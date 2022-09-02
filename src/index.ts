@@ -1,3 +1,1 @@
-export function testFunction (name: string) {
-  return `Hello ${name}`
-}
+export * as xTokens from './pallets/xTokens'
