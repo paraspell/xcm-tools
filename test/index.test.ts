@@ -1,15 +1,6 @@
 import { expect, it, describe } from 'vitest'
-import { testFunction } from '../src'
+import { transferRelayToPara, transferParaToRelay, transferParaToPara} from '../src/pallets/xTokens/index'
+import { ApiPromise, WsProvider } from '@polkadot/api'
 
-describe('packageName', () => {
-  const tests = [
-    { input: 'foo', output: 'Hello foo' },
-    { input: 'bar', output: 'Hello bar' }
-  ]
+describe.skip()
 
-  for (const test of tests) {
-    it(test.input, () => {
-      expect(testFunction(test.input)).eq(test.output)
-    })
-  }
-})

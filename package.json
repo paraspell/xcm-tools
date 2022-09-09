@@ -1,7 +1,7 @@
 {
   "name": "@paraspell/sdk",
   "version": "0.0.1-rc.0",
-  "description": "",
+  "description": "SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": "@paraspell/sdk",
   "license": "MIT",
   "sideEffects": false,
@@ -27,14 +27,9 @@
     "test": "pnpm lint && vitest run --coverage"
   },
   "dependencies": {},
-  "peerDependencies": {
-    "@polkadot/api": ">= 8",
-    "@polkadot/types": ">= 8"
-  },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
     "@polkadot/api": "^8.0.2",
-    "@polkadot/types": "^8.0.2",
     "@vitest/coverage-c8": "latest",
     "eslint": "latest",
     "standard-version": "latest",
