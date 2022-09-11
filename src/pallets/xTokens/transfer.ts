@@ -1,5 +1,6 @@
 import type { ApiPromise } from '@polkadot/api'
 import { Extrinsic } from '../../types'
+import { createAccID } from '../../utils'
 /* eslint-disable */
 export function transferParaToRelay(api: ApiPromise, origin: string, currency: string, amount: any, to: string): Extrinsic {
   if(origin == "Karura" || origin == "Bifrost" ){
@@ -16,9 +17,7 @@ export function transferParaToRelay(api: ApiPromise, origin: string, currency: s
               X1: {
                 AccountId32: {
                   network: 'any',
-                  id: api
-                    .createType('AccountId32', to)
-                    .toHex()
+                  id: createAccID(api, to)
                 }
               }
             }
@@ -39,9 +38,7 @@ export function transferParaToRelay(api: ApiPromise, origin: string, currency: s
               X1: {
                 AccountId32: {
                   network: "any",
-                  id: api
-                    .createType("AccountId32", to)
-                    .toHex()
+                  id: createAccID(api, to)
                 }
               }
             }
@@ -72,9 +69,7 @@ export function transferRelayToPara(api: ApiPromise, destination: number, amount
             X1: {
               AccountId32: {
                 network: "Any",
-                id: api
-                  .createType("AccountId32", to)
-                  .toHex()
+                id: createAccID(api, to)
               }
             }
           }
@@ -118,9 +113,7 @@ export function transferParaToPara(api: ApiPromise, origin: string, destination:
                 {
                   AccountId32: {
                     network: "Any",
-                    id: api
-                      .createType("AccountId32", to)
-                      .toHex()
+                    id: createAccID(api, to)
                   }
                 }
               ]
@@ -146,9 +139,7 @@ export function transferParaToPara(api: ApiPromise, origin: string, destination:
                 {
                   AccountId32: {
                     network: "Any",
-                    id: api
-                      .createType("AccountId32", to)
-                      .toHex()
+                    id: createAccID(api, to)
                   }
                 }
               ]
