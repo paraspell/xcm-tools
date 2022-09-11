@@ -1,5 +1,4 @@
-import { expect, it, describe } from 'vitest'
-//import { transferRelayToPara, transferParaToRelay, transferParaToPara} from '../src/pallets/xTokens/index'
+import { describe } from 'vitest'
 /* eslint-disable */
 describe.skip()
 

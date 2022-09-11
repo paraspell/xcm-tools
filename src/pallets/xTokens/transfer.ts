@@ -1,5 +1,5 @@
 import type { ApiPromise } from '@polkadot/api'
-import { Extrinsic, ExtrinsicFunction } from '../../types'
+import { Extrinsic } from '../../types'
 /* eslint-disable */
 export function transferParaToRelay(api: ApiPromise, origin: string, currency: string, amount: any, to: string): Extrinsic {
   if(origin == "Karura" || origin == "Bifrost" ){

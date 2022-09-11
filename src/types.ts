@@ -1,8 +1,9 @@
-//derrived from https://github.com/kodadot/packages/blob/main/minimark/src/common/types.ts
+//  derrived from https://github.com/kodadot/packages/blob/main/minimark/src/common/types.ts
 
 import { SubmittableExtrinsic } from '@polkadot/api/types'
 
 export type UpdateFunction = (name: string, index: number) => string
+export type Extrinsic = SubmittableExtrinsic<'promise'>
 export type ExtrinsicFunction<T> = (arg: T) => Extrinsic
 
 export type DisplayType = null | 'boost_number' | 'number' | 'boost_percentage'
@@ -22,5 +23,3 @@ export type Metadata = {
   external_url?: string
   type: string
 }
-
-export type Extrinsic = SubmittableExtrinsic<'promise'>
