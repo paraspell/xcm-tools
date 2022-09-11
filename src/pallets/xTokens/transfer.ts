@@ -1,6 +1,7 @@
 import type { ApiPromise } from '@polkadot/api'
-
-export function transferParaToRelay(api: ApiPromise, origin: string, currency: string, amount: any, to: string) {
+import { Extrinsic, ExtrinsicFunction } from '../../types'
+/* eslint-disable */
+export function transferParaToRelay(api: ApiPromise, origin: string, currency: string, amount: any, to: string): Extrinsic {
   if(origin == "Karura" || origin == "Bifrost" ){
     return api.tx.xTokens
       .transfer(
@@ -51,7 +52,7 @@ export function transferParaToRelay(api: ApiPromise, origin: string, currency: s
   }
 }
 
-export function transferRelayToPara(api: ApiPromise, destination: string, amount: any, to: string) {
+export function transferRelayToPara(api: ApiPromise, destination: number, amount: any, to: string): Extrinsic {
   return api.tx.xcmPallet
     .reserveTransferAssets(
       {
@@ -98,7 +99,7 @@ export function transferRelayToPara(api: ApiPromise, destination: string, amount
     )
 }
 
-export function transferParaToPara(api: ApiPromise, origin: string, destination: string, currency: string, amount: any, to: string) {
+export function transferParaToPara(api: ApiPromise, origin: string, destination: number, currency: string, amount: any, to: string): Extrinsic {
   if(origin == "Karura" || origin == "Bifrost" ){
     return api.tx.xTokens
       .transfer(
