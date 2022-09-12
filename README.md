@@ -26,11 +26,25 @@ Import:
 
 ```js
 // ESM
-import { } from '@paraspell/sdk'
+import * as paraspell from '@paraspell/sdk'
 
 // CommonJS
 const { } = require('@paraspell/sdk')
 ```
+
+## Currently implemented pallets
+```ts
+//xToken pallet:
+paraspell.xTokens.transferParaToPara(api: ApiPromise, origin: origin Parachain name string, destination: destination Parachain ID, currency: currency symbol string, amount: any, to: destination address string)
+paraspell.xTokens.transferParaToRelay(api: ApiPromise, origin: origin Parachain name string, currency: currency symbol string, amount: any, to: destination address string)
+paraspell.xTokens.transferRelayToPara(api: ApiPromise, destination: destination Parachain ID, amount: any, to: destination address string)
+//hrmp pallet:
+paraspell.closeChannels.closeChannel(api: ApiPromise, origin: origin Parachain ID, inbound: number, outbound: number)
+//parasSudoWrapper pallet:
+paraspell.openChannels.openChannel(api: ApiPromise, origin: origin Parachain ID, destination: destination Parachain ID, maxSize: number, maxMessageSize: number)
+
+```
+Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui)
 
 ## 💻 Development
 
@@ -40,7 +54,6 @@ const { } = require('@paraspell/sdk')
 - Run interactive tests using `pnpm dev`
 
 ## License
-
 Made with 💛
 
 Published under [MIT License](./LICENSE).
