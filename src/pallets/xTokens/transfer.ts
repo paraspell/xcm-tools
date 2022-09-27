@@ -1,6 +1,6 @@
 import type { ApiPromise } from '@polkadot/api'
 import { Extrinsic } from '../../types'
-import { createAccID } from '../../utils'
+import { createAccID, selectLimit } from '../../utils'
 /* eslint-disable */
 export function transferParaToRelay(api: ApiPromise, origin: string, currency: string, amount: any, to: string): Extrinsic {
   if(origin == "Karura" || origin == "Bifrost" ){
@@ -49,6 +49,7 @@ export function transferParaToRelay(api: ApiPromise, origin: string, currency: s
   }
 }
 
+
 export function transferRelayToPara(api: ApiPromise, destination: number, amount: any, to: string): Extrinsic {
   return api.tx.xcmPallet
     .reserveTransferAssets(
@@ -92,6 +93,51 @@ export function transferRelayToPara(api: ApiPromise, destination: number, amount
       },
       0
     )
+}
+
+export function limitedTransferRelayToPara(api: ApiPromise, destination: number, amount: any, to: string, limit: number , isLimited: boolean): Extrinsic {
+  return api.tx.xcmPallet.limitedReserveTransferAssets(
+    {
+      V1: {
+        parents: 0,
+        interior: {
+          X1: {
+            Parachain: destination
+          }
+        }
+      }
+    },
+    {
+      V1: {
+        parents: 0,
+        interior: {
+          X1: {
+            AccountId32: {
+              network: "Any",
+              id: createAccID(api, to)
+            }
+          }
+        }
+      }
+    },
+    {
+      V1: [
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: "Here"
+            }
+          },
+          fun: {
+            Fungible: amount
+          }
+        }
+      ]
+    },
+    0,
+    selectLimit(limit, isLimited)
+  )
 }
 
 export function transferParaToPara(api: ApiPromise, origin: string, destination: number, currency: string, amount: any, to: string): Extrinsic {
