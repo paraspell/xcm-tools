@@ -128,14 +128,13 @@ Published under [MIT License](https://github.com/paraspell/sdk/blob/main/LICENSE
 
 [npm-downloads-href]: https://npmjs.com/package/@paraspell/sdk
 
- 
- TBA
+
 
 [github-actions-src]: https://img.shields.io/github/workflow/status/unjs/@paraspell/sdk/ci/main?style=flat-square
 
 [github-actions-href]: https://github.com/unjs/@paraspell/sdk/actions?query=workflow%3Aci
 
- TBA
+
 
 [codecov-src]: https://img.shields.io/codecov/c/gh/unjs/@paraspell/sdk/main?style=flat-square
 
