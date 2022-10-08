@@ -28,7 +28,8 @@
   },
   "dependencies": {
     "@polkadot/api": "^8.0.2",
-    "@polkadot/types": "^8.0.2"
+    "@polkadot/types": "^8.0.2",
+    "ethers": "^5.7.1"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",

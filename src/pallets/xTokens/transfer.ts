@@ -1,54 +1,11 @@
 import type { ApiPromise } from '@polkadot/api'
 import { Extrinsic } from '../../types'
-import { createAccID, selectLimit } from '../../utils'
-/* eslint-disable */
-export function transferParaToRelay(api: ApiPromise, origin: string, currency: string, amount: any, to: string): Extrinsic {
-  if(origin == "Karura" || origin == "Bifrost" ){
-    return api.tx.xTokens
-      .transfer(
-        {
-          Token: currency
-        },
-        amount,
-        {
-          V1: {
-            parents: 1,
-            interior: {
-              X1: {
-                AccountId32: {
-                  network: 'any',
-                  id: createAccID(api, to)
-                }
-              }
-            }
-          }
-        },
-        4600000000
-      )
-  }
-  else if (origin == "Pichiu"){
-    return api.tx.ormlXTokens
-      .transfer(
-        currency,
-        amount,
-        {
-          V1: {
-            parents: 1,
-            interior: {
-              X1: {
-                AccountId32: {
-                  network: "any",
-                  id: createAccID(api, to)
-                }
-              }
-            }
-          }
-        },
-        4600000000
-      )
-  }
-}
+import { buildCall, selectLimit, getFees, selectPallet } from '../../utils'
 
+/* eslint-disable */
+export function transferParaToRelay(api: ApiPromise, origin: string, currency: string, currencyID: number, amount: any, to: string): Extrinsic {
+  return selectPallet(api, origin, currencyID, currency, amount, buildCall("ParaToRelay", api, to, 0), getFees("ParaToRelay"))
+}
 
 export function transferRelayToPara(api: ApiPromise, destination: number, amount: any, to: string): Extrinsic {
   return api.tx.xcmPallet
@@ -63,19 +20,7 @@ export function transferRelayToPara(api: ApiPromise, destination: number, amount
           }
         }
       },
-      {
-        V1: {
-          parents: 0,
-          interior: {
-            X1: {
-              AccountId32: {
-                network: "Any",
-                id: createAccID(api, to)
-              }
-            }
-          }
-        }
-      },
+      buildCall("RelayToPara",api,to,destination),
       {
         V1: [
           {
@@ -91,7 +36,7 @@ export function transferRelayToPara(api: ApiPromise, destination: number, amount
           }
         ]
       },
-      0
+      getFees("RelayToPara")
     )
 }
 
@@ -107,19 +52,7 @@ export function limitedTransferRelayToPara(api: ApiPromise, destination: number,
         }
       }
     },
-    {
-      V1: {
-        parents: 0,
-        interior: {
-          X1: {
-            AccountId32: {
-              network: "Any",
-              id: createAccID(api, to)
-            }
-          }
-        }
-      }
-    },
+    buildCall("RelayToPara",api,to,destination),
     {
       V1: [
         {
@@ -135,65 +68,12 @@ export function limitedTransferRelayToPara(api: ApiPromise, destination: number,
         }
       ]
     },
-    0,
+    getFees("RelayToPara"),
     selectLimit(limit, isLimited)
   )
 }
 
-export function transferParaToPara(api: ApiPromise, origin: string, destination: number, currency: string, amount: any, to: string): Extrinsic {
-  if(origin == "Karura" || origin == "Bifrost" ){
-    return api.tx.xTokens
-      .transfer(
-        {
-          Token: currency
-        },
-        amount,
-        {
-          V1: {
-            parents: 1,
-            interior: {
-              X2: [
-                {
-                  Parachain: destination
-                },
-                {
-                  AccountId32: {
-                    network: "Any",
-                    id: createAccID(api, to)
-                  }
-                }
-              ]
-            }
-          }
-        },
-        399600000000
-      )
-  }
-  else if (origin == "Pichiu"){
-    return api.tx.ormlXTokens
-      .transfer(
-        currency,
-        amount,
-        {
-          V1: {
-            parents: 1,
-            interior: {
-              X2: [
-                {
-                  Parachain: destination
-                },
-                {
-                  AccountId32: {
-                    network: "Any",
-                    id: createAccID(api, to)
-                  }
-                }
-              ]
-            }
-          }
-        },
-        399600000000
-      )
-    }
+export function transferParaToPara(api: ApiPromise, origin: string, destination: number, currency: string, currencyID: number,  amount: any, to: string): Extrinsic {
+  return selectPallet(api, origin, currencyID, currency, amount, buildCall("ParaToPara", api, to, destination), getFees("ParaToPara"))
 
 }
