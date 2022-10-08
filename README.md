@@ -7,14 +7,12 @@
 
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 
-
-
 [![Known Vulnerabilities](https://snyk.io/test/github/paraspell/sdk/badge.svg)](https://snyk.io/test/github/paraspell/sdk)
   
 
 SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become magician and try your paraSPELLS 🧙✨. 
 
-#####  Currently supporting 29 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/docs/supportedNodes.md). 
+#####  Currently supporting 29 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md). 
 
   
 
@@ -90,7 +88,7 @@ paraspell.openChannels.openChannel(api: ApiPromise, origin: origin  Parachain  I
 ```
 
  ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui)
- ##### List of currently compatible nodes can be found [here](https://github.com/paraspell/sdk/docs/supportedNodes.md)
+ ##### List of currently compatible nodes can be found [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md)
 
   
 
@@ -130,13 +128,14 @@ Published under [MIT License](https://github.com/paraspell/sdk/blob/main/LICENSE
 
 [npm-downloads-href]: https://npmjs.com/package/@paraspell/sdk
 
-  
+ 
+ TBA
 
 [github-actions-src]: https://img.shields.io/github/workflow/status/unjs/@paraspell/sdk/ci/main?style=flat-square
 
 [github-actions-href]: https://github.com/unjs/@paraspell/sdk/actions?query=workflow%3Aci
 
-  
+ TBA
 
 [codecov-src]: https://img.shields.io/codecov/c/gh/unjs/@paraspell/sdk/main?style=flat-square
 
