@@ -1,6 +1,6 @@
-//FOR FUTURE USE
+// FOR FUTURE USE
 
-//POLKADOT IDS
+// POLKADOT IDS
 export const StatemintID = 1000
 export const AcalaID = 2000
 export const AstarID = 2006
@@ -25,7 +25,7 @@ export const ParallelID = 2012
 export const PhalaID = 2035
 export const UNIQUEID = 2037
 
-//KUSAMA IDS
+// KUSAMA IDS
 export const BasiliskID = 2090
 export const KaruraID = 2000
 export const PichiuID = 2102
@@ -62,7 +62,5 @@ export const SORAID = 2011
 export const SubsocialXID = 2100
 export const TanganikaID = 2116
 export const TuringID = 2114
-export const UnorthodoxID = -1  //Unable to connect
+export const UnorthodoxID = -1 // Unable to connect
 export const ZelgeistID = 2101
-
-
