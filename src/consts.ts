@@ -67,6 +67,4 @@ export enum KusamaParaId {
   Turing = 2114,
   Unorthodox = -1, // Unable to connect,
   Zelgeist = 2101,
-
-
 }
