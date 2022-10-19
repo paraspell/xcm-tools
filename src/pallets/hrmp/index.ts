@@ -1,1 +1,1 @@
-export { closeChannel } from './channelsClose'
+export * from './channelsClose'

@@ -1,1 +1,1 @@
-export { openChannel } from './channels'
+export * from './channels'
