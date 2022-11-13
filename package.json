@@ -29,6 +29,7 @@
   "dependencies": {
     "@polkadot/api": "^8.0.2",
     "@polkadot/types": "^8.0.2",
+    "@polkadot/util-crypto": "^10.1.11",
     "ethers": "^5.7.1"
   },
   "devDependencies": {

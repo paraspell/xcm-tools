@@ -12,7 +12,7 @@
 
 SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become magician and try your paraSPELLS 🧙✨. 
 
-#####  Currently supporting 29 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md). 
+#####  Currently supporting 57 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md). 
 
   
 
@@ -58,19 +58,19 @@ const paraspell = require('@paraspell/sdk')
 
 ```ts
 
-//xToken pallet:
+//XCM pallet (Combined xTokens, polkadotXCM, ormlXTokens, XcmPallet):
 
 //Transfer tokens from Parachain to Parachain
-paraspell.xTokens.transferParaToPara(api: ApiPromise, origin: origin  Parachain  name  string, destination: destination  Parachain  ID, currency: currency  symbol  string, currencyID: number, amount: any, to: destination  address  string)
+paraspell.xcmPallet.transferParaToPara(api: ApiPromise, origin: origin  Parachain  name  string, destination: destination  Parachain  ID, currency: currency  symbol  string, currencyID: number, amount: any, to: destination  address  string)
 
 //Transfer tokens from Parachain to Relay chain
-paraspell.xTokens.transferParaToRelay(api: ApiPromise, origin: origin  Parachain  name  string, currency: currency  symbol  string, currencyID: number, amount: any, to: destination  address  string)
+paraspell.xcmPallet.transferParaToRelay(api: ApiPromise, origin: origin  Parachain  name  string, currency: currency  symbol  string, currencyID: number, amount: any, to: destination  address  string)
 
 //Transfer tokens from Relay chain to Parachain
-paraspell.xTokens.transferRelayToPara(api: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string)
+paraspell.xcmPallet.transferRelayToPara(api: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string)
 
 //Transfer tokens from Relay chain to Parachain /w specific limit
-xTokens.xTokens.limitedTransferRelayToPara(api,destParaID,amount,destinationAddress,yourWeight,true)
+xTokens.xcmPallet.limitedTransferRelayToPara(api,destParaID,amount,destinationAddress,yourWeight,true)
 
 //hrmp pallet:
 
