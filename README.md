@@ -70,7 +70,7 @@ paraspell.xcmPallet.transferParaToRelay(api: ApiPromise, origin: origin  Paracha
 paraspell.xcmPallet.transferRelayToPara(api: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string)
 
 //Transfer tokens from Relay chain to Parachain /w specific limit
-xTokens.xcmPallet.limitedTransferRelayToPara(api,destParaID,amount,destinationAddress,yourWeight,true)
+paraspell.xcmPallet.limitedTransferRelayToPara(api,destParaID,amount,destinationAddress,yourWeight,true)
 
 //hrmp pallet:
 
