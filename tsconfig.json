@@ -4,6 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "esModuleInterop": true,
+    "noImplicitAny": true,
   },
   "include": [
     "src"
