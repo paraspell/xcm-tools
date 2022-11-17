@@ -23,6 +23,7 @@
     "dev": "vitest dev",
     "lint": "eslint --fix --ext .ts,.js,.mjs,.cjs .",
     "prepack": "unbuild",
+    "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updateAssets.ts",
     "release": "pnpm test && standard-version && git push --follow-tags && pnpm publish --no-git-checks --access=public",
     "test": "pnpm lint && vitest run --coverage"
   },
@@ -35,9 +36,11 @@
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
+    "@types/node": "^18.11.9",
     "@vitest/coverage-c8": "latest",
     "eslint": "latest",
     "standard-version": "latest",
+    "ts-node": "^10.9.1",
     "typescript": "latest",
     "unbuild": "latest",
     "vitest": "latest"

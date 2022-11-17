@@ -13,3 +13,13 @@ export type TNodeDetails = {
     type: TRelayChainType
 }
 export type TNode = typeof nodeNames[number];
+export type TAssetDetails = {
+    assetId: string;
+    symbol: string;
+}
+export type TNodeAssets = {
+    relayChainAssetSymbol: 'KSM' | 'DOT';
+    nativeAssets: string[];
+    otherAssets: TAssetDetails[];
+}
+export type TAssetJsonMap = Record<TNode, TNodeAssets>

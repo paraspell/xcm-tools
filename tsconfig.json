@@ -5,6 +5,7 @@
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "noImplicitAny": true,
+    "resolveJsonModule": true
   },
   "include": [
     "src"
