@@ -10,6 +10,7 @@
 | Bifrost-Polkadot | [Website](https://thebifrost.io/) |[Github](https://github.com/bifrost-finance/bifrost)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fhk.p.bifrost-rpc.liebi.com%2Fws#/explorer)| 2030| xTokens |
 | Centrifuge | [Website](https://centrifuge.io/) |[Github](https://github.com/centrifuge/centrifuge-chain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fcentrifuge-rpc.dwellir.com#/explorer)|2031 | xTokens |
 | Clover | [Website](https://clv.org/) |[Github](https://github.com/clover-network/clover)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc-para.clover.finance#/explorer)|2002 | xTokens |
+| Composable-Finance | [Website](https://www.composable.finance/) |[Github](https://github.com/ComposableFi/)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.composable.finance#/explorer)|2019 | relayerXcm |
 | Darwinia | [Website](https://darwinia.network/) |[Github](https://github.com/darwinia-network/darwinia)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fparachain-rpc.darwinia.network#/explorer)|2046 | polkadotXCM |
 | Efinity | [Website](https://enjin.io/efinity-crowdloan) |[Github](https://github.com/enjin)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.efinity.io#/explorer)|2021 | polkadotXCM |
 | Equilibrium | [Website](https://equilibrium.io/) |[Github](https://github.com/equilibrium-eosdt/equilibrium-substrate-chain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fnode.pol.equilibrium.io%2F#/chainstate)|2011 | polkadotXCM |

@@ -385,6 +385,14 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
         return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
       }
       break
+    case 'Composable-Finance':
+      if (scenario === 'ParaToPara') {
+        console.log('Transferring native tokens from Composable-Finance')
+        return api.tx.relayerXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+      } else if (scenario === 'ParaToRelay') {
+        console.log('Transferring DOT tokens from Composable-Finance')
+        return api.tx.relayerXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+      }
     case 'Darwinia':
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Darwinia')

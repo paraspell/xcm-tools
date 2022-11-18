@@ -21,7 +21,7 @@ export function transferParaToRelay(
       handleAddress('ParaToRelay', 'xTokens', api, to, 0),
       getFees('ParaToRelay')
     )
-  } else if (pallet === 'polkadotXCM') {
+  } else if (pallet === 'polkadotXCM' || pallet === 'relayerXcm') {
     return constructPolkadotXCM(
       api,
       origin,
@@ -53,7 +53,7 @@ export function transferParaToPara(
       handleAddress('ParaToPara', 'xTokens', api, to, destination),
       getFees('ParaToPara')
     )
-  } else if (pallet === 'polkadotXCM') {
+  } else if (pallet === 'polkadotXCM' || pallet === 'relayerXcm') {
     return constructPolkadotXCM(
       api,
       origin,

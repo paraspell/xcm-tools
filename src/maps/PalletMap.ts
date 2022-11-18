@@ -9,6 +9,7 @@ export const nodeToPallet: Record<TNode, TPalletType> = {
   'Bifrost-Polkadot': 'xTokens',
   Centrifuge: 'xTokens',
   Clover: 'xTokens',
+  'Composable-Finance': 'relayerXcm',
   Darwinia: 'polkadotXCM',
   Efinity: 'polkadotXCM',
   Equilibrium: 'polkadotXCM',

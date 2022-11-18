@@ -12,7 +12,7 @@
 
 SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become magician and try your paraSPELLS 🧙✨. 
 
-#####  Currently supporting 57 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md). 
+#####  Currently supporting 58 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md). 
 
   
 
@@ -58,7 +58,7 @@ const paraspell = require('@paraspell/sdk')
 
 ```ts
 
-//XCM pallet (Combined xTokens, polkadotXCM, ormlXTokens, XcmPallet):
+//XCM pallet (Combined xTokens, polkadotXCM, ormlXTokens, XcmPallet & relayerXCM):
 
 //Transfer tokens from Parachain to Parachain
 paraspell.xcmPallet.transferParaToPara(api: ApiPromise, origin: origin  Parachain  name  string, destination: destination  Parachain  ID, currency: currency  symbol  string, currencyID: number, amount: any, to: destination  address  string)
