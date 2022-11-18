@@ -263,8 +263,8 @@ export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: num
     case 'Acala':
       console.log('Transferring tokens ' + currency + ' from Acala')
       return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options need addressing
-    case 'Bifrost-Polkadot':
-      console.log('Transferring ' + currency + ' tokens from Bifrost - Polkadot')
+    case 'BifrostPolkadot':
+      console.log('Transferring ' + currency + ' tokens from BifrostPolkadot')
       return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options need addressing
     case 'Centrifuge':
       console.log('Transferring tokens from Centrifuge')
@@ -304,8 +304,8 @@ export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: num
     case 'Basilisk':
       console.log('Transferring ' + currencyID + ' tokens from Basilisk')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
-    case 'Bifrost-Kusama':
-      console.log('Transferring ' + currency + ' tokens from Bifrost - Kusama')
+    case 'BifrostKusama':
+      console.log('Transferring ' + currency + ' tokens from BifrostKusama')
       return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options need addressing
     case 'Pioneer':
       console.log('Transferring tokens from Pioneer')
@@ -313,8 +313,8 @@ export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: num
     case 'Calamari':
       console.log('Transferring ' + currencyID + ' tokens from Calamari')
       return api.tx.xTokens.transfer({ MantaCurrency: currencyID }, amount, addressSelection, fees) // Currently only option for XCM transfer
-    case 'Crust-Shadow':
-      console.log('Transferring tokens from Crust Shadow')
+    case 'CrustShadow':
+      console.log('Transferring tokens from CrustShadow')
       return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
     case 'Dorafactory':
       console.log('Transferring ' + currency + ' tokens from DoraFactory')
@@ -325,7 +325,7 @@ export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: num
     case 'Integritee':
       console.log('Transferring ' + currency + ' tokens from Integritee')
       return api.tx.xTokens.transfer(currency, amount, addressSelection, fees)
-    case 'InvArch-Tinker':
+    case 'InvArchTinker':
       console.log('Transferring ' + currencyID + ' tokens from InvArch Tinker')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Karura':
@@ -349,7 +349,7 @@ export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: num
     case 'Moonriver':
       console.log('Transferring tokens from Moonriver')
       return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
-    case 'Parallel-Heiko':
+    case 'ParallelHeiko':
       console.log('Transferring ' + currencyID + ' tokens from Parallel Heiko')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Picasso':
@@ -385,14 +385,15 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
         return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
       }
       break
-    case 'Composable-Finance':
+    case 'ComposableFinance':
       if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Composable-Finance')
+        console.log('Transferring native tokens from ComposableFinance')
         return api.tx.relayerXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
       } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Composable-Finance')
+        console.log('Transferring DOT tokens from ComposableFinance')
         return api.tx.relayerXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
       }
+      break
     case 'Darwinia':
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Darwinia')
