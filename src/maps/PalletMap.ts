@@ -7,6 +7,7 @@ export const nodeToPallet: Record<TNode, TPalletType> = {
   Acala: 'xTokens',
   Astar: 'polkadotXCM',
   BifrostPolkadot: 'xTokens',
+  Bitgreen: 'polkadotXCM',
   Centrifuge: 'xTokens',
   Clover: 'xTokens',
   ComposableFinance: 'relayerXcm',

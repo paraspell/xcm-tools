@@ -8,6 +8,7 @@
 | Acala | [Website](https://acala.network/) |[Github](https://github.com/AcalaNetwork/Acala)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2F1rpc.io%2Faca#/explorer)|2000 | xTokens |
 | Astar | [Website](https://astar.network/) |[Github](https://github.com/AstarNetwork/Astar)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fastar-rpc.dwellir.com#/explorer)|2006 | polkadotXCM |
 | BifrostPolkadot | [Website](https://thebifrost.io/) |[Github](https://github.com/bifrost-finance/bifrost)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fhk.p.bifrost-rpc.liebi.com%2Fws#/explorer)| 2030| xTokens |
+| Bitgreen | [Website](https://www.bitgreenswiss.org/) |[Github](https://github.com/bitgreen/bitgreen-node)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fmainnet.bitgreen.org#/explorer)| 2048| polkadotXCM |
 | Centrifuge | [Website](https://centrifuge.io/) |[Github](https://github.com/centrifuge/centrifuge-chain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fcentrifuge-rpc.dwellir.com#/explorer)|2031 | xTokens |
 | Clover | [Website](https://clv.org/) |[Github](https://github.com/clover-network/clover)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc-para.clover.finance#/explorer)|2002 | xTokens |
 | ComposableFinance | [Website](https://www.composable.finance/) |[Github](https://github.com/ComposableFi/)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.composable.finance#/explorer)|2019 | relayerXcm |
