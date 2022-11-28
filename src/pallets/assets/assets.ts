@@ -16,7 +16,7 @@ export function getAssetsObject(node: TNode) {
   return getAssetsInfo(node)
 }
 
-export function getAssetId(node: TNode, symbol: string): string {
+export function getAssetId(node: TNode, symbol: string) {
   if (!hasAssetsInfo(node)) { return null }
   return getAssetsInfo(node).otherAssets.find(o => o.symbol === symbol)?.assetId ?? null
 }

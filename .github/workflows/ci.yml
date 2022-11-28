@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - beta-pre-release
   pull_request:
     branches:
       - main
+      - beta-pre-release
 
 jobs:
   ci:
@@ -19,6 +21,7 @@ jobs:
           node-version: 16
           cache: "pnpm"
       - run: pnpm install
+      - run: pnpm compile
       - run: pnpm lint
       - run: pnpm build
       - run: pnpm vitest --coverage

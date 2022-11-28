@@ -77,7 +77,7 @@ const fetchNativeAssets = async (api: ApiPromise) => {
 const fetchBifrostNativeAssets = async (api: ApiPromise): Promise<string[]> => {
   const res = await api.rpc.state.getMetadata()
   const TYPE_ID = 114
-  return res.asLatest.lookup.types.at(TYPE_ID).type.def.asVariant.variants.map(k => k.name.toHuman())
+  return res.asLatest.lookup.types.at(TYPE_ID)!.type.def.asVariant.variants.map(k => k.name.toHuman())
 }
 
 const fetchOtherAssets = async (api: ApiPromise, query: string) => {
@@ -94,7 +94,7 @@ const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string) => {
   const res = await api.query[module][section].entries()
   return res.filter(([{ args: [era] }]) => !Object.prototype.hasOwnProperty.call(era.toHuman(), 'NativeAssetId'))
     .map(([{ args: [era] }, value]) => ({
-      assetId: Object.values(era.toHuman())[0], symbol: (value.toHuman() as any).symbol
+      assetId: Object.values(era.toHuman() ?? {})[0], symbol: (value.toHuman() as any).symbol
     }))
 }
 
@@ -118,16 +118,16 @@ const fetchAssetsType2 = async (api: ApiPromise, query: string): Promise<Partial
   const otherAssets = res
     .filter(([{ args: [era] }]) => !Object.prototype.hasOwnProperty.call(era.toHuman(), 'NativeAssetId'))
     .map(([{ args: [era] }, value]) => ({
-      assetId: Object.values(era.toHuman())[0], symbol: (value.toHuman() as any).symbol
+      assetId: Object.values(era.toHuman() ?? {})[0], symbol: (value.toHuman() as any).symbol
     }))
 
   return { nativeAssets, otherAssets }
 }
 
-const fetchNodeAssets = async (node: TNode, api: ApiPromise, query: string): Promise<Partial<TNodeAssets>> => {
+const fetchNodeAssets = async (node: TNode, api: ApiPromise, query: string | null): Promise<Partial<TNodeAssets>> => {
   // Different format of data
   if (node === 'Acala' || node === 'Karura') {
-    const assets = await fetchAssetsType2(api, query)
+    const assets = await fetchAssetsType2(api, query!)
     await api.disconnect()
     return assets
   }
@@ -167,7 +167,7 @@ const fetchNodeAssets = async (node: TNode, api: ApiPromise, query: string): Pro
 
 const TIMEOUT_MS = 60000
 
-const fetchNodeAssetsWithTimeout = (node: TNode, wsUrl: string, query: string): Promise<Partial<TNodeAssets>> => {
+const fetchNodeAssetsWithTimeout = (node: TNode, wsUrl: string, query: string | null): Promise<Partial<TNodeAssets>> => {
   return new Promise((resolve, reject) => {
     const wsProvider = new WsProvider(wsUrl)
 
@@ -183,7 +183,7 @@ const fetchNodeAssetsWithTimeout = (node: TNode, wsUrl: string, query: string): 
   })
 }
 
-const fetchNodeAssetsTryMultipleProviders = async (node: TNode, providers: string[], query: string): Promise<Partial<TNodeAssets> | null> => {
+const fetchNodeAssetsTryMultipleProviders = async (node: TNode, providers: string[], query: string | null): Promise<Partial<TNodeAssets> | null> => {
   for (const provider of providers) {
     try {
       console.log(`Trying ${provider}...`)
@@ -197,8 +197,8 @@ const fetchNodeAssetsTryMultipleProviders = async (node: TNode, providers: strin
 }
 
 const getNodeProviders = (node: TNode) => {
-  const { providers } = getNodeEndpointOption(node)
-  const providersArr = Object.values(providers)
+  const { providers } = getNodeEndpointOption(node) ?? {}
+  const providersArr = Object.values(providers ?? [])
 
   // TODO: Remove this when lib @polkadot/apps-config releases an update
   if (node === 'SubsocialX') { providersArr.unshift('wss://para.f3joule.space') } else if (node === 'Bitgreen') { providersArr.unshift('wss://mainnet.bitgreen.org') }
@@ -206,7 +206,7 @@ const getNodeProviders = (node: TNode) => {
   return providersArr
 }
 
-const fetchAssets = (node: TNode, query: string): Promise<Partial<TNodeAssets> | null> => {
+const fetchAssets = (node: TNode, query: string | null): Promise<Partial<TNodeAssets> | null> => {
   const providers = getNodeProviders(node)
   return fetchNodeAssetsTryMultipleProviders(node, providers, query)
 }

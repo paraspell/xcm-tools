@@ -25,7 +25,9 @@
     "prepack": "unbuild",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updateAssets.ts",
     "release": "pnpm test && standard-version && git push --follow-tags && pnpm publish --no-git-checks --access=public",
-    "test": "pnpm lint && vitest run --coverage"
+    "test": "vitest run --coverage",
+    "compile": "tsc --noEmit",
+    "runAll": "pnpm compile && pnpm lint && pnpm test"
   },
   "dependencies": {
     "@polkadot/api": "^8.0.2",

@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ethers } from 'ethers'
 import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
 import { nodeToPallet } from './maps/PalletMap'
-import { Extrinsic, TNode } from './types'
+import { Extrinsic, TNode, TScenario } from './types'
 import { nodes } from './maps/consts'
 
 export function createAccID(api: ApiPromise, account: string) {
@@ -20,7 +20,7 @@ export function selectLimit(limit: number, isLimited: boolean) {
   }
 }
 
-export function getFees(scenario: string) {
+export function getFees(scenario: TScenario) {
   if (scenario === 'ParaToRelay') {
     console.log('Asigning fees for transfer to Relay chain')
     return 4600000000
@@ -28,9 +28,10 @@ export function getFees(scenario: string) {
     console.log('Asigning fees for transfer to another Parachain chain')
     return 399600000000
   }
+  throw new Error(`Fees for scenario ${scenario} are not defined.`)
 }
 
-export function handleAddress(scenario: string, pallet: string, api: ApiPromise, to: string, nodeId: number): any {
+export function handleAddress(scenario: TScenario, pallet: string, api: ApiPromise, to: string, nodeId?: number): any {
   if (scenario === 'ParaToRelay' && pallet === 'xTokens') {
     console.log('AccountId32 transfer')
     return {
@@ -177,7 +178,7 @@ export function handleAddress(scenario: string, pallet: string, api: ApiPromise,
   }
 }
 
-export function createCurrencySpecification(amount: any, scenario: string) {
+export function createCurrencySpecification(amount: any, scenario: TScenario) {
   if (scenario === 'ParaToRelay') {
     console.log('polkadotXCM transfer in native currency to Relay chain')
     return {
@@ -216,7 +217,7 @@ export function createCurrencySpecification(amount: any, scenario: string) {
   }
 }
 
-export function createHeaderPolkadotXCM(scenario: string, nodeId: number) {
+export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number) {
   console.log('Generating header for polkadotXCM transfer')
   if (scenario === 'ParaToRelay') {
     return {
@@ -253,7 +254,6 @@ export function createHeaderPolkadotXCM(scenario: string, nodeId: number) {
 }
 
 export function getAvailableXCMPallet(origin: TNode) {
-  if (!Object.prototype.hasOwnProperty.call(nodeToPallet, origin)) { return false }
   return nodeToPallet[origin]
 }
 
@@ -361,10 +361,12 @@ export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: num
     case 'Turing':
       console.log('Transferring ' + currencyID + ' tokens from Turing')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
+    default:
+      throw new Error(`Invalid node: ${origin}`)
   }
 }
 
-export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any, addressSelection: any, currencySelection: any, scenario: string): Extrinsic {
+export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any, addressSelection: any, currencySelection: any, scenario: TScenario): Extrinsic {
   switch (origin) {
     // Polkadot polkadotXCM
     case 'Statemint':
@@ -603,6 +605,7 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
         return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
       }
   }
+  throw new Error(`Invalid node: ${origin}`)
 }
 
 export function getNodeDetails(node: TNode) {
