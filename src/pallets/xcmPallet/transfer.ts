@@ -1,6 +1,8 @@
 import type { ApiPromise } from '@polkadot/api'
 import { Extrinsic, TNode } from '../../types'
 import { handleAddress, selectLimit, getFees, constructXTokens, getAvailableXCMPallet, constructPolkadotXCM, createHeaderPolkadotXCM, createCurrencySpecification } from '../../utils'
+import { hasSupportForAsset } from '../assets'
+import { InvalidCurrencyError } from './InvalidCurrencyError'
 
 export function transferParaToRelay(
   api: ApiPromise,
@@ -9,7 +11,9 @@ export function transferParaToRelay(
   currencyID: number,
   amount: any,
   to: string
-): Extrinsic {
+): Extrinsic | never {
+  if (!hasSupportForAsset(origin, currency)) { throw new InvalidCurrencyError(`Node ${origin} does not support currency ${currency}.`) }
+
   const pallet = getAvailableXCMPallet(origin)
   if (pallet === 'xTokens' || pallet === 'ormlXTokens') {
     return constructXTokens(
@@ -41,7 +45,9 @@ export function transferParaToPara(
   currencyID: number,
   amount: any,
   to: string
-): Extrinsic {
+): Extrinsic | never {
+  if (!hasSupportForAsset(origin, currency)) { throw new InvalidCurrencyError(`Node ${origin} does not support currency ${currency}.`) }
+
   const pallet = getAvailableXCMPallet(origin)
   if (pallet === 'xTokens' || pallet === 'ormlXTokens') {
     return constructXTokens(

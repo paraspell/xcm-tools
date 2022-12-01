@@ -1,6 +1,6 @@
-import type { ApiPromise } from '@polkadot/api'
+import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ethers } from 'ethers'
-import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config'
+import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
 import { nodeToPallet } from './maps/PalletMap'
 import { Extrinsic, TNode } from './types'
 import { nodes } from './maps/consts'
@@ -606,12 +606,21 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
 }
 
 export function getNodeDetails(node: TNode) {
-  if (!Object.prototype.hasOwnProperty.call(nodeToPallet, node)) { return null }
   return nodes[node]
 }
 
-export function getNodeParaId(node: TNode) {
-  const { name, type } = getNodeDetails(node)
+export function getNodeEndpointOption(node: TNode) {
+  const { type, name } = getNodeDetails(node)
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
-  return linked.find(o => o.info === name)?.paraId
+  return linked?.find(o => o.info === name)
+}
+
+export function getNodeParaId(node: TNode) {
+  const option = getNodeEndpointOption(node)
+  return option?.paraId ?? null
+}
+
+export async function createApiInstance(wsUrl: string) {
+  const wsProvider = new WsProvider(wsUrl)
+  return await ApiPromise.create({ provider: wsProvider })
 }
