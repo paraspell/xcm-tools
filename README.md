@@ -61,16 +61,17 @@ const paraspell = require('@paraspell/sdk')
 //XCM pallet (Combined xTokens, polkadotXCM, ormlXTokens, XcmPallet & relayerXCM):
 
 //Transfer tokens from Parachain to Parachain
-paraspell.xcmPallet.transferParaToPara(api: ApiPromise, origin: origin  Parachain  name  string, destination: destination  Parachain  ID, currency: currency  symbol  string, currencyID: number, amount: any, to: destination  address  string)
+paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: currency  symbol  string, currencyID: number (If applicable), amount: any, to: destination  address  string, destination: destination  Parachain  ID)
 
 //Transfer tokens from Parachain to Relay chain
-paraspell.xcmPallet.transferParaToRelay(api: ApiPromise, origin: origin  Parachain  name  string, currency: currency  symbol  string, currencyID: number, amount: any, to: destination  address  string)
+paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: currency  symbol  string, currencyID: number (If applicable), amount: any, to: destination  address  string)
 
 //Transfer tokens from Relay chain to Parachain
 paraspell.xcmPallet.transferRelayToPara(api: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string)
 
 //Transfer tokens from Relay chain to Parachain /w specific limit
 paraspell.xcmPallet.limitedTransferRelayToPara(api,destParaID,amount,destinationAddress,yourWeight,true)
+
 
 //hrmp pallet:
 
@@ -83,8 +84,29 @@ paraspell.closeChannels.closeChannel(api: ApiPromise, origin: origin  Parachain 
 //Open HRMP channels
 paraspell.openChannels.openChannel(api: ApiPromise, origin: origin  Parachain  ID, destination: destination  Parachain  ID, maxSize: number, maxMessageSize: number)
 
-  
 
+//Asset pallet
+
+//Returns assets object from assets.json for particular node including information about native and foreign assets
+paraspell.getAssetsObject(node: TNode)
+
+//Returns foreign assetId for particular node and asset symbol
+paraspell.getAssetId(node: TNode, symbol: string)
+
+//Returns symbol of the relay chain for particular node. Either "DOT" or "KSM"
+paraspell.getRelayChainSymbol(node: TNode)
+
+//Returns string array of native assets symbols for particular node
+paraspell.getNativeAssets(node: TNode)
+
+//Returns object array of foreign assets for particular node. Each object has symbol and assetId property
+paraspell.getOtherAssets(node: TNode)
+
+//Returns string array of all assets symbols. (native and foreign assets are merged to a single array)
+paraspell.getAllAssetsSymbols(node: TNode)
+
+//Checks if node supports particular asset. (Both native and foreign assets are searched). Returns boolean
+paraspell.hasSupportForAsset(node: TNode, symbol: string)
 ```
 
  ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui)
