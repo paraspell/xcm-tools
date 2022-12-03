@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { createApiInstance } from '../../utils'
 import { InvalidCurrencyError } from './InvalidCurrencyError'
-import { transferParaToRelay } from './transfer'
+import { send } from './transfer'
 
 const fakeAddress = '0x00000000'
 const amount = 1000
@@ -12,7 +12,7 @@ describe('transferParaToRelay', () => {
     return createApiInstance('wss://para.f3joule.space')
       .then((api) => {
         const t = () => {
-          transferParaToRelay(
+          send(
             api,
             'Acala',
             'UNIT',
@@ -28,7 +28,7 @@ describe('transferParaToRelay', () => {
     return createApiInstance('wss://para.f3joule.space')
       .then((api) => {
         const t = () => {
-          transferParaToRelay(
+          send(
             api,
             'Acala',
             'ACA',
