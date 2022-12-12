@@ -28,9 +28,8 @@ export function send(
       getFees(type)
     )
   } else if (pallet === 'polkadotXCM' || pallet === 'relayerXcm') {
-
-    //Specific node requirements
-    if(origin == 'Statemint' && type == 'ParaToPara'){
+    // Specific node requirements
+    if (origin === 'Statemint' && type === 'ParaToPara') {
       return constructPolkadotXCM(
         api,
         origin,
@@ -39,8 +38,7 @@ export function send(
         createCurrencySpecification(amount, type, origin, currencyID),
         type
       )
-    }
-    else if(origin == 'Darwinia' && type == 'ParaToPara'){
+    } else if (origin === 'Darwinia' && type === 'ParaToPara') {
       return constructPolkadotXCM(
         api,
         origin,
