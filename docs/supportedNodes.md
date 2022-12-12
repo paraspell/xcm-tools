@@ -13,19 +13,12 @@
 | Clover | [Website](https://clv.org/) |[Github](https://github.com/clover-network/clover)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc-para.clover.finance#/explorer)|2002 | xTokens |
 | ComposableFinance | [Website](https://www.composable.finance/) |[Github](https://github.com/ComposableFi/)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.composable.finance#/explorer)|2019 | relayerXcm |
 | Darwinia | [Website](https://darwinia.network/) |[Github](https://github.com/darwinia-network/darwinia)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fparachain-rpc.darwinia.network#/explorer)|2046 | polkadotXCM |
-| Efinity | [Website](https://enjin.io/efinity-crowdloan) |[Github](https://github.com/enjin)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.efinity.io#/explorer)|2021 | polkadotXCM |
-| Equilibrium | [Website](https://equilibrium.io/) |[Github](https://github.com/equilibrium-eosdt/equilibrium-substrate-chain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fnode.pol.equilibrium.io%2F#/chainstate)|2011 | polkadotXCM |
 | HydraDX | [Website](https://hydradx.io/) |[Github](https://github.com/galacticcouncil/HydraDX-node)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.hydradx.cloud#/explorer)| 2034| xTokens |
 | Interlay | [Website](https://interlay.io/) |[Github](https://github.com/interlay/interbtc)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fapi.interlay.io%2Fparachain#/explorer)| 2032 | xTokens |
-| Kapex | [Website](https://totemaccounting.com/) |[Github](https://gitlab.com/totem-tech)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fk-ui.kapex.network#/chainstate)|2007 | polkadotXCM |
-| Kilt | [Website](https://www.kilt.io/) |[Github](https://github.com/KILTprotocol/kilt-node)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fspiritnet.api.onfinality.io%2Fpublic-ws#/chainstate)|2086 | polkadotXCM |
 | Kylin | [Website](https://www.kylin.network/) |[Github](https://github.com/Kylin-Network/kylin-collator)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot.kylin-node.co.uk#/explorer)|2052 | ormlXTokens |
 | Litentry | [Website](https://litentry.com/) |[Github](https://github.com/litentry/litentry-parachain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Flitentry-rpc.dwellir.com#/explorer)|2013 | xTokens |
 | Moonbeam | [Website](https://moonbeam.network/) |[Github](https://github.com/PureStake/moonbeam)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fmoonbeam.api.onfinality.io%2Fpublic-ws#/explorer)|2004 | xTokens |
-| OriginTrail | [Website](https://parachain.origintrail.io/) |[Github](https://github.com/OriginTrail/origintrail-parachain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fparachain-rpc.origin-trail.network#/explorer)|2043 | polkadotXCM |
 | Parallel | [Website](https://parallel.fi/) |[Github](https://github.com/parallel-finance/parallel)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fparallel.api.onfinality.io%2Fpublic-ws#/explorer)|2012| xTokens |
-| Phala | [Website](https://www.phala.network/) |[Github](https://github.com/Phala-Network/phala-blockchain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fapi.phala.network%2Fws#/explorer)|2035 | polkadotXCM |
-| Unique | [Website](https://unique.network/) |[Github](https://github.com/usetech-llc/polkadot_api_dotnet)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Feu-ws.unique.network%2F#/explorer)|2037 | polkadotXCM |
 
 ## Kusama Parachains
 | Node name | Website | Github | Polkadot.js |Node id | Supported XCM Pallet |
@@ -34,7 +27,6 @@
 | Encointer | [Website](https://encointer.org/) |[Github](https://github.com/encointer/encointer-parachain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.api.encointer.org#/explorer)|1001 | polkadotXCM |
 | Altair | [Website](https://centrifuge.io/altair/) |[Github](https://github.com/centrifuge/centrifuge-chain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Faltair-rpc.dwellir.com#/explorer)| 2088| xTokens |
 | Amplitude | [Website](https://pendulumchain.org/amplitude?utm_source=parachains_info&utm_medium=referral&utm_campaign=parachains_info) |[Github](https://github.com/pendulum-chain/pendulum)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc-amplitude.pendulumchain.tech#/explorer)|2124 | xTokens |
-| Bajun | [Website](https://ajuna.io/) |[Github](https://github.com/ajuna-network/)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fbajun.api.onfinality.io%2Fpublic-ws#/extrinsics)|2119 | polkadotXCM |
 | Basilisk | [Website](https://bsx.fi/) |[Github](https://github.com/galacticcouncil/Basilisk-node)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.basilisk.cloud#/explorer)|2090 | xTokens |
 | BifrostKusama | [Website](https://thebifrost.io/) |[Github](https://github.com/bifrost-finance/bifrost)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fbifrost-parachain.api.onfinality.io%2Fpublic-ws#/explorer)| 2001| xTokens |
 | Pioneer | [Website](https://bit.country/) |[Github](https://github.com/bit-country/Metaverse-Network)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpioneer.api.onfinality.io%2Fpublic-ws#/explorer)| 2096| xTokens |
@@ -42,11 +34,9 @@
 | CrustShadow | [Website](https://crust.network/) |[Github](https://github.com/crustio/crust-node)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc-shadow.crust.network%2F#/explorer)|2012 | xTokens |
 | Crab | [Website](https://crab.network/) |[Github](https://github.com/darwinia-network/darwinia/tree/main/runtime/crab)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fcrab-parachain-rpc.darwinia.network%2F#/explorer)|2105 | polkadotXCM |
 | Dorafactory | [Website](https://dorafactory.org/) |[Github](https://github.com/DoraFactory/dorafactory-node)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.dorafactory.org#/explorer)| 2115| xTokens |
-| GM | [Website](https://www.gmordie.com/) |Github| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fws-node-gm.terrabiodao.org#/explorer)|2123 | polkadotXCM |
 | Imbue | [Website](https://www.imbue.network/) |[Github](https://github.com/ImbueNetwork/imbue)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fimbue-kusama.imbue.network#/explorer)| 2121| xTokens |
 | Integritee | [Website](https://integritee.network/) |[Github](https://github.com/integritee-network/integritee-node)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fintegritee-ksm-rpc.dwellir.com#/explorer)|2015 | xTokens |
 | InvArchTinker | [Website](https://invarch.network/tinkernet) |[Github](https://github.com/InvArch/InvArch-Node)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Finvarch-tinkernet.api.onfinality.io%2Fpublic-ws#/explorer)| 2125| xTokens |
-| Kabocha | [Website](https://www.kabocha.network/) |[Github](https://github.com/Kabocha-Network/kabocha-node-old)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkabocha.jelliedowl.net#/explorer)|2113 | polkadotXCM |
 | Karura | [Website](https://acala.network/karura) |[Github](https://github.com/AcalaNetwork/Acala)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkarura-rpc-2.aca-api.network%2Fws#/explorer)|2000 | xTokens |
 | Khala | [Website](https://phala.network/khala) |[Github](https://github.com/Phala-Network/phala-blockchain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkhala.api.onfinality.io%2Fpublic-ws#/explorer)|2004 | polkadotXCM |
 | Kico | [Website](https://dico.io/) |[Github](https://github.com/DICO-TEAM/dico-chain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.kico.dico.io#/explorer)|2107 | xTokens |
@@ -61,9 +51,4 @@
 | Quartz | [Website](https://unique.network/quartz/) |[Github](https://github.com/usetech-llc/polkadot_api_dotnet)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fus-ws-quartz.unique.network#/explorer)|2095 | polkadotXCM |
 | Robonomics | [Website](https://robonomics.network/) |[Github](https://github.com/airalab/robonomics)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frobonomics.api.onfinality.io%2Fpublic-ws#/robotomics)|2048 | polkadotXCM |
 | Shiden | [Website](https://shiden.astar.network/) |[Github](https://github.com/AstarNetwork/Astar)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fshiden.api.onfinality.io%2Fpublic-ws#/explorer)|2007 | polkadotXCM |
-| Snow | [Website](https://icenetwork.io/snow/) |[Github](https://github.com/web3labs/ice-substrate)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fsnow-rpc.icenetwork.io#/explorer)|2129 | polkadotXCM |
-| Sora | [Website](https://sora.org/) |[Github](https://github.com/sora-xor)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftanganika.datahighway.com#/explorer)|2011 | polkadotXCM |
-| SubsocialX | [Website](https://subsocial.network/) |[Github](https://github.com/dappforce/subsocial-parachain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpara.subsocial.network#/explorer)|2100 | polkadotXCM |
-| DataHighway | [Website](https://www.datahighway.com/) |[Github](https://github.com/DataHighway-DHX/DataHighway-Parachain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Ftanganika.datahighway.com#/explorer)|2116 | polkadotXCM |
 | Turing | [Website](https://oak.tech/turing/home/) |[Github](https://github.com/OAK-Foundation/OAK-blockchain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fturing-rpc.dwellir.com#/explorer)|2114 | xTokens |
-| Zeitgeist | [Website](https://zeitgeist.pm/) |[Github](https://github.com/zeitgeistpm/zeitgeist)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fzeitgeist.api.onfinality.io%2Fpublic-ws#/explorer)|2101 | polkadotXCM |

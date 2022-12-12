@@ -28,6 +28,29 @@ export function send(
       getFees(type)
     )
   } else if (pallet === 'polkadotXCM' || pallet === 'relayerXcm') {
+
+    //Specific node requirements
+    if(origin == 'Statemint' && type == 'ParaToPara'){
+      return constructPolkadotXCM(
+        api,
+        origin,
+        createHeaderPolkadotXCM(type, destination),
+        handleAddress(type, 'polkadotXCM', api, to, destination),
+        createCurrencySpecification(amount, type, origin, currencyID),
+        type
+      )
+    }
+    else if(origin == 'Darwinia' && type == 'ParaToPara'){
+      return constructPolkadotXCM(
+        api,
+        origin,
+        createHeaderPolkadotXCM(type, destination),
+        handleAddress(type, 'polkadotXCM', api, to, destination),
+        createCurrencySpecification(amount, type, origin),
+        type
+      )
+    }
+
     return constructPolkadotXCM(
       api,
       origin,

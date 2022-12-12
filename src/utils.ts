@@ -178,7 +178,7 @@ export function handleAddress(scenario: TScenario, pallet: string, api: ApiPromi
   }
 }
 
-export function createCurrencySpecification(amount: any, scenario: TScenario) {
+export function createCurrencySpecification(amount: any, scenario: TScenario, node?: string, cur?: number) {
   if (scenario === 'ParaToRelay') {
     console.log('polkadotXCM transfer in native currency to Relay chain')
     return {
@@ -199,6 +199,58 @@ export function createCurrencySpecification(amount: any, scenario: TScenario) {
   }
   if (scenario === 'RelayToPara' || scenario === 'ParaToPara') {
     console.log('polkadotXCM Native currency to sender chain transfer')
+
+    //Special case for Darwinia node
+    if (node == "Darwinia"){
+      return {
+        V1: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X1: {
+                    PalletInstance: 5
+                  }
+                }
+              }
+            },
+            fun: {
+              Fungible: amount
+            }
+          }
+        ]
+      }
+    } 
+    //Another specific case for Statemint to send for example USDt
+    else if (node == "Statemint"){
+      return {
+        V1: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [
+                    {
+                      PalletInstance: 50
+                    },
+                    {
+                      GeneralIndex: cur
+                    }
+                  ]
+                }
+              }
+            },
+            fun: {
+              Fungible: amount
+            }
+          }
+        ]
+      }
+    }
+
+    //Otherwise
     return {
       V1: [
         {
@@ -371,103 +423,96 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
     // Polkadot polkadotXCM
     case 'Statemint':
       if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Statemint')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+        console.log('Transferring selected tokens from Statemint') //TESTED https://polkadot.subscan.io/xcm_message/polkadot-e4cdf1c59ffbb3d504adbc893d6b7d72665e484d
+        return api.tx.polkadotXcm.limitedReserveTransferAssets(header, addressSelection, currencySelection, 0, "Unlimited")
       } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Statemint')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+        console.log('Transferring DOT tokens from Statemint')  //TESTED https://polkadot.subscan.io/xcm_message/polkadot-c01158ff1a5c5a596138ed9d0f0f2bccc1d9c51d
+        return api.tx.polkadotXcm.limitedTeleportAssets(header, addressSelection, currencySelection, 0, "Unlimited")
       }
       break
     case 'Astar':
       if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Astar')
+        console.log('Transferring native tokens from Astar') //TESTED https://polkadot.subscan.io/xcm_message/polkadot-f2b697df74ebe4b62853fe81b8b7d0522464972d
         return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Astar')
+      } else if (scenario === 'ParaToRelay') { 
+        console.log('Transferring DOT tokens from Astar') //TESTED https://polkadot.subscan.io/xcm_message/polkadot-58e4741f4c9f99bbdf65f16c81a233ad60a7ad1d
         return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'ComposableFinance':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from ComposableFinance')
-        return api.tx.relayerXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from ComposableFinance')
-        return api.tx.relayerXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
       }
       break
     case 'Darwinia':
       if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Darwinia')
+        console.log('Transferring native tokens from Darwinia') //TESTED https://polkadot.subscan.io/xcm_message/polkadot-55c5c36c8fe8794c8cfbea725c9f8bc5984c6b05
         return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Darwinia')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
+      } //else if (scenario === 'ParaToRelay') {
+        //console.log('Transferring DOT tokens from Darwinia') //DOT NOT REGISTERED ON DARWINIA CHAIN YET.
+        //return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+      //}
       break
-    case 'Efinity':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Efinity')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Efinity')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'Equilibrium':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Equilibrium')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Equilibrium')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'Kapex':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Kapex')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Kapex')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'Kilt':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Kilt')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Kilt')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'OriginTrail':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from OriginTrail')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from OriginTrail')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'Phala':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Phala')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Phala')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'Unique':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Unique')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Unique')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
+
+    //NODES INCOMPATIBLE WITH XCM IN ANY FORM FOR NOW.
+    //case 'Efinity':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Efinity')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Efinity')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    //case 'Equilibrium':
+    //  if (scenario === 'ParaToPara') {
+    //   console.log('Transferring native tokens from Equilibrium')
+    //   return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Equilibrium')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    //case 'Kapex':
+    // if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Kapex')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Kapex')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    //case 'Kilt':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Kilt')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Kilt')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    //case 'OriginTrail':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from OriginTrail')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from OriginTrail')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    //case 'Phala':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Phala')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Phala')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    //case 'Unique':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Unique')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Unique')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
 
     // Kusama polkadotXCM
     case 'Statemine':
@@ -488,15 +533,15 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
         return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
       }
       break
-    case 'Bajun':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Bajun')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Bajun')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
+    //case 'Bajun':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Bajun')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring KSM tokens from Bajun')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
     case 'Crab':
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Crab')
@@ -506,24 +551,24 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
         return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
       }
       break
-    case 'GM':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from GM')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from GM')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'Kabocha':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Kabocha')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Kabocha')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
+    //case 'GM':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from GM')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring KSM tokens from GM')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    //case 'Kabocha':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Kabocha')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring KSM tokens from Kabocha')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
     case 'Khala':
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Khala')
@@ -560,52 +605,52 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
         return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
       }
       break
-    case 'Snow':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Snow')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Snow')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'Sora':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Sora')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Sora')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'SubsocialX':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from SubsocialX')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from SubsocialX')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'DataHighway':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from DataHighway')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from DataHighway')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
-    case 'Zeitgeist':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Zeitgeist')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Zeitgeist')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
+    //case 'Snow':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Snow')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring KSM tokens from Snow')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    // break
+    //case 'Sora':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Sora')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring KSM tokens from Sora')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    //case 'SubsocialX':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from SubsocialX')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring KSM tokens from SubsocialX')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    //case 'DataHighway':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from DataHighway')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring KSM tokens from DataHighway')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    //case 'Zeitgeist':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Zeitgeist')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring KSM tokens from Zeitgeist')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
   }
-  throw new Error(`Invalid node: ${origin}`)
+  throw new Error(`Invalid node/ Node does not support XCM at the moment: ${origin}`)
 }
 
 export function getNodeDetails(node: TNode) {
