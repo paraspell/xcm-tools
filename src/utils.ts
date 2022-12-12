@@ -200,7 +200,7 @@ export function createCurrencySpecification(amount: any, scenario: TScenario, no
   if (scenario === 'RelayToPara' || scenario === 'ParaToPara') {
     console.log('polkadotXCM Native currency to sender chain transfer')
 
-    if (node === 'Darwinia') {
+    if (node === 'Darwinia' && scenario === 'ParaToPara') {
       // Special case for Darwinia node
       return {
         V1: [
@@ -221,7 +221,7 @@ export function createCurrencySpecification(amount: any, scenario: TScenario, no
           }
         ]
       }
-    } else if (node === 'Statemint') {
+    } else if (node === 'Statemint' && scenario === 'ParaToPara') {
       // Another specific case for Statemint to send for example USDt
       return {
         V1: [
