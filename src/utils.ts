@@ -31,7 +31,7 @@ export function getFees(scenario: TScenario) {
   throw new Error(`Fees for scenario ${scenario} are not defined.`)
 }
 
-export function handleAddress(scenario: TScenario, pallet: string, api: ApiPromise, to: string, nodeId?: number): any {
+export function handleAddress(scenario: TScenario, pallet: string, api: ApiPromise, to: string, nodeId?: number, node?: TNode): any {
   if (scenario === 'ParaToRelay' && pallet === 'xTokens') {
     console.log('AccountId32 transfer')
     return {
@@ -110,6 +110,18 @@ export function handleAddress(scenario: TScenario, pallet: string, api: ApiPromi
   }
 
   if (scenario === 'ParaToPara' && pallet === 'polkadotXCM') {
+    if (node === 'Quartz') {
+      return {
+        V0: {
+          X1: {
+            AccountId32: {
+              network: 'Any',
+              id: createAccID(api, to)
+            }
+          }
+        }
+      }
+    }
     if (ethers.utils.isAddress(to)) {
       console.log('AccountKey20 transfer')
       return {
@@ -178,7 +190,7 @@ export function handleAddress(scenario: TScenario, pallet: string, api: ApiPromi
   }
 }
 
-export function createCurrencySpecification(amount: any, scenario: TScenario, node?: string, cur?: number) {
+export function createCurrencySpecification(amount: any, scenario: TScenario, node?: TNode, cur?: number) {
   if (scenario === 'ParaToRelay') {
     console.log('polkadotXCM transfer in native currency to Relay chain')
     return {
@@ -199,9 +211,21 @@ export function createCurrencySpecification(amount: any, scenario: TScenario, no
   }
   if (scenario === 'RelayToPara' || scenario === 'ParaToPara') {
     console.log('polkadotXCM Native currency to sender chain transfer')
+    if (node === 'Quartz' && scenario === 'ParaToPara') {
+      return {
+        V0: [
+          {
+            ConcreteFungible: {
+              id: null,
+              amount
+            }
+          }
+        ]
+      }
+    }
 
-    if (node === 'Darwinia' && scenario === 'ParaToPara') {
-      // Special case for Darwinia node
+    if ((node === 'Darwinia' || node === 'Crab') && scenario === 'ParaToPara') {
+      // Special case for Darwinia&Crab node
       return {
         V1: [
           {
@@ -221,8 +245,8 @@ export function createCurrencySpecification(amount: any, scenario: TScenario, no
           }
         ]
       }
-    } else if (node === 'Statemint' && scenario === 'ParaToPara') {
-      // Another specific case for Statemint to send for example USDt
+    } else if ((node === 'Statemint' || node === 'Statemine') && scenario === 'ParaToPara') {
+      // Another specific case for Statemint & Statemine to send for example USDt
       return {
         V1: [
           {
@@ -268,7 +292,7 @@ export function createCurrencySpecification(amount: any, scenario: TScenario, no
   }
 }
 
-export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number) {
+export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number, node?: TNode) {
   console.log('Generating header for polkadotXCM transfer')
   if (scenario === 'ParaToRelay') {
     return {
@@ -279,6 +303,18 @@ export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number) {
     }
   }
   if (scenario === 'ParaToPara') {
+    if (node === 'Quartz') {
+      return {
+        V0: {
+          X2: [
+            'Parent',
+            {
+              Parachain: nodeId
+            }
+          ]
+        }
+      }
+    }
     return {
       V1: {
         parents: 1,
@@ -516,20 +552,22 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
     // Kusama polkadotXCM
     case 'Statemine':
       if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Statemine')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+        console.log('Transferring native tokens from Statemine') // TESTED https://kusama.subscan.io/xcm_message/kusama-ddc2a48f0d8e0337832d7aae26f6c3053e1f4ffd
+        return api.tx.polkadotXcm.limitedReserveTransferAssets(header, addressSelection, currencySelection, 0, 'Unlimited')
       } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Statemine')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+        console.log('Transferring KSM tokens from Statemine') // TESTED https://kusama.subscan.io/xcm_message/kusama-8e423130a4d8b61679af95dbea18a55124f99672
+        return api.tx.polkadotXcm.limitedTeleportAssets(header, addressSelection, currencySelection, 0, 'Unlimited')
       }
       break
     case 'Encointer':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Encointer')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Encointer')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+      // NO PARA TO PARA SCENARIOS ON SUBSCAN
+      // if (scenario === 'ParaToPara') {
+      //  console.log('Transferring native tokens from Encointer')
+      //  return api.tx.polkadotXcm.limitedReserveTransferAssets(header, addressSelection, currencySelection, 0, 'Unlimited')
+      // }
+      if (scenario === 'ParaToRelay') {
+        console.log('Transferring KSM tokens from Encointer') // TESTED https://encointer.subscan.io/xcm_message/kusama-418501e86e947b16c4e4e9040694017e64f9b162
+        return api.tx.polkadotXcm.limitedTeleportAssets(header, addressSelection, currencySelection, 0, 'Unlimited')
       }
       break
     // case 'Bajun':
@@ -543,12 +581,12 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
     //  break
     case 'Crab':
       if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Crab')
+        console.log('Transferring native tokens from Crab') // TESTED https://kusama.subscan.io/xcm_message/kusama-ce7396ec470ba0c6516a50075046ee65464572dc
         return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Crab')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
+      } // else if (scenario === 'ParaToRelay') {  //KSM NOT COMPATIBLE
+      //  console.log('Transferring KSM tokens from Crab')
+      //   return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+      // }
       break
     // case 'GM':
     //  if (scenario === 'ParaToPara') {
@@ -568,39 +606,39 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
     //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
     //  }
     //  break
-    case 'Khala':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Khala')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Khala')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
-      break
+    // case 'Khala':
+      // if (scenario === 'ParaToPara') { //UNSUPPORTED DUE TO FACT ALL TRANSFERS COME TO KHALA BUT KHALA DOES NOT HAVE ANY TRANSFERS LEAVING
+      //  console.log('Transferring native tokens from Khala')
+      //  return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+      // }// else if (scenario === 'ParaToRelay') { //UNSUPPORTED DUE TO NEW VERSION OF POLKADOTXCM PALLET
+      //  console.log('Transferring KSM tokens from Khala')
+      //  return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+      // }
+    //  break
     case 'Quartz':
-      if (scenario === 'ParaToPara') {
+      if (scenario === 'ParaToPara') { // TESTED https://quartz.subscan.io/xcm_message/kusama-f5b6580f8d7f97a8d33209d2b5b34d97454587e9
         console.log('Transferring native tokens from Quartz')
         return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Quartz')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      }
+      }// else if (scenario === 'ParaToRelay') { //KSM ASSET NOT REGISTERED {ASSET NOT FOUND ERROR}
+      //  console.log('Transferring KSM tokens from Quartz')
+      //  return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+      // }
       break
     case 'Robonomics':
-      if (scenario === 'ParaToPara') {
+      if (scenario === 'ParaToPara') { // TESTED https://robonomics.subscan.io/xcm_message/kusama-e9641113dae59920e5cc0e012f1510ea0e2d0455
         console.log('Transferring native tokens from Robonomics')
         return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') {
+      } else if (scenario === 'ParaToRelay') { // TESTED https://robonomics.subscan.io/xcm_message/kusama-20b03208c99f2ef29d2d4b4cd4bc5659e54311ea
         console.log('Transferring KSM tokens from Robonomics')
         return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
       }
       break
     case 'Shiden':
       if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Shiden')
+        console.log('Transferring native tokens from Shiden') // Same as Astar, works.
         return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
       } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Shiden')
+        console.log('Transferring KSM tokens from Shiden') // https://shiden.subscan.io/xcm_message/kusama-97eb47c25c781affa557f36dbd117d49f7e1ab4e
         return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
       }
       break

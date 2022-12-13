@@ -87,6 +87,10 @@
                 "symbol": "TOK"
             },
             {
+                "assetId": "862812",
+                "symbol": "CUBO"
+            },
+            {
                 "assetId": "1328",
                 "symbol": "ALGM"
             },
@@ -111,12 +115,20 @@
                 "symbol": "PHA"
             },
             {
+                "assetId": "1327",
+                "symbol": "CHAI"
+            },
+            {
                 "assetId": "340282366920938463463374607431768211455",
                 "symbol": "DOT"
             },
             {
                 "assetId": "1335",
                 "symbol": "MDOT"
+            },
+            {
+                "assetId": "868367",
+                "symbol": "VSC"
             },
             {
                 "assetId": "18446744073709551616",
@@ -141,6 +153,10 @@
             {
                 "assetId": "1329",
                 "symbol": "PPC"
+            },
+            {
+                "assetId": "18446744073709551626",
+                "symbol": "vsDOT"
             },
             {
                 "assetId": "4294969280",
@@ -238,20 +254,6 @@
         ],
         "otherAssets": []
     },
-    "Efinity": {
-        "relayChainAssetSymbol": "DOT",
-        "nativeAssets": [
-            "EFI"
-        ],
-        "otherAssets": []
-    },
-    "Equilibrium": {
-        "relayChainAssetSymbol": "DOT",
-        "nativeAssets": [
-            "TOKEN"
-        ],
-        "otherAssets": []
-    },
     "HydraDX": {
         "relayChainAssetSymbol": "DOT",
         "nativeAssets": [
@@ -279,20 +281,6 @@
                 "symbol": "USDT"
             }
         ]
-    },
-    "Kilt": {
-        "relayChainAssetSymbol": "DOT",
-        "nativeAssets": [
-            "KILT"
-        ],
-        "otherAssets": []
-    },
-    "Kapex": {
-        "relayChainAssetSymbol": "DOT",
-        "nativeAssets": [
-            "KPX"
-        ],
-        "otherAssets": []
     },
     "Kylin": {
         "relayChainAssetSymbol": "DOT",
@@ -357,18 +345,6 @@
             {
                 "assetId": "132685552157663328694213725410064821485",
                 "symbol": "xcPHA"
-            }
-        ]
-    },
-    "OriginTrail": {
-        "relayChainAssetSymbol": "DOT",
-        "nativeAssets": [
-            "OTP"
-        ],
-        "otherAssets": [
-            {
-                "assetId": "1",
-                "symbol": "TRAC"
             }
         ]
     },
@@ -520,46 +496,6 @@
             }
         ]
     },
-    "Phala": {
-        "relayChainAssetSymbol": "DOT",
-        "nativeAssets": [
-            "PHA"
-        ],
-        "otherAssets": [
-            {
-                "assetId": "0",
-                "symbol": "DOT"
-            },
-            {
-                "assetId": "4",
-                "symbol": "LDOT"
-            },
-            {
-                "assetId": "6",
-                "symbol": "ASTR"
-            },
-            {
-                "assetId": "2",
-                "symbol": "PARA"
-            },
-            {
-                "assetId": "5",
-                "symbol": "ACA"
-            },
-            {
-                "assetId": "7",
-                "symbol": "RING"
-            },
-            {
-                "assetId": "1",
-                "symbol": "GLMR"
-            },
-            {
-                "assetId": "3",
-                "symbol": "AUSD"
-            }
-        ]
-    },
     "Statemint": {
         "relayChainAssetSymbol": "DOT",
         "nativeAssets": [
@@ -603,6 +539,10 @@
                 "symbol": "VSC"
             },
             {
+                "assetId": "5",
+                "symbol": "PLX"
+            },
+            {
                 "assetId": "7",
                 "symbol": "lucky7"
             },
@@ -631,6 +571,10 @@
                 "symbol": "DOT"
             },
             {
+                "assetId": "1337",
+                "symbol": "USDC"
+            },
+            {
                 "assetId": "666",
                 "symbol": "DANGER"
             },
@@ -643,13 +587,6 @@
                 "symbol": "CUBO"
             }
         ]
-    },
-    "Unique": {
-        "relayChainAssetSymbol": "DOT",
-        "nativeAssets": [
-            "UNQ"
-        ],
-        "otherAssets": []
     },
     "Altair": {
         "relayChainAssetSymbol": "KSM",
@@ -820,15 +757,6 @@
         ],
         "otherAssets": []
     },
-    "GM": {
-        "relayChainAssetSymbol": "KSM",
-        "nativeAssets": [
-            "FREN",
-            "GM",
-            "GN"
-        ],
-        "otherAssets": []
-    },
     "Imbue": {
         "relayChainAssetSymbol": "KSM",
         "nativeAssets": [
@@ -905,13 +833,6 @@
                 "symbol": "LT"
             }
         ]
-    },
-    "Kabocha": {
-        "relayChainAssetSymbol": "KSM",
-        "nativeAssets": [
-            "KAB"
-        ],
-        "otherAssets": []
     },
     "Karura": {
         "relayChainAssetSymbol": "KSM",
@@ -1034,66 +955,6 @@
             }
         ]
     },
-    "Khala": {
-        "relayChainAssetSymbol": "KSM",
-        "nativeAssets": [
-            "PHA"
-        ],
-        "otherAssets": [
-            {
-                "assetId": "0",
-                "symbol": "KSM"
-            },
-            {
-                "assetId": "10",
-                "symbol": "TUR"
-            },
-            {
-                "assetId": "4",
-                "symbol": "aUSD"
-            },
-            {
-                "assetId": "11",
-                "symbol": "CRAB"
-            },
-            {
-                "assetId": "6",
-                "symbol": "MOVR"
-            },
-            {
-                "assetId": "2",
-                "symbol": "BNC"
-            },
-            {
-                "assetId": "5",
-                "symbol": "BSX"
-            },
-            {
-                "assetId": "7",
-                "symbol": "HKO"
-            },
-            {
-                "assetId": "8",
-                "symbol": "KMA"
-            },
-            {
-                "assetId": "1",
-                "symbol": "KAR"
-            },
-            {
-                "assetId": "12",
-                "symbol": "SDN"
-            },
-            {
-                "assetId": "3",
-                "symbol": "ZLK"
-            },
-            {
-                "assetId": "9",
-                "symbol": "BSX"
-            }
-        ]
-    },
     "Kintsugi": {
         "relayChainAssetSymbol": "KSM",
         "nativeAssets": [
@@ -1181,6 +1042,10 @@
                 "symbol": "TUR"
             },
             {
+                "assetId": "13",
+                "symbol": "TKN0x0000000B-TKN0x00000004"
+            },
+            {
                 "assetId": "5",
                 "symbol": "TKN0x00000004-TKN0x00000000"
             },
@@ -1195,6 +1060,18 @@
             {
                 "assetId": "9",
                 "symbol": "TKN0x00000004-TKN0x00000007"
+            },
+            {
+                "assetId": "16",
+                "symbol": "vsKSM"
+            },
+            {
+                "assetId": "14",
+                "symbol": "BNC"
+            },
+            {
+                "assetId": "15",
+                "symbol": "vKSM"
             },
             {
                 "assetId": "10",
@@ -1482,11 +1359,6 @@
             }
         ]
     },
-    "Sora": {
-        "relayChainAssetSymbol": "KSM",
-        "nativeAssets": [],
-        "otherAssets": []
-    },
     "Shiden": {
         "relayChainAssetSymbol": "KSM",
         "nativeAssets": [
@@ -1550,6 +1422,10 @@
                 "symbol": "SKU"
             },
             {
+                "assetId": "18446744073709551629",
+                "symbol": "vsKSM"
+            },
+            {
                 "assetId": "4294969280",
                 "symbol": "USDT"
             },
@@ -1560,15 +1436,12 @@
             {
                 "assetId": "18446744073709551627",
                 "symbol": "BNC"
+            },
+            {
+                "assetId": "315",
+                "symbol": "CHAI"
             }
         ]
-    },
-    "Snow": {
-        "relayChainAssetSymbol": "KSM",
-        "nativeAssets": [
-            "ICZ"
-        ],
-        "otherAssets": []
     },
     "Statemine": {
         "relayChainAssetSymbol": "KSM",
@@ -1695,6 +1568,10 @@
             {
                 "assetId": "99",
                 "symbol": "BITCOIN"
+            },
+            {
+                "assetId": "34",
+                "symbol": "PLX"
             },
             {
                 "assetId": "7777",
@@ -1873,6 +1750,10 @@
                 "symbol": "ADVERT2"
             },
             {
+                "assetId": "3943",
+                "symbol": "GMK"
+            },
+            {
                 "assetId": "314159",
                 "symbol": "RTT"
             },
@@ -1935,6 +1816,10 @@
             {
                 "assetId": "1984",
                 "symbol": "USDt"
+            },
+            {
+                "assetId": "2050",
+                "symbol": "CUT"
             },
             {
                 "assetId": "1688",
@@ -2130,20 +2015,6 @@
             }
         ]
     },
-    "SubsocialX": {
-        "relayChainAssetSymbol": "KSM",
-        "nativeAssets": [
-            "SUB"
-        ],
-        "otherAssets": []
-    },
-    "DataHighway": {
-        "relayChainAssetSymbol": "KSM",
-        "nativeAssets": [
-            "DHX"
-        ],
-        "otherAssets": []
-    },
     "Turing": {
         "relayChainAssetSymbol": "KSM",
         "nativeAssets": [
@@ -2183,12 +2054,5 @@
                 "symbol": "LKSM"
             }
         ]
-    },
-    "Zeitgeist": {
-        "relayChainAssetSymbol": "KSM",
-        "nativeAssets": [
-            "ZTG"
-        ],
-        "otherAssets": []
     }
 }

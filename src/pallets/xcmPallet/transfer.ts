@@ -29,7 +29,7 @@ export function send(
     )
   } else if (pallet === 'polkadotXCM' || pallet === 'relayerXcm') {
     // Specific node requirements
-    if (origin === 'Statemint' && type === 'ParaToPara') {
+    if ((origin === 'Statemint' || origin === 'Statemine') && type === 'ParaToPara') {
       return constructPolkadotXCM(
         api,
         origin,
@@ -38,12 +38,21 @@ export function send(
         createCurrencySpecification(amount, type, origin, currencyID),
         type
       )
-    } else if (origin === 'Darwinia' && type === 'ParaToPara') {
+    } else if ((origin === 'Darwinia' || origin === 'Crab') && type === 'ParaToPara') {
       return constructPolkadotXCM(
         api,
         origin,
         createHeaderPolkadotXCM(type, destination),
         handleAddress(type, 'polkadotXCM', api, to, destination),
+        createCurrencySpecification(amount, type, origin),
+        type
+      )
+    } else if (origin === 'Quartz' && type === 'ParaToPara') {
+      return constructPolkadotXCM(
+        api,
+        origin,
+        createHeaderPolkadotXCM(type, destination, origin),
+        handleAddress(type, 'polkadotXCM', api, to, destination, origin),
         createCurrencySpecification(amount, type, origin),
         type
       )

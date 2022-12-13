@@ -16,20 +16,13 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Clover: 'assets.metadata',
   ComposableFinance: null, // No assets metadata query
   Darwinia: null, // No assets metadata query
-  Efinity: null, // Assets query returns empty array
-  Equilibrium: null, // Has eqAssets state query but there are only ids, no symbols
   HydraDX: null, // Assets query returns empty array
   Interlay: 'assetRegistry.metadata',
-  Kilt: null, // No assets metadata query
-  Kapex: null, // No assets metadata query
   Kylin: 'assets.metadata',
   Litentry: null, // Assets query returns empty array
   Moonbeam: 'assets.metadata',
-  OriginTrail: 'assets.metadata',
   Parallel: 'assets.metadata',
-  Phala: 'assets.metadata',
   Statemint: 'assets.metadata',
-  Unique: null, // No assets metadata query
   Altair: null, // Assets query returns empty array
   Amplitude: null, // No assets metadata query
   Bajun: null, // No assets metadata query
@@ -40,14 +33,11 @@ const nodeToQuery: NodeToAssetModuleMap = {
   CrustShadow: 'assets.metadata',
   Dorafactory: null, // No assets metadata query
   Encointer: null, // No assets metadata query
-  GM: null, // No assets metadata query
   Imbue: null, // Assets query returns empty array
   Integritee: null, // No assets metadata query
   InvArchTinker: null, // Assets query returns empty array
   Kico: 'currencies.dicoAssetsInfo',
-  Kabocha: null, // No assets metadata query
   Karura: 'assetRegistry.assetMetadatas',
-  Khala: 'assets.metadata',
   Kintsugi: 'assetRegistry.metadata',
   Listen: 'currencies.listenAssetsInfo',
   Litmus: null, // Assets query returns empty array
@@ -59,14 +49,9 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Pioneer: null, // Assets query returns empty array
   Quartz: null, // No assets metadata query
   Robonomics: 'assets.metadata',
-  Sora: null, // No assets metadata query
   Shiden: 'assets.metadata',
-  Snow: 'assets.metadata',
   Statemine: 'assets.metadata',
-  SubsocialX: null, // No assets metadata query
-  DataHighway: 'assets.metadata',
   Turing: 'assetRegistry.metadata',
-  Zeitgeist: null // No assets metadata query
 }
 
 const fetchNativeAssets = async (api: ApiPromise) => {
@@ -201,7 +186,7 @@ const getNodeProviders = (node: TNode) => {
   const providersArr = Object.values(providers ?? [])
 
   // TODO: Remove this when lib @polkadot/apps-config releases an update
-  if (node === 'SubsocialX') { providersArr.unshift('wss://para.f3joule.space') } else if (node === 'Bitgreen') { providersArr.unshift('wss://mainnet.bitgreen.org') }
+  if (node === 'Bitgreen') { providersArr.unshift('wss://mainnet.bitgreen.org') }
 
   return providersArr
 }

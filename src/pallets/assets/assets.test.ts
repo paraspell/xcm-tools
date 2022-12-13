@@ -45,18 +45,14 @@ describe('getRelayChainSymbol', () => {
 })
 
 describe('getNativeAssets', () => {
-  it('should return native assets for all nodes except Sora', () => {
+  it('should return native assets for all nodes', () => {
     nodeNames.forEach((node) => {
       const assets = getNativeAssets(node)
-      if (node === 'Sora') {
-        expect(assets.length).toEqual(0)
-      } else {
-        expect(assets.length).toBeGreaterThan(0)
-        assets.forEach(asset => expect(asset).toBeTypeOf('string'))
-      }
+      expect(assets.length).toBeGreaterThan(0)
+      assets.forEach(asset => expect(asset).toBeTypeOf('string'))
+      })
     })
   })
-})
 
 describe('getOtherAssets', () => {
   it('should return other assets or empty array for all nodes', () => {
