@@ -12,7 +12,7 @@
 
 SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become magician and try your paraSPELLS 🧙✨. 
 
-#####  Currently supporting 43 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md). 
+#####  Currently supporting 42 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md). 
 
   
 
