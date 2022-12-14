@@ -46,5 +46,5 @@ export const nodeToPallet: Record<TNode, TPalletType> = {
   Quartz: 'polkadotXCM',
   Robonomics: 'polkadotXCM',
   Shiden: 'polkadotXCM',
-  Turing: 'xTokens',
+  Turing: 'xTokens'
 }

@@ -10,16 +10,6 @@ export function createAccID(api: ApiPromise, account: string) {
   return api.createType('AccountId32', account).toHex()
 }
 
-export function selectLimit(limit: number, isLimited: boolean) {
-  if (isLimited) {
-    return {
-      Limited: limit
-    }
-  } else {
-    return 'Unlimited'
-  }
-}
-
 export function getFees(scenario: TScenario) {
   if (scenario === 'ParaToRelay') {
     console.log('Asigning fees for transfer to Relay chain')

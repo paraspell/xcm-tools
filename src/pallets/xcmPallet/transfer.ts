@@ -1,8 +1,9 @@
 import type { ApiPromise } from '@polkadot/api'
 import { Extrinsic, TNode, TScenario } from '../../types'
-import { handleAddress, selectLimit, getFees, constructXTokens, getAvailableXCMPallet, constructPolkadotXCM, createHeaderPolkadotXCM, createCurrencySpecification } from '../../utils'
+import { handleAddress, getFees, constructXTokens, getAvailableXCMPallet, constructPolkadotXCM, createHeaderPolkadotXCM, createCurrencySpecification } from '../../utils'
 import { hasSupportForAsset } from '../assets'
 import { InvalidCurrencyError } from './InvalidCurrencyError'
+import { NodeNotSupportedError } from './nodeNotSupportedError'
 
 export function send(
   api: ApiPromise,
@@ -75,28 +76,24 @@ export function transferRelayToPara(
   destination: number,
   amount: any,
   to: string
-): Extrinsic {
+): Extrinsic | never {
+  if (destination === 1000 || destination === 1001) {
+    // Same for Statemint, Statemine and Encoiter
+    return api.tx.xcmPallet.limitedTeleportAssets(
+      createHeaderPolkadotXCM('RelayToPara', destination),
+      handleAddress('RelayToPara', '', api, to, destination),
+      createCurrencySpecification(amount, 'RelayToPara'),
+      0,
+      'Unlimited'
+    )
+  } else if (destination === 2046 || destination === 2105 || destination === 2095) {
+    // Do not do anything because Darwinia and Crab does not have DOT and KSM registered Quartz does not work with UMP & DMP too
+    throw new NodeNotSupportedError('These nodes do not support XCM transfers from Relay / to Relay chain.')
+  }
   return api.tx.xcmPallet.reserveTransferAssets(
     createHeaderPolkadotXCM('RelayToPara', destination),
     handleAddress('RelayToPara', '', api, to, destination),
     createCurrencySpecification(amount, 'RelayToPara'),
     0
-  )
-}
-
-export function limitedTransferRelayToPara(
-  api: ApiPromise,
-  destination: number,
-  amount: any,
-  to: string,
-  limit: number,
-  isLimited: boolean
-): Extrinsic {
-  return api.tx.xcmPallet.limitedReserveTransferAssets(
-    createHeaderPolkadotXCM('RelayToPara', destination),
-    handleAddress('RelayToPara', '', api, to, destination),
-    createCurrencySpecification(amount, 'RelayToPara'),
-    0,
-    selectLimit(limit, isLimited)
   )
 }

@@ -44,7 +44,7 @@ export const nodeNames = [
   'Quartz',
   'Robonomics',
   'Shiden',
-  'Turing',
+  'Turing'
 ] as const
 
 // This maps our node names to names which polkadot libs are using
@@ -92,5 +92,5 @@ export const nodes: Record<TNode, TNodeDetails> = {
   Quartz: { name: 'quartz', type: 'kusama' },
   Robonomics: { name: 'robonomics', type: 'kusama' },
   Shiden: { name: 'shiden', type: 'kusama' },
-  Turing: { name: 'turing', type: 'kusama' },
+  Turing: { name: 'turing', type: 'kusama' }
 }

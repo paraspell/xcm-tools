@@ -51,7 +51,7 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Robonomics: 'assets.metadata',
   Shiden: 'assets.metadata',
   Statemine: 'assets.metadata',
-  Turing: 'assetRegistry.metadata',
+  Turing: 'assetRegistry.metadata'
 }
 
 const fetchNativeAssets = async (api: ApiPromise) => {

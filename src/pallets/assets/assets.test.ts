@@ -50,9 +50,9 @@ describe('getNativeAssets', () => {
       const assets = getNativeAssets(node)
       expect(assets.length).toBeGreaterThan(0)
       assets.forEach(asset => expect(asset).toBeTypeOf('string'))
-      })
     })
   })
+})
 
 describe('getOtherAssets', () => {
   it('should return other assets or empty array for all nodes', () => {
