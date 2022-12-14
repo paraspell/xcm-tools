@@ -376,10 +376,10 @@ export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: num
       console.log('Transferring ' + currency + ' tokens from Amplitude')
       return api.tx.xTokens.transfer({ XCM: currency }, amount, addressSelection, fees)
     case 'Bajun':
-      console.log('Transferring ' + currencyID + ' tokens from Bajun')
+      console.log('Transferring ' + currencyID + ' token from Bajun')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Basilisk':
-      console.log('Transferring ' + currencyID + ' tokens from Basilisk')
+      console.log('Transferring ' + currencyID + ' token from Basilisk')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'BifrostKusama':
       console.log('Transferring ' + currency + ' tokens from BifrostKusama')
@@ -388,7 +388,7 @@ export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: num
       console.log('Transferring tokens from Pioneer')
       return api.tx.xTokens.transfer('NativeToken', amount, addressSelection, fees) // Multiple asset options needs addressing
     case 'Calamari':
-      console.log('Transferring ' + currencyID + ' tokens from Calamari')
+      console.log('Transferring ' + currencyID + ' token from Calamari')
       return api.tx.xTokens.transfer({ MantaCurrency: currencyID }, amount, addressSelection, fees) // Currently only option for XCM transfer
     case 'CrustShadow':
       console.log('Transferring tokens from CrustShadow')
@@ -403,40 +403,40 @@ export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: num
       console.log('Transferring ' + currency + ' tokens from Integritee')
       return api.tx.xTokens.transfer(currency, amount, addressSelection, fees)
     case 'InvArchTinker':
-      console.log('Transferring ' + currencyID + ' tokens from InvArch Tinker')
+      console.log('Transferring ' + currencyID + ' token from InvArch Tinker')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Karura':
       console.log('Transferring ' + currency + ' tokens from Karura')
       return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options need addressing
     case 'Kico':
-      console.log('Transferring ' + currencyID + ' tokens from KICO')
+      console.log('Transferring ' + currencyID + ' token from KICO')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Kintsugi':
       console.log('Transferring ' + currency + ' tokens from kintsugi')
       return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options need addressing
     case 'Listen':
-      console.log('Transferring ' + currencyID + ' tokens from Listen')
+      console.log('Transferring ' + currencyID + ' token from Listen')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Litmus':
       console.log('Transferring tokens from Litmus')
       return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
     case 'Mangata':
-      console.log('Transferring ' + currencyID + ' tokens from Mangata')
+      console.log('Transferring ' + currencyID + ' token from Mangata')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Moonriver':
       console.log('Transferring tokens from Moonriver')
       return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
     case 'ParallelHeiko':
-      console.log('Transferring ' + currencyID + ' tokens from Parallel Heiko')
+      console.log('Transferring ' + currencyID + ' token from Parallel Heiko')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Picasso':
-      console.log('Transferring ' + currencyID + ' tokens from Picasso')
+      console.log('Transferring ' + currencyID + ' token from Picasso')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Pichiu':
       console.log('Transferring ' + currency + ' tokens from Pichiu')
       return api.tx.ormlXTokens.transfer(currency, amount, addressSelection, fees)
     case 'Turing':
-      console.log('Transferring ' + currencyID + ' tokens from Turing')
+      console.log('Transferring ' + currencyID + ' token from Turing')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     default:
       throw new Error(`Invalid node: ${origin}`)
