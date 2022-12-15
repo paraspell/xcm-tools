@@ -474,70 +474,70 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
       // }
       break
 
-      // NODES INCOMPATIBLE WITH XCM IN ANY FORM FOR NOW.
-      // case 'Efinity':
-      //  if (scenario === 'ParaToPara') {
-      //    console.log('Transferring native tokens from Efinity')
-      //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      //  } else if (scenario === 'ParaToRelay') {
-      //    console.log('Transferring DOT tokens from Efinity')
-      //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      //  }
-      //  break
-      // case 'Equilibrium':
-      //  if (scenario === 'ParaToPara') {
-      //   console.log('Transferring native tokens from Equilibrium')
-      //   return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      //  } else if (scenario === 'ParaToRelay') {
-      //    console.log('Transferring DOT tokens from Equilibrium')
-      //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      //  }
-      //  break
-      // case 'Kapex':
-      // if (scenario === 'ParaToPara') {
-      //    console.log('Transferring native tokens from Kapex')
-      //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      //  } else if (scenario === 'ParaToRelay') {
-      //    console.log('Transferring DOT tokens from Kapex')
-      //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      //  }
-      //  break
-      // case 'Kilt':
-      //  if (scenario === 'ParaToPara') {
-      //    console.log('Transferring native tokens from Kilt')
-      //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      //  } else if (scenario === 'ParaToRelay') {
-      //    console.log('Transferring DOT tokens from Kilt')
-      //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      //  }
-      //  break
-      // case 'OriginTrail':
-      //  if (scenario === 'ParaToPara') {
-      //    console.log('Transferring native tokens from OriginTrail')
-      //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      //  } else if (scenario === 'ParaToRelay') {
-      //    console.log('Transferring DOT tokens from OriginTrail')
-      //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      //  }
-      //  break
-      // case 'Phala':
-      //  if (scenario === 'ParaToPara') {
-      //    console.log('Transferring native tokens from Phala')
-      //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      //  } else if (scenario === 'ParaToRelay') {
-      //    console.log('Transferring DOT tokens from Phala')
-      //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      //  }
-      //  break
-      // case 'Unique':
-      //  if (scenario === 'ParaToPara') {
-      //    console.log('Transferring native tokens from Unique')
-      //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      //  } else if (scenario === 'ParaToRelay') {
-      //    console.log('Transferring DOT tokens from Unique')
-      //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      //  }
-      //  break
+    // NODES INCOMPATIBLE WITH XCM IN ANY FORM FOR NOW.
+    // case 'Efinity':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Efinity')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Efinity')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    // case 'Equilibrium':
+    //  if (scenario === 'ParaToPara') {
+    //   console.log('Transferring native tokens from Equilibrium')
+    //   return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Equilibrium')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    // case 'Kapex':
+    // if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Kapex')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Kapex')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    // case 'Kilt':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Kilt')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Kilt')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    // case 'OriginTrail':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from OriginTrail')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from OriginTrail')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    // case 'Phala':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Phala')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Phala')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
+    // case 'Unique':
+    //  if (scenario === 'ParaToPara') {
+    //    console.log('Transferring native tokens from Unique')
+    //    return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    //  } else if (scenario === 'ParaToRelay') {
+    //    console.log('Transferring DOT tokens from Unique')
+    //    return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    //  }
+    //  break
 
     // Kusama polkadotXCM
     case 'Statemine':
@@ -597,13 +597,13 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
     //  }
     //  break
     // case 'Khala':
-      // if (scenario === 'ParaToPara') { //UNSUPPORTED DUE TO FACT ALL TRANSFERS COME TO KHALA BUT KHALA DOES NOT HAVE ANY TRANSFERS LEAVING
-      //  console.log('Transferring native tokens from Khala')
-      //  return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      // }// else if (scenario === 'ParaToRelay') { //UNSUPPORTED DUE TO NEW VERSION OF POLKADOTXCM PALLET
-      //  console.log('Transferring KSM tokens from Khala')
-      //  return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
-      // }
+    // if (scenario === 'ParaToPara') { //UNSUPPORTED DUE TO FACT ALL TRANSFERS COME TO KHALA BUT KHALA DOES NOT HAVE ANY TRANSFERS LEAVING
+    //  console.log('Transferring native tokens from Khala')
+    //  return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+    // }// else if (scenario === 'ParaToRelay') { //UNSUPPORTED DUE TO NEW VERSION OF POLKADOTXCM PALLET
+    //  console.log('Transferring KSM tokens from Khala')
+    //  return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+    // }
     //  break
     case 'Quartz':
       if (scenario === 'ParaToPara') { // TESTED https://quartz.subscan.io/xcm_message/kusama-f5b6580f8d7f97a8d33209d2b5b34d97454587e9
@@ -687,12 +687,14 @@ export function getNodeDetails(node: TNode) {
 export function getNodeEndpointOption(node: TNode) {
   const { type, name } = getNodeDetails(node)
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
-  return linked?.find(o => o.info === name)
+  return linked ? linked.find(function (o) {
+    return o.info === name
+  }) : undefined
 }
 
 export function getNodeParaId(node: TNode) {
   const option = getNodeEndpointOption(node)
-  return option?.paraId ?? null
+  return option ? option.paraId : null
 }
 
 export async function createApiInstance(wsUrl: string) {
