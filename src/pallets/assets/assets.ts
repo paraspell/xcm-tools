@@ -18,7 +18,10 @@ export function getAssetsObject(node: TNode) {
 
 export function getAssetId(node: TNode, symbol: string) {
   if (!hasAssetsInfo(node)) { return null }
-  return getAssetsInfo(node).otherAssets.find(o => o.symbol === symbol)?.assetId ?? null
+  const info = getAssetsInfo(node).otherAssets.find(function (o) {
+    return o.symbol === symbol
+  })
+  return info ? info.assetId : null
 }
 
 export function getRelayChainSymbol(node: TNode) {
@@ -28,7 +31,8 @@ export function getRelayChainSymbol(node: TNode) {
 
 export function getNativeAssets(node: TNode) {
   if (!hasAssetsInfo(node)) { return [] }
-  return getAssetsInfo(node).nativeAssets ?? []
+  const info = getAssetsInfo(node).nativeAssets
+  return info ? info : []
 }
 
 export function getOtherAssets(node: TNode) {
@@ -39,7 +43,9 @@ export function getOtherAssets(node: TNode) {
 export function getAllAssetsSymbols(node: TNode) {
   if (!hasAssetsInfo(node)) { return [] }
   const { relayChainAssetSymbol, nativeAssets, otherAssets } = getAssetsInfo(node)
-  return [relayChainAssetSymbol, ...nativeAssets, ...otherAssets.map(({ symbol }) => symbol)]
+  return [relayChainAssetSymbol, ...nativeAssets, ...otherAssets.map(function ({ symbol }) {
+    return symbol
+  })]
 }
 
 export function hasSupportForAsset(node: TNode, symbol: string) {
