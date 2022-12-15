@@ -121,6 +121,12 @@ paraspell.hasSupportForAsset(node: TNode, symbol: string)
 - Install dependencies using `pnpm install`
 
 - Run interactive tests using `pnpm dev`
+- Run compilation test using `pnpm compile`
+- Run linting test using `pnpm lint`
+- Run updateAssets script using `pnpm updateAssets`
+- Run coverage tests usign `pnpm test`
+- Run all tests using `pnpm runAll`
+
 
 ## Founded by
 [![logo-v1](https://user-images.githubusercontent.com/55763425/204865221-90d2b3cd-f2ac-48a2-a367-08722aa8e923.svg)](https://bsx.fi/)
