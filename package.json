@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": "@paraspell/sdk",
   "license": "MIT",
@@ -30,9 +30,9 @@
     "runAll": "pnpm compile && pnpm lint && pnpm test"
   },
   "dependencies": {
-    "@polkadot/api": "^8.0.2",
+    "@polkadot/api": "^9.4.2",
     "@polkadot/apps-config": "^0.122.2",
-    "@polkadot/types": "^8.0.2",
+    "@polkadot/types": "^9.4.2",
     "@polkadot/util-crypto": "^10.1.11",
     "ethers": "^5.7.1"
   },
