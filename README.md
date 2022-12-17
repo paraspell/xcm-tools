@@ -105,7 +105,7 @@ paraspell.getAllAssetsSymbols(node: TNode)
 paraspell.hasSupportForAsset(node: TNode, symbol: string)
 ```
 
- ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui)
+ ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui) or in the Astarot repository [here](https://github.com/paraspell/astarot)
  ##### List of currently compatible nodes can be found [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md)
 
   
