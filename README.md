@@ -84,25 +84,25 @@ paraspell.openChannels.openChannel(api: ApiPromise, origin: origin  Parachain  I
 //Asset pallet
 
 //Returns assets object from assets.json for particular node including information about native and foreign assets
-paraspell.getAssetsObject(node: TNode)
+paraspell.assets.getAssetsObject(node: TNode)
 
 //Returns foreign assetId for particular node and asset symbol
-paraspell.getAssetId(node: TNode, symbol: string)
+paraspell.assets.getAssetId(node: TNode, symbol: string)
 
 //Returns symbol of the relay chain for particular node. Either "DOT" or "KSM"
-paraspell.getRelayChainSymbol(node: TNode)
+paraspell.assets.getRelayChainSymbol(node: TNode)
 
 //Returns string array of native assets symbols for particular node
-paraspell.getNativeAssets(node: TNode)
+paraspell.assets.getNativeAssets(node: TNode)
 
 //Returns object array of foreign assets for particular node. Each object has symbol and assetId property
-paraspell.getOtherAssets(node: TNode)
+paraspell.assets.getOtherAssets(node: TNode)
 
 //Returns string array of all assets symbols. (native and foreign assets are merged to a single array)
-paraspell.getAllAssetsSymbols(node: TNode)
+paraspell.assets.getAllAssetsSymbols(node: TNode)
 
 //Checks if node supports particular asset. (Both native and foreign assets are searched). Returns boolean
-paraspell.hasSupportForAsset(node: TNode, symbol: string)
+paraspell.assets.hasSupportForAsset(node: TNode, symbol: string)
 ```
 
  ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui) or in the Astarot repository [here](https://github.com/paraspell/astarot)
