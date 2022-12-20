@@ -1,5 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { TAssetJsonMap, TNode, TNodeAssets } from '../types'
+import { NODE_NAMES } from '../maps/consts'
+import { TAssetJsonMap, TNativeAssetDetails, TNode, TNodeAssets } from '../types'
 import { getNodeDetails, getNodeEndpointOption } from '../utils'
 
 const ASSETS_MAP_JSON_PATH = './src/maps/assets.json'
@@ -54,42 +55,58 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Turing: 'assetRegistry.metadata'
 }
 
-const fetchNativeAssets = async (api: ApiPromise) => {
+const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
   const propertiesRes = await api.rpc.system.properties()
-  return propertiesRes.toHuman().tokenSymbol as string[]
+  const json = propertiesRes.toHuman()
+  const symbols = json.tokenSymbol as string[]
+  const decimals = json.tokenDecimals as string[]
+  return symbols.map((symbol, i) => ({ symbol, decimals: +decimals[i] }))
 }
 
-const fetchBifrostNativeAssets = async (api: ApiPromise): Promise<string[]> => {
+const fetchBifrostNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
   const res = await api.rpc.state.getMetadata()
   const TYPE_ID = 114
-  return res.asLatest.lookup.types.at(TYPE_ID)!.type.def.asVariant.variants.map(k => k.name.toHuman())
+  const DEFAULT_DECIMALS = -1
+  // Decimals for Bifrost Polkadot will be set to -1 and later derived from other assets
+  return res.asLatest.lookup.types.at(TYPE_ID)!.type.def.asVariant.variants.map(k => ({ symbol: k.name.toHuman(), decimals: DEFAULT_DECIMALS }))
 }
 
 const fetchOtherAssets = async (api: ApiPromise, query: string) => {
   const [module, section] = query.split('.')
   const res = await api.query[module][section].entries()
-  return res.map(([{ args: [era] }, value]) => ({
-    assetId: era.toString(),
-    symbol: (value.toHuman() as any).symbol
-  }))
+  return res.map(([{ args: [era] }, value]) => {
+    const { symbol, decimals } = (value.toHuman() as any)
+    return ({
+      assetId: era.toString(),
+      symbol,
+      decimals: +decimals
+    })
+  })
 }
 
 const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string) => {
   const [module, section] = query.split('.')
   const res = await api.query[module][section].entries()
   return res.filter(([{ args: [era] }]) => !Object.prototype.hasOwnProperty.call(era.toHuman(), 'NativeAssetId'))
-    .map(([{ args: [era] }, value]) => ({
-      assetId: Object.values(era.toHuman() ?? {})[0], symbol: (value.toHuman() as any).symbol
-    }))
+    .map(([{ args: [era] }, value]) => {
+      const { symbol, decimals } = value.toHuman() as any
+      return ({
+        assetId: Object.values(era.toHuman() ?? {})[0], symbol, decimals: +decimals
+      })
+    })
 }
 
 const fetchOtherAssetsType2 = async (api: ApiPromise, query: string) => {
   const [module, section] = query.split('.')
   const res = await api.query[module][section].entries()
-  return res.map(([{ args: [era] }, value]) => ({
-    assetId: era.toString(),
-    symbol: (value.toHuman() as any).metadata.symbol
-  }))
+  return res.map(([{ args: [era] }, value]) => {
+    const json = (value.toHuman() as any).metadata
+    return ({
+      assetId: era.toString(),
+      symbol: json.symbol,
+      decimals: +json.decimals
+    })
+  })
 }
 
 const fetchAssetsType2 = async (api: ApiPromise, query: string): Promise<Partial<TNodeAssets>> => {
@@ -98,13 +115,19 @@ const fetchAssetsType2 = async (api: ApiPromise, query: string): Promise<Partial
 
   const nativeAssets = res
     .filter(([{ args: [era] }]) => Object.prototype.hasOwnProperty.call(era.toHuman(), 'NativeAssetId'))
-    .map(([, value]) => (value.toHuman() as any).symbol)
+    .map(([, value]) => {
+      const { symbol, decimals } = value.toHuman() as any
+      return ({ symbol, decimals: +decimals })
+    })
 
   const otherAssets = res
     .filter(([{ args: [era] }]) => !Object.prototype.hasOwnProperty.call(era.toHuman(), 'NativeAssetId'))
-    .map(([{ args: [era] }, value]) => ({
-      assetId: Object.values(era.toHuman() ?? {})[0], symbol: (value.toHuman() as any).symbol
-    }))
+    .map(([{ args: [era] }, value]) => {
+      const { symbol, decimals } = value.toHuman() as any
+      return ({
+        assetId: Object.values(era.toHuman() ?? {})[0], symbol, decimals: +decimals
+      })
+    })
 
   return { nativeAssets, otherAssets }
 }
@@ -206,8 +229,12 @@ const fetchAllNodesAssets = async (assetMap: NodeToAssetModuleMap, assetsMapJson
     const isError = newData === null
     const oldData = Object.prototype.hasOwnProperty.call(output, nodeName) ? output[nodeName] : null
 
+    const paraId = getNodeEndpointOption(nodeName)?.paraId
+    if (!paraId) { throw new Error(`Cannot find paraId for node ${nodeName}`) }
+
     // In case we cannot fetch assets for some node. Keep existing data
     output[nodeName] = {
+      paraId,
       relayChainAssetSymbol: getNodeDetails(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
       nativeAssets: isError && oldData ? oldData.nativeAssets : newData?.nativeAssets ?? [],
       otherAssets: isError && oldData ? oldData.otherAssets : newData?.otherAssets ?? []
@@ -225,12 +252,37 @@ const readAssetsJson = async () => {
   }
 }
 
+const searchDecimalsBySymbol = (symbol: string, data: TAssetJsonMap) => {
+  for (const node of NODE_NAMES) {
+    if (node === 'BifrostPolkadot') { continue }
+    const { nativeAssets, otherAssets } = data[node]
+    const decimals = [...nativeAssets, ...otherAssets].find(asset => asset.symbol === symbol)?.decimals
+    if (decimals) { return decimals }
+  }
+}
+
+const fillInDecimalsForBifrostPolkadot = (data: TAssetJsonMap) => {
+  data.BifrostPolkadot = {
+    ...data.BifrostPolkadot,
+    nativeAssets: data.BifrostPolkadot.nativeAssets.map((asset) => {
+      const decimals = asset.symbol === 'ASG' ? 18 : searchDecimalsBySymbol(asset.symbol, data)
+      if (!decimals) { throw new Error(`Cannot find decimals for Bitfrost polkadot asset ${asset.symbol}`) }
+      return {
+        ...asset,
+        decimals
+      }
+    })
+  }
+  return data
+}
+
 (async () => {
   if (typeof process !== 'object') { throw new TypeError('This script can only be executed in Node.JS environment') }
   const assetsJson = await readAssetsJson()
   const data = await fetchAllNodesAssets(nodeToQuery, assetsJson)
+  const transformedData = fillInDecimalsForBifrostPolkadot(data)
   const { writeFileSync } = await import('fs')
-  writeFileSync(ASSETS_MAP_JSON_PATH, JSON.stringify(data, null, 4))
+  writeFileSync(ASSETS_MAP_JSON_PATH, JSON.stringify(transformedData, null, 4))
   console.log('Successfuly fetched all assets')
   process.exit()
 })()

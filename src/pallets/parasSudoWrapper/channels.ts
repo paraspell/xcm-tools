@@ -1,17 +1,18 @@
 import type { ApiPromise } from '@polkadot/api'
-import { Extrinsic } from '../../types'
+import { Extrinsic, TNode } from '../../types'
+import { getParaId } from '../assets'
 
 export function openChannel(
   api: ApiPromise,
-  origin: number,
-  destination: number,
+  origin: TNode,
+  destination: TNode,
   maxSize: number,
   maxMessageSize: number
 ): Extrinsic {
   return api.tx.sudo.sudo(
     api.tx.parasSudoWrapper.sudoEstablishHrmpChannel(
-      origin,
-      destination,
+      getParaId(origin),
+      getParaId(destination),
       maxSize,
       maxMessageSize
     )
