@@ -103,6 +103,9 @@ paraspell.assets.getAllAssetsSymbols(node: TNode)
 
 //Checks if node supports particular asset. (Both native and foreign assets are searched). Returns boolean
 paraspell.assets.hasSupportForAsset(node: TNode, symbol: string)
+
+//Import all compatible nodes as constant:
+paraspell.NODE_NAMES
 ```
 
  ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui) or in the Astarot repository [here](https://github.com/paraspell/astarot)
