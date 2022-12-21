@@ -468,7 +468,7 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Darwinia') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-55c5c36c8fe8794c8cfbea725c9f8bc5984c6b05
         return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } 
+      }
       break
 
     // Kusama polkadotXCM
@@ -492,7 +492,7 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Crab') // TESTED https://kusama.subscan.io/xcm_message/kusama-ce7396ec470ba0c6516a50075046ee65464572dc
         return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } 
+      }
       break
     case 'Quartz':
       if (scenario === 'ParaToPara') { // TESTED https://quartz.subscan.io/xcm_message/kusama-f5b6580f8d7f97a8d33209d2b5b34d97454587e9
@@ -529,9 +529,11 @@ export function getNodeDetails(node: TNode) {
 export function getNodeEndpointOption(node: TNode) {
   const { type, name } = getNodeDetails(node)
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
-  return linked ? linked.find(function (o) {
-    return o.info === name
-  }) : undefined
+  return linked
+    ? linked.find(function (o) {
+      return o.info === name
+    })
+    : undefined
 }
 
 export function getNodeParaId(node: TNode) {

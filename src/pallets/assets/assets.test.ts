@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { nodeNames } from '../../maps/consts'
+import { NODE_NAMES } from '../../maps/consts'
 import { getAllAssetsSymbols, getAssetId, getAssetsObject, getNativeAssets, getOtherAssets, getRelayChainSymbol } from './assets'
 
 describe('getAssetsObject', () => {
   it('should return assets object for all nodes', () => {
-    nodeNames.forEach((node) => {
+    NODE_NAMES.forEach((node) => {
       const assets = getAssetsObject(node)
       expect(assets).toEqual(expect.objectContaining({
         relayChainAssetSymbol: expect.any(String),
@@ -37,7 +37,7 @@ describe('getRelayChainSymbol', () => {
     expect(assetId).toEqual('DOT')
   })
   it('should return relay chain currency symbol for all nodes', () => {
-    nodeNames.forEach((node) => {
+    NODE_NAMES.forEach((node) => {
       const assetId = getRelayChainSymbol(node)
       expect(assetId).toBeTypeOf('string')
     })
@@ -46,7 +46,7 @@ describe('getRelayChainSymbol', () => {
 
 describe('getNativeAssets', () => {
   it('should return native assets for all nodes', () => {
-    nodeNames.forEach((node) => {
+    NODE_NAMES.forEach((node) => {
       const assets = getNativeAssets(node)
       expect(assets.length).toBeGreaterThan(0)
       assets.forEach(asset => expect(asset).toBeTypeOf('string'))
@@ -56,7 +56,7 @@ describe('getNativeAssets', () => {
 
 describe('getOtherAssets', () => {
   it('should return other assets or empty array for all nodes', () => {
-    nodeNames.forEach((node) => {
+    NODE_NAMES.forEach((node) => {
       const assets = getOtherAssets(node)
       expect(assets).toBeInstanceOf(Array)
     })
@@ -65,7 +65,7 @@ describe('getOtherAssets', () => {
 
 describe('getAllAssetsSymbols', () => {
   it('should return all assets symbols for all nodes', () => {
-    nodeNames.forEach((node) => {
+    NODE_NAMES.forEach((node) => {
       const assets = getAllAssetsSymbols(node)
       expect(assets).toBeInstanceOf(Array)
       assets.forEach(asset => expect(asset).toBeTypeOf('string'))
