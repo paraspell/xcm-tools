@@ -32,7 +32,7 @@ export function getRelayChainSymbol(node: TNode) {
 export function getNativeAssets(node: TNode) {
   if (!hasAssetsInfo(node)) { return [] }
   const info = getAssetsInfo(node).nativeAssets
-  return info ? info : []
+  return info || []
 }
 
 export function getOtherAssets(node: TNode) {

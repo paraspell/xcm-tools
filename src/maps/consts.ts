@@ -1,6 +1,6 @@
 import { TNode, TNodeDetails } from '../types'
 
-export const nodeNames = [
+export const NODE_NAMES = [
   'Statemint',
   'Acala',
   'Astar',
