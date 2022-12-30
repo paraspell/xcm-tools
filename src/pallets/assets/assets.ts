@@ -3,52 +3,49 @@ import { TAssetJsonMap, TNode } from '../../types'
 
 const assetsMapJson = assetsMap as TAssetJsonMap
 
-function hasAssetsInfo(node: string) {
-  return Object.prototype.hasOwnProperty.call(assetsMapJson, node)
-}
-
-function getAssetsInfo(node: TNode) {
+export function getAssetsObject(node: TNode) {
   return assetsMapJson[node]
 }
 
-export function getAssetsObject(node: TNode) {
-  if (!hasAssetsInfo(node)) { return null }
-  return getAssetsInfo(node)
-}
-
 export function getAssetId(node: TNode, symbol: string) {
-  if (!hasAssetsInfo(node)) { return null }
-  const info = getAssetsInfo(node).otherAssets.find(function (o) {
+  const info = getAssetsObject(node).otherAssets.find(function (o) {
     return o.symbol === symbol
   })
   return info ? info.assetId : null
 }
 
 export function getRelayChainSymbol(node: TNode) {
-  if (!hasAssetsInfo(node)) { return null }
-  return getAssetsInfo(node).relayChainAssetSymbol
+  return getAssetsObject(node).relayChainAssetSymbol
 }
 
 export function getNativeAssets(node: TNode) {
-  if (!hasAssetsInfo(node)) { return [] }
-  const info = getAssetsInfo(node).nativeAssets
+  const info = getAssetsObject(node).nativeAssets
   return info || []
 }
 
 export function getOtherAssets(node: TNode) {
-  if (!hasAssetsInfo(node)) { return [] }
-  return getAssetsInfo(node).otherAssets
+  return getAssetsObject(node).otherAssets
 }
 
 export function getAllAssetsSymbols(node: TNode) {
-  if (!hasAssetsInfo(node)) { return [] }
-  const { relayChainAssetSymbol, nativeAssets, otherAssets } = getAssetsInfo(node)
-  return [relayChainAssetSymbol, ...nativeAssets, ...otherAssets.map(function ({ symbol }) {
+  const { relayChainAssetSymbol, nativeAssets, otherAssets } = getAssetsObject(node)
+  return [relayChainAssetSymbol, ...nativeAssets.map(function ({ symbol }) { return symbol }), ...otherAssets.map(function ({ symbol }) {
     return symbol
   })]
 }
 
 export function hasSupportForAsset(node: TNode, symbol: string) {
-  if (!hasAssetsInfo(node)) { return false }
   return getAllAssetsSymbols(node).includes(symbol)
+}
+
+export function getAssetDecimals(node: TNode, symbol: string) {
+  const { otherAssets, nativeAssets } = getAssetsObject(node)
+  const asset = [...otherAssets, ...nativeAssets].find(function (o) {
+    return o.symbol === symbol
+  })
+  return asset ? asset.decimals : null
+}
+
+export function getParaId(node: TNode) {
+  return getAssetsObject(node).paraId
 }
