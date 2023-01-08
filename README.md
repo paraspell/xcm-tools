@@ -43,6 +43,11 @@ pnpm install @paraspell/sdk
 
  
 ```js
+/////////NEW BUILDER STYLE IMPORT///////////
+
+import { Builder } from '@paraspell/sdk'
+
+/////////OLD STYLE IMPORT & IMPORT FOR ASSET PALLET//////////
 
 // ESM
 import  *  as  paraspell  from  '@paraspell/sdk'
@@ -60,6 +65,25 @@ const paraspell = require('@paraspell/sdk')
 
 //XCM pallet (Combined xTokens, polkadotXCM, ormlXTokens, XcmPallet & relayerXCM):
 
+//////////NEW BUILDER PATTERN XCM & HRMP CONSTRUCTION//////////
+
+//Transfer tokens from Parachain to Parachain
+Builder(api).from(NODE).to(NODE).currency(CurrencyString).currencyId(currencyId).amount(amount).address(address).build()
+
+//Transfer tokens from Relay chain to Parachain
+Builder(api).to(NODE).amount(amount).address(address).build()
+      
+//Transfer tokens from Parachain to Relay chain
+Builder(api).from(NODE).currency(CurrencyString).currencyId(currencyId).amount(amount).address(address).build()
+
+//Close HRMP channels
+Builder(api).from(NODE).closeChannel().inbound(inbound).outbound(outbound).build()
+
+//Open HRMP channels
+Builder(api).from(NODE).to(NODE).openChannel().maxSize(maxSize).maxMessageSize(maxMsgSize).build()
+
+///////////OLD STYLE XCM & HRMP CONSTRUCTION////////////// 
+
 //Transfer tokens from Parachain to Parachain
 paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: currency  symbol  string, currencyID: number (If applicable), amount: any, to: destination  address  string, destination: destination  Parachain  ID)
 
@@ -70,16 +94,14 @@ paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  strin
 paraspell.xcmPallet.transferRelayToPara(api: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string)
 
 //hrmp pallet:
-
 //Close HRMP channels
 paraspell.closeChannels.closeChannel(api: ApiPromise, origin: origin  Parachain  ID, inbound: number, outbound: number)
 
-
 //parasSudoWrapper pallet:
-
 //Open HRMP channels
 paraspell.openChannels.openChannel(api: ApiPromise, origin: origin  Parachain  ID, destination: destination  Parachain  ID, maxSize: number, maxMessageSize: number)
 
+////////ASSET PALLET CONSTRUCTION UNCHANGED////////
 
 //Asset pallet
 
