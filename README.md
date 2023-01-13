@@ -60,13 +60,10 @@ const paraspell = require('@paraspell/sdk')
   
 
 ## Currently implemented pallets
+XCM pallet (Combined xTokens, polkadotXCM, ormlXTokens, XcmPallet & relayerXCM):
 
+Builder pattern XCM & HRMP construction
 ```ts
-
-//XCM pallet (Combined xTokens, polkadotXCM, ormlXTokens, XcmPallet & relayerXCM):
-
-//////////NEW BUILDER PATTERN XCM & HRMP CONSTRUCTION//////////
-
 //Transfer tokens from Parachain to Parachain
 Builder(api).from(NODE).to(NODE).currency(CurrencyString).currencyId(currencyId).amount(amount).address(address).build()
 
@@ -80,10 +77,11 @@ Builder(api).from(NODE).currency(CurrencyString).currencyId(currencyId).amount(a
 Builder(api).from(NODE).closeChannel().inbound(inbound).outbound(outbound).build()
 
 //Open HRMP channels
-Builder(api).from(NODE).to(NODE).openChannel().maxSize(maxSize).maxMessageSize(maxMsgSize).build()
+Builder(api).from(NODE).to(NODE).openChannel().maxSize(maxSize).maxMessageSize(maxMsgSize).build()'
+```
 
-///////////OLD STYLE XCM & HRMP CONSTRUCTION////////////// 
-
+Function pattern XCM & HRMP construction
+```ts
 //Transfer tokens from Parachain to Parachain
 paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: currency  symbol  string, currencyID: number (If applicable), amount: any, to: destination  address  string, destination: destination  Parachain  ID)
 
@@ -100,11 +98,10 @@ paraspell.closeChannels.closeChannel(api: ApiPromise, origin: origin  Parachain 
 //parasSudoWrapper pallet:
 //Open HRMP channels
 paraspell.openChannels.openChannel(api: ApiPromise, origin: origin  Parachain  ID, destination: destination  Parachain  ID, maxSize: number, maxMessageSize: number)
+```
+Asset pallet contruction:
 
-////////ASSET PALLET CONSTRUCTION UNCHANGED////////
-
-//Asset pallet
-
+```ts
 //Returns assets object from assets.json for particular node including information about native and foreign assets
 paraspell.assets.getAssetsObject(node: TNode)
 
@@ -134,9 +131,15 @@ paraspell.assets.getParaId(node: TNode)
 
 //Import all compatible nodes as constant:
 paraspell.NODE_NAMES
+```
+Basilisk XYK pallet contruction
 
-///////BASILISK XYK PALLET//////
-
+Builder patternn XYK construction
+```ts
+//TBA
+```
+Function pattern XYK contruction
+```ts
 //Add liquidity to specific pool
 paraspell.xyk.addLiquidity(api: ApiPromise, assetA: number, assetB: number, amountA: any, amountBMaxLimit: any)
 
@@ -151,9 +154,6 @@ paraspell.xyk.buy(api: ApiPromise, assetOut: number, assetIn: number, amount: an
 
 //Sell specific asset from pool
 paraspell.xyk.sell(api: ApiPromise, assetIn: number, assetOut: number, amount: any, maxLimit: any, discount: Bool)
-
-
-
 ```
 
  ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui) or in the Astarot repository [here](https://github.com/paraspell/astarot)
