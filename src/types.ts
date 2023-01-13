@@ -27,3 +27,5 @@ export type TNodeAssets = {
 }
 export type TAssetJsonMap = Record<TNode, TNodeAssets>
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
+
+export type Bool = 'Yes' | 'No'
