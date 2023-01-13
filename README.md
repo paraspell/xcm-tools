@@ -135,6 +135,25 @@ paraspell.assets.getParaId(node: TNode)
 //Import all compatible nodes as constant:
 paraspell.NODE_NAMES
 
+///////BASILISK XYK PALLET//////
+
+//Add liquidity to specific pool
+paraspell.xyk.addLiquidity(api: ApiPromise, assetA: number, assetB: number, amountA: any, amountBMaxLimit: any)
+
+//Remove liquidity from specific pool
+paraspell.xyk.removeLiquidity(api: ApiPromise, assetA: number, assetB: number, liquidityAmount: any)
+
+//Create pool
+paraspell.xyk.createPool(api: ApiPromise, assetA: number, amountA: any, assetB: number, amountB: any)
+
+//Buy specific asset from pool
+paraspell.xyk.buy(api: ApiPromise, assetOut: number, assetIn: number, amount: any, maxLimit: any, discount: Bool)
+
+//Sell specific asset from pool
+paraspell.xyk.sell(api: ApiPromise, assetIn: number, assetOut: number, amount: any, maxLimit: any, discount: Bool)
+
+
+
 ```
 
  ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui) or in the Astarot repository [here](https://github.com/paraspell/astarot)
