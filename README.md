@@ -1,5 +1,6 @@
 
 # @paraspell/sdk
+![Full name (3)](https://user-images.githubusercontent.com/55763425/197985791-fc7afa52-061d-413a-bbe9-bf1123f16a50.png)
 
   
 
@@ -12,9 +13,9 @@
 
 SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become magician and try your paraSPELLS 🧙✨. 
 
-#####  Currently supporting 42 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md). 
+#####  Currently supporting 42 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supporxxtedNodes.md). 
 
-  
+### Check out our brand new Wiki documentation! [Wiki docs](https://paraspell.github.io/docs/)
 
 ## Usage
 
@@ -41,20 +42,18 @@ pnpm install @paraspell/sdk
 
  ##### Importing package to your project:
 
- 
+If you wish to use XCM, HRMP, XYK Pallets only you can import Builder like this:
 ```js
-/////////NEW BUILDER STYLE IMPORT///////////
-
 import { Builder } from '@paraspell/sdk'
+```
 
-/////////OLD STYLE IMPORT & IMPORT FOR ASSET PALLET//////////
-
+Old function like import (With assets):
+```js
 // ESM
 import  *  as  paraspell  from  '@paraspell/sdk'
 
 // CommonJS
 const paraspell = require('@paraspell/sdk')
-
 ```
 
   
