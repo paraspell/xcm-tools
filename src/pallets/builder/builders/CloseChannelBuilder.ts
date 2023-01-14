@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api'
-import { Extrinsic, TNode } from '../../types'
-import { closeChannel } from '../hrmp'
+import { Extrinsic, TNode } from '../../../types'
+import { closeChannel } from '../../hrmp'
 
 export interface FinalCloseChannelBuilder {
   build(): Extrinsic
