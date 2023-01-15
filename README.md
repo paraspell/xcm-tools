@@ -135,7 +135,20 @@ Basilisk XYK pallet contruction
 
 Builder patternn XYK construction
 ```ts
-//TBA
+//Add liquidity to specific pool
+Builder(api).addLiquidity().assetA(assetA).assetB(assetB).amountA(amountA).amountBMaxLimit(maxLimit).build()
+
+//Remove liquidity from specific pool
+Builder(api).removeLiquidity().assetA(assetA).assetB(assetB).liquidityAmount(liquidity).build()
+
+//Create pool
+Builder(api).createPool().assetA(assetA).amountA(amountA).assetB(assetB).amountB(amountB).build()
+
+//Buy specific asset from pool
+Builder(api).buy().assetOut(out).assetIn(in).amount(amount).maxLimit(maxLimit).discount(discount).build()
+
+//Sell specific asset from pool
+Builder(api).sell().assetIn(in).assetOut(out).amount(amount).maxLimit(maxLimit).discount(discount).build()
 ```
 Function pattern XYK contruction
 ```ts
