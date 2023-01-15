@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api'
-import { send } from '../xcmPallet'
-import { Extrinsic, TNode } from '../../types'
+import { send } from '../../xcmPallet'
+import { Extrinsic, TNode } from '../../../types'
 
 export interface FinalRelayToParaBuilder {
   build(): Extrinsic | never

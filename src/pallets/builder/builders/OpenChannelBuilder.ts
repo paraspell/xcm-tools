@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api'
-import { Extrinsic, TNode } from '../../types'
-import { openChannel } from '../parasSudoWrapper'
+import { Extrinsic, TNode } from '../../../types'
+import { openChannel } from '../../parasSudoWrapper'
 
 export interface FinalOpenChannelBuilder {
   build(): Extrinsic

@@ -1,8 +1,13 @@
 import { ApiPromise } from '@polkadot/api'
-import { TNode } from '../../types'
+import { TNode } from '../../../types'
+import AddLiquidityBuilder from './AddLiquidityBuilder'
+import BuyBuilder from './BuyBuilder'
 import CloseChannelBuilder from './CloseChannelBuilder'
+import CreatePoolBuilder from './CreatePoolBuilder'
 import OpenChannelBuilder from './OpenChannelBuilder'
 import RelayToParaBuilder from './RelayToParaBuilder'
+import RemoveLiquidityBuilder from './RemoveLiquidityBuilder'
+import SellBuilder from './SellBuilder'
 import SendBuilder from './SendBuilder'
 
 class ToGeneralBuilder {
@@ -60,6 +65,26 @@ class GeneralBuilder {
 
   to(node: TNode) {
     return RelayToParaBuilder.create(this.api, node)
+  }
+
+  addLiquidity() {
+    return AddLiquidityBuilder.create(this.api)
+  }
+
+  removeLiquidity() {
+    return RemoveLiquidityBuilder.create(this.api)
+  }
+
+  buy() {
+    return BuyBuilder.create(this.api)
+  }
+
+  sell() {
+    return SellBuilder.create(this.api)
+  }
+
+  createPool() {
+    return CreatePoolBuilder.create(this.api)
   }
 }
 

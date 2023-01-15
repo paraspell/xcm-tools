@@ -47,5 +47,13 @@
     "unbuild": "latest",
     "vitest": "latest"
   },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "@polkadot/util": "10",
+        "@polkadot/util-crypto": "10"
+      }
+    }
+  },
   "packageManager": "pnpm@7.9.5"
 }
