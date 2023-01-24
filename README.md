@@ -182,19 +182,6 @@ getSupportedPallets(node: TNode)
 console.log(SUPPORTED_PALLETS)
 ```
 
-
-import { getSupportedPallets } from '@paraspell/xcm-sdk'
-
-const pallets = getSupportedPallets('Acala')
-console.log(pallets)
-// prints ['XTokens', 'PolkadotXcm']
-Print all possible values for for type TPallet:
-import { SUPPORTED_PALLETS } from '@paraspell/xcm-sdk'
-
-console.log(SUPPORTED_PALLETS)
-// prints ['XTokens', 'OrmlXTokens', 'PolkadotXcm', 'RelayerXcm']
-
-
  ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui) or in the Astarot repository [here](https://github.com/paraspell/astarot)
  ##### List of currently compatible nodes can be found [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md)
 
