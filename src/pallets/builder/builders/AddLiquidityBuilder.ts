@@ -3,26 +3,33 @@ import { Extrinsic } from '../../../types'
 import { addLiquidity } from '../../xyk'
 
 export interface FinalAddLiquidityBuilder {
-    build(): Extrinsic
+  build(): Extrinsic
 }
 
 export interface AmountBMaxLimitAddLiquidityBuilder {
-    amountBMaxLimit(amountBMaxLimit: number): FinalAddLiquidityBuilder
+  amountBMaxLimit(amountBMaxLimit: number): FinalAddLiquidityBuilder
 }
 
 export interface AmountAAddLiquidityBuilder {
-    amountA(amountA: number): AmountBMaxLimitAddLiquidityBuilder
+  amountA(amountA: number): AmountBMaxLimitAddLiquidityBuilder
 }
 
 export interface AssetBAddLiquidityBuilder {
-    assetB(assetB: number): AmountAAddLiquidityBuilder
+  assetB(assetB: number): AmountAAddLiquidityBuilder
 }
 
 export interface AssetAAddLiquidityBuilder {
-    assetA(assetA: number): AssetBAddLiquidityBuilder
+  assetA(assetA: number): AssetBAddLiquidityBuilder
 }
 
-class AddLiquidityBuilder implements AssetAAddLiquidityBuilder, AssetBAddLiquidityBuilder, AmountAAddLiquidityBuilder, AmountBMaxLimitAddLiquidityBuilder, FinalAddLiquidityBuilder {
+class AddLiquidityBuilder
+  implements
+    AssetAAddLiquidityBuilder,
+    AssetBAddLiquidityBuilder,
+    AmountAAddLiquidityBuilder,
+    AmountBMaxLimitAddLiquidityBuilder,
+    FinalAddLiquidityBuilder
+{
   private api: ApiPromise
 
   private _assetA: number

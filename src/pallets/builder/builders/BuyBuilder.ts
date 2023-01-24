@@ -3,30 +3,37 @@ import { Bool, Extrinsic } from '../../../types'
 import { buy } from '../../xyk'
 
 export interface FinalBuyBuilder {
-    build(): Extrinsic
+  build(): Extrinsic
 }
 
 export interface DiscountBuyBuilder {
-    discount(discount: Bool): FinalBuyBuilder
+  discount(discount: Bool): FinalBuyBuilder
 }
 
 export interface MaxLimitBuyBuilder {
-    maxLimit(maxLimit: number): DiscountBuyBuilder
+  maxLimit(maxLimit: number): DiscountBuyBuilder
 }
 
 export interface AmountBuyBuilder {
-    amount(amount: number): MaxLimitBuyBuilder
+  amount(amount: number): MaxLimitBuyBuilder
 }
 
 export interface AssetInBuyBuilder {
-    assetIn(assetIn: number): AmountBuyBuilder
+  assetIn(assetIn: number): AmountBuyBuilder
 }
 
 export interface AssetOutBuyBuilder {
-    assetOut(assetOut: number): AssetInBuyBuilder
+  assetOut(assetOut: number): AssetInBuyBuilder
 }
 
-class BuyBuilder implements AssetOutBuyBuilder, AssetInBuyBuilder, AmountBuyBuilder, MaxLimitBuyBuilder, FinalBuyBuilder {
+class BuyBuilder
+  implements
+    AssetOutBuyBuilder,
+    AssetInBuyBuilder,
+    AmountBuyBuilder,
+    MaxLimitBuyBuilder,
+    FinalBuyBuilder
+{
   private api: ApiPromise
 
   private _assetOut: number
@@ -69,7 +76,14 @@ class BuyBuilder implements AssetOutBuyBuilder, AssetInBuyBuilder, AmountBuyBuil
   }
 
   build() {
-    return buy(this.api, this._assetOut, this._assetIn, this._amount, this._maxLimit, this._discount)
+    return buy(
+      this.api,
+      this._assetOut,
+      this._assetIn,
+      this._amount,
+      this._maxLimit,
+      this._discount
+    )
   }
 }
 

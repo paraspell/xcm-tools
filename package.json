@@ -22,16 +22,19 @@
     "build": "unbuild",
     "dev": "vitest dev",
     "lint": "eslint --fix --ext .ts,.js,.mjs,.cjs .",
+    "format:check": "prettier --check src/**/*.ts",
+    "format:write": "prettier --write src/**/*.ts",
     "prepack": "unbuild",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updateAssets.ts",
+    "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updatePallets.ts",
     "release": "pnpm test && standard-version && git push --follow-tags && pnpm publish --no-git-checks --access=public",
     "test": "vitest run --coverage",
     "compile": "tsc --noEmit",
-    "runAll": "pnpm compile && pnpm lint && pnpm test"
+    "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
   "dependencies": {
     "@polkadot/api": "^9.4.2",
-    "@polkadot/apps-config": "^0.122.2",
+    "@polkadot/apps-config": "^0.123.1",
     "@polkadot/types": "^9.4.2",
     "@polkadot/util-crypto": "^10.1.11",
     "ethers": "^5.7.1"
@@ -41,19 +44,14 @@
     "@types/node": "^18.11.9",
     "@vitest/coverage-c8": "latest",
     "eslint": "latest",
+    "prettier": "^2.8.3",
     "standard-version": "latest",
     "ts-node": "^10.9.1",
     "typescript": "latest",
     "unbuild": "latest",
-    "vitest": "latest"
-  },
-  "pnpm": {
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "@polkadot/util": "10",
-        "@polkadot/util-crypto": "10"
-      }
-    }
+    "vitest": "latest",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1"
   },
   "packageManager": "pnpm@7.9.5"
 }

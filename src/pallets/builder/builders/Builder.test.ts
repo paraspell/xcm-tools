@@ -23,7 +23,9 @@ describe('Builder', () => {
   it('should initiatie a para to para transfer', async () => {
     const api = await createApiInstance(WS_URL)
 
-    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => { return undefined as any })
+    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
+      return undefined as any
+    })
 
     Builder(api)
       .from(NODE)
@@ -40,13 +42,11 @@ describe('Builder', () => {
   it('should initiatie a relay to para transfer', async () => {
     const api = await createApiInstance(WS_URL)
 
-    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockImplementation(() => { return undefined as any })
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockImplementation(() => {
+      return undefined as any
+    })
 
-    Builder(api)
-      .to(NODE)
-      .amount(AMOUNT)
-      .address(ADDRESS)
-      .build()
+    Builder(api).to(NODE).amount(AMOUNT).address(ADDRESS).build()
 
     expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS)
   })
@@ -54,7 +54,9 @@ describe('Builder', () => {
   it('should initiatie a para to relay transfer', async () => {
     const api = await createApiInstance(WS_URL)
 
-    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => { return undefined as any })
+    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
+      return undefined as any
+    })
 
     Builder(api)
       .from(NODE)
@@ -70,7 +72,9 @@ describe('Builder', () => {
   it('should open a channel', async () => {
     const api = await createApiInstance(WS_URL)
 
-    const spy = vi.spyOn(parasSudoWrapper, 'openChannel').mockImplementation(() => { return undefined as any })
+    const spy = vi.spyOn(parasSudoWrapper, 'openChannel').mockImplementation(() => {
+      return undefined as any
+    })
 
     Builder(api)
       .from(NODE)
@@ -86,7 +90,9 @@ describe('Builder', () => {
   it('should close a channel', async () => {
     const api = await createApiInstance(WS_URL)
 
-    const spy = vi.spyOn(hrmp, 'closeChannel').mockImplementation(() => { return undefined as any })
+    const spy = vi.spyOn(hrmp, 'closeChannel').mockImplementation(() => {
+      return undefined as any
+    })
 
     Builder(api)
       .from(NODE)
@@ -101,7 +107,9 @@ describe('Builder', () => {
   it('should add liquidity', async () => {
     const api = await createApiInstance(WS_URL)
 
-    const spy = vi.spyOn(xyk, 'addLiquidity').mockImplementation(() => { return undefined as any })
+    const spy = vi.spyOn(xyk, 'addLiquidity').mockImplementation(() => {
+      return undefined as any
+    })
 
     const ASSET_A = 0
     const ASSET_B = 1
@@ -122,7 +130,9 @@ describe('Builder', () => {
   it('should remove liquidity', async () => {
     const api = await createApiInstance(WS_URL)
 
-    const spy = vi.spyOn(xyk, 'removeLiquidity').mockImplementation(() => { return undefined as any })
+    const spy = vi.spyOn(xyk, 'removeLiquidity').mockImplementation(() => {
+      return undefined as any
+    })
 
     const ASSET_A = 0
     const ASSET_B = 1
@@ -141,7 +151,9 @@ describe('Builder', () => {
   it('should buy', async () => {
     const api = await createApiInstance(WS_URL)
 
-    const spy = vi.spyOn(xyk, 'buy').mockImplementation(() => { return undefined as any })
+    const spy = vi.spyOn(xyk, 'buy').mockImplementation(() => {
+      return undefined as any
+    })
 
     const ASSET_OUT = 0
     const ASSET_IN = 1
@@ -164,7 +176,9 @@ describe('Builder', () => {
   it('should sell', async () => {
     const api = await createApiInstance(WS_URL)
 
-    const spy = vi.spyOn(xyk, 'sell').mockImplementation(() => { return undefined as any })
+    const spy = vi.spyOn(xyk, 'sell').mockImplementation(() => {
+      return undefined as any
+    })
 
     const ASSET_OUT = 0
     const ASSET_IN = 1
@@ -187,7 +201,9 @@ describe('Builder', () => {
   it('should create pool', async () => {
     const api = await createApiInstance(WS_URL)
 
-    const spy = vi.spyOn(xyk, 'createPool').mockImplementation(() => { return undefined as any })
+    const spy = vi.spyOn(xyk, 'createPool').mockImplementation(() => {
+      return undefined as any
+    })
 
     const ASSET_A = 0
     const AMOUNT_A = 1

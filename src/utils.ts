@@ -1,7 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ethers } from 'ethers'
 import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
-import { nodeToPallet } from './maps/PalletMap'
 import { Extrinsic, TNode, TScenario } from './types'
 import { nodes } from './maps/consts'
 
@@ -21,7 +20,14 @@ export function getFees(scenario: TScenario) {
   throw new Error(`Fees for scenario ${scenario} are not defined.`)
 }
 
-export function handleAddress(scenario: TScenario, pallet: string, api: ApiPromise, to: string, nodeId?: number, node?: TNode): any {
+export function handleAddress(
+  scenario: TScenario,
+  pallet: string,
+  api: ApiPromise,
+  to: string,
+  nodeId?: number,
+  node?: TNode
+): any {
   if (scenario === 'ParaToRelay' && pallet === 'xTokens') {
     console.log('AccountId32 transfer')
     return {
@@ -180,7 +186,12 @@ export function handleAddress(scenario: TScenario, pallet: string, api: ApiPromi
   }
 }
 
-export function createCurrencySpecification(amount: any, scenario: TScenario, node?: TNode, cur?: number) {
+export function createCurrencySpecification(
+  amount: any,
+  scenario: TScenario,
+  node?: TNode,
+  cur?: number
+) {
   if (scenario === 'ParaToRelay') {
     console.log('polkadotXCM transfer in native currency to Relay chain')
     return {
@@ -330,11 +341,15 @@ export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number, no
   }
 }
 
-export function getAvailableXCMPallet(origin: TNode) {
-  return nodeToPallet[origin]
-}
-
-export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: number, currency: string, amount: any, addressSelection: any, fees: number): Extrinsic {
+export function constructXTokens(
+  api: ApiPromise,
+  origin: TNode,
+  currencyID: number,
+  currency: string,
+  amount: any,
+  addressSelection: any,
+  fees: number
+): Extrinsic {
   switch (origin) {
     // Polkadot xTokens
     case 'Acala':
@@ -443,31 +458,65 @@ export function constructXTokens(api: ApiPromise, origin: TNode, currencyID: num
   }
 }
 
-export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any, addressSelection: any, currencySelection: any, scenario: TScenario): Extrinsic {
+export function constructPolkadotXCM(
+  api: ApiPromise,
+  origin: TNode,
+  header: any,
+  addressSelection: any,
+  currencySelection: any,
+  scenario: TScenario
+): Extrinsic {
   switch (origin) {
     // Polkadot polkadotXCM
     case 'Statemint':
       if (scenario === 'ParaToPara') {
         console.log('Transferring selected tokens from Statemint') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-e4cdf1c59ffbb3d504adbc893d6b7d72665e484d
-        return api.tx.polkadotXcm.limitedReserveTransferAssets(header, addressSelection, currencySelection, 0, 'Unlimited')
+        return api.tx.polkadotXcm.limitedReserveTransferAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0,
+          'Unlimited'
+        )
       } else if (scenario === 'ParaToRelay') {
         console.log('Transferring DOT tokens from Statemint') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-c01158ff1a5c5a596138ed9d0f0f2bccc1d9c51d
-        return api.tx.polkadotXcm.limitedTeleportAssets(header, addressSelection, currencySelection, 0, 'Unlimited')
+        return api.tx.polkadotXcm.limitedTeleportAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0,
+          'Unlimited'
+        )
       }
       break
     case 'Astar':
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Astar') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-f2b697df74ebe4b62853fe81b8b7d0522464972d
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+        return api.tx.polkadotXcm.reserveTransferAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
       } else if (scenario === 'ParaToRelay') {
         console.log('Transferring DOT tokens from Astar') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-58e4741f4c9f99bbdf65f16c81a233ad60a7ad1d
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+        return api.tx.polkadotXcm.reserveWithdrawAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
       }
       break
     case 'Darwinia':
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Darwinia') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-55c5c36c8fe8794c8cfbea725c9f8bc5984c6b05
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+        return api.tx.polkadotXcm.reserveTransferAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
       }
       break
 
@@ -475,47 +524,98 @@ export function constructPolkadotXCM(api: ApiPromise, origin: TNode, header: any
     case 'Statemine':
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Statemine') // TESTED https://kusama.subscan.io/xcm_message/kusama-ddc2a48f0d8e0337832d7aae26f6c3053e1f4ffd
-        return api.tx.polkadotXcm.limitedReserveTransferAssets(header, addressSelection, currencySelection, 0, 'Unlimited')
+        return api.tx.polkadotXcm.limitedReserveTransferAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0,
+          'Unlimited'
+        )
       } else if (scenario === 'ParaToRelay') {
         console.log('Transferring KSM tokens from Statemine') // TESTED https://kusama.subscan.io/xcm_message/kusama-8e423130a4d8b61679af95dbea18a55124f99672
-        return api.tx.polkadotXcm.limitedTeleportAssets(header, addressSelection, currencySelection, 0, 'Unlimited')
+        return api.tx.polkadotXcm.limitedTeleportAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0,
+          'Unlimited'
+        )
       }
       break
     case 'Encointer':
       // NO PARA TO PARA SCENARIOS ON SUBSCAN
       if (scenario === 'ParaToRelay') {
         console.log('Transferring KSM tokens from Encointer') // TESTED https://encointer.subscan.io/xcm_message/kusama-418501e86e947b16c4e4e9040694017e64f9b162
-        return api.tx.polkadotXcm.limitedTeleportAssets(header, addressSelection, currencySelection, 0, 'Unlimited')
+        return api.tx.polkadotXcm.limitedTeleportAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0,
+          'Unlimited'
+        )
       }
       break
     case 'Crab':
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Crab') // TESTED https://kusama.subscan.io/xcm_message/kusama-ce7396ec470ba0c6516a50075046ee65464572dc
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+        return api.tx.polkadotXcm.reserveTransferAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
       }
       break
     case 'Quartz':
-      if (scenario === 'ParaToPara') { // TESTED https://quartz.subscan.io/xcm_message/kusama-f5b6580f8d7f97a8d33209d2b5b34d97454587e9
+      if (scenario === 'ParaToPara') {
+        // TESTED https://quartz.subscan.io/xcm_message/kusama-f5b6580f8d7f97a8d33209d2b5b34d97454587e9
         console.log('Transferring native tokens from Quartz')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+        return api.tx.polkadotXcm.reserveTransferAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
       }
       break
     case 'Robonomics':
-      if (scenario === 'ParaToPara') { // TESTED https://robonomics.subscan.io/xcm_message/kusama-e9641113dae59920e5cc0e012f1510ea0e2d0455
+      if (scenario === 'ParaToPara') {
+        // TESTED https://robonomics.subscan.io/xcm_message/kusama-e9641113dae59920e5cc0e012f1510ea0e2d0455
         console.log('Transferring native tokens from Robonomics')
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
-      } else if (scenario === 'ParaToRelay') { // TESTED https://robonomics.subscan.io/xcm_message/kusama-20b03208c99f2ef29d2d4b4cd4bc5659e54311ea
+        return api.tx.polkadotXcm.reserveTransferAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
+      } else if (scenario === 'ParaToRelay') {
+        // TESTED https://robonomics.subscan.io/xcm_message/kusama-20b03208c99f2ef29d2d4b4cd4bc5659e54311ea
         console.log('Transferring KSM tokens from Robonomics')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+        return api.tx.polkadotXcm.reserveWithdrawAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
       }
       break
     case 'Shiden':
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Shiden') // Same as Astar, works.
-        return api.tx.polkadotXcm.reserveTransferAssets(header, addressSelection, currencySelection, 0)
+        return api.tx.polkadotXcm.reserveTransferAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
       } else if (scenario === 'ParaToRelay') {
         console.log('Transferring KSM tokens from Shiden') // https://shiden.subscan.io/xcm_message/kusama-97eb47c25c781affa557f36dbd117d49f7e1ab4e
-        return api.tx.polkadotXcm.reserveWithdrawAssets(header, addressSelection, currencySelection, 0)
+        return api.tx.polkadotXcm.reserveWithdrawAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
       }
       break
   }
@@ -531,14 +631,9 @@ export function getNodeEndpointOption(node: TNode) {
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
   return linked
     ? linked.find(function (o) {
-      return o.info === name
-    })
+        return o.info === name
+      })
     : undefined
-}
-
-export function getNodeParaId(node: TNode) {
-  const option = getNodeEndpointOption(node)
-  return option ? option.paraId : null
 }
 
 export async function createApiInstance(wsUrl: string) {

@@ -14,7 +14,9 @@ export interface MaxSizeOpenChannelBuilder {
   maxSize(size: number): MaxMessageSizeOpenChannelBuilder
 }
 
-class OpenChannelBuilder implements MaxSizeOpenChannelBuilder, MaxMessageSizeOpenChannelBuilder, FinalOpenChannelBuilder {
+class OpenChannelBuilder
+  implements MaxSizeOpenChannelBuilder, MaxMessageSizeOpenChannelBuilder, FinalOpenChannelBuilder
+{
   private api: ApiPromise
   private from: TNode
   private to: TNode

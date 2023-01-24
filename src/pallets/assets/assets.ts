@@ -1,10 +1,10 @@
-import * as assetsMap from '../../maps/assets.json' assert { type: 'json' }
+import * as assetsMapJson from '../../maps/assets.json' assert { type: 'json' }
 import { TAssetJsonMap, TNode } from '../../types'
 
-const assetsMapJson = assetsMap as TAssetJsonMap
+const assetsMap = assetsMapJson as TAssetJsonMap
 
 export function getAssetsObject(node: TNode) {
-  return assetsMapJson[node]
+  return assetsMap[node]
 }
 
 export function getAssetId(node: TNode, symbol: string) {
@@ -29,9 +29,15 @@ export function getOtherAssets(node: TNode) {
 
 export function getAllAssetsSymbols(node: TNode) {
   const { relayChainAssetSymbol, nativeAssets, otherAssets } = getAssetsObject(node)
-  return [relayChainAssetSymbol, ...nativeAssets.map(function ({ symbol }) { return symbol }), ...otherAssets.map(function ({ symbol }) {
-    return symbol
-  })]
+  return [
+    relayChainAssetSymbol,
+    ...nativeAssets.map(function ({ symbol }) {
+      return symbol
+    }),
+    ...otherAssets.map(function ({ symbol }) {
+      return symbol
+    })
+  ]
 }
 
 export function hasSupportForAsset(node: TNode, symbol: string) {

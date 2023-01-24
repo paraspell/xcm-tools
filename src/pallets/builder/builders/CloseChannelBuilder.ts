@@ -14,7 +14,9 @@ export interface InboundCloseChannelBuilder {
   inbound(inbound: number): OutboundCloseChannelBuilder
 }
 
-class CloseChannelBuilder implements InboundCloseChannelBuilder, OutboundCloseChannelBuilder, FinalCloseChannelBuilder {
+class CloseChannelBuilder
+  implements InboundCloseChannelBuilder, OutboundCloseChannelBuilder, FinalCloseChannelBuilder
+{
   private api: ApiPromise
   private from: TNode
 

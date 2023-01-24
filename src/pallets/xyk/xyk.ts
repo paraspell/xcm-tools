@@ -8,12 +8,7 @@ export function addLiquidity(
   amountA: any,
   amountBMaxLimit: any
 ): Extrinsic {
-  return api.tx.xyk.addLiquidity(
-    assetA,
-    assetB,
-    amountA,
-    amountBMaxLimit
-  )
+  return api.tx.xyk.addLiquidity(assetA, assetB, amountA, amountBMaxLimit)
 }
 
 export function buy(
@@ -24,13 +19,7 @@ export function buy(
   maxLimit: any,
   discount: Bool
 ): Extrinsic {
-  return api.tx.xyk.buy(
-    assetOut,
-    assetIn,
-    amount,
-    maxLimit,
-    discount
-  )
+  return api.tx.xyk.buy(assetOut, assetIn, amount, maxLimit, discount)
 }
 
 export function createPool(
@@ -40,12 +29,7 @@ export function createPool(
   assetB: number,
   amountB: any
 ): Extrinsic {
-  return api.tx.xyk.createPool(
-    assetA,
-    amountA,
-    assetB,
-    amountB
-  )
+  return api.tx.xyk.createPool(assetA, amountA, assetB, amountB)
 }
 
 export function removeLiquidity(
@@ -54,11 +38,7 @@ export function removeLiquidity(
   assetB: number,
   liquidityAmount: any
 ): Extrinsic {
-  return api.tx.xyk.removeLiquidity(
-    assetA,
-    assetB,
-    liquidityAmount
-  )
+  return api.tx.xyk.removeLiquidity(assetA, assetB, liquidityAmount)
 }
 
 export function sell(
@@ -69,11 +49,5 @@ export function sell(
   maxLimit: any,
   discount: Bool
 ): Extrinsic {
-  return api.tx.xyk.sell(
-    assetIn,
-    assetOut,
-    amount,
-    maxLimit,
-    discount
-  )
+  return api.tx.xyk.sell(assetIn, assetOut, amount, maxLimit, discount)
 }

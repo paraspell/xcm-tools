@@ -14,7 +14,9 @@ export interface AmountRelayToParaBuilder {
   amount(amount: number): AddressRelayToParaBuilder
 }
 
-class RelayToParaBuilder implements AmountRelayToParaBuilder, AddressRelayToParaBuilder, FinalRelayToParaBuilder {
+class RelayToParaBuilder
+  implements AmountRelayToParaBuilder, AddressRelayToParaBuilder, FinalRelayToParaBuilder
+{
   private api: ApiPromise
   private to: TNode
 

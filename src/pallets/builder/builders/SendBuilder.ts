@@ -18,7 +18,9 @@ export interface CurrencyIdSendBuilder {
   currencyId(currencyId: number): AmountSendBuilder
 }
 
-class SendBuilder implements CurrencyIdSendBuilder, AmountSendBuilder, AddressSendBuilder, FinalRelayToParaBuilder {
+class SendBuilder
+  implements CurrencyIdSendBuilder, AmountSendBuilder, AddressSendBuilder, FinalRelayToParaBuilder
+{
   private api: ApiPromise
   private from: TNode
   private to: TNode | undefined
@@ -39,7 +41,12 @@ class SendBuilder implements CurrencyIdSendBuilder, AmountSendBuilder, AddressSe
     return new SendBuilder(api, from, undefined, currency)
   }
 
-  static createParaToPara(api: ApiPromise, from: TNode, to: TNode, currency: string): CurrencyIdSendBuilder {
+  static createParaToPara(
+    api: ApiPromise,
+    from: TNode,
+    to: TNode,
+    currency: string
+  ): CurrencyIdSendBuilder {
     return new SendBuilder(api, from, to, currency)
   }
 
@@ -59,7 +66,15 @@ class SendBuilder implements CurrencyIdSendBuilder, AmountSendBuilder, AddressSe
   }
 
   build() {
-    return send(this.api, this.from, this.currency, this._currencyId, this._amount, this._address, this.to)
+    return send(
+      this.api,
+      this.from,
+      this.currency,
+      this._currencyId,
+      this._amount,
+      this._address,
+      this.to
+    )
   }
 }
 

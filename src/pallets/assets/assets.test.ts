@@ -1,17 +1,27 @@
 import { describe, expect, it } from 'vitest'
 import { NODE_NAMES } from '../../maps/consts'
-import { getAllAssetsSymbols, getAssetDecimals, getAssetId, getAssetsObject, getNativeAssets, getOtherAssets, getRelayChainSymbol } from './assets'
+import {
+  getAllAssetsSymbols,
+  getAssetDecimals,
+  getAssetId,
+  getAssetsObject,
+  getNativeAssets,
+  getOtherAssets,
+  getRelayChainSymbol
+} from './assets'
 
 describe('getAssetsObject', () => {
   it('should return assets object for all nodes', () => {
-    NODE_NAMES.forEach((node) => {
+    NODE_NAMES.forEach(node => {
       const assets = getAssetsObject(node)
-      expect(assets).toEqual(expect.objectContaining({
-        relayChainAssetSymbol: expect.any(String),
-        nativeAssets: expect.any(Array),
-        otherAssets: expect.any(Array),
-        paraId: expect.any(Number)
-      }))
+      expect(assets).toEqual(
+        expect.objectContaining({
+          relayChainAssetSymbol: expect.any(String),
+          nativeAssets: expect.any(Array),
+          otherAssets: expect.any(Array),
+          paraId: expect.any(Number)
+        })
+      )
     })
   })
 })
@@ -38,7 +48,7 @@ describe('getRelayChainSymbol', () => {
     expect(assetId).toEqual('DOT')
   })
   it('should return relay chain currency symbol for all nodes', () => {
-    NODE_NAMES.forEach((node) => {
+    NODE_NAMES.forEach(node => {
       const assetId = getRelayChainSymbol(node)
       expect(assetId).toBeTypeOf('string')
     })
@@ -47,10 +57,10 @@ describe('getRelayChainSymbol', () => {
 
 describe('getNativeAssets', () => {
   it('should return native assets for all nodes', () => {
-    NODE_NAMES.forEach((node) => {
+    NODE_NAMES.forEach(node => {
       const assets = getNativeAssets(node)
       expect(assets.length).toBeGreaterThan(0)
-      assets.forEach((asset) => {
+      assets.forEach(asset => {
         expect(asset).toBeTypeOf('object')
         expect(asset).toHaveProperty('symbol')
         expect(asset).toHaveProperty('decimals')
@@ -61,10 +71,10 @@ describe('getNativeAssets', () => {
 
 describe('getOtherAssets', () => {
   it('should return other assets or empty array for all nodes', () => {
-    NODE_NAMES.forEach((node) => {
+    NODE_NAMES.forEach(node => {
       const assets = getOtherAssets(node)
       expect(assets).toBeInstanceOf(Array)
-      assets.forEach((asset) => {
+      assets.forEach(asset => {
         expect(asset).toBeTypeOf('object')
         expect(asset).toHaveProperty('symbol')
         expect(asset).toHaveProperty('decimals')
@@ -75,7 +85,7 @@ describe('getOtherAssets', () => {
 
 describe('getAllAssetsSymbols', () => {
   it('should return all assets symbols for all nodes', () => {
-    NODE_NAMES.forEach((node) => {
+    NODE_NAMES.forEach(node => {
       const assets = getAllAssetsSymbols(node)
       expect(assets).toBeInstanceOf(Array)
       assets.forEach(asset => expect(asset).toBeTypeOf('string'))
@@ -85,11 +95,11 @@ describe('getAllAssetsSymbols', () => {
 
 describe('getAssetDecimals', () => {
   it('should return valid decimals for all available assets', () => {
-    NODE_NAMES.forEach((node) => {
+    NODE_NAMES.forEach(node => {
       const obj = getAssetsObject(node)
       expect(obj).not.toBeNull()
       if (obj) {
-        [...obj.nativeAssets, ...obj.otherAssets].forEach((asset) => {
+        ;[...obj.nativeAssets, ...obj.otherAssets].forEach(asset => {
           const decimals = getAssetDecimals(node, asset.symbol)
           expect(decimals).toBeTypeOf('number')
           expect(decimals).toBeGreaterThanOrEqual(0)
