@@ -19,9 +19,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: "pnpm"
+          cache: 'pnpm'
       - run: pnpm install
       - run: pnpm compile
+      - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm build
       - run: pnpm vitest --coverage

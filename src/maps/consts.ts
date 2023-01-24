@@ -94,3 +94,5 @@ export const nodes: Record<TNode, TNodeDetails> = {
   Shiden: { name: 'shiden', type: 'kusama' },
   Turing: { name: 'turing', type: 'kusama' }
 }
+
+export const SUPPORTED_PALLETS = ['XTokens', 'OrmlXTokens', 'PolkadotXcm', 'RelayerXcm'] as const

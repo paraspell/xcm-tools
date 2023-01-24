@@ -1,7 +1,15 @@
 import type { ApiPromise } from '@polkadot/api'
 import { Extrinsic, TNode, TScenario } from '../../types'
-import { handleAddress, getFees, constructXTokens, getAvailableXCMPallet, constructPolkadotXCM, createHeaderPolkadotXCM, createCurrencySpecification } from '../../utils'
+import {
+  handleAddress,
+  getFees,
+  constructXTokens,
+  constructPolkadotXCM,
+  createHeaderPolkadotXCM,
+  createCurrencySpecification
+} from '../../utils'
 import { getParaId, hasSupportForAsset } from '../assets'
+import { getDefaultPallet } from '../pallets'
 import { InvalidCurrencyError } from './InvalidCurrencyError'
 import { NodeNotSupportedError } from './nodeNotSupportedError'
 
@@ -14,12 +22,14 @@ export function send(
   to: string,
   destination?: TNode
 ): Extrinsic {
-  if (!hasSupportForAsset(origin, currency)) { throw new InvalidCurrencyError(`Node ${origin} does not support currency ${currency}.`) }
+  if (!hasSupportForAsset(origin, currency)) {
+    throw new InvalidCurrencyError(`Node ${origin} does not support currency ${currency}.`)
+  }
 
   const type: TScenario = destination ? 'ParaToPara' : 'ParaToRelay'
   const paraId = destination ? getParaId(destination) : undefined
-  const pallet = getAvailableXCMPallet(origin)
-  if (pallet === 'xTokens' || pallet === 'ormlXTokens') {
+  const pallet = getDefaultPallet(origin)
+  if (pallet === 'XTokens' || pallet === 'OrmlXTokens') {
     return constructXTokens(
       api,
       origin,
@@ -29,7 +39,7 @@ export function send(
       handleAddress(type, 'xTokens', api, to, paraId),
       getFees(type)
     )
-  } else if (pallet === 'polkadotXCM' || pallet === 'relayerXcm') {
+  } else if (pallet === 'PolkadotXcm' || pallet === 'RelayerXcm') {
     // Specific node requirements
     if ((origin === 'Statemint' || origin === 'Statemine') && type === 'ParaToPara') {
       return constructPolkadotXCM(
@@ -90,7 +100,9 @@ export function transferRelayToPara(
     )
   } else if (destination === 'Darwinia' || destination === 'Crab' || destination === 'Quartz') {
     // Do not do anything because Darwinia and Crab does not have DOT and KSM registered Quartz does not work with UMP & DMP too
-    throw new NodeNotSupportedError('These nodes do not support XCM transfers from Relay / to Relay chain.')
+    throw new NodeNotSupportedError(
+      'These nodes do not support XCM transfers from Relay / to Relay chain.'
+    )
   }
   return api.tx.xcmPallet.reserveTransferAssets(
     createHeaderPolkadotXCM('RelayToPara', paraId),

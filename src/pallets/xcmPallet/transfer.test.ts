@@ -23,14 +23,7 @@ describe('transferParaToRelay', () => {
     const api = await createApiInstance(WS_URL)
 
     const t = () => {
-      send(
-        api,
-        NODE,
-        CURRENCY_UNIT,
-        CURRENCY_ID,
-        AMOUNT,
-        ADDRESS
-      )
+      send(api, NODE, CURRENCY_UNIT, CURRENCY_ID, AMOUNT, ADDRESS)
     }
     expect(t).toThrowError(InvalidCurrencyError)
   })
@@ -39,14 +32,7 @@ describe('transferParaToRelay', () => {
     const api = await createApiInstance(WS_URL)
 
     const t = () => {
-      send(
-        api,
-        NODE,
-        CURRENCY_ACA,
-        CURRENCY_ID,
-        AMOUNT,
-        ADDRESS
-      )
+      send(api, NODE, CURRENCY_ACA, CURRENCY_ID, AMOUNT, ADDRESS)
     }
     expect(t).not.toThrowError(InvalidCurrencyError)
   })

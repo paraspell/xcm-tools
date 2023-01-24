@@ -3,26 +3,33 @@ import { Extrinsic } from '../../../types'
 import { createPool } from '../../xyk'
 
 export interface FinalCreatePoolBuilder {
-    build(): Extrinsic
+  build(): Extrinsic
 }
 
 export interface AmountBCreatePoolBuilder {
-    amountB(amountB: number): FinalCreatePoolBuilder
+  amountB(amountB: number): FinalCreatePoolBuilder
 }
 
 export interface AssetBCreatePoolBuilder {
-    assetB(assetB: number): AmountBCreatePoolBuilder
+  assetB(assetB: number): AmountBCreatePoolBuilder
 }
 
 export interface AmountACreatePoolBuilder {
-    amountA(amountA: number): AssetBCreatePoolBuilder
+  amountA(amountA: number): AssetBCreatePoolBuilder
 }
 
 export interface AssetACreatePoolBuilder {
-    assetA(assetA: number): AmountACreatePoolBuilder
+  assetA(assetA: number): AmountACreatePoolBuilder
 }
 
-class CreatePoolBuilder implements AssetACreatePoolBuilder, AmountACreatePoolBuilder, AssetBCreatePoolBuilder, AmountBCreatePoolBuilder, FinalCreatePoolBuilder {
+class CreatePoolBuilder
+  implements
+    AssetACreatePoolBuilder,
+    AmountACreatePoolBuilder,
+    AssetBCreatePoolBuilder,
+    AmountBCreatePoolBuilder,
+    FinalCreatePoolBuilder
+{
   private api: ApiPromise
 
   private _assetA: number
