@@ -19,12 +19,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "unbuild",
+    "build": "rollup -c",
     "dev": "vitest dev",
     "lint": "eslint --fix --ext .ts,.js,.mjs,.cjs .",
     "format:check": "prettier --check src/**/*.ts",
     "format:write": "prettier --write src/**/*.ts",
-    "prepack": "unbuild",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updateAssets.ts",
     "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updatePallets.ts",
     "release": "pnpm test && standard-version && git push --follow-tags && pnpm publish --no-git-checks --access=public",
@@ -34,24 +33,31 @@
   },
   "dependencies": {
     "@polkadot/api": "^9.4.2",
+    "@polkadot/api-base": "^9.12.1",
     "@polkadot/apps-config": "^0.123.1",
     "@polkadot/types": "^9.4.2",
-    "@polkadot/util-crypto": "^10.1.11",
     "ethers": "^5.7.1"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-import-assertions": "^7.20.0",
+    "@babel/preset-env": "^7.20.2",
     "@nuxtjs/eslint-config-typescript": "latest",
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-json": "^6.0.0",
     "@types/node": "^18.11.9",
     "@vitest/coverage-c8": "latest",
     "eslint": "latest",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.3",
+    "rollup": "^3.10.1",
+    "rollup-plugin-dts": "^5.1.1",
+    "rollup-plugin-typescript2": "^0.34.1",
     "standard-version": "latest",
     "ts-node": "^10.9.1",
+    "tslib": "^2.4.1",
     "typescript": "latest",
-    "unbuild": "latest",
-    "vitest": "latest",
-    "eslint-config-prettier": "^8.6.0",
-    "eslint-plugin-prettier": "^4.2.1"
+    "vitest": "latest"
   },
   "packageManager": "pnpm@7.9.5"
 }
