@@ -3,10 +3,10 @@ import { TNode, TPallet, TPalletJsonMap } from '../types'
 
 const palletsMap = palletsMapJson as TPalletJsonMap
 
-export const getDefaultPallet = (node: TNode): TPallet => {
+export function getDefaultPallet(node: TNode): TPallet {
   return palletsMap[node].defaultPallet
 }
 
-export const getSupportedPallets = (node: TNode): TPallet[] => {
+export function getSupportedPallets(node: TNode): TPallet[] {
   return palletsMap[node].supportedPallets
 }

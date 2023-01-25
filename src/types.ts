@@ -1,6 +1,6 @@
 //  derrived from https://github.com/kodadot/packages/blob/main/minimark/src/common/types.ts
 
-import { SubmittableExtrinsic } from '@polkadot/api-base/types'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { NODE_NAMES, SUPPORTED_PALLETS } from './maps/consts'
 
 export type UpdateFunction = (name: string, index: number) => string
