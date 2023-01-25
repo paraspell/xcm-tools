@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.25](///compare/v0.0.22...v0.0.25) (2023-01-25)
+
 ### [0.0.22](///compare/v0.0.21...v0.0.22) (2023-01-24)
 
 ### [0.0.21](///compare/v0.0.20...v0.0.21) (2023-01-15)
