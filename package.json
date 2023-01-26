@@ -31,6 +31,11 @@
     "compile": "tsc --noEmit",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowAny": ["@polkadot/util"]
+    }
+  },
   "dependencies": {
     "@polkadot/api": "^9.4.2",
     "@polkadot/api-base": "^9.12.1",
@@ -39,6 +44,7 @@
     "ethers": "^5.7.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.20.12",
     "@babel/plugin-syntax-import-assertions": "^7.20.0",
     "@babel/preset-env": "^7.20.2",
     "@nuxtjs/eslint-config-typescript": "latest",
