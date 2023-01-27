@@ -5,11 +5,12 @@ on:
     branches:
       - main
       - beta-pre-release
+      - beta-monorepo
   pull_request:
     branches:
       - main
       - beta-pre-release
-
+      - beta-monorepo
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -19,11 +20,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'pnpm'
+          cache: "pnpm"
       - run: pnpm install
-      - run: pnpm compile
-      - run: pnpm format:check
-      - run: pnpm lint
       - run: pnpm build
-      - run: pnpm vitest --coverage
       - uses: codecov/codecov-action@v3

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "compile": {},
+    "format:write": {
+      "dependsOn": ["compile"]
+    },
+    "lint": {
+      "dependsOn": ["format:write"]
+    },
+    "test": {
+      "dependsOn": ["lint"],
+      "inputs": ["src/**/*.ts"],
+      "cache": false
+    },
+    "build": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["test", "^build"]
+    },
+    "release": {
+      "dependsOn": ["build"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}
