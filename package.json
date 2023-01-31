@@ -32,11 +32,13 @@
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
   "dependencies": {
-    "@polkadot/api": "^9.4.2",
-    "@polkadot/api-base": "^9.12.1",
-    "@polkadot/apps-config": "^0.123.1",
-    "@polkadot/types": "^9.4.2",
+    "@polkadot/api-base": "^9.13.2",
+    "@polkadot/apps-config": "^0.124.1",
     "ethers": "^5.7.1"
+  },
+  "peerDependencies": {
+    "@polkadot/api": "^9.13.2",
+    "@polkadot/types": "^9.13.2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.20.0",
