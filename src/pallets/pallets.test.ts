@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { NODE_NAMES, SUPPORTED_PALLETS } from '../maps/consts'
+import { TNode, TPallet } from '../types'
 import { getDefaultPallet, getSupportedPallets } from './pallets'
 
 describe('getDefaultPallet', () => {
@@ -10,6 +11,13 @@ describe('getDefaultPallet', () => {
       const res = SUPPORTED_PALLETS.includes(pallet)
       expect(res).toBeTruthy()
     })
+  })
+
+  it('should return xTokens pallet for Acala', () => {
+    const node: TNode = 'Acala'
+    const defaultPallet: TPallet = 'XTokens'
+    const pallet = getDefaultPallet(node)
+    expect(pallet).toEqual(defaultPallet)
   })
 })
 
@@ -22,5 +30,12 @@ describe('getSupportedPallets', () => {
         expect(res).toBeTruthy()
       })
     })
+  })
+
+  it('should return PolkadotXcm, Xtokens pallets for Acala', () => {
+    const node: TNode = 'Acala'
+    const supportedPallets: TPallet[] = ['PolkadotXcm', 'XTokens']
+    const pallets = getSupportedPallets(node)
+    expect(pallets).toEqual(supportedPallets)
   })
 })
