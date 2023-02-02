@@ -21,7 +21,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "vitest dev",
-    "lint": "eslint --fix --ext .ts,.js,.mjs,.cjs .",
+    "lint:check": "eslint src/**/*.ts",
+    "lint": "eslint --fix src/**/*.ts",
     "format:check": "prettier --check src/**/*.ts",
     "format:write": "prettier --write src/**/*.ts",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updateAssets.ts",

@@ -23,7 +23,7 @@ jobs:
       - run: pnpm install
       - run: pnpm compile
       - run: pnpm format:check
-      - run: pnpm lint
+      - run: pnpm lint:check
       - run: pnpm build
       - run: pnpm vitest --coverage
       - uses: codecov/codecov-action@v3
