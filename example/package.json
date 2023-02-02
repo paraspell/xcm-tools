@@ -1,0 +1,23 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node build/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@paraspell/sdk": "^0.0.27",
+    "@polkadot/api": "^9.13.5",
+    "@polkadot/api-base": "^9.13.5",
+    "@polkadot/apps-config": "^0.124.1",
+    "@polkadot/types": "^9.13.5"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  }
+}
