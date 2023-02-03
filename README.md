@@ -33,13 +33,16 @@ npm install @paraspell/sdk
 ```
 yarn install @paraspell/sdk
 ```
- ##### Install via pnpm
+##### Install via pnpm
 ```
 pnpm install @paraspell/sdk
 ```
 
-  
-
+##### Make sure your project has SDK's peer dependencies
+They are as Peer dependencies to ease installation & fix problems with unmet dependencies. Most of dApps already have these installed by default so PNPM would generate unnecessary warnings. If your project do not have them, just install them in your project directory via:
+```
+pnpm i @polkadot/apps-config @polkadot/api-base @polkadot/types @polkadot/api
+```
  ##### Importing package to your project:
 
 If you wish to use XCM, HRMP, XYK Pallets only you can import Builder like this:
