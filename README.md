@@ -21,29 +21,40 @@ SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer ne
 
   
 
-Install package:
+**Install package:**
 
-  
+#### Since version 1.0.0
+Our SDK introduced all Polkadot libraries as peer dependencies. Reason for this is, that most of the projects use these libraries in some way already and it fixes issues with unmet dependency warnings. Make sure your project have them. You can install them by following command:
 
-##### Install via npm
+##### Install DEPS via npm
+```
+npm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config
+```
+
+##### Install DEPS via yarn
+```
+yarn install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config
+```
+
+##### Install DEPS via pnpm
+```
+pnpm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config
+```
+
+##### Install SDK via npm
 ```
 npm install @paraspell/sdk
 ```
-##### Install via yarn
+##### Install SDK via yarn
 ```
 yarn install @paraspell/sdk
 ```
-##### Install via pnpm
+##### Install SDK via pnpm
 ```
 pnpm install @paraspell/sdk
 ```
 
-##### Make sure your project has SDK's peer dependencies
-They are as Peer dependencies to ease installation & fix problems with unmet dependencies. Most of dApps already have these installed by default so PNPM would generate unnecessary warnings. If your project do not have them, just install them in your project directory via:
-```
-pnpm i @polkadot/apps-config @polkadot/api-base @polkadot/types @polkadot/api
-```
- ##### Importing package to your project:
+##### Importing package to your project:
 
 If you wish to use XCM, HRMP, XYK Pallets only you can import Builder like this:
 ```js
