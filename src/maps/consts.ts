@@ -44,7 +44,12 @@ export const NODE_NAMES = [
   'Quartz',
   'Robonomics',
   'Shiden',
-  'Turing'
+  'Turing',
+  'Equilibrium',
+  'Unique',
+  'Crust',
+  'Efinity',
+  'Ipci'
 ] as const
 
 // This maps our node names to names which polkadot libs are using
@@ -52,6 +57,10 @@ export const nodes: Record<TNode, TNodeDetails> = {
   Statemint: { name: 'statemint', type: 'polkadot' },
   Acala: { name: 'acala', type: 'polkadot' },
   Astar: { name: 'astar', type: 'polkadot' },
+  Equilibrium: { name: 'equilibrium', type: 'polkadot' },
+  Unique: { name: 'unique', type: 'polkadot' },
+  Crust: { name: 'crust', type: 'polkadot' },
+  Efinity: { name: 'efinity', type: 'polkadot' },
   BifrostPolkadot: { name: 'bifrost', type: 'polkadot' },
   Bitgreen: { name: 'bitgreen', type: 'polkadot' },
   Centrifuge: { name: 'centrifuge', type: 'polkadot' },
@@ -82,6 +91,7 @@ export const nodes: Record<TNode, TNodeDetails> = {
   Karura: { name: 'karura', type: 'kusama' },
   Kico: { name: 'kico', type: 'kusama' },
   Kintsugi: { name: 'kintsugi', type: 'kusama' },
+  Ipci: { name: 'ipci', type: 'kusama' },
   Listen: { name: 'listen', type: 'kusama' },
   Litmus: { name: 'litmus', type: 'kusama' },
   Mangata: { name: 'mangata', type: 'kusama' },

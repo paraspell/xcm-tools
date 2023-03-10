@@ -382,6 +382,16 @@ export function constructXTokens(
     case 'Kylin':
       console.log('Transferring ' + currency + ' tokens from Kylin')
       return api.tx.ormlXTokens.transfer(currency, amount, addressSelection, fees)
+    case 'Unique':
+      console.log('Transferring ' + currencyID + ' tokens from Unique')
+      return api.tx.xTokens.transfer({ForeignAssetId: currencyID}, amount, addressSelection, fees)
+    case 'Crust':
+      console.log('Transferring tokens from Crust')
+      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
+    case 'Efinity':
+      console.log('Transferring ' + currencyID + ' tokens from Efinity')
+      return api.tx.xTokens.transfer({currenncyId: [0, currencyID]}, amount, addressSelection, fees)
+
 
     // Kusama xTokens
     case 'Altair':
@@ -489,6 +499,25 @@ export function constructPolkadotXCM(
         )
       }
       break
+    case 'Equilibrium':
+      if (scenario === 'ParaToPara') {
+        console.log('Transferring native tokens from Astar') // UNTESTED AS 0 TX HAVE BEEN DONE FROM PARACHAIN ONLY TO PARACHAIN
+        return api.tx.polkadotXcm.reserveTransferAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
+      } else if (scenario === 'ParaToRelay') {
+        console.log('Transferring DOT tokens from Astar') // UNTESTED AS 0 TX HAVE BEEN DONE FROM PARACHAIN ONLY TO PARACHAIN
+        return api.tx.polkadotXcm.reserveWithdrawAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
+      }
+      break
     case 'Astar':
       if (scenario === 'ParaToPara') {
         console.log('Transferring native tokens from Astar') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-f2b697df74ebe4b62853fe81b8b7d0522464972d
@@ -501,6 +530,17 @@ export function constructPolkadotXCM(
       } else if (scenario === 'ParaToRelay') {
         console.log('Transferring DOT tokens from Astar') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-58e4741f4c9f99bbdf65f16c81a233ad60a7ad1d
         return api.tx.polkadotXcm.reserveWithdrawAssets(
+          header,
+          addressSelection,
+          currencySelection,
+          0
+        )
+      }
+      break
+    case 'Ipci':
+      if (scenario == 'ParaToPara') {
+        console.log('Transferring native tokens from Ipci') // UNTESTED, ONLY HAS CHANNELS W ROBONOMICS & 0 TRANSACTIONS
+        return api.tx.polkadotXcm.reserveTransferAssets(
           header,
           addressSelection,
           currencySelection,
