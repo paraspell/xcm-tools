@@ -30,6 +30,11 @@
         ],
         "otherAssets": [
             {
+                "assetId": "10",
+                "symbol": "UNQ",
+                "decimals": 18
+            },
+            {
                 "assetId": "0",
                 "symbol": "tDOT",
                 "decimals": 10
@@ -88,6 +93,11 @@
                 "assetId": "0x54a37a01cd75b616d63e0ab665bffdb0143c52ae",
                 "symbol": "DAI",
                 "decimals": 18
+            },
+            {
+                "assetId": "11",
+                "symbol": "CRU",
+                "decimals": 12
             },
             {
                 "assetId": "0x5a4d6acdc4e3e5ab15717f407afe957f7a242578",
@@ -220,6 +230,11 @@
                 "assetId": "18446744073709551618",
                 "symbol": "LDOT",
                 "decimals": 10
+            },
+            {
+                "assetId": "18446744073709551630",
+                "symbol": "HDX",
+                "decimals": 12
             },
             {
                 "assetId": "18446744073709551617",
@@ -478,7 +493,13 @@
                 "decimals": 18
             }
         ],
-        "otherAssets": []
+        "otherAssets": [
+            {
+                "assetId": "1",
+                "symbol": "DOT",
+                "decimals": 0
+            }
+        ]
     },
     "Litentry": {
         "paraId": 2013,
@@ -806,6 +827,11 @@
                 "decimals": 0
             },
             {
+                "assetId": "11",
+                "symbol": "web3",
+                "decimals": 18
+            },
+            {
                 "assetId": "6",
                 "symbol": "LPHP",
                 "decimals": 2
@@ -854,6 +880,11 @@
                 "assetId": "8",
                 "symbol": "JOE",
                 "decimals": 9
+            },
+            {
+                "assetId": "1000",
+                "symbol": "BRZ",
+                "decimals": 6
             },
             {
                 "assetId": "1",
@@ -946,6 +977,11 @@
                 "decimals": 6
             },
             {
+                "assetId": "16",
+                "symbol": "XRT",
+                "decimals": 9
+            },
+            {
                 "assetId": "14",
                 "symbol": "USDT",
                 "decimals": 6
@@ -1036,18 +1072,8 @@
         ],
         "otherAssets": [
             {
-                "assetId": "10",
-                "symbol": "LKSM",
-                "decimals": 12
-            },
-            {
-                "assetId": "11",
-                "symbol": "MOVR",
-                "decimals": 18
-            },
-            {
-                "assetId": "13",
-                "symbol": "PHA",
+                "assetId": "9",
+                "symbol": "AUSD",
                 "decimals": 12
             },
             {
@@ -1056,14 +1082,24 @@
                 "decimals": 12
             },
             {
+                "assetId": "10",
+                "symbol": "LKSM",
+                "decimals": 12
+            },
+            {
                 "assetId": "12",
                 "symbol": "KSM",
                 "decimals": 12
             },
             {
-                "assetId": "9",
-                "symbol": "AUSD",
+                "assetId": "13",
+                "symbol": "PHA",
                 "decimals": 12
+            },
+            {
+                "assetId": "11",
+                "symbol": "MOVR",
+                "decimals": 18
             }
         ]
     },
@@ -1476,6 +1512,11 @@
                 "decimals": 12
             },
             {
+                "assetId": "6",
+                "symbol": "SKSM",
+                "decimals": 12
+            },
+            {
                 "assetId": "3",
                 "symbol": "USDT",
                 "decimals": 6
@@ -1571,8 +1612,18 @@
                 "decimals": 10
             },
             {
+                "assetId": "20",
+                "symbol": "TKN0x00000004-TKN0x0000000E",
+                "decimals": 18
+            },
+            {
                 "assetId": "13",
                 "symbol": "TKN0x0000000B-TKN0x00000004",
+                "decimals": 18
+            },
+            {
+                "assetId": "26",
+                "symbol": "ZLK",
                 "decimals": 18
             },
             {
@@ -1611,13 +1662,43 @@
                 "decimals": 12
             },
             {
+                "assetId": "21",
+                "symbol": "TKN0x0000000F-TKN0x00000004",
+                "decimals": 18
+            },
+            {
                 "assetId": "15",
                 "symbol": "vKSM",
                 "decimals": 12
             },
             {
+                "assetId": "24",
+                "symbol": "TKN0x0000000F-TKN0x00000000",
+                "decimals": 18
+            },
+            {
+                "assetId": "22",
+                "symbol": "TKN0x00000010-TKN0x0000000F",
+                "decimals": 18
+            },
+            {
+                "assetId": "29",
+                "symbol": "TKN0x00000004-TKN0x0000000E",
+                "decimals": 18
+            },
+            {
                 "assetId": "10",
                 "symbol": "TKN0x00000005-TKN0x00000000",
+                "decimals": 18
+            },
+            {
+                "assetId": "27",
+                "symbol": "TKN0x0000001A-TKN0x00000000",
+                "decimals": 18
+            },
+            {
+                "assetId": "28",
+                "symbol": "TKN0x00000004-TKN0x0000001A",
                 "decimals": 18
             },
             {
@@ -1651,9 +1732,19 @@
                 "decimals": 18
             },
             {
+                "assetId": "23",
+                "symbol": "vBNC",
+                "decimals": 12
+            },
+            {
                 "assetId": "4",
                 "symbol": "KSM",
                 "decimals": 12
+            },
+            {
+                "assetId": "25",
+                "symbol": "TKN0x00000010-TKN0x00000000",
+                "decimals": 18
             },
             {
                 "assetId": "12",
@@ -2130,6 +2221,11 @@
         ],
         "otherAssets": [
             {
+                "assetId": "863012",
+                "symbol": "VCOP",
+                "decimals": 2
+            },
+            {
                 "assetId": "9999",
                 "symbol": "BTC",
                 "decimals": 20
@@ -2148,6 +2244,11 @@
                 "assetId": "9000",
                 "symbol": "KPOTS",
                 "decimals": 6
+            },
+            {
+                "assetId": "222",
+                "symbol": "PNEO",
+                "decimals": 12
             },
             {
                 "assetId": "1155",
@@ -2450,6 +2551,11 @@
                 "decimals": 18
             },
             {
+                "assetId": "61",
+                "symbol": "CRY",
+                "decimals": 12
+            },
+            {
                 "assetId": "40",
                 "symbol": "ERIC",
                 "decimals": 10
@@ -2670,9 +2776,19 @@
                 "decimals": 20
             },
             {
+                "assetId": "6967",
+                "symbol": "CHAOS",
+                "decimals": 10
+            },
+            {
                 "assetId": "1234",
                 "symbol": "KSM",
                 "decimals": 10
+            },
+            {
+                "assetId": "404",
+                "symbol": "MAXI",
+                "decimals": 8
             },
             {
                 "assetId": "1420",
@@ -2745,6 +2861,11 @@
                 "decimals": 18
             },
             {
+                "assetId": "220204",
+                "symbol": "STM",
+                "decimals": 10
+            },
+            {
                 "assetId": "598",
                 "symbol": "EREN",
                 "decimals": 10
@@ -2805,6 +2926,11 @@
                 "decimals": 1
             },
             {
+                "assetId": "862812",
+                "symbol": "CUBO",
+                "decimals": 9
+            },
+            {
                 "assetId": "888",
                 "symbol": "LUCK",
                 "decimals": 10
@@ -2857,6 +2983,11 @@
                 "decimals": 12
             },
             {
+                "assetId": "8",
+                "symbol": "SDN",
+                "decimals": 18
+            },
+            {
                 "assetId": "1",
                 "symbol": "KSM",
                 "decimals": 12
@@ -2887,5 +3018,66 @@
                 "decimals": 12
             }
         ]
+    },
+    "Equilibrium": {
+        "paraId": 2011,
+        "relayChainAssetSymbol": "DOT",
+        "nativeAssets": [
+            {
+                "symbol": "TOKEN",
+                "decimals": 9
+            }
+        ],
+        "otherAssets": []
+    },
+    "Unique": {
+        "paraId": 2037,
+        "relayChainAssetSymbol": "DOT",
+        "nativeAssets": [
+            {
+                "symbol": "UNQ",
+                "decimals": 18
+            }
+        ],
+        "otherAssets": []
+    },
+    "Crust": {
+        "paraId": 2008,
+        "relayChainAssetSymbol": "DOT",
+        "nativeAssets": [
+            {
+                "symbol": "CRU",
+                "decimals": 12
+            }
+        ],
+        "otherAssets": [
+            {
+                "assetId": "187224307232923873519830480073807488153",
+                "symbol": "EQD",
+                "decimals": 9
+            }
+        ]
+    },
+    "Efinity": {
+        "paraId": 2021,
+        "relayChainAssetSymbol": "DOT",
+        "nativeAssets": [
+            {
+                "symbol": "EFI",
+                "decimals": 18
+            }
+        ],
+        "otherAssets": []
+    },
+    "Ipci": {
+        "paraId": 2222,
+        "relayChainAssetSymbol": "KSM",
+        "nativeAssets": [
+            {
+                "symbol": "MITO",
+                "decimals": 12
+            }
+        ],
+        "otherAssets": []
     }
 }

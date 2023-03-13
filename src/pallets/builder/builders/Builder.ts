@@ -21,7 +21,7 @@ class ToGeneralBuilder {
     this.to = to
   }
 
-  currency(currency: string) {
+  currency(currency: string | number) {
     return SendBuilder.createParaToPara(this.api, this.from, this.to, currency)
   }
 
@@ -43,7 +43,7 @@ class FromGeneralBuilder {
     return new ToGeneralBuilder(this.api, this.from, node)
   }
 
-  currency(currency: string) {
+  currency(currency: string | number) {
     return SendBuilder.createParaToRelay(this.api, this.from, currency)
   }
 

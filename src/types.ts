@@ -17,7 +17,11 @@ export type TAssetDetails = {
   symbol: string
   decimals: number
 }
-export type TNativeAssetDetails = Omit<TAssetDetails, 'assetId'>
+export type TNativeAssetDetails = {
+  assetId?: string
+  symbol: string
+  decimals: number
+}
 export type TNodeAssets = {
   paraId: number
   relayChainAssetSymbol: 'KSM' | 'DOT'
