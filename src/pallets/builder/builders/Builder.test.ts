@@ -1,4 +1,5 @@
-import { vi, describe, expect, it } from 'vitest'
+import { ApiPromise } from '@polkadot/api'
+import { vi, describe, expect, it, beforeEach } from 'vitest'
 import { Bool, TNode } from '../../../types'
 import { createApiInstance } from '../../../utils'
 import * as hrmp from '../../hrmp'
@@ -20,28 +21,33 @@ const CHANNEL_INBOUND = 9
 const CHANNEL_OUTBOUND = 4
 
 describe('Builder', () => {
-  it('should initiatie a para to para transfer', async () => {
-    const api = await createApiInstance(WS_URL)
+  let api: ApiPromise
 
+  beforeEach(async () => {
+    api = await createApiInstance(WS_URL)
+  })
+
+  it('should initiatie a para to para transfer with currency symbol', async () => {
     const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
       return undefined as any
     })
 
-    Builder(api)
-      .from(NODE)
-      .to(NODE_2)
-      .currency(CURRENCY)
-      .currencyId(CURRENCY_ID)
-      .amount(AMOUNT)
-      .address(ADDRESS)
-      .build()
+    Builder(api).from(NODE).to(NODE_2).currency(CURRENCY).amount(AMOUNT).address(ADDRESS).build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, CURRENCY_ID, AMOUNT, ADDRESS, NODE_2)
+    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, AMOUNT, ADDRESS, NODE_2)
+  })
+
+  it('should initiatie a para to para transfer with currency id', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
+      return undefined as any
+    })
+
+    Builder(api).from(NODE).to(NODE_2).currency(CURRENCY_ID).amount(AMOUNT).address(ADDRESS).build()
+
+    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY_ID, AMOUNT, ADDRESS, NODE_2)
   })
 
   it('should initiatie a relay to para transfer', async () => {
-    const api = await createApiInstance(WS_URL)
-
     const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockImplementation(() => {
       return undefined as any
     })
@@ -51,27 +57,27 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS)
   })
 
-  it('should initiatie a para to relay transfer', async () => {
-    const api = await createApiInstance(WS_URL)
-
+  it('should initiatie a para to relay transfer with currency symbol', async () => {
     const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
       return undefined as any
     })
 
-    Builder(api)
-      .from(NODE)
-      .currency(CURRENCY)
-      .currencyId(CURRENCY_ID)
-      .amount(AMOUNT)
-      .address(ADDRESS)
-      .build()
+    Builder(api).from(NODE).currency(CURRENCY).amount(AMOUNT).address(ADDRESS).build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, CURRENCY_ID, AMOUNT, ADDRESS, undefined)
+    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, AMOUNT, ADDRESS, undefined)
+  })
+
+  it('should initiatie a para to relay transfer with currency id', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
+      return undefined as any
+    })
+
+    Builder(api).from(NODE).currency(CURRENCY_ID).amount(AMOUNT).address(ADDRESS).build()
+
+    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY_ID, AMOUNT, ADDRESS, undefined)
   })
 
   it('should open a channel', async () => {
-    const api = await createApiInstance(WS_URL)
-
     const spy = vi.spyOn(parasSudoWrapper, 'openChannel').mockImplementation(() => {
       return undefined as any
     })
@@ -88,8 +94,6 @@ describe('Builder', () => {
   })
 
   it('should close a channel', async () => {
-    const api = await createApiInstance(WS_URL)
-
     const spy = vi.spyOn(hrmp, 'closeChannel').mockImplementation(() => {
       return undefined as any
     })
@@ -105,8 +109,6 @@ describe('Builder', () => {
   })
 
   it('should add liquidity', async () => {
-    const api = await createApiInstance(WS_URL)
-
     const spy = vi.spyOn(xyk, 'addLiquidity').mockImplementation(() => {
       return undefined as any
     })
@@ -128,8 +130,6 @@ describe('Builder', () => {
   })
 
   it('should remove liquidity', async () => {
-    const api = await createApiInstance(WS_URL)
-
     const spy = vi.spyOn(xyk, 'removeLiquidity').mockImplementation(() => {
       return undefined as any
     })
@@ -149,8 +149,6 @@ describe('Builder', () => {
   })
 
   it('should buy', async () => {
-    const api = await createApiInstance(WS_URL)
-
     const spy = vi.spyOn(xyk, 'buy').mockImplementation(() => {
       return undefined as any
     })
@@ -174,8 +172,6 @@ describe('Builder', () => {
   })
 
   it('should sell', async () => {
-    const api = await createApiInstance(WS_URL)
-
     const spy = vi.spyOn(xyk, 'sell').mockImplementation(() => {
       return undefined as any
     })
@@ -199,8 +195,6 @@ describe('Builder', () => {
   })
 
   it('should create pool', async () => {
-    const api = await createApiInstance(WS_URL)
-
     const spy = vi.spyOn(xyk, 'createPool').mockImplementation(() => {
       return undefined as any
     })

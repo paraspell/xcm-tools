@@ -9,6 +9,7 @@ import {
   createCurrencySpecification
 } from '../../utils'
 import { getParaId, hasSupportForAsset } from '../assets'
+import { getAssetBySymbolOrId } from '../assets/assetsUtils'
 import { getDefaultPallet } from '../pallets'
 import { InvalidCurrencyError } from './InvalidCurrencyError'
 import { NodeNotSupportedError } from './nodeNotSupportedError'
@@ -16,15 +17,26 @@ import { NodeNotSupportedError } from './nodeNotSupportedError'
 export function send(
   api: ApiPromise,
   origin: TNode,
-  currency: string,
-  currencyID: number,
+  currencySymbolOrId: string | number,
   amount: any,
   to: string,
   destination?: TNode
 ): Extrinsic {
-  if (!hasSupportForAsset(origin, currency)) {
-    throw new InvalidCurrencyError(`Node ${origin} does not support currency ${currency}.`)
+  const asset = getAssetBySymbolOrId(origin, currencySymbolOrId.toString())
+
+  if (!asset) {
+    throw new InvalidCurrencyError(
+      `Origin node ${origin} does not support currency or currencyId ${currencySymbolOrId}.`
+    )
   }
+
+  if (destination && !hasSupportForAsset(destination, asset.symbol)) {
+    throw new InvalidCurrencyError(
+      `Destination node ${origin} does not support currency or currencyId ${currencySymbolOrId}.`
+    )
+  }
+
+  const { symbol: currencySymbol, assetId: currencyId } = asset
 
   const type: TScenario = destination ? 'ParaToPara' : 'ParaToRelay'
   const paraId = destination ? getParaId(destination) : undefined
@@ -33,8 +45,8 @@ export function send(
     return constructXTokens(
       api,
       origin,
-      currencyID,
-      currency,
+      currencySymbol,
+      currencyId,
       amount,
       handleAddress(type, 'xTokens', api, to, paraId),
       getFees(type)
@@ -47,7 +59,7 @@ export function send(
         origin,
         createHeaderPolkadotXCM(type, paraId),
         handleAddress(type, 'polkadotXCM', api, to, paraId),
-        createCurrencySpecification(amount, type, origin, currencyID),
+        createCurrencySpecification(amount, type, origin, currencyId),
         type
       )
     } else if ((origin === 'Darwinia' || origin === 'Crab') && type === 'ParaToPara') {

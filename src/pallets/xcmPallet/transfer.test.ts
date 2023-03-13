@@ -1,6 +1,8 @@
-import { vi, describe, expect, it } from 'vitest'
-import { TNode } from '../../types'
+import { ApiPromise } from '@polkadot/api'
+import { vi, describe, expect, it, beforeEach } from 'vitest'
+import { NODE_NAMES } from '../../maps/consts'
 import { createApiInstance } from '../../utils'
+import { getAllAssetsSymbols } from '../assets'
 import { InvalidCurrencyError } from './InvalidCurrencyError'
 import { send } from './transfer'
 
@@ -11,29 +13,53 @@ vi.mock('../../utils', () => ({
 }))
 
 const WS_URL = 'wss://para.f3joule.space'
-const NODE: TNode = 'Acala'
 const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
 const AMOUNT = 1000
-const CURRENCY_ACA = 'ACA'
-const CURRENCY_UNIT = 'UNIT'
-const CURRENCY_ID = -1
 
-describe('transferParaToRelay', () => {
-  it('should throw an InvalidCurrencyError when passing Acala and UNIT', async () => {
-    const api = await createApiInstance(WS_URL)
+describe('send', () => {
+  let api: ApiPromise
 
+  beforeEach(async () => {
+    api = await createApiInstance(WS_URL)
+  })
+
+  it('should throw an InvalidCurrencyError when passing Acala and UNIT', () => {
     const t = () => {
-      send(api, NODE, CURRENCY_UNIT, CURRENCY_ID, AMOUNT, ADDRESS)
+      send(api, 'Acala', 'UNIT', AMOUNT, ADDRESS)
     }
     expect(t).toThrowError(InvalidCurrencyError)
   })
 
-  it('should not throw an InvalidCurrencyError when passing Acala and ACA', async () => {
-    const api = await createApiInstance(WS_URL)
-
+  it('should not throw an InvalidCurrencyError when passing Acala and ACA', () => {
     const t = () => {
-      send(api, NODE, CURRENCY_ACA, CURRENCY_ID, AMOUNT, ADDRESS)
+      send(api, 'Acala', 'ACA', AMOUNT, ADDRESS)
     }
     expect(t).not.toThrowError(InvalidCurrencyError)
+  })
+
+  it('should not throw an InvalidCurrencyError when passing Acala and ACA and Unique as destination', () => {
+    const t = () => {
+      send(api, 'Acala', 'UNQ', AMOUNT, ADDRESS, 'Unique')
+    }
+    expect(t).not.toThrowError(InvalidCurrencyError)
+  })
+
+  it('should throw an InvalidCurrencyError when passing Acala and ACA and BifrostPolkadot as destination', () => {
+    const t = () => {
+      send(api, 'Acala', 'UNQ', AMOUNT, ADDRESS, 'BifrostPolkadot')
+    }
+    expect(t).toThrowError(InvalidCurrencyError)
+  })
+
+  it('should not throw an InvalidCurrencyError when passing all defined symbols from all nodes', () => {
+    NODE_NAMES.forEach(node => {
+      const symbols = getAllAssetsSymbols(node)
+      symbols.forEach(symbol => {
+        const t = () => {
+          send(api, node, symbol, AMOUNT, ADDRESS)
+        }
+        expect(t).not.toThrowError(InvalidCurrencyError)
+      })
+    })
   })
 })

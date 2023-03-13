@@ -295,5 +295,38 @@
             "PolkadotXcm",
             "XTokens"
         ]
+    },
+    "Equilibrium": {
+        "defaultPallet": "PolkadotXcm",
+        "supportedPallets": [
+            "PolkadotXcm"
+        ]
+    },
+    "Unique": {
+        "defaultPallet": "XTokens",
+        "supportedPallets": [
+            "XTokens",
+            "PolkadotXcm"
+        ]
+    },
+    "Crust": {
+        "defaultPallet": "XTokens",
+        "supportedPallets": [
+            "PolkadotXcm",
+            "XTokens"
+        ]
+    },
+    "Efinity": {
+        "defaultPallet": "XTokens",
+        "supportedPallets": [
+            "PolkadotXcm",
+            "XTokens"
+        ]
+    },
+    "Ipci": {
+        "defaultPallet": "PolkadotXcm",
+        "supportedPallets": [
+            "PolkadotXcm"
+        ]
     }
 }

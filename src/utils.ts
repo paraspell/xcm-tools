@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
 import { Extrinsic, TNode, TScenario } from './types'
 import { nodes } from './maps/consts'
+import { getAssetsObject } from './pallets/assets'
 
 export function createAccID(api: ApiPromise, account: string) {
   console.log('Generating AccountId32 address')
@@ -190,7 +191,7 @@ export function createCurrencySpecification(
   amount: any,
   scenario: TScenario,
   node?: TNode,
-  cur?: number
+  cur?: number | string
 ) {
   if (scenario === 'ParaToRelay') {
     console.log('polkadotXCM transfer in native currency to Relay chain')
@@ -344,8 +345,8 @@ export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number, no
 export function constructXTokens(
   api: ApiPromise,
   origin: TNode,
-  currencyID: number,
   currency: string,
+  currencyID: number | undefined,
   amount: any,
   addressSelection: any,
   fees: number
@@ -384,14 +385,18 @@ export function constructXTokens(
       return api.tx.ormlXTokens.transfer(currency, amount, addressSelection, fees)
     case 'Unique':
       console.log('Transferring ' + currencyID + ' tokens from Unique')
-      return api.tx.xTokens.transfer({ForeignAssetId: currencyID}, amount, addressSelection, fees)
+      return api.tx.xTokens.transfer({ ForeignAssetId: currencyID }, amount, addressSelection, fees)
     case 'Crust':
       console.log('Transferring tokens from Crust')
       return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
     case 'Efinity':
       console.log('Transferring ' + currencyID + ' tokens from Efinity')
-      return api.tx.xTokens.transfer({currenncyId: [0, currencyID]}, amount, addressSelection, fees)
-
+      return api.tx.xTokens.transfer(
+        { currenncyId: [0, currencyID] },
+        amount,
+        addressSelection,
+        fees
+      )
 
     // Kusama xTokens
     case 'Altair':
