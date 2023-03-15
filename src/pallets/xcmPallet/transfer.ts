@@ -32,7 +32,7 @@ export function send(
 
   if (destination && !hasSupportForAsset(destination, asset.symbol)) {
     throw new InvalidCurrencyError(
-      `Destination node ${origin} does not support currency or currencyId ${currencySymbolOrId}.`
+      `Destination node ${destination} does not support currency or currencyId ${currencySymbolOrId}.`
     )
   }
 

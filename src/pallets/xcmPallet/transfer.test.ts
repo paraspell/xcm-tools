@@ -44,6 +44,13 @@ describe('send', () => {
     expect(t).not.toThrowError(InvalidCurrencyError)
   })
 
+  it('should not throw an InvalidCurrencyError when passing Karura and BSX and Basilisk as destination', () => {
+    const t = () => {
+      send(api, 'Karura', 'BSX', AMOUNT, ADDRESS, 'Basilisk')
+    }
+    expect(t).not.toThrowError(InvalidCurrencyError)
+  })
+
   it('should throw an InvalidCurrencyError when passing Acala and ACA and BifrostPolkadot as destination', () => {
     const t = () => {
       send(api, 'Acala', 'UNQ', AMOUNT, ADDRESS, 'BifrostPolkadot')
