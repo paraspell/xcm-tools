@@ -1,90 +1,118 @@
 
+  
+
 # @paraspell/sdk
+
 ![Full name (3)](https://user-images.githubusercontent.com/55763425/197985791-fc7afa52-061d-413a-bbe9-bf1123f16a50.png)
+
+  
 
   
 
 [![npm version][npm-version-src]][npm-version-href]
 
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-
-[![Known Vulnerabilities](https://snyk.io/test/github/paraspell/sdk/badge.svg)](https://snyk.io/test/github/paraspell/sdk)
   
 
-SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become magician and try your paraSPELLS 🧙✨. 
+[![npm downloads][npm-downloads-src]][npm-downloads-href]
 
-#####  Currently supporting 47 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/main/docs/supportedNodes.md). 
+  
+
+[![Known Vulnerabilities](https://snyk.io/test/github/paraspell/sdk/badge.svg)](https://snyk.io/test/github/paraspell/sdk)
+
+  
+
+SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become magician and try your paraSPELLS 🧙✨.
+
+  
+
+##### Currently supporting 46 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/main/docs/supportedNodes.md).
+
+  
 
 ### Check out our brand new Wiki documentation! [Wiki docs](https://paraspell.github.io/docs/)
+
+  
 
 ## Usage
 
   
 
+  
+
 **Install package:**
 
+  
+
 #### Since version 1.0.0
+
 Our SDK introduced all Polkadot libraries as peer dependencies. Reason for this is, that most of the projects use these libraries in some way already and it fixes issues with unmet dependency warnings. Make sure your project have them. You can install them by following command:
 
-##### Install DEPS via npm
+  
+
+##### Install DEPS via npm||yarn||pnpm
+
 ```
+//npm
 npm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config
-```
-
-##### Install DEPS via yarn
-```
+//yarn
 yarn install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config
-```
-
-##### Install DEPS via pnpm
-```
+//pnpm
 pnpm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config
 ```
 
-##### Install SDK via npm
+##### Install SDK via npm||yarn||pnpm
+
 ```
+//npm
 npm install @paraspell/sdk
-```
-##### Install SDK via yarn
-```
+//yarn
 yarn install @paraspell/sdk
-```
-##### Install SDK via pnpm
-```
+//pnpm
 pnpm install @paraspell/sdk
 ```
-
 ##### Importing package to your project:
 
+  
+
 If you wish to use XCM, HRMP, XYK Pallets only you can import Builder like this:
+
 ```js
-import { Builder } from '@paraspell/sdk'
+import { Builder } from  '@paraspell/sdk'
 ```
 
+  
+
 Old function like import (With assets):
+
 ```js
 // ESM
 import  *  as  paraspell  from  '@paraspell/sdk'
 
 // CommonJS
-const paraspell = require('@paraspell/sdk')
+const  paraspell  =  require('@paraspell/sdk')
 ```
 
   
 
+  
+
 ## Currently implemented pallets
+
 XCM pallet (Combined xTokens, polkadotXCM, ormlXTokens, XcmPallet & relayerXCM):
 
+  
+
 Builder pattern XCM & HRMP construction
+
 ```ts
 //Transfer tokens from Parachain to Parachain
-Builder(api).from(NODE).to(NODE).currency(CurrencyString).currencyId(currencyId).amount(amount).address(address).build()
+Builder(api).from(NODE).to(NODE).currency(CurrencyString||CurrencyID).amount(amount).address(address).build()
 
 //Transfer tokens from Relay chain to Parachain
 Builder(api).to(NODE).amount(amount).address(address).build()
-      
+
 //Transfer tokens from Parachain to Relay chain
-Builder(api).from(NODE).currency(CurrencyString).currencyId(currencyId).amount(amount).address(address).build()
+Builder(api).from(NODE).currency(CurrencyString||CurrencyID).amount(amount).address(address).build()
 
 //Close HRMP channels
 Builder(api).from(NODE).closeChannel().inbound(inbound).outbound(outbound).build()
@@ -93,13 +121,16 @@ Builder(api).from(NODE).closeChannel().inbound(inbound).outbound(outbound).build
 Builder(api).from(NODE).to(NODE).openChannel().maxSize(maxSize).maxMessageSize(maxMsgSize).build()'
 ```
 
+  
+
 Function pattern XCM & HRMP construction
+
 ```ts
 //Transfer tokens from Parachain to Parachain
-paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: currency  symbol  string, currencyID: number (If applicable), amount: any, to: destination  address  string, destination: destination  Parachain  ID)
+paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string, destination: destination  Parachain  ID)
 
 //Transfer tokens from Parachain to Relay chain
-paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: currency  symbol  string, currencyID: number (If applicable), amount: any, to: destination  address  string)
+paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string)
 
 //Transfer tokens from Relay chain to Parachain
 paraspell.xcmPallet.transferRelayToPara(api: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string)
@@ -112,7 +143,10 @@ paraspell.closeChannels.closeChannel(api: ApiPromise, origin: origin  Parachain 
 //Open HRMP channels
 paraspell.openChannels.openChannel(api: ApiPromise, origin: origin  Parachain  ID, destination: destination  Parachain  ID, maxSize: number, maxMessageSize: number)
 ```
+
 Asset pallet contruction:
+
+  
 
 ```ts
 //Returns assets object from assets.json for particular node including information about native and foreign assets
@@ -145,9 +179,13 @@ paraspell.assets.getParaId(node: TNode)
 //Import all compatible nodes as constant:
 paraspell.NODE_NAMES
 ```
+
 Basilisk XYK pallet contruction
 
+  
+
 Builder patternn XYK construction
+
 ```ts
 //Add liquidity to specific pool
 Builder(api).addLiquidity().assetA(assetA).assetB(assetB).amountA(amountA).amountBMaxLimit(maxLimit).build()
@@ -164,7 +202,9 @@ Builder(api).buy().assetOut(out).assetIn(in).amount(amount).maxLimit(maxLimit).d
 //Sell specific asset from pool
 Builder(api).sell().assetIn(in).assetOut(out).amount(amount).maxLimit(maxLimit).discount(discount).build()
 ```
+
 Function pattern XYK contruction
+
 ```ts
 //Add liquidity to specific pool
 paraspell.xyk.addLiquidity(api: ApiPromise, assetA: number, assetB: number, amountA: any, amountBMaxLimit: any)
@@ -183,8 +223,9 @@ paraspell.xyk.sell(api: ApiPromise, assetIn: number, assetOut: number, amount: a
 ```
 
 Node pallet operations
+
 ```js
-import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from '@paraspell/sdk'
+import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk'
 
 //Returns default pallet for specific parachain node
 getDefaultPallet(node: TNode)
@@ -196,14 +237,11 @@ getSupportedPallets(node: TNode)
 console.log(SUPPORTED_PALLETS)
 ```
 
- ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui) or in the Astarot repository [here](https://github.com/paraspell/astarot)
- ##### List of currently compatible nodes can be found [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md)
+##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui) or in the Astarot repository [here](https://github.com/paraspell/astarot)
 
-  
+##### List of currently compatible nodes can be found [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md)
 
 ## 💻 Development
-
-  
 
 - Clone this repository
 
@@ -212,25 +250,40 @@ console.log(SUPPORTED_PALLETS)
 - Install dependencies using `pnpm install`
 
 - Run interactive tests using `pnpm dev`
+
 - Run compilation test using `pnpm compile`
+
 - Run linting test using `pnpm lint`
+
 - Run updateAssets script using `pnpm updateAssets`
+
 - Run updatePallets script using `pnpm updatePallets`
+
 - Run coverage tests usign `pnpm test`
+
 - Run all tests using `pnpm runAll`
 
-
 ## Founded by
+
 [<img width="245" alt="web3 foundation_grants_badge_black" src="https://user-images.githubusercontent.com/55763425/211145923-f7ee2a57-3e63-4b7d-9674-2da9db46b2ee.png">](https://github.com/w3f/Grants-Program/pull/1245)
+
 [<img width="245" alt="web3 foundation_grants_badge_white (1)" src="https://user-images.githubusercontent.com/55763425/211069914-bbec9e28-7a0d-417b-8149-087b7f04e57e.png">](https://github.com/w3f/Grants-Program/pull/1245)
+
+  
 
 [![logo-v1](https://user-images.githubusercontent.com/55763425/204865221-90d2b3cd-f2ac-48a2-a367-08722aa8e923.svg)](https://bsx.fi/)
 
-
+  
+  
+  
 
 ## License
 
+  
+
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
+
+  
 
   
 
@@ -238,26 +291,44 @@ Published under [MIT License](https://github.com/paraspell/sdk/blob/main/LICENSE
 
   
 
+  
+
 <!-- Badges -->
 
+  
+
 [npm-version-src]: https://img.shields.io/npm/v/@paraspell/sdk?style=flat-square
+
+  
 
 [npm-version-href]: https://npmjs.com/package/@paraspell/sdk
 
   
 
+  
+
 [npm-downloads-src]: https://img.shields.io/npm/dm/@paraspell/sdk?style=flat-square
+
+  
 
 [npm-downloads-href]: https://npmjs.com/package/@paraspell/sdk
 
-
+  
+  
+  
 
 [github-actions-src]: https://img.shields.io/github/workflow/status/unjs/@paraspell/sdk/ci/main?style=flat-square
 
+  
+
 [github-actions-href]: https://github.com/unjs/@paraspell/sdk/actions?query=workflow%3Aci
 
-
+  
+  
+  
 
 [codecov-src]: https://img.shields.io/codecov/c/gh/unjs/@paraspell/sdk/main?style=flat-square
+
+  
 
 [codecov-href]: https://codecov.io/gh/unjs/@paraspell/sdk

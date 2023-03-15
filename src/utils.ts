@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
 import { Extrinsic, TNode, TScenario } from './types'
 import { nodes } from './maps/consts'
+import { getAssetsObject } from './pallets/assets'
 
 export function createAccID(api: ApiPromise, account: string) {
   console.log('Generating AccountId32 address')
@@ -190,7 +191,7 @@ export function createCurrencySpecification(
   amount: any,
   scenario: TScenario,
   node?: TNode,
-  cur?: number
+  cur?: number | string
 ) {
   if (scenario === 'ParaToRelay') {
     console.log('polkadotXCM transfer in native currency to Relay chain')
@@ -344,8 +345,8 @@ export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number, no
 export function constructXTokens(
   api: ApiPromise,
   origin: TNode,
-  currencyID: number,
   currency: string,
+  currencyID: number | undefined,
   amount: any,
   addressSelection: any,
   fees: number
@@ -354,13 +355,13 @@ export function constructXTokens(
     // Polkadot xTokens
     case 'Acala':
       console.log('Transferring tokens ' + currency + ' from Acala')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options need addressing
+      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, 'Unlimited') // Multiple asset options need addressing
     case 'BifrostPolkadot':
       console.log('Transferring ' + currency + ' tokens from BifrostPolkadot')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options need addressing
+      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, 'Unlimited') // Multiple asset options need addressing
     case 'Centrifuge':
       console.log('Transferring tokens from Centrifuge')
-      return api.tx.xTokens.transfer('Native', amount, addressSelection, fees) // Multiple asset options needs addressing
+      return api.tx.xTokens.transfer('Native', amount, addressSelection, 'Unlimited') // Multiple asset options needs addressing
     case 'Clover':
       console.log('Transferring tokens from Clover')
       return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
@@ -372,43 +373,44 @@ export function constructXTokens(
       return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options needs addressing
     case 'Moonbeam':
       console.log('Transferring tokens from Moonbeam')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
+      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, 'Unlimited') // Multiple asset options needs addressing
     case 'Parallel':
       console.log('Transferring ' + currencyID + ' tokens from Parallel')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
+      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, 'Unlimited')
     case 'Litentry':
       console.log('Transferring ' + currencyID + ' tokens from Litentry')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees)
+      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, 'Unlimited')
     case 'Kylin':
       console.log('Transferring ' + currency + ' tokens from Kylin')
       return api.tx.ormlXTokens.transfer(currency, amount, addressSelection, fees)
     case 'Unique':
       console.log('Transferring ' + currencyID + ' tokens from Unique')
-      return api.tx.xTokens.transfer({ForeignAssetId: currencyID}, amount, addressSelection, fees)
+      return api.tx.xTokens.transfer({ ForeignAssetId: currencyID }, amount, addressSelection, 'Unlimited')
     case 'Crust':
       console.log('Transferring tokens from Crust')
       return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
     case 'Efinity':
       console.log('Transferring ' + currencyID + ' tokens from Efinity')
-      return api.tx.xTokens.transfer({currenncyId: [0, currencyID]}, amount, addressSelection, fees)
-
+      return api.tx.xTokens.transfer(
+        { currenncyId: [0, currencyID] },
+        amount,
+        addressSelection,
+        'Unlimited'
+      )
 
     // Kusama xTokens
     case 'Altair':
       console.log('Transferring tokens from Altair')
-      return api.tx.xTokens.transfer('Native', amount, addressSelection, fees) // Multiple asset options needs addressing
+      return api.tx.xTokens.transfer('Native', amount, addressSelection, 'Unlimited') // Multiple asset options needs addressing
     case 'Amplitude':
       console.log('Transferring ' + currency + ' tokens from Amplitude')
-      return api.tx.xTokens.transfer({ XCM: currency }, amount, addressSelection, fees)
-    case 'Bajun':
-      console.log('Transferring ' + currencyID + ' token from Bajun')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
+      return api.tx.xTokens.transfer({ XCM: currency }, amount, addressSelection, 'Unlimited')
     case 'Basilisk':
       console.log('Transferring ' + currencyID + ' token from Basilisk')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'BifrostKusama':
       console.log('Transferring ' + currency + ' tokens from BifrostKusama')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options need addressing
+      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, 'Unlimited') // Multiple asset options need addressing
     case 'Pioneer':
       console.log('Transferring tokens from Pioneer')
       return api.tx.xTokens.transfer('NativeToken', amount, addressSelection, fees) // Multiple asset options needs addressing
@@ -426,37 +428,34 @@ export function constructXTokens(
       return api.tx.xTokens.transfer(currency, amount, addressSelection, fees)
     case 'Integritee':
       console.log('Transferring ' + currency + ' tokens from Integritee')
-      return api.tx.xTokens.transfer(currency, amount, addressSelection, fees)
+      return api.tx.xTokens.transfer(currency, amount, addressSelection, 'Unlimited')
     case 'InvArchTinker':
       console.log('Transferring ' + currencyID + ' token from InvArch Tinker')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Karura':
       console.log('Transferring ' + currency + ' tokens from Karura')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options need addressing
+      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, 'Unlimited') // Multiple asset options need addressing
     case 'Kico':
       console.log('Transferring ' + currencyID + ' token from KICO')
       return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
     case 'Kintsugi':
       console.log('Transferring ' + currency + ' tokens from kintsugi')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options need addressing
-    case 'Listen':
-      console.log('Transferring ' + currencyID + ' token from Listen')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
+      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, 'Unlimited') // Multiple asset options need addressing
     case 'Litmus':
       console.log('Transferring tokens from Litmus')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
+      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, 'Unlimited') // Multiple asset options needs addressing
     case 'Mangata':
       console.log('Transferring ' + currencyID + ' token from Mangata')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
+      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, 'Unlimited')
     case 'Moonriver':
       console.log('Transferring tokens from Moonriver')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
+      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, 'Unlimited') // Multiple asset options needs addressing
     case 'ParallelHeiko':
       console.log('Transferring ' + currencyID + ' token from Parallel Heiko')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
+      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, 'Unlimited')
     case 'Picasso':
       console.log('Transferring ' + currencyID + ' token from Picasso')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
+      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, 'Unlimited')
     case 'Pichiu':
       console.log('Transferring ' + currency + ' tokens from Pichiu')
       return api.tx.ormlXTokens.transfer(currency, amount, addressSelection, fees)

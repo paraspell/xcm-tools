@@ -53,13 +53,16 @@ export const NODE_NAMES = [
 ] as const
 
 // This maps our node names to names which polkadot libs are using
+// https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayKusama.ts
+// https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayPolkadot.ts
+// These names can be found under object key 'info'
 export const nodes: Record<TNode, TNodeDetails> = {
   Statemint: { name: 'statemint', type: 'polkadot' },
   Acala: { name: 'acala', type: 'polkadot' },
   Astar: { name: 'astar', type: 'polkadot' },
   Equilibrium: { name: 'equilibrium', type: 'polkadot' },
   Unique: { name: 'unique', type: 'polkadot' },
-  Crust: { name: 'crust', type: 'polkadot' },
+  Crust: { name: 'crustParachain', type: 'polkadot' },
   Efinity: { name: 'efinity', type: 'polkadot' },
   BifrostPolkadot: { name: 'bifrost', type: 'polkadot' },
   Bitgreen: { name: 'bitgreen', type: 'polkadot' },
