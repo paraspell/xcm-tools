@@ -36,10 +36,10 @@
     "ethers": "^5.7.1"
   },
   "peerDependencies": {
-    "@polkadot/api": "^9.13.2",
-    "@polkadot/types": "^9.13.2",
-    "@polkadot/api-base": "^9.13.2",
-    "@polkadot/apps-config": "^0.124.1"
+    "@polkadot/api": "10.2.2",
+    "@polkadot/types": "10.2.2",
+    "@polkadot/api-base": "10.2.2",
+    "@polkadot/apps-config": "0.127.1"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.20.0",
@@ -59,7 +59,7 @@
     "standard-version": "latest",
     "ts-node": "^10.9.1",
     "tslib": "^2.4.1",
-    "typescript": "latest",
+    "typescript": "4.9.5",
     "vitest": "latest"
   },
   "packageManager": "pnpm@7.9.5"
