@@ -3,7 +3,7 @@ import { vi, describe, expect, it, beforeEach } from 'vitest'
 import { NODE_NAMES } from '../../maps/consts'
 import { createApiInstance } from '../../utils'
 import { getAllAssetsSymbols } from '../assets'
-import { InvalidCurrencyError } from './InvalidCurrencyError'
+import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { send } from './transfer'
 
 vi.mock('../../utils', () => ({

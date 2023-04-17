@@ -221,13 +221,6 @@
             "XTokens"
         ]
     },
-    "Listen": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
     "Litmus": {
         "defaultPallet": "XTokens",
         "supportedPallets": [

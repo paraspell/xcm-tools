@@ -1,9 +1,9 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ethers } from 'ethers'
 import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
-import { Extrinsic, TNode, TScenario } from './types'
+import { TNode, TScenario } from './types'
 import { nodes } from './maps/consts'
-import { getAssetsObject } from './pallets/assets'
+import ParachainNode from './nodes/ParachainNode'
 
 export function createAccID(api: ApiPromise, account: string) {
   console.log('Generating AccountId32 address')
@@ -26,11 +26,25 @@ export function handleAddress(
   pallet: string,
   api: ApiPromise,
   to: string,
-  nodeId?: number,
+  nodeId: number | undefined,
   node?: TNode
 ): any {
   if (scenario === 'ParaToRelay' && pallet === 'xTokens') {
     console.log('AccountId32 transfer')
+    if (node === 'BifrostKusama') {
+      return {
+        V3: {
+          parents: 1,
+          interior: {
+            X1: {
+              AccountId32: {
+                id: createAccID(api, to)
+              }
+            }
+          }
+        }
+      }
+    }
     return {
       V1: {
         parents: 1,
@@ -49,6 +63,25 @@ export function handleAddress(
   if (scenario === 'ParaToPara' && pallet === 'xTokens') {
     if (ethers.utils.isAddress(to)) {
       console.log('AccountKey20 transfer')
+      if (node === 'BifrostKusama') {
+        return {
+          V3: {
+            parents: 0,
+            interior: {
+              X2: [
+                {
+                  Parachain: nodeId
+                },
+                {
+                  AccountKey20: {
+                    key: to
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
       return {
         V1: {
           parents: 1,
@@ -92,7 +125,7 @@ export function handleAddress(
   if (scenario === 'ParaToRelay' && pallet === 'polkadotXCM') {
     console.log('AccountId32 transfer')
     return {
-      V1: {
+      [node === 'Statemine' ? 'V3' : 'V1']: {
         parents: 0,
         interior: {
           X1: {
@@ -122,7 +155,7 @@ export function handleAddress(
     if (ethers.utils.isAddress(to)) {
       console.log('AccountKey20 transfer')
       return {
-        V1: {
+        [node === 'Statemine' ? 'V3' : 'V1']: {
           parents: 0,
           interior: {
             X1: {
@@ -137,7 +170,7 @@ export function handleAddress(
     } else {
       console.log('AccountId32 transfer')
       return {
-        V1: {
+        [node === 'Statemine' ? 'V3' : 'V1']: {
           parents: 0,
           interior: {
             X1: {
@@ -342,331 +375,12 @@ export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number, no
   }
 }
 
-export function constructXTokens(
-  api: ApiPromise,
-  origin: TNode,
-  currency: string,
-  currencyID: number | undefined,
-  amount: any,
-  addressSelection: any,
-  fees: number
-): Extrinsic {
-  switch (origin) {
-    // Polkadot xTokens
-    case 'Acala':
-      console.log('Transferring tokens ' + currency + ' from Acala')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, 'Unlimited') // Multiple asset options need addressing
-    case 'BifrostPolkadot':
-      console.log('Transferring ' + currency + ' tokens from BifrostPolkadot')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, 'Unlimited') // Multiple asset options need addressing
-    case 'Centrifuge':
-      console.log('Transferring tokens from Centrifuge')
-      return api.tx.xTokens.transfer('Native', amount, addressSelection, 'Unlimited') // Multiple asset options needs addressing
-    case 'Clover':
-      console.log('Transferring tokens from Clover')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
-    case 'HydraDX':
-      console.log('Transferring ' + currencyID + 'tokens from HydraDX')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
-    case 'Interlay':
-      console.log('Transferring ' + currency + 'tokens from Interlay')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, fees) // Multiple asset options needs addressing
-    case 'Moonbeam':
-      console.log('Transferring tokens from Moonbeam')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, 'Unlimited') // Multiple asset options needs addressing
-    case 'Parallel':
-      console.log('Transferring ' + currencyID + ' tokens from Parallel')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, 'Unlimited')
-    case 'Litentry':
-      console.log('Transferring ' + currencyID + ' tokens from Litentry')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, 'Unlimited')
-    case 'Kylin':
-      console.log('Transferring ' + currency + ' tokens from Kylin')
-      return api.tx.ormlXTokens.transfer(currency, amount, addressSelection, fees)
-    case 'Unique':
-      console.log('Transferring ' + currencyID + ' tokens from Unique')
-      return api.tx.xTokens.transfer({ ForeignAssetId: currencyID }, amount, addressSelection, 'Unlimited')
-    case 'Crust':
-      console.log('Transferring tokens from Crust')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
-    case 'Efinity':
-      console.log('Transferring ' + currencyID + ' tokens from Efinity')
-      return api.tx.xTokens.transfer(
-        { currenncyId: [0, currencyID] },
-        amount,
-        addressSelection,
-        'Unlimited'
-      )
-
-    // Kusama xTokens
-    case 'Altair':
-      console.log('Transferring tokens from Altair')
-      return api.tx.xTokens.transfer('Native', amount, addressSelection, 'Unlimited') // Multiple asset options needs addressing
-    case 'Amplitude':
-      console.log('Transferring ' + currency + ' tokens from Amplitude')
-      return api.tx.xTokens.transfer({ XCM: currency }, amount, addressSelection, 'Unlimited')
-    case 'Basilisk':
-      console.log('Transferring ' + currencyID + ' token from Basilisk')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
-    case 'BifrostKusama':
-      console.log('Transferring ' + currency + ' tokens from BifrostKusama')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, 'Unlimited') // Multiple asset options need addressing
-    case 'Pioneer':
-      console.log('Transferring tokens from Pioneer')
-      return api.tx.xTokens.transfer('NativeToken', amount, addressSelection, fees) // Multiple asset options needs addressing
-    case 'Calamari':
-      console.log('Transferring ' + currencyID + ' token from Calamari')
-      return api.tx.xTokens.transfer({ MantaCurrency: currencyID }, amount, addressSelection, fees) // Currently only option for XCM transfer
-    case 'CrustShadow':
-      console.log('Transferring tokens from CrustShadow')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, fees) // Multiple asset options needs addressing
-    case 'Dorafactory':
-      console.log('Transferring ' + currency + ' tokens from DoraFactory')
-      return api.tx.xTokens.transfer(currency, amount, addressSelection, fees)
-    case 'Imbue':
-      console.log('Transferring ' + currency + ' tokens from imbue')
-      return api.tx.xTokens.transfer(currency, amount, addressSelection, fees)
-    case 'Integritee':
-      console.log('Transferring ' + currency + ' tokens from Integritee')
-      return api.tx.xTokens.transfer(currency, amount, addressSelection, 'Unlimited')
-    case 'InvArchTinker':
-      console.log('Transferring ' + currencyID + ' token from InvArch Tinker')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
-    case 'Karura':
-      console.log('Transferring ' + currency + ' tokens from Karura')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, 'Unlimited') // Multiple asset options need addressing
-    case 'Kico':
-      console.log('Transferring ' + currencyID + ' token from KICO')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
-    case 'Kintsugi':
-      console.log('Transferring ' + currency + ' tokens from kintsugi')
-      return api.tx.xTokens.transfer({ Token: currency }, amount, addressSelection, 'Unlimited') // Multiple asset options need addressing
-    case 'Litmus':
-      console.log('Transferring tokens from Litmus')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, 'Unlimited') // Multiple asset options needs addressing
-    case 'Mangata':
-      console.log('Transferring ' + currencyID + ' token from Mangata')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, 'Unlimited')
-    case 'Moonriver':
-      console.log('Transferring tokens from Moonriver')
-      return api.tx.xTokens.transfer('SelfReserve', amount, addressSelection, 'Unlimited') // Multiple asset options needs addressing
-    case 'ParallelHeiko':
-      console.log('Transferring ' + currencyID + ' token from Parallel Heiko')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, 'Unlimited')
-    case 'Picasso':
-      console.log('Transferring ' + currencyID + ' token from Picasso')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, 'Unlimited')
-    case 'Pichiu':
-      console.log('Transferring ' + currency + ' tokens from Pichiu')
-      return api.tx.ormlXTokens.transfer(currency, amount, addressSelection, fees)
-    case 'Turing':
-      console.log('Transferring ' + currencyID + ' token from Turing')
-      return api.tx.xTokens.transfer(currencyID, amount, addressSelection, fees)
-    default:
-      throw new Error(`Invalid node: ${origin}`)
-  }
-}
-
-export function constructPolkadotXCM(
-  api: ApiPromise,
-  origin: TNode,
-  header: any,
-  addressSelection: any,
-  currencySelection: any,
-  scenario: TScenario
-): Extrinsic {
-  switch (origin) {
-    // Polkadot polkadotXCM
-    case 'Statemint':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring selected tokens from Statemint') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-e4cdf1c59ffbb3d504adbc893d6b7d72665e484d
-        return api.tx.polkadotXcm.limitedReserveTransferAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0,
-          'Unlimited'
-        )
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Statemint') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-c01158ff1a5c5a596138ed9d0f0f2bccc1d9c51d
-        return api.tx.polkadotXcm.limitedTeleportAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0,
-          'Unlimited'
-        )
-      }
-      break
-    case 'Equilibrium':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Astar') // UNTESTED AS 0 TX HAVE BEEN DONE FROM PARACHAIN ONLY TO PARACHAIN
-        return api.tx.polkadotXcm.reserveTransferAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Astar') // UNTESTED AS 0 TX HAVE BEEN DONE FROM PARACHAIN ONLY TO PARACHAIN
-        return api.tx.polkadotXcm.reserveWithdrawAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      }
-      break
-    case 'Astar':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Astar') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-f2b697df74ebe4b62853fe81b8b7d0522464972d
-        return api.tx.polkadotXcm.reserveTransferAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring DOT tokens from Astar') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-58e4741f4c9f99bbdf65f16c81a233ad60a7ad1d
-        return api.tx.polkadotXcm.reserveWithdrawAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      }
-      break
-    case 'Ipci':
-      if (scenario == 'ParaToPara') {
-        console.log('Transferring native tokens from Ipci') // UNTESTED, ONLY HAS CHANNELS W ROBONOMICS & 0 TRANSACTIONS
-        return api.tx.polkadotXcm.reserveTransferAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      }
-      break
-    case 'Darwinia':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Darwinia') // TESTED https://polkadot.subscan.io/xcm_message/polkadot-55c5c36c8fe8794c8cfbea725c9f8bc5984c6b05
-        return api.tx.polkadotXcm.reserveTransferAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      }
-      break
-
-    // Kusama polkadotXCM
-    case 'Statemine':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Statemine') // TESTED https://kusama.subscan.io/xcm_message/kusama-ddc2a48f0d8e0337832d7aae26f6c3053e1f4ffd
-        return api.tx.polkadotXcm.limitedReserveTransferAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0,
-          'Unlimited'
-        )
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Statemine') // TESTED https://kusama.subscan.io/xcm_message/kusama-8e423130a4d8b61679af95dbea18a55124f99672
-        return api.tx.polkadotXcm.limitedTeleportAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0,
-          'Unlimited'
-        )
-      }
-      break
-    case 'Encointer':
-      // NO PARA TO PARA SCENARIOS ON SUBSCAN
-      if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Encointer') // TESTED https://encointer.subscan.io/xcm_message/kusama-418501e86e947b16c4e4e9040694017e64f9b162
-        return api.tx.polkadotXcm.limitedTeleportAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0,
-          'Unlimited'
-        )
-      }
-      break
-    case 'Crab':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Crab') // TESTED https://kusama.subscan.io/xcm_message/kusama-ce7396ec470ba0c6516a50075046ee65464572dc
-        return api.tx.polkadotXcm.reserveTransferAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      }
-      break
-    case 'Quartz':
-      if (scenario === 'ParaToPara') {
-        // TESTED https://quartz.subscan.io/xcm_message/kusama-f5b6580f8d7f97a8d33209d2b5b34d97454587e9
-        console.log('Transferring native tokens from Quartz')
-        return api.tx.polkadotXcm.reserveTransferAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      }
-      break
-    case 'Robonomics':
-      if (scenario === 'ParaToPara') {
-        // TESTED https://robonomics.subscan.io/xcm_message/kusama-e9641113dae59920e5cc0e012f1510ea0e2d0455
-        console.log('Transferring native tokens from Robonomics')
-        return api.tx.polkadotXcm.reserveTransferAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      } else if (scenario === 'ParaToRelay') {
-        // TESTED https://robonomics.subscan.io/xcm_message/kusama-20b03208c99f2ef29d2d4b4cd4bc5659e54311ea
-        console.log('Transferring KSM tokens from Robonomics')
-        return api.tx.polkadotXcm.reserveWithdrawAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      }
-      break
-    case 'Shiden':
-      if (scenario === 'ParaToPara') {
-        console.log('Transferring native tokens from Shiden') // Same as Astar, works.
-        return api.tx.polkadotXcm.reserveTransferAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      } else if (scenario === 'ParaToRelay') {
-        console.log('Transferring KSM tokens from Shiden') // https://shiden.subscan.io/xcm_message/kusama-97eb47c25c781affa557f36dbd117d49f7e1ab4e
-        return api.tx.polkadotXcm.reserveWithdrawAssets(
-          header,
-          addressSelection,
-          currencySelection,
-          0
-        )
-      }
-      break
-  }
-  throw new Error(`Invalid node/ Node does not support XCM at the moment: ${origin}`)
-}
-
-export function getNodeDetails(node: TNode) {
+export function getNode(node: TNode): ParachainNode {
   return nodes[node]
 }
 
 export function getNodeEndpointOption(node: TNode) {
-  const { type, name } = getNodeDetails(node)
+  const { type, name } = getNode(node)
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
   return linked
     ? linked.find(function (o) {
@@ -679,3 +393,5 @@ export async function createApiInstance(wsUrl: string) {
   const wsProvider = new WsProvider(wsUrl)
   return await ApiPromise.create({ provider: wsProvider })
 }
+
+export const lowercaseFirstLetter = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)

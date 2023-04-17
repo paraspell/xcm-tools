@@ -1,23 +1,20 @@
 import type { ApiPromise } from '@polkadot/api'
-import { Extrinsic, TNode, TScenario } from '../../types'
+import { Extrinsic, TNode } from '../../types'
 import {
   handleAddress,
-  getFees,
-  constructXTokens,
-  constructPolkadotXCM,
   createHeaderPolkadotXCM,
-  createCurrencySpecification
+  createCurrencySpecification,
+  getNode
 } from '../../utils'
 import { getParaId, hasSupportForAsset } from '../assets'
 import { getAssetBySymbolOrId } from '../assets/assetsUtils'
-import { getDefaultPallet } from '../pallets'
-import { InvalidCurrencyError } from './InvalidCurrencyError'
-import { NodeNotSupportedError } from './nodeNotSupportedError'
+import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
+import { NodeNotSupportedError } from '../../errors/NodeNotSupportedError'
 
 export function send(
   api: ApiPromise,
   origin: TNode,
-  currencySymbolOrId: string | number,
+  currencySymbolOrId: string | number | bigint,
   amount: any,
   to: string,
   destination?: TNode
@@ -35,63 +32,9 @@ export function send(
       `Destination node ${destination} does not support currency or currencyId ${currencySymbolOrId}.`
     )
   }
-
   const { symbol: currencySymbol, assetId: currencyId } = asset
 
-  const type: TScenario = destination ? 'ParaToPara' : 'ParaToRelay'
-  const paraId = destination ? getParaId(destination) : undefined
-  const pallet = getDefaultPallet(origin)
-  if (pallet === 'XTokens' || pallet === 'OrmlXTokens') {
-    return constructXTokens(
-      api,
-      origin,
-      currencySymbol,
-      currencyId,
-      amount,
-      handleAddress(type, 'xTokens', api, to, paraId),
-      getFees(type)
-    )
-  } else if (pallet === 'PolkadotXcm' || pallet === 'RelayerXcm') {
-    // Specific node requirements
-    if ((origin === 'Statemint' || origin === 'Statemine') && type === 'ParaToPara') {
-      return constructPolkadotXCM(
-        api,
-        origin,
-        createHeaderPolkadotXCM(type, paraId),
-        handleAddress(type, 'polkadotXCM', api, to, paraId),
-        createCurrencySpecification(amount, type, origin, currencyId),
-        type
-      )
-    } else if ((origin === 'Darwinia' || origin === 'Crab') && type === 'ParaToPara') {
-      return constructPolkadotXCM(
-        api,
-        origin,
-        createHeaderPolkadotXCM(type, paraId),
-        handleAddress(type, 'polkadotXCM', api, to, paraId),
-        createCurrencySpecification(amount, type, origin),
-        type
-      )
-    } else if (origin === 'Quartz' && type === 'ParaToPara') {
-      return constructPolkadotXCM(
-        api,
-        origin,
-        createHeaderPolkadotXCM(type, paraId, origin),
-        handleAddress(type, 'polkadotXCM', api, to, paraId, origin),
-        createCurrencySpecification(amount, type, origin),
-        type
-      )
-    }
-
-    return constructPolkadotXCM(
-      api,
-      origin,
-      createHeaderPolkadotXCM(type, paraId),
-      handleAddress(type, 'polkadotXCM', api, to, paraId),
-      createCurrencySpecification(amount, type),
-      type
-    )
-  }
-  throw new Error(`Invalid pallet: ${pallet}`)
+  return getNode(origin).transfer(api, currencySymbol, currencyId, amount, to, destination)
 }
 
 export function transferRelayToPara(

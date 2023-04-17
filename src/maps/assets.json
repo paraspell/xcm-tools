@@ -132,9 +132,19 @@
         ],
         "otherAssets": [
             {
+                "assetId": "100002",
+                "symbol": "xcATOM",
+                "decimals": 6
+            },
+            {
                 "assetId": "18446744073709551623",
                 "symbol": "BNC",
                 "decimals": 12
+            },
+            {
+                "assetId": "1325",
+                "symbol": "MASTR",
+                "decimals": 18
             },
             {
                 "assetId": "18446744073709551619",
@@ -202,6 +212,11 @@
                 "decimals": 18
             },
             {
+                "assetId": "100001",
+                "symbol": "xcINJ",
+                "decimals": 18
+            },
+            {
                 "assetId": "340282366920938463463374607431768211455",
                 "symbol": "DOT",
                 "decimals": 10
@@ -220,6 +235,11 @@
                 "assetId": "18446744073709551616",
                 "symbol": "ACA",
                 "decimals": 12
+            },
+            {
+                "assetId": "1339",
+                "symbol": "TST",
+                "decimals": 18
             },
             {
                 "assetId": "18446744073709551624",
@@ -265,6 +285,11 @@
                 "assetId": "4294969280",
                 "symbol": "USDT",
                 "decimals": 6
+            },
+            {
+                "assetId": "1324",
+                "symbol": "ASTR",
+                "decimals": 20
             },
             {
                 "assetId": "18446744073709551628",
@@ -524,67 +549,67 @@
         "otherAssets": [
             {
                 "assetId": "125699734534028342599692732320197985871",
-                "symbol": "xcRING",
+                "symbol": "RING",
                 "decimals": 18
             },
             {
                 "assetId": "187224307232923873519830480073807488153",
-                "symbol": "xcEQD",
+                "symbol": "EQD",
                 "decimals": 9
             },
             {
                 "assetId": "190590555344745888270686124937537713878",
-                "symbol": "xcEQ",
+                "symbol": "EQ",
                 "decimals": 9
             },
             {
                 "assetId": "224077081838586484055667086558292981199",
-                "symbol": "xcASTR",
+                "symbol": "ASTR",
                 "decimals": 18
             },
             {
                 "assetId": "110021739665376159354538090254163045594",
-                "symbol": "xcaUSD",
+                "symbol": "aUSD",
                 "decimals": 12
             },
             {
                 "assetId": "311091173110107856861649819128533077277",
-                "symbol": "xcUSDT",
+                "symbol": "USDT",
                 "decimals": 6
             },
             {
                 "assetId": "120637696315203257380661607956669368914",
-                "symbol": "xcIBTC",
+                "symbol": "IBTC",
                 "decimals": 8
             },
             {
                 "assetId": "101170542313601871197860408087030232491",
-                "symbol": "xcINTR",
+                "symbol": "INTR",
                 "decimals": 10
             },
             {
                 "assetId": "165823357460190568952172802245839421906",
-                "symbol": "xcBNC",
+                "symbol": "BNC",
                 "decimals": 12
             },
             {
                 "assetId": "32615670524745285411807346420584982855",
-                "symbol": "xcPARA",
+                "symbol": "PARA",
                 "decimals": 12
             },
             {
                 "assetId": "42259045809535163221576417993425387648",
-                "symbol": "xcDOT",
+                "symbol": "DOT",
                 "decimals": 10
             },
             {
                 "assetId": "224821240862170613278369189818311486111",
-                "symbol": "xcACA",
+                "symbol": "ACA",
                 "decimals": 12
             },
             {
                 "assetId": "132685552157663328694213725410064821485",
-                "symbol": "xcPHA",
+                "symbol": "PHA",
                 "decimals": 12
             }
         ]
@@ -1072,9 +1097,39 @@
         ],
         "otherAssets": [
             {
+                "assetId": "21",
+                "symbol": "BNB",
+                "decimals": 18
+            },
+            {
+                "assetId": "26",
+                "symbol": "WBTC",
+                "decimals": 8
+            },
+            {
+                "assetId": "16",
+                "symbol": "USDC",
+                "decimals": 6
+            },
+            {
+                "assetId": "23",
+                "symbol": "BUSD",
+                "decimals": 18
+            },
+            {
                 "assetId": "9",
                 "symbol": "AUSD",
                 "decimals": 12
+            },
+            {
+                "assetId": "18",
+                "symbol": "LDO",
+                "decimals": 18
+            },
+            {
+                "assetId": "20",
+                "symbol": "MATIC",
+                "decimals": 18
             },
             {
                 "assetId": "8",
@@ -1092,14 +1147,54 @@
                 "decimals": 12
             },
             {
+                "assetId": "17",
+                "symbol": "ARB",
+                "decimals": 18
+            },
+            {
+                "assetId": "25",
+                "symbol": "APE",
+                "decimals": 18
+            },
+            {
                 "assetId": "13",
                 "symbol": "PHA",
                 "decimals": 12
             },
             {
+                "assetId": "22",
+                "symbol": "UNI",
+                "decimals": 18
+            },
+            {
+                "assetId": "24",
+                "symbol": "LINK",
+                "decimals": 18
+            },
+            {
+                "assetId": "19",
+                "symbol": "SHIB",
+                "decimals": 18
+            },
+            {
+                "assetId": "27",
+                "symbol": "WETH",
+                "decimals": 18
+            },
+            {
+                "assetId": "15",
+                "symbol": "DAI",
+                "decimals": 18
+            },
+            {
                 "assetId": "11",
                 "symbol": "MOVR",
                 "decimals": 18
+            },
+            {
+                "assetId": "14",
+                "symbol": "USDT",
+                "decimals": 6
             }
         ]
     },
@@ -1335,9 +1430,24 @@
         ],
         "otherAssets": [
             {
+                "assetId": "0x577f6a0718a468e8a995f6075f2325f86a07c83b",
+                "symbol": "BUSD",
+                "decimals": 18
+            },
+            {
+                "assetId": "0xe278651e8ff8e2efa83d7f84205084ebc90688be",
+                "symbol": "BNB",
+                "decimals": 18
+            },
+            {
                 "assetId": "10",
                 "symbol": "KMA",
                 "decimals": 12
+            },
+            {
+                "assetId": "0x66291c7d88d2ed9a708147bae4e0814a76705e2f",
+                "symbol": "WBTC",
+                "decimals": 8
             },
             {
                 "assetId": "14",
@@ -1355,9 +1465,19 @@
                 "decimals": 12
             },
             {
+                "assetId": "0x2c7de70b32cf5f20e02329a88d2e3b00ef85eb90",
+                "symbol": "LINK",
+                "decimals": 18
+            },
+            {
                 "assetId": "8",
                 "symbol": "TEER",
                 "decimals": 12
+            },
+            {
+                "assetId": "0xb4ce1f6109854243d1af13b8ea34ed28542f31e0",
+                "symbol": "LDO",
+                "decimals": 18
             },
             {
                 "assetId": "16",
@@ -1380,6 +1500,11 @@
                 "decimals": 18
             },
             {
+                "assetId": "0x30b1f4ba0b07789be9986fa090a57e0fe5631ebb",
+                "symbol": "APE",
+                "decimals": 18
+            },
+            {
                 "assetId": "20",
                 "symbol": "LIT",
                 "decimals": 12
@@ -1387,6 +1512,16 @@
             {
                 "assetId": "9",
                 "symbol": "NEER",
+                "decimals": 18
+            },
+            {
+                "assetId": "0xa2a37aaf4730aeedada5aa8ee20a4451cb8b1c4e",
+                "symbol": "MATIC",
+                "decimals": 18
+            },
+            {
+                "assetId": "0x77cf14f938cb97308d752647d554439d99b39a3f",
+                "symbol": "UNI",
                 "decimals": 18
             },
             {
@@ -1415,6 +1550,11 @@
                 "decimals": 18
             },
             {
+                "assetId": "0x9759ca009cbcd75a84786ac19bb5d02f8e68bcd9",
+                "symbol": "SHIB",
+                "decimals": 18
+            },
+            {
                 "assetId": "13",
                 "symbol": "CRAB",
                 "decimals": 18
@@ -1422,6 +1562,16 @@
             {
                 "assetId": "0x4bb6afb5fa2b07a5d1c499e1c3ddb5a15e709a71",
                 "symbol": "DAI",
+                "decimals": 18
+            },
+            {
+                "assetId": "0xc621abc3afa3f24886ea278fffa7e10e8969d755",
+                "symbol": "ARB",
+                "decimals": 18
+            },
+            {
+                "assetId": "0xece0cc38021e734bef1d5da071b027ac2f71181f",
+                "symbol": "WETH",
                 "decimals": 18
             },
             {
@@ -1528,63 +1678,6 @@
             }
         ]
     },
-    "Listen": {
-        "paraId": 2118,
-        "relayChainAssetSymbol": "KSM",
-        "nativeAssets": [
-            {
-                "symbol": "LT",
-                "decimals": 12
-            }
-        ],
-        "otherAssets": [
-            {
-                "assetId": "100",
-                "symbol": "KT",
-                "decimals": 12
-            },
-            {
-                "assetId": "0",
-                "symbol": "LT",
-                "decimals": 12
-            },
-            {
-                "assetId": "10",
-                "symbol": "KICO",
-                "decimals": 14
-            },
-            {
-                "assetId": "129",
-                "symbol": "aUSD",
-                "decimals": 12
-            },
-            {
-                "assetId": "2",
-                "symbol": "KSM",
-                "decimals": 12
-            },
-            {
-                "assetId": "5",
-                "symbol": "USDT",
-                "decimals": 12
-            },
-            {
-                "assetId": "128",
-                "symbol": "KAR",
-                "decimals": 12
-            },
-            {
-                "assetId": "131",
-                "symbol": "LKSM",
-                "decimals": 12
-            },
-            {
-                "assetId": "1",
-                "symbol": "LIKE",
-                "decimals": 12
-            }
-        ]
-    },
     "Litmus": {
         "paraId": 2106,
         "relayChainAssetSymbol": "KSM",
@@ -1606,6 +1699,11 @@
             }
         ],
         "otherAssets": [
+            {
+                "assetId": "30",
+                "symbol": "USDT",
+                "decimals": 6
+            },
             {
                 "assetId": "7",
                 "symbol": "TUR",
@@ -1637,6 +1735,11 @@
                 "decimals": 18
             },
             {
+                "assetId": "33",
+                "symbol": "TKN0x00000000-TKN0x0000001F",
+                "decimals": 18
+            },
+            {
                 "assetId": "1",
                 "symbol": "ETH",
                 "decimals": 18
@@ -1660,6 +1763,11 @@
                 "assetId": "14",
                 "symbol": "BNC",
                 "decimals": 12
+            },
+            {
+                "assetId": "31",
+                "symbol": "RMRK",
+                "decimals": 10
             },
             {
                 "assetId": "21",
@@ -1742,6 +1850,11 @@
                 "decimals": 12
             },
             {
+                "assetId": "32",
+                "symbol": "TKN0x00000004-TKN0x0000001E",
+                "decimals": 18
+            },
+            {
                 "assetId": "25",
                 "symbol": "TKN0x00000010-TKN0x00000000",
                 "decimals": 18
@@ -1765,87 +1878,87 @@
         "otherAssets": [
             {
                 "assetId": "108457044225666871745333730479173774551",
-                "symbol": "xcCSM",
+                "symbol": "CSM",
                 "decimals": 12
             },
             {
                 "assetId": "16797826370226091782818345603793389938",
-                "symbol": "xcSDN",
+                "symbol": "SDN",
                 "decimals": 18
             },
             {
                 "assetId": "76100021443485661246318545281171740067",
-                "symbol": "xcHKO",
+                "symbol": "HKO",
                 "decimals": 12
             },
             {
                 "assetId": "328179947973504579459046439826496046832",
-                "symbol": "xcKBTC",
+                "symbol": "KBTC",
                 "decimals": 8
             },
             {
                 "assetId": "108036400430056508975016746969135344601",
-                "symbol": "xcXRT",
+                "symbol": "XRT",
                 "decimals": 9
             },
             {
                 "assetId": "213357169630950964874127107356898319277",
-                "symbol": "xcKMA",
+                "symbol": "KMA",
                 "decimals": 12
             },
             {
                 "assetId": "65216491554813189869575508812319036608",
-                "symbol": "xcLIT",
+                "symbol": "LIT",
                 "decimals": 12
             },
             {
                 "assetId": "173481220575862801646329923366065693029",
-                "symbol": "xcCRAB",
+                "symbol": "CRAB",
                 "decimals": 18
             },
             {
                 "assetId": "189307976387032586987344677431204943363",
-                "symbol": "xcPHA",
+                "symbol": "PHA",
                 "decimals": 12
             },
             {
                 "assetId": "214920334981412447805621250067209749032",
-                "symbol": "xcAUSD",
+                "symbol": "AUSD",
                 "decimals": 12
             },
             {
                 "assetId": "175400718394635817552109270754364440562",
-                "symbol": "xcKINT",
+                "symbol": "KINT",
                 "decimals": 12
             },
             {
                 "assetId": "105075627293246237499203909093923548958",
-                "symbol": "xcTEER",
+                "symbol": "TEER",
                 "decimals": 12
             },
             {
                 "assetId": "311091173110107856861649819128533077277",
-                "symbol": "xcUSDT",
+                "symbol": "USDT",
                 "decimals": 6
             },
             {
                 "assetId": "182365888117048807484804376330534607370",
-                "symbol": "xcRMRK",
+                "symbol": "RMRK",
                 "decimals": 10
             },
             {
                 "assetId": "42259045809535163221576417993425387648",
-                "symbol": "xcKSM",
+                "symbol": "KSM",
                 "decimals": 12
             },
             {
                 "assetId": "10810581592933651521121702237638664357",
-                "symbol": "xcKAR",
+                "symbol": "KAR",
                 "decimals": 12
             },
             {
                 "assetId": "319623561105283008236062145480775032445",
-                "symbol": "xcBNC",
+                "symbol": "BNC",
                 "decimals": 12
             }
         ]
@@ -2179,6 +2292,11 @@
                 "decimals": 10
             },
             {
+                "assetId": "18446744073709551632",
+                "symbol": "NEER",
+                "decimals": 18
+            },
+            {
                 "assetId": "18446744073709551626",
                 "symbol": "SKU",
                 "decimals": 18
@@ -2434,6 +2552,11 @@
                 "assetId": "66",
                 "symbol": "DAI",
                 "decimals": 20
+            },
+            {
+                "assetId": "555",
+                "symbol": "GAME",
+                "decimals": 10
             },
             {
                 "assetId": "14",

@@ -1,4 +1,53 @@
-import { TNode, TNodeDetails } from '../types'
+import Acala from '../nodes/supported/Acala'
+import ParachainNode from '../nodes/ParachainNode'
+import Unique from '../nodes/supported/Unique'
+import { TNode } from '../types'
+import Crust from '../nodes/supported/Crust'
+import Efinity from '../nodes/supported/Efinity'
+import { BifrostPolkadot } from '../nodes/supported/BifrostPolkadot'
+import Bitgreen from '../nodes/supported/Bitgreen'
+import { Centrifuge } from '../nodes/supported/Centrifuge'
+import Clover from '../nodes/supported/Clover'
+import ComposableFinance from '../nodes/supported/ComposableFinance'
+import HydraDX from '../nodes/supported/HydraDX'
+import Interlay from '../nodes/supported/Interlay'
+import Kylin from '../nodes/supported/Kylin'
+import Litentry from '../nodes/supported/Litentry'
+import Moonbeam from '../nodes/supported/Moonbeam'
+import Parallel from '../nodes/supported/Parallel'
+import Altair from '../nodes/supported/Altair'
+import Amplitude from '../nodes/supported/Amplitude'
+import Bajun from '../nodes/supported/Bajun'
+import Basilisk from '../nodes/supported/Basilisk'
+import BifrostKusama from '../nodes/supported/BifrostKusama'
+import Pioneer from '../nodes/supported/Pioneer'
+import Turing from '../nodes/supported/Turing'
+import Pichiu from '../nodes/supported/Pichiu'
+import Picasso from '../nodes/supported/Picasso'
+import ParallelHeiko from '../nodes/supported/ParallelHeiko'
+import Moonriver from '../nodes/supported/Moonriver'
+import Mangata from '../nodes/supported/Mangata'
+import Litmus from '../nodes/supported/Litmus'
+import Kintsugi from '../nodes/supported/Kintsugi'
+import Kico from '../nodes/supported/Kico'
+import Calamari from '../nodes/supported/Calamari'
+import CrustShadow from '../nodes/supported/CrustShadow'
+import Dorafactory from '../nodes/supported/Dorafactory'
+import Imbue from '../nodes/supported/Imbue'
+import Integritee from '../nodes/supported/Integritee'
+import InvArchTinker from '../nodes/supported/InvArchTinker'
+import Karura from '../nodes/supported/Karura'
+import Statemint from '../nodes/supported/Statemint'
+import Statemine from '../nodes/supported/Statemine'
+import Encointer from '../nodes/supported/Encointer'
+import Robonomics from '../nodes/supported/Robonomics'
+import Astar from '../nodes/supported/Astar'
+import Equilibrium from '../nodes/supported/Equilibrium'
+import Darwinia from '../nodes/supported/Darwinia'
+import Crab from '../nodes/supported/Crab'
+import Ipci from '../nodes/supported/Ipci'
+import Quartz from '../nodes/supported/Quartz'
+import Shiden from '../nodes/supported/Shiden'
 
 export const NODE_NAMES = [
   'Statemint',
@@ -34,7 +83,6 @@ export const NODE_NAMES = [
   'Karura',
   'Kico',
   'Kintsugi',
-  'Listen',
   'Litmus',
   'Mangata',
   'Moonriver',
@@ -52,60 +100,55 @@ export const NODE_NAMES = [
   'Ipci'
 ] as const
 
-// This maps our node names to names which polkadot libs are using
-// https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayKusama.ts
-// https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayPolkadot.ts
-// These names can be found under object key 'info'
-export const nodes: Record<TNode, TNodeDetails> = {
-  Statemint: { name: 'statemint', type: 'polkadot' },
-  Acala: { name: 'acala', type: 'polkadot' },
-  Astar: { name: 'astar', type: 'polkadot' },
-  Equilibrium: { name: 'equilibrium', type: 'polkadot' },
-  Unique: { name: 'unique', type: 'polkadot' },
-  Crust: { name: 'crustParachain', type: 'polkadot' },
-  Efinity: { name: 'efinity', type: 'polkadot' },
-  BifrostPolkadot: { name: 'bifrost', type: 'polkadot' },
-  Bitgreen: { name: 'bitgreen', type: 'polkadot' },
-  Centrifuge: { name: 'centrifuge', type: 'polkadot' },
-  Clover: { name: 'clover', type: 'polkadot' },
-  ComposableFinance: { name: 'composableFinance', type: 'polkadot' },
-  Darwinia: { name: 'darwinia', type: 'polkadot' },
-  HydraDX: { name: 'hydra', type: 'polkadot' },
-  Interlay: { name: 'interlay', type: 'polkadot' },
-  Kylin: { name: 'kylin', type: 'polkadot' },
-  Litentry: { name: 'litentry', type: 'polkadot' },
-  Moonbeam: { name: 'moonbeam', type: 'polkadot' },
-  Parallel: { name: 'parallel', type: 'polkadot' },
-  Statemine: { name: 'statemine', type: 'kusama' },
-  Encointer: { name: 'encointer', type: 'kusama' },
-  Altair: { name: 'altair', type: 'kusama' },
-  Amplitude: { name: 'amplitude', type: 'kusama' },
-  Bajun: { name: 'bajun', type: 'kusama' },
-  Basilisk: { name: 'basilisk', type: 'kusama' },
-  BifrostKusama: { name: 'bifrost', type: 'kusama' },
-  Pioneer: { name: 'bitcountryPioneer', type: 'kusama' },
-  Calamari: { name: 'calamari', type: 'kusama' },
-  CrustShadow: { name: 'shadow', type: 'kusama' },
-  Crab: { name: 'crab', type: 'kusama' },
-  Dorafactory: { name: 'dorafactory', type: 'kusama' },
-  Imbue: { name: 'imbue', type: 'kusama' },
-  Integritee: { name: 'integritee', type: 'kusama' },
-  InvArchTinker: { name: 'tinker', type: 'kusama' },
-  Karura: { name: 'karura', type: 'kusama' },
-  Kico: { name: 'kico', type: 'kusama' },
-  Kintsugi: { name: 'kintsugi', type: 'kusama' },
-  Ipci: { name: 'ipci', type: 'kusama' },
-  Listen: { name: 'listen', type: 'kusama' },
-  Litmus: { name: 'litmus', type: 'kusama' },
-  Mangata: { name: 'mangata', type: 'kusama' },
-  Moonriver: { name: 'moonriver', type: 'kusama' },
-  ParallelHeiko: { name: 'heiko', type: 'kusama' },
-  Picasso: { name: 'picasso', type: 'kusama' },
-  Pichiu: { name: 'pichiu', type: 'kusama' },
-  Quartz: { name: 'quartz', type: 'kusama' },
-  Robonomics: { name: 'robonomics', type: 'kusama' },
-  Shiden: { name: 'shiden', type: 'kusama' },
-  Turing: { name: 'turing', type: 'kusama' }
+export const nodes: Record<TNode, ParachainNode> = {
+  Statemint: new Statemint(),
+  Acala: new Acala(),
+  Astar: new Astar(),
+  Equilibrium: new Equilibrium(),
+  Unique: new Unique(),
+  Crust: new Crust(),
+  Efinity: new Efinity(),
+  BifrostPolkadot: new BifrostPolkadot(),
+  Bitgreen: new Bitgreen(),
+  Centrifuge: new Centrifuge(),
+  Clover: new Clover(),
+  ComposableFinance: new ComposableFinance(),
+  Darwinia: new Darwinia(),
+  HydraDX: new HydraDX(),
+  Interlay: new Interlay(),
+  Kylin: new Kylin(),
+  Litentry: new Litentry(),
+  Moonbeam: new Moonbeam(),
+  Parallel: new Parallel(),
+  Statemine: new Statemine(),
+  Encointer: new Encointer(),
+  Altair: new Altair(),
+  Amplitude: new Amplitude(),
+  Bajun: new Bajun(),
+  Basilisk: new Basilisk(),
+  BifrostKusama: new BifrostKusama(),
+  Pioneer: new Pioneer(),
+  Calamari: new Calamari(),
+  CrustShadow: new CrustShadow(),
+  Crab: new Crab(),
+  Dorafactory: new Dorafactory(),
+  Imbue: new Imbue(),
+  Integritee: new Integritee(),
+  InvArchTinker: new InvArchTinker(),
+  Karura: new Karura(),
+  Kico: new Kico(),
+  Kintsugi: new Kintsugi(),
+  Ipci: new Ipci(),
+  Litmus: new Litmus(),
+  Mangata: new Mangata(),
+  Moonriver: new Moonriver(),
+  ParallelHeiko: new ParallelHeiko(),
+  Picasso: new Picasso(),
+  Pichiu: new Pichiu(),
+  Quartz: new Quartz(),
+  Robonomics: new Robonomics(),
+  Shiden: new Shiden(),
+  Turing: new Turing()
 }
 
 export const SUPPORTED_PALLETS = ['XTokens', 'OrmlXTokens', 'PolkadotXcm', 'RelayerXcm'] as const
