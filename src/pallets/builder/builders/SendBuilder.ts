@@ -18,7 +18,7 @@ class SendBuilder implements AmountSendBuilder, AddressSendBuilder, FinalRelayTo
   private api: ApiPromise
   private from: TNode
   private to: TNode | undefined
-  private currency: string | number
+  private currency: string | number | bigint
 
   private _amount: any
   private _address: string
@@ -27,7 +27,7 @@ class SendBuilder implements AmountSendBuilder, AddressSendBuilder, FinalRelayTo
     api: ApiPromise,
     from: TNode,
     to: TNode | undefined,
-    currency: string | number
+    currency: string | number | bigint
   ) {
     this.api = api
     this.from = from
@@ -38,7 +38,7 @@ class SendBuilder implements AmountSendBuilder, AddressSendBuilder, FinalRelayTo
   static createParaToRelay(
     api: ApiPromise,
     from: TNode,
-    currency: string | number
+    currency: string | number | bigint
   ): AmountSendBuilder {
     return new SendBuilder(api, from, undefined, currency)
   }
@@ -47,7 +47,7 @@ class SendBuilder implements AmountSendBuilder, AddressSendBuilder, FinalRelayTo
     api: ApiPromise,
     from: TNode,
     to: TNode,
-    currency: string | number
+    currency: string | number | bigint
   ): AmountSendBuilder {
     return new SendBuilder(api, from, to, currency)
   }

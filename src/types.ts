@@ -1,5 +1,6 @@
 //  derrived from https://github.com/kodadot/packages/blob/main/minimark/src/common/types.ts
 
+import { ApiPromise } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api-base/types'
 import { NODE_NAMES, SUPPORTED_PALLETS } from './maps/consts'
 
@@ -7,10 +8,6 @@ export type UpdateFunction = (name: string, index: number) => string
 export type Extrinsic = SubmittableExtrinsic<'promise'>
 export type ExtrinsicFunction<T> = (arg: T) => Extrinsic
 export type TRelayChainType = 'polkadot' | 'kusama'
-export type TNodeDetails = {
-  name: string
-  type: TRelayChainType
-}
 export type TNode = (typeof NODE_NAMES)[number]
 export type TAssetDetails = {
   assetId: string
@@ -37,3 +34,28 @@ export type TPalletMap = {
   supportedPallets: TPallet[]
 }
 export type TPalletJsonMap = Record<TNode, TPalletMap>
+
+export type XTokensTransferInput = {
+  api: ApiPromise
+  currency: string
+  currencyID: number | undefined
+  amount: any
+  addressSelection: any
+  fees: number
+}
+
+export interface IXTokensTransfer {
+  transferXTokens(input: XTokensTransferInput): Extrinsic
+}
+
+export type PolkadotXCMTransferInput = {
+  api: ApiPromise
+  header: any
+  addressSelection: any
+  currencySelection: any
+  scenario: TScenario
+}
+
+export interface IPolkadotXCMTransfer {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic
+}

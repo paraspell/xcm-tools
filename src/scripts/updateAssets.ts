@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api'
 import { NODE_NAMES } from '../maps/consts'
 import { TAssetJsonMap, TNativeAssetDetails, TNode, TNodeAssets } from '../types'
-import { getNodeDetails, getNodeEndpointOption } from '../utils'
+import { getNode, getNodeEndpointOption } from '../utils'
 import {
   checkForNodeJsEnvironment,
   readJsonOrReturnEmptyObject,
@@ -44,7 +44,6 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Kico: 'currencies.dicoAssetsInfo',
   Karura: 'assetRegistry.assetMetadatas',
   Kintsugi: 'assetRegistry.metadata',
-  Listen: 'currencies.listenAssetsInfo',
   Litmus: null, // Assets query returns empty array
   Mangata: 'assetRegistry.metadata',
   Moonriver: 'assets.metadata',
@@ -195,6 +194,19 @@ const fetchAssetsType2 = async (api: ApiPromise, query: string): Promise<Partial
   return { nativeAssets, otherAssets }
 }
 
+const removePrefix = (inputString: string, prefix: string) => {
+  if (inputString.startsWith(prefix)) {
+    return inputString.substring(prefix.length)
+  }
+  return inputString
+}
+
+const transformOtherAssets = (otherAssets: any, node: TNode) => {
+  return node === 'Moonbeam' || node === 'Moonriver'
+    ? otherAssets.map((asset: any) => ({ ...asset, symbol: removePrefix(asset.symbol, 'xc') }))
+    : otherAssets
+}
+
 const fetchNodeAssets = async (
   node: TNode,
   api: ApiPromise,
@@ -229,14 +241,14 @@ const fetchNodeAssets = async (
 
   const nativeAssets = (await fetchNativeAssets(api)) ?? []
 
-  const fetcher = node === 'Kico' || node === 'Listen' ? fetchOtherAssetsType2 : fetchOtherAssets
+  const fetcher = node === 'Kico' ? fetchOtherAssetsType2 : fetchOtherAssets
   const otherAssets = query ? await fetcher(api, query) : []
 
   await api.disconnect()
 
   return {
     nativeAssets,
-    otherAssets
+    otherAssets: transformOtherAssets(otherAssets, node)
   }
 }
 
@@ -261,7 +273,7 @@ const fetchAllNodesAssets = async (assetMap: NodeToAssetModuleMap, assetsMapJson
     // In case we cannot fetch assets for some node. Keep existing data
     output[nodeName] = {
       paraId,
-      relayChainAssetSymbol: getNodeDetails(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
+      relayChainAssetSymbol: getNode(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
       nativeAssets: isError && oldData ? oldData.nativeAssets : newData?.nativeAssets ?? [],
       otherAssets: isError && oldData ? oldData.otherAssets : newData?.otherAssets ?? []
     }
