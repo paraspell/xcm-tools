@@ -1,0 +1,22 @@
+name: Publish Package to npmjs
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      # Setup .npmrc file to publish to GitHub Packages
+      - uses: pnpm/action-setup@v2
+      - run: pnpm runAll
+      - run: pnpm publish --no-git-checks --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

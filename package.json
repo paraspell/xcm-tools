@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": "@paraspell/sdk",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "format:write": "prettier --write src/**/*.ts",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updateAssets.ts",
     "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updatePallets.ts",
-    "release": "pnpm test && standard-version && git push --follow-tags && pnpm publish --no-git-checks --access=public",
+    "release": "pnpm runAll && standard-version && git push --follow-tags",
     "test": "vitest run --coverage",
     "compile": "tsc --noEmit",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
