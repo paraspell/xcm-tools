@@ -27,7 +27,7 @@
     "format:write": "prettier --write src/**/*.ts",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updateAssets.ts",
     "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updatePallets.ts",
-    "release": "pnpm test && standard-version && git push --follow-tags && pnpm publish --no-git-checks --access=public",
+    "release": "pnpm runAll && pnpm build && standard-version && git push --follow-tags",
     "test": "vitest run --coverage",
     "compile": "tsc --noEmit",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
