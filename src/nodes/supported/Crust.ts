@@ -1,3 +1,5 @@
+//Contains detailed structure of XCM call construction for Crust Parachain
+
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IXTokensTransfer, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'

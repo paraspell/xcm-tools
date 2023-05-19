@@ -1,3 +1,5 @@
+//Contains builder pattern tests for different Builder pattern functionalities
+
 import { ApiPromise } from '@polkadot/api'
 import { vi, describe, expect, it, beforeEach } from 'vitest'
 import { Bool, TNode } from '../../../types'

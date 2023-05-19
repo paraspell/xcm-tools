@@ -1,3 +1,5 @@
+//Script that updates asset map for compatible nodes
+
 import { ApiPromise } from '@polkadot/api'
 import { NODE_NAMES } from '../maps/consts'
 import { TAssetJsonMap, TNativeAssetDetails, TNode, TNodeAssets } from '../types'

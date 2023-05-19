@@ -1,3 +1,5 @@
+//Implements builder pattern for RemoveLiquidity operation used in XYK Pallet
+
 import { ApiPromise } from '@polkadot/api'
 import { Extrinsic } from '../../../types'
 import { removeLiquidity } from '../../xyk'

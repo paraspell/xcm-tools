@@ -1,3 +1,5 @@
+//Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
+
 import { ApiPromise } from '@polkadot/api'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getParaId } from '../pallets/assets'

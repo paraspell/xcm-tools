@@ -1,3 +1,5 @@
+//Contains function for getting Asset ID or Symbol used in XCM call creation
+
 import { TNode } from '../../types'
 import { getAssetsObject } from './assets'
 

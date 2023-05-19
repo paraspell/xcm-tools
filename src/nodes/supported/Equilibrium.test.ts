@@ -1,3 +1,5 @@
+//Contains test scenario for Parachain to Relay chain transfer on Equilibrium
+
 import { describe, it, vi, expect } from 'vitest'
 import { PolkadotXCMTransferInput, TScenario } from '../..'
 import {

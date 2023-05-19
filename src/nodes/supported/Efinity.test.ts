@@ -1,3 +1,5 @@
+//Contains test scenario for Parachain to Parachain transfer on Efinity
+
 import { describe, it, vi, expect } from 'vitest'
 import { TScenario, XTokensTransferInput } from '../..'
 import { createApiInstance, handleAddress } from '../../utils'

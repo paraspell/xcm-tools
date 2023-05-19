@@ -1,3 +1,5 @@
+//Implements builder pattern for Buy operation used in XYK Pallet
+
 import { ApiPromise } from '@polkadot/api'
 import { Bool, Extrinsic } from '../../../types'
 import { buy } from '../../xyk'

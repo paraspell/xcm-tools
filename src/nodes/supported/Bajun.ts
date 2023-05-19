@@ -1,3 +1,5 @@
+//Contains detailed structure of XCM call construction for Bajun Parachain
+
 import ParachainNode from '../ParachainNode'
 
 class Bajun extends ParachainNode {

@@ -1,3 +1,5 @@
+//Contains detailed structure of XCM call construction for Mangata Parachain
+
 import { IXTokensTransfer, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'

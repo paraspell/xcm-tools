@@ -1,3 +1,5 @@
+//Contains call formatting for opening HRMP channels functionality
+
 import type { ApiPromise } from '@polkadot/api'
 import { Extrinsic, TNode } from '../../types'
 import { getParaId } from '../assets'

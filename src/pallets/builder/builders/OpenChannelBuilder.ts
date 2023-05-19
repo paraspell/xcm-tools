@@ -1,3 +1,5 @@
+//Implements builder pattern for Open HRMP channel operation 
+
 import { ApiPromise } from '@polkadot/api'
 import { Extrinsic, TNode } from '../../../types'
 import { openChannel } from '../../parasSudoWrapper'

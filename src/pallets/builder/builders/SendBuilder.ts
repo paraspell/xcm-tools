@@ -1,3 +1,5 @@
+//Implements builder pattern for XCM message creation operations operation 
+
 import { ApiPromise } from '@polkadot/api'
 import { send } from '../../xcmPallet'
 import { Extrinsic, TNode } from '../../../types'

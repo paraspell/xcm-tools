@@ -1,3 +1,5 @@
+//Contains supported Parachains and exports supported XCM Pallets
+
 import Acala from '../nodes/supported/Acala'
 import ParachainNode from '../nodes/ParachainNode'
 import Unique from '../nodes/supported/Unique'

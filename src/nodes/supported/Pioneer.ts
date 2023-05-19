@@ -1,3 +1,5 @@
+//Contains detailed structure of XCM call construction for Pioneer Parachain
+
 import { IXTokensTransfer, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'

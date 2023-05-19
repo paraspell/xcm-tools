@@ -1,3 +1,5 @@
+//Contains detailed structure of XCM call construction for Encoiter Parachain
+
 import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'

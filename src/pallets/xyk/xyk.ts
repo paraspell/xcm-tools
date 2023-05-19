@@ -1,3 +1,5 @@
+//Contains XYK Decentralized exchange functions implemented in collaboration with Basilisk team
+
 import type { ApiPromise } from '@polkadot/api'
 import { Extrinsic, Bool } from '../../types'
 

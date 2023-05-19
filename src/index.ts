@@ -1,3 +1,5 @@
+//Contains all important exports
+
 export * as xcmPallet from './pallets/xcmPallet'
 export * as xyk from './pallets/xyk'
 export * as openChannels from './pallets/parasSudoWrapper'

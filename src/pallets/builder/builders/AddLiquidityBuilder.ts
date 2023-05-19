@@ -1,3 +1,5 @@
+//Implements builder pattern for AddLiquidity operation used in XYK Pallet
+
 import { ApiPromise } from '@polkadot/api'
 import { Extrinsic } from '../../../types'
 import { addLiquidity } from '../../xyk'

@@ -1,3 +1,5 @@
+//Contains tests for different Asset queries used in XCM call creation
+
 import { describe, expect, it } from 'vitest'
 import { NODE_NAMES } from '../../maps/consts'
 import { getAssetsObject } from './assets'

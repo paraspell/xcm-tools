@@ -1,3 +1,5 @@
+//Contains basic Utils for scripts that pull data for Assets and XCM pallets maps
+
 import * as fs from 'fs'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { TNode } from '../types'

@@ -1,3 +1,5 @@
+//Tests designed to try different XCM Pallet XCM messages and errors
+
 import { ApiPromise } from '@polkadot/api'
 import { vi, describe, expect, it, beforeEach } from 'vitest'
 import { NODE_NAMES } from '../../maps/consts'

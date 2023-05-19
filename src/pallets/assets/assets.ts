@@ -1,3 +1,5 @@
+//Contains different useful asset query operations from compatible Parachains asset map
+
 import * as assetsMapJson from '../../maps/assets.json' assert { type: 'json' }
 import { TAssetJsonMap, TNode } from '../../types'
 

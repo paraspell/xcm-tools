@@ -1,3 +1,5 @@
+//Contains detailed structure of XCM call construction for Robonomics Parachain
+
 import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 

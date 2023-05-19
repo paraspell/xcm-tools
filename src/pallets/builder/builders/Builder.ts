@@ -1,3 +1,5 @@
+//Implements general builder pattern, this is Builder main file
+
 import { ApiPromise } from '@polkadot/api'
 import { TNode } from '../../../types'
 import AddLiquidityBuilder from './AddLiquidityBuilder'

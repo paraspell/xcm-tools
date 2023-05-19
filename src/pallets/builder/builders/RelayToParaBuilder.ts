@@ -1,3 +1,5 @@
+//Implements builder pattern for Relay chain to Parachain transfer operation 
+
 import { ApiPromise } from '@polkadot/api'
 import { transferRelayToPara } from '../../xcmPallet'
 import { Extrinsic, TNode } from '../../../types'
