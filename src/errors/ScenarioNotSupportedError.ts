@@ -1,4 +1,4 @@
-//Used to inform user, that Parachain they wish to use does not support scenario they wish to use yet
+// Used to inform user, that Parachain they wish to use does not support scenario they wish to use yet
 
 import { TNode, TScenario } from '../types'
 

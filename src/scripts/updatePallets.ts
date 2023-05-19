@@ -1,4 +1,4 @@
-//Script that updates XCM Pallets map for compatible nodes
+// Script that updates XCM Pallets map for compatible nodes
 
 import { ApiPromise } from '@polkadot/api'
 import { NODE_NAMES } from '../maps/consts'

@@ -1,4 +1,4 @@
-//Contains basic structure of polkadotXCM call
+// Contains basic structure of polkadotXCM call
 
 import { Extrinsic, PolkadotXCMTransferInput } from '../types'
 

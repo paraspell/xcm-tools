@@ -1,4 +1,4 @@
-//Contains basic structure of xToken call
+// Contains basic structure of xToken call
 
 import { Extrinsic, TPallet, XTokensTransferInput } from '../types'
 import { lowercaseFirstLetter } from '../utils'

@@ -1,4 +1,4 @@
-//Script that pulls XCM Pallets for selected Parachain
+// Script that pulls XCM Pallets for selected Parachain
 
 import * as palletsMapJson from '../maps/pallets.json' assert { type: 'json' }
 import { TNode, TPallet, TPalletJsonMap } from '../types'

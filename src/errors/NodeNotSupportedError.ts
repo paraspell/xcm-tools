@@ -1,4 +1,4 @@
-//Used to inform user, that Parachain they wish to use is not supported yet
+// Used to inform user, that Parachain they wish to use is not supported yet
 
 export class NodeNotSupportedError extends Error {
   constructor(message: string) {

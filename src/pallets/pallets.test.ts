@@ -1,4 +1,4 @@
-//Contains tests for querying Parachain XCM Pallets compatibility
+// Contains tests for querying Parachain XCM Pallets compatibility
 
 import { describe, expect, it } from 'vitest'
 import { NODE_NAMES, SUPPORTED_PALLETS } from '../maps/consts'
