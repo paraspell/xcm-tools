@@ -176,6 +176,9 @@ paraspell.assets.getAssetDecimals(node: TNode, symbol: string)
 //Get specific node id
 paraspell.assets.getParaId(node: TNode)
 
+//Get specific TNode from nodeID
+paraspell.assets.getTNode(nodeID: number)
+
 //Import all compatible nodes as constant:
 paraspell.NODE_NAMES
 ```

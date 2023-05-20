@@ -46,12 +46,12 @@ export function transferRelayToPara(
   to: string
 ): Extrinsic | never {
   const paraId = getParaId(destination)
-  if (destination === 'Statemine' || destination === 'Encointer') {
+  if (destination === 'Statemint' || destination === 'Statemine' || destination === 'Encointer') {
     // Same for Statemint, Statemine and Encoiter
     return api.tx.xcmPallet.limitedTeleportAssets(
-      createHeaderPolkadotXCM('RelayToPara', paraId),
-      handleAddress('RelayToPara', '', api, to, paraId),
-      createCurrencySpecification(amount, 'RelayToPara'),
+      createHeaderPolkadotXCM('RelayToPara', paraId,destination),
+      handleAddress('RelayToPara', '', api, to, paraId,destination),
+      createCurrencySpecification(amount, 'RelayToPara',destination),
       0,
       'Unlimited'
     )

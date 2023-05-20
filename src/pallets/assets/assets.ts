@@ -1,6 +1,7 @@
 //Contains different useful asset query operations from compatible Parachains asset map
 
 import * as assetsMapJson from '../../maps/assets.json' assert { type: 'json' }
+import { NODE_NAMES } from '../../maps/consts'
 import { TAssetJsonMap, TNode } from '../../types'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
@@ -56,4 +57,11 @@ export function getAssetDecimals(node: TNode, symbol: string) {
 
 export function getParaId(node: TNode) {
   return getAssetsObject(node).paraId
+}
+
+export function getTNode(nodeID: number) {
+  for (const node of NODE_NAMES){
+  if( getParaId(node) === nodeID )
+    return node
+  }
 }
