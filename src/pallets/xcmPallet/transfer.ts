@@ -62,9 +62,9 @@ export function transferRelayToPara(
     )
   }
   return api.tx.xcmPallet.reserveTransferAssets(
-    createHeaderPolkadotXCM('RelayToPara', paraId),
-    handleAddress('RelayToPara', '', api, to, paraId),
-    createCurrencySpecification(amount, 'RelayToPara'),
+    createHeaderPolkadotXCM('RelayToPara', paraId,destination),
+    handleAddress('RelayToPara', '', api, to, paraId,destination),
+    createCurrencySpecification(amount, 'RelayToPara',destination),
     0
   )
 }
