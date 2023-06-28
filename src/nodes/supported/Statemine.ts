@@ -1,4 +1,4 @@
-//Contains detailed structure of XCM call construction for Statemine Parachain
+// Contains detailed structure of XCM call construction for Statemine Parachain
 
 import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'

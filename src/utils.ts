@@ -1,10 +1,9 @@
-//Contains important call creation utils (Selection of fees,formating of header and more.. )
+// Contains important call creation utils (Selection of fees,formating of header and more.. )
 
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ethers } from 'ethers'
 import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
 import { TNode, TScenario } from './types'
-import { getRelayChainSymbol } from './pallets/assets'
 import { nodes } from './maps/consts'
 import ParachainNode from './nodes/ParachainNode'
 
@@ -127,7 +126,7 @@ export function handleAddress(
   }
   if (scenario === 'ParaToRelay' && pallet === 'polkadotXCM') {
     console.log('AccountId32 transfer')
-    if (node === 'Statemine'){
+    if (node === 'Statemine' || node === 'Statemint') {
       return {
         V3: {
           parents: 0,
@@ -140,21 +139,21 @@ export function handleAddress(
           }
         }
       }
-    }
-    else{
-    return {
-      V1: {
-        parents: 0,
-        interior: {
-          X1: {
-            AccountId32: {
-              network: 'any',
-              id: createAccID(api, to)
+    } else {
+      return {
+        V1: {
+          parents: 0,
+          interior: {
+            X1: {
+              AccountId32: {
+                network: 'any',
+                id: createAccID(api, to)
+              }
             }
           }
         }
       }
-    }}
+    }
   }
 
   if (scenario === 'ParaToPara' && pallet === 'polkadotXCM') {
@@ -172,7 +171,7 @@ export function handleAddress(
     }
     if (ethers.utils.isAddress(to)) {
       console.log('AccountKey20 transfer')
-      if(node === 'Statemine'){
+      if (node === 'Statemine' || node === 'Statemint') {
         return {
           V3: {
             parents: 0,
@@ -185,8 +184,7 @@ export function handleAddress(
             }
           }
         }
-      }
-      else{
+      } else {
         return {
           V1: {
             parents: 0,
@@ -203,7 +201,7 @@ export function handleAddress(
       }
     } else {
       console.log('AccountId32 transfer')
-      if(node === 'Statemine'){
+      if (node === 'Statemine' || node === 'Statemint') {
         return {
           V3: {
             parents: 0,
@@ -216,8 +214,7 @@ export function handleAddress(
             }
           }
         }
-      }
-      else{
+      } else {
         return {
           V1: {
             parents: 0,
@@ -236,34 +233,15 @@ export function handleAddress(
   }
 
   if (scenario === 'RelayToPara') {
-    let asset  = getRelayChainSymbol(node!)
-
     if (ethers.utils.isAddress(to)) {
       console.log('AccountKey20 transfer')
-      if(asset === 'KSM'){
-        return {
-          V3: {
-            parents: 0,
-            interior: {
-              X1: {
-                AccountKey20: {
-                  key: to
-                }
-              }
-            }
-          }
-        }
-      }
-      else{
-        return {
-          V1: {
-            parents: 0,
-            interior: {
-              X1: {
-                AccountKey20: {
-                  network: 'Any',
-                  key: to
-                }
+      return {
+        V3: {
+          parents: 0,
+          interior: {
+            X1: {
+              AccountKey20: {
+                key: to
               }
             }
           }
@@ -271,30 +249,13 @@ export function handleAddress(
       }
     } else {
       console.log('AccountId32 transfer')
-      if(asset === 'KSM'){
-        return {
-          V3: {
-            parents: 0,
-            interior: {
-              X1: {
-                AccountId32: {
-                  id: createAccID(api, to)
-                }
-              }
-            }
-          }
-        }
-      }
-      else{
-        return {
-          V1: {
-            parents: 0,
-            interior: {
-              X1: {
-                AccountId32: {
-                  network: 'Any',
-                  id: createAccID(api, to)
-                }
+      return {
+        V3: {
+          parents: 0,
+          interior: {
+            X1: {
+              AccountId32: {
+                id: createAccID(api, to)
               }
             }
           }
@@ -312,7 +273,7 @@ export function createCurrencySpecification(
 ) {
   if (scenario === 'ParaToRelay') {
     console.log('polkadotXCM transfer in native currency to Relay chain')
-    if(node === 'Statemine'){
+    if (node === 'Statemine' || node === 'Statemint') {
       return {
         V3: [
           {
@@ -328,8 +289,7 @@ export function createCurrencySpecification(
           }
         ]
       }
-    }
-    else{
+    } else {
       return {
         V1: [
           {
@@ -385,7 +345,7 @@ export function createCurrencySpecification(
       }
     } else if ((node === 'Statemint' || node === 'Statemine') && scenario === 'ParaToPara') {
       // Another specific case for Statemint & Statemine to send for example USDt
-      if(node === 'Statemine'){
+      if (node === 'Statemine' || node === 'Statemint') {
         return {
           V3: [
             {
@@ -410,8 +370,7 @@ export function createCurrencySpecification(
             }
           ]
         }
-      }
-      else{
+      } else {
         return {
           V1: [
             {
@@ -440,26 +399,8 @@ export function createCurrencySpecification(
     }
 
     // Otherwise
-    let asset  = getRelayChainSymbol(node!)
-    if(asset === 'KSM'){
-      return {
-        V3: [
-          {
-            id: {
-              Concrete: {
-                parents: 0,
-                interior: 'Here'
-              }
-            },
-            fun: {
-              Fungible: amount
-            }
-          }
-        ]
-      }
-    }
     return {
-      V1: [
+      V3: [
         {
           id: {
             Concrete: {
@@ -479,15 +420,14 @@ export function createCurrencySpecification(
 export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number, node?: TNode) {
   console.log('Generating header for polkadotXCM transfer')
   if (scenario === 'ParaToRelay') {
-    if(node === 'Statemine'){
+    if (node === 'Statemine' || node === 'Statemint') {
       return {
         V3: {
           parents: 1,
           interior: 'Here'
         }
       }
-    }
-    else{
+    } else {
       return {
         V1: {
           parents: 1,
@@ -521,29 +461,12 @@ export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number, no
     }
   }
   if (scenario === 'RelayToPara') {
-    //We check nodeID currency (IF KSM then V3 IF DOT then V1)
-    let asset  = getRelayChainSymbol(node!)
-
-    if(asset === 'KSM'){
-      return {
-        V3: {
-          parents: 0,
-          interior: {
-            X1: {
-              Parachain: nodeId
-            }
-          }
-        }
-      }
-    } 
-    else{
-      return {
-        V1: {
-          parents: 0,
-          interior: {
-            X1: {
-              Parachain: nodeId
-            }
+    return {
+      V3: {
+        parents: 0,
+        interior: {
+          X1: {
+            Parachain: nodeId
           }
         }
       }
