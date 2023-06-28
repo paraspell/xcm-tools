@@ -37,9 +37,9 @@
   },
   "peerDependencies": {
     "@polkadot/api": "^10.6.1",
-    "@polkadot/types": "^10.6.1",
     "@polkadot/api-base": "^10.6.1",
-    "@polkadot/apps-config": "^0.124.1"
+    "@polkadot/apps-config": "^0.124.1",
+    "@polkadot/types": "^10.6.1"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.20.0",
@@ -48,7 +48,7 @@
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-json": "^6.0.0",
     "@types/node": "^18.11.9",
-    "@vitest/coverage-c8": "latest",
+    "@vitest/coverage-v8": "^0.32.2",
     "eslint": "latest",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
