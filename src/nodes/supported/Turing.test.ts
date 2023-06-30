@@ -29,6 +29,6 @@ describe('Turing', () => {
       return undefined as any
     })
     await turing.transferXTokens(input)
-    expect(transferSpy).toHaveBeenCalledWith(input, undefined, fees)
+    expect(transferSpy).toHaveBeenCalledWith(input, undefined)
   })
 })
