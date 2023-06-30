@@ -1,7 +1,7 @@
-//Contains test scenario for Parachain to Parachain transfer on Turing
+// Contains test scenario for Parachain to Parachain transfer on Turing
 
 import { describe, it, vi, expect } from 'vitest'
-import { TScenario, XTokensTransferInput } from '../..'
+import { TScenario, Version, XTokensTransferInput } from '../..'
 import { createApiInstance, handleAddress } from '../../utils'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 import Turing from './Turing'
@@ -16,7 +16,7 @@ describe('Turing', () => {
     const paraId = 2006
     const amount = 1000
     const scenario: TScenario = 'ParaToPara'
-    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', 3, paraId, turing.node)
+    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', Version.V3, paraId)
     const input: XTokensTransferInput = {
       api: undefined as any,
       currency,

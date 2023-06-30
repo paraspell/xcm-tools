@@ -1,7 +1,7 @@
-//Contains test scenario for Parachain to Parachain transfer on Crust
+// Contains test scenario for Parachain to Parachain transfer on Crust
 
 import { describe, it, vi, expect } from 'vitest'
-import { TScenario, XTokensTransferInput } from '../..'
+import { TScenario, Version, XTokensTransferInput } from '../..'
 import { createApiInstance, getFees, handleAddress } from '../../utils'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 import Crust from './Crust'
@@ -16,7 +16,7 @@ describe('Crust', () => {
     const amount = 1000
     const scenario: TScenario = 'ParaToPara'
     const fees = getFees(scenario)
-    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', 1, paraId, crust.node)
+    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', Version.V1, paraId)
     const input: XTokensTransferInput = {
       api: undefined as any,
       currency,

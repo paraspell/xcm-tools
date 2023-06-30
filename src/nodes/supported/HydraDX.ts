@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for HydraDX Parachain
+// Contains detailed structure of XCM call construction for HydraDX Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class HydraDX extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('HydraDX', 'hydra', 'polkadot')
+    super('HydraDX', 'hydra', 'polkadot', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput) {

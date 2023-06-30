@@ -1,4 +1,4 @@
-//Implements general builder pattern, this is Builder main file
+// Implements general builder pattern, this is Builder main file
 
 import { ApiPromise } from '@polkadot/api'
 import { TNode } from '../../../types'
@@ -16,17 +16,15 @@ class ToGeneralBuilder {
   private api: ApiPromise
   private from: TNode
   private to: TNode
-  private version: number
 
-  constructor(api: ApiPromise, from: TNode, to: TNode, version: number) {
+  constructor(api: ApiPromise, from: TNode, to: TNode) {
     this.api = api
     this.from = from
     this.to = to
-    this.version = version
   }
 
   currency(currency: string | number | bigint) {
-    return SendBuilder.createParaToPara(this.api, this.from, this.to, this.version, currency)
+    return SendBuilder.createParaToPara(this.api, this.from, this.to, currency)
   }
 
   openChannel() {
@@ -46,11 +44,11 @@ class FromGeneralBuilder {
   }
 
   to(node: TNode) {
-    return new ToGeneralBuilder(this.api, this.from, node, this.version)
+    return new ToGeneralBuilder(this.api, this.from, node)
   }
 
   currency(currency: string | number | bigint) {
-    return SendBuilder.createParaToRelay(this.api, this.from, this.version, currency)
+    return SendBuilder.createParaToRelay(this.api, this.from, currency)
   }
 
   closeChannel() {

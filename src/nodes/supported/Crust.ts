@@ -1,13 +1,13 @@
-//Contains detailed structure of XCM call construction for Crust Parachain
+// Contains detailed structure of XCM call construction for Crust Parachain
 
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Crust extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Crust', 'crustParachain', 'polkadot')
+    super('Crust', 'crustParachain', 'polkadot', Version.V1)
   }
 
   getCurrencySelection({ currency, currencyID }: XTokensTransferInput) {

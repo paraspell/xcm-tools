@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Basilisk Parachain
+// Contains detailed structure of XCM call construction for Basilisk Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Basilisk extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Basilisk', 'basilisk', 'kusama')
+    super('Basilisk', 'basilisk', 'kusama', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput) {

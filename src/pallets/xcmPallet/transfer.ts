@@ -1,7 +1,7 @@
-//Contains basic call formatting for different XCM Palletss
+// Contains basic call formatting for different XCM Palletss
 
 import type { ApiPromise } from '@polkadot/api'
-import { Extrinsic, TNode } from '../../types'
+import { Extrinsic, TNode, Version } from '../../types'
 import {
   handleAddress,
   createHeaderPolkadotXCM,
@@ -19,7 +19,6 @@ export function send(
   currencySymbolOrId: string | number | bigint,
   amount: any,
   to: string,
-  version: number,
   destination?: TNode
 ): Extrinsic {
   const asset = getAssetBySymbolOrId(origin, currencySymbolOrId.toString())
@@ -37,7 +36,7 @@ export function send(
   }
   const { symbol: currencySymbol, assetId: currencyId } = asset
 
-  return getNode(origin).transfer(api, currencySymbol, currencyId, amount, to, version, destination)
+  return getNode(origin).transfer(api, currencySymbol, currencyId, amount, to, destination)
 }
 
 export function transferRelayToPara(
@@ -50,32 +49,30 @@ export function transferRelayToPara(
   if (destination === 'Statemint' || destination === 'Statemine') {
     // Same for Statemint, Statemine and Encoiter
     return api.tx.xcmPallet.limitedTeleportAssets(
-      createHeaderPolkadotXCM('RelayToPara', 3, paraId,destination),
-      handleAddress('RelayToPara', '', api, to, 3, paraId,destination),
-      createCurrencySpecification(amount, 'RelayToPara', 3, destination),
+      createHeaderPolkadotXCM('RelayToPara', Version.V3, paraId),
+      handleAddress('RelayToPara', '', api, to, Version.V3, paraId),
+      createCurrencySpecification(amount, 'RelayToPara', Version.V3, destination),
       0,
       'Unlimited'
     )
   } else if (destination === 'Encointer') {
     return api.tx.xcmPallet.limitedTeleportAssets(
-      createHeaderPolkadotXCM('RelayToPara', 1, paraId,destination),
-      handleAddress('RelayToPara', '', api, to, 1, paraId,destination),
-      createCurrencySpecification(amount, 'RelayToPara', 1, destination),
+      createHeaderPolkadotXCM('RelayToPara', Version.V1, paraId),
+      handleAddress('RelayToPara', '', api, to, Version.V1, paraId),
+      createCurrencySpecification(amount, 'RelayToPara', Version.V1, destination),
       0,
       'Unlimited'
     )
-  } 
-  
-    else if (destination === 'Darwinia' || destination === 'Crab') {
-    // Do not do anything because Darwinia and Crab does not have DOT and KSM registered 
+  } else if (destination === 'Darwinia' || destination === 'Crab') {
+    // Do not do anything because Darwinia and Crab does not have DOT and KSM registered
     throw new NodeNotSupportedError(
       'These nodes do not support XCM transfers from Relay / to Relay chain.'
     )
   }
   return api.tx.xcmPallet.reserveTransferAssets(
-    createHeaderPolkadotXCM('RelayToPara', 3, paraId,destination),
-    handleAddress('RelayToPara', '', api, to, 3, paraId,destination),
-    createCurrencySpecification(amount, 'RelayToPara', 3, destination),
+    createHeaderPolkadotXCM('RelayToPara', Version.V3, paraId),
+    handleAddress('RelayToPara', '', api, to, Version.V3, paraId),
+    createCurrencySpecification(amount, 'RelayToPara', Version.V3, destination),
     0
   )
 }

@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for DoraFactory Parachain
+// Contains detailed structure of XCM call construction for DoraFactory Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Dorafactory extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Dorafactory', 'dorafactory', 'kusama')
+    super('Dorafactory', 'dorafactory', 'kusama', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput) {

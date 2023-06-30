@@ -1,7 +1,7 @@
-//Contains test scenario for Parachain to Parachain transfer on Ipci
+// Contains test scenario for Parachain to Parachain transfer on Ipci
 
 import { describe, it, vi, expect } from 'vitest'
-import { PolkadotXCMTransferInput, TScenario } from '../..'
+import { PolkadotXCMTransferInput, TScenario, Version } from '../..'
 import {
   createApiInstance,
   createCurrencySpecification,
@@ -19,9 +19,15 @@ describe('Ipci', () => {
     const paraId = 2006
     const amount = 1000
     const scenario: TScenario = 'ParaToPara'
-    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', 1, paraId, ipci.node)
-    const header = createHeaderPolkadotXCM(scenario, 1, paraId, ipci.node)
-    const currencySelection = createCurrencySpecification(amount, scenario, 1, ipci.node, currency)
+    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', Version.V1, paraId)
+    const header = createHeaderPolkadotXCM(scenario, Version.V1, paraId)
+    const currencySelection = createCurrencySpecification(
+      amount,
+      scenario,
+      Version.V1,
+      ipci.node,
+      currency
+    )
     const input: PolkadotXCMTransferInput = {
       api: undefined as any,
       header,

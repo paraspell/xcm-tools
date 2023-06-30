@@ -1,7 +1,7 @@
-//Contains test scenario for Parachain to Relay chain transfer on Equilibrium
+// Contains test scenario for Parachain to Relay chain transfer on Equilibrium
 
 import { describe, it, vi, expect } from 'vitest'
-import { PolkadotXCMTransferInput, TScenario } from '../..'
+import { PolkadotXCMTransferInput, TScenario, Version } from '../..'
 import {
   createApiInstance,
   createCurrencySpecification,
@@ -19,20 +19,12 @@ describe('Equilibrium', () => {
     const paraId = 2006
     const amount = 1000
     const scenario: TScenario = 'ParaToRelay'
-    const addressSelection = handleAddress(
-      scenario,
-      'polkadotXCM',
-      api,
-      '',
-      1,
-      paraId,
-      equilibrium.node
-    )
-    const header = createHeaderPolkadotXCM(scenario, 1, paraId, equilibrium.node)
+    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', Version.V1, paraId)
+    const header = createHeaderPolkadotXCM(scenario, Version.V1, paraId)
     const currencySelection = createCurrencySpecification(
       amount,
       scenario,
-      1,
+      Version.V1,
       equilibrium.node,
       currency
     )

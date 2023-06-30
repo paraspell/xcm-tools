@@ -1,13 +1,13 @@
-//Contains detailed structure of XCM call construction for Crab Parachain
+// Contains detailed structure of XCM call construction for Crab Parachain
 
-import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Crab extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Crab', 'crab', 'kusama')
+    super('Crab', 'crab', 'kusama', Version.V1)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

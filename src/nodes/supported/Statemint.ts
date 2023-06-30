@@ -1,12 +1,12 @@
 // Contains detailed structure of XCM call construction for Statemint Parachain
 
-import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Statemint extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Statemint', 'statemint', 'polkadot')
+    super('Statemint', 'statemint', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

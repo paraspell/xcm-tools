@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for InvArchTinker Parachain
+// Contains detailed structure of XCM call construction for InvArchTinker Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class InvArchTinker extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('InvArchTinker', 'tinker', 'kusama')
+    super('InvArchTinker', 'tinker', 'kusama', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput) {

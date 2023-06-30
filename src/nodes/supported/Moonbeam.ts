@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Moonbeam Parachain
+// Contains detailed structure of XCM call construction for Moonbeam Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Moonbeam extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Moonbeam', 'moonbeam', 'polkadot')
+    super('Moonbeam', 'moonbeam', 'polkadot', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput) {

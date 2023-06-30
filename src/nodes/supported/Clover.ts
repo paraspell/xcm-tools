@@ -1,13 +1,13 @@
-//Contains detailed structure of XCM call construction for Clover Parachain
+// Contains detailed structure of XCM call construction for Clover Parachain
 
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Clover extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Clover', 'clover', 'polkadot')
+    super('Clover', 'clover', 'polkadot', Version.V1)
   }
 
   getCurrencySelection({ currency, currencyID }: XTokensTransferInput) {

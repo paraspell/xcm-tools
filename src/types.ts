@@ -59,3 +59,8 @@ export type PolkadotXCMTransferInput = {
 export interface IPolkadotXCMTransfer {
   transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic
 }
+
+export enum Version {
+  V1,
+  V3
+}

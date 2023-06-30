@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Kintsugi Parachain
+// Contains detailed structure of XCM call construction for Kintsugi Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Kintsugi extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Kintsugi', 'kintsugi', 'kusama')
+    super('Kintsugi', 'kintsugi', 'kusama', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput) {

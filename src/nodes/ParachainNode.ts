@@ -9,7 +9,8 @@ import {
   Extrinsic,
   TScenario,
   IXTokensTransfer,
-  IPolkadotXCMTransfer
+  IPolkadotXCMTransfer,
+  Version
 } from '../types'
 import {
   handleAddress,
@@ -37,10 +38,13 @@ abstract class ParachainNode {
 
   private _type: TRelayChainType
 
-  constructor(node: TNode, name: string, type: TRelayChainType) {
+  private _version: Version
+
+  constructor(node: TNode, name: string, type: TRelayChainType, version: Version) {
     this._name = name
     this._type = type
     this._node = node
+    this._version = version
   }
 
   get name() {
@@ -55,13 +59,16 @@ abstract class ParachainNode {
     return this._node
   }
 
+  get version() {
+    return this._version
+  }
+
   transfer(
     api: ApiPromise,
     currencySymbol: string,
     currencyId: number | undefined,
     amount: any,
     to: string,
-    version: number,
     destination?: TNode
   ): Extrinsic {
     const scenario: TScenario = destination ? 'ParaToPara' : 'ParaToRelay'
@@ -73,26 +80,18 @@ abstract class ParachainNode {
         currency: currencySymbol,
         currencyID: currencyId,
         amount,
-        addressSelection: handleAddress(scenario, 'xTokens', api, to, version, paraId, this._node),
+        addressSelection: handleAddress(scenario, 'xTokens', api, to, this.version, paraId),
         fees: getFees(scenario)
       })
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
         api,
-        header: createHeaderPolkadotXCM(scenario, version, paraId, this._node),
-        addressSelection: handleAddress(
-          scenario,
-          'polkadotXCM',
-          api,
-          to,
-          version,
-          paraId,
-          this._node
-        ),
+        header: createHeaderPolkadotXCM(scenario, this.version, paraId),
+        addressSelection: handleAddress(scenario, 'polkadotXCM', api, to, this.version, paraId),
         currencySelection: createCurrencySpecification(
           amount,
           scenario,
-          version,
+          this.version,
           this._node,
           currencyId
         ),

@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Mangata Parachain
+// Contains detailed structure of XCM call construction for Mangata Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Mangata extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Mangata', 'mangata', 'kusama')
+    super('Mangata', 'mangata', 'kusama', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput) {

@@ -3,10 +3,9 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ethers } from 'ethers'
 import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
-import { TNode, TScenario } from './types'
+import { TNode, TScenario, Version } from './types'
 import { nodes } from './maps/consts'
 import ParachainNode from './nodes/ParachainNode'
-import Karura from './nodes/supported/Karura'
 
 export function createAccID(api: ApiPromise, account: string) {
   console.log('Generating AccountId32 address')
@@ -29,13 +28,12 @@ export function handleAddress(
   pallet: string,
   api: ApiPromise,
   to: string,
-  version: number,
-  nodeId: number | undefined,
-  node?: TNode
+  version: Version,
+  nodeId: number | undefined
 ): any {
   if (scenario === 'ParaToRelay' && pallet === 'xTokens') {
     console.log('AccountId32 transfer')
-    if (version === 3) {
+    if (version === Version.V3) {
       return {
         V3: {
           parents: 1,
@@ -67,7 +65,7 @@ export function handleAddress(
   if (scenario === 'ParaToPara' && pallet === 'xTokens') {
     if (ethers.utils.isAddress(to)) {
       console.log('AccountKey20 transfer')
-      if (version === 3) {
+      if (version === Version.V3) {
         return {
           V3: {
             parents: 1,
@@ -106,7 +104,7 @@ export function handleAddress(
       }
     } else {
       console.log('AccountId32 transfer')
-      if (version === 3) {
+      if (version === Version.V3) {
         return {
           V3: {
             parents: 1,
@@ -148,7 +146,7 @@ export function handleAddress(
 
   if (scenario === 'ParaToRelay' && pallet === 'polkadotXCM') {
     console.log('AccountId32 transfer')
-    if (version === 3) {
+    if (version === Version.V3) {
       return {
         V3: {
           parents: 0,
@@ -181,7 +179,7 @@ export function handleAddress(
   if (scenario === 'ParaToPara' && pallet === 'polkadotXCM') {
     if (ethers.utils.isAddress(to)) {
       console.log('AccountKey20 transfer')
-      if (version === 3) {
+      if (version === Version.V3) {
         return {
           V3: {
             parents: 0,
@@ -211,7 +209,7 @@ export function handleAddress(
       }
     } else {
       console.log('AccountId32 transfer')
-      if (version === 3) {
+      if (version === Version.V3) {
         return {
           V3: {
             parents: 0,
@@ -278,13 +276,13 @@ export function handleAddress(
 export function createCurrencySpecification(
   amount: any,
   scenario: TScenario,
-  version: number, 
+  version: Version,
   node?: TNode,
   cur?: number | string
 ) {
   if (scenario === 'ParaToRelay') {
     console.log('polkadotXCM transfer in native currency to Relay chain')
-    if (version === 3) {
+    if (version === Version.V3) {
       return {
         V3: [
           {
@@ -343,31 +341,31 @@ export function createCurrencySpecification(
       }
     } else if ((node === 'Statemine' || node === 'Statemint') && scenario === 'ParaToPara') {
       // Another specific case for Statemint & Statemine to send for example USDt
-        return {
-          V3: [
-            {
-              id: {
-                Concrete: {
-                  parents: 0,
-                  interior: {
-                    X2: [
-                      {
-                        PalletInstance: 50
-                      },
-                      {
-                        GeneralIndex: cur
-                      }
-                    ]
-                  }
+      return {
+        V3: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [
+                    {
+                      PalletInstance: 50
+                    },
+                    {
+                      GeneralIndex: cur
+                    }
+                  ]
                 }
-              },
-              fun: {
-                Fungible: amount
               }
+            },
+            fun: {
+              Fungible: amount
             }
-          ]
-        }
-    } 
+          }
+        ]
+      }
+    }
 
     // Otherwise
     return {
@@ -386,13 +384,12 @@ export function createCurrencySpecification(
       ]
     }
   }
-
 }
 
-export function createHeaderPolkadotXCM(scenario: TScenario, version: number,  nodeId?: number, node?: TNode) {
+export function createHeaderPolkadotXCM(scenario: TScenario, version: Version, nodeId?: number) {
   console.log('Generating header for polkadotXCM transfer')
   if (scenario === 'ParaToRelay') {
-    if (version === 3) {
+    if (version === Version.V3) {
       return {
         V3: {
           parents: 1,
@@ -409,7 +406,7 @@ export function createHeaderPolkadotXCM(scenario: TScenario, version: number,  n
     }
   }
   if (scenario === 'ParaToPara') {
-    if (version === 3){
+    if (version === Version.V3) {
       return {
         V3: {
           parents: 1,
@@ -420,8 +417,7 @@ export function createHeaderPolkadotXCM(scenario: TScenario, version: number,  n
           }
         }
       }
-    }
-    else {
+    } else {
       return {
         V1: {
           parents: 1,
