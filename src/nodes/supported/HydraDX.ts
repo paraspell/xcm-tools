@@ -11,7 +11,7 @@ class HydraDX extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput) {
     const { currencyID, fees } = input
-    return XTokensTransferImpl.transferXTokens(input, currencyID, fees)
+    return XTokensTransferImpl.transferXTokens(input, currencyID)
   }
 }
 
