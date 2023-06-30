@@ -6,7 +6,7 @@ import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Astar extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Astar', 'astar', 'polkadot', Version.V1)
+    super('Astar', 'astar', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

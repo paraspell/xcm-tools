@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Basilisk extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Basilisk', 'basilisk', 'kusama', Version.V1)
+    super('Basilisk', 'basilisk', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

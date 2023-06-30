@@ -7,7 +7,7 @@ import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Quartz extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Quartz', 'quartz', 'kusama', Version.V1)
+    super('Quartz', 'quartz', 'kusama', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

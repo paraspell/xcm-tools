@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Mangata extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Mangata', 'mangata', 'kusama', Version.V1)
+    super('Mangata', 'mangata', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

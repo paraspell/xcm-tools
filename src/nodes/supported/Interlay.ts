@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Interlay extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Interlay', 'interlay', 'polkadot', Version.V1)
+    super('Interlay', 'interlay', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

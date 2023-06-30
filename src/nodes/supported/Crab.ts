@@ -7,7 +7,7 @@ import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Crab extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Crab', 'crab', 'kusama', Version.V1)
+    super('Crab', 'crab', 'kusama', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

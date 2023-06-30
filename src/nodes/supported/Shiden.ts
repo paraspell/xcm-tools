@@ -6,7 +6,7 @@ import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Shiden extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Shiden', 'shiden', 'kusama', Version.V1)
+    super('Shiden', 'shiden', 'kusama', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

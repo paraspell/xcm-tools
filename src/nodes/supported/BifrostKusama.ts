@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class BifrostKusama extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('BifrostKusama', 'bifrost', 'kusama', Version.V1)
+    super('BifrostKusama', 'bifrost', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

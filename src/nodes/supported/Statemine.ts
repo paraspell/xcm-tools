@@ -6,7 +6,7 @@ import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Statemine extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Statemine', 'statemine', 'kusama', Version.V1)
+    super('Statemine', 'statemine', 'kusama', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

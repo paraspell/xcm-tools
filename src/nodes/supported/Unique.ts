@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Unique extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Unique', 'unique', 'polkadot', Version.V1)
+    super('Unique', 'unique', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

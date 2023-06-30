@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Moonriver extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Moonriver', 'moonriver', 'kusama', Version.V1)
+    super('Moonriver', 'moonriver', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

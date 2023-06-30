@@ -7,7 +7,7 @@ import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Darwinia extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Darwinia', 'darwinia', 'polkadot', Version.V1)
+    super('Darwinia', 'darwinia', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

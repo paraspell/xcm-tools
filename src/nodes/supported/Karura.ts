@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Karura extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Karura', 'karura', 'kusama', Version.V1)
+    super('Karura', 'karura', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

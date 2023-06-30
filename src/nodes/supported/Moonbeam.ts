@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Moonbeam extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Moonbeam', 'moonbeam', 'polkadot', Version.V1)
+    super('Moonbeam', 'moonbeam', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Turing extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Turing', 'turing', 'kusama', Version.V1)
+    super('Turing', 'turing', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

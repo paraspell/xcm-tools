@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Efinity extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Efinity', 'efinity', 'polkadot', Version.V1)
+    super('Efinity', 'efinity', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

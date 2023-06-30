@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Kintsugi extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Kintsugi', 'kintsugi', 'kusama', Version.V1)
+    super('Kintsugi', 'kintsugi', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

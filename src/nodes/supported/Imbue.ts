@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Imbue extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Imbue', 'imbue', 'kusama', Version.V1)
+    super('Imbue', 'imbue', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

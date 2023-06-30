@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class HydraDX extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('HydraDX', 'hydra', 'polkadot', Version.V1)
+    super('HydraDX', 'hydra', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

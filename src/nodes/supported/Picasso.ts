@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Picasso extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Picasso', 'picasso', 'kusama', Version.V1)
+    super('Picasso', 'picasso', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

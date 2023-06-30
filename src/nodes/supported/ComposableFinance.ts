@@ -5,7 +5,7 @@ import ParachainNode from '../ParachainNode'
 
 class ComposableFinance extends ParachainNode {
   constructor() {
-    super('ComposableFinance', 'composableFinance', 'polkadot', Version.V1)
+    super('ComposableFinance', 'composableFinance', 'polkadot', Version.V3)
   }
 }
 
