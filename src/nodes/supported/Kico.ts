@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Kico Parachain
+// Contains detailed structure of XCM call construction for Kico Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Kico extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Kico', 'kico', 'kusama')
+    super('Kico', 'kico', 'kusama', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput) {

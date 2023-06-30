@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Altair Parachain
+// Contains detailed structure of XCM call construction for Altair Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Altair extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Altair', 'altair', 'kusama')
+    super('Altair', 'altair', 'kusama', Version.V1)
   }
 
   private static getCurrencySelection({ currency, currencyID }: XTokensTransferInput) {

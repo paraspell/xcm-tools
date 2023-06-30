@@ -1,11 +1,11 @@
-//Contains detailed structure of XCM call construction for Robonomics Parachain
+// Contains detailed structure of XCM call construction for Robonomics Parachain
 
-import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Robonomics extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Robonomics', 'robonomics', 'kusama')
+    super('Robonomics', 'robonomics', 'kusama', Version.V1)
   }
 
   transferPolkadotXCM({

@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Pichiu Parachain
+// Contains detailed structure of XCM call construction for Pichiu Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Pichiu extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Pichiu', 'pichiu', 'kusama')
+    super('Pichiu', 'pichiu', 'kusama', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput) {

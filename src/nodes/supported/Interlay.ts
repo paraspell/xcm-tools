@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Interlay Parachain
+// Contains detailed structure of XCM call construction for Interlay Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Interlay extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Interlay', 'interlay', 'polkadot')
+    super('Interlay', 'interlay', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

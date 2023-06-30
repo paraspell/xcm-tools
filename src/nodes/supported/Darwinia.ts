@@ -1,13 +1,13 @@
-//Contains detailed structure of XCM call construction for Darwinia Parachain
+// Contains detailed structure of XCM call construction for Darwinia Parachain
 
-import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Darwinia extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Darwinia', 'darwinia', 'polkadot')
+    super('Darwinia', 'darwinia', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

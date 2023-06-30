@@ -1,13 +1,13 @@
-//Contains detailed structure of XCM call construction for Encoiter Parachain
+// Contains detailed structure of XCM call construction for Encoiter Parachain
 
-import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Encointer extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Encointer', 'encointer', 'kusama')
+    super('Encointer', 'encointer', 'kusama', Version.V1)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

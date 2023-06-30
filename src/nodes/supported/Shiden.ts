@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Shiden Parachain
+// Contains detailed structure of XCM call construction for Shiden Parachain
 
-import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Shiden extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Shiden', 'shiden', 'kusama')
+    super('Shiden', 'shiden', 'kusama', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

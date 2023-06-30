@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Astar Parachain
+// Contains detailed structure of XCM call construction for Astar Parachain
 
-import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Astar extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Astar', 'astar', 'polkadot')
+    super('Astar', 'astar', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

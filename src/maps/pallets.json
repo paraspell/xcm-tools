@@ -46,9 +46,10 @@
         ]
     },
     "ComposableFinance": {
-        "defaultPallet": "RelayerXcm",
+        "defaultPallet": "XTokens",
         "supportedPallets": [
-            "RelayerXcm"
+            "PolkadotXcm",
+            "XTokens"
         ]
     },
     "Darwinia": {
@@ -252,7 +253,7 @@
     "Picasso": {
         "defaultPallet": "XTokens",
         "supportedPallets": [
-            "RelayerXcm",
+            "PolkadotXcm",
             "XTokens"
         ]
     },

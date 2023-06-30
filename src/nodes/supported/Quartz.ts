@@ -1,13 +1,13 @@
-//Contains detailed structure of XCM call construction for Quartz Parachain
+// Contains detailed structure of XCM call construction for Quartz Parachain
 
-import { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Quartz extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Quartz', 'quartz', 'kusama')
+    super('Quartz', 'quartz', 'kusama', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

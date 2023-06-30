@@ -1,4 +1,4 @@
-//Implements general builder pattern, this is Builder main file
+// Implements general builder pattern, this is Builder main file
 
 import { ApiPromise } from '@polkadot/api'
 import { TNode } from '../../../types'
@@ -35,10 +35,12 @@ class ToGeneralBuilder {
 class FromGeneralBuilder {
   private api: ApiPromise
   private from: TNode
+  private version: number
 
-  constructor(api: ApiPromise, from: TNode) {
+  constructor(api: ApiPromise, from: TNode, version: number) {
     this.api = api
     this.from = from
+    this.version = version
   }
 
   to(node: TNode) {
@@ -56,13 +58,14 @@ class FromGeneralBuilder {
 
 class GeneralBuilder {
   private api: ApiPromise
+  private version: number
 
   constructor(api: ApiPromise) {
     this.api = api
   }
 
   from(node: TNode) {
-    return new FromGeneralBuilder(this.api, node)
+    return new FromGeneralBuilder(this.api, node, this.version)
   }
 
   to(node: TNode) {

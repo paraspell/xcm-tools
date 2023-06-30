@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Acala Parachain
+// Contains detailed structure of XCM call construction for Acala Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Acala extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Acala', 'acala', 'polkadot')
+    super('Acala', 'acala', 'polkadot', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput) {

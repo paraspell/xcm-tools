@@ -1,12 +1,12 @@
-//Contains detailed structure of XCM call construction for Unique Parachain
+// Contains detailed structure of XCM call construction for Unique Parachain
 
-import { IXTokensTransfer, XTokensTransferInput } from '../../types'
+import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Unique extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Unique', 'unique', 'polkadot')
+    super('Unique', 'unique', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {
