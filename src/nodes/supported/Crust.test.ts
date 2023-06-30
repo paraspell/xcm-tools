@@ -16,7 +16,7 @@ describe('Crust', () => {
     const amount = 1000
     const scenario: TScenario = 'ParaToPara'
     const fees = getFees(scenario)
-    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', paraId, crust.node)
+    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', 1, paraId, crust.node)
     const input: XTokensTransferInput = {
       api: undefined as any,
       currency,

@@ -15,7 +15,7 @@ describe('Unique', () => {
     const paraId = 2006
     const amount = 1000
     const scenario: TScenario = 'ParaToPara'
-    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', paraId, unique.node)
+    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', 3, paraId, unique.node)
     const input: XTokensTransferInput = {
       api: undefined as any,
       currency,

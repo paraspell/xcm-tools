@@ -24,13 +24,15 @@ describe('Equilibrium', () => {
       'polkadotXCM',
       api,
       '',
+      1,
       paraId,
       equilibrium.node
     )
-    const header = createHeaderPolkadotXCM(scenario, paraId, equilibrium.node)
+    const header = createHeaderPolkadotXCM(scenario, 1, paraId, equilibrium.node)
     const currencySelection = createCurrencySpecification(
       amount,
       scenario,
+      1,
       equilibrium.node,
       currency
     )

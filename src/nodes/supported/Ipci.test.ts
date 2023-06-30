@@ -19,9 +19,9 @@ describe('Ipci', () => {
     const paraId = 2006
     const amount = 1000
     const scenario: TScenario = 'ParaToPara'
-    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', paraId, ipci.node)
-    const header = createHeaderPolkadotXCM(scenario, paraId, ipci.node)
-    const currencySelection = createCurrencySpecification(amount, scenario, ipci.node, currency)
+    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', 1, paraId, ipci.node)
+    const header = createHeaderPolkadotXCM(scenario, 1, paraId, ipci.node)
+    const currencySelection = createCurrencySpecification(amount, scenario, 1, ipci.node, currency)
     const input: PolkadotXCMTransferInput = {
       api: undefined as any,
       header,

@@ -16,7 +16,7 @@ describe('Turing', () => {
     const paraId = 2006
     const amount = 1000
     const scenario: TScenario = 'ParaToPara'
-    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', paraId, turing.node)
+    const addressSelection = handleAddress(scenario, 'polkadotXCM', api, '', 3, paraId, turing.node)
     const input: XTokensTransferInput = {
       api: undefined as any,
       currency,

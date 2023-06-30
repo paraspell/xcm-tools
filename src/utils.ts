@@ -6,6 +6,7 @@ import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoi
 import { TNode, TScenario } from './types'
 import { nodes } from './maps/consts'
 import ParachainNode from './nodes/ParachainNode'
+import Karura from './nodes/supported/Karura'
 
 export function createAccID(api: ApiPromise, account: string) {
   console.log('Generating AccountId32 address')
@@ -28,12 +29,13 @@ export function handleAddress(
   pallet: string,
   api: ApiPromise,
   to: string,
+  version: number,
   nodeId: number | undefined,
   node?: TNode
 ): any {
   if (scenario === 'ParaToRelay' && pallet === 'xTokens') {
     console.log('AccountId32 transfer')
-    if (node === 'BifrostKusama') {
+    if (version === 3) {
       return {
         V3: {
           parents: 1,
@@ -65,10 +67,10 @@ export function handleAddress(
   if (scenario === 'ParaToPara' && pallet === 'xTokens') {
     if (ethers.utils.isAddress(to)) {
       console.log('AccountKey20 transfer')
-      if (node === 'BifrostKusama') {
+      if (version === 3) {
         return {
           V3: {
-            parents: 0,
+            parents: 1,
             interior: {
               X2: [
                 {
@@ -104,6 +106,25 @@ export function handleAddress(
       }
     } else {
       console.log('AccountId32 transfer')
+      if (version === 3) {
+        return {
+          V3: {
+            parents: 1,
+            interior: {
+              X2: [
+                {
+                  Parachain: nodeId
+                },
+                {
+                  AccountId32: {
+                    id: createAccID(api, to)
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
       return {
         V1: {
           parents: 1,
@@ -124,9 +145,10 @@ export function handleAddress(
       }
     }
   }
+
   if (scenario === 'ParaToRelay' && pallet === 'polkadotXCM') {
     console.log('AccountId32 transfer')
-    if (node === 'Statemine' || node === 'Statemint') {
+    if (version === 3) {
       return {
         V3: {
           parents: 0,
@@ -157,21 +179,9 @@ export function handleAddress(
   }
 
   if (scenario === 'ParaToPara' && pallet === 'polkadotXCM') {
-    if (node === 'Quartz') {
-      return {
-        V0: {
-          X1: {
-            AccountId32: {
-              network: 'Any',
-              id: createAccID(api, to)
-            }
-          }
-        }
-      }
-    }
     if (ethers.utils.isAddress(to)) {
       console.log('AccountKey20 transfer')
-      if (node === 'Statemine' || node === 'Statemint') {
+      if (version === 3) {
         return {
           V3: {
             parents: 0,
@@ -201,7 +211,7 @@ export function handleAddress(
       }
     } else {
       console.log('AccountId32 transfer')
-      if (node === 'Statemine' || node === 'Statemint') {
+      if (version === 3) {
         return {
           V3: {
             parents: 0,
@@ -268,12 +278,13 @@ export function handleAddress(
 export function createCurrencySpecification(
   amount: any,
   scenario: TScenario,
+  version: number, 
   node?: TNode,
   cur?: number | string
 ) {
   if (scenario === 'ParaToRelay') {
     console.log('polkadotXCM transfer in native currency to Relay chain')
-    if (node === 'Statemine' || node === 'Statemint') {
+    if (version === 3) {
       return {
         V3: [
           {
@@ -309,23 +320,10 @@ export function createCurrencySpecification(
   }
   if (scenario === 'RelayToPara' || scenario === 'ParaToPara') {
     console.log('polkadotXCM Native currency to sender chain transfer')
-    if (node === 'Quartz' && scenario === 'ParaToPara') {
-      return {
-        V0: [
-          {
-            ConcreteFungible: {
-              id: null,
-              amount
-            }
-          }
-        ]
-      }
-    }
-
     if ((node === 'Darwinia' || node === 'Crab') && scenario === 'ParaToPara') {
       // Special case for Darwinia&Crab node
       return {
-        V1: [
+        V3: [
           {
             id: {
               Concrete: {
@@ -343,9 +341,8 @@ export function createCurrencySpecification(
           }
         ]
       }
-    } else if ((node === 'Statemint' || node === 'Statemine') && scenario === 'ParaToPara') {
+    } else if ((node === 'Statemine' || node === 'Statemint') && scenario === 'ParaToPara') {
       // Another specific case for Statemint & Statemine to send for example USDt
-      if (node === 'Statemine' || node === 'Statemint') {
         return {
           V3: [
             {
@@ -370,33 +367,7 @@ export function createCurrencySpecification(
             }
           ]
         }
-      } else {
-        return {
-          V1: [
-            {
-              id: {
-                Concrete: {
-                  parents: 0,
-                  interior: {
-                    X2: [
-                      {
-                        PalletInstance: 50
-                      },
-                      {
-                        GeneralIndex: cur
-                      }
-                    ]
-                  }
-                }
-              },
-              fun: {
-                Fungible: amount
-              }
-            }
-          ]
-        }
-      }
-    }
+    } 
 
     // Otherwise
     return {
@@ -415,12 +386,13 @@ export function createCurrencySpecification(
       ]
     }
   }
+
 }
 
-export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number, node?: TNode) {
+export function createHeaderPolkadotXCM(scenario: TScenario, version: number,  nodeId?: number, node?: TNode) {
   console.log('Generating header for polkadotXCM transfer')
   if (scenario === 'ParaToRelay') {
-    if (node === 'Statemine' || node === 'Statemint') {
+    if (version === 3) {
       return {
         V3: {
           parents: 1,
@@ -437,24 +409,26 @@ export function createHeaderPolkadotXCM(scenario: TScenario, nodeId?: number, no
     }
   }
   if (scenario === 'ParaToPara') {
-    if (node === 'Quartz') {
+    if (version === 3){
       return {
-        V0: {
-          X2: [
-            'Parent',
-            {
+        V3: {
+          parents: 1,
+          interior: {
+            X1: {
               Parachain: nodeId
             }
-          ]
+          }
         }
       }
     }
-    return {
-      V1: {
-        parents: 1,
-        interior: {
-          X1: {
-            Parachain: nodeId
+    else {
+      return {
+        V1: {
+          parents: 1,
+          interior: {
+            X1: {
+              Parachain: nodeId
+            }
           }
         }
       }

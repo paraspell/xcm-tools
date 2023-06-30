@@ -16,15 +16,17 @@ class ToGeneralBuilder {
   private api: ApiPromise
   private from: TNode
   private to: TNode
+  private version: number
 
-  constructor(api: ApiPromise, from: TNode, to: TNode) {
+  constructor(api: ApiPromise, from: TNode, to: TNode, version: number) {
     this.api = api
     this.from = from
     this.to = to
+    this.version = version
   }
 
   currency(currency: string | number | bigint) {
-    return SendBuilder.createParaToPara(this.api, this.from, this.to, currency)
+    return SendBuilder.createParaToPara(this.api, this.from, this.to, this.version, currency)
   }
 
   openChannel() {
@@ -35,18 +37,20 @@ class ToGeneralBuilder {
 class FromGeneralBuilder {
   private api: ApiPromise
   private from: TNode
+  private version: number
 
-  constructor(api: ApiPromise, from: TNode) {
+  constructor(api: ApiPromise, from: TNode, version: number) {
     this.api = api
     this.from = from
+    this.version = version
   }
 
   to(node: TNode) {
-    return new ToGeneralBuilder(this.api, this.from, node)
+    return new ToGeneralBuilder(this.api, this.from, node, this.version)
   }
 
   currency(currency: string | number | bigint) {
-    return SendBuilder.createParaToRelay(this.api, this.from, currency)
+    return SendBuilder.createParaToRelay(this.api, this.from, this.version, currency)
   }
 
   closeChannel() {
@@ -56,13 +60,14 @@ class FromGeneralBuilder {
 
 class GeneralBuilder {
   private api: ApiPromise
+  private version: number
 
   constructor(api: ApiPromise) {
     this.api = api
   }
 
   from(node: TNode) {
-    return new FromGeneralBuilder(this.api, node)
+    return new FromGeneralBuilder(this.api, node, this.version)
   }
 
   to(node: TNode) {

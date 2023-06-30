@@ -19,6 +19,7 @@ export function send(
   currencySymbolOrId: string | number | bigint,
   amount: any,
   to: string,
+  version: number,
   destination?: TNode
 ): Extrinsic {
   const asset = getAssetBySymbolOrId(origin, currencySymbolOrId.toString())
@@ -36,7 +37,7 @@ export function send(
   }
   const { symbol: currencySymbol, assetId: currencyId } = asset
 
-  return getNode(origin).transfer(api, currencySymbol, currencyId, amount, to, destination)
+  return getNode(origin).transfer(api, currencySymbol, currencyId, amount, to, version, destination)
 }
 
 export function transferRelayToPara(
@@ -46,25 +47,35 @@ export function transferRelayToPara(
   to: string
 ): Extrinsic | never {
   const paraId = getParaId(destination)
-  if (destination === 'Statemint' || destination === 'Statemine' || destination === 'Encointer') {
+  if (destination === 'Statemint' || destination === 'Statemine') {
     // Same for Statemint, Statemine and Encoiter
     return api.tx.xcmPallet.limitedTeleportAssets(
-      createHeaderPolkadotXCM('RelayToPara', paraId,destination),
-      handleAddress('RelayToPara', '', api, to, paraId,destination),
-      createCurrencySpecification(amount, 'RelayToPara',destination),
+      createHeaderPolkadotXCM('RelayToPara', 3, paraId,destination),
+      handleAddress('RelayToPara', '', api, to, 3, paraId,destination),
+      createCurrencySpecification(amount, 'RelayToPara', 3, destination),
       0,
       'Unlimited'
     )
-  } else if (destination === 'Darwinia' || destination === 'Crab' || destination === 'Quartz') {
-    // Do not do anything because Darwinia and Crab does not have DOT and KSM registered Quartz does not work with UMP & DMP too
+  } else if (destination === 'Encointer') {
+    return api.tx.xcmPallet.limitedTeleportAssets(
+      createHeaderPolkadotXCM('RelayToPara', 1, paraId,destination),
+      handleAddress('RelayToPara', '', api, to, 1, paraId,destination),
+      createCurrencySpecification(amount, 'RelayToPara', 1, destination),
+      0,
+      'Unlimited'
+    )
+  } 
+  
+    else if (destination === 'Darwinia' || destination === 'Crab') {
+    // Do not do anything because Darwinia and Crab does not have DOT and KSM registered 
     throw new NodeNotSupportedError(
       'These nodes do not support XCM transfers from Relay / to Relay chain.'
     )
   }
   return api.tx.xcmPallet.reserveTransferAssets(
-    createHeaderPolkadotXCM('RelayToPara', paraId,destination),
-    handleAddress('RelayToPara', '', api, to, paraId,destination),
-    createCurrencySpecification(amount, 'RelayToPara',destination),
+    createHeaderPolkadotXCM('RelayToPara', 3, paraId,destination),
+    handleAddress('RelayToPara', '', api, to, 3, paraId,destination),
+    createCurrencySpecification(amount, 'RelayToPara', 3, destination),
     0
   )
 }

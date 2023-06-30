@@ -27,35 +27,35 @@ describe('send', () => {
 
   it('should throw an InvalidCurrencyError when passing Acala and UNIT', () => {
     const t = () => {
-      send(api, 'Acala', 'UNIT', AMOUNT, ADDRESS)
+      send(api, 'Acala', 'UNIT', AMOUNT, ADDRESS, 1)
     }
     expect(t).toThrowError(InvalidCurrencyError)
   })
 
   it('should not throw an InvalidCurrencyError when passing Acala and ACA', () => {
     const t = () => {
-      send(api, 'Acala', 'ACA', AMOUNT, ADDRESS)
+      send(api, 'Acala', 'ACA', AMOUNT, ADDRESS, 1)
     }
     expect(t).not.toThrowError(InvalidCurrencyError)
   })
 
   it('should not throw an InvalidCurrencyError when passing Acala and ACA and Unique as destination', () => {
     const t = () => {
-      send(api, 'Acala', 'UNQ', AMOUNT, ADDRESS, 'Unique')
+      send(api, 'Acala', 'UNQ', AMOUNT, ADDRESS, 1, 'Unique')
     }
     expect(t).not.toThrowError(InvalidCurrencyError)
   })
 
   it('should not throw an InvalidCurrencyError when passing Karura and BSX and Basilisk as destination', () => {
     const t = () => {
-      send(api, 'Karura', 'BSX', AMOUNT, ADDRESS, 'Basilisk')
+      send(api, 'Karura', 'BSX', AMOUNT, ADDRESS, 3, 'Basilisk')
     }
     expect(t).not.toThrowError(InvalidCurrencyError)
   })
 
   it('should throw an InvalidCurrencyError when passing Acala and ACA and BifrostPolkadot as destination', () => {
     const t = () => {
-      send(api, 'Acala', 'UNQ', AMOUNT, ADDRESS, 'BifrostPolkadot')
+      send(api, 'Acala', 'UNQ', AMOUNT, ADDRESS, 1, 'BifrostPolkadot')
     }
     expect(t).toThrowError(InvalidCurrencyError)
   })
@@ -65,7 +65,7 @@ describe('send', () => {
       const symbols = getAllAssetsSymbols(node)
       symbols.forEach(symbol => {
         const t = () => {
-          send(api, node, symbol, AMOUNT, ADDRESS)
+          send(api, node, symbol, AMOUNT, ADDRESS, 1)
         }
         expect(t).not.toThrowError(InvalidCurrencyError)
       })

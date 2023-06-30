@@ -61,6 +61,7 @@ abstract class ParachainNode {
     currencyId: number | undefined,
     amount: any,
     to: string,
+    version: number,
     destination?: TNode
   ): Extrinsic {
     const scenario: TScenario = destination ? 'ParaToPara' : 'ParaToRelay'
@@ -72,15 +73,29 @@ abstract class ParachainNode {
         currency: currencySymbol,
         currencyID: currencyId,
         amount,
-        addressSelection: handleAddress(scenario, 'xTokens', api, to, paraId, this._node),
+        addressSelection: handleAddress(scenario, 'xTokens', api, to, version, paraId, this._node),
         fees: getFees(scenario)
       })
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
         api,
-        header: createHeaderPolkadotXCM(scenario, paraId, this._node),
-        addressSelection: handleAddress(scenario, 'polkadotXCM', api, to, paraId, this._node),
-        currencySelection: createCurrencySpecification(amount, scenario, this._node, currencyId),
+        header: createHeaderPolkadotXCM(scenario, version, paraId, this._node),
+        addressSelection: handleAddress(
+          scenario,
+          'polkadotXCM',
+          api,
+          to,
+          version,
+          paraId,
+          this._node
+        ),
+        currencySelection: createCurrencySpecification(
+          amount,
+          scenario,
+          version,
+          this._node,
+          currencyId
+        ),
         scenario
       })
     } else {
