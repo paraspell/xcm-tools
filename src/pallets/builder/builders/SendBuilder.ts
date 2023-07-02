@@ -1,11 +1,12 @@
 // Implements builder pattern for XCM message creation operations operation
 
 import { ApiPromise } from '@polkadot/api'
-import { send } from '../../xcmPallet'
-import { Extrinsic, TNode } from '../../../types'
+import { send, sendSerializedApiCall } from '../../xcmPallet'
+import { Extrinsic, TNode, TSerializedApiCall } from '../../../types'
 
 export interface FinalRelayToParaBuilder {
   build(): Extrinsic | never
+  buildSerializedApiCall(): TSerializedApiCall
 }
 
 export interface AddressSendBuilder {
@@ -66,6 +67,17 @@ class SendBuilder implements AmountSendBuilder, AddressSendBuilder, FinalRelayTo
 
   build() {
     return send(this.api, this.from, this.currency, this._amount, this._address, this.to)
+  }
+
+  buildSerializedApiCall() {
+    return sendSerializedApiCall(
+      this.api,
+      this.from,
+      this.currency,
+      this._amount,
+      this._address,
+      this.to
+    )
   }
 }
 

@@ -1,4 +1,4 @@
-//Contains builder pattern tests for different Builder pattern functionalities
+// Contains builder pattern tests for different Builder pattern functionalities
 
 import { ApiPromise } from '@polkadot/api'
 import { vi, describe, expect, it, beforeEach } from 'vitest'
@@ -29,7 +29,7 @@ describe('Builder', () => {
     api = await createApiInstance(WS_URL)
   })
 
-  it('should initiatie a para to para transfer with currency symbol', async () => {
+  it('should initiatie a para to para transfer with currency symbol', () => {
     const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
       return undefined as any
     })
@@ -39,7 +39,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, AMOUNT, ADDRESS, NODE_2)
   })
 
-  it('should initiatie a para to para transfer with currency id', async () => {
+  it('should initiatie a para to para transfer with currency id', () => {
     const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
       return undefined as any
     })
@@ -49,7 +49,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY_ID, AMOUNT, ADDRESS, NODE_2)
   })
 
-  it('should initiatie a relay to para transfer', async () => {
+  it('should initiatie a relay to para transfer', () => {
     const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockImplementation(() => {
       return undefined as any
     })
@@ -59,7 +59,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS)
   })
 
-  it('should initiatie a para to relay transfer with currency symbol', async () => {
+  it('should initiatie a para to relay transfer with currency symbol', () => {
     const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
       return undefined as any
     })
@@ -69,7 +69,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, AMOUNT, ADDRESS, undefined)
   })
 
-  it('should initiatie a para to relay transfer with currency id', async () => {
+  it('should initiatie a para to relay transfer with currency id', () => {
     const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
       return undefined as any
     })
@@ -79,7 +79,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY_ID, AMOUNT, ADDRESS, undefined)
   })
 
-  it('should open a channel', async () => {
+  it('should open a channel', () => {
     const spy = vi.spyOn(parasSudoWrapper, 'openChannel').mockImplementation(() => {
       return undefined as any
     })
@@ -95,7 +95,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, NODE, NODE_2, CHANNEL_MAX_SIZE, CHANNEL_MAX_MSG_SIZE)
   })
 
-  it('should close a channel', async () => {
+  it('should close a channel', () => {
     const spy = vi.spyOn(hrmp, 'closeChannel').mockImplementation(() => {
       return undefined as any
     })
@@ -110,7 +110,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, NODE, CHANNEL_INBOUND, CHANNEL_OUTBOUND)
   })
 
-  it('should add liquidity', async () => {
+  it('should add liquidity', () => {
     const spy = vi.spyOn(xyk, 'addLiquidity').mockImplementation(() => {
       return undefined as any
     })
@@ -131,7 +131,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, ASSET_A, ASSET_B, AMOUNT_A, AMOUNT_B_MAX_LIMIT)
   })
 
-  it('should remove liquidity', async () => {
+  it('should remove liquidity', () => {
     const spy = vi.spyOn(xyk, 'removeLiquidity').mockImplementation(() => {
       return undefined as any
     })
@@ -150,7 +150,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, ASSET_A, ASSET_B, LIQUIDITY_AMOUNT)
   })
 
-  it('should buy', async () => {
+  it('should buy', () => {
     const spy = vi.spyOn(xyk, 'buy').mockImplementation(() => {
       return undefined as any
     })
@@ -173,7 +173,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, ASSET_OUT, ASSET_IN, AMOUNT, MAX_LIMIT, DISCOUNT)
   })
 
-  it('should sell', async () => {
+  it('should sell', () => {
     const spy = vi.spyOn(xyk, 'sell').mockImplementation(() => {
       return undefined as any
     })
@@ -196,7 +196,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, ASSET_IN, ASSET_OUT, AMOUNT, MAX_LIMIT, DISCOUNT)
   })
 
-  it('should create pool', async () => {
+  it('should create pool', () => {
     const spy = vi.spyOn(xyk, 'createPool').mockImplementation(() => {
       return undefined as any
     })
@@ -215,5 +215,24 @@ describe('Builder', () => {
       .build()
 
     expect(spy).toHaveBeenCalledWith(api, ASSET_A, AMOUNT_A, ASSET_B, AMOUNT_B)
+  })
+
+  it('should request a para to para transfer serialized api call with currency id', () => {
+    const serializedApiCall = Builder(api)
+      .from(NODE)
+      .to(NODE_2)
+      .currency('DOT')
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .buildSerializedApiCall()
+
+    expect(serializedApiCall).toHaveProperty('type')
+    expect(serializedApiCall).toHaveProperty('module')
+    expect(serializedApiCall).toHaveProperty('section')
+    expect(serializedApiCall).toHaveProperty('parameters')
+    expect(serializedApiCall.type).toBeTypeOf('string')
+    expect(serializedApiCall.module).toBeTypeOf('string')
+    expect(serializedApiCall.section).toBeTypeOf('string')
+    expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
   })
 })
