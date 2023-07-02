@@ -35,6 +35,19 @@ export type TPalletMap = {
 }
 export type TPalletJsonMap = Record<TNode, TPalletMap>
 
+export enum TType {
+  CONSTS = 'consts',
+  QUERY = 'query',
+  TX = 'tx'
+}
+
+export type TSerializedApiCall = {
+  type: TType
+  module: string
+  section: string
+  parameters: any[]
+}
+
 export type XTokensTransferInput = {
   api: ApiPromise
   currency: string
@@ -42,10 +55,11 @@ export type XTokensTransferInput = {
   amount: any
   addressSelection: any
   fees: number
+  serializedApiCallEnabled?: boolean
 }
 
 export interface IXTokensTransfer {
-  transferXTokens(input: XTokensTransferInput): Extrinsic
+  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall
 }
 
 export type PolkadotXCMTransferInput = {
@@ -54,10 +68,11 @@ export type PolkadotXCMTransferInput = {
   addressSelection: any
   currencySelection: any
   scenario: TScenario
+  serializedApiCallEnabled?: boolean
 }
 
 export interface IPolkadotXCMTransfer {
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic
+  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall
 }
 
 export enum Version {

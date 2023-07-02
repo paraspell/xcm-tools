@@ -10,7 +10,8 @@ import {
   TScenario,
   IXTokensTransfer,
   IPolkadotXCMTransfer,
-  Version
+  Version,
+  TSerializedApiCall
 } from '../types'
 import {
   handleAddress,
@@ -69,8 +70,9 @@ abstract class ParachainNode {
     currencyId: number | undefined,
     amount: any,
     to: string,
-    destination?: TNode
-  ): Extrinsic {
+    destination?: TNode,
+    serializedApiCallEnabled = false
+  ): Extrinsic | TSerializedApiCall {
     const scenario: TScenario = destination ? 'ParaToPara' : 'ParaToRelay'
     const paraId = destination ? getParaId(destination) : undefined
 
@@ -81,7 +83,8 @@ abstract class ParachainNode {
         currencyID: currencyId,
         amount,
         addressSelection: handleAddress(scenario, 'xTokens', api, to, this.version, paraId),
-        fees: getFees(scenario)
+        fees: getFees(scenario),
+        serializedApiCallEnabled
       })
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
@@ -95,7 +98,8 @@ abstract class ParachainNode {
           this._node,
           currencyId
         ),
-        scenario
+        scenario,
+        serializedApiCallEnabled
       })
     } else {
       throw new NoXCMSupportImplementedError(this._node)
