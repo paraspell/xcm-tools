@@ -1,4 +1,4 @@
-//Contains all important exports
+// Contains all important exports
 
 export * as xcmPallet from './pallets/xcmPallet'
 export * as xyk from './pallets/xyk'
@@ -10,3 +10,5 @@ export * from './pallets/builder'
 export * from './pallets/pallets'
 export * from './types'
 export { NODE_NAMES, SUPPORTED_PALLETS } from './maps/consts'
+export { getNodeEndpointOption } from './utils'
+export * from './errors'
