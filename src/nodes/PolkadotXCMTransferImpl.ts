@@ -1,6 +1,6 @@
 // Contains basic structure of polkadotXCM call
 
-import { Extrinsic, PolkadotXCMTransferInput, TSerializedApiCall, TType } from '../types'
+import { Extrinsic, PolkadotXCMTransferInput, TSerializedApiCall } from '../types'
 
 class PolkadotXCMTransferImpl {
   static transferPolkadotXCM(
@@ -16,7 +16,6 @@ class PolkadotXCMTransferImpl {
   ): Extrinsic | TSerializedApiCall {
     if (serializedApiCallEnabled) {
       return {
-        type: TType.TX,
         module: 'polkadotXcm',
         section: method,
         parameters: [header, addressSelection, currencySelection, 0, ...(fees ? [fees] : [])]

@@ -226,11 +226,24 @@ describe('Builder', () => {
       .address(ADDRESS)
       .buildSerializedApiCall()
 
-    expect(serializedApiCall).toHaveProperty('type')
     expect(serializedApiCall).toHaveProperty('module')
     expect(serializedApiCall).toHaveProperty('section')
     expect(serializedApiCall).toHaveProperty('parameters')
-    expect(serializedApiCall.type).toBeTypeOf('string')
+    expect(serializedApiCall.module).toBeTypeOf('string')
+    expect(serializedApiCall.section).toBeTypeOf('string')
+    expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
+  })
+
+  it('should request a relay to para transfer serialized api call', () => {
+    const serializedApiCall = Builder(api)
+      .to(NODE_2)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .buildSerializedApiCall()
+
+    expect(serializedApiCall).toHaveProperty('module')
+    expect(serializedApiCall).toHaveProperty('section')
+    expect(serializedApiCall).toHaveProperty('parameters')
     expect(serializedApiCall.module).toBeTypeOf('string')
     expect(serializedApiCall.section).toBeTypeOf('string')
     expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
