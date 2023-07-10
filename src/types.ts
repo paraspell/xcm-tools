@@ -35,14 +35,7 @@ export type TPalletMap = {
 }
 export type TPalletJsonMap = Record<TNode, TPalletMap>
 
-export enum TType {
-  CONSTS = 'consts',
-  QUERY = 'query',
-  TX = 'tx'
-}
-
 export type TSerializedApiCall = {
-  type: TType
   module: string
   section: string
   parameters: any[]

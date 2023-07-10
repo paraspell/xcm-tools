@@ -1,6 +1,6 @@
 // Contains basic structure of xToken call
 
-import { Extrinsic, TPallet, TSerializedApiCall, TType, XTokensTransferInput } from '../types'
+import { Extrinsic, TPallet, TSerializedApiCall, XTokensTransferInput } from '../types'
 import { lowercaseFirstLetter } from '../utils'
 
 class XTokensTransferImpl {
@@ -14,7 +14,6 @@ class XTokensTransferImpl {
 
     if (serializedApiCallEnabled) {
       return {
-        type: TType.TX,
         module,
         section: 'transfer',
         parameters: [currencySelection, amount, addressSelection, fees]

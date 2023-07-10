@@ -35,12 +35,10 @@ class ToGeneralBuilder {
 class FromGeneralBuilder {
   private api: ApiPromise
   private from: TNode
-  private version: number
 
-  constructor(api: ApiPromise, from: TNode, version: number) {
+  constructor(api: ApiPromise, from: TNode) {
     this.api = api
     this.from = from
-    this.version = version
   }
 
   to(node: TNode) {
@@ -58,14 +56,13 @@ class FromGeneralBuilder {
 
 class GeneralBuilder {
   private api: ApiPromise
-  private version: number
 
   constructor(api: ApiPromise) {
     this.api = api
   }
 
   from(node: TNode) {
-    return new FromGeneralBuilder(this.api, node, this.version)
+    return new FromGeneralBuilder(this.api, node)
   }
 
   to(node: TNode) {

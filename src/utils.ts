@@ -3,7 +3,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ethers } from 'ethers'
 import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
-import { TNode, TScenario, Version } from './types'
+import { TNode, TScenario, TSerializedApiCall, Version } from './types'
 import { nodes } from './maps/consts'
 import ParachainNode from './nodes/ParachainNode'
 
@@ -464,3 +464,8 @@ export async function createApiInstance(wsUrl: string) {
 }
 
 export const lowercaseFirstLetter = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
+
+export const callPolkadotJsTxFunction = (
+  api: ApiPromise,
+  { module, section, parameters }: TSerializedApiCall
+) => api.tx[module][section](...parameters)
