@@ -4,8 +4,10 @@ import { ApiPromise } from '@polkadot/api'
 import { vi, describe, expect, it, beforeEach } from 'vitest'
 import { NODE_NAMES } from '../../maps/consts'
 import { createApiInstance } from '../../utils'
-import { getAllAssetsSymbols } from '../assets'
+import { getAllAssetsSymbols, getRelayChainSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
+import { IncompatibleNodesError } from '../../errors'
+import { TNode } from '../../types'
 import { send } from './transfer'
 
 vi.mock('../../utils', () => ({
@@ -17,12 +19,25 @@ vi.mock('../../utils', () => ({
 const WS_URL = 'wss://para.f3joule.space'
 const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
 const AMOUNT = 1000
+const randomCurrencySymbol = 'DOT'
+
+const createNodePairs = (nodes: TNode[]) =>
+  nodes
+    .reduce((result: any[], _, index, array) => {
+      if (index % 2 === 0) result.push(array.slice(index, index + 2))
+      return result
+    }, [])
+    .filter(pair => pair.length > 1)
 
 describe('send', () => {
   let api: ApiPromise
+  let polkadotNodes: TNode[]
+  let kusamaNodes: TNode[]
 
   beforeEach(async () => {
     api = await createApiInstance(WS_URL)
+    polkadotNodes = NODE_NAMES.filter(node => getRelayChainSymbol(node) === 'KSM')
+    kusamaNodes = NODE_NAMES.filter(node => getRelayChainSymbol(node) === 'DOT')
   })
 
   it('should throw an InvalidCurrencyError when passing Acala and UNIT', () => {
@@ -60,6 +75,20 @@ describe('send', () => {
     expect(t).toThrowError(InvalidCurrencyError)
   })
 
+  it('should throw an IncompatibleNodesError when passing Statemine, DOT and Statemint as destination', () => {
+    const t = () => {
+      send(api, 'Statemine', 'DOT', AMOUNT, ADDRESS, 'Statemint')
+    }
+    expect(t).toThrowError(IncompatibleNodesError)
+  })
+
+  it('should throw an IncompatibleNodesError when passing Statemint, DOT and Statemine as destination', () => {
+    const t = () => {
+      send(api, 'Statemint', 'DOT', AMOUNT, ADDRESS, 'Statemine')
+    }
+    expect(t).toThrowError(IncompatibleNodesError)
+  })
+
   it('should not throw an InvalidCurrencyError when passing all defined symbols from all nodes', () => {
     NODE_NAMES.forEach(node => {
       const symbols = getAllAssetsSymbols(node)
@@ -69,6 +98,36 @@ describe('send', () => {
         }
         expect(t).not.toThrowError(InvalidCurrencyError)
       })
+    })
+  })
+
+  it('should throw an IncompatibleNodesError when passing all nodes which have different relaychains', () => {
+    polkadotNodes.forEach(polkadotNode => {
+      kusamaNodes.forEach(kusamaNode => {
+        const t = () => {
+          send(api, polkadotNode, randomCurrencySymbol, AMOUNT, ADDRESS, kusamaNode)
+        }
+        expect(t).toThrowError(IncompatibleNodesError)
+      })
+    })
+  })
+
+  it('should not throw an IncompatibleNodesError when passing all nodes which have the same relaychains', () => {
+    const polkadotNodePairs = createNodePairs(polkadotNodes)
+    const kusamaNodePairs = createNodePairs(kusamaNodes)
+
+    polkadotNodePairs.forEach(([node, otherNode]) => {
+      const t = () => {
+        send(api, node, randomCurrencySymbol, AMOUNT, ADDRESS, otherNode)
+      }
+      expect(t).not.toThrowError(IncompatibleNodesError)
+    })
+
+    kusamaNodePairs.forEach(([node, otherNode]) => {
+      const t = () => {
+        send(api, node, randomCurrencySymbol, AMOUNT, ADDRESS, otherNode)
+      }
+      expect(t).not.toThrowError(IncompatibleNodesError)
     })
   })
 })

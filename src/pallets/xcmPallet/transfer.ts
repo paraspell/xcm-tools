@@ -9,10 +9,11 @@ import {
   getNode,
   callPolkadotJsTxFunction
 } from '../../utils'
-import { getParaId, hasSupportForAsset } from '../assets'
+import { getParaId, getRelayChainSymbol, hasSupportForAsset } from '../assets'
 import { getAssetBySymbolOrId } from '../assets/assetsUtils'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { NodeNotSupportedError } from '../../errors/NodeNotSupportedError'
+import { IncompatibleNodesError } from '../../errors'
 
 const sendCommon = (
   api: ApiPromise,
@@ -24,6 +25,14 @@ const sendCommon = (
   serializedApiCallEnabled = false
 ): Extrinsic | TSerializedApiCall => {
   const asset = getAssetBySymbolOrId(origin, currencySymbolOrId.toString())
+
+  if (destination) {
+    const originRelayChainSymbol = getRelayChainSymbol(origin)
+    const destinationRelayChainSymbol = getRelayChainSymbol(destination)
+    if (originRelayChainSymbol !== destinationRelayChainSymbol) {
+      throw new IncompatibleNodesError()
+    }
+  }
 
   if (!asset) {
     throw new InvalidCurrencyError(
