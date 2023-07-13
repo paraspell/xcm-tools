@@ -1,7 +1,7 @@
 // Implements general builder pattern, this is Builder main file
 
 import { ApiPromise } from '@polkadot/api'
-import { TNode } from '../../../types'
+import { Extrinsic, TNode, TSerializedApiCall } from '../../../types'
 import AddLiquidityBuilder from './AddLiquidityBuilder'
 import BuyBuilder from './BuyBuilder'
 import CloseChannelBuilder from './CloseChannelBuilder'
@@ -10,7 +10,8 @@ import OpenChannelBuilder from './OpenChannelBuilder'
 import RelayToParaBuilder from './RelayToParaBuilder'
 import RemoveLiquidityBuilder from './RemoveLiquidityBuilder'
 import SellBuilder from './SellBuilder'
-import SendBuilder from './SendBuilder'
+import ParaToParaBuilder from './ParaToParaBuilder'
+import ParaToRelayBuilder from './ParaToRelayBuilder'
 
 class ToGeneralBuilder {
   private api: ApiPromise
@@ -24,7 +25,7 @@ class ToGeneralBuilder {
   }
 
   currency(currency: string | number | bigint) {
-    return SendBuilder.createParaToPara(this.api, this.from, this.to, currency)
+    return ParaToParaBuilder.createParaToPara(this.api, this.from, this.to, currency)
   }
 
   openChannel() {
@@ -45,8 +46,8 @@ class FromGeneralBuilder {
     return new ToGeneralBuilder(this.api, this.from, node)
   }
 
-  currency(currency: string | number | bigint) {
-    return SendBuilder.createParaToRelay(this.api, this.from, currency)
+  amount(amount: any) {
+    return ParaToRelayBuilder.create(this.api, this.from, amount)
   }
 
   closeChannel() {
@@ -92,4 +93,17 @@ class GeneralBuilder {
 
 export function Builder(api: ApiPromise) {
   return new GeneralBuilder(api)
+}
+
+export interface FinalBuilder {
+  build(): Extrinsic | never
+  buildSerializedApiCall(): TSerializedApiCall
+}
+
+export interface AddressBuilder {
+  address(address: string): FinalBuilder
+}
+
+export interface AmountBuilder {
+  amount(amount: any): AddressBuilder
 }

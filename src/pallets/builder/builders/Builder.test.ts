@@ -8,6 +8,7 @@ import * as hrmp from '../../hrmp'
 import * as parasSudoWrapper from '../../parasSudoWrapper'
 import * as xcmPallet from '../../xcmPallet'
 import * as xyk from '../../xyk'
+import { getRelayChainSymbol } from '../../assets'
 import { Builder } from './Builder'
 
 const WS_URL = 'wss://para.f3joule.space'
@@ -64,19 +65,11 @@ describe('Builder', () => {
       return undefined as any
     })
 
-    Builder(api).from(NODE).currency(CURRENCY).amount(AMOUNT).address(ADDRESS).build()
+    const currency = getRelayChainSymbol(NODE)
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, AMOUNT, ADDRESS, undefined)
-  })
+    Builder(api).from(NODE).amount(AMOUNT).address(ADDRESS).build()
 
-  it('should initiatie a para to relay transfer with currency id', () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
-      return undefined as any
-    })
-
-    Builder(api).from(NODE).currency(CURRENCY_ID).amount(AMOUNT).address(ADDRESS).build()
-
-    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY_ID, AMOUNT, ADDRESS, undefined)
+    expect(spy).toHaveBeenCalledWith(api, NODE, currency, AMOUNT, ADDRESS)
   })
 
   it('should open a channel', () => {
