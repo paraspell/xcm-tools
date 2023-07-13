@@ -1,4 +1,4 @@
-//Contains different useful asset query operations from compatible Parachains asset map
+// Contains different useful asset query operations from compatible Parachains asset map
 
 import * as assetsMapJson from '../../maps/assets.json' assert { type: 'json' }
 import { NODE_NAMES } from '../../maps/consts'
@@ -60,8 +60,7 @@ export function getParaId(node: TNode) {
 }
 
 export function getTNode(nodeID: number) {
-  for (const node of NODE_NAMES){
-  if( getParaId(node) === nodeID )
-    return node
+  for (const node of NODE_NAMES) {
+    if (getParaId(node) === nodeID) return node
   }
 }

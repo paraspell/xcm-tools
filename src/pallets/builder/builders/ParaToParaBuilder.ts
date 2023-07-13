@@ -2,48 +2,23 @@
 
 import { ApiPromise } from '@polkadot/api'
 import { send, sendSerializedApiCall } from '../../xcmPallet'
-import { Extrinsic, TNode, TSerializedApiCall } from '../../../types'
+import { TNode } from '../../../types'
+import { AddressBuilder, AmountBuilder, FinalBuilder } from './Builder'
 
-export interface FinalRelayToParaBuilder {
-  build(): Extrinsic | never
-  buildSerializedApiCall(): TSerializedApiCall
-}
-
-export interface AddressSendBuilder {
-  address(address: string): FinalRelayToParaBuilder
-}
-
-export interface AmountSendBuilder {
-  amount(amount: any): AddressSendBuilder
-}
-
-class SendBuilder implements AmountSendBuilder, AddressSendBuilder, FinalRelayToParaBuilder {
+class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
   private api: ApiPromise
   private from: TNode
-  private to: TNode | undefined
+  private to: TNode
   private currency: string | number | bigint
 
   private _amount: any
   private _address: string
 
-  private constructor(
-    api: ApiPromise,
-    from: TNode,
-    to: TNode | undefined,
-    currency: string | number | bigint
-  ) {
+  private constructor(api: ApiPromise, from: TNode, to: TNode, currency: string | number | bigint) {
     this.api = api
     this.from = from
     this.to = to
     this.currency = currency
-  }
-
-  static createParaToRelay(
-    api: ApiPromise,
-    from: TNode,
-    currency: string | number | bigint
-  ): AmountSendBuilder {
-    return new SendBuilder(api, from, undefined, currency)
   }
 
   static createParaToPara(
@@ -51,8 +26,8 @@ class SendBuilder implements AmountSendBuilder, AddressSendBuilder, FinalRelayTo
     from: TNode,
     to: TNode,
     currency: string | number | bigint
-  ): AmountSendBuilder {
-    return new SendBuilder(api, from, to, currency)
+  ): AmountBuilder {
+    return new ParaToParaBuilder(api, from, to, currency)
   }
 
   amount(amount: any) {
@@ -81,4 +56,4 @@ class SendBuilder implements AmountSendBuilder, AddressSendBuilder, FinalRelayTo
   }
 }
 
-export default SendBuilder
+export default ParaToParaBuilder

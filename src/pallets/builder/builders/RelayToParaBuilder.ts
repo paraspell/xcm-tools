@@ -2,24 +2,10 @@
 
 import { ApiPromise } from '@polkadot/api'
 import { transferRelayToPara, transferRelayToParaSerializedApiCall } from '../../xcmPallet'
-import { Extrinsic, TNode, TSerializedApiCall } from '../../../types'
+import { TNode } from '../../../types'
+import { AddressBuilder, AmountBuilder, FinalBuilder } from './Builder'
 
-export interface FinalRelayToParaBuilder {
-  build(): Extrinsic | never
-  buildSerializedApiCall(): TSerializedApiCall
-}
-
-export interface AddressRelayToParaBuilder {
-  address(address: string): FinalRelayToParaBuilder
-}
-
-export interface AmountRelayToParaBuilder {
-  amount(amount: number): AddressRelayToParaBuilder
-}
-
-class RelayToParaBuilder
-  implements AmountRelayToParaBuilder, AddressRelayToParaBuilder, FinalRelayToParaBuilder
-{
+class RelayToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
   private api: ApiPromise
   private to: TNode
 
@@ -31,7 +17,7 @@ class RelayToParaBuilder
     this.to = to
   }
 
-  static create(api: ApiPromise, to: TNode): AmountRelayToParaBuilder {
+  static create(api: ApiPromise, to: TNode): AmountBuilder {
     return new RelayToParaBuilder(api, to)
   }
 
