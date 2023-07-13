@@ -11,7 +11,7 @@
 | Node name | Website | Github | Polkadot.js |Node id | Supported XCM Pallet | Current latest XCM Version |
 | ------------- | ------------- | ------------- |------------- |------------- |------------- |------------- |
 | Statemint | [Website](https://www.parity.io/) |[Github](https://github.com/paritytech/cumulus)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fstatemint.api.onfinality.io%2Fpublic-ws#/explorer)|1000 | polkadotXCM | XCM V3 |
-| Acala | [Website](https://acala.network/) |[Github](https://github.com/AcalaNetwork/Acala)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2F1rpc.io%2Faca#/explorer)|2000 | xTokens |XCM V1 |
+| Acala | [Website](https://acala.network/) |[Github](https://github.com/AcalaNetwork/Acala)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2F1rpc.io%2Faca#/explorer)|2000 | xTokens |XCM V3 |
 | Astar | [Website](https://astar.network/) |[Github](https://github.com/AstarNetwork/Astar)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fastar-rpc.dwellir.com#/explorer)|2006 | polkadotXCM |XCM V3 |
 | BifrostPolkadot | [Website](https://thebifrost.io/) |[Github](https://github.com/bifrost-finance/bifrost)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fhk.p.bifrost-rpc.liebi.com%2Fws#/explorer)| 2030| xTokens |XCM V3 |
 | Centrifuge | [Website](https://centrifuge.io/) |[Github](https://github.com/centrifuge/centrifuge-chain)| [Polkadot.js](https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fcentrifuge-rpc.dwellir.com#/explorer)|2031 | xTokens |XCM V1 |
