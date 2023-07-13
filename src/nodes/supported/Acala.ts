@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Acala extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Acala', 'acala', 'polkadot', Version.V1)
+    super('Acala', 'acala', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {
