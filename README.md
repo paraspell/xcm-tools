@@ -112,7 +112,7 @@ Builder(api).from(NODE).to(NODE).currency(CurrencyString||CurrencyID).amount(amo
 Builder(api).to(NODE).amount(amount).address(address).build()
 
 //Transfer tokens from Parachain to Relay chain
-Builder(api).from(NODE).currency(CurrencyString||CurrencyID).amount(amount).address(address).build()
+Builder(api).from(NODE).amount(amount).address(address).build()
 
 //Close HRMP channels
 Builder(api).from(NODE).closeChannel().inbound(inbound).outbound(outbound).build()
@@ -130,7 +130,7 @@ Function pattern XCM & HRMP construction
 paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string, destination: destination  Parachain  ID)
 
 //Transfer tokens from Parachain to Relay chain
-paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string)
+paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, amount: any, to: destination  address  string)
 
 //Transfer tokens from Relay chain to Parachain
 paraspell.xcmPallet.transferRelayToPara(api: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string)
