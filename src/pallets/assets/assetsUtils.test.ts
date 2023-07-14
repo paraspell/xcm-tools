@@ -1,4 +1,4 @@
-//Contains tests for different Asset queries used in XCM call creation
+// Contains tests for different Asset queries used in XCM call creation
 
 import { describe, expect, it } from 'vitest'
 import { NODE_NAMES } from '../../maps/consts'
@@ -61,5 +61,11 @@ describe('getAssetBySymbolOrId', () => {
       const asset = getAssetBySymbolOrId(node, relayChainAssetSymbol)
       expect(asset).toHaveProperty('symbol')
     })
+  })
+
+  it('should find assetId for KSM asset in Statemine', () => {
+    const asset = getAssetBySymbolOrId('Statemine', 'KSM')
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
   })
 })

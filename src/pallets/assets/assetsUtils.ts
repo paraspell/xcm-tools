@@ -1,4 +1,4 @@
-//Contains function for getting Asset ID or Symbol used in XCM call creation
+// Contains function for getting Asset ID or Symbol used in XCM call creation
 
 import { TNode } from '../../types'
 import { getAssetsObject } from './assets'
@@ -9,7 +9,7 @@ export const getAssetBySymbolOrId = (
 ): { symbol: string; assetId?: number } | null => {
   const { otherAssets, nativeAssets, relayChainAssetSymbol } = getAssetsObject(node)
 
-  const asset = [...nativeAssets, ...otherAssets].find(
+  const asset = [...otherAssets, ...nativeAssets].find(
     ({ symbol, assetId }) => symbol === symbolOrId || assetId === symbolOrId
   )
 
