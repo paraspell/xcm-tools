@@ -1090,7 +1090,7 @@
             },
             {
                 "assetId": "1984",
-                "symbol": "USDt",
+                "symbol": "USDT",
                 "decimals": 6
             },
             {
@@ -2948,11 +2948,6 @@
                 "decimals": 8
             },
             {
-                "assetId": "11",
-                "symbol": "USDT",
-                "decimals": 4
-            },
-            {
                 "assetId": "224",
                 "symbol": "SIK",
                 "decimals": 8
@@ -3239,7 +3234,7 @@
             },
             {
                 "assetId": "1984",
-                "symbol": "USDt",
+                "symbol": "USDT",
                 "decimals": 6
             },
             {
@@ -3440,11 +3435,6 @@
             {
                 "assetId": "23",
                 "symbol": "KOJO",
-                "decimals": 3
-            },
-            {
-                "assetId": "19840",
-                "symbol": "USDt",
                 "decimals": 3
             },
             {
