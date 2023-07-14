@@ -2,7 +2,7 @@
 
 import { ApiPromise } from '@polkadot/api'
 import { NODE_NAMES } from '../maps/consts'
-import { TAssetJsonMap, TNativeAssetDetails, TNode, TNodeAssets } from '../types'
+import { TAssetDetails, TAssetJsonMap, TNativeAssetDetails, TNode, TNodeAssets } from '../types'
 import { getNode, getNodeEndpointOption } from '../utils'
 import {
   checkForNodeJsEnvironment,
@@ -21,9 +21,9 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Bitgreen: null, // No assets metadata query
   Centrifuge: 'ormlAssetRegistry.metadata',
   Clover: 'assets.metadata',
-  ComposableFinance: null, // No assets metadata query
+  ComposableFinance: 'assetsRegistry.assetSymbol',
   Darwinia: null, // No assets metadata query
-  HydraDX: null, // Assets query returns empty array
+  HydraDX: 'assetRegistry.assetMetadataMap',
   Interlay: 'assetRegistry.metadata',
   Kylin: 'assets.metadata',
   Litentry: null, // Assets query returns empty array
@@ -50,9 +50,9 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Mangata: 'assetRegistry.metadata',
   Moonriver: 'assets.metadata',
   ParallelHeiko: 'assets.metadata',
-  Picasso: null, // Assets query returns empty array
+  Picasso: 'assetsRegistry.assetSymbol',
   Pichiu: 'assets.metadata',
-  Pioneer: null, // Assets query returns empty array
+  Pioneer: 'assetManager.assetMetadatas',
   Quartz: null, // No assets metadata query
   Robonomics: 'assets.metadata',
   Shiden: 'assets.metadata',
@@ -75,7 +75,7 @@ const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]
 
 const fetchBifrostNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
   const res = await api.rpc.state.getMetadata()
-  const TYPE_ID = 114
+  const TYPE_ID = 127
   const DEFAULT_DECIMALS = -1
   // Decimals for Bifrost Polkadot will be set to -1 and later derived from other assets
   return res.asLatest.lookup.types.at(TYPE_ID)!.type.def.asVariant.variants.map(k => ({
@@ -130,6 +130,49 @@ const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string) => {
         }
       }
     )
+}
+
+const fetchOtherAssetsInnerType = async (api: ApiPromise, query: string) => {
+  const [module, section] = query.split('.')
+  const symbolsResponse = await api.query[module][section].entries()
+  const assetsWithoutDecimals = symbolsResponse.map(
+    ([
+      {
+        args: [era]
+      },
+      value
+    ]) => {
+      const { inner: symbol } = value.toHuman() as any
+      const assetId = era.toHuman() as string
+      const numberAssetId = assetId.replace(/[,]/g, '')
+      return {
+        assetId: numberAssetId,
+        symbol
+      }
+    }
+  )
+  const decimalsResponse = await api.query[module].assetDecimals.entries()
+  const assetsWithoutSymbols = decimalsResponse.map(
+    ([
+      {
+        args: [era]
+      },
+      value
+    ]) => {
+      const assetId = era.toHuman() as string
+      const numberAssetId = assetId.replace(/[,]/g, '')
+      return { assetId: numberAssetId, decimals: +(value.toHuman() as number) }
+    }
+  )
+
+  return assetsWithoutDecimals
+    .map(assetWithoutDecimals => {
+      const matchingAsset = assetsWithoutSymbols.find(
+        assetWithoutSymbols => assetWithoutSymbols.assetId === assetWithoutDecimals.assetId
+      )
+      return matchingAsset ? { ...assetWithoutDecimals, decimals: matchingAsset.decimals } : null
+    })
+    .filter(asset => asset !== null) as unknown as TAssetDetails[]
 }
 
 const fetchOtherAssetsType2 = async (api: ApiPromise, query: string) => {
@@ -221,10 +264,30 @@ const fetchNodeAssets = async (
     return assets
   }
 
+  if (node === 'Pioneer') {
+    const { otherAssets } = await fetchAssetsType2(api, query!)
+    const nativeAssets = (await fetchNativeAssets(api)) ?? []
+    await api.disconnect()
+    return {
+      nativeAssets,
+      otherAssets
+    }
+  }
+
   // Different format of data
   if (node === 'Centrifuge') {
     const nativeAssets = (await fetchNativeAssets(api)) ?? []
     const otherAssets = query ? await fetchOtherAssetsCentrifuge(api, query) : []
+    await api.disconnect()
+    return {
+      nativeAssets,
+      otherAssets
+    }
+  }
+
+  if (node === 'Picasso' || node === 'ComposableFinance') {
+    const nativeAssets = (await fetchNativeAssets(api)) ?? []
+    const otherAssets = query ? await fetchOtherAssetsInnerType(api, query) : []
     await api.disconnect()
     return {
       nativeAssets,

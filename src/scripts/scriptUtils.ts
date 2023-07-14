@@ -28,7 +28,8 @@ export const fetchTryMultipleProviders = async <T>(
   node: TNode,
   fetcher: (wsUrl: string) => T
 ): Promise<T | null> => {
-  const providers = getNodeProviders(node)
+  let providers = getNodeProviders(node)
+  if (node === 'Mangata') providers = ['wss://kusama-archive.mangata.online']
   for (const provider of providers) {
     try {
       console.log(`Trying ${provider}...`)
