@@ -88,6 +88,23 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, NODE, NODE_2, CHANNEL_MAX_SIZE, CHANNEL_MAX_MSG_SIZE)
   })
 
+  it('should return a channel open serialized api call', () => {
+    const serializedApiCall = Builder(api)
+      .from(NODE)
+      .to(NODE_2)
+      .openChannel()
+      .maxSize(CHANNEL_MAX_SIZE)
+      .maxMessageSize(CHANNEL_MAX_MSG_SIZE)
+      .buildSerializedApiCall()
+
+    expect(serializedApiCall).toHaveProperty('module')
+    expect(serializedApiCall).toHaveProperty('section')
+    expect(serializedApiCall).toHaveProperty('parameters')
+    expect(serializedApiCall.module).toBeTypeOf('string')
+    expect(serializedApiCall.section).toBeTypeOf('string')
+    expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
+  })
+
   it('should close a channel', () => {
     const spy = vi.spyOn(hrmp, 'closeChannel').mockImplementation(() => {
       return undefined as any
@@ -101,6 +118,22 @@ describe('Builder', () => {
       .build()
 
     expect(spy).toHaveBeenCalledWith(api, NODE, CHANNEL_INBOUND, CHANNEL_OUTBOUND)
+  })
+
+  it('should return a channel close serialized api call', () => {
+    const serializedApiCall = Builder(api)
+      .from(NODE)
+      .closeChannel()
+      .inbound(CHANNEL_INBOUND)
+      .outbound(CHANNEL_OUTBOUND)
+      .buildSerializedApiCall()
+
+    expect(serializedApiCall).toHaveProperty('module')
+    expect(serializedApiCall).toHaveProperty('section')
+    expect(serializedApiCall).toHaveProperty('parameters')
+    expect(serializedApiCall.module).toBeTypeOf('string')
+    expect(serializedApiCall.section).toBeTypeOf('string')
+    expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
   })
 
   it('should add liquidity', () => {
