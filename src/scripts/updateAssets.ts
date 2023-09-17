@@ -75,7 +75,7 @@ const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]
 
 const fetchBifrostNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
   const res = await api.rpc.state.getMetadata()
-  const TYPE_ID = 127
+  const TYPE_ID = 131
   const DEFAULT_DECIMALS = -1
   // Decimals for Bifrost Polkadot will be set to -1 and later derived from other assets
   return res.asLatest.lookup.types.at(TYPE_ID)!.type.def.asVariant.variants.map(k => ({
