@@ -1,53 +1,26 @@
-
-  
-
 # @paraspell/sdk
 
 ![Full name (3)](https://user-images.githubusercontent.com/55763425/197985791-fc7afa52-061d-413a-bbe9-bf1123f16a50.png)
 
-  
-
-  
-
 [![npm version][npm-version-src]][npm-version-href]
-
-  
 
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 
-  
-
 [![Known Vulnerabilities](https://snyk.io/test/github/paraspell/sdk/badge.svg)](https://snyk.io/test/github/paraspell/sdk)
-
-  
 
 SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become magician and try your paraSPELLS 🧙✨.
 
-  
-
-##### Currently supporting 44 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/main/docs/supportedNodes.md).
-
-  
+##### Currently supporting 43 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/main/docs/supportedNodes.md).
 
 ### Check out our brand new Wiki documentation! [Wiki docs](https://paraspell.github.io/docs/)
 
-  
-
 ## Usage
 
-  
-
-  
-
 **Install package:**
-
-  
 
 #### Since version 1.0.0
 
 Our SDK introduced all Polkadot libraries as peer dependencies. Reason for this is, that most of the projects use these libraries in some way already and it fixes issues with unmet dependency warnings. Make sure your project have them. You can install them by following command:
-
-  
 
 ##### Install DEPS via npm||yarn||pnpm
 
@@ -70,37 +43,28 @@ yarn install @paraspell/sdk
 //pnpm
 pnpm install @paraspell/sdk
 ```
-##### Importing package to your project:
 
-  
+##### Importing package to your project:
 
 If you wish to use XCM, HRMP, XYK Pallets only you can import Builder like this:
 
 ```js
-import { Builder } from  '@paraspell/sdk'
+import { Builder } from '@paraspell/sdk'
 ```
-
-  
 
 Old function like import (With assets):
 
 ```js
 // ESM
-import  *  as  paraspell  from  '@paraspell/sdk'
+import * as paraspell from '@paraspell/sdk'
 
 // CommonJS
-const  paraspell  =  require('@paraspell/sdk')
+const paraspell = require('@paraspell/sdk')
 ```
-
-  
-
-  
 
 ## Currently implemented pallets
 
 XCM pallet (Combined xTokens, polkadotXCM, ormlXTokens, XcmPallet & relayerXCM):
-
-  
 
 Builder pattern XCM & HRMP construction
 
@@ -120,8 +84,6 @@ Builder(api).from(NODE).closeChannel().inbound(inbound).outbound(outbound).build
 //Open HRMP channels
 Builder(api).from(NODE).to(NODE).openChannel().maxSize(maxSize).maxMessageSize(maxMsgSize).build()'
 ```
-
-  
 
 Function pattern XCM & HRMP construction
 
@@ -145,8 +107,6 @@ paraspell.openChannels.openChannel(api: ApiPromise, origin: origin  Parachain  I
 ```
 
 Asset pallet contruction:
-
-  
 
 ```ts
 //Returns assets object from assets.json for particular node including information about native and foreign assets
@@ -184,8 +144,6 @@ paraspell.NODE_NAMES
 ```
 
 Basilisk XYK pallet contruction
-
-  
 
 Builder patternn XYK construction
 
@@ -276,61 +234,19 @@ console.log(SUPPORTED_PALLETS)
 
 [![logo-v1](https://user-images.githubusercontent.com/55763425/204865221-90d2b3cd-f2ac-48a2-a367-08722aa8e923.svg)](https://bsx.fi/)
 
-  
-  
-
 ## License
-
-  
 
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
 
-  
-
-  
-
 Published under [MIT License](https://github.com/paraspell/sdk/blob/main/LICENSE).
-
-  
-
-  
 
 <!-- Badges -->
 
-  
-
 [npm-version-src]: https://img.shields.io/npm/v/@paraspell/sdk?style=flat-square
-
-  
-
 [npm-version-href]: https://npmjs.com/package/@paraspell/sdk
-
-  
-
-  
-
 [npm-downloads-src]: https://img.shields.io/npm/dm/@paraspell/sdk?style=flat-square
-
-  
-
 [npm-downloads-href]: https://npmjs.com/package/@paraspell/sdk
-
-  
-  
-  
-
 [github-actions-src]: https://img.shields.io/github/workflow/status/unjs/@paraspell/sdk/ci/main?style=flat-square
-
-  
-
 [github-actions-href]: https://github.com/unjs/@paraspell/sdk/actions?query=workflow%3Aci
-
-  
-  
-  
-
 [codecov-src]: https://img.shields.io/codecov/c/gh/unjs/@paraspell/sdk/main?style=flat-square
-
-  
-
 [codecov-href]: https://codecov.io/gh/unjs/@paraspell/sdk

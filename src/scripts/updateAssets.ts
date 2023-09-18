@@ -61,8 +61,7 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Equilibrium: null, // No foreign assets metadata query
   Unique: null, // Foreign assets query returns empty array
   Crust: 'assets.metadata',
-  Efinity: null, // No foreign assets metadata query
-  Ipci: 'assets.metadata'
+  Efinity: null // No foreign assets metadata query
 }
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {

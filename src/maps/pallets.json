@@ -1,326 +1,190 @@
 {
-    "Statemint": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "Acala": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Astar": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "BifrostPolkadot": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Bitgreen": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "Centrifuge": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Clover": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "ComposableFinance": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Darwinia": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "HydraDX": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Interlay": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Kylin": {
-        "defaultPallet": "OrmlXTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "OrmlXTokens"
-        ]
-    },
-    "Litentry": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Moonbeam": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Parallel": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Statemine": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "Encointer": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "Altair": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Amplitude": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Bajun": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "Basilisk": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "BifrostKusama": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Pioneer": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Calamari": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "CrustShadow": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Crab": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "Dorafactory": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Imbue": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Integritee": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "InvArchTinker": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Karura": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Kico": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "XTokens",
-            "PolkadotXcm"
-        ]
-    },
-    "Kintsugi": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Litmus": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Mangata": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Moonriver": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "ParallelHeiko": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Picasso": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Pichiu": {
-        "defaultPallet": "OrmlXTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "OrmlXTokens"
-        ]
-    },
-    "Quartz": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "XTokens",
-            "PolkadotXcm"
-        ]
-    },
-    "Robonomics": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "Shiden": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "Turing": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Equilibrium": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    },
-    "Unique": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "XTokens",
-            "PolkadotXcm"
-        ]
-    },
-    "Crust": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Efinity": {
-        "defaultPallet": "XTokens",
-        "supportedPallets": [
-            "PolkadotXcm",
-            "XTokens"
-        ]
-    },
-    "Ipci": {
-        "defaultPallet": "PolkadotXcm",
-        "supportedPallets": [
-            "PolkadotXcm"
-        ]
-    }
+  "Statemint": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Acala": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Astar": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "BifrostPolkadot": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Bitgreen": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Centrifuge": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Clover": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "ComposableFinance": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Darwinia": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "HydraDX": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Interlay": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Kylin": {
+    "defaultPallet": "OrmlXTokens",
+    "supportedPallets": ["PolkadotXcm", "OrmlXTokens"]
+  },
+  "Litentry": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Moonbeam": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Parallel": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Statemine": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Encointer": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Altair": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Amplitude": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Bajun": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Basilisk": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "BifrostKusama": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Pioneer": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Calamari": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "CrustShadow": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Crab": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Dorafactory": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Imbue": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Integritee": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "InvArchTinker": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Karura": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Kico": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["XTokens", "PolkadotXcm"]
+  },
+  "Kintsugi": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Litmus": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Mangata": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Moonriver": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "ParallelHeiko": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Picasso": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Pichiu": {
+    "defaultPallet": "OrmlXTokens",
+    "supportedPallets": ["PolkadotXcm", "OrmlXTokens"]
+  },
+  "Quartz": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["XTokens", "PolkadotXcm"]
+  },
+  "Robonomics": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Shiden": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Turing": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Equilibrium": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Unique": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["XTokens", "PolkadotXcm"]
+  },
+  "Crust": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Efinity": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  }
 }

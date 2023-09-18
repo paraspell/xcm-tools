@@ -47,7 +47,6 @@ import Astar from '../nodes/supported/Astar'
 import Equilibrium from '../nodes/supported/Equilibrium'
 import Darwinia from '../nodes/supported/Darwinia'
 import Crab from '../nodes/supported/Crab'
-import Ipci from '../nodes/supported/Ipci'
 import Quartz from '../nodes/supported/Quartz'
 import Shiden from '../nodes/supported/Shiden'
 
@@ -98,8 +97,7 @@ export const NODE_NAMES = [
   'Equilibrium',
   'Unique',
   'Crust',
-  'Efinity',
-  'Ipci'
+  'Efinity'
 ] as const
 
 export const nodes: Record<TNode, ParachainNode> = {
@@ -140,7 +138,6 @@ export const nodes: Record<TNode, ParachainNode> = {
   Karura: new Karura(),
   Kico: new Kico(),
   Kintsugi: new Kintsugi(),
-  Ipci: new Ipci(),
   Litmus: new Litmus(),
   Mangata: new Mangata(),
   Moonriver: new Moonriver(),
