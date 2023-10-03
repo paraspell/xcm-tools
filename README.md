@@ -8,7 +8,7 @@
 
 [![Known Vulnerabilities](https://snyk.io/test/github/paraspell/sdk/badge.svg)](https://snyk.io/test/github/paraspell/sdk)
 
-SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become magician and try your paraSPELLS 🧙✨.
+SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become a magician and try your paraSPELLS 🧙✨.
 
 ##### Currently supporting 43 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/main/docs/supportedNodes.md).
 
@@ -20,7 +20,7 @@ SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer ne
 
 #### Since version 1.0.0
 
-Our SDK introduced all Polkadot libraries as peer dependencies. Reason for this is, that most of the projects use these libraries in some way already and it fixes issues with unmet dependency warnings. Make sure your project have them. You can install them by following command:
+Our SDK introduced all Polkadot libraries as peer dependencies. The reason for this is, that most of the projects use these libraries in some way already and it fixes issues with unmet dependency warnings. Make sure your project has them. You can install them by following the command:
 
 ##### Install DEPS via npm||yarn||pnpm
 
@@ -46,7 +46,7 @@ pnpm install @paraspell/sdk
 
 ##### Importing package to your project:
 
-If you wish to use XCM, HRMP, XYK Pallets only you can import Builder like this:
+If you wish to use XCM, HRMP and XYK Pallets only you can import Builder like this:
 
 ```js
 import { Builder } from '@paraspell/sdk'
@@ -72,7 +72,7 @@ Builder pattern XCM & HRMP construction
 //Transfer tokens from Parachain to Parachain
 Builder(api).from(NODE).to(NODE).currency(CurrencyString||CurrencyID).amount(amount).address(address).build()
 
-//Transfer tokens from Relay chain to Parachain
+//Transfer tokens from the Relay chain to Parachain
 Builder(api).to(NODE).amount(amount).address(address).build()
 
 //Transfer tokens from Parachain to Relay chain
@@ -106,28 +106,28 @@ paraspell.closeChannels.closeChannel(api: ApiPromise, origin: origin  Parachain 
 paraspell.openChannels.openChannel(api: ApiPromise, origin: origin  Parachain  ID, destination: destination  Parachain  ID, maxSize: number, maxMessageSize: number)
 ```
 
-Asset pallet contruction:
+Asset pallet construction:
 
 ```ts
 //Returns assets object from assets.json for particular node including information about native and foreign assets
 paraspell.assets.getAssetsObject(node: TNode)
 
-//Returns foreign assetId for particular node and asset symbol
+//Returns foreign assetId for a particular node and asset symbol
 paraspell.assets.getAssetId(node: TNode, symbol: string)
 
-//Returns symbol of the relay chain for particular node. Either "DOT" or "KSM"
+//Returns the symbol of the relay chain for a particular node. Either "DOT" or "KSM"
 paraspell.assets.getRelayChainSymbol(node: TNode)
 
 //Returns string array of native assets symbols for particular node
 paraspell.assets.getNativeAssets(node: TNode)
 
-//Returns object array of foreign assets for particular node. Each object has symbol and assetId property
+//Returns object array of foreign assets for a particular node. Each object has a symbol and assetId property
 paraspell.assets.getOtherAssets(node: TNode)
 
-//Returns string array of all assets symbols. (native and foreign assets are merged to a single array)
+//Returns string array of all assets symbols. (native and foreign assets are merged into a single array)
 paraspell.assets.getAllAssetsSymbols(node: TNode)
 
-//Checks if node supports particular asset. (Both native and foreign assets are searched). Returns boolean
+//Checks if a node supports a particular asset. (Both native and foreign assets are searched). Returns boolean
 paraspell.assets.hasSupportForAsset(node: TNode, symbol: string)
 
 //Get decimals for specific asset
@@ -143,28 +143,28 @@ paraspell.assets.getTNode(nodeID: number)
 paraspell.NODE_NAMES
 ```
 
-Basilisk XYK pallet contruction
+Basilisk XYK pallet construction
 
-Builder patternn XYK construction
+Builder pattern XYK construction
 
 ```ts
-//Add liquidity to specific pool
+//Add liquidity to a specific pool
 Builder(api).addLiquidity().assetA(assetA).assetB(assetB).amountA(amountA).amountBMaxLimit(maxLimit).build()
 
-//Remove liquidity from specific pool
+//Remove liquidity from a specific pool
 Builder(api).removeLiquidity().assetA(assetA).assetB(assetB).liquidityAmount(liquidity).build()
 
 //Create pool
 Builder(api).createPool().assetA(assetA).amountA(amountA).assetB(assetB).amountB(amountB).build()
 
-//Buy specific asset from pool
+//Buy specific asset from the pool
 Builder(api).buy().assetOut(out).assetIn(in).amount(amount).maxLimit(maxLimit).discount(discount).build()
 
-//Sell specific asset from pool
+//Sell specific asset from the pool
 Builder(api).sell().assetIn(in).assetOut(out).amount(amount).maxLimit(maxLimit).discount(discount).build()
 ```
 
-Function pattern XYK contruction
+Function pattern XYK construction
 
 ```ts
 //Add liquidity to specific pool
@@ -191,7 +191,7 @@ import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@para
 //Returns default pallet for specific parachain node
 getDefaultPallet(node: TNode)
 
-//Returns an array of supported pallets for specific parachain node.
+//Returns an array of supported pallets for a specific parachain node.
 getSupportedPallets(node: TNode)
 
 //Prints all pallets that are currently supported
@@ -200,7 +200,7 @@ console.log(SUPPORTED_PALLETS)
 
 ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui) or in the Astarot repository [here](https://github.com/paraspell/astarot)
 
-##### List of currently compatible nodes can be found [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md)
+##### A list of currently compatible nodes can be found [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md)
 
 ## 💻 Development
 
@@ -220,7 +220,7 @@ console.log(SUPPORTED_PALLETS)
 
 - Run updatePallets script using `pnpm updatePallets`
 
-- Run coverage tests usign `pnpm test`
+- Run coverage tests using `pnpm test`
 
 - Run all tests using `pnpm runAll`
 
