@@ -10,7 +10,7 @@ class Turing extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput) {
-    const { currencyID, fees } = input
+    const { currencyID } = input
     return XTokensTransferImpl.transferXTokens(input, currencyID)
   }
 }

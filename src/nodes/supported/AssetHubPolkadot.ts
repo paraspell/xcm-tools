@@ -4,18 +4,16 @@ import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../t
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
-class Statemint extends ParachainNode implements IPolkadotXCMTransfer {
+class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Statemint', 'statemint', 'polkadot', Version.V3)
+    super('AssetHubPolkadot', 'PolkadotAssetHub', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     // TESTED https://polkadot.subscan.io/xcm_message/polkadot-e4cdf1c59ffbb3d504adbc893d6b7d72665e484d
     // TESTED https://polkadot.subscan.io/xcm_message/polkadot-c01158ff1a5c5a596138ed9d0f0f2bccc1d9c51d
-    const method =
-      input.scenario === 'ParaToPara' ? 'limitedReserveTransferAssets' : 'limitedTeleportAssets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited')
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'limitedTeleportAssets', 'Unlimited')
   }
 }
 
-export default Statemint
+export default AssetHubPolkadot

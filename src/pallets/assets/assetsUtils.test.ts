@@ -10,10 +10,12 @@ describe('getAssetBySymbolOrId', () => {
     NODE_NAMES.forEach(node => {
       const { otherAssets } = getAssetsObject(node)
       otherAssets.forEach(other => {
-        const asset = getAssetBySymbolOrId(node, other.symbol)
-        expect(asset).toHaveProperty('symbol')
-        expect(other.symbol).toEqual(asset?.symbol)
-        expect(asset).toHaveProperty('assetId')
+        if (other.symbol) {
+          const asset = getAssetBySymbolOrId(node, other.symbol)
+          expect(asset).toHaveProperty('symbol')
+          expect(other.symbol).toEqual(asset?.symbol)
+          expect(asset).toHaveProperty('assetId')
+        }
       })
     })
   })
@@ -63,8 +65,8 @@ describe('getAssetBySymbolOrId', () => {
     })
   })
 
-  it('should find assetId for KSM asset in Statemine', () => {
-    const asset = getAssetBySymbolOrId('Statemine', 'KSM')
+  it('should find assetId for KSM asset in AssetHubKusama', () => {
+    const asset = getAssetBySymbolOrId('AssetHubKusama', 'KSM')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })

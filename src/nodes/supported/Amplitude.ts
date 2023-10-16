@@ -6,11 +6,11 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Amplitude extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Amplitude', 'amplitude', 'kusama', Version.V1)
+    super('Amplitude', 'amplitude', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {
-    return XTokensTransferImpl.transferXTokens(input, { XCM: input.currency })
+    return XTokensTransferImpl.transferXTokens(input, { XCM: input.currencyID })
   }
 }
 

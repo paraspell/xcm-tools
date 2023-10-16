@@ -34,12 +34,8 @@ export function getAllAssetsSymbols(node: TNode) {
   const { relayChainAssetSymbol, nativeAssets, otherAssets } = getAssetsObject(node)
   return [
     relayChainAssetSymbol,
-    ...nativeAssets.map(function ({ symbol }) {
-      return symbol
-    }),
-    ...otherAssets.map(function ({ symbol }) {
-      return symbol
-    })
+    ...nativeAssets.map(({ symbol }) => symbol),
+    ...otherAssets.filter(asset => !!asset.symbol).map(({ symbol }) => symbol)
   ]
 }
 

@@ -10,7 +10,7 @@ class Imbue extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput) {
-    const { currency, fees } = input
+    const { currency } = input
     return XTokensTransferImpl.transferXTokens(input, currency)
   }
 }

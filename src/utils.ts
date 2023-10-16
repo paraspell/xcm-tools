@@ -3,16 +3,16 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ethers } from 'ethers'
 import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
-import { TNode, TScenario, TSerializedApiCall, Version } from './types'
+import { TNode, TPallet, TScenario, TSerializedApiCall, Version } from './types'
 import { nodes } from './maps/consts'
 import ParachainNode from './nodes/ParachainNode'
 
-export function createAccID(api: ApiPromise, account: string) {
+export const createAccID = (api: ApiPromise, account: string) => {
   console.log('Generating AccountId32 address')
   return api.createType('AccountId32', account).toHex()
 }
 
-export function getFees(scenario: TScenario) {
+export const getFees = (scenario: TScenario) => {
   if (scenario === 'ParaToRelay') {
     console.log('Asigning fees for transfer to Relay chain')
     return 4600000000
@@ -23,38 +23,25 @@ export function getFees(scenario: TScenario) {
   throw new Error(`Fees for scenario ${scenario} are not defined.`)
 }
 
-export function handleAddress(
-  scenario: TScenario,
-  pallet: string,
+export const generateAddressPayload = (
   api: ApiPromise,
-  to: string,
+  scenario: TScenario,
+  pallet: TPallet | null,
+  recipientAddress: string,
   version: Version,
   nodeId: number | undefined
-): any {
-  if (scenario === 'ParaToRelay' && pallet === 'xTokens') {
-    console.log('AccountId32 transfer')
-    if (version === Version.V3) {
-      return {
-        V3: {
-          parents: 1,
-          interior: {
-            X1: {
-              AccountId32: {
-                id: createAccID(api, to)
-              }
-            }
-          }
-        }
-      }
-    }
+) => {
+  const isEthAddress = ethers.utils.isAddress(recipientAddress)
+
+  if (scenario === 'ParaToRelay') {
     return {
-      V1: {
-        parents: 1,
+      [version]: {
+        parents: pallet === 'XTokens' ? 1 : 0,
         interior: {
           X1: {
             AccountId32: {
-              network: 'any',
-              id: createAccID(api, to)
+              ...(version === Version.V1 && { network: 'any' }),
+              id: createAccID(api, recipientAddress)
             }
           }
         }
@@ -62,113 +49,40 @@ export function handleAddress(
     }
   }
 
-  if (scenario === 'ParaToPara' && pallet === 'xTokens') {
-    if (ethers.utils.isAddress(to)) {
-      console.log('AccountKey20 transfer')
-      if (version === Version.V3) {
-        return {
-          V3: {
-            parents: 1,
-            interior: {
-              X2: [
-                {
-                  Parachain: nodeId
-                },
-                {
-                  AccountKey20: {
-                    key: to
-                  }
-                }
-              ]
-            }
-          }
-        }
-      }
-      return {
-        V1: {
-          parents: 1,
-          interior: {
-            X2: [
-              {
-                Parachain: nodeId
-              },
-              {
-                AccountKey20: {
-                  network: 'Any',
-                  key: to
-                }
+  if (scenario === 'ParaToPara' && pallet === 'XTokens') {
+    return {
+      [version]: {
+        parents: 1,
+        interior: {
+          X2: [
+            {
+              Parachain: nodeId
+            },
+            {
+              [isEthAddress ? 'AccountKey20' : 'AccountId32']: {
+                ...(version === Version.V1 && { network: 'any' }),
+                ...(isEthAddress
+                  ? { key: recipientAddress }
+                  : { id: createAccID(api, recipientAddress) })
               }
-            ]
-          }
-        }
-      }
-    } else {
-      console.log('AccountId32 transfer')
-      if (version === Version.V3) {
-        return {
-          V3: {
-            parents: 1,
-            interior: {
-              X2: [
-                {
-                  Parachain: nodeId
-                },
-                {
-                  AccountId32: {
-                    id: createAccID(api, to)
-                  }
-                }
-              ]
             }
-          }
-        }
-      }
-      return {
-        V1: {
-          parents: 1,
-          interior: {
-            X2: [
-              {
-                Parachain: nodeId
-              },
-              {
-                AccountId32: {
-                  network: 'Any',
-                  id: createAccID(api, to)
-                }
-              }
-            ]
-          }
+          ]
         }
       }
     }
   }
 
-  if (scenario === 'ParaToRelay' && pallet === 'polkadotXCM') {
-    console.log('AccountId32 transfer')
-    if (version === Version.V3) {
-      return {
-        V3: {
-          parents: 0,
-          interior: {
-            X1: {
-              AccountId32: {
-                id: createAccID(api, to)
-              }
-            }
-          }
-        }
-      }
-    } else {
-      return {
-        V1: {
-          parents: 0,
-          interior: {
-            X1: {
-              AccountId32: {
-                network: 'any',
-                id: createAccID(api, to)
-              }
+  if (scenario === 'ParaToPara' && pallet === 'PolkadotXcm') {
+    return {
+      [version]: {
+        parents: 0,
+        interior: {
+          X1: {
+            [isEthAddress ? 'AccountKey20' : 'AccountId32']: {
+              ...(version === Version.V1 && { network: 'any' }),
+              ...(isEthAddress
+                ? { key: recipientAddress }
+                : { id: createAccID(api, recipientAddress) })
             }
           }
         }
@@ -176,96 +90,15 @@ export function handleAddress(
     }
   }
 
-  if (scenario === 'ParaToPara' && pallet === 'polkadotXCM') {
-    if (ethers.utils.isAddress(to)) {
-      console.log('AccountKey20 transfer')
-      if (version === Version.V3) {
-        return {
-          V3: {
-            parents: 0,
-            interior: {
-              X1: {
-                AccountKey20: {
-                  key: to
-                }
-              }
-            }
-          }
-        }
-      } else {
-        return {
-          V1: {
-            parents: 0,
-            interior: {
-              X1: {
-                AccountKey20: {
-                  network: 'Any',
-                  key: to
-                }
-              }
-            }
-          }
-        }
-      }
-    } else {
-      console.log('AccountId32 transfer')
-      if (version === Version.V3) {
-        return {
-          V3: {
-            parents: 0,
-            interior: {
-              X1: {
-                AccountId32: {
-                  id: createAccID(api, to)
-                }
-              }
-            }
-          }
-        }
-      } else {
-        return {
-          V1: {
-            parents: 0,
-            interior: {
-              X1: {
-                AccountId32: {
-                  network: 'Any',
-                  id: createAccID(api, to)
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  if (scenario === 'RelayToPara') {
-    if (ethers.utils.isAddress(to)) {
-      console.log('AccountKey20 transfer')
-      return {
-        V3: {
-          parents: 0,
-          interior: {
-            X1: {
-              AccountKey20: {
-                key: to
-              }
-            }
-          }
-        }
-      }
-    } else {
-      console.log('AccountId32 transfer')
-      return {
-        V3: {
-          parents: 0,
-          interior: {
-            X1: {
-              AccountId32: {
-                id: createAccID(api, to)
-              }
-            }
+  return {
+    V3: {
+      parents: 0,
+      interior: {
+        X1: {
+          [isEthAddress ? 'AccountKey20' : 'AccountId32']: {
+            ...(isEthAddress
+              ? { key: recipientAddress }
+              : { id: createAccID(api, recipientAddress) })
           }
         }
       }
@@ -273,49 +106,31 @@ export function handleAddress(
   }
 }
 
-export function createCurrencySpecification(
+export const createCurrencySpecification = (
   amount: any,
   scenario: TScenario,
   version: Version,
   node?: TNode,
   cur?: number | string
-) {
+) => {
   if (scenario === 'ParaToRelay') {
-    console.log('polkadotXCM transfer in native currency to Relay chain')
-    if (version === Version.V3) {
-      return {
-        V3: [
-          {
-            id: {
-              Concrete: {
-                parents: 1,
-                interior: 'Here'
-              }
-            },
-            fun: {
-              Fungible: amount
+    return {
+      [version]: [
+        {
+          id: {
+            Concrete: {
+              parents: 1,
+              interior: 'Here'
             }
+          },
+          fun: {
+            Fungible: amount
           }
-        ]
-      }
-    } else {
-      return {
-        V1: [
-          {
-            id: {
-              Concrete: {
-                parents: 1,
-                interior: 'Here'
-              }
-            },
-            fun: {
-              Fungible: amount
-            }
-          }
-        ]
-      }
+        }
+      ]
     }
   }
+
   if (scenario === 'RelayToPara' || scenario === 'ParaToPara') {
     console.log('polkadotXCM Native currency to sender chain transfer')
     if ((node === 'Darwinia' || node === 'Crab') && scenario === 'ParaToPara') {
@@ -339,8 +154,11 @@ export function createCurrencySpecification(
           }
         ]
       }
-    } else if ((node === 'Statemine' || node === 'Statemint') && scenario === 'ParaToPara') {
-      // Another specific case for Statemint & Statemine to send for example USDt
+    } else if (
+      (node === 'AssetHubPolkadot' || node === 'AssetHubKusama') &&
+      scenario === 'ParaToPara'
+    ) {
+      // Another specific case for AssetHubPolkadot & AssetHubKusama to send for example USDt
       return {
         V3: [
           {
@@ -386,54 +204,20 @@ export function createCurrencySpecification(
   }
 }
 
-export function createHeaderPolkadotXCM(scenario: TScenario, version: Version, nodeId?: number) {
-  console.log('Generating header for polkadotXCM transfer')
+export const createHeaderPolkadotXCM = (scenario: TScenario, version: Version, nodeId?: number) => {
   if (scenario === 'ParaToRelay') {
-    if (version === Version.V3) {
-      return {
-        V3: {
-          parents: 1,
-          interior: 'Here'
-        }
-      }
-    } else {
-      return {
-        V1: {
-          parents: 1,
-          interior: 'Here'
-        }
-      }
-    }
-  }
-  if (scenario === 'ParaToPara') {
-    if (version === Version.V3) {
-      return {
-        V3: {
-          parents: 1,
-          interior: {
-            X1: {
-              Parachain: nodeId
-            }
-          }
-        }
-      }
-    } else {
-      return {
-        V1: {
-          parents: 1,
-          interior: {
-            X1: {
-              Parachain: nodeId
-            }
-          }
-        }
-      }
-    }
-  }
-  if (scenario === 'RelayToPara') {
     return {
-      V3: {
-        parents: 0,
+      [version]: {
+        parents: 1,
+        interior: 'Here'
+      }
+    }
+  }
+
+  if (scenario === 'ParaToPara') {
+    return {
+      [version]: {
+        parents: 1,
         interior: {
           X1: {
             Parachain: nodeId
@@ -442,15 +226,49 @@ export function createHeaderPolkadotXCM(scenario: TScenario, version: Version, n
       }
     }
   }
+
+  return {
+    V3: {
+      parents: 0,
+      interior: {
+        X1: {
+          Parachain: nodeId
+        }
+      }
+    }
+  }
 }
 
-export function getNode(node: TNode): ParachainNode {
+export const getNode = (node: TNode): ParachainNode => {
   return nodes[node]
 }
 
-export function getNodeEndpointOption(node: TNode) {
+export const getNodeEndpointOption = (node: TNode) => {
   const { type, name } = getNode(node)
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
+
+  // TMP Fix because some nodes don't have providers in endpoint options
+  if (node === 'Imbue') {
+    return {
+      info: 'imbue',
+      paraId: 2121,
+      providers: {
+        'Imbue Network 0': 'wss://kusama.imbuenetwork.com'
+      }
+    }
+  }
+  if (node === 'Polkadex') {
+    return {
+      info: 'polkadex',
+      paraId: 2040,
+      providers: {
+        Dwellir: 'wss://polkadex-rpc.dwellir.com',
+        OnFinality: 'wss://polkadex-parachain.api.onfinality.io/public-ws',
+        RadiumBlock: 'wss://polkadex-parachain.public.curie.radiumblock.co/ws'
+      }
+    }
+  }
+
   return linked
     ? linked.find(function (o) {
         return o.info === name
@@ -458,7 +276,7 @@ export function getNodeEndpointOption(node: TNode) {
     : undefined
 }
 
-export async function createApiInstance(wsUrl: string) {
+export const createApiInstance = async (wsUrl: string) => {
   const wsProvider = new WsProvider(wsUrl)
   return await ApiPromise.create({ provider: wsProvider })
 }

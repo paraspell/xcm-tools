@@ -75,16 +75,16 @@ describe('send', () => {
     expect(t).toThrowError(InvalidCurrencyError)
   })
 
-  it('should throw an IncompatibleNodesError when passing Statemine, DOT and Statemint as destination', () => {
+  it('should throw an IncompatibleNodesError when passing AssetHubKusama, DOT and AssetHubPolkadot as destination', () => {
     const t = () => {
-      send(api, 'Statemine', 'DOT', AMOUNT, ADDRESS, 'Statemint')
+      send(api, 'AssetHubKusama', 'DOT', AMOUNT, ADDRESS, 'AssetHubPolkadot')
     }
     expect(t).toThrowError(IncompatibleNodesError)
   })
 
-  it('should throw an IncompatibleNodesError when passing Statemint, DOT and Statemine as destination', () => {
+  it('should throw an IncompatibleNodesError when passing AssetHubPolkadot, DOT and AssetHubKusama as destination', () => {
     const t = () => {
-      send(api, 'Statemint', 'DOT', AMOUNT, ADDRESS, 'Statemine')
+      send(api, 'AssetHubPolkadot', 'DOT', AMOUNT, ADDRESS, 'AssetHubKusama')
     }
     expect(t).toThrowError(IncompatibleNodesError)
   })
@@ -93,10 +93,12 @@ describe('send', () => {
     NODE_NAMES.forEach(node => {
       const symbols = getAllAssetsSymbols(node)
       symbols.forEach(symbol => {
-        const t = () => {
-          send(api, node, symbol, AMOUNT, ADDRESS)
+        if (symbol) {
+          const t = () => {
+            send(api, node, symbol, AMOUNT, ADDRESS)
+          }
+          expect(t).not.toThrowError(InvalidCurrencyError)
         }
-        expect(t).not.toThrowError(InvalidCurrencyError)
       })
     })
   })
