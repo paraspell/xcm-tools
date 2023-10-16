@@ -29,7 +29,7 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Litentry: null, // Assets query returns empty array
   Moonbeam: 'assets.metadata',
   Parallel: 'assets.metadata',
-  Statemint: 'assets.metadata',
+  AssetHubPolkadot: 'assets.metadata',
   Altair: null, // Assets query returns empty array
   Amplitude: null, // No assets metadata query
   Bajun: null, // No assets metadata query
@@ -38,12 +38,10 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Calamari: 'assets.metadata',
   Crab: null, // No assets metadata query
   CrustShadow: 'assets.metadata',
-  Dorafactory: null, // No assets metadata query
   Encointer: null, // No assets metadata query
   Imbue: null, // Assets query returns empty array
   Integritee: null, // No assets metadata query
   InvArchTinker: null, // Assets query returns empty array
-  Kico: 'currencies.dicoAssetsInfo',
   Karura: 'assetRegistry.assetMetadatas',
   Kintsugi: 'assetRegistry.metadata',
   Litmus: null, // Assets query returns empty array
@@ -51,17 +49,22 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Moonriver: 'assets.metadata',
   ParallelHeiko: 'assets.metadata',
   Picasso: 'assetsRegistry.assetSymbol',
-  Pichiu: 'assets.metadata',
   Pioneer: 'assetManager.assetMetadatas',
   Quartz: null, // No assets metadata query
   Robonomics: 'assets.metadata',
   Shiden: 'assets.metadata',
-  Statemine: 'assets.metadata',
+  AssetHubKusama: 'assets.metadata',
   Turing: 'assetRegistry.metadata',
   Equilibrium: null, // No foreign assets metadata query
   Unique: null, // Foreign assets query returns empty array
   Crust: 'assets.metadata',
-  Efinity: null // No foreign assets metadata query
+  Manta: 'assets.metadata',
+  Genshiro: null, // Assets metadata entries have no symbol property (Only GENS paraToPara for now)
+  Nodle: null, // Only NODL paraToPara for now
+  OriginTrail: 'assets.metadata',
+  Pendulum: '', // Only PEN paraToPara for now
+  Polkadex: 'assets.asset',
+  Zeidgeist: 'assetRegistry.metadata'
 }
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
@@ -69,15 +72,24 @@ const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]
   const json = propertiesRes.toHuman()
   const symbols = json.tokenSymbol as string[]
   const decimals = json.tokenDecimals as string[]
-  return symbols.map((symbol, i) => ({ symbol, decimals: +decimals[i] }))
+  return symbols.map((symbol, i) => ({
+    symbol,
+    decimals: decimals[i] ? +decimals[i] : +decimals[0]
+  }))
 }
 
 const fetchBifrostNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
   const res = await api.rpc.state.getMetadata()
-  const TYPE_ID = 131
   const DEFAULT_DECIMALS = -1
   // Decimals for Bifrost Polkadot will be set to -1 and later derived from other assets
-  return res.asLatest.lookup.types.at(TYPE_ID)!.type.def.asVariant.variants.map(k => ({
+  const typeId = res.asLatest.lookup.types.find(obj => {
+    return obj.type.path
+      .toArray()
+      .map(el => el.toHuman().toString())
+      .includes('TokenSymbol')
+  })
+
+  return typeId!.type.def.asVariant.variants.map(k => ({
     symbol: k.name.toHuman(),
     decimals: DEFAULT_DECIMALS
   }))
@@ -103,6 +115,20 @@ const fetchOtherAssets = async (api: ApiPromise, query: string) => {
   )
 }
 
+const fetchAssetIdsOnly = async (api: ApiPromise, query: string) => {
+  const [module, section] = query.split('.')
+  const res = await api.query[module][section].entries()
+  return res.map(
+    ([
+      {
+        args: [era]
+      }
+    ]) => ({
+      assetId: era.toString()
+    })
+  )
+}
+
 const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string) => {
   const [module, section] = query.split('.')
   const res = await api.query[module][section].entries()
@@ -122,8 +148,12 @@ const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string) => {
         value
       ]) => {
         const { symbol, decimals } = value.toHuman() as any
+        const eraObj = era as any
         return {
-          assetId: Object.values(era.toHuman() ?? {})[0],
+          assetId:
+            eraObj.type === 'Tranche'
+              ? Object.values(era.toHuman() ?? {})[0][0].replaceAll(',', '')
+              : Object.values(era.toHuman() ?? {})[0].replaceAll(',', ''),
           symbol,
           decimals: +decimals
         }
@@ -172,26 +202,6 @@ const fetchOtherAssetsInnerType = async (api: ApiPromise, query: string) => {
       return matchingAsset ? { ...assetWithoutDecimals, decimals: matchingAsset.decimals } : null
     })
     .filter(asset => asset !== null) as unknown as TAssetDetails[]
-}
-
-const fetchOtherAssetsType2 = async (api: ApiPromise, query: string) => {
-  const [module, section] = query.split('.')
-  const res = await api.query[module][section].entries()
-  return res.map(
-    ([
-      {
-        args: [era]
-      },
-      value
-    ]) => {
-      const json = (value.toHuman() as any).metadata
-      return {
-        assetId: era.toString(),
-        symbol: json.symbol,
-        decimals: +json.decimals
-      }
-    }
-  )
 }
 
 const fetchAssetsType2 = async (api: ApiPromise, query: string): Promise<Partial<TNodeAssets>> => {
@@ -263,6 +273,26 @@ const fetchNodeAssets = async (
     return assets
   }
 
+  if (node === 'Polkadex') {
+    const nativeAssets = (await fetchNativeAssets(api)) ?? []
+    const otherAssets = await fetchAssetIdsOnly(api, query!)
+    await api.disconnect()
+    return {
+      nativeAssets,
+      otherAssets
+    }
+  }
+
+  if (node === 'Zeidgeist') {
+    const nativeAssets = (await fetchNativeAssets(api)) ?? []
+    const { otherAssets } = (await fetchAssetsType2(api, query!)) ?? []
+    await api.disconnect()
+    return {
+      nativeAssets,
+      otherAssets
+    }
+  }
+
   if (node === 'Pioneer') {
     const { otherAssets } = await fetchAssetsType2(api, query!)
     const nativeAssets = (await fetchNativeAssets(api)) ?? []
@@ -305,8 +335,7 @@ const fetchNodeAssets = async (
 
   const nativeAssets = (await fetchNativeAssets(api)) ?? []
 
-  const fetcher = node === 'Kico' ? fetchOtherAssetsType2 : fetchOtherAssets
-  const otherAssets = query ? await fetcher(api, query) : []
+  const otherAssets = query ? await fetchOtherAssets(api, query) : []
 
   await api.disconnect()
 

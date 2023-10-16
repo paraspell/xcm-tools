@@ -1,4 +1,4 @@
-//Contains tests for different Asset operation functions
+// Contains tests for different Asset operation functions
 
 import { describe, expect, it } from 'vitest'
 import { NODE_NAMES } from '../../maps/consts'
@@ -29,24 +29,24 @@ describe('getAssetsObject', () => {
 })
 
 describe('getAssetId', () => {
-  it('should return id of BTC from statemine', () => {
-    const assetId = getAssetId('Statemine', 'BTC')
+  it('should return id of BTC from AssetHubKusama', () => {
+    const assetId = getAssetId('AssetHubKusama', 'BTC')
     expect(assetId).toEqual('9999')
   })
 
   it('should return null for not existing assetId', () => {
-    const assetId = getAssetId('Statemine', 'BTG')
+    const assetId = getAssetId('AssetHubKusama', 'BTG')
     expect(assetId).toBeNull()
   })
 })
 
 describe('getRelayChainSymbol', () => {
-  it('should return relay chain currency symbol for Statemine', () => {
-    const assetId = getRelayChainSymbol('Statemine')
+  it('should return relay chain currency symbol for AssetHubKusama', () => {
+    const assetId = getRelayChainSymbol('AssetHubKusama')
     expect(assetId).toEqual('KSM')
   })
-  it('should return relay chain currency symbol for Statemint', () => {
-    const assetId = getRelayChainSymbol('Statemint')
+  it('should return relay chain currency symbol for AssetHubPolkadot', () => {
+    const assetId = getRelayChainSymbol('AssetHubPolkadot')
     expect(assetId).toEqual('DOT')
   })
   it('should return relay chain currency symbol for all nodes', () => {
@@ -78,19 +78,18 @@ describe('getOtherAssets', () => {
       expect(assets).toBeInstanceOf(Array)
       assets.forEach(asset => {
         expect(asset).toBeTypeOf('object')
-        expect(asset).toHaveProperty('symbol')
-        expect(asset).toHaveProperty('decimals')
+        expect(asset).toHaveProperty('assetId')
       })
     })
   })
 })
 
 describe('getAllAssetsSymbols', () => {
-  it('should return all assets symbols for all nodes', () => {
+  it('should return all assets symbols for node or empty array', () => {
     NODE_NAMES.forEach(node => {
-      const assets = getAllAssetsSymbols(node)
-      expect(assets).toBeInstanceOf(Array)
-      assets.forEach(asset => expect(asset).toBeTypeOf('string'))
+      const assetsSymbols = getAllAssetsSymbols(node)
+      expect(assetsSymbols).toBeInstanceOf(Array)
+      assetsSymbols.forEach(assetSymbol => expect(assetSymbol).toBeTypeOf('string'))
     })
   })
 })
@@ -102,9 +101,11 @@ describe('getAssetDecimals', () => {
       expect(obj).not.toBeNull()
       if (obj) {
         ;[...obj.nativeAssets, ...obj.otherAssets].forEach(asset => {
-          const decimals = getAssetDecimals(node, asset.symbol)
-          expect(decimals).toBeTypeOf('number')
-          expect(decimals).toBeGreaterThanOrEqual(0)
+          if (asset.symbol) {
+            const decimals = getAssetDecimals(node, asset.symbol)
+            expect(decimals).toBeTypeOf('number')
+            expect(decimals).toBeGreaterThanOrEqual(0)
+          }
         })
       }
     })

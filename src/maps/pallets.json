@@ -1,5 +1,5 @@
 {
-  "Statemint": {
+  "AssetHubPolkadot": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
   },
@@ -59,7 +59,7 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
-  "Statemine": {
+  "AssetHubKusama": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
   },
@@ -103,10 +103,6 @@
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
   },
-  "Dorafactory": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
-  },
   "Imbue": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
@@ -122,10 +118,6 @@
   "Karura": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
-  },
-  "Kico": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["XTokens", "PolkadotXcm"]
   },
   "Kintsugi": {
     "defaultPallet": "XTokens",
@@ -150,10 +142,6 @@
   "Picasso": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
-  },
-  "Pichiu": {
-    "defaultPallet": "OrmlXTokens",
-    "supportedPallets": ["PolkadotXcm", "OrmlXTokens"]
   },
   "Quartz": {
     "defaultPallet": "XTokens",
@@ -183,7 +171,31 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
-  "Efinity": {
+  "Manta": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Genshiro": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Nodle": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "OriginTrail": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Pendulum": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Zeidgeist": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Polkadex": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   }

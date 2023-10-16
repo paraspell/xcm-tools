@@ -3,11 +3,11 @@
 import type { ApiPromise } from '@polkadot/api'
 import { Extrinsic, TNode, TSerializedApiCall, Version } from '../../types'
 import {
-  handleAddress,
   createHeaderPolkadotXCM,
   createCurrencySpecification,
   getNode,
-  callPolkadotJsTxFunction
+  callPolkadotJsTxFunction,
+  generateAddressPayload
 } from '../../utils'
 import { getParaId, getRelayChainSymbol, hasSupportForAsset } from '../assets'
 import { getAssetBySymbolOrId } from '../assets/assetsUtils'
@@ -40,7 +40,7 @@ const sendCommon = (
     )
   }
 
-  if (destination && !hasSupportForAsset(destination, asset.symbol)) {
+  if (destination && asset.symbol && !hasSupportForAsset(destination, asset.symbol)) {
     throw new InvalidCurrencyError(
       `Destination node ${destination} does not support currency or currencyId ${currencySymbolOrId}.`
     )
@@ -97,14 +97,14 @@ export const transferRelayToParaCommon = (
   serializedApiCallEnabled = false
 ): Extrinsic | TSerializedApiCall | never => {
   const paraId = getParaId(destination)
-  if (destination === 'Statemint' || destination === 'Statemine') {
-    // Same for Statemint, Statemine and Encoiter
+  if (destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama') {
+    // Same for AssetHubPolkadot, AssetHubKusama and Encoiter
     const serializedApiCall = {
       module: 'xcmPallet',
       section: 'limitedTeleportAssets',
       parameters: [
         createHeaderPolkadotXCM('RelayToPara', Version.V3, paraId),
-        handleAddress('RelayToPara', '', api, to, Version.V3, paraId),
+        generateAddressPayload(api, 'RelayToPara', null, to, Version.V3, paraId),
         createCurrencySpecification(amount, 'RelayToPara', Version.V3, destination),
         0,
         'Unlimited'
@@ -120,7 +120,7 @@ export const transferRelayToParaCommon = (
       section: 'limitedTeleportAssets',
       parameters: [
         createHeaderPolkadotXCM('RelayToPara', Version.V1, paraId),
-        handleAddress('RelayToPara', '', api, to, Version.V1, paraId),
+        generateAddressPayload(api, 'RelayToPara', null, to, Version.V1, paraId),
         createCurrencySpecification(amount, 'RelayToPara', Version.V1, destination),
         0,
         'Unlimited'
@@ -130,7 +130,13 @@ export const transferRelayToParaCommon = (
       return serializedApiCall
     }
     return callPolkadotJsTxFunction(api, serializedApiCall)
-  } else if (destination === 'Darwinia' || destination === 'Crab') {
+  } else if (
+    destination === 'Darwinia' ||
+    destination === 'Crab' ||
+    destination === 'Integritee' ||
+    destination === 'Nodle' ||
+    destination === 'Pendulum'
+  ) {
     // Do not do anything because Darwinia and Crab does not have DOT and KSM registered
     throw new NodeNotSupportedError(
       'These nodes do not support XCM transfers from Relay / to Relay chain.'
@@ -142,7 +148,7 @@ export const transferRelayToParaCommon = (
     section: 'reserveTransferAssets',
     parameters: [
       createHeaderPolkadotXCM('RelayToPara', Version.V3, paraId),
-      handleAddress('RelayToPara', '', api, to, Version.V3, paraId),
+      generateAddressPayload(api, 'RelayToPara', null, to, Version.V3, paraId),
       createCurrencySpecification(amount, 'RelayToPara', Version.V3, destination),
       0
     ]

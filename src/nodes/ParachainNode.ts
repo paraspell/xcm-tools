@@ -14,7 +14,7 @@ import {
   TSerializedApiCall
 } from '../types'
 import {
-  handleAddress,
+  generateAddressPayload,
   getFees,
   createHeaderPolkadotXCM,
   createCurrencySpecification
@@ -66,7 +66,7 @@ abstract class ParachainNode {
 
   transfer(
     api: ApiPromise,
-    currencySymbol: string,
+    currencySymbol: string | undefined,
     currencyId: number | undefined,
     amount: any,
     to: string,
@@ -82,15 +82,30 @@ abstract class ParachainNode {
         currency: currencySymbol,
         currencyID: currencyId,
         amount,
-        addressSelection: handleAddress(scenario, 'xTokens', api, to, this.version, paraId),
+        addressSelection: generateAddressPayload(
+          api,
+          scenario,
+          'XTokens',
+          to,
+          this.version,
+          paraId
+        ),
         fees: getFees(scenario),
+        scenario,
         serializedApiCallEnabled
       })
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
         api,
         header: createHeaderPolkadotXCM(scenario, this.version, paraId),
-        addressSelection: handleAddress(scenario, 'polkadotXCM', api, to, this.version, paraId),
+        addressSelection: generateAddressPayload(
+          api,
+          scenario,
+          'PolkadotXcm',
+          to,
+          this.version,
+          paraId
+        ),
         currencySelection: createCurrencySpecification(
           amount,
           scenario,
@@ -99,6 +114,7 @@ abstract class ParachainNode {
           currencyId
         ),
         scenario,
+        currencySymbol,
         serializedApiCallEnabled
       })
     } else {

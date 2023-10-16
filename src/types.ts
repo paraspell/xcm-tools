@@ -1,7 +1,7 @@
 //  derrived from https://github.com/kodadot/packages/blob/main/minimark/src/common/types.ts
 
 import { ApiPromise } from '@polkadot/api'
-import { SubmittableExtrinsic } from '@polkadot/api-base/types'
+import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { NODE_NAMES, SUPPORTED_PALLETS } from './maps/consts'
 
 export type UpdateFunction = (name: string, index: number) => string
@@ -11,8 +11,8 @@ export type TRelayChainType = 'polkadot' | 'kusama'
 export type TNode = (typeof NODE_NAMES)[number]
 export type TAssetDetails = {
   assetId: string
-  symbol: string
-  decimals: number
+  symbol?: string
+  decimals?: number
 }
 export type TNativeAssetDetails = {
   assetId?: string
@@ -43,11 +43,12 @@ export type TSerializedApiCall = {
 
 export type XTokensTransferInput = {
   api: ApiPromise
-  currency: string
+  currency: string | undefined
   currencyID: number | undefined
   amount: any
   addressSelection: any
   fees: number
+  scenario: TScenario
   serializedApiCallEnabled?: boolean
 }
 
@@ -61,6 +62,7 @@ export type PolkadotXCMTransferInput = {
   addressSelection: any
   currencySelection: any
   scenario: TScenario
+  currencySymbol: string | undefined
   serializedApiCallEnabled?: boolean
 }
 
@@ -69,6 +71,6 @@ export interface IPolkadotXCMTransfer {
 }
 
 export enum Version {
-  V1,
-  V3
+  V1 = 'V1',
+  V3 = 'V3'
 }

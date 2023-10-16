@@ -7,7 +7,7 @@ import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Encointer extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Encointer', 'encointer', 'kusama', Version.V1)
+    super('Encointer', 'encointer', 'kusama', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {

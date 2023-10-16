@@ -1,12 +1,12 @@
-// Contains detailed structure of XCM call construction for ParallelHeiko Parachain
+// Contains detailed structure of XCM call construction for Polkadex Parachain
 
 import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
-class ParallelHeiko extends ParachainNode implements IXTokensTransfer {
+class Polkadex extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('ParallelHeiko', 'heiko', 'kusama', Version.V3)
+    super('Polkadex', 'polkadex', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {
@@ -14,4 +14,4 @@ class ParallelHeiko extends ParachainNode implements IXTokensTransfer {
   }
 }
 
-export default ParallelHeiko
+export default Polkadex

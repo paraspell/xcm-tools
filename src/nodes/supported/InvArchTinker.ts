@@ -6,12 +6,12 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class InvArchTinker extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('InvArchTinker', 'tinker', 'kusama', Version.V1)
+    super('InvArchTinker', 'tinker', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {
-    const { currencyID, fees } = input
-    return XTokensTransferImpl.transferXTokens(input, currencyID, fees)
+    const { currencyID } = input
+    return XTokensTransferImpl.transferXTokens(input, currencyID)
   }
 }
 

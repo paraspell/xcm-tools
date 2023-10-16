@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 export class Centrifuge extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Centrifuge', 'centrifuge', 'polkadot', Version.V1)
+    super('Centrifuge', 'centrifuge', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

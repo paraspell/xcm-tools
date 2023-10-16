@@ -6,7 +6,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Litentry extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Litentry', 'litentry', 'polkadot', Version.V1)
+    super('Litentry', 'litentry', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput) {

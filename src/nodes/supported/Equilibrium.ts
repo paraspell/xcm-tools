@@ -6,7 +6,7 @@ import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class Equilibrium extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Equilibrium', 'equilibrium', 'polkadot', Version.V1)
+    super('Equilibrium', 'equilibrium', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {
