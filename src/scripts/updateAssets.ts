@@ -64,7 +64,7 @@ const nodeToQuery: NodeToAssetModuleMap = {
   OriginTrail: 'assets.metadata',
   Pendulum: '', // Only PEN paraToPara for now
   Polkadex: 'assets.asset',
-  Zeidgeist: 'assetRegistry.metadata'
+  Zeitgeist: 'assetRegistry.metadata'
 }
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
@@ -283,7 +283,7 @@ const fetchNodeAssets = async (
     }
   }
 
-  if (node === 'Zeidgeist') {
+  if (node === 'Zeitgeist') {
     const nativeAssets = (await fetchNativeAssets(api)) ?? []
     const { otherAssets } = (await fetchAssetsType2(api, query!)) ?? []
     await api.disconnect()

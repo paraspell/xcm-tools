@@ -51,7 +51,7 @@ import Nodle from '../nodes/supported/Nodle'
 import OriginTrail from '../nodes/supported/OriginTrail'
 import Pendulum from '../nodes/supported/Pendulum'
 import Polkadex from '../nodes/supported/Polkadex'
-import Zeidgeist from '../nodes/supported/Zeidgeist'
+import Zeitgeist from '../nodes/supported/Zeitgeist'
 
 export const NODE_NAMES = [
   'AssetHubPolkadot',
@@ -103,7 +103,7 @@ export const NODE_NAMES = [
   'OriginTrail',
   'Pendulum',
   'Polkadex',
-  'Zeidgeist'
+  'Zeitgeist'
 ] as const
 
 export const nodes: Record<TNode, ParachainNode> = {
@@ -156,7 +156,7 @@ export const nodes: Record<TNode, ParachainNode> = {
   OriginTrail: new OriginTrail(),
   Pendulum: new Pendulum(),
   Polkadex: new Polkadex(),
-  Zeidgeist: new Zeidgeist()
+  Zeitgeist: new Zeitgeist()
 }
 
 export const SUPPORTED_PALLETS = ['XTokens', 'OrmlXTokens', 'PolkadotXcm', 'RelayerXcm'] as const
