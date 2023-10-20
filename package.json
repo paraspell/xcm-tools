@@ -36,6 +36,12 @@
   "pnpm": {
     "overrides": {
       "vite": "^4.4.9"
+    },
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "@polkadot/util": "12",
+        "@polkadot/util-crypto": "12"
+      }
     }
   },
   "dependencies": {
