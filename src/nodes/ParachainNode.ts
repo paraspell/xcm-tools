@@ -67,7 +67,7 @@ abstract class ParachainNode {
   transfer(
     api: ApiPromise,
     currencySymbol: string | undefined,
-    currencyId: number | undefined,
+    currencyId: string | undefined,
     amount: any,
     to: string,
     destination?: TNode,
