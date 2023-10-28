@@ -24,6 +24,12 @@ const sendCommon = (
   destination?: TNode,
   serializedApiCallEnabled = false
 ): Extrinsic | TSerializedApiCall => {
+  if (typeof currencySymbolOrId === 'number' && currencySymbolOrId > Number.MAX_SAFE_INTEGER) {
+    throw new InvalidCurrencyError(
+      'The provided asset ID is larger than the maximum safe integer value. Please provide it as a string.'
+    )
+  }
+
   const asset = getAssetBySymbolOrId(origin, currencySymbolOrId.toString())
 
   if (destination) {
@@ -97,11 +103,19 @@ export const transferRelayToParaCommon = (
   serializedApiCallEnabled = false
 ): Extrinsic | TSerializedApiCall | never => {
   const paraId = getParaId(destination)
-  if (destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama') {
-    // Same for AssetHubPolkadot, AssetHubKusama and Encoiter
+  if (
+    destination === 'AssetHubPolkadot' ||
+    destination === 'AssetHubKusama' ||
+    destination === 'Moonbeam' ||
+    destination === 'Moonriver'
+  ) {
+    // Same for AssetHubPolkadot, AssetHubKusama, Encoiter and Moonbeam
     const serializedApiCall = {
       module: 'xcmPallet',
-      section: 'limitedTeleportAssets',
+      section:
+        destination === 'Moonbeam' || destination === 'Moonriver'
+          ? 'limitedReserveTransferAssets'
+          : 'limitedTeleportAssets',
       parameters: [
         createHeaderPolkadotXCM('RelayToPara', Version.V3, paraId),
         generateAddressPayload(api, 'RelayToPara', null, to, Version.V3, paraId),

@@ -6,7 +6,7 @@ import { getAssetsObject } from './assets'
 export const getAssetBySymbolOrId = (
   node: TNode,
   symbolOrId: string | number
-): { symbol?: string; assetId?: number } | null => {
+): { symbol?: string; assetId?: string } | null => {
   const { otherAssets, nativeAssets, relayChainAssetSymbol } = getAssetsObject(node)
 
   const asset = [...otherAssets, ...nativeAssets].find(
@@ -15,7 +15,7 @@ export const getAssetBySymbolOrId = (
 
   if (asset) {
     const { symbol, assetId } = asset
-    return { symbol, assetId: assetId ? Number(assetId) : undefined }
+    return { symbol, assetId }
   }
 
   if (relayChainAssetSymbol === symbolOrId) return { symbol: relayChainAssetSymbol }

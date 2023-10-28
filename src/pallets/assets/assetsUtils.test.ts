@@ -38,7 +38,7 @@ describe('getAssetBySymbolOrId', () => {
         const asset = getAssetBySymbolOrId(node, other.assetId)
         expect(asset).toHaveProperty('symbol')
         expect(asset).toHaveProperty('assetId')
-        expect(Number(other.assetId)).toEqual(asset?.assetId)
+        expect(other.assetId).toEqual(asset?.assetId)
       })
     })
   })

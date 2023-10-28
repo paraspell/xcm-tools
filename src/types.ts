@@ -44,7 +44,7 @@ export type TSerializedApiCall = {
 export type XTokensTransferInput = {
   api: ApiPromise
   currency: string | undefined
-  currencyID: number | undefined
+  currencyID: string | undefined
   amount: any
   addressSelection: any
   fees: number
