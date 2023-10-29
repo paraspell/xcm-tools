@@ -70,6 +70,8 @@ Builder pattern XCM & HRMP construction
 
 ```ts
 //Transfer tokens from Parachain to Parachain
+//**NOTE** If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add character 'n' the end of currencyID. Eg: .currency(42259045809535163221576417993425387648n) will mean you transfer xcDOT.
+
 Builder(api).from(NODE).to(NODE).currency(CurrencyString||CurrencyID).amount(amount).address(address).build()
 
 //Transfer tokens from the Relay chain to Parachain
@@ -89,6 +91,7 @@ Function pattern XCM & HRMP construction
 
 ```ts
 //Transfer tokens from Parachain to Parachain
+//**NOTE** If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add character 'n' the end of currencyID. Eg: currency = 42259045809535163221576417993425387648n will mean you transfer xcDOT.
 paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string, destination: destination  Parachain  ID)
 
 //Transfer tokens from Parachain to Relay chain
