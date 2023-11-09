@@ -276,6 +276,16 @@ export const getNodeEndpointOption = (node: TNode) => {
     : undefined
 }
 
+export const getAllNodeProviders = (node: TNode) => {
+  const { providers } = getNodeEndpointOption(node) ?? {}
+  return Object.values(providers ?? [])
+}
+
+export const getNodeProvider = (node: TNode) => {
+  const providers = getAllNodeProviders(node)
+  return providers.length > 0 ? providers[0] : null
+}
+
 export const createApiInstance = async (wsUrl: string) => {
   const wsProvider = new WsProvider(wsUrl)
   return await ApiPromise.create({ provider: wsProvider })

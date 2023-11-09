@@ -3,7 +3,7 @@
 import * as fs from 'fs'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { TNode } from '../types'
-import { getNodeEndpointOption } from '../utils'
+import { getAllNodeProviders } from '../utils'
 
 export const readJsonOrReturnEmptyObject = (path: string) => {
   try {
@@ -19,17 +19,11 @@ export const checkForNodeJsEnvironment = () => {
   }
 }
 
-export const getNodeProviders = (node: TNode) => {
-  const { providers } = getNodeEndpointOption(node) ?? {}
-  return Object.values(providers ?? [])
-}
-
 export const fetchTryMultipleProviders = async <T>(
   node: TNode,
   fetcher: (wsUrl: string) => T
 ): Promise<T | null> => {
-  let providers = getNodeProviders(node)
-  if (node === 'Mangata') providers = ['wss://kusama-archive.mangata.online']
+  const providers = getAllNodeProviders(node)
   for (const provider of providers) {
     try {
       console.log(`Trying ${provider}...`)
