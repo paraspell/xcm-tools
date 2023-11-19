@@ -45,7 +45,7 @@ export type XTokensTransferInput = {
   api: ApiPromise
   currency: string | undefined
   currencyID: string | undefined
-  amount: any
+  amount: string
   addressSelection: any
   fees: number
   scenario: TScenario

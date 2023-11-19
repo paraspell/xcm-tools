@@ -46,7 +46,7 @@ class FromGeneralBuilder {
     return new ToGeneralBuilder(this.api, this.from, node)
   }
 
-  amount(amount: any) {
+  amount(amount: string | number | bigint) {
     return ParaToRelayBuilder.create(this.api, this.from, amount)
   }
 
@@ -105,5 +105,5 @@ export interface AddressBuilder {
 }
 
 export interface AmountBuilder {
-  amount(amount: any): AddressBuilder
+  amount(amount: string | number | bigint): AddressBuilder
 }

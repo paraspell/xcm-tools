@@ -11,7 +11,7 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
   private to: TNode
   private currency: string | number | bigint
 
-  private _amount: any
+  private _amount: string | number | bigint
   private _address: string
 
   private constructor(api: ApiPromise, from: TNode, to: TNode, currency: string | number | bigint) {
@@ -30,7 +30,7 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
     return new ParaToParaBuilder(api, from, to, currency)
   }
 
-  amount(amount: any) {
+  amount(amount: string | number | bigint) {
     this._amount = amount
     return this
   }
