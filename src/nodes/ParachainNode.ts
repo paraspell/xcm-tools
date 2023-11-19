@@ -68,7 +68,7 @@ abstract class ParachainNode {
     api: ApiPromise,
     currencySymbol: string | undefined,
     currencyId: string | undefined,
-    amount: any,
+    amount: string,
     to: string,
     destination?: TNode,
     serializedApiCallEnabled = false

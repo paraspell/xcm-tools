@@ -9,17 +9,17 @@ import { AddressBuilder, FinalBuilder } from './Builder'
 class ParaToRelayBuilder implements AddressBuilder, FinalBuilder {
   private api: ApiPromise
   private from: TNode
-  private amount: any
+  private amount: string | number | bigint
 
   private _address: string
 
-  private constructor(api: ApiPromise, from: TNode, amount: any) {
+  private constructor(api: ApiPromise, from: TNode, amount: string | number | bigint) {
     this.api = api
     this.from = from
     this.amount = amount
   }
 
-  static create(api: ApiPromise, from: TNode, amount: any): AddressBuilder {
+  static create(api: ApiPromise, from: TNode, amount: string | number | bigint): AddressBuilder {
     return new ParaToRelayBuilder(api, from, amount)
   }
 

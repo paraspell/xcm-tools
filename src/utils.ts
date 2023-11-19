@@ -107,7 +107,7 @@ export const generateAddressPayload = (
 }
 
 export const createCurrencySpecification = (
-  amount: any,
+  amount: string,
   scenario: TScenario,
   version: Version,
   node?: TNode,
