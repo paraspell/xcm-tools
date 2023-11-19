@@ -24,6 +24,6 @@ jobs:
       - run: pnpm compile
       - run: pnpm format:check
       - run: pnpm lint:check
-      - run: pnpm vitest --coverage
+      - run: pnpm test
       - run: pnpm build
       - uses: codecov/codecov-action@v3

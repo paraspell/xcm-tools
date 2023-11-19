@@ -19,18 +19,16 @@
     "dist"
   ],
   "scripts": {
+    "compile": "tsc --noEmit",
     "build": "rollup -c",
-    "dev": "vitest dev",
     "lint:check": "eslint src/**/*.ts",
     "lint": "eslint --fix src/**/*.ts",
     "format:check": "prettier --check src/**/*.ts",
     "format:write": "prettier --write src/**/*.ts",
+    "test": "vitest",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updateAssets.ts",
     "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./src/scripts/updatePallets.ts",
     "release": "pnpm runAll && pnpm build && standard-version && git push --follow-tags",
-    "test": "vitest run --coverage",
-    "test:watch": "vitest",
-    "compile": "tsc --noEmit",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
   "pnpm": {
