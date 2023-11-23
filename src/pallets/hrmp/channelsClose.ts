@@ -1,7 +1,7 @@
 // Contains call formatting for closing HRMP channels functionality
 
 import type { ApiPromise } from '@polkadot/api'
-import { Extrinsic, TNode, TSerializedApiCall } from '../../types'
+import { type Extrinsic, type TNode, type TSerializedApiCall } from '../../types'
 import { getParaId } from '../assets'
 
 const closeChannelInternal = (

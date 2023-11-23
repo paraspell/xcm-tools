@@ -1,17 +1,17 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
-import { ApiPromise } from '@polkadot/api'
+import { type ApiPromise } from '@polkadot/api'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getParaId } from '../pallets/assets'
 import {
-  TNode,
-  TRelayChainType,
-  Extrinsic,
-  TScenario,
-  IXTokensTransfer,
-  IPolkadotXCMTransfer,
-  Version,
-  TSerializedApiCall
+  type TNode,
+  type TRelayChainType,
+  type Extrinsic,
+  type TScenario,
+  type IXTokensTransfer,
+  type IPolkadotXCMTransfer,
+  type Version,
+  type TSerializedApiCall
 } from '../types'
 import {
   generateAddressPayload,
@@ -29,17 +29,17 @@ const supportsPolkadotXCM = (obj: any): obj is IPolkadotXCMTransfer => {
 }
 
 abstract class ParachainNode {
-  private _node: TNode
+  private readonly _node: TNode
 
   // Property _name maps our node names to names which polkadot libs are using
   // https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayKusama.ts
   // https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayPolkadot.ts
   // These names can be found under object key 'info'
-  private _name: string
+  private readonly _name: string
 
-  private _type: TRelayChainType
+  private readonly _type: TRelayChainType
 
-  private _version: Version
+  private readonly _version: Version
 
   constructor(node: TNode, name: string, type: TRelayChainType, version: Version) {
     this._name = name
@@ -48,19 +48,19 @@ abstract class ParachainNode {
     this._version = version
   }
 
-  get name() {
+  get name(): string {
     return this._name
   }
 
-  get type() {
+  get type(): TRelayChainType {
     return this._type
   }
 
-  get node() {
+  get node(): TNode {
     return this._node
   }
 
-  get version() {
+  get version(): Version {
     return this._version
   }
 
@@ -73,8 +73,8 @@ abstract class ParachainNode {
     destination?: TNode,
     serializedApiCallEnabled = false
   ): Extrinsic | TSerializedApiCall {
-    const scenario: TScenario = destination ? 'ParaToPara' : 'ParaToRelay'
-    const paraId = destination ? getParaId(destination) : undefined
+    const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
+    const paraId = destination !== undefined ? getParaId(destination) : undefined
 
     if (supportsXTokens(this)) {
       return this.transferXTokens({

@@ -1,23 +1,23 @@
-//Implements builder pattern for RemoveLiquidity operation used in XYK Pallet
+// Implements builder pattern for RemoveLiquidity operation used in XYK Pallet
 
-import { ApiPromise } from '@polkadot/api'
-import { Extrinsic } from '../../../types'
+import { type ApiPromise } from '@polkadot/api'
+import { type Extrinsic } from '../../../types'
 import { removeLiquidity } from '../../xyk'
 
 export interface FinalRemoveLiquidityBuilder {
-  build(): Extrinsic
+  build: () => Extrinsic
 }
 
 export interface LiquidityAmountRemoveLiquidityBuilder {
-  liquidityAmount(liquidityAmount: number): FinalRemoveLiquidityBuilder
+  liquidityAmount: (liquidityAmount: number) => FinalRemoveLiquidityBuilder
 }
 
 export interface AssetBRemoveLiquidityBuilder {
-  assetB(assetB: number): LiquidityAmountRemoveLiquidityBuilder
+  assetB: (assetB: number) => LiquidityAmountRemoveLiquidityBuilder
 }
 
 export interface AssetARemoveLiquidityBuilder {
-  assetA(assetA: number): AssetBRemoveLiquidityBuilder
+  assetA: (assetA: number) => AssetBRemoveLiquidityBuilder
 }
 
 class RemoveLiquidityBuilder
@@ -27,7 +27,7 @@ class RemoveLiquidityBuilder
     LiquidityAmountRemoveLiquidityBuilder,
     FinalRemoveLiquidityBuilder
 {
-  private api: ApiPromise
+  private readonly api: ApiPromise
 
   private _assetA: number
   private _assetB: number
@@ -41,22 +41,22 @@ class RemoveLiquidityBuilder
     return new RemoveLiquidityBuilder(api)
   }
 
-  assetA(assetA: number) {
+  assetA(assetA: number): this {
     this._assetA = assetA
     return this
   }
 
-  assetB(assetB: number) {
+  assetB(assetB: number): this {
     this._assetB = assetB
     return this
   }
 
-  liquidityAmount(liquidityAmount: any) {
+  liquidityAmount(liquidityAmount: any): this {
     this._liquidityAmount = liquidityAmount
     return this
   }
 
-  build() {
+  build(): Extrinsic {
     return removeLiquidity(this.api, this._assetA, this._assetB, this._liquidityAmount)
   }
 }

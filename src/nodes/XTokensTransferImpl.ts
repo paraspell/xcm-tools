@@ -1,8 +1,14 @@
 // Contains basic structure of xToken call
 
-import { Extrinsic, TPallet, TSerializedApiCall, XTokensTransferInput } from '../types'
+import {
+  type Extrinsic,
+  type TPallet,
+  type TSerializedApiCall,
+  type XTokensTransferInput
+} from '../types'
 import { lowercaseFirstLetter } from '../utils'
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class XTokensTransferImpl {
   static transferXTokens(
     { api, amount, addressSelection, serializedApiCallEnabled }: XTokensTransferInput,
@@ -12,7 +18,7 @@ class XTokensTransferImpl {
   ): Extrinsic | TSerializedApiCall {
     const module = lowercaseFirstLetter(pallet.toString())
 
-    if (serializedApiCallEnabled) {
+    if (serializedApiCallEnabled === true) {
       return {
         module,
         section: 'transfer',

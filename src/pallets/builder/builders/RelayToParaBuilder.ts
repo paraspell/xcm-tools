@@ -1,13 +1,13 @@
 // Implements builder pattern for Relay chain to Parachain transfer operation
 
-import { ApiPromise } from '@polkadot/api'
+import { type ApiPromise } from '@polkadot/api'
 import { transferRelayToPara, transferRelayToParaSerializedApiCall } from '../../xcmPallet'
-import { TNode } from '../../../types'
-import { AddressBuilder, AmountBuilder, FinalBuilder } from './Builder'
+import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../../types'
+import { type AddressBuilder, type AmountBuilder, type FinalBuilder } from './Builder'
 
 class RelayToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
-  private api: ApiPromise
-  private to: TNode
+  private readonly api: ApiPromise
+  private readonly to: TNode
 
   private _amount: number
   private _address: string
@@ -21,21 +21,21 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder 
     return new RelayToParaBuilder(api, to)
   }
 
-  amount(amount: number) {
+  amount(amount: number): this {
     this._amount = amount
     return this
   }
 
-  address(address: string) {
+  address(address: string): this {
     this._address = address
     return this
   }
 
-  build() {
+  build(): Extrinsic | never {
     return transferRelayToPara(this.api, this.to, this._amount, this._address)
   }
 
-  buildSerializedApiCall() {
+  buildSerializedApiCall(): TSerializedApiCall {
     return transferRelayToParaSerializedApiCall(this.api, this.to, this._amount, this._address)
   }
 }

@@ -1,8 +1,8 @@
 // Script that updates XCM Pallets map for compatible nodes
 
 import { ApiPromise } from '@polkadot/api'
-import { NODE_NAMES } from '../maps/consts'
-import { TPallet, TPalletJsonMap, TPalletMap } from '../types'
+import { NODE_NAMES } from '../src/maps/consts'
+import { TPallet, TPalletJsonMap, TPalletMap } from '../src/types'
 import {
   checkForNodeJsEnvironment,
   fetchTryMultipleProvidersWithTimeout,

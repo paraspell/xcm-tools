@@ -1,31 +1,31 @@
-//Implements builder pattern for Sell operation used in XYK Pallet
+// Implements builder pattern for Sell operation used in XYK Pallet
 
-import { ApiPromise } from '@polkadot/api'
-import { Bool, Extrinsic } from '../../../types'
+import { type ApiPromise } from '@polkadot/api'
+import { type Bool, type Extrinsic } from '../../../types'
 import { sell } from '../../xyk'
 
 export interface FinalSellBuilder {
-  build(): Extrinsic
+  build: () => Extrinsic
 }
 
 export interface DiscountSellBuilder {
-  discount(discount: Bool): FinalSellBuilder
+  discount: (discount: Bool) => FinalSellBuilder
 }
 
 export interface MaxLimitSellBuilder {
-  maxLimit(maxLimit: number): DiscountSellBuilder
+  maxLimit: (maxLimit: number) => DiscountSellBuilder
 }
 
 export interface AmountSellBuilder {
-  amount(amount: number): MaxLimitSellBuilder
+  amount: (amount: number) => MaxLimitSellBuilder
 }
 
 export interface AssetOutSellBuilder {
-  assetOut(assetOut: number): AmountSellBuilder
+  assetOut: (assetOut: number) => AmountSellBuilder
 }
 
 export interface AssetInSellBuilder {
-  assetIn(assetIn: number): AssetOutSellBuilder
+  assetIn: (assetIn: number) => AssetOutSellBuilder
 }
 
 class SellBuilder
@@ -36,7 +36,7 @@ class SellBuilder
     MaxLimitSellBuilder,
     FinalSellBuilder
 {
-  private api: ApiPromise
+  private readonly api: ApiPromise
 
   private _assetIn: number
   private _assetOut: number
@@ -52,32 +52,32 @@ class SellBuilder
     return new SellBuilder(api)
   }
 
-  assetIn(assetIn: number) {
+  assetIn(assetIn: number): this {
     this._assetIn = assetIn
     return this
   }
 
-  assetOut(assetOut: number) {
+  assetOut(assetOut: number): this {
     this._assetOut = assetOut
     return this
   }
 
-  amount(amount: any) {
+  amount(amount: any): this {
     this._amount = amount
     return this
   }
 
-  maxLimit(maxLimit: any) {
+  maxLimit(maxLimit: any): this {
     this._maxLimit = maxLimit
     return this
   }
 
-  discount(discount: Bool) {
+  discount(discount: Bool): this {
     this._discount = discount
     return this
   }
 
-  build() {
+  build(): Extrinsic {
     return sell(
       this.api,
       this._assetIn,

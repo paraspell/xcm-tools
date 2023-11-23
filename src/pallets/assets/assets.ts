@@ -2,61 +2,53 @@
 
 import * as assetsMapJson from '../../maps/assets.json' assert { type: 'json' }
 import { NODE_NAMES } from '../../maps/consts'
-import { TAssetJsonMap, TNode } from '../../types'
+import {
+  type TNodeAssets,
+  type TAssetJsonMap,
+  type TNode,
+  type TRelayChainSymbol,
+  type TNativeAssetDetails,
+  type TAssetDetails
+} from '../../types'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
 
-export function getAssetsObject(node: TNode) {
-  return assetsMap[node]
+export const getAssetsObject = (node: TNode): TNodeAssets => assetsMap[node]
+
+export const getAssetId = (node: TNode, symbol: string): string | null => {
+  const info = getAssetsObject(node).otherAssets.find(o => o.symbol === symbol)
+  return info != null ? info.assetId : null
 }
 
-export function getAssetId(node: TNode, symbol: string) {
-  const info = getAssetsObject(node).otherAssets.find(function (o) {
-    return o.symbol === symbol
-  })
-  return info ? info.assetId : null
-}
+export const getRelayChainSymbol = (node: TNode): TRelayChainSymbol =>
+  getAssetsObject(node).relayChainAssetSymbol
 
-export function getRelayChainSymbol(node: TNode) {
-  return getAssetsObject(node).relayChainAssetSymbol
-}
+export const getNativeAssets = (node: TNode): TNativeAssetDetails[] =>
+  getAssetsObject(node).nativeAssets
 
-export function getNativeAssets(node: TNode) {
-  const info = getAssetsObject(node).nativeAssets
-  return info || []
-}
+export const getOtherAssets = (node: TNode): TAssetDetails[] => getAssetsObject(node).otherAssets
 
-export function getOtherAssets(node: TNode) {
-  return getAssetsObject(node).otherAssets
-}
-
-export function getAllAssetsSymbols(node: TNode) {
+export const getAllAssetsSymbols = (node: TNode): string[] => {
   const { relayChainAssetSymbol, nativeAssets, otherAssets } = getAssetsObject(node)
-  return [
-    relayChainAssetSymbol,
-    ...nativeAssets.map(({ symbol }) => symbol),
-    ...otherAssets.filter(asset => !!asset.symbol).map(({ symbol }) => symbol)
-  ]
+  const nativeAssetsSymbols = nativeAssets.map(({ symbol }) => symbol)
+  const otherAssetsSymbols = otherAssets
+    .filter(asset => asset.symbol !== undefined)
+    .map(({ symbol }) => symbol) as string[]
+  return [relayChainAssetSymbol, ...nativeAssetsSymbols, ...otherAssetsSymbols]
 }
 
-export function hasSupportForAsset(node: TNode, symbol: string) {
-  return getAllAssetsSymbols(node).includes(symbol)
-}
+export const hasSupportForAsset = (node: TNode, symbol: string): boolean =>
+  getAllAssetsSymbols(node).includes(symbol)
 
-export function getAssetDecimals(node: TNode, symbol: string) {
+export const getAssetDecimals = (node: TNode, symbol: string): number | null => {
   const { otherAssets, nativeAssets } = getAssetsObject(node)
-  const asset = [...otherAssets, ...nativeAssets].find(function (o) {
-    return o.symbol === symbol
-  })
-  return asset ? asset.decimals : null
+  const asset = [...otherAssets, ...nativeAssets].find(o => o.symbol === symbol)
+  return asset?.decimals !== undefined ? asset.decimals : null
 }
 
-export function getParaId(node: TNode) {
+export const getParaId = (node: TNode): number => {
   return getAssetsObject(node).paraId
 }
 
-export function getTNode(nodeID: number) {
-  for (const node of NODE_NAMES) {
-    if (getParaId(node) === nodeID) return node
-  }
-}
+export const getTNode = (nodeID: number): TNode | null =>
+  NODE_NAMES.find(node => getParaId(node) === nodeID) ?? null

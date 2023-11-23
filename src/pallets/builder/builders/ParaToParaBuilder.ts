@@ -1,15 +1,15 @@
 // Implements builder pattern for XCM message creation operations operation
 
-import { ApiPromise } from '@polkadot/api'
+import { type ApiPromise } from '@polkadot/api'
 import { send, sendSerializedApiCall } from '../../xcmPallet'
-import { TNode } from '../../../types'
-import { AddressBuilder, AmountBuilder, FinalBuilder } from './Builder'
+import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../../types'
+import { type AddressBuilder, type AmountBuilder, type FinalBuilder } from './Builder'
 
 class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
-  private api: ApiPromise
-  private from: TNode
-  private to: TNode
-  private currency: string | number | bigint
+  private readonly api: ApiPromise
+  private readonly from: TNode
+  private readonly to: TNode
+  private readonly currency: string | number | bigint
 
   private _amount: string | number | bigint
   private _address: string
@@ -30,21 +30,21 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
     return new ParaToParaBuilder(api, from, to, currency)
   }
 
-  amount(amount: string | number | bigint) {
+  amount(amount: string | number | bigint): this {
     this._amount = amount
     return this
   }
 
-  address(address: string) {
+  address(address: string): this {
     this._address = address
     return this
   }
 
-  build() {
+  build(): Extrinsic {
     return send(this.api, this.from, this.currency, this._amount, this._address, this.to)
   }
 
-  buildSerializedApiCall() {
+  buildSerializedApiCall(): TSerializedApiCall {
     return sendSerializedApiCall(
       this.api,
       this.from,

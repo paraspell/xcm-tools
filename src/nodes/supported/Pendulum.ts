@@ -1,7 +1,13 @@
 // Contains detailed structure of XCM call construction for Pendulum Parachain
 
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
-import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
+import {
+  type IXTokensTransfer,
+  Version,
+  type XTokensTransferInput,
+  type Extrinsic,
+  type TSerializedApiCall
+} from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
@@ -10,7 +16,7 @@ class Pendulum extends ParachainNode implements IXTokensTransfer {
     super('Pendulum', 'pendulum', 'polkadot', Version.V1)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     if (input.scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, input.scenario)
     }

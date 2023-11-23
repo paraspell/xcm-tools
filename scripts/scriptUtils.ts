@@ -2,8 +2,8 @@
 
 import * as fs from 'fs'
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { TNode } from '../types'
-import { getAllNodeProviders } from '../utils'
+import { type TNode } from '../src/types'
+import { getAllNodeProviders } from '../src/utils'
 
 export const readJsonOrReturnEmptyObject = (path: string) => {
   try {
@@ -27,7 +27,7 @@ export const fetchTryMultipleProviders = async <T>(
   for (const provider of providers) {
     try {
       console.log(`Trying ${provider}...`)
-      return await fetcher(provider)
+      return fetcher(provider)
     } catch (e) {
       console.log(`Error fetching data from ${provider}. Trying from another RPC endpoint`)
     }
@@ -36,9 +36,9 @@ export const fetchTryMultipleProviders = async <T>(
   return null
 }
 
-export const fetchWithTimeout = <T>(wsUrl: string, fetcher: (api: ApiPromise) => T): Promise<T> => {
+export const fetchWithTimeout = async <T>(wsUrl: string, fetcher: (api: ApiPromise) => T): Promise<T> => {
   const TIMEOUT_MS = 60000
-  return new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     const wsProvider = new WsProvider(wsUrl)
 
     setTimeout(() => {
@@ -52,12 +52,12 @@ export const fetchWithTimeout = <T>(wsUrl: string, fetcher: (api: ApiPromise) =>
   })
 }
 
-export const fetchTryMultipleProvidersWithTimeout = <T>(
+export const fetchTryMultipleProvidersWithTimeout = async <T>(
   node: TNode,
   fetcher: (api: ApiPromise) => T
 ) => {
-  return fetchTryMultipleProviders(node, wsUrl => {
-    return fetchWithTimeout(wsUrl, api => fetcher(api))
+  return await fetchTryMultipleProviders(node, async wsUrl => {
+    return await fetchWithTimeout(wsUrl, api => fetcher(api))
   })
 }
 

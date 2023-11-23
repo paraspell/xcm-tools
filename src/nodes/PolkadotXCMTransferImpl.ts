@@ -1,7 +1,8 @@
 // Contains basic structure of polkadotXCM call
 
-import { Extrinsic, PolkadotXCMTransferInput, TSerializedApiCall } from '../types'
+import { type Extrinsic, type PolkadotXCMTransferInput, type TSerializedApiCall } from '../types'
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class PolkadotXCMTransferImpl {
   static transferPolkadotXCM(
     {
@@ -14,15 +15,21 @@ class PolkadotXCMTransferImpl {
     method: string,
     fees: 'Unlimited' | undefined = undefined
   ): Extrinsic | TSerializedApiCall {
-    if (serializedApiCallEnabled) {
+    if (serializedApiCallEnabled === true) {
       return {
         module: 'polkadotXcm',
         section: method,
-        parameters: [header, addressSelection, currencySelection, 0, ...(fees ? [fees] : [])]
+        parameters: [
+          header,
+          addressSelection,
+          currencySelection,
+          0,
+          ...(fees !== undefined ? [fees] : [])
+        ]
       }
     }
 
-    return fees
+    return fees !== undefined
       ? api.tx.polkadotXcm[method](header, addressSelection, currencySelection, 0, fees)
       : api.tx.polkadotXcm[method](header, addressSelection, currencySelection, 0)
   }

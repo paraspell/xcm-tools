@@ -10,7 +10,7 @@ describe('getAssetBySymbolOrId', () => {
     NODE_NAMES.forEach(node => {
       const { otherAssets } = getAssetsObject(node)
       otherAssets.forEach(other => {
-        if (other.symbol) {
+        if (other.symbol !== undefined) {
           const asset = getAssetBySymbolOrId(node, other.symbol)
           expect(asset).toHaveProperty('symbol')
           expect(other.symbol).toEqual(asset?.symbol)
@@ -47,7 +47,7 @@ describe('getAssetBySymbolOrId', () => {
     NODE_NAMES.forEach(node => {
       const { nativeAssets } = getAssetsObject(node)
       nativeAssets.forEach(other => {
-        if (other.assetId) {
+        if (other.assetId !== undefined) {
           const asset = getAssetBySymbolOrId(node, other.assetId)
           expect(asset).toHaveProperty('symbol')
           expect(asset).toHaveProperty('assetId')

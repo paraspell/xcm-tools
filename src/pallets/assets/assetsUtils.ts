@@ -1,6 +1,6 @@
 // Contains function for getting Asset ID or Symbol used in XCM call creation
 
-import { TNode } from '../../types'
+import { type TNode } from '../../types'
 import { getAssetsObject } from './assets'
 
 export const getAssetBySymbolOrId = (
@@ -13,7 +13,7 @@ export const getAssetBySymbolOrId = (
     ({ symbol, assetId }) => symbol === symbolOrId || assetId === symbolOrId
   )
 
-  if (asset) {
+  if (asset !== undefined) {
     const { symbol, assetId } = asset
     return { symbol, assetId }
   }
