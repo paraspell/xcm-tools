@@ -1,6 +1,6 @@
 // Used to inform user, that Parachain they wish to use has not yet implemented full XCM Support
 
-import { TNode } from '../types'
+import { type TNode } from '../types'
 
 export class NoXCMSupportImplementedError extends Error {
   constructor(node: TNode) {

@@ -1,6 +1,12 @@
 // Contains detailed structure of XCM call construction for Manta Parachain
 
-import { IXTokensTransfer, Version, XTokensTransferInput } from '../../types'
+import {
+  type IXTokensTransfer,
+  Version,
+  type XTokensTransferInput,
+  type Extrinsic,
+  type TSerializedApiCall
+} from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
@@ -9,7 +15,7 @@ class Manta extends ParachainNode implements IXTokensTransfer {
     super('Manta', 'manta', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     return XTokensTransferImpl.transferXTokens(input, { ForeignAssetId: input.currencyID })
   }
 }

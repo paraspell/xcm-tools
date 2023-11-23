@@ -3,16 +3,24 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ethers } from 'ethers'
 import { prodRelayPolkadot, prodRelayKusama } from '@polkadot/apps-config/endpoints'
-import { TNode, TPallet, TScenario, TSerializedApiCall, Version } from './types'
+import {
+  type TNode,
+  type TPallet,
+  type TScenario,
+  type TSerializedApiCall,
+  Version,
+  type Extrinsic
+} from './types'
 import { nodes } from './maps/consts'
-import ParachainNode from './nodes/ParachainNode'
+import type ParachainNode from './nodes/ParachainNode'
+import { type HexString } from '@polkadot/util/types'
 
-export const createAccID = (api: ApiPromise, account: string) => {
+export const createAccID = (api: ApiPromise, account: string): HexString => {
   console.log('Generating AccountId32 address')
   return api.createType('AccountId32', account).toHex()
 }
 
-export const getFees = (scenario: TScenario) => {
+export const getFees = (scenario: TScenario): number => {
   if (scenario === 'ParaToRelay') {
     console.log('Asigning fees for transfer to Relay chain')
     return 4600000000
@@ -30,7 +38,7 @@ export const generateAddressPayload = (
   recipientAddress: string,
   version: Version,
   nodeId: number | undefined
-) => {
+): any => {
   const isEthAddress = ethers.utils.isAddress(recipientAddress)
 
   if (scenario === 'ParaToRelay') {
@@ -112,7 +120,7 @@ export const createCurrencySpecification = (
   version: Version,
   node?: TNode,
   cur?: number | string
-) => {
+): any => {
   if (scenario === 'ParaToRelay') {
     return {
       [version]: [
@@ -204,7 +212,11 @@ export const createCurrencySpecification = (
   }
 }
 
-export const createHeaderPolkadotXCM = (scenario: TScenario, version: Version, nodeId?: number) => {
+export const createHeaderPolkadotXCM = (
+  scenario: TScenario,
+  version: Version,
+  nodeId?: number
+): any => {
   if (scenario === 'ParaToRelay') {
     return {
       [version]: {
@@ -243,7 +255,7 @@ export const getNode = (node: TNode): ParachainNode => {
   return nodes[node]
 }
 
-export const getNodeEndpointOption = (node: TNode) => {
+export const getNodeEndpointOption = (node: TNode): any => {
   const { type, name } = getNode(node)
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
 
@@ -269,31 +281,32 @@ export const getNodeEndpointOption = (node: TNode) => {
     }
   }
 
-  return linked
+  return linked !== undefined
     ? linked.find(function (o) {
         return o.info === name
       })
     : undefined
 }
 
-export const getAllNodeProviders = (node: TNode) => {
+export const getAllNodeProviders = (node: TNode): string[] => {
   const { providers } = getNodeEndpointOption(node) ?? {}
   return Object.values(providers ?? [])
 }
 
-export const getNodeProvider = (node: TNode) => {
+export const getNodeProvider = (node: TNode): string | null => {
   const providers = getAllNodeProviders(node)
   return providers.length > 0 ? providers[0] : null
 }
 
-export const createApiInstance = async (wsUrl: string) => {
+export const createApiInstance = async (wsUrl: string): Promise<ApiPromise> => {
   const wsProvider = new WsProvider(wsUrl)
   return await ApiPromise.create({ provider: wsProvider })
 }
 
-export const lowercaseFirstLetter = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
+export const lowercaseFirstLetter = (str: string): string =>
+  str.charAt(0).toLowerCase() + str.slice(1)
 
 export const callPolkadotJsTxFunction = (
   api: ApiPromise,
   { module, section, parameters }: TSerializedApiCall
-) => api.tx[module][section](...parameters)
+): Extrinsic => api.tx[module][section](...parameters)

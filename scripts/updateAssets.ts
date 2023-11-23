@@ -1,9 +1,9 @@
 // Script that updates asset map for compatible nodes
 
 import { ApiPromise } from '@polkadot/api'
-import { NODE_NAMES } from '../maps/consts'
-import { TAssetDetails, TAssetJsonMap, TNativeAssetDetails, TNode, TNodeAssets } from '../types'
-import { getNode, getNodeEndpointOption } from '../utils'
+import { NODE_NAMES } from '../src/maps/consts'
+import { TAssetDetails, TAssetJsonMap, TNativeAssetDetails, TNode, TNodeAssets } from '../src/types'
+import { getNode, getNodeEndpointOption } from '../src/utils'
 import {
   checkForNodeJsEnvironment,
   readJsonOrReturnEmptyObject,
@@ -380,9 +380,8 @@ const searchDecimalsBySymbol = (symbol: string, data: TAssetJsonMap) => {
       continue
     }
     const { nativeAssets, otherAssets } = data[node]
-    const decimals = [...nativeAssets, ...otherAssets].find(
-      asset => asset.symbol === symbol
-    )?.decimals
+    const decimals = [...nativeAssets, ...otherAssets].find(asset => asset.symbol === symbol)
+      ?.decimals
     if (decimals) {
       return decimals
     }

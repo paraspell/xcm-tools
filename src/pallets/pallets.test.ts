@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { NODE_NAMES, SUPPORTED_PALLETS } from '../maps/consts'
-import { TNode, TPallet } from '../types'
+import { type TNode, type TPallet } from '../types'
 import { getDefaultPallet, getSupportedPallets } from './pallets'
 
 describe('getDefaultPallet', () => {

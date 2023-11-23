@@ -1,27 +1,27 @@
-//Implements builder pattern for CreatePool operation used in XYK Pallet
+// Implements builder pattern for CreatePool operation used in XYK Pallet
 
-import { ApiPromise } from '@polkadot/api'
-import { Extrinsic } from '../../../types'
+import { type ApiPromise } from '@polkadot/api'
+import { type Extrinsic } from '../../../types'
 import { createPool } from '../../xyk'
 
 export interface FinalCreatePoolBuilder {
-  build(): Extrinsic
+  build: () => Extrinsic
 }
 
 export interface AmountBCreatePoolBuilder {
-  amountB(amountB: number): FinalCreatePoolBuilder
+  amountB: (amountB: number) => FinalCreatePoolBuilder
 }
 
 export interface AssetBCreatePoolBuilder {
-  assetB(assetB: number): AmountBCreatePoolBuilder
+  assetB: (assetB: number) => AmountBCreatePoolBuilder
 }
 
 export interface AmountACreatePoolBuilder {
-  amountA(amountA: number): AssetBCreatePoolBuilder
+  amountA: (amountA: number) => AssetBCreatePoolBuilder
 }
 
 export interface AssetACreatePoolBuilder {
-  assetA(assetA: number): AmountACreatePoolBuilder
+  assetA: (assetA: number) => AmountACreatePoolBuilder
 }
 
 class CreatePoolBuilder
@@ -32,7 +32,7 @@ class CreatePoolBuilder
     AmountBCreatePoolBuilder,
     FinalCreatePoolBuilder
 {
-  private api: ApiPromise
+  private readonly api: ApiPromise
 
   private _assetA: number
   private _amountA: any
@@ -47,27 +47,27 @@ class CreatePoolBuilder
     return new CreatePoolBuilder(api)
   }
 
-  assetA(assetA: number) {
+  assetA(assetA: number): this {
     this._assetA = assetA
     return this
   }
 
-  amountA(amountA: any) {
+  amountA(amountA: any): this {
     this._amountA = amountA
     return this
   }
 
-  assetB(assetB: number) {
+  assetB(assetB: number): this {
     this._assetB = assetB
     return this
   }
 
-  amountB(amountB: any) {
+  amountB(amountB: any): this {
     this._amountB = amountB
     return this
   }
 
-  build() {
+  build(): Extrinsic {
     return createPool(this.api, this._assetA, this._amountA, this._assetB, this._amountB)
   }
 }

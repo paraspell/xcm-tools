@@ -1,7 +1,7 @@
 // Contains basic call formatting for different XCM Palletss
 
 import type { ApiPromise } from '@polkadot/api'
-import { Extrinsic, TNode, TSerializedApiCall, Version } from '../../types'
+import { type Extrinsic, type TNode, type TSerializedApiCall, Version } from '../../types'
 import {
   createHeaderPolkadotXCM,
   createCurrencySpecification,
@@ -32,7 +32,7 @@ const sendCommon = (
 
   const asset = getAssetBySymbolOrId(origin, currencySymbolOrId.toString())
 
-  if (destination) {
+  if (destination !== undefined) {
     const originRelayChainSymbol = getRelayChainSymbol(origin)
     const destinationRelayChainSymbol = getRelayChainSymbol(destination)
     if (originRelayChainSymbol !== destinationRelayChainSymbol) {
@@ -40,13 +40,17 @@ const sendCommon = (
     }
   }
 
-  if (!asset) {
+  if (asset === null) {
     throw new InvalidCurrencyError(
       `Origin node ${origin} does not support currency or currencyId ${currencySymbolOrId}.`
     )
   }
 
-  if (destination && asset.symbol && !hasSupportForAsset(destination, asset.symbol)) {
+  if (
+    destination !== undefined &&
+    asset.symbol !== undefined &&
+    !hasSupportForAsset(destination, asset.symbol)
+  ) {
     throw new InvalidCurrencyError(
       `Destination node ${destination} does not support currency or currencyId ${currencySymbolOrId}.`
     )

@@ -1,6 +1,12 @@
 // Contains detailed structure of XCM call construction for OriginTrail Parachain
 
-import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../types'
+import {
+  type IPolkadotXCMTransfer,
+  type PolkadotXCMTransferInput,
+  Version,
+  type Extrinsic,
+  type TSerializedApiCall
+} from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
@@ -9,7 +15,7 @@ class OriginTrail extends ParachainNode implements IPolkadotXCMTransfer {
     super('OriginTrail', 'origintrail-parachain', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
       input,
       'limitedReserveTransferAssets',

@@ -1,24 +1,24 @@
 // Implements builder pattern for Open HRMP channel operation
 
-import { ApiPromise } from '@polkadot/api'
-import { TNode } from '../../../types'
+import { type ApiPromise } from '@polkadot/api'
+import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../../types'
 import { openChannel, openChannelSerializedApiCall } from '../../parasSudoWrapper'
-import { FinalBuilder } from './Builder'
+import { type FinalBuilder } from './Builder'
 
 export interface MaxMessageSizeOpenChannelBuilder {
-  maxMessageSize(size: number): FinalBuilder
+  maxMessageSize: (size: number) => FinalBuilder
 }
 
 export interface MaxSizeOpenChannelBuilder {
-  maxSize(size: number): MaxMessageSizeOpenChannelBuilder
+  maxSize: (size: number) => MaxMessageSizeOpenChannelBuilder
 }
 
 class OpenChannelBuilder
   implements MaxSizeOpenChannelBuilder, MaxMessageSizeOpenChannelBuilder, FinalBuilder
 {
-  private api: ApiPromise
-  private from: TNode
-  private to: TNode
+  private readonly api: ApiPromise
+  private readonly from: TNode
+  private readonly to: TNode
 
   private _maxSize: number
   private _maxMessageSize: number
@@ -33,21 +33,21 @@ class OpenChannelBuilder
     return new OpenChannelBuilder(api, from, to)
   }
 
-  maxSize(size: number) {
+  maxSize(size: number): this {
     this._maxSize = size
     return this
   }
 
-  maxMessageSize(size: number) {
+  maxMessageSize(size: number): this {
     this._maxMessageSize = size
     return this
   }
 
-  build() {
+  build(): Extrinsic {
     return openChannel(this.api, this.from, this.to, this._maxSize, this._maxMessageSize)
   }
 
-  buildSerializedApiCall() {
+  buildSerializedApiCall(): TSerializedApiCall {
     return openChannelSerializedApiCall(
       this.api,
       this.from,

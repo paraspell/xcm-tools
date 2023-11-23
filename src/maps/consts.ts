@@ -1,9 +1,9 @@
 // Contains supported Parachains and exports supported XCM Pallets
 
 import Acala from '../nodes/supported/Acala'
-import ParachainNode from '../nodes/ParachainNode'
+import type ParachainNode from '../nodes/ParachainNode'
 import Unique from '../nodes/supported/Unique'
-import { TNode } from '../types'
+import { type TNode } from '../types'
 import Crust from '../nodes/supported/Crust'
 import { BifrostPolkadot } from '../nodes/supported/BifrostPolkadot'
 import Bitgreen from '../nodes/supported/Bitgreen'

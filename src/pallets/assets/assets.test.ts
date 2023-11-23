@@ -89,7 +89,9 @@ describe('getAllAssetsSymbols', () => {
     NODE_NAMES.forEach(node => {
       const assetsSymbols = getAllAssetsSymbols(node)
       expect(assetsSymbols).toBeInstanceOf(Array)
-      assetsSymbols.forEach(assetSymbol => expect(assetSymbol).toBeTypeOf('string'))
+      assetsSymbols.forEach(assetSymbol => {
+        expect(assetSymbol).toBeTypeOf('string')
+      })
     })
   })
 })
@@ -99,15 +101,13 @@ describe('getAssetDecimals', () => {
     NODE_NAMES.forEach(node => {
       const obj = getAssetsObject(node)
       expect(obj).not.toBeNull()
-      if (obj) {
-        ;[...obj.nativeAssets, ...obj.otherAssets].forEach(asset => {
-          if (asset.symbol) {
-            const decimals = getAssetDecimals(node, asset.symbol)
-            expect(decimals).toBeTypeOf('number')
-            expect(decimals).toBeGreaterThanOrEqual(0)
-          }
-        })
-      }
+      ;[...obj.nativeAssets, ...obj.otherAssets].forEach(asset => {
+        if (asset.symbol !== undefined) {
+          const decimals = getAssetDecimals(node, asset.symbol)
+          expect(decimals).toBeTypeOf('number')
+          expect(decimals).toBeGreaterThanOrEqual(0)
+        }
+      })
     })
   })
 })

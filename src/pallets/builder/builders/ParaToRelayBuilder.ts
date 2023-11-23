@@ -1,15 +1,15 @@
 // Implements builder pattern for XCM message creation operations operation
 
-import { ApiPromise } from '@polkadot/api'
+import { type ApiPromise } from '@polkadot/api'
 import { send, sendSerializedApiCall } from '../../xcmPallet'
-import { TNode } from '../../../types'
+import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../../types'
 import { getRelayChainSymbol } from '../../assets'
-import { AddressBuilder, FinalBuilder } from './Builder'
+import { type AddressBuilder, type FinalBuilder } from './Builder'
 
 class ParaToRelayBuilder implements AddressBuilder, FinalBuilder {
-  private api: ApiPromise
-  private from: TNode
-  private amount: string | number | bigint
+  private readonly api: ApiPromise
+  private readonly from: TNode
+  private readonly amount: string | number | bigint
 
   private _address: string
 
@@ -23,17 +23,17 @@ class ParaToRelayBuilder implements AddressBuilder, FinalBuilder {
     return new ParaToRelayBuilder(api, from, amount)
   }
 
-  address(address: string) {
+  address(address: string): this {
     this._address = address
     return this
   }
 
-  build() {
+  build(): Extrinsic {
     const currency = getRelayChainSymbol(this.from)
     return send(this.api, this.from, currency, this.amount, this._address)
   }
 
-  buildSerializedApiCall() {
+  buildSerializedApiCall(): TSerializedApiCall {
     const currency = getRelayChainSymbol(this.from)
     return sendSerializedApiCall(this.api, this.from, currency, this.amount, this._address)
   }
