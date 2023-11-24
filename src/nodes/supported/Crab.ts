@@ -10,6 +10,7 @@ import {
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import { NodeNotSupportedError } from '../../errors'
 
 class Crab extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
@@ -22,6 +23,10 @@ class Crab extends ParachainNode implements IPolkadotXCMTransfer {
       return PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserveTransferAssets')
     }
     throw new ScenarioNotSupportedError(this.node, input.scenario)
+  }
+
+  transferRelayToPara(): TSerializedApiCall {
+    throw new NodeNotSupportedError()
   }
 }
 
