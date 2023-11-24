@@ -1,27 +1,25 @@
 // Contains detailed structure of XCM call construction for Quartz Parachain
 
 import {
-  type IPolkadotXCMTransfer,
-  type PolkadotXCMTransferInput,
   Version,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type IXTokensTransfer,
+  type XTokensTransferInput
 } from '../../types'
-import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import XTokensTransferImpl from '../XTokensTransferImpl'
 
-class Quartz extends ParachainNode implements IPolkadotXCMTransfer {
+class Quartz extends ParachainNode implements IXTokensTransfer {
   constructor() {
     super('Quartz', 'quartz', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
-    // TESTED https://quartz.subscan.io/xcm_message/kusama-f5b6580f8d7f97a8d33209d2b5b34d97454587e9
-    if (input.scenario === 'ParaToPara') {
-      return PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserveTransferAssets')
-    }
-    throw new ScenarioNotSupportedError(this.node, input.scenario)
+  _assetCheckEnabled = false
+
+  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+    const { currencyID } = input
+    return XTokensTransferImpl.transferXTokens(input, { ForeignAssetId: currencyID })
   }
 }
 

@@ -40,7 +40,9 @@ const sendCommon = (
     }
   }
 
-  if (asset === null) {
+  const originNode = getNode(origin)
+
+  if (asset === null && originNode.assetCheckEnabled) {
     throw new InvalidCurrencyError(
       `Origin node ${origin} does not support currency or currencyId ${currencySymbolOrId}.`
     )
@@ -48,18 +50,20 @@ const sendCommon = (
 
   if (
     destination !== undefined &&
-    asset.symbol !== undefined &&
+    asset?.symbol !== undefined &&
+    getNode(destination).assetCheckEnabled &&
     !hasSupportForAsset(destination, asset.symbol)
   ) {
     throw new InvalidCurrencyError(
       `Destination node ${destination} does not support currency or currencyId ${currencySymbolOrId}.`
     )
   }
-  const { symbol: currencySymbol, assetId: currencyId } = asset
 
-  return getNode(origin).transfer(
+  const currencyId = originNode.assetCheckEnabled ? asset?.assetId : currencySymbolOrId.toString()
+
+  return originNode.transfer(
     api,
-    currencySymbol,
+    asset?.symbol,
     currencyId,
     amount,
     to,

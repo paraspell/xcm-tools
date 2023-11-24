@@ -12,11 +12,11 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Manta extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Manta', 'manta', 'polkadot', Version.V3)
+    super('Manta', 'manta', 'polkadot', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    return XTokensTransferImpl.transferXTokens(input, { ForeignAssetId: input.currencyID })
+    return XTokensTransferImpl.transferXTokens(input, { MantaCurrency: input.currencyID })
   }
 }
 
