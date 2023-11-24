@@ -67,6 +67,13 @@ export interface PolkadotXCMTransferInput {
   serializedApiCallEnabled?: boolean
 }
 
+export interface TTransferRelayToParaOptions {
+  api: ApiPromise
+  destination: TNode
+  address: string
+  amount: string
+}
+
 export interface IPolkadotXCMTransfer {
   transferPolkadotXCM: (input: PolkadotXCMTransferInput) => Extrinsic | TSerializedApiCall
 }

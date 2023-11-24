@@ -5,11 +5,13 @@ import {
   type PolkadotXCMTransferInput,
   Version,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TTransferRelayToParaOptions
 } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
 
 class Encointer extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
@@ -27,6 +29,14 @@ class Encointer extends ParachainNode implements IPolkadotXCMTransfer {
       )
     }
     throw new ScenarioNotSupportedError(this.node, input.scenario)
+  }
+
+  transferRelayToPara(options: TTransferRelayToParaOptions): TSerializedApiCall {
+    return {
+      module: 'xcmPallet',
+      section: 'limitedTeleportAssets',
+      parameters: constructRelayToParaParameters(options, Version.V1, true)
+    }
   }
 }
 

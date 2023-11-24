@@ -1,6 +1,10 @@
 // Contains detailed structure of XCM call construction for Nodle Parachain
 
-import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
+import {
+  InvalidCurrencyError,
+  NodeNotSupportedError,
+  ScenarioNotSupportedError
+} from '../../errors'
 import {
   type IXTokensTransfer,
   Version,
@@ -28,6 +32,10 @@ class Nodle extends ParachainNode implements IXTokensTransfer {
     }
 
     return XTokensTransferImpl.transferXTokens(input, 'NodleNative')
+  }
+
+  transferRelayToPara(): TSerializedApiCall {
+    throw new NodeNotSupportedError()
   }
 }
 

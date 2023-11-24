@@ -10,8 +10,9 @@ import {
   type TScenario,
   type IXTokensTransfer,
   type IPolkadotXCMTransfer,
-  type Version,
-  type TSerializedApiCall
+  Version,
+  type TSerializedApiCall,
+  type TTransferRelayToParaOptions
 } from '../types'
 import {
   generateAddressPayload,
@@ -19,6 +20,7 @@ import {
   createHeaderPolkadotXCM,
   createCurrencySpecification
 } from '../utils'
+import { constructRelayToParaParameters } from '../pallets/xcmPallet/utils'
 
 const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
   return 'transferXTokens' in obj
@@ -125,6 +127,14 @@ abstract class ParachainNode {
       })
     } else {
       throw new NoXCMSupportImplementedError(this._node)
+    }
+  }
+
+  transferRelayToPara(options: TTransferRelayToParaOptions): TSerializedApiCall {
+    return {
+      module: 'xcmPallet',
+      section: 'reserveTransferAssets',
+      parameters: constructRelayToParaParameters(options, Version.V3)
     }
   }
 }

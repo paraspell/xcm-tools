@@ -1,18 +1,11 @@
 // Contains basic call formatting for different XCM Palletss
 
 import type { ApiPromise } from '@polkadot/api'
-import { type Extrinsic, type TNode, type TSerializedApiCall, Version } from '../../types'
-import {
-  createHeaderPolkadotXCM,
-  createCurrencySpecification,
-  getNode,
-  callPolkadotJsTxFunction,
-  generateAddressPayload
-} from '../../utils'
-import { getParaId, getRelayChainSymbol, hasSupportForAsset } from '../assets'
+import { type Extrinsic, type TNode, type TSerializedApiCall } from '../../types'
+import { getNode, callPolkadotJsTxFunction } from '../../utils'
+import { getRelayChainSymbol, hasSupportForAsset } from '../assets'
 import { getAssetBySymbolOrId } from '../assets/assetsUtils'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
-import { NodeNotSupportedError } from '../../errors/NodeNotSupportedError'
 import { IncompatibleNodesError } from '../../errors'
 
 const sendCommon = (
@@ -109,79 +102,20 @@ export function send(
   ) as Extrinsic
 }
 
-// TODO: Refactor this function
 export const transferRelayToParaCommon = (
   api: ApiPromise,
   destination: TNode,
   amount: string,
-  to: string,
+  address: string,
   serializedApiCallEnabled = false
 ): Extrinsic | TSerializedApiCall | never => {
-  const paraId = getParaId(destination)
-  if (
-    destination === 'AssetHubPolkadot' ||
-    destination === 'AssetHubKusama' ||
-    destination === 'Moonbeam' ||
-    destination === 'Moonriver'
-  ) {
-    // Same for AssetHubPolkadot, AssetHubKusama, Encoiter and Moonbeam
-    const serializedApiCall = {
-      module: 'xcmPallet',
-      section:
-        destination === 'Moonbeam' || destination === 'Moonriver'
-          ? 'limitedReserveTransferAssets'
-          : 'limitedTeleportAssets',
-      parameters: [
-        createHeaderPolkadotXCM('RelayToPara', Version.V3, paraId),
-        generateAddressPayload(api, 'RelayToPara', null, to, Version.V3, paraId),
-        createCurrencySpecification(amount, 'RelayToPara', Version.V3, destination),
-        0,
-        'Unlimited'
-      ]
-    }
-    if (serializedApiCallEnabled) {
-      return serializedApiCall
-    }
-    return callPolkadotJsTxFunction(api, serializedApiCall)
-  } else if (destination === 'Encointer') {
-    const serializedApiCall = {
-      module: 'xcmPallet',
-      section: 'limitedTeleportAssets',
-      parameters: [
-        createHeaderPolkadotXCM('RelayToPara', Version.V1, paraId),
-        generateAddressPayload(api, 'RelayToPara', null, to, Version.V1, paraId),
-        createCurrencySpecification(amount, 'RelayToPara', Version.V1, destination),
-        0,
-        'Unlimited'
-      ]
-    }
-    if (serializedApiCallEnabled) {
-      return serializedApiCall
-    }
-    return callPolkadotJsTxFunction(api, serializedApiCall)
-  } else if (
-    destination === 'Darwinia' ||
-    destination === 'Crab' ||
-    destination === 'Integritee' ||
-    destination === 'Nodle' ||
-    destination === 'Pendulum'
-  ) {
-    // Do not do anything because Darwinia and Crab does not have DOT and KSM registered
-    throw new NodeNotSupportedError(
-      'These nodes do not support XCM transfers from Relay / to Relay chain.'
-    )
-  }
+  const serializedApiCall = getNode(destination).transferRelayToPara({
+    api,
+    destination,
+    address,
+    amount
+  })
 
-  const serializedApiCall = {
-    module: 'xcmPallet',
-    section: 'reserveTransferAssets',
-    parameters: [
-      createHeaderPolkadotXCM('RelayToPara', Version.V3, paraId),
-      generateAddressPayload(api, 'RelayToPara', null, to, Version.V3, paraId),
-      createCurrencySpecification(amount, 'RelayToPara', Version.V3, destination),
-      0
-    ]
-  }
   if (serializedApiCallEnabled) {
     return serializedApiCall
   }

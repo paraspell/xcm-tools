@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Integritee Parachain
 
-import { InvalidCurrencyError } from '../../errors'
+import { InvalidCurrencyError, NodeNotSupportedError } from '../../errors'
 import {
   type IXTokensTransfer,
   Version,
@@ -20,6 +20,10 @@ class Integritee extends ParachainNode implements IXTokensTransfer {
     if (input.currency === 'KSM')
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency KSM`)
     return XTokensTransferImpl.transferXTokens(input, input.currency)
+  }
+
+  transferRelayToPara(): TSerializedApiCall {
+    throw new NodeNotSupportedError()
   }
 }
 
