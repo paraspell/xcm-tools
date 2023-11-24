@@ -1,20 +1,29 @@
 // Tests designed to try different XCM Pallet XCM messages and errors
 
 import { type ApiPromise } from '@polkadot/api'
-import { vi, describe, expect, it, beforeEach } from 'vitest'
+import { describe, expect, it, beforeEach, vi } from 'vitest'
 import { NODE_NAMES } from '../../maps/consts'
-import { createApiInstance } from '../../utils'
 import { getAllAssetsSymbols, getRelayChainSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
 import { type TNode } from '../../types'
 import { send } from './transfer'
+import ParachainNode from '../../nodes/ParachainNode'
+import { createApiInstance, getNode } from '../../utils'
 
-vi.mock('../../utils', () => ({
-  constructXTokens: vi.fn(),
-  constructPolkadotXCM: vi.fn(),
-  createApiInstance: vi.fn()
-}))
+vi.spyOn(ParachainNode.prototype, 'transfer').mockImplementation(
+  (
+    api: ApiPromise,
+    currencySymbol: string | undefined,
+    currencyId: string | undefined,
+    amount: string,
+    to: string,
+    destination?: TNode,
+    serializedApiCallEnabled = false
+  ) => {
+    return null as any
+  }
+)
 
 const WS_URL = 'wss://para.f3joule.space'
 const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
@@ -91,13 +100,15 @@ describe('send', () => {
 
   it('should not throw an InvalidCurrencyError when passing all defined symbols from all nodes', () => {
     NODE_NAMES.forEach(node => {
-      const symbols = getAllAssetsSymbols(node)
-      symbols.forEach(symbol => {
-        const t = (): void => {
-          send(api, node, symbol, AMOUNT, ADDRESS)
-        }
-        expect(t).not.toThrowError(InvalidCurrencyError)
-      })
+      if (getNode(node).assetCheckEnabled) {
+        const symbols = getAllAssetsSymbols(node)
+        symbols.forEach(symbol => {
+          const t = (): void => {
+            send(api, node, symbol, AMOUNT, ADDRESS)
+          }
+          expect(t).not.toThrowError(InvalidCurrencyError)
+        })
+      }
     })
   })
 

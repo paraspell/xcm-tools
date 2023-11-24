@@ -41,6 +41,8 @@ abstract class ParachainNode {
 
   private readonly _version: Version
 
+  protected _assetCheckEnabled = true
+
   constructor(node: TNode, name: string, type: TRelayChainType, version: Version) {
     this._name = name
     this._type = type
@@ -62,6 +64,10 @@ abstract class ParachainNode {
 
   get version(): Version {
     return this._version
+  }
+
+  get assetCheckEnabled(): boolean {
+    return this._assetCheckEnabled
   }
 
   transfer(
