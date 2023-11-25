@@ -26,11 +26,11 @@ Our SDK introduced all Polkadot libraries as peer dependencies. The reason for t
 
 ```
 //npm
-npm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config
+npm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 //yarn
-yarn install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config
+yarn install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 //pnpm
-pnpm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config
+pnpm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 ```
 
 ##### Install SDK via npm||yarn||pnpm
