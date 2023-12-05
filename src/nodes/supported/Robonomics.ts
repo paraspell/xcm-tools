@@ -1,11 +1,13 @@
 // Contains detailed structure of XCM call construction for Robonomics Parachain
 
+import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TTransferRelayToParaOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 
@@ -25,6 +27,14 @@ class Robonomics extends ParachainNode implements IPolkadotXCMTransfer {
     // TESTED https://robonomics.subscan.io/xcm_message/kusama-20b03208c99f2ef29d2d4b4cd4bc5659e54311ea
     const method = scenario === 'ParaToPara' ? 'reserveTransferAssets' : 'reserveWithdrawAssets'
     return api.tx.polkadotXcm[method](header, addressSelection, currencySelection, 0)
+  }
+
+  transferRelayToPara(options: TTransferRelayToParaOptions): TSerializedApiCall {
+    return {
+      module: 'xcmPallet',
+      section: 'reserveTransferAssets',
+      parameters: constructRelayToParaParameters(options, this.version)
+    }
   }
 }
 
