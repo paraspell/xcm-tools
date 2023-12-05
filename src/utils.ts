@@ -114,6 +114,7 @@ export const generateAddressPayload = (
   }
 }
 
+// TODO: Refactor this function
 export const createCurrencySpecification = (
   amount: string,
   scenario: TScenario,
@@ -183,6 +184,24 @@ export const createCurrencySpecification = (
                     }
                   ]
                 }
+              }
+            },
+            fun: {
+              Fungible: amount
+            }
+          }
+        ]
+      }
+    }
+
+    if (scenario === 'ParaToPara' && node === 'Robonomics') {
+      return {
+        [version]: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: 'Here'
               }
             },
             fun: {
