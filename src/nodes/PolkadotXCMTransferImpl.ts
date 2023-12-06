@@ -13,7 +13,7 @@ class PolkadotXCMTransferImpl {
       serializedApiCallEnabled
     }: PolkadotXCMTransferInput,
     method: string,
-    fees: 'Unlimited' | undefined = undefined
+    fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ): Extrinsic | TSerializedApiCall {
     if (serializedApiCallEnabled === true) {
       return {
