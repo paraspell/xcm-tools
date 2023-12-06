@@ -17,7 +17,8 @@ class BifrostKusama extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     // Multiple asset options need addressing
-    return XTokensTransferImpl.transferXTokens(input, { Token: input.currency })
+    const currencySelection = { Native: input.currency }
+    return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }
 

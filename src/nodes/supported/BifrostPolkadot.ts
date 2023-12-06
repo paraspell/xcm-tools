@@ -17,7 +17,7 @@ export class BifrostPolkadot extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     // Multiple asset options need addressing
-    const currencySelection = { Token: input.currency }
+    const currencySelection = { Native: input.currency }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }
