@@ -12,7 +12,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Pioneer extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Pioneer', 'bitcountryPioneer', 'kusama', Version.V1)
+    super('Pioneer', 'pioneer', 'kusama', Version.V1)
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
