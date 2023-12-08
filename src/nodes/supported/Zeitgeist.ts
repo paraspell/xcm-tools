@@ -16,7 +16,8 @@ class Zeitgeist extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    return XTokensTransferImpl.transferXTokens(input, { ForeignAsset: input.currencyID })
+    const currencySelection = input.currency === 'ZTG' ? 'Ztg' : { ForeignAsset: input.currencyID }
+    return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }
 
