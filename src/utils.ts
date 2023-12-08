@@ -279,32 +279,17 @@ export const getNodeEndpointOption = (node: TNode): any => {
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
 
   // TMP Fix because some nodes don't have providers in endpoint options
-  if (node === 'Imbue') {
+  if (node === 'Kylin') {
     return {
-      info: 'imbue',
-      paraId: 2121,
+      info: 'kylin',
+      paraId: 2052,
       providers: {
-        'Imbue Network 0': 'wss://kusama.imbuenetwork.com'
-      }
-    }
-  }
-  if (node === 'Polkadex') {
-    return {
-      info: 'polkadex',
-      paraId: 2040,
-      providers: {
-        Dwellir: 'wss://polkadex-rpc.dwellir.com',
-        OnFinality: 'wss://polkadex-parachain.api.onfinality.io/public-ws',
-        RadiumBlock: 'wss://polkadex-parachain.public.curie.radiumblock.co/ws'
+        'Kylin Network': 'wss://polkadot.kylin-node.co.uk'
       }
     }
   }
 
-  return linked !== undefined
-    ? linked.find(function (o) {
-        return o.info === name
-      })
-    : undefined
+  return linked !== undefined ? linked.find((o: any) => o.info === name) : undefined
 }
 
 export const getAllNodeProviders = (node: TNode): string[] => {
