@@ -294,13 +294,13 @@ export const getNodeEndpointOption = (node: TNode): any => {
 
 export const getAllNodeProviders = (node: TNode): string[] => {
   const { providers } = getNodeEndpointOption(node) ?? {}
+  if (providers.length < 1) {
+    throw new Error(`Node ${node} does not have any providers.`)
+  }
   return Object.values(providers ?? [])
 }
 
-export const getNodeProvider = (node: TNode): string | null => {
-  const providers = getAllNodeProviders(node)
-  return providers.length > 0 ? providers[0] : null
-}
+export const getNodeProvider = (node: TNode): string => getNode(node).getProvider()
 
 export const createApiInstance = async (wsUrl: string): Promise<ApiPromise> => {
   const wsProvider = new WsProvider(wsUrl)
