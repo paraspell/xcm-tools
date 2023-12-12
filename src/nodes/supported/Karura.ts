@@ -7,6 +7,7 @@ import {
   type Extrinsic,
   type TSerializedApiCall
 } from '../../types'
+import { getAllNodeProviders } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
@@ -20,6 +21,11 @@ class Karura extends ParachainNode implements IXTokensTransfer {
     const currencySelection =
       currencyID !== undefined ? { ForeignAsset: currencyID } : { Token: currency }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
+  }
+
+  getProvider(): string {
+    // Return the second WebSocket URL because the first one is sometimes unreliable.
+    return getAllNodeProviders(this.node)[1]
   }
 }
 

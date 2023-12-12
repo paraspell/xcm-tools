@@ -18,7 +18,8 @@ import {
   generateAddressPayload,
   getFees,
   createHeaderPolkadotXCM,
-  createCurrencySpecification
+  createCurrencySpecification,
+  getAllNodeProviders
 } from '../utils'
 import { constructRelayToParaParameters } from '../pallets/xcmPallet/utils'
 
@@ -136,6 +137,10 @@ abstract class ParachainNode {
       section: 'reserveTransferAssets',
       parameters: constructRelayToParaParameters(options, Version.V3)
     }
+  }
+
+  getProvider(): string {
+    return getAllNodeProviders(this.node)[0]
   }
 }
 
