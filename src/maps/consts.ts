@@ -106,6 +106,8 @@ export const NODE_NAMES = [
   'Zeitgeist'
 ] as const
 
+export const NODES_WITH_RELAY_CHAINS = [...NODE_NAMES, 'Polkadot', 'Kusama'] as const
+
 export const nodes: Record<TNode, ParachainNode> = {
   AssetHubPolkadot: new AssetHubPolkadot(),
   Acala: new Acala(),

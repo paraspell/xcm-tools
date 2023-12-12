@@ -41,6 +41,7 @@
     }
   },
   "dependencies": {
+    "@mangata-finance/sdk": "^2.1.1",
     "ethers": "^5.7.1"
   },
   "peerDependencies": {

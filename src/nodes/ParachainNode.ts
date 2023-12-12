@@ -19,7 +19,8 @@ import {
   getFees,
   createHeaderPolkadotXCM,
   createCurrencySpecification,
-  getAllNodeProviders
+  getAllNodeProviders,
+  createApiInstance
 } from '../utils'
 import { constructRelayToParaParameters } from '../pallets/xcmPallet/utils'
 
@@ -141,6 +142,10 @@ abstract class ParachainNode {
 
   getProvider(): string {
     return getAllNodeProviders(this.node)[0]
+  }
+
+  async createApiInstance(): Promise<ApiPromise> {
+    return await createApiInstance(this.getProvider())
   }
 }
 

@@ -1,5 +1,6 @@
 // Contains detailed structure of XCM call construction for Mangata Parachain
 
+import { type ApiPromise } from '@polkadot/api'
 import {
   type IXTokensTransfer,
   Version,
@@ -17,6 +18,12 @@ class Mangata extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     return XTokensTransferImpl.transferXTokens(input, input.currencyID)
+  }
+
+  async createApiInstance(): Promise<ApiPromise> {
+    const MangataSDK = await import('@mangata-finance/sdk')
+    const instance = MangataSDK.Mangata.instance([this.getProvider()])
+    return await instance.api()
   }
 }
 

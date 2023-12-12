@@ -2,7 +2,11 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
-import { type NODE_NAMES, type SUPPORTED_PALLETS } from './maps/consts'
+import {
+  type NODES_WITH_RELAY_CHAINS,
+  type NODE_NAMES,
+  type SUPPORTED_PALLETS
+} from './maps/consts'
 
 export type UpdateFunction = (name: string, index: number) => string
 export type Extrinsic = SubmittableExtrinsic<'promise'>
@@ -10,6 +14,7 @@ export type ExtrinsicFunction<T> = (arg: T) => Extrinsic
 export type TRelayChainType = 'polkadot' | 'kusama'
 export type TRelayChainSymbol = 'DOT' | 'KSM'
 export type TNode = (typeof NODE_NAMES)[number]
+export type TNodeWithRelayChains = (typeof NODES_WITH_RELAY_CHAINS)[number]
 export interface TAssetDetails {
   assetId: string
   symbol?: string
