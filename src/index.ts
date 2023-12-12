@@ -9,6 +9,12 @@ export * from './pallets/assets'
 export * from './pallets/builder'
 export * from './pallets/pallets'
 export * from './types'
-export { NODE_NAMES, SUPPORTED_PALLETS } from './maps/consts'
-export { getNodeEndpointOption, getNode, getNodeProvider, getAllNodeProviders } from './utils'
+export { NODE_NAMES, NODES_WITH_RELAY_CHAINS, SUPPORTED_PALLETS } from './maps/consts'
+export {
+  getNodeEndpointOption,
+  getNode,
+  getNodeProvider,
+  getAllNodeProviders,
+  createApiInstanceForNode
+} from './utils'
 export * from './errors'

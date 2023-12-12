@@ -9,7 +9,8 @@ import {
   type TScenario,
   type TSerializedApiCall,
   Version,
-  type Extrinsic
+  type Extrinsic,
+  type TNodeWithRelayChains
 } from './types'
 import { nodes } from './maps/consts'
 import type ParachainNode from './nodes/ParachainNode'
@@ -305,6 +306,15 @@ export const getNodeProvider = (node: TNode): string => getNode(node).getProvide
 export const createApiInstance = async (wsUrl: string): Promise<ApiPromise> => {
   const wsProvider = new WsProvider(wsUrl)
   return await ApiPromise.create({ provider: wsProvider })
+}
+
+export const createApiInstanceForNode = async (node: TNodeWithRelayChains): Promise<ApiPromise> => {
+  if (node === 'Polkadot' || node === 'Kusama') {
+    const endpointOption = node === 'Polkadot' ? prodRelayPolkadot : prodRelayKusama
+    const wsUrl = Object.values(endpointOption.providers)[0]
+    return await createApiInstance(wsUrl)
+  }
+  return await getNode(node).createApiInstance()
 }
 
 export const lowercaseFirstLetter = (str: string): string =>
