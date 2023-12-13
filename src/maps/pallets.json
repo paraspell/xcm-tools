@@ -32,8 +32,8 @@
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "Darwinia": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": ["PolkadotXcm"]
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "HydraDX": {
     "defaultPallet": "XTokens",
@@ -152,8 +152,8 @@
     "supportedPallets": ["PolkadotXcm"]
   },
   "Shiden": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": ["PolkadotXcm"]
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "Turing": {
     "defaultPallet": "XTokens",
