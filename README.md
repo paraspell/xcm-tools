@@ -28,7 +28,7 @@ Our SDK introduced all Polkadot libraries as peer dependencies. The reason for t
 //npm
 npm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 //yarn
-yarn install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
+yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 //pnpm
 pnpm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 ```
@@ -39,7 +39,7 @@ pnpm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-con
 //npm
 npm install @paraspell/sdk
 //yarn
-yarn install @paraspell/sdk
+yarn add @paraspell/sdk
 //pnpm
 pnpm install @paraspell/sdk
 ```
