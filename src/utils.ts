@@ -311,7 +311,7 @@ export const createApiInstance = async (wsUrl: string): Promise<ApiPromise> => {
 export const createApiInstanceForNode = async (node: TNodeWithRelayChains): Promise<ApiPromise> => {
   if (node === 'Polkadot' || node === 'Kusama') {
     const endpointOption = node === 'Polkadot' ? prodRelayPolkadot : prodRelayKusama
-    const wsUrl = Object.values(endpointOption.providers)[0]
+    const wsUrl = Object.values(endpointOption.providers)[1]
     return await createApiInstance(wsUrl)
   }
   return await getNode(node).createApiInstance()
