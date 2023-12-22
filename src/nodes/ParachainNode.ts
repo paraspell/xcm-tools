@@ -12,17 +12,17 @@ import {
   type IPolkadotXCMTransfer,
   Version,
   type TSerializedApiCall,
-  type TTransferRelayToParaOptions
+  type TTransferRelayToParaOptions,
+  Parents
 } from '../types'
 import {
   generateAddressPayload,
   getFees,
   createHeaderPolkadotXCM,
-  createCurrencySpecification,
   getAllNodeProviders,
   createApiInstance
 } from '../utils'
-import { constructRelayToParaParameters } from '../pallets/xcmPallet/utils'
+import { constructRelayToParaParameters, createCurrencySpec } from '../pallets/xcmPallet/utils'
 
 export const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
   return 'transferXTokens' in obj
@@ -117,13 +117,7 @@ abstract class ParachainNode {
           this.version,
           paraId
         ),
-        currencySelection: createCurrencySpecification(
-          amount,
-          scenario,
-          this.version,
-          this._node,
-          currencyId
-        ),
+        currencySelection: this.createCurrencySpec(amount, scenario, this.version, currencyId),
         scenario,
         currencySymbol,
         serializedApiCallEnabled
@@ -147,6 +141,19 @@ abstract class ParachainNode {
 
   async createApiInstance(): Promise<ApiPromise> {
     return await createApiInstance(this.getProvider())
+  }
+
+  createCurrencySpec(
+    amount: string,
+    scenario: TScenario,
+    version: Version,
+    currencyId?: string
+  ): any {
+    return createCurrencySpec(
+      amount,
+      version,
+      scenario === 'ParaToRelay' ? Parents.ONE : Parents.ZERO
+    )
   }
 }
 

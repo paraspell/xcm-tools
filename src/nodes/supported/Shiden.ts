@@ -12,12 +12,7 @@ import {
   type TNode,
   type TScenario
 } from '../../types'
-import {
-  createCurrencySpecification,
-  createHeaderPolkadotXCM,
-  generateAddressPayload,
-  getFees
-} from '../../utils'
+import { createHeaderPolkadotXCM, generateAddressPayload, getFees } from '../../utils'
 import ParachainNode, { supportsPolkadotXCM, supportsXTokens } from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -84,13 +79,7 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
           this.version,
           paraId
         ),
-        currencySelection: createCurrencySpecification(
-          amount,
-          scenario,
-          this.version,
-          node,
-          currencyId
-        ),
+        currencySelection: this.createCurrencySpec(amount, scenario, this.version, currencyId),
         scenario,
         currencySymbol,
         serializedApiCallEnabled
