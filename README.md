@@ -10,7 +10,7 @@
 
 SDK For XCM & XCMP handling made with ❤️ by ParaSpell✨. It is no longer necessary to construct calls manually. @paraspell/sdk handles this for you. Feel free to become a magician and try your paraSPELLS 🧙✨.
 
-##### Currently supporting 48 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/main/docs/supportedNodes.md).
+##### Currently supporting 47 Polkadot & Kusama nodes list [here](https://github.com/paraspell/sdk/blob/main/docs/supportedNodes.md).
 
 ### Check out our brand new Wiki documentation! [Wiki docs](https://paraspell.github.io/docs/)
 
@@ -70,7 +70,8 @@ Builder pattern XCM & HRMP construction
 
 ```ts
 //Transfer tokens from Parachain to Parachain
-//**NOTE** If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add character 'n' the end of currencyID. Eg: .currency(42259045809535163221576417993425387648n) will mean you transfer xcDOT.
+//**NOTE** If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' the end of currencyID. Eg: .currency(42259045809535163221576417993425387648n) will mean you transfer xcDOT.
+//**NOTE2** You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948)
 
 Builder(api).from(NODE).to(NODE).currency(CurrencyString||CurrencyID).amount(amount).address(address).build()
 
