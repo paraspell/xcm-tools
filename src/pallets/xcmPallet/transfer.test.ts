@@ -19,6 +19,7 @@ vi.spyOn(ParachainNode.prototype, 'transfer').mockImplementation(
     amount: string,
     to: string,
     destination?: TNode,
+    paraIdTo?: number,
     serializedApiCallEnabled = false
   ) => {
     return null as any

@@ -47,10 +47,11 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
     amount: string,
     to: string,
     destination?: TNode,
+    paraIdTo?: number,
     serializedApiCallEnabled = false
   ): Extrinsic | TSerializedApiCall {
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
-    const paraId = destination !== undefined ? getParaId(destination) : undefined
+    const paraId = destination !== undefined ? paraIdTo ?? getParaId(destination) : undefined
     const node = this.node
     if (supportsXTokens(this) && currencySymbol !== 'ASTR') {
       return this.transferXTokens({

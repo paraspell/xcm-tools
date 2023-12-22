@@ -7,11 +7,11 @@ import {
 import { getParaId } from '../assets'
 
 export const constructRelayToParaParameters = (
-  { api, destination, address, amount }: TTransferRelayToParaOptions,
+  { api, destination, address, amount, paraIdTo }: TTransferRelayToParaOptions,
   version: Version,
   includeFee = false
 ): any[] => {
-  const paraId = getParaId(destination)
+  const paraId = paraIdTo ?? getParaId(destination)
   const parameters = [
     createHeaderPolkadotXCM('RelayToPara', version, paraId),
     generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),

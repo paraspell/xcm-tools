@@ -77,6 +77,7 @@ export interface TTransferRelayToParaOptions {
   destination: TNode
   address: string
   amount: string
+  paraIdTo?: number
 }
 
 export interface IPolkadotXCMTransfer {

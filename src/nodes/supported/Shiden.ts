@@ -48,10 +48,11 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
     amount: string,
     to: string,
     destination?: TNode,
+    paraIdTo?: number,
     serializedApiCallEnabled = false
   ): Extrinsic | TSerializedApiCall {
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
-    const paraId = destination !== undefined ? getParaId(destination) : undefined
+    const paraId = destination !== undefined ? paraIdTo ?? getParaId(destination) : undefined
     const node = this.node
     if (supportsXTokens(this) && currencySymbol !== 'SDN') {
       return this.transferXTokens({

@@ -10,24 +10,33 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
   private readonly from: TNode
   private readonly to: TNode
   private readonly currency: string | number | bigint
+  private readonly paraIdTo?: number
 
   private _amount: string | number | bigint
   private _address: string
 
-  private constructor(api: ApiPromise, from: TNode, to: TNode, currency: string | number | bigint) {
+  private constructor(
+    api: ApiPromise,
+    from: TNode,
+    to: TNode,
+    currency: string | number | bigint,
+    paraIdTo?: number
+  ) {
     this.api = api
     this.from = from
     this.to = to
     this.currency = currency
+    this.paraIdTo = paraIdTo
   }
 
   static createParaToPara(
     api: ApiPromise,
     from: TNode,
     to: TNode,
-    currency: string | number | bigint
+    currency: string | number | bigint,
+    paraIdTo?: number
   ): AmountBuilder {
-    return new ParaToParaBuilder(api, from, to, currency)
+    return new ParaToParaBuilder(api, from, to, currency, paraIdTo)
   }
 
   amount(amount: string | number | bigint): this {
@@ -41,7 +50,15 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
   }
 
   build(): Extrinsic {
-    return send(this.api, this.from, this.currency, this._amount, this._address, this.to)
+    return send(
+      this.api,
+      this.from,
+      this.currency,
+      this._amount,
+      this._address,
+      this.to,
+      this.paraIdTo
+    )
   }
 
   buildSerializedApiCall(): TSerializedApiCall {
@@ -51,7 +68,8 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
       this.currency,
       this._amount,
       this._address,
-      this.to
+      this.to,
+      this.paraIdTo
     )
   }
 }
