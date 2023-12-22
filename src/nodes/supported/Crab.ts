@@ -5,12 +5,14 @@ import {
   type PolkadotXCMTransferInput,
   Version,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TScenario
 } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 import { NodeNotSupportedError } from '../../errors'
+import { getNode } from '../../utils'
 
 class Crab extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
@@ -27,6 +29,15 @@ class Crab extends ParachainNode implements IPolkadotXCMTransfer {
 
   transferRelayToPara(): TSerializedApiCall {
     throw new NodeNotSupportedError()
+  }
+
+  createCurrencySpec(
+    amount: string,
+    scenario: TScenario,
+    version: Version,
+    currencyId?: string
+  ): any {
+    return getNode('Darwinia').createCurrencySpec(amount, scenario, version, currencyId)
   }
 }
 

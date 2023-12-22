@@ -1,13 +1,15 @@
 // Contains detailed structure of XCM call construction for Statemint Parachain
 
-import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
+import { constructRelayToParaParameters, createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
   type Extrinsic,
   type TSerializedApiCall,
-  type TTransferRelayToParaOptions
+  type TTransferRelayToParaOptions,
+  Parents,
+  type TScenario
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
@@ -28,6 +30,29 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
       module: 'xcmPallet',
       section: 'limitedTeleportAssets',
       parameters: constructRelayToParaParameters(options, Version.V3, true)
+    }
+  }
+
+  createCurrencySpec(
+    amount: string,
+    scenario: TScenario,
+    version: Version,
+    currencyId?: string
+  ): any {
+    if (scenario === 'ParaToPara') {
+      const interior = {
+        X2: [
+          {
+            PalletInstance: 50
+          },
+          {
+            GeneralIndex: currencyId
+          }
+        ]
+      }
+      return createCurrencySpec(amount, version, Parents.ZERO, interior)
+    } else {
+      return super.createCurrencySpec(amount, scenario, version, currencyId)
     }
   }
 }

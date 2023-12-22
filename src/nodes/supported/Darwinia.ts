@@ -5,11 +5,14 @@ import {
   type Extrinsic,
   type TSerializedApiCall,
   type IXTokensTransfer,
-  type XTokensTransferInput
+  type XTokensTransferInput,
+  type TScenario,
+  Parents
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import { NodeNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../XTokensTransferImpl'
+import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 
 class Darwinia extends ParachainNode implements IXTokensTransfer {
   constructor() {
@@ -25,6 +28,24 @@ class Darwinia extends ParachainNode implements IXTokensTransfer {
 
   transferRelayToPara(): TSerializedApiCall {
     throw new NodeNotSupportedError()
+  }
+
+  createCurrencySpec(
+    amount: string,
+    scenario: TScenario,
+    version: Version,
+    currencyId?: string
+  ): any {
+    if (scenario === 'ParaToPara') {
+      const interior = {
+        X1: {
+          PalletInstance: 5
+        }
+      }
+      return createCurrencySpec(amount, version, Parents.ZERO, interior)
+    } else {
+      return super.createCurrencySpec(amount, scenario, version, currencyId)
+    }
   }
 }
 

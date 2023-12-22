@@ -7,8 +7,10 @@ import {
   Version,
   type Extrinsic,
   type TSerializedApiCall,
-  type TTransferRelayToParaOptions
+  type TTransferRelayToParaOptions,
+  type TScenario
 } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
@@ -29,6 +31,15 @@ class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
       section: 'limitedTeleportAssets',
       parameters: constructRelayToParaParameters(options, Version.V3, true)
     }
+  }
+
+  createCurrencySpec(
+    amount: string,
+    scenario: TScenario,
+    version: Version,
+    currencyId?: string
+  ): any {
+    return getNode('AssetHubPolkadot').createCurrencySpec(amount, scenario, version, currencyId)
   }
 }
 

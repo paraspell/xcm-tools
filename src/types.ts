@@ -87,3 +87,8 @@ export enum Version {
   V1 = 'V1',
   V3 = 'V3'
 }
+
+export enum Parents {
+  ONE = 1,
+  ZERO = 0
+}

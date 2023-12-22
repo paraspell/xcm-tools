@@ -1,9 +1,5 @@
-import { type Version, type TTransferRelayToParaOptions } from '../../types'
-import {
-  createCurrencySpecification,
-  createHeaderPolkadotXCM,
-  generateAddressPayload
-} from '../../utils'
+import { type Version, type TTransferRelayToParaOptions, Parents } from '../../types'
+import { createHeaderPolkadotXCM, generateAddressPayload } from '../../utils'
 import { getParaId } from '../assets'
 
 export const constructRelayToParaParameters = (
@@ -15,7 +11,7 @@ export const constructRelayToParaParameters = (
   const parameters = [
     createHeaderPolkadotXCM('RelayToPara', version, paraId),
     generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),
-    createCurrencySpecification(amount, 'RelayToPara', version, destination),
+    createCurrencySpec(amount, version, Parents.ZERO),
     0
   ]
   if (includeFee) {
@@ -23,3 +19,24 @@ export const constructRelayToParaParameters = (
   }
   return parameters
 }
+
+export const createCurrencySpec = (
+  amount: string,
+  version: Version,
+  parents: Parents,
+  interior: any = 'Here'
+): any => ({
+  [version]: [
+    {
+      id: {
+        Concrete: {
+          parents,
+          interior
+        }
+      },
+      fun: {
+        Fungible: amount
+      }
+    }
+  ]
+})

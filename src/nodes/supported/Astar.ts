@@ -14,12 +14,7 @@ import {
   type IXTokensTransfer,
   type XTokensTransferInput
 } from '../../types'
-import {
-  generateAddressPayload,
-  getFees,
-  createHeaderPolkadotXCM,
-  createCurrencySpecification
-} from '../../utils'
+import { generateAddressPayload, getFees, createHeaderPolkadotXCM } from '../../utils'
 import ParachainNode, { supportsPolkadotXCM, supportsXTokens } from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -82,13 +77,7 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
           this.version,
           paraId
         ),
-        currencySelection: createCurrencySpecification(
-          amount,
-          scenario,
-          this.version,
-          node,
-          currencyId
-        ),
+        currencySelection: this.createCurrencySpec(amount, scenario, this.version, currencyId),
         scenario,
         currencySymbol,
         serializedApiCallEnabled
