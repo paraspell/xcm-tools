@@ -906,23 +906,6 @@
       }
     ]
   },
-  "Kylin": {
-    "paraId": 2052,
-    "relayChainAssetSymbol": "DOT",
-    "nativeAssets": [
-      {
-        "symbol": "KYL",
-        "decimals": 18
-      }
-    ],
-    "otherAssets": [
-      {
-        "assetId": "1",
-        "symbol": "DOT",
-        "decimals": 0
-      }
-    ]
-  },
   "Litentry": {
     "paraId": 2013,
     "relayChainAssetSymbol": "DOT",

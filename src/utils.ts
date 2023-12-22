@@ -278,18 +278,6 @@ export const getNode = (node: TNode): ParachainNode => {
 export const getNodeEndpointOption = (node: TNode): any => {
   const { type, name } = getNode(node)
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
-
-  // TMP Fix because some nodes don't have providers in endpoint options
-  if (node === 'Kylin') {
-    return {
-      info: 'kylin',
-      paraId: 2052,
-      providers: {
-        'Kylin Network': 'wss://polkadot.kylin-node.co.uk'
-      }
-    }
-  }
-
   return linked !== undefined ? linked.find((o: any) => o.info === name) : undefined
 }
 

@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Mangata Parachain
 
-import { type ApiPromise } from '@polkadot/api'
+import { WsProvider, ApiPromise } from '@polkadot/api'
 import {
   type IXTokensTransfer,
   Version,
@@ -10,6 +10,20 @@ import {
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
+import { type ApiOptions } from '@polkadot/api/types'
+import { mTypes, mRpc } from '@mangata-finance/type-definitions'
+
+const options = ({ types = {}, rpc = {}, ...otherOptions }: ApiOptions = {}): ApiOptions => ({
+  types: {
+    ...mTypes,
+    ...types
+  },
+  rpc: {
+    ...mRpc,
+    ...rpc
+  },
+  ...otherOptions
+})
 
 class Mangata extends ParachainNode implements IXTokensTransfer {
   constructor() {
@@ -21,9 +35,15 @@ class Mangata extends ParachainNode implements IXTokensTransfer {
   }
 
   async createApiInstance(): Promise<ApiPromise> {
-    const MangataSDK = await import('@mangata-finance/sdk')
-    const instance = MangataSDK.Mangata.instance([this.getProvider()])
-    return await instance.api()
+    const provider = new WsProvider(this.getProvider())
+    return await ApiPromise.create(
+      options({
+        provider,
+        throwOnConnect: true,
+        throwOnUnknown: true,
+        noInitWarn: true
+      })
+    )
   }
 }
 

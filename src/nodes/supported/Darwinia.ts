@@ -1,28 +1,26 @@
 // Contains detailed structure of XCM call construction for Darwinia Parachain
 
 import {
-  type IPolkadotXCMTransfer,
-  type PolkadotXCMTransferInput,
   Version,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type IXTokensTransfer,
+  type XTokensTransferInput
 } from '../../types'
-import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 import { NodeNotSupportedError } from '../../errors'
+import XTokensTransferImpl from '../XTokensTransferImpl'
 
-class Darwinia extends ParachainNode implements IPolkadotXCMTransfer {
+class Darwinia extends ParachainNode implements IXTokensTransfer {
   constructor() {
     super('Darwinia', 'darwinia', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
-    // TESTED https://polkadot.subscan.io/xcm_message/polkadot-55c5c36c8fe8794c8cfbea725c9f8bc5984c6b05
-    if (input.scenario === 'ParaToPara') {
-      return PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserveTransferAssets')
-    }
-    throw new ScenarioNotSupportedError(this.node, input.scenario)
+  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+    return XTokensTransferImpl.transferXTokens(
+      input,
+      input.currency === 'RING' ? 'SelfReserve' : { ForeignAsset: input.currencyID }
+    )
   }
 
   transferRelayToPara(): TSerializedApiCall {

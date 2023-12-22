@@ -43,10 +43,6 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
-  "Kylin": {
-    "defaultPallet": "OrmlXTokens",
-    "supportedPallets": ["PolkadotXcm", "OrmlXTokens"]
-  },
   "Litentry": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
