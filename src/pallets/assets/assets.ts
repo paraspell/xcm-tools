@@ -50,5 +50,5 @@ export const getParaId = (node: TNode): number => {
   return getAssetsObject(node).paraId
 }
 
-export const getTNode = (nodeID: number): TNode | null =>
-  NODE_NAMES.find(node => getParaId(node) === nodeID) ?? null
+export const getTNode = (paraId: number): TNode | null =>
+  NODE_NAMES.find(node => getParaId(node) === paraId) ?? null

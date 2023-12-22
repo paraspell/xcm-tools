@@ -22,6 +22,7 @@ const CHANNEL_MAX_SIZE = 2
 const CHANNEL_MAX_MSG_SIZE = 6
 const CHANNEL_INBOUND = 9
 const CHANNEL_OUTBOUND = 4
+const PARA_ID_TO = 1999
 
 describe('Builder', () => {
   let api: ApiPromise
@@ -37,7 +38,23 @@ describe('Builder', () => {
 
     Builder(api).from(NODE).to(NODE_2).currency(CURRENCY).amount(AMOUNT).address(ADDRESS).build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, AMOUNT, ADDRESS, NODE_2)
+    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, AMOUNT, ADDRESS, NODE_2, undefined)
+  })
+
+  it('should initiatie a para to para transfer with custom paraId', () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
+      return undefined as any
+    })
+
+    Builder(api)
+      .from(NODE)
+      .to(NODE_2, PARA_ID_TO)
+      .currency(CURRENCY)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, AMOUNT, ADDRESS, NODE_2, PARA_ID_TO)
   })
 
   it('should initiatie a para to para transfer with currency id', () => {
@@ -47,7 +64,7 @@ describe('Builder', () => {
 
     Builder(api).from(NODE).to(NODE_2).currency(CURRENCY_ID).amount(AMOUNT).address(ADDRESS).build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY_ID, AMOUNT, ADDRESS, NODE_2)
+    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY_ID, AMOUNT, ADDRESS, NODE_2, undefined)
   })
 
   it('should initiatie a relay to para transfer', () => {
@@ -57,7 +74,17 @@ describe('Builder', () => {
 
     Builder(api).to(NODE).amount(AMOUNT).address(ADDRESS).build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS)
+    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS, undefined)
+  })
+
+  it('should initiatie a relay to para transfer with custom paraId', () => {
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockImplementation(() => {
+      return undefined as any
+    })
+
+    Builder(api).to(NODE, PARA_ID_TO).amount(AMOUNT).address(ADDRESS).build()
+
+    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS, PARA_ID_TO)
   })
 
   it('should initiatie a para to relay transfer with currency symbol', () => {

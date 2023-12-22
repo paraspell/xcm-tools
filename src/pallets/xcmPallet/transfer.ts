@@ -15,6 +15,7 @@ const sendCommon = (
   amount: string,
   to: string,
   destination?: TNode,
+  paraIdTo?: number,
   serializedApiCallEnabled = false
 ): Extrinsic | TSerializedApiCall => {
   if (typeof currencySymbolOrId === 'number' && currencySymbolOrId > Number.MAX_SAFE_INTEGER) {
@@ -61,6 +62,7 @@ const sendCommon = (
     amount,
     to,
     destination,
+    paraIdTo,
     serializedApiCallEnabled
   )
 }
@@ -71,7 +73,8 @@ export const sendSerializedApiCall = (
   currencySymbolOrId: string | number | bigint,
   amount: string | number | bigint,
   to: string,
-  destination?: TNode
+  destination?: TNode,
+  paraIdTo?: number
 ): TSerializedApiCall => {
   return sendCommon(
     api,
@@ -80,6 +83,7 @@ export const sendSerializedApiCall = (
     amount.toString(),
     to,
     destination,
+    paraIdTo,
     true
   ) as TSerializedApiCall
 }
@@ -90,7 +94,8 @@ export function send(
   currencySymbolOrId: string | number | bigint,
   amount: string | number | bigint,
   to: string,
-  destination?: TNode
+  destination?: TNode,
+  paraIdTo?: number
 ): Extrinsic {
   return sendCommon(
     api,
@@ -98,7 +103,8 @@ export function send(
     currencySymbolOrId,
     amount.toString(),
     to,
-    destination
+    destination,
+    paraIdTo
   ) as Extrinsic
 }
 
@@ -107,13 +113,15 @@ export const transferRelayToParaCommon = (
   destination: TNode,
   amount: string,
   address: string,
+  paraIdTo?: number,
   serializedApiCallEnabled = false
 ): Extrinsic | TSerializedApiCall | never => {
   const serializedApiCall = getNode(destination).transferRelayToPara({
     api,
     destination,
     address,
-    amount
+    amount,
+    paraIdTo
   })
 
   if (serializedApiCallEnabled) {
@@ -127,15 +135,26 @@ export function transferRelayToPara(
   api: ApiPromise,
   destination: TNode,
   amount: string | number | bigint,
-  to: string
+  to: string,
+  paraIdTo?: number
 ): Extrinsic | never {
-  return transferRelayToParaCommon(api, destination, amount.toString(), to) as Extrinsic | never
+  return transferRelayToParaCommon(api, destination, amount.toString(), to, paraIdTo) as
+    | Extrinsic
+    | never
 }
 
 export const transferRelayToParaSerializedApiCall = (
   api: ApiPromise,
   destination: TNode,
   amount: string | number | bigint,
-  to: string
+  to: string,
+  paraIdTo?: number
 ): TSerializedApiCall =>
-  transferRelayToParaCommon(api, destination, amount.toString(), to, true) as TSerializedApiCall
+  transferRelayToParaCommon(
+    api,
+    destination,
+    amount.toString(),
+    to,
+    paraIdTo,
+    true
+  ) as TSerializedApiCall

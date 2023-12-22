@@ -17,15 +17,17 @@ class ToGeneralBuilder {
   private readonly api: ApiPromise
   private readonly from: TNode
   private readonly to: TNode
+  private readonly paraIdTo?: number
 
-  constructor(api: ApiPromise, from: TNode, to: TNode) {
+  constructor(api: ApiPromise, from: TNode, to: TNode, paraIdTo?: number) {
     this.api = api
     this.from = from
     this.to = to
+    this.paraIdTo = paraIdTo
   }
 
   currency(currency: string | number | bigint): AmountBuilder {
-    return ParaToParaBuilder.createParaToPara(this.api, this.from, this.to, currency)
+    return ParaToParaBuilder.createParaToPara(this.api, this.from, this.to, currency, this.paraIdTo)
   }
 
   openChannel(): MaxSizeOpenChannelBuilder {
@@ -42,8 +44,8 @@ class FromGeneralBuilder {
     this.from = from
   }
 
-  to(node: TNode): ToGeneralBuilder {
-    return new ToGeneralBuilder(this.api, this.from, node)
+  to(node: TNode, paraIdTo?: number): ToGeneralBuilder {
+    return new ToGeneralBuilder(this.api, this.from, node, paraIdTo)
   }
 
   amount(amount: string | number | bigint): AddressBuilder {
@@ -66,8 +68,8 @@ class GeneralBuilder {
     return new FromGeneralBuilder(this.api, node)
   }
 
-  to(node: TNode): AmountBuilder {
-    return RelayToParaBuilder.create(this.api, node)
+  to(node: TNode, paraIdTo?: number): AmountBuilder {
+    return RelayToParaBuilder.create(this.api, node, paraIdTo)
   }
 
   addLiquidity(): AssetAAddLiquidityBuilder {

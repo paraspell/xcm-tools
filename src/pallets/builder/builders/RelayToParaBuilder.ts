@@ -8,17 +8,19 @@ import { type AddressBuilder, type AmountBuilder, type FinalBuilder } from './Bu
 class RelayToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
   private readonly api: ApiPromise
   private readonly to: TNode
+  private readonly paraIdTo?: number
 
   private _amount: number
   private _address: string
 
-  private constructor(api: ApiPromise, to: TNode) {
+  private constructor(api: ApiPromise, to: TNode, paraIdTo?: number) {
     this.api = api
     this.to = to
+    this.paraIdTo = paraIdTo
   }
 
-  static create(api: ApiPromise, to: TNode): AmountBuilder {
-    return new RelayToParaBuilder(api, to)
+  static create(api: ApiPromise, to: TNode, paraIdTo?: number): AmountBuilder {
+    return new RelayToParaBuilder(api, to, paraIdTo)
   }
 
   amount(amount: number): this {
@@ -32,11 +34,17 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder 
   }
 
   build(): Extrinsic | never {
-    return transferRelayToPara(this.api, this.to, this._amount, this._address)
+    return transferRelayToPara(this.api, this.to, this._amount, this._address, this.paraIdTo)
   }
 
   buildSerializedApiCall(): TSerializedApiCall {
-    return transferRelayToParaSerializedApiCall(this.api, this.to, this._amount, this._address)
+    return transferRelayToParaSerializedApiCall(
+      this.api,
+      this.to,
+      this._amount,
+      this._address,
+      this.paraIdTo
+    )
   }
 }
 
