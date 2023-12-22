@@ -12,7 +12,6 @@ import Clover from '../nodes/supported/Clover'
 import ComposableFinance from '../nodes/supported/ComposableFinance'
 import HydraDX from '../nodes/supported/HydraDX'
 import Interlay from '../nodes/supported/Interlay'
-import Kylin from '../nodes/supported/Kylin'
 import Litentry from '../nodes/supported/Litentry'
 import Moonbeam from '../nodes/supported/Moonbeam'
 import Parallel from '../nodes/supported/Parallel'
@@ -65,7 +64,6 @@ export const NODE_NAMES = [
   'Darwinia',
   'HydraDX',
   'Interlay',
-  'Kylin',
   'Litentry',
   'Moonbeam',
   'Parallel',
@@ -123,7 +121,6 @@ export const nodes: Record<TNode, ParachainNode> = {
   Darwinia: new Darwinia(),
   HydraDX: new HydraDX(),
   Interlay: new Interlay(),
-  Kylin: new Kylin(),
   Litentry: new Litentry(),
   Moonbeam: new Moonbeam(),
   Parallel: new Parallel(),

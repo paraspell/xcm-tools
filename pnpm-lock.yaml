@@ -1,9 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
-  '@mangata-finance/sdk':
-    specifier: ^2.1.1
-    version: 2.1.1(@polkadot/api@10.9.1)(@polkadot/types@10.9.1)
+  '@mangata-finance/type-definitions':
+    specifier: ^2.1.2
+    version: 2.1.2(@polkadot/types@10.9.1)
   '@polkadot/api':
     specifier: ^10.6.1
     version: 10.9.1
@@ -2031,20 +2031,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@mangata-finance/sdk@2.1.1(@polkadot/api@10.9.1)(@polkadot/types@10.9.1):
-    resolution: {integrity: sha512-Sbge0swlR2oFTi4QR6my2RjZ0T01SbKICYO2NOgT2ipUcva3gbpt0B+O/FJ7WfckrAYVsiTUmBmQc76euAgxxA==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      '@polkadot/api': 10.9.1
-    dependencies:
-      '@mangata-finance/type-definitions': 2.0.0(@polkadot/types@10.9.1)
-      '@polkadot/api': 10.9.1
-      big.js: 6.2.1
-      tslog: 4.8.2
-    transitivePeerDependencies:
-      - '@polkadot/types'
-    dev: false
-
   /@mangata-finance/type-definitions@2.0.0(@polkadot/types@10.11.1):
     resolution: {integrity: sha512-N8o0PgeSjTsb5MLfdsZD/DsD1BldBqrvRZ/KaanPY1ESFAAEu+B9BebSUZm/XFDm9GzQpOZqNg9KaZsghx4E5A==}
     engines: {node: '>=18.0.0'}
@@ -2054,11 +2040,11 @@ packages:
       '@polkadot/types': 10.11.1
     dev: false
 
-  /@mangata-finance/type-definitions@2.0.0(@polkadot/types@10.9.1):
-    resolution: {integrity: sha512-N8o0PgeSjTsb5MLfdsZD/DsD1BldBqrvRZ/KaanPY1ESFAAEu+B9BebSUZm/XFDm9GzQpOZqNg9KaZsghx4E5A==}
+  /@mangata-finance/type-definitions@2.1.2(@polkadot/types@10.9.1):
+    resolution: {integrity: sha512-kr4mVMuQ6DqZ0H72z0YI8tcdlk4XD4vUgRVYYfTJdXFJhRsfS4YRxfs/iiQPNzWKgoQZKcDqsbQD3xz9T1gELw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      '@polkadot/types': 10.9.1
+      '@polkadot/types': ^10.9.1
     dependencies:
       '@polkadot/types': 10.9.1
     dev: false
@@ -5042,10 +5028,6 @@ packages:
 
   /bech32@1.1.4:
     resolution: {integrity: sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==}
-    dev: false
-
-  /big.js@6.2.1:
-    resolution: {integrity: sha512-bCtHMwL9LeDIozFn+oNhhFoq+yQ3BNdnsLSASUxLciOb1vgvpHsIO1dsENiGMgbb4SkP5TrzWzRiLddn8ahVOQ==}
     dev: false
 
   /blakejs@1.2.1:
@@ -8362,11 +8344,6 @@ packages:
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
-
-  /tslog@4.8.2:
-    resolution: {integrity: sha512-eAKIRjxfSKYLs06r1wT7oou6Uv9VN6NW9g0JPidBlqQwPBBl5+84dm7r8zSOPVq1kyfEw1P6B3/FLSpZCorAgA==}
-    engines: {node: '>=16'}
-    dev: false
 
   /tweetnacl@1.0.3:
     resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}

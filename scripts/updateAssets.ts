@@ -25,7 +25,6 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Darwinia: null, // No assets metadata query
   HydraDX: 'assetRegistry.assetMetadataMap',
   Interlay: 'assetRegistry.metadata',
-  Kylin: 'assets.metadata',
   Litentry: null, // Assets query returns empty array
   Moonbeam: 'assets.metadata',
   Parallel: 'assets.metadata',

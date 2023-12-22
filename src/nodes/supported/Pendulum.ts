@@ -17,7 +17,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Pendulum extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Pendulum', 'pendulum', 'polkadot', Version.V1)
+    super('Pendulum', 'pendulum', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {

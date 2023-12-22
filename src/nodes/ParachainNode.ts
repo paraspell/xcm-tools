@@ -24,11 +24,11 @@ import {
 } from '../utils'
 import { constructRelayToParaParameters } from '../pallets/xcmPallet/utils'
 
-const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
+export const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
   return 'transferXTokens' in obj
 }
 
-const supportsPolkadotXCM = (obj: any): obj is IPolkadotXCMTransfer => {
+export const supportsPolkadotXCM = (obj: any): obj is IPolkadotXCMTransfer => {
   return 'transferPolkadotXCM' in obj
 }
 
