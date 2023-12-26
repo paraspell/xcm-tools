@@ -11,19 +11,6 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 import { type ApiOptions } from '@polkadot/api/types'
-import { mTypes, mRpc } from '@mangata-finance/type-definitions'
-
-const options = ({ types = {}, rpc = {}, ...otherOptions }: ApiOptions = {}): ApiOptions => ({
-  types: {
-    ...mTypes,
-    ...types
-  },
-  rpc: {
-    ...mRpc,
-    ...rpc
-  },
-  ...otherOptions
-})
 
 class Mangata extends ParachainNode implements IXTokensTransfer {
   constructor() {
@@ -35,6 +22,18 @@ class Mangata extends ParachainNode implements IXTokensTransfer {
   }
 
   async createApiInstance(): Promise<ApiPromise> {
+    const { mTypes, mRpc } = await import('@mangata-finance/type-definitions')
+    const options = ({ types = {}, rpc = {}, ...otherOptions }: ApiOptions = {}): ApiOptions => ({
+      types: {
+        ...mTypes,
+        ...types
+      },
+      rpc: {
+        ...mRpc,
+        ...rpc
+      },
+      ...otherOptions
+    })
     const provider = new WsProvider(this.getProvider())
     return await ApiPromise.create(
       options({
