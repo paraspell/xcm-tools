@@ -93,3 +93,10 @@ export enum Parents {
   ONE = 1,
   ZERO = 0
 }
+
+export type PolkadotXCMHeader = {
+  [K in Version]?: {
+    parents: Parents
+    interior: any
+  }
+}

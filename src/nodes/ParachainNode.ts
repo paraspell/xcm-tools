@@ -15,14 +15,12 @@ import {
   type TTransferRelayToParaOptions,
   Parents
 } from '../types'
+import { generateAddressPayload, getFees, getAllNodeProviders, createApiInstance } from '../utils'
 import {
-  generateAddressPayload,
-  getFees,
-  createHeaderPolkadotXCM,
-  getAllNodeProviders,
-  createApiInstance
-} from '../utils'
-import { constructRelayToParaParameters, createCurrencySpec } from '../pallets/xcmPallet/utils'
+  constructRelayToParaParameters,
+  createCurrencySpec,
+  createPolkadotXcmHeader
+} from '../pallets/xcmPallet/utils'
 
 export const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
   return 'transferXTokens' in obj
@@ -108,7 +106,7 @@ abstract class ParachainNode {
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
         api,
-        header: createHeaderPolkadotXCM(scenario, this.version, paraId),
+        header: this.createPolkadotXcmHeader(scenario, paraId),
         addressSelection: generateAddressPayload(
           api,
           scenario,
@@ -154,6 +152,10 @@ abstract class ParachainNode {
       version,
       scenario === 'ParaToRelay' ? Parents.ONE : Parents.ZERO
     )
+  }
+
+  createPolkadotXcmHeader(scenario: TScenario, paraId?: number): any {
+    return createPolkadotXcmHeader(scenario, this.version, paraId)
   }
 }
 

@@ -1,5 +1,11 @@
-import { type Version, type TTransferRelayToParaOptions, Parents } from '../../types'
-import { createHeaderPolkadotXCM, generateAddressPayload } from '../../utils'
+import {
+  Version,
+  type TTransferRelayToParaOptions,
+  Parents,
+  type PolkadotXCMHeader,
+  type TScenario
+} from '../../types'
+import { generateAddressPayload } from '../../utils'
 import { getParaId } from '../assets'
 
 export const constructRelayToParaParameters = (
@@ -9,7 +15,7 @@ export const constructRelayToParaParameters = (
 ): any[] => {
   const paraId = paraIdTo ?? getParaId(destination)
   const parameters = [
-    createHeaderPolkadotXCM('RelayToPara', version, paraId),
+    createPolkadotXcmHeader('RelayToPara', version, paraId),
     generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),
     createCurrencySpec(amount, version, Parents.ZERO),
     0
@@ -40,3 +46,25 @@ export const createCurrencySpec = (
     }
   ]
 })
+
+export const createPolkadotXcmHeader = (
+  scenario: TScenario,
+  version: Version,
+  nodeId?: number
+): PolkadotXCMHeader => {
+  const parents = scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE
+  const interior =
+    scenario === 'ParaToRelay'
+      ? 'Here'
+      : {
+          X1: {
+            Parachain: nodeId
+          }
+        }
+  return {
+    [scenario === 'RelayToPara' ? Version.V3 : version]: {
+      parents,
+      interior
+    }
+  }
+}

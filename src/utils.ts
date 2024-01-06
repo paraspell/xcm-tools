@@ -115,45 +115,6 @@ export const generateAddressPayload = (
   }
 }
 
-export const createHeaderPolkadotXCM = (
-  scenario: TScenario,
-  version: Version,
-  nodeId?: number
-): any => {
-  if (scenario === 'ParaToRelay') {
-    return {
-      [version]: {
-        parents: 1,
-        interior: 'Here'
-      }
-    }
-  }
-
-  if (scenario === 'ParaToPara') {
-    return {
-      [version]: {
-        parents: 1,
-        interior: {
-          X1: {
-            Parachain: nodeId
-          }
-        }
-      }
-    }
-  }
-
-  return {
-    V3: {
-      parents: 0,
-      interior: {
-        X1: {
-          Parachain: nodeId
-        }
-      }
-    }
-  }
-}
-
 export const getNode = (node: TNode): ParachainNode => {
   return nodes[node]
 }
