@@ -14,7 +14,7 @@ import {
   type IXTokensTransfer,
   type XTokensTransferInput
 } from '../../types'
-import { generateAddressPayload, getFees, createHeaderPolkadotXCM } from '../../utils'
+import { generateAddressPayload, getFees } from '../../utils'
 import ParachainNode, { supportsPolkadotXCM, supportsXTokens } from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -69,7 +69,7 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
         api,
-        header: createHeaderPolkadotXCM(scenario, this.version, paraId),
+        header: this.createPolkadotXcmHeader(scenario, paraId),
         addressSelection: generateAddressPayload(
           api,
           scenario,

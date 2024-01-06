@@ -19,7 +19,7 @@ class Moonriver extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     const { currency, currencyID } = input
-    const currencySelection = currency === 'MOVR' ? 'SelfReserve ' : { ForeignAsset: currencyID }
+    const currencySelection = currency === 'MOVR' ? 'SelfReserve' : { ForeignAsset: currencyID }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
