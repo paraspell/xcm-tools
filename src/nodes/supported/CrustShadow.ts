@@ -29,7 +29,7 @@ class CrustShadow extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    return XTokensTransferImpl.transferXTokens(input, this.getCurrencySelection(input))
+    return XTokensTransferImpl.transferXTokens(input, this.getCurrencySelection(input), input.fees)
   }
 }
 
