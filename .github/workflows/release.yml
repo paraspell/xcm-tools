@@ -21,6 +21,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
         if: ${{ steps.release.outputs.release_created }}
+      - uses: pnpm/action-setup@v2
+        if: ${{ steps.release.outputs.release_created }}
       - run: pnpm install
         if: ${{ steps.release.outputs.release_created }}
       - run: pnpm compile
