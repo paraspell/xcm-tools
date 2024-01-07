@@ -12,7 +12,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Parallel extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Parallel', 'parallel', 'polkadot', Version.V1)
+    super('Parallel', 'parallel', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {

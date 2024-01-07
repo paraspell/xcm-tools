@@ -26,7 +26,7 @@ const getAssetsForNode = (node: TNode): string[] => {
   return getAllAssetsSymbols(node)
 }
 
-const filteredNodes = NODE_NAMES.filter(node => node !== 'Quartz')
+const filteredNodes = NODE_NAMES.filter(node => node !== 'Quartz' && node !== 'Clover')
 
 const findTransferableNodeAndAsset = (
   from: TNode
