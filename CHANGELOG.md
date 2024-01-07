@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.1](https://github.com/paraspell/xcm-sdk/compare/v3.1.0...v3.1.1) (2024-01-07)
+
+
+### Bug Fixes
+
+* Update Parallel node to use XTokens V3 & Update Calamari node to use unlimited fees 🔧 ([38b8bef](https://github.com/paraspell/xcm-sdk/commit/38b8bef8898bcb345bfaba01c9912b2925d5a612))
+
 ## [3.1.0](https://github.com/paraspell/xcm-sdk/compare/v3.0.11...v3.1.0) (2024-01-07)
 
 
