@@ -28,6 +28,7 @@ export interface TNativeAssetDetails {
 export interface TNodeAssets {
   paraId: number
   relayChainAssetSymbol: TRelayChainSymbol
+  nativeAssetSymbol: string
   nativeAssets: TNativeAssetDetails[]
   otherAssets: TAssetDetails[]
 }
@@ -40,6 +41,7 @@ export interface TPalletMap {
   supportedPallets: TPallet[]
 }
 export type TPalletJsonMap = Record<TNode, TPalletMap>
+export type TEdJsonMap = Record<TNodeWithRelayChains, string | null>
 
 export interface TSerializedApiCall {
   module: string
@@ -78,6 +80,7 @@ export interface TTransferRelayToParaOptions {
   address: string
   amount: string
   paraIdTo?: number
+  destApiForKeepAlive?: ApiPromise
 }
 
 export interface IPolkadotXCMTransfer {
@@ -99,4 +102,13 @@ export type PolkadotXCMHeader = {
     parents: Parents
     interior: any
   }
+}
+
+export interface CheckKeepAliveOptions {
+  address: string
+  amount: string
+  originNode?: TNode
+  destApi?: ApiPromise
+  currencySymbol?: string
+  destNode?: TNode
 }

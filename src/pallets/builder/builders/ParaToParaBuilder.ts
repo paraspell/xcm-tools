@@ -3,9 +3,9 @@
 import { type ApiPromise } from '@polkadot/api'
 import { send, sendSerializedApiCall } from '../../xcmPallet'
 import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../../types'
-import { type AddressBuilder, type AmountBuilder, type FinalBuilder } from './Builder'
+import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
 
-class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
+class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
   private readonly api: ApiPromise
   private readonly from: TNode
   private readonly to: TNode
@@ -14,6 +14,7 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
 
   private _amount: string | number | bigint
   private _address: string
+  private _destApi?: ApiPromise
 
   private constructor(
     api: ApiPromise,
@@ -49,27 +50,34 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, FinalBuilder {
     return this
   }
 
-  build(): Extrinsic {
-    return send(
+  useKeepAlive(destApi: ApiPromise): this {
+    this._destApi = destApi
+    return this
+  }
+
+  async build(): Promise<Extrinsic> {
+    return await send(
       this.api,
       this.from,
       this.currency,
       this._amount,
       this._address,
       this.to,
-      this.paraIdTo
+      this.paraIdTo,
+      this._destApi
     )
   }
 
-  buildSerializedApiCall(): TSerializedApiCall {
-    return sendSerializedApiCall(
+  async buildSerializedApiCall(): Promise<TSerializedApiCall> {
+    return await sendSerializedApiCall(
       this.api,
       this.from,
       this.currency,
       this._amount,
       this._address,
       this.to,
-      this.paraIdTo
+      this.paraIdTo,
+      this._destApi
     )
   }
 }

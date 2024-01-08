@@ -1,9 +1,11 @@
+import { type BN } from '@polkadot/util'
 import {
   Version,
   type TTransferRelayToParaOptions,
   Parents,
   type PolkadotXCMHeader,
-  type TScenario
+  type TScenario,
+  type Extrinsic
 } from '../../types'
 import { generateAddressPayload } from '../../utils'
 import { getParaId } from '../assets'
@@ -67,4 +69,9 @@ export const createPolkadotXcmHeader = (
       interior
     }
   }
+}
+
+export const calculateTransactionFee = async (tx: Extrinsic, address: string): Promise<BN> => {
+  const { partialFee } = await tx.paymentInfo(address)
+  return partialFee.toBn()
 }

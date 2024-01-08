@@ -260,16 +260,25 @@ const transformOtherAssets = (otherAssets: any, node: TNode) => {
     : otherAssets
 }
 
+const fetchNativeAsset = async (api: ApiPromise): Promise<string> => {
+  const propertiesRes = await api.rpc.system.properties()
+  const json = propertiesRes.toHuman()
+  const symbols = json.tokenSymbol as string[]
+  return symbols[0]
+}
+
 const fetchNodeAssets = async (
   node: TNode,
   api: ApiPromise,
   query: string | null
 ): Promise<Partial<TNodeAssets>> => {
+  const nativeAssetSymbol = await fetchNativeAsset(api)
+
   // Different format of data
   if (node === 'Acala' || node === 'Karura') {
     const assets = await fetchAssetsType2(api, query!)
     await api.disconnect()
-    return assets
+    return { ...assets, nativeAssetSymbol }
   }
 
   if (node === 'Polkadex') {
@@ -278,7 +287,8 @@ const fetchNodeAssets = async (
     await api.disconnect()
     return {
       nativeAssets,
-      otherAssets
+      otherAssets,
+      nativeAssetSymbol
     }
   }
 
@@ -288,7 +298,8 @@ const fetchNodeAssets = async (
     await api.disconnect()
     return {
       nativeAssets,
-      otherAssets
+      otherAssets,
+      nativeAssetSymbol
     }
   }
 
@@ -298,7 +309,8 @@ const fetchNodeAssets = async (
     await api.disconnect()
     return {
       nativeAssets,
-      otherAssets
+      otherAssets,
+      nativeAssetSymbol
     }
   }
 
@@ -309,7 +321,8 @@ const fetchNodeAssets = async (
     await api.disconnect()
     return {
       nativeAssets,
-      otherAssets
+      otherAssets,
+      nativeAssetSymbol
     }
   }
 
@@ -319,7 +332,8 @@ const fetchNodeAssets = async (
     await api.disconnect()
     return {
       nativeAssets,
-      otherAssets
+      otherAssets,
+      nativeAssetSymbol
     }
   }
 
@@ -328,7 +342,8 @@ const fetchNodeAssets = async (
     await api.disconnect()
     return {
       nativeAssets,
-      otherAssets: []
+      otherAssets: [],
+      nativeAssetSymbol
     }
   }
 
@@ -340,7 +355,8 @@ const fetchNodeAssets = async (
 
   return {
     nativeAssets,
-    otherAssets: transformOtherAssets(otherAssets, node)
+    otherAssets: transformOtherAssets(otherAssets, node),
+    nativeAssetSymbol
   }
 }
 
@@ -348,6 +364,7 @@ const fetchAllNodesAssets = async (assetMap: NodeToAssetModuleMap, assetsMapJson
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const [node, query] of Object.entries(assetMap)) {
     const nodeName = node as TNode
+    if (nodeName === 'Clover') continue
     console.log(`Fetching assets for ${nodeName}...`)
 
     const newData = await fetchTryMultipleProvidersWithTimeout(nodeName, api =>
@@ -366,6 +383,8 @@ const fetchAllNodesAssets = async (assetMap: NodeToAssetModuleMap, assetsMapJson
     output[nodeName] = {
       paraId,
       relayChainAssetSymbol: getNode(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
+      nativeAssetSymbol:
+        isError && oldData ? oldData.nativeAssetSymbol : newData?.nativeAssetSymbol ?? '',
       nativeAssets: isError && oldData ? oldData.nativeAssets : newData?.nativeAssets ?? [],
       otherAssets: isError && oldData ? oldData.otherAssets : newData?.otherAssets ?? []
     }

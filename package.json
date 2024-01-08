@@ -29,6 +29,7 @@
     "test": "vitest",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updateAssets.ts",
     "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updatePallets.ts",
+    "updateEds": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updateExistentialDeposits.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
