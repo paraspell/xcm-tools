@@ -7,8 +7,9 @@ import { getRelayChainSymbol, hasSupportForAsset } from '../assets'
 import { getAssetBySymbolOrId } from '../assets/assetsUtils'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
+import { checkKeepAlive } from './keepAlive'
 
-const sendCommon = (
+const sendCommon = async (
   api: ApiPromise,
   origin: TNode,
   currencySymbolOrId: string | number | bigint,
@@ -16,8 +17,9 @@ const sendCommon = (
   to: string,
   destination?: TNode,
   paraIdTo?: number,
+  destApiForKeepAlive?: ApiPromise,
   serializedApiCallEnabled = false
-): Extrinsic | TSerializedApiCall => {
+): Promise<Extrinsic | TSerializedApiCall> => {
   if (typeof currencySymbolOrId === 'number' && currencySymbolOrId > Number.MAX_SAFE_INTEGER) {
     throw new InvalidCurrencyError(
       'The provided asset ID is larger than the maximum safe integer value. Please provide it as a string.'
@@ -53,6 +55,15 @@ const sendCommon = (
     )
   }
 
+  await checkKeepAlive({
+    address: to,
+    amount,
+    originNode: origin,
+    destApi: destApiForKeepAlive,
+    currencySymbol: asset?.symbol,
+    destNode: destination
+  })
+
   const currencyId = originNode.assetCheckEnabled ? asset?.assetId : currencySymbolOrId.toString()
 
   return originNode.transfer(
@@ -67,16 +78,17 @@ const sendCommon = (
   )
 }
 
-export const sendSerializedApiCall = (
+export const sendSerializedApiCall = async (
   api: ApiPromise,
   origin: TNode,
   currencySymbolOrId: string | number | bigint,
   amount: string | number | bigint,
   to: string,
   destination?: TNode,
-  paraIdTo?: number
-): TSerializedApiCall => {
-  return sendCommon(
+  paraIdTo?: number,
+  destApiForKeepAlive?: ApiPromise
+): Promise<TSerializedApiCall> => {
+  return (await sendCommon(
     api,
     origin,
     currencySymbolOrId,
@@ -84,44 +96,58 @@ export const sendSerializedApiCall = (
     to,
     destination,
     paraIdTo,
+    destApiForKeepAlive,
     true
-  ) as TSerializedApiCall
+  )) as TSerializedApiCall
 }
 
-export function send(
+export async function send(
   api: ApiPromise,
   origin: TNode,
   currencySymbolOrId: string | number | bigint,
   amount: string | number | bigint,
   to: string,
   destination?: TNode,
-  paraIdTo?: number
-): Extrinsic {
-  return sendCommon(
+  paraIdTo?: number,
+  destApiForKeepAlive?: ApiPromise
+): Promise<Extrinsic> {
+  return (await sendCommon(
     api,
     origin,
     currencySymbolOrId,
     amount.toString(),
     to,
     destination,
-    paraIdTo
-  ) as Extrinsic
+    paraIdTo,
+    destApiForKeepAlive
+  )) as Extrinsic
 }
 
-export const transferRelayToParaCommon = (
+export const transferRelayToParaCommon = async (
   api: ApiPromise,
   destination: TNode,
   amount: string,
   address: string,
   paraIdTo?: number,
+  destApiForKeepAlive?: ApiPromise,
   serializedApiCallEnabled = false
-): Extrinsic | TSerializedApiCall | never => {
+): Promise<Extrinsic | TSerializedApiCall | never> => {
+  const currencySymbol = getRelayChainSymbol(destination)
+  await checkKeepAlive({
+    address,
+    amount,
+    destApi: destApiForKeepAlive,
+    currencySymbol,
+    destNode: destination
+  })
+
   const serializedApiCall = getNode(destination).transferRelayToPara({
     api,
     destination,
     address,
     amount,
-    paraIdTo
+    paraIdTo,
+    destApiForKeepAlive
   })
 
   if (serializedApiCallEnabled) {
@@ -131,30 +157,38 @@ export const transferRelayToParaCommon = (
   return callPolkadotJsTxFunction(api, serializedApiCall)
 }
 
-export function transferRelayToPara(
+export const transferRelayToPara = async (
   api: ApiPromise,
   destination: TNode,
   amount: string | number | bigint,
   to: string,
-  paraIdTo?: number
-): Extrinsic | never {
-  return transferRelayToParaCommon(api, destination, amount.toString(), to, paraIdTo) as
-    | Extrinsic
-    | never
-}
-
-export const transferRelayToParaSerializedApiCall = (
-  api: ApiPromise,
-  destination: TNode,
-  amount: string | number | bigint,
-  to: string,
-  paraIdTo?: number
-): TSerializedApiCall =>
-  transferRelayToParaCommon(
+  paraIdTo?: number,
+  destApiForKeepAlive?: ApiPromise
+): Promise<Extrinsic | never> => {
+  return (await transferRelayToParaCommon(
     api,
     destination,
     amount.toString(),
     to,
     paraIdTo,
+    destApiForKeepAlive
+  )) as Extrinsic | never
+}
+
+export const transferRelayToParaSerializedApiCall = async (
+  api: ApiPromise,
+  destination: TNode,
+  amount: string | number | bigint,
+  to: string,
+  paraIdTo?: number,
+  destApiForKeepAlive?: ApiPromise
+): Promise<TSerializedApiCall> =>
+  (await transferRelayToParaCommon(
+    api,
+    destination,
+    amount.toString(),
+    to,
+    paraIdTo,
+    destApiForKeepAlive,
     true
-  ) as TSerializedApiCall
+  )) as TSerializedApiCall

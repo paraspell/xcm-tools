@@ -156,3 +156,6 @@ export const callPolkadotJsTxFunction = (
   api: ApiPromise,
   { module, section, parameters }: TSerializedApiCall
 ): Extrinsic => api.tx[module][section](...parameters)
+
+export const determineRelayChain = (currencySymbol: string): TNodeWithRelayChains =>
+  currencySymbol === 'KSM' ? 'Kusama' : 'Polkadot'

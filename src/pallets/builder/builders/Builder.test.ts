@@ -26,27 +26,40 @@ const PARA_ID_TO = 1999
 
 describe('Builder', () => {
   let api: ApiPromise
+  let destApi: ApiPromise
 
   beforeEach(async () => {
     api = await createApiInstance(WS_URL)
+    destApi = await createApiInstance(WS_URL)
   })
 
-  it('should initiatie a para to para transfer with currency symbol', () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
-      return undefined as any
-    })
+  it('should initiatie a para to para transfer with currency symbol', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
 
-    Builder(api).from(NODE).to(NODE_2).currency(CURRENCY).amount(AMOUNT).address(ADDRESS).build()
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2)
+      .currency(CURRENCY)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, AMOUNT, ADDRESS, NODE_2, undefined)
+    expect(spy).toHaveBeenCalledWith(
+      api,
+      NODE,
+      CURRENCY,
+      AMOUNT,
+      ADDRESS,
+      NODE_2,
+      undefined,
+      undefined
+    )
   })
 
-  it('should initiatie a para to para transfer with custom paraId', () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
-      return undefined as any
-    })
+  it('should initiatie a para to para transfer with custom paraId', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
 
-    Builder(api)
+    await Builder(api)
       .from(NODE)
       .to(NODE_2, PARA_ID_TO)
       .currency(CURRENCY)
@@ -54,49 +67,130 @@ describe('Builder', () => {
       .address(ADDRESS)
       .build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY, AMOUNT, ADDRESS, NODE_2, PARA_ID_TO)
+    expect(spy).toHaveBeenCalledWith(
+      api,
+      NODE,
+      CURRENCY,
+      AMOUNT,
+      ADDRESS,
+      NODE_2,
+      PARA_ID_TO,
+      undefined
+    )
   })
 
-  it('should initiatie a para to para transfer with currency id', () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
-      return undefined as any
-    })
+  it('should initiatie a para to para transfer with custom useKeepAlive', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
 
-    Builder(api).from(NODE).to(NODE_2).currency(CURRENCY_ID).amount(AMOUNT).address(ADDRESS).build()
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2, PARA_ID_TO)
+      .currency(CURRENCY)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .useKeepAlive(destApi)
+      .build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, CURRENCY_ID, AMOUNT, ADDRESS, NODE_2, undefined)
+    expect(spy).toHaveBeenCalledWith(
+      api,
+      NODE,
+      CURRENCY,
+      AMOUNT,
+      ADDRESS,
+      NODE_2,
+      PARA_ID_TO,
+      destApi
+    )
   })
 
-  it('should initiatie a relay to para transfer', () => {
-    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockImplementation(() => {
-      return undefined as any
-    })
+  it('should initiatie a para to para transfer with currency id', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
 
-    Builder(api).to(NODE).amount(AMOUNT).address(ADDRESS).build()
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2)
+      .currency(CURRENCY_ID)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS, undefined)
+    expect(spy).toHaveBeenCalledWith(
+      api,
+      NODE,
+      CURRENCY_ID,
+      AMOUNT,
+      ADDRESS,
+      NODE_2,
+      undefined,
+      undefined
+    )
   })
 
-  it('should initiatie a relay to para transfer with custom paraId', () => {
-    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockImplementation(() => {
-      return undefined as any
-    })
+  it('should initiatie a relay to para transfer', async () => {
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue(undefined as any)
 
-    Builder(api).to(NODE, PARA_ID_TO).amount(AMOUNT).address(ADDRESS).build()
+    await Builder(api).to(NODE).amount(AMOUNT).address(ADDRESS).build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS, PARA_ID_TO)
+    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS, undefined, undefined)
   })
 
-  it('should initiatie a para to relay transfer with currency symbol', () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockImplementation(() => {
-      return undefined as any
-    })
+  it('should initiatie a relay to para transfer with custom paraId', async () => {
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue(undefined as any)
+
+    await Builder(api).to(NODE, PARA_ID_TO).amount(AMOUNT).address(ADDRESS).build()
+
+    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS, PARA_ID_TO, undefined)
+  })
+
+  it('should initiatie a relay to para transfer with useKeepAlive', async () => {
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue(undefined as any)
+
+    await Builder(api)
+      .to(NODE, PARA_ID_TO)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .useKeepAlive(destApi)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS, PARA_ID_TO, destApi)
+  })
+
+  it('should initiatie a para to relay transfer with currency symbol', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
 
     const currency = getRelayChainSymbol(NODE)
 
-    Builder(api).from(NODE).amount(AMOUNT).address(ADDRESS).build()
+    await Builder(api).from(NODE).amount(AMOUNT).address(ADDRESS).build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, currency, AMOUNT, ADDRESS)
+    expect(spy).toHaveBeenCalledWith(
+      api,
+      NODE,
+      currency,
+      AMOUNT,
+      ADDRESS,
+      undefined,
+      undefined,
+      undefined
+    )
+  })
+
+  it('should initiatie a para to relay transfer with currency symbol', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+
+    const currency = getRelayChainSymbol(NODE)
+
+    await Builder(api).from(NODE).amount(AMOUNT).address(ADDRESS).useKeepAlive(destApi).build()
+
+    expect(spy).toHaveBeenCalledWith(
+      api,
+      NODE,
+      currency,
+      AMOUNT,
+      ADDRESS,
+      undefined,
+      undefined,
+      destApi
+    )
   })
 
   it('should open a channel', () => {
@@ -270,8 +364,8 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith(api, ASSET_A, AMOUNT_A, ASSET_B, AMOUNT_B)
   })
 
-  it('should request a para to para transfer serialized api call with currency id', () => {
-    const serializedApiCall = Builder(api)
+  it('should request a para to para transfer serialized api call with currency id', async () => {
+    const serializedApiCall = await Builder(api)
       .from(NODE)
       .to(NODE_2)
       .currency('DOT')
@@ -287,8 +381,8 @@ describe('Builder', () => {
     expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
   })
 
-  it('should request a relay to para transfer serialized api call', () => {
-    const serializedApiCall = Builder(api)
+  it('should request a relay to para transfer serialized api call', async () => {
+    const serializedApiCall = await Builder(api)
       .to(NODE_2)
       .amount(AMOUNT)
       .address(ADDRESS)

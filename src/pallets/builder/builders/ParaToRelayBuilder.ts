@@ -4,14 +4,15 @@ import { type ApiPromise } from '@polkadot/api'
 import { send, sendSerializedApiCall } from '../../xcmPallet'
 import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../../types'
 import { getRelayChainSymbol } from '../../assets'
-import { type AddressBuilder, type FinalBuilder } from './Builder'
+import { type UseKeepAliveFinalBuilder, type AddressBuilder } from './Builder'
 
-class ParaToRelayBuilder implements AddressBuilder, FinalBuilder {
+class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
   private readonly api: ApiPromise
   private readonly from: TNode
   private readonly amount: string | number | bigint
 
   private _address: string
+  private _destApi?: ApiPromise
 
   private constructor(api: ApiPromise, from: TNode, amount: string | number | bigint) {
     this.api = api
@@ -28,14 +29,37 @@ class ParaToRelayBuilder implements AddressBuilder, FinalBuilder {
     return this
   }
 
-  build(): Extrinsic {
-    const currency = getRelayChainSymbol(this.from)
-    return send(this.api, this.from, currency, this.amount, this._address)
+  useKeepAlive(destApi: ApiPromise): this {
+    this._destApi = destApi
+    return this
   }
 
-  buildSerializedApiCall(): TSerializedApiCall {
+  async build(): Promise<Extrinsic> {
     const currency = getRelayChainSymbol(this.from)
-    return sendSerializedApiCall(this.api, this.from, currency, this.amount, this._address)
+    return await send(
+      this.api,
+      this.from,
+      currency,
+      this.amount,
+      this._address,
+      undefined,
+      undefined,
+      this._destApi
+    )
+  }
+
+  async buildSerializedApiCall(): Promise<TSerializedApiCall> {
+    const currency = getRelayChainSymbol(this.from)
+    return await sendSerializedApiCall(
+      this.api,
+      this.from,
+      currency,
+      this.amount,
+      this._address,
+      undefined,
+      undefined,
+      this._destApi
+    )
   }
 }
 

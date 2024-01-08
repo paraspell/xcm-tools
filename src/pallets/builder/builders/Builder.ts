@@ -102,8 +102,14 @@ export interface FinalBuilder {
   buildSerializedApiCall: () => TSerializedApiCall
 }
 
+export interface UseKeepAliveFinalBuilder {
+  useKeepAlive: (destApi: ApiPromise) => UseKeepAliveFinalBuilder
+  build: () => Promise<Extrinsic | never>
+  buildSerializedApiCall: () => Promise<TSerializedApiCall>
+}
+
 export interface AddressBuilder {
-  address: (address: string) => FinalBuilder
+  address: (address: string) => UseKeepAliveFinalBuilder
 }
 
 export interface AmountBuilder {
