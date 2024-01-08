@@ -69,17 +69,22 @@ XCM pallet (Combined xTokens, polkadotXCM, ormlXTokens, XcmPallet & relayerXCM):
 Builder pattern XCM & HRMP construction
 
 ```ts
-//Transfer tokens from Parachain to Parachain
-//**NOTE** If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' the end of currencyID. Eg: .currency(42259045809535163221576417993425387648n) will mean you transfer xcDOT.
-//**NOTE2** You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948)
+//NOTE If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' the end of currencyID. Eg: .currency(42259045809535163221576417993425387648n) will mean you transfer xcDOT.
+//NOTE2 You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948)
+//NOTE3 XCM Transfer Builders now require await
+//NOTE4 You can now add optional parameter useKeepAlive which will ensure, that you send more than existential deposit.
 
-Builder(api).from(NODE).to(NODE).currency(CurrencyString||CurrencyID).amount(amount).address(address).build()
+//Transfer tokens from Parachain to Parachain
+await Builder(api).from(NODE).to(NODE/*,customParaId - optional*/).currency(CurrencyString||CurrencyID).amount(amount).address(address).build()
 
 //Transfer tokens from the Relay chain to Parachain
-Builder(api).to(NODE).amount(amount).address(address).build()
+await Builder(api).to(NODE/*,customParaId - optional*/).amount(amount).address(address).build()
 
 //Transfer tokens from Parachain to Relay chain
-Builder(api).from(NODE).amount(amount).address(address).build()
+await Builder(api).from(NODE).amount(amount).address(address).build()
+
+//Use keepAlive example
+await Builder(api).from(NODE).amount(amount).address(address).useKeepAlive(destinationParaAPI).build()
 
 //Close HRMP channels
 Builder(api).from(NODE).closeChannel().inbound(inbound).outbound(outbound).build()
@@ -91,15 +96,22 @@ Builder(api).from(NODE).to(NODE).openChannel().maxSize(maxSize).maxMessageSize(m
 Function pattern XCM & HRMP construction
 
 ```ts
+//NOTE If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add character 'n' the end of currencyID. Eg: currency = 42259045809535163221576417993425387648n will mean you transfer xcDOT.
+//NOTE2 You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948)
+//NOTE3 XCM Transfer Builders now require await
+//NOTE4 You can now add optional parameter useKeepAlive which will ensure, that you send more than existential deposit.
+
 //Transfer tokens from Parachain to Parachain
-//**NOTE** If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add character 'n' the end of currencyID. Eg: currency = 42259045809535163221576417993425387648n will mean you transfer xcDOT.
-paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string, destination: destination  Parachain  ID)
+await paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string, destination: destination  Parachain  ID, paraIdTo?: number,)
 
 //Transfer tokens from Parachain to Relay chain
-paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, amount: any, to: destination  address  string)
+await paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, amount: any, to: destination  address  string, paraIdTo?: number,)
 
 //Transfer tokens from Relay chain to Parachain
-paraspell.xcmPallet.transferRelayToPara(api: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string)
+await paraspell.xcmPallet.transferRelayToPara(api: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string,paraIdTo?: number,)
+
+//Use keepAlive example
+await paraspell.xcmPallet.send(api: ApiPromise, destination: TNode, amount: string | number | bigint, to: string, paraIdTo?: number, destApiForKeepAlive?: ApiPromise)
 
 //hrmp pallet:
 //Close HRMP channels
@@ -147,46 +159,6 @@ paraspell.assets.getTNode(nodeID: number)
 paraspell.NODE_NAMES
 ```
 
-Basilisk XYK pallet construction
-
-Builder pattern XYK construction
-
-```ts
-//Add liquidity to a specific pool
-Builder(api).addLiquidity().assetA(assetA).assetB(assetB).amountA(amountA).amountBMaxLimit(maxLimit).build()
-
-//Remove liquidity from a specific pool
-Builder(api).removeLiquidity().assetA(assetA).assetB(assetB).liquidityAmount(liquidity).build()
-
-//Create pool
-Builder(api).createPool().assetA(assetA).amountA(amountA).assetB(assetB).amountB(amountB).build()
-
-//Buy specific asset from the pool
-Builder(api).buy().assetOut(out).assetIn(in).amount(amount).maxLimit(maxLimit).discount(discount).build()
-
-//Sell specific asset from the pool
-Builder(api).sell().assetIn(in).assetOut(out).amount(amount).maxLimit(maxLimit).discount(discount).build()
-```
-
-Function pattern XYK construction
-
-```ts
-//Add liquidity to specific pool
-paraspell.xyk.addLiquidity(api: ApiPromise, assetA: number, assetB: number, amountA: any, amountBMaxLimit: any)
-
-//Remove liquidity from specific pool
-paraspell.xyk.removeLiquidity(api: ApiPromise, assetA: number, assetB: number, liquidityAmount: any)
-
-//Create pool
-paraspell.xyk.createPool(api: ApiPromise, assetA: number, amountA: any, assetB: number, amountB: any)
-
-//Buy specific asset from pool
-paraspell.xyk.buy(api: ApiPromise, assetOut: number, assetIn: number, amount: any, maxLimit: any, discount: Bool)
-
-//Sell specific asset from pool
-paraspell.xyk.sell(api: ApiPromise, assetIn: number, assetOut: number, amount: any, maxLimit: any, discount: Bool)
-```
-
 Node pallet operations
 
 ```js
@@ -202,6 +174,13 @@ getSupportedPallets(node: TNode)
 console.log(SUPPORTED_PALLETS)
 ```
 
+Existential deposit query
+```ts
+import { getExistentialDeposit } from "@paraspell/sdk";
+
+const ed = getExistentialDeposit('Acala')
+```
+
 ##### Example of usage can be found in the UI repository [here](https://github.com/paraspell/ui) or in the Astarot repository [here](https://github.com/paraspell/astarot)
 
 ##### A list of currently compatible nodes can be found [here](https://github.com/paraspell/sdk/blob/beta-pre-release/docs/supportedNodes.md)
@@ -214,8 +193,6 @@ console.log(SUPPORTED_PALLETS)
 
 - Install dependencies using `pnpm install`
 
-- Run interactive tests using `pnpm dev`
-
 - Run compilation test using `pnpm compile`
 
 - Run linting test using `pnpm lint`
@@ -224,9 +201,9 @@ console.log(SUPPORTED_PALLETS)
 
 - Run updatePallets script using `pnpm updatePallets`
 
-- Run coverage tests using `pnpm test`
+- Run tests using `pnpm test`
 
-- Run all tests using `pnpm runAll`
+- Run all checks using `pnpm runAll`
 
 ## Founded by
 
