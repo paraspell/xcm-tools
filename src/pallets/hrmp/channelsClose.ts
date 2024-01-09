@@ -26,20 +26,17 @@ const closeChannelInternal = (
   return api.tx.sudo.sudo(api.tx[module][section](...parameters))
 }
 
-export function closeChannel(
+export const closeChannel = (
   api: ApiPromise,
   origin: TNode,
   inbound: number,
   outbound: number
-): Extrinsic {
-  return closeChannelInternal(api, origin, inbound, outbound) as Extrinsic
-}
+): Extrinsic => closeChannelInternal(api, origin, inbound, outbound) as Extrinsic
 
-export function closeChannelSerializedApiCall(
+export const closeChannelSerializedApiCall = (
   api: ApiPromise,
   origin: TNode,
   inbound: number,
   outbound: number
-): TSerializedApiCall {
-  return closeChannelInternal(api, origin, inbound, outbound, true) as TSerializedApiCall
-}
+): TSerializedApiCall =>
+  closeChannelInternal(api, origin, inbound, outbound, true) as TSerializedApiCall
