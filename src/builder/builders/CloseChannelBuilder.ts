@@ -1,8 +1,8 @@
 // Implements builder pattern for Close HRMP channel operation
 
 import { type ApiPromise } from '@polkadot/api'
-import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../../types'
-import { closeChannel, closeChannelSerializedApiCall } from '../../hrmp'
+import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../types'
+import { closeChannel, closeChannelSerializedApiCall } from '../../pallets/hrmp'
 import { type FinalBuilder } from './Builder'
 
 export interface OutboundCloseChannelBuilder {

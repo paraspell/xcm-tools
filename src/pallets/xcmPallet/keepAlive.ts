@@ -10,7 +10,7 @@ import {
 import { getAssetsObject } from '../assets'
 import { BN } from '@polkadot/util'
 import * as edMapJson from '../../maps/existential-deposits.json' assert { type: 'json' }
-import { Builder } from '../builder'
+import { Builder } from '../../builder'
 import { calculateTransactionFee } from './utils'
 import { determineRelayChain } from '../../utils'
 

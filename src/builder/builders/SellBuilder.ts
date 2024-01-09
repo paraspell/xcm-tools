@@ -1,8 +1,8 @@
 // Implements builder pattern for Sell operation used in XYK Pallet
 
 import { type ApiPromise } from '@polkadot/api'
-import { type Bool, type Extrinsic } from '../../../types'
-import { sell } from '../../xyk'
+import { type Bool, type Extrinsic } from '../../types'
+import { sell } from '../../pallets/xyk'
 
 export interface FinalSellBuilder {
   build: () => Extrinsic
