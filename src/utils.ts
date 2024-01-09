@@ -15,6 +15,7 @@ import {
 import { nodes } from './maps/consts'
 import type ParachainNode from './nodes/ParachainNode'
 import { type HexString } from '@polkadot/util/types'
+import { getRelayChainSymbol } from './pallets/assets'
 
 export const createAccID = (api: ApiPromise, account: string): HexString => {
   console.log('Generating AccountId32 address')
@@ -157,5 +158,5 @@ export const callPolkadotJsTxFunction = (
   { module, section, parameters }: TSerializedApiCall
 ): Extrinsic => api.tx[module][section](...parameters)
 
-export const determineRelayChain = (currencySymbol: string): TNodeWithRelayChains =>
-  currencySymbol === 'KSM' ? 'Kusama' : 'Polkadot'
+export const determineRelayChain = (node: TNode): TNodeWithRelayChains =>
+  getRelayChainSymbol(node) === 'KSM' ? 'Kusama' : 'Polkadot'

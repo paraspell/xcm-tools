@@ -13,6 +13,7 @@ describe('checkKeepAlive', () => {
   it('should throw an KeepAliveError when passing undefined currency symbol', async () => {
     await expect(
       checkKeepAlive({
+        originApi: mockApi,
         address: ADDRESS,
         amount: AMOUNT,
         originNode: 'Acala',
@@ -26,6 +27,7 @@ describe('checkKeepAlive', () => {
   it('should throw an KeepAliveError when transfering non native token', async () => {
     await expect(
       checkKeepAlive({
+        originApi: mockApi,
         address: ADDRESS,
         amount: AMOUNT,
         originNode: 'Acala',
@@ -39,6 +41,7 @@ describe('checkKeepAlive', () => {
   it('should throw an KeepAliveError when transfering non native token', async () => {
     await expect(
       checkKeepAlive({
+        originApi: mockApi,
         address: ADDRESS,
         amount: AMOUNT,
         originNode: 'Acala',

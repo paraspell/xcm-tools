@@ -19,6 +19,7 @@ const edMap = edMapJson as TEdJsonMap
 export const getExistentialDeposit = (node: TNodeWithRelayChains): string | null => edMap[node]
 
 const createTx = async (
+  originApi: ApiPromise,
   destApi: ApiPromise,
   address: string,
   amount: string,
@@ -36,7 +37,7 @@ const createTx = async (
       .build()
   }
   if (originNode === undefined && destNode !== undefined) {
-    return await Builder(destApi).from(destNode).amount(amount).address(address).build()
+    return await Builder(originApi).to(destNode).amount(amount).address(address).build()
   } else if (originNode !== undefined && destNode === undefined) {
     return await Builder(destApi).to(originNode).amount(amount).address(address).build()
   } else {
@@ -45,6 +46,7 @@ const createTx = async (
 }
 
 export const checkKeepAlive = async ({
+  originApi,
   address,
   amount,
   originNode,
@@ -73,8 +75,16 @@ export const checkKeepAlive = async ({
   const { data }: any = await destApi.query.system.account(address)
   const balance: BN = data.free.toBn()
   const amountBN = new BN(amount)
-  const ed = getExistentialDeposit(destNode ?? determineRelayChain(currencySymbol))
-  const tx = await createTx(destApi, address, amount, currencySymbol, originNode, destNode)
+  const ed = getExistentialDeposit(destNode ?? determineRelayChain(originNode as TNode))
+  const tx = await createTx(
+    originApi,
+    destApi,
+    address,
+    amount,
+    currencySymbol,
+    originNode,
+    destNode
+  )
 
   if (tx === null) {
     throw new KeepAliveError('Transaction for XCM fee calculation could not be created.')

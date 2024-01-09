@@ -6,7 +6,7 @@ import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../types
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
 
 class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
-  private readonly api: ApiPromise
+  private readonly api?: ApiPromise
   private readonly from: TNode
   private readonly to: TNode
   private readonly currency: string | number | bigint
@@ -17,7 +17,7 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFi
   private _destApi?: ApiPromise
 
   private constructor(
-    api: ApiPromise,
+    api: ApiPromise | undefined,
     from: TNode,
     to: TNode,
     currency: string | number | bigint,
@@ -31,7 +31,7 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFi
   }
 
   static createParaToPara(
-    api: ApiPromise,
+    api: ApiPromise | undefined,
     from: TNode,
     to: TNode,
     currency: string | number | bigint,

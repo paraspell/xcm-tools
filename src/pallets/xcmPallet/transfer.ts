@@ -2,7 +2,12 @@
 
 import type { ApiPromise } from '@polkadot/api'
 import { type Extrinsic, type TNode, type TSerializedApiCall } from '../../types'
-import { getNode, callPolkadotJsTxFunction } from '../../utils'
+import {
+  getNode,
+  callPolkadotJsTxFunction,
+  createApiInstanceForNode,
+  determineRelayChain
+} from '../../utils'
 import { getRelayChainSymbol, hasSupportForAsset } from '../assets'
 import { getAssetBySymbolOrId } from '../assets/assetsUtils'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
@@ -10,7 +15,7 @@ import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive'
 
 const sendCommon = async (
-  api: ApiPromise,
+  api: ApiPromise | undefined,
   origin: TNode,
   currencySymbolOrId: string | number | bigint,
   amount: string,
@@ -55,7 +60,10 @@ const sendCommon = async (
     )
   }
 
+  const apiWithFallback = api ?? (await createApiInstanceForNode(origin))
+
   await checkKeepAlive({
+    originApi: apiWithFallback,
     address: to,
     amount,
     originNode: origin,
@@ -67,7 +75,7 @@ const sendCommon = async (
   const currencyId = originNode.assetCheckEnabled ? asset?.assetId : currencySymbolOrId.toString()
 
   return originNode.transfer(
-    api,
+    apiWithFallback,
     asset?.symbol,
     currencyId,
     amount,
@@ -79,7 +87,7 @@ const sendCommon = async (
 }
 
 export const sendSerializedApiCall = async (
-  api: ApiPromise,
+  api: ApiPromise | undefined,
   origin: TNode,
   currencySymbolOrId: string | number | bigint,
   amount: string | number | bigint,
@@ -102,7 +110,7 @@ export const sendSerializedApiCall = async (
 }
 
 export const send = async (
-  api: ApiPromise,
+  api: ApiPromise | undefined,
   origin: TNode,
   currencySymbolOrId: string | number | bigint,
   amount: string | number | bigint,
@@ -123,7 +131,7 @@ export const send = async (
   )) as Extrinsic
 
 export const transferRelayToParaCommon = async (
-  api: ApiPromise,
+  api: ApiPromise | undefined,
   destination: TNode,
   amount: string,
   address: string,
@@ -132,7 +140,12 @@ export const transferRelayToParaCommon = async (
   serializedApiCallEnabled = false
 ): Promise<Extrinsic | TSerializedApiCall | never> => {
   const currencySymbol = getRelayChainSymbol(destination)
+
+  const relayNode = determineRelayChain(destination)
+  const apiWithFallback = api ?? (await createApiInstanceForNode(relayNode))
+
   await checkKeepAlive({
+    originApi: apiWithFallback,
     address,
     amount,
     destApi: destApiForKeepAlive,
@@ -141,7 +154,7 @@ export const transferRelayToParaCommon = async (
   })
 
   const serializedApiCall = getNode(destination).transferRelayToPara({
-    api,
+    api: apiWithFallback,
     destination,
     address,
     amount,
@@ -153,11 +166,11 @@ export const transferRelayToParaCommon = async (
     return serializedApiCall
   }
 
-  return callPolkadotJsTxFunction(api, serializedApiCall)
+  return callPolkadotJsTxFunction(apiWithFallback, serializedApiCall)
 }
 
 export const transferRelayToPara = async (
-  api: ApiPromise,
+  api: ApiPromise | undefined,
   destination: TNode,
   amount: string | number | bigint,
   to: string,
@@ -175,7 +188,7 @@ export const transferRelayToPara = async (
 }
 
 export const transferRelayToParaSerializedApiCall = async (
-  api: ApiPromise,
+  api: ApiPromise | undefined,
   destination: TNode,
   amount: string | number | bigint,
   to: string,
