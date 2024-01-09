@@ -6,7 +6,7 @@ import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../types
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
 
 class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
-  private readonly api: ApiPromise
+  private readonly api?: ApiPromise
   private readonly to: TNode
   private readonly paraIdTo?: number
 
@@ -14,13 +14,13 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
   private _address: string
   private _destApi?: ApiPromise
 
-  private constructor(api: ApiPromise, to: TNode, paraIdTo?: number) {
+  private constructor(api: ApiPromise | undefined, to: TNode, paraIdTo?: number) {
     this.api = api
     this.to = to
     this.paraIdTo = paraIdTo
   }
 
-  static create(api: ApiPromise, to: TNode, paraIdTo?: number): AmountBuilder {
+  static create(api: ApiPromise | undefined, to: TNode, paraIdTo?: number): AmountBuilder {
     return new RelayToParaBuilder(api, to, paraIdTo)
   }
 

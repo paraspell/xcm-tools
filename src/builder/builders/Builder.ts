@@ -12,14 +12,15 @@ import RemoveLiquidityBuilder, { type AssetARemoveLiquidityBuilder } from './Rem
 import SellBuilder, { type AssetInSellBuilder } from './SellBuilder'
 import ParaToParaBuilder from './ParaToParaBuilder'
 import ParaToRelayBuilder from './ParaToRelayBuilder'
+import { MissingApiPromiseError } from '../../errors/MissingApiPromiseError'
 
 class ToGeneralBuilder {
-  private readonly api: ApiPromise
+  private readonly api?: ApiPromise
   private readonly from: TNode
   private readonly to: TNode
   private readonly paraIdTo?: number
 
-  constructor(api: ApiPromise, from: TNode, to: TNode, paraIdTo?: number) {
+  constructor(api: ApiPromise | undefined, from: TNode, to: TNode, paraIdTo?: number) {
     this.api = api
     this.from = from
     this.to = to
@@ -31,15 +32,18 @@ class ToGeneralBuilder {
   }
 
   openChannel(): MaxSizeOpenChannelBuilder {
+    if (this.api === undefined) {
+      throw new MissingApiPromiseError()
+    }
     return OpenChannelBuilder.create(this.api, this.from, this.to)
   }
 }
 
 class FromGeneralBuilder {
-  private readonly api: ApiPromise
+  private readonly api?: ApiPromise
   private readonly from: TNode
 
-  constructor(api: ApiPromise, from: TNode) {
+  constructor(api: ApiPromise | undefined, from: TNode) {
     this.api = api
     this.from = from
   }
@@ -53,14 +57,17 @@ class FromGeneralBuilder {
   }
 
   closeChannel(): InboundCloseChannelBuilder {
+    if (this.api === undefined) {
+      throw new MissingApiPromiseError()
+    }
     return CloseChannelBuilder.create(this.api, this.from)
   }
 }
 
 class GeneralBuilder {
-  private readonly api: ApiPromise
+  private readonly api?: ApiPromise
 
-  constructor(api: ApiPromise) {
+  constructor(api?: ApiPromise) {
     this.api = api
   }
 
@@ -73,27 +80,42 @@ class GeneralBuilder {
   }
 
   addLiquidity(): AssetAAddLiquidityBuilder {
+    if (this.api === undefined) {
+      throw new MissingApiPromiseError()
+    }
     return AddLiquidityBuilder.create(this.api)
   }
 
   removeLiquidity(): AssetARemoveLiquidityBuilder {
+    if (this.api === undefined) {
+      throw new MissingApiPromiseError()
+    }
     return RemoveLiquidityBuilder.create(this.api)
   }
 
   buy(): AssetOutBuyBuilder {
+    if (this.api === undefined) {
+      throw new MissingApiPromiseError()
+    }
     return BuyBuilder.create(this.api)
   }
 
   sell(): AssetInSellBuilder {
+    if (this.api === undefined) {
+      throw new MissingApiPromiseError()
+    }
     return SellBuilder.create(this.api)
   }
 
   createPool(): AssetACreatePoolBuilder {
+    if (this.api === undefined) {
+      throw new MissingApiPromiseError()
+    }
     return CreatePoolBuilder.create(this.api)
   }
 }
 
-export const Builder = (api: ApiPromise): GeneralBuilder => {
+export const Builder = (api?: ApiPromise): GeneralBuilder => {
   return new GeneralBuilder(api)
 }
 

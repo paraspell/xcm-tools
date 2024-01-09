@@ -105,6 +105,7 @@ export type PolkadotXCMHeader = {
 }
 
 export interface CheckKeepAliveOptions {
+  originApi: ApiPromise
   address: string
   amount: string
   originNode?: TNode

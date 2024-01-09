@@ -7,20 +7,24 @@ import { getRelayChainSymbol } from '../../pallets/assets'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder } from './Builder'
 
 class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
-  private readonly api: ApiPromise
+  private readonly api?: ApiPromise
   private readonly from: TNode
   private readonly amount: string | number | bigint
 
   private _address: string
   private _destApi?: ApiPromise
 
-  private constructor(api: ApiPromise, from: TNode, amount: string | number | bigint) {
+  private constructor(api: ApiPromise | undefined, from: TNode, amount: string | number | bigint) {
     this.api = api
     this.from = from
     this.amount = amount
   }
 
-  static create(api: ApiPromise, from: TNode, amount: string | number | bigint): AddressBuilder {
+  static create(
+    api: ApiPromise | undefined,
+    from: TNode,
+    amount: string | number | bigint
+  ): AddressBuilder {
     return new ParaToRelayBuilder(api, from, amount)
   }
 
