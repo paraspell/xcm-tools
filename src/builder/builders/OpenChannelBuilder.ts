@@ -1,8 +1,8 @@
 // Implements builder pattern for Open HRMP channel operation
 
 import { type ApiPromise } from '@polkadot/api'
-import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../../types'
-import { openChannel, openChannelSerializedApiCall } from '../../parasSudoWrapper'
+import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../types'
+import { openChannel, openChannelSerializedApiCall } from '../../pallets/parasSudoWrapper'
 import { type FinalBuilder } from './Builder'
 
 export interface MaxMessageSizeOpenChannelBuilder {

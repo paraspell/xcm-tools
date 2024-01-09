@@ -1,8 +1,8 @@
 // Implements builder pattern for CreatePool operation used in XYK Pallet
 
 import { type ApiPromise } from '@polkadot/api'
-import { type Extrinsic } from '../../../types'
-import { createPool } from '../../xyk'
+import { type Extrinsic } from '../../types'
+import { createPool } from '../../pallets/xyk'
 
 export interface FinalCreatePoolBuilder {
   build: () => Extrinsic

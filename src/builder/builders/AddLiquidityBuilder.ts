@@ -1,8 +1,8 @@
 // Implements builder pattern for AddLiquidity operation used in XYK Pallet
 
 import { type ApiPromise } from '@polkadot/api'
-import { type Extrinsic } from '../../../types'
-import { addLiquidity } from '../../xyk'
+import { type Extrinsic } from '../../types'
+import { addLiquidity } from '../../pallets/xyk'
 
 export interface FinalAddLiquidityBuilder {
   build: () => Extrinsic

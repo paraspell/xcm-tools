@@ -1,9 +1,9 @@
 // Implements builder pattern for XCM message creation operations operation
 
 import { type ApiPromise } from '@polkadot/api'
-import { send, sendSerializedApiCall } from '../../xcmPallet'
-import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../../types'
-import { getRelayChainSymbol } from '../../assets'
+import { send, sendSerializedApiCall } from '../../pallets/xcmPallet'
+import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../types'
+import { getRelayChainSymbol } from '../../pallets/assets'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder } from './Builder'
 
 class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {

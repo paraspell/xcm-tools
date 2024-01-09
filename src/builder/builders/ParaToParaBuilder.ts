@@ -1,8 +1,8 @@
 // Implements builder pattern for XCM message creation operations operation
 
 import { type ApiPromise } from '@polkadot/api'
-import { send, sendSerializedApiCall } from '../../xcmPallet'
-import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../../types'
+import { send, sendSerializedApiCall } from '../../pallets/xcmPallet'
+import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../types'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
 
 class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {

@@ -1,7 +1,7 @@
 // Implements general builder pattern, this is Builder main file
 
 import { type ApiPromise } from '@polkadot/api'
-import { type Extrinsic, type TNode, type TSerializedApiCall } from '../../../types'
+import { type Extrinsic, type TNode, type TSerializedApiCall } from '../../types'
 import AddLiquidityBuilder, { type AssetAAddLiquidityBuilder } from './AddLiquidityBuilder'
 import BuyBuilder, { type AssetOutBuyBuilder } from './BuyBuilder'
 import CloseChannelBuilder, { type InboundCloseChannelBuilder } from './CloseChannelBuilder'
