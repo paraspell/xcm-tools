@@ -3,53 +3,43 @@
 import type { ApiPromise } from '@polkadot/api'
 import { type Extrinsic, type Bool } from '../../types'
 
-export function addLiquidity(
+export const addLiquidity = (
   api: ApiPromise,
   assetA: number,
   assetB: number,
   amountA: any,
   amountBMaxLimit: any
-): Extrinsic {
-  return api.tx.xyk.addLiquidity(assetA, assetB, amountA, amountBMaxLimit)
-}
+): Extrinsic => api.tx.xyk.addLiquidity(assetA, assetB, amountA, amountBMaxLimit)
 
-export function buy(
+export const buy = (
   api: ApiPromise,
   assetOut: number,
   assetIn: number,
   amount: any,
   maxLimit: any,
   discount: Bool
-): Extrinsic {
-  return api.tx.xyk.buy(assetOut, assetIn, amount, maxLimit, discount)
-}
+): Extrinsic => api.tx.xyk.buy(assetOut, assetIn, amount, maxLimit, discount)
 
-export function createPool(
+export const createPool = (
   api: ApiPromise,
   assetA: number,
   amountA: any,
   assetB: number,
   amountB: any
-): Extrinsic {
-  return api.tx.xyk.createPool(assetA, amountA, assetB, amountB)
-}
+): Extrinsic => api.tx.xyk.createPool(assetA, amountA, assetB, amountB)
 
-export function removeLiquidity(
+export const removeLiquidity = (
   api: ApiPromise,
   assetA: number,
   assetB: number,
   liquidityAmount: any
-): Extrinsic {
-  return api.tx.xyk.removeLiquidity(assetA, assetB, liquidityAmount)
-}
+): Extrinsic => api.tx.xyk.removeLiquidity(assetA, assetB, liquidityAmount)
 
-export function sell(
+export const sell = (
   api: ApiPromise,
   assetIn: number,
   assetOut: number,
   amount: any,
   maxLimit: any,
   discount: Bool
-): Extrinsic {
-  return api.tx.xyk.sell(assetIn, assetOut, amount, maxLimit, discount)
-}
+): Extrinsic => api.tx.xyk.sell(assetIn, assetOut, amount, maxLimit, discount)

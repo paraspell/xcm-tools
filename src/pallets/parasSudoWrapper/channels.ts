@@ -27,29 +27,19 @@ const openChannelInternal = (
   return api.tx.sudo.sudo(api.tx[module][section](...parameters))
 }
 
-export function openChannel(
+export const openChannel = (
   api: ApiPromise,
   origin: TNode,
   destination: TNode,
   maxSize: number,
   maxMessageSize: number
-): Extrinsic {
-  return openChannelInternal(api, origin, destination, maxSize, maxMessageSize) as Extrinsic
-}
+): Extrinsic => openChannelInternal(api, origin, destination, maxSize, maxMessageSize) as Extrinsic
 
-export function openChannelSerializedApiCall(
+export const openChannelSerializedApiCall = (
   api: ApiPromise,
   origin: TNode,
   destination: TNode,
   maxSize: number,
   maxMessageSize: number
-): TSerializedApiCall {
-  return openChannelInternal(
-    api,
-    origin,
-    destination,
-    maxSize,
-    maxMessageSize,
-    true
-  ) as TSerializedApiCall
-}
+): TSerializedApiCall =>
+  openChannelInternal(api, origin, destination, maxSize, maxMessageSize, true) as TSerializedApiCall

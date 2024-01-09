@@ -9,7 +9,17 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
+  "plugins": ["prefer-arrow"],
   "rules": {
-    "func-style": ["error", "declaration", { "allowArrowFunctions": true }]
+    "prefer-arrow/prefer-arrow-functions": [
+      "error",
+      {
+        "disallowPrototype": true,
+        "singleReturnOnly": false,
+        "classPropertiesAllowed": false
+      }
+    ],
+    "prefer-arrow-callback": ["error", { "allowNamedFunctions": true }],
+    "func-style": ["error", "expression"]
   }
 }

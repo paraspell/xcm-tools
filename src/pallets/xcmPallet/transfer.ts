@@ -101,7 +101,7 @@ export const sendSerializedApiCall = async (
   )) as TSerializedApiCall
 }
 
-export async function send(
+export const send = async (
   api: ApiPromise,
   origin: TNode,
   currencySymbolOrId: string | number | bigint,
@@ -110,8 +110,8 @@ export async function send(
   destination?: TNode,
   paraIdTo?: number,
   destApiForKeepAlive?: ApiPromise
-): Promise<Extrinsic> {
-  return (await sendCommon(
+): Promise<Extrinsic> =>
+  (await sendCommon(
     api,
     origin,
     currencySymbolOrId,
@@ -121,7 +121,6 @@ export async function send(
     paraIdTo,
     destApiForKeepAlive
   )) as Extrinsic
-}
 
 export const transferRelayToParaCommon = async (
   api: ApiPromise,
