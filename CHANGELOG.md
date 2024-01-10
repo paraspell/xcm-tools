@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/paraspell/xcm-sdk/compare/v3.1.1...v4.0.0) (2024-01-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Add keep alive check ❤️
+
+### Features
+
+* Add keep alive check ❤️ ([5e920d8](https://github.com/paraspell/xcm-sdk/commit/5e920d872a8a1b79c5ce65938914041827ca0d21))
+
 ## [3.1.1](https://github.com/paraspell/xcm-sdk/compare/v3.1.0...v3.1.1) (2024-01-07)
 
 
