@@ -1,7 +1,7 @@
 {
   "packages": {
     ".": {
-      "release-type": "node",
+      "include-component-in-tag": false,
       "changelog-sections": [
         { "type": "feat", "section": "Features", "hidden": false },
         { "type": "fix", "section": "Bug Fixes", "hidden": false },
