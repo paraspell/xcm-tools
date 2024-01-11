@@ -1,5 +1,6 @@
 {
   "release-type": "node",
+  "bootstrap-sha": "057b27d99fbcb75b07e4891b64a825116db496a2",
   "changelog-sections": [
     { "type": "feat", "section": "Features", "hidden": false },
     { "type": "fix", "section": "Bug Fixes", "hidden": false },
