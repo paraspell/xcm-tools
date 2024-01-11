@@ -73,18 +73,19 @@ Builder pattern XCM & HRMP construction
 //NOTE2 You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948)
 //NOTE3 XCM Transfer Builders now require await
 //NOTE4 You can now add optional parameter useKeepAlive which will ensure, that you send more than existential deposit.
+//NOTE5 API parameter in XCM messages is now optional!
 
 //Transfer tokens from Parachain to Parachain
-await Builder(api).from(NODE).to(NODE/*,customParaId - optional*/).currency(CurrencyString||CurrencyID).amount(amount).address(address).build()
+await Builder(/*node api - optional*/).from(NODE).to(NODE/*,customParaId - optional*/).currency(CurrencyString||CurrencyID).amount(amount).address(address).build()
 
 //Transfer tokens from the Relay chain to Parachain
-await Builder(api).to(NODE/*,customParaId - optional*/).amount(amount).address(address).build()
+await Builder(/*node api - optional*/).to(NODE/*,customParaId - optional*/).amount(amount).address(address).build()
 
 //Transfer tokens from Parachain to Relay chain
-await Builder(api).from(NODE).amount(amount).address(address).build()
+await Builder(/*node api - optional*/).from(NODE).amount(amount).address(address).build()
 
 //Use keepAlive example
-await Builder(api).from(NODE).amount(amount).address(address).useKeepAlive(destinationParaAPI).build()
+await Builder(/*node api - optional*/).from(NODE).amount(amount).address(address).useKeepAlive(destinationParaAPI).build()
 
 //Close HRMP channels
 Builder(api).from(NODE).closeChannel().inbound(inbound).outbound(outbound).build()
@@ -100,18 +101,19 @@ Function pattern XCM & HRMP construction
 //NOTE2 You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948)
 //NOTE3 XCM Transfer Builders now require await
 //NOTE4 You can now add optional parameter useKeepAlive which will ensure, that you send more than existential deposit.
+//NOTE5 API parameter in XCM messages is now optional!
 
 //Transfer tokens from Parachain to Parachain
-await paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string, destination: destination  Parachain  ID, paraIdTo?: number,)
+await paraspell.xcmPallet.send(api?: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string, destination: destination  Parachain  ID, paraIdTo?: number,)
 
 //Transfer tokens from Parachain to Relay chain
-await paraspell.xcmPallet.send(api: ApiPromise, origin: origin  Parachain  name  string, amount: any, to: destination  address  string, paraIdTo?: number,)
+await paraspell.xcmPallet.send(api?: ApiPromise, origin: origin  Parachain  name  string, amount: any, to: destination  address  string, paraIdTo?: number,)
 
 //Transfer tokens from Relay chain to Parachain
-await paraspell.xcmPallet.transferRelayToPara(api: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string,paraIdTo?: number,)
+await paraspell.xcmPallet.transferRelayToPara(api?: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string,paraIdTo?: number,)
 
 //Use keepAlive example
-await paraspell.xcmPallet.send(api: ApiPromise, destination: TNode, amount: string | number | bigint, to: string, paraIdTo?: number, destApiForKeepAlive?: ApiPromise)
+await paraspell.xcmPallet.send(api?: ApiPromise, destination: TNode, amount: string | number | bigint, to: string, paraIdTo?: number, destApiForKeepAlive?: ApiPromise)
 
 //hrmp pallet:
 //Close HRMP channels
