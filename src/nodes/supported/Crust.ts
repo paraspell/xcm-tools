@@ -13,7 +13,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Crust extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Crust', 'crustParachain', 'polkadot', Version.V1)
+    super('Crust', 'crustParachain', 'polkadot', Version.V3)
   }
 
   getCurrencySelection({ currency, currencyID }: XTokensTransferInput): any {
@@ -29,7 +29,7 @@ class Crust extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    return XTokensTransferImpl.transferXTokens(input, this.getCurrencySelection(input), input.fees)
+    return XTokensTransferImpl.transferXTokens(input, this.getCurrencySelection(input))
   }
 }
 

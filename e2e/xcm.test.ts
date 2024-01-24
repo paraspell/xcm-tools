@@ -7,7 +7,8 @@ import {
   getAllAssetsSymbols,
   getRelayChainSymbol,
   NoXCMSupportImplementedError,
-  ScenarioNotSupportedError
+  ScenarioNotSupportedError,
+  getAssetId
 } from '../src'
 import { type ApiPromise } from '@polkadot/api'
 
@@ -22,15 +23,19 @@ const getAssetsForNode = (node: TNode): string[] => {
   if (node === 'Crust') return ['EQD']
   if (node === 'Genshiro') return ['GENS']
   if (node === 'CrustShadow') return ['KAR']
+  if (node === 'Khala') return ['PHA']
+  if (node === 'Phala') return ['PHA']
   if (node === 'Integritee') return getAllAssetsSymbols(node).filter(asset => asset !== 'KSM')
   return getAllAssetsSymbols(node)
 }
 
-const filteredNodes = NODE_NAMES.filter(node => node !== 'Quartz' && node !== 'Clover')
+const filteredNodes = NODE_NAMES.filter(
+  node => node !== 'Quartz' && node !== 'Clover' && node !== 'Bitgreen' && node !== 'Bajun'
+)
 
 const findTransferableNodeAndAsset = (
   from: TNode
-): { nodeTo: TNode | undefined; asset: string | undefined } => {
+): { nodeTo: TNode | undefined; asset: string | undefined; assetId: string | null } => {
   const allFromAssets = getAssetsForNode(from)
 
   const nodeTo = NODE_NAMES.filter(
@@ -46,7 +51,7 @@ const findTransferableNodeAndAsset = (
       ? getAllAssetsSymbols(nodeTo).filter(asset => allFromAssets.includes(asset))[0]
       : undefined
 
-  return { nodeTo, asset: foundAsset }
+  return { nodeTo, asset: foundAsset, assetId: getAssetId(from, foundAsset ?? '') }
 }
 
 describe.sequential('XCM - e2e', () => {
@@ -70,17 +75,17 @@ describe.sequential('XCM - e2e', () => {
   filteredNodes.forEach(node => {
     describe.sequential(`${node} ParaToPara & ParaToRelay`, () => {
       let api: ApiPromise
-      const { nodeTo, asset } = findTransferableNodeAndAsset(node)
+      const { nodeTo, asset, assetId } = findTransferableNodeAndAsset(node)
       beforeAll(async () => {
         api = await createApiInstanceForNode(node)
       })
       it(`should create transfer tx - ParaToPara ${asset} from ${node} to ${nodeTo}`, async () => {
         expect(nodeTo).toBeDefined()
         try {
-          const tx = Builder(api)
+          const tx = await Builder(api)
             .from(node)
             .to(nodeTo ?? MOCK_POLKADOT_NODE)
-            .currency(asset ?? 'DOT')
+            .currency(assetId ?? asset ?? 'DOT')
             .amount(MOCK_AMOUNT)
             .address(MOCK_ADDRESS)
             .build()
@@ -96,12 +101,22 @@ describe.sequential('XCM - e2e', () => {
         }
       })
 
-      if (node !== 'Integritee' && node !== 'Crust' && node !== 'CrustShadow') {
+      if (
+        node !== 'Integritee' &&
+        node !== 'Crust' &&
+        node !== 'CrustShadow' &&
+        node !== 'Phala' &&
+        node !== 'Khala'
+      ) {
         it(`should create transfer tx - ParaToRelay ${getRelayChainSymbol(
           node
         )} from ${node} to Relay`, async () => {
           try {
-            const tx = Builder(api).from(node).amount(MOCK_AMOUNT).address(MOCK_ADDRESS).build()
+            const tx = await Builder(api)
+              .from(node)
+              .amount(MOCK_AMOUNT)
+              .address(MOCK_ADDRESS)
+              .build()
             expect(tx).toBeDefined()
           } catch (error) {
             if (error instanceof NoXCMSupportImplementedError) {

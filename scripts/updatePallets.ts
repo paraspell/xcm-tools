@@ -11,6 +11,7 @@ import {
 } from './scriptUtils'
 
 const defaultPalletsSortedByPriority: TPallet[] = [
+  'XTransfer',
   'XTokens',
   'OrmlXTokens',
   'PolkadotXcm',

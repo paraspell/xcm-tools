@@ -43,7 +43,12 @@ const sendCommon = async (
 
   const originNode = getNode(origin)
 
-  if (asset === null && originNode.assetCheckEnabled) {
+  const assetCheckEnabled =
+    destination === 'AssetHubKusama' || destination === 'AssetHubPolkadot'
+      ? false
+      : originNode.assetCheckEnabled
+
+  if (asset === null && assetCheckEnabled) {
     throw new InvalidCurrencyError(
       `Origin node ${origin} does not support currency or currencyId ${currencySymbolOrId}.`
     )
@@ -52,7 +57,7 @@ const sendCommon = async (
   if (
     destination !== undefined &&
     asset?.symbol !== undefined &&
-    getNode(destination).assetCheckEnabled &&
+    assetCheckEnabled &&
     !hasSupportForAsset(destination, asset.symbol)
   ) {
     throw new InvalidCurrencyError(
@@ -68,11 +73,11 @@ const sendCommon = async (
     amount,
     originNode: origin,
     destApi: destApiForKeepAlive,
-    currencySymbol: asset?.symbol,
+    currencySymbol: asset?.symbol ?? currencySymbolOrId.toString(),
     destNode: destination
   })
 
-  const currencyId = originNode.assetCheckEnabled ? asset?.assetId : currencySymbolOrId.toString()
+  const currencyId = assetCheckEnabled ? asset?.assetId : currencySymbolOrId.toString()
 
   return originNode.transfer(
     apiWithFallback,

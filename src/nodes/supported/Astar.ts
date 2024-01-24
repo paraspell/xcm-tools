@@ -64,6 +64,8 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
         ),
         fees: getFees(scenario),
         scenario,
+        paraIdTo: paraId,
+        destination,
         serializedApiCallEnabled
       })
     } else if (supportsPolkadotXCM(this)) {

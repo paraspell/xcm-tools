@@ -65,6 +65,8 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
         ),
         fees: getFees(scenario),
         scenario,
+        paraIdTo: paraId,
+        destination,
         serializedApiCallEnabled
       })
     } else if (supportsPolkadotXCM(this)) {

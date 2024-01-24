@@ -74,8 +74,15 @@ export const checkKeepAlive = async ({
 
   const { data }: any = await destApi.query.system.account(address)
   const balance: BN = data.free.toBn()
+
+  const { data: originData }: any = await originApi.query.system.account(address)
+  const balanceOrigin: BN = originData.free.toBn()
+
   const amountBN = new BN(amount)
+
   const ed = getExistentialDeposit(destNode ?? determineRelayChain(originNode as TNode))
+  const edOrigin = getExistentialDeposit(originNode ?? determineRelayChain(destNode as TNode))
+
   const tx = await createTx(
     originApi,
     destApi,
@@ -96,14 +103,24 @@ export const checkKeepAlive = async ({
     throw new KeepAliveError('Existential deposit not found for destination parachain.')
   }
 
+  if (edOrigin === null) {
+    throw new KeepAliveError('Existential deposit not found for origin parachain.')
+  }
+
   console.log('XCM FEE: ', xcmFee.toString())
   console.log('EXISTENTIAL DEPOSIT: ', ed.toString())
+  console.log('EXISTENTIAL DEPOSIT ORIGIN: ', edOrigin.toString())
   console.log('BALANCE: ', balance.toString())
+  console.log('ORIGIN BALANCE: ', balanceOrigin.toString())
   console.log('AMOUNT: ', amountBN.toString())
   console.log('AMOUNT WITHOUT FEE: ', amountBN.sub(xcmFee.mul(new BN(1.5))).toString())
   console.log(
     'BALANCE + AMOUNT WITHOUT FEE: ',
     balance.add(amountBN.sub(xcmFee.mul(new BN(1.5)))).toString()
+  )
+  console.log(
+    'ORIGIN BALANCE - AMOUNT WITH FEE: ',
+    balanceOrigin.sub(amountBN.sub(xcmFee.mul(new BN(1.5)))).toString()
   )
 
   const amountBNWithoutFee = amountBN.sub(xcmFee.mul(new BN(1.5)))
@@ -112,6 +129,18 @@ export const checkKeepAlive = async ({
     throw new KeepAliveError(
       `Keep alive check failed: Sending ${amount} ${currencySymbol} to ${destNode} would result in an account balance below the required existential deposit.
        Please increase the amount to meet the minimum balance requirement of the destination chain.`
+    )
+  }
+
+  const amountOriginBNWithoutFee = amountBN.sub(xcmFee.mul(new BN(1.5)))
+
+  if (
+    (currencySymbol === 'DOT' || currencySymbol === 'KSM') &&
+    balanceOrigin.sub(amountOriginBNWithoutFee).lt(new BN(edOrigin))
+  ) {
+    throw new KeepAliveError(
+      `Keep alive check failed: Sending ${amount} ${currencySymbol} to ${destNode} would result in an account balance below the required existential deposit on origin.
+       Please decrease the amount to meet the minimum balance requirement of the origin chain.`
     )
   }
 }
