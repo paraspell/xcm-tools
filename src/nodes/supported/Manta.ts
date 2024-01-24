@@ -12,7 +12,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Manta extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Manta', 'manta', 'polkadot', Version.V1)
+    super('Manta', 'manta', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {

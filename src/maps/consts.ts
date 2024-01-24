@@ -51,6 +51,9 @@ import OriginTrail from '../nodes/supported/OriginTrail'
 import Pendulum from '../nodes/supported/Pendulum'
 import Polkadex from '../nodes/supported/Polkadex'
 import Zeitgeist from '../nodes/supported/Zeitgeist'
+import Collectives from '../nodes/supported/Collectives'
+import Khala from '../nodes/supported/Khala'
+import Phala from '../nodes/supported/Phala'
 
 export const NODE_NAMES = [
   'AssetHubPolkadot',
@@ -101,7 +104,10 @@ export const NODE_NAMES = [
   'OriginTrail',
   'Pendulum',
   'Polkadex',
-  'Zeitgeist'
+  'Zeitgeist',
+  'Collectives',
+  'Khala',
+  'Phala'
 ] as const
 
 export const NODES_WITH_RELAY_CHAINS = [...NODE_NAMES, 'Polkadot', 'Kusama'] as const
@@ -155,7 +161,16 @@ export const nodes: Record<TNode, ParachainNode> = {
   OriginTrail: new OriginTrail(),
   Pendulum: new Pendulum(),
   Polkadex: new Polkadex(),
-  Zeitgeist: new Zeitgeist()
+  Zeitgeist: new Zeitgeist(),
+  Collectives: new Collectives(),
+  Khala: new Khala(),
+  Phala: new Phala()
 }
 
-export const SUPPORTED_PALLETS = ['XTokens', 'OrmlXTokens', 'PolkadotXcm', 'RelayerXcm'] as const
+export const SUPPORTED_PALLETS = [
+  'XTokens',
+  'OrmlXTokens',
+  'PolkadotXcm',
+  'RelayerXcm',
+  'XTransfer'
+] as const

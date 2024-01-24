@@ -8,8 +8,8 @@
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "Astar": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": ["PolkadotXcm"]
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "BifrostPolkadot": {
     "defaultPallet": "XTokens",
@@ -21,7 +21,7 @@
   },
   "Centrifuge": {
     "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
+    "supportedPallets": ["PolkadotXcm", "XTokens", "OrmlXTokens"]
   },
   "Clover": {
     "defaultPallet": "XTokens",
@@ -194,5 +194,17 @@
   "Polkadex": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "Collectives": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Khala": {
+    "defaultPallet": "XTransfer",
+    "supportedPallets": ["PolkadotXcm", "XTransfer"]
+  },
+  "Phala": {
+    "defaultPallet": "XTransfer",
+    "supportedPallets": ["PolkadotXcm", "XTransfer"]
   }
 }

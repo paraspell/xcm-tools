@@ -13,7 +13,8 @@ import {
   Version,
   type TSerializedApiCall,
   type TTransferRelayToParaOptions,
-  Parents
+  Parents,
+  type IXTransferTransfer
 } from '../types'
 import { generateAddressPayload, getFees, getAllNodeProviders, createApiInstance } from '../utils'
 import {
@@ -24,6 +25,10 @@ import {
 
 export const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
   return 'transferXTokens' in obj
+}
+
+const supportsXTransfer = (obj: any): obj is IXTransferTransfer => {
+  return 'transferXTransfer' in obj
 }
 
 export const supportsPolkadotXCM = (obj: any): obj is IPolkadotXCMTransfer => {
@@ -101,6 +106,20 @@ abstract class ParachainNode {
         ),
         fees: getFees(scenario),
         scenario,
+        paraIdTo: paraId,
+        destination,
+        serializedApiCallEnabled
+      })
+    } else if (supportsXTransfer(this)) {
+      return this.transferXTransfer({
+        api,
+        currency: currencySymbol,
+        currencyID: currencyId,
+        amount,
+        recipientAddress: to,
+        paraId,
+        origin: this.node,
+        destination,
         serializedApiCallEnabled
       })
     } else if (supportsPolkadotXCM(this)) {

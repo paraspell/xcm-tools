@@ -12,7 +12,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Calamari extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Calamari', 'calamari', 'kusama', Version.V1)
+    super('Calamari', 'calamari', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {

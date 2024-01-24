@@ -63,7 +63,10 @@ const nodeToQuery: NodeToAssetModuleMap = {
   OriginTrail: 'assets.metadata',
   Pendulum: '', // Only PEN paraToPara for now
   Polkadex: 'assets.asset',
-  Zeitgeist: 'assetRegistry.metadata'
+  Zeitgeist: 'assetRegistry.metadata',
+  Collectives: null,
+  Phala: 'assets.metadata',
+  Khala: 'assets.metadata'
 }
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
@@ -364,7 +367,6 @@ const fetchAllNodesAssets = async (assetMap: NodeToAssetModuleMap, assetsMapJson
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const [node, query] of Object.entries(assetMap)) {
     const nodeName = node as TNode
-    if (nodeName === 'Clover') continue
     console.log(`Fetching assets for ${nodeName}...`)
 
     const newData = await fetchTryMultipleProvidersWithTimeout(nodeName, api =>
