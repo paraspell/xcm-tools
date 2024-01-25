@@ -57,6 +57,7 @@ export interface XTokensTransferInput {
   addressSelection: any
   fees: number
   scenario: TScenario
+  origin: TNode
   destination?: TNode
   paraIdTo?: number
   serializedApiCallEnabled?: boolean

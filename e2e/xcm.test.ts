@@ -8,7 +8,8 @@ import {
   getRelayChainSymbol,
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
-  getAssetId
+  getAssetId,
+  NodeNotSupportedError
 } from '../src'
 import { type ApiPromise } from '@polkadot/api'
 
@@ -58,7 +59,7 @@ describe.sequential('XCM - e2e', () => {
   describe.sequential('RelayToPara', () => {
     it('should create transfer tx - DOT from Relay to Para', async () => {
       const api = await createApiInstanceForNode('Polkadot')
-      const tx = Builder(api)
+      const tx = await Builder(api)
         .to(MOCK_POLKADOT_NODE)
         .amount(MOCK_AMOUNT)
         .address(MOCK_ADDRESS)
@@ -95,6 +96,8 @@ describe.sequential('XCM - e2e', () => {
             expect(error).toBeInstanceOf(NoXCMSupportImplementedError)
           } else if (error instanceof ScenarioNotSupportedError) {
             expect(error).toBeInstanceOf(ScenarioNotSupportedError)
+          } else if (error instanceof NodeNotSupportedError) {
+            expect(error).toBeInstanceOf(NodeNotSupportedError)
           } else {
             throw error
           }
@@ -123,6 +126,8 @@ describe.sequential('XCM - e2e', () => {
               expect(error).toBeInstanceOf(NoXCMSupportImplementedError)
             } else if (error instanceof ScenarioNotSupportedError) {
               expect(error).toBeInstanceOf(ScenarioNotSupportedError)
+            } else if (error instanceof NodeNotSupportedError) {
+              expect(error).toBeInstanceOf(NodeNotSupportedError)
             } else {
               throw error
             }
