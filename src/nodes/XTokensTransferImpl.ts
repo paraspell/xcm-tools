@@ -1,22 +1,23 @@
 // Contains basic structure of xToken call
 
 import {
-  Version,
+  type Version,
   type Extrinsic,
   type TPallet,
   type TSerializedApiCall,
   type XTokensTransferInput,
   Parents
 } from '../types'
-import { lowercaseFirstLetter } from '../utils'
+import { getNode, lowercaseFirstLetter } from '../utils'
 
 const getModifiedCurrencySelection = (
+  version: Version,
   amount: string,
   currencyId?: string,
   paraIdTo?: number
 ): any => {
   return {
-    [Version.V3]: {
+    [version]: {
       id: {
         Concrete: {
           parents: Parents.ONE,
@@ -40,6 +41,7 @@ class XTokensTransferImpl {
       amount,
       currencyID,
       addressSelection,
+      origin,
       destination,
       paraIdTo,
       serializedApiCallEnabled
@@ -52,8 +54,10 @@ class XTokensTransferImpl {
 
     const isAssetHub = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
 
+    const node = getNode(origin)
+
     const modifiedCurrencySelection = isAssetHub
-      ? getModifiedCurrencySelection(amount, currencyID, paraIdTo)
+      ? getModifiedCurrencySelection(node.version, amount, currencyID, paraIdTo)
       : currencySelection
 
     const section = isAssetHub ? 'transferMultiasset' : 'transfer'
@@ -62,11 +66,15 @@ class XTokensTransferImpl {
       return {
         module,
         section,
-        parameters: [modifiedCurrencySelection, addressSelection, fees]
+        parameters: isAssetHub
+          ? [modifiedCurrencySelection, addressSelection, fees]
+          : [currencySelection, amount, addressSelection, fees]
       }
     }
 
-    return api.tx[module][section](modifiedCurrencySelection, addressSelection, fees)
+    return isAssetHub
+      ? api.tx[module][section](modifiedCurrencySelection, addressSelection, fees)
+      : api.tx[module][section](currencySelection, amount, addressSelection, fees)
   }
 }
 
