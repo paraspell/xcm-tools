@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/paraspell/xcm-sdk/compare/v3.1.1...v4.0.0) (2024-01-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* Add keep alive check ❤️
+
+### Features
+
+* Add keep alive check ❤️ ([5e920d8](https://github.com/paraspell/xcm-sdk/commit/5e920d872a8a1b79c5ce65938914041827ca0d21))
+* Make API parameter in Builder & function patterns optional ⌥ ([d0e37ca](https://github.com/paraspell/xcm-sdk/commit/d0e37ca68b155328e35dc31a51e2836770ce4b2d))
+* Monthly check ([f72f03a](https://github.com/paraspell/xcm-sdk/commit/f72f03af502bcd0cd3ad10f7371c9eefbbd54aba))
+
+
+### Bug Fixes
+
+* Fix multi asset transfer 🔧 ([28baf2f](https://github.com/paraspell/xcm-sdk/commit/28baf2f8fd71df810697e9f28f84552a25c84d19))
+
+
+### Documentation
+
+* Update readme ([b9cb4d5](https://github.com/paraspell/xcm-sdk/commit/b9cb4d5f496196c7e2c83d9d005dd6c419bb5910))
+
+
+### Miscellaneous Chores
+
+* Add PR AI summaries ([182ede9](https://github.com/paraspell/xcm-sdk/commit/182ede95812517c4a467fc7aeb8403108696e270))
+* Move builder code from pallets to src folder 🗂️ ([af8348f](https://github.com/paraspell/xcm-sdk/commit/af8348fd64d4b02f0ba3e76ee419d6e4be848051))
+* Update release please github action ([5263cec](https://github.com/paraspell/xcm-sdk/commit/5263cec25c6f51efa8777383593042cf22c86d57))
+
+
+### Code Refactoring
+
+* Setup ESLint rule to prefer arrow functions ➡️ ([0199ae1](https://github.com/paraspell/xcm-sdk/commit/0199ae177b549fa1dfd44c56de88580a09720197))
+
 ## [3.1.1](https://github.com/paraspell/xcm-sdk/compare/v3.1.0...v3.1.1) (2024-01-07)
 
 
