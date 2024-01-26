@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.1](https://github.com/paraspell/xcm-sdk/compare/v4.0.0...v4.0.1) (2024-01-26)
+
+
+### Bug Fixes
+
+* PolkadotAssetHub ([da3a05d](https://github.com/paraspell/xcm-sdk/commit/da3a05d907e9f036f9e2820ba9ee2344c87486ae))
+
 ## [4.0.0](https://github.com/paraspell/xcm-sdk/compare/v3.1.1...v4.0.0) (2024-01-25)
 
 
