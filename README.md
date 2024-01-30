@@ -226,13 +226,13 @@ const ed = getExistentialDeposit('Acala')
 ```
 
 ## 💻 Tests
-- Run compilation test using `pnpm compile`
+- Run compilation using `pnpm compile`
 
-- Run linting test using `pnpm lint`
+- Run linter using `pnpm lint`
 
-- Run tests using `pnpm test`
+- Run unit tests using `pnpm test`
 
-- Run end to end tests using `pnpm test:e2e`
+- Run end-to-end tests using `pnpm test:e2e`
 
 - Update Parachain registered assets in the map using script - `pnpm updateAssets`
 
@@ -240,7 +240,7 @@ const ed = getExistentialDeposit('Acala')
 
 - Update existential deposits in the map using script - `pnpm updateEds` 
 
-- Run all core tests using `pnpm runAll`
+- Run all core tests and checks using `pnpm runAll`
 
 ## License
 
