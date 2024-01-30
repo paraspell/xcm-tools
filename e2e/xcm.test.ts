@@ -9,7 +9,8 @@ import {
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
   getAssetId,
-  NodeNotSupportedError
+  NodeNotSupportedError,
+  getOtherAssets
 } from '../src'
 import { type ApiPromise } from '@polkadot/api'
 
@@ -55,6 +56,14 @@ const findTransferableNodeAndAsset = (
   return { nodeTo, asset: foundAsset, assetId: getAssetId(from, foundAsset ?? '') }
 }
 
+const findAssetIdForAssetHub = (node: TNode, asset: string): string | null => {
+  const assetId = getAssetId(node, asset)
+  if (assetId !== null) return assetId
+  const otherAssets = getOtherAssets(node)
+  const otherAsset = otherAssets.filter(otherAsset => otherAsset.assetId !== null)[0]
+  return otherAsset?.assetId ?? null
+}
+
 describe.sequential('XCM - e2e', () => {
   describe.sequential('RelayToPara', () => {
     it('should create transfer tx - DOT from Relay to Para', async () => {
@@ -81,12 +90,18 @@ describe.sequential('XCM - e2e', () => {
         api = await createApiInstanceForNode(node)
       })
       it(`should create transfer tx - ParaToPara ${asset} from ${node} to ${nodeTo}`, async () => {
+        const isAssetHub = nodeTo === 'AssetHubPolkadot' || nodeTo === 'AssetHubKusama'
+        const currency = isAssetHub
+          ? findAssetIdForAssetHub(nodeTo, asset ?? '')
+          : assetId ?? asset ?? 'DOT'
+        if (currency === null) return
+        if (isAssetHub) console.log(`AssetHub ${nodeTo} currency: ${currency}`)
         expect(nodeTo).toBeDefined()
         try {
           const tx = await Builder(api)
             .from(node)
             .to(nodeTo ?? MOCK_POLKADOT_NODE)
-            .currency(assetId ?? asset ?? 'DOT')
+            .currency(currency)
             .amount(MOCK_AMOUNT)
             .address(MOCK_ADDRESS)
             .build()
