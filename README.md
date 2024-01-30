@@ -62,9 +62,10 @@ NOTES:
 - You can now add optional parameter useKeepAlive which will ensure, that you send more than existential deposit.
 ```
 
-#### Builder pattern:
+### Builder pattern:
+
+##### Transfer assets from Parachain to Parachain
 ```ts
-//Transfer assets from Parachain to Parachain
 await Builder(/*node api - optional*/)
       .from(NODE)
       .to(NODE/*,customParaId - optional*/)
@@ -82,8 +83,9 @@ await Builder()
       .address('4FCUYBMe2sbq5KosN22emsPUydS8XUwZhJ6VUZesmouGu6qd')
       .build()
 */
-
-//Transfer assets from the Relay chain to Parachain
+```
+##### Transfer assets from the Relay chain to Parachain
+```ts
 await Builder(/*node api - optional*/)
       .to(NODE/*,customParaId - optional*/)
       .amount(amount)
@@ -97,8 +99,9 @@ await Builder()
       .address('141NGS2jjZca5Ss2Nysth2stJ6rimcnufCNHnh5ExSsftn7U')
       .build()
 */
-
-//Transfer assets from Parachain to Relay chain
+```
+##### Transfer assets from Parachain to Relay chain
+```ts
 await Builder(/*node api - optional*/)
       .from(NODE)
       .amount(amount)
@@ -112,24 +115,28 @@ await Builder()
       .address('141NGS2jjZca5Ss2Nysth2stJ6rimcnufCNHnh5ExSsftn7U')
       .build()
 */
-
-//Use keepAlive option
+```
+##### Use keepAlive option
+```ts
 await Builder(/*node api - optional*/)
       .from(NODE)
       .amount(amount)
       .address(address)
       .useKeepAlive(destinationParaAPI)
       .build()
-
-//Close HRMP channels
+```
+##### Close HRMP channels
+```ts
 Builder(api)
 .from(NODE)
 .closeChannel()
 .inbound(inbound)
 .outbound(outbound)
 .build()
+```
 
-//Open HRMP channels
+##### Open HRMP channels
+```ts
 Builder(api)
 .from(NODE)
 .to(NODE)
@@ -139,81 +146,98 @@ Builder(api)
 .build()'
 ```
 
-#### Function pattern:
+### Function pattern:
 
+
+##### Transfer assets from Parachain to Parachain
 ```ts
-//Transfer assets from Parachain to Parachain
 await paraspell.xcmPallet.send(api?: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string, destination: destination  Parachain  ID, paraIdTo?: number,)
-
-//Transfer assets from Parachain to Relay chain
+```
+##### Transfer assets from Parachain to Relay chain
+```ts
 await paraspell.xcmPallet.send(api?: ApiPromise, origin: origin  Parachain  name  string, amount: any, to: destination  address  string, paraIdTo?: number,)
-
-//Transfer assets from Relay chain to Parachain
+```
+##### Transfer assets from Relay chain to Parachain
+```ts
 await paraspell.xcmPallet.transferRelayToPara(api?: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string,paraIdTo?: number,)
-
-//Use keepAlive option
+```
+##### Use keepAlive option
+```ts
 await paraspell.xcmPallet.send(api?: ApiPromise, destination: TNode, amount: string | number | bigint, to: string, paraIdTo?: number, destApiForKeepAlive?: ApiPromise)
-
-//Close HRMP channels
+```
+##### Close HRMP channels
+```ts
 paraspell.closeChannels.closeChannel(api: ApiPromise, origin: origin  Parachain  ID, inbound: number, outbound: number)
-
-//Open HRMP channels
+```
+##### Open HRMP channels
+```ts
 paraspell.openChannels.openChannel(api: ApiPromise, origin: origin  Parachain  ID, destination: destination  Parachain  ID, maxSize: number, maxMessageSize: number)
 ```
 
-#### Asset queries:
+### Asset queries:
 
+##### Retrieve assets object from assets.json for particular node including information about native and foreign assets
 ```ts
-//Returns assets object from assets.json for particular node including information about native and foreign assets
 paraspell.assets.getAssetsObject(node: TNode)
-
-//Returns foreign assetId for a particular node and asset symbol
+```
+##### Retrieve foreign assetId for a particular node and asset symbol
+```ts
 paraspell.assets.getAssetId(node: TNode, symbol: string)
-
-//Returns the symbol of the relay chain for a particular node. Either "DOT" or "KSM"
+```
+##### Retrieve the symbol of the relay chain for a particular node. Either "DOT" or "KSM"
+```ts
 paraspell.assets.getRelayChainSymbol(node: TNode)
-
-//Returns string array of native assets symbols for particular node
+```
+##### Retrieve string array of native assets symbols for particular node
+```ts
 paraspell.assets.getNativeAssets(node: TNode)
-
-//Returns object array of foreign assets for a particular node. Each object has a symbol and assetId property
+```
+##### Retrieve object array of foreign assets for a particular node. Each object has a symbol and assetId property
+```ts
 paraspell.assets.getOtherAssets(node: TNode)
-
-//Returns string array of all assets symbols. (native and foreign assets are merged into a single array)
+```
+##### Retrieve string array of all assets symbols. (native and foreign assets are merged into a single array)
+```ts
 paraspell.assets.getAllAssetsSymbols(node: TNode)
-
-//Checks if a node supports a particular asset. (Both native and foreign assets are searched). Returns boolean
+```
+##### Check if a node supports a particular asset. (Both native and foreign assets are searched). Returns boolean
+```ts
 paraspell.assets.hasSupportForAsset(node: TNode, symbol: string)
-
-//Get decimals for specific asset
+```
+##### Get decimals for specific asset
+```ts
 paraspell.assets.getAssetDecimals(node: TNode, symbol: string)
-
-//Get specific node id
+```
+##### Get specific node id
+```ts
 paraspell.assets.getParaId(node: TNode)
-
-//Get specific TNode from nodeID
+```
+##### Get specific TNode from nodeID
+```ts
 paraspell.assets.getTNode(nodeID: number)
-
-//Import all compatible nodes as constant:
+```
+##### Import all compatible nodes as constant
+```ts
 paraspell.NODE_NAMES
 ```
 
-#### Parachain XCM Pallet queries
-
-```js
+### Parachain XCM Pallet queries
+```ts
 import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk'
-
-//Returns default pallet for specific parachain node
+```
+##### Retrieve default pallet for specific Parachain 
+```ts
 getDefaultPallet(node: TNode)
-
-//Returns an array of supported pallets for a specific parachain node.
+```
+##### Returns an array of supported pallets for a specific Parachain
+```ts
 getSupportedPallets(node: TNode)
-
-//Prints all pallets that are currently supported
+```
+##### Print all pallets that are currently supported
+```ts
 console.log(SUPPORTED_PALLETS)
 ```
-
-#### Existential deposit queries
+### Existential deposit queries
 ```ts
 import { getExistentialDeposit } from "@paraspell/sdk";
 
