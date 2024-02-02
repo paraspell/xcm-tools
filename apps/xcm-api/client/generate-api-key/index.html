@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lightspell ⚡️</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="script.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header-container">
+        <img src="../logo.png" alt="Lightspell Logo" class="header-logo" />
+        <p class="header-slogan">
+          Your gateway to enhanced cross-chain experiences!
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Generate Your API Key</h2>
+        <p class="section-content">
+          Unlock the full potential of XCM-API by generating your own API key.
+          With an API key, you can access the enhanced features and higher
+          request limits. Start building cross-chain applications seamlessly!
+        </p>
+        <div class="subsection">
+          <h3 class="subsection-title">Requests Limitations</h3>
+          <p class="subsection-content">
+            Without an API key, you have a limit of 20 requests per minute. Once
+            you generate an API key, your limit increases to 100 requests per
+            minute, allowing you to build and scale your applications
+            effectively.
+          </p>
+        </div>
+        <form
+          class="api-form"
+          action=""
+          method="GET"
+          onsubmit="submitForm(event)"
+        >
+          <div
+            class="g-recaptcha"
+            data-sitekey="6LfL0oYnAAAAAEwDq-0SBKDRF1WyIK5H8LV8eHcI"
+          ></div>
+          <p id="captcha-message">Please complete the reCAPTCHA.</p>
+          <!-- <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required /> -->
+          <button type="submit">Generate API Key</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
