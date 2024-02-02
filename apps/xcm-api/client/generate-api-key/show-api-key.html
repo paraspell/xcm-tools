@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>API Key</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        max-width: 400px;
+        text-align: center;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      h2 {
+        margin-bottom: 10px;
+      }
+      p {
+        margin-bottom: 20px;
+      }
+      #api-key {
+        display: block;
+        background-color: #f9f9f9;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        word-break: break-all;
+      }
+      #copy-button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Your Generated API Key</h2>
+      <p>Copy and save this API key for future use:</p>
+      <div id="api-key"></div>
+      <button id="copy-button">Copy</button>
+    </div>
+    <script>
+      var apiKey = sessionStorage.getItem('api_key');
+      if (apiKey) {
+        var apiKeyDisplay = document.getElementById('api-key');
+        apiKeyDisplay.textContent = apiKey;
+
+        var copyButton = document.getElementById('copy-button');
+        copyButton.addEventListener('click', function () {
+          // Copy the API key to the clipboard
+          var textArea = document.createElement('textarea');
+          textArea.value = apiKey;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+
+          copyButton.textContent = 'Copied!';
+        });
+      } else {
+        console.error('API key not found in session.');
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Higher Request Limit Form</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Your CSS styles here */
+      body {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        color: #333;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .section {
+        margin-bottom: 30px;
+      }
+      .section-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+      .section-content {
+        font-size: 16px;
+      }
+      .api-form {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .api-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+      .api-form input[type='text'],
+      .api-form input[type='email'],
+      .api-form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      .api-form textarea {
+        width: 100%;
+        max-width: 100%; /* Add this line to ensure the textarea doesn't exceed the container's width */
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .api-form input[type='number'] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      .api-form button[type='submit'] {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .g-recaptcha {
+        margin-top: 15px; /* Add top padding */
+        margin-bottom: 15px; /* Add bottom padding */
+      }
+      .header-container {
+        color: #333;
+        padding: 20px 0;
+        text-align: center;
+      }
+      .header-logo {
+        max-width: 200px;
+        display: block;
+        margin: 0 auto;
+      }
+      .header-slogan {
+        font-size: 18px;
+        margin-top: 10px;
+      }
+    </style>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header-container">
+        <img src="../logo.png" alt="Lightspell Logo" class="header-logo" />
+        <p class="header-slogan">
+          Your gateway to enhanced cross-chain experiences!
+        </p>
+      </div>
+      <div class="section">
+        <h2 class="section-title">Request Higher Request Limit</h2>
+        <p class="section-content">
+          If your use case requires a higher requests per minute limit than the
+          standard 100, you can submit a request for consideration. Requests for
+          higher limits are manually reviewed by our team to ensure fair usage
+          and optimal service quality. Please provide the following details in
+          your request:
+        </p>
+        <ul class="section-content">
+          <li>Email Address for Notification</li>
+          <li>Your API Key</li>
+          <li>Reason for Higher Limit (How you plan to use the API)</li>
+          <li>Requested Requests Per Minute Limit</li>
+        </ul>
+        <p class="section-content">
+          After your request is submitted, our team will review it to assess its
+          compatibility with your intended usage. You will be notified via the
+          provided email address once the review process is complete.
+        </p>
+        <form
+          class="api-form"
+          action="/auth/higher-request-limit-form"
+          method="POST"
+          onsubmit="onSubmitForm(event)"
+        >
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+          <label for="api_key">API Key:</label>
+          <input
+            type="text"
+            id="api_key"
+            name="api_key"
+            pattern="[\w\-]+\.[\w\-]+\.[\w\-]+"
+            required
+          />
+
+          <label for="reason">Reason for Higher Limit:</label>
+          <textarea id="reason" name="reason" rows="4" required></textarea>
+          <label for="requestedLimit"
+            >Requested Requests Per Minute Limit:</label
+          >
+          <input
+            type="number"
+            id="requested-limit"
+            name="requestedLimit"
+            min="1"
+            required
+          />
+          <div
+            class="g-recaptcha"
+            data-sitekey="6LfL0oYnAAAAAEwDq-0SBKDRF1WyIK5H8LV8eHcI"
+          ></div>
+          <p id="captcha-message" style="display: none; color: red">
+            Please complete the reCAPTCHA.
+          </p>
+          <button type="submit">Submit Request</button>
+        </form>
+      </div>
+    </div>
+    <script>
+      function onSubmitForm(event) {
+        var response = grecaptcha.getResponse();
+        var captchaMessage = document.getElementById('captcha-message');
+
+        if (response.length === 0) {
+          event.preventDefault();
+          captchaMessage.style.display = 'block';
+        } else {
+          captchaMessage.style.display = 'none';
+        }
+      }
+    </script>
+  </body>
+</html>

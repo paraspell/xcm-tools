@@ -13,17 +13,19 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       - uses: actions/checkout@v3
       - run: corepack enable
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
-          cache: 'pnpm'
+          node-version: 18
+          cache: "pnpm"
       - run: pnpm install
+      - run: pnpm build
       - run: pnpm compile
       - run: pnpm format:check
       - run: pnpm lint:check
       - run: pnpm test
-      - run: pnpm build
-      - uses: codecov/codecov-action@v3
