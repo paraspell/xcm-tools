@@ -2,7 +2,6 @@
 node_modules
 *.log*
 .DS_Store
-coverage
+.turbo
 dist
-types
-.conf*
+coverage

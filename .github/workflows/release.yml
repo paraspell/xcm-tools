@@ -7,35 +7,38 @@ name: release-please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       - uses: google-github-actions/release-please-action@v4
         id: release
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
       - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.releases_created }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 16
-          registry-url: 'https://registry.npmjs.org'
-        if: ${{ steps.release.outputs.release_created }}
+          node-version: 18
+          registry-url: "https://registry.npmjs.org"
+        if: ${{ steps.release.outputs.releases_created }}
       - uses: pnpm/action-setup@v2
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.releases_created }}
       - run: pnpm install
-        if: ${{ steps.release.outputs.release_created }}
-      - run: pnpm compile
-        if: ${{ steps.release.outputs.release_created }}
-      - run: pnpm format:check
-        if: ${{ steps.release.outputs.release_created }}
-      - run: pnpm lint:check
-        if: ${{ steps.release.outputs.release_created }}
-      - run: pnpm test
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.releases_created }}
       - run: pnpm build
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.releases_created }}
+      - run: pnpm compile
+        if: ${{ steps.release.outputs.releases_created }}
+      - run: pnpm format:check
+        if: ${{ steps.release.outputs.releases_created }}
+      - run: pnpm lint:check
+        if: ${{ steps.release.outputs.releases_created }}
+      - run: pnpm test
+        if: ${{ steps.release.outputs.releases_created }}
       - run: pnpm config set '//registry.npmjs.org/:_authToken' "${NODE_AUTH_TOKEN}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        if: ${{ steps.release.outputs.release_created }}
-      - run: pnpm publish --no-git-checks --access=public
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.releases_created }}
+      - run: pnpm publish -r --no-git-checks --access=public
+        if: ${{ steps.release.outputs.releases_created }}

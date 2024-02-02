@@ -1,0 +1,111 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  background-color: #f4f4f4;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.section-content {
+  font-size: 16px;
+}
+
+.logo {
+  max-width: 250px;
+  margin: 0 auto;
+  display: block;
+}
+
+.api-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.api-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.api-form input[type='text'],
+.api-form input[type='email'] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.api-form button[type='submit'] {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.header-container {
+  color: #333;
+  padding: 20px 0;
+  text-align: center;
+}
+.header-logo {
+  max-width: 200px;
+  display: block;
+  margin: 0 auto;
+}
+.header-slogan {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+#captcha-message {
+  display: none;
+  color: red;
+  font-size: 14px;
+  margin: 0;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+@media only screen and (max-width: 500px) {
+  .g-recaptcha {
+    transform: scale(0.77);
+    transform-origin: 0 0;
+  }
+}
+
+@media only screen and (max-width: 300px) {
+  .g-recaptcha {
+    transform: scale(0.66);
+    transform-origin: 0 0;
+  }
+}

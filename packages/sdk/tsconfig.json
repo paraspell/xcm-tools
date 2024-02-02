@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "e2e", "vitest.config.e2e.ts", "vitest.config.ts", ".eslintrc.cjs"]
+}

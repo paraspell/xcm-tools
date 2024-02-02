@@ -1,0 +1,41 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+import type { ApiPromise } from '@polkadot/api';
+import type { QueryableStorageMultiArg } from '@polkadot/api/types';
+
+interface CallOptions<T> {
+  defaultValue?: T;
+  transform?: (value: any, api: ApiPromise) => T;
+}
+
+interface UseCallMultiOptions<T> {
+  api: ApiPromise;
+  calls?: Array<QueryableStorageMultiArg<'promise'>> | null | false;
+  options?: CallOptions<T>;
+}
+
+export async function fetchCallMulti<T>({
+  api,
+  calls,
+  options = {},
+}: UseCallMultiOptions<T>): Promise<T> {
+  if (!calls || calls.length === 0 || !api.isConnected) {
+    return options.defaultValue as T;
+  }
+
+  const included = calls.map((c) => !!c && (!Array.isArray(c) || !!c[0]));
+  const filtered = calls.filter((_, index) => included[index]);
+
+  if (filtered.length > 0) {
+    try {
+      const values = await api.queryMulti(filtered);
+      const transformedValues = options.transform ? options.transform(values, api) : values;
+
+      return transformedValues as T;
+    } catch (error) {
+      console.error(error);
+      return options.defaultValue as T;
+    }
+  } else {
+    return options.defaultValue as T;
+  }
+}
