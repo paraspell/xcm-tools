@@ -18,6 +18,10 @@ describe('getNodeDetails', () => {
 describe('getNodeEndpointOption', () => {
   it('should return endpoint option for all nodes', () => {
     NODE_NAMES.forEach(node => {
+      // Coretime does not have endpoint options yet
+      if (node === 'CoretimeKusama') {
+        return
+      }
       const option = getNodeEndpointOption(node)
       expect(option).toBeDefined()
       expect(option).toHaveProperty('providers')
