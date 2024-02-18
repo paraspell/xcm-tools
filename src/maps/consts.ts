@@ -36,6 +36,7 @@ import InvArchTinker from '../nodes/supported/InvArchTinker'
 import Karura from '../nodes/supported/Karura'
 import AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
 import AssetHubKusama from '../nodes/supported/AssetHubKusama'
+import CoretimeKusama from '../nodes/supported/CoretimeKusama'
 import Encointer from '../nodes/supported/Encointer'
 import Robonomics from '../nodes/supported/Robonomics'
 import Astar from '../nodes/supported/Astar'
@@ -71,6 +72,7 @@ export const NODE_NAMES = [
   'Moonbeam',
   'Parallel',
   'AssetHubKusama',
+  'CoretimeKusama',
   'Encointer',
   'Altair',
   'Amplitude',
@@ -131,6 +133,7 @@ export const nodes: Record<TNode, ParachainNode> = {
   Moonbeam: new Moonbeam(),
   Parallel: new Parallel(),
   AssetHubKusama: new AssetHubKusama(),
+  CoretimeKusama: new CoretimeKusama(),
   Encointer: new Encointer(),
   Altair: new Altair(),
   Amplitude: new Amplitude(),

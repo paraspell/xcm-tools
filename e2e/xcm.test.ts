@@ -32,7 +32,12 @@ const getAssetsForNode = (node: TNode): string[] => {
 }
 
 const filteredNodes = NODE_NAMES.filter(
-  node => node !== 'Quartz' && node !== 'Clover' && node !== 'Bitgreen' && node !== 'Bajun'
+  node =>
+    node !== 'Quartz' &&
+    node !== 'Clover' &&
+    node !== 'Bitgreen' &&
+    node !== 'Bajun' &&
+    node !== 'CoretimeKusama'
 )
 
 const findTransferableNodeAndAsset = (

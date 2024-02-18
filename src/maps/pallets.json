@@ -19,6 +19,10 @@
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
   },
+  "CoretimeKusama": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
   "Centrifuge": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens", "OrmlXTokens"]

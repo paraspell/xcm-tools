@@ -4076,6 +4076,18 @@
       }
     ]
   },
+  "CoretimeKusama": {
+    "paraId": 1005,
+    "relayChainAssetSymbol": "KSM",
+    "nativeAssetSymbol": "KSM",
+    "nativeAssets": [
+      {
+        "symbol": "KSM",
+        "decimals": 12
+      }
+    ],
+    "otherAssets": []
+  },
   "Turing": {
     "paraId": 2114,
     "relayChainAssetSymbol": "KSM",
