@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.2](https://github.com/paraspell/xcm-sdk/compare/v4.0.1...v4.0.2) (2024-02-19)
+
+
+### Bug Fixes
+
+* Add CoretimeKusama ([65b98cf](https://github.com/paraspell/xcm-sdk/commit/65b98cff70d390c6b918786576504c80ca1aa18e))
+* Fix e2e tests when the destination parachain is AssetHub ([44971f8](https://github.com/paraspell/xcm-sdk/commit/44971f88f5e78131308b4a66a1421ff568382aff))
+* Update README.md ([4b6580c](https://github.com/paraspell/xcm-sdk/commit/4b6580c7799b6a48bccd73f7de14ef24ceb1451f))
+* Update README.md ([d16147c](https://github.com/paraspell/xcm-sdk/commit/d16147c482cb268f3686366b58cebbfaef02eed0))
+* Update README.md ([563f84f](https://github.com/paraspell/xcm-sdk/commit/563f84f6b09f4e147597dad6ad4c45813355f68c))
+* Update README.md ([96b807a](https://github.com/paraspell/xcm-sdk/commit/96b807a6e7419e13692540b2a6a39edd848ddc63))
+* Update README.md ([4a4be79](https://github.com/paraspell/xcm-sdk/commit/4a4be79608fcf8114025a9781804e8817a833151))
+
 ## [4.0.1](https://github.com/paraspell/xcm-sdk/compare/v4.0.0...v4.0.1) (2024-01-26)
 
 
