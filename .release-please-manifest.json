@@ -1,4 +1,5 @@
 {
   "@paraspell/sdk": "4.0.1",
-  "@paraspell/xcm-router": "0.0.9"
+  "@paraspell/xcm-router": "0.0.9",
+  ".": "1.0.0"
 }
