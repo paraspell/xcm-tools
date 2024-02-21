@@ -1,4 +1,4 @@
 {
-  "packages/sdk": "4.1.0",
-  "packages/xcm-router": "0.0.9"
+  "packages/xcm-router": "0.1.0",
+  "packages/sdk": "4.1.0"
 }
