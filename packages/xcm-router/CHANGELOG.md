@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v0.1.0...xcm-router-v0.2.0) (2024-02-21)
+
+
+### Features
+
+* Migrate to a pnpm monorepo 🗂️ ([e8dc883](https://github.com/paraspell/xcm-tools/commit/e8dc883900ab2cc31e293efd205e93478619e572))
+
+
+### Bug Fixes
+
+* Add xcm router description ([70f674c](https://github.com/paraspell/xcm-tools/commit/70f674c84693814073a33f9ec38548fa83e3b782))
+
+
+### Miscellaneous Chores
+
+* **main:** release xcm-router 0.1.0 ([#153](https://github.com/paraspell/xcm-tools/issues/153)) ([7d3380c](https://github.com/paraspell/xcm-tools/commit/7d3380c5edbae22515d7991578e48d73988df86b))
+
 ## [0.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v0.0.9...xcm-router-v0.1.0) (2024-02-21)
 
 
