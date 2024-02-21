@@ -1,6 +1,10 @@
-# SpellRouter playground
+# XCM-Tools Playground 🛝
 
-This project is a quick start guide for a Vite React project. It uses `pnpm` for package management.
+Following Playground serves as testing/preview tool for our set of state-of-the-art XCM tools: [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk), [XCM API](https://github.com/paraspell/xcm-tools/tree/main/apps/xcm-api) & [XCM Router](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-router)
+
+The playground is now also deployed: [https://playground.paraspell.xyz/](https://playground.paraspell.xyz/)
+
+![Simple 3d](https://github.com/paraspell/xcm-tools/assets/55763425/336bb31d-202f-4e53-9324-54ab6560b6bc)
 
 ## Prerequisites
 
@@ -9,40 +13,21 @@ Before you begin, ensure you have met the following requirements:
 - You have installed [Node.js](https://nodejs.org/en/download/)
 - You have installed [pnpm](https://pnpm.io/installation)
 
-## Installing Vite React Project
+## Installing Playground
 
 To install dependencies, follow these steps:
 
 ```bash
-yarn
+pnpm install
 ```
 
-Only pnpm is supported for now.
+## Using Playground
 
-## Using Vite React Project
-
-To use Vite React Project, follow these steps:
+To use Playground, follow these steps:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
-This will start the development server. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+This will start the development server. Open the link given during startup to access the playground.
 
-## Running Tests
-
-To run tests, use the following command:
-
-```bash
-yarn test
-```
-
-## Building the Project
-
-To build the project for production, use the following command:
-
-```bash
-yarn build
-```
-
-This will create a `dist` directory with the production build.
