@@ -26,6 +26,25 @@ packages | - XCM SDK
          | - XCM Router
 ```
 
+## 💻 Monorepo commands
+These commands will be run on all packages in monorepo.
+
+- Run compilation using `pnpm compile`
+
+- Run formatter using `pnpm format:check`
+
+- Run linter using `pnpm lint`
+
+- Run unit tests using `pnpm test`
+  
+- Build all packages and apps using `pnpm build`
+
+To run command only for specific package or app in monorepo use:
+
+`pnpm --filter <package_selector> <command>` or cd into appropriate folder.
+
+<br/>
+
 Tools supported by:
 <div align="center">
       <img width="200" alt="version" src="https://user-images.githubusercontent.com/55763425/211145923-f7ee2a57-3e63-4b7d-9674-2da9db46b2ee.png" />
