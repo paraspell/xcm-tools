@@ -60,13 +60,14 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Manta: 'assets.metadata',
   Genshiro: null, // Assets metadata entries have no symbol property (Only GENS paraToPara for now)
   Nodle: null, // Only NODL paraToPara for now
-  OriginTrail: 'assets.metadata',
+  NeuroWeb: 'assets.metadata',
   Pendulum: '', // Only PEN paraToPara for now
   Polkadex: 'assets.asset',
   Zeitgeist: 'assetRegistry.metadata',
   Collectives: null,
   Phala: 'assets.metadata',
-  Khala: 'assets.metadata'
+  Khala: 'assets.metadata',
+  CoretimeKusama: null
 }
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {

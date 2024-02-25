@@ -10,9 +10,9 @@ import {
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
-class OriginTrail extends ParachainNode implements IPolkadotXCMTransfer {
+class NeuroWeb extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('OriginTrail', 'origintrail-parachain', 'polkadot', Version.V3)
+    super('NeuroWeb', 'origintrail-parachain', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
@@ -24,4 +24,4 @@ class OriginTrail extends ParachainNode implements IPolkadotXCMTransfer {
   }
 }
 
-export default OriginTrail
+export default NeuroWeb

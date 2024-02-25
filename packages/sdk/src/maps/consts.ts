@@ -48,7 +48,7 @@ import Shiden from '../nodes/supported/Shiden'
 import Manta from '../nodes/supported/Manta'
 import Genshiro from '../nodes/supported/Genshiro'
 import Nodle from '../nodes/supported/Nodle'
-import OriginTrail from '../nodes/supported/OriginTrail'
+import NeuroWeb from '../nodes/supported/NeuroWeb'
 import Pendulum from '../nodes/supported/Pendulum'
 import Polkadex from '../nodes/supported/Polkadex'
 import Zeitgeist from '../nodes/supported/Zeitgeist'
@@ -103,7 +103,7 @@ export const NODE_NAMES = [
   'Manta',
   'Genshiro',
   'Nodle',
-  'OriginTrail',
+  'NeuroWeb',
   'Pendulum',
   'Polkadex',
   'Zeitgeist',
@@ -161,7 +161,7 @@ export const nodes: Record<TNode, ParachainNode> = {
   Manta: new Manta(),
   Genshiro: new Genshiro(),
   Nodle: new Nodle(),
-  OriginTrail: new OriginTrail(),
+  NeuroWeb: new NeuroWeb(),
   Pendulum: new Pendulum(),
   Polkadex: new Polkadex(),
   Zeitgeist: new Zeitgeist(),

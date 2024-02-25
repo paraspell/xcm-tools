@@ -183,7 +183,7 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
-  "OriginTrail": {
+  "NeuroWeb": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
   },
