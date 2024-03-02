@@ -2,14 +2,9 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { type Extrinsic, type TNode, type TSerializedApiCall } from '../../types'
-import AddLiquidityBuilder, { type AssetAAddLiquidityBuilder } from './AddLiquidityBuilder'
-import BuyBuilder, { type AssetOutBuyBuilder } from './BuyBuilder'
 import CloseChannelBuilder, { type InboundCloseChannelBuilder } from './CloseChannelBuilder'
-import CreatePoolBuilder, { type AssetACreatePoolBuilder } from './CreatePoolBuilder'
 import OpenChannelBuilder, { type MaxSizeOpenChannelBuilder } from './OpenChannelBuilder'
 import RelayToParaBuilder from './RelayToParaBuilder'
-import RemoveLiquidityBuilder, { type AssetARemoveLiquidityBuilder } from './RemoveLiquidityBuilder'
-import SellBuilder, { type AssetInSellBuilder } from './SellBuilder'
 import ParaToParaBuilder from './ParaToParaBuilder'
 import ParaToRelayBuilder from './ParaToRelayBuilder'
 import { MissingApiPromiseError } from '../../errors/MissingApiPromiseError'
@@ -77,41 +72,6 @@ class GeneralBuilder {
 
   to(node: TNode, paraIdTo?: number): AmountBuilder {
     return RelayToParaBuilder.create(this.api, node, paraIdTo)
-  }
-
-  addLiquidity(): AssetAAddLiquidityBuilder {
-    if (this.api === undefined) {
-      throw new MissingApiPromiseError()
-    }
-    return AddLiquidityBuilder.create(this.api)
-  }
-
-  removeLiquidity(): AssetARemoveLiquidityBuilder {
-    if (this.api === undefined) {
-      throw new MissingApiPromiseError()
-    }
-    return RemoveLiquidityBuilder.create(this.api)
-  }
-
-  buy(): AssetOutBuyBuilder {
-    if (this.api === undefined) {
-      throw new MissingApiPromiseError()
-    }
-    return BuyBuilder.create(this.api)
-  }
-
-  sell(): AssetInSellBuilder {
-    if (this.api === undefined) {
-      throw new MissingApiPromiseError()
-    }
-    return SellBuilder.create(this.api)
-  }
-
-  createPool(): AssetACreatePoolBuilder {
-    if (this.api === undefined) {
-      throw new MissingApiPromiseError()
-    }
-    return CreatePoolBuilder.create(this.api)
   }
 }
 

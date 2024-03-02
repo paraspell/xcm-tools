@@ -34,7 +34,6 @@ export interface TNodeAssets {
 }
 export type TAssetJsonMap = Record<TNode, TNodeAssets>
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
-export type Bool = 'Yes' | 'No'
 export type TPallet = (typeof SUPPORTED_PALLETS)[number]
 export interface TPalletMap {
   defaultPallet: TPallet
@@ -93,13 +92,76 @@ export interface PolkadotXCMTransferInput {
   serializedApiCallEnabled?: boolean
 }
 
-export interface TTransferRelayToParaOptions {
-  api: ApiPromise
-  destination: TNode
+export type TAmount = string | number | bigint
+
+export interface TSendBaseOptions {
   address: string
-  amount: string
+  destination?: TNode
   paraIdTo?: number
   destApiForKeepAlive?: ApiPromise
+}
+
+export interface TSendOptions extends TSendBaseOptions {
+  api?: ApiPromise
+  origin: TNode
+  currency: string | number | bigint
+  amount: TAmount
+}
+
+export interface TSendOptionsCommon extends TSendOptions {
+  serializedApiCallEnabled?: boolean
+}
+
+export interface TSendInternalOptions extends TSendBaseOptions {
+  api: ApiPromise
+  currencySymbol: string | undefined
+  currencyId: string | undefined
+  amount: string
+  serializedApiCallEnabled?: boolean
+}
+
+interface TRelayToParaBaseOptions {
+  destination: TNode
+  address: string
+  paraIdTo?: number
+  destApiForKeepAlive?: ApiPromise
+}
+
+export interface TRelayToParaOptions extends TRelayToParaBaseOptions {
+  api?: ApiPromise
+  amount: TAmount
+}
+
+export interface TRelayToParaInternalOptions extends TRelayToParaBaseOptions {
+  api: ApiPromise
+  amount: string
+}
+
+export interface TRelayToParaCommonOptions extends TRelayToParaOptions {
+  serializedApiCallEnabled?: boolean
+}
+
+export interface TOpenChannelOptions {
+  api: ApiPromise
+  origin: TNode
+  destination: TNode
+  maxSize: number
+  maxMessageSize: number
+}
+
+export interface TOpenChannelInternalOptions extends TOpenChannelOptions {
+  serializedApiCallEnabled?: boolean
+}
+
+export interface TCloseChannelOptions {
+  api: ApiPromise
+  origin: TNode
+  inbound: number
+  outbound: number
+}
+
+export interface TCloseChannelInternalOptions extends TCloseChannelOptions {
+  serializedApiCallEnabled?: boolean
 }
 
 export interface IPolkadotXCMTransfer {

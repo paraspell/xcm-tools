@@ -12,9 +12,10 @@ import {
   type IPolkadotXCMTransfer,
   Version,
   type TSerializedApiCall,
-  type TTransferRelayToParaOptions,
   Parents,
-  type IXTransferTransfer
+  type IXTransferTransfer,
+  type TRelayToParaInternalOptions,
+  type TSendInternalOptions
 } from '../types'
 import { generateAddressPayload, getFees, getAllNodeProviders, createApiInstance } from '../utils'
 import {
@@ -77,16 +78,17 @@ abstract class ParachainNode {
     return this._assetCheckEnabled
   }
 
-  transfer(
-    api: ApiPromise,
-    currencySymbol: string | undefined,
-    currencyId: string | undefined,
-    amount: string,
-    to: string,
-    destination?: TNode,
-    paraIdTo?: number,
-    serializedApiCallEnabled = false
-  ): Extrinsic | TSerializedApiCall {
+  transfer(options: TSendInternalOptions): Extrinsic | TSerializedApiCall {
+    const {
+      api,
+      currencySymbol,
+      currencyId,
+      amount,
+      address,
+      destination,
+      paraIdTo,
+      serializedApiCallEnabled = false
+    } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
     const paraId = destination !== undefined ? paraIdTo ?? getParaId(destination) : undefined
 
@@ -100,7 +102,7 @@ abstract class ParachainNode {
           api,
           scenario,
           'XTokens',
-          to,
+          address,
           this.version,
           paraId
         ),
@@ -117,7 +119,7 @@ abstract class ParachainNode {
         currency: currencySymbol,
         currencyID: currencyId,
         amount,
-        recipientAddress: to,
+        recipientAddress: address,
         paraId,
         origin: this.node,
         destination,
@@ -131,7 +133,7 @@ abstract class ParachainNode {
           api,
           scenario,
           'PolkadotXcm',
-          to,
+          address,
           this.version,
           paraId
         ),
@@ -145,7 +147,7 @@ abstract class ParachainNode {
     }
   }
 
-  transferRelayToPara(options: TTransferRelayToParaOptions): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
     return {
       module: 'xcmPallet',
       section: 'reserveTransferAssets',

@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
-import { type ApiPromise } from '@polkadot/api'
 import { NoXCMSupportImplementedError } from '../../errors'
 import { getParaId } from '../../pallets/assets'
 import {
@@ -9,10 +8,10 @@ import {
   Version,
   type Extrinsic,
   type TSerializedApiCall,
-  type TNode,
   type TScenario,
   type IXTokensTransfer,
-  type XTokensTransferInput
+  type XTokensTransferInput,
+  type TSendInternalOptions
 } from '../../types'
 import { generateAddressPayload, getFees } from '../../utils'
 import ParachainNode, { supportsPolkadotXCM, supportsXTokens } from '../ParachainNode'
@@ -35,16 +34,17 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
     return XTokensTransferImpl.transferXTokens(input, input.currencyID)
   }
 
-  transfer(
-    api: ApiPromise,
-    currencySymbol: string | undefined,
-    currencyId: string | undefined,
-    amount: string,
-    to: string,
-    destination?: TNode,
-    paraIdTo?: number,
-    serializedApiCallEnabled = false
-  ): Extrinsic | TSerializedApiCall {
+  transfer(options: TSendInternalOptions): Extrinsic | TSerializedApiCall {
+    const {
+      api,
+      currencySymbol,
+      currencyId,
+      amount,
+      address,
+      destination,
+      paraIdTo,
+      serializedApiCallEnabled = false
+    } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
     const paraId = destination !== undefined ? paraIdTo ?? getParaId(destination) : undefined
     const node = this.node
@@ -58,7 +58,7 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
           api,
           scenario,
           'XTokens',
-          to,
+          address,
           this.version,
           paraId
         ),
@@ -77,7 +77,7 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
           api,
           scenario,
           'PolkadotXcm',
-          to,
+          address,
           this.version,
           paraId
         ),

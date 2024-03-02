@@ -2,16 +2,15 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { vi, describe, expect, it, beforeEach } from 'vitest'
-import { type Bool, type TNode } from '../../types'
+import { type TNode } from '../../types'
 import { createApiInstance } from '../../utils'
 import * as hrmp from '../../pallets/hrmp'
 import * as parasSudoWrapper from '../../pallets/parasSudoWrapper'
 import * as xcmPallet from '../../pallets/xcmPallet'
-import * as xyk from '../../pallets/xyk'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { Builder } from './Builder'
 
-const WS_URL = 'wss://para.f3joule.space'
+const WS_URL = 'wss://subsocial-rpc.dwellir.com'
 const NODE: TNode = 'Acala'
 const NODE_2: TNode = 'Acala'
 const AMOUNT = 1000
@@ -44,16 +43,14 @@ describe('Builder', () => {
       .address(ADDRESS)
       .build()
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith({
       api,
-      NODE,
-      CURRENCY,
-      AMOUNT,
-      ADDRESS,
-      NODE_2,
-      undefined,
-      undefined
-    )
+      origin: NODE,
+      currency: CURRENCY,
+      amount: AMOUNT,
+      address: ADDRESS,
+      destination: NODE_2
+    })
   })
 
   it('should initiatie a para to para transfer with custom paraId', async () => {
@@ -67,16 +64,15 @@ describe('Builder', () => {
       .address(ADDRESS)
       .build()
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith({
       api,
-      NODE,
-      CURRENCY,
-      AMOUNT,
-      ADDRESS,
-      NODE_2,
-      PARA_ID_TO,
-      undefined
-    )
+      origin: NODE,
+      currency: CURRENCY,
+      amount: AMOUNT,
+      address: ADDRESS,
+      destination: NODE_2,
+      paraIdTo: PARA_ID_TO
+    })
   })
 
   it('should initiatie a para to para transfer with custom useKeepAlive', async () => {
@@ -91,16 +87,16 @@ describe('Builder', () => {
       .useKeepAlive(destApi)
       .build()
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith({
       api,
-      NODE,
-      CURRENCY,
-      AMOUNT,
-      ADDRESS,
-      NODE_2,
-      PARA_ID_TO,
-      destApi
-    )
+      origin: NODE,
+      currency: CURRENCY,
+      amount: AMOUNT,
+      address: ADDRESS,
+      destination: NODE_2,
+      paraIdTo: PARA_ID_TO,
+      destApiForKeepAlive: destApi
+    })
   })
 
   it('should initiatie a para to para transfer with currency id', async () => {
@@ -114,16 +110,14 @@ describe('Builder', () => {
       .address(ADDRESS)
       .build()
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith({
       api,
-      NODE,
-      CURRENCY_ID,
-      AMOUNT,
-      ADDRESS,
-      NODE_2,
-      undefined,
-      undefined
-    )
+      origin: NODE,
+      currency: CURRENCY_ID,
+      amount: AMOUNT,
+      address: ADDRESS,
+      destination: NODE_2
+    })
   })
 
   it('should initiatie a relay to para transfer', async () => {
@@ -131,7 +125,7 @@ describe('Builder', () => {
 
     await Builder(api).to(NODE).amount(AMOUNT).address(ADDRESS).build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS, undefined, undefined)
+    expect(spy).toHaveBeenCalledWith({ api, destination: NODE, amount: AMOUNT, address: ADDRESS })
   })
 
   it('should initiatie a relay to para transfer with custom paraId', async () => {
@@ -139,7 +133,13 @@ describe('Builder', () => {
 
     await Builder(api).to(NODE, PARA_ID_TO).amount(AMOUNT).address(ADDRESS).build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS, PARA_ID_TO, undefined)
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      destination: NODE,
+      amount: AMOUNT,
+      address: ADDRESS,
+      paraIdTo: PARA_ID_TO
+    })
   })
 
   it('should initiatie a relay to para transfer with useKeepAlive', async () => {
@@ -152,7 +152,14 @@ describe('Builder', () => {
       .useKeepAlive(destApi)
       .build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, AMOUNT, ADDRESS, PARA_ID_TO, destApi)
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      destination: NODE,
+      amount: AMOUNT,
+      address: ADDRESS,
+      paraIdTo: PARA_ID_TO,
+      destApiForKeepAlive: destApi
+    })
   })
 
   it('should initiatie a para to relay transfer with currency symbol', async () => {
@@ -162,16 +169,13 @@ describe('Builder', () => {
 
     await Builder(api).from(NODE).amount(AMOUNT).address(ADDRESS).build()
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith({
       api,
-      NODE,
+      origin: NODE,
       currency,
-      AMOUNT,
-      ADDRESS,
-      undefined,
-      undefined,
-      undefined
-    )
+      amount: AMOUNT,
+      address: ADDRESS
+    })
   })
 
   it('should initiatie a para to relay transfer with currency symbol', async () => {
@@ -181,16 +185,14 @@ describe('Builder', () => {
 
     await Builder(api).from(NODE).amount(AMOUNT).address(ADDRESS).useKeepAlive(destApi).build()
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(spy).toHaveBeenCalledWith({
       api,
-      NODE,
+      origin: NODE,
       currency,
-      AMOUNT,
-      ADDRESS,
-      undefined,
-      undefined,
-      destApi
-    )
+      amount: AMOUNT,
+      address: ADDRESS,
+      destApiForKeepAlive: destApi
+    })
   })
 
   it('should open a channel', () => {
@@ -206,7 +208,13 @@ describe('Builder', () => {
       .maxMessageSize(CHANNEL_MAX_MSG_SIZE)
       .build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, NODE_2, CHANNEL_MAX_SIZE, CHANNEL_MAX_MSG_SIZE)
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      destination: NODE_2,
+      maxSize: CHANNEL_MAX_SIZE,
+      maxMessageSize: CHANNEL_MAX_MSG_SIZE
+    })
   })
 
   it('should return a channel open serialized api call', () => {
@@ -238,7 +246,12 @@ describe('Builder', () => {
       .outbound(CHANNEL_OUTBOUND)
       .build()
 
-    expect(spy).toHaveBeenCalledWith(api, NODE, CHANNEL_INBOUND, CHANNEL_OUTBOUND)
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      inbound: CHANNEL_INBOUND,
+      outbound: CHANNEL_OUTBOUND
+    })
   })
 
   it('should return a channel close serialized api call', () => {
@@ -255,113 +268,6 @@ describe('Builder', () => {
     expect(serializedApiCall.module).toBeTypeOf('string')
     expect(serializedApiCall.section).toBeTypeOf('string')
     expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
-  })
-
-  it('should add liquidity', () => {
-    const spy = vi.spyOn(xyk, 'addLiquidity').mockImplementation(() => {
-      return undefined as any
-    })
-
-    const ASSET_A = 0
-    const ASSET_B = 1
-    const AMOUNT_A = 2
-    const AMOUNT_B_MAX_LIMIT = 3
-
-    Builder(api)
-      .addLiquidity()
-      .assetA(ASSET_A)
-      .assetB(ASSET_B)
-      .amountA(AMOUNT_A)
-      .amountBMaxLimit(AMOUNT_B_MAX_LIMIT)
-      .build()
-
-    expect(spy).toHaveBeenCalledWith(api, ASSET_A, ASSET_B, AMOUNT_A, AMOUNT_B_MAX_LIMIT)
-  })
-
-  it('should remove liquidity', () => {
-    const spy = vi.spyOn(xyk, 'removeLiquidity').mockImplementation(() => {
-      return undefined as any
-    })
-
-    const ASSET_A = 0
-    const ASSET_B = 1
-    const LIQUIDITY_AMOUNT = 2
-
-    Builder(api)
-      .removeLiquidity()
-      .assetA(ASSET_A)
-      .assetB(ASSET_B)
-      .liquidityAmount(LIQUIDITY_AMOUNT)
-      .build()
-
-    expect(spy).toHaveBeenCalledWith(api, ASSET_A, ASSET_B, LIQUIDITY_AMOUNT)
-  })
-
-  it('should buy', () => {
-    const spy = vi.spyOn(xyk, 'buy').mockImplementation(() => {
-      return undefined as any
-    })
-
-    const ASSET_OUT = 0
-    const ASSET_IN = 1
-    const AMOUNT = 2
-    const MAX_LIMIT = 3
-    const DISCOUNT: Bool = 'Yes'
-
-    Builder(api)
-      .buy()
-      .assetOut(ASSET_OUT)
-      .assetIn(ASSET_IN)
-      .amount(AMOUNT)
-      .maxLimit(MAX_LIMIT)
-      .discount(DISCOUNT)
-      .build()
-
-    expect(spy).toHaveBeenCalledWith(api, ASSET_OUT, ASSET_IN, AMOUNT, MAX_LIMIT, DISCOUNT)
-  })
-
-  it('should sell', () => {
-    const spy = vi.spyOn(xyk, 'sell').mockImplementation(() => {
-      return undefined as any
-    })
-
-    const ASSET_OUT = 0
-    const ASSET_IN = 1
-    const AMOUNT = 2
-    const MAX_LIMIT = 3
-    const DISCOUNT: Bool = 'Yes'
-
-    Builder(api)
-      .sell()
-      .assetIn(ASSET_IN)
-      .assetOut(ASSET_OUT)
-      .amount(AMOUNT)
-      .maxLimit(MAX_LIMIT)
-      .discount(DISCOUNT)
-      .build()
-
-    expect(spy).toHaveBeenCalledWith(api, ASSET_IN, ASSET_OUT, AMOUNT, MAX_LIMIT, DISCOUNT)
-  })
-
-  it('should create pool', () => {
-    const spy = vi.spyOn(xyk, 'createPool').mockImplementation(() => {
-      return undefined as any
-    })
-
-    const ASSET_A = 0
-    const AMOUNT_A = 1
-    const ASSET_B = 2
-    const AMOUNT_B = 3
-
-    Builder(api)
-      .createPool()
-      .assetA(ASSET_A)
-      .amountA(AMOUNT_A)
-      .assetB(ASSET_B)
-      .amountB(AMOUNT_B)
-      .build()
-
-    expect(spy).toHaveBeenCalledWith(api, ASSET_A, AMOUNT_A, ASSET_B, AMOUNT_B)
   })
 
   it('should request a para to para transfer serialized api call with currency id', async () => {

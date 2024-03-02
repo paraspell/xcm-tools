@@ -1,4 +1,12 @@
-import { MockInstance, vi } from 'vitest';
+import {
+  MockInstance,
+  vi,
+  describe,
+  beforeEach,
+  it,
+  expect,
+  afterEach,
+} from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AssetsService } from './assets.service.js';
 import * as paraspellSdk from '@paraspell/sdk';
@@ -62,6 +70,7 @@ describe('AssetsService', () => {
       const assetsObject: paraspellSdk.TNodeAssets = {
         paraId,
         relayChainAssetSymbol: symbol,
+        nativeAssetSymbol: 'DOT',
         nativeAssets: [{ symbol, decimals }],
         otherAssets: [{ assetId, symbol: 'BSK', decimals }],
       };

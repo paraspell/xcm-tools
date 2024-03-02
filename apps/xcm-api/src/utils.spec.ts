@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { BadRequestException } from '@nestjs/common';
 import { isNumeric, validateNode } from './utils.js';
 

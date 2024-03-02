@@ -2,7 +2,12 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { transferRelayToPara, transferRelayToParaSerializedApiCall } from '../../pallets/xcmPallet'
-import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../types'
+import {
+  type TSerializedApiCall,
+  type Extrinsic,
+  type TNode,
+  type TRelayToParaOptions
+} from '../../types'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
 
 class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
@@ -39,26 +44,25 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
     return this
   }
 
+  private buildOptions(): TRelayToParaOptions {
+    return {
+      api: this.api,
+      destination: this.to,
+      amount: this._amount,
+      address: this._address,
+      paraIdTo: this.paraIdTo,
+      destApiForKeepAlive: this._destApi
+    }
+  }
+
   async build(): Promise<Extrinsic | never> {
-    return await transferRelayToPara(
-      this.api,
-      this.to,
-      this._amount,
-      this._address,
-      this.paraIdTo,
-      this._destApi
-    )
+    const options = this.buildOptions()
+    return await transferRelayToPara(options)
   }
 
   async buildSerializedApiCall(): Promise<TSerializedApiCall> {
-    return await transferRelayToParaSerializedApiCall(
-      this.api,
-      this.to,
-      this._amount,
-      this._address,
-      this.paraIdTo,
-      this._destApi
-    )
+    const options = this.buildOptions()
+    return await transferRelayToParaSerializedApiCall(options)
   }
 }
 

@@ -1,17 +1,17 @@
 import { type BN } from '@polkadot/util'
 import {
   Version,
-  type TTransferRelayToParaOptions,
   Parents,
   type PolkadotXCMHeader,
   type TScenario,
-  type Extrinsic
+  type Extrinsic,
+  type TRelayToParaInternalOptions
 } from '../../types'
 import { generateAddressPayload } from '../../utils'
 import { getParaId } from '../assets'
 
 export const constructRelayToParaParameters = (
-  { api, destination, address, amount, paraIdTo }: TTransferRelayToParaOptions,
+  { api, destination, address, amount, paraIdTo }: TRelayToParaInternalOptions,
   version: Version,
   includeFee = false
 ): any[] => {

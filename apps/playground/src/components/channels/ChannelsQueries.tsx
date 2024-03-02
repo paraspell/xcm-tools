@@ -1,22 +1,29 @@
-import { Stack, Title, Box } from '@mantine/core';
-import ErrorAlert from '../ErrorAlert';
-import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import { useState, useEffect } from 'react';
-import { fetchFromApi } from '../../utils/submitUsingApi';
-import { closeChannels, createApiInstanceForNode, openChannels } from '@paraspell/sdk';
-import OutputAlert from '../OutputAlert';
-import ChannelsForm, { FormValues } from './ChannelsForm';
-import { ApiPromise } from '@polkadot/api';
-import { useWallet } from '../../providers/WalletProvider';
-import { web3FromAddress } from '@polkadot/extension-dapp';
-import { buildTx, submitTransaction } from '../../utils';
+import { Stack, Title, Box } from "@mantine/core";
+import ErrorAlert from "../ErrorAlert";
+import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
+import { useState, useEffect } from "react";
+import { fetchFromApi } from "../../utils/submitUsingApi";
+import {
+  closeChannels,
+  createApiInstanceForNode,
+  openChannels,
+} from "@paraspell/sdk";
+import OutputAlert from "../OutputAlert";
+import ChannelsForm, { FormValues } from "./ChannelsForm";
+import { ApiPromise } from "@polkadot/api";
+import { useWallet } from "../../providers/WalletProvider";
+import { web3FromAddress } from "@polkadot/extension-dapp";
+import { buildTx, submitTransaction } from "../../utils";
 
 const ChannelsQueries = () => {
   const { selectedAccount } = useWallet();
 
-  const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] = useDisclosure(false);
-  const [outputAlertOpened, { open: openOutputAlert, close: closeOutputAlert }] =
+  const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
     useDisclosure(false);
+  const [
+    outputAlertOpened,
+    { open: openOutputAlert, close: closeOutputAlert },
+  ] = useDisclosure(false);
 
   const [error, setError] = useState<Error>();
   const [output, setOutput] = useState<string>();
@@ -35,13 +42,24 @@ const ChannelsQueries = () => {
 
   const submitUsingSdk = async (
     { func, from, to, maxSize, maxMessageSize, inbound, outbound }: FormValues,
-    api: ApiPromise,
+    api: ApiPromise
   ) => {
     switch (func) {
-      case 'OPEN_CHANNEL':
-        return openChannels.openChannel(api, from, to, Number(maxSize), Number(maxMessageSize));
-      case 'CLOSE_CHANNEL':
-        return closeChannels.closeChannel(api, from, Number(inbound), Number(outbound));
+      case "OPEN_CHANNEL":
+        return openChannels.openChannel({
+          api,
+          origin: from,
+          destination: to,
+          maxSize: Number(maxSize),
+          maxMessageSize: Number(maxMessageSize),
+        });
+      case "CLOSE_CHANNEL":
+        return closeChannels.closeChannel({
+          api,
+          origin: from,
+          inbound: Number(inbound),
+          outbound: Number(outbound),
+        });
     }
   };
 
@@ -51,7 +69,7 @@ const ChannelsQueries = () => {
       return await fetchFromApi(
         formValues,
         `/hrmp/channels`,
-        func === 'OPEN_CHANNEL' ? 'POST' : 'DELETE',
+        func === "OPEN_CHANNEL" ? "POST" : "DELETE"
       );
     } else {
       return await submitUsingSdk(formValues, api);
@@ -62,8 +80,8 @@ const ChannelsQueries = () => {
     const { from } = formValues;
 
     if (!selectedAccount) {
-      alert('No account selected, connect wallet first');
-      throw Error('No account selected!');
+      alert("No account selected, connect wallet first");
+      throw Error("No account selected!");
     }
 
     setLoading(true);
@@ -76,7 +94,12 @@ const ChannelsQueries = () => {
       setOutput(JSON.stringify(output, null, 2));
       openOutputAlert();
       closeErrorAlert();
-      await submitTransaction(api, buildTx(api, output), injector.signer, selectedAccount.address);
+      await submitTransaction(
+        api,
+        buildTx(api, output),
+        injector.signer,
+        selectedAccount.address
+      );
     } catch (e) {
       if (e instanceof Error) {
         console.error(e);
@@ -105,11 +128,15 @@ const ChannelsQueries = () => {
       </Stack>
       <Box ref={targetRef}>
         {errorAlertOpened && (
-          <ErrorAlert onAlertCloseClick={onErrorAlertCloseClick}>{error?.message}</ErrorAlert>
+          <ErrorAlert onAlertCloseClick={onErrorAlertCloseClick}>
+            {error?.message}
+          </ErrorAlert>
         )}
       </Box>
       <Box>
-        {outputAlertOpened && <OutputAlert onClose={onOutputAlertCloseClick}>{output}</OutputAlert>}
+        {outputAlertOpened && (
+          <OutputAlert onClose={onOutputAlertCloseClick}>{output}</OutputAlert>
+        )}
       </Box>
     </Stack>
   );

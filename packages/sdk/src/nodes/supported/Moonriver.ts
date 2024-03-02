@@ -7,7 +7,7 @@ import {
   type XTokensTransferInput,
   type Extrinsic,
   type TSerializedApiCall,
-  type TTransferRelayToParaOptions
+  type TRelayToParaInternalOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -23,7 +23,7 @@ class Moonriver extends ParachainNode implements IXTokensTransfer {
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
-  transferRelayToPara(options: TTransferRelayToParaOptions): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
     return {
       module: 'xcmPallet',
       section: 'limitedReserveTransferAssets',

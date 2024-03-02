@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Shiden Parachain
 
-import { type ApiPromise } from '@polkadot/api'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -9,8 +8,8 @@ import {
   type TSerializedApiCall,
   type IXTokensTransfer,
   type XTokensTransferInput,
-  type TNode,
-  type TScenario
+  type TScenario,
+  type TSendInternalOptions
 } from '../../types'
 import { generateAddressPayload, getFees } from '../../utils'
 import ParachainNode, { supportsPolkadotXCM, supportsXTokens } from '../ParachainNode'
@@ -36,16 +35,17 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
     return XTokensTransferImpl.transferXTokens(input, input.currencyID)
   }
 
-  transfer(
-    api: ApiPromise,
-    currencySymbol: string | undefined,
-    currencyId: string | undefined,
-    amount: string,
-    to: string,
-    destination?: TNode,
-    paraIdTo?: number,
-    serializedApiCallEnabled = false
-  ): Extrinsic | TSerializedApiCall {
+  transfer(options: TSendInternalOptions): Extrinsic | TSerializedApiCall {
+    const {
+      api,
+      currencySymbol,
+      currencyId,
+      amount,
+      address,
+      destination,
+      paraIdTo,
+      serializedApiCallEnabled = false
+    } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
     const paraId = destination !== undefined ? paraIdTo ?? getParaId(destination) : undefined
     const node = this.node
@@ -59,7 +59,7 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
           api,
           scenario,
           'XTokens',
-          to,
+          address,
           this.version,
           paraId
         ),
@@ -78,7 +78,7 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
           api,
           scenario,
           'PolkadotXcm',
-          to,
+          address,
           this.version,
           paraId
         ),

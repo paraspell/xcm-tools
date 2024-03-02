@@ -7,9 +7,9 @@ import {
   Version,
   type Extrinsic,
   type TSerializedApiCall,
-  type TTransferRelayToParaOptions,
   Parents,
-  type TScenario
+  type TScenario,
+  type TRelayToParaInternalOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
@@ -28,7 +28,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     return PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited')
   }
 
-  transferRelayToPara(options: TTransferRelayToParaOptions): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
     return {
       module: 'xcmPallet',
       section: 'limitedTeleportAssets',
