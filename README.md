@@ -39,6 +39,8 @@ These commands will be run on all packages in monorepo.
   
 - Build all packages and apps using `pnpm build`
 
+- Launch playground from root using `pnpm run:playground`
+
 To run command only for specific package or app in monorepo use:
 
 `pnpm --filter <package_selector> <command>` or cd into appropriate folder.
