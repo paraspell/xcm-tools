@@ -23,7 +23,8 @@
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "test:integration": "turbo run test:watch",
-    "build": "turbo run build"
+    "build": "turbo run build",
+    "run:playground": "pnpm --filter=playground dev"
   },
   "packageManager": "pnpm@8.5.1"
 }
