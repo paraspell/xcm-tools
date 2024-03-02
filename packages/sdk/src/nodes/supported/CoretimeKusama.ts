@@ -7,7 +7,7 @@ import {
   Version,
   type Extrinsic,
   type TSerializedApiCall,
-  type TTransferRelayToParaOptions
+  type TRelayToParaInternalOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
@@ -27,7 +27,7 @@ class CoretimeKusama extends ParachainNode implements IPolkadotXCMTransfer {
     return PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited')
   }
 
-  transferRelayToPara(options: TTransferRelayToParaOptions): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
     // TESTED block hash on Rococo: 0x28929f7b2aeadbf3333f05d35bed18214a4b23dd270bd072f99e8a0131d22456
     // https://rococo.subscan.io/extrinsic/0x469eec7dccb22696b0c95cf4f5eec4b367ad3dc23243a346cc2aad3cc9522800
     return {

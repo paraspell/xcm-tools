@@ -1,17 +1,24 @@
 // Contains call formatting for opening HRMP channels functionality
 
-import type { ApiPromise } from '@polkadot/api'
-import { type Extrinsic, type TNode, type TSerializedApiCall } from '../../types'
+import {
+  type TOpenChannelInternalOptions,
+  type Extrinsic,
+  type TSerializedApiCall,
+  type TOpenChannelOptions
+} from '../../types'
 import { getParaId } from '../assets'
 
 const openChannelInternal = (
-  api: ApiPromise,
-  origin: TNode,
-  destination: TNode,
-  maxSize: number,
-  maxMessageSize: number,
-  serializedApiCallEnabled = false
+  options: TOpenChannelInternalOptions
 ): Extrinsic | TSerializedApiCall => {
+  const {
+    api,
+    origin,
+    destination,
+    maxSize,
+    maxMessageSize,
+    serializedApiCallEnabled = false
+  } = options
   const module = 'parasSudoWrapper'
   const section = 'sudoEstablishHrmpChannel'
   const parameters = [getParaId(origin), getParaId(destination), maxSize, maxMessageSize]
@@ -27,19 +34,8 @@ const openChannelInternal = (
   return api.tx.sudo.sudo(api.tx[module][section](...parameters))
 }
 
-export const openChannel = (
-  api: ApiPromise,
-  origin: TNode,
-  destination: TNode,
-  maxSize: number,
-  maxMessageSize: number
-): Extrinsic => openChannelInternal(api, origin, destination, maxSize, maxMessageSize) as Extrinsic
+export const openChannel = (options: TOpenChannelOptions): Extrinsic =>
+  openChannelInternal(options) as Extrinsic
 
-export const openChannelSerializedApiCall = (
-  api: ApiPromise,
-  origin: TNode,
-  destination: TNode,
-  maxSize: number,
-  maxMessageSize: number
-): TSerializedApiCall =>
-  openChannelInternal(api, origin, destination, maxSize, maxMessageSize, true) as TSerializedApiCall
+export const openChannelSerializedApiCall = (options: TOpenChannelOptions): TSerializedApiCall =>
+  openChannelInternal({ ...options, serializedApiCallEnabled: true }) as TSerializedApiCall

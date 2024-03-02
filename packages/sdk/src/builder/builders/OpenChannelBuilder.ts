@@ -1,7 +1,12 @@
 // Implements builder pattern for Open HRMP channel operation
 
 import { type ApiPromise } from '@polkadot/api'
-import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../types'
+import {
+  type TSerializedApiCall,
+  type Extrinsic,
+  type TNode,
+  type TOpenChannelOptions
+} from '../../types'
 import { openChannel, openChannelSerializedApiCall } from '../../pallets/parasSudoWrapper'
 import { type FinalBuilder } from './Builder'
 
@@ -43,18 +48,24 @@ class OpenChannelBuilder
     return this
   }
 
+  private buildOptions(): TOpenChannelOptions {
+    return {
+      api: this.api,
+      origin: this.from,
+      destination: this.to,
+      maxSize: this._maxSize,
+      maxMessageSize: this._maxMessageSize
+    }
+  }
+
   build(): Extrinsic {
-    return openChannel(this.api, this.from, this.to, this._maxSize, this._maxMessageSize)
+    const options = this.buildOptions()
+    return openChannel(options)
   }
 
   buildSerializedApiCall(): TSerializedApiCall {
-    return openChannelSerializedApiCall(
-      this.api,
-      this.from,
-      this.to,
-      this._maxSize,
-      this._maxMessageSize
-    )
+    const options = this.buildOptions()
+    return openChannelSerializedApiCall(options)
   }
 }
 

@@ -1,5 +1,6 @@
+import { describe, beforeEach, it, expect } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
+import { AppController } from './app.controller.js';
 
 describe('AppController', () => {
   let appController: AppController;

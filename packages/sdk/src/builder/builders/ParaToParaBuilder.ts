@@ -2,7 +2,7 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { send, sendSerializedApiCall } from '../../pallets/xcmPallet'
-import { type TSerializedApiCall, type Extrinsic, type TNode } from '../../types'
+import { type TSerializedApiCall, type Extrinsic, type TNode, type TSendOptions } from '../../types'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
 
 class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
@@ -55,30 +55,27 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFi
     return this
   }
 
+  private buildOptions(): TSendOptions {
+    return {
+      api: this.api,
+      origin: this.from,
+      currency: this.currency,
+      amount: this._amount,
+      address: this._address,
+      destination: this.to,
+      paraIdTo: this.paraIdTo,
+      destApiForKeepAlive: this._destApi
+    }
+  }
+
   async build(): Promise<Extrinsic> {
-    return await send(
-      this.api,
-      this.from,
-      this.currency,
-      this._amount,
-      this._address,
-      this.to,
-      this.paraIdTo,
-      this._destApi
-    )
+    const options = this.buildOptions()
+    return await send(options)
   }
 
   async buildSerializedApiCall(): Promise<TSerializedApiCall> {
-    return await sendSerializedApiCall(
-      this.api,
-      this.from,
-      this.currency,
-      this._amount,
-      this._address,
-      this.to,
-      this.paraIdTo,
-      this._destApi
-    )
+    const options = this.buildOptions()
+    return await sendSerializedApiCall(options)
   }
 }
 

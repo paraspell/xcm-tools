@@ -16,7 +16,8 @@
     "lint": "eslint --fix src --ext .ts",
     "format:check": "prettier --check src",
     "format:write": "prettier --write src",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
   },
@@ -78,7 +79,6 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.3.3",
-    "unplugin-swc": "^1.4.4",
-    "vitest": "^1.1.0"
+    "unplugin-swc": "^1.4.4"
   }
 }

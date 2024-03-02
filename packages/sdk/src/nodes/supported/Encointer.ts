@@ -6,7 +6,7 @@ import {
   Version,
   type Extrinsic,
   type TSerializedApiCall,
-  type TTransferRelayToParaOptions
+  type TRelayToParaInternalOptions
 } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
@@ -31,7 +31,7 @@ class Encointer extends ParachainNode implements IPolkadotXCMTransfer {
     throw new ScenarioNotSupportedError(this.node, input.scenario)
   }
 
-  transferRelayToPara(options: TTransferRelayToParaOptions): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
     return {
       module: 'xcmPallet',
       section: 'limitedTeleportAssets',

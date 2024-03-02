@@ -1,3 +1,4 @@
+import { vi, describe, expect, it, beforeEach, afterEach } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { XTransferService } from './x-transfer.service.js';
 import { XTransferDto } from './dto/XTransferDto.js';
@@ -5,7 +6,6 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { vi } from 'vitest';
 import * as paraspellSdk from '@paraspell/sdk';
 import {
   InvalidCurrencyError,
