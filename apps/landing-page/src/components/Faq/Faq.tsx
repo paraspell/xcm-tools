@@ -1,4 +1,4 @@
-import { Title, Accordion } from "@mantine/core";
+import { Title, Accordion, Anchor } from "@mantine/core";
 import classes from "./Faq.module.css";
 
 export function Faq() {
@@ -46,10 +46,21 @@ export function Faq() {
             key, users are limited to 20 requests per minute. By generating an
             API key, this limit increases to 100 requests per minute,
             facilitating the development and scaling of applications. To obtain
-            an API key, visit{" "}
-            <a href="https://api.lightspell.xyz/app/generate-api-key/">
-              https://api.lightspell.xyz/app/generate-api-key/
-            </a>
+            an API key, you can{" "}
+            <Anchor
+              href="https://api.lightspell.xyz/app/generate-api-key/"
+              target="_blank"
+            >
+              generate an API key here
+            </Anchor>
+            . Additionally, for applications that require higher request
+            volumes, you can{" "}
+            <Anchor
+              href="https://api.lightspell.xyz/app/higher-request-limit/"
+              target="_blank"
+            >
+              request a higher limit here
+            </Anchor>
             . For those who choose to deploy the XCM API instance themselves,
             the predefined rate limits do not apply, offering more flexibility
             for application development. Regardless of deployment, transaction
