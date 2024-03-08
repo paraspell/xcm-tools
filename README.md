@@ -13,7 +13,7 @@ ParaSpell✨ monorepo for XCM-Tool set
 
 **Other:**
 - [XCM Tools playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground): Playground for testing/trying all three mentioned XCM tools.
-- [XCM API landing page](https://github.com/paraspell/xcm-tools/tree/main/apps/landing-page)
+- [XCM API landing page](https://github.com/paraspell/xcm-tools/tree/main/apps/landing-page): XCM API Professional landing page
 
 **Documentation:**
 - [XCM Tools documentation](https://paraspell.github.io/docs/): Comprehensive documentation for XCM tools mentioned above.
