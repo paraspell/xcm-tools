@@ -19,7 +19,6 @@ import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useState } from 'react';
 import { useWallet } from './providers/WalletProvider';
-import TransferTypesInfo from './components/TransferTypesInfo';
 import XcmSdkSandbox from './routes/XcmSdkSandbox';
 
 const myColor: MantineColorsTuple = [
@@ -123,7 +122,7 @@ const App = () => {
                 <NavLink
                   component="div"
                   active={isActive}
-                  label="Playground"
+                  label="XCM Router Sandbox"
                   leftSection={<IconHome2 size="1rem" stroke={1.5} />}
                   style={{ borderRadius: 4 }}
                 />
@@ -140,7 +139,6 @@ const App = () => {
                 />
               )}
             </RouterNavLink>
-            <TransferTypesInfo />
           </AppShell.Navbar>
           <AppShell.Main>
             <Routes>
