@@ -148,23 +148,66 @@ Builder(api)
 
 ### Function pattern:
 ```ts
+//NOW FEATURING OBJECT PARAMETERS
+
 // Transfer assets from Parachain to Parachain
-await paraspell.xcmPallet.send(api?: ApiPromise, origin: origin  Parachain  name  string, currency: CurrencyString||CurrencyID, amount: any, to: destination  address  string, destination: destination  Parachain  ID, paraIdTo?: number,)
+await paraspell.xcmPallet.send(
+    {
+      api?: ApiPromise,
+      origin: origin  Parachain  name  string,
+      currency: CurrencyString||CurrencyID,
+      amount: any,
+      to: destination  address  string,
+      destination: destination  Parachain  ID,
+      paraIdTo?: number,
+      destApiForKeepAlive?: ApiPromise
+    }
+)
 
 // Transfer assets from Parachain to Relay chain
-await paraspell.xcmPallet.send(api?: ApiPromise, origin: origin  Parachain  name  string, amount: any, to: destination  address  string, paraIdTo?: number,)
+await paraspell.xcmPallet.send(
+  {
+    api?: ApiPromise,
+    origin: origin  Parachain  name  string,
+    amount: any,
+    to: destination  address  string,
+    paraIdTo?: number,
+    destApiForKeepAlive?: ApiPromise
+  }
+)
 
 // Transfer assets from Relay chain to Parachain
-await paraspell.xcmPallet.transferRelayToPara(api?: ApiPromise, destination: destination  Parachain  ID, amount: any, to: destination  address  string,paraIdTo?: number,)
-
-// Use keepAlive option
-await paraspell.xcmPallet.send(api?: ApiPromise, destination: TNode, amount: string | number | bigint, to: string, paraIdTo?: number, destApiForKeepAlive?: ApiPromise)
+await paraspell.xcmPallet.transferRelayToPara(
+  {
+    api?: ApiPromise,
+    destination: destination  Parachain  ID,
+    amount: any,
+    to: destination  address  string,
+    paraIdTo?: number,
+    destApiForKeepAlive?: ApiPromise
+  }
+)
 
 // Close HRMP channels
-paraspell.closeChannels.closeChannel(api: ApiPromise, origin: origin  Parachain  ID, inbound: number, outbound: number)
+paraspell.closeChannels.closeChannel(
+  {
+    api: ApiPromise,
+    origin: origin  Parachain  ID, 
+    inbound: number,
+    outbound: number
+  }
+)
 
 // Open HRMP channels
-paraspell.openChannels.openChannel(api: ApiPromise, origin: origin  Parachain  ID, destination: destination  Parachain  ID, maxSize: number, maxMessageSize: number)
+paraspell.openChannels.openChannel(
+  {
+    api: ApiPromise,
+    origin: origin  Parachain  ID,
+    destination: destination  Parachain  ID,
+    maxSize: number,
+    maxMessageSize: number
+  }
+)
 ```
 
 ### Asset queries:
