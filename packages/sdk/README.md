@@ -27,14 +27,14 @@
 
 #### Install dependencies
 
-```
-pnpm||yarn||npm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
+```bash
+pnpm | npm install || yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 ```
 
 #### Install SDK 
 
-```
-pnpm||yarn||npm install @paraspell/sdk
+```bash
+pnpm | npm install || yarn add @paraspell/sdk
 ```
 
 #### Importing package to your project:
@@ -284,6 +284,8 @@ const ed = getExistentialDeposit('Acala')
 - Update existential deposits in the map using script - `pnpm updateEds` 
 
 - Run all core tests and checks using `pnpm runAll`
+
+XCM SDK can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
 
 ## License
 
