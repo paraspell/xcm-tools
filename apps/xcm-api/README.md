@@ -242,20 +242,7 @@ $ yarn start:prod
 
 - Run coverage test `yarn test:cov`
 
-#### API playground (For Router endpoint testing use [XCM Router Playground](https://github.com/paraspell/xcm-router/tree/main/playground))
-```bash
-# Navigate to the playground folder
-$ cd playground
-
-# Install playground packages
-$ pnpm i
-
-# Start playground
-$ pnpm run serve
-
-# IMPORTANT: Make sure XCM API is also running in another terminal!
-$ yarn start
-```
+API can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
 
 ## License
 
