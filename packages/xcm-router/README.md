@@ -38,15 +38,15 @@ XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation, that allows
 
 # Installation
 #### Install dependencies
-```
+```bash
 //PNPM temporarily unsupported
-npm||yarn install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
+npm install || yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 ```
 
 #### Install XCM Router
-```
+```bash
 //PNPM temporarily unsupported
-npm||yarn install @paraspell/xcm-router
+npm install || yarn add @paraspell/xcm-router
 ```
 
 ## Importing package to your project
@@ -191,37 +191,7 @@ await transfer({
 
 - Run integration tests using `yarn test:integration`
 
-### Playground
-
-Playground allows you to demo-test XCM-Router to perform test main-net transactions and to learn which features will be beneficial for your project.
-
-#### Prerequisites
-- Node.js
-- yarn
-
-#### Launching
-
-```bash
-# Clone API
-$ git clone https://github.com/paraspell/xcm-router.git
-
-# Navigate to the playground folder
-$ cd playground
-
-# Install playground packages
-$ yarn
-
-# Start playground
-$ yarn dev
-
-```
-
-#### UI
-
-Once launched, you should see the following UI and be able to perform test transactions:
-
-<img width="1667" alt="Screenshot 2023-12-15 at 14 37 39" src="https://github.com/paraspell/xcm-router/assets/55763425/9b07aa55-e462-440e-8c25-9110ddf52570">
-
+XCM Router can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
 
 ## License
 
