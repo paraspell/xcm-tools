@@ -16,7 +16,6 @@ const fetchExistentialDeposit = async (api: ApiPromise): Promise<string | null> 
 const fetchAllExistentialDeposits = async (assetsMapJson: any) => {
   const output: TEdJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const node of NODES_WITH_RELAY_CHAINS) {
-    if (node === 'Clover') continue
     console.log(`Fetching existential deposits for ${node}...`)
 
     const api = await createApiInstanceForNode(node)
