@@ -12,7 +12,7 @@ import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class NeuroWeb extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('NeuroWeb', 'origintrail-parachain', 'polkadot', Version.V3)
+    super('NeuroWeb', 'neuroweb', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {

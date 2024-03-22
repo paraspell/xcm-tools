@@ -8,7 +8,6 @@ import Crust from '../nodes/supported/Crust'
 import { BifrostPolkadot } from '../nodes/supported/BifrostPolkadot'
 import Bitgreen from '../nodes/supported/Bitgreen'
 import { Centrifuge } from '../nodes/supported/Centrifuge'
-import Clover from '../nodes/supported/Clover'
 import ComposableFinance from '../nodes/supported/ComposableFinance'
 import HydraDX from '../nodes/supported/HydraDX'
 import Interlay from '../nodes/supported/Interlay'
@@ -40,13 +39,11 @@ import CoretimeKusama from '../nodes/supported/CoretimeKusama'
 import Encointer from '../nodes/supported/Encointer'
 import Robonomics from '../nodes/supported/Robonomics'
 import Astar from '../nodes/supported/Astar'
-import Equilibrium from '../nodes/supported/Equilibrium'
 import Darwinia from '../nodes/supported/Darwinia'
 import Crab from '../nodes/supported/Crab'
 import Quartz from '../nodes/supported/Quartz'
 import Shiden from '../nodes/supported/Shiden'
 import Manta from '../nodes/supported/Manta'
-import Genshiro from '../nodes/supported/Genshiro'
 import Nodle from '../nodes/supported/Nodle'
 import NeuroWeb from '../nodes/supported/NeuroWeb'
 import Pendulum from '../nodes/supported/Pendulum'
@@ -55,6 +52,7 @@ import Zeitgeist from '../nodes/supported/Zeitgeist'
 import Collectives from '../nodes/supported/Collectives'
 import Khala from '../nodes/supported/Khala'
 import Phala from '../nodes/supported/Phala'
+import Subsocial from '../nodes/supported/Subsocial'
 
 export const NODE_NAMES = [
   'AssetHubPolkadot',
@@ -63,7 +61,6 @@ export const NODE_NAMES = [
   'BifrostPolkadot',
   'Bitgreen',
   'Centrifuge',
-  'Clover',
   'ComposableFinance',
   'Darwinia',
   'HydraDX',
@@ -97,11 +94,9 @@ export const NODE_NAMES = [
   'Robonomics',
   'Shiden',
   'Turing',
-  'Equilibrium',
   'Unique',
   'Crust',
   'Manta',
-  'Genshiro',
   'Nodle',
   'NeuroWeb',
   'Pendulum',
@@ -109,7 +104,8 @@ export const NODE_NAMES = [
   'Zeitgeist',
   'Collectives',
   'Khala',
-  'Phala'
+  'Phala',
+  'Subsocial'
 ] as const
 
 export const NODES_WITH_RELAY_CHAINS = [...NODE_NAMES, 'Polkadot', 'Kusama'] as const
@@ -118,13 +114,11 @@ export const nodes: Record<TNode, ParachainNode> = {
   AssetHubPolkadot: new AssetHubPolkadot(),
   Acala: new Acala(),
   Astar: new Astar(),
-  Equilibrium: new Equilibrium(),
   Unique: new Unique(),
   Crust: new Crust(),
   BifrostPolkadot: new BifrostPolkadot(),
   Bitgreen: new Bitgreen(),
   Centrifuge: new Centrifuge(),
-  Clover: new Clover(),
   ComposableFinance: new ComposableFinance(),
   Darwinia: new Darwinia(),
   HydraDX: new HydraDX(),
@@ -159,7 +153,6 @@ export const nodes: Record<TNode, ParachainNode> = {
   Shiden: new Shiden(),
   Turing: new Turing(),
   Manta: new Manta(),
-  Genshiro: new Genshiro(),
   Nodle: new Nodle(),
   NeuroWeb: new NeuroWeb(),
   Pendulum: new Pendulum(),
@@ -167,7 +160,8 @@ export const nodes: Record<TNode, ParachainNode> = {
   Zeitgeist: new Zeitgeist(),
   Collectives: new Collectives(),
   Khala: new Khala(),
-  Phala: new Phala()
+  Phala: new Phala(),
+  Subsocial: new Subsocial()
 }
 
 export const SUPPORTED_PALLETS = [

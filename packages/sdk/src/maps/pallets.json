@@ -27,10 +27,6 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens", "OrmlXTokens"]
   },
-  "Clover": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
-  },
   "ComposableFinance": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
@@ -69,7 +65,7 @@
   },
   "Altair": {
     "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
+    "supportedPallets": ["PolkadotXcm", "XTokens", "OrmlXTokens"]
   },
   "Amplitude": {
     "defaultPallet": "XTokens",
@@ -159,10 +155,6 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
-  "Equilibrium": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": ["PolkadotXcm"]
-  },
   "Unique": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["XTokens", "PolkadotXcm"]
@@ -174,10 +166,6 @@
   "Manta": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
-  },
-  "Genshiro": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": ["PolkadotXcm"]
   },
   "Nodle": {
     "defaultPallet": "XTokens",
@@ -210,5 +198,9 @@
   "Phala": {
     "defaultPallet": "XTransfer",
     "supportedPallets": ["PolkadotXcm", "XTransfer"]
+  },
+  "Subsocial": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
   }
 }

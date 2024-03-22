@@ -123,7 +123,14 @@ export const getNode = (node: TNode): ParachainNode => {
 export const getNodeEndpointOption = (node: TNode): any => {
   const { type, name } = getNode(node)
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
-  return linked !== undefined ? linked.find((o: any) => o.info === name) : undefined
+
+  if (linked === undefined) return undefined
+
+  const preferredOption = linked.find(
+    (o: any) => o.info === name && Object.values(o.providers).length > 0
+  )
+
+  return preferredOption ?? linked.find((o: any) => o.info === name)
 }
 
 export const getAllNodeProviders = (node: TNode): string[] => {

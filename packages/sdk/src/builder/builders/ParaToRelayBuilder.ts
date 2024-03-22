@@ -43,7 +43,7 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
     return {
       api: this.api,
       origin: this.from,
-      currency: currency,
+      currency,
       amount: this.amount,
       address: this._address,
       destApiForKeepAlive: this._destApi

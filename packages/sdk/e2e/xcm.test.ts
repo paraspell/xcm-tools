@@ -23,7 +23,6 @@ const getAssetsForNode = (node: TNode): string[] => {
   if (node === 'Pendulum') return ['PEN']
   if (node === 'Nodle') return ['NODL']
   if (node === 'Crust') return ['EQD']
-  if (node === 'Genshiro') return ['GENS']
   if (node === 'CrustShadow') return ['KAR']
   if (node === 'Khala') return ['PHA']
   if (node === 'Phala') return ['PHA']
@@ -32,12 +31,7 @@ const getAssetsForNode = (node: TNode): string[] => {
 }
 
 const filteredNodes = NODE_NAMES.filter(
-  node =>
-    node !== 'Quartz' &&
-    node !== 'Clover' &&
-    node !== 'Bitgreen' &&
-    node !== 'Bajun' &&
-    node !== 'CoretimeKusama'
+  node => node !== 'Quartz' && node !== 'Bitgreen' && node !== 'Bajun' && node !== 'CoretimeKusama'
 )
 
 const findTransferableNodeAndAsset = (

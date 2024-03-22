@@ -33,48 +33,40 @@
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
-  "pnpm": {
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "@polkadot/util": "12",
-        "@polkadot/util-crypto": "12"
-      }
-    }
-  },
   "dependencies": {
     "@mangata-finance/type-definitions": "^2.1.2",
-    "ethers": "^5.7.1"
+    "ethers": "^5.7.2"
   },
   "peerDependencies": {
-    "@polkadot/api": "^10.11.1",
-    "@polkadot/api-base": "^10.11.1",
-    "@polkadot/apps-config": "^0.133.1",
-    "@polkadot/types": "^10.11.1",
-    "@polkadot/util": "^12.6.1"
+    "@polkadot/api": "^10.12.4",
+    "@polkadot/api-base": "^10.12.4",
+    "@polkadot/apps-config": "^0.135.1",
+    "@polkadot/types": "^10.12.4",
+    "@polkadot/util": "^12.6.2"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-import-assertions": "^7.23.3",
-    "@babel/preset-env": "^7.23.3",
+    "@babel/plugin-syntax-import-assertions": "^7.24.1",
+    "@babel/preset-env": "^7.24.3",
     "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-json": "^6.0.1",
-    "@types/node": "^18.11.9",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@vitest/coverage-v8": "^1.1.3",
-    "eslint": "^8.54.0",
-    "eslint-config-prettier": "^9.0.0",
+    "@rollup/plugin-json": "^6.1.0",
+    "@types/node": "^18.19.26",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@vitest/coverage-v8": "^1.4.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard-with-typescript": "^40.0.0",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-plugin-n": "^16.3.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
-    "prettier": "^3.1.0",
-    "rollup": "^4.4.1",
+    "prettier": "^3.2.5",
+    "rollup": "^4.13.0",
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-typescript2": "^0.36.0",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
-    "typescript": "^5.2.2"
+    "typescript": "5.2.2"
   },
   "packageManager": "pnpm@8.5.1"
 }

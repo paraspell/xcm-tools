@@ -20,10 +20,9 @@ const nodeToQuery: NodeToAssetModuleMap = {
   BifrostPolkadot: null, // Has no foreign assets. Native assets are fetched directly from state.getMetadata()
   Bitgreen: null, // No assets metadata query
   Centrifuge: 'ormlAssetRegistry.metadata',
-  Clover: 'assets.metadata',
   ComposableFinance: 'assetsRegistry.assetSymbol',
   Darwinia: null, // No assets metadata query
-  HydraDX: 'assetRegistry.assetMetadataMap',
+  HydraDX: 'assetRegistry.assets',
   Interlay: 'assetRegistry.metadata',
   Litentry: null, // Assets query returns empty array
   Moonbeam: 'assets.metadata',
@@ -54,11 +53,9 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Shiden: 'assets.metadata',
   AssetHubKusama: 'assets.metadata',
   Turing: 'assetRegistry.metadata',
-  Equilibrium: null, // No foreign assets metadata query
   Unique: null, // Foreign assets query returns empty array
   Crust: 'assets.metadata',
   Manta: 'assets.metadata',
-  Genshiro: null, // Assets metadata entries have no symbol property (Only GENS paraToPara for now)
   Nodle: null, // Only NODL paraToPara for now
   NeuroWeb: 'assets.metadata',
   Pendulum: '', // Only PEN paraToPara for now
@@ -67,7 +64,8 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Collectives: null,
   Phala: 'assets.metadata',
   Khala: 'assets.metadata',
-  CoretimeKusama: null
+  CoretimeKusama: null,
+  Subsocial: null
 }
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
