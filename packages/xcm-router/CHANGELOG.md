@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v0.1.1...xcm-router-v1.0.0) (2024-04-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sdk:** Refactor public functions to use parameter object ⚙️
+
+### Bug Fixes
+
+* **router:** Update README.md ([4cef3e2](https://github.com/paraspell/xcm-tools/commit/4cef3e2f644d4d27df6ec6f2490c64a66cc7da4f))
+
+
+### Miscellaneous Chores
+
+* **sdk:** Monthly check ✨ ([bee15fb](https://github.com/paraspell/xcm-tools/commit/bee15fb231932705bdfcdb14a13770b8f566035d))
+
+
+### Code Refactoring
+
+* **sdk:** Refactor public functions to use parameter object ⚙️ ([53e81b5](https://github.com/paraspell/xcm-tools/commit/53e81b56523e14e90f5f1ffc0103cb2bd9420c08))
+
 ## [0.1.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v0.1.0...xcm-router-v0.1.1) (2024-02-25)
 
 
