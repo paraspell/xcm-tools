@@ -1,0 +1,48 @@
+{
+  "name": "@paraspell/xcm-analyser",
+  "version": "1.0.0",
+  "description": "Tool for converting XCM MultiLocation into human readable written format.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "compile": "tsc --noEmit",
+    "build": "rollup -c",
+    "lint:check": "eslint src --ext .ts",
+    "lint": "eslint --fix src --ext .ts",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage --config ./vitest.config.coverage.ts",
+    "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
+    "release": "pnpm runAll && pnpm build && standard-version && git push --follow-tags",
+    "runExample": "TS_NODE_PROJECT='./tsconfig.node.json' node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/example.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-json": "^6.0.1",
+    "rollup": "^4.2.0",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2"
+  },
+  "packageManager": "pnpm@8.5.1"
+}
