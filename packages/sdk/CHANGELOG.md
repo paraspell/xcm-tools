@@ -1,5 +1,20 @@
 # Changelog
 
+## [5.0.1](https://github.com/paraspell/xcm-tools/compare/sdk-v5.0.0...sdk-v5.0.1) (2024-04-11)
+
+
+### Bug Fixes
+
+* add asset symbol and decimal ([bafb8d9](https://github.com/paraspell/xcm-tools/commit/bafb8d9c9c117080066a9043e8c3fdcd4eb4aeec))
+* **sdk:** Repair decimals ([19acd63](https://github.com/paraspell/xcm-tools/commit/19acd63908202c1978377079c2370b8708c758f4))
+* **sdk:** Repair formatter ([172050b](https://github.com/paraspell/xcm-tools/commit/172050bcb9d496f0a2c46e13a274e5d6f370265a))
+
+
+### Miscellaneous Chores
+
+* added DED token ([63539fd](https://github.com/paraspell/xcm-tools/commit/63539fd5037889f1e64840181952c6d43e2271c8))
+* added USDC asset id ([d7ef963](https://github.com/paraspell/xcm-tools/commit/d7ef96309d02220b20bca3b69621c860702070d8))
+
 ## [5.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v4.1.1...sdk-v5.0.0) (2024-03-23)
 
 
