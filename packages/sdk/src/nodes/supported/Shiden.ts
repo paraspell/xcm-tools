@@ -44,10 +44,14 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
       address,
       destination,
       paraIdTo,
+      overridedCurrencyMultiLocation,
       serializedApiCallEnabled = false
     } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
-    const paraId = destination !== undefined ? paraIdTo ?? getParaId(destination) : undefined
+    const paraId =
+      destination !== undefined && typeof destination !== 'object'
+        ? paraIdTo ?? getParaId(destination)
+        : undefined
     const node = this.node
     if (supportsXTokens(this) && currencySymbol !== 'SDN') {
       return this.transferXTokens({
@@ -64,16 +68,17 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
           paraId
         ),
         fees: getFees(scenario),
+        origin: this.node,
         scenario,
         paraIdTo: paraId,
-        origin: this.node,
         destination,
+        overridedCurrencyMultiLocation,
         serializedApiCallEnabled
       })
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
         api,
-        header: this.createPolkadotXcmHeader(scenario, paraId),
+        header: this.createPolkadotXcmHeader(scenario, destination, paraId),
         addressSelection: generateAddressPayload(
           api,
           scenario,
@@ -82,7 +87,13 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
           this.version,
           paraId
         ),
-        currencySelection: this.createCurrencySpec(amount, scenario, this.version, currencyId),
+        currencySelection: this.createCurrencySpec(
+          amount,
+          scenario,
+          this.version,
+          currencyId,
+          overridedCurrencyMultiLocation
+        ),
         scenario,
         currencySymbol,
         serializedApiCallEnabled

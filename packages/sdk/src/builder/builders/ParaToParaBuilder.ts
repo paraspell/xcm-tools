@@ -2,25 +2,34 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { send, sendSerializedApiCall } from '../../pallets/xcmPallet'
-import { type TSerializedApiCall, type Extrinsic, type TNode, type TSendOptions } from '../../types'
+import {
+  type TSerializedApiCall,
+  type Extrinsic,
+  type TNode,
+  type TSendOptions,
+  type TCurrency,
+  type TAmount,
+  type TAddress,
+  type TDestination
+} from '../../types'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
 
 class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
   private readonly api?: ApiPromise
   private readonly from: TNode
-  private readonly to: TNode
-  private readonly currency: string | number | bigint
+  private readonly to: TDestination
+  private readonly currency: TCurrency
   private readonly paraIdTo?: number
 
-  private _amount: string | number | bigint
-  private _address: string
+  private _amount: TAmount
+  private _address: TAddress
   private _destApi?: ApiPromise
 
   private constructor(
     api: ApiPromise | undefined,
     from: TNode,
-    to: TNode,
-    currency: string | number | bigint,
+    to: TDestination,
+    currency: TCurrency,
     paraIdTo?: number
   ) {
     this.api = api
@@ -33,19 +42,19 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFi
   static createParaToPara(
     api: ApiPromise | undefined,
     from: TNode,
-    to: TNode,
-    currency: string | number | bigint,
+    to: TDestination,
+    currency: TCurrency,
     paraIdTo?: number
   ): AmountBuilder {
     return new ParaToParaBuilder(api, from, to, currency, paraIdTo)
   }
 
-  amount(amount: string | number | bigint): this {
+  amount(amount: TAmount): this {
     this._amount = amount
     return this
   }
 
-  address(address: string): this {
+  address(address: TAddress): this {
     this._address = address
     return this
   }

@@ -43,10 +43,15 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
       address,
       destination,
       paraIdTo,
+      overridedCurrencyMultiLocation,
       serializedApiCallEnabled = false
     } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
-    const paraId = destination !== undefined ? paraIdTo ?? getParaId(destination) : undefined
+    const paraId =
+      destination !== undefined && typeof destination !== 'object'
+        ? paraIdTo ?? getParaId(destination)
+        : undefined
+
     const node = this.node
     if (supportsXTokens(this) && currencySymbol !== 'ASTR') {
       return this.transferXTokens({
@@ -67,12 +72,13 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
         scenario,
         paraIdTo: paraId,
         destination,
+        overridedCurrencyMultiLocation,
         serializedApiCallEnabled
       })
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
         api,
-        header: this.createPolkadotXcmHeader(scenario, paraId),
+        header: this.createPolkadotXcmHeader(scenario, destination, paraId),
         addressSelection: generateAddressPayload(
           api,
           scenario,
@@ -81,7 +87,13 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
           this.version,
           paraId
         ),
-        currencySelection: this.createCurrencySpec(amount, scenario, this.version, currencyId),
+        currencySelection: this.createCurrencySpec(
+          amount,
+          scenario,
+          this.version,
+          currencyId,
+          overridedCurrencyMultiLocation
+        ),
         scenario,
         currencySymbol,
         serializedApiCallEnabled

@@ -11,6 +11,7 @@ import {
   type TScenario,
   type TRelayToParaInternalOptions
 } from '../../types'
+import { type TMultiLocation } from '../../types/TMultiLocation'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
@@ -40,7 +41,8 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     amount: string,
     scenario: TScenario,
     version: Version,
-    currencyId?: string
+    currencyId?: string,
+    overridedMultiLocation?: TMultiLocation
   ): any {
     if (scenario === 'ParaToPara') {
       const interior = {
@@ -53,7 +55,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
           }
         ]
       }
-      return createCurrencySpec(amount, version, Parents.ZERO, interior)
+      return createCurrencySpec(amount, version, Parents.ZERO, overridedMultiLocation, interior)
     } else {
       return super.createCurrencySpec(amount, scenario, version, currencyId)
     }

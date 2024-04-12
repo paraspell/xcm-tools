@@ -7,6 +7,7 @@ import {
   type NODE_NAMES,
   type SUPPORTED_PALLETS
 } from './maps/consts'
+import { type TMultiLocation } from './types/TMultiLocation'
 
 export type UpdateFunction = (name: string, index: number) => string
 export type Extrinsic = SubmittableExtrinsic<'promise'>
@@ -57,8 +58,9 @@ export interface XTokensTransferInput {
   fees: number
   scenario: TScenario
   origin: TNode
-  destination?: TNode
+  destination?: TDestination
   paraIdTo?: number
+  overridedCurrencyMultiLocation?: TMultiLocation
   serializedApiCallEnabled?: boolean
 }
 
@@ -67,10 +69,11 @@ export interface XTransferTransferInput {
   currency: string | undefined
   currencyID: string | undefined
   amount: string
-  recipientAddress: string
+  recipientAddress: TAddress
   origin: TNode
   paraId?: number
-  destination?: TNode
+  destination?: TDestination
+  overridedCurrencyMultiLocation?: TMultiLocation
   serializedApiCallEnabled?: boolean
 }
 
@@ -93,10 +96,13 @@ export interface PolkadotXCMTransferInput {
 }
 
 export type TAmount = string | number | bigint
+export type TCurrency = string | number | bigint | TMultiLocation
+export type TAddress = string | TMultiLocation
+export type TDestination = TNode | TMultiLocation
 
 export interface TSendBaseOptions {
-  address: string
-  destination?: TNode
+  address: TAddress
+  destination?: TDestination
   paraIdTo?: number
   destApiForKeepAlive?: ApiPromise
 }
@@ -104,7 +110,7 @@ export interface TSendBaseOptions {
 export interface TSendOptions extends TSendBaseOptions {
   api?: ApiPromise
   origin: TNode
-  currency: string | number | bigint
+  currency: TCurrency
   amount: TAmount
 }
 
@@ -117,12 +123,13 @@ export interface TSendInternalOptions extends TSendBaseOptions {
   currencySymbol: string | undefined
   currencyId: string | undefined
   amount: string
+  overridedCurrencyMultiLocation?: TMultiLocation
   serializedApiCallEnabled?: boolean
 }
 
 interface TRelayToParaBaseOptions {
-  destination: TNode
-  address: string
+  destination: TDestination
+  address: TAddress
   paraIdTo?: number
   destApiForKeepAlive?: ApiPromise
 }

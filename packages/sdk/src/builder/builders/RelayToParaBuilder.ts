@@ -5,27 +5,28 @@ import { transferRelayToPara, transferRelayToParaSerializedApiCall } from '../..
 import {
   type TSerializedApiCall,
   type Extrinsic,
-  type TNode,
-  type TRelayToParaOptions
+  type TRelayToParaOptions,
+  type TDestination,
+  type TAddress
 } from '../../types'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
 
 class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
   private readonly api?: ApiPromise
-  private readonly to: TNode
+  private readonly to: TDestination
   private readonly paraIdTo?: number
 
   private _amount: number
-  private _address: string
+  private _address: TAddress
   private _destApi?: ApiPromise
 
-  private constructor(api: ApiPromise | undefined, to: TNode, paraIdTo?: number) {
+  private constructor(api: ApiPromise | undefined, to: TDestination, paraIdTo?: number) {
     this.api = api
     this.to = to
     this.paraIdTo = paraIdTo
   }
 
-  static create(api: ApiPromise | undefined, to: TNode, paraIdTo?: number): AmountBuilder {
+  static create(api: ApiPromise | undefined, to: TDestination, paraIdTo?: number): AmountBuilder {
     return new RelayToParaBuilder(api, to, paraIdTo)
   }
 
@@ -34,7 +35,7 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
     return this
   }
 
-  address(address: string): this {
+  address(address: TAddress): this {
     this._address = address
     return this
   }

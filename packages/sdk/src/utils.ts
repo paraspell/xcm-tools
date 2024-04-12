@@ -10,7 +10,8 @@ import {
   type TSerializedApiCall,
   Version,
   type Extrinsic,
-  type TNodeWithRelayChains
+  type TNodeWithRelayChains,
+  type TAddress
 } from './types'
 import { nodes } from './maps/consts'
 import type ParachainNode from './nodes/ParachainNode'
@@ -37,10 +38,15 @@ export const generateAddressPayload = (
   api: ApiPromise,
   scenario: TScenario,
   pallet: TPallet | null,
-  recipientAddress: string,
+  recipientAddress: TAddress,
   version: Version,
   nodeId: number | undefined
 ): any => {
+  const isMultiLocation = typeof recipientAddress === 'object'
+  if (isMultiLocation) {
+    return { [version]: recipientAddress }
+  }
+
   const isEthAddress = ethers.utils.isAddress(recipientAddress)
 
   if (scenario === 'ParaToRelay') {
