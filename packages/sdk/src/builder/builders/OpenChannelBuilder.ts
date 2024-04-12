@@ -5,7 +5,8 @@ import {
   type TSerializedApiCall,
   type Extrinsic,
   type TNode,
-  type TOpenChannelOptions
+  type TOpenChannelOptions,
+  type TDestination
 } from '../../types'
 import { openChannel, openChannelSerializedApiCall } from '../../pallets/parasSudoWrapper'
 import { type FinalBuilder } from './Builder'
@@ -23,18 +24,18 @@ class OpenChannelBuilder
 {
   private readonly api: ApiPromise
   private readonly from: TNode
-  private readonly to: TNode
+  private readonly to: TDestination
 
   private _maxSize: number
   private _maxMessageSize: number
 
-  private constructor(api: ApiPromise, from: TNode, to: TNode) {
+  private constructor(api: ApiPromise, from: TNode, to: TDestination) {
     this.api = api
     this.from = from
     this.to = to
   }
 
-  static create(api: ApiPromise, from: TNode, to: TNode): MaxSizeOpenChannelBuilder {
+  static create(api: ApiPromise, from: TNode, to: TDestination): MaxSizeOpenChannelBuilder {
     return new OpenChannelBuilder(api, from, to)
   }
 
@@ -49,6 +50,9 @@ class OpenChannelBuilder
   }
 
   private buildOptions(): TOpenChannelOptions {
+    if (typeof this.to === 'object') {
+      throw new Error('Channels do not support multi-location destinations')
+    }
     return {
       api: this.api,
       origin: this.from,

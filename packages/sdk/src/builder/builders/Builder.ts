@@ -1,7 +1,15 @@
 // Implements general builder pattern, this is Builder main file
 
 import { type ApiPromise } from '@polkadot/api'
-import { type Extrinsic, type TNode, type TSerializedApiCall } from '../../types'
+import {
+  type TAmount,
+  type Extrinsic,
+  type TNode,
+  type TSerializedApiCall,
+  type TCurrency,
+  type TDestination,
+  type TAddress
+} from '../../types'
 import CloseChannelBuilder, { type InboundCloseChannelBuilder } from './CloseChannelBuilder'
 import OpenChannelBuilder, { type MaxSizeOpenChannelBuilder } from './OpenChannelBuilder'
 import RelayToParaBuilder from './RelayToParaBuilder'
@@ -12,17 +20,17 @@ import { MissingApiPromiseError } from '../../errors/MissingApiPromiseError'
 class ToGeneralBuilder {
   private readonly api?: ApiPromise
   private readonly from: TNode
-  private readonly to: TNode
+  private readonly to: TDestination
   private readonly paraIdTo?: number
 
-  constructor(api: ApiPromise | undefined, from: TNode, to: TNode, paraIdTo?: number) {
+  constructor(api: ApiPromise | undefined, from: TNode, to: TDestination, paraIdTo?: number) {
     this.api = api
     this.from = from
     this.to = to
     this.paraIdTo = paraIdTo
   }
 
-  currency(currency: string | number | bigint): AmountBuilder {
+  currency(currency: TCurrency): AmountBuilder {
     return ParaToParaBuilder.createParaToPara(this.api, this.from, this.to, currency, this.paraIdTo)
   }
 
@@ -43,11 +51,11 @@ class FromGeneralBuilder {
     this.from = from
   }
 
-  to(node: TNode, paraIdTo?: number): ToGeneralBuilder {
+  to(node: TDestination, paraIdTo?: number): ToGeneralBuilder {
     return new ToGeneralBuilder(this.api, this.from, node, paraIdTo)
   }
 
-  amount(amount: string | number | bigint): AddressBuilder {
+  amount(amount: TAmount): AddressBuilder {
     return ParaToRelayBuilder.create(this.api, this.from, amount)
   }
 
@@ -70,7 +78,7 @@ class GeneralBuilder {
     return new FromGeneralBuilder(this.api, node)
   }
 
-  to(node: TNode, paraIdTo?: number): AmountBuilder {
+  to(node: TDestination, paraIdTo?: number): AmountBuilder {
     return RelayToParaBuilder.create(this.api, node, paraIdTo)
   }
 }
@@ -91,9 +99,9 @@ export interface UseKeepAliveFinalBuilder {
 }
 
 export interface AddressBuilder {
-  address: (address: string) => UseKeepAliveFinalBuilder
+  address: (address: TAddress) => UseKeepAliveFinalBuilder
 }
 
 export interface AmountBuilder {
-  amount: (amount: string | number | bigint) => AddressBuilder
+  amount: (amount: TAmount) => AddressBuilder
 }

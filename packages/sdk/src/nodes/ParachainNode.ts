@@ -15,7 +15,8 @@ import {
   Parents,
   type IXTransferTransfer,
   type TRelayToParaInternalOptions,
-  type TSendInternalOptions
+  type TSendInternalOptions,
+  type TDestination
 } from '../types'
 import { generateAddressPayload, getFees, getAllNodeProviders, createApiInstance } from '../utils'
 import {
@@ -23,6 +24,7 @@ import {
   createCurrencySpec,
   createPolkadotXcmHeader
 } from '../pallets/xcmPallet/utils'
+import { type TMultiLocation } from '../types/TMultiLocation'
 
 export const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
   return 'transferXTokens' in obj
@@ -87,10 +89,14 @@ abstract class ParachainNode {
       address,
       destination,
       paraIdTo,
+      overridedCurrencyMultiLocation,
       serializedApiCallEnabled = false
     } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
-    const paraId = destination !== undefined ? paraIdTo ?? getParaId(destination) : undefined
+    const paraId =
+      destination !== undefined && typeof destination !== 'object'
+        ? paraIdTo ?? getParaId(destination)
+        : undefined
 
     if (supportsXTokens(this)) {
       return this.transferXTokens({
@@ -111,6 +117,7 @@ abstract class ParachainNode {
         scenario,
         paraIdTo: paraId,
         destination,
+        overridedCurrencyMultiLocation,
         serializedApiCallEnabled
       })
     } else if (supportsXTransfer(this)) {
@@ -123,12 +130,13 @@ abstract class ParachainNode {
         paraId,
         origin: this.node,
         destination,
+        overridedCurrencyMultiLocation,
         serializedApiCallEnabled
       })
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
         api,
-        header: this.createPolkadotXcmHeader(scenario, paraId),
+        header: this.createPolkadotXcmHeader(scenario, destination, paraId),
         addressSelection: generateAddressPayload(
           api,
           scenario,
@@ -137,7 +145,13 @@ abstract class ParachainNode {
           this.version,
           paraId
         ),
-        currencySelection: this.createCurrencySpec(amount, scenario, this.version, currencyId),
+        currencySelection: this.createCurrencySpec(
+          amount,
+          scenario,
+          this.version,
+          currencyId,
+          overridedCurrencyMultiLocation
+        ),
         scenario,
         currencySymbol,
         serializedApiCallEnabled
@@ -167,17 +181,19 @@ abstract class ParachainNode {
     amount: string,
     scenario: TScenario,
     version: Version,
-    currencyId?: string
+    currencyId?: string,
+    overridedMultiLocation?: TMultiLocation
   ): any {
     return createCurrencySpec(
       amount,
       version,
-      scenario === 'ParaToRelay' ? Parents.ONE : Parents.ZERO
+      scenario === 'ParaToRelay' ? Parents.ONE : Parents.ZERO,
+      overridedMultiLocation
     )
   }
 
-  createPolkadotXcmHeader(scenario: TScenario, paraId?: number): any {
-    return createPolkadotXcmHeader(scenario, this.version, paraId)
+  createPolkadotXcmHeader(scenario: TScenario, destination?: TDestination, paraId?: number): any {
+    return createPolkadotXcmHeader(scenario, this.version, destination, paraId)
   }
 }
 

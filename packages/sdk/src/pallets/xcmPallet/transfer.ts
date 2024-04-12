@@ -6,7 +6,8 @@ import {
   type TRelayToParaOptions,
   type TRelayToParaCommonOptions,
   type TSendOptionsCommon,
-  type TSendOptions
+  type TSendOptions,
+  type TNode
 } from '../../types'
 import {
   getNode,
@@ -19,12 +20,13 @@ import { getAssetBySymbolOrId } from '../assets/assetsUtils'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive'
+import { resolveTNodeFromMultiLocation } from './utils'
 
 const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSerializedApiCall> => {
   const {
     api,
     origin,
-    currency: currencySymbolOrId,
+    currency,
     amount,
     address,
     destination,
@@ -33,15 +35,18 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     serializedApiCallEnabled = false
   } = options
 
-  if (typeof currencySymbolOrId === 'number' && currencySymbolOrId > Number.MAX_SAFE_INTEGER) {
+  if (typeof currency === 'number' && currency > Number.MAX_SAFE_INTEGER) {
     throw new InvalidCurrencyError(
       'The provided asset ID is larger than the maximum safe integer value. Please provide it as a string.'
     )
   }
 
-  const asset = getAssetBySymbolOrId(origin, currencySymbolOrId.toString())
+  const asset = getAssetBySymbolOrId(origin, currency)
 
-  if (destination !== undefined) {
+  const isMultiLocationDestination = typeof destination === 'object'
+  const isMultiLocationCurrency = typeof currency === 'object'
+
+  if (destination !== undefined && !isMultiLocationDestination) {
     const originRelayChainSymbol = getRelayChainSymbol(origin)
     const destinationRelayChainSymbol = getRelayChainSymbol(destination)
     if (originRelayChainSymbol !== destinationRelayChainSymbol) {
@@ -52,24 +57,27 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
   const originNode = getNode(origin)
 
   const assetCheckEnabled =
-    destination === 'AssetHubKusama' || destination === 'AssetHubPolkadot'
+    destination === 'AssetHubKusama' ||
+    destination === 'AssetHubPolkadot' ||
+    isMultiLocationCurrency
       ? false
       : originNode.assetCheckEnabled
 
   if (asset === null && assetCheckEnabled) {
     throw new InvalidCurrencyError(
-      `Origin node ${origin} does not support currency or currencyId ${currencySymbolOrId}.`
+      `Origin node ${origin} does not support currency or currencyId ${JSON.stringify(currency)}.`
     )
   }
 
   if (
     destination !== undefined &&
+    !isMultiLocationDestination &&
     asset?.symbol !== undefined &&
     assetCheckEnabled &&
     !hasSupportForAsset(destination, asset.symbol)
   ) {
     throw new InvalidCurrencyError(
-      `Destination node ${destination} does not support currency or currencyId ${currencySymbolOrId}.`
+      `Destination node ${destination} does not support currency or currencyId ${JSON.stringify(currency)}.`
     )
   }
 
@@ -77,17 +85,26 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
 
   const amountStr = amount.toString()
 
-  await checkKeepAlive({
-    originApi: apiWithFallback,
-    address,
-    amount: amountStr,
-    originNode: origin,
-    destApi: destApiForKeepAlive,
-    currencySymbol: asset?.symbol ?? currencySymbolOrId.toString(),
-    destNode: destination
-  })
+  if (typeof currency === 'object') {
+    console.warn('Keep alive check is not supported when using MultiLocation as currency.')
+  } else if (typeof address === 'object') {
+    console.warn('Keep alive check is not supported when using MultiLocation as address.')
+  } else if (typeof destination === 'object') {
+    console.warn('Keep alive check is not supported when using MultiLocation as destination.')
+  } else {
+    await checkKeepAlive({
+      originApi: apiWithFallback,
+      address,
+      amount: amountStr,
+      originNode: origin,
+      destApi: destApiForKeepAlive,
+      currencySymbol: asset?.symbol ?? currency.toString(),
+      destNode: destination
+    })
+  }
 
-  const currencyId = assetCheckEnabled ? asset?.assetId : currencySymbolOrId.toString()
+  const currencyStr = typeof currency === 'object' ? undefined : currency.toString()
+  const currencyId = assetCheckEnabled ? asset?.assetId : currencyStr
 
   return originNode.transfer({
     api: apiWithFallback,
@@ -97,6 +114,7 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     address,
     destination,
     paraIdTo,
+    overridedCurrencyMultiLocation: typeof currency === 'object' ? currency : undefined,
     serializedApiCallEnabled
   })
 }
@@ -124,24 +142,36 @@ export const transferRelayToParaCommon = async (
     destApiForKeepAlive,
     serializedApiCallEnabled = false
   } = options
+  const isMultiLocationDestination = typeof destination === 'object'
+  const isAddressMultiLocation = typeof address === 'object'
 
-  const currencySymbol = getRelayChainSymbol(destination)
+  if (api === undefined && isMultiLocationDestination) {
+    throw new Error('API is required when using MultiLocation as destination.')
+  }
 
-  const relayNode = determineRelayChain(destination)
-  const apiWithFallback = api ?? (await createApiInstanceForNode(relayNode))
+  const apiWithFallback =
+    api ?? (await createApiInstanceForNode(determineRelayChain(destination as TNode)))
 
   const amountStr = amount.toString()
 
-  await checkKeepAlive({
-    originApi: apiWithFallback,
-    address,
-    amount: amountStr,
-    destApi: destApiForKeepAlive,
-    currencySymbol,
-    destNode: destination
-  })
+  if (isMultiLocationDestination) {
+    console.warn('Keep alive check is not supported when using MultiLocation as destination.')
+  } else if (isAddressMultiLocation) {
+    console.warn('Keep alive check is not supported when using MultiLocation as address.')
+  } else {
+    await checkKeepAlive({
+      originApi: apiWithFallback,
+      address,
+      amount: amountStr,
+      destApi: destApiForKeepAlive,
+      currencySymbol: getRelayChainSymbol(destination),
+      destNode: destination
+    })
+  }
 
-  const serializedApiCall = getNode(destination).transferRelayToPara({
+  const serializedApiCall = getNode(
+    isMultiLocationDestination ? resolveTNodeFromMultiLocation(destination) : destination
+  ).transferRelayToPara({
     api: apiWithFallback,
     destination,
     address,

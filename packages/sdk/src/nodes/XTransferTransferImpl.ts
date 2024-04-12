@@ -23,37 +23,58 @@ const determineDestWeight = (destNode?: TNode): { refTime: string; proofSize: st
   throw new NodeNotSupportedError(`Node ${destNode} is not supported`)
 }
 
+const getDestination = ({ recipientAddress, paraId, api }: XTransferTransferInput): any => {
+  const isMultiLocation = typeof recipientAddress === 'object'
+  if (isMultiLocation) {
+    return recipientAddress
+  }
+
+  const isEthAddress = ethers.utils.isAddress(recipientAddress)
+  return {
+    parents: 1,
+    interior: {
+      X2: [
+        {
+          Parachain: paraId
+        },
+        {
+          [isEthAddress ? 'AccountKey20' : 'AccountId32']: {
+            ...(isEthAddress
+              ? { key: recipientAddress }
+              : { id: createAccID(api, recipientAddress) })
+          }
+        }
+      ]
+    }
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class XTransferTransferImpl {
-  static transferXTransfer({
-    api,
-    amount,
-    origin,
-    recipientAddress,
-    destination,
-    paraId,
-    serializedApiCallEnabled
-  }: XTransferTransferInput): Extrinsic | TSerializedApiCall {
-    const currencySpec = createCurrencySpec(amount, Version.V1, Parents.ZERO)[Version.V1][0]
+  static transferXTransfer(input: XTransferTransferInput): Extrinsic | TSerializedApiCall {
+    const {
+      api,
+      amount,
+      origin,
+      destination,
+      serializedApiCallEnabled,
+      overridedCurrencyMultiLocation
+    } = input
 
-    const isEthAddress = ethers.utils.isAddress(recipientAddress)
-    const dest = {
-      parents: 1,
-      interior: {
-        X2: [
-          {
-            Parachain: paraId
-          },
-          {
-            [isEthAddress ? 'AccountKey20' : 'AccountId32']: {
-              ...(isEthAddress
-                ? { key: recipientAddress }
-                : { id: createAccID(api, recipientAddress) })
-            }
-          }
-        ]
-      }
+    const isMultiLocationDestination = typeof destination === 'object'
+    if (isMultiLocationDestination) {
+      throw new Error(
+        'Multilocation destinations are not supported for specific transfer you are trying to create. In special cases such as xTokens or xTransfer pallet try using address multilocation instead (for both destination and address in same multilocation set (eg. X2 - Parachain, Address). For further assistance please open issue in our repository.'
+      )
     }
+
+    const currencySpec = createCurrencySpec(
+      amount,
+      Version.V1,
+      Parents.ZERO,
+      overridedCurrencyMultiLocation
+    )[Version.V1][0]
+    const dest = getDestination(input)
 
     if (serializedApiCallEnabled === true) {
       return {

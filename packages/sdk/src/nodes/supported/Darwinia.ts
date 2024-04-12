@@ -13,6 +13,7 @@ import ParachainNode from '../ParachainNode'
 import { NodeNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
+import { type TMultiLocation } from '../../types/TMultiLocation'
 
 class Darwinia extends ParachainNode implements IXTokensTransfer {
   constructor() {
@@ -34,7 +35,8 @@ class Darwinia extends ParachainNode implements IXTokensTransfer {
     amount: string,
     scenario: TScenario,
     version: Version,
-    currencyId?: string
+    currencyId?: string,
+    overridedMultiLocation?: TMultiLocation
   ): any {
     if (scenario === 'ParaToPara') {
       const interior = {
@@ -42,7 +44,7 @@ class Darwinia extends ParachainNode implements IXTokensTransfer {
           PalletInstance: 5
         }
       }
-      return createCurrencySpec(amount, version, Parents.ZERO, interior)
+      return createCurrencySpec(amount, version, Parents.ZERO, overridedMultiLocation, interior)
     } else {
       return super.createCurrencySpec(amount, scenario, version, currencyId)
     }
