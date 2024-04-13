@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.0.0...xcm-router-v1.1.0) (2024-04-13)
+
+
+### Features
+
+* **sdk:** Add MultiLocation override feature ⛓️ ([eb6cdbe](https://github.com/paraspell/xcm-tools/commit/eb6cdbedd8bdfb2570e0bc94192afe6079a20b11))
+
 ## [1.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v0.1.1...xcm-router-v1.0.0) (2024-04-02)
 
 
