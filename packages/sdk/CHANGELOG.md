@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.0.1...sdk-v5.1.0) (2024-04-13)
+
+
+### Features
+
+* **sdk:** Add MultiLocation override feature ⛓️ ([eb6cdbe](https://github.com/paraspell/xcm-tools/commit/eb6cdbedd8bdfb2570e0bc94192afe6079a20b11))
+
 ## [5.0.1](https://github.com/paraspell/xcm-tools/compare/sdk-v5.0.0...sdk-v5.0.1) (2024-04-11)
 
 
