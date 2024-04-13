@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "SDK for ParaSpell XCM/XCMP tool for developers",
   "repository": "@paraspell/sdk",
   "license": "MIT",
