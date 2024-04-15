@@ -15,7 +15,12 @@ export type JunctionType =
 const NetworkId = z.string().nullable();
 const BodyId = z.string().nullable();
 const BodyPart = z.string().nullable();
-const StringOrNumber = z.string().regex(/^\d+$/).or(z.number()).or(z.bigint());
+const StringOrNumber = z
+  .string()
+  .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
+  .transform((s) => s.replace(/,/g, ''))
+  .or(z.number())
+  .or(z.bigint()); 
 const HexString = z.string();
 
 const JunctionParachain = z.object({ Parachain: StringOrNumber });
