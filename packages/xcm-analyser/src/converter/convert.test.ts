@@ -73,11 +73,23 @@ describe('convert', () => {
     expect(result).toBe('./AccountId32(null, accountID)');
   });
 
-  it('convert multilocation to URL with currency and amout multilocation', () => {
+  it('convert multilocation to URL with currency and amount multilocation', () => {
     const multilocation: MultiLocation = {
       parents: '0',
       interior: {
         X2: [{ PalletInstance: '50' }, { GeneralIndex: '1984' }],
+      },
+    };
+
+    const result = convertMultilocationToUrl(multilocation);
+    expect(result).toBe('./PalletInstance(50)/GeneralIndex(1984)');
+  });
+
+  it('convert multilocation to URL with currency and amount multilocation with comma', () => {
+    const multilocation: MultiLocation = {
+      parents: '0',
+      interior: {
+        X2: [{ PalletInstance: '50' }, { GeneralIndex: '1,984' }],
       },
     };
 

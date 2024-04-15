@@ -1,4 +1,4 @@
-import { type Junction, type JunctionType, type MultiLocation } from '../types';
+import { MultiLocationSchema, type Junction, type JunctionType, type MultiLocation } from '../types';
 import { convertJunctionToReadable, findMultiLocationInObject } from '../utils/utils';
 
 export const convertMultilocationToUrlJson = (multiLocationJson: string): string => {
@@ -6,7 +6,8 @@ export const convertMultilocationToUrlJson = (multiLocationJson: string): string
   return convertMultilocationToUrl(multiLocation);
 };
 
-export const convertMultilocationToUrl = ({ parents, interior }: MultiLocation): string => {
+export const convertMultilocationToUrl = (args: unknown): string => {
+  const { parents, interior } = MultiLocationSchema.parse(args)
   const parentsNum = Number(parents);
 
   const entries = Object.entries(interior);
@@ -26,8 +27,8 @@ export const convertMultilocationToUrl = ({ parents, interior }: MultiLocation):
   return `${pathStart}${path}`;
 };
 
-export const convertXCMToUrls = (txArguments: any): string[] => {
-  return txArguments.flatMap((arg: any) => {
+export const convertXCMToUrls = (args: unknown[]): string[] => {
+  return args.flatMap((arg) => {
     const multiLocation = findMultiLocationInObject(arg);
     if (multiLocation !== null && multiLocation !== undefined) {
       return [convertMultilocationToUrl(multiLocation)];
