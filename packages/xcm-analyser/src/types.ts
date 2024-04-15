@@ -20,7 +20,7 @@ const StringOrNumber = z
   .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
   .transform((s) => s.replace(/,/g, ''))
   .or(z.number())
-  .or(z.bigint()); 
+  .or(z.bigint());
 const HexString = z.string();
 
 const JunctionParachain = z.object({ Parachain: StringOrNumber });
