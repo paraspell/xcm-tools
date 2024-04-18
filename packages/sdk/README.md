@@ -299,7 +299,7 @@ XCM SDK can be tested in [Playground](https://github.com/paraspell/xcm-tools/tre
 
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
 
-Published under [MIT License](https://github.com/paraspell/sdk/blob/main/LICENSE).
+Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk/LICENSE).
 
 ## Support
 
