@@ -248,4 +248,4 @@ API can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/ma
 
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
 
-Published under [MIT License](https://github.com/paraspell/xcm-api/blob/main/LICENSE).
+Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/apps/xcm-api/LICENSE).
