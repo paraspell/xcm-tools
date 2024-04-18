@@ -83,19 +83,22 @@ To compile a single multilocation JSON to url use the following structure:
 //Importing the call
 import { convertMultilocationToUrlJson } from '@paraspell/xcm-analyser';
 
-const result = convertMultilocationToUrl({
-      parents: '3',
-      interior: {
-        X2: [
+//Define multilocation JSON
+/*const multilocationJson = `{
+      "parents": "3",
+      "interior": {
+        "X2": [
           {
-            PalletInstance: '50',
+            "PalletInstance": "50"
           },
           {
-            GeneralIndex: '41',
-          },
-        ],
-      },
-});
+            "GeneralIndex": "41"
+          }
+        ]
+      }
+    }`*/
+
+const result = convertMultilocationToUrl(multilocationJson);
 
 /*
 This should result into:
