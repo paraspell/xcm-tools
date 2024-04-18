@@ -60,6 +60,7 @@ NOTES:
 - If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' the end of currencyID. Eg: .currency(42259045809535163221576417993425387648n) will mean you transfer xcDOT.
 - You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948)
 - You can now add optional parameter useKeepAlive which will ensure, that you send more than existential deposit.
+- Since v5 you can fully customize all multilocations (address, currency and destination). Instead of string parameter simply pass object with multilocation instead for more information refer to the following PR https://github.com/paraspell/xcm-tools/pull/199.
 ```
 
 ### Builder pattern:
@@ -68,10 +69,10 @@ NOTES:
 ```ts
 await Builder(/*node api - optional*/)
       .from(NODE)
-      .to(NODE/*,customParaId - optional*/)
-      .currency(CurrencyString||CurrencyID)
+      .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
+      .currency(CurrencyString| | CurrencyID | Multilocation object)
       .amount(amount)
-      .address(address)
+      .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
       .build()
 /*
 EXAMPLE:
@@ -87,9 +88,9 @@ await Builder()
 ##### Transfer assets from the Relay chain to Parachain
 ```ts
 await Builder(/*node api - optional*/)
-      .to(NODE/*,customParaId - optional*/)
+      .to(NODE/*,customParaId - optional*/ | Multilocation object)
       .amount(amount)
-      .address(address)
+      .address(address | Multilocation object)
       .build()
 /*
 EXAMPLE:
@@ -105,7 +106,7 @@ await Builder()
 await Builder(/*node api - optional*/)
       .from(NODE)
       .amount(amount)
-      .address(address)
+      .address(address | Multilocation object)
       .build()
 /*
 EXAMPLE:
@@ -117,6 +118,9 @@ await Builder()
 */
 ```
 ##### Use keepAlive option
+```
+NOTE: Custom multilocations are not available when keepALive check is used
+```
 ```ts
 await Builder(/*node api - optional*/)
       .from(NODE)
@@ -147,18 +151,22 @@ Builder(api)
 ```
 
 ### Function pattern:
+```
+NOTES:
+- Since version v5 there was a breaking change introduced. You now pass single object with properties instead of parameters
+- Since v5 you can fully customize all multilocations (address, currency and destination). Instead of string parameter simply pass object with multilocation instead for more information refer to the following PR https://github.com/paraspell/xcm-tools/pull/199.
+- Custom multilocations are not available when keepALive check is used
+```
 ```ts
-//NOW FEATURING OBJECT PARAMETERS
-
 // Transfer assets from Parachain to Parachain
 await paraspell.xcmPallet.send(
     {
       api?: ApiPromise,
       origin: origin  Parachain  name  string,
-      currency: CurrencyString||CurrencyID,
+      currency: CurrencyString | CurrencyID | Multilocation object /*Only works for PolkadotXCM pallet*/,
       amount: any,
-      to: destination  address  string,
-      destination: destination  Parachain  ID,
+      to: destination  address  string | Multilocation object,
+      destination: destination  Parachain  ID | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/,
       paraIdTo?: number,
       destApiForKeepAlive?: ApiPromise
     }
@@ -170,7 +178,7 @@ await paraspell.xcmPallet.send(
     api?: ApiPromise,
     origin: origin  Parachain  name  string,
     amount: any,
-    to: destination  address  string,
+    to: destination  address  string | Multilocation object,
     paraIdTo?: number,
     destApiForKeepAlive?: ApiPromise
   }
@@ -180,9 +188,9 @@ await paraspell.xcmPallet.send(
 await paraspell.xcmPallet.transferRelayToPara(
   {
     api?: ApiPromise,
-    destination: destination  Parachain  ID,
+    destination: destination  Parachain  ID | Multilocation object,
     amount: any,
-    to: destination  address  string,
+    to: destination  address  string | Multilocation object,
     paraIdTo?: number,
     destApiForKeepAlive?: ApiPromise
   }
