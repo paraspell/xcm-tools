@@ -197,7 +197,7 @@ XCM Router can be tested in [Playground](https://github.com/paraspell/xcm-tools/
 
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
 
-Published under [MIT License](https://github.com/paraspell/xcm-router/blob/main/LICENSE).
+Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/xcm-router/LICENSE).
 
 ## Support
 
