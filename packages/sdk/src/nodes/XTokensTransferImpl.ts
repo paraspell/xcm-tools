@@ -6,7 +6,8 @@ import {
   type TPallet,
   type TSerializedApiCall,
   type XTokensTransferInput,
-  Parents
+  Parents,
+  type TCurrencySelectionHeader
 } from '../types'
 import { getNode, lowercaseFirstLetter } from '../utils'
 
@@ -15,7 +16,7 @@ const getModifiedCurrencySelection = (
   amount: string,
   currencyId?: string,
   paraIdTo?: number
-): any => {
+): TCurrencySelectionHeader => {
   return {
     [version]: {
       id: {

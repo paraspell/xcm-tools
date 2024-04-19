@@ -185,11 +185,25 @@ export enum Parents {
   ZERO = 0
 }
 
-export type PolkadotXCMHeader = {
-  [K in Version]?: {
-    parents: Parents
-    interior: any
+export type TMultiLocationHeader = {
+  [key in Version]?: TMultiLocation
+}
+
+export interface TCurrencySelection {
+  id: {
+    Concrete: TMultiLocation
   }
+  fun: {
+    Fungible: string
+  }
+}
+
+export type TCurrencySelectionHeader = {
+  [key in Version]?: TCurrencySelection
+}
+
+export type TCurrencySelectionHeaderArr = {
+  [key in Version]?: [TCurrencySelection]
 }
 
 export interface CheckKeepAliveOptions {
