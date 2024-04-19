@@ -10,6 +10,7 @@ import {
   type TNode
 } from '../types'
 import { createAccID } from '../utils'
+import { type TJunction, type TMultiLocation } from '../types/TMultiLocation'
 
 const determineDestWeight = (destNode?: TNode): { refTime: string; proofSize: string } | never => {
   if (destNode === 'Astar') {
@@ -23,27 +24,38 @@ const determineDestWeight = (destNode?: TNode): { refTime: string; proofSize: st
   throw new NodeNotSupportedError(`Node ${destNode} is not supported`)
 }
 
-const getDestination = ({ recipientAddress, paraId, api }: XTransferTransferInput): any => {
+const getDestination = ({
+  recipientAddress,
+  paraId,
+  api
+}: XTransferTransferInput): TMultiLocation => {
   const isMultiLocation = typeof recipientAddress === 'object'
   if (isMultiLocation) {
     return recipientAddress
   }
 
   const isEthAddress = ethers.utils.isAddress(recipientAddress)
+
+  const addressJunction: TJunction = isEthAddress
+    ? {
+        AccountKey20: {
+          key: recipientAddress
+        }
+      }
+    : {
+        AccountId32: {
+          id: createAccID(api, recipientAddress)
+        }
+      }
+
   return {
-    parents: 1,
+    parents: Parents.ONE,
     interior: {
       X2: [
         {
           Parachain: paraId
         },
-        {
-          [isEthAddress ? 'AccountKey20' : 'AccountId32']: {
-            ...(isEthAddress
-              ? { key: recipientAddress }
-              : { id: createAccID(api, recipientAddress) })
-          }
-        }
+        addressJunction
       ]
     }
   }
@@ -68,12 +80,10 @@ class XTransferTransferImpl {
       )
     }
 
-    const currencySpec = createCurrencySpec(
-      amount,
-      Version.V1,
-      Parents.ZERO,
-      overridedCurrencyMultiLocation
-    )[Version.V1][0]
+    const currencySpec = Object.values(
+      createCurrencySpec(amount, Version.V1, Parents.ZERO, overridedCurrencyMultiLocation)
+    )[0][0]
+
     const dest = getDestination(input)
 
     if (serializedApiCallEnabled === true) {

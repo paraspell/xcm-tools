@@ -17,12 +17,12 @@ type StringOrNumber = string | number
 type HexString = string
 
 interface JunctionParachain {
-  Parachain: StringOrNumber
+  Parachain: StringOrNumber | undefined
 }
 
 interface JunctionAccountId32 {
   AccountId32: {
-    network: NetworkId
+    network?: NetworkId
     id: HexString
   }
 }
@@ -36,7 +36,7 @@ interface JunctionAccountIndex64 {
 
 interface JunctionAccountKey20 {
   AccountKey20: {
-    network: NetworkId
+    network?: NetworkId
     key: HexString
   }
 }
@@ -71,7 +71,7 @@ interface JunctionGlobalConsensus {
   GlobalConsensus: NetworkId
 }
 
-type Junction =
+export type TJunction =
   | JunctionParachain
   | JunctionAccountId32
   | JunctionAccountIndex64
@@ -84,26 +84,36 @@ type Junction =
   | JunctionGlobalConsensus
 
 interface Junctions {
-  X1?: Junction
-  X2?: [Junction, Junction]
-  X3?: [Junction, Junction, Junction]
-  X4?: [Junction, Junction, Junction, Junction]
-  X5?: [Junction, Junction, Junction, Junction, Junction]
-  X6?: [Junction, Junction, Junction, Junction, Junction, Junction]
-  X7?: [Junction, Junction, Junction, Junction, Junction, Junction, Junction]
-  X8?: [Junction, Junction, Junction, Junction, Junction, Junction, Junction, Junction]
-  X9?: [Junction, Junction, Junction, Junction, Junction, Junction, Junction, Junction, Junction]
+  X1?: TJunction
+  X2?: [TJunction, TJunction]
+  X3?: [TJunction, TJunction, TJunction]
+  X4?: [TJunction, TJunction, TJunction, TJunction]
+  X5?: [TJunction, TJunction, TJunction, TJunction, TJunction]
+  X6?: [TJunction, TJunction, TJunction, TJunction, TJunction, TJunction]
+  X7?: [TJunction, TJunction, TJunction, TJunction, TJunction, TJunction, TJunction]
+  X8?: [TJunction, TJunction, TJunction, TJunction, TJunction, TJunction, TJunction, TJunction]
+  X9?: [
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction
+  ]
   X10?: [
-    Junction,
-    Junction,
-    Junction,
-    Junction,
-    Junction,
-    Junction,
-    Junction,
-    Junction,
-    Junction,
-    Junction
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction,
+    TJunction
   ]
 }
 

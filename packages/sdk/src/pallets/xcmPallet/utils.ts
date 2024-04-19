@@ -2,12 +2,13 @@ import { type BN } from '@polkadot/util'
 import {
   Version,
   Parents,
-  type PolkadotXCMHeader,
+  type TMultiLocationHeader,
   type TScenario,
   type Extrinsic,
   type TRelayToParaInternalOptions,
   type TDestination,
-  type TNode
+  type TNode,
+  type TCurrencySelectionHeaderArr
 } from '../../types'
 import { generateAddressPayload } from '../../utils'
 import { getParaId, getTNode } from '../assets'
@@ -23,7 +24,7 @@ export const constructRelayToParaParameters = (
       ? paraIdTo ?? getParaId(destination)
       : undefined
 
-  const parameters = [
+  const parameters: any[] = [
     createPolkadotXcmHeader('RelayToPara', version, destination, paraId),
     generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),
     createCurrencySpec(amount, version, Parents.ZERO),
@@ -41,7 +42,7 @@ export const createCurrencySpec = (
   parents: Parents,
   overridedMultiLocation?: TMultiLocation,
   interior: any = 'Here'
-): any => ({
+): TCurrencySelectionHeaderArr => ({
   [version]: [
     {
       id: {
@@ -62,7 +63,7 @@ export const createPolkadotXcmHeader = (
   version: Version,
   destination?: TDestination,
   nodeId?: number
-): PolkadotXCMHeader => {
+): TMultiLocationHeader => {
   const parents = scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE
   const interior =
     scenario === 'ParaToRelay'

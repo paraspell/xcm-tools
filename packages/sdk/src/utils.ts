@@ -11,7 +11,9 @@ import {
   Version,
   type Extrinsic,
   type TNodeWithRelayChains,
-  type TAddress
+  type TAddress,
+  type TMultiLocationHeader,
+  Parents
 } from './types'
 import { nodes } from './maps/consts'
 import type ParachainNode from './nodes/ParachainNode'
@@ -41,7 +43,7 @@ export const generateAddressPayload = (
   recipientAddress: TAddress,
   version: Version,
   nodeId: number | undefined
-): any => {
+): TMultiLocationHeader => {
   const isMultiLocation = typeof recipientAddress === 'object'
   if (isMultiLocation) {
     return { [version]: recipientAddress }
@@ -52,7 +54,7 @@ export const generateAddressPayload = (
   if (scenario === 'ParaToRelay') {
     return {
       [version]: {
-        parents: pallet === 'XTokens' ? 1 : 0,
+        parents: pallet === 'XTokens' ? Parents.ONE : Parents.ZERO,
         interior: {
           X1: {
             AccountId32: {
@@ -68,7 +70,7 @@ export const generateAddressPayload = (
   if (scenario === 'ParaToPara' && pallet === 'XTokens') {
     return {
       [version]: {
-        parents: 1,
+        parents: Parents.ONE,
         interior: {
           X2: [
             {
@@ -91,7 +93,7 @@ export const generateAddressPayload = (
   if (scenario === 'ParaToPara' && pallet === 'PolkadotXcm') {
     return {
       [version]: {
-        parents: 0,
+        parents: Parents.ZERO,
         interior: {
           X1: {
             [isEthAddress ? 'AccountKey20' : 'AccountId32']: {
@@ -107,16 +109,12 @@ export const generateAddressPayload = (
   }
 
   return {
-    V3: {
-      parents: 0,
+    [Version.V3]: {
+      parents: Parents.ZERO,
       interior: {
-        X1: {
-          [isEthAddress ? 'AccountKey20' : 'AccountId32']: {
-            ...(isEthAddress
-              ? { key: recipientAddress }
-              : { id: createAccID(api, recipientAddress) })
-          }
-        }
+        X1: isEthAddress
+          ? { AccountKey20: { key: recipientAddress } }
+          : { AccountId32: { id: createAccID(api, recipientAddress) } }
       }
     }
   }
