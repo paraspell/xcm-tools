@@ -76,14 +76,19 @@ export const generateAddressPayload = (
             {
               Parachain: nodeId
             },
-            {
-              [isEthAddress ? 'AccountKey20' : 'AccountId32']: {
-                ...(version === Version.V1 && { network: 'any' }),
-                ...(isEthAddress
-                  ? { key: recipientAddress }
-                  : { id: createAccID(api, recipientAddress) })
-              }
-            }
+            isEthAddress
+              ? {
+                  AccountKey20: {
+                    ...(version === Version.V1 && { network: 'any' }),
+                    key: recipientAddress
+                  }
+                }
+              : {
+                  AccountId32: {
+                    ...(version === Version.V1 && { network: 'any' }),
+                    id: createAccID(api, recipientAddress)
+                  }
+                }
           ]
         }
       }
@@ -95,14 +100,19 @@ export const generateAddressPayload = (
       [version]: {
         parents: Parents.ZERO,
         interior: {
-          X1: {
-            [isEthAddress ? 'AccountKey20' : 'AccountId32']: {
-              ...(version === Version.V1 && { network: 'any' }),
-              ...(isEthAddress
-                ? { key: recipientAddress }
-                : { id: createAccID(api, recipientAddress) })
-            }
-          }
+          X1: isEthAddress
+            ? {
+                AccountKey20: {
+                  ...(version === Version.V1 && { network: 'any' }),
+                  key: recipientAddress
+                }
+              }
+            : {
+                AccountId32: {
+                  ...(version === Version.V1 && { network: 'any' }),
+                  id: createAccID(api, recipientAddress)
+                }
+              }
         }
       }
     }

@@ -105,3 +105,6 @@ export interface AddressBuilder {
 export interface AmountBuilder {
   amount: (amount: TAmount) => AddressBuilder
 }
+
+export * from './CloseChannelBuilder'
+export * from './OpenChannelBuilder'
