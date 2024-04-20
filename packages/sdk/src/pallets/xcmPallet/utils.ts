@@ -89,7 +89,7 @@ export const calculateTransactionFee = async (tx: Extrinsic, address: string): P
   return partialFee.toBn()
 }
 
-export const findParachainJunction = (multilocation: TMultiLocation): number | null => {
+const findParachainJunction = (multilocation: TMultiLocation): number | null => {
   const { interior }: any = multilocation
   for (const key in interior) {
     const junctions = interior[key]

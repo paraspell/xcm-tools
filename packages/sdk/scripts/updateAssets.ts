@@ -2,7 +2,14 @@
 
 import { ApiPromise } from '@polkadot/api'
 import { NODE_NAMES } from '../src/maps/consts'
-import { TAssetDetails, TAssetJsonMap, TNativeAssetDetails, TNode, TNodeAssets } from '../src/types'
+import {
+  NodeToAssetModuleMap,
+  TAssetDetails,
+  TAssetJsonMap,
+  TNativeAssetDetails,
+  TNode,
+  TNodeAssets
+} from '../src/types'
 import { getNode, getNodeEndpointOption } from '../src/utils'
 import {
   checkForNodeJsEnvironment,
@@ -10,8 +17,6 @@ import {
   fetchTryMultipleProvidersWithTimeout,
   writeJsonSync
 } from './scriptUtils'
-
-type NodeToAssetModuleMap = Record<TNode, string | null>
 
 const nodeToQuery: NodeToAssetModuleMap = {
   // Chain state query: <module>.<section> for assets metadata
@@ -399,8 +404,9 @@ const searchDecimalsBySymbol = (symbol: string, data: TAssetJsonMap) => {
       continue
     }
     const { nativeAssets, otherAssets } = data[node]
-    const decimals = [...nativeAssets, ...otherAssets].find(asset => asset.symbol === symbol)
-      ?.decimals
+    const decimals = [...nativeAssets, ...otherAssets].find(
+      asset => asset.symbol === symbol
+    )?.decimals
     if (decimals) {
       return decimals
     }

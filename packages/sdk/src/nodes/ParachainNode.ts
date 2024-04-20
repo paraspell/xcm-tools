@@ -181,7 +181,7 @@ abstract class ParachainNode {
     amount: string,
     scenario: TScenario,
     version: Version,
-    currencyId?: string,
+    _?: string,
     overridedMultiLocation?: TMultiLocation
   ): any {
     return createCurrencySpec(

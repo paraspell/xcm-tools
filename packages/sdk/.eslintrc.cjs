@@ -3,7 +3,17 @@ module.exports = {
     browser: true,
     es2021: true
   },
-  extends: ['standard-with-typescript', 'prettier'],
+  extends: ['standard-with-typescript', 'prettier', 'plugin:import/recommended'],
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts']
+    },
+    'import/resolver': {
+      typescript: {
+        project: './tsconfig.json'
+      }
+    }
+  },
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -12,6 +22,7 @@ module.exports = {
   },
   plugins: ['prefer-arrow'],
   rules: {
+    'import/no-unused-modules': [1, { unusedExports: true, ignoreExports: ['*/index.ts'] }],
     'prefer-arrow/prefer-arrow-functions': [
       'error',
       {
@@ -21,6 +32,18 @@ module.exports = {
       }
     ],
     'prefer-arrow-callback': ['error', { allowNamedFunctions: true }],
-    'func-style': ['error', 'expression']
+    'func-style': ['error', 'expression'],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        args: 'all',
+        argsIgnorePattern: '^_',
+        caughtErrors: 'all',
+        caughtErrorsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true
+      }
+    ]
   }
 }
