@@ -6,9 +6,10 @@ import {
   type Extrinsic,
   type TNode,
   type TSerializedApiCall,
-  type TCurrency,
+  type TCurrencyInput,
   type TDestination,
-  type TAddress
+  type TAddress,
+  type TCurrency
 } from '../../types'
 import CloseChannelBuilder, { type InboundCloseChannelBuilder } from './CloseChannelBuilder'
 import OpenChannelBuilder, { type MaxSizeOpenChannelBuilder } from './OpenChannelBuilder'
@@ -30,7 +31,7 @@ class ToGeneralBuilder {
     this.paraIdTo = paraIdTo
   }
 
-  currency(currency: TCurrency): AmountBuilder {
+  currency(currency: TCurrencyInput): AmountOrFeeAssetBuilder {
     return ParaToParaBuilder.createParaToPara(this.api, this.from, this.to, currency, this.paraIdTo)
   }
 
@@ -46,6 +47,8 @@ class FromGeneralBuilder {
   private readonly api?: ApiPromise
   private readonly from: TNode
 
+  private _feeAsset?: TCurrency
+
   constructor(api: ApiPromise | undefined, from: TNode) {
     this.api = api
     this.from = from
@@ -55,8 +58,13 @@ class FromGeneralBuilder {
     return new ToGeneralBuilder(this.api, this.from, node, paraIdTo)
   }
 
+  feeAsset(feeAsset: TCurrency): AmountBuilder {
+    this._feeAsset = feeAsset
+    return this
+  }
+
   amount(amount: TAmount): AddressBuilder {
-    return ParaToRelayBuilder.create(this.api, this.from, amount)
+    return ParaToRelayBuilder.create(this.api, this.from, amount, this._feeAsset)
   }
 
   closeChannel(): InboundCloseChannelBuilder {
@@ -104,6 +112,11 @@ export interface AddressBuilder {
 
 export interface AmountBuilder {
   amount: (amount: TAmount) => AddressBuilder
+}
+
+export interface AmountOrFeeAssetBuilder {
+  amount: (amount: TAmount) => AddressBuilder
+  feeAsset: (feeAsset: TCurrencyInput) => AmountBuilder
 }
 
 export * from './CloseChannelBuilder'

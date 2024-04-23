@@ -7,20 +7,29 @@ import {
   type Extrinsic,
   type TNode,
   type TSendOptions,
-  type TCurrency,
+  type TCurrencyInput,
   type TAmount,
   type TAddress,
-  type TDestination
+  type TDestination,
+  type TCurrency
 } from '../../types'
-import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
+import {
+  type UseKeepAliveFinalBuilder,
+  type AddressBuilder,
+  type AmountBuilder,
+  type AmountOrFeeAssetBuilder
+} from './Builder'
 
-class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
+class ParaToParaBuilder
+  implements AmountOrFeeAssetBuilder, AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder
+{
   private readonly api?: ApiPromise
   private readonly from: TNode
   private readonly to: TDestination
-  private readonly currency: TCurrency
+  private readonly currency: TCurrencyInput
   private readonly paraIdTo?: number
 
+  private _feeAsset?: TCurrency
   private _amount: TAmount
   private _address: TAddress
   private _destApi?: ApiPromise
@@ -29,7 +38,7 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFi
     api: ApiPromise | undefined,
     from: TNode,
     to: TDestination,
-    currency: TCurrency,
+    currency: TCurrencyInput,
     paraIdTo?: number
   ) {
     this.api = api
@@ -43,10 +52,15 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFi
     api: ApiPromise | undefined,
     from: TNode,
     to: TDestination,
-    currency: TCurrency,
+    currency: TCurrencyInput,
     paraIdTo?: number
-  ): AmountBuilder {
+  ): AmountOrFeeAssetBuilder {
     return new ParaToParaBuilder(api, from, to, currency, paraIdTo)
+  }
+
+  feeAsset(feeAsset: TCurrency): this {
+    this._feeAsset = feeAsset
+    return this
   }
 
   amount(amount: TAmount): this {
@@ -73,6 +87,7 @@ class ParaToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFi
       address: this._address,
       destination: this.to,
       paraIdTo: this.paraIdTo,
+      feeAsset: this._feeAsset,
       destApiForKeepAlive: this._destApi
     }
   }

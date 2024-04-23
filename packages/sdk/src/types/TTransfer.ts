@@ -12,6 +12,7 @@ export interface PolkadotXCMTransferInput {
   currencySelection: any
   scenario: TScenario
   currencySymbol: string | undefined
+  feeAsset?: TCurrency
   serializedApiCallEnabled?: boolean
 }
 
@@ -27,6 +28,7 @@ export interface XTokensTransferInput {
   destination?: TDestination
   paraIdTo?: number
   overridedCurrencyMultiLocation?: TMultiLocation
+  feeAsset?: TCurrency
   serializedApiCallEnabled?: boolean
 }
 
@@ -68,7 +70,8 @@ export enum Parents {
 }
 
 export type TAmount = string | number | bigint
-export type TCurrency = string | number | bigint | TMultiLocation
+export type TCurrency = string | number | bigint
+export type TCurrencyInput = string | number | bigint | TMultiLocation
 export type TAddress = string | TMultiLocation
 export type TDestination = TNode | TMultiLocation
 
@@ -76,13 +79,14 @@ export interface TSendBaseOptions {
   address: TAddress
   destination?: TDestination
   paraIdTo?: number
+  feeAsset?: TCurrency
   destApiForKeepAlive?: ApiPromise
 }
 
 export interface TSendOptions extends TSendBaseOptions {
   api?: ApiPromise
   origin: TNode
-  currency: TCurrency
+  currency: TCurrencyInput
   amount: TAmount
 }
 

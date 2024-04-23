@@ -2,6 +2,8 @@
 
 import { type Extrinsic, type PolkadotXCMTransferInput, type TSerializedApiCall } from '../types'
 
+const DEFAULT_FEE_ASSET = 0
+
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class PolkadotXCMTransferImpl {
   static transferPolkadotXCM(
@@ -10,6 +12,7 @@ class PolkadotXCMTransferImpl {
       header,
       addressSelection,
       currencySelection,
+      feeAsset = DEFAULT_FEE_ASSET,
       serializedApiCallEnabled
     }: PolkadotXCMTransferInput,
     method: string,
@@ -23,15 +26,15 @@ class PolkadotXCMTransferImpl {
           header,
           addressSelection,
           currencySelection,
-          0,
+          feeAsset,
           ...(fees !== undefined ? [fees] : [])
         ]
       }
     }
 
     return fees !== undefined
-      ? api.tx.polkadotXcm[method](header, addressSelection, currencySelection, 0, fees)
-      : api.tx.polkadotXcm[method](header, addressSelection, currencySelection, 0)
+      ? api.tx.polkadotXcm[method](header, addressSelection, currencySelection, feeAsset, fees)
+      : api.tx.polkadotXcm[method](header, addressSelection, currencySelection, feeAsset)
   }
 }
 
