@@ -7,7 +7,8 @@ import {
   type TSerializedApiCall,
   type XTokensTransferInput,
   Parents,
-  type TCurrencySelectionHeader
+  type TCurrencySelectionHeader,
+  type TCurrency
 } from '../types'
 import { getNode, lowercaseFirstLetter } from '../utils'
 
@@ -51,6 +52,22 @@ const getCurrencySelection = (
   return currencySelection
 }
 
+const getParameters = (
+  isAssetHub: boolean,
+  currencySelection: any,
+  addressSelection: any,
+  amount: string,
+  fees: string | number,
+  feeAsset?: TCurrency
+): any[] => {
+  if (isAssetHub) {
+    return feeAsset !== undefined
+      ? [currencySelection, feeAsset, addressSelection, fees]
+      : [currencySelection, addressSelection, fees]
+  }
+  return [currencySelection, amount, addressSelection, fees]
+}
+
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class XTokensTransferImpl {
   static transferXTokens(
@@ -59,7 +76,7 @@ class XTokensTransferImpl {
     fees: string | number = 'Unlimited',
     pallet: TPallet = 'XTokens'
   ): Extrinsic | TSerializedApiCall {
-    const { api, amount, addressSelection, destination, serializedApiCallEnabled } = input
+    const { api, amount, addressSelection, destination, feeAsset, serializedApiCallEnabled } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
     if (isMultiLocationDestination) {
@@ -76,19 +93,24 @@ class XTokensTransferImpl {
 
     const section = isAssetHub ? 'transferMultiasset' : 'transfer'
 
+    const parameters = getParameters(
+      isAssetHub,
+      modifiedCurrencySelection,
+      addressSelection,
+      amount,
+      fees,
+      feeAsset
+    )
+
     if (serializedApiCallEnabled === true) {
       return {
         module,
         section,
-        parameters: isAssetHub
-          ? [modifiedCurrencySelection, addressSelection, fees]
-          : [modifiedCurrencySelection, amount, addressSelection, fees]
+        parameters
       }
     }
 
-    return isAssetHub
-      ? api.tx[module][section](modifiedCurrencySelection, addressSelection, fees)
-      : api.tx[module][section](modifiedCurrencySelection, amount, addressSelection, fees)
+    return api.tx[module][section](...parameters)
   }
 }
 

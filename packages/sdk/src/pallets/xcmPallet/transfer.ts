@@ -32,6 +32,7 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     destination,
     paraIdTo,
     destApiForKeepAlive,
+    feeAsset,
     serializedApiCallEnabled = false
   } = options
 
@@ -115,6 +116,7 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     destination,
     paraIdTo,
     overridedCurrencyMultiLocation: typeof currency === 'object' ? currency : undefined,
+    feeAsset,
     serializedApiCallEnabled
   })
 }

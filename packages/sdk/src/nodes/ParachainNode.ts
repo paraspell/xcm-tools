@@ -90,6 +90,7 @@ abstract class ParachainNode {
       destination,
       paraIdTo,
       overridedCurrencyMultiLocation,
+      feeAsset,
       serializedApiCallEnabled = false
     } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
@@ -118,6 +119,7 @@ abstract class ParachainNode {
         paraIdTo: paraId,
         destination,
         overridedCurrencyMultiLocation,
+        feeAsset,
         serializedApiCallEnabled
       })
     } else if (supportsXTransfer(this)) {
@@ -154,6 +156,7 @@ abstract class ParachainNode {
         ),
         scenario,
         currencySymbol,
+        feeAsset,
         serializedApiCallEnabled
       })
     } else {
