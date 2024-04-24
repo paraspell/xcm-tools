@@ -61,6 +61,7 @@ NOTES:
 - You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948)
 - You can now add optional parameter useKeepAlive which will ensure, that you send more than existential deposit.
 - Since v5 you can fully customize all multilocations (address, currency and destination). Instead of string parameter simply pass object with multilocation instead for more information refer to the following PR https://github.com/paraspell/xcm-tools/pull/199.
+- Fee asset is now an optional parameter.
 ```
 
 ### Builder pattern:
@@ -71,6 +72,7 @@ await Builder(/*node api - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
       .currency(CurrencyString| | CurrencyID | Multilocation object)
+      /*.feeAsset(feeAsset) - Optional (Fee asset select id)*/
       .amount(amount)
       .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
       .build()
@@ -105,6 +107,7 @@ await Builder()
 ```ts
 await Builder(/*node api - optional*/)
       .from(NODE)
+      /*.feeAsset(feeAsset) - Optional (Fee asset select id)*/
       .amount(amount)
       .address(address | Multilocation object)
       .build()
@@ -164,6 +167,7 @@ await paraspell.xcmPallet.send(
       api?: ApiPromise,
       origin: origin  Parachain  name  string,
       currency: CurrencyString | CurrencyID | Multilocation object /*Only works for PolkadotXCM pallet*/,
+      feeAsset? - Fee asset select id
       amount: any,
       to: destination  address  string | Multilocation object,
       destination: destination  Parachain  ID | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/,
@@ -178,6 +182,7 @@ await paraspell.xcmPallet.send(
     api?: ApiPromise,
     origin: origin  Parachain  name  string,
     amount: any,
+    feeAsset? - Fee asset select id,
     to: destination  address  string | Multilocation object,
     paraIdTo?: number,
     destApiForKeepAlive?: ApiPromise
