@@ -7,9 +7,9 @@ import { ApiPromise } from "@polkadot/api";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { Signer } from "@polkadot/api/types";
 import { useState, useEffect } from "react";
-import { useWallet } from "../providers/WalletProvider";
 import { submitTransaction } from "../utils";
 import { submitTxUsingApi } from "../utils/submitUsingApi";
+import { useWallet } from "../hooks/useWallet";
 
 const XcmTransfer = () => {
   const { selectedAccount } = useWallet();
