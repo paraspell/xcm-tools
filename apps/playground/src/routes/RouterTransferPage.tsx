@@ -1,28 +1,39 @@
-import { Title, Stack, Container, Box, Loader, Group, Center } from '@mantine/core';
+import {
+  Title,
+  Stack,
+  Container,
+  Box,
+  Loader,
+  Group,
+  Center,
+} from "@mantine/core";
 import {
   transfer,
   TransactionType,
   TTxProgressInfo,
   TExchangeNode,
   TransactionStatus,
-} from '@paraspell/xcm-router';
-import { useWallet } from '../providers/WalletProvider';
-import { web3FromAddress } from '@polkadot/extension-dapp';
-import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
-import RouterTransferForm, { FormValues } from '../components/RouterTransferForm';
-import TransferStepper from '../components/TransferStepper';
-import Confetti from 'react-confetti';
-import { Signer } from '@polkadot/api/types';
-import axios, { AxiosError } from 'axios';
-import { createApiInstanceForNode } from '@paraspell/sdk';
-import { buildTx, submitTransaction } from '../utils';
-import ErrorAlert from '../components/ErrorAlert';
+} from "@paraspell/xcm-router";
+import { web3FromAddress } from "@polkadot/extension-dapp";
+import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
+import { useEffect, useState } from "react";
+import RouterTransferForm, {
+  FormValues,
+} from "../components/RouterTransferForm";
+import TransferStepper from "../components/TransferStepper";
+import Confetti from "react-confetti";
+import { Signer } from "@polkadot/api/types";
+import axios, { AxiosError } from "axios";
+import { createApiInstanceForNode } from "@paraspell/sdk";
+import { buildTx, submitTransaction } from "../utils";
+import ErrorAlert from "../components/ErrorAlert";
+import { useWallet } from "../hooks/useWallet";
 
 const RouterTransferPage = () => {
   const { selectedAccount } = useWallet();
 
-  const [alertOpened, { open: openAlert, close: closeAlert }] = useDisclosure(false);
+  const [alertOpened, { open: openAlert, close: closeAlert }] =
+    useDisclosure(false);
 
   const [error, setError] = useState<Error>();
 
@@ -58,7 +69,7 @@ const RouterTransferPage = () => {
     formValues: FormValues,
     exchange: TExchangeNode | undefined,
     injectorAddress: string,
-    signer: Signer,
+    signer: Signer
   ) => {
     const { transactionType } = formValues;
     await transfer({
@@ -75,12 +86,12 @@ const RouterTransferPage = () => {
     formValues: FormValues,
     exchange: TExchangeNode | undefined,
     injectorAddress: string,
-    signer: Signer,
+    signer: Signer
   ) => {
     const { from } = formValues;
 
     try {
-      const response = await axios.get('http://localhost:3001/router', {
+      const response = await axios.get("http://localhost:3001/router", {
         timeout: 120000,
         params: {
           ...formValues,
@@ -100,29 +111,44 @@ const RouterTransferPage = () => {
         type: TransactionType.TO_EXCHANGE,
         status: TransactionStatus.IN_PROGRESS,
       });
-      await submitTransaction(originApi, buildTx(originApi, toExchange), signer, injectorAddress);
+      await submitTransaction(
+        originApi,
+        buildTx(originApi, toExchange),
+        signer,
+        injectorAddress
+      );
       onStatusChange({
         type: TransactionType.SWAP,
         status: TransactionStatus.IN_PROGRESS,
       });
-      await submitTransaction(swapApi, buildTx(swapApi, swap), signer, injectorAddress);
+      await submitTransaction(
+        swapApi,
+        buildTx(swapApi, swap),
+        signer,
+        injectorAddress
+      );
       onStatusChange({
         type: TransactionType.TO_DESTINATION,
         status: TransactionStatus.IN_PROGRESS,
       });
-      await submitTransaction(swapApi, buildTx(swapApi, toDest), signer, injectorAddress);
+      await submitTransaction(
+        swapApi,
+        buildTx(swapApi, toDest),
+        signer,
+        injectorAddress
+      );
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error(error);
-        let errorMessage = 'Error while fetching data.';
+        let errorMessage = "Error while fetching data.";
         if (error.response === undefined) {
-          errorMessage += ' Make sure the API is running.';
+          errorMessage += " Make sure the API is running.";
         } else {
           // Append the server-provided error message if available
           const serverMessage =
             error.response.data && error.response.data.message
-              ? ' Server response: ' + error.response.data.message
-              : '';
+              ? " Server response: " + error.response.data.message
+              : "";
           errorMessage += serverMessage;
         }
         throw new Error(errorMessage);
@@ -136,19 +162,20 @@ const RouterTransferPage = () => {
   const onSubmit = async (formValues: FormValues) => {
     const { useApi } = formValues;
     if (!selectedAccount) {
-      alert('No account selected, connect wallet first');
-      throw Error('No account selected!');
+      alert("No account selected, connect wallet first");
+      throw Error("No account selected!");
     }
 
     setLoading(true);
 
     const injector = await web3FromAddress(selectedAccount.address);
 
-    const exchange = formValues.exchange === 'Auto select' ? undefined : formValues.exchange;
+    const exchange =
+      formValues.exchange === "Auto select" ? undefined : formValues.exchange;
 
     const originalError = console.error;
     console.error = (...args) => {
-      if (args[2].includes('ExtrinsicStatus::')) {
+      if (args[2].includes("ExtrinsicStatus::")) {
         setError(new Error(args[2]));
         openAlert();
         setShowStepper(false);
@@ -162,17 +189,22 @@ const RouterTransferPage = () => {
       setShowStepper(true);
       setProgressInfo(undefined);
       if (useApi) {
-        await submitUsingApi(formValues, exchange, selectedAccount.address, injector.signer);
+        await submitUsingApi(
+          formValues,
+          exchange,
+          selectedAccount.address,
+          injector.signer
+        );
       } else {
         await submitUsingRouterModule(
           formValues,
           exchange,
           selectedAccount.address,
-          injector.signer,
+          injector.signer
         );
       }
       setRunConfetti(true);
-      alert('Transaction was successful!');
+      alert("Transaction was successful!");
     } catch (e) {
       if (e instanceof Error) {
         console.error(e);
@@ -215,7 +247,9 @@ const RouterTransferPage = () => {
             </Box>
           )}
           {alertOpened && (
-            <ErrorAlert onAlertCloseClick={onAlertCloseClick}>{error?.message}</ErrorAlert>
+            <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
+              {error?.message}
+            </ErrorAlert>
           )}
         </Box>
       </Stack>

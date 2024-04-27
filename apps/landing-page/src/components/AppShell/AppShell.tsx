@@ -15,7 +15,7 @@ const AppShell = () => {
 
   useEffect(() => {
     close();
-  }, [pathname, hash]);
+  }, [pathname, hash, close]);
 
   return (
     <MantineAppShell

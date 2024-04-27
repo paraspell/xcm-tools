@@ -11,9 +11,9 @@ import {
 import OutputAlert from "../OutputAlert";
 import ChannelsForm, { FormValues } from "./ChannelsForm";
 import { ApiPromise } from "@polkadot/api";
-import { useWallet } from "../../providers/WalletProvider";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { buildTx, submitTransaction } from "../../utils";
+import { useWallet } from "../../hooks/useWallet";
 
 const ChannelsQueries = () => {
   const { selectedAccount } = useWallet();
