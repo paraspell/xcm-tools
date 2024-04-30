@@ -53,6 +53,7 @@ import Collectives from '../nodes/supported/Collectives'
 import Khala from '../nodes/supported/Khala'
 import Phala from '../nodes/supported/Phala'
 import Subsocial from '../nodes/supported/Subsocial'
+import KiltSpiritnet from '../nodes/supported/KiltSpiritnet'
 
 export const NODE_NAMES = [
   'AssetHubPolkadot',
@@ -105,7 +106,8 @@ export const NODE_NAMES = [
   'Collectives',
   'Khala',
   'Phala',
-  'Subsocial'
+  'Subsocial',
+  'KiltSpiritnet'
 ] as const
 
 export const NODES_WITH_RELAY_CHAINS = [...NODE_NAMES, 'Polkadot', 'Kusama'] as const
@@ -161,7 +163,8 @@ export const nodes: Record<TNode, ParachainNode> = {
   Collectives: new Collectives(),
   Khala: new Khala(),
   Phala: new Phala(),
-  Subsocial: new Subsocial()
+  Subsocial: new Subsocial(),
+  KiltSpiritnet: new KiltSpiritnet()
 }
 
 export const SUPPORTED_PALLETS = [
