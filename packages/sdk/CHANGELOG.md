@@ -1,5 +1,33 @@
 # Changelog
 
+## [5.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-v5.2.0...sdk-v5.2.1) (2024-04-30)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Update readme and docs ([f8d6613](https://github.com/paraspell/xcm-tools/commit/f8d6613a77d302229fac98e427b040096111eb24))
+
+## [5.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.1.0...sdk-v5.2.0) (2024-04-30)
+
+
+### Features
+
+* **sdk:** Allow fee asset customization ⚙️ ([a42be92](https://github.com/paraspell/xcm-tools/commit/a42be924a70faf323b59de24c528e2294408c1a2))
+
+
+### Miscellaneous Chores
+
+* **sdk:** Perform monthly check ⚙️ ([0edf441](https://github.com/paraspell/xcm-tools/commit/0edf441af391711f4884032a8ed0f9c3b1818cc6))
+* **sdk:** Update documentation ([aec7f13](https://github.com/paraspell/xcm-tools/commit/aec7f1305ba011de8f11f32cd011100bdbec8ba5))
+* **sdk:** Update License ([042a62b](https://github.com/paraspell/xcm-tools/commit/042a62bf4e90412e55552b053042619fe8559033))
+
+
+### Code Refactoring
+
+* **sdk:** Add types for MultiLocations structures ([13c417b](https://github.com/paraspell/xcm-tools/commit/13c417b1d57d8cfa81a669692e1c24d1be2b5a73))
+* **sdk:** Split types.ts file into multiple organized type definition files ([951e6ca](https://github.com/paraspell/xcm-tools/commit/951e6ca2d7b77d5b04aba2f594634155ddd1dddd))
+* **sdk:** Update README.md ([8330056](https://github.com/paraspell/xcm-tools/commit/8330056bd37e916e734dec8709d6001648cc5ede))
+
 ## [5.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.0.1...sdk-v5.1.0) (2024-04-13)
 
 

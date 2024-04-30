@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.1.0...xcm-router-v1.1.1) (2024-04-30)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Perform monthly check ⚙️ ([0edf441](https://github.com/paraspell/xcm-tools/commit/0edf441af391711f4884032a8ed0f9c3b1818cc6))
+* **xcm-router:** Update License ([1422afe](https://github.com/paraspell/xcm-tools/commit/1422afe61d08cb9083fa3d724e900b1f7d54ec86))
+
 ## [1.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.0.0...xcm-router-v1.1.0) (2024-04-13)
 
 
