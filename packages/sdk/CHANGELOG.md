@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-v5.2.0...sdk-v5.2.1) (2024-04-30)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Update readme and docs ([f8d6613](https://github.com/paraspell/xcm-tools/commit/f8d6613a77d302229fac98e427b040096111eb24))
+
 ## [5.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.1.0...sdk-v5.2.0) (2024-04-30)
 
 
