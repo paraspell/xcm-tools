@@ -14,7 +14,7 @@ import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
 class CoretimeKusama extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('CoretimeKusama', 'KusamaCoretime', 'kusama', Version.V3)
+    super('CoretimeKusama', 'kusamaCoretime', 'kusama', Version.V3)
   }
 
   _assetCheckEnabled = false

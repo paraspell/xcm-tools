@@ -12,7 +12,7 @@
   "Moonbeam": "0",
   "Parallel": "100000000000",
   "AssetHubKusama": "3333333",
-  "CoretimeKusama": "3333333",
+  "CoretimeKusama": "33333333",
   "Encointer": "33333333",
   "Altair": "1000000000000",
   "Amplitude": "1000000000",
@@ -51,5 +51,6 @@
   "Collectives": "1000000000",
   "Khala": "10000000000",
   "Phala": "10000000000",
-  "Subsocial": "100000000"
+  "Subsocial": "100000000",
+  "KiltSpiritnet": "10000000000000"
 }

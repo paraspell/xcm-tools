@@ -236,8 +236,8 @@ importers:
         specifier: ^10.12.4
         version: 10.12.4
       '@polkadot/apps-config':
-        specifier: ^0.135.1
-        version: 0.135.1(@polkadot/keyring@12.6.1)(@polkadot/util-crypto@12.6.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
+        specifier: ^0.136.1
+        version: 0.136.1(@polkadot/keyring@12.6.1)(@polkadot/util-crypto@12.6.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
       '@polkadot/keyring':
         specifier: ^12.5.1
         version: 12.6.1(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2)
@@ -375,8 +375,8 @@ importers:
         specifier: ^10.12.4
         version: 10.12.4
       '@polkadot/apps-config':
-        specifier: ^0.135.1
-        version: 0.135.1(@polkadot/keyring@12.6.2)(@polkadot/util-crypto@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
+        specifier: ^0.136.1
+        version: 0.136.1(@polkadot/keyring@12.6.2)(@polkadot/util-crypto@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
       '@polkadot/types':
         specifier: ^10.12.4
         version: 10.12.4
@@ -531,7 +531,7 @@ importers:
         version: 0.0.2(@crypto-dex-sdk/currency@0.0.4)(@crypto-dex-sdk/format@0.0.2)(@crypto-dex-sdk/math@0.0.2)(@ethersproject/address@5.7.0)
       '@galacticcouncil/sdk':
         specifier: ^1.1.6
-        version: 1.1.6(@polkadot/api-augment@10.12.4)(@polkadot/api-base@10.12.4)(@polkadot/api-derive@10.12.4)(@polkadot/api@10.12.4)(@polkadot/keyring@12.6.2)(@polkadot/rpc-augment@10.12.4)(@polkadot/rpc-core@10.12.4)(@polkadot/rpc-provider@10.12.4)(@polkadot/types-augment@10.12.4)(@polkadot/types-codec@10.12.4)(@polkadot/types-create@10.12.4)(@polkadot/types-known@10.12.4)(@polkadot/types@10.12.4)(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
+        version: 1.1.6(@polkadot/api-augment@10.13.1)(@polkadot/api-base@10.12.4)(@polkadot/api-derive@10.13.1)(@polkadot/api@10.12.4)(@polkadot/keyring@12.6.2)(@polkadot/rpc-augment@10.13.1)(@polkadot/rpc-core@10.13.1)(@polkadot/rpc-provider@10.13.1)(@polkadot/types-augment@10.13.1)(@polkadot/types-codec@10.12.4)(@polkadot/types-create@10.13.1)(@polkadot/types-known@10.12.4)(@polkadot/types@10.12.4)(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
       '@mangata-finance/sdk':
         specifier: ^2.1.1
         version: 2.1.1(@polkadot/api@10.12.4)(@polkadot/types@10.12.4)
@@ -545,8 +545,8 @@ importers:
         specifier: ^10.12.4
         version: 10.12.4
       '@polkadot/apps-config':
-        specifier: ^0.135.1
-        version: 0.135.1(@polkadot/keyring@12.6.2)(@polkadot/util-crypto@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
+        specifier: ^0.136.1
+        version: 0.136.1(@polkadot/keyring@12.6.2)(@polkadot/util-crypto@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
       '@polkadot/types':
         specifier: ^10.12.4
         version: 10.12.4
@@ -808,12 +808,12 @@ packages:
       - encoding
     dev: false
 
-  /@acala-network/type-definitions@5.1.2(@polkadot/types@10.12.4):
+  /@acala-network/type-definitions@5.1.2(@polkadot/types@10.13.1):
     resolution: {integrity: sha512-di3HH8Zn8i1jkQkQiwc44A8ovN9MvK5HwcNV3ngvW3TeF0dHbpHBQHdElJYpVge5IaEyhQ0kWihIEnVqpw4G9A==}
     peerDependencies:
       '@polkadot/types': ^10.5.1
     dependencies:
-      '@polkadot/types': 10.12.4
+      '@polkadot/types': 10.13.1
     dev: false
 
   /@acala-network/types@6.0.4(@polkadot/api@10.12.4):
@@ -3980,12 +3980,12 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@frequency-chain/api-augment@1.9.0:
-    resolution: {integrity: sha512-U9fl5EjVx2G9H4S8E1GOBJIgAOfDQa7T73gLNjUWc4vPPY16gXmABK+otC8Oubtb+yGNn2mETW1LkV5h2T/tXg==}
+  /@frequency-chain/api-augment@1.11.1:
+    resolution: {integrity: sha512-CzVjeGrWl8tbTavygZLUICrncjCC54hM5ioJU1Og2OPoX2P4GYf8xoks8MIyj1yOrYX++mzM6Uf0+nCh77QyFw==}
     dependencies:
       '@polkadot/api': 10.12.4
-      '@polkadot/rpc-provider': 10.12.4
-      '@polkadot/types': 10.12.4
+      '@polkadot/rpc-provider': 10.13.1
+      '@polkadot/types': 10.13.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -4008,7 +4008,7 @@ packages:
     resolution: {integrity: sha512-mznedOeA8d9BQ8kUQ/4O/P6trqTC4FGwvTDGCHJ0O/bgA9iFb+suctbFtyFT3qfNnngR7FSF2Pls1O/SvtNn8g==}
     dev: false
 
-  /@galacticcouncil/sdk@1.1.6(@polkadot/api-augment@10.12.4)(@polkadot/api-base@10.12.4)(@polkadot/api-derive@10.12.4)(@polkadot/api@10.12.4)(@polkadot/keyring@12.6.2)(@polkadot/rpc-augment@10.12.4)(@polkadot/rpc-core@10.12.4)(@polkadot/rpc-provider@10.12.4)(@polkadot/types-augment@10.12.4)(@polkadot/types-codec@10.12.4)(@polkadot/types-create@10.12.4)(@polkadot/types-known@10.12.4)(@polkadot/types@10.12.4)(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2):
+  /@galacticcouncil/sdk@1.1.6(@polkadot/api-augment@10.13.1)(@polkadot/api-base@10.12.4)(@polkadot/api-derive@10.13.1)(@polkadot/api@10.12.4)(@polkadot/keyring@12.6.2)(@polkadot/rpc-augment@10.13.1)(@polkadot/rpc-core@10.13.1)(@polkadot/rpc-provider@10.13.1)(@polkadot/types-augment@10.13.1)(@polkadot/types-codec@10.12.4)(@polkadot/types-create@10.13.1)(@polkadot/types-known@10.12.4)(@polkadot/types@10.12.4)(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2):
     resolution: {integrity: sha512-GBZgjg4TxvVI9sClMQmSBVqE1Oi5+N19VBjQyGXMhgwnEBt/6558PfyIkh7tRl/FOcOky6iJxcZuZLJUbNfwgQ==}
     peerDependencies:
       '@polkadot/api': ^10.12.4
@@ -4032,17 +4032,17 @@ packages:
       '@galacticcouncil/math-stableswap': 0.2.1
       '@galacticcouncil/math-xyk': 0.2.0
       '@polkadot/api': 10.12.4
-      '@polkadot/api-augment': 10.12.4
+      '@polkadot/api-augment': 10.13.1
       '@polkadot/api-base': 10.12.4
-      '@polkadot/api-derive': 10.12.4
+      '@polkadot/api-derive': 10.13.1
       '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
-      '@polkadot/rpc-augment': 10.12.4
-      '@polkadot/rpc-core': 10.12.4
-      '@polkadot/rpc-provider': 10.12.4
+      '@polkadot/rpc-augment': 10.13.1
+      '@polkadot/rpc-core': 10.13.1
+      '@polkadot/rpc-provider': 10.13.1
       '@polkadot/types': 10.12.4
-      '@polkadot/types-augment': 10.12.4
+      '@polkadot/types-augment': 10.13.1
       '@polkadot/types-codec': 10.12.4
-      '@polkadot/types-create': 10.12.4
+      '@polkadot/types-create': 10.13.1
       '@polkadot/types-known': 10.12.4
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
@@ -4279,6 +4279,15 @@ packages:
       '@polkadot/types': ^10.9.1
     dependencies:
       '@polkadot/types': 10.12.4
+    dev: false
+
+  /@mangata-finance/type-definitions@2.1.2(@polkadot/types@10.13.1):
+    resolution: {integrity: sha512-kr4mVMuQ6DqZ0H72z0YI8tcdlk4XD4vUgRVYYfTJdXFJhRsfS4YRxfs/iiQPNzWKgoQZKcDqsbQD3xz9T1gELw==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      '@polkadot/types': ^10.9.1
+    dependencies:
+      '@polkadot/types': 10.13.1
     dev: false
 
   /@mantine/core@7.6.2(@mantine/hooks@7.6.2)(@types/react@18.2.69)(react-dom@18.2.0)(react@18.2.0):
@@ -4914,6 +4923,23 @@ packages:
       - utf-8-validate
     dev: false
 
+  /@polkadot/api-augment@10.13.1:
+    resolution: {integrity: sha512-IAKaCp19QxgOG4HKk9RAgUgC/VNVqymZ2GXfMNOZWImZhxRIbrK+raH5vN2MbWwtVHpjxyXvGsd1RRhnohI33A==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/api-base': 10.13.1
+      '@polkadot/rpc-augment': 10.13.1
+      '@polkadot/types': 10.13.1
+      '@polkadot/types-augment': 10.13.1
+      '@polkadot/types-codec': 10.12.4
+      '@polkadot/util': 12.6.2
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   /@polkadot/api-base@10.11.2:
     resolution: {integrity: sha512-4LIjaUfO9nOzilxo7XqzYKCNMtmUypdk8oHPdrRnSjKEsnK7vDsNi+979z2KXNXd2KFSCFHENmI523fYnMnReg==}
     engines: {node: '>=18'}
@@ -4944,6 +4970,21 @@ packages:
       - utf-8-validate
     dev: false
 
+  /@polkadot/api-base@10.13.1:
+    resolution: {integrity: sha512-Okrw5hjtEjqSMOG08J6qqEwlUQujTVClvY1/eZkzKwNzPelWrtV6vqfyJklB7zVhenlxfxqhZKKcY7zWSW/q5Q==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/rpc-core': 10.13.1
+      '@polkadot/types': 10.13.1
+      '@polkadot/util': 12.6.2
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   /@polkadot/api-derive@10.12.4:
     resolution: {integrity: sha512-V5DogVPWoMw8U6V5hCkxDZP2qpashLUruyWVDcGhQmMb0f5d5PG/dPlZ3CzvAars6G2ypJ8ciSNKDdApP5JWaQ==}
     engines: {node: '>=18'}
@@ -4953,6 +4994,26 @@ packages:
       '@polkadot/api-base': 10.12.4
       '@polkadot/rpc-core': 10.12.4
       '@polkadot/types': 10.12.4
+      '@polkadot/types-codec': 10.12.4
+      '@polkadot/util': 12.6.2
+      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@polkadot/api-derive@10.13.1:
+    resolution: {integrity: sha512-ef0H0GeCZ4q5Om+c61eLLLL29UxFC2/u/k8V1K2JOIU+2wD5LF7sjAoV09CBMKKHfkLenRckVk2ukm4rBqFRpg==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/api': 10.12.4
+      '@polkadot/api-augment': 10.13.1
+      '@polkadot/api-base': 10.13.1
+      '@polkadot/rpc-core': 10.13.1
+      '@polkadot/types': 10.13.1
       '@polkadot/types-codec': 10.12.4
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
@@ -4991,11 +5052,11 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@polkadot/apps-config@0.135.1(@polkadot/keyring@12.6.1)(@polkadot/util-crypto@12.6.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Y9nfYO55dHT5Zalp9m8/lwG3WbXjX0JhPRlsCD0n/nskLAwGMV/q7FR/HFb3bA4q+Mq/Ka8Y+7aVYqV0iIjLtw==}
+  /@polkadot/apps-config@0.136.1(@polkadot/keyring@12.6.1)(@polkadot/util-crypto@12.6.1)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-MNWlZjp+Ua5L4xvREodiMvOc9vgnS5WIIMiGpd3OZ/rnJg5DAEjQWWfSlICLjdbgUFwb3YwvAmkbz6GYxFVgAA==}
     engines: {node: '>=18'}
     dependencies:
-      '@acala-network/type-definitions': 5.1.2(@polkadot/types@10.12.4)
+      '@acala-network/type-definitions': 5.1.2(@polkadot/types@10.13.1)
       '@bifrost-finance/type-definitions': 1.11.3(@polkadot/api@10.12.4)
       '@crustio/type-definitions': 1.3.0
       '@darwinia/types': 2.8.10
@@ -5005,22 +5066,22 @@ packages:
       '@edgeware/node-types': 3.6.2-wako
       '@equilab/definitions': 1.4.18
       '@fragnova/api-augment': 0.1.0-spec-1.0.4-mainnet
-      '@frequency-chain/api-augment': 1.9.0
+      '@frequency-chain/api-augment': 1.11.1
       '@interlay/interbtc-types': 1.13.0
       '@kiltprotocol/type-definitions': 0.34.0
       '@laminar/type-definitions': 0.3.1
       '@logion/node-api': 0.27.0-4
-      '@mangata-finance/type-definitions': 2.1.2(@polkadot/types@10.12.4)
+      '@mangata-finance/type-definitions': 2.1.2(@polkadot/types@10.13.1)
       '@metaverse-network-sdk/type-definitions': 0.0.1-16
       '@parallel-finance/type-definitions': 2.0.1
       '@peaqnetwork/type-definitions': 0.0.4
       '@pendulum-chain/type-definitions': 0.3.8
       '@phala/typedefs': 0.2.33
       '@polkadot/api': 10.12.4
-      '@polkadot/api-derive': 10.12.4
+      '@polkadot/api-derive': 10.13.1
       '@polkadot/networks': 12.6.2
-      '@polkadot/react-identicon': 3.6.5(@polkadot/keyring@12.6.1)(@polkadot/networks@12.6.2)(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
-      '@polkadot/types': 10.12.4
+      '@polkadot/react-identicon': 3.6.6(@polkadot/keyring@12.6.1)(@polkadot/networks@12.6.2)(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
+      '@polkadot/types': 10.13.1
       '@polkadot/types-codec': 10.12.4
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
@@ -5030,10 +5091,10 @@ packages:
       '@snowfork/snowbridge-types': 0.2.7(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2)
       '@sora-substrate/type-definitions': 1.27.7
       '@subsocial/definitions': 0.8.14
-      '@unique-nft/opal-testnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4)
-      '@unique-nft/quartz-mainnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4)
-      '@unique-nft/sapphire-mainnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4)
-      '@unique-nft/unique-mainnet-types': 1001.63.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4)
+      '@unique-nft/opal-testnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1)
+      '@unique-nft/quartz-mainnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1)
+      '@unique-nft/sapphire-mainnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1)
+      '@unique-nft/unique-mainnet-types': 1001.63.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1)
       '@zeitgeistpm/type-defs': 1.0.0
       '@zeroio/type-definitions': 0.0.14
       moonbeam-types-bundle: 2.0.10
@@ -5051,11 +5112,11 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@polkadot/apps-config@0.135.1(@polkadot/keyring@12.6.2)(@polkadot/util-crypto@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Y9nfYO55dHT5Zalp9m8/lwG3WbXjX0JhPRlsCD0n/nskLAwGMV/q7FR/HFb3bA4q+Mq/Ka8Y+7aVYqV0iIjLtw==}
+  /@polkadot/apps-config@0.136.1(@polkadot/keyring@12.6.2)(@polkadot/util-crypto@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-MNWlZjp+Ua5L4xvREodiMvOc9vgnS5WIIMiGpd3OZ/rnJg5DAEjQWWfSlICLjdbgUFwb3YwvAmkbz6GYxFVgAA==}
     engines: {node: '>=18'}
     dependencies:
-      '@acala-network/type-definitions': 5.1.2(@polkadot/types@10.12.4)
+      '@acala-network/type-definitions': 5.1.2(@polkadot/types@10.13.1)
       '@bifrost-finance/type-definitions': 1.11.3(@polkadot/api@10.12.4)
       '@crustio/type-definitions': 1.3.0
       '@darwinia/types': 2.8.10
@@ -5065,22 +5126,22 @@ packages:
       '@edgeware/node-types': 3.6.2-wako
       '@equilab/definitions': 1.4.18
       '@fragnova/api-augment': 0.1.0-spec-1.0.4-mainnet
-      '@frequency-chain/api-augment': 1.9.0
+      '@frequency-chain/api-augment': 1.11.1
       '@interlay/interbtc-types': 1.13.0
       '@kiltprotocol/type-definitions': 0.34.0
       '@laminar/type-definitions': 0.3.1
       '@logion/node-api': 0.27.0-4
-      '@mangata-finance/type-definitions': 2.1.2(@polkadot/types@10.12.4)
+      '@mangata-finance/type-definitions': 2.1.2(@polkadot/types@10.13.1)
       '@metaverse-network-sdk/type-definitions': 0.0.1-16
       '@parallel-finance/type-definitions': 2.0.1
       '@peaqnetwork/type-definitions': 0.0.4
       '@pendulum-chain/type-definitions': 0.3.8
       '@phala/typedefs': 0.2.33
       '@polkadot/api': 10.12.4
-      '@polkadot/api-derive': 10.12.4
+      '@polkadot/api-derive': 10.13.1
       '@polkadot/networks': 12.6.2
-      '@polkadot/react-identicon': 3.6.5(@polkadot/keyring@12.6.2)(@polkadot/networks@12.6.2)(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
-      '@polkadot/types': 10.12.4
+      '@polkadot/react-identicon': 3.6.6(@polkadot/keyring@12.6.2)(@polkadot/networks@12.6.2)(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
+      '@polkadot/types': 10.13.1
       '@polkadot/types-codec': 10.12.4
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
@@ -5090,10 +5151,10 @@ packages:
       '@snowfork/snowbridge-types': 0.2.7(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
       '@sora-substrate/type-definitions': 1.27.7
       '@subsocial/definitions': 0.8.14
-      '@unique-nft/opal-testnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4)
-      '@unique-nft/quartz-mainnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4)
-      '@unique-nft/sapphire-mainnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4)
-      '@unique-nft/unique-mainnet-types': 1001.63.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4)
+      '@unique-nft/opal-testnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1)
+      '@unique-nft/quartz-mainnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1)
+      '@unique-nft/sapphire-mainnet-types': 1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1)
+      '@unique-nft/unique-mainnet-types': 1001.63.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1)
       '@zeitgeistpm/type-defs': 1.0.0
       '@zeroio/type-definitions': 0.0.14
       moonbeam-types-bundle: 2.0.10
@@ -5324,8 +5385,8 @@ packages:
       '@substrate/ss58-registry': 1.47.0
     dev: false
 
-  /@polkadot/react-identicon@3.6.5(@polkadot/keyring@12.6.1)(@polkadot/networks@12.6.2)(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-a2kV2GRgJaxQIuay6CDpIsYB+L8/erth+v9t48H+TX5y87FadBIqj6F7LsaOD5HJ8dsXrDaPOx5f7SsoKAGm6A==}
+  /@polkadot/react-identicon@3.6.6(@polkadot/keyring@12.6.1)(@polkadot/networks@12.6.2)(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-fcIqfXdQqmfVPquytfCPtG//4CEcdYCZQI7mO0zJCwH1RlUuxmhp5Gmm8TS+4ATOZ5utO6/IB+et9yAZ99PSNg==}
     engines: {node: '>=18'}
     peerDependencies:
       '@polkadot/keyring': '*'
@@ -5336,8 +5397,8 @@ packages:
       react-is: '*'
     dependencies:
       '@polkadot/keyring': 12.6.1(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2)
-      '@polkadot/ui-settings': 3.6.5(@polkadot/networks@12.6.2)(@polkadot/util@12.6.2)
-      '@polkadot/ui-shared': 3.6.5(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2)
+      '@polkadot/ui-settings': 3.6.6(@polkadot/networks@12.6.2)(@polkadot/util@12.6.2)
+      '@polkadot/ui-shared': 3.6.6(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2)
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.1(@polkadot/util@12.6.2)
       ethereum-blockies-base64: 1.0.2
@@ -5352,8 +5413,8 @@ packages:
       - '@polkadot/networks'
     dev: false
 
-  /@polkadot/react-identicon@3.6.5(@polkadot/keyring@12.6.2)(@polkadot/networks@12.6.2)(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-a2kV2GRgJaxQIuay6CDpIsYB+L8/erth+v9t48H+TX5y87FadBIqj6F7LsaOD5HJ8dsXrDaPOx5f7SsoKAGm6A==}
+  /@polkadot/react-identicon@3.6.6(@polkadot/keyring@12.6.2)(@polkadot/networks@12.6.2)(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-fcIqfXdQqmfVPquytfCPtG//4CEcdYCZQI7mO0zJCwH1RlUuxmhp5Gmm8TS+4ATOZ5utO6/IB+et9yAZ99PSNg==}
     engines: {node: '>=18'}
     peerDependencies:
       '@polkadot/keyring': '*'
@@ -5364,8 +5425,8 @@ packages:
       react-is: '*'
     dependencies:
       '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
-      '@polkadot/ui-settings': 3.6.5(@polkadot/networks@12.6.2)(@polkadot/util@12.6.2)
-      '@polkadot/ui-shared': 3.6.5(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
+      '@polkadot/ui-settings': 3.6.6(@polkadot/networks@12.6.2)(@polkadot/util@12.6.2)
+      '@polkadot/ui-shared': 3.6.6(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       ethereum-blockies-base64: 1.0.2
@@ -5410,6 +5471,21 @@ packages:
       - utf-8-validate
     dev: false
 
+  /@polkadot/rpc-augment@10.13.1:
+    resolution: {integrity: sha512-iLsWUW4Jcx3DOdVrSHtN0biwxlHuTs4QN2hjJV0gd0jo7W08SXhWabZIf9mDmvUJIbR7Vk+9amzvegjRyIf5+A==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/rpc-core': 10.13.1
+      '@polkadot/types': 10.13.1
+      '@polkadot/types-codec': 10.12.4
+      '@polkadot/util': 12.6.2
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   /@polkadot/rpc-core@10.11.2:
     resolution: {integrity: sha512-Ot0CFLWx8sZhLZog20WDuniPA01Bk2StNDsdAQgcFKPwZw6ShPaZQCHuKLQK6I6DodOrem9FXX7c1hvoKJP5Ww==}
     engines: {node: '>=18'}
@@ -5433,6 +5509,22 @@ packages:
       '@polkadot/rpc-augment': 10.12.4
       '@polkadot/rpc-provider': 10.12.4
       '@polkadot/types': 10.12.4
+      '@polkadot/util': 12.6.2
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@polkadot/rpc-core@10.13.1:
+    resolution: {integrity: sha512-eoejSHa+/tzHm0vwic62/aptTGbph8vaBpbvLIK7gd00+rT813ROz5ckB1CqQBFB23nHRLuzzX/toY8ID3xrKw==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/rpc-augment': 10.13.1
+      '@polkadot/rpc-provider': 10.13.1
+      '@polkadot/types': 10.13.1
       '@polkadot/util': 12.6.2
       rxjs: 7.8.1
       tslib: 2.6.2
@@ -5473,6 +5565,30 @@ packages:
       '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
       '@polkadot/types': 10.12.4
       '@polkadot/types-support': 10.12.4
+      '@polkadot/util': 12.6.2
+      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      '@polkadot/x-fetch': 12.6.2
+      '@polkadot/x-global': 12.6.2
+      '@polkadot/x-ws': 12.6.2
+      eventemitter3: 5.0.1
+      mock-socket: 9.3.1
+      nock: 13.5.4
+      tslib: 2.6.2
+    optionalDependencies:
+      '@substrate/connect': 0.8.8
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@polkadot/rpc-provider@10.13.1:
+    resolution: {integrity: sha512-oJ7tatVXYJ0L7NpNiGd69D558HG5y5ZDmH2Bp9Dd4kFTQIiV8A39SlWwWUPCjSsen9lqSvvprNLnG/VHTpenbw==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
+      '@polkadot/types': 10.13.1
+      '@polkadot/types-support': 10.13.1
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       '@polkadot/x-fetch': 12.6.2
@@ -5560,6 +5676,16 @@ packages:
       tslib: 2.6.2
     dev: false
 
+  /@polkadot/types-augment@10.13.1:
+    resolution: {integrity: sha512-TcrLhf95FNFin61qmVgOgayzQB/RqVsSg9thAso1Fh6pX4HSbvI35aGPBAn3SkA6R+9/TmtECirpSNLtIGFn0g==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/types': 10.13.1
+      '@polkadot/types-codec': 10.12.4
+      '@polkadot/util': 12.6.2
+      tslib: 2.6.2
+    dev: false
+
   /@polkadot/types-augment@7.15.1:
     resolution: {integrity: sha512-aqm7xT/66TCna0I2utpIekoquKo0K5pnkA/7WDzZ6gyD8he2h0IXfe8xWjVmuyhjxrT/C/7X1aUF2Z0xlOCwzQ==}
     engines: {node: '>=14.0.0'}
@@ -5600,6 +5726,15 @@ packages:
 
   /@polkadot/types-create@10.12.4:
     resolution: {integrity: sha512-K3a6q+q+as/FfxrbXgFdgK8aqrsUgAkH5c0KQS+nt6xMs+Yf2ctpqiLPOjOEVEw8kHRpYtjx1db8Namegk51ig==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/types-codec': 10.12.4
+      '@polkadot/util': 12.6.2
+      tslib: 2.6.2
+    dev: false
+
+  /@polkadot/types-create@10.13.1:
+    resolution: {integrity: sha512-Usn1jqrz35SXgCDAqSXy7mnD6j4RvB4wyzTAZipFA6DGmhwyxxIgOzlWQWDb+1PtPKo9vtMzen5IJ+7w5chIeA==}
     engines: {node: '>=18'}
     dependencies:
       '@polkadot/types-codec': 10.12.4
@@ -5673,6 +5808,14 @@ packages:
       tslib: 2.6.2
     dev: false
 
+  /@polkadot/types-support@10.13.1:
+    resolution: {integrity: sha512-4gEPfz36XRQIY7inKq0HXNVVhR6HvXtm7yrEmuBuhM86LE0lQQBkISUSgR358bdn2OFSLMxMoRNoh3kcDvdGDQ==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/util': 12.6.2
+      tslib: 2.6.2
+    dev: false
+
   /@polkadot/types-support@9.14.2:
     resolution: {integrity: sha512-VWCOPgXDK3XtXT7wMLyIWeNDZxUbNcw/8Pn6n6vMogs7o/n4h6WGbGMeTIQhPWyn831/RmkVs5+2DUC+2LlOhw==}
     engines: {node: '>=14.0.0'}
@@ -5703,6 +5846,20 @@ packages:
       '@polkadot/types-augment': 10.12.4
       '@polkadot/types-codec': 10.12.4
       '@polkadot/types-create': 10.12.4
+      '@polkadot/util': 12.6.2
+      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    dev: false
+
+  /@polkadot/types@10.13.1:
+    resolution: {integrity: sha512-Hfvg1ZgJlYyzGSAVrDIpp3vullgxrjOlh/CSThd/PI4TTN1qHoPSFm2hs77k3mKkOzg+LrWsLE0P/LP2XddYcw==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
+      '@polkadot/types-augment': 10.13.1
+      '@polkadot/types-codec': 10.12.4
+      '@polkadot/types-create': 10.13.1
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       rxjs: 7.8.1
@@ -5759,8 +5916,8 @@ packages:
       rxjs: 7.8.1
     dev: false
 
-  /@polkadot/ui-settings@3.6.5(@polkadot/networks@12.6.2)(@polkadot/util@12.6.2):
-    resolution: {integrity: sha512-pRDwnXAsIrkARanL9BLDvg5u9PG7nnSDQkKmqYJiWbTW6G+ohOgBitlctjBnWASqjYMZLSRBY0MKwYrRrxJgVw==}
+  /@polkadot/ui-settings@3.6.6(@polkadot/networks@12.6.2)(@polkadot/util@12.6.2):
+    resolution: {integrity: sha512-DoXXnj4KASxZWE+hnBkNXOkm3AX6CbyyZLzPBAPR4ZyyGTqushJNmyaiTiArqMtBh7rYFT2cDStt+qOa/hjyhQ==}
     engines: {node: '>=18'}
     peerDependencies:
       '@polkadot/networks': '*'
@@ -5773,8 +5930,8 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@polkadot/ui-shared@3.6.5(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2):
-    resolution: {integrity: sha512-ZBkOcKxun+lwCkokDDX71Ajir9yNYc0VuyUik+76xFvoHYkKdQ+qInv2GS6caWAtTSfIxb4EKNN2Euc9m8un1A==}
+  /@polkadot/ui-shared@3.6.6(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.2):
+    resolution: {integrity: sha512-cZkgis83y9U0SxsXZalvOqRWvq0tLHnFIYlyMzitolC4xePUQjamSar6mUedp+mneyPIq+GW46wyUzPbuBFuhw==}
     engines: {node: '>=18'}
     peerDependencies:
       '@polkadot/util': '*'
@@ -5786,8 +5943,8 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@polkadot/ui-shared@3.6.5(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2):
-    resolution: {integrity: sha512-ZBkOcKxun+lwCkokDDX71Ajir9yNYc0VuyUik+76xFvoHYkKdQ+qInv2GS6caWAtTSfIxb4EKNN2Euc9m8un1A==}
+  /@polkadot/ui-shared@3.6.6(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2):
+    resolution: {integrity: sha512-cZkgis83y9U0SxsXZalvOqRWvq0tLHnFIYlyMzitolC4xePUQjamSar6mUedp+mneyPIq+GW46wyUzPbuBFuhw==}
     engines: {node: '>=18'}
     peerDependencies:
       '@polkadot/util': '*'
@@ -8016,44 +8173,44 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@unique-nft/opal-testnet-types@1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4):
+  /@unique-nft/opal-testnet-types@1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1):
     resolution: {integrity: sha512-vXJoV7cqwO21svd03DFL7bl8H77zFbJzgkUgNPLPbVA6YkZt+ZeDmbP9lKKPbNadB1DP84kOZPVvsbmzx7+Jxg==}
     peerDependencies:
       '@polkadot/api': ^10.12.4
       '@polkadot/types': ^10.10.1
     dependencies:
       '@polkadot/api': 10.12.4
-      '@polkadot/types': 10.12.4
+      '@polkadot/types': 10.13.1
     dev: false
 
-  /@unique-nft/quartz-mainnet-types@1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4):
+  /@unique-nft/quartz-mainnet-types@1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1):
     resolution: {integrity: sha512-qs5iwMcDpBeJ6mXzSAbMB6DY9NkdAqPD1KmekOVG9Vug+hKWvSlfW5ozd63O/J2h7iliqwL0WZjDdwvBNdcTNg==}
     peerDependencies:
       '@polkadot/api': ^10.12.4
       '@polkadot/types': ^10.10.1
     dependencies:
       '@polkadot/api': 10.12.4
-      '@polkadot/types': 10.12.4
+      '@polkadot/types': 10.13.1
     dev: false
 
-  /@unique-nft/sapphire-mainnet-types@1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4):
+  /@unique-nft/sapphire-mainnet-types@1003.70.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1):
     resolution: {integrity: sha512-hEMpLDPZxUuGW+B90AxaF3Clw/kvGn20oao+Ejq4nrCNRF/2k3CjjuG1NScZVcPZuGgKPAkBPiHNSF9aRN6qFg==}
     peerDependencies:
       '@polkadot/api': ^10.12.4
       '@polkadot/types': ^10.10.1
     dependencies:
       '@polkadot/api': 10.12.4
-      '@polkadot/types': 10.12.4
+      '@polkadot/types': 10.13.1
     dev: false
 
-  /@unique-nft/unique-mainnet-types@1001.63.0(@polkadot/api@10.12.4)(@polkadot/types@10.12.4):
+  /@unique-nft/unique-mainnet-types@1001.63.0(@polkadot/api@10.12.4)(@polkadot/types@10.13.1):
     resolution: {integrity: sha512-IVr+F7+QvbW2zhbI2aWNtiOBXYAcd6GQ9HmDUdfSd4S0s3TSa8PAC/ikNvD3fk1A2FlBbWjVO0JyPDnnybv/og==}
     peerDependencies:
       '@polkadot/api': ^10.12.4
       '@polkadot/types': ^10.10.1
     dependencies:
       '@polkadot/api': 10.12.4
-      '@polkadot/types': 10.12.4
+      '@polkadot/types': 10.13.1
     dev: false
 
   /@vitejs/plugin-react@4.2.1(vite@5.2.4):

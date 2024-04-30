@@ -40,7 +40,7 @@
   "peerDependencies": {
     "@polkadot/api": "^10.12.4",
     "@polkadot/api-base": "^10.12.4",
-    "@polkadot/apps-config": "^0.135.1",
+    "@polkadot/apps-config": "^0.136.1",
     "@polkadot/types": "^10.12.4",
     "@polkadot/util": "^12.6.2"
   },

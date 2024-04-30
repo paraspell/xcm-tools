@@ -3,12 +3,12 @@
 import { ApiPromise } from '@polkadot/api'
 import { NODE_NAMES } from '../src/maps/consts'
 import {
-  NodeToAssetModuleMap,
   TAssetDetails,
   TAssetJsonMap,
   TNativeAssetDetails,
   TNode,
-  TNodeAssets
+  TNodeAssets,
+  TNodeToAssetModuleMap
 } from '../src/types'
 import { getNode, getNodeEndpointOption } from '../src/utils'
 import {
@@ -18,7 +18,7 @@ import {
   writeJsonSync
 } from './scriptUtils'
 
-const nodeToQuery: NodeToAssetModuleMap = {
+const nodeToQuery: TNodeToAssetModuleMap = {
   // Chain state query: <module>.<section> for assets metadata
   Acala: 'assetRegistry.assetMetadatas',
   Astar: 'assets.metadata',
@@ -70,7 +70,8 @@ const nodeToQuery: NodeToAssetModuleMap = {
   Phala: 'assets.metadata',
   Khala: 'assets.metadata',
   CoretimeKusama: null,
-  Subsocial: null
+  Subsocial: null,
+  KiltSpiritnet: null
 }
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
@@ -104,21 +105,23 @@ const fetchBifrostNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDe
 const fetchOtherAssets = async (api: ApiPromise, query: string) => {
   const [module, section] = query.split('.')
   const res = await api.query[module][section].entries()
-  return res.map(
-    ([
-      {
-        args: [era]
-      },
-      value
-    ]) => {
-      const { symbol, decimals } = value.toHuman() as any
-      return {
-        assetId: era.toString(),
-        symbol,
-        decimals: +decimals
+  return res
+    .map(
+      ([
+        {
+          args: [era]
+        },
+        value
+      ]) => {
+        const { symbol, decimals } = value.toHuman() as any
+        return {
+          assetId: era.toString(),
+          symbol,
+          decimals: +decimals
+        }
       }
-    }
-  )
+    )
+    .filter(asset => asset.symbol !== null)
 }
 
 const fetchAssetIdsOnly = async (api: ApiPromise, query: string) => {
@@ -367,7 +370,7 @@ const fetchNodeAssets = async (
   }
 }
 
-const fetchAllNodesAssets = async (assetMap: NodeToAssetModuleMap, assetsMapJson: any) => {
+const fetchAllNodesAssets = async (assetMap: TNodeToAssetModuleMap, assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const [node, query] of Object.entries(assetMap)) {
     const nodeName = node as TNode

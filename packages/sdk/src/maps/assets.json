@@ -354,6 +354,11 @@
         "decimals": 12
       },
       {
+        "assetId": "18446744073709551634",
+        "symbol": "xcPEN",
+        "decimals": 12
+      },
+      {
         "assetId": "1336",
         "symbol": "TDOT",
         "decimals": 18
@@ -506,6 +511,11 @@
         "decimals": 6
       },
       {
+        "assetId": "1615768079",
+        "symbol": "NS3SR",
+        "decimals": 6
+      },
+      {
         "assetId": "100006",
         "symbol": "LpCeloUSDC",
         "decimals": 6
@@ -558,6 +568,11 @@
       {
         "assetId": "4139607887",
         "symbol": "LTF",
+        "decimals": 6
+      },
+      {
+        "assetId": "1615768079",
+        "symbol": "NS3JR",
         "decimals": 6
       }
     ]
@@ -736,9 +751,34 @@
     ],
     "otherAssets": [
       {
-        "assetId": "7",
+        "assetId": "100",
+        "symbol": "4-Pool",
+        "decimals": 18
+      },
+      {
+        "assetId": "0",
+        "symbol": "HDX",
+        "decimals": 12
+      },
+      {
+        "assetId": "10",
+        "symbol": "USDT",
+        "decimals": 6
+      },
+      {
+        "assetId": "4",
+        "symbol": "WETH",
+        "decimals": 18
+      },
+      {
+        "assetId": "21",
         "symbol": "USDC",
         "decimals": 6
+      },
+      {
+        "assetId": "28",
+        "symbol": "KILT",
+        "decimals": 15
       },
       {
         "assetId": "20",
@@ -746,48 +786,8 @@
         "decimals": 18
       },
       {
-        "assetId": "13",
-        "symbol": "CFG",
-        "decimals": 18
-      },
-      {
-        "assetId": "26",
-        "symbol": "NODL",
-        "decimals": 11
-      },
-      {
-        "assetId": "5",
-        "symbol": "DOT",
-        "decimals": 10
-      },
-      {
-        "assetId": "100",
-        "symbol": "4-Pool",
-        "decimals": 18
-      },
-      {
-        "assetId": "8",
-        "symbol": "PHA",
-        "decimals": 12
-      },
-      {
-        "assetId": "1",
-        "symbol": "LRNA",
-        "decimals": 12
-      },
-      {
         "assetId": "101",
         "symbol": "2-Pool",
-        "decimals": 18
-      },
-      {
-        "assetId": "19",
-        "symbol": "WBTC",
-        "decimals": 8
-      },
-      {
-        "assetId": "9",
-        "symbol": "ASTR",
         "decimals": 18
       },
       {
@@ -796,43 +796,18 @@
         "decimals": 18
       },
       {
-        "assetId": "14",
-        "symbol": "BNC",
+        "assetId": "11",
+        "symbol": "iBTC",
+        "decimals": 8
+      },
+      {
+        "assetId": "1000099",
+        "symbol": "ACA",
         "decimals": 12
       },
       {
-        "assetId": "21",
-        "symbol": "USDC",
-        "decimals": 6
-      },
-      {
-        "assetId": "15",
-        "symbol": "vDOT",
-        "decimals": 10
-      },
-      {
-        "assetId": "24",
-        "symbol": "SUB",
-        "decimals": 10
-      },
-      {
-        "assetId": "22",
-        "symbol": "USDC",
-        "decimals": 6
-      },
-      {
-        "assetId": "2",
-        "symbol": "DAI",
-        "decimals": 18
-      },
-      {
-        "assetId": "10",
-        "symbol": "USDT",
-        "decimals": 6
-      },
-      {
-        "assetId": "0",
-        "symbol": "HDX",
+        "assetId": "14",
+        "symbol": "BNC",
         "decimals": 12
       },
       {
@@ -841,9 +816,89 @@
         "decimals": 18
       },
       {
-        "assetId": "11",
-        "symbol": "iBTC",
+        "assetId": "19",
+        "symbol": "WBTC",
         "decimals": 8
+      },
+      {
+        "assetId": "15",
+        "symbol": "vDOT",
+        "decimals": 10
+      },
+      {
+        "assetId": "2",
+        "symbol": "DAI",
+        "decimals": 18
+      },
+      {
+        "assetId": "13",
+        "symbol": "CFG",
+        "decimals": 18
+      },
+      {
+        "assetId": "27",
+        "symbol": "CRU",
+        "decimals": 12
+      },
+      {
+        "assetId": "102",
+        "symbol": "2-Pool",
+        "decimals": 18
+      },
+      {
+        "assetId": "5",
+        "symbol": "DOT",
+        "decimals": 10
+      },
+      {
+        "assetId": "18",
+        "symbol": "DAI",
+        "decimals": 18
+      },
+      {
+        "assetId": "7",
+        "symbol": "USDC",
+        "decimals": 6
+      },
+      {
+        "assetId": "26",
+        "symbol": "NODL",
+        "decimals": 11
+      },
+      {
+        "assetId": "22",
+        "symbol": "USDC",
+        "decimals": 6
+      },
+      {
+        "assetId": "24",
+        "symbol": "SUB",
+        "decimals": 10
+      },
+      {
+        "assetId": "8",
+        "symbol": "PHA",
+        "decimals": 12
+      },
+      {
+        "assetId": "1000100",
+        "symbol": "LDOT",
+        "decimals": 10
+      },
+      {
+        "assetId": "1",
+        "symbol": "LRNA",
+        "decimals": 12
+      },
+      {
+        "assetId": "12",
+        "symbol": "ZTG",
+        "decimals": 10
+      },
+      {
+        "assetId": "1000081",
+        "symbol": "PEN",
+        "decimals": 12
       },
       {
         "assetId": "3",
@@ -856,8 +911,8 @@
         "decimals": 10
       },
       {
-        "assetId": "18",
-        "symbol": "DAI",
+        "assetId": "25",
+        "symbol": "UNQ",
         "decimals": 18
       },
       {
@@ -866,19 +921,9 @@
         "decimals": 6
       },
       {
-        "assetId": "4",
-        "symbol": "WETH",
+        "assetId": "9",
+        "symbol": "ASTR",
         "decimals": 18
-      },
-      {
-        "assetId": "25",
-        "symbol": "UNQ",
-        "decimals": 18
-      },
-      {
-        "assetId": "12",
-        "symbol": "ZTG",
-        "decimals": 10
       }
     ]
   },
@@ -917,6 +962,11 @@
         "assetId": "7",
         "symbol": "WBNB.wh",
         "decimals": 18
+      },
+      {
+        "assetId": "13",
+        "symbol": "HDX",
+        "decimals": 12
       },
       {
         "assetId": "5",
@@ -967,6 +1017,11 @@
         "assetId": "4",
         "symbol": "DAI.wh",
         "decimals": 18
+      },
+      {
+        "assetId": "12",
+        "symbol": "USDC",
+        "decimals": 6
       }
     ]
   },
@@ -1004,9 +1059,19 @@
         "decimals": 10
       },
       {
+        "assetId": "283870493414747423842723289889816153538",
+        "symbol": "UNQ",
+        "decimals": 18
+      },
+      {
         "assetId": "90225766094594282577230355136633846906",
         "symbol": "PDEX",
         "decimals": 12
+      },
+      {
+        "assetId": "314077021455772878282433861213184736939",
+        "symbol": "PEAQ",
+        "decimals": 18
       },
       {
         "assetId": "144012926827374458669278577633504620722",
@@ -1059,6 +1124,11 @@
         "decimals": 10
       },
       {
+        "assetId": "124463719055550872076363892993240202694",
+        "symbol": "DED",
+        "decimals": 10
+      },
+      {
         "assetId": "224077081838586484055667086558292981199",
         "symbol": "ASTR",
         "decimals": 18
@@ -1072,6 +1142,11 @@
         "assetId": "166377000701797186346254371275954761085",
         "symbol": "USDC",
         "decimals": 6
+      },
+      {
+        "assetId": "142155548796783636521833385094843759961",
+        "symbol": "BNCS",
+        "decimals": 12
       },
       {
         "assetId": "89994634370519791027168048838578580624",
@@ -1091,6 +1166,11 @@
       {
         "assetId": "204507659831918931608354793288110796652",
         "symbol": "vGLMR",
+        "decimals": 18
+      },
+      {
+        "assetId": "289989900872525819559124583375550296953",
+        "symbol": "vMANTA",
         "decimals": 18
       },
       {
@@ -1159,9 +1239,19 @@
         "decimals": 18
       },
       {
+        "assetId": "114018676402354620972806895487280206446",
+        "symbol": "vASTR",
+        "decimals": 18
+      },
+      {
         "assetId": "238111524681612888331172110363070489924",
         "symbol": "OTP",
         "decimals": 12
+      },
+      {
+        "assetId": "112679793397406599376365943185137098326",
+        "symbol": "STINK",
+        "decimals": 10
       },
       {
         "assetId": "132685552157663328694213725410064821485",
@@ -1375,13 +1465,33 @@
     ],
     "otherAssets": [
       {
+        "assetId": "9999",
+        "symbol": "TOM",
+        "decimals": 10
+      },
+      {
         "assetId": "100",
         "symbol": "WETH",
         "decimals": 18
       },
       {
+        "assetId": "482",
+        "symbol": "HUB",
+        "decimals": 10
+      },
+      {
         "assetId": "123",
         "symbol": "123",
+        "decimals": 20
+      },
+      {
+        "assetId": "9000",
+        "symbol": "PLAY",
+        "decimals": 10
+      },
+      {
+        "assetId": "69420",
+        "symbol": "GABE",
         "decimals": 20
       },
       {
@@ -1440,6 +1550,11 @@
         "decimals": 0
       },
       {
+        "assetId": "7777",
+        "symbol": "FUM",
+        "decimals": 10
+      },
+      {
         "assetId": "11",
         "symbol": "web3",
         "decimals": 18
@@ -1448,6 +1563,11 @@
         "assetId": "30035",
         "symbol": "DED",
         "decimals": 18
+      },
+      {
+        "assetId": "111",
+        "symbol": "DEMO",
+        "decimals": 6
       },
       {
         "assetId": "555",
@@ -1470,6 +1590,16 @@
         "decimals": 10
       },
       {
+        "assetId": "8889",
+        "symbol": "BNDT",
+        "decimals": 10
+      },
+      {
+        "assetId": "8886",
+        "symbol": "BANDIT",
+        "decimals": 10
+      },
+      {
         "assetId": "42069",
         "symbol": "STINK",
         "decimals": 10
@@ -1480,6 +1610,16 @@
         "decimals": 18
       },
       {
+        "assetId": "9002",
+        "symbol": "TAPE",
+        "decimals": 10
+      },
+      {
+        "assetId": "33",
+        "symbol": "COCOA",
+        "decimals": 10
+      },
+      {
         "assetId": "15",
         "symbol": "Meme",
         "decimals": 10
@@ -1488,6 +1628,11 @@
         "assetId": "2",
         "symbol": "BTC",
         "decimals": 20
+      },
+      {
+        "assetId": "9527",
+        "symbol": "LSCAT",
+        "decimals": 10
       },
       {
         "assetId": "868367",
@@ -1507,12 +1652,17 @@
       {
         "assetId": "18",
         "symbol": "DOTA",
-        "decimals": 18
+        "decimals": 4
       },
       {
         "assetId": "7",
         "symbol": "lucky7",
         "decimals": 20
+      },
+      {
+        "assetId": "4294967295",
+        "symbol": "(>'')>",
+        "decimals": 0
       },
       {
         "assetId": "1984",
@@ -1545,6 +1695,21 @@
         "decimals": 10
       },
       {
+        "assetId": "9003",
+        "symbol": "KTRL",
+        "decimals": 10
+      },
+      {
+        "assetId": "1313",
+        "symbol": "GGI",
+        "decimals": 6
+      },
+      {
+        "assetId": "24",
+        "symbol": "PRDOG",
+        "decimals": 10
+      },
+      {
         "assetId": "2023",
         "symbol": "dot",
         "decimals": 0
@@ -1560,9 +1725,24 @@
         "decimals": 6
       },
       {
+        "assetId": "404",
+        "symbol": "clay",
+        "decimals": 20
+      },
+      {
         "assetId": "1000",
         "symbol": "BRZ",
         "decimals": 6
+      },
+      {
+        "assetId": "8008",
+        "symbol": "HOBO",
+        "decimals": 2
+      },
+      {
+        "assetId": "6666",
+        "symbol": "CHAOS",
+        "decimals": 10
       },
       {
         "assetId": "1",
@@ -1575,9 +1755,24 @@
         "decimals": 0
       },
       {
+        "assetId": "31337",
+        "symbol": "WUD",
+        "decimals": 10
+      },
+      {
         "assetId": "3",
         "symbol": "DOT",
         "decimals": 20
+      },
+      {
+        "assetId": "6969",
+        "symbol": "LEEMO",
+        "decimals": 10
+      },
+      {
+        "assetId": "1983",
+        "symbol": "KAS",
+        "decimals": 12
       },
       {
         "assetId": "1337",
@@ -1590,6 +1785,21 @@
         "decimals": 8
       },
       {
+        "assetId": "17",
+        "symbol": "WIFD",
+        "decimals": 10
+      },
+      {
+        "assetId": "25",
+        "symbol": "T54",
+        "decimals": 10
+      },
+      {
+        "assetId": "69",
+        "symbol": "DAL",
+        "decimals": 18
+      },
+      {
         "assetId": "23",
         "symbol": "PINK",
         "decimals": 10
@@ -1598,6 +1808,26 @@
         "assetId": "5417",
         "symbol": "HASH",
         "decimals": 18
+      },
+      {
+        "assetId": "9001",
+        "symbol": "BOMB",
+        "decimals": 10
+      },
+      {
+        "assetId": "149",
+        "symbol": "EDU",
+        "decimals": 10
+      },
+      {
+        "assetId": "1980",
+        "symbol": "GAVIN",
+        "decimals": 0
+      },
+      {
+        "assetId": "4157",
+        "symbol": "PDOG",
+        "decimals": 10
       },
       {
         "assetId": "660301",
@@ -1615,9 +1845,19 @@
         "decimals": 9
       },
       {
+        "assetId": "888",
+        "symbol": "ASX",
+        "decimals": 10
+      },
+      {
         "assetId": "2024",
         "symbol": "WOOD",
         "decimals": 10
+      },
+      {
+        "assetId": "2230",
+        "symbol": "GBILL",
+        "decimals": 8
       }
     ]
   },
@@ -1967,6 +2207,18 @@
       {
         "symbol": "IMBU",
         "decimals": 12
+      }
+    ],
+    "otherAssets": []
+  },
+  "KiltSpiritnet": {
+    "paraId": 2086,
+    "relayChainAssetSymbol": "DOT",
+    "nativeAssetSymbol": "KILT",
+    "nativeAssets": [
+      {
+        "symbol": "KILT",
+        "decimals": 15
       }
     ],
     "otherAssets": []
@@ -2531,6 +2783,11 @@
       {
         "assetId": "76100021443485661246318545281171740067",
         "symbol": "HKO",
+        "decimals": 12
+      },
+      {
+        "assetId": "138512078356357941985706694377215053953",
+        "symbol": "TNKR",
         "decimals": 12
       },
       {
@@ -3281,6 +3538,11 @@
         "decimals": 10
       },
       {
+        "assetId": "18446744073709551634",
+        "symbol": "BILL",
+        "decimals": 8
+      },
+      {
         "assetId": "18446744073709551626",
         "symbol": "SKU",
         "decimals": 18
@@ -3406,6 +3668,11 @@
       {
         "assetId": "10",
         "symbol": "USDC",
+        "decimals": 4
+      },
+      {
+        "assetId": "120",
+        "symbol": "OAT",
         "decimals": 4
       },
       {
@@ -3724,6 +3991,11 @@
         "decimals": 10
       },
       {
+        "assetId": "1121",
+        "symbol": "OAT",
+        "decimals": 12
+      },
+      {
         "assetId": "117",
         "symbol": "TNKR",
         "decimals": 10
@@ -3829,6 +4101,11 @@
         "decimals": 10
       },
       {
+        "assetId": "1311",
+        "symbol": "GCT",
+        "decimals": 4
+      },
+      {
         "assetId": "7",
         "symbol": "DOS",
         "decimals": 1
@@ -3922,6 +4199,11 @@
         "assetId": "90",
         "symbol": "SATS",
         "decimals": 1
+      },
+      {
+        "assetId": "177",
+        "symbol": "KST",
+        "decimals": 4
       },
       {
         "assetId": "3000",
@@ -4611,6 +4893,11 @@
         "decimals": 6
       },
       {
+        "assetId": "4",
+        "symbol": "USDC",
+        "decimals": 6
+      },
+      {
         "assetId": "2",
         "symbol": "WSX",
         "decimals": 10
@@ -4624,6 +4911,11 @@
         "assetId": "0",
         "symbol": "DOT",
         "decimals": 10
+      },
+      {
+        "assetId": "5",
+        "symbol": "USDT",
+        "decimals": 6
       }
     ]
   },
