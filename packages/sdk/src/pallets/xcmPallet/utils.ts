@@ -13,6 +13,7 @@ import {
 import { generateAddressPayload } from '../../utils'
 import { getParaId, getTNode } from '../assets'
 import { type TMultiLocation } from '../../types/TMultiLocation'
+import { type TMultiAsset } from '../../types/TMultiAsset'
 
 export const constructRelayToParaParameters = (
   { api, destination, address, amount, paraIdTo }: TRelayToParaInternalOptions,
@@ -36,27 +37,46 @@ export const constructRelayToParaParameters = (
   return parameters
 }
 
+export const isTMulti = (value: any): value is TMultiLocation => {
+  return (value && typeof value === 'object') || Array.isArray(value)
+}
+
+export const isTMultiLocation = (value: any): value is TMultiLocation => {
+  return value && typeof value.parents !== 'undefined' && typeof value.interior !== 'undefined'
+}
+
 export const createCurrencySpec = (
   amount: string,
   version: Version,
   parents: Parents,
-  overridedMultiLocation?: TMultiLocation,
+  overriddenCurrency?: TMultiLocation | TMultiAsset[],
   interior: any = 'Here'
-): TCurrencySelectionHeaderArr => ({
-  [version]: [
-    {
-      id: {
-        Concrete: overridedMultiLocation ?? {
-          parents,
-          interior
+): TCurrencySelectionHeaderArr => {
+  if (!overriddenCurrency) {
+    return {
+      [version]: [
+        {
+          id: { Concrete: { parents, interior } },
+          fun: { Fungible: amount }
         }
-      },
-      fun: {
-        Fungible: amount
-      }
+      ]
     }
-  ]
-})
+  }
+
+  return isTMultiLocation(overriddenCurrency)
+    ? {
+        [version]: [
+          {
+            id: { Concrete: overriddenCurrency },
+            fun: { Fungible: amount }
+          }
+        ]
+      }
+    : // It must be TMultiAsset if not TMultiLocation
+      {
+        [version]: overriddenCurrency
+      }
+}
 
 export const createPolkadotXcmHeader = (
   scenario: TScenario,

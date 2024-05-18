@@ -6,7 +6,7 @@ import { NODE_NAMES } from '../../maps/consts'
 import { getAllAssetsSymbols, getRelayChainSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
-import { type TSendOptions, type TNode } from '../../types'
+import { type TSendOptions, type TNode, type TMultiAsset, type TMultiLocation } from '../../types'
 import { send } from './transfer'
 import ParachainNode from '../../nodes/ParachainNode'
 import { createApiInstance, getNode } from '../../utils'
@@ -145,5 +145,252 @@ describe('send', () => {
         destination: 'CrustShadow'
       })
     ).resolves.not.toThrowError(IncompatibleNodesError)
+  })
+
+  it('should throw InvalidCurrencyError when multi assets array is empty', async () => {
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'HydraDX' as TNode,
+      currency: [],
+      feeAsset: 0,
+      amount: 1000,
+      address: '0x123'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+    await expect(send(options)).rejects.toThrow('Overrided multi assets cannot be empty')
+  })
+
+  it('should throw InvalidCurrencyError when single multi asset is used with fee asset', async () => {
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'HydraDX' as TNode,
+      currency: [
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 1000 }
+        }
+      ] as TMultiAsset[],
+      feeAsset: 1,
+      amount: 1000,
+      address: '0x456'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw InvalidCurrencyError when single multi location is used with fee asset', async () => {
+    const multiLocation: TMultiLocation = {
+      parents: 0,
+      interior: {
+        X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+      }
+    }
+
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'HydraDX' as TNode,
+      currency: multiLocation,
+      feeAsset: 1,
+      amount: 1000,
+      address: '0x456'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw InvalidCurrencyError when multi assets are used without specifying fee asset', async () => {
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'HydraDX' as TNode,
+      currency: [
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 1000 }
+        },
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 500 }
+        }
+      ] as TMultiAsset[],
+      feeAsset: undefined,
+      amount: 1000,
+      address: '0x789'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw InvalidCurrencyError when multi assets are used without specifying fee asset', async () => {
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'HydraDX' as TNode,
+      currency: [
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 1000 }
+        },
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 500 }
+        }
+      ] as TMultiAsset[],
+      feeAsset: 1,
+      amount: 1000,
+      address: '0x789'
+    }
+
+    await expect(send(options)).resolves.not.toThrow()
+  })
+
+  it('should throw InvalidCurrencyError when multi assets are used without specifying fee asset', async () => {
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'HydraDX' as TNode,
+      currency: [
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 1000 }
+        },
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 500 }
+        }
+      ] as TMultiAsset[],
+      feeAsset: 0,
+      amount: 1000,
+      address: '0x789'
+    }
+
+    await expect(send(options)).resolves.not.toThrow()
+  })
+
+  it('should throw InvalidCurrencyError when multi assets are used with fee asset too big', async () => {
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'HydraDX' as TNode,
+      currency: [
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 1000 }
+        },
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 500 }
+        }
+      ] as TMultiAsset[],
+      feeAsset: -1,
+      amount: 1000,
+      address: '0x789'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw InvalidCurrencyError when multi assets are used with fee asset too big', async () => {
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'HydraDX' as TNode,
+      currency: [
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 1000 }
+        },
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+              }
+            }
+          },
+          fun: { Fungible: 500 }
+        }
+      ] as TMultiAsset[],
+      feeAsset: 2,
+      amount: 1000,
+      address: '0x789'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
   })
 })

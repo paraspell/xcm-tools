@@ -20,7 +20,7 @@ import { getAssetBySymbolOrId } from '../assets/assetsUtils'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive'
-import { resolveTNodeFromMultiLocation } from './utils'
+import { isTMulti, isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
 
 const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSerializedApiCall> => {
   const {
@@ -36,10 +36,52 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     serializedApiCallEnabled = false
   } = options
 
+  if ((!isTMulti(currency) || isTMultiLocation(currency)) && amount === null) {
+    throw new Error('Amount is required')
+  }
+
   if (typeof currency === 'number' && currency > Number.MAX_SAFE_INTEGER) {
     throw new InvalidCurrencyError(
       'The provided asset ID is larger than the maximum safe integer value. Please provide it as a string.'
     )
+  }
+
+  // Multi location checks
+  if (isTMultiLocation(currency) && (feeAsset === 0 || feeAsset !== undefined)) {
+    throw new InvalidCurrencyError('Overrided single multi asset cannot be used with fee asset')
+  }
+
+  // Multi assets checks
+  if (isTMulti(currency) && Array.isArray(currency)) {
+    if (amount !== null) {
+      console.warn(
+        'Amount is ignored when using overriding currency using multiple multi locations. Please set it to null.'
+      )
+    }
+
+    if (currency.length === 0) {
+      throw new InvalidCurrencyError('Overrided multi assets cannot be empty')
+    }
+
+    if (currency.length === 1 && (feeAsset === 0 || feeAsset !== undefined)) {
+      throw new InvalidCurrencyError('Overrided single multi asset cannot be used with fee asset')
+    }
+
+    if (currency.length > 1 && feeAsset === undefined) {
+      throw new InvalidCurrencyError(
+        'Overrided multi assets cannot be used without specifying fee asset'
+      )
+    }
+
+    if (
+      currency.length > 1 &&
+      feeAsset !== undefined &&
+      ((feeAsset as number) < 0 || (feeAsset as number) >= currency.length)
+    ) {
+      throw new InvalidCurrencyError(
+        'Fee asset index is out of bounds. Please provide a valid index.'
+      )
+    }
   }
 
   const asset = getAssetBySymbolOrId(origin, currency)
@@ -84,9 +126,9 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
 
   const apiWithFallback = api ?? (await createApiInstanceForNode(origin))
 
-  const amountStr = amount.toString()
+  const amountStr = amount?.toString()
 
-  if (typeof currency === 'object') {
+  if (isTMulti(currency)) {
     console.warn('Keep alive check is not supported when using MultiLocation as currency.')
   } else if (typeof address === 'object') {
     console.warn('Keep alive check is not supported when using MultiLocation as address.')
@@ -96,7 +138,7 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     await checkKeepAlive({
       originApi: apiWithFallback,
       address,
-      amount: amountStr,
+      amount: amountStr ?? '',
       originNode: origin,
       destApi: destApiForKeepAlive,
       currencySymbol: asset?.symbol ?? currency.toString(),
@@ -104,18 +146,18 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     })
   }
 
-  const currencyStr = typeof currency === 'object' ? undefined : currency.toString()
+  const currencyStr = isTMulti(currency) ? undefined : currency.toString()
   const currencyId = assetCheckEnabled ? asset?.assetId : currencyStr
 
   return originNode.transfer({
     api: apiWithFallback,
     currencySymbol: asset?.symbol,
     currencyId,
-    amount: amountStr,
+    amount: amountStr ?? '',
     address,
     destination,
     paraIdTo,
-    overridedCurrencyMultiLocation: typeof currency === 'object' ? currency : undefined,
+    overridedCurrencyMultiLocation: isTMulti(currency) ? currency : undefined,
     feeAsset,
     serializedApiCallEnabled
   })

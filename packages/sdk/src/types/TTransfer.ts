@@ -2,6 +2,7 @@ import { type ApiPromise } from '@polkadot/api'
 import { type TMultiLocation } from './TMultiLocation'
 import { type TNode } from './TNode'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
+import { type TMultiAsset } from './TMultiAsset'
 
 export type Extrinsic = SubmittableExtrinsic<'promise'>
 
@@ -27,7 +28,7 @@ export interface XTokensTransferInput {
   origin: TNode
   destination?: TDestination
   paraIdTo?: number
-  overridedCurrencyMultiLocation?: TMultiLocation
+  overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
   feeAsset?: TCurrency
   serializedApiCallEnabled?: boolean
 }
@@ -41,7 +42,7 @@ export interface XTransferTransferInput {
   origin: TNode
   paraId?: number
   destination?: TDestination
-  overridedCurrencyMultiLocation?: TMultiLocation
+  overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
   serializedApiCallEnabled?: boolean
 }
 
@@ -72,7 +73,7 @@ export enum Parents {
 
 export type TAmount = string | number | bigint
 export type TCurrency = string | number | bigint
-export type TCurrencyInput = string | number | bigint | TMultiLocation
+export type TCurrencyInput = string | number | bigint | TMultiLocation | TMultiAsset[]
 export type TAddress = string | TMultiLocation
 export type TDestination = TNode | TMultiLocation
 
@@ -88,7 +89,7 @@ export interface TSendOptions extends TSendBaseOptions {
   api?: ApiPromise
   origin: TNode
   currency: TCurrencyInput
-  amount: TAmount
+  amount: TAmount | null
 }
 
 export interface TSendOptionsCommon extends TSendOptions {
@@ -100,7 +101,7 @@ export interface TSendInternalOptions extends TSendBaseOptions {
   currencySymbol: string | undefined
   currencyId: string | undefined
   amount: string
-  overridedCurrencyMultiLocation?: TMultiLocation
+  overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
   serializedApiCallEnabled?: boolean
 }
 

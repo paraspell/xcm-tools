@@ -30,7 +30,7 @@ class ParaToParaBuilder
   private readonly paraIdTo?: number
 
   private _feeAsset?: TCurrency
-  private _amount: TAmount
+  private _amount: TAmount | null
   private _address: TAddress
   private _destApi?: ApiPromise
 
@@ -63,7 +63,7 @@ class ParaToParaBuilder
     return this
   }
 
-  amount(amount: TAmount): this {
+  amount(amount: TAmount | null): this {
     this._amount = amount
     return this
   }

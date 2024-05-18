@@ -17,7 +17,7 @@ import { type UseKeepAliveFinalBuilder, type AddressBuilder } from './Builder'
 class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
   private readonly api?: ApiPromise
   private readonly from: TNode
-  private readonly amount: TAmount
+  private readonly amount: TAmount | null
   private readonly feeAsset?: TCurrency
 
   private _address: TAddress
@@ -26,7 +26,7 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
   private constructor(
     api: ApiPromise | undefined,
     from: TNode,
-    amount: TAmount,
+    amount: TAmount | null,
     feeAsset?: TCurrency
   ) {
     this.api = api
@@ -38,7 +38,7 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
   static create(
     api: ApiPromise | undefined,
     from: TNode,
-    amount: TAmount,
+    amount: TAmount | null,
     feeAsset?: TCurrency
   ): AddressBuilder {
     return new ParaToRelayBuilder(api, from, amount, feeAsset)
@@ -55,6 +55,9 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
   }
 
   private buildOptions(): TSendOptions {
+    if (this.amount === null) {
+      throw new Error('Amount is required')
+    }
     const currency = getRelayChainSymbol(this.from)
     return {
       api: this.api,
