@@ -25,6 +25,7 @@ import {
   createPolkadotXcmHeader
 } from '../pallets/xcmPallet/utils'
 import { type TMultiLocation } from '../types/TMultiLocation'
+import { type TMultiAsset } from '../types/TMultiAsset'
 
 export const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
   return 'transferXTokens' in obj
@@ -185,7 +186,7 @@ abstract class ParachainNode {
     scenario: TScenario,
     version: Version,
     _?: string,
-    overridedMultiLocation?: TMultiLocation
+    overridedMultiLocation?: TMultiLocation | TMultiAsset[]
   ): any {
     return createCurrencySpec(
       amount,

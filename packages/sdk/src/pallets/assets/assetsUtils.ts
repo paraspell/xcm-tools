@@ -1,13 +1,14 @@
 // Contains function for getting Asset ID or Symbol used in XCM call creation
 
 import { type TCurrencyInput, type TNode } from '../../types'
+import { isTMulti } from '../xcmPallet/utils'
 import { getAssetsObject } from './assets'
 
 export const getAssetBySymbolOrId = (
   node: TNode,
   currency: TCurrencyInput
 ): { symbol?: string; assetId?: string } | null => {
-  if (typeof currency === 'object') {
+  if (isTMulti(currency)) {
     return null
   }
 

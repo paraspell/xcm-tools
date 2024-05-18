@@ -9,6 +9,7 @@ import * as parasSudoWrapper from '../../pallets/parasSudoWrapper'
 import * as xcmPallet from '../../pallets/xcmPallet'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { Builder } from './Builder'
+import { type TMultiAsset } from '../../types/TMultiAsset'
 
 const WS_URL = 'wss://subsocial-rpc.dwellir.com'
 const NODE: TNode = 'Acala'
@@ -141,6 +142,119 @@ describe('Builder', () => {
       amount: AMOUNT,
       address: ADDRESS,
       feeAsset,
+      destination: NODE_2
+    })
+  })
+
+  it('should initiatie a para to para transfer with two overriden multi asset', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+
+    const feeAsset = 0
+
+    const overridedCurrencyMultiLocation: TMultiAsset[] = [
+      {
+        id: {
+          Concrete: {
+            parents: 0,
+            interior: {
+              X2: [
+                {
+                  PalletInstance: '50'
+                },
+                {
+                  Parachain: '30'
+                }
+              ]
+            }
+          }
+        },
+
+        fun: {
+          Fungible: '102928'
+        }
+      },
+      {
+        id: {
+          Concrete: {
+            parents: 0,
+            interior: {
+              X2: [
+                {
+                  PalletInstance: '50'
+                },
+                {
+                  Parachain: '1337'
+                }
+              ]
+            }
+          }
+        },
+        fun: {
+          Fungible: '38482'
+        }
+      }
+    ]
+
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2)
+      .currency(overridedCurrencyMultiLocation)
+      .feeAsset(feeAsset)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      currency: overridedCurrencyMultiLocation,
+      amount: AMOUNT,
+      address: ADDRESS,
+      feeAsset,
+      destination: NODE_2
+    })
+  })
+
+  it('should initiatie a para to para transfer with one overriden multi asset', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+
+    const overridedCurrencyMultiLocation: TMultiAsset[] = [
+      {
+        id: {
+          Concrete: {
+            parents: 0,
+            interior: {
+              X2: [
+                {
+                  PalletInstance: '50'
+                },
+                {
+                  Parachain: '1337'
+                }
+              ]
+            }
+          }
+        },
+        fun: {
+          Fungible: '38482'
+        }
+      }
+    ]
+
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2)
+      .currency(overridedCurrencyMultiLocation)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      currency: overridedCurrencyMultiLocation,
+      amount: AMOUNT,
+      address: ADDRESS,
       destination: NODE_2
     })
   })

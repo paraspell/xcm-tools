@@ -63,7 +63,7 @@ class FromGeneralBuilder {
     return this
   }
 
-  amount(amount: TAmount): AddressBuilder {
+  amount(amount: TAmount | null): AddressBuilder {
     return ParaToRelayBuilder.create(this.api, this.from, amount, this._feeAsset)
   }
 
@@ -111,11 +111,11 @@ export interface AddressBuilder {
 }
 
 export interface AmountBuilder {
-  amount: (amount: TAmount) => AddressBuilder
+  amount: (amount: TAmount | null) => AddressBuilder
 }
 
 export interface AmountOrFeeAssetBuilder {
-  amount: (amount: TAmount) => AddressBuilder
+  amount: (amount: TAmount | null) => AddressBuilder
   feeAsset: (feeAsset: TCurrencyInput) => AmountBuilder
 }
 
