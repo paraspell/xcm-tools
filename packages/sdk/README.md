@@ -17,7 +17,7 @@
       <img alt="snyk" src="https://snyk.io/test/github/paraspell/sdk/badge.svg" />
     </a>
   </p>
-  <p>Currently supporting 53 Polkadot & Kusama nodes list <a href = "https://github.com/paraspell/xcm-tools/blob/main/packages/sdk/docs/supportedNodes.md"\>[here]</p>
+  <p>Currently supporting 54 Polkadot & Kusama nodes list <a href = "https://github.com/paraspell/xcm-tools/blob/main/packages/sdk/docs/supportedNodes.md"\>[here]</p>
   <p>SDK documentation <a href = "https://paraspell.github.io/docs/" \>[here]</p>
 </div>
 
@@ -57,11 +57,13 @@ const paraspell = require('@paraspell/sdk')
 
 ```
 NOTES:
-- If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' the end of currencyID. Eg: .currency(42259045809535163221576417993425387648n) will mean you transfer xcDOT.
+- If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' to the end of currencyID. Eg: .currency(42259045809535163221576417993425387648n) will mean you transfer xcDOT.
 - You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948)
-- You can now add optional parameter useKeepAlive which will ensure, that you send more than existential deposit.
-- Since v5 you can fully customize all multilocations (address, currency and destination). Instead of string parameter simply pass object with multilocation instead for more information refer to the following PR https://github.com/paraspell/xcm-tools/pull/199.
-- Fee asset is now an optional parameter.
+- You can now add an optional parameter useKeepAlive which will ensure, that you send more than the existential deposit.
+- Since v5 you can fully customize all multilocations (address, currency and destination). Instead of a string parameter simply pass an object with multilocation instead for more information refer to the following PR https://github.com/paraspell/xcm-tools/pull/199.
+- Fee asset is now a required builder parameter when you enter a multilocation array.
+- When using a multilocation array the amount parameter is overridden.
+- Multilocation arrays are now available. Customize your asset multilocations by .currency([{multilocation1},{multilocation2}..{multilocationN}]) For more information refer to the official documentation or following PR https://github.com/paraspell/xcm-tools/pull/224.
 ```
 
 ### Builder pattern:
@@ -71,9 +73,9 @@ NOTES:
 await Builder(/*node api - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
-      .currency(CurrencyString| | CurrencyID | Multilocation object)
-      /*.feeAsset(feeAsset) - Optional (Fee asset select id)*/
-      .amount(amount)
+      .currency(CurrencyString| | CurrencyID | Multilocation object | MultilocationArray)
+      /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
+      .amount(amount) // Overriden when using MultilocationArray
       .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
       .build()
 /*
@@ -107,7 +109,6 @@ await Builder()
 ```ts
 await Builder(/*node api - optional*/)
       .from(NODE)
-      /*.feeAsset(feeAsset) - Optional (Fee asset select id)*/
       .amount(amount)
       .address(address | Multilocation object)
       .build()
@@ -144,7 +145,7 @@ Builder(api)
 
 ##### Open HRMP channels
 ```ts
-Builder(api)
+Builder()
 .from(NODE)
 .to(NODE)
 .openChannel()
@@ -182,7 +183,6 @@ await paraspell.xcmPallet.send(
     api?: ApiPromise,
     origin: origin  Parachain  name  string,
     amount: any,
-    feeAsset? - Fee asset select id,
     to: destination  address  string | Multilocation object,
     paraIdTo?: number,
     destApiForKeepAlive?: ApiPromise
@@ -221,6 +221,17 @@ paraspell.openChannels.openChannel(
     maxMessageSize: number
   }
 )
+```
+
+### Asset claim:
+```ts
+//Claim XCM trapped assets from the selected chain
+await Builder(api)
+      .claimFrom(NODE)
+      .fungible(MultilocationArray (Only one multilocation allowed) [{Multilocation}])
+      .account(address | Multilocation object)
+      /*.xcmVersion(Version.V3) Optional parameter, by default V3. XCM Version ENUM if a different XCM version is needed (Supported V2 & V3). Requires importing Version enum.*/
+      .build()
 ```
 
 ### Asset queries:
