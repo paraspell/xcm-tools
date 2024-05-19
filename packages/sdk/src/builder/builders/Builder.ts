@@ -9,7 +9,10 @@ import {
   type TCurrencyInput,
   type TDestination,
   type TAddress,
-  type TCurrency
+  type TCurrency,
+  type TMultiAsset,
+  type TNodeWithRelayChains,
+  type TVersionClaimAssets
 } from '../../types'
 import CloseChannelBuilder, { type InboundCloseChannelBuilder } from './CloseChannelBuilder'
 import OpenChannelBuilder, { type MaxSizeOpenChannelBuilder } from './OpenChannelBuilder'
@@ -17,6 +20,7 @@ import RelayToParaBuilder from './RelayToParaBuilder'
 import ParaToParaBuilder from './ParaToParaBuilder'
 import ParaToRelayBuilder from './ParaToRelayBuilder'
 import { MissingApiPromiseError } from '../../errors/MissingApiPromiseError'
+import AssetClaimBuilder from './AssetClaimBuilder'
 
 class ToGeneralBuilder {
   private readonly api?: ApiPromise
@@ -89,6 +93,10 @@ class GeneralBuilder {
   to(node: TDestination, paraIdTo?: number): AmountBuilder {
     return RelayToParaBuilder.create(this.api, node, paraIdTo)
   }
+
+  claimFrom(node: TNodeWithRelayChains): FungibleBuilder {
+    return AssetClaimBuilder.create(this.api, node)
+  }
 }
 
 export const Builder = (api?: ApiPromise): GeneralBuilder => {
@@ -98,6 +106,11 @@ export const Builder = (api?: ApiPromise): GeneralBuilder => {
 export interface FinalBuilder {
   build: () => Extrinsic | never
   buildSerializedApiCall: () => TSerializedApiCall
+}
+
+export interface FinalBuilderAsync {
+  build: () => Promise<Extrinsic | never>
+  buildSerializedApiCall: () => Promise<TSerializedApiCall>
 }
 
 export interface UseKeepAliveFinalBuilder {
@@ -117,6 +130,18 @@ export interface AmountBuilder {
 export interface AmountOrFeeAssetBuilder {
   amount: (amount: TAmount | null) => AddressBuilder
   feeAsset: (feeAsset: TCurrencyInput) => AmountBuilder
+}
+
+export interface FungibleBuilder {
+  fungible: (multiAssets: TMultiAsset[]) => AccountBuilder
+}
+
+export interface AccountBuilder {
+  account: (address: TAddress) => VersionBuilder
+}
+
+export interface VersionBuilder extends FinalBuilderAsync {
+  xcmVersion: (version: TVersionClaimAssets) => FinalBuilderAsync
 }
 
 export * from './CloseChannelBuilder'

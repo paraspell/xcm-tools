@@ -181,3 +181,6 @@ export const callPolkadotJsTxFunction = (
 
 export const determineRelayChain = (node: TNode): TNodeWithRelayChains =>
   getRelayChainSymbol(node) === 'KSM' ? 'Kusama' : 'Polkadot'
+
+export const isRelayChain = (node: TNodeWithRelayChains): boolean =>
+  node === 'Polkadot' || node === 'Kusama'

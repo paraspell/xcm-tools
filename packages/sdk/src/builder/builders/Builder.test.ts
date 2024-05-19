@@ -2,7 +2,7 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { vi, describe, expect, it, beforeEach } from 'vitest'
-import { type TNode } from '../../types'
+import { Version, type TNode } from '../../types'
 import { createApiInstance } from '../../utils'
 import * as hrmp from '../../pallets/hrmp'
 import * as parasSudoWrapper from '../../pallets/parasSudoWrapper'
@@ -456,6 +456,22 @@ describe('Builder', () => {
       .to(NODE_2)
       .amount(AMOUNT)
       .address(ADDRESS)
+      .buildSerializedApiCall()
+
+    expect(serializedApiCall).toHaveProperty('module')
+    expect(serializedApiCall).toHaveProperty('section')
+    expect(serializedApiCall).toHaveProperty('parameters')
+    expect(serializedApiCall.module).toBeTypeOf('string')
+    expect(serializedApiCall.section).toBeTypeOf('string')
+    expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
+  })
+
+  it('should call claim asset function with valid params', async () => {
+    const serializedApiCall = await Builder(api)
+      .claimFrom(NODE)
+      .fungible([])
+      .account(ADDRESS)
+      .xcmVersion(Version.V3)
       .buildSerializedApiCall()
 
     expect(serializedApiCall).toHaveProperty('module')

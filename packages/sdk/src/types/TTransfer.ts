@@ -66,6 +66,8 @@ export enum Version {
   V3 = 'V3'
 }
 
+export type TVersionClaimAssets = Version.V3 | Version.V2
+
 export enum Parents {
   ONE = 1,
   ZERO = 0

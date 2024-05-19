@@ -10,7 +10,9 @@ import {
   ScenarioNotSupportedError,
   getAssetId,
   NodeNotSupportedError,
-  getOtherAssets
+  getOtherAssets,
+  TNodeWithRelayChains,
+  Version
 } from '../src'
 import { type ApiPromise } from '@polkadot/api'
 
@@ -64,6 +66,103 @@ const findAssetIdForAssetHub = (node: TNode, asset: string): string | null => {
 }
 
 describe.sequential('XCM - e2e', () => {
+  describe('AssetClaim', () => {
+    ;(
+      ['Polkadot', 'Kusama', 'AssetHubPolkadot', 'AssetHubKusama'] as TNodeWithRelayChains[]
+    ).forEach(node => {
+      it('should create asset claim tx', async () => {
+        const api = await createApiInstanceForNode(node)
+        const tx = Builder(api)
+          .claimFrom(node)
+          .fungible([
+            {
+              id: {
+                Concrete: {
+                  parents: 0,
+                  interior: {
+                    Here: null
+                  }
+                }
+              },
+              fun: { Fungible: 1000 }
+            }
+          ])
+          .account(MOCK_ADDRESS)
+          .build()
+        expect(tx).toBeDefined()
+      })
+    })
+
+    it('should create asset claim tx V1', async () => {
+      const api = await createApiInstanceForNode('AssetHubPolkadot')
+      const tx = Builder(api)
+        .claimFrom('AssetHubPolkadot')
+        .fungible([
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  Here: null
+                }
+              }
+            },
+            fun: { Fungible: 1000 }
+          }
+        ])
+        .account(MOCK_ADDRESS)
+        .xcmVersion(Version.V2)
+        .build()
+      expect(tx).toBeDefined()
+    })
+
+    it('should create asset claim tx V2', async () => {
+      const api = await createApiInstanceForNode('AssetHubPolkadot')
+      const tx = Builder(api)
+        .claimFrom('AssetHubPolkadot')
+        .fungible([
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  Here: null
+                }
+              }
+            },
+            fun: { Fungible: 1000 }
+          }
+        ])
+        .account(MOCK_ADDRESS)
+        .xcmVersion(Version.V2)
+        .build()
+      expect(tx).toBeDefined()
+    })
+
+    it('should create asset claim tx V4', async () => {
+      const api = await createApiInstanceForNode('AssetHubPolkadot')
+      const tx = Builder(api)
+        .claimFrom('AssetHubPolkadot')
+        .fungible([
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  Here: null
+                }
+              }
+            },
+            fun: { Fungible: 1000 }
+          }
+        ])
+        .account(MOCK_ADDRESS)
+        .xcmVersion(Version.V3)
+        .build()
+      expect(tx).toBeDefined()
+    })
+  })
+
   describe.sequential('RelayToPara', () => {
     it('should create transfer tx - DOT from Relay to Para', async () => {
       const api = await createApiInstanceForNode('Polkadot')
