@@ -1,23 +1,25 @@
-import { Text, Alert } from '@mantine/core';
-import { IconJson } from '@tabler/icons-react';
-import { FC, ReactNode } from 'react';
+import { Text, Alert } from "@mantine/core";
+import { IconJson, IconLink } from "@tabler/icons-react";
+import { FC, ReactNode } from "react";
 
 const jsonIcon = <IconJson size={24} />;
+const linkIcon = <IconLink size={24} />;
 
 type Props = {
   children: ReactNode;
   onClose: () => void;
+  useLinkIcon?: boolean;
 };
 
-const OutputAlert: FC<Props> = ({ children, onClose }) => (
+const OutputAlert: FC<Props> = ({ children, onClose, useLinkIcon }) => (
   <Alert
     color="green"
     title="Output"
-    icon={jsonIcon}
+    icon={useLinkIcon ? linkIcon : jsonIcon}
     withCloseButton
     onClose={onClose}
     mt="lg"
-    style={{ overflowWrap: 'anywhere' }}
+    style={{ overflowWrap: "anywhere" }}
   >
     <Text component="pre" size="sm">
       {children}

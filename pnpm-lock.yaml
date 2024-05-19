@@ -108,6 +108,9 @@ importers:
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
+      '@paraspell/xcm-analyser':
+        specifier: workspace:*
+        version: link:../../packages/xcm-analyser
       '@paraspell/xcm-router':
         specifier: workspace:*
         version: link:../../packages/xcm-router

@@ -15,6 +15,7 @@
     "@mantine/hooks": "^7.6.2",
     "@paraspell/sdk": "workspace:*",
     "@paraspell/xcm-router": "workspace:*",
+    "@paraspell/xcm-analyser": "workspace:*",
     "@polkadot/api": "^10.12.4",
     "@polkadot/extension-dapp": "^0.46.9",
     "@polkadot/extension-inject": "^0.46.9",
