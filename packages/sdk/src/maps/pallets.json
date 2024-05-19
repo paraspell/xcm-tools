@@ -206,5 +206,9 @@
   "KiltSpiritnet": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
+  },
+  "Curio": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
   }
 }

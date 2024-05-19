@@ -2247,6 +2247,29 @@
     ],
     "otherAssets": []
   },
+  "Curio": {
+    "paraId": 3339,
+    "relayChainAssetSymbol": "KSM",
+    "nativeAssetSymbol": "CGT",
+    "nativeAssets": [
+      {
+        "symbol": "CGT",
+        "decimals": 18
+      },
+      {
+        "symbol": "KSM",
+        "decimals": 12
+      }
+    ],
+
+    "otherAssets": [
+      {
+        "assetId": "0",
+        "symbol": "BSX",
+        "decimals": 12
+      }
+    ]
+  },
   "Karura": {
     "paraId": 2000,
     "relayChainAssetSymbol": "KSM",

@@ -71,7 +71,8 @@ const nodeToQuery: TNodeToAssetModuleMap = {
   Khala: 'assets.metadata',
   CoretimeKusama: null,
   Subsocial: null,
-  KiltSpiritnet: null
+  KiltSpiritnet: null,
+  Curio: 'assetRegistry.metadata'
 }
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
@@ -122,6 +123,59 @@ const fetchOtherAssets = async (api: ApiPromise, query: string) => {
       }
     )
     .filter(asset => asset.symbol !== null)
+}
+
+const fetchNativeAssetsCurio = async (api: ApiPromise, query: string) => {
+  const [module, section] = query.split('.')
+  const res = await api.query[module][section].entries()
+  return res
+    .map(
+      ([
+        {
+          args: [era]
+        },
+        value
+      ]) => {
+        const { symbol, decimals } = value.toHuman() as any
+        return {
+          assetId: era.toHuman(),
+          symbol,
+          decimals: +decimals
+        }
+      }
+    )
+    .filter(asset => Object.keys(asset.assetId ?? {})[0] === 'Token')
+    .map(asset => ({
+      symbol: asset.symbol,
+      decimals: asset.decimals
+    }))
+}
+
+const fetchOtherAssetsCurio = async (api: ApiPromise, query: string) => {
+  const [module, section] = query.split('.')
+  const res = await api.query[module][section].entries()
+  return res
+    .map(
+      ([
+        {
+          args: [era]
+        },
+        value
+      ]) => {
+        const { symbol, decimals } = value.toHuman() as any
+        return {
+          assetId: era.toHuman(),
+          symbol,
+          decimals: +decimals
+        }
+      }
+    )
+    .filter(asset => Object.keys(asset.assetId ?? {})[0] === 'ForeignAsset')
+    .map(asset => ({
+      assetId: Object.values(asset.assetId ?? {})[0],
+      symbol: asset.symbol,
+      decimals: asset.decimals
+    }))
 }
 
 const fetchAssetIdsOnly = async (api: ApiPromise, query: string) => {
@@ -336,6 +390,17 @@ const fetchNodeAssets = async (
     }
   }
 
+  // Different format of data
+  if (node === 'Curio') {
+    const nativeAssets = query ? await fetchNativeAssetsCurio(api, query) : []
+    const otherAssets = query ? await fetchOtherAssetsCurio(api, query) : []
+    await api.disconnect()
+    return {
+      nativeAssets,
+      otherAssets,
+      nativeAssetSymbol
+    }
+  }
   if (node === 'Picasso' || node === 'ComposableFinance') {
     const nativeAssets = (await fetchNativeAssets(api)) ?? []
     const otherAssets = query ? await fetchOtherAssetsInnerType(api, query) : []
