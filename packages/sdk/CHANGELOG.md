@@ -1,5 +1,22 @@
 # Changelog
 
+## [5.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.2.1...sdk-v5.3.0) (2024-05-20)
+
+
+### Features
+
+* Add support for asset claim 🔧 ([b02f8ed](https://github.com/paraspell/xcm-tools/commit/b02f8ed5af5a78598cca2af1e16ddb5c4a55ea4b))
+* Add support for Curio chain ([f1197c5](https://github.com/paraspell/xcm-tools/commit/f1197c55b3c048a42533933bfca2b52cfa33be91))
+* Add support for overriding multi assets ([e35e521](https://github.com/paraspell/xcm-tools/commit/e35e521dde4f12adf4d03da9ab07476bdbee455e))
+
+
+### Miscellaneous Chores
+
+* **sdk:** Add claimAssets+MultiassetArray to Readme ([99abab9](https://github.com/paraspell/xcm-tools/commit/99abab9aa42e4506122fd5e281ec9126e198dd11))
+* **sdk:** Fix supportedNodes.md ([9dcee6c](https://github.com/paraspell/xcm-tools/commit/9dcee6c8184f35f1e57af3eed722bed18fca403e))
+* **sdk:** Update supportedNodes.md ([6743d23](https://github.com/paraspell/xcm-tools/commit/6743d23c9ff46b1a7f875f1bd9cc72f1bdba11c0))
+* Update Node.js to v20 LTS ([4b00caa](https://github.com/paraspell/xcm-tools/commit/4b00caa58649051f4dea57e7f6ebb94baa6e307a))
+
 ## [5.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-v5.2.0...sdk-v5.2.1) (2024-04-30)
 
 
