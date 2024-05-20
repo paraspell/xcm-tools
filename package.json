@@ -27,5 +27,5 @@
     "run:playground": "pnpm --filter=playground dev",
     "run:landing-page": "pnpm --filter=landing-page dev"
   },
-  "packageManager": "pnpm@8.5.1"
+  "packageManager": "pnpm@9.1.1"
 }
