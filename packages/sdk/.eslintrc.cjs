@@ -34,6 +34,7 @@ module.exports = {
     ],
     'prefer-arrow-callback': ['error', { allowNamedFunctions: true }],
     'func-style': ['error', 'expression'],
+    'new-cap': 'off',
     '@typescript-eslint/no-unused-vars': [
       'error',
       {

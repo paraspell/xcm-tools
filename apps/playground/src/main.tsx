@@ -1,12 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import WalletProvider from './providers/WalletProvider';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import WalletProvider from "./providers/WalletProvider";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(BigInt.prototype as any)["toJSON"] = function () {
+  return this.toString();
+};
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <WalletProvider>
       <App />
     </WalletProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
