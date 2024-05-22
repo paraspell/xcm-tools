@@ -1,14 +1,15 @@
-import { useForm } from '@mantine/form';
-import { FC } from 'react';
-import { Button, Checkbox, Select, Stack, TextInput } from '@mantine/core';
-import { NODE_NAMES, TNode } from '@paraspell/sdk';
-import { TAssetsQuery } from '../../types';
-import { ASSET_QUERIES } from '../../consts';
+import { useForm } from "@mantine/form";
+import { FC } from "react";
+import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
+import { NODE_NAMES, TNode } from "@paraspell/sdk";
+import { TAssetsQuery } from "../../types";
+import { ASSET_QUERIES } from "../../consts";
 
 export type FormValues = {
   func: TAssetsQuery;
   node: TNode;
   symbol: string;
+  address: string;
   useApi: boolean;
 };
 
@@ -20,9 +21,10 @@ type Props = {
 const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
-      func: 'ASSETS_OBJECT',
-      node: 'Acala',
-      symbol: 'GLMR',
+      func: "ASSETS_OBJECT",
+      node: "Acala",
+      symbol: "GLMR",
+      address: "",
       useApi: false,
     },
   });
@@ -30,7 +32,13 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
   const funcVal = form.values.func;
 
   const showSymbolInput =
-    funcVal === 'ASSET_ID' || funcVal === 'DECIMALS' || funcVal == 'HAS_SUPPORT';
+    funcVal === "ASSET_ID" ||
+    funcVal === "DECIMALS" ||
+    funcVal == "HAS_SUPPORT" ||
+    funcVal === "BALANCE_FOREIGN";
+
+  const showAddressInput =
+    funcVal === "BALANCE_FOREIGN" || funcVal === "BALANCE_NATIVE";
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -41,7 +49,7 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...ASSET_QUERIES]}
           searchable
           required
-          {...form.getInputProps('func')}
+          {...form.getInputProps("func")}
         />
 
         <Select
@@ -50,14 +58,28 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...NODE_NAMES]}
           searchable
           required
-          {...form.getInputProps('node')}
+          {...form.getInputProps("node")}
         />
 
         {showSymbolInput && (
-          <TextInput label="Symbol" placeholder="GLMR" required {...form.getInputProps('symbol')} />
+          <TextInput
+            label="Symbol"
+            placeholder="GLMR"
+            required
+            {...form.getInputProps("symbol")}
+          />
         )}
 
-        <Checkbox label="Use XCM API" {...form.getInputProps('useApi')} />
+        {showAddressInput && (
+          <TextInput
+            label="Address"
+            placeholder="0x0000000"
+            required
+            {...form.getInputProps("address")}
+          />
+        )}
+
+        <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
 
         <Button type="submit" loading={loading}>
           Submit

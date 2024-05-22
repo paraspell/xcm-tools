@@ -1,26 +1,32 @@
-import { Stack, Title, Box, Alert, Text } from '@mantine/core';
-import ErrorAlert from '../ErrorAlert';
-import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import { useState, useEffect } from 'react';
-import { fetchFromApi } from '../../utils/submitUsingApi';
-import AssetsForm, { FormValues } from './AssetsForm';
+import { Stack, Title, Box, Alert, Text } from "@mantine/core";
+import ErrorAlert from "../ErrorAlert";
+import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
+import { useState, useEffect } from "react";
+import { fetchFromApi } from "../../utils/submitUsingApi";
+import AssetsForm, { FormValues } from "./AssetsForm";
 import {
   getAllAssetsSymbols,
   getAssetDecimals,
   getAssetId,
   getAssetsObject,
+  getBalanceForeign,
+  getBalanceNative,
   getNativeAssets,
   getOtherAssets,
   getParaId,
   getRelayChainSymbol,
   hasSupportForAsset,
-} from '@paraspell/sdk';
-import { IconJson } from '@tabler/icons-react';
+  // getBalanceNative,
+} from "@paraspell/sdk";
+import { IconJson } from "@tabler/icons-react";
 
 const AssetsQueries = () => {
-  const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] = useDisclosure(false);
-  const [outputAlertOpened, { open: openOutputAlert, close: closeOutputAlert }] =
+  const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
     useDisclosure(false);
+  const [
+    outputAlertOpened,
+    { open: openOutputAlert, close: closeOutputAlert },
+  ] = useDisclosure(false);
 
   const [error, setError] = useState<Error>();
   const [output, setOutput] = useState<string>();
@@ -37,48 +43,57 @@ const AssetsQueries = () => {
     }
   }, [error, scrollIntoView]);
 
-  const submitUsingSdk = async ({ func, node, symbol }: FormValues) => {
+  const submitUsingSdk = async ({
+    func,
+    node,
+    symbol,
+    address,
+  }: FormValues) => {
     switch (func) {
-      case 'ASSETS_OBJECT':
+      case "ASSETS_OBJECT":
         return getAssetsObject(node);
-      case 'ASSET_ID':
+      case "ASSET_ID":
         return getAssetId(node, symbol);
-      case 'RELAYCHAIN_SYMBOL':
+      case "RELAYCHAIN_SYMBOL":
         return getRelayChainSymbol(node);
-      case 'NATIVE_ASSETS':
+      case "NATIVE_ASSETS":
         return getNativeAssets(node);
-      case 'OTHER_ASSETS':
+      case "OTHER_ASSETS":
         return getOtherAssets(node);
-      case 'ALL_SYMBOLS':
+      case "ALL_SYMBOLS":
         return getAllAssetsSymbols(node);
-      case 'DECIMALS':
+      case "DECIMALS":
         return getAssetDecimals(node, symbol);
-      case 'HAS_SUPPORT':
+      case "HAS_SUPPORT":
         return hasSupportForAsset(node, symbol);
-      case 'PARA_ID':
+      case "PARA_ID":
         return getParaId(node);
+      case "BALANCE_NATIVE":
+        return getBalanceNative(address, node);
+      case "BALANCE_FOREIGN":
+        return getBalanceForeign(address, node, symbol);
     }
   };
 
   const getEndpoint = ({ func, node }: FormValues) => {
     switch (func) {
-      case 'ASSETS_OBJECT':
+      case "ASSETS_OBJECT":
         return `${node}`;
-      case 'ASSET_ID':
+      case "ASSET_ID":
         return `${node}/id`;
-      case 'RELAYCHAIN_SYMBOL':
+      case "RELAYCHAIN_SYMBOL":
         return `${node}/relay-chain-symbol`;
-      case 'NATIVE_ASSETS':
+      case "NATIVE_ASSETS":
         return `${node}/native`;
-      case 'OTHER_ASSETS':
+      case "OTHER_ASSETS":
         return `${node}/other`;
-      case 'ALL_SYMBOLS':
+      case "ALL_SYMBOLS":
         return `${node}/all-symbols`;
-      case 'DECIMALS':
+      case "DECIMALS":
         return `${node}/decimals`;
-      case 'HAS_SUPPORT':
+      case "HAS_SUPPORT":
         return `${node}/has-support`;
-      case 'PARA_ID':
+      case "PARA_ID":
         return `${node}/para-id`;
     }
   };
@@ -86,7 +101,10 @@ const AssetsQueries = () => {
   const getQueryResult = async (formValues: FormValues) => {
     const { useApi } = formValues;
     if (useApi) {
-      return await fetchFromApi(formValues, `/assets/${getEndpoint(formValues)}`);
+      return await fetchFromApi(
+        formValues,
+        `/assets/${getEndpoint(formValues)}`
+      );
     } else {
       return await submitUsingSdk(formValues);
     }
@@ -97,7 +115,11 @@ const AssetsQueries = () => {
 
     try {
       const output = await getQueryResult(formValues);
-      setOutput(JSON.stringify(output, null, 2));
+      if (typeof output === "bigint") {
+        setOutput(output.toString());
+      } else {
+        setOutput(JSON.stringify(output, null, 2));
+      }
       openOutputAlert();
       closeErrorAlert();
     } catch (e) {
@@ -130,7 +152,9 @@ const AssetsQueries = () => {
       </Stack>
       <Box ref={targetRef}>
         {errorAlertOpened && (
-          <ErrorAlert onAlertCloseClick={onErrorAlertCloseClick}>{error?.message}</ErrorAlert>
+          <ErrorAlert onAlertCloseClick={onErrorAlertCloseClick}>
+            {error?.message}
+          </ErrorAlert>
         )}
       </Box>
       <Box>
@@ -142,7 +166,7 @@ const AssetsQueries = () => {
             withCloseButton
             onClose={onOutputAlertCloseClick}
             mt="lg"
-            style={{ overflowWrap: 'anywhere' }}
+            style={{ overflowWrap: "anywhere" }}
           >
             <Text component="pre" size="sm">
               {output}

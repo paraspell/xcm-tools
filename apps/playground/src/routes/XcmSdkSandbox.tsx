@@ -4,11 +4,13 @@ import {
   IconBoxAlignBottomRight,
   IconCoins,
   IconSend,
+  IconSend2,
 } from "@tabler/icons-react";
 import XcmTransfer from "../components/XcmTransfer";
 import AssetsQueries from "../components/assets/AssetsQueries";
 import PalletsQueries from "../components/pallets/PalletsQueries";
 import ChannelsQueries from "../components/channels/ChannelsQueries";
+import TransferInfo from "../components/TransferInfo";
 
 const XcmSdkSandbox = () => {
   const iconStyle = { width: rem(12), height: rem(12) };
@@ -37,6 +39,13 @@ const XcmSdkSandbox = () => {
         >
           HRMP Channels
         </Tabs.Tab>
+
+        <Tabs.Tab
+          value="transfer-info"
+          leftSection={<IconSend2 style={iconStyle} />}
+        >
+          Transfer Info
+        </Tabs.Tab>
       </Tabs.List>
 
       <Container p="xl">
@@ -54,6 +63,10 @@ const XcmSdkSandbox = () => {
 
         <Tabs.Panel value="hrmp-channels">
           <ChannelsQueries />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="transfer-info">
+          <TransferInfo />
         </Tabs.Panel>
       </Container>
     </Tabs>
