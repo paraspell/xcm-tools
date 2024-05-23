@@ -55,6 +55,12 @@ class BifrostExchangeNode extends ExchangeNode {
 
     const amountWithoutFee = amountBN.minus(toDestFee.multipliedBy(FEE_BUFFER)).decimalPlaces(0);
 
+    if (amountWithoutFee.isNegative()) {
+      throw new Error(
+        'The provided amount is too small to cover the fees. Please provide a larger amount.',
+      );
+    }
+
     Logger.log('Amount modified', amountWithoutFee.toString());
 
     const amountIn = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
@@ -68,6 +74,12 @@ class BifrostExchangeNode extends ExchangeNode {
     const amountWithoutSwapFee = amountWithoutFee
       .multipliedBy(1 - swapFeePctWithBuffer / 100)
       .decimalPlaces(0);
+
+    if (amountWithoutSwapFee.isNegative()) {
+      throw new Error(
+        'The provided amount is too small to cover the swap fees. Please provide a larger amount.',
+      );
+    }
 
     Logger.log('feePct', swapFeePct);
     Logger.log('amount without swap fee', amountWithoutSwapFee.toString());
@@ -104,6 +116,12 @@ class BifrostExchangeNode extends ExchangeNode {
     const amountOutFinalBN = amountOutBN
       .minus(toDestFeeOut.multipliedBy(FEE_BUFFER))
       .decimalPlaces(0);
+
+    if (amountOutFinalBN.isNegative()) {
+      throw new Error(
+        'The amount after deducting fees is negative. Please provide a larger amount.',
+      );
+    }
 
     Logger.log(trade.outputAmount.toFixed().toString());
     Logger.log(amountOutBN.toString());

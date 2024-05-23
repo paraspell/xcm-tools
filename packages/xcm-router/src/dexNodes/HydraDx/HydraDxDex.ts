@@ -47,6 +47,13 @@ class HydraDxExchangeNode extends ExchangeNode {
       toDestTransactionFee,
     );
     const amountWithoutFee = amountBnum.minus(tradeFee);
+
+    if (amountWithoutFee.isNegative()) {
+      throw new Error(
+        'The provided amount is too small to cover the fees. Please provide a larger amount.',
+      );
+    }
+
     const amountNormalized = amountWithoutFee.shiftedBy(-currencyFromDecimals);
 
     Logger.log('Original amount', amount);
@@ -95,6 +102,12 @@ class HydraDxExchangeNode extends ExchangeNode {
 
     const currencyToFeeBnum = currencyToFee.shiftedBy(currencyToDecimals);
     const amountOutModified = amountOut.minus(currencyToFeeBnum).decimalPlaces(0);
+
+    if (amountOutModified.isNegative()) {
+      throw new Error(
+        'The amount after deducting fees is negative. Please provide a larger amount.',
+      );
+    }
 
     Logger.log('Amount out original', amountOut.toString());
     Logger.log('Amount out modified', amountOutModified.toString());

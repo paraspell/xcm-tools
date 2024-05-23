@@ -36,6 +36,12 @@ class InterlayExchangeNode extends ExchangeNode {
 
     const amountWithoutFee = amountBN.minus(toExchangeFeeWithBuffer);
 
+    if (amountWithoutFee.isNegative()) {
+      throw new Error(
+        'The provided amount is too small to cover the exchange fees. Please provide a larger amount.',
+      );
+    }
+
     Logger.log('Original amount', amount);
     Logger.log('Amount without fee', amountWithoutFee.toString());
 
