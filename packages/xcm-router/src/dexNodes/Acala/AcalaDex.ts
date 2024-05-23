@@ -61,6 +61,12 @@ class AcalaExchangeNode extends ExchangeNode {
 
     const amountWithoutFee = amountBN.minus(feeInCurrencyFromBN).minus(toExchangeFeeWithBuffer);
 
+    if (amountWithoutFee.isNegative()) {
+      throw new Error(
+        'The provided amount is too small to cover the fees. Please provide a larger amount.',
+      );
+    }
+
     Logger.log('Original amount', amount);
     Logger.log('Amount modified', amountWithoutFee.toString());
 
@@ -106,6 +112,12 @@ class AcalaExchangeNode extends ExchangeNode {
 
     const currencyToFeeBnum = new BigNumber(feeInCurrencyTo).shiftedBy(toToken.decimals);
     const amountOutModified = amountOutBN.minus(currencyToFeeBnum).decimalPlaces(0);
+
+    if (amountOutModified.isNegative()) {
+      throw new Error(
+        'The amount after deducting fees is negative. Please provide a larger amount.',
+      );
+    }
 
     Logger.log('Amount out original', amountOut.toString());
     Logger.log('Amount out modified', amountOutModified.toString());
