@@ -175,7 +175,7 @@ const RouterTransferPage = () => {
 
     const originalError = console.error;
     console.error = (...args) => {
-      if (args[2].includes("ExtrinsicStatus::")) {
+      if (args.length > 1 && args[2].includes("ExtrinsicStatus::")) {
         setError(new Error(args[2]));
         openAlert();
         setShowStepper(false);
