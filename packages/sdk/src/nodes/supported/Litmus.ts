@@ -12,7 +12,7 @@ import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Litmus extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('Litmus', 'litmus', 'kusama', Version.V1)
+    super('Litmus', 'litmus', 'kusama', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
