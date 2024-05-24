@@ -1,4 +1,4 @@
-import { TNode, type TNodeWithRelayChains } from '../../types'
+import { type TNode, type TNodeWithRelayChains } from '../../types'
 import { createApiInstanceForNode, determineRelayChainSymbol } from '../../utils'
 import { getAssetsObject } from './assets'
 import { getAssetBySymbolOrId } from './assetsUtils'
@@ -9,7 +9,7 @@ import {
   getMaxNativeTransferableAmount,
   getMinNativeTransferableAmount
 } from './getExistentialDeposit'
-import { type TOriginFeeDetails, getOriginFeeDetails } from './getOriginFeeDetails'
+import { getOriginFeeDetails } from './getOriginFeeDetails'
 
 interface TTransferInfo {
   chain: { origin: TNodeWithRelayChains; destination: TNodeWithRelayChains; ecosystem: string }
@@ -18,21 +18,21 @@ interface TTransferInfo {
     currency: string
   }
   originFeeBalance: {
-    balance: bigint //balance nativneho assetu pre origin chain
-    expectedBalanceAfterXCMFee: bigint //balance - (xcmFee+10%),
+    balance: bigint // balance nativneho assetu pre origin chain
+    expectedBalanceAfterXCMFee: bigint // balance - (xcmFee+10%),
     xcmFee: {
       sufficientForXCM: boolean
       xcmFee: bigint
     }
     existentialDeposit: bigint // existential deposit origin chain
-    asset: string //origin chain native asset symbol
+    asset: string // origin chain native asset symbol
     minNativeTransferableAmount: bigint
     maxNativeTransferableAmount: bigint
   }
   destinationFeeBalance: {
-    balance: bigint //balance nativneho asssetu na destination chaine,
-    currency: string //nativnyAsset destination chainu,
-    existentialDeposit: bigint //existential deposit destination chain,
+    balance: bigint // balance nativneho asssetu na destination chaine,
+    currency: string // nativnyAsset destination chainu,
+    existentialDeposit: bigint // existential deposit destination chain,
   }
 }
 
@@ -74,17 +74,16 @@ export const getTransferInfo = async (
   amount: string
 ): Promise<TTransferInfo> => {
   const originApi = await createApiInstanceForNode(origin)
-  const destApi = await createApiInstanceForNode(destination)
-  const destinationFeeBalance = await getBalanceNative(accountDestination, destination, destApi)
+  const originBalance = await getBalanceNative(accountOrigin, origin, originApi)
   const { xcmFee: destXcmFee } = await getOriginFeeDetails(
-    destination,
     origin,
+    destination,
     assetSymbolOrId,
     amount,
-    accountDestination,
-    destApi
+    accountOrigin,
+    originApi
   )
-  const expectedBalanceAfterXCMDelivery = destinationFeeBalance - destXcmFee
+  const expectedBalanceAfterXCMDelivery = originBalance - destXcmFee
 
   const asset = getAssetSymbol(origin, assetSymbolOrId)
 
@@ -115,9 +114,9 @@ export const getTransferInfo = async (
       maxNativeTransferableAmount: await getMaxNativeTransferableAmount(accountOrigin, origin)
     },
     destinationFeeBalance: {
-      balance: await getBalanceNative(accountDestination, destination), //balance nativneho asssetu na destination chaine,
-      currency: getNativeAssetSymbol(destination), //nativnyAsset destination chainu,
-      existentialDeposit: getExistentialDeposit(destination) //existential deposit destination chain,
+      balance: await getBalanceNative(accountDestination, destination), // balance nativneho asssetu na destination chaine,
+      currency: getNativeAssetSymbol(destination), // nativnyAsset destination chainu,
+      existentialDeposit: getExistentialDeposit(destination) // existential deposit destination chain,
     }
   }
 }

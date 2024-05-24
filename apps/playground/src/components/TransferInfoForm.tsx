@@ -21,12 +21,12 @@ type Props = {
 const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
-      from: "Astar",
-      to: "Moonbeam",
-      currency: "GLMR",
+      from: "Acala",
+      to: "Astar",
+      currency: "DOT",
       amount: "10000000000000000000",
       address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
-      destinationAddress: "0x0000000",
+      destinationAddress: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
     },
 
     validate: {

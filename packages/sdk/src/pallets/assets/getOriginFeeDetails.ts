@@ -42,7 +42,7 @@ const calculateTransactionFee = async (tx: Extrinsic, address: string): Promise<
   return (partialFee as any).toBn()
 }
 
-export interface TOriginFeeDetails {
+interface TOriginFeeDetails {
   sufficientForXCM: boolean
   xcmFee: bigint
 }
