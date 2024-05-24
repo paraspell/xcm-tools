@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.3.0...sdk-v5.4.0) (2024-05-24)
+
+
+### Features
+
+* Add support for querying balances for parachains ([c236def](https://github.com/paraspell/xcm-tools/commit/c236def6abec0f484febc247a62ac86f2b429241))
+* update TransferInfo ([931c4e0](https://github.com/paraspell/xcm-tools/commit/931c4e0f1f789f204a5b8950295a95e7b29c4499))
+
+
+### Miscellaneous Chores
+
+* **sdk:** Update supportedNodes.md ([f9b13ec](https://github.com/paraspell/xcm-tools/commit/f9b13eca32a4f178406ec404283ddaed27927ea8))
+
 ## [5.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.2.1...sdk-v5.3.0) (2024-05-20)
 
 
