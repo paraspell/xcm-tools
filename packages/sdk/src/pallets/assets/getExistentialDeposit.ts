@@ -1,4 +1,4 @@
-import { type TEdJsonMap, type TNode, type TNodeWithRelayChains } from '../../types'
+import { type TEdJsonMap, type TNodeWithRelayChains } from '../../types'
 import * as edsMapJson from '../../maps/existential-deposits.json' assert { type: 'json' }
 import { getBalanceNative } from './getBalanceNative'
 const palletsMap = edsMapJson as TEdJsonMap
