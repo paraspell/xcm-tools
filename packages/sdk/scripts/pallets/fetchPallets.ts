@@ -1,14 +1,7 @@
-// Script that updates XCM Pallets map for compatible nodes
-
 import { ApiPromise } from '@polkadot/api'
-import { NODE_NAMES } from '../src/maps/consts'
-import { TPallet, TPalletJsonMap, TPalletMap } from '../src/types'
-import {
-  checkForNodeJsEnvironment,
-  fetchTryMultipleProvidersWithTimeout,
-  readJsonOrReturnEmptyObject,
-  writeJsonSync
-} from './scriptUtils'
+import { NODE_NAMES } from '../../src/maps/consts'
+import { TPallet, TPalletMap, TPalletJsonMap } from '../../src/types'
+import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 
 const defaultPalletsSortedByPriority: TPallet[] = [
   'XTransfer',
@@ -35,7 +28,7 @@ const composePalletMapObject = async (api: ApiPromise): Promise<TPalletMap> => {
   }
 }
 
-const fetchAllNodesPallets = async (assetsMapJson: any) => {
+export const fetchAllNodesPallets = async (assetsMapJson: any) => {
   const output: TPalletJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const node of NODE_NAMES) {
     console.log(`Fetching pallets for ${node}...`)
@@ -58,13 +51,3 @@ const fetchAllNodesPallets = async (assetsMapJson: any) => {
   }
   return output
 }
-
-;(async () => {
-  checkForNodeJsEnvironment()
-  const JSON_FILE_PATH = './src/maps/pallets.json'
-  const assetsJson = await readJsonOrReturnEmptyObject(JSON_FILE_PATH)
-  const data = await fetchAllNodesPallets(assetsJson)
-  writeJsonSync(JSON_FILE_PATH, data)
-  console.log('Successfuly checked supported pallets')
-  process.exit()
-})()

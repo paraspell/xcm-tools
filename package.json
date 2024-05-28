@@ -25,7 +25,10 @@
     "test:integration": "turbo run test:watch",
     "build": "turbo run build",
     "run:playground": "pnpm --filter=playground dev",
-    "run:landing-page": "pnpm --filter=landing-page dev"
+    "run:landing-page": "pnpm --filter=landing-page dev",
+    "run:updateAssets": "pnpm --filter=sdk updateAssets",
+    "run:updatePallets": "pnpm --filter=sdk updatePallets",
+    "run:updateEds": "pnpm --filter=sdk updateEds"
   },
   "packageManager": "pnpm@9.1.1"
 }

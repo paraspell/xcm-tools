@@ -36,20 +36,32 @@ export const fetchTryMultipleProviders = async <T>(
   return null
 }
 
-export const fetchWithTimeout = async <T>(wsUrl: string, fetcher: (api: ApiPromise) => T): Promise<T> => {
+export const fetchWithTimeout = async <T>(
+  wsUrl: string,
+  fetcher: (api: ApiPromise) => T
+): Promise<T | null> => {
   const TIMEOUT_MS = 60000
-  return await new Promise((resolve, reject) => {
-    const wsProvider = new WsProvider(wsUrl)
+  try {
+    return await new Promise<T>((resolve, reject) => {
+      const wsProvider = new WsProvider(wsUrl)
 
-    setTimeout(() => {
-      wsProvider.disconnect()
-      reject(new Error('Timed out'))
-    }, TIMEOUT_MS)
+      const timeoutHandle = setTimeout(() => {
+        wsProvider.disconnect()
+        reject(new Error('Timed out'))
+      }, TIMEOUT_MS)
 
-    ApiPromise.create({ provider: wsProvider })
-      .then(api => fetcher(api))
-      .then(resolve)
-  })
+      ApiPromise.create({ provider: wsProvider })
+        .then(api => fetcher(api))
+        .then(result => {
+          clearTimeout(timeoutHandle)
+          resolve(result)
+        })
+        .catch(reject)
+    })
+  } catch (error) {
+    console.error('Error occurred:', error)
+    return null
+  }
 }
 
 export const fetchTryMultipleProvidersWithTimeout = async <T>(
@@ -63,4 +75,21 @@ export const fetchTryMultipleProvidersWithTimeout = async <T>(
 
 export const writeJsonSync = (path: string, data: any) => {
   fs.writeFileSync(path, JSON.stringify(data, null, 4))
+}
+
+export const handleDataFetching = async <T1, T2>(
+  filePath: string,
+  fetchFunc: (obj: T1) => Promise<T2>,
+  successMsg: string,
+  transformFunc?: (data: T2) => T2
+) => {
+  checkForNodeJsEnvironment()
+  const existingData = await readJsonOrReturnEmptyObject(filePath)
+  let data = (await fetchFunc(existingData)) as T2
+  if (transformFunc) {
+    data = transformFunc(data)
+  }
+  writeJsonSync(filePath, data)
+  console.log(successMsg)
+  process.exit()
 }

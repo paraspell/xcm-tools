@@ -1,79 +1,14 @@
-// Script that updates asset map for compatible nodes
-
 import { ApiPromise } from '@polkadot/api'
-import { NODE_NAMES } from '../src/maps/consts'
 import {
   TAssetDetails,
   TAssetJsonMap,
   TNativeAssetDetails,
   TNode,
-  TNodeAssets,
-  TNodeToAssetModuleMap
-} from '../src/types'
-import { getNode, getNodeEndpointOption } from '../src/utils'
-import {
-  checkForNodeJsEnvironment,
-  readJsonOrReturnEmptyObject,
-  fetchTryMultipleProvidersWithTimeout,
-  writeJsonSync
-} from './scriptUtils'
-
-const nodeToQuery: TNodeToAssetModuleMap = {
-  // Chain state query: <module>.<section> for assets metadata
-  Acala: 'assetRegistry.assetMetadatas',
-  Astar: 'assets.metadata',
-  BifrostPolkadot: null, // Has no foreign assets. Native assets are fetched directly from state.getMetadata()
-  Bitgreen: null, // No assets metadata query
-  Centrifuge: 'ormlAssetRegistry.metadata',
-  ComposableFinance: 'assetsRegistry.assetSymbol',
-  Darwinia: null, // No assets metadata query
-  HydraDX: 'assetRegistry.assets',
-  Interlay: 'assetRegistry.metadata',
-  Litentry: null, // Assets query returns empty array
-  Moonbeam: 'assets.metadata',
-  Parallel: 'assets.metadata',
-  AssetHubPolkadot: 'assets.metadata',
-  Altair: null, // Assets query returns empty array
-  Amplitude: null, // No assets metadata query
-  Bajun: null, // No assets metadata query
-  Basilisk: 'assetRegistry.assetMetadataMap',
-  BifrostKusama: null, // Has no foreign assets created yet
-  Calamari: 'assets.metadata',
-  Crab: null, // No assets metadata query
-  CrustShadow: 'assets.metadata',
-  Encointer: null, // No assets metadata query
-  Imbue: null, // Assets query returns empty array
-  Integritee: null, // No assets metadata query
-  InvArchTinker: null, // Assets query returns empty array
-  Karura: 'assetRegistry.assetMetadatas',
-  Kintsugi: 'assetRegistry.metadata',
-  Litmus: null, // Assets query returns empty array
-  Mangata: 'assetRegistry.metadata',
-  Moonriver: 'assets.metadata',
-  ParallelHeiko: 'assets.metadata',
-  Picasso: 'assetsRegistry.assetSymbol',
-  Pioneer: 'assetManager.assetMetadatas',
-  Quartz: null, // No assets metadata query
-  Robonomics: 'assets.metadata',
-  Shiden: 'assets.metadata',
-  AssetHubKusama: 'assets.metadata',
-  Turing: 'assetRegistry.metadata',
-  Unique: null, // Foreign assets query returns empty array
-  Crust: 'assets.metadata',
-  Manta: 'assets.metadata',
-  Nodle: null, // Only NODL paraToPara for now
-  NeuroWeb: 'assets.metadata',
-  Pendulum: '', // Only PEN paraToPara for now
-  Polkadex: 'assets.asset',
-  Zeitgeist: 'assetRegistry.metadata',
-  Collectives: null,
-  Phala: 'assets.metadata',
-  Khala: 'assets.metadata',
-  CoretimeKusama: null,
-  Subsocial: null,
-  KiltSpiritnet: null,
-  Curio: 'assetRegistry.metadata'
-}
+  TNodeAssets
+} from '../../src/types'
+import { getNode, getNodeEndpointOption } from '../../src/utils'
+import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
+import { nodeToQuery } from './nodeToQueryMap'
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -435,9 +370,9 @@ const fetchNodeAssets = async (
   }
 }
 
-const fetchAllNodesAssets = async (assetMap: TNodeToAssetModuleMap, assetsMapJson: any) => {
+export const fetchAllNodesAssets = async (assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
-  for (const [node, query] of Object.entries(assetMap)) {
+  for (const [node, query] of Object.entries(nodeToQuery)) {
     const nodeName = node as TNode
     console.log(`Fetching assets for ${nodeName}...`)
 
@@ -465,46 +400,3 @@ const fetchAllNodesAssets = async (assetMap: TNodeToAssetModuleMap, assetsMapJso
   }
   return output
 }
-
-const searchDecimalsBySymbol = (symbol: string, data: TAssetJsonMap) => {
-  for (const node of NODE_NAMES) {
-    if (node === 'BifrostPolkadot') {
-      continue
-    }
-    const { nativeAssets, otherAssets } = data[node]
-    const decimals = [...nativeAssets, ...otherAssets].find(
-      asset => asset.symbol === symbol
-    )?.decimals
-    if (decimals) {
-      return decimals
-    }
-  }
-}
-
-const fillInDecimalsForBifrostPolkadot = (data: TAssetJsonMap) => {
-  data.BifrostPolkadot = {
-    ...data.BifrostPolkadot,
-    nativeAssets: data.BifrostPolkadot.nativeAssets.map(asset => {
-      const decimals = asset.symbol === 'ASG' ? 18 : searchDecimalsBySymbol(asset.symbol, data)
-      if (!decimals) {
-        throw new Error(`Cannot find decimals for Bitfrost polkadot asset ${asset.symbol}`)
-      }
-      return {
-        ...asset,
-        decimals
-      }
-    })
-  }
-  return data
-}
-
-;(async () => {
-  checkForNodeJsEnvironment()
-  const JSON_FILE_PATH = './src/maps/assets.json'
-  const assetsJson = await readJsonOrReturnEmptyObject(JSON_FILE_PATH)
-  const data = await fetchAllNodesAssets(nodeToQuery, assetsJson)
-  const transformedData = fillInDecimalsForBifrostPolkadot(data)
-  writeJsonSync(JSON_FILE_PATH, transformedData)
-  console.log('Successfuly fetched all assets')
-  process.exit()
-})()
