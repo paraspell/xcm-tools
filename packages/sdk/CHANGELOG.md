@@ -1,5 +1,20 @@
 # Changelog
 
+## [5.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-v5.4.0...sdk-v5.4.1) (2024-05-31)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Run maintenance scripts ([2503c84](https://github.com/paraspell/xcm-tools/commit/2503c8441bbd628570da366d4bee6a68e7b329b7))
+* **sdk:** run prettier ([936d9a3](https://github.com/paraspell/xcm-tools/commit/936d9a31e1733bb5bef7b854483f87531bed9cf0))
+* **sdk:** Update README.md ([eb79ad1](https://github.com/paraspell/xcm-tools/commit/eb79ad18d34482aac6223156bdd2a1139d08b88b))
+* **sdk:** Update supportedNodes.md ([08bc76e](https://github.com/paraspell/xcm-tools/commit/08bc76e918f5a3baaa37ace223adebfc7005ce65))
+
+
+### Code Refactoring
+
+* Refactor scripts code ([91db3fe](https://github.com/paraspell/xcm-tools/commit/91db3fe2a1bdaecee5ef469a40725b0c334a9947))
+
 ## [5.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.3.0...sdk-v5.4.0) (2024-05-24)
 
 
