@@ -73,7 +73,7 @@ NOTES:
 await Builder(/*node api - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
-      .currency(CurrencyString| | CurrencyID | Multilocation object | MultilocationArray)
+      .currency(CurrencyString| CurrencyID | Multilocation object | MultilocationArray)
       /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
       .amount(amount) // Overriden when using MultilocationArray
       .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
@@ -290,6 +290,23 @@ console.log(SUPPORTED_PALLETS)
 import { getExistentialDeposit } from "@paraspell/sdk";
 
 const ed = getExistentialDeposit('Acala')
+```
+
+### XCM Transfer info
+```ts
+import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails } from "@paraspell/sdk"; 
+
+//Get balance of foreign currency
+await getBalanceForeign(address, Parachain name, currency)
+
+//Get balance of native currency
+await getBalanceNative(address, Parachain name)
+
+//Get fee information regarding XCM call
+await getOriginFeeDetails(from, to, currency, amount, originAddress)
+
+//Get all the information about XCM transfer
+await getTransferInfo(from, to, address, destinationAddress, currency, amount)
 ```
 
 ## 💻 Tests
