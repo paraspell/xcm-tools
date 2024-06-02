@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.2](https://github.com/paraspell/xcm-tools/compare/sdk-v5.4.1...sdk-v5.4.2) (2024-06-02)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Add transfer info docs ([7754941](https://github.com/paraspell/xcm-tools/commit/7754941e639f75d0e3882cc627103c0881d0c148))
+
 ## [5.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-v5.4.0...sdk-v5.4.1) (2024-05-31)
 
 
