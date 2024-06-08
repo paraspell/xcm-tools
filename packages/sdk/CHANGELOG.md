@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.4.2...sdk-v5.5.0) (2024-06-08)
+
+
+### Features
+
+* Add support for Polkadot and Kusama bridge ([0b935fe](https://github.com/paraspell/xcm-tools/commit/0b935fecf6e49e7e58abb1efee239bce53126a0b))
+
+
+### Bug Fixes
+
+* Fix maps JSON print width ([a98814b](https://github.com/paraspell/xcm-tools/commit/a98814b801365a729bc89d101cd73a84619c25ff))
+
 ## [5.4.2](https://github.com/paraspell/xcm-tools/compare/sdk-v5.4.1...sdk-v5.4.2) (2024-06-02)
 
 
