@@ -64,6 +64,7 @@ NOTES:
 - Fee asset is now a required builder parameter when you enter a multilocation array.
 - When using a multilocation array the amount parameter is overridden.
 - Multilocation arrays are now available. Customize your asset multilocations by .currency([{multilocation1},{multilocation2}..{multilocationN}]) For more information refer to the official documentation or following PR https://github.com/paraspell/xcm-tools/pull/224.
+- POLKADOT <> KUSAMA Bridge is now available! Try sending DOT or KSM between AssetHubs.
 ```
 
 ### Builder pattern:
