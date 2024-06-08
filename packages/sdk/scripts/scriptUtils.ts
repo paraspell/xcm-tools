@@ -74,7 +74,8 @@ export const fetchTryMultipleProvidersWithTimeout = async <T>(
 }
 
 export const writeJsonSync = (path: string, data: any) => {
-  fs.writeFileSync(path, JSON.stringify(data, null, 4))
+  const TAB_WIDTH = 2
+  fs.writeFileSync(path, JSON.stringify(data, null, TAB_WIDTH))
 }
 
 export const handleDataFetching = async <T1, T2>(
