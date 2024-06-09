@@ -10,9 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mantine/core": "^7.6.2",
-    "@mantine/form": "^7.6.2",
-    "@mantine/hooks": "^7.6.2",
+    "@mantine/core": "^7.10.1",
+    "@mantine/form": "^7.10.1",
+    "@mantine/hooks": "^7.10.1",
     "@paraspell/sdk": "workspace:*",
     "@paraspell/xcm-router": "workspace:*",
     "@paraspell/xcm-analyser": "workspace:*",
@@ -21,28 +21,28 @@
     "@polkadot/extension-inject": "^0.47.5",
     "@polkadot/keyring": "^12.6.2",
     "@polkadot/util": "^12.6.2",
-    "@tabler/icons-react": "^2.47.0",
-    "axios": "^1.6.8",
-    "react": "^18.2.0",
+    "@tabler/icons-react": "^3.5.0",
+    "axios": "^1.7.2",
+    "react": "^18.3.1",
     "react-confetti": "^6.1.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.3",
-    "web3-validator": "^2.0.4"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1",
+    "web3-validator": "^2.0.6"
   },
   "devDependencies": {
-    "@types/react": "^18.2.69",
-    "@types/react-dom": "^18.2.22",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.12.0",
+    "@typescript-eslint/parser": "^7.12.0",
+    "@vitejs/plugin-react": "^4.3.0",
     "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.6",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
     "postcss": "^8.4.38",
-    "postcss-preset-mantine": "^1.13.0",
+    "postcss-preset-mantine": "^1.15.0",
     "postcss-simple-vars": "^7.0.1",
-    "typescript": "^5.4.3",
-    "vite": "^5.2.4",
-    "vite-plugin-node-polyfills": "^0.19.0"
+    "typescript": "^5.4.5",
+    "vite": "^5.2.13",
+    "vite-plugin-node-polyfills": "^0.22.0"
   }
 }
