@@ -34,7 +34,7 @@ const getDestination = ({
     return recipientAddress
   }
 
-  const isEthAddress = ethers.utils.isAddress(recipientAddress)
+  const isEthAddress = ethers.isAddress(recipientAddress)
 
   const addressJunction: TJunction = isEthAddress
     ? {

@@ -42,7 +42,7 @@ export const generateAddressMultiLocationV4 = (api: ApiPromise, address: TAddres
     return { [Version.V4]: address }
   }
 
-  const isEthAddress = ethers.utils.isAddress(address)
+  const isEthAddress = ethers.isAddress(address)
   return {
     [Version.V4]: {
       parents: Parents.ZERO,
@@ -70,7 +70,7 @@ export const generateAddressPayload = (
     return { [version]: recipientAddress }
   }
 
-  const isEthAddress = ethers.utils.isAddress(recipientAddress)
+  const isEthAddress = ethers.isAddress(recipientAddress)
 
   if (scenario === 'ParaToRelay') {
     return {
