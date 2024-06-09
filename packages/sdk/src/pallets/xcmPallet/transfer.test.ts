@@ -77,22 +77,22 @@ describe('send', () => {
     ).rejects.toThrowError(InvalidCurrencyError)
   })
 
-  it('should throw an IncompatibleNodesError when passing AssetHubKusama, DOT and AssetHubPolkadot as destination', async () => {
+  it('should throw an IncompatibleNodesError when passing AssetHubKusama, DOT and HydraDX as destination', async () => {
     await expect(
       send({
         ...sendOptions,
         origin: 'AssetHubKusama',
         currency: 'DOT',
-        destination: 'AssetHubPolkadot'
+        destination: 'HydraDX'
       })
     ).rejects.toThrowError(IncompatibleNodesError)
   })
 
-  it('should throw an IncompatibleNodesError when passing AssetHubPolkadot, DOT and AssetHubKusama as destination', async () => {
+  it('should throw an IncompatibleNodesError when passing HydraDX, DOT and AssetHubKusama as destination', async () => {
     await expect(
       send({
         ...sendOptions,
-        origin: 'AssetHubPolkadot',
+        origin: 'HydraDX',
         currency: 'DOT',
         destination: 'AssetHubKusama'
       })
@@ -115,6 +115,14 @@ describe('send', () => {
   it('should throw an IncompatibleNodesError when passing all nodes which have different relaychains', async () => {
     for (const polkadotNode of polkadotNodes) {
       for (const kusamaNode of kusamaNodes) {
+        // Ignore these cases because they are using bridge
+        if (
+          (polkadotNode === 'AssetHubPolkadot' && kusamaNode === 'AssetHubKusama') ||
+          (polkadotNode === 'AssetHubKusama' && kusamaNode === 'AssetHubPolkadot')
+        ) {
+          continue
+        }
+
         await expect(
           send({
             ...sendOptions,

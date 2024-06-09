@@ -8,11 +8,14 @@ import {
   type Extrinsic,
   type TSerializedApiCall,
   type TScenario,
-  type TRelayToParaInternalOptions
+  type TRelayToParaInternalOptions,
+  type TMultiAsset,
+  type TMultiLocation
 } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import type AssetHubPolkadot from './AssetHubPolkadot'
 
 class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
@@ -24,6 +27,14 @@ class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
   transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
     // TESTED https://kusama.subscan.io/xcm_message/kusama-ddc2a48f0d8e0337832d7aae26f6c3053e1f4ffd
     // TESTED https://kusama.subscan.io/xcm_message/kusama-8e423130a4d8b61679af95dbea18a55124f99672
+
+    if (input.destination === 'AssetHubPolkadot') {
+      return (getNode('AssetHubPolkadot') as AssetHubPolkadot).handleBridgeTransfer(
+        input,
+        'Polkadot'
+      )
+    }
+
     const { scenario } = input
     const method =
       scenario === 'ParaToPara' ? 'limitedReserveTransferAssets' : 'limitedTeleportAssets'
@@ -42,9 +53,16 @@ class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
     amount: string,
     scenario: TScenario,
     version: Version,
-    currencyId?: string
+    currencyId?: string,
+    overridedMultiLocation?: TMultiLocation | TMultiAsset[]
   ): any {
-    return getNode('AssetHubPolkadot').createCurrencySpec(amount, scenario, version, currencyId)
+    return getNode('AssetHubPolkadot').createCurrencySpec(
+      amount,
+      scenario,
+      version,
+      currencyId,
+      overridedMultiLocation
+    )
   }
 }
 

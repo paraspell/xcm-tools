@@ -11,8 +11,8 @@
   "resolutions": {
     "@acala-network/eth-providers": "2.7.5-1",
     "@crypto-dex-sdk/chain": "0.0.4",
-    "@polkadot/types-codec": "^10.12.4",
-    "@polkadot/api": "^10.12.4"
+    "@polkadot/types-codec": "^11.2.1",
+    "@polkadot/api": "^11.2.1"
   },
   "scripts": {
     "compile": "turbo run compile",

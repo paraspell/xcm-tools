@@ -43,6 +43,7 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
       address,
       destination,
       paraIdTo,
+      feeAsset,
       overridedCurrencyMultiLocation,
       serializedApiCallEnabled = false
     } = options
@@ -87,6 +88,8 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
           this.version,
           paraId
         ),
+        address,
+        amount,
         currencySelection: this.createCurrencySpec(
           amount,
           scenario,
@@ -94,8 +97,13 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
           currencyId,
           overridedCurrencyMultiLocation
         ),
+        currencyId,
         scenario,
         currencySymbol,
+        feeAsset,
+        destination,
+        paraIdTo,
+        overridedCurrency: overridedCurrencyMultiLocation,
         serializedApiCallEnabled
       })
     }

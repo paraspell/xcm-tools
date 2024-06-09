@@ -92,7 +92,10 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
   if (destination !== undefined && !isMultiLocationDestination) {
     const originRelayChainSymbol = getRelayChainSymbol(origin)
     const destinationRelayChainSymbol = getRelayChainSymbol(destination)
-    if (originRelayChainSymbol !== destinationRelayChainSymbol) {
+    const supportsBridge =
+      (origin === 'AssetHubPolkadot' || origin === 'AssetHubKusama') &&
+      (destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama')
+    if (!supportsBridge && originRelayChainSymbol !== destinationRelayChainSymbol) {
       throw new IncompatibleNodesError()
     }
   }

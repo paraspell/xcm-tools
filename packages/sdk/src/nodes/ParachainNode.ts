@@ -148,6 +148,8 @@ abstract class ParachainNode {
           this.version,
           paraId
         ),
+        address,
+        amount,
         currencySelection: this.createCurrencySpec(
           amount,
           scenario,
@@ -155,9 +157,13 @@ abstract class ParachainNode {
           currencyId,
           overridedCurrencyMultiLocation
         ),
+        currencyId,
         scenario,
         currencySymbol,
         feeAsset,
+        destination,
+        paraIdTo: paraId,
+        overridedCurrency: overridedCurrencyMultiLocation,
         serializedApiCallEnabled
       })
     } else {

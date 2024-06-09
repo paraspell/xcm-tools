@@ -33,7 +33,12 @@ const getAssetsForNode = (node: TNode): string[] => {
 }
 
 const filteredNodes = NODE_NAMES.filter(
-  node => node !== 'Quartz' && node !== 'Bitgreen' && node !== 'Bajun' && node !== 'CoretimeKusama'
+  node =>
+    node !== 'Quartz' &&
+    node !== 'Bitgreen' &&
+    node !== 'Bajun' &&
+    node !== 'CoretimeKusama' &&
+    node !== 'Polkadex'
 )
 
 const findTransferableNodeAndAsset = (
@@ -91,6 +96,54 @@ describe.sequential('XCM - e2e', () => {
           .build()
         expect(tx).toBeDefined()
       })
+    })
+
+    it('should create bridge transfer tx AssetHubPolkadot -> AssetHubKusama (DOT)', async () => {
+      const api = await createApiInstanceForNode('AssetHubPolkadot')
+      const tx = Builder(api)
+        .from('AssetHubPolkadot')
+        .to('AssetHubKusama')
+        .currency('DOT')
+        .amount(MOCK_AMOUNT)
+        .address(MOCK_ADDRESS)
+        .build()
+      expect(tx).toBeDefined()
+    })
+
+    it('should create bridge transfer tx AssetHubPolkadot -> AssetHubKusama (KSM)', async () => {
+      const api = await createApiInstanceForNode('AssetHubPolkadot')
+      const tx = Builder(api)
+        .from('AssetHubPolkadot')
+        .to('AssetHubKusama')
+        .currency('KSM')
+        .amount(MOCK_AMOUNT)
+        .address(MOCK_ADDRESS)
+        .build()
+      expect(tx).toBeDefined()
+    })
+
+    it('should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (DOT)', async () => {
+      const api = await createApiInstanceForNode('AssetHubPolkadot')
+      const tx = Builder(api)
+        .from('AssetHubKusama')
+        .to('AssetHubPolkadot')
+        .currency('DOT')
+        .amount(MOCK_AMOUNT)
+        .address(MOCK_ADDRESS)
+        .build()
+      expect(tx).toBeDefined()
+    })
+
+    it('should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (KSM)', async () => {
+      const api = await createApiInstanceForNode('AssetHubPolkadot')
+      const tx = Builder(api)
+        .from('AssetHubKusama')
+        .to('AssetHubPolkadot')
+        .currency('KSM')
+        .amount(MOCK_AMOUNT)
+        .address(MOCK_ADDRESS)
+        .build()
+      expect(tx).toBeDefined()
     })
 
     it('should create asset claim tx V1', async () => {

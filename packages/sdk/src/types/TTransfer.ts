@@ -10,10 +10,16 @@ export interface PolkadotXCMTransferInput {
   api: ApiPromise
   header: any
   addressSelection: any
+  amount: string
+  address: TAddress
   currencySelection: any
   scenario: TScenario
   currencySymbol: string | undefined
+  currencyId: string | undefined
+  destination?: TDestination
+  paraIdTo?: number
   feeAsset?: TCurrency
+  overridedCurrency?: TMultiLocation | TMultiAsset[]
   serializedApiCallEnabled?: boolean
 }
 
@@ -63,14 +69,16 @@ export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
 export enum Version {
   V1 = 'V1',
   V2 = 'V2',
-  V3 = 'V3'
+  V3 = 'V3',
+  V4 = 'V4'
 }
 
 export type TVersionClaimAssets = Version.V3 | Version.V2
 
 export enum Parents {
+  ZERO = 0,
   ONE = 1,
-  ZERO = 0
+  TWO = 2
 }
 
 export type TAmount = string | number | bigint

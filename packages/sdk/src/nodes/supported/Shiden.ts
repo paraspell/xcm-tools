@@ -44,6 +44,7 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
       address,
       destination,
       paraIdTo,
+      feeAsset,
       overridedCurrencyMultiLocation,
       serializedApiCallEnabled = false
     } = options
@@ -87,6 +88,8 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
           this.version,
           paraId
         ),
+        address,
+        amount,
         currencySelection: this.createCurrencySpec(
           amount,
           scenario,
@@ -94,8 +97,13 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
           currencyId,
           overridedCurrencyMultiLocation
         ),
+        currencyId,
         scenario,
         currencySymbol,
+        feeAsset,
+        destination,
+        paraIdTo,
+        overridedCurrency: overridedCurrencyMultiLocation,
         serializedApiCallEnabled
       })
     }
