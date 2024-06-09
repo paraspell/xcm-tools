@@ -5,12 +5,14 @@ import {
   IconCoins,
   IconSend,
   IconSend2,
+  IconWallet,
 } from "@tabler/icons-react";
 import XcmTransfer from "../components/XcmTransfer";
 import AssetsQueries from "../components/assets/AssetsQueries";
 import PalletsQueries from "../components/pallets/PalletsQueries";
 import ChannelsQueries from "../components/channels/ChannelsQueries";
 import TransferInfo from "../components/TransferInfo";
+import AssetClaim from "../components/asset-claim/AssetClaim";
 
 const XcmSdkSandbox = () => {
   const iconStyle = { width: rem(12), height: rem(12) };
@@ -46,6 +48,13 @@ const XcmSdkSandbox = () => {
         >
           Transfer Info
         </Tabs.Tab>
+
+        <Tabs.Tab
+          value="asset-claim"
+          leftSection={<IconWallet style={iconStyle} />}
+        >
+          Asset Claim
+        </Tabs.Tab>
       </Tabs.List>
 
       <Container p="xl">
@@ -67,6 +76,10 @@ const XcmSdkSandbox = () => {
 
         <Tabs.Panel value="transfer-info">
           <TransferInfo />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="asset-claim">
+          <AssetClaim />
         </Tabs.Panel>
       </Container>
     </Tabs>
