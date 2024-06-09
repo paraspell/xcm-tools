@@ -16,7 +16,7 @@ const buildBeneficiaryInput = (api: ApiPromise, address: TAddress): TMultiLocati
   if (isTMultiLocation(address)) {
     return address
   }
-  const isEthAddress = ethers.utils.isAddress(address)
+  const isEthAddress = ethers.isAddress(address)
   return {
     parents: Parents.ZERO,
     interior: {

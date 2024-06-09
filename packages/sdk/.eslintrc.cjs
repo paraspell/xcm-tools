@@ -23,6 +23,8 @@ module.exports = {
   plugins: ['prefer-arrow'],
   rules: {
     '@typescript-eslint/strict-boolean-expressions': 0,
+    '@typescript-eslint/no-unsafe-argument': 0,
+    '@typescript-eslint/non-nullable-type-assertion-style': 0,
     'import/no-unused-modules': [1, { unusedExports: true, ignoreExports: ['*/index.ts'] }],
     'prefer-arrow/prefer-arrow-functions': [
       'error',
