@@ -334,6 +334,11 @@
         "decimals": 18
       },
       {
+        "assetId": "18446744073709551637",
+        "symbol": "vGLMR",
+        "decimals": 18
+      },
+      {
         "assetId": "18446744073709551624",
         "symbol": "vDOT",
         "decimals": 10
@@ -369,6 +374,11 @@
         "decimals": 18
       },
       {
+        "assetId": "18446744073709551640",
+        "symbol": "vFIL",
+        "decimals": 18
+      },
+      {
         "assetId": "1329",
         "symbol": "PPC",
         "decimals": 8
@@ -399,6 +409,11 @@
         "decimals": 9
       },
       {
+        "assetId": "18446744073709551638",
+        "symbol": "vMANTA",
+        "decimals": 18
+      },
+      {
         "assetId": "18446744073709551627",
         "symbol": "RING",
         "decimals": 18
@@ -422,6 +437,11 @@
         "assetId": "1332",
         "symbol": "sDOT",
         "decimals": 10
+      },
+      {
+        "assetId": "18446744073709551639",
+        "symbol": "FIL",
+        "decimals": 18
       }
     ]
   },
@@ -841,6 +861,11 @@
         "decimals": 8
       },
       {
+        "assetId": "31",
+        "symbol": "RING",
+        "decimals": 18
+      },
+      {
         "assetId": "15",
         "symbol": "vDOT",
         "decimals": 10
@@ -912,7 +937,7 @@
       },
       {
         "assetId": "1",
-        "symbol": "LRNA",
+        "symbol": "H2O",
         "decimals": 12
       },
       {
@@ -1134,6 +1159,11 @@
         "decimals": 9
       },
       {
+        "assetId": "61295607754960722617854661686514597014",
+        "symbol": "WIFD",
+        "decimals": 10
+      },
+      {
         "assetId": "141196559012917796508928734717797136690",
         "symbol": "ibcIST",
         "decimals": 6
@@ -1270,7 +1300,7 @@
       },
       {
         "assetId": "238111524681612888331172110363070489924",
-        "symbol": "OTP",
+        "symbol": "NEURO",
         "decimals": 12
       },
       {
@@ -1690,6 +1720,11 @@
         "decimals": 10
       },
       {
+        "assetId": "1212",
+        "symbol": "DOTTY",
+        "decimals": 10
+      },
+      {
         "assetId": "77",
         "symbol": "TRQ",
         "decimals": 18
@@ -1705,6 +1740,11 @@
         "decimals": 10
       },
       {
+        "assetId": "36",
+        "symbol": "CLAY",
+        "decimals": 10
+      },
+      {
         "assetId": "420666",
         "symbol": "GIO",
         "decimals": 10
@@ -1717,6 +1757,11 @@
       {
         "assetId": "33",
         "symbol": "COCOA",
+        "decimals": 10
+      },
+      {
+        "assetId": "2020",
+        "symbol": "HYDRA",
         "decimals": 10
       },
       {
@@ -1800,6 +1845,11 @@
         "decimals": 10
       },
       {
+        "assetId": "1970",
+        "symbol": "NIPS",
+        "decimals": 10
+      },
+      {
         "assetId": "42",
         "symbol": "PJS",
         "decimals": 18
@@ -1840,9 +1890,19 @@
         "decimals": 10
       },
       {
+        "assetId": "33441",
+        "symbol": "MPACT",
+        "decimals": 8
+      },
+      {
         "assetId": "22",
         "symbol": "KNRY",
         "decimals": 10
+      },
+      {
+        "assetId": "72",
+        "symbol": "NEHT",
+        "decimals": 12
       },
       {
         "assetId": "79",
@@ -1893,6 +1953,11 @@
         "assetId": "8",
         "symbol": "JOE",
         "decimals": 9
+      },
+      {
+        "assetId": "45",
+        "symbol": "HYDRA",
+        "decimals": 10
       },
       {
         "assetId": "2820",
@@ -2028,6 +2093,11 @@
         "assetId": "149",
         "symbol": "EDU",
         "decimals": 10
+      },
+      {
+        "assetId": "2025",
+        "symbol": "FLMG",
+        "decimals": 20
       },
       {
         "assetId": "1980",
@@ -3439,6 +3509,11 @@
         "decimals": 12
       },
       {
+        "assetId": "3",
+        "symbol": "wSOL",
+        "decimals": 9
+      },
+      {
         "assetId": "1088357900348863545351",
         "symbol": "USDT_OSMO_LPT",
         "decimals": 12
@@ -3499,9 +3574,19 @@
         "decimals": 12
       },
       {
+        "assetId": "2",
+        "symbol": "ETH",
+        "decimals": 18
+      },
+      {
         "assetId": "2011",
         "symbol": "EQ",
         "decimals": 9
+      },
+      {
+        "assetId": "45",
+        "symbol": "XLM",
+        "decimals": 12
       },
       {
         "assetId": "25",
@@ -3627,6 +3712,11 @@
         "assetId": "420",
         "symbol": "HUAHUA",
         "decimals": 6
+      },
+      {
+        "assetId": "44",
+        "symbol": "AMPE",
+        "decimals": 12
       },
       {
         "assetId": "1088357900348863545365",
@@ -3966,6 +4056,11 @@
         "assetId": "28",
         "symbol": "LAC",
         "decimals": 7
+      },
+      {
+        "assetId": "1985",
+        "symbol": "web3",
+        "decimals": 16
       },
       {
         "assetId": "20",
@@ -4658,6 +4753,11 @@
         "decimals": 18
       },
       {
+        "assetId": "2025",
+        "symbol": "FLMG",
+        "decimals": 10
+      },
+      {
         "assetId": "91",
         "symbol": "TMJ",
         "decimals": 8
@@ -5079,6 +5179,9 @@
         "assetId": "193492391581201937291053139015355410612",
         "symbol": "PHA",
         "decimals": 12
+      },
+      {
+        "assetId": "130314105136721928300689838359167097187"
       },
       {
         "assetId": "14826654563114266286226336203450732505"

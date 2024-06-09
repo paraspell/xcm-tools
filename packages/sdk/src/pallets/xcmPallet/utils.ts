@@ -45,6 +45,28 @@ export const isTMultiLocation = (value: any): value is TMultiLocation => {
   return value && typeof value.parents !== 'undefined' && typeof value.interior !== 'undefined'
 }
 
+export const createBridgeCurrencySpec = (amount: string, ecosystem: 'Polkadot' | 'Kusama'): any => {
+  return {
+    [Version.V4]: [
+      {
+        id: {
+          parents: Parents.TWO,
+          interior: {
+            X1: [
+              {
+                GlobalConsensus: ecosystem
+              }
+            ]
+          }
+        },
+        fun: {
+          Fungible: amount
+        }
+      }
+    ]
+  }
+}
+
 export const createCurrencySpec = (
   amount: string,
   version: Version,
@@ -101,6 +123,31 @@ export const createPolkadotXcmHeader = (
           parents,
           interior
         }
+  }
+}
+
+export const createBridgePolkadotXcmDest = (
+  version: Version,
+  ecosystem: 'Kusama' | 'Polkadot',
+  destination?: TDestination,
+  nodeId?: number
+): TMultiLocationHeader => {
+  const multiLocation: TMultiLocation = {
+    parents: Parents.TWO,
+    interior: {
+      X2: [
+        {
+          GlobalConsensus: ecosystem
+        },
+        {
+          Parachain: nodeId
+        }
+      ]
+    }
+  }
+  const isMultiLocationDestination = typeof destination === 'object'
+  return {
+    [version]: isMultiLocationDestination ? destination : multiLocation
   }
 }
 

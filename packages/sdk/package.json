@@ -38,10 +38,10 @@
     "ethers": "^5.7.2"
   },
   "peerDependencies": {
-    "@polkadot/api": "^10.12.4",
-    "@polkadot/api-base": "^10.12.4",
-    "@polkadot/apps-config": "^0.136.1",
-    "@polkadot/types": "^10.12.4",
+    "@polkadot/api": "^11.2.1",
+    "@polkadot/api-base": "^11.2.1",
+    "@polkadot/apps-config": "^0.138.1",
+    "@polkadot/types": "^11.2.1",
     "@polkadot/util": "^12.6.2"
   },
   "devDependencies": {
