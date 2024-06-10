@@ -5,6 +5,8 @@ import type ExchangeNode from '../dexNodes/DexNode';
 import { type TCommonTransferOptionsModified, type TTransferOptionsModified } from '../types';
 import { validateRelayChainCurrency } from '../utils/utils';
 import { submitTransaction } from '../utils/submitTransaction';
+import { ethers } from 'ethers';
+import { FALLBACK_FEE_CALC_ADDRESS } from '../consts/consts';
 
 export const buildToExchangeExtrinsic = async (
   api: ApiPromise,
@@ -63,10 +65,18 @@ export const submitTransferToExchange = async (
   api: ApiPromise,
   options: TTransferOptionsModified,
 ): Promise<string> => {
-  const { from, currencyFrom, signer, injectorAddress } = options;
+  const { from, currencyFrom, signer, injectorAddress, evmSigner, evmInjectorAddress } = options;
   validateRelayChainCurrency(from, currencyFrom);
   const tx = await buildToExchangeExtrinsic(api, options);
-  return await submitTransaction(api, tx, signer, injectorAddress);
+  console.log('evmSigner', evmSigner ?? signer);
+  console.log('evmInjectorAddress', evmInjectorAddress ?? injectorAddress);
+
+  return await submitTransaction(
+    api,
+    tx,
+    evmSigner ?? signer,
+    evmInjectorAddress ?? injectorAddress,
+  );
 };
 
 export const submitTransferToDestination = async (
@@ -78,4 +88,22 @@ export const submitTransferToDestination = async (
   validateRelayChainCurrency(to, currencyTo);
   const tx = await buildFromExchangeExtrinsic(api, options, amountOut);
   return await submitTransaction(api, tx, signer, injectorAddress);
+};
+
+export const determineFeeCalcAddress = (
+  injectorAddress: string,
+  recipientAddress: string,
+): string => {
+  if (!ethers.isAddress(injectorAddress)) {
+    // Use wallet address for fee calculation
+    return injectorAddress;
+  }
+
+  if (!ethers.isAddress(recipientAddress)) {
+    // Use recipient address for fee calculation
+    return recipientAddress;
+  }
+
+  // If both addresses are ethereum addresses, use fallback address for fee calculation
+  return FALLBACK_FEE_CALC_ADDRESS;
 };

@@ -8,7 +8,11 @@ import {
   type TCommonTransferOptions,
 } from '../types';
 import { calculateTransactionFee } from '../utils/utils';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
+import {
+  buildFromExchangeExtrinsic,
+  buildToExchangeExtrinsic,
+  determineFeeCalcAddress,
+} from './utils';
 import BigNumber from 'bignumber.js';
 import type ExchangeNode from '../dexNodes/DexNode';
 import * as assetsMapJson from '../consts/assets.json' assert { type: 'json' };
@@ -23,7 +27,7 @@ const supportsCurrency = (exchangeNode: TExchangeNode, currency: string): boolea
 export const selectBestExchange = async (
   options: TCommonTransferOptions,
 ): Promise<ExchangeNode> => {
-  const { from, amount, injectorAddress, currencyFrom, currencyTo } = options;
+  const { from, amount, currencyFrom, currencyTo } = options;
   Logger.log(`Selecting best exchange for ${currencyFrom} -> ${currencyTo}`);
   let bestExchange: ExchangeNode | undefined;
   let maxAmountOut: BigNumber = new BigNumber(0);
@@ -40,17 +44,30 @@ export const selectBestExchange = async (
 
     Logger.log(`Checking ${exchangeNode}...`);
 
-    const modifiedOptions: TCommonTransferOptionsModified = { ...options, exchange: dex.node };
+    const modifiedOptions: TCommonTransferOptionsModified = {
+      ...options,
+      exchange: dex.node,
+      feeCalcAddress: determineFeeCalcAddress(options.injectorAddress, options.recipientAddress),
+    };
     const originApi = await createApiInstanceForNode(from);
     const swapApi = await dex.createApiInstance();
     try {
       const toDestTx = await buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
-      const toDestTransactionFee = await calculateTransactionFee(toDestTx, injectorAddress);
+      const toDestTransactionFee = await calculateTransactionFee(
+        toDestTx,
+        modifiedOptions.feeCalcAddress,
+      );
       const toExchangeTx = await buildToExchangeExtrinsic(originApi, modifiedOptions);
-      const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, injectorAddress);
+      const toExchangeTransactionFee = await calculateTransactionFee(
+        toExchangeTx,
+        modifiedOptions.feeCalcAddress,
+      );
       const swapResult = await dex.swapCurrency(
         swapApi,
-        options,
+        {
+          ...modifiedOptions,
+          feeCalcAddress: modifiedOptions.feeCalcAddress,
+        },
         toDestTransactionFee,
         toExchangeTransactionFee,
       );

@@ -19,6 +19,7 @@ import { type ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import type ExchangeNode from '../dexNodes/DexNode';
 import * as transactionUtils from '../utils/submitTransaction';
+import { FALLBACK_FEE_CALC_ADDRESS } from '../consts/consts';
 
 const builderMock = {
   from: vi.fn().mockReturnThis(),
@@ -61,6 +62,7 @@ describe('transfer utils', () => {
         ...transferParams,
         from,
         exchange: 'Acala',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
 
       const extrinsic = buildToExchangeExtrinsic(relaychainApi, options);
@@ -73,6 +75,7 @@ describe('transfer utils', () => {
         ...transferParams,
         from,
         exchange: 'Acala',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
 
       const extrinsic = buildToExchangeExtrinsic(parachainApi, options);
@@ -87,6 +90,7 @@ describe('transfer utils', () => {
         ...transferParams,
         to,
         exchange: 'Acala',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
       const extrinsic = buildFromExchangeExtrinsic(parachainApi, options, '10000000000');
       expect(extrinsic).toBeDefined();
@@ -98,6 +102,7 @@ describe('transfer utils', () => {
         ...transferParams,
         to,
         exchange: 'Acala',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
       const extrinsic = buildFromExchangeExtrinsic(parachainApi, options, '10000000000');
       expect(extrinsic).toBeDefined();
@@ -123,6 +128,7 @@ describe('transfer utils', () => {
       const options: TTransferOptionsModified = {
         ...transferParams,
         exchange: 'Acala',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
       const toDestTransactionFee = new BigNumber(10);
       const toExchangeTransactionFee = new BigNumber(5);
@@ -156,6 +162,7 @@ describe('transfer utils', () => {
       const options: TTransferOptionsModified = {
         ...transferParams,
         exchange: 'Acala',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
       const result = await submitTransferToExchange(relaychainApi, options);
 
@@ -178,6 +185,7 @@ describe('transfer utils', () => {
       const options: TTransferOptionsModified = {
         ...transferParams,
         exchange: 'Acala',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
 
       const result = await submitTransferToDestination(parachainApi, options, '10000000000');

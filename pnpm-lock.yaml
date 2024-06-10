@@ -135,6 +135,9 @@ importers:
       axios:
         specifier: ^1.7.2
         version: 1.7.2
+      ethers:
+        specifier: ^6.13.0
+        version: 6.13.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -193,6 +196,9 @@ importers:
       vite-plugin-node-polyfills:
         specifier: ^0.22.0
         version: 0.22.0(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0))
+      vite-plugin-wasm:
+        specifier: ^3.3.0
+        version: 3.3.0(vite@5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0))
 
   apps/visualizator-be:
     dependencies:
@@ -790,8 +796,8 @@ importers:
         specifier: ^0.0.2
         version: 0.0.2(@crypto-dex-sdk/currency@0.0.4)(@crypto-dex-sdk/format@0.0.2)(@crypto-dex-sdk/math@0.0.2)(@ethersproject/address@5.7.0)
       '@galacticcouncil/sdk':
-        specifier: ^1.1.6
-        version: 1.2.3(@polkadot/api-augment@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-base@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-derive@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/keyring@12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2))(@polkadot/rpc-augment@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-core@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types-augment@11.2.1)(@polkadot/types-codec@11.2.1)(@polkadot/types-create@11.2.1)(@polkadot/types-known@11.2.1)(@polkadot/types@11.2.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
+        specifier: ^3.0.1
+        version: 3.0.1(@polkadot/api-augment@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-base@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-derive@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/keyring@12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2))(@polkadot/rpc-augment@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-core@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types-augment@11.2.1)(@polkadot/types-codec@11.2.1)(@polkadot/types-create@11.2.1)(@polkadot/types-known@11.2.1)(@polkadot/types@11.2.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
       '@mangata-finance/sdk':
         specifier: ^2.1.1
         version: 2.2.0(@polkadot/api@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types@11.2.1)
@@ -825,6 +831,9 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      ethers:
+        specifier: ^6.13.0
+        version: 6.13.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       inter-exchange:
         specifier: ^1.0.1
         version: 1.0.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -2603,20 +2612,23 @@ packages:
   '@frequency-chain/api-augment@1.11.1':
     resolution: {integrity: sha512-CzVjeGrWl8tbTavygZLUICrncjCC54hM5ioJU1Og2OPoX2P4GYf8xoks8MIyj1yOrYX++mzM6Uf0+nCh77QyFw==}
 
-  '@galacticcouncil/math-lbp@0.2.1':
-    resolution: {integrity: sha512-TquOt8OwHBr//I/HHVkEDZJNfY3cGhIjLYGFwHNwXQBwwgsRFykf4C0adS5WnkOgvyzHAykPazPO2UsqPA9MwQ==}
+  '@galacticcouncil/math-lbp@1.0.0':
+    resolution: {integrity: sha512-G5WsqJpQEkHcN8oFKxPOYqh7GSrt/6X6YQJWTNjxm9aKpXc/xQlTYXybML2J4wZ4VywEnqvX3CmpPfOg7wQkLg==}
 
-  '@galacticcouncil/math-omnipool@0.2.0':
-    resolution: {integrity: sha512-D8p1XzA4zrdMQjWY5Ldha/a+CjEAkjwO3yTM3JjtbHLb3ImXTNuWLSUdfCWYpmBzFc/NGXPvTWPfnWb9q3SS7Q==}
+  '@galacticcouncil/math-liquidity-mining@1.0.0':
+    resolution: {integrity: sha512-5B/ccr6VqT9v96qlSnClcC6/+7eLKUZwndFSfUr1WvIaVbej5GTx6EI1Pyvk+c4TVmudBK1eoIIVTv5uxWcfXQ==}
 
-  '@galacticcouncil/math-stableswap@0.2.2':
-    resolution: {integrity: sha512-seC2IPIctNpJ5l2qNTudLTTpp2oI5KqFuHTSaJKR6/1IeARFBRg+TVyw/wOTPa0uKKhCd3fGtaKO/bdIra41kg==}
+  '@galacticcouncil/math-omnipool@1.0.0':
+    resolution: {integrity: sha512-TWx9J7b8/2cLr7rpx7ASzQ8qLH9JRWEoxLrphULxqdymtbMGKFBx7ACBCJhfZ0nyJ95H6zCDPjweNmJfYZwM0Q==}
 
-  '@galacticcouncil/math-xyk@0.2.0':
-    resolution: {integrity: sha512-mznedOeA8d9BQ8kUQ/4O/P6trqTC4FGwvTDGCHJ0O/bgA9iFb+suctbFtyFT3qfNnngR7FSF2Pls1O/SvtNn8g==}
+  '@galacticcouncil/math-stableswap@1.0.0':
+    resolution: {integrity: sha512-4LmaQbcDdUzUKZSAyL/GEmKDzQurEBbR08HuU7v8dXCz4Ds6Hxo9i1zqB0mPj+Bc4OUjcP0MwPIgdojRSfLN7Q==}
 
-  '@galacticcouncil/sdk@1.2.3':
-    resolution: {integrity: sha512-lOIk81y+mhWTq9dUJwDIWIjn3LSpImTDF3LpWzzB4Y30Yhv4yPSjsRzZUJ/VX7PsLIYTbss0YoW0qslZ2dgl+w==}
+  '@galacticcouncil/math-xyk@1.0.0':
+    resolution: {integrity: sha512-n44M7jKes5Rxr4RQZ5W7kscTfoO4xwhW3VL/VyaEP1KEHMavlICpDNOlCwO/k6RTr+UXU8cHLJZdBzGFa2soJA==}
+
+  '@galacticcouncil/sdk@3.0.1':
+    resolution: {integrity: sha512-zw3p4XL2NcZ1RerSmzpMesrpHUY8oY7v/hm3YG9oXGnhEqsDOVoyUnyDJZB7S7Q0Hf29yjdepSv1qNrUDA3Zog==}
     peerDependencies:
       '@polkadot/api': ^11.2.1
       '@polkadot/api-augment': ^10.9.1
@@ -9941,6 +9953,11 @@ packages:
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
 
+  vite-plugin-wasm@3.3.0:
+    resolution: {integrity: sha512-tVhz6w+W9MVsOCHzxo6SSMSswCeIw4HTrXEi6qL3IRzATl83jl09JVO1djBqPSwfjgnpVHNLYcaMbaDX5WB/pg==}
+    peerDependencies:
+      vite: ^2 || ^3 || ^4 || ^5
+
   vite@5.2.11:
     resolution: {integrity: sha512-HndV31LWW05i1BLPMUCE1B9E9GFbOu1MbenhS58FuK6owSO5qHm7GiCotrNY1YE5rMeQSFBGmT5ZaLEjFizgiQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -12604,20 +12621,23 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@galacticcouncil/math-lbp@0.2.1': {}
+  '@galacticcouncil/math-lbp@1.0.0': {}
 
-  '@galacticcouncil/math-omnipool@0.2.0': {}
+  '@galacticcouncil/math-liquidity-mining@1.0.0': {}
 
-  '@galacticcouncil/math-stableswap@0.2.2': {}
+  '@galacticcouncil/math-omnipool@1.0.0': {}
 
-  '@galacticcouncil/math-xyk@0.2.0': {}
+  '@galacticcouncil/math-stableswap@1.0.0': {}
 
-  '@galacticcouncil/sdk@1.2.3(@polkadot/api-augment@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-base@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-derive@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/keyring@12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2))(@polkadot/rpc-augment@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-core@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types-augment@11.2.1)(@polkadot/types-codec@11.2.1)(@polkadot/types-create@11.2.1)(@polkadot/types-known@11.2.1)(@polkadot/types@11.2.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)':
+  '@galacticcouncil/math-xyk@1.0.0': {}
+
+  '@galacticcouncil/sdk@3.0.1(@polkadot/api-augment@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-base@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-derive@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/keyring@12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2))(@polkadot/rpc-augment@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-core@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types-augment@11.2.1)(@polkadot/types-codec@11.2.1)(@polkadot/types-create@11.2.1)(@polkadot/types-known@11.2.1)(@polkadot/types@11.2.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)':
     dependencies:
-      '@galacticcouncil/math-lbp': 0.2.1
-      '@galacticcouncil/math-omnipool': 0.2.0
-      '@galacticcouncil/math-stableswap': 0.2.2
-      '@galacticcouncil/math-xyk': 0.2.0
+      '@galacticcouncil/math-lbp': 1.0.0
+      '@galacticcouncil/math-liquidity-mining': 1.0.0
+      '@galacticcouncil/math-omnipool': 1.0.0
+      '@galacticcouncil/math-stableswap': 1.0.0
+      '@galacticcouncil/math-xyk': 1.0.0
       '@polkadot/api': 11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/api-augment': 11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/api-base': 11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -21990,6 +22010,10 @@ snapshots:
       vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
     transitivePeerDependencies:
       - rollup
+
+  vite-plugin-wasm@3.3.0(vite@5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)):
+    dependencies:
+      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
 
   vite@5.2.11(@types/node@20.12.12)(sugarss@4.0.1)(terser@5.31.0):
     dependencies:

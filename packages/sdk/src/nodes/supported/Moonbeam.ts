@@ -9,6 +9,7 @@ import {
   type TSerializedApiCall,
   type TRelayToParaInternalOptions
 } from '../../types'
+import { getAllNodeProviders } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
@@ -29,6 +30,10 @@ class Moonbeam extends ParachainNode implements IXTokensTransfer {
       section: 'limitedReserveTransferAssets',
       parameters: constructRelayToParaParameters(options, Version.V3, true)
     }
+  }
+
+  getProvider(): string {
+    return getAllNodeProviders(this.node)[2]
   }
 }
 

@@ -11,8 +11,27 @@ import { transferToExchange } from './transferToExchange';
 import { swap } from './swap';
 import { transferToDestination } from './transferToDestination';
 import { selectBestExchange } from './selectBestExchange';
+import { determineFeeCalcAddress } from './utils';
+import { ethers } from 'ethers';
 
 export const transfer = async (options: TTransferOptions): Promise<void> => {
+  if (options.evmSigner !== undefined && options.evmInjectorAddress === undefined) {
+    throw new Error('evmInjectorAddress is required when evmSigner is provided');
+  }
+  if (options.evmInjectorAddress !== undefined && options.evmSigner === undefined) {
+    throw new Error('evmSigner is required when evmInjectorAddress is provided');
+  }
+
+  if (options.evmInjectorAddress !== undefined && !ethers.isAddress(options.evmInjectorAddress)) {
+    throw new Error('Evm injector address is not a valid Ethereum address');
+  }
+
+  if (ethers.isAddress(options.injectorAddress)) {
+    throw new Error(
+      'Injector address cannot be an Ethereum address. Please use an Evm injector address instead.',
+    );
+  }
+
   maybeUpdateTransferStatus(options.onStatusChange, {
     type: TransactionType.TO_EXCHANGE,
     status: TransactionStatus.IN_PROGRESS,
@@ -30,7 +49,11 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
     isAutoSelectingExchange: false,
   });
 
-  const modifiedOptions: TTransferOptionsModified = { ...options, exchange: dex.node };
+  const modifiedOptions: TTransferOptionsModified = {
+    ...options,
+    exchange: dex.node,
+    feeCalcAddress: determineFeeCalcAddress(options.injectorAddress, options.recipientAddress),
+  };
 
   const { from, amount } = modifiedOptions;
 

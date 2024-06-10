@@ -10,6 +10,7 @@ export interface TSwapOptions {
   amount: string;
   slippagePct: string;
   injectorAddress: string;
+  feeCalcAddress: string;
 }
 
 export interface TSwapResult {
@@ -47,9 +48,11 @@ export interface TTransferOptions {
   currencyTo: string;
   amount: string;
   injectorAddress: string;
+  evmInjectorAddress?: string;
   recipientAddress: string;
   slippagePct: string;
   signer: Signer;
+  evmSigner?: Signer;
   exchange?: TExchangeNode;
   onStatusChange?: (info: TTxProgressInfo) => void;
   type?: TransactionType;
@@ -62,6 +65,7 @@ export type TBuildTransferExtrinsicsOptions = Omit<
 
 export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> & {
   exchange: TNode;
+  feeCalcAddress: string;
 };
 
 export type TCommonTransferOptions = Omit<TTransferOptions, 'signer'>;

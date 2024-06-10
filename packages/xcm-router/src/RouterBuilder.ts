@@ -16,9 +16,11 @@ export interface TRouterBuilderOptions {
   currencyTo?: string;
   amount?: string;
   injectorAddress?: string;
+  evmInjectorAddress?: string;
   recipientAddress?: string;
   slippagePct?: string;
   signer?: Signer;
+  evmSigner?: Signer;
   onStatusChange?: (info: TTxProgressInfo) => void;
 }
 
@@ -74,6 +76,16 @@ export class RouterBuilderObject {
     return this;
   }
 
+  evmInjectorAddress(evmInjectorAddress: string): this {
+    this._routerBuilderOptions.evmInjectorAddress = evmInjectorAddress;
+    return this;
+  }
+
+  evmSigner(evmSigner: Signer): this {
+    this._routerBuilderOptions.evmSigner = evmSigner;
+    return this;
+  }
+
   slippagePct(slippagePct: string): this {
     this._routerBuilderOptions.slippagePct = slippagePct;
     return this;
@@ -103,6 +115,7 @@ export class RouterBuilderObject {
         throw new Error(`Builder object is missing parameter: ${param}`);
       }
     }
+
     await transfer({
       ...(this._routerBuilderOptions as TTransferOptions),
       type: TransactionType.FULL_TRANSFER,
