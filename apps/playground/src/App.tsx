@@ -6,9 +6,7 @@ import {
   Image,
   MantineColorsTuple,
   MantineProvider,
-  Modal,
   NavLink,
-  Stack,
   createTheme,
 } from "@mantine/core";
 import "@mantine/core/styles.css";
@@ -28,6 +26,7 @@ import { useWallet } from "./hooks/useWallet";
 import RouterTransferPage from "./routes/RouterTransferPage";
 import XcmAnalyserSandbox from "./routes/XcmAnalyserSandbox";
 import XcmSdkSandbox from "./routes/XcmSdkSandbox";
+import AccountsModal from "./components/AccountsModal";
 
 const myColor: MantineColorsTuple = [
   "#ffe9f6",
@@ -90,27 +89,12 @@ const App = () => {
   return (
     <BrowserRouter>
       <MantineProvider theme={theme}>
-        <Modal
-          opened={modalOpened}
+        <AccountsModal
+          isOpen={modalOpened}
           onClose={closeModal}
-          title="Select account"
-          centered
-        >
-          <Stack gap="xs">
-            {accounts.map((account) => (
-              <Button
-                size="lg"
-                variant="subtle"
-                key={account.address}
-                onClick={onAccountSelect(account)}
-              >
-                {`${account.meta.name} (${
-                  account.meta.source
-                }) - ${account.address.replace(/(.{10})..+/, "$1…")}`}
-              </Button>
-            ))}
-          </Stack>
-        </Modal>
+          accounts={accounts}
+          onAccountSelect={onAccountSelect}
+        />
         <AppShell
           header={{ height: 60 }}
           navbar={{

@@ -18,6 +18,7 @@ import {
 } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../transfer/utils';
+import { FALLBACK_FEE_CALC_ADDRESS } from '../consts/consts';
 
 describe('validateRelayChainCurrency', () => {
   it('should not throw an error for valid Polkadot currency', () => {
@@ -137,6 +138,7 @@ export const MOCK_TRANSFER_OPTIONS: TTransferOptionsModified = {
   recipientAddress: MOCK_ADDRESS,
   signer: {},
   type: TransactionType.FULL_TRANSFER,
+  feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
 };
 
 export const performSwap = async (

@@ -10,15 +10,15 @@ export const swap = async (
   originApi: ApiPromise,
   swapApi: ApiPromise,
 ): Promise<{ amountOut: string; txHash: string }> => {
-  const { amount, injectorAddress, onStatusChange } = options;
+  const { amount, feeCalcAddress, onStatusChange } = options;
   maybeUpdateTransferStatus(onStatusChange, {
     type: TransactionType.SWAP,
     status: TransactionStatus.IN_PROGRESS,
   });
   const toDestTx = await buildFromExchangeExtrinsic(swapApi, options, amount);
-  const toDestTransactionFee = await calculateTransactionFee(toDestTx, injectorAddress);
+  const toDestTransactionFee = await calculateTransactionFee(toDestTx, feeCalcAddress);
   const toExchangeTx = await buildToExchangeExtrinsic(originApi, options);
-  const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, injectorAddress);
+  const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, feeCalcAddress);
   const swapResult = await submitSwap(
     swapApi,
     exchangeNode,

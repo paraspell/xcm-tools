@@ -7,7 +7,11 @@ import {
 } from '../types';
 import { validateRelayChainCurrency, calculateTransactionFee } from '../utils/utils';
 import { selectBestExchange } from './selectBestExchange';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
+import {
+  buildFromExchangeExtrinsic,
+  buildToExchangeExtrinsic,
+  determineFeeCalcAddress,
+} from './utils';
 
 export const buildTransferExtrinsics = async (
   options: TBuildTransferExtrinsicsOptions,
@@ -20,21 +24,25 @@ export const buildTransferExtrinsics = async (
   const modifiedOptions: TCommonTransferOptionsModified = {
     ...options,
     exchange: dex.node,
+    feeCalcAddress: determineFeeCalcAddress(options.injectorAddress, options.recipientAddress),
   };
 
-  const { from, to, currencyFrom, currencyTo, amount, injectorAddress } = modifiedOptions;
+  const { from, to, currencyFrom, currencyTo, amount, feeCalcAddress } = modifiedOptions;
 
   const originApi = await createApiInstanceForNode(from);
   validateRelayChainCurrency(from, currencyFrom);
   validateRelayChainCurrency(to, currencyTo);
   const swapApi = await dex.createApiInstance();
   const toDestTxForSwap = await buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
-  const toDestTransactionFee = await calculateTransactionFee(toDestTxForSwap, injectorAddress);
+  const toDestTransactionFee = await calculateTransactionFee(toDestTxForSwap, feeCalcAddress);
   const toExchangeTx = await buildToExchangeExtrinsic(originApi, modifiedOptions);
-  const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, injectorAddress);
+  const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, feeCalcAddress);
   const { amountOut, tx: swapTx } = await dex.swapCurrency(
     swapApi,
-    options,
+    {
+      ...modifiedOptions,
+      feeCalcAddress,
+    },
     toDestTransactionFee,
     toExchangeTransactionFee,
   );

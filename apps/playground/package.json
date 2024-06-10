@@ -14,8 +14,8 @@
     "@mantine/form": "^7.10.1",
     "@mantine/hooks": "^7.10.1",
     "@paraspell/sdk": "workspace:*",
-    "@paraspell/xcm-router": "workspace:*",
     "@paraspell/xcm-analyser": "workspace:*",
+    "@paraspell/xcm-router": "workspace:*",
     "@polkadot/api": "^11.2.1",
     "@polkadot/extension-dapp": "^0.47.5",
     "@polkadot/extension-inject": "^0.47.5",
@@ -23,6 +23,7 @@
     "@polkadot/util": "^12.6.2",
     "@tabler/icons-react": "^3.5.0",
     "axios": "^1.7.2",
+    "ethers": "^6.13.0",
     "react": "^18.3.1",
     "react-confetti": "^6.1.0",
     "react-dom": "^18.3.1",
@@ -43,6 +44,7 @@
     "postcss-simple-vars": "^7.0.1",
     "typescript": "^5.4.5",
     "vite": "^5.2.13",
-    "vite-plugin-node-polyfills": "^0.22.0"
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "vite-plugin-wasm": "^3.3.0"
   }
 }
