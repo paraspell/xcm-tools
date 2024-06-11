@@ -86,6 +86,9 @@ await RouterBuilder
         .injectorAddress(injectorAddress)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
         .signer(injector.signer)    //Signer
+        //.evmInjectorAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
+        //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
+
         .onStatusChange((status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
           console.log(status.hashes);   //Transaction hashes
           console.log(status.status);   //Transaction statuses
@@ -110,6 +113,9 @@ await RouterBuilder
         .injectorAddress(selectedAccount.address)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
         .signer(injector.signer)    //Signer
+        //.evmInjectorAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
+        //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
+
         .onStatusChange((status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
           console.log(status.hashes);   //Transaction hashes
           console.log(status.status);   //Transaction statuses
@@ -133,6 +139,9 @@ await transfer({
         injectorAddress: selectedAccount.address, //Injector address
         address: recipientAddress, //Recipient address
         signer: injector.signer,  //Signer
+        //evmInjectorAddress: evmInjector address,   //Optional parameters when origin node is EVM based (Required with evmSigner)
+        //evmSigner: EVM signer,                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
+
         onStatusChange: (status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
           console.log(status.hashes);   //Transaction hashes
           console.log(status.status);   //Transaction statuses
@@ -158,6 +167,9 @@ await transfer({
         injectorAddress: selectedAccount.address, //Injector address
         address: recipientAddress, //Recipient address
         signer: injector.signer,  //Signer
+        //evmInjectorAddress: evmInjector address,   //Optional parameters when origin node is EVM based (Required with evmSigner)
+        //evmSigner: EVM signer,                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
+
         onStatusChange: (status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
           console.log(status.hashes);   //Transaction hashes
           console.log(status.status);   //Transaction statuses
