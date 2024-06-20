@@ -57,7 +57,7 @@ TypeScript
 
 The production version of the XCM Visualizator is available at [https://xcm-visualizator.tech/](https://xcm-visualizator.tech/).
 
-To run the project locally, you need to have Node.js installed, as well as PostgreSQL database.
+To run the project locally, you need to have Node.js v.20^ installed, as well as PostgreSQL database.
 
 In backend folder create .env file following .env.example file. After your database is set up, you can import the database dump from the [xcm_database_dump.tar](https://drive.google.com/file/d/1mBYi9zh8iuEWtQtcZdg-sgGtRwJFRLje/view?usp=sharing) file to try the XCM Visualizator with the example data.
 
@@ -66,19 +66,21 @@ Then, run the following commands:
 Install dependencies:
 
 ```bash
+//This has to be run from monorepository root
 pnpm install
+pnpm build
 ```
 
 Run backend:
 
 ```bash
-pnpm start:be
+pnpm start
 ```
 
 Run frontend from [frontend folder](https://github.com/paraspell/xcm-tools/tree/main/apps/visualizator-fe):
 
 ```bash
-pnpm start:fe
+pnpm dev
 ```
 
 ## License
