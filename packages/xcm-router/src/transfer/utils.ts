@@ -1,7 +1,5 @@
 import { type Extrinsic, Builder } from '@paraspell/sdk';
 import { type ApiPromise } from '@polkadot/api';
-import type BigNumber from 'bignumber.js';
-import type ExchangeNode from '../dexNodes/DexNode';
 import { type TCommonTransferOptionsModified, type TTransferOptionsModified } from '../types';
 import { validateRelayChainCurrency } from '../utils/utils';
 import { submitTransaction } from '../utils/submitTransaction';
@@ -45,20 +43,11 @@ export const buildFromExchangeExtrinsic = async (
 
 export const submitSwap = async (
   api: ApiPromise,
-  exchangeNode: ExchangeNode,
   options: TTransferOptionsModified,
-  toDestTransactionFee: BigNumber,
-  toExchangeTransactionFee: BigNumber,
-): Promise<{ amountOut: string; txHash: string }> => {
+  swapTx: Extrinsic,
+): Promise<string> => {
   const { signer, injectorAddress } = options;
-  const { tx, amountOut } = await exchangeNode.swapCurrency(
-    api,
-    options,
-    toDestTransactionFee,
-    toExchangeTransactionFee,
-  );
-  const txHash = await submitTransaction(api, tx, signer, injectorAddress);
-  return { amountOut, txHash };
+  return await submitTransaction(api, swapTx, signer, injectorAddress);
 };
 
 export const submitTransferToExchange = async (

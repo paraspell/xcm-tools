@@ -23,13 +23,18 @@ vi.mock('@paraspell/sdk', async () => {
 describe('transfer', () => {
   let transferToExchangeSpy: MockInstance;
   let swapSpy: MockInstance;
+  let createSwapExtrinsicSpy: MockInstance;
   let transferToDestinationSpy: MockInstance;
 
   beforeEach(() => {
     transferToExchangeSpy = vi
       .spyOn(transferToExchange, 'transferToExchange')
       .mockResolvedValue('');
-    swapSpy = vi.spyOn(swap, 'swap').mockResolvedValue({ amountOut: '', txHash: '' });
+    swapSpy = vi.spyOn(swap, 'swap').mockResolvedValue('');
+    createSwapExtrinsicSpy = vi.spyOn(swap, 'createSwapExtrinsic').mockResolvedValue({
+      amountOut: '1',
+      tx: {} as any,
+    });
     transferToDestinationSpy = vi
       .spyOn(transferToDestination, 'transferToDestination')
       .mockResolvedValue('');
@@ -43,6 +48,7 @@ describe('transfer', () => {
     };
     await transfer(options);
     expect(transferToExchangeSpy).toHaveBeenCalled();
+    expect(createSwapExtrinsicSpy).toHaveBeenCalled();
     expect(swapSpy).toHaveBeenCalled();
     expect(transferToDestinationSpy).toHaveBeenCalled();
   });

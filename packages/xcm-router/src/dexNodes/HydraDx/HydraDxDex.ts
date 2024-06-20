@@ -6,6 +6,7 @@ import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../t
 import { type ApiPromise } from '@polkadot/api';
 import { FEE_BUFFER } from '../../consts/consts';
 import Logger from '../../Logger/Logger';
+import { SmallAmountError } from '../../errors/SmallAmountError';
 
 class HydraDxExchangeNode extends ExchangeNode {
   async swapCurrency(
@@ -49,7 +50,7 @@ class HydraDxExchangeNode extends ExchangeNode {
     const amountWithoutFee = amountBnum.minus(tradeFee);
 
     if (amountWithoutFee.isNegative()) {
-      throw new Error(
+      throw new SmallAmountError(
         'The provided amount is too small to cover the fees. Please provide a larger amount.',
       );
     }
@@ -104,7 +105,7 @@ class HydraDxExchangeNode extends ExchangeNode {
     const amountOutModified = amountOut.minus(currencyToFeeBnum).decimalPlaces(0);
 
     if (amountOutModified.isNegative()) {
-      throw new Error(
+      throw new SmallAmountError(
         'The amount after deducting fees is negative. Please provide a larger amount.',
       );
     }

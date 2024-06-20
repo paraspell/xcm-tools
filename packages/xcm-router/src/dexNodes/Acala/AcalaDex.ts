@@ -10,6 +10,7 @@ import { calculateAcalaTransactionFee, createAcalaApiInstance } from './utils';
 import BigNumber from 'bignumber.js';
 import { FEE_BUFFER } from '../../consts/consts';
 import Logger from '../../Logger/Logger';
+import { SmallAmountError } from '../../errors/SmallAmountError';
 
 class AcalaExchangeNode extends ExchangeNode {
   async swapCurrency(
@@ -62,7 +63,7 @@ class AcalaExchangeNode extends ExchangeNode {
     const amountWithoutFee = amountBN.minus(feeInCurrencyFromBN).minus(toExchangeFeeWithBuffer);
 
     if (amountWithoutFee.isNegative()) {
-      throw new Error(
+      throw new SmallAmountError(
         'The provided amount is too small to cover the fees. Please provide a larger amount.',
       );
     }
@@ -114,7 +115,7 @@ class AcalaExchangeNode extends ExchangeNode {
     const amountOutModified = amountOutBN.minus(currencyToFeeBnum).decimalPlaces(0);
 
     if (amountOutModified.isNegative()) {
-      throw new Error(
+      throw new SmallAmountError(
         'The amount after deducting fees is negative. Please provide a larger amount.',
       );
     }
