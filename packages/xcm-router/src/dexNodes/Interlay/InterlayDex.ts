@@ -8,6 +8,7 @@ import BigNumber from 'bignumber.js';
 import { FEE_BUFFER } from '../../consts/consts';
 import Logger from '../../Logger/Logger';
 import { getCurrency } from './utils';
+import { SmallAmountError } from '../../errors/SmallAmountError';
 
 class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(
@@ -37,7 +38,7 @@ class InterlayExchangeNode extends ExchangeNode {
     const amountWithoutFee = amountBN.minus(toExchangeFeeWithBuffer);
 
     if (amountWithoutFee.isNegative()) {
-      throw new Error(
+      throw new SmallAmountError(
         'The provided amount is too small to cover the exchange fees. Please provide a larger amount.',
       );
     }

@@ -8,7 +8,7 @@ import {
 } from '../types';
 import { delay, maybeUpdateTransferStatus } from '../utils/utils';
 import { transferToExchange } from './transferToExchange';
-import { swap } from './swap';
+import { swap, createSwapExtrinsic } from './swap';
 import { transferToDestination } from './transferToDestination';
 import { selectBestExchange } from './selectBestExchange';
 import { determineFeeCalcAddress } from './utils';
@@ -63,16 +63,23 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
   } else if (options.type === TransactionType.SWAP) {
     const originApi = await createApiInstanceForNode(from);
     const swapApi = await dex.createApiInstance();
-    await swap(modifiedOptions, dex, originApi, swapApi);
+    const { tx: swapTx } = await createSwapExtrinsic(originApi, swapApi, dex, modifiedOptions);
+    await swap(modifiedOptions, swapTx, swapApi);
   } else if (options.type === TransactionType.TO_DESTINATION) {
     const swapApi = await dex.createApiInstance();
     await transferToDestination(modifiedOptions, amount, swapApi);
   } else {
     const originApi = await createApiInstanceForNode(from);
+    const swapApi = await dex.createApiInstance();
+    const { tx: swapTx, amountOut } = await createSwapExtrinsic(
+      originApi,
+      swapApi,
+      dex,
+      modifiedOptions,
+    );
     await transferToExchange(modifiedOptions, originApi);
     await delay(1000);
-    const swapApi = await dex.createApiInstance();
-    const { amountOut } = await swap(modifiedOptions, dex, originApi, swapApi);
+    await swap(modifiedOptions, swapTx, swapApi);
     await delay(1000);
     await transferToDestination(modifiedOptions, amountOut, swapApi);
   }

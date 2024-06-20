@@ -182,6 +182,7 @@ const RouterTransferPage = () => {
         setLoading(false);
       } else {
         originalError(...args);
+        setProgressInfo(undefined);
       }
     };
 
@@ -248,7 +249,9 @@ const RouterTransferPage = () => {
           )}
           {alertOpened && (
             <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
-              {error?.message}
+              {error?.message
+                .split("\n\n")
+                .map((line, index) => <p key={index}>{line}</p>)}
             </ErrorAlert>
           )}
         </Box>

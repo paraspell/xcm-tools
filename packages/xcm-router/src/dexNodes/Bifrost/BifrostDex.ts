@@ -10,6 +10,7 @@ import BigNumber from 'bignumber.js';
 import { convertAmount } from './utils';
 import { FEE_BUFFER } from '../../consts/consts';
 import Logger from '../../Logger/Logger';
+import { SmallAmountError } from '../../errors/SmallAmountError';
 
 const findToken = (tokenMap: TokenMap, symbol: string): Token | undefined => {
   return Object.values(tokenMap).find((item) => item.wrapped.symbol === symbol)?.wrapped;
@@ -56,7 +57,7 @@ class BifrostExchangeNode extends ExchangeNode {
     const amountWithoutFee = amountBN.minus(toDestFee.multipliedBy(FEE_BUFFER)).decimalPlaces(0);
 
     if (amountWithoutFee.isNegative()) {
-      throw new Error(
+      throw new SmallAmountError(
         'The provided amount is too small to cover the fees. Please provide a larger amount.',
       );
     }
@@ -76,7 +77,7 @@ class BifrostExchangeNode extends ExchangeNode {
       .decimalPlaces(0);
 
     if (amountWithoutSwapFee.isNegative()) {
-      throw new Error(
+      throw new SmallAmountError(
         'The provided amount is too small to cover the swap fees. Please provide a larger amount.',
       );
     }
@@ -118,7 +119,7 @@ class BifrostExchangeNode extends ExchangeNode {
       .decimalPlaces(0);
 
     if (amountOutFinalBN.isNegative()) {
-      throw new Error(
+      throw new SmallAmountError(
         'The amount after deducting fees is negative. Please provide a larger amount.',
       );
     }

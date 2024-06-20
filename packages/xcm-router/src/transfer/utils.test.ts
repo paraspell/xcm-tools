@@ -8,7 +8,7 @@ import {
   submitTransferToDestination,
   submitTransferToExchange,
 } from './utils';
-import { type TSwapResult, type TTransferOptionsModified } from '../types';
+import { type TTransferOptionsModified } from '../types';
 import { transferParams } from '../RouterBuilder.test';
 import {
   type TNodeWithRelayChains,
@@ -16,8 +16,6 @@ import {
   type Extrinsic,
 } from '@paraspell/sdk';
 import { type ApiPromise } from '@polkadot/api';
-import BigNumber from 'bignumber.js';
-import type ExchangeNode from '../dexNodes/DexNode';
 import * as transactionUtils from '../utils/submitTransaction';
 import { FALLBACK_FEE_CALC_ADDRESS } from '../consts/consts';
 
@@ -109,41 +107,22 @@ describe('transfer utils', () => {
     });
   });
 
-  class MockExchangeNode {
-    async swapCurrency(): Promise<TSwapResult> {
-      return {
-        tx: {
-          signAsync: vi.fn().mockResolvedValue('signedTx'),
-          send: vi.fn().mockResolvedValue('sentTx'),
-        } as unknown as Extrinsic,
-        amountOut: '1000',
-      };
-    }
-  }
-
   describe('submitSwap', () => {
     it('submits a swap and returns amountOut and txHash', async () => {
       const spy = vi.spyOn(transactionUtils, 'submitTransaction').mockResolvedValue('mockedTxHash');
-      const exchangeNode = new MockExchangeNode();
       const options: TTransferOptionsModified = {
         ...transferParams,
         exchange: 'Acala',
         feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
-      const toDestTransactionFee = new BigNumber(10);
-      const toExchangeTransactionFee = new BigNumber(5);
 
-      const result = await submitSwap(
-        parachainApi,
-        exchangeNode as unknown as ExchangeNode,
-        options,
-        toDestTransactionFee,
-        toExchangeTransactionFee,
-      );
+      const txHash = await submitSwap(parachainApi, options, {
+        signAsync: vi.fn().mockResolvedValue('signedTx'),
+        send: vi.fn().mockResolvedValue('sentTx'),
+      } as unknown as Extrinsic);
 
-      expect(result).toBeDefined();
-      expect(result.amountOut).toBe('1000');
-      expect(result.txHash).toBe('mockedTxHash');
+      expect(txHash).toBeDefined();
+      expect(txHash).toBe('mockedTxHash');
       expect(spy).toHaveBeenCalledWith(
         parachainApi,
         expect.objectContaining({

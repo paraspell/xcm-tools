@@ -1,4 +1,4 @@
-import { createApiInstanceForNode } from '@paraspell/sdk';
+import { type TNode, createApiInstanceForNode } from '@paraspell/sdk';
 import { EXCHANGE_NODES } from '../consts/consts';
 import createDexNodeInstance from '../dexNodes/DexNodeFactory';
 import {
@@ -31,7 +31,7 @@ export const selectBestExchange = async (
   Logger.log(`Selecting best exchange for ${currencyFrom} -> ${currencyTo}`);
   let bestExchange: ExchangeNode | undefined;
   let maxAmountOut: BigNumber = new BigNumber(0);
-  let lastError: Error | undefined;
+  const errors = new Map<TNode, Error>();
   for (const exchangeNode of EXCHANGE_NODES) {
     const dex = createDexNodeInstance(exchangeNode);
 
@@ -78,16 +78,18 @@ export const selectBestExchange = async (
       }
     } catch (e) {
       if (e instanceof Error) {
-        lastError = e;
+        errors.set(dex.node, e);
       }
       continue;
     }
   }
   if (bestExchange === undefined) {
     throw new Error(
-      `Could not select best exchange automatically. Please specify one manually. Last erorr: ${
-        lastError !== undefined ? lastError.message : 'None'
-      }`,
+      `Could not select best exchange automatically. Please specify one manually. Errors: \n\n${Array.from(
+        errors.entries(),
+      )
+        .map(([key, value]) => `${key}: ${value.message}`)
+        .join('\n\n')}`,
     );
   }
   Logger.log(`Selected exchange: ${bestExchange.node}`);

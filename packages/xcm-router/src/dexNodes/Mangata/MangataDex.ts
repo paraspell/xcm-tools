@@ -14,6 +14,7 @@ import { getAllPools, routeExactIn } from './routingUtils';
 import { FEE_BUFFER } from '../../consts/consts';
 import BigNumber from 'bignumber.js';
 import Logger from '../../Logger/Logger';
+import { SmallAmountError } from '../../errors/SmallAmountError';
 
 class MangataExchangeNode extends ExchangeNode {
   constructor() {
@@ -42,7 +43,7 @@ class MangataExchangeNode extends ExchangeNode {
       .decimalPlaces(0);
 
     if (amountWithoutFee.isNegative()) {
-      throw new Error(
+      throw new SmallAmountError(
         'The provided amount is too small to cover the fixed fees. Please provide a larger amount.',
       );
     }
