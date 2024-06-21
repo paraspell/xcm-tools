@@ -25,10 +25,11 @@ class Moonbeam extends ParachainNode implements IXTokensTransfer {
   }
 
   transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
+    const { version = Version.V3 } = options
     return {
       module: 'xcmPallet',
       section: 'limitedReserveTransferAssets',
-      parameters: constructRelayToParaParameters(options, Version.V3, true)
+      parameters: constructRelayToParaParameters(options, version, true)
     }
   }
 

@@ -93,6 +93,7 @@ export interface TSendBaseOptions {
   paraIdTo?: number
   feeAsset?: TCurrency
   destApiForKeepAlive?: ApiPromise
+  version?: Version
 }
 
 export interface TSendOptions extends TSendBaseOptions {
@@ -120,6 +121,7 @@ interface TRelayToParaBaseOptions {
   address: TAddress
   paraIdTo?: number
   destApiForKeepAlive?: ApiPromise
+  version?: Version
 }
 
 export interface TRelayToParaOptions extends TRelayToParaBaseOptions {

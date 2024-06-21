@@ -33,6 +33,7 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     paraIdTo,
     destApiForKeepAlive,
     feeAsset,
+    version,
     serializedApiCallEnabled = false
   } = options
 
@@ -162,6 +163,7 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     paraIdTo,
     overridedCurrencyMultiLocation: isTMulti(currency) ? currency : undefined,
     feeAsset,
+    version,
     serializedApiCallEnabled
   })
 }
@@ -187,6 +189,7 @@ export const transferRelayToParaCommon = async (
     address,
     paraIdTo,
     destApiForKeepAlive,
+    version,
     serializedApiCallEnabled = false
   } = options
   const isMultiLocationDestination = typeof destination === 'object'
@@ -224,7 +227,8 @@ export const transferRelayToParaCommon = async (
     address,
     amount: amountStr,
     paraIdTo,
-    destApiForKeepAlive
+    destApiForKeepAlive,
+    version
   })
 
   if (serializedApiCallEnabled) {

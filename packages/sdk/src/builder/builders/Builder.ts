@@ -12,7 +12,8 @@ import {
   type TCurrency,
   type TMultiAsset,
   type TNodeWithRelayChains,
-  type TVersionClaimAssets
+  type TVersionClaimAssets,
+  type Version
 } from '../../types'
 import CloseChannelBuilder, { type InboundCloseChannelBuilder } from './CloseChannelBuilder'
 import OpenChannelBuilder, { type MaxSizeOpenChannelBuilder } from './OpenChannelBuilder'
@@ -115,6 +116,7 @@ export interface FinalBuilderAsync {
 
 export interface UseKeepAliveFinalBuilder {
   useKeepAlive: (destApi: ApiPromise) => UseKeepAliveFinalBuilder
+  xcmVersion: (version: Version) => UseKeepAliveFinalBuilder
   build: () => Promise<Extrinsic | never>
   buildSerializedApiCall: () => Promise<TSerializedApiCall>
 }

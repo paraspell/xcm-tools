@@ -10,7 +10,7 @@ import {
   type TNode,
   type TCurrencySelectionHeaderArr
 } from '../../types'
-import { generateAddressPayload } from '../../utils'
+import { createX1Payload, generateAddressPayload } from '../../utils'
 import { getParaId, getTNode } from '../assets'
 import { type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
@@ -78,7 +78,7 @@ export const createCurrencySpec = (
     return {
       [version]: [
         {
-          id: { Concrete: { parents, interior } },
+          id: version === Version.V4 ? { parents, interior } : { Concrete: { parents, interior } },
           fun: { Fungible: amount }
         }
       ]
@@ -89,7 +89,7 @@ export const createCurrencySpec = (
     ? {
         [version]: [
           {
-            id: { Concrete: overriddenCurrency },
+            id: version === Version.V4 ? overriddenCurrency : { Concrete: overriddenCurrency },
             fun: { Fungible: amount }
           }
         ]
@@ -110,14 +110,13 @@ export const createPolkadotXcmHeader = (
   const interior =
     scenario === 'ParaToRelay'
       ? 'Here'
-      : {
-          X1: {
-            Parachain: nodeId
-          }
-        }
+      : createX1Payload(version, {
+          Parachain: nodeId
+        })
+
   const isMultiLocationDestination = typeof destination === 'object'
   return {
-    [scenario === 'RelayToPara' ? Version.V3 : version]: isMultiLocationDestination
+    [version]: isMultiLocationDestination
       ? destination
       : {
           parents,

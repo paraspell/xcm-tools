@@ -9,7 +9,8 @@ import {
   type TSendOptions,
   type TAmount,
   type TAddress,
-  type TCurrency
+  type TCurrency,
+  type Version
 } from '../../types'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder } from './Builder'
@@ -22,6 +23,7 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
 
   private _address: TAddress
   private _destApi?: ApiPromise
+  private _version?: Version
 
   private constructor(
     api: ApiPromise | undefined,
@@ -54,6 +56,11 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
     return this
   }
 
+  xcmVersion(version: Version): this {
+    this._version = version
+    return this
+  }
+
   private buildOptions(): TSendOptions {
     if (this.amount === null) {
       throw new Error('Amount is required')
@@ -66,7 +73,8 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
       amount: this.amount,
       address: this._address,
       feeAsset: this.feeAsset,
-      destApiForKeepAlive: this._destApi
+      destApiForKeepAlive: this._destApi,
+      version: this._version
     }
   }
 

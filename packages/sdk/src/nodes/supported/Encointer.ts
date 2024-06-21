@@ -32,10 +32,11 @@ class Encointer extends ParachainNode implements IPolkadotXCMTransfer {
   }
 
   transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
+    const { version = Version.V1 } = options
     return {
       module: 'xcmPallet',
       section: 'limitedTeleportAssets',
-      parameters: constructRelayToParaParameters(options, Version.V1, true)
+      parameters: constructRelayToParaParameters(options, version, true)
     }
   }
 }

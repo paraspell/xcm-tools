@@ -1,7 +1,7 @@
 // Contains builder pattern tests for different Builder pattern functionalities
 
 import { type ApiPromise } from '@polkadot/api'
-import { vi, describe, expect, it, beforeEach } from 'vitest'
+import { vi, describe, expect, it, beforeAll } from 'vitest'
 import { Version, type TNode } from '../../types'
 import { createApiInstance } from '../../utils'
 import * as hrmp from '../../pallets/hrmp'
@@ -11,7 +11,7 @@ import { getRelayChainSymbol } from '../../pallets/assets'
 import { Builder } from './Builder'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 
-const WS_URL = 'wss://subsocial-rpc.dwellir.com'
+const WS_URL = 'wss://para.subsocial.network'
 const NODE: TNode = 'Acala'
 const NODE_2: TNode = 'Acala'
 const AMOUNT = 1000
@@ -28,7 +28,7 @@ describe('Builder', () => {
   let api: ApiPromise
   let destApi: ApiPromise
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     api = await createApiInstance(WS_URL)
     destApi = await createApiInstance(WS_URL)
   })
@@ -97,6 +97,60 @@ describe('Builder', () => {
       destination: NODE_2,
       paraIdTo: PARA_ID_TO,
       destApiForKeepAlive: destApi
+    })
+  })
+
+  it('should initiatie a para to para transfer with overriden version', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+
+    const version = Version.V2
+
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2, PARA_ID_TO)
+      .currency(CURRENCY)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .xcmVersion(version)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      currency: CURRENCY,
+      amount: AMOUNT,
+      address: ADDRESS,
+      destination: NODE_2,
+      paraIdTo: PARA_ID_TO,
+      version
+    })
+  })
+
+  it('should initiatie a para to para transfer with custom useKeepAlive and overriden version', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+
+    const version = Version.V2
+
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2, PARA_ID_TO)
+      .currency(CURRENCY)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .useKeepAlive(destApi)
+      .xcmVersion(version)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      currency: CURRENCY,
+      amount: AMOUNT,
+      address: ADDRESS,
+      destination: NODE_2,
+      paraIdTo: PARA_ID_TO,
+      destApiForKeepAlive: destApi,
+      version
     })
   })
 
@@ -301,6 +355,52 @@ describe('Builder', () => {
     })
   })
 
+  it('should initiatie a relay to para transfer with useKeepAlive and overriden version', async () => {
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue(undefined as any)
+
+    const version = Version.V2
+
+    await Builder(api)
+      .to(NODE, PARA_ID_TO)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .useKeepAlive(destApi)
+      .xcmVersion(version)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      destination: NODE,
+      amount: AMOUNT,
+      address: ADDRESS,
+      paraIdTo: PARA_ID_TO,
+      destApiForKeepAlive: destApi,
+      version
+    })
+  })
+
+  it('should initiatie a relay to para transfer with overriden version', async () => {
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue(undefined as any)
+
+    const version = Version.V2
+
+    await Builder(api)
+      .to(NODE, PARA_ID_TO)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .xcmVersion(version)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      destination: NODE,
+      amount: AMOUNT,
+      address: ADDRESS,
+      paraIdTo: PARA_ID_TO,
+      version
+    })
+  })
+
   it('should initiatie a para to relay transfer with currency symbol', async () => {
     const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
 
@@ -356,6 +456,52 @@ describe('Builder', () => {
       address: ADDRESS,
       feeAsset,
       destApiForKeepAlive: destApi
+    })
+  })
+
+  it('should initiatie a para to relay transfer with overriden version', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+
+    const currency = getRelayChainSymbol(NODE)
+    const version = Version.V2
+
+    await Builder(api).from(NODE).amount(AMOUNT).address(ADDRESS).xcmVersion(version).build()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      currency,
+      amount: AMOUNT,
+      address: ADDRESS,
+      version
+    })
+  })
+
+  it('should initiatie a para to relay transfer with fee asset, keep alive and overriden version', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+
+    const currency = getRelayChainSymbol(NODE)
+    const feeAsset = 0
+    const version = Version.V2
+
+    await Builder(api)
+      .from(NODE)
+      .feeAsset(feeAsset)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .useKeepAlive(destApi)
+      .xcmVersion(version)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      currency,
+      amount: AMOUNT,
+      address: ADDRESS,
+      feeAsset,
+      destApiForKeepAlive: destApi,
+      version
     })
   })
 

@@ -30,10 +30,11 @@ class CoretimeKusama extends ParachainNode implements IPolkadotXCMTransfer {
   transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
     // TESTED block hash on Rococo: 0x28929f7b2aeadbf3333f05d35bed18214a4b23dd270bd072f99e8a0131d22456
     // https://rococo.subscan.io/extrinsic/0x469eec7dccb22696b0c95cf4f5eec4b367ad3dc23243a346cc2aad3cc9522800
+    const { version = Version.V3 } = options
     return {
       module: 'xcmPallet',
       section: 'limitedTeleportAssets',
-      parameters: constructRelayToParaParameters(options, Version.V3, true)
+      parameters: constructRelayToParaParameters(options, version, true)
     }
   }
 }

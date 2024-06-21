@@ -13,7 +13,9 @@ import {
   type TNodeWithRelayChains,
   type TAddress,
   type TMultiLocationHeader,
-  Parents
+  Parents,
+  type TJunction,
+  type Junctions
 } from './types'
 import { nodes } from './maps/consts'
 import type ParachainNode from './nodes/ParachainNode'
@@ -57,6 +59,13 @@ export const generateAddressMultiLocationV4 = (api: ApiPromise, address: TAddres
   }
 }
 
+export const createX1Payload = (version: Version, junction: TJunction): Junctions => {
+  if (version === Version.V4) {
+    return { X1: [junction] }
+  }
+  return { X1: junction }
+}
+
 export const generateAddressPayload = (
   api: ApiPromise,
   scenario: TScenario,
@@ -76,14 +85,12 @@ export const generateAddressPayload = (
     return {
       [version]: {
         parents: pallet === 'XTokens' ? Parents.ONE : Parents.ZERO,
-        interior: {
-          X1: {
-            AccountId32: {
-              ...(version === Version.V1 && { network: 'any' }),
-              id: createAccID(api, recipientAddress)
-            }
+        interior: createX1Payload(version, {
+          AccountId32: {
+            ...(version === Version.V1 && { network: 'any' }),
+            id: createAccID(api, recipientAddress)
           }
-        }
+        })
       }
     }
   }
@@ -120,8 +127,9 @@ export const generateAddressPayload = (
     return {
       [version]: {
         parents: Parents.ZERO,
-        interior: {
-          X1: isEthAddress
+        interior: createX1Payload(
+          version,
+          isEthAddress
             ? {
                 AccountKey20: {
                   ...(version === Version.V1 && { network: 'any' }),
@@ -134,19 +142,20 @@ export const generateAddressPayload = (
                   id: createAccID(api, recipientAddress)
                 }
               }
-        }
+        )
       }
     }
   }
 
   return {
-    [Version.V3]: {
+    [version]: {
       parents: Parents.ZERO,
-      interior: {
-        X1: isEthAddress
+      interior: createX1Payload(
+        version,
+        isEthAddress
           ? { AccountKey20: { key: recipientAddress } }
           : { AccountId32: { id: createAccID(api, recipientAddress) } }
-      }
+      )
     }
   }
 }
