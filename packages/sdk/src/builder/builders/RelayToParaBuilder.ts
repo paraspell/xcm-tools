@@ -7,7 +7,8 @@ import {
   type Extrinsic,
   type TRelayToParaOptions,
   type TDestination,
-  type TAddress
+  type TAddress,
+  type Version
 } from '../../types'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
 
@@ -19,6 +20,7 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
   private _amount: number
   private _address: TAddress
   private _destApi?: ApiPromise
+  private _version?: Version
 
   private constructor(api: ApiPromise | undefined, to: TDestination, paraIdTo?: number) {
     this.api = api
@@ -45,6 +47,11 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
     return this
   }
 
+  xcmVersion(version: Version): this {
+    this._version = version
+    return this
+  }
+
   private buildOptions(): TRelayToParaOptions {
     return {
       api: this.api,
@@ -52,7 +59,8 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
       amount: this._amount,
       address: this._address,
       paraIdTo: this.paraIdTo,
-      destApiForKeepAlive: this._destApi
+      destApiForKeepAlive: this._destApi,
+      version: this._version
     }
   }
 

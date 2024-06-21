@@ -96,6 +96,7 @@ abstract class ParachainNode {
       paraIdTo,
       overridedCurrencyMultiLocation,
       feeAsset,
+      version = this.version,
       serializedApiCallEnabled = false
     } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
@@ -115,7 +116,7 @@ abstract class ParachainNode {
           scenario,
           'XTokens',
           address,
-          this.version,
+          version,
           paraId
         ),
         fees: getFees(scenario),
@@ -143,13 +144,13 @@ abstract class ParachainNode {
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
         api,
-        header: this.createPolkadotXcmHeader(scenario, destination, paraId),
+        header: this.createPolkadotXcmHeader(scenario, version, destination, paraId),
         addressSelection: generateAddressPayload(
           api,
           scenario,
           'PolkadotXcm',
           address,
-          this.version,
+          version,
           paraId
         ),
         address,
@@ -157,7 +158,7 @@ abstract class ParachainNode {
         currencySelection: this.createCurrencySpec(
           amount,
           scenario,
-          this.version,
+          version,
           currencyId,
           overridedCurrencyMultiLocation
         ),
@@ -176,10 +177,11 @@ abstract class ParachainNode {
   }
 
   transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
+    const { version = Version.V3 } = options
     return {
       module: 'xcmPallet',
       section: 'reserveTransferAssets',
-      parameters: constructRelayToParaParameters(options, Version.V3)
+      parameters: constructRelayToParaParameters(options, version)
     }
   }
 
@@ -206,8 +208,13 @@ abstract class ParachainNode {
     )
   }
 
-  createPolkadotXcmHeader(scenario: TScenario, destination?: TDestination, paraId?: number): any {
-    return createPolkadotXcmHeader(scenario, this.version, destination, paraId)
+  createPolkadotXcmHeader(
+    scenario: TScenario,
+    version: Version,
+    destination?: TDestination,
+    paraId?: number
+  ): any {
+    return createPolkadotXcmHeader(scenario, version, destination, paraId)
   }
 }
 

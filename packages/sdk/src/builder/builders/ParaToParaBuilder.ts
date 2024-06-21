@@ -11,7 +11,8 @@ import {
   type TAmount,
   type TAddress,
   type TDestination,
-  type TCurrency
+  type TCurrency,
+  type Version
 } from '../../types'
 import {
   type UseKeepAliveFinalBuilder,
@@ -33,6 +34,7 @@ class ParaToParaBuilder
   private _amount: TAmount | null
   private _address: TAddress
   private _destApi?: ApiPromise
+  private _version?: Version
 
   private constructor(
     api: ApiPromise | undefined,
@@ -78,6 +80,11 @@ class ParaToParaBuilder
     return this
   }
 
+  xcmVersion(version: Version): this {
+    this._version = version
+    return this
+  }
+
   private buildOptions(): TSendOptions {
     return {
       api: this.api,
@@ -88,7 +95,8 @@ class ParaToParaBuilder
       destination: this.to,
       paraIdTo: this.paraIdTo,
       feeAsset: this._feeAsset,
-      destApiForKeepAlive: this._destApi
+      destApiForKeepAlive: this._destApi,
+      version: this._version
     }
   }
 

@@ -85,9 +85,9 @@ export type TJunction =
   | JunctionPlurality
   | JunctionGlobalConsensus
 
-interface Junctions {
+export interface Junctions {
   Here?: null
-  X1?: TJunction
+  X1?: TJunction | [TJunction]
   X2?: [TJunction, TJunction]
   X3?: [TJunction, TJunction, TJunction]
   X4?: [TJunction, TJunction, TJunction, TJunction]

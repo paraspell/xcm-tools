@@ -95,10 +95,11 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
   }
 
   transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
+    const { version = Version.V3 } = options
     return {
       module: 'xcmPallet',
       section: 'limitedTeleportAssets',
-      parameters: constructRelayToParaParameters(options, Version.V3, true)
+      parameters: constructRelayToParaParameters(options, version, true)
     }
   }
 
