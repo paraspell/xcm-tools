@@ -1,22 +1,18 @@
 // Contains detailed structure of XCM call construction for Shiden Parachain
 
 import {
-  type IPolkadotXCMTransfer,
-  type PolkadotXCMTransferInput,
   Version,
   type Extrinsic,
-  type TSerializedApiCall,
+  type IPolkadotXCMTransfer,
   type IXTokensTransfer,
-  type XTokensTransferInput,
-  type TScenario,
-  type TSendInternalOptions
+  type PolkadotXCMTransferInput,
+  type TSendInternalOptions,
+  type TSerializedApiCall,
+  type XTokensTransferInput
 } from '../../types'
-import { generateAddressPayload, getFees } from '../../utils'
-import ParachainNode, { supportsPolkadotXCM, supportsXTokens } from '../ParachainNode'
+import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 import XTokensTransferImpl from '../XTokensTransferImpl'
-import { getParaId } from '../../pallets/assets'
-import { NoXCMSupportImplementedError } from '../../errors'
 
 class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTransfer {
   constructor() {
@@ -35,79 +31,8 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
     return XTokensTransferImpl.transferXTokens(input, input.currencyID)
   }
 
-  transfer(options: TSendInternalOptions): Extrinsic | TSerializedApiCall {
-    const {
-      api,
-      currencySymbol,
-      currencyId,
-      amount,
-      address,
-      destination,
-      paraIdTo,
-      feeAsset,
-      overridedCurrencyMultiLocation,
-      serializedApiCallEnabled = false
-    } = options
-    const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
-    const paraId =
-      destination !== undefined && typeof destination !== 'object'
-        ? paraIdTo ?? getParaId(destination)
-        : undefined
-    const node = this.node
-    if (supportsXTokens(this) && currencySymbol !== 'SDN') {
-      return this.transferXTokens({
-        api,
-        currency: currencySymbol,
-        currencyID: currencyId,
-        amount,
-        addressSelection: generateAddressPayload(
-          api,
-          scenario,
-          'XTokens',
-          address,
-          this.version,
-          paraId
-        ),
-        fees: getFees(scenario),
-        origin: this.node,
-        scenario,
-        paraIdTo: paraId,
-        destination,
-        overridedCurrencyMultiLocation,
-        serializedApiCallEnabled
-      })
-    } else if (supportsPolkadotXCM(this)) {
-      return this.transferPolkadotXCM({
-        api,
-        header: this.createPolkadotXcmHeader(scenario, destination, paraId),
-        addressSelection: generateAddressPayload(
-          api,
-          scenario,
-          'PolkadotXcm',
-          address,
-          this.version,
-          paraId
-        ),
-        address,
-        amount,
-        currencySelection: this.createCurrencySpec(
-          amount,
-          scenario,
-          this.version,
-          currencyId,
-          overridedCurrencyMultiLocation
-        ),
-        currencyId,
-        scenario,
-        currencySymbol,
-        feeAsset,
-        destination,
-        paraIdTo,
-        overridedCurrency: overridedCurrencyMultiLocation,
-        serializedApiCallEnabled
-      })
-    }
-    throw new NoXCMSupportImplementedError(node)
+  protected canUseXTokens({ currencySymbol }: TSendInternalOptions): boolean {
+    return currencySymbol !== 'SDN'
   }
 }
 

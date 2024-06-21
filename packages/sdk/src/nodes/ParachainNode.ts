@@ -27,7 +27,7 @@ import {
 import { type TMultiLocation } from '../types/TMultiLocation'
 import { type TMultiAsset } from '../types/TMultiAsset'
 
-export const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
+const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
   return 'transferXTokens' in obj
 }
 
@@ -35,7 +35,7 @@ const supportsXTransfer = (obj: any): obj is IXTransferTransfer => {
   return 'transferXTransfer' in obj
 }
 
-export const supportsPolkadotXCM = (obj: any): obj is IPolkadotXCMTransfer => {
+const supportsPolkadotXCM = (obj: any): obj is IPolkadotXCMTransfer => {
   return 'transferPolkadotXCM' in obj
 }
 
@@ -81,6 +81,10 @@ abstract class ParachainNode {
     return this._assetCheckEnabled
   }
 
+  protected canUseXTokens(_: TSendInternalOptions): boolean {
+    return true
+  }
+
   transfer(options: TSendInternalOptions): Extrinsic | TSerializedApiCall {
     const {
       api,
@@ -100,7 +104,7 @@ abstract class ParachainNode {
         ? paraIdTo ?? getParaId(destination)
         : undefined
 
-    if (supportsXTokens(this)) {
+    if (supportsXTokens(this) && this.canUseXTokens(options)) {
       return this.transferXTokens({
         api,
         currency: currencySymbol,
