@@ -79,7 +79,7 @@ await Builder(/*node api - optional*/)
       /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
       .amount(amount) // Overriden when using MultilocationArray
       .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
-      /*.xcmVersion(Version.V1/V2/V3/V4  //Optional parameter for manual override of XCM Version used in call*/
+      /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
       .build()
 /*
 EXAMPLE:
@@ -98,7 +98,7 @@ await Builder(/*node api - optional*/)
       .to(NODE/*,customParaId - optional*/ | Multilocation object)
       .amount(amount)
       .address(address | Multilocation object)
-      /*.xcmVersion(Version.V1/V2/V3/V4  //Optional parameter for manual override of XCM Version used in call*/
+      /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
       .build()
 /*
 EXAMPLE:
@@ -115,7 +115,7 @@ await Builder(/*node api - optional*/)
       .from(NODE)
       .amount(amount)
       .address(address | Multilocation object)
-      /*.xcmVersion(Version.V1/V2/V3/V4  //Optional parameter for manual override of XCM Version used in call*/
+      /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
       .build()
 /*
 EXAMPLE:
@@ -136,7 +136,7 @@ await Builder(/*node api - optional*/)
       .amount(amount)
       .address(address)
       .useKeepAlive(destinationParaAPI)
-      /*.xcmVersion(Version.V1/V2/V3/V4  //Optional parameter for manual override of XCM Version used in call*/
+      /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
       .build()
 ```
 ##### Close HRMP channels
