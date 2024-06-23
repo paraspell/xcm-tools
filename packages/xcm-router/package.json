@@ -53,7 +53,7 @@
     "@paraspell/sdk": "workspace:*",
     "@polkadot/api": "^11.2.1",
     "@polkadot/api-base": "^11.2.1",
-    "@polkadot/apps-config": "^0.138.1",
+    "@polkadot/apps-config": "^0.139.1",
     "@polkadot/types": "^11.2.1",
     "@polkadot/types-codec": "^11.2.1",
     "@polkadot/util": "^12.6.2",
