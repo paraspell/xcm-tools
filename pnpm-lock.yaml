@@ -19,7 +19,7 @@ importers:
         version: 1.13.3
       vitest:
         specifier: ^1.4.0
-        version: 1.6.0(@types/node@20.14.2)(jsdom@24.1.0)(sugarss@4.0.1)(terser@5.31.0)
+        version: 1.6.0(@types/node@20.14.2)(jsdom@24.1.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(sugarss@4.0.1)(terser@5.31.0)
 
   apps/landing-page:
     dependencies:
@@ -89,7 +89,7 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^5.2.4
-        version: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+        version: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
       vite-plugin-node-polyfills:
         specifier: ^0.19.0
         version: 0.19.0(rollup@4.18.0)(vite@5.2.11(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0))
@@ -192,7 +192,7 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^5.2.13
-        version: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+        version: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
       vite-plugin-node-polyfills:
         specifier: ^0.22.0
         version: 0.22.0(rollup@4.18.0)(vite@5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0))
@@ -455,7 +455,7 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^5.2.13
-        version: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+        version: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
 
   apps/xcm-api:
     dependencies:
@@ -555,6 +555,9 @@ importers:
       web3-validator:
         specifier: ^2.0.2
         version: 2.0.6
+      zod:
+        specifier: ^3.22.4
+        version: 3.23.8
     devDependencies:
       '@nestjs/cli':
         specifier: ^10.0.0
@@ -16223,7 +16226,7 @@ snapshots:
       '@babel/plugin-transform-react-jsx-source': 7.24.1(@babel/core@7.24.5)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+      vite: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -16234,7 +16237,7 @@ snapshots:
       '@babel/plugin-transform-react-jsx-source': 7.24.1(@babel/core@7.24.5)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -22214,7 +22217,7 @@ snapshots:
       debug: 4.3.4
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -22231,7 +22234,7 @@ snapshots:
       debug: 4.3.4
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -22246,7 +22249,7 @@ snapshots:
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.18.0)
       node-stdlib-browser: 1.2.0
-      vite: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+      vite: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
     transitivePeerDependencies:
       - rollup
 
@@ -22254,13 +22257,13 @@ snapshots:
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.18.0)
       node-stdlib-browser: 1.2.0
-      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
     transitivePeerDependencies:
       - rollup
 
   vite-plugin-wasm@3.3.0(vite@5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)):
     dependencies:
-      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+      vite: 5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
 
   vite@5.2.11(@types/node@20.12.12)(sugarss@4.0.1)(terser@5.31.0):
     dependencies:
@@ -22273,7 +22276,7 @@ snapshots:
       sugarss: 4.0.1(postcss@8.4.38)
       terser: 5.31.0
 
-  vite@5.2.11(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0):
+  vite@5.2.11(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0):
     dependencies:
       esbuild: 0.20.2
       postcss: 8.4.38
@@ -22295,7 +22298,7 @@ snapshots:
       sugarss: 4.0.1(postcss@8.4.38)
       terser: 5.31.0
 
-  vite@5.2.13(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0):
+  vite@5.2.13(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0):
     dependencies:
       esbuild: 0.20.2
       postcss: 8.4.38
@@ -22359,7 +22362,7 @@ snapshots:
       strip-literal: 2.1.0
       tinybench: 2.8.0
       tinypool: 0.8.4
-      vite: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+      vite: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
       vite-node: 1.6.0(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
       why-is-node-running: 2.2.2
     optionalDependencies:
@@ -22393,41 +22396,7 @@ snapshots:
       strip-literal: 2.1.0
       tinybench: 2.8.0
       tinypool: 0.8.4
-      vite: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
-      vite-node: 1.6.0(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
-      why-is-node-running: 2.2.2
-    optionalDependencies:
-      '@types/node': 20.14.2
-      jsdom: 24.1.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-    transitivePeerDependencies:
-      - less
-      - lightningcss
-      - sass
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-
-  vitest@1.6.0(@types/node@20.14.2)(jsdom@24.1.0)(sugarss@4.0.1)(terser@5.31.0):
-    dependencies:
-      '@vitest/expect': 1.6.0
-      '@vitest/runner': 1.6.0
-      '@vitest/snapshot': 1.6.0
-      '@vitest/spy': 1.6.0
-      '@vitest/utils': 1.6.0
-      acorn-walk: 8.3.2
-      chai: 4.4.1
-      debug: 4.3.4
-      execa: 8.0.1
-      local-pkg: 0.5.0
-      magic-string: 0.30.10
-      pathe: 1.1.2
-      picocolors: 1.0.1
-      std-env: 3.7.0
-      strip-literal: 2.1.0
-      tinybench: 2.8.0
-      tinypool: 0.8.4
-      vite: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
+      vite: 5.2.11(@types/node@20.14.2)(sugarss@4.0.1(postcss@8.4.38))(terser@5.31.0)
       vite-node: 1.6.0(@types/node@20.14.2)(sugarss@4.0.1)(terser@5.31.0)
       why-is-node-running: 2.2.2
     optionalDependencies:
