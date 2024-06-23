@@ -2,9 +2,9 @@ import { vi, describe, beforeEach, it, expect } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { XTransferController } from './x-transfer.controller.js';
 import { XTransferService } from './x-transfer.service.js';
-import { XTransferDto } from './dto/XTransferDto.js';
 import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
+import { XTransferDto } from './dto/XTransferDto.js';
 
 // Integration tests to ensure controller and service are working together
 describe('XTransferController', () => {
