@@ -49,7 +49,7 @@
     "nodemailer": "^6.9.4",
     "pg": "^8.11.2",
     "react": "^18.2.0",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.17",
     "ua-parser-js": "^1.0.36",
