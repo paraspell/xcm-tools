@@ -14,7 +14,6 @@ import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { XTransferDto, XTransferDtoSchema } from './dto/XTransferDto.js';
 
 @Controller('x-transfer')
-@UsePipes(new ZodValidationPipe(XTransferDtoSchema))
 export class XTransferController {
   constructor(
     private xTransferService: XTransferService,
@@ -34,12 +33,14 @@ export class XTransferController {
   }
 
   @Get()
+  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   generateXcmCall(@Query() queryParams: XTransferDto, @Req() req) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, queryParams);
     return this.xTransferService.generateXcmCall(queryParams);
   }
 
   @Post()
+  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   generateXcmCallV2(@Body() bodyParams: XTransferDto, @Req() req) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
     return this.xTransferService.generateXcmCall(bodyParams);
