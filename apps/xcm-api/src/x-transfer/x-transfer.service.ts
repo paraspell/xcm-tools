@@ -33,7 +33,7 @@ export class XTransferService {
       );
     }
 
-    if (toNode && !NODE_NAMES.includes(toNode)) {
+    if (typeof toNode === 'string' && toNode && !NODE_NAMES.includes(toNode)) {
       throw new BadRequestException(
         `Node ${to} is not valid. Check docs for valid nodes.`,
       );
