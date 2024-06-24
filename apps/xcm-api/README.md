@@ -35,44 +35,82 @@ XCM API allows you to implement all XCM SDK and XCM Router features.
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html).
 
 Possible parameters:
-- `from` (Query parameter): (optional): Represents the Parachain from which the assets will be transferred.
-- `to` (Query parameter): (optional): Represents the Parachain to which the assets will be transferred.
-- `currency` (Query parameter): (optional): Represents the asset being sent. It should be a string value.
-- `amount` (Query parameter): (required): Specifies the amount of assets to transfer. It should be a numeric value.
-- `address` (Query parameter): (required): Specifies the address of the recipient.
+- `from`: (optional): Represents the Parachain from which the assets will be transferred.
+- `to`: (optional): Represents the Parachain to which the assets will be transferred. This can also be custom multilocation.
+- `currency`: (optional): Represents the asset being sent. It should be a string value. This can also be custom multilocation.
+- `amount`: (required): Specifies the amount of assets to transfer. It should be a numeric value.
+- `address`: (required): Specifies the address of the recipient. This can also be custom multilocation.
+
+```
+NOTICE:
+Latest version switched to POST method for XCM Transfers, but we kept GET method support. It will however be deprecated at some point. Please consider switching to POST method.
+```
 
 ```js
 //Construct XCM call from Relay chain to Parachain (DMP)
-const response = await fetch(
-    "http://localhost:3001/x-transfer?" +
-    new URLSearchParams({
-        to: "Parachain",   //Replace "Parachain" with destination Parachain eg. "Moonbeam"
-        amount: "Amount",  //Replace "Amount" with the amount you wish to transfer (Numeric value)
-        address: "Address" //Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
+const response = await fetch("http://localhost:3001/x-transfer", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        to: "Parachain",   // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
+        amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
+        address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     })
-);
+});
 
 //Construct XCM call from Parachain chain to Relay chain (UMP)
-const response = await fetch(
-    "http://localhost:3001/x-transfer?" +
-    new URLSearchParams({
-        from: "Parachain", //Replace "Parachain" with sender Parachain eg. "Acala"
-        amount: "Amount",  //Replace "Amount" with the amount you wish to transfer (Numeric value)
-        address: "Address" //Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
+const response = await fetch("http://localhost:3001/x-transfer", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        from: "Parachain", // Replace "Parachain" with sender Parachain, e.g., "Acala"
+        amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
+        address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     })
-);
+});
 
 //Construct XCM call from Parachain to Parachain (HRMP)
-const response = await fetch(
-    "http://localhost:3001/x-transfer?" +
-    new URLSearchParams({
-        from: "Parachain", //Replace "Parachain" with sender Parachain eg. "Acala"
-        to: "Parachain",   //Replace "Parachain" with destination Parachain eg. "Moonbeam"
-        currency: "Currency", //Replace "Currency" with asset id or symbol eg. "DOT"
-        amount: "Amount",  //Replace "Amount" with the amount you wish to transfer (Numeric value)
-        address: "Address" //Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
+const response = await fetch("http://localhost:3001/x-transfer", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        from: "Parachain", // Replace "Parachain" with sender Parachain, e.g., "Acala"
+        to: "Parachain",   // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
+        currency: "Currency", // Replace "Currency" with asset id or symbol, e.g., "DOT" or custom Multilocation
+        amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
+        address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     })
-);
+});
+
+//Construct custom multilocation XCM call from Parachain to Parachain (HRMP)
+//Multilocations can be customized for Destination, Address and Currency.
+const response = await fetch("http://localhost:3001/x-transfer", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        from: "Parachain",   // Replace "Parachain" with sender Parachain, e.g., "Acala"
+        to: "Parachain",    // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
+        address: "Address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+        currency: {         // Replace "Currency" with asset id, symbol, e.g., "DOT" or custom Multilocation
+            parents: 0,
+            interior: {
+                X2: [
+                    { PalletInstance: "50" },
+                    { GeneralIndex: "41" }
+                ]
+            }
+        },
+        amount: "Amount" // Replace "Amount" with the numeric value you wish to transfer
+    })
+});
 ```
 
 ### XCM Router
