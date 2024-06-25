@@ -113,6 +113,28 @@ const response = await fetch("http://localhost:3001/x-transfer", {
 });
 ```
 
+### Asset claim
+A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#asset-claim).
+
+Possible parameters:
+- `from` (Inside JSON body): (required): Represents the Parachain on which the asset will be claimed.
+- `address` (Inside JSON body): (required): Specifies the address of the recipient.
+- `fungible` (Inside JSON body): (required): Represents the asset being claimed. It should be a multilocation.
+
+```js
+const response = await fetch("http://localhost:3001/asset-claim", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        from: "Parachain", // Replace "Amount" with the numeric value you wish to transfer
+        address: "Address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+        fungible: "Multilocation" //Replace "Multilocation" with specific asset multilocation
+    })
+});
+```
+
 ### XCM Router
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmRouter.html).
 
