@@ -17,4 +17,5 @@ export enum EventName {
   GENERATE_XCM_CALL = 'Generate XCM Call',
   GENERATE_API_KEY = 'Generate API Key',
   GENERATE_ROUTER_EXTRINSICS = 'Generate router extrinsics',
+  CLAIM_ASSETS = 'Claim assets',
 }
