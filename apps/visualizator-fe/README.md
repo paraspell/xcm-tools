@@ -11,7 +11,7 @@
     </a>
   </p>
   <p align="center"> Now live at https://xcm-visualizator.tech/</p>
-  <p>XCM Visualizator documentation <a href = "" \>[TBA]</p>
+  <p>XCM Visualizator documentation <a href = "https://paraspell.github.io/docs/visualizator/getting-start.html" \>[here]</p>
 </div>
 
 <br /><br />
