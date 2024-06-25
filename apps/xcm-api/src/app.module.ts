@@ -21,6 +21,7 @@ import { throttlerConfig } from './config/throttler.config.js';
 import { RouterModule } from './router/router.module.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { AssetClaimModule } from './asset-claim/asset-claim.module.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +30,7 @@ const __dirname = path.dirname(__filename);
   imports: [
     AnalyticsModule,
     XTransferModule,
+    AssetClaimModule,
     RouterModule,
     AssetsModule,
     ChannelsModule,

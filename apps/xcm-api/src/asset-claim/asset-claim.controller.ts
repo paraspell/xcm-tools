@@ -1,0 +1,29 @@
+import { Body, Controller, Post, Req, UsePipes } from '@nestjs/common';
+import { AnalyticsService } from '../analytics/analytics.service.js';
+import { EventName } from '../analytics/EventName.js';
+import { ZodValidationPipe } from '../zod-validation-pipe.js';
+import { AssetClaimService } from './asset-claim.service.js';
+import { AssetClaimDto, AssetClaimSchema } from './dto/asset-claim.dto.js';
+
+@Controller('asset-claim')
+export class AssetClaimController {
+  constructor(
+    private xTransferService: AssetClaimService,
+    private analyticsService: AnalyticsService,
+  ) {}
+
+  private trackAnalytics(eventName: EventName, req, params: AssetClaimDto) {
+    const { from, fungible } = params;
+    this.analyticsService.track(eventName, req, {
+      from,
+      assetLength: fungible.length,
+    });
+  }
+
+  @Post()
+  @UsePipes(new ZodValidationPipe(AssetClaimSchema))
+  claimAssets(@Body() bodyParams: AssetClaimDto, @Req() req) {
+    this.trackAnalytics(EventName.CLAIM_ASSETS, req, bodyParams);
+    return this.xTransferService.claimAssets(bodyParams);
+  }
+}

@@ -23,7 +23,7 @@ export class XTransferService {
 
     if (!fromNode && !toNode) {
       throw new BadRequestException(
-        "You need to provide either 'from' or 'to' query parameters",
+        "You need to provide either 'from' or 'to' parameters",
       );
     }
 
