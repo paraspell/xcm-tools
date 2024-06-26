@@ -1,3 +1,4 @@
+import { Version } from '@paraspell/sdk';
 import { z } from 'zod';
 
 export type JunctionType =
@@ -133,6 +134,8 @@ const CurrencySchema = z
   .union([z.string(), MultiLocationSchema, z.array(MultiAssetSchema)])
   .optional();
 
+const versionValues = Object.values(Version) as [Version, ...Version[]];
+
 export const XTransferDtoSchema = z.object({
   from: z.string().optional(),
   to: z.union([z.string().optional(), MultiLocationSchema]),
@@ -153,6 +156,7 @@ export const XTransferDtoSchema = z.object({
     MultiLocationSchema,
   ]),
   currency: CurrencySchema,
+  xcmVersion: z.enum(versionValues).optional(),
 });
 
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
