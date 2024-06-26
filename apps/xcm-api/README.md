@@ -128,11 +128,36 @@ const response = await fetch("http://localhost:3001/asset-claim", {
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        from: "Parachain", // Replace "Amount" with the numeric value you wish to transfer
+        from: "Parachain", // Replace "Parachain" with chain you wish to claim assets on
         address: "Address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
         fungible: "Asset Multilocation array" //Replace "Asset Multilocation array" with specific asset multilocation array along with the amount (example in docs)
     })
 });
+```
+
+### Transfer info query
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#transfer-info-query).
+
+Possible parameters:
+- `origin` (Query parameter): (required): Represents the Parachain from which the assets will be transferred.
+- `destination` (Query parameter): (required): Represents the Parachain to which the assets will be transferred.
+- `currency`: (Query parameter): (required): Represents the asset being sent. It should be a string value.
+- `amount`:  (Query parameter): (required): Specifies the amount of assets to transfer. It should be a numeric value.
+- `accountOrigin`:  (Query parameter): (required): Specifies the address of the origin. 
+- `accountDestination`:  (Query parameter): (required): Specifies the address of the recipient. 
+
+```js
+const response = await fetch(
+    "http://localhost:3001/transfer-info?" +
+    new URLSearchParams({
+        origin: "Parachain", // Replace "Parachain" with sender Parachain, e.g., "Acala"
+        destination: "Parachain", // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" 
+        currency: "Currency", // Replace "Currency" with asset id or symbol, e.g., "DOT"
+        amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
+        accountOrigin: "Account address", // Replace "Address" with origin wallet address (In AccountID32 or AccountKey20 Format)
+        accountDestination: "Account address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
+    })
+);
 ```
 
 ### XCM Router
