@@ -17,7 +17,14 @@ import { XTransferDto } from './dto/XTransferDto.js';
 
 @Injectable()
 export class XTransferService {
-  async generateXcmCall({ from, to, amount, address, currency }: XTransferDto) {
+  async generateXcmCall({
+    from,
+    to,
+    amount,
+    address,
+    currency,
+    xcmVersion,
+  }: XTransferDto) {
     const fromNode = from as TNode | undefined;
     const toNode = to as TNode | undefined;
 
@@ -63,6 +70,10 @@ export class XTransferService {
     }
 
     builder = builder.amount(amount).address(address);
+
+    if (xcmVersion) {
+      builder = builder.xcmVersion(xcmVersion);
+    }
 
     let response: TSerializedApiCall;
     try {
