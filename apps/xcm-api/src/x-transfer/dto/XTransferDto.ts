@@ -60,7 +60,7 @@ const JunctionSchema = z.union([
 
 const Junctions = z.lazy(() =>
   z.object({
-    X1: JunctionSchema.optional(),
+    X1: z.union([JunctionSchema, z.array(JunctionSchema)]).optional(),
     X2: z.tuple([JunctionSchema, JunctionSchema]).optional(),
     X3: z.tuple([JunctionSchema, JunctionSchema, JunctionSchema]).optional(),
     X4: z
@@ -119,7 +119,7 @@ export const MultiLocationSchema = z.object({
 export type MultiLocation = z.infer<typeof MultiLocationSchema>;
 export type Junction = z.infer<typeof JunctionSchema>;
 
-export const MultiAssetSchema = z.object({
+export const MultiAssetSchemaV3 = z.object({
   id: z.object({
     Concrete: MultiLocationSchema,
   }),
@@ -127,6 +127,18 @@ export const MultiAssetSchema = z.object({
     Fungible: StringOrNumber,
   }),
 });
+
+export const MultiAssetSchemaV4 = z.object({
+  id: MultiLocationSchema,
+  fun: z.object({
+    Fungible: StringOrNumber,
+  }),
+});
+
+export const MultiAssetSchema = z.union([
+  MultiAssetSchemaV3,
+  MultiAssetSchemaV4,
+]);
 
 export type TMultiAsset = z.infer<typeof MultiAssetSchema>;
 
