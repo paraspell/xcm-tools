@@ -40,6 +40,7 @@ Possible parameters:
 - `currency`: (optional): Represents the asset being sent. It should be a string value. This can also be custom multilocation.
 - `amount`: (required): Specifies the amount of assets to transfer. It should be a numeric value.
 - `address`: (required): Specifies the address of the recipient. This can also be custom multilocation.
+- `xcmVersion`: (optional): Specifies manually selected XCM version if pre-selected does not work. Format: Vx - where x = version number eg. V4. 
 
 ```
 NOTICE:
@@ -57,6 +58,8 @@ const response = await fetch("http://localhost:3001/x-transfer", {
         to: "Parachain",   // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
         amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
         address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+        //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
+    })
     })
 });
 
@@ -70,6 +73,8 @@ const response = await fetch("http://localhost:3001/x-transfer", {
         from: "Parachain", // Replace "Parachain" with sender Parachain, e.g., "Acala"
         amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
         address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+        //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
+    })
     })
 });
 
@@ -85,6 +90,8 @@ const response = await fetch("http://localhost:3001/x-transfer", {
         currency: "Currency", // Replace "Currency" with asset id or symbol, e.g., "DOT" or custom Multilocation
         amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
         address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+        //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
+    })
     })
 });
 
@@ -109,6 +116,8 @@ const response = await fetch("http://localhost:3001/x-transfer", {
             }
         },
         amount: "Amount" // Replace "Amount" with the numeric value you wish to transfer
+        //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
+    })
     })
 });
 ```
