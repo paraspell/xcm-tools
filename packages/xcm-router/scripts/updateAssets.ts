@@ -1,10 +1,10 @@
 import fs from 'fs';
 import { EXCHANGE_NODES } from '../src/consts/consts';
 import createDexNodeInstance from '../src/dexNodes/DexNodeFactory';
-import { TAssetSymbols, TExchangeNode } from '../src/types';
+import { TAssetSymbols } from '../src/types';
 
 export const writeJsonSync = (path: string, data: any) => {
-  fs.writeFileSync(path, JSON.stringify(data, null, 4));
+  fs.writeFileSync(path, JSON.stringify(data, null, 2));
 };
 
 (async () => {

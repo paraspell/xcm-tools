@@ -9,8 +9,6 @@
     "node": ">=18"
   },
   "resolutions": {
-    "@acala-network/eth-providers": "2.7.5-1",
-    "@crypto-dex-sdk/chain": "0.0.4",
     "@polkadot/types-codec": "^11.2.1",
     "@polkadot/api": "^11.2.1"
   },
