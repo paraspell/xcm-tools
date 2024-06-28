@@ -5,7 +5,6 @@ import AcalaExchangeNode from './Acala/AcalaDex';
 import BifrostExchangeNode from './Bifrost/BifrostDex';
 import HydraDxExchangeNode from './HydraDx/HydraDxDex';
 import InterlayExchangeNode from './Interlay/InterlayDex';
-import MangataExchangeNode from './Mangata/MangataDex';
 import createDexNodeInstance from './DexNodeFactory';
 import { type TExchangeNode } from '../types';
 import type ExchangeNode from './DexNode';
@@ -16,7 +15,6 @@ describe('createDexNodeInstance', () => {
     { node: 'AcalaDex', expectedClass: AcalaExchangeNode },
     { node: 'BifrostPolkadotDex', expectedClass: BifrostExchangeNode },
     { node: 'InterlayDex', expectedClass: InterlayExchangeNode },
-    { node: 'MangataDex', expectedClass: MangataExchangeNode },
   ];
 
   testCases.forEach(({ node, expectedClass }) => {

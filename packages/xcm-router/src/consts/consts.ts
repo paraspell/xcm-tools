@@ -3,7 +3,6 @@ export const EXCHANGE_NODES = [
   'BasiliskDex',
   'KaruraDex',
   'AcalaDex',
-  'MangataDex',
   'KintsugiDex',
   'InterlayDex',
   'BifrostKusamaDex',
