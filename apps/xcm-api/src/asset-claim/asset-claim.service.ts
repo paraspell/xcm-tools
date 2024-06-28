@@ -6,7 +6,7 @@ import {
 import {
   Builder,
   InvalidCurrencyError,
-  NODE_NAMES,
+  NODES_WITH_RELAY_CHAINS,
   TMultiAsset,
   TNode,
   TSerializedApiCall,
@@ -24,7 +24,7 @@ export class AssetClaimService {
       throw new BadRequestException("You need to provide a 'from' parameter");
     }
 
-    if (fromNode && !NODE_NAMES.includes(fromNode)) {
+    if (fromNode && !NODES_WITH_RELAY_CHAINS.includes(fromNode)) {
       throw new BadRequestException(
         `Node ${from} is not valid. Check docs for valid nodes.`,
       );

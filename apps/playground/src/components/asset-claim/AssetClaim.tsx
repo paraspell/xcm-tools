@@ -9,6 +9,7 @@ import { useWallet } from "../../hooks/useWallet";
 import { submitTransaction } from "../../utils";
 import ErrorAlert from "../ErrorAlert";
 import AssetClaimForm, { FormValues } from "./AssetClaimForm";
+import { submitTxUsingApi } from "../../utils/submitUsingApi";
 
 const AssetClaim = () => {
   const { selectedAccount } = useWallet();
@@ -64,6 +65,8 @@ const AssetClaim = () => {
   };
 
   const onSubmit = async (formValues: FormValues) => {
+    const { useApi, from, amount } = formValues;
+
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
       throw Error("No account selected!");
@@ -74,11 +77,38 @@ const AssetClaim = () => {
     const injector = await web3FromAddress(selectedAccount.address);
 
     try {
-      await submitUsingSdk(
-        formValues,
-        selectedAccount.address,
-        injector.signer
-      );
+      if (useApi) {
+        await submitTxUsingApi(
+          {
+            from,
+            address: formValues.address,
+            fungible: [
+              {
+                id: {
+                  Concrete: {
+                    parents: from === "Polkadot" || from === "Kusama" ? 0 : 1,
+                    interior: "Here",
+                  },
+                },
+                fun: { Fungible: amount },
+              },
+            ],
+          },
+          formValues.from,
+          "/asset-claim",
+          selectedAccount.address,
+          injector.signer,
+          "POST",
+          true
+        );
+      } else {
+        await submitUsingSdk(
+          formValues,
+          selectedAccount.address,
+          injector.signer
+        );
+      }
+
       alert("Transaction was successful!");
     } catch (e) {
       if (e instanceof Error) {

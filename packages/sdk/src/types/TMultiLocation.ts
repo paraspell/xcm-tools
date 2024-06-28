@@ -122,7 +122,7 @@ export interface Junctions {
 
 export interface TMultiLocation {
   parents: StringOrNumber
-  interior: Junctions
+  interior: Junctions | 'Here'
 }
 
 export type TMultiLocationHeader = {

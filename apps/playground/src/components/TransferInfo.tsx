@@ -6,6 +6,7 @@ import { useWallet } from "../hooks/useWallet";
 import TransferInfoForm, { FormValues } from "./TransferInfoForm";
 import OutputAlert from "./OutputAlert";
 import { getTransferInfo } from "@paraspell/sdk";
+import { fetchFromApi } from "../utils/submitUsingApi";
 
 const TransferInfo = () => {
   const { selectedAccount } = useWallet();
@@ -33,6 +34,33 @@ const TransferInfo = () => {
     }
   }, [error, scrollIntoView]);
 
+  const getQueryResult = async (formValues: FormValues) => {
+    const { useApi } = formValues;
+    const originAddress = selectedAccount?.address ?? "";
+    if (useApi) {
+      return await fetchFromApi(
+        {
+          origin: formValues.from,
+          destination: formValues.to,
+          accountOrigin: originAddress,
+          accountDestination: formValues.destinationAddress,
+          currency: formValues.currency,
+          amount: formValues.amount,
+        },
+        `/transfer-info`
+      );
+    } else {
+      return await getTransferInfo(
+        formValues.from,
+        formValues.to,
+        originAddress,
+        formValues.destinationAddress,
+        formValues.currency,
+        formValues.amount
+      );
+    }
+  };
+
   const onSubmit = async (formValues: FormValues) => {
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -42,15 +70,7 @@ const TransferInfo = () => {
     setLoading(true);
 
     try {
-      const output = await getTransferInfo(
-        formValues.from,
-        formValues.to,
-        selectedAccount.address,
-        formValues.destinationAddress,
-        formValues.currency,
-        formValues.amount
-      );
-      console.log(output);
+      const output = await getQueryResult(formValues);
       setOutput(JSON.stringify(output, null, 2));
       openOutputAlert();
       closeAlert();

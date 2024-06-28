@@ -113,7 +113,7 @@ const Junctions = z.lazy(() =>
 
 export const MultiLocationSchema = z.object({
   parents: StringOrNumber,
-  interior: Junctions,
+  interior: z.union([Junctions, z.literal('Here')]),
 });
 
 export type MultiLocation = z.infer<typeof MultiLocationSchema>;

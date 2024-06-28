@@ -1,30 +1,34 @@
-import { Signer } from '@polkadot/api/types';
-import { API_URL } from '../consts';
-import axios, { AxiosError } from 'axios';
-import { TNodeWithRelayChains, createApiInstanceForNode } from '@paraspell/sdk';
-import { buildTx, submitTransaction } from '../utils';
+import { Signer } from "@polkadot/api/types";
+import { API_URL } from "../consts";
+import axios, { AxiosError } from "axios";
+import { TNodeWithRelayChains, createApiInstanceForNode } from "@paraspell/sdk";
+import { buildTx, submitTransaction } from "../utils";
 
-export const fetchFromApi = async <T>(params: T, endpoint: string, method: string = 'GET') => {
+export const fetchFromApi = async <T>(
+  params: T,
+  endpoint: string,
+  method = "GET",
+  useBody: boolean = false
+) => {
   try {
     const response = await axios(`${API_URL}${endpoint}`, {
       method,
-      params: {
-        ...params,
-      },
+      params: useBody ? undefined : params,
+      data: useBody ? params : undefined,
     });
 
     return await response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error(error);
-      let errorMessage = 'Error while fetching data.';
+      let errorMessage = "Error while fetching data.";
       if (error.response === undefined) {
         errorMessage += " Couldn't connect to API.";
       } else {
         const serverMessage =
           error.response.data && error.response.data.message
-            ? ' Server response: ' + error.response.data.message
-            : '';
+            ? " Server response: " + error.response.data.message
+            : "";
         errorMessage += serverMessage;
       }
       throw new Error(errorMessage);
@@ -41,9 +45,20 @@ export const submitTxUsingApi = async <T>(
   endpoint: string,
   injectorAddress: string,
   signer: Signer,
-  method: string = 'GET',
+  method: string = "GET",
+  useBody = false
 ) => {
-  const serializedTx = await fetchFromApi({ ...params, injectorAddress }, endpoint, method);
+  const serializedTx = await fetchFromApi(
+    { ...params, injectorAddress },
+    endpoint,
+    method,
+    useBody
+  );
   const api = await createApiInstanceForNode(fromNode);
-  await submitTransaction(api, buildTx(api, serializedTx), signer, injectorAddress);
+  await submitTransaction(
+    api,
+    buildTx(api, serializedTx),
+    signer,
+    injectorAddress
+  );
 };

@@ -1,4 +1,4 @@
-import { Stack, Select, TextInput, Button } from "@mantine/core";
+import { Stack, Select, TextInput, Button, Checkbox } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { TNodeWithRelayChains } from "@paraspell/sdk";
 import { FC } from "react";
@@ -15,6 +15,7 @@ export type FormValues = {
   from: TNodeWithRelayChains;
   address: string;
   amount: string;
+  useApi: boolean;
 };
 
 type Props = {
@@ -28,6 +29,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
       from: "Polkadot",
       amount: "10000000000000000000",
       address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
+      useApi: false,
     },
 
     validate: {
@@ -61,6 +63,8 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           required
           {...form.getInputProps("amount")}
         />
+
+        <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
 
         <Button type="submit" loading={loading}>
           Claim asset
