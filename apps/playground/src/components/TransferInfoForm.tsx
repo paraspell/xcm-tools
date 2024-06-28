@@ -1,7 +1,7 @@
 import { useForm } from "@mantine/form";
 import { isValidWalletAddress } from "../utils";
 import { FC } from "react";
-import { Button, Select, Stack, TextInput } from "@mantine/core";
+import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
 import { NODES_WITH_RELAY_CHAINS, TNodeWithRelayChains } from "@paraspell/sdk";
 
 export type FormValues = {
@@ -11,6 +11,7 @@ export type FormValues = {
   address: string;
   destinationAddress: string;
   amount: string;
+  useApi: boolean;
 };
 
 type Props = {
@@ -27,6 +28,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
       amount: "10000000000000000000",
       address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
       destinationAddress: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
+      useApi: false,
     },
 
     validate: {
@@ -91,6 +93,8 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           required
           {...form.getInputProps("amount")}
         />
+
+        <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
 
         <Button type="submit" loading={loading}>
           Show Transfer Info
