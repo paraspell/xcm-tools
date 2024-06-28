@@ -4,7 +4,6 @@ import BifrostExchangeNode from './Bifrost/BifrostDex';
 import type ExchangeNode from './DexNode';
 import HydraDxExchangeNode from './HydraDx/HydraDxDex';
 import InterlayExchangeNode from './Interlay/InterlayDex';
-import MangataExchangeNode from './Mangata/MangataDex';
 
 export const record: Record<TExchangeNode, ExchangeNode> = {
   // Reuse classes for Kusama equivalents
@@ -12,7 +11,6 @@ export const record: Record<TExchangeNode, ExchangeNode> = {
   BasiliskDex: new HydraDxExchangeNode('Basilisk'),
   AcalaDex: new AcalaExchangeNode('Acala'),
   KaruraDex: new AcalaExchangeNode('Karura'),
-  MangataDex: new MangataExchangeNode(),
   InterlayDex: new InterlayExchangeNode('Interlay'),
   KintsugiDex: new InterlayExchangeNode('Kintsugi'),
   BifrostPolkadotDex: new BifrostExchangeNode('BifrostPolkadot'),

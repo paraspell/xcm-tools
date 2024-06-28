@@ -798,9 +798,6 @@ importers:
       '@galacticcouncil/sdk':
         specifier: ^3.0.1
         version: 3.0.1(@polkadot/api-augment@11.3.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-base@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-derive@11.3.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/keyring@12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2))(@polkadot/rpc-augment@11.3.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-core@11.3.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@11.3.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types-augment@11.3.1)(@polkadot/types-codec@11.2.1)(@polkadot/types-create@11.3.1)(@polkadot/types-known@11.2.1)(@polkadot/types@11.2.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
-      '@mangata-finance/sdk':
-        specifier: ^2.1.1
-        version: 2.2.0(@polkadot/api@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types@11.2.1)
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../sdk
@@ -3057,12 +3054,6 @@ packages:
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
 
-  '@mangata-finance/sdk@2.2.0':
-    resolution: {integrity: sha512-TDM6W8nL1c+laq14YwL+uiNAxKFkVBRnRh5ezsqQDoAsLt9k/fWNEYl1KEASptTD4oXpZfVcT0ORrULW3ogzTg==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      '@polkadot/api': ^11.2.1
-
   '@mangata-finance/type-definitions@2.1.2':
     resolution: {integrity: sha512-kr4mVMuQ6DqZ0H72z0YI8tcdlk4XD4vUgRVYYfTJdXFJhRsfS4YRxfs/iiQPNzWKgoQZKcDqsbQD3xz9T1gELw==}
     engines: {node: '>=18.0.0'}
@@ -4373,12 +4364,15 @@ packages:
 
   '@substrate/connect@0.7.19':
     resolution: {integrity: sha512-+DDRadc466gCmDU71sHrYOt1HcI2Cbhm7zdCFjZfFVHXhC/E8tOdrVSglAH2HDEHR0x2SiHRxtxOGC7ak2Zjog==}
+    deprecated: versions below 1.x are no longer maintained
 
   '@substrate/connect@0.8.10':
     resolution: {integrity: sha512-DIyQ13DDlXqVFnLV+S6/JDgiGowVRRrh18kahieJxhgvzcWicw5eLc6jpfQ0moVVLBYkO7rctB5Wreldwpva8w==}
+    deprecated: versions below 1.x are no longer maintained
 
   '@substrate/connect@0.8.8':
     resolution: {integrity: sha512-zwaxuNEVI9bGt0rT8PEJiXOyebLIo6QN1SyiAHRPBOl6g3Sy0KKdSN8Jmyn++oXhVRD8aIe75/V8ZkS81T+BPQ==}
+    deprecated: versions below 1.x are no longer maintained
 
   '@substrate/light-client-extension-helpers@0.0.4':
     resolution: {integrity: sha512-vfKcigzL0SpiK+u9sX6dq2lQSDtuFLOxIJx2CKPouPEHIs8C+fpsufn52r19GQn+qDhU8POMPHOVoqLktj8UEA==}
@@ -9579,10 +9573,6 @@ packages:
   tslib@2.6.3:
     resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
 
-  tslog@4.8.2:
-    resolution: {integrity: sha512-eAKIRjxfSKYLs06r1wT7oou6Uv9VN6NW9g0JPidBlqQwPBBl5+84dm7r8zSOPVq1kyfEw1P6B3/FLSpZCorAgA==}
-    engines: {node: '>=16'}
-
   tty-browserify@0.0.1:
     resolution: {integrity: sha512-C3TaO7K81YvjCgQH9Q1S3R3P3BtN3RIM8n+OvX4il1K1zgE8ZhI0op7kClgkxtutIE8hQrcrHBXvIheqKUUCxw==}
 
@@ -13442,16 +13432,6 @@ snapshots:
       - utf-8-validate
 
   '@lukeed/csprng@1.1.0': {}
-
-  '@mangata-finance/sdk@2.2.0(@polkadot/api@11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types@11.2.1)':
-    dependencies:
-      '@mangata-finance/type-definitions': 2.1.2(@polkadot/types@11.2.1)
-      '@polkadot/api': 11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      big.js: 6.2.1
-      tslib: 2.6.3
-      tslog: 4.8.2
-    transitivePeerDependencies:
-      - '@polkadot/types'
 
   '@mangata-finance/type-definitions@2.1.2(@polkadot/types@11.2.1)':
     dependencies:
@@ -21980,8 +21960,6 @@ snapshots:
   tslib@2.6.2: {}
 
   tslib@2.6.3: {}
-
-  tslog@4.8.2: {}
 
   tty-browserify@0.0.1: {}
 
