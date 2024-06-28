@@ -21,9 +21,7 @@ export class AssetClaimService {
     const fromNode = from as TNode | undefined;
 
     if (!fromNode) {
-      throw new BadRequestException(
-        "You need to provide either 'from' or 'to' parameters",
-      );
+      throw new BadRequestException("You need to provide a 'from' parameter");
     }
 
     if (fromNode && !NODE_NAMES.includes(fromNode)) {
