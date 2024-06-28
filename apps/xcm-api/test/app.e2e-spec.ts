@@ -5,7 +5,10 @@ import { AppModule } from './../src/app.module';
 import {
   Builder,
   NODE_NAMES,
+  TMultiAsset,
+  TMultiLocation,
   TNode,
+  Version,
   createApiInstanceForNode,
   getAllAssetsSymbols,
   getAssetsObject,
@@ -15,11 +18,13 @@ import {
   getParaId,
   getRelayChainSymbol,
   getSupportedPallets,
+  getTransferInfo,
   hasSupportForAsset,
 } from '@paraspell/sdk';
 import { ApiPromise } from '@polkadot/api';
 import { RouterDto } from '../src/router/dto/RouterDto';
 import { describe, beforeAll, it, expect } from 'vitest';
+import { TransferInfoDto } from '../src/transfer-info/dto/transfer-info.dto';
 
 describe('XCM API (e2e)', () => {
   let app: INestApplication;
@@ -431,6 +436,79 @@ describe('XCM API (e2e)', () => {
         .expect(serializedApiCall);
     });
 
+    it(`Generate XCM call - Parachain to parachain override currency - ${xTransferUrl} (GET)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to: TNode = 'Basilisk';
+      const currency: TMultiLocation = {
+        parents: '0',
+        interior: {
+          X1: {
+            Parachain: '2000',
+          },
+        },
+      };
+      const api = await createApiInstanceForNode(from);
+      const serializedApiCall = await Builder(api)
+        .from(from)
+        .to(to)
+        .currency(currency)
+        .amount(amount)
+        .address(address)
+        .buildSerializedApiCall();
+      await api.disconnect();
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from,
+          to,
+          amount,
+          address,
+          currency,
+        })
+        .expect(201)
+        .expect(serializedApiCall);
+    });
+
+    it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl} (GET)`, async () => {
+      const from: TNode = 'AssetHubPolkadot';
+      const to: TNode = 'Acala';
+      const currency: TMultiAsset = {
+        id: {
+          Concrete: {
+            parents: 0,
+            interior: {
+              X1: {
+                Parachain: '2000',
+              },
+            },
+          },
+        },
+        fun: {
+          Fungible: '1000000000',
+        },
+      };
+      const api = await createApiInstanceForNode(from);
+      const serializedApiCall = await Builder(api)
+        .from(from)
+        .to(to)
+        .currency([currency])
+        .amount(amount)
+        .address(address)
+        .buildSerializedApiCall();
+      await api.disconnect();
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from,
+          to,
+          amount,
+          address,
+          currency: [currency],
+        })
+        .expect(201)
+        .expect(serializedApiCall);
+    });
+
     it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl} (GET)`, async () => {
       const from: TNode = 'AssetHubKusama';
       const api = await createApiInstanceForNode(from);
@@ -471,47 +549,210 @@ describe('XCM API (e2e)', () => {
         .expect(serializedApiCall);
     });
 
-    const routerOptions: RouterDto = {
-      from: 'Astar',
-      exchange: 'HydraDxDex',
-      to: 'Moonbeam',
-      currencyFrom: 'ASTR',
-      currencyTo: 'GLMR',
-      amount: '10000000000000000000',
-      injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-      recipientAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-      slippagePct: '1',
-    };
-
-    it(`Generate router call - manual exchange select - ${routerUrl} (GET)`, async () => {
+    it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl} (GET)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const api = await createApiInstanceForNode(from);
+      const serializedApiCall = await Builder(api)
+        .from(from)
+        .amount(amount)
+        .address(address)
+        .xcmVersion(Version.V3)
+        .buildSerializedApiCall();
+      await api.disconnect();
       return request(app.getHttpServer())
-        .get(routerUrl)
-        .query(routerOptions)
+        .get(xTransferUrl)
+        .query({
+          from,
+          amount,
+          address,
+          xcmVersion: Version.V3,
+        })
         .expect(200)
-        .expect((res) => {
-          const data = JSON.parse(res.text);
-          expect(data).toHaveProperty('txs');
-          expect(data).toHaveProperty('exchangeNode');
-          expect(Array.isArray(data.txs)).toBeTruthy();
-        });
+        .expect(serializedApiCall);
     });
 
-    it(`Generate router call - automatic exchange select - ${routerUrl} (GET)`, async () => {
-      const automaticSelectOptions = {
-        ...routerOptions,
-        exchange: undefined,
+    it(`Generate XCM call - Parachain to relaychain invalid version - ${xTransferUrl} (GET)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      return request(app.getHttpServer())
+        .get(xTransferUrl)
+        .query({
+          from,
+          amount,
+          address,
+          xcmVersion: 'V6',
+        })
+        .expect(400);
+    });
+
+    describe('Router controller', () => {
+      const routerOptions: RouterDto = {
+        from: 'Astar',
+        exchange: 'HydraDxDex',
+        to: 'Moonbeam',
+        currencyFrom: 'ASTR',
+        currencyTo: 'GLMR',
+        amount: '10000000000000000000',
+        injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        recipientAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        slippagePct: '1',
       };
 
-      return request(app.getHttpServer())
-        .get(routerUrl)
-        .query(automaticSelectOptions)
-        .expect(200)
-        .expect((res) => {
-          const data = JSON.parse(res.text);
-          expect(data).toHaveProperty('txs');
-          expect(data).toHaveProperty('exchangeNode');
-          expect(Array.isArray(data.txs)).toBeTruthy();
-        });
+      it(`Generate router call - manual exchange select - ${routerUrl} (GET)`, async () => {
+        return request(app.getHttpServer())
+          .get(routerUrl)
+          .query(routerOptions)
+          .expect(200)
+          .expect((res) => {
+            const data = JSON.parse(res.text);
+            expect(data).toHaveProperty('txs');
+            expect(data).toHaveProperty('exchangeNode');
+            expect(Array.isArray(data.txs)).toBeTruthy();
+          });
+      });
+
+      it(`Generate router call - automatic exchange select - ${routerUrl} (GET)`, async () => {
+        const automaticSelectOptions = {
+          ...routerOptions,
+          exchange: undefined,
+        };
+
+        return request(app.getHttpServer())
+          .get(routerUrl)
+          .query(automaticSelectOptions)
+          .expect(200)
+          .expect((res) => {
+            const data = JSON.parse(res.text);
+            expect(data).toHaveProperty('txs');
+            expect(data).toHaveProperty('exchangeNode');
+            expect(Array.isArray(data.txs)).toBeTruthy();
+          });
+      });
+    });
+
+    describe('Asset claim controller', () => {
+      it('Generate asset claim call - no from provided - /asset-claim (GET)', () => {
+        return request(app.getHttpServer())
+          .post('/asset-claim')
+          .send({
+            address,
+          })
+          .expect(400);
+      });
+
+      it('Generate asset claim call - invalid from provided - /asset-claim (GET)', () => {
+        return request(app.getHttpServer())
+          .post('/asset-claim')
+          .send({
+            from: unknownNode,
+            address,
+          })
+          .expect(400);
+      });
+
+      it('Generate asset claim call - invalid wallet address - /asset-claim (GET)', () => {
+        return request(app.getHttpServer())
+          .post('/asset-claim')
+          .send({
+            from: mockNode,
+            address: 'InvalidWalletAddress',
+          })
+          .expect(400);
+      });
+
+      it('Generate asset claim call - all valid - /asset-claim (GET)', async () => {
+        const from: TNode = 'AssetHubKusama';
+        const api = await createApiInstanceForNode(from);
+        const fungible = [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X1: {
+                    Parachain: '2000',
+                  },
+                },
+              },
+            },
+            fun: {
+              Fungible: '1000000000',
+            },
+          },
+        ];
+        const serializedApiCall = await Builder(api)
+          .claimFrom(from)
+          .fungible(fungible)
+          .account(address)
+          .buildSerializedApiCall();
+        await api.disconnect();
+        return request(app.getHttpServer())
+          .post('/asset-claim')
+          .send({
+            from,
+            fungible,
+            address,
+          })
+          .expect(201)
+          .expect(serializedApiCall);
+      });
+    });
+
+    describe('Transfer info controller', () => {
+      const transferInfo: TransferInfoDto = {
+        origin: 'AssetHubPolkadot',
+        destination: 'Polkadot',
+        accountOrigin: '5EtHZF4E8QagNCz6naobCkCAUT52SbcEqaXiDUu2PjUHxZid',
+        accountDestination: '5EtHZF4E8QagNCz6naobCkCAUT52SbcEqaXiDUu2PjUHxZid',
+        currency: 'DOT',
+        amount: '10000',
+      };
+
+      it('Generate transfer info call - invalid origin provided - /transfer-info (GET)', () => {
+        return request(app.getHttpServer())
+          .get('/transfer-info')
+          .query({
+            ...transferInfo,
+            origin: unknownNode,
+          })
+          .expect(400);
+      });
+
+      it('Generate transfer info call - invalid destination provided - /transfer-info (GET)', () => {
+        return request(app.getHttpServer())
+          .get('/transfer-info')
+          .query({
+            ...transferInfo,
+            destination: unknownNode,
+          })
+          .expect(400);
+      });
+
+      it('Generate transfer info call - invalid wallet address origin - /transfer-info (GET)', () => {
+        return request(app.getHttpServer())
+          .get('/transfer-info')
+          .query({
+            ...transferInfo,
+            accountOrigin: 'InvalidWalletAddress',
+          })
+          .expect(400);
+      });
+
+      it('Generate transfer info call - invalid wallet address destination - /transfer-info (GET)', () => {
+        return request(app.getHttpServer())
+          .get('/transfer-info')
+          .query({
+            ...transferInfo,
+            accountDestination: 'InvalidWalletAddress',
+          })
+          .expect(400);
+      });
+
+      it('Generate transfer info call - all valid - /transfer-info (GET)', async () => {
+        return request(app.getHttpServer())
+          .get('/transfer-info')
+          .query(transferInfo)
+          .expect(200);
+      });
     });
   });
 });
