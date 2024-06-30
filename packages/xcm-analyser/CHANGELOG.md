@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.2.1...xcm-analyser-v1.2.2) (2024-06-30)
+
+
+### Miscellaneous Chores
+
+* Update Node.js to v20 LTS ([4b00caa](https://github.com/paraspell/xcm-tools/commit/4b00caa58649051f4dea57e7f6ebb94baa6e307a))
+* Update SDK dependencies ⚙️ ([281d5c7](https://github.com/paraspell/xcm-tools/commit/281d5c7a5fd043c7a5b3d323218ccfdba9ef0a56))
+
 ## [1.2.1](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.2.0...xcm-analyser-v1.2.1) (2024-04-30)
 
 
