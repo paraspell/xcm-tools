@@ -1,47 +1,31 @@
-// Integration tests for AcalaDex
-
-import { describe, expect, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import AcalaExchangeNode from './AcalaDex';
-import { type TTransferOptionsModified } from '../../types';
-import { MOCK_ADDRESS, MOCK_TRANSFER_OPTIONS, performSwap } from '../../utils/utils.test';
+import { type ApiPromise } from '@polkadot/api';
+import { testSwap } from '../HydraDx/HydraDxDex.integration.test';
+import { SmallAmountError } from '../../errors/SmallAmountError';
 
 describe('AcalaDex - integration', () => {
-  it('should build a transfer extrinsic without error on Acala', async () => {
+  it('should build a transfer extrinsic without error for DOT to ACA on Acala', async () => {
     const dex = new AcalaExchangeNode('Acala');
-    const transferOptions: TTransferOptionsModified = {
-      ...MOCK_TRANSFER_OPTIONS,
-      currencyFrom: 'DOT',
-      currencyTo: 'ACA',
-      amount: '5000000000',
-      to: 'Astar',
-      exchange: 'Acala',
-      from: 'Polkadot',
-      recipientAddress: MOCK_ADDRESS,
-    };
-    const tx = await performSwap(transferOptions, dex);
-    expect(tx).toBeDefined();
+    await testSwap(dex, 'Acala', 'DOT', 'ACA', '5000000000', 'Astar', 'Polkadot');
   });
 
-  it('should build a transfer extrinsic without error on Karura', async () => {
+  it('should build a transfer extrinsic without error for KSM to BNC on Karura', async () => {
     const dex = new AcalaExchangeNode('Karura');
-    const options: TTransferOptionsModified = {
-      ...MOCK_TRANSFER_OPTIONS,
-      currencyFrom: 'KSM',
-      currencyTo: 'BNC',
-      amount: '22000000000000',
-      to: 'BifrostKusama',
-      exchange: 'Karura',
-      from: 'Kusama',
-      recipientAddress: MOCK_ADDRESS,
-    };
-    const tx = await performSwap(options, dex);
-    expect(tx).toBeDefined();
+    await testSwap(dex, 'Karura', 'KSM', 'BNC', '22000000000000', 'BifrostKusama', 'Kusama');
   });
 
-  it('should return asset symbols', async () => {
+  it('should retrieve asset symbols from Acala', async () => {
     const dex = new AcalaExchangeNode('Acala');
-    const api = await dex.createApiInstance();
+    const api: ApiPromise = await dex.createApiInstance();
     const symbols = await dex.getAssetSymbols(api);
     expect(symbols.length).toBeGreaterThan(0);
+  });
+
+  it('should throw SmallAmountError when the amount is too small to cover fees', async () => {
+    const dex = new AcalaExchangeNode('Acala');
+    await expect(testSwap(dex, 'Acala', 'DOT', 'ACA', '100', 'Astar', 'Polkadot')).rejects.toThrow(
+      SmallAmountError,
+    );
   });
 });
