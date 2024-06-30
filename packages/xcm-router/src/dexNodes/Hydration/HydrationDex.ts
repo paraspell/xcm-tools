@@ -8,7 +8,7 @@ import { FEE_BUFFER } from '../../consts/consts';
 import Logger from '../../Logger/Logger';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 
-class HydraDxExchangeNode extends ExchangeNode {
+class HydrationExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
     options: TSwapOptions,
@@ -72,7 +72,7 @@ class HydraDxExchangeNode extends ExchangeNode {
 
     const nativeCurrencyInfo = await getAssetInfo(
       tradeRouter,
-      this.node === 'HydraDX' ? 'HDX' : 'BSX',
+      this.node === 'Hydration' ? 'HDX' : 'BSX',
     );
 
     if (nativeCurrencyInfo === undefined) {
@@ -127,4 +127,4 @@ class HydraDxExchangeNode extends ExchangeNode {
   }
 }
 
-export default HydraDxExchangeNode;
+export default HydrationExchangeNode;

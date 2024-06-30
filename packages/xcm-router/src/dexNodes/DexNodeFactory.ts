@@ -2,13 +2,13 @@ import { type TExchangeNode } from '../types';
 import AcalaExchangeNode from './Acala/AcalaDex';
 import BifrostExchangeNode from './Bifrost/BifrostDex';
 import type ExchangeNode from './DexNode';
-import HydraDxExchangeNode from './HydraDx/HydraDxDex';
+import HydrationDexExchangeNode from './Hydration/HydrationDex';
 import InterlayExchangeNode from './Interlay/InterlayDex';
 
 export const record: Record<TExchangeNode, ExchangeNode> = {
   // Reuse classes for Kusama equivalents
-  HydraDxDex: new HydraDxExchangeNode('HydraDX'),
-  BasiliskDex: new HydraDxExchangeNode('Basilisk'),
+  HydrationDex: new HydrationDexExchangeNode('Hydration'),
+  BasiliskDex: new HydrationDexExchangeNode('Basilisk'),
   AcalaDex: new AcalaExchangeNode('Acala'),
   KaruraDex: new AcalaExchangeNode('Karura'),
   InterlayDex: new InterlayExchangeNode('Interlay'),

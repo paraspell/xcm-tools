@@ -10,7 +10,7 @@ import mantaPng from '../../logos/manta1.png';
 import moonbeamPng from '../../logos/moonbeam1.png';
 import subsocialPng from '../../logos/subsocial1.png';
 import bifrostPng from '../../logos/bifrost1.png';
-import hydraDxPng from '../../logos/hydraDx1.png';
+import hydrationPng from '../../logos/hydration1.png';
 import polkadexPng from '../../logos/polkadex1.png';
 import litentryPng from '../../logos/litentry1.png';
 import assetHubPng from '../../logos/assetHub1.png';
@@ -36,7 +36,7 @@ export const getNodeLogo = (node: string) => {
   if (node === 'Moonbeam') return moonbeamPng;
   if (node === 'Subsocial') return subsocialPng;
   if (node === 'Bifrost') return bifrostPng;
-  if (node === 'HydraDX') return hydraDxPng;
+  if (node === 'Hydration') return hydrationPng;
   if (node === 'Polkadex') return polkadexPng;
   if (node === 'Litentry') return litentryPng;
   if (node === 'AssetHub') return assetHubPng;
@@ -57,7 +57,7 @@ export const getLogoScaleFactor = (node: string) => {
   if (node === 'Acala') return 2.5;
   if (node === 'Subsocial') return 2;
   if (node === 'Bifrost') return 2;
-  if (node === 'HydraDX') return 1.75;
+  if (node === 'Hydration') return 1.75;
   if (node === 'Polkadex') return 1.75;
   if (node === 'Litentry') return 1.75;
   if (node === 'AssetHub') return 1.75;

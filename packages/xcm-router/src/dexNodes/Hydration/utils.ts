@@ -24,7 +24,7 @@ export const calculateFee = async (
   );
   const minAmountOut = getMinAmountOut(trade.amountOut, currencyToDecimals, slippagePct);
 
-  const nativeCurrencyInfo = await getAssetInfo(tradeRouter, node === 'HydraDX' ? 'HDX' : 'BSX');
+  const nativeCurrencyInfo = await getAssetInfo(tradeRouter, node === 'Hydration' ? 'HDX' : 'BSX');
 
   if (nativeCurrencyInfo === undefined) {
     throw new Error('Native currency not found');

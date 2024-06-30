@@ -5,7 +5,7 @@ import { type Signer } from '@polkadot/api/types';
 
 export const transferParams: index.TTransferOptions = {
   from: 'Astar',
-  exchange: 'HydraDxDex',
+  exchange: 'HydrationDex',
   to: 'Moonbeam',
   currencyFrom: 'ASTR',
   currencyTo: 'GLMR',

@@ -1,4 +1,4 @@
-// Contains detailed structure of XCM call construction for HydraDX Parachain
+// Contains detailed structure of XCM call construction for Hydration Parachain
 
 import {
   type IXTokensTransfer,
@@ -10,9 +10,9 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
-class HydraDX extends ParachainNode implements IXTokensTransfer {
+class Hydration extends ParachainNode implements IXTokensTransfer {
   constructor() {
-    super('HydraDX', 'hydradx', 'polkadot', Version.V3)
+    super('Hydration', 'hydradx', 'polkadot', Version.V3)
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
@@ -21,4 +21,4 @@ class HydraDX extends ParachainNode implements IXTokensTransfer {
   }
 }
 
-export default HydraDX
+export default Hydration

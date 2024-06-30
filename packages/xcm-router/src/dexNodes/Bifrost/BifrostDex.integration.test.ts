@@ -2,13 +2,13 @@
 
 import { describe, expect, it } from 'vitest';
 import BifrostExchangeNode from './BifrostDex';
-import { testSwap } from '../HydraDx/HydraDxDex.integration.test';
+import { testSwap } from '../Hydration/HydrationDex.integration.test';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 
 describe('BifrostDex - integration', () => {
   it('should build a transfer extrinsic without error on Bifrost Polkadot', async () => {
     const dex = new BifrostExchangeNode('BifrostPolkadot');
-    await testSwap(dex, 'BifrostPolkadot', 'DOT', 'BNC', '5000000000', 'Polkadot', 'HydraDX');
+    await testSwap(dex, 'BifrostPolkadot', 'DOT', 'BNC', '5000000000', 'Polkadot', 'Hydration');
   });
 
   it('should build a transfer extrinsic without error on Bifrost Kusama', async () => {
@@ -26,7 +26,7 @@ describe('BifrostDex - integration', () => {
   it('should throw SmallAmountError when the amount is too small to cover fees', async () => {
     const dex = new BifrostExchangeNode('BifrostPolkadot');
     await expect(
-      testSwap(dex, 'BifrostPolkadot', 'DOT', 'BNC', '100', 'Polkadot', 'HydraDX'),
+      testSwap(dex, 'BifrostPolkadot', 'DOT', 'BNC', '100', 'Polkadot', 'Hydration'),
     ).rejects.toThrow(SmallAmountError);
   });
 });

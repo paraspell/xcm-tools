@@ -629,9 +629,6 @@ importers:
 
   packages/sdk:
     dependencies:
-      '@mangata-finance/type-definitions':
-        specifier: ^2.1.2
-        version: 2.1.2(@polkadot/types@11.2.1)
       '@polkadot/api':
         specifier: ^11.2.1
         version: 11.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)

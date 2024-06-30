@@ -7,7 +7,7 @@
   "Centrifuge": "1000000000000",
   "ComposableFinance": "100000000000",
   "Darwinia": "0",
-  "HydraDX": "1000000000000",
+  "Hydration": "1000000000000",
   "Litentry": "100000000000",
   "Moonbeam": "0",
   "Parallel": "100000000000",
@@ -47,11 +47,12 @@
   "Kusama": "333333333",
   "Interlay": "0",
   "Kintsugi": "0",
-  "Mangata": "0",
   "Collectives": "1000000000",
   "Khala": "10000000000",
   "Phala": "10000000000",
   "Subsocial": "100000000",
   "KiltSpiritnet": "10000000000000",
-  "Curio": "10000000000000000"
+  "Curio": "10000000000000000",
+  "BridgeHubPolkadot": "1000000000",
+  "BridgeHubKusama": "33333333"
 }

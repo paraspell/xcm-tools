@@ -587,7 +587,7 @@ describe('XCM API (e2e)', () => {
     describe('Router controller', () => {
       const routerOptions: RouterDto = {
         from: 'Astar',
-        exchange: 'HydraDxDex',
+        exchange: 'HydrationDex',
         to: 'Moonbeam',
         currencyFrom: 'ASTR',
         currencyTo: 'GLMR',

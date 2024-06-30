@@ -1,8 +1,8 @@
-// Integration tests for HydraDxDex
+// Integration tests for HydrationExchangeNodeDex
 
 import { describe, expect, it } from 'vitest';
 import { type TTransferOptionsModified } from '../../types';
-import HydraDxExchangeNode from './HydraDxDex';
+import HydrationExchangeNode from './HydrationDex';
 import { MOCK_TRANSFER_OPTIONS, performSwap } from '../../utils/utils.test';
 import { type TNodeWithRelayChains, type TNode } from '@paraspell/sdk';
 import { SmallAmountError } from '../../errors/SmallAmountError';
@@ -31,12 +31,12 @@ export async function testSwap(
   if (checkTx) expect(tx).toBeDefined();
 }
 
-describe('HydraDxDex - integration', () => {
-  it('should build a transfer extrinsic without error on HydraDx', async () => {
-    const dex = new HydraDxExchangeNode('HydraDX');
+describe('HydrationDex - integration', () => {
+  it('should build a transfer extrinsic without error on Hydration', async () => {
+    const dex = new HydrationExchangeNode('Hydration');
     await testSwap(
       dex,
-      'HydraDX',
+      'Hydration',
       'ASTR',
       'DOT',
       '38821036538894063687',
@@ -46,21 +46,21 @@ describe('HydraDxDex - integration', () => {
   });
 
   it('should build a transfer extrinsic without error on Basilisk', async () => {
-    const dex = new HydraDxExchangeNode('Basilisk');
+    const dex = new HydrationExchangeNode('Basilisk');
     await testSwap(dex, 'Basilisk', 'KSM', 'USDT', '1000000000000', 'Karura', 'Kusama');
   });
 
   it('should return asset symbols', async () => {
-    const dex = new HydraDxExchangeNode('HydraDX');
+    const dex = new HydrationExchangeNode('Hydration');
     const api = await dex.createApiInstance();
     const symbols = await dex.getAssetSymbols(api);
     expect(symbols.length).toBeGreaterThan(0);
   });
 
   it('should throw SmallAmountError when the amount is too small to cover fees', async () => {
-    const dex = new HydraDxExchangeNode('HydraDX');
+    const dex = new HydrationExchangeNode('Hydration');
     await expect(
-      testSwap(dex, 'HydraDX', 'ASTR', 'DOT', '100', 'BifrostPolkadot', 'Astar'),
+      testSwap(dex, 'Hydration', 'ASTR', 'DOT', '100', 'BifrostPolkadot', 'Astar'),
     ).rejects.toThrow(SmallAmountError);
   });
 });

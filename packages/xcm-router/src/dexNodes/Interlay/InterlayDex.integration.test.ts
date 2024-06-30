@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 import InterlayExchangeNode from './InterlayDex';
-import { testSwap } from '../HydraDx/HydraDxDex.integration.test';
+import { testSwap } from '../Hydration/HydrationDex.integration.test';
 import { type ApiPromise } from '@polkadot/api';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 

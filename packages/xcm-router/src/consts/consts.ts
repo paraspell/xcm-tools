@@ -1,5 +1,5 @@
 export const EXCHANGE_NODES = [
-  'HydraDxDex',
+  'HydrationDex',
   'BasiliskDex',
   'KaruraDex',
   'AcalaDex',
