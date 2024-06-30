@@ -17,7 +17,7 @@ const determineDestWeight = (destNode?: TNode): { refTime: string; proofSize: st
     return { refTime: '6000000000', proofSize: '1000000' }
   }
 
-  if (destNode === 'Moonbeam' || destNode === 'HydraDX') {
+  if (destNode === 'Moonbeam' || destNode === 'Hydration') {
     return { refTime: '5000000000', proofSize: '0' }
   }
 

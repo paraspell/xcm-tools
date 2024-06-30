@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import AcalaExchangeNode from './AcalaDex';
 import { type ApiPromise } from '@polkadot/api';
-import { testSwap } from '../HydraDx/HydraDxDex.integration.test';
+import { testSwap } from '../Hydration/HydrationDex.integration.test';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 
 describe('AcalaDex - integration', () => {

@@ -34,7 +34,6 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
   "dependencies": {
-    "@mangata-finance/type-definitions": "^2.1.2",
     "ethers": "^6.13.0"
   },
   "peerDependencies": {

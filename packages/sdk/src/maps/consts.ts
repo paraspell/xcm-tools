@@ -9,7 +9,7 @@ import { BifrostPolkadot } from '../nodes/supported/BifrostPolkadot'
 import Bitgreen from '../nodes/supported/Bitgreen'
 import { Centrifuge } from '../nodes/supported/Centrifuge'
 import ComposableFinance from '../nodes/supported/ComposableFinance'
-import HydraDX from '../nodes/supported/HydraDX'
+import Hydration from '../nodes/supported/Hydration'
 import Interlay from '../nodes/supported/Interlay'
 import Litentry from '../nodes/supported/Litentry'
 import Moonbeam from '../nodes/supported/Moonbeam'
@@ -24,7 +24,6 @@ import Turing from '../nodes/supported/Turing'
 import Picasso from '../nodes/supported/Picasso'
 import ParallelHeiko from '../nodes/supported/ParallelHeiko'
 import Moonriver from '../nodes/supported/Moonriver'
-import Mangata from '../nodes/supported/Mangata'
 import Litmus from '../nodes/supported/Litmus'
 import Kintsugi from '../nodes/supported/Kintsugi'
 import Calamari from '../nodes/supported/Calamari'
@@ -55,6 +54,8 @@ import Phala from '../nodes/supported/Phala'
 import Subsocial from '../nodes/supported/Subsocial'
 import KiltSpiritnet from '../nodes/supported/KiltSpiritnet'
 import Curio from '../nodes/supported/Curio'
+import BridgeHubPolkadot from '../nodes/supported/BridgeHubPolkadot'
+import BridgeHubKusama from '../nodes/supported/BridgeHubKusama'
 
 export const NODE_NAMES = [
   'AssetHubPolkadot',
@@ -62,10 +63,12 @@ export const NODE_NAMES = [
   'Astar',
   'BifrostPolkadot',
   'Bitgreen',
+  'BridgeHubPolkadot',
+  'BridgeHubKusama',
   'Centrifuge',
   'ComposableFinance',
   'Darwinia',
-  'HydraDX',
+  'Hydration',
   'Interlay',
   'Litentry',
   'Moonbeam',
@@ -88,7 +91,6 @@ export const NODE_NAMES = [
   'Karura',
   'Kintsugi',
   'Litmus',
-  'Mangata',
   'Moonriver',
   'ParallelHeiko',
   'Picasso',
@@ -121,11 +123,13 @@ export const nodes: Record<TNode, ParachainNode> = {
   Unique: new Unique(),
   Crust: new Crust(),
   BifrostPolkadot: new BifrostPolkadot(),
+  BridgeHubPolkadot: new BridgeHubPolkadot(),
+  BridgeHubKusama: new BridgeHubKusama(),
   Bitgreen: new Bitgreen(),
   Centrifuge: new Centrifuge(),
   ComposableFinance: new ComposableFinance(),
   Darwinia: new Darwinia(),
-  HydraDX: new HydraDX(),
+  Hydration: new Hydration(),
   Interlay: new Interlay(),
   Litentry: new Litentry(),
   Moonbeam: new Moonbeam(),
@@ -148,7 +152,6 @@ export const nodes: Record<TNode, ParachainNode> = {
   Karura: new Karura(),
   Kintsugi: new Kintsugi(),
   Litmus: new Litmus(),
-  Mangata: new Mangata(),
   Moonriver: new Moonriver(),
   ParallelHeiko: new ParallelHeiko(),
   Picasso: new Picasso(),

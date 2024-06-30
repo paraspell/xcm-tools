@@ -77,22 +77,22 @@ describe('send', () => {
     ).rejects.toThrowError(InvalidCurrencyError)
   })
 
-  it('should throw an IncompatibleNodesError when passing AssetHubKusama, DOT and HydraDX as destination', async () => {
+  it('should throw an IncompatibleNodesError when passing AssetHubKusama, DOT and Hydration as destination', async () => {
     await expect(
       send({
         ...sendOptions,
         origin: 'AssetHubKusama',
         currency: 'DOT',
-        destination: 'HydraDX'
+        destination: 'Hydration'
       })
     ).rejects.toThrowError(IncompatibleNodesError)
   })
 
-  it('should throw an IncompatibleNodesError when passing HydraDX, DOT and AssetHubKusama as destination', async () => {
+  it('should throw an IncompatibleNodesError when passing Hydration, DOT and AssetHubKusama as destination', async () => {
     await expect(
       send({
         ...sendOptions,
-        origin: 'HydraDX',
+        origin: 'Hydration',
         currency: 'DOT',
         destination: 'AssetHubKusama'
       })
@@ -141,7 +141,7 @@ describe('send', () => {
         ...sendOptions,
         origin: 'Acala',
         currency: randomCurrencySymbol,
-        destination: 'HydraDX'
+        destination: 'Hydration'
       })
     ).resolves.not.toThrowError(IncompatibleNodesError)
 
@@ -159,7 +159,7 @@ describe('send', () => {
     const options = {
       api,
       origin: 'AssetHubPolkadot' as TNode,
-      destination: 'HydraDX' as TNode,
+      destination: 'Hydration' as TNode,
       currency: [],
       feeAsset: 0,
       amount: 1000,
@@ -174,7 +174,7 @@ describe('send', () => {
     const options = {
       api,
       origin: 'AssetHubPolkadot' as TNode,
-      destination: 'HydraDX' as TNode,
+      destination: 'Hydration' as TNode,
       currency: [
         {
           id: {
@@ -207,7 +207,7 @@ describe('send', () => {
     const options = {
       api,
       origin: 'AssetHubPolkadot' as TNode,
-      destination: 'HydraDX' as TNode,
+      destination: 'Hydration' as TNode,
       currency: multiLocation,
       feeAsset: 1,
       amount: 1000,
@@ -221,7 +221,7 @@ describe('send', () => {
     const options = {
       api,
       origin: 'AssetHubPolkadot' as TNode,
-      destination: 'HydraDX' as TNode,
+      destination: 'Hydration' as TNode,
       currency: [
         {
           id: {
@@ -258,7 +258,7 @@ describe('send', () => {
     const options = {
       api,
       origin: 'AssetHubPolkadot' as TNode,
-      destination: 'HydraDX' as TNode,
+      destination: 'Hydration' as TNode,
       currency: [
         {
           id: {
@@ -295,7 +295,7 @@ describe('send', () => {
     const options = {
       api,
       origin: 'AssetHubPolkadot' as TNode,
-      destination: 'HydraDX' as TNode,
+      destination: 'Hydration' as TNode,
       currency: [
         {
           id: {
@@ -332,7 +332,7 @@ describe('send', () => {
     const options = {
       api,
       origin: 'AssetHubPolkadot' as TNode,
-      destination: 'HydraDX' as TNode,
+      destination: 'Hydration' as TNode,
       currency: [
         {
           id: {
@@ -369,7 +369,7 @@ describe('send', () => {
     const options = {
       api,
       origin: 'AssetHubPolkadot' as TNode,
-      destination: 'HydraDX' as TNode,
+      destination: 'Hydration' as TNode,
       currency: [
         {
           id: {

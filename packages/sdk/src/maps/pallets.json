@@ -35,7 +35,7 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
-  "HydraDX": {
+  "Hydration": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
@@ -72,8 +72,8 @@
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "Bajun": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": ["PolkadotXcm"]
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "Basilisk": {
     "defaultPallet": "XTokens",
@@ -120,10 +120,6 @@
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "Litmus": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
-  },
-  "Mangata": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
@@ -210,5 +206,13 @@
   "Curio": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "BridgeHubPolkadot": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "BridgeHubKusama": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
   }
 }

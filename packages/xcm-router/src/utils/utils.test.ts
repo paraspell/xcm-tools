@@ -128,7 +128,7 @@ export const MOCK_SLIIPPAGE = '1';
 
 export const MOCK_TRANSFER_OPTIONS: TTransferOptionsModified = {
   from: 'Astar',
-  exchange: 'HydraDX',
+  exchange: 'Hydration',
   to: 'Moonbeam',
   currencyFrom: 'ASTR',
   currencyTo: 'GLMR',

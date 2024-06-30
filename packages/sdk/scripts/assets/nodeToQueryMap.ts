@@ -9,7 +9,7 @@ export const nodeToQuery: TNodeToAssetModuleMap = {
   Centrifuge: 'ormlAssetRegistry.metadata',
   ComposableFinance: 'assetsRegistry.assetSymbol',
   Darwinia: null, // No assets metadata query
-  HydraDX: 'assetRegistry.assets',
+  Hydration: 'assetRegistry.assets',
   Interlay: 'assetRegistry.metadata',
   Litentry: null, // Assets query returns empty array
   Moonbeam: 'assets.metadata',
@@ -30,7 +30,6 @@ export const nodeToQuery: TNodeToAssetModuleMap = {
   Karura: 'assetRegistry.assetMetadatas',
   Kintsugi: 'assetRegistry.metadata',
   Litmus: null, // Assets query returns empty array
-  Mangata: 'assetRegistry.metadata',
   Moonriver: 'assets.metadata',
   ParallelHeiko: 'assets.metadata',
   Picasso: 'assetsRegistry.assetSymbol',
@@ -54,5 +53,7 @@ export const nodeToQuery: TNodeToAssetModuleMap = {
   CoretimeKusama: null,
   Subsocial: null,
   KiltSpiritnet: null,
-  Curio: 'assetRegistry.metadata'
+  Curio: 'assetRegistry.metadata',
+  BridgeHubPolkadot: null,
+  BridgeHubKusama: null
 }
