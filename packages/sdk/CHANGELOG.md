@@ -1,5 +1,32 @@
 # Changelog
 
+## [5.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.5.0...sdk-v5.6.0) (2024-06-30)
+
+
+### Features
+
+* Add playground "use API" option to transfer-info & asset claim ([8d9bbcb](https://github.com/paraspell/xcm-tools/commit/8d9bbcb602de89fee28def064bf9d765a711c7e5))
+* Add support for V4 MultiAsset ([3d6c68b](https://github.com/paraspell/xcm-tools/commit/3d6c68b9b146aa0d42210e84b0f332c3bf60c0aa))
+* **sdk:** Add ability to override XCM version ✨ ([3a5459c](https://github.com/paraspell/xcm-tools/commit/3a5459c2b54535e98db82d86bd11a4a3e7d9b329))
+* **xcm-router:** Add support for EVM signer ([569f4fc](https://github.com/paraspell/xcm-tools/commit/569f4fc3e0316df4ac82a1b4f3714a7528548c14))
+
+
+### Bug Fixes
+
+* Fix WS endpoints timing out ([32f34b8](https://github.com/paraspell/xcm-tools/commit/32f34b8eecaf46be06b968bbd97b817860dd8e52))
+
+
+### Miscellaneous Chores
+
+* Perform monthly maintenance check ([5b1b76a](https://github.com/paraspell/xcm-tools/commit/5b1b76a249d52568488242908581fe061dee2750))
+* **sdk:** Fix typos ([678eb6a](https://github.com/paraspell/xcm-tools/commit/678eb6ac5ee4c5beed067891599d73e70ee9564e))
+* Update SDK dependencies ⚙️ ([281d5c7](https://github.com/paraspell/xcm-tools/commit/281d5c7a5fd043c7a5b3d323218ccfdba9ef0a56))
+
+
+### Code Refactoring
+
+* **sdk:** Remove duplicate code from Astar, Shiden classes ([c347cd0](https://github.com/paraspell/xcm-tools/commit/c347cd021abd983b7f8c8544ebee281f9f1695e2))
+
 ## [5.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.4.2...sdk-v5.5.0) (2024-06-08)
 
 
