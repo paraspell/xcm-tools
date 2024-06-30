@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.1.1...xcm-router-v1.2.0) (2024-06-30)
+
+
+### Features
+
+* Add support for Polkadot and Kusama bridge ([0b935fe](https://github.com/paraspell/xcm-tools/commit/0b935fecf6e49e7e58abb1efee239bce53126a0b))
+* **xcm-router:** Add support for EVM signer ([569f4fc](https://github.com/paraspell/xcm-tools/commit/569f4fc3e0316df4ac82a1b4f3714a7528548c14))
+* **xcm-router:** Remove Mangata DEX ([b601bbf](https://github.com/paraspell/xcm-tools/commit/b601bbffc8ba285b159c14cc395dc27594f1a068))
+
+
+### Bug Fixes
+
+* Fix WS endpoints timing out ([32f34b8](https://github.com/paraspell/xcm-tools/commit/32f34b8eecaf46be06b968bbd97b817860dd8e52))
+* Properly handle smaller amounts in exchanges ([6004c13](https://github.com/paraspell/xcm-tools/commit/6004c137c470719ed5d3f9c138c59a187b6e42a2))
+* **xcm-router:** Fix handling small amounts before sending XCM to exchange ([ae27b5b](https://github.com/paraspell/xcm-tools/commit/ae27b5b4bbbce3ad9bfa656ce5cea1186de067e9))
+
+
+### Miscellaneous Chores
+
+* Update Node.js to v20 LTS ([4b00caa](https://github.com/paraspell/xcm-tools/commit/4b00caa58649051f4dea57e7f6ebb94baa6e307a))
+* **xcm-router:** Update all dependencies ([b71eaec](https://github.com/paraspell/xcm-tools/commit/b71eaec3ee5c2fb2a73e37e2b0fb3013a2d53b95))
+* **xcm-router:** Update README.md ([0b24925](https://github.com/paraspell/xcm-tools/commit/0b2492503dc573379ec2f1b988939bf89316133a))
+
+
+### Code Refactoring
+
+* **xcm-router:** Reduce unit tests code duplication & add tests for small amount error ([384803d](https://github.com/paraspell/xcm-tools/commit/384803da3528087124fe2f2182d7d4ee8fdf9120))
+
 ## [1.1.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.1.0...xcm-router-v1.1.1) (2024-04-30)
 
 
