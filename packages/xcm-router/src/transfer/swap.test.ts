@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { vi, describe, it, expect } from 'vitest';
+import { vi, describe, it, expect, beforeAll, beforeEach, type MockInstance } from 'vitest';
 import * as transferUtils from './utils';
 import * as utils from '../utils/utils';
 import { type ApiPromise } from '@polkadot/api';
@@ -9,28 +9,35 @@ import { swap } from './swap';
 import { type Extrinsic } from '@paraspell/sdk';
 
 describe('swap', () => {
-  it('updates status and returns transaction hash on successful swap', async () => {
-    const mockSwapApi = {} as ApiPromise;
-    const mockTxHash = 'mockTxHash';
-    const mockFee = new BigNumber(0);
+  let options: any;
+  let mockSwapApi: ApiPromise;
+  let mockTxHash: string;
+  let mockFee: BigNumber;
+  let extrinsicMock: Extrinsic;
+  let submitSpy: MockInstance, statusSpy: MockInstance;
 
-    const options = { ...MOCK_TRANSFER_OPTIONS, onStatusChange: vi.fn() };
+  beforeAll(() => {
+    mockSwapApi = {} as ApiPromise;
+    mockTxHash = 'mockTxHash';
+    mockFee = new BigNumber(0);
 
-    const submitSpy = vi.spyOn(transferUtils, 'submitSwap').mockResolvedValue(mockTxHash);
-    const statusSpy = vi.spyOn(utils, 'maybeUpdateTransferStatus').mockResolvedValue();
-
+    submitSpy = vi.spyOn(transferUtils, 'submitSwap').mockResolvedValue(mockTxHash);
+    statusSpy = vi.spyOn(utils, 'maybeUpdateTransferStatus').mockResolvedValue();
     vi.spyOn(utils, 'calculateTransactionFee').mockResolvedValue(mockFee);
     vi.spyOn(transferUtils, 'buildFromExchangeExtrinsic').mockResolvedValue({} as any);
     vi.spyOn(transferUtils, 'buildToExchangeExtrinsic').mockResolvedValue({} as any);
+  });
 
-    const txHash = await swap(
-      options,
-      {
-        signAsync: vi.fn().mockResolvedValue('signedTx'),
-        send: vi.fn().mockResolvedValue('sentTx'),
-      } as unknown as Extrinsic,
-      mockSwapApi,
-    );
+  beforeEach(() => {
+    options = { ...MOCK_TRANSFER_OPTIONS, onStatusChange: vi.fn() };
+    extrinsicMock = {
+      signAsync: vi.fn().mockResolvedValue('signedTx'),
+      send: vi.fn().mockResolvedValue('sentTx'),
+    } as unknown as Extrinsic;
+  });
+
+  it('updates status and returns transaction hash on successful swap', async () => {
+    const txHash = await swap(options, extrinsicMock, mockSwapApi);
 
     expect(statusSpy).toHaveBeenCalledWith(expect.any(Function), {
       type: 'SWAP',

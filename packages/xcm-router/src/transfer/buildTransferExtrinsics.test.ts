@@ -1,6 +1,6 @@
 // Unit tests for buildTransferExtrinsics function
 
-import { describe, it, expect, vi, afterAll } from 'vitest';
+import { describe, it, expect, vi, afterAll, type MockInstance, beforeEach } from 'vitest';
 import * as utils from '../utils/utils';
 import * as transferUtils from './utils';
 import * as dexNodeFactory from '../dexNodes/DexNodeFactory';
@@ -20,30 +20,34 @@ vi.mock('@paraspell/sdk', async () => {
 });
 
 describe('buildTransferExtrinsics', () => {
-  afterAll(() => {
-    vi.resetAllMocks();
-  });
+  let options: TTransferOptions;
+  let fromExchangeTxSpy: MockInstance,
+    toExchangeTxSpy: MockInstance,
+    feeSpy: MockInstance,
+    validateSpy: MockInstance;
 
-  it('should build transfer extrinsics correctly - manual exchange selection', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-    };
-
-    const fromExchangeTxSpy = vi
+  beforeEach(() => {
+    fromExchangeTxSpy = vi
       .spyOn(transferUtils, 'buildFromExchangeExtrinsic')
       .mockReturnValue({} as any);
-    const toExchangeTxSpy = vi
+    toExchangeTxSpy = vi
       .spyOn(transferUtils, 'buildToExchangeExtrinsic')
       .mockReturnValue({} as any);
-    const feeSpy = vi.spyOn(utils, 'calculateTransactionFee').mockReturnValue({} as any);
-    const validateSpy = vi.spyOn(utils, 'validateRelayChainCurrency').mockReturnValue({} as any);
+    feeSpy = vi.spyOn(utils, 'calculateTransactionFee').mockReturnValue({} as any);
+    validateSpy = vi.spyOn(utils, 'validateRelayChainCurrency').mockReturnValue({} as any);
     vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
       node: 'Acala',
       createApiInstance: vi.fn().mockResolvedValue({}),
       swapCurrency: vi.fn().mockResolvedValue({}),
     } as unknown as ExchangeNode);
+  });
 
+  afterAll(() => {
+    vi.resetAllMocks();
+  });
+
+  it('should build transfer extrinsics correctly - manual exchange selection', async () => {
+    options = { ...MOCK_TRANSFER_OPTIONS, exchange: 'AcalaDex' };
     const result = await buildTransferExtrinsics(options);
 
     expect(result).toBeDefined();
@@ -56,19 +60,7 @@ describe('buildTransferExtrinsics', () => {
   });
 
   it('should build transfer extrinsics correctly - auto exchange selection', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: undefined,
-    };
-
-    const fromExchangeTxSpy = vi
-      .spyOn(transferUtils, 'buildFromExchangeExtrinsic')
-      .mockReturnValue({} as any);
-    const toExchangeTxSpy = vi
-      .spyOn(transferUtils, 'buildToExchangeExtrinsic')
-      .mockReturnValue({} as any);
-    const feeSpy = vi.spyOn(utils, 'calculateTransactionFee').mockReturnValue({} as any);
-    const validateSpy = vi.spyOn(utils, 'validateRelayChainCurrency').mockReturnValue({} as any);
+    options = { ...MOCK_TRANSFER_OPTIONS, exchange: undefined };
     const selectBestExchangeSpy = vi
       .spyOn(selectBestExchange, 'selectBestExchange')
       .mockReturnValue(

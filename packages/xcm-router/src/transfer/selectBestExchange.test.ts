@@ -1,6 +1,6 @@
 // Unit tests for selectBestExchange function
 
-import { describe, it, expect, vi, afterAll } from 'vitest';
+import { describe, it, expect, vi, afterAll, beforeAll, type MockInstance } from 'vitest';
 import * as utils from '../utils/utils';
 import * as transferUtils from './utils';
 import * as dexNodeFactory from '../dexNodes/DexNodeFactory';
@@ -19,23 +19,25 @@ vi.mock('@paraspell/sdk', async () => {
 });
 
 describe('selectBestExchange', () => {
+  let options: TTransferOptions;
+  let fromExchangeTxSpy: MockInstance, toExchangeTxSpy: MockInstance, feeSpy: MockInstance;
+
+  beforeAll(() => {
+    fromExchangeTxSpy = vi
+      .spyOn(transferUtils, 'buildFromExchangeExtrinsic')
+      .mockReturnValue({} as any);
+    toExchangeTxSpy = vi
+      .spyOn(transferUtils, 'buildToExchangeExtrinsic')
+      .mockReturnValue({} as any);
+    feeSpy = vi.spyOn(utils, 'calculateTransactionFee').mockReturnValue({} as any);
+  });
+
   afterAll(() => {
     vi.resetAllMocks();
   });
 
   it('should find best exchange', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-    };
-
-    const fromExchangeTxSpy = vi
-      .spyOn(transferUtils, 'buildFromExchangeExtrinsic')
-      .mockReturnValue({} as any);
-    const toExchangeTxSpy = vi
-      .spyOn(transferUtils, 'buildToExchangeExtrinsic')
-      .mockReturnValue({} as any);
-    const feeSpy = vi.spyOn(utils, 'calculateTransactionFee').mockReturnValue({} as any);
+    options = { ...MOCK_TRANSFER_OPTIONS, exchange: 'AcalaDex' };
     vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
       node: 'Acala',
       createApiInstance: vi.fn().mockResolvedValue({}),
@@ -52,11 +54,7 @@ describe('selectBestExchange', () => {
   });
 
   it('should fail to find best exchange', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-    };
-
+    options = { ...MOCK_TRANSFER_OPTIONS, exchange: 'AcalaDex' };
     vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
       node: 'Acala',
       createApiInstance: vi.fn().mockResolvedValue({}),
