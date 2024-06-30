@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.2.0...xcm-router-v1.2.1) (2024-06-30)
+
+
+### Miscellaneous Chores
+
+* Perform monthly maintenance check ([5b1b76a](https://github.com/paraspell/xcm-tools/commit/5b1b76a249d52568488242908581fe061dee2750))
+
 ## [1.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.1.1...xcm-router-v1.2.0) (2024-06-30)
 
 
