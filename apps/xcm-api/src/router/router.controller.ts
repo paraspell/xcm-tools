@@ -1,4 +1,12 @@
-import { Controller, Get, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  Request,
+} from '@nestjs/common';
 import { RouterService } from './router.service.js';
 import { RouterDto } from './dto/RouterDto.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -11,11 +19,14 @@ export class RouterController {
     private analyticsService: AnalyticsService,
   ) {}
 
-  @Get()
-  generateExtrinsics(@Query() queryParams: RouterDto, @Req() req) {
+  private trackAnalytics(
+    eventName: EventName,
+    req: Request,
+    params: RouterDto,
+  ) {
     const { from, exchange, to, currencyFrom, currencyTo, slippagePct } =
-      queryParams;
-    this.analyticsService.track(EventName.GENERATE_ROUTER_EXTRINSICS, req, {
+      params;
+    this.analyticsService.track(eventName, req, {
       from,
       exchange,
       to,
@@ -23,6 +34,17 @@ export class RouterController {
       currencyTo,
       slippagePct,
     });
+  }
+
+  @Get()
+  generateExtrinsics(@Query() queryParams: RouterDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, queryParams);
+    return this.routerService.generateExtrinsics(queryParams);
+  }
+
+  @Post()
+  generateExtrinsicsV2(@Body() queryParams: RouterDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, queryParams);
     return this.routerService.generateExtrinsics(queryParams);
   }
 }
