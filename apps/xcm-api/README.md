@@ -44,7 +44,7 @@ Possible parameters:
 
 ```
 NOTICE:
-Latest version switched to POST method for XCM Transfers, but we kept GET method support. It will however be deprecated at some point. Please consider switching to POST method.
+The latest version switched to the POST method for XCM Transfers, but we kept GET method support. It will however be deprecated at some point. Please consider switching to POST method.
 ```
 
 ```js
@@ -60,7 +60,6 @@ const response = await fetch("http://localhost:3001/x-transfer", {
         address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
         //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
     })
-    })
 });
 
 //Construct XCM call from Parachain chain to Relay chain (UMP)
@@ -74,7 +73,6 @@ const response = await fetch("http://localhost:3001/x-transfer", {
         amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
         address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
         //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
-    })
     })
 });
 
@@ -91,7 +89,6 @@ const response = await fetch("http://localhost:3001/x-transfer", {
         amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
         address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
         //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
-    })
     })
 });
 
@@ -118,7 +115,6 @@ const response = await fetch("http://localhost:3001/x-transfer", {
         amount: "Amount" // Replace "Amount" with the numeric value you wish to transfer
         //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
     })
-    })
 });
 ```
 
@@ -127,7 +123,7 @@ A complete guide on asset claim can be found in [official docs](https://paraspel
 
 Possible parameters:
 - `from` (Inside JSON body): (required): Represents the Parachain on which the asset will be claimed.
-- `address` (Inside JSON body): (required): Specifies the address of the recipient.
+- `address` (Inside JSON body): (required): Specifies the recipient's address.
 - `fungible` (Inside JSON body): (required): Represents the asset being claimed. It should be a multilocation.
 
 ```js
@@ -153,7 +149,7 @@ Possible parameters:
 - `currency`: (Query parameter): (required): Represents the asset being sent. It should be a string value.
 - `amount`:  (Query parameter): (required): Specifies the amount of assets to transfer. It should be a numeric value.
 - `accountOrigin`:  (Query parameter): (required): Specifies the address of the origin. 
-- `accountDestination`:  (Query parameter): (required): Specifies the address of the recipient. 
+- `accountDestination`:  (Query parameter): (required): Specifies the recipient's address. 
 
 ```js
 const response = await fetch(
@@ -172,34 +168,41 @@ const response = await fetch(
 ### XCM Router
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmRouter.html).
 
-NOTICE: It is advised to use at least 120s timeout with this endpoint (Because API has to connect to other endpoints and that is time dependent)
+```
+NOTICE:
+The latest version switched to the POST method for XCM Transfers, but we kept GET method support. It will however be deprecated at some point. Please consider switching to POST method.
+It is advised to use at least 120s timeout with this endpoint (Because API has to connect to other endpoints and that is time dependent)
+```
 
 Possible parameters:
-- `from` (Query parameter): (required): Represents the Parachain from which the assets will be transferred.
-- `exchange` (Query parameter): (optional): Represents the Parachain DEX on which tokens will be exchanged (If not provided, DEX is selected automatically based on best price output).
-- `to` (Query parameter): (required): Represents the Parachain to which the assets will be transferred.
-- `currencyFrom` (Query parameter): (required): Represents the asset being sent.
-- `currencyTo` (Query parameter): (required): Represents the asset being received. 
-- `amount` (Query parameter): (required): Specifies the amount of assets to transfer.
-- `slippagePct` (Query parameter): (required): Specifies the slippage percentage. 
-- `address` (Query parameter): (required): Specifies the address of the recipient.
-- `injectorAddress` (Query parameter): (required): Specifies the address of the sender.
+- `from`: (required): Represents the Parachain from which the assets will be transferred.
+- `exchange`: (optional): Represents the Parachain DEX on which tokens will be exchanged (If not provided, DEX is selected automatically based on best price output).
+- `to`: (required): Represents the Parachain to which the assets will be transferred.
+- `currencyFrom`: (required): Represents the asset being sent.
+- `currencyTo`: (required): Represents the received asset. 
+- `amount`: (required): Specifies the amount of assets to transfer.
+- `slippagePct`: (required): Specifies the slippage percentage. 
+- `address`: (required): Specifies the recipient's address.
+- `injectorAddress`: (required): Specifies the sender's address.
 
 ```js
-const response = await fetch(
-    "http://localhost:3001/router?" +
-    new URLSearchParams({
-        from: "Polkadot", //Origin Parachain/Relay chain
-        exchange: "AcalaDex", //Exchange Parachain/Relay chain
-        to: "Interlay", //Destination Parachain/Relay chain
-        currencyFrom: "DOT", // Currency to send
-        currencyTo: "INTR", // Currency to receive
-        amount: "100000", // Amount to send
-        slippagePct: "1", // Max slipppage percentage
-        address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96", //Recipient address
-        injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96', //Address of sender
+const response = await fetch("http://localhost:3001/router", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        from: "Chain", //Origin Parachain/Relay chain
+        exchange: "Dex", //Exchange Parachain/Relay chain //Optional parameter, if not specified exchange will be auto-selected
+        to: "Chain", //Destination Parachain/Relay chain
+        currencyFrom: "Currency", // Currency to send
+        currencyTo: "Currency", // Currency to receive
+        amount: "Amount", // Amount to send
+        slippagePct: "Pct", // Max slipppage percentage
+        address: "Address", //Recipient address
+        injectorAddress: 'InjectorAddress', //Address of sender
     })
-);
+})
 ```
 
 ### Asset Pallet
