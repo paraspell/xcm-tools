@@ -29,7 +29,7 @@ const XcmAnalyserSandbox = () => {
     }
   }, [error, scrollIntoView]);
 
-  const onSubmit = async (formValues: FormValues) => {
+  const onSubmit = (formValues: FormValues) => {
     setLoading(true);
 
     try {

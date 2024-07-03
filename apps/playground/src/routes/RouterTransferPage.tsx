@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Title,
   Stack,
@@ -24,10 +29,11 @@ import TransferStepper from "../components/TransferStepper";
 import Confetti from "react-confetti";
 import { Signer } from "@polkadot/api/types";
 import axios, { AxiosError } from "axios";
-import { createApiInstanceForNode } from "@paraspell/sdk";
+import { createApiInstanceForNode, TNodeWithRelayChains } from "@paraspell/sdk";
 import { buildTx, submitTransaction } from "../utils";
 import ErrorAlert from "../components/ErrorAlert";
 import { useWallet } from "../hooks/useWallet";
+import { API_URL } from "../consts";
 
 const RouterTransferPage = () => {
   const { selectedAccount } = useWallet();
@@ -91,7 +97,7 @@ const RouterTransferPage = () => {
     const { from } = formValues;
 
     try {
-      const response = await axios.get("http://localhost:3001/router", {
+      const response = await axios.get(`${API_URL}/router`, {
         timeout: 120000,
         params: {
           ...formValues,
@@ -106,7 +112,9 @@ const RouterTransferPage = () => {
       } = await response.data;
 
       const originApi = await createApiInstanceForNode(from);
-      const swapApi = await createApiInstanceForNode(exchangeNode);
+      const swapApi = await createApiInstanceForNode(
+        exchangeNode as TNodeWithRelayChains
+      );
       onStatusChange({
         type: TransactionType.TO_EXCHANGE,
         status: TransactionStatus.IN_PROGRESS,

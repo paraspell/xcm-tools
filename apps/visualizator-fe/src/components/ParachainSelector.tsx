@@ -11,7 +11,7 @@ type Props = MultiSelectProps & {
 const ParachainSelector: FC<Props> = ({ onCustomChange, ...props }) => {
   const onChangeInternal = (values: string[]) => {
     if (values) {
-      onCustomChange(values as SelectedParachain[]);
+      onCustomChange(values);
     }
   };
 

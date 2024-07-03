@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useForm } from "@mantine/form";
 import {
   EXCHANGE_NODES,
@@ -58,7 +59,7 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   };
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       if (selectedAccount) {
         const injector = await web3FromAddress(selectedAccount.address);
         form.setFieldValue("evmSigner", injector.signer);

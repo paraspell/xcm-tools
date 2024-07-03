@@ -89,7 +89,7 @@ export const calculateFee = async (
 
 export const PCT_100 = bnum('100');
 
-export const calculateSlippage = (amount: BigNumber, slippagePct: string): any => {
+export const calculateSlippage = (amount: BigNumber, slippagePct: string) => {
   const slippage = amount.div(PCT_100).multipliedBy(slippagePct);
   return slippage.decimalPlaces(0, 1);
 };

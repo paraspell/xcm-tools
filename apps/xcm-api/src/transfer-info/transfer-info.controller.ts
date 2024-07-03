@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Req, UsePipes } from '@nestjs/common';
+import { Controller, Get, Request, Query, Req, UsePipes } from '@nestjs/common';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
@@ -15,7 +15,11 @@ export class TransferInfoController {
     private analyticsService: AnalyticsService,
   ) {}
 
-  private trackAnalytics(eventName: EventName, req, params: TransferInfoDto) {
+  private trackAnalytics(
+    eventName: EventName,
+    req: Request,
+    params: TransferInfoDto,
+  ) {
     const { origin, destination, currency, amount } = params;
     this.analyticsService.track(eventName, req, {
       origin,
@@ -27,7 +31,7 @@ export class TransferInfoController {
 
   @Get()
   @UsePipes(new ZodValidationPipe(TransferInfoSchema))
-  getTransferInfo(@Query() queryParams: TransferInfoDto, @Req() req) {
+  getTransferInfo(@Query() queryParams: TransferInfoDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, queryParams);
     return this.transferInfoService.getTransferInfo(queryParams);
   }

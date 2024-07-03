@@ -20,7 +20,7 @@ const sendEmails = async (
     email,
     configService,
   );
-  const emailsVal = configService.get('EMAIL_ADDRESS_RECIPIENT_ARR');
+  const emailsVal = configService.get<string>('EMAIL_ADDRESS_RECIPIENT_ARR');
   if (emailsVal) {
     const emails = emailsVal.split(',');
     const title = 'New higher limit request';
@@ -72,7 +72,9 @@ export class AuthService {
       this.configService.get('RECAPTCHA_SECRET_KEY'),
     );
     if (verificationResult) {
-      const { userId } = this.jwtService.verify(dto.api_key);
+      const { userId } = this.jwtService.verify<{ userId: string }>(
+        dto.api_key,
+      );
       await sendEmails(dto, userId, this.configService);
     } else {
       throw new ForbiddenException('Recaptcha verification failed');

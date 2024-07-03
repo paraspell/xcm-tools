@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type ApiPromise } from '@polkadot/api'
 import { type TNodeWithRelayChains } from '../../types'
 import { type BN } from '@polkadot/util'

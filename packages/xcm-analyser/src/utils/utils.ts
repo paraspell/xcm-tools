@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type MultiLocation, type Junction, MultiLocationSchema } from '../types';
 
 export const convertJunctionToReadable = (junctionOriginal: Junction): string | never => {
@@ -48,7 +53,7 @@ export function findMultiLocationInObject(obj: any): MultiLocation {
     } else if (typeof value === 'object' && value !== null) {
       for (const key of Object.keys(value)) {
         const result = searchObject(value[key]);
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+
         if (result) return result;
       }
     }

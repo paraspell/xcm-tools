@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { FC } from 'react';
 import { AccountCountsQuery } from '../../gql/graphql';
 import Highcharts from 'highcharts';
@@ -11,12 +13,9 @@ type Props = {
 };
 
 const AccountsAmountPlot: FC<Props> = ({ counts }) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePointClick = (point: any) => {
-    // Example action: log the point's details
     console.log(`Point clicked: ID = ${point.name}, Count = ${point.value}`);
-    // Here, you could also invoke more complex logic based on the clicked point
-    navigator.clipboard.writeText(point.name);
+    void navigator.clipboard.writeText(point.name);
   };
 
   const options: Highcharts.Options = {
@@ -56,7 +55,6 @@ const AccountsAmountPlot: FC<Props> = ({ counts }) => {
         dataLabels: {
           enabled: true,
           formatter: function () {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             return (this.point as any).value > 1000 ? `${this.point.name.substring(0, 10)}...` : '';
           }
         },

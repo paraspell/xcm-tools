@@ -1,15 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Text } from '@react-three/drei';
 import { useFrame, useLoader } from '@react-three/fiber';
-import {
-  Color,
-  Group,
-  Mesh,
-  MeshStandardMaterial,
-  SphereGeometry,
-  Texture,
-  TextureLoader
-} from 'three';
+import { Color, Group, Mesh, MeshStandardMaterial, SphereGeometry, TextureLoader } from 'three';
 import { getParachainPosition } from '../ParachainsGraph/utils';
 import { getLogoScaleFactor, getNodeLogo } from './utils';
 import { getParachainColor } from '../../utils/utils';
@@ -81,7 +73,7 @@ const Parachain: React.FC<Props> = ({ name, index, isSelected, onClick, scale })
 
   const sphereRef = useRef<Mesh>(null);
 
-  const texture = useLoader(TextureLoader, getNodeLogo(name)!) as Texture;
+  const texture = useLoader(TextureLoader, getNodeLogo(name)!);
 
   useEffect(() => {
     if (sphereRef.current) {

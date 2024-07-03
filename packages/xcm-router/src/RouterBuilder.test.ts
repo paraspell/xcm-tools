@@ -35,6 +35,7 @@ describe('Builder', () => {
   let spy: MockInstance;
 
   beforeEach(() => {
+    // eslint-disable-next-line @typescript-eslint/require-await
     spy = vi.spyOn(index, 'transfer').mockImplementation(async () => undefined);
   });
 

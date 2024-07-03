@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Unit tests for submitTransaction function
 
-/* eslint-disable n/no-callback-literal */
 import { type Extrinsic } from '@paraspell/sdk';
 import { type ApiPromise } from '@polkadot/api';
 import { type H256 } from '@polkadot/types/interfaces';

@@ -61,7 +61,6 @@ const getDestination = ({
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class XTransferTransferImpl {
   static transferXTransfer(input: XTransferTransferInput): Extrinsic | TSerializedApiCall {
     const {

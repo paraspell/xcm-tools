@@ -6,7 +6,7 @@ import { fillDecimalsBifrost } from './fillInDecimalsBifrost'
 
 const JSON_FILE_PATH = './src/maps/assets.json'
 
-;(async () => {
+void (async () => {
   await handleDataFetching(
     JSON_FILE_PATH,
     fetchAllNodesAssets,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box, Alert, Text } from "@mantine/core";
 import ErrorAlert from "../ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
@@ -101,6 +102,7 @@ const AssetsQueries = () => {
   const getQueryResult = async (formValues: FormValues) => {
     const { useApi } = formValues;
     if (useApi) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return await fetchFromApi(
         formValues,
         `/assets/${getEndpoint(formValues)}`
@@ -114,6 +116,7 @@ const AssetsQueries = () => {
     setLoading(true);
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const output = await getQueryResult(formValues);
       if (typeof output === "bigint") {
         setOutput(output.toString());

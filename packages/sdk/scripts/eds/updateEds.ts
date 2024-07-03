@@ -3,7 +3,7 @@ import { fetchAllExistentialDeposits } from './fetchEds'
 
 const JSON_FILE_PATH = './src/maps/existential-deposits.json'
 
-;(async () => {
+void (async () => {
   checkForNodeJsEnvironment()
   await handleDataFetching(
     JSON_FILE_PATH,

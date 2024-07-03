@@ -56,7 +56,7 @@ class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
     version: Version,
     currencyId?: string,
     overridedMultiLocation?: TMultiLocation | TMultiAsset[]
-  ): any {
+  ) {
     return getNode('AssetHubPolkadot').createCurrencySpec(
       amount,
       scenario,

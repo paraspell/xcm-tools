@@ -10,9 +10,7 @@ import { ChannelModule } from 'src/channels/channels.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from 'src/tasks/tasks.module';
 
-const typeOrmConfig = async (
-  config: ConfigService,
-): Promise<TypeOrmModuleOptions> => ({
+const typeOrmConfig = (config: ConfigService): TypeOrmModuleOptions => ({
   type: 'postgres',
   host: config.get('DB_HOST'),
   port: config.get('DB_PORT'),

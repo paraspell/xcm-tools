@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ThrottlerModuleOptions } from '@nestjs/throttler';
 import { ConfigService } from '@nestjs/config';
 
-export const throttlerConfig = async (
+export const throttlerConfig = (
   config: ConfigService,
-): Promise<ThrottlerModuleOptions> => ({
+): ThrottlerModuleOptions => ({
   throttlers: [
     {
       ttl:

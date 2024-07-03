@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // Unit tests for selectBestExchange function
 
 import { describe, it, expect, vi, afterAll, beforeAll, type MockInstance } from 'vitest';

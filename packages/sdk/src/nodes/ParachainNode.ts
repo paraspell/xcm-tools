@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
 import { type ApiPromise } from '@polkadot/api'
@@ -16,7 +17,8 @@ import {
   type IXTransferTransfer,
   type TRelayToParaInternalOptions,
   type TSendInternalOptions,
-  type TDestination
+  type TDestination,
+  TCurrencySelectionHeaderArr
 } from '../types'
 import { generateAddressPayload, getFees, getAllNodeProviders, createApiInstance } from '../utils'
 import {
@@ -24,7 +26,7 @@ import {
   createCurrencySpec,
   createPolkadotXcmHeader
 } from '../pallets/xcmPallet/utils'
-import { type TMultiLocation } from '../types/TMultiLocation'
+import { TMultiLocationHeader, type TMultiLocation } from '../types/TMultiLocation'
 import { type TMultiAsset } from '../types/TMultiAsset'
 
 const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
@@ -199,7 +201,7 @@ abstract class ParachainNode {
     version: Version,
     _?: string,
     overridedMultiLocation?: TMultiLocation | TMultiAsset[]
-  ): any {
+  ): TCurrencySelectionHeaderArr {
     return createCurrencySpec(
       amount,
       version,
@@ -213,7 +215,7 @@ abstract class ParachainNode {
     version: Version,
     destination?: TDestination,
     paraId?: number
-  ): any {
+  ): TMultiLocationHeader {
     return createPolkadotXcmHeader(scenario, version, destination, paraId)
   }
 }

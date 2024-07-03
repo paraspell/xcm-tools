@@ -5,7 +5,7 @@ import { fetchAllNodesPallets } from './fetchPallets'
 
 const JSON_FILE_PATH = './src/maps/pallets.json'
 
-;(async () => {
+void (async () => {
   checkForNodeJsEnvironment()
   await handleDataFetching(JSON_FILE_PATH, fetchAllNodesPallets, 'Successfuly updated pallets.')
 })()

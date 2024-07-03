@@ -42,7 +42,7 @@ describe('ChannelsService', () => {
   });
 
   describe('openChannel', () => {
-    it('should open a channel with valid parameters', async () => {
+    it('should open a channel with valid parameters', () => {
       const from: TNode = 'Acala';
       const to: TNode = 'Basilisk';
 
@@ -55,7 +55,7 @@ describe('ChannelsService', () => {
 
       const builderSpy = vi.spyOn(paraspellSdk, 'Builder');
 
-      const result = await service.openChannel(mockOpenChannelDto);
+      const result = service.openChannel(mockOpenChannelDto);
 
       expect(result).toBe('serialized-api-call');
       expect(builderSpy).toHaveBeenCalledWith(null);
@@ -67,7 +67,7 @@ describe('ChannelsService', () => {
       );
     });
 
-    it('should throw BadRequestException for invalid from node', async () => {
+    it('should throw BadRequestException for invalid from node', () => {
       const from = 'InvalidNode';
       const to: TNode = 'Basilisk';
       const mockOpenChannelDto = {
@@ -77,12 +77,12 @@ describe('ChannelsService', () => {
         maxMessageSize,
       };
 
-      await expect(service.openChannel(mockOpenChannelDto)).rejects.toThrow(
+      expect(() => service.openChannel(mockOpenChannelDto)).toThrow(
         BadRequestException,
       );
     });
 
-    it('should throw BadRequestException for invalid to node', async () => {
+    it('should throw BadRequestException for invalid to node', () => {
       const from: TNode = 'Basilisk';
       const to = 'InvalidNode';
       const mockOpenChannelDto = {
@@ -92,14 +92,14 @@ describe('ChannelsService', () => {
         maxMessageSize,
       };
 
-      await expect(service.openChannel(mockOpenChannelDto)).rejects.toThrow(
+      expect(() => service.openChannel(mockOpenChannelDto)).toThrow(
         BadRequestException,
       );
     });
   });
 
   describe('closeChannel', () => {
-    it('should close a channel with valid parameters', async () => {
+    it('should close a channel with valid parameters', () => {
       const from: TNode = 'Acala';
 
       const mockCloseChannelDto = {
@@ -122,7 +122,7 @@ describe('ChannelsService', () => {
         .spyOn(paraspellSdk, 'Builder')
         .mockImplementation(() => builderMock as any);
 
-      const result = await service.closeChannel(mockCloseChannelDto);
+      const result = service.closeChannel(mockCloseChannelDto);
 
       expect(result).toBe('serialized-api-call');
       expect(builderSpy).toHaveBeenCalledWith(null);
@@ -132,7 +132,7 @@ describe('ChannelsService', () => {
       expect(builderMock.buildSerializedApiCall).toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException for invalid nodes', async () => {
+    it('should throw BadRequestException for invalid nodes', () => {
       const from = 'InvalidNode';
       const mockCloseChannelDto = {
         from,
@@ -140,7 +140,7 @@ describe('ChannelsService', () => {
         outbound,
       };
 
-      await expect(service.closeChannel(mockCloseChannelDto)).rejects.toThrow(
+      expect(() => service.closeChannel(mockCloseChannelDto)).toThrow(
         BadRequestException,
       );
     });

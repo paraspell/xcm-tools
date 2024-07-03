@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const Logger = {
   log(...messages: any[]): void {
     const isEnabled = true;

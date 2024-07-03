@@ -36,12 +36,7 @@ class Collectives extends ParachainNode implements IPolkadotXCMTransfer {
     }
   }
 
-  createCurrencySpec(
-    amount: string,
-    scenario: TScenario,
-    version: Version,
-    currencyId?: string
-  ): any {
+  createCurrencySpec(amount: string, scenario: TScenario, version: Version, currencyId?: string) {
     if (scenario === 'ParaToPara') {
       return {}
     } else {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { Builder, createApiInstanceForNode } from "@paraspell/sdk";

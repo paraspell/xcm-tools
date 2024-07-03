@@ -38,7 +38,7 @@ export const getFees = (scenario: TScenario): number => {
   throw new Error(`Fees for scenario ${scenario} are not defined.`)
 }
 
-export const generateAddressMultiLocationV4 = (api: ApiPromise, address: TAddress): any => {
+export const generateAddressMultiLocationV4 = (api: ApiPromise, address: TAddress) => {
   const isMultiLocation = typeof address === 'object'
   if (isMultiLocation) {
     return { [Version.V4]: address }
@@ -164,22 +164,20 @@ export const getNode = (node: TNode): ParachainNode => {
   return nodes[node]
 }
 
-export const getNodeEndpointOption = (node: TNode): any => {
+export const getNodeEndpointOption = (node: TNode) => {
   const { type, name } = getNode(node)
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
 
   if (linked === undefined) return undefined
 
-  const preferredOption = linked.find(
-    (o: any) => o.info === name && Object.values(o.providers).length > 0
-  )
+  const preferredOption = linked.find(o => o.info === name && Object.values(o.providers).length > 0)
 
-  return preferredOption ?? linked.find((o: any) => o.info === name)
+  return preferredOption ?? linked.find(o => o.info === name)
 }
 
 export const getAllNodeProviders = (node: TNode): string[] => {
   const { providers } = getNodeEndpointOption(node) ?? {}
-  if (providers.length < 1) {
+  if (providers && Object.values(providers).length < 1) {
     throw new Error(`Node ${node} does not have any providers.`)
   }
   return Object.values(providers ?? [])
@@ -207,6 +205,7 @@ export const lowercaseFirstLetter = (str: string): string =>
 export const callPolkadotJsTxFunction = (
   api: ApiPromise,
   { module, section, parameters }: TSerializedApiCall
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 ): Extrinsic => api.tx[module][section](...parameters)
 
 export const determineRelayChain = (node: TNode): TNodeWithRelayChains =>

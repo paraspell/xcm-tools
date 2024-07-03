@@ -5,7 +5,7 @@ import { Builder, NODE_NAMES, TNode } from '@paraspell/sdk';
 
 @Injectable()
 export class ChannelsService {
-  async openChannel({ from, to, maxSize, maxMessageSize }: OpenChannelDto) {
+  openChannel({ from, to, maxSize, maxMessageSize }: OpenChannelDto) {
     if (!NODE_NAMES.includes(from as TNode)) {
       throw new BadRequestException(
         `From node ${from} is not valid. Check docs for valid nodes.`,
@@ -27,7 +27,7 @@ export class ChannelsService {
       .buildSerializedApiCall();
   }
 
-  async closeChannel({ from, inbound, outbound }: CloseChannelDto) {
+  closeChannel({ from, inbound, outbound }: CloseChannelDto) {
     if (!NODE_NAMES.includes(from as TNode)) {
       throw new BadRequestException(
         `From node ${from} is not valid. Check docs for valid nodes.`,

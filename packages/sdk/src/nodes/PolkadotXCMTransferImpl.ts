@@ -4,7 +4,6 @@ import { type Extrinsic, type PolkadotXCMTransferInput, type TSerializedApiCall 
 
 const DEFAULT_FEE_ASSET = 0
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class PolkadotXCMTransferImpl {
   static transferPolkadotXCM(
     {

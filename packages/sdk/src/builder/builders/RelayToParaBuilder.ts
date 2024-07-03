@@ -64,7 +64,7 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
     }
   }
 
-  async build(): Promise<Extrinsic | never> {
+  async build(): Promise<Extrinsic> {
     const options = this.buildOptions()
     return await transferRelayToPara(options)
   }

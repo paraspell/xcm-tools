@@ -55,6 +55,7 @@ const App = () => {
 
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { selectedAccount, setSelectedAccount } = useWallet();
 
   const initAccounts = async () => {
@@ -114,10 +115,12 @@ const App = () => {
               <Image src="logo.png" h="100%" p={8} />
               {selectedAccount ? (
                 <Button
+                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
                   onClick={onChangeAccountClick}
                   variant="outline"
                 >{`${selectedAccount.meta.name} (${selectedAccount.meta.source})`}</Button>
               ) : (
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 <Button onClick={onConnectWalletClick}>Connect wallet</Button>
               )}
             </Group>

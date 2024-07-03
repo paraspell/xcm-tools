@@ -15,7 +15,7 @@ class Curio extends ParachainNode implements IXTokensTransfer {
     super('Curio', 'curio', 'kusama', Version.V3)
   }
 
-  private getCurrencySelection({ currency, currencyID }: XTokensTransferInput): any {
+  private getCurrencySelection({ currency, currencyID }: XTokensTransferInput) {
     if (currencyID) {
       return { ForeignAsset: currencyID }
     }

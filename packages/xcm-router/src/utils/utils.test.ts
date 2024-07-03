@@ -74,6 +74,7 @@ interface RuntimeDispatchInfoMock {
 }
 
 class MockExtrinsic {
+  // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars
   async paymentInfo(address: string): Promise<RuntimeDispatchInfoMock> {
     return { partialFee: { toString: () => '1000' } };
   }

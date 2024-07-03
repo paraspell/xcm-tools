@@ -14,7 +14,7 @@ const getWalletStateFromLocalStorage = ():
     return undefined;
   }
 
-  return JSON.parse(walletState);
+  return JSON.parse(walletState) as InjectedAccountWithMeta;
 };
 
 const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
@@ -28,7 +28,7 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   }, [selectedAccount]);
 
   useEffect(() => {
-    web3Enable("SpellRouter");
+    void web3Enable("SpellRouter");
   }, []);
 
   return (

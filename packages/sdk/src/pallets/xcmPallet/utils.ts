@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type BN } from '@polkadot/util'
 import {
   Version,
@@ -38,14 +39,16 @@ export const constructRelayToParaParameters = (
 }
 
 export const isTMulti = (value: any): value is TMultiLocation => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return (value && typeof value === 'object') || Array.isArray(value)
 }
 
 export const isTMultiLocation = (value: any): value is TMultiLocation => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
   return value && typeof value.parents !== 'undefined' && typeof value.interior !== 'undefined'
 }
 
-export const createBridgeCurrencySpec = (amount: string, ecosystem: 'Polkadot' | 'Kusama'): any => {
+export const createBridgeCurrencySpec = (amount: string, ecosystem: 'Polkadot' | 'Kusama') => {
   return {
     [Version.V4]: [
       {
@@ -78,6 +81,7 @@ export const createCurrencySpec = (
     return {
       [version]: [
         {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           id: version === Version.V4 ? { parents, interior } : { Concrete: { parents, interior } },
           fun: { Fungible: amount }
         }
@@ -155,17 +159,21 @@ export const calculateTransactionFee = async (tx: Extrinsic, address: string): P
   return partialFee.toBn()
 }
 
+// TODO: Refactor this function to eliminate the any type
 const findParachainJunction = (multilocation: TMultiLocation): number | null => {
   const { interior }: any = multilocation
   for (const key in interior) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const junctions = interior[key]
     if (Array.isArray(junctions)) {
       for (const junction of junctions) {
         if ('Parachain' in junction) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           return Number(junction.Parachain)
         }
       }
     } else if (junctions !== undefined && 'Parachain' in junctions) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       return Number(junctions.Parachain)
     }
   }

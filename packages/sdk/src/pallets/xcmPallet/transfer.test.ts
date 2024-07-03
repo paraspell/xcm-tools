@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // Tests designed to try different XCM Pallet XCM messages and errors
 
 import { type ApiPromise } from '@polkadot/api'
