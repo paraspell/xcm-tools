@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState } from 'react';
 import { Stack, Title, Box, Group, Button, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -12,6 +13,7 @@ import ErrorAlert from '../ErrorAlert';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
 const SendXcm = () => {
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { selectedAccount, setSelectedAccount } = useWallet();
 
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -47,11 +49,7 @@ const SendXcm = () => {
         .address(address)
         .build();
     } else if (to === 'Polkadot' || to === 'Kusama') {
-      return Builder(api)
-        .from(from as TNode)
-        .amount(amount)
-        .address(address)
-        .build();
+      return Builder(api).from(from).amount(amount).address(address).build();
     } else {
       return Builder(api)
         .from(from)

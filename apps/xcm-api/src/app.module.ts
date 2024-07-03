@@ -74,7 +74,8 @@ const __dirname = path.dirname(__filename);
             {
               type: HttpException,
               filter: (exception: HttpException) =>
-                HttpStatus.INTERNAL_SERVER_ERROR > exception.getStatus(),
+                HttpStatus.INTERNAL_SERVER_ERROR >
+                (exception.getStatus() as HttpStatus),
             },
           ],
         }),

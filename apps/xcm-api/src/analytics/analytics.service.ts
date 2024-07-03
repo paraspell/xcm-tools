@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Mixpanel from 'mixpanel';
@@ -13,7 +17,9 @@ export class AnalyticsService {
   private client: Mixpanel.Mixpanel;
 
   init() {
-    const projectToken = this.configService.get('MIXPANEL_PROJECT_TOKEN');
+    const projectToken = this.configService.get<string>(
+      'MIXPANEL_PROJECT_TOKEN',
+    );
     if (!projectToken) return;
     this.client = Mixpanel.init(projectToken, {
       host: 'api-eu.mixpanel.com',

@@ -40,7 +40,7 @@ const buildClaimAssetsInput = ({
   multiAssets,
   address,
   version = Version.V3
-}: TAssetClaimOptions): any => [
+}: TAssetClaimOptions) => [
   {
     [version]: multiAssets
   },

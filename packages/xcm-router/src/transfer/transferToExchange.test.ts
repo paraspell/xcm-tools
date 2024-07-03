@@ -1,6 +1,5 @@
 // Unit tests for transferToExchange function
 
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { vi, describe, it, expect } from 'vitest';
 import * as transferUtils from './utils';
 import * as utils from '../utils/utils';

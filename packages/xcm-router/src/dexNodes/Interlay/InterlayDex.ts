@@ -14,7 +14,7 @@ class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
     { injectorAddress, currencyFrom, currencyTo, amount, slippagePct }: TSwapOptions,
-    toDestTransactionFee: BigNumber,
+    _toDestTransactionFee: BigNumber,
     toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     const interBTC = await createInterBtcApi(getNodeProvider(this.node), 'mainnet');
@@ -62,7 +62,7 @@ class InterlayExchangeNode extends ExchangeNode {
     const deadline = currentBlock.add(new BN(150));
 
     const trade1 = interBTC.amm.swap(trade, outputAmount, injectorAddress, deadline.toString());
-    const extrinsic: any = trade1.extrinsic;
+    const extrinsic = trade1.extrinsic;
 
     return {
       tx: extrinsic,
@@ -70,8 +70,8 @@ class InterlayExchangeNode extends ExchangeNode {
     };
   }
 
-  async getAssetSymbols(api: ApiPromise): Promise<TAssetSymbols> {
-    return getAllAssetsSymbols(this.node);
+  async getAssetSymbols(_api: ApiPromise): Promise<TAssetSymbols> {
+    return Promise.resolve(getAllAssetsSymbols(this.node));
   }
 }
 

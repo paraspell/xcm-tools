@@ -28,8 +28,8 @@ const composePalletMapObject = async (api: ApiPromise): Promise<TPalletMap> => {
   }
 }
 
-export const fetchAllNodesPallets = async (assetsMapJson: any) => {
-  const output: TPalletJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
+export const fetchAllNodesPallets = async (assetsMapJson: unknown) => {
+  const output = JSON.parse(JSON.stringify(assetsMapJson)) as TPalletJsonMap
   for (const node of NODE_NAMES) {
     console.log(`Fetching pallets for ${node}...`)
 

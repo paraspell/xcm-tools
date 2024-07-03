@@ -54,7 +54,7 @@ describe('transfer utils', () => {
   });
 
   describe('buildToExchangeExtrinsic', () => {
-    it('builds correct Extrinsic for Polkadot origin', async () => {
+    it('builds correct Extrinsic for Polkadot origin', () => {
       const from: TNodeWithRelayChains = 'Polkadot';
       const options: TTransferOptionsModified = {
         ...transferParams,
@@ -67,7 +67,7 @@ describe('transfer utils', () => {
       expect(extrinsic).toBeDefined();
     });
 
-    it('builds correct Extrinsic for non-Polkadot/Kusama origin', async () => {
+    it('builds correct Extrinsic for non-Polkadot/Kusama origin', () => {
       const from: TNodeWithRelayChains = 'Astar';
       const options: TTransferOptionsModified = {
         ...transferParams,
@@ -82,7 +82,7 @@ describe('transfer utils', () => {
   });
 
   describe('buildFromExchangeExtrinsic', () => {
-    it('builds correct Extrinsic for Polkadot destination', async () => {
+    it('builds correct Extrinsic for Polkadot destination', () => {
       const to: TNodeWithRelayChains = 'Polkadot';
       const options: TTransferOptionsModified = {
         ...transferParams,
@@ -94,7 +94,7 @@ describe('transfer utils', () => {
       expect(extrinsic).toBeDefined();
     });
 
-    it('builds correct Extrinsic for non-Polkadot/Kusama destination', async () => {
+    it('builds correct Extrinsic for non-Polkadot/Kusama destination', () => {
       const to: TNodeWithRelayChains = 'Astar';
       const options: TTransferOptionsModified = {
         ...transferParams,

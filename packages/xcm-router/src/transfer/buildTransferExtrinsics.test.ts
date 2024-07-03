@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // Unit tests for buildTransferExtrinsics function
 
 import { describe, it, expect, vi, afterAll, type MockInstance, beforeEach } from 'vitest';

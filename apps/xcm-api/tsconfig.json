@@ -1,6 +1,5 @@
 {
   "include": ["src/**/*"],
-  "exclude": ["playground"],
   "compilerOptions": {
     "module": "nodenext",
     "declaration": false,

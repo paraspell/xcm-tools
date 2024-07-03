@@ -5,8 +5,10 @@ import {
   HttpStatus,
   Post,
   Req,
+  Request,
   Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service.js';
 import { HigherRequestLimitDto } from './dto/HigherRequestLimitDto.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -21,7 +23,10 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('generate')
-  generateApiKey(@Body('recaptchaResponse') recaptcha: string, @Req() req) {
+  generateApiKey(
+    @Body('recaptchaResponse') recaptcha: string,
+    @Req() req: Request,
+  ) {
     this.analyticsService.track(EventName.GENERATE_API_KEY, req);
     return this.authService.generateApiKey(recaptcha);
   }
@@ -30,7 +35,7 @@ export class AuthController {
   @Post('higher-request-limit-form')
   async submitHigherRequestLimitForm(
     @Body() higherRequestLimitDto: HigherRequestLimitDto,
-    @Res() res,
+    @Res() res: Response,
   ) {
     await this.authService.submitHigherRequestLimitForm(higherRequestLimitDto);
     return res.redirect('/app/higher-request-limit/submit-success.html');

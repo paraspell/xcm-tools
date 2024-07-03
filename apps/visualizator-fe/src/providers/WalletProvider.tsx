@@ -11,7 +11,7 @@ interface WalletState {
 
 const defaultWalletState: WalletState = {
   selectedAccount: undefined,
-  setSelectedAccount: () => {},
+  setSelectedAccount: () => {}
 };
 
 const getWalletStateFromLocalStorage = (): InjectedAccountWithMeta | undefined => {
@@ -21,7 +21,7 @@ const getWalletStateFromLocalStorage = (): InjectedAccountWithMeta | undefined =
     return undefined;
   }
 
-  return JSON.parse(walletState);
+  return JSON.parse(walletState) as InjectedAccountWithMeta;
 };
 
 const ThemeContext = createContext(defaultWalletState);
@@ -30,7 +30,7 @@ export const useWallet = () => useContext(ThemeContext);
 
 const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [selectedAccount, setSelectedAccount] = useState<InjectedAccountWithMeta | undefined>(
-    getWalletStateFromLocalStorage,
+    getWalletStateFromLocalStorage
   );
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   }, [selectedAccount]);
 
   useEffect(() => {
-    web3Enable('SpellRouter');
+    void web3Enable('SpellRouter');
   }, []);
 
   return (

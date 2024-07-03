@@ -109,7 +109,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     version: Version,
     currencyId?: string,
     overridedMultiLocation?: TMultiLocation | TMultiAsset[]
-  ): any {
+  ) {
     if (scenario === 'ParaToPara') {
       const interior = {
         X2: [

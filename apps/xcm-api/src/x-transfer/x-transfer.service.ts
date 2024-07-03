@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   BadRequestException,
   Injectable,
@@ -42,7 +46,7 @@ export class XTransferService {
 
     if (typeof toNode === 'string' && toNode && !NODE_NAMES.includes(toNode)) {
       throw new BadRequestException(
-        `Node ${to} is not valid. Check docs for valid nodes.`,
+        `Node ${toNode} is not valid. Check docs for valid nodes.`,
       );
     }
 
@@ -87,7 +91,7 @@ export class XTransferService {
       }
       throw new InternalServerErrorException(e.message);
     } finally {
-      if (api) api.disconnect();
+      if (api) await api.disconnect();
     }
     return response;
   }

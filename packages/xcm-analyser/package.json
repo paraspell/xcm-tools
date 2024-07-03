@@ -18,8 +18,8 @@
   "scripts": {
     "compile": "tsc --noEmit",
     "build": "rollup -c",
-    "lint:check": "eslint src --ext .ts",
-    "lint": "eslint --fix src --ext .ts",
+    "lint:check": "eslint .",
+    "lint": "eslint --fix .",
     "format:check": "prettier --check src",
     "format:write": "prettier --write src",
     "test": "vitest run",
@@ -41,7 +41,6 @@
     "rollup": "^4.2.0",
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-typescript2": "^0.36.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.2.2"
+    "ts-node": "^10.9.2"
   }
 }

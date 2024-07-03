@@ -16,7 +16,7 @@ class CrustShadow extends ParachainNode implements IXTokensTransfer {
     super('CrustShadow', 'shadow', 'kusama', Version.V3)
   }
 
-  getCurrencySelection({ currency, currencyID }: XTokensTransferInput): any {
+  getCurrencySelection({ currency, currencyID }: XTokensTransferInput) {
     if (currency === 'CSM') {
       return 'SelfReserve'
     }

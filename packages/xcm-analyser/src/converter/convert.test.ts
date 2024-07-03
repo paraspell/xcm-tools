@@ -229,7 +229,7 @@ describe('convert', () => {
       },
     ];
 
-    const t = (): any => {
+    const t = () => {
       convertXCMToUrls(xcmCallArguments);
     };
 

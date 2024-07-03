@@ -61,11 +61,11 @@ export class RouterService {
     try {
       const { txs, exchangeNode: selectedExchangeNode } =
         await buildTransferExtrinsics({
-          from: fromNode as TNodeWithRelayChains,
+          ...options,
+          from: fromNode,
           exchange: exchangeNode,
           to: toNode,
           slippagePct,
-          ...options,
         });
 
       return {
@@ -76,6 +76,7 @@ export class RouterService {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       throw new InternalServerErrorException(e.message);
     }
   }

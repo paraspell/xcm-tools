@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Request,
   Get,
   Post,
   Query,
@@ -20,7 +21,11 @@ export class XTransferController {
     private analyticsService: AnalyticsService,
   ) {}
 
-  private trackAnalytics(eventName: EventName, req, params: XTransferDto) {
+  private trackAnalytics(
+    eventName: EventName,
+    req: Request,
+    params: XTransferDto,
+  ) {
     const { from, to, currency } = params;
     const resolvedCurrency =
       typeof currency === 'string' ? currency : 'MultiLocation';
@@ -34,14 +39,14 @@ export class XTransferController {
 
   @Get()
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  generateXcmCall(@Query() queryParams: XTransferDto, @Req() req) {
+  generateXcmCall(@Query() queryParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, queryParams);
     return this.xTransferService.generateXcmCall(queryParams);
   }
 
   @Post()
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  generateXcmCallV2(@Body() bodyParams: XTransferDto, @Req() req) {
+  generateXcmCallV2(@Body() bodyParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
     return this.xTransferService.generateXcmCall(bodyParams);
   }

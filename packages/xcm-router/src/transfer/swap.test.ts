@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { vi, describe, it, expect, beforeAll, beforeEach, type MockInstance } from 'vitest';
 import * as transferUtils from './utils';
 import * as utils from '../utils/utils';

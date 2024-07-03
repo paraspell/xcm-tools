@@ -1,16 +1,20 @@
-import { Stack, Title, Box } from '@mantine/core';
-import ErrorAlert from '../ErrorAlert';
-import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import { useState, useEffect } from 'react';
-import { fetchFromApi } from '../../utils/submitUsingApi';
-import { getDefaultPallet, getSupportedPallets } from '@paraspell/sdk';
-import PalletsForm, { FormValues } from './PalletsForm';
-import OutputAlert from '../OutputAlert';
+/* eslint-disable @typescript-eslint/no-misused-promises */
+import { Stack, Title, Box } from "@mantine/core";
+import ErrorAlert from "../ErrorAlert";
+import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
+import { useState, useEffect } from "react";
+import { fetchFromApi } from "../../utils/submitUsingApi";
+import { getDefaultPallet, getSupportedPallets } from "@paraspell/sdk";
+import PalletsForm, { FormValues } from "./PalletsForm";
+import OutputAlert from "../OutputAlert";
 
 const PalletsQueries = () => {
-  const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] = useDisclosure(false);
-  const [outputAlertOpened, { open: openOutputAlert, close: closeOutputAlert }] =
+  const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
     useDisclosure(false);
+  const [
+    outputAlertOpened,
+    { open: openOutputAlert, close: closeOutputAlert },
+  ] = useDisclosure(false);
 
   const [error, setError] = useState<Error>();
   const [output, setOutput] = useState<string>();
@@ -27,20 +31,20 @@ const PalletsQueries = () => {
     }
   }, [error, scrollIntoView]);
 
-  const submitUsingSdk = async ({ func, node }: FormValues) => {
+  const submitUsingSdk = ({ func, node }: FormValues) => {
     switch (func) {
-      case 'ALL_PALLETS':
+      case "ALL_PALLETS":
         return getSupportedPallets(node);
-      case 'DEFAULT_PALLET':
+      case "DEFAULT_PALLET":
         return getDefaultPallet(node);
     }
   };
 
   const getEndpoint = ({ func, node }: FormValues) => {
     switch (func) {
-      case 'ALL_PALLETS':
+      case "ALL_PALLETS":
         return `${node}`;
-      case 'DEFAULT_PALLET':
+      case "DEFAULT_PALLET":
         return `${node}/default`;
     }
   };
@@ -48,9 +52,13 @@ const PalletsQueries = () => {
   const getQueryResult = async (formValues: FormValues) => {
     const { useApi } = formValues;
     if (useApi) {
-      return await fetchFromApi(formValues, `/pallets/${getEndpoint(formValues)}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return await fetchFromApi(
+        formValues,
+        `/pallets/${getEndpoint(formValues)}`
+      );
     } else {
-      return await submitUsingSdk(formValues);
+      return submitUsingSdk(formValues);
     }
   };
 
@@ -58,6 +66,7 @@ const PalletsQueries = () => {
     setLoading(true);
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const output = await getQueryResult(formValues);
       setOutput(JSON.stringify(output, null, 2));
       openOutputAlert();
@@ -90,11 +99,15 @@ const PalletsQueries = () => {
       </Stack>
       <Box ref={targetRef}>
         {errorAlertOpened && (
-          <ErrorAlert onAlertCloseClick={onErrorAlertCloseClick}>{error?.message}</ErrorAlert>
+          <ErrorAlert onAlertCloseClick={onErrorAlertCloseClick}>
+            {error?.message}
+          </ErrorAlert>
         )}
       </Box>
       <Box>
-        {outputAlertOpened && <OutputAlert onClose={onOutputAlertCloseClick}>{output}</OutputAlert>}
+        {outputAlertOpened && (
+          <OutputAlert onClose={onOutputAlertCloseClick}>{output}</OutputAlert>
+        )}
       </Box>
     </Stack>
   );

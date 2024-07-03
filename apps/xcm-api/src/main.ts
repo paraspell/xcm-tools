@@ -9,4 +9,4 @@ async function bootstrap() {
   const DEFAULT_PORT = 3001;
   await app.listen(process.env.PORT || DEFAULT_PORT);
 }
-bootstrap();
+void bootstrap();

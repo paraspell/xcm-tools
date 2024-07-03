@@ -31,12 +31,7 @@ class Crab extends ParachainNode implements IPolkadotXCMTransfer {
     throw new NodeNotSupportedError()
   }
 
-  createCurrencySpec(
-    amount: string,
-    scenario: TScenario,
-    version: Version,
-    currencyId?: string
-  ): any {
+  createCurrencySpec(amount: string, scenario: TScenario, version: Version, currencyId?: string) {
     return getNode('Darwinia').createCurrencySpec(amount, scenario, version, currencyId)
   }
 }

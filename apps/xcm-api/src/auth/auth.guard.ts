@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   CanActivate,
@@ -25,7 +28,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const { userId } = this.jwtService.verify(apiKey);
+      const { userId } = this.jwtService.verify<{ userId: string }>(apiKey);
       if (!userId) throw new ForbiddenException('Invalid API key.');
       const dbUser = await this.usersService.findOne(userId);
       this.analyticsService.identify(userId, {

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, Fragment, useMemo } from 'react';
 import { ChannelQuery, ChannelsQuery, TotalMessageCountsQuery } from '../../gql/graphql';
@@ -35,7 +38,7 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, selectedChan
   }, [totalMessageCounts]);
 
   const parachainPositions = useMemo(
-    () => sortedParachainNames!.map((_, index) => getParachainPosition(index)),
+    () => sortedParachainNames.map((_, index) => getParachainPosition(index)),
     [sortedParachainNames]
   );
 
@@ -76,10 +79,10 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, selectedChan
   );
 
   const channelElements = channels.map(channel => {
-    const senderIndex = sortedParachainNames!.findIndex(
+    const senderIndex = sortedParachainNames.findIndex(
       name => getParachainId(name) === channel.sender
     );
-    const recipientIndex = sortedParachainNames!.findIndex(
+    const recipientIndex = sortedParachainNames.findIndex(
       name => getParachainId(name) === channel.recipient
     );
     const senderPosition = parachainPositions[senderIndex];

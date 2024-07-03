@@ -181,7 +181,7 @@ export const send = async (options: TSendOptions): Promise<Extrinsic> => {
 
 export const transferRelayToParaCommon = async (
   options: TRelayToParaCommonOptions
-): Promise<Extrinsic | TSerializedApiCall | never> => {
+): Promise<Extrinsic | TSerializedApiCall> => {
   const {
     api,
     destination,
@@ -238,10 +238,8 @@ export const transferRelayToParaCommon = async (
   return callPolkadotJsTxFunction(apiWithFallback, serializedApiCall)
 }
 
-export const transferRelayToPara = async (
-  options: TRelayToParaOptions
-): Promise<Extrinsic | never> => {
-  return (await transferRelayToParaCommon(options)) as Extrinsic | never
+export const transferRelayToPara = async (options: TRelayToParaOptions): Promise<Extrinsic> => {
+  return (await transferRelayToParaCommon(options)) as Extrinsic
 }
 
 export const transferRelayToParaSerializedApiCall = async (

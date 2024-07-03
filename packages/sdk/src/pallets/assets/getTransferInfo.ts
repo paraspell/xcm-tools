@@ -45,12 +45,12 @@ const getNativeAssetSymbol = (node: TNodeWithRelayChains): string => {
   return getAssetsObject(node).nativeAssetSymbol
 }
 
-const getAssetSymbol = (node: TNodeWithRelayChains, assetId: string): any => {
+const getAssetSymbol = (node: TNodeWithRelayChains, assetId: string) => {
   if (node === 'Polkadot' || node === 'Kusama') {
     return getNativeAssetSymbol(node)
   }
   const asset = getAssetBySymbolOrId(node, assetId)
-  return asset
+  return asset?.symbol
 }
 
 const getAssetBalance = async (
@@ -95,7 +95,7 @@ export const getTransferInfo = async (
     },
     currencyBalanceOrigin: {
       balance: await getAssetBalance(accountOrigin, origin, assetSymbolOrId),
-      currency: asset.symbol
+      currency: asset ?? ''
     },
     originFeeBalance: {
       balance: await getBalanceNative(accountOrigin, origin, originApi),
@@ -114,9 +114,9 @@ export const getTransferInfo = async (
       maxNativeTransferableAmount: await getMaxNativeTransferableAmount(accountOrigin, origin)
     },
     destinationFeeBalance: {
-      balance: await getBalanceNative(accountDestination, destination), // balance nativneho asssetu na destination chaine,
-      currency: getNativeAssetSymbol(destination), // nativnyAsset destination chainu,
-      existentialDeposit: getExistentialDeposit(destination) // existential deposit destination chain,
+      balance: await getBalanceNative(accountDestination, destination),
+      currency: getNativeAssetSymbol(destination),
+      existentialDeposit: getExistentialDeposit(destination)
     }
   }
 }

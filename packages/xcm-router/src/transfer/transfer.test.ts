@@ -1,7 +1,5 @@
 // Unit tests for main entry point functions
 
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-/* eslint-disable @typescript-eslint/no-confusing-void-expression */
 import { vi, describe, it, expect, beforeEach, type MockInstance } from 'vitest';
 import * as transferToExchange from './transferToExchange';
 import * as swap from './swap';
@@ -33,6 +31,7 @@ describe('transfer', () => {
     swapSpy = vi.spyOn(swap, 'swap').mockResolvedValue('');
     createSwapExtrinsicSpy = vi.spyOn(swap, 'createSwapExtrinsic').mockResolvedValue({
       amountOut: '1',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       tx: {} as any,
     });
     transferToDestinationSpy = vi

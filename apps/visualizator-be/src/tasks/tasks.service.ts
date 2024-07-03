@@ -1,3 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -31,7 +37,7 @@ export class TasksService {
   @Cron('0 16 * * *')
   async handleCron() {
     console.log('Cron job started at 4 PM');
-    const lastPage = await this.getLastPageCrawled();
+    const lastPage = this.getLastPageCrawled();
     console.log(`Starting task from page ${lastPage}`);
     await this.runTask(lastPage);
   }
@@ -58,18 +64,18 @@ export class TasksService {
         console.log(
           `Data saved for page ${page}, updating last crawled page...`,
         );
-        await this.saveLastPageCrawled(page);
+        this.saveLastPageCrawled(page);
       }
       await waitRandomSeconds(1, 5);
     }
   }
 
-  private async saveLastPageCrawled(pageNumber: number): Promise<void> {
+  private saveLastPageCrawled(pageNumber: number) {
     console.log(`Saving last crawled page number: ${pageNumber}`);
     //fs.writeFileSync(this.lastPageFile, pageNumber.toString(), 'utf8');
   }
 
-  private async getLastPageCrawled(): Promise<number> {
+  private getLastPageCrawled() {
     try {
       if (fs.existsSync(this.lastPageFile)) {
         //const lastPage = fs.readFileSync(this.lastPageFile, 'utf8');
@@ -106,10 +112,7 @@ export class TasksService {
     return 0;
   }
 
-  private async fetchPage(
-    pageNumber: number,
-    afterId?: string,
-  ): Promise<any[]> {
+  private async fetchPage(pageNumber: number, afterId?: string) {
     let url = `${this.url}?page=${pageNumber}`;
     if (pageNumber >= 1 && afterId) {
       url = `${this.url}?page=${pageNumber}&afterId=${afterId}`;
@@ -129,7 +132,7 @@ export class TasksService {
       } else {
         console.log('Element not found. No data to fetch.');
       }
-    } catch (error) {
+    } catch (_e) {
       console.error(`Error fetching page ${pageNumber}:`);
     }
     return null;

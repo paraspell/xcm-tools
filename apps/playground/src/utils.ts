@@ -1,15 +1,15 @@
-import { Extrinsic, TSerializedApiCall } from '@paraspell/sdk';
-import { ApiPromise } from '@polkadot/api';
-import { Signer } from '@polkadot/api/types';
-import { encodeAddress, decodeAddress } from '@polkadot/keyring';
-import { isHex, hexToU8a } from '@polkadot/util';
-import { isAddress } from 'web3-validator';
+import { Extrinsic, TSerializedApiCall } from "@paraspell/sdk";
+import { ApiPromise } from "@polkadot/api";
+import { Signer } from "@polkadot/api/types";
+import { encodeAddress, decodeAddress } from "@polkadot/keyring";
+import { isHex, hexToU8a } from "@polkadot/util";
+import { isAddress } from "web3-validator";
 
 export const isValidPolkadotAddress = (address: string) => {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
     return true;
-  } catch (error) {
+  } catch (_e) {
     return false;
   }
 };
@@ -23,7 +23,7 @@ export const submitTransaction = async (
   api: ApiPromise,
   tx: Extrinsic,
   signer: Signer,
-  injectorAddress: string,
+  injectorAddress: string
 ): Promise<string> => {
   await tx.signAsync(injectorAddress, { signer });
   return await new Promise((resolve, reject) => {
@@ -35,7 +35,7 @@ export const submitTransaction = async (
             const decoded = api.registry.findMetaError(dispatchError.asModule);
             const { docs, name, section } = decoded;
 
-            reject(new Error(`${section}.${name}: ${docs.join(' ')}`));
+            reject(new Error(`${section}.${name}: ${docs.join(" ")}`));
           } else {
             reject(new Error(dispatchError.toString()));
           }
@@ -48,6 +48,10 @@ export const submitTransaction = async (
   });
 };
 
-export const buildTx = (api: ApiPromise, { module, section, parameters }: TSerializedApiCall) => {
+export const buildTx = (
+  api: ApiPromise,
+  { module, section, parameters }: TSerializedApiCall
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return api.tx[module][section](...parameters);
 };

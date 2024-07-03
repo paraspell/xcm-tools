@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "../ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
@@ -40,7 +41,7 @@ const ChannelsQueries = () => {
     }
   }, [error, scrollIntoView]);
 
-  const submitUsingSdk = async (
+  const submitUsingSdk = (
     { func, from, to, maxSize, maxMessageSize, inbound, outbound }: FormValues,
     api: ApiPromise
   ) => {
@@ -66,13 +67,14 @@ const ChannelsQueries = () => {
   const getQueryResult = async (formValues: FormValues, api: ApiPromise) => {
     const { func, useApi } = formValues;
     if (useApi) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return await fetchFromApi(
         formValues,
         `/hrmp/channels`,
         func === "OPEN_CHANNEL" ? "POST" : "DELETE"
       );
     } else {
-      return await submitUsingSdk(formValues, api);
+      return submitUsingSdk(formValues, api);
     }
   };
 
@@ -90,12 +92,14 @@ const ChannelsQueries = () => {
 
     try {
       const api = await createApiInstanceForNode(from);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const output = await getQueryResult(formValues, api);
       setOutput(JSON.stringify(output, null, 2));
       openOutputAlert();
       closeErrorAlert();
       await submitTransaction(
         api,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         buildTx(api, output),
         injector.signer,
         selectedAccount.address

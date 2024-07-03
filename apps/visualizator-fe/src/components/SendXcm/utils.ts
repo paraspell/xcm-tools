@@ -38,7 +38,7 @@ export const isValidPolkadotAddress = (address: string) => {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
     return true;
-  } catch (error) {
+  } catch (_e) {
     return false;
   }
 };

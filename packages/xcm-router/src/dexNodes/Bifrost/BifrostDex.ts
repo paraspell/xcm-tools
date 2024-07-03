@@ -21,7 +21,6 @@ class BifrostExchangeNode extends ExchangeNode {
     api: ApiPromise,
     { currencyFrom, currencyTo, amount, injectorAddress, slippagePct }: TSwapOptions,
     toDestTransactionFee: BigNumber,
-    toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     const chainId = getParaId(this.node);
 
@@ -134,11 +133,11 @@ class BifrostExchangeNode extends ExchangeNode {
     };
   }
 
-  async getAssetSymbols(api: ApiPromise): Promise<TAssetSymbols> {
+  async getAssetSymbols(_api: ApiPromise): Promise<TAssetSymbols> {
     const chainId = getParaId(this.node);
     const tokenMap = getTokenMap(this.node, chainId);
     const symbols = Object.values(tokenMap).map((item) => item.wrapped.symbol);
-    return symbols as string[];
+    return Promise.resolve(symbols as string[]);
   }
 }
 

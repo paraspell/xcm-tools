@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Contains basic structure of xToken call
 
 import {
@@ -68,7 +71,6 @@ const getParameters = (
   return [currencySelection, amount, addressSelection, fees]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class XTokensTransferImpl {
   static transferXTokens(
     input: XTokensTransferInput,
@@ -110,6 +112,7 @@ class XTokensTransferImpl {
       }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return api.tx[module][section](...parameters)
   }
 }

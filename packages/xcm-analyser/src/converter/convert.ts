@@ -7,7 +7,7 @@ import {
 import { convertJunctionToReadable, findMultiLocationInObject } from '../utils/utils';
 
 export const convertMultilocationToUrlJson = (multiLocationJson: string): string => {
-  const multiLocation: MultiLocation = JSON.parse(multiLocationJson);
+  const multiLocation = JSON.parse(multiLocationJson) as MultiLocation;
   return convertMultilocationToUrl(multiLocation);
 };
 

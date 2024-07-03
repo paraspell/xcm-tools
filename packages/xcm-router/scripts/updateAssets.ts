@@ -3,11 +3,12 @@ import { EXCHANGE_NODES } from '../src/consts/consts';
 import createDexNodeInstance from '../src/dexNodes/DexNodeFactory';
 import { TAssetSymbols } from '../src/types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const writeJsonSync = (path: string, data: any) => {
   fs.writeFileSync(path, JSON.stringify(data, null, 2));
 };
 
-(async () => {
+void (async () => {
   const record: Record<string, TAssetSymbols> = {};
   for (const exchangeNode of EXCHANGE_NODES) {
     console.log(`Fetching ${exchangeNode} assets...`);

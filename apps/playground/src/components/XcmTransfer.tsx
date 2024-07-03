@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "./ErrorAlert";
 import TransferForm, { FormValues } from "./TransferForm";
@@ -42,11 +43,7 @@ const XcmTransfer = () => {
         .address(address)
         .build();
     } else if (to === "Polkadot" || to === "Kusama") {
-      return Builder(api)
-        .from(from as TNode)
-        .amount(amount)
-        .address(address)
-        .build();
+      return Builder(api).from(from).amount(amount).address(address).build();
     } else {
       return Builder(api)
         .from(from)

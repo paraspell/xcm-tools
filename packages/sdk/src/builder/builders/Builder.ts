@@ -110,14 +110,14 @@ export interface FinalBuilder {
 }
 
 export interface FinalBuilderAsync {
-  build: () => Promise<Extrinsic | never>
+  build: () => Promise<Extrinsic>
   buildSerializedApiCall: () => Promise<TSerializedApiCall>
 }
 
 export interface UseKeepAliveFinalBuilder {
   useKeepAlive: (destApi: ApiPromise) => UseKeepAliveFinalBuilder
   xcmVersion: (version: Version) => UseKeepAliveFinalBuilder
-  build: () => Promise<Extrinsic | never>
+  build: () => Promise<Extrinsic>
   buildSerializedApiCall: () => Promise<TSerializedApiCall>
 }
 

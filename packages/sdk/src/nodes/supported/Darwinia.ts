@@ -37,7 +37,7 @@ class Darwinia extends ParachainNode implements IXTokensTransfer {
     version: Version,
     currencyId?: string,
     overridedMultiLocation?: TMultiLocation
-  ): any {
+  ) {
     if (scenario === 'ParaToPara') {
       const interior = {
         X1: {

@@ -40,4 +40,4 @@ const xcmCallArguments = [
 ];
 
 const urls = convertXCMToUrls(xcmCallArguments);
-console.log(`URLs: ${urls}`);
+console.log(`URLs: ${urls.toString()}`);

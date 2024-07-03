@@ -1,16 +1,14 @@
-import { TNodeWithRelayChains } from '@paraspell/sdk';
-import { TExchangeNode } from '@paraspell/xcm-router';
 import { IsNotEmpty, IsNumberString, IsOptional } from 'class-validator';
 
 export class RouterDto {
   @IsNotEmpty()
-  from: TNodeWithRelayChains;
+  from: string;
 
   @IsOptional()
-  exchange?: TExchangeNode;
+  exchange?: string;
 
   @IsNotEmpty()
-  to: TNodeWithRelayChains;
+  to: string;
 
   @IsNotEmpty()
   currencyFrom: string;

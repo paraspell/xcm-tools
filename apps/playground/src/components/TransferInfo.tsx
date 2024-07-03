@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "./ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
@@ -38,6 +39,7 @@ const TransferInfo = () => {
     const { useApi } = formValues;
     const originAddress = selectedAccount?.address ?? "";
     if (useApi) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return await fetchFromApi(
         {
           origin: formValues.from,
@@ -70,6 +72,7 @@ const TransferInfo = () => {
     setLoading(true);
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const output = await getQueryResult(formValues);
       setOutput(JSON.stringify(output, null, 2));
       openOutputAlert();

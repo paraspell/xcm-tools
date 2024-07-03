@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC } from 'react';
 import { MessageCountsQuery } from '../../gql/graphql';
 import { BarChart, ChartTooltip } from '@mantine/charts';
@@ -8,8 +7,7 @@ type Props = {
   counts: MessageCountsQuery['messageCounts'];
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getParachainByIdInternal = (id: number | null): any => {
+const getParachainByIdInternal = (id: number | null) => {
   return id ? getParachainById(id) : 'Total';
 };
 
@@ -35,6 +33,7 @@ const SuccessMessagesPlot: FC<Props> = ({ counts }) => {
       tooltipProps={{
         content: ({ label, payload }) => (
           <ChartTooltip
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             label={label}
             payload={
               payload && payload.length > 0
@@ -53,6 +52,7 @@ const SuccessMessagesPlot: FC<Props> = ({ counts }) => {
                       payload: {
                         category: 'Total',
                         Success: 558651,
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
                         Total: payload[0].payload.Success + payload[1].payload.Failure
                       },
                       hide: false

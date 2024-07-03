@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { FC } from 'react';
@@ -34,7 +38,6 @@ type Props = {
 };
 
 const AssetsTransferredPlot: FC<Props> = ({ counts }) => {
-  // Process the live data into a chart-friendly format
   const processData = () => {
     const dataByParachain = counts.reduce((acc: any, item) => {
       const parachainKey = item.paraId

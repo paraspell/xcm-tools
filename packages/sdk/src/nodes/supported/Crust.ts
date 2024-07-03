@@ -16,7 +16,7 @@ class Crust extends ParachainNode implements IXTokensTransfer {
     super('Crust', 'crustParachain', 'polkadot', Version.V3)
   }
 
-  getCurrencySelection({ currency, currencyID }: XTokensTransferInput): any {
+  getCurrencySelection({ currency, currencyID }: XTokensTransferInput) {
     if (currency === 'CRU') {
       return 'SelfReserve'
     }

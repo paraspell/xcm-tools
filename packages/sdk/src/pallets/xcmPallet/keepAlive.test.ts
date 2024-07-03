@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { type ApiPromise } from '@polkadot/api'
 import { describe, expect, it } from 'vitest'
 import { checkKeepAlive } from './keepAlive'

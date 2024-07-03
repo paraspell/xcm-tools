@@ -7,8 +7,9 @@ import { getAllNodeProviders } from '../src/utils'
 
 export const readJsonOrReturnEmptyObject = (path: string) => {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return JSON.parse(fs.readFileSync(path, 'utf8'))
-  } catch (e) {
+  } catch (_e) {
     return {}
   }
 }
@@ -19,16 +20,16 @@ export const checkForNodeJsEnvironment = () => {
   }
 }
 
-export const fetchTryMultipleProviders = async <T>(
+export const fetchTryMultipleProviders = <T>(
   node: TNode,
   fetcher: (wsUrl: string) => T
-): Promise<T | null> => {
+): T | null => {
   const providers = getAllNodeProviders(node)
   for (const provider of providers) {
     try {
       console.log(`Trying ${provider}...`)
       return fetcher(provider)
-    } catch (e) {
+    } catch (_e) {
       console.log(`Error fetching data from ${provider}. Trying from another RPC endpoint`)
     }
   }
@@ -46,7 +47,7 @@ export const fetchWithTimeout = async <T>(
       const wsProvider = new WsProvider(wsUrl)
 
       const timeoutHandle = setTimeout(() => {
-        wsProvider.disconnect()
+        void wsProvider.disconnect()
         reject(new Error('Timed out'))
       }, TIMEOUT_MS)
 
@@ -73,6 +74,7 @@ export const fetchTryMultipleProvidersWithTimeout = async <T>(
   })
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const writeJsonSync = (path: string, data: any) => {
   const TAB_WIDTH = 2
   fs.writeFileSync(path, JSON.stringify(data, null, TAB_WIDTH))
@@ -85,7 +87,9 @@ export const handleDataFetching = async <T1, T2>(
   transformFunc?: (data: T2) => T2
 ) => {
   checkForNodeJsEnvironment()
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const existingData = await readJsonOrReturnEmptyObject(filePath)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   let data = (await fetchFunc(existingData)) as T2
   if (transformFunc) {
     data = transformFunc(data)

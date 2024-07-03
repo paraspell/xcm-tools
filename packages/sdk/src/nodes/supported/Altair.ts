@@ -15,7 +15,7 @@ class Altair extends ParachainNode implements IXTokensTransfer {
     super('Altair', 'altair', 'kusama', Version.V3)
   }
 
-  private static getCurrencySelection({ currency, currencyID }: XTokensTransferInput): any {
+  private static getCurrencySelection({ currency, currencyID }: XTokensTransferInput) {
     if (currency === 'AIR') return 'Native'
     return { ForeignAsset: currencyID }
   }
