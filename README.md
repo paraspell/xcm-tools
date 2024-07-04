@@ -41,13 +41,31 @@ These commands will be run on all packages in monorepo.
 
 - Run formatter using `pnpm format:check`
 
-- Run linter using `pnpm lint`
+- Run formatter with write permissions using `pnpm format:wríte`
+
+- Run linter using `pnpm lint:check`
 
 - Run unit tests using `pnpm test`
+
+- Run integration tests using `pnpm test:integration`
+
+- Run end-to-end tests using `pnpm test:e2e`
   
 - Build all packages and apps using `pnpm build`
 
-- Launch playground from root using `pnpm run:playground`
+- Launch playground from the root using `pnpm run:playground`
+
+- Launch XCM API from the root using `pnpm run:api`
+
+- Launch the landing page from the root using `pnpm run:landing-page`
+
+- Run asset update script for XCM SDK from the root using `pnpm run:updateAssets`
+
+- Run existential deposit update script for XCM SDK from the root using `run:updateEds`
+
+- Run pallet update script for XCM SDK from the root using `pnpm run:updatePallets`
+
+- Run asset update script for XCM Router from the root using `pnpm run:updateRouterAssets`
 
 To run command only for specific package or app in monorepo use:
 
