@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.2.1...xcm-analyser-v1.3.0) (2024-07-04)
+
+
+### Features
+
+* **xcm-api:** Add XCM Analyser endpoint ([d171645](https://github.com/paraspell/xcm-tools/commit/d1716455e093a4adac1946debcde9ee0132e90ee))
+
+
+### Miscellaneous Chores
+
+* Update Node.js to v20 LTS ([4b00caa](https://github.com/paraspell/xcm-tools/commit/4b00caa58649051f4dea57e7f6ebb94baa6e307a))
+* Update SDK dependencies ⚙️ ([281d5c7](https://github.com/paraspell/xcm-tools/commit/281d5c7a5fd043c7a5b3d323218ccfdba9ef0a56))
+
+
+### Code Refactoring
+
+* Upgrade ESlint to v9 & create shared config ([524161b](https://github.com/paraspell/xcm-tools/commit/524161b9a9509c3beb15af99bfc0151c7eeb5619))
+
 ## [1.2.1](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.2.0...xcm-analyser-v1.2.1) (2024-04-30)
 
 
