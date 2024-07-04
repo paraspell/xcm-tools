@@ -23,6 +23,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import { AssetClaimModule } from './asset-claim/asset-claim.module.js';
 import { TransferInfoModule } from './transfer-info/transfer-info.module.js';
+import { XcmAnalyserModule } from './xcm-analyser/xcm-analyser.module.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,6 +34,7 @@ const __dirname = path.dirname(__filename);
     XTransferModule,
     AssetClaimModule,
     TransferInfoModule,
+    XcmAnalyserModule,
     RouterModule,
     AssetsModule,
     ChannelsModule,

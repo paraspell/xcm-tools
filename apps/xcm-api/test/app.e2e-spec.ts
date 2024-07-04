@@ -754,5 +754,64 @@ describe('XCM API (e2e)', () => {
           .expect(200);
       });
     });
+
+    describe('XCM Analyser controller', () => {
+      it('Get MultiLocation paths - No multilocation or xcm provided - /xcm-analyser (POST)', () => {
+        return request(app.getHttpServer()).post('/xcm-analyser').expect(400);
+      });
+
+      it('Get MultiLocation paths - Invalid multilocation provided - /xcm-analyser (POST)', () => {
+        return request(app.getHttpServer())
+          .post('/xcm-analyser')
+          .send({
+            multilocation: {
+              parents: '0',
+              exterior: {
+                X1: {
+                  Parachain: '2000',
+                },
+              },
+            },
+          })
+          .expect(400);
+      });
+
+      it('Get MultiLocation paths - XCM without any multilocations provided - /xcm-analyser (POST)', () => {
+        return request(app.getHttpServer())
+          .post('/xcm-analyser')
+          .send({
+            xcm: ['0x123'],
+          })
+          .expect(201)
+          .expect('[]');
+      });
+
+      it('Get MultiLocation paths - Valid MultiLocation - /xcm-analyser (POST)', () => {
+        return request(app.getHttpServer())
+          .post('/xcm-analyser')
+          .send({
+            multilocation: {
+              parents: '0',
+              interior: {
+                X1: {
+                  Parachain: '2000',
+                },
+              },
+            },
+          })
+          .expect(201)
+          .expect('"./Parachain(2000)"');
+      });
+
+      it('Get MultiLocation paths - Valid XCM - /xcm-analyser (POST)', () => {
+        return request(app.getHttpServer())
+          .post('/xcm-analyser')
+          .send({
+            xcm: ['0x123'],
+          })
+          .expect(201)
+          .expect('[]');
+      });
+    });
   });
 });
