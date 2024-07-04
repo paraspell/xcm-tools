@@ -225,6 +225,7 @@ const response = await fetch("http://localhost:3001/xcm-analyser", {
     body: JSON.stringify({
         multilocation: "Multilocation", //Replace Multilocation with specific Multilocation you wish to analyse
         xcm: "XCM" //Replace XCM with the specific XCM call you wish to analyse
+    })
 });
 ```
 
