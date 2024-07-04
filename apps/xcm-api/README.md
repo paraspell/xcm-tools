@@ -202,7 +202,30 @@ const response = await fetch("http://localhost:3001/router", {
         address: "Address", //Recipient address
         injectorAddress: 'InjectorAddress', //Address of sender
     })
-})
+});
+```
+
+### XCM Analyser
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmAnalyser.html).
+
+```
+NOTICE: Only one parameter at a time is allowed, either multilocation or xcm.
+```
+
+Possible parameters:
+- `multilocation` (Optional): Specific multilocation
+- `xcm` (Optional): Complete XCM call
+
+```js
+const response = await fetch("http://localhost:3001/xcm-analyser", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        multilocation: "Multilocation", //Replace Multilocation with specific Multilocation you wish to analyse
+        xcm: "XCM" //Replace XCM with the specific XCM call you wish to analyse
+});
 ```
 
 ### Asset Pallet
