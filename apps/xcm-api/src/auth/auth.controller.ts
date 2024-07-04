@@ -8,11 +8,11 @@ import {
   Request,
   Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { AuthService } from './auth.service.js';
 import { HigherRequestLimitDto } from './dto/HigherRequestLimitDto.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {

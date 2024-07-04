@@ -60,7 +60,7 @@ const JunctionSchema = z.union([
 
 const Junctions = z.lazy(() =>
   z.object({
-    X1: z.union([JunctionSchema, z.array(JunctionSchema)]).optional(),
+    X1: z.union([JunctionSchema, z.tuple([JunctionSchema])]).optional(),
     X2: z.tuple([JunctionSchema, JunctionSchema]).optional(),
     X3: z.tuple([JunctionSchema, JunctionSchema, JunctionSchema]).optional(),
     X4: z
