@@ -8,7 +8,7 @@
     "eslint": "^9.6.0",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "^3.3.2",
-    "turbo": "^1.13.0",
+    "turbo": "^2.0.6",
     "typescript": "^5.5.3",
     "typescript-eslint": "^7.15.0",
     "vitest": "^1.6.0"
@@ -28,13 +28,16 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
-    "test:integration": "turbo run test:watch",
+    "test:integration": "turbo run test:integration",
+    "test:e2e": "turbo run test:e2e",
     "build": "turbo run build",
     "run:playground": "pnpm --filter=playground dev",
+    "run:api": "pnpm --filter=xcm-api start:dev",
     "run:landing-page": "pnpm --filter=landing-page dev",
     "run:updateAssets": "pnpm --filter=sdk updateAssets",
+    "run:updateRouterAssets": "pnpm --filter=xcm-router updateAssets",
     "run:updatePallets": "pnpm --filter=sdk updatePallets",
     "run:updateEds": "pnpm --filter=sdk updateEds"
   },
-  "packageManager": "pnpm@9.1.1"
+  "packageManager": "pnpm@9.4.0"
 }

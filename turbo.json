@@ -1,16 +1,17 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "compile": {},
     "format:check": {},
     "format:write": {},
     "lint:check": {},
     "lint": {},
     "test": {},
-    "test:integration": {},
     "test:watch": {
       "cache": false
     },
+    "test:integration": {},
+    "test:e2e": {},
     "build": {
       "outputs": ["dist/**"],
       "dependsOn": ["^build"]
