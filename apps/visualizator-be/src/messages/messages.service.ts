@@ -106,14 +106,13 @@ export class MessageService {
     startTime: number,
     endTime: number,
   ): Promise<MessageCountByDay[]> {
-    // Start constructing the query
     const queryBuilder = this.messagesRepository
       .createQueryBuilder('message')
       .select(
         "TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
         'date',
       )
-      .addSelect('COUNT(*)', 'message_count') // Total message count
+      .addSelect('COUNT(*)', 'message_count')
       .addSelect(
         "SUM(CASE WHEN message.status = 'success' THEN 1 ELSE 0 END)",
         'message_count_success',
@@ -123,7 +122,6 @@ export class MessageService {
         'message_count_failed',
       );
 
-    // Apply initial filter for the date range first
     queryBuilder.where(
       'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
       {
@@ -132,34 +130,26 @@ export class MessageService {
       },
     );
 
-    // Only apply the paraId filter and additional select/group if paraIds are provided
     if (paraIds.length > 0) {
-      console.log(paraIds); // Good for debugging
       queryBuilder
-        .andWhere('message.origin_para_id IN (:...paraIds)', { paraIds }) // Filter by paraIds
-        .addSelect('message.origin_para_id', 'paraId') // Need paraId for grouping and output
+        .andWhere('message.origin_para_id IN (:...paraIds)', { paraIds })
+        .addSelect('message.origin_para_id', 'paraId')
         .groupBy(
           "message.origin_para_id, TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
         );
     } else {
-      // When no paraIds are provided, group only by date
       queryBuilder.groupBy(
         "TO_CHAR(TO_TIMESTAMP(message.origin_block_timestamp), 'YYYY-MM-DD')",
       );
     }
 
-    // Apply order based on whether paraIds are provided
     queryBuilder.orderBy(
       paraIds.length > 0 ? 'message.origin_para_id, date' : 'date',
     );
 
-    // Log the final SQL query and parameters to verify correctness
-    const queryAndParameters = queryBuilder.getQueryAndParameters();
-    console.log(queryAndParameters);
-
     const data = await queryBuilder.getRawMany();
     return data.map((d) => ({
-      paraId: d.paraId ? parseInt(d.paraId, 10) : undefined, // Handle absence of paraId when paraIds is empty
+      paraId: d.paraId ? parseInt(d.paraId, 10) : undefined,
       date: d.date,
       messageCount:
         parseInt(d.message_count_success, 10) +
@@ -175,7 +165,6 @@ export class MessageService {
     countBy: CountOption,
   ): Promise<MessageCount[]> {
     if (countBy === CountOption.BOTH) {
-      // Define separate queries for origin and destination
       const originQuery = this.messagesRepository
         .createQueryBuilder('message')
         .select('message.origin_para_id', 'paraId')
@@ -196,18 +185,15 @@ export class MessageService {
         )
         .groupBy('message.dest_para_id');
 
-      // Execute both queries
       const originResults = await originQuery.getRawMany();
       const destinationResults = await destinationQuery.getRawMany();
 
-      // Aggregate counts for each paraId
       const totalCounts = new Map();
       [...originResults, ...destinationResults].forEach((result) => {
         const count = totalCounts.get(result.paraId) || 0;
         totalCounts.set(result.paraId, count + parseInt(result.totalCount, 10));
       });
 
-      // Convert the Map to an array of objects
       return Array.from(totalCounts.entries()).map(([paraId, totalCount]) => ({
         paraId: parseInt(paraId, 10),
         totalCount,
@@ -216,7 +202,6 @@ export class MessageService {
       const queryBuilder =
         this.messagesRepository.createQueryBuilder('message');
 
-      // Apply where clause first to narrow down the results right away
       queryBuilder.where(
         'message.origin_block_timestamp BETWEEN :startTime AND :endTime',
         {
@@ -225,25 +210,22 @@ export class MessageService {
         },
       );
 
-      // Depending on the count option, select and group by the appropriate paraId
       if (countBy === CountOption.ORIGIN) {
         queryBuilder
-          .select('message.origin_para_id', 'paraId') // Select with alias
-          .addGroupBy('message.origin_para_id'); // Group by actual field
+          .select('message.origin_para_id', 'paraId')
+          .addGroupBy('message.origin_para_id');
       } else if (countBy === CountOption.DESTINATION) {
         queryBuilder
-          .select('message.dest_para_id', 'paraId') // Select with alias
-          .addGroupBy('message.dest_para_id'); // Group by actual field
+          .select('message.dest_para_id', 'paraId')
+          .addGroupBy('message.dest_para_id');
       }
 
-      // Add select for count after setting up primary select to ensure it is not overridden
       queryBuilder.addSelect('COUNT(*)', 'totalCount');
 
-      // Execute the query and return results
       const results = await queryBuilder.getRawMany();
       return results.map((result) => ({
         paraId: result.paraId,
-        totalCount: parseInt(result.totalCount, 10), // Ensure the totalCount is parsed to int
+        totalCount: parseInt(result.totalCount, 10),
       }));
     }
   }
@@ -313,11 +295,9 @@ export class MessageService {
     const whereConditions = [];
     const parameters = [];
 
-    // Adding time range filters
     whereConditions.push('origin_block_timestamp BETWEEN $1 AND $2');
     parameters.push(startTime, endTime);
 
-    // Handling paraId filtering
     if (paraIds.length > 0) {
       whereConditions.push(
         `origin_para_id IN (${paraIds.map((_, index) => `$${index + 3}`).join(', ')})`,
@@ -334,7 +314,7 @@ export class MessageService {
       ORDER BY message_count DESC;
     `;
 
-    parameters.push(threshold); // Add threshold as the last parameter
+    parameters.push(threshold);
 
     const result = await this.messagesRepository.query(query, parameters);
 

@@ -23,12 +23,10 @@ export const lightenColor = (hex: string | undefined, percent: number) => {
   g += amount;
   b += amount;
 
-  // Ensure that no RGB values go over 255
   r = Math.min(255, r);
   g = Math.min(255, g);
   b = Math.min(255, b);
 
-  // Convert back to hex and return
   return (
     '#' +
     (

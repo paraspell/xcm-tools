@@ -17,7 +17,6 @@ export class ChannelService {
   ) {}
 
   async findAll(startTime: number, endTime: number): Promise<Channel[]> {
-    // Construct a query using positional parameters
     const query = `
       SELECT 
         ch.sender AS "senderId",
@@ -55,7 +54,6 @@ export class ChannelService {
   }
 
   async findOne(channelId: number): Promise<Channel> {
-    // Construct a query using positional parameters
     const query = `
       SELECT 
         ch.sender AS "senderId",
@@ -74,7 +72,6 @@ export class ChannelService {
         ch.sender, ch.recipient, ch.id, ch.status;
     `;
 
-    // Execute the query with channelId as the parameter
     const result = await this.channelRepository.query(query, [channelId]);
 
     if (result.length === 0) {

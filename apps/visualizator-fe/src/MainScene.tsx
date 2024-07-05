@@ -1,14 +1,14 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import ParachainsGraphContainer from './components/ParachainsGraph/ParachainsGraph.container';
 
-const MainScene = () => {
-  return (
-    <>
-      <ParachainsGraphContainer />
-      <OrbitControls enableDamping autoRotate={false} />
-      <PerspectiveCamera makeDefault position={[15, 2, 5]} />
-    </>
-  );
-};
+const CAMERA_POSITION = [15, 2, 5] as const;
+
+const MainScene = () => (
+  <>
+    <ParachainsGraphContainer />
+    <OrbitControls enableDamping autoRotate={false} />
+    <PerspectiveCamera makeDefault position={CAMERA_POSITION} />
+  </>
+);
 
 export default MainScene;

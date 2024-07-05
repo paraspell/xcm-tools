@@ -14,7 +14,6 @@ type Props = {
 
 const AccountsAmountPlot: FC<Props> = ({ counts }) => {
   const handlePointClick = (point: any) => {
-    console.log(`Point clicked: ID = ${point.name}, Count = ${point.value}`);
     void navigator.clipboard.writeText(point.name);
   };
 
@@ -43,14 +42,11 @@ const AccountsAmountPlot: FC<Props> = ({ counts }) => {
     tooltip: {
       useHTML: true,
       formatter: function () {
-        // Assuming you want to show the item's id (or a hash of it) in the tooltip
-        // Here, simply using the item's name (id) as an example. Replace or modify according to your hash generation logic
         return `ID (Hash): <b>${this.point.name.startsWith('0x') ? this.point.name : '0x' + this.point.name}</b><br>Count: <b>${(this.point as any).value}</b>`;
       }
     },
     plotOptions: {
       packedbubble: {
-        // minSize: 1,
         maxSize: 150,
         dataLabels: {
           enabled: true,
