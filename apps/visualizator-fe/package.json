@@ -12,6 +12,7 @@
     "lint": "eslint --fix ."
   },
   "dependencies": {
+    "@apollo/client": "^3.10.8",
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@mantine/charts": "^7.10.1",
@@ -29,10 +30,8 @@
     "@react-three/drei": "^9.106.0",
     "@react-three/fiber": "^8.16.8",
     "@tabler/icons-react": "^3.5.0",
-    "@tanstack/react-query": "^5.40.1",
     "dayjs": "^1.11.11",
     "graphql": "^16.8.1",
-    "graphql-request": "^7.0.1",
     "highcharts": "^11.4.3",
     "highcharts-react-official": "^3.2.1",
     "react": "^18.3.1",

@@ -282,6 +282,9 @@ importers:
 
   apps/visualizator-fe:
     dependencies:
+      '@apollo/client':
+        specifier: ^3.10.8
+        version: 3.10.8(@types/react@18.3.3)(graphql-ws@5.14.3(graphql@16.8.1))(graphql@16.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(subscriptions-transport-ws@0.11.0(bufferutil@4.0.8)(graphql@16.8.1)(utf-8-validate@5.0.10))
       '@graphql-codegen/cli':
         specifier: ^5.0.2
         version: 5.0.2(@types/node@20.14.2)(bufferutil@4.0.8)(graphql@16.8.1)(typescript@5.5.3)(utf-8-validate@5.0.10)
@@ -333,18 +336,12 @@ importers:
       '@tabler/icons-react':
         specifier: ^3.5.0
         version: 3.5.0(react@18.3.1)
-      '@tanstack/react-query':
-        specifier: ^5.40.1
-        version: 5.40.1(react@18.3.1)
       dayjs:
         specifier: ^1.11.11
         version: 1.11.11
       graphql:
         specifier: ^16.8.1
         version: 16.8.1
-      graphql-request:
-        specifier: ^7.0.1
-        version: 7.0.1(graphql@16.8.1)
       highcharts:
         specifier: ^11.4.3
         version: 11.4.3
@@ -880,6 +877,24 @@ packages:
     resolution: {integrity: sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==}
     peerDependencies:
       graphql: 14.x || 15.x || 16.x
+
+  '@apollo/client@3.10.8':
+    resolution: {integrity: sha512-UaaFEitRrPRWV836wY2L7bd3HRCfbMie1jlYMcmazFAK23MVhz/Uq7VG1nwbotPb5xzFsw5RF4Wnp2G3dWPM3g==}
+    peerDependencies:
+      graphql: ^15.0.0 || ^16.0.0
+      graphql-ws: ^5.5.5
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      subscriptions-transport-ws: ^0.9.0 || ^0.11.0
+    peerDependenciesMeta:
+      graphql-ws:
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      subscriptions-transport-ws:
+        optional: true
 
   '@apollo/protobufjs@1.2.7':
     resolution: {integrity: sha512-Lahx5zntHPZia35myYDBRuF58tlwPskwHc5CWBZC/4bMKB6siTBWwtMrkqXcsNwQiFSzSx5hKdRPUmemrEp3Gg==}
@@ -1714,47 +1729,6 @@ packages:
   '@docknetwork/node-types@0.16.0':
     resolution: {integrity: sha512-VUZB8guX9161hDIEVn/UKJEUlXjIDE6vH5flx6uDHVc0QOhBy1bq6AGLayG4ZH19dCN39ta2sKGIFq9wLO4H2A==}
     engines: {node: '>=14.0.0'}
-
-  '@dprint/darwin-arm64@0.45.1':
-    resolution: {integrity: sha512-pH0/uKLJ5SJPoHhOwLWFMhCmL0BY3FzWQbull8OGMK/FRkIPgOl2adZSovtUZpUMGWyDOzIWH1fW9X2DuMhnEg==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@dprint/darwin-x64@0.45.1':
-    resolution: {integrity: sha512-YUj421LmBLDlxpIER3pORKfQmpmXD50n5mClHjpZrnl17WTiHtQ+jHvDJdJoxH2eS66W0mQyxLoGo5SfFfiM7A==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@dprint/formatter@0.3.0':
-    resolution: {integrity: sha512-N9fxCxbaBOrDkteSOzaCqwWjso5iAe+WJPsHC021JfHNj2ThInPNEF13ORDKta3llq5D1TlclODCvOvipH7bWQ==}
-
-  '@dprint/linux-arm64-glibc@0.45.1':
-    resolution: {integrity: sha512-lJ7s/pOQWRJ0mstjZQnVyX2/3QRXZ9cpFHJDZ7e81Y8QSn/iqxTrnK0DPgxUrDG8hYKQmWQdQLU4sP5DKBz0Jg==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@dprint/linux-arm64-musl@0.45.1':
-    resolution: {integrity: sha512-un2awe1L1sAJLsCPSEUrE0/cgupdzbYFoyBOutyU1zHR9KQn47AtIDw+chvuinU4xleHDuEGyXGuJ6NE+Ky6vw==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@dprint/linux-x64-glibc@0.45.1':
-    resolution: {integrity: sha512-5Civht90S/g8zlyYB7n4oH78p+sLbNqeFCFuImJRK7uRxZwCRya7lji6RwlB6DQ7qngVqovTHj9RLOYfZzfVlg==}
-    cpu: [x64]
-    os: [linux]
-
-  '@dprint/linux-x64-musl@0.45.1':
-    resolution: {integrity: sha512-p2/gjnHDd8GRCvtey5HZO4o/He6pSmY/zpcCuIXprFW9P0vNlEj3DFhz4FPpOKXM+csrsVWWs2E0T/xr5QZtVg==}
-    cpu: [x64]
-    os: [linux]
-
-  '@dprint/typescript@0.90.5':
-    resolution: {integrity: sha512-/1aP6saonFvJyQN3l2is6eTOec3GnLGyW+opid/eDm8pnlhwzYl8A9p36pI6WO5jLl/a9Ghod+LWpvSOuXFGUw==}
-
-  '@dprint/win32-x64@0.45.1':
-    resolution: {integrity: sha512-2l78XM7KsW46P2Yv6uPB3fE+y92EsBlrCxi+RVQ0pbznPFdMdkLyGgaCuh683zdld14jHlaADpIQ7YchGAEMAg==}
-    cpu: [x64]
-    os: [win32]
 
   '@edgeware/node-types@3.6.2-wako':
     resolution: {integrity: sha512-kBGCoWoRSUOj864BiTwHGfsfuhGr2ycWEsjw9FB2VdJ5esJDVq3K6WZs/J2rtrtybKJWADqIp5K0ptDBlg1XqA==}
@@ -2606,12 +2580,6 @@ packages:
 
   '@metaverse-network-sdk/type-definitions@0.0.1-16':
     resolution: {integrity: sha512-lo1NbA0gi+Tu23v4cTkN/oxEhQxaf3QxQ2qvUUfTxDU7a1leYp2Bw3IcoUvqHAGb/PPp8bNmYQfAKXsjqp+LZw==}
-
-  '@molt/command@0.9.0':
-    resolution: {integrity: sha512-1JI8dAlpqlZoXyKWVQggX7geFNPxBpocHIXQCsnxDjKy+3WX4SGyZVJXuLlqRRrX7FmQCuuMAfx642ovXmPA9g==}
-
-  '@molt/types@0.2.0':
-    resolution: {integrity: sha512-p6ChnEZDGjg9PYPec9BK6Yp5/DdSrYQvXTBAtgrnqX6N36cZy37ql1c8Tc5LclfIYBNG7EZp8NBcRTYJwyi84g==}
 
   '@monogrid/gainmap-js@3.0.5':
     resolution: {integrity: sha512-53sCTG4FaJBaAq/tcufARtVYDMDGqyBT9i7F453pWGhZ5LqubDHDWtYoHo9VhQqMcHTEexdJqSsR58y+9HVmQA==}
@@ -3952,14 +3920,6 @@ packages:
   '@tabler/icons@3.5.0':
     resolution: {integrity: sha512-I53dC3ZSHQ2MZFGvDYJelfXm91L2bTTixS4w5jTAulLhHbCZso5Bih4Rk/NYZxlngLQMKHvEYwZQ+6w/WluKiA==}
 
-  '@tanstack/query-core@5.40.0':
-    resolution: {integrity: sha512-eD8K8jsOIq0Z5u/QbvOmfvKKE/XC39jA7yv4hgpl/1SRiU+J8QCIwgM/mEHuunQsL87dcvnHqSVLmf9pD4CiaA==}
-
-  '@tanstack/react-query@5.40.1':
-    resolution: {integrity: sha512-gOcmu+gpFd2taHrrgMM9RemLYYEDYfsCqszxCC0xtx+csDa4R8t7Hr7SfWXQP13S2sF+mOxySo/+FNXJFYBqcA==}
-    peerDependencies:
-      react: ^18.0.0
-
   '@thi.ng/api@8.11.2':
     resolution: {integrity: sha512-5i00GGTZ2E0JXGdcCuQL9HvA8fIxgYdYog3aFku6zmLh5fJCxfZVNNay5LV87Ev5uj3iuaqz0vbl33JuZc6/iw==}
     engines: {node: '>=18'}
@@ -4437,6 +4397,26 @@ packages:
     resolution: {integrity: sha512-LS8tSomZa3YHnntpWt3PP43iFEEl6YeIsvDakczHBKlay5LdkXFr8w7v8H6akpG5nRrzydyB0k1iE2eoL6aKIQ==}
     engines: {node: '>=16.0.0'}
 
+  '@wry/caches@1.0.1':
+    resolution: {integrity: sha512-bXuaUNLVVkD20wcGBWRyo7j9N3TxePEWFZj2Y+r9OoUzfqmavM84+mFykRicNsBqatba5JLay1t48wxaXaWnlA==}
+    engines: {node: '>=8'}
+
+  '@wry/context@0.7.4':
+    resolution: {integrity: sha512-jmT7Sb4ZQWI5iyu3lobQxICu2nC/vbUhP0vIdd6tHC9PTfenmRmuIFqktc6GH9cgi+ZHnsLWPvfSvc4DrYmKiQ==}
+    engines: {node: '>=8'}
+
+  '@wry/equality@0.5.7':
+    resolution: {integrity: sha512-BRFORjsTuQv5gxcXsuDXx6oGRhuVsEGwZy6LOzRRfgu+eSfxbhUQ9L9YtSEIuIjY/o7g3iWFjrc5eSY1GXP2Dw==}
+    engines: {node: '>=8'}
+
+  '@wry/trie@0.4.3':
+    resolution: {integrity: sha512-I6bHwH0fSf6RqQcnnXLJKhkSXG45MFral3GxPaY4uAl0LYDZM+YDVDAiU9bYwjTuysy1S0IeecWtmq1SZA3M1w==}
+    engines: {node: '>=8'}
+
+  '@wry/trie@0.5.0':
+    resolution: {integrity: sha512-FNoYzHawTMk/6KMQoEG5O4PuioX19UbwdQKF44yw0nLfOypfQdjtfZzo/UIJWAJ23sNIFbD1Ug9lbaDGMwbqQA==}
+    engines: {node: '>=8'}
+
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
 
@@ -4523,9 +4503,6 @@ packages:
 
   ajv@8.12.0:
     resolution: {integrity: sha512-sRu1kpcO9yLtYxBKvqfTeh9KzZEwO3STyX1HT+4CaDzC6HpTGYhIhPIzj9XuKU7KYDwnaeh5hcOwjy1QuJzBPA==}
-
-  alge@0.8.1:
-    resolution: {integrity: sha512-kiV9nTt+XIauAXsowVygDxMZLplZxDWt0W8plE/nB32/V2ziM/P/TxDbSVK7FYIUt2Xo16h3/htDh199LNPCKQ==}
 
   ansi-colors@4.1.3:
     resolution: {integrity: sha512-/6w/C21Pm1A7aZitlI5Ni/2J6FFQN8i1Cvz3kHABAAbw93v/NlvKdVOqz7CCWz/3iv/JplRSEEZ83XION15ovw==}
@@ -5481,10 +5458,6 @@ packages:
     resolution: {integrity: sha512-sCm11ak2oY6DglEPpCB8TixLjWAxd3kJTs6UIcSasNYxXdFPV+YKlye92c8H4kKFqV5qYMIh7d+cYecEg0dIkA==}
     engines: {node: '>=6'}
 
-  dprint@0.45.1:
-    resolution: {integrity: sha512-OYefcDgxd6jSdig/Cfkw1vdvyiOIRruCPnqGBbXpc95buDt9kvwL+Lic1OHc+SaQSsQub0BUZMd5+TNgy8Sh3A==}
-    hasBin: true
-
   draco3d@1.5.7:
     resolution: {integrity: sha512-m6WCKt/erDXcw+70IJXnG7M3awwQPAsZvJGX5zY7beBqpELw6RDGkYVU0W43AFxye4pDZ5i2Lbyc/NNGqwjUVQ==}
 
@@ -6051,12 +6024,6 @@ packages:
     peerDependencies:
       graphql: 14 - 16
 
-  graphql-request@7.0.1:
-    resolution: {integrity: sha512-hfGBZF6o6lC3C0th+aTMOFP6p8Ev+ydXn4PUlT8rvqPDUFCbaynXszjBCyu0saZIP3VGbJ67GpxW8UGK+tphSw==}
-    hasBin: true
-    peerDependencies:
-      graphql: 14 - 16
-
   graphql-tag@2.12.6:
     resolution: {integrity: sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==}
     engines: {node: '>=10'}
@@ -6162,6 +6129,9 @@ packages:
 
   hmac-drbg@1.0.1:
     resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
+
+  hoist-non-react-statics@3.3.2:
+    resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
   hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
@@ -6843,9 +6813,6 @@ packages:
   lodash.once@4.1.1:
     resolution: {integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==}
 
-  lodash.snakecase@4.1.1:
-    resolution: {integrity: sha512-QZ1d4xoBHYUeuouhEq3lk3Uq7ldgyFXGBhg04+oRLnIz8o9T65Eh+8YdroUwn846zchkA9yDsDl5CVVaV2nqYw==}
-
   lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
 
@@ -7263,6 +7230,9 @@ packages:
   onetime@6.0.0:
     resolution: {integrity: sha512-1FlR+gjXK7X+AsAHso35MnyN5KqGwJRi/31ft6x0M194ht7S+rWAvd7PHss9xSKMzE0asv1pyIHaJYq+BbacAQ==}
     engines: {node: '>=12'}
+
+  optimism@0.18.0:
+    resolution: {integrity: sha512-tGn8+REwLRNFnb9WmcY5IfpOqeX2kpaYJ1s6Ae3mn12AeydLkR3j+jSCmVQFoXqU8D41PAJ1RG1rCRNWmNZVmQ==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -7848,10 +7818,6 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
 
-  readline-sync@1.4.10:
-    resolution: {integrity: sha512-gNva8/6UAe8QYepIQH/jQ2qn91Qj0B9sYjMBBs3QOB8F2CXcKgLxQaJRP76sWVRQt+QU+8fAkCbCvjjMFu7Ycw==}
-    engines: {node: '>= 0.8.0'}
-
   recharts-scale@0.4.5:
     resolution: {integrity: sha512-kivNFO+0OcUNu7jQquLXAxz1FIwZj8nrj+YkOKc5694NbjCvcT6aSZiIzNzd2Kul4o4rTto8QVR9lMNtxD4G1w==}
 
@@ -7897,11 +7863,19 @@ packages:
     resolution: {integrity: sha512-dQUtn90WanSNl+7mQKcXAgZxvUe7Z0SqXlgzv0za4LwiUhyzBC58yQO3liFoUgu8GiJVInAhJjkj1N0EtQ5nkQ==}
     hasBin: true
 
+  rehackt@0.1.0:
+    resolution: {integrity: sha512-7kRDOuLHB87D/JESKxQoRwv4DzbIdwkAGQ7p6QKGdVlY1IZheUnVhlk/4UZlNUVxdAXpyxikE3URsG067ybVzw==}
+    peerDependencies:
+      '@types/react': '*'
+      react: '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
+
   relay-runtime@12.0.0:
     resolution: {integrity: sha512-QU6JKr1tMsry22DXNy9Whsq5rmvwr3LSZiiWV/9+DFpuTWvp+WFhobWMc8TC4OjKFfNhEZy7mOiqUAn5atQtug==}
-
-  remeda@1.61.0:
-    resolution: {integrity: sha512-caKfSz9rDeSKBQQnlJnVW3mbVdFgxgGWQKq1XlFokqjf+hQD5gxutLGTTY2A/x24UxVyJe9gH5fAkFI63ULw4A==}
 
   remedial@1.0.8:
     resolution: {integrity: sha512-/62tYiOe6DzS5BqVsNpH/nkGlX45C/Sp6V+NtiN6JQNS1Viay7cWkazmRkrQrdFj2eshDe96SIQNIoMxqhzBOg==}
@@ -7949,6 +7923,10 @@ packages:
   resolve@1.22.8:
     resolution: {integrity: sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==}
     hasBin: true
+
+  response-iterator@0.2.6:
+    resolution: {integrity: sha512-pVzEEzrsg23Sh053rmDUvLSkGXluZio0qu8VT6ukrYuvtjVfCbDZH9d6PGXb8HZfzdNZt8feXv/jvUzlhRgLnw==}
+    engines: {node: '>=0.8'}
 
   restore-cursor@3.1.0:
     resolution: {integrity: sha512-l+sSefzHpj5qimhFSE5a8nufZYAM3sBSVMAPtYkmC+4EH2anSGaEMXSD0izRQbu9nfyQ9y5JrVmp7E8oZrUjvA==}
@@ -8242,10 +8220,6 @@ packages:
     resolution: {integrity: sha512-+l6rNN5fYHNhZZy41RXsYptCjA2Igmq4EG7kZAYFQI1E1VTXarr6ZPXBg6eq7Y6eK4FEhY6AJlyuFIb/v/S0VQ==}
     engines: {node: '>=10'}
 
-  string-length@6.0.0:
-    resolution: {integrity: sha512-1U361pxZHEQ+FeSjzqRpV+cu2vTzYeWeafXFLykiFlv4Vc0n3njgU8HrMbyik5uwm77naWMuVG8fhEF+Ovb1Kg==}
-    engines: {node: '>=16'}
-
   string-width@4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
     engines: {node: '>=8'}
@@ -8523,6 +8497,10 @@ packages:
     peerDependencies:
       typescript: '>=4.2.0'
 
+  ts-invariant@0.10.3:
+    resolution: {integrity: sha512-uivwYcQaxAucv1CzRp2n/QdYPo4ILf9VXgH19zEIjFx2EJufV16P0JtJVpYHy89DItG6Kwj2oIUjrcK5au+4tQ==}
+    engines: {node: '>=8'}
+
   ts-jest@29.1.4:
     resolution: {integrity: sha512-YiHwDhSvCiItoAgsKtoLFCuakDzDsJ1DLDnSouTaTmdOcOwIkSzbLXduaQ6M5DRVhuZC/NYaaZ/mtHbWMv/S6Q==}
     engines: {node: ^14.15.0 || ^16.10.0 || ^18.0.0 || >=20.0.0}
@@ -8570,9 +8548,6 @@ packages:
         optional: true
       '@swc/wasm':
         optional: true
-
-  ts-toolbelt@9.6.0:
-    resolution: {integrity: sha512-nsZd8ZeNUzukXPlJmTBwUAuABDe/9qtVDelJeT/qW0ow3ZS3BsQJtNkan1802aM9Uf68/Y8ljw86Hu0h5IUW3w==}
 
   tsconfig-paths-webpack-plugin@4.1.0:
     resolution: {integrity: sha512-xWFISjviPydmtmgeUAuXp4N1fky+VCtfhOkDUFIv5ea7p4wuTomI4QTrXvFBX2S4jZsmyTSrStQl+E+4w+RzxA==}
@@ -9369,6 +9344,12 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
 
+  zen-observable-ts@1.2.5:
+    resolution: {integrity: sha512-QZWQekv6iB72Naeake9hS1KxHlotfRpe+WGNbNx5/ta+R3DNjVO2bswf63gXlWDcs+EMd7XY8HfVQyP1X6T4Zg==}
+
+  zen-observable@0.8.15:
+    resolution: {integrity: sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==}
+
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
@@ -9545,6 +9526,31 @@ snapshots:
   '@apollo/cache-control-types@1.0.3(graphql@16.8.1)':
     dependencies:
       graphql: 16.8.1
+
+  '@apollo/client@3.10.8(@types/react@18.3.3)(graphql-ws@5.14.3(graphql@16.8.1))(graphql@16.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(subscriptions-transport-ws@0.11.0(bufferutil@4.0.8)(graphql@16.8.1)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
+      '@wry/caches': 1.0.1
+      '@wry/equality': 0.5.7
+      '@wry/trie': 0.5.0
+      graphql: 16.8.1
+      graphql-tag: 2.12.6(graphql@16.8.1)
+      hoist-non-react-statics: 3.3.2
+      optimism: 0.18.0
+      prop-types: 15.8.1
+      rehackt: 0.1.0(@types/react@18.3.3)(react@18.3.1)
+      response-iterator: 0.2.6
+      symbol-observable: 4.0.0
+      ts-invariant: 0.10.3
+      tslib: 2.6.3
+      zen-observable-ts: 1.2.5
+    optionalDependencies:
+      graphql-ws: 5.14.3(graphql@16.8.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      subscriptions-transport-ws: 0.11.0(bufferutil@4.0.8)(graphql@16.8.1)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - '@types/react'
 
   '@apollo/protobufjs@1.2.7':
     dependencies:
@@ -10701,31 +10707,6 @@ snapshots:
       - '@polkadot/util-crypto'
 
   '@docknetwork/node-types@0.16.0': {}
-
-  '@dprint/darwin-arm64@0.45.1':
-    optional: true
-
-  '@dprint/darwin-x64@0.45.1':
-    optional: true
-
-  '@dprint/formatter@0.3.0': {}
-
-  '@dprint/linux-arm64-glibc@0.45.1':
-    optional: true
-
-  '@dprint/linux-arm64-musl@0.45.1':
-    optional: true
-
-  '@dprint/linux-x64-glibc@0.45.1':
-    optional: true
-
-  '@dprint/linux-x64-musl@0.45.1':
-    optional: true
-
-  '@dprint/typescript@0.90.5': {}
-
-  '@dprint/win32-x64@0.45.1':
-    optional: true
 
   '@edgeware/node-types@3.6.2-wako': {}
 
@@ -12063,24 +12044,6 @@ snapshots:
   '@metaverse-network-sdk/type-definitions@0.0.1-16':
     dependencies:
       lodash.merge: 4.6.2
-
-  '@molt/command@0.9.0':
-    dependencies:
-      '@molt/types': 0.2.0
-      alge: 0.8.1
-      chalk: 5.3.0
-      lodash.camelcase: 4.3.0
-      lodash.snakecase: 4.1.1
-      readline-sync: 1.4.10
-      string-length: 6.0.0
-      strip-ansi: 7.1.0
-      ts-toolbelt: 9.6.0
-      type-fest: 4.18.2
-      zod: 3.23.8
-
-  '@molt/types@0.2.0':
-    dependencies:
-      ts-toolbelt: 9.6.0
 
   '@monogrid/gainmap-js@3.0.5(three@0.165.0)':
     dependencies:
@@ -14131,13 +14094,6 @@ snapshots:
 
   '@tabler/icons@3.5.0': {}
 
-  '@tanstack/query-core@5.40.0': {}
-
-  '@tanstack/react-query@5.40.1(react@18.3.1)':
-    dependencies:
-      '@tanstack/query-core': 5.40.0
-      react: 18.3.1
-
   '@thi.ng/api@8.11.2': {}
 
   '@thi.ng/arrays@2.9.6':
@@ -14835,6 +14791,26 @@ snapshots:
       fast-querystring: 1.1.2
       tslib: 2.6.3
 
+  '@wry/caches@1.0.1':
+    dependencies:
+      tslib: 2.6.3
+
+  '@wry/context@0.7.4':
+    dependencies:
+      tslib: 2.6.3
+
+  '@wry/equality@0.5.7':
+    dependencies:
+      tslib: 2.6.3
+
+  '@wry/trie@0.4.3':
+    dependencies:
+      tslib: 2.6.3
+
+  '@wry/trie@0.5.0':
+    dependencies:
+      tslib: 2.6.3
+
   '@xtuc/ieee754@1.2.0': {}
 
   '@xtuc/long@4.2.2': {}
@@ -14925,13 +14901,6 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
       uri-js: 4.4.1
-
-  alge@0.8.1:
-    dependencies:
-      lodash.ismatch: 4.4.0
-      remeda: 1.61.0
-      ts-toolbelt: 9.6.0
-      zod: 3.23.8
 
   ansi-colors@4.1.3: {}
 
@@ -16096,16 +16065,6 @@ snapshots:
       find-up: 3.0.0
       minimatch: 3.1.2
 
-  dprint@0.45.1:
-    optionalDependencies:
-      '@dprint/darwin-arm64': 0.45.1
-      '@dprint/darwin-x64': 0.45.1
-      '@dprint/linux-arm64-glibc': 0.45.1
-      '@dprint/linux-arm64-musl': 0.45.1
-      '@dprint/linux-x64-glibc': 0.45.1
-      '@dprint/linux-x64-musl': 0.45.1
-      '@dprint/win32-x64': 0.45.1
-
   draco3d@1.5.7: {}
 
   dset@3.1.3: {}
@@ -16904,16 +16863,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  graphql-request@7.0.1(graphql@16.8.1):
-    dependencies:
-      '@dprint/formatter': 0.3.0
-      '@dprint/typescript': 0.90.5
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
-      '@molt/command': 0.9.0
-      dprint: 0.45.1
-      graphql: 16.8.1
-      zod: 3.23.8
-
   graphql-tag@2.12.6(graphql@16.8.1):
     dependencies:
       graphql: 16.8.1
@@ -17011,6 +16960,10 @@ snapshots:
       hash.js: 1.1.7
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
+
+  hoist-non-react-statics@3.3.2:
+    dependencies:
+      react-is: 16.13.1
 
   hosted-git-info@2.8.9: {}
 
@@ -17930,8 +17883,6 @@ snapshots:
 
   lodash.once@4.1.1: {}
 
-  lodash.snakecase@4.1.1: {}
-
   lodash.sortby@4.7.0: {}
 
   lodash@4.17.21: {}
@@ -18341,6 +18292,13 @@ snapshots:
   onetime@6.0.0:
     dependencies:
       mimic-fn: 4.0.0
+
+  optimism@0.18.0:
+    dependencies:
+      '@wry/caches': 1.0.1
+      '@wry/context': 0.7.4
+      '@wry/trie': 0.4.3
+      tslib: 2.6.3
 
   optionator@0.9.4:
     dependencies:
@@ -18930,8 +18888,6 @@ snapshots:
     dependencies:
       picomatch: 2.3.1
 
-  readline-sync@1.4.10: {}
-
   recharts-scale@0.4.5:
     dependencies:
       decimal.js-light: 2.5.1
@@ -18987,6 +18943,11 @@ snapshots:
     dependencies:
       jsesc: 0.5.0
 
+  rehackt@0.1.0(@types/react@18.3.3)(react@18.3.1):
+    optionalDependencies:
+      '@types/react': 18.3.3
+      react: 18.3.1
+
   relay-runtime@12.0.0:
     dependencies:
       '@babel/runtime': 7.24.5
@@ -18994,8 +18955,6 @@ snapshots:
       invariant: 2.2.4
     transitivePeerDependencies:
       - encoding
-
-  remeda@1.61.0: {}
 
   remedial@1.0.8: {}
 
@@ -19028,6 +18987,8 @@ snapshots:
       is-core-module: 2.13.1
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
+
+  response-iterator@0.2.6: {}
 
   restore-cursor@3.1.0:
     dependencies:
@@ -19367,10 +19328,6 @@ snapshots:
       char-regex: 1.0.2
       strip-ansi: 6.0.1
 
-  string-length@6.0.0:
-    dependencies:
-      strip-ansi: 7.1.0
-
   string-width@4.2.3:
     dependencies:
       emoji-regex: 8.0.0
@@ -19646,6 +19603,10 @@ snapshots:
     dependencies:
       typescript: 5.5.3
 
+  ts-invariant@0.10.3:
+    dependencies:
+      tslib: 2.6.3
+
   ts-jest@29.1.4(@babel/core@7.24.7)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.7))(jest@29.7.0(@types/node@20.14.2)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.6.5)(@types/node@20.14.2)(typescript@5.3.3)))(typescript@5.3.3):
     dependencies:
       bs-logger: 0.2.6
@@ -19765,8 +19726,6 @@ snapshots:
       yn: 3.1.1
     optionalDependencies:
       '@swc/core': 1.6.5
-
-  ts-toolbelt@9.6.0: {}
 
   tsconfig-paths-webpack-plugin@4.1.0:
     dependencies:
@@ -20659,6 +20618,12 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.0.0: {}
+
+  zen-observable-ts@1.2.5:
+    dependencies:
+      zen-observable: 0.8.15
+
+  zen-observable@0.8.15: {}
 
   zod@3.23.8: {}
 
