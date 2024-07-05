@@ -1,18 +1,10 @@
 import { web3Enable } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
+import { WalletContext } from '../context/WalletContext';
 
-const STORAGE_KEY = 'walletState';
-
-interface WalletState {
-  selectedAccount?: InjectedAccountWithMeta;
-  setSelectedAccount(account: InjectedAccountWithMeta): void;
-}
-
-const defaultWalletState: WalletState = {
-  selectedAccount: undefined,
-  setSelectedAccount: () => {}
-};
+const NAME = 'XCMVisualizator';
+const STORAGE_KEY = 'wallet-state-xcm-visualizator';
 
 const getWalletStateFromLocalStorage = (): InjectedAccountWithMeta | undefined => {
   const walletState = localStorage.getItem(STORAGE_KEY);
@@ -24,10 +16,6 @@ const getWalletStateFromLocalStorage = (): InjectedAccountWithMeta | undefined =
   return JSON.parse(walletState) as InjectedAccountWithMeta;
 };
 
-const ThemeContext = createContext(defaultWalletState);
-
-export const useWallet = () => useContext(ThemeContext);
-
 const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [selectedAccount, setSelectedAccount] = useState<InjectedAccountWithMeta | undefined>(
     getWalletStateFromLocalStorage
@@ -38,13 +26,13 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   }, [selectedAccount]);
 
   useEffect(() => {
-    void web3Enable('SpellRouter');
+    void web3Enable(NAME);
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ selectedAccount, setSelectedAccount }}>
+    <WalletContext.Provider value={{ selectedAccount, setSelectedAccount }}>
       {children}
-    </ThemeContext.Provider>
+    </WalletContext.Provider>
   );
 };
 
