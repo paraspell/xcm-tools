@@ -9,7 +9,6 @@ import { AssetCountsBySymbolQuery } from '../../gql/graphql';
 import { getParachainById } from '../../utils/utils';
 import { BarChart } from '@mantine/charts';
 
-// Expanded fixed color palette
 const fixedPalette = [
   '#FF6384',
   '#36A2EB',
@@ -55,16 +54,13 @@ const AssetsTransferredPlot: FC<Props> = ({ counts }) => {
 
   const data = processData();
 
-  // Create a unique color for each symbol from the fixed palette
   const symbolColors: any = {};
   counts.forEach((item: any, index) => {
     if (item.symbol && !symbolColors[item.symbol]) {
-      // Use index modulo palette length to cycle through colors
       symbolColors[item.symbol] = fixedPalette[index % fixedPalette.length];
     }
   });
 
-  // Generate the series based on the unique asset symbols present in the data
   const series = Object.keys(symbolColors).map(symbol => ({
     name: symbol,
     color: symbolColors[symbol]

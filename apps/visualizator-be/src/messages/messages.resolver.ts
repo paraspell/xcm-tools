@@ -87,13 +87,10 @@ export class MessageResolver {
     })
     countBy: CountOption,
   ): Promise<MessageCount[]> {
-    const data = await this.messageService.getTotalMessageCounts(
+    return this.messageService.getTotalMessageCounts(
       startTime.getTime(),
       endTime.getTime(),
       countBy,
     );
-    console.log(data);
-
-    return data;
   }
 }
