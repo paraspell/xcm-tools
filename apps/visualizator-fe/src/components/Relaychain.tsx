@@ -2,16 +2,9 @@ import { useFrame, useLoader } from '@react-three/fiber';
 import { FC, useEffect, useRef } from 'react';
 import { Color, TextureLoader, SphereGeometry, Mesh, Group } from 'three';
 import polkadotPng from '../logos/polkadot1.png';
+import { adjustUVs } from '../utils/adjustUVs';
 
-const adjustUVs = (geometry: SphereGeometry) => {
-  const uvs = geometry.attributes.uv;
-  const scaleFactor = 2.25;
-  for (let i = 0; i < uvs.count; i++) {
-    uvs.setX(i, (uvs.getX(i) - 0.5) * scaleFactor + 0.5);
-    uvs.setY(i, (uvs.getY(i) - 0.5) * scaleFactor + 0.5);
-  }
-  geometry.attributes.uv.needsUpdate = true;
-};
+const SCALE_FACTOR = 2.25;
 
 type Props = {
   onClick: () => void;
@@ -31,7 +24,7 @@ const Relaychain: FC<Props> = ({ onClick, isSelected }) => {
 
   useEffect(() => {
     if (sphereRef.current) {
-      adjustUVs(sphereRef.current.geometry as SphereGeometry);
+      adjustUVs(sphereRef.current.geometry as SphereGeometry, SCALE_FACTOR);
     }
   }, []);
 

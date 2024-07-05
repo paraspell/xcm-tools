@@ -8,6 +8,7 @@ import { FC } from 'react';
 import { ChartTooltip, LineChart } from '@mantine/charts';
 import { MessageCountsByDayQuery } from '../../gql/graphql';
 import { getParachainById, getParachainColor } from '../../utils/utils';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   counts: MessageCountsByDayQuery['messageCountsByDay'];
@@ -15,6 +16,7 @@ type Props = {
 };
 
 const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
+  const { t } = useTranslation();
   const processData = () => {
     const dataByDate = counts.reduce((acc: any, item) => {
       if (!acc[item.date]) {
@@ -73,7 +75,7 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
       series={[
         ...series,
         {
-          name: 'Median',
+          name: t('median'),
           color: 'gray.6'
         }
       ]}
@@ -82,34 +84,34 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
         content: ({ label, payload }) => {
           if (!payload || payload.length === 0) return null;
           const extendedPayload = payload.reduce((acc: any, item) => {
-            if (item.name === 'Median') {
+            if (item.name === t('median')) {
               acc.push(item);
               return acc;
             }
             const total = {
               ...item,
-              name: `${item.name} Total`,
+              name: `${item.name} ${t('total')}`,
               value: item.value,
               color: item.color
             };
             const success = {
               ...item,
-              name: `${item.name} Success`,
+              name: `${item.name} ${t('success')}`,
               dataKey: `${item.name} Success`,
               payload: {
-                category: `${item.name} Success`,
-                [`${item.name} Success`]: item.payload[`${item.name} Success`]
+                category: `${item.name} ${t('success')}`,
+                [`${item.name} ${t('success')}`]: item.payload[`${item.name} ${t('success')}`]
               },
               value: 0,
               color: 'green'
             };
             const failed = {
               ...item,
-              name: `${item.name} Failed`,
+              name: `${item.name} ${t('failed')}`,
               dataKey: `${item.name} Failed`,
               payload: {
-                category: `${item.name} Failed`,
-                [`${item.name} Failed`]: item.payload[`${item.name} Failed`]
+                category: `${item.name} ${t('failed')}`,
+                [`${item.name} ${t('failed')}`]: item.payload[`${item.name} ${t('failed')}`]
               },
               value: 0,
               color: 'red'

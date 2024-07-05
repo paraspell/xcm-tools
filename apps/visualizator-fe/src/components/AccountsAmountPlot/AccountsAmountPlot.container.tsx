@@ -4,6 +4,7 @@ import AccountsAmountPlot from './AccountsAmountPlot';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { getParachainId } from '../../utils/utils';
 import { useQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 
 const now = Date.now();
 
@@ -12,6 +13,7 @@ type Props = {
 };
 
 const AccountsAmountPlotContainer: FC<Props> = ({ threshold }) => {
+  const { t } = useTranslation();
   const { parachains, dateRange } = useSelectedParachain();
 
   const [start, end] = dateRange;
@@ -26,7 +28,7 @@ const AccountsAmountPlotContainer: FC<Props> = ({ threshold }) => {
   });
 
   if (error) {
-    return <div>Error</div>;
+    return <div>{t('error')}</div>;
   }
 
   return <AccountsAmountPlot counts={data?.accountCounts ?? []} />;

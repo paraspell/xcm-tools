@@ -4,8 +4,10 @@ import ParachainSelector from '../ParachainSelector';
 import DateRangePicker from '../DateRangePicker';
 import { useDisclosure } from '@mantine/hooks';
 import { CountOption } from '../../gql/graphql';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation();
   const {
     parachains,
     setParachains,
@@ -34,46 +36,46 @@ const Footer = () => {
         <Group align="flex-end">
           <ParachainSelector value={parachains} onCustomChange={setParachains} flex={1} />
           <DateRangePicker value={dateRange} setValue={setDateRange} />
-          <Modal opened={opened} onClose={close} title="Edit options">
+          <Modal opened={opened} onClose={close} title={t('editOptions')}>
             <Stack gap="sm">
               <ColorInput
-                label="Primary channel color"
-                placeholder="Select color"
+                label={t('primaryChannelColor')}
+                placeholder={t('selectColor')}
                 value={primaryChannelColor}
                 onChange={setPrimaryChannelColor}
               />
               <ColorInput
-                label="Highlighted channel color"
-                placeholder="Select color"
+                label={t('highlightedChannelColor')}
+                placeholder={t('selectColor')}
                 value={highlightedChannelColor}
                 onChange={setHighlightedChannelColor}
               />
               <ColorInput
-                label="Secondary channel color"
-                placeholder="Select color"
+                label={t('secondaryChannelColor')}
+                placeholder={t('selectColor')}
                 value={secondaryChannelColor}
                 onChange={setSecondaryChannelColor}
               />
               <ColorInput
-                label="Selected channel color"
-                placeholder="Select color"
+                label={t('selectedChannelColor')}
+                placeholder={t('selectColor')}
                 value={selectedChannelColor}
                 onChange={setSelectedChannelColor}
               />
               <Select
-                label="Arrangement"
-                placeholder="Select arrangement"
+                label={t('arrangement')}
+                placeholder={t('selectArrangement')}
                 data={[
-                  { value: CountOption.ORIGIN, label: 'By origin' },
-                  { value: CountOption.DESTINATION, label: 'By destination' },
-                  { value: CountOption.BOTH, label: 'By both' }
+                  { value: CountOption.ORIGIN, label: t('byOrigin') },
+                  { value: CountOption.DESTINATION, label: t('byDestination') },
+                  { value: CountOption.BOTH, label: t('byBoth') }
                 ]}
                 value={parachainArrangement}
                 onChange={onParachainArrangementChange}
               />
             </Stack>
           </Modal>
-          <Button onClick={open}>Options</Button>
+          <Button onClick={open}>{t('options')}</Button>
         </Group>
       </Paper>
     </Box>

@@ -6,6 +6,7 @@ import { AccountCountsQuery } from '../../gql/graphql';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HC_more from 'highcharts/highcharts-more';
+import { useTranslation } from 'react-i18next';
 HC_more(Highcharts);
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 };
 
 const AccountsAmountPlot: FC<Props> = ({ counts }) => {
+  const { t } = useTranslation();
   const handlePointClick = (point: any) => {
     void navigator.clipboard.writeText(point.name);
   };
@@ -42,7 +44,11 @@ const AccountsAmountPlot: FC<Props> = ({ counts }) => {
     tooltip: {
       useHTML: true,
       formatter: function () {
-        return `ID (Hash): <b>${this.point.name.startsWith('0x') ? this.point.name : '0x' + this.point.name}</b><br>Count: <b>${(this.point as any).value}</b>`;
+        const idHash = this.point.name.startsWith('0x') ? this.point.name : '0x' + this.point.name;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const count = (this.point as any).value;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        return t('idHash', { idHash, count });
       }
     },
     plotOptions: {

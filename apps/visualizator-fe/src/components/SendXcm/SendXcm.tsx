@@ -11,8 +11,11 @@ import TransferForm, { FormValues } from './SendXcmForm';
 import ErrorAlert from '../ErrorAlert';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useWallet } from '../../hooks/useWallet';
+import { useTranslation } from 'react-i18next';
+import { NAME } from '../../consts';
 
 const SendXcm = () => {
+  const { t } = useTranslation('translation', { keyPrefix: 'sendXcmForm' });
   const { selectedAccount, setSelectedAccount } = useWallet();
 
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -26,11 +29,11 @@ const SendXcm = () => {
   const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
 
   const initAccounts = async () => {
-    const allInjected = await web3Enable('SpellRouter');
+    const allInjected = await web3Enable(NAME);
 
     if (!allInjected) {
-      alert('No wallet extension found, install it to connect');
-      throw Error('No Wallet Extension Found!');
+      alert(t('noWalletExtensionFound'));
+      throw Error(t('noWalletExtensionFound'));
     }
 
     const allAccounts = await web3Accounts();
@@ -72,8 +75,8 @@ const SendXcm = () => {
 
   const onSubmit = async (formValues: FormValues) => {
     if (!selectedAccount) {
-      alert('No account selected, connect wallet first');
-      throw Error('No account selected!');
+      alert(t('noAccountSelected'));
+      throw Error(t('noAccountSelected'));
     }
 
     setLoading(true);
@@ -82,7 +85,7 @@ const SendXcm = () => {
 
     try {
       await submitUsingSdk(formValues, selectedAccount.address, injector.signer);
-      alert('Transaction was successful!');
+      alert(t('transactionSuccess'));
     } catch (e) {
       if (e instanceof Error) {
         console.error(e);
@@ -119,14 +122,14 @@ const SendXcm = () => {
     <Stack gap="xl">
       <Stack w="100%" maw={400} mx="auto" gap="lg">
         <Group justify="space-between">
-          <Title order={3}>Send XCM message</Title>
+          <Title order={3}>{t('title')}</Title>
           {selectedAccount ? (
             <Button
               onClick={onChangeAccountClick}
               variant="outline"
             >{`${selectedAccount.meta.name} (${selectedAccount.meta.source})`}</Button>
           ) : (
-            <Button onClick={onConnectWalletClick}>Connect wallet</Button>
+            <Button onClick={onConnectWalletClick}>{t('connectWallet')}</Button>
           )}
         </Group>
         <TransferForm onSubmit={onSubmit} loading={loading} />
@@ -136,7 +139,7 @@ const SendXcm = () => {
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>{error?.message}</ErrorAlert>
         )}
       </Box>
-      <Modal opened={modalOpened} onClose={closeModal} title="Select account" centered>
+      <Modal opened={modalOpened} onClose={closeModal} title={t('selectAccount')} centered>
         <Stack gap="xs">
           {accounts.map(account => (
             <Button

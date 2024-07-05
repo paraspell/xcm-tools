@@ -3,6 +3,7 @@ import { useForm } from '@mantine/form';
 import { isValidWalletAddress } from './utils';
 import { Button, Select, Stack, TextInput } from '@mantine/core';
 import { NODES_WITH_RELAY_CHAINS, TNodeWithRelayChains } from '@paraspell/sdk';
+import { useTranslation } from 'react-i18next';
 
 export type FormValues = {
   from: TNodeWithRelayChains;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
+  const { t } = useTranslation('translation', { keyPrefix: 'sendXcmForm' });
   const form = useForm<FormValues>({
     initialValues: {
       from: 'Astar',
@@ -42,8 +44,8 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
         <Select
-          label="Sender Parachain"
-          placeholder="Pick value"
+          label={t('senderParachain')}
+          placeholder={t('pickValue')}
           data={[...NODES_WITH_RELAY_CHAINS]}
           searchable
           required
@@ -51,8 +53,8 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
         />
 
         <Select
-          label="Recipient Parachain"
-          placeholder="Pick value"
+          label={t('recipientParachain')}
+          placeholder={t('pickValue')}
           data={[...NODES_WITH_RELAY_CHAINS]}
           searchable
           required
@@ -61,7 +63,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
 
         {!isNotParaToPara && (
           <TextInput
-            label="Asset symbol"
+            label={t('assetSymbol')}
             placeholder="GLMR"
             required
             {...form.getInputProps('currency')}
@@ -69,16 +71,16 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
         )}
 
         <TextInput
-          label="Recipient address"
+          label={t('recipientAddress')}
           placeholder="0x0000000"
           required
           {...form.getInputProps('address')}
         />
 
-        <TextInput label="Amount" placeholder="0" required {...form.getInputProps('amount')} />
+        <TextInput label={t('amount')} placeholder="0" required {...form.getInputProps('amount')} />
 
         <Button type="submit" loading={loading}>
-          Submit transaction
+          {t('submitTransaction')}
         </Button>
       </Stack>
     </form>

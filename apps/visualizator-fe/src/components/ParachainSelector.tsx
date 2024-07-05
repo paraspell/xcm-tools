@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { MultiSelect, MultiSelectProps } from '@mantine/core';
 import { POLKADOT_NODE_NAMES } from '../consts';
 import { SelectedParachain } from '../context/SelectedParachain/SelectedParachainContext';
+import { useTranslation } from 'react-i18next';
 
 type Props = MultiSelectProps & {
   value: SelectedParachain[];
@@ -9,6 +10,8 @@ type Props = MultiSelectProps & {
 };
 
 const ParachainSelector: FC<Props> = ({ onCustomChange, ...props }) => {
+  const { t } = useTranslation();
+
   const onChangeInternal = (values: string[]) => {
     if (values) {
       onCustomChange(values);
@@ -17,8 +20,8 @@ const ParachainSelector: FC<Props> = ({ onCustomChange, ...props }) => {
 
   return (
     <MultiSelect
-      label="Parachains"
-      placeholder="Select one"
+      label={t('parachains')}
+      placeholder={t('selectOne')}
       data={[...POLKADOT_NODE_NAMES, 'Polkadot']}
       onChange={onChangeInternal}
       searchable

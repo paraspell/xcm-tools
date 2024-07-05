@@ -8,6 +8,7 @@ import { FC } from 'react';
 import { AssetCountsBySymbolQuery } from '../../gql/graphql';
 import { getParachainById } from '../../utils/utils';
 import { BarChart } from '@mantine/charts';
+import { useTranslation } from 'react-i18next';
 
 const fixedPalette = [
   '#FF6384',
@@ -37,11 +38,12 @@ type Props = {
 };
 
 const AssetsTransferredPlot: FC<Props> = ({ counts }) => {
+  const { t } = useTranslation();
   const processData = () => {
     const dataByParachain = counts.reduce((acc: any, item) => {
       const parachainKey = item.paraId
         ? getParachainById(item.paraId) || `ID ${item.paraId}`
-        : 'Total';
+        : t('total');
       if (!acc[parachainKey]) {
         acc[parachainKey] = { parachain: parachainKey };
       }

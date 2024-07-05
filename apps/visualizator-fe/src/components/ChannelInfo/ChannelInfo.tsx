@@ -2,6 +2,7 @@ import { Alert, Box, Group, Stack, Text } from '@mantine/core';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { ChannelsQuery } from '../../gql/graphql';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   channel?: ChannelsQuery['channels'][number];
@@ -9,11 +10,12 @@ type Props = {
 };
 
 const ChannelInfo: FC<Props> = ({ channel, onClose }) => {
+  const { t } = useTranslation();
   const { channelId } = useSelectedParachain();
   return (
     <Box pos="absolute" top={0} left={0} p="xl">
       <Alert
-        title="Channel info"
+        title={t('channelInfo')}
         withCloseButton
         onClose={onClose}
         w="100%"
@@ -25,13 +27,13 @@ const ChannelInfo: FC<Props> = ({ channel, onClose }) => {
       >
         <Stack>
           <Group align="center" gap="xs">
-            <Text size="lg">Selected channelId:</Text>
+            <Text size="lg">{t('selectedChannelId')}:</Text>
             <Text fw="bold" size="lg">
               {channelId}
             </Text>
           </Group>
           <Group align="center" gap="xs">
-            <Text size="lg">Message count:</Text>
+            <Text size="lg">{t('messageCount')}:</Text>
             <Text fw="bold" size="lg">
               {channel?.message_count}
             </Text>
