@@ -26,33 +26,6 @@ export class MessageService {
     private messagesRepository: Repository<Message>,
   ) {}
 
-  async findAll(): Promise<Message[]> {
-    return this.messagesRepository.find();
-  }
-
-  async findOne(messageHash: string): Promise<Message> {
-    return this.messagesRepository.findOneBy({ message_hash: messageHash });
-  }
-
-  async updateMessage(
-    messageHash: string,
-    updateMessageDto: any,
-  ): Promise<Message> {
-    const message = await this.messagesRepository.preload({
-      message_hash: messageHash,
-      ...updateMessageDto,
-    });
-    if (!message) {
-      throw new Error(`Message ${messageHash} not found`);
-    }
-    return this.messagesRepository.save(message);
-  }
-
-  async remove(messageHash: string): Promise<void> {
-    const message = await this.findOne(messageHash);
-    await this.messagesRepository.remove(message);
-  }
-
   async countMessagesByStatus(
     paraIds: number[] = [],
     startTime: number,

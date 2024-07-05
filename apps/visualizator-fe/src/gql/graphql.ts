@@ -64,33 +64,6 @@ export enum CountOption {
   ORIGIN = 'ORIGIN'
 }
 
-export type Message = {
-  __typename?: 'Message';
-  assets: Array<Asset>;
-  block_num: Scalars['Int']['output'];
-  child_dest?: Maybe<Scalars['String']['output']>;
-  child_para_id: Scalars['Int']['output'];
-  confirm_block_timestamp: Scalars['Int']['output'];
-  dest_event_index: Scalars['String']['output'];
-  dest_extrinsic_index: Scalars['String']['output'];
-  dest_para_id: Scalars['Int']['output'];
-  extrinsic_index: Scalars['String']['output'];
-  from_account_id: Scalars['String']['output'];
-  message_hash: Scalars['ID']['output'];
-  message_type: Scalars['String']['output'];
-  origin_block_timestamp: Scalars['Int']['output'];
-  origin_event_index: Scalars['String']['output'];
-  origin_para_id: Scalars['Int']['output'];
-  protocol: Scalars['String']['output'];
-  relayed_block_timestamp: Scalars['Int']['output'];
-  relayed_event_index: Scalars['String']['output'];
-  relayed_extrinsic_index: Scalars['String']['output'];
-  status: Scalars['String']['output'];
-  to_account_id: Scalars['String']['output'];
-  unique_id: Scalars['String']['output'];
-  xcm_version: Scalars['Int']['output'];
-};
-
 export type MessageCount = {
   __typename?: 'MessageCount';
   paraId: Scalars['Int']['output'];
@@ -119,10 +92,8 @@ export type Query = {
   assetCountsBySymbol: Array<AssetCount>;
   channel: Channel;
   channels: Array<Channel>;
-  message: Message;
   messageCounts: Array<MessageCountByStatus>;
   messageCountsByDay: Array<MessageCountByDay>;
-  messages: Array<Message>;
   totalMessageCounts: Array<MessageCount>;
 };
 
@@ -146,10 +117,6 @@ export type QueryChannelArgs = {
 export type QueryChannelsArgs = {
   endTime: Scalars['Timestamp']['input'];
   startTime: Scalars['Timestamp']['input'];
-};
-
-export type QueryMessageArgs = {
-  message_hash: Scalars['String']['input'];
 };
 
 export type QueryMessageCountsArgs = {
