@@ -1,13 +1,13 @@
-import { useGraphQL } from '../../hooks/useGraphQL';
 import { allChannelsQueryDocument } from '../../api/channels';
 import ParachainInfo from './ParachainInfo';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
+import { useQuery } from '@apollo/client';
 
 const ParachainInfoContainer = () => {
-  const { data, error, isLoading } = useGraphQL(allChannelsQueryDocument);
+  const { data, error, loading } = useQuery(allChannelsQueryDocument);
   const { channelId } = useSelectedParachain();
 
-  if (isLoading) {
+  if (loading) {
     return null;
   }
 
@@ -15,11 +15,6 @@ const ParachainInfoContainer = () => {
     return null;
   }
 
-  // const channelsCount = data?.channels.filter(
-  //   channel =>
-  //     channel.sender === getParachainId(parachains) ||
-  //     channel.recipient === getParachainId(parachains)
-  // ).length;
   const channel = data?.channels.find(channel => channel.id === channelId);
   return <ParachainInfo channelsCount={0} channel={channel} />;
 };

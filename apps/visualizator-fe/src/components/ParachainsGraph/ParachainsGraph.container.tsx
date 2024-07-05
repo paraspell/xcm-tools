@@ -2,8 +2,8 @@ import { allChannelsQueryDocument, channelQueryDocument } from '../../api/channe
 import { totalMessageCountsQueryDocument } from '../../api/messages';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { CountOption } from '../../gql/graphql';
-import { useGraphQL } from '../../hooks/useGraphQL';
 import ParachainsGraph from './ParachainsGraph';
+import { useQuery } from '@apollo/client';
 
 const now = Date.now();
 
@@ -12,17 +12,21 @@ const ParachainsGraphContainer = () => {
 
   const [start, end] = dateRange;
 
-  const { data, error } = useGraphQL(allChannelsQueryDocument, {
-    startTime: start && end ? start.getTime() / 1000 : 1,
-    endTime: start && end ? end.getTime() / 1000 : now
+  const { data, error } = useQuery(allChannelsQueryDocument, {
+    variables: {
+      startTime: start && end ? start.getTime() / 1000 : 1,
+      endTime: start && end ? end.getTime() / 1000 : now
+    }
   });
-  const totalCountsQuery = useGraphQL(totalMessageCountsQueryDocument, {
-    startTime: start && end ? start.getTime() / 1000 : 1,
-    endTime: start && end ? end.getTime() / 1000 : now,
-    countBy: parachainArrangement ?? CountOption.ORIGIN
+  const totalCountsQuery = useQuery(totalMessageCountsQueryDocument, {
+    variables: {
+      startTime: start && end ? start.getTime() / 1000 : 1,
+      endTime: start && end ? end.getTime() / 1000 : now,
+      countBy: parachainArrangement ?? CountOption.ORIGIN
+    }
   });
 
-  const channelQuery = useGraphQL(channelQueryDocument, { id: channelId ?? 1 });
+  const channelQuery = useQuery(channelQueryDocument, { variables: { id: channelId ?? 1 } });
 
   if (data && totalCountsQuery.data) {
     return (

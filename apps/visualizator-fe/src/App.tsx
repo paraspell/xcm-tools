@@ -1,4 +1,3 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Flex, Group, MantineProvider, Stack } from '@mantine/core';
 import Scene3d from './pages/Scene3d';
 
@@ -8,12 +7,12 @@ import TabNavigator from './components/TabNavigator/TabNavigator';
 import ChannelInfoContainer from './components/ChannelInfo/ChannelInfo.container';
 import SendXCMContainer from './components/SendXCMContainer/SendXCMContainer';
 import WalletProvider from './providers/WalletProvider';
-
-const queryClient = new QueryClient();
+import { ApolloProvider } from '@apollo/client';
+import { client } from './apolloClient';
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
+    <ApolloProvider client={client}>
       <WalletProvider>
         <SelectedParachainProvider>
           <MantineProvider>
@@ -38,7 +37,7 @@ const App = () => {
           </MantineProvider>
         </SelectedParachainProvider>
       </WalletProvider>
-    </QueryClientProvider>
+    </ApolloProvider>
   );
 };
 
