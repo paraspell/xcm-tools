@@ -8,12 +8,11 @@ import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-d
 import { Signer } from '@polkadot/api/types';
 import { submitTransaction } from './utils';
 import TransferForm, { FormValues } from './SendXcmForm';
-import { useWallet } from '../../providers/WalletProvider';
 import ErrorAlert from '../ErrorAlert';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { useWallet } from '../../hooks/useWallet';
 
 const SendXcm = () => {
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { selectedAccount, setSelectedAccount } = useWallet();
 
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
