@@ -11,16 +11,6 @@ import { CountOption, MessageCount } from './models/message-count.model';
 export class MessageResolver {
   constructor(private readonly messageService: MessageService) {}
 
-  @Query(() => [Message], { name: 'messages' })
-  findAll() {
-    return this.messageService.findAll();
-  }
-
-  @Query(() => Message, { name: 'message' })
-  findOne(@Args('message_hash', { type: () => String }) message_hash: string) {
-    return this.messageService.findOne(message_hash);
-  }
-
   @Query(() => [MessageCountByStatus])
   async messageCounts(
     @Args('paraIds', { type: () => [Int], nullable: true }) paraIds: number[],
@@ -40,13 +30,11 @@ export class MessageResolver {
     @Args('startTime', { type: () => Date }) startTime: Date,
     @Args('endTime', { type: () => Date }) endTime: Date,
   ) {
-    const data = await this.messageService.countMessagesByDay(
+    return this.messageService.countMessagesByDay(
       paraIds,
       startTime.getTime(),
       endTime.getTime(),
     );
-
-    return data;
   }
 
   @Query(() => [AssetCount])
