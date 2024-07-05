@@ -3,7 +3,7 @@ import { Text } from '@react-three/drei';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { Color, Group, Mesh, MeshStandardMaterial, SphereGeometry, TextureLoader } from 'three';
 import { getParachainPosition } from '../ParachainsGraph/utils';
-import { getNodeLogo } from './utils';
+import { getLogoScaleFactor, getNodeLogo } from './utils';
 import { getParachainColor } from '../../utils/utils';
 import { lightenColor } from '../../utils/lightenColor';
 import { adjustUVs } from '../../utils/adjustUVs';
@@ -28,7 +28,7 @@ const Parachain: React.FC<Props> = ({ name, index, isSelected, onClick, scale })
 
   useEffect(() => {
     if (sphereRef.current) {
-      adjustUVs(sphereRef.current.geometry as SphereGeometry, name);
+      adjustUVs(sphereRef.current.geometry as SphereGeometry, getLogoScaleFactor(name));
     }
   }, []);
 

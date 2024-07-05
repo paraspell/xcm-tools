@@ -3,8 +3,10 @@ import ChannelInfo from './ChannelInfo';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 
 const ChannelInfoContainer = () => {
+  const { t } = useTranslation();
   const { channelId, channelAlertOpen, setChannelAlertOpen } = useSelectedParachain();
 
   const { data, error } = useQuery(channelQueryDocument, {
@@ -22,7 +24,11 @@ const ChannelInfoContainer = () => {
   }, [channelId]);
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <div>
+        {t('error')}: {error.message}
+      </div>
+    );
   }
 
   return channelId && channelAlertOpen ? (

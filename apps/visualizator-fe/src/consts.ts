@@ -1,5 +1,7 @@
 import { prodRelayPolkadot } from '@polkadot/apps-config/endpoints';
 
+export const NAME = 'XCMVisualizator';
+
 const EXCLUDED_NODE_NAMES = new Set([
   'Energy Web X',
   'Frequency',

@@ -5,8 +5,10 @@ import Scene2dMessagesStatus from '../../pages/Scene2dMessagesStatus';
 import Scene2dAssetsChart from '../../pages/Scene2dAssetsChart';
 import Scene2dAmountsByDay from '../../pages/Scene2dAmountsByDay';
 import Scene2dBubblePlot from '../../pages/Scene2dBubblePlot';
+import { useTranslation } from 'react-i18next';
 
 const TabNavigator = () => {
+  const { t } = useTranslation();
   const iconStyle = { width: rem(12), height: rem(12) };
   return (
     <Tabs
@@ -21,25 +23,25 @@ const TabNavigator = () => {
           value={PageRoute.SCENE_2D_MSG_SUCCESS_CHART}
           leftSection={<IconCheck style={iconStyle} />}
         >
-          Success
+          {t('success')}
         </Tabs.Tab>
         <Tabs.Tab
           value={PageRoute.SCENE_2D_ASSETS_CHART}
           leftSection={<IconAsset style={iconStyle} />}
         >
-          Assets
+          {t('assets')}
         </Tabs.Tab>
         <Tabs.Tab
           value={PageRoute.SCENE_2D_AMOUNTS_BY_DAY}
           leftSection={<IconClock style={iconStyle} />}
         >
-          Amounts
+          {t('amounts')}
         </Tabs.Tab>
         <Tabs.Tab
           value={PageRoute.SCENE_2D_BUBBLE_PLOT}
           leftSection={<IconChartBubble style={iconStyle} />}
         >
-          Accounts
+          {t('accounts')}
         </Tabs.Tab>
       </Tabs.List>
 

@@ -3,10 +3,12 @@ import SuccessMessagesPlot from './SuccessMessagesPlot';
 import { getParachainId } from '../../utils/utils';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { useQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 
 const now = Date.now();
 
 const SuccessMessagesPlotContainer = () => {
+  const { t } = useTranslation();
   const { parachains, dateRange } = useSelectedParachain();
 
   const [start, end] = dateRange;
@@ -20,7 +22,7 @@ const SuccessMessagesPlotContainer = () => {
   });
 
   if (error) {
-    return <div>Error</div>;
+    return <div>{t('error')}</div>;
   }
 
   return <SuccessMessagesPlot counts={data?.messageCounts ?? []} />;

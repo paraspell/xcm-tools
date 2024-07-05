@@ -2,8 +2,8 @@ import { web3Enable } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { WalletContext } from '../context/WalletContext';
+import { NAME } from '../consts';
 
-const NAME = 'XCMVisualizator';
 const STORAGE_KEY = 'wallet-state-xcm-visualizator';
 
 const getWalletStateFromLocalStorage = (): InjectedAccountWithMeta | undefined => {

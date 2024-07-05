@@ -3,10 +3,12 @@ import AssetsTransferedPlot from './AssetsTransferedPlot';
 import { getParachainId } from '../../utils/utils';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { useQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 
 const now = Date.now();
 
 const AssetsTransferedPlotContainer = () => {
+  const { t } = useTranslation();
   const { parachains, dateRange } = useSelectedParachain();
 
   const [start, end] = dateRange;
@@ -20,7 +22,7 @@ const AssetsTransferedPlotContainer = () => {
   });
 
   if (error) {
-    return <div>Error</div>;
+    return <div>{t('error')}</div>;
   }
 
   return <AssetsTransferedPlot counts={data?.assetCountsBySymbol ?? []} />;

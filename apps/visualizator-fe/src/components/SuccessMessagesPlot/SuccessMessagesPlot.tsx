@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { MessageCountsQuery } from '../../gql/graphql';
 import { BarChart, ChartTooltip } from '@mantine/charts';
 import { getParachainById } from '../../utils/utils';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   counts: MessageCountsQuery['messageCounts'];
@@ -12,6 +13,7 @@ const getParachainByIdInternal = (id: number | null) => {
 };
 
 const SuccessMessagesPlot: FC<Props> = ({ counts }) => {
+  const { t } = useTranslation();
   const chartData = counts.map(count => ({
     category: getParachainByIdInternal(count.paraId ?? 0),
     Success: count.success,
@@ -26,8 +28,8 @@ const SuccessMessagesPlot: FC<Props> = ({ counts }) => {
       dataKey="category"
       tooltipAnimationDuration={200}
       series={[
-        { name: 'Success', color: 'green' },
-        { name: 'Failure', color: 'red' }
+        { name: t('success'), color: 'green' },
+        { name: t('failure'), color: 'red' }
       ]}
       tickLine="y"
       tooltipProps={{

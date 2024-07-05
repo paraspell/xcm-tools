@@ -4,6 +4,7 @@ import { getParachainId } from '../../utils/utils';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { FC } from 'react';
 import { useQuery } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 
 const now = Date.now();
 
@@ -12,6 +13,7 @@ type Props = {
 };
 
 const AmountTransferedPlotContainer: FC<Props> = ({ showMedian }) => {
+  const { t } = useTranslation();
   const { parachains, dateRange } = useSelectedParachain();
   const [start, end] = dateRange;
 
@@ -24,7 +26,7 @@ const AmountTransferedPlotContainer: FC<Props> = ({ showMedian }) => {
   });
 
   if (error) {
-    return <div>Error</div>;
+    return <div>{t('error')}</div>;
   }
 
   return <AmountTransferedPlot counts={data?.messageCountsByDay ?? []} showMedian={showMedian} />;
