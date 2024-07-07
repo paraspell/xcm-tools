@@ -1,0 +1,23 @@
+name: Deploy Visualizator Backend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/visualizator-be/**"
+
+  # Enables manual trigger of the workflow
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: self-hosted
+    steps:
+      - run: git pull
+      - run: pnpm install
+      - run: pnpm --filter visualizator-be build
+      - name: Restart PM2 process
+        run: pm2 restart visualizator-be
+        env:
+          PM2_HOME: /${{ secrets.USER }}/.pm2
