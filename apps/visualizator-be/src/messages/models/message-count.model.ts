@@ -1,10 +1,5 @@
 import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
-
-export enum CountOption {
-  ORIGIN = 'origin_para_id',
-  DESTINATION = 'dest_para_id',
-  BOTH = 'both',
-}
+import { CountOption } from '../count-option';
 
 registerEnumType(CountOption, {
   name: 'CountOption',

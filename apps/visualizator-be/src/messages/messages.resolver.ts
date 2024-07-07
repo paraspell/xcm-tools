@@ -5,7 +5,8 @@ import { AccountXcmCountType } from './models/account-msg-count.model';
 import { AssetCount } from './models/asset-count.model';
 import { MessageCountByDay } from './models/message-count-by-day.model';
 import { MessageCountByStatus } from './models/message-count-by-status.model';
-import { CountOption, MessageCount } from './models/message-count.model';
+import { MessageCount } from './models/message-count.model';
+import { CountOption } from './count-option';
 
 @Resolver(() => Message)
 export class MessageResolver {
