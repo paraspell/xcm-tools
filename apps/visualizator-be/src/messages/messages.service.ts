@@ -12,12 +12,7 @@ import { MessageCountByDay } from './models/message-count-by-day.model';
 import { MessageCountByStatus } from './models/message-count-by-status.model';
 import { AssetCount } from './models/asset-count.model';
 import { MessageCount } from './models/message-count.model';
-
-enum CountOption {
-  ORIGIN = 'origin_para_id',
-  DESTINATION = 'dest_para_id',
-  BOTH = 'both',
-}
+import { CountOption } from './count-option';
 
 @Injectable()
 export class MessageService {
