@@ -3,37 +3,20 @@ import { prodRelayPolkadot } from '@polkadot/apps-config/endpoints';
 export const NAME = 'XCMVisualizator';
 
 const EXCLUDED_NODE_NAMES = new Set([
-  'Energy Web X',
-  'Frequency',
-  'Laos',
-  'Geminis',
-  'Hashed Network',
-  'Hyperbridge (Nexus)',
-  'SORA',
   'Kapex',
-  'KILT Spiritnet',
-  'Logion',
   'peaq',
   'OAK Network',
-  'Watr Network',
-  't3rn',
   'OmniBTC',
-  'InvArch',
-  'Polimec',
   'Equilibrium',
-  'Continuum',
   'Coinversation',
   'Efinity',
   'Kylin',
   'Clover',
-  'Integritee Network',
-  'Ajuna Network',
   'Ares Odyssey',
   'SubGame Gamma',
   'Moonsama',
-  'Aventus',
   'SubDAO',
-  'Mythos'
+  'Geminis'
 ]);
 
 export const POLKADOT_NODE_NAMES = [
