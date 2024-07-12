@@ -252,6 +252,9 @@ importers:
       '@types/node':
         specifier: ^20.14.10
         version: 20.14.10
+      '@types/supertest':
+        specifier: ^6.0.2
+        version: 6.0.2
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.14.10)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.6.5)(@types/node@20.14.10)(typescript@5.3.3))
@@ -261,6 +264,9 @@ importers:
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
+      supertest:
+        specifier: ^7.0.0
+        version: 7.0.0
       ts-jest:
         specifier: ^29.1.5
         version: 29.1.5(@babel/core@7.24.7)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.7))(jest@29.7.0(@types/node@20.14.10)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.6.5)(@types/node@20.14.10)(typescript@5.3.3)))(typescript@5.3.3)
