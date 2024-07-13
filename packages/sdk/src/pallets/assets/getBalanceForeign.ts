@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type ApiPromise } from '@polkadot/api'
-import { type TNode } from '../../types'
+import { TNodePolkadotKusama } from '../../types'
 import { getDefaultPallet } from '../pallets'
 import { createApiInstanceForNode } from '../../utils'
 import { type StorageKey, u32 } from '@polkadot/types'
@@ -60,7 +60,7 @@ const getBalanceForeignPolkadotXcm = async (
 
 export const getBalanceForeign = async (
   address: string,
-  node: TNode,
+  node: TNodePolkadotKusama,
   symbolOrId: string,
   api?: ApiPromise
 ): Promise<bigint | null> => {

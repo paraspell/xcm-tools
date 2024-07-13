@@ -1,13 +1,13 @@
 import { useForm } from "@mantine/form";
 import { FC } from "react";
 import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
-import { NODE_NAMES, TNode } from "@paraspell/sdk";
+import { NODE_NAMES, TNodePolkadotKusama } from "@paraspell/sdk";
 import { TAssetsQuery } from "../../types";
 import { ASSET_QUERIES } from "../../consts";
 
 export type FormValues = {
   func: TAssetsQuery;
-  node: TNode;
+  node: TNodePolkadotKusama;
   symbol: string;
   address: string;
   useApi: boolean;

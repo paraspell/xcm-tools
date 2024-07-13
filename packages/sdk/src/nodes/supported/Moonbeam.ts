@@ -7,7 +7,8 @@ import {
   type XTokensTransferInput,
   type Extrinsic,
   type TSerializedApiCall,
-  type TRelayToParaInternalOptions
+  type TRelayToParaInternalOptions,
+  TNodePolkadotKusama
 } from '../../types'
 import { getAllNodeProviders } from '../../utils'
 import ParachainNode from '../ParachainNode'
@@ -34,7 +35,7 @@ class Moonbeam extends ParachainNode implements IXTokensTransfer {
   }
 
   getProvider(): string {
-    return getAllNodeProviders(this.node)[2]
+    return getAllNodeProviders(this.node as TNodePolkadotKusama)[2]
   }
 }
 

@@ -1,4 +1,8 @@
-import { type TNode, type TNodeWithRelayChains } from '../../types'
+import {
+  TNodeDotKsmWithRelayChains,
+  TNodePolkadotKusama,
+  type TNodeWithRelayChains
+} from '../../types'
 import { createApiInstanceForNode, determineRelayChainSymbol } from '../../utils'
 import { getAssetsObject } from './assets'
 import { getAssetBySymbolOrId } from './assetsUtils'
@@ -55,19 +59,20 @@ const getAssetSymbol = (node: TNodeWithRelayChains, assetId: string) => {
 
 const getAssetBalance = async (
   account: string,
-  node: TNodeWithRelayChains,
+  node: TNodeDotKsmWithRelayChains,
   assetSymbolOrId: string
 ): Promise<bigint> => {
   const api = await createApiInstanceForNode(node)
   const isNativeSymbol = getNativeAssetSymbol(node) === assetSymbolOrId
   return isNativeSymbol
     ? await getBalanceNative(account, node, api)
-    : (await getBalanceForeign(account, node as TNode, assetSymbolOrId, api)) ?? BigInt(0)
+    : (await getBalanceForeign(account, node as TNodePolkadotKusama, assetSymbolOrId, api)) ??
+        BigInt(0)
 }
 
 export const getTransferInfo = async (
-  origin: TNodeWithRelayChains,
-  destination: TNodeWithRelayChains,
+  origin: TNodeDotKsmWithRelayChains,
+  destination: TNodeDotKsmWithRelayChains,
   accountOrigin: string,
   accountDestination: string,
   assetSymbolOrId: string,

@@ -70,7 +70,7 @@ interface JunctionPlurality {
 }
 
 interface JunctionGlobalConsensus {
-  GlobalConsensus: NetworkId
+  GlobalConsensus: NetworkId | object
 }
 
 export type TJunction =

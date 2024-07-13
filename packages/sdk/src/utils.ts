@@ -15,7 +15,8 @@ import {
   type TMultiLocationHeader,
   Parents,
   type TJunction,
-  type Junctions
+  type Junctions,
+  TNodePolkadotKusama
 } from './types'
 import { nodes } from './maps/consts'
 import type ParachainNode from './nodes/ParachainNode'
@@ -164,7 +165,7 @@ export const getNode = (node: TNode): ParachainNode => {
   return nodes[node]
 }
 
-export const getNodeEndpointOption = (node: TNode) => {
+export const getNodeEndpointOption = (node: TNodePolkadotKusama) => {
   const { type, name } = getNode(node)
   const { linked } = type === 'polkadot' ? prodRelayPolkadot : prodRelayKusama
 
@@ -175,7 +176,7 @@ export const getNodeEndpointOption = (node: TNode) => {
   return preferredOption ?? linked.find(o => o.info === name)
 }
 
-export const getAllNodeProviders = (node: TNode): string[] => {
+export const getAllNodeProviders = (node: TNodePolkadotKusama): string[] => {
   const { providers } = getNodeEndpointOption(node) ?? {}
   if (providers && Object.values(providers).length < 1) {
     throw new Error(`Node ${node} does not have any providers.`)

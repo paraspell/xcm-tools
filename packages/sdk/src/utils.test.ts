@@ -1,7 +1,7 @@
 // Contains tests for important utils features that are used during call creation
 
 import { describe, expect, it } from 'vitest'
-import { NODE_NAMES } from './maps/consts'
+import { NODE_NAMES, NODE_NAMES_DOT_KSM } from './maps/consts'
 import { getNode, getNodeEndpointOption } from './utils'
 
 describe('getNodeDetails', () => {
@@ -17,7 +17,7 @@ describe('getNodeDetails', () => {
 
 describe('getNodeEndpointOption', () => {
   it('should return endpoint option for all nodes', () => {
-    NODE_NAMES.forEach(node => {
+    NODE_NAMES_DOT_KSM.forEach(node => {
       // Coretime does not have endpoint options yet
       if (node === 'CoretimeKusama') {
         return

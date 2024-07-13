@@ -1,13 +1,13 @@
-import { useForm } from '@mantine/form';
-import { FC } from 'react';
-import { Button, Checkbox, Select, Stack } from '@mantine/core';
-import { NODE_NAMES, TNode } from '@paraspell/sdk';
-import { TPalletsQuery } from '../../types';
-import { PALLETS_QUERIES } from '../../consts';
+import { useForm } from "@mantine/form";
+import { FC } from "react";
+import { Button, Checkbox, Select, Stack } from "@mantine/core";
+import { NODE_NAMES, TNodePolkadotKusama } from "@paraspell/sdk";
+import { TPalletsQuery } from "../../types";
+import { PALLETS_QUERIES } from "../../consts";
 
 export type FormValues = {
   func: TPalletsQuery;
-  node: TNode;
+  node: TNodePolkadotKusama;
   useApi: boolean;
 };
 
@@ -19,8 +19,8 @@ type Props = {
 const PalletsForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
-      func: 'ALL_PALLETS',
-      node: 'Acala',
+      func: "ALL_PALLETS",
+      node: "Acala",
       useApi: false,
     },
   });
@@ -34,7 +34,7 @@ const PalletsForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...PALLETS_QUERIES]}
           searchable
           required
-          {...form.getInputProps('func')}
+          {...form.getInputProps("func")}
         />
 
         <Select
@@ -43,10 +43,10 @@ const PalletsForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...NODE_NAMES]}
           searchable
           required
-          {...form.getInputProps('node')}
+          {...form.getInputProps("node")}
         />
 
-        <Checkbox label="Use XCM API" {...form.getInputProps('useApi')} />
+        <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
 
         <Button type="submit" loading={loading}>
           Submit

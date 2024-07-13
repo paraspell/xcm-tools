@@ -5,7 +5,8 @@ import {
   Version,
   type XTokensTransferInput,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  TNodePolkadotKusama
 } from '../../types'
 import { getAllNodeProviders } from '../../utils'
 import ParachainNode from '../ParachainNode'
@@ -21,7 +22,7 @@ class Polkadex extends ParachainNode implements IXTokensTransfer {
   }
 
   getProvider(): string {
-    return getAllNodeProviders(this.node)[1]
+    return getAllNodeProviders(this.node as TNodePolkadotKusama)[1]
   }
 }
 

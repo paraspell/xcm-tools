@@ -18,7 +18,8 @@ import {
   type TRelayToParaInternalOptions,
   type TSendInternalOptions,
   type TDestination,
-  TCurrencySelectionHeaderArr
+  TCurrencySelectionHeaderArr,
+  TNodePolkadotKusama
 } from '../types'
 import { generateAddressPayload, getFees, getAllNodeProviders, createApiInstance } from '../utils'
 import {
@@ -188,7 +189,7 @@ abstract class ParachainNode {
   }
 
   getProvider(): string {
-    return getAllNodeProviders(this.node)[0]
+    return getAllNodeProviders(this.node as TNodePolkadotKusama)[0]
   }
 
   async createApiInstance(): Promise<ApiPromise> {

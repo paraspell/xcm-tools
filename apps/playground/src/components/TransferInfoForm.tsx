@@ -2,11 +2,14 @@ import { useForm } from "@mantine/form";
 import { isValidWalletAddress } from "../utils";
 import { FC } from "react";
 import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
-import { NODES_WITH_RELAY_CHAINS, TNodeWithRelayChains } from "@paraspell/sdk";
+import {
+  NODES_WITH_RELAY_CHAINS,
+  TNodeDotKsmWithRelayChains,
+} from "@paraspell/sdk";
 
 export type FormValues = {
-  from: TNodeWithRelayChains;
-  to: TNodeWithRelayChains;
+  from: TNodeDotKsmWithRelayChains;
+  to: TNodeDotKsmWithRelayChains;
   currency: string;
   address: string;
   destinationAddress: string;
