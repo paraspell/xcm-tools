@@ -99,6 +99,8 @@ describe('getAllAssetsSymbols', () => {
 describe('getAssetDecimals', () => {
   it('should return valid decimals for all available assets', () => {
     NODE_NAMES.forEach(node => {
+      // Ethereum assets do not have asset decimals available
+      if (node === 'Ethereum') return
       const obj = getAssetsObject(node)
       expect(obj).not.toBeNull()
       ;[...obj.nativeAssets, ...obj.otherAssets].forEach(asset => {

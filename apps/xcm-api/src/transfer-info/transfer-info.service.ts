@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import {
   InvalidCurrencyError,
-  NODES_WITH_RELAY_CHAINS,
-  TNodeWithRelayChains,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
+  TNodeDotKsmWithRelayChains,
   getTransferInfo,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
@@ -30,16 +30,16 @@ export class TransferInfoService {
     currency,
     amount,
   }: TransferInfoDto) {
-    const originNode = origin as TNodeWithRelayChains | undefined;
-    const destNode = destination as TNodeWithRelayChains | undefined;
+    const originNode = origin as TNodeDotKsmWithRelayChains | undefined;
+    const destNode = destination as TNodeDotKsmWithRelayChains | undefined;
 
-    if (!NODES_WITH_RELAY_CHAINS.includes(originNode)) {
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(originNode)) {
       throw new BadRequestException(
         `Node ${originNode} is not valid. Check docs for valid nodes.`,
       );
     }
 
-    if (!NODES_WITH_RELAY_CHAINS.includes(destNode)) {
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(destNode)) {
       throw new BadRequestException(
         `Node ${destNode} is not valid. Check docs for valid nodes.`,
       );

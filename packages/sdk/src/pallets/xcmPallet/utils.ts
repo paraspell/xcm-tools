@@ -13,7 +13,7 @@ import {
 } from '../../types'
 import { createX1Payload, generateAddressPayload } from '../../utils'
 import { getParaId, getTNode } from '../assets'
-import { type TMultiLocation } from '../../types/TMultiLocation'
+import { TJunction, type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 
 export const constructRelayToParaParameters = (
@@ -108,22 +108,27 @@ export const createPolkadotXcmHeader = (
   scenario: TScenario,
   version: Version,
   destination?: TDestination,
-  nodeId?: number
+  nodeId?: number,
+  junction?: TJunction,
+  parents?: Parents
 ): TMultiLocationHeader => {
-  const parents = scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE
+  const parentsResolved = parents ?? (scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE)
   const interior =
     scenario === 'ParaToRelay'
       ? 'Here'
-      : createX1Payload(version, {
-          Parachain: nodeId
-        })
+      : createX1Payload(
+          version,
+          junction ?? {
+            Parachain: nodeId
+          }
+        )
 
   const isMultiLocationDestination = typeof destination === 'object'
   return {
     [version]: isMultiLocationDestination
       ? destination
       : {
-          parents,
+          parents: parentsResolved,
           interior
         }
   }

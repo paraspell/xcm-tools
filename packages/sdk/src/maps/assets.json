@@ -5380,6 +5380,47 @@
       }
     ]
   },
+  "Ethereum": {
+    "paraId": 1,
+    "relayChainAssetSymbol": "DOT",
+    "nativeAssetSymbol": "ETH",
+    "nativeAssets": [
+      {
+        "symbol": "ETH",
+        "decimals": 18
+      }
+    ],
+    "otherAssets": [
+      {
+        "symbol": "WETH",
+        "assetId": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+      },
+      {
+        "symbol": "WBTC",
+        "assetId": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"
+      },
+      {
+        "symbol": "SHIB",
+        "assetId": "0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE"
+      },
+      {
+        "symbol": "PEPE",
+        "assetId": "0x6982508145454Ce325dDbE47a25d4ec3d2311933"
+      },
+      {
+        "symbol": "TON",
+        "assetId": "0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1"
+      },
+      {
+        "symbol": "wstETH",
+        "assetId": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"
+      },
+      {
+        "symbol": "tBTC",
+        "assetId": "0x18084fbA666a33d37592fA2633fD49a74DD93a88"
+      }
+    ]
+  },
   "Khala": {
     "paraId": 2004,
     "relayChainAssetSymbol": "KSM",

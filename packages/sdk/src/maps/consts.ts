@@ -56,8 +56,9 @@ import KiltSpiritnet from '../nodes/supported/KiltSpiritnet'
 import Curio from '../nodes/supported/Curio'
 import BridgeHubPolkadot from '../nodes/supported/BridgeHubPolkadot'
 import BridgeHubKusama from '../nodes/supported/BridgeHubKusama'
+import Ethereum from '../nodes/supported/Ethereum'
 
-export const NODE_NAMES = [
+export const NODE_NAMES_DOT_KSM = [
   'AssetHubPolkadot',
   'Acala',
   'Astar',
@@ -114,7 +115,15 @@ export const NODE_NAMES = [
   'Curio'
 ] as const
 
+export const NODE_NAMES = [...NODE_NAMES_DOT_KSM, 'Ethereum'] as const
+
 export const NODES_WITH_RELAY_CHAINS = [...NODE_NAMES, 'Polkadot', 'Kusama'] as const
+
+export const NODES_WITH_RELAY_CHAINS_DOT_KSM = [
+  ...NODE_NAMES_DOT_KSM,
+  'Polkadot',
+  'Kusama'
+] as const
 
 export const nodes: Record<TNode, ParachainNode> = {
   AssetHubPolkadot: new AssetHubPolkadot(),
@@ -170,7 +179,8 @@ export const nodes: Record<TNode, ParachainNode> = {
   Phala: new Phala(),
   Subsocial: new Subsocial(),
   KiltSpiritnet: new KiltSpiritnet(),
-  Curio: new Curio()
+  Curio: new Curio(),
+  Ethereum: new Ethereum()
 }
 
 export const SUPPORTED_PALLETS = [

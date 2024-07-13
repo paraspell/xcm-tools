@@ -1,11 +1,13 @@
 // Contains detailed structure of XCM call construction for Statemint Parachain
 
+import { ethers } from 'ethers'
 import { InvalidCurrencyError } from '../../errors'
 import {
   constructRelayToParaParameters,
   createBridgeCurrencySpec,
   createBridgePolkadotXcmDest,
-  createCurrencySpec
+  createCurrencySpec,
+  createPolkadotXcmHeader
 } from '../../pallets/xcmPallet/utils'
 import {
   type IPolkadotXCMTransfer,
@@ -17,11 +19,13 @@ import {
   type TScenario,
   type TRelayToParaInternalOptions,
   type TMultiAsset,
-  type TMultiLocation
+  type TMultiLocation,
+  TJunction
 } from '../../types'
-import { generateAddressMultiLocationV4 } from '../../utils'
+import { generateAddressMultiLocationV4, generateAddressPayload } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import { getOtherAssets } from '../../pallets/assets'
 
 class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
@@ -82,11 +86,69 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     throw new InvalidCurrencyError('Polkadot <-> Kusama bridge does not support this currency')
   }
 
+  public handleEthBridgeTransfer(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+    const { api, scenario, destination, paraIdTo, address, currencyId } = input
+
+    if (!ethers.isAddress(address)) {
+      throw new Error('Only Ethereum addresses are supported for Ethereum transfers')
+    }
+
+    const ethAssets = getOtherAssets('Ethereum')
+    const ethAsset = ethAssets.find(asset => asset.symbol === currencyId)
+
+    if (!ethAsset) {
+      throw new InvalidCurrencyError(
+        `Currency ${currencyId} is not supported for Ethereum transfers`
+      )
+    }
+
+    const ETH_CHAIN_ID = 1
+    const ethJunction: TJunction = {
+      GlobalConsensus: { Ethereum: { chain_id: ETH_CHAIN_ID } }
+    }
+
+    const modifiedInput: PolkadotXCMTransferInput = {
+      ...input,
+      header: createPolkadotXcmHeader(
+        scenario,
+        this.version,
+        destination,
+        paraIdTo,
+        ethJunction,
+        Parents.TWO
+      ),
+      addressSelection: generateAddressPayload(
+        api,
+        scenario,
+        'PolkadotXcm',
+        address,
+        this.version,
+        paraIdTo
+      ),
+      currencySelection: createCurrencySpec(input.amount, Version.V3, Parents.TWO, {
+        parents: Parents.TWO,
+        interior: {
+          X2: [
+            ethJunction,
+            {
+              AccountKey20: { key: ethAsset.assetId }
+            }
+          ]
+        }
+      })
+    }
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, 'transferAssets', 'Unlimited')
+  }
+
   transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
     const { scenario } = input
 
     if (input.destination === 'AssetHubKusama') {
       return this.handleBridgeTransfer(input, 'Kusama')
+    }
+
+    if (input.destination === 'Ethereum') {
+      return this.handleEthBridgeTransfer(input)
     }
 
     const method =

@@ -3,7 +3,6 @@ import {
   Builder,
   type TNode,
   createApiInstanceForNode,
-  NODE_NAMES,
   getAllAssetsSymbols,
   getRelayChainSymbol,
   NoXCMSupportImplementedError,
@@ -12,12 +11,14 @@ import {
   NodeNotSupportedError,
   getOtherAssets,
   TNodeWithRelayChains,
-  Version
+  Version,
+  NODE_NAMES_DOT_KSM
 } from '../src'
 import { type ApiPromise } from '@polkadot/api'
 
 const MOCK_AMOUNT = 1000
 const MOCK_ADDRESS = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'
+const MOCK_ETH_ADDRESS = '0x1501C1413e4178c38567Ada8945A80351F7B8496'
 const MOCK_POLKADOT_NODE: TNode = 'Acala'
 const MOCK_KUSAMA_NODE: TNode = 'Karura'
 
@@ -32,7 +33,7 @@ const getAssetsForNode = (node: TNode): string[] => {
   return getAllAssetsSymbols(node)
 }
 
-const filteredNodes = NODE_NAMES.filter(
+const filteredNodes = NODE_NAMES_DOT_KSM.filter(
   node =>
     node !== 'Quartz' &&
     node !== 'Bitgreen' &&
@@ -46,7 +47,7 @@ const findTransferableNodeAndAsset = (
 ): { nodeTo: TNode | undefined; asset: string | undefined; assetId: string | null } => {
   const allFromAssets = getAssetsForNode(from)
 
-  const nodeTo = NODE_NAMES.filter(
+  const nodeTo = NODE_NAMES_DOT_KSM.filter(
     node => getRelayChainSymbol(node) === getRelayChainSymbol(from)
   ).find(node => {
     const nodeAssets = getAllAssetsSymbols(node)
@@ -213,6 +214,23 @@ describe.sequential('XCM - e2e', () => {
         .xcmVersion(Version.V3)
         .build()
       expect(tx).toBeDefined()
+    })
+  })
+
+  describe('Ethereum transfers', async () => {
+    const ethAssetSymbols = getOtherAssets('Ethereum').map(asset => asset.symbol)
+    const api = await createApiInstanceForNode('AssetHubPolkadot')
+    ethAssetSymbols.forEach(symbol => {
+      it(`should create transfer tx - ${symbol} from Polkadot to Ethereum`, async () => {
+        const tx = await Builder(api)
+          .from('AssetHubPolkadot')
+          .to('Ethereum')
+          .currency(symbol as string)
+          .amount(MOCK_AMOUNT)
+          .address(MOCK_ETH_ADDRESS)
+          .build()
+        expect(tx).toBeDefined()
+      })
     })
   })
 
