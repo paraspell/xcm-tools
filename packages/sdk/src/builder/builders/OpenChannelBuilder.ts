@@ -19,7 +19,7 @@ export interface MaxSizeOpenChannelBuilder {
   maxSize: (size: number) => MaxMessageSizeOpenChannelBuilder
 }
 
-class OpenChannelBuilder
+export class OpenChannelBuilder
   implements MaxSizeOpenChannelBuilder, MaxMessageSizeOpenChannelBuilder, FinalBuilder
 {
   private readonly api: ApiPromise
@@ -72,5 +72,3 @@ class OpenChannelBuilder
     return openChannelSerializedApiCall(options)
   }
 }
-
-export default OpenChannelBuilder

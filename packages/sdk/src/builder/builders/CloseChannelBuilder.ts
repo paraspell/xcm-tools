@@ -18,7 +18,7 @@ export interface InboundCloseChannelBuilder {
   inbound: (inbound: number) => OutboundCloseChannelBuilder
 }
 
-class CloseChannelBuilder
+export class CloseChannelBuilder
   implements InboundCloseChannelBuilder, OutboundCloseChannelBuilder, FinalBuilder
 {
   private readonly api: ApiPromise
@@ -65,5 +65,3 @@ class CloseChannelBuilder
     return closeChannelSerializedApiCall(options)
   }
 }
-
-export default CloseChannelBuilder
