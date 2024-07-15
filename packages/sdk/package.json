@@ -34,7 +34,8 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
   "dependencies": {
-    "ethers": "^6.13.0"
+    "@snowbridge/api": "^0.1.16",
+    "ethers": "^6.13.1"
   },
   "peerDependencies": {
     "@polkadot/api": "^12.1.1",

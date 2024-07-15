@@ -15,8 +15,8 @@ import {
   type TVersionClaimAssets,
   type Version
 } from '../../types'
-import CloseChannelBuilder, { type InboundCloseChannelBuilder } from './CloseChannelBuilder'
-import OpenChannelBuilder, { type MaxSizeOpenChannelBuilder } from './OpenChannelBuilder'
+import { CloseChannelBuilder, type InboundCloseChannelBuilder } from './CloseChannelBuilder'
+import { OpenChannelBuilder, type MaxSizeOpenChannelBuilder } from './OpenChannelBuilder'
 import RelayToParaBuilder from './RelayToParaBuilder'
 import ParaToParaBuilder from './ParaToParaBuilder'
 import ParaToRelayBuilder from './ParaToRelayBuilder'
@@ -145,6 +145,3 @@ export interface AccountBuilder {
 export interface VersionBuilder extends FinalBuilderAsync {
   xcmVersion: (version: TVersionClaimAssets) => FinalBuilderAsync
 }
-
-export * from './CloseChannelBuilder'
-export * from './OpenChannelBuilder'
