@@ -218,7 +218,7 @@ export class MessageService {
         WHERE symbol IS NOT NULL
           AND symbol <> ''
         GROUP BY origin_para_id, symbol
-        ORDER BY origin_para_id, count DESC;
+        ORDER BY count DESC, origin_para_id;
       `;
       queryParameters.push(paraIds);
     } else {

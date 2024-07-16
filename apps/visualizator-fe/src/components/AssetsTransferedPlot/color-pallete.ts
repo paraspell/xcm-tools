@@ -1,0 +1,22 @@
+export const colorPallete = [
+  '#FF6384',
+  '#36A2EB',
+  '#FFCE56',
+  '#4BC0C0',
+  '#9966FF',
+  '#FF9F40',
+  '#E7E9ED',
+  '#70D6FF',
+  '#FF70A6',
+  '#FF9770',
+  '#FFD670',
+  '#E9FF70',
+  '#8AEFFF',
+  '#B5E85E',
+  '#FF7575',
+  '#B28DFF',
+  '#FFC0CB',
+  '#C0C0FF',
+  '#C4FAF8',
+  '#F2D7D5'
+];
