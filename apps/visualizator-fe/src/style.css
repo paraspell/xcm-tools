@@ -17,6 +17,7 @@
 body {
   margin: 0;
   background-color: black !important;
+  overflow: hidden;
 }
 
 body,
@@ -64,4 +65,13 @@ h1 {
 
 .recharts-tooltip-wrapper {
   z-index: 1000;
+}
+
+.mantine-ChartTooltip-tooltip {
+  pointer-events: auto;
+}
+
+.mantine-ChartTooltip-tooltipBody {
+  max-height: 200px;
+  overflow: scroll;
 }
