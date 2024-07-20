@@ -1,7 +1,7 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import ParachainsGraphContainer from './components/ParachainsGraph/ParachainsGraph.container';
 
-const CAMERA_POSITION = [15, 2, 5] as const;
+const CAMERA_POSITION = [20, 2, 5] as const;
 
 const MainScene = () => (
   <>
