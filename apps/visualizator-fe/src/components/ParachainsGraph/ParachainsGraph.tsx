@@ -3,7 +3,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, Fragment, useMemo } from 'react';
-import { ChannelQuery, ChannelsQuery, TotalMessageCountsQuery } from '../../gql/graphql';
+import {
+  ChannelQuery,
+  ChannelsQuery,
+  CountOption,
+  TotalMessageCountsQuery
+} from '../../gql/graphql';
 import Relaychain from '../Relaychain';
 import Parachain from '../Parachain/Parachain';
 import { getParachainPosition } from './utils';
@@ -22,7 +27,8 @@ type Props = {
 };
 
 const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, selectedChannel }) => {
-  const { parachains, toggleParachain, setChannelId, setChannelAlertOpen } = useSelectedParachain();
+  const { parachains, toggleParachain, setChannelId, setChannelAlertOpen, parachainArrangement } =
+    useSelectedParachain();
 
   const sortedParachainNames = useMemo(() => {
     const nameToCountMap = totalMessageCounts.reduce((acc: any, item) => {
@@ -52,13 +58,13 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, selectedChan
 
   const calculateLineWidth = (messageCount: number): number => {
     const baseLineWidth = 0.02;
-    const scalingFactor = 0.00001;
+    const scalingFactor = 0.000008;
     return baseLineWidth + messageCount * scalingFactor;
   };
 
   const calculateParachainScale = (parachain: string): number => {
-    const baseLineWidth = 1;
-    const scalingFactor = 0.00003;
+    const baseLineWidth = 1.3;
+    const scalingFactor = parachainArrangement === CountOption.BOTH ? 0.000015 : 0.000024;
     return (
       baseLineWidth +
       (totalMessageCounts.find(item => getParachainId(parachain) === item.paraId)?.totalCount ??
@@ -130,7 +136,7 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, selectedChan
           <LineBetween
             startPosition={relayChainPosition}
             endPosition={parachainPositions[index]}
-            lineWidth={0.05}
+            lineWidth={0.02}
             isHighlighed={parachains.includes('Polkadot')}
             isSelected={false}
             isSecondary={false}
