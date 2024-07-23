@@ -7,6 +7,8 @@ import { getLogoScaleFactor, getNodeLogo } from './utils';
 import { getParachainColor } from '../../utils/utils';
 import { lightenColor } from '../../utils/lightenColor';
 import { adjustUVs } from '../../utils/adjustUVs';
+import { Ecosystem } from '../../types/types';
+import { FONT_URL } from '../../consts/consts';
 
 type Props = {
   name: string;
@@ -14,17 +16,20 @@ type Props = {
   isSelected: boolean;
   onClick: (name: string) => void;
   scale: number;
+  ecosystem: Ecosystem;
 };
 
-const Parachain: React.FC<Props> = ({ name, index, isSelected, onClick, scale }) => {
-  const position = getParachainPosition(index);
+const Parachain: React.FC<Props> = ({ name, index, isSelected, onClick, scale, ecosystem }) => {
+  const position = getParachainPosition(index, ecosystem);
   const textRef = useRef<Text>(null);
   const materialRef = useRef<MeshStandardMaterial>(null);
   const groupRef = useRef<Group>(null);
 
   const sphereRef = useRef<Mesh>(null);
 
-  const texture = useLoader(TextureLoader, getNodeLogo(name)!);
+  const logo = getNodeLogo(name, ecosystem);
+
+  const texture = logo ? useLoader(TextureLoader, logo) : null;
 
   useEffect(() => {
     if (sphereRef.current) {
@@ -44,7 +49,7 @@ const Parachain: React.FC<Props> = ({ name, index, isSelected, onClick, scale })
     }
   });
 
-  const color = getParachainColor(name);
+  const color = getParachainColor(name, ecosystem);
   const lightColor = lightenColor(color, 50);
 
   return (
@@ -74,7 +79,7 @@ const Parachain: React.FC<Props> = ({ name, index, isSelected, onClick, scale })
         color="white"
         anchorX="center"
         anchorY="middle"
-        font="https://cdn.jsdelivr.net/npm/roboto-regular-woff@0.7.1/Roboto-Regular.woff"
+        font={FONT_URL}
       >
         {name}
       </Text>

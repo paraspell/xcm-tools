@@ -16,3 +16,10 @@ export type TAggregatedData = {
   parachain: string;
   counts: { [symbol: string]: number };
 };
+
+export enum Ecosystem {
+  POLKADOT = 'Polkadot',
+  KUSAMA = 'Kusama',
+  WESTEND = 'Westend',
+  ROCOCO = 'Rococo'
+}

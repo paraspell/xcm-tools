@@ -1,9 +1,10 @@
 import { Vector3 } from 'three';
-import { POLKADOT_NODE_NAMES } from '../../consts';
+import { Ecosystem } from '../../types/types';
+import { getNodesByEcosystem } from '../../utils/utils';
 
-export const getParachainPosition = (index: number) => {
+export const getParachainPosition = (index: number, ecosystem: Ecosystem) => {
   const radius = 6;
-  const totalParachains = POLKADOT_NODE_NAMES.length;
+  const totalParachains = getNodesByEcosystem(ecosystem).length;
   const goldenAngle = Math.PI * (3 - Math.sqrt(5)); // golden angle in radians
 
   const phi = goldenAngle * index; // This spreads out the points along the longitude

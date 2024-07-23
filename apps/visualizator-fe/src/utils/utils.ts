@@ -1,29 +1,64 @@
 import { SelectedParachain } from '../context/SelectedParachain/SelectedParachainContext';
-import { prodRelayPolkadot } from '@polkadot/apps-config/endpoints';
+import {
+  prodRelayKusama,
+  prodRelayPolkadot,
+  testRelayRococo,
+  testRelayWestend
+} from '@polkadot/apps-config/endpoints';
+import { Ecosystem } from '../types/types';
 
-export const getParachainId = (parachain: SelectedParachain): number => {
-  if (parachain === 'Polkadot') return 0;
+export const getParachainId = (parachain: SelectedParachain, ecosystem: Ecosystem): number => {
+  if (parachain === 'Polkadot' || parachain === 'Kusama') return 0;
 
-  // Special case for Polkadex
-  if (parachain === 'Polkadex') return 2040;
+  const paraId = findEndpointOption(ecosystem, parachain)?.paraId;
 
-  const paraId = prodRelayPolkadot.linked?.find(node => node.text === parachain)?.paraId;
-  if (!paraId) throw new Error(`Parachain ${parachain} not found`);
+  if (!paraId) throw new Error(`Parachain ${parachain} not found in ecosystem ${ecosystem}`);
+
   return paraId;
 };
 
-export const getParachainById = (id: number): SelectedParachain | null => {
-  if (id === 0) return 'Polkadot';
-  const parachain = prodRelayPolkadot.linked?.find(node => node.paraId === id)?.text;
+export const getParachainById = (id: number, ecosystem: Ecosystem): SelectedParachain | null => {
+  if (id === 0) return ecosystem === Ecosystem.POLKADOT ? 'Polkadot' : 'Kusama';
+  const parachain = getFilteredEndpointOptions(ecosystem)?.find(node => node.paraId === id)?.text;
   if (!parachain) return null;
   return parachain;
 };
 
-export const getParachainColor = (parachain: SelectedParachain): string => {
-  if (parachain === 'Polkadot') return 'blue.6';
-  return prodRelayPolkadot.linked?.find(node => node.text === parachain)?.ui.color ?? 'gray.6';
+export const getParachainColor = (parachain: SelectedParachain, ecosystem: Ecosystem): string => {
+  if (parachain === 'Polkadot' || parachain === 'Kusama') return 'blue.6';
+  return findEndpointOption(ecosystem, parachain)?.ui.color ?? 'gray.6';
 };
 
-export const getParachainLogo = (parachain: SelectedParachain): string | undefined => {
-  return prodRelayPolkadot.linked?.find(node => node.text === parachain)?.ui.logo;
+export const getParachainLogo = (
+  parachain: SelectedParachain,
+  ecosystem: Ecosystem
+): string | undefined => {
+  return getFilteredEndpointOptions(ecosystem)?.find(node => node.text === parachain)?.ui.logo;
+};
+
+export const getNodesByEcosystem = (ecosystem: Ecosystem) =>
+  getFilteredEndpointOptions(ecosystem)?.map(option => option.text) ?? [];
+
+const findEndpointOption = (ecosystem: Ecosystem, parachain: SelectedParachain) => {
+  return getFilteredEndpointOptions(ecosystem)?.find(node => node.text === parachain);
+};
+
+export const getFilteredEndpointOptions = (ecosystem: Ecosystem) => {
+  return getEndpointOptions(ecosystem)?.filter(({ providers, isUnreachable }) => {
+    const hasProviders = Object.keys(providers).length !== 0;
+    return hasProviders && !isUnreachable;
+  });
+};
+
+const getEndpointOptions = (ecosystem: Ecosystem) => {
+  switch (ecosystem) {
+    case Ecosystem.POLKADOT:
+      return prodRelayPolkadot.linked;
+    case Ecosystem.KUSAMA:
+      return prodRelayKusama.linked;
+    case Ecosystem.WESTEND:
+      return testRelayWestend.linked;
+    case Ecosystem.ROCOCO:
+      return testRelayRococo.linked;
+  }
 };

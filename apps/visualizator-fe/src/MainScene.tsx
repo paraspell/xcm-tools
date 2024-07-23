@@ -1,14 +1,75 @@
+import { useRef, useEffect, useState } from 'react';
+import { Vector3 } from 'three';
+import { useFrame } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import ParachainsGraphContainer from './components/ParachainsGraph/ParachainsGraph.container';
+import { Ecosystem } from './types/types';
+import { useSelectedParachain } from './context/SelectedParachain/useSelectedParachain';
 
-const CAMERA_POSITION = [20, 2, 5] as const;
+const CAMERA_POSITION = new Vector3(48, 10, 0);
+const RADIUS = 25;
 
-const MainScene = () => (
-  <>
-    <ParachainsGraphContainer />
-    <OrbitControls enableDamping autoRotate={false} />
-    <PerspectiveCamera makeDefault position={CAMERA_POSITION} />
-  </>
-);
+const getCirclePosition = (angle: number, radius: number): Vector3 => {
+  return new Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+};
+
+interface AngleMap {
+  [key: string]: number;
+}
+
+const MainScene = () => {
+  const { selectedEcosystem } = useSelectedParachain();
+
+  const targetAngles = useRef<AngleMap>({});
+  const currentAngles = useRef<AngleMap>({});
+  const ecosystems = Object.values(Ecosystem);
+  const totalEcosystems = ecosystems.length;
+  const initialTargetRef = useRef<Vector3 | null>(null);
+  const [_initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    ecosystems.forEach((ecosystem, index) => {
+      const targetAngle = (index / totalEcosystems) * 2 * Math.PI;
+      targetAngles.current[ecosystem] = targetAngle;
+      currentAngles.current[ecosystem] = currentAngles.current[ecosystem] ?? targetAngle;
+    });
+    const initialEcosystem = Ecosystem.POLKADOT;
+    initialTargetRef.current = getCirclePosition(targetAngles.current[initialEcosystem], RADIUS);
+    setInitialized(true);
+  }, [totalEcosystems, ecosystems]);
+
+  useFrame(({ scene }) => {
+    const rotationOffset = -(
+      (ecosystems.indexOf(selectedEcosystem) / totalEcosystems) *
+      2 *
+      Math.PI
+    );
+
+    ecosystems.forEach(ecosystem => {
+      const mesh = scene.getObjectByName(ecosystem);
+      if (mesh) {
+        const targetAngle = targetAngles.current[ecosystem] + rotationOffset;
+        let currentAngle = currentAngles.current[ecosystem];
+        const deltaAngle = ((targetAngle - currentAngle + Math.PI) % (2 * Math.PI)) - Math.PI;
+        currentAngle += deltaAngle * 0.08;
+        currentAngles.current[ecosystem] = currentAngle;
+        mesh.position.copy(getCirclePosition(currentAngle, RADIUS));
+      }
+    });
+  });
+
+  const target = initialTargetRef.current || CAMERA_POSITION;
+
+  return (
+    <>
+      <ParachainsGraphContainer ecosystem={Ecosystem.POLKADOT} />
+      <ParachainsGraphContainer ecosystem={Ecosystem.KUSAMA} />
+      <ParachainsGraphContainer ecosystem={Ecosystem.WESTEND} />
+      <ParachainsGraphContainer ecosystem={Ecosystem.ROCOCO} />
+      <OrbitControls enableDamping autoRotate={false} target={target} />
+      <PerspectiveCamera makeDefault position={CAMERA_POSITION} />
+    </>
+  );
+};
 
 export default MainScene;

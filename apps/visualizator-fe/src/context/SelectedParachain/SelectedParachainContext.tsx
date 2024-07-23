@@ -1,5 +1,6 @@
 import { createContext, useState, ReactNode } from 'react';
 import { CountOption } from '../../gql/graphql';
+import { Ecosystem } from '../../types/types';
 
 export type SelectedParachain = string;
 
@@ -23,6 +24,8 @@ interface SelectedParachainContextType {
   setSelectedChannelColor: (color: string) => void;
   parachainArrangement?: CountOption;
   setParachainArrangement: (arrangement: CountOption) => void;
+  selectedEcosystem: Ecosystem;
+  setSelectedEcosystem: (ecosystem: Ecosystem) => void;
 }
 
 export const SelectedParachainContext = createContext<SelectedParachainContextType | null>(null);
@@ -41,6 +44,7 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
   const [selectedChannelColor, setSelectedChannelColor] = useState<string>();
   const [parachainArrangement, setParachainArrangement] = useState<CountOption>(CountOption.ORIGIN);
   const [channelAlertOpen, setChannelAlertOpen] = useState<boolean>(false);
+  const [selectedEcosystem, setSelectedEcosystem] = useState<Ecosystem>(Ecosystem.POLKADOT);
 
   const toggleParachain = (parachain: SelectedParachain) => {
     if (parachains.includes(parachain)) {
@@ -71,7 +75,9 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
         selectedChannelColor,
         setSelectedChannelColor,
         parachainArrangement,
-        setParachainArrangement
+        setParachainArrangement,
+        selectedEcosystem,
+        setSelectedEcosystem
       }}
     >
       {children}

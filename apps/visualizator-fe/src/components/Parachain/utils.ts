@@ -33,9 +33,15 @@ import polimecPng from '../../logos/polimec.png';
 import t3rnPng from '../../logos/t3rn.png';
 import soraPng from '../../logos/sora.png';
 import logionPng from '../../logos/logion.png';
+import curioPng from '../../logos/curio.png';
+import krestPng from '../../logos/krest.png';
+import ipciPng from '../../logos/ipci.png';
+import crabPng from '../../logos/crab.png';
+import pioneerPng from '../../logos/pioneer.png';
 import { getParachainLogo } from '../../utils/utils';
+import { Ecosystem } from '../../types/types';
 
-export const getNodeLogo = (node: string) => {
+export const getNodeLogo = (node: string, ecosystem: Ecosystem) => {
   if (node === 'Collectives') return collectivesPng;
   if (node === 'Interlay') return interlayPng;
   if (node === 'Centrifuge') return centrifugePng;
@@ -71,7 +77,12 @@ export const getNodeLogo = (node: string) => {
   if (node === 't3rn') return t3rnPng;
   if (node === 'SORA') return soraPng;
   if (node === 'Logion') return logionPng;
-  return getParachainLogo(node);
+  if (node === 'Curio') return curioPng;
+  if (node === 'Krest') return krestPng;
+  if (node === 'DAO IPCI') return ipciPng;
+  if (node === 'Crab') return crabPng;
+  if (node === 'Pioneer') return pioneerPng;
+  return getParachainLogo(node, ecosystem);
 };
 
 export const getLogoScaleFactor = (node: string) => {
@@ -104,5 +115,10 @@ export const getLogoScaleFactor = (node: string) => {
   if (node === 't3rn') return 2;
   if (node === 'SORA') return 2;
   if (node === 'Logion') return 2;
+  if (node === 'Curio') return 2;
+  if (node === 'Krest') return 2;
+  if (node === 'DAO IPCI') return 2;
+  if (node === 'Crab') return 2;
+  if (node === 'Pioneer') return 2;
   return 3;
 };

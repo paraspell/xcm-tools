@@ -1,18 +1,21 @@
 import { useFrame, useLoader } from '@react-three/fiber';
 import { FC, useEffect, useRef } from 'react';
 import { Color, TextureLoader, SphereGeometry, Mesh, Group } from 'three';
-import polkadotPng from '../logos/polkadot1.png';
-import { adjustUVs } from '../utils/adjustUVs';
+import { adjustUVs } from '../../utils/adjustUVs';
+import { Ecosystem } from '../../types/types';
+import { getRelaychainLogo } from './utils/getRelaychainLogo';
 
 const SCALE_FACTOR = 2.25;
 
 type Props = {
   onClick: () => void;
+  ecosystem: Ecosystem;
   isSelected?: boolean;
 };
 
-const Relaychain: FC<Props> = ({ onClick, isSelected }) => {
-  const texture = useLoader(TextureLoader, polkadotPng);
+const Relaychain: FC<Props> = ({ onClick, ecosystem, isSelected }) => {
+  const logo = getRelaychainLogo(ecosystem);
+  const texture = useLoader(TextureLoader, logo);
   const sphereRef = useRef<Mesh>(null);
   const groupRef = useRef<Group>(null);
 
@@ -35,7 +38,7 @@ const Relaychain: FC<Props> = ({ onClick, isSelected }) => {
   });
 
   return (
-    <group ref={groupRef} position={[0, 0, 0]} onClick={onClick}>
+    <group ref={groupRef} onClick={onClick}>
       <mesh ref={sphereRef} castShadow rotation={[0, Math.PI * 1.5, 0]}>
         <sphereGeometry args={[1, 32, 32]} />
         <meshStandardMaterial
