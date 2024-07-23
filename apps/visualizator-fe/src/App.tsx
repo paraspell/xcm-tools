@@ -11,6 +11,7 @@ import { ApolloProvider } from '@apollo/client';
 import { client } from './apolloClient';
 import { useSpring, animated } from '@react-spring/web';
 import CollapseButton from './components/CollapseButton';
+import EcosystemSelectContainer from './components/EcosystemSelect/EcosystemSelect.container';
 
 const App = () => {
   const [width, setWidth] = useState('40%');
@@ -33,6 +34,7 @@ const App = () => {
                 <Footer />
                 <ChannelInfoContainer />
                 <SendXCMContainer />
+                <EcosystemSelectContainer />
               </Group>
               <animated.div style={props}>
                 <Stack h="100%" w="100%" pos="relative" bg="white">

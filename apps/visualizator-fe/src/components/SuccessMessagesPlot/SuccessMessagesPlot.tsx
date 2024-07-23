@@ -3,13 +3,14 @@ import { MessageCountsQuery } from '../../gql/graphql';
 import { BarChart, ChartTooltip } from '@mantine/charts';
 import { getParachainById } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
+import { Ecosystem } from '../../types/types';
 
 type Props = {
   counts: MessageCountsQuery['messageCounts'];
 };
 
 const getParachainByIdInternal = (id: number | null) => {
-  return id ? getParachainById(id) : 'Total';
+  return id ? getParachainById(id, Ecosystem.POLKADOT) : 'Total';
 };
 
 const SuccessMessagesPlot: FC<Props> = ({ counts }) => {

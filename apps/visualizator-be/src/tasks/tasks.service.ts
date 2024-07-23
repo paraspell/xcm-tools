@@ -8,7 +8,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from '../messages/message.entity';
-import { Cron } from '@nestjs/schedule';
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
 import * as fs from 'fs';
@@ -34,7 +33,7 @@ export class TasksService {
     //this.handleCron();
   }
 
-  @Cron('0 16 * * *')
+  // @Cron('0 16 * * *')
   async handleCron() {
     console.log('Cron job started at 4 PM');
     const lastPage = this.getLastPageCrawled();

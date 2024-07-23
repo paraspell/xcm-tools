@@ -27,6 +27,7 @@ const LineBetween: FC<Props> = ({
     secondaryChannelColor,
     selectedChannelColor
   } = useSelectedParachain();
+
   const curve = new LineCurve3(startPosition, endPosition);
 
   const getLineColor = (isHighlighed: boolean, isSelected: boolean, isSecondary: boolean) => {

@@ -1,12 +1,12 @@
 import { TFunction } from 'i18next';
-import { TAssetCounts, TAggregatedData } from '../../../types/types';
+import { TAssetCounts, TAggregatedData, Ecosystem } from '../../../types/types';
 import { getParachainById } from '../../../utils/utils';
 
 export const aggregateDataByParachain = (counts: TAssetCounts, t: TFunction): TAggregatedData[] => {
   const accumulator: Record<string, TAggregatedData> = {};
   counts.forEach(asset => {
     const parachainKey = asset.paraId
-      ? getParachainById(asset.paraId) || `ID ${asset.paraId}`
+      ? getParachainById(asset.paraId, Ecosystem.POLKADOT) || `ID ${asset.paraId}`
       : t('total');
     if (!accumulator[parachainKey]) {
       accumulator[parachainKey] = { parachain: parachainKey, counts: {} };

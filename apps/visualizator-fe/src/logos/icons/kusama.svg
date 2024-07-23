@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns:xodm="http://www.corel.com/coreldraw/odm/2003" xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 2500 2500"
+	style="enable-background:new 0 0 2500 2500;" xml:space="preserve">
+	<style type="text/css">
+		.stf0 {
+			fill-rule: evenodd;
+			clip-rule: evenodd;
+			fill: black;
+		}
+
+		.stf1 {
+			fill: #FFFFFF;
+		}
+	</style>
+	<g id="Layer_x0020_1">
+		<g id="_2234187675152">
+			<path class="stf0" d="M1250,0c690,0,1250,560,1250,1250s-560,1250-1250,1250S0,1940,0,1250S560,0,1250,0z">
+			</path>
+			<path class="stf1"
+				d="M2008,784c-32-28-68-50-110-57c-53-7-107,28-142,53c-36,25-107,89-135,114s-100,39-217,110s-573,363-573,363    h117l-530,274h53l-75,57c43,11,85,4,125-18v18c0,0,630-249,751-185l-75,21c7,0,125,7,125,7c7,50,36,96,78,121c71,46,75,75,75,75    s-36,14-36,36c68-21,139-21,203,0c0,0-4-21-53-36c-50-21-93-53-125-100c-28-39-39-89-21-135s78-71,203-135c146-75,182-132,199-178    c18-46,53-132,68-174c14-39,39-71,71-100c39-21,82-39,121-53c7,4-71-61-96-78H2008z">
+			</path>
+		</g>
+	</g>
+</svg>

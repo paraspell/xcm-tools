@@ -24,7 +24,7 @@
     "@mantine/hooks": "^7.11.2",
     "@paraspell/sdk": "workspace:*",
     "@polkadot/api": "^12.1.1",
-    "@polkadot/apps-config": "^0.141.1",
+    "@polkadot/apps-config": "^0.142.1",
     "@polkadot/extension-dapp": "^0.48.2",
     "@polkadot/extension-inject": "^0.48.2",
     "@polkadot/keyring": "^12.6.2",
@@ -55,6 +55,7 @@
     "postcss-preset-mantine": "^1.15.0",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "^3.3.2",
-    "vite": "^5.3.3"
+    "vite": "^5.3.3",
+    "vite-plugin-svgr": "^4.2.0"
   }
 }

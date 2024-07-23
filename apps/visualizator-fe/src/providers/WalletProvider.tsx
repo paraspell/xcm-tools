@@ -2,7 +2,7 @@ import { web3Enable } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { WalletContext } from '../context/WalletContext';
-import { NAME } from '../consts';
+import { NAME } from '../consts/consts';
 
 const STORAGE_KEY = 'wallet-state-xcm-visualizator';
 

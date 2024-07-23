@@ -5,6 +5,7 @@ import { useSelectedParachain } from '../../context/SelectedParachain/useSelecte
 import { FC } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
+import { Ecosystem } from '../../types/types';
 
 const now = Date.now();
 
@@ -19,7 +20,7 @@ const AmountTransferedPlotContainer: FC<Props> = ({ showMedian }) => {
 
   const { data, error } = useQuery(messageCountsByDayQueryDocument, {
     variables: {
-      paraIds: parachains.map(parachain => getParachainId(parachain)),
+      paraIds: parachains.map(parachain => getParachainId(parachain, Ecosystem.POLKADOT)),
       startTime: start && end ? start.getTime() / 1000 : 1,
       endTime: start && end ? end.getTime() / 1000 : now
     }

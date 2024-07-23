@@ -9,6 +9,7 @@ import { ChartTooltip, LineChart } from '@mantine/charts';
 import { MessageCountsByDayQuery } from '../../gql/graphql';
 import { getParachainById, getParachainColor } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
+import { Ecosystem } from '../../types/types';
 
 type Props = {
   counts: MessageCountsByDayQuery['messageCountsByDay'];
@@ -23,7 +24,7 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
         acc[item.date] = { date: item.date };
       }
       const parachainKey = item.paraId
-        ? getParachainById(item.paraId) || `ID ${item.paraId}`
+        ? getParachainById(item.paraId, Ecosystem.POLKADOT) || `ID ${item.paraId}`
         : 'Total';
 
       acc[item.date][parachainKey] = (acc[item.date][parachainKey] || 0) + item.messageCount;
@@ -57,13 +58,15 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
 
   const series = Object.keys(
     counts.reduce((result: any, item) => {
-      const key = item.paraId ? getParachainById(item.paraId) || `ID ${item.paraId}` : 'Total';
+      const key = item.paraId
+        ? getParachainById(item.paraId, Ecosystem.POLKADOT) || `ID ${item.paraId}`
+        : 'Total';
       result[key] = true;
       return result;
     }, {})
   ).map(key => ({
     name: key,
-    color: key === 'Total' ? 'blue.6' : getParachainColor(key)
+    color: key === 'Total' ? 'blue.6' : getParachainColor(key, Ecosystem.POLKADOT)
   }));
 
   return (

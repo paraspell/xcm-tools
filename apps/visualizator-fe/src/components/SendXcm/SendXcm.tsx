@@ -12,7 +12,7 @@ import ErrorAlert from '../ErrorAlert';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useWallet } from '../../hooks/useWallet';
 import { useTranslation } from 'react-i18next';
-import { NAME } from '../../consts';
+import { NAME } from '../../consts/consts';
 
 const SendXcm = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'sendXcmForm' });
