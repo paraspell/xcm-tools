@@ -12,6 +12,7 @@ import { client } from './apolloClient';
 import { useSpring, animated } from '@react-spring/web';
 import CollapseButton from './components/CollapseButton';
 import EcosystemSelectContainer from './components/EcosystemSelect/EcosystemSelect.container';
+import { PageRoute } from './PageRoute';
 
 const App = () => {
   const [width, setWidth] = useState('40%');
@@ -40,7 +41,7 @@ const App = () => {
                 <Stack h="100%" w="100%" pos="relative" bg="white">
                   <CollapseButton onClick={toggleWidth} isCollapsed={isCollapsed} />
                   <Flex flex={1} w="100%" justify="center">
-                    <TabNavigator />
+                    <TabNavigator defaultValue={PageRoute.SCENE_2D_ASSETS_CHART} />
                   </Flex>
                   <Flex flex={1} w="100%" justify="center">
                     <TabNavigator />
