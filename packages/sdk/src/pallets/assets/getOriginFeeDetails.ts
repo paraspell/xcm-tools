@@ -1,5 +1,10 @@
 import { type BN } from '@polkadot/util'
-import { type Extrinsic, type TNode, type TNodeWithRelayChains } from '../../types'
+import {
+  type TNodeDotKsmWithRelayChains,
+  type Extrinsic,
+  type TNode,
+  type TNodeWithRelayChains
+} from '../../types'
 import { getBalanceNative } from './getBalanceNative'
 import { getMinNativeTransferableAmount } from './getExistentialDeposit'
 import { type ApiPromise } from '@polkadot/api'
@@ -49,8 +54,8 @@ interface TOriginFeeDetails {
 }
 
 export const getOriginFeeDetails = async (
-  origin: TNodeWithRelayChains,
-  destination: TNodeWithRelayChains,
+  origin: TNodeDotKsmWithRelayChains,
+  destination: TNodeDotKsmWithRelayChains,
   currency: string,
   amount: string,
   account: string,

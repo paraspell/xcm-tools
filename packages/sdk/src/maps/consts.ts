@@ -57,6 +57,8 @@ import Curio from '../nodes/supported/Curio'
 import BridgeHubPolkadot from '../nodes/supported/BridgeHubPolkadot'
 import BridgeHubKusama from '../nodes/supported/BridgeHubKusama'
 import Ethereum from '../nodes/supported/Ethereum'
+import Mythos from '../nodes/supported/Mythos'
+import Peaq from '../nodes/supported/Peaq'
 
 export const NODE_NAMES_DOT_KSM = [
   'AssetHubPolkadot',
@@ -112,7 +114,9 @@ export const NODE_NAMES_DOT_KSM = [
   'Phala',
   'Subsocial',
   'KiltSpiritnet',
-  'Curio'
+  'Curio',
+  'Mythos',
+  'Peaq'
 ] as const
 
 export const NODE_NAMES = [...NODE_NAMES_DOT_KSM, 'Ethereum'] as const
@@ -180,7 +184,9 @@ export const nodes: Record<TNode, ParachainNode> = {
   Subsocial: new Subsocial(),
   KiltSpiritnet: new KiltSpiritnet(),
   Curio: new Curio(),
-  Ethereum: new Ethereum()
+  Ethereum: new Ethereum(),
+  Mythos: new Mythos(),
+  Peaq: new Peaq()
 }
 
 export const SUPPORTED_PALLETS = [

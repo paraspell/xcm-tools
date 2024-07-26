@@ -16,7 +16,8 @@ import {
   Parents,
   type TJunction,
   type Junctions,
-  TNodePolkadotKusama
+  TNodePolkadotKusama,
+  TNodeDotKsmWithRelayChains
 } from './types'
 import { nodes } from './maps/consts'
 import type ParachainNode from './nodes/ParachainNode'
@@ -209,7 +210,7 @@ export const callPolkadotJsTxFunction = (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 ): Extrinsic => api.tx[module][section](...parameters)
 
-export const determineRelayChain = (node: TNode): TNodeWithRelayChains =>
+export const determineRelayChain = (node: TNode): TNodeDotKsmWithRelayChains =>
   getRelayChainSymbol(node) === 'KSM' ? 'Kusama' : 'Polkadot'
 
 export const determineRelayChainSymbol = (node: TNodeWithRelayChains): string => {

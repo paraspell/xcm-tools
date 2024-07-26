@@ -8,7 +8,8 @@ import {
   type TNode,
   type TRelayChainSymbol,
   type TNativeAssetDetails,
-  type TAssetDetails
+  type TAssetDetails,
+  TNodeWithRelayChains
 } from '../../types'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
@@ -37,6 +38,14 @@ export const getAllAssetsSymbols = (node: TNode): string[] => {
   return [relayChainAssetSymbol, ...nativeAssetsSymbols, ...otherAssetsSymbols]
 }
 
+export const getNativeAssetSymbol = (node: TNodeWithRelayChains): string => {
+  if (node === 'Polkadot') {
+    return 'DOT'
+  } else if (node === 'Kusama') {
+    return 'KSM'
+  }
+  return getAssetsObject(node).nativeAssetSymbol
+}
 export const hasSupportForAsset = (node: TNode, symbol: string): boolean =>
   getAllAssetsSymbols(node).includes(symbol)
 

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type ApiPromise } from '@polkadot/api'
 import { type TMultiLocation } from './TMultiLocation'
-import { type TNode } from './TNode'
+import { TNodePolkadotKusama, type TNode } from './TNode'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type TMultiAsset } from './TMultiAsset'
 
@@ -166,8 +166,8 @@ export interface CheckKeepAliveOptions {
   originApi: ApiPromise
   address: string
   amount: string
-  originNode?: TNode
+  originNode?: TNodePolkadotKusama
   destApi?: ApiPromise
   currencySymbol?: string
-  destNode?: TNode
+  destNode?: TNodePolkadotKusama
 }

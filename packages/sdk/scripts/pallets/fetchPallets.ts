@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api'
-import { NODE_NAMES } from '../../src/maps/consts'
+import { NODE_NAMES_DOT_KSM } from '../../src/maps/consts'
 import { TPallet, TPalletMap, TPalletJsonMap } from '../../src/types'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 
@@ -30,7 +30,7 @@ const composePalletMapObject = async (api: ApiPromise): Promise<TPalletMap> => {
 
 export const fetchAllNodesPallets = async (assetsMapJson: unknown) => {
   const output = JSON.parse(JSON.stringify(assetsMapJson)) as TPalletJsonMap
-  for (const node of NODE_NAMES) {
+  for (const node of NODE_NAMES_DOT_KSM) {
     console.log(`Fetching pallets for ${node}...`)
 
     const newData = await fetchTryMultipleProvidersWithTimeout(node, api =>

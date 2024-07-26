@@ -138,6 +138,8 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     console.warn('Keep alive check is not supported when using MultiLocation as address.')
   } else if (typeof destination === 'object') {
     console.warn('Keep alive check is not supported when using MultiLocation as destination.')
+  } else if (origin === 'Ethereum' || destination === 'Ethereum') {
+    console.warn('Keep alive check is not supported when using Ethereum as origin or destination.')
   } else {
     await checkKeepAlive({
       originApi: apiWithFallback,
@@ -208,6 +210,8 @@ export const transferRelayToParaCommon = async (
     console.warn('Keep alive check is not supported when using MultiLocation as destination.')
   } else if (isAddressMultiLocation) {
     console.warn('Keep alive check is not supported when using MultiLocation as address.')
+  } else if (destination === 'Ethereum') {
+    console.warn('Keep alive check is not supported when using Ethereum as destination.')
   } else {
     await checkKeepAlive({
       originApi: apiWithFallback,

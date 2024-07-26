@@ -2,8 +2,8 @@
 
 import * as fs from 'fs'
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { type TNode } from '../src/types'
-import { getAllNodeProviders } from '../src/utils'
+import { type TNodePolkadotKusama } from '../src/types'
+import { getAllNodeProviders, getNodeProvider } from '../src/utils'
 
 export const readJsonOrReturnEmptyObject = (path: string) => {
   try {
@@ -21,10 +21,17 @@ export const checkForNodeJsEnvironment = () => {
 }
 
 export const fetchTryMultipleProviders = <T>(
-  node: TNode,
+  node: TNodePolkadotKusama,
   fetcher: (wsUrl: string) => T
 ): T | null => {
-  const providers = getAllNodeProviders(node)
+  const providers = (() => {
+    try {
+      return getAllNodeProviders(node)
+    } catch (_e) {
+      console.log(`Error retrieving all providers. Using default provider.`)
+      return [getNodeProvider(node)]
+    }
+  })()
   for (const provider of providers) {
     try {
       console.log(`Trying ${provider}...`)
@@ -66,7 +73,7 @@ export const fetchWithTimeout = async <T>(
 }
 
 export const fetchTryMultipleProvidersWithTimeout = async <T>(
-  node: TNode,
+  node: TNodePolkadotKusama,
   fetcher: (api: ApiPromise) => T
 ) => {
   return await fetchTryMultipleProviders(node, async wsUrl => {

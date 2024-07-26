@@ -17,7 +17,7 @@ export const nodeToQuery: TNodeToAssetModuleMap = {
   AssetHubPolkadot: 'assets.metadata',
   Altair: null, // Assets query returns empty array
   Amplitude: null, // No assets metadata query
-  Bajun: null, // No assets metadata query
+  Bajun: 'assets.metadata',
   Basilisk: 'assetRegistry.assetMetadataMap',
   BifrostKusama: null, // Has no foreign assets created yet
   Calamari: 'assets.metadata',
@@ -55,5 +55,7 @@ export const nodeToQuery: TNodeToAssetModuleMap = {
   KiltSpiritnet: null,
   Curio: 'assetRegistry.metadata',
   BridgeHubPolkadot: null,
-  BridgeHubKusama: null
+  BridgeHubKusama: null,
+  Mythos: null,
+  Peaq: 'assets.metadata'
 }

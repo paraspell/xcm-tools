@@ -9,8 +9,8 @@ import {
   TAssetDetails,
   TAssetJsonMap,
   TNativeAssetDetails,
-  TNode,
-  TNodeAssets
+  TNodeAssets,
+  TNodePolkadotKusama
 } from '../../src/types'
 import { getNode, getNodeEndpointOption } from '../../src/utils'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
@@ -259,7 +259,7 @@ const removePrefix = (inputString: string, prefix: string) => {
   return inputString
 }
 
-const transformOtherAssets = (otherAssets: any, node: TNode) => {
+const transformOtherAssets = (otherAssets: any, node: TNodePolkadotKusama) => {
   return node === 'Moonbeam' || node === 'Moonriver'
     ? otherAssets.map((asset: any) => ({ ...asset, symbol: removePrefix(asset.symbol, 'xc') }))
     : otherAssets
@@ -273,7 +273,7 @@ const fetchNativeAsset = async (api: ApiPromise): Promise<string> => {
 }
 
 const fetchNodeAssets = async (
-  node: TNode,
+  node: TNodePolkadotKusama,
   api: ApiPromise,
   query: string | null
 ): Promise<Partial<TNodeAssets>> => {
@@ -379,7 +379,7 @@ const fetchNodeAssets = async (
 export const fetchAllNodesAssets = async (assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const [node, query] of Object.entries(nodeToQuery)) {
-    const nodeName = node as TNode
+    const nodeName = node as TNodePolkadotKusama
     console.log(`Fetching assets for ${nodeName}...`)
 
     const newData = await fetchTryMultipleProvidersWithTimeout(nodeName, api =>

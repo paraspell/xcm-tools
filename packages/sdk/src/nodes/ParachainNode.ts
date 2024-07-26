@@ -105,7 +105,7 @@ abstract class ParachainNode {
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
     const paraId =
       destination !== undefined && typeof destination !== 'object'
-        ? paraIdTo ?? getParaId(destination)
+        ? (paraIdTo ?? getParaId(destination))
         : undefined
 
     if (supportsXTokens(this) && this.canUseXTokens(options)) {

@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api'
-import { NODES_WITH_RELAY_CHAINS } from '../../src/maps/consts'
+import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '../../src/maps/consts'
 import { TEdJsonMap } from '../../src/types'
 import { createApiInstanceForNode } from '../../src/utils'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
@@ -11,7 +11,7 @@ const fetchExistentialDeposit = (api: ApiPromise): string | null => {
 
 export const fetchAllExistentialDeposits = async (assetsMapJson: unknown) => {
   const output = JSON.parse(JSON.stringify(assetsMapJson)) as TEdJsonMap
-  for (const node of NODES_WITH_RELAY_CHAINS) {
+  for (const node of NODES_WITH_RELAY_CHAINS_DOT_KSM) {
     console.log(`Fetching existential deposits for ${node}...`)
 
     let newData: string | null
