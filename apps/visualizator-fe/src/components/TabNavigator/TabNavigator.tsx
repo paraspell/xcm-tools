@@ -6,13 +6,18 @@ import Scene2dAssetsChart from '../../pages/Scene2dAssetsChart';
 import Scene2dAmountsByDay from '../../pages/Scene2dAmountsByDay';
 import Scene2dBubblePlot from '../../pages/Scene2dBubblePlot';
 import { useTranslation } from 'react-i18next';
+import { FC } from 'react';
 
-const TabNavigator = () => {
+type Props = {
+  defaultValue?: PageRoute;
+};
+
+const TabNavigator: FC<Props> = ({ defaultValue = PageRoute.SCENE_2D_MSG_SUCCESS_CHART }) => {
   const { t } = useTranslation();
   const iconStyle = { width: rem(12), height: rem(12) };
   return (
     <Tabs
-      defaultValue={PageRoute.SCENE_2D_MSG_SUCCESS_CHART}
+      defaultValue={defaultValue}
       variant="pills"
       p="md"
       w="100%"
