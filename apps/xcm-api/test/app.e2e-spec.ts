@@ -5,6 +5,7 @@ import { AppModule } from './../src/app.module';
 import {
   Builder,
   NODE_NAMES,
+  NODE_NAMES_DOT_KSM,
   TMultiAsset,
   TMultiLocation,
   TNode,
@@ -42,7 +43,7 @@ describe('XCM API (e2e)', () => {
   });
 
   describe('Pallets controller', () => {
-    NODE_NAMES.forEach((node) => {
+    NODE_NAMES_DOT_KSM.forEach((node) => {
       const supoortedPalletsUrl = `/pallets/${node}`;
       it(`Supported pallets - ${supoortedPalletsUrl} (GET)`, () => {
         const pallets = getSupportedPallets(node);
@@ -195,7 +196,7 @@ describe('XCM API (e2e)', () => {
         .expect(NODE_NAMES);
     });
 
-    NODE_NAMES.forEach((node) => {
+    NODE_NAMES_DOT_KSM.forEach((node) => {
       const assetsObjectUrl = `/assets/${node}`;
       it(`Get assets object - ${assetsObjectUrl} (GFT)`, () => {
         const assetsObject = getAssetsObject(node);

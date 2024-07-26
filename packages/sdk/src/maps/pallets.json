@@ -214,5 +214,13 @@
   "BridgeHubKusama": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
+  },
+  "Mythos": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "Peaq": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": ["PolkadotXcm", "XTokens"]
   }
 }

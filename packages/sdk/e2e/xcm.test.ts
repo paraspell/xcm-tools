@@ -29,6 +29,7 @@ const getAssetsForNode = (node: TNode): string[] => {
   if (node === 'CrustShadow') return ['KAR']
   if (node === 'Khala') return ['PHA']
   if (node === 'Phala') return ['PHA']
+  if (node === 'Mythos') return ['MYTH']
   if (node === 'Integritee') return getAllAssetsSymbols(node).filter(asset => asset !== 'KSM')
   return getAllAssetsSymbols(node)
 }

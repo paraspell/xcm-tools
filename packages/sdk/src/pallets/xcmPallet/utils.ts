@@ -23,7 +23,7 @@ export const constructRelayToParaParameters = (
 ): any[] => {
   const paraId =
     destination !== undefined && typeof destination !== 'object'
-      ? paraIdTo ?? getParaId(destination)
+      ? (paraIdTo ?? getParaId(destination))
       : undefined
 
   const parameters: any[] = [

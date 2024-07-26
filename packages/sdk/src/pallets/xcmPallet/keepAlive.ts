@@ -5,11 +5,12 @@
 import { type ApiPromise } from '@polkadot/api'
 import { KeepAliveError } from '../../errors/KeepAliveError'
 import {
-  type TNodeWithRelayChains,
   type TEdJsonMap,
   type TNode,
   type Extrinsic,
-  type CheckKeepAliveOptions
+  type CheckKeepAliveOptions,
+  type TNodeDotKsmWithRelayChains,
+  TNodePolkadotKusama
 } from '../../types'
 import { getAssetsObject } from '../assets'
 import { BN } from '@polkadot/util'
@@ -20,7 +21,8 @@ import { determineRelayChain } from '../../utils'
 
 const edMap = edMapJson as TEdJsonMap
 
-export const getExistentialDeposit = (node: TNodeWithRelayChains): string | null => edMap[node]
+export const getExistentialDeposit = (node: TNodeDotKsmWithRelayChains): string | null =>
+  edMap[node]
 
 const createTx = async (
   originApi: ApiPromise,
@@ -84,8 +86,12 @@ export const checkKeepAlive = async ({
 
   const amountBN = new BN(amount)
 
-  const ed = getExistentialDeposit(destNode ?? determineRelayChain(originNode as TNode))
-  const edOrigin = getExistentialDeposit(originNode ?? determineRelayChain(destNode as TNode))
+  const ed = getExistentialDeposit(
+    destNode ?? determineRelayChain(originNode as TNodePolkadotKusama)
+  )
+  const edOrigin = getExistentialDeposit(
+    originNode ?? determineRelayChain(destNode as TNodePolkadotKusama)
+  )
 
   const tx = await createTx(
     originApi,

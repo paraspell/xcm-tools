@@ -18,7 +18,7 @@ class KiltSpiritnet extends ParachainNode implements IPolkadotXCMTransfer {
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
     if (input.scenario !== 'ParaToPara') {
-      throw new ScenarioNotSupportedError('KiltSpiritnet', input.scenario)
+      throw new ScenarioNotSupportedError(this.node, input.scenario)
     }
     return PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserveTransferAssets')
   }

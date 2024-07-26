@@ -1,3 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /*
@@ -13,7 +19,6 @@ import {
 import { type ApiPromise } from '@polkadot/api';
 import { type QueryableStorageEntry } from '@polkadot/api/types';
 import { type OrmlTokensAccountData } from '@zenlink-types/bifrost/interfaces';
-import type { FrameSystemAccountInfo } from '@polkadot/types/lookup';
 import { Pair, type Pool, Trade } from '@crypto-dex-sdk/amm';
 import { ParachainId } from '@crypto-dex-sdk/chain';
 import { type PairPrimitivesAssetId } from '@crypto-dex-sdk/parachains-bifrost';
@@ -114,7 +119,7 @@ export async function fetchPairs(
     [[], [], []],
   );
 
-  const reserves = await fetchCallMulti<Array<OrmlTokensAccountData | FrameSystemAccountInfo>>({
+  const reserves = await fetchCallMulti<Array<OrmlTokensAccountData | any>>({
     api,
     calls: reservesCalls,
     options: { defaultValue: [] },
@@ -139,14 +144,8 @@ export async function fetchPairs(
     return [
       PairState.EXISTS,
       new Pair(
-        Amount.fromRawAmount(
-          tokenA,
-          ((reserve0 as FrameSystemAccountInfo).data || reserve0).free.toString(),
-        ),
-        Amount.fromRawAmount(
-          tokenB,
-          ((reserve1 as FrameSystemAccountInfo).data || reserve1).free.toString(),
-        ),
+        Amount.fromRawAmount(tokenA, ((reserve0 as any).data || reserve0).free.toString()),
+        Amount.fromRawAmount(tokenB, ((reserve1 as any).data || reserve1).free.toString()),
         pairAddress,
       ),
     ];

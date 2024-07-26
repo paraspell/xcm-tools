@@ -4,7 +4,7 @@ import {
   type TNodeWithRelayChains
 } from '../../types'
 import { createApiInstanceForNode, determineRelayChainSymbol } from '../../utils'
-import { getAssetsObject } from './assets'
+import { getNativeAssetSymbol } from './assets'
 import { getAssetBySymbolOrId } from './assetsUtils'
 import { getBalanceForeign } from './getBalanceForeign'
 import { getBalanceNative } from './getBalanceNative'
@@ -40,15 +40,6 @@ interface TTransferInfo {
   }
 }
 
-const getNativeAssetSymbol = (node: TNodeWithRelayChains): string => {
-  if (node === 'Polkadot') {
-    return 'DOT'
-  } else if (node === 'Kusama') {
-    return 'KSM'
-  }
-  return getAssetsObject(node).nativeAssetSymbol
-}
-
 const getAssetSymbol = (node: TNodeWithRelayChains, assetId: string) => {
   if (node === 'Polkadot' || node === 'Kusama') {
     return getNativeAssetSymbol(node)
@@ -66,8 +57,8 @@ const getAssetBalance = async (
   const isNativeSymbol = getNativeAssetSymbol(node) === assetSymbolOrId
   return isNativeSymbol
     ? await getBalanceNative(account, node, api)
-    : (await getBalanceForeign(account, node as TNodePolkadotKusama, assetSymbolOrId, api)) ??
-        BigInt(0)
+    : ((await getBalanceForeign(account, node as TNodePolkadotKusama, assetSymbolOrId, api)) ??
+        BigInt(0))
 }
 
 export const getTransferInfo = async (

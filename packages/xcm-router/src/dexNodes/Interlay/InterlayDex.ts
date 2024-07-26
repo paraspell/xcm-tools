@@ -59,7 +59,8 @@ class InterlayExchangeNode extends ExchangeNode {
     const outputAmount = trade.getMinimumOutputAmount(Number(slippagePct));
 
     const currentBlock = await api.query.system.number();
-    const deadline = currentBlock.add(new BN(150));
+    const currentBlockNumber = new BN(currentBlock.toString());
+    const deadline = currentBlockNumber.add(new BN(150));
 
     const trade1 = interBTC.amm.swap(trade, outputAmount, injectorAddress, deadline.toString());
     const extrinsic = trade1.extrinsic;

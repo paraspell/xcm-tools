@@ -34,25 +34,25 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
   "dependencies": {
-    "@snowbridge/api": "^0.1.16",
-    "ethers": "^6.13.1"
+    "@snowbridge/api": "^0.1.17",
+    "ethers": "^6.13.2"
   },
   "peerDependencies": {
-    "@polkadot/api": "^12.1.1",
-    "@polkadot/api-base": "^12.1.1",
-    "@polkadot/apps-config": "^0.141.1",
-    "@polkadot/types": "^12.1.1",
-    "@polkadot/util": "^12.6.2"
+    "@polkadot/api": "^12.2.2",
+    "@polkadot/api-base": "^12.2.2",
+    "@polkadot/apps-config": "^0.142.1",
+    "@polkadot/types": "^12.2.2",
+    "@polkadot/util": "^13.0.2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.24.7",
-    "@babel/preset-env": "^7.24.7",
+    "@babel/preset-env": "^7.25.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
-    "@types/node": "^20.14.2",
-    "@vitest/coverage-v8": "^1.6.0",
-    "prettier": "^3.3.1",
-    "rollup": "^4.18.0",
+    "@types/node": "^20.14.12",
+    "@vitest/coverage-v8": "^2.0.4",
+    "prettier": "^3.3.3",
+    "rollup": "^4.19.0",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-typescript2": "^0.36.0",
     "ts-node": "^10.9.2",

@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import { Stack, Title, Box, Button } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";

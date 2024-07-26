@@ -1,3 +1,3 @@
-import { type TNodeWithRelayChains } from './TNode'
+import { TNodeDotKsmWithRelayChains } from './TNode'
 
-export type TEdJsonMap = Record<TNodeWithRelayChains, string | null>
+export type TEdJsonMap = Record<TNodeDotKsmWithRelayChains, string | null>
