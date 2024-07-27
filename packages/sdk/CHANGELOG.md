@@ -1,5 +1,27 @@
 # Changelog
 
+## [5.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.6.0...sdk-v5.7.0) (2024-07-27)
+
+
+### Features
+
+* Add support for Snowbridge transfers (Ethereum -&gt; Polkadot) ❄️ ([2f16524](https://github.com/paraspell/xcm-tools/commit/2f165245137766d4d11cc5f8a592082f68fc4ff8))
+* Add support for Snowbridge transfers (Polkadot -&gt; Ethereum) ❄️ ([631cd55](https://github.com/paraspell/xcm-tools/commit/631cd5562a9efdde991276daafc16fc72b635287))
+
+
+### Miscellaneous Chores
+
+* **sdk:** Perform monthly maintenance check 🛠️ ([71e0bdd](https://github.com/paraspell/xcm-tools/commit/71e0bdd6e4df2c87bb428a66d6dea637131f27c1))
+* **sdk:** Update readme ([c64e35b](https://github.com/paraspell/xcm-tools/commit/c64e35b7de41f396f15bddc8716c15a0c975662d))
+* **sdk:** Update Readme ([8599604](https://github.com/paraspell/xcm-tools/commit/85996041d51228502b33ac0e1216a941b8db715e))
+* Update docs ([1cea10f](https://github.com/paraspell/xcm-tools/commit/1cea10f78a1377ce4526dba7a54ad3a806afc024))
+* Update Polkadot dependencies to latest version ([319ec70](https://github.com/paraspell/xcm-tools/commit/319ec70e4f3771f0ca339f770d6474a8fcceb8ed))
+
+
+### Code Refactoring
+
+* Upgrade ESlint to v9 & create shared config ([524161b](https://github.com/paraspell/xcm-tools/commit/524161b9a9509c3beb15af99bfc0151c7eeb5619))
+
 ## [5.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.5.0...sdk-v5.6.0) (2024-06-30)
 
 
