@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.3.0...xcm-analyser-v1.3.1) (2024-07-27)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Perform monthly maintenance check 🛠️ ([71e0bdd](https://github.com/paraspell/xcm-tools/commit/71e0bdd6e4df2c87bb428a66d6dea637131f27c1))
+
 ## [1.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.2.1...xcm-analyser-v1.3.0) (2024-07-04)
 
 
