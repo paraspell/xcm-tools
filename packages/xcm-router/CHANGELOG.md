@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.2.1...xcm-router-v1.2.2) (2024-07-27)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Perform monthly maintenance check 🛠️ ([71e0bdd](https://github.com/paraspell/xcm-tools/commit/71e0bdd6e4df2c87bb428a66d6dea637131f27c1))
+* Update docs ([1cea10f](https://github.com/paraspell/xcm-tools/commit/1cea10f78a1377ce4526dba7a54ad3a806afc024))
+* Update Polkadot dependencies to latest version ([319ec70](https://github.com/paraspell/xcm-tools/commit/319ec70e4f3771f0ca339f770d6474a8fcceb8ed))
+
+
+### Code Refactoring
+
+* Upgrade ESlint to v9 & create shared config ([524161b](https://github.com/paraspell/xcm-tools/commit/524161b9a9509c3beb15af99bfc0151c7eeb5619))
+
 ## [1.2.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.2.0...xcm-router-v1.2.1) (2024-06-30)
 
 
