@@ -17,7 +17,7 @@
       <img alt="snyk" src="https://snyk.io/test/github/paraspell/sdk/badge.svg" />
     </a>
   </p>
-  <p>Currently supporting 53 Polkadot & Kusama nodes list <a href = "https://github.com/paraspell/xcm-tools/blob/main/packages/sdk/docs/supportedNodes.md"\>[here]</p>
+  <p>Currently supporting 55 Polkadot & Kusama nodes list <a href = "https://github.com/paraspell/xcm-tools/blob/main/packages/sdk/docs/supportedNodes.md"\>[here]</p>
   <p>SDK documentation <a href = "https://paraspell.github.io/docs/" \>[here]</p>
 </div>
 
@@ -64,8 +64,9 @@ NOTES:
 - Fee asset is now a required builder parameter when you enter a multilocation array.
 - When using a multilocation array the amount parameter is overridden.
 - Multilocation arrays are now available. Customize your asset multilocations by .currency([{multilocation1},{multilocation2}..{multilocationN}]) For more information refer to the official documentation or following PR https://github.com/paraspell/xcm-tools/pull/224.
-- POLKADOT <> KUSAMA Bridge is now available! Try sending DOT or KSM between AssetHubs.
+- POLKADOT <> KUSAMA Bridge is now available! Try sending DOT or KSM between AssetHubs - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
 - You can now customize XCM Version! Try using .xcmVersion parameter after address in builder.
+- POLKADOT <> ETHEREUM Bridge is now available! Try sending WETH between the ecosystems - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges
 ```
 
 ### Builder pattern:

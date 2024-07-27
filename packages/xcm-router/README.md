@@ -21,7 +21,7 @@
 <br /><br />
 
 ### Introduction
-XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation, that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within one call and three signatures. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **9 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **579** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
+XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation, that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within one call and three signatures. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **8 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **524** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
 
 **Exchanges implemented:**
 - Acala / 36 Pools available
@@ -32,7 +32,6 @@ XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation, that allows
 - Interlay / 10 Pools available / Requires native token for swaps
 - Karura / 136 Pools available
 - Kintsugi / 6 Pools available / Requires native token for swaps
-- Mangata / 55 Pools available / Requires native token for swaps
 
 ```NOTE: Some exchanges require native tokens in order to proceed with swaps.```
 
@@ -185,10 +184,9 @@ await transfer({
 | ------------- | ------------- | ------------- |------------- |
 | Acala DEX |Polkadot Relay, Astar, HydraDX, Interlay, Moonbeam, Parallel, AssetHubPolkadot, Unique network|ACA, DOT, aSEED, USDCet, UNQ, IBTC, INTR, lcDOT, LDOT| Fees are paid by either ACA or DOT|
 |Karura DEX| Kusama Relay, Altair, Basilisk, BifrostKusama, Calamari, Crab, Parallel Heiko, Kintsugi, Moonriver, Quartz, Crust Shadow, Shiden, AssetHubKusama| BNC, USDCet, RMRK, ARIS, AIR, QTZ, CSM, USDT, KAR, KBTC, KINT, KSM, aSEED, LKSM, PHA, tKSM, TAI | Fees are paid by either KAR or KSM|
-|HydraDX DEX| Polkadot Relay, Acala, Interlay, AssetHubPolkadot, Zeitgeist, Astar, Centrifuge, BifrostPolkadot| USDT, HDX, WETH, GLMR, IBTC, BNC, WBTC, vDOT, DAI, CFG, DOT, DAI, ZTG, WBTC, INTR, ASTR, LRNA, USDC| Chain automatically gives you native asset to pay for fees.|
+|Hydration DEX| Polkadot Relay, Acala, Interlay, AssetHubPolkadot, Zeitgeist, Astar, Centrifuge, BifrostPolkadot, Mythos | USDT, MYTH, HDX, WETH, GLMR, IBTC, BNC, WBTC, vDOT, DAI, CFG, DOT, DAI, ZTG, WBTC, INTR, ASTR, LRNA, USDC| Chain automatically gives you native asset to pay for fees.|
 | Basilisk DEX | Kusama Relay, Karura, AssetHubKusama, Tinkernet, Robonomics| BSX, USDT, aSEED, XRT, KSM, TNKR| Chain automatically gives you native asset to pay for fees.|
-|Mangata DEX| Kusama Relay, AssetHubKusama, BifrostPolkadot, Moonriver, Turing, Imbue| MGX, IMBU, TUR, ZLK, BNC, USDT, RMRK, MOVR, vsKSM, KSM, vKSM| Chain requires native MGX asset to pay for fees.|
-|Bifrost Kusama DEX| Kusama Relay, AssetHubKusama, Karura, Moonriver, Kintsugi, Mangata| BNC, vBNC, vsKSM, vKSM, USDT, aSEED, KAR, ZLK, RMRK, KBTC, MOVR, vMOVR| Chain requires native BNC asset for fees.|
+|Bifrost Kusama DEX| Kusama Relay, AssetHubKusama, Karura, Moonriver, Kintsugi| BNC, vBNC, vsKSM, vKSM, USDT, aSEED, KAR, ZLK, RMRK, KBTC, MOVR, vMOVR| Chain requires native BNC asset for fees.|
 |Bifrost Polkadot DEX| Polkadot Relay, AssetHubPolkadot, Moonbeam, Astar, Interlay| BNC, vDOT, vsDOT, USDT, FIL, vFIL, ASTR, vASTR, GLMR, vGLMR, MANTA, vMANTA|Chain requires native BNC asset for fees.|
 |Interlay DEX| Polkadot Relay, Acala, Astar, Parallel, PolkadotAssetHub, HydraDX, BifrostPolkadot |INTR, DOT, IBTC, USDT, VDOT| Chain requires native INTR asset for fees.|
 |Kintsugi DEX| Kusama Relay, Karura, KusamaAssetHub, Parallel Heiko, BifrostKusama|KINT,KSM,KBTC,USDT|Chain requires native KINT asset for fees.|
