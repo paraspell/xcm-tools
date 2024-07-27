@@ -58,7 +58,7 @@ const paraspell = require('@paraspell/sdk')
 ```
 NOTES:
 - If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' to the end of currencyID. Eg: .currency(42259045809535163221576417993425387648n) will mean you transfer xcDOT.
-- You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948)
+- You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948).
 - You can now add an optional parameter useKeepAlive which will ensure, that you send more than the existential deposit.
 - Since v5 you can fully customize all multilocations (address, currency and destination). Instead of a string parameter simply pass an object with multilocation instead for more information refer to the following PR https://github.com/paraspell/xcm-tools/pull/199.
 - Fee asset is now a required builder parameter when you enter a multilocation array.
@@ -66,7 +66,7 @@ NOTES:
 - Multilocation arrays are now available. Customize your asset multilocations by .currency([{multilocation1},{multilocation2}..{multilocationN}]) For more information refer to the official documentation or following PR https://github.com/paraspell/xcm-tools/pull/224.
 - POLKADOT <> KUSAMA Bridge is now available! Try sending DOT or KSM between AssetHubs - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
 - You can now customize XCM Version! Try using .xcmVersion parameter after address in builder.
-- POLKADOT <> ETHEREUM Bridge is now available! Try sending WETH between the ecosystems - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges
+- POLKADOT <> ETHEREUM Bridge is now available! Try sending WETH between the ecosystems - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
 ```
 
 ### Builder pattern:
