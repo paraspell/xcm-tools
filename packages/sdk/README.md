@@ -348,11 +348,8 @@ Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/p
     <a href="https://github.com/w3f/Grants-Program/pull/1245">
       <img width="200" alt="version" src="https://user-images.githubusercontent.com/55763425/211145923-f7ee2a57-3e63-4b7d-9674-2da9db46b2ee.png" />
     </a>
-    <a href="https://kusama.subsquare.io/referenda/277">
+    <a href="https://kusama.subsquare.io/referenda/417">
       <img width="200" alt="version" src="https://github.com/paraspell/xcm-sdk/assets/55763425/9ed74ebe-9b29-4efd-8e3e-7467ac4caed6" />
-    </a>
-    <a href="https://bsx.fi/">
-      <img width="200" alt="version" src="https://user-images.githubusercontent.com/55763425/204865221-90d2b3cd-f2ac-48a2-a367-08722aa8e923.svg" />
     </a>
  </p>
 </div>
