@@ -79,6 +79,58 @@ describe('Builder', () => {
     })
   })
 
+  it('should initiatie a para to para transfer with specified asset symbol', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2, PARA_ID_TO)
+      .currency({
+        symbol: CURRENCY
+      })
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      currency: {
+        symbol: CURRENCY
+      },
+      amount: AMOUNT,
+      address: ADDRESS,
+      destination: NODE_2,
+      paraIdTo: PARA_ID_TO
+    })
+  })
+
+  it('should initiatie a para to para transfer with specified asset ID', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const ASSET_ID = 1
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2, PARA_ID_TO)
+      .currency({
+        id: ASSET_ID
+      })
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .build()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      currency: {
+        id: ASSET_ID
+      },
+      amount: AMOUNT,
+      address: ADDRESS,
+      destination: NODE_2,
+      paraIdTo: PARA_ID_TO
+    })
+  })
+
   it('should initiatie a para to para transfer with custom useKeepAlive', async () => {
     const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
 

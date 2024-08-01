@@ -20,7 +20,38 @@ import { getAssetBySymbolOrId } from '../assets/assetsUtils'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive'
-import { isTMulti, isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
+import {
+  isTCurrencySpecifier,
+  isTMulti,
+  isTMultiLocation,
+  resolveTNodeFromMultiLocation
+} from './utils'
+
+const transformOptions = (options: TSendOptionsCommon) => {
+  const { currency } = options
+
+  if (isTCurrencySpecifier(currency)) {
+    if ('symbol' in currency) {
+      return {
+        ...options,
+        currency: currency.symbol,
+        isSymbol: true
+      }
+    } else if ('id' in currency) {
+      return {
+        ...options,
+        currency: currency.id,
+        isSymbol: false
+      }
+    }
+  }
+
+  return {
+    ...options,
+    currency: currency,
+    isSymbol: undefined
+  }
+}
 
 const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSerializedApiCall> => {
   const {
@@ -34,8 +65,9 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     destApiForKeepAlive,
     feeAsset,
     version,
+    isSymbol,
     serializedApiCallEnabled = false
-  } = options
+  } = transformOptions(options)
 
   if ((!isTMulti(currency) || isTMultiLocation(currency)) && amount === null) {
     throw new Error('Amount is required')
@@ -85,18 +117,20 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     }
   }
 
-  const asset = getAssetBySymbolOrId(origin, currency)
-
   const isMultiLocationDestination = typeof destination === 'object'
   const isMultiLocationCurrency = typeof currency === 'object'
 
-  if (destination !== undefined && !isMultiLocationDestination) {
+  const isBridge =
+    (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
+    (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot') ||
+    destination === 'Ethereum'
+
+  const isRelayDestination = destination === undefined
+
+  if (!isRelayDestination && !isMultiLocationDestination) {
     const originRelayChainSymbol = getRelayChainSymbol(origin)
     const destinationRelayChainSymbol = getRelayChainSymbol(destination)
-    const supportsBridge =
-      (origin === 'AssetHubPolkadot' || origin === 'AssetHubKusama') &&
-      (destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama')
-    if (!supportsBridge && originRelayChainSymbol !== destinationRelayChainSymbol) {
+    if (!isBridge && originRelayChainSymbol !== destinationRelayChainSymbol) {
       throw new IncompatibleNodesError()
     }
   }
@@ -104,23 +138,26 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
   const originNode = getNode(origin)
 
   const assetCheckEnabled =
-    destination === 'AssetHubKusama' ||
-    destination === 'AssetHubPolkadot' ||
-    isMultiLocationCurrency
-      ? false
-      : originNode.assetCheckEnabled
+    isMultiLocationCurrency || isBridge ? false : originNode.assetCheckEnabled
 
-  if (asset === null && assetCheckEnabled) {
+  const asset = assetCheckEnabled
+    ? getAssetBySymbolOrId(origin, currency, isRelayDestination, isSymbol)
+    : null
+
+  if (!isBridge && asset === null && assetCheckEnabled) {
     throw new InvalidCurrencyError(
       `Origin node ${origin} does not support currency or currencyId ${JSON.stringify(currency)}.`
     )
   }
 
   if (
-    destination !== undefined &&
+    !isBridge &&
+    !isRelayDestination &&
     !isMultiLocationDestination &&
     asset?.symbol !== undefined &&
     assetCheckEnabled &&
+    isSymbol !== false &&
+    asset.assetId !== currency &&
     !hasSupportForAsset(destination, asset.symbol)
   ) {
     throw new InvalidCurrencyError(
@@ -153,12 +190,11 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
   }
 
   const currencyStr = isTMulti(currency) ? undefined : currency.toString()
-  const currencyId = assetCheckEnabled ? asset?.assetId : currencyStr
 
   return originNode.transfer({
     api: apiWithFallback,
-    currencySymbol: asset?.symbol,
-    currencyId,
+    currencySymbol: asset?.symbol ?? currencyStr,
+    currencyId: asset?.assetId,
     amount: amountStr ?? '',
     address,
     destination,

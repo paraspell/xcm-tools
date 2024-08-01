@@ -4,10 +4,10 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { describe, expect, it, beforeEach, vi } from 'vitest'
-import { NODE_NAMES } from '../../maps/consts'
-import { getAllAssetsSymbols, getRelayChainSymbol } from '../assets'
+import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '../../maps/consts'
+import { getAllAssetsSymbols, getOtherAssets, getRelayChainSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
-import { IncompatibleNodesError } from '../../errors'
+import { DuplicateAssetError, IncompatibleNodesError } from '../../errors'
 import { type TSendOptions, type TNode, type TMultiAsset, type TMultiLocation } from '../../types'
 import { send } from './transfer'
 import ParachainNode from '../../nodes/ParachainNode'
@@ -35,8 +35,8 @@ describe('send', () => {
 
   beforeEach(async () => {
     api = await createApiInstance(WS_URL)
-    polkadotNodes = NODE_NAMES.filter(node => getRelayChainSymbol(node) === 'KSM')
-    kusamaNodes = NODE_NAMES.filter(node => getRelayChainSymbol(node) === 'DOT')
+    polkadotNodes = NODE_NAMES_DOT_KSM.filter(node => getRelayChainSymbol(node) === 'KSM')
+    kusamaNodes = NODE_NAMES_DOT_KSM.filter(node => getRelayChainSymbol(node) === 'DOT')
     sendOptions = {
       ...MOCK_OPTIONS_BASE,
       origin: 'Acala',
@@ -106,6 +106,12 @@ describe('send', () => {
       if (getNode(node).assetCheckEnabled) {
         const symbols = getAllAssetsSymbols(node)
         for (const symbol of symbols) {
+          const otherAssetsMatches = getOtherAssets(node).filter(
+            ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === symbol.toLowerCase()
+          )
+          if (otherAssetsMatches.length > 1) {
+            continue
+          }
           await expect(
             send({ ...sendOptions, origin: node, currency: symbol })
           ).resolves.not.toThrowError(InvalidCurrencyError)
@@ -170,6 +176,34 @@ describe('send', () => {
 
     await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
     await expect(send(options)).rejects.toThrow('Overrided multi assets cannot be empty')
+  })
+
+  it('should throw DuplicateAssetError when AssetHubPolkadot and DOT is passed', async () => {
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'Hydration' as TNode,
+      currency: 'USDT',
+      feeAsset: 0,
+      amount: 1000,
+      address: '0x123'
+    }
+
+    await expect(send(options)).rejects.toThrow(DuplicateAssetError)
+  })
+
+  it('should not throw DuplicateAssetError when AssetHubPolkadot and WETH is passed', async () => {
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'Hydration' as TNode,
+      currency: 'WETH',
+      feeAsset: 0,
+      amount: 1000,
+      address: '0x123'
+    }
+
+    await expect(send(options)).resolves.not.toThrow(DuplicateAssetError)
   })
 
   it('should throw InvalidCurrencyError when single multi asset is used with fee asset', async () => {

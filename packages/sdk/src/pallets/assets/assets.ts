@@ -47,7 +47,9 @@ export const getNativeAssetSymbol = (node: TNodeWithRelayChains): string => {
   return getAssetsObject(node).nativeAssetSymbol
 }
 export const hasSupportForAsset = (node: TNode, symbol: string): boolean =>
-  getAllAssetsSymbols(node).includes(symbol)
+  getAllAssetsSymbols(node)
+    .map(s => s.toLowerCase())
+    .includes(symbol.toLowerCase())
 
 export const getAssetDecimals = (node: TNode, symbol: string): number | null => {
   const { otherAssets, nativeAssets } = getAssetsObject(node)
