@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type BN } from '@polkadot/util'
 import {
@@ -9,7 +11,8 @@ import {
   type TRelayToParaInternalOptions,
   type TDestination,
   type TNode,
-  type TCurrencySelectionHeaderArr
+  type TCurrencySelectionHeaderArr,
+  TCurrencySpecifier
 } from '../../types'
 import { createX1Payload, generateAddressPayload } from '../../utils'
 import { getParaId, getTNode } from '../assets'
@@ -39,13 +42,24 @@ export const constructRelayToParaParameters = (
 }
 
 export const isTMulti = (value: any): value is TMultiLocation => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return (value && typeof value === 'object') || Array.isArray(value)
 }
 
 export const isTMultiLocation = (value: any): value is TMultiLocation => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
   return value && typeof value.parents !== 'undefined' && typeof value.interior !== 'undefined'
+}
+
+export const isTCurrencySpecifier = (value: any): value is TCurrencySpecifier => {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  return (
+    ('symbol' in value && typeof value.symbol === 'string') ||
+    ('id' in value &&
+      (typeof value.id === 'string' ||
+        typeof value.id === 'number' ||
+        typeof value.id === 'bigint'))
+  )
 }
 
 export const createBridgeCurrencySpec = (amount: string, ecosystem: 'Polkadot' | 'Kusama') => {
@@ -168,17 +182,15 @@ export const calculateTransactionFee = async (tx: Extrinsic, address: string): P
 const findParachainJunction = (multilocation: TMultiLocation): number | null => {
   const { interior }: any = multilocation
   for (const key in interior) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const junctions = interior[key]
     if (Array.isArray(junctions)) {
       for (const junction of junctions) {
         if ('Parachain' in junction) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           return Number(junction.Parachain)
         }
       }
     } else if (junctions !== undefined && 'Parachain' in junctions) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       return Number(junctions.Parachain)
     }
   }

@@ -11,10 +11,15 @@ describe('getAssetBySymbolOrId', () => {
       const { otherAssets } = getAssetsObject(node)
       otherAssets.forEach(other => {
         if (other.symbol !== undefined) {
-          const asset = getAssetBySymbolOrId(node, other.symbol)
-          expect(asset).toHaveProperty('symbol')
-          expect(other.symbol).toEqual(asset?.symbol)
-          expect(asset).toHaveProperty('assetId')
+          const otherAssetsMatches = otherAssets.filter(
+            ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === other.symbol?.toLowerCase()
+          )
+          if (otherAssetsMatches.length < 2) {
+            const asset = getAssetBySymbolOrId(node, other.symbol)
+            expect(asset).toHaveProperty('symbol')
+            expect(other.symbol.toLowerCase()).toEqual(asset?.symbol?.toLowerCase())
+            expect(asset).toHaveProperty('assetId')
+          }
         }
       })
     })
@@ -24,8 +29,8 @@ describe('getAssetBySymbolOrId', () => {
     NODE_NAMES.forEach(node => {
       const { nativeAssets } = getAssetsObject(node)
       nativeAssets.forEach(other => {
-        const asset = getAssetBySymbolOrId(node, other.symbol)
-        expect(other.symbol).toEqual(asset?.symbol)
+        const asset = getAssetBySymbolOrId(node, other.symbol, true)
+        expect(other.symbol.toLowerCase()).toEqual(asset?.symbol?.toLowerCase())
         expect(asset).toHaveProperty('symbol')
       })
     })
@@ -60,7 +65,7 @@ describe('getAssetBySymbolOrId', () => {
   it('should return symbol for every node relay chain asset symbol', () => {
     NODE_NAMES.forEach(node => {
       const { relayChainAssetSymbol } = getAssetsObject(node)
-      const asset = getAssetBySymbolOrId(node, relayChainAssetSymbol)
+      const asset = getAssetBySymbolOrId(node, relayChainAssetSymbol, true)
       expect(asset).toHaveProperty('symbol')
     })
   })

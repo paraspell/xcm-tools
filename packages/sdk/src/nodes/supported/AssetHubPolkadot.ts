@@ -32,15 +32,13 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     super('AssetHubPolkadot', 'PolkadotAssetHub', 'polkadot', Version.V3)
   }
 
-  _assetCheckEnabled = false
-
   public handleBridgeTransfer(
     input: PolkadotXCMTransferInput,
     targetChain: 'Polkadot' | 'Kusama'
   ): Extrinsic | TSerializedApiCall {
     if (
-      (targetChain === 'Kusama' && input.currencyId === 'KSM') ||
-      (targetChain === 'Polkadot' && input.currencyId === 'DOT')
+      (targetChain === 'Kusama' && input.currencySymbol?.toUpperCase() === 'KSM') ||
+      (targetChain === 'Polkadot' && input.currencySymbol?.toUpperCase() === 'DOT')
     ) {
       const modifiedInput: PolkadotXCMTransferInput = {
         ...input,
@@ -59,8 +57,8 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
         'Unlimited'
       )
     } else if (
-      (targetChain === 'Polkadot' && input.currencyId === 'KSM') ||
-      (targetChain === 'Kusama' && input.currencyId === 'DOT')
+      (targetChain === 'Polkadot' && input.currencySymbol?.toUpperCase() === 'KSM') ||
+      (targetChain === 'Kusama' && input.currencySymbol?.toUpperCase() === 'DOT')
     ) {
       const modifiedInput: PolkadotXCMTransferInput = {
         ...input,
@@ -83,22 +81,24 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
         'Unlimited'
       )
     }
-    throw new InvalidCurrencyError('Polkadot <-> Kusama bridge does not support this currency')
+    throw new InvalidCurrencyError(
+      `Polkadot <-> Kusama bridge does not support currency ${input.currencySymbol}`
+    )
   }
 
   public handleEthBridgeTransfer(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
-    const { api, scenario, destination, paraIdTo, address, currencyId } = input
+    const { api, scenario, destination, paraIdTo, address, currencySymbol } = input
 
     if (!ethers.isAddress(address)) {
       throw new Error('Only Ethereum addresses are supported for Ethereum transfers')
     }
 
     const ethAssets = getOtherAssets('Ethereum')
-    const ethAsset = ethAssets.find(asset => asset.symbol === currencyId)
+    const ethAsset = ethAssets.find(asset => asset.symbol === currencySymbol)
 
     if (!ethAsset) {
       throw new InvalidCurrencyError(
-        `Currency ${currencyId} is not supported for Ethereum transfers`
+        `Currency ${currencySymbol} is not supported for Ethereum transfers`
       )
     }
 

@@ -4,6 +4,7 @@ import { type TMultiLocation } from './TMultiLocation'
 import { TNodePolkadotKusama, type TNode } from './TNode'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type TMultiAsset } from './TMultiAsset'
+import { TCurrency, TCurrencyInput } from './TCurrency'
 
 export type Extrinsic = SubmittableExtrinsic<'promise'>
 
@@ -83,8 +84,6 @@ export enum Parents {
 }
 
 export type TAmount = string | number | bigint
-export type TCurrency = string | number | bigint
-export type TCurrencyInput = string | number | bigint | TMultiLocation | TMultiAsset[]
 export type TAddress = string | TMultiLocation
 export type TDestination = TNode | TMultiLocation
 
@@ -137,23 +136,6 @@ export interface TRelayToParaInternalOptions extends TRelayToParaBaseOptions {
 
 export interface TRelayToParaCommonOptions extends TRelayToParaOptions {
   serializedApiCallEnabled?: boolean
-}
-
-export interface TCurrencySelection {
-  id: {
-    Concrete: TMultiLocation
-  }
-  fun: {
-    Fungible: string
-  }
-}
-
-export type TCurrencySelectionHeader = {
-  [key in Version]?: TCurrencySelection
-}
-
-export type TCurrencySelectionHeaderArr = {
-  [key in Version]?: [TCurrencySelection]
 }
 
 export interface TSerializedApiCall {

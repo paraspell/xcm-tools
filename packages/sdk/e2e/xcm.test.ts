@@ -64,14 +64,6 @@ const findTransferableNodeAndAsset = (
   return { nodeTo, asset: foundAsset, assetId: getAssetId(from, foundAsset ?? '') }
 }
 
-const findAssetIdForAssetHub = (node: TNode, asset: string): string | null => {
-  const assetId = getAssetId(node, asset)
-  if (assetId !== null) return assetId
-  const otherAssets = getOtherAssets(node)
-  const otherAsset = otherAssets.filter(otherAsset => otherAsset.assetId !== null)[0]
-  return otherAsset?.assetId ?? null
-}
-
 describe.sequential('XCM - e2e', () => {
   describe('AssetClaim', () => {
     ;(
@@ -260,12 +252,8 @@ describe.sequential('XCM - e2e', () => {
         api = await createApiInstanceForNode(node)
       })
       it(`should create transfer tx - ParaToPara ${asset} from ${node} to ${nodeTo}`, async () => {
-        const isAssetHub = nodeTo === 'AssetHubPolkadot' || nodeTo === 'AssetHubKusama'
-        const currency = isAssetHub
-          ? findAssetIdForAssetHub(nodeTo, asset ?? '')
-          : assetId ?? asset ?? 'DOT'
+        const currency = assetId ?? asset ?? 'DOT'
         if (currency === null) return
-        if (isAssetHub) console.log(`AssetHub ${nodeTo} currency: ${currency}`)
         expect(nodeTo).toBeDefined()
         try {
           const tx = await Builder(api)
