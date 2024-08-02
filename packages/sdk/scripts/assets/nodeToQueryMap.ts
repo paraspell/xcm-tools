@@ -1,6 +1,6 @@
-import { TNodeToAssetModuleMap } from '../../src/types'
+import { TNodePolkadotKusama } from '../../src/types'
 
-export const nodeToQuery: TNodeToAssetModuleMap = {
+export const nodeToQuery: Record<TNodePolkadotKusama, string | null> = {
   // Chain state query: <module>.<section> for assets metadata
   Acala: 'assetRegistry.assetMetadatas',
   Astar: 'assets.metadata',
