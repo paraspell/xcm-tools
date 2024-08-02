@@ -865,6 +865,11 @@
         "decimals": 8
       },
       {
+        "assetId": "1000085",
+        "symbol": "WUD",
+        "decimals": 10
+      },
+      {
         "assetId": "1000099",
         "symbol": "ACA",
         "decimals": 12
@@ -1081,6 +1086,16 @@
         "assetId": "9",
         "symbol": "WBTC.wh",
         "decimals": 8
+      },
+      {
+        "assetId": "14",
+        "symbol": "PHA",
+        "decimals": 12
+      },
+      {
+        "assetId": "15",
+        "symbol": "stDOT",
+        "decimals": 10
       },
       {
         "assetId": "2",
@@ -1569,8 +1584,18 @@
     ],
     "otherAssets": [
       {
+        "assetId": "",
+        "symbol": "MYTH",
+        "decimals": 18
+      },
+      {
         "assetId": "9999",
         "symbol": "TOM",
+        "decimals": 10
+      },
+      {
+        "assetId": "20090142",
+        "symbol": "ELONA",
         "decimals": 10
       },
       {
@@ -1602,6 +1627,11 @@
         "assetId": "123",
         "symbol": "123",
         "decimals": 20
+      },
+      {
+        "assetId": "52",
+        "symbol": "TeMe8",
+        "decimals": 12
       },
       {
         "assetId": "9000",
@@ -1719,6 +1749,16 @@
         "decimals": 10
       },
       {
+        "assetId": "7006",
+        "symbol": "ttt",
+        "decimals": 0
+      },
+      {
+        "assetId": "20090138",
+        "symbol": "LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG",
+        "decimals": 10
+      },
+      {
         "assetId": "67",
         "symbol": "LINK",
         "decimals": 6
@@ -1726,6 +1766,11 @@
       {
         "assetId": "20",
         "symbol": "StabCP",
+        "decimals": 10
+      },
+      {
+        "assetId": "20090140",
+        "symbol": "Grift ",
         "decimals": 10
       },
       {
@@ -1859,6 +1904,11 @@
         "decimals": 10
       },
       {
+        "assetId": "669",
+        "symbol": "lish",
+        "decimals": 9
+      },
+      {
         "assetId": "8889",
         "symbol": "BNDT",
         "decimals": 10
@@ -1871,6 +1921,11 @@
       {
         "assetId": "42069",
         "symbol": "STINK",
+        "decimals": 10
+      },
+      {
+        "assetId": "20090143",
+        "symbol": "DMSTR",
         "decimals": 10
       },
       {
@@ -1897,6 +1952,11 @@
         "assetId": "1212",
         "symbol": "DOTTY",
         "decimals": 10
+      },
+      {
+        "assetId": "323",
+        "symbol": "DGNNNC",
+        "decimals": 6
       },
       {
         "assetId": "77",
@@ -2044,8 +2104,18 @@
         "decimals": 20
       },
       {
+        "assetId": "20090136",
+        "symbol": "HTG",
+        "decimals": 10
+      },
+      {
         "assetId": "32",
         "symbol": "CLAY",
+        "decimals": 10
+      },
+      {
+        "assetId": "2106",
+        "symbol": "STREAK",
         "decimals": 10
       },
       {
@@ -2084,6 +2154,11 @@
         "decimals": 10
       },
       {
+        "assetId": "53",
+        "symbol": "TeMe9",
+        "decimals": 12
+      },
+      {
         "assetId": "29",
         "symbol": "SHRIMP",
         "decimals": 10
@@ -2095,8 +2170,8 @@
       },
       {
         "assetId": "42",
-        "symbol": "PJS",
-        "decimals": 18
+        "symbol": "GAVUN",
+        "decimals": 10
       },
       {
         "assetId": "43",
@@ -2127,6 +2202,11 @@
         "assetId": "7",
         "symbol": "lucky7",
         "decimals": 20
+      },
+      {
+        "assetId": "4242",
+        "symbol": "GAVUN",
+        "decimals": 10
       },
       {
         "assetId": "26",
@@ -2219,6 +2299,11 @@
         "decimals": 6
       },
       {
+        "assetId": "54",
+        "symbol": "TeMe10",
+        "decimals": 12
+      },
+      {
         "assetId": "1230",
         "symbol": "HAM",
         "decimals": 10
@@ -2266,6 +2351,11 @@
       {
         "assetId": "80",
         "symbol": "GOVD",
+        "decimals": 10
+      },
+      {
+        "assetId": "20090139",
+        "symbol": "DUSTY",
         "decimals": 10
       },
       {
@@ -2459,6 +2549,11 @@
         "decimals": 10
       },
       {
+        "assetId": "20090137",
+        "symbol": "hawn",
+        "decimals": 10
+      },
+      {
         "assetId": "69",
         "symbol": "DAL",
         "decimals": 18
@@ -2477,6 +2572,11 @@
         "assetId": "37",
         "symbol": "DODA",
         "decimals": 6
+      },
+      {
+        "assetId": "20090141",
+        "symbol": "Guzzler",
+        "decimals": 10
       },
       {
         "assetId": "5417",

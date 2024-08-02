@@ -25,7 +25,7 @@ import {
 import { generateAddressMultiLocationV4, generateAddressPayload } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
-import { getOtherAssets } from '../../pallets/assets'
+import { getOtherAssets, getParaId } from '../../pallets/assets'
 
 class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
@@ -140,6 +140,48 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     return PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, 'transferAssets', 'Unlimited')
   }
 
+  handleMythosTransfer(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+    const { api, address, amount, currencyId, overridedCurrency, scenario, destination, paraIdTo } =
+      input
+    const version = Version.V2
+    const paraId =
+      destination !== undefined && typeof destination !== 'object'
+        ? (paraIdTo ?? getParaId(destination))
+        : undefined
+    const customMultiLocation: TMultiLocation = {
+      parents: Parents.ONE,
+      interior: {
+        X1: {
+          Parachain: paraId
+        }
+      }
+    }
+    const modifiedInput: PolkadotXCMTransferInput = {
+      ...input,
+      header: this.createPolkadotXcmHeader(scenario, version, destination, paraId),
+      addressSelection: generateAddressPayload(
+        api,
+        scenario,
+        'PolkadotXcm',
+        address,
+        version,
+        paraId
+      ),
+      currencySelection: this.createCurrencySpec(
+        amount,
+        scenario,
+        version,
+        currencyId,
+        overridedCurrency ?? customMultiLocation
+      )
+    }
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(
+      modifiedInput,
+      'limitedTeleportAssets',
+      'Unlimited'
+    )
+  }
+
   transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
     const { scenario } = input
 
@@ -149,6 +191,10 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
 
     if (input.destination === 'Ethereum') {
       return this.handleEthBridgeTransfer(input)
+    }
+
+    if (input.destination === 'Mythos') {
+      return this.handleMythosTransfer(input)
     }
 
     const method =
