@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.7.0...sdk-v5.8.0) (2024-08-02)
+
+
+### Features
+
+* **sdk:** Add support for AHP -&gt; MYTHOS transfers 🛠️ ([c29c630](https://github.com/paraspell/xcm-tools/commit/c29c630689916c763f0ed88c2bc5879348ce405f))
+* **sdk:** Enable direct entry of asset symbol or ID as currency ✨ ([987be79](https://github.com/paraspell/xcm-tools/commit/987be79ddd7198f541654cd8c5353c714f3caf37))
+
 ## [5.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.6.0...sdk-v5.7.0) (2024-07-27)
 
 
