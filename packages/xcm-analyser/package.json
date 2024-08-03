@@ -26,7 +26,6 @@
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage --config ./vitest.config.coverage.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
-    "release": "pnpm runAll && pnpm build && standard-version && git push --follow-tags",
     "runExample": "TS_NODE_PROJECT='./tsconfig.node.json' node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/example.ts"
   },
   "keywords": [],
