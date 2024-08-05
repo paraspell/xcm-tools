@@ -1,0 +1,21 @@
+flag_management:
+  default_rules:
+    statuses:
+      - type: project
+        target: auto
+        threshold: 1%
+      - type: patch
+        target: 90%
+  individual_flags:
+    - name: xcm-sdk
+      paths:
+        - packages/sdk
+    - name: xcm-analyser
+      paths:
+        - packages/xcm-analyser
+    - name: xcm-router
+      paths:
+        - packages/xcm-router
+    - name: visualizator-be
+      paths:
+        - apps/visualizator-be
