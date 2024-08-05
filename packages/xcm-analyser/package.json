@@ -24,7 +24,7 @@
     "format:write": "prettier --write src",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:cov": "vitest run --coverage --config ./vitest.config.coverage.ts",
+    "test:cov": "vitest run --coverage",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
     "runExample": "TS_NODE_PROJECT='./tsconfig.node.json' node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/example.ts"
   },
@@ -37,6 +37,7 @@
   "devDependencies": {
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
+    "@vitest/coverage-v8": "^2.0.5",
     "rollup": "^4.19.0",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-typescript2": "^0.36.0",

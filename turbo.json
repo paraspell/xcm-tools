@@ -7,6 +7,7 @@
     "lint:check": {},
     "lint": {},
     "test": {},
+    "test:cov": {},
     "test:watch": {
       "cache": false
     },

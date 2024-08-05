@@ -26,4 +26,28 @@ jobs:
       - run: pnpm compile
       - run: pnpm format:check
       - run: pnpm lint:check
-      - run: pnpm test
+      - run: pnpm test:cov
+      - name: Upload XCM SDK coverage report to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/sdk
+          flags: xcm-sdk
+      - name: Upload XCM Analyser coverage report to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/xcm-analyser
+          flags: xcm-analyser
+      - name: Upload XCM Router coverage report to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/xcm-router
+          flags: xcm-router
+      - name: Upload Visualizator BE coverage report to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: apps/visualizator-be
+          flags: visualizator-be

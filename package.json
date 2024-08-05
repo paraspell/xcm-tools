@@ -11,7 +11,7 @@
     "turbo": "^2.0.9",
     "typescript": "^5.5.4",
     "typescript-eslint": "^7.17.0",
-    "vitest": "^2.0.4"
+    "vitest": "^2.0.5"
   },
   "engines": {
     "node": ">=20"
@@ -27,6 +27,7 @@
     "lint:check": "turbo run lint:check",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "test:cov": "turbo run test:cov",
     "test:watch": "turbo run test:watch",
     "test:integration": "turbo run test:integration",
     "test:e2e": "turbo run test:e2e",
