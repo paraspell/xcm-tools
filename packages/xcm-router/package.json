@@ -26,7 +26,7 @@
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
     "test:integration": "vitest run --config ./vitest.config.integration.ts",
-    "runAll": "yarn compile && yarn format:write && yarn lint && yarn test",
+    "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updateAssets.ts"
   },
   "keywords": [],

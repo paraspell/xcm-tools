@@ -17,11 +17,13 @@
 <br /><br />
 
 ## Introduction
+
   <img width="400" alt="LightSpell logo" src="https://user-images.githubusercontent.com/55763425/251588168-4855abc3-445a-4207-9a65-e891975be62c.png">
 
-XCM API allows you to implement all XCM SDK and XCM Router features. 
+XCM API allows you to implement all XCM SDK and XCM Router features.
 
 **Reasons to use XCM API for interoperability integration into your application:**
+
 - XCM API handles complex logic and you are only required to provide basic details to create calls (Junctions and other complex details are auto-filled for you)
 - Offloads your server from heavy computing required to construct calls (You receive constructed message already)
 - Saves you server costs (Because of the reason mentioned above)
@@ -29,18 +31,21 @@ XCM API allows you to implement all XCM SDK and XCM Router features.
 - Simple to implement (Constructed to be as dev-friendly as possible)
 
 **XCM API can greatly reduce application development times, save server costs and boost the ecosystem with new fresh projects**.
-  
+
 ## Implementation
+
 ### XCM Messages
+
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html).
 
 Possible parameters:
+
 - `from`: (optional): Represents the Parachain from which the assets will be transferred.
 - `to`: (optional): Represents the Parachain to which the assets will be transferred. This can also be custom multilocation.
 - `currency`: (optional): Represents the asset being sent. It should be a string value. This can also be custom multilocation.
 - `amount`: (required): Specifies the amount of assets to transfer. It should be a numeric value.
 - `address`: (required): Specifies the address of the recipient. This can also be custom multilocation.
-- `xcmVersion`: (optional): Specifies manually selected XCM version if pre-selected does not work. Format: Vx - where x = version number eg. V4. 
+- `xcmVersion`: (optional): Specifies manually selected XCM version if pre-selected does not work. Format: Vx - where x = version number eg. V4.
 
 ```
 NOTICE:
@@ -49,123 +54,126 @@ The latest version switched to the POST method for XCM Transfers, but we kept GE
 
 ```js
 //Construct XCM call from Relay chain to Parachain (DMP)
-const response = await fetch("http://localhost:3001/x-transfer", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        to: "Parachain",   // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
-        amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
-        address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
-        //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
-    })
+const response = await fetch('http://localhost:3001/x-transfer', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
+    amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+    //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
+  }),
 });
 
 //Construct XCM call from Parachain chain to Relay chain (UMP)
-const response = await fetch("http://localhost:3001/x-transfer", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        from: "Parachain", // Replace "Parachain" with sender Parachain, e.g., "Acala"
-        amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
-        address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
-        //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
-    })
+const response = await fetch('http://localhost:3001/x-transfer', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
+    amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+    //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
+  }),
 });
 
 //Construct XCM call from Parachain to Parachain (HRMP)
-const response = await fetch("http://localhost:3001/x-transfer", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        from: "Parachain", // Replace "Parachain" with sender Parachain, e.g., "Acala"
-        to: "Parachain",   // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
-        currency: "Currency", // Replace "Currency" with asset id or symbol, e.g., "DOT" or custom Multilocation
-        amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
-        address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
-        //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
-    })
+const response = await fetch('http://localhost:3001/x-transfer', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
+    to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
+    currency: 'Currency', // Replace "Currency" with asset id or symbol, e.g., "DOT" or custom Multilocation
+    amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+    //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
+  }),
 });
 
 //Construct custom multilocation XCM call from Parachain to Parachain (HRMP)
 //Multilocations can be customized for Destination, Address and Currency.
-const response = await fetch("http://localhost:3001/x-transfer", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
+const response = await fetch('http://localhost:3001/x-transfer', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
+    to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+    currency: {
+      // Replace "Currency" with asset id, symbol, e.g., "DOT" or custom Multilocation
+      parents: 0,
+      interior: {
+        X2: [{ PalletInstance: '50' }, { GeneralIndex: '41' }],
+      },
     },
-    body: JSON.stringify({
-        from: "Parachain",   // Replace "Parachain" with sender Parachain, e.g., "Acala"
-        to: "Parachain",    // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
-        address: "Address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
-        currency: {         // Replace "Currency" with asset id, symbol, e.g., "DOT" or custom Multilocation
-            parents: 0,
-            interior: {
-                X2: [
-                    { PalletInstance: "50" },
-                    { GeneralIndex: "41" }
-                ]
-            }
-        },
-        amount: "Amount" // Replace "Amount" with the numeric value you wish to transfer
-        //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
-    })
+    amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
+    //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
+  }),
 });
 ```
 
 ### Asset claim
+
 A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#asset-claim).
 
 Possible parameters:
+
 - `from` (Inside JSON body): (required): Represents the Parachain on which the asset will be claimed.
 - `address` (Inside JSON body): (required): Specifies the recipient's address.
 - `fungible` (Inside JSON body): (required): Represents the asset being claimed. It should be a multilocation.
 
 ```js
-const response = await fetch("http://localhost:3001/asset-claim", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        from: "Parachain", // Replace "Parachain" with chain you wish to claim assets on
-        address: "Address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
-        fungible: "Asset Multilocation array" //Replace "Asset Multilocation array" with specific asset multilocation array along with the amount (example in docs)
-    })
+const response = await fetch('http://localhost:3001/asset-claim', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Parachain', // Replace "Parachain" with chain you wish to claim assets on
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+    fungible: 'Asset Multilocation array', //Replace "Asset Multilocation array" with specific asset multilocation array along with the amount (example in docs)
+  }),
 });
 ```
 
 ### Transfer info query
+
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#transfer-info-query).
 
 Possible parameters:
+
 - `origin` (Query parameter): (required): Represents the Parachain from which the assets will be transferred.
 - `destination` (Query parameter): (required): Represents the Parachain to which the assets will be transferred.
 - `currency`: (Query parameter): (required): Represents the asset being sent. It should be a string value.
-- `amount`:  (Query parameter): (required): Specifies the amount of assets to transfer. It should be a numeric value.
-- `accountOrigin`:  (Query parameter): (required): Specifies the address of the origin. 
-- `accountDestination`:  (Query parameter): (required): Specifies the recipient's address. 
+- `amount`: (Query parameter): (required): Specifies the amount of assets to transfer. It should be a numeric value.
+- `accountOrigin`: (Query parameter): (required): Specifies the address of the origin.
+- `accountDestination`: (Query parameter): (required): Specifies the recipient's address.
 
 ```js
 const response = await fetch(
-    "http://localhost:3001/transfer-info?" +
+  'http://localhost:3001/transfer-info?' +
     new URLSearchParams({
-        origin: "Parachain", // Replace "Parachain" with sender Parachain, e.g., "Acala"
-        destination: "Parachain", // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" 
-        currency: "Currency", // Replace "Currency" with asset id or symbol, e.g., "DOT"
-        amount: "Amount", // Replace "Amount" with the numeric value you wish to transfer
-        accountOrigin: "Account address", // Replace "Address" with origin wallet address (In AccountID32 or AccountKey20 Format)
-        accountDestination: "Account address", // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
-    })
+      origin: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
+      destination: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam"
+      currency: 'Currency', // Replace "Currency" with asset id or symbol, e.g., "DOT"
+      amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
+      accountOrigin: 'Account address', // Replace "Address" with origin wallet address (In AccountID32 or AccountKey20 Format)
+      accountDestination: 'Account address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
+    }),
 );
 ```
 
 ### XCM Router
+
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmRouter.html).
 
 ```
@@ -175,37 +183,39 @@ It is advised to use at least 120s timeout with this endpoint (Because API has t
 ```
 
 Possible parameters:
+
 - `from`: (required): Represents the Parachain from which the assets will be transferred.
 - `exchange`: (optional): Represents the Parachain DEX on which tokens will be exchanged (If not provided, DEX is selected automatically based on best price output).
 - `to`: (required): Represents the Parachain to which the assets will be transferred.
 - `currencyFrom`: (required): Represents the asset being sent.
-- `currencyTo`: (required): Represents the received asset. 
+- `currencyTo`: (required): Represents the received asset.
 - `amount`: (required): Specifies the amount of assets to transfer.
-- `slippagePct`: (required): Specifies the slippage percentage. 
+- `slippagePct`: (required): Specifies the slippage percentage.
 - `address`: (required): Specifies the recipient's address.
 - `injectorAddress`: (required): Specifies the sender's address.
 
 ```js
-const response = await fetch("http://localhost:3001/router", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        from: "Chain", //Origin Parachain/Relay chain
-        exchange: "Dex", //Exchange Parachain/Relay chain //Optional parameter, if not specified exchange will be auto-selected
-        to: "Chain", //Destination Parachain/Relay chain
-        currencyFrom: "Currency", // Currency to send
-        currencyTo: "Currency", // Currency to receive
-        amount: "Amount", // Amount to send
-        slippagePct: "Pct", // Max slipppage percentage
-        address: "Address", //Recipient address
-        injectorAddress: 'InjectorAddress', //Address of sender
-    })
+const response = await fetch('http://localhost:3001/router', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Chain', //Origin Parachain/Relay chain
+    exchange: 'Dex', //Exchange Parachain/Relay chain //Optional parameter, if not specified exchange will be auto-selected
+    to: 'Chain', //Destination Parachain/Relay chain
+    currencyFrom: 'Currency', // Currency to send
+    currencyTo: 'Currency', // Currency to receive
+    amount: 'Amount', // Amount to send
+    slippagePct: 'Pct', // Max slipppage percentage
+    address: 'Address', //Recipient address
+    injectorAddress: 'InjectorAddress', //Address of sender
+  }),
 });
 ```
 
 ### XCM Analyser
+
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmAnalyser.html).
 
 ```
@@ -213,138 +223,153 @@ NOTICE: Only one parameter at a time is allowed, either multilocation or xcm.
 ```
 
 Possible parameters:
+
 - `multilocation` (Optional): Specific multilocation
 - `xcm` (Optional): Complete XCM call
 
 ```js
-const response = await fetch("http://localhost:3001/xcm-analyser", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        multilocation: "Multilocation", //Replace Multilocation with specific Multilocation you wish to analyse
-        xcm: "XCM" //Replace XCM with the specific XCM call you wish to analyse
-    })
+const response = await fetch('http://localhost:3001/xcm-analyser', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    multilocation: 'Multilocation', //Replace Multilocation with specific Multilocation you wish to analyse
+    xcm: 'XCM', //Replace XCM with the specific XCM call you wish to analyse
+  }),
 });
 ```
 
 ### Asset Pallet
+
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/assetP.html).
 
 Possible parameters:
+
 - `node`: Specific Parachain eg. Moonbeam
 - `asset`: Asset symbol eg. DOT
 - `paraID`: Parachain ID eg. 2090 (Basilisk)
 
 ```js
 //Retrieve assets object for a specific Parachain
-const response = await fetch("http://localhost:3001/assets/:node");
+const response = await fetch('http://localhost:3001/assets/:node');
 
 //Retrieve asset ID for particular Parachain and asset
-const response = await fetch("http://localhost:3001/assets/:node/id?symbol=:asset");
+const response = await fetch(
+  'http://localhost:3001/assets/:node/id?symbol=:asset',
+);
 
 //Retrieve the Relay chain asset Symbol for a particular Parachain
-const response = await fetch("http://localhost:3001/assets/:node/relay-chain-symbol");
+const response = await fetch(
+  'http://localhost:3001/assets/:node/relay-chain-symbol',
+);
 
 //Retrieve native assets for a particular Parachain
-const response = await fetch("http://localhost:3001/assets/:node/native");
+const response = await fetch('http://localhost:3001/assets/:node/native');
 
 //Retrieve foreign assets for a particular Parachain
-const response = await fetch("http://localhost:3001/assets/:node/other");
+const response = await fetch('http://localhost:3001/assets/:node/other');
 
 //Retrieve all asset symbols for particular Parachain
-const response = await fetch("http://localhost:3001/assets/:node/all-symbols");
+const response = await fetch('http://localhost:3001/assets/:node/all-symbols');
 
 //Retrieve support for a particular asset on a particular Parachain
-const response = await fetch("http://localhost:3001/assets/:node/has-support?symbol=:asset");
+const response = await fetch(
+  'http://localhost:3001/assets/:node/has-support?symbol=:asset',
+);
 
 //Retrieve decimals for a particular asset for a particular Parachain
-const response = await fetch("http://localhost:3001/assets/:node/decimals?symbol=:asset");
+const response = await fetch(
+  'http://localhost:3001/assets/:node/decimals?symbol=:asset',
+);
 
 //Retrieve Parachain ID for a particular Parachain
-const response = await fetch("http://localhost:3001/assets/:node/para-id");
+const response = await fetch('http://localhost:3001/assets/:node/para-id');
 
 //Retrieve Parachain name from Parachain ID
-const response = await fetch("http://localhost:3001/assets/:paraID");
+const response = await fetch('http://localhost:3001/assets/:paraID');
 
 //Retrieve a list of implemented Parachains
-const response = await fetch("http://localhost:3001/assets");
-
+const response = await fetch('http://localhost:3001/assets');
 ```
 
 ### XCM Pallet
+
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/nodeP.html).
 
 Possible parameters:
+
 - `node`: Specific Parachain eg. Moonbeam
 
 ```js
 //Return default pallet for specific Parachain
-const response = await fetch("http://localhost:3001/pallets/:node/default");
+const response = await fetch('http://localhost:3001/pallets/:node/default');
 
 //Return an array of supported pallets for specific Parachain
-const response = await fetch("http://localhost:3001/pallets/:node");
+const response = await fetch('http://localhost:3001/pallets/:node');
 ```
 
 ### HRMP Pallet
+
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/hrmpP.html).
 
 Possible parameters:
+
 - `from` (Query parameter): (required): Specifies the origin Parachain.
 - `to` (Query parameter): (required): Specifies the destination Parachain.
 - `maxSize` (Query parameter): (required): Specifies the maximum size.
 - `maxMessageSize` (Query parameter): (required): Specifies the maximum message size.
 - `inbound` (Query parameter): (required): Specifies the maximum inbound.
-- `outbound` (Query parameter):  (required): Specifies the maximum outbound.
+- `outbound` (Query parameter): (required): Specifies the maximum outbound.
 
 ```js
 //Opening HRMP Channel
 const response = await fetch(
-    "http://localhost:3001/hrmp/channels?" +
+  'http://localhost:3001/hrmp/channels?' +
     new URLSearchParams({
-        from: Parachain, //eg. replace "Parachain" with "Moonbeam"
-        to: Parachain,   //eg. replace "Parachain" with "Acala"
-        maxSize: "8",
-        maxMessageSize: "1024",
+      from: Parachain, //eg. replace "Parachain" with "Moonbeam"
+      to: Parachain, //eg. replace "Parachain" with "Acala"
+      maxSize: '8',
+      maxMessageSize: '1024',
     }),
-    { method: "POST" }
+  { method: 'POST' },
 );
 
 //Closing HRMP Channel
 const response = await fetch(
-    "http://localhost:3001/hrmp/channels?" +
+  'http://localhost:3001/hrmp/channels?' +
     new URLSearchParams({
-        from: Parachain, //eg. replace "Parachain" with "Moonriver"
-        inbound: "0",
-        outbound: "0",
+      from: Parachain, //eg. replace "Parachain" with "Moonriver"
+      inbound: '0',
+      outbound: '0',
     }),
-    { method: "DELETE" }
+  { method: 'DELETE' },
 );
 ```
 
 ## Running the API locally
 
 ### Installation
+
 The following command installs all necessary packages.
 
-NOTICE: Use Yarn v1.22 (Temporarily)
-
 ```bash
-$ yarn
+$ pnpm install
 ```
 
 ### Start nest server
+
 The following commands allow you to start the nest server locally. You can then test its endpoints with various tools (eg. [Insomnia](https://insomnia.rest/)) or integrate it directly into your application.
+
 ```bash
 # development
-$ yarn start
+$ pnpm start
 
 # watch mode
-$ yarn start:dev
+$ pnpm start:dev
 
 # production mode
-$ yarn start:prod
+$ pnpm start:prod
 ```
 
 ### Other
@@ -355,13 +380,13 @@ $ yarn start:prod
 
 ## Tests
 
-- Run linter using `yarn lint`
+- Run linter using `pnpm lint`
 
-- Run unit and integration tests using `yarn test`
+- Run unit and integration tests using `pnpm test`
 
-- Run end-to-end tests using `yarn test:e2e`
+- Run end-to-end tests using `pnpm test:e2e`
 
-- Run coverage test `yarn test:cov`
+- Run tests with coverage `pnpm test:cov`
 
 API can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
 
