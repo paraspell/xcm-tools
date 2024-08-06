@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -167,7 +166,7 @@ const RouterTransferPage = () => {
     }
   };
 
-  const onSubmit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValues) => {
     const { useApi } = formValues;
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -225,6 +224,8 @@ const RouterTransferPage = () => {
       setLoading(false);
     }
   };
+
+  const onSubmit = (formValues: FormValues) => void submit(formValues);
 
   const onAlertCloseClick = () => {
     closeAlert();

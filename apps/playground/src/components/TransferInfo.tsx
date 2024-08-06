@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "./ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
@@ -63,7 +62,7 @@ const TransferInfo = () => {
     }
   };
 
-  const onSubmit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValues) => {
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
       throw Error("No account selected!");
@@ -88,13 +87,11 @@ const TransferInfo = () => {
     }
   };
 
-  const onAlertCloseClick = () => {
-    closeAlert();
-  };
+  const onSubmit = (formValues: FormValues) => void submit(formValues);
 
-  const onOutputAlertCloseClick = () => {
-    closeOutputAlert();
-  };
+  const onAlertCloseClick = () => closeAlert();
+
+  const onOutputAlertCloseClick = () => closeOutputAlert();
 
   return (
     <Stack gap="xl">

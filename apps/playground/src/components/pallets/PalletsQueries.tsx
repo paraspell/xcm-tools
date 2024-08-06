@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "../ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
@@ -62,7 +61,7 @@ const PalletsQueries = () => {
     }
   };
 
-  const onSubmit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValues) => {
     setLoading(true);
 
     try {
@@ -82,6 +81,8 @@ const PalletsQueries = () => {
       setLoading(false);
     }
   };
+
+  const onSubmit = (formValues: FormValues) => void submit(formValues);
 
   const onErrorAlertCloseClick = () => {
     closeErrorAlert();

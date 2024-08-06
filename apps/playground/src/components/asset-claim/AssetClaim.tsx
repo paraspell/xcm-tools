@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { Builder, createApiInstanceForNode } from "@paraspell/sdk";
@@ -65,7 +64,7 @@ const AssetClaim = () => {
     await submitTransaction(api, tx, signer, injectorAddress);
   };
 
-  const onSubmit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValues) => {
     const { useApi, from, amount } = formValues;
 
     if (!selectedAccount) {
@@ -121,6 +120,8 @@ const AssetClaim = () => {
       setLoading(false);
     }
   };
+
+  const onSubmit = (formValues: FormValues) => void submit(formValues);
 
   const onAlertCloseClick = () => {
     closeAlert();

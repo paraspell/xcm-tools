@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "../ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
@@ -78,7 +77,7 @@ const ChannelsQueries = () => {
     }
   };
 
-  const onSubmit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValues) => {
     const { from } = formValues;
 
     if (!selectedAccount) {
@@ -115,6 +114,8 @@ const ChannelsQueries = () => {
       setLoading(false);
     }
   };
+
+  const onSubmit = (formValues: FormValues) => void submit(formValues);
 
   const onErrorAlertCloseClick = () => {
     closeErrorAlert();
