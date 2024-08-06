@@ -1,4 +1,26 @@
 {
+  "Polkadot": {
+    "relayChainAssetSymbol": "DOT",
+    "nativeAssetSymbol": "DOT",
+    "nativeAssets": [
+      {
+        "symbol": "DOT",
+        "decimals": 10
+      }
+    ],
+    "otherAssets": []
+  },
+  "Kusama": {
+    "relayChainAssetSymbol": "KSM",
+    "nativeAssetSymbol": "KSM",
+    "nativeAssets": [
+      {
+        "symbol": "KSM",
+        "decimals": 12
+      }
+    ],
+    "otherAssets": []
+  },
   "Acala": {
     "paraId": 2000,
     "relayChainAssetSymbol": "DOT",

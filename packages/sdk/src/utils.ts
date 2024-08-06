@@ -210,7 +210,7 @@ export const callPolkadotJsTxFunction = (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 ): Extrinsic => api.tx[module][section](...parameters)
 
-export const determineRelayChain = (node: TNode): TNodeDotKsmWithRelayChains =>
+export const determineRelayChain = (node: TNodeWithRelayChains): TNodeDotKsmWithRelayChains =>
   getRelayChainSymbol(node) === 'KSM' ? 'Kusama' : 'Polkadot'
 
 export const determineRelayChainSymbol = (node: TNodeWithRelayChains): string => {

@@ -14,7 +14,11 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
-import { NODES_WITH_RELAY_CHAINS, TNodeWithRelayChains } from "@paraspell/sdk";
+import {
+  getAllAssetsSymbols,
+  NODES_WITH_RELAY_CHAINS,
+  TNodeWithRelayChains,
+} from "@paraspell/sdk";
 import { Signer } from "@polkadot/api/types";
 import { web3Accounts, web3FromAddress } from "@polkadot/extension-dapp";
 import AccountsModal from "./AccountsModal";
@@ -109,6 +113,11 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
     closeModal();
   };
 
+  const fromCurrencySymbols = [
+    ...new Set(getAllAssetsSymbols(form.values.from)),
+  ];
+  const toCurrencySymbols = [...new Set(getAllAssetsSymbols(form.values.to))];
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
@@ -124,6 +133,7 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           label="Origin node"
           placeholder="Pick value"
           data={[...NODES_WITH_RELAY_CHAINS]}
+          allowDeselect={false}
           searchable
           required
           {...form.getInputProps("from")}
@@ -133,6 +143,7 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           label="Exchange node"
           placeholder="Pick value"
           data={["Auto select", ...EXCHANGE_NODES]}
+          allowDeselect={false}
           searchable
           required
           {...form.getInputProps("exchange")}
@@ -142,21 +153,28 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           label="Destination node"
           placeholder="Pick value"
           data={[...NODES_WITH_RELAY_CHAINS]}
+          allowDeselect={false}
           searchable
           required
           {...form.getInputProps("to")}
         />
 
-        <TextInput
+        <Select
           label="Currency from"
-          placeholder="ASTR"
+          placeholder="Pick value"
+          data={fromCurrencySymbols}
+          allowDeselect={false}
+          searchable
           required
           {...form.getInputProps("currencyFrom")}
         />
 
-        <TextInput
+        <Select
           label="Currency to"
-          placeholder="GLMR"
+          placeholder="Pick value"
+          data={toCurrencySymbols}
+          allowDeselect={false}
+          searchable
           required
           {...form.getInputProps("currencyTo")}
         />

@@ -208,7 +208,9 @@ describe('XCM API (e2e)', () => {
 
       const otherAssets = getOtherAssets(node);
       if (otherAssets.length > 0) {
-        const { symbol, assetId, decimals } = otherAssets[0];
+        const { symbol, assetId, decimals } = otherAssets[0].assetId
+          ? otherAssets[0]
+          : otherAssets[1];
         const assetIdUrl = `/assets/${node}/id`;
         it(`Get asset id - ${assetIdUrl} (GET)`, () => {
           return request(app.getHttpServer())

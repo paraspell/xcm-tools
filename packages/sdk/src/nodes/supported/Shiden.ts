@@ -31,8 +31,8 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
     return XTokensTransferImpl.transferXTokens(input, input.currencyID)
   }
 
-  protected canUseXTokens({ currencySymbol }: TSendInternalOptions): boolean {
-    return currencySymbol !== 'SDN'
+  protected canUseXTokens({ currencySymbol, currencyId }: TSendInternalOptions): boolean {
+    return currencySymbol !== 'SDN' && !!currencyId
   }
 }
 

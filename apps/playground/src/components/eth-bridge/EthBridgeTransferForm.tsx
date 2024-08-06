@@ -1,14 +1,23 @@
 import { useForm } from "@mantine/form";
 import { FC } from "react";
 import { Button, Select, Stack, TextInput } from "@mantine/core";
-import { NODES_WITH_RELAY_CHAINS, TNodePolkadotKusama } from "@paraspell/sdk";
+import {
+  NODES_WITH_RELAY_CHAINS,
+  TAsset,
+  TNodePolkadotKusama,
+} from "@paraspell/sdk";
 import { isValidPolkadotAddress } from "../../utils";
+import useCurrencyOptions from "../../hooks/useCurrencyOptions";
 
 export type FormValues = {
   to: TNodePolkadotKusama;
-  currency: string;
+  currencyOptionId: string;
   address: string;
   amount: string;
+};
+
+export type FormValuesTransformed = FormValues & {
+  currency?: TAsset;
 };
 
 type Props = {
@@ -20,7 +29,7 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
       to: "AssetHubPolkadot",
-      currency: "WETH",
+      currencyOptionId: "",
       amount: "1000000000",
       address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
     },
@@ -31,8 +40,25 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
+  const { currencyOptions, currencyMap } = useCurrencyOptions(
+    "Ethereum",
+    form.values.to
+  );
+
+  const onSubmitInternal = (values: FormValues) => {
+    const currency = currencyMap[values.currencyOptionId];
+
+    if (!currency) {
+      return;
+    }
+
+    const transformedValues = { ...values, currency: currency };
+
+    onSubmit(transformedValues);
+  };
+
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    <form onSubmit={form.onSubmit(onSubmitInternal)}>
       <Stack>
         <Select
           label="From"
@@ -52,11 +78,14 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           {...form.getInputProps("to")}
         />
 
-        <TextInput
+        <Select
           label="Currency"
-          placeholder="WETH"
+          placeholder="Pick value"
+          data={currencyOptions}
+          allowDeselect={false}
+          searchable
           required
-          {...form.getInputProps("currency")}
+          {...form.getInputProps("currencyOptionId")}
         />
 
         <TextInput

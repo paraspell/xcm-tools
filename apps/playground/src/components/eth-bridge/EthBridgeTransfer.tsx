@@ -3,7 +3,10 @@ import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 import { BrowserProvider, ethers } from "ethers";
 import ErrorAlert from "../ErrorAlert";
-import EthBridgeTransferForm, { FormValues } from "./EthBridgeTransferForm";
+import EthBridgeTransferForm, {
+  FormValues,
+  FormValuesTransformed,
+} from "./EthBridgeTransferForm";
 import { EvmBuilder } from "@paraspell/sdk";
 
 const EthBridgeTransfer = () => {
@@ -78,7 +81,7 @@ const EthBridgeTransfer = () => {
     amount,
     currency,
     address,
-  }: FormValues) => {
+  }: FormValuesTransformed) => {
     if (!provider) {
       throw new Error("Provider not initialized");
     }
@@ -92,7 +95,7 @@ const EthBridgeTransfer = () => {
     await EvmBuilder(provider)
       .to(to)
       .amount(amount)
-      .currency(currency)
+      .currency(currency?.symbol ?? "")
       .address(address)
       .signer(signer)
       .build();

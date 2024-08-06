@@ -17,7 +17,9 @@ export const buildToExchangeExtrinsic = async (
   return await builder
     .from(from)
     .to(exchange)
-    .currency(currencyFrom)
+    .currency({
+      symbol: currencyFrom,
+    })
     .amount(amount)
     .address(injectorAddress)
     .build();
@@ -35,7 +37,9 @@ export const buildFromExchangeExtrinsic = async (
   return await builder
     .from(exchange)
     .to(to)
-    .currency(currencyTo)
+    .currency({
+      symbol: currencyTo,
+    })
     .amount(amountOut)
     .address(address)
     .build();

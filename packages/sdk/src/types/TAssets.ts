@@ -1,20 +1,25 @@
-import { type TNode, type TRelayChainSymbol } from '../types'
+import { TNodeWithRelayChains, type TRelayChainSymbol } from '../types'
 
-export interface TAssetDetails {
+export type TAsset = TNativeAssetDetails | TAssetDetails
+
+export type TAssetDetails = {
   assetId: string
   symbol?: string
   decimals?: number
 }
-export interface TNativeAssetDetails {
+
+export type TNativeAssetDetails = {
   assetId?: string
   symbol: string
   decimals: number
 }
-export interface TNodeAssets {
-  paraId: number
+
+export type TNodeAssets = {
+  paraId?: number
   relayChainAssetSymbol: TRelayChainSymbol
   nativeAssetSymbol: string
   nativeAssets: TNativeAssetDetails[]
   otherAssets: TAssetDetails[]
 }
-export type TAssetJsonMap = Record<TNode, TNodeAssets>
+
+export type TAssetJsonMap = Record<TNodeWithRelayChains, TNodeAssets>
