@@ -3,7 +3,7 @@ import { createContext } from "react";
 
 interface WalletState {
   selectedAccount?: InjectedAccountWithMeta;
-  setSelectedAccount(account: InjectedAccountWithMeta): void;
+  setSelectedAccount: (account: InjectedAccountWithMeta) => void;
 }
 
 const defaultWalletState: WalletState = {

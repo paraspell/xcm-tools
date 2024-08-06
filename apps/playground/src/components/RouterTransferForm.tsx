@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useForm } from "@mantine/form";
 import {
   EXCHANGE_NODES,
@@ -88,13 +87,20 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
-  const onConnectEvmWallet = async () => {
-    const allAccounts = await web3Accounts();
-    setAccounts(
-      allAccounts.filter((account) => ethers.isAddress(account.address))
-    );
-    openModal();
+  const connectEvmWallet = async () => {
+    try {
+      const allAccounts = await web3Accounts();
+      setAccounts(
+        allAccounts.filter((account) => ethers.isAddress(account.address))
+      );
+      openModal();
+    } catch (error) {
+      console.error("Failed to connect EVM wallet:", error);
+      alert("Failed to connect EVM wallet");
+    }
   };
+
+  const onConnectEvmWallet = () => void connectEvmWallet();
 
   const onAccountDisconnect = () => {
     setSelectedAccount(undefined);

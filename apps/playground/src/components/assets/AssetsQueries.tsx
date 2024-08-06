@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box, Alert, Text } from "@mantine/core";
 import ErrorAlert from "../ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
@@ -17,7 +16,6 @@ import {
   getParaId,
   getRelayChainSymbol,
   hasSupportForAsset,
-  // getBalanceNative,
 } from "@paraspell/sdk";
 import { IconJson } from "@tabler/icons-react";
 
@@ -112,7 +110,7 @@ const AssetsQueries = () => {
     }
   };
 
-  const onSubmit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValues) => {
     setLoading(true);
 
     try {
@@ -137,13 +135,11 @@ const AssetsQueries = () => {
     }
   };
 
-  const onErrorAlertCloseClick = () => {
-    closeErrorAlert();
-  };
+  const onSubmit = (formValues: FormValues) => void submit(formValues);
 
-  const onOutputAlertCloseClick = () => {
-    closeOutputAlert();
-  };
+  const onErrorAlertCloseClick = () => closeErrorAlert();
+
+  const onOutputAlertCloseClick = () => closeOutputAlert();
 
   const jsonIcon = <IconJson size={24} />;
 

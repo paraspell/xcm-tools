@@ -4,10 +4,8 @@ import {
   Button,
   Group,
   Image,
-  MantineColorsTuple,
   MantineProvider,
   NavLink,
-  createTheme,
 } from "@mantine/core";
 import "@mantine/core/styles.css";
 import { useDisclosure } from "@mantine/hooks";
@@ -27,26 +25,7 @@ import RouterTransferPage from "./routes/RouterTransferPage";
 import XcmAnalyserSandbox from "./routes/XcmAnalyserSandbox";
 import XcmSdkSandbox from "./routes/XcmSdkSandbox";
 import AccountsModal from "./components/AccountsModal";
-
-const myColor: MantineColorsTuple = [
-  "#ffe9f6",
-  "#ffd1e6",
-  "#faa1c9",
-  "#f66eab",
-  "#f24391",
-  "#f02881",
-  "#f01879",
-  "#d60867",
-  "#c0005c",
-  "#a9004f",
-];
-
-const theme = createTheme({
-  primaryColor: "myColor",
-  colors: {
-    myColor,
-  },
-});
+import { theme } from "./theme/themeConfig";
 
 const App = () => {
   const [opened, { toggle }] = useDisclosure();
@@ -55,7 +34,6 @@ const App = () => {
 
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { selectedAccount, setSelectedAccount } = useWallet();
 
   const initAccounts = async () => {
@@ -70,22 +48,36 @@ const App = () => {
     setAccounts(allAccounts);
   };
 
-  const onConnectWalletClick = async () => {
-    await initAccounts();
-    openModal();
+  const connectWallet = async () => {
+    try {
+      await initAccounts();
+      openModal();
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+      alert("Failed to connect wallet");
+    }
   };
+
+  const onConnectWalletClick = () => void connectWallet();
 
   const onAccountSelect = (account: InjectedAccountWithMeta) => () => {
     setSelectedAccount(account);
     closeModal();
   };
 
-  const onChangeAccountClick = async () => {
-    if (!accounts.length) {
-      await initAccounts();
+  const changeAccount = async () => {
+    try {
+      if (!accounts.length) {
+        await initAccounts();
+      }
+      openModal();
+    } catch (error) {
+      console.error("Failed to change account:", error);
+      alert("Failed to change account");
     }
-    openModal();
   };
+
+  const onChangeAccountClick = () => void changeAccount();
 
   return (
     <BrowserRouter>
@@ -115,12 +107,10 @@ const App = () => {
               <Image src="logo.png" h="100%" p={8} />
               {selectedAccount ? (
                 <Button
-                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
                   onClick={onChangeAccountClick}
                   variant="outline"
                 >{`${selectedAccount.meta.name} (${selectedAccount.meta.source})`}</Button>
               ) : (
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 <Button onClick={onConnectWalletClick}>Connect wallet</Button>
               )}
             </Group>

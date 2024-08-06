@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box, Button } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
@@ -66,6 +65,8 @@ const EthBridgeTransfer = () => {
     }
   };
 
+  const onConnectWallet = () => void connectWallet();
+
   useEffect(() => {
     if (error) {
       scrollIntoView();
@@ -97,7 +98,7 @@ const EthBridgeTransfer = () => {
       .build();
   };
 
-  const onSubmit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValues) => {
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
       throw new Error("No account selected!");
@@ -119,6 +120,8 @@ const EthBridgeTransfer = () => {
     }
   };
 
+  const onSubmit = (formValues: FormValues) => void submit(formValues);
+
   const onAlertCloseClick = () => {
     closeAlert();
   };
@@ -127,7 +130,7 @@ const EthBridgeTransfer = () => {
     <Stack gap="xl">
       <Stack w="100%" maw={400} mx="auto" gap="lg">
         <Title order={3}>Ethereum Bridge Transfer</Title>
-        <Button size="xs" variant="outline" onClick={connectWallet}>
+        <Button size="xs" variant="outline" onClick={onConnectWallet}>
           {selectedAccount
             ? `Connected: ${selectedAccount.substring(0, 6)}...${selectedAccount.substring(selectedAccount.length - 4)}`
             : "Connect Ethereum Wallet"}

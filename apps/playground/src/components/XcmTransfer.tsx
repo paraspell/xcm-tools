@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "./ErrorAlert";
 import TransferForm, { FormValues } from "./TransferForm";
@@ -65,7 +64,7 @@ const XcmTransfer = () => {
     await submitTransaction(api, tx, signer, injectorAddress);
   };
 
-  const onSubmit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValues) => {
     const { useApi } = formValues;
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -104,9 +103,9 @@ const XcmTransfer = () => {
     }
   };
 
-  const onAlertCloseClick = () => {
-    closeAlert();
-  };
+  const onSubmit = (formValues: FormValues) => void submit(formValues);
+
+  const onAlertCloseClick = () => closeAlert();
 
   return (
     <Stack gap="xl">

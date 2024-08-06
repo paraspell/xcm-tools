@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState } from 'react';
 import { Stack, Title, Box, Group, Button, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -73,7 +72,7 @@ const SendXcm = () => {
     await submitTransaction(api, tx, signer, injectorAddress);
   };
 
-  const onSubmit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValues) => {
     if (!selectedAccount) {
       alert(t('noAccountSelected'));
       throw Error(t('noAccountSelected'));
@@ -97,6 +96,8 @@ const SendXcm = () => {
     }
   };
 
+  const onSubmit = (formValues: FormValues) => void submit(formValues);
+
   const onAlertCloseClick = () => {
     closeAlert();
   };
@@ -106,17 +107,31 @@ const SendXcm = () => {
     closeModal();
   };
 
-  const onConnectWalletClick = async () => {
-    await initAccounts();
-    openModal();
+  const connectWallet = async () => {
+    try {
+      await initAccounts();
+      openModal();
+    } catch (e) {
+      console.error('Failed to connect wallet', e);
+      alert('Failed to connect wallet');
+    }
   };
 
-  const onChangeAccountClick = async () => {
-    if (!accounts.length) {
-      await initAccounts();
+  const onConnectWalletClick = () => void connectWallet();
+
+  const changeAccount = async () => {
+    try {
+      if (!accounts.length) {
+        await initAccounts();
+      }
+      openModal();
+    } catch (e) {
+      console.error('Failed to change account', e);
+      alert('Failed to change account');
     }
-    openModal();
   };
+
+  const onChangeAccountClick = () => void changeAccount();
 
   return (
     <Stack gap="xl">
