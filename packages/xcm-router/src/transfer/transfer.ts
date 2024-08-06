@@ -18,6 +18,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
   if (options.evmSigner !== undefined && options.evmInjectorAddress === undefined) {
     throw new Error('evmInjectorAddress is required when evmSigner is provided');
   }
+
   if (options.evmInjectorAddress !== undefined && options.evmSigner === undefined) {
     throw new Error('evmSigner is required when evmInjectorAddress is provided');
   }

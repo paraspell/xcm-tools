@@ -44,7 +44,7 @@ const getAssetSymbol = (node: TNodeWithRelayChains, assetId: string) => {
   if (node === 'Polkadot' || node === 'Kusama') {
     return getNativeAssetSymbol(node)
   }
-  const asset = getAssetBySymbolOrId(node, assetId)
+  const asset = getAssetBySymbolOrId(node, assetId, false, true)
   return asset?.symbol
 }
 

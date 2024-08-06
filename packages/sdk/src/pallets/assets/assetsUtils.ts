@@ -2,23 +2,32 @@
 
 import { DuplicateAssetError } from '../../errors'
 import {
+  TAsset,
   TAssetDetails,
   TCurrency,
   TCurrencyCore,
   TNativeAssetDetails,
-  type TNode
+  TNodeWithRelayChains
 } from '../../types'
 import { isTMulti } from '../xcmPallet/utils'
-import { getAssetsObject } from './assets'
-
-type TAsset = TAssetDetails | TNativeAssetDetails
+import { getAssetDecimals, getAssetsObject, getOtherAssets } from './assets'
 
 const findAssetBySymbol = (
+  node: TNodeWithRelayChains,
+  destination: TNodeWithRelayChains | undefined,
   otherAssets: TAssetDetails[],
   nativeAssets: TNativeAssetDetails[],
+  combinedAssets: TAsset[],
   symbol: string,
-  isRelayDestination: boolean
+  isRelayDestination: boolean,
+  isSymbol: boolean | undefined
 ) => {
+  if (destination === 'Ethereum') {
+    return combinedAssets.find(
+      ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === symbol.toLowerCase()
+    )
+  }
+
   const otherAssetsMatches = otherAssets.filter(
     ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === symbol.toLowerCase()
   )
@@ -27,8 +36,12 @@ const findAssetBySymbol = (
     ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === symbol.toLowerCase()
   )
 
-  if (otherAssetsMatches.length > 1 && !isRelayDestination) {
+  if (otherAssetsMatches.length > 1 && !isRelayDestination && isSymbol === undefined) {
     throw new DuplicateAssetError(symbol)
+  }
+
+  if (node === 'Astar' || node === 'Shiden') {
+    return nativeAssetsMatches[0] || otherAssetsMatches[0] || null
   }
 
   return otherAssetsMatches[0] || nativeAssetsMatches[0] || null
@@ -38,36 +51,59 @@ const findAssetById = (assets: TAsset[], assetId: TCurrency) =>
   assets.find(({ assetId: currentAssetId }) => currentAssetId === assetId)
 
 export const getAssetBySymbolOrId = (
-  node: TNode,
+  node: TNodeWithRelayChains,
   currency: TCurrencyCore,
   isRelayDestination: boolean = false,
-  isSymbol: boolean | undefined = undefined
-): { symbol?: string; assetId?: string } | null => {
+  isSymbol: boolean | undefined = undefined,
+  destination?: TNodeWithRelayChains
+): TAsset | null => {
   if (isTMulti(currency)) {
     return null
   }
 
   const currencyString = currency.toString()
   const { otherAssets, nativeAssets, relayChainAssetSymbol } = getAssetsObject(node)
-  const combinedAssets = [...otherAssets, ...nativeAssets]
+  const combinedAssets =
+    destination === 'Ethereum' ? [...getOtherAssets('Ethereum')] : [...otherAssets, ...nativeAssets]
 
-  let asset
+  let asset: TAsset | undefined
   if (isSymbol === true) {
-    asset = findAssetBySymbol(otherAssets, nativeAssets, currencyString, isRelayDestination)
+    asset = findAssetBySymbol(
+      node,
+      destination,
+      otherAssets,
+      nativeAssets,
+      combinedAssets,
+      currencyString,
+      isRelayDestination,
+      isSymbol
+    )
   } else if (isSymbol === false) {
     asset = findAssetById(combinedAssets, currencyString)
   } else {
     asset =
-      findAssetBySymbol(otherAssets, nativeAssets, currencyString, isRelayDestination) ||
-      findAssetById(combinedAssets, currencyString)
+      findAssetBySymbol(
+        node,
+        destination,
+        otherAssets,
+        nativeAssets,
+        combinedAssets,
+        currencyString,
+        isRelayDestination,
+        isSymbol
+      ) || findAssetById(combinedAssets, currencyString)
   }
 
   if (asset) {
-    return { symbol: asset.symbol, assetId: asset.assetId }
+    return asset
   }
 
-  if (relayChainAssetSymbol === currencyString && isSymbol !== false) {
-    return { symbol: relayChainAssetSymbol }
+  if (relayChainAssetSymbol.toLowerCase() === currencyString.toLowerCase() && isSymbol !== false) {
+    const relayChainAsset: TNativeAssetDetails = {
+      symbol: relayChainAssetSymbol,
+      decimals: getAssetDecimals(node, relayChainAssetSymbol) as number
+    }
+    return relayChainAsset
   }
 
   return null

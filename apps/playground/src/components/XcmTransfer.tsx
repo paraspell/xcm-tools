@@ -1,6 +1,6 @@
 import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "./ErrorAlert";
-import TransferForm, { FormValues } from "./TransferForm";
+import TransferForm, { FormValuesTransformed } from "./TransferForm";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { Builder, TNode, createApiInstanceForNode } from "@paraspell/sdk";
 import { ApiPromise } from "@polkadot/api";
@@ -31,10 +31,24 @@ const XcmTransfer = () => {
     }
   }, [error, scrollIntoView]);
 
-  const createTransferTx = (
-    { from, to, amount, address, currency }: FormValues,
-    api: ApiPromise
-  ) => {
+  const determineCurrency = ({
+    isCustomCurrency,
+    customCurrency,
+    currency,
+  }: FormValuesTransformed) => {
+    if (isCustomCurrency) {
+      return customCurrency;
+    } else if (currency) {
+      return currency.assetId
+        ? { id: currency.assetId }
+        : { symbol: currency.symbol ?? "" };
+    } else {
+      throw Error("Currency is required");
+    }
+  };
+
+  const createTransferTx = (values: FormValuesTransformed, api: ApiPromise) => {
+    const { from, to, amount, address } = values;
     if (from === "Polkadot" || from === "Kusama") {
       return Builder(api)
         .to(to as TNode)
@@ -47,7 +61,7 @@ const XcmTransfer = () => {
       return Builder(api)
         .from(from)
         .to(to)
-        .currency(currency)
+        .currency(determineCurrency(values))
         .amount(amount)
         .address(address)
         .build();
@@ -55,7 +69,7 @@ const XcmTransfer = () => {
   };
 
   const submitUsingSdk = async (
-    formValues: FormValues,
+    formValues: FormValuesTransformed,
     injectorAddress: string,
     signer: Signer
   ) => {
@@ -64,7 +78,7 @@ const XcmTransfer = () => {
     await submitTransaction(api, tx, signer, injectorAddress);
   };
 
-  const submit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValuesTransformed) => {
     const { useApi } = formValues;
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -78,7 +92,11 @@ const XcmTransfer = () => {
     try {
       if (useApi) {
         await submitTxUsingApi(
-          formValues,
+          {
+            ...formValues,
+            currency:
+              formValues.currency?.symbol ?? formValues.currency?.assetId,
+          },
           formValues.from,
           "/x-transfer",
           selectedAccount.address,
@@ -103,7 +121,8 @@ const XcmTransfer = () => {
     }
   };
 
-  const onSubmit = (formValues: FormValues) => void submit(formValues);
+  const onSubmit = (formValues: FormValuesTransformed) =>
+    void submit(formValues);
 
   const onAlertCloseClick = () => closeAlert();
 

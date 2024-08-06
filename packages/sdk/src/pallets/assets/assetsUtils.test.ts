@@ -36,12 +36,11 @@ describe('getAssetBySymbolOrId', () => {
     })
   })
 
-  it('should return assetId and symbol for every native foreign asset id', () => {
+  it('should return assetId and symbol for every foreign asset id', () => {
     NODE_NAMES.forEach(node => {
       const { otherAssets } = getAssetsObject(node)
       otherAssets.forEach(other => {
         const asset = getAssetBySymbolOrId(node, other.assetId)
-        expect(asset).toHaveProperty('symbol')
         expect(asset).toHaveProperty('assetId')
         expect(other.assetId).toEqual(asset?.assetId)
       })

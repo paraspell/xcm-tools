@@ -117,14 +117,18 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     }
   }
 
+  if (destination === 'Ethereum' && origin !== 'AssetHubPolkadot') {
+    throw new IncompatibleNodesError(
+      'Transfers to Ethereum are only supported from AssetHubPolkadot.'
+    )
+  }
+
   const isMultiLocationDestination = typeof destination === 'object'
   const isMultiLocationCurrency = typeof currency === 'object'
 
   const isBridge =
     (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
-    (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot') ||
-    destination === 'Ethereum'
-
+    (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot')
   const isRelayDestination = destination === undefined
 
   if (!isRelayDestination && !isMultiLocationDestination) {
@@ -141,7 +145,13 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     isMultiLocationCurrency || isBridge ? false : originNode.assetCheckEnabled
 
   const asset = assetCheckEnabled
-    ? getAssetBySymbolOrId(origin, currency, isRelayDestination, isSymbol)
+    ? getAssetBySymbolOrId(
+        origin,
+        currency,
+        isRelayDestination,
+        isSymbol,
+        isTMultiLocation(destination) ? undefined : destination
+      )
     : null
 
   if (!isBridge && asset === null && assetCheckEnabled) {

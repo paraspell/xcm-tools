@@ -1,12 +1,7 @@
 import { type TNode, createApiInstanceForNode } from '@paraspell/sdk';
 import { EXCHANGE_NODES } from '../consts/consts';
 import createDexNodeInstance from '../dexNodes/DexNodeFactory';
-import {
-  type TExchangeNode,
-  type TAssetsRecord,
-  type TCommonTransferOptionsModified,
-  type TCommonTransferOptions,
-} from '../types';
+import { type TCommonTransferOptionsModified, type TCommonTransferOptions } from '../types';
 import { calculateTransactionFee } from '../utils/utils';
 import {
   buildFromExchangeExtrinsic,
@@ -15,14 +10,8 @@ import {
 } from './utils';
 import BigNumber from 'bignumber.js';
 import type ExchangeNode from '../dexNodes/DexNode';
-import * as assetsMapJson from '../consts/assets.json' assert { type: 'json' };
 import Logger from '../Logger/Logger';
-
-const assetsMap = assetsMapJson as TAssetsRecord;
-
-const supportsCurrency = (exchangeNode: TExchangeNode, currency: string): boolean => {
-  return assetsMap[exchangeNode].some((asset) => asset === currency);
-};
+import { supportsCurrency } from '../assets/assets';
 
 export const selectBestExchange = async (
   options: TCommonTransferOptions,
