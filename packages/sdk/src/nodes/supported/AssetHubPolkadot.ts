@@ -20,7 +20,7 @@ import {
   type TRelayToParaInternalOptions,
   type TMultiAsset,
   type TMultiLocation,
-  TJunction
+  type TJunction
 } from '../../types'
 import { generateAddressMultiLocationV4, generateAddressPayload } from '../../utils'
 import ParachainNode from '../ParachainNode'

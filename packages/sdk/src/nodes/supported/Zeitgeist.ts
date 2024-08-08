@@ -5,7 +5,9 @@ import {
   Version,
   type XTokensTransferInput,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TForeignAsset,
+  type TZeitgeistAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -16,7 +18,8 @@ class Zeitgeist extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    const currencySelection = input.currency === 'ZTG' ? 'Ztg' : { ForeignAsset: input.currencyID }
+    const currencySelection: TZeitgeistAsset | TForeignAsset =
+      input.currency === this.getNativeAssetSymbol() ? 'Ztg' : { ForeignAsset: input.currencyID }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }

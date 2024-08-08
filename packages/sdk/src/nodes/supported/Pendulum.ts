@@ -10,7 +10,8 @@ import {
   Version,
   type XTokensTransferInput,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TXcmAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -25,13 +26,15 @@ class Pendulum extends ParachainNode implements IXTokensTransfer {
       throw new ScenarioNotSupportedError(this.node, input.scenario)
     }
 
-    if (input.currency !== 'PEN') {
+    if (input.currency !== this.getNativeAssetSymbol()) {
       throw new InvalidCurrencyError(
         `Asset ${input.currency} is not supported by node ${this.node}.`
       )
     }
 
-    return XTokensTransferImpl.transferXTokens(input, { XCM: input.currencyID })
+    const currencySelection: TXcmAsset = { XCM: input.currencyID }
+
+    return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
   transferRelayToPara(): TSerializedApiCall {

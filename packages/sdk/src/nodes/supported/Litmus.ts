@@ -7,8 +7,8 @@ import {
   type Extrinsic,
   type TSerializedApiCall
 } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Litmus extends ParachainNode implements IXTokensTransfer {
   constructor() {
@@ -17,7 +17,7 @@ class Litmus extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     // Multiple asset options needs addressing
-    return XTokensTransferImpl.transferXTokens(input, 'SelfReserve')
+    return getNode('Litentry').transferXTokens(input)
   }
 }
 

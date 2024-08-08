@@ -3,7 +3,8 @@
 import {
   type Extrinsic,
   type IXTokensTransfer,
-  TNodePolkadotKusama,
+  type TForeignOrTokenAsset,
+  type TNodePolkadotKusama,
   type TSerializedApiCall,
   Version,
   type XTokensTransferInput
@@ -19,7 +20,7 @@ class Acala extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     const { currency, currencyID } = input
-    const currencySelection =
+    const currencySelection: TForeignOrTokenAsset =
       currencyID !== undefined ? { ForeignAsset: currencyID } : { Token: currency }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }

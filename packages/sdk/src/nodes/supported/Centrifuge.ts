@@ -17,7 +17,8 @@ export class Centrifuge extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     const { currency, currencyID } = input
-    const currencySelection = currency === 'CFG' ? 'Native' : { ForeignAsset: currencyID }
+    const currencySelection =
+      currency === this.getNativeAssetSymbol() ? 'Native' : { ForeignAsset: currencyID }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }

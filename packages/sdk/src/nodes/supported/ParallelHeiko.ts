@@ -7,8 +7,8 @@ import {
   type Extrinsic,
   type TSerializedApiCall
 } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class ParallelHeiko extends ParachainNode implements IXTokensTransfer {
   constructor() {
@@ -16,7 +16,7 @@ class ParallelHeiko extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    return XTokensTransferImpl.transferXTokens(input, input.currencyID)
+    return getNode('Parallel').transferXTokens(input)
   }
 }
 

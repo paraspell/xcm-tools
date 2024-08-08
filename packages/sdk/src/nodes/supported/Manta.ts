@@ -5,7 +5,8 @@ import {
   Version,
   type XTokensTransferInput,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TMantaAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -16,7 +17,9 @@ class Manta extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    return XTokensTransferImpl.transferXTokens(input, { MantaCurrency: input.currencyID })
+    const { currencyID } = input
+    const currencySelection: TMantaAsset = { MantaCurrency: currencyID }
+    return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }
 

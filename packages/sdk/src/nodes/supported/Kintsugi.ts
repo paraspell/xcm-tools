@@ -5,7 +5,8 @@ import {
   Version,
   type XTokensTransferInput,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TForeignOrTokenAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -17,7 +18,7 @@ class Kintsugi extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     const { currency, currencyID } = input
-    const currencySelection =
+    const currencySelection: TForeignOrTokenAsset =
       currencyID !== undefined ? { ForeignAsset: currencyID } : { Token: currency }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }

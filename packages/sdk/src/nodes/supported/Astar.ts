@@ -27,11 +27,12 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    return XTokensTransferImpl.transferXTokens(input, input.currencyID)
+    const { currencyID } = input
+    return XTokensTransferImpl.transferXTokens(input, currencyID)
   }
 
   protected canUseXTokens({ currencySymbol, currencyId }: TSendInternalOptions): boolean {
-    return currencySymbol !== 'ASTR' && !!currencyId
+    return currencySymbol !== this.getNativeAssetSymbol() || !!currencyId
   }
 }
 

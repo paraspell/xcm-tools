@@ -6,7 +6,8 @@ import {
   Version,
   type XTokensTransferInput,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TReserveAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -16,8 +17,8 @@ class Crust extends ParachainNode implements IXTokensTransfer {
     super('Crust', 'crustParachain', 'polkadot', Version.V3)
   }
 
-  getCurrencySelection({ currency, currencyID }: XTokensTransferInput) {
-    if (currency === 'CRU') {
+  getCurrencySelection({ currency, currencyID }: XTokensTransferInput): TReserveAsset {
+    if (currency === this.getNativeAssetSymbol()) {
       return 'SelfReserve'
     }
 
