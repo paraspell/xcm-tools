@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Contains basic structure of xToken call
 
 import {
@@ -11,7 +8,9 @@ import {
   type XTokensTransferInput,
   Parents,
   type TCurrencySelectionHeader,
-  type TCurrency
+  type TCurrency,
+  TMultiLocationHeader,
+  TXTokensCurrencySelection
 } from '../types'
 import { getNode, lowercaseFirstLetter } from '../utils'
 
@@ -41,8 +40,8 @@ const getModifiedCurrencySelection = (
 const getCurrencySelection = (
   { origin, amount, currencyID, paraIdTo, overridedCurrencyMultiLocation }: XTokensTransferInput,
   isAssetHub: boolean,
-  currencySelection: any
-): any => {
+  currencySelection: TXTokensCurrencySelection
+): TXTokensCurrencySelection => {
   const { version } = getNode(origin)
 
   if (overridedCurrencyMultiLocation !== undefined)
@@ -57,11 +56,12 @@ const getCurrencySelection = (
 
 const getParameters = (
   isAssetHub: boolean,
-  currencySelection: any,
-  addressSelection: any,
+  currencySelection: TXTokensCurrencySelection,
+  addressSelection: TMultiLocationHeader,
   amount: string,
   fees: string | number,
   feeAsset?: TCurrency
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any[] => {
   if (isAssetHub) {
     return feeAsset !== undefined
@@ -74,7 +74,7 @@ const getParameters = (
 class XTokensTransferImpl {
   static transferXTokens(
     input: XTokensTransferInput,
-    currencySelection: any,
+    currencySelection: TXTokensCurrencySelection,
     fees: string | number = 'Unlimited',
     pallet: TPallet = 'XTokens'
   ): Extrinsic | TSerializedApiCall {

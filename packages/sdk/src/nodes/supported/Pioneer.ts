@@ -5,7 +5,8 @@ import {
   Version,
   type XTokensTransferInput,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TNativeTokenAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -17,7 +18,9 @@ class Pioneer extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     // Multiple asset options needs addressing
-    return XTokensTransferImpl.transferXTokens(input, 'NativeToken', input.fees)
+    const { fees } = input
+    const currencySelection: TNativeTokenAsset = 'NativeToken'
+    return XTokensTransferImpl.transferXTokens(input, currencySelection, fees)
   }
 }
 

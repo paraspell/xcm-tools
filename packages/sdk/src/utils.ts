@@ -20,7 +20,6 @@ import {
   TNodeDotKsmWithRelayChains
 } from './types'
 import { nodes } from './maps/consts'
-import type ParachainNode from './nodes/ParachainNode'
 import { type HexString } from '@polkadot/util/types'
 import { getRelayChainSymbol } from './pallets/assets'
 
@@ -40,7 +39,10 @@ export const getFees = (scenario: TScenario): number => {
   throw new Error(`Fees for scenario ${scenario} are not defined.`)
 }
 
-export const generateAddressMultiLocationV4 = (api: ApiPromise, address: TAddress) => {
+export const generateAddressMultiLocationV4 = (
+  api: ApiPromise,
+  address: TAddress
+): TMultiLocationHeader => {
   const isMultiLocation = typeof address === 'object'
   if (isMultiLocation) {
     return { [Version.V4]: address }
@@ -162,9 +164,7 @@ export const generateAddressPayload = (
   }
 }
 
-export const getNode = (node: TNode): ParachainNode => {
-  return nodes[node]
-}
+export const getNode = <T extends TNode>(node: T): (typeof nodes)[T] => nodes[node]
 
 export const getNodeEndpointOption = (node: TNodePolkadotKusama) => {
   const { type, name } = getNode(node)

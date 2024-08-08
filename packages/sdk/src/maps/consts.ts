@@ -1,7 +1,6 @@
 // Contains supported Parachains and exports supported XCM Pallets
 
 import Acala from '../nodes/supported/Acala'
-import type ParachainNode from '../nodes/ParachainNode'
 import Unique from '../nodes/supported/Unique'
 import { type TNode } from '../types'
 import Crust from '../nodes/supported/Crust'
@@ -129,7 +128,7 @@ export const NODES_WITH_RELAY_CHAINS_DOT_KSM = [
   'Kusama'
 ] as const
 
-export const nodes: Record<TNode, ParachainNode> = {
+export const nodes = {
   AssetHubPolkadot: new AssetHubPolkadot(),
   Acala: new Acala(),
   Astar: new Astar(),
@@ -187,7 +186,7 @@ export const nodes: Record<TNode, ParachainNode> = {
   Ethereum: new Ethereum(),
   Mythos: new Mythos(),
   Peaq: new Peaq()
-}
+} satisfies Record<TNode, unknown>
 
 export const SUPPORTED_PALLETS = [
   'XTokens',

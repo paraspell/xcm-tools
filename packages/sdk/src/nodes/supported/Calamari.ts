@@ -5,7 +5,8 @@ import {
   Version,
   type XTokensTransferInput,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TMantaAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -18,7 +19,8 @@ class Calamari extends ParachainNode implements IXTokensTransfer {
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     // Currently only option for XCM transfer
     const { currencyID } = input
-    return XTokensTransferImpl.transferXTokens(input, { MantaCurrency: currencyID })
+    const currencySelection: TMantaAsset = { MantaCurrency: currencyID }
+    return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }
 

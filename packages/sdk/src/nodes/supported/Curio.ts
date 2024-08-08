@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for Curio Parachain
 
 import {
+  TForeignOrTokenAsset,
   Version,
   type Extrinsic,
   type IXTokensTransfer,
@@ -15,7 +16,10 @@ class Curio extends ParachainNode implements IXTokensTransfer {
     super('Curio', 'curio', 'kusama', Version.V3)
   }
 
-  private getCurrencySelection({ currency, currencyID }: XTokensTransferInput) {
+  private getCurrencySelection({
+    currency,
+    currencyID
+  }: XTokensTransferInput): TForeignOrTokenAsset {
     if (currencyID) {
       return { ForeignAsset: currencyID }
     }

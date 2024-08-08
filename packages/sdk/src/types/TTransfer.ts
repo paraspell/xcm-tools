@@ -1,20 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type ApiPromise } from '@polkadot/api'
-import { type TMultiLocation } from './TMultiLocation'
+import { TMultiLocationHeader, type TMultiLocation } from './TMultiLocation'
 import { TNodePolkadotKusama, type TNode } from './TNode'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type TMultiAsset } from './TMultiAsset'
-import { TCurrency, TCurrencyInput } from './TCurrency'
+import { TCurrency, TCurrencyInput, TCurrencySelectionHeaderArr } from './TCurrency'
 
 export type Extrinsic = SubmittableExtrinsic<'promise'>
 
 export interface PolkadotXCMTransferInput {
   api: ApiPromise
-  header: any
-  addressSelection: any
+  header: TMultiLocationHeader
+  addressSelection: TMultiLocationHeader
   amount: string
   address: TAddress
-  currencySelection: any
+  currencySelection: TCurrencySelectionHeaderArr
   scenario: TScenario
   currencySymbol: string | undefined
   currencyId: string | undefined
@@ -30,7 +29,7 @@ export interface XTokensTransferInput {
   currency: string | undefined
   currencyID: string | undefined
   amount: string
-  addressSelection: any
+  addressSelection: TMultiLocationHeader
   fees: number
   scenario: TScenario
   origin: TNode
@@ -141,6 +140,7 @@ export interface TRelayToParaCommonOptions extends TRelayToParaOptions {
 export interface TSerializedApiCall {
   module: string
   section: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parameters: any[]
 }
 

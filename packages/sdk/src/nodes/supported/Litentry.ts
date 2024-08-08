@@ -5,7 +5,8 @@ import {
   Version,
   type XTokensTransferInput,
   type Extrinsic,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  type TSelfReserveAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -16,7 +17,8 @@ class Litentry extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    return XTokensTransferImpl.transferXTokens(input, 'SelfReserve')
+    const currencySelection: TSelfReserveAsset = 'SelfReserve'
+    return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }
 

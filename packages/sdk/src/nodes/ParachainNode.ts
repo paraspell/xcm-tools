@@ -3,7 +3,7 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
-import { getParaId } from '../pallets/assets'
+import { getNativeAssetSymbol, getParaId } from '../pallets/assets'
 import {
   type TNode,
   type TRelayChainType,
@@ -218,6 +218,10 @@ abstract class ParachainNode {
     paraId?: number
   ): TMultiLocationHeader {
     return createPolkadotXcmHeader(scenario, version, destination, paraId)
+  }
+
+  getNativeAssetSymbol(): string {
+    return getNativeAssetSymbol(this.node)
   }
 }
 

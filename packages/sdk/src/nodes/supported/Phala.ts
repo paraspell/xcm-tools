@@ -16,7 +16,7 @@ class Phala extends ParachainNode implements IXTransferTransfer {
 
   transferXTransfer(input: XTransferTransferInput): Extrinsic | TSerializedApiCall {
     const { currency } = input
-    if (currency !== 'PHA') {
+    if (currency !== this.getNativeAssetSymbol()) {
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${currency}`)
     }
     return XTransferTransferImpl.transferXTransfer(input)

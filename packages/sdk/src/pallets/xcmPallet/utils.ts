@@ -62,7 +62,10 @@ export const isTCurrencySpecifier = (value: any): value is TCurrencySpecifier =>
   )
 }
 
-export const createBridgeCurrencySpec = (amount: string, ecosystem: 'Polkadot' | 'Kusama') => {
+export const createBridgeCurrencySpec = (
+  amount: string,
+  ecosystem: 'Polkadot' | 'Kusama'
+): TCurrencySelectionHeaderArr => {
   return {
     [Version.V4]: [
       {

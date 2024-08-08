@@ -10,9 +10,8 @@ import {
   type TSerializedApiCall,
   type XTokensTransferInput
 } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
-import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTransfer {
   constructor() {
@@ -22,17 +21,15 @@ class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTran
   transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
     // Same as Astar, works
     // https://shiden.subscan.io/xcm_message/kusama-97eb47c25c781affa557f36dbd117d49f7e1ab4e
-    const method =
-      input.scenario === 'ParaToPara' ? 'reserveTransferAssets' : 'reserveWithdrawAssets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, method)
+    return getNode('Astar').transferPolkadotXCM(input)
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    return XTokensTransferImpl.transferXTokens(input, input.currencyID)
+    return getNode('Astar').transferXTokens(input)
   }
 
   protected canUseXTokens({ currencySymbol, currencyId }: TSendInternalOptions): boolean {
-    return currencySymbol !== 'SDN' && !!currencyId
+    return currencySymbol !== this.getNativeAssetSymbol() || !!currencyId
   }
 }
 

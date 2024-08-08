@@ -5,7 +5,6 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import { getNativeAssetSymbol } from '../../pallets/assets'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -27,7 +26,7 @@ class Mythos extends ParachainNode implements IPolkadotXCMTransfer {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
 
-    const nativeSymbol = getNativeAssetSymbol(this.node)
+    const nativeSymbol = this.getNativeAssetSymbol()
     if (currencySymbol !== nativeSymbol) {
       throw new InvalidCurrencyError(
         `Node ${this.node} does not support currency ${currencySymbol}`

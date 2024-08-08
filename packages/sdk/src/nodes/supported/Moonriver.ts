@@ -7,7 +7,9 @@ import {
   type XTokensTransferInput,
   type Extrinsic,
   type TSerializedApiCall,
-  type TRelayToParaInternalOptions
+  type TRelayToParaInternalOptions,
+  type TForeignAsset,
+  type TSelfReserveAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -19,7 +21,8 @@ class Moonriver extends ParachainNode implements IXTokensTransfer {
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
     const { currency, currencyID } = input
-    const currencySelection = currency === 'MOVR' ? 'SelfReserve' : { ForeignAsset: currencyID }
+    const currencySelection: TSelfReserveAsset | TForeignAsset =
+      currency === this.getNativeAssetSymbol() ? 'SelfReserve' : { ForeignAsset: currencyID }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 

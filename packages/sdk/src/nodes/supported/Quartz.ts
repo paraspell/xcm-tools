@@ -7,8 +7,8 @@ import {
   type IXTokensTransfer,
   type XTokensTransferInput
 } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Quartz extends ParachainNode implements IXTokensTransfer {
   constructor() {
@@ -18,8 +18,7 @@ class Quartz extends ParachainNode implements IXTokensTransfer {
   _assetCheckEnabled = false
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    const { currencyID } = input
-    return XTokensTransferImpl.transferXTokens(input, { ForeignAssetId: currencyID })
+    return getNode('Unique').transferXTokens(input)
   }
 }
 

@@ -7,7 +7,9 @@ import {
   type IXTokensTransfer,
   type XTokensTransferInput,
   type TScenario,
-  Parents
+  Parents,
+  type TSelfReserveAsset,
+  type TForeignAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import { NodeNotSupportedError } from '../../errors'
@@ -21,10 +23,10 @@ class Darwinia extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    return XTokensTransferImpl.transferXTokens(
-      input,
-      input.currency === 'RING' ? 'SelfReserve' : { ForeignAsset: input.currencyID }
-    )
+    const { currencyID } = input
+    const currencySelection: TSelfReserveAsset | TForeignAsset =
+      input.currency === this.getNativeAssetSymbol() ? 'SelfReserve' : { ForeignAsset: currencyID }
+    return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
   transferRelayToPara(): TSerializedApiCall {

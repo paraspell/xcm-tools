@@ -15,7 +15,6 @@ import {
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
-import type AssetHubPolkadot from './AssetHubPolkadot'
 
 class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
@@ -27,10 +26,7 @@ class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
     // TESTED https://kusama.subscan.io/xcm_message/kusama-8e423130a4d8b61679af95dbea18a55124f99672
 
     if (input.destination === 'AssetHubPolkadot') {
-      return (getNode('AssetHubPolkadot') as AssetHubPolkadot).handleBridgeTransfer(
-        input,
-        'Polkadot'
-      )
+      return getNode('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot')
     }
 
     const { scenario } = input

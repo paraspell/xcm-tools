@@ -6,11 +6,10 @@ import {
   type XTokensTransferInput,
   type Extrinsic,
   type TSerializedApiCall,
-  TNodePolkadotKusama
+  type TNodePolkadotKusama
 } from '../../types'
-import { getAllNodeProviders } from '../../utils'
+import { getAllNodeProviders, getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../XTokensTransferImpl'
 
 class Karura extends ParachainNode implements IXTokensTransfer {
   constructor() {
@@ -18,10 +17,7 @@ class Karura extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    const { currency, currencyID } = input
-    const currencySelection =
-      currencyID !== undefined ? { ForeignAsset: currencyID } : { Token: currency }
-    return XTokensTransferImpl.transferXTokens(input, currencySelection)
+    return getNode('Acala').transferXTokens(input)
   }
 
   getProvider(): string {

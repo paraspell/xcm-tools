@@ -5,13 +5,12 @@ import {
   NodeNotSupportedError,
   InvalidCurrencyError
 } from '../../errors'
-import { getNativeAssetSymbol } from '../../pallets/assets'
 import {
-  Extrinsic,
-  IXTokensTransfer,
-  TSerializedApiCall,
+  type Extrinsic,
+  type IXTokensTransfer,
+  type TSerializedApiCall,
   Version,
-  XTokensTransferInput
+  type XTokensTransferInput
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
@@ -27,7 +26,7 @@ class Bajun extends ParachainNode implements IXTokensTransfer {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
 
-    const nativeSymbol = getNativeAssetSymbol(this.node)
+    const nativeSymbol = this.getNativeAssetSymbol()
     if (currency !== nativeSymbol) {
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${currency}`)
     }

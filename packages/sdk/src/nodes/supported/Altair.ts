@@ -15,13 +15,10 @@ class Altair extends ParachainNode implements IXTokensTransfer {
     super('Altair', 'altair', 'kusama', Version.V3)
   }
 
-  private static getCurrencySelection({ currency, currencyID }: XTokensTransferInput) {
-    if (currency === 'AIR') return 'Native'
-    return { ForeignAsset: currencyID }
-  }
-
   transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
-    const currencySelection = Altair.getCurrencySelection(input)
+    const { currency, currencyID } = input
+    const currencySelection =
+      currency === this.getNativeAssetSymbol() ? 'Native' : { ForeignAsset: currencyID }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }
