@@ -3,8 +3,17 @@
 import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import prettierConfig from "eslint-config-prettier";
+import reactPlugin from "eslint-plugin-react";
+import globals from "globals";
 
 export default tseslint.config(
+  {
+    settings: {
+      react: {
+        version: "18.3.1",
+      },
+    },
+  },
   {
     ignores: [
       "eslint.config.js",
@@ -48,6 +57,31 @@ export default tseslint.config(
     files: ["**/*.test.ts"],
     rules: {
       "@typescript-eslint/no-unsafe-assignment": "off",
+    },
+  },
+  {
+    files: [
+      "apps/{playground,visualizator-fe,landing-page}/**/*.ts",
+      "apps/{playground,visualizator-fe,landing-page}/**/*.tsx",
+    ],
+    ...reactPlugin.configs.flat.recommended,
+    rules: {
+      ...reactPlugin.configs.flat.recommended.rules,
+      ...reactPlugin.configs.flat["jsx-runtime"].rules,
+      "react/prop-types": "off",
+      "react/no-unknown-property": "off",
+    },
+    languageOptions: {
+      ...reactPlugin.configs.flat.recommended.languageOptions,
+      parserOptions: {
+        ...reactPlugin.configs.flat.recommended.languageOptions.parserOptions,
+        ...reactPlugin.configs.flat["jsx-runtime"].languageOptions
+          .parserOptions,
+      },
+      globals: {
+        ...globals.serviceworker,
+        ...globals.browser,
+      },
     },
   }
 );

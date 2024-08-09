@@ -63,7 +63,7 @@ export function Tryit() {
         <Text c="dimmed" maw={550}>
           Get hands-on with our API instantly in our interactive playground. No
           setup needed—just experiment, see real-time results, and gauge the
-          API's fit for your projects. Ready to explore its full potential
+          API&apos;s fit for your projects. Ready to explore its full potential
           effortlessly?
         </Text>
 

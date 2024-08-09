@@ -19,14 +19,18 @@ const data = [
 ];
 
 export const Footer = () => {
-  const groups = data.map((group) => {
+  const groups = data.map((group, indexGroup) => {
     const links = group.links.map((link, index) => (
-      <Link key={index} className={classes.link} to={link.link}>
+      <Link key={index + indexGroup} className={classes.link} to={link.link}>
         {link.label}
       </Link>
     ));
 
-    return <div className={classes.wrapper}>{links}</div>;
+    return (
+      <div key={indexGroup} className={classes.wrapper}>
+        {links}
+      </div>
+    );
   });
 
   return (
