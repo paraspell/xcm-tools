@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.2.2...xcm-router-v1.3.0) (2024-08-09)
+
+
+### Features
+
+* Add Select component for selecting assets ([850483f](https://github.com/paraspell/xcm-tools/commit/850483fc75dbef266b46a5bbb15da8517985c620))
+
+
+### Miscellaneous Chores
+
+* Remove unused standard-version package 🔨 ([f36f10c](https://github.com/paraspell/xcm-tools/commit/f36f10ccbdf67ec61fea78a9fe20030b5fcea705))
+
+
+### Build System
+
+* Update all package commands to use pnpm ([5478cf3](https://github.com/paraspell/xcm-tools/commit/5478cf3166613eb7fdd9571bc20811d45d1d2fcd))
+
+
+### Continuous Integration
+
+* Integrate Codecov PR comments 💬 ([220da1b](https://github.com/paraspell/xcm-tools/commit/220da1b6d060b7aa4d8262e779256e40ce145f3f))
+
 ## [1.2.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.2.1...xcm-router-v1.2.2) (2024-07-27)
 
 ### Miscellaneous Chores
