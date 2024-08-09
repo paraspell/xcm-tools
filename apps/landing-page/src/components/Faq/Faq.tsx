@@ -28,7 +28,7 @@ export function Faq() {
           </Accordion.Control>
           <Accordion.Panel>
             To use XCM API, simply make HTTP requests from your application to
-            our API endpoints. There's no need to install any dependencies.
+            our API endpoints. There&apos;s no need to install any dependencies.
             Check our documentation for detailed API endpoints, request formats,
             and example code to help you get started.
           </Accordion.Panel>
@@ -41,8 +41,8 @@ export function Faq() {
           <Accordion.Panel>
             The XCM API is entirely free to use, offering developers a generous
             way to integrate and test their applications without any cost.
-            However, it's important to note that while the API itself does not
-            incur charges, there are rate limits to consider. Without an API
+            However, it&apos;s important to note that while the API itself does
+            not incur charges, there are rate limits to consider. Without an API
             key, users are limited to 20 requests per minute. By generating an
             API key, this limit increases to 100 requests per minute,
             facilitating the development and scaling of applications. To obtain

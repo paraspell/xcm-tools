@@ -8,7 +8,7 @@ import RococoLogo from '../../logos/icons/rococo.svg?react';
 
 type Props = {
   value: string | null;
-  onChange(value: Ecosystem): void;
+  onChange: (value: Ecosystem) => void;
 };
 
 const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
