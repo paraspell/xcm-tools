@@ -15,6 +15,7 @@ export enum EventName {
   GET_DEFAULT_PALLET = 'Get Default Pallet',
   GET_SUPPORTED_PALLETS = 'Get Supported Pallets',
   GENERATE_XCM_CALL = 'Generate XCM Call',
+  GENERATE_ETH_CALL = 'Generate ETH Call',
   GENERATE_API_KEY = 'Generate API Key',
   GENERATE_ROUTER_EXTRINSICS = 'Generate router extrinsics',
   CLAIM_ASSETS = 'Claim assets',

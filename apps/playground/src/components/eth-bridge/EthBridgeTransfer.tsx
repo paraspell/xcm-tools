@@ -1,13 +1,24 @@
 import { Stack, Title, Box, Button } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
-import { BrowserProvider, ethers } from "ethers";
+import { BrowserProvider, ethers, LogDescription } from "ethers";
 import ErrorAlert from "../ErrorAlert";
 import EthBridgeTransferForm, {
   FormValues,
   FormValuesTransformed,
 } from "./EthBridgeTransferForm";
 import { EvmBuilder } from "@paraspell/sdk";
+import { fetchFromApi } from "../../utils/submitUsingApi";
+import { IGateway__factory } from "@snowbridge/contract-types";
+import { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
+
+interface ApiResponse {
+  token: string;
+  destinationParaId: number;
+  destinationFee: string;
+  amount: string;
+  fee: string;
+}
 
 const EthBridgeTransfer = () => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -76,7 +87,7 @@ const EthBridgeTransfer = () => {
     }
   }, [error, scrollIntoView]);
 
-  const submitEthTransaction = async ({
+  const submitEthTransactionSdk = async ({
     to,
     amount,
     currency,
@@ -101,6 +112,74 @@ const EthBridgeTransfer = () => {
       .build();
   };
 
+  const submitEthTransactionApi = async (formValues: FormValuesTransformed) => {
+    if (!provider) {
+      throw new Error("Provider not initialized");
+    }
+
+    const signer = await provider.getSigner();
+
+    if (!signer) {
+      throw new Error("Signer not initialized");
+    }
+
+    const apiResonse = (await fetchFromApi(
+      {
+        ...formValues,
+        destAddress: formValues.address,
+        address: await signer.getAddress(),
+        currency: formValues.currency?.symbol,
+      },
+      "/x-transfer-eth",
+      "POST",
+      true
+    )) as ApiResponse;
+
+    const GATEWAY_CONTRACT = "0xEDa338E4dC46038493b885327842fD3E301CaB39";
+
+    const contract = IGateway__factory.connect(GATEWAY_CONTRACT, signer);
+
+    const abi = ethers.AbiCoder.defaultAbiCoder();
+
+    const address: MultiAddressStruct = {
+      data: abi.encode(["bytes32"], [formValues.address]),
+      kind: 1,
+    };
+
+    const response = await contract.sendToken(
+      apiResonse.token,
+      apiResonse.destinationParaId,
+      address,
+      apiResonse.destinationFee,
+      apiResonse.amount,
+      {
+        value: apiResonse.fee,
+      }
+    );
+    const receipt = await response.wait(1);
+
+    if (receipt === null) {
+      throw new Error("Error waiting for transaction completion");
+    }
+
+    if (receipt?.status !== 1) {
+      throw new Error("Transaction failed");
+    }
+
+    const events: LogDescription[] = [];
+    receipt.logs.forEach((log) => {
+      const event = contract.interface.parseLog({
+        topics: [...log.topics],
+        data: log.data,
+      });
+      if (event !== null) {
+        events.push(event);
+      }
+    });
+
+    return true;
+  };
+
   const submit = async (formValues: FormValues) => {
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -110,7 +189,11 @@ const EthBridgeTransfer = () => {
     setLoading(true);
 
     try {
-      await submitEthTransaction(formValues);
+      if (formValues.useApi) {
+        await submitEthTransactionApi(formValues);
+      } else {
+        await submitEthTransactionSdk(formValues);
+      }
       alert("Transaction was successful!");
     } catch (e) {
       if (e instanceof Error) {

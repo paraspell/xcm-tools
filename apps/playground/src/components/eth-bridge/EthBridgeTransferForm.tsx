@@ -1,6 +1,6 @@
 import { useForm } from "@mantine/form";
 import { FC } from "react";
-import { Button, Select, Stack, TextInput } from "@mantine/core";
+import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
 import {
   NODES_WITH_RELAY_CHAINS,
   TAsset,
@@ -14,6 +14,7 @@ export type FormValues = {
   currencyOptionId: string;
   address: string;
   amount: string;
+  useApi: boolean;
 };
 
 export type FormValuesTransformed = FormValues & {
@@ -32,6 +33,7 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
       currencyOptionId: "",
       amount: "1000000000",
       address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
+      useApi: false,
     },
 
     validate: {
@@ -101,6 +103,8 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           required
           {...form.getInputProps("amount")}
         />
+
+        <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
 
         <Button type="submit" loading={loading}>
           Submit transaction
