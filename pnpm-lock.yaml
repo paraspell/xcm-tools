@@ -93,7 +93,7 @@ importers:
         version: 7.0.1(postcss@8.4.41)
       vite:
         specifier: ^5.4.0
-        version: 5.4.0(@types/node@20.14.12)(sugarss@4.0.1(postcss@8.4.41))(terser@5.31.0)
+        version: 5.4.0(@types/node@20.14.12)(sugarss@4.0.1)(terser@5.31.0)
 
   apps/playground:
     dependencies:
@@ -130,6 +130,9 @@ importers:
       '@polkadot/util':
         specifier: ^13.0.2
         version: 13.0.2
+      '@snowbridge/contract-types':
+        specifier: ^0.1.18
+        version: 0.1.18(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@tabler/icons-react':
         specifier: ^3.11.0
         version: 3.11.0(react@18.3.1)
@@ -459,10 +462,10 @@ importers:
         version: 12.2.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/apps-config':
         specifier: ^0.142.1
-        version: 0.142.1(@polkadot/keyring@13.0.2(@polkadot/util-crypto@13.0.2(@polkadot/util@13.0.2))(@polkadot/util@13.0.2))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(utf-8-validate@5.0.10)
+        version: 0.142.1(@polkadot/keyring@13.0.2(@polkadot/util-crypto@12.6.2(@polkadot/util@13.0.2))(@polkadot/util@13.0.2))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(utf-8-validate@5.0.10)
       '@polkadot/keyring':
         specifier: ^13.0.2
-        version: 13.0.2(@polkadot/util-crypto@13.0.2(@polkadot/util@13.0.2))(@polkadot/util@13.0.2)
+        version: 13.0.2(@polkadot/util-crypto@12.6.2(@polkadot/util@13.0.2))(@polkadot/util@13.0.2)
       '@polkadot/types':
         specifier: ^12.2.2
         version: 12.2.2
@@ -472,6 +475,9 @@ importers:
       '@sentry/node':
         specifier: ^7.73.0
         version: 7.118.0
+      '@snowbridge/api':
+        specifier: ^0.1.17
+        version: 0.1.17(bufferutil@4.0.8)(typechain@8.3.2(typescript@5.5.4))(typescript@5.5.4)(utf-8-validate@5.0.10)
       axios:
         specifier: ^1.7.2
         version: 1.7.2
@@ -481,6 +487,9 @@ importers:
       class-validator:
         specifier: ^0.14.1
         version: 0.14.1
+      ethers:
+        specifier: ^6.13.2
+        version: 6.13.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       express:
         specifier: ^4.19.2
         version: 4.19.2
@@ -580,7 +589,7 @@ importers:
         version: 12.2.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/apps-config':
         specifier: ^0.142.1
-        version: 0.142.1(@polkadot/keyring@13.0.2(@polkadot/util-crypto@12.6.2(@polkadot/util@13.0.2))(@polkadot/util@13.0.2))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(utf-8-validate@5.0.10)
+        version: 0.142.1(@polkadot/keyring@13.0.2(@polkadot/util-crypto@13.0.2(@polkadot/util@13.0.2))(@polkadot/util@13.0.2))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(utf-8-validate@5.0.10)
       '@polkadot/types':
         specifier: ^12.2.2
         version: 12.2.2
@@ -645,7 +654,7 @@ importers:
         version: 6.1.0(rollup@4.19.0)
       '@vitest/coverage-v8':
         specifier: ^2.0.5
-        version: 2.0.5(vitest@2.0.5(@types/node@20.14.12)(jsdom@24.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(sugarss@4.0.1)(terser@5.31.0))
+        version: 2.0.5(vitest@2.0.5(@types/node@20.14.12)(jsdom@24.1.1)(sugarss@4.0.1)(terser@5.31.0))
       rollup:
         specifier: ^4.19.0
         version: 4.19.0
@@ -4046,6 +4055,9 @@ packages:
 
   '@snowbridge/contract-types@0.1.17':
     resolution: {integrity: sha512-obMU6z4RfJSh3fmXbmmHhlLl7J55K6ItzJYkE92aQcVG7LE3f+4DyEiWBwkkp2Ijb2+AJLCByld582XfFmnTVA==}
+
+  '@snowbridge/contract-types@0.1.18':
+    resolution: {integrity: sha512-lXg66i0aj3HHMz7UgIiN+NNvEHHlgWQiO8TA41KxVzu4wmlVjZGPWiS+PHPsMtwGT1WURX2XyY7XgSKHUBSApA==}
 
   '@snowfork/snowbridge-types@0.2.7':
     resolution: {integrity: sha512-Dz3OM8xvYhzL7XU/QOjgyPWZI4IgPKGByaJo6eZe3UMS6F7TLaFaZW1oYhQVTTahGWWAE6ZwwCuMkVh2FC/9bw==}
@@ -14694,6 +14706,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  '@snowbridge/contract-types@0.1.18(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+    dependencies:
+      ethers: 6.13.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@snowfork/snowbridge-types@0.2.7(@polkadot/util-crypto@13.0.2(@polkadot/util@13.0.2))(@polkadot/util@13.0.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/api': 12.2.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -15404,7 +15423,7 @@ snapshots:
       '@babel/plugin-transform-react-jsx-source': 7.24.1(@babel/core@7.24.7)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.4.0(@types/node@20.14.12)(sugarss@4.0.1(postcss@8.4.41))(terser@5.31.0)
+      vite: 5.4.0(@types/node@20.14.12)(sugarss@4.0.1)(terser@5.31.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -15427,6 +15446,24 @@ snapshots:
       - supports-color
 
   '@vitest/coverage-v8@2.0.5(vitest@2.0.5(@types/node@20.14.12)(jsdom@24.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(sugarss@4.0.1)(terser@5.31.0))':
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@bcoe/v8-coverage': 0.2.3
+      debug: 4.3.5
+      istanbul-lib-coverage: 3.2.2
+      istanbul-lib-report: 3.0.1
+      istanbul-lib-source-maps: 5.0.6
+      istanbul-reports: 3.1.7
+      magic-string: 0.30.10
+      magicast: 0.3.4
+      std-env: 3.7.0
+      test-exclude: 7.0.1
+      tinyrainbow: 1.2.0
+      vitest: 2.0.5(@types/node@20.14.12)(jsdom@24.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(sugarss@4.0.1)(terser@5.31.0)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@vitest/coverage-v8@2.0.5(vitest@2.0.5(@types/node@20.14.12)(jsdom@24.1.1)(sugarss@4.0.1)(terser@5.31.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -21004,6 +21041,24 @@ snapshots:
       - supports-color
       - terser
 
+  vite-node@2.0.5(@types/node@20.14.12)(sugarss@4.0.1)(terser@5.31.0):
+    dependencies:
+      cac: 6.7.14
+      debug: 4.3.5
+      pathe: 1.1.2
+      tinyrainbow: 1.2.0
+      vite: 5.4.0(@types/node@20.14.12)(sugarss@4.0.1)(terser@5.31.0)
+    transitivePeerDependencies:
+      - '@types/node'
+      - less
+      - lightningcss
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+
   vite-plugin-node-polyfills@0.22.0(rollup@4.19.0)(vite@5.3.5(@types/node@20.14.12)(sugarss@4.0.1(postcss@8.4.40))(terser@5.31.0)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.19.0)
@@ -21038,6 +21093,17 @@ snapshots:
       sugarss: 4.0.1(postcss@8.4.40)
       terser: 5.31.0
 
+  vite@5.3.5(@types/node@20.14.12)(sugarss@4.0.1)(terser@5.31.0):
+    dependencies:
+      esbuild: 0.21.5
+      postcss: 8.4.41
+      rollup: 4.19.0
+    optionalDependencies:
+      '@types/node': 20.14.12
+      fsevents: 2.3.3
+      sugarss: 4.0.1(postcss@8.4.41)
+      terser: 5.31.0
+
   vite@5.4.0(@types/node@20.14.12)(sugarss@4.0.1(postcss@8.4.40))(terser@5.31.0):
     dependencies:
       esbuild: 0.21.5
@@ -21049,7 +21115,7 @@ snapshots:
       sugarss: 4.0.1(postcss@8.4.40)
       terser: 5.31.0
 
-  vite@5.4.0(@types/node@20.14.12)(sugarss@4.0.1(postcss@8.4.41))(terser@5.31.0):
+  vite@5.4.0(@types/node@20.14.12)(sugarss@4.0.1)(terser@5.31.0):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.41
@@ -21094,6 +21160,40 @@ snapshots:
       - supports-color
       - terser
 
+  vitest@2.0.5(@types/node@20.14.12)(jsdom@24.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(sugarss@4.0.1)(terser@5.31.0):
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@vitest/expect': 2.0.5
+      '@vitest/pretty-format': 2.0.5
+      '@vitest/runner': 2.0.5
+      '@vitest/snapshot': 2.0.5
+      '@vitest/spy': 2.0.5
+      '@vitest/utils': 2.0.5
+      chai: 5.1.1
+      debug: 4.3.5
+      execa: 8.0.1
+      magic-string: 0.30.10
+      pathe: 1.1.2
+      std-env: 3.7.0
+      tinybench: 2.8.0
+      tinypool: 1.0.0
+      tinyrainbow: 1.2.0
+      vite: 5.3.5(@types/node@20.14.12)(sugarss@4.0.1)(terser@5.31.0)
+      vite-node: 2.0.5(@types/node@20.14.12)(sugarss@4.0.1)(terser@5.31.0)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@types/node': 20.14.12
+      jsdom: 24.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - less
+      - lightningcss
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+
   vitest@2.0.5(@types/node@20.14.12)(jsdom@24.1.1)(sugarss@4.0.1)(terser@5.31.0):
     dependencies:
       '@ampproject/remapping': 2.3.0
@@ -21112,8 +21212,8 @@ snapshots:
       tinybench: 2.8.0
       tinypool: 1.0.0
       tinyrainbow: 1.2.0
-      vite: 5.3.5(@types/node@20.14.12)(sugarss@4.0.1(postcss@8.4.40))(terser@5.31.0)
-      vite-node: 2.0.5(@types/node@20.14.12)(sugarss@4.0.1(postcss@8.4.40))(terser@5.31.0)
+      vite: 5.3.5(@types/node@20.14.12)(sugarss@4.0.1)(terser@5.31.0)
+      vite-node: 2.0.5(@types/node@20.14.12)(sugarss@4.0.1)(terser@5.31.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 20.14.12

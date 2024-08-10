@@ -22,6 +22,7 @@
     "@polkadot/extension-inject": "^0.49.3",
     "@polkadot/keyring": "^13.0.2",
     "@polkadot/util": "^13.0.2",
+    "@snowbridge/contract-types": "^0.1.18",
     "@tabler/icons-react": "^3.11.0",
     "axios": "^1.7.2",
     "ethers": "^6.13.2",
