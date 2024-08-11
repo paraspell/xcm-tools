@@ -1,6 +1,7 @@
 import { type TNodeWithRelayChains, type Extrinsic, type TNode } from '@paraspell/sdk';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts/consts';
+import { Signer as EthSigner } from 'ethers';
 
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 
@@ -23,6 +24,8 @@ export enum TransactionType {
   SWAP = 'SWAP',
   TO_DESTINATION = 'TO_DESTINATION',
   FULL_TRANSFER = 'FULL_TRANSFER',
+  FROM_ETH = 'FROM_ETH',
+  TO_ETH = 'TO_ETH',
 }
 
 export interface TTxProgressInfo {
@@ -49,10 +52,12 @@ export interface TTransferOptions {
   amount: string;
   injectorAddress: string;
   evmInjectorAddress?: string;
+  assetHubAddress?: string;
   recipientAddress: string;
   slippagePct: string;
   signer: Signer;
   evmSigner?: Signer;
+  ethSigner?: EthSigner;
   exchange?: TExchangeNode;
   onStatusChange?: (info: TTxProgressInfo) => void;
   type?: TransactionType;

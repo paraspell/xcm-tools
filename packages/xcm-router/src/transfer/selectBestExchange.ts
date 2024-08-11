@@ -38,7 +38,9 @@ export const selectBestExchange = async (
       exchange: dex.node,
       feeCalcAddress: determineFeeCalcAddress(options.injectorAddress, options.recipientAddress),
     };
-    const originApi = await createApiInstanceForNode(from);
+    const originApi = await createApiInstanceForNode(
+      from === 'Ethereum' ? 'AssetHubPolkadot' : from,
+    );
     const swapApi = await dex.createApiInstance();
     try {
       const toDestTx = await buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);

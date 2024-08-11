@@ -15,7 +15,7 @@ export const buildToExchangeExtrinsic = async (
     return await builder.to(exchange).amount(amount).address(injectorAddress).build();
   }
   return await builder
-    .from(from)
+    .from(from === 'Ethereum' ? 'AssetHubPolkadot' : from)
     .to(exchange)
     .currency({
       symbol: currencyFrom,
@@ -34,9 +34,10 @@ export const buildFromExchangeExtrinsic = async (
   if (to === 'Polkadot' || to === 'Kusama') {
     return await builder.from(exchange).amount(amountOut).address(address).build();
   }
+
   return await builder
     .from(exchange)
-    .to(to)
+    .to(to === 'Ethereum' ? 'AssetHubPolkadot' : to)
     .currency({
       symbol: currencyTo,
     })
@@ -61,8 +62,6 @@ export const submitTransferToExchange = async (
   const { from, currencyFrom, signer, injectorAddress, evmSigner, evmInjectorAddress } = options;
   validateRelayChainCurrency(from, currencyFrom);
   const tx = await buildToExchangeExtrinsic(api, options);
-  console.log('evmSigner', evmSigner ?? signer);
-  console.log('evmInjectorAddress', evmInjectorAddress ?? injectorAddress);
 
   return await submitTransaction(
     api,
