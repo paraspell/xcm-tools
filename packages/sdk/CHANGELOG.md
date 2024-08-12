@@ -1,5 +1,27 @@
 # Changelog
 
+## [5.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.8.0...sdk-v5.9.0) (2024-08-12)
+
+
+### Features
+
+* Add Select component for selecting assets ([850483f](https://github.com/paraspell/xcm-tools/commit/850483fc75dbef266b46a5bbb15da8517985c620))
+
+
+### Bug Fixes
+
+* **sdk:** Fix Mythos transfer & assets ([d46f739](https://github.com/paraspell/xcm-tools/commit/d46f7394f7cc686448dd556b5655ee991f891c2a))
+
+
+### Code Refactoring
+
+* **sdk:** Add types and remove 'any' from TTransfer.ts file 🧩 ([3c50ba7](https://github.com/paraspell/xcm-tools/commit/3c50ba7070fbae9eb2a71b72c054be94ef884525))
+
+
+### Continuous Integration
+
+* Integrate Codecov PR comments 💬 ([220da1b](https://github.com/paraspell/xcm-tools/commit/220da1b6d060b7aa4d8262e779256e40ce145f3f))
+
 ## [5.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.7.0...sdk-v5.8.0) (2024-08-02)
 
 
