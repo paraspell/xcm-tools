@@ -19,7 +19,7 @@ vi.spyOn(ParachainNode.prototype, 'transfer').mockReturnValue(null as any)
 vi.spyOn(Astar.prototype, 'transfer').mockReturnValue(null as any)
 vi.spyOn(Shiden.prototype, 'transfer').mockReturnValue(null as any)
 
-const WS_URL = 'wss://para.f3joule.space'
+const WS_URL = 'wss://subsocial-rpc.dwellir.com'
 const randomCurrencySymbol = 'DOT'
 
 const MOCK_OPTIONS_BASE = {
