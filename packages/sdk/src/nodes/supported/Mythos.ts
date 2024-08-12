@@ -21,7 +21,7 @@ class Mythos extends ParachainNode implements IPolkadotXCMTransfer {
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
-    const { scenario, currencySymbol } = input
+    const { scenario, currencySymbol, destination } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
@@ -35,7 +35,7 @@ class Mythos extends ParachainNode implements IPolkadotXCMTransfer {
 
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
       input,
-      'limitedReserveTransferAssets',
+      destination === 'AssetHubPolkadot' ? 'limitedTeleportAssets' : 'limitedReserveTransferAssets',
       'Unlimited'
     )
   }

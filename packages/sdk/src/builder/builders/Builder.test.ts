@@ -14,7 +14,7 @@ import { getRelayChainSymbol } from '../../pallets/assets'
 import { Builder } from './Builder'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 
-const WS_URL = 'wss://para.subsocial.network'
+const WS_URL = 'wss://subsocial-rpc.dwellir.com'
 const NODE: TNode = 'Acala'
 const NODE_2: TNode = 'Acala'
 const AMOUNT = 1000
