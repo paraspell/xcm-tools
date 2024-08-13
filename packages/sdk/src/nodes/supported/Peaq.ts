@@ -5,7 +5,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
   type TSerializedApiCall
 } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -16,7 +15,7 @@ class Peaq extends ParachainNode implements IXTokensTransfer {
     super('Peaq', 'peaq', 'polkadot', Version.V2)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { scenario, currencyID } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)

@@ -9,7 +9,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
   type TSerializedApiCall,
   type TXcmAsset
 } from '../../types'
@@ -21,7 +20,7 @@ class Pendulum extends ParachainNode implements IXTokensTransfer {
     super('Pendulum', 'pendulum', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     if (input.scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, input.scenario)
     }

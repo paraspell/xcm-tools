@@ -9,7 +9,7 @@ import {
   NODES_WITH_RELAY_CHAINS,
   TMultiAsset,
   TNode,
-  TSerializedApiCall,
+  TTransferReturn,
   createApiInstanceForNode,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
@@ -17,7 +17,10 @@ import { AssetClaimDto } from './dto/asset-claim.dto.js';
 
 @Injectable()
 export class AssetClaimService {
-  async claimAssets({ from, fungible, address }: AssetClaimDto) {
+  async claimAssets(
+    { from, fungible, address }: AssetClaimDto,
+    hashEnabled = false,
+  ) {
     const fromNode = from as TNode | undefined;
 
     if (!fromNode) {
@@ -36,13 +39,15 @@ export class AssetClaimService {
 
     const api = await createApiInstanceForNode(fromNode);
 
-    let response: TSerializedApiCall;
+    let response: TTransferReturn;
     try {
-      response = await Builder(api)
+      const builder = Builder(api)
         .claimFrom(fromNode)
         .fungible(fungible as TMultiAsset[])
-        .account(address)
-        .buildSerializedApiCall();
+        .account(address);
+      response = hashEnabled
+        ? await builder.build()
+        : await builder.buildSerializedApiCall();
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);

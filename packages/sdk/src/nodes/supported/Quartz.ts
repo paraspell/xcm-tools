@@ -1,12 +1,6 @@
 // Contains detailed structure of XCM call construction for Quartz Parachain
 
-import {
-  Version,
-  type Extrinsic,
-  type TSerializedApiCall,
-  type IXTokensTransfer,
-  type XTokensTransferInput
-} from '../../types'
+import { Version, type IXTokensTransfer, type XTokensTransferInput } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
@@ -17,7 +11,7 @@ class Quartz extends ParachainNode implements IXTokensTransfer {
 
   _assetCheckEnabled = false
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     return getNode('Unique').transferXTokens(input)
   }
 }

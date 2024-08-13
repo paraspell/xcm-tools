@@ -354,7 +354,9 @@ describe('XCM API (e2e)', () => {
     const amount = '1000000000';
     const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
     const xTransferUrl = '/x-transfer';
+    const xTransferHashUrl = '/x-transfer-hash';
     const routerUrl = '/router';
+    const routerHashUrl = '/router-hash';
 
     it(`Generate XCM call - No from or to provided - ${xTransferUrl} (GET)`, () => {
       return request(app.getHttpServer())
@@ -437,6 +439,32 @@ describe('XCM API (e2e)', () => {
         })
         .expect(200)
         .expect(serializedApiCall);
+    });
+
+    it(`Generate XCM call - Parachain to parachain all valid - ${xTransferHashUrl} (GET)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to: TNode = 'Basilisk';
+      const currency = 'KSM';
+      const api = await createApiInstanceForNode(from);
+      const tx = await Builder(api)
+        .from(from)
+        .to(to)
+        .currency(currency)
+        .amount(amount)
+        .address(address)
+        .build();
+      await api.disconnect();
+      return request(app.getHttpServer())
+        .post(xTransferHashUrl)
+        .send({
+          from,
+          to,
+          amount,
+          address,
+          currency,
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
     });
 
     it(`Generate XCM call - Parachain to parachain override currency - ${xTransferUrl} (GET)`, async () => {
@@ -608,6 +636,30 @@ describe('XCM API (e2e)', () => {
           .expect((res) => {
             const data = JSON.parse(res.text);
             expect(data).toHaveProperty('txs');
+            expect(data.txs).toBeInstanceOf(Array);
+            expect(data.txs).toHaveLength(3);
+            data.txs.forEach((tx: any) => {
+              expect(tx).toHaveProperty('module');
+              expect(tx).toHaveProperty('section');
+              expect(tx).toHaveProperty('parameters');
+            });
+            expect(data).toHaveProperty('exchangeNode');
+            expect(Array.isArray(data.txs)).toBeTruthy();
+          });
+      });
+
+      it(`Generate router call - manual exchange select - ${routerHashUrl} (POST)`, async () => {
+        return request(app.getHttpServer())
+          .post(routerHashUrl)
+          .send(routerOptions)
+          .expect(201)
+          .expect((res) => {
+            const data = JSON.parse(res.text);
+            expect(data).toHaveProperty('txs');
+            expect(data.txs).toHaveLength(3);
+            data.txs.forEach((tx: any) => {
+              expect(tx).toBeTypeOf('string');
+            });
             expect(data).toHaveProperty('exchangeNode');
             expect(Array.isArray(data.txs)).toBeTruthy();
           });
@@ -697,6 +749,43 @@ describe('XCM API (e2e)', () => {
           })
           .expect(201)
           .expect(serializedApiCall);
+      });
+
+      it('Generate asset claim call - all valid - /asset-claim-hash (GET)', async () => {
+        const from: TNode = 'AssetHubKusama';
+        const api = await createApiInstanceForNode(from);
+        const fungible = [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X1: {
+                    Parachain: '2000',
+                  },
+                },
+              },
+            },
+            fun: {
+              Fungible: '1000000000',
+            },
+          },
+        ];
+        const tx = await Builder(api)
+          .claimFrom(from)
+          .fungible(fungible)
+          .account(address)
+          .build();
+        await api.disconnect();
+        return request(app.getHttpServer())
+          .post('/asset-claim-hash')
+          .send({
+            from,
+            fungible,
+            address,
+          })
+          .expect(201)
+          .expect(JSON.stringify(tx.toHex()));
       });
     });
 

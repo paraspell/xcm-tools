@@ -1,12 +1,6 @@
 // Contains detailed structure of XCM call construction for Centrifuge Parachain
 
-import {
-  type IXTokensTransfer,
-  Version,
-  type XTokensTransferInput,
-  type Extrinsic,
-  type TSerializedApiCall
-} from '../../types'
+import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
@@ -15,7 +9,7 @@ export class Centrifuge extends ParachainNode implements IXTokensTransfer {
     super('Centrifuge', 'centrifuge', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { currency, currencyID } = input
     const currencySelection =
       currency === this.getNativeAssetSymbol() ? 'Native' : { ForeignAsset: currencyID }

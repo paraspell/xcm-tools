@@ -5,7 +5,6 @@ import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type Extrinsic,
   type TSerializedApiCall,
   type TRelayToParaInternalOptions
 } from '../../types'
@@ -19,7 +18,7 @@ class CoretimeKusama extends ParachainNode implements IPolkadotXCMTransfer {
 
   _assetCheckEnabled = false
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     // TESTED block hash on Rococo: 0x78ace0f1bf7cac9a42e56143321b617d98327e2750f795efb0abb833025c9082
     const { scenario } = input
     const method =

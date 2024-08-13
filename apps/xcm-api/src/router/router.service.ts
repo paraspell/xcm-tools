@@ -18,7 +18,7 @@ import {
 
 @Injectable()
 export class RouterService {
-  async generateExtrinsics(options: RouterDto) {
+  async generateExtrinsics(options: RouterDto, hashEnabled = false) {
     const {
       from,
       exchange,
@@ -70,7 +70,9 @@ export class RouterService {
 
       return {
         exchangeNode: selectedExchangeNode,
-        txs: txs.map((extrinsic) => serializeExtrinsic(extrinsic)),
+        txs: hashEnabled
+          ? txs
+          : txs.map((extrinsic) => serializeExtrinsic(extrinsic)),
       };
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {

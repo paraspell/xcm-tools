@@ -2,7 +2,6 @@
 
 import {
   Version,
-  type Extrinsic,
   type TSerializedApiCall,
   type IXTokensTransfer,
   type XTokensTransferInput,
@@ -22,7 +21,7 @@ class Darwinia extends ParachainNode implements IXTokensTransfer {
     super('Darwinia', 'darwinia', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { currencyID } = input
     const currencySelection: TSelfReserveAsset | TForeignAsset =
       input.currency === this.getNativeAssetSymbol() ? 'SelfReserve' : { ForeignAsset: currencyID }

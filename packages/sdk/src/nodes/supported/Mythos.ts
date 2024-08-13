@@ -9,7 +9,6 @@ import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type Extrinsic,
   type TSerializedApiCall
 } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -20,7 +19,7 @@ class Mythos extends ParachainNode implements IPolkadotXCMTransfer {
     super('Mythos', 'mythos', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     const { scenario, currencySymbol, destination } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
