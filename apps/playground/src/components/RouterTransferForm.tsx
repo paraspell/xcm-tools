@@ -248,7 +248,7 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const infoEthWallet = (
     <Tooltip
-      label="You need to connect your Ethereum wallet when choosing Ethereum as the origin or destination node"
+      label="You need to connect your Metamask wallet when choosing Ethereum as the origin or destination chain"
       position="top-end"
       withArrow
       transitionProps={{ transition: "pop-bottom-right" }}
@@ -266,7 +266,7 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const infoAssetHubWallet = (
     <Tooltip
-      label="You need to connect your AssetHub wallet when choosing Ethereum as the origin or destination node"
+      label="You need to connect your AssetHub wallet (Polkadot wallet) when choosing Ethereum as the origin or destination chain"
       position="top-end"
       withArrow
       transitionProps={{ transition: "pop-bottom-right" }}
@@ -284,7 +284,7 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const infoEvmWallet = (
     <Tooltip
-      label="You need to connect yout Polkadot EVM wallet when choosing EVM node as origin"
+      label="You need to connect yout Polkadot EVM wallet when choosing EVM chain as origin"
       position="top-end"
       withArrow
       transitionProps={{ transition: "pop-bottom-right" }}
