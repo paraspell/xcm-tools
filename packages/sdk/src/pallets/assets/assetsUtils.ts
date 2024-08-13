@@ -36,12 +36,12 @@ const findAssetBySymbol = (
     ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === symbol.toLowerCase()
   )
 
-  if (otherAssetsMatches.length > 1 && !isRelayDestination && isSymbol === undefined) {
-    throw new DuplicateAssetError(symbol)
-  }
-
   if (node === 'Astar' || node === 'Shiden') {
     return nativeAssetsMatches[0] || otherAssetsMatches[0] || null
+  }
+
+  if (otherAssetsMatches.length > 1 && !isRelayDestination && isSymbol === undefined) {
+    throw new DuplicateAssetError(symbol)
   }
 
   return otherAssetsMatches[0] || nativeAssetsMatches[0] || null
