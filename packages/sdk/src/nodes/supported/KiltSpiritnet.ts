@@ -3,7 +3,6 @@
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import {
   Version,
-  type Extrinsic,
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   type TSerializedApiCall
@@ -16,7 +15,7 @@ class KiltSpiritnet extends ParachainNode implements IPolkadotXCMTransfer {
     super('KiltSpiritnet', 'kilt', 'polkadot', Version.V2)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     if (input.scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, input.scenario)
     }

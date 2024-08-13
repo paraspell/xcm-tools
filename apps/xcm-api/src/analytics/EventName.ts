@@ -15,10 +15,13 @@ export enum EventName {
   GET_DEFAULT_PALLET = 'Get Default Pallet',
   GET_SUPPORTED_PALLETS = 'Get Supported Pallets',
   GENERATE_XCM_CALL = 'Generate XCM Call',
+  GENERATE_XCM_CALL_HASH = 'Generate XCM Call Hash',
   GENERATE_ETH_CALL = 'Generate ETH Call',
   GENERATE_API_KEY = 'Generate API Key',
   GENERATE_ROUTER_EXTRINSICS = 'Generate router extrinsics',
+  GENERATE_ROUTER_EXTRINSICS_HASH = 'Generate router extrinsics hash',
   CLAIM_ASSETS = 'Claim assets',
+  CLAIM_ASSETS_HASH = 'Claim assets hash',
   GET_TRANSFER_INFO = 'Get Transfer Info',
   XCM_ANALYSER = 'XCM Analyser',
 }

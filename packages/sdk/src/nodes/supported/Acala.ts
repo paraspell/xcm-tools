@@ -1,11 +1,9 @@
 // Contains detailed structure of XCM call construction for Acala Parachain
 
 import {
-  type Extrinsic,
   type IXTokensTransfer,
   type TForeignOrTokenAsset,
   type TNodePolkadotKusama,
-  type TSerializedApiCall,
   Version,
   type XTokensTransferInput
 } from '../../types'
@@ -18,7 +16,7 @@ class Acala extends ParachainNode implements IXTokensTransfer {
     super('Acala', 'acala', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { currency, currencyID } = input
     const currencySelection: TForeignOrTokenAsset =
       currencyID !== undefined ? { ForeignAsset: currencyID } : { Token: currency }

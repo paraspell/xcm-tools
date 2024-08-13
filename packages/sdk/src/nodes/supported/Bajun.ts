@@ -6,7 +6,6 @@ import {
   InvalidCurrencyError
 } from '../../errors'
 import {
-  type Extrinsic,
   type IXTokensTransfer,
   type TSerializedApiCall,
   Version,
@@ -20,7 +19,7 @@ class Bajun extends ParachainNode implements IXTokensTransfer {
     super('Bajun', 'bajun', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { scenario, currency } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)

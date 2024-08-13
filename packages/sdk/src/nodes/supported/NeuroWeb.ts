@@ -1,12 +1,6 @@
 // Contains detailed structure of XCM call construction for OriginTrail Parachain
 
-import {
-  type IPolkadotXCMTransfer,
-  type PolkadotXCMTransferInput,
-  Version,
-  type Extrinsic,
-  type TSerializedApiCall
-} from '../../types'
+import { type IPolkadotXCMTransfer, type PolkadotXCMTransferInput, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
@@ -15,7 +9,7 @@ class NeuroWeb extends ParachainNode implements IPolkadotXCMTransfer {
     super('NeuroWeb', 'neuroweb', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
       input,
       'limitedReserveTransferAssets',

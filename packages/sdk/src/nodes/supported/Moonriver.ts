@@ -5,7 +5,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
   type TSerializedApiCall,
   type TRelayToParaInternalOptions,
   type TForeignAsset,
@@ -19,7 +18,7 @@ class Moonriver extends ParachainNode implements IXTokensTransfer {
     super('Moonriver', 'moonriver', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { currency, currencyID } = input
     const currencySelection: TSelfReserveAsset | TForeignAsset =
       currency === this.getNativeAssetSymbol() ? 'SelfReserve' : { ForeignAsset: currencyID }

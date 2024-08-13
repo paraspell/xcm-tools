@@ -6,7 +6,6 @@ import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type Extrinsic,
   type TSerializedApiCall,
   type TRelayToParaInternalOptions
 } from '../../types'
@@ -20,7 +19,7 @@ class BridgeHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
 
   _assetCheckEnabled = false
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     const { scenario } = input
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(

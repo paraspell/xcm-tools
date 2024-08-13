@@ -7,7 +7,6 @@ import { getNativeAssetSymbol, getParaId } from '../pallets/assets'
 import {
   type TNode,
   type TRelayChainType,
-  type Extrinsic,
   type TScenario,
   type IXTokensTransfer,
   type IPolkadotXCMTransfer,
@@ -18,8 +17,9 @@ import {
   type TRelayToParaInternalOptions,
   type TSendInternalOptions,
   type TDestination,
-  TCurrencySelectionHeaderArr,
-  TNodePolkadotKusama
+  type TCurrencySelectionHeaderArr,
+  type TNodePolkadotKusama,
+  type TTransferReturn
 } from '../types'
 import { generateAddressPayload, getFees, getAllNodeProviders, createApiInstance } from '../utils'
 import {
@@ -88,7 +88,7 @@ abstract class ParachainNode {
     return true
   }
 
-  transfer(options: TSendInternalOptions): Extrinsic | TSerializedApiCall {
+  transfer(options: TSendInternalOptions): TTransferReturn {
     const {
       api,
       currencySymbol,

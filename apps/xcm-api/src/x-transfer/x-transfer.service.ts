@@ -13,7 +13,7 @@ import {
   InvalidCurrencyError,
   NODE_NAMES,
   TNode,
-  TSerializedApiCall,
+  TTransferReturn,
   createApiInstanceForNode,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
@@ -21,14 +21,10 @@ import { XTransferDto } from './dto/XTransferDto.js';
 
 @Injectable()
 export class XTransferService {
-  async generateXcmCall({
-    from,
-    to,
-    amount,
-    address,
-    currency,
-    xcmVersion,
-  }: XTransferDto) {
+  async generateXcmCall(
+    { from, to, amount, address, currency, xcmVersion }: XTransferDto,
+    hashEnabled = false,
+  ) {
     const fromNode = from as TNode | undefined;
     const toNode = to as TNode | undefined;
 
@@ -79,9 +75,11 @@ export class XTransferService {
       builder = builder.xcmVersion(xcmVersion);
     }
 
-    let response: TSerializedApiCall;
+    let response: TTransferReturn;
     try {
-      response = await builder.buildSerializedApiCall();
+      response = hashEnabled
+        ? await builder.build()
+        : await builder.buildSerializedApiCall();
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||

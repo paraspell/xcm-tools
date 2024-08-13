@@ -7,7 +7,8 @@ import {
   type TRelayToParaCommonOptions,
   type TSendOptionsCommon,
   type TSendOptions,
-  type TNode
+  type TNode,
+  TTransferReturn
 } from '../../types'
 import {
   getNode,
@@ -20,40 +21,10 @@ import { getAssetBySymbolOrId } from '../assets/assetsUtils'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive'
-import {
-  isTCurrencySpecifier,
-  isTMulti,
-  isTMultiLocation,
-  resolveTNodeFromMultiLocation
-} from './utils'
+import { isTMulti, isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
+import { transformSendOptions } from './transformSendOptions'
 
-const transformOptions = (options: TSendOptionsCommon) => {
-  const { currency } = options
-
-  if (isTCurrencySpecifier(currency)) {
-    if ('symbol' in currency) {
-      return {
-        ...options,
-        currency: currency.symbol,
-        isSymbol: true
-      }
-    } else if ('id' in currency) {
-      return {
-        ...options,
-        currency: currency.id,
-        isSymbol: false
-      }
-    }
-  }
-
-  return {
-    ...options,
-    currency: currency,
-    isSymbol: undefined
-  }
-}
-
-const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSerializedApiCall> => {
+const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn> => {
   const {
     api,
     origin,
@@ -67,7 +38,7 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
     version,
     isSymbol,
     serializedApiCallEnabled = false
-  } = transformOptions(options)
+  } = transformSendOptions(options)
 
   if ((!isTMulti(currency) || isTMultiLocation(currency)) && amount === null) {
     throw new Error('Amount is required')
@@ -216,20 +187,18 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<Extrinsic | TSer
   })
 }
 
-export const sendSerializedApiCall = async (options: TSendOptions): Promise<TSerializedApiCall> => {
-  return (await sendCommon({
+export const sendSerializedApiCall = async (options: TSendOptions): Promise<TSerializedApiCall> =>
+  sendCommon({
     ...options,
     serializedApiCallEnabled: true
-  })) as TSerializedApiCall
-}
+  }) as Promise<TSerializedApiCall>
 
-export const send = async (options: TSendOptions): Promise<Extrinsic> => {
-  return (await sendCommon(options)) as Extrinsic
-}
+export const send = async (options: TSendOptions): Promise<Extrinsic> =>
+  sendCommon(options) as Promise<Extrinsic>
 
 export const transferRelayToParaCommon = async (
   options: TRelayToParaCommonOptions
-): Promise<Extrinsic | TSerializedApiCall> => {
+): Promise<TTransferReturn> => {
   const {
     api,
     destination,
@@ -288,15 +257,13 @@ export const transferRelayToParaCommon = async (
   return callPolkadotJsTxFunction(apiWithFallback, serializedApiCall)
 }
 
-export const transferRelayToPara = async (options: TRelayToParaOptions): Promise<Extrinsic> => {
-  return (await transferRelayToParaCommon(options)) as Extrinsic
-}
+export const transferRelayToPara = async (options: TRelayToParaOptions): Promise<Extrinsic> =>
+  transferRelayToParaCommon(options) as Promise<Extrinsic>
 
 export const transferRelayToParaSerializedApiCall = async (
   options: TRelayToParaOptions
-): Promise<TSerializedApiCall> => {
-  return (await transferRelayToParaCommon({
+): Promise<TSerializedApiCall> =>
+  transferRelayToParaCommon({
     ...options,
     serializedApiCallEnabled: true
-  })) as TSerializedApiCall
-}
+  }) as Promise<TSerializedApiCall>

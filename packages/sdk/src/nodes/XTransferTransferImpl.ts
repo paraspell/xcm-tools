@@ -3,11 +3,10 @@ import { NodeNotSupportedError } from '../errors'
 import { createCurrencySpec } from '../pallets/xcmPallet/utils'
 import {
   Version,
-  type Extrinsic,
-  type TSerializedApiCall,
   type XTransferTransferInput,
   Parents,
-  type TNode
+  type TNode,
+  type TTransferReturn
 } from '../types'
 import { createAccID } from '../utils'
 import { type TJunction, type TMultiLocation } from '../types/TMultiLocation'
@@ -62,7 +61,7 @@ const getDestination = ({
 }
 
 class XTransferTransferImpl {
-  static transferXTransfer(input: XTransferTransferInput): Extrinsic | TSerializedApiCall {
+  static transferXTransfer(input: XTransferTransferInput): TTransferReturn {
     const {
       api,
       amount,

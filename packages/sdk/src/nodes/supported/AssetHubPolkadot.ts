@@ -13,7 +13,6 @@ import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type Extrinsic,
   type TSerializedApiCall,
   Parents,
   type TScenario,
@@ -32,10 +31,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     super('AssetHubPolkadot', 'PolkadotAssetHub', 'polkadot', Version.V3)
   }
 
-  public handleBridgeTransfer(
-    input: PolkadotXCMTransferInput,
-    targetChain: 'Polkadot' | 'Kusama'
-  ): Extrinsic | TSerializedApiCall {
+  public handleBridgeTransfer(input: PolkadotXCMTransferInput, targetChain: 'Polkadot' | 'Kusama') {
     if (
       (targetChain === 'Kusama' && input.currencySymbol?.toUpperCase() === 'KSM') ||
       (targetChain === 'Polkadot' && input.currencySymbol?.toUpperCase() === 'DOT')
@@ -86,7 +82,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     )
   }
 
-  public handleEthBridgeTransfer(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  public handleEthBridgeTransfer(input: PolkadotXCMTransferInput) {
     const { api, scenario, destination, paraIdTo, address, currencySymbol } = input
 
     if (!ethers.isAddress(address)) {
@@ -140,7 +136,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     return PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, 'transferAssets', 'Unlimited')
   }
 
-  handleMythosTransfer(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  handleMythosTransfer(input: PolkadotXCMTransferInput) {
     const { api, address, amount, currencyId, overridedCurrency, scenario, destination, paraIdTo } =
       input
     const version = Version.V2
@@ -182,7 +178,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     )
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     const { scenario } = input
 
     if (input.destination === 'AssetHubKusama') {

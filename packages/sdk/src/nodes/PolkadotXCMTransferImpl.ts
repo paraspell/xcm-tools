@@ -1,6 +1,6 @@
 // Contains basic structure of polkadotXCM call
 
-import { type Extrinsic, type PolkadotXCMTransferInput, type TSerializedApiCall } from '../types'
+import { TTransferReturn, type PolkadotXCMTransferInput } from '../types'
 
 const DEFAULT_FEE_ASSET = 0
 
@@ -16,7 +16,7 @@ class PolkadotXCMTransferImpl {
     }: PolkadotXCMTransferInput,
     method: string,
     fees: 'Unlimited' | { Limited: string } | undefined = undefined
-  ): Extrinsic | TSerializedApiCall {
+  ): TTransferReturn {
     if (serializedApiCallEnabled === true) {
       return {
         module: 'polkadotXcm',

@@ -4,8 +4,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
-  type TSerializedApiCall,
   type TForeignAssetId
 } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -16,7 +14,7 @@ class Unique extends ParachainNode implements IXTokensTransfer {
     super('Unique', 'unique', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { currencyID } = input
     const currencySelection: TForeignAssetId = { ForeignAssetId: currencyID }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)

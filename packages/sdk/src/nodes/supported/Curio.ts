@@ -3,9 +3,7 @@
 import {
   TForeignOrTokenAsset,
   Version,
-  type Extrinsic,
   type IXTokensTransfer,
-  type TSerializedApiCall,
   type XTokensTransferInput
 } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -26,7 +24,7 @@ class Curio extends ParachainNode implements IXTokensTransfer {
     return { Token: currency }
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const currencySelection = this.getCurrencySelection(input)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }

@@ -1,11 +1,5 @@
 import { InvalidCurrencyError } from '../../errors'
-import {
-  type IXTransferTransfer,
-  Version,
-  type XTransferTransferInput,
-  type Extrinsic,
-  type TSerializedApiCall
-} from '../../types'
+import { type IXTransferTransfer, Version, type XTransferTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTransferTransferImpl from '../XTransferTransferImpl'
 
@@ -14,7 +8,7 @@ class Khala extends ParachainNode implements IXTransferTransfer {
     super('Khala', 'khala', 'kusama', Version.V3)
   }
 
-  transferXTransfer(input: XTransferTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTransfer(input: XTransferTransferInput) {
     const { currency } = input
     if (currency !== 'PHA') {
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${currency}`)

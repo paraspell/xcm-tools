@@ -1,16 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // Contains basic structure of xToken call
 
 import {
   type Version,
-  type Extrinsic,
   type TPallet,
-  type TSerializedApiCall,
   type XTokensTransferInput,
   Parents,
   type TCurrencySelectionHeader,
   type TCurrency,
-  TMultiLocationHeader,
-  TXTokensCurrencySelection
+  type TMultiLocationHeader,
+  type TXTokensCurrencySelection,
+  type TTransferReturn
 } from '../types'
 import { getNode, lowercaseFirstLetter } from '../utils'
 
@@ -77,7 +77,7 @@ class XTokensTransferImpl {
     currencySelection: TXTokensCurrencySelection,
     fees: string | number = 'Unlimited',
     pallet: TPallet = 'XTokens'
-  ): Extrinsic | TSerializedApiCall {
+  ): TTransferReturn {
     const { api, amount, addressSelection, destination, feeAsset, serializedApiCallEnabled } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
@@ -112,7 +112,6 @@ class XTokensTransferImpl {
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return api.tx[module][section](...parameters)
   }
 }

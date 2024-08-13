@@ -5,7 +5,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
   type TSerializedApiCall,
   type TRelayToParaInternalOptions,
   type TNodePolkadotKusama,
@@ -21,7 +20,7 @@ class Moonbeam extends ParachainNode implements IXTokensTransfer {
     super('Moonbeam', 'moonbeam', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { currency, currencyID } = input
     const currencySelection: TSelfReserveAsset | TForeignAsset =
       currency === this.getNativeAssetSymbol() ? 'SelfReserve' : { ForeignAsset: currencyID }
