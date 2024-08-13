@@ -9,7 +9,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
   type TSerializedApiCall,
   type TNodleAsset
 } from '../../types'
@@ -21,7 +20,7 @@ class Nodle extends ParachainNode implements IXTokensTransfer {
     super('Nodle', 'nodle', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     if (input.scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, input.scenario)
     }

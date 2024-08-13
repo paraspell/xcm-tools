@@ -4,7 +4,6 @@ import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type Extrinsic,
   type TSerializedApiCall,
   type TRelayToParaInternalOptions
 } from '../../types'
@@ -18,7 +17,7 @@ class Encointer extends ParachainNode implements IPolkadotXCMTransfer {
     super('Encointer', 'encointer', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     // NO PARA TO PARA SCENARIOS ON SUBSCAN
     // TESTED https://encointer.subscan.io/xcm_message/kusama-418501e86e947b16c4e4e9040694017e64f9b162
     if (input.scenario === 'ParaToRelay') {

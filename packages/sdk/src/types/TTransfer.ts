@@ -7,7 +7,7 @@ import { TCurrency, TCurrencyInput, TCurrencySelectionHeaderArr } from './TCurre
 
 export type Extrinsic = SubmittableExtrinsic<'promise'>
 
-export interface PolkadotXCMTransferInput {
+export type PolkadotXCMTransferInput = {
   api: ApiPromise
   header: TMultiLocationHeader
   addressSelection: TMultiLocationHeader
@@ -24,7 +24,7 @@ export interface PolkadotXCMTransferInput {
   serializedApiCallEnabled?: boolean
 }
 
-export interface XTokensTransferInput {
+export type XTokensTransferInput = {
   api: ApiPromise
   currency: string | undefined
   currencyID: string | undefined
@@ -40,7 +40,7 @@ export interface XTokensTransferInput {
   serializedApiCallEnabled?: boolean
 }
 
-export interface XTransferTransferInput {
+export type XTransferTransferInput = {
   api: ApiPromise
   currency: string | undefined
   currencyID: string | undefined
@@ -53,16 +53,16 @@ export interface XTransferTransferInput {
   serializedApiCallEnabled?: boolean
 }
 
-export interface IPolkadotXCMTransfer {
-  transferPolkadotXCM: (input: PolkadotXCMTransferInput) => Extrinsic | TSerializedApiCall
+export type IPolkadotXCMTransfer = {
+  transferPolkadotXCM: (input: PolkadotXCMTransferInput) => TTransferReturn
 }
 
-export interface IXTokensTransfer {
-  transferXTokens: (input: XTokensTransferInput) => Extrinsic | TSerializedApiCall
+export type IXTokensTransfer = {
+  transferXTokens: (input: XTokensTransferInput) => TTransferReturn
 }
 
-export interface IXTransferTransfer {
-  transferXTransfer: (input: XTransferTransferInput) => Extrinsic | TSerializedApiCall
+export type IXTransferTransfer = {
+  transferXTransfer: (input: XTransferTransferInput) => TTransferReturn
 }
 
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
@@ -86,7 +86,7 @@ export type TAmount = string | number | bigint
 export type TAddress = string | TMultiLocation
 export type TDestination = TNode | TMultiLocation
 
-export interface TSendBaseOptions {
+export type TSendBaseOptions = {
   address: TAddress
   destination?: TDestination
   paraIdTo?: number
@@ -95,18 +95,18 @@ export interface TSendBaseOptions {
   version?: Version
 }
 
-export interface TSendOptions extends TSendBaseOptions {
+export type TSendOptions = TSendBaseOptions & {
   api?: ApiPromise
   origin: TNode
   currency: TCurrencyInput
   amount: TAmount | null
 }
 
-export interface TSendOptionsCommon extends TSendOptions {
+export type TSendOptionsCommon = TSendOptions & {
   serializedApiCallEnabled?: boolean
 }
 
-export interface TSendInternalOptions extends TSendBaseOptions {
+export type TSendInternalOptions = TSendBaseOptions & {
   api: ApiPromise
   currencySymbol: string | undefined
   currencyId: string | undefined
@@ -115,7 +115,7 @@ export interface TSendInternalOptions extends TSendBaseOptions {
   serializedApiCallEnabled?: boolean
 }
 
-interface TRelayToParaBaseOptions {
+type TRelayToParaBaseOptions = {
   destination: TDestination
   address: TAddress
   paraIdTo?: number
@@ -123,28 +123,30 @@ interface TRelayToParaBaseOptions {
   version?: Version
 }
 
-export interface TRelayToParaOptions extends TRelayToParaBaseOptions {
+export type TRelayToParaOptions = TRelayToParaBaseOptions & {
   api?: ApiPromise
   amount: TAmount
 }
 
-export interface TRelayToParaInternalOptions extends TRelayToParaBaseOptions {
+export type TRelayToParaInternalOptions = TRelayToParaBaseOptions & {
   api: ApiPromise
   amount: string
 }
 
-export interface TRelayToParaCommonOptions extends TRelayToParaOptions {
+export type TRelayToParaCommonOptions = TRelayToParaOptions & {
   serializedApiCallEnabled?: boolean
 }
 
-export interface TSerializedApiCall {
+export type TTransferReturn = Extrinsic | TSerializedApiCall
+
+export type TSerializedApiCall = {
   module: string
   section: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   parameters: any[]
 }
 
-export interface CheckKeepAliveOptions {
+export type CheckKeepAliveOptions = {
   originApi: ApiPromise
   address: string
   amount: string

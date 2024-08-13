@@ -12,7 +12,7 @@ import { RouterDto } from './dto/RouterDto.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 
-@Controller('router')
+@Controller()
 export class RouterController {
   constructor(
     private routerService: RouterService,
@@ -36,15 +36,28 @@ export class RouterController {
     });
   }
 
-  @Get()
+  @Get('router')
   generateExtrinsics(@Query() queryParams: RouterDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, queryParams);
     return this.routerService.generateExtrinsics(queryParams);
   }
 
-  @Post()
+  @Post('router')
   generateExtrinsicsV2(@Body() queryParams: RouterDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, queryParams);
     return this.routerService.generateExtrinsics(queryParams);
+  }
+
+  @Post('router-hash')
+  generateExtrinsicsV2Hash(
+    @Body() queryParams: RouterDto,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(
+      EventName.GENERATE_ROUTER_EXTRINSICS_HASH,
+      req,
+      queryParams,
+    );
+    return this.routerService.generateExtrinsics(queryParams, true);
   }
 }

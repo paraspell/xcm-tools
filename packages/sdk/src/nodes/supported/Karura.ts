@@ -4,8 +4,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
-  type TSerializedApiCall,
   type TNodePolkadotKusama
 } from '../../types'
 import { getAllNodeProviders, getNode } from '../../utils'
@@ -16,7 +14,7 @@ class Karura extends ParachainNode implements IXTokensTransfer {
     super('Karura', 'karura', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     return getNode('Acala').transferXTokens(input)
   }
 

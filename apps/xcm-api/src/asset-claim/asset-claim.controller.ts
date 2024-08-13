@@ -5,7 +5,7 @@ import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { AssetClaimService } from './asset-claim.service.js';
 import { AssetClaimDto, AssetClaimSchema } from './dto/asset-claim.dto.js';
 
-@Controller('asset-claim')
+@Controller()
 export class AssetClaimController {
   constructor(
     private xTransferService: AssetClaimService,
@@ -24,10 +24,17 @@ export class AssetClaimController {
     });
   }
 
-  @Post()
+  @Post('asset-claim')
   @UsePipes(new ZodValidationPipe(AssetClaimSchema))
   claimAssets(@Body() bodyParams: AssetClaimDto, @Req() req: Request) {
     this.trackAnalytics(EventName.CLAIM_ASSETS, req, bodyParams);
     return this.xTransferService.claimAssets(bodyParams);
+  }
+
+  @Post('asset-claim-hash')
+  @UsePipes(new ZodValidationPipe(AssetClaimSchema))
+  claimAssetsHash(@Body() bodyParams: AssetClaimDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.CLAIM_ASSETS_HASH, req, bodyParams);
+    return this.xTransferService.claimAssets(bodyParams, true);
   }
 }

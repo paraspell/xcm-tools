@@ -5,8 +5,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
-  type TSerializedApiCall,
   type TReserveAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -29,7 +27,7 @@ class CrustShadow extends ParachainNode implements IXTokensTransfer {
     return { OtherReserve: currencyID }
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     return XTokensTransferImpl.transferXTokens(input, this.getCurrencySelection(input))
   }
 }

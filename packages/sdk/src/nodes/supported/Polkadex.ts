@@ -4,8 +4,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
-  type TSerializedApiCall,
   type TNodePolkadotKusama
 } from '../../types'
 import { getAllNodeProviders } from '../../utils'
@@ -17,7 +15,7 @@ class Polkadex extends ParachainNode implements IXTokensTransfer {
     super('Polkadex', 'polkadex', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { currencyID } = input
     return XTokensTransferImpl.transferXTokens(input, currencyID)
   }

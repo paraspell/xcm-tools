@@ -4,8 +4,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
-  type TSerializedApiCall,
   type TForeignOrTokenAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -16,7 +14,7 @@ class Interlay extends ParachainNode implements IXTokensTransfer {
     super('Interlay', 'interlay', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { currency, currencyID } = input
     const currencySelection: TForeignOrTokenAsset =
       currencyID !== undefined ? { ForeignAsset: currencyID } : { Token: currency }

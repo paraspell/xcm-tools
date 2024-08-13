@@ -4,8 +4,6 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type Extrinsic,
-  type TSerializedApiCall,
   type TXcmAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -16,7 +14,7 @@ class Amplitude extends ParachainNode implements IXTokensTransfer {
     super('Amplitude', 'amplitude', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     const { currencyID } = input
     const currencySelection: TXcmAsset = { XCM: currencyID }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)

@@ -1,12 +1,6 @@
 // Contains detailed structure of XCM call construction for Litmus Parachain
 
-import {
-  type IXTokensTransfer,
-  Version,
-  type XTokensTransferInput,
-  type Extrinsic,
-  type TSerializedApiCall
-} from '../../types'
+import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
@@ -15,7 +9,7 @@ class Litmus extends ParachainNode implements IXTokensTransfer {
     super('Litmus', 'litmus', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput): Extrinsic | TSerializedApiCall {
+  transferXTokens(input: XTokensTransferInput) {
     // Multiple asset options needs addressing
     return getNode('Litentry').transferXTokens(input)
   }

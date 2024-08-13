@@ -1,12 +1,6 @@
 // Contains detailed structure of XCM call construction for Robonomics Parachain
 
-import {
-  type IPolkadotXCMTransfer,
-  type PolkadotXCMTransferInput,
-  Version,
-  type Extrinsic,
-  type TSerializedApiCall
-} from '../../types'
+import { type IPolkadotXCMTransfer, type PolkadotXCMTransferInput, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
 
@@ -17,7 +11,7 @@ class Robonomics extends ParachainNode implements IPolkadotXCMTransfer {
 
   private static readonly FEE = '400000000'
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     if (input.scenario === 'ParaToPara') {
       return PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'limitedReserveTransferAssets', {
         Limited: Robonomics.FEE

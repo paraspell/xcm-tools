@@ -6,7 +6,6 @@ import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type Extrinsic,
   type TSerializedApiCall,
   type TScenario,
   type TRelayToParaInternalOptions
@@ -19,7 +18,7 @@ class Collectives extends ParachainNode implements IPolkadotXCMTransfer {
     super('Collectives', 'polkadotCollectives', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput): Extrinsic | TSerializedApiCall {
+  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     const { scenario } = input
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
