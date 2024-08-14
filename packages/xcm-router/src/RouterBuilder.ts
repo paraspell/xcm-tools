@@ -7,7 +7,7 @@ import {
   type TTransferOptions,
 } from '.';
 import { type TNodeWithRelayChains } from '@paraspell/sdk';
-import { Signer as EthSigner } from 'ethers';
+import { type Signer as EthSigner } from 'ethers';
 
 export interface TRouterBuilderOptions {
   from?: TNodeWithRelayChains;
@@ -21,9 +21,10 @@ export interface TRouterBuilderOptions {
   recipientAddress?: string;
   assetHubAddress?: string;
   slippagePct?: string;
+  ethSigner?: EthSigner;
   signer?: Signer;
   evmSigner?: Signer;
-  ethSigner?: EthSigner;
+  transactionType?: TransactionType;
   onStatusChange?: (info: TTxProgressInfo) => void;
 }
 
@@ -39,7 +40,7 @@ export class RouterBuilderObject {
     return this;
   }
 
-  exchange(node: TExchangeNode): this {
+  exchange(node: TExchangeNode | undefined): this {
     this._routerBuilderOptions.exchange = node;
     return this;
   }
@@ -74,7 +75,7 @@ export class RouterBuilderObject {
     return this;
   }
 
-  assetHubAddress(assetHubAddress: string): this {
+  assetHubAddress(assetHubAddress: string | undefined): this {
     this._routerBuilderOptions.assetHubAddress = assetHubAddress;
     return this;
   }
@@ -84,23 +85,28 @@ export class RouterBuilderObject {
     return this;
   }
 
-  evmInjectorAddress(evmInjectorAddress: string): this {
+  ethSigner(ethSigner: EthSigner | undefined): this {
+    this._routerBuilderOptions.ethSigner = ethSigner;
+    return this;
+  }
+
+  evmInjectorAddress(evmInjectorAddress: string | undefined): this {
     this._routerBuilderOptions.evmInjectorAddress = evmInjectorAddress;
     return this;
   }
 
-  evmSigner(evmSigner: Signer): this {
+  evmSigner(evmSigner: Signer | undefined): this {
     this._routerBuilderOptions.evmSigner = evmSigner;
-    return this;
-  }
-
-  ethSigner(ethSigner: EthSigner): this {
-    this._routerBuilderOptions.ethSigner = ethSigner;
     return this;
   }
 
   slippagePct(slippagePct: string): this {
     this._routerBuilderOptions.slippagePct = slippagePct;
+    return this;
+  }
+
+  transactionType(transactionType: TransactionType): this {
+    this._routerBuilderOptions.transactionType = transactionType;
     return this;
   }
 
@@ -112,7 +118,6 @@ export class RouterBuilderObject {
   async build(): Promise<void> {
     const requiredParams: Array<keyof TRouterBuilderOptions> = [
       'from',
-      'exchange',
       'to',
       'currencyFrom',
       'currencyTo',
@@ -131,11 +136,9 @@ export class RouterBuilderObject {
 
     await transfer({
       ...(this._routerBuilderOptions as TTransferOptions),
-      type: TransactionType.FULL_TRANSFER,
+      type: this._routerBuilderOptions.transactionType ?? TransactionType.FULL_TRANSFER,
     });
   }
 }
 
-const RouterBuilder = (): RouterBuilderObject => new RouterBuilderObject();
-
-export default RouterBuilder;
+export const RouterBuilder = (): RouterBuilderObject => new RouterBuilderObject();

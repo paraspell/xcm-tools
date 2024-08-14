@@ -1,8 +1,8 @@
 import { describe, expect, it, vi, beforeEach, type MockInstance } from 'vitest';
 import * as index from './index';
-import RouterBuilder from './RouterBuilder';
+import { RouterBuilder } from './RouterBuilder';
 import { type Signer } from '@polkadot/api/types';
-import { Signer as EthSigner } from 'ethers';
+import { type Signer as EthSigner } from 'ethers';
 
 export const transferParams: index.TTransferOptions = {
   from: 'Astar',
@@ -93,9 +93,9 @@ describe('Builder', () => {
       .recipientAddress(recipientAddress)
       .signer(signer)
       .slippagePct(slippagePct)
-      .onStatusChange(onStatusChange)
       .assetHubAddress(assetHubAddress)
       .ethSigner(ethSigner)
+      .onStatusChange(onStatusChange)
       .build();
 
     expect(spy).toHaveBeenCalledWith({
@@ -104,6 +104,25 @@ describe('Builder', () => {
       assetHubAddress,
       ethSigner,
     });
+  });
+
+  it('should construct a transfer using RouterBuilder with automatic selection', async () => {
+    const onStatusChange = vi.fn();
+
+    await RouterBuilder()
+      .from(from)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .injectorAddress(injectorAddress)
+      .recipientAddress(recipientAddress)
+      .signer(signer)
+      .slippagePct(slippagePct)
+      .onStatusChange(onStatusChange)
+      .build();
+
+    expect(spy).toHaveBeenCalledWith({ ...transferParams, onStatusChange, exchange: undefined });
   });
 
   it('should fail to construct a transfer using RouterBuilder when missing some params', async () => {

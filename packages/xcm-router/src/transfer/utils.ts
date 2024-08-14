@@ -29,6 +29,7 @@ export const buildFromExchangeExtrinsic = async (
   api: ApiPromise,
   { to, exchange, currencyTo, recipientAddress: address }: TCommonTransferOptionsModified,
   amountOut: string,
+  isToEth = false,
 ): Promise<Extrinsic> => {
   const builder = Builder(api);
   if (to === 'Polkadot' || to === 'Kusama') {
@@ -37,7 +38,7 @@ export const buildFromExchangeExtrinsic = async (
 
   return await builder
     .from(exchange)
-    .to(to === 'Ethereum' ? 'AssetHubPolkadot' : to)
+    .to(to === 'Ethereum' && !isToEth ? 'AssetHubPolkadot' : to)
     .currency({
       symbol: currencyTo,
     })
@@ -75,10 +76,11 @@ export const submitTransferToDestination = async (
   api: ApiPromise,
   options: TTransferOptionsModified,
   amountOut: string,
+  isToEth = false,
 ): Promise<string> => {
   const { to, currencyTo, signer, injectorAddress } = options;
   validateRelayChainCurrency(to, currencyTo);
-  const tx = await buildFromExchangeExtrinsic(api, options, amountOut);
+  const tx = await buildFromExchangeExtrinsic(api, options, amountOut, isToEth);
   return await submitTransaction(api, tx, signer, injectorAddress);
 };
 
