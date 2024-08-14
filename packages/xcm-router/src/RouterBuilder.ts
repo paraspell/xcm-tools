@@ -7,6 +7,7 @@ import {
   type TTransferOptions,
 } from '.';
 import { type TNodeWithRelayChains } from '@paraspell/sdk';
+import { Signer as EthSigner } from 'ethers';
 
 export interface TRouterBuilderOptions {
   from?: TNodeWithRelayChains;
@@ -18,9 +19,11 @@ export interface TRouterBuilderOptions {
   injectorAddress?: string;
   evmInjectorAddress?: string;
   recipientAddress?: string;
+  assetHubAddress?: string;
   slippagePct?: string;
   signer?: Signer;
   evmSigner?: Signer;
+  ethSigner?: EthSigner;
   onStatusChange?: (info: TTxProgressInfo) => void;
 }
 
@@ -71,6 +74,11 @@ export class RouterBuilderObject {
     return this;
   }
 
+  assetHubAddress(assetHubAddress: string): this {
+    this._routerBuilderOptions.assetHubAddress = assetHubAddress;
+    return this;
+  }
+
   signer(signer: Signer): this {
     this._routerBuilderOptions.signer = signer;
     return this;
@@ -83,6 +91,11 @@ export class RouterBuilderObject {
 
   evmSigner(evmSigner: Signer): this {
     this._routerBuilderOptions.evmSigner = evmSigner;
+    return this;
+  }
+
+  ethSigner(ethSigner: EthSigner): this {
+    this._routerBuilderOptions.ethSigner = ethSigner;
     return this;
   }
 
