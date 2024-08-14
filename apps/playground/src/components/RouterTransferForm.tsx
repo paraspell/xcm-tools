@@ -48,15 +48,22 @@ export type FormValues = {
   evmSigner?: Signer;
   evmInjectorAddress?: string;
   assetHubAddress?: string;
-  ethSigner?: ethers.Signer;
+  ethAddress?: string;
 };
 
 type Props = {
   onSubmit: (values: FormValues) => void;
   loading: boolean;
+  initializeProvider: () => BrowserProvider | undefined;
+  provider?: BrowserProvider;
 };
 
-const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
+const RouterTransferForm: FC<Props> = ({
+  onSubmit,
+  loading,
+  initializeProvider,
+  provider,
+}) => {
   const [modalOpened, { open: openModal, close: closeModal }] =
     useDisclosure(false);
 
@@ -79,7 +86,6 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   const [selectedAssetHubAccount, setSelectedAssetHubAccount] =
     useState<InjectedAccountWithMeta>();
 
-  const [provider, setProvider] = useState<BrowserProvider | null>(null);
   const [selectedEthAccount, setSelectedEthAccount] = useState<string | null>(
     null
   );
@@ -89,13 +95,12 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
     closeModal();
   };
 
-  const onEthAccountSelect = (account: string) => async () => {
+  const onEthAccountSelect = (account: string) => () => {
     setSelectedEthAccount(account);
     if (!provider) {
       throw new Error("Provider not initialized");
     }
-    const tempSigner = await provider.getSigner(account);
-    form.setFieldValue("ethSigner", tempSigner);
+    form.setFieldValue("ethAddress", account);
     closeEthModal();
   };
 
@@ -115,20 +120,9 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   }, [selectedAccount]);
 
   useEffect(() => {
-    void (async () => {
-      if (selectedEthAccount) {
-        if (!provider) {
-          throw new Error("Provider not initialized");
-        }
-
-        const signer = await provider.getSigner();
-
-        if (!signer) {
-          throw new Error("Signer not initialized");
-        }
-        form.setFieldValue("ethSigner", signer);
-      }
-    })();
+    if (selectedEthAccount) {
+      form.setFieldValue("ethAddress", selectedEthAccount);
+    }
   }, [selectedEthAccount]);
 
   useEffect(() => {
@@ -201,15 +195,14 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   const onConnectEvmWallet = () => void connectEvmWallet();
 
   const connectEthWallet = async () => {
-    if (!window.ethereum) {
-      alert("Please install MetaMask!");
-      return;
+    const newProvider = initializeProvider();
+
+    if (!newProvider) {
+      throw new Error("Provider not initialized");
     }
 
-    const tempProvider = new ethers.BrowserProvider(window.ethereum);
-    setProvider(tempProvider);
     try {
-      const accounts = (await tempProvider.send(
+      const accounts = (await newProvider.send(
         "eth_requestAccounts",
         []
       )) as string[];
@@ -391,23 +384,21 @@ const RouterTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           {...form.getInputProps("amount")}
         />
 
-        {!form.values.useApi && (
-          <Select
-            label="Transaction type"
-            placeholder="Pick value"
-            data={[
-              TransactionType.TO_EXCHANGE.toString(),
-              TransactionType.TO_DESTINATION.toString(),
-              TransactionType.SWAP.toString(),
-              TransactionType.FULL_TRANSFER.toString(),
-              TransactionType.FROM_ETH.toString(),
-              TransactionType.TO_ETH.toString(),
-            ]}
-            searchable
-            required
-            {...form.getInputProps("transactionType")}
-          />
-        )}
+        <Select
+          label="Transaction type"
+          placeholder="Pick value"
+          data={[
+            TransactionType.TO_EXCHANGE.toString(),
+            TransactionType.TO_DESTINATION.toString(),
+            TransactionType.SWAP.toString(),
+            TransactionType.FULL_TRANSFER.toString(),
+            TransactionType.FROM_ETH.toString(),
+            TransactionType.TO_ETH.toString(),
+          ]}
+          searchable
+          required
+          {...form.getInputProps("transactionType")}
+        />
 
         <TextInput
           label="Slippage percentage (%)"

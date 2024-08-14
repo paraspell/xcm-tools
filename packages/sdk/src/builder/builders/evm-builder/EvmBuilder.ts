@@ -1,7 +1,7 @@
 import { AbstractProvider, Signer } from 'ethers'
 import { TNodePolkadotKusama } from '../../../types'
 import { TEvmBuilderOptions, TOptionalEvmBuilderOptions } from '../../../types/TBuilder'
-import transferEthToPolkadot from '../../../pallets/xcmPallet/ethTransfer'
+import transferEthToPolkadot from '../../../pallets/xcmPallet/ethTransfer/ethTransfer'
 
 class EvmBuilderClass {
   private readonly _options: TOptionalEvmBuilderOptions

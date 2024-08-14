@@ -147,12 +147,13 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
 
     if (from === 'Ethereum' && assetHubAddress) {
       await transferFromEthereum(modifiedOptions);
+      const assetHubApi = await createApiInstanceForNode('AssetHubPolkadot');
       await transferToExchange(
         {
           ...modifiedOptions,
           from: 'AssetHubPolkadot',
         },
-        originApi,
+        assetHubApi,
       );
     } else {
       await transferToExchange(modifiedOptions, originApi);
@@ -167,6 +168,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
         {
           ...modifiedOptions,
           to: 'AssetHubPolkadot',
+          recipientAddress: assetHubAddress,
         },
         amountOut,
         swapApi,
@@ -182,5 +184,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
     } else {
       await transferToDestination(modifiedOptions, amountOut, swapApi);
     }
+    await originApi.disconnect();
+    await swapApi.disconnect();
   }
 };

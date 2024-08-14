@@ -185,7 +185,14 @@ export const getAllNodeProviders = (node: TNodePolkadotKusama): string[] => {
   return Object.values(providers ?? [])
 }
 
-export const getNodeProvider = (node: TNode): string => getNode(node).getProvider()
+export const getNodeProvider = (node: TNodeWithRelayChains): string => {
+  if (node === 'Polkadot') {
+    return prodRelayPolkadot.providers[0]
+  } else if (node === 'Kusama') {
+    return prodRelayKusama.providers[0]
+  }
+  return getNode(node).getProvider()
+}
 
 export const createApiInstance = async (wsUrl: string): Promise<ApiPromise> => {
   const wsProvider = new WsProvider(wsUrl)

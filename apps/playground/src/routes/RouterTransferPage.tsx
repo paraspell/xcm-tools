@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -28,11 +27,16 @@ import TransferStepper from "../components/TransferStepper";
 import Confetti from "react-confetti";
 import { Signer } from "@polkadot/api/types";
 import axios, { AxiosError } from "axios";
-import { createApiInstanceForNode, TNodeWithRelayChains } from "@paraspell/sdk";
 import { buildTx, submitTransaction } from "../utils";
 import ErrorAlert from "../components/ErrorAlert";
 import { useWallet } from "../hooks/useWallet";
 import { API_URL } from "../consts";
+import { BrowserProvider, ethers, LogDescription } from "ethers";
+import { IGateway__factory } from "@snowbridge/contract-types";
+import { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
+import { u8aToHex } from "@polkadot/util";
+import { decodeAddress } from "@polkadot/keyring";
+import { ApiPromise, WsProvider } from "@polkadot/api";
 
 const RouterTransferPage = () => {
   const { selectedAccount } = useWallet();
@@ -49,6 +53,8 @@ const RouterTransferPage = () => {
   const [showStepper, setShowStepper] = useState(false);
 
   const [runConfetti, setRunConfetti] = useState(false);
+
+  const [provider, setProvider] = useState<BrowserProvider>();
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -70,6 +76,16 @@ const RouterTransferPage = () => {
     setProgressInfo(status);
   };
 
+  const initializeProvider = () => {
+    if (!window.ethereum) {
+      alert("Please install MetaMask!");
+      return;
+    }
+    const browserProvider = new ethers.BrowserProvider(window.ethereum);
+    setProvider(browserProvider);
+    return browserProvider;
+  };
+
   const submitUsingRouterModule = async (
     formValues: FormValues,
     exchange: TExchangeNode | undefined,
@@ -87,9 +103,13 @@ const RouterTransferPage = () => {
       assetHubAddress,
       slippagePct,
       evmSigner,
-      ethSigner,
+      ethAddress,
       transactionType,
     } = formValues;
+
+    const ethSigner = provider
+      ? await provider.getSigner(ethAddress)
+      : undefined;
 
     await RouterBuilder()
       .from(from)
@@ -117,57 +137,111 @@ const RouterTransferPage = () => {
     injectorAddress: string,
     signer: Signer
   ) => {
-    const { from } = formValues;
-
     try {
-      const response = await axios.get(`${API_URL}/router`, {
-        timeout: 120000,
-        params: {
+      const response = await axios.post(
+        `${API_URL}/router`,
+        {
           ...formValues,
+          type: TransactionType[formValues.transactionType],
           exchange: exchange ?? undefined,
           injectorAddress,
         },
-      });
+        {
+          timeout: 120000,
+        }
+      );
 
-      const {
-        txs: [toExchange, swap, toDest],
-        exchangeNode,
-      } = await response.data;
+      const txs = await response.data;
 
-      const originApi = await createApiInstanceForNode(from);
-      const swapApi = await createApiInstanceForNode(
-        exchangeNode as TNodeWithRelayChains
-      );
-      onStatusChange({
-        type: TransactionType.TO_EXCHANGE,
-        status: TransactionStatus.IN_PROGRESS,
-      });
-      await submitTransaction(
-        originApi,
-        buildTx(originApi, toExchange),
-        signer,
-        injectorAddress
-      );
-      onStatusChange({
-        type: TransactionType.SWAP,
-        status: TransactionStatus.IN_PROGRESS,
-      });
-      await submitTransaction(
-        swapApi,
-        buildTx(swapApi, swap),
-        signer,
-        injectorAddress
-      );
-      onStatusChange({
-        type: TransactionType.TO_DESTINATION,
-        status: TransactionStatus.IN_PROGRESS,
-      });
-      await submitTransaction(
-        swapApi,
-        buildTx(swapApi, toDest),
-        signer,
-        injectorAddress
-      );
+      for (const txInfo of txs) {
+        onStatusChange({
+          type: txInfo.type,
+          status: TransactionStatus.IN_PROGRESS,
+        });
+
+        if (txInfo.type === "EXTRINSIC") {
+          // Handling of Polkadot transaction
+          const api = await ApiPromise.create({
+            provider: new WsProvider(txInfo.wsProvider),
+          });
+          if (txInfo.statusType === "TO_EXCHANGE") {
+            // When submitting to exchange, prioritize the evmSigner if available
+            await submitTransaction(
+              api,
+              buildTx(api, txInfo.tx),
+              formValues.evmSigner ?? signer,
+              formValues.evmInjectorAddress ?? injectorAddress
+            );
+          } else {
+            await submitTransaction(
+              api,
+              buildTx(api, txInfo.tx),
+              signer,
+              injectorAddress
+            );
+          }
+        } else {
+          // Handling of Ethereum transaction
+          const apiResponse = txInfo.tx;
+          const GATEWAY_CONTRACT = "0xEDa338E4dC46038493b885327842fD3E301CaB39";
+
+          if (!provider) {
+            throw new Error("Provider not initialized");
+          }
+
+          const tempSigner = await provider.getSigner(formValues.ethAddress);
+
+          const contract = IGateway__factory.connect(
+            GATEWAY_CONTRACT,
+            tempSigner
+          );
+
+          const abi = ethers.AbiCoder.defaultAbiCoder();
+
+          const address: MultiAddressStruct = {
+            data: abi.encode(
+              ["bytes32"],
+              [u8aToHex(decodeAddress(formValues.assetHubAddress))]
+            ),
+            kind: 1,
+          };
+
+          const response = await contract.sendToken(
+            apiResponse.token,
+            apiResponse.destinationParaId,
+            address,
+            apiResponse.destinationFee,
+            apiResponse.amount,
+            {
+              value: apiResponse.fee,
+            }
+          );
+          const receipt = await response.wait(1);
+
+          if (receipt === null) {
+            throw new Error("Error waiting for transaction completion");
+          }
+
+          if (receipt?.status !== 1) {
+            throw new Error("Transaction failed");
+          }
+
+          const events: LogDescription[] = [];
+          receipt.logs.forEach((log) => {
+            const event = contract.interface.parseLog({
+              topics: [...log.topics],
+              data: log.data,
+            });
+            if (event !== null) {
+              events.push(event);
+            }
+          });
+        }
+        onStatusChange({
+          type: txInfo.type,
+          status: TransactionStatus.SUCCESS,
+        });
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error(error);
@@ -206,6 +280,7 @@ const RouterTransferPage = () => {
 
     const originalError = console.error;
     console.error = (...args) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       if (args.length > 1 && args[2].includes("ExtrinsicStatus::")) {
         setError(new Error(args[2]));
         openAlert();
@@ -247,6 +322,7 @@ const RouterTransferPage = () => {
     } finally {
       setLoading(false);
     }
+    setLoading(false);
   };
 
   const onSubmit = (formValues: FormValues) => void submit(formValues);
@@ -264,7 +340,12 @@ const RouterTransferPage = () => {
       <Stack gap="xl">
         <Stack w="100%" maw={400} mx="auto" gap="lg">
           <Title order={3}>New SpellRouter transfer</Title>
-          <RouterTransferForm onSubmit={onSubmit} loading={loading} />
+          <RouterTransferForm
+            onSubmit={onSubmit}
+            loading={loading}
+            initializeProvider={initializeProvider}
+            provider={provider}
+          />
         </Stack>
         <Box ref={targetRef}>
           {progressInfo?.isAutoSelectingExchange && (
