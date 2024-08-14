@@ -11,6 +11,8 @@ import { EvmBuilder } from "@paraspell/sdk";
 import { fetchFromApi } from "../../utils/submitUsingApi";
 import { IGateway__factory } from "@snowbridge/contract-types";
 import { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
+import { u8aToHex } from "@polkadot/util";
+import { decodeAddress } from "@polkadot/keyring";
 
 interface ApiResponse {
   token: string;
@@ -123,7 +125,7 @@ const EthBridgeTransfer = () => {
       throw new Error("Signer not initialized");
     }
 
-    const apiResonse = (await fetchFromApi(
+    const apiResponse = (await fetchFromApi(
       {
         ...formValues,
         destAddress: formValues.address,
@@ -142,18 +144,21 @@ const EthBridgeTransfer = () => {
     const abi = ethers.AbiCoder.defaultAbiCoder();
 
     const address: MultiAddressStruct = {
-      data: abi.encode(["bytes32"], [formValues.address]),
+      data: abi.encode(
+        ["bytes32"],
+        [u8aToHex(decodeAddress(formValues.address))]
+      ),
       kind: 1,
     };
 
     const response = await contract.sendToken(
-      apiResonse.token,
-      apiResonse.destinationParaId,
+      apiResponse.token,
+      apiResponse.destinationParaId,
       address,
-      apiResonse.destinationFee,
-      apiResonse.amount,
+      apiResponse.destinationFee,
+      apiResponse.amount,
       {
-        value: apiResonse.fee,
+        value: apiResponse.fee,
       }
     );
     const receipt = await response.wait(1);

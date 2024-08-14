@@ -1,4 +1,9 @@
-import { type TNodeWithRelayChains, type Extrinsic, type TNode } from '@paraspell/sdk';
+import {
+  type TNodeWithRelayChains,
+  type Extrinsic,
+  type TNode,
+  type TSerializedEthTransfer,
+} from '@paraspell/sdk';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts/consts';
 import { Signer as EthSigner } from 'ethers';
@@ -65,8 +70,10 @@ export interface TTransferOptions {
 
 export type TBuildTransferExtrinsicsOptions = Omit<
   TTransferOptions,
-  'onStatusChange' | 'signer' | 'type'
->;
+  'onStatusChange' | 'signer' | 'evmSigner' | 'ethSigner'
+> & {
+  ethAddress?: string;
+};
 
 export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> & {
   exchange: TNode;
@@ -79,7 +86,20 @@ export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'sig
 export type TAssetSymbols = string[];
 export type TAssetsRecord = Record<TExchangeNode, TAssetSymbols>;
 
-export interface TBuildTransferExtrinsicsResult {
-  txs: [Extrinsic, Extrinsic, Extrinsic];
-  exchangeNode: TNode;
-}
+export type TBasicInfo = {
+  node: TNodeWithRelayChains;
+  statusType: TransactionType;
+  wsProvider?: string;
+};
+
+export type TExtrinsicInfo = TBasicInfo & {
+  tx: Extrinsic;
+  type: 'EXTRINSIC';
+};
+
+export type TEthOptionsInfo = TBasicInfo & {
+  tx: TSerializedEthTransfer | undefined;
+  type: 'ETH_TRANSFER';
+};
+
+export type TBuildTransferExtrinsicsResult = Array<TExtrinsicInfo | TEthOptionsInfo>;

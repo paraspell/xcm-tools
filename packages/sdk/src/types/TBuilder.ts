@@ -9,6 +9,17 @@ export type TEvmBuilderOptions = {
   signer: Signer
 }
 
+export type TSerializeEthTransferOptions = Omit<TEvmBuilderOptions, 'signer'> & {
+  destAddress: string
+}
+
+export type TSerializedEthTransfer = {
+  token: string
+  destinationParaId: number
+  destinationFee: bigint
+  amount: bigint
+}
+
 type OptionalProperties<T> = {
   [P in keyof T]?: T[P] | undefined
 }

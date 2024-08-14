@@ -4,7 +4,7 @@ import { maybeUpdateTransferStatus } from '../utils/utils';
 import { ethers, Signer } from 'ethers';
 
 export const transferFromEthereum = async (options: TTransferOptionsModified) => {
-  const { onStatusChange, injectorAddress, amount, currencyFrom, ethSigner } = options;
+  const { onStatusChange, amount, currencyFrom, ethSigner, assetHubAddress } = options;
   const ETH_PROVIDER = 'https://eth.llamarpc.com';
   const provider = new ethers.JsonRpcProvider(ETH_PROVIDER);
   maybeUpdateTransferStatus(onStatusChange, {
@@ -13,7 +13,7 @@ export const transferFromEthereum = async (options: TTransferOptionsModified) =>
   });
   await EvmBuilder(provider)
     .to('AssetHubPolkadot')
-    .address(injectorAddress)
+    .address(assetHubAddress ?? '')
     .amount(amount)
     .currency(currencyFrom)
     .signer(ethSigner as Signer)

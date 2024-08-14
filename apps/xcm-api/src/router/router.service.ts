@@ -13,6 +13,7 @@ import { isValidWalletAddress, serializeExtrinsic } from '../utils.js';
 import {
   EXCHANGE_NODES,
   TExchangeNode,
+  TransactionType,
   buildTransferExtrinsics,
 } from '@paraspell/xcm-router';
 
@@ -26,6 +27,7 @@ export class RouterService {
       injectorAddress,
       recipientAddress,
       slippagePct = '1',
+      type,
     } = options;
 
     const fromNode = from as TNodeWithRelayChains;
@@ -59,21 +61,24 @@ export class RouterService {
     }
 
     try {
-      const { txs, exchangeNode: selectedExchangeNode } =
-        await buildTransferExtrinsics({
-          ...options,
-          from: fromNode,
-          exchange: exchangeNode,
-          to: toNode,
-          slippagePct,
-        });
+      const txs = await buildTransferExtrinsics({
+        ...options,
+        type: type ? TransactionType[type] : undefined,
+        from: fromNode,
+        exchange: exchangeNode,
+        to: toNode,
+        slippagePct,
+      });
 
-      return {
-        exchangeNode: selectedExchangeNode,
-        txs: hashEnabled
-          ? txs
-          : txs.map((extrinsic) => serializeExtrinsic(extrinsic)),
-      };
+      return hashEnabled
+        ? txs
+        : txs.map((extrinsic) => ({
+            ...extrinsic,
+            tx:
+              extrinsic.type === 'EXTRINSIC'
+                ? serializeExtrinsic(extrinsic.tx)
+                : extrinsic.tx,
+          }));
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);

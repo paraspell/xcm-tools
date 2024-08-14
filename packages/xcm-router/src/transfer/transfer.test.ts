@@ -13,12 +13,16 @@ import * as selectBestExchange from './selectBestExchange';
 import type ExchangeNode from '../dexNodes/DexNode';
 import { Signer as EthSigner } from 'ethers';
 import { Signer } from '@polkadot/types/types';
+import { createApiInstanceForNode } from '@paraspell/sdk';
+import { ApiPromise } from '@polkadot/api';
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
   return {
     ...actual,
-    createApiInstanceForNode: vi.fn().mockResolvedValue(undefined),
+    createApiInstanceForNode: vi.fn().mockResolvedValue({
+      disconnect: async () => {},
+    }),
   };
 });
 
@@ -55,6 +59,10 @@ describe('transfer', () => {
     transferFromEthereumSpy = vi
       .spyOn(transferFromEthereum, 'transferFromEthereum')
       .mockResolvedValue();
+
+    vi.mocked(createApiInstanceForNode).mockResolvedValue({
+      disconnect: async () => {},
+    } as ApiPromise);
   });
 
   it('main transfer function - FULL_TRANSFER scenario - manual exchange', async () => {
@@ -82,7 +90,9 @@ describe('transfer', () => {
       .mockReturnValue(
         Promise.resolve({
           node: 'Acala',
-          createApiInstance: vi.fn().mockResolvedValue({}),
+          createApiInstance: vi.fn().mockResolvedValue({
+            disconnect: () => {},
+          }),
           swapCurrency: vi.fn().mockResolvedValue({}),
         } as unknown as ExchangeNode),
       );

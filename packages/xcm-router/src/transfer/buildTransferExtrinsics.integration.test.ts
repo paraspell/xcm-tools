@@ -19,6 +19,6 @@ describe('buildTransferExtrinsics - integration', () => {
     const result = await buildTransferExtrinsics(options);
 
     expect(result).toBeDefined();
-    expect(result.txs).toHaveLength(3);
+    expect(result).toHaveLength(3);
   });
 });

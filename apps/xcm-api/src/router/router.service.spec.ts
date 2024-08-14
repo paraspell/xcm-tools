@@ -14,14 +14,26 @@ vi.mock('@paraspell/xcm-router', async () => {
   const actual = await vi.importActual('@paraspell/xcm-router');
   return {
     ...actual,
-    buildTransferExtrinsics: vi.fn().mockReturnValue({
-      txs: [
-        'serialized-api-call',
-        'serialized-api-call',
-        'serialized-api-call',
-      ],
-      exchangeNode: 'AcalaDex',
-    }),
+    buildTransferExtrinsics: vi.fn().mockReturnValue([
+      {
+        node: 'Astar',
+        tx: 'serialized-api-call',
+        type: 'EXTRINSICS',
+        statusType: 'TO_EXCHANGE',
+      },
+      {
+        node: 'Hydration',
+        tx: 'serialized-api-call',
+        type: 'EXTRINSICS',
+        statusType: 'SWAP',
+      },
+      {
+        node: 'Astar',
+        tx: 'serialized-api-call',
+        type: 'EXTRINSICS',
+        statusType: 'TO_DESTINATION',
+      },
+    ]),
   };
 });
 
@@ -39,15 +51,32 @@ describe('RouterService', () => {
     amount: '1000000000000000000',
     injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
     recipientAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+    type: spellRouter.TransactionType.TO_DESTINATION,
   };
 
   const invalidNode = 'Astarr';
 
   const serializedTx = 'serialized-api-call';
-  const serializedExtrinsics = {
-    txs: [serializedTx, serializedTx, serializedTx],
-    exchangeNode: 'AcalaDex',
-  };
+  const serializedExtrinsics = [
+    {
+      node: 'Astar',
+      tx: serializedTx,
+      type: 'EXTRINSICS',
+      statusType: 'TO_EXCHANGE',
+    },
+    {
+      node: 'Hydration',
+      tx: serializedTx,
+      type: 'EXTRINSICS',
+      statusType: 'SWAP',
+    },
+    {
+      node: 'Astar',
+      tx: serializedTx,
+      type: 'EXTRINSICS',
+      statusType: 'TO_DESTINATION',
+    },
+  ];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

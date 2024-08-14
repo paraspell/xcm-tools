@@ -635,16 +635,15 @@ describe('XCM API (e2e)', () => {
           .expect(200)
           .expect((res) => {
             const data = JSON.parse(res.text);
-            expect(data).toHaveProperty('txs');
-            expect(data.txs).toBeInstanceOf(Array);
-            expect(data.txs).toHaveLength(3);
-            data.txs.forEach((tx: any) => {
-              expect(tx).toHaveProperty('module');
-              expect(tx).toHaveProperty('section');
-              expect(tx).toHaveProperty('parameters');
+            expect(Array.isArray(data)).toBeTruthy();
+            expect(data).toHaveLength(3);
+            data.forEach((txInfo: any) => {
+              expect(txInfo).toHaveProperty('tx');
+              expect(txInfo).toHaveProperty('node');
+              expect(txInfo).toHaveProperty('type');
+              expect(txInfo).toHaveProperty('statusType');
+              expect(txInfo.tx).toBeTypeOf('object');
             });
-            expect(data).toHaveProperty('exchangeNode');
-            expect(Array.isArray(data.txs)).toBeTruthy();
           });
       });
 
@@ -655,13 +654,15 @@ describe('XCM API (e2e)', () => {
           .expect(201)
           .expect((res) => {
             const data = JSON.parse(res.text);
-            expect(data).toHaveProperty('txs');
-            expect(data.txs).toHaveLength(3);
-            data.txs.forEach((tx: any) => {
-              expect(tx).toBeTypeOf('string');
+            expect(Array.isArray(data)).toBeTruthy();
+            expect(data).toHaveLength(3);
+            data.forEach((txInfo: any) => {
+              expect(txInfo).toHaveProperty('tx');
+              expect(txInfo).toHaveProperty('node');
+              expect(txInfo).toHaveProperty('type');
+              expect(txInfo).toHaveProperty('statusType');
+              expect(txInfo.tx).toBeTypeOf('string');
             });
-            expect(data).toHaveProperty('exchangeNode');
-            expect(Array.isArray(data.txs)).toBeTruthy();
           });
       });
 
@@ -677,9 +678,15 @@ describe('XCM API (e2e)', () => {
           .expect(200)
           .expect((res) => {
             const data = JSON.parse(res.text);
-            expect(data).toHaveProperty('txs');
-            expect(data).toHaveProperty('exchangeNode');
-            expect(Array.isArray(data.txs)).toBeTruthy();
+            expect(Array.isArray(data)).toBeTruthy();
+            expect(data).toHaveLength(3);
+            data.forEach((txInfo: any) => {
+              expect(txInfo).toHaveProperty('tx');
+              expect(txInfo).toHaveProperty('node');
+              expect(txInfo).toHaveProperty('type');
+              expect(txInfo).toHaveProperty('statusType');
+              expect(txInfo.tx).toBeTypeOf('object');
+            });
           });
       });
     });
