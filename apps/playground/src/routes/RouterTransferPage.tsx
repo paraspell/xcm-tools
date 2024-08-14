@@ -12,11 +12,11 @@ import {
   Center,
 } from "@mantine/core";
 import {
-  transfer,
   TransactionType,
   TTxProgressInfo,
   TExchangeNode,
   TransactionStatus,
+  RouterBuilder,
 } from "@paraspell/xcm-router";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
@@ -76,15 +76,39 @@ const RouterTransferPage = () => {
     injectorAddress: string,
     signer: Signer
   ) => {
-    const { transactionType } = formValues;
-    await transfer({
-      ...formValues,
-      injectorAddress: injectorAddress,
-      signer: signer,
-      type: TransactionType[transactionType],
-      exchange: exchange ?? undefined,
-      onStatusChange,
-    });
+    const {
+      from,
+      to,
+      currencyFrom,
+      currencyTo,
+      amount,
+      recipientAddress,
+      evmInjectorAddress,
+      assetHubAddress,
+      slippagePct,
+      evmSigner,
+      ethSigner,
+      transactionType,
+    } = formValues;
+
+    await RouterBuilder()
+      .from(from)
+      .to(to)
+      .exchange(exchange)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .injectorAddress(injectorAddress)
+      .recipientAddress(recipientAddress)
+      .evmInjectorAddress(evmInjectorAddress)
+      .assetHubAddress(assetHubAddress)
+      .signer(signer)
+      .ethSigner(ethSigner)
+      .evmSigner(evmSigner)
+      .slippagePct(slippagePct)
+      .transactionType(TransactionType[transactionType])
+      .onStatusChange(onStatusChange)
+      .build();
   };
 
   const submitUsingApi = async (

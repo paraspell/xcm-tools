@@ -10,7 +10,7 @@ export const transferToEthereum = async (options: TTransferOptionsModified, amou
     status: TransactionStatus.IN_PROGRESS,
   });
   const assetHubApi = await createApiInstanceForNode('AssetHubPolkadot');
-  await submitTransferToDestination(assetHubApi, options, amountOut);
+  await submitTransferToDestination(assetHubApi, options, amountOut, true);
   maybeUpdateTransferStatus(onStatusChange, {
     type: TransactionType.TO_ETH,
     status: TransactionStatus.SUCCESS,
