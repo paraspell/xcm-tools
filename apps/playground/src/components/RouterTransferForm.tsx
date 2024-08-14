@@ -47,6 +47,7 @@ export type FormValues = {
   useApi: boolean;
   evmSigner?: Signer;
   evmInjectorAddress?: string;
+  assetHubAddress?: string;
   ethSigner?: ethers.Signer;
 };
 

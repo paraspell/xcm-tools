@@ -28,6 +28,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
     assetHubAddress,
     type,
   } = options;
+
   if (evmSigner !== undefined && evmInjectorAddress === undefined) {
     throw new Error('evmInjectorAddress is required when evmSigner is provided');
   }

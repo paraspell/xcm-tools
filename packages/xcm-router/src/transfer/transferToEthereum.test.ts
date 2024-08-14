@@ -55,7 +55,7 @@ describe('transferToEthereum', () => {
       type: TransactionType.TO_ETH,
       status: TransactionStatus.IN_PROGRESS,
     });
-    expect(submitTransferToDestination).toHaveBeenCalledWith(mockApi, options, amountOut);
+    expect(submitTransferToDestination).toHaveBeenCalledWith(mockApi, options, amountOut, true);
     expect(maybeUpdateTransferStatus).toHaveBeenCalledWith(options.onStatusChange, {
       type: TransactionType.TO_ETH,
       status: TransactionStatus.SUCCESS,
