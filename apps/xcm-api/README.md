@@ -49,12 +49,13 @@ Possible parameters:
 
 ```
 NOTICE:
-The latest version switched to the POST method for XCM Transfers, but we kept GET method support. It will however be deprecated at some point. Please consider switching to POST method.
+- The latest version switched to the POST method for XCM Transfers, but we kept GET method support. It will however be deprecated at some point. Please consider switching to POST method.
+- API now returns you transaction hash instead of transaction instruction that needs to be parsed! Implementation is as easy as api.tx(receivedHash).
 ```
 
 ```js
 //Construct XCM call from Relay chain to Parachain (DMP)
-const response = await fetch('http://localhost:3001/x-transfer', {
+const response = await fetch('http://localhost:3001/x-transfer-hash', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ const response = await fetch('http://localhost:3001/x-transfer', {
 });
 
 //Construct XCM call from Parachain chain to Relay chain (UMP)
-const response = await fetch('http://localhost:3001/x-transfer', {
+const response = await fetch('http://localhost:3001/x-transfer-hash', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -82,7 +83,7 @@ const response = await fetch('http://localhost:3001/x-transfer', {
 });
 
 //Construct XCM call from Parachain to Parachain (HRMP)
-const response = await fetch('http://localhost:3001/x-transfer', {
+const response = await fetch('http://localhost:3001/x-transfer-hash', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -99,7 +100,7 @@ const response = await fetch('http://localhost:3001/x-transfer', {
 
 //Construct custom multilocation XCM call from Parachain to Parachain (HRMP)
 //Multilocations can be customized for Destination, Address and Currency.
-const response = await fetch('http://localhost:3001/x-transfer', {
+const response = await fetch('http://localhost:3001/x-transfer-hash', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -132,7 +133,7 @@ Possible parameters:
 - `fungible` (Inside JSON body): (required): Represents the asset being claimed. It should be a multilocation.
 
 ```js
-const response = await fetch('http://localhost:3001/asset-claim', {
+const response = await fetch('http://localhost:3001/asset-claim-hash', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -195,7 +196,7 @@ Possible parameters:
 - `injectorAddress`: (required): Specifies the sender's address.
 
 ```js
-const response = await fetch('http://localhost:3001/router', {
+const response = await fetch('http://localhost:3001/router-hash', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',

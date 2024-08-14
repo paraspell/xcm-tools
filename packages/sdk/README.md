@@ -67,6 +67,7 @@ NOTES:
 - POLKADOT <> KUSAMA Bridge is now available! Try sending DOT or KSM between AssetHubs - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
 - You can now customize XCM Version! Try using .xcmVersion parameter after address in builder.
 - POLKADOT <> ETHEREUM Bridge is now available! Try sending WETH between the ecosystems - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
+- If you have duplicit asset error when building your call you can now specify which asset by new object selection eg. {symbol: number | bigint | string } or {id: number | bigint | string}
 ```
 
 ### Builder pattern:
@@ -76,7 +77,7 @@ NOTES:
 await Builder(/*node api - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
-      .currency(CurrencyString| CurrencyID | Multilocation object | MultilocationArray)
+      .currency(CurrencyString | CurrencyID | Multilocation object | MultilocationArray | { symbol: string | number | bigint} | { id: string | number | bigint}) // Object selection is used when there are duplicate assets found and selector is unable to pick based on details provided (You will get an error from SDK when this happens).
       /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
       .amount(amount) // Overriden when using MultilocationArray
       .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
