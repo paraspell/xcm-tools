@@ -682,4 +682,136 @@ describe('Builder', () => {
     expect(serializedApiCall.section).toBeTypeOf('string')
     expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
   })
+
+  it('should initiatie a para to para transfer using batching', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as any)
+
+    const api = {
+      tx: {
+        utility: {
+          batchAll: vi.fn(),
+          batch: vi.fn()
+        }
+      }
+    } as unknown as ApiPromise
+
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2)
+      .currency(CURRENCY)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .addToBatch()
+      .buildBatch()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      destination: NODE_2,
+      currency: CURRENCY,
+      amount: AMOUNT,
+      address: ADDRESS
+    })
+  })
+
+  it('should initiatie a double para to para transfer using batching', async () => {
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as any)
+
+    const api = {
+      tx: {
+        utility: {
+          batchAll: vi.fn(),
+          batch: vi.fn()
+        }
+      }
+    } as unknown as ApiPromise
+
+    await Builder(api)
+      .from(NODE)
+      .to(NODE_2)
+      .currency(CURRENCY)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .addToBatch()
+      .from(NODE)
+      .to(NODE_2)
+      .currency(CURRENCY)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .addToBatch()
+      .buildBatch()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      origin: NODE,
+      destination: NODE_2,
+      currency: CURRENCY,
+      amount: AMOUNT,
+      address: ADDRESS
+    })
+
+    expect(spy).toHaveBeenCalledTimes(2)
+  })
+
+  it('should initiatie a double relay to para transfer using batching', async () => {
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue({} as any)
+
+    const api = {
+      tx: {
+        utility: {
+          batchAll: vi.fn(),
+          batch: vi.fn()
+        }
+      }
+    } as unknown as ApiPromise
+
+    await Builder(api)
+      .to(NODE_2)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .addToBatch()
+      .to(NODE_2)
+      .amount(AMOUNT)
+      .address(ADDRESS)
+      .addToBatch()
+      .buildBatch()
+
+    expect(spy).toHaveBeenCalledWith({
+      api,
+      destination: NODE_2,
+      amount: AMOUNT,
+      address: ADDRESS
+    })
+
+    expect(spy).toHaveBeenCalledTimes(2)
+  })
+
+  it('should throw if trying to build when transactions are batched', async () => {
+    const api = {
+      tx: {
+        utility: {
+          batchAll: vi.fn(),
+          batch: vi.fn()
+        }
+      }
+    } as unknown as ApiPromise
+
+    await expect(
+      Builder(api)
+        .from(NODE)
+        .to(NODE_2)
+        .currency(CURRENCY)
+        .amount(AMOUNT)
+        .address(ADDRESS)
+        .addToBatch()
+        .from(NODE)
+        .to(NODE_2)
+        .currency(CURRENCY)
+        .amount(AMOUNT)
+        .address(ADDRESS)
+        .build()
+    ).rejects.toThrow(
+      'Transaction manager contains batched items. Use buildBatch() to process them.'
+    )
+  })
 })

@@ -1,5 +1,5 @@
-import { Signer } from 'ethers'
-import { TNodePolkadotKusama } from './TNode'
+import type { Signer } from 'ethers'
+import type { TNodePolkadotKusama } from './TNode'
 
 export type TEvmBuilderOptions = {
   to: TNodePolkadotKusama
@@ -25,3 +25,12 @@ type OptionalProperties<T> = {
 }
 
 export type TOptionalEvmBuilderOptions = OptionalProperties<TEvmBuilderOptions>
+
+export enum BatchMode {
+  BATCH_ALL = 'BATCH_ALL',
+  BATCH = 'BATCH'
+}
+
+export type TBatchOptions = {
+  mode: BatchMode
+}

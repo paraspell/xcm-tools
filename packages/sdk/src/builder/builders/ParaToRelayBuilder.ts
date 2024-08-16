@@ -13,7 +13,8 @@ import {
   type Version
 } from '../../types'
 import { getRelayChainSymbol } from '../../pallets/assets'
-import { type UseKeepAliveFinalBuilder, type AddressBuilder } from './Builder'
+import { type UseKeepAliveFinalBuilder, type AddressBuilder, GeneralBuilder } from './Builder'
+import BatchTransactionManager from './BatchTransactionManager'
 
 class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
   private readonly api?: ApiPromise
@@ -29,6 +30,7 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
     api: ApiPromise | undefined,
     from: TNode,
     amount: TAmount | null,
+    private batchManager: BatchTransactionManager,
     feeAsset?: TCurrency
   ) {
     this.api = api
@@ -41,9 +43,10 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
     api: ApiPromise | undefined,
     from: TNode,
     amount: TAmount | null,
+    batchManager: BatchTransactionManager,
     feeAsset?: TCurrency
   ): AddressBuilder {
-    return new ParaToRelayBuilder(api, from, amount, feeAsset)
+    return new ParaToRelayBuilder(api, from, amount, batchManager, feeAsset)
   }
 
   address(address: TAddress): this {
@@ -76,6 +79,15 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
       destApiForKeepAlive: this._destApi,
       version: this._version
     }
+  }
+
+  addToBatch() {
+    const options = this.buildOptions()
+    this.batchManager.addTransaction({
+      func: send,
+      options
+    })
+    return new GeneralBuilder(this.batchManager, this.api, this.from)
   }
 
   async build(): Promise<Extrinsic> {
