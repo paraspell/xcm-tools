@@ -10,7 +10,13 @@ import {
   type TAddress,
   type Version
 } from '../../types'
-import { type UseKeepAliveFinalBuilder, type AddressBuilder, type AmountBuilder } from './Builder'
+import {
+  type UseKeepAliveFinalBuilder,
+  type AddressBuilder,
+  type AmountBuilder,
+  GeneralBuilder
+} from './Builder'
+import BatchTransactionManager from './BatchTransactionManager'
 
 class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
   private readonly api?: ApiPromise
@@ -22,14 +28,24 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
   private _destApi?: ApiPromise
   private _version?: Version
 
-  private constructor(api: ApiPromise | undefined, to: TDestination, paraIdTo?: number) {
+  private constructor(
+    api: ApiPromise | undefined,
+    to: TDestination,
+    private batchManager: BatchTransactionManager,
+    paraIdTo?: number
+  ) {
     this.api = api
     this.to = to
     this.paraIdTo = paraIdTo
   }
 
-  static create(api: ApiPromise | undefined, to: TDestination, paraIdTo?: number): AmountBuilder {
-    return new RelayToParaBuilder(api, to, paraIdTo)
+  static create(
+    api: ApiPromise | undefined,
+    to: TDestination,
+    batchManager: BatchTransactionManager,
+    paraIdTo?: number
+  ): AmountBuilder {
+    return new RelayToParaBuilder(api, to, batchManager, paraIdTo)
   }
 
   amount(amount: number): this {
@@ -62,6 +78,14 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
       destApiForKeepAlive: this._destApi,
       version: this._version
     }
+  }
+
+  addToBatch() {
+    this.batchManager.addTransaction({
+      func: transferRelayToPara,
+      options: this.buildOptions()
+    })
+    return new GeneralBuilder(this.batchManager, this.api, undefined, this.to)
   }
 
   async build(): Promise<Extrinsic> {

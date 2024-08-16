@@ -1,25 +1,26 @@
 // Implements builder pattern for XCM message creation operations operation
 
-import { type ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 import { send, sendSerializedApiCall } from '../../pallets/xcmPallet'
-import {
-  type TSerializedApiCall,
-  type Extrinsic,
-  type TNode,
-  type TSendOptions,
-  type TCurrencyInput,
-  type TAmount,
-  type TAddress,
-  type TDestination,
-  type TCurrency,
-  type Version
+import type {
+  TSerializedApiCall,
+  TNode,
+  TSendOptions,
+  TCurrencyInput,
+  TAmount,
+  TAddress,
+  TDestination,
+  TCurrency,
+  Version
 } from '../../types'
 import {
-  type UseKeepAliveFinalBuilder,
-  type AddressBuilder,
+  AddressBuilder,
+  GeneralBuilder,
+  UseKeepAliveFinalBuilder,
   type AmountBuilder,
   type AmountOrFeeAssetBuilder
 } from './Builder'
+import BatchTransactionManager from './BatchTransactionManager'
 
 class ParaToParaBuilder
   implements AmountOrFeeAssetBuilder, AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder
@@ -41,6 +42,7 @@ class ParaToParaBuilder
     from: TNode,
     to: TDestination,
     currency: TCurrencyInput,
+    private batchManager: BatchTransactionManager,
     paraIdTo?: number
   ) {
     this.api = api
@@ -55,9 +57,10 @@ class ParaToParaBuilder
     from: TNode,
     to: TDestination,
     currency: TCurrencyInput,
+    batchManager: BatchTransactionManager,
     paraIdTo?: number
   ): AmountOrFeeAssetBuilder {
-    return new ParaToParaBuilder(api, from, to, currency, paraIdTo)
+    return new ParaToParaBuilder(api, from, to, currency, batchManager, paraIdTo)
   }
 
   feeAsset(feeAsset: TCurrency): this {
@@ -100,7 +103,21 @@ class ParaToParaBuilder
     }
   }
 
-  async build(): Promise<Extrinsic> {
+  addToBatch() {
+    const options = this.buildOptions()
+    this.batchManager.addTransaction({
+      func: send,
+      options
+    })
+    return new GeneralBuilder(this.batchManager, this.api, this.from)
+  }
+
+  async build() {
+    if (!this.batchManager.isEmpty()) {
+      throw new Error(
+        'Transaction manager contains batched items. Use buildBatch() to process them.'
+      )
+    }
     const options = this.buildOptions()
     return await send(options)
   }

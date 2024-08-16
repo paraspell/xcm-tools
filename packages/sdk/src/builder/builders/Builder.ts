@@ -13,7 +13,8 @@ import {
   type TMultiAsset,
   type TNodeWithRelayChains,
   type TVersionClaimAssets,
-  type Version
+  type Version,
+  TBatchOptions
 } from '../../types'
 import { CloseChannelBuilder, type InboundCloseChannelBuilder } from './CloseChannelBuilder'
 import { OpenChannelBuilder, type MaxSizeOpenChannelBuilder } from './OpenChannelBuilder'
@@ -22,6 +23,8 @@ import ParaToParaBuilder from './ParaToParaBuilder'
 import ParaToRelayBuilder from './ParaToRelayBuilder'
 import { MissingApiPromiseError } from '../../errors/MissingApiPromiseError'
 import AssetClaimBuilder from './AssetClaimBuilder'
+import BatchTransactionManager from './BatchTransactionManager'
+import { IAddToBatchBuilder } from './IBatchBuilder'
 
 class ToGeneralBuilder {
   private readonly api?: ApiPromise
@@ -29,7 +32,13 @@ class ToGeneralBuilder {
   private readonly to: TDestination
   private readonly paraIdTo?: number
 
-  constructor(api: ApiPromise | undefined, from: TNode, to: TDestination, paraIdTo?: number) {
+  constructor(
+    api: ApiPromise | undefined,
+    from: TNode,
+    to: TDestination,
+    private batchManager: BatchTransactionManager,
+    paraIdTo?: number
+  ) {
     this.api = api
     this.from = from
     this.to = to
@@ -37,7 +46,14 @@ class ToGeneralBuilder {
   }
 
   currency(currency: TCurrencyInput): AmountOrFeeAssetBuilder {
-    return ParaToParaBuilder.createParaToPara(this.api, this.from, this.to, currency, this.paraIdTo)
+    return ParaToParaBuilder.createParaToPara(
+      this.api,
+      this.from,
+      this.to,
+      currency,
+      this.batchManager,
+      this.paraIdTo
+    )
   }
 
   openChannel(): MaxSizeOpenChannelBuilder {
@@ -54,13 +70,17 @@ class FromGeneralBuilder {
 
   private _feeAsset?: TCurrency
 
-  constructor(api: ApiPromise | undefined, from: TNode) {
+  constructor(
+    api: ApiPromise | undefined,
+    from: TNode,
+    private batchManager: BatchTransactionManager
+  ) {
     this.api = api
     this.from = from
   }
 
   to(node: TDestination, paraIdTo?: number): ToGeneralBuilder {
-    return new ToGeneralBuilder(this.api, this.from, node, paraIdTo)
+    return new ToGeneralBuilder(this.api, this.from, node, this.batchManager, paraIdTo)
   }
 
   feeAsset(feeAsset: TCurrency): AmountBuilder {
@@ -69,7 +89,7 @@ class FromGeneralBuilder {
   }
 
   amount(amount: TAmount | null): AddressBuilder {
-    return ParaToRelayBuilder.create(this.api, this.from, amount, this._feeAsset)
+    return ParaToRelayBuilder.create(this.api, this.from, amount, this.batchManager, this._feeAsset)
   }
 
   closeChannel(): InboundCloseChannelBuilder {
@@ -80,28 +100,33 @@ class FromGeneralBuilder {
   }
 }
 
-class GeneralBuilder {
-  private readonly api?: ApiPromise
-
-  constructor(api?: ApiPromise) {
-    this.api = api
-  }
+export class GeneralBuilder {
+  constructor(
+    private readonly batchManager: BatchTransactionManager,
+    private readonly api?: ApiPromise,
+    private readonly _from?: TNode,
+    private readonly _to?: TDestination
+  ) {}
 
   from(node: TNode): FromGeneralBuilder {
-    return new FromGeneralBuilder(this.api, node)
+    return new FromGeneralBuilder(this.api, node, this.batchManager)
   }
 
   to(node: TDestination, paraIdTo?: number): AmountBuilder {
-    return RelayToParaBuilder.create(this.api, node, paraIdTo)
+    return RelayToParaBuilder.create(this.api, node, this.batchManager, paraIdTo)
   }
 
   claimFrom(node: TNodeWithRelayChains): FungibleBuilder {
     return AssetClaimBuilder.create(this.api, node)
   }
+
+  async buildBatch(options?: TBatchOptions) {
+    return this.batchManager.buildBatch(this.api, this._from, this._to, options)
+  }
 }
 
 export const Builder = (api?: ApiPromise): GeneralBuilder => {
-  return new GeneralBuilder(api)
+  return new GeneralBuilder(new BatchTransactionManager(), api)
 }
 
 export interface FinalBuilder {
@@ -114,9 +139,9 @@ export interface FinalBuilderAsync {
   buildSerializedApiCall: () => Promise<TSerializedApiCall>
 }
 
-export interface UseKeepAliveFinalBuilder {
-  useKeepAlive: (destApi: ApiPromise) => UseKeepAliveFinalBuilder
-  xcmVersion: (version: Version) => UseKeepAliveFinalBuilder
+export interface UseKeepAliveFinalBuilder extends IAddToBatchBuilder {
+  useKeepAlive: (destApi: ApiPromise) => this
+  xcmVersion: (version: Version) => this
   build: () => Promise<Extrinsic>
   buildSerializedApiCall: () => Promise<TSerializedApiCall>
 }
