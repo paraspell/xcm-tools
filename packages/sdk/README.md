@@ -141,6 +141,30 @@ await Builder(/*node api - optional*/)
       /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
       .build()
 ```
+
+##### Batch calls
+You can batch XCM calls and execute multiple XCM calls within one call. All three scenarios (Para->Para, Para->Relay, Relay->Para) can be used and combined.
+```js
+await Builder(/*node api - optional*/)
+      .from(NODE) //Ensure, that origin node is the same in all batched XCM Calls.
+      .to(NODE_2) //Any compatible Parachain
+      .currency(currency) //Currency to transfer (If Para->Para), otherwise you do not need to specify .currency()
+      .amount(amount) 
+      .address(address | Multilocation object)
+      .addToBatch()
+
+      .from(NODE) //Ensure, that origin node is the same in all batched XCM Calls.
+      .to(NODE_3) //Any compatible Parachain
+      .currency(currency) //Currency to transfer (If Para->Para), otherwise you do not need to specify .currency()
+      .amount(amount)
+      .address(address | Multilocation object)
+      .addToBatch()
+      .buildBatch({ 
+          // This settings object is optional and batch all is the default option
+          mode: BatchMode.BATCH_ALL //or BatchMode.BATCH
+      })
+```
+
 ##### Close HRMP channels
 ```ts
 Builder(api)
