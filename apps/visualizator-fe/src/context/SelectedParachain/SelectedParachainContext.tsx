@@ -8,6 +8,8 @@ interface SelectedParachainContextType {
   parachains: SelectedParachain[];
   setParachains: (parachain: SelectedParachain[]) => void;
   toggleParachain: (parachain: SelectedParachain) => void;
+  activeEditParachain: SelectedParachain | null;
+  toggleActiveEditParachain: (parachain: SelectedParachain | null) => void;
   channelId?: number;
   setChannelId: (channelId: number) => void;
   channelAlertOpen?: boolean;
@@ -45,12 +47,21 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
   const [parachainArrangement, setParachainArrangement] = useState<CountOption>(CountOption.ORIGIN);
   const [channelAlertOpen, setChannelAlertOpen] = useState<boolean>(false);
   const [selectedEcosystem, setSelectedEcosystem] = useState<Ecosystem>(Ecosystem.POLKADOT);
+  const [activeEditParachain, setActiveEditParachain] = useState<SelectedParachain | null>(null);
 
   const toggleParachain = (parachain: SelectedParachain) => {
     if (parachains.includes(parachain)) {
       setParachains(parachains.filter(p => p !== parachain));
     } else {
       setParachains([...parachains, parachain]);
+    }
+  };
+
+  const toggleActiveEditParachain = (parachain: SelectedParachain | null) => {
+    if (activeEditParachain === parachain) {
+      setActiveEditParachain(null);
+    } else {
+      setActiveEditParachain(parachain);
     }
   };
 
@@ -77,7 +88,9 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
         parachainArrangement,
         setParachainArrangement,
         selectedEcosystem,
-        setSelectedEcosystem
+        setSelectedEcosystem,
+        activeEditParachain,
+        toggleActiveEditParachain
       }}
     >
       {children}
