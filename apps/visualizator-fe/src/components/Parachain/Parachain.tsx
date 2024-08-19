@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Text } from '@react-three/drei';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { Color, Group, Mesh, MeshStandardMaterial, SphereGeometry, TextureLoader } from 'three';
@@ -15,12 +15,22 @@ type Props = {
   index: number;
   isSelected: boolean;
   onClick: (name: string) => void;
+  onRightClick: (name: string) => void;
   scale: number;
   ecosystem: Ecosystem;
 };
 
-const Parachain: React.FC<Props> = ({ name, index, isSelected, onClick, scale, ecosystem }) => {
-  const position = getParachainPosition(index, ecosystem);
+const Parachain: React.FC<Props> = ({
+  name,
+  index,
+  isSelected,
+  onClick,
+  onRightClick,
+  scale,
+  ecosystem
+}) => {
+  const initialPosition = getParachainPosition(index, ecosystem);
+  const [position] = useState(initialPosition);
   const textRef = useRef<Text>(null);
   const materialRef = useRef<MeshStandardMaterial>(null);
   const groupRef = useRef<Group>(null);
@@ -52,13 +62,24 @@ const Parachain: React.FC<Props> = ({ name, index, isSelected, onClick, scale, e
   const color = getParachainColor(name, ecosystem);
   const lightColor = lightenColor(color, 50);
 
+  const onClickHandler = () => {
+    onClick(name);
+  };
+
+  const onContextMenu = () => {
+    onRightClick(name);
+  };
+
+  const objectName = `${ecosystem};${name}`;
+
   return (
-    <group ref={groupRef} scale={[scale, scale, scale]} position={position}>
+    <group ref={groupRef} name={objectName} scale={[scale, scale, scale]} position={position}>
       <mesh
         castShadow
         ref={sphereRef}
         rotation={[0, Math.PI * 1.5, 0]}
-        onClick={() => onClick(name)}
+        onClick={onClickHandler}
+        onContextMenu={onContextMenu}
       >
         <sphereGeometry args={[0.3, 16, 16]} />
         <meshStandardMaterial
@@ -72,6 +93,7 @@ const Parachain: React.FC<Props> = ({ name, index, isSelected, onClick, scale, e
           roughness={0.3}
         />
       </mesh>
+
       <Text
         ref={textRef}
         position={[0, 0.5, 0]}

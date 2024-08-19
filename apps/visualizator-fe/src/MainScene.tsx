@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { Vector3 } from 'three';
-import { useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
+import { OrbitControls, PerspectiveCamera, TransformControls } from '@react-three/drei';
 import ParachainsGraphContainer from './components/ParachainsGraph/ParachainsGraph.container';
 import { Ecosystem } from './types/types';
 import { useSelectedParachain } from './context/SelectedParachain/useSelectedParachain';
@@ -18,7 +18,7 @@ interface AngleMap {
 }
 
 const MainScene = () => {
-  const { selectedEcosystem } = useSelectedParachain();
+  const { selectedEcosystem, activeEditParachain } = useSelectedParachain();
 
   const targetAngles = useRef<AngleMap>({});
   const currentAngles = useRef<AngleMap>({});
@@ -26,6 +26,8 @@ const MainScene = () => {
   const totalEcosystems = ecosystems.length;
   const initialTargetRef = useRef<Vector3 | null>(null);
   const [_initialized, setInitialized] = useState(false);
+
+  const [channelsUpdateTrigger, setChannelsUpdateTrigger] = useState(0);
 
   useEffect(() => {
     ecosystems.forEach((ecosystem, index) => {
@@ -60,13 +62,45 @@ const MainScene = () => {
 
   const target = initialTargetRef.current || CAMERA_POSITION;
 
+  const { scene } = useThree();
+
+  const activeEditParachainMesh = activeEditParachain
+    ? scene.getObjectByName(activeEditParachain)
+    : null;
+
+  const onParachainMove = () => {
+    if (activeEditParachainMesh) {
+      setChannelsUpdateTrigger(current => current + 1);
+    }
+  };
+
   return (
     <>
-      <ParachainsGraphContainer ecosystem={Ecosystem.POLKADOT} />
-      <ParachainsGraphContainer ecosystem={Ecosystem.KUSAMA} />
-      <ParachainsGraphContainer ecosystem={Ecosystem.WESTEND} />
-      <ParachainsGraphContainer ecosystem={Ecosystem.ROCOCO} />
-      <OrbitControls enableDamping autoRotate={false} target={target} />
+      {activeEditParachainMesh && (
+        <TransformControls
+          onObjectChange={onParachainMove}
+          object={activeEditParachainMesh}
+          mode="translate"
+          size={0.5}
+        />
+      )}
+      <ParachainsGraphContainer
+        ecosystem={Ecosystem.POLKADOT}
+        updateTrigger={channelsUpdateTrigger}
+      />
+      <ParachainsGraphContainer
+        ecosystem={Ecosystem.KUSAMA}
+        updateTrigger={channelsUpdateTrigger}
+      />
+      <ParachainsGraphContainer
+        ecosystem={Ecosystem.WESTEND}
+        updateTrigger={channelsUpdateTrigger}
+      />
+      <ParachainsGraphContainer
+        ecosystem={Ecosystem.ROCOCO}
+        updateTrigger={channelsUpdateTrigger}
+      />
+      <OrbitControls enableDamping autoRotate={false} target={target} makeDefault />
       <PerspectiveCamera makeDefault position={CAMERA_POSITION} />
     </>
   );
