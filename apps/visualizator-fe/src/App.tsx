@@ -13,6 +13,7 @@ import { useSpring, animated } from '@react-spring/web';
 import CollapseButton from './components/CollapseButton';
 import EcosystemSelectContainer from './components/EcosystemSelect/EcosystemSelect.container';
 import { PageRoute } from './PageRoute';
+import { Notifications } from '@mantine/notifications';
 
 const App = () => {
   const [width, setWidth] = useState('40%');
@@ -29,6 +30,7 @@ const App = () => {
       <WalletProvider>
         <SelectedParachainProvider>
           <MantineProvider>
+            <Notifications />
             <Flex h="100%">
               <Group flex={1} w="60%" h="100%" pos="relative">
                 <Scene3d />

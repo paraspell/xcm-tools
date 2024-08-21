@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode } from 'react';
+import { createContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
 import { CountOption } from '../../gql/graphql';
 import { Ecosystem } from '../../types/types';
 
@@ -28,6 +28,8 @@ interface SelectedParachainContextType {
   setParachainArrangement: (arrangement: CountOption) => void;
   selectedEcosystem: Ecosystem;
   setSelectedEcosystem: (ecosystem: Ecosystem) => void;
+  skyboxTrigger: number;
+  setSkyboxTrigger: Dispatch<SetStateAction<number>>;
 }
 
 export const SelectedParachainContext = createContext<SelectedParachainContextType | null>(null);
@@ -48,6 +50,7 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
   const [channelAlertOpen, setChannelAlertOpen] = useState<boolean>(false);
   const [selectedEcosystem, setSelectedEcosystem] = useState<Ecosystem>(Ecosystem.POLKADOT);
   const [activeEditParachain, setActiveEditParachain] = useState<SelectedParachain | null>(null);
+  const [skyboxTrigger, setSkyboxTrigger] = useState(0);
 
   const toggleParachain = (parachain: SelectedParachain) => {
     if (parachains.includes(parachain)) {
@@ -90,7 +93,9 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
         selectedEcosystem,
         setSelectedEcosystem,
         activeEditParachain,
-        toggleActiveEditParachain
+        toggleActiveEditParachain,
+        skyboxTrigger,
+        setSkyboxTrigger
       }}
     >
       {children}

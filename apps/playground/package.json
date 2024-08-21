@@ -11,9 +11,9 @@
     "lint": "eslint --fix ."
   },
   "dependencies": {
-    "@mantine/core": "^7.11.2",
-    "@mantine/form": "^7.11.2",
-    "@mantine/hooks": "^7.11.2",
+    "@mantine/core": "^7.12.1",
+    "@mantine/form": "^7.12.1",
+    "@mantine/hooks": "^7.12.1",
     "@paraspell/sdk": "workspace:*",
     "@paraspell/xcm-analyser": "workspace:*",
     "@paraspell/xcm-router": "workspace:*",
