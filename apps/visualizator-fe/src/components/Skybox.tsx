@@ -1,20 +1,29 @@
 import { useThree } from '@react-three/fiber';
+import { useEffect } from 'react';
 import { CubeTextureLoader } from 'three';
+import { loadImageFromDB } from '../utils/idbUtils';
+import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
 
 const SkyBox = () => {
   const { scene } = useThree();
-  const loader = new CubeTextureLoader();
+  const { skyboxTrigger } = useSelectedParachain();
 
-  const texture = loader.load([
-    '/right.png',
-    '/left.png',
-    '/top.png',
-    '/bottom.png',
-    '/front.png',
-    '/back.png'
-  ]);
+  useEffect(() => {
+    const loadTextures = async () => {
+      const loader = new CubeTextureLoader();
+      const sides = ['right', 'left', 'top', 'bottom', 'front', 'back'];
 
-  scene.background = texture;
+      const paths = await Promise.all(
+        sides.map(async side => (await loadImageFromDB(`skybox-${side}`)) || `/skybox/${side}.png`)
+      );
+
+      const texture = loader.load(paths);
+      scene.background = texture;
+    };
+
+    void loadTextures();
+  }, [scene, skyboxTrigger]);
+
   return null;
 };
 
