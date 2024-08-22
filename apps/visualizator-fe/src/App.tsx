@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Flex, Group, MantineProvider, Stack } from '@mantine/core';
+import { Box, Flex, Group, MantineProvider, Stack } from '@mantine/core';
 import Scene3d from './pages/Scene3d';
 import SelectedParachainProvider from './context/SelectedParachain/SelectedParachainContext';
 import Footer from './components/Footer/Footer';
@@ -8,12 +8,25 @@ import ChannelInfoContainer from './components/ChannelInfo/ChannelInfo.container
 import SendXCMContainer from './components/SendXCMContainer/SendXCMContainer';
 import WalletProvider from './providers/WalletProvider';
 import { ApolloProvider } from '@apollo/client';
-import { client } from './apolloClient';
 import { useSpring, animated } from '@react-spring/web';
 import CollapseButton from './components/CollapseButton';
 import EcosystemSelectContainer from './components/EcosystemSelect/EcosystemSelect.container';
 import { PageRoute } from './PageRoute';
 import { Notifications } from '@mantine/notifications';
+import LoadingScreen from './components/LoadingScreen/LoadingScreen';
+import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import { createNetworkStatusNotifier } from 'react-apollo-network-status';
+
+const { link, useApolloNetworkStatus } = createNetworkStatusNotifier();
+
+export const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: link.concat(
+    createHttpLink({
+      uri: import.meta.env.VITE_API_URL as string
+    })
+  )
+});
 
 const App = () => {
   const [width, setWidth] = useState('40%');
@@ -30,27 +43,30 @@ const App = () => {
       <WalletProvider>
         <SelectedParachainProvider>
           <MantineProvider>
-            <Notifications />
-            <Flex h="100%">
-              <Group flex={1} w="60%" h="100%" pos="relative">
-                <Scene3d />
-                <Footer />
-                <ChannelInfoContainer />
-                <SendXCMContainer />
-                <EcosystemSelectContainer />
-              </Group>
-              <animated.div style={props}>
-                <Stack h="100%" w="100%" pos="relative" bg="white">
-                  <CollapseButton onClick={toggleWidth} isCollapsed={isCollapsed} />
-                  <Flex flex={1} w="100%" justify="center">
-                    <TabNavigator defaultValue={PageRoute.SCENE_2D_ASSETS_CHART} />
-                  </Flex>
-                  <Flex flex={1} w="100%" justify="center">
-                    <TabNavigator />
-                  </Flex>
-                </Stack>
-              </animated.div>
-            </Flex>
+            <Box pos="relative" h="100%">
+              <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
+              <Notifications />
+              <Flex h="100%">
+                <Group flex={1} w="60%" h="100%" pos="relative">
+                  <Scene3d />
+                  <Footer />
+                  <ChannelInfoContainer />
+                  <SendXCMContainer />
+                  <EcosystemSelectContainer />
+                </Group>
+                <animated.div style={props}>
+                  <Stack h="100%" w="100%" pos="relative" bg="white">
+                    <CollapseButton onClick={toggleWidth} isCollapsed={isCollapsed} />
+                    <Flex flex={1} w="100%" justify="center">
+                      <TabNavigator defaultValue={PageRoute.SCENE_2D_ASSETS_CHART} />
+                    </Flex>
+                    <Flex flex={1} w="100%" justify="center">
+                      <TabNavigator />
+                    </Flex>
+                  </Stack>
+                </animated.div>
+              </Flex>
+            </Box>
           </MantineProvider>
         </SelectedParachainProvider>
       </WalletProvider>

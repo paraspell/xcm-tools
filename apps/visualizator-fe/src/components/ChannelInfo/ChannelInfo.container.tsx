@@ -9,7 +9,7 @@ const ChannelInfoContainer = () => {
   const { t } = useTranslation();
   const { channelId, channelAlertOpen, setChannelAlertOpen } = useSelectedParachain();
 
-  const { data, error } = useQuery(channelQueryDocument, {
+  const { data, loading, error } = useQuery(channelQueryDocument, {
     variables: {
       id: channelId ?? 1
     }
@@ -32,7 +32,7 @@ const ChannelInfoContainer = () => {
   }
 
   return channelId && channelAlertOpen ? (
-    <ChannelInfo channel={data?.channel} onClose={onClose} />
+    <ChannelInfo loading={loading} channel={data?.channel} onClose={onClose} />
   ) : null;
 };
 
