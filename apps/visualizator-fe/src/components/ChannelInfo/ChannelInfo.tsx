@@ -1,15 +1,16 @@
-import { Alert, Box, Group, Stack, Text } from '@mantine/core';
+import { Alert, Box, Center, Group, Loader, Stack, Text } from '@mantine/core';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { ChannelsQuery } from '../../gql/graphql';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type Props = {
+  loading?: boolean;
   channel?: ChannelsQuery['channels'][number];
   onClose?: () => void;
 };
 
-const ChannelInfo: FC<Props> = ({ channel, onClose }) => {
+const ChannelInfo: FC<Props> = ({ loading, channel, onClose }) => {
   const { t } = useTranslation();
   const { channelId } = useSelectedParachain();
   return (
@@ -25,6 +26,11 @@ const ChannelInfo: FC<Props> = ({ channel, onClose }) => {
         radius="md"
         bg="rgba(255,255,255,0.8)"
       >
+        {loading && (
+          <Center h="100%">
+            <Loader size="xs" />
+          </Center>
+        )}
         <Stack>
           <Group align="center" gap="xs">
             <Text size="lg">{t('selectedChannelId')}:</Text>

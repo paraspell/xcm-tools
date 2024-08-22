@@ -1,0 +1,14 @@
+.logoTitle {
+  font-family: 'Anek Devanagari', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  letter-spacing: 5px;
+  font-style: normal;
+  font-variation-settings: 'wdth' 100;
+  color: #dbfafd;
+  font-size: 24px;
+}
+
+.xcmText {
+  margin-bottom: -6px;
+}
