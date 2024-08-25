@@ -15,7 +15,10 @@ export class ChannelResolver {
   }
 
   @Query(() => Channel, { name: 'channel' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.channelService.findOne(id);
+  findOne(
+    @Args('sender', { type: () => Int }) sender: number,
+    @Args('recipient', { type: () => Int }) recipient: number,
+  ) {
+    return this.channelService.findOne(sender, recipient);
   }
 }

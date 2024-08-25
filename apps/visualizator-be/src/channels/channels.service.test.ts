@@ -90,25 +90,27 @@ describe('ChannelService', () => {
 
       mockRepository.query.mockResolvedValue(expectedResponse);
 
-      const result = await service.findOne(channelId);
+      const result = await service.findOne(2000, 2006);
 
       expect(result).toEqual({
         id: channelId,
         sender: expectedResponse[0].senderId,
         recipient: expectedResponse[0].recipientId,
+        active_at: NaN,
         message_count: expectedResponse[0].totalCount,
         status: expectedResponse[0].status,
       });
-      expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
-        channelId,
-      ]);
+      expect(mockRepository.query).toHaveBeenCalledWith(
+        expect.any(String),
+        [2000, 2006],
+      );
     });
 
     it('should throw an error when no channel is found', async () => {
       mockRepository.query.mockResolvedValue([]);
 
-      await expect(service.findOne(channelId)).rejects.toThrow(
-        `Channel with ID ${channelId} not found.`,
+      await expect(service.findOne(2000, 1987)).rejects.toThrow(
+        `No channel found with sender ID ${2000} or recipient ID ${1987}.`,
       );
     });
 
@@ -117,7 +119,7 @@ describe('ChannelService', () => {
         new Error('Query execution failed'),
       );
 
-      await expect(service.findOne(channelId)).rejects.toThrow(
+      await expect(service.findOne(2000, 2006)).rejects.toThrow(
         'Query execution failed',
       );
     });

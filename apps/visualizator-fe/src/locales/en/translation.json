@@ -13,7 +13,7 @@
   "selectOne": "Select One",
   "selectThreshold": "Select Threshold",
   "channelInfo": "Channel Info",
-  "selectedChannelId": "Selected Channel ID",
+  "selectedChannelActiveAt": "Active at",
   "messageCount": "Message Count",
   "editOptions": "Options",
   "primaryChannelColor": "Primary Channel Color",

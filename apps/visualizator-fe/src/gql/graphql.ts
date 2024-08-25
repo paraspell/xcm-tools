@@ -111,7 +111,8 @@ export type QueryAssetCountsBySymbolArgs = {
 };
 
 export type QueryChannelArgs = {
-  id: Scalars['Int']['input'];
+  recipient: Scalars['Int']['input'];
+  sender: Scalars['Int']['input'];
 };
 
 export type QueryChannelsArgs = {
@@ -154,7 +155,8 @@ export type ChannelsQuery = {
 };
 
 export type ChannelQueryVariables = Exact<{
-  id: Scalars['Int']['input'];
+  sender: Scalars['Int']['input'];
+  recipient: Scalars['Int']['input'];
 }>;
 
 export type ChannelQuery = {
@@ -165,6 +167,7 @@ export type ChannelQuery = {
     sender: number;
     recipient: number;
     message_count: number;
+    active_at: number;
   };
 };
 
@@ -309,7 +312,15 @@ export const ChannelDocument = {
       variableDefinitions: [
         {
           kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'sender' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
+          }
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'recipient' } },
           type: {
             kind: 'NonNullType',
             type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } }
@@ -325,8 +336,13 @@ export const ChannelDocument = {
             arguments: [
               {
                 kind: 'Argument',
-                name: { kind: 'Name', value: 'id' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'id' } }
+                name: { kind: 'Name', value: 'sender' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'sender' } }
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'recipient' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'recipient' } }
               }
             ],
             selectionSet: {
@@ -335,7 +351,8 @@ export const ChannelDocument = {
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'sender' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'recipient' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'message_count' } }
+                { kind: 'Field', name: { kind: 'Name', value: 'message_count' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'active_at' } }
               ]
             }
           }

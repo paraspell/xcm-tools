@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Text } from '@react-three/drei';
-import { useFrame, useLoader } from '@react-three/fiber';
+import { ThreeEvent, useFrame, useLoader } from '@react-three/fiber';
 import { Color, Group, Mesh, MeshStandardMaterial, SphereGeometry, TextureLoader } from 'three';
 import { getParachainPosition } from '../ParachainsGraph/utils';
 import { getLogoScaleFactor, getNodeLogo } from './utils';
@@ -9,6 +9,7 @@ import { lightenColor } from '../../utils/lightenColor';
 import { adjustUVs } from '../../utils/adjustUVs';
 import { Ecosystem } from '../../types/types';
 import { FONT_URL } from '../../consts/consts';
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 
 type Props = {
   name: string;
@@ -29,6 +30,7 @@ const Parachain: React.FC<Props> = ({
   scale,
   ecosystem
 }) => {
+  const { activeEditParachain } = useSelectedParachain();
   const initialPosition = getParachainPosition(index, ecosystem);
   const [position] = useState(initialPosition);
   const textRef = useRef<Text>(null);
@@ -62,11 +64,16 @@ const Parachain: React.FC<Props> = ({
   const color = getParachainColor(name, ecosystem);
   const lightColor = lightenColor(color, 50);
 
-  const onClickHandler = () => {
+  const onClickHandler = (event: ThreeEvent<MouseEvent>) => {
+    event.stopPropagation();
+    if (activeEditParachain?.includes(name)) {
+      return;
+    }
     onClick(name);
   };
 
-  const onContextMenu = () => {
+  const onContextMenu = (event: ThreeEvent<MouseEvent>) => {
+    event.stopPropagation();
     onRightClick(name);
   };
 

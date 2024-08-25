@@ -12,12 +12,13 @@ export const allChannelsQueryDocument = graphql(`
 `);
 
 export const channelQueryDocument = graphql(`
-  query channel($id: Int!) {
-    channel(id: $id) {
+  query channel($sender: Int!, $recipient: Int!) {
+    channel(sender: $sender, recipient: $recipient) {
       id
       sender
       recipient
       message_count
+      active_at
     }
   }
 `);
