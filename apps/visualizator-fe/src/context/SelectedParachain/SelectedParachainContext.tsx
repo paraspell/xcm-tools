@@ -1,5 +1,5 @@
 import { createContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
-import { CountOption } from '../../gql/graphql';
+import { ChannelsQuery, CountOption } from '../../gql/graphql';
 import { Ecosystem } from '../../types/types';
 
 export type SelectedParachain = string;
@@ -10,8 +10,8 @@ interface SelectedParachainContextType {
   toggleParachain: (parachain: SelectedParachain) => void;
   activeEditParachain: SelectedParachain | null;
   toggleActiveEditParachain: (parachain: SelectedParachain | null) => void;
-  channelId?: number;
-  setChannelId: (channelId: number) => void;
+  selectedChannel?: ChannelsQuery['channels'][number];
+  setSelectedChannel: (channel: ChannelsQuery['channels'][number] | undefined) => void;
   channelAlertOpen?: boolean;
   setChannelAlertOpen: (open: boolean) => void;
   dateRange: [Date | null, Date | null];
@@ -41,7 +41,7 @@ interface SelectedParachainProviderProps {
 const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps) => {
   const [parachains, setParachains] = useState<SelectedParachain[]>([]);
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
-  const [channelId, setChannelId] = useState<number>();
+  const [selectedChannel, setSelectedChannel] = useState<ChannelsQuery['channels'][number]>();
   const [primaryChannelColor, setPrimaryChannelColor] = useState<string>();
   const [highlightedChannelColor, setHighlightedChannelColor] = useState<string>();
   const [secondaryChannelColor, setSecondaryChannelColor] = useState<string>();
@@ -76,8 +76,8 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
         toggleParachain,
         dateRange,
         setDateRange,
-        channelId,
-        setChannelId,
+        selectedChannel,
+        setSelectedChannel,
         channelAlertOpen,
         setChannelAlertOpen,
         primaryChannelColor,

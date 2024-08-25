@@ -15,7 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 const documents = {
   '\n  query channels($startTime: Timestamp!, $endTime: Timestamp!) {\n    channels(startTime: $startTime, endTime: $endTime) {\n      id\n      sender\n      recipient\n      message_count\n    }\n  }\n':
     types.ChannelsDocument,
-  '\n  query channel($id: Int!) {\n    channel(id: $id) {\n      id\n      sender\n      recipient\n      message_count\n    }\n  }\n':
+  '\n  query channel($sender: Int!, $recipient: Int!) {\n    channel(sender: $sender, recipient: $recipient) {\n      id\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n':
     types.ChannelDocument,
   '\n  query messageCounts($paraIds: [Int!], $startTime: Timestamp!, $endTime: Timestamp!) {\n    messageCounts(paraIds: $paraIds, startTime: $startTime, endTime: $endTime) {\n      paraId\n      success\n      failed\n    }\n  }\n':
     types.MessageCountsDocument,
@@ -53,8 +53,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n  query channel($id: Int!) {\n    channel(id: $id) {\n      id\n      sender\n      recipient\n      message_count\n    }\n  }\n'
-): (typeof documents)['\n  query channel($id: Int!) {\n    channel(id: $id) {\n      id\n      sender\n      recipient\n      message_count\n    }\n  }\n'];
+  source: '\n  query channel($sender: Int!, $recipient: Int!) {\n    channel(sender: $sender, recipient: $recipient) {\n      id\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n'
+): (typeof documents)['\n  query channel($sender: Int!, $recipient: Int!) {\n    channel(sender: $sender, recipient: $recipient) {\n      id\n      sender\n      recipient\n      message_count\n      active_at\n    }\n  }\n'];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

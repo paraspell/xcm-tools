@@ -1,4 +1,4 @@
-import { useFrame, useLoader } from '@react-three/fiber';
+import { ThreeEvent, useFrame, useLoader } from '@react-three/fiber';
 import { FC, useEffect, useRef } from 'react';
 import { Color, TextureLoader, SphereGeometry, Mesh, Group } from 'three';
 import { adjustUVs } from '../../utils/adjustUVs';
@@ -8,7 +8,7 @@ import { getRelaychainLogo } from './utils/getRelaychainLogo';
 const SCALE_FACTOR = 2.25;
 
 type Props = {
-  onClick: () => void;
+  onClick: (event: ThreeEvent<MouseEvent>) => void;
   ecosystem: Ecosystem;
   isSelected?: boolean;
 };

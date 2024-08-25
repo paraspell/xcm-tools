@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { allChannelsQueryDocument, channelQueryDocument } from '../../api/channels';
+import { allChannelsQueryDocument } from '../../api/channels';
 import { totalMessageCountsQueryDocument } from '../../api/messages';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { CountOption } from '../../gql/graphql';
@@ -15,7 +15,7 @@ type Props = {
 };
 
 const ParachainsGraphContainer: FC<Props> = ({ ecosystem, updateTrigger }) => {
-  const { dateRange, channelId, parachainArrangement } = useSelectedParachain();
+  const { dateRange, parachainArrangement } = useSelectedParachain();
 
   const [start, end] = dateRange;
 
@@ -33,16 +33,15 @@ const ParachainsGraphContainer: FC<Props> = ({ ecosystem, updateTrigger }) => {
     }
   });
 
-  const channelQuery = useQuery(channelQueryDocument, { variables: { id: channelId ?? 1 } });
-
   if (data && totalCountsQuery.data) {
     return (
       <ParachainsGraph
         channels={data.channels}
         totalMessageCounts={totalCountsQuery.data?.totalMessageCounts}
         ecosystem={ecosystem}
+        startTime={start}
+        endTime={end}
         updateTrigger={updateTrigger}
-        selectedChannel={channelQuery.data?.channel}
       />
     );
   }

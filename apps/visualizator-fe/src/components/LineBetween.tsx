@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { DoubleSide, LineCurve3, Vector3 } from 'three';
 import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
+import { ThreeEvent } from '@react-three/fiber';
 
 type Props = {
   startPosition: Vector3;
@@ -9,7 +10,7 @@ type Props = {
   isHighlighed: boolean;
   isSelected: boolean;
   isSecondary: boolean;
-  onClick: () => void;
+  onClick: (event: ThreeEvent<MouseEvent>) => void;
 };
 
 const LineBetween: FC<Props> = ({

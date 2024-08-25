@@ -4,7 +4,7 @@ import Scene3d from './pages/Scene3d';
 import SelectedParachainProvider from './context/SelectedParachain/SelectedParachainContext';
 import Footer from './components/Footer/Footer';
 import TabNavigator from './components/TabNavigator/TabNavigator';
-import ChannelInfoContainer from './components/ChannelInfo/ChannelInfo.container';
+import ChannelAlertContainer from './components/ChannelInfo/ChannelAlert.container';
 import SendXCMContainer from './components/SendXCMContainer/SendXCMContainer';
 import WalletProvider from './providers/WalletProvider';
 import { ApolloProvider } from '@apollo/client';
@@ -20,7 +20,13 @@ import { createNetworkStatusNotifier } from 'react-apollo-network-status';
 const { link, useApolloNetworkStatus } = createNetworkStatusNotifier();
 
 export const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Channel: {
+        keyFields: ['id', 'message_count']
+      }
+    }
+  }),
   link: link.concat(
     createHttpLink({
       uri: import.meta.env.VITE_API_URL as string
@@ -50,7 +56,7 @@ const App = () => {
                 <Group flex={1} w="60%" h="100%" pos="relative">
                   <Scene3d />
                   <Footer />
-                  <ChannelInfoContainer />
+                  <ChannelAlertContainer />
                   <SendXCMContainer />
                   <EcosystemSelectContainer />
                 </Group>
