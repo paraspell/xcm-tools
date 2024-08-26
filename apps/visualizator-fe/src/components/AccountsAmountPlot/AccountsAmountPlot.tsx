@@ -5,6 +5,7 @@ import HighchartsReact from 'highcharts-react-official';
 import HC_more from 'highcharts/highcharts-more';
 import { useTranslation } from 'react-i18next';
 import { ChartDataItem, CustomPoint } from '../../types/types';
+import { encodeAddress } from '@polkadot/keyring';
 HC_more(Highcharts);
 
 type Props = {
@@ -41,14 +42,27 @@ const AccountsAmountPlot: FC<Props> = ({ counts }) => {
     },
     tooltip: {
       useHTML: true,
+      style: {
+        pointerEvents: 'auto'
+      },
       formatter: function () {
         const point = this.point as CustomPoint;
-        const idHash = point.name.startsWith('0x') ? point.name : '0x' + point.name;
-        return t('idHash', { idHash, count: point.value });
+        const { name } = point;
+        const address = name.startsWith('0x') ? name : `0x${name}`;
+
+        let encodedAddress;
+        try {
+          encodedAddress = encodeAddress(address, 0);
+        } catch (_e) {
+          encodedAddress = address;
+        }
+
+        return `${t('idHash', { address, count: point.value })} <br> <a target="_blank" href="https://subscan.io/account/${encodedAddress}">${t('showInExplorer')}</a>`;
       }
     },
     plotOptions: {
       packedbubble: {
+        stickyTracking: false,
         maxSize: 150,
         dataLabels: {
           enabled: true,

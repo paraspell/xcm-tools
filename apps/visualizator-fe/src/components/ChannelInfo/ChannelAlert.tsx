@@ -1,6 +1,7 @@
 import {
   Alert,
   Box,
+  Button,
   Center,
   Flex,
   Group,
@@ -17,6 +18,7 @@ import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import { getParachainById } from '../../utils/utils';
 import { Ecosystem } from '../../types/types';
 import dayjs from 'dayjs';
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 
 type Props = {
   loading?: boolean;
@@ -27,12 +29,28 @@ type Props = {
 
 const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) => {
   const { t } = useTranslation();
+  const { dateRange } = useSelectedParachain();
+  const [startDate, endDate] = dateRange;
   const [value, setValue] = useState('from');
 
   const iconProps = {
     style: { width: rem(20), height: rem(20), display: 'block' },
     stroke: 1.5
   };
+
+  const currentChannel = value === 'from' ? channelFrom : channelTo;
+
+  const generateExplorerLink = () => {
+    const baseUrl = 'https://polkadot.subscan.io/xcm_message?page=1&time_dimension=date';
+    const fromChain = `&fromChain=${currentChannel?.sender}`;
+    const toChain = `&toChain=${currentChannel?.recipient}`;
+    const start = startDate ? `&date_start=${dayjs(startDate).format('YYYY-MM-DD')}` : '';
+    const end = endDate ? `&date_end=${dayjs(endDate).format('YYYY-MM-DD')}` : '';
+
+    return `${baseUrl}${fromChain}${toChain}${start}${end}`;
+  };
+
+  const explorerLink = generateExplorerLink();
 
   return (
     <Box pos="absolute" top={0} left={0} p="xl">
@@ -84,16 +102,19 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
           <Group align="center" gap="xs">
             <Text size="md">{t('messageCount')}:</Text>
             <Text fw="bold" size="md">
-              {value === 'from' ? channelFrom?.message_count : channelTo?.message_count}
+              {currentChannel?.message_count}
             </Text>
           </Group>
           <Group align="center" gap="xs">
             <Text size="md">{t('selectedChannelActiveAt')}:</Text>
             <Text fw="bold" size="md">
-              {value === 'from'
-                ? dayjs((channelFrom?.active_at ?? 0) * 1000).format('YYYY/MM/DD')
-                : dayjs(channelTo?.active_at).format('YYYY/MM/DD')}
+              {dayjs((currentChannel?.active_at ?? 0) * 1000).format('YYYY/MM/DD')}{' '}
             </Text>
+          </Group>
+          <Group>
+            <Button component="a" target="_blank" size="xs" href={explorerLink}>
+              {t('showInExplorer')}
+            </Button>
           </Group>
         </Stack>
       </Alert>

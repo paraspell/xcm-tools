@@ -1,26 +1,30 @@
 import { channelQueryDocument } from '../../api/channels';
 import ChannelAlert from './ChannelAlert';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
+import { ChannelsQuery } from '../../gql/graphql';
 
-const ChannelAlertContainer = () => {
+type Props = {
+  selectedChannel: ChannelsQuery['channels'][number];
+};
+
+const ChannelAlertContainer: FC<Props> = ({ selectedChannel }) => {
   const { t } = useTranslation();
-  const { selectedChannel, setSelectedChannel, channelAlertOpen, setChannelAlertOpen } =
-    useSelectedParachain();
+  const { setSelectedChannel, channelAlertOpen, setChannelAlertOpen } = useSelectedParachain();
 
   const channelFromQuery = useQuery(channelQueryDocument, {
     variables: {
-      sender: selectedChannel?.sender ?? 0,
-      recipient: selectedChannel?.recipient ?? 0
+      sender: selectedChannel.sender,
+      recipient: selectedChannel.recipient
     }
   });
 
   const channelToQuery = useQuery(channelQueryDocument, {
     variables: {
-      sender: selectedChannel?.recipient ?? 0,
-      recipient: selectedChannel?.sender ?? 0
+      sender: selectedChannel.recipient,
+      recipient: selectedChannel.sender
     }
   });
 
@@ -43,7 +47,7 @@ const ChannelAlertContainer = () => {
 
   const loading = channelFromQuery.loading || channelToQuery.loading;
 
-  return selectedChannel && channelAlertOpen ? (
+  return channelAlertOpen ? (
     <ChannelAlert
       loading={loading}
       channelFrom={channelFromQuery.data?.channel}
