@@ -1,6 +1,7 @@
 {
   "error": "Error",
-  "idHash": "ID (Hash): <b>{{idHash}}</b><br>Count: <b>{{count}}</b>",
+  "idHash": "ID (Hash): <b>{{address}}</b><br>Count: <b>{{count}}</b>",
+  "showInExplorer": "Show in explorer",
   "total": "Total",
   "success": "Success",
   "failed": "Failed",
