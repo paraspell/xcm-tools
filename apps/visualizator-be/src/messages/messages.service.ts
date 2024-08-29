@@ -13,6 +13,7 @@ import { MessageCountByStatus } from './models/message-count-by-status.model';
 import { AssetCount } from './models/asset-count.model';
 import { MessageCount } from './models/message-count.model';
 import { CountOption } from './count-option';
+import { AccountXcmCountType } from './models/account-msg-count.model';
 
 @Injectable()
 export class MessageService {
@@ -259,7 +260,7 @@ export class MessageService {
     threshold: number,
     startTime: number,
     endTime: number,
-  ): Promise<any> {
+  ): Promise<AccountXcmCountType[]> {
     const whereConditions = [];
     const parameters = [];
 

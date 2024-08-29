@@ -1,12 +1,6 @@
 // Contains detailed structure of XCM call construction for Polkadex Parachain
 
-import {
-  type IXTokensTransfer,
-  Version,
-  type XTokensTransferInput,
-  type TNodePolkadotKusama
-} from '../../types'
-import { getAllNodeProviders } from '../../utils'
+import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../XTokensTransferImpl'
 
@@ -18,10 +12,6 @@ class Polkadex extends ParachainNode implements IXTokensTransfer {
   transferXTokens(input: XTokensTransferInput) {
     const { currencyID } = input
     return XTokensTransferImpl.transferXTokens(input, currencyID)
-  }
-
-  getProvider(): string {
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[1]
   }
 }
 
