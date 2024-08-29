@@ -77,13 +77,14 @@ describe('XCM API (e2e)', () => {
 
     describe('findOne', () => {
       it('findOne channel with a valid ID', () => {
-        const channelId = 1;
+        const sender = 2012;
+        const recipient = 2004;
         return request(app.getHttpServer())
           .post('/graphql')
           .send({
             query: `
-              query GetChannel($id: Int!) {
-                channel(id: $id) {
+              query GetChannel($sender: Int!, $recipient: Int!) {
+                channel(sender: $sender, recipient: $recipient) {
                   id
                   sender
                   recipient
@@ -92,13 +93,14 @@ describe('XCM API (e2e)', () => {
               }
             `,
             variables: {
-              id: channelId,
+              sender,
+              recipient,
             },
           })
           .expect(200)
           .expect((res) => {
             expect(res.body.data.channel).toEqual({
-              id: channelId,
+              id: expect.any(Number),
               sender: expect.any(Number),
               recipient: expect.any(Number),
               message_count: expect.any(Number),
@@ -107,13 +109,14 @@ describe('XCM API (e2e)', () => {
       });
 
       it('findOne channel with an invalid ID', () => {
-        const invalidChannelId = 9999;
+        const sender = 1;
+        const recipient = 2;
         return request(app.getHttpServer())
           .post('/graphql')
           .send({
             query: `
-              query GetChannel($id: Int!) {
-                channel(id: $id) {
+              query GetChannel($sender: Int!, $recipient: Int!) {
+                channel(sender: $sender, recipient: $recipient) {
                   id
                   sender
                   recipient
@@ -122,7 +125,8 @@ describe('XCM API (e2e)', () => {
               }
             `,
             variables: {
-              id: invalidChannelId,
+              sender,
+              recipient,
             },
           })
           .expect(200)

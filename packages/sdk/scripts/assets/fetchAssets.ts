@@ -133,6 +133,34 @@ const fetchAssetIdsOnly = async (api: ApiPromise, query: string) => {
   )
 }
 
+const fetchOtherAssetsAmplitude = async (api: ApiPromise, query: string) => {
+  const [module, section] = query.split('.')
+  const res = await api.query[module][section].entries()
+  return res
+    .filter(
+      ([
+        {
+          args: [era]
+        }
+      ]) => Object.prototype.hasOwnProperty.call(era.toHuman(), 'XCM')
+    )
+    .map(
+      ([
+        {
+          args: [era]
+        },
+        value
+      ]) => {
+        const { symbol, decimals } = value.toHuman() as any
+        return {
+          assetId: Object.values(era.toHuman() ?? {})[0].replaceAll(',', ''),
+          symbol,
+          decimals: +decimals
+        }
+      }
+    )
+}
+
 const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string) => {
   const [module, section] = query.split('.')
   const res = await api.query[module][section].entries()
@@ -142,7 +170,7 @@ const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string) => {
         {
           args: [era]
         }
-      ]) => !Object.prototype.hasOwnProperty.call(era.toHuman(), 'NativeAssetId')
+      ]) => era.toHuman() !== 'Native'
     )
     .map(
       ([
@@ -320,9 +348,21 @@ const fetchNodeAssets = async (
   }
 
   // Different format of data
-  if (node === 'Centrifuge') {
+  if (node === 'Centrifuge' || node === 'Altair') {
     const nativeAssets = (await fetchNativeAssets(api)) ?? []
     const otherAssets = query ? await fetchOtherAssetsCentrifuge(api, query) : []
+    await api.disconnect()
+    return {
+      nativeAssets,
+      otherAssets,
+      nativeAssetSymbol
+    }
+  }
+
+  // Different format of data
+  if (node === 'Amplitude') {
+    const nativeAssets = (await fetchNativeAssets(api)) ?? []
+    const otherAssets = query ? await fetchOtherAssetsAmplitude(api, query) : []
     await api.disconnect()
     return {
       nativeAssets,
@@ -399,9 +439,9 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
       paraId,
       relayChainAssetSymbol: getNode(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
       nativeAssetSymbol:
-        isError && oldData ? oldData.nativeAssetSymbol : newData?.nativeAssetSymbol ?? '',
-      nativeAssets: isError && oldData ? oldData.nativeAssets : newData?.nativeAssets ?? [],
-      otherAssets: isError && oldData ? oldData.otherAssets : newData?.otherAssets ?? []
+        isError && oldData ? oldData.nativeAssetSymbol : (newData?.nativeAssetSymbol ?? ''),
+      nativeAssets: isError && oldData ? oldData.nativeAssets : (newData?.nativeAssets ?? []),
+      otherAssets: isError && oldData ? oldData.otherAssets : (newData?.otherAssets ?? [])
     }
   }
   return output
