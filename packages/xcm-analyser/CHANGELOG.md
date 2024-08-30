@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.2](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.3.1...xcm-analyser-v1.3.2) (2024-08-30)
+
+
+### Miscellaneous Chores
+
+* Perform montly check ✨ ([3f20805](https://github.com/paraspell/xcm-tools/commit/3f20805195f11ca9f37c57f1c6ee6e37c07f6edc))
+* Remove unused standard-version package 🔨 ([f36f10c](https://github.com/paraspell/xcm-tools/commit/f36f10ccbdf67ec61fea78a9fe20030b5fcea705))
+
+
+### Continuous Integration
+
+* Integrate Codecov PR comments 💬 ([220da1b](https://github.com/paraspell/xcm-tools/commit/220da1b6d060b7aa4d8262e779256e40ce145f3f))
+
 ## [1.3.1](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.3.0...xcm-analyser-v1.3.1) (2024-07-27)
 
 
