@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.2.2...xcm-router-v1.3.0) (2024-08-30)
+
+
+### Features
+
+* Add Select component for selecting assets ([850483f](https://github.com/paraspell/xcm-tools/commit/850483fc75dbef266b46a5bbb15da8517985c620))
+* **xcm-api:** Add support for XCM Router API Snowbridge transfers ([c468a80](https://github.com/paraspell/xcm-tools/commit/c468a804845fa3fd78649f01af7eee32a7305aae))
+* **xcm-router:** Add Snowbridge transfers support ❄️ ([d69fda6](https://github.com/paraspell/xcm-tools/commit/d69fda6e723f3e7e7820c2eeaf2800975d43b53f))
+
+
+### Bug Fixes
+
+* **xcm-router:** Add missing methods to Router builder ([fac5bc0](https://github.com/paraspell/xcm-tools/commit/fac5bc01fb33bc1e54a8d7d99622efb27c218073))
+* **xcm-router:** Add missing Router builder methods ([2048e9c](https://github.com/paraspell/xcm-tools/commit/2048e9c380b94ed788f0176ecb28276d551538f6))
+
+
+### Miscellaneous Chores
+
+* Perform montly check ✨ ([3f20805](https://github.com/paraspell/xcm-tools/commit/3f20805195f11ca9f37c57f1c6ee6e37c07f6edc))
+* Remove unused standard-version package 🔨 ([f36f10c](https://github.com/paraspell/xcm-tools/commit/f36f10ccbdf67ec61fea78a9fe20030b5fcea705))
+* **xcm-tools:** Update readme to reflect latest changes ([65c7a72](https://github.com/paraspell/xcm-tools/commit/65c7a72963eaf9eaba147a13c2b9da654d5cf8fb))
+
+
+### Build System
+
+* Update all package commands to use pnpm ([5478cf3](https://github.com/paraspell/xcm-tools/commit/5478cf3166613eb7fdd9571bc20811d45d1d2fcd))
+
+
+### Continuous Integration
+
+* Integrate Codecov PR comments 💬 ([220da1b](https://github.com/paraspell/xcm-tools/commit/220da1b6d060b7aa4d8262e779256e40ce145f3f))
+
 ## [1.2.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.2.1...xcm-router-v1.2.2) (2024-07-27)
 
 ### Miscellaneous Chores
