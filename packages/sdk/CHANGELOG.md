@@ -1,5 +1,26 @@
 # Changelog
 
+## [5.10.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.9.0...sdk-v5.10.0) (2024-08-30)
+
+
+### Features
+
+* **sdk:** Add support for batch utility to Builder ✨ ([4163a52](https://github.com/paraspell/xcm-tools/commit/4163a52a5c84a7409e045467c68ed49435eb01e5))
+* **xcm-api:** Add support for directly returning hex of extrinsics ✨ ([566fac3](https://github.com/paraspell/xcm-tools/commit/566fac3541d05184f1776afeb49ae5148b32f778))
+* **xcm-api:** Add support for XCM Router API Snowbridge transfers ([c468a80](https://github.com/paraspell/xcm-tools/commit/c468a804845fa3fd78649f01af7eee32a7305aae))
+
+
+### Bug Fixes
+
+* **sdk:** Fix Astar and Shiden native asset transfers 🪲 ([da13fd2](https://github.com/paraspell/xcm-tools/commit/da13fd287fa6efa4e071bf564b06acaf1050d6d9))
+
+
+### Miscellaneous Chores
+
+* Perform montly check ✨ ([3f20805](https://github.com/paraspell/xcm-tools/commit/3f20805195f11ca9f37c57f1c6ee6e37c07f6edc))
+* **sdk:** Add readme ([029bf6f](https://github.com/paraspell/xcm-tools/commit/029bf6f5892f564d51387fb24a6dd7ab9bb0ce92))
+* **xcm-tools:** Update readme to reflect latest changes ([65c7a72](https://github.com/paraspell/xcm-tools/commit/65c7a72963eaf9eaba147a13c2b9da654d5cf8fb))
+
 ## [5.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.8.0...sdk-v5.9.0) (2024-08-12)
 
 
