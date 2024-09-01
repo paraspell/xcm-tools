@@ -99,33 +99,6 @@ const Junctions = z.lazy(() =>
         JunctionSchema,
       ])
       .optional(),
-    X9: z
-      .tuple([
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-      ])
-      .optional(),
-    X10: z
-      .tuple([
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-        JunctionSchema,
-      ])
-      .optional(),
   }),
 );
 
