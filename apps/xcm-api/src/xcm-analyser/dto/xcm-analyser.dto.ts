@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MultiLocationSchema } from '../../x-transfer/dto/XTransferDto.js';
+import { MultiLocationSchema } from '@paraspell/xcm-analyser';
 
 export const XcmAnalyserSchema = z.object({
   multilocation: MultiLocationSchema.optional(),
