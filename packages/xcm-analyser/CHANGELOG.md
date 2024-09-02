@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.3.2...xcm-analyser-v1.3.3) (2024-09-02)
+
+
+### Bug Fixes
+
+* Remove duplicated ZOD validation code 🔨 ([fe2fb13](https://github.com/paraspell/xcm-tools/commit/fe2fb13ee902233fe59345a3b79384caca6e03a1))
+
 ## [1.3.2](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.3.1...xcm-analyser-v1.3.2) (2024-08-30)
 
 
