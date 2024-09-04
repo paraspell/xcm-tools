@@ -165,27 +165,6 @@ await Builder(/*node api - optional*/)
       })
 ```
 
-##### Close HRMP channels
-```ts
-Builder(api)
-.from(NODE)
-.closeChannel()
-.inbound(inbound)
-.outbound(outbound)
-.build()
-```
-
-##### Open HRMP channels
-```ts
-Builder()
-.from(NODE)
-.to(NODE)
-.openChannel()
-.maxSize(maxSize)
-.maxMessageSize(maxMsgSize)
-.build()'
-```
-
 ### Function pattern:
 ```
 NOTES:
@@ -230,27 +209,6 @@ await paraspell.xcmPallet.transferRelayToPara(
     to: destination  address  string | Multilocation object,
     paraIdTo?: number,
     destApiForKeepAlive?: ApiPromise
-  }
-)
-
-// Close HRMP channels
-paraspell.closeChannels.closeChannel(
-  {
-    api: ApiPromise,
-    origin: origin  Parachain  ID, 
-    inbound: number,
-    outbound: number
-  }
-)
-
-// Open HRMP channels
-paraspell.openChannels.openChannel(
-  {
-    api: ApiPromise,
-    origin: origin  Parachain  ID,
-    destination: destination  Parachain  ID,
-    maxSize: number,
-    maxMessageSize: number
   }
 )
 ```
