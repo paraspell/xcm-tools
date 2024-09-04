@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 // Contains builder pattern tests for different Builder pattern functionalities
 
 import { type ApiPromise } from '@polkadot/api'
 import { vi, describe, expect, it, beforeAll } from 'vitest'
 import { Version, type TNode } from '../../types'
 import { createApiInstance } from '../../utils'
-import * as hrmp from '../../pallets/hrmp'
-import * as parasSudoWrapper from '../../pallets/parasSudoWrapper'
 import * as xcmPallet from '../../pallets/xcmPallet'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { Builder } from './Builder'
@@ -21,10 +19,6 @@ const AMOUNT = 1000
 const CURRENCY = 'ACA'
 const CURRENCY_ID = BigInt(-1)
 const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
-const CHANNEL_MAX_SIZE = 2
-const CHANNEL_MAX_MSG_SIZE = 6
-const CHANNEL_INBOUND = 9
-const CHANNEL_OUTBOUND = 4
 const PARA_ID_TO = 1999
 
 describe('Builder', () => {
@@ -558,81 +552,6 @@ describe('Builder', () => {
       destApiForKeepAlive: destApi,
       version
     })
-  })
-
-  it('should open a channel', () => {
-    const spy = vi.spyOn(parasSudoWrapper, 'openChannel').mockImplementation(() => {
-      return undefined as any
-    })
-
-    Builder(api)
-      .from(NODE)
-      .to(NODE_2)
-      .openChannel()
-      .maxSize(CHANNEL_MAX_SIZE)
-      .maxMessageSize(CHANNEL_MAX_MSG_SIZE)
-      .build()
-
-    expect(spy).toHaveBeenCalledWith({
-      api,
-      origin: NODE,
-      destination: NODE_2,
-      maxSize: CHANNEL_MAX_SIZE,
-      maxMessageSize: CHANNEL_MAX_MSG_SIZE
-    })
-  })
-
-  it('should return a channel open serialized api call', () => {
-    const serializedApiCall = Builder(api)
-      .from(NODE)
-      .to(NODE_2)
-      .openChannel()
-      .maxSize(CHANNEL_MAX_SIZE)
-      .maxMessageSize(CHANNEL_MAX_MSG_SIZE)
-      .buildSerializedApiCall()
-
-    expect(serializedApiCall).toHaveProperty('module')
-    expect(serializedApiCall).toHaveProperty('section')
-    expect(serializedApiCall).toHaveProperty('parameters')
-    expect(serializedApiCall.module).toBeTypeOf('string')
-    expect(serializedApiCall.section).toBeTypeOf('string')
-    expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
-  })
-
-  it('should close a channel', () => {
-    const spy = vi.spyOn(hrmp, 'closeChannel').mockImplementation(() => {
-      return undefined as any
-    })
-
-    Builder(api)
-      .from(NODE)
-      .closeChannel()
-      .inbound(CHANNEL_INBOUND)
-      .outbound(CHANNEL_OUTBOUND)
-      .build()
-
-    expect(spy).toHaveBeenCalledWith({
-      api,
-      origin: NODE,
-      inbound: CHANNEL_INBOUND,
-      outbound: CHANNEL_OUTBOUND
-    })
-  })
-
-  it('should return a channel close serialized api call', () => {
-    const serializedApiCall = Builder(api)
-      .from(NODE)
-      .closeChannel()
-      .inbound(CHANNEL_INBOUND)
-      .outbound(CHANNEL_OUTBOUND)
-      .buildSerializedApiCall()
-
-    expect(serializedApiCall).toHaveProperty('module')
-    expect(serializedApiCall).toHaveProperty('section')
-    expect(serializedApiCall).toHaveProperty('parameters')
-    expect(serializedApiCall.module).toBeTypeOf('string')
-    expect(serializedApiCall.section).toBeTypeOf('string')
-    expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
   })
 
   it('should request a para to para transfer serialized api call with currency id', async () => {

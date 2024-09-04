@@ -16,12 +16,9 @@ import {
   type Version,
   TBatchOptions
 } from '../../types'
-import { CloseChannelBuilder, type InboundCloseChannelBuilder } from './CloseChannelBuilder'
-import { OpenChannelBuilder, type MaxSizeOpenChannelBuilder } from './OpenChannelBuilder'
 import RelayToParaBuilder from './RelayToParaBuilder'
 import ParaToParaBuilder from './ParaToParaBuilder'
 import ParaToRelayBuilder from './ParaToRelayBuilder'
-import { MissingApiPromiseError } from '../../errors/MissingApiPromiseError'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 import { IAddToBatchBuilder } from './IBatchBuilder'
@@ -55,13 +52,6 @@ class ToGeneralBuilder {
       this.paraIdTo
     )
   }
-
-  openChannel(): MaxSizeOpenChannelBuilder {
-    if (this.api === undefined) {
-      throw new MissingApiPromiseError()
-    }
-    return OpenChannelBuilder.create(this.api, this.from, this.to)
-  }
 }
 
 class FromGeneralBuilder {
@@ -90,13 +80,6 @@ class FromGeneralBuilder {
 
   amount(amount: TAmount | null): AddressBuilder {
     return ParaToRelayBuilder.create(this.api, this.from, amount, this.batchManager, this._feeAsset)
-  }
-
-  closeChannel(): InboundCloseChannelBuilder {
-    if (this.api === undefined) {
-      throw new MissingApiPromiseError()
-    }
-    return CloseChannelBuilder.create(this.api, this.from)
   }
 }
 

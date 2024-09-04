@@ -10,8 +10,6 @@ export enum EventName {
   GET_DECIMALS = 'Get Decimals',
   HAS_SUPPORT_FOR_ASSET = 'Has Support For Asset',
   GET_PARA_ID = 'Get Para Id',
-  OPEN_CHANNEL = 'Open Channel',
-  CLOSE_CHANNEL = 'Close Channel',
   GET_DEFAULT_PALLET = 'Get Default Pallet',
   GET_SUPPORTED_PALLETS = 'Get Supported Pallets',
   GENERATE_XCM_CALL = 'Generate XCM Call',

@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Module } from '@nestjs/common';
 import { AppController } from './app.controller.js';
 import { XTransferModule } from './x-transfer/x-transfer.module.js';
 import { AssetsModule } from './assets/assets.module.js';
-import { ChannelsModule } from './channels/channels.module.js';
 import { PalletsModule } from './pallets/pallets.module.js';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -39,7 +38,6 @@ const __dirname = path.dirname(__filename);
     XcmAnalyserModule,
     RouterModule,
     AssetsModule,
-    ChannelsModule,
     PalletsModule,
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),

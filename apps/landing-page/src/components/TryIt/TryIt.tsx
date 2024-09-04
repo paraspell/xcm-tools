@@ -1,8 +1,8 @@
 import { Text, Title, Button, SimpleGrid, ThemeIcon, rem } from "@mantine/core";
 import classes from "./TryIt.module.css";
 import {
-  IconArrowsUpDown,
   IconBoxAlignBottomRight,
+  IconBuildingBridge2,
   IconCoins,
   IconSend,
 } from "@tabler/icons-react";
@@ -25,9 +25,9 @@ const data = [
     description: "Query the XCM pallets that parachains currently support",
   },
   {
-    icon: IconArrowsUpDown,
-    title: "HRMP Channels",
-    description: "Try opening or closing HRMP channels",
+    icon: IconBuildingBridge2,
+    title: "Polkadot bridges",
+    description: "Transfer assets between ecosystems with ease",
   },
 ];
 
