@@ -310,44 +310,6 @@ const response = await fetch('http://localhost:3001/pallets/:node/default');
 const response = await fetch('http://localhost:3001/pallets/:node');
 ```
 
-### HRMP Pallet
-
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/hrmpP.html).
-
-Possible parameters:
-
-- `from` (Query parameter): (required): Specifies the origin Parachain.
-- `to` (Query parameter): (required): Specifies the destination Parachain.
-- `maxSize` (Query parameter): (required): Specifies the maximum size.
-- `maxMessageSize` (Query parameter): (required): Specifies the maximum message size.
-- `inbound` (Query parameter): (required): Specifies the maximum inbound.
-- `outbound` (Query parameter): (required): Specifies the maximum outbound.
-
-```js
-//Opening HRMP Channel
-const response = await fetch(
-  'http://localhost:3001/hrmp/channels?' +
-    new URLSearchParams({
-      from: Parachain, //eg. replace "Parachain" with "Moonbeam"
-      to: Parachain, //eg. replace "Parachain" with "Acala"
-      maxSize: '8',
-      maxMessageSize: '1024',
-    }),
-  { method: 'POST' },
-);
-
-//Closing HRMP Channel
-const response = await fetch(
-  'http://localhost:3001/hrmp/channels?' +
-    new URLSearchParams({
-      from: Parachain, //eg. replace "Parachain" with "Moonriver"
-      inbound: '0',
-      outbound: '0',
-    }),
-  { method: 'DELETE' },
-);
-```
-
 ## Running the API locally
 
 ### Installation
