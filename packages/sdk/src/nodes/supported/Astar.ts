@@ -9,8 +9,8 @@ import {
   type XTokensTransferInput
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
-import XTokensTransferImpl from '../XTokensTransferImpl'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
+import XTokensTransferImpl from '../xTokens'
 
 class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTransfer {
   constructor() {
@@ -19,9 +19,9 @@ class Astar extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTrans
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     // TESTED https://polkadot.subscan.io/xcm_message/polkadot-f2b697df74ebe4b62853fe81b8b7d0522464972d
-    const method =
+    const section =
       input.scenario === 'ParaToPara' ? 'reserveTransferAssets' : 'reserveWithdrawAssets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, method)
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section)
   }
 
   transferXTokens(input: XTokensTransferInput) {

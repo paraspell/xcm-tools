@@ -9,7 +9,7 @@ import {
 } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
 
 class Encointer extends ParachainNode implements IPolkadotXCMTransfer {

@@ -2,7 +2,7 @@
 
 import { type IPolkadotXCMTransfer, type PolkadotXCMTransferInput, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 
 class Robonomics extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {

@@ -1,6 +1,11 @@
 // Contains basic structure of polkadotXCM call
 
-import { TTransferReturn, type PolkadotXCMTransferInput } from '../types'
+import {
+  PolkadotXcmModule,
+  PolkadotXcmSection,
+  TTransferReturn,
+  type PolkadotXCMTransferInput
+} from '../../types'
 
 const DEFAULT_FEE_ASSET = 0
 
@@ -14,13 +19,14 @@ class PolkadotXCMTransferImpl {
       feeAsset = DEFAULT_FEE_ASSET,
       serializedApiCallEnabled
     }: PolkadotXCMTransferInput,
-    method: string,
+    section: PolkadotXcmSection,
     fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ): TTransferReturn {
+    const module: PolkadotXcmModule = 'polkadotXcm'
     if (serializedApiCallEnabled === true) {
       return {
-        module: 'polkadotXcm',
-        section: method,
+        module,
+        section,
         parameters: [
           header,
           addressSelection,
@@ -32,8 +38,8 @@ class PolkadotXCMTransferImpl {
     }
 
     return fees !== undefined
-      ? api.tx.polkadotXcm[method](header, addressSelection, currencySelection, feeAsset, fees)
-      : api.tx.polkadotXcm[method](header, addressSelection, currencySelection, feeAsset)
+      ? api.tx[module][section](header, addressSelection, currencySelection, feeAsset, fees)
+      : api.tx[module][section](header, addressSelection, currencySelection, feeAsset)
   }
 }
 

@@ -10,7 +10,7 @@ import {
   type TRelayToParaInternalOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 
 class BridgeHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
@@ -28,8 +28,8 @@ class BridgeHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
         'Unable to use bridge hub for transfers to other Parachains. Please move your currency to AssetHub to transfer to other Parachains.'
       )
     }
-    const method = 'limitedTeleportAssets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited')
+    const section = 'limitedTeleportAssets'
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
   }
 
   transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {

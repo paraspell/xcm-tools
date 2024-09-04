@@ -12,7 +12,7 @@ import {
   type TSerializedApiCall
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 
 class Mythos extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {

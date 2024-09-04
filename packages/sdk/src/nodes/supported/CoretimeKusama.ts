@@ -9,7 +9,7 @@ import {
   type TRelayToParaInternalOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 
 class CoretimeKusama extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
@@ -21,9 +21,9 @@ class CoretimeKusama extends ParachainNode implements IPolkadotXCMTransfer {
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {
     // TESTED block hash on Rococo: 0x78ace0f1bf7cac9a42e56143321b617d98327e2750f795efb0abb833025c9082
     const { scenario } = input
-    const method =
+    const section =
       scenario === 'ParaToPara' ? 'limitedReserveTransferAssets' : 'limitedTeleportAssets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited')
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
   }
 
   transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {

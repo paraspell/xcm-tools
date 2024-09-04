@@ -11,7 +11,7 @@ import {
   type TRelayToParaInternalOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 
 class Collectives extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {

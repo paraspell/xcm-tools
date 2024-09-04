@@ -2,7 +2,7 @@
 
 import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../XTokensTransferImpl'
+import XTokensTransferImpl from '../xTokens'
 
 export class BifrostPolkadot extends ParachainNode implements IXTokensTransfer {
   constructor() {

@@ -13,7 +13,7 @@ import {
 } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 
 class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
@@ -29,9 +29,9 @@ class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
     }
 
     const { scenario } = input
-    const method =
+    const section =
       scenario === 'ParaToPara' ? 'limitedReserveTransferAssets' : 'limitedTeleportAssets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited')
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
   }
 
   transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
