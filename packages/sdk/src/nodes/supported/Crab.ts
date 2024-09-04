@@ -9,7 +9,7 @@ import {
 } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { NodeNotSupportedError } from '../../errors'
 import { getNode } from '../../utils'
 

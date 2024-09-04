@@ -155,3 +155,22 @@ export type CheckKeepAliveOptions = {
   currencySymbol?: string
   destNode?: TNodePolkadotKusama
 }
+
+export type TDestWeight = {
+  refTime: string
+  proofSize: string
+}
+
+export type XTransferModule = 'xTransfer'
+export type XTransferSection = 'transfer'
+
+export type XTokensModule = 'xTokens'
+export type XTokensSection = 'transfer' | 'transferMultiasset'
+
+export type PolkadotXcmModule = 'polkadotXcm'
+export type PolkadotXcmSection =
+  | 'limitedTeleportAssets'
+  | 'limitedReserveTransferAssets'
+  | 'reserveTransferAssets'
+  | 'reserveWithdrawAssets'
+  | 'transferAssets'

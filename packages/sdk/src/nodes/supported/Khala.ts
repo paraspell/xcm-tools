@@ -1,7 +1,7 @@
 import { InvalidCurrencyError } from '../../errors'
 import { type IXTransferTransfer, Version, type XTransferTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
-import XTransferTransferImpl from '../XTransferTransferImpl'
+import XTransferTransferImpl from '../xTransfer'
 
 class Khala extends ParachainNode implements IXTransferTransfer {
   constructor() {

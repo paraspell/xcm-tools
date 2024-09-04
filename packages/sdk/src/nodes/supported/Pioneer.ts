@@ -7,7 +7,7 @@ import {
   type TNativeTokenAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../XTokensTransferImpl'
+import XTokensTransferImpl from '../xTokens'
 
 class Pioneer extends ParachainNode implements IXTokensTransfer {
   constructor() {

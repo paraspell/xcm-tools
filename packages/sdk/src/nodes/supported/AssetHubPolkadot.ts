@@ -23,7 +23,7 @@ import {
 } from '../../types'
 import { generateAddressMultiLocationV4, generateAddressPayload } from '../../utils'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../PolkadotXCMTransferImpl'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { getOtherAssets, getParaId } from '../../pallets/assets'
 
 class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
@@ -193,9 +193,9 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
       return this.handleMythosTransfer(input)
     }
 
-    const method =
+    const section =
       scenario === 'ParaToPara' ? 'limitedReserveTransferAssets' : 'limitedTeleportAssets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited')
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
   }
 
   transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {

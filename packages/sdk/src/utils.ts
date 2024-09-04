@@ -208,9 +208,6 @@ export const createApiInstanceForNode = async (node: TNodeWithRelayChains): Prom
   return await getNode(node).createApiInstance()
 }
 
-export const lowercaseFirstLetter = (str: string): string =>
-  str.charAt(0).toLowerCase() + str.slice(1)
-
 export const callPolkadotJsTxFunction = (
   api: ApiPromise,
   { module, section, parameters }: TSerializedApiCall

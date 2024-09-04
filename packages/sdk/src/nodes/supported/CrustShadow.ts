@@ -8,7 +8,7 @@ import {
   type TReserveAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../XTokensTransferImpl'
+import XTokensTransferImpl from '../xTokens'
 
 class CrustShadow extends ParachainNode implements IXTokensTransfer {
   constructor() {

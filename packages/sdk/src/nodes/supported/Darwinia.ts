@@ -12,7 +12,7 @@ import {
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import { NodeNotSupportedError } from '../../errors'
-import XTokensTransferImpl from '../XTokensTransferImpl'
+import XTokensTransferImpl from '../xTokens'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { type TMultiLocation } from '../../types/TMultiLocation'
 
