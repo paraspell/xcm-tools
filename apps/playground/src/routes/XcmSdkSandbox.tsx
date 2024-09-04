@@ -1,6 +1,5 @@
 import { Container, Tabs, rem } from "@mantine/core";
 import {
-  IconArrowsUpDown,
   IconBoxAlignBottomRight,
   IconCoins,
   IconSend,
@@ -10,7 +9,6 @@ import {
 import XcmTransfer from "../components/XcmTransfer";
 import AssetsQueries from "../components/assets/AssetsQueries";
 import PalletsQueries from "../components/pallets/PalletsQueries";
-import ChannelsQueries from "../components/channels/ChannelsQueries";
 import TransferInfo from "../components/TransferInfo";
 import AssetClaim from "../components/asset-claim/AssetClaim";
 import EthBridgeTransfer from "../components/eth-bridge/EthBridgeTransfer";
@@ -35,12 +33,6 @@ const XcmSdkSandbox = () => {
           leftSection={<IconBoxAlignBottomRight style={iconStyle} />}
         >
           Pallets
-        </Tabs.Tab>
-        <Tabs.Tab
-          value="hrmp-channels"
-          leftSection={<IconArrowsUpDown style={iconStyle} />}
-        >
-          HRMP Channels
         </Tabs.Tab>
 
         <Tabs.Tab
@@ -75,10 +67,6 @@ const XcmSdkSandbox = () => {
 
         <Tabs.Panel value="pallets">
           <PalletsQueries />
-        </Tabs.Panel>
-
-        <Tabs.Panel value="hrmp-channels">
-          <ChannelsQueries />
         </Tabs.Panel>
 
         <Tabs.Panel value="transfer-info">

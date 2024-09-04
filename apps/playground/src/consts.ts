@@ -15,5 +15,3 @@ export const ASSET_QUERIES = [
 ] as const;
 
 export const PALLETS_QUERIES = ["ALL_PALLETS", "DEFAULT_PALLET"] as const;
-
-export const CHANNELS_QUERIES = ["OPEN_CHANNEL", "CLOSE_CHANNEL"] as const;
