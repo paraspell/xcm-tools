@@ -59,3 +59,11 @@ jobs:
           flags: visualizator-be
           fail_ci_if_error: false
           verbose: true
+      - name: Upload XCM API coverage report to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: apps/xcm-api
+          flags: xcm-api
+          fail_ci_if_error: false
+          verbose: true
