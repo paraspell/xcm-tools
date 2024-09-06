@@ -1,6 +1,6 @@
 import { type TNodeDotKsmWithRelayChains, type TEdJsonMap } from '../../types'
 import * as edsMapJson from '../../maps/existential-deposits.json' assert { type: 'json' }
-import { getBalanceNative } from './getBalanceNative'
+import { getBalanceNative } from './balance/getBalanceNative'
 const palletsMap = edsMapJson as TEdJsonMap
 
 export const getExistentialDeposit = (node: TNodeDotKsmWithRelayChains): bigint =>

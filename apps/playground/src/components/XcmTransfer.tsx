@@ -2,7 +2,13 @@ import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "./ErrorAlert";
 import TransferForm, { FormValuesTransformed } from "./TransferForm";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import { Builder, TNode, createApiInstanceForNode } from "@paraspell/sdk";
+import {
+  Builder,
+  TCurrencyInput,
+  TMultiLocation,
+  TNode,
+  createApiInstanceForNode,
+} from "@paraspell/sdk";
 import { ApiPromise } from "@polkadot/api";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { Signer } from "@polkadot/api/types";
@@ -34,10 +40,23 @@ const XcmTransfer = () => {
   const determineCurrency = ({
     isCustomCurrency,
     customCurrency,
+    customCurrencyType,
     currency,
-  }: FormValuesTransformed) => {
+  }: FormValuesTransformed): TCurrencyInput => {
     if (isCustomCurrency) {
-      return customCurrency;
+      if (customCurrencyType === "id") {
+        return {
+          id: customCurrency,
+        };
+      } else if (customCurrencyType === "symbol") {
+        return {
+          symbol: customCurrency,
+        };
+      } else {
+        return {
+          multilocation: JSON.parse(customCurrency) as TMultiLocation,
+        };
+      }
     } else if (currency) {
       return currency.assetId
         ? { id: currency.assetId }

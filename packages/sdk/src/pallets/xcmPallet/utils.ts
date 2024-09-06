@@ -11,8 +11,7 @@ import {
   type TRelayToParaInternalOptions,
   type TDestination,
   type TNode,
-  type TCurrencySelectionHeaderArr,
-  TCurrencySpecifier
+  type TCurrencySelectionHeaderArr
 } from '../../types'
 import { createX1Payload, generateAddressPayload } from '../../utils'
 import { getParaId, getTNode } from '../assets'
@@ -41,25 +40,8 @@ export const constructRelayToParaParameters = (
   return parameters
 }
 
-export const isTMulti = (value: any): value is TMultiLocation => {
-  return (value && typeof value === 'object') || Array.isArray(value)
-}
-
 export const isTMultiLocation = (value: any): value is TMultiLocation => {
   return value && typeof value.parents !== 'undefined' && typeof value.interior !== 'undefined'
-}
-
-export const isTCurrencySpecifier = (value: any): value is TCurrencySpecifier => {
-  if (typeof value !== 'object' || value === null) {
-    return false
-  }
-  return (
-    ('symbol' in value && typeof value.symbol === 'string') ||
-    ('id' in value &&
-      (typeof value.id === 'string' ||
-        typeof value.id === 'number' ||
-        typeof value.id === 'bigint'))
-  )
 }
 
 export const createBridgeCurrencySpec = (

@@ -3,9 +3,10 @@ import {
   type TNodeDotKsmWithRelayChains,
   type Extrinsic,
   type TNode,
-  type TNodeWithRelayChains
+  type TNodeWithRelayChains,
+  TCurrencyCore
 } from '../../types'
-import { getBalanceNative } from './getBalanceNative'
+import { getBalanceNative } from './balance/getBalanceNative'
 import { getMinNativeTransferableAmount } from './getExistentialDeposit'
 import { type ApiPromise } from '@polkadot/api'
 import { createApiInstanceForNode, isRelayChain } from '../../utils'
@@ -15,7 +16,7 @@ const createTx = async (
   originApi: ApiPromise,
   address: string,
   amount: string,
-  currencySymbol: string,
+  currency: TCurrencyCore,
   originNode: TNodeWithRelayChains,
   destNode: TNodeWithRelayChains
 ): Promise<Extrinsic> => {
@@ -35,7 +36,7 @@ const createTx = async (
     return await Builder(originApi)
       .from(originNode as TNode)
       .to(destNode as TNode)
-      .currency(currencySymbol)
+      .currency(currency)
       .amount(amount)
       .address(address)
       .build()
@@ -56,7 +57,7 @@ interface TOriginFeeDetails {
 export const getOriginFeeDetails = async (
   origin: TNodeDotKsmWithRelayChains,
   destination: TNodeDotKsmWithRelayChains,
-  currency: string,
+  currency: TCurrencyCore,
   amount: string,
   account: string,
   api?: ApiPromise

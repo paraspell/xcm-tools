@@ -4,31 +4,24 @@
 // Contains builder pattern tests for different Builder pattern functionalities
 
 import { type ApiPromise } from '@polkadot/api'
-import { vi, describe, expect, it, beforeAll } from 'vitest'
+import { vi, describe, expect, it } from 'vitest'
 import { Version, type TNode } from '../../types'
-import { createApiInstance } from '../../utils'
 import * as xcmPallet from '../../pallets/xcmPallet'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { Builder } from './Builder'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 
-const WS_URL = 'wss://subsocial-rpc.dwellir.com'
 const NODE: TNode = 'Acala'
 const NODE_2: TNode = 'Acala'
 const AMOUNT = 1000
-const CURRENCY = 'ACA'
+const CURRENCY = { symbol: 'ACA' }
 const CURRENCY_ID = BigInt(-1)
 const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
 const PARA_ID_TO = 1999
 
 describe('Builder', () => {
-  let api: ApiPromise
-  let destApi: ApiPromise
-
-  beforeAll(async () => {
-    api = await createApiInstance(WS_URL)
-    destApi = await createApiInstance(WS_URL)
-  })
+  const api = {} as ApiPromise
+  const destApi = {} as ApiPromise
 
   it('should initiatie a para to para transfer with currency symbol', async () => {
     const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
@@ -66,32 +59,6 @@ describe('Builder', () => {
       api,
       origin: NODE,
       currency: CURRENCY,
-      amount: AMOUNT,
-      address: ADDRESS,
-      destination: NODE_2,
-      paraIdTo: PARA_ID_TO
-    })
-  })
-
-  it('should initiatie a para to para transfer with specified asset symbol', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
-
-    await Builder(api)
-      .from(NODE)
-      .to(NODE_2, PARA_ID_TO)
-      .currency({
-        symbol: CURRENCY
-      })
-      .amount(AMOUNT)
-      .address(ADDRESS)
-      .build()
-
-    expect(spy).toHaveBeenCalledWith({
-      api,
-      origin: NODE,
-      currency: {
-        symbol: CURRENCY
-      },
       amount: AMOUNT,
       address: ADDRESS,
       destination: NODE_2,
@@ -209,7 +176,7 @@ describe('Builder', () => {
     await Builder(api)
       .from(NODE)
       .to(NODE_2)
-      .currency(CURRENCY_ID)
+      .currency({ id: CURRENCY_ID })
       .amount(AMOUNT)
       .address(ADDRESS)
       .build()
@@ -217,7 +184,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith({
       api,
       origin: NODE,
-      currency: CURRENCY_ID,
+      currency: { id: CURRENCY_ID },
       amount: AMOUNT,
       address: ADDRESS,
       destination: NODE_2
@@ -232,7 +199,7 @@ describe('Builder', () => {
     await Builder(api)
       .from(NODE)
       .to(NODE_2)
-      .currency(CURRENCY_ID)
+      .currency({ id: CURRENCY_ID })
       .feeAsset(feeAsset)
       .amount(AMOUNT)
       .address(ADDRESS)
@@ -241,7 +208,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith({
       api,
       origin: NODE,
-      currency: CURRENCY_ID,
+      currency: { id: CURRENCY_ID },
       amount: AMOUNT,
       address: ADDRESS,
       feeAsset,
@@ -301,7 +268,7 @@ describe('Builder', () => {
     await Builder(api)
       .from(NODE)
       .to(NODE_2)
-      .currency(overridedCurrencyMultiLocation)
+      .currency({ multiasset: overridedCurrencyMultiLocation })
       .feeAsset(feeAsset)
       .amount(AMOUNT)
       .address(ADDRESS)
@@ -310,7 +277,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith({
       api,
       origin: NODE,
-      currency: overridedCurrencyMultiLocation,
+      currency: { multiasset: overridedCurrencyMultiLocation },
       amount: AMOUNT,
       address: ADDRESS,
       feeAsset,
@@ -347,7 +314,7 @@ describe('Builder', () => {
     await Builder(api)
       .from(NODE)
       .to(NODE_2)
-      .currency(overridedCurrencyMultiLocation)
+      .currency({ multiasset: overridedCurrencyMultiLocation })
       .amount(AMOUNT)
       .address(ADDRESS)
       .build()
@@ -355,7 +322,7 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith({
       api,
       origin: NODE,
-      currency: overridedCurrencyMultiLocation,
+      currency: { multiasset: overridedCurrencyMultiLocation },
       amount: AMOUNT,
       address: ADDRESS,
       destination: NODE_2
@@ -460,7 +427,9 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith({
       api,
       origin: NODE,
-      currency,
+      currency: {
+        symbol: currency
+      },
       amount: AMOUNT,
       address: ADDRESS
     })
@@ -476,7 +445,9 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith({
       api,
       origin: NODE,
-      currency,
+      currency: {
+        symbol: currency
+      },
       amount: AMOUNT,
       address: ADDRESS,
       destApiForKeepAlive: destApi
@@ -500,7 +471,9 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith({
       api,
       origin: NODE,
-      currency,
+      currency: {
+        symbol: currency
+      },
       amount: AMOUNT,
       address: ADDRESS,
       feeAsset,
@@ -519,7 +492,9 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith({
       api,
       origin: NODE,
-      currency,
+      currency: {
+        symbol: currency
+      },
       amount: AMOUNT,
       address: ADDRESS,
       version
@@ -545,7 +520,9 @@ describe('Builder', () => {
     expect(spy).toHaveBeenCalledWith({
       api,
       origin: NODE,
-      currency,
+      currency: {
+        symbol: currency
+      },
       amount: AMOUNT,
       address: ADDRESS,
       feeAsset,
@@ -555,10 +532,10 @@ describe('Builder', () => {
   })
 
   it('should request a para to para transfer serialized api call with currency id', async () => {
-    const serializedApiCall = await Builder(api)
+    const serializedApiCall = await Builder()
       .from(NODE)
       .to(NODE_2)
-      .currency('DOT')
+      .currency({ symbol: 'DOT' })
       .amount(AMOUNT)
       .address(ADDRESS)
       .buildSerializedApiCall()
@@ -572,7 +549,7 @@ describe('Builder', () => {
   })
 
   it('should request a relay to para transfer serialized api call', async () => {
-    const serializedApiCall = await Builder(api)
+    const serializedApiCall = await Builder()
       .to(NODE_2)
       .amount(AMOUNT)
       .address(ADDRESS)
@@ -587,7 +564,7 @@ describe('Builder', () => {
   })
 
   it('should call claim asset function with valid params', async () => {
-    const serializedApiCall = await Builder(api)
+    const serializedApiCall = await Builder()
       .claimFrom(NODE)
       .fungible([])
       .account(ADDRESS)

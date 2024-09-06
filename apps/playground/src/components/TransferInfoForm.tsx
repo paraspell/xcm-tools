@@ -1,7 +1,15 @@
 import { useForm } from "@mantine/form";
 import { isValidWalletAddress } from "../utils";
 import { FC } from "react";
-import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
+import {
+  Button,
+  Checkbox,
+  Group,
+  SegmentedControl,
+  Select,
+  Stack,
+  TextInput,
+} from "@mantine/core";
 import {
   NODES_WITH_RELAY_CHAINS,
   TNodeDotKsmWithRelayChains,
@@ -15,6 +23,7 @@ export type FormValues = {
   destinationAddress: string;
   amount: string;
   useApi: boolean;
+  customCurrencyType?: "id" | "symbol";
 };
 
 type Props = {
@@ -27,7 +36,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
     initialValues: {
       from: "Acala",
       to: "Astar",
-      currency: "DOT",
+      currency: "",
       amount: "10000000000000000000",
       address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
       destinationAddress: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
@@ -68,12 +77,26 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
         />
 
         {!isNotParaToPara && (
-          <TextInput
-            label="Currency"
-            placeholder="GLMR"
-            required
-            {...form.getInputProps("currency")}
-          />
+          <Group align="flex-end">
+            <TextInput
+              flex={1}
+              label="Currency"
+              placeholder={
+                form.values.customCurrencyType === "id" ? "Asset ID" : "Symbol"
+              }
+              required
+              {...form.getInputProps("currency")}
+            />
+            <SegmentedControl
+              size="xs"
+              pb={8}
+              data={[
+                { label: "Asset ID", value: "id" },
+                { label: "Symbol", value: "symbol" },
+              ]}
+              {...form.getInputProps("customCurrencyType")}
+            />
+          </Group>
         )}
 
         <TextInput

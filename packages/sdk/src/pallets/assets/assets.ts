@@ -13,7 +13,7 @@ import {
   TAsset
 } from '../../types'
 import { determineRelayChain } from '../../utils'
-import { getAssetBySymbolOrId } from './assetsUtils'
+import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
 
@@ -34,7 +34,9 @@ export const getOtherAssets = (node: TNode): TAssetDetails[] => getAssetsObject(
 
 export const getAssets = (node: TNodeWithRelayChains): TAsset[] => {
   const { nativeAssets, otherAssets } = getAssetsObject(node)
-  const relayChainAsset = getAssetBySymbolOrId(determineRelayChain(node), getRelayChainSymbol(node))
+  const relayChainAsset = getAssetBySymbolOrId(determineRelayChain(node), {
+    symbol: getRelayChainSymbol(node)
+  })
   return [...(relayChainAsset ? [relayChainAsset] : []), ...nativeAssets, ...otherAssets]
 }
 
@@ -75,8 +77,8 @@ export const getSupportedAssets = (
     (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
     (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot')
   ) {
-    const polkadotAsset = getAssetBySymbolOrId('Polkadot', 'DOT')
-    const kusamaAsset = getAssetBySymbolOrId('Kusama', 'KSM')
+    const polkadotAsset = getAssetBySymbolOrId('Polkadot', { symbol: 'DOT' })
+    const kusamaAsset = getAssetBySymbolOrId('Kusama', { symbol: 'KSM' })
     return [...(polkadotAsset ? [polkadotAsset] : []), ...(kusamaAsset ? [kusamaAsset] : [])]
   }
 

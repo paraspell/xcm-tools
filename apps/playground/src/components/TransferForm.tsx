@@ -19,6 +19,7 @@ export type FormValues = {
   amount: string;
   useApi: boolean;
   isCustomCurrency: boolean;
+  customCurrencyType?: "id" | "symbol" | "multilocation";
 };
 
 export type FormValuesTransformed = FormValues & {
@@ -41,6 +42,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
       address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
       useApi: false,
       isCustomCurrency: false,
+      customCurrencyType: "id",
     },
 
     validate: {

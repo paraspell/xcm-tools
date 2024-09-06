@@ -56,7 +56,9 @@ const TransferInfo = () => {
         formValues.to,
         originAddress,
         formValues.destinationAddress,
-        formValues.currency,
+        formValues.customCurrencyType === "id"
+          ? { id: formValues.currency }
+          : { symbol: formValues.currency },
         formValues.amount
       );
     }
