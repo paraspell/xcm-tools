@@ -40,7 +40,7 @@ describe('send', () => {
     sendOptions = {
       ...MOCK_OPTIONS_BASE,
       origin: 'Acala',
-      currency: 'ACA',
+      currency: { symbol: 'ACA' },
       api
     }
   })
@@ -50,32 +50,42 @@ describe('send', () => {
       send({
         ...sendOptions,
         origin: 'Acala',
-        currency: 'UNIT'
+        currency: { symbol: 'UNIT' }
       })
     ).rejects.toThrowError(InvalidCurrencyError)
   })
 
   it('should not throw an InvalidCurrencyError when passing Acala and ACA', async () => {
     await expect(
-      send({ ...sendOptions, origin: 'Acala', currency: 'ACA' })
+      send({ ...sendOptions, origin: 'Acala', currency: { symbol: 'ACA' } })
     ).resolves.not.toThrowError(InvalidCurrencyError)
   })
 
   it('should not throw an InvalidCurrencyError when passing Acala and ACA and Unique as destination', async () => {
     await expect(
-      send({ ...sendOptions, origin: 'Acala', currency: 'UNQ', destination: 'Unique' })
+      send({ ...sendOptions, origin: 'Acala', currency: { symbol: 'UNQ' }, destination: 'Unique' })
     ).resolves.not.toThrowError(InvalidCurrencyError)
   })
 
   it('should not throw an InvalidCurrencyError when passing Karura and BSX and Basilisk as destination', async () => {
     await expect(
-      send({ ...sendOptions, origin: 'Karura', currency: 'BSX', destination: 'Basilisk' })
+      send({
+        ...sendOptions,
+        origin: 'Karura',
+        currency: { symbol: 'BSX' },
+        destination: 'Basilisk'
+      })
     ).resolves.not.toThrowError(InvalidCurrencyError)
   })
 
   it('should throw an InvalidCurrencyError when passing Acala and ACA and BifrostPolkadot as destination', async () => {
     await expect(
-      send({ ...sendOptions, origin: 'Acala', currency: 'UNQ', destination: 'BifrostPolkadot' })
+      send({
+        ...sendOptions,
+        origin: 'Acala',
+        currency: { symbol: 'UNQ' },
+        destination: 'BifrostPolkadot'
+      })
     ).rejects.toThrowError(InvalidCurrencyError)
   })
 
@@ -84,7 +94,7 @@ describe('send', () => {
       send({
         ...sendOptions,
         origin: 'AssetHubKusama',
-        currency: 'DOT',
+        currency: { symbol: 'DOT' },
         destination: 'Hydration'
       })
     ).rejects.toThrowError(IncompatibleNodesError)
@@ -95,7 +105,7 @@ describe('send', () => {
       send({
         ...sendOptions,
         origin: 'Hydration',
-        currency: 'DOT',
+        currency: { symbol: 'DOT' },
         destination: 'AssetHubKusama'
       })
     ).rejects.toThrowError(IncompatibleNodesError)
@@ -113,7 +123,7 @@ describe('send', () => {
             continue
           }
           await expect(
-            send({ ...sendOptions, origin: node, currency: symbol })
+            send({ ...sendOptions, origin: node, currency: { symbol } })
           ).resolves.not.toThrowError(InvalidCurrencyError)
         }
       }
@@ -135,7 +145,7 @@ describe('send', () => {
           send({
             ...sendOptions,
             origin: polkadotNode,
-            currency: randomCurrencySymbol,
+            currency: { symbol: randomCurrencySymbol },
             destination: kusamaNode
           })
         ).rejects.toThrowError(IncompatibleNodesError)
@@ -148,7 +158,7 @@ describe('send', () => {
       send({
         ...sendOptions,
         origin: 'Acala',
-        currency: randomCurrencySymbol,
+        currency: { symbol: randomCurrencySymbol },
         destination: 'Hydration'
       })
     ).resolves.not.toThrowError(IncompatibleNodesError)
@@ -157,7 +167,7 @@ describe('send', () => {
       send({
         ...sendOptions,
         origin: 'AssetHubKusama',
-        currency: 'KSM',
+        currency: { symbol: 'KSM' },
         destination: 'CrustShadow'
       })
     ).resolves.not.toThrowError(IncompatibleNodesError)
@@ -168,7 +178,7 @@ describe('send', () => {
       api,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
-      currency: [],
+      currency: { multiasset: [] },
       feeAsset: 0,
       amount: 1000,
       address: '0x123'
@@ -178,12 +188,12 @@ describe('send', () => {
     await expect(send(options)).rejects.toThrow('Overrided multi assets cannot be empty')
   })
 
-  it('should throw DuplicateAssetError when AssetHubPolkadot and DOT is passed', async () => {
+  it('should throw DuplicateAssetError when Hydration and USDT is passed', async () => {
     const options = {
       api,
-      origin: 'AssetHubPolkadot' as TNode,
-      destination: 'Hydration' as TNode,
-      currency: 'USDT',
+      origin: 'Hydration' as TNode,
+      destination: 'Acala' as TNode,
+      currency: { symbol: 'USDT' },
       feeAsset: 0,
       amount: 1000,
       address: '0x123'
@@ -197,7 +207,7 @@ describe('send', () => {
       api,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
-      currency: 'WETH',
+      currency: { symbol: 'WETH' },
       feeAsset: 0,
       amount: 1000,
       address: '0x123'
@@ -211,19 +221,21 @@ describe('send', () => {
       api,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
-      currency: [
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+      currency: {
+        multiasset: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
-          },
-          fun: { Fungible: 1000 }
-        }
-      ] as TMultiAsset[],
+            },
+            fun: { Fungible: 1000 }
+          }
+        ] as TMultiAsset[]
+      },
       feeAsset: 1,
       amount: 1000,
       address: '0x456'
@@ -233,7 +245,7 @@ describe('send', () => {
   })
 
   it('should throw InvalidCurrencyError when single multi location is used with fee asset', async () => {
-    const multiLocation: TMultiLocation = {
+    const multilocation: TMultiLocation = {
       parents: 0,
       interior: {
         X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
@@ -244,7 +256,7 @@ describe('send', () => {
       api,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
-      currency: multiLocation,
+      currency: { multilocation },
       feeAsset: 1,
       amount: 1000,
       address: '0x456'
@@ -258,30 +270,32 @@ describe('send', () => {
       api,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
-      currency: [
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+      currency: {
+        multiasset: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
+            },
+            fun: { Fungible: 1000 }
           },
-          fun: { Fungible: 1000 }
-        },
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
-          },
-          fun: { Fungible: 500 }
-        }
-      ] as TMultiAsset[],
+            },
+            fun: { Fungible: 500 }
+          }
+        ] as TMultiAsset[]
+      },
       feeAsset: undefined,
       amount: 1000,
       address: '0x789'
@@ -295,30 +309,32 @@ describe('send', () => {
       api,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
-      currency: [
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+      currency: {
+        multiasset: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
+            },
+            fun: { Fungible: 1000 }
           },
-          fun: { Fungible: 1000 }
-        },
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
-          },
-          fun: { Fungible: 500 }
-        }
-      ] as TMultiAsset[],
+            },
+            fun: { Fungible: 500 }
+          }
+        ] as TMultiAsset[]
+      },
       feeAsset: 1,
       amount: 1000,
       address: '0x789'
@@ -332,30 +348,32 @@ describe('send', () => {
       api,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
-      currency: [
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+      currency: {
+        multiasset: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
+            },
+            fun: { Fungible: 1000 }
           },
-          fun: { Fungible: 1000 }
-        },
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
-          },
-          fun: { Fungible: 500 }
-        }
-      ] as TMultiAsset[],
+            },
+            fun: { Fungible: 500 }
+          }
+        ] as TMultiAsset[]
+      },
       feeAsset: 0,
       amount: 1000,
       address: '0x789'
@@ -369,30 +387,32 @@ describe('send', () => {
       api,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
-      currency: [
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+      currency: {
+        multiasset: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
+            },
+            fun: { Fungible: 1000 }
           },
-          fun: { Fungible: 1000 }
-        },
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
-          },
-          fun: { Fungible: 500 }
-        }
-      ] as TMultiAsset[],
+            },
+            fun: { Fungible: 500 }
+          }
+        ] as TMultiAsset[]
+      },
       feeAsset: -1,
       amount: 1000,
       address: '0x789'
@@ -406,30 +426,32 @@ describe('send', () => {
       api,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
-      currency: [
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+      currency: {
+        multiasset: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
+            },
+            fun: { Fungible: 1000 }
           },
-          fun: { Fungible: 1000 }
-        },
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: {
+                  X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+                }
               }
-            }
-          },
-          fun: { Fungible: 500 }
-        }
-      ] as TMultiAsset[],
+            },
+            fun: { Fungible: 500 }
+          }
+        ] as TMultiAsset[]
+      },
       feeAsset: 2,
       amount: 1000,
       address: '0x789'

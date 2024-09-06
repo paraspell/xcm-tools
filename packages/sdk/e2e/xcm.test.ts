@@ -97,7 +97,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = Builder(api)
         .from('AssetHubPolkadot')
         .to('AssetHubKusama')
-        .currency('DOT')
+        .currency({ symbol: 'DOT' })
         .amount(MOCK_AMOUNT)
         .address(MOCK_ADDRESS)
         .build()
@@ -109,7 +109,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = Builder(api)
         .from('AssetHubPolkadot')
         .to('AssetHubKusama')
-        .currency('KSM')
+        .currency({ symbol: 'KSM' })
         .amount(MOCK_AMOUNT)
         .address(MOCK_ADDRESS)
         .build()
@@ -121,7 +121,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = Builder(api)
         .from('AssetHubKusama')
         .to('AssetHubPolkadot')
-        .currency('DOT')
+        .currency({ symbol: 'DOT' })
         .amount(MOCK_AMOUNT)
         .address(MOCK_ADDRESS)
         .build()
@@ -133,7 +133,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = Builder(api)
         .from('AssetHubKusama')
         .to('AssetHubPolkadot')
-        .currency('KSM')
+        .currency({ symbol: 'KSM' })
         .amount(MOCK_AMOUNT)
         .address(MOCK_ADDRESS)
         .build()
@@ -214,11 +214,12 @@ describe.sequential('XCM - e2e', () => {
     const ethAssetSymbols = getOtherAssets('Ethereum').map(asset => asset.symbol)
     const api = await createApiInstanceForNode('AssetHubPolkadot')
     ethAssetSymbols.forEach(symbol => {
+      if (!symbol) return
       it(`should create transfer tx - ${symbol} from Polkadot to Ethereum`, async () => {
         const tx = await Builder(api)
           .from('AssetHubPolkadot')
           .to('Ethereum')
-          .currency(symbol as string)
+          .currency({ symbol })
           .amount(MOCK_AMOUNT)
           .address(MOCK_ETH_ADDRESS)
           .build()
@@ -252,7 +253,7 @@ describe.sequential('XCM - e2e', () => {
         api = await createApiInstanceForNode(node)
       })
       it(`should create transfer tx - ParaToPara ${asset} from ${node} to ${nodeTo}`, async () => {
-        const currency = assetId ?? asset ?? 'DOT'
+        const currency = assetId ? { id: assetId } : { symbol: asset ?? 'DOT' }
         if (currency === null) return
         expect(nodeTo).toBeDefined()
         try {

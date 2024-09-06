@@ -3,9 +3,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type ApiPromise } from '@polkadot/api'
-import { type TNodeWithRelayChains } from '../../types'
+import { type TNodeWithRelayChains } from '../../../types'
 import { type BN } from '@polkadot/util'
-import { createApiInstanceForNode } from '../../utils'
+import { createApiInstanceForNode } from '../../../utils'
 
 export const getBalanceNative = async (
   address: string,

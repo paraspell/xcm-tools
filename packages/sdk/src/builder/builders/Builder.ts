@@ -139,7 +139,7 @@ export interface AmountBuilder {
 
 export interface AmountOrFeeAssetBuilder {
   amount: (amount: TAmount | null) => AddressBuilder
-  feeAsset: (feeAsset: TCurrencyInput) => AmountBuilder
+  feeAsset: (feeAsset: TCurrency) => AmountBuilder
 }
 
 export interface FungibleBuilder {

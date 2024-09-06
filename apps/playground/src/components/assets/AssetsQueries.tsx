@@ -70,7 +70,7 @@ const AssetsQueries = () => {
       case "BALANCE_NATIVE":
         return getBalanceNative(address, node);
       case "BALANCE_FOREIGN":
-        return getBalanceForeign(address, node, symbol);
+        return getBalanceForeign(address, node, { symbol: symbol });
     }
   };
 

@@ -1,4 +1,4 @@
 export * from './assets'
-export * from './getBalanceNative'
-export * from './getBalanceForeign'
-export * from './getTransferInfo'
+export * from './balance/getBalanceNative'
+export * from './balance/getBalanceForeign'
+export * from './transfer-info/getTransferInfo'

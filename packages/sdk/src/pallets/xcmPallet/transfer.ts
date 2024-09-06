@@ -17,12 +17,11 @@ import {
   determineRelayChain
 } from '../../utils'
 import { getRelayChainSymbol, hasSupportForAsset } from '../assets'
-import { getAssetBySymbolOrId } from '../assets/assetsUtils'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive'
-import { isTMulti, isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
-import { transformSendOptions } from './transformSendOptions'
+import { isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
+import { getAssetBySymbolOrId } from '../assets/getAssetBySymbolOrId'
 
 const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn> => {
   const {
@@ -36,51 +35,50 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn>
     destApiForKeepAlive,
     feeAsset,
     version,
-    isSymbol,
     serializedApiCallEnabled = false
-  } = transformSendOptions(options)
+  } = options
 
-  if ((!isTMulti(currency) || isTMultiLocation(currency)) && amount === null) {
+  if ((!('multiasset' in currency) || 'multilocation' in currency) && amount === null) {
     throw new Error('Amount is required')
   }
 
-  if (typeof currency === 'number' && currency > Number.MAX_SAFE_INTEGER) {
+  if ('id' in currency && typeof currency === 'number' && currency > Number.MAX_SAFE_INTEGER) {
     throw new InvalidCurrencyError(
       'The provided asset ID is larger than the maximum safe integer value. Please provide it as a string.'
     )
   }
 
   // Multi location checks
-  if (isTMultiLocation(currency) && (feeAsset === 0 || feeAsset !== undefined)) {
+  if ('multilocation' in currency && (feeAsset === 0 || feeAsset !== undefined)) {
     throw new InvalidCurrencyError('Overrided single multi asset cannot be used with fee asset')
   }
 
   // Multi assets checks
-  if (isTMulti(currency) && Array.isArray(currency)) {
+  if ('multiasset' in currency) {
     if (amount !== null) {
       console.warn(
         'Amount is ignored when using overriding currency using multiple multi locations. Please set it to null.'
       )
     }
 
-    if (currency.length === 0) {
+    if (currency.multiasset.length === 0) {
       throw new InvalidCurrencyError('Overrided multi assets cannot be empty')
     }
 
-    if (currency.length === 1 && (feeAsset === 0 || feeAsset !== undefined)) {
+    if (currency.multiasset.length === 1 && (feeAsset === 0 || feeAsset !== undefined)) {
       throw new InvalidCurrencyError('Overrided single multi asset cannot be used with fee asset')
     }
 
-    if (currency.length > 1 && feeAsset === undefined) {
+    if (currency.multiasset.length > 1 && feeAsset === undefined) {
       throw new InvalidCurrencyError(
         'Overrided multi assets cannot be used without specifying fee asset'
       )
     }
 
     if (
-      currency.length > 1 &&
+      currency.multiasset.length > 1 &&
       feeAsset !== undefined &&
-      ((feeAsset as number) < 0 || (feeAsset as number) >= currency.length)
+      ((feeAsset as number) < 0 || (feeAsset as number) >= currency.multiasset.length)
     ) {
       throw new InvalidCurrencyError(
         'Fee asset index is out of bounds. Please provide a valid index.'
@@ -95,7 +93,6 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn>
   }
 
   const isMultiLocationDestination = typeof destination === 'object'
-  const isMultiLocationCurrency = typeof currency === 'object'
 
   const isBridge =
     (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
@@ -113,21 +110,22 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn>
   const originNode = getNode(origin)
 
   const assetCheckEnabled =
-    isMultiLocationCurrency || isBridge ? false : originNode.assetCheckEnabled
+    'multilocation' in currency || 'multiasset' in currency || isBridge
+      ? false
+      : originNode.assetCheckEnabled
 
   const asset = assetCheckEnabled
     ? getAssetBySymbolOrId(
         origin,
         currency,
         isRelayDestination,
-        isSymbol,
         isTMultiLocation(destination) ? undefined : destination
       )
     : null
 
   if (!isBridge && asset === null && assetCheckEnabled) {
     throw new InvalidCurrencyError(
-      `Origin node ${origin} does not support currency or currencyId ${JSON.stringify(currency)}.`
+      `Origin node ${origin} does not support currency ${JSON.stringify(currency)}.`
     )
   }
 
@@ -137,12 +135,11 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn>
     !isMultiLocationDestination &&
     asset?.symbol !== undefined &&
     assetCheckEnabled &&
-    isSymbol !== false &&
-    asset.assetId !== currency &&
+    !('id' in currency) &&
     !hasSupportForAsset(destination, asset.symbol)
   ) {
     throw new InvalidCurrencyError(
-      `Destination node ${destination} does not support currency or currencyId ${JSON.stringify(currency)}.`
+      `Destination node ${destination} does not support currency ${JSON.stringify(currency)}.`
     )
   }
 
@@ -150,7 +147,7 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn>
 
   const amountStr = amount?.toString()
 
-  if (isTMulti(currency)) {
+  if ('multilocation' in currency || 'multiasset' in currency) {
     console.warn('Keep alive check is not supported when using MultiLocation as currency.')
   } else if (typeof address === 'object') {
     console.warn('Keep alive check is not supported when using MultiLocation as address.')
@@ -165,12 +162,13 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn>
       amount: amountStr ?? '',
       originNode: origin,
       destApi: destApiForKeepAlive,
-      currencySymbol: asset?.symbol ?? currency.toString(),
+      currencySymbol: asset?.symbol ?? ('symbol' in currency ? currency.symbol : undefined),
       destNode: destination
     })
   }
 
-  const currencyStr = isTMulti(currency) ? undefined : currency.toString()
+  const currencyStr =
+    'symbol' in currency ? currency.symbol : 'id' in currency ? currency.id.toString() : undefined
 
   return originNode.transfer({
     api: apiWithFallback,
@@ -180,7 +178,12 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn>
     address,
     destination,
     paraIdTo,
-    overridedCurrencyMultiLocation: isTMulti(currency) ? currency : undefined,
+    overridedCurrencyMultiLocation:
+      'multilocation' in currency
+        ? currency.multilocation
+        : 'multiasset' in currency
+          ? currency.multiasset
+          : undefined,
     feeAsset,
     version,
     serializedApiCallEnabled

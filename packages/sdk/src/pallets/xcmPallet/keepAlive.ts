@@ -37,7 +37,7 @@ const createTx = async (
     return await Builder(destApi)
       .from(destNode)
       .to(originNode)
-      .currency(currencySymbol)
+      .currency({ symbol: currencySymbol })
       .amount(amount)
       .address(address)
       .build()

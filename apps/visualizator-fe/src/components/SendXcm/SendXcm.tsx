@@ -55,7 +55,7 @@ const SendXcm = () => {
       return Builder(api)
         .from(from)
         .to(to)
-        .currency(currency)
+        .currency({ symbol: currency })
         .amount(amount)
         .address(address)
         .build();

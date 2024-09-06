@@ -3,15 +3,23 @@ import { TMultiAsset } from './TMultiAsset'
 import { Version } from './TTransfer'
 
 export type TCurrency = string | number | bigint
-export type TCurrencySpecifier =
+
+export type TCurrencyCore =
   | {
       symbol: string
     }
   | {
       id: TCurrency
     }
-export type TCurrencyCore = TCurrency | TMultiLocation | TMultiAsset[]
-export type TCurrencyInput = TCurrencyCore | TCurrencySpecifier
+
+export type TCurrencyInput =
+  | TCurrencyCore
+  | {
+      multilocation: TMultiLocation
+    }
+  | {
+      multiasset: TMultiAsset[]
+    }
 
 export interface TCurrencySelection {
   id: {

@@ -60,7 +60,7 @@ export class TransferInfoService {
         destNode,
         accountOrigin,
         accountDestination,
-        currency,
+        { symbol: currency },
         amount.toString(),
       );
     } catch (e) {

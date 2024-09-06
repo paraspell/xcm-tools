@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useForm } from '@mantine/form';
 import { isValidWalletAddress } from './utils';
 import { Button, Select, Stack, TextInput } from '@mantine/core';
-import { NODES_WITH_RELAY_CHAINS, TNodeWithRelayChains } from '@paraspell/sdk';
+import { isRelayChain, NODES_WITH_RELAY_CHAINS, TNodeWithRelayChains } from '@paraspell/sdk';
 import { useTranslation } from 'react-i18next';
 
 export type FormValues = {
@@ -34,11 +34,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
     }
   });
 
-  const isNotParaToPara =
-    form.values.from === 'Polkadot' ||
-    form.values.from === 'Kusama' ||
-    form.values.to === 'Polkadot' ||
-    form.values.to === 'Kusama';
+  const isNotParaToPara = isRelayChain(form.values.from) || isRelayChain(form.values.to);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
