@@ -20,7 +20,8 @@
   },
   "resolutions": {
     "@polkadot/types-codec": "^12.4.2",
-    "@polkadot/api": "^12.4.2"
+    "@polkadot/api": "^12.4.2",
+    "@crypto-dex-sdk/chain": "0.1.2"
   },
   "scripts": {
     "compile": "turbo run compile",

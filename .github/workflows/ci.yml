@@ -21,6 +21,10 @@ jobs:
         with:
           node-version: 20
           cache: "pnpm"
+      - run: |
+          touch .env
+          echo GH_COMMIT_SHA="${{ github.event.pull_request.head.sha }}" >> .env
+          echo CODECOV_TOKEN="${{ secrets.CODECOV_TOKEN }}" >> .env
       - run: pnpm install
       - run: pnpm build
       - run: pnpm compile

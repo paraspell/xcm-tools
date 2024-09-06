@@ -7,6 +7,7 @@ settings:
 overrides:
   '@polkadot/types-codec': ^12.4.2
   '@polkadot/api': ^12.4.2
+  '@crypto-dex-sdk/chain': 0.1.2
 
 importers:
 
@@ -615,6 +616,9 @@ importers:
       '@babel/preset-env':
         specifier: ^7.25.4
         version: 7.25.4(@babel/core@7.25.2)
+      '@codecov/rollup-plugin':
+        specifier: 0.0.1-beta.12
+        version: 0.0.1-beta.12(rollup@4.21.1)
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.21.1)
@@ -627,6 +631,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^2.0.5
         version: 2.0.5(vitest@2.0.5(@types/node@22.5.1)(jsdom@25.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(sugarss@4.0.1(postcss@8.4.41))(terser@5.31.0))
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -652,6 +659,9 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
     devDependencies:
+      '@codecov/rollup-plugin':
+        specifier: 0.0.1-beta.12
+        version: 0.0.1-beta.12(rollup@4.21.1)
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.21.1)
@@ -661,6 +671,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^2.0.5
         version: 2.0.5(vitest@2.0.5(@types/node@22.5.1)(jsdom@25.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(sugarss@4.0.1(postcss@8.4.41))(terser@5.31.0))
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       rollup:
         specifier: ^4.21.1
         version: 4.21.1
@@ -701,7 +714,7 @@ importers:
         specifier: ^0.1.2
         version: 0.1.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/chain':
-        specifier: ^0.1.2
+        specifier: 0.1.2
         version: 0.1.2
       '@crypto-dex-sdk/currency':
         specifier: ^0.1.2
@@ -785,6 +798,9 @@ importers:
       '@babel/preset-env':
         specifier: ^7.25.4
         version: 7.25.4(@babel/core@7.25.2)
+      '@codecov/rollup-plugin':
+        specifier: 0.0.1-beta.12
+        version: 0.0.1-beta.12(rollup@4.21.1)
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.21.1)
@@ -800,6 +816,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^2.0.5
         version: 2.0.5(vitest@2.0.5(@types/node@22.5.1)(jsdom@25.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(sugarss@4.0.1(postcss@8.4.41))(terser@5.31.0))
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -1852,6 +1871,16 @@ packages:
     resolution: {integrity: sha512-zjyF40p9yvvMIb7l/5PEXYO4FUeX3Gx2Xl4J3nJ07o/PZUYvvbYOql+DDyIl1ip1DYY+aImTorJymtaMaZQ9RA==}
     peerDependencies:
       '@polkadot/api': ^12.4.2
+
+  '@codecov/bundler-plugin-core@0.0.1-beta.12':
+    resolution: {integrity: sha512-QZOVp90ZtSCj6p5AO8rnSzee7E4T6PeA5XXd8/miggK5Mi9OtcuB0N1zTPDp3ry5lLLbeWTcdxNVGGnqMHfz8w==}
+    engines: {node: '>=18.0.0'}
+
+  '@codecov/rollup-plugin@0.0.1-beta.12':
+    resolution: {integrity: sha512-9URNaTEOgVmCCyXjA/W1msJ3qEnvc65GMYwPAWrHlk9jTI1ASvA4WpeOpEPCbFRBjVPPFg6c+2wGaTHatXMLaw==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      rollup: 3.x || 4.x
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -11191,6 +11220,19 @@ snapshots:
     dependencies:
       '@polkadot/api': 12.4.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
+  '@codecov/bundler-plugin-core@0.0.1-beta.12':
+    dependencies:
+      chalk: 4.1.2
+      semver: 7.6.3
+      unplugin: 1.12.0
+      zod: 3.23.8
+
+  '@codecov/rollup-plugin@0.0.1-beta.12(rollup@4.21.1)':
+    dependencies:
+      '@codecov/bundler-plugin-core': 0.0.1-beta.12
+      rollup: 4.21.1
+      unplugin: 1.12.0
+
   '@colors/colors@1.5.0':
     optional: true
 
@@ -13856,7 +13898,7 @@ snapshots:
       '@noble/hashes': 1.4.0
       '@polkadot/networks': 12.6.2
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-crypto': 7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))
+      '@polkadot/wasm-crypto': 7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
       '@polkadot/x-bigint': 12.6.2
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2))
@@ -13966,11 +14008,11 @@ snapshots:
       '@polkadot/util': 10.4.2
       '@polkadot/x-randomvalues': 10.4.2
 
-  '@polkadot/wasm-bridge@7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))':
+  '@polkadot/wasm-bridge@7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))':
     dependencies:
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2))
       tslib: 2.7.0
 
   '@polkadot/wasm-bridge@7.3.2(@polkadot/util@13.0.2)(@polkadot/x-randomvalues@13.0.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))':
@@ -14014,14 +14056,14 @@ snapshots:
       '@polkadot/wasm-crypto-wasm': 6.4.1(@polkadot/util@10.4.2)
       '@polkadot/x-randomvalues': 10.4.2
 
-  '@polkadot/wasm-crypto-init@7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))':
+  '@polkadot/wasm-crypto-init@7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-bridge': 7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))
+      '@polkadot/wasm-bridge': 7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))
       '@polkadot/wasm-crypto-asmjs': 7.3.2(@polkadot/util@12.6.2)
       '@polkadot/wasm-crypto-wasm': 7.3.2(@polkadot/util@12.6.2)
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2))
       tslib: 2.7.0
 
   '@polkadot/wasm-crypto-init@7.3.2(@polkadot/util@13.0.2)(@polkadot/x-randomvalues@13.0.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))':
@@ -14089,15 +14131,15 @@ snapshots:
       '@polkadot/wasm-util': 6.4.1(@polkadot/util@10.4.2)
       '@polkadot/x-randomvalues': 10.4.2
 
-  '@polkadot/wasm-crypto@7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))':
+  '@polkadot/wasm-crypto@7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-bridge': 7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))
+      '@polkadot/wasm-bridge': 7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))
       '@polkadot/wasm-crypto-asmjs': 7.3.2(@polkadot/util@12.6.2)
-      '@polkadot/wasm-crypto-init': 7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))
+      '@polkadot/wasm-crypto-init': 7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))
       '@polkadot/wasm-crypto-wasm': 7.3.2(@polkadot/util@12.6.2)
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2))
       tslib: 2.7.0
 
   '@polkadot/wasm-crypto@7.3.2(@polkadot/util@13.0.2)(@polkadot/x-randomvalues@13.0.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2)))':
@@ -14193,6 +14235,13 @@ snapshots:
   '@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2))':
     dependencies:
       '@polkadot/util': 12.6.2
+      '@polkadot/wasm-util': 7.3.2(@polkadot/util@13.0.2)
+      '@polkadot/x-global': 12.6.2
+      tslib: 2.7.0
+
+  '@polkadot/x-randomvalues@12.6.2(@polkadot/util@13.0.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.0.2))':
+    dependencies:
+      '@polkadot/util': 13.0.2
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@13.0.2)
       '@polkadot/x-global': 12.6.2
       tslib: 2.7.0
@@ -20259,7 +20308,7 @@ snapshots:
   terser@5.31.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
-      acorn: 8.11.3
+      acorn: 8.12.1
       commander: 2.20.3
       source-map-support: 0.5.21
 

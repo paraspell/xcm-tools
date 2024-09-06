@@ -2,6 +2,10 @@ import typescript from 'rollup-plugin-typescript2'
 import json from '@rollup/plugin-json'
 import dts from 'rollup-plugin-dts'
 import { babel } from '@rollup/plugin-babel'
+import { codecovRollupPlugin } from '@codecov/rollup-plugin'
+import { config } from 'dotenv'
+
+config({ path: '../../.env' })
 
 export default [
   {
@@ -19,6 +23,15 @@ export default [
         plugins: ['@babel/plugin-syntax-import-assertions'],
         babelHelpers: 'bundled',
         presets: ['@babel/preset-env']
+      }),
+      codecovRollupPlugin({
+        enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+        bundleName: 'sdk',
+        uploadToken: process.env.CODECOV_TOKEN,
+        debug: true,
+        uploadOverrides: {
+          sha: process.env.GH_COMMIT_SHA
+        }
       })
     ]
   },
