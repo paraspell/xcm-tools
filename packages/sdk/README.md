@@ -57,17 +57,16 @@ const paraspell = require('@paraspell/sdk')
 
 ```
 NOTES:
-- If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' to the end of currencyID. Eg: .currency(42259045809535163221576417993425387648n) will mean you transfer xcDOT.
+- If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' to the end of currencyID. Eg: .currency({id: 42259045809535163221576417993425387648n}) will mean you transfer xcDOT.
 - You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948).
 - You can now add an optional parameter useKeepAlive which will ensure, that you send more than the existential deposit.
 - Since v5 you can fully customize all multilocations (address, currency and destination). Instead of a string parameter simply pass an object with multilocation instead for more information refer to the following PR https://github.com/paraspell/xcm-tools/pull/199.
 - Fee asset is now a required builder parameter when you enter a multilocation array.
 - When using a multilocation array the amount parameter is overridden.
-- Multilocation arrays are now available. Customize your asset multilocations by .currency([{multilocation1},{multilocation2}..{multilocationN}]) For more information refer to the official documentation or following PR https://github.com/paraspell/xcm-tools/pull/224.
+- Multilocation arrays are now available. Customize your asset multilocations by .currency({multiasset: [{multilocation1},{multilocation2}..{multilocationN}]}) For more information refer to the official documentation or following PR https://github.com/paraspell/xcm-tools/pull/224.
 - POLKADOT <> KUSAMA Bridge is now available! Try sending DOT or KSM between AssetHubs - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
 - You can now customize XCM Version! Try using .xcmVersion parameter after address in builder.
 - POLKADOT <> ETHEREUM Bridge is now available! Try sending WETH between the ecosystems - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
-- If you have duplicit asset error when building your call you can now specify which asset by new object selection eg. {symbol: number | bigint | string } or {id: number | bigint | string}
 ```
 
 ### Builder pattern:
@@ -77,7 +76,7 @@ NOTES:
 await Builder(/*node api - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
-      .currency(CurrencyString | CurrencyID | Multilocation object | MultilocationArray | { symbol: string | number | bigint} | { id: string | number | bigint}) // Object selection is used when there are duplicate assets found and selector is unable to pick based on details provided (You will get an error from SDK when this happens).
+      .currency({id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray})
       /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
       .amount(amount) // Overriden when using MultilocationArray
       .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
@@ -88,7 +87,7 @@ EXAMPLE:
 await Builder()
       .from('Basilisk')
       .to('Robonomics')
-      .currency('XRT')
+      .currency({symbol:'XRT'})
       .amount(1000000000000)
       .address('4FCUYBMe2sbq5KosN22emsPUydS8XUwZhJ6VUZesmouGu6qd')
       .build()
@@ -178,7 +177,7 @@ await paraspell.xcmPallet.send(
     {
       api?: ApiPromise,
       origin: origin  Parachain  name  string,
-      currency: CurrencyString | CurrencyID | Multilocation object /*Only works for PolkadotXCM pallet*/,
+      currency: {id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray},
       feeAsset? - Fee asset select id
       amount: any,
       to: destination  address  string | Multilocation object,
@@ -287,16 +286,16 @@ const ed = getExistentialDeposit('Acala')
 import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails } from "@paraspell/sdk"; 
 
 //Get balance of foreign currency
-await getBalanceForeign(address, Parachain name, currency)
+await getBalanceForeign(address, Parachain name, currency /*- {id: currencyID} | {symbol: currencySymbol}*/)
 
 //Get balance of native currency
 await getBalanceNative(address, Parachain name)
 
 //Get fee information regarding XCM call
-await getOriginFeeDetails(from, to, currency, amount, originAddress)
+await getOriginFeeDetails(from, to, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, amount, originAddress)
 
 //Get all the information about XCM transfer
-await getTransferInfo(from, to, address, destinationAddress, currency, amount)
+await getTransferInfo(from, to, address, destinationAddress, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, amount)
 ```
 
 ## 💻 Tests
