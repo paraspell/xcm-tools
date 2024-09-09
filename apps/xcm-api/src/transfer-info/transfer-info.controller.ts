@@ -1,10 +1,10 @@
-import { Controller, Get, Request, Query, Req, UsePipes } from '@nestjs/common';
+import { Controller, Request, Req, UsePipes, Post, Body } from '@nestjs/common';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { TransferInfoService } from './transfer-info.service.js';
 import {
-  TransferInfoDto,
+  PatchedTransferInfoDto,
   TransferInfoSchema,
 } from './dto/transfer-info.dto.js';
 
@@ -18,21 +18,24 @@ export class TransferInfoController {
   private trackAnalytics(
     eventName: EventName,
     req: Request,
-    params: TransferInfoDto,
+    params: PatchedTransferInfoDto,
   ) {
     const { origin, destination, currency, amount } = params;
     this.analyticsService.track(eventName, req, {
       origin,
       destination,
-      currency,
+      currency: JSON.stringify(currency),
       amount,
     });
   }
 
-  @Get()
+  @Post()
   @UsePipes(new ZodValidationPipe(TransferInfoSchema))
-  getTransferInfo(@Query() queryParams: TransferInfoDto, @Req() req: Request) {
-    this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, queryParams);
-    return this.transferInfoService.getTransferInfo(queryParams);
+  async getTransferInfo(
+    @Body() params: PatchedTransferInfoDto,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, params);
+    return await this.transferInfoService.getTransferInfo(params);
   }
 }

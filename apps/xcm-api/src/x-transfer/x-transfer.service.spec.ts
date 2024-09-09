@@ -36,7 +36,7 @@ describe('XTransferService', () => {
 
   const amount = 100;
   const address = '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96';
-  const currency = 'DOT';
+  const currency = { symbol: 'DOT' };
   const serializedApiCall = 'serialized-api-call';
   const invalidNode = 'InvalidNode';
 
@@ -179,7 +179,7 @@ describe('XTransferService', () => {
         to: 'Basilisk',
         amount,
         address,
-        currency: 'UNKNOWN',
+        currency: { symbol: 'UNKNOWN' },
       };
 
       const builderMock = {

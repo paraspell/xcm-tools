@@ -45,14 +45,15 @@ const AssetsQueries = () => {
   const submitUsingSdk = async ({
     func,
     node,
-    symbol,
+    currency,
+    currencyType,
     address,
   }: FormValues) => {
     switch (func) {
       case "ASSETS_OBJECT":
         return getAssetsObject(node);
       case "ASSET_ID":
-        return getAssetId(node, symbol);
+        return getAssetId(node, currency);
       case "RELAYCHAIN_SYMBOL":
         return getRelayChainSymbol(node);
       case "NATIVE_ASSETS":
@@ -62,15 +63,19 @@ const AssetsQueries = () => {
       case "ALL_SYMBOLS":
         return getAllAssetsSymbols(node);
       case "DECIMALS":
-        return getAssetDecimals(node, symbol);
+        return getAssetDecimals(node, currency);
       case "HAS_SUPPORT":
-        return hasSupportForAsset(node, symbol);
+        return hasSupportForAsset(node, currency);
       case "PARA_ID":
         return getParaId(node);
       case "BALANCE_NATIVE":
         return getBalanceNative(address, node);
       case "BALANCE_FOREIGN":
-        return getBalanceForeign(address, node, { symbol: symbol });
+        return getBalanceForeign(
+          address,
+          node,
+          currencyType === "id" ? { id: currency } : { symbol: currency }
+        );
     }
   };
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   BadRequestException,
   Injectable,
@@ -9,16 +9,11 @@ import {
   InvalidCurrencyError,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
+  TTransferInfo,
   getTransferInfo,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
-import { TransferInfoDto } from './dto/transfer-info.dto.js';
-
-const serializeJson = (param: any): any => {
-  return JSON.stringify(param, (_key, value) =>
-    typeof value === 'bigint' ? value.toString() : value,
-  );
-};
+import { PatchedTransferInfoDto } from './dto/transfer-info.dto.js';
 
 @Injectable()
 export class TransferInfoService {
@@ -29,7 +24,7 @@ export class TransferInfoService {
     accountDestination,
     currency,
     amount,
-  }: TransferInfoDto) {
+  }: PatchedTransferInfoDto) {
     const originNode = origin as TNodeDotKsmWithRelayChains | undefined;
     const destNode = destination as TNodeDotKsmWithRelayChains | undefined;
 
@@ -53,14 +48,14 @@ export class TransferInfoService {
       throw new BadRequestException('Invalid destination wallet address.');
     }
 
-    let response;
+    let response: TTransferInfo;
     try {
       response = await getTransferInfo(
         originNode,
         destNode,
         accountOrigin,
         accountDestination,
-        { symbol: currency },
+        currency,
         amount.toString(),
       );
     } catch (e) {
@@ -70,6 +65,6 @@ export class TransferInfoService {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       throw new InternalServerErrorException(e.message);
     }
-    return serializeJson(response);
+    return response;
   }
 }

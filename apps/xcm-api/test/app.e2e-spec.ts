@@ -19,10 +19,8 @@ import {
   getParaId,
   getRelayChainSymbol,
   getSupportedPallets,
-  getTransferInfo,
   hasSupportForAsset,
 } from '@paraspell/sdk';
-import { ApiPromise } from '@polkadot/api';
 import { RouterDto } from '../src/router/dto/RouterDto';
 import { describe, beforeAll, it, expect } from 'vitest';
 import { TransferInfoDto } from '../src/transfer-info/dto/transfer-info.dto';
@@ -34,6 +32,10 @@ describe('XCM API (e2e)', () => {
   const unknownNode = 'UnknownNode';
 
   beforeAll(async () => {
+    BigInt.prototype['toJSON'] = function () {
+      return this.toString();
+    };
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -308,10 +310,10 @@ describe('XCM API (e2e)', () => {
         .expect(400);
     });
 
-    it(`Generate XCM call - Parachain to parachain all valid - ${xTransferUrl} (GET)`, async () => {
-      const from: TNode = 'AssetHubKusama';
-      const to: TNode = 'Basilisk';
-      const currency = 'KSM';
+    it(`Generate XCM call - Parachain to parachain all valid - ${xTransferUrl} (POST)`, async () => {
+      const from: TNode = 'Acala';
+      const to: TNode = 'Hydration';
+      const currency = { symbol: 'HDX' };
       const api = await createApiInstanceForNode(from);
       const serializedApiCall = await Builder(api)
         .from(from)
@@ -322,22 +324,38 @@ describe('XCM API (e2e)', () => {
         .buildSerializedApiCall();
       await api.disconnect();
       return request(app.getHttpServer())
-        .get(xTransferUrl)
-        .query({
+        .post(xTransferUrl)
+        .send({
           from,
           to,
           amount,
           address,
           currency,
         })
-        .expect(200)
+        .expect(201)
         .expect(serializedApiCall);
     });
 
-    it(`Generate XCM call - Parachain to parachain all valid - ${xTransferHashUrl} (GET)`, async () => {
+    it(`Generate XCM call - Parachain to parachain invalid scenario - ${xTransferHashUrl} (POST)`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = 'KSM';
+      const currency = { symbol: 'KSM' };
+      return request(app.getHttpServer())
+        .post(xTransferHashUrl)
+        .send({
+          from,
+          to,
+          amount,
+          address,
+          currency,
+        })
+        .expect(500);
+    });
+
+    it(`Generate XCM call - Parachain to parachain all valid - ${xTransferHashUrl} (POST)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to: TNode = 'Basilisk';
+      const currency = { symbol: 'USDT' };
       const api = await createApiInstanceForNode(from);
       const tx = await Builder(api)
         .from(from)
@@ -375,7 +393,7 @@ describe('XCM API (e2e)', () => {
       const serializedApiCall = await Builder(api)
         .from(from)
         .to(to)
-        .currency(currency)
+        .currency({ multilocation: currency })
         .amount(amount)
         .address(address)
         .buildSerializedApiCall();
@@ -387,13 +405,13 @@ describe('XCM API (e2e)', () => {
           to,
           amount,
           address,
-          currency,
+          currency: { multilocation: currency },
         })
         .expect(201)
         .expect(serializedApiCall);
     });
 
-    it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl} (GET)`, async () => {
+    it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl} (POST)`, async () => {
       const from: TNode = 'AssetHubPolkadot';
       const to: TNode = 'Acala';
       const currency: TMultiAsset = {
@@ -415,7 +433,7 @@ describe('XCM API (e2e)', () => {
       const serializedApiCall = await Builder(api)
         .from(from)
         .to(to)
-        .currency([currency])
+        .currency({ multiasset: [currency] })
         .amount(amount)
         .address(address)
         .buildSerializedApiCall();
@@ -427,7 +445,7 @@ describe('XCM API (e2e)', () => {
           to,
           amount,
           address,
-          currency: [currency],
+          currency: { multiasset: [currency] },
         })
         .expect(201)
         .expect(serializedApiCall);
@@ -691,59 +709,59 @@ describe('XCM API (e2e)', () => {
 
     describe('Transfer info controller', () => {
       const transferInfo: TransferInfoDto = {
-        origin: 'AssetHubPolkadot',
-        destination: 'Polkadot',
-        accountOrigin: '5EtHZF4E8QagNCz6naobCkCAUT52SbcEqaXiDUu2PjUHxZid',
-        accountDestination: '5EtHZF4E8QagNCz6naobCkCAUT52SbcEqaXiDUu2PjUHxZid',
-        currency: 'DOT',
-        amount: '10000',
+        origin: 'Acala',
+        destination: 'Astar',
+        accountOrigin: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        accountDestination: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        currency: { symbol: 'DOT' },
+        amount: '100000000',
       };
 
-      it('Generate transfer info call - invalid origin provided - /transfer-info (GET)', () => {
+      it('Generate transfer info call - invalid origin provided - /transfer-info (POST)', () => {
         return request(app.getHttpServer())
-          .get('/transfer-info')
-          .query({
+          .post('/transfer-info')
+          .send({
             ...transferInfo,
             origin: unknownNode,
           })
           .expect(400);
       });
 
-      it('Generate transfer info call - invalid destination provided - /transfer-info (GET)', () => {
+      it('Generate transfer info call - invalid destination provided - /transfer-info (POST)', () => {
         return request(app.getHttpServer())
-          .get('/transfer-info')
-          .query({
+          .post('/transfer-info')
+          .send({
             ...transferInfo,
             destination: unknownNode,
           })
           .expect(400);
       });
 
-      it('Generate transfer info call - invalid wallet address origin - /transfer-info (GET)', () => {
+      it('Generate transfer info call - invalid wallet address origin - /transfer-info (POST)', () => {
         return request(app.getHttpServer())
-          .get('/transfer-info')
-          .query({
+          .post('/transfer-info')
+          .send({
             ...transferInfo,
             accountOrigin: 'InvalidWalletAddress',
           })
           .expect(400);
       });
 
-      it('Generate transfer info call - invalid wallet address destination - /transfer-info (GET)', () => {
+      it('Generate transfer info call - invalid wallet address destination - /transfer-info (POST)', () => {
         return request(app.getHttpServer())
-          .get('/transfer-info')
-          .query({
+          .post('/transfer-info')
+          .send({
             ...transferInfo,
             accountDestination: 'InvalidWalletAddress',
           })
           .expect(400);
       });
 
-      it('Generate transfer info call - all valid - /transfer-info (GET)', async () => {
+      it('Generate transfer info call - all valid - /transfer-info (POST)', async () => {
         return request(app.getHttpServer())
-          .get('/transfer-info')
-          .query(transferInfo)
-          .expect(200);
+          .post('/transfer-info')
+          .send(transferInfo)
+          .expect(201);
       });
     });
 

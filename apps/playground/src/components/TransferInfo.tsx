@@ -37,6 +37,10 @@ const TransferInfo = () => {
   const getQueryResult = async (formValues: FormValues) => {
     const { useApi } = formValues;
     const originAddress = selectedAccount?.address ?? "";
+    const currency =
+      formValues.customCurrencyType === "id"
+        ? { id: formValues.currency }
+        : { symbol: formValues.currency };
     if (useApi) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return await fetchFromApi(
@@ -45,10 +49,12 @@ const TransferInfo = () => {
           destination: formValues.to,
           accountOrigin: originAddress,
           accountDestination: formValues.destinationAddress,
-          currency: formValues.currency,
+          currency,
           amount: formValues.amount,
         },
-        `/transfer-info`
+        `/transfer-info`,
+        "POST",
+        true
       );
     } else {
       return await getTransferInfo(
@@ -56,9 +62,7 @@ const TransferInfo = () => {
         formValues.to,
         originAddress,
         formValues.destinationAddress,
-        formValues.customCurrencyType === "id"
-          ? { id: formValues.currency }
-          : { symbol: formValues.currency },
+        currency,
         formValues.amount
       );
     }
