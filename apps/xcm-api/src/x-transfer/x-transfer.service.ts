@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   BadRequestException,
   Injectable,
@@ -36,7 +37,7 @@ export class XTransferService {
 
     if (fromNode && !NODE_NAMES.includes(fromNode)) {
       throw new BadRequestException(
-        `Node ${from} is not valid. Check docs for valid nodes.`,
+        `Node ${fromNode} is not valid. Check docs for valid nodes.`,
       );
     }
 

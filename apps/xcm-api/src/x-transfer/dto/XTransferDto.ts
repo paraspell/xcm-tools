@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Version } from '@paraspell/sdk';
+import { TCurrencyInput, Version } from '@paraspell/sdk';
 import { MultiLocationSchema } from '@paraspell/xcm-analyser';
 
 const StringOrNumber = z
@@ -32,9 +32,33 @@ export const MultiAssetSchema = z.union([
 
 export type TMultiAsset = z.infer<typeof MultiAssetSchema>;
 
-const CurrencySchema = z
-  .union([z.string(), MultiLocationSchema, z.array(MultiAssetSchema)])
-  .optional();
+export const CurrencyCoreSchema = z.union([
+  z
+    .object({
+      symbol: z.string(),
+    })
+    .required(),
+  z
+    .object({
+      id: z.union([z.string(), z.number(), z.bigint()]),
+    })
+    .required(),
+]);
+
+export const CurrencySchema = z.union([
+  z.object({
+    symbol: z.string(),
+  }),
+  z.object({
+    id: z.union([z.string(), z.number(), z.bigint()]),
+  }),
+  z.object({
+    multilocation: MultiLocationSchema,
+  }),
+  z.object({
+    multiasset: z.array(MultiAssetSchema),
+  }),
+]);
 
 const versionValues = Object.values(Version) as [Version, ...Version[]];
 
@@ -57,8 +81,12 @@ export const XTransferDtoSchema = z.object({
     z.string().min(1, { message: 'Address is required' }),
     MultiLocationSchema,
   ]),
-  currency: CurrencySchema,
+  currency: CurrencySchema.optional(),
   xcmVersion: z.enum(versionValues).optional(),
 });
 
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
+
+export type XPatchedTransferDto = XTransferDto & {
+  currency: TCurrencyInput;
+};

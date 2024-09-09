@@ -34,7 +34,7 @@ describe('TransferInfoService', () => {
         destination: 'Kusama',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: 'DOT',
+        currency: { symbol: 'DOT' },
         amount: '1000',
       }),
     ).rejects.toThrow(BadRequestException);
@@ -47,7 +47,7 @@ describe('TransferInfoService', () => {
         destination: 'InvalidNode',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: 'DOT',
+        currency: { symbol: 'DOT' },
         amount: '1000',
       }),
     ).rejects.toThrow(BadRequestException);
@@ -61,7 +61,7 @@ describe('TransferInfoService', () => {
         destination: 'Kusama',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: 'DOT',
+        currency: { symbol: 'DOT' },
         amount: '1000',
       }),
     ).rejects.toThrow(BadRequestException);
@@ -74,10 +74,10 @@ describe('TransferInfoService', () => {
       destination: 'Kusama',
       accountOrigin: '0x123',
       accountDestination: '0x456',
-      currency: 'DOT',
+      currency: { symbol: 'DOT' },
       amount: '1000',
     });
-    expect(result).toEqual(JSON.stringify({ some: 'data' }));
+    expect(result).toEqual({ some: 'data' });
   });
 
   it('handles InvalidCurrencyError by throwing BadRequestException', async () => {
@@ -90,7 +90,7 @@ describe('TransferInfoService', () => {
         destination: 'Kusama',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: 'DOT',
+        currency: { symbol: 'DOT' },
         amount: '1000',
       }),
     ).rejects.toThrow(BadRequestException);
@@ -104,7 +104,7 @@ describe('TransferInfoService', () => {
         destination: 'Kusama',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: 'DOT',
+        currency: { symbol: 'DOT' },
         amount: '1000',
       }),
     ).rejects.toThrow(InternalServerErrorException);

@@ -5,6 +5,7 @@ import { XTransferService } from './x-transfer.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { XTransferDto } from './dto/XTransferDto.js';
+import { Extrinsic } from '@paraspell/sdk';
 
 // Integration tests to ensure controller and service are working together
 describe('XTransferController', () => {
@@ -38,10 +39,10 @@ describe('XTransferController', () => {
         to: 'Basilisk',
         amount: 100,
         address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        currency: 'DOT',
+        currency: { symbol: 'DOT' },
       };
-      const mockResult = 'serialized-api-call';
-      vi.spyOn(service, 'generateXcmCall' as any).mockResolvedValue(mockResult);
+      const mockResult = {} as Extrinsic;
+      vi.spyOn(service, 'generateXcmCall').mockResolvedValue(mockResult);
 
       const result = await controller.generateXcmCall(
         queryParams,

@@ -113,13 +113,22 @@ const XcmTransfer = () => {
         await submitTxUsingApi(
           {
             ...formValues,
-            currency:
-              formValues.currency?.symbol ?? formValues.currency?.assetId,
+            from:
+              formValues.from === "Polkadot" || formValues.from === "Kusama"
+                ? undefined
+                : formValues.from,
+            to:
+              formValues.to === "Polkadot" || formValues.to === "Kusama"
+                ? undefined
+                : formValues.to,
+            currency: determineCurrency(formValues),
           },
           formValues.from,
           "/x-transfer",
           selectedAccount.address,
-          injector.signer
+          injector.signer,
+          "POST",
+          true
         );
       } else {
         await submitUsingSdk(

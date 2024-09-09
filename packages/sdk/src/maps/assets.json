@@ -1633,6 +1633,10 @@
       {
         "symbol": "DOT",
         "decimals": 10
+      },
+      {
+        "symbol": "KSM",
+        "decimals": 12
       }
     ],
     "otherAssets": [
@@ -4886,6 +4890,10 @@
       {
         "symbol": "KSM",
         "decimals": 12
+      },
+      {
+        "symbol": "DOT",
+        "decimals": 10
       }
     ],
     "otherAssets": [

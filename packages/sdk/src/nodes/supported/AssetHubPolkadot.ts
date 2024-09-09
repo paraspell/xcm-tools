@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Statemint Parachain
 
 import { ethers } from 'ethers'
-import { InvalidCurrencyError } from '../../errors'
+import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import {
   constructRelayToParaParameters,
   createBridgeCurrencySpec,
@@ -179,7 +179,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
   }
 
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {
-    const { scenario } = input
+    const { scenario, currencySymbol, currencyId } = input
 
     if (input.destination === 'AssetHubKusama') {
       return this.handleBridgeTransfer(input, 'Kusama')
@@ -191,6 +191,22 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
 
     if (input.destination === 'Mythos') {
       return this.handleMythosTransfer(input)
+    }
+
+    if (scenario === 'ParaToPara' && currencySymbol === 'DOT' && currencyId === undefined) {
+      throw new ScenarioNotSupportedError(
+        this.node,
+        scenario,
+        'Para to Para scenarios for DOT transfer from AssetHub are not supported, you have to transfer DOT to Relay chain and transfer to destination chain from Relay chain.'
+      )
+    }
+
+    if (scenario === 'ParaToPara' && currencySymbol === 'KSM' && currencyId === undefined) {
+      throw new ScenarioNotSupportedError(
+        this.node,
+        scenario,
+        'Bridged KSM cannot currently be transfered from AssetHubPolkadot, if you are sending different KSM asset, please specify {id: <KSMID>}.'
+      )
     }
 
     const section =

@@ -40,6 +40,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
       amount: "10000000000000000000",
       address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
       destinationAddress: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
+      customCurrencyType: "symbol",
       useApi: false,
     },
 
