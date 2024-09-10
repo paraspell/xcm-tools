@@ -153,12 +153,12 @@ A complete guide on this section can be found in [official docs](https://paraspe
 
 Possible parameters:
 
-- `origin` (Query parameter): (required): Represents the Parachain from which the assets will be transferred.
-- `destination` (Query parameter): (required): Represents the Parachain to which the assets will be transferred.
-- `currency`: (Query parameter): (required): Represents the asset being sent. It should be a string value.
-- `amount`: (Query parameter): (required): Specifies the amount of assets to transfer. It should be a numeric value.
-- `accountOrigin`: (Query parameter): (required): Specifies the address of the origin.
-- `accountDestination`: (Query parameter): (required): Specifies the recipient's address.
+- `origin` (Inside JSON body): (required): Represents the Parachain from which the assets will be transferred.
+- `destination` (Inside JSON body): (required): Represents the Parachain to which the assets will be transferred.
+- `currency`: (Inside JSON body): (required): Represents the asset being sent. It should be a string value.
+- `amount`: (Inside JSON body): (required): Specifies the amount of assets to transfer. It should be a numeric value.
+- `accountOrigin`: (Inside JSON body): (required): Specifies the address of the origin.
+- `accountDestination`: (Inside JSON body): (required): Specifies the recipient's address.
 
 ```js
 const response = await fetch(
