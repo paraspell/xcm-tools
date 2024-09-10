@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost:3001";
+export const API_URL = "https://api.lightspell.xyz";
 
 export const ASSET_QUERIES = [
   "ASSETS_OBJECT",
