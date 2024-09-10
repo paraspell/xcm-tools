@@ -91,7 +91,7 @@ const response = await fetch('http://localhost:3001/x-transfer-hash', {
   body: JSON.stringify({
     from: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
     to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
-    currency: 'Currency', // Replace "Currency" with asset id or symbol, e.g., "DOT" or custom Multilocation
+    currency: {currencySpec}, // {id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}
     amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
     address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
@@ -110,11 +110,12 @@ const response = await fetch('http://localhost:3001/x-transfer-hash', {
     to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
     address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     currency: {
-      // Replace "Currency" with asset id, symbol, e.g., "DOT" or custom Multilocation
-      parents: 0,
-      interior: {
-        X2: [{ PalletInstance: '50' }, { GeneralIndex: '41' }],
-      },
+        multilocation: {
+        parents: 0,
+        interior: {
+          X2: [{ PalletInstance: '50' }, { GeneralIndex: '41' }],
+        },
+      }
     },
     amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
@@ -161,16 +162,20 @@ Possible parameters:
 
 ```js
 const response = await fetch(
-  'http://localhost:3001/transfer-info?' +
-    new URLSearchParams({
-      origin: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
-      destination: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam"
-      currency: 'Currency', // Replace "Currency" with asset id or symbol, e.g., "DOT"
-      amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
-      accountOrigin: 'Account address', // Replace "Address" with origin wallet address (In AccountID32 or AccountKey20 Format)
-      accountDestination: 'Account address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
-    }),
-);
+  'http://localhost:3001/transfer-info?' , {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },  
+  body: JSON.stringify({
+    origin: 'Parachain', // Replace "Parachain" with chain you wish to query transfer info for as origin
+    destination: 'Parachain', // Replace "Parachain" with chain you wish to query transfer info for as destination
+    currency: 'Asset Multilocation array', //Replace "Asset Multilocation array" with specific asset multilocation array along with the amount (example in docs)
+    amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
+    accountOrigin: 'Account address', // Replace "Address" with origin wallet address (In AccountID32 or AccountKey20 Format)
+    accountDestination: 'Account address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
+  }),
+});
 ```
 
 ### XCM Router
