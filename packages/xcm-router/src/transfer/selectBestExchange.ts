@@ -11,22 +11,57 @@ import {
 import BigNumber from 'bignumber.js';
 import type ExchangeNode from '../dexNodes/DexNode';
 import Logger from '../Logger/Logger';
-import { supportsCurrency } from '../assets/assets';
+import { findAssetFrom, findAssetTo, supportsCurrency } from '../assets/assets';
 
 export const selectBestExchange = async (
   options: TCommonTransferOptions,
 ): Promise<ExchangeNode> => {
   const { from, amount, currencyFrom, currencyTo } = options;
-  Logger.log(`Selecting best exchange for ${currencyFrom} -> ${currencyTo}`);
+
+  const assetFrom = findAssetFrom(options.from, undefined, options.currencyFrom);
+
+  if (!assetFrom) {
+    throw new Error(
+      `Currency from ${JSON.stringify(options.currencyFrom)} is not supported by ${options.from}`,
+    );
+  }
+
+  Logger.log(
+    `Selecting best exchange for ${JSON.stringify(currencyFrom)} -> ${JSON.stringify(currencyTo)}`,
+  );
   let bestExchange: ExchangeNode | undefined;
   let maxAmountOut: BigNumber = new BigNumber(0);
   const errors = new Map<TNode, Error>();
   for (const exchangeNode of EXCHANGE_NODES) {
     const dex = createDexNodeInstance(exchangeNode);
 
+    const assetFrom = findAssetFrom(options.from, dex.exchangeNode, options.currencyFrom);
+
+    if (!assetFrom && 'id' in options.currencyFrom) {
+      continue;
+    }
+
+    const assetTo = findAssetTo(
+      dex.exchangeNode,
+      options.from,
+      options.to,
+      options.currencyTo,
+      true,
+    );
+
+    if (!assetTo && 'id' in options.currencyTo) {
+      continue;
+    }
+
+    const currencyFromSymbol =
+      assetFrom?.symbol ?? ('symbol' in options.currencyFrom ? options.currencyFrom.symbol : '');
+
+    const currencyToSymbol =
+      assetTo?.symbol ?? ('symbol' in options.currencyTo ? options.currencyTo.symbol : '');
+
     if (
-      !supportsCurrency(exchangeNode, currencyFrom) ||
-      !supportsCurrency(exchangeNode, currencyTo)
+      !supportsCurrency(exchangeNode, { symbol: currencyFromSymbol }) ||
+      !supportsCurrency(exchangeNode, { symbol: currencyToSymbol })
     ) {
       continue;
     }
@@ -35,7 +70,12 @@ export const selectBestExchange = async (
 
     const modifiedOptions: TCommonTransferOptionsModified = {
       ...options,
-      exchange: dex.node,
+      exchangeNode: dex.node,
+      exchange: dex.exchangeNode,
+      currencyFrom: { symbol: currencyFromSymbol },
+      currencyTo: { symbol: currencyToSymbol },
+      assetFrom,
+      assetTo,
       feeCalcAddress: determineFeeCalcAddress(options.injectorAddress, options.recipientAddress),
     };
     const originApi = await createApiInstanceForNode(

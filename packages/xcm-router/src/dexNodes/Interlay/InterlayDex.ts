@@ -1,6 +1,6 @@
-import { getAllAssetsSymbols, getNodeProvider } from '@paraspell/sdk';
+import { getAssets, getNodeProvider } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
-import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../types';
+import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
 import { createInterBtcApi, newMonetaryAmount } from 'inter-exchange';
 import { type ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
@@ -13,21 +13,41 @@ import { SmallAmountError } from '../../errors/SmallAmountError';
 class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
-    { injectorAddress, currencyFrom, currencyTo, amount, slippagePct }: TSwapOptions,
+    {
+      injectorAddress,
+      assetFrom,
+      assetTo,
+      currencyFrom,
+      currencyTo,
+      amount,
+      slippagePct,
+    }: TSwapOptions,
     _toDestTransactionFee: BigNumber,
     toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     const interBTC = await createInterBtcApi(getNodeProvider(this.node), 'mainnet');
 
-    const assetFrom = await getCurrency(currencyFrom, interBTC, this.node);
+    const assetFromInfo = await getCurrency(
+      {
+        symbol: assetFrom?.symbol ?? ('symbol' in currencyFrom ? currencyFrom.symbol : ''),
+      },
+      interBTC,
+      this.node,
+    );
 
-    if (assetFrom === null) {
+    if (assetFromInfo === null) {
       throw new Error('Currency from is invalid.');
     }
 
-    const assetTo = await getCurrency(currencyTo, interBTC, this.node);
+    const assetToInfo = await getCurrency(
+      {
+        symbol: assetTo?.symbol ?? ('symbol' in currencyTo ? currencyTo.symbol : ''),
+      },
+      interBTC,
+      this.node,
+    );
 
-    if (assetTo === null) {
+    if (assetToInfo === null) {
       throw new Error('Currency to is invalid.');
     }
 
@@ -46,11 +66,11 @@ class InterlayExchangeNode extends ExchangeNode {
     Logger.log('Original amount', amount);
     Logger.log('Amount without fee', amountWithoutFee.toString());
 
-    const inputAmount = newMonetaryAmount(amountWithoutFee.toString(), assetFrom);
+    const inputAmount = newMonetaryAmount(amountWithoutFee.toString(), assetFromInfo);
 
     const liquidityPools = await interBTC.amm.getLiquidityPools();
 
-    const trade = interBTC.amm.getOptimalTrade(inputAmount, assetTo, liquidityPools);
+    const trade = interBTC.amm.getOptimalTrade(inputAmount, assetToInfo, liquidityPools);
 
     if (trade === null) {
       throw new Error('No trade found');
@@ -71,8 +91,13 @@ class InterlayExchangeNode extends ExchangeNode {
     };
   }
 
-  async getAssetSymbols(_api: ApiPromise): Promise<TAssetSymbols> {
-    return Promise.resolve(getAllAssetsSymbols(this.node));
+  async getAssets(_api: ApiPromise): Promise<TAssets> {
+    const assets = getAssets(this.node);
+    const transformedAssets = assets.map((asset) => ({
+      symbol: asset.symbol ?? '',
+      id: asset.assetId,
+    }));
+    return Promise.resolve(transformedAssets);
   }
 }
 

@@ -1,5 +1,5 @@
 import { AbstractProvider, Signer } from 'ethers'
-import { TNodePolkadotKusama } from '../../../types'
+import { TCurrencyCore, TNodePolkadotKusama } from '../../../types'
 import { TEvmBuilderOptions, TOptionalEvmBuilderOptions } from '../../../types/TBuilder'
 import transferEthToPolkadot from '../../../pallets/xcmPallet/ethTransfer/ethTransfer'
 
@@ -23,7 +23,7 @@ class EvmBuilderClass {
     return this
   }
 
-  currency(currency: string): this {
+  currency(currency: TCurrencyCore): this {
     this._options.currency = currency
     return this
   }

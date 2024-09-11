@@ -15,7 +15,7 @@ vi.mock('@paraspell/sdk', async () => {
 describe('ExchangeNode', () => {
   it('should create an Api instance correctly', async () => {
     const mockNode: TNode = 'BifrostPolkadot';
-    const exchangeNode = new BifrostExchangeNode(mockNode);
+    const exchangeNode = new BifrostExchangeNode(mockNode, 'BifrostPolkadotDex');
     const apiInstance = await exchangeNode.createApiInstance();
     expect(createApiInstanceForNode).toHaveBeenCalledWith(mockNode);
     expect(apiInstance).toBe('mockApiPromise');

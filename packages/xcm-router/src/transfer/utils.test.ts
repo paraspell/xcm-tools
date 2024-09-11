@@ -58,8 +58,11 @@ describe('transfer utils', () => {
       const from: TNodeWithRelayChains = 'Polkadot';
       const options: TTransferOptionsModified = {
         ...transferParams,
+        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
         from,
-        exchange: 'Acala',
+        exchange: 'AcalaDex',
+        exchangeNode: 'Acala',
         feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
 
@@ -72,7 +75,10 @@ describe('transfer utils', () => {
       const options: TTransferOptionsModified = {
         ...transferParams,
         from,
-        exchange: 'Acala',
+        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
+        exchangeNode: 'Acala',
+        exchange: 'AcalaDex',
         feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
 
@@ -87,7 +93,10 @@ describe('transfer utils', () => {
       const options: TTransferOptionsModified = {
         ...transferParams,
         to,
-        exchange: 'Acala',
+        exchangeNode: 'Acala',
+        exchange: 'AcalaDex',
+        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
         feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
       const extrinsic = buildFromExchangeExtrinsic(parachainApi, options, '10000000000');
@@ -99,7 +108,10 @@ describe('transfer utils', () => {
       const options: TTransferOptionsModified = {
         ...transferParams,
         to,
-        exchange: 'Acala',
+        exchangeNode: 'Acala',
+        exchange: 'AcalaDex',
+        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
         feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
       const extrinsic = buildFromExchangeExtrinsic(parachainApi, options, '10000000000');
@@ -112,7 +124,10 @@ describe('transfer utils', () => {
       const spy = vi.spyOn(transactionUtils, 'submitTransaction').mockResolvedValue('mockedTxHash');
       const options: TTransferOptionsModified = {
         ...transferParams,
-        exchange: 'Acala',
+        exchangeNode: 'Acala',
+        exchange: 'AcalaDex',
+        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
         feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
 
@@ -140,7 +155,10 @@ describe('transfer utils', () => {
       const spy = vi.spyOn(transactionUtils, 'submitTransaction').mockResolvedValue('mockedTxHash');
       const options: TTransferOptionsModified = {
         ...transferParams,
-        exchange: 'Acala',
+        exchangeNode: 'Acala',
+        exchange: 'AcalaDex',
+        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
         feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
       const result = await submitTransferToExchange(relaychainApi, options);
@@ -163,7 +181,10 @@ describe('transfer utils', () => {
       const spy = vi.spyOn(transactionUtils, 'submitTransaction').mockResolvedValue('mockedTxHash');
       const options: TTransferOptionsModified = {
         ...transferParams,
-        exchange: 'Acala',
+        exchangeNode: 'Acala',
+        exchange: 'AcalaDex',
+        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
         feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
       };
 

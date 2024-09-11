@@ -15,6 +15,7 @@ import { determineFeeCalcAddress } from './utils';
 import { ethers } from 'ethers';
 import { transferToEthereum } from './transferToEthereum';
 import { transferFromEthereum } from './transferFromEthereum';
+import { findAssetFrom, findAssetTo } from '../assets/assets';
 
 export const transfer = async (options: TTransferOptions): Promise<void> => {
   const {
@@ -70,9 +71,34 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
     isAutoSelectingExchange: false,
   });
 
+  const assetFrom = findAssetFrom(options.from, dex.exchangeNode, options.currencyFrom);
+
+  if (!assetFrom && 'id' in options.currencyFrom) {
+    throw new Error(
+      `Currency from ${JSON.stringify(options.currencyFrom)} not found in ${options.from}.`,
+    );
+  }
+
+  const assetTo = findAssetTo(
+    dex.exchangeNode,
+    options.from,
+    options.to,
+    options.currencyTo,
+    exchange === undefined,
+  );
+
+  if (!assetTo && 'id' in options.currencyTo) {
+    throw new Error(
+      `Currency to ${JSON.stringify(options.currencyTo)} not found in ${options.from}.`,
+    );
+  }
+
   const modifiedOptions: TTransferOptionsModified = {
     ...options,
-    exchange: dex.node,
+    exchangeNode: dex.node,
+    exchange: dex.exchangeNode,
+    assetFrom,
+    assetTo,
     feeCalcAddress: determineFeeCalcAddress(injectorAddress, recipientAddress),
   };
 
@@ -84,13 +110,11 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
     );
     if (from === 'Ethereum' && assetHubAddress) {
       await transferFromEthereum(modifiedOptions);
-      await transferToExchange(
-        {
-          ...modifiedOptions,
-          from: 'AssetHubPolkadot',
-        },
-        originApi,
+      throw new Error(
+        'Transfering Snowbridge assets from AssetHub to other parachains is not yet supported.',
       );
+    } else if (from === dex.node) {
+      console.log('Assets are already on the exchange');
     } else {
       await transferToExchange(modifiedOptions, originApi);
     }
@@ -116,10 +140,12 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       await transferToEthereum(
         {
           ...modifiedOptions,
-          exchange: 'AssetHubPolkadot',
+          exchangeNode: 'AssetHubPolkadot',
         },
         amount,
       );
+    } else if (to === dex.node) {
+      console.log('Exchange node is the destination. Assets are already on the destination');
     } else {
       await transferToDestination(modifiedOptions, amount, swapApi);
     }
@@ -129,7 +155,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
     await transferToEthereum(
       {
         ...modifiedOptions,
-        exchange: 'AssetHubPolkadot',
+        exchangeNode: 'AssetHubPolkadot',
       },
       amount,
     );
@@ -147,14 +173,11 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
 
     if (from === 'Ethereum' && assetHubAddress) {
       await transferFromEthereum(modifiedOptions);
-      const assetHubApi = await createApiInstanceForNode('AssetHubPolkadot');
-      await transferToExchange(
-        {
-          ...modifiedOptions,
-          from: 'AssetHubPolkadot',
-        },
-        assetHubApi,
+      throw new Error(
+        'Transfering Snowbridge assets from AssetHub to other parachains is not yet supported.',
       );
+    } else if (from === dex.node) {
+      console.log('Assets are already on the exchange');
     } else {
       await transferToExchange(modifiedOptions, originApi);
     }
@@ -177,10 +200,12 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       await transferToEthereum(
         {
           ...modifiedOptions,
-          exchange: 'AssetHubPolkadot',
+          exchangeNode: 'AssetHubPolkadot',
         },
         amountOut,
       );
+    } else if (to === dex.node) {
+      console.log('Exchange node is the destination. Assets are already on the destination');
     } else {
       await transferToDestination(modifiedOptions, amountOut, swapApi);
     }

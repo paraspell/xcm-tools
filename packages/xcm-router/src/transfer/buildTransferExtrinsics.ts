@@ -14,11 +14,13 @@ import {
   determineFeeCalcAddress,
 } from './utils';
 import { ethers } from 'ethers';
+import { findAssetFrom, findAssetTo } from '../assets/assets';
 
 export const buildTransferExtrinsics = async (
   options: TBuildTransferExtrinsicsOptions,
 ): Promise<TBuildTransferExtrinsicsResult> => {
-  const { injectorAddress, evmInjectorAddress, assetHubAddress, ethAddress, type } = options;
+  const { injectorAddress, evmInjectorAddress, assetHubAddress, ethAddress, type, exchange } =
+    options;
   if (evmInjectorAddress !== undefined && !ethers.isAddress(evmInjectorAddress)) {
     throw new Error('Evm injector address is not a valid Ethereum address');
   }
@@ -38,13 +40,36 @@ export const buildTransferExtrinsics = async (
   }
 
   const dex =
-    options.exchange !== undefined
-      ? createDexNodeInstance(options.exchange)
-      : await selectBestExchange(options);
+    exchange !== undefined ? createDexNodeInstance(exchange) : await selectBestExchange(options);
+
+  const assetFrom = findAssetFrom(options.from, dex.exchangeNode, options.currencyFrom);
+
+  if (!assetFrom && 'id' in options.currencyFrom) {
+    throw new Error(
+      `Currency from ${JSON.stringify(options.currencyFrom)} not found in ${options.from}.`,
+    );
+  }
+
+  const assetTo = findAssetTo(
+    dex.exchangeNode,
+    options.from,
+    options.to,
+    options.currencyTo,
+    exchange === undefined,
+  );
+
+  if (!assetTo && 'id' in options.currencyTo) {
+    throw new Error(
+      `Currency to ${JSON.stringify(options.currencyTo)} not found in ${options.from}.`,
+    );
+  }
 
   const modifiedOptions: TCommonTransferOptionsModified = {
     ...options,
-    exchange: dex.node,
+    exchangeNode: dex.node,
+    exchange: dex.exchangeNode,
+    assetFrom,
+    assetTo,
     feeCalcAddress: determineFeeCalcAddress(options.injectorAddress, options.recipientAddress),
   };
 
@@ -72,13 +97,15 @@ export const buildTransferExtrinsics = async (
         statusType: TransactionType.TO_EXCHANGE,
       });
     }
-    const toExchangeTx = await buildToExchangeExtrinsic(originApi, modifiedOptions);
-    transactions.push({
-      node: from === 'Ethereum' ? 'AssetHubPolkadot' : from,
-      tx: toExchangeTx,
-      type: 'EXTRINSIC',
-      statusType: TransactionType.TO_EXCHANGE,
-    });
+    if (from !== dex.node) {
+      const toExchangeTx = await buildToExchangeExtrinsic(originApi, modifiedOptions);
+      transactions.push({
+        node: from === 'Ethereum' ? 'AssetHubPolkadot' : from,
+        tx: toExchangeTx,
+        type: 'EXTRINSIC',
+        statusType: TransactionType.TO_EXCHANGE,
+      });
+    }
   } else if (type === TransactionType.SWAP) {
     const swapApi = await dex.createApiInstance();
     const toExchangeTx = await buildToExchangeExtrinsic(originApi, modifiedOptions);
@@ -121,21 +148,23 @@ export const buildTransferExtrinsics = async (
     }
     const assetHubApi = await createApiInstanceForNode('AssetHubPolkadot');
     const swapApi = await dex.createApiInstance();
-    const toDestTx = await buildFromExchangeExtrinsic(
-      to === 'Ethereum' ? assetHubApi : swapApi,
-      {
-        ...modifiedOptions,
-        exchange: to === 'Ethereum' ? 'AssetHubPolkadot' : dex.node,
-      },
-      amount,
-      to === 'Ethereum',
-    );
-    transactions.push({
-      node: to === 'Ethereum' ? 'AssetHubPolkadot' : dex.node,
-      tx: toDestTx,
-      type: 'EXTRINSIC',
-      statusType: TransactionType.TO_DESTINATION,
-    });
+    if (to !== dex.node) {
+      const toDestTx = await buildFromExchangeExtrinsic(
+        to === 'Ethereum' ? assetHubApi : swapApi,
+        {
+          ...modifiedOptions,
+          exchangeNode: to === 'Ethereum' ? 'AssetHubPolkadot' : dex.node,
+        },
+        amount,
+        to === 'Ethereum',
+      );
+      transactions.push({
+        node: to === 'Ethereum' ? 'AssetHubPolkadot' : dex.node,
+        tx: toDestTx,
+        type: 'EXTRINSIC',
+        statusType: TransactionType.TO_DESTINATION,
+      });
+    }
   } else if (type === TransactionType.FROM_ETH && assetHubAddress) {
     const fromEthereumTx = await buildEthTransferOptions({
       to: 'AssetHubPolkadot',
@@ -156,7 +185,7 @@ export const buildTransferExtrinsics = async (
       assetHubApi,
       {
         ...modifiedOptions,
-        exchange: 'AssetHubPolkadot',
+        exchangeNode: 'AssetHubPolkadot',
       },
       amount,
       true,
@@ -184,16 +213,18 @@ export const buildTransferExtrinsics = async (
         statusType: TransactionType.TO_EXCHANGE,
       });
     }
+
     const toExchangeTx = await buildToExchangeExtrinsic(originApi, modifiedOptions);
-    transactions.push({
-      node: from === 'Ethereum' ? 'AssetHubPolkadot' : from,
-      tx: toExchangeTx,
-      type: 'EXTRINSIC',
-      statusType: TransactionType.TO_EXCHANGE,
-    });
+    if (from !== dex.node) {
+      transactions.push({
+        node: from === 'Ethereum' ? 'AssetHubPolkadot' : from,
+        tx: toExchangeTx,
+        type: 'EXTRINSIC',
+        statusType: TransactionType.TO_EXCHANGE,
+      });
+    }
 
     // SWAP
-
     const swapApi = await dex.createApiInstance();
     const toExchangeTransactionFee = await calculateTransactionFee(toExchangeTx, feeCalcAddress);
     const toDestTxForSwap = await buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
@@ -240,17 +271,19 @@ export const buildTransferExtrinsics = async (
       to === 'Ethereum' ? assetHubApi : swapApi,
       {
         ...modifiedOptions,
-        exchange: to === 'Ethereum' ? 'AssetHubPolkadot' : dex.node,
+        exchangeNode: to === 'Ethereum' ? 'AssetHubPolkadot' : dex.node,
       },
       amountOut,
       to === 'Ethereum',
     );
-    transactions.push({
-      node: to === 'Ethereum' ? 'AssetHubPolkadot' : dex.node,
-      tx: toDestTx,
-      type: 'EXTRINSIC',
-      statusType: TransactionType.TO_DESTINATION,
-    });
+    if (to !== dex.node) {
+      transactions.push({
+        node: to === 'Ethereum' ? 'AssetHubPolkadot' : dex.node,
+        tx: toDestTx,
+        type: 'EXTRINSIC',
+        statusType: TransactionType.TO_DESTINATION,
+      });
+    }
 
     await originApi.disconnect();
     await swapApi.disconnect();

@@ -5,7 +5,7 @@ import { EventName } from '../analytics/EventName.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import {
   XTransferEthDtoSchema,
-  XTransferEthDto,
+  PatchedXTransferEthDto,
 } from './dto/x-transfer-eth.dto.js';
 
 @Controller('x-transfer-eth')
@@ -18,19 +18,22 @@ export class XTransferEthController {
   private trackAnalytics(
     eventName: EventName,
     req: Request,
-    params: XTransferEthDto,
+    params: PatchedXTransferEthDto,
   ) {
     const { to, address, currency } = params;
     this.analyticsService.track(eventName, req, {
       to,
       address,
-      currency,
+      currency: JSON.stringify(currency),
     });
   }
 
   @Post()
   @UsePipes(new ZodValidationPipe(XTransferEthDtoSchema))
-  generateXcmCall(@Body() bodyParams: XTransferEthDto, @Req() req: Request) {
+  generateXcmCall(
+    @Body() bodyParams: PatchedXTransferEthDto,
+    @Req() req: Request,
+  ) {
     this.trackAnalytics(EventName.GENERATE_ETH_CALL, req, bodyParams);
     return this.xTransferEthService.generateEthCall(bodyParams);
   }

@@ -1,9 +1,9 @@
-import { type Extrinsic, InvalidCurrencyError, getAssetDecimals } from '@paraspell/sdk';
+import { getAssetDecimals, InvalidCurrencyError, type Extrinsic } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import { PoolService, TradeRouter, BigNumber, PoolType } from '@galacticcouncil/sdk';
 import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
-import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../types';
-import { type ApiPromise } from '@polkadot/api';
+import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
+import type { ApiPromise } from '@polkadot/api';
 import { FEE_BUFFER } from '../../consts/consts';
 import Logger from '../../Logger/Logger';
 import { SmallAmountError } from '../../errors/SmallAmountError';
@@ -14,26 +14,34 @@ class HydrationExchangeNode extends ExchangeNode {
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
-    const { currencyFrom, currencyTo, slippagePct, amount } = options;
+    const { assetFrom, assetTo, currencyFrom, currencyTo, slippagePct, amount } = options;
     const poolService = new PoolService(api);
     const tradeRouter = new TradeRouter(
       poolService,
       this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
     );
-    const currencyFromInfo = await getAssetInfo(tradeRouter, currencyFrom);
-    const currencyToInfo = await getAssetInfo(tradeRouter, currencyTo);
-
-    const currencyFromDecimals = getAssetDecimals(this.node, currencyFrom);
-    const currencyToDecimals = getAssetDecimals(this.node, currencyTo);
-
-    if (currencyFromDecimals === null || currencyToDecimals === null) {
-      throw new InvalidCurrencyError('Decimals not found for currency from');
-    }
+    const currencyFromInfo = await getAssetInfo(tradeRouter, {
+      symbol: assetFrom?.symbol ?? ('symbol' in currencyFrom ? currencyFrom.symbol : ''),
+    });
+    const currencyToInfo = await getAssetInfo(tradeRouter, {
+      symbol: assetTo?.symbol ?? ('symbol' in currencyTo ? currencyTo.symbol : ''),
+    });
 
     if (currencyFromInfo === undefined) {
       throw new InvalidCurrencyError("Currency from doesn't exist");
     } else if (currencyToInfo === undefined) {
       throw new InvalidCurrencyError("Currency to doesn't exist");
+    }
+
+    const currencyFromDecimals = currencyFromInfo?.decimals;
+    const currencyToDecimals = currencyToInfo?.decimals;
+
+    if (!currencyFromDecimals || !currencyToDecimals) {
+      throw new InvalidCurrencyError('Decimals not found for entered currencies.');
+    }
+
+    if (currencyFromDecimals === null || currencyToDecimals === null) {
+      throw new InvalidCurrencyError('Decimals not found for currency from');
     }
 
     const amountBnum = BigNumber(amount);
@@ -70,10 +78,9 @@ class HydrationExchangeNode extends ExchangeNode {
 
     const amountOut = trade.amountOut;
 
-    const nativeCurrencyInfo = await getAssetInfo(
-      tradeRouter,
-      this.node === 'Hydration' ? 'HDX' : 'BSX',
-    );
+    const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
+      symbol: this.node === 'Hydration' ? 'HDX' : 'BSX',
+    });
 
     if (nativeCurrencyInfo === undefined) {
       throw new InvalidCurrencyError('Native currency not found');
@@ -116,14 +123,14 @@ class HydrationExchangeNode extends ExchangeNode {
     return { tx, amountOut: amountOutModified.toString() };
   }
 
-  async getAssetSymbols(api: ApiPromise): Promise<TAssetSymbols> {
+  async getAssets(api: ApiPromise): Promise<TAssets> {
     const poolService = new PoolService(api);
     const tradeRouter = new TradeRouter(
       poolService,
       this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
     );
     const assets = await tradeRouter.getAllAssets();
-    return assets.map((asset) => asset.symbol);
+    return assets.map(({ symbol, id }) => ({ symbol, id }));
   }
 }
 

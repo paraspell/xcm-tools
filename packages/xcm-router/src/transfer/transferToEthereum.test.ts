@@ -27,8 +27,16 @@ describe('transferToEthereum', () => {
     onStatusChange: vi.fn(),
     from: 'Acala',
     to: 'Ethereum',
-    currencyFrom: 'WETH',
-    currencyTo: 'tBTC',
+    currencyFrom: { symbol: 'WETH' },
+    currencyTo: { symbol: 'tBTC' },
+    assetFrom: {
+      symbol: 'WETH',
+      assetId: '0x1234567890abcdef',
+    },
+    assetTo: {
+      symbol: 'tBTC',
+      assetId: '0xabcdef1234567890',
+    },
     amount: '1000',
     injectorAddress: '0x1234567890abcdef',
     assetHubAddress: '0xabcdef1234567890',
@@ -37,7 +45,8 @@ describe('transferToEthereum', () => {
     slippagePct: '0.1',
     signer: {} as Signer,
     ethSigner: {} as EthersSigner,
-    exchange: 'Hydration',
+    exchangeNode: 'Hydration',
+    exchange: 'HydrationDex',
   };
 
   it('should initiate a transfer to Ethereum and handle success', async () => {

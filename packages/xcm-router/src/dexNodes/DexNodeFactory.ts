@@ -7,14 +7,14 @@ import InterlayExchangeNode from './Interlay/InterlayDex';
 
 export const record: Record<TExchangeNode, ExchangeNode> = {
   // Reuse classes for Kusama equivalents
-  HydrationDex: new HydrationDexExchangeNode('Hydration'),
-  BasiliskDex: new HydrationDexExchangeNode('Basilisk'),
-  AcalaDex: new AcalaExchangeNode('Acala'),
-  KaruraDex: new AcalaExchangeNode('Karura'),
-  InterlayDex: new InterlayExchangeNode('Interlay'),
-  KintsugiDex: new InterlayExchangeNode('Kintsugi'),
-  BifrostPolkadotDex: new BifrostExchangeNode('BifrostPolkadot'),
-  BifrostKusamaDex: new BifrostExchangeNode('BifrostKusama'),
+  HydrationDex: new HydrationDexExchangeNode('Hydration', 'HydrationDex'),
+  BasiliskDex: new HydrationDexExchangeNode('Basilisk', 'BasiliskDex'),
+  AcalaDex: new AcalaExchangeNode('Acala', 'AcalaDex'),
+  KaruraDex: new AcalaExchangeNode('Karura', 'KaruraDex'),
+  InterlayDex: new InterlayExchangeNode('Interlay', 'InterlayDex'),
+  KintsugiDex: new InterlayExchangeNode('Kintsugi', 'KintsugiDex'),
+  BifrostPolkadotDex: new BifrostExchangeNode('BifrostPolkadot', 'BifrostPolkadotDex'),
+  BifrostKusamaDex: new BifrostExchangeNode('BifrostKusama', 'BifrostKusamaDex'),
 };
 
 const createDexNodeInstance = (node: TExchangeNode): ExchangeNode => {

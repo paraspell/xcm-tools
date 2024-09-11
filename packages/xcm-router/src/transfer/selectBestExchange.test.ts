@@ -39,7 +39,12 @@ describe('selectBestExchange', () => {
   });
 
   it('should find best exchange', async () => {
-    options = { ...MOCK_TRANSFER_OPTIONS, exchange: 'AcalaDex' };
+    options = {
+      ...MOCK_TRANSFER_OPTIONS,
+      currencyFrom: { id: '1333' },
+      currencyTo: { id: '18446744073709551616' },
+      exchange: 'AcalaDex',
+    };
     vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
       node: 'Acala',
       createApiInstance: vi.fn().mockResolvedValue({}),
@@ -56,7 +61,12 @@ describe('selectBestExchange', () => {
   });
 
   it('should fail to find best exchange', async () => {
-    options = { ...MOCK_TRANSFER_OPTIONS, exchange: 'AcalaDex' };
+    options = {
+      ...MOCK_TRANSFER_OPTIONS,
+      currencyFrom: { id: '1333' },
+      currencyTo: { id: '18446744073709551616' },
+      exchange: 'AcalaDex',
+    };
     vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
       node: 'Acala',
       createApiInstance: vi.fn().mockResolvedValue({}),
@@ -64,5 +74,23 @@ describe('selectBestExchange', () => {
     } as unknown as ExchangeNode);
 
     await expect(selectBestExchange(options)).rejects.toThrow('test');
+  });
+
+  it('should fail to find best exchange when asset from is not supported', async () => {
+    options = {
+      ...MOCK_TRANSFER_OPTIONS,
+      currencyFrom: { id: 'xyz' },
+      currencyTo: { id: '1000099' },
+      exchange: 'AcalaDex',
+    };
+    vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
+      node: 'Acala',
+      createApiInstance: vi.fn().mockResolvedValue({}),
+      swapCurrency: vi.fn().mockResolvedValue({ amountOut: '1' }),
+    } as unknown as ExchangeNode);
+
+    await expect(selectBestExchange(options)).rejects.toThrow(
+      `Currency from ${JSON.stringify(options.currencyFrom)} is not supported by ${options.from}`,
+    );
   });
 });

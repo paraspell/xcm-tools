@@ -1,46 +1,49 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumberString,
-  IsOptional,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
+import { z } from 'zod';
+import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
+import { TCurrencyCore } from '@paraspell/sdk';
 import { TransactionType } from '@paraspell/xcm-router';
 
-export class RouterDto {
-  @IsNotEmpty()
-  from: string;
+export const RouterDtoSchema = z.object({
+  from: z.string(),
+  exchange: z.string().optional(),
+  to: z.string(),
+  currencyFrom: CurrencyCoreSchema,
+  currencyTo: CurrencyCoreSchema,
+  recipientAddress: z
+    .string()
+    .min(1, { message: 'Recipient address is required' }),
+  injectorAddress: z
+    .string()
+    .min(1, { message: 'Injector address is required' }),
+  evmInjectorAddress: z
+    .string()
+    .min(1, 'Evm injector address is required')
+    .optional(),
+  assetHubAddress: z
+    .string()
+    .min(1, 'Asset hub address is required')
+    .optional(),
+  amount: z.union([
+    z.string().refine(
+      (val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num > 0;
+      },
+      {
+        message: 'Amount must be a positive number',
+      },
+    ),
+    z.number().positive({ message: 'Amount must be a positive number' }),
+  ]),
+  slippagePct: z.string().optional(),
+  type: z.nativeEnum(TransactionType).optional(),
+});
 
-  @IsOptional()
-  exchange?: string;
+export type RouterDto = z.infer<typeof RouterDtoSchema>;
 
-  @IsNotEmpty()
-  to: string;
-
-  @IsNotEmpty()
-  currencyFrom: string;
-
-  @IsNotEmpty()
-  currencyTo: string;
-
-  @IsNotEmpty()
+export type PatchedRouterDto = RouterDto & {
+  currencyFrom: TCurrencyCore;
+  currencyTo: TCurrencyCore;
   recipientAddress: string;
-
-  @IsNotEmpty()
   injectorAddress: string;
-
-  @IsOptional()
-  evmInjectorAddress?: string;
-
-  @IsNotEmpty()
-  @IsNumberString()
-  amount: string;
-
-  @IsOptional()
-  slippagePct?: string;
-
-  @IsOptional()
-  @Transform(({ value }) => ('' + value).toUpperCase())
-  @IsEnum(TransactionType)
-  type?: TransactionType;
-}
+};

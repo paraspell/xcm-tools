@@ -1,8 +1,10 @@
-import {
-  type TNodeWithRelayChains,
-  type Extrinsic,
-  type TNode,
-  type TSerializedEthTransfer,
+import type {
+  TNodeWithRelayChains,
+  Extrinsic,
+  TNode,
+  TSerializedEthTransfer,
+  TCurrencyCore,
+  TAsset as SdkTAsset,
 } from '@paraspell/sdk';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts/consts';
@@ -11,8 +13,10 @@ import { Signer as EthSigner } from 'ethers';
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 
 export interface TSwapOptions {
-  currencyFrom: string;
-  currencyTo: string;
+  currencyFrom: TCurrencyCore;
+  currencyTo: TCurrencyCore;
+  assetFrom?: SdkTAsset;
+  assetTo?: SdkTAsset;
   amount: string;
   slippagePct: string;
   injectorAddress: string;
@@ -52,8 +56,8 @@ export enum TransactionStatus {
 export interface TTransferOptions {
   from: TNodeWithRelayChains;
   to: TNodeWithRelayChains;
-  currencyFrom: string;
-  currencyTo: string;
+  currencyFrom: TCurrencyCore;
+  currencyTo: TCurrencyCore;
   amount: string;
   injectorAddress: string;
   evmInjectorAddress?: string;
@@ -76,15 +80,22 @@ export type TBuildTransferExtrinsicsOptions = Omit<
 };
 
 export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> & {
-  exchange: TNode;
+  exchangeNode: TNode;
+  exchange: TExchangeNode;
+  assetFrom?: SdkTAsset;
+  assetTo?: SdkTAsset;
   feeCalcAddress: string;
 };
 
 export type TCommonTransferOptions = Omit<TTransferOptions, 'signer'>;
 export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'signer'>;
 
-export type TAssetSymbols = string[];
-export type TAssetsRecord = Record<TExchangeNode, TAssetSymbols>;
+export type TAsset = {
+  symbol: string;
+  id?: string;
+};
+export type TAssets = Array<TAsset>;
+export type TAssetsRecord = Record<TExchangeNode, TAssets>;
 
 export type TBasicInfo = {
   node: TNodeWithRelayChains;
@@ -103,3 +114,5 @@ export type TEthOptionsInfo = TBasicInfo & {
 };
 
 export type TBuildTransferExtrinsicsResult = Array<TExtrinsicInfo | TEthOptionsInfo>;
+
+export type TAutoSelect = 'Auto select';
