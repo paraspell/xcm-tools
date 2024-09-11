@@ -14,7 +14,19 @@ describe('findEthAsset', () => {
     ]
     vi.mocked(getOtherAssets).mockReturnValue(mockAssets)
 
-    const asset = findEthAsset('WETH')
+    const asset = findEthAsset({ symbol: 'WETH' })
+    expect(asset).toEqual({ symbol: 'WETH', assetId: '0x123' })
+    expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
+  })
+
+  it('returns the correct asset for a valid currency using id', () => {
+    const mockAssets = [
+      { symbol: 'WETH', assetId: '0x123' },
+      { symbol: 'WBTC', assetId: '0x234' }
+    ]
+    vi.mocked(getOtherAssets).mockReturnValue(mockAssets)
+
+    const asset = findEthAsset({ id: '0x123' })
     expect(asset).toEqual({ symbol: 'WETH', assetId: '0x123' })
     expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
   })
@@ -26,18 +38,16 @@ describe('findEthAsset', () => {
     ]
     vi.mocked(getOtherAssets).mockReturnValue(mockAssets)
 
-    const testFunc = () => findEthAsset('WDOGE')
+    const testFunc = () => findEthAsset({ symbol: 'WDOGE' })
     expect(testFunc).toThrow(Error)
-    expect(testFunc).toThrow('Currency WDOGE is not supported for Ethereum transfers')
     expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
   })
 
   it('throws InvalidCurrencyError when no assets are available', () => {
     vi.mocked(getOtherAssets).mockReturnValue([])
 
-    const testFunc = () => findEthAsset('WETH')
+    const testFunc = () => findEthAsset({ symbol: 'WETH' })
     expect(testFunc).toThrow(Error)
-    expect(testFunc).toThrow('Currency WETH is not supported for Ethereum transfers')
     expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
   })
 })

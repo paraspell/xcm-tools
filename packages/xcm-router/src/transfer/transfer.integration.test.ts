@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// Unit tests for main entry point functions
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { transfer } from './transfer';
@@ -17,8 +16,8 @@ describe('transfer - integration', () => {
       ...MOCK_TRANSFER_OPTIONS,
       from: 'Kusama',
       to: 'Robonomics',
-      currencyFrom: 'KSM',
-      currencyTo: 'XRT',
+      currencyFrom: { symbol: 'KSM' },
+      currencyTo: { symbol: 'XRT' },
       type: TransactionType.FULL_TRANSFER,
     };
 

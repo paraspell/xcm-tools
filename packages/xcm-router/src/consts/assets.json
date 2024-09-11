@@ -1,215 +1,720 @@
 {
   "HydrationDex": [
-    "HDX",
-    "UNQ",
-    "ACA",
-    "2-Pool",
-    "DOT",
-    "CRU",
-    "NODL",
-    "USDT",
-    "GLMR",
-    "MYTH",
-    "PEN",
-    "ZTG",
-    "ASTR",
-    "WUD",
-    "RING",
-    "4-Pool",
-    "HDXb",
-    "SUB",
-    "HDXb",
-    "INTR",
-    "KILT",
-    "WETH",
-    "2-Pool",
-    "BNC",
-    "vASTR",
-    "vDOT",
-    "CFG",
-    "PHA",
-    "H2O",
-    "DAI",
-    "USDC",
-    "USDT",
-    "iBTC",
-    "WBTC",
-    "USDC"
+    {
+      "symbol": "ACA",
+      "id": "1000099"
+    },
+    {
+      "symbol": "2-Pool",
+      "id": "102"
+    },
+    {
+      "symbol": "HDX",
+      "id": "0"
+    },
+    {
+      "symbol": "DOT",
+      "id": "5"
+    },
+    {
+      "symbol": "CRU",
+      "id": "27"
+    },
+    {
+      "symbol": "NODL",
+      "id": "26"
+    },
+    {
+      "symbol": "USDT",
+      "id": "10"
+    },
+    {
+      "symbol": "UNQ",
+      "id": "25"
+    },
+    {
+      "symbol": "GLMR",
+      "id": "16"
+    },
+    {
+      "symbol": "MYTH",
+      "id": "30"
+    },
+    {
+      "symbol": "PEN",
+      "id": "1000081"
+    },
+    {
+      "symbol": "WUD",
+      "id": "1000085"
+    },
+    {
+      "symbol": "RING",
+      "id": "31"
+    },
+    {
+      "symbol": "4-Pool",
+      "id": "100"
+    },
+    {
+      "symbol": "HDXb",
+      "id": "1000010"
+    },
+    {
+      "symbol": "SUB",
+      "id": "24"
+    },
+    {
+      "symbol": "HDXb",
+      "id": "1000013"
+    },
+    {
+      "symbol": "INTR",
+      "id": "17"
+    },
+    {
+      "symbol": "ASTR",
+      "id": "9"
+    },
+    {
+      "symbol": "KILT",
+      "id": "28"
+    },
+    {
+      "symbol": "WETH",
+      "id": "20"
+    },
+    {
+      "symbol": "2-Pool",
+      "id": "101"
+    },
+    {
+      "symbol": "BNC",
+      "id": "14"
+    },
+    {
+      "symbol": "vASTR",
+      "id": "33"
+    },
+    {
+      "symbol": "vDOT",
+      "id": "15"
+    },
+    {
+      "symbol": "CFG",
+      "id": "13"
+    },
+    {
+      "symbol": "PHA",
+      "id": "8"
+    },
+    {
+      "symbol": "ZTG",
+      "id": "12"
+    },
+    {
+      "symbol": "H2O",
+      "id": "1"
+    },
+    {
+      "symbol": "DAI",
+      "id": "18"
+    },
+    {
+      "symbol": "USDC",
+      "id": "21"
+    },
+    {
+      "symbol": "USDT",
+      "id": "23"
+    },
+    {
+      "symbol": "iBTC",
+      "id": "11"
+    },
+    {
+      "symbol": "WBTC",
+      "id": "19"
+    },
+    {
+      "symbol": "USDC",
+      "id": "22"
+    }
   ],
-  "BasiliskDex": ["BSX", "USDT", "aUSD", "XRT", "KSM", "TEER", "TNKR", "BAJU"],
+  "BasiliskDex": [
+    {
+      "symbol": "BSX",
+      "id": "0"
+    },
+    {
+      "symbol": "USDT",
+      "id": "14"
+    },
+    {
+      "symbol": "aUSD",
+      "id": "2"
+    },
+    {
+      "symbol": "XRT",
+      "id": "16"
+    },
+    {
+      "symbol": "KSM",
+      "id": "1"
+    },
+    {
+      "symbol": "TEER",
+      "id": "17"
+    },
+    {
+      "symbol": "TNKR",
+      "id": "6"
+    },
+    {
+      "symbol": "BAJU",
+      "id": "18"
+    }
+  ],
   "KaruraDex": [
-    "LKSM",
-    "KAR",
-    "BNC",
-    "TAI",
-    "PHA",
-    "KINT",
-    "VSKSM",
-    "KSM",
-    "aSEED",
-    "KBTC",
-    "KMA",
-    "GENS",
-    "LT",
-    "TEER",
-    "TUR",
-    "HKO",
-    "KICO",
-    "QTZ",
-    "LIT",
-    "NEER",
-    "ARIS",
-    "RMRK",
-    "CSM",
-    "PCHU",
-    "CRAB",
-    "BSX",
-    "AIR",
-    "USDT",
-    "SDN",
-    "EQD",
-    "MOVR",
-    "tKSM",
-    "3USD",
-    "BUSDet",
-    "BNBet",
-    "WBTC",
-    "BUSDbs",
-    "LINK",
-    "LDO",
-    "ARB",
-    "USDTet",
-    "APE",
-    "BNB",
-    "MATICet",
-    "UNI",
-    "USDCet",
-    "SHIB",
-    "DAI",
-    "ARBet",
-    "WETH",
-    "MATICpo",
-    "waUSD",
-    "lp://KSM/fa%3A%2F%2F0",
-    "lp://KAR/erc20%3A%2F%2F0x1f3a10587a20114ea25ba1b388ee2dd4a337ce27",
-    "lp://KSM/LKSM",
-    "lp://KAR/KUSD",
-    "lp://KAR/fa%3A%2F%2F2",
-    "lp://KUSD/KSM",
-    "lp://KUSD/BNC",
-    "lp://KUSD/fa%3A%2F%2F5",
-    "lp://KUSD/fa%3A%2F%2F0",
-    "lp://KSM/fa%3A%2F%2F1",
-    "lp://KUSD/KINT",
-    "lp://TAI/sa%3A%2F%2F0",
-    "lp://KAR/KSM",
-    "lp://KUSD/fa%3A%2F%2F12",
-    "lp://KAR/LKSM",
-    "lp://KUSD/fa%3A%2F%2F2",
-    "lp://KUSD/PHA",
-    "lp://KUSD/LKSM",
-    "lp://KUSD/KBTC"
+    {
+      "symbol": "LKSM"
+    },
+    {
+      "symbol": "KAR"
+    },
+    {
+      "symbol": "BNC"
+    },
+    {
+      "symbol": "TAI"
+    },
+    {
+      "symbol": "PHA"
+    },
+    {
+      "symbol": "KINT"
+    },
+    {
+      "symbol": "VSKSM"
+    },
+    {
+      "symbol": "KSM"
+    },
+    {
+      "symbol": "aSEED"
+    },
+    {
+      "symbol": "KBTC"
+    },
+    {
+      "symbol": "KMA",
+      "id": "10"
+    },
+    {
+      "symbol": "GENS",
+      "id": "14"
+    },
+    {
+      "symbol": "LT",
+      "id": "19"
+    },
+    {
+      "symbol": "TEER",
+      "id": "8"
+    },
+    {
+      "symbol": "TUR",
+      "id": "16"
+    },
+    {
+      "symbol": "HKO",
+      "id": "4"
+    },
+    {
+      "symbol": "KICO",
+      "id": "6"
+    },
+    {
+      "symbol": "QTZ",
+      "id": "2"
+    },
+    {
+      "symbol": "LIT",
+      "id": "20"
+    },
+    {
+      "symbol": "NEER",
+      "id": "9"
+    },
+    {
+      "symbol": "ARIS",
+      "id": "1"
+    },
+    {
+      "symbol": "RMRK",
+      "id": "0"
+    },
+    {
+      "symbol": "CSM",
+      "id": "5"
+    },
+    {
+      "symbol": "PCHU",
+      "id": "17"
+    },
+    {
+      "symbol": "CRAB",
+      "id": "13"
+    },
+    {
+      "symbol": "BSX",
+      "id": "11"
+    },
+    {
+      "symbol": "AIR",
+      "id": "12"
+    },
+    {
+      "symbol": "USDT",
+      "id": "7"
+    },
+    {
+      "symbol": "SDN",
+      "id": "18"
+    },
+    {
+      "symbol": "EQD",
+      "id": "15"
+    },
+    {
+      "symbol": "MOVR",
+      "id": "3"
+    },
+    {
+      "symbol": "tKSM",
+      "id": "0"
+    },
+    {
+      "symbol": "3USD",
+      "id": "1"
+    },
+    {
+      "symbol": "BUSDet",
+      "id": "0x577f6a0718a468e8a995f6075f2325f86a07c83b"
+    },
+    {
+      "symbol": "BNBet",
+      "id": "0xe278651e8ff8e2efa83d7f84205084ebc90688be"
+    },
+    {
+      "symbol": "WBTC",
+      "id": "0x66291c7d88d2ed9a708147bae4e0814a76705e2f"
+    },
+    {
+      "symbol": "BUSDbs",
+      "id": "0x1516d2d4436d7f2eb0eadeb9be597b8cdbfb5724"
+    },
+    {
+      "symbol": "LINK",
+      "id": "0x2c7de70b32cf5f20e02329a88d2e3b00ef85eb90"
+    },
+    {
+      "symbol": "LDO",
+      "id": "0xb4ce1f6109854243d1af13b8ea34ed28542f31e0"
+    },
+    {
+      "symbol": "ARB",
+      "id": "0x21a3e77e77f1a73f303b0e050bdfa33c439e57d3"
+    },
+    {
+      "symbol": "USDTet",
+      "id": "0x54e183e533fd3c6e72debb2d1cab451d017faf72"
+    },
+    {
+      "symbol": "APE",
+      "id": "0x30b1f4ba0b07789be9986fa090a57e0fe5631ebb"
+    },
+    {
+      "symbol": "BNB",
+      "id": "0x8cc494086db58859bddc5df0f33679dfe3729a03"
+    },
+    {
+      "symbol": "MATICet",
+      "id": "0xa2a37aaf4730aeedada5aa8ee20a4451cb8b1c4e"
+    },
+    {
+      "symbol": "UNI",
+      "id": "0x77cf14f938cb97308d752647d554439d99b39a3f"
+    },
+    {
+      "symbol": "USDCet",
+      "id": "0x1f3a10587a20114ea25ba1b388ee2dd4a337ce27"
+    },
+    {
+      "symbol": "SHIB",
+      "id": "0x9759ca009cbcd75a84786ac19bb5d02f8e68bcd9"
+    },
+    {
+      "symbol": "DAI",
+      "id": "0x4bb6afb5fa2b07a5d1c499e1c3ddb5a15e709a71"
+    },
+    {
+      "symbol": "ARBet",
+      "id": "0xc621abc3afa3f24886ea278fffa7e10e8969d755"
+    },
+    {
+      "symbol": "WETH",
+      "id": "0xece0cc38021e734bef1d5da071b027ac2f71181f"
+    },
+    {
+      "symbol": "MATICpo",
+      "id": "0xc5033741ca1ce8f4f956eca6c2ff7360cabfa08d"
+    },
+    {
+      "symbol": "waUSD",
+      "id": "0xe20683ad1ed8bbeed7e1ae74be10f19d8045b530"
+    }
   ],
   "AcalaDex": [
-    "aSEED",
-    "ACA",
-    "TAP",
-    "lcDOT",
-    "LDOT",
-    "DOT",
-    "UNQ",
-    "USDC",
-    "EQD",
-    "PDEX",
-    "INTR",
-    "ASTR",
-    "PHA",
-    "PARA",
-    "GLMR",
-    "HDX",
-    "PINK",
-    "CRU",
-    "USDT",
-    "EQ",
-    "CFG",
-    "IBTC",
-    "tDOT",
-    "CRUet",
-    "USDCet",
-    "TAI",
-    "APE",
-    "LDO",
-    "DAI",
-    "SHIB",
-    "LINK",
-    "ARB",
-    "WETH",
-    "BUSDbs",
-    "MATICpo",
-    "UNI",
-    "WBTC",
-    "lp://AUSD/LDOT",
-    "lp://DOT/fa%3A%2F%2F10",
-    "lp://ACA/erc20%3A%2F%2F0x07df96d1341a7d16ba1ad431e2c847d978bc2bce",
-    "lp://AUSD/fa%3A%2F%2F3",
-    "lp://AUSD/lc%3A%2F%2F13",
-    "lp://ACA/AUSD",
-    "lp://DOT/lc%3A%2F%2F13",
-    "lp://AUSD/fa%3A%2F%2F4"
+    {
+      "symbol": "aSEED"
+    },
+    {
+      "symbol": "ACA"
+    },
+    {
+      "symbol": "TAP"
+    },
+    {
+      "symbol": "lcDOT",
+      "id": "13"
+    },
+    {
+      "symbol": "LDOT"
+    },
+    {
+      "symbol": "DOT"
+    },
+    {
+      "symbol": "UNQ",
+      "id": "10"
+    },
+    {
+      "symbol": "USDC",
+      "id": "14"
+    },
+    {
+      "symbol": "EQD",
+      "id": "8"
+    },
+    {
+      "symbol": "PDEX",
+      "id": "16"
+    },
+    {
+      "symbol": "INTR",
+      "id": "4"
+    },
+    {
+      "symbol": "ASTR",
+      "id": "2"
+    },
+    {
+      "symbol": "PHA",
+      "id": "9"
+    },
+    {
+      "symbol": "PARA",
+      "id": "1"
+    },
+    {
+      "symbol": "GLMR",
+      "id": "0"
+    },
+    {
+      "symbol": "HDX",
+      "id": "17"
+    },
+    {
+      "symbol": "PINK",
+      "id": "13"
+    },
+    {
+      "symbol": "CRU",
+      "id": "11"
+    },
+    {
+      "symbol": "USDT",
+      "id": "12"
+    },
+    {
+      "symbol": "EQ",
+      "id": "7"
+    },
+    {
+      "symbol": "CFG",
+      "id": "15"
+    },
+    {
+      "symbol": "IBTC",
+      "id": "3"
+    },
+    {
+      "symbol": "tDOT",
+      "id": "0"
+    },
+    {
+      "symbol": "CRUet",
+      "id": "0xa72206fdf839c785b3073870013f2fd57ba10b63"
+    },
+    {
+      "symbol": "USDCet",
+      "id": "0x07df96d1341a7d16ba1ad431e2c847d978bc2bce"
+    },
+    {
+      "symbol": "TAI",
+      "id": "0x892ddd9387dbdecedaef878bd7acf8603109227f"
+    },
+    {
+      "symbol": "APE",
+      "id": "0xf4c723e61709d90f89939c1852f516e373d418a8"
+    },
+    {
+      "symbol": "LDO",
+      "id": "0xd1729649ee6d5e3740ee2f9254c4226aabd0dc5b"
+    },
+    {
+      "symbol": "DAI",
+      "id": "0x54a37a01cd75b616d63e0ab665bffdb0143c52ae"
+    },
+    {
+      "symbol": "SHIB",
+      "id": "0xaf6997a70feb868df863d5380c3ab93da4297edc"
+    },
+    {
+      "symbol": "LINK",
+      "id": "0x604cae74cdc395a8824557d422fccf8db6809a2f"
+    },
+    {
+      "symbol": "ARB",
+      "id": "0xd53e4ba478cca5080c47435769ff82f41e5e4cd0"
+    },
+    {
+      "symbol": "WETH",
+      "id": "0x5a4d6acdc4e3e5ab15717f407afe957f7a242578"
+    },
+    {
+      "symbol": "BUSDbs",
+      "id": "0x7d52316b1132c26626670fbf52aa7f5ce6f9b388"
+    },
+    {
+      "symbol": "MATICpo",
+      "id": "0x19eba3efa7d0e02956678c5f3c63c46beda2d7d8"
+    },
+    {
+      "symbol": "UNI",
+      "id": "0x13fe490489204abde3265bfd81179e6ddd2020c3"
+    },
+    {
+      "symbol": "WBTC",
+      "id": "0xc80084af223c8b598536178d9361dc55bfda6818"
+    }
   ],
   "KintsugiDex": [
-    "KSM",
-    "KINT",
-    "KBTC",
-    "KSM",
-    "INTR",
-    "IBTC",
-    "DOT",
-    "VKSM",
-    "AUSD",
-    "LKSM",
-    "SKSM",
-    "USDT",
-    "MOVR"
+    {
+      "symbol": "KSM"
+    },
+    {
+      "symbol": "KINT"
+    },
+    {
+      "symbol": "KBTC"
+    },
+    {
+      "symbol": "KSM"
+    },
+    {
+      "symbol": "INTR"
+    },
+    {
+      "symbol": "IBTC"
+    },
+    {
+      "symbol": "DOT"
+    },
+    {
+      "symbol": "VKSM",
+      "id": "5"
+    },
+    {
+      "symbol": "AUSD",
+      "id": "1"
+    },
+    {
+      "symbol": "LKSM",
+      "id": "2"
+    },
+    {
+      "symbol": "SKSM",
+      "id": "6"
+    },
+    {
+      "symbol": "USDT",
+      "id": "3"
+    },
+    {
+      "symbol": "MOVR",
+      "id": "4"
+    }
   ],
   "InterlayDex": [
-    "DOT",
-    "INTR",
-    "IBTC",
-    "DOT",
-    "KINT",
-    "KBTC",
-    "KSM",
-    "WBNB.wh",
-    "HDX",
-    "TBTC.wh",
-    "USDC.wh",
-    "LDOT",
-    "WBTC.wh",
-    "PHA",
-    "stDOT",
-    "USDT",
-    "GLMR",
-    "WETH.wh",
-    "BNC",
-    "VDOT",
-    "DAI.wh",
-    "USDC"
+    {
+      "symbol": "DOT"
+    },
+    {
+      "symbol": "INTR"
+    },
+    {
+      "symbol": "IBTC"
+    },
+    {
+      "symbol": "DOT"
+    },
+    {
+      "symbol": "KINT"
+    },
+    {
+      "symbol": "KBTC"
+    },
+    {
+      "symbol": "KSM"
+    },
+    {
+      "symbol": "WBNB.wh",
+      "id": "7"
+    },
+    {
+      "symbol": "HDX",
+      "id": "13"
+    },
+    {
+      "symbol": "TBTC.wh",
+      "id": "5"
+    },
+    {
+      "symbol": "USDC.wh",
+      "id": "8"
+    },
+    {
+      "symbol": "LDOT",
+      "id": "1"
+    },
+    {
+      "symbol": "WBTC.wh",
+      "id": "9"
+    },
+    {
+      "symbol": "PHA",
+      "id": "14"
+    },
+    {
+      "symbol": "stDOT",
+      "id": "15"
+    },
+    {
+      "symbol": "USDT",
+      "id": "2"
+    },
+    {
+      "symbol": "GLMR",
+      "id": "10"
+    },
+    {
+      "symbol": "WETH.wh",
+      "id": "6"
+    },
+    {
+      "symbol": "BNC",
+      "id": "11"
+    },
+    {
+      "symbol": "VDOT",
+      "id": "3"
+    },
+    {
+      "symbol": "DAI.wh",
+      "id": "4"
+    },
+    {
+      "symbol": "USDC",
+      "id": "12"
+    }
   ],
   "BifrostKusamaDex": [
-    "BNC",
-    "aSEED",
-    "KSM",
-    "ZLK",
-    "KAR",
-    "vsKSM",
-    "RMRK",
-    "vKSM",
-    "USDT",
-    "KBTC",
-    "vBNC",
-    "MOVR",
-    "vMOVR"
+    {
+      "symbol": "BNC"
+    },
+    {
+      "symbol": "aSEED"
+    },
+    {
+      "symbol": "KSM"
+    },
+    {
+      "symbol": "ZLK"
+    },
+    {
+      "symbol": "KAR"
+    },
+    {
+      "symbol": "vsKSM"
+    },
+    {
+      "symbol": "RMRK"
+    },
+    {
+      "symbol": "vKSM"
+    },
+    {
+      "symbol": "USDT"
+    },
+    {
+      "symbol": "KBTC"
+    },
+    {
+      "symbol": "vBNC"
+    },
+    {
+      "symbol": "MOVR"
+    },
+    {
+      "symbol": "vMOVR"
+    }
   ],
-  "BifrostPolkadotDex": ["BNC", "vFIL", "GLMR", "vGLMR", "DOT", "vDOT", "vsDOT", "FIL"]
+  "BifrostPolkadotDex": [
+    {
+      "symbol": "BNC"
+    },
+    {
+      "symbol": "vFIL"
+    },
+    {
+      "symbol": "GLMR"
+    },
+    {
+      "symbol": "vGLMR"
+    },
+    {
+      "symbol": "DOT"
+    },
+    {
+      "symbol": "vDOT"
+    },
+    {
+      "symbol": "vsDOT"
+    },
+    {
+      "symbol": "FIL"
+    }
+  ]
 }

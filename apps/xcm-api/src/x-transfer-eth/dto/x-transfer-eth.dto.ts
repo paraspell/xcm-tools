@@ -1,3 +1,5 @@
+import { TCurrencyCore } from '@paraspell/sdk';
+import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
 import { z } from 'zod';
 
 export const XTransferEthDtoSchema = z.object({
@@ -18,7 +20,11 @@ export const XTransferEthDtoSchema = z.object({
   destAddress: z
     .string()
     .min(1, { message: 'Destination address is required' }),
-  currency: z.string(),
+  currency: CurrencyCoreSchema,
 });
 
 export type XTransferEthDto = z.infer<typeof XTransferEthDtoSchema>;
+
+export type PatchedXTransferEthDto = XTransferEthDto & {
+  currency: TCurrencyCore;
+};

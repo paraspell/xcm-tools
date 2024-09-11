@@ -21,7 +21,7 @@ import { web3FromAddress } from "@polkadot/extension-dapp";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import RouterTransferForm, {
-  FormValues,
+  FormValuesTransformed,
 } from "../components/RouterTransferForm";
 import TransferStepper from "../components/TransferStepper";
 import Confetti from "react-confetti";
@@ -87,7 +87,7 @@ const RouterTransferPage = () => {
   };
 
   const submitUsingRouterModule = async (
-    formValues: FormValues,
+    formValues: FormValuesTransformed,
     exchange: TExchangeNode | undefined,
     injectorAddress: string,
     signer: Signer
@@ -115,8 +115,16 @@ const RouterTransferPage = () => {
       .from(from)
       .to(to)
       .exchange(exchange)
-      .currencyFrom(currencyFrom)
-      .currencyTo(currencyTo)
+      .currencyFrom(
+        currencyFrom.assetId
+          ? { id: currencyFrom.assetId }
+          : { symbol: currencyFrom.symbol ?? "" }
+      )
+      .currencyTo(
+        currencyTo.assetId
+          ? { id: currencyTo.assetId }
+          : { symbol: currencyTo.symbol ?? "" }
+      )
       .amount(amount)
       .injectorAddress(injectorAddress)
       .recipientAddress(recipientAddress)
@@ -132,17 +140,24 @@ const RouterTransferPage = () => {
   };
 
   const submitUsingApi = async (
-    formValues: FormValues,
+    formValues: FormValuesTransformed,
     exchange: TExchangeNode | undefined,
     injectorAddress: string,
     signer: Signer
   ) => {
+    const { currencyFrom, currencyTo, transactionType } = formValues;
     try {
       const response = await axios.post(
         `${API_URL}/router`,
         {
           ...formValues,
-          type: TransactionType[formValues.transactionType],
+          currencyFrom: currencyFrom.assetId
+            ? { id: currencyFrom.assetId }
+            : { symbol: currencyFrom.symbol ?? "" },
+          currencyTo: currencyTo.assetId
+            ? { id: currencyTo.assetId }
+            : { symbol: currencyTo.symbol ?? "" },
+          type: TransactionType[transactionType],
           exchange: exchange ?? undefined,
           injectorAddress,
         },
@@ -264,7 +279,7 @@ const RouterTransferPage = () => {
     }
   };
 
-  const submit = async (formValues: FormValues) => {
+  const submit = async (formValues: FormValuesTransformed) => {
     const { useApi } = formValues;
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -325,7 +340,8 @@ const RouterTransferPage = () => {
     setLoading(false);
   };
 
-  const onSubmit = (formValues: FormValues) => void submit(formValues);
+  const onSubmit = (formValues: FormValuesTransformed) =>
+    void submit(formValues);
 
   const onAlertCloseClick = () => {
     closeAlert();

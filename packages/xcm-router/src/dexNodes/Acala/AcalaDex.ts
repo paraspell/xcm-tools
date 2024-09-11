@@ -1,11 +1,15 @@
-import { type Extrinsic } from '@paraspell/sdk';
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import type { Extrinsic } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
 import { Wallet } from '@acala-network/sdk';
-import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../types';
+import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
 import { firstValueFrom } from 'rxjs';
-import { type ApiPromise } from '@polkadot/api';
+import type { ApiPromise } from '@polkadot/api';
 import { calculateAcalaTransactionFee, createAcalaApiInstance } from './utils';
 import BigNumber from 'bignumber.js';
 import { FEE_BUFFER } from '../../consts/consts';
@@ -19,13 +23,17 @@ class AcalaExchangeNode extends ExchangeNode {
     toDestTransactionFee: BigNumber,
     toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
-    const { currencyFrom, currencyTo, amount } = options;
+    const { assetFrom, assetTo, currencyFrom, currencyTo, amount } = options;
 
     const wallet = new Wallet(api);
     await wallet.isReady;
 
-    const fromToken = wallet.getToken(currencyFrom);
-    const toToken = wallet.getToken(currencyTo);
+    const fromToken = wallet.getToken(
+      assetFrom?.symbol ?? ('symbol' in currencyFrom ? currencyFrom.symbol : ''),
+    );
+    const toToken = wallet.getToken(
+      assetTo?.symbol ?? ('symbol' in currencyTo ? currencyTo.symbol : ''),
+    );
 
     const acalaDex = new AcalaDex({ api, wallet });
 
@@ -130,11 +138,30 @@ class AcalaExchangeNode extends ExchangeNode {
     return await createAcalaApiInstance(this.node);
   }
 
-  async getAssetSymbols(api: ApiPromise): Promise<TAssetSymbols> {
+  async getAssets(api: ApiPromise): Promise<TAssets> {
     const wallet = new Wallet(api);
     await wallet.isReady;
     const tokens = await wallet.getTokens();
-    return Object.values(tokens).map((token) => token.symbol);
+    return Object.values(tokens).reduce<TAssets>((acc, token) => {
+      const idObject = JSON.parse(token.toCurrencyId(api).toString());
+
+      const firstKey = Object.keys(idObject)[0];
+      const firstValue = idObject[firstKey];
+
+      if (!Array.isArray(firstValue)) {
+        if (firstKey.toLowerCase() === 'token') {
+          acc.push({ symbol: token.symbol });
+        } else {
+          const formattedId =
+            typeof firstValue === 'object' ? JSON.stringify(firstValue) : firstValue.toString();
+          acc.push({
+            symbol: token.symbol,
+            id: formattedId,
+          });
+        }
+      }
+      return acc;
+    }, []);
   }
 }
 

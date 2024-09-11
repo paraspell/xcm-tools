@@ -81,6 +81,8 @@ describe('transfer', () => {
   it('main transfer function - FULL_TRANSFER scenario - auto exchange', async () => {
     const options: TTransferOptions = {
       ...MOCK_TRANSFER_OPTIONS,
+      currencyFrom: { id: '1333' },
+      currencyTo: { id: '18446744073709551616' },
       exchange: undefined,
       type: TransactionType.FULL_TRANSFER,
     };
@@ -90,6 +92,7 @@ describe('transfer', () => {
       .mockReturnValue(
         Promise.resolve({
           node: 'Acala',
+          exchangeNode: 'AcalaDex',
           createApiInstance: vi.fn().mockResolvedValue({
             disconnect: () => {},
           }),
@@ -120,13 +123,15 @@ describe('transfer', () => {
     const options: TTransferOptions = {
       ...MOCK_TRANSFER_OPTIONS,
       from: 'Ethereum',
+      currencyFrom: { symbol: 'WETH' },
       exchange: 'HydrationDex',
       assetHubAddress: '0xABC123',
       ethSigner: {} as EthSigner,
       type: TransactionType.TO_EXCHANGE,
     };
-    await transfer(options);
+    await expect(transfer(options)).rejects.toThrow();
     expect(transferFromEthereumSpy).toHaveBeenCalled();
+    expect(transferToExchangeSpy).not.toHaveBeenCalled();
   });
 
   it('main transfer function - SWAP scenario', async () => {
@@ -156,6 +161,7 @@ describe('transfer', () => {
   it('main transfer function - TO_ETH scenario', async () => {
     const options: TTransferOptions = {
       ...MOCK_TRANSFER_OPTIONS,
+      currencyTo: { symbol: 'WETH' },
       to: 'Ethereum',
       exchange: 'HydrationDex',
       assetHubAddress: '0xABC123',
@@ -168,6 +174,7 @@ describe('transfer', () => {
   it('main transfer function - TO_ETH scenario - TYPE', async () => {
     const options: TTransferOptions = {
       ...MOCK_TRANSFER_OPTIONS,
+      currencyTo: { symbol: 'WETH' },
       to: 'Ethereum',
       exchange: 'HydrationDex',
       assetHubAddress: '0xABC123',
@@ -182,18 +189,20 @@ describe('transfer', () => {
     const options: TTransferOptions = {
       ...MOCK_TRANSFER_OPTIONS,
       from: 'Ethereum',
+      currencyFrom: { symbol: 'WETH' },
       exchange: 'HydrationDex',
       assetHubAddress: '0xABC123',
       ethSigner: {} as EthSigner,
     };
-    await transfer(options);
-    expect(transferFromEthereumSpy).toHaveBeenCalled();
+    await expect(transfer(options)).rejects.toThrow();
+    expect(transferToExchangeSpy).not.toHaveBeenCalled();
   });
 
   it('main transfer function - FROM_ETH scenario - TYPE', async () => {
     const options: TTransferOptions = {
       ...MOCK_TRANSFER_OPTIONS,
       from: 'Ethereum',
+      currencyFrom: { symbol: 'WETH' },
       exchange: 'HydrationDex',
       assetHubAddress: '0xABC123',
       type: TransactionType.FROM_ETH,
@@ -273,5 +282,49 @@ describe('transfer', () => {
     await expect(transfer(options)).rejects.toThrow(
       'Eth signer is required when transferring to or from Ethereum',
     );
+  });
+
+  it('skips extrinsic building for transactions already on the exchange', async () => {
+    const options: TTransferOptions = {
+      ...MOCK_TRANSFER_OPTIONS,
+      from: 'Acala',
+      exchange: 'AcalaDex',
+      type: TransactionType.TO_EXCHANGE,
+    };
+    await transfer(options);
+    expect(transferToExchangeSpy).not.toHaveBeenCalled();
+  });
+
+  it('skips extrinsic building for transactions already on the exchange - FULL_TRANSFER', async () => {
+    const options: TTransferOptions = {
+      ...MOCK_TRANSFER_OPTIONS,
+      from: 'Acala',
+      exchange: 'AcalaDex',
+      type: TransactionType.FULL_TRANSFER,
+    };
+    await transfer(options);
+    expect(transferToExchangeSpy).not.toHaveBeenCalled();
+  });
+
+  it('skips extrinsic building for transactions already on destination', async () => {
+    const options: TTransferOptions = {
+      ...MOCK_TRANSFER_OPTIONS,
+      to: 'Acala',
+      exchange: 'AcalaDex',
+      type: TransactionType.TO_DESTINATION,
+    };
+    await transfer(options);
+    expect(transferToDestinationSpy).not.toHaveBeenCalled();
+  });
+
+  it('skips extrinsic building for transactions already on destination - FULL_TRANSFER', async () => {
+    const options: TTransferOptions = {
+      ...MOCK_TRANSFER_OPTIONS,
+      to: 'Acala',
+      exchange: 'AcalaDex',
+      type: TransactionType.FULL_TRANSFER,
+    };
+    await transfer(options);
+    expect(transferToDestinationSpy).not.toHaveBeenCalled();
   });
 });

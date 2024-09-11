@@ -59,7 +59,7 @@ describe('buildEthTransferOptions', () => {
     } as SendValidationResult)
 
     const options: TSerializeEthTransferOptions = {
-      currency: 'ETH',
+      currency: { symbol: 'ETH' },
       to: 'AssetHubPolkadot',
       address: '0xSenderAddress',
       destAddress: '0xDestinationAddress',
@@ -82,7 +82,7 @@ describe('buildEthTransferOptions', () => {
     })
 
     const options: TSerializeEthTransferOptions = {
-      currency: 'ETH',
+      currency: { symbol: 'ETH' },
       to: 'AssetHubPolkadot',
       address: '0xSenderAddress',
       destAddress: '0xDestinationAddress',
@@ -108,7 +108,7 @@ describe('buildEthTransferOptions', () => {
     } as SendValidationResult)
 
     const options: TSerializeEthTransferOptions = {
-      currency: 'ETH',
+      currency: { symbol: 'ETH' },
       to: 'AssetHubPolkadot',
       address: '0xSenderAddress',
       destAddress: '0xDestinationAddress',

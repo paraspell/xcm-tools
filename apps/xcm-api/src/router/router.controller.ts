@@ -8,7 +8,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { RouterService } from './router.service.js';
-import { RouterDto } from './dto/RouterDto.js';
+import { PatchedRouterDto } from './dto/RouterDto.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 
@@ -22,7 +22,7 @@ export class RouterController {
   private trackAnalytics(
     eventName: EventName,
     req: Request,
-    params: RouterDto,
+    params: PatchedRouterDto,
   ) {
     const { from, exchange, to, currencyFrom, currencyTo, slippagePct } =
       params;
@@ -30,27 +30,33 @@ export class RouterController {
       from,
       exchange,
       to,
-      currencyFrom,
-      currencyTo,
+      currencyFrom: JSON.stringify(currencyFrom),
+      currencyTo: JSON.stringify(currencyTo),
       slippagePct,
     });
   }
 
   @Get('router')
-  generateExtrinsics(@Query() queryParams: RouterDto, @Req() req: Request) {
+  generateExtrinsics(
+    @Query() queryParams: PatchedRouterDto,
+    @Req() req: Request,
+  ) {
     this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, queryParams);
     return this.routerService.generateExtrinsics(queryParams);
   }
 
   @Post('router')
-  generateExtrinsicsV2(@Body() queryParams: RouterDto, @Req() req: Request) {
+  generateExtrinsicsV2(
+    @Body() queryParams: PatchedRouterDto,
+    @Req() req: Request,
+  ) {
     this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, queryParams);
     return this.routerService.generateExtrinsics(queryParams);
   }
 
   @Post('router-hash')
   generateExtrinsicsV2Hash(
-    @Body() queryParams: RouterDto,
+    @Body() queryParams: PatchedRouterDto,
     @Req() req: Request,
   ) {
     this.trackAnalytics(

@@ -4,10 +4,12 @@ import { Version } from './TTransfer'
 
 export type TCurrency = string | number | bigint
 
+export type TCurrencySymbol = {
+  symbol: string
+}
+
 export type TCurrencyCore =
-  | {
-      symbol: string
-    }
+  | TCurrencySymbol
   | {
       id: TCurrency
     }

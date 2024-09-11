@@ -1,4 +1,9 @@
-import { type TNodeWithRelayChains, type Extrinsic, InvalidCurrencyError } from '@paraspell/sdk';
+import {
+  type TNodeWithRelayChains,
+  type Extrinsic,
+  InvalidCurrencyError,
+  TCurrencyCore,
+} from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { type TTxProgressInfo } from '../types';
 
@@ -25,11 +30,12 @@ export const maybeUpdateTransferStatus = (
 
 export const validateRelayChainCurrency = (
   originNode: TNodeWithRelayChains,
-  currency: string,
+  currency: TCurrencyCore,
 ): void => {
   if (
-    (originNode === 'Polkadot' && currency !== 'DOT') ||
-    (originNode === 'Kusama' && currency !== 'KSM')
+    'symbol' in currency &&
+    ((originNode === 'Polkadot' && currency.symbol !== 'DOT') ||
+      (originNode === 'Kusama' && currency.symbol !== 'KSM'))
   ) {
     throw new InvalidCurrencyError(`Invalid currency for ${originNode}`);
   }

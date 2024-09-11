@@ -9,7 +9,7 @@ import {
   buildEthTransferOptions,
 } from '@paraspell/sdk';
 import { isValidPolkadotAddress } from '../utils.js';
-import { XTransferEthDto } from './dto/x-transfer-eth.dto.js';
+import { PatchedXTransferEthDto } from './dto/x-transfer-eth.dto.js';
 
 @Injectable()
 export class XTransferEthService {
@@ -19,7 +19,7 @@ export class XTransferEthService {
     address,
     destAddress,
     currency,
-  }: XTransferEthDto) {
+  }: PatchedXTransferEthDto) {
     const toNode = to as TNodePolkadotKusama;
 
     if (!NODE_NAMES_DOT_KSM.includes(toNode)) {

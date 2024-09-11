@@ -1,6 +1,6 @@
 import ExchangeNode from '../DexNode';
-import { type TSwapResult, type TSwapOptions, type TAssetSymbols } from '../../types';
-import { type ApiPromise } from '@polkadot/api';
+import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
+import type { ApiPromise } from '@polkadot/api';
 import { getParaId } from '@paraspell/sdk';
 import { getBestTrade, getFilteredPairs, getTokenMap } from './bifrostUtils';
 import { Amount, Token, getCurrencyCombinations, type TokenMap } from '@crypto-dex-sdk/currency';
@@ -19,20 +19,34 @@ const findToken = (tokenMap: TokenMap, symbol: string): Token | undefined => {
 class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
-    { currencyFrom, currencyTo, amount, injectorAddress, slippagePct }: TSwapOptions,
+    {
+      assetFrom,
+      assetTo,
+      currencyFrom,
+      currencyTo,
+      amount,
+      injectorAddress,
+      slippagePct,
+    }: TSwapOptions,
     toDestTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     const chainId = getParaId(this.node);
 
     const tokenMap = getTokenMap(this.node, chainId);
 
-    const tokenWrappedFrom = findToken(tokenMap, currencyFrom);
+    const tokenWrappedFrom = findToken(
+      tokenMap,
+      assetFrom?.symbol ?? ('symbol' in currencyFrom ? currencyFrom.symbol : ''),
+    );
 
     if (tokenWrappedFrom === undefined) {
       throw new Error('Currency from not found');
     }
 
-    const tokenWrappedTo = findToken(tokenMap, currencyTo);
+    const tokenWrappedTo = findToken(
+      tokenMap,
+      assetTo?.symbol ?? ('symbol' in currencyTo ? currencyTo.symbol : ''),
+    );
 
     if (tokenWrappedTo === undefined) {
       throw new Error('Currency to not found');
@@ -133,11 +147,11 @@ class BifrostExchangeNode extends ExchangeNode {
     };
   }
 
-  async getAssetSymbols(_api: ApiPromise): Promise<TAssetSymbols> {
+  async getAssets(_api: ApiPromise): Promise<TAssets> {
     const chainId = getParaId(this.node);
     const tokenMap = getTokenMap(this.node, chainId);
-    const symbols = Object.values(tokenMap).map((item) => item.wrapped.symbol);
-    return Promise.resolve(symbols as string[]);
+    const assets = Object.values(tokenMap).map((item) => ({ symbol: item.wrapped.symbol ?? '' }));
+    return Promise.resolve(assets);
   }
 }
 

@@ -12,8 +12,8 @@ describe('buildTransferExtrinsics - integration', () => {
       exchange: 'BasiliskDex',
       from: 'Kusama',
       to: 'Robonomics',
-      currencyFrom: 'KSM',
-      currencyTo: 'XRT',
+      currencyFrom: { symbol: 'KSM' },
+      currencyTo: { symbol: 'XRT' },
     };
 
     const result = await buildTransferExtrinsics(options);

@@ -1,6 +1,6 @@
 import { BigNumber, type TradeRouter, bnum, type Asset } from '@galacticcouncil/sdk';
 import { type TSwapOptions } from '../../types';
-import { type TNode, type Extrinsic, getAssetDecimals } from '@paraspell/sdk';
+import { type TNode, type Extrinsic, getAssetDecimals, TCurrencyCore } from '@paraspell/sdk';
 import { FEE_BUFFER } from '../../consts/consts';
 import { calculateTransactionFee } from '../../utils/utils';
 import Logger from '../../Logger/Logger';
@@ -24,7 +24,9 @@ export const calculateFee = async (
   );
   const minAmountOut = getMinAmountOut(trade.amountOut, currencyToDecimals, slippagePct);
 
-  const nativeCurrencyInfo = await getAssetInfo(tradeRouter, node === 'Hydration' ? 'HDX' : 'BSX');
+  const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
+    symbol: node === 'Hydration' ? 'HDX' : 'BSX',
+  });
 
   if (nativeCurrencyInfo === undefined) {
     throw new Error('Native currency not found');
@@ -110,8 +112,19 @@ export const getMinAmountOut = (
 
 export const getAssetInfo = async (
   tradeRouter: TradeRouter,
-  currencySymbol: string,
+  currency: TCurrencyCore,
 ): Promise<Asset | undefined> => {
   const assets = await tradeRouter.getAllAssets();
-  return assets.find((asset) => asset.symbol === currencySymbol);
+
+  if (
+    assets.filter((asset) =>
+      'symbol' in currency ? asset.symbol === currency.symbol : asset.id === currency.id,
+    ).length > 1
+  ) {
+    throw new Error('Duplicate currency found in HydrationDex.');
+  }
+
+  return 'symbol' in currency
+    ? assets.find((asset) => asset.symbol === currency.symbol)
+    : assets.find((asset) => asset.id === currency.id);
 };

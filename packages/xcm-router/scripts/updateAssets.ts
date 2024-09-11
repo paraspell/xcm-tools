@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { EXCHANGE_NODES } from '../src/consts/consts';
 import createDexNodeInstance from '../src/dexNodes/DexNodeFactory';
-import { TAssetSymbols } from '../src/types';
+import type { TAssets } from '../src/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const writeJsonSync = (path: string, data: any) => {
@@ -9,12 +9,12 @@ export const writeJsonSync = (path: string, data: any) => {
 };
 
 void (async () => {
-  const record: Record<string, TAssetSymbols> = {};
+  const record: Record<string, TAssets> = {};
   for (const exchangeNode of EXCHANGE_NODES) {
     console.log(`Fetching ${exchangeNode} assets...`);
     const dex = createDexNodeInstance(exchangeNode);
     const api = await dex.createApiInstance();
-    const symbols = await dex.getAssetSymbols(api);
+    const symbols = await dex.getAssets(api);
     record[exchangeNode] = symbols;
   }
   writeJsonSync('./src/consts/assets.json', record);

@@ -23,31 +23,31 @@ import { FALLBACK_FEE_CALC_ADDRESS } from '../consts/consts';
 describe('validateRelayChainCurrency', () => {
   it('should not throw an error for valid Polkadot currency', () => {
     expect(() => {
-      validateRelayChainCurrency('Polkadot', 'DOT');
+      validateRelayChainCurrency('Polkadot', { symbol: 'DOT' });
     }).not.toThrow();
   });
 
   it('should not throw an error for valid Kusama currency', () => {
     expect(() => {
-      validateRelayChainCurrency('Kusama', 'KSM');
+      validateRelayChainCurrency('Kusama', { symbol: 'KSM' });
     }).not.toThrow();
   });
 
   it('should throw an InvalidCurrencyError for invalid Polkadot currency', () => {
     expect(() => {
-      validateRelayChainCurrency('Polkadot', 'XYZ');
+      validateRelayChainCurrency('Polkadot', { symbol: 'XYZ' });
     }).toThrow(InvalidCurrencyError);
     expect(() => {
-      validateRelayChainCurrency('Polkadot', 'XYZ');
+      validateRelayChainCurrency('Polkadot', { symbol: 'XYZ' });
     }).toThrow('Invalid currency for Polkadot');
   });
 
   it('should throw an InvalidCurrencyError for invalid Kusama currency', () => {
     expect(() => {
-      validateRelayChainCurrency('Kusama', 'XYZ');
+      validateRelayChainCurrency('Kusama', { symbol: 'XYZ' });
     }).toThrow(InvalidCurrencyError);
     expect(() => {
-      validateRelayChainCurrency('Kusama', 'XYZ');
+      validateRelayChainCurrency('Kusama', { symbol: 'XYZ' });
     }).toThrow('Invalid currency for Kusama');
   });
 });
@@ -129,10 +129,13 @@ export const MOCK_SLIIPPAGE = '1';
 
 export const MOCK_TRANSFER_OPTIONS: TTransferOptionsModified = {
   from: 'Astar',
-  exchange: 'Hydration',
+  exchangeNode: 'Hydration',
+  exchange: 'HydrationDex',
   to: 'Moonbeam',
-  currencyFrom: 'ASTR',
-  currencyTo: 'GLMR',
+  currencyFrom: { symbol: 'ASTR' },
+  currencyTo: { symbol: 'GLMR' },
+  assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+  assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
   amount: '10000000000000000000',
   slippagePct: '1',
   injectorAddress: MOCK_ADDRESS,

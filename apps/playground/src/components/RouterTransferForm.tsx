@@ -1,6 +1,7 @@
 import { useForm } from "@mantine/form";
 import {
   EXCHANGE_NODES,
+  TAutoSelect,
   TExchangeNode,
   TransactionType,
 } from "@paraspell/xcm-router";
@@ -19,8 +20,8 @@ import {
   rem,
 } from "@mantine/core";
 import {
-  getAllAssetsSymbols,
   NODES_WITH_RELAY_CHAINS,
+  TAsset,
   TNodeWithRelayChains,
 } from "@paraspell/sdk";
 import { Signer } from "@polkadot/api/types";
@@ -31,15 +32,14 @@ import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { BrowserProvider, ethers } from "ethers";
 import { IconInfoCircle } from "@tabler/icons-react";
 import EthAccountsModal from "./EthAccountsModal";
-
-export type TAutoSelect = "Auto select";
+import useRouterCurrencyOptions from "../hooks/useRouterCurrencyOptions";
 
 export type FormValues = {
   from: TNodeWithRelayChains;
   exchange: TExchangeNode | TAutoSelect;
   to: TNodeWithRelayChains;
-  currencyFrom: string;
-  currencyTo: string;
+  currencyFromOptionId: string;
+  currencyToOptionId: string;
   recipientAddress: string;
   amount: string;
   slippagePct: string;
@@ -51,8 +51,13 @@ export type FormValues = {
   ethAddress?: string;
 };
 
+export type FormValuesTransformed = FormValues & {
+  currencyFrom: TAsset;
+  currencyTo: TAsset;
+};
+
 type Props = {
-  onSubmit: (values: FormValues) => void;
+  onSubmit: (values: FormValuesTransformed) => void;
   loading: boolean;
   initializeProvider: () => BrowserProvider | undefined;
   provider?: BrowserProvider;
@@ -136,8 +141,8 @@ const RouterTransferForm: FC<Props> = ({
       from: "Astar",
       to: "Moonbeam",
       exchange: "Auto select",
-      currencyFrom: "ASTR",
-      currencyTo: "GLMR",
+      currencyFromOptionId: "",
+      currencyToOptionId: "",
       amount: "10000000000000000000",
       recipientAddress: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
       slippagePct: "1",
@@ -148,6 +153,12 @@ const RouterTransferForm: FC<Props> = ({
     validate: {
       recipientAddress: (value) =>
         isValidWalletAddress(value) ? null : "Invalid address",
+      currencyFromOptionId: (value) => {
+        return value ? null : "Currency from selection is required";
+      },
+      currencyToOptionId: (value) => {
+        return value ? null : "Currency to selection is required";
+      },
     },
   });
 
@@ -235,10 +246,31 @@ const RouterTransferForm: FC<Props> = ({
     closeEthModal();
   };
 
-  const fromCurrencySymbols = [
-    ...new Set(getAllAssetsSymbols(form.values.from)),
-  ];
-  const toCurrencySymbols = [...new Set(getAllAssetsSymbols(form.values.to))];
+  const {
+    currencyFromOptions,
+    currencyFromMap,
+    currencyToOptions,
+    currencyToMap,
+    isFromNotParaToPara,
+    isToNotParaToPara,
+  } = useRouterCurrencyOptions(
+    form.values.from,
+    form.values.exchange,
+    form.values.to
+  );
+
+  const onSubmitInternal = (values: FormValues) => {
+    const currencyFrom = currencyFromMap[values.currencyFromOptionId];
+    const currencyTo = currencyToMap[values.currencyToOptionId];
+
+    if (!currencyFrom || !currencyTo) {
+      return;
+    }
+
+    const transformedValues = { ...values, currencyFrom, currencyTo };
+
+    onSubmit(transformedValues);
+  };
 
   const infoEthWallet = (
     <Tooltip
@@ -294,8 +326,23 @@ const RouterTransferForm: FC<Props> = ({
     </Tooltip>
   );
 
+  useEffect(() => {
+    if (isFromNotParaToPara) {
+      form.setFieldValue(
+        "currencyFromOptionId",
+        Object.keys(currencyFromMap)[0]
+      );
+    }
+  }, [isFromNotParaToPara, currencyFromMap]);
+
+  useEffect(() => {
+    if (isToNotParaToPara) {
+      form.setFieldValue("currencyToOptionId", Object.keys(currencyToMap)[0]);
+    }
+  }, [isToNotParaToPara, currencyToMap]);
+
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    <form onSubmit={form.onSubmit(onSubmitInternal)}>
       <Stack>
         <EthAccountsModal
           isOpen={ethModalOpened}
@@ -351,23 +398,37 @@ const RouterTransferForm: FC<Props> = ({
         />
 
         <Select
-          label="Currency from"
+          key={
+            form.values.from +
+            form.values.exchange +
+            form.values.to +
+            "currencyFrom"
+          }
+          label="Currency From"
           placeholder="Pick value"
-          data={fromCurrencySymbols}
+          data={currencyFromOptions}
           allowDeselect={false}
+          disabled={isFromNotParaToPara}
           searchable
           required
-          {...form.getInputProps("currencyFrom")}
+          {...form.getInputProps("currencyFromOptionId")}
         />
 
         <Select
-          label="Currency to"
+          key={
+            form.values.from +
+            form.values.exchange +
+            form.values.to +
+            "currencyTo"
+          }
+          label="Currency To"
           placeholder="Pick value"
-          data={toCurrencySymbols}
+          data={currencyToOptions}
           allowDeselect={false}
+          disabled={isToNotParaToPara}
           searchable
           required
-          {...form.getInputProps("currencyTo")}
+          {...form.getInputProps("currencyToOptionId")}
         />
 
         <TextInput
