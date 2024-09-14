@@ -78,8 +78,8 @@ If you wish to have an exchange chain selection based on the best price outcome,
 await RouterBuilder
         .from('Polkadot')   //Origin Parachain/Relay chain
         .to('Astar')    //Destination Parachain/Relay chain
-        .currencyFrom('DOT')    // Currency to send
-        .currencyTo('ASTR')    // Currency to receive
+        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID} | {symbol: currencySymbol}
+        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID} | {symbol: currencySymbol}
         .amount('1000000')  // Amount to send
         .slippagePct('1')   // Max slipppage percentage
         .injectorAddress(injectorAddress)   //Injector address
@@ -105,8 +105,8 @@ await RouterBuilder
         .from('Polkadot')   //Origin Parachain/Relay chain
         .exchange('HydraDDex')    //Exchange Parachain
         .to('Astar')    //Destination Parachain/Relay chain
-        .currencyFrom('DOT')    // Currency to send
-        .currencyTo('ASTR')    // Currency to receive
+        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID} | {symbol: currencySymbol}
+        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID} | {symbol: currencySymbol}
         .amount('1000000')  // Amount to send
         .slippagePct('1')   // Max slipppage percentage
         .injectorAddress(selectedAccount.address)   //Injector address
@@ -131,8 +131,8 @@ If you wish to have an exchange chain selection based on the best price outcome,
 await transfer({
         from: 'Polkadot', //Origin Parachain/Relay chain
         to: 'Interlay', //Destination Parachain/Relay chain
-        currencyFrom: 'DOT', // Currency to send
-        currencyTo: 'INTR', // Currency to receive
+        currencyFrom: {symbol: 'DOT'}, // Currency to send {id: currencyID} | {symbol: currencySymbol}
+        currencyTo: {symbol: 'INTR'}, // Currency to receive {id: currencyID} | {symbol: currencySymbol}
         amount: '100000', // Amount to send
         slippagePct: '1', // Max slipppage percentage
         injectorAddress: selectedAccount.address, //Injector address
@@ -159,8 +159,8 @@ await transfer({
         from: 'Polkadot', //Origin Parachain/Relay chain
         exchange: 'AcalaDex', //Exchange Parachain
         to: 'Interlay', //Destination Parachain/Relay chain
-        currencyFrom: 'DOT', // Currency to send
-        currencyTo: 'INTR', // Currency to receive
+        currencyFrom: {symbol: 'DOT'}, // Currency to send
+        currencyTo: {symbol: 'INTR'}, // Currency to receive
         amount: '100000', // Amount to send
         slippagePct: '1', // Max slipppage percentage
         injectorAddress: selectedAccount.address, //Injector address
@@ -187,8 +187,8 @@ Following scenario works just like normal transfer, you just select Ethereum as 
 await RouterBuilder
         .from('Origin')   //Origin Parachain/Relay chain
         .to('Ethereum')   
-        .currencyFrom('DOT')    // Currency to send
-        .currencyTo('WETH')    // Any currency supported by Ethereum bridge (WETH, WBTC and more)
+        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID} | {symbol: currencySymbol}
+        .currencyTo({symbol: 'WETH'})    // Any currency supported by Ethereum bridge (WETH, WBTC and more) - {id: currencyID} | {symbol: currencySymbol}
         .amount('1000000')  // Amount to send
         .slippagePct('1')   // Max slipppage percentage
         .injectorAddress(selectedAccount.address)   //Injector address
@@ -212,8 +212,8 @@ The other scenario is a little different as it requires other parameters because
 await RouterBuilder()
     .from('Ethereum')     
     .to('Destination')     //Destination Chain
-    .currencyTo('WETH')    // Any currency supported by Ethereum bridge (WETH, WBTC and more)
-    .currencyTo('GLMR')   // Currency to receive
+    .currencyTo({symbol: 'WETH'})    // Any currency supported by Ethereum bridge (WETH, WBTC and more) - {id: currencyID} | {symbol: currencySymbol}
+    .currencyTo({symbol: 'GLMR'})   // Currency to receive {id: currencyID} | {symbol: currencySymbol}
     .amount('1000000')  // Amount to send
     .injectorAddress(selectedAccount.address)   //Injector address
     .recipientAddress(recipientAddress) //Recipient address

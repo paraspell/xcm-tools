@@ -170,7 +170,7 @@ const response = await fetch(
   body: JSON.stringify({
     origin: 'Parachain', // Replace "Parachain" with chain you wish to query transfer info for as origin
     destination: 'Parachain', // Replace "Parachain" with chain you wish to query transfer info for as destination
-    currency: 'Asset Multilocation array', //Replace "Asset Multilocation array" with specific asset multilocation array along with the amount (example in docs)
+    currency: {currencySpec}, //{id: currencyID} | {symbol: currencySymbol}
     amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
     accountOrigin: 'Account address', // Replace "Address" with origin wallet address (In AccountID32 or AccountKey20 Format)
     accountDestination: 'Account address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
@@ -210,8 +210,8 @@ const response = await fetch('http://localhost:3001/router-hash', {
     from: 'Chain', //Origin Parachain/Relay chain
     exchange: 'Dex', //Exchange Parachain/Relay chain //Optional parameter, if not specified exchange will be auto-selected
     to: 'Chain', //Destination Parachain/Relay chain
-    currencyFrom: 'Currency', // Currency to send
-    currencyTo: 'Currency', // Currency to receive
+    currencyFrom: {CurrencySpec}, // {id: currencyID} | {symbol: currencySymbol}
+    currencyTo: {CurrencySpec}, // {id: currencyID} | {symbol: currencySymbol}
     amount: 'Amount', // Amount to send
     slippagePct: 'Pct', // Max slipppage percentage
     address: 'Address', //Recipient address
