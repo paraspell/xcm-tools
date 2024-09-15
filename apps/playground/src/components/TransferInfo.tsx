@@ -34,7 +34,7 @@ const TransferInfo = () => {
     }
   }, [error, scrollIntoView]);
 
-  const getQueryResult = async (formValues: FormValues) => {
+  const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
     const { useApi } = formValues;
     const originAddress = selectedAccount?.address ?? "";
     const currency =
@@ -42,7 +42,6 @@ const TransferInfo = () => {
         ? { id: formValues.currency }
         : { symbol: formValues.currency };
     if (useApi) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return await fetchFromApi(
         {
           origin: formValues.from,
@@ -77,7 +76,6 @@ const TransferInfo = () => {
     setLoading(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const output = await getQueryResult(formValues);
       setOutput(JSON.stringify(output, null, 2));
       openOutputAlert();

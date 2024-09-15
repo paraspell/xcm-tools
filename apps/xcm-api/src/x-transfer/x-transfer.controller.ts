@@ -12,7 +12,11 @@ import { XTransferService } from './x-transfer.service.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
-import { XTransferDto, XTransferDtoSchema } from './dto/XTransferDto.js';
+import {
+  PatchedXTransferDto,
+  XTransferDto,
+  XTransferDtoSchema,
+} from './dto/XTransferDto.js';
 
 @Controller()
 export class XTransferController {
@@ -39,21 +43,30 @@ export class XTransferController {
 
   @Get('x-transfer')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  generateXcmCall(@Query() queryParams: XTransferDto, @Req() req: Request) {
+  generateXcmCall(
+    @Query() queryParams: PatchedXTransferDto,
+    @Req() req: Request,
+  ) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, queryParams);
     return this.xTransferService.generateXcmCall(queryParams);
   }
 
   @Post('x-transfer')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  generateXcmCallV2(@Body() bodyParams: XTransferDto, @Req() req: Request) {
+  generateXcmCallV2(
+    @Body() bodyParams: PatchedXTransferDto,
+    @Req() req: Request,
+  ) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
     return this.xTransferService.generateXcmCall(bodyParams);
   }
 
   @Post('x-transfer-hash')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  generateXcmCallV2Hash(@Body() bodyParams: XTransferDto, @Req() req: Request) {
+  generateXcmCallV2Hash(
+    @Body() bodyParams: PatchedXTransferDto,
+    @Req() req: Request,
+  ) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL_HASH, req, bodyParams);
     return this.xTransferService.generateXcmCall(bodyParams, true);
   }

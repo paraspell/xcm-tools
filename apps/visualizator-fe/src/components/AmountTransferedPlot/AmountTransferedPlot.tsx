@@ -1,15 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { ChartTooltip, LineChart } from '@mantine/charts';
 import { MessageCountsByDayQuery } from '../../gql/graphql';
 import { getParachainById, getParachainColor } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
 import { Ecosystem } from '../../types/types';
+
+type Payload = {
+  name: string;
+  value: number;
+  payload: Record<string, string | number>;
+  color: string;
+};
 
 type Props = {
   counts: MessageCountsByDayQuery['messageCountsByDay'];
@@ -19,7 +20,15 @@ type Props = {
 const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
   const { t } = useTranslation();
   const processData = () => {
-    const dataByDate = counts.reduce((acc: any, item) => {
+    const dataByDate = counts.reduce<
+      Record<
+        string,
+        {
+          date: string;
+          [key: string]: number | string;
+        }
+      >
+    >((acc, item) => {
       if (!acc[item.date]) {
         acc[item.date] = { date: item.date };
       }
@@ -27,7 +36,7 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
         ? getParachainById(item.paraId, Ecosystem.POLKADOT) || `ID ${item.paraId}`
         : 'Total';
 
-      acc[item.date][parachainKey] = (acc[item.date][parachainKey] || 0) + item.messageCount;
+      acc[item.date][parachainKey] = Number(acc[item.date][parachainKey] || 0) + item.messageCount;
       acc[item.date][`${parachainKey} Success`] = item.messageCountSuccess;
       acc[item.date][`${parachainKey} Failed`] = item.messageCountFailed;
       return acc;
@@ -36,10 +45,10 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
     let data = Object.values(dataByDate);
 
     if (showMedian) {
-      data = data.map((day: any) => {
+      data = data.map(day => {
         const values = Object.keys(day)
           .filter(key => !key.includes('Success') && !key.includes('Failed') && key !== 'date')
-          .map(key => day[key]);
+          .map(key => Number(day[key]));
 
         if (values.length > 0) {
           values.sort((a, b) => a - b);
@@ -57,7 +66,7 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
   const data = processData();
 
   const series = Object.keys(
-    counts.reduce((result: any, item) => {
+    counts.reduce<Record<string, boolean>>((result, item) => {
       const key = item.paraId
         ? getParachainById(item.paraId, Ecosystem.POLKADOT) || `ID ${item.paraId}`
         : 'Total';
@@ -73,7 +82,7 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
     <LineChart
       w="100%"
       h="100%"
-      data={data as any}
+      data={data}
       dataKey="date"
       series={[
         ...series,
@@ -86,7 +95,7 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
       tooltipProps={{
         content: ({ label, payload }) => {
           if (!payload || payload.length === 0) return null;
-          const extendedPayload = payload.reduce((acc: any, item) => {
+          const extendedPayload = (payload as Payload[]).reduce<Payload[]>((acc, item) => {
             if (item.name === t('median')) {
               acc.push(item);
               return acc;
@@ -124,7 +133,7 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
             return acc;
           }, []);
 
-          return <ChartTooltip label={label} payload={extendedPayload} />;
+          return <ChartTooltip label={label as ReactNode} payload={extendedPayload} />;
         }
       }}
     />

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // Unit tests for buildTransferExtrinsics function
 
 import { describe, it, expect, vi, type MockInstance, beforeEach, afterEach } from 'vitest';
@@ -11,8 +9,9 @@ import { buildTransferExtrinsics } from './buildTransferExtrinsics';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import { TBuildTransferExtrinsicsOptions, TransactionType } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
-import { buildEthTransferOptions, createApiInstanceForNode } from '@paraspell/sdk';
+import { buildEthTransferOptions, createApiInstanceForNode, Extrinsic } from '@paraspell/sdk';
 import { ApiPromise } from '@polkadot/api';
+import BigNumber from 'bignumber.js';
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
@@ -34,13 +33,13 @@ describe('buildTransferExtrinsics', () => {
   beforeEach(() => {
     fromExchangeTxSpy = vi
       .spyOn(transferUtils, 'buildFromExchangeExtrinsic')
-      .mockReturnValue({} as any);
+      .mockResolvedValue({} as Extrinsic);
     toExchangeTxSpy = vi
       .spyOn(transferUtils, 'buildToExchangeExtrinsic')
-      .mockReturnValue({} as any);
+      .mockResolvedValue({} as Extrinsic);
 
-    feeSpy = vi.spyOn(utils, 'calculateTransactionFee').mockReturnValue({} as any);
-    validateSpy = vi.spyOn(utils, 'validateRelayChainCurrency').mockReturnValue({} as any);
+    feeSpy = vi.spyOn(utils, 'calculateTransactionFee').mockResolvedValue(BigNumber(100));
+    validateSpy = vi.spyOn(utils, 'validateRelayChainCurrency').mockResolvedValue();
     vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
       node: 'Acala',
       exchangeNode: 'AcalaDex',
@@ -55,6 +54,7 @@ describe('buildTransferExtrinsics', () => {
       destinationParaId: 1000,
       destinationFee: BigInt(500),
       amount: BigInt(1000),
+      fee: BigInt(100),
     });
 
     vi.mocked(createApiInstanceForNode).mockResolvedValue({

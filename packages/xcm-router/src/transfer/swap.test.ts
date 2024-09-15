@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { vi, describe, it, expect, beforeAll, beforeEach, type MockInstance } from 'vitest';
 import * as transferUtils from './utils';
 import * as utils from '../utils/utils';
@@ -9,9 +6,10 @@ import BigNumber from 'bignumber.js';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import { swap } from './swap';
 import { type Extrinsic } from '@paraspell/sdk';
+import { TTransferOptionsModified } from '../types';
 
 describe('swap', () => {
-  let options: any;
+  let options: TTransferOptionsModified;
   let mockSwapApi: ApiPromise;
   let mockTxHash: string;
   let mockFee: BigNumber;
@@ -26,8 +24,8 @@ describe('swap', () => {
     submitSpy = vi.spyOn(transferUtils, 'submitSwap').mockResolvedValue(mockTxHash);
     statusSpy = vi.spyOn(utils, 'maybeUpdateTransferStatus').mockResolvedValue();
     vi.spyOn(utils, 'calculateTransactionFee').mockResolvedValue(mockFee);
-    vi.spyOn(transferUtils, 'buildFromExchangeExtrinsic').mockResolvedValue({} as any);
-    vi.spyOn(transferUtils, 'buildToExchangeExtrinsic').mockResolvedValue({} as any);
+    vi.spyOn(transferUtils, 'buildFromExchangeExtrinsic').mockResolvedValue({} as Extrinsic);
+    vi.spyOn(transferUtils, 'buildToExchangeExtrinsic').mockResolvedValue({} as Extrinsic);
   });
 
   beforeEach(() => {

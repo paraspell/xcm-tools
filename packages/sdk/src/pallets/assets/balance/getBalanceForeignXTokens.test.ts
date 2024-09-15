@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { ApiPromise } from '@polkadot/api'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
@@ -20,13 +18,22 @@ describe('getBalanceForeignXTokens', () => {
   })
 
   it('should return the correct balance when asset matches by symbol', async () => {
-    const mockResponse = [
-      [
-        { args: [undefined, { toString: () => 'BTC', toHuman: () => ({}) }] },
-        { free: { toString: () => '1000' } }
-      ]
-    ]
-    vi.mocked(apiMock.query.tokens.accounts.entries).mockResolvedValue(mockResponse as any)
+    const apiMock = {
+      query: {
+        tokens: {
+          accounts: {
+            entries: vi
+              .fn()
+              .mockResolvedValue([
+                [
+                  { args: [undefined, { toString: () => 'BTC', toHuman: () => ({}) }] },
+                  { free: { toString: () => '1000' } }
+                ]
+              ])
+          }
+        }
+      }
+    } as unknown as ApiPromise
 
     const result = await getBalanceForeignXTokens(
       '0x123',

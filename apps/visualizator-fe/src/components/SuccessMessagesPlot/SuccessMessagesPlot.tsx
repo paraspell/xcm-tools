@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { MessageCountsQuery } from '../../gql/graphql';
 import { BarChart, ChartTooltip } from '@mantine/charts';
 import { getParachainById } from '../../utils/utils';
@@ -36,8 +36,7 @@ const SuccessMessagesPlot: FC<Props> = ({ counts }) => {
       tooltipProps={{
         content: ({ label, payload }) => (
           <ChartTooltip
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            label={label}
+            label={label as ReactNode}
             payload={
               payload && payload.length > 0
                 ? [
@@ -55,8 +54,9 @@ const SuccessMessagesPlot: FC<Props> = ({ counts }) => {
                       payload: {
                         category: 'Total',
                         Success: 558651,
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-                        Total: payload[0].payload.Success + payload[1].payload.Failure
+                        Total:
+                          (payload[0].payload as (typeof chartData)[number]).Success +
+                          (payload[1].payload as (typeof chartData)[number]).Failure
                       },
                       hide: false
                     },

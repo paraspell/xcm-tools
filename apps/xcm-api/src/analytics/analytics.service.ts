@@ -1,12 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Mixpanel from 'mixpanel';
 import { EventName } from './EventName.js';
 import UAParser from 'ua-parser-js';
+import { RequestWithUser } from 'src/types/types.js';
 
 @Injectable()
 export class AnalyticsService {
@@ -28,16 +25,16 @@ export class AnalyticsService {
 
   track(
     eventName: EventName,
-    req: Request,
+    req: RequestWithUser,
     properties?: Record<string, string | number>,
   ) {
     if (!this.client) return;
-    const user = (req as any).user;
-    const parser = new UAParser(req.headers['user-agent']);
+    const user = req.user;
+    const parser = new UAParser(req.headers['user-agent'] as string);
     this.client.track(eventName, {
       ...properties,
       ...(user && { distinct_id: user.id }),
-      ip: req.headers['x-forwarded-for'],
+      ip: req.headers['x-forwarded-for'] as string,
       $browser: parser.getBrowser(),
       $device: parser.getDevice(),
       $os: parser.getOS(),

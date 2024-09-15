@@ -142,8 +142,7 @@ export type TTransferReturn = Extrinsic | TSerializedApiCall
 export type TSerializedApiCall = {
   module: string
   section: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  parameters: any[]
+  parameters: unknown[]
 }
 
 export type CheckKeepAliveOptions = {

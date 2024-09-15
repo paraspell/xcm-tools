@@ -19,7 +19,8 @@ import {
   type TRelayToParaInternalOptions,
   type TMultiAsset,
   type TMultiLocation,
-  type TJunction
+  type TJunction,
+  Junctions
 } from '../../types'
 import { generateAddressMultiLocationV4, generateAddressPayload } from '../../utils'
 import ParachainNode from '../ParachainNode'
@@ -231,13 +232,14 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     overridedMultiLocation?: TMultiLocation | TMultiAsset[]
   ) {
     if (scenario === 'ParaToPara') {
-      const interior = {
+      const interior: Junctions = {
         X2: [
           {
             PalletInstance: 50
           },
           {
-            GeneralIndex: currencyId
+            // TODO: Handle the case where currencyId is undefined
+            GeneralIndex: currencyId ?? ''
           }
         ]
       }

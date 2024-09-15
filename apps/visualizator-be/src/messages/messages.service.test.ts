@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -211,12 +210,12 @@ describe('MessageService', () => {
     ];
 
     type MockQueryBuilder = {
-      select: jest.Mock<any, any>;
-      addSelect: jest.Mock<any, any>;
-      where: jest.Mock<any, any>;
-      groupBy: jest.Mock<any, any>;
-      getRawMany: jest.Mock<any, any>;
-      addGroupBy: jest.Mock<any, any>;
+      select: jest.Mock;
+      addSelect: jest.Mock;
+      where: jest.Mock;
+      groupBy: jest.Mock;
+      getRawMany: jest.Mock;
+      addGroupBy: jest.Mock;
     };
 
     it.each([

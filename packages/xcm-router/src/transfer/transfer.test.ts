@@ -13,7 +13,7 @@ import * as selectBestExchange from './selectBestExchange';
 import type ExchangeNode from '../dexNodes/DexNode';
 import { Signer as EthSigner } from 'ethers';
 import { Signer } from '@polkadot/types/types';
-import { createApiInstanceForNode } from '@paraspell/sdk';
+import { createApiInstanceForNode, Extrinsic } from '@paraspell/sdk';
 import { ApiPromise } from '@polkadot/api';
 
 vi.mock('@paraspell/sdk', async () => {
@@ -45,8 +45,7 @@ describe('transfer', () => {
     swapSpy = vi.spyOn(swap, 'swap').mockResolvedValue('');
     createSwapExtrinsicSpy = vi.spyOn(swap, 'createSwapExtrinsic').mockResolvedValue({
       amountOut: '1',
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      tx: {} as any,
+      tx: {} as Extrinsic,
     });
     transferToDestinationSpy = vi
       .spyOn(transferToDestination, 'transferToDestination')

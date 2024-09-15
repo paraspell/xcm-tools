@@ -1,9 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
@@ -14,6 +8,11 @@ import { AssetCount } from './models/asset-count.model';
 import { MessageCount } from './models/message-count.model';
 import { CountOption } from './count-option';
 import { AccountXcmCountType } from './models/account-msg-count.model';
+import {
+  AccountXcmCountResult,
+  AssetCountResult,
+  ParaIdAssetCountResult,
+} from 'src/types/types';
 
 @Injectable()
 export class MessageService {
@@ -116,7 +115,12 @@ export class MessageService {
       paraIds.length > 0 ? 'message.origin_para_id, date' : 'date',
     );
 
-    const data = await queryBuilder.getRawMany();
+    const data: {
+      paraId: string;
+      date: string;
+      message_count_success: string;
+      message_count_failed: string;
+    }[] = await queryBuilder.getRawMany();
     return data.map((d) => ({
       paraId: d.paraId ? parseInt(d.paraId, 10) : undefined,
       date: d.date,
@@ -154,10 +158,16 @@ export class MessageService {
         )
         .groupBy('message.dest_para_id');
 
-      const originResults = await originQuery.getRawMany();
-      const destinationResults = await destinationQuery.getRawMany();
+      const originResults: {
+        paraId: string;
+        totalCount: string;
+      }[] = await originQuery.getRawMany();
+      const destinationResults: {
+        paraId: string;
+        totalCount: string;
+      }[] = await destinationQuery.getRawMany();
 
-      const totalCounts = new Map();
+      const totalCounts = new Map<string, number>();
       [...originResults, ...destinationResults].forEach((result) => {
         const count = totalCounts.get(result.paraId) || 0;
         totalCounts.set(result.paraId, count + parseInt(result.totalCount, 10));
@@ -165,7 +175,7 @@ export class MessageService {
 
       return Array.from(totalCounts.entries()).map(([paraId, totalCount]) => ({
         paraId: parseInt(paraId, 10),
-        totalCount,
+        totalCount: totalCount,
       }));
     } else {
       const queryBuilder =
@@ -191,7 +201,10 @@ export class MessageService {
 
       queryBuilder.addSelect('COUNT(*)', 'totalCount');
 
-      const results = await queryBuilder.getRawMany();
+      const results: {
+        paraId: number;
+        totalCount: string;
+      }[] = await queryBuilder.getRawMany();
       return results.map((result) => ({
         paraId: result.paraId,
         totalCount: parseInt(result.totalCount, 10),
@@ -205,7 +218,7 @@ export class MessageService {
     endTime: number,
   ): Promise<AssetCount[]> {
     let query = '';
-    const queryParameters: any[] = [startTime, endTime];
+    const queryParameters: (number | number[])[] = [startTime, endTime];
 
     if (paraIds.length > 0) {
       query = `
@@ -237,22 +250,23 @@ export class MessageService {
       `;
     }
 
-    const result = await this.messagesRepository.query(query, queryParameters);
+    const results = (await this.messagesRepository.query(
+      query,
+      queryParameters,
+    )) as (ParaIdAssetCountResult | AssetCountResult)[];
 
-    const transformedResult = result.map((r) => {
-      return paraIds.length > 0
+    return results.map((result) =>
+      'origin_para_id' in result
         ? {
-            paraId: r.origin_para_id,
-            symbol: r.symbol,
-            count: parseInt(r.count),
+            paraId: result.origin_para_id,
+            symbol: result.symbol,
+            count: parseInt(result.count),
           }
         : {
-            symbol: r.symbol,
-            count: parseInt(r.count),
-          };
-    });
-
-    return transformedResult;
+            symbol: result.symbol,
+            count: parseInt(result.count),
+          },
+    );
   }
 
   async getAccountXcmCounts(
@@ -285,9 +299,12 @@ export class MessageService {
 
     parameters.push(threshold);
 
-    const result = await this.messagesRepository.query(query, parameters);
+    const results = (await this.messagesRepository.query(
+      query,
+      parameters,
+    )) as AccountXcmCountResult[];
 
-    return result.map((account) => ({
+    return results.map((account) => ({
       id: account.from_account_id,
       count: parseInt(account.message_count, 10),
     }));

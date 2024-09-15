@@ -13,8 +13,7 @@ import { hexToU8a, isHex } from '@polkadot/util';
 import axios from 'axios';
 import { isAddress } from 'web3-validator';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-export const isNumeric = (num: any) => !isNaN(num);
+export const isNumeric = (num: string) => !isNaN(Number(num));
 
 export const validateNode = (node: string) => {
   if (!NODE_NAMES.includes(node as TNode)) {
@@ -43,8 +42,7 @@ export const validateRecaptcha = async (
       );
     });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-  return response.data.success;
+  return (response.data as { success: boolean }).success;
 };
 
 export const isValidPolkadotAddress = (address: string) => {

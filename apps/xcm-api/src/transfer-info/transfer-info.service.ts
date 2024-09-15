@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-
 import {
   BadRequestException,
   Injectable,
@@ -62,8 +60,9 @@ export class TransferInfoService {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      throw new InternalServerErrorException(e.message);
+      if (e instanceof Error) {
+        throw new InternalServerErrorException(e.message);
+      }
     }
     return response;
   }

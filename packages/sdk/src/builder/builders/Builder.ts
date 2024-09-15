@@ -1,19 +1,19 @@
 // Implements general builder pattern, this is Builder main file
 
 import { type ApiPromise } from '@polkadot/api'
-import {
-  type TAmount,
-  type Extrinsic,
-  type TNode,
-  type TSerializedApiCall,
-  type TCurrencyInput,
-  type TDestination,
-  type TAddress,
-  type TCurrency,
-  type TMultiAsset,
-  type TNodeWithRelayChains,
-  type TVersionClaimAssets,
-  type Version,
+import type {
+  TAmount,
+  Extrinsic,
+  TNode,
+  TSerializedApiCall,
+  TCurrencyInput,
+  TDestination,
+  TAddress,
+  TCurrency,
+  TMultiAsset,
+  TNodeWithRelayChains,
+  TVersionClaimAssets,
+  Version,
   TBatchOptions
 } from '../../types'
 import RelayToParaBuilder from './RelayToParaBuilder'

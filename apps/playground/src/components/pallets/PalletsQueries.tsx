@@ -48,10 +48,9 @@ const PalletsQueries = () => {
     }
   };
 
-  const getQueryResult = async (formValues: FormValues) => {
+  const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
     const { useApi } = formValues;
     if (useApi) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return await fetchFromApi(
         formValues,
         `/pallets/${getEndpoint(formValues)}`
@@ -65,7 +64,6 @@ const PalletsQueries = () => {
     setLoading(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const output = await getQueryResult(formValues);
       setOutput(JSON.stringify(output, null, 2));
       openOutputAlert();

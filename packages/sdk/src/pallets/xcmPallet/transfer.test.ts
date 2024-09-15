@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // Tests designed to try different XCM Pallet XCM messages and errors
 
 import { type ApiPromise } from '@polkadot/api'
@@ -8,16 +6,22 @@ import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '../../maps/consts'
 import { getAllAssetsSymbols, getOtherAssets, getRelayChainSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { DuplicateAssetError, IncompatibleNodesError } from '../../errors'
-import { type TSendOptions, type TNode, type TMultiAsset, type TMultiLocation } from '../../types'
+import {
+  type TSendOptions,
+  type TNode,
+  type TMultiAsset,
+  type TMultiLocation,
+  Extrinsic
+} from '../../types'
 import { send } from './transfer'
 import ParachainNode from '../../nodes/ParachainNode'
 import { createApiInstance, getNode } from '../../utils'
 import Astar from '../../nodes/supported/Astar'
 import Shiden from '../../nodes/supported/Shiden'
 
-vi.spyOn(ParachainNode.prototype, 'transfer').mockReturnValue(null as any)
-vi.spyOn(Astar.prototype, 'transfer').mockReturnValue(null as any)
-vi.spyOn(Shiden.prototype, 'transfer').mockReturnValue(null as any)
+vi.spyOn(ParachainNode.prototype, 'transfer').mockReturnValue({} as Extrinsic)
+vi.spyOn(Astar.prototype, 'transfer').mockReturnValue({} as Extrinsic)
+vi.spyOn(Shiden.prototype, 'transfer').mockReturnValue({} as Extrinsic)
 
 const WS_URL = 'wss://subsocial-rpc.dwellir.com'
 const randomCurrencySymbol = 'DOT'

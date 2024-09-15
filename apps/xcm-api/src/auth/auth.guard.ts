@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Injectable,
   CanActivate,
@@ -10,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
+import { RequestWithUser } from 'src/types/types.js';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,8 +18,8 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const apiKey = request.headers['x-api-key'];
+    const request: RequestWithUser = context.switchToHttp().getRequest();
+    const apiKey = request.headers['x-api-key'] as string;
 
     if (!apiKey) {
       return true;

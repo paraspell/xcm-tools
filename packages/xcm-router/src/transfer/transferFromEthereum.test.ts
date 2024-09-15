@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { transferFromEthereum } from './transferFromEthereum';
 import { EvmBuilder } from '@paraspell/sdk';
@@ -61,17 +59,14 @@ describe('transferFromEthereum', () => {
   });
 
   it('should successfully handle a transfer from Ethereum', async () => {
-    vi.mocked(EvmBuilder).mockImplementationOnce(
-      () =>
-        ({
-          to: vi.fn().mockReturnThis(),
-          address: vi.fn().mockReturnThis(),
-          amount: vi.fn().mockReturnThis(),
-          currency: vi.fn().mockReturnThis(),
-          signer: vi.fn().mockReturnThis(),
-          build: vi.fn().mockResolvedValue('transaction-hash'),
-        }) as any,
-    );
+    vi.mocked(EvmBuilder).mockImplementationOnce((() => ({
+      to: vi.fn().mockReturnThis(),
+      address: vi.fn().mockReturnThis(),
+      amount: vi.fn().mockReturnThis(),
+      currency: vi.fn().mockReturnThis(),
+      signer: vi.fn().mockReturnThis(),
+      build: vi.fn().mockResolvedValue('transaction-hash'),
+    })) as unknown as typeof EvmBuilder);
     await transferFromEthereum(options);
 
     expect(maybeUpdateTransferStatus).toHaveBeenCalledWith(options.onStatusChange, {
@@ -87,17 +82,14 @@ describe('transferFromEthereum', () => {
 
   it('should handle errors during the transfer process', async () => {
     const error = new Error('Failed to build transaction');
-    vi.mocked(EvmBuilder).mockImplementationOnce(
-      () =>
-        ({
-          to: vi.fn().mockReturnThis(),
-          address: vi.fn().mockReturnThis(),
-          amount: vi.fn().mockReturnThis(),
-          currency: vi.fn().mockReturnThis(),
-          signer: vi.fn().mockReturnThis(),
-          build: vi.fn().mockRejectedValue(error),
-        }) as any,
-    );
+    vi.mocked(EvmBuilder).mockImplementationOnce((() => ({
+      to: vi.fn().mockReturnThis(),
+      address: vi.fn().mockReturnThis(),
+      amount: vi.fn().mockReturnThis(),
+      currency: vi.fn().mockReturnThis(),
+      signer: vi.fn().mockReturnThis(),
+      build: vi.fn().mockRejectedValue(error),
+    })) as unknown as typeof EvmBuilder);
 
     await expect(transferFromEthereum(options)).rejects.toThrow('Failed to build transaction');
 

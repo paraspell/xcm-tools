@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 // Contains builder pattern tests for different Builder pattern functionalities
 
 import { type ApiPromise } from '@polkadot/api'
 import { vi, describe, expect, it } from 'vitest'
-import { Version, type TNode } from '../../types'
+import { Extrinsic, Version, type TNode } from '../../types'
 import * as xcmPallet from '../../pallets/xcmPallet'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { Builder } from './Builder'
@@ -24,7 +21,7 @@ describe('Builder', () => {
   const destApi = {} as ApiPromise
 
   it('should initiatie a para to para transfer with currency symbol', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     await Builder(api)
       .from(NODE)
@@ -45,7 +42,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to para transfer with custom paraId', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     await Builder(api)
       .from(NODE)
@@ -67,7 +64,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to para transfer with specified asset ID', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
     const ASSET_ID = 1
     await Builder(api)
       .from(NODE)
@@ -93,7 +90,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to para transfer with custom useKeepAlive', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     await Builder(api)
       .from(NODE)
@@ -117,7 +114,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to para transfer with overriden version', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const version = Version.V2
 
@@ -143,7 +140,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to para transfer with custom useKeepAlive and overriden version', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const version = Version.V2
 
@@ -171,7 +168,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to para transfer with currency id', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     await Builder(api)
       .from(NODE)
@@ -192,7 +189,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to para transfer with fee asset', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const feeAsset = 0
 
@@ -217,7 +214,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to para transfer with two overriden multi asset', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const feeAsset = 0
 
@@ -286,7 +283,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to para transfer with one overriden multi asset', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const overridedCurrencyMultiLocation: TMultiAsset[] = [
       {
@@ -330,7 +327,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a relay to para transfer', async () => {
-    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue({} as Extrinsic)
 
     await Builder(api).to(NODE).amount(AMOUNT).address(ADDRESS).build()
 
@@ -338,7 +335,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a relay to para transfer with custom paraId', async () => {
-    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue({} as Extrinsic)
 
     await Builder(api).to(NODE, PARA_ID_TO).amount(AMOUNT).address(ADDRESS).build()
 
@@ -352,7 +349,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a relay to para transfer with useKeepAlive', async () => {
-    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue({} as Extrinsic)
 
     await Builder(api)
       .to(NODE, PARA_ID_TO)
@@ -372,7 +369,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a relay to para transfer with useKeepAlive and overriden version', async () => {
-    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue({} as Extrinsic)
 
     const version = Version.V2
 
@@ -396,7 +393,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a relay to para transfer with overriden version', async () => {
-    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue({} as Extrinsic)
 
     const version = Version.V2
 
@@ -418,7 +415,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to relay transfer with currency symbol', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const currency = getRelayChainSymbol(NODE)
 
@@ -436,7 +433,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to relay transfer with currency symbol', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const currency = getRelayChainSymbol(NODE)
 
@@ -455,7 +452,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to relay transfer with fee asset', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const currency = getRelayChainSymbol(NODE)
     const feeAsset = 0
@@ -482,7 +479,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to relay transfer with overriden version', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const currency = getRelayChainSymbol(NODE)
     const version = Version.V2
@@ -502,7 +499,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to relay transfer with fee asset, keep alive and overriden version', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(undefined as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const currency = getRelayChainSymbol(NODE)
     const feeAsset = 0
@@ -580,7 +577,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a para to para transfer using batching', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const api = {
       tx: {
@@ -611,7 +608,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a double para to para transfer using batching', async () => {
-    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as any)
+    const spy = vi.spyOn(xcmPallet, 'send').mockResolvedValue({} as Extrinsic)
 
     const api = {
       tx: {
@@ -650,7 +647,7 @@ describe('Builder', () => {
   })
 
   it('should initiatie a double relay to para transfer using batching', async () => {
-    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue({} as any)
+    const spy = vi.spyOn(xcmPallet, 'transferRelayToPara').mockResolvedValue({} as Extrinsic)
 
     const api = {
       tx: {

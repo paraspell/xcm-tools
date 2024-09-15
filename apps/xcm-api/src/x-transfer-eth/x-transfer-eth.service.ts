@@ -41,8 +41,9 @@ export class XTransferEthService {
         currency,
       });
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      throw new InternalServerErrorException(e.message);
+      if (e instanceof Error) {
+        throw new InternalServerErrorException(e.message);
+      }
     }
   }
 }

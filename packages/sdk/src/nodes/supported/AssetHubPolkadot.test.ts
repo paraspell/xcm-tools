@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { describe, it, expect, vi } from 'vitest'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
@@ -15,7 +13,7 @@ vi.mock('ethers', () => ({
 }))
 
 vi.mock('../polkadotXcm', async importOriginal => {
-  const actual: any = await importOriginal()
+  const actual = await importOriginal<typeof import('../polkadotXcm')>()
   return {
     default: {
       ...actual.default,

@@ -1,12 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { StorageKey } from '@polkadot/types'
 import { TCurrencyCore } from '../../../types'
 import { AnyTuple, Codec } from '@polkadot/types/types'
 import { ApiPromise } from '@polkadot/api'
+import { AccountData } from '@polkadot/types/interfaces'
 
 export const getBalanceForeignXTokens = async (
   address: string,
@@ -18,7 +14,7 @@ export const getBalanceForeignXTokens = async (
   const response: Array<[StorageKey<AnyTuple>, Codec]> =
     await api.query.tokens.accounts.entries(address)
 
-  const entry: any = response.find(
+  const entry = response.find(
     ([
       {
         args: [_, asset]
@@ -38,5 +34,7 @@ export const getBalanceForeignXTokens = async (
       )
     }
   )
-  return entry ? BigInt(entry[1].free.toString()) : null
+
+  const accountData = entry ? (entry[1] as AccountData) : null
+  return accountData ? BigInt(accountData.free.toString()) : null
 }

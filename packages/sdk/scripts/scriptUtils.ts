@@ -81,8 +81,7 @@ export const fetchTryMultipleProvidersWithTimeout = async <T>(
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const writeJsonSync = (path: string, data: any) => {
+export const writeJsonSync = (path: string, data: unknown) => {
   const TAB_WIDTH = 2
   fs.writeFileSync(path, JSON.stringify(data, null, TAB_WIDTH))
 }

@@ -18,7 +18,7 @@ type BodyPart = string | null
 type StringOrNumber = string | number
 type HexString = string
 
-interface JunctionParachain {
+export interface JunctionParachain {
   Parachain: StringOrNumber | undefined
 }
 

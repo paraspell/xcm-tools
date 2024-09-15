@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // Contains basic structure of xToken call
 
 import type {

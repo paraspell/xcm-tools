@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
 import { type ApiPromise } from '@polkadot/api'
@@ -30,16 +29,16 @@ import {
 import { TMultiLocationHeader, type TMultiLocation } from '../types/TMultiLocation'
 import { type TMultiAsset } from '../types/TMultiAsset'
 
-const supportsXTokens = (obj: any): obj is IXTokensTransfer => {
-  return 'transferXTokens' in obj
+const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
+  return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
 }
 
-const supportsXTransfer = (obj: any): obj is IXTransferTransfer => {
-  return 'transferXTransfer' in obj
+const supportsXTransfer = (obj: unknown): obj is IXTransferTransfer => {
+  return typeof obj === 'object' && obj !== null && 'transferXTransfer' in obj
 }
 
-const supportsPolkadotXCM = (obj: any): obj is IPolkadotXCMTransfer => {
-  return 'transferPolkadotXCM' in obj
+const supportsPolkadotXCM = (obj: unknown): obj is IPolkadotXCMTransfer => {
+  return typeof obj === 'object' && obj !== null && 'transferPolkadotXCM' in obj
 }
 
 abstract class ParachainNode {

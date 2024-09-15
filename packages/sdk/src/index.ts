@@ -23,4 +23,3 @@ export {
   isRelayChain
 } from './utils'
 export * from './errors'
-export { getExistentialDeposit } from './pallets/xcmPallet/keepAlive'

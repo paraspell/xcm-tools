@@ -1,11 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { getTransferInfo, InvalidCurrencyError } from '@paraspell/sdk';
+import {
+  getTransferInfo,
+  InvalidCurrencyError,
+  TTransferInfo,
+} from '@paraspell/sdk';
 import { TransferInfoService } from './transfer-info.service.js';
 import { isValidWalletAddress } from '../utils.js';
 
@@ -68,7 +70,35 @@ describe('TransferInfoService', () => {
   });
 
   it('returns serialized transfer info successfully for valid inputs', async () => {
-    vi.mocked(getTransferInfo).mockResolvedValue({ some: 'data' } as any);
+    const mockTransferInfo: TTransferInfo = {
+      chain: {
+        origin: 'Polkadot',
+        destination: 'Acala',
+        ecosystem: 'polkadot',
+      },
+      currencyBalanceOrigin: {
+        balance: 1000n,
+        currency: 'DOT',
+      },
+      originFeeBalance: {
+        balance: 1000n,
+        expectedBalanceAfterXCMFee: 1000n,
+        xcmFee: {
+          sufficientForXCM: true,
+          xcmFee: 1000n,
+        },
+        existentialDeposit: 1000n,
+        asset: 'DOT',
+        minNativeTransferableAmount: 1000n,
+        maxNativeTransferableAmount: 1000n,
+      },
+      destinationFeeBalance: {
+        balance: 1000n,
+        currency: 'DOT',
+        existentialDeposit: 1000n,
+      },
+    };
+    vi.mocked(getTransferInfo).mockResolvedValue(mockTransferInfo);
     const result = await service.getTransferInfo({
       origin: 'Polkadot',
       destination: 'Kusama',
@@ -77,7 +107,7 @@ describe('TransferInfoService', () => {
       currency: { symbol: 'DOT' },
       amount: '1000',
     });
-    expect(result).toEqual({ some: 'data' });
+    expect(result).toEqual(mockTransferInfo);
   });
 
   it('handles InvalidCurrencyError by throwing BadRequestException', async () => {

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Title,
   Stack,
@@ -16,6 +13,8 @@ import {
   TExchangeNode,
   TransactionStatus,
   RouterBuilder,
+  TExtrinsicInfo,
+  TEthOptionsInfo,
 } from "@paraspell/xcm-router";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
@@ -37,6 +36,7 @@ import { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
 import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/keyring";
 import { ApiPromise, WsProvider } from "@polkadot/api";
+import { TSerializedApiCall } from "@paraspell/sdk";
 
 const RouterTransferPage = () => {
   const { selectedAccount } = useWallet();
@@ -166,11 +166,13 @@ const RouterTransferPage = () => {
         }
       );
 
-      const txs = await response.data;
+      const txs = (await response.data) as Array<
+        TExtrinsicInfo | TEthOptionsInfo
+      >;
 
       for (const txInfo of txs) {
         onStatusChange({
-          type: txInfo.type,
+          type: txInfo.type as TransactionType,
           status: TransactionStatus.IN_PROGRESS,
         });
 
@@ -179,18 +181,18 @@ const RouterTransferPage = () => {
           const api = await ApiPromise.create({
             provider: new WsProvider(txInfo.wsProvider),
           });
-          if (txInfo.statusType === "TO_EXCHANGE") {
+          if (txInfo.statusType === TransactionType.TO_EXCHANGE) {
             // When submitting to exchange, prioritize the evmSigner if available
             await submitTransaction(
               api,
-              buildTx(api, txInfo.tx),
+              buildTx(api, txInfo.tx as unknown as TSerializedApiCall),
               formValues.evmSigner ?? signer,
               formValues.evmInjectorAddress ?? injectorAddress
             );
           } else {
             await submitTransaction(
               api,
-              buildTx(api, txInfo.tx),
+              buildTx(api, txInfo.tx as unknown as TSerializedApiCall),
               signer,
               injectorAddress
             );
@@ -220,6 +222,10 @@ const RouterTransferPage = () => {
             ),
             kind: 1,
           };
+
+          if (!apiResponse) {
+            throw new Error("No response from API");
+          }
 
           const response = await contract.sendToken(
             apiResponse.token,
@@ -253,7 +259,7 @@ const RouterTransferPage = () => {
           });
         }
         onStatusChange({
-          type: txInfo.type,
+          type: txInfo.type as TransactionType,
           status: TransactionStatus.SUCCESS,
         });
       }
@@ -266,8 +272,10 @@ const RouterTransferPage = () => {
         } else {
           // Append the server-provided error message if available
           const serverMessage =
-            error.response.data && error.response.data.message
-              ? " Server response: " + error.response.data.message
+            error.response.data &&
+            (error.response.data as { message: string }).message
+              ? " Server response: " +
+                (error.response.data as { message: string }).message
               : "";
           errorMessage += serverMessage;
         }
@@ -294,9 +302,12 @@ const RouterTransferPage = () => {
       formValues.exchange === "Auto select" ? undefined : formValues.exchange;
 
     const originalError = console.error;
-    console.error = (...args) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      if (args.length > 1 && args[2].includes("ExtrinsicStatus::")) {
+    console.error = (...args: unknown[]) => {
+      if (
+        args.length > 1 &&
+        typeof args[2] === "string" &&
+        args[2].includes("ExtrinsicStatus::")
+      ) {
         setError(new Error(args[2]));
         openAlert();
         setShowStepper(false);

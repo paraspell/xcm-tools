@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { getBalanceNative } from './getBalanceNative'
 import { createApiInstanceForNode } from '../../../utils'
@@ -16,7 +14,9 @@ describe('getBalanceNative', () => {
     apiMock = {
       query: {
         system: {
-          account: vi.fn()
+          account: vi
+            .fn()
+            .mockResolvedValue({ data: { free: { toBn: () => ({ toString: () => '2000' }) } } })
         }
       }
     } as unknown as ApiPromise
@@ -26,8 +26,15 @@ describe('getBalanceNative', () => {
   it('returns the correct balance when API is provided', async () => {
     const address = '0x123'
     const node = 'Polkadot'
-    const mockBalance = { data: { free: { toBn: () => ({ toString: () => '1000' }) } } }
-    vi.mocked(apiMock.query.system.account).mockResolvedValue(mockBalance as any)
+    const apiMock = {
+      query: {
+        system: {
+          account: vi
+            .fn()
+            .mockResolvedValue({ data: { free: { toBn: () => ({ toString: () => '1000' }) } } })
+        }
+      }
+    } as unknown as ApiPromise
 
     const balance = await getBalanceNative(address, node, apiMock)
     expect(balance).toEqual(BigInt(1000))
@@ -36,8 +43,6 @@ describe('getBalanceNative', () => {
   it('returns the correct balance using a fallback API when no API is provided', async () => {
     const address = '0x456'
     const node = 'Kusama'
-    const mockBalance = { data: { free: { toBn: () => ({ toString: () => '2000' }) } } }
-    vi.mocked(apiMock.query.system.account).mockResolvedValue(mockBalance as any)
 
     const balance = await getBalanceNative(address, node)
     expect(balance).toEqual(BigInt(2000))

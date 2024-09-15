@@ -45,8 +45,7 @@ const createTx = async (
 
 const calculateTransactionFee = async (tx: Extrinsic, address: string): Promise<BN> => {
   const { partialFee } = await tx.paymentInfo(address)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-  return (partialFee as any).toBn()
+  return partialFee.toBn()
 }
 
 interface TOriginFeeDetails {

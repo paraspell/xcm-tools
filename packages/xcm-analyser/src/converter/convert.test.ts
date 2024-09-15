@@ -73,6 +73,84 @@ describe('convert', () => {
     expect(result).toBe('./AccountId32(null, accountID)');
   });
 
+  it('should convert multilocation to URL with AccountIndex64 interior', () => {
+    const multilocation: MultiLocation = {
+      parents: '0',
+      interior: {
+        X1: {
+          AccountIndex64: {
+            network: null,
+            index: '100',
+          },
+        },
+      },
+    };
+
+    const result = convertMultilocationToUrl(multilocation);
+    expect(result).toBe('./AccountIndex64(null, 100)');
+  });
+
+  it('should convert multilocation to URL with AccountKey20 interior', () => {
+    const multilocation: MultiLocation = {
+      parents: '0',
+      interior: {
+        X1: {
+          AccountKey20: {
+            network: null,
+            key: 'key',
+          },
+        },
+      },
+    };
+
+    const result = convertMultilocationToUrl(multilocation);
+    expect(result).toBe('./AccountKey20(null, key)');
+  });
+
+  it('should convert multilocation to URL with GeneralKey interior', () => {
+    const multilocation: MultiLocation = {
+      parents: '0',
+      interior: {
+        X1: {
+          GeneralKey: {
+            length: '10',
+            data: 'data',
+          },
+        },
+      },
+    };
+    const result = convertMultilocationToUrl(multilocation);
+    expect(result).toBe('./GeneralKey(10, data)');
+  });
+
+  it('should convert multilocation to URL with OnlyChild interior', () => {
+    const multilocation: MultiLocation = {
+      parents: '0',
+      interior: {
+        X1: {
+          OnlyChild: 'child',
+        },
+      },
+    };
+
+    const result = convertMultilocationToUrl(multilocation);
+    expect(result).toBe('./OnlyChild(child)');
+  });
+
+  it('should convert multilocation to URL with GlobalConsensus interior', () => {
+    const multilocation: MultiLocation = {
+      parents: '0',
+      interior: {
+        X1: {
+          GlobalConsensus: 'consensus',
+        },
+      },
+    };
+
+    const result = convertMultilocationToUrl(multilocation);
+    expect(result).toBe('./GlobalConsensus(consensus)');
+  });
+
   it('convert multilocation to URL with currency and amount multilocation', () => {
     const multilocation: MultiLocation = {
       parents: '0',

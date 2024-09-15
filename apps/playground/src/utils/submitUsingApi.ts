@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Signer } from "@polkadot/api/types";
 import { API_URL } from "../consts";
 import axios, { AxiosError } from "axios";
-import { TNodeWithRelayChains, createApiInstanceForNode } from "@paraspell/sdk";
+import {
+  TNodeWithRelayChains,
+  TSerializedApiCall,
+  createApiInstanceForNode,
+} from "@paraspell/sdk";
 import { buildTx, submitTransaction } from "../utils";
 
 export const fetchFromApi = async <T>(
@@ -13,7 +13,7 @@ export const fetchFromApi = async <T>(
   endpoint: string,
   method = "GET",
   useBody: boolean = false
-) => {
+): Promise<unknown> => {
   try {
     const response = await axios(`${API_URL}${endpoint}`, {
       method,
@@ -30,8 +30,10 @@ export const fetchFromApi = async <T>(
         errorMessage += " Couldn't connect to API.";
       } else {
         const serverMessage =
-          error.response.data && error.response.data.message
-            ? " Server response: " + error.response.data.message
+          error.response.data &&
+          (error.response.data as { message: string }).message
+            ? " Server response: " +
+              (error.response.data as { message: string }).message
             : "";
         errorMessage += serverMessage;
       }
@@ -61,7 +63,7 @@ export const submitTxUsingApi = async <T>(
   const api = await createApiInstanceForNode(fromNode);
   await submitTransaction(
     api,
-    buildTx(api, serializedTx),
+    buildTx(api, serializedTx as TSerializedApiCall),
     signer,
     injectorAddress
   );
