@@ -1,15 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { transfer } from './transfer';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
-import { TransactionType } from '../types';
+import { TransactionType, TTransferOptions } from '../types';
 import * as submitTransaction from '../utils/submitTransaction';
 
 describe('transfer - integration', () => {
-  let options: any;
+  let options: TTransferOptions;
 
   beforeEach(() => {
     options = {

@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { Extrinsic } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import { FixedPointNumber } from '@acala-network/sdk-core';
@@ -143,10 +139,10 @@ class AcalaExchangeNode extends ExchangeNode {
     await wallet.isReady;
     const tokens = await wallet.getTokens();
     return Object.values(tokens).reduce<TAssets>((acc, token) => {
-      const idObject = JSON.parse(token.toCurrencyId(api).toString());
+      const idObject = JSON.parse(token.toCurrencyId(api).toString()) as Record<string, unknown>;
 
       const firstKey = Object.keys(idObject)[0];
-      const firstValue = idObject[firstKey];
+      const firstValue = idObject[firstKey] as string;
 
       if (!Array.isArray(firstValue)) {
         if (firstKey.toLowerCase() === 'token') {

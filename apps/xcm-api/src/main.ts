@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
 
-BigInt.prototype['toJSON'] = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function (
+  this: bigint,
+) {
   return this.toString();
 };
 

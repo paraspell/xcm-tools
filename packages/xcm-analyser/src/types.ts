@@ -23,26 +23,26 @@ const StringOrNumber = z
   .or(z.bigint());
 const HexString = z.string();
 
-const JunctionParachain = z.object({ Parachain: StringOrNumber });
-const JunctionAccountId32 = z.object({
+export const JunctionParachain = z.object({ Parachain: StringOrNumber });
+export const JunctionAccountId32 = z.object({
   AccountId32: z.object({ network: NetworkId, id: HexString }),
 });
-const JunctionAccountIndex64 = z.object({
+export const JunctionAccountIndex64 = z.object({
   AccountIndex64: z.object({ network: NetworkId, index: StringOrNumber }),
 });
-const JunctionAccountKey20 = z.object({
+export const JunctionAccountKey20 = z.object({
   AccountKey20: z.object({ network: NetworkId, key: HexString }),
 });
-const JunctionPalletInstance = z.object({ PalletInstance: StringOrNumber });
-const JunctionGeneralIndex = z.object({ GeneralIndex: StringOrNumber });
-const JunctionGeneralKey = z.object({
+export const JunctionPalletInstance = z.object({ PalletInstance: StringOrNumber });
+export const JunctionGeneralIndex = z.object({ GeneralIndex: StringOrNumber });
+export const JunctionGeneralKey = z.object({
   GeneralKey: z.object({ length: StringOrNumber, data: HexString }),
 });
-const JunctionOnlyChild = z.object({ OnlyChild: z.string() });
-const JunctionPlurality = z.object({
+export const JunctionOnlyChild = z.object({ OnlyChild: z.string() });
+export const JunctionPlurality = z.object({
   Plurality: z.object({ id: BodyId, part: BodyPart }),
 });
-const JunctionGlobalConsensus = z.object({ GlobalConsensus: NetworkId });
+export const JunctionGlobalConsensus = z.object({ GlobalConsensus: NetworkId });
 
 const JunctionSchema = z.union([
   JunctionParachain,
@@ -106,6 +106,16 @@ export const MultiLocationSchema = z.object({
   parents: StringOrNumber,
   interior: z.union([Junctions, z.literal('Here')]),
 });
+
+export type TJunctionAccountId32 = z.infer<typeof JunctionAccountId32>;
+export type TJunctionAccountIndex64 = z.infer<typeof JunctionAccountIndex64>;
+export type TJunctionAccountKey20 = z.infer<typeof JunctionAccountKey20>;
+export type TJunctionPalletInstance = z.infer<typeof JunctionPalletInstance>;
+export type TJunctionGeneralIndex = z.infer<typeof JunctionGeneralIndex>;
+export type TJunctionGeneralKey = z.infer<typeof JunctionGeneralKey>;
+export type TJunctionOnlyChild = z.infer<typeof JunctionOnlyChild>;
+export type TJunctionPlurality = z.infer<typeof JunctionPlurality>;
+export type TJunctionGlobalConsensus = z.infer<typeof JunctionGlobalConsensus>;
 
 export type MultiLocation = z.infer<typeof MultiLocationSchema>;
 export type Junction = z.infer<typeof JunctionSchema>;

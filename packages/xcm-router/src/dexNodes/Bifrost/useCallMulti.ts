@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ApiPromise } from '@polkadot/api';
 import type { QueryableStorageMultiArg } from '@polkadot/api/types';
 
 interface CallOptions<T> {
   defaultValue?: T;
-  transform?: (value: any, api: ApiPromise) => T;
+  transform?: (value: unknown, api: ApiPromise) => T;
 }
 
 interface UseCallMultiOptions<T> {

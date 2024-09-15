@@ -1,11 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
 /*
 Code partially inspired by https://app.zenlink.pro/
 */
@@ -38,7 +30,7 @@ export type TokenAddressMap = ChainTokenMap;
 type PairsReturn = Array<[PairState, Pair | null]>;
 
 export function getPairs(
-  chainId: number | undefined,
+  chainId: ParachainId | undefined,
   currencies: Array<[Currency | undefined, Currency | undefined]>,
 ) {
   return currencies
@@ -110,7 +102,7 @@ export async function fetchPairs(
         if (isNativeCurrency(tokenB)) acc[2].push([api.query.system.account, pairAccount]);
         else
           acc[2].push([
-            api.query.tokens.accounts as any,
+            api.query.tokens.accounts,
             [pairAccount, addressToNodeCurrency(tokenB.address)],
           ]);
       }
@@ -119,7 +111,13 @@ export async function fetchPairs(
     [[], [], []],
   );
 
-  const reserves = await fetchCallMulti<Array<OrmlTokensAccountData | any>>({
+  const reserves = await fetchCallMulti<
+    Array<
+      OrmlTokensAccountData & {
+        data: OrmlTokensAccountData;
+      }
+    >
+  >({
     api,
     calls: reservesCalls,
     options: { defaultValue: [] },
@@ -144,8 +142,8 @@ export async function fetchPairs(
     return [
       PairState.EXISTS,
       new Pair(
-        Amount.fromRawAmount(tokenA, ((reserve0 as any).data || reserve0).free.toString()),
-        Amount.fromRawAmount(tokenB, ((reserve1 as any).data || reserve1).free.toString()),
+        Amount.fromRawAmount(tokenA, (reserve0.data || reserve0).free.toString()),
+        Amount.fromRawAmount(tokenB, (reserve1.data || reserve1).free.toString()),
         pairAddress,
       ),
     ];

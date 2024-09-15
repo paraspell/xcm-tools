@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type ApiPromise } from '@polkadot/api'
 import { type TNodeWithRelayChains } from '../../../types'
 import { type BN } from '@polkadot/util'
 import { createApiInstanceForNode } from '../../../utils'
+import { AccountInfo } from '@polkadot/types/interfaces'
+import { UInt } from '@polkadot/types'
 
 export const getBalanceNative = async (
   address: string,
@@ -13,7 +11,7 @@ export const getBalanceNative = async (
   api?: ApiPromise
 ): Promise<bigint> => {
   const apiWithFallback = api ?? (await createApiInstanceForNode(node))
-  const { data }: any = await apiWithFallback.query.system.account(address)
-  const balance: BN = data.free.toBn()
+  const response = (await apiWithFallback.query.system.account(address)) as AccountInfo
+  const balance: BN = (response.data.free as UInt).toBn()
   return BigInt(balance.toString())
 }

@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ChannelsQuery, CountOption, TotalMessageCountsQuery } from '../../gql/graphql';
 import Relaychain from '../Relaychain/Relaychain';
@@ -50,7 +46,7 @@ const ParachainsGraph: FC<Props> = ({
   const { scene } = useThree();
 
   const sortedParachainNames = useMemo(() => {
-    const nameToCountMap = totalMessageCounts.reduce((acc: any, item) => {
+    const nameToCountMap = totalMessageCounts.reduce<Record<number, number>>((acc, item) => {
       acc[item.paraId] = item.totalCount;
       return acc;
     }, {});
@@ -113,7 +109,7 @@ const ParachainsGraph: FC<Props> = ({
   const relaychainPosition = new Vector3(0, 0, 0);
   const RELAYCHAIN_ID = 0;
 
-  const [channelElements, setChannelElements] = useState<any>(null);
+  const [channelElements, setChannelElements] = useState<(JSX.Element | null)[] | null>(null);
 
   useLayoutEffect(() => {
     const channelElements =

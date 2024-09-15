@@ -211,7 +211,6 @@ export const createApiInstanceForNode = async (node: TNodeWithRelayChains): Prom
 export const callPolkadotJsTxFunction = (
   api: ApiPromise,
   { module, section, parameters }: TSerializedApiCall
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 ): Extrinsic => api.tx[module][section](...parameters)
 
 export const determineRelayChain = (node: TNodeWithRelayChains): TNodeDotKsmWithRelayChains =>

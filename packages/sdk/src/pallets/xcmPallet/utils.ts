@@ -1,13 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { type BN } from '@polkadot/util'
 import {
   Version,
   Parents,
   type TMultiLocationHeader,
   type TScenario,
-  type Extrinsic,
   type TRelayToParaInternalOptions,
   type TDestination,
   type TNode,
@@ -15,20 +10,21 @@ import {
 } from '../../types'
 import { createX1Payload, generateAddressPayload } from '../../utils'
 import { getParaId, getTNode } from '../assets'
-import { TJunction, type TMultiLocation } from '../../types/TMultiLocation'
+import { Junctions, TJunction, type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
+import { findParachainJunction } from './findParachainJunction'
 
 export const constructRelayToParaParameters = (
   { api, destination, address, amount, paraIdTo }: TRelayToParaInternalOptions,
   version: Version,
   includeFee = false
-): any[] => {
+): unknown[] => {
   const paraId =
     destination !== undefined && typeof destination !== 'object'
       ? (paraIdTo ?? getParaId(destination))
       : undefined
 
-  const parameters: any[] = [
+  const parameters: unknown[] = [
     createPolkadotXcmHeader('RelayToPara', version, destination, paraId),
     generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),
     createCurrencySpec(amount, version, Parents.ZERO),
@@ -40,9 +36,8 @@ export const constructRelayToParaParameters = (
   return parameters
 }
 
-export const isTMultiLocation = (value: any): value is TMultiLocation => {
-  return value && typeof value.parents !== 'undefined' && typeof value.interior !== 'undefined'
-}
+export const isTMultiLocation = (value: unknown): value is TMultiLocation =>
+  typeof value === 'object' && value !== null && 'parents' in value && 'interior' in value
 
 export const createBridgeCurrencySpec = (
   amount: string,
@@ -74,13 +69,12 @@ export const createCurrencySpec = (
   version: Version,
   parents: Parents,
   overriddenCurrency?: TMultiLocation | TMultiAsset[],
-  interior: any = 'Here'
+  interior: Junctions | 'Here' = 'Here'
 ): TCurrencySelectionHeaderArr => {
   if (!overriddenCurrency) {
     return {
       [version]: [
         {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           id: version === Version.V4 ? { parents, interior } : { Concrete: { parents, interior } },
           fun: { Fungible: amount }
         }
@@ -156,30 +150,6 @@ export const createBridgePolkadotXcmDest = (
   return {
     [version]: isMultiLocationDestination ? destination : multiLocation
   }
-}
-
-export const calculateTransactionFee = async (tx: Extrinsic, address: string): Promise<BN> => {
-  const { partialFee } = await tx.paymentInfo(address)
-  return partialFee.toBn()
-}
-
-// TODO: Refactor this function to eliminate the any type
-const findParachainJunction = (multilocation: TMultiLocation): number | null => {
-  const { interior }: any = multilocation
-  for (const key in interior) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const junctions = interior[key]
-    if (Array.isArray(junctions)) {
-      for (const junction of junctions) {
-        if ('Parachain' in junction) {
-          return Number(junction.Parachain)
-        }
-      }
-    } else if (junctions !== undefined && 'Parachain' in junctions) {
-      return Number(junctions.Parachain)
-    }
-  }
-  return null
 }
 
 export const resolveTNodeFromMultiLocation = (multiLocation: TMultiLocation): TNode => {

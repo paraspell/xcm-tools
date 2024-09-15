@@ -19,6 +19,7 @@ export type TSerializedEthTransfer = {
   destinationParaId: number
   destinationFee: bigint
   amount: bigint
+  fee: bigint
 }
 
 type OptionalProperties<T> = {

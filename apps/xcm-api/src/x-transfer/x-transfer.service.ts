@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import {
   BadRequestException,
   Injectable,
@@ -15,15 +10,16 @@ import {
   NODE_NAMES,
   TNode,
   TTransferReturn,
+  UseKeepAliveFinalBuilder,
   createApiInstanceForNode,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
-import { XTransferDto } from './dto/XTransferDto.js';
+import { PatchedXTransferDto } from './dto/XTransferDto.js';
 
 @Injectable()
 export class XTransferService {
   async generateXcmCall(
-    { from, to, amount, address, currency, xcmVersion }: XTransferDto,
+    { from, to, amount, address, currency, xcmVersion }: PatchedXTransferDto,
     hashEnabled = false,
   ) {
     const fromNode = from as TNode | undefined;
@@ -57,30 +53,35 @@ export class XTransferService {
 
     const api = await createApiInstanceForNode(fromNode ?? toNode);
 
-    let builder: any = Builder(api);
+    const builder = Builder(api);
+
+    let finalBuilder: UseKeepAliveFinalBuilder;
 
     if (fromNode && toNode) {
       // Parachain to parachain
-      builder = builder.from(fromNode).to(toNode).currency(currency);
-    } else if (from) {
+      finalBuilder = builder
+        .from(fromNode)
+        .to(toNode)
+        .currency(currency)
+        .amount(amount)
+        .address(address);
+    } else if (fromNode) {
       // Parachain to relaychain
-      builder = builder.from(fromNode);
+      finalBuilder = builder.from(fromNode).amount(amount).address(address);
     } else if (to) {
       // Relaychain to parachain
-      builder = builder.to(toNode);
+      finalBuilder = builder.to(toNode).amount(amount).address(address);
     }
 
-    builder = builder.amount(amount).address(address);
-
     if (xcmVersion) {
-      builder = builder.xcmVersion(xcmVersion);
+      finalBuilder = finalBuilder.xcmVersion(xcmVersion);
     }
 
     let response: TTransferReturn;
     try {
       response = hashEnabled
-        ? await builder.build()
-        : await builder.buildSerializedApiCall();
+        ? await finalBuilder.build()
+        : await finalBuilder.buildSerializedApiCall();
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||
@@ -88,7 +89,8 @@ export class XTransferService {
       ) {
         throw new BadRequestException(e.message);
       }
-      throw new InternalServerErrorException(e.message);
+      const error = e as Error;
+      throw new InternalServerErrorException(error.message);
     } finally {
       if (api) await api.disconnect();
     }

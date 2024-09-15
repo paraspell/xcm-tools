@@ -1,13 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Channel } from './channel.entity';
+import { ChannelResult } from 'src/types/types';
 
 @Injectable()
 export class ChannelService {
@@ -16,7 +11,10 @@ export class ChannelService {
     private channelRepository: Repository<Channel>,
   ) {}
 
-  async findAll(startTime: number, endTime: number): Promise<Channel[]> {
+  async findAll(
+    startTime: number,
+    endTime: number,
+  ): Promise<Partial<Channel>[]> {
     const query = `
       SELECT 
         LEAST(ch.sender, ch.recipient) AS "senderId",
@@ -43,20 +41,20 @@ export class ChannelService {
         "totalCount" DESC;
     `;
 
-    const results = await this.channelRepository.query(query, [
+    const results = (await this.channelRepository.query(query, [
       startTime,
       endTime,
-    ]);
+    ])) as ChannelResult[];
 
-    return results.map((result) => ({
-      id: parseInt(result.id, 10),
-      sender: parseInt(result.senderId, 10),
-      recipient: parseInt(result.recipientId, 10),
-      message_count: parseInt(result.totalCount, 10),
+    return results.map(({ id, senderId, recipientId, totalCount }) => ({
+      id: parseInt(id, 10),
+      sender: parseInt(senderId, 10),
+      recipient: parseInt(recipientId, 10),
+      message_count: parseInt(totalCount, 10),
     }));
   }
 
-  async findOne(sender: number, recipient: number): Promise<Channel> {
+  async findOne(sender: number, recipient: number): Promise<Partial<Channel>> {
     const query = `
       SELECT 
         ch.sender AS "senderId",
@@ -76,10 +74,17 @@ export class ChannelService {
         ch.sender, ch.recipient, ch.id, ch.status;
     `;
 
-    const result = await this.channelRepository.query(query, [
+    const result = (await this.channelRepository.query(query, [
       sender,
       recipient,
-    ]);
+    ])) as {
+      id: string;
+      senderId: string;
+      recipientId: string;
+      totalCount: string;
+      active_at: string;
+      status: string;
+    }[];
 
     if (result.length === 0) {
       throw new Error(
@@ -94,6 +99,6 @@ export class ChannelService {
       message_count: parseInt(result[0].totalCount, 10),
       active_at: parseInt(result[0].active_at, 10),
       status: result[0].status,
-    } as any;
+    };
   }
 }

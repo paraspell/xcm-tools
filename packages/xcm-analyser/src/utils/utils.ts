@@ -1,9 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { type MultiLocation, type Junction, MultiLocationSchema } from '../types';
+import type {
+  MultiLocation,
+  Junction,
+  TJunctionAccountId32,
+  TJunctionAccountIndex64,
+  TJunctionAccountKey20,
+  TJunctionGeneralKey,
+  TJunctionPlurality,
+} from '../types';
+import { MultiLocationSchema } from '../types';
 
 export const convertJunctionToReadable = (junctionOriginal: Junction): string | never => {
   const junction = Object.fromEntries(
@@ -13,21 +17,26 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
   if ('parachain' in junction) {
     return `Parachain(${junction.parachain})`;
   } else if ('accountid32' in junction) {
-    return `AccountId32(${junction.accountid32.network}, ${junction.accountid32.id})`;
+    const junct = junction.accountid32 as TJunctionAccountId32['AccountId32'];
+    return `AccountId32(${junct.network}, ${junct.id})`;
   } else if ('accountindex64' in junction) {
-    return `AccountIndex64(${junction.accountindex64.network}, ${junction.accountindex64.index})`;
+    const junct = junction.accountindex64 as TJunctionAccountIndex64['AccountIndex64'];
+    return `AccountIndex64(${junct.network}, ${junct.index})`;
   } else if ('accountkey20' in junction) {
-    return `AccountKey20(${junction.accountkey20.network}, ${junction.accountkey20.key})`;
+    const junct = junction.accountkey20 as TJunctionAccountKey20['AccountKey20'];
+    return `AccountKey20(${junct.network}, ${junct.key})`;
   } else if ('palletinstance' in junction) {
     return `PalletInstance(${junction.palletinstance})`;
   } else if ('generalindex' in junction) {
     return `GeneralIndex(${junction.generalindex})`;
   } else if ('generalkey' in junction) {
-    return `GeneralKey(${junction.generalkey.length}, ${junction.generalkey.data})`;
+    const junct = junction.generalkey as TJunctionGeneralKey['GeneralKey'];
+    return `GeneralKey(${junct.length}, ${junct.data})`;
   } else if ('onlychild' in junction) {
     return `OnlyChild(${junction.onlychild})`;
   } else if ('plurality' in junction) {
-    return `Plurality(${junction.plurality.id}, ${junction.plurality.part})`;
+    const junct = junction.plurality as TJunctionPlurality['Plurality'];
+    return `Plurality(${junct.id}, ${junct.part})`;
   } else if ('globalconsensus' in junction) {
     return `GlobalConsensus(${junction.globalconsensus})`;
   }
@@ -35,8 +44,8 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
   throw new Error('Unknown junction type');
 };
 
-export function findMultiLocationInObject(obj: any): MultiLocation {
-  function hasSpecificKeys(value: any): boolean {
+export function findMultiLocationInObject(obj: unknown): MultiLocation | null {
+  function hasSpecificKeys(value: unknown): boolean {
     return (
       typeof value === 'object' &&
       value !== null &&
@@ -46,13 +55,13 @@ export function findMultiLocationInObject(obj: any): MultiLocation {
     );
   }
 
-  function searchObject(value: any): any {
+  function searchObject(value: unknown): MultiLocation | null {
     if (hasSpecificKeys(value)) {
       const parsedValue = MultiLocationSchema.parse(value);
       return parsedValue;
     } else if (typeof value === 'object' && value !== null) {
       for (const key of Object.keys(value)) {
-        const result = searchObject(value[key]);
+        const result = searchObject((value as Record<string, unknown>)[key]);
 
         if (result) return result;
       }

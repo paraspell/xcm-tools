@@ -52,6 +52,5 @@ export const buildTx = (
   api: ApiPromise,
   { module, section, parameters }: TSerializedApiCall
 ) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return api.tx[module][section](...parameters);
 };

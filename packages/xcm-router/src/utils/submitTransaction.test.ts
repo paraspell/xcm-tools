@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Unit tests for submitTransaction function
 
@@ -17,7 +15,7 @@ import { submitTransaction } from './submitTransaction';
 
 class MockApiPromise {
   registry = {
-    findMetaError: (moduleError: any) => {
+    findMetaError: (moduleError: unknown) => {
       return {
         docs: ['Mock documentation'],
         name: 'MockErrorName',
@@ -29,7 +27,7 @@ class MockApiPromise {
 
 class MockExtrinsic2 {
   async signAsync(): Promise<void> {}
-  send(callback: any): void {}
+  send(_callback: unknown): void {}
 }
 
 class MockSigner {
@@ -45,9 +43,17 @@ describe('submitTransaction', () => {
     const mockSigner = new MockSigner();
     const injectorAddress = 'mockInjectorAddress';
 
-    mockTx.send = vi.fn((callback) => {
-      callback({ status: { isFinalized: true }, txHash: 'mockTxHash' });
-    });
+    mockTx.send = vi.fn(
+      (
+        callback: (result: {
+          status: { isFinalized: boolean };
+          txHash?: string;
+          dispatchError?: unknown;
+        }) => void,
+      ) => {
+        callback({ status: { isFinalized: true }, txHash: 'mockTxHash' });
+      },
+    );
 
     const result = await submitTransaction(
       mockApi as ApiPromise,
@@ -64,13 +70,21 @@ describe('submitTransaction', () => {
     const mockSigner = new MockSigner();
     const injectorAddress = 'mockInjectorAddress';
 
-    mockTx.send = vi.fn((callback) => {
-      const dispatchError = {
-        isModule: true,
-        asModule: 'mockModuleError',
-      };
-      callback({ status: { isFinalized: true }, dispatchError });
-    });
+    mockTx.send = vi.fn(
+      (
+        callback: (result: {
+          status: { isFinalized: boolean };
+          txHash?: string;
+          dispatchError?: unknown;
+        }) => void,
+      ) => {
+        const dispatchError = {
+          isModule: true,
+          asModule: 'mockModuleError',
+        };
+        callback({ status: { isFinalized: true }, dispatchError });
+      },
+    );
 
     try {
       await submitTransaction(
@@ -98,9 +112,17 @@ describe('submitTransaction', () => {
       isModule: false,
     };
 
-    mockTx.send = vi.fn((callback) => {
-      callback({ status: { isFinalized: true }, dispatchError: mockDispatchError });
-    });
+    mockTx.send = vi.fn(
+      (
+        callback: (result: {
+          status: { isFinalized: boolean };
+          txHash?: string;
+          dispatchError?: unknown;
+        }) => void,
+      ) => {
+        callback({ status: { isFinalized: true }, dispatchError: mockDispatchError });
+      },
+    );
 
     try {
       await submitTransaction(

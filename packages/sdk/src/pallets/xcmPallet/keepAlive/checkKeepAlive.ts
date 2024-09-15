@@ -1,55 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { type ApiPromise } from '@polkadot/api'
-import { KeepAliveError } from '../../errors/KeepAliveError'
-import {
-  type TEdJsonMap,
-  type TNode,
-  type Extrinsic,
-  type CheckKeepAliveOptions,
-  type TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama
-} from '../../types'
-import { getAssetsObject } from '../assets'
+import { UInt } from '@polkadot/types'
 import { BN } from '@polkadot/util'
-import * as edMapJson from '../../maps/existential-deposits.json' assert { type: 'json' }
-import { Builder } from '../../builder'
-import { calculateTransactionFee } from './utils'
-import { determineRelayChain } from '../../utils'
-
-const edMap = edMapJson as TEdJsonMap
-
-export const getExistentialDeposit = (node: TNodeDotKsmWithRelayChains): string | null =>
-  edMap[node]
-
-const createTx = async (
-  originApi: ApiPromise,
-  destApi: ApiPromise,
-  address: string,
-  amount: string,
-  currencySymbol: string,
-  originNode?: TNode,
-  destNode?: TNode
-): Promise<Extrinsic | null> => {
-  if (originNode !== undefined && destNode !== undefined) {
-    return await Builder(destApi)
-      .from(destNode)
-      .to(originNode)
-      .currency({ symbol: currencySymbol })
-      .amount(amount)
-      .address(address)
-      .build()
-  }
-  if (originNode === undefined && destNode !== undefined) {
-    return await Builder(originApi).to(destNode).amount(amount).address(address).build()
-  } else if (originNode !== undefined && destNode === undefined) {
-    return await Builder(destApi).to(originNode).amount(amount).address(address).build()
-  } else {
-    return null
-  }
-}
+import { AccountInfo } from '@polkadot/types/interfaces'
+import { KeepAliveError } from '../../../errors/KeepAliveError'
+import { CheckKeepAliveOptions, TNodePolkadotKusama } from '../../../types'
+import { getAssetsObject } from '../../assets'
+import { determineRelayChain } from '../../../utils'
+import { calculateTransactionFee } from '../calculateTransactionFee'
+import { getExistentialDeposit } from '../../assets/eds'
+import { createTx } from './createTx'
 
 export const checkKeepAlive = async ({
   originApi,
@@ -78,11 +36,11 @@ export const checkKeepAlive = async ({
     )
   }
 
-  const { data }: any = await destApi.query.system.account(address)
-  const balance: BN = data.free.toBn()
+  const { data } = (await destApi.query.system.account(address)) as AccountInfo
+  const balance: BN = (data.free as UInt).toBn()
 
-  const { data: originData }: any = await originApi.query.system.account(address)
-  const balanceOrigin: BN = originData.free.toBn()
+  const { data: originData } = (await originApi.query.system.account(address)) as AccountInfo
+  const balanceOrigin: BN = (originData.free as UInt).toBn()
 
   const amountBN = new BN(amount)
 
@@ -138,7 +96,7 @@ export const checkKeepAlive = async ({
   if (balance.add(amountBNWithoutFee).lt(new BN(ed))) {
     throw new KeepAliveError(
       `Keep alive check failed: Sending ${amount} ${currencySymbol} to ${destNode} would result in an account balance below the required existential deposit.
-       Please increase the amount to meet the minimum balance requirement of the destination chain.`
+         Please increase the amount to meet the minimum balance requirement of the destination chain.`
     )
   }
 
@@ -150,7 +108,7 @@ export const checkKeepAlive = async ({
   ) {
     throw new KeepAliveError(
       `Keep alive check failed: Sending ${amount} ${currencySymbol} to ${destNode} would result in an account balance below the required existential deposit on origin.
-       Please decrease the amount to meet the minimum balance requirement of the origin chain.`
+         Please decrease the amount to meet the minimum balance requirement of the origin chain.`
     )
   }
 }

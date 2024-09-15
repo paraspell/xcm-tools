@@ -46,6 +46,7 @@ export const buildEthTransferOptions = async ({
     token: plan.success.token,
     destinationParaId: plan.success.destinationParaId,
     destinationFee: plan.success.destinationFee,
-    amount: plan.success.amount
+    amount: plan.success.amount,
+    fee: plan.success.fee
   }
 }

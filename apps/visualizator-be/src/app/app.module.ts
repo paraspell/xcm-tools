@@ -8,7 +8,6 @@ import { Asset, Message } from '../messages/message.entity';
 import { Channel } from '../channels/channel.entity';
 import { ChannelModule } from '../channels/channels.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TasksModule } from '../tasks/tasks.module';
 
 const typeOrmConfig = (config: ConfigService): TypeOrmModuleOptions => ({
   type: 'postgres',
@@ -37,7 +36,6 @@ const typeOrmConfig = (config: ConfigService): TypeOrmModuleOptions => ({
     }),
     MessageModule,
     ChannelModule,
-    TasksModule,
   ],
 })
 export class AppModule {}

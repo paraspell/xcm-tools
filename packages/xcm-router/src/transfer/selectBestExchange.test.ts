@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // Unit tests for selectBestExchange function
 
 import { describe, it, expect, vi, afterAll, beforeAll, type MockInstance } from 'vitest';
@@ -10,7 +8,8 @@ import { selectBestExchange } from './selectBestExchange';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import { type TTransferOptions } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
-import { createApiInstanceForNode } from '@paraspell/sdk';
+import { createApiInstanceForNode, Extrinsic } from '@paraspell/sdk';
+import BigNumber from 'bignumber.js';
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
@@ -27,11 +26,11 @@ describe('selectBestExchange', () => {
   beforeAll(() => {
     fromExchangeTxSpy = vi
       .spyOn(transferUtils, 'buildFromExchangeExtrinsic')
-      .mockReturnValue({} as any);
+      .mockResolvedValue({} as Extrinsic);
     toExchangeTxSpy = vi
       .spyOn(transferUtils, 'buildToExchangeExtrinsic')
-      .mockReturnValue({} as any);
-    feeSpy = vi.spyOn(utils, 'calculateTransactionFee').mockReturnValue({} as any);
+      .mockResolvedValue({} as Extrinsic);
+    feeSpy = vi.spyOn(utils, 'calculateTransactionFee').mockResolvedValue(BigNumber(2000));
   });
 
   afterAll(() => {

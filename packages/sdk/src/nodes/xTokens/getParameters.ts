@@ -7,8 +7,7 @@ export const getParameters = (
   amount: string,
   fees: string | number,
   feeAsset?: TCurrency
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): any[] => {
+): unknown[] => {
   if (isAssetHub) {
     return feeAsset !== undefined
       ? [currencySelection, feeAsset, addressSelection, fees]

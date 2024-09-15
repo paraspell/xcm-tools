@@ -19,7 +19,7 @@ import {
 import { getRelayChainSymbol, hasSupportForAsset } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
-import { checkKeepAlive } from './keepAlive'
+import { checkKeepAlive } from './keepAlive/checkKeepAlive'
 import { isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
 import { getAssetBySymbolOrId } from '../assets/getAssetBySymbolOrId'
 

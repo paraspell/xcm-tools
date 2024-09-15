@@ -1,26 +1,25 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ApiPromise } from '@polkadot/api'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getAssetHubMultiLocation } from './getAssetHubMultiLocation'
 import { u32 } from '@polkadot/types'
 
-// Mocking the dependencies
 vi.mock('./getAssetHubMultiLocation', () => ({
   getAssetHubMultiLocation: vi.fn()
 }))
 
 describe('getBalanceForeignPolkadotXcm', () => {
-  let mockApi: ApiPromise
-
   beforeEach(() => {
     vi.resetAllMocks()
+  })
 
-    mockApi = {
+  it('should return balance for Mythos node', async () => {
+    const mockApi = {
       query: {
         balances: {
-          account: vi.fn()
+          account: vi.fn().mockResolvedValue({
+            toJSON: () => ({ free: '1000' })
+          })
         },
         foreignAssets: {
           account: vi.fn()
@@ -33,12 +32,6 @@ describe('getBalanceForeignPolkadotXcm', () => {
         createType: vi.fn()
       }
     } as unknown as ApiPromise
-  })
-
-  it('should return balance for Mythos node', async () => {
-    vi.mocked(mockApi.query.balances.account).mockResolvedValue({
-      toJSON: () => ({ free: '1000' })
-    } as any)
 
     const result = await getBalanceForeignPolkadotXcm('some-address', undefined, mockApi, 'Mythos')
 
@@ -47,16 +40,30 @@ describe('getBalanceForeignPolkadotXcm', () => {
   })
 
   it('should return balance for AssetHubPolkadot node', async () => {
+    const mockApi = {
+      query: {
+        balances: {
+          account: vi.fn()
+        },
+        foreignAssets: {
+          account: vi.fn().mockResolvedValue({
+            toJSON: () => ({ balance: '500' })
+          })
+        },
+        assets: {
+          account: vi.fn()
+        }
+      },
+      registry: {
+        createType: vi.fn()
+      }
+    } as unknown as ApiPromise
+
     // Mock getAssetHubMultiLocation
     vi.mocked(getAssetHubMultiLocation).mockReturnValue({
       parents: 1,
       interior: { X1: { Parachain: '2000' } }
     })
-
-    // Mock the response for foreignAssets.account
-    vi.mocked(mockApi.query.foreignAssets.account).mockResolvedValue({
-      toJSON: () => ({ balance: '500' })
-    } as any)
 
     const result = await getBalanceForeignPolkadotXcm(
       'some-address',
@@ -77,9 +84,24 @@ describe('getBalanceForeignPolkadotXcm', () => {
   it('should return balance for other nodes using assets.account', async () => {
     const validId = '1000'
 
-    vi.mocked(mockApi.query.assets.account).mockResolvedValue({
-      toJSON: () => ({ balance: '200' })
-    } as any)
+    const mockApi = {
+      query: {
+        balances: {
+          account: vi.fn()
+        },
+        foreignAssets: {
+          account: vi.fn()
+        },
+        assets: {
+          account: vi.fn().mockResolvedValue({
+            toJSON: () => ({ balance: '200' })
+          })
+        }
+      },
+      registry: {
+        createType: vi.fn()
+      }
+    } as unknown as ApiPromise
 
     const result = await getBalanceForeignPolkadotXcm('some-address', validId, mockApi)
 
@@ -90,6 +112,23 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
   it('should return null and log error if an error occurs', async () => {
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+
+    const mockApi = {
+      query: {
+        balances: {
+          account: vi.fn().mockRejectedValue(new Error('API error'))
+        },
+        foreignAssets: {
+          account: vi.fn()
+        },
+        assets: {
+          account: vi.fn()
+        }
+      },
+      registry: {
+        createType: vi.fn()
+      }
+    } as unknown as ApiPromise
 
     // Simulate an error in API query
     vi.mocked(mockApi.query.balances.account).mockRejectedValue(new Error('API error'))

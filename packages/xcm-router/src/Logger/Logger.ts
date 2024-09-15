@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const Logger = {
-  log(...messages: any[]): void {
+  log(...messages: unknown[]): void {
     const isEnabled = true;
     const isTestMode = process.env.VITEST === 'true';
     if (isEnabled || isTestMode) {
