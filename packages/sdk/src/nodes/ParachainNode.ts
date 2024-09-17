@@ -24,10 +24,13 @@ import { generateAddressPayload, getFees, getAllNodeProviders, createApiInstance
 import {
   constructRelayToParaParameters,
   createCurrencySpec,
-  createPolkadotXcmHeader
+  createPolkadotXcmHeader,
+  isTMultiLocation
 } from '../pallets/xcmPallet/utils'
 import { TMultiLocationHeader, type TMultiLocation } from '../types/TMultiLocation'
 import { type TMultiAsset } from '../types/TMultiAsset'
+import { InvalidCurrencyError } from '../errors'
+import { verifyMultiLocation } from '../utils/verifyMultilocation'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
@@ -144,6 +147,12 @@ abstract class ParachainNode {
         serializedApiCallEnabled
       })
     } else if (supportsPolkadotXCM(this)) {
+      if (
+        isTMultiLocation(overridedCurrencyMultiLocation) &&
+        !verifyMultiLocation(this.node, overridedCurrencyMultiLocation)
+      ) {
+        throw new InvalidCurrencyError('Provided Multi-location is not a valid currency.')
+      }
       return this.transferPolkadotXCM({
         api,
         header: this.createPolkadotXcmHeader(scenario, version, destination, paraId),

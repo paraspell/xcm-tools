@@ -8,6 +8,7 @@ import { ApiPromise } from '@polkadot/api'
 import {
   TAssetDetails,
   TAssetJsonMap,
+  TMultiLocation,
   TNativeAssetDetails,
   TNodeAssets,
   TNodePolkadotKusama
@@ -300,6 +301,17 @@ const fetchNativeAsset = async (api: ApiPromise): Promise<string> => {
   return symbols[0]
 }
 
+const fetchMultiLocations = async (api: ApiPromise): Promise<TMultiLocation[]> => {
+  const res = await api.query.foreignAssets.asset.entries()
+  return res.map(
+    ([
+      {
+        args: [era]
+      }
+    ]) => era.toJSON()
+  ) as unknown as TMultiLocation[]
+}
+
 const fetchNodeAssets = async (
   node: TNodePolkadotKusama,
   api: ApiPromise,
@@ -403,6 +415,19 @@ const fetchNodeAssets = async (
     }
   }
 
+  if (node === 'AssetHubPolkadot' || node === 'AssetHubKusama') {
+    const nativeAssets = (await fetchNativeAssets(api)) ?? []
+    const otherAssets = query ? await fetchOtherAssets(api, query) : []
+    const multiLocations = await fetchMultiLocations(api)
+    await api.disconnect()
+    return {
+      nativeAssets,
+      otherAssets,
+      nativeAssetSymbol,
+      multiLocations
+    }
+  }
+
   const nativeAssets = (await fetchNativeAssets(api)) ?? []
 
   const otherAssets = query ? await fetchOtherAssets(api, query) : []
@@ -441,7 +466,8 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
       nativeAssetSymbol:
         isError && oldData ? oldData.nativeAssetSymbol : (newData?.nativeAssetSymbol ?? ''),
       nativeAssets: isError && oldData ? oldData.nativeAssets : (newData?.nativeAssets ?? []),
-      otherAssets: isError && oldData ? oldData.otherAssets : (newData?.otherAssets ?? [])
+      otherAssets: isError && oldData ? oldData.otherAssets : (newData?.otherAssets ?? []),
+      multiLocations: isError && oldData ? oldData.multiLocations : (newData?.multiLocations ?? [])
     }
   }
   return output

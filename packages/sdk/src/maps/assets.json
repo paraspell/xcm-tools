@@ -1656,6 +1656,11 @@
         "decimals": 10
       },
       {
+        "assetId": "22222087",
+        "symbol": "KAIBYO",
+        "decimals": 12
+      },
+      {
         "assetId": "20090142",
         "symbol": "ELONA",
         "decimals": 10
@@ -1771,6 +1776,11 @@
         "decimals": 12
       },
       {
+        "assetId": "22222079",
+        "symbol": "GR",
+        "decimals": 12
+      },
+      {
         "assetId": "20090110",
         "symbol": "test1",
         "decimals": 10
@@ -1814,6 +1824,11 @@
         "assetId": "202406",
         "symbol": "USDT",
         "decimals": 16
+      },
+      {
+        "assetId": "22222084",
+        "symbol": "SOPHIA",
+        "decimals": 12
       },
       {
         "assetId": "22222008",
@@ -2086,6 +2101,11 @@
         "decimals": 12
       },
       {
+        "assetId": "696969",
+        "symbol": "BRO",
+        "decimals": 18
+      },
+      {
         "assetId": "14",
         "symbol": "LEAP",
         "decimals": 18
@@ -2331,6 +2351,16 @@
         "decimals": 10
       },
       {
+        "assetId": "3164",
+        "symbol": "TTT",
+        "decimals": 3
+      },
+      {
+        "assetId": "1828",
+        "symbol": "CPLS",
+        "decimals": 10
+      },
+      {
         "assetId": "20090116",
         "symbol": "POO",
         "decimals": 10
@@ -2344,6 +2374,11 @@
         "assetId": "22222014",
         "symbol": "GIT",
         "decimals": 12
+      },
+      {
+        "assetId": "1810",
+        "symbol": "TSTD",
+        "decimals": 6
       },
       {
         "assetId": "20090129",
@@ -2374,11 +2409,6 @@
         "assetId": "20090136",
         "symbol": "HTG",
         "decimals": 10
-      },
-      {
-        "assetId": "12746",
-        "symbol": "TTTT",
-        "decimals": 6
       },
       {
         "assetId": "32",
@@ -2451,9 +2481,9 @@
         "decimals": 9
       },
       {
-        "assetId": "1994",
-        "symbol": "CRT",
-        "decimals": 4
+        "assetId": "5361",
+        "symbol": "NAT",
+        "decimals": 10
       },
       {
         "assetId": "2829",
@@ -2576,6 +2606,11 @@
         "decimals": 10
       },
       {
+        "assetId": "22222082",
+        "symbol": "Ax",
+        "decimals": 12
+      },
+      {
         "assetId": "20090103",
         "symbol": "BTC",
         "decimals": 20
@@ -2584,6 +2619,11 @@
         "assetId": "20090118",
         "symbol": "NOTDED",
         "decimals": 10
+      },
+      {
+        "assetId": "22222085",
+        "symbol": "ANU",
+        "decimals": 12
       },
       {
         "assetId": "20090124",
@@ -2673,6 +2713,11 @@
       {
         "assetId": "22222023",
         "symbol": "LURPIS",
+        "decimals": 12
+      },
+      {
+        "assetId": "22222088",
+        "symbol": "KOYM",
         "decimals": 12
       },
       {
@@ -2771,6 +2816,11 @@
         "decimals": 10
       },
       {
+        "assetId": "22222080",
+        "symbol": "GREEN",
+        "decimals": 12
+      },
+      {
         "assetId": "22222057",
         "symbol": "DIO",
         "decimals": 12
@@ -2781,6 +2831,11 @@
         "decimals": 6
       },
       {
+        "assetId": "8277",
+        "symbol": "KH5usdt",
+        "decimals": 20
+      },
+      {
         "assetId": "59",
         "symbol": "OK",
         "decimals": 12
@@ -2789,6 +2844,11 @@
         "assetId": "2820",
         "symbol": "HOOT",
         "decimals": 6
+      },
+      {
+        "assetId": "22222083",
+        "symbol": "TAG",
+        "decimals": 12
       },
       {
         "assetId": "20090125",
@@ -2804,11 +2864,6 @@
         "assetId": "22222007",
         "symbol": "NaCl",
         "decimals": 12
-      },
-      {
-        "assetId": "2567",
-        "symbol": "TSTRM",
-        "decimals": 6
       },
       {
         "assetId": "51",
@@ -2868,6 +2923,11 @@
       {
         "assetId": "22222030",
         "symbol": "PIGS",
+        "decimals": 12
+      },
+      {
+        "assetId": "22222086",
+        "symbol": "BIFF",
         "decimals": 12
       },
       {
@@ -3007,7 +3067,7 @@
       },
       {
         "assetId": "112233",
-        "symbol": "MTA",
+        "symbol": "MTC",
         "decimals": 10
       },
       {
@@ -3023,6 +3083,11 @@
       {
         "assetId": "1180",
         "symbol": "KRAK",
+        "decimals": 10
+      },
+      {
+        "assetId": "1148",
+        "symbol": "NT2",
         "decimals": 10
       },
       {
@@ -3161,6 +3226,11 @@
         "decimals": 12
       },
       {
+        "assetId": "6594",
+        "symbol": "MVPW",
+        "decimals": 3
+      },
+      {
         "assetId": "660301",
         "symbol": "GRL",
         "decimals": 6
@@ -3188,6 +3258,11 @@
       {
         "assetId": "22222060",
         "symbol": "TATE",
+        "decimals": 12
+      },
+      {
+        "assetId": "22222081",
+        "symbol": "NAR",
         "decimals": 12
       },
       {
@@ -3239,6 +3314,356 @@
         "assetId": "2203",
         "symbol": "PBTC",
         "decimals": 10
+      }
+    ],
+    "multiLocations": [
+      {
+        "parents": 1,
+        "interior": {
+          "x1": {
+            "parachain": 2011
+          }
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x1": {
+            "globalConsensus": {
+              "kusama": null
+            }
+          }
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x2": [
+            {
+              "parachain": 2030
+            },
+            {
+              "generalKey": {
+                "length": 2,
+                "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0x582d872a1b094fc48f5de31d3b73f2d9be47def1"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0x6b175474e89094c44da98b954eedeac495271d0f"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x2": [
+            {
+              "parachain": 2011
+            },
+            {
+              "generalKey": {
+                "length": 3,
+                "data": "0x6571640000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x2": [
+            {
+              "parachain": 2004
+            },
+            {
+              "palletInstance": 10
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x1": {
+            "parachain": 3369
+          }
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x2": [
+            {
+              "parachain": 2030
+            },
+            {
+              "generalKey": {
+                "length": 2,
+                "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0x8daebade922df735c38c80c7ebd708af50815faa"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x2": [
+            {
+              "parachain": 2034
+            },
+            {
+              "generalIndex": 0
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
+                "key": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x1": {
+            "parachain": 2051
+          }
+        }
       }
     ]
   },
@@ -5792,6 +6217,60 @@
         "symbol": "RUEPP",
         "decimals": 10
       }
+    ],
+    "multiLocations": [
+      {
+        "parents": 2,
+        "interior": {
+          "x1": {
+            "globalConsensus": {
+              "polkadot": null
+            }
+          }
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x2": [
+            {
+              "parachain": 2125
+            },
+            {
+              "generalIndex": 0
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x1": {
+            "parachain": 2123
+          }
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x2": [
+            {
+              "parachain": 2023
+            },
+            {
+              "palletInstance": 10
+            }
+          ]
+        }
+      },
+      {
+        "parents": 1,
+        "interior": {
+          "x1": {
+            "parachain": 2015
+          }
+        }
+      }
     ]
   },
   "CoretimeKusama": {
@@ -6166,7 +6645,6 @@
         "symbol": "DED",
         "decimals": 12
       },
-
       {
         "assetId": "339306133874233608313826294843504252047",
         "symbol": "PINK",
