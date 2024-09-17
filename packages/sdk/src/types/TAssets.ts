@@ -1,4 +1,4 @@
-import { TNodeWithRelayChains, type TRelayChainSymbol } from '../types'
+import { TMultiLocation, TNodeWithRelayChains, type TRelayChainSymbol } from '../types'
 
 export type TAsset = TNativeAssetDetails | TAssetDetails
 
@@ -20,6 +20,7 @@ export type TNodeAssets = {
   nativeAssetSymbol: string
   nativeAssets: TNativeAssetDetails[]
   otherAssets: TAssetDetails[]
+  multiLocations?: TMultiLocation[]
 }
 
 export type TAssetJsonMap = Record<TNodeWithRelayChains, TNodeAssets>
