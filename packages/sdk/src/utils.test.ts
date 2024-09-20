@@ -19,7 +19,7 @@ describe('getNodeEndpointOption', () => {
   it('should return endpoint option for all nodes', () => {
     NODE_NAMES_DOT_KSM.forEach(node => {
       // Coretime does not have endpoint options yet
-      if (node === 'CoretimeKusama') return
+      if (node === 'CoretimeKusama' || node === 'CoretimePolkadot') return
       // Peaq has an endpoint commented out, but it works
       if (node === 'Peaq') return
 

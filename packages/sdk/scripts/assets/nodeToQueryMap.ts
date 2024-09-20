@@ -51,6 +51,7 @@ export const nodeToQuery: Record<TNodePolkadotKusama, string | null> = {
   Phala: 'assets.metadata',
   Khala: 'assets.metadata',
   CoretimeKusama: null,
+  CoretimePolkadot: null,
   Subsocial: null, // No assets metadata query
   KiltSpiritnet: null, // No assets metadata query
   Curio: 'assetRegistry.metadata',

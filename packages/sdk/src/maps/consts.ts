@@ -34,6 +34,7 @@ import Karura from '../nodes/supported/Karura'
 import AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
 import AssetHubKusama from '../nodes/supported/AssetHubKusama'
 import CoretimeKusama from '../nodes/supported/CoretimeKusama'
+import CoretimePolkadot from '../nodes/supported/CoretimePolkadot'
 import Encointer from '../nodes/supported/Encointer'
 import Robonomics from '../nodes/supported/Robonomics'
 import Astar from '../nodes/supported/Astar'
@@ -77,6 +78,7 @@ export const NODE_NAMES_DOT_KSM = [
   'Parallel',
   'AssetHubKusama',
   'CoretimeKusama',
+  'CoretimePolkadot',
   'Encointer',
   'Altair',
   'Amplitude',
@@ -148,6 +150,7 @@ export const nodes = {
   Parallel: new Parallel(),
   AssetHubKusama: new AssetHubKusama(),
   CoretimeKusama: new CoretimeKusama(),
+  CoretimePolkadot: new CoretimePolkadot(),
   Encointer: new Encointer(),
   Altair: new Altair(),
   Amplitude: new Amplitude(),

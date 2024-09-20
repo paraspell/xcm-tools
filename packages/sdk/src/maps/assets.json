@@ -6285,6 +6285,19 @@
     ],
     "otherAssets": []
   },
+  "CoretimePolkadot": {
+    "paraId": 1005,
+    "relayChainAssetSymbol": "DOT",
+    "nativeAssetSymbol": "DOT",
+    "nativeAssets": [
+      {
+        "symbol": "DOT",
+        "decimals": 10
+      }
+    ],
+    "otherAssets": [],
+    "multiLocations": []
+  },
   "Turing": {
     "paraId": 2114,
     "relayChainAssetSymbol": "KSM",

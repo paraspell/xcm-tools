@@ -222,5 +222,9 @@
   "Peaq": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
+  },
+  "CoretimePolkadot": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
   }
 }
