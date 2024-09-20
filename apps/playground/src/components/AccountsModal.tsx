@@ -27,6 +27,7 @@ const AccountsModal: FC<Props> = ({
           variant="subtle"
           key={account.address}
           onClick={onAccountSelect(account)}
+          data-testid="btn-account"
         >
           {`${account.meta.name} (${
             account.meta.source

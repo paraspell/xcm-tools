@@ -20,6 +20,7 @@ const OutputAlert: FC<Props> = ({ children, onClose, useLinkIcon }) => (
     onClose={onClose}
     mt="lg"
     style={{ overflowWrap: "anywhere" }}
+    data-testid="output"
   >
     <Text component="pre" size="sm">
       {children}

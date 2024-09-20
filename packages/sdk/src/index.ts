@@ -20,6 +20,7 @@ export {
   getNodeProvider,
   getAllNodeProviders,
   createApiInstanceForNode,
-  isRelayChain
+  isRelayChain,
+  determineRelayChain
 } from './utils'
 export * from './errors'

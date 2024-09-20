@@ -62,6 +62,7 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions }) => {
           disabled={isNotParaToPara}
           searchable
           required
+          data-testid="select-currency"
           {...form.getInputProps("currencyOptionId")}
         />
       )}

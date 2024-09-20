@@ -111,7 +111,12 @@ const App = () => {
                   variant="outline"
                 >{`${selectedAccount.meta.name} (${selectedAccount.meta.source})`}</Button>
               ) : (
-                <Button onClick={onConnectWalletClick}>Connect wallet</Button>
+                <Button
+                  onClick={onConnectWalletClick}
+                  data-testid="btn-connect-wallet"
+                >
+                  Connect wallet
+                </Button>
               )}
             </Group>
           </AppShell.Header>

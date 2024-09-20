@@ -77,6 +77,7 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...NODES_WITH_RELAY_CHAINS]}
           searchable
           required
+          data-testid="select-destination"
           {...form.getInputProps("to")}
         />
 
@@ -87,6 +88,7 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           allowDeselect={false}
           searchable
           required
+          data-testid="select-currency"
           {...form.getInputProps("currencyOptionId")}
         />
 
@@ -94,6 +96,7 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           label="Recipient address"
           placeholder="0x0000000"
           required
+          data-testid="input-address"
           {...form.getInputProps("address")}
         />
 
@@ -101,12 +104,17 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           label="Amount"
           placeholder="0"
           required
+          data-testid="input-amount"
           {...form.getInputProps("amount")}
         />
 
-        <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
+        <Checkbox
+          label="Use XCM API"
+          {...form.getInputProps("useApi")}
+          data-testid="checkbox-api"
+        />
 
-        <Button type="submit" loading={loading}>
+        <Button type="submit" loading={loading} data-testid="submit">
           Submit transaction
         </Button>
       </Stack>

@@ -34,6 +34,8 @@ const PalletsForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...PALLETS_QUERIES]}
           searchable
           required
+          allowDeselect={false}
+          data-testid="select-func"
           {...form.getInputProps("func")}
         />
 
@@ -43,12 +45,18 @@ const PalletsForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...NODE_NAMES]}
           searchable
           required
+          allowDeselect={false}
+          data-testid="select-node"
           {...form.getInputProps("node")}
         />
 
-        <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
+        <Checkbox
+          label="Use XCM API"
+          {...form.getInputProps("useApi")}
+          data-testid="checkbox-api"
+        />
 
-        <Button type="submit" loading={loading}>
+        <Button type="submit" loading={loading} data-testid="submit">
           Submit
         </Button>
       </Stack>

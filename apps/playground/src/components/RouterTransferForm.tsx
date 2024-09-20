@@ -374,6 +374,7 @@ const RouterTransferForm: FC<Props> = ({
           allowDeselect={false}
           searchable
           required
+          data-testid="select-from"
           {...form.getInputProps("from")}
         />
 
@@ -384,6 +385,7 @@ const RouterTransferForm: FC<Props> = ({
           allowDeselect={false}
           searchable
           required
+          data-testid="select-exchange"
           {...form.getInputProps("exchange")}
         />
 
@@ -394,6 +396,7 @@ const RouterTransferForm: FC<Props> = ({
           allowDeselect={false}
           searchable
           required
+          data-testid="select-to"
           {...form.getInputProps("to")}
         />
 
@@ -411,6 +414,7 @@ const RouterTransferForm: FC<Props> = ({
           disabled={isFromNotParaToPara}
           searchable
           required
+          data-testid="select-currency-from"
           {...form.getInputProps("currencyFromOptionId")}
         />
 
@@ -428,6 +432,7 @@ const RouterTransferForm: FC<Props> = ({
           disabled={isToNotParaToPara}
           searchable
           required
+          data-testid="select-currency-to"
           {...form.getInputProps("currencyToOptionId")}
         />
 
@@ -435,6 +440,7 @@ const RouterTransferForm: FC<Props> = ({
           label="Recipient address"
           placeholder="0x0000000"
           required
+          data-testid="input-recipient-address"
           {...form.getInputProps("recipientAddress")}
         />
 
@@ -442,6 +448,7 @@ const RouterTransferForm: FC<Props> = ({
           label="Amount"
           placeholder="0"
           required
+          data-testid="input-amount"
           {...form.getInputProps("amount")}
         />
 
@@ -458,6 +465,8 @@ const RouterTransferForm: FC<Props> = ({
           ]}
           searchable
           required
+          data-testid="select-transaction-type"
+          allowDeselect={false}
           {...form.getInputProps("transactionType")}
         />
 
@@ -465,11 +474,16 @@ const RouterTransferForm: FC<Props> = ({
           label="Slippage percentage (%)"
           placeholder="1"
           required
+          data-testid="input-slippage-pct"
           {...form.getInputProps("slippagePct")}
         />
 
         <Group justify="space-between">
-          <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
+          <Checkbox
+            label="Use XCM API"
+            {...form.getInputProps("useApi")}
+            data-testid="checkbox-api"
+          />
           <Button.Group orientation="vertical">
             {(form.values.from === "Ethereum" ||
               form.values.to === "Ethereum") && (
@@ -478,6 +492,7 @@ const RouterTransferForm: FC<Props> = ({
                 variant="outline"
                 onClick={onConnectEthWallet}
                 rightSection={infoEthWallet}
+                data-testid="connect-eth-wallet"
               >
                 {selectedEthAccount
                   ? `Connected: ${selectedEthAccount.substring(0, 6)}...${selectedEthAccount.substring(selectedEthAccount.length - 4)}`
@@ -491,6 +506,7 @@ const RouterTransferForm: FC<Props> = ({
                 variant="outline"
                 onClick={onConnectAssetHubWallet}
                 rightSection={infoAssetHubWallet}
+                data-testid="connect-asset-hub-wallet"
               >
                 {selectedAssetHubAccount
                   ? `${selectedAssetHubAccount?.meta.name} (${selectedAssetHubAccount?.meta.source})`
@@ -504,6 +520,7 @@ const RouterTransferForm: FC<Props> = ({
                   variant="outline"
                   onClick={onConnectEvmWallet}
                   rightSection={infoEvmWallet}
+                  data-testid="connect-evm-wallet"
                 >
                   {selectedAccount
                     ? `${selectedAccount?.meta.name} (${selectedAccount?.meta.source})`
@@ -513,7 +530,7 @@ const RouterTransferForm: FC<Props> = ({
           </Button.Group>
         </Group>
 
-        <Button type="submit" loading={loading}>
+        <Button type="submit" loading={loading} data-testid="submit">
           Submit transaction
         </Button>
       </Stack>
