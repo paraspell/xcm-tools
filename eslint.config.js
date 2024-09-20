@@ -26,6 +26,8 @@ export default tseslint.config(
       "**/client/",
       "**/postcss.config.cjs",
       "**/codegen.ts",
+      "**/playwright.config.ts",
+      "**/e2e/",
     ],
   },
   eslint.configs.recommended,

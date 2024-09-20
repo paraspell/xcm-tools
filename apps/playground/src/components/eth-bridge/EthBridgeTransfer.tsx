@@ -115,6 +115,7 @@ const EthBridgeTransfer = () => {
   };
 
   const submitEthTransactionApi = async (formValues: FormValuesTransformed) => {
+    const { currency } = formValues;
     if (!provider) {
       throw new Error("Provider not initialized");
     }
@@ -130,7 +131,7 @@ const EthBridgeTransfer = () => {
         ...formValues,
         destAddress: formValues.address,
         address: await signer.getAddress(),
-        currency: formValues.currency?.symbol,
+        currency: { symbol: currency?.symbol ?? "" },
       },
       "/x-transfer-eth",
       "POST",
@@ -221,7 +222,12 @@ const EthBridgeTransfer = () => {
     <Stack gap="xl">
       <Stack w="100%" maw={400} mx="auto" gap="lg">
         <Title order={3}>Ethereum Bridge Transfer</Title>
-        <Button size="xs" variant="outline" onClick={onConnectWallet}>
+        <Button
+          size="xs"
+          variant="outline"
+          onClick={onConnectWallet}
+          data-testid="btn-connect-eth-wallet"
+        >
           {selectedAccount
             ? `Connected: ${selectedAccount.substring(0, 6)}...${selectedAccount.substring(selectedAccount.length - 4)}`
             : "Connect Ethereum Wallet"}

@@ -65,6 +65,8 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...NODES_WITH_RELAY_CHAINS]}
           searchable
           required
+          allowDeselect={false}
+          data-testid="select-origin"
           {...form.getInputProps("from")}
         />
 
@@ -74,6 +76,8 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...NODES_WITH_RELAY_CHAINS]}
           searchable
           required
+          allowDeselect={false}
+          data-testid="select-destination"
           {...form.getInputProps("to")}
         />
 
@@ -86,6 +90,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
                 form.values.customCurrencyType === "id" ? "Asset ID" : "Symbol"
               }
               required
+              data-testid="input-currency"
               {...form.getInputProps("currency")}
             />
             <SegmentedControl
@@ -104,6 +109,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           label="Address"
           placeholder="0x0000000"
           required
+          data-testid="input-address"
           {...form.getInputProps("address")}
         />
 
@@ -111,6 +117,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           label="Destination Address"
           placeholder="0x0000000"
           required
+          data-testid="input-destination-address"
           {...form.getInputProps("destinationAddress")}
         />
 
@@ -118,12 +125,17 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           label="Amount"
           placeholder="0"
           required
+          data-testid="input-amount"
           {...form.getInputProps("amount")}
         />
 
-        <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
+        <Checkbox
+          label="Use XCM API"
+          {...form.getInputProps("useApi")}
+          data-testid="checkbox-api"
+        />
 
-        <Button type="submit" loading={loading}>
+        <Button type="submit" loading={loading} data-testid="submit">
           Show Transfer Info
         </Button>
       </Stack>

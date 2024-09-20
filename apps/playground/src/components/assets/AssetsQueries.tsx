@@ -169,6 +169,7 @@ const AssetsQueries = () => {
             onClose={onOutputAlertCloseClick}
             mt="lg"
             style={{ overflowWrap: "anywhere" }}
+            data-testid="output"
           >
             <Text component="pre" size="sm">
               {output}

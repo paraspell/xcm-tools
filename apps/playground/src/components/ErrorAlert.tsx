@@ -1,6 +1,6 @@
-import { FC, ReactNode } from 'react';
-import { Alert } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { FC, ReactNode } from "react";
+import { Alert } from "@mantine/core";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 const alertIcon = <IconAlertCircle size={24} />;
 
@@ -16,7 +16,8 @@ const ErrorAlert: FC<Props> = ({ children, onAlertCloseClick }) => (
     withCloseButton
     onClose={onAlertCloseClick}
     mt="lg"
-    style={{ overflowWrap: 'anywhere' }}
+    style={{ overflowWrap: "anywhere" }}
+    data-testid="error"
   >
     {children}
   </Alert>

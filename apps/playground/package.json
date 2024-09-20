@@ -8,7 +8,12 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint:check": "eslint .",
-    "lint": "eslint --fix ."
+    "lint": "eslint --fix .",
+    "test:e2e": "playwright test",
+    "install-polkadot-ext": "cd e2e/extensions/polkadot-ext && yarn && yarn build:chrome",
+    "init-polkadot-ext": "git clone https://github.com/polkadot-js/extension e2e/extensions/polkadot-ext && pnpm install-polkadot-ext",
+    "init-metamask-ext": "mkdir -p e2e/extensions/metamask-ext/ && cd e2e/extensions/metamask-ext && curl -L -o metamask.zip https://github.com/MetaMask/metamask-extension/releases/download/v12.2.4/metamask-chrome-12.2.4.zip && unzip metamask.zip",
+    "init-e2e": "pnpm init-polkadot-ext && pnpm init-metamask-ext"
   },
   "dependencies": {
     "@mantine/core": "^7.12.1",
@@ -34,12 +39,16 @@
   },
   "devDependencies": {
     "@metamask/providers": "^17.1.2",
+    "@playwright/test": "^1.47.1",
+    "@types/node": "^22.5.1",
     "@types/react": "^18.3.4",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "path": "^0.12.7",
     "postcss": "^8.4.41",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
+    "url": "^0.11.4",
     "vite": "^5.4.2",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vite-plugin-wasm": "^3.3.0"

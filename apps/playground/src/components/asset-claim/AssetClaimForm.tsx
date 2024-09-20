@@ -47,6 +47,8 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...SUPPORTED_NODES]}
           searchable
           required
+          allowDeselect={false}
+          data-testid="select-origin"
           {...form.getInputProps("from")}
         />
 
@@ -54,6 +56,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           label="Recipient address"
           placeholder="0x0000000"
           required
+          data-testid="input-address"
           {...form.getInputProps("address")}
         />
 
@@ -61,12 +64,17 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           label="Amount"
           placeholder="0"
           required
+          data-testid="input-amount"
           {...form.getInputProps("amount")}
         />
 
-        <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
+        <Checkbox
+          label="Use XCM API"
+          {...form.getInputProps("useApi")}
+          data-testid="checkbox-api"
+        />
 
-        <Button type="submit" loading={loading}>
+        <Button type="submit" loading={loading} data-testid="submit">
           Claim asset
         </Button>
       </Stack>

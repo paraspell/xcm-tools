@@ -68,6 +68,8 @@ const TransferInfo = () => {
   };
 
   const submit = async (formValues: FormValues) => {
+    closeAlert();
+    closeOutputAlert();
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
       throw Error("No account selected!");

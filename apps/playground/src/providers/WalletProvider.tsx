@@ -28,6 +28,7 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   }, [selectedAccount]);
 
   useEffect(() => {
+    if (!selectedAccount) return;
     void web3Enable("SpellRouter");
   }, []);
 

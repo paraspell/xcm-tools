@@ -52,8 +52,18 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
   const showAddressInput =
     funcVal === "BALANCE_FOREIGN" || funcVal === "BALANCE_NATIVE";
 
+  const onSubmitInternal = (formValues: FormValues) => {
+    const { func } = formValues;
+    const usesSymbol =
+      func === "ASSET_ID" || func === "DECIMALS" || func === "HAS_SUPPORT";
+    return onSubmit({
+      ...formValues,
+      ...(usesSymbol && { symbol: formValues.currency }),
+    });
+  };
+
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    <form onSubmit={form.onSubmit(onSubmitInternal)}>
       <Stack>
         <Select
           label="Function"
@@ -61,6 +71,8 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...ASSET_QUERIES]}
           searchable
           required
+          allowDeselect={false}
+          data-testid="select-func"
           {...form.getInputProps("func")}
         />
 
@@ -70,6 +82,8 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
           data={[...NODE_NAMES]}
           searchable
           required
+          allowDeselect={false}
+          data-testid="select-node"
           {...form.getInputProps("node")}
         />
 
@@ -86,6 +100,7 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
                     : "Symbol"
               }
               required
+              data-testid="input-currency"
               {...form.getInputProps("currency")}
             />
             {supportsCurrencyType && (
@@ -96,6 +111,7 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
                   { label: "Asset ID", value: "id" },
                   { label: "Symbol", value: "symbol" },
                 ]}
+                data-testid="currency-type"
                 {...form.getInputProps("customCurrencyType")}
               />
             )}
@@ -107,13 +123,18 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
             label="Address"
             placeholder="0x0000000"
             required
+            data-testid="address-input"
             {...form.getInputProps("address")}
           />
         )}
 
-        <Checkbox label="Use XCM API" {...form.getInputProps("useApi")} />
+        <Checkbox
+          label="Use XCM API"
+          {...form.getInputProps("useApi")}
+          data-testid="checkbox-api"
+        />
 
-        <Button type="submit" loading={loading}>
+        <Button type="submit" loading={loading} data-testid="submit">
           Submit
         </Button>
       </Stack>

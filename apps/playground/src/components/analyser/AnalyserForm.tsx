@@ -26,10 +26,11 @@ const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
           formatOnBlur
           autosize
           minRows={10}
+          data-testid="input"
           {...form.getInputProps("input")}
         />
 
-        <Button type="submit" loading={loading}>
+        <Button type="submit" loading={loading} data-testid="submit">
           Convert
         </Button>
       </Stack>
