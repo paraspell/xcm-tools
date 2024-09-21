@@ -39,11 +39,11 @@
     "ethers": "^6.13.2"
   },
   "peerDependencies": {
-    "@polkadot/api": "^12.4.2",
-    "@polkadot/api-base": "^12.4.2",
-    "@polkadot/apps-config": "^0.143.2",
-    "@polkadot/types": "^12.4.2",
-    "@polkadot/util": "^13.0.2"
+    "@polkadot/api": ">= 12.4",
+    "@polkadot/api-base": ">= 12.4",
+    "@polkadot/apps-config": ">= 0.143",
+    "@polkadot/types": ">= 12.4",
+    "@polkadot/util": ">= 13"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.25.6",
