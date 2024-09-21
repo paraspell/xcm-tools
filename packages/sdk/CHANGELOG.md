@@ -1,5 +1,42 @@
 # Changelog
 
+## [6.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.10.0...sdk-v6.0.0) (2024-09-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sdk:** Refactor asset selection 🛠️
+
+### Features
+
+* **playground:** Add E2E tests using Playwright 🧪 ([ebb5ad2](https://github.com/paraspell/xcm-tools/commit/ebb5ad21a399abed42dcea7be2fff678acea8f21))
+* Remove HRMP channel functionality ([d7b4f0d](https://github.com/paraspell/xcm-tools/commit/d7b4f0d3d8303e64debb39efcca355ceee80412d))
+* **sdk:** Add Coretime Polkadot parachain ✨ ([8e6510e](https://github.com/paraspell/xcm-tools/commit/8e6510e574d021a1b0ac0a3b878e575a86823c1e))
+* **sdk:** Add foreignAssets pallet multi-location checks ([eb2f190](https://github.com/paraspell/xcm-tools/commit/eb2f190c9f270f6a8117229c8fbf58e33409f160))
+* **sdk:** Refactor asset selection 🛠️ ([5e54a11](https://github.com/paraspell/xcm-tools/commit/5e54a11086383699e4f2096e36610c96cc476306))
+* **xcm-api:** Add support for new currency input types ✨ ([5d8655a](https://github.com/paraspell/xcm-tools/commit/5d8655a50e26b9c2ca110acfb2caa187e889d581))
+* **xcm-router:** Refactor currency inputs ✨ ([28db4a9](https://github.com/paraspell/xcm-tools/commit/28db4a918f896f496a5b8c984d9f0413d6f827ae))
+
+
+### Bug Fixes
+
+* Fix ignored ESlint errors 🔧 ([495fc06](https://github.com/paraspell/xcm-tools/commit/495fc067758db128df1d0c46c1c2534dc28aaf3f))
+
+
+### Code Refactoring
+
+* **sdk:** Add types for method property ✨ ([58abfb6](https://github.com/paraspell/xcm-tools/commit/58abfb6efcb3bcaa3bf12ea62399806cb6680c75))
+
+
+### Build System
+
+* **sdk:** Setup more benevolent peer dependencies 📦 ([be65545](https://github.com/paraspell/xcm-tools/commit/be655457f7673e5c5d47cc7ccb39278fe7463989))
+
+
+### Continuous Integration
+
+* Setup Codecov bundle analysis 📦 ([c3e0e53](https://github.com/paraspell/xcm-tools/commit/c3e0e535cef0e2d8dd77035cb10ee596163d54a0))
+
 ## [5.10.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.9.0...sdk-v5.10.0) (2024-08-30)
 
 
