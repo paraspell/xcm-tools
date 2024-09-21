@@ -12,8 +12,8 @@ vi.mock('ethers', () => ({
   }
 }))
 
-vi.mock('../polkadotXcm', async importOriginal => {
-  const actual = await importOriginal<typeof import('../polkadotXcm')>()
+vi.mock('../polkadotXcm', async () => {
+  const actual = await vi.importActual<typeof import('../polkadotXcm')>('../polkadotXcm')
   return {
     default: {
       ...actual.default,
