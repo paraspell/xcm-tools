@@ -27,8 +27,6 @@ const MainScene = () => {
   const initialTargetRef = useRef<Vector3 | null>(null);
   const [_initialized, setInitialized] = useState(false);
 
-  const [channelsUpdateTrigger, setChannelsUpdateTrigger] = useState(0);
-
   useEffect(() => {
     ecosystems.forEach((ecosystem, index) => {
       const targetAngle = (index / totalEcosystems) * 2 * Math.PI;
@@ -68,38 +66,15 @@ const MainScene = () => {
     ? scene.getObjectByName(activeEditParachain)
     : null;
 
-  const onParachainMove = () => {
-    if (activeEditParachainMesh) {
-      setChannelsUpdateTrigger(current => current + 1);
-    }
-  };
-
   return (
     <>
       {activeEditParachainMesh && (
-        <TransformControls
-          onObjectChange={onParachainMove}
-          object={activeEditParachainMesh}
-          mode="translate"
-          size={0.5}
-        />
+        <TransformControls object={activeEditParachainMesh} mode="translate" size={0.5} />
       )}
-      <ParachainsGraphContainer
-        ecosystem={Ecosystem.POLKADOT}
-        updateTrigger={channelsUpdateTrigger}
-      />
-      <ParachainsGraphContainer
-        ecosystem={Ecosystem.KUSAMA}
-        updateTrigger={channelsUpdateTrigger}
-      />
-      <ParachainsGraphContainer
-        ecosystem={Ecosystem.WESTEND}
-        updateTrigger={channelsUpdateTrigger}
-      />
-      <ParachainsGraphContainer
-        ecosystem={Ecosystem.ROCOCO}
-        updateTrigger={channelsUpdateTrigger}
-      />
+      <ParachainsGraphContainer ecosystem={Ecosystem.POLKADOT} />
+      <ParachainsGraphContainer ecosystem={Ecosystem.KUSAMA} />
+      <ParachainsGraphContainer ecosystem={Ecosystem.WESTEND} />
+      <ParachainsGraphContainer ecosystem={Ecosystem.ROCOCO} />
       <OrbitControls enableDamping autoRotate={false} target={target} makeDefault />
       <PerspectiveCamera makeDefault position={CAMERA_POSITION} />
     </>

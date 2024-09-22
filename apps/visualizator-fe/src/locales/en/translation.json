@@ -76,6 +76,8 @@
     "backImageRequired": "Back image is required",
     "skyboxSaved": "Skybox saved",
     "skyboxSaveSuccess": "Enjoy your new skybox! 🌌",
-    "skyboxSaveError": "Failed to save image to browser storage"
+    "skyboxSaveError": "Failed to save image to browser storage",
+    "animationSettingsTitle": "Animation Settings",
+    "floatingAnimationDesc": "Turn on floating animation"
   }
 }

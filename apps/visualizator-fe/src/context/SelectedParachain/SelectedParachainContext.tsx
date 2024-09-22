@@ -30,6 +30,8 @@ interface SelectedParachainContextType {
   setSelectedEcosystem: (ecosystem: Ecosystem) => void;
   skyboxTrigger: number;
   setSkyboxTrigger: Dispatch<SetStateAction<number>>;
+  animationEnabled: boolean;
+  setAnimationEnabled: (enabled: boolean) => void;
 }
 
 export const SelectedParachainContext = createContext<SelectedParachainContextType | null>(null);
@@ -51,6 +53,7 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
   const [selectedEcosystem, setSelectedEcosystem] = useState<Ecosystem>(Ecosystem.POLKADOT);
   const [activeEditParachain, setActiveEditParachain] = useState<SelectedParachain | null>(null);
   const [skyboxTrigger, setSkyboxTrigger] = useState(0);
+  const [animationEnabled, setAnimationEnabled] = useState(true);
 
   const toggleParachain = (parachain: SelectedParachain) => {
     if (parachains.includes(parachain)) {
@@ -95,7 +98,9 @@ const SelectedParachainProvider = ({ children }: SelectedParachainProviderProps)
         activeEditParachain,
         toggleActiveEditParachain,
         skyboxTrigger,
-        setSkyboxTrigger
+        setSkyboxTrigger,
+        animationEnabled,
+        setAnimationEnabled
       }}
     >
       {children}

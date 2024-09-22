@@ -1,4 +1,4 @@
-import { ColorInput, Select, Stack } from '@mantine/core';
+import { ColorInput, Group, Select, Stack, Switch, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { CountOption } from '../../gql/graphql';
@@ -15,7 +15,9 @@ const Options = () => {
     selectedChannelColor,
     setSelectedChannelColor,
     parachainArrangement,
-    setParachainArrangement
+    setParachainArrangement,
+    animationEnabled,
+    setAnimationEnabled
   } = useSelectedParachain();
 
   const onParachainArrangementChange = (value: string | null) => {
@@ -59,6 +61,18 @@ const Options = () => {
         value={parachainArrangement}
         onChange={onParachainArrangementChange}
       />
+      <Stack gap={0}>
+        <Text size="sm" fw="500">
+          {t('options.animationSettingsTitle')}
+        </Text>
+        <Group mt="xs">
+          <Switch
+            checked={animationEnabled}
+            onChange={event => setAnimationEnabled(event.currentTarget.checked)}
+            label={t('options.floatingAnimationDesc')}
+          />
+        </Group>
+      </Stack>
     </Stack>
   );
 };
