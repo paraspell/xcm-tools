@@ -11,10 +11,9 @@ const now = Date.now();
 
 type Props = {
   ecosystem: Ecosystem;
-  updateTrigger: number;
 };
 
-const ParachainsGraphContainer: FC<Props> = ({ ecosystem, updateTrigger }) => {
+const ParachainsGraphContainer: FC<Props> = ({ ecosystem }) => {
   const { dateRange, parachainArrangement } = useSelectedParachain();
 
   const [start, end] = dateRange;
@@ -39,9 +38,6 @@ const ParachainsGraphContainer: FC<Props> = ({ ecosystem, updateTrigger }) => {
         channels={data.channels}
         totalMessageCounts={totalCountsQuery.data?.totalMessageCounts}
         ecosystem={ecosystem}
-        startTime={start}
-        endTime={end}
-        updateTrigger={updateTrigger}
       />
     );
   }

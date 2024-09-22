@@ -1,13 +1,13 @@
-import { FC, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { FC, useMemo, useRef } from 'react';
 import { ChannelsQuery, CountOption, TotalMessageCountsQuery } from '../../gql/graphql';
 import Relaychain from '../Relaychain/Relaychain';
 import Parachain from '../Parachain/Parachain';
 import LineBetween from '../LineBetween';
-import { Group, Vector3 } from 'three';
+import { Group, Object3D } from 'three';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { getNodesByEcosystem, getParachainById, getParachainId } from '../../utils/utils';
 import { Ecosystem } from '../../types/types';
-import { ThreeEvent, useThree } from '@react-three/fiber';
+import { ThreeEvent } from '@react-three/fiber';
 
 const calculateLineWidth = (messageCount: number): number => {
   const baseLineWidth = 0.035;
@@ -19,19 +19,9 @@ type Props = {
   channels: ChannelsQuery['channels'];
   totalMessageCounts: TotalMessageCountsQuery['totalMessageCounts'];
   ecosystem: Ecosystem;
-  startTime: Date | null;
-  endTime: Date | null;
-  updateTrigger?: number;
 };
 
-const ParachainsGraph: FC<Props> = ({
-  channels,
-  totalMessageCounts,
-  ecosystem,
-  startTime,
-  endTime,
-  updateTrigger
-}) => {
+const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem }) => {
   const {
     parachains,
     toggleParachain,
@@ -43,7 +33,6 @@ const ParachainsGraph: FC<Props> = ({
   } = useSelectedParachain();
 
   const groupRef = useRef<Group>(null);
-  const { scene } = useThree();
 
   const sortedParachainNames = useMemo(() => {
     const nameToCountMap = totalMessageCounts.reduce<Record<number, number>>((acc, item) => {
@@ -106,60 +95,11 @@ const ParachainsGraph: FC<Props> = ({
         )
       : [];
 
-  const relaychainPosition = new Vector3(0, 0, 0);
   const RELAYCHAIN_ID = 0;
 
-  const [channelElements, setChannelElements] = useState<(JSX.Element | null)[] | null>(null);
+  const parachainRefs = useRef<{ [key: string]: Object3D | null }>({});
 
-  useLayoutEffect(() => {
-    const channelElements =
-      ecosystem === Ecosystem.POLKADOT
-        ? channels.map(channel => {
-            const senderObject = scene.getObjectByName(
-              `${ecosystem};${getParachainById(channel.sender, ecosystem)}`
-            );
-
-            const recipientName = scene.getObjectByName(
-              `${ecosystem};${getParachainById(channel.recipient, ecosystem)}`
-            );
-
-            const senderPosition =
-              channel.sender === RELAYCHAIN_ID ? relaychainPosition : senderObject?.position;
-
-            const recipientPosition =
-              channel.recipient === RELAYCHAIN_ID ? relaychainPosition : recipientName?.position;
-
-            if (!senderPosition || !recipientPosition) {
-              return null;
-            }
-
-            const lineWidth = calculateLineWidth(channel.message_count);
-            const isHighlighted =
-              parachains.some(p => getParachainId(p, ecosystem) === channel.sender) ||
-              parachains.some(p => getParachainId(p, ecosystem) === channel.recipient);
-
-            const isSecondary = selectedParachainChannels.some(
-              ch => ch.sender === channel.sender || ch.recipient === channel.recipient
-            );
-
-            const isSelected = selectedChannel?.id === channel.id;
-
-            return (
-              <LineBetween
-                key={channel.id}
-                startPosition={senderPosition}
-                endPosition={recipientPosition}
-                lineWidth={lineWidth}
-                isHighlighed={isHighlighted}
-                isSelected={isSelected}
-                isSecondary={isSecondary}
-                onClick={onChannelClick(channel)}
-              />
-            );
-          })
-        : null;
-    setChannelElements(channelElements);
-  }, [updateTrigger, channels, startTime, endTime, parachains, selectedChannel]);
+  const relaychainRef = useRef<Group | null>(null);
 
   return (
     <group name={ecosystem} ref={groupRef}>
@@ -167,6 +107,7 @@ const ParachainsGraph: FC<Props> = ({
         onClick={onRelaychainClick}
         ecosystem={ecosystem}
         isSelected={parachains.includes('Polkadot')}
+        ref={relaychainRef}
       />
       {sortedParachainNames?.map((node, index) => (
         <Parachain
@@ -178,9 +119,62 @@ const ParachainsGraph: FC<Props> = ({
           isSelected={parachains.includes(node)}
           scale={calculateParachainScale(node)}
           ecosystem={ecosystem}
+          ref={el => {
+            parachainRefs.current[`${ecosystem};${node}`] = el;
+          }}
         />
       ))}
-      {ecosystem === Ecosystem.POLKADOT && channelElements}
+
+      {/* Channels */}
+      {ecosystem === Ecosystem.POLKADOT &&
+        channels.map(channel => {
+          const senderKey =
+            channel.sender === RELAYCHAIN_ID
+              ? `${ecosystem};Relaychain`
+              : `${ecosystem};${getParachainById(channel.sender, ecosystem)}`;
+          const recipientKey =
+            channel.recipient === RELAYCHAIN_ID
+              ? `${ecosystem};Relaychain`
+              : `${ecosystem};${getParachainById(channel.recipient, ecosystem)}`;
+
+          const senderObject =
+            channel.sender === RELAYCHAIN_ID
+              ? relaychainRef.current
+              : parachainRefs.current[senderKey];
+
+          const recipientObject =
+            channel.recipient === RELAYCHAIN_ID
+              ? relaychainRef.current
+              : parachainRefs.current[recipientKey];
+
+          if (!senderObject || !recipientObject) {
+            return null;
+          }
+
+          const lineWidth = calculateLineWidth(channel.message_count);
+          const isHighlighted =
+            parachains.some(p => getParachainId(p, ecosystem) === channel.sender) ||
+            parachains.some(p => getParachainId(p, ecosystem) === channel.recipient);
+
+          const isSecondary = selectedParachainChannels.some(
+            ch => ch.sender === channel.sender || ch.recipient === channel.recipient
+          );
+
+          const isSelected = selectedChannel?.id === channel.id;
+
+          return (
+            <LineBetween
+              key={channel.id}
+              startObject={senderObject}
+              endObject={recipientObject}
+              lineWidth={lineWidth}
+              isHighlighted={isHighlighted}
+              isSelected={isSelected}
+              isSecondary={isSecondary}
+              onClick={onChannelClick(channel)}
+            />
+          );
+        })}
     </group>
   );
 };

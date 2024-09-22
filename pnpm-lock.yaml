@@ -367,6 +367,9 @@ importers:
       '@tabler/icons-react':
         specifier: ^3.14.0
         version: 3.14.0(react@18.3.1)
+      d3-ease:
+        specifier: ^3.0.1
+        version: 3.0.1
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -407,6 +410,9 @@ importers:
         specifier: ^2.0.6
         version: 2.0.6
     devDependencies:
+      '@types/d3-ease':
+        specifier: ^3.0.2
+        version: 3.0.2
       '@types/node':
         specifier: ^22.5.1
         version: 22.5.1

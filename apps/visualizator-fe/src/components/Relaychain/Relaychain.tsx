@@ -1,5 +1,5 @@
 import { ThreeEvent, useFrame, useLoader } from '@react-three/fiber';
-import { FC, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Color, TextureLoader, SphereGeometry, Mesh, Group } from 'three';
 import { adjustUVs } from '../../utils/adjustUVs';
 import { Ecosystem } from '../../types/types';
@@ -13,11 +13,13 @@ type Props = {
   isSelected?: boolean;
 };
 
-const Relaychain: FC<Props> = ({ onClick, ecosystem, isSelected }) => {
+const Relaychain = forwardRef<Group, Props>(({ onClick, ecosystem, isSelected }, ref) => {
   const logo = getRelaychainLogo(ecosystem);
   const texture = useLoader(TextureLoader, logo);
   const sphereRef = useRef<Mesh>(null);
   const groupRef = useRef<Group>(null);
+
+  useImperativeHandle(ref, () => groupRef.current!);
 
   useEffect(() => {
     if (texture) {
@@ -38,7 +40,7 @@ const Relaychain: FC<Props> = ({ onClick, ecosystem, isSelected }) => {
   });
 
   return (
-    <group ref={groupRef} onClick={onClick}>
+    <group ref={groupRef} name={`${ecosystem};Relaychain`} onClick={onClick}>
       <mesh ref={sphereRef} castShadow rotation={[0, Math.PI * 1.5, 0]}>
         <sphereGeometry args={[1, 32, 32]} />
         <meshStandardMaterial
@@ -51,6 +53,8 @@ const Relaychain: FC<Props> = ({ onClick, ecosystem, isSelected }) => {
       </mesh>
     </group>
   );
-};
+});
+
+Relaychain.displayName = 'Relaychain';
 
 export default Relaychain;
