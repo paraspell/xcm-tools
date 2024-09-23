@@ -1,9 +1,10 @@
-import { FC, ReactNode } from 'react';
-import { ChartTooltip, LineChart } from '@mantine/charts';
+import { FC, ReactNode, useState } from 'react';
+import { LineChart } from '@mantine/charts';
 import { MessageCountsByDayQuery } from '../../gql/graphql';
 import { getParachainById, getParachainColor } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
 import { Ecosystem } from '../../types/types';
+import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
 type Payload = {
   name: string;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
+  const [isTooltipActive, setIsTooltipActive] = useState<boolean | undefined>(undefined);
   const { t } = useTranslation();
   const processData = () => {
     const dataByDate = counts.reduce<
@@ -78,6 +80,14 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
     color: key === 'Total' ? 'blue.6' : getParachainColor(key, Ecosystem.POLKADOT)
   }));
 
+  const onTooltipClose = () => {
+    setIsTooltipActive(false);
+  };
+
+  const onChartClick = () => {
+    setIsTooltipActive(undefined);
+  };
+
   return (
     <LineChart
       w="100%"
@@ -92,7 +102,10 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
         }
       ]}
       curveType="natural"
+      onClick={onChartClick}
       tooltipProps={{
+        trigger: 'click',
+        active: isTooltipActive,
         content: ({ label, payload }) => {
           if (!payload || payload.length === 0) return null;
           const extendedPayload = (payload as Payload[]).reduce<Payload[]>((acc, item) => {
@@ -100,12 +113,27 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
               acc.push(item);
               return acc;
             }
-            const total = {
-              ...item,
-              name: `${item.name} ${t('total')}`,
-              value: item.value,
-              color: item.color
-            };
+            const total =
+              item.name === 'Total'
+                ? {
+                    ...item,
+                    name: t('total'),
+                    value: item.value,
+                    color: item.color,
+                    parachain: item.name
+                  }
+                : {
+                    ...item,
+                    name: `${item.name} ${t('total')}`,
+                    dataKey: item.name,
+                    payload: {
+                      category: `${item.name} ${t('total')}`,
+                      [`${item.name} ${t('total')}`]: item.value
+                    },
+                    value: 0,
+                    color: item.color,
+                    parachain: item.name
+                  };
             const success = {
               ...item,
               name: `${item.name} ${t('success')}`,
@@ -115,7 +143,8 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
                 [`${item.name} ${t('success')}`]: item.payload[`${item.name} ${t('success')}`]
               },
               value: 0,
-              color: 'green'
+              color: 'green',
+              parachain: item.name
             };
             const failed = {
               ...item,
@@ -126,14 +155,21 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
                 [`${item.name} ${t('failed')}`]: item.payload[`${item.name} ${t('failed')}`]
               },
               value: 0,
-              color: 'red'
+              color: 'red',
+              parachain: item.name
             };
 
             acc.push(total, success, failed);
             return acc;
           }, []);
 
-          return <ChartTooltip label={label as ReactNode} payload={extendedPayload} />;
+          return (
+            <CustomChartTooltip
+              label={label as ReactNode}
+              payload={extendedPayload}
+              onCloseClick={onTooltipClose}
+            />
+          );
         }
       }}
     />

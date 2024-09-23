@@ -68,10 +68,18 @@ h1 {
 }
 
 .mantine-ChartTooltip-tooltip {
-  pointer-events: auto;
+  pointer-events: auto !important;
 }
 
 .mantine-ChartTooltip-tooltipBody {
   max-height: 200px;
   overflow-y: scroll;
+}
+
+.recharts-tooltip-wrapper {
+  pointer-events: all !important;
+}
+
+.tooltip-explorer-link:last-child {
+  margin-bottom: 0 !important;
 }

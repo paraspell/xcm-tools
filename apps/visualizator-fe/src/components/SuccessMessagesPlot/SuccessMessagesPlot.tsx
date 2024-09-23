@@ -1,9 +1,10 @@
 import { FC, ReactNode } from 'react';
 import { MessageCountsQuery } from '../../gql/graphql';
-import { BarChart, ChartTooltip } from '@mantine/charts';
+import { BarChart } from '@mantine/charts';
 import { getParachainById } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
 import { Ecosystem } from '../../types/types';
+import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
 type Props = {
   counts: MessageCountsQuery['messageCounts'];
@@ -35,7 +36,7 @@ const SuccessMessagesPlot: FC<Props> = ({ counts }) => {
       tickLine="y"
       tooltipProps={{
         content: ({ label, payload }) => (
-          <ChartTooltip
+          <CustomChartTooltip
             label={label as ReactNode}
             payload={
               payload && payload.length > 0

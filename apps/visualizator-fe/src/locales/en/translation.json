@@ -34,6 +34,7 @@
   "amountByDay": "Amount transfered by day",
   "assetsTransfered": "Assets transfered",
   "successfulFailedXcmCalls": "Successful / Failed XCM Calls",
+  "amountsChartInfo": "Click on the specific day to show values",
   "sendXcmForm": {
     "title": "Send XCM message",
     "connectWallet": "Connect Wallet",

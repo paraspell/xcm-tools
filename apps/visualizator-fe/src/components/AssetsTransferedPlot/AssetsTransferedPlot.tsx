@@ -3,7 +3,8 @@ import { aggregateDataByParachain } from './utils/aggregateDataByParachain';
 import { TAssetCounts } from '../../types/types';
 import { useTranslation } from 'react-i18next';
 import { generateSeries } from './utils/generateSeries';
-import { BarChart, ChartTooltip } from '@mantine/charts';
+import { BarChart } from '@mantine/charts';
+import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
 type Props = {
   counts: TAssetCounts;
@@ -40,7 +41,7 @@ const AssetsTransferredPlot: FC<Props> = ({ counts }) => {
         content: ({ label, payload }) => {
           if (!payload || payload.length === 0) return null;
           const sortedPayload = payload.sort((a, b) => b.value - a.value);
-          return <ChartTooltip label={label as ReactNode} payload={sortedPayload} />;
+          return <CustomChartTooltip label={label as ReactNode} payload={sortedPayload} />;
         }
       }}
     />
