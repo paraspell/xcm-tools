@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Checkbox, Stack, Title } from '@mantine/core';
+import { Checkbox, Group, Stack, Title, Tooltip } from '@mantine/core';
 import AmountTransferedPlotContainer from '../components/AmountTransferedPlot/AmountTransferedPlot.container';
 import { useTranslation } from 'react-i18next';
+import { IconInfoCircle } from '@tabler/icons-react';
 
 const Scene2dAmountsByDay = () => {
   const { t } = useTranslation();
@@ -11,13 +12,20 @@ const Scene2dAmountsByDay = () => {
       <Title order={2} ta="center">
         {t('amountByDay')}
       </Title>
-      <Checkbox
-        label="Show median"
-        onChange={() => setShowMedian(value => !value)}
-        checked={showMedian}
-      >
-        {t('median')}
-      </Checkbox>
+      <Group justify="space-between">
+        <Checkbox
+          label="Show median"
+          onChange={() => setShowMedian(value => !value)}
+          checked={showMedian}
+        >
+          {t('median')}
+        </Checkbox>
+        <Tooltip label={t('amountsChartInfo')} position="right" withArrow multiline w={220}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IconInfoCircle size={16} />
+          </div>
+        </Tooltip>
+      </Group>
       <AmountTransferedPlotContainer showMedian={showMedian} />
     </Stack>
   );
