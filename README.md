@@ -7,11 +7,11 @@ ParaSpell✨ monorepo for XCM-Tool set
 </p>
 
 **Monorepo contains the following XCM tools:**
-- [XCM API](https://github.com/paraspell/xcm-tools/tree/main/apps/xcm-api) (LightSpell⚡️): Meant to ease the integration of XCM interoperability into your dApp, offload your dApp from heavy computing and save you costs.
-- [XCM ROUTER](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-router) (SpellRouter☄️): Meant to allow you to create XCM calls where you receive different assets than assets you send (Eg. Send -> DOT from Polkadot, receive ASTR on Astar)—all in just one call.
-- [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk): Meant to unify cross-chain experience on Polkadot and become a layer 2 protocol that allows for seamless integration of XCM into your dApps.
-- [XCM Analyser](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-analyser) - Tool to convert XCM Multilocations to human readable format.
-- [XCM Visualizator](https://github.com/paraspell/xcm-tools/tree/main/apps/visualizator-fe) - Tool to visualize XCM in Polkadot ecosystem
+- [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk): A tool designed to unify the cross-chain experience on Polkadot and serve as a layer 2 protocol that enables seamless integration of XCM into your decentralized applications.
+- [XCM API](https://github.com/paraspell/xcm-tools/tree/main/apps/xcm-api) (LightSpell⚡️): An API that provides the ability to integrate XCM interoperability into your decentralized application in package-less way offloading heavy computing tasks from your decentralized application, and reducing associated costs.
+- [XCM ROUTER](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-router) (SpellRouter☄️): A tool aiming to provide the capability of cross-chain swaps where you receive different assets than those you send (e.g. send DOT from Polkadot and receive ASTR on Astar) — all within a single command.
+- [XCM Analyser](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-analyser) - Analyser package to convert XCM Multilocations into a human-readable format.
+- [XCM Visualizator](https://github.com/paraspell/xcm-tools/tree/main/apps/visualizator-fe) - An application developed to visualize XCM within the Polkadot ecosystem.
 
 **Other:**
 - [XCM Tools playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground): Playground for testing/trying all three mentioned XCM tools.
@@ -22,7 +22,7 @@ ParaSpell✨ monorepo for XCM-Tool set
 
 **Monorepo infrastructure:**
 ```
-apps | - Playground
+apps | - XCM Playground
      | - XCM API
      | - XCM API Landing page
      | - XCM Visualizator FE
