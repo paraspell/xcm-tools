@@ -35,6 +35,8 @@
   "assetsTransfered": "Assets transfered",
   "successfulFailedXcmCalls": "Successful / Failed XCM Calls",
   "amountsChartInfo": "Click on the specific day to show values",
+  "downloadZipTooltip": "Download chart data as ZIP file",
+  "downloadSvgTooltip": "Download chart as SVG file",
   "sendXcmForm": {
     "title": "Send XCM message",
     "connectWallet": "Connect Wallet",

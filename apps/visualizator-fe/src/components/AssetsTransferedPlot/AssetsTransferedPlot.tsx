@@ -1,4 +1,4 @@
-import { FC, ReactNode, useMemo } from 'react';
+import { forwardRef, ReactNode, useMemo } from 'react';
 import { aggregateDataByParachain } from './utils/aggregateDataByParachain';
 import { TAssetCounts } from '../../types/types';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ type Props = {
   counts: TAssetCounts;
 };
 
-const AssetsTransferredPlot: FC<Props> = ({ counts }) => {
+const AssetsTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) => {
   const { t } = useTranslation();
 
   const aggregatedData = useMemo(() => {
@@ -30,6 +30,7 @@ const AssetsTransferredPlot: FC<Props> = ({ counts }) => {
 
   return (
     <BarChart
+      ref={ref}
       data={transformedData}
       series={series}
       type="stacked"
@@ -46,6 +47,8 @@ const AssetsTransferredPlot: FC<Props> = ({ counts }) => {
       }}
     />
   );
-};
+});
+
+AssetsTransferredPlot.displayName = 'AssetsTransferredPlot';
 
 export default AssetsTransferredPlot;
