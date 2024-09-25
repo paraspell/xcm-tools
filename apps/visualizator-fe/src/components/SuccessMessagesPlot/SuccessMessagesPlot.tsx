@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { forwardRef, ReactNode } from 'react';
 import { MessageCountsQuery } from '../../gql/graphql';
 import { BarChart } from '@mantine/charts';
 import { getParachainById } from '../../utils/utils';
@@ -14,7 +14,7 @@ const getParachainByIdInternal = (id: number | null) => {
   return id ? getParachainById(id, Ecosystem.POLKADOT) : 'Total';
 };
 
-const SuccessMessagesPlot: FC<Props> = ({ counts }) => {
+const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) => {
   const { t } = useTranslation();
   const chartData = counts.map(count => ({
     category: getParachainByIdInternal(count.paraId ?? 0),
@@ -24,6 +24,7 @@ const SuccessMessagesPlot: FC<Props> = ({ counts }) => {
 
   return (
     <BarChart
+      ref={ref}
       w="100%"
       h="100%"
       data={chartData}
@@ -70,6 +71,8 @@ const SuccessMessagesPlot: FC<Props> = ({ counts }) => {
       }}
     />
   );
-};
+});
+
+SuccessMessagesPlot.displayName = 'SuccessMessagesPlot';
 
 export default SuccessMessagesPlot;

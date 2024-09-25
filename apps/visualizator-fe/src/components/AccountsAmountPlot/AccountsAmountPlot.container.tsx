@@ -1,21 +1,29 @@
+import { useRef, useState } from 'react';
 import { accountXcmCountsQueryDocument } from '../../api/messages';
-import { FC } from 'react';
 import AccountsAmountPlot from './AccountsAmountPlot';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { getParachainId } from '../../utils/utils';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { Ecosystem } from '../../types/types';
-import { Center, Loader } from '@mantine/core';
+import { Center, Flex, Group, Loader, Stack } from '@mantine/core';
+import SliderInput from '../SliderInput';
+import { HighchartsReactRefObject } from 'highcharts-react-official';
+import DownloadButtons from '../DownloadButtons';
+import { AccountCountsQuery } from '../../gql/graphql';
+import convertToCsv from '../../utils/convertToCsv';
+import { downloadZip } from '../../utils/downloadZip';
+import downloadSvg from '../../utils/downloadSvg';
 
 const now = Date.now();
 
-type Props = {
-  threshold: number;
-};
-
-const AccountsAmountPlotContainer: FC<Props> = ({ threshold }) => {
+const AccountsAmountPlotContainer = () => {
   const { t } = useTranslation();
+
+  const ref = useRef<HighchartsReactRefObject>(null);
+
+  const [threshold, setThreshold] = useState(500);
+
   const { parachains, dateRange } = useSelectedParachain();
 
   const [start, end] = dateRange;
@@ -29,6 +37,22 @@ const AccountsAmountPlotContainer: FC<Props> = ({ threshold }) => {
     }
   });
 
+  const onDownloadZipClick = () => {
+    if (!data) throw new Error('Could not download data.');
+
+    const headers: (keyof Omit<AccountCountsQuery['accountCounts'][number], '__typename'>)[] = [
+      'id',
+      'count'
+    ];
+    const csvData = convertToCsv(data.accountCounts, headers);
+    void downloadZip(data.accountCounts, csvData);
+  };
+
+  const onDownloadSvgClick = () => {
+    if (!ref.current) return;
+    downloadSvg(ref.current.chart.container as HTMLDivElement);
+  };
+
   if (loading) {
     return (
       <Center h="100%" w="100%">
@@ -41,7 +65,28 @@ const AccountsAmountPlotContainer: FC<Props> = ({ threshold }) => {
     return <div>{t('error')}</div>;
   }
 
-  return <AccountsAmountPlot counts={data?.accountCounts ?? []} />;
+  return (
+    <Stack gap="xl" w="100%" h="100%">
+      <Group align="flex-start" px="xs" pb={0}>
+        <Flex w="100%" gap="xl" align="end">
+          <SliderInput
+            value={threshold}
+            onCustomChange={setThreshold}
+            min={200}
+            max={2000}
+            flex={1}
+          />
+          <DownloadButtons
+            onDownloadZipClick={onDownloadZipClick}
+            onDownloadSvgClick={onDownloadSvgClick}
+          />
+        </Flex>
+      </Group>
+      <Group flex={1} w="100%" justify="center">
+        <AccountsAmountPlot ref={ref} counts={data?.accountCounts ?? []} />
+      </Group>
+    </Stack>
+  );
 };
 
 export default AccountsAmountPlotContainer;

@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from 'react';
+import { forwardRef, ReactNode, useState } from 'react';
 import { LineChart } from '@mantine/charts';
 import { MessageCountsByDayQuery } from '../../gql/graphql';
 import { getParachainById, getParachainColor } from '../../utils/utils';
@@ -18,7 +18,7 @@ type Props = {
   showMedian?: boolean;
 };
 
-const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
+const AmountTransferredPlot = forwardRef<HTMLDivElement, Props>(({ counts, showMedian }, ref) => {
   const [isTooltipActive, setIsTooltipActive] = useState<boolean | undefined>(undefined);
   const { t } = useTranslation();
   const processData = () => {
@@ -90,6 +90,7 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
 
   return (
     <LineChart
+      ref={ref}
       w="100%"
       h="100%"
       data={data}
@@ -174,6 +175,8 @@ const AmountTransferredPlot: FC<Props> = ({ counts, showMedian }) => {
       }}
     />
   );
-};
+});
+
+AmountTransferredPlot.displayName = 'AmountTransferredPlot';
 
 export default AmountTransferredPlot;

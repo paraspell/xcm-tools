@@ -5,12 +5,21 @@ import { useSelectedParachain } from '../../context/SelectedParachain/useSelecte
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { Ecosystem } from '../../types/types';
-import { Center, Loader } from '@mantine/core';
+import { Center, Group, Loader, Stack, Title } from '@mantine/core';
+import DownloadButtons from '../DownloadButtons';
+import { MessageCountsQuery } from '../../gql/graphql';
+import convertToCsv from '../../utils/convertToCsv';
+import { downloadZip } from '../../utils/downloadZip';
+import { useRef } from 'react';
+import downloadSvg from '../../utils/downloadSvg';
 
 const now = Date.now();
 
 const SuccessMessagesPlotContainer = () => {
   const { t } = useTranslation();
+
+  const ref = useRef<HTMLDivElement>(null);
+
   const { parachains, dateRange } = useSelectedParachain();
 
   const [start, end] = dateRange;
@@ -35,7 +44,37 @@ const SuccessMessagesPlotContainer = () => {
     return <div>{t('error')}</div>;
   }
 
-  return <SuccessMessagesPlot counts={data?.messageCounts ?? []} />;
+  const onDownloadZipClick = () => {
+    if (!data) throw new Error('Could not download data.');
+
+    const headers: (keyof Omit<MessageCountsQuery['messageCounts'][number], '__typename'>)[] = [
+      'paraId',
+      'success',
+      'failed'
+    ];
+    const csvData = convertToCsv(data.messageCounts, headers);
+    void downloadZip(data.messageCounts, csvData);
+  };
+
+  const onDownloadSvgClick = () => {
+    if (!ref.current) return;
+    downloadSvg(ref.current);
+  };
+
+  return (
+    <Stack gap="xl" pl="xl" pr="xl" flex={1}>
+      <Group>
+        <Title order={2} ta="center" flex={1}>
+          {t('successfulFailedXcmCalls')}
+        </Title>
+        <DownloadButtons
+          onDownloadZipClick={onDownloadZipClick}
+          onDownloadSvgClick={onDownloadSvgClick}
+        />
+      </Group>
+      <SuccessMessagesPlot ref={ref} counts={data?.messageCounts ?? []} />;
+    </Stack>
+  );
 };
 
 export default SuccessMessagesPlotContainer;
