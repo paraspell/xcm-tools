@@ -1,0 +1,118 @@
+.sparkleElements {
+  -webkit-transform: translate(42.5px, 42.5px);
+  -moz-transform: translate(42.5px, 42.5px);
+  transform: translate(42.5px, 42.5px);
+}
+#one path {
+  -webkit-transform: translate(-42.5px, -42.5px);
+  -moz-transform: translate(-42.5px, -42.5px);
+  transform: translate(-42.5px, -42.5px);
+}
+path#large {
+  /* Large Sparkle */
+  fill: #f0e197;
+}
+path#medium {
+  /* Medium Sparkle */
+  fill: #f0e197;
+}
+path#small {
+  /* Small Sparkle */
+  fill: #f0e197;
+}
+.large {
+  -webkit-animation: large 2.5s forwards;
+  -moz-animation: large 2.5s forwards;
+}
+.medium {
+  -webkit-animation: medium 2.5s forwards;
+  -moz-animation: medium 2.5s forwards;
+}
+.small {
+  -webkit-animation: small 2.5s forwards;
+  -moz-animation: small 2.5s forwards;
+}
+@-webkit-keyframes large {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: scale(1.5);
+    transform: scale(1.5);
+  }
+}
+@-moz-keyframes large {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+@-webkit-keyframes medium {
+  0% {
+    opacity: 0;
+    -webkit-transform: rotate(45deg) scale(0);
+    transform: rotate(45deg) scale(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: rotate(405deg) scale(1.1);
+    transform: rotate(405deg) scale(1.1);
+  }
+}
+@-moz-keyframes medium {
+  0% {
+    opacity: 0;
+    transform: rotate(45deg) scale(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(405deg) scale(1.1);
+  }
+}
+@-webkit-keyframes small {
+  0% {
+    opacity: 0;
+    -webkit-transform: rotate(0deg) scale(0);
+    transform: rotate(0deg) scale(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: rotate(-360deg) scale(1);
+    transform: rotate(-360deg) scale(1.5);
+  }
+}
+@-moz-keyframes small {
+  0% {
+    opacity: 0;
+    transform: rotate(0deg) scale(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(-360deg) scale(1.5);
+  }
+}

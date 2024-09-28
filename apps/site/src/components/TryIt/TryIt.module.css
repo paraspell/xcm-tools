@@ -1,0 +1,50 @@
+.wrapper {
+  padding: 24px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    flex-direction: column;
+  }
+}
+
+.image {
+  max-width: 40%;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    max-width: 100%;
+  }
+}
+
+.body {
+  flex: 1;
+  width: 100%;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    padding-right: 0;
+  }
+}
+
+.title {
+  font-family:
+    Greycliff CF,
+    var(--mantine-font-family);
+  font-size: rem(36px);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: var(--mantine-spacing-md);
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+}
+
+.controls {
+  display: flex;
+}
+
+.item {
+  display: flex;
+}
+
+.itemIcon {
+  margin-right: var(--mantine-spacing-md);
+}
