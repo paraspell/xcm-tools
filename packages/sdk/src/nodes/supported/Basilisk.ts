@@ -1,6 +1,12 @@
 // Contains detailed structure of XCM call construction for Basilisk Parachain
 
-import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
+import {
+  type IXTokensTransfer,
+  type TNodePolkadotKusama,
+  Version,
+  type XTokensTransferInput
+} from '../../types'
+import { getAllNodeProviders } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -12,6 +18,11 @@ class Basilisk extends ParachainNode implements IXTokensTransfer {
   transferXTokens(input: XTokensTransferInput) {
     const { currencyID } = input
     return XTokensTransferImpl.transferXTokens(input, currencyID)
+  }
+
+  getProvider(): string {
+    // Return the second WebSocket URL because the first one is sometimes unreliable.
+    return getAllNodeProviders(this.node as TNodePolkadotKusama)[1]
   }
 }
 
