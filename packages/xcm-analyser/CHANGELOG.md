@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.3.4](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.3.3...xcm-analyser-v1.3.4) (2024-09-30)
+
+
+### Bug Fixes
+
+* Fix ignored ESlint errors 🔧 ([495fc06](https://github.com/paraspell/xcm-tools/commit/495fc067758db128df1d0c46c1c2534dc28aaf3f))
+
+
+### Miscellaneous Chores
+
+* Perform monthly maintenance check 🛠️ ([e85ed15](https://github.com/paraspell/xcm-tools/commit/e85ed15e709ccf3b59f7aa8c0fcaf7134e0fe8a3))
+
+
+### Continuous Integration
+
+* Setup Codecov bundle analysis 📦 ([c3e0e53](https://github.com/paraspell/xcm-tools/commit/c3e0e535cef0e2d8dd77035cb10ee596163d54a0))
+
 ## [1.3.3](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.3.2...xcm-analyser-v1.3.3) (2024-09-02)
 
 
