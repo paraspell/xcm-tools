@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-v6.1.0...sdk-v6.1.1) (2024-09-30)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Remove docs and replace link in Readme ([bfa11cd](https://github.com/paraspell/xcm-tools/commit/bfa11cd2c3d8493ceb73a6b45ae8cba3c2cfb33d))
+* **sdk:** Update README.md ([48b950a](https://github.com/paraspell/xcm-tools/commit/48b950a5f004fbcc5a14c13dba33830d0ea75613))
+
 ## [6.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v6.0.0...sdk-v6.1.0) (2024-09-30)
 
 
