@@ -6,18 +6,15 @@ import PolkadotXCMTransferImpl from '../polkadotXcm'
 
 class Robonomics extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {
-    super('Robonomics', 'robonomics', 'kusama', Version.V1)
+    super('Robonomics', 'robonomics', 'kusama', Version.V3)
   }
 
-  private static readonly FEE = '400000000'
-
   transferPolkadotXCM(input: PolkadotXCMTransferInput) {
-    if (input.scenario === 'ParaToPara') {
-      return PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'limitedReserveTransferAssets', {
-        Limited: Robonomics.FEE
-      })
-    }
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserveWithdrawAssets')
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(
+      input,
+      'limitedReserveTransferAssets',
+      'Unlimited'
+    )
   }
 }
 

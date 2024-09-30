@@ -8,7 +8,7 @@ import {
 } from 'react-apollo-network-status/dist/src/useApolloNetworkStatus';
 
 type Props = {
-  useApolloNetworkStatus: (options?: UseApolloNetworkStatusOptions | undefined) => NetworkStatus;
+  useApolloNetworkStatus: (options?: UseApolloNetworkStatusOptions) => NetworkStatus;
 };
 
 const LoadingScreen: FC<Props> = ({ useApolloNetworkStatus }) => {

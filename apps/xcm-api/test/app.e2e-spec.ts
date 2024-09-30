@@ -379,7 +379,7 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to parachain override currency - ${xTransferUrl} (GET)`, async () => {
-      const from: TNode = 'AssetHubKusama';
+      const from: TNode = 'Karura';
       const to: TNode = 'Basilisk';
       const currency: TMultiLocation = {
         parents: '0',

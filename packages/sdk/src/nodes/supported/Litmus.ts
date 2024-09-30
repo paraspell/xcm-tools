@@ -13,6 +13,10 @@ class Litmus extends ParachainNode implements IXTokensTransfer {
     // Multiple asset options needs addressing
     return getNode('Litentry').transferXTokens(input)
   }
+
+  getProvider(): string {
+    return 'wss:///rpc.litmus-parachain.litentry.io'
+  }
 }
 
 export default Litmus

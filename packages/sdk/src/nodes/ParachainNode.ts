@@ -110,6 +110,10 @@ abstract class ParachainNode {
         ? (paraIdTo ?? getParaId(destination))
         : undefined
 
+    if (destination === 'Polimec' && this.node !== 'AssetHubPolkadot') {
+      throw new Error('Sending assets to Polimec is supported only from AssetHubPolkadot')
+    }
+
     if (supportsXTokens(this) && this.canUseXTokens(options)) {
       return this.transferXTokens({
         api,

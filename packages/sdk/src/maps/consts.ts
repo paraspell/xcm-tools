@@ -59,6 +59,7 @@ import BridgeHubKusama from '../nodes/supported/BridgeHubKusama'
 import Ethereum from '../nodes/supported/Ethereum'
 import Mythos from '../nodes/supported/Mythos'
 import Peaq from '../nodes/supported/Peaq'
+import Polimec from '../nodes/supported/Polimec'
 
 export const NODE_NAMES_DOT_KSM = [
   'AssetHubPolkadot',
@@ -117,7 +118,8 @@ export const NODE_NAMES_DOT_KSM = [
   'KiltSpiritnet',
   'Curio',
   'Mythos',
-  'Peaq'
+  'Peaq',
+  'Polimec'
 ] as const
 
 export const NODE_NAMES = [...NODE_NAMES_DOT_KSM, 'Ethereum'] as const
@@ -188,7 +190,8 @@ export const nodes = {
   Curio: new Curio(),
   Ethereum: new Ethereum(),
   Mythos: new Mythos(),
-  Peaq: new Peaq()
+  Peaq: new Peaq(),
+  Polimec: new Polimec()
 } satisfies Record<TNode, unknown>
 
 export const SUPPORTED_PALLETS = [
