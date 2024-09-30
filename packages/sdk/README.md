@@ -17,7 +17,7 @@
       <img alt="snyk" src="https://snyk.io/test/github/paraspell/sdk/badge.svg" />
     </a>
   </p>
-  <p>Currently supporting 55 Polkadot & Kusama nodes list <a href = "https://github.com/paraspell/xcm-tools/blob/main/packages/sdk/docs/supportedNodes.md"\>[here]</p>
+  <p>Currently supporting 58 Polkadot & Kusama nodes list <a href = "https://paraspell.github.io/docs/supported.html"\>[here]</p>
   <p>SDK documentation <a href = "https://paraspell.github.io/docs/" \>[here]</p>
 </div>
 
