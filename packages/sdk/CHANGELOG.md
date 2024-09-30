@@ -1,5 +1,17 @@
 # Changelog
 
+## [6.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v6.0.0...sdk-v6.1.0) (2024-09-30)
+
+
+### Features
+
+* Add ParaSpell landing page ([91ceeba](https://github.com/paraspell/xcm-tools/commit/91ceeba999473cd618edae70f028f5e2bdfd25d9))
+
+
+### Miscellaneous Chores
+
+* Perform monthly maintenance check 🛠️ ([e85ed15](https://github.com/paraspell/xcm-tools/commit/e85ed15e709ccf3b59f7aa8c0fcaf7134e0fe8a3))
+
 ## [6.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v5.10.0...sdk-v6.0.0) (2024-09-21)
 
 
