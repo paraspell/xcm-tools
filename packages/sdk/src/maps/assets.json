@@ -21,6 +21,34 @@
     ],
     "otherAssets": []
   },
+  "Polimec": {
+    "paraId": 3344,
+    "relayChainAssetSymbol": "DOT",
+    "nativeAssetSymbol": "PLMC",
+    "nativeAssets": [
+      {
+        "symbol": "PLMC",
+        "decimals": 10
+      }
+    ],
+    "otherAssets": [
+      {
+        "assetId": "10",
+        "symbol": "DOT",
+        "decimals": 10
+      },
+      {
+        "assetId": "1984",
+        "symbol": "USDt",
+        "decimals": 6
+      },
+      {
+        "assetId": "1337",
+        "symbol": "USDC",
+        "decimals": 6
+      }
+    ]
+  },
   "Acala": {
     "paraId": 2000,
     "relayChainAssetSymbol": "DOT",
@@ -1231,6 +1259,11 @@
         "decimals": 12
       },
       {
+        "assetId": "178794693648360392906933130845919698647",
+        "symbol": "WETH.e",
+        "decimals": 18
+      },
+      {
         "assetId": "314077021455772878282433861213184736939",
         "symbol": "PEAQ",
         "decimals": 18
@@ -1254,6 +1287,11 @@
         "assetId": "187224307232923873519830480073807488153",
         "symbol": "EQD",
         "decimals": 9
+      },
+      {
+        "assetId": "124105859028862849477017063633156007283",
+        "symbol": "wstETH.e",
+        "decimals": 18
       },
       {
         "assetId": "69606720909260275826784788104880799692",
@@ -1289,6 +1327,11 @@
         "assetId": "225719522181998468294117309041779353812",
         "symbol": "LDOT",
         "decimals": 10
+      },
+      {
+        "assetId": "36282181791341254438422467838694599751",
+        "symbol": "WBTC.e",
+        "decimals": 8
       },
       {
         "assetId": "124463719055550872076363892993240202694",
@@ -1736,6 +1779,11 @@
         "decimals": 20
       },
       {
+        "assetId": "50000003",
+        "symbol": "ARMY",
+        "decimals": 12
+      },
+      {
         "assetId": "47",
         "symbol": "TeMe6Pump",
         "decimals": 12
@@ -1861,6 +1909,11 @@
         "decimals": 2
       },
       {
+        "assetId": "50000000",
+        "symbol": "AGA",
+        "decimals": 12
+      },
+      {
         "assetId": "22222064",
         "symbol": "RIDEMY",
         "decimals": 12
@@ -1963,6 +2016,11 @@
       {
         "assetId": "22222036",
         "symbol": "Shit",
+        "decimals": 12
+      },
+      {
+        "assetId": "50000002",
+        "symbol": "NYBORG",
         "decimals": 12
       },
       {
@@ -2099,11 +2157,6 @@
         "assetId": "22222009",
         "symbol": "china",
         "decimals": 12
-      },
-      {
-        "assetId": "696969",
-        "symbol": "BRO",
-        "decimals": 18
       },
       {
         "assetId": "14",
@@ -2484,6 +2537,11 @@
         "assetId": "5361",
         "symbol": "NAT",
         "decimals": 10
+      },
+      {
+        "assetId": "50000001",
+        "symbol": "PHU",
+        "decimals": 12
       },
       {
         "assetId": "2829",
@@ -3651,6 +3709,26 @@
             {
               "accountKey20": {
                 "network": null,
+                "key": "0x5d3d01fd6d2ad1169b17918eb4f153c6616288eb"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parents": 2,
+        "interior": {
+          "x2": [
+            {
+              "globalConsensus": {
+                "ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "accountKey20": {
+                "network": null,
                 "key": "0xdac17f958d2ee523a2206206994597c13d831ec7"
               }
             }
@@ -4129,6 +4207,11 @@
       {
         "assetId": "2",
         "symbol": "VAL",
+        "decimals": 18
+      },
+      {
+        "assetId": "3",
+        "symbol": "PSWAP",
         "decimals": 18
       },
       {
@@ -6295,8 +6378,7 @@
         "decimals": 10
       }
     ],
-    "otherAssets": [],
-    "multiLocations": []
+    "otherAssets": []
   },
   "Turing": {
     "paraId": 2114,
@@ -6664,9 +6746,6 @@
         "decimals": 12
       },
       {
-        "assetId": "313524628741076911470961827389955394913"
-      },
-      {
         "assetId": "3496813586714279103986568049643838918",
         "symbol": "USDT",
         "decimals": 12
@@ -6708,9 +6787,24 @@
         "decimals": 6
       },
       {
+        "assetId": "11",
+        "symbol": "vASTR",
+        "decimals": 18
+      },
+      {
         "assetId": "4",
         "symbol": "USDC",
         "decimals": 6
+      },
+      {
+        "assetId": "9",
+        "symbol": "vDOT",
+        "decimals": 10
+      },
+      {
+        "assetId": "7",
+        "symbol": "INTR",
+        "decimals": 10
       },
       {
         "assetId": "2",
@@ -6728,9 +6822,29 @@
         "decimals": 10
       },
       {
+        "assetId": "8",
+        "symbol": "BNC",
+        "decimals": 12
+      },
+      {
         "assetId": "5",
         "symbol": "USDT",
         "decimals": 6
+      },
+      {
+        "assetId": "10",
+        "symbol": "vGLMR",
+        "decimals": 18
+      },
+      {
+        "assetId": "12",
+        "symbol": "vMANTA",
+        "decimals": 18
+      },
+      {
+        "assetId": "6",
+        "symbol": "HDX",
+        "decimals": 12
       }
     ]
   },

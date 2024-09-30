@@ -23,6 +23,9 @@ describe('getNodeEndpointOption', () => {
       // Peaq has an endpoint commented out, but it works
       if (node === 'Peaq') return
 
+      // All endpoints are unreachable
+      if (node === 'Litmus') return
+
       const option = getNodeEndpointOption(node)
       expect(option).toBeDefined()
       expect(option).toHaveProperty('providers')

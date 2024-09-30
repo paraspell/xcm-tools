@@ -75,12 +75,10 @@ const AmountTransferedPlotContainer = () => {
       </Group>
       <Group justify="space-between">
         <Checkbox
-          label="Show median"
+          label={t('median')}
           onChange={() => setShowMedian(value => !value)}
           checked={showMedian}
-        >
-          {t('median')}
-        </Checkbox>
+        />
         <Tooltip label={t('amountsChartInfo')} position="right" withArrow multiline w={220}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <IconInfoCircle size={16} />

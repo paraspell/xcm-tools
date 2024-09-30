@@ -21,7 +21,7 @@ class Basilisk extends ParachainNode implements IXTokensTransfer {
   }
 
   getProvider(): string {
-    // Return the second WebSocket URL because the first one is sometimes unreliable.
+    // Prefer Dwellir RPC endpoint
     return getAllNodeProviders(this.node as TNodePolkadotKusama)[1]
   }
 }

@@ -58,5 +58,6 @@ export const nodeToQuery: Record<TNodePolkadotKusama, string | null> = {
   BridgeHubPolkadot: null,
   BridgeHubKusama: null,
   Mythos: null, // No assets metadata query
-  Peaq: 'assets.metadata'
+  Peaq: 'assets.metadata',
+  Polimec: 'foreignAssets.metadata'
 }

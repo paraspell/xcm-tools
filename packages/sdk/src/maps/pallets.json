@@ -226,5 +226,9 @@
   "CoretimePolkadot": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
+  },
+  "Polimec": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
   }
 }
