@@ -25,7 +25,7 @@ class Acala extends ParachainNode implements IXTokensTransfer {
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[1]
+    return getAllNodeProviders(this.node as TNodePolkadotKusama)[3]
   }
 }
 

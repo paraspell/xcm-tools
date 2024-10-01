@@ -31,10 +31,12 @@
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/assets/updateAssets.ts",
     "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/pallets/updatePallets.ts",
     "updateEds": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/eds/updateEds.ts",
+    "generatePapiDescriptors": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/papi/generateDescriptors.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
   "dependencies": {
+    "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@snowbridge/api": "^0.1.20",
     "ethers": "^6.13.2"
   },
@@ -43,7 +45,25 @@
     "@polkadot/api-base": ">= 12.4 < 13",
     "@polkadot/apps-config": ">= 0.144",
     "@polkadot/types": ">= 12.4 < 13",
-    "@polkadot/util": ">= 13"
+    "@polkadot/util": ">= 13",
+    "polkadot-api": ">= 1 < 2"
+  },
+  "peerDependenciesMeta": {
+    "@polkadot/api": {
+      "optional": true
+    },
+    "@polkadot/api-base": {
+      "optional": true
+    },
+    "@polkadot/types": {
+      "optional": true
+    },
+    "@polkadot/util": {
+      "optional": true
+    },
+    "polkadot-api": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.25.6",
