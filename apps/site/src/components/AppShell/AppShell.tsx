@@ -7,11 +7,14 @@ import Navbar from "./Navbar";
 import Routes from "../Routes";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import StickyBar from "../StickyBar";
 
 const AppShell = () => {
   const [pinned, setPinned] = useState(true);
 
   const [opened, { toggle, close }] = useDisclosure();
+
+  const [showStickyBar, setShowStickyBar] = useState(true);
 
   const { pathname, hash } = useLocation();
 
@@ -32,9 +35,19 @@ const AppShell = () => {
     };
   }, []);
 
+  const onCloseClick = () => {
+    setShowStickyBar(false);
+  };
+
   return (
     <MantineAppShell
-      header={{ height: 86, offset: false }}
+      header={{
+        height: {
+          base: 70 + (showStickyBar ? 54 : 0),
+          sm: 70 + (showStickyBar ? 28 : 0),
+        },
+        offset: false,
+      }}
       navbar={{
         width: 300,
         breakpoint: "md",
@@ -53,10 +66,18 @@ const AppShell = () => {
           transition: "background-color 100ms ease, backdrop-filter 100ms ease",
         }}
       >
+        {showStickyBar && <StickyBar onCloseClick={onCloseClick} />}
         <Header menuOpened={opened} toggleMenu={toggle} pinned={pinned} />
       </MantineAppShell.Header>
 
-      <MantineAppShell.Navbar py="sm" px="sm" mt={86}>
+      <MantineAppShell.Navbar
+        py="sm"
+        px="sm"
+        mt={{
+          base: 70 + (showStickyBar ? 54 : 0),
+          sm: 70 + (showStickyBar ? 28 : 0),
+        }}
+      >
         <Navbar />
       </MantineAppShell.Navbar>
 
