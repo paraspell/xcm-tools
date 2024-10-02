@@ -20,7 +20,13 @@ import {
   type TNodePolkadotKusama,
   type TTransferReturn
 } from '../types'
-import { generateAddressPayload, getFees, getAllNodeProviders, createApiInstance } from '../utils'
+import {
+  getAllNodeProviders,
+  createApiInstance,
+  generateAddressPayload,
+  getFees,
+  verifyMultiLocation
+} from '../utils'
 import {
   constructRelayToParaParameters,
   createCurrencySpec,
@@ -30,7 +36,6 @@ import {
 import { TMultiLocationHeader, type TMultiLocation } from '../types/TMultiLocation'
 import { type TMultiAsset } from '../types/TMultiAsset'
 import { InvalidCurrencyError } from '../errors'
-import { verifyMultiLocation } from '../utils/verifyMultilocation'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj

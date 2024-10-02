@@ -139,4 +139,20 @@ describe('TransferInfoService', () => {
       }),
     ).rejects.toThrow(InternalServerErrorException);
   });
+
+  it('should validate destination wallet address', async () => {
+    vi.mocked(isValidWalletAddress).mockImplementation((address) => {
+      return address === '0x123';
+    });
+    await expect(
+      service.getTransferInfo({
+        origin: 'Polkadot',
+        destination: 'Kusama',
+        accountOrigin: '0x123',
+        accountDestination: '0x456',
+        currency: { symbol: 'DOT' },
+        amount: '1000',
+      }),
+    ).rejects.toThrow('Invalid destination wallet address.');
+  });
 });

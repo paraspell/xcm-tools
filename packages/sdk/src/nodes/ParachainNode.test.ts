@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { InvalidCurrencyError } from '../errors'
 import { isTMultiLocation } from '../pallets/xcmPallet/utils'
-import { verifyMultiLocation } from '../utils/verifyMultilocation'
 import { TMultiLocation, TNode, TSendInternalOptions } from '../types'
 import { getNode } from '../utils'
 import AssetHubPolkadot from './supported/AssetHubPolkadot'
 import { ApiPromise } from '@polkadot/api'
+import { verifyMultiLocation } from '../utils/verifyMultiLocation'
 
 vi.mock('../pallets/xcmPallet/utils', async () => {
   const actual = await import('../pallets/xcmPallet/utils')
@@ -15,7 +15,7 @@ vi.mock('../pallets/xcmPallet/utils', async () => {
   }
 })
 
-vi.mock('../utils/verifyMultilocation', () => ({
+vi.mock('../utils/verifyMultiLocation', () => ({
   verifyMultiLocation: vi.fn()
 }))
 

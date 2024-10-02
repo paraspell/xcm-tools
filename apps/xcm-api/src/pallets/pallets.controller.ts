@@ -13,12 +13,12 @@ export class PalletsController {
   @Get(':node/default')
   getDefaultPallet(@Param('node') node: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_DEFAULT_PALLET, req, { node });
-    return this.palletsService.getDefaultPallet(node);
+    return Promise.resolve(this.palletsService.getDefaultPallet(node));
   }
 
   @Get(':node')
   getPallets(@Param('node') node: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_SUPPORTED_PALLETS, req, { node });
-    return this.palletsService.getPallets(node);
+    return Promise.resolve(this.palletsService.getPallets(node));
   }
 }

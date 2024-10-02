@@ -6,8 +6,8 @@ export default defineConfig({
     globals: true,
     root: './',
     coverage: {
-      include: ['src/**/*'],
-      exclude: ['src/**/*.module.ts', 'src/main.ts'],
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/*.module.ts', 'src/**/*.test.ts', 'src/types/types.ts'],
     },
   },
   plugins: [

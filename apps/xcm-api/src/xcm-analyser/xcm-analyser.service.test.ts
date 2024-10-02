@@ -75,7 +75,7 @@ describe('XcmAnalyserService', () => {
     });
 
     expect(convertMultilocationToUrl).toHaveBeenCalledWith(multilocation);
-    expect(result).toEqual(JSON.stringify(expectedUrl));
+    expect(result).toEqual(`"${expectedUrl}"`);
   });
 
   it('returns the correct URLs for xcm', () => {
@@ -98,7 +98,7 @@ describe('XcmAnalyserService', () => {
     });
 
     expect(convertXCMToUrls).toHaveBeenCalledWith(xcm);
-    expect(result).toEqual(JSON.stringify(expectedUrls));
+    expect(result).toEqual(expectedUrls);
   });
 
   it('throws InternalServerErrorException when conversion fails', () => {

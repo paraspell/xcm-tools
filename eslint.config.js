@@ -28,6 +28,7 @@ export default tseslint.config(
       "**/codegen.ts",
       "**/playwright.config.ts",
       "**/e2e/",
+      "**/coverage/",
     ],
   },
   eslint.configs.recommended,

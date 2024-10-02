@@ -31,9 +31,8 @@ export class XTransferController {
     params: XTransferDto,
   ) {
     const { from, to, currency } = params;
-    const resolvedCurrency =
-      typeof currency === 'string' ? currency : 'MultiLocation';
-    const resolvedTo = typeof to === 'string' ? to : 'MultiLocation';
+    const resolvedCurrency = JSON.stringify(currency);
+    const resolvedTo = JSON.stringify(to);
     this.analyticsService.track(eventName, req, {
       from,
       resolvedTo,

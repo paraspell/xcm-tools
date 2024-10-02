@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
 import { TCurrencyCore } from '@paraspell/sdk';
 import { TransactionType } from '@paraspell/xcm-router';
+import { validateAmount } from '../../utils/validateAmount.js';
 
 export const RouterDtoSchema = z.object({
   from: z.string(),
@@ -24,15 +25,9 @@ export const RouterDtoSchema = z.object({
     .min(1, 'Asset hub address is required')
     .optional(),
   amount: z.union([
-    z.string().refine(
-      (val) => {
-        const num = parseFloat(val);
-        return !isNaN(num) && num > 0;
-      },
-      {
-        message: 'Amount must be a positive number',
-      },
-    ),
+    z.string().refine(validateAmount, {
+      message: 'Amount must be a positive number',
+    }),
     z.number().positive({ message: 'Amount must be a positive number' }),
   ]),
   slippagePct: z.string().optional(),

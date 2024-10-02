@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { ApiPromise } from '@polkadot/api'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
+import { Codec } from '@polkadot/types/types'
+import { StorageKey } from '@polkadot/types'
 
 describe('getBalanceForeignXTokens', () => {
   let apiMock: ApiPromise
@@ -62,5 +64,146 @@ describe('getBalanceForeignXTokens', () => {
     await expect(
       getBalanceForeignXTokens('0x123', { symbol: 'BTC' }, undefined, undefined, apiMock)
     ).rejects.toThrow('API Error')
+  })
+
+  it('should return the correct balance when asset matches by ID', async () => {
+    vi.mocked(apiMock.query.tokens.accounts.entries).mockResolvedValue([
+      [
+        {
+          args: [
+            undefined as unknown as Codec,
+            { toString: () => '1234', toHuman: () => ({}) } as Codec
+          ]
+        } as unknown as StorageKey,
+        { free: { toString: () => '500' } }
+      ]
+    ])
+
+    const result = await getBalanceForeignXTokens(
+      '0x123',
+      { id: '1234' },
+      undefined,
+      '1234',
+      apiMock
+    )
+    expect(result).toEqual(BigInt(500))
+  })
+
+  it('should return the correct balance when asset matches by human-readable symbol', async () => {
+    vi.mocked(apiMock.query.tokens.accounts.entries).mockResolvedValue([
+      [
+        {
+          args: [
+            undefined as unknown as Codec,
+            { toString: () => '0x123', toHuman: () => ({ symbol: 'BTC' }) } as unknown as Codec
+          ]
+        } as unknown as StorageKey,
+        { free: { toString: () => '2000' } }
+      ]
+    ])
+
+    const result = await getBalanceForeignXTokens(
+      '0x123',
+      { symbol: 'BTC' },
+      undefined,
+      undefined,
+      apiMock
+    )
+    expect(result).toEqual(BigInt(2000))
+  })
+
+  it('should return the correct balance when asset matches by human-readable ID', async () => {
+    vi.mocked(apiMock.query.tokens.accounts.entries).mockResolvedValue([
+      [
+        {
+          args: [
+            undefined as unknown as Codec,
+            { toString: () => '0x123', toHuman: () => ({ id: '1234' }) } as unknown as Codec
+          ]
+        } as unknown as StorageKey,
+        { free: { toString: () => '3000' } }
+      ]
+    ])
+
+    const result = await getBalanceForeignXTokens(
+      '0x123',
+      { id: '1234' },
+      undefined,
+      undefined,
+      apiMock
+    )
+    expect(result).toEqual(BigInt(3000))
+  })
+
+  it('should return the correct balance when asset matches by provided symbol', async () => {
+    vi.mocked(apiMock.query.tokens.accounts.entries).mockResolvedValue([
+      [
+        {
+          args: [
+            undefined as unknown as Codec,
+            { toString: () => 'BTC', toHuman: () => ({}) } as Codec
+          ]
+        } as unknown as StorageKey,
+        { free: { toString: () => '1500' } }
+      ]
+    ])
+
+    const result = await getBalanceForeignXTokens(
+      '0x123',
+      { symbol: 'BTC' },
+      'BTC',
+      undefined,
+      apiMock
+    )
+    expect(result).toEqual(BigInt(1500))
+  })
+
+  it('should return the correct balance when asset matches by provided ID', async () => {
+    vi.mocked(apiMock.query.tokens.accounts.entries).mockResolvedValue([
+      [
+        {
+          args: [
+            undefined as unknown as Codec,
+            { toString: () => '1234', toHuman: () => ({}) } as Codec
+          ]
+        } as unknown as StorageKey,
+        { free: { toString: () => '2500' } }
+      ]
+    ])
+
+    const result = await getBalanceForeignXTokens(
+      '0x123',
+      { id: '1234' },
+      undefined,
+      '1234',
+      apiMock
+    )
+    expect(result).toEqual(BigInt(2500))
+  })
+
+  it('should return null when human-readable asset does not match id or symbol', async () => {
+    vi.mocked(apiMock.query.tokens.accounts.entries).mockResolvedValue([
+      [
+        {
+          args: [
+            undefined as unknown as Codec,
+            {
+              toString: () => '0x123',
+              toHuman: () => ({ symbol: 'ETH' })
+            } as unknown as Codec
+          ]
+        } as unknown as StorageKey,
+        { free: { toString: () => '1000' } }
+      ]
+    ])
+
+    const result = await getBalanceForeignXTokens(
+      '0x123',
+      { symbol: 'BTC' },
+      'BTC',
+      undefined,
+      apiMock
+    )
+    expect(result).toBeNull()
   })
 })

@@ -1,0 +1,50 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { Version, XTokensTransferInput, TForeignOrTokenAsset } from '../../types'
+import XTokensTransferImpl from '../xTokens'
+import Curio from './Curio'
+import { getNode } from '../../utils'
+
+vi.mock('../xTokens', () => ({
+  default: {
+    transferXTokens: vi.fn()
+  }
+}))
+
+describe('Curio', () => {
+  let curio: Curio
+  const mockInput = {
+    currency: 'CUR',
+    currencyID: '123',
+    amount: '100'
+  } as XTokensTransferInput
+
+  beforeEach(() => {
+    curio = getNode('Curio')
+  })
+
+  it('should initialize with correct values', () => {
+    expect(curio.node).toBe('Curio')
+    expect(curio.name).toBe('curio')
+    expect(curio.type).toBe('kusama')
+    expect(curio.version).toBe(Version.V3)
+  })
+
+  it('should call transferXTokens with ForeignAsset when currencyID is defined', () => {
+    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
+
+    curio.transferXTokens(mockInput)
+
+    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: '123' } as TForeignOrTokenAsset)
+  })
+
+  it('should call transferXTokens with Token when currencyID is undefined', () => {
+    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
+    const inputWithoutCurrencyID = { ...mockInput, currencyID: undefined }
+
+    curio.transferXTokens(inputWithoutCurrencyID)
+
+    expect(spy).toHaveBeenCalledWith(inputWithoutCurrencyID, {
+      Token: 'CUR'
+    } as TForeignOrTokenAsset)
+  })
+})

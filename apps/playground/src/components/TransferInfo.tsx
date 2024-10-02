@@ -7,6 +7,7 @@ import TransferInfoForm, { FormValues } from "./TransferInfoForm";
 import OutputAlert from "./OutputAlert";
 import { getTransferInfo } from "@paraspell/sdk";
 import { fetchFromApi } from "../utils/submitUsingApi";
+import { replaceBigInt } from "../utils/replaceBigInt";
 
 const TransferInfo = () => {
   const { selectedAccount } = useWallet();
@@ -79,7 +80,7 @@ const TransferInfo = () => {
 
     try {
       const output = await getQueryResult(formValues);
-      setOutput(JSON.stringify(output, null, 2));
+      setOutput(JSON.stringify(output, replaceBigInt, 2));
       openOutputAlert();
       closeAlert();
     } catch (e) {

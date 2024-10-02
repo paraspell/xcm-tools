@@ -1,6 +1,6 @@
 import { ThrottlerModuleOptions } from '@nestjs/throttler';
 import { ConfigService } from '@nestjs/config';
-import { RequestWithUser } from 'src/types/types.js';
+import { RequestWithUser } from '../types/types.js';
 
 export const throttlerConfig = (
   config: ConfigService,

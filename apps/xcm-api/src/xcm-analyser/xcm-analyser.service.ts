@@ -26,9 +26,9 @@ export class XcmAnalyserService {
 
     try {
       if (multilocation) {
-        return JSON.stringify(convertMultilocationToUrl(multilocation));
+        return `"${convertMultilocationToUrl(multilocation)}"`;
       } else {
-        return JSON.stringify(convertXCMToUrls(xcm));
+        return convertXCMToUrls(xcm);
       }
     } catch (e) {
       if (e instanceof Error) {

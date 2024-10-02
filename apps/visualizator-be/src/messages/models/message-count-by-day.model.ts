@@ -1,8 +1,9 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { returnInt } from '../../utils/graphql.utils';
 
 @ObjectType()
 export class MessageCountByDay {
-  @Field(() => Int, { nullable: true })
+  @Field(returnInt, { nullable: true })
   paraId?: number;
 
   @Field()

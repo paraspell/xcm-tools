@@ -291,7 +291,7 @@ export class MessageService {
     const query = `
       SELECT from_account_id, COUNT(*) as message_count
       FROM messages
-      ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
+      WHERE ${whereConditions.join(' AND ')}
       GROUP BY from_account_id
       HAVING COUNT(*) > $${parameters.length + 1}
       ORDER BY message_count DESC;

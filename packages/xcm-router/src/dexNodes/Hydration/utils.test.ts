@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Asset, TradeRouter } from '@galacticcouncil/sdk';
 import { TCurrencyCore } from '@paraspell/sdk';
@@ -20,33 +19,33 @@ describe('getAssetInfo', () => {
   });
 
   it('should return asset by symbol if found', async () => {
-    vi.mocked(mockTradeRouter.getAllAssets).mockResolvedValue(mockAssets);
+    const spy = vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
     const currency: TCurrencyCore = { symbol: 'BTC' };
     const asset = await getAssetInfo(mockTradeRouter, currency);
 
     expect(asset).toEqual(mockAssets[0]);
-    expect(mockTradeRouter.getAllAssets).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledOnce();
   });
 
   it('should return asset by id if found', async () => {
-    vi.mocked(mockTradeRouter.getAllAssets).mockResolvedValue(mockAssets);
+    const spy = vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
     const currency: TCurrencyCore = { id: '2' };
     const asset = await getAssetInfo(mockTradeRouter, currency);
 
     expect(asset).toEqual(mockAssets[1]);
-    expect(mockTradeRouter.getAllAssets).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledOnce();
   });
 
   it('should return undefined if asset is not found', async () => {
-    vi.mocked(mockTradeRouter.getAllAssets).mockResolvedValue(mockAssets);
+    const spy = vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
     const currency: TCurrencyCore = { symbol: 'XRP' }; // Non-existent symbol
     const asset = await getAssetInfo(mockTradeRouter, currency);
 
     expect(asset).toBeUndefined();
-    expect(mockTradeRouter.getAllAssets).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledOnce();
   });
 
   it('should throw an error if duplicate assets are found by symbol', async () => {
@@ -54,7 +53,7 @@ describe('getAssetInfo', () => {
       { id: '1', symbol: 'BTC' } as unknown as Asset,
       { id: '4', symbol: 'BTC' } as unknown as Asset,
     ];
-    vi.mocked(mockTradeRouter.getAllAssets).mockResolvedValue(duplicateAssets);
+    vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(duplicateAssets);
 
     const currency: TCurrencyCore = { symbol: 'BTC' };
 
@@ -68,7 +67,7 @@ describe('getAssetInfo', () => {
       { id: '1', symbol: 'BTC' } as unknown as Asset,
       { id: '1', symbol: 'ETH' } as unknown as Asset,
     ];
-    vi.mocked(mockTradeRouter.getAllAssets).mockResolvedValue(duplicateAssets);
+    vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(duplicateAssets);
 
     const currency: TCurrencyCore = { id: '1' };
 

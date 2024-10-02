@@ -1,18 +1,19 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
+import { returnInt } from '../utils/graphql.utils';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
 @Entity('channels')
 export class Channel {
-  @Field(() => Int)
+  @Field(returnInt)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column()
   sender: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column()
   recipient: number;
 
@@ -20,23 +21,23 @@ export class Channel {
   @Column()
   status: string;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column()
   transfer_count: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column()
   message_count: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column('bigint')
   active_at: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column()
   proposed_max_capacity: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column()
   proposed_max_message_size: number;
 }

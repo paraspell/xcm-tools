@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
   Extrinsic,
@@ -48,25 +47,22 @@ describe('CoretimePolkadot', () => {
 
       const mockResult = {} as Extrinsic
 
-      vi.mocked(PolkadotXCMTransferImpl.transferPolkadotXCM).mockResolvedValue(mockResult)
+      const spy = vi
+        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+        .mockResolvedValue(mockResult)
 
       coretimePolkadot.transferPolkadotXCM(input)
 
-      expect(PolkadotXCMTransferImpl.transferPolkadotXCM).toHaveBeenCalledWith(
-        input,
-        'limitedReserveTransferAssets',
-        'Unlimited'
-      )
+      expect(spy).toHaveBeenCalledWith(input, 'limitedReserveTransferAssets', 'Unlimited')
     })
 
     it('should use limitedTeleportAssets when scenario is not ParaToPara', () => {
       const input = { scenario: 'ParaToRelay' } as PolkadotXCMTransferInput
+
+      const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+
       coretimePolkadot.transferPolkadotXCM(input)
-      expect(PolkadotXCMTransferImpl.transferPolkadotXCM).toHaveBeenCalledWith(
-        input,
-        'limitedTeleportAssets',
-        'Unlimited'
-      )
+      expect(spy).toHaveBeenCalledWith(input, 'limitedTeleportAssets', 'Unlimited')
     })
   })
 

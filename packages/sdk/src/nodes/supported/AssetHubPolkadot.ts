@@ -1,4 +1,4 @@
-// Contains detailed structure of XCM call construction for Statemint Parachain
+// Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
 import { ethers } from 'ethers'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
@@ -22,10 +22,11 @@ import {
   type TJunction,
   Junctions
 } from '../../types'
-import { generateAddressMultiLocationV4, generateAddressPayload } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { getOtherAssets, getParaId } from '../../pallets/assets'
+import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
+import { generateAddressPayload } from '../../utils/generateAddressPayload'
 
 class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
   constructor() {

@@ -1,13 +1,14 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
+import { returnInt } from '../../utils/graphql.utils';
 
 @ObjectType()
 export class MessageCountByStatus {
-  @Field(() => Int, { nullable: true })
+  @Field(returnInt, { nullable: true })
   paraId?: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   success: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   failed: number;
 }
