@@ -1,6 +1,6 @@
-export interface RequestWithUser extends Request {
+export type RequestWithUser = Request & {
   user?: {
     id: string;
     requestLimit: number;
   };
-}
+};

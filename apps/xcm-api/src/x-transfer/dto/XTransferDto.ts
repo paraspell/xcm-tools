@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TAddress, TCurrencyInput, Version } from '@paraspell/sdk';
 import { MultiLocationSchema } from '@paraspell/xcm-analyser';
+import { validateAmount } from '../../utils/validateAmount.js';
 
 const StringOrNumber = z
   .string()
@@ -66,15 +67,9 @@ export const XTransferDtoSchema = z.object({
   from: z.string().optional(),
   to: z.union([z.string().optional(), MultiLocationSchema]),
   amount: z.union([
-    z.string().refine(
-      (val) => {
-        const num = parseFloat(val);
-        return !isNaN(num) && num > 0;
-      },
-      {
-        message: 'Amount must be a positive number',
-      },
-    ),
+    z.string().refine(validateAmount, {
+      message: 'Amount must be a positive number',
+    }),
     z.number().positive({ message: 'Amount must be a positive number' }),
   ]),
   address: z.union([

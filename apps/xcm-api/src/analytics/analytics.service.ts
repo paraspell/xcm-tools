@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as Mixpanel from 'mixpanel';
 import { EventName } from './EventName.js';
 import UAParser from 'ua-parser-js';
-import { RequestWithUser } from 'src/types/types.js';
+import { RequestWithUser } from '../types/types.js';
 
 @Injectable()
 export class AnalyticsService {

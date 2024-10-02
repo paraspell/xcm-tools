@@ -3,7 +3,10 @@ import { AssetClaimService } from './asset-claim.service.js';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as sdk from '@paraspell/sdk';
 import * as utils from '../utils.js';
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ApiPromise } from '@polkadot/api';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
 
@@ -47,8 +50,17 @@ describe('AssetClaimService', () => {
     await expect(service.claimAssets(dto)).rejects.toThrow(BadRequestException);
   });
 
+  it('throws BadRequestException when fromNode is undefined', async () => {
+    const dto = { from: undefined, fungible: [], address: 'validAddress' };
+
+    await expect(service.claimAssets(dto)).rejects.toThrow(
+      new BadRequestException("You need to provide a 'from' parameter"),
+    );
+  });
+
   it('throws BadRequestException if the wallet address is not valid', async () => {
     const dto = { from: 'Acala', fungible: [], address: 'invalidAddress' };
+    sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(false);
 
     await expect(service.claimAssets(dto)).rejects.toThrow(BadRequestException);
@@ -108,5 +120,39 @@ describe('AssetClaimService', () => {
 
     expect(result).toEqual('hash');
     expect(sdk.createApiInstanceForNode).toHaveBeenCalledWith('Acala');
+  });
+
+  it('throws BadRequestException when InvalidCurrencyError is thrown', async () => {
+    vi.mocked(sdk.Builder).mockImplementation(() => {
+      throw new sdk.InvalidCurrencyError('Invalid currency error');
+    });
+
+    const dto = { from: 'Acala', fungible: [], address: 'validAddress' };
+    sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
+    vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
+    vi.mocked(sdk.createApiInstanceForNode).mockResolvedValue({
+      disconnect: vi.fn(),
+    } as unknown as ApiPromise);
+
+    await expect(service.claimAssets(dto)).rejects.toThrow(
+      new BadRequestException('Invalid currency error'),
+    );
+  });
+
+  it('throws InternalServerErrorException when a generic error is thrown', async () => {
+    vi.mocked(sdk.Builder).mockImplementation(() => {
+      throw new Error('Some internal error');
+    });
+
+    const dto = { from: 'Acala', fungible: [], address: 'validAddress' };
+    sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
+    vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
+    vi.mocked(sdk.createApiInstanceForNode).mockResolvedValue({
+      disconnect: vi.fn(),
+    } as unknown as ApiPromise);
+
+    await expect(service.claimAssets(dto)).rejects.toThrow(
+      new InternalServerErrorException('Some internal error'),
+    );
   });
 });

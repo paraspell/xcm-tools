@@ -1,6 +1,7 @@
 import { TCurrencyCore } from '@paraspell/sdk';
 import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
 import { z } from 'zod';
+import { validateAmount } from '../../utils/validateAmount.js';
 
 export const TransferInfoSchema = z.object({
   origin: z.string(),
@@ -11,15 +12,9 @@ export const TransferInfoSchema = z.object({
     .min(1, { message: 'Destination address is required' }),
   currency: CurrencyCoreSchema,
   amount: z.union([
-    z.string().refine(
-      (val) => {
-        const num = parseFloat(val);
-        return !isNaN(num) && num > 0;
-      },
-      {
-        message: 'Amount must be a positive number',
-      },
-    ),
+    z.string().refine(validateAmount, {
+      message: 'Amount must be a positive number',
+    }),
     z.number().positive({ message: 'Amount must be a positive number' }),
   ]),
 });

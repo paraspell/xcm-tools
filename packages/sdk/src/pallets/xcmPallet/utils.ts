@@ -8,11 +8,12 @@ import {
   type TNode,
   type TCurrencySelectionHeaderArr
 } from '../../types'
-import { createX1Payload, generateAddressPayload } from '../../utils'
 import { getParaId, getTNode } from '../assets'
 import { Junctions, TJunction, type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 import { findParachainJunction } from './findParachainJunction'
+import { generateAddressPayload } from '../../utils/generateAddressPayload'
+import { createX1Payload } from '../../utils/createX1Payload'
 
 export const constructRelayToParaParameters = (
   { api, destination, address, amount, paraIdTo }: TRelayToParaInternalOptions,

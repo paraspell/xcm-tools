@@ -1,7 +1,4 @@
-import {
-  BadRequestException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import {
   Extrinsic,
   NODE_NAMES,
@@ -10,7 +7,6 @@ import {
 } from '@paraspell/sdk';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
-import axios from 'axios';
 import { isAddress } from 'web3-validator';
 
 export const isNumeric = (num: string) => !isNaN(Number(num));
@@ -21,28 +17,6 @@ export const validateNode = (node: string) => {
       `Node ${node} is not valid. Check docs for valid nodes.`,
     );
   }
-};
-
-export const validateRecaptcha = async (
-  recaptcha: string,
-  recaptchaSecretKey: string,
-): Promise<boolean> => {
-  const data = {
-    secret: recaptchaSecretKey,
-    response: recaptcha,
-  };
-
-  const response = await axios
-    .post('https://www.google.com/recaptcha/api/siteverify', null, {
-      params: data,
-    })
-    .catch((error) => {
-      throw new InternalServerErrorException(
-        'Error verifying reCAPTCHA: ' + error,
-      );
-    });
-
-  return (response.data as { success: boolean }).success;
 };
 
 export const isValidPolkadotAddress = (address: string) => {

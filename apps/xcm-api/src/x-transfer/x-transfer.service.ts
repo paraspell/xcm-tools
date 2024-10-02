@@ -87,6 +87,7 @@ export class XTransferService {
         e instanceof InvalidCurrencyError ||
         e instanceof IncompatibleNodesError
       ) {
+        console.log(e);
         throw new BadRequestException(e.message);
       }
       const error = e as Error;

@@ -75,7 +75,7 @@ describe('MessageService', () => {
       );
 
       const results = await service.countMessagesByStatus(
-        [],
+        undefined,
         startTime,
         endTime,
       );
@@ -367,12 +367,12 @@ describe('MessageService', () => {
         { id: 'account1', count: 6 },
         { id: 'account2', count: 7 },
       ]);
-      expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
-        startTime,
-        endTime,
-        ...paraIds,
-        threshold,
-      ]);
+
+      // Ensure that the WHERE clause includes paraIds
+      expect(mockRepository.query).toHaveBeenCalledWith(
+        expect.stringContaining('WHERE origin_block_timestamp BETWEEN'),
+        [startTime, endTime, ...paraIds, threshold],
+      );
     });
 
     it('should return account message counts when no paraIds are provided', async () => {
@@ -387,11 +387,12 @@ describe('MessageService', () => {
       );
 
       expect(results).toEqual([{ id: 'account3', count: 8 }]);
-      expect(mockRepository.query).toHaveBeenCalledWith(expect.any(String), [
-        startTime,
-        endTime,
-        threshold,
-      ]);
+
+      // Ensure that the WHERE clause does not include paraIds
+      expect(mockRepository.query).toHaveBeenCalledWith(
+        expect.not.stringContaining('origin_para_id IN'),
+        [startTime, endTime, threshold],
+      );
     });
 
     it('should handle exceptions', async () => {

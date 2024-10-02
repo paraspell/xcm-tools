@@ -1,5 +1,6 @@
-import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
+import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 import { CountOption } from '../count-option';
+import { returnInt } from '../../utils/graphql.utils';
 
 registerEnumType(CountOption, {
   name: 'CountOption',
@@ -8,9 +9,9 @@ registerEnumType(CountOption, {
 
 @ObjectType()
 export class MessageCount {
-  @Field(() => Int)
+  @Field(returnInt)
   paraId: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   totalCount: number;
 }

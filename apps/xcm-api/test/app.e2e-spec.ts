@@ -24,6 +24,8 @@ import {
 import { RouterDto } from '../src/router/dto/RouterDto';
 import { describe, beforeAll, it, expect } from 'vitest';
 import { TransferInfoDto } from '../src/transfer-info/dto/transfer-info.dto';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import { replaceBigInt } from '../src/utils/replaceBigInt';
 
 describe('XCM API (e2e)', () => {
   let app: INestApplication;
@@ -32,15 +34,15 @@ describe('XCM API (e2e)', () => {
   const unknownNode = 'UnknownNode';
 
   beforeAll(async () => {
-    BigInt.prototype['toJSON'] = function () {
-      return this.toString();
-    };
-
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    (app.getHttpAdapter().getInstance() as ExpressAdapter).set(
+      'json replacer',
+      replaceBigInt,
+    );
     await app.init();
   });
 

@@ -1,10 +1,14 @@
-import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { returnInt } from '../utils/graphql.utils';
 import { Entity, Column, PrimaryColumn } from 'typeorm';
+
+export const returnID = () => ID;
+export const returnAssetArray = () => [Asset];
 
 @ObjectType()
 @Entity('messages')
 export class Message {
-  @Field(() => ID)
+  @Field(returnID)
   @PrimaryColumn()
   message_hash: string;
 
@@ -16,19 +20,19 @@ export class Message {
   @Column()
   from_account_id: string;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column()
   origin_para_id: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column('bigint')
   origin_block_timestamp: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column('bigint')
   relayed_block_timestamp: number;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column('bigint')
   block_num: number;
 
@@ -44,7 +48,7 @@ export class Message {
   @Column()
   dest_event_index: string;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column()
   dest_para_id: number;
 
@@ -52,7 +56,7 @@ export class Message {
   @Column()
   to_account_id: string;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column('bigint')
   confirm_block_timestamp: number;
 
@@ -68,7 +72,7 @@ export class Message {
   @Column()
   dest_extrinsic_index: string;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column()
   child_para_id: number;
 
@@ -88,11 +92,11 @@ export class Message {
   @Column()
   unique_id: string;
 
-  @Field(() => Int)
+  @Field(returnInt)
   @Column()
   xcm_version: number;
 
-  @Field(() => [Asset])
+  @Field(returnAssetArray)
   @Column('jsonb')
   assets: Asset[];
 }
@@ -108,7 +112,7 @@ export class Asset {
   @Field()
   amount: string;
 
-  @Field(() => Int)
+  @Field(returnInt)
   decimals: number;
 
   @Field()

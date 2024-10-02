@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { PolkadotXCMTransferInput } from '../../types'
 import { getNode } from '../../utils'
@@ -40,12 +39,11 @@ describe('Robonomics', () => {
 
     it('should use limitedReserveTransferAssets when scenario is ParaToPara', () => {
       const input = { scenario: 'ParaToPara', currencySymbol: 'SUB' } as PolkadotXCMTransferInput
+
+      const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+
       subsocial.transferPolkadotXCM(input)
-      expect(PolkadotXCMTransferImpl.transferPolkadotXCM).toHaveBeenCalledWith(
-        input,
-        'limitedReserveTransferAssets',
-        'Unlimited'
-      )
+      expect(spy).toHaveBeenCalledWith(input, 'limitedReserveTransferAssets', 'Unlimited')
     })
   })
 })

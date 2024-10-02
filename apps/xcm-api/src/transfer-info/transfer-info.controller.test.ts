@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { mockRequestObject } from '../testUtils.js';
@@ -43,7 +42,9 @@ describe('TransferInfoController', () => {
         amount: 100,
       };
       const mockResult = {} as TTransferInfo;
-      vi.spyOn(service, 'getTransferInfo').mockResolvedValue(mockResult);
+      const spy = vi
+        .spyOn(service, 'getTransferInfo')
+        .mockResolvedValue(mockResult);
 
       const result = await controller.getTransferInfo(
         queryParams,
@@ -51,7 +52,7 @@ describe('TransferInfoController', () => {
       );
 
       expect(result).toBe(mockResult);
-      expect(service.getTransferInfo).toHaveBeenCalledWith(queryParams);
+      expect(spy).toHaveBeenCalledWith(queryParams);
     });
   });
 });
