@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { BN } from '@polkadot/util'
-import { Extrinsic } from '../../types'
+import type { Extrinsic } from '../../types'
 import { calculateTransactionFee } from './calculateTransactionFee'
 
 describe('calculateTransactionFee', () => {

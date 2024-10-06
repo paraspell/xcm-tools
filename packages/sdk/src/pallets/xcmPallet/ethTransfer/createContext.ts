@@ -1,5 +1,6 @@
-import { environment, contextFactory } from '@snowbridge/api'
-import { AbstractProvider } from 'ethers'
+import type { environment } from '@snowbridge/api'
+import { contextFactory } from '@snowbridge/api'
+import type { AbstractProvider } from 'ethers'
 
 export const createContext = async (
   executionUrl: string | AbstractProvider,

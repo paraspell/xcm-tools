@@ -1,5 +1,6 @@
-import { ApiPromise } from '@polkadot/api'
-import { Parents, TAddress, TMultiLocationHeader, Version } from '../types'
+import type { ApiPromise } from '@polkadot/api'
+import type { TAddress, TMultiLocationHeader } from '../types'
+import { Parents, Version } from '../types'
 import { ethers } from 'ethers'
 import { createAccID } from '../utils'
 

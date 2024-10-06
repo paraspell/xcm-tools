@@ -16,7 +16,7 @@ import {
   type AmountBuilder,
   GeneralBuilder
 } from './Builder'
-import BatchTransactionManager from './BatchTransactionManager'
+import type BatchTransactionManager from './BatchTransactionManager'
 
 class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
   private readonly api?: ApiPromise

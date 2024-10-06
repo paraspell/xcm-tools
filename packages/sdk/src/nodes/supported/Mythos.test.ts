@@ -4,9 +4,10 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import { Version, PolkadotXCMTransferInput } from '../../types'
+import type { PolkadotXCMTransferInput } from '../../types'
+import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
-import Mythos from './Mythos'
+import type Mythos from './Mythos'
 import { getNode } from '../../utils'
 
 vi.mock('../polkadotXcm', () => ({

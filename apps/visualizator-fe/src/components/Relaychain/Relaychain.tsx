@@ -1,8 +1,10 @@
-import { ThreeEvent, useFrame, useLoader } from '@react-three/fiber';
+import type { ThreeEvent } from '@react-three/fiber';
+import { useFrame, useLoader } from '@react-three/fiber';
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { Color, TextureLoader, SphereGeometry, Mesh, Group } from 'three';
+import type { SphereGeometry, Mesh, Group } from 'three';
+import { Color, TextureLoader } from 'three';
 import { adjustUVs } from '../../utils/adjustUVs';
-import { Ecosystem } from '../../types/types';
+import type { Ecosystem } from '../../types/types';
 import { getRelaychainLogo } from './utils/getRelaychainLogo';
 
 const SCALE_FACTOR = 2.25;

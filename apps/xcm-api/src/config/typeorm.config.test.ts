@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ConfigService } from '@nestjs/config';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import type { ConfigService } from '@nestjs/config';
+import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { typeOrmConfig } from './typeorm.config.js';
 import { User } from '../users/user.entity.js';
 

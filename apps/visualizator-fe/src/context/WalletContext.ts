@@ -1,4 +1,4 @@
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { createContext } from 'react';
 
 interface WalletState {

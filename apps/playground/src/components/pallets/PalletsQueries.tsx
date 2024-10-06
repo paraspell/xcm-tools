@@ -4,7 +4,8 @@ import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 import { fetchFromApi } from "../../utils/submitUsingApi";
 import { getDefaultPallet, getSupportedPallets } from "@paraspell/sdk";
-import PalletsForm, { FormValues } from "./PalletsForm";
+import type { FormValues } from "./PalletsForm";
+import PalletsForm from "./PalletsForm";
 import OutputAlert from "../OutputAlert";
 
 const PalletsQueries = () => {
@@ -53,7 +54,7 @@ const PalletsQueries = () => {
     if (useApi) {
       return await fetchFromApi(
         formValues,
-        `/pallets/${getEndpoint(formValues)}`
+        `/pallets/${getEndpoint(formValues)}`,
       );
     } else {
       return submitUsingSdk(formValues);

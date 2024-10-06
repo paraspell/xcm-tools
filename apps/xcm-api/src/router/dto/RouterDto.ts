@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
-import { TCurrencyCore } from '@paraspell/sdk';
+import type { TCurrencyCore } from '@paraspell/sdk';
 import { TransactionType } from '@paraspell/xcm-router';
 import { validateAmount } from '../../utils/validateAmount.js';
 

@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { InvalidCurrencyError } from '../../errors'
-import { Version, XTransferTransferInput } from '../../types'
+import type { XTransferTransferInput } from '../../types'
+import { Version } from '../../types'
 import XTransferTransferImpl from '../xTransfer'
-import Khala from './Khala'
+import type Khala from './Khala'
 import { getNode } from '../../utils'
 
 vi.mock('../xTransfer', () => ({

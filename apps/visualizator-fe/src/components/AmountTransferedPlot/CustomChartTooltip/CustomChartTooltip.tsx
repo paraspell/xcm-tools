@@ -4,13 +4,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Factory } from '@mantine/core';
 import {
   ActionIcon,
   Anchor,
   Box,
   ColorSwatch,
   factory,
-  Factory,
   getThemeColor,
   Group,
   useMantineTheme,
@@ -18,13 +18,13 @@ import {
   useStyles
 } from '@mantine/core';
 import classes from './CustomChartTooltip.module.css';
-import { ChartSeries, ChartTooltipProps } from '@mantine/charts';
+import type { ChartSeries, ChartTooltipProps } from '@mantine/charts';
 import { useTranslation } from 'react-i18next';
 import { getParachainId } from '../../../utils/utils';
 import { Ecosystem } from '../../../types/types';
 import dayjs from 'dayjs';
 import { IconX } from '@tabler/icons-react';
-import { MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 
 type ChartSeriesLabels = Record<string, string | undefined>;
 

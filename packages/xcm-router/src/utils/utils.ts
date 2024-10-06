@@ -1,9 +1,5 @@
-import {
-  type TNodeWithRelayChains,
-  type Extrinsic,
-  InvalidCurrencyError,
-  TCurrencyCore,
-} from '@paraspell/sdk';
+import type { TCurrencyCore } from '@paraspell/sdk';
+import { type TNodeWithRelayChains, type Extrinsic, InvalidCurrencyError } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { type TTxProgressInfo } from '../types';
 

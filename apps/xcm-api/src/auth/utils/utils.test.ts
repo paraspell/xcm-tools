@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 import { sendEmail } from './utils.js';

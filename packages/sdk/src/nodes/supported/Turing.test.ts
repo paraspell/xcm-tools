@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, XTokensTransferInput } from '../../types'
+import type { XTokensTransferInput } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import { getNode } from '../../utils/getNode'
-import Turing from './Turing'
+import type Turing from './Turing'
 
 vi.mock('../xTokens', () => ({
   default: {

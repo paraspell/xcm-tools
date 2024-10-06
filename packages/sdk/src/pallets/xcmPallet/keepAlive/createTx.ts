@@ -1,5 +1,5 @@
-import { ApiPromise } from '@polkadot/api'
-import { Extrinsic, TNode } from '../../../types'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic, TNode } from '../../../types'
 import { Builder } from '../../../builder'
 
 export const createTx = async (

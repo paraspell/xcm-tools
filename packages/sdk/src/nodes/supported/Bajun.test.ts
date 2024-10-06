@@ -4,9 +4,10 @@ import {
   InvalidCurrencyError,
   NodeNotSupportedError
 } from '../../errors'
-import { Version, XTokensTransferInput } from '../../types'
+import type { XTokensTransferInput } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import Bajun from './Bajun'
+import type Bajun from './Bajun'
 import { getNode } from '../../utils'
 
 vi.mock('../xTokens', () => ({

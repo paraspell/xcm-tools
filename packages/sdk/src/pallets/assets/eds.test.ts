@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { TNodeDotKsmWithRelayChains } from '../../types'
+import type { TNodeDotKsmWithRelayChains } from '../../types'
 import { getExistentialDeposit } from './eds'
 
 vi.mock('../../maps/existential-deposits.json', () => ({

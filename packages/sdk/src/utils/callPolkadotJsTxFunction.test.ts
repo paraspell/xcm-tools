@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
-import { ApiPromise } from '@polkadot/api'
-import { TSerializedApiCall, Extrinsic } from '../types'
+import type { ApiPromise } from '@polkadot/api'
+import type { TSerializedApiCall, Extrinsic } from '../types'
 import { callPolkadotJsTxFunction } from './callPolkadotJsTxFunction'
 
 const apiMock = {

@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ScenarioNotSupportedError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import { PolkadotXCMTransferInput, TRelayToParaInternalOptions, Version } from '../../types'
-import BridgeHubPolkadot from './BridgeHubPolkadot'
+import type { PolkadotXCMTransferInput, TRelayToParaInternalOptions } from '../../types'
+import { Version } from '../../types'
+import type BridgeHubPolkadot from './BridgeHubPolkadot'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { getNode } from '../../utils'
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { TScenario } from '../types'
+import type { TScenario } from '../types'
 import { getFees } from './getFees'
 
 describe('getFees', () => {

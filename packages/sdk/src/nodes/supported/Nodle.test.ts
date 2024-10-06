@@ -4,9 +4,10 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import { Version, XTokensTransferInput, TNodleAsset } from '../../types'
+import type { XTokensTransferInput, TNodleAsset } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import Nodle from './Nodle'
+import type Nodle from './Nodle'
 import { getNode } from '../../utils/getNode'
 
 vi.mock('../xTokens', () => ({

@@ -1,4 +1,4 @@
-import { TXTokensCurrencySelection, XTokensTransferInput } from '../../types'
+import type { TXTokensCurrencySelection, XTokensTransferInput } from '../../types'
 import { getNode } from '../../utils'
 import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
 

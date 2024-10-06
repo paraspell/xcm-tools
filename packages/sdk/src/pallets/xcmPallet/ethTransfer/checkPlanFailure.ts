@@ -1,4 +1,4 @@
-import { SendValidationResult } from '@snowbridge/api/dist/toPolkadot'
+import type { SendValidationResult } from '@snowbridge/api/dist/toPolkadot'
 
 export const checkPlanFailure = (plan: SendValidationResult) => {
   if (plan.failure) {

@@ -3,7 +3,8 @@ import ErrorAlert from "./ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 import { useWallet } from "../hooks/useWallet";
-import TransferInfoForm, { FormValues } from "./TransferInfoForm";
+import type { FormValues } from "./TransferInfoForm";
+import TransferInfoForm from "./TransferInfoForm";
 import OutputAlert from "./OutputAlert";
 import { getTransferInfo } from "@paraspell/sdk";
 import { fetchFromApi } from "../utils/submitUsingApi";
@@ -54,7 +55,7 @@ const TransferInfo = () => {
         },
         `/transfer-info`,
         "POST",
-        true
+        true,
       );
     } else {
       return await getTransferInfo(
@@ -63,7 +64,7 @@ const TransferInfo = () => {
         originAddress,
         formValues.destinationAddress,
         currency,
-        formValues.amount
+        formValues.amount,
       );
     }
   };

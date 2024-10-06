@@ -1,8 +1,8 @@
-import { StorageKey } from '@polkadot/types'
-import { TCurrencyCore } from '../../../types'
-import { AnyTuple, Codec } from '@polkadot/types/types'
-import { ApiPromise } from '@polkadot/api'
-import { AccountData } from '@polkadot/types/interfaces'
+import type { StorageKey } from '@polkadot/types'
+import type { TCurrencyCore } from '../../../types'
+import type { AnyTuple, Codec } from '@polkadot/types/types'
+import type { ApiPromise } from '@polkadot/api'
+import type { AccountData } from '@polkadot/types/interfaces'
 
 export const getBalanceForeignXTokens = async (
   address: string,

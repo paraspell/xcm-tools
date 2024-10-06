@@ -1,6 +1,7 @@
-import { Stepper, Title } from '@mantine/core';
-import { TTxProgressInfo, TransactionStatus, TransactionType } from '@paraspell/xcm-router';
-import { FC } from 'react';
+import { Stepper, Title } from "@mantine/core";
+import type { TTxProgressInfo } from "@paraspell/xcm-router";
+import { TransactionStatus, TransactionType } from "@paraspell/xcm-router";
+import type { FC } from "react";
 
 const getActiveStep = (progressInfo?: TTxProgressInfo) => {
   if (!progressInfo) {
@@ -60,7 +61,7 @@ const TransferStepper: FC<Props> = ({ progressInfo }) => {
         }
       ></Stepper.Step>
       <Stepper.Completed>
-        <Title order={4} style={{ textAlign: 'center' }} mt="md">
+        <Title order={4} style={{ textAlign: "center" }} mt="md">
           Your transaction was successful!
         </Title>
       </Stepper.Completed>

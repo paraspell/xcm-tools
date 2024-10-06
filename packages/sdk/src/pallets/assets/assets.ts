@@ -2,15 +2,14 @@
 
 import * as assetsMapJson from '../../maps/assets.json' assert { type: 'json' }
 import { NODE_NAMES } from '../../maps/consts'
+import type { TNodeWithRelayChains, TAsset } from '../../types'
 import {
   type TNodeAssets,
   type TAssetJsonMap,
   type TNode,
   type TRelayChainSymbol,
   type TNativeAssetDetails,
-  type TAssetDetails,
-  TNodeWithRelayChains,
-  TAsset
+  type TAssetDetails
 } from '../../types'
 import { determineRelayChain } from '../../utils'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'

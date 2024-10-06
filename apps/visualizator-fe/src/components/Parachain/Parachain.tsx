@@ -1,21 +1,15 @@
 import { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Text } from '@react-three/drei';
-import { ThreeEvent, useFrame, useLoader } from '@react-three/fiber';
-import {
-  Color,
-  Group,
-  Mesh,
-  MeshStandardMaterial,
-  SphereGeometry,
-  TextureLoader,
-  Vector3
-} from 'three';
+import type { ThreeEvent } from '@react-three/fiber';
+import { useFrame, useLoader } from '@react-three/fiber';
+import type { Group, Mesh, MeshStandardMaterial, SphereGeometry, Vector3 } from 'three';
+import { Color, TextureLoader } from 'three';
 import { getParachainPosition } from '../ParachainsGraph/utils';
 import { getLogoScaleFactor, getNodeLogo } from './utils';
 import { getParachainColor } from '../../utils/utils';
 import { lightenColor } from '../../utils/lightenColor';
 import { adjustUVs } from '../../utils/adjustUVs';
-import { Ecosystem } from '../../types/types';
+import type { Ecosystem } from '../../types/types';
 import { FONT_URL } from '../../consts/consts';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { easePoly } from 'd3-ease';

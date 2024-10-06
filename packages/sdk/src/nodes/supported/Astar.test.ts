@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, XTokensTransferInput, PolkadotXCMTransferInput } from '../../types'
+import type { XTokensTransferInput, PolkadotXCMTransferInput } from '../../types'
+import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import XTokensTransferImpl from '../xTokens'
-import Astar from './Astar'
+import type Astar from './Astar'
 import { getNode } from '../../utils'
 
 vi.mock('../polkadotXcm', () => ({

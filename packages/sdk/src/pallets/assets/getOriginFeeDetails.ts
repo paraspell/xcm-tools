@@ -1,10 +1,10 @@
 import { type BN } from '@polkadot/util'
+import type { TCurrencyCore } from '../../types'
 import {
   type TNodeDotKsmWithRelayChains,
   type Extrinsic,
   type TNode,
-  type TNodeWithRelayChains,
-  TCurrencyCore
+  type TNodeWithRelayChains
 } from '../../types'
 import { getBalanceNative } from './balance/getBalanceNative'
 import { getMinNativeTransferableAmount } from './getExistentialDeposit'

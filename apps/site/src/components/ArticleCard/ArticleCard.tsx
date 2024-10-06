@@ -1,6 +1,6 @@
 import { Card, Image, Avatar, Text, Group, Flex } from "@mantine/core";
 import classes from "./ArticleCard.module.css";
-import { FC } from "react";
+import type { FC } from "react";
 
 type Props = {
   title: string;

@@ -1,11 +1,7 @@
 // Contains detailed structure of XCM call construction for Curio Parachain
 
-import {
-  TForeignOrTokenAsset,
-  Version,
-  type IXTokensTransfer,
-  type XTokensTransferInput
-} from '../../types'
+import type { TForeignOrTokenAsset } from '../../types'
+import { Version, type IXTokensTransfer, type XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 

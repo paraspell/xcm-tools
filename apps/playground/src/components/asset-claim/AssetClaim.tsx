@@ -1,14 +1,15 @@
 import { Stack, Title, Box } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { Builder, createApiInstanceForNode } from "@paraspell/sdk";
-import { ApiPromise } from "@polkadot/api";
-import { Signer } from "@polkadot/api/types";
+import type { ApiPromise } from "@polkadot/api";
+import type { Signer } from "@polkadot/api/types";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { useState, useEffect } from "react";
 import { useWallet } from "../../hooks/useWallet";
 import { submitTransaction } from "../../utils";
 import ErrorAlert from "../ErrorAlert";
-import AssetClaimForm, { FormValues } from "./AssetClaimForm";
+import type { FormValues } from "./AssetClaimForm";
+import AssetClaimForm from "./AssetClaimForm";
 import { submitTxUsingApi } from "../../utils/submitUsingApi";
 
 const AssetClaim = () => {
@@ -33,7 +34,7 @@ const AssetClaim = () => {
 
   const createTransferTx = (
     { from, amount, address }: FormValues,
-    api: ApiPromise
+    api: ApiPromise,
   ) => {
     return Builder(api)
       .claimFrom(from)
@@ -57,7 +58,7 @@ const AssetClaim = () => {
   const submitUsingSdk = async (
     formValues: FormValues,
     injectorAddress: string,
-    signer: Signer
+    signer: Signer,
   ) => {
     const api = await createApiInstanceForNode(formValues.from);
     const tx = await createTransferTx(formValues, api);
@@ -99,13 +100,13 @@ const AssetClaim = () => {
           selectedAccount.address,
           injector.signer,
           "POST",
-          true
+          true,
         );
       } else {
         await submitUsingSdk(
           formValues,
           selectedAccount.address,
-          injector.signer
+          injector.signer,
         );
       }
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getAssetHubMultiLocation } from './getAssetHubMultiLocation'
 import { u32 } from '@polkadot/types'

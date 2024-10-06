@@ -1,6 +1,6 @@
-import { ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '../../src/maps/consts'
-import { TEdJsonMap } from '../../src/types'
+import type { TEdJsonMap } from '../../src/types'
 import { createApiInstanceForNode } from '../../src/utils'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 

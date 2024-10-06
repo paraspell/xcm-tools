@@ -1,16 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import {
-  Version,
+import type {
   XTokensTransferInput,
   TScenario,
   TSelfReserveAsset,
   TForeignAsset,
-  TCurrencySelectionHeaderArr,
-  Parents
+  TCurrencySelectionHeaderArr
 } from '../../types'
+import { Version, Parents } from '../../types'
 import { NodeNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../xTokens'
-import Darwinia from './Darwinia'
+import type Darwinia from './Darwinia'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'

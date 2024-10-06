@@ -6,7 +6,7 @@ import { getAssetsObject } from './assets'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 import { getDefaultPallet } from '../pallets'
 import { isRelayChain } from '../../utils'
-import { TNodePolkadotKusama } from '../../types'
+import type { TNodePolkadotKusama } from '../../types'
 
 describe('getAssetBySymbolOrId', () => {
   it('should return assetId and symbol for every foreign asset', () => {

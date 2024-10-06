@@ -1,6 +1,6 @@
-import { AbstractProvider, Signer } from 'ethers'
-import { TCurrencyCore, TNodePolkadotKusama } from '../../../types'
-import { TEvmBuilderOptions, TOptionalEvmBuilderOptions } from '../../../types/TBuilder'
+import type { AbstractProvider, Signer } from 'ethers'
+import type { TCurrencyCore, TNodePolkadotKusama } from '../../../types'
+import type { TEvmBuilderOptions, TOptionalEvmBuilderOptions } from '../../../types/TBuilder'
 import transferEthToPolkadot from '../../../pallets/xcmPallet/ethTransfer/ethTransfer'
 
 class EvmBuilderClass {

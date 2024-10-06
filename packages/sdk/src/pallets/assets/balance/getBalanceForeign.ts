@@ -1,5 +1,5 @@
 import { type ApiPromise } from '@polkadot/api'
-import { TCurrencyCore, TNodePolkadotKusama } from '../../../types'
+import type { TCurrencyCore, TNodePolkadotKusama } from '../../../types'
 import { getDefaultPallet } from '../../pallets'
 import { createApiInstanceForNode } from '../../../utils'
 import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'

@@ -1,13 +1,10 @@
-import {
-  getSupportedAssets,
-  TAsset,
-  TNodeWithRelayChains,
-} from "@paraspell/sdk";
+import type { TAsset, TNodeWithRelayChains } from "@paraspell/sdk";
+import { getSupportedAssets } from "@paraspell/sdk";
 import { useMemo } from "react";
 
 const useCurrencyOptions = (
   from: TNodeWithRelayChains,
-  to: TNodeWithRelayChains
+  to: TNodeWithRelayChains,
 ) => {
   const isNotParaToPara =
     from === "Polkadot" ||
@@ -17,7 +14,7 @@ const useCurrencyOptions = (
 
   const supportedAssets = useMemo(
     () => getSupportedAssets(from, to),
-    [from, to]
+    [from, to],
   );
 
   const currencyMap = useMemo(
@@ -27,7 +24,7 @@ const useCurrencyOptions = (
         map[key] = asset;
         return map;
       }, {}),
-    [supportedAssets]
+    [supportedAssets],
   );
 
   const currencyOptions = useMemo(
@@ -36,7 +33,7 @@ const useCurrencyOptions = (
         value: key,
         label: `${currencyMap[key].symbol} - ${currencyMap[key].assetId ?? "Native"}`,
       })),
-    [currencyMap]
+    [currencyMap],
   );
 
   return { currencyOptions, isNotParaToPara, currencyMap };

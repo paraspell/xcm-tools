@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { Container, Group, Burger, Image, Button, Anchor } from "@mantine/core";
 import classes from "./Header.module.css";
 import { Link } from "react-router-dom";

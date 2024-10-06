@@ -1,5 +1,6 @@
 import { type InterBtcApi, type CurrencyExt } from 'inter-exchange';
-import { TCurrencyCore, type TNode, getAssetId } from '@paraspell/sdk';
+import type { TCurrencyCore } from '@paraspell/sdk';
+import { type TNode, getAssetId } from '@paraspell/sdk';
 
 export const getCurrency = async (
   currency: TCurrencyCore,

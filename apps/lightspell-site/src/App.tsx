@@ -3,7 +3,7 @@ import "./App.css";
 import {
   MantineProvider,
   createTheme,
-  MantineColorsTuple,
+  type MantineColorsTuple,
 } from "@mantine/core";
 import { BrowserRouter } from "react-router-dom";
 import ScrollToAnchor from "./components/ScrollToAnchor";

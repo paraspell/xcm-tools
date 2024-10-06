@@ -1,19 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { RouterService } from './router.service.js';
 import * as utils from '../utils.js';
 import * as spellRouter from '@paraspell/xcm-router';
-import { PatchedRouterDto } from './dto/RouterDto.js';
+import type { PatchedRouterDto } from './dto/RouterDto.js';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { vi, describe, beforeEach, it, expect, MockInstance } from 'vitest';
-import {
-  Extrinsic,
-  InvalidCurrencyError,
-  TNode,
-  TSerializedApiCall,
-} from '@paraspell/sdk';
+import type { MockInstance } from 'vitest';
+import { vi, describe, beforeEach, it, expect } from 'vitest';
+import type { Extrinsic, TNode, TSerializedApiCall } from '@paraspell/sdk';
+import { InvalidCurrencyError } from '@paraspell/sdk';
 
 vi.mock('@paraspell/xcm-router', async () => {
   const actual = await vi.importActual('@paraspell/xcm-router');

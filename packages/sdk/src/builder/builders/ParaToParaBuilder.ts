@@ -13,14 +13,9 @@ import type {
   TCurrency,
   Version
 } from '../../types'
-import {
-  AddressBuilder,
-  GeneralBuilder,
-  UseKeepAliveFinalBuilder,
-  type AmountBuilder,
-  type AmountOrFeeAssetBuilder
-} from './Builder'
-import BatchTransactionManager from './BatchTransactionManager'
+import type { AddressBuilder, UseKeepAliveFinalBuilder } from './Builder'
+import { GeneralBuilder, type AmountBuilder, type AmountOrFeeAssetBuilder } from './Builder'
+import type BatchTransactionManager from './BatchTransactionManager'
 
 class ParaToParaBuilder
   implements AmountOrFeeAssetBuilder, AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder

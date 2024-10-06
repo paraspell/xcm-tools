@@ -1,5 +1,6 @@
-import { CodeHighlight, CodeHighlightProps } from "@mantine/code-highlight";
-import { FC } from "react";
+import type { CodeHighlightProps } from "@mantine/code-highlight";
+import { CodeHighlight } from "@mantine/code-highlight";
+import type { FC } from "react";
 
 const CodeHighlightDark: FC<CodeHighlightProps> = (props) => {
   const { style } = props;

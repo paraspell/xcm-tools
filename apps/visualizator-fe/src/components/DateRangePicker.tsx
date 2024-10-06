@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { DatePickerInput } from '@mantine/dates';
 import { rem } from '@mantine/core';
 import { IconCalendar } from '@tabler/icons-react';

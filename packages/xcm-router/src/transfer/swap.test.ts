@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import { swap } from './swap';
 import { type Extrinsic } from '@paraspell/sdk';
-import { TTransferOptionsModified } from '../types';
+import type { TTransferOptionsModified } from '../types';
 
 describe('swap', () => {
   let options: TTransferOptionsModified;

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { getBalanceNative } from './getBalanceNative'
 import { createApiInstanceForNode } from '../../../utils'
-import { ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn()

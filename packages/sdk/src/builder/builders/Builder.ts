@@ -21,7 +21,7 @@ import ParaToParaBuilder from './ParaToParaBuilder'
 import ParaToRelayBuilder from './ParaToRelayBuilder'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
-import { IAddToBatchBuilder } from './IBatchBuilder'
+import type { IAddToBatchBuilder } from './IBatchBuilder'
 
 class ToGeneralBuilder {
   private readonly api?: ApiPromise

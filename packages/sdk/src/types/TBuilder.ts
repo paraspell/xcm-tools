@@ -1,6 +1,6 @@
 import type { Signer } from 'ethers'
 import type { TNodePolkadotKusama } from './TNode'
-import { TCurrencyCore } from './TCurrency'
+import type { TCurrencyCore } from './TCurrency'
 
 export type TEvmBuilderOptions = {
   to: TNodePolkadotKusama

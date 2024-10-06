@@ -1,6 +1,6 @@
 import { toPolkadot, environment } from '@snowbridge/api'
-import { TEvmBuilderOptions } from '../../../types/TBuilder'
-import { AbstractProvider } from 'ethers'
+import type { TEvmBuilderOptions } from '../../../types/TBuilder'
+import type { AbstractProvider } from 'ethers'
 import { getParaId } from '../../assets'
 import { findEthAsset } from './findEthAsset'
 import { createContext } from './createContext'

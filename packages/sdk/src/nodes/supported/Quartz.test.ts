@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, XTokensTransferInput } from '../../types'
+import type { XTokensTransferInput } from '../../types'
+import { Version } from '../../types'
 import { getNode } from '../../utils'
-import Quartz from './Quartz'
+import type Quartz from './Quartz'
 import XTokensTransferImpl from '../xTokens'
 
 vi.mock('../xTokens', () => ({

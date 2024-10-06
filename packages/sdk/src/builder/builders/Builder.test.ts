@@ -2,7 +2,8 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { vi, describe, expect, it } from 'vitest'
-import { Extrinsic, Version, type TNode } from '../../types'
+import type { Extrinsic } from '../../types'
+import { Version, type TNode } from '../../types'
 import * as xcmPallet from '../../pallets/xcmPallet'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { Builder } from './Builder'

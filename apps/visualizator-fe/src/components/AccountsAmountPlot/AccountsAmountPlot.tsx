@@ -1,10 +1,11 @@
 import { forwardRef } from 'react';
-import { AccountCountsQuery } from '../../gql/graphql';
+import type { AccountCountsQuery } from '../../gql/graphql';
 import Highcharts from 'highcharts';
-import HighchartsReact, { HighchartsReactRefObject } from 'highcharts-react-official';
+import type { HighchartsReactRefObject } from 'highcharts-react-official';
+import HighchartsReact from 'highcharts-react-official';
 import HC_more from 'highcharts/highcharts-more';
 import { useTranslation } from 'react-i18next';
-import { ChartDataItem, CustomPoint } from '../../types/types';
+import type { ChartDataItem, CustomPoint } from '../../types/types';
 import { encodeAddress } from '@polkadot/keyring';
 HC_more(Highcharts);
 

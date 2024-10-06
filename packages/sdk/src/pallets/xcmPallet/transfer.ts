@@ -1,5 +1,6 @@
 // Contains basic call formatting for different XCM Palletss
 
+import type { TTransferReturn } from '../../types'
 import {
   type Extrinsic,
   type TSerializedApiCall,
@@ -7,8 +8,7 @@ import {
   type TRelayToParaCommonOptions,
   type TSendOptionsCommon,
   type TSendOptions,
-  type TNode,
-  TTransferReturn
+  type TNode
 } from '../../types'
 import {
   getNode,

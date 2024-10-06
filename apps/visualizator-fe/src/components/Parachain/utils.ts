@@ -39,7 +39,7 @@ import ipciPng from '../../logos/ipci.png';
 import crabPng from '../../logos/crab.png';
 import pioneerPng from '../../logos/pioneer.png';
 import { getParachainLogo } from '../../utils/utils';
-import { Ecosystem } from '../../types/types';
+import type { Ecosystem } from '../../types/types';
 
 export const getNodeLogo = (node: string, ecosystem: Ecosystem) => {
   if (node === 'Collectives') return collectivesPng;

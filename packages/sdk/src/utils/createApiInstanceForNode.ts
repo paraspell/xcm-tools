@@ -1,5 +1,5 @@
-import { ApiPromise } from '@polkadot/api'
-import { TNodeWithRelayChains } from '../types'
+import type { ApiPromise } from '@polkadot/api'
+import type { TNodeWithRelayChains } from '../types'
 import { prodRelayKusama, prodRelayPolkadot } from '@polkadot/apps-config'
 import { createApiInstance, getNode } from '.'
 

@@ -8,7 +8,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint:check": "eslint .",
-    "lint": "eslint --fix ."
+    "lint": "eslint --fix .",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src"
   },
   "dependencies": {
     "@mantine/code-highlight": "^7.13.1",

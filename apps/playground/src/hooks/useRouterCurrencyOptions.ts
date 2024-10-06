@@ -1,25 +1,24 @@
-import { TAsset, TNodeWithRelayChains } from "@paraspell/sdk";
+import type { TAsset, TNodeWithRelayChains } from "@paraspell/sdk";
 import { useMemo } from "react";
+import type { TAutoSelect, TExchangeNode } from "@paraspell/xcm-router";
 import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
-  TAutoSelect,
-  TExchangeNode,
 } from "@paraspell/xcm-router";
 
 const useRouterCurrencyOptions = (
   from: TNodeWithRelayChains,
   exchangeNode: TExchangeNode | TAutoSelect,
-  to: TNodeWithRelayChains
+  to: TNodeWithRelayChains,
 ) => {
   const supportedAssetsFrom = useMemo(
     () => getSupportedAssetsFrom(from, exchangeNode),
-    [from, exchangeNode]
+    [from, exchangeNode],
   );
 
   const supportedAssetsTo = useMemo(
     () => getSupportedAssetsTo(from, exchangeNode, to),
-    [exchangeNode, to]
+    [exchangeNode, to],
   );
 
   const currencyFromMap = useMemo(
@@ -29,7 +28,7 @@ const useRouterCurrencyOptions = (
         map[key] = asset;
         return map;
       }, {}),
-    [supportedAssetsFrom]
+    [supportedAssetsFrom],
   );
 
   const currencyToMap = useMemo(
@@ -39,7 +38,7 @@ const useRouterCurrencyOptions = (
         map[key] = asset;
         return map;
       }, {}),
-    [supportedAssetsTo]
+    [supportedAssetsTo],
   );
 
   const currencyFromOptions = useMemo(
@@ -48,7 +47,7 @@ const useRouterCurrencyOptions = (
         value: key,
         label: `${currencyFromMap[key].symbol} - ${currencyFromMap[key].assetId ?? "Native"}`,
       })),
-    [currencyFromMap]
+    [currencyFromMap],
   );
 
   const currencyToOptions = useMemo(
@@ -57,7 +56,7 @@ const useRouterCurrencyOptions = (
         value: key,
         label: `${currencyToMap[key].symbol} - ${currencyToMap[key].assetId ?? "Native"}`,
       })),
-    [currencyToMap]
+    [currencyToMap],
   );
 
   const isFromNotParaToPara = from === "Polkadot" || from === "Kusama";

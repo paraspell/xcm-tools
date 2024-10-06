@@ -2,8 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { getCurrencySelection } from './getCurrencySelection'
 import { getParameters } from './getParameters'
 import XTokensTransferImpl from './XTokensTransferImpl'
-import { Parents, TMultiLocation, XTokensTransferInput } from '../../types'
-import { ApiPromise } from '@polkadot/api'
+import type { TMultiLocation, XTokensTransferInput } from '../../types'
+import { Parents } from '../../types'
+import type { ApiPromise } from '@polkadot/api'
 
 vi.mock('./getCurrencySelection', () => ({
   getCurrencySelection: vi.fn()

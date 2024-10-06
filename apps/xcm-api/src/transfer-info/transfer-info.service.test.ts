@@ -3,11 +3,8 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import {
-  getTransferInfo,
-  InvalidCurrencyError,
-  TTransferInfo,
-} from '@paraspell/sdk';
+import type { TTransferInfo } from '@paraspell/sdk';
+import { getTransferInfo, InvalidCurrencyError } from '@paraspell/sdk';
 import { TransferInfoService } from './transfer-info.service.js';
 import { isValidWalletAddress } from '../utils.js';
 

@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { InvalidCurrencyError, NodeNotSupportedError } from '../../errors'
-import { Version, XTokensTransferInput } from '../../types'
+import type { XTokensTransferInput } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import Integritee from './Integritee'
+import type Integritee from './Integritee'
 import { getNode } from '../../utils'
 
 vi.mock('../xTokens', () => ({

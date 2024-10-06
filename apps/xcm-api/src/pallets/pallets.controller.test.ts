@@ -1,8 +1,9 @@
 import { vi, describe, beforeEach, it, expect } from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { PalletsController } from './pallets.controller.js';
 import { PalletsService } from './pallets.service.js';
-import { TNode, TPallet } from '@paraspell/sdk';
+import type { TNode, TPallet } from '@paraspell/sdk';
 import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 
