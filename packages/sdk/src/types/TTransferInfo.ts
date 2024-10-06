@@ -25,3 +25,8 @@ export interface TTransferInfo {
     existentialDeposit: bigint
   }
 }
+
+export type TOriginFeeDetails = {
+  sufficientForXCM: boolean
+  xcmFee: bigint
+}

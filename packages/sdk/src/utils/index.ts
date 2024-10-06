@@ -1,14 +1,7 @@
 // Contains important call creation utils (Selection of fees,formating of header and more.. )
 
-import type { ApiPromise } from '@polkadot/api'
-import type { HexString } from '@polkadot/util/types'
 import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '../types'
 import { getRelayChainSymbol } from '../pallets/assets'
-
-export const createAccID = (api: ApiPromise, account: string): HexString => {
-  console.log('Generating AccountId32 address')
-  return api.createType('AccountId32', account).toHex()
-}
 
 export const determineRelayChain = (node: TNodeWithRelayChains): TNodeDotKsmWithRelayChains =>
   getRelayChainSymbol(node) === 'KSM' ? 'Kusama' : 'Polkadot'
@@ -30,3 +23,4 @@ export { createApiInstanceForNode } from './createApiInstanceForNode'
 export { getNodeEndpointOption } from './getNodeEndpointOption'
 export { createApiInstance } from './createApiInstance'
 export { determineRelayChainSymbol } from './determineRelayChainSymbol'
+export { createAccID } from './createAccID'

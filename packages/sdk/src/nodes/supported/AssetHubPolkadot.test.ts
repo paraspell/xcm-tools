@@ -56,7 +56,6 @@ describe('AssetHubPolkadot', () => {
   describe('handleBridgeTransfer', () => {
     it('should process a valid DOT transfer to Polkadot', () => {
       const mockResult = {} as Extrinsic
-
       const spy = vi
         .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
         .mockReturnValue(mockResult)
@@ -66,27 +65,22 @@ describe('AssetHubPolkadot', () => {
       expect(spy).toHaveBeenCalledTimes(1)
     })
 
-    it('throws InvalidCurrencyError for unsupported currency', () => {
-      const input = {
-        ...mockInput,
-        currencySymbol: 'UNKNOWN'
-      }
-      expect(() => assetHub.handleBridgeTransfer(input, 'Kusama')).toThrow(InvalidCurrencyError)
-    })
-
-    it('should process a valid KSM transfer to Kusama', () => {
+    it('should process a valid DOT transfer to Kusama', () => {
       const mockResult = {} as Extrinsic
       const spy = vi
         .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
         .mockReturnValue(mockResult)
-      const input = {
-        ...mockInput,
-        currencySymbol: 'KSM'
-      }
+
+      const input = { ...mockInput, currencySymbol: 'DOT' } as PolkadotXCMTransferInput
 
       const result = assetHub.handleBridgeTransfer(input, 'Kusama')
       expect(result).toStrictEqual(mockResult)
       expect(spy).toHaveBeenCalledTimes(1)
+    })
+
+    it('throws InvalidCurrencyError for unsupported currency', () => {
+      const input = { ...mockInput, currencySymbol: 'UNKNOWN' }
+      expect(() => assetHub.handleBridgeTransfer(input, 'Polkadot')).toThrow(InvalidCurrencyError)
     })
   })
 
@@ -104,6 +98,47 @@ describe('AssetHubPolkadot', () => {
       vi.mocked(getOtherAssets).mockReturnValue([])
 
       expect(() => assetHub.handleEthBridgeTransfer(mockInput)).toThrowError(InvalidCurrencyError)
+    })
+
+    it('should process a valid ETH transfer', () => {
+      vi.mocked(ethers.isAddress).mockReturnValue(true)
+      const mockEthAsset = { symbol: 'ETH', assetId: '0x123' }
+      vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
+
+      const mockResult = {} as Extrinsic
+      const spy = vi
+        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+        .mockReturnValue(mockResult)
+
+      const input = {
+        ...mockInput,
+        currencySymbol: 'ETH',
+        destination: 'Ethereum'
+      } as PolkadotXCMTransferInput
+      const result = assetHub.handleEthBridgeTransfer(input)
+
+      expect(result).toStrictEqual(mockResult)
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('handleMythosTransfer', () => {
+    it('should process a valid Mythos transfer', () => {
+      const mockResult = {} as Extrinsic
+      const spy = vi
+        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+        .mockReturnValue(mockResult)
+
+      const input = {
+        ...mockInput,
+        destination: 'Mythos',
+        paraIdTo: 2000,
+        currencyId: 'MYTH'
+      } as PolkadotXCMTransferInput
+      const result = assetHub.handleMythosTransfer(input)
+
+      expect(result).toStrictEqual(mockResult)
+      expect(spy).toHaveBeenCalledTimes(1)
     })
   })
 

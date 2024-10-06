@@ -1,25 +1,27 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
-import { type ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getNativeAssetSymbol, getParaId } from '../pallets/assets'
-import {
-  type TNode,
-  type TRelayChainType,
-  type TScenario,
-  type IXTokensTransfer,
-  type IPolkadotXCMTransfer,
-  Version,
-  type TSerializedApiCall,
-  Parents,
-  type IXTransferTransfer,
-  type TRelayToParaInternalOptions,
-  type TSendInternalOptions,
-  type TDestination,
-  type TCurrencySelectionHeaderArr,
-  type TNodePolkadotKusama,
-  type TTransferReturn
+import type {
+  TNode,
+  TRelayChainType,
+  TScenario,
+  IXTokensTransfer,
+  IPolkadotXCMTransfer,
+  TSerializedApiCall,
+  IXTransferTransfer,
+  TRelayToParaInternalOptions,
+  TSendInternalOptions,
+  TDestination,
+  TCurrencySelectionHeaderArr,
+  TNodePolkadotKusama,
+  TTransferReturn,
+  TMultiAsset,
+  TMultiLocation,
+  TMultiLocationHeader
 } from '../types'
+import { Version, Parents } from '../types'
 import {
   getAllNodeProviders,
   createApiInstance,
@@ -33,9 +35,6 @@ import {
   createPolkadotXcmHeader,
   isTMultiLocation
 } from '../pallets/xcmPallet/utils'
-import type { TMultiLocationHeader } from '../types/TMultiLocation'
-import { type TMultiLocation } from '../types/TMultiLocation'
-import { type TMultiAsset } from '../types/TMultiAsset'
 import { InvalidCurrencyError } from '../errors'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
