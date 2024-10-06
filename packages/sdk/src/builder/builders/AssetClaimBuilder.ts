@@ -14,7 +14,7 @@ import {
   type FinalBuilderAsync,
   type FungibleBuilder
 } from './Builder'
-import claimAssets from '../../pallets/assets/assetClaim'
+import claimAssets from '../../pallets/assets/asset-claim'
 
 class AssetClaimBuilder
   implements AccountBuilder, FungibleBuilder, VersionBuilder, FinalBuilderAsync

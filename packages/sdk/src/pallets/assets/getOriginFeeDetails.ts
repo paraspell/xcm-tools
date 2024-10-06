@@ -1,5 +1,5 @@
 import { type BN } from '@polkadot/util'
-import type { TCurrencyCore } from '../../types'
+import type { TCurrencyCore, TOriginFeeDetails } from '../../types'
 import {
   type TNodeDotKsmWithRelayChains,
   type Extrinsic,
@@ -46,11 +46,6 @@ const createTx = async (
 const calculateTransactionFee = async (tx: Extrinsic, address: string): Promise<BN> => {
   const { partialFee } = await tx.paymentInfo(address)
   return partialFee.toBn()
-}
-
-interface TOriginFeeDetails {
-  sufficientForXCM: boolean
-  xcmFee: bigint
 }
 
 export const getOriginFeeDetails = async (

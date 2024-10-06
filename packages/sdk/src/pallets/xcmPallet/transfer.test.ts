@@ -10,7 +10,7 @@ import type { Extrinsic } from '../../types'
 import { type TSendOptions, type TNode, type TMultiAsset, type TMultiLocation } from '../../types'
 import { send } from './transfer'
 import ParachainNode from '../../nodes/ParachainNode'
-import { createApiInstance, getNode } from '../../utils'
+import { getNode } from '../../utils'
 import Astar from '../../nodes/supported/Astar'
 import Shiden from '../../nodes/supported/Shiden'
 
@@ -18,7 +18,6 @@ vi.spyOn(ParachainNode.prototype, 'transfer').mockReturnValue({} as Extrinsic)
 vi.spyOn(Astar.prototype, 'transfer').mockReturnValue({} as Extrinsic)
 vi.spyOn(Shiden.prototype, 'transfer').mockReturnValue({} as Extrinsic)
 
-const WS_URL = 'wss://subsocial-rpc.dwellir.com'
 const randomCurrencySymbol = 'DOT'
 
 const MOCK_OPTIONS_BASE = {
@@ -27,13 +26,12 @@ const MOCK_OPTIONS_BASE = {
 }
 
 describe('send', () => {
-  let api: ApiPromise
+  const api: ApiPromise = {} as ApiPromise
   let polkadotNodes: TNode[]
   let kusamaNodes: TNode[]
   let sendOptions: TSendOptions
 
-  beforeEach(async () => {
-    api = await createApiInstance(WS_URL)
+  beforeEach(() => {
     polkadotNodes = NODE_NAMES_DOT_KSM.filter(node => getRelayChainSymbol(node) === 'KSM')
     kusamaNodes = NODE_NAMES_DOT_KSM.filter(node => getRelayChainSymbol(node) === 'DOT')
     sendOptions = {
