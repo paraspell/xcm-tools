@@ -2,9 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
 import { getNode } from '../../utils'
 import { getAllNodeProviders } from '../../utils/getAllNodeProviders'
-import { Version, XTokensTransferInput, TRelayToParaInternalOptions } from '../../types'
+import type { XTokensTransferInput, TRelayToParaInternalOptions } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import Moonbeam from './Moonbeam'
+import type Moonbeam from './Moonbeam'
 
 vi.mock('../xTokens', () => ({
   default: {

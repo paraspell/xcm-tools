@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { transferFromEthereum } from './transferFromEthereum';
 import { EvmBuilder } from '@paraspell/sdk';
-import { TransactionType, TransactionStatus, TTransferOptionsModified } from '../types';
+import type { TTransferOptionsModified } from '../types';
+import { TransactionType, TransactionStatus } from '../types';
 import { maybeUpdateTransferStatus } from '../utils/utils';
-import { Signer } from '@polkadot/types/types';
-import { Signer as EthersSigner } from 'ethers';
+import type { Signer } from '@polkadot/types/types';
+import type { Signer as EthersSigner } from 'ethers';
 
 vi.mock('@paraspell/sdk', () => ({
   EvmBuilder: vi.fn().mockImplementation((_provider) =>

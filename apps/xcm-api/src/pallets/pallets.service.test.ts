@@ -1,21 +1,11 @@
-import {
-  MockInstance,
-  vi,
-  describe,
-  beforeEach,
-  afterEach,
-  it,
-  expect,
-} from 'vitest';
+import type { MockInstance } from 'vitest';
+import { vi, describe, beforeEach, afterEach, it, expect } from 'vitest';
 
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { PalletsService } from './pallets.service.js';
-import {
-  TNode,
-  TPallet,
-  getDefaultPallet,
-  getSupportedPallets,
-} from '@paraspell/sdk';
+import type { TNode, TPallet } from '@paraspell/sdk';
+import { getDefaultPallet, getSupportedPallets } from '@paraspell/sdk';
 import * as utils from '../utils.js';
 
 const mockPallets: TPallet[] = ['OrmlXTokens', 'RelayerXcm'];

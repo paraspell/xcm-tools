@@ -1,5 +1,6 @@
-import { TFunction } from 'i18next';
-import { TAssetCounts, TAggregatedData, Ecosystem } from '../../../types/types';
+import type { TFunction } from 'i18next';
+import type { TAssetCounts, TAggregatedData } from '../../../types/types';
+import { Ecosystem } from '../../../types/types';
 import { getParachainById } from '../../../utils/utils';
 
 export const aggregateDataByParachain = (counts: TAssetCounts, t: TFunction): TAggregatedData[] => {

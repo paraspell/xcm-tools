@@ -1,8 +1,10 @@
 import { vi, describe, beforeEach, it, expect } from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { AssetsController } from './assets.controller.js';
 import { AssetsService } from './assets.service.js';
-import { NODE_NAMES, TNode, TNodeAssets } from '@paraspell/sdk';
+import type { TNode, TNodeAssets } from '@paraspell/sdk';
+import { NODE_NAMES } from '@paraspell/sdk';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { mockRequestObject } from '../testUtils.js';
 

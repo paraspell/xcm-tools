@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, XTokensTransferInput } from '../../types'
+import type { XTokensTransferInput } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import Parallel from './Parallel'
+import type Parallel from './Parallel'
 import { getNode } from '../../utils/getNode'
 
 vi.mock('../xTokens', () => ({

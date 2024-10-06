@@ -1,9 +1,11 @@
 import { type ApiPromise } from '@polkadot/api'
-import { TMultiLocationHeader, type TMultiLocation } from './TMultiLocation'
-import { TNodePolkadotKusama, type TNode } from './TNode'
+import type { TMultiLocationHeader } from './TMultiLocation'
+import { type TMultiLocation } from './TMultiLocation'
+import type { TNodePolkadotKusama } from './TNode'
+import { type TNode } from './TNode'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type TMultiAsset } from './TMultiAsset'
-import { TCurrency, TCurrencyInput, TCurrencySelectionHeaderArr } from './TCurrency'
+import type { TCurrency, TCurrencyInput, TCurrencySelectionHeaderArr } from './TCurrency'
 
 export type Extrinsic = SubmittableExtrinsic<'promise'>
 

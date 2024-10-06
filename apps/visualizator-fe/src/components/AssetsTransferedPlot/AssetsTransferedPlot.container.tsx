@@ -9,7 +9,7 @@ import { Ecosystem } from '../../types/types';
 import { Center, Group, Loader, Stack, Title } from '@mantine/core';
 import downloadSvg from '../../utils/downloadSvg';
 import DownloadButtons from '../DownloadButtons';
-import { AssetCountsBySymbolQuery } from '../../gql/graphql';
+import type { AssetCountsBySymbolQuery } from '../../gql/graphql';
 import convertToCsv from '../../utils/convertToCsv';
 import { downloadZip } from '../../utils/downloadZip';
 

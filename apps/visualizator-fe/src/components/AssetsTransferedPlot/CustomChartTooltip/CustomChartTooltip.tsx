@@ -4,12 +4,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { Factory } from '@mantine/core';
 import {
   Anchor,
   Box,
   ColorSwatch,
   factory,
-  Factory,
   getThemeColor,
   Image,
   useMantineTheme,
@@ -17,7 +17,7 @@ import {
   useStyles
 } from '@mantine/core';
 import classes from './CustomChartTooltip.module.css';
-import { ChartSeries, ChartTooltipProps } from '@mantine/charts';
+import type { ChartSeries, ChartTooltipProps } from '@mantine/charts';
 import { getParachainId } from '../../../utils/utils';
 import { Ecosystem } from '../../../types/types';
 import dayjs from 'dayjs';

@@ -1,6 +1,6 @@
 import { ActionIcon, Flex, Group, Text, Tooltip } from "@mantine/core";
 import AudioPlayer from "./AudioPlayer";
-import { FC } from "react";
+import type { FC } from "react";
 import { IconInfoCircle, IconX } from "@tabler/icons-react";
 
 const complianceStatement = `

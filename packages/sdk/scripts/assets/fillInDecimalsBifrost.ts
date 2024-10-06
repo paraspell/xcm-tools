@@ -1,5 +1,5 @@
 import { NODE_NAMES } from '../../src/maps/consts'
-import { TAssetJsonMap } from '../../src/types'
+import type { TAssetJsonMap } from '../../src/types'
 
 const searchDecimalsBySymbol = (symbol: string, data: TAssetJsonMap) => {
   for (const node of NODE_NAMES) {

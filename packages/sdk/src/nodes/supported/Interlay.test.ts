@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, XTokensTransferInput, TForeignOrTokenAsset } from '../../types'
+import type { XTokensTransferInput, TForeignOrTokenAsset } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import Interlay from './Interlay'
+import type Interlay from './Interlay'
 import { getNode } from '../../utils'
 
 vi.mock('../xTokens', () => ({

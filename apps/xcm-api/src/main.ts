@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
-import { ExpressAdapter } from '@nestjs/platform-express';
+import type { ExpressAdapter } from '@nestjs/platform-express';
 import { replaceBigInt } from './utils/replaceBigInt.js';
 
 export const bootstrap = async () => {

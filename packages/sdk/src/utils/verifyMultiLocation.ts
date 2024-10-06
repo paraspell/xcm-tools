@@ -1,5 +1,5 @@
 import { getAssetsObject } from '../pallets/assets'
-import { TMultiLocation, TNode } from '../types'
+import type { TMultiLocation, TNode } from '../types'
 import { deepEqual } from './deepEqual'
 
 export const verifyMultiLocation = (node: TNode, multiLocation: TMultiLocation) => {

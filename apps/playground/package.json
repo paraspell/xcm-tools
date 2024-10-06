@@ -9,6 +9,8 @@
     "preview": "vite preview",
     "lint:check": "eslint .",
     "lint": "eslint --fix .",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src",
     "test:e2e": "playwright test",
     "install-polkadot-ext": "cd e2e/extensions/polkadot-ext && yarn && yarn build:chrome",
     "init-polkadot-ext": "git clone https://github.com/polkadot-js/extension e2e/extensions/polkadot-ext && pnpm install-polkadot-ext",
@@ -40,7 +42,6 @@
   "devDependencies": {
     "@metamask/providers": "^17.2.0",
     "@playwright/test": "^1.47.2",
-    "@types/node": "^22.7.4",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",

@@ -1,4 +1,4 @@
-import { TScenario } from '../types'
+import type { TScenario } from '../types'
 
 export const getFees = (scenario: TScenario): number => {
   if (scenario === 'ParaToRelay') {

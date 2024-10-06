@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { Version, TJunction } from '../types'
+import type { TJunction } from '../types'
+import { Version } from '../types'
 import { createX1Payload } from './createX1Payload'
 
 describe('createX1Payload', () => {

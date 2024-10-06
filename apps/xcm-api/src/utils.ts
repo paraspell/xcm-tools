@@ -1,10 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
-import {
-  Extrinsic,
-  NODE_NAMES,
-  TNode,
-  TSerializedApiCall,
-} from '@paraspell/sdk';
+import type { Extrinsic, TNode, TSerializedApiCall } from '@paraspell/sdk';
+import { NODE_NAMES } from '@paraspell/sdk';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'web3-validator';

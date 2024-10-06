@@ -1,4 +1,4 @@
-import { TNodePolkadotKusama } from '../types'
+import type { TNodePolkadotKusama } from '../types'
 import { getNodeEndpointOption } from '../utils'
 
 export const getAllNodeProviders = (node: TNodePolkadotKusama): string[] => {

@@ -75,7 +75,6 @@
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^22.7.4",
     "@vitest/coverage-v8": "^2.1.1",
     "dotenv": "^16.4.5",
     "prettier": "^3.3.3",

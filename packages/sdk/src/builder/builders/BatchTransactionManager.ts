@@ -1,12 +1,11 @@
-import { ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
+import type { TNode, TDestination } from '../../types'
 import {
   BatchMode,
   type TRelayToParaOptions,
   type TSendOptions,
   type Extrinsic,
-  type TBatchOptions,
-  TNode,
-  TDestination
+  type TBatchOptions
 } from '../../types'
 import { createApiInstanceForNode, determineRelayChain } from '../../utils'
 

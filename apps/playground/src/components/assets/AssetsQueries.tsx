@@ -3,7 +3,8 @@ import ErrorAlert from "../ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 import { fetchFromApi } from "../../utils/submitUsingApi";
-import AssetsForm, { FormValues } from "./AssetsForm";
+import type { FormValues } from "./AssetsForm";
+import AssetsForm from "./AssetsForm";
 import {
   getAllAssetsSymbols,
   getAssetDecimals,
@@ -74,7 +75,7 @@ const AssetsQueries = () => {
         return getBalanceForeign(
           address,
           node,
-          currencyType === "id" ? { id: currency } : { symbol: currency }
+          currencyType === "id" ? { id: currency } : { symbol: currency },
         );
     }
   };
@@ -107,7 +108,7 @@ const AssetsQueries = () => {
     if (useApi) {
       return await fetchFromApi(
         formValues,
-        `/assets/${getEndpoint(formValues)}`
+        `/assets/${getEndpoint(formValues)}`,
       );
     } else {
       return await submitUsingSdk(formValues);

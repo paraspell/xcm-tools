@@ -1,12 +1,9 @@
 import { useForm } from "@mantine/form";
-import {
-  EXCHANGE_NODES,
-  TAutoSelect,
-  TExchangeNode,
-  TransactionType,
-} from "@paraspell/xcm-router";
+import type { TAutoSelect, TExchangeNode } from "@paraspell/xcm-router";
+import { EXCHANGE_NODES, TransactionType } from "@paraspell/xcm-router";
 import { isValidWalletAddress } from "../utils";
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import {
   Text,
   Button,
@@ -19,17 +16,15 @@ import {
   Center,
   rem,
 } from "@mantine/core";
-import {
-  NODES_WITH_RELAY_CHAINS,
-  TAsset,
-  TNodeWithRelayChains,
-} from "@paraspell/sdk";
-import { Signer } from "@polkadot/api/types";
+import type { TAsset, TNodeWithRelayChains } from "@paraspell/sdk";
+import { NODES_WITH_RELAY_CHAINS } from "@paraspell/sdk";
+import type { Signer } from "@polkadot/api/types";
 import { web3Accounts, web3FromAddress } from "@polkadot/extension-dapp";
 import AccountsModal from "./AccountsModal";
 import { useDisclosure } from "@mantine/hooks";
-import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import { BrowserProvider, ethers } from "ethers";
+import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import type { BrowserProvider } from "ethers";
+import { ethers } from "ethers";
 import { IconInfoCircle } from "@tabler/icons-react";
 import EthAccountsModal from "./EthAccountsModal";
 import useRouterCurrencyOptions from "../hooks/useRouterCurrencyOptions";
@@ -92,7 +87,7 @@ const RouterTransferForm: FC<Props> = ({
     useState<InjectedAccountWithMeta>();
 
   const [selectedEthAccount, setSelectedEthAccount] = useState<string | null>(
-    null
+    null,
   );
 
   const onAccountSelect = (account: InjectedAccountWithMeta) => () => {
@@ -179,7 +174,7 @@ const RouterTransferForm: FC<Props> = ({
     try {
       const allAccounts = await web3Accounts();
       setAssetHubAccounts(
-        allAccounts.filter((account) => !ethers.isAddress(account.address))
+        allAccounts.filter((account) => !ethers.isAddress(account.address)),
       );
       openAssetHubModal();
     } catch (error) {
@@ -194,7 +189,7 @@ const RouterTransferForm: FC<Props> = ({
     try {
       const allAccounts = await web3Accounts();
       setAccounts(
-        allAccounts.filter((account) => ethers.isAddress(account.address))
+        allAccounts.filter((account) => ethers.isAddress(account.address)),
       );
       openModal();
     } catch (error) {
@@ -215,7 +210,7 @@ const RouterTransferForm: FC<Props> = ({
     try {
       const accounts = (await newProvider.send(
         "eth_requestAccounts",
-        []
+        [],
       )) as string[];
       console.log("Accounts:", accounts);
       setEthAccounts(accounts);
@@ -256,7 +251,7 @@ const RouterTransferForm: FC<Props> = ({
   } = useRouterCurrencyOptions(
     form.values.from,
     form.values.exchange,
-    form.values.to
+    form.values.to,
   );
 
   const onSubmitInternal = (values: FormValues) => {
@@ -330,7 +325,7 @@ const RouterTransferForm: FC<Props> = ({
     if (isFromNotParaToPara) {
       form.setFieldValue(
         "currencyFromOptionId",
-        Object.keys(currencyFromMap)[0]
+        Object.keys(currencyFromMap)[0],
       );
     }
   }, [isFromNotParaToPara, currencyFromMap]);

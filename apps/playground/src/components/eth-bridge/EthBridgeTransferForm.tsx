@@ -1,11 +1,8 @@
 import { useForm } from "@mantine/form";
-import { FC } from "react";
+import type { FC } from "react";
 import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
-import {
-  NODES_WITH_RELAY_CHAINS,
-  TAsset,
-  TNodePolkadotKusama,
-} from "@paraspell/sdk";
+import type { TAsset, TNodePolkadotKusama } from "@paraspell/sdk";
+import { NODES_WITH_RELAY_CHAINS } from "@paraspell/sdk";
 import { isValidPolkadotAddress } from "../../utils";
 import useCurrencyOptions from "../../hooks/useCurrencyOptions";
 
@@ -44,7 +41,7 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const { currencyOptions, currencyMap } = useCurrencyOptions(
     "Ethereum",
-    form.values.to
+    form.values.to,
   );
 
   const onSubmitInternal = (values: FormValues) => {

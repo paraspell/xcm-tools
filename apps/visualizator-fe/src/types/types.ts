@@ -1,4 +1,4 @@
-import { AssetCountsBySymbolQuery } from '../gql/graphql';
+import type { AssetCountsBySymbolQuery } from '../gql/graphql';
 
 export type ChartDataItem = {
   name: string;

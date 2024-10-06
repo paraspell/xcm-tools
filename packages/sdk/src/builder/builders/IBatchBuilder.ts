@@ -1,5 +1,5 @@
 import type { Extrinsic, TBatchOptions } from '../../types'
-import { GeneralBuilder } from './Builder'
+import type { GeneralBuilder } from './Builder'
 
 export interface IAddToBatchBuilder {
   addToBatch(): GeneralBuilder

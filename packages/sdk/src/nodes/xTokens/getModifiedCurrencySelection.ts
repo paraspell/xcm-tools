@@ -1,4 +1,5 @@
-import { Parents, TCurrencySelectionHeader, Version } from '../../types'
+import type { TCurrencySelectionHeader, Version } from '../../types'
+import { Parents } from '../../types'
 
 export const getModifiedCurrencySelection = (
   version: Version,

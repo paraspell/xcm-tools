@@ -1,8 +1,8 @@
 // Contains important call creation utils (Selection of fees,formating of header and more.. )
 
-import { ApiPromise } from '@polkadot/api'
-import { HexString } from '@polkadot/util/types'
-import { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '../types'
+import type { ApiPromise } from '@polkadot/api'
+import type { HexString } from '@polkadot/util/types'
+import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '../types'
 import { getRelayChainSymbol } from '../pallets/assets'
 
 export const createAccID = (api: ApiPromise, account: string): HexString => {

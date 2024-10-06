@@ -1,5 +1,6 @@
-import { forwardRef, ReactNode } from 'react';
-import { MessageCountsQuery } from '../../gql/graphql';
+import type { ReactNode } from 'react';
+import { forwardRef } from 'react';
+import type { MessageCountsQuery } from '../../gql/graphql';
 import { BarChart } from '@mantine/charts';
 import { getParachainById } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';

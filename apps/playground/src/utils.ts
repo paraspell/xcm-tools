@@ -1,6 +1,6 @@
-import { Extrinsic, TSerializedApiCall } from "@paraspell/sdk";
-import { ApiPromise } from "@polkadot/api";
-import { Signer } from "@polkadot/api/types";
+import type { Extrinsic, TSerializedApiCall } from "@paraspell/sdk";
+import type { ApiPromise } from "@polkadot/api";
+import type { Signer } from "@polkadot/api/types";
 import { encodeAddress, decodeAddress } from "@polkadot/keyring";
 import { isHex, hexToU8a } from "@polkadot/util";
 import { isAddress } from "web3-validator";
@@ -23,7 +23,7 @@ export const submitTransaction = async (
   api: ApiPromise,
   tx: Extrinsic,
   signer: Signer,
-  injectorAddress: string
+  injectorAddress: string,
 ): Promise<string> => {
   await tx.signAsync(injectorAddress, { signer });
   return await new Promise((resolve, reject) => {
@@ -50,7 +50,7 @@ export const submitTransaction = async (
 
 export const buildTx = (
   api: ApiPromise,
-  { module, section, parameters }: TSerializedApiCall
+  { module, section, parameters }: TSerializedApiCall,
 ) => {
   return api.tx[module][section](...parameters);
 };

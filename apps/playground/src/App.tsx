@@ -10,7 +10,7 @@ import {
 import "@mantine/core/styles.css";
 import { useDisclosure } from "@mantine/hooks";
 import { web3Accounts, web3Enable } from "@polkadot/extension-dapp";
-import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { IconAnalyze, IconBoxSeam, IconRoute } from "@tabler/icons-react";
 import { useState } from "react";
 import {

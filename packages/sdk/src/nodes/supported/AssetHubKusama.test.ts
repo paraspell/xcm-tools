@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { ScenarioNotSupportedError } from '../../errors'
-import { PolkadotXCMTransferInput } from '../../types'
+import type { PolkadotXCMTransferInput } from '../../types'
 import { getNode } from '../../utils'
 
 describe('transferPolkadotXCM', () => {

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 import { Builder } from '../../../builder'
 import { createTx } from './createTx'
-import { Extrinsic, TNode } from '../../../types'
+import type { Extrinsic, TNode } from '../../../types'
 
 vi.mock('../../../builder', () => ({
   Builder: vi.fn().mockImplementation(() => ({

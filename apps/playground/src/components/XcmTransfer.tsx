@@ -1,17 +1,13 @@
 import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "./ErrorAlert";
-import TransferForm, { FormValuesTransformed } from "./TransferForm";
+import type { FormValuesTransformed } from "./TransferForm";
+import TransferForm from "./TransferForm";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import {
-  Builder,
-  TCurrencyInput,
-  TMultiLocation,
-  TNode,
-  createApiInstanceForNode,
-} from "@paraspell/sdk";
-import { ApiPromise } from "@polkadot/api";
+import type { TCurrencyInput, TMultiLocation, TNode } from "@paraspell/sdk";
+import { Builder, createApiInstanceForNode } from "@paraspell/sdk";
+import type { ApiPromise } from "@polkadot/api";
 import { web3FromAddress } from "@polkadot/extension-dapp";
-import { Signer } from "@polkadot/api/types";
+import type { Signer } from "@polkadot/api/types";
 import { useState, useEffect } from "react";
 import { submitTransaction } from "../utils";
 import { submitTxUsingApi } from "../utils/submitUsingApi";
@@ -90,7 +86,7 @@ const XcmTransfer = () => {
   const submitUsingSdk = async (
     formValues: FormValuesTransformed,
     injectorAddress: string,
-    signer: Signer
+    signer: Signer,
   ) => {
     const api = await createApiInstanceForNode(formValues.from);
     const tx = await createTransferTx(formValues, api);
@@ -128,13 +124,13 @@ const XcmTransfer = () => {
           selectedAccount.address,
           injector.signer,
           "POST",
-          true
+          true,
         );
       } else {
         await submitUsingSdk(
           formValues,
           selectedAccount.address,
-          injector.signer
+          injector.signer,
         );
       }
       alert("Transaction was successful!");

@@ -1,12 +1,10 @@
 import { useForm } from "@mantine/form";
 import { isValidWalletAddress } from "../utils";
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
-import {
-  NODES_WITH_RELAY_CHAINS,
-  TAsset,
-  TNodeWithRelayChains,
-} from "@paraspell/sdk";
+import type { TAsset, TNodeWithRelayChains } from "@paraspell/sdk";
+import { NODES_WITH_RELAY_CHAINS } from "@paraspell/sdk";
 import useCurrencyOptions from "../hooks/useCurrencyOptions";
 import CurrencySelection from "./CurrencySelection";
 
@@ -66,7 +64,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const { currencyOptions, currencyMap, isNotParaToPara } = useCurrencyOptions(
     form.values.from,
-    form.values.to
+    form.values.to,
   );
 
   const onSubmitInternal = (values: FormValues) => {

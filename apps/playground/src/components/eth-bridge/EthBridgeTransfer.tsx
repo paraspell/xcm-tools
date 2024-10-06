@@ -1,16 +1,18 @@
 import { Stack, Title, Box, Button } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
-import { BrowserProvider, ethers, LogDescription } from "ethers";
+import type { BrowserProvider, LogDescription } from "ethers";
+import { ethers } from "ethers";
 import ErrorAlert from "../ErrorAlert";
-import EthBridgeTransferForm, {
+import type {
   FormValues,
   FormValuesTransformed,
 } from "./EthBridgeTransferForm";
+import EthBridgeTransferForm from "./EthBridgeTransferForm";
 import { EvmBuilder } from "@paraspell/sdk";
 import { fetchFromApi } from "../../utils/submitUsingApi";
 import { IGateway__factory } from "@snowbridge/contract-types";
-import { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
+import type { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
 import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/keyring";
 
@@ -48,7 +50,7 @@ const EthBridgeTransfer = () => {
     if (window.ethereum) {
       window.ethereum.on(
         "accountsChanged",
-        handleAccountsChanged as (...args: unknown[]) => void
+        handleAccountsChanged as (...args: unknown[]) => void,
       );
     }
 
@@ -56,7 +58,7 @@ const EthBridgeTransfer = () => {
       if (window.ethereum) {
         window.ethereum.removeListener(
           "accountsChanged",
-          handleAccountsChanged
+          handleAccountsChanged,
         );
       }
     };
@@ -135,7 +137,7 @@ const EthBridgeTransfer = () => {
       },
       "/x-transfer-eth",
       "POST",
-      true
+      true,
     )) as ApiResponse;
 
     const GATEWAY_CONTRACT = "0xEDa338E4dC46038493b885327842fD3E301CaB39";
@@ -147,7 +149,7 @@ const EthBridgeTransfer = () => {
     const address: MultiAddressStruct = {
       data: abi.encode(
         ["bytes32"],
-        [u8aToHex(decodeAddress(formValues.address))]
+        [u8aToHex(decodeAddress(formValues.address))],
       ),
       kind: 1,
     };
@@ -160,7 +162,7 @@ const EthBridgeTransfer = () => {
       apiResponse.amount,
       {
         value: apiResponse.fee,
-      }
+      },
     );
     const receipt = await response.wait(1);
 

@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, XTokensTransferInput, TMantaAsset } from '../../types'
+import type { XTokensTransferInput, TMantaAsset } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import Manta from './Manta'
+import type Manta from './Manta'
 import { getNode } from '../../utils'
 
 vi.mock('../xTokens', () => ({

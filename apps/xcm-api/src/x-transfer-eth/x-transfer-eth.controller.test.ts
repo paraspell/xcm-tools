@@ -1,11 +1,12 @@
 import { vi, describe, beforeEach, it, expect } from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
-import { TSerializedEthTransfer } from '@paraspell/sdk';
+import type { TSerializedEthTransfer } from '@paraspell/sdk';
 import { XTransferEthController } from './x-transfer-eth.controller.js';
 import { XTransferEthService } from './x-transfer-eth.service.js';
-import { PatchedXTransferEthDto } from './dto/x-transfer-eth.dto.js';
+import type { PatchedXTransferEthDto } from './dto/x-transfer-eth.dto.js';
 
 describe('XTransferEthController', () => {
   let controller: XTransferEthController;

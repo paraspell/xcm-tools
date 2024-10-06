@@ -1,5 +1,6 @@
-import { Slider, Stack, StackProps, Text } from '@mantine/core';
-import { FC } from 'react';
+import type { StackProps } from '@mantine/core';
+import { Slider, Stack, Text } from '@mantine/core';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type Props = StackProps & {

@@ -1,4 +1,4 @@
-import { JunctionParachain, TMultiLocation } from '../../types'
+import type { JunctionParachain, TMultiLocation } from '../../types'
 
 export const findParachainJunction = (multilocation: TMultiLocation): number | null => {
   const { interior } = multilocation

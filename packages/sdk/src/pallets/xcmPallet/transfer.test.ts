@@ -6,13 +6,8 @@ import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '../../maps/consts'
 import { getAllAssetsSymbols, getOtherAssets, getRelayChainSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { DuplicateAssetError, IncompatibleNodesError } from '../../errors'
-import {
-  type TSendOptions,
-  type TNode,
-  type TMultiAsset,
-  type TMultiLocation,
-  Extrinsic
-} from '../../types'
+import type { Extrinsic } from '../../types'
+import { type TSendOptions, type TNode, type TMultiAsset, type TMultiLocation } from '../../types'
 import { send } from './transfer'
 import ParachainNode from '../../nodes/ParachainNode'
 import { createApiInstance, getNode } from '../../utils'

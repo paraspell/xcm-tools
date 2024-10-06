@@ -1,10 +1,8 @@
-import { type Extrinsic, Builder, TAsset, TCurrencyCore } from '@paraspell/sdk';
+import type { TAsset, TCurrencyCore } from '@paraspell/sdk';
+import { type Extrinsic, Builder } from '@paraspell/sdk';
 import { type ApiPromise } from '@polkadot/api';
-import {
-  TExchangeNode,
-  type TCommonTransferOptionsModified,
-  type TTransferOptionsModified,
-} from '../types';
+import type { TExchangeNode } from '../types';
+import { type TCommonTransferOptionsModified, type TTransferOptionsModified } from '../types';
 import { validateRelayChainCurrency } from '../utils/utils';
 import { submitTransaction } from '../utils/submitTransaction';
 import { ethers } from 'ethers';

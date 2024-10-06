@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { Modal, Title } from '@mantine/core';
 import Options from './Options';
 import { useTranslation } from 'react-i18next';

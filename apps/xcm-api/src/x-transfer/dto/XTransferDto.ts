@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { TAddress, TCurrencyInput, Version } from '@paraspell/sdk';
+import type { TAddress, TCurrencyInput } from '@paraspell/sdk';
+import { Version } from '@paraspell/sdk';
 import { MultiLocationSchema } from '@paraspell/xcm-analyser';
 import { validateAmount } from '../../utils/validateAmount.js';
 

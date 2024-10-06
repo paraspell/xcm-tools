@@ -1,7 +1,7 @@
 import { Stack, Select, TextInput, Button, Checkbox } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { TNodeWithRelayChains } from "@paraspell/sdk";
-import { FC } from "react";
+import type { TNodeWithRelayChains } from "@paraspell/sdk";
+import type { FC } from "react";
 import { isValidWalletAddress } from "../../utils";
 
 const SUPPORTED_NODES: TNodeWithRelayChains[] = [

@@ -1,9 +1,9 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { allChannelsQueryDocument } from '../../api/channels';
 import { totalMessageCountsQueryDocument } from '../../api/messages';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { CountOption } from '../../gql/graphql';
-import { Ecosystem } from '../../types/types';
+import type { Ecosystem } from '../../types/types';
 import ParachainsGraph from './ParachainsGraph';
 import { useQuery } from '@apollo/client';
 

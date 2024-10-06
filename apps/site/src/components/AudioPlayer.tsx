@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect, FC } from "react";
+import type { FC } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ActionIcon, Slider, Group, Text } from "@mantine/core";
 import { IconPlayerPlay, IconPlayerPause } from "@tabler/icons-react";
 

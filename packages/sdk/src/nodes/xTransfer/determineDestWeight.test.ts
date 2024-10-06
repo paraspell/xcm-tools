@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { NodeNotSupportedError } from '../../errors'
 import { determineDestWeight } from './determineDestWeight'
-import { TNode } from '../../types'
+import type { TNode } from '../../types'
 
 describe('determineDestWeight', () => {
   it('returns correct weight for Astar', () => {

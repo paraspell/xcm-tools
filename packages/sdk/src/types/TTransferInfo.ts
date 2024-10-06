@@ -1,4 +1,4 @@
-import { TNodeWithRelayChains } from './TNode'
+import type { TNodeWithRelayChains } from './TNode'
 
 export interface TTransferInfo {
   chain: { origin: TNodeWithRelayChains; destination: TNodeWithRelayChains; ecosystem: string }

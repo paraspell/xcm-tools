@@ -1,11 +1,12 @@
 import { vi, describe, beforeEach, it, expect } from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { XTransferController } from './x-transfer.controller.js';
 import { XTransferService } from './x-transfer.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
-import { PatchedXTransferDto } from './dto/XTransferDto.js';
-import { Extrinsic } from '@paraspell/sdk';
+import type { PatchedXTransferDto } from './dto/XTransferDto.js';
+import type { Extrinsic } from '@paraspell/sdk';
 
 // Integration tests to ensure controller and service are working together
 describe('XTransferController', () => {

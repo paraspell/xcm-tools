@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { Modal, Stack, Button } from "@mantine/core";
 
 type Props = {

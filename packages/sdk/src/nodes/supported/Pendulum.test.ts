@@ -4,9 +4,10 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import { Version, XTokensTransferInput, TXcmAsset } from '../../types'
+import type { XTokensTransferInput, TXcmAsset } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import Pendulum from './Pendulum'
+import type Pendulum from './Pendulum'
 import { getNode } from '../../utils'
 
 vi.mock('../xTokens', () => ({

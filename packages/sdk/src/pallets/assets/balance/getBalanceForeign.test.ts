@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createApiInstanceForNode } from '../../../utils'
-import { ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 import { getBalanceForeign } from './getBalanceForeign'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'

@@ -1,16 +1,10 @@
-import {
-  MockInstance,
-  vi,
-  describe,
-  beforeEach,
-  it,
-  expect,
-  afterEach,
-} from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
+import type { MockInstance } from 'vitest';
+import { vi, describe, beforeEach, it, expect, afterEach } from 'vitest';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { AssetsService } from './assets.service.js';
 import * as paraspellSdk from '@paraspell/sdk';
-import { TNode } from '@paraspell/sdk';
+import type { TNode } from '@paraspell/sdk';
 import * as utils from '../utils.js';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 

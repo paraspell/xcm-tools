@@ -1,9 +1,5 @@
-import {
-  getAssets,
-  TCurrencyCore,
-  TNodeWithRelayChains,
-  TAsset as SdkTAsset,
-} from '@paraspell/sdk';
+import type { TCurrencyCore, TNodeWithRelayChains, TAsset as SdkTAsset } from '@paraspell/sdk';
+import { getAssets } from '@paraspell/sdk';
 import * as assetsMapJson from '../consts/assets.json' assert { type: 'json' };
 import type { TAssetsRecord, TAutoSelect, TExchangeNode } from '../types';
 

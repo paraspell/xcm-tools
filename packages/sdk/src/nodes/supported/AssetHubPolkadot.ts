@@ -9,6 +9,7 @@ import {
   createCurrencySpec,
   createPolkadotXcmHeader
 } from '../../pallets/xcmPallet/utils'
+import type { Junctions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -19,8 +20,7 @@ import {
   type TRelayToParaInternalOptions,
   type TMultiAsset,
   type TMultiLocation,
-  type TJunction,
-  Junctions
+  type TJunction
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'

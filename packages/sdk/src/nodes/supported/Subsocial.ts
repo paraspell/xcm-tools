@@ -1,7 +1,8 @@
 // Contains detailed structure of XCM call construction for Subsocial Parachain
 
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
-import { IPolkadotXCMTransfer, PolkadotXCMTransferInput, Version } from '../../types'
+import type { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 

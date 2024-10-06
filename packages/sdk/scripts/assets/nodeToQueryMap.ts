@@ -1,4 +1,4 @@
-import { TNodePolkadotKusama } from '../../src/types'
+import type { TNodePolkadotKusama } from '../../src/types'
 
 export const nodeToQuery: Record<TNodePolkadotKusama, string | null> = {
   // Chain state query: <module>.<section> for assets metadata

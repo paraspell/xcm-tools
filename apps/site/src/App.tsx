@@ -1,11 +1,8 @@
 import "@mantine/core/styles.css";
 import "@mantine/code-highlight/styles.css";
 import "./App.css";
-import {
-  MantineProvider,
-  createTheme,
-  MantineColorsTuple,
-} from "@mantine/core";
+import type { MantineColorsTuple } from "@mantine/core";
+import { MantineProvider, createTheme } from "@mantine/core";
 import { BrowserRouter } from "react-router-dom";
 import ScrollToAnchor from "./components/ScrollToAnchor";
 import AppShell from "./components/AppShell/AppShell";

@@ -1,4 +1,4 @@
-const Illustration = (props: React.ComponentPropsWithoutRef<'svg'>) => {
+const Illustration = (props: React.ComponentPropsWithoutRef<"svg">) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 362 145" {...props}>
       <path

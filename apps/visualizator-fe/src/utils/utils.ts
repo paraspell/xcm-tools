@@ -1,4 +1,4 @@
-import { SelectedParachain } from '../context/SelectedParachain/SelectedParachainContext';
+import type { SelectedParachain } from '../context/SelectedParachain/SelectedParachainContext';
 import {
   prodRelayKusama,
   prodRelayPolkadot,

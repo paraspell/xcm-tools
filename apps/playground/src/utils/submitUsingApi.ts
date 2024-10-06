@@ -1,18 +1,15 @@
-import { Signer } from "@polkadot/api/types";
+import type { Signer } from "@polkadot/api/types";
 import { API_URL } from "../consts";
 import axios, { AxiosError } from "axios";
-import {
-  TNodeWithRelayChains,
-  TSerializedApiCall,
-  createApiInstanceForNode,
-} from "@paraspell/sdk";
+import type { TNodeWithRelayChains, TSerializedApiCall } from "@paraspell/sdk";
+import { createApiInstanceForNode } from "@paraspell/sdk";
 import { buildTx, submitTransaction } from "../utils";
 
 export const fetchFromApi = async <T>(
   params: T,
   endpoint: string,
   method = "GET",
-  useBody: boolean = false
+  useBody: boolean = false,
 ): Promise<unknown> => {
   try {
     const response = await axios(`${API_URL}${endpoint}`, {
@@ -52,19 +49,19 @@ export const submitTxUsingApi = async <T>(
   injectorAddress: string,
   signer: Signer,
   method: string = "GET",
-  useBody = false
+  useBody = false,
 ) => {
   const serializedTx = await fetchFromApi(
     { ...params, injectorAddress },
     endpoint,
     method,
-    useBody
+    useBody,
   );
   const api = await createApiInstanceForNode(fromNode);
   await submitTransaction(
     api,
     buildTx(api, serializedTx as TSerializedApiCall),
     signer,
-    injectorAddress
+    injectorAddress,
   );
 };

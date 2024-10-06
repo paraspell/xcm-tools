@@ -1,6 +1,7 @@
-import { forwardRef, ReactNode, useMemo } from 'react';
+import type { ReactNode } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { aggregateDataByParachain } from './utils/aggregateDataByParachain';
-import { TAssetCounts } from '../../types/types';
+import type { TAssetCounts } from '../../types/types';
 import { useTranslation } from 'react-i18next';
 import { generateSeries } from './utils/generateSeries';
 import { BarChart } from '@mantine/charts';

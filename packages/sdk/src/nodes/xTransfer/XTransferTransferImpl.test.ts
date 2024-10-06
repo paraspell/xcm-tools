@@ -3,14 +3,13 @@ import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { determineDestWeight } from './determineDestWeight'
 import { getDestination } from './getDestination'
 import XTransferTransferImpl from './XTransferTransferImpl'
-import {
-  Parents,
+import type {
   TCurrencySelectionHeaderArr,
   TMultiLocation,
-  Version,
   XTransferTransferInput
 } from '../../types'
-import { ApiPromise } from '@polkadot/api'
+import { Parents, Version } from '../../types'
+import type { ApiPromise } from '@polkadot/api'
 
 const mockApi = {
   tx: { xTransfer: { transfer: vi.fn() } }

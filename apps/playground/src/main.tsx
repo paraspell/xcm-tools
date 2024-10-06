@@ -8,5 +8,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <WalletProvider>
       <App />
     </WalletProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

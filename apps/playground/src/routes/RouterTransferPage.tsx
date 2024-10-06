@@ -7,36 +7,38 @@ import {
   Group,
   Center,
 } from "@mantine/core";
-import {
-  TransactionType,
+import type {
   TTxProgressInfo,
   TExchangeNode,
-  TransactionStatus,
-  RouterBuilder,
   TExtrinsicInfo,
   TEthOptionsInfo,
+} from "@paraspell/xcm-router";
+import {
+  TransactionType,
+  TransactionStatus,
+  RouterBuilder,
 } from "@paraspell/xcm-router";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useEffect, useState } from "react";
-import RouterTransferForm, {
-  FormValuesTransformed,
-} from "../components/RouterTransferForm";
+import type { FormValuesTransformed } from "../components/RouterTransferForm";
+import RouterTransferForm from "../components/RouterTransferForm";
 import TransferStepper from "../components/TransferStepper";
 import Confetti from "react-confetti";
-import { Signer } from "@polkadot/api/types";
+import type { Signer } from "@polkadot/api/types";
 import axios, { AxiosError } from "axios";
 import { buildTx, submitTransaction } from "../utils";
 import ErrorAlert from "../components/ErrorAlert";
 import { useWallet } from "../hooks/useWallet";
 import { API_URL } from "../consts";
-import { BrowserProvider, ethers, LogDescription } from "ethers";
+import type { BrowserProvider, LogDescription } from "ethers";
+import { ethers } from "ethers";
 import { IGateway__factory } from "@snowbridge/contract-types";
-import { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
+import type { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
 import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/keyring";
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { TSerializedApiCall } from "@paraspell/sdk";
+import type { TSerializedApiCall } from "@paraspell/sdk";
 
 const RouterTransferPage = () => {
   const { selectedAccount } = useWallet();
@@ -90,7 +92,7 @@ const RouterTransferPage = () => {
     formValues: FormValuesTransformed,
     exchange: TExchangeNode | undefined,
     injectorAddress: string,
-    signer: Signer
+    signer: Signer,
   ) => {
     const {
       from,
@@ -118,12 +120,12 @@ const RouterTransferPage = () => {
       .currencyFrom(
         currencyFrom.assetId
           ? { id: currencyFrom.assetId }
-          : { symbol: currencyFrom.symbol ?? "" }
+          : { symbol: currencyFrom.symbol ?? "" },
       )
       .currencyTo(
         currencyTo.assetId
           ? { id: currencyTo.assetId }
-          : { symbol: currencyTo.symbol ?? "" }
+          : { symbol: currencyTo.symbol ?? "" },
       )
       .amount(amount)
       .injectorAddress(injectorAddress)
@@ -143,7 +145,7 @@ const RouterTransferPage = () => {
     formValues: FormValuesTransformed,
     exchange: TExchangeNode | undefined,
     injectorAddress: string,
-    signer: Signer
+    signer: Signer,
   ) => {
     const { currencyFrom, currencyTo, transactionType } = formValues;
     try {
@@ -163,7 +165,7 @@ const RouterTransferPage = () => {
         },
         {
           timeout: 120000,
-        }
+        },
       );
 
       const txs = (await response.data) as Array<
@@ -187,14 +189,14 @@ const RouterTransferPage = () => {
               api,
               buildTx(api, txInfo.tx as unknown as TSerializedApiCall),
               formValues.evmSigner ?? signer,
-              formValues.evmInjectorAddress ?? injectorAddress
+              formValues.evmInjectorAddress ?? injectorAddress,
             );
           } else {
             await submitTransaction(
               api,
               buildTx(api, txInfo.tx as unknown as TSerializedApiCall),
               signer,
-              injectorAddress
+              injectorAddress,
             );
           }
         } else {
@@ -210,7 +212,7 @@ const RouterTransferPage = () => {
 
           const contract = IGateway__factory.connect(
             GATEWAY_CONTRACT,
-            tempSigner
+            tempSigner,
           );
 
           const abi = ethers.AbiCoder.defaultAbiCoder();
@@ -218,7 +220,7 @@ const RouterTransferPage = () => {
           const address: MultiAddressStruct = {
             data: abi.encode(
               ["bytes32"],
-              [u8aToHex(decodeAddress(formValues.assetHubAddress))]
+              [u8aToHex(decodeAddress(formValues.assetHubAddress))],
             ),
             kind: 1,
           };
@@ -235,7 +237,7 @@ const RouterTransferPage = () => {
             apiResponse.amount,
             {
               value: apiResponse.fee,
-            }
+            },
           );
           const receipt = await response.wait(1);
 
@@ -326,14 +328,14 @@ const RouterTransferPage = () => {
           formValues,
           exchange,
           selectedAccount.address,
-          injector.signer
+          injector.signer,
         );
       } else {
         await submitUsingRouterModule(
           formValues,
           exchange,
           selectedAccount.address,
-          injector.signer
+          injector.signer,
         );
       }
       setRunConfetti(true);

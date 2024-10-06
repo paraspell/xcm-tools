@@ -1,17 +1,15 @@
 import { vi, describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { XTransferService } from './x-transfer.service.js';
-import { PatchedXTransferDto } from './dto/XTransferDto.js';
+import type { PatchedXTransferDto } from './dto/XTransferDto.js';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import * as paraspellSdk from '@paraspell/sdk';
-import {
-  InvalidCurrencyError,
-  TNode,
-  createApiInstanceForNode,
-} from '@paraspell/sdk';
+import type { TNode } from '@paraspell/sdk';
+import { InvalidCurrencyError, createApiInstanceForNode } from '@paraspell/sdk';
 
 const builderMock = {
   xcmVersion: vi.fn().mockReturnThis(),

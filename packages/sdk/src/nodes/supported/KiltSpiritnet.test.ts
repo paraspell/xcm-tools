@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ScenarioNotSupportedError, NodeNotSupportedError } from '../../errors'
-import { Version, PolkadotXCMTransferInput } from '../../types'
+import type { PolkadotXCMTransferInput } from '../../types'
+import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
-import KiltSpiritnet from './KiltSpiritnet'
+import type KiltSpiritnet from './KiltSpiritnet'
 import { getNode } from '../../utils'
 
 vi.mock('../polkadotXcm', () => ({

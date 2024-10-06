@@ -11,8 +11,9 @@ import {
   Stack,
   Text
 } from '@mantine/core';
-import { ChannelQuery } from '../../gql/graphql';
-import { FC, useState } from 'react';
+import type { ChannelQuery } from '../../gql/graphql';
+import type { FC } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import { getParachainById } from '../../utils/utils';

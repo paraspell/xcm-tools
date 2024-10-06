@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createApiInstanceForNode } from '../../../utils'
 import { getNativeAssetSymbol } from '../assets'
 import { getAssetBalance } from './getAssetBalance'
-import { ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 import { getBalanceNative } from './getBalanceNative'
 import { getBalanceForeign } from './getBalanceForeign'
 

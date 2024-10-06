@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
-import { ApiPromise } from '@polkadot/api'
-import { TNodeWithRelayChains } from '../types'
+import type { ApiPromise } from '@polkadot/api'
+import type { TNodeWithRelayChains } from '../types'
 import { createApiInstanceForNode } from './createApiInstanceForNode'
 import { createApiInstance } from './createApiInstance'
 import { getNode } from './getNode'

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { TNodeWithRelayChains } from '../types'
+import type { TNodeWithRelayChains } from '../types'
 import { determineRelayChainSymbol } from './determineRelayChainSymbol'
 import { getRelayChainSymbol } from '../pallets/assets'
 
