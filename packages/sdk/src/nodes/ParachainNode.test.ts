@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { InvalidCurrencyError } from '../errors'
 import { isTMultiLocation } from '../pallets/xcmPallet/utils'
-import { TMultiLocation, TNode, TSendInternalOptions } from '../types'
+import type { TMultiLocation, TNode, TSendInternalOptions } from '../types'
 import { getNode } from '../utils'
-import AssetHubPolkadot from './supported/AssetHubPolkadot'
-import { ApiPromise } from '@polkadot/api'
+import type AssetHubPolkadot from './supported/AssetHubPolkadot'
+import type { ApiPromise } from '@polkadot/api'
 import { verifyMultiLocation } from '../utils/verifyMultiLocation'
 
 vi.mock('../pallets/xcmPallet/utils', async () => {

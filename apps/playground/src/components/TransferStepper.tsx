@@ -1,6 +1,6 @@
 import { Stepper, Title } from '@mantine/core';
-import { TTxProgressInfo, TransactionStatus, TransactionType } from '@paraspell/xcm-router';
-import { FC } from 'react';
+import { type TTxProgressInfo, TransactionStatus, TransactionType } from '@paraspell/xcm-router';
+import { type FC } from 'react';
 
 const getActiveStep = (progressInfo?: TTxProgressInfo) => {
   if (!progressInfo) {

@@ -1,5 +1,5 @@
-import { TCurrencyCore, TNodeDotKsmWithRelayChains } from '../../../types'
-import { TTransferInfo } from '../../../types/TTransferInfo'
+import type { TCurrencyCore, TNodeDotKsmWithRelayChains } from '../../../types'
+import type { TTransferInfo } from '../../../types/TTransferInfo'
 import { createApiInstanceForNode, determineRelayChainSymbol } from '../../../utils'
 import { getNativeAssetSymbol } from '../assets'
 import { getAssetBalance } from '../balance/getAssetBalance'

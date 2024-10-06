@@ -1,4 +1,4 @@
-import { describe, it, vi, expect, beforeAll, Mock } from 'vitest';
+import { describe, it, vi, expect, beforeAll, type Mock } from 'vitest';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';

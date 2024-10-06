@@ -9,14 +9,14 @@ import {
   Box,
   ColorSwatch,
   factory,
-  Factory,
+  type Factory,
   getThemeColor,
   useMantineTheme,
   useProps,
   useStyles
 } from '@mantine/core';
 import classes from './CustomChartTooltip.module.css';
-import { ChartSeries, ChartTooltipProps } from '@mantine/charts';
+import { type ChartSeries, type ChartTooltipProps } from '@mantine/charts';
 import { useTranslation } from 'react-i18next';
 import { getParachainId } from '../../../utils/utils';
 import { Ecosystem } from '../../../types/types';

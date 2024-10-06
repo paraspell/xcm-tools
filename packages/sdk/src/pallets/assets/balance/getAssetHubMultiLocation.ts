@@ -1,4 +1,4 @@
-import { TMultiLocation } from '../../../types'
+import type { TMultiLocation } from '../../../types'
 import { getOtherAssets } from '../assets'
 
 export const getAssetHubMultiLocation = (symbol?: string): TMultiLocation | null => {

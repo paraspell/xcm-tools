@@ -4,7 +4,7 @@ import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 import { fetchFromApi } from "../../utils/submitUsingApi";
 import { getDefaultPallet, getSupportedPallets } from "@paraspell/sdk";
-import PalletsForm, { FormValues } from "./PalletsForm";
+import PalletsForm, { type FormValues } from "./PalletsForm";
 import OutputAlert from "../OutputAlert";
 
 const PalletsQueries = () => {

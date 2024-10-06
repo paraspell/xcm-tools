@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import * as deepEqual from './deepEqual'
 import { getAssetsObject } from '../pallets/assets'
-import { TNode, TMultiLocation, TNodeAssets } from '../types'
+import type { TNode, TMultiLocation, TNodeAssets } from '../types'
 import { verifyMultiLocation } from './verifyMultiLocation'
 
 vi.mock('../pallets/assets', () => ({

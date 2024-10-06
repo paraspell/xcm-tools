@@ -9,34 +9,34 @@ import {
 } from "@mantine/core";
 import {
   TransactionType,
-  TTxProgressInfo,
-  TExchangeNode,
+  type TTxProgressInfo,
+  type TExchangeNode,
   TransactionStatus,
   RouterBuilder,
-  TExtrinsicInfo,
-  TEthOptionsInfo,
+  type TExtrinsicInfo,
+  type TEthOptionsInfo,
 } from "@paraspell/xcm-router";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import RouterTransferForm, {
-  FormValuesTransformed,
+  type FormValuesTransformed,
 } from "../components/RouterTransferForm";
 import TransferStepper from "../components/TransferStepper";
 import Confetti from "react-confetti";
-import { Signer } from "@polkadot/api/types";
+import { type Signer } from "@polkadot/api/types";
 import axios, { AxiosError } from "axios";
 import { buildTx, submitTransaction } from "../utils";
 import ErrorAlert from "../components/ErrorAlert";
 import { useWallet } from "../hooks/useWallet";
 import { API_URL } from "../consts";
-import { BrowserProvider, ethers, LogDescription } from "ethers";
+import { type BrowserProvider, ethers, type LogDescription } from "ethers";
 import { IGateway__factory } from "@snowbridge/contract-types";
-import { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
+import { type MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
 import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/keyring";
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { TSerializedApiCall } from "@paraspell/sdk";
+import { type TSerializedApiCall } from "@paraspell/sdk";
 
 const RouterTransferPage = () => {
   const { selectedAccount } = useWallet();

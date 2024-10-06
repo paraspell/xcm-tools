@@ -1,16 +1,16 @@
-import { FC, useEffect } from "react";
+import { type FC, useEffect } from "react";
 import {
   Select,
   Stack,
   TextInput,
   Checkbox,
-  ComboboxItem,
+  type ComboboxItem,
   Group,
   SegmentedControl,
   JsonInput,
 } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
-import { FormValues } from "./TransferForm";
+import { type UseFormReturnType } from "@mantine/form";
+import { type FormValues } from "./TransferForm";
 import { isRelayChain } from "@paraspell/sdk";
 
 type Props = {

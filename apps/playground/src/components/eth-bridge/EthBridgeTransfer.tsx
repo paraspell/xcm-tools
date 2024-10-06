@@ -1,16 +1,16 @@
 import { Stack, Title, Box, Button } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
-import { BrowserProvider, ethers, LogDescription } from "ethers";
+import { type BrowserProvider, ethers, type LogDescription } from "ethers";
 import ErrorAlert from "../ErrorAlert";
 import EthBridgeTransferForm, {
-  FormValues,
-  FormValuesTransformed,
+  type FormValues,
+  type FormValuesTransformed,
 } from "./EthBridgeTransferForm";
 import { EvmBuilder } from "@paraspell/sdk";
 import { fetchFromApi } from "../../utils/submitUsingApi";
 import { IGateway__factory } from "@snowbridge/contract-types";
-import { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
+import { type MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
 import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/keyring";
 

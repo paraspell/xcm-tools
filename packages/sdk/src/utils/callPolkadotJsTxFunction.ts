@@ -1,5 +1,5 @@
-import { ApiPromise } from '@polkadot/api'
-import { Extrinsic, TSerializedApiCall } from '../types'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic, TSerializedApiCall } from '../types'
 
 export const callPolkadotJsTxFunction = (
   api: ApiPromise,

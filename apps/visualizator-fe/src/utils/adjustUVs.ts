@@ -1,4 +1,4 @@
-import { SphereGeometry } from 'three';
+import { type SphereGeometry } from 'three';
 
 export const adjustUVs = (geometry: SphereGeometry, scaleFactor: number) => {
   const uvs = geometry.attributes.uv;

@@ -1,4 +1,4 @@
-import { MultiLocation } from '../src/types';
+import { type MultiLocation } from '../src/types';
 import { convertMultilocationToUrl, convertXCMToUrls } from '../src/converter/convert';
 
 const multilocation: MultiLocation = {

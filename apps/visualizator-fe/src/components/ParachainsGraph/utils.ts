@@ -1,5 +1,5 @@
 import { Vector3 } from 'three';
-import { Ecosystem } from '../../types/types';
+import { type Ecosystem } from '../../types/types';
 import { getNodesByEcosystem } from '../../utils/utils';
 
 export const getParachainPosition = (index: number, ecosystem: Ecosystem) => {

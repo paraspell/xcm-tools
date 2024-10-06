@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
-import { TNodePolkadotKusama } from '../types'
+import type { TNodePolkadotKusama } from '../types'
 import { getNodeEndpointOption } from '../utils'
-import { EndpointOption } from '@polkadot/apps-config/endpoints/types'
+import type { EndpointOption } from '@polkadot/apps-config/endpoints/types'
 import { getAllNodeProviders } from './getAllNodeProviders'
 
 vi.mock('../utils', () => ({

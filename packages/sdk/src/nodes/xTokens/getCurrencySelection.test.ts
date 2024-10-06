@@ -2,8 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { getNode } from '../../utils'
 import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
 import { getCurrencySelection } from './getCurrencySelection'
-import { Parents, TCurrencySelectionHeader, Version, type XTokensTransferInput } from '../../types'
-import ParachainNode from '../ParachainNode'
+import type { TCurrencySelectionHeader } from '../../types'
+import { Parents, Version, type XTokensTransferInput } from '../../types'
+import type ParachainNode from '../ParachainNode'
 
 vi.mock('../../utils', () => ({
   getNode: vi.fn()

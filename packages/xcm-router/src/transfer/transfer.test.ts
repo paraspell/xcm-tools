@@ -11,10 +11,10 @@ import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import { TransactionType, type TTransferOptions } from '../types';
 import * as selectBestExchange from './selectBestExchange';
 import type ExchangeNode from '../dexNodes/DexNode';
-import { Signer as EthSigner } from 'ethers';
-import { Signer } from '@polkadot/types/types';
-import { createApiInstanceForNode, Extrinsic } from '@paraspell/sdk';
-import { ApiPromise } from '@polkadot/api';
+import { type Signer as EthSigner } from 'ethers';
+import { type Signer } from '@polkadot/types/types';
+import { createApiInstanceForNode, type Extrinsic } from '@paraspell/sdk';
+import { type ApiPromise } from '@polkadot/api';
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');

@@ -1,6 +1,6 @@
-import { Extrinsic, TSerializedApiCall } from "@paraspell/sdk";
-import { ApiPromise } from "@polkadot/api";
-import { Signer } from "@polkadot/api/types";
+import { type Extrinsic, type TSerializedApiCall } from "@paraspell/sdk";
+import { type ApiPromise } from "@polkadot/api";
+import { type Signer } from "@polkadot/api/types";
 import { encodeAddress, decodeAddress } from "@polkadot/keyring";
 import { isHex, hexToU8a } from "@polkadot/util";
 import { isAddress } from "web3-validator";

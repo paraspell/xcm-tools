@@ -6,7 +6,7 @@ import Scene2dAssetsChart from '../../pages/Scene2dAssetsChart';
 import Scene2dAmountsByDay from '../../pages/Scene2dAmountsByDay';
 import Scene2dBubblePlot from '../../pages/Scene2dBubblePlot';
 import { useTranslation } from 'react-i18next';
-import { FC } from 'react';
+import { type FC } from 'react';
 
 type Props = {
   defaultValue?: PageRoute;

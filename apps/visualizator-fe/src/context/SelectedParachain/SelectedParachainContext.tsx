@@ -1,5 +1,5 @@
-import { createContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
-import { ChannelsQuery, CountOption } from '../../gql/graphql';
+import { createContext, useState, type ReactNode, type Dispatch, type SetStateAction } from 'react';
+import { type ChannelsQuery, CountOption } from '../../gql/graphql';
 import { Ecosystem } from '../../types/types';
 
 export type SelectedParachain = string;

@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ScenarioNotSupportedError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import { PolkadotXCMTransferInput, TRelayToParaInternalOptions, Version } from '../../types'
+import type { PolkadotXCMTransferInput, TRelayToParaInternalOptions } from '../../types'
+import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
-import Collectives from './Collectives'
+import type Collectives from './Collectives'
 import { getNode } from '../../utils/getNode'
 
 vi.mock('../polkadotXcm', () => ({

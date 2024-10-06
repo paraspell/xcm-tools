@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ConfigService } from '@nestjs/config';
-import { SentryModuleOptions } from '@ntegral/nestjs-sentry';
+import { type ConfigService } from '@nestjs/config';
+import { type SentryModuleOptions } from '@ntegral/nestjs-sentry';
 import { sentryConfig } from './sentry.config.js';
 
 describe('sentryConfig', () => {

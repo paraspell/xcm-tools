@@ -9,7 +9,8 @@ import {
   type TCurrencySelectionHeaderArr
 } from '../../types'
 import { getParaId, getTNode } from '../assets'
-import { Junctions, TJunction, type TMultiLocation } from '../../types/TMultiLocation'
+import type { Junctions, TJunction } from '../../types/TMultiLocation'
+import { type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 import { findParachainJunction } from './findParachainJunction'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'

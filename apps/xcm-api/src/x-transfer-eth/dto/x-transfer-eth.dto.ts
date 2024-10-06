@@ -1,4 +1,4 @@
-import { TCurrencyCore } from '@paraspell/sdk';
+import { type TCurrencyCore } from '@paraspell/sdk';
 import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
 import { z } from 'zod';
 import { validateAmount } from '../../utils/validateAmount.js';

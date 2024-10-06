@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Ecosystem } from '../../types/types';
 import { Center, Group, Loader, Stack, Title } from '@mantine/core';
 import DownloadButtons from '../DownloadButtons';
-import { MessageCountsQuery } from '../../gql/graphql';
+import { type MessageCountsQuery } from '../../gql/graphql';
 import convertToCsv from '../../utils/convertToCsv';
 import { downloadZip } from '../../utils/downloadZip';
 import { useRef } from 'react';

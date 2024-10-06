@@ -1,7 +1,7 @@
 import { EvmBuilder } from '@paraspell/sdk';
-import { TTransferOptionsModified, TransactionType, TransactionStatus } from '../types';
+import { type TTransferOptionsModified, TransactionType, TransactionStatus } from '../types';
 import { maybeUpdateTransferStatus } from '../utils/utils';
-import { ethers, Signer } from 'ethers';
+import { ethers, type Signer } from 'ethers';
 
 export const transferFromEthereum = async (options: TTransferOptionsModified) => {
   const { onStatusChange, amount, currencyFrom, ethSigner, assetHubAddress } = options;

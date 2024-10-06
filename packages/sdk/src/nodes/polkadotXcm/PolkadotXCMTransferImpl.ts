@@ -1,11 +1,7 @@
 // Contains basic structure of polkadotXCM call
 
-import {
-  PolkadotXcmModule,
-  PolkadotXcmSection,
-  TTransferReturn,
-  type PolkadotXCMTransferInput
-} from '../../types'
+import type { PolkadotXcmModule, PolkadotXcmSection, TTransferReturn } from '../../types'
+import { type PolkadotXCMTransferInput } from '../../types'
 
 const DEFAULT_FEE_ASSET = 0
 

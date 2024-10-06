@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, XTokensTransferInput, TNodePolkadotKusama } from '../../types'
+import type { XTokensTransferInput, TNodePolkadotKusama } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import { getAllNodeProviders } from '../../utils'
 import { getNode } from '../../utils/getNode'
-import Basilisk from './Basilisk'
+import type Basilisk from './Basilisk'
 
 vi.mock('../xTokens', () => ({
   default: {

@@ -1,8 +1,8 @@
 import { useForm } from "@mantine/form";
-import { FC } from "react";
+import { type FC } from "react";
 import { Button, Checkbox, Select, Stack } from "@mantine/core";
-import { NODE_NAMES, TNodePolkadotKusama } from "@paraspell/sdk";
-import { TPalletsQuery } from "../../types";
+import { NODE_NAMES, type TNodePolkadotKusama } from "@paraspell/sdk";
+import { type TPalletsQuery } from "../../types";
 import { PALLETS_QUERIES } from "../../consts";
 
 export type FormValues = {

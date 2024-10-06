@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
-import { Codec } from '@polkadot/types/types'
-import { StorageKey } from '@polkadot/types'
+import type { Codec } from '@polkadot/types/types'
+import type { StorageKey } from '@polkadot/types'
 
 describe('getBalanceForeignXTokens', () => {
   let apiMock: ApiPromise

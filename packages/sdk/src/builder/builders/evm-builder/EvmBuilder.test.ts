@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { AbstractProvider, Signer } from 'ethers'
-import { TCurrencyCore, TNodePolkadotKusama } from '../../../types'
-import { TEvmBuilderOptions } from '../../../types/TBuilder'
+import type { AbstractProvider, Signer } from 'ethers'
+import type { TCurrencyCore, TNodePolkadotKusama } from '../../../types'
+import type { TEvmBuilderOptions } from '../../../types/TBuilder'
 import transferEthToPolkadot from '../../../pallets/xcmPallet/ethTransfer/ethTransfer'
 import { EvmBuilder } from './EvmBuilder'
 

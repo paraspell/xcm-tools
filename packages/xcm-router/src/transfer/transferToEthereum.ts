@@ -1,5 +1,5 @@
 import { createApiInstanceForNode } from '@paraspell/sdk';
-import { TransactionType, TransactionStatus, TTransferOptionsModified } from '../types';
+import { TransactionType, TransactionStatus, type TTransferOptionsModified } from '../types';
 import { maybeUpdateTransferStatus } from '../utils/utils';
 import { submitTransferToDestination } from './utils';
 

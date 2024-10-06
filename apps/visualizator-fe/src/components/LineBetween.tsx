@@ -1,15 +1,15 @@
-import { FC, useRef } from 'react';
+import { type FC, useRef } from 'react';
 import {
   DoubleSide,
   LineCurve3,
-  Mesh,
-  MeshStandardMaterial,
+  type Mesh,
+  type MeshStandardMaterial,
   Object3D,
   TubeGeometry,
-  InstancedMesh
+  type InstancedMesh
 } from 'three';
 import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
-import { ThreeEvent, useFrame } from '@react-three/fiber';
+import { type ThreeEvent, useFrame } from '@react-three/fiber';
 
 type Props = {
   startObject: Object3D | null;

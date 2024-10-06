@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { type TTransferOptionsModified } from '../../types';
 import HydrationExchangeNode from './HydrationDex';
 import { MOCK_TRANSFER_OPTIONS, performSwap } from '../../utils/utils.test';
-import { type TNodeWithRelayChains, type TNode, TCurrencyCore } from '@paraspell/sdk';
+import { type TNodeWithRelayChains, type TNode, type TCurrencyCore } from '@paraspell/sdk';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import type ExchangeNode from '../DexNode';
 import { findAssetFrom, findAssetTo } from '../../assets/assets';

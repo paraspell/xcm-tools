@@ -1,5 +1,5 @@
 import { getRelayChainSymbol } from '../pallets/assets'
-import { TNodeWithRelayChains } from '../types'
+import type { TNodeWithRelayChains } from '../types'
 
 export const determineRelayChainSymbol = (node: TNodeWithRelayChains): string => {
   if (node === 'Polkadot') {

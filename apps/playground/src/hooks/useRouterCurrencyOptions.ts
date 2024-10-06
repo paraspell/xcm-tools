@@ -1,10 +1,10 @@
-import { TAsset, TNodeWithRelayChains } from "@paraspell/sdk";
+import { type TAsset, type TNodeWithRelayChains } from "@paraspell/sdk";
 import { useMemo } from "react";
 import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
-  TAutoSelect,
-  TExchangeNode,
+  type TAutoSelect,
+  type TExchangeNode,
 } from "@paraspell/xcm-router";
 
 const useRouterCurrencyOptions = (

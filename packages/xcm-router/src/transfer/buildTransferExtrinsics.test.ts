@@ -7,10 +7,10 @@ import * as dexNodeFactory from '../dexNodes/DexNodeFactory';
 import * as selectBestExchange from './selectBestExchange';
 import { buildTransferExtrinsics } from './buildTransferExtrinsics';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
-import { TBuildTransferExtrinsicsOptions, TransactionType } from '../types';
+import { type TBuildTransferExtrinsicsOptions, TransactionType } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
-import { buildEthTransferOptions, createApiInstanceForNode, Extrinsic } from '@paraspell/sdk';
-import { ApiPromise } from '@polkadot/api';
+import { buildEthTransferOptions, createApiInstanceForNode, type Extrinsic } from '@paraspell/sdk';
+import { type ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
 vi.mock('@paraspell/sdk', async () => {

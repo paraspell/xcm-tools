@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, XTokensTransferInput, TMantaAsset } from '../../types'
+import type { XTokensTransferInput, TMantaAsset } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import Calamari from './Calamari'
+import type Calamari from './Calamari'
 import { getNode } from '../../utils'
 
 vi.mock('../xTokens', () => ({

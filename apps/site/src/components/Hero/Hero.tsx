@@ -53,12 +53,12 @@ export const Hero = () => {
 
         // Schedule next sparkle
         const nextInterval = Math.random() * (5000 - 2000) + 2000; // Random between 2s and 5s
-        timeoutId = setTimeout(triggerSparkle, nextInterval);
+        timeoutId = window.setTimeout(triggerSparkle, nextInterval);
       }
     };
 
     // Start the sparkle sequence
-    timeoutId = setTimeout(triggerSparkle, 1000); // Initial delay of 1s
+    timeoutId = window.setTimeout(triggerSparkle, 1000); // Initial delay of 1s
 
     return () => clearTimeout(timeoutId);
   }, [logoDimensions]);

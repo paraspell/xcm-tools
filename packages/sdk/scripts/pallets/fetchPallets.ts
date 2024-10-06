@@ -1,6 +1,6 @@
-import { ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 import { NODE_NAMES_DOT_KSM } from '../../src/maps/consts'
-import { TPallet, TPalletMap, TPalletJsonMap } from '../../src/types'
+import type { TPallet, TPalletMap, TPalletJsonMap } from '../../src/types'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 
 const defaultPalletsSortedByPriority: TPallet[] = [

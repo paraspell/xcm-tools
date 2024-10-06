@@ -1,7 +1,7 @@
 import {
   getSupportedAssets,
-  TAsset,
-  TNodeWithRelayChains,
+  type TAsset,
+  type TNodeWithRelayChains,
 } from "@paraspell/sdk";
 import { useMemo } from "react";
 

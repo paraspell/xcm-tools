@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AssetClaimService } from './asset-claim.service.js';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import * as sdk from '@paraspell/sdk';
 import * as utils from '../utils.js';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ApiPromise } from '@polkadot/api';
-import { AssetClaimDto } from './dto/asset-claim.dto.js';
+import { type ApiPromise } from '@polkadot/api';
+import { type AssetClaimDto } from './dto/asset-claim.dto.js';
 
 vi.mock('@paraspell/sdk', async () => {
   const actual =

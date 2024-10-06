@@ -1,6 +1,6 @@
 import { Modal, Stack, Button } from "@mantine/core";
-import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import { FC } from "react";
+import { type InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { type FC } from "react";
 
 type Props = {
   isOpen: boolean;

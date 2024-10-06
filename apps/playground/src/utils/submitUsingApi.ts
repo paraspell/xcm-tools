@@ -1,9 +1,9 @@
-import { Signer } from "@polkadot/api/types";
+import { type Signer } from "@polkadot/api/types";
 import { API_URL } from "../consts";
 import axios, { AxiosError } from "axios";
 import {
-  TNodeWithRelayChains,
-  TSerializedApiCall,
+  type TNodeWithRelayChains,
+  type TSerializedApiCall,
   createApiInstanceForNode,
 } from "@paraspell/sdk";
 import { buildTx, submitTransaction } from "../utils";

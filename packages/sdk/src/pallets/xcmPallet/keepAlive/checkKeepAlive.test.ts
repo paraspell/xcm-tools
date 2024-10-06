@@ -5,7 +5,7 @@ import { BN } from '@polkadot/util'
 import { calculateTransactionFee } from '../calculateTransactionFee'
 import { KeepAliveError } from '../../../errors/KeepAliveError'
 import { createTx } from '../keepAlive/createTx'
-import { Extrinsic } from '../../../types'
+import type { Extrinsic } from '../../../types'
 import { beforeEach } from 'node:test'
 import { getExistentialDeposit } from '../../assets/eds'
 

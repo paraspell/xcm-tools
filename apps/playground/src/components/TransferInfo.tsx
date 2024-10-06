@@ -3,7 +3,7 @@ import ErrorAlert from "./ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 import { useWallet } from "../hooks/useWallet";
-import TransferInfoForm, { FormValues } from "./TransferInfoForm";
+import TransferInfoForm, { type FormValues } from "./TransferInfoForm";
 import OutputAlert from "./OutputAlert";
 import { getTransferInfo } from "@paraspell/sdk";
 import { fetchFromApi } from "../utils/submitUsingApi";

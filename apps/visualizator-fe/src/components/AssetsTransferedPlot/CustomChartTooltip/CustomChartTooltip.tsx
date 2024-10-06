@@ -9,7 +9,7 @@ import {
   Box,
   ColorSwatch,
   factory,
-  Factory,
+  type Factory,
   getThemeColor,
   Image,
   useMantineTheme,
@@ -17,7 +17,7 @@ import {
   useStyles
 } from '@mantine/core';
 import classes from './CustomChartTooltip.module.css';
-import { ChartSeries, ChartTooltipProps } from '@mantine/charts';
+import { type ChartSeries, type ChartTooltipProps } from '@mantine/charts';
 import { getParachainId } from '../../../utils/utils';
 import { Ecosystem } from '../../../types/types';
 import dayjs from 'dayjs';

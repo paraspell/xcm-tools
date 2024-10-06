@@ -6,7 +6,7 @@ import {
 } from './getExistentialDeposit'
 import * as edsMapJson from '../../maps/existential-deposits.json'
 import { getBalanceNative } from './balance/getBalanceNative'
-import { TNodeDotKsmWithRelayChains } from '../../types'
+import type { TNodeDotKsmWithRelayChains } from '../../types'
 
 vi.mock('./balance/getBalanceNative', () => ({
   getBalanceNative: vi.fn()

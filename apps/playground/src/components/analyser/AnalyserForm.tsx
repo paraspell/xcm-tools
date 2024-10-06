@@ -1,6 +1,6 @@
 import { Button, JsonInput, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { FC } from "react";
+import { type FC } from "react";
 
 export type FormValues = {
   input: string;

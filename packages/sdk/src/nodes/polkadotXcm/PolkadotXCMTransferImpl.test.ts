@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
 import PolkadotXCMTransferImpl from './PolkadotXCMTransferImpl'
-import { ApiPromise } from '@polkadot/api'
-import {
+import type { ApiPromise } from '@polkadot/api'
+import type {
   PolkadotXcmSection,
   PolkadotXCMTransferInput,
   TCurrencySelectionHeaderArr,
-  TMultiLocationHeader,
-  Version
+  TMultiLocationHeader
 } from '../../types'
+import { Version } from '../../types'
 
 const mockApi = {
   tx: {

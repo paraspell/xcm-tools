@@ -1,5 +1,5 @@
 import { useForm } from "@mantine/form";
-import { FC } from "react";
+import { type FC } from "react";
 import {
   Button,
   Checkbox,
@@ -9,8 +9,8 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
-import { NODE_NAMES, TNodePolkadotKusama } from "@paraspell/sdk";
-import { TAssetsQuery } from "../../types";
+import { NODE_NAMES, type TNodePolkadotKusama } from "@paraspell/sdk";
+import { type TAssetsQuery } from "../../types";
 import { ASSET_QUERIES } from "../../consts";
 
 export type FormValues = {

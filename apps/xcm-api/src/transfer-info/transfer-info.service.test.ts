@@ -6,7 +6,7 @@ import {
 import {
   getTransferInfo,
   InvalidCurrencyError,
-  TTransferInfo,
+  type TTransferInfo,
 } from '@paraspell/sdk';
 import { TransferInfoService } from './transfer-info.service.js';
 import { isValidWalletAddress } from '../utils.js';

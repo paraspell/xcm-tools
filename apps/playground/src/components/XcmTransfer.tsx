@@ -1,17 +1,17 @@
 import { Stack, Title, Box } from "@mantine/core";
 import ErrorAlert from "./ErrorAlert";
-import TransferForm, { FormValuesTransformed } from "./TransferForm";
+import TransferForm, { type FormValuesTransformed } from "./TransferForm";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import {
   Builder,
-  TCurrencyInput,
-  TMultiLocation,
-  TNode,
+  type TCurrencyInput,
+  type TMultiLocation,
+  type TNode,
   createApiInstanceForNode,
 } from "@paraspell/sdk";
-import { ApiPromise } from "@polkadot/api";
+import { type ApiPromise } from "@polkadot/api";
 import { web3FromAddress } from "@polkadot/extension-dapp";
-import { Signer } from "@polkadot/api/types";
+import { type Signer } from "@polkadot/api/types";
 import { useState, useEffect } from "react";
 import { submitTransaction } from "../utils";
 import { submitTxUsingApi } from "../utils/submitUsingApi";

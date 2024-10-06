@@ -1,9 +1,9 @@
-import { ApiPromise } from '@polkadot/api'
-import { TNodePolkadotKusama } from '../../../types'
-import { Codec } from '@polkadot/types/types'
+import type { ApiPromise } from '@polkadot/api'
+import type { TNodePolkadotKusama } from '../../../types'
+import type { Codec } from '@polkadot/types/types'
 import { getAssetHubMultiLocation } from './getAssetHubMultiLocation'
 import { u32 } from '@polkadot/types'
-import { TBalanceResponse } from '../../../types/TBalance'
+import type { TBalanceResponse } from '../../../types/TBalance'
 
 export const getBalanceForeignPolkadotXcm = async (
   address: string,

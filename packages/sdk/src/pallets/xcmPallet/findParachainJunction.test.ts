@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { Parents, TMultiLocation } from '../../types'
+import type { TMultiLocation } from '../../types'
+import { Parents } from '../../types'
 import { findParachainJunction } from './findParachainJunction'
 
 describe('findParachainJunction', () => {

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { getParameters } from './getParameters'
-import { Parents, TMultiLocationHeader, Version } from '../../types'
+import type { TMultiLocationHeader } from '../../types'
+import { Parents, Version } from '../../types'
 
 const mockMultiLocationHeader: TMultiLocationHeader = {
   [Version.V4]: {

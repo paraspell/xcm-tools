@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { contextFactory } from '@snowbridge/api'
 import { AbstractProvider } from 'ethers'
 import { createContext } from './createContext'
-import { Config } from '@snowbridge/api/dist/environment'
+import type { Config } from '@snowbridge/api/dist/environment'
 
 vi.mock('@snowbridge/api', () => ({
   contextFactory: vi.fn()

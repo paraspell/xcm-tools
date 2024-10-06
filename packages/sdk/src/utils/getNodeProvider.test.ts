@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { TNodeWithRelayChains } from '../types'
+import type { TNodeWithRelayChains } from '../types'
 import { getNode, getNodeProvider } from '.'
 
 vi.mock('@polkadot/apps-config', () => ({

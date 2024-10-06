@@ -14,7 +14,7 @@ import {
 } from '../../types'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, GeneralBuilder } from './Builder'
-import BatchTransactionManager from './BatchTransactionManager'
+import type BatchTransactionManager from './BatchTransactionManager'
 
 class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
   private readonly api?: ApiPromise

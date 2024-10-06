@@ -1,10 +1,10 @@
 import { vi, describe, beforeEach, it, expect } from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { XcmAnalyserController } from './xcm-analyser.controller.js';
 import { XcmAnalyserService } from './xcm-analyser.service.js';
-import { XcmAnalyserDto } from './dto/xcm-analyser.dto.js';
+import { type XcmAnalyserDto } from './dto/xcm-analyser.dto.js';
 
 describe('XcmAnalyserController', () => {
   let controller: XcmAnalyserController;

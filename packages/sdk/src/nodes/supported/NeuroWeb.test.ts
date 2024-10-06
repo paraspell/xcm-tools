@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, PolkadotXCMTransferInput } from '../../types'
+import type { PolkadotXCMTransferInput } from '../../types'
+import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
-import NeuroWeb from './NeuroWeb'
+import type NeuroWeb from './NeuroWeb'
 import { getNode } from '../../utils'
 
 vi.mock('../polkadotXcm', () => ({

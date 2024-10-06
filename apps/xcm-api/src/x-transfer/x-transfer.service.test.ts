@@ -1,7 +1,7 @@
 import { vi, describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { XTransferService } from './x-transfer.service.js';
-import { PatchedXTransferDto } from './dto/XTransferDto.js';
+import { type PatchedXTransferDto } from './dto/XTransferDto.js';
 import {
   BadRequestException,
   InternalServerErrorException,
@@ -9,7 +9,7 @@ import {
 import * as paraspellSdk from '@paraspell/sdk';
 import {
   InvalidCurrencyError,
-  TNode,
+  type TNode,
   createApiInstanceForNode,
 } from '@paraspell/sdk';
 

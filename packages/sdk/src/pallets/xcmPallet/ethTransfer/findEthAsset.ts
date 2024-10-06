@@ -1,5 +1,5 @@
 import { InvalidCurrencyError } from '../../../errors'
-import { TCurrencyCore } from '../../../types'
+import type { TCurrencyCore } from '../../../types'
 import { getOtherAssets } from '../../assets'
 
 export const findEthAsset = (currency: TCurrencyCore) => {

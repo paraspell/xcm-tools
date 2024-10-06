@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { ethers } from 'ethers'
 import { createAccID } from '../../utils'
 import { getDestination } from './getDestination'
-import { XTransferTransferInput } from '../../types'
+import type { XTransferTransferInput } from '../../types'
 
 vi.mock('ethers', () => ({
   ethers: {

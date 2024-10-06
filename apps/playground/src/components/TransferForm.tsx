@@ -1,11 +1,11 @@
 import { useForm } from "@mantine/form";
 import { isValidWalletAddress } from "../utils";
-import { FC, useEffect } from "react";
+import { type FC, useEffect } from "react";
 import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
 import {
   NODES_WITH_RELAY_CHAINS,
-  TAsset,
-  TNodeWithRelayChains,
+  type TAsset,
+  type TNodeWithRelayChains,
 } from "@paraspell/sdk";
 import useCurrencyOptions from "../hooks/useCurrencyOptions";
 import CurrencySelection from "./CurrencySelection";

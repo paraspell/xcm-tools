@@ -1,12 +1,12 @@
 import { useForm } from "@mantine/form";
 import {
   EXCHANGE_NODES,
-  TAutoSelect,
-  TExchangeNode,
+  type TAutoSelect,
+  type TExchangeNode,
   TransactionType,
 } from "@paraspell/xcm-router";
 import { isValidWalletAddress } from "../utils";
-import { FC, useEffect, useState } from "react";
+import { type FC, useEffect, useState } from "react";
 import {
   Text,
   Button,
@@ -21,15 +21,15 @@ import {
 } from "@mantine/core";
 import {
   NODES_WITH_RELAY_CHAINS,
-  TAsset,
-  TNodeWithRelayChains,
+  type TAsset,
+  type TNodeWithRelayChains,
 } from "@paraspell/sdk";
-import { Signer } from "@polkadot/api/types";
+import { type Signer } from "@polkadot/api/types";
 import { web3Accounts, web3FromAddress } from "@polkadot/extension-dapp";
 import AccountsModal from "./AccountsModal";
 import { useDisclosure } from "@mantine/hooks";
-import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import { BrowserProvider, ethers } from "ethers";
+import { type InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { type BrowserProvider, ethers } from "ethers";
 import { IconInfoCircle } from "@tabler/icons-react";
 import EthAccountsModal from "./EthAccountsModal";
 import useRouterCurrencyOptions from "../hooks/useRouterCurrencyOptions";

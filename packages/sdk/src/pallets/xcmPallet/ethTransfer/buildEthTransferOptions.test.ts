@@ -3,9 +3,10 @@ import { buildEthTransferOptions } from './buildEthTransferOptions'
 import { findEthAsset } from './findEthAsset'
 import { createContext } from './createContext'
 import { getParaId } from '../../assets'
-import { Context, toPolkadot } from '@snowbridge/api'
-import { TSerializeEthTransferOptions } from '../../../types'
-import { SendValidationResult } from '@snowbridge/api/dist/toPolkadot'
+import type { Context } from '@snowbridge/api'
+import { toPolkadot } from '@snowbridge/api'
+import type { TSerializeEthTransferOptions } from '../../../types'
+import type { SendValidationResult } from '@snowbridge/api/dist/toPolkadot'
 
 vi.mock('./findEthAsset', () => ({
   findEthAsset: vi.fn()

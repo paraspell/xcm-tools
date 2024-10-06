@@ -8,7 +8,7 @@ import { selectBestExchange } from './selectBestExchange';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import { type TTransferOptions } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
-import { createApiInstanceForNode, Extrinsic } from '@paraspell/sdk';
+import { createApiInstanceForNode, type Extrinsic } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 
 vi.mock('@paraspell/sdk', async () => {

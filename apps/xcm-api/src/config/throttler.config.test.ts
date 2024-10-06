@@ -1,8 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ThrottlerModuleOptions, ThrottlerOptions } from '@nestjs/throttler';
-import { ConfigService } from '@nestjs/config';
-import { ExecutionContext } from '@nestjs/common';
-import { RequestWithUser } from '../types/types.js';
+import {
+  type ThrottlerModuleOptions,
+  type ThrottlerOptions,
+} from '@nestjs/throttler';
+import { type ConfigService } from '@nestjs/config';
+import { type ExecutionContext } from '@nestjs/common';
+import { type RequestWithUser } from '../types/types.js';
 import { throttlerConfig } from './throttler.config.js';
 
 describe('throttlerConfig', () => {

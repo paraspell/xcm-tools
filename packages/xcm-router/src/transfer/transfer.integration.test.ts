@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { transfer } from './transfer';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
-import { TransactionType, TTransferOptions } from '../types';
+import { TransactionType, type TTransferOptions } from '../types';
 import * as submitTransaction from '../utils/submitTransaction';
 
 describe('transfer - integration', () => {

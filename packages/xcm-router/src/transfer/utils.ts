@@ -1,7 +1,7 @@
-import { type Extrinsic, Builder, TAsset, TCurrencyCore } from '@paraspell/sdk';
+import { type Extrinsic, Builder, type TAsset, type TCurrencyCore } from '@paraspell/sdk';
 import { type ApiPromise } from '@polkadot/api';
 import {
-  TExchangeNode,
+  type TExchangeNode,
   type TCommonTransferOptionsModified,
   type TTransferOptionsModified,
 } from '../types';

@@ -2,7 +2,7 @@ import {
   type TNodeWithRelayChains,
   type Extrinsic,
   InvalidCurrencyError,
-  TCurrencyCore,
+  type TCurrencyCore,
 } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { type TTxProgressInfo } from '../types';

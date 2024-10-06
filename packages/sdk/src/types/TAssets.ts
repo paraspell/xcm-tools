@@ -1,4 +1,5 @@
-import { TMultiLocation, TNodeWithRelayChains, type TRelayChainSymbol } from '../types'
+import type { TMultiLocation, TNodeWithRelayChains } from '../types'
+import { type TRelayChainSymbol } from '../types'
 
 export type TAsset = TNativeAssetDetails | TAssetDetails
 

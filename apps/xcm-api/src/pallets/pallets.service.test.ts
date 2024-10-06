@@ -1,5 +1,5 @@
 import {
-  MockInstance,
+  type MockInstance,
   vi,
   describe,
   beforeEach,
@@ -8,11 +8,11 @@ import {
   expect,
 } from 'vitest';
 
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { PalletsService } from './pallets.service.js';
 import {
-  TNode,
-  TPallet,
+  type TNode,
+  type TPallet,
   getDefaultPallet,
   getSupportedPallets,
 } from '@paraspell/sdk';

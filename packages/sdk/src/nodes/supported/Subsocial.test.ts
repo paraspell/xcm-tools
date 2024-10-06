@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { PolkadotXCMTransferInput } from '../../types'
+import type { PolkadotXCMTransferInput } from '../../types'
 import { getNode } from '../../utils'
 import Subsocial from './Subsocial'
 import PolkadotXCMTransferImpl from '../polkadotXcm'

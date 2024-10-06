@@ -10,7 +10,7 @@ import { Center, Checkbox, Group, Loader, Stack, Title, Tooltip } from '@mantine
 import { IconInfoCircle } from '@tabler/icons-react';
 import DownloadButtons from '../DownloadButtons';
 import downloadSvg from '../../utils/downloadSvg';
-import { MessageCountsByDayQuery } from '../../gql/graphql';
+import { type MessageCountsByDayQuery } from '../../gql/graphql';
 import convertToCsv from '../../utils/convertToCsv';
 import { downloadZip } from '../../utils/downloadZip';
 

@@ -3,7 +3,7 @@ import ErrorAlert from "../ErrorAlert";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
 import { fetchFromApi } from "../../utils/submitUsingApi";
-import AssetsForm, { FormValues } from "./AssetsForm";
+import AssetsForm, { type FormValues } from "./AssetsForm";
 import {
   getAllAssetsSymbols,
   getAssetDecimals,

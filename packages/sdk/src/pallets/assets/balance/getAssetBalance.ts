@@ -1,4 +1,4 @@
-import { TCurrencyCore, TNodeDotKsmWithRelayChains, TNodePolkadotKusama } from '../../../types'
+import type { TCurrencyCore, TNodeDotKsmWithRelayChains, TNodePolkadotKusama } from '../../../types'
 import { createApiInstanceForNode } from '../../../utils'
 import { getNativeAssetSymbol } from '../assets'
 import { getBalanceNative } from './getBalanceNative'

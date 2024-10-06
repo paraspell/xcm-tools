@@ -3,7 +3,7 @@ import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import ErrorAlert from "../components/ErrorAlert";
 import OutputAlert from "../components/OutputAlert";
-import AnalyserForm, { FormValues } from "../components/analyser/AnalyserForm";
+import AnalyserForm, { type FormValues } from "../components/analyser/AnalyserForm";
 import { convertMultilocationToUrlJson } from "@paraspell/xcm-analyser";
 
 const XcmAnalyserSandbox = () => {

@@ -2,8 +2,8 @@ import { type ApiPromise } from '@polkadot/api'
 import { type TNodeWithRelayChains } from '../../../types'
 import { type BN } from '@polkadot/util'
 import { createApiInstanceForNode } from '../../../utils'
-import { AccountInfo } from '@polkadot/types/interfaces'
-import { UInt } from '@polkadot/types'
+import type { AccountInfo } from '@polkadot/types/interfaces'
+import type { UInt } from '@polkadot/types'
 
 export const getBalanceNative = async (
   address: string,

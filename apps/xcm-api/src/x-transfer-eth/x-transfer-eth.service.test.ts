@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common';
 import {
   buildEthTransferOptions,
-  TSerializedEthTransfer,
+  type TSerializedEthTransfer,
 } from '@paraspell/sdk';
 import { isValidPolkadotAddress } from '../utils.js';
-import { PatchedXTransferEthDto } from './dto/x-transfer-eth.dto.js';
+import { type PatchedXTransferEthDto } from './dto/x-transfer-eth.dto.js';
 import { XTransferEthService } from './x-transfer-eth.service.js';
 
 vi.mock('@paraspell/sdk', () => ({

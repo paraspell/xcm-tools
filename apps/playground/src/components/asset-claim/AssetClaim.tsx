@@ -1,14 +1,14 @@
 import { Stack, Title, Box } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { Builder, createApiInstanceForNode } from "@paraspell/sdk";
-import { ApiPromise } from "@polkadot/api";
-import { Signer } from "@polkadot/api/types";
+import { type ApiPromise } from "@polkadot/api";
+import { type Signer } from "@polkadot/api/types";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { useState, useEffect } from "react";
 import { useWallet } from "../../hooks/useWallet";
 import { submitTransaction } from "../../utils";
 import ErrorAlert from "../ErrorAlert";
-import AssetClaimForm, { FormValues } from "./AssetClaimForm";
+import AssetClaimForm, { type FormValues } from "./AssetClaimForm";
 import { submitTxUsingApi } from "../../utils/submitUsingApi";
 
 const AssetClaim = () => {

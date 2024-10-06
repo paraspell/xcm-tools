@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import { Box, Combobox, Group, Input, InputBase, useCombobox } from '@mantine/core';
 import { Ecosystem } from '../../types/types';
 import PolkadotLogo from '../../logos/icons/polkadot.svg?react';

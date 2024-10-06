@@ -1,5 +1,5 @@
-import { BarChartSeries } from '@mantine/charts';
-import { TAssetCounts } from '../../../types/types';
+import { type BarChartSeries } from '@mantine/charts';
+import { type TAssetCounts } from '../../../types/types';
 import { colorPallete } from '../color-pallete';
 
 export const generateSeries = (counts: TAssetCounts): BarChartSeries[] => {

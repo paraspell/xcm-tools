@@ -1,4 +1,4 @@
-import { ASSET_QUERIES, PALLETS_QUERIES } from "./consts";
+import { type ASSET_QUERIES, type PALLETS_QUERIES } from "./consts";
 
 export type TAssetsQuery = (typeof ASSET_QUERIES)[number];
 

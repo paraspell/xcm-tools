@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { checkPlanFailure } from './checkPlanFailure'
-import { SendValidationResult } from '@snowbridge/api/dist/toPolkadot'
+import type { SendValidationResult } from '@snowbridge/api/dist/toPolkadot'
 
 describe('checkPlanFailure', () => {
   it('throws an error with the correct message when plan.failure is true', () => {

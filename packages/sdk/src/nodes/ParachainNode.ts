@@ -33,7 +33,8 @@ import {
   createPolkadotXcmHeader,
   isTMultiLocation
 } from '../pallets/xcmPallet/utils'
-import { TMultiLocationHeader, type TMultiLocation } from '../types/TMultiLocation'
+import type { TMultiLocationHeader } from '../types/TMultiLocation'
+import { type TMultiLocation } from '../types/TMultiLocation'
 import { type TMultiAsset } from '../types/TMultiAsset'
 import { InvalidCurrencyError } from '../errors'
 

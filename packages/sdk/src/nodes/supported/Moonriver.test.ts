@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import { Version, XTokensTransferInput, TRelayToParaInternalOptions } from '../../types'
+import type { XTokensTransferInput, TRelayToParaInternalOptions } from '../../types'
+import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import Moonriver from './Moonriver'
+import type Moonriver from './Moonriver'
 import { getNode } from '../../utils'
 
 vi.mock('../xTokens', () => ({

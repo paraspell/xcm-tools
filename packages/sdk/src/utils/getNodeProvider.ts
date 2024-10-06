@@ -1,5 +1,5 @@
 import { prodRelayKusama, prodRelayPolkadot } from '@polkadot/apps-config'
-import { TNodeWithRelayChains } from '../types'
+import type { TNodeWithRelayChains } from '../types'
 import { getNode } from '.'
 
 export const getNodeProvider = (node: TNodeWithRelayChains): string => {

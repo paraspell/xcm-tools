@@ -1,10 +1,10 @@
 import { LoadingOverlay } from '@mantine/core';
 import StarsBackground from '../StarsBackground/StarsBackground';
 import LogoLoader from '../LogoLoader/LogoLoader';
-import { FC, useEffect, useState } from 'react';
+import { type FC, useEffect, useState } from 'react';
 import {
-  NetworkStatus,
-  UseApolloNetworkStatusOptions
+  type NetworkStatus,
+  type UseApolloNetworkStatusOptions
 } from 'react-apollo-network-status/dist/src/useApolloNetworkStatus';
 
 type Props = {

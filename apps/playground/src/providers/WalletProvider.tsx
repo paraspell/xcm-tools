@@ -1,6 +1,6 @@
 import { web3Enable } from "@polkadot/extension-dapp";
-import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { type InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { type PropsWithChildren, useEffect, useState } from "react";
 import { ThemeContext } from "./ThemeContext";
 
 const STORAGE_KEY = "walletState";

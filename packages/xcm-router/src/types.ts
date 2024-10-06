@@ -8,7 +8,7 @@ import type {
 } from '@paraspell/sdk';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts/consts';
-import { Signer as EthSigner } from 'ethers';
+import { type Signer as EthSigner } from 'ethers';
 
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 

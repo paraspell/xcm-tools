@@ -1,13 +1,13 @@
-import { FC, useMemo, useRef } from 'react';
-import { ChannelsQuery, CountOption, TotalMessageCountsQuery } from '../../gql/graphql';
+import { type FC, useMemo, useRef } from 'react';
+import { type ChannelsQuery, CountOption, type TotalMessageCountsQuery } from '../../gql/graphql';
 import Relaychain from '../Relaychain/Relaychain';
 import Parachain from '../Parachain/Parachain';
 import LineBetween from '../LineBetween';
-import { Group, Object3D } from 'three';
+import { type Group, type Object3D } from 'three';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { getNodesByEcosystem, getParachainById, getParachainId } from '../../utils/utils';
 import { Ecosystem } from '../../types/types';
-import { ThreeEvent } from '@react-three/fiber';
+import { type ThreeEvent } from '@react-three/fiber';
 
 const calculateLineWidth = (messageCount: number): number => {
   const baseLineWidth = 0.035;

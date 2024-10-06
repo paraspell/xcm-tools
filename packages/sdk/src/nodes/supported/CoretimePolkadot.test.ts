@@ -1,10 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import {
-  Extrinsic,
-  PolkadotXCMTransferInput,
-  TRelayToParaInternalOptions,
-  Version
-} from '../../types'
+import type { Extrinsic, PolkadotXCMTransferInput, TRelayToParaInternalOptions } from '../../types'
+import { Version } from '../../types'
 import { getNode } from '../../utils'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import CoretimePolkadot from './CoretimePolkadot'

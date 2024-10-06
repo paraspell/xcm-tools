@@ -10,7 +10,7 @@ import {
   getMaxNativeTransferableAmount,
   getMinNativeTransferableAmount
 } from '../getExistentialDeposit'
-import { ApiPromise } from '@polkadot/api'
+import type { ApiPromise } from '@polkadot/api'
 import { getNativeAssetSymbol } from '../assets'
 
 vi.mock('../../../utils', () => ({

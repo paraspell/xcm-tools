@@ -1,9 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 import {
-  Extrinsic,
+  type Extrinsic,
   NODE_NAMES,
-  TNode,
-  TSerializedApiCall,
+  type TNode,
+  type TSerializedApiCall,
 } from '@paraspell/sdk';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
