@@ -19,7 +19,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
-    "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org paraspell --project node ./dist && sentry-cli sourcemaps upload --org paraspell --project node ./dist"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.4",
@@ -31,7 +32,6 @@
     "@nestjs/serve-static": "^4.0.2",
     "@nestjs/throttler": "^6.2.1",
     "@nestjs/typeorm": "^10.0.2",
-    "@ntegral/nestjs-sentry": "^4.0.1",
     "@paraspell/sdk": "workspace:*",
     "@paraspell/xcm-analyser": "workspace:*",
     "@paraspell/xcm-router": "workspace:*",
@@ -41,7 +41,9 @@
     "@polkadot/keyring": "^13.1.1",
     "@polkadot/types": "^12.4.2",
     "@polkadot/util": "^13.1.1",
-    "@sentry/node": "^7.73.0",
+    "@sentry/cli": "^2.36.6",
+    "@sentry/nestjs": "^8.33.1",
+    "@sentry/profiling-node": "^8.33.1",
     "axios": "^1.7.7",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
