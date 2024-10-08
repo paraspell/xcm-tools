@@ -123,6 +123,25 @@ const response = await fetch('http://localhost:3001/x-transfer-hash', {
 });
 ```
 
+### Batch call
+
+A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#batch-call).
+
+Possible parameters:
+     - `transfers` (Inside JSON body): (required): Represents array of XCM calls along with optional parameter "options" which contains "mode" to switch between BATCH and BATCH_ALL call forms.
+
+```js
+const response = await fetch("http://localhost:3001/x-transfer-batch", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        transfers: "Parachain", // Replace "transfers" with array of XCM transfers
+    })
+});
+```
+
 ### Asset claim
 
 A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#asset-claim).
@@ -297,6 +316,29 @@ const response = await fetch('http://localhost:3001/assets/:paraID');
 
 //Retrieve a list of implemented Parachains
 const response = await fetch('http://localhost:3001/assets');
+
+//Query native asset balance
+const response = await fetch("http://localhost:3001/balance/:node/native", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
+    })
+});
+
+//Query foreign asset balance
+const response = await fetch("http://localhost:3001/balance/:node/foreign", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
+        currency: "Currency" //Replace "Currency" with either symbol { symbol: "KSM" } or  id { id: 123 }
+    })
+});
 ```
 
 ### XCM Pallet
