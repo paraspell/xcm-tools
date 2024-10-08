@@ -2,6 +2,7 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     "module": "nodenext",
+    "strict": true,
     "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -13,10 +14,10 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "strictPropertyInitialization": false
   }
 }

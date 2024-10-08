@@ -5,7 +5,7 @@ import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { TransferInfoController } from './transfer-info.controller.js';
 import { TransferInfoService } from './transfer-info.service.js';
-import type { PatchedTransferInfoDto } from './dto/transfer-info.dto.js';
+import type { TransferInfoDto } from './dto/transfer-info.dto.js';
 import type { TTransferInfo } from '@paraspell/sdk';
 
 describe('TransferInfoController', () => {
@@ -34,7 +34,7 @@ describe('TransferInfoController', () => {
 
   describe('generateXcmCall', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
-      const queryParams: PatchedTransferInfoDto = {
+      const queryParams: TransferInfoDto = {
         origin: 'Acala',
         destination: 'Basilisk',
         accountOrigin: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',

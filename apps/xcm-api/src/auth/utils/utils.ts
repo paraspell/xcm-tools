@@ -31,7 +31,7 @@ export const sendEmail = async (
       refreshToken,
       accessToken: myAccessToken.token,
     },
-  });
+  } as nodemailer.TransportOptions);
 
   transporter.sendMail(
     {

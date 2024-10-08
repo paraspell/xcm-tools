@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { RouterService } from './router.service.js';
 import * as utils from '../utils.js';
 import * as spellRouter from '@paraspell/xcm-router';
-import type { PatchedRouterDto } from './dto/RouterDto.js';
+import type { RouterDto } from './dto/RouterDto.js';
 import {
   BadRequestException,
   InternalServerErrorException,
@@ -46,7 +46,7 @@ describe('RouterService', () => {
     (tx: Extrinsic) => TSerializedApiCall
   >;
 
-  const options: PatchedRouterDto = {
+  const options: RouterDto = {
     from: 'Astar',
     exchange: 'AcalaDex',
     to: 'Moonbeam',
@@ -128,7 +128,7 @@ describe('RouterService', () => {
     });
 
     it('should throw BadRequestException for invalid from node', async () => {
-      const modifiedOptions: PatchedRouterDto = {
+      const modifiedOptions: RouterDto = {
         ...options,
         from: invalidNode as TNode,
       };
@@ -143,7 +143,7 @@ describe('RouterService', () => {
     });
 
     it('should throw BadRequestException for invalid to node', async () => {
-      const modifiedOptions: PatchedRouterDto = {
+      const modifiedOptions: RouterDto = {
         ...options,
         to: invalidNode as TNode,
       };
@@ -158,7 +158,7 @@ describe('RouterService', () => {
     });
 
     it('should throw BadRequestException for invalid exchange node', async () => {
-      const modifiedOptions: PatchedRouterDto = {
+      const modifiedOptions: RouterDto = {
         ...options,
         exchange: invalidNode as TNode,
       };
@@ -173,7 +173,7 @@ describe('RouterService', () => {
     });
 
     it('should throw BadRequestException for invalid injector address', async () => {
-      const modifiedOptions: PatchedRouterDto = {
+      const modifiedOptions: RouterDto = {
         ...options,
         injectorAddress: invalidNode,
       };
@@ -188,7 +188,7 @@ describe('RouterService', () => {
     });
 
     it('should throw BadRequestException for invalid recipient address', async () => {
-      const modifiedOptions: PatchedRouterDto = {
+      const modifiedOptions: RouterDto = {
         ...options,
         recipientAddress: invalidNode,
       };

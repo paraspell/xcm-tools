@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
-import type { TCurrencyCore } from '@paraspell/sdk';
 import { TransactionType } from '@paraspell/xcm-router';
 import { validateAmount } from '../../utils/validateAmount.js';
 
@@ -35,10 +34,3 @@ export const RouterDtoSchema = z.object({
 });
 
 export type RouterDto = z.infer<typeof RouterDtoSchema>;
-
-export type PatchedRouterDto = RouterDto & {
-  currencyFrom: TCurrencyCore;
-  currencyTo: TCurrencyCore;
-  recipientAddress: string;
-  injectorAddress: string;
-};

@@ -23,6 +23,7 @@ import { AssetClaimModule } from './asset-claim/asset-claim.module.js';
 import { TransferInfoModule } from './transfer-info/transfer-info.module.js';
 import { XcmAnalyserModule } from './xcm-analyser/xcm-analyser.module.js';
 import { XTransferEthModule } from './x-transfer-eth/x-transfer-eth.module.js';
+import { BalanceModule } from './balance/balance.module.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,6 +39,7 @@ const __dirname = path.dirname(__filename);
     RouterModule,
     AssetsModule,
     PalletsModule,
+    BalanceModule,
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({

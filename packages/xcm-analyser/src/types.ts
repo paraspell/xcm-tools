@@ -19,24 +19,24 @@ const StringOrNumber = z
   .string()
   .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
   .transform((s) => s.replace(/,/g, ''))
-  .or(z.number())
-  .or(z.bigint());
+  .or(z.number());
+const StringOrNumberOrBigInt = StringOrNumber.or(z.bigint());
 const HexString = z.string();
 
-export const JunctionParachain = z.object({ Parachain: StringOrNumber });
+export const JunctionParachain = z.object({ Parachain: StringOrNumberOrBigInt });
 export const JunctionAccountId32 = z.object({
   AccountId32: z.object({ network: NetworkId, id: HexString }),
 });
 export const JunctionAccountIndex64 = z.object({
-  AccountIndex64: z.object({ network: NetworkId, index: StringOrNumber }),
+  AccountIndex64: z.object({ network: NetworkId, index: StringOrNumberOrBigInt }),
 });
 export const JunctionAccountKey20 = z.object({
   AccountKey20: z.object({ network: NetworkId, key: HexString }),
 });
-export const JunctionPalletInstance = z.object({ PalletInstance: StringOrNumber });
-export const JunctionGeneralIndex = z.object({ GeneralIndex: StringOrNumber });
+export const JunctionPalletInstance = z.object({ PalletInstance: StringOrNumberOrBigInt });
+export const JunctionGeneralIndex = z.object({ GeneralIndex: StringOrNumberOrBigInt });
 export const JunctionGeneralKey = z.object({
-  GeneralKey: z.object({ length: StringOrNumber, data: HexString }),
+  GeneralKey: z.object({ length: StringOrNumberOrBigInt, data: HexString }),
 });
 export const JunctionOnlyChild = z.object({ OnlyChild: z.string() });
 export const JunctionPlurality = z.object({

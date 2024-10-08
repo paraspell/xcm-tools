@@ -10,7 +10,18 @@ import { throttlerConfig } from './throttler.config.js';
 
 describe('throttlerConfig', () => {
   const mockConfigService = {
-    get: vi.fn(),
+    get: vi.fn().mockImplementation((key: string) => {
+      switch (key) {
+        case 'RATE_LIMIT_TTL_SEC':
+          return 60;
+        case 'RATE_LIMIT_REQ_COUNT_AUTH':
+          return 50;
+        case 'RATE_LIMIT_REQ_COUNT_PUBLIC':
+          return 20;
+        default:
+          throw new Error('Unknown key');
+      }
+    }),
   } as unknown as ConfigService;
 
   const mockHttpContext = {
@@ -53,7 +64,14 @@ describe('throttlerConfig', () => {
   });
 
   it('should return request limit from user-specific requestLimit when present', () => {
-    mockConfigService.get = vi.fn();
+    mockConfigService.get = vi.fn().mockImplementation((key: string) => {
+      switch (key) {
+        case 'RATE_LIMIT_TTL_SEC':
+          return 60;
+        default:
+          return undefined;
+      }
+    });
     mockHttpContext.getRequest = vi.fn().mockReturnValue({
       user: { requestLimit: 100 },
     } as RequestWithUser);

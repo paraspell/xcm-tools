@@ -5,9 +5,9 @@ import { XTransferController } from './x-transfer.controller.js';
 import { XTransferService } from './x-transfer.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
-import type { PatchedXTransferDto } from './dto/XTransferDto.js';
+import type { XTransferDto } from './dto/XTransferDto.js';
 import { BatchMode, type Extrinsic } from '@paraspell/sdk';
-import type { PatchedBatchXTransferDto } from './dto/XTransferBatchDto.js';
+import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 
 // Integration tests to ensure controller and service are working together
 describe('XTransferController', () => {
@@ -36,7 +36,7 @@ describe('XTransferController', () => {
 
   describe('generateXcmCall', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
-      const queryParams: PatchedXTransferDto = {
+      const queryParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
         amount: 100,
@@ -60,7 +60,7 @@ describe('XTransferController', () => {
 
   describe('generateXcmCallV2', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
-      const bodyParams: PatchedXTransferDto = {
+      const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
         amount: '100',
@@ -84,7 +84,7 @@ describe('XTransferController', () => {
 
   describe('generateXcmCallV2Hash', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
-      const bodyParams: PatchedXTransferDto = {
+      const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
         amount: 100,
@@ -108,7 +108,7 @@ describe('XTransferController', () => {
 
   describe('generateXcmCallBatchHash', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
-      const bodyParams: PatchedBatchXTransferDto = {
+      const bodyParams: BatchXTransferDto = {
         transfers: [
           {
             from: 'Acala',

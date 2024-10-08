@@ -12,6 +12,8 @@ export enum EventName {
   GET_PARA_ID = 'Get Para Id',
   GET_DEFAULT_PALLET = 'Get Default Pallet',
   GET_SUPPORTED_PALLETS = 'Get Supported Pallets',
+  GET_BALANCE_NATIVE = 'Get Balance Native',
+  GET_BALANCE_FOREIGN = 'Get Balance Foreign',
   GENERATE_XCM_CALL = 'Generate XCM Call',
   GENERATE_XCM_CALL_HASH = 'Generate XCM Call Hash',
   GENERATE_XCM_CALL_BATCH_HASH = 'Generate XCM Call Batch Hash',

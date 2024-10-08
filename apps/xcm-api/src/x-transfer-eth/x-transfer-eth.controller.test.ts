@@ -6,7 +6,7 @@ import { AnalyticsService } from '../analytics/analytics.service.js';
 import type { TSerializedEthTransfer } from '@paraspell/sdk';
 import { XTransferEthController } from './x-transfer-eth.controller.js';
 import { XTransferEthService } from './x-transfer-eth.service.js';
-import type { PatchedXTransferEthDto } from './dto/x-transfer-eth.dto.js';
+import type { XTransferEthDto } from './dto/x-transfer-eth.dto.js';
 
 describe('XTransferEthController', () => {
   let controller: XTransferEthController;
@@ -34,11 +34,12 @@ describe('XTransferEthController', () => {
 
   describe('generateXcmCall', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
-      const queryParams: PatchedXTransferEthDto = {
+      const queryParams: XTransferEthDto = {
         to: 'AssetHubPolkadot',
         amount: 100,
         address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
         currency: { symbol: 'WETH' },
+        destAddress: '0x5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
       };
       const mockResult = {} as TSerializedEthTransfer;
       const spy = vi

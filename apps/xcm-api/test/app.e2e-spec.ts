@@ -246,6 +246,62 @@ describe('XCM API (e2e)', () => {
         .get(parachainIdUnknownNodeUrl)
         .expect(400);
     });
+
+    it('should get native balance successfully', async () => {
+      const validRequest = {
+        address: '5EtHZF4E8QagNCz6naobCkCAUT52SbcEqaXiDUu2PjUHxZid',
+      };
+
+      return request(app.getHttpServer())
+        .post('/balance/Acala/native')
+        .send(validRequest)
+        .expect(201)
+        .expect((res) => {
+          expect(res.body).toBeDefined();
+        });
+    });
+
+    it('should return 400 for invalid native balance request', async () => {
+      const invalidRequest = {
+        address: '5EtHZF4E8QagNCz6naobCkCAUT52SbcEqaXiDUu2PjUHxZid',
+      };
+
+      return request(app.getHttpServer())
+        .post('/balance/Node123/native')
+        .send(invalidRequest)
+        .expect(400);
+    });
+
+    it('should get foreign balance successfully', async () => {
+      const validRequest = {
+        address: '5EtHZF4E8QagNCz6naobCkCAUT52SbcEqaXiDUu2PjUHxZid',
+        currency: {
+          symbol: 'UNQ',
+        },
+      };
+
+      return request(app.getHttpServer())
+        .post('/balance/Acala/foreign')
+        .send(validRequest)
+        .expect(201)
+        .expect((res) => {
+          expect(res.body).toBeDefined();
+        });
+    });
+
+    it('should return 400 for invalid foreign balance request', async () => {
+      const invalidRequest = {
+        address: '5EtHZF4E8QagNCz6naobCkCAUT52SbcEqaXiDUu2PjUHxZid',
+        currency: {
+          symbol: 'UNQ',
+        },
+      };
+
+      return request(app.getHttpServer())
+        .post('/balance/Node123/foreign')
+        .send(invalidRequest)
+        .expect(400);
+    });
   });
 
   describe('X-Transfer controller', () => {

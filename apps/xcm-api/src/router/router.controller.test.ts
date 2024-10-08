@@ -3,8 +3,8 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { RouterController } from './router.controller.js';
 import { RouterService } from './router.service.js';
-import type { PatchedRouterDto } from './dto/RouterDto.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
+import type { RouterDto } from './dto/RouterDto.js';
 
 // Integration tests to ensure controller and service are working together
 describe('RouterController', () => {
@@ -33,7 +33,7 @@ describe('RouterController', () => {
 
   describe('generateXcmCall', () => {
     it('should call generateExtrinsics service method with correct parameters and return result', async () => {
-      const queryParams: PatchedRouterDto = {
+      const queryParams: RouterDto = {
         from: 'Astar',
         exchange: 'AcalaDex',
         to: 'Moonbeam',
@@ -60,7 +60,7 @@ describe('RouterController', () => {
     });
 
     it('should call generateExtrinsics service method with correct parameters and return result - hash', async () => {
-      const queryParams: PatchedRouterDto = {
+      const queryParams: RouterDto = {
         from: 'Astar',
         exchange: 'AcalaDex',
         to: 'Moonbeam',
@@ -87,7 +87,7 @@ describe('RouterController', () => {
     });
 
     it('should call generateExtrinsics service method with correct parameters and return result - V2 POST', async () => {
-      const queryParams: PatchedRouterDto = {
+      const queryParams: RouterDto = {
         from: 'Astar',
         exchange: 'AcalaDex',
         to: 'Moonbeam',

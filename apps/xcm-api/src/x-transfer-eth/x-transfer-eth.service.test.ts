@@ -6,7 +6,7 @@ import {
 import type { TSerializedEthTransfer } from '@paraspell/sdk';
 import { buildEthTransferOptions } from '@paraspell/sdk';
 import { isValidPolkadotAddress } from '../utils.js';
-import type { PatchedXTransferEthDto } from './dto/x-transfer-eth.dto.js';
+import type { XTransferEthDto } from './dto/x-transfer-eth.dto.js';
 import { XTransferEthService } from './x-transfer-eth.service.js';
 
 vi.mock('@paraspell/sdk', () => ({
@@ -26,7 +26,7 @@ describe('XTransferEthService', () => {
   });
 
   it('should throw BadRequestException if the node is invalid', async () => {
-    const dto: PatchedXTransferEthDto = {
+    const dto: XTransferEthDto = {
       to: 'InvalidNode',
       amount: 100,
       address: '0xAddress',
@@ -43,7 +43,7 @@ describe('XTransferEthService', () => {
   });
 
   it('should throw BadRequestException if the destination address is invalid', async () => {
-    const dto: PatchedXTransferEthDto = {
+    const dto: XTransferEthDto = {
       to: 'Polkadot',
       amount: 100,
       address: '0xAddress',
@@ -62,7 +62,7 @@ describe('XTransferEthService', () => {
   });
 
   it('should return the result from buildEthTransferOptions for valid input', async () => {
-    const dto: PatchedXTransferEthDto = {
+    const dto: XTransferEthDto = {
       to: 'Polkadot',
       amount: 100,
       address: '0xAddress',
@@ -90,7 +90,7 @@ describe('XTransferEthService', () => {
   });
 
   it('should throw InternalServerErrorException when buildEthTransferOptions throws an error', async () => {
-    const dto: PatchedXTransferEthDto = {
+    const dto: XTransferEthDto = {
       to: 'Polkadot',
       amount: 100,
       address: '0xAddress',
