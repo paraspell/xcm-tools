@@ -12,9 +12,11 @@ import {
   TTransferReturn,
   UseKeepAliveFinalBuilder,
   createApiInstanceForNode,
+  determineRelayChain,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
 import { PatchedXTransferDto } from './dto/XTransferDto.js';
+import { PatchedBatchXTransferDto } from './dto/XTransferBatchDto.js';
 
 @Injectable()
 export class XTransferService {
@@ -96,5 +98,125 @@ export class XTransferService {
       if (api) await api.disconnect();
     }
     return response;
+  }
+
+  async generateBatchXcmCall(batchDto: PatchedBatchXTransferDto) {
+    const { transfers, options } = batchDto;
+
+    if (!transfers || transfers.length === 0) {
+      throw new BadRequestException('Transfers array cannot be empty.');
+    }
+
+    const firstTransfer = transfers[0];
+    const fromNode = firstTransfer.from as TNode | undefined;
+    const toNode = firstTransfer.to as TNode | undefined;
+
+    if (!fromNode && !toNode) {
+      throw new BadRequestException(
+        "You need to provide either 'from' or 'to' parameters.",
+      );
+    }
+
+    if (toNode && typeof toNode === 'object') {
+      throw new BadRequestException('Please provide ApiPromise instance.');
+    }
+
+    const sameFrom = transfers.every((transfer) => transfer.from === fromNode);
+
+    if (!sameFrom) {
+      throw new BadRequestException(
+        'All transactions must have the same origin.',
+      );
+    }
+
+    if (fromNode && !NODE_NAMES.includes(fromNode)) {
+      throw new BadRequestException(
+        `Node ${fromNode} is not valid. Check docs for valid nodes.`,
+      );
+    }
+
+    if (toNode && !NODE_NAMES.includes(toNode)) {
+      throw new BadRequestException(
+        `Node ${toNode} is not valid. Check docs for valid nodes.`,
+      );
+    }
+
+    const api = await createApiInstanceForNode(
+      fromNode ?? determineRelayChain(toNode),
+    );
+    let builder = Builder(api);
+
+    try {
+      for (const transfer of transfers) {
+        const transferFromNode = transfer.from as TNode | undefined;
+        const transferToNode = transfer.to as TNode | undefined;
+
+        if (
+          transferToNode &&
+          typeof transferToNode === 'string' &&
+          !NODE_NAMES.includes(transferToNode)
+        ) {
+          throw new BadRequestException(
+            `Node ${transferToNode} is not valid. Check docs for valid nodes.`,
+          );
+        }
+
+        if (transferFromNode && transferToNode && !transfer.currency) {
+          throw new BadRequestException('Currency should not be empty.');
+        }
+
+        if (
+          typeof transfer.address === 'string' &&
+          !isValidWalletAddress(transfer.address)
+        ) {
+          throw new BadRequestException('Invalid wallet address.');
+        }
+
+        let finalBuilder: UseKeepAliveFinalBuilder;
+
+        if (transferFromNode && transferToNode) {
+          // Parachain to parachain
+          finalBuilder = builder
+            .from(transferFromNode)
+            .to(transferToNode)
+            .currency(transfer.currency)
+            .amount(transfer.amount)
+            .address(transfer.address);
+        } else if (transferFromNode) {
+          // Parachain to relaychain
+          finalBuilder = builder
+            .from(transferFromNode)
+            .amount(transfer.amount)
+            .address(transfer.address);
+        } else if (transferToNode) {
+          // Relaychain to parachain
+          finalBuilder = builder
+            .to(transferToNode)
+            .amount(transfer.amount)
+            .address(transfer.address);
+        }
+
+        if (transfer.xcmVersion) {
+          finalBuilder = finalBuilder.xcmVersion(transfer.xcmVersion);
+        }
+
+        builder = finalBuilder.addToBatch();
+      }
+      return await builder.buildBatch(options);
+    } catch (e) {
+      if (
+        e instanceof InvalidCurrencyError ||
+        e instanceof IncompatibleNodesError ||
+        e instanceof BadRequestException
+      ) {
+        console.error(e);
+        throw new BadRequestException(e.message);
+      }
+      console.log(e);
+
+      throw new InternalServerErrorException((e as Error).message);
+    } finally {
+      if (api) await api.disconnect();
+    }
   }
 }

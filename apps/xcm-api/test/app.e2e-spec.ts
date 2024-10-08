@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from './../src/app.module';
 import {
+  BatchMode,
   Builder,
   NODE_NAMES,
   NODE_NAMES_DOT_KSM,
@@ -252,6 +253,7 @@ describe('XCM API (e2e)', () => {
     const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
     const xTransferUrl = '/x-transfer';
     const xTransferHashUrl = '/x-transfer-hash';
+    const xTransferBatchUrl = '/x-transfer-batch';
     const routerUrl = '/router';
     const routerHashUrl = '/router-hash';
 
@@ -352,6 +354,470 @@ describe('XCM API (e2e)', () => {
           currency,
         })
         .expect(500);
+    });
+
+    it(`Generate Batch XCM call - Parachain to parachain all valid - ${xTransferBatchUrl} (POST)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to1: TNode = 'Basilisk';
+      const to2: TNode = 'Moonriver';
+      const currency = { symbol: 'USDT' };
+      const amount1 = '1000';
+      const amount2 = '2000';
+      const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+      const address2 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+
+      const builder = Builder()
+        .from(from)
+        .to(to1)
+        .currency(currency)
+        .amount(amount1)
+        .address(address1)
+        .addToBatch()
+        .from(from)
+        .to(to2)
+        .currency(currency)
+        .amount(amount2)
+        .address(address2)
+        .addToBatch();
+
+      const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from,
+              to: to1,
+              amount: amount1,
+              address: address1,
+              currency,
+            },
+            {
+              from,
+              to: to2,
+              amount: amount2,
+              address: address2,
+              currency,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
+    });
+
+    it(`Generate Batch XCM call - Invalid Currency Symbol - ${xTransferBatchUrl} (POST)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to: TNode = 'Basilisk';
+      const invalidCurrency = { symbol: 'INVALID' };
+      const amount = '1000';
+      const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from,
+              to,
+              amount,
+              address,
+              currency: invalidCurrency,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(400) // Expect Bad Request due to invalid currency
+        .expect((res) => {
+          expect(res.body.message).toContain('does not support currency');
+        });
+    });
+
+    it(`Generate Batch XCM call - Different 'from' Nodes - ${xTransferBatchUrl} (POST)`, async () => {
+      const from1: TNode = 'AssetHubKusama';
+      const from2: TNode = 'Moonriver';
+      const to: TNode = 'Basilisk';
+      const currency = { symbol: 'USDT' };
+      const amount = '1000';
+      const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from: from1,
+              to,
+              amount,
+              address,
+              currency,
+            },
+            {
+              from: from2, // Different 'from' node
+              to,
+              amount,
+              address,
+              currency,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(400) // Expect Bad Request due to different 'from' nodes
+        .expect((res) => {
+          expect(res.body.message).toContain(
+            'All transactions must have the same origin.',
+          );
+        });
+    });
+
+    it(`Generate Batch XCM call - Invalid Addresses - ${xTransferBatchUrl} (POST)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to: TNode = 'Basilisk';
+      const currency = { symbol: 'USDT' };
+      const amount = '1000';
+      const invalidAddress = 'InvalidAddress123';
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from,
+              to,
+              amount,
+              address: invalidAddress, // Invalid address
+              currency,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(400) // Expect Bad Request due to invalid address
+        .expect((res) => {
+          expect(res.body.message).toContain('Invalid wallet address.');
+        });
+    });
+
+    it(`Generate Batch XCM call - Empty Transfers Array - ${xTransferBatchUrl} (POST)`, async () => {
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [], // Empty transfers array
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(400) // Expect Bad Request due to empty transfers array
+        .expect((res) => {
+          expect(res.body.message).toContain(
+            'Transfers array cannot be empty.',
+          );
+        });
+    });
+
+    it(`Generate Batch XCM call - Empty Transfers Array - ${xTransferBatchUrl} (POST)`, async () => {
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [], // Empty transfers array
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(400) // Expect Bad Request due to empty transfers array
+        .expect((res) => {
+          expect(res.body.message).toContain(
+            'Transfers array cannot be empty.',
+          );
+        });
+    });
+
+    it(`Generate Batch XCM call - Empty Transfers Array - ${xTransferBatchUrl} (POST)`, async () => {
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [], // Empty transfers array
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(400) // Expect Bad Request due to empty transfers array
+        .expect((res) => {
+          expect(res.body.message).toContain(
+            'Transfers array cannot be empty.',
+          );
+        });
+    });
+
+    it(`Generate Batch XCM call - Invalid Batch Mode - ${xTransferBatchUrl} (POST)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to: TNode = 'Basilisk';
+      const currency = { symbol: 'USDT' };
+      const amount = '1000';
+      const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+      const invalidBatchMode = 'INVALID_MODE';
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from,
+              to,
+              amount,
+              address,
+              currency,
+            },
+          ],
+          options: {
+            mode: invalidBatchMode, // Invalid batch mode
+          },
+        })
+        .expect(400); // Expect Bad Request due to invalid batch mode
+    });
+
+    it(`Generate Batch XCM call - Missing Required Fields - ${xTransferBatchUrl} (POST)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const currency = { symbol: 'USDT' };
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from,
+              // Missing 'amount' field
+              address,
+              currency,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(400); // Expect Bad Request due to missing required field
+    });
+
+    it(`Generate Batch XCM call - Zero or Negative Amounts - ${xTransferBatchUrl} (POST)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to: TNode = 'Basilisk';
+      const currency = { symbol: 'USDT' };
+      const invalidAmount = '-1000'; // Negative amount
+      const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from,
+              to,
+              amount: invalidAmount,
+              address,
+              currency,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(400);
+    });
+
+    it(`Generate Batch XCM call - Batch Mode 'BATCH' - ${xTransferBatchUrl} (POST)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to1: TNode = 'Basilisk';
+      const to2: TNode = 'Moonriver';
+      const currency = { symbol: 'USDT' };
+      const amount1 = '1000';
+      const amount2 = '2000';
+      const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+      const address2 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+
+      const builder = Builder()
+        .from(from)
+        .to(to1)
+        .currency(currency)
+        .amount(amount1)
+        .address(address1)
+        .addToBatch()
+        .from(from)
+        .to(to2)
+        .currency(currency)
+        .amount(amount2)
+        .address(address2)
+        .addToBatch();
+
+      const tx = await builder.buildBatch({ mode: BatchMode.BATCH });
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from,
+              to: to1,
+              amount: amount1,
+              address: address1,
+              currency,
+            },
+            {
+              from,
+              to: to2,
+              amount: amount2,
+              address: address2,
+              currency,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH,
+          },
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
+    });
+
+    it(`Generate Batch XCM call - Single Transfer in Batch - ${xTransferBatchUrl} (POST)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to: TNode = 'Basilisk';
+      const currency = { symbol: 'USDT' };
+      const amount = '1000';
+
+      const builder = Builder()
+        .from(from)
+        .to(to)
+        .currency(currency)
+        .amount(amount)
+        .address(address)
+        .addToBatch();
+
+      const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from,
+              to,
+              amount,
+              address,
+              currency,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
+    });
+
+    it(`Generate Batch XCM call - Specifying XCM Version - ${xTransferBatchUrl} (POST)`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to: TNode = 'Basilisk';
+      const currency = { symbol: 'USDT' };
+      const amount = '1000';
+      const xcmVersion = Version.V2;
+
+      const builder = Builder()
+        .from(from)
+        .to(to)
+        .currency(currency)
+        .amount(amount)
+        .address(address)
+        .xcmVersion(xcmVersion)
+        .addToBatch();
+
+      const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from,
+              to,
+              amount,
+              address,
+              currency,
+              xcmVersion,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
+    });
+
+    it(`Generate Batch XCM call - Parachain to Relay Chain - ${xTransferBatchUrl} (POST)`, async () => {
+      const from: TNode = 'Basilisk';
+      const amount = '1000';
+
+      const builder = Builder()
+        .from(from)
+        .amount(amount)
+        .address(address)
+        .addToBatch();
+
+      const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              from,
+              amount,
+              address,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
+    });
+
+    it(`Generate Batch XCM call - Relay Chain to Parachain - ${xTransferBatchUrl} (POST)`, async () => {
+      const to: TNode = 'Basilisk';
+      const amount = '1000';
+
+      const builder = Builder()
+        .to(to)
+        .amount(amount)
+        .address(address)
+        .addToBatch();
+
+      const tx = await builder.buildBatch({ mode: BatchMode.BATCH_ALL });
+
+      return request(app.getHttpServer())
+        .post(xTransferBatchUrl)
+        .send({
+          transfers: [
+            {
+              to,
+              amount,
+              address,
+            },
+          ],
+          options: {
+            mode: BatchMode.BATCH_ALL,
+          },
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
     });
 
     it(`Generate XCM call - Parachain to parachain all valid - ${xTransferHashUrl} (POST)`, async () => {

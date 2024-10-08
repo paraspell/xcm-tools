@@ -6,7 +6,8 @@ import { XTransferService } from './x-transfer.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import type { PatchedXTransferDto } from './dto/XTransferDto.js';
-import type { Extrinsic } from '@paraspell/sdk';
+import { BatchMode, type Extrinsic } from '@paraspell/sdk';
+import type { PatchedBatchXTransferDto } from './dto/XTransferBatchDto.js';
 
 // Integration tests to ensure controller and service are working together
 describe('XTransferController', () => {
@@ -102,6 +103,42 @@ describe('XTransferController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams, true);
+    });
+  });
+
+  describe('generateXcmCallBatchHash', () => {
+    it('should call generateXcmCall service method with correct parameters and return result', async () => {
+      const bodyParams: PatchedBatchXTransferDto = {
+        transfers: [
+          {
+            from: 'Acala',
+            to: 'Astar',
+            amount: 100,
+            address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+            currency: { symbol: 'ACA' },
+          },
+          {
+            from: 'Acala',
+            to: 'Astar',
+            amount: 100,
+            address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+            currency: { symbol: 'ACA' },
+          },
+        ],
+        options: { mode: BatchMode.BATCH },
+      };
+      const mockResult = {} as Extrinsic;
+      const spy = vi
+        .spyOn(service, 'generateBatchXcmCall')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.generateXcmCallBatchHash(
+        bodyParams,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
     });
   });
 });
