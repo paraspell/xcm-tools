@@ -17,6 +17,10 @@ import {
   XTransferDto,
   XTransferDtoSchema,
 } from './dto/XTransferDto.js';
+import {
+  BatchXTransferDtoSchema,
+  PatchedBatchXTransferDto,
+} from './dto/XTransferBatchDto.js';
 
 @Controller()
 export class XTransferController {
@@ -37,6 +41,20 @@ export class XTransferController {
       from,
       resolvedTo,
       resolvedCurrency,
+    });
+  }
+
+  private trackAnalyticsBatch(
+    eventName: EventName,
+    req: Request,
+    params: PatchedBatchXTransferDto,
+  ) {
+    const { transfers, options } = params;
+    const resolvedTransfers = JSON.stringify(transfers);
+    const resolvedOptions = JSON.stringify(options);
+    this.analyticsService.track(eventName, req, {
+      resolvedTransfers,
+      resolvedOptions,
     });
   }
 
@@ -68,5 +86,19 @@ export class XTransferController {
   ) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL_HASH, req, bodyParams);
     return this.xTransferService.generateXcmCall(bodyParams, true);
+  }
+
+  @Post('x-transfer-batch')
+  @UsePipes(new ZodValidationPipe(BatchXTransferDtoSchema))
+  generateXcmCallBatchHash(
+    @Body() bodyParams: PatchedBatchXTransferDto,
+    @Req() req: Request,
+  ) {
+    this.trackAnalyticsBatch(
+      EventName.GENERATE_XCM_CALL_BATCH_HASH,
+      req,
+      bodyParams,
+    );
+    return this.xTransferService.generateBatchXcmCall(bodyParams);
   }
 }
