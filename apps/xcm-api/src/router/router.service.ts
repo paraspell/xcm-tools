@@ -8,7 +8,7 @@ import {
   NODES_WITH_RELAY_CHAINS,
   TNodeWithRelayChains,
 } from '@paraspell/sdk';
-import { PatchedRouterDto } from './dto/RouterDto.js';
+import { RouterDto } from './dto/RouterDto.js';
 import { isValidWalletAddress, serializeExtrinsic } from '../utils.js';
 import {
   EXCHANGE_NODES,
@@ -19,7 +19,7 @@ import {
 
 @Injectable()
 export class RouterService {
-  async generateExtrinsics(options: PatchedRouterDto, hashEnabled = false) {
+  async generateExtrinsics(options: RouterDto, hashEnabled = false) {
     const {
       from,
       exchange,

@@ -11,7 +11,6 @@ describe('isNumeric', () => {
   it('should return false for non-numeric values', () => {
     expect(isNumeric('abc')).toBe(false);
     expect(isNumeric('123abc')).toBe(false);
-    expect(isNumeric(undefined)).toBe(false);
   });
 });
 

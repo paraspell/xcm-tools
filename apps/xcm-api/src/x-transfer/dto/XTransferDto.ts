@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import type { TAddress, TCurrencyInput } from '@paraspell/sdk';
 import { Version } from '@paraspell/sdk';
 import { MultiLocationSchema } from '@paraspell/xcm-analyser';
 import { validateAmount } from '../../utils/validateAmount.js';
@@ -82,8 +81,3 @@ export const XTransferDtoSchema = z.object({
 });
 
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
-
-export type PatchedXTransferDto = XTransferDto & {
-  currency: TCurrencyInput;
-  address: TAddress;
-};

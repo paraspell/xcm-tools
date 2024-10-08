@@ -15,13 +15,13 @@ import {
   determineRelayChain,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
-import { PatchedXTransferDto } from './dto/XTransferDto.js';
-import { PatchedBatchXTransferDto } from './dto/XTransferBatchDto.js';
+import { XTransferDto } from './dto/XTransferDto.js';
+import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 
 @Injectable()
 export class XTransferService {
   async generateXcmCall(
-    { from, to, amount, address, currency, xcmVersion }: PatchedXTransferDto,
+    { from, to, amount, address, currency, xcmVersion }: XTransferDto,
     hashEnabled = false,
   ) {
     const fromNode = from as TNode | undefined;
@@ -53,13 +53,14 @@ export class XTransferService {
       throw new BadRequestException('Invalid wallet address.');
     }
 
-    const api = await createApiInstanceForNode(fromNode ?? toNode);
+    const node = fromNode ?? toNode;
+    const api = await createApiInstanceForNode(node as TNode);
 
     const builder = Builder(api);
 
     let finalBuilder: UseKeepAliveFinalBuilder;
 
-    if (fromNode && toNode) {
+    if (fromNode && toNode && currency) {
       // Parachain to parachain
       finalBuilder = builder
         .from(fromNode)
@@ -70,9 +71,12 @@ export class XTransferService {
     } else if (fromNode) {
       // Parachain to relaychain
       finalBuilder = builder.from(fromNode).amount(amount).address(address);
-    } else if (to) {
+    } else {
       // Relaychain to parachain
-      finalBuilder = builder.to(toNode).amount(amount).address(address);
+      finalBuilder = builder
+        .to(toNode as TNode)
+        .amount(amount)
+        .address(address);
     }
 
     if (xcmVersion) {
@@ -100,7 +104,7 @@ export class XTransferService {
     return response;
   }
 
-  async generateBatchXcmCall(batchDto: PatchedBatchXTransferDto) {
+  async generateBatchXcmCall(batchDto: BatchXTransferDto) {
     const { transfers, options } = batchDto;
 
     if (!transfers || transfers.length === 0) {
@@ -142,7 +146,7 @@ export class XTransferService {
     }
 
     const api = await createApiInstanceForNode(
-      fromNode ?? determineRelayChain(toNode),
+      fromNode ?? determineRelayChain(toNode as TNode),
     );
     let builder = Builder(api);
 
@@ -174,7 +178,7 @@ export class XTransferService {
 
         let finalBuilder: UseKeepAliveFinalBuilder;
 
-        if (transferFromNode && transferToNode) {
+        if (transferFromNode && transferToNode && transfer.currency) {
           // Parachain to parachain
           finalBuilder = builder
             .from(transferFromNode)
@@ -188,10 +192,10 @@ export class XTransferService {
             .from(transferFromNode)
             .amount(transfer.amount)
             .address(transfer.address);
-        } else if (transferToNode) {
+        } else {
           // Relaychain to parachain
           finalBuilder = builder
-            .to(transferToNode)
+            .to(transferToNode as TNode)
             .amount(transfer.amount)
             .address(transfer.address);
         }
@@ -202,7 +206,7 @@ export class XTransferService {
 
         builder = finalBuilder.addToBatch();
       }
-      return await builder.buildBatch(options);
+      return await builder.buildBatch(options ?? undefined);
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||

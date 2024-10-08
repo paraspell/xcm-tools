@@ -12,6 +12,19 @@ describe('AssetClaimController', () => {
   let assetClaimService: AssetClaimService;
   let analyticsService: AnalyticsService;
 
+  const bodyParams = {
+    from: 'address1',
+    fungible: [
+      {
+        id: { parents: 1, interior: { X1: { Parachain: 2000 } } },
+        fun: {
+          Fungible: '100',
+        },
+      },
+    ],
+    address: 'address2',
+  } as AssetClaimDto;
+
   beforeEach(() => {
     assetClaimService = {
       claimAssets: vi.fn(),
@@ -26,11 +39,6 @@ describe('AssetClaimController', () => {
 
   describe('claimAssets', () => {
     it('should call trackAnalytics and claimAssets with correct parameters', async () => {
-      const bodyParams = {
-        from: 'address1',
-        fungible: [{ id: 'asset1', fun: 100 }],
-      } as AssetClaimDto;
-
       const req = {
         headers: {
           'user-agent': 'Mozilla/5.0',
@@ -59,10 +67,6 @@ describe('AssetClaimController', () => {
 
   describe('claimAssetsHash', () => {
     it('should call trackAnalytics and claimAssets with hashEnabled set to true', async () => {
-      const bodyParams: AssetClaimDto = {
-        from: 'address1',
-        fungible: [{ id: 'asset1', fun: 100 }],
-      } as AssetClaimDto;
       const req = {
         headers: {
           'user-agent': 'Mozilla/5.0',

@@ -51,9 +51,15 @@ export class AuthService {
   ) {}
 
   async generateApiKey(recaptcha: string) {
+    const recaptchaSecretKey = this.configService.get<string>(
+      'RECAPTCHA_SECRET_KEY',
+    );
+    if (!recaptchaSecretKey) {
+      throw new ForbiddenException('Recaptcha secret key is not set');
+    }
     const verificationResult = await validateRecaptcha(
       recaptcha,
-      this.configService.get('RECAPTCHA_SECRET_KEY'),
+      recaptchaSecretKey,
     );
     if (verificationResult) {
       const { id } = await this.usersService.create();
@@ -67,9 +73,15 @@ export class AuthService {
   }
 
   async submitHigherRequestLimitForm(dto: HigherRequestLimitDto) {
+    const recaptchaSecretKey = this.configService.get<string>(
+      'RECAPTCHA_SECRET_KEY',
+    );
+    if (!recaptchaSecretKey) {
+      throw new ForbiddenException('Recaptcha secret key is not set');
+    }
     const verificationResult = await validateRecaptcha(
       dto['g-recaptcha-response'],
-      this.configService.get('RECAPTCHA_SECRET_KEY'),
+      recaptchaSecretKey,
     );
     if (verificationResult) {
       const { userId } = this.jwtService.verify<{ userId: string }>(

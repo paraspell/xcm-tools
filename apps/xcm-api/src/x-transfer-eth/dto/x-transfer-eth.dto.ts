@@ -1,4 +1,3 @@
-import type { TCurrencyCore } from '@paraspell/sdk';
 import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
 import { z } from 'zod';
 import { validateAmount } from '../../utils/validateAmount.js';
@@ -19,7 +18,3 @@ export const XTransferEthDtoSchema = z.object({
 });
 
 export type XTransferEthDto = z.infer<typeof XTransferEthDtoSchema>;
-
-export type PatchedXTransferEthDto = XTransferEthDto & {
-  currency: TCurrencyCore;
-};

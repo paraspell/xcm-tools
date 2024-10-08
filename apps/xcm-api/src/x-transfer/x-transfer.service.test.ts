@@ -2,7 +2,8 @@ import { vi, describe, expect, it, beforeEach } from 'vitest';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { XTransferService } from './x-transfer.service.js';
-import type { PatchedBatchXTransferDto } from './dto/XTransferBatchDto.js';
+import type { XTransferDto } from './dto/XTransferDto.js';
+import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
   BadRequestException,
   InternalServerErrorException,
@@ -10,7 +11,6 @@ import {
 import * as paraspellSdk from '@paraspell/sdk';
 import type { TNode } from '@paraspell/sdk';
 import { InvalidCurrencyError, createApiInstanceForNode } from '@paraspell/sdk';
-import type { PatchedXTransferDto } from './dto/XTransferDto.js';
 
 const builderMock = {
   from: vi.fn().mockReturnThis(),
@@ -58,7 +58,7 @@ describe('XTransferService', () => {
     it('should generate XCM call for parachain to parachain transfer', async () => {
       const from: TNode = 'Acala';
       const to: TNode = 'Basilisk';
-      const xTransferDto: PatchedXTransferDto = {
+      const xTransferDto: XTransferDto = {
         from,
         to,
         amount,
@@ -81,7 +81,7 @@ describe('XTransferService', () => {
     it('should generate XCM call for parachain to relaychain transfer', async () => {
       const from: TNode = 'Acala';
 
-      const xTransferDto: PatchedXTransferDto = {
+      const xTransferDto: XTransferDto = {
         from,
         amount,
         address,
@@ -100,7 +100,7 @@ describe('XTransferService', () => {
 
     it('should generate XCM call for relaychain to parachain transfer', async () => {
       const to: TNode = 'Acala';
-      const xTransferDto: PatchedXTransferDto = {
+      const xTransferDto: XTransferDto = {
         to,
         amount,
         address,
@@ -118,7 +118,7 @@ describe('XTransferService', () => {
     });
 
     it('should throw BadRequestException for invalid from node', async () => {
-      const xTransferDto: PatchedXTransferDto = {
+      const xTransferDto: XTransferDto = {
         from: invalidNode,
         amount,
         address,
@@ -132,7 +132,7 @@ describe('XTransferService', () => {
     });
 
     it('should throw BadRequestException for invalid to node', async () => {
-      const xTransferDto: PatchedXTransferDto = {
+      const xTransferDto: XTransferDto = {
         to: invalidNode,
         amount,
         address,
@@ -146,7 +146,7 @@ describe('XTransferService', () => {
     });
 
     it('should throw BadRequestException when from and to node are missing', async () => {
-      const xTransferDto: PatchedXTransferDto = {
+      const xTransferDto: XTransferDto = {
         amount,
         address,
         currency,
@@ -159,7 +159,7 @@ describe('XTransferService', () => {
     });
 
     it('should throw BadRequestException for missing currency in parachain to parachain transfer', async () => {
-      const xTransferDto: PatchedXTransferDto = {
+      const xTransferDto: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
         amount,
@@ -173,37 +173,8 @@ describe('XTransferService', () => {
       expect(createApiInstanceForNode).not.toHaveBeenCalled();
     });
 
-    // it('should throw BadRequestException for invalid currency', async () => {
-    //   const xTransferDto: PatchedXTransferDto = {
-    //     from: 'Acala',
-    //     to: 'Basilisk',
-    //     amount,
-    //     address,
-    //     currency: { symbol: 'UNKNOWN' },
-    //   };
-
-    //   const builderMock = {
-    //     from: vi.fn().mockReturnThis(),
-    //     to: vi.fn().mockReturnThis(),
-    //     currency: vi.fn().mockReturnThis(),
-    //     amount: vi.fn().mockReturnThis(),
-    //     address: vi.fn().mockReturnThis(),
-    //     buildSerializedApiCall: vi.fn().mockImplementation(() => {
-    //       throw new InvalidCurrencyError('');
-    //     }),
-    //   };
-    //   vi.spyOn(paraspellSdk, 'Builder').mockReturnValue(
-    //     builderMock as unknown as paraspellSdk.GeneralBuilder,
-    //   );
-
-    //   await expect(service.generateXcmCall(xTransferDto)).rejects.toThrow(
-    //     BadRequestException,
-    //   );
-    //   expect(createApiInstanceForNode).toHaveBeenCalled();
-    // });
-
     it('should throw InternalServerError when uknown error occures in the SDK', async () => {
-      const xTransferDto: PatchedXTransferDto = {
+      const xTransferDto: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
         amount,
@@ -236,7 +207,7 @@ describe('XTransferService', () => {
     });
 
     it('should throw on invalid wallet address', async () => {
-      const xTransferDto: PatchedXTransferDto = {
+      const xTransferDto: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
         amount,
@@ -251,7 +222,7 @@ describe('XTransferService', () => {
     });
 
     it('should specify xcm version if provided', async () => {
-      const xTransferDto: PatchedXTransferDto = {
+      const xTransferDto: XTransferDto = {
         from: 'Acala',
         to: 'AssetHubPolkadot',
         amount,
@@ -303,7 +274,7 @@ describe('XTransferService', () => {
         builderMock as unknown as paraspellSdk.GeneralBuilder,
       );
 
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [
           {
             from,
@@ -340,7 +311,7 @@ describe('XTransferService', () => {
     });
 
     it('should throw BadRequestException when transfers array is empty', async () => {
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [],
         options: {
           mode: paraspellSdk.BatchMode.BATCH_ALL,
@@ -354,7 +325,7 @@ describe('XTransferService', () => {
     });
 
     it('should throw BadRequestException when from and to are missing', async () => {
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [
           {
             amount,
@@ -375,7 +346,7 @@ describe('XTransferService', () => {
       const from2: TNode = 'Basilisk';
       const to: TNode = 'Moonriver';
 
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [
           {
             from: from1,
@@ -403,7 +374,7 @@ describe('XTransferService', () => {
     it('should throw BadRequestException for invalid from node', async () => {
       const to: TNode = 'Basilisk';
 
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [
           {
             from: invalidNode,
@@ -424,7 +395,7 @@ describe('XTransferService', () => {
     it('should throw BadRequestException for invalid to node', async () => {
       const from: TNode = 'Acala';
 
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [
           {
             from,
@@ -446,7 +417,7 @@ describe('XTransferService', () => {
       const from: TNode = 'Acala';
       const to: TNode = 'Basilisk';
 
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [
           {
             from,
@@ -477,7 +448,7 @@ describe('XTransferService', () => {
             // currency is missing
           },
         ],
-      } as unknown as PatchedBatchXTransferDto;
+      } as unknown as BatchXTransferDto;
 
       await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
         BadRequestException,
@@ -504,7 +475,7 @@ describe('XTransferService', () => {
         builderMockWithError as unknown as paraspellSdk.GeneralBuilder,
       );
 
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [
           {
             from,
@@ -542,7 +513,7 @@ describe('XTransferService', () => {
         builderMockWithError as unknown as paraspellSdk.GeneralBuilder,
       );
 
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [
           {
             from,
@@ -574,7 +545,7 @@ describe('XTransferService', () => {
             currency,
           },
         ],
-      } as unknown as PatchedBatchXTransferDto;
+      } as unknown as BatchXTransferDto;
 
       await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
         BadRequestException,
@@ -587,7 +558,7 @@ describe('XTransferService', () => {
       const from: TNode = 'Acala';
       const invalidToNode = 'InvalidNode';
 
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [
           {
             from,
@@ -639,7 +610,8 @@ describe('XTransferService', () => {
             address,
           },
         ],
-      } as unknown as PatchedBatchXTransferDto;
+        options: undefined,
+      } as unknown as BatchXTransferDto;
 
       const result = await service.generateBatchXcmCall(batchDto);
 
@@ -656,7 +628,7 @@ describe('XTransferService', () => {
       const from: TNode = 'Acala';
       const to: TNode = 'Basilisk';
 
-      const batchDto: PatchedBatchXTransferDto = {
+      const batchDto: BatchXTransferDto = {
         transfers: [
           {
             from,

@@ -4,7 +4,7 @@ import { EventName } from '../analytics/EventName.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import { TransferInfoService } from './transfer-info.service.js';
 import {
-  PatchedTransferInfoDto,
+  TransferInfoDto,
   TransferInfoSchema,
 } from './dto/transfer-info.dto.js';
 
@@ -18,7 +18,7 @@ export class TransferInfoController {
   private trackAnalytics(
     eventName: EventName,
     req: Request,
-    params: PatchedTransferInfoDto,
+    params: TransferInfoDto,
   ) {
     const { origin, destination, currency, amount } = params;
     this.analyticsService.track(eventName, req, {
@@ -31,10 +31,7 @@ export class TransferInfoController {
 
   @Post()
   @UsePipes(new ZodValidationPipe(TransferInfoSchema))
-  async getTransferInfo(
-    @Body() params: PatchedTransferInfoDto,
-    @Req() req: Request,
-  ) {
+  async getTransferInfo(@Body() params: TransferInfoDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, params);
     return await this.transferInfoService.getTransferInfo(params);
   }

@@ -28,7 +28,7 @@ export class XcmAnalyserService {
       if (multilocation) {
         return `"${convertMultilocationToUrl(multilocation)}"`;
       } else {
-        return convertXCMToUrls(xcm);
+        return convertXCMToUrls(xcm as unknown[]);
       }
     } catch (e) {
       if (e instanceof Error) {

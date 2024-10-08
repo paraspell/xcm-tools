@@ -36,7 +36,10 @@ describe('XcmAnalyserService', () => {
       }),
     ).toThrow(BadRequestException);
     expect(() =>
-      service.getMultiLocationPaths({ multilocation: null, xcm: null }),
+      service.getMultiLocationPaths({
+        multilocation: undefined,
+        xcm: undefined,
+      }),
     ).toThrow(BadRequestException);
   });
 

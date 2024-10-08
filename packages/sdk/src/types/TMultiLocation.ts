@@ -16,10 +16,11 @@ type NetworkId = string | null
 type BodyId = string | null
 type BodyPart = string | null
 type StringOrNumber = string | number
+type StringOrNumberOrBigInt = StringOrNumber | bigint
 type HexString = string
 
 export interface JunctionParachain {
-  Parachain: StringOrNumber | undefined
+  Parachain: StringOrNumberOrBigInt | undefined
 }
 
 interface JunctionAccountId32 {
@@ -32,7 +33,7 @@ interface JunctionAccountId32 {
 interface JunctionAccountIndex64 {
   AccountIndex64: {
     network: NetworkId
-    index: StringOrNumber
+    index: StringOrNumberOrBigInt
   }
 }
 
@@ -44,16 +45,16 @@ interface JunctionAccountKey20 {
 }
 
 interface JunctionPalletInstance {
-  PalletInstance: StringOrNumber
+  PalletInstance: StringOrNumberOrBigInt
 }
 
 interface JunctionGeneralIndex {
-  GeneralIndex: StringOrNumber
+  GeneralIndex: StringOrNumberOrBigInt
 }
 
 interface JunctionGeneralKey {
   GeneralKey: {
-    length: StringOrNumber
+    length: StringOrNumberOrBigInt
     data: HexString
   }
 }

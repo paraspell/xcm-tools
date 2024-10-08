@@ -83,32 +83,46 @@ const AssetsQueries = () => {
   const getEndpoint = ({ func, node }: FormValues) => {
     switch (func) {
       case "ASSETS_OBJECT":
-        return `${node}`;
+        return `/assets/${node}`;
       case "ASSET_ID":
-        return `${node}/id`;
+        return `/assets/${node}/id`;
       case "RELAYCHAIN_SYMBOL":
-        return `${node}/relay-chain-symbol`;
+        return `/assets/${node}/relay-chain-symbol`;
       case "NATIVE_ASSETS":
-        return `${node}/native`;
+        return `/assets/${node}/native`;
       case "OTHER_ASSETS":
-        return `${node}/other`;
+        return `/assets/${node}/other`;
       case "ALL_SYMBOLS":
-        return `${node}/all-symbols`;
+        return `/assets/${node}/all-symbols`;
       case "DECIMALS":
-        return `${node}/decimals`;
+        return `/assets/${node}/decimals`;
       case "HAS_SUPPORT":
-        return `${node}/has-support`;
+        return `/assets/${node}/has-support`;
       case "PARA_ID":
-        return `${node}/para-id`;
+        return `/assets/${node}/para-id`;
+      case "BALANCE_NATIVE":
+        return `/balance/${node}/native`;
+      case "BALANCE_FOREIGN":
+        return `/balance/${node}/foreign`;
     }
   };
 
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
-    const { useApi } = formValues;
+    const { useApi, func, address, currencyType, currency } = formValues;
+    const isBalanceQuery =
+      func === "BALANCE_FOREIGN" || func === "BALANCE_NATIVE";
     if (useApi) {
       return await fetchFromApi(
-        formValues,
-        `/assets/${getEndpoint(formValues)}`,
+        isBalanceQuery
+          ? {
+              address,
+              currency:
+                currencyType === "id" ? { id: currency } : { symbol: currency },
+            }
+          : formValues,
+        `${getEndpoint(formValues)}`,
+        isBalanceQuery ? "POST" : "GET",
+        isBalanceQuery,
       );
     } else {
       return await submitUsingSdk(formValues);

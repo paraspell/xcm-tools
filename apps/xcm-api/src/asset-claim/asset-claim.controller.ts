@@ -19,7 +19,7 @@ export class AssetClaimController {
   ) {
     const { from, fungible } = params;
     this.analyticsService.track(eventName, req, {
-      from,
+      from: from || 'unknown',
       assetLength: fungible.length,
     });
   }

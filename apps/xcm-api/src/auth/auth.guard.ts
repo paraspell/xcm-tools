@@ -29,6 +29,7 @@ export class AuthGuard implements CanActivate {
       const { userId } = this.jwtService.verify<{ userId: string }>(apiKey);
       if (!userId) throw new ForbiddenException('Invalid API key.');
       const dbUser = await this.usersService.findOne(userId);
+      if (!dbUser) throw new ForbiddenException('User not found.');
       this.analyticsService.identify(userId, {
         hasApiKey: 'true',
         requestLimit: dbUser.requestLimit,

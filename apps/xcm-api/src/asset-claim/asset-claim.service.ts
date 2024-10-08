@@ -9,7 +9,6 @@ import {
   NODES_WITH_RELAY_CHAINS,
   TMultiAsset,
   TNode,
-  TTransferReturn,
   createApiInstanceForNode,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
@@ -39,13 +38,12 @@ export class AssetClaimService {
 
     const api = await createApiInstanceForNode(fromNode);
 
-    let response: TTransferReturn;
     try {
       const builder = Builder(api)
         .claimFrom(fromNode)
         .fungible(fungible as TMultiAsset[])
         .account(address);
-      response = hashEnabled
+      return hashEnabled
         ? await builder.build()
         : await builder.buildSerializedApiCall();
     } catch (e) {
@@ -58,6 +56,5 @@ export class AssetClaimService {
     } finally {
       if (api) await api.disconnect();
     }
-    return response;
   }
 }
