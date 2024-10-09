@@ -6,6 +6,7 @@ import OutputAlert from "../components/OutputAlert";
 import type { FormValues } from "../components/analyser/AnalyserForm";
 import AnalyserForm from "../components/analyser/AnalyserForm";
 import { convertMultilocationToUrlJson } from "@paraspell/xcm-analyser";
+import { fetchFromApi } from "../utils/submitUsingApi";
 
 const XcmAnalyserSandbox = () => {
   const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
@@ -30,11 +31,31 @@ const XcmAnalyserSandbox = () => {
     }
   }, [error, scrollIntoView]);
 
-  const onSubmit = (formValues: FormValues) => {
+  const convertUsingSdk = (input: string) => {
+    return convertMultilocationToUrlJson(input);
+  };
+
+  const convertUsingApi = async (input: string) => {
+    return fetchFromApi(
+      { multilocation: JSON.parse(input) as Record<string, unknown> },
+      "/xcm-analyser",
+      "POST",
+      true,
+    );
+  };
+
+  const convert = async ({ useApi, input }: FormValues) => {
+    if (useApi) {
+      return await convertUsingApi(input);
+    }
+    return convertUsingSdk(input);
+  };
+
+  const submit = async (formValues: FormValues) => {
     setLoading(true);
 
     try {
-      const output = convertMultilocationToUrlJson(formValues.input);
+      const output = await convert(formValues);
       setOutput(JSON.stringify(output, null, 2));
       openOutputAlert();
       closeErrorAlert();
@@ -49,6 +70,8 @@ const XcmAnalyserSandbox = () => {
       setLoading(false);
     }
   };
+
+  const onSubmit = (formValues: FormValues) => void submit(formValues);
 
   const onErrorAlertCloseClick = () => {
     closeErrorAlert();
