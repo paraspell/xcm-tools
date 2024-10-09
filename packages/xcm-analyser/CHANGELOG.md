@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.4.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.3.4...xcm-analyser-v1.4.0) (2024-10-09)
+
+
+### Features
+
+* **xcm-api:** Add balance queries to XCM-API 👨‍🔧 ([4475ea7](https://github.com/paraspell/xcm-tools/commit/4475ea721765638fd4d69681e9613bfd6023a3a7))
+
+
+### Miscellaneous Chores
+
+* Add consistent type imports ESlint rule ✏️ ([61c20ae](https://github.com/paraspell/xcm-tools/commit/61c20ae24b83d871a6a5e3819e09748df3026061))
+
+
+### Tests
+
+* Improve overall unit test coverage to above 90% 🧪 ([aeb32bb](https://github.com/paraspell/xcm-tools/commit/aeb32bb6a54c1bc2e527cf587b8e0a44e3c397a5))
+
 ## [1.3.4](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.3.3...xcm-analyser-v1.3.4) (2024-09-30)
 
 
