@@ -15,14 +15,10 @@ import { IGateway__factory } from "@snowbridge/contract-types";
 import type { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
 import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/keyring";
-
-interface ApiResponse {
-  token: string;
-  destinationParaId: number;
-  destinationFee: string;
-  amount: string;
-  fee: string;
-}
+import { Web3 } from "web3";
+import type { EIP6963ProviderDetail, TEthBridgeApiResponse } from "../../types";
+import EthWalletSelectModal from "../EthWalletSelectModal";
+import EthAccountsSelectModal from "../EthAccountsSelectModal";
 
 const EthBridgeTransfer = () => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -33,57 +29,103 @@ const EthBridgeTransfer = () => {
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const [providers, setProviders] = useState<EIP6963ProviderDetail[]>([]);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+  const [accounts, setAccounts] = useState<string[]>([]);
+  const [selectedProvider, setSelectedProvider] =
+    useState<EIP6963ProviderDetail | null>(null);
+
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
   });
 
-  useEffect(() => {
-    const handleAccountsChanged = (accounts: string[]) => {
-      if (accounts.length === 0) {
-        console.log("Please connect to MetaMask.");
-        setSelectedAccount(null);
-      } else {
-        setSelectedAccount(accounts[0]);
-      }
-    };
-
-    if (window.ethereum) {
-      window.ethereum.on(
-        "accountsChanged",
-        handleAccountsChanged as (...args: unknown[]) => void,
-      );
+  const handleAccountsChanged = (accounts: string[]) => {
+    if (accounts.length === 0) {
+      console.log("Please connect to a wallet.");
+      setSelectedAccount(null);
+      setAccounts([]);
+    } else {
+      setAccounts(accounts);
+      setIsAccountModalOpen(true);
     }
+  };
 
-    return () => {
-      if (window.ethereum) {
-        window.ethereum.removeListener(
-          "accountsChanged",
-          handleAccountsChanged,
-        );
-      }
-    };
-  }, []);
+  useEffect(() => {
+    if (selectedProvider && selectedProvider.provider) {
+      const provider = selectedProvider.provider;
+
+      provider.on("accountsChanged", handleAccountsChanged);
+
+      return () => {
+        provider.removeListener("accountsChanged", handleAccountsChanged);
+      };
+    }
+  }, [selectedProvider]);
 
   const connectWallet = async () => {
-    if (!window.ethereum) {
-      alert("Please install MetaMask!");
-      return;
-    }
-
-    const tempProvider = new ethers.BrowserProvider(window.ethereum);
-    setProvider(tempProvider);
     try {
-      await tempProvider.send("eth_requestAccounts", []);
-      const tempSigner = await tempProvider.getSigner();
-      const account = await tempSigner.getAddress();
-      setSelectedAccount(account);
-      console.log("Wallet connected:", account);
+      const providerMap = await Web3.requestEIP6963Providers();
+
+      if (providerMap.size === 0) {
+        alert("No compatible Ethereum wallets found.");
+        return;
+      }
+
+      const providerArray = Array.from(providerMap.values());
+
+      setProviders(providerArray);
+      setIsWalletModalOpen(true);
     } catch (error) {
-      console.error("Error connecting to MetaMask:", error);
+      console.error("Error fetching providers:", error);
+      alert("An error occurred while fetching wallet providers.");
     }
   };
 
   const onConnectWallet = () => void connectWallet();
+
+  const selectProvider = async (providerInfo: EIP6963ProviderDetail) => {
+    try {
+      setIsWalletModalOpen(false);
+      const provider = providerInfo.provider;
+
+      if (!provider) {
+        alert("Selected provider is not available.");
+        return;
+      }
+
+      const tempProvider = new ethers.BrowserProvider(provider);
+      setProvider(tempProvider);
+      setSelectedProvider(providerInfo);
+
+      const accounts = (await tempProvider.send(
+        "eth_requestAccounts",
+        [],
+      )) as string[];
+
+      if (accounts.length === 0) {
+        alert("No accounts found in the selected wallet.");
+        return;
+      }
+
+      setAccounts(accounts);
+      setIsAccountModalOpen(true);
+    } catch (error) {
+      console.error("Error connecting to wallet:", error);
+      alert("An error occurred while connecting to the wallet.");
+    }
+  };
+
+  const onProviderSelect = (provider: EIP6963ProviderDetail) => {
+    void selectProvider(provider);
+  };
+
+  const onAccountSelect = (account: string) => {
+    setIsAccountModalOpen(false);
+    setSelectedAccount(account);
+
+    console.log("Account selected:", account);
+  };
 
   useEffect(() => {
     if (error) {
@@ -138,7 +180,7 @@ const EthBridgeTransfer = () => {
       "/x-transfer-eth",
       "POST",
       true,
-    )) as ApiResponse;
+    )) as TEthBridgeApiResponse;
 
     const GATEWAY_CONTRACT = "0xEDa338E4dC46038493b885327842fD3E301CaB39";
 
@@ -220,6 +262,12 @@ const EthBridgeTransfer = () => {
     closeAlert();
   };
 
+  const onWalletDisconnect = () => {
+    setSelectedAccount(null);
+    setAccounts([]);
+    setIsWalletModalOpen(false);
+  };
+
   return (
     <Stack gap="xl">
       <Stack w="100%" maw={400} mx="auto" gap="lg">
@@ -245,6 +293,19 @@ const EthBridgeTransfer = () => {
           </ErrorAlert>
         )}
       </Box>
+      <EthWalletSelectModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+        providers={providers}
+        onProviderSelect={onProviderSelect}
+        onDisconnect={onWalletDisconnect}
+      />
+      <EthAccountsSelectModal
+        isOpen={isAccountModalOpen}
+        onClose={() => setIsAccountModalOpen(false)}
+        accounts={accounts}
+        onAccountSelect={onAccountSelect}
+      />
     </Stack>
   );
 };
