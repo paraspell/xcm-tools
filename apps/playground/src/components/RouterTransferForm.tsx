@@ -23,13 +23,14 @@ import { web3Accounts, web3FromAddress } from "@polkadot/extension-dapp";
 import AccountsModal from "./AccountsModal";
 import { useDisclosure } from "@mantine/hooks";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import type { BrowserProvider } from "ethers";
 import { ethers } from "ethers";
 import { IconInfoCircle } from "@tabler/icons-react";
-import EthAccountsModal from "./EthAccountsModal";
 import useRouterCurrencyOptions from "../hooks/useRouterCurrencyOptions";
+import EthWalletSelectModal from "./EthWalletSelectModal";
+import EthAccountsSelectModal from "./EthAccountsSelectModal";
+import type { EIP6963ProviderDetail } from "../types";
 
-export type FormValues = {
+export type TRouterFormValues = {
   from: TNodeWithRelayChains;
   exchange: TExchangeNode | TAutoSelect;
   to: TNodeWithRelayChains;
@@ -46,23 +47,37 @@ export type FormValues = {
   ethAddress?: string;
 };
 
-export type FormValuesTransformed = FormValues & {
+export type TRouterFormValuesTransformed = TRouterFormValues & {
   currencyFrom: TAsset;
   currencyTo: TAsset;
 };
 
 type Props = {
-  onSubmit: (values: FormValuesTransformed) => void;
+  onSubmit: (values: TRouterFormValuesTransformed) => void;
   loading: boolean;
-  initializeProvider: () => BrowserProvider | undefined;
-  provider?: BrowserProvider;
+  onConnectEthWallet: () => void;
+  ethProviders: EIP6963ProviderDetail[];
+  onEthProviderSelect: (providerInfo: EIP6963ProviderDetail) => void;
+  onEthWalletDisconnect: () => void;
+  ethAccounts: string[];
+  isEthWalletModalOpen: boolean;
+  setIsEthWalletModalOpen: (isOpen: boolean) => void;
+  isEthAccountModalOpen: boolean;
+  setIsEthAccountModalOpen: (isOpen: boolean) => void;
 };
 
 const RouterTransferForm: FC<Props> = ({
   onSubmit,
   loading,
-  initializeProvider,
-  provider,
+  onConnectEthWallet,
+  ethProviders,
+  onEthProviderSelect,
+  onEthWalletDisconnect,
+  ethAccounts,
+  isEthWalletModalOpen,
+  setIsEthWalletModalOpen,
+  isEthAccountModalOpen,
+  setIsEthAccountModalOpen,
 }) => {
   const [modalOpened, { open: openModal, close: closeModal }] =
     useDisclosure(false);
@@ -72,11 +87,7 @@ const RouterTransferForm: FC<Props> = ({
     { open: openAssetHubModal, close: closeAssetHubModal },
   ] = useDisclosure(false);
 
-  const [ethModalOpened, { open: openEthModal, close: closeEthModal }] =
-    useDisclosure(false);
-
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-  const [ethAccounts, setEthAccounts] = useState<string[]>([]);
   const [assetHubAccounts, setAssetHubAccounts] = useState<
     InjectedAccountWithMeta[]
   >([]);
@@ -95,13 +106,10 @@ const RouterTransferForm: FC<Props> = ({
     closeModal();
   };
 
-  const onEthAccountSelect = (account: string) => () => {
+  const onEthAccountSelect = (account: string) => {
     setSelectedEthAccount(account);
-    if (!provider) {
-      throw new Error("Provider not initialized");
-    }
+    setIsEthAccountModalOpen(false);
     form.setFieldValue("ethAddress", account);
-    closeEthModal();
   };
 
   const onAssetHubAccountSelect = (account: InjectedAccountWithMeta) => () => {
@@ -131,7 +139,7 @@ const RouterTransferForm: FC<Props> = ({
     }
   }, [selectedAssetHubAccount]);
 
-  const form = useForm<FormValues>({
+  const form = useForm<TRouterFormValues>({
     initialValues: {
       from: "Astar",
       to: "Moonbeam",
@@ -200,28 +208,6 @@ const RouterTransferForm: FC<Props> = ({
 
   const onConnectEvmWallet = () => void connectEvmWallet();
 
-  const connectEthWallet = async () => {
-    const newProvider = initializeProvider();
-
-    if (!newProvider) {
-      throw new Error("Provider not initialized");
-    }
-
-    try {
-      const accounts = (await newProvider.send(
-        "eth_requestAccounts",
-        [],
-      )) as string[];
-      console.log("Accounts:", accounts);
-      setEthAccounts(accounts);
-      openEthModal();
-    } catch (error) {
-      console.error("Error connecting to MetaMask:", error);
-    }
-  };
-
-  const onConnectEthWallet = () => void connectEthWallet();
-
   const onAccountDisconnect = () => {
     setSelectedAccount(undefined);
     form.setFieldValue("evmSigner", undefined);
@@ -235,10 +221,11 @@ const RouterTransferForm: FC<Props> = ({
     closeAssetHubModal();
   };
 
-  const onEthWalletDisconnect = () => {
+  const onEthWalletDisconnectInternal = () => {
     setSelectedEthAccount(null);
     form.setFieldValue("ethSigner", undefined);
-    closeEthModal();
+    setIsEthWalletModalOpen(false);
+    onEthWalletDisconnect();
   };
 
   const {
@@ -254,7 +241,7 @@ const RouterTransferForm: FC<Props> = ({
     form.values.to,
   );
 
-  const onSubmitInternal = (values: FormValues) => {
+  const onSubmitInternal = (values: TRouterFormValues) => {
     const currencyFrom = currencyFromMap[values.currencyFromOptionId];
     const currencyTo = currencyToMap[values.currencyToOptionId];
 
@@ -269,7 +256,7 @@ const RouterTransferForm: FC<Props> = ({
 
   const infoEthWallet = (
     <Tooltip
-      label="You need to connect your Metamask wallet when choosing Ethereum as the origin or destination chain"
+      label="You need to connect your Ethereum wallet when choosing Ethereum as the origin or destination chain"
       position="top-end"
       withArrow
       transitionProps={{ transition: "pop-bottom-right" }}
@@ -339,12 +326,18 @@ const RouterTransferForm: FC<Props> = ({
   return (
     <form onSubmit={form.onSubmit(onSubmitInternal)}>
       <Stack>
-        <EthAccountsModal
-          isOpen={ethModalOpened}
-          onClose={closeEthModal}
+        <EthWalletSelectModal
+          isOpen={isEthWalletModalOpen}
+          onClose={() => setIsEthWalletModalOpen(false)}
+          providers={ethProviders}
+          onProviderSelect={onEthProviderSelect}
+          onDisconnect={onEthWalletDisconnectInternal}
+        />
+        <EthAccountsSelectModal
+          isOpen={isEthAccountModalOpen}
+          onClose={() => setIsEthAccountModalOpen(false)}
           accounts={ethAccounts}
           onAccountSelect={onEthAccountSelect}
-          onDisconnect={onAccountDisconnect}
         />
         <AccountsModal
           isOpen={modalOpened}

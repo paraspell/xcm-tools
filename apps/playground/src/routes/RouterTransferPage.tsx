@@ -21,7 +21,7 @@ import {
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useEffect, useState } from "react";
-import type { FormValuesTransformed } from "../components/RouterTransferForm";
+import type { TRouterFormValuesTransformed } from "../components/RouterTransferForm";
 import RouterTransferForm from "../components/RouterTransferForm";
 import TransferStepper from "../components/TransferStepper";
 import Confetti from "react-confetti";
@@ -39,6 +39,8 @@ import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/keyring";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import type { TSerializedApiCall } from "@paraspell/sdk";
+import { Web3 } from "web3";
+import type { EIP6963ProviderDetail } from "../types";
 
 const RouterTransferPage = () => {
   const { selectedAccount } = useWallet();
@@ -56,7 +58,13 @@ const RouterTransferPage = () => {
 
   const [runConfetti, setRunConfetti] = useState(false);
 
+  const [providers, setProviders] = useState<EIP6963ProviderDetail[]>([]);
+  const [isEthWalletModalOpen, setIsEthWalletModalOpen] = useState(false);
   const [provider, setProvider] = useState<BrowserProvider>();
+  const [_selectedProvider, setSelectedProvider] =
+    useState<EIP6963ProviderDetail | null>(null);
+  const [ethAccounts, setEthAccounts] = useState<string[]>([]);
+  const [isEthAccountModalOpen, setIsEthAccountModalOpen] = useState(false);
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -78,18 +86,65 @@ const RouterTransferPage = () => {
     setProgressInfo(status);
   };
 
-  const initializeProvider = () => {
-    if (!window.ethereum) {
-      alert("Please install MetaMask!");
-      return;
+  const connectEthWallet = async () => {
+    try {
+      const providerMap = await Web3.requestEIP6963Providers();
+
+      if (providerMap.size === 0) {
+        alert("No compatible Ethereum wallets found.");
+        return;
+      }
+
+      const providerArray = Array.from(providerMap.values());
+
+      setProviders(providerArray);
+      setIsEthWalletModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching providers:", error);
+      alert("An error occurred while fetching wallet providers.");
     }
-    const browserProvider = new ethers.BrowserProvider(window.ethereum);
-    setProvider(browserProvider);
-    return browserProvider;
+  };
+
+  const onConnectEthWallet = () => void connectEthWallet();
+
+  const selectEthProvider = async (providerInfo: EIP6963ProviderDetail) => {
+    try {
+      setIsEthWalletModalOpen(false);
+      const provider = providerInfo.provider;
+
+      if (!provider) {
+        alert("Selected provider is not available.");
+        return;
+      }
+
+      const tempProvider = new ethers.BrowserProvider(provider);
+      setProvider(tempProvider);
+      setSelectedProvider(providerInfo);
+
+      const accounts = (await tempProvider.send(
+        "eth_requestAccounts",
+        [],
+      )) as string[];
+
+      if (accounts.length === 0) {
+        alert("No accounts found in the selected wallet.");
+        return;
+      }
+
+      setEthAccounts(accounts);
+      setIsEthAccountModalOpen(true);
+    } catch (error) {
+      console.error("Error connecting to wallet:", error);
+      alert("An error occurred while connecting to the wallet.");
+    }
+  };
+
+  const onEthProviderSelect = (provider: EIP6963ProviderDetail) => {
+    void selectEthProvider(provider);
   };
 
   const submitUsingRouterModule = async (
-    formValues: FormValuesTransformed,
+    formValues: TRouterFormValuesTransformed,
     exchange: TExchangeNode | undefined,
     injectorAddress: string,
     signer: Signer,
@@ -142,7 +197,7 @@ const RouterTransferPage = () => {
   };
 
   const submitUsingApi = async (
-    formValues: FormValuesTransformed,
+    formValues: TRouterFormValuesTransformed,
     exchange: TExchangeNode | undefined,
     injectorAddress: string,
     signer: Signer,
@@ -289,7 +344,7 @@ const RouterTransferPage = () => {
     }
   };
 
-  const submit = async (formValues: FormValuesTransformed) => {
+  const submit = async (formValues: TRouterFormValuesTransformed) => {
     const { useApi } = formValues;
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -353,7 +408,7 @@ const RouterTransferPage = () => {
     setLoading(false);
   };
 
-  const onSubmit = (formValues: FormValuesTransformed) =>
+  const onSubmit = (formValues: TRouterFormValuesTransformed) =>
     void submit(formValues);
 
   const onAlertCloseClick = () => {
@@ -364,6 +419,13 @@ const RouterTransferPage = () => {
     setRunConfetti(false);
   };
 
+  const onEthWalletDisconnect = () => {
+    setProvider(undefined);
+    setSelectedProvider(null);
+    setEthAccounts([]);
+    setIsEthWalletModalOpen(false);
+  };
+
   return (
     <Container p="xl">
       <Stack gap="xl">
@@ -372,8 +434,15 @@ const RouterTransferPage = () => {
           <RouterTransferForm
             onSubmit={onSubmit}
             loading={loading}
-            initializeProvider={initializeProvider}
-            provider={provider}
+            onConnectEthWallet={onConnectEthWallet}
+            ethAccounts={ethAccounts}
+            ethProviders={providers}
+            onEthWalletDisconnect={onEthWalletDisconnect}
+            onEthProviderSelect={onEthProviderSelect}
+            isEthWalletModalOpen={isEthWalletModalOpen}
+            setIsEthWalletModalOpen={setIsEthWalletModalOpen}
+            isEthAccountModalOpen={isEthAccountModalOpen}
+            setIsEthAccountModalOpen={setIsEthAccountModalOpen}
           />
         </Stack>
         <Box ref={targetRef}>
