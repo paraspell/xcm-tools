@@ -52,6 +52,13 @@ export const findAssetInExchangeBySymbol = (exchange: TExchangeNode, currencySym
   return assetsMap[exchange].find((asset) => asset.symbol === currencySymbol);
 };
 
+/**
+ * Retrieves the list of assets supported for transfer from the origin node to the exchange node.
+ *
+ * @param from - The origin node.
+ * @param exchange - The exchange node or 'Auto select'.
+ * @returns An array of supported assets.
+ */
 export const getSupportedAssetsFrom = (
   from: TNodeWithRelayChains,
   exchange: TExchangeNode | TAutoSelect,
@@ -68,6 +75,14 @@ export const getSupportedAssetsFrom = (
   );
 };
 
+/**
+ * Retrieves the list of assets supported for transfer to the destination node.
+ *
+ * @param origin - The origin node.
+ * @param exchange - The exchange node or 'Auto select'.
+ * @param to - The destination node.
+ * @returns An array of supported assets.
+ */
 export const getSupportedAssetsTo = (
   origin: TNodeWithRelayChains,
   exchange: TExchangeNode | TAutoSelect,

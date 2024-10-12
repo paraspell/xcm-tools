@@ -17,6 +17,9 @@ import type { AddressBuilder, UseKeepAliveFinalBuilder } from './Builder'
 import { GeneralBuilder, type AmountBuilder, type AmountOrFeeAssetBuilder } from './Builder'
 import type BatchTransactionManager from './BatchTransactionManager'
 
+/**
+ * Builder class for constructing transactions between parachains.
+ */
 class ParaToParaBuilder
   implements AmountOrFeeAssetBuilder, AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder
 {
@@ -58,26 +61,56 @@ class ParaToParaBuilder
     return new ParaToParaBuilder(api, from, to, currency, batchManager, paraIdTo)
   }
 
+  /**
+   * Specifies the fee asset to be used for the transaction.
+   *
+   * @param feeAsset - The currency to be used as the fee asset.
+   * @returns An instance of Builder
+   */
   feeAsset(feeAsset: TCurrency): this {
     this._feeAsset = feeAsset
     return this
   }
 
+  /**
+   * Specifies the amount to be transferred. Can be either a number, string, or bigint.
+   *
+   * @param amount - The amount to transfer.
+   * @returns An instance of Builder
+   */
   amount(amount: TAmount | null): this {
     this._amount = amount
     return this
   }
 
+  /**
+   * Specifies the recipient address.
+   *
+   * @param address - The destination address.
+   * @returns An instance of Builder
+   */
   address(address: TAddress): this {
     this._address = address
     return this
   }
 
+  /**
+   * Specifies to use the keep-alive option for the destination account.
+   *
+   * @param destApi - The API instance of the destination chain.
+   * @returns An instance of Builder
+   */
   useKeepAlive(destApi: ApiPromise): this {
     this._destApi = destApi
     return this
   }
 
+  /**
+   * Sets the XCM version to be used for the transfer.
+   *
+   * @param version - The XCM version.
+   * @returns An instance of Builder
+   */
   xcmVersion(version: Version): this {
     this._version = version
     return this
@@ -98,6 +131,11 @@ class ParaToParaBuilder
     }
   }
 
+  /**
+   * Adds the transfer transaction to the batch manager.
+   *
+   * @returns An instance of Builder
+   */
   addToBatch() {
     const options = this.buildOptions()
     this.batchManager.addTransaction({
@@ -107,6 +145,12 @@ class ParaToParaBuilder
     return new GeneralBuilder(this.batchManager, this.api, this.from)
   }
 
+  /**
+   * Builds and returns the transfer extrinsic.
+   *
+   * @returns A Promise that resolves to the transfer extrinsic.
+   * @throws Error if the batch manager contains batched items.
+   */
   async build() {
     if (!this.batchManager.isEmpty()) {
       throw new Error(
@@ -117,6 +161,11 @@ class ParaToParaBuilder
     return await send(options)
   }
 
+  /**
+   * Builds and returns a serialized API call for the transfer.
+   *
+   * @returns A Promise that resolves to the serialized API call.
+   */
   async buildSerializedApiCall(): Promise<TSerializedApiCall> {
     const options = this.buildOptions()
     return await sendSerializedApiCall(options)

@@ -69,6 +69,9 @@ export type IXTransferTransfer = {
 
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
 
+/**
+ * The XCM version.
+ */
 export enum Version {
   V1 = 'V1',
   V2 = 'V2',
@@ -76,6 +79,9 @@ export enum Version {
   V4 = 'V4'
 }
 
+/**
+ * The supported XCM versions for asset claims.
+ */
 export type TVersionClaimAssets = Version.V3 | Version.V2
 
 export enum Parents {
@@ -89,18 +95,51 @@ export type TAddress = string | TMultiLocation
 export type TDestination = TNode | TMultiLocation
 
 export type TSendBaseOptions = {
+  /**
+   * The destination address. A SS58 or H160 format.
+   */
   address: TAddress
+  /**
+   * The destination node or multi-location
+   */
   destination?: TDestination
+  /**
+   * The optional destination parachain ID
+   */
   paraIdTo?: number
+  /**
+   * The optional overrided fee asset
+   */
   feeAsset?: TCurrency
+  /**
+   * The optional destination API instance required for keep-alive
+   */
   destApiForKeepAlive?: ApiPromise
+  /**
+   * The optional overrided XCM version
+   */
   version?: Version
 }
 
+/**
+ * Options for transferring from a parachain to another parachain or relay chain
+ */
 export type TSendOptions = TSendBaseOptions & {
+  /**
+   * The Polkadot API instance
+   */
   api?: ApiPromise
+  /**
+   * The origin node
+   */
   origin: TNode
+  /**
+   * The currency to transfer. Either ID, symbol, multi-location, or multi-asset
+   */
   currency: TCurrencyInput
+  /**
+   * The amount to transfer. Can be a number, string, or bigint
+   */
   amount: TAmount | null
 }
 
@@ -118,15 +157,39 @@ export type TSendInternalOptions = TSendBaseOptions & {
 }
 
 type TRelayToParaBaseOptions = {
+  /**
+   * The destination node or multi-location
+   */
   destination: TDestination
+  /**
+   * The destination address. A SS58 or H160 format.
+   */
   address: TAddress
+  /**
+   * The optional destination parachain ID
+   */
   paraIdTo?: number
+  /**
+   * The optional destination API instance required for keep-alive
+   */
   destApiForKeepAlive?: ApiPromise
+  /**
+   * The optional overrided XCM version
+   */
   version?: Version
 }
 
+/**
+ * Options for transferring from a relay chain to a parachain
+ */
 export type TRelayToParaOptions = TRelayToParaBaseOptions & {
+  /**
+   * The Polkadot API instance
+   */
   api?: ApiPromise
+  /**
+   * The amount to transfer
+   */
   amount: TAmount
 }
 

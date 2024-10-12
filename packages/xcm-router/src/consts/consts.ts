@@ -1,3 +1,6 @@
+/**
+ * Supported exchange nodes
+ */
 export const EXCHANGE_NODES = [
   'HydrationDex',
   'BasiliskDex',

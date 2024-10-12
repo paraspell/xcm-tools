@@ -5,6 +5,14 @@ import { createApiInstanceForNode } from '../../../utils'
 import type { AccountInfo } from '@polkadot/types/interfaces'
 import type { UInt } from '@polkadot/types'
 
+/**
+ * Retrieves the native balance for a given account on a specified node.
+ *
+ * @param address - The address of the account.
+ * @param node - The node on which to query the balance.
+ * @param api - Optional API instance; if not provided, one will be created.
+ * @returns The native balance as a bigint.
+ */
 export const getBalanceNative = async (
   address: string,
   node: TNodeWithRelayChains,

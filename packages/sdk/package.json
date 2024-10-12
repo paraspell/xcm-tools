@@ -21,7 +21,7 @@
   "scripts": {
     "compile": "tsc --noEmit",
     "build": "rollup -c",
-    "lint:check": "eslint .",
+    "lint:check": "eslint src",
     "lint": "eslint --fix .",
     "format:check": "prettier --check src",
     "format:write": "prettier --write src",

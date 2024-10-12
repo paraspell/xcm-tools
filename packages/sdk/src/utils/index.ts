@@ -3,9 +3,21 @@
 import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '../types'
 import { getRelayChainSymbol } from '../pallets/assets'
 
+/**
+ * Determines the relay chain for a given node.
+ *
+ * @param node - The node for which to determine the relay chain.
+ * @returns 'Kusama' if the node's relay chain symbol is 'KSM'; otherwise, 'Polkadot'.
+ */
 export const determineRelayChain = (node: TNodeWithRelayChains): TNodeDotKsmWithRelayChains =>
   getRelayChainSymbol(node) === 'KSM' ? 'Kusama' : 'Polkadot'
 
+/**
+ * Determines whether a given node is a relay chain (Polkadot or Kusama).
+ *
+ * @param node - The node to check.
+ * @returns True if the node is 'Polkadot' or 'Kusama'; otherwise, false.
+ */
 export const isRelayChain = (node: TNodeWithRelayChains): boolean =>
   node === 'Polkadot' || node === 'Kusama'
 

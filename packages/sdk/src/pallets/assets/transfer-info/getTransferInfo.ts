@@ -12,6 +12,17 @@ import {
 } from '../getExistentialDeposit'
 import { getOriginFeeDetails } from '../getOriginFeeDetails'
 
+/**
+ * Retrieves detailed transfer information for a cross-chain transfer.
+ *
+ * @param origin - The origin node of the transfer.
+ * @param destination - The destination node of the transfer.
+ * @param accountOrigin - The account address on the origin node.
+ * @param accountDestination - The account address on the destination node.
+ * @param currency - The currency to be transferred.
+ * @param amount - The amount to be transferred.
+ * @returns A Promise that resolves to the transfer information.
+ */
 export const getTransferInfo = async (
   origin: TNodeDotKsmWithRelayChains,
   destination: TNodeDotKsmWithRelayChains,
