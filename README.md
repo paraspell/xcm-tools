@@ -25,6 +25,11 @@ Tired of reading? Listen to this AI-generated podcast about ParaSpell XCM Tools 
 **Documentation:**
 - [XCM Tools documentation](https://paraspell.github.io/docs/) 📚: Comprehensive documentation for XCM tools mentioned above.
 
+**Starter templates:**
+- [XCM SDK (React + Vite) starter template](https://github.com/paraspell/xcm-sdk-template) 🛫: Advanced cross-chain dApp starter template using XCM SDK 
+- [XCM API (React + Vite) starter template](https://github.com/paraspell/xcm-api-template) 🛫: Advanced cross-chain dApp starter template using XCM API
+- [XCM Router (React + Vite) starter template](https://github.com/paraspell/xcm-router-template) 🛫: Advanced cross-chain dApp starter template using XCM Router
+
 **Monorepo infrastructure:**
 ```
 apps | - XCM Playground
