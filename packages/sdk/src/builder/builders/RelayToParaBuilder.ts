@@ -18,6 +18,9 @@ import {
 } from './Builder'
 import type BatchTransactionManager from './BatchTransactionManager'
 
+/**
+ * Builder class for constructing transfer operations from the Relay chain to a Parachain.
+ */
 class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
   private readonly api?: ApiPromise
   private readonly to: TDestination
@@ -48,21 +51,45 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
     return new RelayToParaBuilder(api, to, batchManager, paraIdTo)
   }
 
+  /**
+   * Sets the amount to be transferred.
+   *
+   * @param amount - The amount to transfer.
+   * @returns An instance of Builder
+   */
   amount(amount: number): this {
     this._amount = amount
     return this
   }
 
+  /**
+   * Sets the recipient address.
+   *
+   * @param address - The destination address.
+   * @returns An instance of Builder
+   */
   address(address: TAddress): this {
     this._address = address
     return this
   }
 
+  /**
+   * Specifies to use the keep-alive option for the destination account to keep account active.
+   *
+   * @param destApi - The API instance of the destination chain.
+   * @returns An instance of Builder
+   */
   useKeepAlive(destApi: ApiPromise): this {
     this._destApi = destApi
     return this
   }
 
+  /**
+   * Sets the XCM version to be used for the transfer.
+   *
+   * @param version - The XCM version.
+   * @returns An instance of Builder
+   */
   xcmVersion(version: Version): this {
     this._version = version
     return this
@@ -80,6 +107,11 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
     }
   }
 
+  /**
+   * Adds the transfer transaction to the batch.
+   *
+   * @returns An instance of Builder
+   */
   addToBatch() {
     this.batchManager.addTransaction({
       func: transferRelayToPara,
@@ -88,11 +120,21 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
     return new GeneralBuilder(this.batchManager, this.api, undefined, this.to)
   }
 
+  /**
+   * Builds and returns the transfer extrinsic.
+   *
+   * @returns A Promise that resolves to the transfer extrinsic.
+   */
   async build(): Promise<Extrinsic> {
     const options = this.buildOptions()
     return await transferRelayToPara(options)
   }
 
+  /**
+   * Builds and returns a serialized API call for the transfer.
+   *
+   * @returns A Promise that resolves to the serialized API call.
+   */
   async buildSerializedApiCall(): Promise<TSerializedApiCall> {
     const options = this.buildOptions()
     return await transferRelayToParaSerializedApiCall(options)

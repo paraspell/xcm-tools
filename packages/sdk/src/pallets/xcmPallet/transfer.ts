@@ -196,6 +196,11 @@ export const sendSerializedApiCall = async (options: TSendOptions): Promise<TSer
     serializedApiCallEnabled: true
   }) as Promise<TSerializedApiCall>
 
+/**
+ * Transfers assets from parachain to another parachain or relay chain.
+ * @param options - The transfer options.
+ * @returns An extrinsic to be signed and sent.
+ */
 export const send = async (options: TSendOptions): Promise<Extrinsic> =>
   sendCommon(options) as Promise<Extrinsic>
 
@@ -260,6 +265,13 @@ export const transferRelayToParaCommon = async (
   return callPolkadotJsTxFunction(apiWithFallback, serializedApiCall)
 }
 
+/**
+ * Transfers assets from relay chain to parachain.
+ *
+ * @param options - The transfer options.
+ *
+ * @returns An extrinsic to be signed and sent.
+ */
 export const transferRelayToPara = async (options: TRelayToParaOptions): Promise<Extrinsic> =>
   transferRelayToParaCommon(options) as Promise<Extrinsic>
 

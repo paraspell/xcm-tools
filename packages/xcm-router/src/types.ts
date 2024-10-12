@@ -37,14 +37,29 @@ export enum TransactionType {
   TO_ETH = 'TO_ETH',
 }
 
+/**
+ * The transaction progress information.
+ */
 export interface TTxProgressInfo {
+  /**
+   * When true the exchange will be selected automatically.
+   */
   isAutoSelectingExchange?: boolean;
+  /**
+   * The currently executed transaction type.
+   */
   type: TransactionType;
+  /**
+   * The transaction hashes grouped by transaction type.
+   */
   hashes?: {
     [TransactionType.TO_EXCHANGE]?: string;
     [TransactionType.SWAP]?: string;
     [TransactionType.TO_DESTINATION]?: string;
   };
+  /**
+   * The current transaction status. Either 'IN_PROGRESS' or 'SUCCESS'.
+   */
   status: TransactionStatus;
 }
 
@@ -53,22 +68,74 @@ export enum TransactionStatus {
   SUCCESS = 'SUCCESS',
 }
 
+/**
+ * The options for an XCM Router transfer.
+ */
 export interface TTransferOptions {
+  /**
+   * The origin node to transfer from.
+   */
   from: TNodeWithRelayChains;
+  /**
+   * The destination node to transfer to.
+   */
   to: TNodeWithRelayChains;
+  /**
+   * The origin currency.
+   */
   currencyFrom: TCurrencyCore;
+  /**
+   * The destination currency that the origin currency will be exchanged to.
+   */
   currencyTo: TCurrencyCore;
+  /**
+   * The amount to transfer.
+   * @example '1000000000000000'
+   */
   amount: string;
+  /**
+   * The injector address.
+   */
   injectorAddress: string;
+  /**
+   * The EVM injector address. Used when dealing with EVM nodes.
+   */
   evmInjectorAddress?: string;
+  /**
+   * The AssetHub address. Used for transfers to and from Ethereum.
+   */
   assetHubAddress?: string;
+  /**
+   * The recipient address.
+   */
   recipientAddress: string;
+  /**
+   * The slippage percentage.
+   */
   slippagePct: string;
+  /**
+   * The Polkadot signer instance.
+   */
   signer: Signer;
+  /**
+   * The Polkadot EVM signer instance.
+   */
   evmSigner?: Signer;
+  /**
+   * The Ethereum signer instance.
+   */
   ethSigner?: EthSigner;
+  /**
+   * The exchange node to use for the transfer.
+   */
   exchange?: TExchangeNode;
+  /**
+   * The callback function to call when the transaction status changes.
+   */
   onStatusChange?: (info: TTxProgressInfo) => void;
+  /**
+   * Execute only the specific part of the transfer. Used for debugging and testing purposes.
+   */
   type?: TransactionType;
 }
 

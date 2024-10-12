@@ -61,6 +61,9 @@ import Mythos from '../nodes/supported/Mythos'
 import Peaq from '../nodes/supported/Peaq'
 import Polimec from '../nodes/supported/Polimec'
 
+/**
+ * Supported nodes excluding relay chains and Ethereum.
+ */
 export const NODE_NAMES_DOT_KSM = [
   'AssetHubPolkadot',
   'Acala',
@@ -122,10 +125,19 @@ export const NODE_NAMES_DOT_KSM = [
   'Polimec'
 ] as const
 
+/**
+ * Supported nodes including Ethereum.
+ */
 export const NODE_NAMES = [...NODE_NAMES_DOT_KSM, 'Ethereum'] as const
 
+/**
+ * Supported nodes including relay chains and Ethereum.
+ */
 export const NODES_WITH_RELAY_CHAINS = [...NODE_NAMES, 'Polkadot', 'Kusama'] as const
 
+/**
+ * Supported nodes including relay chains and excluding Ethereum.
+ */
 export const NODES_WITH_RELAY_CHAINS_DOT_KSM = [
   ...NODE_NAMES_DOT_KSM,
   'Polkadot',
@@ -194,6 +206,9 @@ export const nodes = {
   Polimec: new Polimec()
 } satisfies Record<TNode, unknown>
 
+/**
+ * Supported XCM pallets.
+ */
 export const SUPPORTED_PALLETS = [
   'XTokens',
   'OrmlXTokens',
