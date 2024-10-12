@@ -15,6 +15,7 @@
     </a>
   </p>
   <p>XCM Router documentation <a href = "https://paraspell.github.io/docs/router/getting-strtd" \>[here]</p>
+    <p>XCM Router starter template project <a href = "https://github.com/paraspell/xcm-router-template" \>[here]</p>
 </div>
 
 <br /><br />

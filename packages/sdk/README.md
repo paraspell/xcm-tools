@@ -19,6 +19,7 @@
   </p>
   <p>Currently supporting 58 Polkadot & Kusama nodes list <a href = "https://paraspell.github.io/docs/supported.html"\>[here]</p>
   <p>SDK documentation <a href = "https://paraspell.github.io/docs/" \>[here]</p>
+   <p>SDK starter template project <a href = "https://github.com/paraspell/xcm-sdk-template" \>[here]</p>
 </div>
 
 <br /><br />
