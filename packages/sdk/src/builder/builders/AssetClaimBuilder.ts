@@ -1,8 +1,7 @@
-import { type ApiPromise } from '@polkadot/api'
+import type { TApiType, TResType } from '../../types'
 import {
   type TMultiAsset,
   type TNodeWithRelayChains,
-  type Extrinsic,
   type TAddress,
   type TSerializedApiCall,
   type TVersionClaimAssets
@@ -11,7 +10,7 @@ import { type TAssetClaimOptions } from '../../types/TAssetClaim'
 import {
   type VersionBuilder,
   type AccountBuilder,
-  type FinalBuilderAsync,
+  type FinalBuilder,
   type FungibleBuilder
 } from './Builder'
 import claimAssets from '../../pallets/assets/asset-claim'
@@ -19,22 +18,25 @@ import claimAssets from '../../pallets/assets/asset-claim'
 /**
  * Builder class for constructing asset claim transactions.
  */
-class AssetClaimBuilder
-  implements AccountBuilder, FungibleBuilder, VersionBuilder, FinalBuilderAsync
+class AssetClaimBuilder<TApi extends TApiType, TRes extends TResType>
+  implements AccountBuilder<TRes>, FungibleBuilder<TRes>, VersionBuilder<TRes>, FinalBuilder<TRes>
 {
-  private readonly api?: ApiPromise
+  private readonly api?: TApi
   private readonly node: TNodeWithRelayChains
 
   private _multiAssets: TMultiAsset[]
   private _address: TAddress
   private _version?: TVersionClaimAssets
 
-  private constructor(api: ApiPromise | undefined, node: TNodeWithRelayChains) {
+  private constructor(api: TApi | undefined, node: TNodeWithRelayChains) {
     this.api = api
     this.node = node
   }
 
-  static create(api: ApiPromise | undefined, node: TNodeWithRelayChains): FungibleBuilder {
+  static create<TApi extends TApiType, TRes extends TResType>(
+    api: TApi | undefined,
+    node: TNodeWithRelayChains
+  ): FungibleBuilder<TRes> {
     return new AssetClaimBuilder(api, node)
   }
 
@@ -71,7 +73,7 @@ class AssetClaimBuilder
     return this
   }
 
-  private buildOptions(): TAssetClaimOptions {
+  private buildOptions(): TAssetClaimOptions<TApi> {
     return {
       api: this.api,
       node: this.node,
@@ -86,9 +88,9 @@ class AssetClaimBuilder
    *
    * @returns A Promise that resolves to the asset claim extrinsic.
    */
-  async build(): Promise<Extrinsic> {
+  async build() {
     const options = this.buildOptions()
-    return (await claimAssets(options)) as Extrinsic
+    return (await claimAssets(options)) as TRes
   }
 
   /**

@@ -1,18 +1,18 @@
 import { buildBeneficiaryInput } from './buildBeneficiaryInput'
+import type { TApiType } from '../../../types'
 import { Version } from '../../../types'
-import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
-import type { ApiPromise } from '@polkadot/api'
+import type { TAssetClaimOptionsInternal } from '../../../types/TAssetClaim'
 
-export const buildClaimAssetsInput = ({
+export const buildClaimAssetsInput = <TApi extends TApiType>({
   api,
   multiAssets,
   address,
   version = Version.V3
-}: TAssetClaimOptions) => [
+}: TAssetClaimOptionsInternal<TApi>) => [
   {
     [version]: multiAssets
   },
   {
-    [version]: buildBeneficiaryInput(api as ApiPromise, address)
+    [version]: buildBeneficiaryInput(api, address)
   }
 ]

@@ -1,25 +1,23 @@
-import type { ApiPromise } from '@polkadot/api'
-import type { TNode, TDestination } from '../../types'
+import type { TNode, TDestination, TApiType, TResType } from '../../types'
 import {
   BatchMode,
   type TRelayToParaOptions,
   type TSendOptions,
-  type Extrinsic,
   type TBatchOptions
 } from '../../types'
 import { createApiInstanceForNode, determineRelayChain } from '../../utils'
 
-type TOptions = TSendOptions | TRelayToParaOptions
+type TOptions<TApi extends TApiType> = TSendOptions<TApi> | TRelayToParaOptions<TApi>
 
-type TTransaction = {
-  func: (options: TOptions) => Promise<Extrinsic>
-  options: TOptions
+type TTransaction<TApi extends TApiType, TRes extends TResType> = {
+  func: (options: TOptions<TApi>) => Promise<TRes>
+  options: TOptions<TApi>
 }
 
-class BatchTransactionManager {
-  private transactions: TTransaction[] = []
+class BatchTransactionManager<TApi extends TApiType, TRes extends TResType> {
+  private transactions: TTransaction<TApi, TRes>[] = []
 
-  addTransaction(transaction: TTransaction) {
+  addTransaction(transaction: TTransaction<TApi, TRes>) {
     this.transactions.push(transaction)
   }
 
@@ -28,11 +26,11 @@ class BatchTransactionManager {
   }
 
   async buildBatch(
-    api: ApiPromise | undefined,
+    api: TApi | undefined,
     from: TNode | undefined,
     to: TDestination | undefined,
     options: TBatchOptions = { mode: BatchMode.BATCH_ALL }
-  ): Promise<Extrinsic> {
+  ): Promise<TRes> {
     if (!from && !to) {
       throw new Error('From or to node is required')
     }
@@ -63,9 +61,11 @@ class BatchTransactionManager {
       return func(txOptions)
     })
     const txs = await Promise.all(results)
-    return mode === BatchMode.BATCH_ALL
-      ? apiWithFallback.tx.utility.batchAll(txs)
-      : apiWithFallback.tx.utility.batch(txs)
+    const resTx =
+      mode === BatchMode.BATCH_ALL
+        ? apiWithFallback.tx.utility.batchAll(txs)
+        : apiWithFallback.tx.utility.batch(txs)
+    return resTx as TRes
   }
 }
 

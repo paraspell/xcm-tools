@@ -7,6 +7,9 @@ import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type TMultiAsset } from './TMultiAsset'
 import type { TCurrency, TCurrencyInput, TCurrencySelectionHeaderArr } from './TCurrency'
 
+export type TApiType = ApiPromise
+export type TResType = Extrinsic
+
 export type Extrinsic = SubmittableExtrinsic<'promise'>
 
 export type PolkadotXCMTransferInput = {
@@ -94,7 +97,7 @@ export type TAmount = string | number | bigint
 export type TAddress = string | TMultiLocation
 export type TDestination = TNode | TMultiLocation
 
-export type TSendBaseOptions = {
+export type TSendBaseOptions<TApi> = {
   /**
    * The destination address. A SS58 or H160 format.
    */
@@ -114,7 +117,7 @@ export type TSendBaseOptions = {
   /**
    * The optional destination API instance required for keep-alive
    */
-  destApiForKeepAlive?: ApiPromise
+  destApiForKeepAlive?: TApi
   /**
    * The optional overrided XCM version
    */
@@ -124,11 +127,11 @@ export type TSendBaseOptions = {
 /**
  * Options for transferring from a parachain to another parachain or relay chain
  */
-export type TSendOptions = TSendBaseOptions & {
+export type TSendOptions<TApi extends TApiType = ApiPromise> = TSendBaseOptions<TApi> & {
   /**
    * The Polkadot API instance
    */
-  api?: ApiPromise
+  api?: TApi
   /**
    * The origin node
    */
@@ -143,11 +146,11 @@ export type TSendOptions = TSendBaseOptions & {
   amount: TAmount | null
 }
 
-export type TSendOptionsCommon = TSendOptions & {
+export type TSendOptionsCommon<TApi extends TApiType = ApiPromise> = TSendOptions<TApi> & {
   serializedApiCallEnabled?: boolean
 }
 
-export type TSendInternalOptions = TSendBaseOptions & {
+export type TSendInternalOptions<TApi extends TApiType = ApiPromise> = TSendBaseOptions<TApi> & {
   api: ApiPromise
   currencySymbol: string | undefined
   currencyId: string | undefined
@@ -156,7 +159,7 @@ export type TSendInternalOptions = TSendBaseOptions & {
   serializedApiCallEnabled?: boolean
 }
 
-type TRelayToParaBaseOptions = {
+type TRelayToParaBaseOptions<TApi> = {
   /**
    * The destination node or multi-location
    */
@@ -172,7 +175,7 @@ type TRelayToParaBaseOptions = {
   /**
    * The optional destination API instance required for keep-alive
    */
-  destApiForKeepAlive?: ApiPromise
+  destApiForKeepAlive?: TApi
   /**
    * The optional overrided XCM version
    */
@@ -182,23 +185,24 @@ type TRelayToParaBaseOptions = {
 /**
  * Options for transferring from a relay chain to a parachain
  */
-export type TRelayToParaOptions = TRelayToParaBaseOptions & {
+export type TRelayToParaOptions<TApi> = TRelayToParaBaseOptions<TApi> & {
   /**
    * The Polkadot API instance
    */
-  api?: ApiPromise
+  api?: TApi
   /**
    * The amount to transfer
    */
   amount: TAmount
 }
 
-export type TRelayToParaInternalOptions = TRelayToParaBaseOptions & {
-  api: ApiPromise
-  amount: string
-}
+export type TRelayToParaInternalOptions<TApi extends TApiType = ApiPromise> =
+  TRelayToParaBaseOptions<TApi> & {
+    api: ApiPromise
+    amount: string
+  }
 
-export type TRelayToParaCommonOptions = TRelayToParaOptions & {
+export type TRelayToParaCommonOptions<TApi> = TRelayToParaOptions<TApi> & {
   serializedApiCallEnabled?: boolean
 }
 
