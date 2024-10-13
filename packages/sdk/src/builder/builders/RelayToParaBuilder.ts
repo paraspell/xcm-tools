@@ -1,10 +1,9 @@
 // Implements builder pattern for Relay chain to Parachain transfer operation
 
-import { type ApiPromise } from '@polkadot/api'
 import { transferRelayToPara, transferRelayToParaSerializedApiCall } from '../../pallets/xcmPallet'
+import type { TApiType, TResType } from '../../types'
 import {
   type TSerializedApiCall,
-  type Extrinsic,
   type TRelayToParaOptions,
   type TDestination,
   type TAddress,
@@ -21,20 +20,22 @@ import type BatchTransactionManager from './BatchTransactionManager'
 /**
  * Builder class for constructing transfer operations from the Relay chain to a Parachain.
  */
-class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder {
-  private readonly api?: ApiPromise
+class RelayToParaBuilder<TApi extends TApiType, TRes extends TResType>
+  implements AmountBuilder<TApi>, AddressBuilder<TApi>, UseKeepAliveFinalBuilder<TApi>
+{
+  private readonly api?: TApi
   private readonly to: TDestination
   private readonly paraIdTo?: number
 
   private _amount: number
   private _address: TAddress
-  private _destApi?: ApiPromise
+  private _destApi?: TApi
   private _version?: Version
 
   private constructor(
-    api: ApiPromise | undefined,
+    api: TApi | undefined,
     to: TDestination,
-    private batchManager: BatchTransactionManager,
+    private batchManager: BatchTransactionManager<TApi, TRes>,
     paraIdTo?: number
   ) {
     this.api = api
@@ -42,12 +43,12 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
     this.paraIdTo = paraIdTo
   }
 
-  static create(
-    api: ApiPromise | undefined,
+  static create<TApi extends TApiType, TRes extends TResType>(
+    api: TApi | undefined,
     to: TDestination,
-    batchManager: BatchTransactionManager,
+    batchManager: BatchTransactionManager<TApi, TRes>,
     paraIdTo?: number
-  ): AmountBuilder {
+  ): AmountBuilder<TApi> {
     return new RelayToParaBuilder(api, to, batchManager, paraIdTo)
   }
 
@@ -79,7 +80,7 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
    * @param destApi - The API instance of the destination chain.
    * @returns An instance of Builder
    */
-  useKeepAlive(destApi: ApiPromise): this {
+  useKeepAlive(destApi: TApi): this {
     this._destApi = destApi
     return this
   }
@@ -95,7 +96,7 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
     return this
   }
 
-  private buildOptions(): TRelayToParaOptions {
+  private buildOptions(): TRelayToParaOptions<TApi> {
     return {
       api: this.api,
       destination: this.to,
@@ -125,7 +126,7 @@ class RelayToParaBuilder implements AmountBuilder, AddressBuilder, UseKeepAliveF
    *
    * @returns A Promise that resolves to the transfer extrinsic.
    */
-  async build(): Promise<Extrinsic> {
+  async build() {
     const options = this.buildOptions()
     return await transferRelayToPara(options)
   }

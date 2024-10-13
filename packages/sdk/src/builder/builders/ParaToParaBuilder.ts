@@ -1,6 +1,5 @@
 // Implements builder pattern for XCM message creation operations operation
 
-import type { ApiPromise } from '@polkadot/api'
 import { send, sendSerializedApiCall } from '../../pallets/xcmPallet'
 import type {
   TSerializedApiCall,
@@ -11,7 +10,9 @@ import type {
   TAddress,
   TDestination,
   TCurrency,
-  Version
+  Version,
+  TApiType,
+  TResType
 } from '../../types'
 import type { AddressBuilder, UseKeepAliveFinalBuilder } from './Builder'
 import { GeneralBuilder, type AmountBuilder, type AmountOrFeeAssetBuilder } from './Builder'
@@ -20,10 +21,14 @@ import type BatchTransactionManager from './BatchTransactionManager'
 /**
  * Builder class for constructing transactions between parachains.
  */
-class ParaToParaBuilder
-  implements AmountOrFeeAssetBuilder, AmountBuilder, AddressBuilder, UseKeepAliveFinalBuilder
+class ParaToParaBuilder<TApi extends TApiType, TRes extends TResType>
+  implements
+    AmountOrFeeAssetBuilder<TApi>,
+    AmountBuilder<TApi>,
+    AddressBuilder<TApi>,
+    UseKeepAliveFinalBuilder<TApi>
 {
-  private readonly api?: ApiPromise
+  private readonly api?: TApi
   private readonly from: TNode
   private readonly to: TDestination
   private readonly currency: TCurrencyInput
@@ -32,15 +37,15 @@ class ParaToParaBuilder
   private _feeAsset?: TCurrency
   private _amount: TAmount | null
   private _address: TAddress
-  private _destApi?: ApiPromise
+  private _destApi?: TApi
   private _version?: Version
 
   private constructor(
-    api: ApiPromise | undefined,
+    api: TApi | undefined,
     from: TNode,
     to: TDestination,
     currency: TCurrencyInput,
-    private batchManager: BatchTransactionManager,
+    private batchManager: BatchTransactionManager<TApi, TRes>,
     paraIdTo?: number
   ) {
     this.api = api
@@ -50,14 +55,14 @@ class ParaToParaBuilder
     this.paraIdTo = paraIdTo
   }
 
-  static createParaToPara(
-    api: ApiPromise | undefined,
+  static createParaToPara<TApi extends TApiType, TRes extends TResType>(
+    api: TApi | undefined,
     from: TNode,
     to: TDestination,
     currency: TCurrencyInput,
-    batchManager: BatchTransactionManager,
+    batchManager: BatchTransactionManager<TApi, TRes>,
     paraIdTo?: number
-  ): AmountOrFeeAssetBuilder {
+  ): AmountOrFeeAssetBuilder<TApi> {
     return new ParaToParaBuilder(api, from, to, currency, batchManager, paraIdTo)
   }
 
@@ -100,7 +105,7 @@ class ParaToParaBuilder
    * @param destApi - The API instance of the destination chain.
    * @returns An instance of Builder
    */
-  useKeepAlive(destApi: ApiPromise): this {
+  useKeepAlive(destApi: TApi): this {
     this._destApi = destApi
     return this
   }
@@ -116,7 +121,7 @@ class ParaToParaBuilder
     return this
   }
 
-  private buildOptions(): TSendOptions {
+  private buildOptions(): TSendOptions<TApi> {
     return {
       api: this.api,
       origin: this.from,

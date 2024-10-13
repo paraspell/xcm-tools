@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import type { ApiPromise } from '@polkadot/api'
 import BatchTransactionManager from './BatchTransactionManager'
 import type { TSendOptions } from '../../types'
 import { BatchMode } from '../../types'
+import type { ApiPromise } from '@polkadot/api'
 
 const mockSendTransaction = vi.fn()
 const batchMock = vi.fn()

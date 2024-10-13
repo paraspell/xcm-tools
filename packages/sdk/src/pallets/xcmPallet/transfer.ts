@@ -1,6 +1,6 @@
 // Contains basic call formatting for different XCM Palletss
 
-import type { TTransferReturn } from '../../types'
+import type { TApiType, TResType, TTransferReturn } from '../../types'
 import {
   type Extrinsic,
   type TSerializedApiCall,
@@ -22,8 +22,11 @@ import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive/checkKeepAlive'
 import { isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
 import { getAssetBySymbolOrId } from '../assets/getAssetBySymbolOrId'
+import type { ApiPromise } from '@polkadot/api'
 
-const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn> => {
+const sendCommon = async <TApi extends TApiType>(
+  options: TSendOptionsCommon<TApi>
+): Promise<TTransferReturn> => {
   const {
     api,
     origin,
@@ -190,7 +193,9 @@ const sendCommon = async (options: TSendOptionsCommon): Promise<TTransferReturn>
   })
 }
 
-export const sendSerializedApiCall = async (options: TSendOptions): Promise<TSerializedApiCall> =>
+export const sendSerializedApiCall = async <TApi extends TApiType = ApiPromise>(
+  options: TSendOptions<TApi>
+): Promise<TSerializedApiCall> =>
   sendCommon({
     ...options,
     serializedApiCallEnabled: true
@@ -201,11 +206,12 @@ export const sendSerializedApiCall = async (options: TSendOptions): Promise<TSer
  * @param options - The transfer options.
  * @returns An extrinsic to be signed and sent.
  */
-export const send = async (options: TSendOptions): Promise<Extrinsic> =>
-  sendCommon(options) as Promise<Extrinsic>
+export const send = async <TApi extends TApiType = ApiPromise, TRes extends TResType = Extrinsic>(
+  options: TSendOptions<TApi>
+): Promise<TRes> => sendCommon(options) as Promise<TRes>
 
-export const transferRelayToParaCommon = async (
-  options: TRelayToParaCommonOptions
+export const transferRelayToParaCommon = async <TApi extends TApiType>(
+  options: TRelayToParaCommonOptions<TApi>
 ): Promise<TTransferReturn> => {
   const {
     api,
@@ -272,11 +278,15 @@ export const transferRelayToParaCommon = async (
  *
  * @returns An extrinsic to be signed and sent.
  */
-export const transferRelayToPara = async (options: TRelayToParaOptions): Promise<Extrinsic> =>
-  transferRelayToParaCommon(options) as Promise<Extrinsic>
+export const transferRelayToPara = async <
+  TApi extends TApiType = ApiPromise,
+  TRes extends TResType = Extrinsic
+>(
+  options: TRelayToParaOptions<TApi>
+): Promise<TRes> => transferRelayToParaCommon(options) as Promise<TRes>
 
-export const transferRelayToParaSerializedApiCall = async (
-  options: TRelayToParaOptions
+export const transferRelayToParaSerializedApiCall = async <TApi extends TApiType = ApiPromise>(
+  options: TRelayToParaOptions<TApi>
 ): Promise<TSerializedApiCall> =>
   transferRelayToParaCommon({
     ...options,

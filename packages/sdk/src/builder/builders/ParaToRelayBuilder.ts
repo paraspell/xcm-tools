@@ -1,36 +1,38 @@
 // Implements builder pattern for XCM message creation operations operation
 
-import type { ApiPromise } from '@polkadot/api'
 import { send, sendSerializedApiCall } from '../../pallets/xcmPallet'
 import type {
   TSerializedApiCall,
-  Extrinsic,
   TNode,
   TSendOptions,
   TAmount,
   TAddress,
   TCurrency,
-  Version
+  Version,
+  TApiType,
+  TResType
 } from '../../types'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, GeneralBuilder } from './Builder'
 import type BatchTransactionManager from './BatchTransactionManager'
 
-class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
-  private readonly api?: ApiPromise
+class ParaToRelayBuilder<TApi extends TApiType, TRes extends TResType>
+  implements AddressBuilder<TApi>, UseKeepAliveFinalBuilder<TApi>
+{
+  private readonly api?: TApi
   private readonly from: TNode
   private readonly amount: TAmount | null
   private readonly feeAsset?: TCurrency
 
   private _address: TAddress
-  private _destApi?: ApiPromise
+  private _destApi?: TApi
   private _version?: Version
 
   private constructor(
-    api: ApiPromise | undefined,
+    api: TApi | undefined,
     from: TNode,
     amount: TAmount | null,
-    private batchManager: BatchTransactionManager,
+    private batchManager: BatchTransactionManager<TApi, TRes>,
     feeAsset?: TCurrency
   ) {
     this.api = api
@@ -39,13 +41,13 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
     this.feeAsset = feeAsset
   }
 
-  static create(
-    api: ApiPromise | undefined,
+  static create<TApi extends TApiType, TRes extends TResType>(
+    api: TApi | undefined,
     from: TNode,
     amount: TAmount | null,
-    batchManager: BatchTransactionManager,
+    batchManager: BatchTransactionManager<TApi, TRes>,
     feeAsset?: TCurrency
-  ): AddressBuilder {
+  ): AddressBuilder<TApi> {
     return new ParaToRelayBuilder(api, from, amount, batchManager, feeAsset)
   }
 
@@ -54,7 +56,7 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
     return this
   }
 
-  useKeepAlive(destApi: ApiPromise): this {
+  useKeepAlive(destApi: TApi): this {
     this._destApi = destApi
     return this
   }
@@ -64,7 +66,7 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
     return this
   }
 
-  private buildOptions(): TSendOptions {
+  private buildOptions(): TSendOptions<TApi> {
     if (this.amount === null) {
       throw new Error('Amount is required')
     }
@@ -92,7 +94,7 @@ class ParaToRelayBuilder implements AddressBuilder, UseKeepAliveFinalBuilder {
     return new GeneralBuilder(this.batchManager, this.api, this.from)
   }
 
-  async build(): Promise<Extrinsic> {
+  async build() {
     const options = this.buildOptions()
     return await send(options)
   }

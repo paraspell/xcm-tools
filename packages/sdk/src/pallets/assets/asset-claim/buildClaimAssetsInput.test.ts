@@ -3,7 +3,7 @@ import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 import { buildBeneficiaryInput } from './buildBeneficiaryInput'
 import type { TMultiAsset } from '../../../types'
 import { Version } from '../../../types'
-import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
+import type { TAssetClaimOptionsInternal } from '../../../types/TAssetClaim'
 import type { ApiPromise } from '@polkadot/api'
 
 vi.mock('./buildBeneficiaryInput', () => ({
@@ -19,7 +19,7 @@ describe('buildClaimAssetsInput', () => {
     const beneficiaryInput = { parents: 1, interior: {} }
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
-    const options: TAssetClaimOptions = {
+    const options: TAssetClaimOptionsInternal = {
       node: 'Acala',
       api: apiMock,
       multiAssets,
@@ -38,7 +38,7 @@ describe('buildClaimAssetsInput', () => {
     const beneficiaryInput = { parents: 1, interior: {} }
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
-    const options: TAssetClaimOptions = {
+    const options: TAssetClaimOptionsInternal = {
       node: 'Acala',
       api: apiMock,
       multiAssets,
@@ -58,7 +58,7 @@ describe('buildClaimAssetsInput', () => {
     const beneficiaryInput = { parents: 1, interior: {} }
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
-    const options: TAssetClaimOptions = {
+    const options: TAssetClaimOptionsInternal = {
       node: 'Acala',
       api: apiMock,
       multiAssets,
