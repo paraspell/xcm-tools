@@ -1,5 +1,35 @@
 # Changelog
 
+## [6.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-v6.1.1...sdk-v6.2.0) (2024-10-14)
+
+
+### Features
+
+* **xcm-api:** Add balance queries to XCM-API 👨‍🔧 ([4475ea7](https://github.com/paraspell/xcm-tools/commit/4475ea721765638fd4d69681e9613bfd6023a3a7))
+
+
+### Documentation
+
+* Add TSDoc reference comments to exported functions 📄 ([73b8cfe](https://github.com/paraspell/xcm-tools/commit/73b8cfe6d0944a0ea2c649552c844501ad10b19c))
+
+
+### Miscellaneous Chores
+
+* Add consistent type imports ESlint rule ✏️ ([61c20ae](https://github.com/paraspell/xcm-tools/commit/61c20ae24b83d871a6a5e3819e09748df3026061))
+* **xcm-tools:** Add starter template projects to readme ([8e9cbf7](https://github.com/paraspell/xcm-tools/commit/8e9cbf7f6a8c25e7bf7dd48287d0dd66557c4c02))
+
+
+### Code Refactoring
+
+* **sdk:** Generalize Builder class - preparation for PAPI implementation 🛠️ ([5d3f34f](https://github.com/paraspell/xcm-tools/commit/5d3f34f8937d33e8a3d823988a8966f841ae9064))
+* **sdk:** Generalize PolkadotJS code ⚙️ ([582fbdf](https://github.com/paraspell/xcm-tools/commit/582fbdfce3c907cc464352867bc80d007f81cc99))
+
+
+### Tests
+
+* Improve overall unit test coverage to above 90% 🧪 ([aeb32bb](https://github.com/paraspell/xcm-tools/commit/aeb32bb6a54c1bc2e527cf587b8e0a44e3c397a5))
+* **sdk:** Correctly mock ApiPromise in Builder / transfer tests 🧪 ([8e01c4f](https://github.com/paraspell/xcm-tools/commit/8e01c4f6fd40190b6be4cae7d1adf14533cd964d))
+
 ## [6.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-v6.1.0...sdk-v6.1.1) (2024-09-30)
 
 
