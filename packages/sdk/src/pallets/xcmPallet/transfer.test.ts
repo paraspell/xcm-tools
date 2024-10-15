@@ -8,15 +8,26 @@ import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { DuplicateAssetError, IncompatibleNodesError } from '../../errors'
 import type { Extrinsic } from '../../types'
 import { type TSendOptions, type TNode, type TMultiAsset, type TMultiLocation } from '../../types'
-import { send } from './transfer'
+import { send, transferRelayToParaSerializedApiCall } from './transfer'
 import ParachainNode from '../../nodes/ParachainNode'
 import { getNode } from '../../utils'
+import { createApiInstanceForNode } from '../../utils/createApiInstanceForNode'
 import Astar from '../../nodes/supported/Astar'
 import Shiden from '../../nodes/supported/Shiden'
+import AssetHubKusama from '../../nodes/supported/AssetHubKusama'
+
+vi.mock('../../utils/createApiInstanceForNode', () => ({
+  createApiInstanceForNode: vi.fn().mockReturnValue({} as ApiPromise)
+}))
 
 vi.spyOn(ParachainNode.prototype, 'transfer').mockReturnValue({} as Extrinsic)
 vi.spyOn(Astar.prototype, 'transfer').mockReturnValue({} as Extrinsic)
 vi.spyOn(Shiden.prototype, 'transfer').mockReturnValue({} as Extrinsic)
+vi.spyOn(AssetHubKusama.prototype, 'transferRelayToPara').mockReturnValue({
+  module: 'xcmPallet',
+  section: 'limitedTeleportAssets',
+  parameters: []
+})
 
 const randomCurrencySymbol = 'DOT'
 
@@ -56,6 +67,16 @@ describe('send', () => {
     await expect(
       send({ ...sendOptions, origin: 'Acala', currency: { symbol: 'ACA' } })
     ).resolves.not.toThrowError(InvalidCurrencyError)
+  })
+
+  it('should create a new API instance when API is not provided', async () => {
+    const options = {
+      ...sendOptions,
+      api: undefined
+    }
+
+    await send(options)
+    expect(createApiInstanceForNode).toHaveBeenCalled()
   })
 
   it('should not throw an InvalidCurrencyError when passing Acala and ACA and Unique as destination', async () => {
@@ -106,6 +127,18 @@ describe('send', () => {
         destination: 'AssetHubKusama'
       })
     ).rejects.toThrowError(IncompatibleNodesError)
+  })
+
+  it('should call transferRelayToParaSerializedApiCall when passing AssetHubPolkadot, DOT and AssetHubKusama as destination', async () => {
+    const res = await transferRelayToParaSerializedApiCall({
+      api: {} as ApiPromise,
+      amount: 1000,
+      address: '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6',
+      destination: 'AssetHubKusama'
+    })
+    expect(res).toHaveProperty('module')
+    expect(res).toHaveProperty('section')
+    expect(res).toHaveProperty('parameters')
   })
 
   it('should not throw an InvalidCurrencyError when passing all defined symbols from all nodes', async () => {
@@ -260,6 +293,41 @@ describe('send', () => {
     }
 
     await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw Error if missing amount and is using multilocation', async () => {
+    const multilocation: TMultiLocation = {
+      parents: 0,
+      interior: {
+        X2: [{ PalletInstance: '50' }, { Parachain: '30' }]
+      }
+    }
+
+    const options = {
+      api,
+      origin: 'AssetHubPolkadot' as TNode,
+      destination: 'Hydration' as TNode,
+      currency: { multilocation },
+      feeAsset: 1,
+      amount: null,
+      address: '0x456'
+    }
+
+    await expect(send(options)).rejects.toThrow('Amount is required')
+  })
+
+  it('should throw Error if trying to transfer to ethereum from not AssetHub', async () => {
+    const options = {
+      api,
+      origin: 'Hydration' as TNode,
+      destination: 'Ethereum' as TNode,
+      currency: { symbol: 'ETH' },
+      feeAsset: 1,
+      amount: 1000,
+      address: '0x456'
+    }
+
+    await expect(send(options)).rejects.toThrow(IncompatibleNodesError)
   })
 
   it('should throw InvalidCurrencyError when multi assets are used without specifying fee asset', async () => {

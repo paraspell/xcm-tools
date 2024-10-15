@@ -4,7 +4,7 @@ import { getParameters } from './getParameters'
 import XTokensTransferImpl from './XTokensTransferImpl'
 import type { TMultiLocation, XTokensTransferInput } from '../../types'
 import { Parents } from '../../types'
-import type { ApiPromise } from '@polkadot/api'
+import type PolkadotJsApi from '../../api/PolkadotJsApi'
 
 vi.mock('./getCurrencySelection', () => ({
   getCurrencySelection: vi.fn()
@@ -20,8 +20,8 @@ const mockMultiLocation: TMultiLocation = {
 }
 
 const mockApi = {
-  tx: { xTokens: { transfer: vi.fn() } }
-} as unknown as ApiPromise
+  call: vi.fn()
+} as unknown as PolkadotJsApi
 
 describe('XTokensTransferImpl', () => {
   it('throws an error for multilocation destinations', () => {
@@ -91,8 +91,14 @@ describe('XTokensTransferImpl', () => {
     vi.mocked(getCurrencySelection).mockReturnValue(currencySelection)
     vi.mocked(getParameters).mockReturnValue(['param1', 'param2', 'param3'])
 
+    const callSpy = vi.spyOn(mockApi, 'call')
+
     XTokensTransferImpl.transferXTokens(input, currencySelection)
 
-    expect(mockApi.tx.xTokens.transfer).toHaveBeenCalledWith('param1', 'param2', 'param3')
+    expect(callSpy).toHaveBeenCalledWith({
+      module: 'xTokens',
+      section: 'transfer',
+      parameters: ['param1', 'param2', 'param3']
+    })
   })
 })

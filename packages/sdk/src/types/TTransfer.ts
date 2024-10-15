@@ -6,14 +6,20 @@ import { type TNode } from './TNode'
 import { type SubmittableExtrinsic } from '@polkadot/api/types'
 import { type TMultiAsset } from './TMultiAsset'
 import type { TCurrency, TCurrencyInput, TCurrencySelectionHeaderArr } from './TCurrency'
+import type { IPolkadotApi } from '../api/IPolkadotApi'
 
 export type TApiType = ApiPromise
 export type TResType = Extrinsic
 
+export type HexString = `0x${string}`
+
 export type Extrinsic = SubmittableExtrinsic<'promise'>
 
-export type PolkadotXCMTransferInput = {
-  api: ApiPromise
+export type PolkadotXCMTransferInput<
+  TApi extends TApiType = ApiPromise,
+  TRes extends TResType = Extrinsic
+> = {
+  api: IPolkadotApi<TApi, TRes>
   header: TMultiLocationHeader
   addressSelection: TMultiLocationHeader
   amount: string
@@ -29,8 +35,11 @@ export type PolkadotXCMTransferInput = {
   serializedApiCallEnabled?: boolean
 }
 
-export type XTokensTransferInput = {
-  api: ApiPromise
+export type XTokensTransferInput<
+  TApi extends TApiType = ApiPromise,
+  TRes extends TResType = Extrinsic
+> = {
+  api: IPolkadotApi<TApi, TRes>
   currency: string | undefined
   currencyID: string | undefined
   amount: string
@@ -45,8 +54,11 @@ export type XTokensTransferInput = {
   serializedApiCallEnabled?: boolean
 }
 
-export type XTransferTransferInput = {
-  api: ApiPromise
+export type XTransferTransferInput<
+  TApi extends TApiType = ApiPromise,
+  TRes extends TResType = Extrinsic
+> = {
+  api: IPolkadotApi<TApi, TRes>
   currency: string | undefined
   currencyID: string | undefined
   amount: string
@@ -58,16 +70,25 @@ export type XTransferTransferInput = {
   serializedApiCallEnabled?: boolean
 }
 
-export type IPolkadotXCMTransfer = {
-  transferPolkadotXCM: (input: PolkadotXCMTransferInput) => TTransferReturn
+export type IPolkadotXCMTransfer<
+  TApi extends TApiType = ApiPromise,
+  TRes extends TResType = Extrinsic
+> = {
+  transferPolkadotXCM: (input: PolkadotXCMTransferInput<TApi, TRes>) => TTransferReturn
 }
 
-export type IXTokensTransfer = {
-  transferXTokens: (input: XTokensTransferInput) => TTransferReturn
+export type IXTokensTransfer<
+  TApi extends TApiType = ApiPromise,
+  TRes extends TResType = Extrinsic
+> = {
+  transferXTokens: (input: XTokensTransferInput<TApi, TRes>) => TTransferReturn
 }
 
-export type IXTransferTransfer = {
-  transferXTransfer: (input: XTransferTransferInput) => TTransferReturn
+export type IXTransferTransfer<
+  TApi extends TApiType = ApiPromise,
+  TRes extends TResType = Extrinsic
+> = {
+  transferXTransfer: (input: XTransferTransferInput<TApi, TRes>) => TTransferReturn
 }
 
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
@@ -150,8 +171,11 @@ export type TSendOptionsCommon<TApi extends TApiType = ApiPromise> = TSendOption
   serializedApiCallEnabled?: boolean
 }
 
-export type TSendInternalOptions<TApi extends TApiType = ApiPromise> = TSendBaseOptions<TApi> & {
-  api: ApiPromise
+export type TSendInternalOptions<
+  TApi extends TApiType = ApiPromise,
+  TRes extends TResType = Extrinsic
+> = TSendBaseOptions<TApi> & {
+  api: IPolkadotApi<TApi, TRes>
   currencySymbol: string | undefined
   currencyId: string | undefined
   amount: string
@@ -196,11 +220,13 @@ export type TRelayToParaOptions<TApi> = TRelayToParaBaseOptions<TApi> & {
   amount: TAmount
 }
 
-export type TRelayToParaInternalOptions<TApi extends TApiType = ApiPromise> =
-  TRelayToParaBaseOptions<TApi> & {
-    api: ApiPromise
-    amount: string
-  }
+export type TRelayToParaInternalOptions<
+  TApi extends TApiType = ApiPromise,
+  TRes extends TResType = Extrinsic
+> = TRelayToParaBaseOptions<TApi> & {
+  api: IPolkadotApi<TApi, TRes>
+  amount: string
+}
 
 export type TRelayToParaCommonOptions<TApi> = TRelayToParaOptions<TApi> & {
   serializedApiCallEnabled?: boolean

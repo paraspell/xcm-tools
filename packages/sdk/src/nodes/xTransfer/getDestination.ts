@@ -5,7 +5,6 @@ import {
   type TMultiLocation,
   type XTransferTransferInput
 } from '../../types'
-import { createAccID } from '../../utils'
 
 export const getDestination = ({
   recipientAddress,
@@ -27,7 +26,7 @@ export const getDestination = ({
       }
     : {
         AccountId32: {
-          id: createAccID(api, recipientAddress)
+          id: api.createAccountId(recipientAddress)
         }
       }
 

@@ -49,7 +49,11 @@ class XTokensTransferImpl {
       }
     }
 
-    return api.tx[module][section](...parameters)
+    return api.call({
+      module,
+      section,
+      parameters
+    })
   }
 }
 

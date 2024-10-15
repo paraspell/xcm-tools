@@ -1,6 +1,5 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
-import type { ApiPromise } from '@polkadot/api'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getNativeAssetSymbol, getParaId } from '../pallets/assets'
 import type {
@@ -19,7 +18,9 @@ import type {
   TTransferReturn,
   TMultiAsset,
   TMultiLocation,
-  TMultiLocationHeader
+  TMultiLocationHeader,
+  TApiType,
+  TResType
 } from '../types'
 import { Version, Parents } from '../types'
 import {
@@ -36,20 +37,27 @@ import {
   isTMultiLocation
 } from '../pallets/xcmPallet/utils'
 import { InvalidCurrencyError } from '../errors'
+import type { ApiPromise } from '@polkadot/api'
 
-const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
+const supportsXTokens = <TApi extends TApiType, TRes extends TResType>(
+  obj: unknown
+): obj is IXTokensTransfer<TApi, TRes> => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
 }
 
-const supportsXTransfer = (obj: unknown): obj is IXTransferTransfer => {
+const supportsXTransfer = <TApi extends TApiType, TRes extends TResType>(
+  obj: unknown
+): obj is IXTransferTransfer<TApi, TRes> => {
   return typeof obj === 'object' && obj !== null && 'transferXTransfer' in obj
 }
 
-const supportsPolkadotXCM = (obj: unknown): obj is IPolkadotXCMTransfer => {
+const supportsPolkadotXCM = <TApi extends TApiType, TRes extends TResType>(
+  obj: unknown
+): obj is IPolkadotXCMTransfer<TApi, TRes> => {
   return typeof obj === 'object' && obj !== null && 'transferPolkadotXCM' in obj
 }
 
-abstract class ParachainNode {
+abstract class ParachainNode<TApi extends TApiType = ApiPromise> {
   private readonly _node: TNode
 
   // Property _name maps our node names to names which polkadot libs are using
@@ -209,7 +217,7 @@ abstract class ParachainNode {
     return getAllNodeProviders(this.node as TNodePolkadotKusama)[0]
   }
 
-  async createApiInstance(): Promise<ApiPromise> {
+  async createApiInstance(): Promise<TApi> {
     return await createApiInstance(this.getProvider())
   }
 

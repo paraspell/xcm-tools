@@ -1,14 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { ApiPromise } from '@polkadot/api'
 import type { TAddress } from '../types'
 import { Parents, Version } from '../types'
-import { createAccID } from '../utils'
 import { generateAddressMultiLocationV4 } from './generateAddressMultiLocationV4'
 import * as ethers from 'ethers'
-
-vi.mock('../utils', () => ({
-  createAccID: vi.fn()
-}))
+import type PolkadotJsApi from '../api/PolkadotJsApi'
 
 vi.mock('ethers', () => ({
   ethers: {
@@ -17,10 +12,12 @@ vi.mock('ethers', () => ({
 }))
 
 describe('generateAddressMultiLocationV4', () => {
-  let apiMock: ApiPromise
+  let apiMock: PolkadotJsApi
 
   beforeEach(() => {
-    apiMock = {} as ApiPromise
+    apiMock = {
+      createAccountId: vi.fn()
+    } as unknown as PolkadotJsApi
   })
 
   it('should return a multi-location object when the address is a multi-location object', () => {
@@ -50,7 +47,7 @@ describe('generateAddressMultiLocationV4', () => {
     const standardAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
     const accIDMock = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
-    vi.mocked(createAccID).mockReturnValue(accIDMock)
+    const accountIdSpy = vi.spyOn(apiMock, 'createAccountId').mockReturnValue(accIDMock)
 
     const result = generateAddressMultiLocationV4(apiMock, standardAddress)
 
@@ -63,14 +60,14 @@ describe('generateAddressMultiLocationV4', () => {
       }
     })
 
-    expect(createAccID).toHaveBeenCalledWith(apiMock, standardAddress)
+    expect(accountIdSpy).toHaveBeenCalledWith(standardAddress)
   })
 
   it('should handle invalid Ethereum address appropriately', () => {
-    const invalidEthAddress = 'invalidEthAddress'
+    const invalidEthAddress = '0xinvalidEthAddress'
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
     const accIDMock = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
-    vi.mocked(createAccID).mockReturnValue(accIDMock)
+    const accountIdSpy = vi.spyOn(apiMock, 'createAccountId').mockReturnValue(accIDMock)
 
     const result = generateAddressMultiLocationV4(apiMock, invalidEthAddress)
 
@@ -83,6 +80,6 @@ describe('generateAddressMultiLocationV4', () => {
       }
     })
 
-    expect(createAccID).toHaveBeenCalledWith(apiMock, invalidEthAddress)
+    expect(accountIdSpy).toHaveBeenCalledWith(invalidEthAddress)
   })
 })
