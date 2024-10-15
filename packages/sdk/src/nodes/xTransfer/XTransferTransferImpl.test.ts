@@ -9,11 +9,11 @@ import type {
   XTransferTransferInput
 } from '../../types'
 import { Parents, Version } from '../../types'
-import type { ApiPromise } from '@polkadot/api'
+import type PolkadotJsApi from '../../api/PolkadotJsApi'
 
 const mockApi = {
-  tx: { xTransfer: { transfer: vi.fn() } }
-} as unknown as ApiPromise
+  call: vi.fn()
+} as unknown as PolkadotJsApi
 
 const mockMultiLocation: TMultiLocation = {
   parents: Parents.ONE,
@@ -94,18 +94,20 @@ describe('XTransferTransferImpl', () => {
       origin: 'Khala',
       destination: 'Phala',
       serializedApiCallEnabled: false
-    } as XTransferTransferInput
+    } as unknown as XTransferTransferInput
 
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
 
+    const callSpy = vi.spyOn(mockApi, 'call')
+
     XTransferTransferImpl.transferXTransfer(input)
 
-    expect(mockApi.tx.xTransfer.transfer).toHaveBeenCalledWith(
-      Object.values(mockCurrencySpec)[0][0],
-      mockMultiLocation,
-      null
-    )
+    expect(callSpy).toHaveBeenCalledWith({
+      module: 'xTransfer',
+      section: 'transfer',
+      parameters: [Object.values(mockCurrencySpec)[0][0], mockMultiLocation, null]
+    })
   })
 
   it('executes transaction for non-serialized calls with Phala as origin', () => {
@@ -115,7 +117,7 @@ describe('XTransferTransferImpl', () => {
       origin: 'Phala',
       destination: 'Karura',
       serializedApiCallEnabled: false
-    } as XTransferTransferInput
+    } as unknown as XTransferTransferInput
 
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
@@ -127,12 +129,14 @@ describe('XTransferTransferImpl', () => {
 
     vi.mocked(determineDestWeight).mockReturnValue(mockDestWeight)
 
+    const callSpy = vi.spyOn(mockApi, 'call')
+
     XTransferTransferImpl.transferXTransfer(input)
 
-    expect(mockApi.tx.xTransfer.transfer).toHaveBeenCalledWith(
-      Object.values(mockCurrencySpec)[0][0],
-      mockMultiLocation,
-      mockDestWeight
-    )
+    expect(callSpy).toHaveBeenCalledWith({
+      module: 'xTransfer',
+      section: 'transfer',
+      parameters: [Object.values(mockCurrencySpec)[0][0], mockMultiLocation, mockDestWeight]
+    })
   })
 })

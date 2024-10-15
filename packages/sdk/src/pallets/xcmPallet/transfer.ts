@@ -23,6 +23,7 @@ import { checkKeepAlive } from './keepAlive/checkKeepAlive'
 import { isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
 import { getAssetBySymbolOrId } from '../assets/getAssetBySymbolOrId'
 import type { ApiPromise } from '@polkadot/api'
+import PolkadotJsApi from '../../api/PolkadotJsApi'
 
 const sendCommon = async <TApi extends TApiType>(
   options: TSendOptionsCommon<TApi>
@@ -148,6 +149,9 @@ const sendCommon = async <TApi extends TApiType>(
 
   const apiWithFallback = api ?? (await createApiInstanceForNode(origin))
 
+  const polkadotApi = new PolkadotJsApi()
+  polkadotApi.init(apiWithFallback)
+
   const amountStr = amount?.toString()
 
   if ('multilocation' in currency || 'multiasset' in currency) {
@@ -174,7 +178,7 @@ const sendCommon = async <TApi extends TApiType>(
     'symbol' in currency ? currency.symbol : 'id' in currency ? currency.id.toString() : undefined
 
   return originNode.transfer({
-    api: apiWithFallback,
+    api: polkadotApi,
     currencySymbol: asset?.symbol ?? currencyStr,
     currencyId: asset?.assetId,
     amount: amountStr ?? '',
@@ -233,6 +237,9 @@ export const transferRelayToParaCommon = async <TApi extends TApiType>(
   const apiWithFallback =
     api ?? (await createApiInstanceForNode(determineRelayChain(destination as TNode)))
 
+  const polkadotApi = new PolkadotJsApi()
+  polkadotApi.init(apiWithFallback)
+
   const amountStr = amount.toString()
 
   if (isMultiLocationDestination) {
@@ -255,7 +262,7 @@ export const transferRelayToParaCommon = async <TApi extends TApiType>(
   const serializedApiCall = getNode(
     isMultiLocationDestination ? resolveTNodeFromMultiLocation(destination) : destination
   ).transferRelayToPara({
-    api: apiWithFallback,
+    api: polkadotApi,
     destination,
     address,
     amount: amountStr,

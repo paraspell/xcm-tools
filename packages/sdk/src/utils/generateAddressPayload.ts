@@ -1,12 +1,18 @@
-import type { ApiPromise } from '@polkadot/api'
-import type { TAddress, TMultiLocationHeader, TPallet, TScenario } from '../types'
+import type {
+  TAddress,
+  TApiType,
+  TMultiLocationHeader,
+  TPallet,
+  TResType,
+  TScenario
+} from '../types'
 import { Parents, Version } from '../types'
 import { ethers } from 'ethers'
 import { createX1Payload } from './createX1Payload'
-import { createAccID } from '../utils'
+import type { IPolkadotApi } from '../api/IPolkadotApi'
 
-export const generateAddressPayload = (
-  api: ApiPromise,
+export const generateAddressPayload = <TApi extends TApiType, TRes extends TResType>(
+  api: IPolkadotApi<TApi, TRes>,
   scenario: TScenario,
   pallet: TPallet | null,
   recipientAddress: TAddress,
@@ -27,7 +33,7 @@ export const generateAddressPayload = (
         interior: createX1Payload(version, {
           AccountId32: {
             ...(version === Version.V1 && { network: 'any' }),
-            id: createAccID(api, recipientAddress)
+            id: api.createAccountId(recipientAddress)
           }
         })
       }
@@ -53,7 +59,7 @@ export const generateAddressPayload = (
               : {
                   AccountId32: {
                     ...(version === Version.V1 && { network: 'any' }),
-                    id: createAccID(api, recipientAddress)
+                    id: api.createAccountId(recipientAddress)
                   }
                 }
           ]
@@ -78,7 +84,7 @@ export const generateAddressPayload = (
             : {
                 AccountId32: {
                   ...(version === Version.V1 && { network: 'any' }),
-                  id: createAccID(api, recipientAddress)
+                  id: api.createAccountId(recipientAddress)
                 }
               }
         )
@@ -93,7 +99,7 @@ export const generateAddressPayload = (
         version,
         isEthAddress
           ? { AccountKey20: { key: recipientAddress } }
-          : { AccountId32: { id: createAccID(api, recipientAddress) } }
+          : { AccountId32: { id: api.createAccountId(recipientAddress) } }
       )
     }
   }

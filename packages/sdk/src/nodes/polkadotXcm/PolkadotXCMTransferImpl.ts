@@ -33,9 +33,14 @@ class PolkadotXCMTransferImpl {
       }
     }
 
-    return fees !== undefined
-      ? api.tx[module][section](header, addressSelection, currencySelection, feeAsset, fees)
-      : api.tx[module][section](header, addressSelection, currencySelection, feeAsset)
+    return api.call({
+      module,
+      section,
+      parameters:
+        fees !== undefined
+          ? [header, addressSelection, currencySelection, feeAsset, fees]
+          : [header, addressSelection, currencySelection, feeAsset]
+    })
   }
 }
 

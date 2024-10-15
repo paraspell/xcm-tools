@@ -3,10 +3,10 @@ import { ethers } from 'ethers'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type AssetHubPolkadot from './AssetHubPolkadot'
-import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic, PolkadotXCMTransferInput } from '../../types'
 import { getOtherAssets } from '../../pallets/assets'
 import { getNode } from '../../utils'
+import type PolkadotJsApi from '../../api/PolkadotJsApi'
 
 vi.mock('ethers', () => ({
   ethers: {
@@ -36,7 +36,7 @@ vi.mock('../../utils/generateAddressPayload', () => ({
 describe('AssetHubPolkadot', () => {
   let assetHub: AssetHubPolkadot
   const mockInput = {
-    api: {} as unknown as ApiPromise,
+    api: {} as PolkadotJsApi,
     currencySymbol: 'DOT',
     currencySelection: {},
     currencyId: '0',

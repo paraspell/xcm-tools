@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import type { ApiPromise } from '@polkadot/api'
-import { createAccID } from './createAccID'
+import { createAccountId } from './createAccountId'
 
 describe('createAccID', () => {
   it('should create AccountId32 hex string', () => {
@@ -13,15 +13,11 @@ describe('createAccID', () => {
       })
     } as unknown as ApiPromise
 
-    const consoleLogSpy = vi.spyOn(console, 'log')
     const createTypeSpy = vi.spyOn(api, 'createType')
 
-    const result = createAccID(api, account)
+    const result = createAccountId(api, account)
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Generating AccountId32 address')
     expect(createTypeSpy).toHaveBeenCalledWith('AccountId32', account)
     expect(result).toBe(hexString)
-
-    consoleLogSpy.mockRestore()
   })
 })

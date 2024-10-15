@@ -1,11 +1,10 @@
-import type { ApiPromise } from '@polkadot/api'
-import type { TAddress, TMultiLocationHeader } from '../types'
+import type { TAddress, TApiType, TMultiLocationHeader, TResType } from '../types'
 import { Parents, Version } from '../types'
 import { ethers } from 'ethers'
-import { createAccID } from '../utils'
+import type { IPolkadotApi } from '../api/IPolkadotApi'
 
-export const generateAddressMultiLocationV4 = (
-  api: ApiPromise,
+export const generateAddressMultiLocationV4 = <TApi extends TApiType, TRes extends TResType>(
+  api: IPolkadotApi<TApi, TRes>,
   address: TAddress
 ): TMultiLocationHeader => {
   const isMultiLocation = typeof address === 'object'
@@ -21,7 +20,7 @@ export const generateAddressMultiLocationV4 = (
         X1: [
           isEthAddress
             ? { AccountKey20: { key: address } }
-            : { AccountId32: { id: createAccID(api, address), network: null } }
+            : { AccountId32: { id: api.createAccountId(address), network: null } }
         ]
       }
     }

@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
 import PolkadotXCMTransferImpl from './PolkadotXCMTransferImpl'
-import type { ApiPromise } from '@polkadot/api'
 import type {
   PolkadotXcmSection,
   PolkadotXCMTransferInput,
@@ -8,14 +7,11 @@ import type {
   TMultiLocationHeader
 } from '../../types'
 import { Version } from '../../types'
+import type PolkadotJsApi from '../../api/PolkadotJsApi'
 
 const mockApi = {
-  tx: {
-    polkadotXcm: {
-      limitedReserveTransferAssets: vi.fn()
-    }
-  }
-} as unknown as ApiPromise
+  call: vi.fn()
+} as unknown as PolkadotJsApi
 
 const mockHeader: TMultiLocationHeader = {
   [Version.V4]: {
@@ -62,7 +58,7 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset,
         serializedApiCallEnabled: true
-      } as PolkadotXCMTransferInput,
+      } as unknown as PolkadotXCMTransferInput,
       mockSection,
       { Limited: '1000' }
     )
@@ -81,6 +77,8 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
   })
 
   it('should call api.tx[module][section] with correct parameters when serializedApiCallEnabled is false and fees is undefined', () => {
+    const callSpy = vi.spyOn(mockApi, 'call')
+
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
         api: mockApi,
@@ -89,20 +87,21 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset,
         serializedApiCallEnabled: false
-      } as PolkadotXCMTransferInput,
+      } as unknown as PolkadotXCMTransferInput,
       mockSection,
       undefined
     )
 
-    expect(mockApi.tx.polkadotXcm[mockSection]).toHaveBeenCalledWith(
-      mockHeader,
-      mockAddressSelection,
-      mockCurrencySelection,
-      mockFeeAsset
-    )
+    expect(callSpy).toHaveBeenCalledWith({
+      module: 'polkadotXcm',
+      section: mockSection,
+      parameters: [mockHeader, mockAddressSelection, mockCurrencySelection, mockFeeAsset]
+    })
   })
 
   it('should call api.tx[module][section] with correct parameters when serializedApiCallEnabled is false and fees is "Unlimited"', () => {
+    const callSpy = vi.spyOn(mockApi, 'call')
+
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
         api: mockApi,
@@ -111,21 +110,27 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset,
         serializedApiCallEnabled: false
-      } as PolkadotXCMTransferInput,
+      } as unknown as PolkadotXCMTransferInput,
       mockSection,
       'Unlimited'
     )
 
-    expect(mockApi.tx.polkadotXcm[mockSection]).toHaveBeenCalledWith(
-      mockHeader,
-      mockAddressSelection,
-      mockCurrencySelection,
-      mockFeeAsset,
-      'Unlimited'
-    )
+    expect(callSpy).toHaveBeenCalledWith({
+      module: 'polkadotXcm',
+      section: mockSection,
+      parameters: [
+        mockHeader,
+        mockAddressSelection,
+        mockCurrencySelection,
+        mockFeeAsset,
+        'Unlimited'
+      ]
+    })
   })
 
   it('should call api.tx[module][section] with correct parameters when serializedApiCallEnabled is false and fees is Limited', () => {
+    const callSpy = vi.spyOn(mockApi, 'call')
+
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
         api: mockApi,
@@ -134,17 +139,21 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset,
         serializedApiCallEnabled: false
-      } as PolkadotXCMTransferInput,
+      } as unknown as PolkadotXCMTransferInput,
       mockSection,
       { Limited: '1000' }
     )
 
-    expect(mockApi.tx.polkadotXcm[mockSection]).toHaveBeenCalledWith(
-      mockHeader,
-      mockAddressSelection,
-      mockCurrencySelection,
-      mockFeeAsset,
-      { Limited: '1000' }
-    )
+    expect(callSpy).toHaveBeenCalledWith({
+      module: 'polkadotXcm',
+      section: mockSection,
+      parameters: [
+        mockHeader,
+        mockAddressSelection,
+        mockCurrencySelection,
+        mockFeeAsset,
+        { Limited: '1000' }
+      ]
+    })
   })
 })

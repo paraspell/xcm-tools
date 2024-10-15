@@ -1,17 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
 import { ethers } from 'ethers'
-import { createAccID } from '../../utils'
 import { getDestination } from './getDestination'
 import type { XTransferTransferInput } from '../../types'
+import type PolkadotJsApi from '../../api/PolkadotJsApi'
 
 vi.mock('ethers', () => ({
   ethers: {
     isAddress: vi.fn()
   }
-}))
-
-vi.mock('../../utils', () => ({
-  createAccID: vi.fn()
 }))
 
 describe('getDestination', () => {
@@ -56,12 +52,17 @@ describe('getDestination', () => {
   it('returns a correct multi-location for non-Ethereum addresses using createAccID', () => {
     vi.mocked(ethers.isAddress).mockReturnValue(false)
     const mockAddress = '0x123'
-    vi.mocked(createAccID).mockReturnValue(mockAddress)
+    const apiMock = {
+      createAccountId: vi.fn().mockReturnValue(mockAddress)
+    } as unknown as PolkadotJsApi
     const nonEthAddressInput = {
       recipientAddress: 'someAccountId',
       paraId: 3000,
-      api: {}
-    } as XTransferTransferInput
+      api: apiMock
+    } as unknown as XTransferTransferInput
+
+    const accountIdSpy = vi.spyOn(apiMock, 'createAccountId')
+
     const result = getDestination(nonEthAddressInput)
     expect(result).toEqual({
       parents: 1,
@@ -78,6 +79,6 @@ describe('getDestination', () => {
         ]
       }
     })
-    expect(createAccID).toHaveBeenCalledWith(nonEthAddressInput.api, 'someAccountId')
+    expect(accountIdSpy).toHaveBeenCalledWith('someAccountId')
   })
 })

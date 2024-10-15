@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { buildBeneficiaryInput } from './buildBeneficiaryInput'
-import { createAccID } from '../../../utils'
+import { createAccountId } from '../../../utils'
 import { ethers } from 'ethers'
 import { Parents } from '../../../types'
 import type { ApiPromise } from '@polkadot/api'
@@ -12,7 +12,7 @@ vi.mock('ethers', () => ({
 }))
 
 vi.mock('../../../utils', () => ({
-  createAccID: vi.fn()
+  createAccountId: vi.fn()
 }))
 
 describe('buildBeneficiaryInput', () => {
@@ -49,7 +49,7 @@ describe('buildBeneficiaryInput', () => {
     const nonEthAddress = 'somePolkadotAddress'
     const accountId32 = '0xabcdef'
     vi.mocked(ethers.isAddress).mockReturnValue(false)
-    vi.mocked(createAccID).mockReturnValue(accountId32)
+    vi.mocked(createAccountId).mockReturnValue(accountId32)
 
     const result = buildBeneficiaryInput(apiMock, nonEthAddress)
 
@@ -63,6 +63,6 @@ describe('buildBeneficiaryInput', () => {
         }
       }
     })
-    expect(createAccID).toHaveBeenCalledWith(apiMock, nonEthAddress)
+    expect(createAccountId).toHaveBeenCalledWith(apiMock, nonEthAddress)
   })
 })

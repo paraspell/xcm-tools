@@ -46,7 +46,12 @@ class XTransferTransferImpl {
         parameters: [currencySpec, dest, destWeight]
       }
     }
-    return api.tx[module][section](currencySpec, dest, destWeight)
+
+    return api.call({
+      module,
+      section,
+      parameters: [currencySpec, dest, destWeight]
+    })
   }
 }
 
