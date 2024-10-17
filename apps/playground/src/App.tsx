@@ -2,16 +2,27 @@ import {
   AppShell,
   Burger,
   Button,
+  Center,
   Group,
   Image,
   MantineProvider,
   NavLink,
+  rem,
+  SegmentedControl,
+  Switch,
+  Text,
 } from "@mantine/core";
 import "@mantine/core/styles.css";
 import { useDisclosure } from "@mantine/hooks";
 import { web3Accounts, web3Enable } from "@polkadot/extension-dapp";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import { IconAnalyze, IconBoxSeam, IconRoute } from "@tabler/icons-react";
+import {
+  IconAnalyze,
+  IconBoxSeam,
+  IconCode,
+  IconEye,
+  IconRoute,
+} from "@tabler/icons-react";
 import { useState } from "react";
 import {
   BrowserRouter,
@@ -105,6 +116,34 @@ const App = () => {
                 size="sm"
               />
               <Image src="logo.png" h="100%" p={8} />
+              <Group>
+                <SegmentedControl
+                  data={[
+                    {
+                      value: "preview",
+                      label: (
+                        <Center style={{ gap: 10 }}>
+                          <IconEye
+                            style={{ width: rem(16), height: rem(16) }}
+                          />
+                          <span>PJS</span>
+                        </Center>
+                      ),
+                    },
+                    {
+                      value: "code",
+                      label: (
+                        <Center style={{ gap: 10 }}>
+                          <IconCode
+                            style={{ width: rem(16), height: rem(16) }}
+                          />
+                          <span>PAPI</span>
+                        </Center>
+                      ),
+                    },
+                  ]}
+                />
+              </Group>
               {selectedAccount ? (
                 <Button
                   onClick={onChangeAccountClick}

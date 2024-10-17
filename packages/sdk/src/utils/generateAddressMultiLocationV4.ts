@@ -1,9 +1,9 @@
-import type { TAddress, TApiType, TMultiLocationHeader, TResType } from '../types'
+import type { TAddress, TMultiLocationHeader } from '../types'
 import { Parents, Version } from '../types'
 import { ethers } from 'ethers'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 
-export const generateAddressMultiLocationV4 = <TApi extends TApiType, TRes extends TResType>(
+export const generateAddressMultiLocationV4 = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   address: TAddress
 ): TMultiLocationHeader => {

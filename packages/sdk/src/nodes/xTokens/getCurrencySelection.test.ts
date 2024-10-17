@@ -5,6 +5,8 @@ import { getCurrencySelection } from './getCurrencySelection'
 import type { TCurrencySelectionHeader } from '../../types'
 import { Parents, Version, type XTokensTransferInput } from '../../types'
 import type ParachainNode from '../ParachainNode'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../../utils', () => ({
   getNode: vi.fn()
@@ -41,11 +43,14 @@ describe('getCurrencySelection', () => {
         parents: Parents.ZERO,
         interior: 'Here'
       }
-    } as XTokensTransferInput
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
     const currencySelection = '123'
     const isAssetHub = false
 
-    vi.mocked(getNode).mockReturnValue({ version: Version.V4 } as ParachainNode)
+    vi.mocked(getNode).mockReturnValue({ version: Version.V4 } as ParachainNode<
+      ApiPromise,
+      Extrinsic
+    >)
 
     const result = getCurrencySelection(input, isAssetHub, currencySelection)
     expect(result).toEqual({ V4: input.overridedCurrencyMultiLocation })
@@ -58,11 +63,14 @@ describe('getCurrencySelection', () => {
       currencyID: '123',
       paraIdTo: 1000,
       overridedCurrencyMultiLocation: undefined
-    } as XTokensTransferInput
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
     const currencySelection = '123'
     const isAssetHub = true
 
-    vi.mocked(getNode).mockReturnValue({ version: Version.V4 } as ParachainNode)
+    vi.mocked(getNode).mockReturnValue({ version: Version.V4 } as ParachainNode<
+      ApiPromise,
+      Extrinsic
+    >)
     vi.mocked(getModifiedCurrencySelection).mockReturnValue(mockCurrencySelectionHeader)
 
     const result = getCurrencySelection(input, isAssetHub, currencySelection)
@@ -76,11 +84,14 @@ describe('getCurrencySelection', () => {
       currencyID: '123',
       paraIdTo: 3000,
       overridedCurrencyMultiLocation: undefined
-    } as XTokensTransferInput
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
     const currencySelection = '123'
     const isAssetHub = false
 
-    vi.mocked(getNode).mockReturnValue({ version: Version.V4 } as ParachainNode)
+    vi.mocked(getNode).mockReturnValue({ version: Version.V4 } as ParachainNode<
+      ApiPromise,
+      Extrinsic
+    >)
 
     const result = getCurrencySelection(input, isAssetHub, currencySelection)
     expect(result).toEqual(currencySelection)

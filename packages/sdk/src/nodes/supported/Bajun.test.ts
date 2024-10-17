@@ -9,6 +9,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Bajun from './Bajun'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -17,15 +19,15 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Bajun', () => {
-  let bajun: Bajun
+  let bajun: Bajun<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'ParaToPara',
     currency: 'BAJ',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    bajun = getNode('Bajun')
+    bajun = getNode<ApiPromise, Extrinsic, 'Bajun'>('Bajun')
   })
 
   it('should initialize with correct values', () => {
@@ -36,7 +38,10 @@ describe('Bajun', () => {
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'RelayToPara' } as XTokensTransferInput
+    const invalidInput = { ...mockInput, scenario: 'RelayToPara' } as XTokensTransferInput<
+      ApiPromise,
+      Extrinsic
+    >
 
     expect(() => bajun.transferXTokens(invalidInput)).toThrowError(
       new ScenarioNotSupportedError(bajun.node, 'RelayToPara')

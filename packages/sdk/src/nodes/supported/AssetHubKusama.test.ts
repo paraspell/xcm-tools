@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { ScenarioNotSupportedError } from '../../errors'
 import type { PolkadotXCMTransferInput } from '../../types'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 describe('transferPolkadotXCM', () => {
   it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', () => {
@@ -11,7 +13,7 @@ describe('transferPolkadotXCM', () => {
       currencyId: undefined,
       scenario: 'ParaToPara',
       destination: 'Karura'
-    } as PolkadotXCMTransferInput
+    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
     expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
   })
@@ -23,7 +25,7 @@ describe('transferPolkadotXCM', () => {
       currencyId: undefined,
       scenario: 'ParaToPara',
       destination: 'Karura'
-    } as PolkadotXCMTransferInput
+    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
     expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
   })

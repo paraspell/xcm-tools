@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ScenarioNotSupportedError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { PolkadotXCMTransferInput, TRelayToParaInternalOptions } from '../../types'
+import type { PolkadotXCMTransferInput, TRelayToParaOptions } from '../../types'
 import { Version } from '../../types'
 import type BridgeHubPolkadot from './BridgeHubPolkadot'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../polkadotXcm', () => ({
   default: {
@@ -18,19 +20,19 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 }))
 
 describe('BridgeHubPolkadot', () => {
-  let bridgeHubPolkadot: BridgeHubPolkadot
+  let bridgeHubPolkadot: BridgeHubPolkadot<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'RelayToPara',
     currencySymbol: 'DOT',
     amount: '100'
-  } as PolkadotXCMTransferInput
+  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   const mockOptions = {
     destination: 'BridgeHubPolkadot'
-  } as TRelayToParaInternalOptions
+  } as TRelayToParaOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    bridgeHubPolkadot = getNode('BridgeHubPolkadot')
+    bridgeHubPolkadot = getNode<ApiPromise, Extrinsic, 'BridgeHubPolkadot'>('BridgeHubPolkadot')
   })
 
   it('should initialize with correct values', () => {
@@ -42,7 +44,10 @@ describe('BridgeHubPolkadot', () => {
   })
 
   it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToPara' } as PolkadotXCMTransferInput
+    const invalidInput = { ...mockInput, scenario: 'ParaToPara' } as PolkadotXCMTransferInput<
+      ApiPromise,
+      Extrinsic
+    >
 
     expect(() => bridgeHubPolkadot.transferPolkadotXCM(invalidInput)).toThrowError(
       new ScenarioNotSupportedError(
@@ -58,19 +63,19 @@ describe('BridgeHubPolkadot', () => {
 
     bridgeHubPolkadot.transferPolkadotXCM(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'limitedTeleportAssets', 'Unlimited')
+    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_teleport_assets', 'Unlimited')
   })
 
   it('should call transferRelayToPara with the correct parameters', () => {
-    const expectedParameters = [{ param: 'value' }] as unknown[]
+    const expectedParameters = { param: 'value' }
     vi.mocked(constructRelayToParaParameters).mockReturnValue(expectedParameters)
 
     const result = bridgeHubPolkadot.transferRelayToPara(mockOptions)
 
     expect(constructRelayToParaParameters).toHaveBeenCalledWith(mockOptions, Version.V3, true)
     expect(result).toEqual({
-      module: 'xcmPallet',
-      section: 'limitedTeleportAssets',
+      module: 'XcmPallet',
+      section: 'limited_teleport_assets',
       parameters: expectedParameters
     })
   })

@@ -5,6 +5,8 @@ import XTokensTransferImpl from '../xTokens'
 import { getNode } from '../../utils/getNode'
 import { getAllNodeProviders } from '../../utils/getAllNodeProviders'
 import type Acala from './Acala'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -17,15 +19,15 @@ vi.mock('../../utils/getAllNodeProviders', () => ({
 }))
 
 describe('Acala', () => {
-  let acala: Acala
+  let acala: Acala<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'ACA',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
   const spyTransferXTokens = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
 
   beforeEach(() => {
-    acala = getNode('Acala')
+    acala = getNode<ApiPromise, Extrinsic, 'Acala'>('Acala')
     spyTransferXTokens.mockClear()
   })
 

@@ -29,7 +29,20 @@ export class BalanceController {
     this.analyticsService.track(EventName.GET_BALANCE_NATIVE, req, {
       node,
     });
-    return this.balanceService.getBalanceNative(node, params);
+    return this.balanceService.getBalanceNativePjs(node, params);
+  }
+
+  @Post(':node/native-papi')
+  getBalanceNativePapi(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(BalanceNativeDtoSchema))
+    params: BalanceNativeDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_BALANCE_NATIVE_PAPI, req, {
+      node,
+    });
+    return this.balanceService.getBalanceNativePapi(node, params);
   }
 
   @Post(':node/foreign')
@@ -42,6 +55,19 @@ export class BalanceController {
     this.analyticsService.track(EventName.GET_BALANCE_FOREIGN, req, {
       node,
     });
-    return this.balanceService.getBalanceForeign(node, params);
+    return this.balanceService.getBalanceForeignPjs(node, params);
+  }
+
+  @Post(':node/foreign-papi')
+  getBalanceForeignPapi(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(BalanceForeignDtoSchema))
+    params: BalanceForeignDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_BALANCE_FOREIGN, req, {
+      node,
+    });
+    return this.balanceService.getBalanceForeignPapi(node, params);
   }
 }

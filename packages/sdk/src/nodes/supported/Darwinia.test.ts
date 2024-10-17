@@ -13,6 +13,8 @@ import type Darwinia from './Darwinia'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -25,15 +27,15 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 }))
 
 describe('Darwinia', () => {
-  let darwinia: Darwinia
+  let darwinia: Darwinia<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'RING',
     currencyID: '456',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    darwinia = getNode('Darwinia')
+    darwinia = getNode<ApiPromise, Extrinsic, 'Darwinia'>('Darwinia')
   })
 
   it('should initialize with correct values', () => {

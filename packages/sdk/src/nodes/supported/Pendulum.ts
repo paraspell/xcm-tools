@@ -5,22 +5,24 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
+import type { TNodePolkadotKusama } from '../../types'
 import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type TSerializedApiCall,
+  type TSerializedApiCallV2,
   type TXcmAsset
 } from '../../types'
+import { getAllNodeProviders } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Pendulum extends ParachainNode implements IXTokensTransfer {
+class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Pendulum', 'pendulum', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     if (input.scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, input.scenario)
     }
@@ -36,8 +38,13 @@ class Pendulum extends ParachainNode implements IXTokensTransfer {
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): TSerializedApiCallV2 {
     throw new NodeNotSupportedError()
+  }
+
+  getProvider(): string {
+    // Return the second WebSocket URL because the first one is sometimes unreliable.
+    return getAllNodeProviders(this.node as TNodePolkadotKusama)[1]
   }
 }
 

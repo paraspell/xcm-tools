@@ -3,13 +3,14 @@
 import { type ApiPromise } from '@polkadot/api'
 import type { MockInstance } from 'vitest'
 import { vi, describe, expect, it, beforeEach } from 'vitest'
-import type { Extrinsic } from '../../types'
 import { Version, type TNode } from '../../types'
 import * as xcmPallet from '../../pallets/xcmPallet'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { Builder } from './Builder'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 import * as claimAssets from '../../pallets/assets/asset-claim'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../../pallets/xcmPallet', () => ({
   send: vi.fn(),
@@ -28,7 +29,7 @@ const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
 const PARA_ID_TO = 1999
 
 describe('Builder', () => {
-  const mockApi = {} as ApiPromise
+  const mockApi = {} as IPolkadotApi<ApiPromise, Extrinsic>
   const destApi = {} as ApiPromise
   const mockExtrinsic = {} as Extrinsic
   const mockSerializedApiCall = {
@@ -513,13 +514,8 @@ describe('Builder', () => {
 
     it('should initiate a para to relay transfer using batching', async () => {
       const api = {
-        tx: {
-          utility: {
-            batchAll: vi.fn(),
-            batch: vi.fn()
-          }
-        }
-      } as unknown as ApiPromise
+        call: vi.fn()
+      } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
       await Builder(api)
         .from(NODE)
@@ -547,13 +543,8 @@ describe('Builder', () => {
 
     it('should initiate a para to para transfer using batching', async () => {
       const api = {
-        tx: {
-          utility: {
-            batchAll: vi.fn(),
-            batch: vi.fn()
-          }
-        }
-      } as unknown as ApiPromise
+        call: vi.fn()
+      } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
       await Builder(api)
         .from(NODE)
@@ -576,13 +567,8 @@ describe('Builder', () => {
 
     it('should initiate a double para to para transfer using batching', async () => {
       const api = {
-        tx: {
-          utility: {
-            batchAll: vi.fn(),
-            batch: vi.fn()
-          }
-        }
-      } as unknown as ApiPromise
+        call: vi.fn()
+      } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
       await Builder(api)
         .from(NODE)
@@ -613,13 +599,8 @@ describe('Builder', () => {
 
     it('should throw if trying to build when transactions are batched', async () => {
       const api = {
-        tx: {
-          utility: {
-            batchAll: vi.fn(),
-            batch: vi.fn()
-          }
-        }
-      } as unknown as ApiPromise
+        call: vi.fn()
+      } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
       await expect(
         Builder(api)
@@ -757,13 +738,8 @@ describe('Builder', () => {
 
     it('should initiate a double relay to para transfer using batching', async () => {
       const api = {
-        tx: {
-          utility: {
-            batchAll: vi.fn(),
-            batch: vi.fn()
-          }
-        }
-      } as unknown as ApiPromise
+        call: vi.fn()
+      } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
       await Builder(api)
         .to(NODE_2)

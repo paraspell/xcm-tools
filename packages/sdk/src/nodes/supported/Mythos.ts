@@ -9,17 +9,17 @@ import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type TSerializedApiCall
+  type TSerializedApiCallV2
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
-class Mythos extends ParachainNode implements IPolkadotXCMTransfer {
+class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Mythos', 'mythos', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
     const { scenario, currencySymbol, destination } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
@@ -34,12 +34,14 @@ class Mythos extends ParachainNode implements IPolkadotXCMTransfer {
 
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
       input,
-      destination === 'AssetHubPolkadot' ? 'limitedTeleportAssets' : 'limitedReserveTransferAssets',
+      destination === 'AssetHubPolkadot'
+        ? 'limited_teleport_assets'
+        : 'limited_reserve_transfer_assets',
       'Unlimited'
     )
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): TSerializedApiCallV2 {
     throw new NodeNotSupportedError()
   }
 }

@@ -5,6 +5,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type CrustShadow from './CrustShadow'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -13,15 +15,15 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('CrustShadow', () => {
-  let crustShadow: CrustShadow
+  let crustShadow: CrustShadow<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'CRU',
     currencyID: '456',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    crustShadow = getNode('CrustShadow')
+    crustShadow = getNode<ApiPromise, Extrinsic, 'CrustShadow'>('CrustShadow')
   })
 
   it('should initialize with correct values', () => {

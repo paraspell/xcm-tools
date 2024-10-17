@@ -8,7 +8,7 @@ import {
   TransferInfoSchema,
 } from './dto/transfer-info.dto.js';
 
-@Controller('transfer-info')
+@Controller()
 export class TransferInfoController {
   constructor(
     private transferInfoService: TransferInfoService,
@@ -29,10 +29,20 @@ export class TransferInfoController {
     });
   }
 
-  @Post()
+  @Post('transfer-info')
   @UsePipes(new ZodValidationPipe(TransferInfoSchema))
   async getTransferInfo(@Body() params: TransferInfoDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, params);
-    return await this.transferInfoService.getTransferInfo(params);
+    return await this.transferInfoService.getTransferInfoPjs(params);
+  }
+
+  @Post('transfer-info-papi')
+  @UsePipes(new ZodValidationPipe(TransferInfoSchema))
+  async getTransferInfoPapi(
+    @Body() params: TransferInfoDto,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(EventName.GET_TRANSFER_INFO_PAPI, req, params);
+    return await this.transferInfoService.getTransferInfoPapi(params);
   }
 }

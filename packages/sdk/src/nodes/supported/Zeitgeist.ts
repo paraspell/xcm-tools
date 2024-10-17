@@ -10,14 +10,16 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Zeitgeist extends ParachainNode implements IXTokensTransfer {
+class Zeitgeist<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Zeitgeist', 'zeitgeist', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const currencySelection: TZeitgeistAsset | TForeignAsset =
-      input.currency === this.getNativeAssetSymbol() ? 'Ztg' : { ForeignAsset: input.currencyID }
+      input.currency === this.getNativeAssetSymbol()
+        ? 'Ztg'
+        : { ForeignAsset: Number(input.currencyID) }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }

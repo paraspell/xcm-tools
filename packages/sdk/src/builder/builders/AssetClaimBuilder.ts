@@ -1,4 +1,3 @@
-import type { TApiType, TResType } from '../../types'
 import {
   type TMultiAsset,
   type TNodeWithRelayChains,
@@ -14,27 +13,28 @@ import {
   type FungibleBuilder
 } from './Builder'
 import claimAssets from '../../pallets/assets/asset-claim'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
 
 /**
  * Builder class for constructing asset claim transactions.
  */
-class AssetClaimBuilder<TApi extends TApiType, TRes extends TResType>
+class AssetClaimBuilder<TApi, TRes>
   implements AccountBuilder<TRes>, FungibleBuilder<TRes>, VersionBuilder<TRes>, FinalBuilder<TRes>
 {
-  private readonly api?: TApi
+  private readonly api: IPolkadotApi<TApi, TRes>
   private readonly node: TNodeWithRelayChains
 
   private _multiAssets: TMultiAsset[]
   private _address: TAddress
   private _version?: TVersionClaimAssets
 
-  private constructor(api: TApi | undefined, node: TNodeWithRelayChains) {
+  private constructor(api: IPolkadotApi<TApi, TRes>, node: TNodeWithRelayChains) {
     this.api = api
     this.node = node
   }
 
-  static create<TApi extends TApiType, TRes extends TResType>(
-    api: TApi | undefined,
+  static create<TApi, TRes>(
+    api: IPolkadotApi<TApi, TRes>,
     node: TNodeWithRelayChains
   ): FungibleBuilder<TRes> {
     return new AssetClaimBuilder(api, node)
@@ -73,7 +73,7 @@ class AssetClaimBuilder<TApi extends TApiType, TRes extends TResType>
     return this
   }
 
-  private buildOptions(): TAssetClaimOptions<TApi> {
+  private buildOptions(): TAssetClaimOptions<TApi, TRes> {
     return {
       api: this.api,
       node: this.node,
@@ -100,10 +100,10 @@ class AssetClaimBuilder<TApi extends TApiType, TRes extends TResType>
    */
   async buildSerializedApiCall(): Promise<TSerializedApiCall> {
     const options = this.buildOptions()
-    return (await claimAssets({
+    return claimAssets<TApi, TRes>({
       ...options,
       serializedApiCallEnabled: true
-    })) as TSerializedApiCall
+    }) as Promise<TSerializedApiCall>
   }
 }
 

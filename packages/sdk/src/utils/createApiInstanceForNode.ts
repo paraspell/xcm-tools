@@ -1,13 +1,16 @@
-import type { ApiPromise } from '@polkadot/api'
 import type { TNodeWithRelayChains } from '../types'
 import { prodRelayKusama, prodRelayPolkadot } from '@polkadot/apps-config'
-import { createApiInstance, getNode } from '.'
+import { getNode } from './getNode'
+import type { IPolkadotApi } from '../api/IPolkadotApi'
 
-export const createApiInstanceForNode = async (node: TNodeWithRelayChains): Promise<ApiPromise> => {
+export const createApiInstanceForNode = async <TApi, TRes>(
+  api: IPolkadotApi<TApi, TRes>,
+  node: TNodeWithRelayChains
+): Promise<TApi> => {
   if (node === 'Polkadot' || node === 'Kusama') {
     const endpointOption = node === 'Polkadot' ? prodRelayPolkadot : prodRelayKusama
     const wsUrl = Object.values(endpointOption.providers)[0]
-    return await createApiInstance(wsUrl)
+    return await api.createApiInstance(wsUrl)
   }
-  return await getNode(node).createApiInstance()
+  return await getNode<TApi, TRes, typeof node>(node).createApiInstance(api)
 }

@@ -8,20 +8,28 @@ import type {
   TMultiLocation,
   TNode,
   TNodePolkadotKusama,
-} from "@paraspell/sdk";
+} from "@paraspell/sdk/papi";
 import {
   Builder,
   createApiInstanceForNode,
   getOtherAssets,
   isRelayChain,
-} from "@paraspell/sdk";
-import type { ApiPromise } from "@polkadot/api";
+} from "@paraspell/sdk/papi";
+import type { PolkadotClient } from "polkadot-api";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import type { Signer } from "@polkadot/api/types";
 import { useState, useEffect } from "react";
-import { submitTransaction } from "../utils";
+import { submitTransactionPapi } from "../utils";
 import { submitTxUsingApi } from "../utils/submitUsingApi";
 import { useWallet } from "../hooks/useWallet";
+import type {
+  InjectedExtension,
+  InjectedPolkadotAccount,
+} from "polkadot-api/pjs-signer";
+import {
+  getInjectedExtensions,
+  connectInjectedExtension,
+} from "polkadot-api/pjs-signer";
 
 const XcmTransfer = () => {
   const { selectedAccount } = useWallet();
@@ -72,7 +80,7 @@ const XcmTransfer = () => {
       const hasDuplicateIds = isRelayChain(from)
         ? false
         : getOtherAssets(from as TNodePolkadotKusama).filter(
-            (asset) => asset.assetId === currency.assetId,
+            (asset) => asset.assetId === currency.assetId
           ).length > 1;
       return hasDuplicateIds
         ? { symbol: currency.symbol ?? "" }
@@ -84,7 +92,10 @@ const XcmTransfer = () => {
     }
   };
 
-  const createTransferTx = (values: FormValuesTransformed, api: ApiPromise) => {
+  const createTransferTx = (
+    values: FormValuesTransformed,
+    api: PolkadotClient
+  ) => {
     const { from, to, amount, address } = values;
     if (from === "Polkadot" || from === "Kusama") {
       return Builder(api)
@@ -99,6 +110,7 @@ const XcmTransfer = () => {
         .from(from)
         .to(to)
         .currency(determineCurrency(values))
+        .feeAsset("0")
         .amount(amount)
         .address(address)
         .build();
@@ -107,12 +119,27 @@ const XcmTransfer = () => {
 
   const submitUsingSdk = async (
     formValues: FormValuesTransformed,
-    injectorAddress: string,
-    signer: Signer,
+    _injectorAddress: string,
+    _signer: Signer
   ) => {
     const api = await createApiInstanceForNode(formValues.from);
     const tx = await createTransferTx(formValues, api);
-    await submitTransaction(api, tx, signer, injectorAddress);
+
+    const extensions: string[] = getInjectedExtensions();
+
+    // Connect to an extension
+    const selectedExtension: InjectedExtension = await connectInjectedExtension(
+      extensions[0]
+    );
+
+    // Get accounts registered in the extension
+    const accounts: InjectedPolkadotAccount[] = selectedExtension.getAccounts();
+
+    // The signer for each account is in the `polkadotSigner` property of `InjectedPolkadotAccount`
+    const polkadotSigner = accounts[0].polkadotSigner;
+
+    await submitTransactionPapi(tx, polkadotSigner);
+    //await submitTransaction(api, tx, signer, injectorAddress);
   };
 
   const submit = async (formValues: FormValuesTransformed) => {
@@ -146,13 +173,13 @@ const XcmTransfer = () => {
           selectedAccount.address,
           injector.signer,
           "POST",
-          true,
+          true
         );
       } else {
         await submitUsingSdk(
           formValues,
           selectedAccount.address,
-          injector.signer,
+          injector.signer
         );
       }
       alert("Transaction was successful!");

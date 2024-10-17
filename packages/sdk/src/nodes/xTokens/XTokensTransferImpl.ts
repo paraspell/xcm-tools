@@ -5,17 +5,17 @@ import type {
   TXTokensCurrencySelection,
   TTransferReturn,
   XTokensSection,
-  XTokensModule
+  TSerializedApiCallV2
 } from '../../types'
 import { getCurrencySelection } from './getCurrencySelection'
-import { getParameters } from './getParameters'
+import { getXTokensParameters } from './getXTokensParameters'
 
 class XTokensTransferImpl {
-  static transferXTokens(
-    input: XTokensTransferInput,
+  static transferXTokens<TApi, TRes>(
+    input: XTokensTransferInput<TApi, TRes>,
     currencySelection: TXTokensCurrencySelection,
     fees: string | number = 'Unlimited'
-  ): TTransferReturn {
+  ): TTransferReturn<TRes> {
     const { api, amount, addressSelection, destination, feeAsset, serializedApiCallEnabled } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
@@ -29,14 +29,13 @@ class XTokensTransferImpl {
 
     const modifiedCurrencySelection = getCurrencySelection(input, isAssetHub, currencySelection)
 
-    const module: XTokensModule = 'xTokens'
     const section: XTokensSection = isAssetHub
       ? feeAsset
-        ? 'transferMultiassets'
-        : 'transferMultiasset'
+        ? 'transfer_multiassets'
+        : 'transfer_multiasset'
       : 'transfer'
 
-    const parameters = getParameters(
+    const parameters = getXTokensParameters(
       isAssetHub,
       modifiedCurrencySelection,
       addressSelection,
@@ -45,19 +44,28 @@ class XTokensTransferImpl {
       feeAsset
     )
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+    ;(BigInt.prototype as any).toJSON = function () {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+      return this.toString()
+    }
+
+    console.log('before', JSON.stringify(parameters))
+
+    const call: TSerializedApiCallV2 = {
+      module: 'XTokens',
+      section,
+      parameters
+    }
+
     if (serializedApiCallEnabled === true) {
       return {
-        module,
-        section,
-        parameters
+        ...call,
+        parameters: Object.values(parameters)
       }
     }
 
-    return api.call({
-      module,
-      section,
-      parameters
-    })
+    return api.callTxMethod(call)
   }
 }
 

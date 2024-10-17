@@ -1,8 +1,10 @@
 import type { Extrinsic, TSerializedApiCall } from "@paraspell/sdk";
+import type { TPapiTransaction } from "@paraspell/sdk/papi";
 import type { ApiPromise } from "@polkadot/api";
 import type { Signer } from "@polkadot/api/types";
 import { encodeAddress, decodeAddress } from "@polkadot/keyring";
 import { isHex, hexToU8a } from "@polkadot/util";
+import type { PolkadotSigner } from "polkadot-api";
 import { isAddress } from "web3-validator";
 
 export const isValidPolkadotAddress = (address: string) => {
@@ -19,11 +21,19 @@ export const isValidEthereumAddress = (address: string) => isAddress(address);
 export const isValidWalletAddress = (address: string) =>
   isValidPolkadotAddress(address) || isValidEthereumAddress(address);
 
+export const submitTransactionPapi = async (
+  tx: TPapiTransaction,
+  signer: PolkadotSigner
+): Promise<string> => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  return await tx.sign(signer);
+};
+
 export const submitTransaction = async (
   api: ApiPromise,
   tx: Extrinsic,
   signer: Signer,
-  injectorAddress: string,
+  injectorAddress: string
 ): Promise<string> => {
   await tx.signAsync(injectorAddress, { signer });
   return await new Promise((resolve, reject) => {
@@ -50,7 +60,7 @@ export const submitTransaction = async (
 
 export const buildTx = (
   api: ApiPromise,
-  { module, section, parameters }: TSerializedApiCall,
+  { module, section, parameters }: TSerializedApiCall
 ) => {
   return api.tx[module][section](...parameters);
 };

@@ -4,15 +4,15 @@ import { type IPolkadotXCMTransfer, type PolkadotXCMTransferInput, Version } fro
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
-class NeuroWeb extends ParachainNode implements IPolkadotXCMTransfer {
+class NeuroWeb<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('NeuroWeb', 'neuroweb', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
       input,
-      'limitedReserveTransferAssets',
+      'limited_reserve_transfer_assets',
       'Unlimited'
     )
   }

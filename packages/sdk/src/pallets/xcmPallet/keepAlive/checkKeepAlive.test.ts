@@ -2,12 +2,12 @@ import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { type ApiPromise } from '@polkadot/api'
 import { checkKeepAlive } from './checkKeepAlive'
 import { BN } from '@polkadot/util'
-import { calculateTransactionFee } from '../calculateTransactionFee'
 import { KeepAliveError } from '../../../errors/KeepAliveError'
 import { createTx } from '../keepAlive/createTx'
-import type { Extrinsic } from '../../../types'
 import { beforeEach } from 'node:test'
 import { getExistentialDeposit } from '../../assets/eds'
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import type { Extrinsic } from '../../../pjs/types'
 
 vi.mock('../calculateTransactionFee', () => ({
   calculateTransactionFee: vi.fn()
@@ -24,25 +24,10 @@ vi.mock('../../assets/eds', () => ({
 describe('checkKeepAlive', () => {
   const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
   const AMOUNT = '1000'
-  const mockApi = {
-    createType: vi.fn().mockReturnValue({
-      toHex: vi.fn().mockReturnValue('0x123')
-    }),
-    query: {
-      system: {
-        account: vi.fn().mockResolvedValue({
-          data: {
-            free: {
-              toBn: () => new BN(5000)
-            }
-          }
-        })
-      }
-    }
-  } as unknown as ApiPromise
+  const mockApi = {} as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
   beforeAll(() => {
-    vi.mocked(calculateTransactionFee).mockResolvedValue(new BN(100))
+    // vi.mocked(calculateTransactionFee).mockResolvedValue(new BN(100))
   })
 
   beforeEach(() => {
@@ -56,7 +41,7 @@ describe('checkKeepAlive', () => {
         address: ADDRESS,
         amount: AMOUNT,
         originNode: 'Acala',
-        destApi: undefined as unknown as ApiPromise,
+        destApi: mockApi,
         currencySymbol: 'DOT',
         destNode: 'Unique'
       })
@@ -115,7 +100,7 @@ describe('checkKeepAlive', () => {
     const amountBNWithoutFee = new BN(100000)
 
     vi.mocked(createTx).mockResolvedValue({} as Extrinsic)
-    vi.mocked(calculateTransactionFee).mockResolvedValue(new BN(100))
+    // vi.mocked(calculateTransactionFee).mockResolvedValue(new BN(100))
 
     vi.mocked(getExistentialDeposit).mockReturnValue('5000000')
 

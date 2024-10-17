@@ -4,6 +4,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type { Centrifuge } from './Centrifuge'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -12,15 +14,15 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Centrifuge', () => {
-  let centrifuge: Centrifuge
+  let centrifuge: Centrifuge<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'CFG',
     currencyID: '123',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    centrifuge = getNode('Centrifuge')
+    centrifuge = getNode<ApiPromise, Extrinsic, 'Centrifuge'>('Centrifuge')
   })
 
   it('should initialize with correct values', () => {

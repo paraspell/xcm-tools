@@ -5,6 +5,8 @@ import { getAssetBalance } from './getAssetBalance'
 import type { ApiPromise } from '@polkadot/api'
 import { getBalanceNative } from './getBalanceNative'
 import { getBalanceForeign } from './getBalanceForeign'
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import type { Extrinsic } from '../../../pjs/types'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn()
@@ -23,10 +25,10 @@ vi.mock('./getBalanceForeign', () => ({
 }))
 
 describe('getAssetBalance', () => {
-  let apiMock: ApiPromise
+  let apiMock: IPolkadotApi<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    apiMock = {} as unknown as ApiPromise
+    apiMock = {} as unknown as IPolkadotApi<ApiPromise, Extrinsic>
     vi.mocked(createApiInstanceForNode).mockResolvedValue(apiMock)
   })
 
@@ -37,7 +39,7 @@ describe('getAssetBalance', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getBalanceNative).mockResolvedValue(BigInt(1000))
 
-    const result = await getAssetBalance(account, node, currency)
+    const result = await getAssetBalance(apiMock, account, node, currency)
     expect(result).toEqual(BigInt(1000))
     expect(getBalanceNative).toHaveBeenCalledWith(account, node, apiMock)
   })
@@ -49,7 +51,7 @@ describe('getAssetBalance', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getBalanceForeign).mockResolvedValue(BigInt(200))
 
-    const result = await getAssetBalance(account, node, currency)
+    const result = await getAssetBalance(apiMock, account, node, currency)
     expect(result).toEqual(BigInt(200))
     expect(getBalanceForeign).toHaveBeenCalledWith(account, node, currency, apiMock)
   })
@@ -61,7 +63,7 @@ describe('getAssetBalance', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getBalanceForeign).mockResolvedValue(null)
 
-    const result = await getAssetBalance(account, node, currency)
+    const result = await getAssetBalance(apiMock, account, node, currency)
     expect(result).toEqual(BigInt(0))
   })
 
@@ -71,6 +73,8 @@ describe('getAssetBalance', () => {
     const currency = { symbol: 'XYZ' }
     vi.mocked(createApiInstanceForNode).mockRejectedValue(new Error('API creation failed'))
 
-    await expect(getAssetBalance(account, node, currency)).rejects.toThrow('API creation failed')
+    await expect(getAssetBalance(apiMock, account, node, currency)).rejects.toThrow(
+      'API creation failed'
+    )
   })
 })

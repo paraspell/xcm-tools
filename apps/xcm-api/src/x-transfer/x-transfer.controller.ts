@@ -58,21 +58,28 @@ export class XTransferController {
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   generateXcmCall(@Query() queryParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, queryParams);
-    return this.xTransferService.generateXcmCall(queryParams);
+    return this.xTransferService.generateXcmCallPjs(queryParams);
   }
 
   @Post('x-transfer')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   generateXcmCallV2(@Body() bodyParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
-    return this.xTransferService.generateXcmCall(bodyParams);
+    return this.xTransferService.generateXcmCallPjs(bodyParams);
   }
 
   @Post('x-transfer-hash')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   generateXcmCallV2Hash(@Body() bodyParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL_HASH, req, bodyParams);
-    return this.xTransferService.generateXcmCall(bodyParams, true);
+    return this.xTransferService.generateXcmCallPjs(bodyParams, true);
+  }
+
+  @Post('x-transfer-papi')
+  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
+  generateXcmCallPapi(@Body() bodyParams: XTransferDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
+    return this.xTransferService.generateXcmCallPapi(bodyParams);
   }
 
   @Post('x-transfer-batch')
@@ -86,6 +93,20 @@ export class XTransferController {
       req,
       bodyParams,
     );
-    return this.xTransferService.generateBatchXcmCall(bodyParams);
+    return this.xTransferService.generateBatchXcmCallPjs(bodyParams);
+  }
+
+  @Post('x-transfer-batch-papi')
+  @UsePipes(new ZodValidationPipe(BatchXTransferDtoSchema))
+  generateXcmCallBatchPapi(
+    @Body() bodyParams: BatchXTransferDto,
+    @Req() req: Request,
+  ) {
+    this.trackAnalyticsBatch(
+      EventName.GENERATE_XCM_CALL_BATCH_PAPI,
+      req,
+      bodyParams,
+    );
+    return this.xTransferService.generateBatchXcmCallPapi(bodyParams);
   }
 }

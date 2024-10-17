@@ -10,12 +10,12 @@ import { getAllNodeProviders } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Basilisk extends ParachainNode implements IXTokensTransfer {
+class Basilisk<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Basilisk', 'basilisk', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currencyID } = input
     return XTokensTransferImpl.transferXTokens(input, currencyID)
   }

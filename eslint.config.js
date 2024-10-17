@@ -30,6 +30,7 @@ export default tseslint.config(
       "**/playwright.config.ts",
       "**/e2e/",
       "**/coverage/",
+      "**/bin/",
     ],
   },
   eslint.configs.recommended,

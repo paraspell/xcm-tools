@@ -1,5 +1,4 @@
 import { nodes } from '../maps/consts'
-import type { TNode } from '../types'
 
 /**
  * Retrieves the node instance for a given node.
@@ -7,4 +6,9 @@ import type { TNode } from '../types'
  * @param node - The node identifier.
  * @returns The node instance
  */
-export const getNode = <T extends TNode>(node: T): (typeof nodes)[T] => nodes[node]
+export const getNode = <TApi, TRes, T extends keyof ReturnType<typeof nodes>>(
+  node: T
+): ReturnType<typeof nodes<TApi, TRes>>[T] => {
+  const nodeMap = nodes<TApi, TRes>()
+  return nodeMap[node]
+}

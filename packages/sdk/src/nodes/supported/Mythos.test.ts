@@ -9,6 +9,8 @@ import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type Mythos from './Mythos'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../polkadotXcm', () => ({
   default: {
@@ -17,16 +19,16 @@ vi.mock('../polkadotXcm', () => ({
 }))
 
 describe('Mythos', () => {
-  let mythos: Mythos
+  let mythos: Mythos<ApiPromise, Extrinsic>
   const mockInput = {
     currencySymbol: 'MYTH',
     scenario: 'ParaToPara',
     destination: 'Acala',
     amount: '100'
-  } as PolkadotXCMTransferInput
+  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    mythos = getNode('Mythos')
+    mythos = getNode<ApiPromise, Extrinsic, 'Mythos'>('Mythos')
   })
 
   it('should initialize with correct values', () => {
@@ -42,7 +44,7 @@ describe('Mythos', () => {
 
     mythos.transferPolkadotXCM(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'limitedReserveTransferAssets', 'Unlimited')
+    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
   })
 
   it('should call transferPolkadotXCM with limitedTeleportAssets for AssetHubPolkadot destination', () => {
@@ -53,13 +55,16 @@ describe('Mythos', () => {
 
     expect(spy).toHaveBeenCalledWith(
       { ...mockInput, destination: 'AssetHubPolkadot' },
-      'limitedTeleportAssets',
+      'limited_teleport_assets',
       'Unlimited'
     )
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as PolkadotXCMTransferInput
+    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as PolkadotXCMTransferInput<
+      ApiPromise,
+      Extrinsic
+    >
 
     expect(() => mythos.transferPolkadotXCM(invalidInput)).toThrowError(ScenarioNotSupportedError)
   })

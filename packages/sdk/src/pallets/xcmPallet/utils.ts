@@ -1,9 +1,10 @@
+import type { TAmount } from '../../types'
 import {
   Version,
   Parents,
   type TMultiLocationHeader,
   type TScenario,
-  type TRelayToParaInternalOptions,
+  type TRelayToParaOptions,
   type TDestination,
   type TNode,
   type TCurrencySelectionHeaderArr
@@ -15,27 +16,26 @@ import { type TMultiAsset } from '../../types/TMultiAsset'
 import { findParachainJunction } from './findParachainJunction'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { createX1Payload } from '../../utils/createX1Payload'
+import { DEFAULT_FEE_ASSET } from '../../const'
 
-export const constructRelayToParaParameters = (
-  { api, destination, address, amount, paraIdTo }: TRelayToParaInternalOptions,
+export const constructRelayToParaParameters = <TApi, TRes>(
+  { api, destination, address, amount, paraIdTo }: TRelayToParaOptions<TApi, TRes>,
   version: Version,
   includeFee = false
-): unknown[] => {
+): Record<string, unknown> => {
+  // Handle the case when a destination is a multi-location
   const paraId =
     destination !== undefined && typeof destination !== 'object'
       ? (paraIdTo ?? getParaId(destination))
       : undefined
 
-  const parameters: unknown[] = [
-    createPolkadotXcmHeader('RelayToPara', version, destination, paraId),
-    generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),
-    createCurrencySpec(amount, version, Parents.ZERO),
-    0
-  ]
-  if (includeFee) {
-    parameters.push('Unlimited')
+  return {
+    dest: createPolkadotXcmHeader('RelayToPara', version, destination, paraId),
+    beneficiary: generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),
+    assets: createCurrencySpec(amount, version, Parents.ZERO),
+    fee_asset_item: DEFAULT_FEE_ASSET,
+    ...(includeFee && { weightLimit: 'Unlimited' })
   }
-  return parameters
 }
 
 export const isTMultiLocation = (value: unknown): value is TMultiLocation =>
@@ -67,7 +67,7 @@ export const createBridgeCurrencySpec = (
 }
 
 export const createCurrencySpec = (
-  amount: string,
+  amount: TAmount,
   version: Version,
   parents: Parents,
   overriddenCurrency?: TMultiLocation | TMultiAsset[],

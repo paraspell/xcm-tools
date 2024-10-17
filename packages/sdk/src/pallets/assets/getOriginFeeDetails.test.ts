@@ -8,6 +8,10 @@ import type { ApiPromise } from '@polkadot/api'
 import type { TCurrencyCore } from '../../types'
 import type { TNodeDotKsmWithRelayChains } from '../../types'
 import { getOriginFeeDetails } from './getOriginFeeDetails'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import type { Extrinsic } from '../../pjs/types'
+
+const apiMock = {} as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
 describe('getOriginFeeDetails', () => {
   it('should return correct origin fee details', async () => {
@@ -42,13 +46,20 @@ describe('getOriginFeeDetails', () => {
       address: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(mockTx)
-    } as unknown as BuilderModule.GeneralBuilder
+    } as unknown as BuilderModule.GeneralBuilder<ApiPromise, Extrinsic>
 
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
 
     const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
-    const result = await getOriginFeeDetails(originNode, destinationNode, currency, amount, account)
+    const result = await getOriginFeeDetails(
+      originNode,
+      destinationNode,
+      currency,
+      amount,
+      account,
+      apiMock
+    )
 
     expect(result).toEqual({
       sufficientForXCM: true,
@@ -90,13 +101,20 @@ describe('getOriginFeeDetails', () => {
       address: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(mockTx)
-    } as unknown as BuilderModule.GeneralBuilder
+    } as unknown as BuilderModule.GeneralBuilder<ApiPromise, Extrinsic>
 
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
 
     const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
-    const result = await getOriginFeeDetails(originNode, destinationNode, currency, amount, account)
+    const result = await getOriginFeeDetails<ApiPromise, Extrinsic>(
+      originNode,
+      destinationNode,
+      currency,
+      amount,
+      account,
+      apiMock
+    )
 
     expect(result).toEqual({
       sufficientForXCM: true,
@@ -138,13 +156,20 @@ describe('getOriginFeeDetails', () => {
       address: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(mockTx)
-    } as unknown as BuilderModule.GeneralBuilder
+    } as unknown as BuilderModule.GeneralBuilder<ApiPromise, Extrinsic>
 
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
 
     const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
-    const result = await getOriginFeeDetails(originNode, destinationNode, currency, amount, account)
+    const result = await getOriginFeeDetails(
+      originNode,
+      destinationNode,
+      currency,
+      amount,
+      account,
+      apiMock
+    )
 
     expect(result).toEqual({
       sufficientForXCM: true,

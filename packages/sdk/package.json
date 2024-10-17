@@ -10,7 +10,15 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
+    },
+    "./papi": {
+      "import": "./dist/papi/index.mjs",
+      "require": "./dist/papi/index.cjs",
+      "types": "./dist/papi/index.d.ts"
     }
+  },
+  "bin": {
+    "paraspell": "./bin/papi-gen.js"
   },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
@@ -32,7 +40,8 @@
     "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/pallets/updatePallets.ts",
     "updateEds": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/eds/updateEds.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
-    "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent",
+    "papi:gen": "node ./bin/papi-gen.js papi:gen"
   },
   "dependencies": {
     "@snowbridge/api": "^0.1.20",
@@ -43,12 +52,35 @@
     "@polkadot/api-base": ">= 12.4 < 13",
     "@polkadot/apps-config": ">= 0.144",
     "@polkadot/types": ">= 12.4 < 13",
-    "@polkadot/util": ">= 13"
+    "@polkadot/util": ">= 13",
+    "polkadot-api": ">= 1.6.2 < 2"
+  },
+  "peerDependenciesMeta": {
+    "@polkadot/api": {
+      "optional": true
+    },
+    "@polkadot/api-base": {
+      "optional": true
+    },
+    "@polkadot/types": {
+      "optional": true
+    },
+    "@polkadot/util": {
+      "optional": true
+    },
+    "polkadot-api": {
+      "optional": true
+    },
+    "@polkadot-api/descriptors": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.25.6",
     "@babel/preset-env": "^7.25.4",
     "@codecov/rollup-plugin": "^1.2.0",
+    "@polkadot-labs/hdkd": "^0.0.8",
+    "@polkadot-labs/hdkd-helpers": "^0.0.8",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
     "@vitest/coverage-v8": "^2.1.1",

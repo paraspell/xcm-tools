@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import type { ApiPromise } from '@polkadot/api'
 import PolkadotJsApi from './PolkadotJsApi'
+import type { TSerializedApiCallV2 } from '../types'
 
 describe('PolkadotJsApi', () => {
   let polkadotApi: PolkadotJsApi
   let mockApiPromise: ApiPromise
 
-  beforeEach(() => {
+  beforeEach(async () => {
     polkadotApi = new PolkadotJsApi()
     mockApiPromise = {
       createType: vi.fn().mockReturnValue({
@@ -18,7 +19,7 @@ describe('PolkadotJsApi', () => {
         }
       }
     } as unknown as ApiPromise
-    polkadotApi.init(mockApiPromise)
+    await polkadotApi.init('Acala')
   })
 
   describe('createAccountId', () => {
@@ -36,13 +37,13 @@ describe('PolkadotJsApi', () => {
 
   describe('call', () => {
     it('should create an extrinsic with the provided module, section, and parameters', () => {
-      const serializedCall = {
-        module: 'balances',
+      const serializedCall: TSerializedApiCallV2 = {
+        module: 'XTokens',
         section: 'transfer',
-        parameters: ['recipient_address', 1000]
+        parameters: { beneficiary: 'recipient_address', amount: 1000 }
       }
 
-      const result = polkadotApi.call(serializedCall)
+      const result = polkadotApi.callTxMethod(serializedCall)
 
       expect(mockApiPromise.tx.balances.transfer).toHaveBeenCalledWith('recipient_address', 1000)
       expect(result).toBe('mocked_extrinsic')

@@ -5,6 +5,8 @@ import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type KiltSpiritnet from './KiltSpiritnet'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../polkadotXcm', () => ({
   default: {
@@ -13,15 +15,15 @@ vi.mock('../polkadotXcm', () => ({
 }))
 
 describe('KiltSpiritnet', () => {
-  let kiltSpiritnet: KiltSpiritnet
+  let kiltSpiritnet: KiltSpiritnet<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'ParaToPara',
     currencySymbol: 'KILT',
     amount: '100'
-  } as PolkadotXCMTransferInput
+  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    kiltSpiritnet = getNode('KiltSpiritnet')
+    kiltSpiritnet = getNode<ApiPromise, Extrinsic, 'KiltSpiritnet'>('KiltSpiritnet')
   })
 
   it('should initialize with correct values', () => {
@@ -40,7 +42,10 @@ describe('KiltSpiritnet', () => {
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as PolkadotXCMTransferInput
+    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as PolkadotXCMTransferInput<
+      ApiPromise,
+      Extrinsic
+    >
 
     expect(() => kiltSpiritnet.transferPolkadotXCM(invalidInput)).toThrowError(
       ScenarioNotSupportedError

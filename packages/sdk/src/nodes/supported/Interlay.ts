@@ -9,15 +9,15 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Interlay extends ParachainNode implements IXTokensTransfer {
+class Interlay<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Interlay', 'interlay', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currency, currencyID } = input
     const currencySelection: TForeignOrTokenAsset =
-      currencyID !== undefined ? { ForeignAsset: currencyID } : { Token: currency }
+      currencyID !== undefined ? { ForeignAsset: Number(currencyID) } : { Token: currency }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }

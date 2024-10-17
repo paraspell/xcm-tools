@@ -9,18 +9,18 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type TSerializedApiCall,
+  type TSerializedApiCallV2,
   type TNodleAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Nodle extends ParachainNode implements IXTokensTransfer {
+class Nodle<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Nodle', 'nodle', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     if (input.scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, input.scenario)
     }
@@ -36,7 +36,7 @@ class Nodle extends ParachainNode implements IXTokensTransfer {
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): TSerializedApiCallV2 {
     throw new NodeNotSupportedError()
   }
 }

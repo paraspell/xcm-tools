@@ -1,6 +1,8 @@
-import type { TNodeWithRelayChains } from './TNode'
+import type { WithApi } from './TApi'
+import type { TCurrencyCore } from './TCurrency'
+import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from './TNode'
 
-export interface TTransferInfo {
+export type TTransferInfo = {
   chain: { origin: TNodeWithRelayChains; destination: TNodeWithRelayChains; ecosystem: string }
   currencyBalanceOrigin: {
     balance: bigint
@@ -30,3 +32,14 @@ export type TOriginFeeDetails = {
   sufficientForXCM: boolean
   xcmFee: bigint
 }
+
+export type TGetTransferInfoOptionsBase = {
+  origin: TNodeDotKsmWithRelayChains
+  destination: TNodeDotKsmWithRelayChains
+  accountOrigin: string
+  accountDestination: string
+  currency: TCurrencyCore
+  amount: string
+}
+
+export type TGetTransferInfoOptions<TApi, TRes> = WithApi<TGetTransferInfoOptionsBase, TApi, TRes>

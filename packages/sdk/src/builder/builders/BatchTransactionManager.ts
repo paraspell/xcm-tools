@@ -1,20 +1,21 @@
-import type { TNode, TDestination, TApiType, TResType } from '../../types'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import type { TNode, TDestination } from '../../types'
 import {
   BatchMode,
   type TRelayToParaOptions,
   type TSendOptions,
   type TBatchOptions
 } from '../../types'
-import { createApiInstanceForNode, determineRelayChain } from '../../utils'
+import { determineRelayChain } from '../../utils'
 
-type TOptions<TApi extends TApiType> = TSendOptions<TApi> | TRelayToParaOptions<TApi>
+type TOptions<TApi, TRes> = TSendOptions<TApi, TRes> | TRelayToParaOptions<TApi, TRes>
 
-type TTransaction<TApi extends TApiType, TRes extends TResType> = {
-  func: (options: TOptions<TApi>) => Promise<TRes>
-  options: TOptions<TApi>
+type TTransaction<TApi, TRes> = {
+  func: (options: TOptions<TApi, TRes>) => Promise<TRes>
+  options: TOptions<TApi, TRes>
 }
 
-class BatchTransactionManager<TApi extends TApiType, TRes extends TResType> {
+class BatchTransactionManager<TApi, TRes> {
   private transactions: TTransaction<TApi, TRes>[] = []
 
   addTransaction(transaction: TTransaction<TApi, TRes>) {
@@ -26,7 +27,7 @@ class BatchTransactionManager<TApi extends TApiType, TRes extends TResType> {
   }
 
   async buildBatch(
-    api: TApi | undefined,
+    api: IPolkadotApi<TApi, TRes>,
     from: TNode | undefined,
     to: TDestination | undefined,
     options: TBatchOptions = { mode: BatchMode.BATCH_ALL }
@@ -35,10 +36,10 @@ class BatchTransactionManager<TApi extends TApiType, TRes extends TResType> {
       throw new Error('From or to node is required')
     }
     if (to && typeof to === 'object') {
-      throw new Error('Please provide ApiPromise instance.')
+      throw new Error('Please provide Api instance.')
     }
-    const apiWithFallback =
-      api ?? (await createApiInstanceForNode(from ?? determineRelayChain(to as TNode)))
+
+    await api.init(from ?? determineRelayChain(to as TNode))
 
     const { mode } = options
     if (this.transactions.length === 0) {
@@ -61,11 +62,12 @@ class BatchTransactionManager<TApi extends TApiType, TRes extends TResType> {
       return func(txOptions)
     })
     const txs = await Promise.all(results)
-    const resTx =
-      mode === BatchMode.BATCH_ALL
-        ? apiWithFallback.tx.utility.batchAll(txs)
-        : apiWithFallback.tx.utility.batch(txs)
-    return resTx as TRes
+
+    return api.callTxMethod({
+      module: 'Utility',
+      section: mode === BatchMode.BATCH_ALL ? 'batch_all' : 'batch',
+      parameters: { data: [txs] }
+    })
   }
 }
 

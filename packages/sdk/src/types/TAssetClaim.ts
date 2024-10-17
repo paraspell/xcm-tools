@@ -1,11 +1,9 @@
-import type { ApiPromise } from '@polkadot/api'
+import type { WithApi } from './TApi'
 import { type TMultiAsset } from './TMultiAsset'
 import { type TNodeWithRelayChains } from './TNode'
-import type { TApiType } from './TTransfer'
 import { type TAddress, type TVersionClaimAssets } from './TTransfer'
 
-export type TAssetClaimOptions<TApi extends TApiType = ApiPromise> = {
-  api?: TApi
+export type TAssetClaimOptionsBase = {
   node: TNodeWithRelayChains
   multiAssets: TMultiAsset[]
   address: TAddress
@@ -13,7 +11,4 @@ export type TAssetClaimOptions<TApi extends TApiType = ApiPromise> = {
   serializedApiCallEnabled?: boolean
 }
 
-export type TAssetClaimOptionsInternal<TApi extends TApiType = ApiPromise> =
-  TAssetClaimOptions<TApi> & {
-    api: TApi
-  }
+export type TAssetClaimOptions<TApi, TRes> = WithApi<TAssetClaimOptionsBase, TApi, TRes>

@@ -3,7 +3,7 @@
 import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
-class Polimec extends ParachainNode {
+class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> {
   constructor() {
     super('Polimec', 'polimec', 'polkadot', Version.V3)
   }

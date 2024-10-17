@@ -6,11 +6,11 @@ import {
   type XTransferTransferInput
 } from '../../types'
 
-export const getDestination = ({
+export const getDestination = <TApi, TRes>({
   recipientAddress,
   paraId,
   api
-}: XTransferTransferInput): TMultiLocation => {
+}: XTransferTransferInput<TApi, TRes>): TMultiLocation => {
   const isMultiLocation = typeof recipientAddress === 'object'
   if (isMultiLocation) {
     return recipientAddress

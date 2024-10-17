@@ -9,15 +9,17 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Calamari extends ParachainNode implements IXTokensTransfer {
+class Calamari<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Calamari', 'calamari', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     // Currently only option for XCM transfer
     const { currencyID } = input
-    const currencySelection: TMantaAsset = { MantaCurrency: currencyID }
+    const currencySelection: TMantaAsset = {
+      MantaCurrency: currencyID ? BigInt(currencyID) : undefined
+    }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }

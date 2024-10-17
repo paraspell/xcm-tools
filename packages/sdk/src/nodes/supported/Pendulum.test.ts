@@ -9,6 +9,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Pendulum from './Pendulum'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -17,16 +19,16 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Pendulum', () => {
-  let pendulum: Pendulum
+  let pendulum: Pendulum<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'PEN',
     currencyID: '123',
     scenario: 'ParaToPara',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    pendulum = getNode('Pendulum')
+    pendulum = getNode<ApiPromise, Extrinsic, 'Pendulum'>('Pendulum')
   })
 
   it('should initialize with correct values', () => {
@@ -46,7 +48,10 @@ describe('Pendulum', () => {
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as XTokensTransferInput
+    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as XTokensTransferInput<
+      ApiPromise,
+      Extrinsic
+    >
 
     expect(() => pendulum.transferXTokens(invalidInput)).toThrowError(ScenarioNotSupportedError)
   })

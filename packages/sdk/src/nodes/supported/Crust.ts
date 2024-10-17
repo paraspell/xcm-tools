@@ -10,12 +10,15 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Crust extends ParachainNode implements IXTokensTransfer {
+class Crust<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Crust', 'crustParachain', 'polkadot', Version.V3)
   }
 
-  getCurrencySelection({ currency, currencyID }: XTokensTransferInput): TReserveAsset {
+  getCurrencySelection<TApi, TRes>({
+    currency,
+    currencyID
+  }: XTokensTransferInput<TApi, TRes>): TReserveAsset {
     if (currency === this.getNativeAssetSymbol()) {
       return 'SelfReserve'
     }
@@ -27,7 +30,7 @@ class Crust extends ParachainNode implements IXTokensTransfer {
     return { OtherReserve: currencyID }
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     return XTokensTransferImpl.transferXTokens(input, this.getCurrencySelection(input))
   }
 }

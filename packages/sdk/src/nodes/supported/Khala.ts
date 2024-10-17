@@ -3,12 +3,12 @@ import { type IXTransferTransfer, Version, type XTransferTransferInput } from '.
 import ParachainNode from '../ParachainNode'
 import XTransferTransferImpl from '../xTransfer'
 
-class Khala extends ParachainNode implements IXTransferTransfer {
+class Khala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTransferTransfer {
   constructor() {
     super('Khala', 'khala', 'kusama', Version.V3)
   }
 
-  transferXTransfer(input: XTransferTransferInput) {
+  transferXTransfer<TApi, TRes>(input: XTransferTransferInput<TApi, TRes>) {
     const { currency } = input
     if (currency !== 'PHA') {
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${currency}`)

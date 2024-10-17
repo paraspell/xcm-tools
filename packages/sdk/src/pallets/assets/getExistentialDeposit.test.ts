@@ -7,12 +7,16 @@ import {
 import * as edsMapJson from '../../maps/existential-deposits.json'
 import { getBalanceNative } from './balance/getBalanceNative'
 import type { TNodeDotKsmWithRelayChains } from '../../types'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('./balance/getBalanceNative', () => ({
   getBalanceNative: vi.fn()
 }))
 
 describe('Existential Deposit and Transferable Amounts', () => {
+  const apiMock = {} as unknown as IPolkadotApi<ApiPromise, Extrinsic>
   const mockPalletsMap = edsMapJson as { [key: string]: string }
   const mockNode: TNodeDotKsmWithRelayChains = 'Polkadot'
   const mockAddress = '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa'
@@ -37,7 +41,7 @@ describe('Existential Deposit and Transferable Amounts', () => {
     const ed = getExistentialDeposit(mockNode)
     const expectedMaxTransferableAmount = mockBalance - ed - ed / BigInt(10)
 
-    const result = await getMaxNativeTransferableAmount(mockAddress, mockNode)
+    const result = await getMaxNativeTransferableAmount(apiMock, mockAddress, mockNode)
 
     expect(result).toBe(
       expectedMaxTransferableAmount > BigInt(0) ? expectedMaxTransferableAmount : BigInt(0)
@@ -48,7 +52,7 @@ describe('Existential Deposit and Transferable Amounts', () => {
     const mockBalance = BigInt(5000)
     vi.mocked(getBalanceNative).mockResolvedValue(mockBalance)
 
-    const result = await getMaxNativeTransferableAmount(mockAddress, mockNode)
+    const result = await getMaxNativeTransferableAmount(apiMock, mockAddress, mockNode)
 
     expect(result).toBe(BigInt(0))
   })

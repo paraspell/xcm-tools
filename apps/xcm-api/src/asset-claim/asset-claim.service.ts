@@ -4,21 +4,30 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
-  Builder,
   InvalidCurrencyError,
   NODES_WITH_RELAY_CHAINS,
   TMultiAsset,
   TNode,
-  createApiInstanceForNode,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
+import { ApiPromise } from '@polkadot/api';
+import { PolkadotClient } from 'polkadot-api';
 
 @Injectable()
 export class AssetClaimService {
-  async claimAssets(
+  async claimAssetsPjs(options: AssetClaimDto, hashEnabled = false) {
+    return await this.claimAssets(options, hashEnabled);
+  }
+
+  async claimAssetsPapi(options: AssetClaimDto) {
+    return await this.claimAssets(options, false, true);
+  }
+
+  private async claimAssets(
     { from, fungible, address }: AssetClaimDto,
     hashEnabled = false,
+    usePapi = false,
   ) {
     const fromNode = from as TNode | undefined;
 
@@ -36,10 +45,14 @@ export class AssetClaimService {
       throw new BadRequestException('Invalid wallet address.');
     }
 
-    const api = await createApiInstanceForNode(fromNode);
+    const Sdk = usePapi
+      ? await import('@paraspell/sdk/papi')
+      : await import('@paraspell/sdk');
+
+    const api = await Sdk.createApiInstanceForNode(fromNode);
 
     try {
-      const builder = Builder(api)
+      const builder = Sdk.Builder(api as ApiPromise & PolkadotClient)
         .claimFrom(fromNode)
         .fungible(fungible as TMultiAsset[])
         .account(address);
@@ -54,7 +67,8 @@ export class AssetClaimService {
         throw new InternalServerErrorException(e.message);
       }
     } finally {
-      if (api) await api.disconnect();
+      if (api instanceof ApiPromise) await api.disconnect();
+      else api.destroy();
     }
   }
 }

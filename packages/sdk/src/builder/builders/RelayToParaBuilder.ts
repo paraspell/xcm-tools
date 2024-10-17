@@ -1,7 +1,6 @@
 // Implements builder pattern for Relay chain to Parachain transfer operation
 
 import { transferRelayToPara, transferRelayToParaSerializedApiCall } from '../../pallets/xcmPallet'
-import type { TApiType, TResType } from '../../types'
 import {
   type TSerializedApiCall,
   type TRelayToParaOptions,
@@ -16,24 +15,28 @@ import {
   GeneralBuilder
 } from './Builder'
 import type BatchTransactionManager from './BatchTransactionManager'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
 
 /**
  * Builder class for constructing transfer operations from the Relay chain to a Parachain.
  */
-class RelayToParaBuilder<TApi extends TApiType, TRes extends TResType>
-  implements AmountBuilder<TApi>, AddressBuilder<TApi>, UseKeepAliveFinalBuilder<TApi>
+class RelayToParaBuilder<TApi, TRes>
+  implements
+    AmountBuilder<TApi, TRes>,
+    AddressBuilder<TApi, TRes>,
+    UseKeepAliveFinalBuilder<TApi, TRes>
 {
-  private readonly api?: TApi
+  private readonly api: IPolkadotApi<TApi, TRes>
   private readonly to: TDestination
   private readonly paraIdTo?: number
 
   private _amount: number
   private _address: TAddress
-  private _destApi?: TApi
+  private _destApi: IPolkadotApi<TApi, TRes>
   private _version?: Version
 
   private constructor(
-    api: TApi | undefined,
+    api: IPolkadotApi<TApi, TRes>,
     to: TDestination,
     private batchManager: BatchTransactionManager<TApi, TRes>,
     paraIdTo?: number
@@ -43,13 +46,13 @@ class RelayToParaBuilder<TApi extends TApiType, TRes extends TResType>
     this.paraIdTo = paraIdTo
   }
 
-  static create<TApi extends TApiType, TRes extends TResType>(
-    api: TApi | undefined,
+  static create<TApi, TRes>(
+    api: IPolkadotApi<TApi, TRes>,
     to: TDestination,
     batchManager: BatchTransactionManager<TApi, TRes>,
     paraIdTo?: number
-  ): AmountBuilder<TApi> {
-    return new RelayToParaBuilder(api, to, batchManager, paraIdTo)
+  ): AmountBuilder<TApi, TRes> {
+    return new RelayToParaBuilder<TApi, TRes>(api, to, batchManager, paraIdTo)
   }
 
   /**
@@ -81,7 +84,7 @@ class RelayToParaBuilder<TApi extends TApiType, TRes extends TResType>
    * @returns An instance of Builder
    */
   useKeepAlive(destApi: TApi): this {
-    this._destApi = destApi
+    this._destApi.setApi(destApi)
     return this
   }
 
@@ -96,7 +99,7 @@ class RelayToParaBuilder<TApi extends TApiType, TRes extends TResType>
     return this
   }
 
-  private buildOptions(): TRelayToParaOptions<TApi> {
+  private buildOptions(): TRelayToParaOptions<TApi, TRes> {
     return {
       api: this.api,
       destination: this.to,
@@ -128,7 +131,7 @@ class RelayToParaBuilder<TApi extends TApiType, TRes extends TResType>
    */
   async build() {
     const options = this.buildOptions()
-    return await transferRelayToPara(options)
+    return await transferRelayToPara<TApi, TRes>(options)
   }
 
   /**

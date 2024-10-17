@@ -9,12 +9,12 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Pioneer extends ParachainNode implements IXTokensTransfer {
+class Pioneer<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Pioneer', 'pioneer', 'kusama', Version.V1)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     // Multiple asset options needs addressing
     const { fees } = input
     const currencySelection: TNativeTokenAsset = 'NativeToken'

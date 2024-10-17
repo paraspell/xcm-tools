@@ -3,26 +3,35 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { isValidWalletAddress } from '../utils.js';
+import { XTransferDto } from './dto/XTransferDto.js';
+import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
-  Builder,
   IncompatibleNodesError,
   InvalidCurrencyError,
   NODE_NAMES,
   TNode,
-  TTransferReturn,
-  UseKeepAliveFinalBuilder,
-  createApiInstanceForNode,
-  determineRelayChain,
 } from '@paraspell/sdk';
-import { isValidWalletAddress } from '../utils.js';
-import { XTransferDto } from './dto/XTransferDto.js';
-import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
+import type * as SdkType from '@paraspell/sdk';
+import type * as SdkPapiType from '@paraspell/sdk/papi';
+import { determineRelayChain } from '@paraspell/sdk';
+import { ApiPromise } from '@polkadot/api';
+import { PolkadotClient } from 'polkadot-api';
 
 @Injectable()
 export class XTransferService {
-  async generateXcmCall(
+  async generateXcmCallPjs(options: XTransferDto, hashEnabled = false) {
+    return await this.generateXcmCall(options, hashEnabled);
+  }
+
+  async generateXcmCallPapi(options: XTransferDto) {
+    return await this.generateXcmCall(options, true, true);
+  }
+
+  private async generateXcmCall(
     { from, to, amount, address, currency, xcmVersion }: XTransferDto,
-    hashEnabled = false,
+    hashEnabled: boolean,
+    usePapi = false,
   ) {
     const fromNode = from as TNode | undefined;
     const toNode = to as TNode | undefined;
@@ -53,12 +62,18 @@ export class XTransferService {
       throw new BadRequestException('Invalid wallet address.');
     }
 
+    const Sdk = usePapi
+      ? await import('@paraspell/sdk/papi')
+      : await import('@paraspell/sdk');
+
     const node = fromNode ?? toNode;
-    const api = await createApiInstanceForNode(node as TNode);
+    const api = await Sdk.createApiInstanceForNode(node as TNode);
 
-    const builder = Builder(api);
+    const builder = Sdk.Builder(api as PolkadotClient & ApiPromise);
 
-    let finalBuilder: UseKeepAliveFinalBuilder;
+    let finalBuilder:
+      | SdkPapiType.UseKeepAliveFinalBuilder
+      | SdkType.UseKeepAliveFinalBuilder;
 
     if (fromNode && toNode && currency) {
       // Parachain to parachain
@@ -83,7 +98,9 @@ export class XTransferService {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);
     }
 
-    let response: TTransferReturn;
+    let response:
+      | SdkType.TTransferReturn<SdkType.Extrinsic>
+      | SdkPapiType.TTransferReturn<SdkPapiType.TPapiTransaction>;
     try {
       response = hashEnabled
         ? await finalBuilder.build()
@@ -99,12 +116,24 @@ export class XTransferService {
       const error = e as Error;
       throw new InternalServerErrorException(error.message);
     } finally {
-      if (api) await api.disconnect();
+      if (api instanceof ApiPromise) await api.disconnect();
+      else api.destroy();
     }
     return response;
   }
 
-  async generateBatchXcmCall(batchDto: BatchXTransferDto) {
+  async generateBatchXcmCallPjs(batchDto: BatchXTransferDto) {
+    return await this.generateBatchXcmCall(batchDto);
+  }
+
+  async generateBatchXcmCallPapi(batchDto: BatchXTransferDto) {
+    return await this.generateBatchXcmCall(batchDto, true);
+  }
+
+  private async generateBatchXcmCall(
+    batchDto: BatchXTransferDto,
+    usePapi = false,
+  ) {
     const { transfers, options } = batchDto;
 
     if (!transfers || transfers.length === 0) {
@@ -145,10 +174,14 @@ export class XTransferService {
       );
     }
 
-    const api = await createApiInstanceForNode(
+    const Sdk = usePapi
+      ? await import('@paraspell/sdk/papi')
+      : await import('@paraspell/sdk');
+
+    const api = await Sdk.createApiInstanceForNode(
       fromNode ?? determineRelayChain(toNode as TNode),
     );
-    let builder = Builder(api);
+    let builder = Sdk.Builder(api as PolkadotClient & ApiPromise);
 
     try {
       for (const transfer of transfers) {
@@ -176,7 +209,9 @@ export class XTransferService {
           throw new BadRequestException('Invalid wallet address.');
         }
 
-        let finalBuilder: UseKeepAliveFinalBuilder;
+        let finalBuilder:
+          | SdkPapiType.UseKeepAliveFinalBuilder
+          | SdkType.UseKeepAliveFinalBuilder;
 
         if (transferFromNode && transferToNode && transfer.currency) {
           // Parachain to parachain
@@ -220,7 +255,8 @@ export class XTransferService {
 
       throw new InternalServerErrorException((e as Error).message);
     } finally {
-      if (api) await api.disconnect();
+      if (api instanceof ApiPromise) await api.disconnect();
+      else api.destroy();
     }
   }
 }
