@@ -33,6 +33,7 @@
     "@tabler/icons-react": "^3.19.0",
     "axios": "^1.7.7",
     "ethers": "^6.13.2",
+    "polkadot-api": "^1.6.4",
     "react": "^18.3.1",
     "react-confetti": "^6.1.0",
     "react-dom": "^18.3.1",

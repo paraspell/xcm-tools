@@ -5,6 +5,8 @@ import { Version } from '../../types'
 import XTransferTransferImpl from '../xTransfer'
 import type Phala from './Phala'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTransfer', () => ({
   default: {
@@ -13,14 +15,14 @@ vi.mock('../xTransfer', () => ({
 }))
 
 describe('Phala', () => {
-  let phala: Phala
+  let phala: Phala<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'PHA',
     amount: '100'
-  } as XTransferTransferInput
+  } as XTransferTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    phala = getNode('Phala')
+    phala = getNode<ApiPromise, Extrinsic, 'Phala'>('Phala')
   })
 
   it('should initialize with correct values', () => {

@@ -5,6 +5,8 @@ import XTokensTransferImpl from '../xTokens'
 import { getAllNodeProviders } from '../../utils'
 import { getNode } from '../../utils/getNode'
 import type Basilisk from './Basilisk'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -17,16 +19,16 @@ vi.mock('../../utils', () => ({
 }))
 
 describe('Basilisk', () => {
-  let basilisk: Basilisk
+  let basilisk: Basilisk<ApiPromise, Extrinsic>
   const mockInput = {
     currencyID: '123',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   const mockProviders = ['wss://non-preferred-rpc', 'wss://preferred-dwellir-rpc']
 
   beforeEach(() => {
-    basilisk = getNode('Basilisk')
+    basilisk = getNode<ApiPromise, Extrinsic, 'Basilisk'>('Basilisk')
     vi.mocked(getAllNodeProviders).mockReturnValue(mockProviders)
   })
 

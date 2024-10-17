@@ -6,12 +6,12 @@ import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
-class Subsocial extends ParachainNode implements IPolkadotXCMTransfer {
+class Subsocial<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Subsocial', 'subsocial', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
     const { scenario, currencySymbol } = input
 
     if (scenario !== 'ParaToPara') {
@@ -25,7 +25,7 @@ class Subsocial extends ParachainNode implements IPolkadotXCMTransfer {
     }
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
       input,
-      'limitedReserveTransferAssets',
+      'limited_reserve_transfer_assets',
       'Unlimited'
     )
   }

@@ -6,9 +6,9 @@ import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type TSerializedApiCall,
+  type TSerializedApiCallV2,
   type TScenario,
-  type TRelayToParaInternalOptions,
+  type TRelayToParaOptions,
   type TMultiAsset,
   type TMultiLocation
 } from '../../types'
@@ -16,12 +16,12 @@ import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
-class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
+class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('AssetHubKusama', 'KusamaAssetHub', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
     const { destination, currencySymbol, currencyId, scenario } = input
     // TESTED https://kusama.subscan.io/xcm_message/kusama-ddc2a48f0d8e0337832d7aae26f6c3053e1f4ffd
     // TESTED https://kusama.subscan.io/xcm_message/kusama-8e423130a4d8b61679af95dbea18a55124f99672
@@ -47,15 +47,15 @@ class AssetHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
     }
 
     const section =
-      scenario === 'ParaToPara' ? 'limitedReserveTransferAssets' : 'limitedTeleportAssets'
+      scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
     return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
   }
 
-  transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
     const { version = Version.V3 } = options
     return {
-      module: 'xcmPallet',
-      section: 'limitedTeleportAssets',
+      module: 'XcmPallet',
+      section: 'limited_teleport_assets',
       parameters: constructRelayToParaParameters(options, version, true)
     }
   }

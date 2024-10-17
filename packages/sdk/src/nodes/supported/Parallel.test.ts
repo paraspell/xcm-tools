@@ -4,6 +4,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Parallel from './Parallel'
 import { getNode } from '../../utils/getNode'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -12,14 +14,14 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Parallel', () => {
-  let parallel: Parallel
+  let parallel: Parallel<ApiPromise, Extrinsic>
   const mockInput = {
     currencyID: '123',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    parallel = getNode('Parallel')
+    parallel = getNode<ApiPromise, Extrinsic, 'Parallel'>('Parallel')
   })
 
   it('should initialize with correct values', () => {

@@ -1,7 +1,28 @@
-import type { HexString, TApiType, TResType, TSerializedApiCall } from '../types'
+import type {
+  HexString,
+  TCurrencyCore,
+  TMultiLocation,
+  TNodeWithRelayChains,
+  TSerializedApiCallV2
+} from '../types'
 
-export interface IPolkadotApi<TApi extends TApiType, TRes extends TResType> {
-  init(api: TApi): void
+export interface IPolkadotApi<TApi, TRes> {
+  setApi(api?: TApi): void
+  getApi(): TApi
+  init(node: TNodeWithRelayChains): Promise<void>
+  createApiInstance: (wsUrl: string) => Promise<TApi>
   createAccountId(address: string): HexString
-  call(serializedCall: TSerializedApiCall): TRes
+  callTxMethod(serializedCall: TSerializedApiCallV2): TRes
+  calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
+  getBalanceNative(address: string): Promise<bigint>
+  getBalanceForeign(address: string, id?: string): Promise<bigint | null>
+  getMythosForeignBalance(address: string): Promise<bigint | null>
+  getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint | null>
+  getBalanceForeignXTokens(
+    address: string,
+    symbolOrId: TCurrencyCore,
+    symbol: string | undefined,
+    id: string | undefined
+  ): Promise<bigint | null>
+  clone(): IPolkadotApi<TApi, TRes>
 }

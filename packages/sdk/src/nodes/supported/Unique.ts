@@ -9,12 +9,12 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Unique extends ParachainNode implements IXTokensTransfer {
+class Unique<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Unique', 'unique', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currencyID } = input
     const currencySelection: TForeignAssetId = { ForeignAssetId: currencyID }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)

@@ -4,7 +4,7 @@ import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedE
 import { InvalidCurrencyError } from '../errors'
 import * as utils from '../utils'
 import * as xcmUtils from '../pallets/xcmPallet/utils'
-import type { TRelayToParaInternalOptions } from '../types'
+import type { TRelayToParaOptions } from '../types'
 import {
   Version,
   type PolkadotXcmSection,
@@ -14,6 +14,9 @@ import {
   type XTokensTransferInput,
   type XTransferTransferInput
 } from '../types'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../pjs/types'
+import type { IPolkadotApi } from '../api'
 
 vi.mock('../utils', () => ({
   getAllNodeProviders: vi.fn().mockReturnValue(['provider1']),
@@ -35,41 +38,41 @@ vi.mock('../pallets/assets', () => ({
   getParaId: vi.fn().mockReturnValue(1000)
 }))
 
-class TestParachainNode extends ParachainNode {
+class TestParachainNode extends ParachainNode<ApiPromise, Extrinsic> {
   transferXTokens(
-    _input: XTokensTransferInput,
+    _input: XTokensTransferInput<ApiPromise, Extrinsic>,
     _currencySelection: TXTokensCurrencySelection,
     _fees: string | number = 'Unlimited'
   ) {
     return 'transferXTokens called'
   }
 
-  transferXTransfer(_input: XTransferTransferInput) {
+  transferXTransfer(_input: XTransferTransferInput<ApiPromise, Extrinsic>) {
     return 'transferXTransfer called'
   }
 
   transferPolkadotXCM(
-    _options: PolkadotXCMTransferInput,
+    _options: PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
     _section: PolkadotXcmSection,
     _fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ) {
     return 'transferPolkadotXCM called'
   }
 
-  public exposeCanUseXTokens(options: TSendInternalOptions): boolean {
+  public exposeCanUseXTokens(options: TSendInternalOptions<ApiPromise, Extrinsic>): boolean {
     return this.canUseXTokens(options)
   }
 }
 
-class NoXTokensNode extends ParachainNode {
-  transferXTransfer(_input: XTransferTransferInput) {
+class NoXTokensNode extends ParachainNode<ApiPromise, Extrinsic> {
+  transferXTransfer(_input: XTransferTransferInput<ApiPromise, Extrinsic>) {
     return 'transferXTransfer called'
   }
 }
 
-class OnlyPolkadotXCMNode extends ParachainNode {
+class OnlyPolkadotXCMNode extends ParachainNode<ApiPromise, Extrinsic> {
   transferPolkadotXCM(
-    _options: PolkadotXCMTransferInput,
+    _options: PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
     _section: PolkadotXcmSection,
     _fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ) {
@@ -77,7 +80,7 @@ class OnlyPolkadotXCMNode extends ParachainNode {
   }
 }
 
-class NoSupportNode extends ParachainNode {}
+class NoSupportNode extends ParachainNode<ApiPromise, Extrinsic> {}
 
 describe('ParachainNode', () => {
   let node: TestParachainNode
@@ -116,7 +119,7 @@ describe('ParachainNode', () => {
       currencySymbol: 'DOT',
       amount: '100',
       address: 'destinationAddress'
-    } as TSendInternalOptions
+    } as TSendInternalOptions<ApiPromise, Extrinsic>
     expect(node.exposeCanUseXTokens(options)).toBe(true)
   })
 
@@ -126,7 +129,7 @@ describe('ParachainNode', () => {
       currencySymbol: 'DOT',
       amount: '100',
       address: 'destinationAddress'
-    } as TSendInternalOptions
+    } as TSendInternalOptions<ApiPromise, Extrinsic>
 
     const transferXTokensSpy = vi.spyOn(node, 'transferXTokens')
 
@@ -143,7 +146,7 @@ describe('ParachainNode', () => {
       currencySymbol: 'DOT',
       amount: '100',
       address: 'destinationAddress'
-    } as TSendInternalOptions
+    } as TSendInternalOptions<ApiPromise, Extrinsic>
 
     const transferXTransferSpy = vi.spyOn(node, 'transferXTransfer')
 
@@ -160,7 +163,7 @@ describe('ParachainNode', () => {
       currencySymbol: 'DOT',
       amount: '100',
       address: 'destinationAddress'
-    } as TSendInternalOptions
+    } as TSendInternalOptions<ApiPromise, Extrinsic>
 
     const transferPolkadotXCMSpy = vi.spyOn(node, 'transferPolkadotXCM')
 
@@ -177,14 +180,14 @@ describe('ParachainNode', () => {
       currencySymbol: 'DOT',
       amount: '100',
       address: 'destinationAddress'
-    } as TSendInternalOptions
+    } as TSendInternalOptions<ApiPromise, Extrinsic>
 
     expect(() => node.transfer(options)).toThrowError(NoXCMSupportImplementedError)
   })
 
   it('should not call transferXTokens when canUseXTokens returns false', () => {
     class TestNode extends TestParachainNode {
-      protected canUseXTokens(_: TSendInternalOptions): boolean {
+      protected canUseXTokens(_: TSendInternalOptions<ApiPromise, Extrinsic>): boolean {
         return false
       }
     }
@@ -197,7 +200,7 @@ describe('ParachainNode', () => {
       currencySymbol: 'DOT',
       amount: '100',
       address: 'destinationAddress'
-    } as TSendInternalOptions
+    } as TSendInternalOptions<ApiPromise, Extrinsic>
 
     const transferXTokensSpy = vi.spyOn(node, 'transferXTokens')
     const transferXTransferSpy = vi.spyOn(node, 'transferXTransfer')
@@ -216,7 +219,7 @@ describe('ParachainNode', () => {
       amount: '100',
       address: 'destinationAddress',
       destination: 'Polimec'
-    } as TSendInternalOptions
+    } as TSendInternalOptions<ApiPromise, Extrinsic>
 
     expect(() => node.transfer(options)).toThrowError(
       'Sending assets to Polimec is supported only from AssetHubPolkadot'
@@ -233,7 +236,7 @@ describe('ParachainNode', () => {
       amount: '100',
       address: 'destinationAddress',
       destination: 'Polimec'
-    } as TSendInternalOptions
+    } as TSendInternalOptions<ApiPromise, Extrinsic>
 
     const transferXTokensSpy = vi.spyOn(node, 'transferXTokens')
 
@@ -251,7 +254,7 @@ describe('ParachainNode', () => {
       amount: '100',
       address: 'destinationAddress',
       overridedCurrencyMultiLocation: {}
-    } as TSendInternalOptions
+    } as TSendInternalOptions<ApiPromise, Extrinsic>
 
     vi.spyOn(xcmUtils, 'isTMultiLocation').mockReturnValue(true)
     vi.spyOn(utils, 'verifyMultiLocation').mockReturnValue(false)
@@ -260,13 +263,13 @@ describe('ParachainNode', () => {
   })
 
   it('should return correct serialized API call from transferRelayToPara', () => {
-    const options = {} as TRelayToParaInternalOptions
+    const options = {} as TRelayToParaOptions<ApiPromise, Extrinsic>
 
     const result = node.transferRelayToPara(options)
 
     expect(result).toEqual({
-      module: 'xcmPallet',
-      section: 'reserveTransferAssets',
+      module: 'XcmPallet',
+      section: 'reserve_transfer_assets',
       parameters: 'parameters'
     })
   })
@@ -276,7 +279,10 @@ describe('ParachainNode', () => {
   })
 
   it('should create API instance', async () => {
-    const apiInstance = await node.createApiInstance()
+    const mockApi = {
+      createApiInstance: vi.fn().mockResolvedValue('apiInstance')
+    } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
+    const apiInstance = await node.createApiInstance(mockApi)
 
     expect(apiInstance).toBe('apiInstance')
   })

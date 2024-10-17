@@ -1,7 +1,6 @@
 import { InvalidCurrencyError } from '../../../errors'
-import type { TCurrencyCore, TNodeDotKsmWithRelayChains } from '../../../types'
-import type { TTransferInfo } from '../../../types/TTransferInfo'
-import { createApiInstanceForNode, determineRelayChainSymbol } from '../../../utils'
+import type { TGetTransferInfoOptions, TTransferInfo } from '../../../types/TTransferInfo'
+import { determineRelayChainSymbol } from '../../../utils'
 import { getNativeAssetSymbol } from '../assets'
 import { getAssetBalance } from '../balance/getAssetBalance'
 import { getBalanceNative } from '../balance/getBalanceNative'
@@ -13,27 +12,21 @@ import {
 } from '../getExistentialDeposit'
 import { getOriginFeeDetails } from '../getOriginFeeDetails'
 
-/**
- * Retrieves detailed transfer information for a cross-chain transfer.
- *
- * @param origin - The origin node of the transfer.
- * @param destination - The destination node of the transfer.
- * @param accountOrigin - The account address on the origin node.
- * @param accountDestination - The account address on the destination node.
- * @param currency - The currency to be transferred.
- * @param amount - The amount to be transferred.
- * @returns A Promise that resolves to the transfer information.
- */
-export const getTransferInfo = async (
-  origin: TNodeDotKsmWithRelayChains,
-  destination: TNodeDotKsmWithRelayChains,
-  accountOrigin: string,
-  accountDestination: string,
-  currency: TCurrencyCore,
-  amount: string
-): Promise<TTransferInfo> => {
-  const originApi = await createApiInstanceForNode(origin)
-  const originBalance = await getBalanceNative(accountOrigin, origin, originApi)
+export const getTransferInfo = async <TApi, TRes>({
+  origin,
+  destination,
+  accountOrigin,
+  accountDestination,
+  currency,
+  amount,
+  api: originApi
+}: TGetTransferInfoOptions<TApi, TRes>): Promise<TTransferInfo> => {
+  await originApi.init(origin)
+  const originBalance = await getBalanceNative({
+    address: accountOrigin,
+    node: origin,
+    api: originApi
+  })
   const { xcmFee: destXcmFee } = await getOriginFeeDetails(
     origin,
     destination,
@@ -59,11 +52,20 @@ export const getTransferInfo = async (
       ecosystem: determineRelayChainSymbol(origin)
     },
     currencyBalanceOrigin: {
-      balance: await getAssetBalance(accountOrigin, origin, currency),
+      balance: await getAssetBalance({
+        api: originApi,
+        address: accountOrigin,
+        node: origin,
+        currency
+      }),
       currency: asset?.symbol ?? ''
     },
     originFeeBalance: {
-      balance: await getBalanceNative(accountOrigin, origin, originApi),
+      balance: await getBalanceNative({
+        address: accountOrigin,
+        node: origin,
+        api: originApi
+      }),
       expectedBalanceAfterXCMFee: expectedBalanceAfterXCMDelivery,
       xcmFee: await getOriginFeeDetails(
         origin,
@@ -76,10 +78,18 @@ export const getTransferInfo = async (
       existentialDeposit: BigInt(getExistentialDeposit(origin) ?? 0),
       asset: getNativeAssetSymbol(origin),
       minNativeTransferableAmount: getMinNativeTransferableAmount(origin),
-      maxNativeTransferableAmount: await getMaxNativeTransferableAmount(accountOrigin, origin)
+      maxNativeTransferableAmount: await getMaxNativeTransferableAmount(
+        originApi,
+        accountOrigin,
+        origin
+      )
     },
     destinationFeeBalance: {
-      balance: await getBalanceNative(accountDestination, destination),
+      balance: await getBalanceNative({
+        address: accountDestination,
+        node: destination,
+        api: originApi
+      }),
       currency: getNativeAssetSymbol(destination),
       existentialDeposit: getExistentialDeposit(destination)
     }

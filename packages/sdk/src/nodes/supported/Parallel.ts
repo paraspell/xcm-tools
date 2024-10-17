@@ -4,12 +4,12 @@ import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../..
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Parallel extends ParachainNode implements IXTokensTransfer {
+class Parallel<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Parallel', 'parallel', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currencyID } = input
     return XTokensTransferImpl.transferXTokens(input, currencyID)
   }

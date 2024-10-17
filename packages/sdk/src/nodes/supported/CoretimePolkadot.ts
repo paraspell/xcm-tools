@@ -5,38 +5,36 @@ import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type TSerializedApiCall,
-  type TRelayToParaInternalOptions
+  type TSerializedApiCallV2,
+  type TRelayToParaOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
-class CoretimePolkadot extends ParachainNode implements IPolkadotXCMTransfer {
+class CoretimePolkadot<TApi, TRes>
+  extends ParachainNode<TApi, TRes>
+  implements IPolkadotXCMTransfer
+{
   constructor() {
     super('CoretimePolkadot', 'polkadotCoretime', 'polkadot', Version.V3)
   }
 
   _assetCheckEnabled = false
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
     const { scenario } = input
     const section =
-      scenario === 'ParaToPara' ? 'limitedReserveTransferAssets' : 'limitedTeleportAssets'
+      scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
     return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
   }
 
-  transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
     const { version = Version.V3 } = options
     return {
-      module: 'xcmPallet',
-      section: 'limitedTeleportAssets',
+      module: 'XcmPallet',
+      section: 'limited_teleport_assets',
       parameters: constructRelayToParaParameters(options, version, true)
     }
-  }
-
-  getProvider(): string {
-    // TODO: Temporary solution, will be solved after updating @polkadot/apps-config package
-    return 'wss://polkadot-coretime-rpc.polkadot.io'
   }
 }
 

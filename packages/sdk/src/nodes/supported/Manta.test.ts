@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { XTokensTransferInput, TMantaAsset } from '../../types'
+import type { XTokensTransferInput } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Manta from './Manta'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -12,14 +14,14 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Manta', () => {
-  let manta: Manta
+  let manta: Manta<ApiPromise, Extrinsic>
   const mockInput = {
     currencyID: '123',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    manta = getNode('Manta')
+    manta = getNode<ApiPromise, Extrinsic, 'Manta'>('Manta')
   })
 
   it('should initialize with correct values', () => {
@@ -34,6 +36,6 @@ describe('Manta', () => {
 
     manta.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { MantaCurrency: '123' } as TMantaAsset)
+    expect(spy).toHaveBeenCalledWith(mockInput, { MantaCurrency: BigInt('123') })
   })
 })

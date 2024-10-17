@@ -9,15 +9,14 @@ import {
   createCurrencySpec,
   createPolkadotXcmHeader
 } from '../../pallets/xcmPallet/utils'
-import type { Junctions } from '../../types'
+import type { Junctions, TSerializedApiCallV2 } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type TSerializedApiCall,
   Parents,
   type TScenario,
-  type TRelayToParaInternalOptions,
+  type TRelayToParaOptions,
   type TMultiAsset,
   type TMultiLocation,
   type TJunction
@@ -28,17 +27,23 @@ import { getOtherAssets, getParaId } from '../../pallets/assets'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
 
-class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
+class AssetHubPolkadot<TApi, TRes>
+  extends ParachainNode<TApi, TRes>
+  implements IPolkadotXCMTransfer
+{
   constructor() {
     super('AssetHubPolkadot', 'PolkadotAssetHub', 'polkadot', Version.V3)
   }
 
-  public handleBridgeTransfer(input: PolkadotXCMTransferInput, targetChain: 'Polkadot' | 'Kusama') {
+  public handleBridgeTransfer<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>,
+    targetChain: 'Polkadot' | 'Kusama'
+  ) {
     if (
       (targetChain === 'Kusama' && input.currencySymbol?.toUpperCase() === 'KSM') ||
       (targetChain === 'Polkadot' && input.currencySymbol?.toUpperCase() === 'DOT')
     ) {
-      const modifiedInput: PolkadotXCMTransferInput = {
+      const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
         ...input,
         header: createBridgePolkadotXcmDest(
           Version.V4,
@@ -51,14 +56,14 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
       }
       return PolkadotXCMTransferImpl.transferPolkadotXCM(
         modifiedInput,
-        'transferAssets',
+        'transfer_assets',
         'Unlimited'
       )
     } else if (
       (targetChain === 'Polkadot' && input.currencySymbol?.toUpperCase() === 'KSM') ||
       (targetChain === 'Kusama' && input.currencySymbol?.toUpperCase() === 'DOT')
     ) {
-      const modifiedInput: PolkadotXCMTransferInput = {
+      const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
         ...input,
         header: createBridgePolkadotXcmDest(
           Version.V3,
@@ -75,7 +80,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
       }
       return PolkadotXCMTransferImpl.transferPolkadotXCM(
         modifiedInput,
-        'limitedReserveTransferAssets',
+        'limited_reserve_transfer_assets',
         'Unlimited'
       )
     }
@@ -84,7 +89,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     )
   }
 
-  public handleEthBridgeTransfer(input: PolkadotXCMTransferInput) {
+  public handleEthBridgeTransfer<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
     const { api, scenario, destination, paraIdTo, address, currencySymbol } = input
 
     if (!ethers.isAddress(address)) {
@@ -105,7 +110,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
       GlobalConsensus: { Ethereum: { chain_id: ETH_CHAIN_ID } }
     }
 
-    const modifiedInput: PolkadotXCMTransferInput = {
+    const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
       ...input,
       header: createPolkadotXcmHeader(
         scenario,
@@ -135,10 +140,14 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
         }
       })
     }
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, 'transferAssets', 'Unlimited')
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(
+      modifiedInput,
+      'transfer_assets',
+      'Unlimited'
+    )
   }
 
-  handleMythosTransfer(input: PolkadotXCMTransferInput) {
+  handleMythosTransfer<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
     const { api, address, amount, currencyId, overridedCurrency, scenario, destination, paraIdTo } =
       input
     const version = Version.V2
@@ -154,7 +163,7 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
         }
       }
     }
-    const modifiedInput: PolkadotXCMTransferInput = {
+    const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
       ...input,
       header: this.createPolkadotXcmHeader(scenario, version, destination, paraId),
       addressSelection: generateAddressPayload(
@@ -175,20 +184,20 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     }
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
       modifiedInput,
-      'limitedTeleportAssets',
+      'limited_teleport_assets',
       'Unlimited'
     )
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
     const { scenario, currencySymbol, currencyId } = input
 
     if (input.destination === 'AssetHubKusama') {
-      return this.handleBridgeTransfer(input, 'Kusama')
+      return this.handleBridgeTransfer<TApi, TRes>(input, 'Kusama')
     }
 
     if (input.destination === 'Ethereum') {
-      return this.handleEthBridgeTransfer(input)
+      return this.handleEthBridgeTransfer<TApi, TRes>(input)
     }
 
     if (input.destination === 'Mythos') {
@@ -212,15 +221,15 @@ class AssetHubPolkadot extends ParachainNode implements IPolkadotXCMTransfer {
     }
 
     const section =
-      scenario === 'ParaToPara' ? 'limitedReserveTransferAssets' : 'limitedTeleportAssets'
+      scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
     return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
   }
 
-  transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
     const { version = Version.V3 } = options
     return {
-      module: 'xcmPallet',
-      section: 'limitedTeleportAssets',
+      module: 'XcmPallet',
+      section: 'limited_teleport_assets',
       parameters: constructRelayToParaParameters(options, version, true)
     }
   }

@@ -3,15 +3,17 @@ import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 import { buildBeneficiaryInput } from './buildBeneficiaryInput'
 import type { TMultiAsset } from '../../../types'
 import { Version } from '../../../types'
-import type { TAssetClaimOptionsInternal } from '../../../types/TAssetClaim'
+import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
 import type { ApiPromise } from '@polkadot/api'
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import type { Extrinsic } from '../../../pjs/types'
 
 vi.mock('./buildBeneficiaryInput', () => ({
   buildBeneficiaryInput: vi.fn()
 }))
 
 describe('buildClaimAssetsInput', () => {
-  const apiMock = {} as ApiPromise
+  const apiMock = {} as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
   it('should build claim assets input with default version (V3)', () => {
     const multiAssets = ['asset1', 'asset2'] as unknown as TMultiAsset[]
@@ -19,7 +21,7 @@ describe('buildClaimAssetsInput', () => {
     const beneficiaryInput = { parents: 1, interior: {} }
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
-    const options: TAssetClaimOptionsInternal = {
+    const options: TAssetClaimOptions<ApiPromise, Extrinsic> = {
       node: 'Acala',
       api: apiMock,
       multiAssets,
@@ -28,7 +30,10 @@ describe('buildClaimAssetsInput', () => {
 
     const result = buildClaimAssetsInput(options)
 
-    expect(result).toEqual([{ [Version.V3]: multiAssets }, { [Version.V3]: beneficiaryInput }])
+    expect(result).toEqual({
+      assets: { [Version.V3]: multiAssets },
+      beneficiary: { [Version.V3]: beneficiaryInput }
+    })
     expect(buildBeneficiaryInput).toHaveBeenCalledWith(apiMock, address)
   })
 
@@ -38,7 +43,7 @@ describe('buildClaimAssetsInput', () => {
     const beneficiaryInput = { parents: 1, interior: {} }
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
-    const options: TAssetClaimOptionsInternal = {
+    const options: TAssetClaimOptions<ApiPromise, Extrinsic> = {
       node: 'Acala',
       api: apiMock,
       multiAssets,
@@ -48,7 +53,10 @@ describe('buildClaimAssetsInput', () => {
 
     const result = buildClaimAssetsInput(options)
 
-    expect(result).toEqual([{ [Version.V2]: multiAssets }, { [Version.V2]: beneficiaryInput }])
+    expect(result).toEqual({
+      assets: { [Version.V2]: multiAssets },
+      beneficiary: { [Version.V2]: beneficiaryInput }
+    })
     expect(buildBeneficiaryInput).toHaveBeenCalledWith(apiMock, address)
   })
 
@@ -58,7 +66,7 @@ describe('buildClaimAssetsInput', () => {
     const beneficiaryInput = { parents: 1, interior: {} }
     vi.mocked(buildBeneficiaryInput).mockReturnValue(beneficiaryInput)
 
-    const options: TAssetClaimOptionsInternal = {
+    const options: TAssetClaimOptions<ApiPromise, Extrinsic> = {
       node: 'Acala',
       api: apiMock,
       multiAssets,
@@ -67,7 +75,10 @@ describe('buildClaimAssetsInput', () => {
 
     const result = buildClaimAssetsInput(options)
 
-    expect(result).toEqual([{ [Version.V3]: multiAssets }, { [Version.V3]: beneficiaryInput }])
+    expect(result).toEqual({
+      assets: { [Version.V3]: multiAssets },
+      beneficiary: { [Version.V3]: beneficiaryInput }
+    })
     expect(buildBeneficiaryInput).toHaveBeenCalledWith(apiMock, address)
   })
 })

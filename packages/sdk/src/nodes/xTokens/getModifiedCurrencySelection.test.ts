@@ -1,8 +1,10 @@
+import type { ApiPromise } from '@polkadot/api'
 import { InvalidCurrencyError } from '../../errors'
 import type { XTokensTransferInput } from '../../types'
 import { Parents, Version } from '../../types'
 import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
 import { describe, it, expect } from 'vitest'
+import type { Extrinsic } from '../../pjs/types'
 
 describe('getModifiedCurrencySelection', () => {
   it('returns correct structure with all parameters provided', () => {
@@ -15,7 +17,7 @@ describe('getModifiedCurrencySelection', () => {
       amount,
       currencyID,
       paraIdTo
-    } as XTokensTransferInput
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
 
     const result = getModifiedCurrencySelection(version, xTransferInput)
     expect(result).toEqual({
@@ -44,7 +46,7 @@ describe('getModifiedCurrencySelection', () => {
       amount,
       currencyID: undefined,
       paraIdTo
-    } as XTokensTransferInput
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
 
     expect(() => getModifiedCurrencySelection(version, xTransferInput)).toThrow(
       InvalidCurrencyError
@@ -63,7 +65,7 @@ describe('getModifiedCurrencySelection', () => {
       currencyID,
       paraIdTo,
       feeAsset
-    } as XTokensTransferInput
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
 
     const result = getModifiedCurrencySelection(version, xTransferInput)
     expect(result).toEqual({

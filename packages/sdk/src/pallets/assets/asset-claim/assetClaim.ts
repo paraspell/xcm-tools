@@ -1,38 +1,33 @@
-import type { ApiPromise } from '@polkadot/api'
-import type { Extrinsic, TApiType, TResType } from '../../../types'
+import type { TPallet } from '../../../types'
 import { type TSerializedApiCall } from '../../../types'
 import { type TAssetClaimOptions } from '../../../types/TAssetClaim'
-import { createApiInstanceForNode, isRelayChain } from '../../../utils'
+import { isRelayChain } from '../../../utils'
 import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 
-const MODULE = 'polkadotXcm'
-const MODULE_RELAY = 'xcmPallet'
-const SECTION = 'claimAssets'
-
-export const claimAssets = async <
-  TApi extends TApiType = ApiPromise,
-  TRes extends TResType = Extrinsic
->(
-  options: TAssetClaimOptions<TApi>
+export const claimAssets = async <TApi, TRes>(
+  options: TAssetClaimOptions<TApi, TRes>
 ): Promise<TRes | TSerializedApiCall> => {
   const { api, node, serializedApiCallEnabled } = options
 
-  const apiWithFallback = api ?? (await createApiInstanceForNode(node))
+  await api.init(node)
 
-  const args = buildClaimAssetsInput({
-    ...options,
-    api: apiWithFallback
-  })
+  const args = buildClaimAssetsInput<TApi, TRes>(options)
 
-  const module = isRelayChain(node) ? MODULE_RELAY : MODULE
+  const module: TPallet = isRelayChain(node) ? 'XcmPallet' : 'PolkadotXcm'
+
+  const call = {
+    module,
+    section: 'claim_assets',
+    parameters: args
+  }
 
   if (serializedApiCallEnabled === true) {
     return {
-      module,
-      section: SECTION,
-      parameters: args
+      ...call,
+      // Keep compatible with the old SerializedCall type
+      parameters: Object.values(args)
     }
   }
 
-  return apiWithFallback.tx[module][SECTION](...args) as TRes
+  return api.callTxMethod(call)
 }

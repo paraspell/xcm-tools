@@ -1,4 +1,4 @@
 import { useContext } from "react";
-import { ThemeContext } from "../providers/ThemeContext";
+import { WalletContext } from "../providers/WalletContext";
 
-export const useWallet = () => useContext(ThemeContext);
+export const useWallet = () => useContext(WalletContext);

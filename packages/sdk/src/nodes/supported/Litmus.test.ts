@@ -1,12 +1,14 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { getNode } from '../../utils'
 import Litmus from './Litmus'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 describe('Litmus', () => {
-  let litmus: Litmus
+  let litmus: Litmus<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    litmus = getNode('Litmus')
+    litmus = getNode<ApiPromise, Extrinsic, 'Litmus'>('Litmus')
   })
 
   it('should be instantiated correctly', () => {

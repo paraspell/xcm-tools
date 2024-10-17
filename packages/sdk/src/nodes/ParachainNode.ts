@@ -8,9 +8,8 @@ import type {
   TScenario,
   IXTokensTransfer,
   IPolkadotXCMTransfer,
-  TSerializedApiCall,
   IXTransferTransfer,
-  TRelayToParaInternalOptions,
+  TRelayToParaOptions,
   TSendInternalOptions,
   TDestination,
   TCurrencySelectionHeaderArr,
@@ -19,17 +18,10 @@ import type {
   TMultiAsset,
   TMultiLocation,
   TMultiLocationHeader,
-  TApiType,
-  TResType
+  TSerializedApiCallV2
 } from '../types'
 import { Version, Parents } from '../types'
-import {
-  getAllNodeProviders,
-  createApiInstance,
-  generateAddressPayload,
-  getFees,
-  verifyMultiLocation
-} from '../utils'
+import { getAllNodeProviders, generateAddressPayload, getFees, verifyMultiLocation } from '../utils'
 import {
   constructRelayToParaParameters,
   createCurrencySpec,
@@ -37,27 +29,21 @@ import {
   isTMultiLocation
 } from '../pallets/xcmPallet/utils'
 import { InvalidCurrencyError } from '../errors'
-import type { ApiPromise } from '@polkadot/api'
+import type { IPolkadotApi } from '../api/IPolkadotApi'
 
-const supportsXTokens = <TApi extends TApiType, TRes extends TResType>(
-  obj: unknown
-): obj is IXTokensTransfer<TApi, TRes> => {
+const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
 }
 
-const supportsXTransfer = <TApi extends TApiType, TRes extends TResType>(
-  obj: unknown
-): obj is IXTransferTransfer<TApi, TRes> => {
+const supportsXTransfer = (obj: unknown): obj is IXTransferTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTransfer' in obj
 }
 
-const supportsPolkadotXCM = <TApi extends TApiType, TRes extends TResType>(
-  obj: unknown
-): obj is IPolkadotXCMTransfer<TApi, TRes> => {
+const supportsPolkadotXCM = (obj: unknown): obj is IPolkadotXCMTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferPolkadotXCM' in obj
 }
 
-abstract class ParachainNode<TApi extends TApiType = ApiPromise> {
+abstract class ParachainNode<TApi, TRes> {
   private readonly _node: TNode
 
   // Property _name maps our node names to names which polkadot libs are using
@@ -99,11 +85,11 @@ abstract class ParachainNode<TApi extends TApiType = ApiPromise> {
     return this._assetCheckEnabled
   }
 
-  protected canUseXTokens(_: TSendInternalOptions): boolean {
+  protected canUseXTokens(_: TSendInternalOptions<TApi, TRes>): boolean {
     return true
   }
 
-  transfer(options: TSendInternalOptions): TTransferReturn {
+  transfer(options: TSendInternalOptions<TApi, TRes>): TTransferReturn<TRes> {
     const {
       api,
       currencySymbol,
@@ -204,11 +190,11 @@ abstract class ParachainNode<TApi extends TApiType = ApiPromise> {
     }
   }
 
-  transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
     const { version = Version.V3 } = options
     return {
-      module: 'xcmPallet',
-      section: 'reserveTransferAssets',
+      module: 'XcmPallet',
+      section: 'reserve_transfer_assets',
       parameters: constructRelayToParaParameters(options, version)
     }
   }
@@ -217,8 +203,8 @@ abstract class ParachainNode<TApi extends TApiType = ApiPromise> {
     return getAllNodeProviders(this.node as TNodePolkadotKusama)[0]
   }
 
-  async createApiInstance(): Promise<TApi> {
-    return await createApiInstance(this.getProvider())
+  async createApiInstance(api: IPolkadotApi<TApi, TRes>): Promise<TApi> {
+    return api.createApiInstance(this.getProvider())
   }
 
   createCurrencySpec(

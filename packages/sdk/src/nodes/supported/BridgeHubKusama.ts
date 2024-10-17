@@ -6,20 +6,23 @@ import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type TSerializedApiCall,
-  type TRelayToParaInternalOptions
+  type TSerializedApiCallV2,
+  type TRelayToParaOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
-class BridgeHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
+class BridgeHubKusama<TApi, TRes>
+  extends ParachainNode<TApi, TRes>
+  implements IPolkadotXCMTransfer
+{
   constructor() {
     super('BridgeHubKusama', 'kusamaBridgeHub', 'kusama', Version.V3)
   }
 
   _assetCheckEnabled = false
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
     const { scenario } = input
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(
@@ -28,15 +31,15 @@ class BridgeHubKusama extends ParachainNode implements IPolkadotXCMTransfer {
         'Unable to use bridge hub for transfers to other Parachains. Please move your currency to AssetHub to transfer to other Parachains.'
       )
     }
-    const section = 'limitedTeleportAssets'
+    const section = 'limited_teleport_assets'
     return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
   }
 
-  transferRelayToPara(options: TRelayToParaInternalOptions): TSerializedApiCall {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
     const { version = Version.V3 } = options
     return {
-      module: 'xcmPallet',
-      section: 'limitedTeleportAssets',
+      module: 'XcmPallet',
+      section: 'limited_teleport_assets',
       parameters: constructRelayToParaParameters(options, version, true)
     }
   }

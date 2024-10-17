@@ -9,15 +9,15 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Kintsugi extends ParachainNode implements IXTokensTransfer {
+class Kintsugi<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Kintsugi', 'kintsugi', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currency, currencyID } = input
     const currencySelection: TForeignOrTokenAsset =
-      currencyID !== undefined ? { ForeignAsset: currencyID } : { Token: currency }
+      currencyID !== undefined ? { ForeignAsset: Number(currencyID) } : { Token: currency }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }

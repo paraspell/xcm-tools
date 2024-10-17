@@ -8,9 +8,9 @@ import type {
 } from '../../types'
 import { Parents } from '../../types'
 
-export const getModifiedCurrencySelection = (
+export const getModifiedCurrencySelection = <TApi, TRes>(
   version: Version,
-  { paraIdTo, currencyID, amount, feeAsset }: XTokensTransferInput
+  { paraIdTo, currencyID, amount, feeAsset }: XTokensTransferInput<TApi, TRes>
 ): TCurrencySelectionHeader | TCurrencySelectionHeaderArr => {
   if (currencyID === undefined || currencyID === '') {
     throw new InvalidCurrencyError('The selected asset has no currency ID')

@@ -4,6 +4,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import { getNode } from '../../utils/getNode'
 import type Zeitgeist from './Zeitgeist'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -12,15 +14,15 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Zeitgeist', () => {
-  let zeitgeist: Zeitgeist
+  let zeitgeist: Zeitgeist<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'ZTG',
     amount: '100',
     currencyID: '123'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    zeitgeist = getNode('Zeitgeist')
+    zeitgeist = getNode<ApiPromise, Extrinsic, 'Zeitgeist'>('Zeitgeist')
   })
 
   it('should initialize with correct values', () => {
@@ -46,7 +48,7 @@ describe('Zeitgeist', () => {
     zeitgeist.transferXTokens(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, {
-      ForeignAsset: '123'
+      ForeignAsset: 123
     })
   })
 })

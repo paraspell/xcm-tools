@@ -1,12 +1,16 @@
 // Contains basic structure of polkadotXCM call
 
-import type { PolkadotXcmModule, PolkadotXcmSection, TTransferReturn } from '../../types'
+import { DEFAULT_FEE_ASSET } from '../../const'
+import type {
+  PolkadotXcmSection,
+  TPallet,
+  TSerializedApiCallV2,
+  TTransferReturn
+} from '../../types'
 import { type PolkadotXCMTransferInput } from '../../types'
 
-const DEFAULT_FEE_ASSET = 0
-
 class PolkadotXCMTransferImpl {
-  static transferPolkadotXCM(
+  static transferPolkadotXCM<TApi, TRes>(
     {
       api,
       header,
@@ -14,33 +18,33 @@ class PolkadotXCMTransferImpl {
       currencySelection,
       feeAsset = DEFAULT_FEE_ASSET,
       serializedApiCallEnabled
-    }: PolkadotXCMTransferInput,
+    }: PolkadotXCMTransferInput<TApi, TRes>,
     section: PolkadotXcmSection,
     fees: 'Unlimited' | { Limited: string } | undefined = undefined
-  ): TTransferReturn {
-    const module: PolkadotXcmModule = 'polkadotXcm'
-    if (serializedApiCallEnabled === true) {
-      return {
-        module,
-        section,
-        parameters: [
-          header,
-          addressSelection,
-          currencySelection,
-          feeAsset,
-          ...(fees !== undefined ? [fees] : [])
-        ]
+  ): TTransferReturn<TRes> {
+    const module: TPallet = 'PolkadotXcm'
+
+    const call: TSerializedApiCallV2 = {
+      module,
+      section,
+      parameters: {
+        dest: header,
+        beneficiary: addressSelection,
+        assets: currencySelection,
+        fee_asset_item: feeAsset,
+        ...(fees !== undefined ? { weight_limit: fees } : {})
       }
     }
 
-    return api.call({
-      module,
-      section,
-      parameters:
-        fees !== undefined
-          ? [header, addressSelection, currencySelection, feeAsset, fees]
-          : [header, addressSelection, currencySelection, feeAsset]
-    })
+    if (serializedApiCallEnabled === true) {
+      // Keep compatible with old serialized call type
+      return {
+        ...call,
+        parameters: Object.values(call.parameters)
+      }
+    }
+
+    return api.callTxMethod(call)
   }
 }
 

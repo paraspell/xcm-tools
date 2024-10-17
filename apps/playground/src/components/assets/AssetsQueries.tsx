@@ -10,8 +10,6 @@ import {
   getAssetDecimals,
   getAssetId,
   getAssetsObject,
-  getBalanceForeign,
-  getBalanceNative,
   getNativeAssets,
   getOtherAssets,
   getParaId,
@@ -19,6 +17,7 @@ import {
   hasSupportForAsset,
 } from "@paraspell/sdk";
 import { IconJson } from "@tabler/icons-react";
+import { useWallet } from "../../hooks/useWallet";
 
 const AssetsQueries = () => {
   const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
@@ -27,6 +26,8 @@ const AssetsQueries = () => {
     outputAlertOpened,
     { open: openOutputAlert, close: closeOutputAlert },
   ] = useDisclosure(false);
+
+  const { apiType } = useWallet();
 
   const [error, setError] = useState<Error>();
   const [output, setOutput] = useState<string>();
@@ -50,6 +51,11 @@ const AssetsQueries = () => {
     currencyType,
     address,
   }: FormValues) => {
+    const Sdk =
+      apiType === "PAPI"
+        ? await import("@paraspell/sdk/papi")
+        : await import("@paraspell/sdk");
+
     switch (func) {
       case "ASSETS_OBJECT":
         return getAssetsObject(node);
@@ -70,13 +76,14 @@ const AssetsQueries = () => {
       case "PARA_ID":
         return getParaId(node);
       case "BALANCE_NATIVE":
-        return getBalanceNative(address, node);
+        return Sdk.getBalanceNative({ address, node });
       case "BALANCE_FOREIGN":
-        return getBalanceForeign(
+        return Sdk.getBalanceForeign({
           address,
           node,
-          currencyType === "id" ? { id: currency } : { symbol: currency },
-        );
+          currency:
+            currencyType === "id" ? { id: currency } : { symbol: currency },
+        });
     }
   };
 
@@ -101,9 +108,13 @@ const AssetsQueries = () => {
       case "PARA_ID":
         return `/assets/${node}/para-id`;
       case "BALANCE_NATIVE":
-        return `/balance/${node}/native`;
+        return apiType === "PAPI"
+          ? `/balance/${node}/native-papi`
+          : `/balance/${node}/native`;
       case "BALANCE_FOREIGN":
-        return `/balance/${node}/foreign`;
+        return apiType === "PAPI"
+          ? `/balance/${node}/foreign-papi`
+          : `/balance/${node}/foreign`;
     }
   };
 

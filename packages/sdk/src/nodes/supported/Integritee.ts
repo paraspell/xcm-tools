@@ -5,23 +5,23 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type TSerializedApiCall
+  type TSerializedApiCallV2
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Integritee extends ParachainNode implements IXTokensTransfer {
+class Integritee<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Integritee', 'integritee', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     if (input.currency === 'KSM')
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency KSM`)
     return XTokensTransferImpl.transferXTokens(input, input.currency)
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): TSerializedApiCallV2 {
     throw new NodeNotSupportedError()
   }
 }

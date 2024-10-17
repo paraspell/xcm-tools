@@ -4,6 +4,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Imbue from './Imbue'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -12,14 +14,14 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Imbue', () => {
-  let imbue: Imbue
+  let imbue: Imbue<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'IMBU',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    imbue = getNode('Imbue')
+    imbue = getNode<ApiPromise, Extrinsic, 'Imbue'>('Imbue')
   })
 
   it('should initialize with correct values', () => {

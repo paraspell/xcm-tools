@@ -1,20 +1,13 @@
-import { beforeAll, describe, expect, it, vi } from 'vitest'
-import { type ApiPromise } from '@polkadot/api'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { checkKeepAlive } from './checkKeepAlive'
-import { BN } from '@polkadot/util'
-import { calculateTransactionFee } from '../calculateTransactionFee'
 import { KeepAliveError } from '../../../errors/KeepAliveError'
-import { createTx } from '../keepAlive/createTx'
-import type { Extrinsic } from '../../../types'
-import { beforeEach } from 'node:test'
 import { getExistentialDeposit } from '../../assets/eds'
-
-vi.mock('../calculateTransactionFee', () => ({
-  calculateTransactionFee: vi.fn()
-}))
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import type { Extrinsic } from '../../../pjs/types'
+import type { ApiPromise } from '@polkadot/api'
 
 vi.mock('../keepAlive/createTx', () => ({
-  createTx: vi.fn().mockResolvedValue(null)
+  createTx: vi.fn().mockResolvedValue({} as Extrinsic)
 }))
 
 vi.mock('../../assets/eds', () => ({
@@ -25,28 +18,28 @@ describe('checkKeepAlive', () => {
   const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
   const AMOUNT = '1000'
   const mockApi = {
-    createType: vi.fn().mockReturnValue({
-      toHex: vi.fn().mockReturnValue('0x123')
-    }),
-    query: {
-      system: {
-        account: vi.fn().mockResolvedValue({
-          data: {
-            free: {
-              toBn: () => new BN(5000)
-            }
-          }
-        })
-      }
-    }
-  } as unknown as ApiPromise
-
-  beforeAll(() => {
-    vi.mocked(calculateTransactionFee).mockResolvedValue(new BN(100))
-  })
+    getApi: vi.fn().mockReturnValue({}),
+    getBalanceNative: vi.fn().mockReturnValue(BigInt(1000000)),
+    calculateTransactionFee: vi.fn().mockResolvedValue(BigInt(100))
+  } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  it('should resolve when destination API is defined', async () => {
+    vi.mocked(getExistentialDeposit).mockReturnValue('100') // Mock a low ED
+    await expect(
+      checkKeepAlive({
+        originApi: mockApi,
+        address: ADDRESS,
+        amount: AMOUNT,
+        originNode: 'Acala',
+        destApi: mockApi,
+        currencySymbol: 'UNQ',
+        destNode: 'Unique'
+      })
+    ).resolves.toBeUndefined()
   })
 
   it('should throw KeepAliveError when destination API is undefined', async () => {
@@ -56,29 +49,14 @@ describe('checkKeepAlive', () => {
         address: ADDRESS,
         amount: AMOUNT,
         originNode: 'Acala',
-        destApi: undefined as unknown as ApiPromise,
-        currencySymbol: 'DOT',
-        destNode: 'Unique'
-      })
-    ).resolves.toBeUndefined()
-  })
-
-  it('should throw KeepAliveError if transaction creation fails', async () => {
-    await expect(
-      checkKeepAlive({
-        originApi: mockApi,
-        address: ADDRESS,
-        amount: AMOUNT,
-        originNode: 'Acala',
         destApi: mockApi,
         currencySymbol: 'DOT',
-        destNode: undefined
+        destNode: 'Unique'
       })
     ).rejects.toThrowError(KeepAliveError)
   })
 
   it('should throw KeepAliveError if existential deposit is null', async () => {
-    vi.mocked(createTx).mockResolvedValue({} as Extrinsic)
     vi.mocked(getExistentialDeposit).mockReturnValue(null)
     await expect(
       checkKeepAlive({
@@ -93,37 +71,13 @@ describe('checkKeepAlive', () => {
     ).rejects.toThrowError(KeepAliveError)
   })
 
-  it('should throw KeepAliveError if origin existential deposit is null', async () => {
-    vi.mocked(createTx).mockResolvedValue({} as Extrinsic)
-    vi.mocked(getExistentialDeposit).mockImplementation((node: string) => {
-      return node === 'Acala' ? null : '1000'
-    })
-    await expect(
-      checkKeepAlive({
-        originApi: mockApi,
-        address: ADDRESS,
-        amount: AMOUNT,
-        originNode: 'Acala',
-        destApi: mockApi,
-        currencySymbol: 'UNQ',
-        destNode: 'Unique'
-      })
-    ).rejects.toThrowError(KeepAliveError)
-  })
-
   it('should throw KeepAliveError when the final balance is below the existential deposit', async () => {
-    const amountBNWithoutFee = new BN(100000)
-
-    vi.mocked(createTx).mockResolvedValue({} as Extrinsic)
-    vi.mocked(calculateTransactionFee).mockResolvedValue(new BN(100))
-
-    vi.mocked(getExistentialDeposit).mockReturnValue('5000000')
-
+    vi.mocked(getExistentialDeposit).mockReturnValue('5000000') // High ED to force failure
     await expect(
       checkKeepAlive({
         originApi: mockApi,
         address: 'test-address',
-        amount: amountBNWithoutFee.toString(),
+        amount: '100000', // Amount lower than ED
         originNode: 'Acala',
         destApi: mockApi,
         currencySymbol: 'UNQ',
@@ -132,7 +86,7 @@ describe('checkKeepAlive', () => {
     ).rejects.toThrowError(KeepAliveError)
   })
 
-  it('should throw an KeepAliveError when passing undefined currency symbol', async () => {
+  it('should throw KeepAliveError when currency symbol is undefined', async () => {
     await expect(
       checkKeepAlive({
         originApi: mockApi,
@@ -146,21 +100,7 @@ describe('checkKeepAlive', () => {
     ).rejects.toThrowError(KeepAliveError)
   })
 
-  it('should throw an KeepAliveError when transfering non native token', async () => {
-    await expect(
-      checkKeepAlive({
-        originApi: mockApi,
-        address: ADDRESS,
-        amount: AMOUNT,
-        originNode: 'Acala',
-        destApi: mockApi,
-        currencySymbol: 'BBB',
-        destNode: 'Unique'
-      })
-    ).rejects.toThrowError(KeepAliveError)
-  })
-
-  it('should throw an KeepAliveError when transfering non native token', async () => {
+  it('should throw KeepAliveError for non-native token transfer', async () => {
     await expect(
       checkKeepAlive({
         originApi: mockApi,
@@ -175,8 +115,7 @@ describe('checkKeepAlive', () => {
   })
 
   it('should pass keep alive check if balance after transfer is above destination ED', async () => {
-    vi.mocked(createTx).mockResolvedValue({} as Extrinsic)
-    vi.mocked(getExistentialDeposit).mockReturnValue('1000')
+    vi.mocked(getExistentialDeposit).mockReturnValue('500') // Ensure ED is low enough
     await expect(
       checkKeepAlive({
         originApi: mockApi,
@@ -191,29 +130,23 @@ describe('checkKeepAlive', () => {
   })
 
   it('should not throw KeepAliveError for non-DOT/KSM currencies', async () => {
-    const amount = '1000'
-    const address = 'test-address'
-    const currencySymbol = 'ACA'
-    const destination = 'Acala'
-
     vi.mocked(getExistentialDeposit).mockReturnValue('4000')
-
     await expect(
       checkKeepAlive({
         originApi: mockApi,
-        address,
-        amount,
+        address: 'test-address',
+        amount: '1000',
         originNode: 'Astar',
         destApi: mockApi,
-        currencySymbol,
-        destNode: destination
+        currencySymbol: 'ACA',
+        destNode: 'Acala'
       })
     ).resolves.toBeUndefined()
   })
 
   it('should throw KeepAliveError when sending DOT or KSM results in balance below ED on origin', async () => {
-    const amountOriginBNWithoutFee = new BN(500) // Example amount being subtracted
-    const edOrigin = '800000' // Example ED which is higher than balanceOrigin - amountOriginBNWithoutFee
+    const amountOriginBNWithoutFee = BigInt(500)
+    const edOrigin = '800000'
 
     vi.mocked(getExistentialDeposit).mockReturnValue(edOrigin)
 

@@ -45,7 +45,7 @@ describe('XTransferController', () => {
       };
       const mockResult = {} as Extrinsic;
       const spy = vi
-        .spyOn(service, 'generateXcmCall')
+        .spyOn(service, 'generateXcmCallPjs')
         .mockResolvedValue(mockResult);
 
       const result = await controller.generateXcmCall(
@@ -69,7 +69,7 @@ describe('XTransferController', () => {
       };
       const mockResult = {} as Extrinsic;
       const spy = vi
-        .spyOn(service, 'generateXcmCall')
+        .spyOn(service, 'generateXcmCallPjs')
         .mockResolvedValue(mockResult);
 
       const result = await controller.generateXcmCallV2(
@@ -93,7 +93,7 @@ describe('XTransferController', () => {
       };
       const mockResult = {} as Extrinsic;
       const spy = vi
-        .spyOn(service, 'generateXcmCall')
+        .spyOn(service, 'generateXcmCallPjs')
         .mockResolvedValue(mockResult);
 
       const result = await controller.generateXcmCallV2Hash(
@@ -103,6 +103,28 @@ describe('XTransferController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams, true);
+    });
+
+    it('should use papi service method if papi flag is set', async () => {
+      const bodyParams: XTransferDto = {
+        from: 'Acala',
+        to: 'Basilisk',
+        amount: 100,
+        address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        currency: { symbol: 'DOT' },
+      };
+      const mockResult = {} as Extrinsic;
+      const spy = vi
+        .spyOn(service, 'generateXcmCallPapi')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.generateXcmCallPapi(
+        bodyParams,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
     });
   });
 
@@ -129,10 +151,44 @@ describe('XTransferController', () => {
       };
       const mockResult = {} as Extrinsic;
       const spy = vi
-        .spyOn(service, 'generateBatchXcmCall')
+        .spyOn(service, 'generateBatchXcmCallPjs')
         .mockResolvedValue(mockResult);
 
       const result = await controller.generateXcmCallBatchHash(
+        bodyParams,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+
+    it('should use papi service method if papi flag is set', async () => {
+      const bodyParams: BatchXTransferDto = {
+        transfers: [
+          {
+            from: 'Acala',
+            to: 'Astar',
+            amount: 100,
+            address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+            currency: { symbol: 'ACA' },
+          },
+          {
+            from: 'Acala',
+            to: 'Astar',
+            amount: 100,
+            address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+            currency: { symbol: 'ACA' },
+          },
+        ],
+        options: { mode: BatchMode.BATCH },
+      };
+      const mockResult = {} as Extrinsic;
+      const spy = vi
+        .spyOn(service, 'generateBatchXcmCallPapi')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.generateXcmCallBatchPapi(
         bodyParams,
         mockRequestObject,
       );

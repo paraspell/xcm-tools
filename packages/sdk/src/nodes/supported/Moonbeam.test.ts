@@ -2,10 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
 import { getNode } from '../../utils'
 import { getAllNodeProviders } from '../../utils/getAllNodeProviders'
-import type { XTokensTransferInput, TRelayToParaInternalOptions } from '../../types'
+import type { XTokensTransferInput, TRelayToParaOptions } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Moonbeam from './Moonbeam'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -22,19 +24,19 @@ vi.mock('../../utils/getAllNodeProviders', () => ({
 }))
 
 describe('Moonbeam', () => {
-  let moonbeam: Moonbeam
+  let moonbeam: Moonbeam<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'GLMR',
     currencyID: '123',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   const mockOptions = {
     destination: 'Moonbeam'
-  } as TRelayToParaInternalOptions
+  } as TRelayToParaOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    moonbeam = getNode('Moonbeam')
+    moonbeam = getNode<ApiPromise, Extrinsic, 'Moonbeam'>('Moonbeam')
   })
 
   it('should initialize with correct values', () => {
@@ -59,19 +61,19 @@ describe('Moonbeam', () => {
 
     moonbeam.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: '123' })
+    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: BigInt(123) })
   })
 
   it('should call transferRelayToPara with the correct parameters', () => {
-    const expectedParameters = [{ param: 'value' }] as unknown[]
+    const expectedParameters = { param: 'value' }
     vi.mocked(constructRelayToParaParameters).mockReturnValue(expectedParameters)
 
     const result = moonbeam.transferRelayToPara(mockOptions)
 
     expect(constructRelayToParaParameters).toHaveBeenCalledWith(mockOptions, Version.V3, true)
     expect(result).toEqual({
-      module: 'xcmPallet',
-      section: 'limitedReserveTransferAssets',
+      module: 'XcmPallet',
+      section: 'limited_reserve_transfer_assets',
       parameters: expectedParameters
     })
   })

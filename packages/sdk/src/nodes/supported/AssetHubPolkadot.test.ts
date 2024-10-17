@@ -3,10 +3,12 @@ import { ethers } from 'ethers'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type AssetHubPolkadot from './AssetHubPolkadot'
-import type { Extrinsic, PolkadotXCMTransferInput } from '../../types'
+import type { PolkadotXCMTransferInput } from '../../types'
 import { getOtherAssets } from '../../pallets/assets'
 import { getNode } from '../../utils'
-import type PolkadotJsApi from '../../api/PolkadotJsApi'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
+import type PolkadotJsApi from '../../pjs/PolkadotJsApi'
 
 vi.mock('ethers', () => ({
   ethers: {
@@ -34,7 +36,7 @@ vi.mock('../../utils/generateAddressPayload', () => ({
 }))
 
 describe('AssetHubPolkadot', () => {
-  let assetHub: AssetHubPolkadot
+  let assetHub: AssetHubPolkadot<ApiPromise, Extrinsic>
   const mockInput = {
     api: {} as PolkadotJsApi,
     currencySymbol: 'DOT',
@@ -46,11 +48,11 @@ describe('AssetHubPolkadot', () => {
     paraIdTo: 1001,
     amount: '1000',
     address: 'address'
-  } as PolkadotXCMTransferInput
+  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     vi.resetAllMocks()
-    assetHub = getNode('AssetHubPolkadot')
+    assetHub = getNode<ApiPromise, Extrinsic, 'AssetHubPolkadot'>('AssetHubPolkadot')
   })
 
   describe('handleBridgeTransfer', () => {
@@ -71,7 +73,10 @@ describe('AssetHubPolkadot', () => {
         .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
         .mockReturnValue(mockResult)
 
-      const input = { ...mockInput, currencySymbol: 'DOT' } as PolkadotXCMTransferInput
+      const input = { ...mockInput, currencySymbol: 'DOT' } as PolkadotXCMTransferInput<
+        ApiPromise,
+        Extrinsic
+      >
 
       const result = assetHub.handleBridgeTransfer(input, 'Kusama')
       expect(result).toStrictEqual(mockResult)
@@ -114,7 +119,7 @@ describe('AssetHubPolkadot', () => {
         ...mockInput,
         currencySymbol: 'ETH',
         destination: 'Ethereum'
-      } as PolkadotXCMTransferInput
+      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
       const result = assetHub.handleEthBridgeTransfer(input)
 
       expect(result).toStrictEqual(mockResult)
@@ -134,7 +139,7 @@ describe('AssetHubPolkadot', () => {
         destination: 'Mythos',
         paraIdTo: 2000,
         currencyId: 'MYTH'
-      } as PolkadotXCMTransferInput
+      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
       const result = assetHub.handleMythosTransfer(input)
 
       expect(result).toStrictEqual(mockResult)
@@ -150,7 +155,7 @@ describe('AssetHubPolkadot', () => {
         currencyId: undefined,
         scenario: 'ParaToPara',
         destination: 'Acala'
-      } as PolkadotXCMTransferInput
+      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
       expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
@@ -162,7 +167,7 @@ describe('AssetHubPolkadot', () => {
         currencyId: undefined,
         scenario: 'ParaToPara',
         destination: 'Acala'
-      } as PolkadotXCMTransferInput
+      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
       expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
@@ -175,7 +180,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         scenario: 'RelayToPara'
-      } as PolkadotXCMTransferInput
+      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
       const result = assetHub.transferPolkadotXCM(input)
       expect(result).toStrictEqual(mockResult)

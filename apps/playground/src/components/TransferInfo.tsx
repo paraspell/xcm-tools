@@ -6,12 +6,11 @@ import { useWallet } from "../hooks/useWallet";
 import type { FormValues } from "./TransferInfoForm";
 import TransferInfoForm from "./TransferInfoForm";
 import OutputAlert from "./OutputAlert";
-import { getTransferInfo } from "@paraspell/sdk";
 import { fetchFromApi } from "../utils/submitUsingApi";
 import { replaceBigInt } from "../utils/replaceBigInt";
 
 const TransferInfo = () => {
-  const { selectedAccount } = useWallet();
+  const { selectedAccount, apiType } = useWallet();
 
   const [alertOpened, { open: openAlert, close: closeAlert }] =
     useDisclosure(false);
@@ -62,14 +61,19 @@ const TransferInfo = () => {
         true,
       );
     } else {
-      return await getTransferInfo(
-        formValues.from,
-        formValues.to,
-        originAddress,
-        formValues.destinationAddress,
+      const Sdk =
+        apiType === "PAPI"
+          ? await import("@paraspell/sdk/papi")
+          : await import("@paraspell/sdk");
+
+      return await Sdk.getTransferInfo({
+        origin: formValues.from,
+        destination: formValues.to,
+        accountOrigin: originAddress,
+        accountDestination: formValues.destinationAddress,
         currency,
-        formValues.amount,
-      );
+        amount: formValues.amount,
+      });
     }
   };
 

@@ -9,6 +9,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Nodle from './Nodle'
 import { getNode } from '../../utils/getNode'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -17,15 +19,15 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Nodle', () => {
-  let nodle: Nodle
+  let nodle: Nodle<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'NODL',
     scenario: 'ParaToPara',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    nodle = getNode('Nodle')
+    nodle = getNode<ApiPromise, Extrinsic, 'Nodle'>('Nodle')
   })
 
   it('should initialize with correct values', () => {
@@ -45,7 +47,10 @@ describe('Nodle', () => {
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as XTokensTransferInput
+    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as XTokensTransferInput<
+      ApiPromise,
+      Extrinsic
+    >
 
     expect(() => nodle.transferXTokens(invalidInput)).toThrowError(ScenarioNotSupportedError)
   })

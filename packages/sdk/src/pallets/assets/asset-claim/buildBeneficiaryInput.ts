@@ -1,11 +1,13 @@
-import type { ApiPromise } from '@polkadot/api'
 import { ethers } from 'ethers'
 import type { TAddress, TMultiLocation } from '../../../types'
 import { Parents } from '../../../types'
-import { createAccountId } from '../../../utils'
 import { isTMultiLocation } from '../../xcmPallet/utils'
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 
-export const buildBeneficiaryInput = (api: ApiPromise, address: TAddress): TMultiLocation => {
+export const buildBeneficiaryInput = <TApi, TRes>(
+  api: IPolkadotApi<TApi, TRes>,
+  address: TAddress
+): TMultiLocation => {
   if (isTMultiLocation(address)) {
     return address
   }
@@ -21,7 +23,7 @@ export const buildBeneficiaryInput = (api: ApiPromise, address: TAddress): TMult
           }
         : {
             AccountId32: {
-              id: createAccountId(api, address)
+              id: api.createAccountId(address)
             }
           }
     }

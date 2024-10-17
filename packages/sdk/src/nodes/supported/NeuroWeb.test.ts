@@ -4,6 +4,8 @@ import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type NeuroWeb from './NeuroWeb'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../polkadotXcm', () => ({
   default: {
@@ -12,14 +14,14 @@ vi.mock('../polkadotXcm', () => ({
 }))
 
 describe('NeuroWeb', () => {
-  let neuroweb: NeuroWeb
+  let neuroweb: NeuroWeb<ApiPromise, Extrinsic>
   const mockInput = {
     currencySymbol: 'DOT',
     amount: '100'
-  } as PolkadotXCMTransferInput
+  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    neuroweb = getNode('NeuroWeb')
+    neuroweb = getNode<ApiPromise, Extrinsic, 'NeuroWeb'>('NeuroWeb')
   })
 
   it('should initialize with correct values', () => {
@@ -34,6 +36,6 @@ describe('NeuroWeb', () => {
 
     neuroweb.transferPolkadotXCM(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'limitedReserveTransferAssets', 'Unlimited')
+    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
   })
 })

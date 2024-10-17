@@ -9,10 +9,12 @@ import type {
   XTransferTransferInput
 } from '../../types'
 import { Parents, Version } from '../../types'
-import type PolkadotJsApi from '../../api/PolkadotJsApi'
+import type { ApiPromise } from '@polkadot/api'
+import type PolkadotJsApi from '../../pjs/PolkadotJsApi'
+import type { Extrinsic } from '../../pjs/types'
 
 const mockApi = {
-  call: vi.fn()
+  callTxMethod: vi.fn()
 } as unknown as PolkadotJsApi
 
 const mockMultiLocation: TMultiLocation = {
@@ -51,7 +53,7 @@ describe('XTransferTransferImpl', () => {
       origin: 'Khala',
       destination: mockMultiLocation,
       serializedApiCallEnabled: false
-    } as XTransferTransferInput
+    } as XTransferTransferInput<ApiPromise, Extrinsic>
     expect(() => XTransferTransferImpl.transferXTransfer(input)).toThrow(
       'Multilocation destinations are not supported for specific transfer you are trying to create.'
     )
@@ -67,7 +69,7 @@ describe('XTransferTransferImpl', () => {
       origin: 'Phala',
       destination: 'Acala',
       serializedApiCallEnabled: true
-    } as XTransferTransferInput
+    } as XTransferTransferInput<ApiPromise, Extrinsic>
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
 
@@ -81,7 +83,7 @@ describe('XTransferTransferImpl', () => {
     const result = XTransferTransferImpl.transferXTransfer(input)
 
     expect(result).toEqual({
-      module: 'xTransfer',
+      module: 'XTransfer',
       section: 'transfer',
       parameters: [Object.values(mockCurrencySpec)[0][0], mockMultiLocation, mockDestWeight]
     })
@@ -94,19 +96,23 @@ describe('XTransferTransferImpl', () => {
       origin: 'Khala',
       destination: 'Phala',
       serializedApiCallEnabled: false
-    } as unknown as XTransferTransferInput
+    } as unknown as XTransferTransferInput<ApiPromise, Extrinsic>
 
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
 
-    const callSpy = vi.spyOn(mockApi, 'call')
+    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
     XTransferTransferImpl.transferXTransfer(input)
 
     expect(callSpy).toHaveBeenCalledWith({
-      module: 'xTransfer',
+      module: 'XTransfer',
       section: 'transfer',
-      parameters: [Object.values(mockCurrencySpec)[0][0], mockMultiLocation, null]
+      parameters: {
+        asset: Object.values(mockCurrencySpec)[0][0],
+        dest: mockMultiLocation,
+        dest_weight: null
+      }
     })
   })
 
@@ -117,7 +123,7 @@ describe('XTransferTransferImpl', () => {
       origin: 'Phala',
       destination: 'Karura',
       serializedApiCallEnabled: false
-    } as unknown as XTransferTransferInput
+    } as unknown as XTransferTransferInput<ApiPromise, Extrinsic>
 
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
@@ -129,14 +135,18 @@ describe('XTransferTransferImpl', () => {
 
     vi.mocked(determineDestWeight).mockReturnValue(mockDestWeight)
 
-    const callSpy = vi.spyOn(mockApi, 'call')
+    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
     XTransferTransferImpl.transferXTransfer(input)
 
     expect(callSpy).toHaveBeenCalledWith({
-      module: 'xTransfer',
+      module: 'XTransfer',
       section: 'transfer',
-      parameters: [Object.values(mockCurrencySpec)[0][0], mockMultiLocation, mockDestWeight]
+      parameters: {
+        asset: Object.values(mockCurrencySpec)[0][0],
+        dest: mockMultiLocation,
+        dest_weight: mockDestWeight
+      }
     })
   })
 })

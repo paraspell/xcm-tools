@@ -28,7 +28,7 @@ import { IconInfoCircle } from "@tabler/icons-react";
 import useRouterCurrencyOptions from "../hooks/useRouterCurrencyOptions";
 import EthWalletSelectModal from "./EthWalletSelectModal";
 import EthAccountsSelectModal from "./EthAccountsSelectModal";
-import type { EIP6963ProviderDetail } from "../types";
+import type { EIP6963ProviderDetail, WalletAccount } from "../types";
 
 export type TRouterFormValues = {
   from: TNodeWithRelayChains;
@@ -91,17 +91,16 @@ const RouterTransferForm: FC<Props> = ({
   const [assetHubAccounts, setAssetHubAccounts] = useState<
     InjectedAccountWithMeta[]
   >([]);
-  const [selectedAccount, setSelectedAccount] =
-    useState<InjectedAccountWithMeta>();
+  const [selectedAccount, setSelectedAccount] = useState<WalletAccount>();
 
   const [selectedAssetHubAccount, setSelectedAssetHubAccount] =
-    useState<InjectedAccountWithMeta>();
+    useState<WalletAccount>();
 
   const [selectedEthAccount, setSelectedEthAccount] = useState<string | null>(
     null,
   );
 
-  const onAccountSelect = (account: InjectedAccountWithMeta) => () => {
+  const onAccountSelect = (account: WalletAccount) => () => {
     setSelectedAccount(account);
     closeModal();
   };
@@ -112,7 +111,7 @@ const RouterTransferForm: FC<Props> = ({
     form.setFieldValue("ethAddress", account);
   };
 
-  const onAssetHubAccountSelect = (account: InjectedAccountWithMeta) => () => {
+  const onAssetHubAccountSelect = (account: WalletAccount) => () => {
     setSelectedAssetHubAccount(account);
     closeAssetHubModal();
   };

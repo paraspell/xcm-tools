@@ -4,12 +4,12 @@ import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../..
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Hydration extends ParachainNode implements IXTokensTransfer {
+class Hydration<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Hydration', 'hydradx', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currencyID } = input
     return XTokensTransferImpl.transferXTokens(input, currencyID)
   }
