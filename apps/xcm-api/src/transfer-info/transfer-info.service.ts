@@ -7,21 +7,31 @@ import {
   InvalidCurrencyError,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
-  getTransferInfo,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
 import { TransferInfoDto } from './dto/transfer-info.dto.js';
 
 @Injectable()
 export class TransferInfoService {
-  async getTransferInfo({
-    origin,
-    destination,
-    accountOrigin,
-    accountDestination,
-    currency,
-    amount,
-  }: TransferInfoDto) {
+  async getTransferInfoPjs(options: TransferInfoDto) {
+    return await this.getTransferInfo(options);
+  }
+
+  async getTransferInfoPapi(options: TransferInfoDto) {
+    return await this.getTransferInfo(options, true);
+  }
+
+  private async getTransferInfo(
+    {
+      origin,
+      destination,
+      accountOrigin,
+      accountDestination,
+      currency,
+      amount,
+    }: TransferInfoDto,
+    usePapi = false,
+  ) {
     const originNode = origin as TNodeDotKsmWithRelayChains | undefined;
     const destNode = destination as TNodeDotKsmWithRelayChains | undefined;
 
@@ -45,15 +55,19 @@ export class TransferInfoService {
       throw new BadRequestException('Invalid destination wallet address.');
     }
 
+    const Sdk = usePapi
+      ? await import('@paraspell/sdk/papi')
+      : await import('@paraspell/sdk');
+
     try {
-      return await getTransferInfo(
-        originNode as TNodeDotKsmWithRelayChains,
-        destNode as TNodeDotKsmWithRelayChains,
+      return await Sdk.getTransferInfo({
+        origin: originNode as TNodeDotKsmWithRelayChains,
+        destination: destNode as TNodeDotKsmWithRelayChains,
         accountOrigin,
         accountDestination,
         currency,
-        amount.toString(),
-      );
+        amount: amount.toString(),
+      });
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);

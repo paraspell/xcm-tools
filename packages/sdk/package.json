@@ -10,6 +10,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
+    },
+    "./papi": {
+      "import": "./dist/papi/index.mjs",
+      "require": "./dist/papi/index.cjs",
+      "types": "./dist/papi/index.d.ts"
     }
   },
   "main": "dist/index.cjs",
@@ -43,14 +48,38 @@
     "@polkadot/api-base": ">= 12.4 < 13",
     "@polkadot/apps-config": ">= 0.144",
     "@polkadot/types": ">= 12.4 < 13",
-    "@polkadot/util": ">= 13"
+    "@polkadot/util": ">= 13",
+    "polkadot-api": ">= 1.6.4 < 2"
+  },
+  "peerDependenciesMeta": {
+    "@polkadot/api": {
+      "optional": true
+    },
+    "@polkadot/api-base": {
+      "optional": true
+    },
+    "@polkadot/types": {
+      "optional": true
+    },
+    "@polkadot/util": {
+      "optional": true
+    },
+    "polkadot-api": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.25.6",
     "@babel/preset-env": "^7.25.4",
     "@codecov/rollup-plugin": "^1.2.0",
+    "@noble/curves": "^1.6.0",
+    "@noble/hashes": "^1.5.0",
+    "@polkadot-labs/hdkd": "^0.0.8",
+    "@polkadot-labs/hdkd-helpers": "^0.0.8",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
+    "@scure/bip32": "^1.5.0",
+    "@scure/bip39": "^1.4.0",
     "@vitest/coverage-v8": "^2.1.1",
     "dotenv": "^16.4.5",
     "prettier": "^3.3.3",

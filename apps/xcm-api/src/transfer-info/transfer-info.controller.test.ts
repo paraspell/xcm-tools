@@ -32,8 +32,8 @@ describe('TransferInfoController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('generateXcmCall', () => {
-    it('should call generateXcmCall service method with correct parameters and return result', async () => {
+  describe('getTransferInfo', () => {
+    it('should call getTransferInfo service method with correct parameters and return result', async () => {
       const queryParams: TransferInfoDto = {
         origin: 'Acala',
         destination: 'Basilisk',
@@ -44,10 +44,33 @@ describe('TransferInfoController', () => {
       };
       const mockResult = {} as TTransferInfo;
       const spy = vi
-        .spyOn(service, 'getTransferInfo')
+        .spyOn(service, 'getTransferInfoPjs')
         .mockResolvedValue(mockResult);
 
       const result = await controller.getTransferInfo(
+        queryParams,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(queryParams);
+    });
+
+    it('should call getTransferInfoPapi service method with correct parameters and return result', async () => {
+      const queryParams: TransferInfoDto = {
+        origin: 'Acala',
+        destination: 'Basilisk',
+        accountOrigin: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        accountDestination: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        currency: { symbol: 'DOT' },
+        amount: 100,
+      };
+      const mockResult = {} as TTransferInfo;
+      const spy = vi
+        .spyOn(service, 'getTransferInfoPapi')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getTransferInfoPapi(
         queryParams,
         mockRequestObject,
       );

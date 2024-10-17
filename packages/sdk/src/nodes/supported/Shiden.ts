@@ -1,5 +1,6 @@
 // Contains detailed structure of XCM call construction for Shiden Parachain
 
+import type { TTransferReturn } from '../../types'
 import {
   Version,
   type IPolkadotXCMTransfer,
@@ -11,22 +12,30 @@ import {
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
-class Shiden extends ParachainNode implements IPolkadotXCMTransfer, IXTokensTransfer {
+class Shiden<TApi, TRes>
+  extends ParachainNode<TApi, TRes>
+  implements IPolkadotXCMTransfer, IXTokensTransfer
+{
   constructor() {
     super('Shiden', 'shiden', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM(input: PolkadotXCMTransferInput) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): TTransferReturn<TRes> {
     // Same as Astar, works
     // https://shiden.subscan.io/xcm_message/kusama-97eb47c25c781affa557f36dbd117d49f7e1ab4e
-    return getNode('Astar').transferPolkadotXCM(input)
+    return getNode<TApi, TRes, 'Astar'>('Astar').transferPolkadotXCM(input)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
-    return getNode('Astar').transferXTokens(input)
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>): TTransferReturn<TRes> {
+    return getNode<TApi, TRes, 'Astar'>('Astar').transferXTokens(input)
   }
 
-  protected canUseXTokens({ currencySymbol, currencyId }: TSendInternalOptions): boolean {
+  protected canUseXTokens({
+    currencySymbol,
+    currencyId
+  }: TSendInternalOptions<TApi, TRes>): boolean {
     return currencySymbol !== this.getNativeAssetSymbol() || !!currencyId
   }
 }

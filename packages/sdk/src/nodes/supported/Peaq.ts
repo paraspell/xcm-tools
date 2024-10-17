@@ -5,25 +5,25 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type TSerializedApiCall
+  type TSerializedApiCallV2
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Peaq extends ParachainNode implements IXTokensTransfer {
+class Peaq<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Peaq', 'peaq', 'polkadot', Version.V2)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { scenario, currencyID } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
-    return XTokensTransferImpl.transferXTokens(input, currencyID)
+    return XTokensTransferImpl.transferXTokens(input, currencyID ? BigInt(currencyID) : undefined)
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): TSerializedApiCallV2 {
     throw new NodeNotSupportedError()
   }
 

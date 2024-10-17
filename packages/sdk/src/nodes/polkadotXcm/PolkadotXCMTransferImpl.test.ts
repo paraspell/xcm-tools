@@ -7,10 +7,12 @@ import type {
   TMultiLocationHeader
 } from '../../types'
 import { Version } from '../../types'
-import type PolkadotJsApi from '../../api/PolkadotJsApi'
+import type { ApiPromise } from '@polkadot/api'
+import type PolkadotJsApi from '../../pjs/PolkadotJsApi'
+import type { Extrinsic } from '../../pjs/types'
 
 const mockApi = {
-  call: vi.fn()
+  callTxMethod: vi.fn()
 } as unknown as PolkadotJsApi
 
 const mockHeader: TMultiLocationHeader = {
@@ -30,6 +32,7 @@ const mockAddressSelection: TMultiLocationHeader = {
     }
   }
 }
+
 const mockCurrencySelection: TCurrencySelectionHeaderArr = {
   [Version.V4]: [
     {
@@ -45,8 +48,9 @@ const mockCurrencySelection: TCurrencySelectionHeaderArr = {
     }
   ]
 }
+
 const mockFeeAsset = 1
-const mockSection: PolkadotXcmSection = 'limitedReserveTransferAssets'
+const mockSection: PolkadotXcmSection = 'limited_reserve_transfer_assets'
 
 describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
   it('should return serialized call structure when serializedApiCallEnabled is true', () => {
@@ -58,13 +62,13 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset,
         serializedApiCallEnabled: true
-      } as unknown as PolkadotXCMTransferInput,
+      } as unknown as PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
       mockSection,
       { Limited: '1000' }
     )
 
     expect(result).toEqual({
-      module: 'polkadotXcm',
+      module: 'PolkadotXcm',
       section: mockSection,
       parameters: [
         mockHeader,
@@ -77,7 +81,7 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
   })
 
   it('should call api.tx[module][section] with correct parameters when serializedApiCallEnabled is false and fees is undefined', () => {
-    const callSpy = vi.spyOn(mockApi, 'call')
+    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
@@ -87,20 +91,39 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset,
         serializedApiCallEnabled: false
-      } as unknown as PolkadotXCMTransferInput,
+      } as unknown as PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
       mockSection,
       undefined
     )
 
     expect(callSpy).toHaveBeenCalledWith({
-      module: 'polkadotXcm',
+      module: 'PolkadotXcm',
       section: mockSection,
-      parameters: [mockHeader, mockAddressSelection, mockCurrencySelection, mockFeeAsset]
+      parameters: {
+        assets: {
+          V4: [
+            {
+              id: {
+                parents: 0,
+                interior: {
+                  Here: null
+                }
+              },
+              fun: {
+                Fungible: '123'
+              }
+            }
+          ]
+        },
+        beneficiary: mockAddressSelection,
+        dest: mockHeader,
+        fee_asset_item: mockFeeAsset
+      }
     })
   })
 
   it('should call api.tx[module][section] with correct parameters when serializedApiCallEnabled is false and fees is "Unlimited"', () => {
-    const callSpy = vi.spyOn(mockApi, 'call')
+    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
@@ -110,26 +133,40 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset,
         serializedApiCallEnabled: false
-      } as unknown as PolkadotXCMTransferInput,
+      } as unknown as PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
       mockSection,
       'Unlimited'
     )
 
     expect(callSpy).toHaveBeenCalledWith({
-      module: 'polkadotXcm',
+      module: 'PolkadotXcm',
       section: mockSection,
-      parameters: [
-        mockHeader,
-        mockAddressSelection,
-        mockCurrencySelection,
-        mockFeeAsset,
-        'Unlimited'
-      ]
+      parameters: {
+        assets: {
+          V4: [
+            {
+              id: {
+                parents: 0,
+                interior: {
+                  Here: null
+                }
+              },
+              fun: {
+                Fungible: '123'
+              }
+            }
+          ]
+        },
+        beneficiary: mockAddressSelection,
+        dest: mockHeader,
+        fee_asset_item: mockFeeAsset,
+        weight_limit: 'Unlimited'
+      }
     })
   })
 
   it('should call api.tx[module][section] with correct parameters when serializedApiCallEnabled is false and fees is Limited', () => {
-    const callSpy = vi.spyOn(mockApi, 'call')
+    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
@@ -139,21 +176,35 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset,
         serializedApiCallEnabled: false
-      } as unknown as PolkadotXCMTransferInput,
+      } as unknown as PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
       mockSection,
       { Limited: '1000' }
     )
 
     expect(callSpy).toHaveBeenCalledWith({
-      module: 'polkadotXcm',
+      module: 'PolkadotXcm',
       section: mockSection,
-      parameters: [
-        mockHeader,
-        mockAddressSelection,
-        mockCurrencySelection,
-        mockFeeAsset,
-        { Limited: '1000' }
-      ]
+      parameters: {
+        assets: {
+          V4: [
+            {
+              id: {
+                parents: 0,
+                interior: {
+                  Here: null
+                }
+              },
+              fun: {
+                Fungible: '123'
+              }
+            }
+          ]
+        },
+        beneficiary: mockAddressSelection,
+        dest: mockHeader,
+        fee_asset_item: mockFeeAsset,
+        weight_limit: { Limited: '1000' }
+      }
     })
   })
 })

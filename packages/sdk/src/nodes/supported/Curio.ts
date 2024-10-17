@@ -5,23 +5,16 @@ import { Version, type IXTokensTransfer, type XTokensTransferInput } from '../..
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Curio extends ParachainNode implements IXTokensTransfer {
+class Curio<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Curio', 'curio', 'kusama', Version.V3)
   }
 
-  private getCurrencySelection({
-    currency,
-    currencyID
-  }: XTokensTransferInput): TForeignOrTokenAsset {
-    if (currencyID) {
-      return { ForeignAsset: currencyID }
-    }
-    return { Token: currency }
-  }
-
-  transferXTokens(input: XTokensTransferInput) {
-    const currencySelection = this.getCurrencySelection(input)
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+    const { currencyID, currency } = input
+    const currencySelection: TForeignOrTokenAsset = currencyID
+      ? { ForeignAsset: Number(currencyID) }
+      : { Token: currency }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }

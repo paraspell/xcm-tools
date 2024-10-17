@@ -5,6 +5,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Integritee from './Integritee'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -13,14 +15,14 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Integritee', () => {
-  let integritee: Integritee
+  let integritee: Integritee<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'TEER',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    integritee = getNode('Integritee')
+    integritee = getNode<ApiPromise, Extrinsic, 'Integritee'>('Integritee')
   })
 
   it('should initialize with correct values', () => {

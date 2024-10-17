@@ -1,18 +1,17 @@
 import { buildBeneficiaryInput } from './buildBeneficiaryInput'
-import type { TApiType } from '../../../types'
 import { Version } from '../../../types'
-import type { TAssetClaimOptionsInternal } from '../../../types/TAssetClaim'
+import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
 
-export const buildClaimAssetsInput = <TApi extends TApiType>({
+export const buildClaimAssetsInput = <TApi, TRes>({
   api,
   multiAssets,
   address,
   version = Version.V3
-}: TAssetClaimOptionsInternal<TApi>) => [
-  {
+}: TAssetClaimOptions<TApi, TRes>) => ({
+  assets: {
     [version]: multiAssets
   },
-  {
+  beneficiary: {
     [version]: buildBeneficiaryInput(api, address)
   }
-]
+})

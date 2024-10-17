@@ -1,39 +1,33 @@
 import type { TCurrencyCore, TOriginFeeDetails } from '../../types'
-import {
-  type TNodeDotKsmWithRelayChains,
-  type Extrinsic,
-  type TNode,
-  type TNodeWithRelayChains
-} from '../../types'
+import { type TNodeDotKsmWithRelayChains, type TNode, type TNodeWithRelayChains } from '../../types'
 import { getBalanceNative } from './balance/getBalanceNative'
 import { getMinNativeTransferableAmount } from './getExistentialDeposit'
-import { type ApiPromise } from '@polkadot/api'
-import { createApiInstanceForNode, isRelayChain } from '../../utils'
+import { isRelayChain } from '../../utils'
 import { Builder } from '../../builder'
-import { calculateTransactionFee } from '../xcmPallet/calculateTransactionFee'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
 
-const createTx = async (
-  originApi: ApiPromise,
+const createTx = async <TApi, TRes>(
+  originApi: IPolkadotApi<TApi, TRes>,
   address: string,
   amount: string,
   currency: TCurrencyCore,
   originNode: TNodeWithRelayChains,
   destNode: TNodeWithRelayChains
-): Promise<Extrinsic> => {
+): Promise<TRes> => {
   if (isRelayChain(originNode)) {
-    return await Builder(originApi)
+    return await Builder<TApi, TRes>(originApi)
       .to(destNode as TNode)
       .amount(amount)
       .address(address)
       .build()
   } else if (isRelayChain(destNode)) {
-    return await Builder(originApi)
+    return await Builder<TApi, TRes>(originApi)
       .from(originNode as TNode)
       .amount(amount)
       .address(address)
       .build()
   } else {
-    return await Builder(originApi)
+    return await Builder<TApi, TRes>(originApi)
       .from(originNode as TNode)
       .to(destNode as TNode)
       .currency(currency)
@@ -43,30 +37,33 @@ const createTx = async (
   }
 }
 
-export const getOriginFeeDetails = async (
+export const getOriginFeeDetails = async <TApi, TRes>(
   origin: TNodeDotKsmWithRelayChains,
   destination: TNodeDotKsmWithRelayChains,
   currency: TCurrencyCore,
   amount: string,
   account: string,
-  api?: ApiPromise,
+  api: IPolkadotApi<TApi, TRes>,
   feeMarginPercentage: number = 10
 ): Promise<TOriginFeeDetails> => {
-  const nativeBalance = await getBalanceNative(account, origin)
+  const nativeBalance = await getBalanceNative({
+    address: account,
+    node: origin,
+    api
+  })
 
   const minTransferableAmount = getMinNativeTransferableAmount(origin)
 
-  const apiWithFallback = api ?? (await createApiInstanceForNode(origin))
-  const tx = await createTx(apiWithFallback, account, amount, currency, origin, destination)
-  const xcmFee = await calculateTransactionFee(tx, account)
+  const tx = await createTx(api, account, amount, currency, origin, destination)
 
-  const xcmFeeBigInt = BigInt(xcmFee.toString())
-  const xcmFeeWithMargin = xcmFeeBigInt + xcmFeeBigInt / BigInt(feeMarginPercentage)
+  const xcmFee = await api.calculateTransactionFee(tx, account)
+
+  const xcmFeeWithMargin = xcmFee + xcmFee / BigInt(feeMarginPercentage)
 
   const sufficientForXCM = nativeBalance - minTransferableAmount - xcmFeeWithMargin > 0
 
   return {
     sufficientForXCM,
-    xcmFee: xcmFeeBigInt
+    xcmFee
   }
 }

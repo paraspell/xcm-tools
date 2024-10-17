@@ -1,6 +1,5 @@
 // Implements builder pattern for XCM message creation operations operation
 
-import { send, sendSerializedApiCall } from '../../pallets/xcmPallet'
 import type {
   TSerializedApiCall,
   TNode,
@@ -10,25 +9,25 @@ import type {
   TAddress,
   TDestination,
   TCurrency,
-  Version,
-  TApiType,
-  TResType
+  Version
 } from '../../types'
 import type { AddressBuilder, UseKeepAliveFinalBuilder } from './Builder'
 import { GeneralBuilder, type AmountBuilder, type AmountOrFeeAssetBuilder } from './Builder'
 import type BatchTransactionManager from './BatchTransactionManager'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import { send, sendSerializedApiCall } from '../../pallets/xcmPallet/transfer'
 
 /**
  * Builder class for constructing transactions between parachains.
  */
-class ParaToParaBuilder<TApi extends TApiType, TRes extends TResType>
+class ParaToParaBuilder<TApi, TRes>
   implements
-    AmountOrFeeAssetBuilder<TApi>,
-    AmountBuilder<TApi>,
-    AddressBuilder<TApi>,
-    UseKeepAliveFinalBuilder<TApi>
+    AmountOrFeeAssetBuilder<TApi, TRes>,
+    AmountBuilder<TApi, TRes>,
+    AddressBuilder<TApi, TRes>,
+    UseKeepAliveFinalBuilder<TApi, TRes>
 {
-  private readonly api?: TApi
+  private readonly api: IPolkadotApi<TApi, TRes>
   private readonly from: TNode
   private readonly to: TDestination
   private readonly currency: TCurrencyInput
@@ -37,11 +36,11 @@ class ParaToParaBuilder<TApi extends TApiType, TRes extends TResType>
   private _feeAsset?: TCurrency
   private _amount: TAmount | null
   private _address: TAddress
-  private _destApi?: TApi
+  private _destApi: IPolkadotApi<TApi, TRes>
   private _version?: Version
 
   private constructor(
-    api: TApi | undefined,
+    api: IPolkadotApi<TApi, TRes>,
     from: TNode,
     to: TDestination,
     currency: TCurrencyInput,
@@ -53,16 +52,17 @@ class ParaToParaBuilder<TApi extends TApiType, TRes extends TResType>
     this.to = to
     this.currency = currency
     this.paraIdTo = paraIdTo
+    this._destApi = api.clone()
   }
 
-  static createParaToPara<TApi extends TApiType, TRes extends TResType>(
-    api: TApi | undefined,
+  static createParaToPara<TApi, TRes>(
+    api: IPolkadotApi<TApi, TRes>,
     from: TNode,
     to: TDestination,
     currency: TCurrencyInput,
     batchManager: BatchTransactionManager<TApi, TRes>,
     paraIdTo?: number
-  ): AmountOrFeeAssetBuilder<TApi> {
+  ): AmountOrFeeAssetBuilder<TApi, TRes> {
     return new ParaToParaBuilder(api, from, to, currency, batchManager, paraIdTo)
   }
 
@@ -106,7 +106,7 @@ class ParaToParaBuilder<TApi extends TApiType, TRes extends TResType>
    * @returns An instance of Builder
    */
   useKeepAlive(destApi: TApi): this {
-    this._destApi = destApi
+    this._destApi.setApi(destApi)
     return this
   }
 
@@ -121,7 +121,7 @@ class ParaToParaBuilder<TApi extends TApiType, TRes extends TResType>
     return this
   }
 
-  private buildOptions(): TSendOptions<TApi> {
+  private buildOptions(): TSendOptions<TApi, TRes> {
     return {
       api: this.api,
       origin: this.from,
@@ -163,7 +163,7 @@ class ParaToParaBuilder<TApi extends TApiType, TRes extends TResType>
       )
     }
     const options = this.buildOptions()
-    return await send(options)
+    return send(options)
   }
 
   /**
@@ -173,7 +173,7 @@ class ParaToParaBuilder<TApi extends TApiType, TRes extends TResType>
    */
   async buildSerializedApiCall(): Promise<TSerializedApiCall> {
     const options = this.buildOptions()
-    return await sendSerializedApiCall(options)
+    return sendSerializedApiCall(options)
   }
 }
 

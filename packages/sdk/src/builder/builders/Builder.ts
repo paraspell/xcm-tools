@@ -12,10 +12,7 @@ import type {
   TNodeWithRelayChains,
   TVersionClaimAssets,
   Version,
-  TBatchOptions,
-  TApiType,
-  Extrinsic,
-  TResType
+  TBatchOptions
 } from '../../types'
 import RelayToParaBuilder from './RelayToParaBuilder'
 import ParaToParaBuilder from './ParaToParaBuilder'
@@ -23,19 +20,19 @@ import ParaToRelayBuilder from './ParaToRelayBuilder'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 import type { IAddToBatchBuilder } from './IBatchBuilder'
-import type { ApiPromise } from '@polkadot/api'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
 
 /**
  * A builder class for constructing a Para-to-Para and Para-to-Relay transactions.
  */
-class ToGeneralBuilder<TApi extends TApiType, TRes extends TResType> {
-  private readonly api?: TApi
+class ToGeneralBuilder<TApi, TRes> {
+  private readonly api: IPolkadotApi<TApi, TRes>
   private readonly from: TNode
   private readonly to: TDestination
   private readonly paraIdTo?: number
 
   constructor(
-    api: TApi | undefined,
+    api: IPolkadotApi<TApi, TRes>,
     from: TNode,
     to: TDestination,
     private batchManager: BatchTransactionManager<TApi, TRes>,
@@ -53,7 +50,7 @@ class ToGeneralBuilder<TApi extends TApiType, TRes extends TResType> {
    * @param currency - The currency to be transferred.
    * @returns An instance of Builder
    */
-  currency(currency: TCurrencyInput): AmountOrFeeAssetBuilder<TApi> {
+  currency(currency: TCurrencyInput): AmountOrFeeAssetBuilder<TApi, TRes> {
     return ParaToParaBuilder.createParaToPara(
       this.api,
       this.from,
@@ -68,14 +65,14 @@ class ToGeneralBuilder<TApi extends TApiType, TRes extends TResType> {
 /**
  * A builder class for constructing a Para-to-Para and Para-to-Relay transactions.
  */
-class FromGeneralBuilder<TApi extends TApiType, TRes extends TResType> {
-  private readonly api?: TApi
+class FromGeneralBuilder<TApi, TRes> {
+  private readonly api: IPolkadotApi<TApi, TRes>
   private readonly from: TNode
 
   private _feeAsset?: TCurrency
 
   constructor(
-    api: TApi | undefined,
+    api: IPolkadotApi<TApi, TRes>,
     from: TNode,
     private batchManager: BatchTransactionManager<TApi, TRes>
   ) {
@@ -100,7 +97,7 @@ class FromGeneralBuilder<TApi extends TApiType, TRes extends TResType> {
    * @param feeAsset - The currency to be used as the fee asset.
    * @returns An instance of Builder
    */
-  feeAsset(feeAsset: TCurrency): AmountBuilder<TApi> {
+  feeAsset(feeAsset: TCurrency): AmountBuilder<TApi, TRes> {
     this._feeAsset = feeAsset
     return this
   }
@@ -111,7 +108,7 @@ class FromGeneralBuilder<TApi extends TApiType, TRes extends TResType> {
    * @param amount - The amount to be transferred.
    * @returns An instance of Builder
    */
-  amount(amount: TAmount | null): AddressBuilder<TApi> {
+  amount(amount: TAmount | null): AddressBuilder<TApi, TRes> {
     return ParaToRelayBuilder.create(this.api, this.from, amount, this.batchManager, this._feeAsset)
   }
 }
@@ -119,10 +116,10 @@ class FromGeneralBuilder<TApi extends TApiType, TRes extends TResType> {
 /**
  * A builder class for constructing Para-to-Para, Para-to-Relay, Relay-to-Para transactions and asset claims.
  */
-export class GeneralBuilder<TApi extends TApiType = ApiPromise, TRes extends TResType = Extrinsic> {
+export class GeneralBuilder<TApi, TRes> {
   constructor(
     private readonly batchManager: BatchTransactionManager<TApi, TRes>,
-    private readonly api?: TApi,
+    private readonly api: IPolkadotApi<TApi, TRes>,
     private readonly _from?: TNode,
     private readonly _to?: TDestination
   ) {}
@@ -144,7 +141,7 @@ export class GeneralBuilder<TApi extends TApiType = ApiPromise, TRes extends TRe
    * @param paraIdTo - (Optional) The parachain ID of the destination node.
    * @returns An instance of Builder
    */
-  to(node: TDestination, paraIdTo?: number): AmountBuilder<TApi> {
+  to(node: TDestination, paraIdTo?: number): AmountBuilder<TApi, TRes> {
     return RelayToParaBuilder.create(this.api, node, this.batchManager, paraIdTo)
   }
 
@@ -175,9 +172,7 @@ export class GeneralBuilder<TApi extends TApiType = ApiPromise, TRes extends TRe
  * @param api - The API instance to use for building transactions. If not provided, a new instance will be created.
  * @returns A new Builder instance.
  */
-export const Builder = <TApi extends TApiType, TRes extends TResType = Extrinsic>(
-  api?: TApi
-): GeneralBuilder<TApi, TRes> => {
+export const Builder = <TApi, TRes>(api: IPolkadotApi<TApi, TRes>): GeneralBuilder<TApi, TRes> => {
   return new GeneralBuilder(new BatchTransactionManager(), api)
 }
 
@@ -186,27 +181,24 @@ export interface FinalBuilder<TRes> {
   buildSerializedApiCall: () => Promise<TSerializedApiCall>
 }
 
-export interface UseKeepAliveFinalBuilder<
-  TApi extends TApiType = ApiPromise,
-  TRes extends TResType = Extrinsic
-> extends IAddToBatchBuilder<TApi> {
+export interface UseKeepAliveFinalBuilder<TApi, TRes> extends IAddToBatchBuilder<TApi, TRes> {
   useKeepAlive: (destApi: TApi) => this
   xcmVersion: (version: Version) => this
   build: () => Promise<TRes>
   buildSerializedApiCall: () => Promise<TSerializedApiCall>
 }
 
-export interface AddressBuilder<TApi extends TApiType> {
-  address: (address: TAddress) => UseKeepAliveFinalBuilder<TApi>
+export interface AddressBuilder<TApi, TRes> {
+  address: (address: TAddress) => UseKeepAliveFinalBuilder<TApi, TRes>
 }
 
-export interface AmountBuilder<TApi extends TApiType> {
-  amount: (amount: TAmount | null) => AddressBuilder<TApi>
+export interface AmountBuilder<TApi, TRes> {
+  amount: (amount: TAmount | null) => AddressBuilder<TApi, TRes>
 }
 
-export interface AmountOrFeeAssetBuilder<TApi extends TApiType> {
-  amount: (amount: TAmount | null) => AddressBuilder<TApi>
-  feeAsset: (feeAsset: TCurrency) => AmountBuilder<TApi>
+export interface AmountOrFeeAssetBuilder<TApi, TRes> {
+  amount: (amount: TAmount | null) => AddressBuilder<TApi, TRes>
+  feeAsset: (feeAsset: TCurrency) => AmountBuilder<TApi, TRes>
 }
 
 export interface FungibleBuilder<TRes> {

@@ -3,7 +3,7 @@
 import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
-class Ethereum extends ParachainNode {
+class Ethereum<TApi, TRes> extends ParachainNode<TApi, TRes> {
   constructor() {
     super('Ethereum', 'ethereum', 'polkadot', Version.V3)
   }

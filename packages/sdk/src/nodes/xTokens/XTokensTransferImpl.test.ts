@@ -1,17 +1,19 @@
 import { describe, it, expect, vi } from 'vitest'
 import { getCurrencySelection } from './getCurrencySelection'
-import { getParameters } from './getParameters'
+import { getXTokensParameters } from './getXTokensParameters'
 import XTokensTransferImpl from './XTokensTransferImpl'
 import type { TMultiLocation, XTokensTransferInput } from '../../types'
 import { Parents } from '../../types'
-import type PolkadotJsApi from '../../api/PolkadotJsApi'
+import type { ApiPromise } from '@polkadot/api'
+import type PolkadotJsApi from '../../pjs/PolkadotJsApi'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('./getCurrencySelection', () => ({
   getCurrencySelection: vi.fn()
 }))
 
-vi.mock('./getParameters', () => ({
-  getParameters: vi.fn()
+vi.mock('./getXTokensParameters', () => ({
+  getXTokensParameters: vi.fn()
 }))
 
 const mockMultiLocation: TMultiLocation = {
@@ -20,7 +22,7 @@ const mockMultiLocation: TMultiLocation = {
 }
 
 const mockApi = {
-  call: vi.fn()
+  callTxMethod: vi.fn()
 } as unknown as PolkadotJsApi
 
 describe('XTokensTransferImpl', () => {
@@ -37,7 +39,7 @@ describe('XTokensTransferImpl', () => {
       feeAsset: '0',
       scenario: 'ParaToPara',
       serializedApiCallEnabled: false
-    } as XTokensTransferInput
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
 
     expect(() => XTokensTransferImpl.transferXTokens(input, {})).toThrow(
       'Multilocation destinations are not supported for specific transfer you are trying to create.'
@@ -57,18 +59,22 @@ describe('XTokensTransferImpl', () => {
       destination: 'AssetHubPolkadot',
       feeAsset: 'XTK',
       serializedApiCallEnabled: true
-    } as XTokensTransferInput
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
     const currencySelection = '123'
 
     vi.mocked(getCurrencySelection).mockReturnValue(currencySelection)
-    vi.mocked(getParameters).mockReturnValue(['param1', 'param2', 'param3'])
+    vi.mocked(getXTokensParameters).mockReturnValue({
+      param1: 'value1',
+      param2: 'value2',
+      param3: 'value3'
+    })
 
     const result = XTokensTransferImpl.transferXTokens(input, currencySelection)
 
     expect(result).toEqual({
-      module: 'xTokens',
-      section: 'transferMultiassets',
-      parameters: ['param1', 'param2', 'param3']
+      module: 'XTokens',
+      section: 'transfer_multiassets',
+      parameters: ['value1', 'value2', 'value3']
     })
   })
 
@@ -84,18 +90,21 @@ describe('XTokensTransferImpl', () => {
       addressSelection: 'Address',
       destination: 'AssetHubPolkadot',
       serializedApiCallEnabled: true
-    } as XTokensTransferInput
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
     const currencySelection = '123'
 
     vi.mocked(getCurrencySelection).mockReturnValue(currencySelection)
-    vi.mocked(getParameters).mockReturnValue(['param1', 'param2', 'param3'])
-
+    vi.mocked(getXTokensParameters).mockReturnValue({
+      param1: 'value1',
+      param2: 'value2',
+      param3: 'value3'
+    })
     const result = XTokensTransferImpl.transferXTokens(input, currencySelection)
 
     expect(result).toEqual({
-      module: 'xTokens',
-      section: 'transferMultiasset',
-      parameters: ['param1', 'param2', 'param3']
+      module: 'XTokens',
+      section: 'transfer_multiasset',
+      parameters: ['value1', 'value2', 'value3']
     })
   })
 
@@ -112,20 +121,27 @@ describe('XTokensTransferImpl', () => {
       destination: 'Hydration',
       feeAsset: 'HDX',
       serializedApiCallEnabled: false
-    } as XTokensTransferInput
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
     const currencySelection = '123'
 
     vi.mocked(getCurrencySelection).mockReturnValue(currencySelection)
-    vi.mocked(getParameters).mockReturnValue(['param1', 'param2', 'param3'])
-
-    const callSpy = vi.spyOn(mockApi, 'call')
+    vi.mocked(getXTokensParameters).mockReturnValue({
+      param1: 'value1',
+      param2: 'value2',
+      param3: 'value3'
+    })
+    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
     XTokensTransferImpl.transferXTokens(input, currencySelection)
 
     expect(callSpy).toHaveBeenCalledWith({
-      module: 'xTokens',
+      module: 'XTokens',
       section: 'transfer',
-      parameters: ['param1', 'param2', 'param3']
+      parameters: {
+        param1: 'value1',
+        param2: 'value2',
+        param3: 'value3'
+      }
     })
   })
 })

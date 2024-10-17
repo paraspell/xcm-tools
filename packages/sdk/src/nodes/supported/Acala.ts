@@ -11,21 +11,21 @@ import { getAllNodeProviders } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Acala extends ParachainNode implements IXTokensTransfer {
+class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Acala', 'acala', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currency, currencyID } = input
     const currencySelection: TForeignOrTokenAsset =
-      currencyID !== undefined ? { ForeignAsset: currencyID } : { Token: currency }
+      currencyID !== undefined ? { ForeignAsset: Number(currencyID) } : { Token: currency }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[1]
+    return getAllNodeProviders(this.node as TNodePolkadotKusama)[3]
   }
 }
 

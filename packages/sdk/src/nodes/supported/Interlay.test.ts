@@ -4,6 +4,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Interlay from './Interlay'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -12,15 +14,15 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Interlay', () => {
-  let interlay: Interlay
+  let interlay: Interlay<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'INTR',
     currencyID: '456',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    interlay = getNode('Interlay')
+    interlay = getNode<ApiPromise, Extrinsic, 'Interlay'>('Interlay')
   })
 
   it('should initialize with correct values', () => {
@@ -35,7 +37,7 @@ describe('Interlay', () => {
 
     interlay.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: '456' } as TForeignOrTokenAsset)
+    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: 456 } as TForeignOrTokenAsset)
   })
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {

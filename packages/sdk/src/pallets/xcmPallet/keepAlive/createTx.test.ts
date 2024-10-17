@@ -2,7 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { ApiPromise } from '@polkadot/api'
 import { Builder } from '../../../builder'
 import { createTx } from './createTx'
-import type { Extrinsic, TNode } from '../../../types'
+import type { TNode } from '../../../types'
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import type { Extrinsic } from '../../../pjs/types'
 
 vi.mock('../../../builder', () => ({
   Builder: vi.fn().mockImplementation(() => ({
@@ -21,8 +23,8 @@ describe('createTx', () => {
   })
 
   it('should create a transaction when only destNode is defined', async () => {
-    const originApi = {} as ApiPromise
-    const destApi = {} as ApiPromise
+    const originApi = {} as IPolkadotApi<ApiPromise, Extrinsic>
+    const destApi = {} as IPolkadotApi<ApiPromise, Extrinsic>
     const address = 'test-address'
     const amount = '1000'
     const currencySymbol = 'DOT'
@@ -44,8 +46,8 @@ describe('createTx', () => {
   })
 
   it('should create a transaction when both originNode and destNode are defined', async () => {
-    const originApi = {} as ApiPromise
-    const destApi = {} as ApiPromise
+    const originApi = {} as IPolkadotApi<ApiPromise, Extrinsic>
+    const destApi = {} as IPolkadotApi<ApiPromise, Extrinsic>
     const address = 'test-address'
     const amount = '1000'
     const currencySymbol = 'DOT'

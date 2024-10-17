@@ -13,6 +13,8 @@ import {
 import type { ApiPromise } from '@polkadot/api'
 import { getNativeAssetSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../../errors'
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import type { Extrinsic } from '../../../pjs/types'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn(),
@@ -46,6 +48,10 @@ vi.mock('../getOriginFeeDetails', () => ({
   getOriginFeeDetails: vi.fn()
 }))
 
+const apiMock = {
+  init: vi.fn()
+} as unknown as IPolkadotApi<ApiPromise, Extrinsic>
+
 describe('getTransferInfo', () => {
   const origin = 'Polkadot'
   const destination = 'Kusama'
@@ -69,14 +75,15 @@ describe('getTransferInfo', () => {
   })
 
   it('constructs the correct transfer info object', async () => {
-    const transferInfo = await getTransferInfo(
+    const transferInfo = await getTransferInfo({
+      api: apiMock,
       origin,
       destination,
       accountOrigin,
       accountDestination,
       currency,
       amount
-    )
+    })
 
     expect(transferInfo).toMatchObject({
       chain: {
@@ -110,14 +117,30 @@ describe('getTransferInfo', () => {
   it('handles errors during API interactions', async () => {
     vi.mocked(getBalanceNative).mockRejectedValue(new Error('API failure'))
     await expect(
-      getTransferInfo(origin, destination, accountOrigin, accountDestination, currency, amount)
+      getTransferInfo({
+        api: apiMock,
+        origin,
+        destination,
+        accountOrigin,
+        accountDestination,
+        currency,
+        amount
+      })
     ).rejects.toThrow('API failure')
   })
 
   it('Throws an error if invalid currency for origin node provided', async () => {
     vi.mocked(getAssetBySymbolOrId).mockReturnValue(null)
     await expect(() =>
-      getTransferInfo(origin, destination, accountOrigin, accountDestination, currency, amount)
+      getTransferInfo({
+        api: apiMock,
+        origin,
+        destination,
+        accountOrigin,
+        accountDestination,
+        currency,
+        amount
+      })
     ).rejects.toThrow(InvalidCurrencyError)
   })
 })

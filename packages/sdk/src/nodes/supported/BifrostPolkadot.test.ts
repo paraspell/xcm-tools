@@ -4,6 +4,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type { BifrostPolkadot } from './BifrostPolkadot'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -12,15 +14,14 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('BifrostPolkadot', () => {
-  let bifrostPolkadot: BifrostPolkadot
+  let bifrostPolkadot: BifrostPolkadot<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'BNC',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    bifrostPolkadot = getNode('BifrostPolkadot')
-    vi.resetAllMocks()
+    bifrostPolkadot = getNode<ApiPromise, Extrinsic, 'BifrostPolkadot'>('BifrostPolkadot')
   })
 
   it('should initialize with correct values', () => {

@@ -4,6 +4,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Pioneer from './Pioneer'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -12,15 +14,15 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Pioneer', () => {
-  let pioneer: Pioneer
+  let pioneer: Pioneer<ApiPromise, Extrinsic>
   const mockInput = {
     currencyID: '123',
     amount: '100',
     fees: 0.01
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    pioneer = getNode('Pioneer')
+    pioneer = getNode<ApiPromise, Extrinsic, 'Pioneer'>('Pioneer')
   })
 
   it('should initialize with correct values', () => {

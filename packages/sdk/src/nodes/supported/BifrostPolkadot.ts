@@ -4,7 +4,10 @@ import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../..
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-export class BifrostPolkadot extends ParachainNode implements IXTokensTransfer {
+export class BifrostPolkadot<TApi, TRes>
+  extends ParachainNode<TApi, TRes>
+  implements IXTokensTransfer
+{
   constructor() {
     super('BifrostPolkadot', 'bifrost', 'polkadot', Version.V3)
   }
@@ -31,7 +34,7 @@ export class BifrostPolkadot extends ParachainNode implements IXTokensTransfer {
     return isVToken ? { VToken2: id } : { Token2: id }
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currency, currencyID } = input
 
     if (!currency) {

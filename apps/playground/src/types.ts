@@ -17,3 +17,13 @@ type ValueType<T> = T extends Map<unknown, infer V> ? V : never;
 export type EIP6963ProviderDetail = ValueType<
   Awaited<ReturnType<typeof Web3.requestEIP6963Providers>>
 >;
+
+export type TApiType = "PJS" | "PAPI";
+
+export type WalletAccount = {
+  address: string;
+  meta: {
+    name?: string;
+    source?: string;
+  };
+};

@@ -3,15 +3,16 @@
 import { type ApiPromise } from '@polkadot/api'
 import type { MockInstance } from 'vitest'
 import { vi, describe, expect, it, beforeEach } from 'vitest'
-import type { Extrinsic } from '../../types'
 import { Version, type TNode } from '../../types'
-import * as xcmPallet from '../../pallets/xcmPallet'
+import * as xcmPallet from '../../pallets/xcmPallet/transfer'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { Builder } from './Builder'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 import * as claimAssets from '../../pallets/assets/asset-claim'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import type { Extrinsic } from '../../pjs/types'
 
-vi.mock('../../pallets/xcmPallet', () => ({
+vi.mock('../../pallets/xcmPallet/transfer', () => ({
   send: vi.fn(),
   sendSerializedApiCall: vi.fn(),
   transferRelayToParaCommon: vi.fn(),
@@ -28,7 +29,16 @@ const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
 const PARA_ID_TO = 1999
 
 describe('Builder', () => {
-  const mockApi = {} as ApiPromise
+  const mockApi = {
+    init: vi.fn(),
+    setApi: vi.fn(),
+    callTxMethod: vi.fn(),
+    clone: vi.fn().mockReturnValue({
+      init: vi.fn(),
+      setApi: vi.fn(),
+      clone: vi.fn()
+    })
+  } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
   const destApi = {} as ApiPromise
   const mockExtrinsic = {} as Extrinsic
   const mockSerializedApiCall = {
@@ -39,6 +49,11 @@ describe('Builder', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
+    vi.spyOn(mockApi, 'clone').mockReturnValue({
+      init: vi.fn(),
+      setApi: vi.fn(),
+      clone: vi.fn()
+    } as unknown as IPolkadotApi<ApiPromise, Extrinsic>)
   })
 
   describe('Para to para/relay transfer', () => {
@@ -67,7 +82,8 @@ describe('Builder', () => {
         currency: CURRENCY,
         amount: AMOUNT,
         address: ADDRESS,
-        destination: NODE_2
+        destination: NODE_2,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -86,7 +102,8 @@ describe('Builder', () => {
         currency: CURRENCY,
         amount: AMOUNT,
         address: ADDRESS,
-        destination: NODE_2
+        destination: NODE_2,
+        destApiForKeepAlive: expect.any(Object)
       })
       expect(serializedCall).toEqual(mockSerializedApiCall)
     })
@@ -107,7 +124,8 @@ describe('Builder', () => {
         amount: AMOUNT,
         address: ADDRESS,
         destination: NODE_2,
-        paraIdTo: PARA_ID_TO
+        paraIdTo: PARA_ID_TO,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -132,7 +150,8 @@ describe('Builder', () => {
         amount: AMOUNT,
         address: ADDRESS,
         destination: NODE_2,
-        paraIdTo: PARA_ID_TO
+        paraIdTo: PARA_ID_TO,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -154,7 +173,7 @@ describe('Builder', () => {
         address: ADDRESS,
         destination: NODE_2,
         paraIdTo: PARA_ID_TO,
-        destApiForKeepAlive: destApi
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -178,7 +197,8 @@ describe('Builder', () => {
         address: ADDRESS,
         destination: NODE_2,
         paraIdTo: PARA_ID_TO,
-        version
+        version,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -203,7 +223,7 @@ describe('Builder', () => {
         address: ADDRESS,
         destination: NODE_2,
         paraIdTo: PARA_ID_TO,
-        destApiForKeepAlive: destApi,
+        destApiForKeepAlive: expect.any(Object),
         version
       })
     })
@@ -223,7 +243,8 @@ describe('Builder', () => {
         currency: { id: CURRENCY_ID },
         amount: AMOUNT,
         address: ADDRESS,
-        destination: NODE_2
+        destination: NODE_2,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -246,7 +267,8 @@ describe('Builder', () => {
         amount: AMOUNT,
         address: ADDRESS,
         feeAsset,
-        destination: NODE_2
+        destination: NODE_2,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -313,7 +335,8 @@ describe('Builder', () => {
         amount: AMOUNT,
         address: ADDRESS,
         feeAsset,
-        destination: NODE_2
+        destination: NODE_2,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -355,7 +378,8 @@ describe('Builder', () => {
         currency: { multiasset: overridedCurrencyMultiLocation },
         amount: AMOUNT,
         address: ADDRESS,
-        destination: NODE_2
+        destination: NODE_2,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -371,7 +395,8 @@ describe('Builder', () => {
           symbol: currency
         },
         amount: AMOUNT,
-        address: ADDRESS
+        address: ADDRESS,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -389,7 +414,8 @@ describe('Builder', () => {
           symbol: getRelayChainSymbol(NODE)
         },
         amount: AMOUNT,
-        address: ADDRESS
+        address: ADDRESS,
+        destApiForKeepAlive: expect.any(Object)
       })
       expect(serializedCall).toEqual(mockSerializedApiCall)
     })
@@ -418,7 +444,7 @@ describe('Builder', () => {
         },
         amount: AMOUNT,
         address: ADDRESS,
-        destApiForKeepAlive: destApi
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -443,7 +469,7 @@ describe('Builder', () => {
         amount: AMOUNT,
         address: ADDRESS,
         feeAsset,
-        destApiForKeepAlive: destApi
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -461,7 +487,8 @@ describe('Builder', () => {
         },
         amount: AMOUNT,
         address: ADDRESS,
-        version
+        version,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -488,7 +515,7 @@ describe('Builder', () => {
         amount: AMOUNT,
         address: ADDRESS,
         feeAsset,
-        destApiForKeepAlive: destApi,
+        destApiForKeepAlive: expect.any(Object),
         version
       })
     })
@@ -512,16 +539,7 @@ describe('Builder', () => {
     })
 
     it('should initiate a para to relay transfer using batching', async () => {
-      const api = {
-        tx: {
-          utility: {
-            batchAll: vi.fn(),
-            batch: vi.fn()
-          }
-        }
-      } as unknown as ApiPromise
-
-      await Builder(api)
+      await Builder(mockApi)
         .from(NODE)
         .amount(AMOUNT)
         .address(ADDRESS)
@@ -533,29 +551,21 @@ describe('Builder', () => {
         .buildBatch()
 
       expect(sendSpy).toHaveBeenCalledWith({
-        api,
+        api: mockApi,
         origin: NODE,
         currency: {
           symbol: getRelayChainSymbol(NODE)
         },
         amount: AMOUNT,
-        address: ADDRESS
+        address: ADDRESS,
+        destApiForKeepAlive: expect.any(Object)
       })
 
       expect(sendSpy).toHaveBeenCalledTimes(2)
     })
 
     it('should initiate a para to para transfer using batching', async () => {
-      const api = {
-        tx: {
-          utility: {
-            batchAll: vi.fn(),
-            batch: vi.fn()
-          }
-        }
-      } as unknown as ApiPromise
-
-      await Builder(api)
+      await Builder(mockApi)
         .from(NODE)
         .to(NODE_2)
         .currency(CURRENCY)
@@ -565,26 +575,18 @@ describe('Builder', () => {
         .buildBatch()
 
       expect(sendSpy).toHaveBeenCalledWith({
-        api,
+        api: mockApi,
         origin: NODE,
         destination: NODE_2,
         currency: CURRENCY,
         amount: AMOUNT,
-        address: ADDRESS
+        address: ADDRESS,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
     it('should initiate a double para to para transfer using batching', async () => {
-      const api = {
-        tx: {
-          utility: {
-            batchAll: vi.fn(),
-            batch: vi.fn()
-          }
-        }
-      } as unknown as ApiPromise
-
-      await Builder(api)
+      await Builder(mockApi)
         .from(NODE)
         .to(NODE_2)
         .currency(CURRENCY)
@@ -600,29 +602,21 @@ describe('Builder', () => {
         .buildBatch()
 
       expect(sendSpy).toHaveBeenCalledWith({
-        api,
+        api: mockApi,
         origin: NODE,
         destination: NODE_2,
         currency: CURRENCY,
         amount: AMOUNT,
-        address: ADDRESS
+        address: ADDRESS,
+        destApiForKeepAlive: expect.any(Object)
       })
 
       expect(sendSpy).toHaveBeenCalledTimes(2)
     })
 
     it('should throw if trying to build when transactions are batched', async () => {
-      const api = {
-        tx: {
-          utility: {
-            batchAll: vi.fn(),
-            batch: vi.fn()
-          }
-        }
-      } as unknown as ApiPromise
-
       await expect(
-        Builder(api)
+        Builder(mockApi)
           .from(NODE)
           .to(NODE_2)
           .currency(CURRENCY)
@@ -663,7 +657,8 @@ describe('Builder', () => {
         api: mockApi,
         destination: NODE,
         amount: AMOUNT,
-        address: ADDRESS
+        address: ADDRESS,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -675,7 +670,8 @@ describe('Builder', () => {
         destination: NODE,
         amount: AMOUNT,
         address: ADDRESS,
-        paraIdTo: PARA_ID_TO
+        paraIdTo: PARA_ID_TO,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -693,7 +689,7 @@ describe('Builder', () => {
         amount: AMOUNT,
         address: ADDRESS,
         paraIdTo: PARA_ID_TO,
-        destApiForKeepAlive: destApi
+        destApiForKeepAlive: expect.anything()
       })
     })
 
@@ -714,7 +710,7 @@ describe('Builder', () => {
         amount: AMOUNT,
         address: ADDRESS,
         paraIdTo: PARA_ID_TO,
-        destApiForKeepAlive: destApi,
+        destApiForKeepAlive: expect.anything(),
         version
       })
     })
@@ -735,7 +731,8 @@ describe('Builder', () => {
         amount: AMOUNT,
         address: ADDRESS,
         paraIdTo: PARA_ID_TO,
-        version
+        version,
+        destApiForKeepAlive: expect.any(Object)
       })
     })
 
@@ -756,16 +753,7 @@ describe('Builder', () => {
     })
 
     it('should initiate a double relay to para transfer using batching', async () => {
-      const api = {
-        tx: {
-          utility: {
-            batchAll: vi.fn(),
-            batch: vi.fn()
-          }
-        }
-      } as unknown as ApiPromise
-
-      await Builder(api)
+      await Builder(mockApi)
         .to(NODE_2)
         .amount(AMOUNT)
         .address(ADDRESS)
@@ -777,10 +765,11 @@ describe('Builder', () => {
         .buildBatch()
 
       expect(transferRelayToParaSpy).toHaveBeenCalledWith({
-        api,
+        api: mockApi,
         destination: NODE_2,
         amount: AMOUNT,
-        address: ADDRESS
+        address: ADDRESS,
+        destApiForKeepAlive: expect.any(Object)
       })
 
       expect(transferRelayToParaSpy).toHaveBeenCalledTimes(2)

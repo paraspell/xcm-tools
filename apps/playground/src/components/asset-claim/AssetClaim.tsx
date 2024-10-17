@@ -1,19 +1,20 @@
 import { Stack, Title, Box } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import { Builder, createApiInstanceForNode } from "@paraspell/sdk";
-import type { ApiPromise } from "@polkadot/api";
-import type { Signer } from "@polkadot/api/types";
-import { web3FromAddress } from "@polkadot/extension-dapp";
+import type { Extrinsic } from "@paraspell/sdk";
 import { useState, useEffect } from "react";
 import { useWallet } from "../../hooks/useWallet";
-import { submitTransaction } from "../../utils";
 import ErrorAlert from "../ErrorAlert";
 import type { FormValues } from "./AssetClaimForm";
 import AssetClaimForm from "./AssetClaimForm";
-import { submitTxUsingApi } from "../../utils/submitUsingApi";
+import { getTxFromApi } from "../../utils/submitUsingApi";
+import type { TPapiTransaction } from "@paraspell/sdk/papi";
+import type { ApiPromise } from "@polkadot/api";
+import type { PolkadotClient, PolkadotSigner } from "polkadot-api";
+import { submitTransaction, submitTransactionPapi } from "../../utils";
+import type { Signer } from "@polkadot/api/types";
 
 const AssetClaim = () => {
-  const { selectedAccount } = useWallet();
+  const { selectedAccount, apiType, getSigner } = useWallet();
 
   const [alertOpened, { open: openAlert, close: closeAlert }] =
     useDisclosure(false);
@@ -32,41 +33,8 @@ const AssetClaim = () => {
     }
   }, [error, scrollIntoView]);
 
-  const createTransferTx = (
-    { from, amount, address }: FormValues,
-    api: ApiPromise,
-  ) => {
-    return Builder(api)
-      .claimFrom(from)
-      .fungible([
-        {
-          id: {
-            Concrete: {
-              parents: from === "Polkadot" || from === "Kusama" ? 0 : 1,
-              interior: {
-                Here: null,
-              },
-            },
-          },
-          fun: { Fungible: amount },
-        },
-      ])
-      .account(address)
-      .build();
-  };
-
-  const submitUsingSdk = async (
-    formValues: FormValues,
-    injectorAddress: string,
-    signer: Signer,
-  ) => {
-    const api = await createApiInstanceForNode(formValues.from);
-    const tx = await createTransferTx(formValues, api);
-    await submitTransaction(api, tx, signer, injectorAddress);
-  };
-
   const submit = async (formValues: FormValues) => {
-    const { useApi, from, amount } = formValues;
+    const { useApi, from, amount, address } = formValues;
 
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -75,11 +43,19 @@ const AssetClaim = () => {
 
     setLoading(true);
 
-    const injector = await web3FromAddress(selectedAccount.address);
+    const Sdk =
+      apiType === "PAPI"
+        ? await import("@paraspell/sdk/papi")
+        : await import("@paraspell/sdk");
+
+    const api = await Sdk.createApiInstanceForNode(from);
+
+    const signer = await getSigner();
 
     try {
+      let tx: Extrinsic | TPapiTransaction;
       if (useApi) {
-        await submitTxUsingApi(
+        tx = await getTxFromApi(
           {
             from,
             address: formValues.address,
@@ -95,18 +71,44 @@ const AssetClaim = () => {
               },
             ],
           },
-          formValues.from,
-          "/asset-claim",
+          api,
+          apiType === "PJS" ? "/asset-claim-hash" : "/asset-claim-papi",
           selectedAccount.address,
-          injector.signer,
+          apiType,
           "POST",
           true,
         );
       } else {
-        await submitUsingSdk(
-          formValues,
+        tx = await Sdk.Builder(api as ApiPromise & PolkadotClient)
+          .claimFrom(from)
+          .fungible([
+            {
+              id: {
+                Concrete: {
+                  parents: from === "Polkadot" || from === "Kusama" ? 0 : 1,
+                  interior: {
+                    Here: null,
+                  },
+                },
+              },
+              fun: { Fungible: amount },
+            },
+          ])
+          .account(address)
+          .build();
+      }
+
+      if (apiType === "PAPI") {
+        await submitTransactionPapi(
+          tx as TPapiTransaction,
+          signer as PolkadotSigner,
+        );
+      } else {
+        await submitTransaction(
+          api as ApiPromise,
+          tx as Extrinsic,
+          signer as Signer,
           selectedAccount.address,
-          injector.signer,
         );
       }
 

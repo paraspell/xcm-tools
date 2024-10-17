@@ -6,15 +6,15 @@ import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
 import { getAllAssetsSymbols, getOtherAssets, getRelayChainSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { DuplicateAssetError, IncompatibleNodesError } from '../../errors'
-import type { Extrinsic } from '../../types'
 import { type TSendOptions, type TNode, type TMultiAsset, type TMultiLocation } from '../../types'
 import { send, transferRelayToParaSerializedApiCall } from './transfer'
 import ParachainNode from '../../nodes/ParachainNode'
 import { getNode } from '../../utils'
-import { createApiInstanceForNode } from '../../utils/createApiInstanceForNode'
 import Astar from '../../nodes/supported/Astar'
 import Shiden from '../../nodes/supported/Shiden'
 import AssetHubKusama from '../../nodes/supported/AssetHubKusama'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../../utils/createApiInstanceForNode', () => ({
   createApiInstanceForNode: vi.fn().mockReturnValue({} as ApiPromise)
@@ -24,9 +24,9 @@ vi.spyOn(ParachainNode.prototype, 'transfer').mockReturnValue({} as Extrinsic)
 vi.spyOn(Astar.prototype, 'transfer').mockReturnValue({} as Extrinsic)
 vi.spyOn(Shiden.prototype, 'transfer').mockReturnValue({} as Extrinsic)
 vi.spyOn(AssetHubKusama.prototype, 'transferRelayToPara').mockReturnValue({
-  module: 'xcmPallet',
-  section: 'limitedTeleportAssets',
-  parameters: []
+  module: 'XcmPallet',
+  section: 'limited_teleport_assets',
+  parameters: {}
 })
 
 const randomCurrencySymbol = 'DOT'
@@ -36,11 +36,17 @@ const MOCK_OPTIONS_BASE = {
   address: '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
 }
 
+const mockApi = {
+  getApi: vi.fn(),
+  setApi: vi.fn(),
+  init: vi.fn(),
+  callTxMethod: vi.fn()
+} as unknown as IPolkadotApi<ApiPromise, Extrinsic>
+
 describe('send', () => {
-  const api: ApiPromise = {} as ApiPromise
   let polkadotNodes: TNode[]
   let kusamaNodes: TNode[]
-  let sendOptions: TSendOptions
+  let sendOptions: TSendOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     polkadotNodes = NODE_NAMES_DOT_KSM.filter(node => getRelayChainSymbol(node) === 'KSM')
@@ -49,7 +55,8 @@ describe('send', () => {
       ...MOCK_OPTIONS_BASE,
       origin: 'Acala',
       currency: { symbol: 'ACA' },
-      api
+      api: mockApi,
+      destApiForKeepAlive: mockApi
     }
   })
 
@@ -71,12 +78,16 @@ describe('send', () => {
 
   it('should create a new API instance when API is not provided', async () => {
     const options = {
-      ...sendOptions,
-      api: undefined
+      ...sendOptions
     }
 
+    const spy = vi.spyOn(options.api, 'init')
+
+    options.api.setApi(undefined)
+
     await send(options)
-    expect(createApiInstanceForNode).toHaveBeenCalled()
+
+    expect(spy).toHaveBeenCalled()
   })
 
   it('should not throw an InvalidCurrencyError when passing Acala and ACA and Unique as destination', async () => {
@@ -131,7 +142,8 @@ describe('send', () => {
 
   it('should call transferRelayToParaSerializedApiCall when passing AssetHubPolkadot, DOT and AssetHubKusama as destination', async () => {
     const res = await transferRelayToParaSerializedApiCall({
-      api: {} as ApiPromise,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       amount: 1000,
       address: '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6',
       destination: 'AssetHubKusama'
@@ -205,7 +217,8 @@ describe('send', () => {
 
   it('should throw InvalidCurrencyError when multi assets array is empty', async () => {
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
       currency: { multiasset: [] },
@@ -220,7 +233,8 @@ describe('send', () => {
 
   it('should throw DuplicateAssetError when Hydration and USDT is passed', async () => {
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'Hydration' as TNode,
       destination: 'Acala' as TNode,
       currency: { symbol: 'USDT' },
@@ -234,7 +248,8 @@ describe('send', () => {
 
   it('should not throw DuplicateAssetError when AssetHubPolkadot and WETH is passed', async () => {
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
       currency: { symbol: 'WETH' },
@@ -248,7 +263,8 @@ describe('send', () => {
 
   it('should throw InvalidCurrencyError when single multi asset is used with fee asset', async () => {
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
       currency: {
@@ -283,7 +299,8 @@ describe('send', () => {
     }
 
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
       currency: { multilocation },
@@ -304,7 +321,8 @@ describe('send', () => {
     }
 
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
       currency: { multilocation },
@@ -318,7 +336,8 @@ describe('send', () => {
 
   it('should throw Error if trying to transfer to ethereum from not AssetHub', async () => {
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'Hydration' as TNode,
       destination: 'Ethereum' as TNode,
       currency: { symbol: 'ETH' },
@@ -332,7 +351,8 @@ describe('send', () => {
 
   it('should throw InvalidCurrencyError when multi assets are used without specifying fee asset', async () => {
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
       currency: {
@@ -371,7 +391,8 @@ describe('send', () => {
 
   it('should throw InvalidCurrencyError when multi assets are used without specifying fee asset', async () => {
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
       currency: {
@@ -410,7 +431,8 @@ describe('send', () => {
 
   it('should throw InvalidCurrencyError when multi assets are used without specifying fee asset', async () => {
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
       currency: {
@@ -449,7 +471,8 @@ describe('send', () => {
 
   it('should throw InvalidCurrencyError when multi assets are used with fee asset too big', async () => {
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
       currency: {
@@ -488,7 +511,8 @@ describe('send', () => {
 
   it('should throw InvalidCurrencyError when multi assets are used with fee asset too big', async () => {
     const options = {
-      api,
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'AssetHubPolkadot' as TNode,
       destination: 'Hydration' as TNode,
       currency: {
@@ -526,8 +550,9 @@ describe('send', () => {
   })
 
   it('should throw InvalidCurrencyError when destination is AssetHubPolkadot and currency is DOT', async () => {
-    const options = {
-      api,
+    const options: TSendOptions<ApiPromise, Extrinsic> = {
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'Hydration' as TNode,
       destination: 'AssetHubPolkadot' as TNode,
       currency: { symbol: 'DOT' },
@@ -540,8 +565,9 @@ describe('send', () => {
   })
 
   it('should throw InvalidCurrencyError when destination is AssetHubPolkadot and currency is not supported', async () => {
-    const options = {
-      api,
+    const options: TSendOptions<ApiPromise, Extrinsic> = {
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'Hydration' as TNode,
       destination: 'AssetHubPolkadot' as TNode,
       currency: { symbol: 'ETH' },
@@ -554,8 +580,9 @@ describe('send', () => {
   })
 
   it('should throw InvalidCurrencyError when destination is AssetHubPolkadot and currency is not supported on AssetHub', async () => {
-    const options = {
-      api,
+    const options: TSendOptions<ApiPromise, Extrinsic> = {
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
       origin: 'Hydration' as TNode,
       destination: 'AssetHubPolkadot' as TNode,
       currency: { symbol: '4-Pool' },

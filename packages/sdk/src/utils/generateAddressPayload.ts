@@ -1,17 +1,10 @@
-import type {
-  TAddress,
-  TApiType,
-  TMultiLocationHeader,
-  TPallet,
-  TResType,
-  TScenario
-} from '../types'
+import type { TAddress, TMultiLocationHeader, TPallet, TScenario } from '../types'
 import { Parents, Version } from '../types'
 import { ethers } from 'ethers'
 import { createX1Payload } from './createX1Payload'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 
-export const generateAddressPayload = <TApi extends TApiType, TRes extends TResType>(
+export const generateAddressPayload = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   scenario: TScenario,
   pallet: TPallet | null,
@@ -52,13 +45,13 @@ export const generateAddressPayload = <TApi extends TApiType, TRes extends TResT
             isEthAddress
               ? {
                   AccountKey20: {
-                    ...(version === Version.V1 && { network: 'any' }),
+                    ...((version === Version.V1 || version === Version.V2) && { network: 'any' }),
                     key: recipientAddress
                   }
                 }
               : {
                   AccountId32: {
-                    ...(version === Version.V1 && { network: 'any' }),
+                    ...((version === Version.V1 || version === Version.V2) && { network: 'any' }),
                     id: api.createAccountId(recipientAddress)
                   }
                 }
@@ -77,13 +70,13 @@ export const generateAddressPayload = <TApi extends TApiType, TRes extends TResT
           isEthAddress
             ? {
                 AccountKey20: {
-                  ...(version === Version.V1 && { network: 'any' }),
+                  ...((version === Version.V1 || version === Version.V2) && { network: 'any' }),
                   key: recipientAddress
                 }
               }
             : {
                 AccountId32: {
-                  ...(version === Version.V1 && { network: 'any' }),
+                  ...((version === Version.V1 || version === Version.V2) && { network: 'any' }),
                   id: api.createAccountId(recipientAddress)
                 }
               }

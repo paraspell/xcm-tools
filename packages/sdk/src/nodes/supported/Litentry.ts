@@ -9,12 +9,12 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Litentry extends ParachainNode implements IXTokensTransfer {
+class Litentry<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Litentry', 'litentry', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const currencySelection: TSelfReserveAsset = 'SelfReserve'
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }

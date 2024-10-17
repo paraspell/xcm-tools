@@ -1,41 +1,29 @@
-import type { ApiPromise } from '@polkadot/api'
 import type { TNodePolkadotKusama } from '../../../types'
-import type { Codec } from '@polkadot/types/types'
 import { getAssetHubMultiLocation } from './getAssetHubMultiLocation'
-import { u32 } from '@polkadot/types'
-import type { TBalanceResponse } from '../../../types/TBalance'
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 
-export const getBalanceForeignPolkadotXcm = async (
+export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   address: string,
   id: string | undefined,
-  api: ApiPromise,
+  api: IPolkadotApi<TApi, TRes>,
   node?: TNodePolkadotKusama,
   symbol?: string
 ): Promise<bigint | null> => {
   try {
     if (node === 'Mythos') {
-      const response: Codec = await api.query.balances.account(address)
-      const obj = response.toJSON() as TBalanceResponse
-      return obj.free ? BigInt(obj.free) : null
+      return await api.getMythosForeignBalance(address)
     }
 
     if (node === 'AssetHubPolkadot') {
       const multiLocation = getAssetHubMultiLocation(symbol ?? id)
       if (multiLocation) {
-        const response: Codec = await api.query.foreignAssets.account(multiLocation, address)
-        const obj = response.toJSON() as TBalanceResponse
-        return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
+        return api.getAssetHubForeignBalance(address, multiLocation)
       }
     }
 
-    const parsedId = new u32(api.registry, id)
-    const response: Codec = await api.query.assets.account(parsedId, address)
-    const obj = response.toJSON() as TBalanceResponse
-
-    return obj.balance ? BigInt(obj.balance) : null
+    return api.getBalanceForeign(address, id)
   } catch (error) {
     console.log('Error while fetching balance', error)
-
     return null
   }
 }

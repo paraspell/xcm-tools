@@ -6,11 +6,24 @@ import {
   getBalanceForeign,
   getBalanceNative,
 } from '@paraspell/sdk';
+import {
+  createApiInstanceForNode as createApiInstanceForNodePapi,
+  getBalanceNative as getBalanceNativePapi,
+  getBalanceForeign as getBalanceForeignPapi,
+} from '@paraspell/sdk/papi';
 import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
 import type { ApiPromise } from '@polkadot/api';
+import type { PolkadotClient } from 'polkadot-api';
 
 vi.mock('@paraspell/sdk', () => ({
+  createApiInstanceForNode: vi.fn(),
+  getBalanceForeign: vi.fn(),
+  getBalanceNative: vi.fn(),
+  NODES_WITH_RELAY_CHAINS: ['valid-node'],
+}));
+
+vi.mock('@paraspell/sdk/papi', () => ({
   createApiInstanceForNode: vi.fn(),
   getBalanceForeign: vi.fn(),
   getBalanceNative: vi.fn(),
@@ -30,14 +43,16 @@ describe('BalanceService', () => {
       const params: BalanceNativeDto = { address: '0x1234567890' };
 
       await expect(
-        balanceService.getBalanceNative(invalidNode, params),
+        balanceService.getBalanceNativePjs(invalidNode, params),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should return native balance for a valid node', async () => {
       const validNode = 'valid-node';
       const params: BalanceNativeDto = { address: '0x1234567890' };
-      const mockApiInstance = { disconnect: vi.fn() } as unknown as ApiPromise;
+      const mockApiInstance = {
+        disconnect: vi.fn(),
+      } as unknown as ApiPromise;
       const mockBalance = 1000n;
 
       vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiInstance);
@@ -45,14 +60,48 @@ describe('BalanceService', () => {
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
 
-      const result = await balanceService.getBalanceNative(validNode, params);
+      const result = await balanceService.getBalanceNativePjs(
+        validNode,
+        params,
+      );
 
       expect(createApiInstanceForNode).toHaveBeenCalledWith(validNode);
-      expect(getBalanceNative).toHaveBeenCalledWith(
-        params.address,
-        validNode,
+      expect(getBalanceNative).toHaveBeenCalledWith({
+        address: params.address,
+        node: validNode,
+        api: mockApiInstance,
+      });
+      expect(disconnectSpy).toHaveBeenCalled();
+      expect(result).toEqual(mockBalance);
+    });
+
+    it('should use papi for native balance if usePapi is true', async () => {
+      const validNode = 'valid-node';
+      const params: BalanceNativeDto = { address: '0x1234567890' };
+      const mockApiInstance = {
+        destroy: vi.fn(),
+      } as unknown as PolkadotClient;
+      const mockBalance = 1000n;
+
+      vi.mocked(createApiInstanceForNodePapi).mockResolvedValue(
         mockApiInstance,
       );
+      vi.mocked(getBalanceNativePapi).mockResolvedValue(mockBalance);
+
+      const disconnectSpy = vi.spyOn(mockApiInstance, 'destroy');
+
+      const result = await balanceService.getBalanceNativePapi(
+        validNode,
+        params,
+      );
+
+      expect(createApiInstanceForNode).toHaveBeenCalledWith(validNode);
+      expect(getBalanceNativePapi).toHaveBeenCalledWith({
+        address: params.address,
+        node: validNode,
+        api: mockApiInstance,
+      });
+
       expect(disconnectSpy).toHaveBeenCalled();
       expect(result).toEqual(mockBalance);
     });
@@ -67,7 +116,7 @@ describe('BalanceService', () => {
       };
 
       await expect(
-        balanceService.getBalanceForeign(invalidNode, params),
+        balanceService.getBalanceForeignPjs(invalidNode, params),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -77,7 +126,9 @@ describe('BalanceService', () => {
         address: '0x1234567890',
         currency: { symbol: 'UNQ' },
       };
-      const mockApiInstance = { disconnect: vi.fn() } as unknown as ApiPromise;
+      const mockApiInstance = {
+        disconnect: vi.fn(),
+      } as unknown as ApiPromise;
       const mockBalance = 500n;
 
       vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiInstance);
@@ -85,15 +136,18 @@ describe('BalanceService', () => {
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
 
-      const result = await balanceService.getBalanceForeign(validNode, params);
+      const result = await balanceService.getBalanceForeignPjs(
+        validNode,
+        params,
+      );
 
       expect(createApiInstanceForNode).toHaveBeenCalledWith(validNode);
-      expect(getBalanceForeign).toHaveBeenCalledWith(
-        params.address,
-        validNode,
-        params.currency,
-        mockApiInstance,
-      );
+      expect(getBalanceForeign).toHaveBeenCalledWith({
+        address: params.address,
+        node: validNode,
+        currency: params.currency,
+        api: mockApiInstance,
+      });
       expect(disconnectSpy).toHaveBeenCalled();
       expect(result).toEqual(mockBalance.toString());
     });
@@ -104,24 +158,64 @@ describe('BalanceService', () => {
         address: '0x1234567890',
         currency: { symbol: 'UNQ' },
       };
-      const mockApiInstance = { disconnect: vi.fn() } as unknown as ApiPromise;
+      const mockApiInstance = {
+        disconnect: vi.fn(),
+      } as unknown as ApiPromise;
 
       vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiInstance);
       vi.mocked(getBalanceForeign).mockResolvedValue(null);
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
 
-      const result = await balanceService.getBalanceForeign(validNode, params);
+      const result = await balanceService.getBalanceForeignPjs(
+        validNode,
+        params,
+      );
 
       expect(createApiInstanceForNode).toHaveBeenCalledWith(validNode);
-      expect(getBalanceForeign).toHaveBeenCalledWith(
-        params.address,
-        validNode,
-        params.currency,
-        mockApiInstance,
-      );
+      expect(getBalanceForeign).toHaveBeenCalledWith({
+        address: params.address,
+        node: validNode,
+        currency: params.currency,
+        api: mockApiInstance,
+      });
       expect(disconnectSpy).toHaveBeenCalled();
       expect(result).toEqual('null');
+    });
+
+    it('should use papi for foreign balance if usePapi is true', async () => {
+      const validNode = 'valid-node';
+      const params: BalanceForeignDto = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ' },
+      };
+      const mockApiInstance = {
+        destroy: vi.fn(),
+      } as unknown as PolkadotClient;
+      const mockBalance = 500n;
+
+      vi.mocked(createApiInstanceForNodePapi).mockResolvedValue(
+        mockApiInstance,
+      );
+      vi.mocked(getBalanceForeignPapi).mockResolvedValue(mockBalance);
+
+      const disconnectSpy = vi.spyOn(mockApiInstance, 'destroy');
+
+      const result = await balanceService.getBalanceForeignPapi(
+        validNode,
+        params,
+      );
+
+      expect(createApiInstanceForNodePapi).toHaveBeenCalledWith(validNode);
+      expect(getBalanceForeignPapi).toHaveBeenCalledWith({
+        address: params.address,
+        node: validNode,
+        currency: params.currency,
+        api: mockApiInstance,
+      });
+
+      expect(disconnectSpy).toHaveBeenCalled();
+      expect(result).toEqual(mockBalance.toString());
     });
   });
 });

@@ -2,17 +2,24 @@ import {
   AppShell,
   Burger,
   Button,
+  Center,
   Group,
   Image,
   MantineProvider,
   NavLink,
+  rem,
+  SegmentedControl,
 } from "@mantine/core";
 import "@mantine/core/styles.css";
 import { useDisclosure } from "@mantine/hooks";
 import { web3Accounts, web3Enable } from "@polkadot/extension-dapp";
-import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import { IconAnalyze, IconBoxSeam, IconRoute } from "@tabler/icons-react";
-import { useState } from "react";
+import {
+  IconAnalyze,
+  IconBoxSeam,
+  IconCode,
+  IconFileCode,
+  IconRoute,
+} from "@tabler/icons-react";
 import {
   BrowserRouter,
   Route,
@@ -26,32 +33,78 @@ import XcmAnalyserSandbox from "./routes/XcmAnalyserSandbox";
 import XcmSdkSandbox from "./routes/XcmSdkSandbox";
 import AccountsModal from "./components/AccountsModal";
 import { theme } from "./theme/themeConfig";
+import {
+  connectInjectedExtension,
+  getInjectedExtensions,
+} from "polkadot-api/pjs-signer";
+import type { TApiType, WalletAccount } from "./types";
+import PolkadotWalletSelectModal from "./components/PolkadotWalletSelectModal";
+import { STORAGE_ADDRESS_KEY } from "./providers/WalletProvider";
 
 const App = () => {
   const [opened, { toggle }] = useDisclosure();
-  const [modalOpened, { open: openModal, close: closeModal }] =
-    useDisclosure(false);
+  const [
+    accountsModalOpened,
+    { open: openAccountsModal, close: closeAccountsModal },
+  ] = useDisclosure(false);
+  const [
+    walletSelectModalOpened,
+    { open: openWalletSelectModal, close: closeWalletSelectModal },
+  ] = useDisclosure(false);
 
-  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
+  const {
+    selectedAccount,
+    setSelectedAccount,
+    extensions,
+    setExtensions,
+    setInjectedExtension,
+    setExtensionInLocalStorage,
+    accounts,
+    setAccounts,
+    apiType,
+    setApiType,
+    isInitialized,
+  } = useWallet();
 
-  const { selectedAccount, setSelectedAccount } = useWallet();
+  const initPjsAccounts = async () => {
+    const allInjected = await web3Enable("Paraspell");
 
-  const initAccounts = async () => {
-    const allInjected = await web3Enable("SpellRouter");
-
-    if (!allInjected) {
+    if (!allInjected.length) {
       alert("No wallet extension found, install it to connect");
       throw Error("No Wallet Extension Found!");
     }
 
     const allAccounts = await web3Accounts();
-    setAccounts(allAccounts);
+    setAccounts(
+      allAccounts.map((account) => ({
+        address: account.address,
+        meta: {
+          name: account.meta.name,
+          source: account.meta.source,
+        },
+      })),
+    );
+    openAccountsModal();
+  };
+
+  const initPapiExtensions = () => {
+    const extensions: string[] = getInjectedExtensions();
+
+    setExtensions(extensions);
+    openWalletSelectModal();
+  };
+
+  const initAccounts = async () => {
+    if (apiType === "PJS") {
+      await initPjsAccounts();
+    } else {
+      initPapiExtensions();
+    }
   };
 
   const connectWallet = async () => {
     try {
       await initAccounts();
-      openModal();
     } catch (error) {
       console.error("Failed to connect wallet:", error);
       alert("Failed to connect wallet");
@@ -60,9 +113,9 @@ const App = () => {
 
   const onConnectWalletClick = () => void connectWallet();
 
-  const onAccountSelect = (account: InjectedAccountWithMeta) => () => {
+  const onAccountSelect = (account: WalletAccount) => {
     setSelectedAccount(account);
-    closeModal();
+    closeAccountsModal();
   };
 
   const changeAccount = async () => {
@@ -70,7 +123,7 @@ const App = () => {
       if (!accounts.length) {
         await initAccounts();
       }
-      openModal();
+      openAccountsModal();
     } catch (error) {
       console.error("Failed to change account:", error);
       alert("Failed to change account");
@@ -79,14 +132,67 @@ const App = () => {
 
   const onChangeAccountClick = () => void changeAccount();
 
+  const handleApiSwitch = (value: string) => {
+    console.log("handleApiSwitch", value);
+    setApiType(value as TApiType);
+    setSelectedAccount(undefined);
+    setAccounts([]);
+    setInjectedExtension(undefined);
+    setExtensionInLocalStorage(undefined);
+    localStorage.removeItem(STORAGE_ADDRESS_KEY);
+  };
+  const selectWallet = async (walletName: string) => {
+    try {
+      const selectedExtension = await connectInjectedExtension(walletName);
+      setInjectedExtension(selectedExtension);
+      setExtensionInLocalStorage(walletName);
+      const accounts = selectedExtension.getAccounts();
+
+      if (!accounts.length) {
+        alert("No accounts found in the selected wallet");
+        throw Error("No accounts found in the selected wallet");
+      }
+
+      setAccounts(
+        accounts.map((account) => ({
+          address: account.address,
+          meta: {
+            name: account.name,
+            source: selectedExtension.name,
+          },
+        })),
+      );
+      closeWalletSelectModal();
+      openAccountsModal();
+    } catch (error) {
+      console.error("Failed to connect to wallet:", error);
+      alert("Failed to connect to wallet");
+      closeWalletSelectModal();
+    }
+  };
+
+  const onWalletSelect = (wallet: string) => void selectWallet(wallet);
+
+  const onDisconnect = () => {
+    setSelectedAccount(undefined);
+    closeAccountsModal();
+  };
+
   return (
     <BrowserRouter>
       <MantineProvider theme={theme}>
         <AccountsModal
-          isOpen={modalOpened}
-          onClose={closeModal}
+          isOpen={accountsModalOpened}
+          onClose={closeAccountsModal}
           accounts={accounts}
           onAccountSelect={onAccountSelect}
+          onDisconnect={selectedAccount ? onDisconnect : undefined}
+        />
+        <PolkadotWalletSelectModal
+          isOpen={walletSelectModalOpened}
+          onClose={closeWalletSelectModal}
+          providers={extensions}
+          onProviderSelect={onWalletSelect}
         />
         <AppShell
           header={{ height: 60 }}
@@ -105,19 +211,54 @@ const App = () => {
                 size="sm"
               />
               <Image src="logo.png" h="100%" p={8} />
-              {selectedAccount ? (
-                <Button
-                  onClick={onChangeAccountClick}
-                  variant="outline"
-                >{`${selectedAccount.meta.name} (${selectedAccount.meta.source})`}</Button>
-              ) : (
-                <Button
-                  onClick={onConnectWalletClick}
-                  data-testid="btn-connect-wallet"
-                >
-                  Connect wallet
-                </Button>
-              )}
+              <Group>
+                <Group>
+                  <SegmentedControl
+                    value={apiType}
+                    onChange={handleApiSwitch}
+                    disabled={!isInitialized}
+                    data={[
+                      {
+                        value: "PJS",
+                        label: (
+                          <Center style={{ gap: 10 }}>
+                            <IconCode
+                              style={{ width: rem(16), height: rem(16) }}
+                            />
+                            <span>PJS</span>
+                          </Center>
+                        ),
+                      },
+                      {
+                        value: "PAPI",
+                        label: (
+                          <Center style={{ gap: 10 }}>
+                            <IconFileCode
+                              style={{ width: rem(16), height: rem(16) }}
+                            />
+                            <span>PAPI</span>
+                          </Center>
+                        ),
+                      },
+                    ]}
+                  />
+                </Group>
+                {selectedAccount ? (
+                  <Button
+                    onClick={onChangeAccountClick}
+                    variant="outline"
+                    loading={!isInitialized}
+                  >{`${selectedAccount.meta.name} - (${selectedAccount.meta.source})`}</Button>
+                ) : (
+                  <Button
+                    onClick={onConnectWalletClick}
+                    data-testid="btn-connect-wallet"
+                    loading={!isInitialized}
+                  >
+                    Connect wallet
+                  </Button>
+                )}
+              </Group>
             </Group>
           </AppShell.Header>
           <AppShell.Navbar p="md">

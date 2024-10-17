@@ -7,19 +7,19 @@ import {
 } from '../../errors'
 import {
   type IXTokensTransfer,
-  type TSerializedApiCall,
+  type TSerializedApiCallV2,
   Version,
   type XTokensTransferInput
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Bajun extends ParachainNode implements IXTokensTransfer {
+class Bajun<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Bajun', 'bajun', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { scenario, currency } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
@@ -33,7 +33,7 @@ class Bajun extends ParachainNode implements IXTokensTransfer {
     return XTokensTransferImpl.transferXTokens(input, currency)
   }
 
-  transferRelayToPara(): TSerializedApiCall {
+  transferRelayToPara(): TSerializedApiCallV2 {
     throw new NodeNotSupportedError()
   }
 }

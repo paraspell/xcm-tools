@@ -1,15 +1,11 @@
-import type { UInt } from '@polkadot/types'
-import { BN } from '@polkadot/util'
-import type { AccountInfo } from '@polkadot/types/interfaces'
 import { KeepAliveError } from '../../../errors/KeepAliveError'
 import type { CheckKeepAliveOptions, TNodePolkadotKusama } from '../../../types'
 import { getAssetsObject } from '../../assets'
 import { determineRelayChain } from '../../../utils'
-import { calculateTransactionFee } from '../calculateTransactionFee'
 import { getExistentialDeposit } from '../../assets/eds'
 import { createTx } from './createTx'
 
-export const checkKeepAlive = async ({
+export const checkKeepAlive = async <TApi, TRes>({
   originApi,
   address,
   amount,
@@ -17,8 +13,8 @@ export const checkKeepAlive = async ({
   destApi,
   currencySymbol,
   destNode
-}: CheckKeepAliveOptions): Promise<void> => {
-  if (destApi === undefined) {
+}: CheckKeepAliveOptions<TApi, TRes>): Promise<void> => {
+  if (destApi.getApi() === undefined) {
     return
   }
 
@@ -36,13 +32,11 @@ export const checkKeepAlive = async ({
     )
   }
 
-  const { data } = (await destApi.query.system.account(address)) as AccountInfo
-  const balance: BN = (data.free as UInt).toBn()
+  const balance = await destApi.getBalanceNative(address)
 
-  const { data: originData } = (await originApi.query.system.account(address)) as AccountInfo
-  const balanceOrigin: BN = (originData.free as UInt).toBn()
+  const balanceOrigin = await originApi.getBalanceNative(address)
 
-  const amountBN = new BN(amount)
+  const amountBN = BigInt(amount)
 
   const ed = getExistentialDeposit(
     destNode ?? determineRelayChain(originNode as TNodePolkadotKusama)
@@ -51,7 +45,7 @@ export const checkKeepAlive = async ({
     originNode ?? determineRelayChain(destNode as TNodePolkadotKusama)
   )
 
-  const tx = await createTx(
+  const tx = await createTx<TApi, TRes>(
     originApi,
     destApi,
     address,
@@ -65,7 +59,7 @@ export const checkKeepAlive = async ({
     throw new KeepAliveError('Transaction for XCM fee calculation could not be created.')
   }
 
-  const xcmFee = await calculateTransactionFee(tx, address)
+  const xcmFee = await originApi.calculateTransactionFee(tx, address)
 
   if (ed === null) {
     throw new KeepAliveError('Existential deposit not found for destination parachain.')
@@ -75,36 +69,22 @@ export const checkKeepAlive = async ({
     throw new KeepAliveError('Existential deposit not found for origin parachain.')
   }
 
-  console.log('XCM FEE: ', xcmFee.toString())
-  console.log('EXISTENTIAL DEPOSIT: ', ed.toString())
-  console.log('EXISTENTIAL DEPOSIT ORIGIN: ', edOrigin.toString())
-  console.log('BALANCE: ', balance.toString())
-  console.log('ORIGIN BALANCE: ', balanceOrigin.toString())
-  console.log('AMOUNT: ', amountBN.toString())
-  console.log('AMOUNT WITHOUT FEE: ', amountBN.sub(xcmFee.mul(new BN(1.5))).toString())
-  console.log(
-    'BALANCE + AMOUNT WITHOUT FEE: ',
-    balance.add(amountBN.sub(xcmFee.mul(new BN(1.5)))).toString()
-  )
-  console.log(
-    'ORIGIN BALANCE - AMOUNT WITH FEE: ',
-    balanceOrigin.sub(amountBN.sub(xcmFee.mul(new BN(1.5)))).toString()
-  )
+  const increasedFee = xcmFee + xcmFee / BigInt(2)
 
-  const amountBNWithoutFee = amountBN.sub(xcmFee.mul(new BN(1.5)))
+  const amountBNWithoutFee = amountBN - increasedFee
 
-  if (balance.add(amountBNWithoutFee).lt(new BN(ed))) {
+  if (balance + amountBNWithoutFee < BigInt(ed)) {
     throw new KeepAliveError(
       `Keep alive check failed: Sending ${amount} ${currencySymbol} to ${destNode} would result in an account balance below the required existential deposit.
          Please increase the amount to meet the minimum balance requirement of the destination chain.`
     )
   }
 
-  const amountOriginBNWithoutFee = amountBN.sub(xcmFee.mul(new BN(1.5)))
+  const amountOriginBNWithoutFee = amountBN - (xcmFee + xcmFee / BigInt(2))
 
   if (
     (currencySymbol === 'DOT' || currencySymbol === 'KSM') &&
-    balanceOrigin.sub(amountOriginBNWithoutFee).lt(new BN(edOrigin))
+    balanceOrigin - amountOriginBNWithoutFee > BigInt(edOrigin)
   ) {
     throw new KeepAliveError(
       `Keep alive check failed: Sending ${amount} ${currencySymbol} to ${destNode} would result in an account balance below the required existential deposit on origin.

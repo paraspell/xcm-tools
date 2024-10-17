@@ -4,6 +4,8 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Curio from './Curio'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -12,15 +14,15 @@ vi.mock('../xTokens', () => ({
 }))
 
 describe('Curio', () => {
-  let curio: Curio
+  let curio: Curio<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'CUR',
     currencyID: '123',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    curio = getNode('Curio')
+    curio = getNode<ApiPromise, Extrinsic, 'Curio'>('Curio')
   })
 
   it('should initialize with correct values', () => {
@@ -35,7 +37,7 @@ describe('Curio', () => {
 
     curio.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: '123' } as TForeignOrTokenAsset)
+    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: 123 } as TForeignOrTokenAsset)
   })
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {

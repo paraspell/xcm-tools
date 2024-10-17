@@ -1,34 +1,25 @@
 // Contains basic call formatting for different XCM Palletss
 
-import type { TApiType, TNodePolkadotKusama, TResType, TTransferReturn } from '../../types'
+import type { TNodePolkadotKusama, TTransferReturn } from '../../types'
 import {
-  type Extrinsic,
   type TSerializedApiCall,
   type TRelayToParaOptions,
-  type TRelayToParaCommonOptions,
-  type TSendOptionsCommon,
   type TSendOptions,
   type TNode
 } from '../../types'
-import {
-  getNode,
-  callPolkadotJsTxFunction,
-  createApiInstanceForNode,
-  determineRelayChain
-} from '../../utils'
-import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive/checkKeepAlive'
 import { isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
 import { getAssetBySymbolOrId } from '../assets/getAssetBySymbolOrId'
-import type { ApiPromise } from '@polkadot/api'
-import PolkadotJsApi from '../../api/PolkadotJsApi'
 import { getDefaultPallet } from '../pallets'
+import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../assets'
+import { getNode, determineRelayChain } from '../../utils'
 
-const sendCommon = async <TApi extends TApiType>(
-  options: TSendOptionsCommon<TApi>
-): Promise<TTransferReturn> => {
+const sendCommon = async <TApi, TRes>(
+  options: TSendOptions<TApi, TRes>,
+  serializedApiCallEnabled = false
+): Promise<TTransferReturn<TRes>> => {
   const {
     api,
     origin,
@@ -39,8 +30,7 @@ const sendCommon = async <TApi extends TApiType>(
     paraIdTo,
     destApiForKeepAlive,
     feeAsset,
-    version,
-    serializedApiCallEnabled = false
+    version
   } = options
 
   if ((!('multiasset' in currency) || 'multilocation' in currency) && amount === null) {
@@ -112,7 +102,7 @@ const sendCommon = async <TApi extends TApiType>(
     }
   }
 
-  const originNode = getNode(origin)
+  const originNode = getNode<TApi, TRes, typeof origin>(origin)
 
   const assetCheckEnabled =
     'multilocation' in currency || 'multiasset' in currency || isBridge
@@ -182,10 +172,7 @@ const sendCommon = async <TApi extends TApiType>(
     }
   }
 
-  const apiWithFallback = api ?? (await createApiInstanceForNode(origin))
-
-  const polkadotApi = new PolkadotJsApi()
-  polkadotApi.init(apiWithFallback)
+  await api.init(origin)
 
   const amountStr = amount?.toString()
 
@@ -199,7 +186,7 @@ const sendCommon = async <TApi extends TApiType>(
     console.warn('Keep alive check is not supported when using Ethereum as origin or destination.')
   } else {
     await checkKeepAlive({
-      originApi: apiWithFallback,
+      originApi: api,
       address,
       amount: amountStr ?? '',
       originNode: origin,
@@ -213,7 +200,7 @@ const sendCommon = async <TApi extends TApiType>(
     'symbol' in currency ? currency.symbol : 'id' in currency ? currency.id.toString() : undefined
 
   return originNode.transfer({
-    api: polkadotApi,
+    api,
     currencySymbol: asset?.symbol ?? currencyStr,
     currencyId: asset?.assetId,
     amount: amountStr ?? '',
@@ -228,40 +215,24 @@ const sendCommon = async <TApi extends TApiType>(
           : undefined,
     feeAsset,
     version,
+    destApiForKeepAlive,
     serializedApiCallEnabled
   })
 }
 
-export const sendSerializedApiCall = async <TApi extends TApiType = ApiPromise>(
-  options: TSendOptions<TApi>
+export const sendSerializedApiCall = async <TApi, TRes>(
+  options: TSendOptions<TApi, TRes>
 ): Promise<TSerializedApiCall> =>
-  sendCommon({
-    ...options,
-    serializedApiCallEnabled: true
-  }) as Promise<TSerializedApiCall>
+  sendCommon<TApi, TRes>(options, true) as Promise<TSerializedApiCall>
 
-/**
- * Transfers assets from parachain to another parachain or relay chain.
- * @param options - The transfer options.
- * @returns An extrinsic to be signed and sent.
- */
-export const send = async <TApi extends TApiType = ApiPromise, TRes extends TResType = Extrinsic>(
-  options: TSendOptions<TApi>
-): Promise<TRes> => sendCommon(options) as Promise<TRes>
+export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promise<TRes> =>
+  sendCommon(options) as Promise<TRes>
 
-export const transferRelayToParaCommon = async <TApi extends TApiType>(
-  options: TRelayToParaCommonOptions<TApi>
-): Promise<TTransferReturn> => {
-  const {
-    api,
-    destination,
-    amount,
-    address,
-    paraIdTo,
-    destApiForKeepAlive,
-    version,
-    serializedApiCallEnabled = false
-  } = options
+export const transferRelayToParaCommon = async <TApi, TRes>(
+  options: TRelayToParaOptions<TApi, TRes>,
+  serializedApiCallEnabled = false
+): Promise<TTransferReturn<TRes>> => {
+  const { api, destination, amount, address, paraIdTo, destApiForKeepAlive, version } = options
   const isMultiLocationDestination = typeof destination === 'object'
   const isAddressMultiLocation = typeof address === 'object'
 
@@ -269,11 +240,7 @@ export const transferRelayToParaCommon = async <TApi extends TApiType>(
     throw new Error('API is required when using MultiLocation as destination.')
   }
 
-  const apiWithFallback =
-    api ?? (await createApiInstanceForNode(determineRelayChain(destination as TNode)))
-
-  const polkadotApi = new PolkadotJsApi()
-  polkadotApi.init(apiWithFallback)
+  await api.init(determineRelayChain(destination as TNode))
 
   const amountStr = amount.toString()
 
@@ -285,7 +252,7 @@ export const transferRelayToParaCommon = async <TApi extends TApiType>(
     console.warn('Keep alive check is not supported when using Ethereum as destination.')
   } else {
     await checkKeepAlive({
-      originApi: apiWithFallback,
+      originApi: api,
       address,
       amount: amountStr,
       destApi: destApiForKeepAlive,
@@ -297,7 +264,7 @@ export const transferRelayToParaCommon = async <TApi extends TApiType>(
   const serializedApiCall = getNode(
     isMultiLocationDestination ? resolveTNodeFromMultiLocation(destination) : destination
   ).transferRelayToPara({
-    api: polkadotApi,
+    api,
     destination,
     address,
     amount: amountStr,
@@ -307,30 +274,21 @@ export const transferRelayToParaCommon = async <TApi extends TApiType>(
   })
 
   if (serializedApiCallEnabled) {
-    return serializedApiCall
+    // Keep compatibility with old serialized call type
+    return {
+      ...serializedApiCall,
+      parameters: Object.values(serializedApiCall.parameters)
+    }
   }
 
-  return callPolkadotJsTxFunction(apiWithFallback, serializedApiCall)
+  return api.callTxMethod(serializedApiCall)
 }
 
-/**
- * Transfers assets from relay chain to parachain.
- *
- * @param options - The transfer options.
- *
- * @returns An extrinsic to be signed and sent.
- */
-export const transferRelayToPara = async <
-  TApi extends TApiType = ApiPromise,
-  TRes extends TResType = Extrinsic
->(
-  options: TRelayToParaOptions<TApi>
+export const transferRelayToPara = async <TApi, TRes>(
+  options: TRelayToParaOptions<TApi, TRes>
 ): Promise<TRes> => transferRelayToParaCommon(options) as Promise<TRes>
 
-export const transferRelayToParaSerializedApiCall = async <TApi extends TApiType = ApiPromise>(
-  options: TRelayToParaOptions<TApi>
+export const transferRelayToParaSerializedApiCall = async <TApi, TRes>(
+  options: TRelayToParaOptions<TApi, TRes>
 ): Promise<TSerializedApiCall> =>
-  transferRelayToParaCommon({
-    ...options,
-    serializedApiCallEnabled: true
-  }) as Promise<TSerializedApiCall>
+  transferRelayToParaCommon<TApi, TRes>(options, true) as Promise<TSerializedApiCall>

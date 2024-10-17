@@ -1,10 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { XTokensTransferInput, TRelayToParaInternalOptions } from '../../types'
+import type { XTokensTransferInput, TRelayToParaOptions } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Moonriver from './Moonriver'
 import { getNode } from '../../utils'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -17,19 +19,19 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 }))
 
 describe('Moonriver', () => {
-  let moonriver: Moonriver
+  let moonriver: Moonriver<ApiPromise, Extrinsic>
   const mockInput = {
     currency: 'MOVR',
     currencyID: '123',
     amount: '100'
-  } as XTokensTransferInput
+  } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   const mockOptions = {
     destination: 'Moonriver'
-  } as TRelayToParaInternalOptions
+  } as TRelayToParaOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    moonriver = getNode('Moonriver')
+    moonriver = getNode<ApiPromise, Extrinsic, 'Moonriver'>('Moonriver')
   })
 
   it('should initialize with correct values', () => {
@@ -54,19 +56,19 @@ describe('Moonriver', () => {
 
     moonriver.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: '123' })
+    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: BigInt(123) })
   })
 
   it('should call transferRelayToPara with the correct parameters', () => {
-    const expectedParameters = [{ param: 'value' }] as unknown[]
+    const expectedParameters = { param: 'value' }
     vi.mocked(constructRelayToParaParameters).mockReturnValue(expectedParameters)
 
     const result = moonriver.transferRelayToPara(mockOptions)
 
     expect(constructRelayToParaParameters).toHaveBeenCalledWith(mockOptions, Version.V3, true)
     expect(result).toEqual({
-      module: 'xcmPallet',
-      section: 'limitedReserveTransferAssets',
+      module: 'XcmPallet',
+      section: 'limited_reserve_transfer_assets',
       parameters: expectedParameters
     })
   })

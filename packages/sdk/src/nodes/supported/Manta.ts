@@ -9,14 +9,16 @@ import {
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Manta extends ParachainNode implements IXTokensTransfer {
+class Manta<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Manta', 'manta', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currencyID } = input
-    const currencySelection: TMantaAsset = { MantaCurrency: currencyID }
+    const currencySelection: TMantaAsset = {
+      MantaCurrency: currencyID ? BigInt(currencyID) : undefined
+    }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }

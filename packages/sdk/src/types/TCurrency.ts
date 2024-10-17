@@ -48,7 +48,7 @@ export type TCurrencySelectionHeaderArr = {
 }
 
 export type TForeignAsset = {
-  ForeignAsset: string | undefined
+  ForeignAsset: string | number | bigint | undefined
 }
 
 export type TForeignAssetId = {
@@ -64,7 +64,7 @@ export type TXcmAsset = {
 }
 
 export type TMantaAsset = {
-  MantaCurrency: string | undefined
+  MantaCurrency: bigint | undefined
 }
 
 export type TNativeTokenAsset = 'NativeToken'
@@ -100,4 +100,5 @@ export type TXTokensCurrencySelection =
   | TOtherReserveAsset
   | TBifrostToken
   | string
+  | bigint
   | undefined

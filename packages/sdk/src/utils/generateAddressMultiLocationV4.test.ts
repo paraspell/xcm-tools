@@ -3,7 +3,7 @@ import type { TAddress } from '../types'
 import { Parents, Version } from '../types'
 import { generateAddressMultiLocationV4 } from './generateAddressMultiLocationV4'
 import * as ethers from 'ethers'
-import type PolkadotJsApi from '../api/PolkadotJsApi'
+import type PolkadotJsApi from '../pjs/PolkadotJsApi'
 
 vi.mock('ethers', () => ({
   ethers: {

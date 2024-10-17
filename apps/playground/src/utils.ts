@@ -1,8 +1,10 @@
 import type { Extrinsic, TSerializedApiCall } from "@paraspell/sdk";
+import type { TPapiTransaction } from "@paraspell/sdk/papi";
 import type { ApiPromise } from "@polkadot/api";
 import type { Signer } from "@polkadot/api/types";
 import { encodeAddress, decodeAddress } from "@polkadot/keyring";
 import { isHex, hexToU8a } from "@polkadot/util";
+import type { PolkadotSigner, TxFinalizedPayload } from "polkadot-api";
 import { isAddress } from "web3-validator";
 
 export const isValidPolkadotAddress = (address: string) => {
@@ -18,6 +20,13 @@ export const isValidEthereumAddress = (address: string) => isAddress(address);
 
 export const isValidWalletAddress = (address: string) =>
   isValidPolkadotAddress(address) || isValidEthereumAddress(address);
+
+export const submitTransactionPapi = async (
+  tx: TPapiTransaction,
+  signer: PolkadotSigner,
+): Promise<TxFinalizedPayload> => {
+  return await tx.signAndSubmit(signer);
+};
 
 export const submitTransaction = async (
   api: ApiPromise,

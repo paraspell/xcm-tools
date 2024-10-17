@@ -4,12 +4,12 @@ import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../..
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
-class Imbue extends ParachainNode implements IXTokensTransfer {
+class Imbue<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Imbue', 'imbue', 'kusama', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currency } = input
     return XTokensTransferImpl.transferXTokens(input, currency)
   }

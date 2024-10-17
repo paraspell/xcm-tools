@@ -2,8 +2,8 @@ import type { TXTokensCurrencySelection, XTokensTransferInput } from '../../type
 import { getNode } from '../../utils'
 import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
 
-export const getCurrencySelection = (
-  input: XTokensTransferInput,
+export const getCurrencySelection = <TApi, TRes>(
+  input: XTokensTransferInput<TApi, TRes>,
   isAssetHub: boolean,
   currencySelection: TXTokensCurrencySelection
 ): TXTokensCurrencySelection => {

@@ -4,27 +4,24 @@ import type { FormValuesTransformed } from "./TransferForm";
 import TransferForm from "./TransferForm";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import type {
+  Extrinsic,
   TCurrencyInput,
   TMultiLocation,
   TNode,
   TNodePolkadotKusama,
 } from "@paraspell/sdk";
-import {
-  Builder,
-  createApiInstanceForNode,
-  getOtherAssets,
-  isRelayChain,
-} from "@paraspell/sdk";
-import type { ApiPromise } from "@polkadot/api";
-import { web3FromAddress } from "@polkadot/extension-dapp";
+import type { TPapiTransaction } from "@paraspell/sdk/papi";
+import { getOtherAssets, isRelayChain } from "@paraspell/sdk/papi";
+import type { PolkadotClient, PolkadotSigner } from "polkadot-api";
 import type { Signer } from "@polkadot/api/types";
 import { useState, useEffect } from "react";
-import { submitTransaction } from "../utils";
-import { submitTxUsingApi } from "../utils/submitUsingApi";
+import { submitTransaction, submitTransactionPapi } from "../utils";
+import { getTxFromApi } from "../utils/submitUsingApi";
 import { useWallet } from "../hooks/useWallet";
+import type { ApiPromise } from "@polkadot/api";
 
 const XcmTransfer = () => {
-  const { selectedAccount } = useWallet();
+  const { selectedAccount, apiType, getSigner } = useWallet();
 
   const [alertOpened, { open: openAlert, close: closeAlert }] =
     useDisclosure(false);
@@ -84,39 +81,9 @@ const XcmTransfer = () => {
     }
   };
 
-  const createTransferTx = (values: FormValuesTransformed, api: ApiPromise) => {
-    const { from, to, amount, address } = values;
-    if (from === "Polkadot" || from === "Kusama") {
-      return Builder(api)
-        .to(to as TNode)
-        .amount(amount)
-        .address(address)
-        .build();
-    } else if (to === "Polkadot" || to === "Kusama") {
-      return Builder(api).from(from).amount(amount).address(address).build();
-    } else {
-      return Builder(api)
-        .from(from)
-        .to(to)
-        .currency(determineCurrency(values))
-        .amount(amount)
-        .address(address)
-        .build();
-    }
-  };
-
-  const submitUsingSdk = async (
-    formValues: FormValuesTransformed,
-    injectorAddress: string,
-    signer: Signer,
-  ) => {
-    const api = await createApiInstanceForNode(formValues.from);
-    const tx = await createTransferTx(formValues, api);
-    await submitTransaction(api, tx, signer, injectorAddress);
-  };
-
   const submit = async (formValues: FormValuesTransformed) => {
-    const { useApi } = formValues;
+    const { from, to, amount, address, useApi } = formValues;
+
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
       throw Error("No account selected!");
@@ -124,11 +91,19 @@ const XcmTransfer = () => {
 
     setLoading(true);
 
-    const injector = await web3FromAddress(selectedAccount.address);
+    const signer = await getSigner();
 
     try {
+      const Sdk =
+        apiType === "PAPI"
+          ? await import("@paraspell/sdk/papi")
+          : await import("@paraspell/sdk");
+
+      const api = await Sdk.createApiInstanceForNode(from);
+
+      let tx: Extrinsic | TPapiTransaction;
       if (useApi) {
-        await submitTxUsingApi(
+        tx = await getTxFromApi(
           {
             ...formValues,
             from:
@@ -141,20 +116,49 @@ const XcmTransfer = () => {
                 : formValues.to,
             currency: determineCurrency(formValues),
           },
-          formValues.from,
-          "/x-transfer",
+          api,
+          apiType === "PJS" ? "/x-transfer-hash" : "/x-transfer-papi",
           selectedAccount.address,
-          injector.signer,
+          apiType,
           "POST",
           true,
         );
       } else {
-        await submitUsingSdk(
-          formValues,
+        const builder = Sdk.Builder(api as ApiPromise & PolkadotClient);
+        if (from === "Polkadot" || from === "Kusama") {
+          tx = await builder
+            .to(to as TNode)
+            .amount(amount)
+            .address(address)
+            .build();
+        } else if (to === "Polkadot" || to === "Kusama") {
+          tx = await builder.from(from).amount(amount).address(address).build();
+        } else {
+          tx = await builder
+            .from(from)
+            .to(to)
+            .currency(determineCurrency(formValues))
+            .feeAsset("0")
+            .amount(amount)
+            .address(address)
+            .build();
+        }
+      }
+
+      if (apiType === "PAPI") {
+        await submitTransactionPapi(
+          tx as TPapiTransaction,
+          signer as PolkadotSigner,
+        );
+      } else {
+        await submitTransaction(
+          api as ApiPromise,
+          tx as Extrinsic,
+          signer as Signer,
           selectedAccount.address,
-          injector.signer,
         );
       }
+
       alert("Transaction was successful!");
     } catch (e) {
       if (e instanceof Error) {

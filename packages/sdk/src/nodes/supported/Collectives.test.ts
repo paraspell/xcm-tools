@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ScenarioNotSupportedError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { PolkadotXCMTransferInput, TRelayToParaInternalOptions } from '../../types'
+import type { PolkadotXCMTransferInput, TRelayToParaOptions } from '../../types'
 import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type Collectives from './Collectives'
 import { getNode } from '../../utils/getNode'
+import type { ApiPromise } from '@polkadot/api'
+import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../polkadotXcm', () => ({
   default: {
@@ -18,19 +20,19 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 }))
 
 describe('Collectives', () => {
-  let collectives: Collectives
+  let collectives: Collectives<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'RelayToPara',
     currencySymbol: 'DOT',
     amount: '100'
-  } as PolkadotXCMTransferInput
+  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   const mockOptions = {
     destination: 'Collectives'
-  } as TRelayToParaInternalOptions
+  } as TRelayToParaOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    collectives = getNode('Collectives')
+    collectives = getNode<ApiPromise, Extrinsic, 'Collectives'>('Collectives')
   })
 
   it('should initialize with correct values', () => {
@@ -41,7 +43,10 @@ describe('Collectives', () => {
   })
 
   it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToPara' } as PolkadotXCMTransferInput
+    const invalidInput = { ...mockInput, scenario: 'ParaToPara' } as PolkadotXCMTransferInput<
+      ApiPromise,
+      Extrinsic
+    >
 
     expect(() => collectives.transferPolkadotXCM(invalidInput)).toThrowError(
       ScenarioNotSupportedError
@@ -53,19 +58,19 @@ describe('Collectives', () => {
 
     collectives.transferPolkadotXCM(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'limitedTeleportAssets', 'Unlimited')
+    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_teleport_assets', 'Unlimited')
   })
 
   it('should call transferRelayToPara with the correct parameters', () => {
-    const expectedParameters = [{ param: 'value' }] as unknown[]
+    const expectedParameters = { param: 'value' }
     vi.mocked(constructRelayToParaParameters).mockReturnValue(expectedParameters)
 
     const result = collectives.transferRelayToPara(mockOptions)
 
     expect(constructRelayToParaParameters).toHaveBeenCalledWith(mockOptions, Version.V3, true)
     expect(result).toEqual({
-      module: 'xcmPallet',
-      section: 'limitedTeleportAssets',
+      module: 'XcmPallet',
+      section: 'limited_teleport_assets',
       parameters: expectedParameters
     })
   })

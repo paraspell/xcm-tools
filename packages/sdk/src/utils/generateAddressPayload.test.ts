@@ -4,7 +4,7 @@ import type { TPallet, TScenario } from '../types'
 import { Parents, Version } from '../types'
 import { createX1Payload } from './createX1Payload'
 import { generateAddressPayload } from './generateAddressPayload'
-import type PolkadotJsApi from '../api/PolkadotJsApi'
+import type PolkadotJsApi from '../pjs/PolkadotJsApi'
 
 vi.mock('./createX1Payload', () => ({
   createX1Payload: vi.fn()

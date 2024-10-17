@@ -1,9 +1,9 @@
+import type { TAmount } from '../../types'
 import {
   Version,
   Parents,
   type TMultiLocationHeader,
   type TScenario,
-  type TRelayToParaInternalOptions,
   type TDestination,
   type TNode,
   type TCurrencySelectionHeaderArr
@@ -13,31 +13,8 @@ import type { Junctions, TJunction } from '../../types/TMultiLocation'
 import { type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 import { findParachainJunction } from './findParachainJunction'
-import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { createX1Payload } from '../../utils/createX1Payload'
 import { NODE_NAMES } from '../../maps/consts'
-
-export const constructRelayToParaParameters = (
-  { api, destination, address, amount, paraIdTo }: TRelayToParaInternalOptions,
-  version: Version,
-  includeFee = false
-): unknown[] => {
-  const paraId =
-    destination !== undefined && typeof destination !== 'object'
-      ? (paraIdTo ?? getParaId(destination))
-      : undefined
-
-  const parameters: unknown[] = [
-    createPolkadotXcmHeader('RelayToPara', version, destination, paraId),
-    generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),
-    createCurrencySpec(amount, version, Parents.ZERO),
-    0
-  ]
-  if (includeFee) {
-    parameters.push('Unlimited')
-  }
-  return parameters
-}
 
 export const isTMultiLocation = (value: unknown): value is TMultiLocation =>
   typeof value === 'object' && value !== null && 'parents' in value && 'interior' in value
@@ -68,7 +45,7 @@ export const createBridgeCurrencySpec = (
 }
 
 export const createCurrencySpec = (
-  amount: string,
+  amount: TAmount,
   version: Version,
   parents: Parents,
   overriddenCurrency?: TMultiLocation | TMultiAsset[],
@@ -169,3 +146,5 @@ export const resolveTNodeFromMultiLocation = (multiLocation: TMultiLocation): TN
 
   return node
 }
+
+export { constructRelayToParaParameters } from './constructRelayToParaParameters'

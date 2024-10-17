@@ -5,13 +5,15 @@ import {
   Parents,
   type TTransferReturn,
   type XTransferSection,
-  type XTransferModule
+  type TSerializedApiCallV2
 } from '../../types'
 import { determineDestWeight } from './determineDestWeight'
 import { getDestination } from './getDestination'
 
 class XTransferTransferImpl {
-  static transferXTransfer(input: XTransferTransferInput): TTransferReturn {
+  static transferXTransfer<TApi, TRes>(
+    input: XTransferTransferInput<TApi, TRes>
+  ): TTransferReturn<TRes> {
     const {
       api,
       amount,
@@ -34,24 +36,28 @@ class XTransferTransferImpl {
 
     const dest = getDestination(input)
 
-    const module: XTransferModule = 'xTransfer'
     const section: XTransferSection = 'transfer'
 
     const destWeight = origin === 'Khala' ? null : determineDestWeight(destination)
 
-    if (serializedApiCallEnabled === true) {
-      return {
-        module,
-        section,
-        parameters: [currencySpec, dest, destWeight]
+    const call: TSerializedApiCallV2 = {
+      module: 'XTransfer',
+      section,
+      parameters: {
+        asset: currencySpec,
+        dest,
+        dest_weight: destWeight
       }
     }
 
-    return api.call({
-      module,
-      section,
-      parameters: [currencySpec, dest, destWeight]
-    })
+    if (serializedApiCallEnabled === true) {
+      return {
+        ...call,
+        parameters: Object.values(call.parameters)
+      }
+    }
+
+    return api.callTxMethod(call)
   }
 }
 
