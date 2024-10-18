@@ -259,7 +259,7 @@ export type XTransferModule = 'xTransfer'
 export type XTransferSection = 'transfer'
 
 export type XTokensModule = 'xTokens'
-export type XTokensSection = 'transfer' | 'transferMultiasset'
+export type XTokensSection = 'transfer' | 'transferMultiasset' | 'transferMultiassets'
 
 export type PolkadotXcmModule = 'polkadotXcm'
 export type PolkadotXcmSection =

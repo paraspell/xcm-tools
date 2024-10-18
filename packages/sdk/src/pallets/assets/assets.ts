@@ -119,36 +119,6 @@ export const hasSupportForAsset = (node: TNode, symbol: string): boolean =>
     .includes(symbol.toLowerCase())
 
 /**
- * Retrieves the list of assets that are supported for transfers between two specified nodes.
- *
- * @param origin - The origin node.
- * @param destination - The destination node.
- * @returns An array of assets supported between the origin and destination nodes.
- */
-export const getSupportedAssets = (
-  origin: TNodeWithRelayChains,
-  destination: TNodeWithRelayChains
-): TAsset[] => {
-  const originAssets = getAssets(origin)
-  const destinationAssets = getAssets(destination)
-
-  if (destination === 'Ethereum' || origin === 'Ethereum') {
-    return getOtherAssets('Ethereum')
-  }
-
-  if (
-    (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
-    (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot')
-  ) {
-    const polkadotAsset = getAssetBySymbolOrId('Polkadot', { symbol: 'DOT' })
-    const kusamaAsset = getAssetBySymbolOrId('Kusama', { symbol: 'KSM' })
-    return [...(polkadotAsset ? [polkadotAsset] : []), ...(kusamaAsset ? [kusamaAsset] : [])]
-  }
-
-  return [...originAssets.filter(asset => destinationAssets.some(a => a.symbol === asset.symbol))]
-}
-
-/**
  * Retrieves the number of decimals for an asset with the given symbol on a specified node.
  *
  * @param node - The node where the asset is located.

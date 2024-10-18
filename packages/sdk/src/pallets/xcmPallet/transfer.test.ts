@@ -2,7 +2,7 @@
 
 import { type ApiPromise } from '@polkadot/api'
 import { describe, expect, it, beforeEach, vi } from 'vitest'
-import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '../../maps/consts'
+import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
 import { getAllAssetsSymbols, getOtherAssets, getRelayChainSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { DuplicateAssetError, IncompatibleNodesError } from '../../errors'
@@ -142,7 +142,7 @@ describe('send', () => {
   })
 
   it('should not throw an InvalidCurrencyError when passing all defined symbols from all nodes', async () => {
-    for (const node of NODE_NAMES) {
+    for (const node of NODE_NAMES_DOT_KSM) {
       if (getNode(node).assetCheckEnabled) {
         const symbols = getAllAssetsSymbols(node)
         for (const symbol of symbols) {
@@ -518,6 +518,48 @@ describe('send', () => {
         ] as TMultiAsset[]
       },
       feeAsset: 2,
+      amount: 1000,
+      address: '0x789'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw InvalidCurrencyError when destination is AssetHubPolkadot and currency is DOT', async () => {
+    const options = {
+      api,
+      origin: 'Hydration' as TNode,
+      destination: 'AssetHubPolkadot' as TNode,
+      currency: { symbol: 'DOT' },
+      feeAsset: 0,
+      amount: 1000,
+      address: '0x789'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw InvalidCurrencyError when destination is AssetHubPolkadot and currency is not supported', async () => {
+    const options = {
+      api,
+      origin: 'Hydration' as TNode,
+      destination: 'AssetHubPolkadot' as TNode,
+      currency: { symbol: 'ETH' },
+      feeAsset: 0,
+      amount: 1000,
+      address: '0x789'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw InvalidCurrencyError when destination is AssetHubPolkadot and currency is not supported on AssetHub', async () => {
+    const options = {
+      api,
+      origin: 'Hydration' as TNode,
+      destination: 'AssetHubPolkadot' as TNode,
+      currency: { symbol: '4-Pool' },
+      feeAsset: 0,
       amount: 1000,
       address: '0x789'
     }
