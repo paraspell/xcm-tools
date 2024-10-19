@@ -83,6 +83,7 @@ export type TReserveAsset = TOtherReserveAsset | TSelfReserveAsset
 
 export type TXTokensCurrencySelection =
   | TCurrencySelectionHeader
+  | TCurrencySelectionHeaderArr
   | TForeignAsset
   | TForeignAssetId
   | TForeignOrTokenAsset

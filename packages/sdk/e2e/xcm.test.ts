@@ -12,7 +12,8 @@ import {
   getOtherAssets,
   TNodeWithRelayChains,
   Version,
-  NODE_NAMES_DOT_KSM
+  NODE_NAMES_DOT_KSM,
+  getSupportedAssets
 } from '../src'
 import { type ApiPromise } from '@polkadot/api'
 
@@ -50,12 +51,29 @@ const findTransferableNodeAndAsset = (
   const allFromAssets = getAssetsForNode(from)
 
   const nodeTo = NODE_NAMES_DOT_KSM.filter(
-    node => getRelayChainSymbol(node) === getRelayChainSymbol(from)
+    node => getRelayChainSymbol(node) === getRelayChainSymbol(from) && node !== from
   ).find(node => {
     const nodeAssets = getAllAssetsSymbols(node)
-    const commonAsset = nodeAssets.filter(asset => allFromAssets.includes(asset))[0]
+
+    const filteredNodes =
+      node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
+        ? nodeAssets.filter(symbol => symbol !== 'DOT' && symbol !== 'KSM')
+        : nodeAssets
+
+    const commonAsset = filteredNodes.filter(asset => allFromAssets.includes(asset))[0]
     return commonAsset !== undefined
   })
+
+  if (nodeTo === 'AssetHubPolkadot' || nodeTo === 'AssetHubKusama') {
+    const supportedAsset = getSupportedAssets(from, nodeTo).filter(
+      asset => asset.symbol !== 'DOT' && asset.symbol !== 'KSM'
+    )[0]
+    return {
+      nodeTo,
+      asset: supportedAsset.symbol,
+      assetId: supportedAsset.assetId ?? null
+    }
+  }
 
   const foundAsset =
     nodeTo !== undefined
@@ -242,6 +260,21 @@ describe.sequential('XCM - e2e', () => {
     it('should create transfer tx - KSM from Relay to Para', async () => {
       const api = await createApiInstanceForNode('Kusama')
       const tx = Builder(api).to(MOCK_KUSAMA_NODE).amount(MOCK_AMOUNT).address(MOCK_ADDRESS).build()
+      expect(tx).toBeDefined()
+    })
+  })
+
+  describe.sequential('Hydration to AssetHub transfer with feeAsset', () => {
+    it('should create transfer tx from Hydration to AssetHubPolkadot with feeAsset(0)', async () => {
+      const api = await createApiInstanceForNode('Hydration')
+      const tx = await Builder(api)
+        .from('Hydration')
+        .to('AssetHubPolkadot')
+        .currency({ symbol: 'USDT' })
+        .feeAsset('0')
+        .amount(MOCK_AMOUNT)
+        .address(MOCK_ADDRESS)
+        .build()
       expect(tx).toBeDefined()
     })
   })
