@@ -9,7 +9,7 @@ import { getAssetDecimals, getAssetsObject, getOtherAssets } from './assets'
 import { findAssetBySymbol } from './assetsUtils'
 
 const findAssetById = (assets: TAsset[], assetId: TCurrency) =>
-  assets.find(({ assetId: currentAssetId }) => currentAssetId === assetId)
+  assets.find(({ assetId: currentAssetId }) => currentAssetId === assetId.toString())
 
 export const getAssetBySymbolOrId = (
   node: TNodeWithRelayChains,

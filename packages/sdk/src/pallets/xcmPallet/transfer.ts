@@ -1,6 +1,6 @@
 // Contains basic call formatting for different XCM Palletss
 
-import type { TApiType, TResType, TTransferReturn } from '../../types'
+import type { TApiType, TNodePolkadotKusama, TResType, TTransferReturn } from '../../types'
 import {
   type Extrinsic,
   type TSerializedApiCall,
@@ -16,7 +16,7 @@ import {
   createApiInstanceForNode,
   determineRelayChain
 } from '../../utils'
-import { getRelayChainSymbol, hasSupportForAsset } from '../assets'
+import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive/checkKeepAlive'
@@ -24,6 +24,7 @@ import { isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
 import { getAssetBySymbolOrId } from '../assets/getAssetBySymbolOrId'
 import type { ApiPromise } from '@polkadot/api'
 import PolkadotJsApi from '../../api/PolkadotJsApi'
+import { getDefaultPallet } from '../pallets'
 
 const sendCommon = async <TApi extends TApiType>(
   options: TSendOptionsCommon<TApi>
@@ -118,33 +119,67 @@ const sendCommon = async <TApi extends TApiType>(
       ? false
       : originNode.assetCheckEnabled
 
-  const asset = assetCheckEnabled
-    ? getAssetBySymbolOrId(
-        origin,
-        currency,
-        isRelayDestination,
-        isTMultiLocation(destination) ? undefined : destination
+  const isDestAssetHub = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
+
+  const pallet = getDefaultPallet(origin as TNodePolkadotKusama)
+
+  let asset
+
+  // Transfers to AssetHub require the destination asset ID to be used
+  if (!isBridge && isDestAssetHub && pallet === 'XTokens') {
+    asset = getAssetBySymbolOrId(destination, currency, false, destination)
+
+    if (
+      'symbol' in currency &&
+      getNativeAssets(destination).some(
+        nativeAsset => nativeAsset.symbol.toLowerCase() === currency.symbol.toLowerCase()
       )
-    : null
+    ) {
+      throw new InvalidCurrencyError(
+        `${currency.symbol} is not supported for transfers to ${destination}.`
+      )
+    }
 
-  if (!isBridge && asset === null && assetCheckEnabled) {
-    throw new InvalidCurrencyError(
-      `Origin node ${origin} does not support currency ${JSON.stringify(currency)}.`
-    )
-  }
+    if (assetCheckEnabled && asset === null) {
+      throw new InvalidCurrencyError(
+        `Destination node ${destination} does not support currency ${JSON.stringify(currency)}.`
+      )
+    }
 
-  if (
-    !isBridge &&
-    !isRelayDestination &&
-    !isMultiLocationDestination &&
-    asset?.symbol !== undefined &&
-    assetCheckEnabled &&
-    !('id' in currency) &&
-    !hasSupportForAsset(destination, asset.symbol)
-  ) {
-    throw new InvalidCurrencyError(
-      `Destination node ${destination} does not support currency ${JSON.stringify(currency)}.`
-    )
+    if (asset?.symbol && !hasSupportForAsset(origin, asset.symbol)) {
+      throw new InvalidCurrencyError(
+        `Origin node ${origin} does not support currency ${asset.symbol}.`
+      )
+    }
+  } else {
+    asset = assetCheckEnabled
+      ? getAssetBySymbolOrId(
+          origin,
+          currency,
+          isRelayDestination,
+          isTMultiLocation(destination) ? undefined : destination
+        )
+      : null
+
+    if (!isBridge && asset === null && assetCheckEnabled) {
+      throw new InvalidCurrencyError(
+        `Origin node ${origin} does not support currency ${JSON.stringify(currency)}.`
+      )
+    }
+
+    if (
+      !isBridge &&
+      !isRelayDestination &&
+      !isMultiLocationDestination &&
+      asset?.symbol !== undefined &&
+      assetCheckEnabled &&
+      !('id' in currency) &&
+      !hasSupportForAsset(destination, asset.symbol)
+    ) {
+      throw new InvalidCurrencyError(
+        `Destination node ${destination} does not support currency ${JSON.stringify(currency)}.`
+      )
+    }
   }
 
   const apiWithFallback = api ?? (await createApiInstanceForNode(origin))

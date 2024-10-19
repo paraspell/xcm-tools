@@ -44,7 +44,7 @@ describe('XTokensTransferImpl', () => {
     )
   })
 
-  it('returns structured data for serialized transfer calls', () => {
+  it('returns structured data for serialized transfer calls - feeAsset provided', () => {
     const input = {
       api: mockApi,
       origin: 'Acala',
@@ -56,6 +56,33 @@ describe('XTokensTransferImpl', () => {
       addressSelection: 'Address',
       destination: 'AssetHubPolkadot',
       feeAsset: 'XTK',
+      serializedApiCallEnabled: true
+    } as XTokensTransferInput
+    const currencySelection = '123'
+
+    vi.mocked(getCurrencySelection).mockReturnValue(currencySelection)
+    vi.mocked(getParameters).mockReturnValue(['param1', 'param2', 'param3'])
+
+    const result = XTokensTransferImpl.transferXTokens(input, currencySelection)
+
+    expect(result).toEqual({
+      module: 'xTokens',
+      section: 'transferMultiassets',
+      parameters: ['param1', 'param2', 'param3']
+    })
+  })
+
+  it('returns structured data for serialized transfer calls - feeAsset not provided', () => {
+    const input = {
+      api: mockApi,
+      origin: 'Acala',
+      amount: '2000',
+      currency: '123',
+      currencyID: '123',
+      fees: 2000,
+      scenario: 'ParaToPara',
+      addressSelection: 'Address',
+      destination: 'AssetHubPolkadot',
       serializedApiCallEnabled: true
     } as XTokensTransferInput
     const currencySelection = '123'

@@ -30,7 +30,11 @@ class XTokensTransferImpl {
     const modifiedCurrencySelection = getCurrencySelection(input, isAssetHub, currencySelection)
 
     const module: XTokensModule = 'xTokens'
-    const section: XTokensSection = isAssetHub ? 'transferMultiasset' : 'transfer'
+    const section: XTokensSection = isAssetHub
+      ? feeAsset
+        ? 'transferMultiassets'
+        : 'transferMultiasset'
+      : 'transfer'
 
     const parameters = getParameters(
       isAssetHub,
