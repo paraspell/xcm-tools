@@ -113,3 +113,19 @@ describe('getAssetDecimals', () => {
     })
   })
 })
+
+describe('getSupportedAssets', () => {
+  it('should return supported assets for all nodes', () => {
+    NODE_NAMES.forEach(node => {
+      const assets = getAssetsObject(node)
+      expect(assets).toEqual(
+        expect.objectContaining({
+          relayChainAssetSymbol: expect.any(String),
+          nativeAssets: expect.any(Array),
+          otherAssets: expect.any(Array),
+          paraId: expect.any(Number)
+        })
+      )
+    })
+  })
+})
