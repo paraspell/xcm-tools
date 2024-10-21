@@ -2,15 +2,9 @@
 
 import { handleDataFetching } from '../scriptUtils'
 import { fetchAllNodesAssets } from './fetchAssets'
-import { fillDecimalsBifrost } from './fillInDecimalsBifrost'
 
 const JSON_FILE_PATH = './src/maps/assets.json'
 
 void (async () => {
-  await handleDataFetching(
-    JSON_FILE_PATH,
-    fetchAllNodesAssets,
-    'Successfuly updated assets map.',
-    fillDecimalsBifrost
-  )
+  await handleDataFetching(JSON_FILE_PATH, fetchAllNodesAssets, 'Successfuly updated assets map.')
 })()

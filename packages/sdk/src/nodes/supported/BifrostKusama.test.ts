@@ -44,6 +44,6 @@ describe('BifrostKusama', () => {
 
     bifrostKusama.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { Token: 'BNC' })
+    expect(spy).toHaveBeenCalledWith(mockInput, { Native: 'BNC' })
   })
 })

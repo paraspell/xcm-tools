@@ -1,15 +1,6 @@
-import type {
-  TAsset,
-  TCurrency,
-  TCurrencyInput,
-  TNativeAssetDetails,
-  TNodeWithRelayChains
-} from '../../types'
+import type { TAsset, TCurrencyInput, TNativeAssetDetails, TNodeWithRelayChains } from '../../types'
 import { getAssetDecimals, getAssetsObject, getOtherAssets } from './assets'
-import { findAssetBySymbol } from './assetsUtils'
-
-const findAssetById = (assets: TAsset[], assetId: TCurrency) =>
-  assets.find(({ assetId: currentAssetId }) => currentAssetId === assetId.toString())
+import { findAssetById, findAssetBySymbol } from './assetsUtils'
 
 export const getAssetBySymbolOrId = (
   node: TNodeWithRelayChains,

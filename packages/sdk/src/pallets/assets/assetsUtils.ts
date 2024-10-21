@@ -1,6 +1,6 @@
 // Contains function for getting Asset ID or Symbol used in XCM call creation
 
-import { DuplicateAssetError } from '../../errors'
+import { DuplicateAssetError, DuplicateAssetIdError } from '../../errors'
 import type {
   TAsset,
   TAssetDetails,
@@ -51,5 +51,14 @@ export const findAssetBySymbol = (
   return otherAssetsMatches[0] || nativeAssetsMatches[0] || null
 }
 
-export const findAssetById = (assets: TAsset[], assetId: TCurrency) =>
-  assets.find(({ assetId: currentAssetId }) => currentAssetId === assetId)
+export const findAssetById = (assets: TAsset[], assetId: TCurrency) => {
+  const otherAssetsMatches = assets.filter(
+    ({ assetId: currentAssetId }) => currentAssetId === assetId.toString()
+  )
+
+  if (otherAssetsMatches.length > 1) {
+    throw new DuplicateAssetIdError(assetId.toString())
+  }
+
+  return assets.find(({ assetId: currentAssetId }) => currentAssetId === assetId)
+}

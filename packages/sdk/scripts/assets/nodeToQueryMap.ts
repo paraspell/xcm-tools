@@ -4,7 +4,7 @@ export const nodeToQuery: Record<TNodePolkadotKusama, string | null> = {
   // Chain state query: <module>.<section> for assets metadata
   Acala: 'assetRegistry.assetMetadatas',
   Astar: 'assets.metadata',
-  BifrostPolkadot: null, // Has no foreign assets. Native assets are fetched directly from state.getMetadata()
+  BifrostPolkadot: 'assetRegistry.currencyMetadatas',
   Bitgreen: null, // No assets metadata query
   Centrifuge: 'ormlAssetRegistry.metadata',
   ComposableFinance: 'assetsRegistry.assetSymbol',
@@ -19,7 +19,7 @@ export const nodeToQuery: Record<TNodePolkadotKusama, string | null> = {
   Amplitude: 'assetRegistry.metadata',
   Bajun: 'assets.metadata',
   Basilisk: 'assetRegistry.assetMetadataMap',
-  BifrostKusama: null, // Has no foreign assets created yet
+  BifrostKusama: 'assetRegistry.currencyMetadatas',
   Calamari: 'assets.metadata',
   Crab: 'assets.metadata',
   CrustShadow: 'assets.metadata',

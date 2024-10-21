@@ -1,8 +1,8 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Kusama
 
 import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../xTokens'
 
 class BifrostKusama extends ParachainNode implements IXTokensTransfer {
   constructor() {
@@ -10,10 +10,7 @@ class BifrostKusama extends ParachainNode implements IXTokensTransfer {
   }
 
   transferXTokens(input: XTokensTransferInput) {
-    const currencySelection = {
-      [input.currency === this.getNativeAssetSymbol() ? 'Native' : 'Token']: input.currency
-    }
-    return XTokensTransferImpl.transferXTokens(input, currencySelection)
+    return getNode('BifrostPolkadot').transferXTokens(input)
   }
 }
 

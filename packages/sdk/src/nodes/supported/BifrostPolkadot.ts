@@ -9,10 +9,36 @@ export class BifrostPolkadot extends ParachainNode implements IXTokensTransfer {
     super('BifrostPolkadot', 'bifrost', 'polkadot', Version.V3)
   }
 
-  transferXTokens(input: XTokensTransferInput) {
-    const currencySelection = {
-      [input.currency === this.getNativeAssetSymbol() ? 'Native' : 'Token']: input.currency
+  private getCurrencySelection(currency: string, currencyId: string | undefined) {
+    const nativeAssetSymbol = this.getNativeAssetSymbol()
+
+    if (currency === nativeAssetSymbol) {
+      return { Native: nativeAssetSymbol }
     }
+
+    const isVToken = currency.startsWith('v')
+    const isVSToken = currency.startsWith('vs')
+
+    if (!currencyId) {
+      return isVToken ? { VToken: currency.substring(1) } : { Token: currency }
+    }
+
+    const id = Number(currencyId)
+    if (isVSToken) {
+      return { VSToken2: id }
+    }
+
+    return isVToken ? { VToken2: id } : { Token2: id }
+  }
+
+  transferXTokens(input: XTokensTransferInput) {
+    const { currency, currencyID } = input
+
+    if (!currency) {
+      throw new Error('Currency symbol is undefined')
+    }
+
+    const currencySelection = this.getCurrencySelection(currency, currencyID)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }
