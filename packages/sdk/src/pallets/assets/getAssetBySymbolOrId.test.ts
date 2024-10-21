@@ -29,6 +29,13 @@ describe('getAssetBySymbolOrId', () => {
               expect(asset).toHaveProperty('assetId')
             }
           }
+
+          const otherAssetsMatchesById = otherAssets.filter(
+            ({ assetId }) => assetId === other.assetId
+          )
+          if (otherAssetsMatchesById.length > 1) {
+            expect(() => getAssetBySymbolOrId(node, { id: other.assetId })).toThrow()
+          }
         }
       })
     })
@@ -48,10 +55,15 @@ describe('getAssetBySymbolOrId', () => {
   it('should return assetId and symbol for every foreign asset id', () => {
     NODE_NAMES.forEach(node => {
       const { otherAssets } = getAssetsObject(node)
+
       otherAssets.forEach(other => {
-        const asset = getAssetBySymbolOrId(node, { id: other.assetId })
-        expect(asset).toHaveProperty('assetId')
-        expect(other.assetId).toEqual(asset?.assetId)
+        const hasDuplicateIds =
+          otherAssets.filter(asset => asset.assetId === other.assetId).length > 1
+        if (!hasDuplicateIds) {
+          const asset = getAssetBySymbolOrId(node, { id: other.assetId })
+          expect(asset).toHaveProperty('assetId')
+          expect(other.assetId).toEqual(asset?.assetId)
+        }
       })
     })
   })

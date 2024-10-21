@@ -89,17 +89,13 @@ export const writeJsonSync = (path: string, data: unknown) => {
 export const handleDataFetching = async <T1, T2>(
   filePath: string,
   fetchFunc: (obj: T1) => Promise<T2>,
-  successMsg: string,
-  transformFunc?: (data: T2) => T2
+  successMsg: string
 ) => {
   checkForNodeJsEnvironment()
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const existingData = await readJsonOrReturnEmptyObject(filePath)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  let data = (await fetchFunc(existingData)) as T2
-  if (transformFunc) {
-    data = transformFunc(data)
-  }
+  const data = (await fetchFunc(existingData)) as T2
   writeJsonSync(filePath, data)
   console.log(successMsg)
   process.exit()

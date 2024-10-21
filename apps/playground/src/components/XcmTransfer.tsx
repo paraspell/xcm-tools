@@ -3,8 +3,18 @@ import ErrorAlert from "./ErrorAlert";
 import type { FormValuesTransformed } from "./TransferForm";
 import TransferForm from "./TransferForm";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import type { TCurrencyInput, TMultiLocation, TNode } from "@paraspell/sdk";
-import { Builder, createApiInstanceForNode } from "@paraspell/sdk";
+import type {
+  TCurrencyInput,
+  TMultiLocation,
+  TNode,
+  TNodePolkadotKusama,
+} from "@paraspell/sdk";
+import {
+  Builder,
+  createApiInstanceForNode,
+  getOtherAssets,
+  isRelayChain,
+} from "@paraspell/sdk";
 import type { ApiPromise } from "@polkadot/api";
 import { web3FromAddress } from "@polkadot/extension-dapp";
 import type { Signer } from "@polkadot/api/types";
@@ -34,6 +44,7 @@ const XcmTransfer = () => {
   }, [error, scrollIntoView]);
 
   const determineCurrency = ({
+    from,
     isCustomCurrency,
     customCurrency,
     customCurrencyType,
@@ -54,9 +65,20 @@ const XcmTransfer = () => {
         };
       }
     } else if (currency) {
-      return currency.assetId
-        ? { id: currency.assetId }
-        : { symbol: currency.symbol ?? "" };
+      if (!currency.assetId) {
+        return { symbol: currency.symbol ?? "" };
+      }
+
+      const hasDuplicateIds = isRelayChain(from)
+        ? false
+        : getOtherAssets(from as TNodePolkadotKusama).filter(
+            (asset) => asset.assetId === currency.assetId,
+          ).length > 1;
+      return hasDuplicateIds
+        ? { symbol: currency.symbol ?? "" }
+        : {
+            id: currency.assetId,
+          };
     } else {
       throw Error("Currency is required");
     }

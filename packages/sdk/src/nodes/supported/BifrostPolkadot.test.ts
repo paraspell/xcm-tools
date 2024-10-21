@@ -20,6 +20,7 @@ describe('BifrostPolkadot', () => {
 
   beforeEach(() => {
     bifrostPolkadot = getNode('BifrostPolkadot')
+    vi.resetAllMocks()
   })
 
   it('should initialize with correct values', () => {
@@ -45,5 +46,26 @@ describe('BifrostPolkadot', () => {
     bifrostPolkadot.transferXTokens(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, { Token: 'BNC' })
+  })
+
+  it('should call transferXTokens with VSToken', () => {
+    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
+    vi.spyOn(bifrostPolkadot, 'getNativeAssetSymbol').mockReturnValue('NOT_BNC')
+
+    const input = {
+      ...mockInput,
+      currency: 'vsDOT',
+      currencyID: '0'
+    }
+
+    bifrostPolkadot.transferXTokens(input)
+
+    expect(spy).toHaveBeenCalledWith(input, { VSToken2: 0 })
+  })
+
+  it('should throw error when currency symbol is undefined', () => {
+    expect(() =>
+      bifrostPolkadot.transferXTokens({ ...mockInput, currency: undefined })
+    ).toThrowError('Currency symbol is undefined')
   })
 })

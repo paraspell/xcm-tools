@@ -16,6 +16,7 @@ import type {
 import { getNode, getNodeEndpointOption } from '../../src/utils'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 import { nodeToQuery } from './nodeToQueryMap'
+import { fetchBifrostAssets } from './fetchBifrostAssets'
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -25,23 +26,6 @@ const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]
   return symbols.map((symbol, i) => ({
     symbol,
     decimals: decimals[i] ? +decimals[i] : +decimals[0]
-  }))
-}
-
-const fetchBifrostNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
-  const res = await api.rpc.state.getMetadata()
-  const DEFAULT_DECIMALS = -1
-  // Decimals for Bifrost Polkadot will be set to -1 and later derived from other assets
-  const typeId = res.asLatest.lookup.types.find(obj => {
-    return obj.type.path
-      .toArray()
-      .map(el => el.toHuman().toString())
-      .includes('TokenSymbol')
-  })
-
-  return typeId!.type.def.asVariant.variants.map(k => ({
-    symbol: k.name.toHuman(),
-    decimals: DEFAULT_DECIMALS
   }))
 }
 
@@ -405,12 +389,12 @@ const fetchNodeAssets = async (
     }
   }
 
-  if (node === 'BifrostPolkadot') {
-    const nativeAssets = (await fetchBifrostNativeAssets(api)) ?? []
+  if (node === 'BifrostPolkadot' || node === 'BifrostKusama') {
+    const { nativeAssets, otherAssets } = await fetchBifrostAssets(api, query ?? '')
     await api.disconnect()
     return {
       nativeAssets,
-      otherAssets: [],
+      otherAssets,
       nativeAssetSymbol
     }
   }

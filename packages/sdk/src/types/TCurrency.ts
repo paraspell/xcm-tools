@@ -81,6 +81,14 @@ export type TSelfReserveAsset = 'SelfReserve'
 
 export type TReserveAsset = TOtherReserveAsset | TSelfReserveAsset
 
+export type TBifrostToken =
+  | { Native: string }
+  | { VToken: string }
+  | { Token: string }
+  | { VSToken2: number }
+  | { VToken2: number }
+  | { Token2: number }
+
 export type TXTokensCurrencySelection =
   | TCurrencySelectionHeader
   | TCurrencySelectionHeaderArr
@@ -90,5 +98,6 @@ export type TXTokensCurrencySelection =
   | TXcmAsset
   | TMantaAsset
   | TOtherReserveAsset
+  | TBifrostToken
   | string
   | undefined

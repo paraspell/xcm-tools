@@ -540,51 +540,121 @@
     "nativeAssetSymbol": "BNC",
     "nativeAssets": [
       {
-        "symbol": "ASG",
-        "decimals": 18
+        "symbol": "vBNC",
+        "decimals": 12
       },
       {
         "symbol": "BNC",
         "decimals": 12
+      }
+    ],
+    "otherAssets": [
+      {
+        "assetId": "6",
+        "symbol": "IBTC",
+        "decimals": 8
       },
       {
-        "symbol": "KUSD",
-        "decimals": 12
+        "assetId": "8",
+        "symbol": "MANTA",
+        "decimals": 18
       },
       {
+        "assetId": "7",
+        "symbol": "INTR",
+        "decimals": 10
+      },
+      {
+        "assetId": "13",
+        "symbol": "WETH",
+        "decimals": 18
+      },
+      {
+        "assetId": "2",
+        "symbol": "USDT",
+        "decimals": 6
+      },
+      {
+        "assetId": "5",
+        "symbol": "USDC",
+        "decimals": 6
+      },
+      {
+        "assetId": "0",
         "symbol": "DOT",
         "decimals": 10
       },
       {
-        "symbol": "KSM",
-        "decimals": 12
-      },
-      {
-        "symbol": "ETH",
-        "decimals": 10
-      },
-      {
-        "symbol": "KAR",
-        "decimals": 12
-      },
-      {
-        "symbol": "ZLK",
-        "decimals": 12
-      },
-      {
-        "symbol": "PHA",
-        "decimals": 12
-      },
-      {
-        "symbol": "RMRK",
-        "decimals": 10
-      },
-      {
-        "symbol": "MOVR",
+        "assetId": "1",
+        "symbol": "GLMR",
         "decimals": 18
+      },
+      {
+        "assetId": "1",
+        "symbol": "vGLMR",
+        "decimals": 18
+      },
+      {
+        "assetId": "14",
+        "symbol": "WAVE",
+        "decimals": 18
+      },
+      {
+        "assetId": "11",
+        "symbol": "DED",
+        "decimals": 10
+      },
+      {
+        "assetId": "4",
+        "symbol": "vFIL",
+        "decimals": 18
+      },
+      {
+        "assetId": "9",
+        "symbol": "BNCS",
+        "decimals": 12
+      },
+      {
+        "assetId": "10",
+        "symbol": "PINK",
+        "decimals": 10
+      },
+      {
+        "assetId": "4",
+        "symbol": "FIL",
+        "decimals": 18
+      },
+      {
+        "assetId": "8",
+        "symbol": "vMANTA",
+        "decimals": 18
+      },
+      {
+        "assetId": "12",
+        "symbol": "PEN",
+        "decimals": 12
+      },
+      {
+        "assetId": "3",
+        "symbol": "vASTR",
+        "decimals": 18
+      },
+      {
+        "assetId": "0",
+        "symbol": "vDOT",
+        "decimals": 10
+      },
+      {
+        "assetId": "3",
+        "symbol": "ASTR",
+        "decimals": 18
+      },
+      {
+        "assetId": "0",
+        "symbol": "vsDOT",
+        "decimals": 10
       }
-    ],
-    "otherAssets": []
+    ]
   },
   "Bitgreen": {
     "paraId": 2048,
@@ -3907,24 +3977,28 @@
     "nativeAssetSymbol": "BNC",
     "nativeAssets": [
       {
-        "symbol": "BNC",
-        "decimals": 12
-      },
-      {
-        "symbol": "KUSD",
-        "decimals": 12
-      },
-      {
-        "symbol": "DOT",
-        "decimals": 10
-      },
-      {
         "symbol": "KSM",
         "decimals": 12
       },
       {
-        "symbol": "KAR",
+        "symbol": "RMRK",
+        "decimals": 10
+      },
+      {
+        "symbol": "vBNC",
         "decimals": 12
+      },
+      {
+        "symbol": "vMOVR",
+        "decimals": 18
+      },
+      {
+        "symbol": "vKSM",
+        "decimals": 12
+      },
+      {
+        "symbol": "MOVR",
+        "decimals": 18
       },
       {
         "symbol": "ZLK",
@@ -3935,15 +4009,41 @@
         "decimals": 12
       },
       {
-        "symbol": "RMRK",
-        "decimals": 10
+        "symbol": "KAR",
+        "decimals": 12
       },
       {
-        "symbol": "MOVR",
-        "decimals": 18
+        "symbol": "BNC",
+        "decimals": 12
       }
     ],
-    "otherAssets": []
+    "otherAssets": [
+      {
+        "assetId": "2",
+        "symbol": "KBTC",
+        "decimals": 8
+      },
+      {
+        "assetId": "0",
+        "symbol": "USDT",
+        "decimals": 6
+      },
+      {
+        "assetId": "1",
+        "symbol": "KINT",
+        "decimals": 12
+      },
+      {
+        "assetId": "4",
+        "symbol": "MGX",
+        "decimals": 18
+      },
+      {
+        "assetId": "3",
+        "symbol": "SDN",
+        "decimals": 18
+      }
+    ]
   },
   "Calamari": {
     "paraId": 2084,
