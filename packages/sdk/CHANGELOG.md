@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-v6.2.0...sdk-v6.2.1) (2024-10-21)
+
+
+### Bug Fixes
+
+* **sdk:** Fix Bifrost transfers 🛠️ ([9eb6a2b](https://github.com/paraspell/xcm-tools/commit/9eb6a2bc88d471b56d26d3c99c3b1df3bd15c66e))
+
 ## [6.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-v6.1.1...sdk-v6.2.0) (2024-10-19)
 
 
