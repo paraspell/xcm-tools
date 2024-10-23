@@ -1,6 +1,6 @@
 import { useForm } from "@mantine/form";
 import { isValidWalletAddress } from "../utils";
-import type { FC } from "react";
+import { useEffect, type FC } from "react";
 import {
   Button,
   Checkbox,
@@ -11,7 +11,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import type { TNodeDotKsmWithRelayChains } from "@paraspell/sdk";
-import { NODES_WITH_RELAY_CHAINS } from "@paraspell/sdk";
+import {
+  getRelayChainSymbol,
+  isRelayChain,
+  NODES_WITH_RELAY_CHAINS,
+} from "@paraspell/sdk";
 
 export type FormValues = {
   from: TNodeDotKsmWithRelayChains;
@@ -54,6 +58,22 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
     form.values.to === "Polkadot" ||
     form.values.to === "Kusama";
 
+  const onSelectCurrencyTypeClick = () => {
+    form.setFieldValue("currency", "");
+  };
+
+  useEffect(() => {
+    if (isRelayChain(form.values.from) || isRelayChain(form.values.to)) {
+      form.setFieldValue("customCurrencyType", "symbol");
+      if (isRelayChain(form.values.from)) {
+        form.setFieldValue("currency", getRelayChainSymbol(form.values.from));
+      }
+      if (isRelayChain(form.values.to)) {
+        form.setFieldValue("currency", getRelayChainSymbol(form.values.to));
+      }
+    }
+  }, [form.values.from, form.values.to]);
+
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
       <Stack>
@@ -79,29 +99,30 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           {...form.getInputProps("to")}
         />
 
-        {!isNotParaToPara && (
-          <Group align="flex-end">
-            <TextInput
-              flex={1}
-              label="Currency"
-              placeholder={
-                form.values.customCurrencyType === "id" ? "Asset ID" : "Symbol"
-              }
-              required
-              data-testid="input-currency"
-              {...form.getInputProps("currency")}
-            />
-            <SegmentedControl
-              size="xs"
-              pb={8}
-              data={[
-                { label: "Asset ID", value: "id" },
-                { label: "Symbol", value: "symbol" },
-              ]}
-              {...form.getInputProps("customCurrencyType")}
-            />
-          </Group>
-        )}
+        <Group align="flex-end">
+          <TextInput
+            disabled={isNotParaToPara}
+            flex={1}
+            label="Currency"
+            placeholder={
+              form.values.customCurrencyType === "id" ? "Asset ID" : "Symbol"
+            }
+            required
+            data-testid="input-currency"
+            {...form.getInputProps("currency")}
+          />
+          <SegmentedControl
+            disabled={isNotParaToPara}
+            onClick={onSelectCurrencyTypeClick}
+            size="xs"
+            pb={8}
+            data={[
+              { label: "Asset ID", value: "id" },
+              { label: "Symbol", value: "symbol" },
+            ]}
+            {...form.getInputProps("customCurrencyType")}
+          />
+        </Group>
 
         <TextInput
           label="Address"
