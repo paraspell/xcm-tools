@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-v6.2.1...sdk-v6.2.2) (2024-10-23)
+
+
+### Bug Fixes
+
+* **sdk:** Fix transfer info invalid currency error handling 🛠️ ([139bcfc](https://github.com/paraspell/xcm-tools/commit/139bcfcddc487216c6cc4992bfb168b017e676c6))
+
 ## [6.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-v6.2.0...sdk-v6.2.1) (2024-10-21)
 
 
