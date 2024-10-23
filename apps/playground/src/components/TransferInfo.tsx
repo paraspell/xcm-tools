@@ -36,13 +36,17 @@ const TransferInfo = () => {
     }
   }, [error, scrollIntoView]);
 
+  const resolveCurrency = (formValues: FormValues) => {
+    if (formValues.customCurrencyType === "id") {
+      return { id: formValues.currency };
+    }
+    return { symbol: formValues.currency };
+  };
+
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
     const { useApi } = formValues;
-    const originAddress = selectedAccount?.address ?? "";
-    const currency =
-      formValues.customCurrencyType === "id"
-        ? { id: formValues.currency }
-        : { symbol: formValues.currency };
+    const originAddress = formValues.address;
+    const currency = resolveCurrency(formValues);
     if (useApi) {
       return await fetchFromApi(
         {

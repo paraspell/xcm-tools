@@ -12,6 +12,7 @@ import {
 } from '../getExistentialDeposit'
 import type { ApiPromise } from '@polkadot/api'
 import { getNativeAssetSymbol } from '../assets'
+import { InvalidCurrencyError } from '../../../errors'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn(),
@@ -111,5 +112,12 @@ describe('getTransferInfo', () => {
     await expect(
       getTransferInfo(origin, destination, accountOrigin, accountDestination, currency, amount)
     ).rejects.toThrow('API failure')
+  })
+
+  it('Throws an error if invalid currency for origin node provided', async () => {
+    vi.mocked(getAssetBySymbolOrId).mockReturnValue(null)
+    await expect(() =>
+      getTransferInfo(origin, destination, accountOrigin, accountDestination, currency, amount)
+    ).rejects.toThrow(InvalidCurrencyError)
   })
 })

@@ -1,3 +1,4 @@
+import { InvalidCurrencyError } from '../../../errors'
 import type { TCurrencyCore, TNodeDotKsmWithRelayChains } from '../../../types'
 import type { TTransferInfo } from '../../../types/TTransferInfo'
 import { createApiInstanceForNode, determineRelayChainSymbol } from '../../../utils'
@@ -44,6 +45,12 @@ export const getTransferInfo = async (
   const expectedBalanceAfterXCMDelivery = originBalance - destXcmFee
 
   const asset = getAssetBySymbolOrId(origin, currency)
+
+  if (!asset) {
+    throw new InvalidCurrencyError(
+      `Asset ${'symbol' in currency ? currency.symbol : currency.id} not found on ${origin}`
+    )
+  }
 
   return {
     chain: {
