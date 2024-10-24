@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.3](https://github.com/paraspell/xcm-tools/compare/sdk-v6.2.2...sdk-v6.2.3) (2024-10-24)
+
+
+### Bug Fixes
+
+* **sdk:** Export getOriginFeeDetails function 📦 ([41fe7a0](https://github.com/paraspell/xcm-tools/commit/41fe7a06e25f9b4b4e5083139c8f5e8aec212257))
+
 ## [6.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-v6.2.1...sdk-v6.2.2) (2024-10-23)
 
 
