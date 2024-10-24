@@ -293,7 +293,7 @@ await getBalanceForeign(address, Parachain name, currency /*- {id: currencyID} |
 await getBalanceNative(address, Parachain name)
 
 //Get fee information regarding XCM call
-await getOriginFeeDetails(from, to, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, amount, originAddress)
+await getOriginFeeDetails(from, to, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, amount, originAddress, api /* optional */, feeMargin /* 10% by default */)
 
 //Get all the information about XCM transfer
 await getTransferInfo(from, to, address, destinationAddress, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, amount)
