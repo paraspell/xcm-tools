@@ -1,4 +1,3 @@
-import { type BN } from '@polkadot/util'
 import type { TCurrencyCore, TOriginFeeDetails } from '../../types'
 import {
   type TNodeDotKsmWithRelayChains,
@@ -11,6 +10,7 @@ import { getMinNativeTransferableAmount } from './getExistentialDeposit'
 import { type ApiPromise } from '@polkadot/api'
 import { createApiInstanceForNode, isRelayChain } from '../../utils'
 import { Builder } from '../../builder'
+import { calculateTransactionFee } from '../xcmPallet/calculateTransactionFee'
 
 const createTx = async (
   originApi: ApiPromise,
@@ -43,18 +43,14 @@ const createTx = async (
   }
 }
 
-const calculateTransactionFee = async (tx: Extrinsic, address: string): Promise<BN> => {
-  const { partialFee } = await tx.paymentInfo(address)
-  return partialFee.toBn()
-}
-
 export const getOriginFeeDetails = async (
   origin: TNodeDotKsmWithRelayChains,
   destination: TNodeDotKsmWithRelayChains,
   currency: TCurrencyCore,
   amount: string,
   account: string,
-  api?: ApiPromise
+  api?: ApiPromise,
+  feeMarginPercentage: number = 10
 ): Promise<TOriginFeeDetails> => {
   const nativeBalance = await getBalanceNative(account, origin)
 
@@ -65,7 +61,7 @@ export const getOriginFeeDetails = async (
   const xcmFee = await calculateTransactionFee(tx, account)
 
   const xcmFeeBigInt = BigInt(xcmFee.toString())
-  const xcmFeeWithMargin = xcmFeeBigInt + xcmFeeBigInt / BigInt(10)
+  const xcmFeeWithMargin = xcmFeeBigInt + xcmFeeBigInt / BigInt(feeMarginPercentage)
 
   console.log('nativeBalance', nativeBalance)
   console.log('minTransferableAmount', minTransferableAmount)
