@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.4](https://github.com/paraspell/xcm-tools/compare/sdk-v6.2.3...sdk-v6.2.4) (2024-10-25)
+
+
+### Bug Fixes
+
+* **sdk:** Add relaychain support for getTNode function ⚙️ ([c8fdf3e](https://github.com/paraspell/xcm-tools/commit/c8fdf3eec9c3feddec8cbcc65ad566ba1d8a8f40))
+
 ## [6.2.3](https://github.com/paraspell/xcm-tools/compare/sdk-v6.2.2...sdk-v6.2.3) (2024-10-24)
 
 
