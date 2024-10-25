@@ -63,7 +63,11 @@ describe('AssetsController', () => {
         .spyOn(assetsService, 'getAssetsObject')
         .mockReturnValue(mockResult);
 
-      const result = controller.getAssetsObject(node, mockRequestObject);
+      const result = controller.getAssetsObject(
+        node,
+        'polkadot',
+        mockRequestObject,
+      );
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(node);
@@ -75,10 +79,14 @@ describe('AssetsController', () => {
         .spyOn(assetsService, 'getNodeByParaId')
         .mockReturnValue(paraId);
 
-      const result = controller.getAssetsObject(paraId, mockRequestObject);
+      const result = controller.getAssetsObject(
+        paraId,
+        'polkadot',
+        mockRequestObject,
+      );
 
       expect(result).toBe(paraId);
-      expect(spy).toHaveBeenCalledWith(Number(paraId));
+      expect(spy).toHaveBeenCalledWith(Number(paraId), 'polkadot');
     });
   });
 

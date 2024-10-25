@@ -1,5 +1,6 @@
 {
   "Polkadot": {
+    "paraId": 0,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "nativeAssets": [
@@ -11,6 +12,7 @@
     "otherAssets": []
   },
   "Kusama": {
+    "paraId": 0,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "nativeAssets": [
@@ -7054,7 +7056,6 @@
     ]
   },
   "Ethereum": {
-    "paraId": 1,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ETH",
     "nativeAssets": [

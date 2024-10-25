@@ -19,13 +19,20 @@ export class AssetsController {
   }
 
   @Get(':node')
-  getAssetsObject(@Param('node') nodeOrParaId: string, @Req() req: Request) {
+  getAssetsObject(
+    @Param('node') nodeOrParaId: string,
+    @Query('ecosystem') ecosystem: string | undefined,
+    @Req() req: Request,
+  ) {
     const isParaId = isNumeric(nodeOrParaId);
     if (isParaId) {
       this.analyticsService.track(EventName.GET_NODE_BY_PARA_ID, req, {
         paraId: nodeOrParaId,
       });
-      return this.assetsService.getNodeByParaId(Number(nodeOrParaId));
+      return this.assetsService.getNodeByParaId(
+        Number(nodeOrParaId),
+        ecosystem,
+      );
     }
     this.analyticsService.track(EventName.GET_ASSETS_OBJECT, req, {
       node: nodeOrParaId,

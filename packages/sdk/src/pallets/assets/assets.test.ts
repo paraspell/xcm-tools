@@ -1,7 +1,7 @@
 // Contains tests for different Asset operation functions
 
 import { describe, expect, it } from 'vitest'
-import { NODE_NAMES } from '../../maps/consts'
+import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '../../maps/consts'
 import {
   getAllAssetsSymbols,
   getAssetDecimals,
@@ -9,8 +9,12 @@ import {
   getAssetsObject,
   getNativeAssets,
   getOtherAssets,
-  getRelayChainSymbol
+  getParaId,
+  getRelayChainSymbol,
+  getTNode
 } from './assets'
+import type { TRelayChainType } from '../../types'
+import { getNode } from '../../utils'
 
 describe('getAssetsObject', () => {
   it('should return assets object for all nodes', () => {
@@ -21,7 +25,7 @@ describe('getAssetsObject', () => {
           relayChainAssetSymbol: expect.any(String),
           nativeAssets: expect.any(Array),
           otherAssets: expect.any(Array),
-          paraId: expect.any(Number)
+          ...(node !== 'Ethereum' ? { paraId: expect.any(Number) } : {})
         })
       )
     })
@@ -123,9 +127,36 @@ describe('getSupportedAssets', () => {
           relayChainAssetSymbol: expect.any(String),
           nativeAssets: expect.any(Array),
           otherAssets: expect.any(Array),
-          paraId: expect.any(Number)
+          ...(node !== 'Ethereum' ? { paraId: expect.any(Number) } : {})
         })
       )
     })
+  })
+})
+
+describe('getTNode', () => {
+  it('should return supported assets for all nodes', () => {
+    ;(['polkadot', 'kusama'] as TRelayChainType[]).forEach(ecosystem => {
+      NODE_NAMES_DOT_KSM.filter(node => getNode(node).type === ecosystem).forEach(node => {
+        const paraId = getParaId(node)
+        const nodeName = getTNode(paraId, ecosystem)
+        expect(nodeName).toEqual(node)
+      })
+    })
+  })
+
+  it('should return Polkadot for paraId 0', () => {
+    const nodeName = getTNode(0, 'polkadot')
+    expect(nodeName).toEqual('Polkadot')
+  })
+
+  it('should return Kusama for paraId 0', () => {
+    const nodeName = getTNode(0, 'kusama')
+    expect(nodeName).toEqual('Kusama')
+  })
+
+  it('should return null for not existing paraId', () => {
+    const nodeName = getTNode(9999, 'kusama')
+    expect(nodeName).toBeNull()
   })
 })

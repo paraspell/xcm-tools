@@ -1,8 +1,13 @@
 // Contains different useful asset query operations from compatible Parachains asset map
 
 import * as assetsMapJson from '../../maps/assets.json' assert { type: 'json' }
-import { NODE_NAMES } from '../../maps/consts'
-import type { TNodeWithRelayChains, TAsset } from '../../types'
+import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
+import type {
+  TNodeWithRelayChains,
+  TAsset,
+  TRelayChainType,
+  TNodeDotKsmWithRelayChains
+} from '../../types'
 import {
   type TNodeAssets,
   type TAssetJsonMap,
@@ -11,7 +16,7 @@ import {
   type TNativeAssetDetails,
   type TAssetDetails
 } from '../../types'
-import { determineRelayChain } from '../../utils'
+import { determineRelayChain, getNode } from '../../utils'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
@@ -137,7 +142,7 @@ export const getAssetDecimals = (node: TNodeWithRelayChains, symbol: string): nu
  * @param node - The node for which to get the paraId.
  * @returns The parachain ID of the node.
  */
-export const getParaId = (node: TNode): number => {
+export const getParaId = (node: TNodeWithRelayChains): number => {
   return getAssetsObject(node).paraId as number
 }
 
@@ -147,5 +152,17 @@ export const getParaId = (node: TNode): number => {
  * @param paraId - The parachain ID.
  * @returns The node name if found; otherwise, null.
  */
-export const getTNode = (paraId: number): TNode | null =>
-  NODE_NAMES.find(node => getParaId(node) === paraId) ?? null
+export const getTNode = (
+  paraId: number,
+  ecosystem: TRelayChainType
+): TNodeDotKsmWithRelayChains | null => {
+  if (paraId === 0) {
+    return ecosystem === 'polkadot' ? 'Polkadot' : 'Kusama'
+  }
+
+  return (
+    NODE_NAMES_DOT_KSM.find(
+      nodeName => getNode(nodeName).type === ecosystem && getParaId(nodeName) === paraId
+    ) ?? null
+  )
+}
