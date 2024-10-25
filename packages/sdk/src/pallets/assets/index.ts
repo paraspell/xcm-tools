@@ -1,5 +1,6 @@
 export * from './assets'
 export * from './eds'
+export * from './balance/getAssetBalance'
 export * from './balance/getBalanceNative'
 export * from './balance/getBalanceForeign'
 export * from './getOriginFeeDetails'

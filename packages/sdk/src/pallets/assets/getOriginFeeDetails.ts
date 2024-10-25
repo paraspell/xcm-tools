@@ -63,11 +63,6 @@ export const getOriginFeeDetails = async (
   const xcmFeeBigInt = BigInt(xcmFee.toString())
   const xcmFeeWithMargin = xcmFeeBigInt + xcmFeeBigInt / BigInt(feeMarginPercentage)
 
-  console.log('nativeBalance', nativeBalance)
-  console.log('minTransferableAmount', minTransferableAmount)
-  console.log('xcmFeeBigInt', xcmFeeBigInt)
-  console.log('xcmFeeWithMargin', xcmFeeWithMargin)
-
   const sufficientForXCM = nativeBalance - minTransferableAmount - xcmFeeWithMargin > 0
 
   return {

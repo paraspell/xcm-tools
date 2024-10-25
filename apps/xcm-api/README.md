@@ -93,7 +93,7 @@ const response = await fetch('http://localhost:3001/x-transfer-hash', {
   body: JSON.stringify({
     from: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
     to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
-    currency: {currencySpec}, // {id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}
+    currency: { currencySpec }, // {id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}
     amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
     address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
@@ -112,12 +112,12 @@ const response = await fetch('http://localhost:3001/x-transfer-hash', {
     to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
     address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     currency: {
-        multilocation: {
+      multilocation: {
         parents: 0,
         interior: {
           X2: [{ PalletInstance: '50' }, { GeneralIndex: '41' }],
         },
-      }
+      },
     },
     amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
@@ -129,18 +129,17 @@ const response = await fetch('http://localhost:3001/x-transfer-hash', {
 
 A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#batch-call).
 
-Possible parameters:
-     - `transfers` (Inside JSON body): (required): Represents array of XCM calls along with optional parameter "options" which contains "mode" to switch between BATCH and BATCH_ALL call forms.
+Possible parameters: - `transfers` (Inside JSON body): (required): Represents array of XCM calls along with optional parameter "options" which contains "mode" to switch between BATCH and BATCH_ALL call forms.
 
 ```js
-const response = await fetch("http://localhost:3001/x-transfer-batch", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        transfers: "Parachain", // Replace "transfers" with array of XCM transfers
-    })
+const response = await fetch('http://localhost:3001/x-transfer-batch', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    transfers: 'Parachain', // Replace "transfers" with array of XCM transfers
+  }),
 });
 ```
 
@@ -182,16 +181,15 @@ Possible parameters:
 - `accountDestination`: (Inside JSON body): (required): Specifies the recipient's address.
 
 ```js
-const response = await fetch(
-  'http://localhost:3001/transfer-info?' , {
+const response = await fetch('http://localhost:3001/transfer-info?', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-  },  
+  },
   body: JSON.stringify({
     origin: 'Parachain', // Replace "Parachain" with chain you wish to query transfer info for as origin
     destination: 'Parachain', // Replace "Parachain" with chain you wish to query transfer info for as destination
-    currency: {currencySpec}, //{id: currencyID} | {symbol: currencySymbol}
+    currency: { currencySpec }, //{id: currencyID} | {symbol: currencySymbol}
     amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
     accountOrigin: 'Account address', // Replace "Address" with origin wallet address (In AccountID32 or AccountKey20 Format)
     accountDestination: 'Account address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
@@ -231,8 +229,8 @@ const response = await fetch('http://localhost:3001/router-hash', {
     from: 'Chain', //Origin Parachain/Relay chain
     exchange: 'Dex', //Exchange Parachain/Relay chain //Optional parameter, if not specified exchange will be auto-selected
     to: 'Chain', //Destination Parachain/Relay chain
-    currencyFrom: {CurrencySpec}, // {id: currencyID} | {symbol: currencySymbol}
-    currencyTo: {CurrencySpec}, // {id: currencyID} | {symbol: currencySymbol}
+    currencyFrom: { CurrencySpec }, // {id: currencyID} | {symbol: currencySymbol}
+    currencyTo: { CurrencySpec }, // {id: currencyID} | {symbol: currencySymbol}
     amount: 'Amount', // Amount to send
     slippagePct: 'Pct', // Max slipppage percentage
     address: 'Address', //Recipient address
@@ -314,7 +312,7 @@ const response = await fetch(
 const response = await fetch('http://localhost:3001/assets/:node/para-id');
 
 //Retrieve Parachain name from Parachain ID
-const response = await fetch('http://localhost:3001/assets/:paraID');
+const response = await fetch('http://localhost:3001/assets/:paraID?ecosystem=polkadot');
 
 //Retrieve a list of implemented Parachains
 const response = await fetch('http://localhost:3001/assets');
@@ -326,7 +324,7 @@ const response = await fetch("http://localhost:3001/balance/:node/native", {
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
+        address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format)
     })
 });
 
@@ -337,7 +335,7 @@ const response = await fetch("http://localhost:3001/balance/:node/foreign", {
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
+        address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format)
         currency: "Currency" //Replace "Currency" with either symbol { symbol: "KSM" } or  id { id: 123 }
     })
 });

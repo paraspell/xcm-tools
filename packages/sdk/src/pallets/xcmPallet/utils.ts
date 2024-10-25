@@ -8,13 +8,14 @@ import {
   type TNode,
   type TCurrencySelectionHeaderArr
 } from '../../types'
-import { getParaId, getTNode } from '../assets'
+import { getParaId } from '../assets'
 import type { Junctions, TJunction } from '../../types/TMultiLocation'
 import { type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 import { findParachainJunction } from './findParachainJunction'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { createX1Payload } from '../../utils/createX1Payload'
+import { NODE_NAMES } from '../../maps/consts'
 
 export const constructRelayToParaParameters = (
   { api, destination, address, amount, paraIdTo }: TRelayToParaInternalOptions,
@@ -160,7 +161,7 @@ export const resolveTNodeFromMultiLocation = (multiLocation: TMultiLocation): TN
     throw new Error('Parachain ID not found in destination multi location.')
   }
 
-  const node = getTNode(parachainId)
+  const node = NODE_NAMES.find(nodeName => getParaId(nodeName) === parachainId) ?? null
 
   if (node === null) {
     throw new Error('Node with specified paraId not found in destination multi location.')

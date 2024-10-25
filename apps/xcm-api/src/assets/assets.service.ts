@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   NODE_NAMES,
   TNode,
@@ -74,8 +78,13 @@ export class AssetsService {
     return getParaId(node as TNode);
   }
 
-  getNodeByParaId(paraId: number) {
-    const node = getTNode(paraId);
+  getNodeByParaId(paraId: number, ecosystem: string | undefined) {
+    if (ecosystem !== 'polkadot' && ecosystem !== 'kusama') {
+      throw new BadRequestException(
+        "Invalid ecosystem provided. Available options are 'polkadot' and 'kusama'.",
+      );
+    }
+    const node = getTNode(paraId, ecosystem);
     if (!node) {
       throw new NotFoundException(
         `Node with parachain id ${paraId} not found.`,
