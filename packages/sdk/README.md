@@ -27,10 +27,23 @@
 ## Installation
 
 #### Install dependencies
+Install peer dependencies according to choice of API package. ParaSpell XCM SDK is the 🥇 in the ecosystem to support both PolkadotJS and PolkadotAPI.
 
 ```bash
+#NOTE: apps-config will soon be removed entirely from peer dependency list
+
+#Choose package and install it's dependencies below (SDK is built in a way, that the only one library has to be installed)
+
+#Polkadot API peer dependecies
+pnpm | npm install || yarn add polkadot-api @polkadot/apps-config
+
+#PolkadotJS peer dependencies
 pnpm | npm install || yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 ```
+
+**Make sure to set PeerDependencyInstall flag for SDK to false on your package manager (Because it will install both API packages instead of just one)**
+
+For example on PNPM: `pnpm config set auto-install-peers false`
 
 #### Install SDK 
 
@@ -42,15 +55,24 @@ pnpm | npm install || yarn add @paraspell/sdk
 
 Builder pattern:
 ```js
+// Polkadot API version
+import { Builder } from '@paraspell/sdk/papi'
+
+// Polkadot JS version
 import { Builder } from '@paraspell/sdk'
 ```
 
 Other patterns:
 ```js
-// ESM
+// ESM PAPI
+import * as paraspell from '@paraspell/sdk/papi'
+// ESM PJS
 import * as paraspell from '@paraspell/sdk'
 
-// CommonJS
+// CommonJS PAPI
+const paraspell = require('@paraspell/sdk/papi')
+
+// CommonJS PJS
 const paraspell = require('@paraspell/sdk')
 ```
 
