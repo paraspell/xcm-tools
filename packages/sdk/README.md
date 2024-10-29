@@ -289,7 +289,10 @@ paraspell.NODE_NAMES
 
 ### Parachain XCM Pallet queries
 ```ts
+//PJS
 import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk'
+//PAPI
+import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk/papi'
 
 //Retrieve default pallet for specific Parachain 
 getDefaultPallet(node: TNode)
@@ -303,14 +306,20 @@ console.log(SUPPORTED_PALLETS)
 
 ### Existential deposit queries
 ```ts
+//PJS
 import { getExistentialDeposit } from "@paraspell/sdk";
+//PAPI
+import { getExistentialDeposit } from "@paraspell/sdk/papi";
 
 const ed = getExistentialDeposit('Acala')
 ```
 
 ### XCM Transfer info
 ```ts
-import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails } from "@paraspell/sdk"; 
+//PJS
+import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails } from "@paraspell/sdk";
+//PAPI
+import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails } from "@paraspell/sdk/papi"; 
 
 //Get balance of foreign currency
 await getBalanceForeign(address, Parachain name, currency /*- {id: currencyID} | {symbol: currencySymbol}*/)
