@@ -1,6 +1,6 @@
 import type {
   HexString,
-  TCurrencyCore,
+  TAsset,
   TMultiLocation,
   TNodeWithRelayChains,
   TSerializedApiCallV2
@@ -18,11 +18,6 @@ export interface IPolkadotApi<TApi, TRes> {
   getBalanceForeign(address: string, id?: string): Promise<bigint | null>
   getMythosForeignBalance(address: string): Promise<bigint | null>
   getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint | null>
-  getBalanceForeignXTokens(
-    address: string,
-    symbolOrId: TCurrencyCore,
-    symbol: string | undefined,
-    id: string | undefined
-  ): Promise<bigint | null>
+  getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint | null>
   clone(): IPolkadotApi<TApi, TRes>
 }

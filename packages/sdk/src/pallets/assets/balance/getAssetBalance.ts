@@ -11,7 +11,9 @@ export const getAssetBalance = async <TApi, TRes>({
   api
 }: TGetAssetBalanceOptions<TApi, TRes>): Promise<bigint> => {
   await api.init(node)
-  const isNativeSymbol = 'symbol' in currency && getNativeAssetSymbol(node) === currency.symbol
+
+  const isNativeSymbol =
+    'symbol' in currency ? getNativeAssetSymbol(node) === currency.symbol : false
   return isNativeSymbol
     ? await getBalanceNative({
         address,

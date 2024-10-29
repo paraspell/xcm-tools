@@ -12,6 +12,7 @@ export const ASSET_QUERIES = [
   "PARA_ID",
   "BALANCE_NATIVE",
   "BALANCE_FOREIGN",
+  "ASSET_BALANCE",
 ] as const;
 
 export const PALLETS_QUERIES = ["ALL_PALLETS", "DEFAULT_PALLET"] as const;

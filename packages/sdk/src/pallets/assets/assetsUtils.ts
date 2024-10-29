@@ -60,5 +60,5 @@ export const findAssetById = (assets: TAsset[], assetId: TCurrency) => {
     throw new DuplicateAssetIdError(assetId.toString())
   }
 
-  return assets.find(({ assetId: currentAssetId }) => currentAssetId === assetId)
+  return assets.find(({ assetId: currentAssetId }) => currentAssetId === assetId.toString())
 }

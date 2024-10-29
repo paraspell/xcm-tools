@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type {
   HexString,
-  TCurrencyCore,
+  TAsset,
   TMultiLocation,
   TNodeWithRelayChains,
   TSerializedApiCallV2
@@ -91,33 +91,27 @@ class PolkadotJsApi implements IPolkadotApi<ApiPromise, Extrinsic> {
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
-  async getBalanceForeignXTokens(
-    address: string,
-    symbolOrId: TCurrencyCore,
-    symbol: string | undefined,
-    id: string | undefined
-  ): Promise<bigint | null> {
+  async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint | null> {
     const response: Array<[StorageKey<AnyTuple>, Codec]> =
       await this.api.query.tokens.accounts.entries(address)
 
     const entry = response.find(
       ([
         {
-          args: [_, asset]
+          args: [_, assetItem]
         },
         _value1
       ]) => {
+        const assetSymbol = assetItem.toString().toLowerCase()
         return (
-          ('symbol' in symbolOrId && asset.toString() === symbolOrId.symbol) ||
-          ('id' in symbolOrId && asset.toString() === symbolOrId.id) ||
-          asset.toString() === id ||
-          asset.toString() === symbol ||
-          ('symbol' in symbolOrId &&
-            Object.values(asset.toHuman() ?? {}).toString() === symbolOrId.symbol) ||
-          ('id' in symbolOrId &&
-            Object.values(asset.toHuman() ?? {}).toString() === symbolOrId.id) ||
-          Object.values(asset.toHuman() ?? {}).toString() === id ||
-          Object.values(asset.toHuman() ?? {}).toString() === symbol
+          assetSymbol === asset.symbol?.toLowerCase() ||
+          assetSymbol === asset.assetId?.toLowerCase() ||
+          Object.values(assetItem.toHuman() ?? {})
+            .toString()
+            .toLowerCase() === asset.symbol?.toLowerCase() ||
+          Object.values(assetItem.toHuman() ?? {})
+            .toString()
+            .toLowerCase() === asset.assetId?.toLowerCase()
         )
       }
     )

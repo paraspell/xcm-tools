@@ -46,12 +46,16 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
     funcVal === "ASSET_ID" ||
     funcVal === "DECIMALS" ||
     funcVal == "HAS_SUPPORT" ||
-    funcVal === "BALANCE_FOREIGN";
+    funcVal === "BALANCE_FOREIGN" ||
+    funcVal === "ASSET_BALANCE";
 
-  const supportsCurrencyType = funcVal === "BALANCE_FOREIGN";
+  const supportsCurrencyType =
+    funcVal === "BALANCE_FOREIGN" || funcVal === "ASSET_BALANCE";
 
   const showAddressInput =
-    funcVal === "BALANCE_FOREIGN" || funcVal === "BALANCE_NATIVE";
+    funcVal === "BALANCE_FOREIGN" ||
+    funcVal === "BALANCE_NATIVE" ||
+    funcVal === "ASSET_BALANCE";
 
   const onSubmitInternal = (formValues: FormValues) => {
     const { func } = formValues;
@@ -113,7 +117,7 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
                   { label: "Symbol", value: "symbol" },
                 ]}
                 data-testid="currency-type"
-                {...form.getInputProps("customCurrencyType")}
+                {...form.getInputProps("currencyType")}
               />
             )}
           </Group>

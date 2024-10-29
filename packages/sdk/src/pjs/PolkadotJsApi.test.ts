@@ -4,7 +4,7 @@ import type { StorageKey } from '@polkadot/types'
 import { u32 } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
 import PolkadotJsApi from './PolkadotJsApi'
-import type { TSerializedApiCallV2, TMultiLocation, TCurrencyCore } from '../types'
+import type { TSerializedApiCallV2, TMultiLocation } from '../types'
 import type { Extrinsic } from '../pjs/types'
 import * as utils from '../utils'
 import type { VoidFn } from '@polkadot/api/types'
@@ -274,9 +274,6 @@ describe('PolkadotJsApi', () => {
   describe('getBalanceForeignXTokens', () => {
     it('should return the balance when asset matches symbolOrId', async () => {
       const address = 'some_address'
-      const symbolOrId: TCurrencyCore = { symbol: 'DOT' }
-      const symbol = 'DOT'
-      const id = '1'
       const mockEntry = [
         {
           args: [address, { toString: () => 'DOT', toHuman: () => ({}) }]
@@ -286,22 +283,79 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([mockEntry])
 
-      const balance = await polkadotApi.getBalanceForeignXTokens(address, symbolOrId, symbol, id)
+      const balance = await polkadotApi.getBalanceForeignXTokens(address, {
+        symbol: 'DOT',
+        assetId: '1'
+      })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
       expect(balance).toBe(BigInt(6000))
     })
 
     it('should return null when no matching asset found', async () => {
       const address = 'some_address'
-      const symbolOrId: TCurrencyCore = { symbol: 'DOT' }
-      const symbol = 'DOT'
-      const id = '1'
 
       vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([])
 
-      const balance = await polkadotApi.getBalanceForeignXTokens(address, symbolOrId, symbol, id)
+      const balance = await polkadotApi.getBalanceForeignXTokens(address, {
+        symbol: 'DOT',
+        assetId: '1'
+      })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
       expect(balance).toBeNull()
+    })
+
+    it('should return balance when assetItem is object by symbol', async () => {
+      const address = 'some_address'
+      const mockEntry = [
+        {
+          args: [
+            address,
+            {
+              toString: () => '',
+              toHuman: () => ({
+                ForeignToken: 'DOT'
+              })
+            }
+          ]
+        },
+        { free: { toString: () => '6000' } }
+      ] as unknown as [StorageKey<AnyTuple>, Codec]
+
+      vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([mockEntry])
+
+      const balance = await polkadotApi.getBalanceForeignXTokens(address, {
+        symbol: 'DOT',
+        assetId: '1'
+      })
+      expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
+      expect(balance).toBe(BigInt(6000))
+    })
+
+    it('should return balance when assetItem is object by id', async () => {
+      const address = 'some_address'
+      const mockEntry = [
+        {
+          args: [
+            address,
+            {
+              toString: () => '',
+              toHuman: () => ({
+                ForeignToken: '1'
+              })
+            }
+          ]
+        },
+        { free: { toString: () => '6000' } }
+      ] as unknown as [StorageKey<AnyTuple>, Codec]
+
+      vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([mockEntry])
+
+      const balance = await polkadotApi.getBalanceForeignXTokens(address, {
+        symbol: 'DOT',
+        assetId: '1'
+      })
+      expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
+      expect(balance).toBe(BigInt(6000))
     })
   })
   describe('clone', () => {

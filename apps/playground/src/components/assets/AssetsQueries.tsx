@@ -84,6 +84,13 @@ const AssetsQueries = () => {
           currency:
             currencyType === "id" ? { id: currency } : { symbol: currency },
         });
+      case "ASSET_BALANCE":
+        return Sdk.getAssetBalance({
+          address,
+          node,
+          currency:
+            currencyType === "id" ? { id: currency } : { symbol: currency },
+        });
     }
   };
 
@@ -115,6 +122,10 @@ const AssetsQueries = () => {
         return apiType === "PAPI"
           ? `/balance/${node}/foreign-papi`
           : `/balance/${node}/foreign`;
+      case "ASSET_BALANCE":
+        return apiType === "PAPI"
+          ? `/balance/${node}/asset-papi`
+          : `/balance/${node}/asset`;
     }
   };
 

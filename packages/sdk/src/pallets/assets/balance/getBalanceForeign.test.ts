@@ -7,6 +7,7 @@ import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { Extrinsic } from '../../../pjs/types'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import * as palletsModule from '../../pallets'
+import { InvalidCurrencyError } from '../../../errors'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn()
@@ -95,5 +96,17 @@ describe('getBalanceForeign', () => {
         api: mockApi
       })
     ).rejects.toThrow('Unsupported pallet')
+  })
+
+  it('throws an error for invalid currency', async () => {
+    vi.mocked(getAssetBySymbolOrId).mockReturnValue(null)
+    await expect(
+      getBalanceForeign({
+        address: 'address',
+        node: 'Acala',
+        currency: { symbol: 'DOT' },
+        api: mockApi
+      })
+    ).rejects.toThrow(InvalidCurrencyError)
   })
 })
