@@ -26,32 +26,36 @@
 <br /><br />
 ## Installation
 
-#### Install dependencies
-Install peer dependencies according to choice of API package. ParaSpell XCM SDK is the 🥇 in the ecosystem to support both PolkadotJS and PolkadotAPI.
+### Install dependencies
+
+Install peer dependencies according to the choice of API package. 
+
+ParaSpell XCM SDK is the 🥇 in the ecosystem to support both **PolkadotJS** and **PolkadotAPI**.
+
+```
+NOTE: Make sure to set PeerDependencyInstall flag to false on your package manager (Because it will install both API packages instead of just one)
+For example on PNPM: `pnpm config set auto-install-peers false`
+```
 
 ```bash
-#NOTE: apps-config will soon be removed entirely from peer dependency list
+#NOTE: apps-config will soon be removed entirely from the peer dependency list
 
-#Choose package and install it's dependencies below (SDK is built in a way, that the only one library has to be installed)
+#Choose a package and install its dependencies below (SDK is built in a way, that only one library has to be installed)
 
-#Polkadot API peer dependecies
+#Polkadot API peer dependencies
 pnpm | npm install || yarn add polkadot-api @polkadot/apps-config
 
 #PolkadotJS peer dependencies
 pnpm | npm install || yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 ```
 
-**Make sure to set PeerDependencyInstall flag for SDK to false on your package manager (Because it will install both API packages instead of just one)**
-
-For example on PNPM: `pnpm config set auto-install-peers false`
-
-#### Install SDK 
+### Install SDK 
 
 ```bash
 pnpm | npm install || yarn add @paraspell/sdk
 ```
 
-#### Importing package to your project:
+### Importing package to your project
 
 Builder pattern:
 ```js
