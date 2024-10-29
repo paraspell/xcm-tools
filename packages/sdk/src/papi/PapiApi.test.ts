@@ -2,12 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import PapiApi from './PapiApi'
 import type { PolkadotClient } from 'polkadot-api'
 import type { TPapiTransaction } from '../papi/types'
-import type {
-  TNodeWithRelayChains,
-  TSerializedApiCallV2,
-  TCurrencyCore,
-  TMultiLocation
-} from '../types'
+import type { TNodeWithRelayChains, TSerializedApiCallV2, TMultiLocation } from '../types'
 import * as utils from '../utils'
 import { createClient, FixedSizeBinary } from 'polkadot-api'
 import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
@@ -86,9 +81,12 @@ describe('PapiApi', () => {
             Accounts: {
               getEntries: vi.fn().mockResolvedValue([
                 {
-                  keyArgs: {
-                    toString: vi.fn().mockReturnValue('DOT')
-                  },
+                  keyArgs: [
+                    '',
+                    {
+                      toString: vi.fn().mockReturnValue('DOT')
+                    }
+                  ],
                   value: {
                     free: {
                       toString: vi.fn().mockReturnValue('6000')
@@ -288,11 +286,69 @@ describe('PapiApi', () => {
   describe('getBalanceForeignXTokens', () => {
     it('should return the balance when asset matches symbolOrId', async () => {
       papiApi.setApi(mockPolkadotClient)
-      const symbolOrId: TCurrencyCore = { symbol: 'DOT' }
-      const balance = await papiApi.getBalanceForeignXTokens('some_address', symbolOrId, 'DOT', '1')
+      const balance = await papiApi.getBalanceForeignXTokens('some_address', {
+        symbol: 'DOT',
+        assetId: '1'
+      })
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Tokens.Accounts.getEntries).toHaveBeenCalledWith('some_address')
+      expect(balance).toBe(BigInt(6000))
+    })
+
+    it('should return the balance when asset matches object by id', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.query.Tokens.Accounts.getEntries = vi.fn().mockResolvedValue([
+        {
+          keyArgs: [
+            '',
+            {
+              toString: vi.fn().mockReturnValue(''),
+              type: 'ForeignToken',
+              value: '1'
+            }
+          ],
+          value: {
+            free: {
+              toString: vi.fn().mockReturnValue('6000')
+            }
+          }
+        }
+      ])
+
+      const balance = await papiApi.getBalanceForeignXTokens('some_address', {
+        symbol: 'DOT',
+        assetId: '1'
+      })
+
+      expect(balance).toBe(BigInt(6000))
+    })
+
+    it('should return the balance when asset matches object by symbol', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.query.Tokens.Accounts.getEntries = vi.fn().mockResolvedValue([
+        {
+          keyArgs: [
+            '',
+            {
+              toString: vi.fn().mockReturnValue(''),
+              type: 'ForeignToken',
+              value: 'DOT'
+            }
+          ],
+          value: {
+            free: {
+              toString: vi.fn().mockReturnValue('6000')
+            }
+          }
+        }
+      ])
+
+      const balance = await papiApi.getBalanceForeignXTokens('some_address', {
+        symbol: 'DOT',
+        assetId: '1'
+      })
+
       expect(balance).toBe(BigInt(6000))
     })
 
@@ -300,8 +356,10 @@ describe('PapiApi', () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.query.Tokens.Accounts.getEntries = vi.fn().mockResolvedValue([])
 
-      const symbolOrId: TCurrencyCore = { symbol: 'DOT' }
-      const balance = await papiApi.getBalanceForeignXTokens('some_address', symbolOrId, 'DOT', '1')
+      const balance = await papiApi.getBalanceForeignXTokens('some_address', {
+        symbol: 'DOT',
+        assetId: '1'
+      })
 
       expect(balance).toBeNull()
     })

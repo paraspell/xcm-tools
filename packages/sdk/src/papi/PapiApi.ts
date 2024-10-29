@@ -1,6 +1,6 @@
 import type {
   HexString,
-  TCurrencyCore,
+  TAsset,
   TMultiLocation,
   TNodeWithRelayChains,
   TSerializedApiCallV2
@@ -109,23 +109,25 @@ class PapiApi implements IPolkadotApi<PolkadotClient, TPapiTransaction> {
     return BigInt(res === null || !res.balance ? 0 : res.balance)
   }
 
-  async getBalanceForeignXTokens(
-    address: string,
-    symbolOrId: TCurrencyCore,
-    symbol: string | undefined,
-    id: string | undefined
-  ): Promise<bigint | null> {
+  async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint | null> {
     const response = await this.api.getUnsafeApi().query.Tokens.Accounts.getEntries(address)
+
     const entry = response.find(({ keyArgs }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const [_address, assetItem] = keyArgs
+
       return (
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        ('symbol' in symbolOrId && keyArgs.toString() === symbolOrId.symbol) ||
+        assetItem.toString().toLowerCase() === asset.symbol?.toLowerCase() ||
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        ('id' in symbolOrId && keyArgs.toString() === symbolOrId.id) ||
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        keyArgs.toString() === id ||
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        keyArgs.toString() === symbol
+        assetItem.toString().toLowerCase() === asset.assetId?.toLowerCase() ||
+        (typeof assetItem === 'object' &&
+          'value' in assetItem && // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+          assetItem.value.toString().toLowerCase() === asset.symbol?.toLowerCase()) ||
+        (typeof assetItem === 'object' &&
+          'value' in assetItem &&
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+          assetItem.value.toString().toLowerCase() === asset.assetId?.toLowerCase())
       )
     })
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access

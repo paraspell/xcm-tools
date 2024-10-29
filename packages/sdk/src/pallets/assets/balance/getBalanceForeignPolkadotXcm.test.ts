@@ -19,7 +19,12 @@ describe('getBalanceForeignPolkadotXcm', () => {
       getMythosForeignBalance: vi.fn().mockResolvedValue(BigInt(1000))
     } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
-    const result = await getBalanceForeignPolkadotXcm('some-address', undefined, mockApi, 'Mythos')
+    const result = await getBalanceForeignPolkadotXcm(
+      'some-address',
+      { symbol: 'DOT', assetId: '1' },
+      mockApi,
+      'Mythos'
+    )
 
     expect(result).toBe(BigInt(1000))
   })
@@ -36,10 +41,9 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     const result = await getBalanceForeignPolkadotXcm(
       'some-address',
-      'some-id',
+      { symbol: 'DOT', assetId: '1' },
       mockApi,
-      'AssetHubPolkadot',
-      'DOT'
+      'AssetHubPolkadot'
     )
 
     expect(getAssetHubMultiLocation).toHaveBeenCalledWith('DOT')
@@ -53,7 +57,12 @@ describe('getBalanceForeignPolkadotXcm', () => {
       getMythosForeignBalance: vi.fn().mockRejectedValue(new Error('API error'))
     } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
-    const result = await getBalanceForeignPolkadotXcm('some-address', undefined, mockApi, 'Mythos')
+    const result = await getBalanceForeignPolkadotXcm(
+      'some-address',
+      { symbol: 'DOT', assetId: '1' },
+      mockApi,
+      'Mythos'
+    )
 
     expect(result).toBeNull()
     expect(consoleSpy).toHaveBeenCalledWith('Error while fetching balance', expect.any(Error))
