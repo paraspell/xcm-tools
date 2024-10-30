@@ -1,14 +1,22 @@
 import { BadRequestException } from '@nestjs/common';
-import type { Extrinsic, TNode, TSerializedApiCall } from '@paraspell/sdk';
-import { NODE_NAMES } from '@paraspell/sdk';
+import type {
+  Extrinsic,
+  TNodePolkadotKusama,
+  TSerializedApiCall,
+} from '@paraspell/sdk';
+import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '@paraspell/sdk';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'web3-validator';
 
 export const isNumeric = (num: string) => !isNaN(Number(num));
 
-export const validateNode = (node: string) => {
-  if (!NODE_NAMES.includes(node as TNode)) {
+export const validateNode = (
+  node: string,
+  { excludeEthereum } = { excludeEthereum: false },
+) => {
+  const nodeList = excludeEthereum ? NODE_NAMES_DOT_KSM : NODE_NAMES;
+  if (!nodeList.includes(node as TNodePolkadotKusama)) {
     throw new BadRequestException(
       `Node ${node} is not valid. Check docs for valid nodes.`,
     );

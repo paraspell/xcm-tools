@@ -142,7 +142,7 @@ export const getAssetDecimals = (node: TNodeWithRelayChains, symbol: string): nu
  * @param node - The node for which to get the paraId.
  * @returns The parachain ID of the node.
  */
-export const getParaId = (node: TNodeWithRelayChains): number => {
+export const getParaId = (node: TNodeDotKsmWithRelayChains): number => {
   return getAssetsObject(node).paraId as number
 }
 

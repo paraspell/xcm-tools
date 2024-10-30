@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { ApiPromise } from '@polkadot/api'
 import { Builder } from '../../../builder'
 import { createTx } from './createTx'
-import type { TNode } from '../../../types'
+import type { TNodePolkadotKusama } from '../../../types'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { Extrinsic } from '../../../pjs/types'
 
@@ -28,7 +28,7 @@ describe('createTx', () => {
     const address = 'test-address'
     const amount = '1000'
     const currencySymbol = 'DOT'
-    const destNode = 'NodeB' as TNode
+    const destNode = 'NodeB' as TNodePolkadotKusama
 
     const result = await createTx(
       originApi,
@@ -51,8 +51,8 @@ describe('createTx', () => {
     const address = 'test-address'
     const amount = '1000'
     const currencySymbol = 'DOT'
-    const originNode = 'NodeA' as TNode
-    const destNode = 'NodeB' as TNode
+    const originNode = 'NodeA' as TNodePolkadotKusama
+    const destNode = 'NodeB' as TNodePolkadotKusama
 
     const result = await createTx(
       originApi,

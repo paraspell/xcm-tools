@@ -6,6 +6,7 @@ import {
 import {
   NODE_NAMES,
   TNode,
+  TNodePolkadotKusama,
   getAllAssetsSymbols,
   getAssetDecimals,
   getAssetId,
@@ -74,8 +75,8 @@ export class AssetsService {
   }
 
   getParaId(node: string) {
-    validateNode(node);
-    return getParaId(node as TNode);
+    validateNode(node, { excludeEthereum: true });
+    return getParaId(node as TNodePolkadotKusama);
   }
 
   getNodeByParaId(paraId: number, ecosystem: string | undefined) {

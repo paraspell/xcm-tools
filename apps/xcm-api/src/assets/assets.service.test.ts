@@ -410,7 +410,9 @@ describe('AssetsService', () => {
           BadRequestException,
         );
 
-        expect(validateNodeSpy).toHaveBeenCalledWith(invalidNode);
+        expect(validateNodeSpy).toHaveBeenCalledWith(invalidNode, {
+          excludeEthereum: true,
+        });
         expect(getParaIdSpy).not.toHaveBeenCalled();
       });
     });

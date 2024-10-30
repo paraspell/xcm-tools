@@ -1,4 +1,4 @@
-import type { TNode } from '../../../types'
+import type { TNodePolkadotKusama } from '../../../types'
 import { Builder } from '../../../builder'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 
@@ -8,8 +8,8 @@ export const createTx = async <TApi, TRes>(
   address: string,
   amount: string,
   currencySymbol: string,
-  originNode?: TNode,
-  destNode?: TNode
+  originNode?: TNodePolkadotKusama,
+  destNode?: TNodePolkadotKusama
 ): Promise<TRes | null> => {
   if (originNode !== undefined && destNode !== undefined) {
     return await Builder<TApi, TRes>(destApi)

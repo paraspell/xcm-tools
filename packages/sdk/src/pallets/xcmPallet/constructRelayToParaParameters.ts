@@ -11,7 +11,7 @@ export const constructRelayToParaParameters = <TApi, TRes>(
 ): Record<string, unknown> => {
   // Handle the case when a destination is a multi-location
   const paraId =
-    destination !== undefined && typeof destination !== 'object'
+    destination !== undefined && typeof destination !== 'object' && destination !== 'Ethereum'
       ? (paraIdTo ?? getParaId(destination))
       : undefined
 

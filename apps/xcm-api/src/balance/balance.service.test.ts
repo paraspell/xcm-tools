@@ -20,14 +20,18 @@ vi.mock('@paraspell/sdk', () => ({
   createApiInstanceForNode: vi.fn(),
   getBalanceForeign: vi.fn(),
   getBalanceNative: vi.fn(),
+  NODE_NAMES_DOT_KSM: ['valid-node'],
   NODES_WITH_RELAY_CHAINS: ['valid-node'],
+  NODES_WITH_RELAY_CHAINS_DOT_KSM: ['valid-node'],
 }));
 
 vi.mock('@paraspell/sdk/papi', () => ({
   createApiInstanceForNode: vi.fn(),
   getBalanceForeign: vi.fn(),
   getBalanceNative: vi.fn(),
+  NODE_NAMES_DOT_KSM: ['valid-node'],
   NODES_WITH_RELAY_CHAINS: ['valid-node'],
+  NODES_WITH_RELAY_CHAINS_DOT_KSM: ['valid-node'],
 }));
 
 describe('BalanceService', () => {

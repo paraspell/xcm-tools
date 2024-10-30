@@ -1,5 +1,5 @@
 import { useForm } from "@mantine/form";
-import type { FC } from "react";
+import { useEffect, type FC } from "react";
 import {
   Button,
   Checkbox,
@@ -9,14 +9,14 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
-import type { TNodePolkadotKusama } from "@paraspell/sdk";
-import { NODE_NAMES } from "@paraspell/sdk";
+import type { TNode } from "@paraspell/sdk";
+import { NODE_NAMES, NODE_NAMES_DOT_KSM } from "@paraspell/sdk";
 import type { TAssetsQuery } from "../../types";
 import { ASSET_QUERIES } from "../../consts";
 
 export type FormValues = {
   func: TAssetsQuery;
-  node: TNodePolkadotKusama;
+  node: TNode;
   currency: string;
   address: string;
   useApi: boolean;
@@ -67,13 +67,27 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
     });
   };
 
+  const notSupportsEthereum =
+    funcVal === "PARA_ID" ||
+    funcVal === "BALANCE_NATIVE" ||
+    funcVal === "BALANCE_FOREIGN" ||
+    funcVal === "ASSET_BALANCE";
+
+  const nodeList = notSupportsEthereum ? NODE_NAMES_DOT_KSM : NODE_NAMES;
+
+  useEffect(() => {
+    if (form.values.node === "Ethereum" && notSupportsEthereum) {
+      form.setFieldValue("node", "Acala");
+    }
+  }, [form.values.func]);
+
   return (
     <form onSubmit={form.onSubmit(onSubmitInternal)}>
       <Stack>
         <Select
           label="Function"
           placeholder="Pick value"
-          data={[...ASSET_QUERIES]}
+          data={ASSET_QUERIES}
           searchable
           required
           allowDeselect={false}
@@ -84,7 +98,7 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="Node"
           placeholder="Pick value"
-          data={[...NODE_NAMES]}
+          data={nodeList}
           searchable
           required
           allowDeselect={false}

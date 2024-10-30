@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { fetchFromApi } from "../../utils/submitUsingApi";
 import type { FormValues } from "./AssetsForm";
 import AssetsForm from "./AssetsForm";
+import type { TNodePolkadotKusama } from "@paraspell/sdk";
 import {
   getAllAssetsSymbols,
   getAssetDecimals,
@@ -74,20 +75,23 @@ const AssetsQueries = () => {
       case "HAS_SUPPORT":
         return hasSupportForAsset(node, currency);
       case "PARA_ID":
-        return getParaId(node);
+        return getParaId(node as TNodePolkadotKusama);
       case "BALANCE_NATIVE":
-        return Sdk.getBalanceNative({ address, node });
+        return Sdk.getBalanceNative({
+          address,
+          node: node as TNodePolkadotKusama,
+        });
       case "BALANCE_FOREIGN":
         return Sdk.getBalanceForeign({
           address,
-          node,
+          node: node as TNodePolkadotKusama,
           currency:
             currencyType === "id" ? { id: currency } : { symbol: currency },
         });
       case "ASSET_BALANCE":
         return Sdk.getAssetBalance({
           address,
-          node,
+          node: node as TNodePolkadotKusama,
           currency:
             currencyType === "id" ? { id: currency } : { symbol: currency },
         });

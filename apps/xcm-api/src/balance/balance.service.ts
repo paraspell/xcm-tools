@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import {
-  NODES_WITH_RELAY_CHAINS,
+  NODE_NAMES_DOT_KSM,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
+  TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
-  TNodeWithRelayChains,
 } from '@paraspell/sdk';
 import { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import { BalanceForeignDto } from './dto/BalanceForeignDto.js';
@@ -24,8 +25,8 @@ export class BalanceService {
     { address }: BalanceNativeDto,
     usePapi = false,
   ) {
-    const nodeTyped = node as TNodeWithRelayChains;
-    if (!NODES_WITH_RELAY_CHAINS.includes(nodeTyped)) {
+    const nodeTyped = node as TNodeDotKsmWithRelayChains;
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(nodeTyped)) {
       throw new BadRequestException(
         `Node ${node} is not valid. Check docs for valid nodes.`,
       );
@@ -60,7 +61,7 @@ export class BalanceService {
     usePapi = false,
   ) {
     const nodeTyped = node as TNodePolkadotKusama;
-    if (!NODES_WITH_RELAY_CHAINS.includes(nodeTyped)) {
+    if (!NODE_NAMES_DOT_KSM.includes(nodeTyped)) {
       throw new BadRequestException(
         `Node ${node} is not valid. Check docs for valid nodes.`,
       );

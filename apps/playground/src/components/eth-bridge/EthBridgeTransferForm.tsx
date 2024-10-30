@@ -2,7 +2,7 @@ import { useForm } from "@mantine/form";
 import type { FC } from "react";
 import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
 import type { TAsset, TNodePolkadotKusama } from "@paraspell/sdk";
-import { NODES_WITH_RELAY_CHAINS } from "@paraspell/sdk";
+import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from "@paraspell/sdk";
 import { isValidPolkadotAddress } from "../../utils";
 import useCurrencyOptions from "../../hooks/useCurrencyOptions";
 
@@ -62,7 +62,8 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="From"
           placeholder="Pick value"
-          data={[...NODES_WITH_RELAY_CHAINS]}
+          data={["Ethereum"]}
+          allowDeselect={false}
           searchable
           disabled
           value="Ethereum"
@@ -71,7 +72,8 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="To"
           placeholder="Pick value"
-          data={[...NODES_WITH_RELAY_CHAINS]}
+          data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
+          allowDeselect={false}
           searchable
           required
           data-testid="select-destination"

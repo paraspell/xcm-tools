@@ -1,4 +1,4 @@
-import type { TCurrencyCore, TNodePolkadotKusama, TNodeWithRelayChains } from '.'
+import type { TCurrencyCore, TNodeDotKsmWithRelayChains, TNodePolkadotKusama } from '.'
 import type { WithApi } from './TApi'
 
 export type TBalanceResponse = {
@@ -17,7 +17,7 @@ export type TGetBalanceNativeOptionsBase = {
   /**
    * The node on which to query the balance.
    */
-  node: TNodeWithRelayChains
+  node: TNodeDotKsmWithRelayChains
 }
 
 export type TGetBalanceNativeOptions<TApi, TRes> = WithApi<TGetBalanceNativeOptionsBase, TApi, TRes>
@@ -57,7 +57,7 @@ export type TGetAssetBalanceOptionsBase = {
   /**
    * The node on which to query the balance.
    */
-  node: TNodeWithRelayChains
+  node: TNodeDotKsmWithRelayChains
   /**
    * The currency to query.
    */
