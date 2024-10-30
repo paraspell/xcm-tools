@@ -152,7 +152,7 @@ class AssetHubPolkadot<TApi, TRes>
       input
     const version = Version.V2
     const paraId =
-      destination !== undefined && typeof destination !== 'object'
+      destination !== undefined && typeof destination !== 'object' && destination !== 'Ethereum'
         ? (paraIdTo ?? getParaId(destination))
         : undefined
     const customMultiLocation: TMultiLocation = {

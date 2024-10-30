@@ -2,7 +2,7 @@ import { useForm } from "@mantine/form";
 import type { FC } from "react";
 import { Button, Checkbox, Select, Stack } from "@mantine/core";
 import type { TNodePolkadotKusama } from "@paraspell/sdk";
-import { NODE_NAMES } from "@paraspell/sdk";
+import { NODE_NAMES_DOT_KSM } from "@paraspell/sdk";
 import type { TPalletsQuery } from "../../types";
 import { PALLETS_QUERIES } from "../../consts";
 
@@ -32,7 +32,7 @@ const PalletsForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="Function"
           placeholder="Pick value"
-          data={[...PALLETS_QUERIES]}
+          data={PALLETS_QUERIES}
           searchable
           required
           allowDeselect={false}
@@ -43,7 +43,7 @@ const PalletsForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="Node"
           placeholder="Pick value"
-          data={[...NODE_NAMES]}
+          data={NODE_NAMES_DOT_KSM}
           searchable
           required
           allowDeselect={false}

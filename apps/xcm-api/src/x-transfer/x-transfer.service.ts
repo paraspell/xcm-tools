@@ -10,7 +10,8 @@ import {
   IncompatibleNodesError,
   InvalidCurrencyError,
   NODE_NAMES,
-  TNode,
+  NODE_NAMES_DOT_KSM,
+  TNodePolkadotKusama,
 } from '@paraspell/sdk';
 import type * as SdkType from '@paraspell/sdk';
 import type * as SdkPapiType from '@paraspell/sdk/papi';
@@ -34,8 +35,8 @@ export class XTransferService {
     hashEnabled: boolean,
     usePapi = false,
   ) {
-    const fromNode = from as TNode | undefined;
-    const toNode = to as TNode | undefined;
+    const fromNode = from as TNodePolkadotKusama | undefined;
+    const toNode = to as TNodePolkadotKusama | undefined;
 
     if (!fromNode && !toNode) {
       throw new BadRequestException(
@@ -43,7 +44,7 @@ export class XTransferService {
       );
     }
 
-    if (fromNode && !NODE_NAMES.includes(fromNode)) {
+    if (fromNode && !NODE_NAMES_DOT_KSM.includes(fromNode)) {
       throw new BadRequestException(
         `Node ${fromNode} is not valid. Check docs for valid nodes.`,
       );
@@ -68,7 +69,7 @@ export class XTransferService {
       : await import('@paraspell/sdk');
 
     const node = fromNode ?? toNode;
-    const api = await Sdk.createApiInstanceForNode(node as TNode);
+    const api = await Sdk.createApiInstanceForNode(node as TNodePolkadotKusama);
 
     const builder = Sdk.Builder(api as PolkadotClient & ApiPromise);
 
@@ -90,7 +91,7 @@ export class XTransferService {
     } else {
       // Relaychain to parachain
       finalBuilder = builder
-        .to(toNode as TNode)
+        .to(toNode as TNodePolkadotKusama)
         .amount(amount)
         .address(address);
     }
@@ -143,8 +144,8 @@ export class XTransferService {
     }
 
     const firstTransfer = transfers[0];
-    const fromNode = firstTransfer.from as TNode | undefined;
-    const toNode = firstTransfer.to as TNode | undefined;
+    const fromNode = firstTransfer.from as TNodePolkadotKusama | undefined;
+    const toNode = firstTransfer.to as TNodePolkadotKusama | undefined;
 
     if (!fromNode && !toNode) {
       throw new BadRequestException(
@@ -164,7 +165,7 @@ export class XTransferService {
       );
     }
 
-    if (fromNode && !NODE_NAMES.includes(fromNode)) {
+    if (fromNode && !NODE_NAMES_DOT_KSM.includes(fromNode)) {
       throw new BadRequestException(
         `Node ${fromNode} is not valid. Check docs for valid nodes.`,
       );
@@ -181,14 +182,16 @@ export class XTransferService {
       : await import('@paraspell/sdk');
 
     const api = await Sdk.createApiInstanceForNode(
-      fromNode ?? determineRelayChain(toNode as TNode),
+      fromNode ?? determineRelayChain(toNode as TNodePolkadotKusama),
     );
     let builder = Sdk.Builder(api as PolkadotClient & ApiPromise);
 
     try {
       for (const transfer of transfers) {
-        const transferFromNode = transfer.from as TNode | undefined;
-        const transferToNode = transfer.to as TNode | undefined;
+        const transferFromNode = transfer.from as
+          | TNodePolkadotKusama
+          | undefined;
+        const transferToNode = transfer.to as TNodePolkadotKusama | undefined;
 
         if (
           transferToNode &&
@@ -232,7 +235,7 @@ export class XTransferService {
         } else {
           // Relaychain to parachain
           finalBuilder = builder
-            .to(transferToNode as TNode)
+            .to(transferToNode as TNodePolkadotKusama)
             .amount(transfer.amount)
             .address(transfer.address);
         }

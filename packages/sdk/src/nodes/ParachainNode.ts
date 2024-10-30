@@ -105,7 +105,7 @@ abstract class ParachainNode<TApi, TRes> {
     } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
     const paraId =
-      destination !== undefined && typeof destination !== 'object'
+      destination !== undefined && typeof destination !== 'object' && destination !== 'Ethereum'
         ? (paraIdTo ?? getParaId(destination))
         : undefined
 

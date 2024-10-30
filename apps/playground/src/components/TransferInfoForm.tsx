@@ -14,7 +14,7 @@ import type { TNodeDotKsmWithRelayChains } from "@paraspell/sdk";
 import {
   getRelayChainSymbol,
   isRelayChain,
-  NODES_WITH_RELAY_CHAINS,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
 } from "@paraspell/sdk";
 
 export type FormValues = {
@@ -80,7 +80,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="Origin node"
           placeholder="Pick value"
-          data={[...NODES_WITH_RELAY_CHAINS]}
+          data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
           searchable
           required
           allowDeselect={false}
@@ -91,7 +91,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="Destination node"
           placeholder="Pick value"
-          data={[...NODES_WITH_RELAY_CHAINS]}
+          data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
           searchable
           required
           allowDeselect={false}

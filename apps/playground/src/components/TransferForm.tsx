@@ -3,13 +3,20 @@ import { isValidWalletAddress } from "../utils";
 import type { FC } from "react";
 import { useEffect } from "react";
 import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
-import type { TAsset, TNodeWithRelayChains } from "@paraspell/sdk";
-import { NODES_WITH_RELAY_CHAINS } from "@paraspell/sdk";
+import type {
+  TAsset,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
+} from "@paraspell/sdk";
+import {
+  NODES_WITH_RELAY_CHAINS,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
+} from "@paraspell/sdk";
 import useCurrencyOptions from "../hooks/useCurrencyOptions";
 import CurrencySelection from "./CurrencySelection";
 
 export type FormValues = {
-  from: TNodeWithRelayChains;
+  from: TNodeDotKsmWithRelayChains;
   to: TNodeWithRelayChains;
   currencyOptionId: string;
   customCurrency: string;
@@ -96,7 +103,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="Origin node"
           placeholder="Pick value"
-          data={[...NODES_WITH_RELAY_CHAINS]}
+          data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
           allowDeselect={false}
           searchable
           required
@@ -107,7 +114,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
         <Select
           label="Destination node"
           placeholder="Pick value"
-          data={[...NODES_WITH_RELAY_CHAINS]}
+          data={NODES_WITH_RELAY_CHAINS}
           allowDeselect={false}
           searchable
           required

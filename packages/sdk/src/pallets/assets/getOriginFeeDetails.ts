@@ -1,5 +1,5 @@
-import type { TCurrencyCore, TOriginFeeDetails } from '../../types'
-import { type TNodeDotKsmWithRelayChains, type TNode, type TNodeWithRelayChains } from '../../types'
+import type { TCurrencyCore, TNodePolkadotKusama, TOriginFeeDetails } from '../../types'
+import { type TNodeDotKsmWithRelayChains } from '../../types'
 import { getBalanceNative } from './balance/getBalanceNative'
 import { getMinNativeTransferableAmount } from './getExistentialDeposit'
 import { isRelayChain } from '../../utils'
@@ -11,25 +11,25 @@ const createTx = async <TApi, TRes>(
   address: string,
   amount: string,
   currency: TCurrencyCore,
-  originNode: TNodeWithRelayChains,
-  destNode: TNodeWithRelayChains
+  originNode: TNodeDotKsmWithRelayChains,
+  destNode: TNodeDotKsmWithRelayChains
 ): Promise<TRes> => {
   if (isRelayChain(originNode)) {
     return await Builder<TApi, TRes>(originApi)
-      .to(destNode as TNode)
+      .to(destNode as TNodePolkadotKusama)
       .amount(amount)
       .address(address)
       .build()
   } else if (isRelayChain(destNode)) {
     return await Builder<TApi, TRes>(originApi)
-      .from(originNode as TNode)
+      .from(originNode as TNodePolkadotKusama)
       .amount(amount)
       .address(address)
       .build()
   } else {
     return await Builder<TApi, TRes>(originApi)
-      .from(originNode as TNode)
-      .to(destNode as TNode)
+      .from(originNode as TNodePolkadotKusama)
+      .to(destNode as TNodePolkadotKusama)
       .currency(currency)
       .amount(amount)
       .address(address)

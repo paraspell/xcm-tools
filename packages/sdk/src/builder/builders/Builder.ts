@@ -12,7 +12,8 @@ import type {
   TNodeWithRelayChains,
   TVersionClaimAssets,
   Version,
-  TBatchOptions
+  TBatchOptions,
+  TNodePolkadotKusama
 } from '../../types'
 import RelayToParaBuilder from './RelayToParaBuilder'
 import ParaToParaBuilder from './ParaToParaBuilder'
@@ -130,7 +131,7 @@ export class GeneralBuilder<TApi, TRes> {
    * @param node - The node from which the transaction originates.
    * @returns An instance of Builder
    */
-  from(node: TNode): FromGeneralBuilder<TApi, TRes> {
+  from(node: TNodePolkadotKusama): FromGeneralBuilder<TApi, TRes> {
     return new FromGeneralBuilder(this.api, node, this.batchManager)
   }
 

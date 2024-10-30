@@ -1,10 +1,10 @@
 import type {
   TNodeWithRelayChains,
   Extrinsic,
-  TNode,
   TSerializedEthTransfer,
   TCurrencyCore,
   TAsset as SdkTAsset,
+  TNodePolkadotKusama,
 } from '@paraspell/sdk';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts/consts';
@@ -147,7 +147,7 @@ export type TBuildTransferExtrinsicsOptions = Omit<
 };
 
 export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> & {
-  exchangeNode: TNode;
+  exchangeNode: TNodePolkadotKusama;
   exchange: TExchangeNode;
   assetFrom?: SdkTAsset;
   assetTo?: SdkTAsset;

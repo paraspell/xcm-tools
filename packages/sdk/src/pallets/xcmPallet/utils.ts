@@ -14,7 +14,7 @@ import { type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 import { findParachainJunction } from './findParachainJunction'
 import { createX1Payload } from '../../utils/createX1Payload'
-import { NODE_NAMES } from '../../maps/consts'
+import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
 
 export const isTMultiLocation = (value: unknown): value is TMultiLocation =>
   typeof value === 'object' && value !== null && 'parents' in value && 'interior' in value
@@ -138,7 +138,7 @@ export const resolveTNodeFromMultiLocation = (multiLocation: TMultiLocation): TN
     throw new Error('Parachain ID not found in destination multi location.')
   }
 
-  const node = NODE_NAMES.find(nodeName => getParaId(nodeName) === parachainId) ?? null
+  const node = NODE_NAMES_DOT_KSM.find(nodeName => getParaId(nodeName) === parachainId) ?? null
 
   if (node === null) {
     throw new Error('Node with specified paraId not found in destination multi location.')

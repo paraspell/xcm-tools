@@ -139,6 +139,7 @@ describe('getTNode', () => {
     ;(['polkadot', 'kusama'] as TRelayChainType[]).forEach(ecosystem => {
       NODE_NAMES_DOT_KSM.filter(node => getNode(node).type === ecosystem).forEach(node => {
         const paraId = getParaId(node)
+        if (paraId === undefined) return
         const nodeName = getTNode(paraId, ecosystem)
         expect(nodeName).toEqual(node)
       })
