@@ -27,12 +27,11 @@
   "Integritee": "1000000000",
   "InvArchTinker": "1000000000",
   "Karura": "100000000000",
-  "Litmus": "100000000000000000",
   "Moonriver": "0",
   "ParallelHeiko": "10000000000",
   "Picasso": "100000000000",
   "Quartz": "0",
-  "Robonomics": "1000",
+  "RobonomicsKusama": "1000",
   "Shiden": "1000000",
   "Turing": "100000000",
   "Unique": "0",
@@ -58,5 +57,8 @@
   "Mythos": "10000000000000000",
   "Peaq": "500",
   "CoretimePolkadot": "1000000000",
-  "Polimec": "100000000"
+  "Polimec": "100000000",
+  "RobonomicsPolkadot": "1000",
+  "PeoplePolkadot": "1000000000",
+  "PeopleKusama": "33333333"
 }

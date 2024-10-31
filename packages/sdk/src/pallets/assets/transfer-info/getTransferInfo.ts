@@ -37,7 +37,9 @@ export const getTransferInfo = async <TApi, TRes>({
   )
   const expectedBalanceAfterXCMDelivery = originBalance - destXcmFee
 
-  const asset = getAssetBySymbolOrId(origin, currency)
+  const asset =
+    getAssetBySymbolOrId(origin, currency) ??
+    (origin === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency) : null)
 
   if (!asset) {
     throw new InvalidCurrencyError(

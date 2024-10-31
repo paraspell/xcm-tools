@@ -119,10 +119,6 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
-  "Litmus": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
-  },
   "Moonriver": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
@@ -139,7 +135,7 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["XTokens", "PolkadotXcm"]
   },
-  "Robonomics": {
+  "RobonomicsKusama": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
   },
@@ -228,6 +224,18 @@
     "supportedPallets": ["PolkadotXcm"]
   },
   "Polimec": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "RobonomicsPolkadot": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "PeoplePolkadot": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
+  },
+  "PeopleKusama": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
   }

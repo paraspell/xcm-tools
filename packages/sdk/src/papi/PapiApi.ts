@@ -22,12 +22,11 @@ const unsupportedNodes = [
   'Kintsugi',
   'ParallelHeiko',
   'Picasso',
-  'Robonomics',
+  'RobonomicsKusama',
   'Turing',
   'Pendulum',
   'Polkadex',
-  'Subsocial',
-  'Litmus'
+  'Subsocial'
 ] as TNodeWithRelayChains[]
 
 class PapiApi implements IPolkadotApi<PolkadotClient, TPapiTransaction> {
@@ -83,33 +82,36 @@ class PapiApi implements IPolkadotApi<PolkadotClient, TPapiTransaction> {
     return res.data.free as bigint
   }
 
-  async getBalanceForeign(address: string, id?: string): Promise<bigint | null> {
+  async getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const res = await this.api.getUnsafeApi().query.Assets.Account.getValue(address, id)
+    const res = await this.api.getUnsafeApi().query.Assets.Account.getValue(id, address)
+    console.log(res)
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-    return res.balance ? BigInt(res.balance) : null
+    return res && res.balance ? BigInt(res.balance) : BigInt(0)
   }
 
-  async getMythosForeignBalance(address: string): Promise<bigint | null> {
+  async getMythosForeignBalance(address: string): Promise<bigint> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const res = await this.api.getUnsafeApi().query.Balances.Account.getValue(address)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-    return res.free ? BigInt(res.free) : null
+    return res && res.free ? BigInt(res.free) : BigInt(0)
   }
 
-  async getAssetHubForeignBalance(
-    address: string,
-    multiLocation: TMultiLocation
-  ): Promise<bigint | null> {
+  async getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const transformedMultiLocation = transform(multiLocation)
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const res = await this.api
       .getUnsafeApi()
-      .query.ForeignAssets.Account.getValue(multiLocation, address)
+      .query.ForeignAssets.Account.getValue(transformedMultiLocation, address)
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-    return BigInt(res === null || !res.balance ? 0 : res.balance)
+    return BigInt(res === undefined ? 0 : res.balance)
   }
 
-  async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint | null> {
+  async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint> {
     const response = await this.api.getUnsafeApi().query.Tokens.Accounts.getEntries(address)
 
     const entry = response.find(({ keyArgs }) => {
@@ -131,7 +133,14 @@ class PapiApi implements IPolkadotApi<PolkadotClient, TPapiTransaction> {
       )
     })
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    return entry?.value ? BigInt(entry.value.free.toString()) : null
+    return entry?.value ? BigInt(entry.value.free.toString()) : BigInt(0)
+  }
+
+  async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number): Promise<bigint> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const response = await this.api.getUnsafeApi().query.Assets.Account.getValue(assetId, address)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+    return BigInt(response === undefined ? 0 : response.balance)
   }
 
   clone(): IPolkadotApi<PolkadotClient, TPapiTransaction> {

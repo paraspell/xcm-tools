@@ -71,11 +71,11 @@ describe('getSupportedAssetsFrom', () => {
   it('should return assets from exchange that match node assets', () => {
     const fromNode = 'Acala' as TNodeWithRelayChains;
     const exchange: TExchangeNode = 'HydrationDex';
-    const assets = [{ symbol: 'ACA', assetId: '1000099' }];
+    const assets = [{ symbol: 'WUD', assetId: '1000085' }];
     vi.mocked(getAssets).mockReturnValue(assets);
 
     const result = getSupportedAssetsFrom(fromNode, exchange);
-    expect(result).toEqual([{ symbol: 'ACA', assetId: '1000099' }]);
+    expect(result).toEqual([{ symbol: 'WUD', assetId: '1000085' }]);
   });
 
   it('should return all assets from node when exchange is auto select', () => {
@@ -94,11 +94,11 @@ describe('getSupportedAssetsTo', () => {
     const fromNode: TNodeWithRelayChains = 'Hydration';
     const toNode = 'Acala' as TNodeWithRelayChains;
     const exchange: TExchangeNode = 'HydrationDex';
-    const assets = [{ symbol: 'ACA', assetId: '1000099' }];
+    const assets = [{ symbol: 'WUD', assetId: '1000085' }];
     vi.mocked(getAssets).mockReturnValue(assets);
 
     const result = getSupportedAssetsTo(fromNode, exchange, toNode);
-    expect(result).toEqual([{ symbol: 'ACA', assetId: '1000099' }]);
+    expect(result).toEqual([{ symbol: 'WUD', assetId: '1000085' }]);
   });
 
   it('should return all assets from node when exchange is auto select', () => {

@@ -8,6 +8,7 @@ import type { Extrinsic } from '../../../pjs/types'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import * as palletsModule from '../../pallets'
 import { InvalidCurrencyError } from '../../../errors'
+import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn()
@@ -63,14 +64,14 @@ describe('getBalanceForeign', () => {
   })
 
   it('returns balance for XTokens pallet', async () => {
-    const spy = vi.spyOn(mockApi, 'getBalanceForeignXTokens').mockResolvedValue(BigInt(1000))
+    vi.mocked(getBalanceForeignXTokens).mockResolvedValue(BigInt(1000))
     const result = await getBalanceForeign({
       address: 'address',
       node: 'Acala',
       currency: { symbol: 'DOT' },
       api: mockApi
     })
-    expect(spy).toHaveBeenCalled()
+    expect(getBalanceForeignXTokens).toHaveBeenCalled()
     expect(result).toBe(BigInt(1000))
   })
 

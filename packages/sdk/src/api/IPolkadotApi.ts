@@ -15,9 +15,10 @@ export interface IPolkadotApi<TApi, TRes> {
   callTxMethod(serializedCall: TSerializedApiCallV2): TRes
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
   getBalanceNative(address: string): Promise<bigint>
-  getBalanceForeign(address: string, id?: string): Promise<bigint | null>
-  getMythosForeignBalance(address: string): Promise<bigint | null>
-  getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint | null>
-  getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint | null>
+  getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint>
+  getMythosForeignBalance(address: string): Promise<bigint>
+  getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint>
+  getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint>
+  getBalanceForeignAssetsAccount(address: string, assetId: bigint | number): Promise<bigint>
   clone(): IPolkadotApi<TApi, TRes>
 }

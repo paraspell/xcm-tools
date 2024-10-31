@@ -52,9 +52,12 @@ export const transform = (obj: any): any => {
           type: key,
           value: value
         }
-      } else if (key === 'chain_id') {
+      } else if (key === 'Ethereum') {
         return {
-          chain_id: value
+          type: key,
+          value: {
+            chain_id: BigInt('chainId' in value ? value.chainId : value.chain_id)
+          }
         }
       } else if (key === 'AccountKey20') {
         return {

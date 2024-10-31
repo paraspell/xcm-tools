@@ -20,6 +20,5 @@ export type TAggregatedData = {
 export enum Ecosystem {
   POLKADOT = 'Polkadot',
   KUSAMA = 'Kusama',
-  WESTEND = 'Westend',
-  ROCOCO = 'Rococo'
+  WESTEND = 'Westend'
 }

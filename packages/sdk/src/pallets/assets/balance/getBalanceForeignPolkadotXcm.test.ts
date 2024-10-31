@@ -19,12 +19,10 @@ describe('getBalanceForeignPolkadotXcm', () => {
       getMythosForeignBalance: vi.fn().mockResolvedValue(BigInt(1000))
     } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
-    const result = await getBalanceForeignPolkadotXcm(
-      'some-address',
-      { symbol: 'DOT', assetId: '1' },
-      mockApi,
-      'Mythos'
-    )
+    const result = await getBalanceForeignPolkadotXcm(mockApi, 'Mythos', 'some-address', {
+      symbol: 'DOT',
+      assetId: '1'
+    })
 
     expect(result).toBe(BigInt(1000))
   })
@@ -39,34 +37,12 @@ describe('getBalanceForeignPolkadotXcm', () => {
       interior: { X1: { Parachain: '2000' } }
     })
 
-    const result = await getBalanceForeignPolkadotXcm(
-      'some-address',
-      { symbol: 'DOT', assetId: '1' },
-      mockApi,
-      'AssetHubPolkadot'
-    )
+    const result = await getBalanceForeignPolkadotXcm(mockApi, 'AssetHubPolkadot', 'some-address', {
+      symbol: 'DOT',
+      assetId: '1'
+    })
 
     expect(getAssetHubMultiLocation).toHaveBeenCalledWith('DOT')
     expect(result).toBe(BigInt(500))
-  })
-
-  it('should return null and log error if an error occurs', async () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
-
-    const mockApi = {
-      getMythosForeignBalance: vi.fn().mockRejectedValue(new Error('API error'))
-    } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
-
-    const result = await getBalanceForeignPolkadotXcm(
-      'some-address',
-      { symbol: 'DOT', assetId: '1' },
-      mockApi,
-      'Mythos'
-    )
-
-    expect(result).toBeNull()
-    expect(consoleSpy).toHaveBeenCalledWith('Error while fetching balance', expect.any(Error))
-
-    consoleSpy.mockRestore()
   })
 })

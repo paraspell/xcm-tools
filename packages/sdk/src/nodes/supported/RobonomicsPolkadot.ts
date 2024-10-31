@@ -4,9 +4,12 @@ import { type IPolkadotXCMTransfer, type PolkadotXCMTransferInput, Version } fro
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
-class Robonomics<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
+class RobonomicsPolkadot<TApi, TRes>
+  extends ParachainNode<TApi, TRes>
+  implements IPolkadotXCMTransfer
+{
   constructor() {
-    super('Robonomics', 'robonomics', 'kusama', Version.V3)
+    super('RobonomicsPolkadot', 'robonomics', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
@@ -18,4 +21,4 @@ class Robonomics<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolka
   }
 }
 
-export default Robonomics
+export default RobonomicsPolkadot

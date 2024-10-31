@@ -59,12 +59,12 @@ const filteredNodes = NODE_NAMES_DOT_KSM.filter(
     node !== 'Kintsugi' &&
     node !== 'ParallelHeiko' &&
     node !== 'Picasso' &&
-    node !== 'Robonomics' &&
+    node !== 'RobonomicsKusama' &&
+    node !== 'RobonomicsPolkadot' &&
     node !== 'Turing' &&
     node !== 'Pendulum' &&
     node !== 'Polkadex' &&
-    node !== 'Subsocial' &&
-    node !== 'Litmus'
+    node !== 'Subsocial'
 )
 
 const findTransferableNodeAndAsset = (

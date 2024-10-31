@@ -22,7 +22,6 @@ import Turing from '../nodes/supported/Turing'
 import Picasso from '../nodes/supported/Picasso'
 import ParallelHeiko from '../nodes/supported/ParallelHeiko'
 import Moonriver from '../nodes/supported/Moonriver'
-import Litmus from '../nodes/supported/Litmus'
 import Kintsugi from '../nodes/supported/Kintsugi'
 import Calamari from '../nodes/supported/Calamari'
 import CrustShadow from '../nodes/supported/CrustShadow'
@@ -35,7 +34,10 @@ import AssetHubKusama from '../nodes/supported/AssetHubKusama'
 import CoretimeKusama from '../nodes/supported/CoretimeKusama'
 import CoretimePolkadot from '../nodes/supported/CoretimePolkadot'
 import Encointer from '../nodes/supported/Encointer'
-import Robonomics from '../nodes/supported/Robonomics'
+import RobonomicsKusama from '../nodes/supported/RobonomicsKusama'
+import RobonomicsPolkadot from '../nodes/supported/RobonomicsPolkadot'
+import PeoplePolkadot from '../nodes/supported/PeoplePolkadot'
+import PeopleKusama from '../nodes/supported/PeopleKusama'
 import Astar from '../nodes/supported/Astar'
 import Darwinia from '../nodes/supported/Darwinia'
 import Crab from '../nodes/supported/Crab'
@@ -97,12 +99,14 @@ export const NODE_NAMES_DOT_KSM = [
   'InvArchTinker',
   'Karura',
   'Kintsugi',
-  'Litmus',
   'Moonriver',
   'ParallelHeiko',
   'Picasso',
   'Quartz',
-  'Robonomics',
+  'RobonomicsKusama',
+  'RobonomicsPolkadot',
+  'PeoplePolkadot',
+  'PeopleKusama',
   'Shiden',
   'Turing',
   'Unique',
@@ -179,12 +183,14 @@ export const nodes = <TApi, TRes>() => ({
   InvArchTinker: new InvArchTinker<TApi, TRes>(),
   Karura: new Karura<TApi, TRes>(),
   Kintsugi: new Kintsugi<TApi, TRes>(),
-  Litmus: new Litmus<TApi, TRes>(),
   Moonriver: new Moonriver<TApi, TRes>(),
   ParallelHeiko: new ParallelHeiko<TApi, TRes>(),
   Picasso: new Picasso<TApi, TRes>(),
   Quartz: new Quartz<TApi, TRes>(),
-  Robonomics: new Robonomics<TApi, TRes>(),
+  RobonomicsKusama: new RobonomicsKusama<TApi, TRes>(),
+  RobonomicsPolkadot: new RobonomicsPolkadot<TApi, TRes>(),
+  PeoplePolkadot: new PeoplePolkadot<TApi, TRes>(),
+  PeopleKusama: new PeopleKusama<TApi, TRes>(),
   Shiden: new Shiden<TApi, TRes>(),
   Turing: new Turing<TApi, TRes>(),
   Manta: new Manta<TApi, TRes>(),

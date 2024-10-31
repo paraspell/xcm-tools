@@ -1,8 +1,8 @@
 import type { ApiPromise } from '@polkadot/api'
 import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '../../src/maps/consts'
 import type { TEdJsonMap } from '../../src/types'
-import { createApiInstanceForNode } from '../../src/utils'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
+import { createApiInstanceForNode } from '../../src/pjs'
 
 const fetchExistentialDeposit = (api: ApiPromise): string | null => {
   const balances = api.consts.balances

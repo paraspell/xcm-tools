@@ -29,13 +29,15 @@ export const nodeToQuery: Record<TNodePolkadotKusama, string | null> = {
   InvArchTinker: null, // Assets query returns empty array
   Karura: 'assetRegistry.assetMetadatas',
   Kintsugi: 'assetRegistry.metadata',
-  Litmus: null, // Assets query returns empty array
   Moonriver: 'assets.metadata',
   ParallelHeiko: 'assets.metadata',
   Picasso: 'assetsRegistry.assetSymbol',
   Pioneer: 'assetManager.assetMetadatas',
   Quartz: null, // No assets metadata query
-  Robonomics: 'assets.metadata',
+  RobonomicsKusama: 'assets.metadata',
+  RobonomicsPolkadot: 'assets.metadata',
+  PeopleKusama: null, // Does not support ParaToPara transfers
+  PeoplePolkadot: null, // Does not support ParaToPara transfers
   Shiden: 'assets.metadata',
   AssetHubKusama: 'assets.metadata',
   Turing: 'assetRegistry.metadata',

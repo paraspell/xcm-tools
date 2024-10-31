@@ -69,29 +69,26 @@ class PolkadotJsApi implements IPolkadotApi<ApiPromise, Extrinsic> {
     return (response.data.free as UInt).toBigInt()
   }
 
-  async getBalanceForeign(address: string, id?: string): Promise<bigint | null> {
+  async getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint> {
     const parsedId = new u32(this.api.registry, id)
     const response: Codec = await this.api.query.assets.account(parsedId, address)
     const obj = response.toJSON() as TBalanceResponse
-    return obj.balance ? BigInt(obj.balance) : null
+    return obj.balance ? BigInt(obj.balance) : BigInt(0)
   }
 
-  async getMythosForeignBalance(address: string): Promise<bigint | null> {
+  async getMythosForeignBalance(address: string): Promise<bigint> {
     const response: Codec = await this.api.query.balances.account(address)
     const obj = response.toJSON() as TBalanceResponse
-    return obj.free ? BigInt(obj.free) : null
+    return obj.free ? BigInt(obj.free) : BigInt(0)
   }
 
-  async getAssetHubForeignBalance(
-    address: string,
-    multiLocation: TMultiLocation
-  ): Promise<bigint | null> {
+  async getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint> {
     const response: Codec = await this.api.query.foreignAssets.account(multiLocation, address)
     const obj = response.toJSON() as TBalanceResponse
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
-  async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint | null> {
+  async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint> {
     const response: Array<[StorageKey<AnyTuple>, Codec]> =
       await this.api.query.tokens.accounts.entries(address)
 
@@ -117,7 +114,13 @@ class PolkadotJsApi implements IPolkadotApi<ApiPromise, Extrinsic> {
     )
 
     const accountData = entry ? (entry[1] as AccountData) : null
-    return accountData ? BigInt(accountData.free.toString()) : null
+    return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
+  }
+
+  async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number): Promise<bigint> {
+    const response = await this.api.query.assets.account(assetId, address)
+    const obj = response.toJSON() as TBalanceResponse
+    return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
   clone(): IPolkadotApi<ApiPromise, Extrinsic> {
