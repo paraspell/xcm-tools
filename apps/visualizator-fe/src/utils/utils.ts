@@ -2,7 +2,6 @@ import type { SelectedParachain } from '../context/SelectedParachain/SelectedPar
 import {
   prodRelayKusama,
   prodRelayPolkadot,
-  testRelayRococo,
   testRelayWestend
 } from '@polkadot/apps-config/endpoints';
 import { Ecosystem } from '../types/types';
@@ -58,7 +57,5 @@ const getEndpointOptions = (ecosystem: Ecosystem) => {
       return prodRelayKusama.linked;
     case Ecosystem.WESTEND:
       return testRelayWestend.linked;
-    case Ecosystem.ROCOCO:
-      return testRelayRococo.linked;
   }
 };

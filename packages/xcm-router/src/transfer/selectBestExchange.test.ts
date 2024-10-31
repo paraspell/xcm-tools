@@ -56,7 +56,7 @@ describe('selectBestExchange', () => {
     expect(result).toBeDefined();
     expect(createApiInstanceForNode).toHaveBeenCalled();
     expect(feeSpy).toHaveBeenCalled();
-    expect(fromExchangeTxSpy).toHaveBeenCalledTimes(2);
+    expect(fromExchangeTxSpy).toHaveBeenCalledTimes(1);
     expect(toExchangeTxSpy).toHaveBeenCalled();
   });
 

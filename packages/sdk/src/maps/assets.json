@@ -119,7 +119,7 @@
       },
       {
         "assetId": "6",
-        "symbol": "WETH",
+        "symbol": "WETHah",
         "decimals": 18
       },
       {
@@ -186,6 +186,11 @@
         "assetId": "0xaf6997a70feb868df863d5380c3ab93da4297edc",
         "symbol": "SHIB",
         "decimals": 18
+      },
+      {
+        "assetId": "0x492f4e41bd378d6dbd92ab645ac4020b01784db3",
+        "symbol": "USDTet",
+        "decimals": 6
       },
       {
         "assetId": "0x604cae74cdc395a8824557d422fccf8db6809a2f",
@@ -1851,6 +1856,11 @@
         "decimals": 20
       },
       {
+        "assetId": "50000012",
+        "symbol": "PHUDAO",
+        "decimals": 12
+      },
+      {
         "assetId": "50000003",
         "symbol": "ARMY",
         "decimals": 12
@@ -1914,6 +1924,11 @@
         "assetId": "256",
         "symbol": "ICE",
         "decimals": 20
+      },
+      {
+        "assetId": "50000006",
+        "symbol": "NERDS",
+        "decimals": 8
       },
       {
         "assetId": "22222070",
@@ -2049,6 +2064,11 @@
         "assetId": "30",
         "symbol": "DED",
         "decimals": 10
+      },
+      {
+        "assetId": "50000010",
+        "symbol": "KUS",
+        "decimals": 12
       },
       {
         "assetId": "39",
@@ -2299,6 +2319,11 @@
         "assetId": "1212",
         "symbol": "DOTTY",
         "decimals": 10
+      },
+      {
+        "assetId": "50000008",
+        "symbol": "GABI",
+        "decimals": 12
       },
       {
         "assetId": "22222078",
@@ -2576,6 +2601,11 @@
         "decimals": 6
       },
       {
+        "assetId": "50000013",
+        "symbol": "PHU",
+        "decimals": 12
+      },
+      {
         "assetId": "22222001",
         "symbol": "OMG2",
         "decimals": 12
@@ -2609,11 +2639,6 @@
         "assetId": "5361",
         "symbol": "NAT",
         "decimals": 10
-      },
-      {
-        "assetId": "50000001",
-        "symbol": "PHU",
-        "decimals": 12
       },
       {
         "assetId": "2829",
@@ -2754,6 +2779,11 @@
         "assetId": "22222085",
         "symbol": "ANU",
         "decimals": 12
+      },
+      {
+        "assetId": "50000004",
+        "symbol": "MIA",
+        "decimals": 0
       },
       {
         "assetId": "20090124",
@@ -2931,6 +2961,11 @@
         "decimals": 10
       },
       {
+        "assetId": "50000007",
+        "symbol": "i1DOT",
+        "decimals": 12
+      },
+      {
         "assetId": "1864",
         "symbol": "JUNK",
         "decimals": 10
@@ -2974,11 +3009,6 @@
         "assetId": "2820",
         "symbol": "HOOT",
         "decimals": 6
-      },
-      {
-        "assetId": "22222083",
-        "symbol": "TAG",
-        "decimals": 12
       },
       {
         "assetId": "20090125",
@@ -3076,6 +3106,11 @@
         "decimals": 10
       },
       {
+        "assetId": "50000009",
+        "symbol": "GABIC",
+        "decimals": 12
+      },
+      {
         "assetId": "20090145",
         "symbol": "ROCK",
         "decimals": 10
@@ -3089,6 +3124,11 @@
         "assetId": "2121",
         "symbol": "SKEM",
         "decimals": 10
+      },
+      {
+        "assetId": "50000011",
+        "symbol": "NNN",
+        "decimals": 12
       },
       {
         "assetId": "1024",
@@ -3234,6 +3274,11 @@
         "assetId": "20090137",
         "symbol": "hawn",
         "decimals": 10
+      },
+      {
+        "assetId": "50000005",
+        "symbol": "GOAT",
+        "decimals": 12
       },
       {
         "assetId": "69",
@@ -5341,7 +5386,7 @@
     ],
     "otherAssets": []
   },
-  "Robonomics": {
+  "RobonomicsKusama": {
     "paraId": 2048,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "XRT",
@@ -5363,6 +5408,48 @@
         "decimals": 12
       }
     ]
+  },
+  "RobonomicsPolkadot": {
+    "paraId": 3388,
+    "relayChainAssetSymbol": "DOT",
+    "nativeAssetSymbol": "XRT",
+    "nativeAssets": [
+      {
+        "symbol": "XRT",
+        "decimals": 9
+      }
+    ],
+    "otherAssets": [
+      {
+        "assetId": "4294967295",
+        "symbol": "DOT",
+        "decimals": 10
+      }
+    ]
+  },
+  "PeopleKusama": {
+    "paraId": 1004,
+    "relayChainAssetSymbol": "KSM",
+    "nativeAssetSymbol": "KSM",
+    "nativeAssets": [
+      {
+        "symbol": "KSM",
+        "decimals": 12
+      }
+    ],
+    "otherAssets": []
+  },
+  "PeoplePolkadot": {
+    "paraId": 1004,
+    "relayChainAssetSymbol": "DOT",
+    "nativeAssetSymbol": "DOT",
+    "nativeAssets": [
+      {
+        "symbol": "DOT",
+        "decimals": 10
+      }
+    ],
+    "otherAssets": []
   },
   "Shiden": {
     "paraId": 2007,
@@ -7071,27 +7158,43 @@
       },
       {
         "symbol": "WBTC",
-        "assetId": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"
+        "assetId": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
       },
       {
         "symbol": "SHIB",
-        "assetId": "0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE"
+        "assetId": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
       },
       {
         "symbol": "PEPE",
-        "assetId": "0x6982508145454Ce325dDbE47a25d4ec3d2311933"
+        "assetId": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
       },
       {
         "symbol": "TON",
-        "assetId": "0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1"
+        "assetId": "0x582d872a1b094fc48f5de31d3b73f2d9be47def1"
       },
       {
         "symbol": "wstETH",
-        "assetId": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"
+        "assetId": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
       },
       {
         "symbol": "tBTC",
-        "assetId": "0x18084fbA666a33d37592fA2633fD49a74DD93a88"
+        "assetId": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
+      },
+      {
+        "symbol": "USDC",
+        "assetId": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+      },
+      {
+        "symbol": "USDT",
+        "assetId": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+      },
+      {
+        "symbol": "DAI",
+        "assetId": "0x6b175474e89094c44da98b954eedeac495271d0f"
+      },
+      {
+        "symbol": "KILT",
+        "assetId": "0x5d3d01fd6d2ad1169b17918eb4f153c6616288eb"
       }
     ]
   },

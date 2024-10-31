@@ -63,12 +63,12 @@ describe('getAssetBalance', () => {
     })
   })
 
-  it('returns zero when the foreign asset balance is null', async () => {
+  it('returns zero when the foreign asset balance is 0', async () => {
     const account = '0x789'
     const node = 'Kusama'
     const currency = { symbol: 'XYZ' }
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getBalanceForeign).mockResolvedValue(null)
+    vi.mocked(getBalanceForeign).mockResolvedValue(BigInt(0))
 
     const result = await getAssetBalance({ api: apiMock, address: account, node, currency })
     expect(result).toEqual(BigInt(0))

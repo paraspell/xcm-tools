@@ -167,7 +167,7 @@ describe('BalanceService', () => {
       } as unknown as ApiPromise;
 
       vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiInstance);
-      vi.mocked(getBalanceForeign).mockResolvedValue(null);
+      vi.mocked(getBalanceForeign).mockResolvedValue(BigInt(0));
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
 
@@ -184,7 +184,7 @@ describe('BalanceService', () => {
         api: mockApiInstance,
       });
       expect(disconnectSpy).toHaveBeenCalled();
-      expect(result).toEqual('null');
+      expect(result).toEqual('0');
     });
 
     it('should use papi for foreign balance if usePapi is true', async () => {

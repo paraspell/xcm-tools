@@ -100,12 +100,17 @@ describe('transform', () => {
     expect(transform(input2)).toEqual(expected2)
   })
 
-  it('should handle chain_id key', () => {
+  it('should handle Ethereum key', () => {
     const input = {
-      chain_id: 'chain123'
+      Ethereum: {
+        chain_id: 1
+      }
     }
     const expected = {
-      chain_id: 'chain123'
+      type: 'Ethereum',
+      value: {
+        chain_id: BigInt(1)
+      }
     }
     expect(transform(input)).toEqual(expected)
   })

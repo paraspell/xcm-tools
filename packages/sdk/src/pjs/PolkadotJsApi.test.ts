@@ -159,7 +159,7 @@ describe('PolkadotJsApi', () => {
       const id = '1'
       const parsedId = new u32(mockApiPromise.registry, id)
 
-      const balance = await polkadotApi.getBalanceForeign(address, id)
+      const balance = await polkadotApi.getBalanceForeignPolkadotXcm(address, id)
 
       expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(parsedId, address)
       expect(balance).toBe(BigInt(3000))
@@ -178,10 +178,10 @@ describe('PolkadotJsApi', () => {
         mockResponse as unknown as VoidFn
       )
 
-      const balance = await polkadotApi.getBalanceForeign(address, id)
+      const balance = await polkadotApi.getBalanceForeignPolkadotXcm(address, id)
 
       expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(parsedId, address)
-      expect(balance).toBeNull()
+      expect(balance).toBe(BigInt(0))
     })
 
     describe('getMythosForeignBalance', () => {
@@ -216,7 +216,7 @@ describe('PolkadotJsApi', () => {
         const balance = await polkadotApi.getMythosForeignBalance(address)
 
         expect(mockApiPromise.query.balances.account).toHaveBeenCalledWith(address)
-        expect(balance).toBeNull()
+        expect(balance).toBe(BigInt(0))
       })
     })
 
@@ -301,7 +301,7 @@ describe('PolkadotJsApi', () => {
         assetId: '1'
       })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBeNull()
+      expect(balance).toBe(BigInt(0))
     })
 
     it('should return balance when assetItem is object by symbol', async () => {
@@ -358,6 +358,37 @@ describe('PolkadotJsApi', () => {
       expect(balance).toBe(BigInt(6000))
     })
   })
+
+  describe('getBalanceForeignMoonbeam', () => {
+    it('should return the balance when asset matches assetId', async () => {
+      const address = 'some_address'
+      const mockResponse = {
+        toJSON: () => ({ balance: '7000' })
+      } as unknown as VoidFn
+
+      vi.mocked(mockApiPromise.query.assets.account).mockResolvedValue(mockResponse)
+
+      const balance = await polkadotApi.getBalanceForeignAssetsAccount(address, BigInt(1))
+
+      expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(BigInt(1), address)
+      expect(balance).toBe(BigInt(7000))
+    })
+
+    it('should return null when balance does not exist', async () => {
+      const address = 'some_address'
+      const mockResponse = {
+        toJSON: () => ({})
+      } as unknown as VoidFn
+
+      vi.mocked(mockApiPromise.query.assets.account).mockResolvedValue(mockResponse)
+
+      const balance = await polkadotApi.getBalanceForeignAssetsAccount(address, 1)
+
+      expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(1, address)
+      expect(balance).toEqual(BigInt(0))
+    })
+  })
+
   describe('clone', () => {
     it('should return a new instance of PolkadotJsApi', () => {
       const cloneApi = polkadotApi.clone()

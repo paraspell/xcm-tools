@@ -7,6 +7,7 @@ import * as utils from '../utils'
 import { createClient, FixedSizeBinary } from 'polkadot-api'
 import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
 import { getWsProvider } from 'polkadot-api/ws-provider/node'
+import { transform } from './PapiXcmTransformer'
 
 vi.mock('polkadot-api/ws-provider/node', () => ({
   getWsProvider: vi.fn().mockReturnValue((_onMessage: (message: string) => void) => ({
@@ -211,12 +212,12 @@ describe('PapiApi', () => {
   describe('getBalanceForeign', () => {
     it('should return the foreign balance as bigint when balance exists', async () => {
       papiApi.setApi(mockPolkadotClient)
-      const balance = await papiApi.getBalanceForeign('some_address', 'asset_id')
+      const balance = await papiApi.getBalanceForeignPolkadotXcm('some_address', 'asset_id')
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Assets.Account.getValue).toHaveBeenCalledWith(
-        'some_address',
-        'asset_id'
+        'asset_id',
+        'some_address'
       )
       expect(balance).toBe(BigInt(3000))
     })
@@ -225,9 +226,9 @@ describe('PapiApi', () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.query.Assets.Account.getValue = vi.fn().mockResolvedValue({})
 
-      const balance = await papiApi.getBalanceForeign('some_address', 'asset_id')
+      const balance = await papiApi.getBalanceForeignPolkadotXcm('some_address', 'asset_id')
 
-      expect(balance).toBeNull()
+      expect(balance).toBe(BigInt(0))
     })
   })
 
@@ -247,7 +248,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getMythosForeignBalance('some_address')
 
-      expect(balance).toBeNull()
+      expect(balance).toEqual(BigInt(0))
     })
   })
 
@@ -267,7 +268,7 @@ describe('PapiApi', () => {
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.ForeignAssets.Account.getValue).toHaveBeenCalledWith(
-        multiLocation,
+        transform(multiLocation),
         'some_address'
       )
       expect(balance).toBe(BigInt(5000))
@@ -275,7 +276,7 @@ describe('PapiApi', () => {
 
     it('should return 0 when balance does not exist', async () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
-      unsafeApi.query.ForeignAssets.Account.getValue = vi.fn().mockResolvedValue({})
+      unsafeApi.query.ForeignAssets.Account.getValue = vi.fn().mockResolvedValue(undefined)
 
       const balance = await papiApi.getAssetHubForeignBalance('some_address', multiLocation)
 
@@ -361,7 +362,27 @@ describe('PapiApi', () => {
         assetId: '1'
       })
 
-      expect(balance).toBeNull()
+      expect(balance).toEqual(BigInt(0))
+    })
+  })
+
+  describe('getBalanceForeignMoonbeam', () => {
+    it('should return the balance when balance exists', async () => {
+      papiApi.setApi(mockPolkadotClient)
+      const balance = await papiApi.getBalanceForeignAssetsAccount('some_address', 1)
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      expect(unsafeApi.query.Assets.Account.getValue).toHaveBeenCalledWith(1, 'some_address')
+      expect(balance).toBe(BigInt(3000))
+    })
+
+    it('should return 0 when balance does not exist', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.query.Assets.Account.getValue = vi.fn().mockResolvedValue(undefined)
+
+      const balance = await papiApi.getBalanceForeignAssetsAccount('some_address', 1)
+
+      expect(balance).toBe(BigInt(0))
     })
   })
 

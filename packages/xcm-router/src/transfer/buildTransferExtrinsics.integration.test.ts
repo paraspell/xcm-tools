@@ -11,7 +11,7 @@ describe('buildTransferExtrinsics - integration', () => {
       ...MOCK_TRANSFER_OPTIONS,
       exchange: 'BasiliskDex',
       from: 'Kusama',
-      to: 'Robonomics',
+      to: 'RobonomicsKusama',
       currencyFrom: { symbol: 'KSM' },
       currencyTo: { symbol: 'XRT' },
     };

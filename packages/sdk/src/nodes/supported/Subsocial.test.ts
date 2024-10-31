@@ -17,7 +17,7 @@ vi.mock('../polkadotXcm', async () => {
   }
 })
 
-describe('Robonomics', () => {
+describe('Subsocial', () => {
   describe('transferPolkadotXCM', () => {
     let subsocial: Subsocial<ApiPromise, Extrinsic>
 

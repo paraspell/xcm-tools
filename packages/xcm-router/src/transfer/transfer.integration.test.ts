@@ -12,7 +12,7 @@ describe('transfer - integration', () => {
     options = {
       ...MOCK_TRANSFER_OPTIONS,
       from: 'Kusama',
-      to: 'Robonomics',
+      to: 'RobonomicsKusama',
       currencyFrom: { symbol: 'KSM' },
       currencyTo: { symbol: 'XRT' },
       type: TransactionType.FULL_TRANSFER,

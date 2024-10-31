@@ -4,7 +4,6 @@ import { Ecosystem } from '../../types/types';
 import PolkadotLogo from '../../logos/icons/polkadot.svg?react';
 import KusamaLogo from '../../logos/icons/kusama.svg?react';
 import WestendLogo from '../../logos/icons/westend.svg?react';
-import RococoLogo from '../../logos/icons/rococo.svg?react';
 
 type Props = {
   value: string | null;
@@ -24,8 +23,6 @@ const EcosystemSelect: FC<Props> = ({ value, onChange }) => {
         return <KusamaLogo />;
       case 'Westend':
         return <WestendLogo />;
-      case 'Rococo':
-        return <RococoLogo />;
       default:
         return null;
     }

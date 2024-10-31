@@ -41,14 +41,6 @@
       "id": "1000085"
     },
     {
-      "symbol": "ACA",
-      "id": "1000099"
-    },
-    {
-      "symbol": "4-Pool",
-      "id": "100"
-    },
-    {
       "symbol": "HDXb",
       "id": "1000010"
     },
@@ -63,6 +55,10 @@
     {
       "symbol": "INTR",
       "id": "17"
+    },
+    {
+      "symbol": "4-Pool",
+      "id": "100"
     },
     {
       "symbol": "KILT",
@@ -416,6 +412,10 @@
       "id": "4"
     },
     {
+      "symbol": "WETHah",
+      "id": "6"
+    },
+    {
       "symbol": "ASTR",
       "id": "2"
     },
@@ -490,6 +490,10 @@
     {
       "symbol": "SHIB",
       "id": "0xaf6997a70feb868df863d5380c3ab93da4297edc"
+    },
+    {
+      "symbol": "USDTet",
+      "id": "0x492f4e41bd378d6dbd92ab645ac4020b01784db3"
     },
     {
       "symbol": "LINK",

@@ -35,12 +35,12 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@codecov/rollup-plugin": "^1.2.0",
+    "@codecov/rollup-plugin": "^1.2.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
-    "@vitest/coverage-v8": "^2.1.1",
+    "@vitest/coverage-v8": "^2.1.4",
     "dotenv": "^16.4.5",
-    "rollup": "^4.22.5",
+    "rollup": "^4.24.3",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-typescript2": "^0.36.0",
     "ts-node": "^10.9.2"

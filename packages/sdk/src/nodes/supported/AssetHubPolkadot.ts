@@ -105,7 +105,7 @@ class AssetHubPolkadot<TApi, TRes>
       )
     }
 
-    const ETH_CHAIN_ID = 1
+    const ETH_CHAIN_ID = BigInt(1)
     const ethJunction: TJunction = {
       GlobalConsensus: { Ethereum: { chain_id: ETH_CHAIN_ID } }
     }
