@@ -3,6 +3,7 @@ import { getBalanceNative as getBalanceNativeImpl } from '../pallets/assets/bala
 import { getBalanceForeign as getBalanceForeignImpl } from '../pallets/assets/balance/getBalanceForeign'
 import { getTransferInfo as getTransferInfoImpl } from '../pallets/assets/transfer-info/getTransferInfo'
 import { getAssetBalance as getAssetBalanceImpl } from '../pallets/assets/balance/getAssetBalance'
+import { getOriginFeeDetails as getOriginFeeDetailsImpl } from '../pallets/assets/getOriginFeeDetails'
 import { default as claimAssetsImpl } from '../pallets/assets/asset-claim'
 import type { Extrinsic } from './types'
 import { createPolkadotJsApiCall } from './utils'
@@ -44,6 +45,11 @@ export const getAssetBalance = createPolkadotJsApiCall(getAssetBalanceImpl<ApiPr
  */
 export const claimAssets = createPolkadotJsApiCall(claimAssetsImpl<ApiPromise, Extrinsic>)
 
+export const getOriginFeeDetails = createPolkadotJsApiCall(
+  getOriginFeeDetailsImpl<ApiPromise, Extrinsic>
+)
+
 export * from '../pallets/assets/assets'
 export * from '../pallets/assets/eds'
+export * from '../pallets/assets/getOriginFeeDetails'
 export { getSupportedAssets } from '../pallets/assets/getSupportedAssets'

@@ -5,6 +5,7 @@ import { getMinNativeTransferableAmount } from './getExistentialDeposit'
 import { isRelayChain } from '../../utils'
 import { Builder } from '../../builder'
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import type { TGetOriginFeeDetailsOptions } from '../../types/TBalance'
 
 const createTx = async <TApi, TRes>(
   originApi: IPolkadotApi<TApi, TRes>,
@@ -37,15 +38,15 @@ const createTx = async <TApi, TRes>(
   }
 }
 
-export const getOriginFeeDetails = async <TApi, TRes>(
-  origin: TNodeDotKsmWithRelayChains,
-  destination: TNodeDotKsmWithRelayChains,
-  currency: TCurrencyCore,
-  amount: string,
-  account: string,
-  api: IPolkadotApi<TApi, TRes>,
-  feeMarginPercentage: number = 10
-): Promise<TOriginFeeDetails> => {
+export const getOriginFeeDetails = async <TApi, TRes>({
+  api,
+  account,
+  amount,
+  currency,
+  origin: origin,
+  destination,
+  feeMarginPercentage = 10
+}: TGetOriginFeeDetailsOptions<TApi, TRes>): Promise<TOriginFeeDetails> => {
   const nativeBalance = await getBalanceNative({
     address: account,
     node: origin,

@@ -85,7 +85,6 @@ class PapiApi implements IPolkadotApi<PolkadotClient, TPapiTransaction> {
   async getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const res = await this.api.getUnsafeApi().query.Assets.Account.getValue(id, address)
-    console.log(res)
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
     return res && res.balance ? BigInt(res.balance) : BigInt(0)

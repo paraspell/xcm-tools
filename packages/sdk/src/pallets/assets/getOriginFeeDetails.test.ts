@@ -54,14 +54,14 @@ describe('getOriginFeeDetails', () => {
 
     const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
-    const result = await getOriginFeeDetails(
-      originNode,
-      destinationNode,
+    const result = await getOriginFeeDetails({
+      origin: originNode,
+      destination: destinationNode,
       currency,
       amount,
       account,
-      apiMock
-    )
+      api: apiMock
+    })
 
     expect(result).toEqual({
       sufficientForXCM: true,
@@ -109,14 +109,14 @@ describe('getOriginFeeDetails', () => {
 
     const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
-    const result = await getOriginFeeDetails<ApiPromise, Extrinsic>(
-      originNode,
-      destinationNode,
+    const result = await getOriginFeeDetails<ApiPromise, Extrinsic>({
+      origin: originNode,
+      destination: destinationNode,
       currency,
       amount,
       account,
-      apiMock
-    )
+      api: apiMock
+    })
 
     expect(result).toEqual({
       sufficientForXCM: true,
@@ -164,14 +164,14 @@ describe('getOriginFeeDetails', () => {
 
     const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
-    const result = await getOriginFeeDetails(
-      originNode,
-      destinationNode,
+    const result = await getOriginFeeDetails({
+      origin: originNode,
+      destination: destinationNode,
       currency,
       amount,
       account,
-      apiMock
-    )
+      api: apiMock
+    })
 
     expect(result).toEqual({
       sufficientForXCM: true,

@@ -138,7 +138,6 @@ const XcmTransfer = () => {
             .from(from)
             .to(to)
             .currency(determineCurrency(formValues))
-            .feeAsset("0")
             .amount(amount)
             .address(address)
             .build();

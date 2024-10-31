@@ -1,12 +1,21 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Polkadot
 
-import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
+import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
+import { getAssetId } from '../../pallets/assets'
+import type {
+  IPolkadotXCMTransfer,
+  PolkadotXCMTransferInput,
+  TJunction,
+  TSendInternalOptions
+} from '../../types'
+import { type IXTokensTransfer, Parents, Version, type XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 import XTokensTransferImpl from '../xTokens'
 
 export class BifrostPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>
-  implements IXTokensTransfer
+  implements IXTokensTransfer, IPolkadotXCMTransfer
 {
   constructor() {
     super('BifrostPolkadot', 'bifrost', 'polkadot', Version.V3)
@@ -43,5 +52,48 @@ export class BifrostPolkadot<TApi, TRes>
 
     const currencySelection = this.getCurrencySelection(currency, currencyID)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
+  }
+
+  // Handles DOT, WETH transfers to AssetHubPolkadot
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+    const { amount, overridedCurrency, currencySymbol } = input
+
+    const ETH_CHAIN_ID = BigInt(1)
+    const ethJunction: TJunction = {
+      GlobalConsensus: { Ethereum: { chain_id: ETH_CHAIN_ID } }
+    }
+
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(
+      {
+        ...input,
+        currencySelection: createCurrencySpec(
+          amount,
+          this.version,
+          currencySymbol === 'DOT' ? Parents.ONE : Parents.TWO,
+          overridedCurrency,
+          currencySymbol === 'WETH'
+            ? {
+                X2: [
+                  ethJunction,
+                  {
+                    AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
+                  }
+                ]
+              }
+            : undefined
+        )
+      },
+      'transfer_assets',
+      'Unlimited'
+    )
+  }
+
+  protected canUseXTokens({
+    currencySymbol,
+    destination
+  }: TSendInternalOptions<TApi, TRes>): boolean {
+    return (
+      (currencySymbol !== 'WETH' && currencySymbol !== 'DOT') || destination !== 'AssetHubPolkadot'
+    )
   }
 }

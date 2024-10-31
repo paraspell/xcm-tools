@@ -118,11 +118,22 @@ export const getNativeAssetSymbol = (node: TNodeWithRelayChains): string => {
  * @param symbol - The symbol of the asset to check.
  * @returns True if the asset is supported; otherwise, false.
  */
-export const hasSupportForAsset = (node: TNode, symbol: string): boolean =>
-  getAllAssetsSymbols(node)
-    .map(s => s.toLowerCase())
-    .includes(symbol.toLowerCase())
+export const hasSupportForAsset = (node: TNode, symbol: string): boolean => {
+  const lowerSymbol = symbol.toLowerCase()
+  const symbolsToCheck = new Set<string>()
 
+  symbolsToCheck.add(lowerSymbol)
+
+  if (lowerSymbol.startsWith('xc')) {
+    symbolsToCheck.add(lowerSymbol.substring(2))
+  } else {
+    symbolsToCheck.add(`xc${lowerSymbol}`)
+  }
+
+  const nodeSymbols = getAllAssetsSymbols(node).map(s => s.toLowerCase())
+
+  return nodeSymbols.some(nodeSymbol => symbolsToCheck.has(nodeSymbol))
+}
 /**
  * Retrieves the number of decimals for an asset with the given symbol on a specified node.
  *

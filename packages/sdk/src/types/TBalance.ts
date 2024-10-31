@@ -65,3 +65,36 @@ export type TGetAssetBalanceOptionsBase = {
 }
 
 export type TGetAssetBalanceOptions<TApi, TRes> = WithApi<TGetAssetBalanceOptionsBase, TApi, TRes>
+
+export type TGetOriginFeeDetailsOptionsBase = {
+  /**
+   * The origin node.
+   */
+  origin: TNodeDotKsmWithRelayChains
+  /**
+   * The destination node.
+   */
+  destination: TNodeDotKsmWithRelayChains
+  /**
+   * The currency to transfer.
+   */
+  currency: TCurrencyCore
+  /**
+   * The amount to transfer.
+   */
+  amount: string
+  /**
+   * The account to transfer from.
+   */
+  account: string
+  /**
+   * The fee margin percentage.
+   */
+  feeMarginPercentage?: number
+}
+
+export type TGetOriginFeeDetailsOptions<TApi, TRes> = WithApi<
+  TGetOriginFeeDetailsOptionsBase,
+  TApi,
+  TRes
+>

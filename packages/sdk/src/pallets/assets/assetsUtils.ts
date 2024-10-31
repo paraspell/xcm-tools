@@ -1,6 +1,6 @@
 // Contains function for getting Asset ID or Symbol used in XCM call creation
 
-import { DuplicateAssetError, DuplicateAssetIdError } from '../../errors'
+import { DuplicateAssetError, DuplicateAssetIdError, InvalidCurrencyError } from '../../errors'
 import type {
   TAsset,
   TAssetDetails,
@@ -21,24 +21,78 @@ export const findAssetBySymbol = (
   symbol: string,
   isRelayDestination: boolean
 ) => {
+  const lowerSymbol = symbol.toLowerCase()
+
   if (destination === 'Ethereum') {
     return combinedAssets.find(
-      ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === symbol.toLowerCase()
+      ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === lowerSymbol
     )
   }
 
-  const otherAssetsMatches = otherAssets.filter(
-    ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === symbol.toLowerCase()
+  let otherAssetsMatches = otherAssets.filter(
+    ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === lowerSymbol
   )
 
-  const nativeAssetsMatches = nativeAssets.filter(
-    ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === symbol.toLowerCase()
+  let nativeAssetsMatches = nativeAssets.filter(
+    ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === lowerSymbol
   )
 
   const isPolkadotXcm =
     !isRelayChain(node) &&
     node !== 'Ethereum' &&
     getDefaultPallet(node as TNodePolkadotKusama) === 'PolkadotXcm'
+
+  if (otherAssetsMatches.length === 0 && nativeAssetsMatches.length === 0) {
+    if (lowerSymbol.startsWith('xc')) {
+      // No exact matches found, and symbol starts with 'xc', try stripping 'xc'
+      const strippedSymbol = symbol.substring(2)
+      const strippedLowerSymbol = strippedSymbol.toLowerCase()
+
+      otherAssetsMatches = otherAssets.filter(
+        ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === strippedLowerSymbol
+      )
+
+      nativeAssetsMatches = nativeAssets.filter(
+        ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === strippedLowerSymbol
+      )
+
+      if (node === 'Astar' || node === 'Shiden' || isPolkadotXcm) {
+        return nativeAssetsMatches[0] || otherAssetsMatches[0] || null
+      }
+
+      const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
+
+      if (totalMatches > 1) {
+        throw new InvalidCurrencyError(
+          `Multiple assets found for symbol ${symbol} after stripping 'xc' prefix. Please specify by ID.`
+        )
+      }
+    } else {
+      // No matches found, and symbol does not start with 'xc', try adding 'xc' prefix
+      const prefixedSymbol = `xc${symbol}`
+      const prefixedLowerSymbol = prefixedSymbol.toLowerCase()
+
+      otherAssetsMatches = otherAssets.filter(
+        ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === prefixedLowerSymbol
+      )
+
+      nativeAssetsMatches = nativeAssets.filter(
+        ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === prefixedLowerSymbol
+      )
+
+      if (node === 'Astar' || node === 'Shiden' || isPolkadotXcm) {
+        return nativeAssetsMatches[0] || otherAssetsMatches[0] || null
+      }
+
+      const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
+
+      if (totalMatches > 1) {
+        throw new InvalidCurrencyError(
+          `Multiple assets found for symbol ${symbol} after adding 'xc' prefix. Please specify by ID.`
+        )
+      }
+    }
+  }
 
   if (node === 'Astar' || node === 'Shiden' || isPolkadotXcm) {
     return nativeAssetsMatches[0] || otherAssetsMatches[0] || null
