@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -265,19 +263,6 @@ const fetchAssetsType2 = async (api: ApiPromise, query: string): Promise<Partial
   return { nativeAssets, otherAssets }
 }
 
-const removePrefix = (inputString: string, prefix: string) => {
-  if (inputString.startsWith(prefix)) {
-    return inputString.substring(prefix.length)
-  }
-  return inputString
-}
-
-const transformOtherAssets = (otherAssets: any, node: TNodePolkadotKusama) => {
-  return node === 'Moonbeam' || node === 'Moonriver'
-    ? otherAssets.map((asset: any) => ({ ...asset, symbol: removePrefix(asset.symbol, 'xc') }))
-    : otherAssets
-}
-
 const fetchNativeAsset = async (api: ApiPromise): Promise<string> => {
   const propertiesRes = await api.rpc.system.properties()
   const json = propertiesRes.toHuman()
@@ -420,7 +405,7 @@ const fetchNodeAssets = async (
 
   return {
     nativeAssets,
-    otherAssets: transformOtherAssets(otherAssets, node),
+    otherAssets,
     nativeAssetSymbol
   }
 }

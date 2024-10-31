@@ -1,14 +1,20 @@
 // Contains tests for different Asset queries used in XCM call creation
 
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { NODE_NAMES } from '../../maps/consts'
-import { getAssetsObject } from './assets'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
+import * as assetFunctions from './assets'
 import { getDefaultPallet } from '../pallets'
 import { isRelayChain } from '../../utils'
 import type { TNodePolkadotKusama } from '../../types'
 
+const getAssetsObject = assetFunctions.getAssetsObject
+
 describe('getAssetBySymbolOrId', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('should return assetId and symbol for every foreign asset', () => {
     NODE_NAMES.forEach(node => {
       const { otherAssets } = getAssetsObject(node)
@@ -94,5 +100,94 @@ describe('getAssetBySymbolOrId', () => {
     const asset = getAssetBySymbolOrId('AssetHubKusama', { symbol: 'PNEO' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should find asset starting with "xc" for Moonbeam', () => {
+    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: 'xcZTG' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should find asset starting with "xc" for Moonbeam', () => {
+    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: 'xcWETH.e' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should throw error when duplicate dot asset on Hydration', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockResolvedValueOnce({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '1',
+          symbol: 'DOT'
+        },
+        {
+          assetId: '2',
+          symbol: 'DOT'
+        }
+      ],
+      nativeAssets: []
+    })
+    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'HDX' })).toThrow()
+  })
+
+  it('should throw error when multiple assets found for symbol after stripping "xc" prefix', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '1',
+          symbol: 'DOT'
+        },
+        {
+          assetId: '2',
+          symbol: 'DOT'
+        }
+      ],
+      nativeAssets: []
+    })
+    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'xcDOT' })).toThrow()
+  })
+
+  it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '1',
+          symbol: 'xcDOT'
+        },
+        {
+          assetId: '2',
+          symbol: 'xcDOT'
+        }
+      ],
+      nativeAssets: []
+    })
+    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'DOT' })).toThrow()
+  })
+
+  it('Should find ethereum assets', () => {
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH' }, false, 'Ethereum')
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should return null when passing a multilocation currency', () => {
+    const asset = getAssetBySymbolOrId('Astar', {
+      multilocation: {
+        parents: 1,
+        interior: {
+          X1: {
+            PalletInstance: 1
+          }
+        }
+      }
+    })
+    expect(asset).toBeNull()
   })
 })

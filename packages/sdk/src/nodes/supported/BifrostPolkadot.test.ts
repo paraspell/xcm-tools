@@ -1,11 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { XTokensTransferInput } from '../../types'
-import { Version } from '../../types'
+import type {
+  XTokensTransferInput,
+  PolkadotXCMTransferInput,
+  TSendInternalOptions
+} from '../../types'
+import { Parents, Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type { BifrostPolkadot } from './BifrostPolkadot'
 import { getNode } from '../../utils'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
+import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
+import { getAssetId } from '../../pallets/assets'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -13,12 +20,23 @@ vi.mock('../xTokens', () => ({
   }
 }))
 
+vi.mock('../polkadotXcm', () => ({
+  default: {
+    transferPolkadotXCM: vi.fn()
+  }
+}))
+
 describe('BifrostPolkadot', () => {
   let bifrostPolkadot: BifrostPolkadot<ApiPromise, Extrinsic>
-  const mockInput = {
+  const mockXTokensInput = {
     currency: 'BNC',
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
+
+  const mockPolkadotXCMInput = {
+    amount: '200',
+    currencySymbol: 'WETH'
+  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     bifrostPolkadot = getNode<ApiPromise, Extrinsic, 'BifrostPolkadot'>('BifrostPolkadot')
@@ -35,38 +53,109 @@ describe('BifrostPolkadot', () => {
     const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     vi.spyOn(bifrostPolkadot, 'getNativeAssetSymbol').mockReturnValue('BNC')
 
-    bifrostPolkadot.transferXTokens(mockInput)
+    bifrostPolkadot.transferXTokens(mockXTokensInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { Native: 'BNC' })
+    expect(spy).toHaveBeenCalledWith(mockXTokensInput, { Native: 'BNC' })
   })
 
-  it('should call transferXTokens with Token when currency does not match native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-    vi.spyOn(bifrostPolkadot, 'getNativeAssetSymbol').mockReturnValue('NOT_BNC')
-
-    bifrostPolkadot.transferXTokens(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, { Token: 'BNC' })
-  })
-
-  it('should call transferXTokens with VSToken', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-    vi.spyOn(bifrostPolkadot, 'getNativeAssetSymbol').mockReturnValue('NOT_BNC')
-
-    const input = {
-      ...mockInput,
-      currency: 'vsDOT',
-      currencyID: '0'
+  it('should call transferPolkadotXCM with correct parameters for WETH transfer', () => {
+    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+    const ETH_CHAIN_ID = BigInt(1)
+    const ethJunction = {
+      GlobalConsensus: { Ethereum: { chain_id: ETH_CHAIN_ID } }
     }
 
-    bifrostPolkadot.transferXTokens(input)
+    bifrostPolkadot.transferPolkadotXCM(mockPolkadotXCMInput)
 
-    expect(spy).toHaveBeenCalledWith(input, { VSToken2: 0 })
+    expect(spy).toHaveBeenCalledWith(
+      {
+        ...mockPolkadotXCMInput,
+        currencySelection: createCurrencySpec(
+          mockPolkadotXCMInput.amount,
+          Version.V3,
+          2, // Parents.TWO
+          mockPolkadotXCMInput.overridedCurrency,
+          {
+            X2: [
+              ethJunction,
+              {
+                AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
+              }
+            ]
+          }
+        )
+      },
+      'transfer_assets',
+      'Unlimited'
+    )
   })
 
-  it('should throw error when currency symbol is undefined', () => {
+  it('should call transferPolkadotXCM with correct parameters for DOT transfer', () => {
+    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+
+    bifrostPolkadot.transferPolkadotXCM({ ...mockPolkadotXCMInput, currencySymbol: 'DOT' })
+
+    expect(spy).toHaveBeenCalledWith(
+      {
+        ...mockPolkadotXCMInput,
+        currencySymbol: 'DOT',
+        currencySelection: createCurrencySpec(
+          mockPolkadotXCMInput.amount,
+          Version.V3,
+          Parents.ONE,
+          mockPolkadotXCMInput.overridedCurrency
+        )
+      },
+      'transfer_assets',
+      'Unlimited'
+    )
+  })
+
+  it('should throw error when currency symbol is undefined in transferXTokens', () => {
     expect(() =>
-      bifrostPolkadot.transferXTokens({ ...mockInput, currency: undefined })
+      bifrostPolkadot.transferXTokens({ ...mockXTokensInput, currency: undefined })
     ).toThrowError('Currency symbol is undefined')
+  })
+
+  describe('canUseXTokens', () => {
+    it('should return false when currencySymbol is WETH and destination is AssetHubPolkadot', () => {
+      const options = {
+        currencySymbol: 'WETH',
+        destination: 'AssetHubPolkadot'
+      } as TSendInternalOptions<ApiPromise, Extrinsic>
+      expect(bifrostPolkadot['canUseXTokens'](options)).toBe(false)
+    })
+
+    it('should return false when currencySymbol is DOT and destination is AssetHubPolkadot', () => {
+      const options: TSendInternalOptions<ApiPromise, Extrinsic> = {
+        currencySymbol: 'DOT',
+        destination: 'AssetHubPolkadot'
+      } as TSendInternalOptions<ApiPromise, Extrinsic>
+      expect(bifrostPolkadot['canUseXTokens'](options)).toBe(false)
+    })
+
+    it('should return true when currencySymbol is not WETH or DOT and destination is AssetHubPolkadot', () => {
+      const options: TSendInternalOptions<ApiPromise, Extrinsic> = {
+        currencySymbol: 'BNC',
+        destination: 'AssetHubPolkadot'
+      } as TSendInternalOptions<ApiPromise, Extrinsic>
+      expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
+    })
+
+    it('should return true when currencySymbol is WETH but destination is not AssetHubPolkadot', () => {
+      const options: TSendInternalOptions<ApiPromise, Extrinsic> = {
+        currencySymbol: 'WETH',
+        destination: 'Acala'
+      } as TSendInternalOptions<ApiPromise, Extrinsic>
+      expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
+    })
+
+    it('should return true when currencySymbol is DOT but destination is not AssetHubPolkadot', () => {
+      const options: TSendInternalOptions<ApiPromise, Extrinsic> = {
+        currencySymbol: 'DOT',
+        destination: 'Acala'
+      } as TSendInternalOptions<ApiPromise, Extrinsic>
+      expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
+    })
   })
 })

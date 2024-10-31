@@ -27,14 +27,14 @@ export const getTransferInfo = async <TApi, TRes>({
     node: origin,
     api: originApi
   })
-  const { xcmFee: destXcmFee } = await getOriginFeeDetails(
+  const { xcmFee: destXcmFee } = await getOriginFeeDetails({
     origin,
     destination,
     currency,
     amount,
-    accountOrigin,
-    originApi
-  )
+    account: accountOrigin,
+    api: originApi
+  })
   const expectedBalanceAfterXCMDelivery = originBalance - destXcmFee
 
   const asset =
@@ -69,14 +69,14 @@ export const getTransferInfo = async <TApi, TRes>({
         api: originApi
       }),
       expectedBalanceAfterXCMFee: expectedBalanceAfterXCMDelivery,
-      xcmFee: await getOriginFeeDetails(
-        origin,
+      xcmFee: await getOriginFeeDetails({
+        origin: origin,
         destination,
         currency,
         amount,
-        accountOrigin,
-        originApi
-      ),
+        account: accountOrigin,
+        api: originApi
+      }),
       existentialDeposit: BigInt(getExistentialDeposit(origin) ?? 0),
       asset: getNativeAssetSymbol(origin),
       minNativeTransferableAmount: getMinNativeTransferableAmount(origin),

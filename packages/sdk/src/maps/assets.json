@@ -1317,22 +1317,22 @@
     "otherAssets": [
       {
         "assetId": "78407957940239408223554844611219482002",
-        "symbol": "ibcMOVR",
+        "symbol": "xcibcMOVR",
         "decimals": 18
       },
       {
         "assetId": "150874409661081770150564009349448205842",
-        "symbol": "ZTG",
+        "symbol": "xcZTG",
         "decimals": 10
       },
       {
         "assetId": "283870493414747423842723289889816153538",
-        "symbol": "UNQ",
+        "symbol": "xcUNQ",
         "decimals": 18
       },
       {
         "assetId": "90225766094594282577230355136633846906",
-        "symbol": "PDEX",
+        "symbol": "xcPDEX",
         "decimals": 12
       },
       {
@@ -1342,27 +1342,27 @@
       },
       {
         "assetId": "314077021455772878282433861213184736939",
-        "symbol": "PEAQ",
+        "symbol": "xcPEAQ",
         "decimals": 18
       },
       {
         "assetId": "144012926827374458669278577633504620722",
-        "symbol": "FIL",
+        "symbol": "xcFIL",
         "decimals": 18
       },
       {
         "assetId": "125699734534028342599692732320197985871",
-        "symbol": "RING",
+        "symbol": "xcRING",
         "decimals": 18
       },
       {
         "assetId": "91372035960551235635465443179559840483",
-        "symbol": "CFG",
+        "symbol": "xcCFG",
         "decimals": 18
       },
       {
         "assetId": "187224307232923873519830480073807488153",
-        "symbol": "EQD",
+        "symbol": "xcEQD",
         "decimals": 9
       },
       {
@@ -1372,37 +1372,37 @@
       },
       {
         "assetId": "69606720909260275826784788104880799692",
-        "symbol": "HDX",
+        "symbol": "xcHDX",
         "decimals": 12
       },
       {
         "assetId": "133307414193833606001516599592873928539",
-        "symbol": "ibcTIA",
+        "symbol": "xcibcTIA",
         "decimals": 6
       },
       {
         "assetId": "190590555344745888270686124937537713878",
-        "symbol": "EQ",
+        "symbol": "xcEQ",
         "decimals": 9
       },
       {
         "assetId": "61295607754960722617854661686514597014",
-        "symbol": "WIFD",
+        "symbol": "xcWIFD",
         "decimals": 10
       },
       {
         "assetId": "141196559012917796508928734717797136690",
-        "symbol": "ibcIST",
+        "symbol": "xcibcIST",
         "decimals": 6
       },
       {
         "assetId": "29085784439601774464560083082574142143",
-        "symbol": "vDOT",
+        "symbol": "xcvDOT",
         "decimals": 10
       },
       {
         "assetId": "225719522181998468294117309041779353812",
-        "symbol": "LDOT",
+        "symbol": "xcLDOT",
         "decimals": 10
       },
       {
@@ -1412,142 +1412,142 @@
       },
       {
         "assetId": "124463719055550872076363892993240202694",
-        "symbol": "DED",
+        "symbol": "xcDED",
         "decimals": 10
       },
       {
         "assetId": "224077081838586484055667086558292981199",
-        "symbol": "ASTR",
+        "symbol": "xcASTR",
         "decimals": 18
       },
       {
         "assetId": "199907282886248358976504623107230837230",
-        "symbol": "ibcBLD",
+        "symbol": "xcibcBLD",
         "decimals": 6
       },
       {
         "assetId": "166377000701797186346254371275954761085",
-        "symbol": "USDC",
+        "symbol": "xcUSDC",
         "decimals": 6
       },
       {
         "assetId": "142155548796783636521833385094843759961",
-        "symbol": "BNCS",
+        "symbol": "xcBNCS",
         "decimals": 12
       },
       {
         "assetId": "89994634370519791027168048838578580624",
-        "symbol": "SUB",
+        "symbol": "xcSUB",
         "decimals": 10
       },
       {
         "assetId": "138280378441551394289980644963240827219",
-        "symbol": "ibcATOM",
+        "symbol": "xcibcATOM",
         "decimals": 6
       },
       {
         "assetId": "228510780171552721666262089780561563481",
-        "symbol": "ibcPICA",
+        "symbol": "xcibcPICA",
         "decimals": 12
       },
       {
         "assetId": "204507659831918931608354793288110796652",
-        "symbol": "vGLMR",
+        "symbol": "xcvGLMR",
         "decimals": 18
       },
       {
         "assetId": "184218609779515850660274730699350567246",
-        "symbol": "NCTR",
+        "symbol": "xcNCTR",
         "decimals": 18
       },
       {
         "assetId": "289989900872525819559124583375550296953",
-        "symbol": "vMANTA",
+        "symbol": "xcvMANTA",
         "decimals": 18
       },
       {
         "assetId": "110021739665376159354538090254163045594",
-        "symbol": "aUSD",
+        "symbol": "xcaUSD",
         "decimals": 12
       },
       {
         "assetId": "311091173110107856861649819128533077277",
-        "symbol": "USDT",
+        "symbol": "xcUSDT",
         "decimals": 6
       },
       {
         "assetId": "64174511183114006009298114091987195453",
-        "symbol": "PINK",
+        "symbol": "xcPINK",
         "decimals": 10
       },
       {
         "assetId": "309163521958167876851250718453738106865",
-        "symbol": "NODL",
+        "symbol": "xcNODL",
         "decimals": 11
       },
       {
         "assetId": "120637696315203257380661607956669368914",
-        "symbol": "IBTC",
+        "symbol": "xcIBTC",
         "decimals": 8
       },
       {
         "assetId": "166446646689194205559791995948102903873",
-        "symbol": "MANTA",
+        "symbol": "xcMANTA",
         "decimals": 18
       },
       {
         "assetId": "101170542313601871197860408087030232491",
-        "symbol": "INTR",
+        "symbol": "xcINTR",
         "decimals": 10
       },
       {
         "assetId": "165823357460190568952172802245839421906",
-        "symbol": "BNC",
+        "symbol": "xcBNC",
         "decimals": 12
       },
       {
         "assetId": "32615670524745285411807346420584982855",
-        "symbol": "PARA",
+        "symbol": "xcPARA",
         "decimals": 12
       },
       {
         "assetId": "42259045809535163221576417993425387648",
-        "symbol": "DOT",
+        "symbol": "xcDOT",
         "decimals": 10
       },
       {
         "assetId": "45647473099451451833602657905356404688",
-        "symbol": "PEN",
+        "symbol": "xcPEN",
         "decimals": 12
       },
       {
         "assetId": "224821240862170613278369189818311486111",
-        "symbol": "ACA",
+        "symbol": "xcACA",
         "decimals": 12
       },
       {
         "assetId": "272547899416482196831721420898811311297",
-        "symbol": "vFIL",
+        "symbol": "xcvFIL",
         "decimals": 18
       },
       {
         "assetId": "114018676402354620972806895487280206446",
-        "symbol": "vASTR",
+        "symbol": "xcvASTR",
         "decimals": 18
       },
       {
         "assetId": "238111524681612888331172110363070489924",
-        "symbol": "NEURO",
+        "symbol": "xcNEURO",
         "decimals": 12
       },
       {
         "assetId": "112679793397406599376365943185137098326",
-        "symbol": "STINK",
+        "symbol": "xcSTINK",
         "decimals": 10
       },
       {
         "assetId": "132685552157663328694213725410064821485",
-        "symbol": "PHA",
+        "symbol": "xcPHA",
         "decimals": 12
       }
     ]
@@ -4715,122 +4715,122 @@
     "otherAssets": [
       {
         "assetId": "108457044225666871745333730479173774551",
-        "symbol": "CSM",
+        "symbol": "xcCSM",
         "decimals": 12
       },
       {
         "assetId": "16797826370226091782818345603793389938",
-        "symbol": "SDN",
+        "symbol": "xcSDN",
         "decimals": 18
       },
       {
         "assetId": "76100021443485661246318545281171740067",
-        "symbol": "HKO",
+        "symbol": "xcHKO",
         "decimals": 12
       },
       {
         "assetId": "138512078356357941985706694377215053953",
-        "symbol": "TNKR",
+        "symbol": "xcTNKR",
         "decimals": 12
       },
       {
         "assetId": "328179947973504579459046439826496046832",
-        "symbol": "KBTC",
+        "symbol": "xcKBTC",
         "decimals": 8
       },
       {
         "assetId": "108036400430056508975016746969135344601",
-        "symbol": "XRT",
+        "symbol": "xcXRT",
         "decimals": 9
       },
       {
         "assetId": "133300872918374599700079037156071917454",
-        "symbol": "TUR",
+        "symbol": "xcTUR",
         "decimals": 10
       },
       {
         "assetId": "213357169630950964874127107356898319277",
-        "symbol": "KMA",
+        "symbol": "xcKMA",
         "decimals": 12
       },
       {
         "assetId": "65216491554813189869575508812319036608",
-        "symbol": "LIT",
+        "symbol": "xcLIT",
         "decimals": 12
       },
       {
         "assetId": "173481220575862801646329923366065693029",
-        "symbol": "CRAB",
+        "symbol": "xcCRAB",
         "decimals": 18
       },
       {
         "assetId": "189307976387032586987344677431204943363",
-        "symbol": "PHA",
+        "symbol": "xcPHA",
         "decimals": 12
       },
       {
         "assetId": "264344629840762281112027368930249420542",
-        "symbol": "vKSM",
+        "symbol": "xcvKSM",
         "decimals": 12
       },
       {
         "assetId": "72145018963825376852137222787619937732",
-        "symbol": "vBNC",
+        "symbol": "xcvBNC",
         "decimals": 12
       },
       {
         "assetId": "214920334981412447805621250067209749032",
-        "symbol": "aSeed",
+        "symbol": "xcaSeed",
         "decimals": 12
       },
       {
         "assetId": "175400718394635817552109270754364440562",
-        "symbol": "KINT",
+        "symbol": "xcKINT",
         "decimals": 12
       },
       {
         "assetId": "167283995827706324502761431814209211090",
-        "symbol": "PICA",
+        "symbol": "xcPICA",
         "decimals": 12
       },
       {
         "assetId": "105075627293246237499203909093923548958",
-        "symbol": "TEER",
+        "symbol": "xcTEER",
         "decimals": 12
       },
       {
         "assetId": "118095707745084482624853002839493125353",
-        "symbol": "MGX",
+        "symbol": "xcMGX",
         "decimals": 18
       },
       {
         "assetId": "203223821023327994093278529517083736593",
-        "symbol": "vMOVR",
+        "symbol": "xcvMOVR",
         "decimals": 18
       },
       {
         "assetId": "311091173110107856861649819128533077277",
-        "symbol": "USDT",
+        "symbol": "xcUSDT",
         "decimals": 6
       },
       {
         "assetId": "182365888117048807484804376330534607370",
-        "symbol": "RMRK",
+        "symbol": "xcRMRK",
         "decimals": 10
       },
       {
         "assetId": "42259045809535163221576417993425387648",
-        "symbol": "KSM",
+        "symbol": "xcKSM",
         "decimals": 12
       },
       {
         "assetId": "10810581592933651521121702237638664357",
-        "symbol": "KAR",
+        "symbol": "xcKAR",
         "decimals": 12
       },
       {
         "assetId": "319623561105283008236062145480775032445",
-        "symbol": "BNC",
+        "symbol": "xcBNC",
         "decimals": 12
       }
     ]
