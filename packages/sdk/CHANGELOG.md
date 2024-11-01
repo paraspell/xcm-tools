@@ -1,5 +1,30 @@
 # Changelog
 
+## [7.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v6.2.4...sdk-v7.0.0) (2024-11-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sdk:** Add PolkadotAPI(PAPI) support ✨
+
+### Features
+
+* **sdk:** Add PolkadotAPI(PAPI) support ✨ ([b3a1e72](https://github.com/paraspell/xcm-tools/commit/b3a1e72f11d13b7f43f077bb2f68cb27903cc7cc))
+
+
+### Bug Fixes
+
+* **playground:** Remove Ethereum option from some selects ✨ ([825702e](https://github.com/paraspell/xcm-tools/commit/825702e55f2cfab2d52f0c3c6bfcab7904b285a5))
+* **sdk:** Fix and improve getAssetBalance function 🔧 ([395dc7c](https://github.com/paraspell/xcm-tools/commit/395dc7c4e5b0727ea9d8b25eeb82c67d43b41509))
+
+
+### Miscellaneous Chores
+
+* Perform a monthly check 🛠️ ([46a8802](https://github.com/paraspell/xcm-tools/commit/46a8802cb68a49b28f131b337e5b4b4731e01fd4))
+* **sdk:** Update docs about PAPI ([50db221](https://github.com/paraspell/xcm-tools/commit/50db221e01294d42855318d5c7f3516cd85ca3b5))
+* **sdk:** Update README.md ([a7dad60](https://github.com/paraspell/xcm-tools/commit/a7dad60befc0f97c647ea79b525622d7aa1397d2))
+* **sdk:** Update README.md ([1fbb395](https://github.com/paraspell/xcm-tools/commit/1fbb395d04466e3cbf34e13617faabe62dd6bb40))
+
 ## [6.2.4](https://github.com/paraspell/xcm-tools/compare/sdk-v6.2.3...sdk-v6.2.4) (2024-10-25)
 
 
