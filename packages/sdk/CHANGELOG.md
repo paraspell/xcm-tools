@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.1](https://github.com/paraspell/xcm-tools/compare/sdk-v7.0.0...sdk-v7.0.1) (2024-11-01)
+
+
+### Bug Fixes
+
+* **sdk:** Fix Moonbeam 'xc' prefix handling 🔧 ([a986bf8](https://github.com/paraspell/xcm-tools/commit/a986bf886f977499057a5ed49cb078953b770330))
+
 ## [7.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v6.2.4...sdk-v7.0.0) (2024-11-01)
 
 
