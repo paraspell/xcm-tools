@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.4.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.4.0...xcm-router-v1.4.1) (2024-11-01)
+
+
+### Bug Fixes
+
+* **playground:** Remove Ethereum option from some selects ✨ ([825702e](https://github.com/paraspell/xcm-tools/commit/825702e55f2cfab2d52f0c3c6bfcab7904b285a5))
+
+
+### Documentation
+
+* Add TSDoc reference comments to exported functions 📄 ([73b8cfe](https://github.com/paraspell/xcm-tools/commit/73b8cfe6d0944a0ea2c649552c844501ad10b19c))
+
+
+### Miscellaneous Chores
+
+* Add consistent type imports ESlint rule ✏️ ([61c20ae](https://github.com/paraspell/xcm-tools/commit/61c20ae24b83d871a6a5e3819e09748df3026061))
+* Perform a monthly check 🛠️ ([46a8802](https://github.com/paraspell/xcm-tools/commit/46a8802cb68a49b28f131b337e5b4b4731e01fd4))
+* **xcm-tools:** Add starter template projects to readme ([8e9cbf7](https://github.com/paraspell/xcm-tools/commit/8e9cbf7f6a8c25e7bf7dd48287d0dd66557c4c02))
+
+
+### Tests
+
+* Improve overall unit test coverage to above 90% 🧪 ([aeb32bb](https://github.com/paraspell/xcm-tools/commit/aeb32bb6a54c1bc2e527cf587b8e0a44e3c397a5))
+
 ## [1.4.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.3.0...xcm-router-v1.4.0) (2024-09-30)
 
 
