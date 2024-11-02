@@ -113,20 +113,17 @@ const sendCommon = async <TApi, TRes>(
 
   const pallet = getDefaultPallet(origin as TNodePolkadotKusama)
 
+  const isBifrost = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
+
   let asset
 
   // Transfers to AssetHub require the destination asset ID to be used
-  if (!isBridge && isDestAssetHub && pallet === 'XTokens') {
+  if (!isBridge && isDestAssetHub && pallet === 'XTokens' && !isBifrost) {
     asset = getAssetBySymbolOrId(destination, currency, false, destination)
-
-    let nativeAssets = getNativeAssets(destination)
-    if (origin === 'BifrostPolkadot' && asset?.symbol === 'DOT') {
-      nativeAssets = nativeAssets.filter(nativeAsset => nativeAsset.symbol !== 'DOT')
-    }
 
     if (
       'symbol' in currency &&
-      nativeAssets.some(
+      getNativeAssets(destination).some(
         nativeAsset => nativeAsset.symbol.toLowerCase() === currency.symbol.toLowerCase()
       )
     ) {

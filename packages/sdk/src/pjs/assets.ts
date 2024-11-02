@@ -48,5 +48,4 @@ export const getOriginFeeDetails = createPolkadotJsApiCall(
 
 export * from '../pallets/assets/assets'
 export * from '../pallets/assets/eds'
-export * from '../pallets/assets/getOriginFeeDetails'
 export { getSupportedAssets } from '../pallets/assets/getSupportedAssets'

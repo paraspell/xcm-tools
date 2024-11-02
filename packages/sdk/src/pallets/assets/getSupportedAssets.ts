@@ -43,10 +43,13 @@ export const getSupportedAssets = (
     return [...(polkadotAsset ? [polkadotAsset] : []), ...(kusamaAsset ? [kusamaAsset] : [])]
   }
 
+  const isBifrost = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
+
   if (
     !isRelayChain(origin) &&
     getDefaultPallet(origin as TNodePolkadotKusama) === 'XTokens' &&
-    (destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama')
+    (destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama') &&
+    !isBifrost
   ) {
     return getOtherAssets(destination).filter(
       asset =>
