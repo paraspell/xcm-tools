@@ -8,46 +8,42 @@ import {
   sendSerializedApiCall
 } from './transfer'
 import PapiApi from './PapiApi'
-import type { PolkadotClient } from 'polkadot-api'
-import type { TPapiTransaction } from './types'
+import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 import type { TRelayToParaOptions, TSendOptions } from '../types'
 
 vi.mock('./PapiApi')
 vi.mock('../pallets/xcmPallet/transfer')
 
 describe('Relay Transfer and Send Functions using PapiApi', () => {
-  const mockApi = {} as PolkadotClient
-  const mockDestApi = {} as PolkadotClient
+  const mockApi = {} as TPapiApi
+  const mockDestApi = {} as TPapiApi
 
   const optionsRelayToPara: Omit<
-    TRelayToParaOptions<PolkadotClient, TPapiTransaction>,
+    TRelayToParaOptions<TPapiApi, TPapiTransaction>,
     'api' | 'destApiForKeepAlive'
   > & {
-    api: PolkadotClient
-    destApiForKeepAlive: PolkadotClient
+    api: TPapiApiOrUrl
+    destApiForKeepAlive: TPapiApiOrUrl
   } = {
     api: mockApi,
     destApiForKeepAlive: mockDestApi
-  } as Omit<
-    TRelayToParaOptions<PolkadotClient, TPapiTransaction>,
-    'api' | 'destApiForKeepAlive'
-  > & {
-    api: PolkadotClient
-    destApiForKeepAlive: PolkadotClient
+  } as Omit<TRelayToParaOptions<TPapiApi, TPapiTransaction>, 'api' | 'destApiForKeepAlive'> & {
+    api: TPapiApiOrUrl
+    destApiForKeepAlive: TPapiApiOrUrl
   }
 
   const optionsSend: Omit<
-    TSendOptions<PolkadotClient, TPapiTransaction>,
+    TSendOptions<TPapiApi, TPapiTransaction>,
     'api' | 'destApiForKeepAlive'
   > & {
-    api: PolkadotClient
-    destApiForKeepAlive: PolkadotClient
+    api: TPapiApiOrUrl
+    destApiForKeepAlive: TPapiApiOrUrl
   } = {
     api: mockApi,
     destApiForKeepAlive: mockDestApi
-  } as Omit<TSendOptions<PolkadotClient, TPapiTransaction>, 'api' | 'destApiForKeepAlive'> & {
-    api: PolkadotClient
-    destApiForKeepAlive: PolkadotClient
+  } as Omit<TSendOptions<TPapiApi, TPapiTransaction>, 'api' | 'destApiForKeepAlive'> & {
+    api: TPapiApiOrUrl
+    destApiForKeepAlive: TPapiApiOrUrl
   }
 
   let papiApiSetApiSpy: MockInstance

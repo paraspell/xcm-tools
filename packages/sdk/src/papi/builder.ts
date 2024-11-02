@@ -1,7 +1,6 @@
 import * as InternalBuilder from '../builder'
-import type { PolkadotClient } from 'polkadot-api'
 import PapiApi from './PapiApi'
-import type { TPapiTransaction } from './types'
+import type { TPapiApiOrUrl, TPapiApi, TPapiTransaction } from './types'
 
 /**
  * Creates a new Builder instance.
@@ -9,18 +8,15 @@ import type { TPapiTransaction } from './types'
  * @param api - The API instance to use for building transactions. If not provided, a new instance will be created.
  * @returns A new Builder instance.
  */
-const Builder = (api?: PolkadotClient) => {
+const Builder = (api?: TPapiApiOrUrl) => {
   const papiApi = new PapiApi()
   papiApi.setApi(api)
-  return InternalBuilder.Builder<PolkadotClient, TPapiTransaction>(papiApi)
+  return InternalBuilder.Builder<TPapiApi, TPapiTransaction>(papiApi)
 }
 
-type UseKeepAliveFinalBuilder = InternalBuilder.UseKeepAliveFinalBuilder<
-  PolkadotClient,
-  TPapiTransaction
->
+type UseKeepAliveFinalBuilder = InternalBuilder.UseKeepAliveFinalBuilder<TPapiApi, TPapiTransaction>
 
-const GeneralBuilder = InternalBuilder.GeneralBuilder<PolkadotClient, TPapiTransaction>
+const GeneralBuilder = InternalBuilder.GeneralBuilder<TPapiApi, TPapiTransaction>
 
 export { Builder, UseKeepAliveFinalBuilder, GeneralBuilder }
 export * from '../builder/builders/evm-builder/EvmBuilder'

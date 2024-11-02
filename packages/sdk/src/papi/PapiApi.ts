@@ -6,8 +6,8 @@ import type {
   TSerializedApiCallV2
 } from '../types'
 import { createApiInstanceForNode } from '../utils'
-import { createClient, FixedSizeBinary, type PolkadotClient } from 'polkadot-api'
-import type { TPapiTransaction } from '../papi/types'
+import { createClient, FixedSizeBinary } from 'polkadot-api'
+import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from '../papi/types'
 import type { IPolkadotApi } from '../api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { transform } from './PapiXcmTransformer'
@@ -29,15 +29,15 @@ const unsupportedNodes = [
   'Subsocial'
 ] as TNodeWithRelayChains[]
 
-class PapiApi implements IPolkadotApi<PolkadotClient, TPapiTransaction> {
-  private _api?: PolkadotClient
-  private api: PolkadotClient
+class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
+  private _api?: TPapiApiOrUrl
+  private api: TPapiApi
 
-  setApi(api?: PolkadotClient): void {
+  setApi(api?: TPapiApiOrUrl): void {
     this._api = api
   }
 
-  getApi(): PolkadotClient {
+  getApi(): TPapiApi {
     return this.api
   }
 
@@ -45,11 +45,15 @@ class PapiApi implements IPolkadotApi<PolkadotClient, TPapiTransaction> {
     if (unsupportedNodes.includes(node)) {
       throw new NodeNotSupportedError(`The node ${node} is not yet supported by the Polkadot API.`)
     }
-    this.api =
-      this._api ?? (await createApiInstanceForNode<PolkadotClient, TPapiTransaction>(this, node))
+    if (typeof this._api === 'string') {
+      this.api = await this.createApiInstance(this._api)
+    } else {
+      this.api =
+        this._api ?? (await createApiInstanceForNode<TPapiApi, TPapiTransaction>(this, node))
+    }
   }
 
-  async createApiInstance(wsUrl: string): Promise<PolkadotClient> {
+  async createApiInstance(wsUrl: string): Promise<TPapiApi> {
     const isNodeJs = typeof window === 'undefined'
     let getWsProvider
     if (isNodeJs) {
@@ -67,6 +71,7 @@ class PapiApi implements IPolkadotApi<PolkadotClient, TPapiTransaction> {
   callTxMethod({ module, section, parameters }: TSerializedApiCallV2): TPapiTransaction {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const transformedParameters = transform(parameters)
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.api.getUnsafeApi().tx[module][section](transformedParameters)
   }
@@ -142,7 +147,7 @@ class PapiApi implements IPolkadotApi<PolkadotClient, TPapiTransaction> {
     return BigInt(response === undefined ? 0 : response.balance)
   }
 
-  clone(): IPolkadotApi<PolkadotClient, TPapiTransaction> {
+  clone(): IPolkadotApi<TPapiApi, TPapiTransaction> {
     return new PapiApi()
   }
 }

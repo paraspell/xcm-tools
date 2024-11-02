@@ -19,8 +19,7 @@ import { getPolkadotSigner, PolkadotSigner } from 'polkadot-api/signer'
 
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
 import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
-import { TPapiTransaction } from '../src/papi/types'
-import { PolkadotClient } from 'polkadot-api'
+import { TPapiApi, TPapiTransaction } from '../src/papi/types'
 import { secp256k1 } from '@noble/curves/secp256k1'
 import { keccak_256 } from '@noble/hashes/sha3'
 import { mnemonicToSeedSync } from '@scure/bip39'
@@ -112,11 +111,9 @@ const validateTx = async (tx: TPapiTransaction, signer: PolkadotSigner) => {
 }
 
 describe.sequential('XCM - e2e', () => {
-  const apiPool: Record<string, PolkadotClient> = {}
+  const apiPool: Record<string, TPapiApi> = {}
 
-  async function createOrGetApiInstanceForNode(
-    node: TNodeWithRelayChains
-  ): Promise<PolkadotClient> {
+  async function createOrGetApiInstanceForNode(node: TNodeWithRelayChains): Promise<TPapiApi> {
     if (!apiPool[node]) {
       const api = await createApiInstanceForNode(node)
       apiPool[node] = api
@@ -328,7 +325,7 @@ describe.sequential('XCM - e2e', () => {
   })
   filteredNodes.forEach(node => {
     describe.sequential(`${node} ParaToPara & ParaToRelay`, () => {
-      let api: PolkadotClient
+      let api: TPapiApi
       const { nodeTo, asset, assetId } = findTransferableNodeAndAsset(node)
       beforeAll(async () => {
         api = await createOrGetApiInstanceForNode(node)

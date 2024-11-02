@@ -5,9 +5,10 @@ import type {
   TNodeWithRelayChains,
   TSerializedApiCallV2
 } from '../types'
+import type { TApiOrUrl } from '../types/TApi'
 
 export interface IPolkadotApi<TApi, TRes> {
-  setApi(api?: TApi): void
+  setApi(api?: TApiOrUrl<TApi>): void
   getApi(): TApi
   init(node: TNodeWithRelayChains): Promise<void>
   createApiInstance: (wsUrl: string) => Promise<TApi>

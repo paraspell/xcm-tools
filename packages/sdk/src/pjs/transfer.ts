@@ -1,5 +1,4 @@
-import type { ApiPromise } from '@polkadot/api'
-import type { Extrinsic } from './types'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 import * as transferImpl from '../pallets/xcmPallet/transfer'
 import type { TRelayToParaOptions, TSendOptions } from '../types'
 import PolkadotJsApi from './PolkadotJsApi'
@@ -12,16 +11,16 @@ import PolkadotJsApi from './PolkadotJsApi'
  * @returns An extrinsic to be signed and sent.
  */
 export const transferRelayToPara = (
-  options: Omit<TRelayToParaOptions<ApiPromise, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
-    api: ApiPromise
-    destApiForKeepAlive: ApiPromise
+  options: Omit<TRelayToParaOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
+    api: TPjsApiOrUrl
+    destApiForKeepAlive: TPjsApiOrUrl
   }
 ) => {
   const pjsApi = new PolkadotJsApi()
   pjsApi.setApi(options.api)
   const destPjsApi = new PolkadotJsApi()
   destPjsApi.setApi(options.destApiForKeepAlive)
-  return transferImpl.transferRelayToPara<ApiPromise, Extrinsic>({
+  return transferImpl.transferRelayToPara<TPjsApi, Extrinsic>({
     ...options,
     api: pjsApi,
     destApiForKeepAlive: destPjsApi
@@ -29,16 +28,16 @@ export const transferRelayToPara = (
 }
 
 export const transferRelayToParaSerializedApiCall = (
-  options: Omit<TRelayToParaOptions<ApiPromise, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
-    api: ApiPromise
-    destApiForKeepAlive: ApiPromise
+  options: Omit<TRelayToParaOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
+    api: TPjsApiOrUrl
+    destApiForKeepAlive: TPjsApiOrUrl
   }
 ) => {
   const pjsApi = new PolkadotJsApi()
   pjsApi.setApi(options.api)
   const destPjsApi = new PolkadotJsApi()
   destPjsApi.setApi(options.destApiForKeepAlive)
-  return transferImpl.transferRelayToParaSerializedApiCall<ApiPromise, Extrinsic>({
+  return transferImpl.transferRelayToParaSerializedApiCall<TPjsApi, Extrinsic>({
     ...options,
     api: pjsApi,
     destApiForKeepAlive: destPjsApi
@@ -51,9 +50,9 @@ export const transferRelayToParaSerializedApiCall = (
  * @returns An extrinsic to be signed and sent.
  */
 export const send = (
-  options: Omit<TSendOptions<ApiPromise, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
-    api: ApiPromise
-    destApiForKeepAlive: ApiPromise
+  options: Omit<TSendOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
+    api: TPjsApiOrUrl
+    destApiForKeepAlive: TPjsApiOrUrl
   }
 ) => {
   const pjsApi = new PolkadotJsApi()
@@ -68,9 +67,9 @@ export const send = (
 }
 
 export const sendSerializedApiCall = (
-  options: Omit<TSendOptions<ApiPromise, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
-    api: ApiPromise
-    destApiForKeepAlive: ApiPromise
+  options: Omit<TSendOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
+    api: TPjsApiOrUrl
+    destApiForKeepAlive: TPjsApiOrUrl
   }
 ) => {
   const pjsApi = new PolkadotJsApi()

@@ -4,14 +4,14 @@ import * as internalUtils from '../utils'
 import { createApiInstanceForNode, createPapiApiCall } from './utils'
 import PapiApi from './PapiApi'
 import type { TNodeWithRelayChains } from '../types'
-import type { PolkadotClient } from 'polkadot-api'
+import type { TPapiApi } from './types'
 
 vi.mock('./PapiApi')
 vi.mock('../utils')
 
 describe('API Instance and Call Utility Functions with PapiApi', () => {
   const mockNode = {} as TNodeWithRelayChains
-  const mockApi = {} as PolkadotClient
+  const mockApi = {} as TPapiApi
   let setApiSpy: MockInstance
 
   beforeEach(() => {
