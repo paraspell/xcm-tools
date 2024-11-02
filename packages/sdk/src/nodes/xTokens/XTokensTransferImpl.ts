@@ -16,7 +16,15 @@ class XTokensTransferImpl {
     currencySelection: TXTokensCurrencySelection,
     fees: string | number = 'Unlimited'
   ): TTransferReturn<TRes> {
-    const { api, amount, addressSelection, destination, feeAsset, serializedApiCallEnabled } = input
+    const {
+      api,
+      origin,
+      amount,
+      addressSelection,
+      destination,
+      feeAsset,
+      serializedApiCallEnabled
+    } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
     if (isMultiLocationDestination) {
@@ -25,18 +33,25 @@ class XTokensTransferImpl {
       )
     }
 
-    const isAssetHub = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
+    const isBifrostOrigin = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
+    const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
 
-    const modifiedCurrencySelection = getCurrencySelection(input, isAssetHub, currencySelection)
+    const shouldUseMultiasset = isAssetHubDest && !isBifrostOrigin
 
-    const section: XTokensSection = isAssetHub
+    const modifiedCurrencySelection = getCurrencySelection(
+      input,
+      shouldUseMultiasset,
+      currencySelection
+    )
+
+    const section: XTokensSection = shouldUseMultiasset
       ? feeAsset
         ? 'transfer_multiassets'
         : 'transfer_multiasset'
       : 'transfer'
 
     const parameters = getXTokensParameters(
-      isAssetHub,
+      shouldUseMultiasset,
       modifiedCurrencySelection,
       addressSelection,
       amount,
