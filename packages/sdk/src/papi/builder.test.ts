@@ -3,13 +3,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as InternalBuilder from '../builder'
 import PapiApi from './PapiApi'
 import { Builder } from './builder'
-import type { PolkadotClient } from 'polkadot-api'
+import type { TPapiApi } from './types'
 
 vi.mock('./PapiApi')
 vi.mock('../builder')
 
 describe('Builder Function using PapiApi', () => {
-  const mockApi = {} as PolkadotClient
+  const mockApi = {} as TPapiApi
   let setApiSpy: MockInstance
 
   beforeEach(() => {

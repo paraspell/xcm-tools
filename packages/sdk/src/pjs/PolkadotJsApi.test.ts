@@ -1,17 +1,16 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import type { ApiPromise } from '@polkadot/api'
 import type { StorageKey } from '@polkadot/types'
 import { u32 } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
 import PolkadotJsApi from './PolkadotJsApi'
 import type { TSerializedApiCallV2, TMultiLocation } from '../types'
-import type { Extrinsic } from '../pjs/types'
+import type { Extrinsic, TPjsApi } from '../pjs/types'
 import * as utils from '../utils'
 import type { VoidFn } from '@polkadot/api/types'
 
 describe('PolkadotJsApi', () => {
   let polkadotApi: PolkadotJsApi
-  let mockApiPromise: ApiPromise
+  let mockApiPromise: TPjsApi
 
   beforeEach(async () => {
     polkadotApi = new PolkadotJsApi()
@@ -47,14 +46,14 @@ describe('PolkadotJsApi', () => {
           }
         }
       }
-    } as unknown as ApiPromise
+    } as unknown as TPjsApi
     polkadotApi.setApi(mockApiPromise)
     await polkadotApi.init('Acala')
   })
 
   describe('setApi and getApi', () => {
     it('should set and get the api', async () => {
-      const newApi = {} as ApiPromise
+      const newApi = {} as TPjsApi
       polkadotApi.setApi(newApi)
       await polkadotApi.init('Acala')
       const api = polkadotApi.getApi()
@@ -64,7 +63,7 @@ describe('PolkadotJsApi', () => {
 
   describe('init', () => {
     it('should set api to _api when _api is defined', async () => {
-      const mockApi = {} as ApiPromise
+      const mockApi = {} as TPjsApi
       polkadotApi.setApi(mockApi)
       await polkadotApi.init('Acala')
       expect(polkadotApi.getApi()).toBe(mockApi)

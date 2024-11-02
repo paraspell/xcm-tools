@@ -7,7 +7,7 @@ import type {
   TSerializedApiCallV2
 } from '../types'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import type { Extrinsic } from '../pjs/types'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from '../pjs/types'
 import type { AccountData, AccountInfo } from '@polkadot/types/interfaces'
 import type { StorageKey } from '@polkadot/types'
 import { u32, type UInt } from '@polkadot/types'
@@ -22,23 +22,27 @@ const snakeToCamel = (str: string) =>
     .toLowerCase()
     .replace(/([-_][a-z])/g, group => group.toUpperCase().replace('-', '').replace('_', ''))
 
-class PolkadotJsApi implements IPolkadotApi<ApiPromise, Extrinsic> {
-  private _api?: ApiPromise
-  private api: ApiPromise
+class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
+  private _api?: TPjsApiOrUrl
+  private api: TPjsApi
 
-  setApi(api?: ApiPromise): void {
+  setApi(api?: TPjsApiOrUrl): void {
     this._api = api
   }
 
-  getApi(): ApiPromise {
+  getApi(): TPjsApi {
     return this.api
   }
 
   async init(node: TNodeWithRelayChains): Promise<void> {
-    this.api = this._api ?? (await createApiInstanceForNode<ApiPromise, Extrinsic>(this, node))
+    if (typeof this._api === 'string') {
+      this.api = await this.createApiInstance(this._api)
+    } else {
+      this.api = this._api ?? (await createApiInstanceForNode<TPjsApi, Extrinsic>(this, node))
+    }
   }
 
-  async createApiInstance(wsUrl: string): Promise<ApiPromise> {
+  async createApiInstance(wsUrl: string): Promise<TPjsApi> {
     const wsProvider = new WsProvider(wsUrl)
     return ApiPromise.create({ provider: wsProvider })
   }
@@ -123,7 +127,7 @@ class PolkadotJsApi implements IPolkadotApi<ApiPromise, Extrinsic> {
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
-  clone(): IPolkadotApi<ApiPromise, Extrinsic> {
+  clone(): IPolkadotApi<TPjsApi, Extrinsic> {
     return new PolkadotJsApi()
   }
 }

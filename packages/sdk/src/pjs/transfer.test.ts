@@ -2,8 +2,7 @@ import type { MockInstance } from 'vitest'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as transferImpl from '../pallets/xcmPallet/transfer'
 import PolkadotJsApi from './PolkadotJsApi'
-import type { ApiPromise } from '@polkadot/api'
-import type { Extrinsic } from './types'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 import type { TRelayToParaOptions, TSendOptions } from '../types'
 import {
   send,
@@ -16,35 +15,32 @@ vi.mock('./PolkadotJsApi')
 vi.mock('../pallets/xcmPallet/transfer')
 
 describe('Relay Transfer and Send Functions', () => {
-  const mockApi = {} as ApiPromise
-  const mockDestApi = {} as ApiPromise
+  const mockApi = {} as TPjsApi
+  const mockDestApi = {} as TPjsApi
 
   const optionsRelayToPara: Omit<
-    TRelayToParaOptions<ApiPromise, Extrinsic>,
+    TRelayToParaOptions<TPjsApi, Extrinsic>,
     'api' | 'destApiForKeepAlive'
   > & {
-    api: ApiPromise
-    destApiForKeepAlive: ApiPromise
+    api: TPjsApiOrUrl
+    destApiForKeepAlive: TPjsApiOrUrl
   } = {
     api: mockApi,
     destApiForKeepAlive: mockDestApi
-  } as unknown as Omit<
-    TRelayToParaOptions<ApiPromise, Extrinsic>,
-    'api' | 'destApiForKeepAlive'
-  > & {
-    api: ApiPromise
-    destApiForKeepAlive: ApiPromise
+  } as unknown as Omit<TRelayToParaOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
+    api: TPjsApiOrUrl
+    destApiForKeepAlive: TPjsApiOrUrl
   }
 
-  const optionsSend: Omit<TSendOptions<ApiPromise, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
-    api: ApiPromise
-    destApiForKeepAlive: ApiPromise
+  const optionsSend: Omit<TSendOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
+    api: TPjsApiOrUrl
+    destApiForKeepAlive: TPjsApiOrUrl
   } = {
     api: mockApi,
     destApiForKeepAlive: mockDestApi
-  } as unknown as Omit<TSendOptions<ApiPromise, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
-    api: ApiPromise
-    destApiForKeepAlive: ApiPromise
+  } as unknown as Omit<TSendOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
+    api: TPjsApiOrUrl
+    destApiForKeepAlive: TPjsApiOrUrl
   }
 
   let pjsApiSetApiSpy: MockInstance
