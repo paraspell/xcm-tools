@@ -111,7 +111,7 @@ describe('XTransferService', () => {
       expect(builderMock.to).toHaveBeenCalledWith(to);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
       expect(builderMock.amount).toHaveBeenCalledWith(amount);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
       expect(builderMock.buildSerializedApiCall).toHaveBeenCalled();
     });
 
@@ -337,6 +337,20 @@ describe('XTransferService', () => {
         paraspellSdk.Version.V2,
       );
     });
+
+    it('should throw BadRequestException when assetHub address is missing', async () => {
+      const xTransferDto: XTransferDto = {
+        from: 'Hydration',
+        to: 'Ethereum',
+        amount,
+        address,
+        currency,
+      };
+
+      await expect(service.generateXcmCallPjs(xTransferDto)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
   });
 
   describe('generateBatchXcmCall', () => {
@@ -392,7 +406,7 @@ describe('XTransferService', () => {
       expect(builderMock.to).toHaveBeenCalledWith(to2);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
       expect(builderMock.amount).toHaveBeenCalledWith(amount);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(2);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });

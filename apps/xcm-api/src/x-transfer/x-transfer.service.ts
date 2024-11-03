@@ -12,6 +12,7 @@ import {
   NODE_NAMES,
   NODE_NAMES_DOT_KSM,
   TNodePolkadotKusama,
+  TNode,
 } from '@paraspell/sdk';
 import type * as SdkType from '@paraspell/sdk';
 import type * as SdkPapiType from '@paraspell/sdk/papi';
@@ -31,12 +32,20 @@ export class XTransferService {
   }
 
   private async generateXcmCall(
-    { from, to, amount, address, currency, xcmVersion }: XTransferDto,
+    {
+      from,
+      to,
+      amount,
+      address,
+      ahAddress,
+      currency,
+      xcmVersion,
+    }: XTransferDto,
     hashEnabled: boolean,
     usePapi = false,
   ) {
     const fromNode = from as TNodePolkadotKusama | undefined;
-    const toNode = to as TNodePolkadotKusama | undefined;
+    const toNode = to as TNode | undefined;
 
     if (!fromNode && !toNode) {
       throw new BadRequestException(
@@ -64,6 +73,12 @@ export class XTransferService {
       throw new BadRequestException('Invalid wallet address.');
     }
 
+    if (fromNode === 'Hydration' && toNode === 'Ethereum' && !ahAddress) {
+      throw new BadRequestException(
+        'AssetHub address is required when transferring from Hydration to Ethereum.',
+      );
+    }
+
     const Sdk = usePapi
       ? await import('@paraspell/sdk/papi')
       : await import('@paraspell/sdk');
@@ -84,7 +99,7 @@ export class XTransferService {
         .to(toNode)
         .currency(currency)
         .amount(amount)
-        .address(address);
+        .address(address, ahAddress);
     } else if (fromNode) {
       // Parachain to relaychain
       finalBuilder = builder.from(fromNode).amount(amount).address(address);
@@ -145,7 +160,7 @@ export class XTransferService {
 
     const firstTransfer = transfers[0];
     const fromNode = firstTransfer.from as TNodePolkadotKusama | undefined;
-    const toNode = firstTransfer.to as TNodePolkadotKusama | undefined;
+    const toNode = firstTransfer.to as TNode | undefined;
 
     if (!fromNode && !toNode) {
       throw new BadRequestException(
@@ -225,7 +240,7 @@ export class XTransferService {
             .to(transferToNode)
             .currency(transfer.currency)
             .amount(transfer.amount)
-            .address(transfer.address);
+            .address(transfer.address, transfer.ahAddress);
         } else if (transferFromNode) {
           // Parachain to relaychain
           finalBuilder = builder

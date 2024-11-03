@@ -42,7 +42,7 @@ describe('Subsocial', () => {
       expect(() => subsocial.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
     })
 
-    it('should use limitedReserveTransferAssets when scenario is ParaToPara', () => {
+    it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
       const input = { scenario: 'ParaToPara', currencySymbol: 'SUB' } as PolkadotXCMTransferInput<
         ApiPromise,
         Extrinsic
@@ -50,7 +50,7 @@ describe('Subsocial', () => {
 
       const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-      subsocial.transferPolkadotXCM(input)
+      await subsocial.transferPolkadotXCM(input)
       expect(spy).toHaveBeenCalledWith(input, 'limited_reserve_transfer_assets', 'Unlimited')
     })
   })

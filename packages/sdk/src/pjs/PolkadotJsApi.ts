@@ -127,8 +127,19 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
+  async getFromStorage(key: string): Promise<string> {
+    const response = (await this.api.rpc.state.getStorage(key)) as Codec
+    return response.toHex()
+  }
+
   clone(): IPolkadotApi<TPjsApi, Extrinsic> {
     return new PolkadotJsApi()
+  }
+
+  async createApiForNode(node: TNodeWithRelayChains): Promise<IPolkadotApi<TPjsApi, Extrinsic>> {
+    const api = new PolkadotJsApi()
+    await api.init(node)
+    return api
   }
 }
 

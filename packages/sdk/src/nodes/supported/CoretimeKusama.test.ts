@@ -42,22 +42,22 @@ describe('CoretimeKusama', () => {
     expect(coretimeKusama._assetCheckEnabled).toBe(false)
   })
 
-  it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', () => {
+  it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    coretimeKusama.transferPolkadotXCM(mockInput)
+    await coretimeKusama.transferPolkadotXCM(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
   })
 
-  it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', () => {
+  it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
     const inputWithDifferentScenario = {
       ...mockInput,
       scenario: 'RelayToPara'
     } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
-    coretimeKusama.transferPolkadotXCM(inputWithDifferentScenario)
+    await coretimeKusama.transferPolkadotXCM(inputWithDifferentScenario)
 
     expect(spy).toHaveBeenCalledWith(
       inputWithDifferentScenario,

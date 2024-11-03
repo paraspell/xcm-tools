@@ -38,20 +38,20 @@ describe('Mythos', () => {
     expect(mythos.version).toBe(Version.V3)
   })
 
-  it('should call transferPolkadotXCM with limitedReserveTransferAssets for non-AssetHubPolkadot destination', () => {
+  it('should call transferPolkadotXCM with limitedReserveTransferAssets for non-AssetHubPolkadot destination', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
     vi.spyOn(mythos, 'getNativeAssetSymbol').mockReturnValue('MYTH')
 
-    mythos.transferPolkadotXCM(mockInput)
+    await mythos.transferPolkadotXCM(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
   })
 
-  it('should call transferPolkadotXCM with limitedTeleportAssets for AssetHubPolkadot destination', () => {
+  it('should call transferPolkadotXCM with limitedTeleportAssets for AssetHubPolkadot destination', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
     vi.spyOn(mythos, 'getNativeAssetSymbol').mockReturnValue('MYTH')
 
-    mythos.transferPolkadotXCM({ ...mockInput, destination: 'AssetHubPolkadot' })
+    await mythos.transferPolkadotXCM({ ...mockInput, destination: 'AssetHubPolkadot' })
 
     expect(spy).toHaveBeenCalledWith(
       { ...mockInput, destination: 'AssetHubPolkadot' },

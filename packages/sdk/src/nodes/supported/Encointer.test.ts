@@ -42,10 +42,10 @@ describe('Encointer', () => {
     expect(encointer.version).toBe(Version.V3)
   })
 
-  it('should call transferPolkadotXCM with limitedTeleportAssets for ParaToRelay scenario', () => {
+  it('should call transferPolkadotXCM with limitedTeleportAssets for ParaToRelay scenario', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    encointer.transferPolkadotXCM(mockInput)
+    await encointer.transferPolkadotXCM(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, 'limited_teleport_assets', 'Unlimited')
   })

@@ -9,7 +9,7 @@ import {
   createCurrencySpec,
   createPolkadotXcmHeader
 } from '../../pallets/xcmPallet/utils'
-import type { Junctions, TSerializedApiCallV2 } from '../../types'
+import type { Junctions, TSerializedApiCallV2, TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -18,14 +18,14 @@ import {
   type TScenario,
   type TRelayToParaOptions,
   type TMultiAsset,
-  type TMultiLocation,
-  type TJunction
+  type TMultiLocation
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { getOtherAssets, getParaId } from '../../pallets/assets'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
+import { ETHEREUM_JUNCTION } from '../../const'
 
 class AssetHubPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>
@@ -105,11 +105,6 @@ class AssetHubPolkadot<TApi, TRes>
       )
     }
 
-    const ETH_CHAIN_ID = BigInt(1)
-    const ethJunction: TJunction = {
-      GlobalConsensus: { Ethereum: { chain_id: ETH_CHAIN_ID } }
-    }
-
     const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
       ...input,
       header: createPolkadotXcmHeader(
@@ -117,7 +112,7 @@ class AssetHubPolkadot<TApi, TRes>
         this.version,
         destination,
         paraIdTo,
-        ethJunction,
+        ETHEREUM_JUNCTION,
         Parents.TWO
       ),
       addressSelection: generateAddressPayload(
@@ -132,7 +127,7 @@ class AssetHubPolkadot<TApi, TRes>
         parents: Parents.TWO,
         interior: {
           X2: [
-            ethJunction,
+            ETHEREUM_JUNCTION,
             {
               AccountKey20: { key: ethAsset.assetId }
             }
@@ -189,19 +184,21 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     const { scenario, currencySymbol, currencyId } = input
 
     if (input.destination === 'AssetHubKusama') {
-      return this.handleBridgeTransfer<TApi, TRes>(input, 'Kusama')
+      return Promise.resolve(this.handleBridgeTransfer<TApi, TRes>(input, 'Kusama'))
     }
 
     if (input.destination === 'Ethereum') {
-      return this.handleEthBridgeTransfer<TApi, TRes>(input)
+      return Promise.resolve(this.handleEthBridgeTransfer<TApi, TRes>(input))
     }
 
     if (input.destination === 'Mythos') {
-      return this.handleMythosTransfer(input)
+      return Promise.resolve(this.handleMythosTransfer(input))
     }
 
     if (scenario === 'ParaToPara' && currencySymbol === 'DOT' && currencyId === undefined) {
@@ -222,7 +219,38 @@ class AssetHubPolkadot<TApi, TRes>
 
     const section =
       scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
+
+    const { api, destination, paraIdTo, address, amount, overridedCurrency } = input
+
+    const versionOrDefault = input.version ?? Version.V2
+
+    const modifiedInput =
+      (currencySymbol?.toUpperCase() === 'USDT' || currencySymbol?.toUpperCase() === 'USDC') &&
+      destination === 'BifrostPolkadot'
+        ? {
+            ...input,
+            header: this.createPolkadotXcmHeader(scenario, versionOrDefault, destination, paraIdTo),
+            addressSelection: generateAddressPayload(
+              api,
+              scenario,
+              'PolkadotXcm',
+              address,
+              versionOrDefault,
+              paraIdTo
+            ),
+            currencySelection: this.createCurrencySpec(
+              amount,
+              scenario,
+              versionOrDefault,
+              currencyId,
+              overridedCurrency
+            )
+          }
+        : input
+
+    return Promise.resolve(
+      PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, section, 'Unlimited')
+    )
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {

@@ -40,7 +40,7 @@ describe('CoretimePolkadot', () => {
   })
 
   describe('transferPolkadotXCM', () => {
-    it('should use limitedReserveTransferAssets when scenario is ParaToPara', () => {
+    it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
       const input = { scenario: 'ParaToPara' } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
       const mockResult = {} as Extrinsic
@@ -49,17 +49,17 @@ describe('CoretimePolkadot', () => {
         .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
         .mockResolvedValue(mockResult)
 
-      coretimePolkadot.transferPolkadotXCM(input)
+      await coretimePolkadot.transferPolkadotXCM(input)
 
       expect(spy).toHaveBeenCalledWith(input, 'limited_reserve_transfer_assets', 'Unlimited')
     })
 
-    it('should use limitedTeleportAssets when scenario is not ParaToPara', () => {
+    it('should use limitedTeleportAssets when scenario is not ParaToPara', async () => {
       const input = { scenario: 'ParaToRelay' } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
       const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-      coretimePolkadot.transferPolkadotXCM(input)
+      await coretimePolkadot.transferPolkadotXCM(input)
       expect(spy).toHaveBeenCalledWith(input, 'limited_teleport_assets', 'Unlimited')
     })
   })

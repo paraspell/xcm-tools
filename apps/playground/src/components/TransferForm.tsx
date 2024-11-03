@@ -21,6 +21,7 @@ export type FormValues = {
   currencyOptionId: string;
   customCurrency: string;
   address: string;
+  ahAddress: string;
   amount: string;
   useApi: boolean;
   isCustomCurrency: boolean;
@@ -45,6 +46,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
       customCurrency: "",
       amount: "10000000000000000000",
       address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
+      ahAddress: "",
       useApi: false,
       isCustomCurrency: false,
       customCurrencyType: "id",
@@ -63,6 +65,14 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
       customCurrency: (value, values) => {
         if (values.isCustomCurrency) {
           return value ? null : "Custom currency is required";
+        }
+        return null;
+      },
+      ahAddress: (value, values) => {
+        if (values.to === "Ethereum" && values.from === "Hydration") {
+          return value
+            ? null
+            : "AssetHub address is required for transfers to Ethereum";
         }
         return null;
       },
@@ -131,6 +141,15 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
           data-testid="input-address"
           {...form.getInputProps("address")}
         />
+
+        {form.values.to === "Ethereum" && form.values.from === "Hydration" && (
+          <TextInput
+            label="AssetHub address"
+            placeholder="0x0000000"
+            data-testid="input-ahaddress"
+            {...form.getInputProps("ahAddress")}
+          />
+        )}
 
         <TextInput
           label="Amount"

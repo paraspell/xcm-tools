@@ -147,8 +147,20 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return BigInt(response === undefined ? 0 : response.balance)
   }
 
+  async getFromStorage(key: string): Promise<string> {
+    return await this.api._request('state_getStorage', [key])
+  }
+
   clone(): IPolkadotApi<TPapiApi, TPapiTransaction> {
     return new PapiApi()
+  }
+
+  async createApiForNode(
+    node: TNodeWithRelayChains
+  ): Promise<IPolkadotApi<TPapiApi, TPapiTransaction>> {
+    const api = new PapiApi()
+    await api.init(node)
+    return api
   }
 }
 

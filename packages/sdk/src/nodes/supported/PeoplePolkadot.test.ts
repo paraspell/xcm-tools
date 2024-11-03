@@ -49,12 +49,12 @@ describe('PeoplePolkadot', () => {
       )
     })
 
-    it('should use limitedTeleportAssets when scenario is not ParaToPara', () => {
+    it('should use limitedTeleportAssets when scenario is not ParaToPara', async () => {
       const input = { scenario: 'ParaToRelay' } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
       const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-      peoplePolkadot.transferPolkadotXCM(input)
+      await peoplePolkadot.transferPolkadotXCM(input)
       expect(spy).toHaveBeenCalledWith(input, 'limited_teleport_assets', 'Unlimited')
     })
   })

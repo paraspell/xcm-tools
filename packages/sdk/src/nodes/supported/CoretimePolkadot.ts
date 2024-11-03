@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for CoretimePolkadot Parachain
 
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
+import type { TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -21,11 +22,13 @@ class CoretimePolkadot<TApi, TRes>
 
   _assetCheckEnabled = false
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     const { scenario } = input
     const section =
       scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
+    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited'))
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {

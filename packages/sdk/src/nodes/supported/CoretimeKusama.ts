@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for CoretimeKusama Parachain
 
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
+import type { TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -18,12 +19,14 @@ class CoretimeKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
 
   _assetCheckEnabled = false
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     // TESTED block hash on Rococo: 0x78ace0f1bf7cac9a42e56143321b617d98327e2750f795efb0abb833025c9082
     const { scenario } = input
     const section =
       scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
+    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited'))
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {

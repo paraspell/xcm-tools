@@ -82,7 +82,7 @@ const XcmTransfer = () => {
   };
 
   const submit = async (formValues: FormValuesTransformed) => {
-    const { from, to, amount, address, useApi } = formValues;
+    const { from, to, amount, address, ahAddress, useApi } = formValues;
 
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -139,7 +139,7 @@ const XcmTransfer = () => {
             .to(to)
             .currency(determineCurrency(formValues))
             .amount(amount)
-            .address(address)
+            .address(address, ahAddress)
             .build();
         }
       }

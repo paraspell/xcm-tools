@@ -28,6 +28,10 @@ vi.mock('./PapiXcmTransformer', () => ({
   transform: vi.fn().mockReturnValue({ transformed: true })
 }))
 
+vi.mock('../utils', () => ({
+  createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient)
+}))
+
 describe('PapiApi', () => {
   let papiApi: PapiApi
   let mockPolkadotClient: PolkadotClient
@@ -41,6 +45,7 @@ describe('PapiApi', () => {
     } as unknown as TPapiTransaction
 
     mockPolkadotClient = {
+      _request: vi.fn(),
       getUnsafeApi: vi.fn().mockReturnValue({
         tx: {
           XcmPallet: {
@@ -391,6 +396,28 @@ describe('PapiApi', () => {
       const cloneApi = papiApi.clone()
       expect(cloneApi).toBeInstanceOf(PapiApi)
       expect(cloneApi).not.toBe(papiApi)
+    })
+  })
+
+  describe('getFromStorage', () => {
+    it('should return the value from storage', async () => {
+      const key = 'some_key'
+      const value = 'some_value'
+
+      const spy = vi.spyOn(papiApi.getApi(), '_request').mockResolvedValue(value)
+
+      const result = await papiApi.getFromStorage(key)
+
+      expect(spy).toHaveBeenCalledWith('state_getStorage', [key])
+      expect(result).toBe(value)
+    })
+  })
+
+  describe('createApiInstanceForNode', () => {
+    it('should create a PolkadotClient instance for the provided node', async () => {
+      const apiInstance = await papiApi.createApiForNode('Acala')
+
+      expect(apiInstance).toBeDefined()
     })
   })
 })

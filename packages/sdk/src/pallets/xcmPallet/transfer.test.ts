@@ -20,9 +20,9 @@ vi.mock('../../utils/createApiInstanceForNode', () => ({
   createApiInstanceForNode: vi.fn().mockReturnValue({} as ApiPromise)
 }))
 
-vi.spyOn(ParachainNode.prototype, 'transfer').mockReturnValue({} as Extrinsic)
-vi.spyOn(Astar.prototype, 'transfer').mockReturnValue({} as Extrinsic)
-vi.spyOn(Shiden.prototype, 'transfer').mockReturnValue({} as Extrinsic)
+vi.spyOn(ParachainNode.prototype, 'transfer').mockReturnValue({} as Promise<Extrinsic>)
+vi.spyOn(Astar.prototype, 'transfer').mockReturnValue({} as Promise<Extrinsic>)
+vi.spyOn(Shiden.prototype, 'transfer').mockReturnValue({} as Promise<Extrinsic>)
 vi.spyOn(AssetHubKusama.prototype, 'transferRelayToPara').mockReturnValue({
   module: 'XcmPallet',
   section: 'limited_teleport_assets',
@@ -338,9 +338,9 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'Hydration' as TNode,
+      origin: 'Acala' as TNode,
       destination: 'Ethereum' as TNode,
-      currency: { symbol: 'ETH' },
+      currency: { symbol: 'WETH' },
       feeAsset: 1,
       amount: 1000,
       address: '0x456'

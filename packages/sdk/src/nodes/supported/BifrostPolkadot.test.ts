@@ -13,6 +13,7 @@ import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { getAssetId } from '../../pallets/assets'
+import { ETHEREUM_JUNCTION } from '../../const'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -58,14 +59,10 @@ describe('BifrostPolkadot', () => {
     expect(spy).toHaveBeenCalledWith(mockXTokensInput, { Native: 'BNC' })
   })
 
-  it('should call transferPolkadotXCM with correct parameters for WETH transfer', () => {
+  it('should call transferPolkadotXCM with correct parameters for WETH transfer', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-    const ETH_CHAIN_ID = BigInt(1)
-    const ethJunction = {
-      GlobalConsensus: { Ethereum: { chain_id: ETH_CHAIN_ID } }
-    }
 
-    bifrostPolkadot.transferPolkadotXCM(mockPolkadotXCMInput)
+    await bifrostPolkadot.transferPolkadotXCM(mockPolkadotXCMInput)
 
     expect(spy).toHaveBeenCalledWith(
       {
@@ -77,7 +74,7 @@ describe('BifrostPolkadot', () => {
           mockPolkadotXCMInput.overridedCurrency,
           {
             X2: [
-              ethJunction,
+              ETHEREUM_JUNCTION,
               {
                 AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
               }
@@ -90,10 +87,10 @@ describe('BifrostPolkadot', () => {
     )
   })
 
-  it('should call transferPolkadotXCM with correct parameters for DOT transfer', () => {
+  it('should call transferPolkadotXCM with correct parameters for DOT transfer', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    bifrostPolkadot.transferPolkadotXCM({ ...mockPolkadotXCMInput, currencySymbol: 'DOT' })
+    await bifrostPolkadot.transferPolkadotXCM({ ...mockPolkadotXCMInput, currencySymbol: 'DOT' })
 
     expect(spy).toHaveBeenCalledWith(
       {

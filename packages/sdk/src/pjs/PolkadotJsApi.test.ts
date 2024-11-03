@@ -19,6 +19,13 @@ describe('PolkadotJsApi', () => {
         toHex: vi.fn().mockReturnValue('0x1234567890abcdef')
       }),
       registry: {},
+      rpc: {
+        state: {
+          getStorage: vi
+            .fn()
+            .mockResolvedValue({ toHex: vi.fn().mockReturnValue('0x1234567890abcdef') })
+        }
+      },
       tx: {
         xTokens: {
           transfer: vi.fn().mockReturnValue('mocked_extrinsic')
@@ -393,6 +400,39 @@ describe('PolkadotJsApi', () => {
       const cloneApi = polkadotApi.clone()
       expect(cloneApi).toBeInstanceOf(PolkadotJsApi)
       expect(cloneApi).not.toBe(polkadotApi)
+    })
+  })
+
+  describe('getFromStorage', () => {
+    it('should return the value as hex string', async () => {
+      const key = 'some'
+      const mockResponse = {
+        toHex: vi.fn().mockReturnValue('0x1234567890abcdef')
+      } as unknown as VoidFn
+
+      vi.mocked(mockApiPromise.rpc.state.getStorage).mockResolvedValue(mockResponse)
+
+      const result = await polkadotApi.getFromStorage(key)
+
+      expect(mockApiPromise.rpc.state.getStorage).toHaveBeenCalledWith(key)
+
+      expect(result).toBe('0x1234567890abcdef')
+    })
+  })
+
+  describe('createApiForNode', () => {
+    it('should create a new PolkadotJsApi instance and call init with the provided node', async () => {
+      const node = 'Acala'
+      const mockCreateApiInstanceForNode = vi
+        .spyOn(utils, 'createApiInstanceForNode')
+        .mockResolvedValue(mockApiPromise)
+
+      const newApi = await polkadotApi.createApiForNode(node)
+
+      expect(newApi).toBeInstanceOf(PolkadotJsApi)
+      expect(newApi.getApi()).toBe(mockApiPromise)
+
+      mockCreateApiInstanceForNode.mockRestore()
     })
   })
 })

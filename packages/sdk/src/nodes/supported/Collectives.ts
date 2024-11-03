@@ -2,6 +2,7 @@
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
+import type { TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -18,15 +19,15 @@ class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolk
     super('Collectives', 'polkadotCollectives', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     const { scenario } = input
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(
-      input,
-      'limited_teleport_assets',
-      'Unlimited'
+    return Promise.resolve(
+      PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'limited_teleport_assets', 'Unlimited')
     )
   }
 

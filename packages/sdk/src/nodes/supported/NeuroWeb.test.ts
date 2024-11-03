@@ -31,10 +31,10 @@ describe('NeuroWeb', () => {
     expect(neuroweb.version).toBe(Version.V3)
   })
 
-  it('should call transferPolkadotXCM with the correct arguments', () => {
+  it('should call transferPolkadotXCM with the correct arguments', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    neuroweb.transferPolkadotXCM(mockInput)
+    await neuroweb.transferPolkadotXCM(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
   })

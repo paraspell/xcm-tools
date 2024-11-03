@@ -33,10 +33,10 @@ describe('KiltSpiritnet', () => {
     expect(kiltSpiritnet.version).toBe(Version.V2)
   })
 
-  it('should call transferPolkadotXCM with reserveTransferAssets', () => {
+  it('should call transferPolkadotXCM with reserveTransferAssets', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    kiltSpiritnet.transferPolkadotXCM(mockInput)
+    await kiltSpiritnet.transferPolkadotXCM(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, 'reserve_transfer_assets')
   })
