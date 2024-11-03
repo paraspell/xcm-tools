@@ -47,10 +47,10 @@ describe('Crab', () => {
     expect(() => crab.transferPolkadotXCM(invalidInput)).toThrowError(ScenarioNotSupportedError)
   })
 
-  it('should call transferPolkadotXCM with reserve_transfer_assets for non-ParaToPara scenario', () => {
+  it('should call transferPolkadotXCM with reserve_transfer_assets for non-ParaToPara scenario', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    crab.transferPolkadotXCM(mockInput)
+    await crab.transferPolkadotXCM(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, 'reserve_transfer_assets')
   })

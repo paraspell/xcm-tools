@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Crab Parachain
 
-import type { TCurrencySelectionHeaderArr } from '../../types'
+import type { TCurrencySelectionHeaderArr, TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -19,10 +19,14 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
     super('Crab', 'crab', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     // TESTED https://kusama.subscan.io/xcm_message/kusama-ce7396ec470ba0c6516a50075046ee65464572dc
     if (input.scenario === 'ParaToPara') {
-      return PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserve_transfer_assets')
+      return Promise.resolve(
+        PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserve_transfer_assets')
+      )
     }
     throw new ScenarioNotSupportedError(this.node, input.scenario)
   }

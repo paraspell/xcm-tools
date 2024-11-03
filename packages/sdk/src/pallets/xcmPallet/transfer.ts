@@ -30,7 +30,8 @@ const sendCommon = async <TApi, TRes>(
     paraIdTo,
     destApiForKeepAlive,
     feeAsset,
-    version
+    version,
+    ahAddress
   } = options
 
   if ((!('multiasset' in currency) || 'multilocation' in currency) && amount === null) {
@@ -81,9 +82,9 @@ const sendCommon = async <TApi, TRes>(
     }
   }
 
-  if (destination === 'Ethereum' && origin !== 'AssetHubPolkadot') {
+  if (destination === 'Ethereum' && origin !== 'AssetHubPolkadot' && origin !== 'Hydration') {
     throw new IncompatibleNodesError(
-      'Transfers to Ethereum are only supported from AssetHubPolkadot.'
+      'Transfers to Ethereum are only supported from AssetHubPolkadot and Hydration.'
     )
   }
 
@@ -218,7 +219,8 @@ const sendCommon = async <TApi, TRes>(
     feeAsset,
     version,
     destApiForKeepAlive,
-    serializedApiCallEnabled
+    serializedApiCallEnabled,
+    ahAddress
   })
 }
 

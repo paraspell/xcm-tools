@@ -190,7 +190,7 @@ export interface UseKeepAliveFinalBuilder<TApi, TRes> extends IAddToBatchBuilder
 }
 
 export interface AddressBuilder<TApi, TRes> {
-  address: (address: TAddress) => UseKeepAliveFinalBuilder<TApi, TRes>
+  address: (address: TAddress, ahAddress?: string) => UseKeepAliveFinalBuilder<TApi, TRes>
 }
 
 export interface AmountBuilder<TApi, TRes> {

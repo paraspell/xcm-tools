@@ -76,6 +76,7 @@ export const XTransferDtoSchema = z.object({
     z.string().min(1, { message: 'Address is required' }),
     MultiLocationSchema,
   ]),
+  ahAddress: z.string().optional(),
   currency: CurrencySchema.optional(),
   xcmVersion: z.enum(versionValues).optional(),
 });

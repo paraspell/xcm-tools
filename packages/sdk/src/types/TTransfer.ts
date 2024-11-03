@@ -25,6 +25,8 @@ export type PolkadotXCMTransferInput<TApi, TRes> = {
   feeAsset?: TCurrency
   overridedCurrency?: TMultiLocation | TMultiAsset[]
   serializedApiCallEnabled?: boolean
+  version?: Version
+  ahAddress?: string
 }
 
 export type XTokensTransferInput<TApi, TRes> = {
@@ -59,7 +61,7 @@ export type XTransferTransferInput<TApi, TRes> = {
 export type IPolkadotXCMTransfer = {
   transferPolkadotXCM: <TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
-  ) => TTransferReturn<TRes>
+  ) => Promise<TTransferReturn<TRes>>
 }
 
 export type IXTokensTransfer = {
@@ -104,6 +106,10 @@ export type TSendBaseOptions<TApi, TRes> = {
    * The destination address. A SS58 or H160 format.
    */
   address: TAddress
+  /**
+   * The optional AssetHub address used when transfering to Ethereum
+   */
+  ahAddress?: string
   /**
    * The destination node or multi-location
    */

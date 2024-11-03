@@ -2,6 +2,7 @@
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
+import type { TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -21,13 +22,15 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     super('AssetHubKusama', 'KusamaAssetHub', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     const { destination, currencySymbol, currencyId, scenario } = input
     // TESTED https://kusama.subscan.io/xcm_message/kusama-ddc2a48f0d8e0337832d7aae26f6c3053e1f4ffd
     // TESTED https://kusama.subscan.io/xcm_message/kusama-8e423130a4d8b61679af95dbea18a55124f99672
 
     if (destination === 'AssetHubPolkadot') {
-      return getNode('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot')
+      return Promise.resolve(getNode('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot'))
     }
 
     if (scenario === 'ParaToPara' && currencySymbol === 'KSM' && currencyId === undefined) {
@@ -48,7 +51,7 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
 
     const section =
       scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
+    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited'))
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {

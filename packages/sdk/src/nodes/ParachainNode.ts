@@ -89,7 +89,7 @@ abstract class ParachainNode<TApi, TRes> {
     return true
   }
 
-  transfer(options: TSendInternalOptions<TApi, TRes>): TTransferReturn<TRes> {
+  async transfer(options: TSendInternalOptions<TApi, TRes>): Promise<TTransferReturn<TRes>> {
     const {
       api,
       currencySymbol,
@@ -100,7 +100,8 @@ abstract class ParachainNode<TApi, TRes> {
       paraIdTo,
       overridedCurrencyMultiLocation,
       feeAsset,
-      version = this.version,
+      version,
+      ahAddress,
       serializedApiCallEnabled = false
     } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
@@ -113,6 +114,8 @@ abstract class ParachainNode<TApi, TRes> {
       throw new Error('Sending assets to Polimec is supported only from AssetHubPolkadot')
     }
 
+    const versionOrDefault = version ?? this.version
+
     if (supportsXTokens(this) && this.canUseXTokens(options)) {
       return this.transferXTokens({
         api,
@@ -124,7 +127,7 @@ abstract class ParachainNode<TApi, TRes> {
           scenario,
           'XTokens',
           address,
-          version,
+          versionOrDefault,
           paraId
         ),
         fees: getFees(scenario),
@@ -156,15 +159,15 @@ abstract class ParachainNode<TApi, TRes> {
       ) {
         throw new InvalidCurrencyError('Provided Multi-location is not a valid currency.')
       }
-      return this.transferPolkadotXCM({
+      return await this.transferPolkadotXCM({
         api,
-        header: this.createPolkadotXcmHeader(scenario, version, destination, paraId),
+        header: this.createPolkadotXcmHeader(scenario, versionOrDefault, destination, paraId),
         addressSelection: generateAddressPayload(
           api,
           scenario,
           'PolkadotXcm',
           address,
-          version,
+          versionOrDefault,
           paraId
         ),
         address,
@@ -172,7 +175,7 @@ abstract class ParachainNode<TApi, TRes> {
         currencySelection: this.createCurrencySpec(
           amount,
           scenario,
-          version,
+          versionOrDefault,
           currencyId,
           overridedCurrencyMultiLocation
         ),
@@ -183,7 +186,9 @@ abstract class ParachainNode<TApi, TRes> {
         destination,
         paraIdTo: paraId,
         overridedCurrency: overridedCurrencyMultiLocation,
-        serializedApiCallEnabled
+        serializedApiCallEnabled,
+        version,
+        ahAddress
       })
     } else {
       throw new NoXCMSupportImplementedError(this._node)
@@ -211,7 +216,7 @@ abstract class ParachainNode<TApi, TRes> {
     amount: string,
     scenario: TScenario,
     version: Version,
-    _?: string,
+    _currencyId?: string,
     overridedMultiLocation?: TMultiLocation | TMultiAsset[]
   ): TCurrencySelectionHeaderArr {
     return createCurrencySpec(

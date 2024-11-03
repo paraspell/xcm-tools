@@ -5,13 +5,14 @@ import { getAssetId } from '../../pallets/assets'
 import type {
   IPolkadotXCMTransfer,
   PolkadotXCMTransferInput,
-  TJunction,
-  TSendInternalOptions
+  TSendInternalOptions,
+  TTransferReturn
 } from '../../types'
 import { type IXTokensTransfer, Parents, Version, type XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import XTokensTransferImpl from '../xTokens'
+import { ETHEREUM_JUNCTION } from '../../const'
 
 export class BifrostPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>
@@ -55,36 +56,35 @@ export class BifrostPolkadot<TApi, TRes>
   }
 
   // Handles DOT, WETH transfers to AssetHubPolkadot
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     const { amount, overridedCurrency, currencySymbol } = input
 
-    const ETH_CHAIN_ID = BigInt(1)
-    const ethJunction: TJunction = {
-      GlobalConsensus: { Ethereum: { chain_id: ETH_CHAIN_ID } }
-    }
-
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(
-      {
-        ...input,
-        currencySelection: createCurrencySpec(
-          amount,
-          this.version,
-          currencySymbol === 'DOT' ? Parents.ONE : Parents.TWO,
-          overridedCurrency,
-          currencySymbol === 'WETH'
-            ? {
-                X2: [
-                  ethJunction,
-                  {
-                    AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
-                  }
-                ]
-              }
-            : undefined
-        )
-      },
-      'transfer_assets',
-      'Unlimited'
+    return Promise.resolve(
+      PolkadotXCMTransferImpl.transferPolkadotXCM(
+        {
+          ...input,
+          currencySelection: createCurrencySpec(
+            amount,
+            this.version,
+            currencySymbol === 'DOT' ? Parents.ONE : Parents.TWO,
+            overridedCurrency,
+            currencySymbol === 'WETH'
+              ? {
+                  X2: [
+                    ETHEREUM_JUNCTION,
+                    {
+                      AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
+                    }
+                  ]
+                }
+              : undefined
+          )
+        },
+        'transfer_assets',
+        'Unlimited'
+      )
     )
   }
 

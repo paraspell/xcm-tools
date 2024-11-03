@@ -123,7 +123,7 @@ describe('ParachainNode', () => {
     expect(node.exposeCanUseXTokens(options)).toBe(true)
   })
 
-  it('should call transferXTokens when supportsXTokens and canUseXTokens return true', () => {
+  it('should call transferXTokens when supportsXTokens and canUseXTokens return true', async () => {
     const options = {
       api: {},
       currencySymbol: 'DOT',
@@ -133,13 +133,13 @@ describe('ParachainNode', () => {
 
     const transferXTokensSpy = vi.spyOn(node, 'transferXTokens')
 
-    const result = node.transfer(options)
+    const result = await node.transfer(options)
 
     expect(transferXTokensSpy).toHaveBeenCalled()
     expect(result).toBe('transferXTokens called')
   })
 
-  it('should call transferXTransfer when supportsXTransfer returns true', () => {
+  it('should call transferXTransfer when supportsXTransfer returns true', async () => {
     const node = new NoXTokensNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
@@ -150,13 +150,13 @@ describe('ParachainNode', () => {
 
     const transferXTransferSpy = vi.spyOn(node, 'transferXTransfer')
 
-    const result = node.transfer(options)
+    const result = await node.transfer(options)
 
     expect(transferXTransferSpy).toHaveBeenCalled()
     expect(result).toBe('transferXTransfer called')
   })
 
-  it('should call transferPolkadotXCM when supportsPolkadotXCM returns true', () => {
+  it('should call transferPolkadotXCM when supportsPolkadotXCM returns true', async () => {
     const node = new OnlyPolkadotXCMNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
@@ -167,13 +167,13 @@ describe('ParachainNode', () => {
 
     const transferPolkadotXCMSpy = vi.spyOn(node, 'transferPolkadotXCM')
 
-    const result = node.transfer(options)
+    const result = await node.transfer(options)
 
     expect(transferPolkadotXCMSpy).toHaveBeenCalled()
     expect(result).toBe('transferPolkadotXCM called')
   })
 
-  it('should throw NoXCMSupportImplementedError when no transfer methods are supported', () => {
+  it('should throw NoXCMSupportImplementedError when no transfer methods are supported', async () => {
     const node = new NoSupportNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
@@ -182,10 +182,10 @@ describe('ParachainNode', () => {
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
 
-    expect(() => node.transfer(options)).toThrowError(NoXCMSupportImplementedError)
+    await expect(node.transfer(options)).rejects.toThrowError(NoXCMSupportImplementedError)
   })
 
-  it('should not call transferXTokens when canUseXTokens returns false', () => {
+  it('should not call transferXTokens when canUseXTokens returns false', async () => {
     class TestNode extends TestParachainNode {
       protected canUseXTokens(_: TSendInternalOptions<ApiPromise, Extrinsic>): boolean {
         return false
@@ -205,14 +205,14 @@ describe('ParachainNode', () => {
     const transferXTokensSpy = vi.spyOn(node, 'transferXTokens')
     const transferXTransferSpy = vi.spyOn(node, 'transferXTransfer')
 
-    const result = node.transfer(options)
+    const result = await node.transfer(options)
 
     expect(transferXTokensSpy).not.toHaveBeenCalled()
     expect(transferXTransferSpy).toHaveBeenCalled()
     expect(result).toBe('transferXTransfer called')
   })
 
-  it('should throw error when destination is Polimec and node is not AssetHubPolkadot', () => {
+  it('should throw error when destination is Polimec and node is not AssetHubPolkadot', async () => {
     const options = {
       api: {},
       currencySymbol: 'DOT',
@@ -221,12 +221,12 @@ describe('ParachainNode', () => {
       destination: 'Polimec'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
 
-    expect(() => node.transfer(options)).toThrowError(
+    await expect(node.transfer(options)).rejects.toThrowError(
       'Sending assets to Polimec is supported only from AssetHubPolkadot'
     )
   })
 
-  it('should not throw error when destination is Polimec and node is AssetHubPolkadot', () => {
+  it('should not throw error when destination is Polimec and node is AssetHubPolkadot', async () => {
     const node = new TestParachainNode('AssetHubPolkadot', 'TestNode', 'polkadot', Version.V3)
     node.transferXTokens = vi.fn().mockReturnValue('transferXTokens called')
 
@@ -240,13 +240,13 @@ describe('ParachainNode', () => {
 
     const transferXTokensSpy = vi.spyOn(node, 'transferXTokens')
 
-    const result = node.transfer(options)
+    const result = await node.transfer(options)
 
     expect(transferXTokensSpy).toHaveBeenCalled()
     expect(result).toBe('transferXTokens called')
   })
 
-  it('should throw InvalidCurrencyError when overridedCurrencyMultiLocation is invalid', () => {
+  it('should throw InvalidCurrencyError when overridedCurrencyMultiLocation is invalid', async () => {
     const node = new OnlyPolkadotXCMNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
@@ -259,7 +259,7 @@ describe('ParachainNode', () => {
     vi.spyOn(xcmUtils, 'isTMultiLocation').mockReturnValue(true)
     vi.spyOn(utils, 'verifyMultiLocation').mockReturnValue(false)
 
-    expect(() => node.transfer(options)).toThrowError(InvalidCurrencyError)
+    await expect(node.transfer(options)).rejects.toThrowError(InvalidCurrencyError)
   })
 
   it('should return correct serialized API call from transferRelayToPara', () => {

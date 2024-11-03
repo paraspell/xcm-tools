@@ -2,6 +2,7 @@
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
+import type { TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -17,13 +18,15 @@ class PeopleKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPol
     super('PeopleKusama', 'kusamaPeople', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     const { scenario } = input
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
     const section = 'limited_teleport_assets'
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited')
+    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited'))
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {

@@ -38,6 +38,7 @@ class ParaToParaBuilder<TApi, TRes>
   private _address: TAddress
   private _destApi: IPolkadotApi<TApi, TRes>
   private _version?: Version
+  private _ahAddress?: string
 
   private constructor(
     api: IPolkadotApi<TApi, TRes>,
@@ -94,8 +95,9 @@ class ParaToParaBuilder<TApi, TRes>
    * @param address - The destination address.
    * @returns An instance of Builder
    */
-  address(address: TAddress): this {
+  address(address: TAddress, ahAddress?: string): this {
     this._address = address
+    this._ahAddress = ahAddress
     return this
   }
 
@@ -132,7 +134,8 @@ class ParaToParaBuilder<TApi, TRes>
       paraIdTo: this.paraIdTo,
       feeAsset: this._feeAsset,
       destApiForKeepAlive: this._destApi,
-      version: this._version
+      version: this._version,
+      ahAddress: this._ahAddress
     }
   }
 

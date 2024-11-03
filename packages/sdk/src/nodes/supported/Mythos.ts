@@ -5,6 +5,7 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
+import type { TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -19,7 +20,9 @@ class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotX
     super('Mythos', 'mythos', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     const { scenario, currencySymbol, destination } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
@@ -32,12 +35,14 @@ class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotX
       )
     }
 
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(
-      input,
-      destination === 'AssetHubPolkadot'
-        ? 'limited_teleport_assets'
-        : 'limited_reserve_transfer_assets',
-      'Unlimited'
+    return Promise.resolve(
+      PolkadotXCMTransferImpl.transferPolkadotXCM(
+        input,
+        destination === 'AssetHubPolkadot'
+          ? 'limited_teleport_assets'
+          : 'limited_reserve_transfer_assets',
+        'Unlimited'
+      )
     )
   }
 

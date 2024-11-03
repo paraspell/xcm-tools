@@ -1,5 +1,6 @@
 // Contains detailed structure of XCM call construction for Encoiter Parachain
 
+import type { TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -17,14 +18,14 @@ class Encointer<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
     super('Encointer', 'encointer', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     // NO PARA TO PARA SCENARIOS ON SUBSCAN
     // TESTED https://encointer.subscan.io/xcm_message/kusama-418501e86e947b16c4e4e9040694017e64f9b162
     if (input.scenario === 'ParaToRelay') {
-      return PolkadotXCMTransferImpl.transferPolkadotXCM(
-        input,
-        'limited_teleport_assets',
-        'Unlimited'
+      return Promise.resolve(
+        PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'limited_teleport_assets', 'Unlimited')
       )
     }
     throw new ScenarioNotSupportedError(this.node, input.scenario)

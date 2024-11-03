@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for KiltSpiritnet Parachain
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import type { TNodePolkadotKusama } from '../../types'
+import type { TNodePolkadotKusama, TTransferReturn } from '../../types'
 import {
   Version,
   type IPolkadotXCMTransfer,
@@ -17,11 +17,15 @@ class KiltSpiritnet<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPo
     super('KiltSpiritnet', 'kilt', 'polkadot', Version.V2)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
     if (input.scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, input.scenario)
     }
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserve_transfer_assets')
+    return Promise.resolve(
+      PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserve_transfer_assets')
+    )
   }
 
   transferRelayToPara(): TSerializedApiCallV2 {

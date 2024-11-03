@@ -3,12 +3,13 @@ import { ethers } from 'ethers'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type AssetHubPolkadot from './AssetHubPolkadot'
-import type { PolkadotXCMTransferInput } from '../../types'
+import { Version, type PolkadotXCMTransferInput, type TRelayToParaOptions } from '../../types'
 import { getOtherAssets } from '../../pallets/assets'
 import { getNode } from '../../utils'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
 import type PolkadotJsApi from '../../pjs/PolkadotJsApi'
+import { constructRelayToParaParameters } from '../../pallets/xcmPallet/constructRelayToParaParameters'
 
 vi.mock('ethers', () => ({
   ethers: {
@@ -33,6 +34,10 @@ vi.mock('../../utils/generateAddressMultiLocationV4', () => ({
 
 vi.mock('../../utils/generateAddressPayload', () => ({
   generateAddressPayload: vi.fn()
+}))
+
+vi.mock('../../pallets/xcmPallet/constructRelayToParaParameters', () => ({
+  constructRelayToParaParameters: vi.fn()
 }))
 
 describe('AssetHubPolkadot', () => {
@@ -172,7 +177,7 @@ describe('AssetHubPolkadot', () => {
       expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
 
-    it('should process a valid transfer for non-ParaToPara scenario', () => {
+    it('should process a valid transfer for non-ParaToPara scenario', async () => {
       const mockResult = {} as Extrinsic
       const spy = vi
         .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
@@ -182,9 +187,91 @@ describe('AssetHubPolkadot', () => {
         scenario: 'RelayToPara'
       } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
-      const result = assetHub.transferPolkadotXCM(input)
+      const result = await assetHub.transferPolkadotXCM(input)
       expect(result).toStrictEqual(mockResult)
       expect(spy).toHaveBeenCalledTimes(1)
+    })
+
+    it('should call handleBridgeTransfer when destination is AssetHubKusama', async () => {
+      mockInput.destination = 'AssetHubKusama'
+
+      const spy = vi.spyOn(assetHub, 'handleBridgeTransfer').mockReturnValue({} as Extrinsic)
+
+      await assetHub.transferPolkadotXCM(mockInput)
+
+      expect(spy).toHaveBeenCalledWith(mockInput, 'Kusama')
+    })
+
+    it('should call handleEthBridgeTransfer when destination is Ethereum', async () => {
+      mockInput.destination = 'Ethereum'
+
+      vi.mocked(ethers.isAddress).mockReturnValue(true)
+
+      const spy = vi.spyOn(assetHub, 'handleEthBridgeTransfer').mockReturnValue({} as Extrinsic)
+
+      await assetHub.transferPolkadotXCM(mockInput)
+
+      expect(spy).toHaveBeenCalledWith(mockInput)
+    })
+
+    it('should call handleMythosTransfer when destination is Mythos', async () => {
+      mockInput.destination = 'Mythos'
+
+      const handleMythosTransferSpy = vi
+        .spyOn(assetHub, 'handleMythosTransfer')
+        .mockReturnValue({} as Extrinsic)
+
+      await assetHub.transferPolkadotXCM(mockInput)
+
+      expect(handleMythosTransferSpy).toHaveBeenCalledWith(mockInput)
+    })
+
+    it('should modify input for USDT currencySymbol', async () => {
+      mockInput.currencySymbol = 'USDT'
+      mockInput.scenario = 'ParaToPara'
+      mockInput.destination = 'BifrostPolkadot'
+
+      const mockResult = {} as Extrinsic
+      const spy = vi
+        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+        .mockReturnValue(mockResult)
+
+      await assetHub.transferPolkadotXCM(mockInput)
+
+      expect(spy).toHaveBeenCalled()
+    })
+
+    it('should modify input for USDC currencyId', async () => {
+      mockInput.currencySymbol = 'USDC'
+      mockInput.scenario = 'ParaToPara'
+      mockInput.destination = 'BifrostPolkadot'
+
+      const mockResult = {} as Extrinsic
+      const spy = vi
+        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+        .mockReturnValue(mockResult)
+
+      await assetHub.transferPolkadotXCM(mockInput)
+
+      expect(spy).toHaveBeenCalled()
+    })
+  })
+
+  it('should call transferRelayToPara with the correct parameters', () => {
+    const expectedParameters = { param: 'value' }
+    vi.mocked(constructRelayToParaParameters).mockReturnValue(expectedParameters)
+
+    const mockOptions = {
+      destination: 'BridgeHubKusama'
+    } as TRelayToParaOptions<ApiPromise, Extrinsic>
+
+    const result = assetHub.transferRelayToPara(mockOptions)
+
+    expect(constructRelayToParaParameters).toHaveBeenCalledWith(mockOptions, Version.V3, true)
+    expect(result).toEqual({
+      module: 'XcmPallet',
+      section: 'limited_teleport_assets',
+      parameters: expectedParameters
     })
   })
 })

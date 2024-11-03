@@ -22,7 +22,7 @@ class Shiden<TApi, TRes>
 
   transferPolkadotXCM<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
-  ): TTransferReturn<TRes> {
+  ): Promise<TTransferReturn<TRes>> {
     // Same as Astar, works
     // https://shiden.subscan.io/xcm_message/kusama-97eb47c25c781affa557f36dbd117d49f7e1ab4e
     return getNode<TApi, TRes, 'Astar'>('Astar').transferPolkadotXCM(input)

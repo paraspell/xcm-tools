@@ -58,10 +58,10 @@ describe('BridgeHubPolkadot', () => {
     )
   })
 
-  it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', () => {
+  it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    bridgeHubPolkadot.transferPolkadotXCM(mockInput)
+    await bridgeHubPolkadot.transferPolkadotXCM(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, 'limited_teleport_assets', 'Unlimited')
   })
