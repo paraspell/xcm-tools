@@ -7,12 +7,14 @@ export type TAssetDetails = {
   assetId: string
   symbol?: string
   decimals?: number
+  manuallyAdded?: boolean
 }
 
 export type TNativeAssetDetails = {
   assetId?: string
   symbol: string
   decimals: number
+  manuallyAdded?: boolean
 }
 
 export type TNodeAssets = {

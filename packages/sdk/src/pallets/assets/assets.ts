@@ -130,6 +130,12 @@ export const hasSupportForAsset = (node: TNode, symbol: string): boolean => {
     symbolsToCheck.add(`xc${lowerSymbol}`)
   }
 
+  if (lowerSymbol.endsWith('.e')) {
+    symbolsToCheck.add(lowerSymbol.substring(0, lowerSymbol.length - 2))
+  } else {
+    symbolsToCheck.add(`${lowerSymbol}.e`)
+  }
+
   const nodeSymbols = getAllAssetsSymbols(node).map(s => s.toLowerCase())
 
   return nodeSymbols.some(nodeSymbol => symbolsToCheck.has(nodeSymbol))

@@ -8,6 +8,7 @@ import type {
   TAssetJsonMap,
   TMultiLocation,
   TNativeAssetDetails,
+  TNode,
   TNodeAssets,
   TNodePolkadotKusama
 } from '../../src/types'
@@ -15,6 +16,7 @@ import { getNode, getNodeEndpointOption } from '../../src/utils'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 import { nodeToQuery } from './nodeToQueryMap'
 import { fetchBifrostAssets } from './fetchBifrostAssets'
+import { fetchEthereumAssets } from './fetchEthereumAssets'
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -413,30 +415,50 @@ const fetchNodeAssets = async (
 export const fetchAllNodesAssets = async (assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const [node, query] of Object.entries(nodeToQuery)) {
-    const nodeName = node as TNodePolkadotKusama
+    const nodeName = node as TNode
     console.log(`Fetching assets for ${nodeName}...`)
 
-    const newData = await fetchTryMultipleProvidersWithTimeout(nodeName, api =>
-      fetchNodeAssets(nodeName, api, query)
-    )
+    let newData
 
-    const isError = newData === null
-    const oldData = Object.prototype.hasOwnProperty.call(output, nodeName) ? output[nodeName] : null
+    if (nodeName === 'Ethereum') {
+      newData = await fetchEthereumAssets()
+      output[nodeName] = newData
+    } else {
+      newData = await fetchTryMultipleProvidersWithTimeout(nodeName as TNodePolkadotKusama, api =>
+        fetchNodeAssets(nodeName as TNodePolkadotKusama, api, query)
+      )
+      const isError = newData === null
+      const oldData = output[nodeName] ?? null
+      const paraId = getNodeEndpointOption(nodeName as TNodePolkadotKusama)?.paraId
+      if (!paraId) {
+        throw new Error(`Cannot find paraId for node ${nodeName}`)
+      }
 
-    const paraId = getNodeEndpointOption(nodeName)?.paraId
-    if (!paraId) {
-      throw new Error(`Cannot find paraId for node ${nodeName}`)
-    }
+      if (isError && oldData) {
+        // If fetching new data fails, keep existing data
+        output[nodeName] = oldData
+      } else {
+        // Append manually added assets from oldData to newData
+        const manuallyAddedNativeAssets =
+          oldData?.nativeAssets?.filter(asset => asset.manuallyAdded) ?? []
+        const manuallyAddedOtherAssets =
+          oldData?.otherAssets?.filter(asset => asset.manuallyAdded) ?? []
 
-    // In case we cannot fetch assets for some node. Keep existing data
-    output[nodeName] = {
-      paraId,
-      relayChainAssetSymbol: getNode(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
-      nativeAssetSymbol:
-        isError && oldData ? oldData.nativeAssetSymbol : (newData?.nativeAssetSymbol ?? ''),
-      nativeAssets: isError && oldData ? oldData.nativeAssets : (newData?.nativeAssets ?? []),
-      otherAssets: isError && oldData ? oldData.otherAssets : (newData?.otherAssets ?? []),
-      multiLocations: isError && oldData ? oldData.multiLocations : (newData?.multiLocations ?? [])
+        const combinedNativeAssets = [
+          ...(newData?.nativeAssets ?? []),
+          ...manuallyAddedNativeAssets
+        ]
+        const combinedOtherAssets = [...(newData?.otherAssets ?? []), ...manuallyAddedOtherAssets]
+
+        output[nodeName] = {
+          paraId,
+          relayChainAssetSymbol: getNode(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
+          nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
+          nativeAssets: combinedNativeAssets,
+          otherAssets: combinedOtherAssets,
+          multiLocations: newData?.multiLocations ?? []
+        }
+      }
     }
   }
   return output
