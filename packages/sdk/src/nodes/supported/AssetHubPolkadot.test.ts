@@ -178,6 +178,8 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should process a valid transfer for non-ParaToPara scenario', async () => {
+      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', assetId: '' }])
+
       const mockResult = {} as Extrinsic
       const spy = vi
         .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
@@ -245,6 +247,23 @@ describe('AssetHubPolkadot', () => {
       mockInput.currencySymbol = 'USDC'
       mockInput.scenario = 'ParaToPara'
       mockInput.destination = 'BifrostPolkadot'
+
+      const mockResult = {} as Extrinsic
+      const spy = vi
+        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+        .mockReturnValue(mockResult)
+
+      await assetHub.transferPolkadotXCM(mockInput)
+
+      expect(spy).toHaveBeenCalled()
+    })
+
+    it('should modify input for DOT transfer to Hydration', async () => {
+      mockInput.destination = 'Hydration'
+      mockInput.currencySymbol = 'DOT'
+      mockInput.currencyId = undefined
+
+      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', assetId: '' }])
 
       const mockResult = {} as Extrinsic
       const spy = vi

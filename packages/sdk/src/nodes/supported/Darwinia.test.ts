@@ -95,6 +95,6 @@ describe('Darwinia', () => {
 
     darwinia.createCurrencySpec(mockAmount, mockScenario, mockVersion)
 
-    expect(spy).toHaveBeenCalledWith(mockAmount, mockScenario, mockVersion, undefined)
+    expect(spy).toHaveBeenCalledWith(mockAmount, mockScenario, mockVersion, undefined, undefined)
   })
 })

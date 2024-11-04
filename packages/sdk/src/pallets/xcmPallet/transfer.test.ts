@@ -553,7 +553,7 @@ describe('send', () => {
     const options: TSendOptions<ApiPromise, Extrinsic> = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'Hydration' as TNode,
+      origin: 'Acala' as TNode,
       destination: 'AssetHubPolkadot' as TNode,
       currency: { symbol: 'DOT' },
       feeAsset: 0,
