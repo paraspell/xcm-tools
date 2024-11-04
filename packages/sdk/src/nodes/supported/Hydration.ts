@@ -13,7 +13,7 @@ import { type IXTokensTransfer, Parents, Version, type XTokensTransferInput } fr
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 import { InvalidCurrencyError } from '../../errors'
-import { getParaId } from '../../pallets/assets'
+import { getOtherAssets, getParaId } from '../../pallets/assets'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { ETHEREUM_JUNCTION } from '../../const'
 import { generateAddressPayload } from '../../utils'
@@ -41,11 +41,27 @@ const createEthereumTokenLocation = (currencyId: string): TMultiLocation => ({
   }
 })
 
+const createCustomXcmAh = <TApi, TRes>(
+  { api, scenario, address }: PolkadotXCMTransferInput<TApi, TRes>,
+  version: Version
+) => ({
+  [version]: [
+    {
+      DepositAsset: {
+        assets: { Wild: { AllCounted: 1 } },
+        beneficiary: Object.values(
+          generateAddressPayload(api, scenario, 'PolkadotXcm', address, version, undefined)
+        )[0]
+      }
+    }
+  ]
+})
+
 const createCustomXcmOnDest = <TApi, TRes>(
   { api, address, currencyId, scenario, ahAddress }: PolkadotXCMTransferInput<TApi, TRes>,
-  versionOrDefault: Version
+  version: Version
 ) => ({
-  [versionOrDefault]: [
+  [version]: [
     {
       SetAppendix: [
         {
@@ -57,7 +73,7 @@ const createCustomXcmOnDest = <TApi, TRes>(
                 scenario,
                 'PolkadotXcm',
                 ahAddress ?? '',
-                versionOrDefault,
+                version,
                 undefined
               )
             )[0]
@@ -121,8 +137,7 @@ class Hydration<TApi, TRes>
     super('Hydration', 'hydradx', 'polkadot', Version.V3)
   }
 
-  // Handles WETH Ethereum transfers
-  async transferPolkadotXCM<TApi, TRes>(
+  async transferToEthereum<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): Promise<TTransferReturn<TRes>> {
     const {
@@ -195,13 +210,77 @@ class Hydration<TApi, TRes>
     return api.callTxMethod(call)
   }
 
+  transferToAssetHub<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): TTransferReturn<TRes> {
+    const { api, scenario, version, destination, amount } = input
+
+    const versionOrDefault = version ?? Version.V3
+
+    const call: TSerializedApiCallV2 = {
+      module: 'PolkadotXcm',
+      section: 'transfer_assets_using_type_and_then',
+      parameters: {
+        dest: this.createPolkadotXcmHeader(
+          scenario,
+          versionOrDefault,
+          destination,
+          getParaId('AssetHubPolkadot')
+        ),
+        assets: {
+          [versionOrDefault]: [
+            Object.values(this.createCurrencySpec(amount, 'ParaToRelay', versionOrDefault))[0][0]
+          ]
+        },
+        assets_transfer_type: 'DestinationReserve',
+        remote_fees_id: {
+          [versionOrDefault]: {
+            Concrete: {
+              parents: Parents.ONE,
+              interior: 'Here'
+            }
+          }
+        },
+        fees_transfer_type: 'DestinationReserve',
+        custom_xcm_on_dest: createCustomXcmAh(input, versionOrDefault),
+        weight_limit: 'Unlimited'
+      }
+    }
+
+    return api.callTxMethod(call)
+  }
+
+  // Handles WETH Ethereum transfers
+  async transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
+    const { destination } = input
+    if (destination === 'Ethereum') {
+      return this.transferToEthereum(input)
+    }
+
+    return this.transferToAssetHub(input)
+  }
+
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { currencyID } = input
     return XTokensTransferImpl.transferXTokens(input, currencyID)
   }
 
-  protected canUseXTokens({ destination }: TSendInternalOptions<TApi, TRes>): boolean {
-    return destination !== 'Ethereum'
+  protected canUseXTokens({
+    destination,
+    currencySymbol,
+    currencyId
+  }: TSendInternalOptions<TApi, TRes>): boolean {
+    const dotAsset = getOtherAssets(this.node).find(({ symbol }) => symbol === 'DOT')
+
+    return (
+      destination !== 'Ethereum' &&
+      !(
+        destination === 'AssetHubPolkadot' &&
+        (currencySymbol === dotAsset?.symbol || currencyId === dotAsset?.assetId)
+      )
+    )
   }
 }
 

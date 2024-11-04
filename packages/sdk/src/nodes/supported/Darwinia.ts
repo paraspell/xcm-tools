@@ -51,7 +51,7 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
       }
       return createCurrencySpec(amount, version, Parents.ZERO, overridedMultiLocation, interior)
     } else {
-      return super.createCurrencySpec(amount, scenario, version, currencyId)
+      return super.createCurrencySpec(amount, scenario, version, currencyId, overridedMultiLocation)
     }
   }
 

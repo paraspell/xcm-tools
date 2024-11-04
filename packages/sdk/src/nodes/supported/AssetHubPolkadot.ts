@@ -184,24 +184,93 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
+  patchInput<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): PolkadotXCMTransferInput<TApi, TRes> {
+    const {
+      currencySymbol,
+      currencyId,
+      destination,
+      paraIdTo,
+      amount,
+      overridedCurrency,
+      scenario,
+      api,
+      version,
+      address
+    } = input
+
+    if (
+      (currencySymbol?.toUpperCase() === 'USDT' || currencySymbol?.toUpperCase() === 'USDC') &&
+      destination === 'BifrostPolkadot'
+    ) {
+      const versionOrDefault = input.version ?? Version.V2
+      return {
+        ...input,
+        header: this.createPolkadotXcmHeader(scenario, versionOrDefault, destination, paraIdTo),
+        addressSelection: generateAddressPayload(
+          api,
+          scenario,
+          'PolkadotXcm',
+          address,
+          versionOrDefault,
+          paraIdTo
+        ),
+        currencySelection: this.createCurrencySpec(
+          amount,
+          scenario,
+          versionOrDefault,
+          currencyId,
+          overridedCurrency
+        )
+      }
+    }
+
+    const dotAsset = getOtherAssets(this.node).find(({ symbol }) => symbol === 'DOT')
+
+    if (
+      destination === 'Hydration' &&
+      (currencySymbol === dotAsset?.symbol || currencyId === dotAsset?.assetId)
+    ) {
+      const versionOrDefault = version ?? this.version
+      return {
+        ...input,
+        currencySelection: super.createCurrencySpec(
+          amount,
+          'ParaToRelay',
+          versionOrDefault,
+          currencyId,
+          overridedCurrency
+        )
+      }
+    }
+
+    return input
+  }
+
   transferPolkadotXCM<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): Promise<TTransferReturn<TRes>> {
-    const { scenario, currencySymbol, currencyId } = input
+    const { scenario, currencySymbol, currencyId, destination } = input
 
-    if (input.destination === 'AssetHubKusama') {
+    if (destination === 'AssetHubKusama') {
       return Promise.resolve(this.handleBridgeTransfer<TApi, TRes>(input, 'Kusama'))
     }
 
-    if (input.destination === 'Ethereum') {
+    if (destination === 'Ethereum') {
       return Promise.resolve(this.handleEthBridgeTransfer<TApi, TRes>(input))
     }
 
-    if (input.destination === 'Mythos') {
+    if (destination === 'Mythos') {
       return Promise.resolve(this.handleMythosTransfer(input))
     }
 
-    if (scenario === 'ParaToPara' && currencySymbol === 'DOT' && currencyId === undefined) {
+    if (
+      scenario === 'ParaToPara' &&
+      currencySymbol === 'DOT' &&
+      currencyId === undefined &&
+      destination !== 'Hydration'
+    ) {
       throw new ScenarioNotSupportedError(
         this.node,
         scenario,
@@ -220,33 +289,7 @@ class AssetHubPolkadot<TApi, TRes>
     const section =
       scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
 
-    const { api, destination, paraIdTo, address, amount, overridedCurrency } = input
-
-    const versionOrDefault = input.version ?? Version.V2
-
-    const modifiedInput =
-      (currencySymbol?.toUpperCase() === 'USDT' || currencySymbol?.toUpperCase() === 'USDC') &&
-      destination === 'BifrostPolkadot'
-        ? {
-            ...input,
-            header: this.createPolkadotXcmHeader(scenario, versionOrDefault, destination, paraIdTo),
-            addressSelection: generateAddressPayload(
-              api,
-              scenario,
-              'PolkadotXcm',
-              address,
-              versionOrDefault,
-              paraIdTo
-            ),
-            currencySelection: this.createCurrencySpec(
-              amount,
-              scenario,
-              versionOrDefault,
-              currencyId,
-              overridedCurrency
-            )
-          }
-        : input
+    const modifiedInput = this.patchInput(input)
 
     return Promise.resolve(
       PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, section, 'Unlimited')

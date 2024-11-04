@@ -122,9 +122,15 @@ const sendCommon = async <TApi, TRes>(
   if (!isBridge && isDestAssetHub && pallet === 'XTokens' && !isBifrost) {
     asset = getAssetBySymbolOrId(destination, currency, false, destination)
 
+    let nativeAssets = getNativeAssets(destination)
+
+    if (origin === 'Hydration') {
+      nativeAssets = nativeAssets.filter(nativeAsset => nativeAsset.symbol !== 'DOT')
+    }
+
     if (
       'symbol' in currency &&
-      getNativeAssets(destination).some(
+      nativeAssets.some(
         nativeAsset => nativeAsset.symbol.toLowerCase() === currency.symbol.toLowerCase()
       )
     ) {

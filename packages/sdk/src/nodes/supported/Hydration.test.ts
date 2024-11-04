@@ -112,6 +112,43 @@ describe('Hydration', () => {
         parameters: expect.any(Object)
       })
     })
+
+    it('should create call for AssetHub destination DOT transfer', async () => {
+      mockInput.destination = 'AssetHubPolkadot'
+      mockInput.currencySymbol = 'DOT'
+      mockInput.currencyId = undefined
+
+      const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
+      const spy = vi.spyOn(mockApi, 'callTxMethod')
+
+      await hydration.transferPolkadotXCM(mockInput)
+
+      expect(spy).toHaveBeenCalled()
+      expect(transferToAhSpy).toHaveBeenCalled()
+      expect(spy).toHaveBeenCalledWith({
+        module: 'PolkadotXcm',
+        section: 'transfer_assets_using_type_and_then',
+        parameters: expect.any(Object)
+      })
+    })
+
+    it('should create call for AssetHub destination DOT transfer', async () => {
+      mockInput.destination = 'AssetHubPolkadot'
+      mockInput.currencyId = '3'
+
+      const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
+      const spy = vi.spyOn(mockApi, 'callTxMethod')
+
+      await hydration.transferPolkadotXCM(mockInput)
+
+      expect(spy).toHaveBeenCalled()
+      expect(transferToAhSpy).toHaveBeenCalled()
+      expect(spy).toHaveBeenCalledWith({
+        module: 'PolkadotXcm',
+        section: 'transfer_assets_using_type_and_then',
+        parameters: expect.any(Object)
+      })
+    })
   })
 
   describe('canUseXTokens', () => {
@@ -128,6 +165,14 @@ describe('Hydration', () => {
         destination: 'Acala'
       } as TSendInternalOptions<TPjsApi, Extrinsic>)
       expect(result).toBe(true)
+    })
+
+    it('should return false when destination AssetHubPolkadot and currency is DOT', () => {
+      const result = hydration['canUseXTokens']({
+        destination: 'AssetHubPolkadot',
+        currencySymbol: 'DOT'
+      } as TSendInternalOptions<TPjsApi, Extrinsic>)
+      expect(result).toBe(false)
     })
   })
 })
