@@ -1,5 +1,23 @@
 # Changelog
 
+## [7.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v7.0.1...sdk-v7.1.0) (2024-11-04)
+
+
+### Features
+
+* **sdk:** Add support to Hydration &gt; Ethereum transfer 🪄 ([b6f4c81](https://github.com/paraspell/xcm-tools/commit/b6f4c818bf53d3a0ed080a6f1d7959a08cb97556))
+* **sdk:** Allow to pass RPC url to create API client ✨ ([6fb3af9](https://github.com/paraspell/xcm-tools/commit/6fb3af9cbc58921189ce7c6cdceabb10d5271dcd))
+
+
+### Bug Fixes
+
+* **sdk:** Fix USDT transfer from Bifrost to AssetHub ✏️ ([68eb167](https://github.com/paraspell/xcm-tools/commit/68eb16742e8d187de78d8d86d28ed5296be4ccc9))
+
+
+### Miscellaneous Chores
+
+* **sdk:** Update optional ws_url parameter ([c6fb8ae](https://github.com/paraspell/xcm-tools/commit/c6fb8aea82236e3a2fbb95ade336744f96396886))
+
 ## [7.0.1](https://github.com/paraspell/xcm-tools/compare/sdk-v7.0.0...sdk-v7.0.1) (2024-11-01)
 
 
