@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-v7.1.0...sdk-v7.1.1) (2024-11-04)
+
+
+### Bug Fixes
+
+* **sdk:** Fix Hydration &lt;&gt; AHP transfers 🔧 ([8f5965d](https://github.com/paraspell/xcm-tools/commit/8f5965db50c12e2b46e550d7c9c0cffe0237516e))
+
 ## [7.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v7.0.1...sdk-v7.1.0) (2024-11-04)
 
 
