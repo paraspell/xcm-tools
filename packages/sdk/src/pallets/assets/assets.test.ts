@@ -11,7 +11,8 @@ import {
   getOtherAssets,
   getParaId,
   getRelayChainSymbol,
-  getTNode
+  getTNode,
+  hasSupportForAsset
 } from './assets'
 import type { TRelayChainType } from '../../types'
 import { getNode } from '../../utils'
@@ -159,5 +160,12 @@ describe('getTNode', () => {
   it('should return null for not existing paraId', () => {
     const nodeName = getTNode(9999, 'kusama')
     expect(nodeName).toBeNull()
+  })
+})
+
+describe('hasSupportForAsset', () => {
+  it('should return true for .e suffixed asset', () => {
+    const hasSupport = hasSupportForAsset('AssetHubPolkadot', 'WETH.e')
+    expect(hasSupport).toBe(true)
   })
 })

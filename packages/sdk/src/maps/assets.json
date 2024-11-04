@@ -1756,14 +1756,16 @@
       },
       {
         "symbol": "KSM",
-        "decimals": 12
+        "decimals": 12,
+        "manuallyAdded": true
       }
     ],
     "otherAssets": [
       {
         "assetId": "",
         "symbol": "MYTH",
-        "decimals": 18
+        "decimals": 18,
+        "manuallyAdded": true
       },
       {
         "assetId": "22222005",
@@ -5586,7 +5588,8 @@
     "nativeAssets": [
       {
         "symbol": "KSM",
-        "decimals": 12
+        "decimals": 12,
+        "manuallyAdded": true
       },
       {
         "symbol": "DOT",

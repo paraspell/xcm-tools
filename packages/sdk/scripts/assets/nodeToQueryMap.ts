@@ -1,6 +1,6 @@
-import type { TNodePolkadotKusama } from '../../src/types'
+import type { TNode } from '../../src/types'
 
-export const nodeToQuery: Record<TNodePolkadotKusama, string | null> = {
+export const nodeToQuery: Record<TNode, string | null> = {
   // Chain state query: <module>.<section> for assets metadata
   Acala: 'assetRegistry.assetMetadatas',
   Astar: 'assets.metadata',
@@ -61,5 +61,6 @@ export const nodeToQuery: Record<TNodePolkadotKusama, string | null> = {
   BridgeHubKusama: null,
   Mythos: null, // No assets metadata query
   Peaq: 'assets.metadata',
-  Polimec: 'foreignAssets.metadata'
+  Polimec: 'foreignAssets.metadata',
+  Ethereum: null
 }

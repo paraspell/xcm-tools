@@ -114,6 +114,122 @@ describe('getAssetBySymbolOrId', () => {
     expect(asset).toHaveProperty('assetId')
   })
 
+  it('Should find asset ending with .e on AssetHubPolkadot', () => {
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH.e' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should find asset ending with .e on Ethereum', () => {
+    const asset = getAssetBySymbolOrId('Ethereum', { symbol: 'WETH.e' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should find asset ending with .e on Ethereum', () => {
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH.e' }, false, 'Ethereum')
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should find asset ending with .e on Ethereum when entered withou suffix', () => {
+    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
+      {
+        assetId: '1',
+        symbol: 'WETH.e'
+      }
+    ])
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH' }, false, 'Ethereum')
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should find asset ending with .e on AssetHubPolkadot with duplicates', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockImplementation(node => {
+      return node === 'Ethereum'
+        ? {
+            nativeAssetSymbol: 'ETH',
+            relayChainAssetSymbol: 'DOT',
+            otherAssets: [],
+            nativeAssets: []
+          }
+        : {
+            nativeAssetSymbol: 'DOT',
+            relayChainAssetSymbol: 'DOT',
+            otherAssets: [
+              {
+                assetId: '1',
+                symbol: 'WTH'
+              },
+              {
+                assetId: '2',
+                symbol: 'WTH'
+              }
+            ],
+            nativeAssets: []
+          }
+    })
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WTH.e' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should find asset ending with .e on AssetHubPolkadot ', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockImplementation(node => {
+      return node === 'Ethereum'
+        ? {
+            nativeAssetSymbol: 'ETH',
+            relayChainAssetSymbol: 'DOT',
+            otherAssets: [],
+            nativeAssets: []
+          }
+        : {
+            nativeAssetSymbol: 'DOT',
+            relayChainAssetSymbol: 'DOT',
+            otherAssets: [
+              {
+                assetId: '1',
+                symbol: 'WTH.e'
+              },
+              {
+                assetId: '2',
+                symbol: 'WTH.e'
+              }
+            ],
+            nativeAssets: []
+          }
+    })
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WTH.e' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should find asset with xc prefix on Astar', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '1',
+          symbol: 'DOT'
+        },
+        {
+          assetId: '2',
+          symbol: 'DOT'
+        }
+      ],
+      nativeAssets: [
+        {
+          symbol: 'DOT',
+          decimals: 10
+        }
+      ]
+    })
+    const asset = getAssetBySymbolOrId('Astar', { symbol: 'xcDOT' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).not.toHaveProperty('assetId')
+  })
+
   it('Should throw error when duplicate dot asset on Hydration', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockResolvedValueOnce({
       nativeAssetSymbol: 'DOT',

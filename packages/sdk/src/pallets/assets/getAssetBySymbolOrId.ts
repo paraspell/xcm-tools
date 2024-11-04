@@ -23,7 +23,6 @@ export const getAssetBySymbolOrId = (
       destination,
       otherAssets,
       nativeAssets,
-      combinedAssets,
       currency.symbol,
       isRelayDestination
     )
