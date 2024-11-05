@@ -13,6 +13,32 @@ import { isRelayChain } from '../../utils'
 import { getDefaultPallet } from '../pallets'
 import { getOtherAssets } from './assets'
 
+const findBestMatches = (assets: TAsset[], symbol: string): TAsset[] => {
+  // First, exact match
+  let matches = assets.filter(asset => asset.symbol === symbol)
+  if (matches.length > 0) {
+    return matches
+  }
+
+  // Uppercase match
+  const upperSymbol = symbol.toUpperCase()
+  matches = assets.filter(asset => asset.symbol === upperSymbol)
+  if (matches.length > 0) {
+    return matches
+  }
+
+  // Lowercase match
+  const lowerSymbol = symbol.toLowerCase()
+  matches = assets.filter(asset => asset.symbol === lowerSymbol)
+  if (matches.length > 0) {
+    return matches
+  }
+
+  // Case-insensitive match
+  matches = assets.filter(asset => asset.symbol?.toLowerCase() === lowerSymbol)
+  return matches
+}
+
 export const findAssetBySymbol = (
   node: TNodeWithRelayChains,
   destination: TNodeWithRelayChains | undefined,
@@ -34,27 +60,21 @@ export const findAssetBySymbol = (
   if (destination === 'Ethereum') {
     const ethereumAssets = getOtherAssets('Ethereum')
 
-    let asset = ethereumAssets.find(
-      ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === lowerSymbol
-    )
+    let assetsMatches = findBestMatches(ethereumAssets, symbol)
 
-    if (!asset) {
+    if (assetsMatches.length === 0) {
       if (lowerSymbol.endsWith('.e')) {
         // Symbol ends with '.e', strip it and search again
         const strippedSymbol = symbol.slice(0, -2).toLowerCase()
-        asset = ethereumAssets.find(
-          ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === strippedSymbol
-        )
+        assetsMatches = findBestMatches(ethereumAssets, strippedSymbol)
       } else {
         // Symbol does not end with '.e', add '.e' suffix and search
         const suffixedSymbol = `${symbol}.e`.toLowerCase()
-        asset = ethereumAssets.find(
-          ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === suffixedSymbol
-        )
+        assetsMatches = findBestMatches(ethereumAssets, suffixedSymbol)
       }
     }
 
-    return asset
+    return assetsMatches[0]
   }
 
   const supportsESuffix =
@@ -67,27 +87,18 @@ export const findAssetBySymbol = (
   if (lowerSymbol.endsWith('.e') && supportsESuffix) {
     // Symbol ends with '.e', indicating a Snowbridge asset
     const strippedSymbol = symbol.slice(0, -2)
-    const strippedLowerSymbol = strippedSymbol.toLowerCase()
 
     // Search in Ethereum assets without the '.e' suffix
-    const ethereumAsset = getOtherAssets('Ethereum').find(
-      asset => asset.symbol?.toLowerCase() === strippedLowerSymbol
-    )
+    const ethereumAssets = getOtherAssets('Ethereum')
+    const ethereumMatches = findBestMatches(ethereumAssets, strippedSymbol)
 
-    if (ethereumAsset) {
-      return ethereumAsset
+    if (ethereumMatches.length > 0) {
+      return ethereumMatches[0]
     }
 
     // If not found, search normal assets with '.e' suffix
-    const suffixedLowerSymbol = lowerSymbol
-
-    otherAssetsMatches = otherAssets.filter(
-      ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === suffixedLowerSymbol
-    )
-
-    nativeAssetsMatches = nativeAssets.filter(
-      ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === suffixedLowerSymbol
-    )
+    otherAssetsMatches = findBestMatches(otherAssets, symbol) as TAssetDetails[]
+    nativeAssetsMatches = findBestMatches(nativeAssets, symbol) as TNativeAssetDetails[]
 
     if (nativeAssetsMatches.length > 0 || otherAssetsMatches.length > 0) {
       if (isPolkadotXcm) {
@@ -97,13 +108,8 @@ export const findAssetBySymbol = (
     }
 
     // If still not found, search normal assets without suffix
-    otherAssetsMatches = otherAssets.filter(
-      ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === strippedLowerSymbol
-    )
-
-    nativeAssetsMatches = nativeAssets.filter(
-      ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === strippedLowerSymbol
-    )
+    otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol) as TAssetDetails[]
+    nativeAssetsMatches = findBestMatches(nativeAssets, strippedSymbol) as TNativeAssetDetails[]
 
     if (nativeAssetsMatches.length > 0 || otherAssetsMatches.length > 0) {
       if (isPolkadotXcm) {
@@ -116,31 +122,19 @@ export const findAssetBySymbol = (
     return undefined
   } else {
     // Symbol does not end with '.e', proceed with existing logic
-
-    otherAssetsMatches = otherAssets.filter(
-      ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === lowerSymbol
-    )
-
-    nativeAssetsMatches = nativeAssets.filter(
-      ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === lowerSymbol
-    )
+    otherAssetsMatches = findBestMatches(otherAssets, symbol) as TAssetDetails[]
+    nativeAssetsMatches = findBestMatches(nativeAssets, symbol) as TNativeAssetDetails[]
 
     if (otherAssetsMatches.length === 0 && nativeAssetsMatches.length === 0) {
       if (lowerSymbol.startsWith('xc')) {
         // Symbol starts with 'xc', try stripping 'xc' prefix
         const strippedSymbol = symbol.substring(2)
-        const strippedLowerSymbol = strippedSymbol.toLowerCase()
 
-        otherAssetsMatches = otherAssets.filter(
-          ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === strippedLowerSymbol
-        )
-
-        nativeAssetsMatches = nativeAssets.filter(
-          ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === strippedLowerSymbol
-        )
+        otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol) as TAssetDetails[]
+        nativeAssetsMatches = findBestMatches(nativeAssets, strippedSymbol) as TNativeAssetDetails[]
 
         if (node === 'Astar' || node === 'Shiden' || isPolkadotXcm) {
-          return nativeAssetsMatches[0] || otherAssetsMatches[0] || null
+          return nativeAssetsMatches[0] || otherAssetsMatches[0] || undefined
         }
 
         const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
@@ -153,18 +147,12 @@ export const findAssetBySymbol = (
       } else {
         // Try adding 'xc' prefix
         const prefixedSymbol = `xc${symbol}`
-        const prefixedLowerSymbol = prefixedSymbol.toLowerCase()
 
-        otherAssetsMatches = otherAssets.filter(
-          ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === prefixedLowerSymbol
-        )
-
-        nativeAssetsMatches = nativeAssets.filter(
-          ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === prefixedLowerSymbol
-        )
+        otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol) as TAssetDetails[]
+        nativeAssetsMatches = findBestMatches(nativeAssets, prefixedSymbol) as TNativeAssetDetails[]
 
         if (node === 'Astar' || node === 'Shiden' || isPolkadotXcm) {
-          return nativeAssetsMatches[0] || otherAssetsMatches[0] || null
+          return nativeAssetsMatches[0] || otherAssetsMatches[0] || undefined
         }
 
         const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
@@ -178,14 +166,14 @@ export const findAssetBySymbol = (
     }
 
     if (node === 'Astar' || node === 'Shiden' || isPolkadotXcm) {
-      return nativeAssetsMatches[0] || otherAssetsMatches[0] || null
+      return nativeAssetsMatches[0] || otherAssetsMatches[0] || undefined
     }
 
     if (otherAssetsMatches.length > 1 && !isRelayDestination) {
       throw new DuplicateAssetError(symbol)
     }
 
-    return otherAssetsMatches[0] || nativeAssetsMatches[0] || null
+    return otherAssetsMatches[0] || nativeAssetsMatches[0] || undefined
   }
 }
 

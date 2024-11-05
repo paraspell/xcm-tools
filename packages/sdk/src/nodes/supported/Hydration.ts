@@ -4,7 +4,6 @@ import { ethers } from 'ethers'
 import type {
   IPolkadotXCMTransfer,
   PolkadotXCMTransferInput,
-  TMultiLocation,
   TSendInternalOptions,
   TSerializedApiCallV2,
   TTransferReturn
@@ -18,6 +17,7 @@ import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { ETHEREUM_JUNCTION } from '../../const'
 import { generateAddressPayload } from '../../utils'
 import type { IPolkadotApi } from '../../api'
+import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
 
 const calculateFee = async <TApi, TRes>(api: IPolkadotApi<TApi, TRes>) => {
   const DEFAULT_FEE = BigInt(2_750_872_500_000)
@@ -33,13 +33,6 @@ const calculateFee = async <TApi, TRes>(api: IPolkadotApi<TApi, TRes>) => {
   const transfer_assethub_execution_fee = BigInt(2200000000)
   return (transfer_bridge_fee + transfer_assethub_execution_fee).toString() // ~6.248 DOT (10 decimals)
 }
-
-const createEthereumTokenLocation = (currencyId: string): TMultiLocation => ({
-  parents: Parents.TWO,
-  interior: {
-    X2: [ETHEREUM_JUNCTION, { AccountKey20: { key: currencyId } }]
-  }
-})
 
 const createCustomXcmAh = <TApi, TRes>(
   { api, scenario, address }: PolkadotXCMTransferInput<TApi, TRes>,

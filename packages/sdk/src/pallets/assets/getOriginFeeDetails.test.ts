@@ -60,6 +60,7 @@ describe('getOriginFeeDetails', () => {
       currency,
       amount,
       account,
+      accountDestination: account,
       api: apiMock
     })
 
@@ -115,6 +116,7 @@ describe('getOriginFeeDetails', () => {
       currency,
       amount,
       account,
+      accountDestination: account,
       api: apiMock
     })
 
@@ -170,6 +172,7 @@ describe('getOriginFeeDetails', () => {
       currency,
       amount,
       account,
+      accountDestination: account,
       api: apiMock
     })
 

@@ -29,7 +29,8 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
   it('should return balance for AssetHubPolkadot node', async () => {
     const mockApi = {
-      getAssetHubForeignBalance: vi.fn().mockResolvedValue(BigInt(500))
+      getAssetHubForeignBalance: vi.fn().mockResolvedValue(BigInt(500)),
+      getBalanceForeignAssetsAccount: vi.fn().mockResolvedValue(BigInt(500))
     } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
     vi.mocked(getAssetHubMultiLocation).mockReturnValue({
