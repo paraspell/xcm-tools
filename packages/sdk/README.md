@@ -328,7 +328,7 @@ await getBalanceForeign({address, node, currency /*- {id: currencyID} | {symbol:
 await getBalanceNative({address, node, api /* api/ws_url_string optional */})
 
 //Get fee information regarding XCM call
-await getOriginFeeDetails({from, to, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, amount, originAddress, api /* api/ws_url_string optional */, feeMargin /* 10% by default */})
+await getOriginFeeDetails({from, to, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, amount, originAddress, destinationAddress, api /* api/ws_url_string optional */, feeMargin /* 10% by default */})
 
 //Retrieves the asset balance for a given account on a specified node.
 await getAssetBalance({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, api /* api/ws_url_string optional */});
