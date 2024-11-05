@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.1.2](https://github.com/paraspell/xcm-tools/compare/sdk-v7.1.1...sdk-v7.1.2) (2024-11-05)
+
+
+### Bug Fixes
+
+* **sdk:** Add support for AHP &gt; BifrostPolkadot transfer 🔧 ([8a5823b](https://github.com/paraspell/xcm-tools/commit/8a5823be4faa8963a833864f761ae765bfb4485d))
+* **sdk:** Fix Snowbridge asset selection ✨ ([8a2709f](https://github.com/paraspell/xcm-tools/commit/8a2709fdfbff7a94a42a7cfebebd0b5f57cac7d0))
+
 ## [7.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-v7.1.0...sdk-v7.1.1) (2024-11-04)
 
 
