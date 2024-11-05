@@ -41,6 +41,7 @@ const createTx = async <TApi, TRes>(
 export const getOriginFeeDetails = async <TApi, TRes>({
   api,
   account,
+  accountDestination,
   amount,
   currency,
   origin: origin,
@@ -55,7 +56,7 @@ export const getOriginFeeDetails = async <TApi, TRes>({
 
   const minTransferableAmount = getMinNativeTransferableAmount(origin)
 
-  const tx = await createTx(api, account, amount, currency, origin, destination)
+  const tx = await createTx(api, accountDestination, amount, currency, origin, destination)
 
   const xcmFee = await api.calculateTransactionFee(tx, account)
 

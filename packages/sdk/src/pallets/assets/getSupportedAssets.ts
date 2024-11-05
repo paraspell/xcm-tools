@@ -62,5 +62,14 @@ export const getSupportedAssets = (
     destinationAssets.some(a => normalizeSymbol(a.symbol) === normalizeSymbol(asset.symbol))
   )
 
+  if (origin === 'AssetHubPolkadot' && destination === 'BifrostPolkadot') {
+    const wethAsset = getOtherAssets('Ethereum').find(({ symbol }) => symbol === 'WETH')
+    if (wethAsset)
+      supportedAssets.push({
+        assetId: wethAsset.assetId,
+        symbol: `${wethAsset.symbol}.e`
+      })
+  }
+
   return supportedAssets
 }

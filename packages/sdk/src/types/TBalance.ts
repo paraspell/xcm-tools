@@ -84,9 +84,13 @@ export type TGetOriginFeeDetailsOptionsBase = {
    */
   amount: string
   /**
-   * The account to transfer from.
+   * The origin account.
    */
   account: string
+  /**
+   * The destination account.
+   */
+  accountDestination: string
   /**
    * The fee margin percentage.
    */

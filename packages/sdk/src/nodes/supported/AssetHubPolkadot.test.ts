@@ -3,13 +3,15 @@ import { ethers } from 'ethers'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type AssetHubPolkadot from './AssetHubPolkadot'
+import type { TMultiLocationHeader } from '../../types'
 import { Version, type PolkadotXCMTransferInput, type TRelayToParaOptions } from '../../types'
 import { getOtherAssets } from '../../pallets/assets'
 import { getNode } from '../../utils'
+import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import type { ApiPromise } from '@polkadot/api'
-import type { Extrinsic } from '../../pjs/types'
-import type PolkadotJsApi from '../../pjs/PolkadotJsApi'
+import type { Extrinsic, TPjsApi } from '../../pjs/types'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/constructRelayToParaParameters'
+import type { IPolkadotApi } from '../../api'
 
 vi.mock('ethers', () => ({
   ethers: {
@@ -42,8 +44,17 @@ vi.mock('../../pallets/xcmPallet/constructRelayToParaParameters', () => ({
 
 describe('AssetHubPolkadot', () => {
   let assetHub: AssetHubPolkadot<ApiPromise, Extrinsic>
+
+  const mockApi = {
+    callTxMethod: vi.fn().mockResolvedValue('success'),
+    createApiForNode: vi.fn().mockResolvedValue({
+      getFromStorage: vi.fn().mockResolvedValue('0x0000000000000000')
+    }),
+    createAccountId: vi.fn().mockReturnValue('0x0000000000000000')
+  } as unknown as IPolkadotApi<TPjsApi, Extrinsic>
+
   const mockInput = {
-    api: {} as PolkadotJsApi,
+    api: mockApi,
     currencySymbol: 'DOT',
     currencySelection: {},
     currencyId: '0',
@@ -56,7 +67,7 @@ describe('AssetHubPolkadot', () => {
   } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    vi.resetAllMocks()
+    vi.clearAllMocks()
     assetHub = getNode<ApiPromise, Extrinsic, 'AssetHubPolkadot'>('AssetHubPolkadot')
   })
 
@@ -228,6 +239,22 @@ describe('AssetHubPolkadot', () => {
       expect(handleMythosTransferSpy).toHaveBeenCalledWith(mockInput)
     })
 
+    it('should call transferPolkadotXCM when destination is BifrostPolkadot and currency WETH.e', async () => {
+      mockInput.destination = 'BifrostPolkadot'
+      mockInput.currencySymbol = 'WETH'
+
+      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'WETH', assetId: '' }])
+      vi.mocked(generateAddressPayload).mockReturnValue({
+        [Version.V3]: {}
+      } as unknown as TMultiLocationHeader)
+
+      const handleBifrostEthTransferSpy = vi.spyOn(assetHub, 'handleBifrostEthTransfer')
+
+      await assetHub.transferPolkadotXCM(mockInput)
+
+      expect(handleBifrostEthTransferSpy).toHaveBeenCalled()
+    })
+
     it('should modify input for USDT currencySymbol', async () => {
       mockInput.currencySymbol = 'USDT'
       mockInput.scenario = 'ParaToPara'
@@ -263,7 +290,9 @@ describe('AssetHubPolkadot', () => {
       mockInput.currencySymbol = 'DOT'
       mockInput.currencyId = undefined
 
-      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', assetId: '' }])
+      vi.mocked(getOtherAssets).mockImplementation(node =>
+        node === 'Ethereum' ? [] : [{ symbol: 'DOT', assetId: '' }]
+      )
 
       const mockResult = {} as Extrinsic
       const spy = vi

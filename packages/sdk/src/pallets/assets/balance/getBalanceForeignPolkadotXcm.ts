@@ -2,6 +2,7 @@ import type { TAsset, TNodePolkadotKusama } from '../../../types'
 import { getAssetHubMultiLocation } from './getAssetHubMultiLocation'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { InvalidCurrencyError } from '../../../errors'
+import { ethers } from 'ethers'
 
 export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
@@ -15,7 +16,8 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
 
   if (node === 'AssetHubPolkadot') {
     const multiLocation = getAssetHubMultiLocation(asset.symbol)
-    if (multiLocation) {
+    // Ethereum address ID indicates that it is an Ethereum asset
+    if (multiLocation && ethers.isAddress(asset.assetId)) {
       return api.getAssetHubForeignBalance(address, multiLocation)
     } else {
       if (asset.assetId === undefined) {

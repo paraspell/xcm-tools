@@ -26,6 +26,23 @@ import { getOtherAssets, getParaId } from '../../pallets/assets'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { ETHEREUM_JUNCTION } from '../../const'
+import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
+
+const createCustomXcmToBifrost = <TApi, TRes>(
+  { api, address, scenario }: PolkadotXCMTransferInput<TApi, TRes>,
+  version: Version
+) => ({
+  [version]: [
+    {
+      DepositAsset: {
+        assets: { Wild: 'All' },
+        beneficiary: Object.values(
+          generateAddressPayload(api, scenario, 'PolkadotXcm', address, version, undefined)
+        )[0]
+      }
+    }
+  ]
+})
 
 class AssetHubPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>
@@ -184,6 +201,50 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
+  handleBifrostEthTransfer = <TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): TTransferReturn<TRes> => {
+    const { api, amount, scenario, version, destination, currencyId } = input
+
+    const versionOrDefault = version ?? this.version
+
+    const call: TSerializedApiCallV2 = {
+      module: 'PolkadotXcm',
+      section: 'transfer_assets_using_type_and_then',
+      parameters: {
+        dest: this.createPolkadotXcmHeader(
+          scenario,
+          versionOrDefault,
+          destination,
+          getParaId('BifrostPolkadot')
+        ),
+        assets: {
+          [versionOrDefault]: [
+            Object.values(
+              createCurrencySpec(
+                amount,
+                versionOrDefault,
+                Parents.TWO,
+                createEthereumTokenLocation(currencyId ?? '')
+              )
+            )[0][0]
+          ]
+        },
+        assets_transfer_type: 'LocalReserve',
+        remote_fees_id: {
+          [versionOrDefault]: {
+            Concrete: createEthereumTokenLocation(currencyId ?? '')
+          }
+        },
+        fees_transfer_type: 'LocalReserve',
+        custom_xcm_on_dest: createCustomXcmToBifrost(input, versionOrDefault),
+        weight_limit: 'Unlimited'
+      }
+    }
+
+    return api.callTxMethod(call)
+  }
+
   patchInput<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): PolkadotXCMTransferInput<TApi, TRes> {
@@ -263,6 +324,15 @@ class AssetHubPolkadot<TApi, TRes>
 
     if (destination === 'Mythos') {
       return Promise.resolve(this.handleMythosTransfer(input))
+    }
+
+    const wethAsset = getOtherAssets('Ethereum').find(({ symbol }) => symbol === 'WETH')
+
+    if (
+      destination === 'BifrostPolkadot' &&
+      (currencySymbol === wethAsset?.symbol || currencyId === wethAsset?.assetId)
+    ) {
+      return Promise.resolve(this.handleBifrostEthTransfer(input))
     }
 
     if (

@@ -19,6 +19,7 @@ import { submitTransaction, submitTransactionPapi } from "../utils";
 import { getTxFromApi } from "../utils/submitUsingApi";
 import { useWallet } from "../hooks/useWallet";
 import type { ApiPromise } from "@polkadot/api";
+import { ethers } from "ethers";
 
 const XcmTransfer = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
@@ -62,6 +63,10 @@ const XcmTransfer = () => {
         };
       }
     } else if (currency) {
+      if (ethers.isAddress(currency.assetId)) {
+        return { symbol: currency.symbol ?? "" };
+      }
+
       if (!currency.assetId) {
         return { symbol: currency.symbol ?? "" };
       }

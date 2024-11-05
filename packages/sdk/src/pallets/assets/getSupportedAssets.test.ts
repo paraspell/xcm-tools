@@ -99,4 +99,19 @@ describe('getSupportedAssets', () => {
     const result = getSupportedAssets('Phala', 'Polkadot')
     expect(result).toEqual([])
   })
+
+  it('should return WETH asset when origin is AssetHubPolkadot and destination is BifrostPolkadot', () => {
+    const mockOriginAssets = [{ symbol: 'PHA', assetId: '300' }]
+    const mockDestinationAssets = [{ symbol: 'PHA', assetId: '400' }]
+    const mockWETHAsset = { symbol: 'WETH', assetId: '500' }
+    vi.mocked(getAssets).mockImplementation(node => {
+      if (node === 'AssetHubPolkadot') return mockOriginAssets
+      if (node === 'BifrostPolkadot') return mockDestinationAssets
+      return []
+    })
+    vi.mocked(getOtherAssets).mockReturnValue([mockWETHAsset])
+
+    const result = getSupportedAssets('AssetHubPolkadot', 'BifrostPolkadot')
+    expect(result).toEqual([...mockOriginAssets, { symbol: 'WETH.e', assetId: '500' }])
+  })
 })
