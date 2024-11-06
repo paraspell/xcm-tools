@@ -17,7 +17,7 @@ vi.mock('../xTransfer', () => ({
 describe('Phala', () => {
   let phala: Phala<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'PHA',
+    asset: { symbol: 'PHA' },
     amount: '100'
   } as XTransferTransferInput<ApiPromise, Extrinsic>
 

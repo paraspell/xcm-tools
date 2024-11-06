@@ -9,9 +9,9 @@ class Phala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTransferT
   }
 
   transferXTransfer<TApi, TRes>(input: XTransferTransferInput<TApi, TRes>) {
-    const { currency } = input
-    if (currency !== this.getNativeAssetSymbol()) {
-      throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${currency}`)
+    const { asset } = input
+    if (asset.symbol !== this.getNativeAssetSymbol()) {
+      throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${asset.symbol}`)
     }
     return XTransferTransferImpl.transferXTransfer(input)
   }

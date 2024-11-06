@@ -3,6 +3,7 @@ import { getAssetHubMultiLocation } from './getAssetHubMultiLocation'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { InvalidCurrencyError } from '../../../errors'
 import { ethers } from 'ethers'
+import { isForeignAsset } from '../../../utils/assets'
 
 export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
@@ -14,15 +15,16 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
     return await api.getMythosForeignBalance(address)
   }
 
+  if (!isForeignAsset(asset)) {
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+  }
+
   if (node === 'AssetHubPolkadot') {
     const multiLocation = getAssetHubMultiLocation(asset.symbol)
     // Ethereum address ID indicates that it is an Ethereum asset
-    if (multiLocation && ethers.isAddress(asset.assetId)) {
+    if (multiLocation && isForeignAsset(asset) && ethers.isAddress(asset.assetId)) {
       return api.getAssetHubForeignBalance(address, multiLocation)
     } else {
-      if (asset.assetId === undefined) {
-        throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-      }
       return api.getBalanceForeignAssetsAccount(address, Number(asset.assetId))
     }
   }

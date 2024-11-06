@@ -1,4 +1,4 @@
-import type { TAssetDetails, TNodeAssets } from '../../src/types'
+import type { TForeignAsset, TNodeAssets } from '../../src/types'
 import axios from 'axios'
 import { Project, SyntaxKind } from 'ts-morph'
 
@@ -43,7 +43,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
     token.getLastChildByKindOrThrow(SyntaxKind.PropertyAssignment).remove()
   })
 
-  const assets: TAssetDetails[] = []
+  const assets: TForeignAsset[] = []
 
   tokenArray.forEachChild(token => {
     const item = token.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList)

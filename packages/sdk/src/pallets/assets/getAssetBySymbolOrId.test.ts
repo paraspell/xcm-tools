@@ -6,7 +6,9 @@ import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 import * as assetFunctions from './assets'
 import { getDefaultPallet } from '../pallets'
 import { isRelayChain } from '../../utils'
-import type { TNodePolkadotKusama } from '../../types'
+import type { TAsset, TForeignAsset, TNodePolkadotKusama } from '../../types'
+import { isForeignAsset } from '../../utils/assets'
+import { Foreign, ForeignAbstract, Native } from './assetSelectors'
 
 const getAssetsObject = assetFunctions.getAssetsObject
 
@@ -24,7 +26,7 @@ describe('getAssetBySymbolOrId', () => {
             ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === other.symbol?.toLowerCase()
           )
           if (otherAssetsMatches.length < 2) {
-            const asset = getAssetBySymbolOrId(node, { symbol: other.symbol })
+            const asset = getAssetBySymbolOrId(node, { symbol: Foreign(other.symbol) })
             expect(asset).toHaveProperty('symbol')
             expect(other.symbol.toLowerCase()).toEqual(asset?.symbol?.toLowerCase())
             if (
@@ -67,22 +69,22 @@ describe('getAssetBySymbolOrId', () => {
           otherAssets.filter(asset => asset.assetId === other.assetId).length > 1
         if (!hasDuplicateIds) {
           const asset = getAssetBySymbolOrId(node, { id: other.assetId })
+          expect(asset).not.toBeNull()
+          expect(isForeignAsset(asset as TAsset)).toBe(true)
           expect(asset).toHaveProperty('assetId')
-          expect(other.assetId).toEqual(asset?.assetId)
+          expect(other.assetId).toEqual((asset as TForeignAsset).assetId)
         }
       })
     })
   })
 
-  it('should return symbol for every native foreign asset id', () => {
+  it('should return symbol for every native asset', () => {
     NODE_NAMES.forEach(node => {
       const { nativeAssets } = getAssetsObject(node)
-      nativeAssets.forEach(other => {
-        if (other.assetId !== undefined) {
-          const asset = getAssetBySymbolOrId(node, { id: other.assetId })
+      nativeAssets.forEach(nativeAsset => {
+        if (!isForeignAsset(nativeAsset)) {
+          const asset = getAssetBySymbolOrId(node, { symbol: Native(nativeAsset.symbol) })
           expect(asset).toHaveProperty('symbol')
-          expect(asset).toHaveProperty('assetId')
-          expect(Number(other.assetId)).toEqual(asset?.assetId)
         }
       })
     })
@@ -108,8 +110,20 @@ describe('getAssetBySymbolOrId', () => {
     expect(asset).toHaveProperty('assetId')
   })
 
+  it('Should find asset starting with "xc" for Moonbeam using Foreign selector', () => {
+    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: Foreign('xcZTG') })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
   it('Should find asset starting with "xc" for Moonbeam', () => {
     const asset = getAssetBySymbolOrId('Moonbeam', { symbol: 'xcWETH.e' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should find asset starting with "xc" for Moonbeam using Foreign selector', () => {
+    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: Foreign('xcWETH.e') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -120,8 +134,20 @@ describe('getAssetBySymbolOrId', () => {
     expect(asset).toHaveProperty('assetId')
   })
 
+  it('Should find asset ending with .e on AssetHubPolkadot', () => {
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: Foreign('WETH.e') })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
   it('Should find asset ending with .e on Ethereum', () => {
     const asset = getAssetBySymbolOrId('Ethereum', { symbol: 'WETH.e' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('Should find asset ending with .e on Ethereum', () => {
+    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH.e') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -140,6 +166,89 @@ describe('getAssetBySymbolOrId', () => {
       }
     ])
     const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH' }, false, 'Ethereum')
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should find asset without .e to match e', () => {
+    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
+      {
+        assetId: '1',
+        symbol: 'MON'
+      }
+    ])
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: Foreign('MON.e') })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should find asset without .e to match e', () => {
+    vi.spyOn(assetFunctions, 'getOtherAssets').mockImplementation(node =>
+      node === 'Ethereum'
+        ? []
+        : [
+            {
+              assetId: '1',
+              symbol: 'MON'
+            },
+            {
+              assetId: '2',
+              symbol: 'MON'
+            }
+          ]
+    )
+    getAssetBySymbolOrId('AssetHubPolkadot', { symbol: Foreign('MON.e') })
+  })
+
+  it('Should find asset ending with .e on Ethereum when entered withou suffix', () => {
+    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
+      {
+        assetId: '1',
+        symbol: 'WETH.e'
+      }
+    ])
+    const asset = getAssetBySymbolOrId(
+      'AssetHubPolkadot',
+      { symbol: Foreign('WETH') },
+      false,
+      'Ethereum'
+    )
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should find weth with suffix on Ethereum', () => {
+    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
+      {
+        assetId: '1',
+        symbol: 'WETH.e'
+      }
+    ])
+    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH') })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should find weth with suffix on Ethereum', () => {
+    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
+      {
+        assetId: '1',
+        symbol: 'WETH'
+      }
+    ])
+    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH.e') }, false, 'Ethereum')
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should find weth with suffix on Ethereum', () => {
+    vi.spyOn(assetFunctions, 'getOtherAssets').mockReturnValue([
+      {
+        assetId: '1',
+        symbol: 'WETH.e'
+      }
+    ])
+    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH') }, false, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -287,8 +396,128 @@ describe('getAssetBySymbolOrId', () => {
     expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'DOT' })).toThrow()
   })
 
+  it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '1',
+          symbol: 'xcDOT'
+        },
+        {
+          assetId: '2',
+          symbol: 'xcDOT'
+        }
+      ],
+      nativeAssets: []
+    })
+    expect(() => getAssetBySymbolOrId('Hydration', { symbol: Foreign('DOT') })).toThrow()
+  })
+
+  it('should find asset with xc prefix on Acala', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '2',
+          symbol: 'xcDOT'
+        }
+      ],
+      nativeAssets: []
+    })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: 'DOT' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
   it('Should find ethereum assets', () => {
     const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH' }, false, 'Ethereum')
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should find native asset on Acala', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [],
+      nativeAssets: [
+        {
+          symbol: 'DOT',
+          decimals: 10
+        }
+      ]
+    })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: Native('DOT') })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('decimals')
+  })
+
+  it('should find foreign abstract asset on Acala', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '1',
+          symbol: 'DOT',
+          alias: 'DOT1'
+        },
+        {
+          assetId: '2',
+          symbol: 'DOT',
+          alias: 'DOT2'
+        }
+      ],
+      nativeAssets: []
+    })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: ForeignAbstract('DOT1') })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should throw error when multiple matches in native and foreign assets', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '1',
+          symbol: 'DOT',
+          alias: 'DOT1'
+        },
+        {
+          assetId: '2',
+          symbol: 'DOT',
+          alias: 'DOT2'
+        }
+      ],
+      nativeAssets: [
+        {
+          symbol: 'DOT',
+          decimals: 10
+        }
+      ]
+    })
+    expect(() => getAssetBySymbolOrId('Acala', { symbol: 'DOT' })).toThrow()
+  })
+
+  it('should find asset with lowercase matching', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '2',
+          symbol: 'dot',
+          alias: 'DOT2'
+        }
+      ],
+      nativeAssets: []
+    })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: 'Dot' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })

@@ -26,8 +26,10 @@ vi.mock('../../utils/getAllNodeProviders', () => ({
 describe('Moonbeam', () => {
   let moonbeam: Moonbeam<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'GLMR',
-    currencyID: '123',
+    asset: {
+      symbol: 'GLMR',
+      assetId: '123'
+    },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 

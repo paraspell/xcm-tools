@@ -22,7 +22,7 @@ describe('Bajun', () => {
   let bajun: Bajun<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'ParaToPara',
-    currency: 'BAJ',
+    asset: { symbol: 'BAJ' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -49,7 +49,12 @@ describe('Bajun', () => {
   })
 
   it('should throw InvalidCurrencyError when currency does not match native asset', () => {
-    const invalidInput = { ...mockInput, currency: 'INVALID' }
+    const invalidInput = {
+      ...mockInput,
+      asset: {
+        symbol: 'INVALID'
+      }
+    }
     vi.spyOn(bajun, 'getNativeAssetSymbol').mockReturnValue('BAJ')
 
     expect(() => bajun.transferXTokens(invalidInput)).toThrowError(

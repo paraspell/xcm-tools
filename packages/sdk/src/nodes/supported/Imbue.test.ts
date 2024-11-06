@@ -16,7 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('Imbue', () => {
   let imbue: Imbue<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'IMBU',
+    asset: { symbol: 'IMBU' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 

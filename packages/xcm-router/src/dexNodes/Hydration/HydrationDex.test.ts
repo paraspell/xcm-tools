@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { type TTransferOptionsModified } from '../../types';
 import HydrationExchangeNode from './HydrationDex';
 import { MOCK_TRANSFER_OPTIONS, performSwap } from '../../utils/utils.test';
-import type { TCurrencyCore, TNodePolkadotKusama } from '@paraspell/sdk';
+import type { TCurrencyCoreV1, TNodePolkadotKusama } from '@paraspell/sdk';
 import { type TNodeWithRelayChains } from '@paraspell/sdk';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import type ExchangeNode from '../DexNode';
@@ -13,8 +13,8 @@ import { findAssetFrom, findAssetTo } from '../../assets/assets';
 export async function testSwap(
   dex: ExchangeNode,
   exchange: TNodePolkadotKusama,
-  currencyFrom: TCurrencyCore,
-  currencyTo: TCurrencyCore,
+  currencyFrom: TCurrencyCoreV1,
+  currencyTo: TCurrencyCoreV1,
   amount: string,
   to: TNodeWithRelayChains,
   from: TNodeWithRelayChains,

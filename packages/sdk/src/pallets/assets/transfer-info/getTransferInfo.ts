@@ -44,9 +44,7 @@ export const getTransferInfo = async <TApi, TRes>({
     (origin === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency) : null)
 
   if (!asset) {
-    throw new InvalidCurrencyError(
-      `Asset ${'symbol' in currency ? currency.symbol : currency.id} not found on ${origin}`
-    )
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${origin}`)
   }
 
   return {

@@ -23,7 +23,7 @@ describe('Collectives', () => {
   let collectives: Collectives<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'RelayToPara',
-    currencySymbol: 'DOT',
+    asset: { symbol: 'DOT' },
     amount: '100'
   } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 

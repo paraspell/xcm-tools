@@ -17,7 +17,7 @@ vi.mock('../xTokens', () => ({
 describe('Integritee', () => {
   let integritee: Integritee<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'TEER',
+    asset: { symbol: 'TEER' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -41,7 +41,7 @@ describe('Integritee', () => {
   })
 
   it('should throw InvalidCurrencyError for unsupported currency KSM', () => {
-    const invalidInput = { ...mockInput, currency: 'KSM' }
+    const invalidInput = { ...mockInput, asset: { symbol: 'KSM' } }
 
     expect(() => integritee.transferXTokens(invalidInput)).toThrowError(
       new InvalidCurrencyError('Node Integritee does not support currency KSM')

@@ -1,11 +1,13 @@
 // Contains detailed structure of XCM call construction for Unique Parachain
 
+import { InvalidCurrencyError } from '../../errors'
 import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
   type TForeignAssetId
 } from '../../types'
+import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -15,8 +17,13 @@ class Unique<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { currencyID } = input
-    const currencySelection: TForeignAssetId = { ForeignAssetId: currencyID }
+    const { asset } = input
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    const currencySelection: TForeignAssetId = { ForeignAssetId: BigInt(asset.assetId) }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }

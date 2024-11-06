@@ -6,7 +6,7 @@ import {
   TransactionType,
   type TTransferOptions,
 } from '.';
-import type { TCurrencyCore } from '@paraspell/sdk';
+import type { TCurrencyCoreV1 } from '@paraspell/sdk';
 import { type TNodeWithRelayChains } from '@paraspell/sdk';
 import { type Signer as EthSigner } from 'ethers';
 
@@ -14,8 +14,8 @@ export interface TRouterBuilderOptions {
   from?: TNodeWithRelayChains;
   exchange?: TExchangeNode;
   to?: TNodeWithRelayChains;
-  currencyFrom?: TCurrencyCore;
-  currencyTo?: TCurrencyCore;
+  currencyFrom?: TCurrencyCoreV1;
+  currencyTo?: TCurrencyCoreV1;
   amount?: string;
   injectorAddress?: string;
   evmInjectorAddress?: string;
@@ -79,7 +79,7 @@ export class RouterBuilderObject {
    * @param currencyFrom - The currency to send.
    * @returns The current builder instance.
    */
-  currencyFrom(currencyFrom: TCurrencyCore): this {
+  currencyFrom(currencyFrom: TCurrencyCoreV1): this {
     this._routerBuilderOptions.currencyFrom = currencyFrom;
     return this;
   }
@@ -90,7 +90,7 @@ export class RouterBuilderObject {
    * @param currencyTo - The currency to receive.
    * @returns The current builder instance.
    */
-  currencyTo(currencyTo: TCurrencyCore): this {
+  currencyTo(currencyTo: TCurrencyCoreV1): this {
     this._routerBuilderOptions.currencyTo = currencyTo;
     return this;
   }

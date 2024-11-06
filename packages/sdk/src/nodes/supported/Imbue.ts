@@ -10,8 +10,8 @@ class Imbue<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { currency } = input
-    return XTokensTransferImpl.transferXTokens(input, currency)
+    const { asset } = input
+    return XTokensTransferImpl.transferXTokens(input, asset.symbol)
   }
 }
 

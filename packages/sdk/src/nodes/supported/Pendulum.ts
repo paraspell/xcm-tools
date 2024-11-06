@@ -5,13 +5,9 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import {
-  type IXTokensTransfer,
-  Version,
-  type XTokensTransferInput,
-  type TSerializedApiCallV2,
-  type TXcmAsset
-} from '../../types'
+import type { IXTokensTransfer, TXcmAsset, XTokensTransferInput } from '../../types'
+import { Version, type TSerializedApiCallV2 } from '../../types'
+import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -21,17 +17,21 @@ class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    if (input.scenario !== 'ParaToPara') {
+    const { scenario, asset } = input
+
+    if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, input.scenario)
     }
 
-    if (input.currency !== this.getNativeAssetSymbol()) {
-      throw new InvalidCurrencyError(
-        `Asset ${input.currency} is not supported by node ${this.node}.`
-      )
+    if (asset.symbol !== this.getNativeAssetSymbol()) {
+      throw new InvalidCurrencyError(`Asset ${asset.symbol} is not supported by node ${this.node}.`)
     }
 
-    const currencySelection: TXcmAsset = { XCM: input.currencyID }
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    const currencySelection: TXcmAsset = { XCM: Number(asset.assetId) }
 
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }

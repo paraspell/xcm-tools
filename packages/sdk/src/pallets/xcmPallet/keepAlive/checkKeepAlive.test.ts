@@ -36,7 +36,7 @@ describe('checkKeepAlive', () => {
         amount: AMOUNT,
         originNode: 'Acala',
         destApi: mockApi,
-        currencySymbol: 'UNQ',
+        asset: { symbol: 'UNQ' },
         destNode: 'Unique'
       })
     ).resolves.toBeUndefined()
@@ -50,7 +50,7 @@ describe('checkKeepAlive', () => {
         amount: AMOUNT,
         originNode: 'Acala',
         destApi: mockApi,
-        currencySymbol: 'DOT',
+        asset: { symbol: 'DOT' },
         destNode: 'Unique'
       })
     ).rejects.toThrowError(KeepAliveError)
@@ -65,7 +65,7 @@ describe('checkKeepAlive', () => {
         amount: AMOUNT,
         originNode: 'Acala',
         destApi: mockApi,
-        currencySymbol: 'UNQ',
+        asset: { symbol: 'UNQ' },
         destNode: 'Unique'
       })
     ).rejects.toThrowError(KeepAliveError)
@@ -80,7 +80,7 @@ describe('checkKeepAlive', () => {
         amount: '100000', // Amount lower than ED
         originNode: 'Acala',
         destApi: mockApi,
-        currencySymbol: 'UNQ',
+        asset: { symbol: 'UNQ' },
         destNode: 'Unique'
       })
     ).rejects.toThrowError(KeepAliveError)
@@ -94,7 +94,7 @@ describe('checkKeepAlive', () => {
         amount: AMOUNT,
         originNode: 'Acala',
         destApi: mockApi,
-        currencySymbol: undefined,
+        asset: { symbol: undefined, assetId: '1' },
         destNode: 'Unique'
       })
     ).rejects.toThrowError(KeepAliveError)
@@ -108,7 +108,7 @@ describe('checkKeepAlive', () => {
         amount: AMOUNT,
         originNode: 'Acala',
         destApi: mockApi,
-        currencySymbol: 'BBB',
+        asset: { symbol: 'BBB' },
         destNode: 'Unique'
       })
     ).rejects.toThrowError(KeepAliveError)
@@ -123,7 +123,7 @@ describe('checkKeepAlive', () => {
         amount: '1000',
         originNode: 'Acala',
         destApi: mockApi,
-        currencySymbol: 'UNQ',
+        asset: { symbol: 'UNQ' },
         destNode: 'Unique'
       })
     ).resolves.toBeUndefined()
@@ -138,7 +138,7 @@ describe('checkKeepAlive', () => {
         amount: '1000',
         originNode: 'Astar',
         destApi: mockApi,
-        currencySymbol: 'ACA',
+        asset: { symbol: 'ACA' },
         destNode: 'Acala'
       })
     ).resolves.toBeUndefined()
@@ -160,7 +160,9 @@ describe('checkKeepAlive', () => {
           amount: amountOriginBNWithoutFee.toString(),
           originNode: 'Acala',
           destApi: mockApi,
-          currencySymbol,
+          asset: {
+            symbol: currencySymbol
+          },
           destNode: 'AssetHubPolkadot'
         })
       ).rejects.toThrowError(KeepAliveError)

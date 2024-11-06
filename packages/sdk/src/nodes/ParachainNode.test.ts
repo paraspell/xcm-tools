@@ -115,8 +115,8 @@ describe('ParachainNode', () => {
 
   it('should return true for canUseXTokens when using exposeCanUseXTokens', () => {
     const options = {
-      api: {},
-      currencySymbol: 'DOT',
+      api: {} as IPolkadotApi<ApiPromise, Extrinsic>,
+      asset: { symbol: 'DOT' },
       amount: '100',
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
@@ -126,7 +126,7 @@ describe('ParachainNode', () => {
   it('should call transferXTokens when supportsXTokens and canUseXTokens return true', async () => {
     const options = {
       api: {},
-      currencySymbol: 'DOT',
+      asset: { symbol: 'DOT' },
       amount: '100',
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
@@ -143,7 +143,7 @@ describe('ParachainNode', () => {
     const node = new NoXTokensNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
-      currencySymbol: 'DOT',
+      asset: { symbol: 'DOT' },
       amount: '100',
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
@@ -160,7 +160,7 @@ describe('ParachainNode', () => {
     const node = new OnlyPolkadotXCMNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
-      currencySymbol: 'DOT',
+      asset: { symbol: 'DOT' },
       amount: '100',
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
@@ -177,7 +177,7 @@ describe('ParachainNode', () => {
     const node = new NoSupportNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
-      currencySymbol: 'DOT',
+      asset: { symbol: 'DOT' },
       amount: '100',
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
@@ -197,7 +197,7 @@ describe('ParachainNode', () => {
 
     const options = {
       api: {},
-      currencySymbol: 'DOT',
+      asset: { symbol: 'DOT' },
       amount: '100',
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
@@ -215,7 +215,7 @@ describe('ParachainNode', () => {
   it('should throw error when destination is Polimec and node is not AssetHubPolkadot', async () => {
     const options = {
       api: {},
-      currencySymbol: 'DOT',
+      asset: { symbol: 'DOT' },
       amount: '100',
       address: 'destinationAddress',
       destination: 'Polimec'
@@ -232,7 +232,7 @@ describe('ParachainNode', () => {
 
     const options = {
       api: {},
-      currencySymbol: 'DOT',
+      asset: { symbol: 'DOT' },
       amount: '100',
       address: 'destinationAddress',
       destination: 'Polimec'
@@ -250,7 +250,7 @@ describe('ParachainNode', () => {
     const node = new OnlyPolkadotXCMNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
-      currencySymbol: 'DOT',
+      asset: { symbol: 'DOT' },
       amount: '100',
       address: 'destinationAddress',
       overridedCurrencyMultiLocation: {}
@@ -288,7 +288,7 @@ describe('ParachainNode', () => {
   })
 
   it('should create currency spec', () => {
-    const result = node.createCurrencySpec('100', 'ParaToRelay', Version.V3, 'currencyId')
+    const result = node.createCurrencySpec('100', 'ParaToRelay', Version.V3, { symbol: 'DOT' })
 
     expect(result).toBe('currencySpec')
   })

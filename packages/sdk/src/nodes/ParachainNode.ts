@@ -18,7 +18,8 @@ import type {
   TMultiAsset,
   TMultiLocation,
   TMultiLocationHeader,
-  TSerializedApiCallV2
+  TSerializedApiCallV2,
+  TAsset
 } from '../types'
 import { Version, Parents } from '../types'
 import { getAllNodeProviders, generateAddressPayload, getFees, verifyMultiLocation } from '../utils'
@@ -92,8 +93,7 @@ abstract class ParachainNode<TApi, TRes> {
   async transfer(options: TSendInternalOptions<TApi, TRes>): Promise<TTransferReturn<TRes>> {
     const {
       api,
-      currencySymbol,
-      currencyId,
+      asset,
       amount,
       address,
       destination,
@@ -119,8 +119,7 @@ abstract class ParachainNode<TApi, TRes> {
     if (supportsXTokens(this) && this.canUseXTokens(options)) {
       return this.transferXTokens({
         api,
-        currency: currencySymbol,
-        currencyID: currencyId,
+        asset,
         amount,
         addressSelection: generateAddressPayload(
           api,
@@ -142,8 +141,7 @@ abstract class ParachainNode<TApi, TRes> {
     } else if (supportsXTransfer(this)) {
       return this.transferXTransfer({
         api,
-        currency: currencySymbol,
-        currencyID: currencyId,
+        asset,
         amount,
         recipientAddress: address,
         paraId,
@@ -176,12 +174,11 @@ abstract class ParachainNode<TApi, TRes> {
           amount,
           scenario,
           versionOrDefault,
-          currencyId,
+          asset,
           overridedCurrencyMultiLocation
         ),
-        currencyId,
+        asset,
         scenario,
-        currencySymbol,
         feeAsset,
         destination,
         paraIdTo: paraId,
@@ -216,7 +213,7 @@ abstract class ParachainNode<TApi, TRes> {
     amount: string,
     scenario: TScenario,
     version: Version,
-    _currencyId?: string,
+    _asset?: TAsset,
     overridedMultiLocation?: TMultiLocation | TMultiAsset[]
   ): TCurrencySelectionHeaderArr {
     return createCurrencySpec(

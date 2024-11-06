@@ -8,6 +8,7 @@ import {
   type XTokensTransferInput
 } from '../../types'
 import { getAllNodeProviders } from '../../utils'
+import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -17,9 +18,10 @@ class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { currency, currencyID } = input
-    const currencySelection: TForeignOrTokenAsset =
-      currencyID !== undefined ? { ForeignAsset: Number(currencyID) } : { Token: currency }
+    const { asset } = input
+    const currencySelection: TForeignOrTokenAsset = isForeignAsset(asset)
+      ? { ForeignAsset: Number(asset.assetId) }
+      : { Token: asset.symbol }
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 

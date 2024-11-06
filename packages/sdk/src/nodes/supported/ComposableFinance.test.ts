@@ -16,7 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('ComposableFinance', () => {
   let composableFinance: ComposableFinance<ApiPromise, Extrinsic>
   const mockInput = {
-    currencyID: '123',
+    asset: { symbol: 'LAYR', assetId: '123' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -36,6 +36,6 @@ describe('ComposableFinance', () => {
 
     composableFinance.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, '123')
+    expect(spy).toHaveBeenCalledWith(mockInput, BigInt(123))
   })
 })

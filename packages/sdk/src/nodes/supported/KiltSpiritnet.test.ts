@@ -18,7 +18,9 @@ describe('KiltSpiritnet', () => {
   let kiltSpiritnet: KiltSpiritnet<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'ParaToPara',
-    currencySymbol: 'KILT',
+    asset: {
+      symbol: 'KILT'
+    },
     amount: '100'
   } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 

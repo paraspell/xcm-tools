@@ -1,17 +1,19 @@
 // Contains detailed structure of XCM call construction for Moonriver Parachain
 
+import { InvalidCurrencyError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { TNodePolkadotKusama } from '../../types'
+import type { TAsset, TNodePolkadotKusama } from '../../types'
 import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
   type TSerializedApiCallV2,
   type TRelayToParaOptions,
-  type TForeignAsset,
+  type TXcmForeignAsset,
   type TSelfReserveAsset
 } from '../../types'
 import { getAllNodeProviders } from '../../utils'
+import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -20,12 +22,19 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
     super('Moonriver', 'moonriver', 'kusama', Version.V3)
   }
 
+  private getCurrencySelection(asset: TAsset): TSelfReserveAsset | TXcmForeignAsset {
+    if (asset.symbol === this.getNativeAssetSymbol()) return 'SelfReserve'
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return { ForeignAsset: BigInt(asset.assetId) }
+  }
+
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { currency, currencyID } = input
-    const currencySelection: TSelfReserveAsset | TForeignAsset =
-      currency === this.getNativeAssetSymbol()
-        ? 'SelfReserve'
-        : { ForeignAsset: currencyID ? BigInt(currencyID) : undefined }
+    const { asset } = input
+    const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 

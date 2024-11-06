@@ -30,8 +30,10 @@ describe('XTokensTransferImpl', () => {
     const input = {
       api: mockApi,
       origin: 'Acala',
-      currency: '123',
-      currencyID: '123',
+      asset: {
+        symbol: 'ACA',
+        assetId: '123'
+      },
       fees: 1000,
       amount: '1000',
       addressSelection: 'Address',
@@ -51,8 +53,10 @@ describe('XTokensTransferImpl', () => {
       api: mockApi,
       origin: 'Acala',
       amount: '2000',
-      currency: '123',
-      currencyID: '123',
+      asset: {
+        symbol: 'ACA',
+        assetId: '123'
+      },
       fees: 2000,
       scenario: 'ParaToPara',
       addressSelection: 'Address',
@@ -83,8 +87,10 @@ describe('XTokensTransferImpl', () => {
       api: mockApi,
       origin: 'Acala',
       amount: '2000',
-      currency: '123',
-      currencyID: '123',
+      asset: {
+        symbol: 'ACA',
+        assetId: '123'
+      },
       fees: 2000,
       scenario: 'ParaToPara',
       addressSelection: 'Address',
@@ -113,8 +119,10 @@ describe('XTokensTransferImpl', () => {
       api: mockApi,
       origin: 'Acala',
       amount: '3000',
-      currency: '123',
-      currencyID: '123',
+      asset: {
+        symbol: 'ACA',
+        assetId: '123'
+      },
       fees: 3000,
       scenario: 'ParaToPara',
       addressSelection: 'Address',

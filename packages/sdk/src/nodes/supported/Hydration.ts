@@ -18,6 +18,7 @@ import { ETHEREUM_JUNCTION } from '../../const'
 import { generateAddressPayload } from '../../utils'
 import type { IPolkadotApi } from '../../api'
 import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
+import { isForeignAsset } from '../../utils/assets'
 
 const calculateFee = async <TApi, TRes>(api: IPolkadotApi<TApi, TRes>) => {
   const DEFAULT_FEE = BigInt(2_750_872_500_000)
@@ -51,76 +52,82 @@ const createCustomXcmAh = <TApi, TRes>(
 })
 
 const createCustomXcmOnDest = <TApi, TRes>(
-  { api, address, currencyId, scenario, ahAddress }: PolkadotXCMTransferInput<TApi, TRes>,
+  { api, address, asset, scenario, ahAddress }: PolkadotXCMTransferInput<TApi, TRes>,
   version: Version
-) => ({
-  [version]: [
-    {
-      SetAppendix: [
-        {
-          DepositAsset: {
-            assets: { Wild: 'All' },
-            beneficiary: Object.values(
-              generateAddressPayload(
-                api,
-                scenario,
-                'PolkadotXcm',
-                ahAddress ?? '',
-                version,
-                undefined
-              )
-            )[0]
-          }
-        }
-      ]
-    },
-    {
-      InitiateReserveWithdraw: {
-        assets: {
-          Wild: { AllOf: { id: createEthereumTokenLocation(currencyId ?? ''), fun: 'Fungible' } }
-        },
-        reserve: {
-          parents: Parents.TWO,
-          interior: { X1: [ETHEREUM_JUNCTION] }
-        },
-        xcm: [
-          {
-            BuyExecution: {
-              fees: {
-                id: {
-                  parents: Parents.ZERO,
-                  interior: {
-                    X1: [{ AccountKey20: { network: null, key: currencyId } }]
-                  }
-                },
-                fun: { Fungible: BigInt(1) }
-              },
-              weight_limit: 'Unlimited'
-            }
-          },
+) => {
+  if (!isForeignAsset(asset)) {
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+  }
+
+  return {
+    [version]: [
+      {
+        SetAppendix: [
           {
             DepositAsset: {
-              assets: { Wild: { AllCounted: 1 } },
-              beneficiary: {
-                parents: Parents.ZERO,
-                interior: {
-                  X1: [
-                    {
-                      AccountKey20: {
-                        network: null,
-                        key: address
-                      }
-                    }
-                  ]
-                }
-              }
+              assets: { Wild: 'All' },
+              beneficiary: Object.values(
+                generateAddressPayload(
+                  api,
+                  scenario,
+                  'PolkadotXcm',
+                  ahAddress ?? '',
+                  version,
+                  undefined
+                )
+              )[0]
             }
           }
         ]
+      },
+      {
+        InitiateReserveWithdraw: {
+          assets: {
+            Wild: { AllOf: { id: createEthereumTokenLocation(asset.assetId), fun: 'Fungible' } }
+          },
+          reserve: {
+            parents: Parents.TWO,
+            interior: { X1: [ETHEREUM_JUNCTION] }
+          },
+          xcm: [
+            {
+              BuyExecution: {
+                fees: {
+                  id: {
+                    parents: Parents.ZERO,
+                    interior: {
+                      X1: [{ AccountKey20: { network: null, key: asset.assetId } }]
+                    }
+                  },
+                  fun: { Fungible: BigInt(1) }
+                },
+                weight_limit: 'Unlimited'
+              }
+            },
+            {
+              DepositAsset: {
+                assets: { Wild: { AllCounted: 1 } },
+                beneficiary: {
+                  parents: Parents.ZERO,
+                  interior: {
+                    X1: [
+                      {
+                        AccountKey20: {
+                          network: null,
+                          key: address
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
       }
-    }
-  ]
-})
+    ]
+  }
+}
 
 class Hydration<TApi, TRes>
   extends ParachainNode<TApi, TRes>
@@ -133,25 +140,19 @@ class Hydration<TApi, TRes>
   async transferToEthereum<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): Promise<TTransferReturn<TRes>> {
-    const {
-      api,
-      address,
-      currencySymbol,
-      scenario,
-      version,
-      destination,
-      amount,
-      currencyId,
-      ahAddress
-    } = input
+    const { api, address, asset, scenario, version, destination, amount, ahAddress } = input
     if (!ethers.isAddress(address)) {
       throw new Error('Only Ethereum addresses are supported for Ethereum transfers')
     }
 
-    if (currencySymbol?.toUpperCase() !== 'WETH') {
+    if (asset.symbol?.toUpperCase() !== 'WETH') {
       throw new InvalidCurrencyError(
-        `Currency ${currencySymbol} is not supported for Ethereum transfers from Hydration`
+        `Currency ${asset.symbol} is not supported for Ethereum transfers from Hydration`
       )
+    }
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
     if (ahAddress === undefined) {
@@ -165,7 +166,7 @@ class Hydration<TApi, TRes>
         amount,
         versionOrDefault,
         Parents.TWO,
-        createEthereumTokenLocation(currencyId ?? '')
+        createEthereumTokenLocation(asset.assetId)
       )
     )[0][0]
 
@@ -256,22 +257,24 @@ class Hydration<TApi, TRes>
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { currencyID } = input
-    return XTokensTransferImpl.transferXTokens(input, currencyID)
+    const { asset } = input
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return XTokensTransferImpl.transferXTokens(input, Number(asset.assetId))
   }
 
-  protected canUseXTokens({
-    destination,
-    currencySymbol,
-    currencyId
-  }: TSendInternalOptions<TApi, TRes>): boolean {
+  protected canUseXTokens({ destination, asset }: TSendInternalOptions<TApi, TRes>): boolean {
     const dotAsset = getOtherAssets(this.node).find(({ symbol }) => symbol === 'DOT')
 
     return (
       destination !== 'Ethereum' &&
       !(
         destination === 'AssetHubPolkadot' &&
-        (currencySymbol === dotAsset?.symbol || currencyId === dotAsset?.assetId)
+        (asset.symbol === dotAsset?.symbol ||
+          (isForeignAsset(asset) && asset.symbol === dotAsset?.assetId))
       )
     )
   }

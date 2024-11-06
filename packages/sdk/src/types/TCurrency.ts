@@ -4,12 +4,27 @@ import type { Version } from './TTransfer'
 
 export type TCurrency = string | number | bigint
 
+export type TSymbolSpecifier = {
+  type: 'Native' | 'Foreign' | 'ForeignAbstract'
+  value: string
+}
+
+export type TCurrencySymbolValue = string | TSymbolSpecifier
+
 export type TCurrencySymbol = {
-  symbol: string
+  symbol: TCurrencySymbolValue
 }
 
 export type TCurrencyCore =
   | TCurrencySymbol
+  | {
+      id: TCurrency
+    }
+
+export type TCurrencyCoreV1 =
+  | {
+      symbol: string
+    }
   | {
       id: TCurrency
     }
@@ -47,20 +62,20 @@ export type TCurrencySelectionHeaderArr = {
   [key in Version]?: [TCurrencySelection | TCurrencySelectionV4]
 }
 
-export type TForeignAsset = {
+export type TXcmForeignAsset = {
   ForeignAsset: string | number | bigint | undefined
 }
 
 export type TForeignAssetId = {
-  ForeignAssetId: string | undefined
+  ForeignAssetId: bigint | undefined
 }
 
-export type TForeignOrTokenAsset = TForeignAsset | { Token: string | undefined }
+export type TForeignOrTokenAsset = TXcmForeignAsset | { Token: string | undefined }
 
-export type TForeignOrNativeAsset = TForeignAsset | 'Native'
+export type TForeignOrNativeAsset = TXcmForeignAsset | 'Native'
 
 export type TXcmAsset = {
-  XCM: string | undefined
+  XCM: number | undefined
 }
 
 export type TMantaAsset = {
@@ -74,7 +89,7 @@ export type TNodleAsset = 'NodleNative'
 export type TZeitgeistAsset = 'Ztg'
 
 export type TOtherReserveAsset = {
-  OtherReserve: string | undefined
+  OtherReserve: string | bigint | undefined
 }
 
 export type TSelfReserveAsset = 'SelfReserve'
@@ -92,7 +107,7 @@ export type TBifrostToken =
 export type TXTokensCurrencySelection =
   | TCurrencySelectionHeader
   | TCurrencySelectionHeaderArr
-  | TForeignAsset
+  | TXcmForeignAsset
   | TForeignAssetId
   | TForeignOrTokenAsset
   | TXcmAsset
@@ -101,4 +116,5 @@ export type TXTokensCurrencySelection =
   | TBifrostToken
   | string
   | bigint
+  | number
   | undefined

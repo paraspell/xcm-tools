@@ -24,3 +24,5 @@ export const createPolkadotJsApiCall = <TArgs extends Record<string, unknown>, T
     return apiCall(optionsWithApi)
   }
 }
+
+export * from '../utils/assets/isForeignAsset'

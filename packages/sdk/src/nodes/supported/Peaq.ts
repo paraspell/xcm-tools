@@ -1,12 +1,17 @@
 // Contains detailed structure of XCM call construction for Peaq Parachain
 
-import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import {
+  InvalidCurrencyError,
+  NodeNotSupportedError,
+  ScenarioNotSupportedError
+} from '../../errors'
 import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
   type TSerializedApiCallV2
 } from '../../types'
+import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -16,11 +21,16 @@ class Peaq<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTran
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { scenario, currencyID } = input
+    const { scenario, asset } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
-    return XTokensTransferImpl.transferXTokens(input, currencyID ? BigInt(currencyID) : undefined)
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return XTokensTransferImpl.transferXTokens(input, BigInt(asset.assetId))
   }
 
   transferRelayToPara(): TSerializedApiCallV2 {

@@ -1,3 +1,4 @@
+import type { TForeignAsset } from '@paraspell/sdk';
 import { getAssets, getNodeProvider } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
@@ -92,7 +93,7 @@ class InterlayExchangeNode extends ExchangeNode {
   }
 
   async getAssets(_api: ApiPromise): Promise<TAssets> {
-    const assets = getAssets(this.node);
+    const assets = getAssets(this.node) as TForeignAsset[];
     const transformedAssets = assets.map((asset) => ({
       symbol: asset.symbol ?? '',
       id: asset.assetId,

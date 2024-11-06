@@ -2,7 +2,7 @@
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { TTransferReturn } from '../../types'
+import type { TAsset, TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -40,11 +40,11 @@ class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolk
     }
   }
 
-  createCurrencySpec(amount: string, scenario: TScenario, version: Version, currencyId?: string) {
+  createCurrencySpec(amount: string, scenario: TScenario, version: Version, asset?: TAsset) {
     if (scenario === 'ParaToPara') {
       return {}
     } else {
-      return super.createCurrencySpec(amount, scenario, version, currencyId)
+      return super.createCurrencySpec(amount, scenario, version, asset)
     }
   }
 }

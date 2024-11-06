@@ -1,12 +1,14 @@
 // Contains detailed structure of XCM call construction for CrustShadow Parachain
 
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
+import type { TAsset } from '../../types'
 import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
   type TReserveAsset
 } from '../../types'
+import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -15,23 +17,22 @@ class CrustShadow<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTok
     super('CrustShadow', 'shadow', 'kusama', Version.V3)
   }
 
-  getCurrencySelection<TApi, TRes>({
-    currency,
-    currencyID
-  }: XTokensTransferInput<TApi, TRes>): TReserveAsset {
-    if (currency === this.getNativeAssetSymbol()) {
+  private getCurrencySelection(asset: TAsset): TReserveAsset {
+    if (asset.symbol === this.getNativeAssetSymbol()) {
       return 'SelfReserve'
     }
 
-    if (currencyID === undefined) {
-      throw new InvalidCurrencyError(`Asset ${currency} is not supported by node ${this.node}.`)
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    return { OtherReserve: currencyID }
+    return { OtherReserve: BigInt(asset.assetId) }
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    return XTokensTransferImpl.transferXTokens(input, this.getCurrencySelection(input))
+    const { asset } = input
+    const currencySelection = this.getCurrencySelection(asset)
+    return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }
 

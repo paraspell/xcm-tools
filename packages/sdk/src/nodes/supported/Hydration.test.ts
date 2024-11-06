@@ -42,7 +42,7 @@ describe('Hydration', () => {
 
   it('should call transferXTokens with currencyID', () => {
     const mockInput = {
-      currencyID: '123',
+      asset: { assetId: '123' },
       amount: '100'
     } as XTokensTransferInput<TPjsApi, Extrinsic>
 
@@ -50,7 +50,7 @@ describe('Hydration', () => {
 
     hydration.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, '123')
+    expect(spy).toHaveBeenCalledWith(mockInput, Number(123))
   })
 
   describe('transferPolkadotXCM', () => {
@@ -69,11 +69,10 @@ describe('Hydration', () => {
       mockInput = {
         api: mockApi,
         address: ethers.Wallet.createRandom().address,
-        currencySymbol: 'WETH',
+        asset: { symbol: 'WETH', assetId: '0x1234567890abcdef' },
         scenario: 'RelayToPara',
         destination: 'Ethereum',
         amount: '1000',
-        currencyId: '0x1234567890abcdef',
         ahAddress: '5Gw3s7q4QLkSWwknsiixu9GR7x6xN5PWQ1YbQGxwSz1Y7DZT'
       } as PolkadotXCMTransferInput<TPjsApi, Extrinsic>
     })
@@ -87,7 +86,7 @@ describe('Hydration', () => {
     })
 
     it('should throw InvalidCurrencyError for unsupported currency', async () => {
-      mockInput.currencySymbol = 'DOT'
+      mockInput.asset.symbol = 'DOT'
 
       await expect(hydration.transferPolkadotXCM(mockInput)).rejects.toThrow(InvalidCurrencyError)
     })
@@ -115,8 +114,9 @@ describe('Hydration', () => {
 
     it('should create call for AssetHub destination DOT transfer', async () => {
       mockInput.destination = 'AssetHubPolkadot'
-      mockInput.currencySymbol = 'DOT'
-      mockInput.currencyId = undefined
+      mockInput.asset = {
+        symbol: 'DOT'
+      }
 
       const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
       const spy = vi.spyOn(mockApi, 'callTxMethod')
@@ -134,7 +134,7 @@ describe('Hydration', () => {
 
     it('should create call for AssetHub destination DOT transfer', async () => {
       mockInput.destination = 'AssetHubPolkadot'
-      mockInput.currencyId = '3'
+      mockInput.asset = { symbol: 'DOT', assetId: '3' }
 
       const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
       const spy = vi.spyOn(mockApi, 'callTxMethod')
@@ -170,7 +170,7 @@ describe('Hydration', () => {
     it('should return false when destination AssetHubPolkadot and currency is DOT', () => {
       const result = hydration['canUseXTokens']({
         destination: 'AssetHubPolkadot',
-        currencySymbol: 'DOT'
+        asset: { symbol: 'DOT' }
       } as TSendInternalOptions<TPjsApi, Extrinsic>)
       expect(result).toBe(false)
     })

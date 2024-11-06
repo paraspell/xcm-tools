@@ -3,7 +3,7 @@
 import { type ApiPromise } from '@polkadot/api'
 import { describe, expect, it, beforeEach, vi } from 'vitest'
 import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
-import { getAllAssetsSymbols, getOtherAssets, getRelayChainSymbol } from '../assets'
+import { Foreign, getAllAssetsSymbols, getOtherAssets, getRelayChainSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { DuplicateAssetError, IncompatibleNodesError } from '../../errors'
 import { type TSendOptions, type TNode, type TMultiAsset, type TMultiLocation } from '../../types'
@@ -586,6 +586,36 @@ describe('send', () => {
       origin: 'Hydration' as TNode,
       destination: 'AssetHubPolkadot' as TNode,
       currency: { symbol: '4-Pool' },
+      feeAsset: 0,
+      amount: 1000,
+      address: '0x789'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw if assetCheck is disabled and we are using symbol specifier', async () => {
+    const options: TSendOptions<ApiPromise, Extrinsic> = {
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
+      origin: 'CoretimePolkadot' as TNode,
+      destination: 'AssetHubPolkadot' as TNode,
+      currency: { symbol: Foreign('DOT') },
+      feeAsset: 0,
+      amount: 1000,
+      address: '0x789'
+    }
+
+    await expect(send(options)).rejects.toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw if assetCheck is disabled and we are using id specifier', async () => {
+    const options: TSendOptions<ApiPromise, Extrinsic> = {
+      api: mockApi,
+      destApiForKeepAlive: mockApi,
+      origin: 'CoretimePolkadot' as TNode,
+      destination: 'AssetHubPolkadot' as TNode,
+      currency: { id: 123 },
       feeAsset: 0,
       amount: 1000,
       address: '0x789'

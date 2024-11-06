@@ -30,13 +30,13 @@ vi.mock('../polkadotXcm', () => ({
 describe('BifrostPolkadot', () => {
   let bifrostPolkadot: BifrostPolkadot<ApiPromise, Extrinsic>
   const mockXTokensInput = {
-    currency: 'BNC',
+    asset: { symbol: 'BNC' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   const mockPolkadotXCMInput = {
     amount: '200',
-    currencySymbol: 'WETH'
+    asset: { symbol: 'WETH' }
   } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
@@ -90,12 +90,12 @@ describe('BifrostPolkadot', () => {
   it('should call transferPolkadotXCM with correct parameters for DOT transfer', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    await bifrostPolkadot.transferPolkadotXCM({ ...mockPolkadotXCMInput, currencySymbol: 'DOT' })
+    await bifrostPolkadot.transferPolkadotXCM({ ...mockPolkadotXCMInput, asset: { symbol: 'DOT' } })
 
     expect(spy).toHaveBeenCalledWith(
       {
         ...mockPolkadotXCMInput,
-        currencySymbol: 'DOT',
+        asset: { symbol: 'DOT' },
         currencySelection: createCurrencySpec(
           mockPolkadotXCMInput.amount,
           Version.V3,
@@ -108,48 +108,42 @@ describe('BifrostPolkadot', () => {
     )
   })
 
-  it('should throw error when currency symbol is undefined in transferXTokens', () => {
-    expect(() =>
-      bifrostPolkadot.transferXTokens({ ...mockXTokensInput, currency: undefined })
-    ).toThrowError('Currency symbol is undefined')
-  })
-
   describe('canUseXTokens', () => {
-    it('should return false when currencySymbol is WETH and destination is AssetHubPolkadot', () => {
+    it('should return false when currency symbol is WETH and destination is AssetHubPolkadot', () => {
       const options = {
-        currencySymbol: 'WETH',
+        asset: { symbol: 'WETH' },
         destination: 'AssetHubPolkadot'
       } as TSendInternalOptions<ApiPromise, Extrinsic>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(false)
     })
 
-    it('should return false when currencySymbol is DOT and destination is AssetHubPolkadot', () => {
+    it('should return false when currency symbol is DOT and destination is AssetHubPolkadot', () => {
       const options: TSendInternalOptions<ApiPromise, Extrinsic> = {
-        currencySymbol: 'DOT',
+        asset: { symbol: 'DOT' },
         destination: 'AssetHubPolkadot'
       } as TSendInternalOptions<ApiPromise, Extrinsic>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(false)
     })
 
-    it('should return true when currencySymbol is not WETH or DOT and destination is AssetHubPolkadot', () => {
+    it('should return true when currency symbol is not WETH or DOT and destination is AssetHubPolkadot', () => {
       const options: TSendInternalOptions<ApiPromise, Extrinsic> = {
-        currencySymbol: 'BNC',
+        asset: { symbol: 'BNC' },
         destination: 'AssetHubPolkadot'
       } as TSendInternalOptions<ApiPromise, Extrinsic>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
     })
 
-    it('should return true when currencySymbol is WETH but destination is not AssetHubPolkadot', () => {
+    it('should return true when currency symbol is WETH but destination is not AssetHubPolkadot', () => {
       const options: TSendInternalOptions<ApiPromise, Extrinsic> = {
-        currencySymbol: 'WETH',
+        asset: { symbol: 'WETH' },
         destination: 'Acala'
       } as TSendInternalOptions<ApiPromise, Extrinsic>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
     })
 
-    it('should return true when currencySymbol is DOT but destination is not AssetHubPolkadot', () => {
+    it('should return true when currency ymbol is DOT but destination is not AssetHubPolkadot', () => {
       const options: TSendInternalOptions<ApiPromise, Extrinsic> = {
-        currencySymbol: 'DOT',
+        asset: { symbol: 'DOT' },
         destination: 'Acala'
       } as TSendInternalOptions<ApiPromise, Extrinsic>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)

@@ -1,4 +1,4 @@
-import type { TAsset, TCurrencyCore } from '@paraspell/sdk';
+import type { TAsset, TCurrencyCoreV1 } from '@paraspell/sdk';
 import { type Extrinsic, Builder } from '@paraspell/sdk';
 import { type ApiPromise } from '@polkadot/api';
 import type { TExchangeNode } from '../types';
@@ -41,9 +41,9 @@ export const buildToExchangeExtrinsic = async (
 
 export const getCurrencyExchange = (
   exchange: TExchangeNode,
-  currencyOrigin: TCurrencyCore,
+  currencyOrigin: TCurrencyCoreV1,
   assetToOrigin: TAsset | undefined,
-): TCurrencyCore => {
+): TCurrencyCoreV1 => {
   if ('symbol' in currencyOrigin) return { symbol: currencyOrigin.symbol };
   const exchangeAsset = findAssetInExchangeBySymbol(exchange, assetToOrigin?.symbol ?? '');
   if (!exchangeAsset) {

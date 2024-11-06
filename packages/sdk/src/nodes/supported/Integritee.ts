@@ -16,9 +16,10 @@ class Integritee<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToke
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    if (input.currency === 'KSM')
+    const { asset } = input
+    if (asset.symbol === 'KSM')
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency KSM`)
-    return XTokensTransferImpl.transferXTokens(input, input.currency)
+    return XTokensTransferImpl.transferXTokens(input, asset.symbol)
   }
 
   transferRelayToPara(): TSerializedApiCallV2 {

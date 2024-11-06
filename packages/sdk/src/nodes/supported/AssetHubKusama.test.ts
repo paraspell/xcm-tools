@@ -9,8 +9,9 @@ describe('transferPolkadotXCM', () => {
   it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', () => {
     const assetHub = getNode('AssetHubKusama')
     const input = {
-      currencySymbol: 'KSM',
-      currencyId: undefined,
+      asset: {
+        symbol: 'KSM'
+      },
       scenario: 'ParaToPara',
       destination: 'Karura'
     } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
@@ -21,8 +22,9 @@ describe('transferPolkadotXCM', () => {
   it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', () => {
     const assetHub = getNode('AssetHubKusama')
     const input = {
-      currencySymbol: 'DOT',
-      currencyId: undefined,
+      asset: {
+        symbol: 'DOT'
+      },
       scenario: 'ParaToPara',
       destination: 'Karura'
     } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>

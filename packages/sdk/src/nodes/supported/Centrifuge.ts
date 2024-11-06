@@ -1,6 +1,9 @@
 // Contains detailed structure of XCM call construction for Centrifuge Parachain
 
+import { InvalidCurrencyError } from '../../errors'
+import type { TAsset } from '../../types'
 import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
+import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -9,10 +12,19 @@ export class Centrifuge<TApi, TRes> extends ParachainNode<TApi, TRes> implements
     super('Centrifuge', 'centrifuge', 'polkadot', Version.V3)
   }
 
+  private getCurrencySelection(asset: TAsset) {
+    if (asset.symbol === this.getNativeAssetSymbol()) return 'Native'
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return { ForeignAsset: Number(asset.assetId) }
+  }
+
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { currency, currencyID } = input
-    const currencySelection =
-      currency === this.getNativeAssetSymbol() ? 'Native' : { ForeignAsset: Number(currencyID) }
+    const { asset } = input
+    const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 }

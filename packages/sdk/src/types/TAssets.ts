@@ -1,28 +1,29 @@
 import type { TMultiLocation, TNodeWithRelayChains } from '../types'
 import { type TRelayChainSymbol } from '../types'
 
-export type TAsset = TNativeAssetDetails | TAssetDetails
-
-export type TAssetDetails = {
-  assetId: string
+type TBaseAsset = {
   symbol?: string
   decimals?: number
   manuallyAdded?: boolean
+  alias?: string
 }
 
-export type TNativeAssetDetails = {
-  assetId?: string
+export type TNativeAsset = TBaseAsset & {
   symbol: string
-  decimals: number
-  manuallyAdded?: boolean
 }
+
+export type TForeignAsset = TBaseAsset & {
+  assetId: string
+}
+
+export type TAsset = TNativeAsset | TForeignAsset
 
 export type TNodeAssets = {
   paraId?: number
   relayChainAssetSymbol: TRelayChainSymbol
   nativeAssetSymbol: string
-  nativeAssets: TNativeAssetDetails[]
-  otherAssets: TAssetDetails[]
+  nativeAssets: TNativeAsset[]
+  otherAssets: TForeignAsset[]
   multiLocations?: TMultiLocation[]
 }
 

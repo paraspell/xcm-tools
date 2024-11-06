@@ -23,7 +23,7 @@ describe('Encointer', () => {
   let encointer: Encointer<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'ParaToRelay',
-    currencySymbol: 'KSM',
+    asset: { symbol: 'KSM' },
     amount: '100'
   } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 

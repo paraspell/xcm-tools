@@ -24,3 +24,5 @@ export const createPapiApiCall = <TArgs extends Record<string, unknown>, TResult
     return apiCall(optionsWithApi)
   }
 }
+
+export * from '../utils/assets/isForeignAsset'

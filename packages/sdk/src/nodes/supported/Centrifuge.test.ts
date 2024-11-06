@@ -16,8 +16,10 @@ vi.mock('../xTokens', () => ({
 describe('Centrifuge', () => {
   let centrifuge: Centrifuge<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'CFG',
-    currencyID: '123',
+    asset: {
+      symbol: 'CFG',
+      assetId: '123'
+    },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 

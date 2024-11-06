@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Crab Parachain
 
-import type { TCurrencySelectionHeaderArr, TTransferReturn } from '../../types'
+import type { TAsset, TCurrencySelectionHeaderArr, TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -39,13 +39,13 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
     amount: string,
     scenario: TScenario,
     version: Version,
-    currencyId?: string
+    asset?: TAsset
   ): TCurrencySelectionHeaderArr {
     return getNode<TApi, TRes, 'Darwinia'>('Darwinia').createCurrencySpec(
       amount,
       scenario,
       version,
-      currencyId
+      asset
     )
   }
 }

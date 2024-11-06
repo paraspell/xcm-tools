@@ -7,12 +7,13 @@ import type {
   XTokensTransferInput
 } from '../../types'
 import { Parents } from '../../types'
+import { isForeignAsset } from '../../utils/assets'
 
 export const getModifiedCurrencySelection = <TApi, TRes>(
   version: Version,
-  { paraIdTo, currencyID, amount, feeAsset }: XTokensTransferInput<TApi, TRes>
+  { paraIdTo, asset, amount, feeAsset }: XTokensTransferInput<TApi, TRes>
 ): TCurrencySelectionHeader | TCurrencySelectionHeaderArr => {
-  if (currencyID === undefined || currencyID === '') {
+  if (!isForeignAsset(asset) || asset.assetId === '') {
     throw new InvalidCurrencyError('The selected asset has no currency ID')
   }
 
@@ -21,7 +22,11 @@ export const getModifiedCurrencySelection = <TApi, TRes>(
       Concrete: {
         parents: Parents.ONE,
         interior: {
-          X3: [{ Parachain: paraIdTo }, { PalletInstance: '50' }, { GeneralIndex: currencyID }]
+          X3: [
+            { Parachain: paraIdTo },
+            { PalletInstance: '50' },
+            { GeneralIndex: BigInt(asset.assetId) }
+          ]
         }
       }
     },

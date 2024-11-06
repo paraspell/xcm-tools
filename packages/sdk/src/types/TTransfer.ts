@@ -7,6 +7,7 @@ import type { TCurrency, TCurrencyInput, TCurrencySelectionHeaderArr } from './T
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { TPallet } from './TPallet'
 import type { WithApi } from './TApi'
+import type { TAsset } from './TAssets'
 
 export type HexString = `0x${string}`
 
@@ -18,8 +19,7 @@ export type PolkadotXCMTransferInput<TApi, TRes> = {
   address: TAddress
   currencySelection: TCurrencySelectionHeaderArr
   scenario: TScenario
-  currencySymbol: string | undefined
-  currencyId: string | undefined
+  asset: TAsset
   destination?: TDestination
   paraIdTo?: number
   feeAsset?: TCurrency
@@ -31,8 +31,7 @@ export type PolkadotXCMTransferInput<TApi, TRes> = {
 
 export type XTokensTransferInput<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  currency: string | undefined
-  currencyID: string | undefined
+  asset: TAsset
   amount: string
   addressSelection: TMultiLocationHeader
   fees: number
@@ -47,8 +46,7 @@ export type XTokensTransferInput<TApi, TRes> = {
 
 export type XTransferTransferInput<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  currency: string | undefined
-  currencyID: string | undefined
+  asset: TAsset
   amount: string
   recipientAddress: TAddress
   origin: TNode
@@ -152,8 +150,7 @@ export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions<TApi, TRes>, TAp
 
 export type TSendInternalOptions<TApi, TRes> = TSendBaseOptions<TApi, TRes> & {
   api: IPolkadotApi<TApi, TRes>
-  currencySymbol: string | undefined
-  currencyId: string | undefined
+  asset: TAsset
   amount: string
   overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
   serializedApiCallEnabled?: boolean
@@ -215,7 +212,7 @@ export type CheckKeepAliveOptions<TApi, TRes> = {
   amount: string
   originNode?: TNodePolkadotKusama
   destApi: IPolkadotApi<TApi, TRes>
-  currencySymbol?: string
+  asset: TAsset
   destNode?: TNodePolkadotKusama
 }
 

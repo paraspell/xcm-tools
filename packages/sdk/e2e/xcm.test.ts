@@ -16,6 +16,7 @@ import {
   getSupportedAssets
 } from '../src'
 import { type ApiPromise } from '@polkadot/api'
+import { isForeignAsset } from '../src/utils/assets'
 
 const MOCK_AMOUNT = 1000
 const MOCK_ADDRESS = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'
@@ -38,11 +39,15 @@ const getAssetsForNode = (node: TNode): string[] => {
 
 const filteredNodes = NODE_NAMES_DOT_KSM.filter(
   node =>
-    node !== 'Quartz' &&
     node !== 'Bitgreen' &&
     node !== 'Bajun' &&
     node !== 'CoretimeKusama' &&
-    node !== 'Polkadex'
+    node !== 'Polkadex' &&
+    // Has no assets
+    node !== 'Quartz' &&
+    node !== 'Pendulum' &&
+    node !== 'InvArchTinker' &&
+    node !== 'Unique'
 )
 
 const findTransferableNodeAndAsset = (
@@ -71,7 +76,7 @@ const findTransferableNodeAndAsset = (
     return {
       nodeTo,
       asset: supportedAsset.symbol,
-      assetId: supportedAsset.assetId ?? null
+      assetId: isForeignAsset(supportedAsset) ? supportedAsset.assetId : null
     }
   }
 

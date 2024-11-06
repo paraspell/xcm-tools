@@ -2,9 +2,9 @@ import type {
   TNodeWithRelayChains,
   Extrinsic,
   TSerializedEthTransfer,
-  TCurrencyCore,
   TAsset as SdkTAsset,
   TNodePolkadotKusama,
+  TCurrencyCoreV1,
 } from '@paraspell/sdk';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts/consts';
@@ -13,8 +13,8 @@ import type { Signer as EthSigner } from 'ethers';
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 
 export interface TSwapOptions {
-  currencyFrom: TCurrencyCore;
-  currencyTo: TCurrencyCore;
+  currencyFrom: TCurrencyCoreV1;
+  currencyTo: TCurrencyCoreV1;
   assetFrom?: SdkTAsset;
   assetTo?: SdkTAsset;
   amount: string;
@@ -83,11 +83,11 @@ export interface TTransferOptions {
   /**
    * The origin currency.
    */
-  currencyFrom: TCurrencyCore;
+  currencyFrom: TCurrencyCoreV1;
   /**
    * The destination currency that the origin currency will be exchanged to.
    */
-  currencyTo: TCurrencyCore;
+  currencyTo: TCurrencyCoreV1;
   /**
    * The amount to transfer.
    * @example '1000000000000000'

@@ -16,8 +16,10 @@ vi.mock('../xTokens', () => ({
 describe('Interlay', () => {
   let interlay: Interlay<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'INTR',
-    currencyID: '456',
+    asset: {
+      symbol: 'INTR',
+      assetId: '456'
+    },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -42,7 +44,12 @@ describe('Interlay', () => {
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {
     const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-    const inputWithoutCurrencyID = { ...mockInput, currencyID: undefined }
+    const inputWithoutCurrencyID = {
+      ...mockInput,
+      asset: {
+        symbol: 'INTR'
+      }
+    }
 
     interlay.transferXTokens(inputWithoutCurrencyID)
 

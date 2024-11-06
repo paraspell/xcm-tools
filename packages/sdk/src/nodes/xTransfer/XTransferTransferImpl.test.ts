@@ -63,8 +63,10 @@ describe('XTransferTransferImpl', () => {
     const input = {
       api: mockApi,
       amount: '100',
-      currency: '123',
-      currencyID: '123',
+      asset: {
+        symbol: 'PHA',
+        assetId: '123'
+      },
       recipientAddress: 'Recipient',
       origin: 'Phala',
       destination: 'Acala',

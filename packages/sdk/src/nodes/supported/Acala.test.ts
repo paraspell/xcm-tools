@@ -21,7 +21,7 @@ vi.mock('../../utils/getAllNodeProviders', () => ({
 describe('Acala', () => {
   let acala: Acala<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'ACA',
+    asset: { symbol: 'ACA' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
   const spyTransferXTokens = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
@@ -45,7 +45,13 @@ describe('Acala', () => {
   })
 
   it('should call transferXTokens with ForeignAsset when currencyID is defined', () => {
-    const inputWithCurrencyID = { ...mockInput, currencyID: '1' }
+    const inputWithCurrencyID = {
+      ...mockInput,
+      asset: {
+        symbol: 'ACA',
+        assetId: 1
+      }
+    }
 
     acala.transferXTokens(inputWithCurrencyID)
 

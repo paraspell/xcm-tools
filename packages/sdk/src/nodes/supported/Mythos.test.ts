@@ -21,7 +21,7 @@ vi.mock('../polkadotXcm', () => ({
 describe('Mythos', () => {
   let mythos: Mythos<ApiPromise, Extrinsic>
   const mockInput = {
-    currencySymbol: 'MYTH',
+    asset: { symbol: 'MYTH' },
     scenario: 'ParaToPara',
     destination: 'Acala',
     amount: '100'
