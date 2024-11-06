@@ -5,6 +5,7 @@ import { getAssetId } from '../../pallets/assets'
 import type {
   IPolkadotXCMTransfer,
   PolkadotXCMTransferInput,
+  TAsset,
   TSendInternalOptions,
   TTransferReturn
 } from '../../types'
@@ -13,6 +14,7 @@ import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import XTokensTransferImpl from '../xTokens'
 import { ETHEREUM_JUNCTION } from '../../const'
+import { isForeignAsset } from '../../utils/assets'
 
 export class BifrostPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>
@@ -22,21 +24,21 @@ export class BifrostPolkadot<TApi, TRes>
     super('BifrostPolkadot', 'bifrost', 'polkadot', Version.V3)
   }
 
-  private getCurrencySelection(currency: string, currencyId: string | undefined) {
+  private getCurrencySelection(asset: TAsset) {
     const nativeAssetSymbol = this.getNativeAssetSymbol()
 
-    if (currency === nativeAssetSymbol) {
+    if (asset.symbol === nativeAssetSymbol) {
       return { Native: nativeAssetSymbol }
     }
 
-    const isVToken = currency.startsWith('v')
-    const isVSToken = currency.startsWith('vs')
+    const isVToken = asset.symbol && asset.symbol.startsWith('v')
+    const isVSToken = asset.symbol && asset.symbol.startsWith('vs')
 
-    if (!currencyId) {
-      return isVToken ? { VToken: currency.substring(1) } : { Token: currency }
+    if (!isForeignAsset(asset)) {
+      return isVToken ? { VToken: asset.symbol.substring(1) } : { Token: asset.symbol }
     }
 
-    const id = Number(currencyId)
+    const id = Number(asset.assetId)
     if (isVSToken) {
       return { VSToken2: id }
     }
@@ -45,13 +47,9 @@ export class BifrostPolkadot<TApi, TRes>
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { currency, currencyID } = input
+    const { asset } = input
 
-    if (!currency) {
-      throw new Error('Currency symbol is undefined')
-    }
-
-    const currencySelection = this.getCurrencySelection(currency, currencyID)
+    const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
@@ -59,7 +57,7 @@ export class BifrostPolkadot<TApi, TRes>
   transferPolkadotXCM<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): Promise<TTransferReturn<TRes>> {
-    const { amount, overridedCurrency, currencySymbol } = input
+    const { amount, overridedCurrency, asset } = input
 
     return Promise.resolve(
       PolkadotXCMTransferImpl.transferPolkadotXCM(
@@ -68,9 +66,9 @@ export class BifrostPolkadot<TApi, TRes>
           currencySelection: createCurrencySpec(
             amount,
             this.version,
-            currencySymbol === 'DOT' ? Parents.ONE : Parents.TWO,
+            asset.symbol === 'DOT' ? Parents.ONE : Parents.TWO,
             overridedCurrency,
-            currencySymbol === 'WETH'
+            asset.symbol === 'WETH'
               ? {
                   X2: [
                     ETHEREUM_JUNCTION,
@@ -88,12 +86,7 @@ export class BifrostPolkadot<TApi, TRes>
     )
   }
 
-  protected canUseXTokens({
-    currencySymbol,
-    destination
-  }: TSendInternalOptions<TApi, TRes>): boolean {
-    return (
-      (currencySymbol !== 'WETH' && currencySymbol !== 'DOT') || destination !== 'AssetHubPolkadot'
-    )
+  protected canUseXTokens({ asset, destination }: TSendInternalOptions<TApi, TRes>): boolean {
+    return (asset.symbol !== 'WETH' && asset.symbol !== 'DOT') || destination !== 'AssetHubPolkadot'
   }
 }

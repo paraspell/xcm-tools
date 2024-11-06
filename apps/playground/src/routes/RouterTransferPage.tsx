@@ -38,7 +38,7 @@ import type { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGatewa
 import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/keyring";
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import type { TSerializedApiCall } from "@paraspell/sdk";
+import { isForeignAsset, type TSerializedApiCall } from "@paraspell/sdk";
 import { Web3 } from "web3";
 import type { EIP6963ProviderDetail } from "../types";
 
@@ -173,12 +173,12 @@ const RouterTransferPage = () => {
       .to(to)
       .exchange(exchange)
       .currencyFrom(
-        currencyFrom.assetId
+        isForeignAsset(currencyFrom)
           ? { id: currencyFrom.assetId }
           : { symbol: currencyFrom.symbol ?? "" },
       )
       .currencyTo(
-        currencyTo.assetId
+        isForeignAsset(currencyTo)
           ? { id: currencyTo.assetId }
           : { symbol: currencyTo.symbol ?? "" },
       )
@@ -208,10 +208,10 @@ const RouterTransferPage = () => {
         `${API_URL}/router`,
         {
           ...formValues,
-          currencyFrom: currencyFrom.assetId
+          currencyFrom: isForeignAsset(currencyFrom)
             ? { id: currencyFrom.assetId }
             : { symbol: currencyFrom.symbol ?? "" },
-          currencyTo: currencyTo.assetId
+          currencyTo: isForeignAsset(currencyTo)
             ? { id: currencyTo.assetId }
             : { symbol: currencyTo.symbol ?? "" },
           type: TransactionType[transactionType],

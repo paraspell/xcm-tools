@@ -1,11 +1,14 @@
-import type { TCurrencyCore, TNodeWithRelayChains, TAsset as SdkTAsset } from '@paraspell/sdk';
-import { getAssets } from '@paraspell/sdk';
+import type { TNodeWithRelayChains, TAsset as SdkTAsset, TCurrencyCoreV1 } from '@paraspell/sdk';
+import { getAssets, isForeignAsset } from '@paraspell/sdk';
 import * as assetsMapJson from '../consts/assets.json' assert { type: 'json' };
 import type { TAssetsRecord, TAutoSelect, TExchangeNode } from '../types';
 
 const assetsMap = assetsMapJson as TAssetsRecord;
 
-export const supportsCurrency = (exchangeNode: TExchangeNode, currency: TCurrencyCore): boolean => {
+export const supportsCurrency = (
+  exchangeNode: TExchangeNode,
+  currency: TCurrencyCoreV1,
+): boolean => {
   const assets = assetsMap[exchangeNode];
   return 'symbol' in currency
     ? assets.some((asset) => asset.symbol === currency.symbol)
@@ -15,17 +18,21 @@ export const supportsCurrency = (exchangeNode: TExchangeNode, currency: TCurrenc
 export const findAssetFrom = (
   from: TNodeWithRelayChains,
   exchange: TExchangeNode | undefined,
-  currency: TCurrencyCore,
+  currency: TCurrencyCoreV1,
 ): SdkTAsset | undefined => {
   const fromAssets = getAssets(from);
   if (exchange === undefined) {
     return getAssets(from).find((asset) =>
-      'symbol' in currency ? asset.symbol === currency.symbol : asset.assetId === currency.id,
+      'symbol' in currency
+        ? asset.symbol === currency.symbol
+        : isForeignAsset(asset) && asset.assetId === currency.id,
     );
   }
 
   return fromAssets.find((asset) =>
-    'symbol' in currency ? asset.symbol === currency.symbol : asset.assetId === currency.id,
+    'symbol' in currency
+      ? asset.symbol === currency.symbol
+      : isForeignAsset(asset) && asset.assetId === currency.id,
   );
 };
 
@@ -33,18 +40,22 @@ export const findAssetTo = (
   _exchange: TExchangeNode,
   from: TNodeWithRelayChains,
   _to: TNodeWithRelayChains,
-  currency: TCurrencyCore,
+  currency: TCurrencyCoreV1,
   isAutomaticSelection = false,
 ): SdkTAsset | undefined => {
   const fromAssets = getAssets(from);
   if (isAutomaticSelection) {
     return fromAssets.find((asset) =>
-      'symbol' in currency ? asset.symbol === currency.symbol : asset.assetId === currency.id,
+      'symbol' in currency
+        ? asset.symbol === currency.symbol
+        : isForeignAsset(asset) && asset.assetId === currency.id,
     );
   }
 
   return fromAssets.find((asset) =>
-    'symbol' in currency ? asset.symbol === currency.symbol : asset.assetId === currency.id,
+    'symbol' in currency
+      ? asset.symbol === currency.symbol
+      : isForeignAsset(asset) && asset.assetId === currency.id,
   );
 };
 

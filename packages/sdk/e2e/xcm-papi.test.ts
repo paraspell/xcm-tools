@@ -24,6 +24,7 @@ import { secp256k1 } from '@noble/curves/secp256k1'
 import { keccak_256 } from '@noble/hashes/sha3'
 import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
+import { isForeignAsset } from '../src/utils/assets'
 
 const MOCK_AMOUNT = 1000
 const MOCK_ADDRESS = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'
@@ -63,7 +64,11 @@ const filteredNodes = NODE_NAMES_DOT_KSM.filter(
     node !== 'Turing' &&
     node !== 'Pendulum' &&
     node !== 'Polkadex' &&
-    node !== 'Subsocial'
+    node !== 'Subsocial' &&
+    // has no assets
+    node !== 'Quartz' &&
+    node !== 'InvArchTinker' &&
+    node !== 'Unique'
 )
 
 const findTransferableNodeAndAsset = (
@@ -92,7 +97,7 @@ const findTransferableNodeAndAsset = (
     return {
       nodeTo,
       asset: supportedAsset.symbol,
-      assetId: supportedAsset.assetId ?? null
+      assetId: isForeignAsset(supportedAsset) ? supportedAsset.assetId : null
     }
   }
 
@@ -148,10 +153,6 @@ describe.sequential('XCM - e2e', () => {
       signEcdsa(keccak_256, input, privateKey)
     )
   }
-
-  // const deriveEvm = ecdsaCreateDerive(miniSecret)
-  // const aliceKeyPairEvm = deriveEvm('//Alice//0')
-  // const evmSigner = getEvmEcdsaSigner(aliceKeyPairEvm.)
 
   const seed = mnemonicToSeedSync(DEV_PHRASE)
   const hdkey = HDKey.fromMasterSeed(seed)

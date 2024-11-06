@@ -14,16 +14,14 @@ class Subsocial<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
   transferPolkadotXCM<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): Promise<TTransferReturn<TRes>> {
-    const { scenario, currencySymbol } = input
+    const { scenario, asset } = input
 
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
 
-    if (currencySymbol !== this.getNativeAssetSymbol()) {
-      throw new InvalidCurrencyError(
-        `Asset ${currencySymbol} is not supported by node ${this.node}.`
-      )
+    if (asset.symbol !== this.getNativeAssetSymbol()) {
+      throw new InvalidCurrencyError(`Asset ${asset.symbol} is not supported by node ${this.node}.`)
     }
     return Promise.resolve(
       PolkadotXCMTransferImpl.transferPolkadotXCM(

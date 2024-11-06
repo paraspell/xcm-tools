@@ -5,35 +5,36 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import {
-  type IXTokensTransfer,
-  Version,
-  type XTokensTransferInput,
-  type TSerializedApiCallV2,
-  type TNodleAsset
-} from '../../types'
+import type { IPolkadotXCMTransfer, PolkadotXCMTransferInput, TTransferReturn } from '../../types'
+import { Version, type TSerializedApiCallV2 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../xTokens'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 
-class Nodle<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
+class Nodle<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Nodle', 'nodle', 'polkadot', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    if (input.scenario !== 'ParaToPara') {
-      throw new ScenarioNotSupportedError(this.node, input.scenario)
+  transferPolkadotXCM<TApi, TRes>(
+    input: PolkadotXCMTransferInput<TApi, TRes>
+  ): Promise<TTransferReturn<TRes>> {
+    const { asset, scenario } = input
+
+    if (scenario !== 'ParaToPara') {
+      throw new ScenarioNotSupportedError(this.node, scenario)
     }
 
-    if (input.currency !== this.getNativeAssetSymbol()) {
-      throw new InvalidCurrencyError(
-        `Asset ${input.currency} is not supported by node ${this.node}.`
+    if (asset.symbol !== this.getNativeAssetSymbol()) {
+      throw new InvalidCurrencyError(`Asset ${asset.symbol} is not supported by node ${this.node}.`)
+    }
+
+    return Promise.resolve(
+      PolkadotXCMTransferImpl.transferPolkadotXCM(
+        input,
+        'limited_reserve_transfer_assets',
+        'Unlimited'
       )
-    }
-
-    const currencySelection: TNodleAsset = 'NodleNative'
-
-    return XTokensTransferImpl.transferXTokens(input, currencySelection)
+    )
   }
 
   transferRelayToPara(): TSerializedApiCallV2 {

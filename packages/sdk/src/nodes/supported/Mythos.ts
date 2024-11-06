@@ -23,16 +23,14 @@ class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotX
   transferPolkadotXCM<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): Promise<TTransferReturn<TRes>> {
-    const { scenario, currencySymbol, destination } = input
+    const { scenario, asset, destination } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
 
     const nativeSymbol = this.getNativeAssetSymbol()
-    if (currencySymbol !== nativeSymbol) {
-      throw new InvalidCurrencyError(
-        `Node ${this.node} does not support currency ${currencySymbol}`
-      )
+    if (asset.symbol !== nativeSymbol) {
+      throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${asset.symbol}`)
     }
 
     return Promise.resolve(

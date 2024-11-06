@@ -17,8 +17,10 @@ vi.mock('../xTokens', () => ({
 describe('Crust', () => {
   let crust: Crust<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'CRU',
-    currencyID: '456',
+    asset: {
+      symbol: 'CRU',
+      assetId: '123'
+    },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -48,15 +50,18 @@ describe('Crust', () => {
 
     crust.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { OtherReserve: '456' } as TReserveAsset)
+    expect(spy).toHaveBeenCalledWith(mockInput, { OtherReserve: BigInt(123) } as TReserveAsset)
   })
 
   it('should throw InvalidCurrencyError when currencyID is undefined and currency does not match native asset', () => {
-    const invalidInput = { ...mockInput, currencyID: undefined }
+    const invalidInput = {
+      ...mockInput,
+      asset: {
+        symbol: 'XYZ'
+      }
+    }
     vi.spyOn(crust, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
 
-    expect(() => crust.transferXTokens(invalidInput)).toThrowError(
-      new InvalidCurrencyError('Asset CRU is not supported by node Crust.')
-    )
+    expect(() => crust.transferXTokens(invalidInput)).toThrowError(InvalidCurrencyError)
   })
 })

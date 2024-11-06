@@ -6,7 +6,7 @@ import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
 } from './assets';
-import type { TAsset, TCurrencyCore, TNodeWithRelayChains } from '@paraspell/sdk';
+import type { TAsset, TCurrencyCoreV1, TNodeWithRelayChains } from '@paraspell/sdk';
 import { getAssets } from '@paraspell/sdk';
 import type { TAutoSelect, TExchangeNode } from '../types';
 
@@ -17,7 +17,7 @@ vi.mock('@paraspell/sdk', () => ({
 describe('supportsCurrency', () => {
   it('should return true when currency is supported by exchange node', () => {
     const exchangeNode: TExchangeNode = 'HydrationDex';
-    const currency = { symbol: 'HDX' } as TCurrencyCore;
+    const currency = { symbol: 'HDX' } as TCurrencyCoreV1;
 
     const result = supportsCurrency(exchangeNode, currency);
     expect(result).toBe(true);
@@ -25,7 +25,7 @@ describe('supportsCurrency', () => {
 
   it('should return false when currency is not supported by exchange node', () => {
     const exchangeNode: TExchangeNode = 'AcalaDex';
-    const currency = { symbol: 'XYZ' } as TCurrencyCore;
+    const currency = { symbol: 'XYZ' } as TCurrencyCoreV1;
 
     const result = supportsCurrency(exchangeNode, currency);
     expect(result).toBe(false);
@@ -35,7 +35,7 @@ describe('supportsCurrency', () => {
 describe('findAssetFrom', () => {
   it('should return correct asset when found in node assets', () => {
     const fromNode = 'Hydration' as TNodeWithRelayChains;
-    const currency = { symbol: 'ETH' } as TCurrencyCore;
+    const currency = { symbol: 'ETH' } as TCurrencyCoreV1;
     const assets = [{ symbol: 'ETH', assetId: 'eth-id' }];
     vi.mocked(getAssets).mockReturnValue(assets);
 
@@ -45,7 +45,7 @@ describe('findAssetFrom', () => {
 
   it('should return undefined when asset not found in node', () => {
     const fromNode = 'Hydration' as TNodeWithRelayChains;
-    const currency = { symbol: 'BTC' } as TCurrencyCore;
+    const currency = { symbol: 'BTC' } as TCurrencyCoreV1;
     const assets = [{ symbol: 'ETH', assetId: 'eth-id' }];
     vi.mocked(getAssets).mockReturnValue(assets);
 
@@ -59,7 +59,7 @@ describe('findAssetTo', () => {
     const fromNode: TNodeWithRelayChains = 'Acala';
     const exchange: TExchangeNode = 'HydrationDex';
     const toNode: TNodeWithRelayChains = 'Hydration';
-    const currency = { symbol: 'USDT' } as TCurrencyCore;
+    const currency = { symbol: 'USDT' } as TCurrencyCoreV1;
     vi.mocked(getAssets).mockReturnValue([{ symbol: 'USDT', assetId: '10' }] as TAsset[]);
 
     const result = findAssetTo(exchange, fromNode, toNode, currency);

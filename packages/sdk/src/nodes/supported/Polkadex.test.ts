@@ -16,7 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('Polkadex', () => {
   let polkadex: Polkadex<ApiPromise, Extrinsic>
   const mockInput = {
-    currencyID: '123',
+    asset: { symbol: 'PDEX', assetId: '123' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -36,6 +36,6 @@ describe('Polkadex', () => {
 
     polkadex.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, '123')
+    expect(spy).toHaveBeenCalledWith(mockInput, BigInt(123))
   })
 })

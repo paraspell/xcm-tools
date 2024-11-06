@@ -21,8 +21,7 @@ vi.mock('../xTokens', () => ({
 describe('Pendulum', () => {
   let pendulum: Pendulum<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'PEN',
-    currencyID: '123',
+    asset: { symbol: 'PEN', assetId: '123' },
     scenario: 'ParaToPara',
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
@@ -44,7 +43,7 @@ describe('Pendulum', () => {
 
     pendulum.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { XCM: '123' } as TXcmAsset)
+    expect(spy).toHaveBeenCalledWith(mockInput, { XCM: 123 } as TXcmAsset)
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {

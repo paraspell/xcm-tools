@@ -16,7 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('Calamari', () => {
   let calamari: Calamari<ApiPromise, Extrinsic>
   const mockInput = {
-    currencyID: '123',
+    asset: { assetId: '123' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 

@@ -4,10 +4,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import type {
-  TAssetDetails,
+  TForeignAsset,
   TAssetJsonMap,
   TMultiLocation,
-  TNativeAssetDetails,
+  TNativeAsset,
   TNode,
   TNodeAssets,
   TNodePolkadotKusama
@@ -17,8 +17,9 @@ import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 import { nodeToQuery } from './nodeToQueryMap'
 import { fetchBifrostAssets } from './fetchBifrostAssets'
 import { fetchEthereumAssets } from './fetchEthereumAssets'
+import { addAliasesToDuplicateSymbols } from './addAliases'
 
-const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAssetDetails[]> => {
+const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
   const json = propertiesRes.toHuman()
   const symbols = json.tokenSymbol as string[]
@@ -218,7 +219,7 @@ const fetchOtherAssetsInnerType = async (api: ApiPromise, query: string) => {
       )
       return matchingAsset ? { ...assetWithoutDecimals, decimals: matchingAsset.decimals } : null
     })
-    .filter(asset => asset !== null) as unknown as TAssetDetails[]
+    .filter(asset => asset !== null) as unknown as TForeignAsset[]
 }
 
 const fetchAssetsType2 = async (api: ApiPromise, query: string): Promise<Partial<TNodeAssets>> => {
@@ -461,5 +462,6 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
       }
     }
   }
-  return output
+
+  return addAliasesToDuplicateSymbols(output)
 }

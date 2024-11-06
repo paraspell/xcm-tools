@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import type {
   HexString,
   TAsset,
@@ -12,6 +14,7 @@ import type { IPolkadotApi } from '../api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { transform } from './PapiXcmTransformer'
 import { NodeNotSupportedError } from '../errors'
+import { isForeignAsset } from '../utils/assets'
 
 const unsupportedNodes = [
   'ComposableFinance',
@@ -83,7 +86,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   async getBalanceNative(address: string): Promise<bigint> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const res = await this.api.getUnsafeApi().query.System.Account.getValue(address)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
     return res.data.free as bigint
   }
 
@@ -91,14 +94,14 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const res = await this.api.getUnsafeApi().query.Assets.Account.getValue(id, address)
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return res && res.balance ? BigInt(res.balance) : BigInt(0)
   }
 
   async getMythosForeignBalance(address: string): Promise<bigint> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const res = await this.api.getUnsafeApi().query.Balances.Account.getValue(address)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return res && res.free ? BigInt(res.free) : BigInt(0)
   }
 
@@ -111,7 +114,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       .getUnsafeApi()
       .query.ForeignAssets.Account.getValue(transformedMultiLocation, address)
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return BigInt(res === undefined ? 0 : res.balance)
   }
 
@@ -123,27 +126,26 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       const [_address, assetItem] = keyArgs
 
       return (
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         assetItem.toString().toLowerCase() === asset.symbol?.toLowerCase() ||
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        assetItem.toString().toLowerCase() === asset.assetId?.toLowerCase() ||
+        (isForeignAsset(asset) &&
+          assetItem.toString().toLowerCase() === asset.assetId?.toLowerCase()) ||
         (typeof assetItem === 'object' &&
-          'value' in assetItem && // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+          'value' in assetItem &&
           assetItem.value.toString().toLowerCase() === asset.symbol?.toLowerCase()) ||
         (typeof assetItem === 'object' &&
           'value' in assetItem &&
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+          isForeignAsset(asset) &&
           assetItem.value.toString().toLowerCase() === asset.assetId?.toLowerCase())
       )
     })
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return entry?.value ? BigInt(entry.value.free.toString()) : BigInt(0)
   }
 
   async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number): Promise<bigint> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const response = await this.api.getUnsafeApi().query.Assets.Account.getValue(assetId, address)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return BigInt(response === undefined ? 0 : response.balance)
   }
 

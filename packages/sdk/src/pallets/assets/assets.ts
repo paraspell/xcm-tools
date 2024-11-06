@@ -6,15 +6,15 @@ import type {
   TNodeWithRelayChains,
   TAsset,
   TRelayChainType,
-  TNodeDotKsmWithRelayChains
+  TNodeDotKsmWithRelayChains,
+  TForeignAsset
 } from '../../types'
 import {
   type TNodeAssets,
   type TAssetJsonMap,
   type TNode,
   type TRelayChainSymbol,
-  type TNativeAssetDetails,
-  type TAssetDetails
+  type TNativeAsset
 } from '../../types'
 import { determineRelayChain, getNode } from '../../utils'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
@@ -56,8 +56,7 @@ export const getRelayChainSymbol = (node: TNodeWithRelayChains): TRelayChainSymb
  * @param node - The node for which to get native assets.
  * @returns An array of native asset details.
  */
-export const getNativeAssets = (node: TNode): TNativeAssetDetails[] =>
-  getAssetsObject(node).nativeAssets
+export const getNativeAssets = (node: TNode): TNativeAsset[] => getAssetsObject(node).nativeAssets
 
 /**
  * Retrieves the list of other (non-native) assets for a specified node.
@@ -65,7 +64,7 @@ export const getNativeAssets = (node: TNode): TNativeAssetDetails[] =>
  * @param node - The node for which to get other assets.
  * @returns An array of other asset details.
  */
-export const getOtherAssets = (node: TNode): TAssetDetails[] => getAssetsObject(node).otherAssets
+export const getOtherAssets = (node: TNode): TForeignAsset[] => getAssetsObject(node).otherAssets
 
 /**
  * Retrieves the complete list of assets for a specified node, including relay chain asset, native, and other assets.

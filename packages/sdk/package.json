@@ -36,6 +36,7 @@
     "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/assets/updateAssets.ts",
     "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/pallets/updatePallets.ts",
     "updateEds": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/eds/updateEds.ts",
+    "checkDuplicateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/assets/checkDuplicates.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },

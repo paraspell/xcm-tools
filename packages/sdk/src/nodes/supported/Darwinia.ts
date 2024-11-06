@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Darwinia Parachain
 
-import type { TNodePolkadotKusama } from '../../types'
+import type { TAsset, TNodePolkadotKusama } from '../../types'
 import {
   Version,
   type TSerializedApiCallV2,
@@ -9,26 +9,36 @@ import {
   type TScenario,
   Parents,
   type TSelfReserveAsset,
-  type TForeignAsset
+  type TXcmForeignAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import { NodeNotSupportedError } from '../../errors'
+import { InvalidCurrencyError, NodeNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../xTokens'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { type TMultiLocation } from '../../types/TMultiLocation'
 import { getAllNodeProviders } from '../../utils'
+import { isForeignAsset } from '../../utils/assets'
 
 class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
     super('Darwinia', 'darwinia', 'polkadot', Version.V3)
   }
 
+  private getCurrencySelection(asset: TAsset): TSelfReserveAsset | TXcmForeignAsset {
+    if (asset.symbol === this.getNativeAssetSymbol()) {
+      return 'SelfReserve'
+    }
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return { ForeignAsset: BigInt(asset.assetId) }
+  }
+
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { currencyID } = input
-    const currencySelection: TSelfReserveAsset | TForeignAsset =
-      input.currency === this.getNativeAssetSymbol()
-        ? 'SelfReserve'
-        : { ForeignAsset: currencyID ? BigInt(currencyID) : undefined }
+    const { asset } = input
+    const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
@@ -40,7 +50,7 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     amount: string,
     scenario: TScenario,
     version: Version,
-    currencyId?: string,
+    _asset?: TAsset,
     overridedMultiLocation?: TMultiLocation
   ) {
     if (scenario === 'ParaToPara') {
@@ -51,7 +61,7 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
       }
       return createCurrencySpec(amount, version, Parents.ZERO, overridedMultiLocation, interior)
     } else {
-      return super.createCurrencySpec(amount, scenario, version, currencyId, overridedMultiLocation)
+      return super.createCurrencySpec(amount, scenario, version, undefined, overridedMultiLocation)
     }
   }
 

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ApiPromise } from '@polkadot/api'
 import type { IPolkadotApi } from '../../../api'
-import type { TAsset, TNativeAssetDetails } from '../../../types'
+import type { TAsset, TNativeAsset } from '../../../types'
 import { InvalidCurrencyError, type Extrinsic } from '../../../pjs'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 
@@ -60,9 +60,8 @@ describe('getBalanceForeignXTokens', () => {
   it('throws InvalidCurrencyError if asset has no assetId', async () => {
     await expect(
       getBalanceForeignXTokens(mockApi, 'Moonbeam', address, {
-        symbol: 'AssetName',
-        assetId: undefined
-      } as TNativeAssetDetails)
+        symbol: 'AssetName'
+      } as TNativeAsset)
     ).rejects.toThrow(InvalidCurrencyError)
   })
 })

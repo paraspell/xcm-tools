@@ -23,7 +23,7 @@ describe('Crab', () => {
   let crab: Crab<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'ParaToPara',
-    currencySymbol: 'KSM',
+    asset: { symbol: 'KSM' },
     amount: '100'
   } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 

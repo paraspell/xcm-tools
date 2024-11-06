@@ -11,21 +11,21 @@ export const checkKeepAlive = async <TApi, TRes>({
   amount,
   originNode,
   destApi,
-  currencySymbol,
+  asset,
   destNode
 }: CheckKeepAliveOptions<TApi, TRes>): Promise<void> => {
   if (destApi.getApi() === undefined) {
     return
   }
 
-  if (currencySymbol === undefined) {
+  if (asset.symbol === undefined) {
     throw new KeepAliveError('Currency symbol not found for this asset. Cannot check keep alive.')
   }
 
   if (
     originNode !== undefined &&
     destNode !== undefined &&
-    currencySymbol !== getAssetsObject(destNode).nativeAssetSymbol
+    asset.symbol !== getAssetsObject(destNode).nativeAssetSymbol
   ) {
     throw new KeepAliveError(
       'Keep alive check is only supported when sending native asset of destination parachain.'
@@ -50,7 +50,7 @@ export const checkKeepAlive = async <TApi, TRes>({
     destApi,
     address,
     amount,
-    currencySymbol,
+    asset.symbol,
     originNode,
     destNode
   )
@@ -75,7 +75,7 @@ export const checkKeepAlive = async <TApi, TRes>({
 
   if (balance + amountBNWithoutFee < BigInt(ed)) {
     throw new KeepAliveError(
-      `Keep alive check failed: Sending ${amount} ${currencySymbol} to ${destNode} would result in an account balance below the required existential deposit.
+      `Keep alive check failed: Sending ${amount} ${asset.symbol} to ${destNode} would result in an account balance below the required existential deposit.
          Please increase the amount to meet the minimum balance requirement of the destination chain.`
     )
   }
@@ -83,11 +83,11 @@ export const checkKeepAlive = async <TApi, TRes>({
   const amountOriginBNWithoutFee = amountBN - (xcmFee + xcmFee / BigInt(2))
 
   if (
-    (currencySymbol === 'DOT' || currencySymbol === 'KSM') &&
+    (asset.symbol === 'DOT' || asset.symbol === 'KSM') &&
     balanceOrigin - amountOriginBNWithoutFee > BigInt(edOrigin)
   ) {
     throw new KeepAliveError(
-      `Keep alive check failed: Sending ${amount} ${currencySymbol} to ${destNode} would result in an account balance below the required existential deposit on origin.
+      `Keep alive check failed: Sending ${amount} ${asset.symbol} to ${destNode} would result in an account balance below the required existential deposit on origin.
          Please decrease the amount to meet the minimum balance requirement of the origin chain.`
     )
   }

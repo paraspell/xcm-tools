@@ -1,30 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import {
-  InvalidCurrencyError,
-  NodeNotSupportedError,
-  ScenarioNotSupportedError
-} from '../../errors'
-import type { XTokensTransferInput, TNodleAsset } from '../../types'
+import type { PolkadotXCMTransferInput } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../xTokens'
-import type Nodle from './Nodle'
-import { getNode } from '../../utils/getNode'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
+import { getNode } from '../../utils'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
+import type Nodle from './Nodle'
 
-vi.mock('../xTokens', () => ({
+vi.mock('../polkadotXcm', () => ({
   default: {
-    transferXTokens: vi.fn()
+    transferPolkadotXCM: vi.fn()
   }
 }))
 
 describe('Nodle', () => {
   let nodle: Nodle<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'NODL',
-    scenario: 'ParaToPara',
-    amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+    asset: { symbol: 'NODL' },
+    amount: '100',
+    scenario: 'ParaToPara'
+  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     nodle = getNode<ApiPromise, Extrinsic, 'Nodle'>('Nodle')
@@ -37,33 +32,11 @@ describe('Nodle', () => {
     expect(nodle.version).toBe(Version.V3)
   })
 
-  it('should call transferXTokens with valid scenario and currency', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-    vi.spyOn(nodle, 'getNativeAssetSymbol').mockReturnValue('NODL')
+  it('should call transferPolkadotXCM with the correct arguments', async () => {
+    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    nodle.transferXTokens(mockInput)
+    await nodle.transferPolkadotXCM(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'NodleNative' as TNodleAsset)
-  })
-
-  it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as XTokensTransferInput<
-      ApiPromise,
-      Extrinsic
-    >
-
-    expect(() => nodle.transferXTokens(invalidInput)).toThrowError(ScenarioNotSupportedError)
-  })
-
-  it('should throw InvalidCurrencyError for unsupported currency', () => {
-    vi.spyOn(nodle, 'getNativeAssetSymbol').mockReturnValue('NOT_NODL')
-
-    expect(() => nodle.transferXTokens(mockInput)).toThrowError(
-      new InvalidCurrencyError(`Asset NODL is not supported by node Nodle.`)
-    )
-  })
-
-  it('should throw NodeNotSupportedError for transferRelayToPara', () => {
-    expect(() => nodle.transferRelayToPara()).toThrowError(NodeNotSupportedError)
+    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
   })
 })

@@ -16,9 +16,8 @@ vi.mock('../xTokens', () => ({
 describe('Zeitgeist', () => {
   let zeitgeist: Zeitgeist<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'ZTG',
-    amount: '100',
-    currencyID: '123'
+    asset: { symbol: 'ZTG', assetId: '123' },
+    amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
   beforeEach(() => {

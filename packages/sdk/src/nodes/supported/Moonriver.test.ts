@@ -21,8 +21,7 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 describe('Moonriver', () => {
   let moonriver: Moonriver<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'MOVR',
-    currencyID: '123',
+    asset: { symbol: 'MOVR', assetId: '123' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 

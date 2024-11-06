@@ -21,7 +21,7 @@ vi.mock('../../utils', () => ({
 describe('Basilisk', () => {
   let basilisk: Basilisk<ApiPromise, Extrinsic>
   const mockInput = {
-    currencyID: '123',
+    asset: { symbol: 'BSX', assetId: '123' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -44,7 +44,7 @@ describe('Basilisk', () => {
 
     basilisk.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, '123')
+    expect(spy).toHaveBeenCalledWith(mockInput, Number(123))
   })
 
   it('should return the second provider URL from getProvider', () => {

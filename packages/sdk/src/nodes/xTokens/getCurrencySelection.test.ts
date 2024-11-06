@@ -37,7 +37,9 @@ describe('getCurrencySelection', () => {
     const input = {
       origin: 'Acala',
       amount: '1000',
-      currencyID: '123',
+      asset: {
+        assetId: '123'
+      },
       paraIdTo: 2000,
       overridedCurrencyMultiLocation: {
         parents: Parents.ZERO,
@@ -60,7 +62,9 @@ describe('getCurrencySelection', () => {
     const input = {
       origin: 'Acala',
       amount: '2000',
-      currencyID: '123',
+      asset: {
+        assetId: '123'
+      },
       paraIdTo: 1000,
       overridedCurrencyMultiLocation: undefined
     } as XTokensTransferInput<ApiPromise, Extrinsic>
@@ -81,7 +85,9 @@ describe('getCurrencySelection', () => {
     const input = {
       origin: 'Acala',
       amount: '3000',
-      currencyID: '123',
+      asset: {
+        assetId: '123'
+      },
       paraIdTo: 3000,
       overridedCurrencyMultiLocation: undefined
     } as XTokensTransferInput<ApiPromise, Extrinsic>

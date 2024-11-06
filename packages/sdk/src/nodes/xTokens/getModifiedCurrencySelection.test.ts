@@ -15,7 +15,9 @@ describe('getModifiedCurrencySelection', () => {
 
     const xTransferInput = {
       amount,
-      currencyID,
+      asset: {
+        assetId: currencyID
+      },
       paraIdTo
     } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -26,7 +28,11 @@ describe('getModifiedCurrencySelection', () => {
           Concrete: {
             parents: Parents.ONE,
             interior: {
-              X3: [{ Parachain: paraIdTo }, { PalletInstance: '50' }, { GeneralIndex: currencyID }]
+              X3: [
+                { Parachain: paraIdTo },
+                { PalletInstance: '50' },
+                { GeneralIndex: BigInt(currencyID) }
+              ]
             }
           }
         },
@@ -44,7 +50,9 @@ describe('getModifiedCurrencySelection', () => {
 
     const xTransferInput = {
       amount,
-      currencyID: undefined,
+      asset: {
+        assetId: ''
+      },
       paraIdTo
     } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -62,7 +70,9 @@ describe('getModifiedCurrencySelection', () => {
 
     const xTransferInput = {
       amount,
-      currencyID,
+      asset: {
+        assetId: currencyID
+      },
       paraIdTo,
       feeAsset
     } as XTokensTransferInput<ApiPromise, Extrinsic>
@@ -78,7 +88,7 @@ describe('getModifiedCurrencySelection', () => {
                 X3: [
                   { Parachain: paraIdTo },
                   { PalletInstance: '50' },
-                  { GeneralIndex: currencyID }
+                  { GeneralIndex: BigInt(currencyID) }
                 ]
               }
             }

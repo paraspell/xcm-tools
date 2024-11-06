@@ -3,7 +3,7 @@ import type {
   XTokensTransferInput,
   TScenario,
   TSelfReserveAsset,
-  TForeignAsset,
+  TXcmForeignAsset,
   TCurrencySelectionHeaderArr
 } from '../../types'
 import { Version, Parents } from '../../types'
@@ -29,8 +29,7 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 describe('Darwinia', () => {
   let darwinia: Darwinia<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'RING',
-    currencyID: '456',
+    asset: { symbol: 'RING', assetId: '123' },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -60,7 +59,7 @@ describe('Darwinia', () => {
 
     darwinia.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: BigInt(456) } as TForeignAsset)
+    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: BigInt(123) } as TXcmForeignAsset)
   })
 
   it('should throw NodeNotSupportedError for transferRelayToPara', () => {

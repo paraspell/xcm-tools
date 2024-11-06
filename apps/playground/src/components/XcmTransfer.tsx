@@ -3,12 +3,13 @@ import ErrorAlert from "./ErrorAlert";
 import type { FormValuesTransformed } from "./TransferForm";
 import TransferForm from "./TransferForm";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import type {
-  Extrinsic,
-  TCurrencyInput,
-  TMultiLocation,
-  TNode,
-  TNodePolkadotKusama,
+import {
+  isForeignAsset,
+  type Extrinsic,
+  type TCurrencyInput,
+  type TMultiLocation,
+  type TNode,
+  type TNodePolkadotKusama,
 } from "@paraspell/sdk";
 import type { TPapiTransaction } from "@paraspell/sdk/papi";
 import { getOtherAssets, isRelayChain } from "@paraspell/sdk/papi";
@@ -63,11 +64,11 @@ const XcmTransfer = () => {
         };
       }
     } else if (currency) {
-      if (ethers.isAddress(currency.assetId)) {
+      if (isForeignAsset(currency) && ethers.isAddress(currency.assetId)) {
         return { symbol: currency.symbol ?? "" };
       }
 
-      if (!currency.assetId) {
+      if (!isForeignAsset(currency)) {
         return { symbol: currency.symbol ?? "" };
       }
 

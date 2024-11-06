@@ -22,7 +22,7 @@ describe('CoretimeKusama', () => {
   let coretimeKusama: CoretimeKusama<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'ParaToPara',
-    currencySymbol: 'KSM',
+    asset: { symbol: 'KSM' },
     amount: '100'
   } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 

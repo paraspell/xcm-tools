@@ -16,8 +16,10 @@ vi.mock('../xTokens', () => ({
 describe('Curio', () => {
   let curio: Curio<ApiPromise, Extrinsic>
   const mockInput = {
-    currency: 'CUR',
-    currencyID: '123',
+    asset: {
+      symbol: 'CUR',
+      assetId: '123'
+    },
     amount: '100'
   } as XTokensTransferInput<ApiPromise, Extrinsic>
 
@@ -42,7 +44,12 @@ describe('Curio', () => {
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {
     const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-    const inputWithoutCurrencyID = { ...mockInput, currencyID: undefined }
+    const inputWithoutCurrencyID = {
+      ...mockInput,
+      asset: {
+        symbol: 'CUR'
+      }
+    }
 
     curio.transferXTokens(inputWithoutCurrencyID)
 

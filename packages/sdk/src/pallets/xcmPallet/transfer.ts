@@ -1,6 +1,6 @@
 // Contains basic call formatting for different XCM Palletss
 
-import type { TNodePolkadotKusama, TTransferReturn } from '../../types'
+import type { TAsset, TNativeAsset, TNodePolkadotKusama, TTransferReturn } from '../../types'
 import {
   type TSerializedApiCall,
   type TRelayToParaOptions,
@@ -15,6 +15,7 @@ import { getAssetBySymbolOrId } from '../assets/getAssetBySymbolOrId'
 import { getDefaultPallet } from '../pallets'
 import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../assets'
 import { getNode, determineRelayChain } from '../../utils'
+import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
 
 const sendCommon = async <TApi, TRes>(
   options: TSendOptions<TApi, TRes>,
@@ -36,12 +37,6 @@ const sendCommon = async <TApi, TRes>(
 
   if ((!('multiasset' in currency) || 'multilocation' in currency) && amount === null) {
     throw new Error('Amount is required')
-  }
-
-  if ('id' in currency && typeof currency === 'number' && currency > Number.MAX_SAFE_INTEGER) {
-    throw new InvalidCurrencyError(
-      'The provided asset ID is larger than the maximum safe integer value. Please provide it as a string.'
-    )
   }
 
   // Multi location checks
@@ -116,7 +111,19 @@ const sendCommon = async <TApi, TRes>(
 
   const isBifrost = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
 
-  let asset
+  if (!assetCheckEnabled && 'symbol' in currency && isSymbolSpecifier(currency.symbol)) {
+    throw new InvalidCurrencyError(
+      'Symbol specifier is not supported when asset check is disabled. Please use normal symbol instead.'
+    )
+  }
+
+  if (!assetCheckEnabled && 'id' in currency) {
+    throw new InvalidCurrencyError(
+      'Asset ID is not supported when asset check is disabled. Please use normal symbol instead'
+    )
+  }
+
+  let asset: TAsset | null
 
   // Transfers to AssetHub require the destination asset ID to be used
   if (!isBridge && isDestAssetHub && pallet === 'XTokens' && !isBifrost) {
@@ -128,17 +135,6 @@ const sendCommon = async <TApi, TRes>(
       nativeAssets = nativeAssets.filter(nativeAsset => nativeAsset.symbol !== 'DOT')
     }
 
-    if (
-      'symbol' in currency &&
-      nativeAssets.some(
-        nativeAsset => nativeAsset.symbol.toLowerCase() === currency.symbol.toLowerCase()
-      )
-    ) {
-      throw new InvalidCurrencyError(
-        `${currency.symbol} is not supported for transfers to ${destination}.`
-      )
-    }
-
     if (assetCheckEnabled && asset === null) {
       throw new InvalidCurrencyError(
         `Destination node ${destination} does not support currency ${JSON.stringify(currency)}.`
@@ -148,6 +144,17 @@ const sendCommon = async <TApi, TRes>(
     if (asset?.symbol && !hasSupportForAsset(origin, asset.symbol)) {
       throw new InvalidCurrencyError(
         `Origin node ${origin} does not support currency ${asset.symbol}.`
+      )
+    }
+
+    if (
+      'symbol' in currency &&
+      nativeAssets.some(
+        nativeAsset => nativeAsset.symbol.toLowerCase() === asset?.symbol?.toLowerCase()
+      )
+    ) {
+      throw new InvalidCurrencyError(
+        `${asset?.symbol} is not supported for transfers to ${destination}.`
       )
     }
   } else {
@@ -193,6 +200,8 @@ const sendCommon = async <TApi, TRes>(
     console.warn('Keep alive check is not supported when using MultiLocation as destination.')
   } else if (origin === 'Ethereum' || destination === 'Ethereum') {
     console.warn('Keep alive check is not supported when using Ethereum as origin or destination.')
+  } else if (!asset) {
+    console.warn('Keep alive check is not supported when asset check is disabled.')
   } else {
     await checkKeepAlive({
       originApi: api,
@@ -200,18 +209,21 @@ const sendCommon = async <TApi, TRes>(
       amount: amountStr ?? '',
       originNode: origin,
       destApi: destApiForKeepAlive,
-      currencySymbol: asset?.symbol ?? ('symbol' in currency ? currency.symbol : undefined),
+      asset,
       destNode: destination
     })
   }
 
-  const currencyStr =
-    'symbol' in currency ? currency.symbol : 'id' in currency ? currency.id.toString() : undefined
+  // In case asset check is disabled, we create asset object from currency symbol
+  const resolvedAsset =
+    asset ??
+    ({
+      symbol: 'symbol' in currency ? currency.symbol : undefined
+    } as TNativeAsset)
 
   return originNode.transfer({
     api,
-    currencySymbol: asset?.symbol ?? currencyStr,
-    currencyId: asset?.assetId,
+    asset: resolvedAsset,
     amount: amountStr ?? '',
     address,
     destination,
@@ -266,7 +278,7 @@ export const transferRelayToParaCommon = async <TApi, TRes>(
       address,
       amount: amountStr,
       destApi: destApiForKeepAlive,
-      currencySymbol: getRelayChainSymbol(destination),
+      asset: { symbol: getRelayChainSymbol(destination) },
       destNode: destination
     })
   }

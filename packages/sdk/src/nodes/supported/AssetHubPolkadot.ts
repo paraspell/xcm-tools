@@ -9,7 +9,7 @@ import {
   createCurrencySpec,
   createPolkadotXcmHeader
 } from '../../pallets/xcmPallet/utils'
-import type { Junctions, TSerializedApiCallV2, TTransferReturn } from '../../types'
+import type { Junctions, TAsset, TSerializedApiCallV2, TTransferReturn } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -27,6 +27,7 @@ import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMulti
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { ETHEREUM_JUNCTION } from '../../const'
 import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
+import { isForeignAsset } from '../../utils/assets'
 
 const createCustomXcmToBifrost = <TApi, TRes>(
   { api, address, scenario }: PolkadotXCMTransferInput<TApi, TRes>,
@@ -57,8 +58,8 @@ class AssetHubPolkadot<TApi, TRes>
     targetChain: 'Polkadot' | 'Kusama'
   ) {
     if (
-      (targetChain === 'Kusama' && input.currencySymbol?.toUpperCase() === 'KSM') ||
-      (targetChain === 'Polkadot' && input.currencySymbol?.toUpperCase() === 'DOT')
+      (targetChain === 'Kusama' && input.asset.symbol?.toUpperCase() === 'KSM') ||
+      (targetChain === 'Polkadot' && input.asset.symbol?.toUpperCase() === 'DOT')
     ) {
       const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
         ...input,
@@ -77,8 +78,8 @@ class AssetHubPolkadot<TApi, TRes>
         'Unlimited'
       )
     } else if (
-      (targetChain === 'Polkadot' && input.currencySymbol?.toUpperCase() === 'KSM') ||
-      (targetChain === 'Kusama' && input.currencySymbol?.toUpperCase() === 'DOT')
+      (targetChain === 'Polkadot' && input.asset.symbol?.toUpperCase() === 'KSM') ||
+      (targetChain === 'Kusama' && input.asset.symbol?.toUpperCase() === 'DOT')
     ) {
       const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
         ...input,
@@ -102,23 +103,23 @@ class AssetHubPolkadot<TApi, TRes>
       )
     }
     throw new InvalidCurrencyError(
-      `Polkadot <-> Kusama bridge does not support currency ${input.currencySymbol}`
+      `Polkadot <-> Kusama bridge does not support currency ${input.asset.symbol}`
     )
   }
 
   public handleEthBridgeTransfer<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
-    const { api, scenario, destination, paraIdTo, address, currencySymbol } = input
+    const { api, scenario, destination, paraIdTo, address, asset } = input
 
     if (!ethers.isAddress(address)) {
       throw new Error('Only Ethereum addresses are supported for Ethereum transfers')
     }
 
     const ethAssets = getOtherAssets('Ethereum')
-    const ethAsset = ethAssets.find(asset => asset.symbol === currencySymbol)
+    const ethAsset = ethAssets.find(asset => asset.symbol === asset.symbol)
 
     if (!ethAsset) {
       throw new InvalidCurrencyError(
-        `Currency ${currencySymbol} is not supported for Ethereum transfers`
+        `Currency ${asset.symbol} is not supported for Ethereum transfers`
       )
     }
 
@@ -160,7 +161,7 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   handleMythosTransfer<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
-    const { api, address, amount, currencyId, overridedCurrency, scenario, destination, paraIdTo } =
+    const { api, address, amount, asset, overridedCurrency, scenario, destination, paraIdTo } =
       input
     const version = Version.V2
     const paraId =
@@ -190,7 +191,7 @@ class AssetHubPolkadot<TApi, TRes>
         amount,
         scenario,
         version,
-        currencyId,
+        asset,
         overridedCurrency ?? customMultiLocation
       )
     }
@@ -204,9 +205,15 @@ class AssetHubPolkadot<TApi, TRes>
   handleBifrostEthTransfer = <TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): TTransferReturn<TRes> => {
-    const { api, amount, scenario, version, destination, currencyId } = input
+    const { api, amount, scenario, version, destination, asset } = input
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
 
     const versionOrDefault = version ?? this.version
+
+    const ethereumTokenLocation = createEthereumTokenLocation(asset.assetId)
 
     const call: TSerializedApiCallV2 = {
       module: 'PolkadotXcm',
@@ -221,19 +228,14 @@ class AssetHubPolkadot<TApi, TRes>
         assets: {
           [versionOrDefault]: [
             Object.values(
-              createCurrencySpec(
-                amount,
-                versionOrDefault,
-                Parents.TWO,
-                createEthereumTokenLocation(currencyId ?? '')
-              )
+              createCurrencySpec(amount, versionOrDefault, Parents.TWO, ethereumTokenLocation)
             )[0][0]
           ]
         },
         assets_transfer_type: 'LocalReserve',
         remote_fees_id: {
           [versionOrDefault]: {
-            Concrete: createEthereumTokenLocation(currencyId ?? '')
+            Concrete: ethereumTokenLocation
           }
         },
         fees_transfer_type: 'LocalReserve',
@@ -249,8 +251,7 @@ class AssetHubPolkadot<TApi, TRes>
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): PolkadotXCMTransferInput<TApi, TRes> {
     const {
-      currencySymbol,
-      currencyId,
+      asset,
       destination,
       paraIdTo,
       amount,
@@ -262,7 +263,7 @@ class AssetHubPolkadot<TApi, TRes>
     } = input
 
     if (
-      (currencySymbol?.toUpperCase() === 'USDT' || currencySymbol?.toUpperCase() === 'USDC') &&
+      (asset.symbol?.toUpperCase() === 'USDT' || asset.symbol?.toUpperCase() === 'USDC') &&
       destination === 'BifrostPolkadot'
     ) {
       const versionOrDefault = input.version ?? Version.V2
@@ -281,7 +282,7 @@ class AssetHubPolkadot<TApi, TRes>
           amount,
           scenario,
           versionOrDefault,
-          currencyId,
+          asset,
           overridedCurrency
         )
       }
@@ -291,7 +292,8 @@ class AssetHubPolkadot<TApi, TRes>
 
     if (
       destination === 'Hydration' &&
-      (currencySymbol === dotAsset?.symbol || currencyId === dotAsset?.assetId)
+      (asset.symbol === dotAsset?.symbol ||
+        (isForeignAsset(asset) && asset.assetId === dotAsset?.assetId))
     ) {
       const versionOrDefault = version ?? this.version
       return {
@@ -300,7 +302,7 @@ class AssetHubPolkadot<TApi, TRes>
           amount,
           'ParaToRelay',
           versionOrDefault,
-          currencyId,
+          asset,
           overridedCurrency
         )
       }
@@ -312,7 +314,7 @@ class AssetHubPolkadot<TApi, TRes>
   transferPolkadotXCM<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): Promise<TTransferReturn<TRes>> {
-    const { scenario, currencySymbol, currencyId, destination } = input
+    const { scenario, asset, destination } = input
 
     if (destination === 'AssetHubKusama') {
       return Promise.resolve(this.handleBridgeTransfer<TApi, TRes>(input, 'Kusama'))
@@ -326,19 +328,20 @@ class AssetHubPolkadot<TApi, TRes>
       return Promise.resolve(this.handleMythosTransfer(input))
     }
 
-    const wethAsset = getOtherAssets('Ethereum').find(({ symbol }) => symbol === 'WETH')
+    const ethereumAssets = getOtherAssets('Ethereum')
+    const isEthereumAsset = ethereumAssets.some(
+      ({ symbol, assetId }) =>
+        asset.symbol === symbol && isForeignAsset(asset) && asset.assetId === assetId
+    )
 
-    if (
-      destination === 'BifrostPolkadot' &&
-      (currencySymbol === wethAsset?.symbol || currencyId === wethAsset?.assetId)
-    ) {
+    if (destination === 'BifrostPolkadot' && isEthereumAsset) {
       return Promise.resolve(this.handleBifrostEthTransfer(input))
     }
 
     if (
       scenario === 'ParaToPara' &&
-      currencySymbol === 'DOT' &&
-      currencyId === undefined &&
+      asset.symbol === 'DOT' &&
+      !isForeignAsset(asset) &&
       destination !== 'Hydration'
     ) {
       throw new ScenarioNotSupportedError(
@@ -348,7 +351,7 @@ class AssetHubPolkadot<TApi, TRes>
       )
     }
 
-    if (scenario === 'ParaToPara' && currencySymbol === 'KSM' && currencyId === undefined) {
+    if (scenario === 'ParaToPara' && asset.symbol === 'KSM' && !isForeignAsset(asset)) {
       throw new ScenarioNotSupportedError(
         this.node,
         scenario,
@@ -379,7 +382,7 @@ class AssetHubPolkadot<TApi, TRes>
     amount: string,
     scenario: TScenario,
     version: Version,
-    currencyId?: string,
+    asset?: TAsset,
     overridedMultiLocation?: TMultiLocation | TMultiAsset[]
   ) {
     if (scenario === 'ParaToPara') {
@@ -389,14 +392,14 @@ class AssetHubPolkadot<TApi, TRes>
             PalletInstance: 50
           },
           {
-            // TODO: Handle the case where currencyId is undefined
-            GeneralIndex: currencyId ?? ''
+            // TODO: Handle missing assedId
+            GeneralIndex: asset && isForeignAsset(asset) ? asset.assetId : 0
           }
         ]
       }
       return createCurrencySpec(amount, version, Parents.ZERO, overridedMultiLocation, interior)
     } else {
-      return super.createCurrencySpec(amount, scenario, version, currencyId)
+      return super.createCurrencySpec(amount, scenario, version, asset)
     }
   }
 }

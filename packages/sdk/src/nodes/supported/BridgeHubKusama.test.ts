@@ -23,7 +23,7 @@ describe('BridgeHubKusama', () => {
   let bridgeHubKusama: BridgeHubKusama<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'RelayToPara',
-    currencySymbol: 'KSM',
+    asset: { symbol: 'KSM' },
     amount: '100'
   } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 

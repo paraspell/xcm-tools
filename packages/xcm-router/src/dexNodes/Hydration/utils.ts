@@ -1,6 +1,6 @@
 import { BigNumber, type TradeRouter, bnum, type Asset } from '@galacticcouncil/sdk';
 import { type TSwapOptions } from '../../types';
-import type { TCurrencyCore } from '@paraspell/sdk';
+import type { TCurrencyCoreV1 } from '@paraspell/sdk';
 import { type TNode, type Extrinsic, getAssetDecimals } from '@paraspell/sdk';
 import { FEE_BUFFER } from '../../consts/consts';
 import { calculateTransactionFee } from '../../utils/utils';
@@ -113,7 +113,7 @@ export const getMinAmountOut = (
 
 export const getAssetInfo = async (
   tradeRouter: TradeRouter,
-  currency: TCurrencyCore,
+  currency: TCurrencyCoreV1,
 ): Promise<Asset | undefined> => {
   const assets = await tradeRouter.getAllAssets();
 

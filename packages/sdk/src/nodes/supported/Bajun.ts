@@ -20,17 +20,17 @@ class Bajun<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { scenario, currency } = input
+    const { scenario, asset } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
 
     const nativeSymbol = this.getNativeAssetSymbol()
-    if (currency !== nativeSymbol) {
-      throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${currency}`)
+    if (asset.symbol !== nativeSymbol) {
+      throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${asset.symbol}`)
     }
 
-    return XTokensTransferImpl.transferXTokens(input, currency)
+    return XTokensTransferImpl.transferXTokens(input, asset.symbol)
   }
 
   transferRelayToPara(): TSerializedApiCallV2 {

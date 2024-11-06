@@ -14,6 +14,7 @@ import { u32, type UInt } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
 import type { TBalanceResponse } from '../types/TBalance'
 import { createApiInstanceForNode } from '../utils'
+import { isForeignAsset } from '../utils/assets'
 
 const lowercaseFirstLetter = (value: string) => value.charAt(0).toLowerCase() + value.slice(1)
 
@@ -106,13 +107,14 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         const assetSymbol = assetItem.toString().toLowerCase()
         return (
           assetSymbol === asset.symbol?.toLowerCase() ||
-          assetSymbol === asset.assetId?.toLowerCase() ||
+          (isForeignAsset(asset) && assetSymbol === asset.assetId?.toLowerCase()) ||
           Object.values(assetItem.toHuman() ?? {})
             .toString()
             .toLowerCase() === asset.symbol?.toLowerCase() ||
-          Object.values(assetItem.toHuman() ?? {})
-            .toString()
-            .toLowerCase() === asset.assetId?.toLowerCase()
+          (isForeignAsset(asset) &&
+            Object.values(assetItem.toHuman() ?? {})
+              .toString()
+              .toLowerCase() === asset.assetId?.toLowerCase())
         )
       }
     )
