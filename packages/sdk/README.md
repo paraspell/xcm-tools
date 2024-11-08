@@ -80,6 +80,11 @@ const paraspell = require('@paraspell/sdk/papi')
 const paraspell = require('@paraspell/sdk')
 ```
 
+Interaction with further asset symbol abstraction:
+```js 
+import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk'; //Only needed when advanced asset symbol selection is used. PJS version.
+import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk/papi'; //Only needed when advanced asset symbol selection is used. PAPI version.
+```
 ## Implementation
 
 ```
@@ -96,6 +101,11 @@ NOTES:
 - POLKADOT <> ETHEREUM Bridge is now available! Try sending WETH between the ecosystems - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
 ```
 
+```
+Latest news:
+- ParaSpell now offers advanced asset symbol selection {symbol: "symbol"} for non duplicate assets, {symbol: Native("symbol")} or {symbol: Foreign("symbol")} if the duplicates are between native and foreign assets and {symbol: ForeignAbstract("symbol")} if the duplicates are in foreign assets only. You will get an error that will guide you further if you simply start with {symbol: "symbol"}.
+```
+
 ### Builder pattern:
 
 ##### Transfer assets from Parachain to Parachain
@@ -103,7 +113,7 @@ NOTES:
 await Builder(/*node api/ws_url_string - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
-      .currency({id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray})
+      .currency({id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray})
       /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
       .amount(amount) // Overriden when using MultilocationArray
       .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
@@ -204,7 +214,7 @@ await paraspell.xcmPallet.send(
     {
       api?: ApiPromise/Ws_url_string,
       origin: origin  Parachain  name  string,
-      currency: {id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray},
+      currency: {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}) ,
       feeAsset? - Fee asset select id
       amount: any,
       to: destination  address  string | Multilocation object,
