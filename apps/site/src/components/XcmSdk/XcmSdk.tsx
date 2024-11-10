@@ -114,7 +114,7 @@ const XcmSdk = () => {
         </List>
 
         <div className={classes.controls}>
-            <Button
+          <Button
             component="a"
             href="https://paraspell.github.io/docs/sdk/getting-started.html"
             target="_blank"
@@ -122,19 +122,19 @@ const XcmSdk = () => {
             radius="lg"
             mt="xl"
             mr="md"
-            >
+          >
             Get started
-            </Button>
-            <Button
+          </Button>
+          <Button
             component="a"
             href="https://github.com/paraspell/xcm-sdk-template"
             target="_blank"
             size="lg"
             radius="lg"
             mt="xl"
-            >
+          >
             Template project
-            </Button>
+          </Button>
         </div>
       </div>
       <Box

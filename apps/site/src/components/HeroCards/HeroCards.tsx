@@ -140,7 +140,7 @@ const HeroCards = () => {
         }}
       >
         <Title fw={800} order={2} c="black">
-        LightSpell<span style={{ paddingLeft: "6px" }}>⚡️</span>
+          LightSpell<span style={{ paddingLeft: "6px" }}>⚡️</span>
         </Title>
         <Text fw={500} size="lg" mt="sm" c="black">
           Integrate XCM via a powerful, package-less API.
