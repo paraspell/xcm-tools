@@ -101,19 +101,19 @@ const HeroCards = () => {
         shadow="xl"
         p="xl"
         radius="lg"
-        bg="#2e2e2e"
         h={{ base: undefined, md: 400 }}
         style={{
           backdropFilter: "blur(3px)",
+          backgroundColor: "rgba(240, 230, 255, 0.5)",
         }}
       >
-        <Title fw={800} order={2} c="white">
+        <Title fw={800} order={2} c="black">
           XCM SDK<span style={{ paddingLeft: "14px" }}>🪄</span>
         </Title>
-        <Text size="lg" mt="sm" c="white">
+        <Text size="lg" mt="sm" c="black">
           Simplify cross-chain development with our easy-to-use SDK.
         </Text>
-        <CodeHighlightDark
+        <CodeHighlight
           style={{
             borderRadius: 16,
           }}
@@ -137,13 +137,13 @@ const HeroCards = () => {
         mt={{ base: undefined, md: 150 }}
         style={{
           backdropFilter: "blur(3px)",
-          backgroundColor: "rgba(240, 25, 122, 0.14)",
+          backgroundColor: "rgba(255, 245, 225, 0.5)",
         }}
       >
-        <Title fw={800} order={2}>
-          LightSpell<span style={{ paddingLeft: "6px" }}>⚡️</span>
+        <Title fw={800} order={2} c="black">
+        LightSpell<span style={{ paddingLeft: "6px" }}>⚡️</span>
         </Title>
-        <Text fw={500} size="lg" mt="sm">
+        <Text fw={500} size="lg" mt="sm" c="black">
           Integrate XCM via a powerful, package-less API.
         </Text>
         <CodeHighlight
@@ -170,17 +170,20 @@ const HeroCards = () => {
         shadow="xl"
         p="xl"
         radius="lg"
-        bg="#2e2e2e"
         h={{ base: undefined, md: 420 }}
         mt={{ base: 20, md: -230 }}
+        style={{
+          backdropFilter: "blur(3px)",
+          backgroundColor: "rgba(240, 230, 255, 0.5)",
+        }}
       >
-        <Title fw={800} order={2} c="white">
+        <Title fw={800} order={2} c="black">
           SpellRouter<span style={{ paddingLeft: "14px" }}>☄️</span>
         </Title>
-        <Text size="lg" mt="sm" c="white">
+        <Text size="lg" mt="sm" c="black">
           Cross-chain swaps made simple.
         </Text>
-        <CodeHighlightDark
+        <CodeHighlight
           style={{
             borderRadius: 16,
           }}
@@ -199,17 +202,20 @@ const HeroCards = () => {
         p="xl"
         pt={21}
         radius="lg"
-        bg="#2e2e2e"
         h={{ base: undefined, md: 330 }}
         mt={{ base: undefined, md: -180 }}
+        style={{
+          backdropFilter: "blur(3px)",
+          backgroundColor: "rgba(240, 230, 255, 0.5)",
+        }}
       >
-        <Title fw={800} order={2} c="white">
+        <Title fw={800} order={2} c="black">
           XCM Analyser<span style={{ paddingLeft: "14px" }}>🔎</span>
         </Title>
-        <Text size="lg" mt="sm" c="white">
+        <Text size="lg" mt="sm" c="black">
           Convert XCM Multilocations into human-readable format.
         </Text>
-        <CodeHighlightDark
+        <CodeHighlight
           mb={2}
           style={{
             borderRadius: 16,
