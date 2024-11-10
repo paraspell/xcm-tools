@@ -106,16 +106,27 @@ const XcmRouter = () => {
         </List>
 
         <div className={classes.controls}>
-          <Button
+        <Button
             component="a"
             href="https://paraspell.github.io/docs/router/getting-strtd.html"
             target="_blank"
             size="lg"
             radius="lg"
             mt="xl"
-          >
+            mr="md"
+            >
             Read more
-          </Button>
+            </Button>
+            <Button
+            component="a"
+            href="https://github.com/paraspell/xcm-router-template"
+            target="_blank"
+            size="lg"
+            radius="lg"
+            mt="xl"
+            >
+            Template project
+            </Button>
         </div>
       </div>
       <Box

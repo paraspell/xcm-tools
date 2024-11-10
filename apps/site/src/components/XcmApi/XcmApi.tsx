@@ -106,16 +106,27 @@ const XcmApi = () => {
         </List>
 
         <div className={classes.controls}>
-          <Button
+        <Button
             component="a"
             href="https://lightspell.xyz/"
             target="_blank"
             size="lg"
             radius="lg"
             mt="xl"
-          >
+            mr="md"
+            >
             Read more
-          </Button>
+            </Button>
+            <Button
+            component="a"
+            href="https://github.com/paraspell/xcm-api-template"
+            target="_blank"
+            size="lg"
+            radius="lg"
+            mt="xl"
+            >
+            Template project
+            </Button>
         </div>
       </div>
       <Box
