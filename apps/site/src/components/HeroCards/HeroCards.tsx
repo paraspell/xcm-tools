@@ -11,7 +11,6 @@ import {
 import visualizatorImg from "../../assets/visualizator-mockup-1-compressed.png";
 import visualizatorLogoImg from "../../assets/visualizator_logo.png";
 import { CodeHighlight } from "@mantine/code-highlight";
-import CodeHighlightDark from "../CodeHighlightDark/CodeHighlightDark";
 import { useMediaQuery } from "@mantine/hooks";
 
 const codeForAnalyser = `
