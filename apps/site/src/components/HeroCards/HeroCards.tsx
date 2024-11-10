@@ -74,7 +74,7 @@ const HeroCards = () => {
         mt={{ base: undefined, md: 150 }}
         style={{
           overflow: "hidden",
-          backdropFilter: "blur(3px)",
+          backdropFilter: "blur(2px)",
           backgroundColor: "rgba(33, 120, 150, 0.14)",
         }}
       >
@@ -102,7 +102,7 @@ const HeroCards = () => {
         radius="lg"
         h={{ base: undefined, md: 400 }}
         style={{
-          backdropFilter: "blur(3px)",
+          backdropFilter: "blur(2px)",
           backgroundColor: "rgba(240, 230, 255, 0.5)",
         }}
       >
@@ -135,7 +135,7 @@ const HeroCards = () => {
         h={{ base: undefined, md: 300 }}
         mt={{ base: undefined, md: 150 }}
         style={{
-          backdropFilter: "blur(3px)",
+          backdropFilter: "blur(2px)",
           backgroundColor: "rgba(255, 245, 225, 0.5)",
         }}
       >
@@ -172,7 +172,7 @@ const HeroCards = () => {
         h={{ base: undefined, md: 420 }}
         mt={{ base: 20, md: -230 }}
         style={{
-          backdropFilter: "blur(3px)",
+          backdropFilter: "blur(2px)",
           backgroundColor: "rgba(240, 230, 255, 0.5)",
         }}
       >
@@ -204,7 +204,7 @@ const HeroCards = () => {
         h={{ base: undefined, md: 330 }}
         mt={{ base: undefined, md: -180 }}
         style={{
-          backdropFilter: "blur(3px)",
+          backdropFilter: "blur(2px)",
           backgroundColor: "rgba(240, 230, 255, 0.5)",
         }}
       >
