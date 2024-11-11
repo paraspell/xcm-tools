@@ -37,8 +37,8 @@ export const getAssetsObject = (node: TNodeWithRelayChains): TNodeAssets => asse
  * @returns The asset ID if found; otherwise, null.
  */
 export const getAssetId = (node: TNode, symbol: string): string | null => {
-  const info = getAssetsObject(node).otherAssets.find(o => o.symbol === symbol)
-  return info != null ? info.assetId : null
+  const asset = getAssetsObject(node).otherAssets.find(o => o.symbol === symbol)
+  return asset != null && asset.assetId ? asset.assetId : null
 }
 
 /**
@@ -158,9 +158,8 @@ export const getAssetDecimals = (node: TNodeWithRelayChains, symbol: string): nu
  * @param node - The node for which to get the paraId.
  * @returns The parachain ID of the node.
  */
-export const getParaId = (node: TNodeDotKsmWithRelayChains): number => {
-  return getAssetsObject(node).paraId as number
-}
+export const getParaId = (node: TNodeDotKsmWithRelayChains): number =>
+  getAssetsObject(node).paraId as number
 
 /**
  * Retrieves the node name corresponding to a specified parachain ID.

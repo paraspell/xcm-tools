@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import type { AbstractProvider, Signer } from 'ethers'
-import type { TCurrencyCore, TNodePolkadotKusama } from '../../../types'
+import type { TCurrencyCoreV1, TNodePolkadotKusama } from '../../../types'
 import type { TEvmBuilderOptions } from '../../../types/TBuilder'
 import transferEthToPolkadot from '../../../pallets/xcmPallet/ethTransfer/ethTransfer'
 import { EvmBuilder } from './EvmBuilder'
@@ -13,7 +13,7 @@ describe('EvmBuilderClass', () => {
   let provider: AbstractProvider
   let signer: Signer
   let node: TNodePolkadotKusama
-  let currency: TCurrencyCore
+  let currency: TCurrencyCoreV1
   let address: string
   let amount: string
 
@@ -21,7 +21,7 @@ describe('EvmBuilderClass', () => {
     provider = {} as AbstractProvider
     signer = {} as Signer
     node = {} as TNodePolkadotKusama
-    currency = {} as TCurrencyCore
+    currency = {} as TCurrencyCoreV1
     address = '0x1234567890abcdef'
     amount = '100'
   })

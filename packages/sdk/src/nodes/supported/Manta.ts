@@ -19,7 +19,7 @@ class Manta<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { asset } = input
 
-    if (!isForeignAsset(asset)) {
+    if (!isForeignAsset(asset) || !asset.assetId) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 

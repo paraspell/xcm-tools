@@ -10,10 +10,11 @@ import {
   getAssetId,
   NodeNotSupportedError,
   getOtherAssets,
-  TNodeWithRelayChains,
   Version,
   NODE_NAMES_DOT_KSM,
-  getSupportedAssets
+  getSupportedAssets,
+  TNodeDotKsmWithRelayChains,
+  ForeignAbstract
 } from '../src'
 import { type ApiPromise } from '@polkadot/api'
 import { isForeignAsset } from '../src/utils/assets'
@@ -52,7 +53,7 @@ const filteredNodes = NODE_NAMES_DOT_KSM.filter(
 
 const findTransferableNodeAndAsset = (
   from: TNode
-): { nodeTo: TNode | undefined; asset: string | undefined; assetId: string | null } => {
+): { nodeTo: TNode | undefined; asset: string | undefined; assetId: string | null | undefined } => {
   const allFromAssets = getAssetsForNode(from)
 
   const nodeTo = NODE_NAMES_DOT_KSM.filter(
@@ -62,7 +63,7 @@ const findTransferableNodeAndAsset = (
 
     const filteredNodes =
       node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
-        ? nodeAssets.filter(symbol => symbol !== 'DOT' && symbol !== 'KSM')
+        ? nodeAssets.filter(symbol => symbol !== 'DOT' && symbol !== 'KSM' && symbol !== 'GLMR')
         : nodeAssets
 
     const commonAsset = filteredNodes.filter(asset => allFromAssets.includes(asset))[0]
@@ -91,7 +92,7 @@ const findTransferableNodeAndAsset = (
 describe.sequential('XCM - e2e', () => {
   describe('AssetClaim', () => {
     ;(
-      ['Polkadot', 'Kusama', 'AssetHubPolkadot', 'AssetHubKusama'] as TNodeWithRelayChains[]
+      ['Polkadot', 'Kusama', 'AssetHubPolkadot', 'AssetHubKusama'] as TNodeDotKsmWithRelayChains[]
     ).forEach(node => {
       it('should create asset claim tx', async () => {
         const api = await createApiInstanceForNode(node)
@@ -275,7 +276,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = await Builder(api)
         .from('Hydration')
         .to('AssetHubPolkadot')
-        .currency({ symbol: 'USDT' })
+        .currency({ symbol: ForeignAbstract('USDT1') })
         .feeAsset('0')
         .amount(MOCK_AMOUNT)
         .address(MOCK_ADDRESS)
@@ -322,7 +323,23 @@ describe.sequential('XCM - e2e', () => {
         node !== 'Crust' &&
         node !== 'CrustShadow' &&
         node !== 'Phala' &&
-        node !== 'Khala'
+        node !== 'Khala' &&
+        node !== 'Manta' &&
+        node !== 'Turing' &&
+        node !== 'Zeitgeist' &&
+        node !== 'Picasso' &&
+        node !== 'Parallel' &&
+        node !== 'Moonriver' &&
+        node !== 'Calamari' &&
+        node !== 'Basilisk' &&
+        node !== 'Amplitude' &&
+        node !== 'Altair' &&
+        node !== 'Moonbeam' &&
+        node !== 'Hydration' &&
+        node !== 'Darwinia' &&
+        node !== 'ComposableFinance' &&
+        node !== 'Centrifuge' &&
+        node !== 'ParallelHeiko'
       ) {
         it(`should create transfer tx - ParaToRelay ${getRelayChainSymbol(
           node

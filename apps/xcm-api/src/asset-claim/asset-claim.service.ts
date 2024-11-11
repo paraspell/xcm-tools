@@ -7,7 +7,7 @@ import {
   InvalidCurrencyError,
   NODES_WITH_RELAY_CHAINS,
   TMultiAsset,
-  TNode,
+  TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
@@ -30,7 +30,7 @@ export class AssetClaimService {
     hashEnabled = false,
     usePapi = false,
   ) {
-    const fromNode = from as TNode | undefined;
+    const fromNode = from as TNodeDotKsmWithRelayChains | undefined;
 
     if (!fromNode) {
       throw new BadRequestException("You need to provide a 'from' parameter");

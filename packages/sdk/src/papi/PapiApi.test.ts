@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import PapiApi from './PapiApi'
 import type { PolkadotClient } from 'polkadot-api'
 import type { TPapiTransaction } from '../papi/types'
-import type { TNodeWithRelayChains, TSerializedApiCallV2, TMultiLocation } from '../types'
+import type { TSerializedApiCallV2, TMultiLocation, TNodeDotKsmWithRelayChains } from '../types'
 import * as utils from '../utils'
 import { createClient, FixedSizeBinary } from 'polkadot-api'
 import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
@@ -121,7 +121,7 @@ describe('PapiApi', () => {
   describe('init', () => {
     it('should set api to _api when _api is defined', async () => {
       papiApi.setApi(mockPolkadotClient)
-      await papiApi.init('SomeNode' as TNodeWithRelayChains)
+      await papiApi.init('SomeNode' as TNodeDotKsmWithRelayChains)
       expect(papiApi.getApi()).toBe(mockPolkadotClient)
     })
 
@@ -131,7 +131,7 @@ describe('PapiApi', () => {
         .spyOn(utils, 'createApiInstanceForNode')
         .mockResolvedValue(mockPolkadotClient)
 
-      await papiApi.init('SomeNode' as TNodeWithRelayChains)
+      await papiApi.init('SomeNode' as TNodeDotKsmWithRelayChains)
 
       expect(mockCreateApiInstanceForNode).toHaveBeenCalledWith(papiApi, 'SomeNode')
       expect(papiApi.getApi()).toBe(mockPolkadotClient)

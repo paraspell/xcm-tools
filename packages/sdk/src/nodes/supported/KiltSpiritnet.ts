@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for KiltSpiritnet Parachain
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import type { TNodePolkadotKusama, TTransferReturn } from '../../types'
+import type { TTransferReturn } from '../../types'
 import {
   Version,
   type IPolkadotXCMTransfer,
@@ -34,7 +34,7 @@ class KiltSpiritnet<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPo
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[1]
+    return getAllNodeProviders(this.node)[1]
   }
 }
 

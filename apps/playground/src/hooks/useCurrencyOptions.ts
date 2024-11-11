@@ -31,7 +31,7 @@ const useCurrencyOptions = (
     () =>
       Object.keys(currencyMap).map((key) => ({
         value: key,
-        label: `${currencyMap[key].symbol} - ${isForeignAsset(currencyMap[key]) ? currencyMap[key].assetId : "Native"}`,
+        label: `${currencyMap[key].symbol} - ${isForeignAsset(currencyMap[key]) ? (currencyMap[key].assetId ?? "Multi-location") : "Native"}`,
       })),
     [currencyMap],
   );

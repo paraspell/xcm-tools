@@ -9,7 +9,14 @@ import {
   createCurrencySpec,
   createPolkadotXcmHeader
 } from '../../pallets/xcmPallet/utils'
-import type { Junctions, TAsset, TSerializedApiCallV2, TTransferReturn } from '../../types'
+import type {
+  Junctions,
+  PolkadotXcmSection,
+  TAsset,
+  TDestination,
+  TSerializedApiCallV2,
+  TTransferReturn
+} from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
@@ -147,7 +154,7 @@ class AssetHubPolkadot<TApi, TRes>
           X2: [
             ETHEREUM_JUNCTION,
             {
-              AccountKey20: { key: ethAsset.assetId }
+              AccountKey20: { key: ethAsset.assetId ?? '' }
             }
           ]
         }
@@ -213,7 +220,7 @@ class AssetHubPolkadot<TApi, TRes>
 
     const versionOrDefault = version ?? this.version
 
-    const ethereumTokenLocation = createEthereumTokenLocation(asset.assetId)
+    const ethereumTokenLocation = createEthereumTokenLocation(asset.assetId ?? '')
 
     const call: TSerializedApiCallV2 = {
       module: 'PolkadotXcm',
@@ -288,13 +295,7 @@ class AssetHubPolkadot<TApi, TRes>
       }
     }
 
-    const dotAsset = getOtherAssets(this.node).find(({ symbol }) => symbol === 'DOT')
-
-    if (
-      destination === 'Hydration' &&
-      (asset.symbol === dotAsset?.symbol ||
-        (isForeignAsset(asset) && asset.assetId === dotAsset?.assetId))
-    ) {
+    if ((destination === 'Hydration' || destination === 'Polimec') && asset.symbol === 'DOT') {
       const versionOrDefault = version ?? this.version
       return {
         ...input,
@@ -309,6 +310,11 @@ class AssetHubPolkadot<TApi, TRes>
     }
 
     return input
+  }
+
+  private getSection(scenario: TScenario, destination?: TDestination): PolkadotXcmSection {
+    if (destination === 'Polimec') return 'transfer_assets'
+    return scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
   }
 
   transferPolkadotXCM<TApi, TRes>(
@@ -342,7 +348,8 @@ class AssetHubPolkadot<TApi, TRes>
       scenario === 'ParaToPara' &&
       asset.symbol === 'DOT' &&
       !isForeignAsset(asset) &&
-      destination !== 'Hydration'
+      destination !== 'Hydration' &&
+      destination !== 'Polimec'
     ) {
       throw new ScenarioNotSupportedError(
         this.node,
@@ -359,8 +366,7 @@ class AssetHubPolkadot<TApi, TRes>
       )
     }
 
-    const section =
-      scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
+    const section = this.getSection(scenario, destination)
 
     const modifiedInput = this.patchInput(input)
 
@@ -393,11 +399,17 @@ class AssetHubPolkadot<TApi, TRes>
           },
           {
             // TODO: Handle missing assedId
-            GeneralIndex: asset && isForeignAsset(asset) ? asset.assetId : 0
+            GeneralIndex: asset && isForeignAsset(asset) && asset.assetId ? asset.assetId : 0
           }
         ]
       }
-      return createCurrencySpec(amount, version, Parents.ZERO, overridedMultiLocation, interior)
+      const multiLocation =
+        overridedMultiLocation !== undefined
+          ? overridedMultiLocation
+          : asset && isForeignAsset(asset)
+            ? (asset.multiLocation as TMultiLocation)
+            : undefined
+      return createCurrencySpec(amount, version, Parents.ZERO, multiLocation, interior)
     } else {
       return super.createCurrencySpec(amount, scenario, version, asset)
     }

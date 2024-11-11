@@ -96,29 +96,6 @@ export interface Junctions {
   X6?: [TJunction, TJunction, TJunction, TJunction, TJunction, TJunction]
   X7?: [TJunction, TJunction, TJunction, TJunction, TJunction, TJunction, TJunction]
   X8?: [TJunction, TJunction, TJunction, TJunction, TJunction, TJunction, TJunction, TJunction]
-  X9?: [
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction
-  ]
-  X10?: [
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction,
-    TJunction
-  ]
 }
 
 export interface TMultiLocation {

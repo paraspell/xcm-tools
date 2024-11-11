@@ -14,7 +14,7 @@ export const getBalanceForeign = async <TApi, TRes>({
   await api.init(node)
 
   const asset =
-    getAssetBySymbolOrId(node, currency) ??
+    getAssetBySymbolOrId(node, currency, false, undefined, true) ??
     (node === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency) : null)
 
   if (!asset) {

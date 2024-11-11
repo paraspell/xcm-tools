@@ -13,7 +13,7 @@ import type {
 import { isRelayChain } from '../../utils'
 import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
 import { getDefaultPallet } from '../pallets'
-import { getOtherAssets } from './assets'
+import { getAssetDecimals, getOtherAssets, getRelayChainSymbol } from './assets'
 
 export const throwDuplicateAssetError = (
   symbol: string,
@@ -62,14 +62,36 @@ export const findBestMatches = (
   return matches
 }
 
+const findRelayChainSymbol = (node: TNodeWithRelayChains, symbol: TCurrencySymbolValue) => {
+  const relayChainAssetSymbol = getRelayChainSymbol(node)
+  if (
+    (isSymbolSpecifier(symbol) &&
+      symbol.type === 'Native' &&
+      relayChainAssetSymbol.toLowerCase() === symbol.value.toLowerCase()) ||
+    (!isSymbolSpecifier(symbol) && relayChainAssetSymbol.toLowerCase() === symbol.toLowerCase())
+  ) {
+    const relayChainAsset: TNativeAsset = {
+      symbol: relayChainAssetSymbol,
+      decimals: getAssetDecimals(node, relayChainAssetSymbol) ?? undefined
+    }
+    return relayChainAsset
+  }
+}
+
 export const findAssetBySymbol = (
   node: TNodeWithRelayChains,
   destination: TNodeWithRelayChains | undefined,
   otherAssets: TForeignAsset[],
   nativeAssets: TNativeAsset[],
   symbol: TCurrencySymbolValue,
-  isRelayDestination: boolean
+  isRelayDestination: boolean,
+  preferForeignAssets = false
 ) => {
+  if (!preferForeignAssets) {
+    const relayChainAssetMatch = findRelayChainSymbol(node, symbol)
+    if (relayChainAssetMatch) return relayChainAssetMatch
+  }
+
   const supportsESuffix =
     node === 'AssetHubPolkadot' ||
     node === 'AssetHubKusama' ||
@@ -296,7 +318,12 @@ export const findAssetBySymbol = (
     }
   }
 
-  return assetsMatches[0] || undefined
+  if (assetsMatches.length > 0) return assetsMatches[0]
+
+  const relayChainAssetMatch = findRelayChainSymbol(node, symbol)
+  if (relayChainAssetMatch) return relayChainAssetMatch
+
+  return undefined
 }
 
 export const findAssetById = (assets: TForeignAsset[], assetId: TCurrency) => {

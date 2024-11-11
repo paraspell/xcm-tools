@@ -1,12 +1,7 @@
 // Contains detailed structure of XCM call construction for Basilisk Parachain
 
 import { InvalidCurrencyError } from '../../errors'
-import {
-  type IXTokensTransfer,
-  type TNodePolkadotKusama,
-  Version,
-  type XTokensTransferInput
-} from '../../types'
+import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
 import { getAllNodeProviders } from '../../utils'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
@@ -29,7 +24,7 @@ class Basilisk<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
 
   getProvider(): string {
     // Prefer Dwellir RPC endpoint
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[1]
+    return getAllNodeProviders(this.node)[1]
   }
 }
 

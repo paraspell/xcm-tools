@@ -30,7 +30,7 @@ export const buildEthTransferOptions = async ({
     context,
     signer,
     destAddress,
-    ethAsset.assetId,
+    ethAsset.assetId ?? '',
     destParaId,
     BigInt(amount),
     BigInt(0)

@@ -3,7 +3,7 @@ import { useEffect, type FC } from "react";
 import {
   Button,
   Checkbox,
-  Group,
+  JsonInput,
   SegmentedControl,
   Select,
   Stack,
@@ -20,7 +20,7 @@ export type FormValues = {
   currency: string;
   address: string;
   useApi: boolean;
-  currencyType?: "id" | "symbol";
+  currencyType?: "id" | "symbol" | "multilocation";
 };
 
 type Props = {
@@ -79,7 +79,15 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
     if (form.values.node === "Ethereum" && notSupportsEthereum) {
       form.setFieldValue("node", "Acala");
     }
+    if (showSymbolInput) {
+      form.setFieldValue("currency", "");
+      form.setFieldValue("currencyType", "symbol");
+    }
   }, [form.values.func]);
+
+  const onSelectCurrencyTypeClick = () => {
+    form.setFieldValue("currency", "");
+  };
 
   return (
     <form onSubmit={form.onSubmit(onSubmitInternal)}>
@@ -107,21 +115,35 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
         />
 
         {showSymbolInput && (
-          <Group align="flex-end">
-            <TextInput
-              flex={1}
-              label={supportsCurrencyType ? "Currency" : "Symbol"}
-              placeholder={
-                supportsCurrencyType
-                  ? "GLMR"
-                  : form.values.currencyType === "id"
-                    ? "Asset ID"
-                    : "Symbol"
-              }
-              required
-              data-testid="input-currency"
-              {...form.getInputProps("currency")}
-            />
+          <Stack gap="xs">
+            {(form.values.currencyType === "id" ||
+              form.values.currencyType === "symbol") && (
+              <TextInput
+                flex={1}
+                label={supportsCurrencyType ? "Currency" : "Symbol"}
+                placeholder={
+                  supportsCurrencyType
+                    ? "GLMR"
+                    : form.values.currencyType === "id"
+                      ? "Asset ID"
+                      : "Symbol"
+                }
+                required
+                data-testid="input-currency"
+                {...form.getInputProps("currency")}
+              />
+            )}
+
+            {form.values.currencyType === "multilocation" && (
+              <JsonInput
+                placeholder="Input Multi-Location JSON or interior junctions JSON to search for and identify the asset"
+                formatOnBlur
+                autosize
+                minRows={10}
+                {...form.getInputProps("currency")}
+              />
+            )}
+
             {supportsCurrencyType && (
               <SegmentedControl
                 size="xs"
@@ -129,12 +151,14 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
                 data={[
                   { label: "Asset ID", value: "id" },
                   { label: "Symbol", value: "symbol" },
+                  { label: "Multi-location", value: "multilocation" },
                 ]}
+                onClick={onSelectCurrencyTypeClick}
                 data-testid="currency-type"
                 {...form.getInputProps("currencyType")}
               />
             )}
-          </Group>
+          </Stack>
         )}
 
         {showAddressInput && (

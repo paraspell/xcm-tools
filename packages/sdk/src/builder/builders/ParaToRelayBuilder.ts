@@ -3,12 +3,12 @@
 import { send, sendSerializedApiCall } from '../../pallets/xcmPallet/transfer'
 import type {
   TSerializedApiCall,
-  TNode,
   TSendOptions,
   TAmount,
   TAddress,
   TCurrency,
-  Version
+  Version,
+  TNodePolkadotKusama
 } from '../../types'
 import { getRelayChainSymbol } from '../../pallets/assets'
 import { type UseKeepAliveFinalBuilder, type AddressBuilder, GeneralBuilder } from './Builder'
@@ -19,7 +19,7 @@ class ParaToRelayBuilder<TApi, TRes>
   implements AddressBuilder<TApi, TRes>, UseKeepAliveFinalBuilder<TApi, TRes>
 {
   private readonly api: IPolkadotApi<TApi, TRes>
-  private readonly from: TNode
+  private readonly from: TNodePolkadotKusama
   private readonly amount: TAmount | null
   private readonly feeAsset?: TCurrency
 
@@ -29,7 +29,7 @@ class ParaToRelayBuilder<TApi, TRes>
 
   private constructor(
     api: IPolkadotApi<TApi, TRes>,
-    from: TNode,
+    from: TNodePolkadotKusama,
     amount: TAmount | null,
     private batchManager: BatchTransactionManager<TApi, TRes>,
     feeAsset?: TCurrency
@@ -43,7 +43,7 @@ class ParaToRelayBuilder<TApi, TRes>
 
   static create<TApi, TRes>(
     api: IPolkadotApi<TApi, TRes>,
-    from: TNode,
+    from: TNodePolkadotKusama,
     amount: TAmount | null,
     batchManager: BatchTransactionManager<TApi, TRes>,
     feeAsset?: TCurrency

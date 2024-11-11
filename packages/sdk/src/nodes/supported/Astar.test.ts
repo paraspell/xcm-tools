@@ -52,18 +52,6 @@ describe('Astar', () => {
     expect(spy).toHaveBeenCalledWith(mockPolkadotXCMInput, 'reserve_transfer_assets')
   })
 
-  it('should call transferPolkadotXCM with reserveWithdrawAssets for non-ParaToPara scenario', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-    const inputWithDifferentScenario = {
-      ...mockPolkadotXCMInput,
-      scenario: 'RelayToPara'
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
-
-    await astar.transferPolkadotXCM(inputWithDifferentScenario)
-
-    expect(spy).toHaveBeenCalledWith(inputWithDifferentScenario, 'reserve_withdraw_assets')
-  })
-
   it('should call transferXTokens with currencyID', () => {
     const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
 

@@ -22,7 +22,7 @@ class Crust<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
       return 'SelfReserve'
     }
 
-    if (!isForeignAsset(asset)) {
+    if (!isForeignAsset(asset) || !asset.assetId) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 

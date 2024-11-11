@@ -1,8 +1,6 @@
-import type { TAsset, TNodePolkadotKusama } from '../../../types'
-import { getAssetHubMultiLocation } from './getAssetHubMultiLocation'
+import type { TAsset, TMultiLocation, TNodePolkadotKusama } from '../../../types'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { InvalidCurrencyError } from '../../../errors'
-import { ethers } from 'ethers'
 import { isForeignAsset } from '../../../utils/assets'
 
 export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
@@ -16,14 +14,20 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   }
 
   if (!isForeignAsset(asset)) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+  }
+
+  if (node === 'Polimec') {
+    if (asset.assetId === undefined) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return api.getForeignAssetsByIdBalance(address, asset.assetId)
   }
 
   if (node === 'AssetHubPolkadot') {
-    const multiLocation = getAssetHubMultiLocation(asset.symbol)
-    // Ethereum address ID indicates that it is an Ethereum asset
-    if (multiLocation && isForeignAsset(asset) && ethers.isAddress(asset.assetId)) {
-      return api.getAssetHubForeignBalance(address, multiLocation)
+    if (asset.multiLocation) {
+      return api.getAssetHubForeignBalance(address, asset.multiLocation as TMultiLocation)
     } else {
       return api.getBalanceForeignAssetsAccount(address, Number(asset.assetId))
     }

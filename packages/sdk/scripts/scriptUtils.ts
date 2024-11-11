@@ -48,7 +48,7 @@ export const fetchWithTimeout = async <T>(
   wsUrl: string,
   fetcher: (api: ApiPromise) => T
 ): Promise<T | null> => {
-  const TIMEOUT_MS = 60000
+  const TIMEOUT_MS = 10000
   try {
     return await new Promise<T>((resolve, reject) => {
       const wsProvider = new WsProvider(wsUrl)

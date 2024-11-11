@@ -2,14 +2,14 @@
 
 import type {
   TSerializedApiCall,
-  TNode,
   TSendOptions,
   TCurrencyInput,
   TAmount,
   TAddress,
   TDestination,
   TCurrency,
-  Version
+  Version,
+  TNodePolkadotKusama
 } from '../../types'
 import type { AddressBuilder, UseKeepAliveFinalBuilder } from './Builder'
 import { GeneralBuilder, type AmountBuilder, type AmountOrFeeAssetBuilder } from './Builder'
@@ -28,7 +28,7 @@ class ParaToParaBuilder<TApi, TRes>
     UseKeepAliveFinalBuilder<TApi, TRes>
 {
   private readonly api: IPolkadotApi<TApi, TRes>
-  private readonly from: TNode
+  private readonly from: TNodePolkadotKusama
   private readonly to: TDestination
   private readonly currency: TCurrencyInput
   private readonly paraIdTo?: number
@@ -42,7 +42,7 @@ class ParaToParaBuilder<TApi, TRes>
 
   private constructor(
     api: IPolkadotApi<TApi, TRes>,
-    from: TNode,
+    from: TNodePolkadotKusama,
     to: TDestination,
     currency: TCurrencyInput,
     private batchManager: BatchTransactionManager<TApi, TRes>,
@@ -58,7 +58,7 @@ class ParaToParaBuilder<TApi, TRes>
 
   static createParaToPara<TApi, TRes>(
     api: IPolkadotApi<TApi, TRes>,
-    from: TNode,
+    from: TNodePolkadotKusama,
     to: TDestination,
     currency: TCurrencyInput,
     batchManager: BatchTransactionManager<TApi, TRes>,

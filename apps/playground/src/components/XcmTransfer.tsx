@@ -5,6 +5,7 @@ import TransferForm from "./TransferForm";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import {
   isForeignAsset,
+  Override,
   type Extrinsic,
   type TCurrencyInput,
   type TMultiLocation,
@@ -58,6 +59,10 @@ const XcmTransfer = () => {
         return {
           symbol: customCurrency,
         };
+      } else if (customCurrencyType === "overridenMultilocation") {
+        return {
+          multilocation: Override(JSON.parse(customCurrency) as TMultiLocation),
+        };
       } else {
         return {
           multilocation: JSON.parse(customCurrency) as TMultiLocation,
@@ -80,7 +85,7 @@ const XcmTransfer = () => {
       return hasDuplicateIds
         ? { symbol: currency.symbol ?? "" }
         : {
-            id: currency.assetId,
+            id: currency.assetId ?? "",
           };
     } else {
       throw Error("Currency is required");

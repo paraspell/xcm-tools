@@ -1,11 +1,10 @@
-import type { TAmount } from '../../types'
+import type { TAmount, TCurrencyInput, TNodePolkadotKusama } from '../../types'
 import {
   Version,
   Parents,
   type TMultiLocationHeader,
   type TScenario,
   type TDestination,
-  type TNode,
   type TCurrencySelectionHeaderArr
 } from '../../types'
 import { getParaId } from '../assets'
@@ -15,6 +14,7 @@ import { type TMultiAsset } from '../../types/TMultiAsset'
 import { findParachainJunction } from './findParachainJunction'
 import { createX1Payload } from '../../utils/createX1Payload'
 import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
+import { InvalidCurrencyError } from '../../errors'
 
 export const isTMultiLocation = (value: unknown): value is TMultiLocation =>
   typeof value === 'object' && value !== null && 'parents' in value && 'interior' in value
@@ -44,6 +44,24 @@ export const createBridgeCurrencySpec = (
   }
 }
 
+export const createMultiAsset = (
+  version: Version,
+  amount: TAmount,
+  multiLocation: TMultiLocation
+): TMultiAsset => {
+  if (version === Version.V4) {
+    return {
+      id: multiLocation,
+      fun: { Fungible: amount }
+    }
+  }
+
+  return {
+    id: { Concrete: multiLocation },
+    fun: { Fungible: amount }
+  }
+}
+
 export const createCurrencySpec = (
   amount: TAmount,
   version: Version,
@@ -54,22 +72,17 @@ export const createCurrencySpec = (
   if (!overriddenCurrency) {
     return {
       [version]: [
-        {
-          id: version === Version.V4 ? { parents, interior } : { Concrete: { parents, interior } },
-          fun: { Fungible: amount }
-        }
+        createMultiAsset(version, amount, {
+          parents,
+          interior
+        })
       ]
     }
   }
 
   return isTMultiLocation(overriddenCurrency)
     ? {
-        [version]: [
-          {
-            id: version === Version.V4 ? overriddenCurrency : { Concrete: overriddenCurrency },
-            fun: { Fungible: amount }
-          }
-        ]
+        [version]: [createMultiAsset(version, amount, overriddenCurrency)]
       }
     : // It must be TMultiAsset if not TMultiLocation
       {
@@ -132,7 +145,9 @@ export const createBridgePolkadotXcmDest = (
   }
 }
 
-export const resolveTNodeFromMultiLocation = (multiLocation: TMultiLocation): TNode => {
+export const resolveTNodeFromMultiLocation = (
+  multiLocation: TMultiLocation
+): TNodePolkadotKusama => {
   const parachainId = findParachainJunction(multiLocation)
   if (parachainId === null) {
     throw new Error('Parachain ID not found in destination multi location.')
@@ -145,6 +160,21 @@ export const resolveTNodeFromMultiLocation = (multiLocation: TMultiLocation): TN
   }
 
   return node
+}
+
+export const throwUnsupportedCurrency = (
+  currency: TCurrencyInput,
+  node: TNodePolkadotKusama,
+  { isDestination } = { isDestination: false }
+) => {
+  if ('multilocation' in currency) {
+    throw new InvalidCurrencyError(`
+      Selected chain doesn't support multilocation you provided. Maybe you meant custom multilocation. If so, you need to use override option. Your selection should look like this: {multilocation: Override(${JSON.stringify(currency.multilocation)})}.`)
+  }
+
+  throw new InvalidCurrencyError(
+    `${isDestination ? 'Destination' : 'Origin'} node ${node} does not support currency ${JSON.stringify(currency)}.`
+  )
 }
 
 export { constructRelayToParaParameters } from './constructRelayToParaParameters'

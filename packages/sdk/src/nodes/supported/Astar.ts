@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
-import { InvalidCurrencyError } from '../../errors'
 import type { TTransferReturn } from '../../types'
 import {
   Version,
@@ -27,23 +26,23 @@ class Astar<TApi, TRes>
     input: PolkadotXCMTransferInput<TApi, TRes>
   ): Promise<TTransferReturn<TRes>> {
     // TESTED https://polkadot.subscan.io/xcm_message/polkadot-f2b697df74ebe4b62853fe81b8b7d0522464972d
-    const section =
-      input.scenario === 'ParaToPara' ? 'reserve_transfer_assets' : 'reserve_withdraw_assets'
-    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, section))
+    return Promise.resolve(
+      PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserve_transfer_assets')
+    )
   }
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { asset } = input
 
-    if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    if (!isForeignAsset(asset) || !asset.assetId) {
+      return XTokensTransferImpl.transferXTokens(input, undefined)
     }
 
     return XTokensTransferImpl.transferXTokens(input, BigInt(asset.assetId))
   }
 
   protected canUseXTokens({ asset }: TSendInternalOptions<TApi, TRes>): boolean {
-    return asset.symbol !== this.getNativeAssetSymbol() || isForeignAsset(asset)
+    return asset.symbol !== this.getNativeAssetSymbol()
   }
 }
 

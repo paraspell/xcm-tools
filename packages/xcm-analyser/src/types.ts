@@ -44,7 +44,7 @@ export const JunctionPlurality = z.object({
 });
 export const JunctionGlobalConsensus = z.object({ GlobalConsensus: NetworkId });
 
-const JunctionSchema = z.union([
+export const JunctionSchema = z.union([
   JunctionParachain,
   JunctionAccountId32,
   JunctionAccountIndex64,

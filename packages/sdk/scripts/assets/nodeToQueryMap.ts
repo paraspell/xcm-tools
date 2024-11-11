@@ -1,57 +1,60 @@
 import type { TNode } from '../../src/types'
 
+export const GLOBAL = 'GLOBAL_XCM_REGISTRY'
+
 export const nodeToQuery: Record<TNode, string | null> = {
   // Chain state query: <module>.<section> for assets metadata
-  Acala: 'assetRegistry.assetMetadatas',
-  Astar: 'assets.metadata',
-  BifrostPolkadot: 'assetRegistry.currencyMetadatas',
+  // Or GLOBAL flag to use global XCM registry
+  Acala: GLOBAL,
+  Astar: GLOBAL,
+  BifrostPolkadot: GLOBAL,
   Bitgreen: null, // No assets metadata query
-  Centrifuge: 'ormlAssetRegistry.metadata',
+  Centrifuge: GLOBAL,
   ComposableFinance: 'assetsRegistry.assetSymbol',
-  Darwinia: 'assets.metadata',
-  Hydration: 'assetRegistry.assets',
-  Interlay: 'assetRegistry.metadata',
-  Litentry: null, // Assets query returns empty array
-  Moonbeam: 'assets.metadata',
-  Parallel: 'assets.metadata',
-  AssetHubPolkadot: 'assets.metadata',
-  Altair: 'ormlAssetRegistry.metadata',
+  Darwinia: GLOBAL,
+  Hydration: GLOBAL,
+  Interlay: GLOBAL,
+  Litentry: GLOBAL,
+  Moonbeam: GLOBAL,
+  Parallel: GLOBAL,
+  AssetHubPolkadot: GLOBAL,
+  Altair: GLOBAL,
   Amplitude: 'assetRegistry.metadata',
-  Bajun: 'assets.metadata',
-  Basilisk: 'assetRegistry.assetMetadataMap',
-  BifrostKusama: 'assetRegistry.currencyMetadatas',
-  Calamari: 'assets.metadata',
+  Bajun: GLOBAL,
+  Basilisk: GLOBAL,
+  BifrostKusama: GLOBAL,
+  Calamari: GLOBAL,
   Crab: 'assets.metadata',
   CrustShadow: 'assets.metadata',
   Encointer: null, // No assets metadata query
-  Imbue: null, // Assets query returns empty array
-  Integritee: null, // Assets query returns empty array
+  Imbue: GLOBAL,
+  Integritee: GLOBAL,
   InvArchTinker: null, // Assets query returns empty array
-  Karura: 'assetRegistry.assetMetadatas',
-  Kintsugi: 'assetRegistry.metadata',
-  Moonriver: 'assets.metadata',
-  ParallelHeiko: 'assets.metadata',
+  Karura: GLOBAL,
+  Kintsugi: GLOBAL,
+  Moonriver: GLOBAL,
+  ParallelHeiko: GLOBAL,
   Picasso: 'assetsRegistry.assetSymbol',
-  Pioneer: 'assetManager.assetMetadatas',
-  Quartz: null, // No assets metadata query
-  RobonomicsKusama: 'assets.metadata',
+  Pioneer: GLOBAL,
+  Quartz: GLOBAL,
+  RobonomicsKusama: GLOBAL,
   RobonomicsPolkadot: 'assets.metadata',
   PeopleKusama: null, // Does not support ParaToPara transfers
   PeoplePolkadot: null, // Does not support ParaToPara transfers
-  Shiden: 'assets.metadata',
-  AssetHubKusama: 'assets.metadata',
-  Turing: 'assetRegistry.metadata',
-  Unique: null, // Foreign assets have no symbol or decimals
+  Shiden: GLOBAL,
+  AssetHubKusama: GLOBAL,
+  Turing: GLOBAL,
+  Unique: GLOBAL,
   Crust: 'assets.metadata',
   Manta: 'assets.metadata',
-  Nodle: null, // Only NODL paraToPara for now
+  Nodle: GLOBAL,
   NeuroWeb: 'assets.metadata',
-  Pendulum: '', // Only PEN paraToPara for now
+  Pendulum: GLOBAL,
   Polkadex: 'assets.asset',
   Zeitgeist: 'assetRegistry.metadata',
   Collectives: null,
-  Phala: 'assets.metadata',
-  Khala: 'assets.metadata',
+  Phala: GLOBAL,
+  Khala: GLOBAL,
   CoretimeKusama: null,
   CoretimePolkadot: null,
   Subsocial: null, // No assets metadata query

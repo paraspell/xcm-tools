@@ -1,5 +1,10 @@
-import type { TMultiLocation, TNodeWithRelayChains } from '../types'
+import type { TNodeWithRelayChains } from '../types'
 import { type TRelayChainSymbol } from '../types'
+
+type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
+  {
+    [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>
+  }[Keys]
 
 type TBaseAsset = {
   symbol?: string
@@ -12,9 +17,12 @@ export type TNativeAsset = TBaseAsset & {
   symbol: string
 }
 
-export type TForeignAsset = TBaseAsset & {
-  assetId: string
-}
+export type TForeignAsset = TBaseAsset &
+  AtLeastOne<{
+    assetId?: string
+    multiLocation?: object
+    xcmInterior?: object[]
+  }>
 
 export type TAsset = TNativeAsset | TForeignAsset
 
@@ -24,7 +32,6 @@ export type TNodeAssets = {
   nativeAssetSymbol: string
   nativeAssets: TNativeAsset[]
   otherAssets: TForeignAsset[]
-  multiLocations?: TMultiLocation[]
 }
 
 export type TAssetJsonMap = Record<TNodeWithRelayChains, TNodeAssets>

@@ -1,10 +1,10 @@
 import * as internalUtils from '../utils'
-import type { TNodeWithRelayChains } from '../types'
+import type { TNodeDotKsmWithRelayChains } from '../types'
 import PapiApi from './PapiApi'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 import type { IPolkadotApi } from '../api'
 
-export const createApiInstanceForNode = (node: TNodeWithRelayChains) => {
+export const createApiInstanceForNode = (node: TNodeDotKsmWithRelayChains) => {
   const pjsApi = new PapiApi()
   return internalUtils.createApiInstanceForNode<TPapiApi, TPapiTransaction>(pjsApi, node)
 }

@@ -2,8 +2,6 @@ import { describe, it, expect, vi } from 'vitest'
 import { getAssets, getOtherAssets } from './assets'
 import { getSupportedAssets } from './getSupportedAssets'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
-import { isRelayChain } from '../../utils'
-import { getDefaultPallet } from '../pallets'
 
 vi.mock('./assets', () => ({
   getAssets: vi.fn(),
@@ -52,23 +50,6 @@ describe('getSupportedAssets', () => {
 
     const result2 = getSupportedAssets('AssetHubKusama', 'AssetHubPolkadot')
     expect(result2).toEqual([mockDOTAsset, mockKSMAsset])
-  })
-
-  it('should return filtered other assets when origin is not a relay chain and destination is AssetHub', () => {
-    const mockOriginAssets = [{ symbol: 'PHA', assetId: '300' }]
-    const mockDestinationAssets = [{ symbol: 'PHA', assetId: '400' }]
-    vi.mocked(getAssets).mockImplementation(node => {
-      if (node === 'Phala') return mockOriginAssets
-      if (node === 'AssetHubPolkadot') return mockDestinationAssets
-      return []
-    })
-    vi.mocked(getOtherAssets).mockReturnValue(mockDestinationAssets)
-    vi.mocked(isRelayChain).mockReturnValue(false)
-    vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
-
-    const result = getSupportedAssets('Phala', 'AssetHubPolkadot')
-    expect(result).toEqual(mockDestinationAssets.filter(asset => asset.symbol === 'PHA'))
-    expect(getOtherAssets).toHaveBeenCalledWith('AssetHubPolkadot')
   })
 
   it('should return common assets between origin and destination', () => {

@@ -81,7 +81,7 @@ describe('transfer', () => {
   it('main transfer function - FULL_TRANSFER scenario - auto exchange', async () => {
     const options: TTransferOptions = {
       ...MOCK_TRANSFER_OPTIONS,
-      currencyFrom: { id: '1333' },
+      currencyFrom: { id: '18446744073709551619' },
       currencyTo: { id: '18446744073709551616' },
       exchange: undefined,
       type: TransactionType.FULL_TRANSFER,

@@ -1,5 +1,5 @@
 import type { AbstractProvider, Signer } from 'ethers'
-import type { TCurrencyCore, TNodePolkadotKusama } from '../../../types'
+import type { TCurrencyCoreV1, TNodePolkadotKusama } from '../../../types'
 import type { TEvmBuilderOptions, TOptionalEvmBuilderOptions } from '../../../types/TBuilder'
 import transferEthToPolkadot from '../../../pallets/xcmPallet/ethTransfer/ethTransfer'
 
@@ -44,7 +44,7 @@ class EvmBuilderClass {
    * @param currency - The currency to be transferred.
    * @returns An instance of EvmBuilder
    */
-  currency(currency: TCurrencyCore): this {
+  currency(currency: TCurrencyCoreV1): this {
     this._options.currency = currency
     return this
   }

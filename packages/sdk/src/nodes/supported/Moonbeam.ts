@@ -8,7 +8,6 @@ import {
   Version,
   type XTokensTransferInput,
   type TRelayToParaOptions,
-  type TNodePolkadotKusama,
   type TSelfReserveAsset,
   type TXcmForeignAsset
 } from '../../types'
@@ -25,7 +24,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
   private getCurrencySelection(asset: TAsset): TSelfReserveAsset | TXcmForeignAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) return 'SelfReserve'
 
-    if (!isForeignAsset(asset)) {
+    if (!isForeignAsset(asset) || !asset.assetId) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
@@ -48,7 +47,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
   }
 
   getProvider(): string {
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[2]
+    return getAllNodeProviders(this.node)[2]
   }
 }
 

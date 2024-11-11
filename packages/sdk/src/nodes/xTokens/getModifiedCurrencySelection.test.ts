@@ -1,25 +1,159 @@
-import type { ApiPromise } from '@polkadot/api'
-import { InvalidCurrencyError } from '../../errors'
-import type { XTokensTransferInput } from '../../types'
-import { Parents, Version } from '../../types'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
-import { describe, it, expect } from 'vitest'
+import { Version, Parents } from '../../types'
+import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
+import type { XTokensTransferInput } from '../../types'
+
+vi.mock('../../utils/assets', () => ({
+  isForeignAsset: vi.fn()
+}))
+
+vi.mock('../../pallets/assets', () => ({
+  getOtherAssets: vi.fn()
+}))
+
+import { isForeignAsset } from '../../utils/assets'
+import { getOtherAssets } from '../../pallets/assets'
+import { DOT_MULTILOCATION } from '../../const'
+import { createMultiAsset } from '../../pallets/xcmPallet/utils'
 
 describe('getModifiedCurrencySelection', () => {
-  it('returns correct structure with all parameters provided', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('throws error when asset is not foreign and destination is undefined', () => {
+    const version = Version.V1
+    const amount = '500'
+    const paraIdTo = 1000
+
+    const xTransferInput = {
+      amount,
+      asset: { symbol: 'DOT' },
+      paraIdTo,
+      destination: undefined
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
+
+    vi.mocked(isForeignAsset).mockReturnValue(false)
+
+    expect(getModifiedCurrencySelection(version, xTransferInput)).toEqual({
+      [version]: createMultiAsset(version, amount, DOT_MULTILOCATION)
+    })
+  })
+
+  it('returns assetHubAsset.multiLocation when asset is not foreign and assetHubAsset.multiLocation is defined', () => {
+    const version = Version.V1
+    const amount = '1000'
+    const paraIdTo = 1000
+    const destination = 'AssetHubPolkadot'
+
+    const xTransferInput = {
+      amount,
+      asset: { symbol: 'DOT' },
+      paraIdTo,
+      destination
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
+
+    vi.mocked(isForeignAsset).mockReturnValue(false)
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        symbol: 'DOT',
+        multiLocation: { parents: Parents.ONE, interior: 'Here' }
+      }
+    ])
+
+    const result = getModifiedCurrencySelection(version, xTransferInput)
+    expect(result).toEqual({
+      [version]: {
+        id: {
+          Concrete: {
+            parents: Parents.ONE,
+            interior: 'Here'
+          }
+        },
+        fun: {
+          Fungible: amount
+        }
+      }
+    })
+  })
+
+  it('returns assetHubAsset.xcmInterior when asset is not foreign and assetHubAsset.xcmInterior is defined', () => {
+    const version = Version.V2
+    const amount = '2000'
+    const paraIdTo = 2000
+    const destination = 'AssetHubPolkadot'
+
+    const xTransferInput = {
+      amount,
+      asset: { symbol: 'KSM' },
+      paraIdTo,
+      destination
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
+
+    vi.mocked(isForeignAsset).mockReturnValue(false)
+    vi.mocked(getOtherAssets).mockReturnValue([
+      {
+        symbol: 'KSM',
+        xcmInterior: [{ NetworkId: 'Any' }]
+      }
+    ])
+
+    const result = getModifiedCurrencySelection(version, xTransferInput)
+    expect(result).toEqual({
+      [version]: {
+        id: {
+          Concrete: {
+            parents: Parents.ONE,
+            interior: {
+              X1: [{ NetworkId: 'Any' }]
+            }
+          }
+        },
+        fun: {
+          Fungible: amount
+        }
+      }
+    })
+  })
+
+  it('throws InvalidCurrencyError when assetHubAsset is undefined', () => {
+    const version = Version.V1
+    const amount = '500'
+    const paraIdTo = 1000
+    const destination = 'AssetHubPolkadot'
+
+    const xTransferInput = {
+      amount,
+      asset: { symbol: 'UNKNOWN' },
+      paraIdTo,
+      destination
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
+
+    vi.mocked(isForeignAsset).mockReturnValue(false)
+    vi.mocked(getOtherAssets).mockReturnValue([])
+
+    expect(() => getModifiedCurrencySelection(version, xTransferInput)).toThrow(
+      'Asset UNKNOWN not found in AssetHub'
+    )
+  })
+
+  it('returns default multiLocation for Bifrost origin', () => {
     const version = Version.V2
     const amount = '1000'
     const currencyID = '123'
     const paraIdTo = 2000
+    const origin = 'BifrostPolkadot'
 
     const xTransferInput = {
       amount,
-      asset: {
-        assetId: currencyID
-      },
-      paraIdTo
+      asset: { assetId: currencyID },
+      paraIdTo,
+      origin
     } as XTokensTransferInput<ApiPromise, Extrinsic>
+
+    vi.mocked(isForeignAsset).mockReturnValue(true)
 
     const result = getModifiedCurrencySelection(version, xTransferInput)
     expect(result).toEqual({
@@ -43,61 +177,106 @@ describe('getModifiedCurrencySelection', () => {
     })
   })
 
-  it('throws an error when currencyID is undefined or empty', () => {
-    const version = Version.V1
-    const amount = '500'
-    const paraIdTo = 1000
+  it('returns asset.multiLocation when it is defined', () => {
+    const version = Version.V3
+    const amount = '1500'
+    const paraIdTo = 3000
 
     const xTransferInput = {
       amount,
       asset: {
-        assetId: ''
+        multiLocation: {
+          parents: Parents.ONE,
+          interior: 'Here'
+        }
       },
       paraIdTo
     } as XTokensTransferInput<ApiPromise, Extrinsic>
 
-    expect(() => getModifiedCurrencySelection(version, xTransferInput)).toThrow(
-      InvalidCurrencyError
-    )
+    vi.mocked(isForeignAsset).mockReturnValue(true)
+
+    const result = getModifiedCurrencySelection(version, xTransferInput)
+    expect(result).toEqual({
+      [version]: {
+        id: {
+          Concrete: {
+            parents: Parents.ONE,
+            interior: 'Here'
+          }
+        },
+        fun: {
+          Fungible: amount
+        }
+      }
+    })
   })
 
-  it('returns correct structure with feeAsset provided', () => {
+  it('returns asset.xcmInterior when asset.multiLocation is undefined but xcmInterior is defined', () => {
     const version = Version.V3
     const amount = '1500'
-    const currencyID = '321'
     const paraIdTo = 3000
-    const feeAsset = '500'
 
     const xTransferInput = {
       amount,
       asset: {
-        assetId: currencyID
+        xcmInterior: [{ NetworkId: 'Any' }, { Parachain: paraIdTo }]
       },
-      paraIdTo,
-      feeAsset
+      paraIdTo
     } as XTokensTransferInput<ApiPromise, Extrinsic>
+
+    vi.mocked(isForeignAsset).mockReturnValue(true)
 
     const result = getModifiedCurrencySelection(version, xTransferInput)
     expect(result).toEqual({
-      [version]: [
-        {
-          id: {
-            Concrete: {
-              parents: Parents.ONE,
-              interior: {
-                X3: [
-                  { Parachain: paraIdTo },
-                  { PalletInstance: '50' },
-                  { GeneralIndex: BigInt(currencyID) }
-                ]
-              }
+      [version]: {
+        id: {
+          Concrete: {
+            parents: Parents.ONE,
+            interior: {
+              X2: [{ NetworkId: 'Any' }, { Parachain: paraIdTo }]
             }
-          },
-          fun: {
-            Fungible: amount
           }
+        },
+        fun: {
+          Fungible: amount
         }
-      ]
+      }
+    })
+  })
+
+  it('returns default multiLocation when asset.multiLocation and xcmInterior are undefined', () => {
+    const version = Version.V2
+    const amount = '1000'
+    const currencyID = '123'
+    const paraIdTo = 2000
+
+    const xTransferInput = {
+      amount,
+      asset: { assetId: currencyID },
+      paraIdTo
+    } as XTokensTransferInput<ApiPromise, Extrinsic>
+
+    vi.mocked(isForeignAsset).mockReturnValue(true)
+
+    const result = getModifiedCurrencySelection(version, xTransferInput)
+    expect(result).toEqual({
+      [version]: {
+        id: {
+          Concrete: {
+            parents: Parents.ONE,
+            interior: {
+              X3: [
+                { Parachain: paraIdTo },
+                { PalletInstance: '50' },
+                { GeneralIndex: BigInt(currencyID) }
+              ]
+            }
+          }
+        },
+        fun: {
+          Fungible: amount
+        }
+      }
     })
   })
 })

@@ -1,19 +1,30 @@
-import type { TAsset, TCurrencyInput, TNativeAsset, TNodeWithRelayChains } from '../../types'
-import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
-import { getAssetDecimals, getAssetsObject, getOtherAssets } from './assets'
+import type {
+  TAsset,
+  TCurrencyInput,
+  TJunction,
+  TMultiLocation,
+  TNodeWithRelayChains
+} from '../../types'
+import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
+import { getAssetsObject, getOtherAssets } from './assets'
 import { findAssetById, findAssetBySymbol } from './assetsUtils'
+import { findAssetByMultiLocation } from './findAssetByMultiLocation'
 
 export const getAssetBySymbolOrId = (
   node: TNodeWithRelayChains,
   currency: TCurrencyInput,
   isRelayDestination: boolean = false,
-  destination?: TNodeWithRelayChains
+  destination?: TNodeWithRelayChains,
+  preferForeignAssets = false
 ): TAsset | null => {
-  if ('multilocation' in currency || 'multiasset' in currency) {
+  if (
+    ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) ||
+    'multiasset' in currency
+  ) {
     return null
   }
 
-  const { otherAssets, nativeAssets, relayChainAssetSymbol } = getAssetsObject(node)
+  const { otherAssets, nativeAssets } = getAssetsObject(node)
 
   const resolvedOtherAssets = destination === 'Ethereum' ? getOtherAssets('Ethereum') : otherAssets
 
@@ -25,29 +36,25 @@ export const getAssetBySymbolOrId = (
       otherAssets,
       nativeAssets,
       currency.symbol,
-      isRelayDestination
+      isRelayDestination,
+      preferForeignAssets
     )
-  } else {
+  } else if (
+    'multilocation' in currency &&
+    !isOverrideMultiLocationSpecifier(currency.multilocation)
+  ) {
+    asset = findAssetByMultiLocation(
+      resolvedOtherAssets,
+      currency.multilocation as string | TMultiLocation | TJunction[]
+    )
+  } else if ('id' in currency) {
     asset = findAssetById(resolvedOtherAssets, currency.id)
+  } else {
+    throw new Error('Invalid currency input')
   }
 
   if (asset) {
     return asset
-  }
-
-  if (
-    'symbol' in currency &&
-    ((isSymbolSpecifier(currency.symbol) &&
-      currency.symbol.type === 'Native' &&
-      relayChainAssetSymbol.toLowerCase() === currency.symbol.value.toLowerCase()) ||
-      (!isSymbolSpecifier(currency.symbol) &&
-        relayChainAssetSymbol.toLowerCase() === currency.symbol.toLowerCase()))
-  ) {
-    const relayChainAsset: TNativeAsset = {
-      symbol: relayChainAssetSymbol,
-      decimals: getAssetDecimals(node, relayChainAssetSymbol) as number
-    }
-    return relayChainAsset
   }
 
   return null

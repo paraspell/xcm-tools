@@ -63,7 +63,7 @@ export function addAliasesToDuplicateSymbols(assetsMap: TAssetJsonMap): TAssetJs
 
       for (const asset of allAssets) {
         if (asset.symbol === symbol && isForeignAsset(asset)) {
-          const aliasNumber = aliasNumbers[asset.assetId]
+          const aliasNumber = asset.assetId ? aliasNumbers[asset.assetId] : undefined
           if (aliasNumber !== undefined) {
             asset.alias = `${symbol}${aliasNumber}`
           }

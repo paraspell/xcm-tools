@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TForeignAsset, TNodeAssets } from '../../src/types'
 import axios from 'axios'
 import { Project, SyntaxKind } from 'ts-morph'
@@ -58,10 +59,19 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
       .getText()
 
     assets.push({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       symbol: JSON.parse(symbol),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      assetId: JSON.parse(assetId)
+      assetId: JSON.parse(assetId),
+      multiLocation: {
+        parents: 2,
+        interior: {
+          X2: [
+            {
+              GlobalConsensus: { Ethereum: { chain_id: 1 } }
+            },
+            { AccountKey20: { key: JSON.parse(assetId) } }
+          ]
+        }
+      }
     })
   })
 

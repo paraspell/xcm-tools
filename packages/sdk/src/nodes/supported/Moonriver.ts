@@ -2,7 +2,7 @@
 
 import { InvalidCurrencyError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { TAsset, TNodePolkadotKusama } from '../../types'
+import type { TAsset } from '../../types'
 import {
   type IXTokensTransfer,
   Version,
@@ -25,7 +25,7 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
   private getCurrencySelection(asset: TAsset): TSelfReserveAsset | TXcmForeignAsset {
     if (asset.symbol === this.getNativeAssetSymbol()) return 'SelfReserve'
 
-    if (!isForeignAsset(asset)) {
+    if (!isForeignAsset(asset) || !asset.assetId) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
@@ -49,7 +49,7 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[3]
+    return getAllNodeProviders(this.node)[3]
   }
 }
 

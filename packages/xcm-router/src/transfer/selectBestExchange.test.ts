@@ -41,7 +41,7 @@ describe('selectBestExchange', () => {
   it('should find best exchange', async () => {
     options = {
       ...MOCK_TRANSFER_OPTIONS,
-      currencyFrom: { id: '1333' },
+      currencyFrom: { id: '18446744073709551619' },
       currencyTo: { id: '18446744073709551616' },
       exchange: 'AcalaDex',
     };
@@ -63,7 +63,7 @@ describe('selectBestExchange', () => {
   it('should fail to find best exchange', async () => {
     options = {
       ...MOCK_TRANSFER_OPTIONS,
-      currencyFrom: { id: '1333' },
+      currencyFrom: { id: '18446744073709551619' },
       currencyTo: { id: '18446744073709551616' },
       exchange: 'AcalaDex',
     };
