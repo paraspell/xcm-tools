@@ -35,8 +35,8 @@ describe('getAssetsObject', () => {
 
 describe('getAssetId', () => {
   it('should return id of BTC from AssetHubKusama', () => {
-    const assetId = getAssetId('AssetHubKusama', 'BTC')
-    expect(assetId).toEqual('9999')
+    const assetId = getAssetId('AssetHubKusama', 'USDt')
+    expect(assetId).toEqual('1984')
   })
 
   it('should return null for not existing assetId', () => {
@@ -83,7 +83,7 @@ describe('getOtherAssets', () => {
       expect(assets).toBeInstanceOf(Array)
       assets.forEach(asset => {
         expect(asset).toBeTypeOf('object')
-        expect(asset).toHaveProperty('assetId')
+        if (!asset.multiLocation) expect(asset).toHaveProperty('assetId')
       })
     })
   })

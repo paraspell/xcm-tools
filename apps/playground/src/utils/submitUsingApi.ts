@@ -4,12 +4,11 @@ import type { PolkadotClient } from "polkadot-api";
 import { Binary } from "polkadot-api";
 import type { TApiType } from "../types";
 import type { ApiPromise } from "@polkadot/api";
-import type { TSerializedApiCall } from "@paraspell/sdk";
-import {
-  createApiInstanceForNode,
-  type Extrinsic,
-  type TNodeWithRelayChains,
+import type {
+  TNodeDotKsmWithRelayChains,
+  TSerializedApiCall,
 } from "@paraspell/sdk";
+import { createApiInstanceForNode, type Extrinsic } from "@paraspell/sdk";
 import type { TPapiTransaction } from "@paraspell/sdk/papi";
 import type { Signer } from "@polkadot/api/types";
 import { buildTx, submitTransaction } from "../utils";
@@ -79,7 +78,7 @@ export const getTxFromApi = async <T>(
 
 export const submitTxUsingApi = async <T>(
   params: T,
-  fromNode: TNodeWithRelayChains,
+  fromNode: TNodeDotKsmWithRelayChains,
   endpoint: string,
   injectorAddress: string,
   signer: Signer,

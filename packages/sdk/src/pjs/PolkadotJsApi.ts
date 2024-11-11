@@ -3,7 +3,7 @@ import type {
   HexString,
   TAsset,
   TMultiLocation,
-  TNodeWithRelayChains,
+  TNodeDotKsmWithRelayChains,
   TSerializedApiCallV2
 } from '../types'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
@@ -35,7 +35,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api
   }
 
-  async init(node: TNodeWithRelayChains): Promise<void> {
+  async init(node: TNodeDotKsmWithRelayChains): Promise<void> {
     if (typeof this._api === 'string') {
       this.api = await this.createApiInstance(this._api)
     } else {
@@ -93,6 +93,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
+  async getForeignAssetsByIdBalance(address: string, assetId: string): Promise<bigint> {
+    const response: Codec = await this.api.query.foreignAssets.account(assetId, address)
+    const obj = response.toJSON() as TBalanceResponse
+    return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
+  }
+
   async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint> {
     const response: Array<[StorageKey<AnyTuple>, Codec]> =
       await this.api.query.tokens.accounts.entries(address)
@@ -138,7 +144,9 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return new PolkadotJsApi()
   }
 
-  async createApiForNode(node: TNodeWithRelayChains): Promise<IPolkadotApi<TPjsApi, Extrinsic>> {
+  async createApiForNode(
+    node: TNodeDotKsmWithRelayChains
+  ): Promise<IPolkadotApi<TPjsApi, Extrinsic>> {
     const api = new PolkadotJsApi()
     await api.init(node)
     return api

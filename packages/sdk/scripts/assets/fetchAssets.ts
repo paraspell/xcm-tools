@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import type {
-  TForeignAsset,
   TAssetJsonMap,
+  TForeignAsset,
   TMultiLocation,
   TNativeAsset,
   TNode,
@@ -14,10 +14,10 @@ import type {
 } from '../../src/types'
 import { getNode, getNodeEndpointOption } from '../../src/utils'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
-import { nodeToQuery } from './nodeToQueryMap'
-import { fetchBifrostAssets } from './fetchBifrostAssets'
+import { GLOBAL, nodeToQuery } from './nodeToQueryMap'
 import { fetchEthereumAssets } from './fetchEthereumAssets'
 import { addAliasesToDuplicateSymbols } from './addAliases'
+import { capitalizeMultiLocation, fetchOtherAssetsRegistry } from './fetchOtherAssetsRegistry'
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -30,9 +30,10 @@ const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   }))
 }
 
-const fetchOtherAssets = async (api: ApiPromise, query: string) => {
+const fetchOtherAssets = async (api: ApiPromise, query: string): Promise<TForeignAsset[]> => {
   const [module, section] = query.split('.')
   const res = await api.query[module][section].entries()
+
   return res
     .map(
       ([
@@ -147,38 +148,6 @@ const fetchOtherAssetsAmplitude = async (api: ApiPromise, query: string) => {
     )
 }
 
-const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string) => {
-  const [module, section] = query.split('.')
-  const res = await api.query[module][section].entries()
-  return res
-    .filter(
-      ([
-        {
-          args: [era]
-        }
-      ]) => era.toHuman() !== 'Native'
-    )
-    .map(
-      ([
-        {
-          args: [era]
-        },
-        value
-      ]) => {
-        const { symbol, decimals } = value.toHuman() as any
-        const eraObj = era as any
-        return {
-          assetId:
-            eraObj.type === 'Tranche'
-              ? Object.values(era.toHuman() ?? {})[0][0].replaceAll(',', '')
-              : Object.values(era.toHuman() ?? {})[0].replaceAll(',', ''),
-          symbol,
-          decimals: +decimals
-        }
-      }
-    )
-}
-
 const fetchOtherAssetsInnerType = async (api: ApiPromise, query: string) => {
   const [module, section] = query.split('.')
   const symbolsResponse = await api.query[module][section].entries()
@@ -273,15 +242,24 @@ const fetchNativeAsset = async (api: ApiPromise): Promise<string> => {
   return symbols[0]
 }
 
-const fetchMultiLocations = async (api: ApiPromise): Promise<TMultiLocation[]> => {
-  const res = await api.query.foreignAssets.asset.entries()
+const fetchMultiLocations = async (api: ApiPromise): Promise<TForeignAsset[]> => {
+  const res = await api.query.foreignAssets.metadata.entries()
   return res.map(
     ([
       {
         args: [era]
+      },
+      value
+    ]) => {
+      const multiLocation = era.toJSON() ?? {}
+      const { symbol, decimals } = value.toHuman() as any
+      return {
+        symbol,
+        decimals: +decimals,
+        multiLocation: multiLocation as object
       }
-    ]) => era.toJSON()
-  ) as unknown as TMultiLocation[]
+    }
+  )
 }
 
 const fetchNodeAssets = async (
@@ -290,13 +268,6 @@ const fetchNodeAssets = async (
   query: string | null
 ): Promise<Partial<TNodeAssets>> => {
   const nativeAssetSymbol = await fetchNativeAsset(api)
-
-  // Different format of data
-  if (node === 'Acala' || node === 'Karura') {
-    const assets = await fetchAssetsType2(api, query!)
-    await api.disconnect()
-    return { ...assets, nativeAssetSymbol }
-  }
 
   if (node === 'Polkadex') {
     const nativeAssets = (await fetchNativeAssets(api)) ?? []
@@ -319,31 +290,6 @@ const fetchNodeAssets = async (
       nativeAssetSymbol
     }
   }
-
-  if (node === 'Pioneer') {
-    const { otherAssets } = await fetchAssetsType2(api, query!)
-    const nativeAssets = (await fetchNativeAssets(api)) ?? []
-    await api.disconnect()
-    return {
-      nativeAssets,
-      otherAssets,
-      nativeAssetSymbol
-    }
-  }
-
-  // Different format of data
-  if (node === 'Centrifuge' || node === 'Altair') {
-    const nativeAssets = (await fetchNativeAssets(api)) ?? []
-    const otherAssets = query ? await fetchOtherAssetsCentrifuge(api, query) : []
-    await api.disconnect()
-    return {
-      nativeAssets,
-      otherAssets,
-      nativeAssetSymbol
-    }
-  }
-
-  // Different format of data
   if (node === 'Amplitude') {
     const nativeAssets = (await fetchNativeAssets(api)) ?? []
     const otherAssets = query ? await fetchOtherAssetsAmplitude(api, query) : []
@@ -366,6 +312,7 @@ const fetchNodeAssets = async (
       nativeAssetSymbol
     }
   }
+
   if (node === 'Picasso' || node === 'ComposableFinance') {
     const nativeAssets = (await fetchNativeAssets(api)) ?? []
     const otherAssets = query ? await fetchOtherAssetsInnerType(api, query) : []
@@ -377,32 +324,36 @@ const fetchNodeAssets = async (
     }
   }
 
-  if (node === 'BifrostPolkadot' || node === 'BifrostKusama') {
-    const { nativeAssets, otherAssets } = await fetchBifrostAssets(api, query ?? '')
-    await api.disconnect()
-    return {
-      nativeAssets,
-      otherAssets,
-      nativeAssetSymbol
-    }
-  }
-
-  if (node === 'AssetHubPolkadot' || node === 'AssetHubKusama') {
-    const nativeAssets = (await fetchNativeAssets(api)) ?? []
-    const otherAssets = query ? await fetchOtherAssets(api, query) : []
-    const multiLocations = await fetchMultiLocations(api)
-    await api.disconnect()
-    return {
-      nativeAssets,
-      otherAssets,
-      nativeAssetSymbol,
-      multiLocations
-    }
-  }
-
   const nativeAssets = (await fetchNativeAssets(api)) ?? []
 
-  const otherAssets = query ? await fetchOtherAssets(api, query) : []
+  let otherAssets: TForeignAsset[]
+
+  try {
+    otherAssets =
+      query === GLOBAL
+        ? await fetchOtherAssetsRegistry(node)
+        : typeof query === 'string'
+          ? await fetchOtherAssets(api, query)
+          : []
+  } catch (e) {
+    console.warn(`Failed to fetch other assets for ${node}: ${e.message}`)
+    otherAssets = []
+  }
+
+  const isAssetHub = node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
+
+  if (isAssetHub) {
+    const foreignAssets = await fetchMultiLocations(api)
+    const transformedForeignAssets = foreignAssets.map(asset => {
+      return {
+        ...asset,
+        multiLocation: asset.multiLocation
+          ? (capitalizeMultiLocation(asset.multiLocation) as TMultiLocation)
+          : undefined
+      } as TForeignAsset
+    })
+    otherAssets.push(...transformedForeignAssets)
+  }
 
   await api.disconnect()
 
@@ -417,6 +368,7 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const [node, query] of Object.entries(nodeToQuery)) {
     const nodeName = node as TNode
+
     console.log(`Fetching assets for ${nodeName}...`)
 
     let newData
@@ -428,6 +380,7 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
       newData = await fetchTryMultipleProvidersWithTimeout(nodeName as TNodePolkadotKusama, api =>
         fetchNodeAssets(nodeName as TNodePolkadotKusama, api, query)
       )
+
       const isError = newData === null
       const oldData = output[nodeName] ?? null
       const paraId = getNodeEndpointOption(nodeName as TNodePolkadotKusama)?.paraId
@@ -456,8 +409,7 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
           relayChainAssetSymbol: getNode(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
           nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
           nativeAssets: combinedNativeAssets,
-          otherAssets: combinedOtherAssets,
-          multiLocations: newData?.multiLocations ?? []
+          otherAssets: combinedOtherAssets
         }
       }
     }

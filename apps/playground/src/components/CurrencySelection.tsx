@@ -46,13 +46,25 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions }) => {
       {form.values.isCustomCurrency &&
         form.values.customCurrencyType === "multilocation" && (
           <JsonInput
-            placeholder="Enter Multi-Location JSON here"
+            placeholder="Input Multi-Location JSON or interior junctions JSON to search for and identify the asset"
             formatOnBlur
             autosize
             minRows={10}
             {...form.getInputProps("customCurrency")}
           />
         )}
+
+      {form.values.isCustomCurrency &&
+        form.values.customCurrencyType === "overridenMultilocation" && (
+          <JsonInput
+            placeholder="Provide the XCM Multi-Location JSON to override the default configuration"
+            formatOnBlur
+            autosize
+            minRows={10}
+            {...form.getInputProps("customCurrency")}
+          />
+        )}
+
       {!form.values.isCustomCurrency && (
         <Select
           key={form.values.from + form.values.to}
@@ -71,7 +83,7 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions }) => {
         <Group>
           <Checkbox
             size="xs"
-            label="Use Custom Currency"
+            label="Select custom asset"
             {...form.getInputProps("isCustomCurrency", { type: "checkbox" })}
           />
           {form.values.isCustomCurrency && (
@@ -81,6 +93,10 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions }) => {
                 { label: "Asset ID", value: "id" },
                 { label: "Symbol", value: "symbol" },
                 { label: "Multi-location", value: "multilocation" },
+                {
+                  label: "Override Multi-location",
+                  value: "overridenMultilocation",
+                },
               ]}
               {...form.getInputProps("customCurrencyType")}
             />

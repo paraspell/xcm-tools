@@ -3,7 +3,6 @@
 import {
   type IXTokensTransfer,
   type TForeignOrTokenAsset,
-  type TNodePolkadotKusama,
   Version,
   type XTokensTransferInput
 } from '../../types'
@@ -27,7 +26,7 @@ class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[3]
+    return getAllNodeProviders(this.node)[3]
   }
 }
 

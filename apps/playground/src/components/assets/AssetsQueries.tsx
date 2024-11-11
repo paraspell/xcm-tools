@@ -5,7 +5,11 @@ import { useState, useEffect } from "react";
 import { fetchFromApi } from "../../utils/submitUsingApi";
 import type { FormValues } from "./AssetsForm";
 import AssetsForm from "./AssetsForm";
-import type { TNodePolkadotKusama } from "@paraspell/sdk";
+import type {
+  TCurrencyCore,
+  TMultiLocation,
+  TNodePolkadotKusama,
+} from "@paraspell/sdk";
 import {
   getAllAssetsSymbols,
   getAssetDecimals,
@@ -45,17 +49,14 @@ const AssetsQueries = () => {
     }
   }, [error, scrollIntoView]);
 
-  const submitUsingSdk = async ({
-    func,
-    node,
-    currency,
-    currencyType,
-    address,
-  }: FormValues) => {
+  const submitUsingSdk = async (formValues: FormValues) => {
+    const { func, node, currency, address } = formValues;
     const Sdk =
       apiType === "PAPI"
         ? await import("@paraspell/sdk/papi")
         : await import("@paraspell/sdk");
+
+    const resolvedCurrency = resolveCurrency(formValues);
 
     switch (func) {
       case "ASSETS_OBJECT":
@@ -85,15 +86,13 @@ const AssetsQueries = () => {
         return Sdk.getBalanceForeign({
           address,
           node: node as TNodePolkadotKusama,
-          currency:
-            currencyType === "id" ? { id: currency } : { symbol: currency },
+          currency: resolvedCurrency,
         });
       case "ASSET_BALANCE":
         return Sdk.getAssetBalance({
           address,
           node: node as TNodePolkadotKusama,
-          currency:
-            currencyType === "id" ? { id: currency } : { symbol: currency },
+          currency: resolvedCurrency,
         });
     }
   };
@@ -133,17 +132,29 @@ const AssetsQueries = () => {
     }
   };
 
+  const resolveCurrency = (formValues: FormValues): TCurrencyCore => {
+    if (formValues.currencyType === "multilocation") {
+      return {
+        multilocation: JSON.parse(formValues.currency) as TMultiLocation,
+      };
+    } else if (formValues.currencyType === "id") {
+      return { id: formValues.currency };
+    } else {
+      return { symbol: formValues.currency };
+    }
+  };
+
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
-    const { useApi, func, address, currencyType, currency } = formValues;
+    const { useApi, func, address } = formValues;
     const isBalanceQuery =
       func === "BALANCE_FOREIGN" || func === "BALANCE_NATIVE";
+    const resolvedCurrency = resolveCurrency(formValues);
     if (useApi) {
       return await fetchFromApi(
         isBalanceQuery
           ? {
               address,
-              currency:
-                currencyType === "id" ? { id: currency } : { symbol: currency },
+              currency: resolvedCurrency,
             }
           : formValues,
         `${getEndpoint(formValues)}`,

@@ -1,10 +1,10 @@
 import { Stack, Select, TextInput, Button, Checkbox } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import type { TNodeWithRelayChains } from "@paraspell/sdk";
+import type { TNodeDotKsmWithRelayChains } from "@paraspell/sdk";
 import type { FC } from "react";
 import { isValidWalletAddress } from "../../utils";
 
-const SUPPORTED_NODES: TNodeWithRelayChains[] = [
+const SUPPORTED_NODES: TNodeDotKsmWithRelayChains[] = [
   "Polkadot",
   "Kusama",
   "AssetHubPolkadot",
@@ -12,7 +12,7 @@ const SUPPORTED_NODES: TNodeWithRelayChains[] = [
 ];
 
 export type FormValues = {
-  from: TNodeWithRelayChains;
+  from: TNodeDotKsmWithRelayChains;
   address: string;
   amount: string;
   useApi: boolean;

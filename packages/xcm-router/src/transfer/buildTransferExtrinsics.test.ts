@@ -107,7 +107,7 @@ describe('buildTransferExtrinsics', () => {
   it('should build transfer extrinsics correctly - auto exchange selection', async () => {
     const options = {
       ...MOCK_TRANSFER_OPTIONS,
-      currencyFrom: { id: '1333' },
+      currencyFrom: { id: '18446744073709551619' },
       currencyTo: { id: '18446744073709551616' },
       exchange: undefined,
     };

@@ -1,10 +1,10 @@
 import * as internalUtils from '../utils'
-import type { TNodeWithRelayChains } from '../types'
+import type { TNodeDotKsmWithRelayChains } from '../types'
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 import type { IPolkadotApi } from '../api'
 
-export const createApiInstanceForNode = (node: TNodeWithRelayChains) => {
+export const createApiInstanceForNode = (node: TNodeDotKsmWithRelayChains) => {
   const pjsApi = new PolkadotJsApi()
   return internalUtils.createApiInstanceForNode<TPjsApi, Extrinsic>(pjsApi, node)
 }

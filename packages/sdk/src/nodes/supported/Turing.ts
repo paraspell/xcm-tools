@@ -14,7 +14,7 @@ class Turing<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { asset } = input
 
-    if (!isForeignAsset(asset)) {
+    if (!isForeignAsset(asset) || !asset.assetId) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 

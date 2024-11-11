@@ -1,6 +1,6 @@
 // Contains basic call formatting for different XCM Palletss
 
-import type { TAsset, TNativeAsset, TNodePolkadotKusama, TTransferReturn } from '../../types'
+import type { TNativeAsset, TTransferReturn } from '../../types'
 import {
   type TSerializedApiCall,
   type TRelayToParaOptions,
@@ -10,12 +10,13 @@ import {
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive/checkKeepAlive'
-import { isTMultiLocation, resolveTNodeFromMultiLocation } from './utils'
+import { isTMultiLocation, resolveTNodeFromMultiLocation, throwUnsupportedCurrency } from './utils'
 import { getAssetBySymbolOrId } from '../assets/getAssetBySymbolOrId'
 import { getDefaultPallet } from '../pallets'
 import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../assets'
 import { getNode, determineRelayChain } from '../../utils'
 import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
+import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
 
 const sendCommon = async <TApi, TRes>(
   options: TSendOptions<TApi, TRes>,
@@ -101,13 +102,15 @@ const sendCommon = async <TApi, TRes>(
   const originNode = getNode<TApi, TRes, typeof origin>(origin)
 
   const assetCheckEnabled =
-    'multilocation' in currency || 'multiasset' in currency || isBridge
+    'multiasset' in currency ||
+    ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) ||
+    isBridge
       ? false
       : originNode.assetCheckEnabled
 
   const isDestAssetHub = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
 
-  const pallet = getDefaultPallet(origin as TNodePolkadotKusama)
+  const pallet = getDefaultPallet(origin)
 
   const isBifrost = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
 
@@ -123,28 +126,20 @@ const sendCommon = async <TApi, TRes>(
     )
   }
 
-  let asset: TAsset | null
+  const asset = assetCheckEnabled
+    ? getAssetBySymbolOrId(
+        origin,
+        currency,
+        isRelayDestination,
+        isTMultiLocation(destination) ? undefined : destination
+      )
+    : null
 
-  // Transfers to AssetHub require the destination asset ID to be used
   if (!isBridge && isDestAssetHub && pallet === 'XTokens' && !isBifrost) {
-    asset = getAssetBySymbolOrId(destination, currency, false, destination)
-
     let nativeAssets = getNativeAssets(destination)
 
     if (origin === 'Hydration') {
       nativeAssets = nativeAssets.filter(nativeAsset => nativeAsset.symbol !== 'DOT')
-    }
-
-    if (assetCheckEnabled && asset === null) {
-      throw new InvalidCurrencyError(
-        `Destination node ${destination} does not support currency ${JSON.stringify(currency)}.`
-      )
-    }
-
-    if (asset?.symbol && !hasSupportForAsset(origin, asset.symbol)) {
-      throw new InvalidCurrencyError(
-        `Origin node ${origin} does not support currency ${asset.symbol}.`
-      )
     }
 
     if (
@@ -154,38 +149,27 @@ const sendCommon = async <TApi, TRes>(
       )
     ) {
       throw new InvalidCurrencyError(
-        `${asset?.symbol} is not supported for transfers to ${destination}.`
+        `${JSON.stringify(asset?.symbol)} is not supported for transfers to ${destination}.`
       )
     }
-  } else {
-    asset = assetCheckEnabled
-      ? getAssetBySymbolOrId(
-          origin,
-          currency,
-          isRelayDestination,
-          isTMultiLocation(destination) ? undefined : destination
-        )
-      : null
+  }
 
-    if (!isBridge && asset === null && assetCheckEnabled) {
-      throw new InvalidCurrencyError(
-        `Origin node ${origin} does not support currency ${JSON.stringify(currency)}.`
-      )
-    }
+  if (!isBridge && asset === null && assetCheckEnabled) {
+    throwUnsupportedCurrency(currency, origin)
+  }
 
-    if (
-      !isBridge &&
-      !isRelayDestination &&
-      !isMultiLocationDestination &&
-      asset?.symbol !== undefined &&
-      assetCheckEnabled &&
-      !('id' in currency) &&
-      !hasSupportForAsset(destination, asset.symbol)
-    ) {
-      throw new InvalidCurrencyError(
-        `Destination node ${destination} does not support currency ${JSON.stringify(currency)}.`
-      )
-    }
+  if (
+    !isBridge &&
+    !isRelayDestination &&
+    !isMultiLocationDestination &&
+    asset?.symbol !== undefined &&
+    assetCheckEnabled &&
+    !('id' in currency) &&
+    !hasSupportForAsset(destination, asset.symbol)
+  ) {
+    throw new InvalidCurrencyError(
+      `Destination node ${destination} does not support currency ${JSON.stringify(currency)}.`
+    )
   }
 
   await api.init(origin)
@@ -198,7 +182,7 @@ const sendCommon = async <TApi, TRes>(
     console.warn('Keep alive check is not supported when using MultiLocation as address.')
   } else if (typeof destination === 'object') {
     console.warn('Keep alive check is not supported when using MultiLocation as destination.')
-  } else if (origin === 'Ethereum' || destination === 'Ethereum') {
+  } else if (destination === 'Ethereum') {
     console.warn('Keep alive check is not supported when using Ethereum as origin or destination.')
   } else if (!asset) {
     console.warn('Keep alive check is not supported when asset check is disabled.')
@@ -229,8 +213,8 @@ const sendCommon = async <TApi, TRes>(
     destination,
     paraIdTo,
     overridedCurrencyMultiLocation:
-      'multilocation' in currency
-        ? currency.multilocation
+      'multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)
+        ? currency.multilocation.value
         : 'multiasset' in currency
           ? currency.multiasset
           : undefined,
@@ -266,12 +250,14 @@ export const transferRelayToParaCommon = async <TApi, TRes>(
 
   const amountStr = amount.toString()
 
+  if (destination === 'Ethereum') {
+    throw new Error('Relay to para transfers are not supported to Ethereum.')
+  }
+
   if (isMultiLocationDestination) {
     console.warn('Keep alive check is not supported when using MultiLocation as destination.')
   } else if (isAddressMultiLocation) {
     console.warn('Keep alive check is not supported when using MultiLocation as address.')
-  } else if (destination === 'Ethereum') {
-    console.warn('Keep alive check is not supported when using Ethereum as destination.')
   } else {
     await checkKeepAlive({
       originApi: api,

@@ -1,8 +1,8 @@
 import { InvalidCurrencyError } from '../../../errors'
-import type { TCurrencyCore } from '../../../types'
+import type { TCurrencyCoreV1 } from '../../../types'
 import { getOtherAssets } from '../../assets'
 
-export const findEthAsset = (currency: TCurrencyCore) => {
+export const findEthAsset = (currency: TCurrencyCoreV1) => {
   const ethAssets = getOtherAssets('Ethereum')
   const ethAsset =
     'symbol' in currency

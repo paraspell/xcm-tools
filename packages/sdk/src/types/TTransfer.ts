@@ -36,7 +36,7 @@ export type XTokensTransferInput<TApi, TRes> = {
   addressSelection: TMultiLocationHeader
   fees: number
   scenario: TScenario
-  origin: TNode
+  origin: TNodePolkadotKusama
   destination?: TDestination
   paraIdTo?: number
   overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
@@ -49,7 +49,7 @@ export type XTransferTransferInput<TApi, TRes> = {
   asset: TAsset
   amount: string
   recipientAddress: TAddress
-  origin: TNode
+  origin: TNodePolkadotKusama
   paraId?: number
   destination?: TDestination
   overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
@@ -137,7 +137,7 @@ export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions<TApi, TRes>, TAp
   /**
    * The origin node
    */
-  origin: TNode
+  origin: TNodePolkadotKusama
   /**
    * The currency to transfer. Either ID, symbol, multi-location, or multi-asset
    */

@@ -3,14 +3,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as internalUtils from '../utils'
 import { createApiInstanceForNode, createPapiApiCall } from './utils'
 import PapiApi from './PapiApi'
-import type { TNodeWithRelayChains } from '../types'
 import type { TPapiApi } from './types'
+import type { TNodeDotKsmWithRelayChains } from '../types'
 
 vi.mock('./PapiApi')
 vi.mock('../utils')
 
 describe('API Instance and Call Utility Functions with PapiApi', () => {
-  const mockNode = {} as TNodeWithRelayChains
+  const mockNode = {} as TNodeDotKsmWithRelayChains
   const mockApi = {} as TPapiApi
   let setApiSpy: MockInstance
 

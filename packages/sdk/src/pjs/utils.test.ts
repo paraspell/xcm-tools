@@ -3,14 +3,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as internalUtils from '../utils'
 import { createApiInstanceForNode, createPolkadotJsApiCall } from './utils'
 import PolkadotJsApi from './PolkadotJsApi'
-import type { TNodeWithRelayChains } from '../types'
+import type { TNodeDotKsmWithRelayChains } from '../types'
 import type { TPjsApi } from './types'
 
 vi.mock('./PolkadotJsApi')
 vi.mock('../utils')
 
 describe('API Instance and Call Utility Functions', () => {
-  const mockNode = {} as TNodeWithRelayChains
+  const mockNode = {} as TNodeDotKsmWithRelayChains
   const mockApi = {} as TPjsApi
   let setApiSpy: MockInstance
 

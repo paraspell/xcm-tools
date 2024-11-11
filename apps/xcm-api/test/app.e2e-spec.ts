@@ -5,8 +5,11 @@ import { AppModule } from './../src/app.module';
 import {
   BatchMode,
   Builder,
+  Foreign,
   NODE_NAMES,
   NODE_NAMES_DOT_KSM,
+  Native,
+  Override,
   TMultiAsset,
   TMultiLocation,
   TNode,
@@ -115,7 +118,7 @@ describe('XCM API (e2e)', () => {
             .get(assetIdUrl)
             .query({ symbol })
             .expect(200)
-            .expect(assetId);
+            .expect(assetId ?? '');
         });
 
         if (symbol) {
@@ -394,6 +397,58 @@ describe('XCM API (e2e)', () => {
         })
         .expect(201)
         .expect(serializedApiCall);
+    });
+
+    it(`Generate XCM call - Parachain to parachain Native() selector - ${xTransferUrl} (POST)`, async () => {
+      const from: TNode = 'Acala';
+      const to: TNode = 'Astar';
+      const currency = { symbol: Native('DOT') };
+      const api = await createApiInstanceForNode(from);
+      const tx = await Builder(api)
+        .from(from)
+        .to(to)
+        .currency(currency)
+        .amount(amount)
+        .address(address)
+        .build();
+      await api.disconnect();
+      return request(app.getHttpServer())
+        .post(xTransferHashUrl)
+        .send({
+          from,
+          to,
+          amount,
+          address,
+          currency,
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
+    });
+
+    it(`Generate XCM call - Parachain to parachain Foreign() selector - ${xTransferUrl} (POST)`, async () => {
+      const from: TNode = 'Astar';
+      const to: TNode = 'Acala';
+      const currency = { symbol: Foreign('HDX') };
+      const api = await createApiInstanceForNode(from);
+      const tx = await Builder(api)
+        .from(from)
+        .to(to)
+        .currency(currency)
+        .amount(amount)
+        .address(address)
+        .build();
+      await api.disconnect();
+      return request(app.getHttpServer())
+        .post(xTransferHashUrl)
+        .send({
+          from,
+          to,
+          amount,
+          address,
+          currency,
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
     });
 
     it(`Generate XCM call - Parachain to parachain invalid scenario - ${xTransferHashUrl} (POST)`, async () => {
@@ -917,7 +972,7 @@ describe('XCM API (e2e)', () => {
       const serializedApiCall = await Builder(api)
         .from(from)
         .to(to)
-        .currency({ multilocation: currency })
+        .currency({ multilocation: Override(currency) })
         .amount(amount)
         .address(address)
         .buildSerializedApiCall();
@@ -929,7 +984,7 @@ describe('XCM API (e2e)', () => {
           to,
           amount,
           address,
-          currency: { multilocation: currency },
+          currency: { multilocation: Override(currency) },
         })
         .expect(201)
         .expect(serializedApiCall);

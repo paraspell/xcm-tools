@@ -22,6 +22,7 @@ class XTokensTransferImpl {
       amount,
       addressSelection,
       destination,
+      scenario,
       feeAsset,
       serializedApiCallEnabled
     } = input
@@ -36,7 +37,10 @@ class XTokensTransferImpl {
     const isBifrostOrigin = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
     const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
 
-    const shouldUseMultiasset = isAssetHubDest && !isBifrostOrigin
+    const isAstarOrShidenToRelay =
+      scenario === 'ParaToRelay' && (origin === 'Astar' || origin === 'Shiden')
+
+    const shouldUseMultiasset = isAstarOrShidenToRelay || (isAssetHubDest && !isBifrostOrigin)
 
     const modifiedCurrencySelection = getCurrencySelection(
       input,

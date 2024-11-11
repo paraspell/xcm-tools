@@ -173,12 +173,12 @@ const RouterTransferPage = () => {
       .to(to)
       .exchange(exchange)
       .currencyFrom(
-        isForeignAsset(currencyFrom)
+        isForeignAsset(currencyFrom) && currencyFrom.assetId
           ? { id: currencyFrom.assetId }
           : { symbol: currencyFrom.symbol ?? "" },
       )
       .currencyTo(
-        isForeignAsset(currencyTo)
+        isForeignAsset(currencyTo) && currencyTo.assetId
           ? { id: currencyTo.assetId }
           : { symbol: currencyTo.symbol ?? "" },
       )

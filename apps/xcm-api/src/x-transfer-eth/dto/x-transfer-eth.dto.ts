@@ -1,4 +1,4 @@
-import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
+import { CurrencyCoreSchemaV1 } from '../../x-transfer/dto/XTransferDto.js';
 import { z } from 'zod';
 import { validateAmount } from '../../utils/validateAmount.js';
 
@@ -14,7 +14,7 @@ export const XTransferEthDtoSchema = z.object({
   destAddress: z
     .string()
     .min(1, { message: 'Destination address is required' }),
-  currency: CurrencyCoreSchema,
+  currency: CurrencyCoreSchemaV1,
 });
 
 export type XTransferEthDto = z.infer<typeof XTransferEthDtoSchema>;

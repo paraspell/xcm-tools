@@ -1,6 +1,6 @@
 import type { Signer } from 'ethers'
 import type { TNodePolkadotKusama } from './TNode'
-import type { TCurrencyCore } from './TCurrency'
+import type { TCurrencyCoreV1 } from './TCurrency'
 
 /**
  * The options for the Ethereum to Polkadot transfer builder.
@@ -17,7 +17,7 @@ export type TEvmBuilderOptions = {
   /**
    * The currency to transfer. Symbol or ID.
    */
-  currency: TCurrencyCore
+  currency: TCurrencyCoreV1
   /**
    * The Polkadot destination address.
    */

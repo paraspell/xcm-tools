@@ -10,7 +10,6 @@ import {
   type XTokensTransferInput
 } from '../../types'
 import { getNode } from '../../utils'
-import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 
 class Shiden<TApi, TRes>
@@ -34,7 +33,7 @@ class Shiden<TApi, TRes>
   }
 
   protected canUseXTokens({ asset }: TSendInternalOptions<TApi, TRes>): boolean {
-    return asset.symbol !== this.getNativeAssetSymbol() || isForeignAsset(asset)
+    return asset.symbol !== this.getNativeAssetSymbol()
   }
 }
 

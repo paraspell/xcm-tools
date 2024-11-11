@@ -12,7 +12,7 @@ import { type IXTokensTransfer, Parents, Version, type XTokensTransferInput } fr
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 import { InvalidCurrencyError } from '../../errors'
-import { getOtherAssets, getParaId } from '../../pallets/assets'
+import { getParaId } from '../../pallets/assets'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { ETHEREUM_JUNCTION } from '../../const'
 import { generateAddressPayload } from '../../utils'
@@ -83,7 +83,9 @@ const createCustomXcmOnDest = <TApi, TRes>(
       {
         InitiateReserveWithdraw: {
           assets: {
-            Wild: { AllOf: { id: createEthereumTokenLocation(asset.assetId), fun: 'Fungible' } }
+            Wild: {
+              AllOf: { id: createEthereumTokenLocation(asset.assetId ?? ''), fun: 'Fungible' }
+            }
           },
           reserve: {
             parents: Parents.TWO,
@@ -166,7 +168,7 @@ class Hydration<TApi, TRes>
         amount,
         versionOrDefault,
         Parents.TWO,
-        createEthereumTokenLocation(asset.assetId)
+        createEthereumTokenLocation(asset.assetId ?? '')
       )
     )[0][0]
 
@@ -267,15 +269,8 @@ class Hydration<TApi, TRes>
   }
 
   protected canUseXTokens({ destination, asset }: TSendInternalOptions<TApi, TRes>): boolean {
-    const dotAsset = getOtherAssets(this.node).find(({ symbol }) => symbol === 'DOT')
-
     return (
-      destination !== 'Ethereum' &&
-      !(
-        destination === 'AssetHubPolkadot' &&
-        (asset.symbol === dotAsset?.symbol ||
-          (isForeignAsset(asset) && asset.symbol === dotAsset?.assetId))
-      )
+      destination !== 'Ethereum' && !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT')
     )
   }
 }

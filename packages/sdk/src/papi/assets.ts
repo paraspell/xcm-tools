@@ -51,4 +51,5 @@ export const getOriginFeeDetails = createPapiApiCall(
 export * from '../pallets/assets/assets'
 export * from '../pallets/assets/eds'
 export * from '../pallets/assets/assetSelectors'
+export * from '../pallets/assets/multiLocationSelectors'
 export { getSupportedAssets } from '../pallets/assets/getSupportedAssets'

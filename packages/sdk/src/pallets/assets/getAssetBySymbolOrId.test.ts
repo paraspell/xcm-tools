@@ -6,7 +6,7 @@ import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 import * as assetFunctions from './assets'
 import { getDefaultPallet } from '../pallets'
 import { isRelayChain } from '../../utils'
-import type { TAsset, TForeignAsset, TNodePolkadotKusama } from '../../types'
+import type { TAsset, TForeignAsset, TMultiLocation, TNodePolkadotKusama } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import { Foreign, ForeignAbstract, Native } from './assetSelectors'
 
@@ -41,8 +41,8 @@ describe('getAssetBySymbolOrId', () => {
           const otherAssetsMatchesById = otherAssets.filter(
             ({ assetId }) => assetId === other.assetId
           )
-          if (otherAssetsMatchesById.length > 1) {
-            expect(() => getAssetBySymbolOrId(node, { id: other.assetId })).toThrow()
+          if (otherAssetsMatchesById.length > 1 && other.assetId) {
+            expect(() => getAssetBySymbolOrId(node, { id: other.assetId as string })).toThrow()
           }
         }
       })
@@ -68,7 +68,7 @@ describe('getAssetBySymbolOrId', () => {
         const hasDuplicateIds =
           otherAssets.filter(asset => asset.assetId === other.assetId).length > 1
         if (!hasDuplicateIds) {
-          const asset = getAssetBySymbolOrId(node, { id: other.assetId })
+          const asset = getAssetBySymbolOrId(node, { id: other.assetId ?? '' })
           expect(asset).not.toBeNull()
           expect(isForeignAsset(asset as TAsset)).toBe(true)
           expect(asset).toHaveProperty('assetId')
@@ -82,7 +82,7 @@ describe('getAssetBySymbolOrId', () => {
     NODE_NAMES.forEach(node => {
       const { nativeAssets } = getAssetsObject(node)
       nativeAssets.forEach(nativeAsset => {
-        if (!isForeignAsset(nativeAsset)) {
+        if (nativeAsset.symbol) {
           const asset = getAssetBySymbolOrId(node, { symbol: Native(nativeAsset.symbol) })
           expect(asset).toHaveProperty('symbol')
         }
@@ -99,7 +99,7 @@ describe('getAssetBySymbolOrId', () => {
   })
 
   it('should find assetId for KSM asset in AssetHubKusama', () => {
-    const asset = getAssetBySymbolOrId('AssetHubKusama', { symbol: 'PNEO' })
+    const asset = getAssetBySymbolOrId('AssetHubKusama', { symbol: 'USDt' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -384,16 +384,16 @@ describe('getAssetBySymbolOrId', () => {
       otherAssets: [
         {
           assetId: '1',
-          symbol: 'xcDOT'
+          symbol: 'xcGLMR'
         },
         {
           assetId: '2',
-          symbol: 'xcDOT'
+          symbol: 'xcGLMR'
         }
       ],
       nativeAssets: []
     })
-    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'DOT' })).toThrow()
+    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'GLMR' })).toThrow()
   })
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
@@ -427,7 +427,7 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Acala', { symbol: 'DOT' })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: Foreign('DOT') })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -501,7 +501,7 @@ describe('getAssetBySymbolOrId', () => {
         }
       ]
     })
-    expect(() => getAssetBySymbolOrId('Acala', { symbol: 'DOT' })).toThrow()
+    expect(() => getAssetBySymbolOrId('Acala', { symbol: Foreign('DOT') })).toThrow()
   })
 
   it('should find asset with lowercase matching', () => {
@@ -511,18 +511,32 @@ describe('getAssetBySymbolOrId', () => {
       otherAssets: [
         {
           assetId: '2',
-          symbol: 'dot',
-          alias: 'DOT2'
+          symbol: 'glmr',
+          alias: 'glmr2'
         }
       ],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Acala', { symbol: 'Dot' })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: 'Glmr' })
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
-  it('Should return null when passing a multilocation currency', () => {
+  it('should find asset dot native asset when specifier not present', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [],
+      nativeAssets: []
+    })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: 'dot' })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset?.symbol).toBe('DOT')
+    expect(asset).not.toHaveProperty('assetId')
+    expect(asset).toHaveProperty('decimals')
+  })
+
+  it('Should return null when passing a multilocation currency that is not present', () => {
     const asset = getAssetBySymbolOrId('Astar', {
       multilocation: {
         parents: 1,
@@ -534,5 +548,235 @@ describe('getAssetBySymbolOrId', () => {
       }
     })
     expect(asset).toBeNull()
+  })
+
+  it('should return asset when passing a multilocation currency that is present', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '2',
+          symbol: 'dot',
+          multiLocation: {
+            parents: 1,
+            interior: {
+              X3: [
+                {
+                  Parachain: 1000
+                },
+                {
+                  PalletInstance: 50
+                },
+                {
+                  GeneralIndex: 1984
+                }
+              ]
+            }
+          } as TMultiLocation
+        }
+      ],
+      nativeAssets: []
+    })
+    const asset = getAssetBySymbolOrId('Astar', {
+      multilocation: {
+        parents: 1,
+        interior: {
+          X3: [
+            {
+              Parachain: 1000
+            },
+            {
+              PalletInstance: 50
+            },
+            {
+              GeneralIndex: 1984
+            }
+          ]
+        }
+      }
+    })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should return asset when passing a multilocation currency that is present', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '2',
+          symbol: 'dot',
+          multiLocation: {
+            parents: 1,
+            interior: {
+              X3: [
+                {
+                  Parachain: 1000
+                },
+                {
+                  PalletInstance: 50
+                },
+                {
+                  GeneralIndex: 1984
+                }
+              ]
+            }
+          } as TMultiLocation
+        }
+      ],
+      nativeAssets: []
+    })
+    const asset = getAssetBySymbolOrId('Astar', {
+      multilocation: JSON.stringify({
+        parents: 1,
+        interior: {
+          X3: [
+            {
+              Parachain: 1000
+            },
+            {
+              PalletInstance: 50
+            },
+            {
+              GeneralIndex: 1984
+            }
+          ]
+        }
+      })
+    })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should return asset when passing a multilocation currency with commas that is present', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '2',
+          symbol: 'dot',
+          multiLocation: {
+            parents: 1,
+            interior: {
+              X3: [
+                {
+                  Parachain: '1000'
+                },
+                {
+                  PalletInstance: '50'
+                },
+                {
+                  GeneralIndex: '1,984'
+                }
+              ]
+            }
+          } as TMultiLocation
+        }
+      ],
+      nativeAssets: []
+    })
+    const asset = getAssetBySymbolOrId('Astar', {
+      multilocation: JSON.stringify({
+        parents: 1,
+        interior: {
+          X3: [
+            {
+              Parachain: '1000'
+            },
+            {
+              PalletInstance: '50'
+            },
+            {
+              GeneralIndex: '1984'
+            }
+          ]
+        }
+      })
+    })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should find asset by xcm interior - string', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '2',
+          symbol: 'dot',
+          xcmInterior: [
+            {
+              Parachain: '1000'
+            },
+            {
+              PalletInstance: '50'
+            },
+            {
+              GeneralIndex: '1,984'
+            }
+          ]
+        }
+      ],
+      nativeAssets: []
+    })
+    const asset = getAssetBySymbolOrId('Astar', {
+      multilocation: JSON.stringify([
+        {
+          Parachain: '1000'
+        },
+        {
+          PalletInstance: '50'
+        },
+        {
+          GeneralIndex: '1984'
+        }
+      ])
+    })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
+  })
+
+  it('should find asset by xcm interior - array', () => {
+    vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
+      nativeAssetSymbol: 'DOT',
+      relayChainAssetSymbol: 'DOT',
+      otherAssets: [
+        {
+          assetId: '2',
+          symbol: 'dot',
+          xcmInterior: [
+            {
+              Parachain: '1000'
+            },
+            {
+              PalletInstance: '50'
+            },
+            {
+              GeneralIndex: '1984'
+            }
+          ]
+        }
+      ],
+      nativeAssets: []
+    })
+    const asset = getAssetBySymbolOrId('Astar', {
+      multilocation: [
+        {
+          Parachain: '1000'
+        },
+        {
+          PalletInstance: '50'
+        },
+        {
+          GeneralIndex: '1984'
+        }
+      ]
+    })
+    expect(asset).toHaveProperty('symbol')
+    expect(asset).toHaveProperty('assetId')
   })
 })

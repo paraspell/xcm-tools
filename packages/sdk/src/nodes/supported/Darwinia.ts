@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Darwinia Parachain
 
-import type { TAsset, TNodePolkadotKusama } from '../../types'
+import type { TAsset } from '../../types'
 import {
   Version,
   type TSerializedApiCallV2,
@@ -29,7 +29,7 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
       return 'SelfReserve'
     }
 
-    if (!isForeignAsset(asset)) {
+    if (!isForeignAsset(asset) || !asset.assetId) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
@@ -67,7 +67,7 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[2]
+    return getAllNodeProviders(this.node)[2]
   }
 }
 

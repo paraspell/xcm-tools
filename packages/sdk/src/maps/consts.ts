@@ -57,7 +57,6 @@ import KiltSpiritnet from '../nodes/supported/KiltSpiritnet'
 import Curio from '../nodes/supported/Curio'
 import BridgeHubPolkadot from '../nodes/supported/BridgeHubPolkadot'
 import BridgeHubKusama from '../nodes/supported/BridgeHubKusama'
-import Ethereum from '../nodes/supported/Ethereum'
 import Mythos from '../nodes/supported/Mythos'
 import Peaq from '../nodes/supported/Peaq'
 import Polimec from '../nodes/supported/Polimec'
@@ -205,7 +204,6 @@ export const nodes = <TApi, TRes>() => ({
   Subsocial: new Subsocial<TApi, TRes>(),
   KiltSpiritnet: new KiltSpiritnet<TApi, TRes>(),
   Curio: new Curio<TApi, TRes>(),
-  Ethereum: new Ethereum<TApi, TRes>(),
   Mythos: new Mythos<TApi, TRes>(),
   Peaq: new Peaq<TApi, TRes>(),
   Polimec: new Polimec<TApi, TRes>()

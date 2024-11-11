@@ -1,9 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import ParachainNode from './ParachainNode'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
-import { InvalidCurrencyError } from '../errors'
-import * as utils from '../utils'
-import * as xcmUtils from '../pallets/xcmPallet/utils'
 import type { TRelayToParaOptions } from '../types'
 import {
   Version,
@@ -244,22 +241,6 @@ describe('ParachainNode', () => {
 
     expect(transferXTokensSpy).toHaveBeenCalled()
     expect(result).toBe('transferXTokens called')
-  })
-
-  it('should throw InvalidCurrencyError when overridedCurrencyMultiLocation is invalid', async () => {
-    const node = new OnlyPolkadotXCMNode('Acala', 'TestNode', 'polkadot', Version.V3)
-    const options = {
-      api: {},
-      asset: { symbol: 'DOT' },
-      amount: '100',
-      address: 'destinationAddress',
-      overridedCurrencyMultiLocation: {}
-    } as TSendInternalOptions<ApiPromise, Extrinsic>
-
-    vi.spyOn(xcmUtils, 'isTMultiLocation').mockReturnValue(true)
-    vi.spyOn(utils, 'verifyMultiLocation').mockReturnValue(false)
-
-    await expect(node.transfer(options)).rejects.toThrowError(InvalidCurrencyError)
   })
 
   it('should return correct serialized API call from transferRelayToPara', () => {

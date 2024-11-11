@@ -10,7 +10,7 @@ export const getBalanceForeignXTokens = async <TApi, TRes>(
   asset: TAsset
 ): Promise<bigint> => {
   if (node === 'Moonbeam' || node === 'Moonriver' || node === 'Astar' || node === 'Shiden') {
-    if (!isForeignAsset(asset)) {
+    if (!isForeignAsset(asset) || !asset.assetId) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 

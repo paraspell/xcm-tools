@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Version } from '@paraspell/sdk';
-import { MultiLocationSchema } from '@paraspell/xcm-analyser';
+import { MultiLocationSchema, JunctionSchema } from '@paraspell/xcm-analyser';
 import { validateAmount } from '../../utils/validateAmount.js';
 
 const StringOrNumber = z
@@ -33,7 +33,34 @@ export const MultiAssetSchema = z.union([
 
 export type TMultiAsset = z.infer<typeof MultiAssetSchema>;
 
-export const CurrencyCoreSchema = z.union([
+export const SymbolSpecifierSchema = z.object({
+  type: z.enum(['Native', 'Foreign', 'ForeignAbstract']),
+  value: z.string(),
+});
+
+const OverrideMultiLocationSpecifierSchema = z.object({
+  type: z.literal('Override'),
+  value: MultiLocationSchema,
+});
+
+const MultiLocationValueSchema = z.union([
+  z.string(),
+  MultiLocationSchema,
+  z.array(JunctionSchema),
+]);
+
+const MultiLocationValueWithOverrideSchema = z.union([
+  MultiLocationValueSchema,
+  OverrideMultiLocationSpecifierSchema,
+]);
+
+const CurrencySymbolValueSchema = z.union([z.string(), SymbolSpecifierSchema]);
+
+const CurrencySymbolSchema = z.object({
+  symbol: CurrencySymbolValueSchema,
+});
+
+export const CurrencyCoreSchemaV1 = z.union([
   z
     .object({
       symbol: z.string(),
@@ -46,15 +73,23 @@ export const CurrencyCoreSchema = z.union([
     .required(),
 ]);
 
-export const CurrencySchema = z.union([
-  z.object({
-    symbol: z.string(),
-  }),
+export const CurrencyCoreSchema = z.union([
+  CurrencySymbolSchema,
   z.object({
     id: z.union([z.string(), z.number(), z.bigint()]),
   }),
   z.object({
-    multilocation: MultiLocationSchema,
+    multilocation: MultiLocationValueSchema,
+  }),
+]);
+
+export const CurrencySchema = z.union([
+  CurrencySymbolSchema,
+  z.object({
+    id: z.union([z.string(), z.number(), z.bigint()]),
+  }),
+  z.object({
+    multilocation: MultiLocationValueWithOverrideSchema,
   }),
   z.object({
     multiasset: z.array(MultiAssetSchema),

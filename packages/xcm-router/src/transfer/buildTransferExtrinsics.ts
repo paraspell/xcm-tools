@@ -291,7 +291,7 @@ export const buildTransferExtrinsics = async (
 
   const txsWithWsProviders = transactions.map((tx) => ({
     ...tx,
-    wsProvider: getNodeProvider(tx.node),
+    wsProvider: tx.node === 'Ethereum' ? '' : getNodeProvider(tx.node),
   }));
 
   return txsWithWsProviders;

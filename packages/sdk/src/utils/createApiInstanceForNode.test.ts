@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import type { ApiPromise } from '@polkadot/api'
-import type { TNodeWithRelayChains } from '../types'
+import type { TNodeDotKsmWithRelayChains } from '../types'
 import { createApiInstanceForNode } from './createApiInstanceForNode'
 import { getNode } from './getNode'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
@@ -46,7 +46,7 @@ describe('createApiInstanceForNode', () => {
   })
 
   it('should call getNode and create an ApiPromise instance for other nodes', async () => {
-    const node = 'SomeOtherNode' as TNodeWithRelayChains
+    const node = 'SomeOtherNode' as TNodeDotKsmWithRelayChains
 
     const result = await createApiInstanceForNode(mockApi, node)
 

@@ -4,7 +4,7 @@ import { useEffect, type FC } from "react";
 import {
   Button,
   Checkbox,
-  Group,
+  JsonInput,
   SegmentedControl,
   Select,
   Stack,
@@ -25,7 +25,7 @@ export type FormValues = {
   destinationAddress: string;
   amount: string;
   useApi: boolean;
-  customCurrencyType?: "id" | "symbol";
+  customCurrencyType?: "id" | "symbol" | "multilocation";
 };
 
 type Props = {
@@ -99,18 +99,32 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           {...form.getInputProps("to")}
         />
 
-        <Group align="flex-end">
-          <TextInput
-            disabled={isNotParaToPara}
-            flex={1}
-            label="Currency"
-            placeholder={
-              form.values.customCurrencyType === "id" ? "Asset ID" : "Symbol"
-            }
-            required
-            data-testid="input-currency"
-            {...form.getInputProps("currency")}
-          />
+        <Stack gap="xs">
+          {(form.values.customCurrencyType === "id" ||
+            form.values.customCurrencyType === "symbol") && (
+            <TextInput
+              disabled={isNotParaToPara}
+              flex={1}
+              label="Currency"
+              placeholder={
+                form.values.customCurrencyType === "id" ? "Asset ID" : "Symbol"
+              }
+              required
+              data-testid="input-currency"
+              {...form.getInputProps("currency")}
+            />
+          )}
+
+          {form.values.customCurrencyType === "multilocation" && (
+            <JsonInput
+              placeholder="Input Multi-Location JSON or interior junctions JSON to search for and identify the asset"
+              formatOnBlur
+              autosize
+              minRows={10}
+              {...form.getInputProps("currency")}
+            />
+          )}
+
           <SegmentedControl
             disabled={isNotParaToPara}
             onClick={onSelectCurrencyTypeClick}
@@ -119,10 +133,11 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
             data={[
               { label: "Asset ID", value: "id" },
               { label: "Symbol", value: "symbol" },
+              { label: "Multi-location", value: "multilocation" },
             ]}
             {...form.getInputProps("customCurrencyType")}
           />
-        </Group>
+        </Stack>
 
         <TextInput
           label="Address"

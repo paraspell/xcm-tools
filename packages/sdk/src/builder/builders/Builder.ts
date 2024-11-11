@@ -28,13 +28,13 @@ import type { IPolkadotApi } from '../../api/IPolkadotApi'
  */
 class ToGeneralBuilder<TApi, TRes> {
   private readonly api: IPolkadotApi<TApi, TRes>
-  private readonly from: TNode
+  private readonly from: TNodePolkadotKusama
   private readonly to: TDestination
   private readonly paraIdTo?: number
 
   constructor(
     api: IPolkadotApi<TApi, TRes>,
-    from: TNode,
+    from: TNodePolkadotKusama,
     to: TDestination,
     private batchManager: BatchTransactionManager<TApi, TRes>,
     paraIdTo?: number
@@ -68,13 +68,13 @@ class ToGeneralBuilder<TApi, TRes> {
  */
 class FromGeneralBuilder<TApi, TRes> {
   private readonly api: IPolkadotApi<TApi, TRes>
-  private readonly from: TNode
+  private readonly from: TNodePolkadotKusama
 
   private _feeAsset?: TCurrency
 
   constructor(
     api: IPolkadotApi<TApi, TRes>,
-    from: TNode,
+    from: TNodePolkadotKusama,
     private batchManager: BatchTransactionManager<TApi, TRes>
   ) {
     this.api = api

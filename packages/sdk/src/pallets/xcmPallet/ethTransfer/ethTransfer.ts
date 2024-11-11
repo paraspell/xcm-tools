@@ -31,7 +31,7 @@ const transferEthToPolkadot = async (
     context,
     signer,
     address,
-    ethAsset.assetId,
+    ethAsset.assetId ?? '',
     destParaId,
     BigInt(amount),
     BigInt(0)

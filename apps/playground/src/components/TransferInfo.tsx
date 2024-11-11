@@ -8,6 +8,7 @@ import TransferInfoForm from "./TransferInfoForm";
 import OutputAlert from "./OutputAlert";
 import { fetchFromApi } from "../utils/submitUsingApi";
 import { replaceBigInt } from "../utils/replaceBigInt";
+import type { TCurrencyCore, TMultiLocation } from "@paraspell/sdk";
 
 const TransferInfo = () => {
   const { selectedAccount, apiType } = useWallet();
@@ -35,11 +36,16 @@ const TransferInfo = () => {
     }
   }, [error, scrollIntoView]);
 
-  const resolveCurrency = (formValues: FormValues) => {
-    if (formValues.customCurrencyType === "id") {
+  const resolveCurrency = (formValues: FormValues): TCurrencyCore => {
+    if (formValues.customCurrencyType === "multilocation") {
+      return {
+        multilocation: JSON.parse(formValues.currency) as TMultiLocation,
+      };
+    } else if (formValues.customCurrencyType === "id") {
       return { id: formValues.currency };
+    } else {
+      return { symbol: formValues.currency };
     }
-    return { symbol: formValues.currency };
   };
 
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {

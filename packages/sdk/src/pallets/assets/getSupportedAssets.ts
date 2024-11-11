@@ -1,6 +1,4 @@
-import type { TAsset, TNodePolkadotKusama, TNodeWithRelayChains } from '../../types'
-import { isRelayChain } from '../../utils'
-import { getDefaultPallet } from '../pallets'
+import type { TAsset, TNodeWithRelayChains } from '../../types'
 import { getAssets, getOtherAssets } from './assets'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 
@@ -41,21 +39,6 @@ export const getSupportedAssets = (
     const polkadotAsset = getAssetBySymbolOrId('Polkadot', { symbol: 'DOT' })
     const kusamaAsset = getAssetBySymbolOrId('Kusama', { symbol: 'KSM' })
     return [...(polkadotAsset ? [polkadotAsset] : []), ...(kusamaAsset ? [kusamaAsset] : [])]
-  }
-
-  const isBifrost = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
-
-  if (
-    !isRelayChain(origin) &&
-    getDefaultPallet(origin as TNodePolkadotKusama) === 'XTokens' &&
-    (destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama') &&
-    !isBifrost
-  ) {
-    return getOtherAssets(destination).filter(
-      asset =>
-        originAssets.some(a => normalizeSymbol(a.symbol) === normalizeSymbol(asset.symbol)) &&
-        asset.assetId !== ''
-    )
   }
 
   const supportedAssets = originAssets.filter(asset =>

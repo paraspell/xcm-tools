@@ -1,5 +1,6 @@
 // Unit tests for general utils
 
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
 import { type Extrinsic, InvalidCurrencyError, createApiInstanceForNode } from '@paraspell/sdk';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import {
@@ -149,7 +150,7 @@ export const performSwap = async (
   options: TTransferOptionsModified,
   dex: ExchangeNode,
 ): Promise<TSwapResult> => {
-  const originApi = await createApiInstanceForNode(options.from);
+  const originApi = await createApiInstanceForNode(options.from as TNodeDotKsmWithRelayChains);
   const swapApi = await dex.createApiInstance();
   const toDestTx = await buildFromExchangeExtrinsic(swapApi, options, options.amount);
   const toExchangeTx = await buildToExchangeExtrinsic(originApi, options);

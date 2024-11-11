@@ -26,7 +26,7 @@ class Peaq<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTran
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
 
-    if (!isForeignAsset(asset)) {
+    if (!isForeignAsset(asset) || !asset.assetId) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 

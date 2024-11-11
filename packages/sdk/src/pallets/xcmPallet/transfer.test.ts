@@ -6,6 +6,7 @@ import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
 import { Foreign, getAllAssetsSymbols, getOtherAssets, getRelayChainSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { DuplicateAssetError, IncompatibleNodesError } from '../../errors'
+import type { TNodePolkadotKusama } from '../../types'
 import { type TSendOptions, type TNode, type TMultiAsset, type TMultiLocation } from '../../types'
 import { send, transferRelayToParaSerializedApiCall } from './transfer'
 import ParachainNode from '../../nodes/ParachainNode'
@@ -44,7 +45,7 @@ const mockApi = {
 } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
 describe('send', () => {
-  let polkadotNodes: TNode[]
+  let polkadotNodes: TNodePolkadotKusama[]
   let kusamaNodes: TNode[]
   let sendOptions: TSendOptions<ApiPromise, Extrinsic>
 
@@ -219,7 +220,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'AssetHubPolkadot' as TNode,
+      origin: 'AssetHubPolkadot' as TNodePolkadotKusama,
       destination: 'Hydration' as TNode,
       currency: { multiasset: [] },
       feeAsset: 0,
@@ -235,7 +236,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'Hydration' as TNode,
+      origin: 'Hydration' as TNodePolkadotKusama,
       destination: 'Acala' as TNode,
       currency: { symbol: 'USDT' },
       feeAsset: 0,
@@ -250,9 +251,9 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'AssetHubPolkadot' as TNode,
+      origin: 'AssetHubPolkadot' as TNodePolkadotKusama,
       destination: 'Hydration' as TNode,
-      currency: { symbol: 'WETH' },
+      currency: { symbol: 'WETH.e' },
       feeAsset: 0,
       amount: 1000,
       address: '0x123'
@@ -265,7 +266,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'AssetHubPolkadot' as TNode,
+      origin: 'AssetHubPolkadot' as TNodePolkadotKusama,
       destination: 'Hydration' as TNode,
       currency: {
         multiasset: [
@@ -301,7 +302,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'AssetHubPolkadot' as TNode,
+      origin: 'AssetHubPolkadot' as TNodePolkadotKusama,
       destination: 'Hydration' as TNode,
       currency: { multilocation },
       feeAsset: 1,
@@ -323,7 +324,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'AssetHubPolkadot' as TNode,
+      origin: 'AssetHubPolkadot' as TNodePolkadotKusama,
       destination: 'Hydration' as TNode,
       currency: { multilocation },
       feeAsset: 1,
@@ -338,7 +339,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'Acala' as TNode,
+      origin: 'Acala' as TNodePolkadotKusama,
       destination: 'Ethereum' as TNode,
       currency: { symbol: 'WETH' },
       feeAsset: 1,
@@ -353,7 +354,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'AssetHubPolkadot' as TNode,
+      origin: 'AssetHubPolkadot' as TNodePolkadotKusama,
       destination: 'Hydration' as TNode,
       currency: {
         multiasset: [
@@ -393,7 +394,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'AssetHubPolkadot' as TNode,
+      origin: 'AssetHubPolkadot' as TNodePolkadotKusama,
       destination: 'Hydration' as TNode,
       currency: {
         multiasset: [
@@ -433,7 +434,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'AssetHubPolkadot' as TNode,
+      origin: 'AssetHubPolkadot' as TNodePolkadotKusama,
       destination: 'Hydration' as TNode,
       currency: {
         multiasset: [
@@ -473,7 +474,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'AssetHubPolkadot' as TNode,
+      origin: 'AssetHubPolkadot' as TNodePolkadotKusama,
       destination: 'Hydration' as TNode,
       currency: {
         multiasset: [
@@ -513,7 +514,7 @@ describe('send', () => {
     const options = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'AssetHubPolkadot' as TNode,
+      origin: 'AssetHubPolkadot' as TNodePolkadotKusama,
       destination: 'Hydration' as TNode,
       currency: {
         multiasset: [
@@ -553,7 +554,7 @@ describe('send', () => {
     const options: TSendOptions<ApiPromise, Extrinsic> = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'Acala' as TNode,
+      origin: 'Acala' as TNodePolkadotKusama,
       destination: 'AssetHubPolkadot' as TNode,
       currency: { symbol: 'DOT' },
       feeAsset: 0,
@@ -568,7 +569,7 @@ describe('send', () => {
     const options: TSendOptions<ApiPromise, Extrinsic> = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'Hydration' as TNode,
+      origin: 'Hydration' as TNodePolkadotKusama,
       destination: 'AssetHubPolkadot' as TNode,
       currency: { symbol: 'ETH' },
       feeAsset: 0,
@@ -583,7 +584,7 @@ describe('send', () => {
     const options: TSendOptions<ApiPromise, Extrinsic> = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'Hydration' as TNode,
+      origin: 'Hydration' as TNodePolkadotKusama,
       destination: 'AssetHubPolkadot' as TNode,
       currency: { symbol: '4-Pool' },
       feeAsset: 0,
@@ -598,7 +599,7 @@ describe('send', () => {
     const options: TSendOptions<ApiPromise, Extrinsic> = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'CoretimePolkadot' as TNode,
+      origin: 'CoretimePolkadot' as TNodePolkadotKusama,
       destination: 'AssetHubPolkadot' as TNode,
       currency: { symbol: Foreign('DOT') },
       feeAsset: 0,
@@ -613,7 +614,7 @@ describe('send', () => {
     const options: TSendOptions<ApiPromise, Extrinsic> = {
       api: mockApi,
       destApiForKeepAlive: mockApi,
-      origin: 'CoretimePolkadot' as TNode,
+      origin: 'CoretimePolkadot' as TNodePolkadotKusama,
       destination: 'AssetHubPolkadot' as TNode,
       currency: { id: 123 },
       feeAsset: 0,

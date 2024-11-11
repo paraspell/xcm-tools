@@ -25,7 +25,11 @@ export type FormValues = {
   amount: string;
   useApi: boolean;
   isCustomCurrency: boolean;
-  customCurrencyType?: "id" | "symbol" | "multilocation";
+  customCurrencyType?:
+    | "id"
+    | "symbol"
+    | "multilocation"
+    | "overridenMultilocation";
 };
 
 export type FormValuesTransformed = FormValues & {

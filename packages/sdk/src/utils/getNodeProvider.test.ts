@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import type { TNodeWithRelayChains } from '../types'
+import type { TNodeDotKsmWithRelayChains } from '../types'
 import { getNode, getNodeProvider } from '.'
 
 vi.mock('@polkadot/apps-config', () => ({
@@ -15,19 +15,19 @@ vi.mock('./getNode', () => ({
 
 describe('getNodeProvider', () => {
   it('should return the first provider for Polkadot', () => {
-    const node = 'Polkadot' as TNodeWithRelayChains
+    const node = 'Polkadot' as TNodeDotKsmWithRelayChains
     const result = getNodeProvider(node)
     expect(result).toBe('https://polkadotProvider.com')
   })
 
   it('should return the first provider for Kusama', () => {
-    const node = 'Kusama' as TNodeWithRelayChains
+    const node = 'Kusama' as TNodeDotKsmWithRelayChains
     const result = getNodeProvider(node)
     expect(result).toBe('https://kusamaProvider.com')
   })
 
   it('should call getNode and return the provider for other nodes', () => {
-    const node = 'SomeOtherNode' as TNodeWithRelayChains
+    const node = 'SomeOtherNode' as TNodeDotKsmWithRelayChains
     const mockNodeProvider = 'https://otherNodeProvider.com'
 
     const result = getNodeProvider(node)

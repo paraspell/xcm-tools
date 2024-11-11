@@ -1,12 +1,7 @@
 // Contains detailed structure of XCM call construction for Karura Parachain
 
 import type { TTransferReturn } from '../../types'
-import {
-  type IXTokensTransfer,
-  Version,
-  type XTokensTransferInput,
-  type TNodePolkadotKusama
-} from '../../types'
+import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
 import { getAllNodeProviders, getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
@@ -21,7 +16,7 @@ class Karura<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[4]
+    return getAllNodeProviders(this.node)[4]
   }
 }
 

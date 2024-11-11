@@ -3,7 +3,6 @@
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getNativeAssetSymbol, getParaId } from '../pallets/assets'
 import type {
-  TNode,
   TRelayChainType,
   TScenario,
   IXTokensTransfer,
@@ -19,18 +18,18 @@ import type {
   TMultiLocation,
   TMultiLocationHeader,
   TSerializedApiCallV2,
-  TAsset
+  TAsset,
+  XTokensTransferInput
 } from '../types'
 import { Version, Parents } from '../types'
-import { getAllNodeProviders, generateAddressPayload, getFees, verifyMultiLocation } from '../utils'
+import { getAllNodeProviders, generateAddressPayload, getFees } from '../utils'
 import {
   constructRelayToParaParameters,
   createCurrencySpec,
-  createPolkadotXcmHeader,
-  isTMultiLocation
+  createPolkadotXcmHeader
 } from '../pallets/xcmPallet/utils'
-import { InvalidCurrencyError } from '../errors'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
+import XTokensTransferImpl from './xTokens'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
@@ -45,7 +44,7 @@ const supportsPolkadotXCM = (obj: unknown): obj is IPolkadotXCMTransfer => {
 }
 
 abstract class ParachainNode<TApi, TRes> {
-  private readonly _node: TNode
+  private readonly _node: TNodePolkadotKusama
 
   // Property _name maps our node names to names which polkadot libs are using
   // https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayKusama.ts
@@ -59,7 +58,7 @@ abstract class ParachainNode<TApi, TRes> {
 
   protected _assetCheckEnabled = true
 
-  constructor(node: TNode, name: string, type: TRelayChainType, version: Version) {
+  constructor(node: TNodePolkadotKusama, name: string, type: TRelayChainType, version: Version) {
     this._name = name
     this._type = type
     this._node = node
@@ -74,7 +73,7 @@ abstract class ParachainNode<TApi, TRes> {
     return this._type
   }
 
-  get node(): TNode {
+  get node(): TNodePolkadotKusama {
     return this._node
   }
 
@@ -117,7 +116,11 @@ abstract class ParachainNode<TApi, TRes> {
     const versionOrDefault = version ?? this.version
 
     if (supportsXTokens(this) && this.canUseXTokens(options)) {
-      return this.transferXTokens({
+      const isBifrostOrigin = this.node === 'BifrostPolkadot' || this.node === 'BifrostKusama'
+      const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
+      const shouldUseMultiasset = isAssetHubDest && !isBifrostOrigin
+
+      const input: XTokensTransferInput<TApi, TRes> = {
         api,
         asset,
         amount,
@@ -137,7 +140,13 @@ abstract class ParachainNode<TApi, TRes> {
         overridedCurrencyMultiLocation,
         feeAsset,
         serializedApiCallEnabled
-      })
+      }
+
+      if (shouldUseMultiasset) {
+        return XTokensTransferImpl.transferXTokens(input, undefined)
+      }
+
+      return this.transferXTokens(input)
     } else if (supportsXTransfer(this)) {
       return this.transferXTransfer({
         api,
@@ -151,12 +160,6 @@ abstract class ParachainNode<TApi, TRes> {
         serializedApiCallEnabled
       })
     } else if (supportsPolkadotXCM(this)) {
-      if (
-        isTMultiLocation(overridedCurrencyMultiLocation) &&
-        !verifyMultiLocation(this.node, overridedCurrencyMultiLocation)
-      ) {
-        throw new InvalidCurrencyError('Provided Multi-location is not a valid currency.')
-      }
       return await this.transferPolkadotXCM({
         api,
         header: this.createPolkadotXcmHeader(scenario, versionOrDefault, destination, paraId),
@@ -202,7 +205,7 @@ abstract class ParachainNode<TApi, TRes> {
   }
 
   getProvider(): string {
-    return getAllNodeProviders(this.node as TNodePolkadotKusama)[0]
+    return getAllNodeProviders(this.node)[0]
   }
 
   async createApiInstance(api: IPolkadotApi<TApi, TRes>): Promise<TApi> {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { XTokensTransferInput, TNodePolkadotKusama } from '../../types'
+import type { XTokensTransferInput } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import { getAllNodeProviders } from '../../utils'
@@ -50,7 +50,7 @@ describe('Basilisk', () => {
   it('should return the second provider URL from getProvider', () => {
     const provider = basilisk.getProvider()
 
-    expect(getAllNodeProviders).toHaveBeenCalledWith(basilisk.node as TNodePolkadotKusama)
+    expect(getAllNodeProviders).toHaveBeenCalledWith(basilisk.node)
     expect(provider).toBe('wss://preferred-dwellir-rpc')
   })
 })

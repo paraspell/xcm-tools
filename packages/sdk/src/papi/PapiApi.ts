@@ -4,6 +4,7 @@ import type {
   HexString,
   TAsset,
   TMultiLocation,
+  TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
   TSerializedApiCallV2
 } from '../types'
@@ -44,7 +45,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return this.api
   }
 
-  async init(node: TNodeWithRelayChains): Promise<void> {
+  async init(node: TNodeDotKsmWithRelayChains): Promise<void> {
     if (unsupportedNodes.includes(node)) {
       throw new NodeNotSupportedError(`The node ${node} is not yet supported by the Polkadot API.`)
     }
@@ -118,6 +119,14 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return BigInt(res === undefined ? 0 : res.balance)
   }
 
+  async getForeignAssetsByIdBalance(address: string, assetId: string): Promise<bigint> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const res = await this.api.getUnsafeApi().query.ForeignAssets.Account.getValue(assetId, address)
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return BigInt(res === undefined ? 0 : res.balance)
+  }
+
   async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint> {
     const response = await this.api.getUnsafeApi().query.Tokens.Accounts.getEntries(address)
 
@@ -158,7 +167,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   async createApiForNode(
-    node: TNodeWithRelayChains
+    node: TNodeDotKsmWithRelayChains
   ): Promise<IPolkadotApi<TPapiApi, TPapiTransaction>> {
     const api = new PapiApi()
     await api.init(node)

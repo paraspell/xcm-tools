@@ -1,5 +1,5 @@
 import { prodRelayKusama, prodRelayPolkadot } from '@polkadot/apps-config'
-import type { TNodeWithRelayChains } from '../types'
+import type { TNodeDotKsmWithRelayChains } from '../types'
 import { getNode } from '.'
 
 /**
@@ -8,7 +8,7 @@ import { getNode } from '.'
  * @param node - The node for which to get the WS provider URL.
  * @returns The WS provider URL as a string.
  */
-export const getNodeProvider = (node: TNodeWithRelayChains): string => {
+export const getNodeProvider = (node: TNodeDotKsmWithRelayChains): string => {
   if (node === 'Polkadot') {
     return prodRelayPolkadot.providers[0]
   } else if (node === 'Kusama') {

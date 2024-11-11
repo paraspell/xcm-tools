@@ -1,4 +1,4 @@
-import type { TMultiLocation } from './TMultiLocation'
+import type { TJunction, TMultiLocation } from './TMultiLocation'
 import type { TMultiAsset } from './TMultiAsset'
 import type { Version } from './TTransfer'
 
@@ -7,6 +7,11 @@ export type TCurrency = string | number | bigint
 export type TSymbolSpecifier = {
   type: 'Native' | 'Foreign' | 'ForeignAbstract'
   value: string
+}
+
+export type TOverrideMultiLocationSpecifier = {
+  type: 'Override'
+  value: TMultiLocation
 }
 
 export type TCurrencySymbolValue = string | TSymbolSpecifier
@@ -20,6 +25,9 @@ export type TCurrencyCore =
   | {
       id: TCurrency
     }
+  | {
+      multilocation: TMultiLocationValue
+    }
 
 export type TCurrencyCoreV1 =
   | {
@@ -29,10 +37,17 @@ export type TCurrencyCoreV1 =
       id: TCurrency
     }
 
+export type TMultiLocationValue = string | TMultiLocation | TJunction[]
+
+export type TMultiLocationValueWithOverride = TMultiLocationValue | TOverrideMultiLocationSpecifier
+
 export type TCurrencyInput =
-  | TCurrencyCore
+  | TCurrencySymbol
   | {
-      multilocation: TMultiLocation
+      id: TCurrency
+    }
+  | {
+      multilocation: TMultiLocationValueWithOverride
     }
   | {
       multiasset: TMultiAsset[]

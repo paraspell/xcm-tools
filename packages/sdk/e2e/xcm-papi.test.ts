@@ -8,12 +8,13 @@ import {
   ScenarioNotSupportedError,
   getAssetId,
   NodeNotSupportedError,
-  TNodeWithRelayChains,
   NODE_NAMES_DOT_KSM,
   getSupportedAssets,
   Builder,
   Version,
-  getOtherAssets
+  getOtherAssets,
+  TNodeDotKsmWithRelayChains,
+  ForeignAbstract
 } from '../src/papi'
 import { getPolkadotSigner, PolkadotSigner } from 'polkadot-api/signer'
 
@@ -73,7 +74,7 @@ const filteredNodes = NODE_NAMES_DOT_KSM.filter(
 
 const findTransferableNodeAndAsset = (
   from: TNode
-): { nodeTo: TNode | undefined; asset: string | undefined; assetId: string | null } => {
+): { nodeTo: TNode | undefined; asset: string | undefined; assetId: string | null | undefined } => {
   const allFromAssets = getAssetsForNode(from)
 
   const nodeTo = NODE_NAMES_DOT_KSM.filter(
@@ -83,7 +84,7 @@ const findTransferableNodeAndAsset = (
 
     const filteredNodes =
       node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
-        ? nodeAssets.filter(symbol => symbol !== 'DOT' && symbol !== 'KSM')
+        ? nodeAssets.filter(symbol => symbol !== 'DOT' && symbol !== 'KSM' && symbol !== 'GLMR')
         : nodeAssets
 
     const commonAsset = filteredNodes.filter(asset => allFromAssets.includes(asset))[0]
@@ -118,7 +119,9 @@ const validateTx = async (tx: TPapiTransaction, signer: PolkadotSigner) => {
 describe.sequential('XCM - e2e', () => {
   const apiPool: Record<string, TPapiApi> = {}
 
-  async function createOrGetApiInstanceForNode(node: TNodeWithRelayChains): Promise<TPapiApi> {
+  async function createOrGetApiInstanceForNode(
+    node: TNodeDotKsmWithRelayChains
+  ): Promise<TPapiApi> {
     if (!apiPool[node]) {
       const api = await createApiInstanceForNode(node)
       apiPool[node] = api
@@ -165,7 +168,7 @@ describe.sequential('XCM - e2e', () => {
 
   describe('AssetClaim', () => {
     ;(
-      ['Polkadot', 'Kusama', 'AssetHubPolkadot', 'AssetHubKusama'] as TNodeWithRelayChains[]
+      ['Polkadot', 'Kusama', 'AssetHubPolkadot', 'AssetHubKusama'] as TNodeDotKsmWithRelayChains[]
     ).forEach(node => {
       it('should create asset claim tx', async () => {
         const api = await createOrGetApiInstanceForNode(node)
@@ -316,7 +319,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = await Builder(api)
         .from('Hydration')
         .to('AssetHubPolkadot')
-        .currency({ symbol: 'USDT' })
+        .currency({ symbol: ForeignAbstract('USDT1') })
         .feeAsset('0')
         .amount(MOCK_AMOUNT)
         .address(MOCK_ADDRESS)
@@ -367,7 +370,23 @@ describe.sequential('XCM - e2e', () => {
           }
         }
       })
-      if (node !== 'Integritee' && node !== 'Crust' && node !== 'Phala' && node !== 'Khala') {
+      if (
+        node !== 'Integritee' &&
+        node !== 'Crust' &&
+        node !== 'Phala' &&
+        node !== 'Khala' &&
+        node !== 'Manta' &&
+        node !== 'Zeitgeist' &&
+        node !== 'Moonriver' &&
+        node !== 'Calamari' &&
+        node !== 'Basilisk' &&
+        node !== 'Amplitude' &&
+        node !== 'Altair' &&
+        node !== 'Moonbeam' &&
+        node !== 'Hydration' &&
+        node !== 'Darwinia' &&
+        node !== 'Centrifuge'
+      ) {
         it(`should create transfer tx - ParaToRelay ${getRelayChainSymbol(
           node
         )} from ${node} to Relay`, async () => {
@@ -377,13 +396,7 @@ describe.sequential('XCM - e2e', () => {
               .amount(MOCK_AMOUNT)
               .address(MOCK_ADDRESS)
               .build()
-            if (
-              node === 'Moonriver' ||
-              node === 'Moonbeam' ||
-              node === 'Mythos' ||
-              node === 'Crab' ||
-              node === 'Darwinia'
-            ) {
+            if (node === 'Mythos' || node === 'Crab') {
               await validateTx(tx, evmSigner)
             } else {
               await validateTx(tx, signer)
