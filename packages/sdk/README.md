@@ -104,6 +104,8 @@ NOTES:
 ```
 Latest news:
 - ParaSpell now offers advanced asset symbol selection {symbol: "symbol"} for non duplicate assets, {symbol: Native("symbol")} or {symbol: Foreign("symbol")} if the duplicates are between native and foreign assets and {symbol: ForeignAbstract("symbol")} if the duplicates are in foreign assets only. You will get an error that will guide you further if you simply start with {symbol: "symbol"}.
+- You can now select assets by multilocation by simply using { multilocation: string | JSON }. The custom multilocation selection remains supported, but in order to use it you now have to use override - {multilocation: Override('Custom Multilocation')}.
+- The balance queries also support multilocation asset selection
 ```
 
 ### Builder pattern:
@@ -113,7 +115,7 @@ Latest news:
 await Builder(/*node api/ws_url_string - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
-      .currency({id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray})
+      .currency({id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson} | {multilocation: Override('Custom Multilocation')} | {multiasset: multilocationJsonArray})
       /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
       .amount(amount) // Overriden when using MultilocationArray
       .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
@@ -122,9 +124,9 @@ await Builder(/*node api/ws_url_string - optional*/)
 /*
 EXAMPLE:
 await Builder()
-      .from('Basilisk')
-      .to('Robonomics')
-      .currency({symbol:'XRT'})
+      .from('Hydration')
+      .to('BifrostPolkadot')
+      .currency({symbol:'BNC'})
       .amount(1000000000000)
       .address('4FCUYBMe2sbq5KosN22emsPUydS8XUwZhJ6VUZesmouGu6qd')
       .build()
@@ -214,7 +216,7 @@ await paraspell.xcmPallet.send(
     {
       api?: ApiPromise/Ws_url_string,
       origin: origin  Parachain  name  string,
-      currency: {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}) ,
+      currency: {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson} | {multilocation: Override('Custom Multilocation')} | {multiasset: multilocationJsonArray} ,
       feeAsset? - Fee asset select id
       amount: any,
       to: destination  address  string | Multilocation object,
@@ -332,19 +334,19 @@ import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetai
 import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails } from "@paraspell/sdk/papi"; 
 
 //Get balance of foreign currency
-await getBalanceForeign({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, api /* api/ws_url_string optional */})
+await getBalanceForeign({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, api /* api/ws_url_string optional */})
 
 //Get balance of native currency
 await getBalanceNative({address, node, api /* api/ws_url_string optional */})
 
 //Get fee information regarding XCM call
-await getOriginFeeDetails({from, to, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, amount, originAddress, destinationAddress, api /* api/ws_url_string optional */, feeMargin /* 10% by default */})
+await getOriginFeeDetails({from, to, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, originAddress, destinationAddress, api /* api/ws_url_string optional */, feeMargin /* 10% by default */})
 
 //Retrieves the asset balance for a given account on a specified node.
-await getAssetBalance({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, api /* api/ws_url_string optional */});
+await getAssetBalance({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, api /* api/ws_url_string optional */});
 
 //Get all the information about XCM transfer
-await getTransferInfo({from, to, address, destinationAddress, currency /*- {id: currencyID} | {symbol: currencySymbol}*/, amount, api /* api/ws_url_string optional */})
+await getTransferInfo({from, to, address, destinationAddress, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, api /* api/ws_url_string optional */})
 ```
 
 ## 💻 Tests

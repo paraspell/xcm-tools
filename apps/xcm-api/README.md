@@ -93,7 +93,7 @@ const response = await fetch('http://localhost:3001/x-transfer-hash', {
   body: JSON.stringify({
     from: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
     to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
-    currency: { currencySpec }, // {id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}
+    currency: { currencySpec }, //{id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson} | {multilocation: "type": "Override","value": "CustomAssetMultilocationJson"} | {multiasset: multilocationJsonArray}
     amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
     address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
@@ -189,7 +189,7 @@ const response = await fetch('http://localhost:3001/transfer-info?', {
   body: JSON.stringify({
     origin: 'Parachain', // Replace "Parachain" with chain you wish to query transfer info for as origin
     destination: 'Parachain', // Replace "Parachain" with chain you wish to query transfer info for as destination
-    currency: { currencySpec }, //{id: currencyID} | {symbol: currencySymbol}
+    currency: { currencySpec }, //{id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson}
     amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
     accountOrigin: 'Account address', // Replace "Address" with origin wallet address (In AccountID32 or AccountKey20 Format)
     accountDestination: 'Account address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
@@ -336,7 +336,7 @@ const response = await fetch("http://localhost:3001/balance/:node/foreign", {
     },
     body: JSON.stringify({
         address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format)
-        currency: "Currency" //Replace "Currency" with either symbol { symbol: "KSM" } or  id { id: 123 }
+        currency: "Currency" //Replace "Currency" with either {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson}
     })
 });
 ```
