@@ -38,15 +38,13 @@ For example on PNPM: `pnpm config set auto-install-peers false`
 ```
 
 ```bash
-#NOTE: apps-config will soon be removed entirely from the peer dependency list
-
 #Choose a package and install its dependencies below (SDK is built in a way, that only one library has to be installed)
 
 #Polkadot API peer dependencies
-pnpm | npm install || yarn add polkadot-api @polkadot/apps-config
+pnpm | npm install || yarn add polkadot-api 
 
 #PolkadotJS peer dependencies
-pnpm | npm install || yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
+pnpm | npm install || yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/util
 ```
 
 ### Install SDK 
@@ -106,6 +104,7 @@ Latest news:
 - ParaSpell now offers advanced asset symbol selection {symbol: "symbol"} for non duplicate assets, {symbol: Native("symbol")} or {symbol: Foreign("symbol")} if the duplicates are between native and foreign assets and {symbol: ForeignAbstract("symbol")} if the duplicates are in foreign assets only. You will get an error that will guide you further if you simply start with {symbol: "symbol"}.
 - You can now select assets by multilocation by simply using { multilocation: string | JSON }. The custom multilocation selection remains supported, but in order to use it you now have to use override - {multilocation: Override('Custom Multilocation')}.
 - The balance queries also support multilocation asset selection
+- PAPI version of SDK is now fully PJS-less (We removed apps/config as dependency entirely).
 ```
 
 ### Builder pattern:
