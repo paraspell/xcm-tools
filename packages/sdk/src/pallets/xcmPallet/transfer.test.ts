@@ -3,7 +3,13 @@
 import { type ApiPromise } from '@polkadot/api'
 import { describe, expect, it, beforeEach, vi } from 'vitest'
 import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
-import { Foreign, getAllAssetsSymbols, getOtherAssets, getRelayChainSymbol } from '../assets'
+import {
+  Foreign,
+  getAllAssetsSymbols,
+  getNativeAssets,
+  getOtherAssets,
+  getRelayChainSymbol
+} from '../assets'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { DuplicateAssetError, IncompatibleNodesError } from '../../errors'
 import type { TNodePolkadotKusama } from '../../types'
@@ -66,6 +72,7 @@ describe('send', () => {
       send({
         ...sendOptions,
         origin: 'Acala',
+        destination: 'Astar',
         currency: { symbol: 'UNIT' }
       })
     ).rejects.toThrowError(InvalidCurrencyError)
@@ -162,7 +169,10 @@ describe('send', () => {
           const otherAssetsMatches = getOtherAssets(node).filter(
             ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === symbol.toLowerCase()
           )
-          if (otherAssetsMatches.length > 1) {
+          const nativeAssetsMatches = getNativeAssets(node).filter(
+            ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === symbol.toLowerCase()
+          )
+          if (otherAssetsMatches.length + nativeAssetsMatches.length > 1) {
             continue
           }
           await expect(
@@ -209,8 +219,8 @@ describe('send', () => {
     await expect(
       send({
         ...sendOptions,
-        origin: 'AssetHubKusama',
-        currency: { symbol: 'KSM' },
+        origin: 'Karura',
+        currency: { symbol: 'CSM' },
         destination: 'CrustShadow'
       })
     ).resolves.not.toThrowError(IncompatibleNodesError)

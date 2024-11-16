@@ -25,8 +25,10 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions }) => {
     form.setFieldValue("customCurrency", "");
   }, [form.values.customCurrencyType]);
 
-  const isNotParaToPara =
-    isRelayChain(form.values.from) || isRelayChain(form.values.to);
+  const isRelayToPara = isRelayChain(form.values.from);
+  const isParaToRelay = isRelayChain(form.values.to);
+
+  const isNotParaToPara = isRelayToPara || isParaToRelay;
 
   return (
     <Stack gap="xs">
@@ -72,7 +74,7 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions }) => {
           placeholder="Pick value"
           data={currencyOptions}
           allowDeselect={false}
-          disabled={isNotParaToPara}
+          disabled={isRelayToPara}
           searchable
           required
           data-testid="select-currency"

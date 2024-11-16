@@ -36,8 +36,8 @@ export const getSupportedAssets = (
     (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
     (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot')
   ) {
-    const polkadotAsset = getAssetBySymbolOrId('Polkadot', { symbol: 'DOT' })
-    const kusamaAsset = getAssetBySymbolOrId('Kusama', { symbol: 'KSM' })
+    const polkadotAsset = getAssetBySymbolOrId('Polkadot', { symbol: 'DOT' }, null)
+    const kusamaAsset = getAssetBySymbolOrId('Kusama', { symbol: 'KSM' }, null)
     return [...(polkadotAsset ? [polkadotAsset] : []), ...(kusamaAsset ? [kusamaAsset] : [])]
   }
 

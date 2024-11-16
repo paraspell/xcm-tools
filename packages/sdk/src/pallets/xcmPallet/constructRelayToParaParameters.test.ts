@@ -72,7 +72,7 @@ describe('constructRelayToParaParameters', () => {
       beneficiary: 'mockedBeneficiary',
       assets: 'mockedAssets',
       fee_asset_item: DEFAULT_FEE_ASSET,
-      weightLimit: 'Unlimited'
+      weight_limit: 'Unlimited'
     })
   })
 
@@ -140,7 +140,7 @@ describe('constructRelayToParaParameters', () => {
       beneficiary: 'mockedBeneficiary',
       assets: 'mockedAssets',
       fee_asset_item: DEFAULT_FEE_ASSET,
-      weightLimit: 'Unlimited'
+      weight_limit: 'Unlimited'
     })
   })
 

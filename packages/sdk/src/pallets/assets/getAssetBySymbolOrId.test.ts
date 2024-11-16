@@ -26,7 +26,7 @@ describe('getAssetBySymbolOrId', () => {
             ({ symbol: assetSymbol }) => assetSymbol?.toLowerCase() === other.symbol?.toLowerCase()
           )
           if (otherAssetsMatches.length < 2) {
-            const asset = getAssetBySymbolOrId(node, { symbol: Foreign(other.symbol) })
+            const asset = getAssetBySymbolOrId(node, { symbol: Foreign(other.symbol) }, null)
             expect(asset).toHaveProperty('symbol')
             expect(other.symbol.toLowerCase()).toEqual(asset?.symbol?.toLowerCase())
             if (
@@ -42,7 +42,9 @@ describe('getAssetBySymbolOrId', () => {
             ({ assetId }) => assetId === other.assetId
           )
           if (otherAssetsMatchesById.length > 1 && other.assetId) {
-            expect(() => getAssetBySymbolOrId(node, { id: other.assetId as string })).toThrow()
+            expect(() =>
+              getAssetBySymbolOrId(node, { id: other.assetId as string }, null)
+            ).toThrow()
           }
         }
       })
@@ -53,7 +55,7 @@ describe('getAssetBySymbolOrId', () => {
     NODE_NAMES.forEach(node => {
       const { nativeAssets } = getAssetsObject(node)
       nativeAssets.forEach(other => {
-        const asset = getAssetBySymbolOrId(node, { symbol: other.symbol }, true)
+        const asset = getAssetBySymbolOrId(node, { symbol: Native(other.symbol) }, null)
         expect(other.symbol.toLowerCase()).toEqual(asset?.symbol?.toLowerCase())
         expect(asset).toHaveProperty('symbol')
       })
@@ -68,7 +70,7 @@ describe('getAssetBySymbolOrId', () => {
         const hasDuplicateIds =
           otherAssets.filter(asset => asset.assetId === other.assetId).length > 1
         if (!hasDuplicateIds) {
-          const asset = getAssetBySymbolOrId(node, { id: other.assetId ?? '' })
+          const asset = getAssetBySymbolOrId(node, { id: other.assetId ?? '' }, null)
           expect(asset).not.toBeNull()
           expect(isForeignAsset(asset as TAsset)).toBe(true)
           expect(asset).toHaveProperty('assetId')
@@ -83,77 +85,69 @@ describe('getAssetBySymbolOrId', () => {
       const { nativeAssets } = getAssetsObject(node)
       nativeAssets.forEach(nativeAsset => {
         if (nativeAsset.symbol) {
-          const asset = getAssetBySymbolOrId(node, { symbol: Native(nativeAsset.symbol) })
+          const asset = getAssetBySymbolOrId(node, { symbol: Native(nativeAsset.symbol) }, null)
           expect(asset).toHaveProperty('symbol')
         }
       })
     })
   })
 
-  it('should return symbol for every node relay chain asset symbol', () => {
-    NODE_NAMES.forEach(node => {
-      const { relayChainAssetSymbol } = getAssetsObject(node)
-      const asset = getAssetBySymbolOrId(node, { symbol: relayChainAssetSymbol }, true)
-      expect(asset).toHaveProperty('symbol')
-    })
-  })
-
   it('should find assetId for KSM asset in AssetHubKusama', () => {
-    const asset = getAssetBySymbolOrId('AssetHubKusama', { symbol: 'USDt' })
+    const asset = getAssetBySymbolOrId('AssetHubKusama', { symbol: 'USDt' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam', () => {
-    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: 'xcZTG' })
+    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: 'xcZTG' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam using Foreign selector', () => {
-    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: Foreign('xcZTG') })
+    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: Foreign('xcZTG') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam', () => {
-    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: 'xcWETH.e' })
+    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: 'xcWETH.e' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset starting with "xc" for Moonbeam using Foreign selector', () => {
-    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: Foreign('xcWETH.e') })
+    const asset = getAssetBySymbolOrId('Moonbeam', { symbol: Foreign('xcWETH.e') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot', () => {
-    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH.e' })
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH.e' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on AssetHubPolkadot', () => {
-    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: Foreign('WETH.e') })
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: Foreign('WETH.e') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum', () => {
-    const asset = getAssetBySymbolOrId('Ethereum', { symbol: 'WETH.e' })
+    const asset = getAssetBySymbolOrId('Ethereum', { symbol: 'WETH.e' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum', () => {
-    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH.e') })
+    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH.e') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find asset ending with .e on Ethereum', () => {
-    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH.e' }, false, 'Ethereum')
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH.e' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -165,7 +159,7 @@ describe('getAssetBySymbolOrId', () => {
         symbol: 'WETH.e'
       }
     ])
-    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH' }, false, 'Ethereum')
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -177,7 +171,7 @@ describe('getAssetBySymbolOrId', () => {
         symbol: 'MON'
       }
     ])
-    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: Foreign('MON.e') })
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: Foreign('MON.e') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -197,7 +191,7 @@ describe('getAssetBySymbolOrId', () => {
             }
           ]
     )
-    getAssetBySymbolOrId('AssetHubPolkadot', { symbol: Foreign('MON.e') })
+    getAssetBySymbolOrId('AssetHubPolkadot', { symbol: Foreign('MON.e') }, null)
   })
 
   it('Should find asset ending with .e on Ethereum when entered withou suffix', () => {
@@ -207,12 +201,7 @@ describe('getAssetBySymbolOrId', () => {
         symbol: 'WETH.e'
       }
     ])
-    const asset = getAssetBySymbolOrId(
-      'AssetHubPolkadot',
-      { symbol: Foreign('WETH') },
-      false,
-      'Ethereum'
-    )
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: Foreign('WETH') }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -224,7 +213,7 @@ describe('getAssetBySymbolOrId', () => {
         symbol: 'WETH.e'
       }
     ])
-    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH') })
+    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -236,7 +225,7 @@ describe('getAssetBySymbolOrId', () => {
         symbol: 'WETH'
       }
     ])
-    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH.e') }, false, 'Ethereum')
+    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH.e') }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -248,7 +237,7 @@ describe('getAssetBySymbolOrId', () => {
         symbol: 'WETH.e'
       }
     ])
-    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH') }, false, 'Ethereum')
+    const asset = getAssetBySymbolOrId('Ethereum', { symbol: Foreign('WETH') }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -278,7 +267,7 @@ describe('getAssetBySymbolOrId', () => {
             nativeAssets: []
           }
     })
-    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WTH.e' })
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WTH.e' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -308,12 +297,12 @@ describe('getAssetBySymbolOrId', () => {
             nativeAssets: []
           }
     })
-    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WTH.e' })
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WTH.e' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
-  it('should find asset with xc prefix on Astar', () => {
+  it('should not find asset with xc prefix on Astar becuase of duplicates', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
@@ -334,9 +323,7 @@ describe('getAssetBySymbolOrId', () => {
         }
       ]
     })
-    const asset = getAssetBySymbolOrId('Astar', { symbol: 'xcDOT' })
-    expect(asset).toHaveProperty('symbol')
-    expect(asset).not.toHaveProperty('assetId')
+    expect(() => getAssetBySymbolOrId('Astar', { symbol: 'xcDOT' }, null)).toThrow()
   })
 
   it('Should throw error when duplicate dot asset on Hydration', () => {
@@ -355,7 +342,7 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'HDX' })).toThrow()
+    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'HDX' }, null)).toThrow()
   })
 
   it('should throw error when multiple assets found for symbol after stripping "xc" prefix', () => {
@@ -374,7 +361,7 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'xcDOT' })).toThrow()
+    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'xcDOT' }, null)).toThrow()
   })
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
@@ -393,7 +380,7 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'GLMR' })).toThrow()
+    expect(() => getAssetBySymbolOrId('Hydration', { symbol: 'GLMR' }, null)).toThrow()
   })
 
   it('should throw error when multiple assets found for symbol after adding "xc" prefix', () => {
@@ -412,7 +399,7 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    expect(() => getAssetBySymbolOrId('Hydration', { symbol: Foreign('DOT') })).toThrow()
+    expect(() => getAssetBySymbolOrId('Hydration', { symbol: Foreign('DOT') }, null)).toThrow()
   })
 
   it('should find asset with xc prefix on Acala', () => {
@@ -427,13 +414,13 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Acala', { symbol: Foreign('DOT') })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: Foreign('DOT') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
   it('Should find ethereum assets', () => {
-    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH' }, false, 'Ethereum')
+    const asset = getAssetBySymbolOrId('AssetHubPolkadot', { symbol: 'WETH' }, 'Ethereum')
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -450,7 +437,7 @@ describe('getAssetBySymbolOrId', () => {
         }
       ]
     })
-    const asset = getAssetBySymbolOrId('Acala', { symbol: Native('DOT') })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: Native('DOT') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('decimals')
   })
@@ -473,7 +460,7 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Acala', { symbol: ForeignAbstract('DOT1') })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: ForeignAbstract('DOT1') }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -501,7 +488,7 @@ describe('getAssetBySymbolOrId', () => {
         }
       ]
     })
-    expect(() => getAssetBySymbolOrId('Acala', { symbol: Foreign('DOT') })).toThrow()
+    expect(() => getAssetBySymbolOrId('Acala', { symbol: Foreign('DOT') }, null)).toThrow()
   })
 
   it('should find asset with lowercase matching', () => {
@@ -517,36 +504,37 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Acala', { symbol: 'Glmr' })
+    const asset = getAssetBySymbolOrId('Acala', { symbol: 'Glmr' }, null)
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
 
-  it('should find asset dot native asset when specifier not present', () => {
+  it('should not find asset DOT native asset when specifier not present and is not in assets', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       otherAssets: [],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Acala', { symbol: 'dot' })
-    expect(asset).toHaveProperty('symbol')
-    expect(asset?.symbol).toBe('DOT')
-    expect(asset).not.toHaveProperty('assetId')
-    expect(asset).toHaveProperty('decimals')
+    const asset = getAssetBySymbolOrId('Acala', { symbol: 'dot' }, null)
+    expect(asset).toBeNull()
   })
 
   it('Should return null when passing a multilocation currency that is not present', () => {
-    const asset = getAssetBySymbolOrId('Astar', {
-      multilocation: {
-        parents: 1,
-        interior: {
-          X1: {
-            PalletInstance: 1
+    const asset = getAssetBySymbolOrId(
+      'Astar',
+      {
+        multilocation: {
+          parents: 1,
+          interior: {
+            X1: {
+              PalletInstance: 1
+            }
           }
         }
-      }
-    })
+      },
+      null
+    )
     expect(asset).toBeNull()
   })
 
@@ -578,24 +566,28 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Astar', {
-      multilocation: {
-        parents: 1,
-        interior: {
-          X3: [
-            {
-              Parachain: 1000
-            },
-            {
-              PalletInstance: 50
-            },
-            {
-              GeneralIndex: 1984
-            }
-          ]
+    const asset = getAssetBySymbolOrId(
+      'Astar',
+      {
+        multilocation: {
+          parents: 1,
+          interior: {
+            X3: [
+              {
+                Parachain: 1000
+              },
+              {
+                PalletInstance: 50
+              },
+              {
+                GeneralIndex: 1984
+              }
+            ]
+          }
         }
-      }
-    })
+      },
+      null
+    )
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -628,24 +620,28 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Astar', {
-      multilocation: JSON.stringify({
-        parents: 1,
-        interior: {
-          X3: [
-            {
-              Parachain: 1000
-            },
-            {
-              PalletInstance: 50
-            },
-            {
-              GeneralIndex: 1984
-            }
-          ]
-        }
-      })
-    })
+    const asset = getAssetBySymbolOrId(
+      'Astar',
+      {
+        multilocation: JSON.stringify({
+          parents: 1,
+          interior: {
+            X3: [
+              {
+                Parachain: 1000
+              },
+              {
+                PalletInstance: 50
+              },
+              {
+                GeneralIndex: 1984
+              }
+            ]
+          }
+        })
+      },
+      null
+    )
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -678,24 +674,28 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Astar', {
-      multilocation: JSON.stringify({
-        parents: 1,
-        interior: {
-          X3: [
-            {
-              Parachain: '1000'
-            },
-            {
-              PalletInstance: '50'
-            },
-            {
-              GeneralIndex: '1984'
-            }
-          ]
-        }
-      })
-    })
+    const asset = getAssetBySymbolOrId(
+      'Astar',
+      {
+        multilocation: JSON.stringify({
+          parents: 1,
+          interior: {
+            X3: [
+              {
+                Parachain: '1000'
+              },
+              {
+                PalletInstance: '50'
+              },
+              {
+                GeneralIndex: '1984'
+              }
+            ]
+          }
+        })
+      },
+      null
+    )
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -723,19 +723,23 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Astar', {
-      multilocation: JSON.stringify([
-        {
-          Parachain: '1000'
-        },
-        {
-          PalletInstance: '50'
-        },
-        {
-          GeneralIndex: '1984'
-        }
-      ])
-    })
+    const asset = getAssetBySymbolOrId(
+      'Astar',
+      {
+        multilocation: JSON.stringify([
+          {
+            Parachain: '1000'
+          },
+          {
+            PalletInstance: '50'
+          },
+          {
+            GeneralIndex: '1984'
+          }
+        ])
+      },
+      null
+    )
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })
@@ -763,19 +767,23 @@ describe('getAssetBySymbolOrId', () => {
       ],
       nativeAssets: []
     })
-    const asset = getAssetBySymbolOrId('Astar', {
-      multilocation: [
-        {
-          Parachain: '1000'
-        },
-        {
-          PalletInstance: '50'
-        },
-        {
-          GeneralIndex: '1984'
-        }
-      ]
-    })
+    const asset = getAssetBySymbolOrId(
+      'Astar',
+      {
+        multilocation: [
+          {
+            Parachain: '1000'
+          },
+          {
+            PalletInstance: '50'
+          },
+          {
+            GeneralIndex: '1984'
+          }
+        ]
+      },
+      null
+    )
     expect(asset).toHaveProperty('symbol')
     expect(asset).toHaveProperty('assetId')
   })

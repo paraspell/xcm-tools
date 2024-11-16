@@ -45,8 +45,8 @@ describe('getSupportedAssets', () => {
 
     const result = getSupportedAssets('AssetHubPolkadot', 'AssetHubKusama')
     expect(result).toEqual([mockDOTAsset, mockKSMAsset])
-    expect(getAssetBySymbolOrId).toHaveBeenCalledWith('Polkadot', { symbol: 'DOT' })
-    expect(getAssetBySymbolOrId).toHaveBeenCalledWith('Kusama', { symbol: 'KSM' })
+    expect(getAssetBySymbolOrId).toHaveBeenCalledWith('Polkadot', { symbol: 'DOT' }, null)
+    expect(getAssetBySymbolOrId).toHaveBeenCalledWith('Kusama', { symbol: 'KSM' }, null)
 
     const result2 = getSupportedAssets('AssetHubKusama', 'AssetHubPolkadot')
     expect(result2).toEqual([mockDOTAsset, mockKSMAsset])

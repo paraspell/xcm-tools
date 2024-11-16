@@ -135,6 +135,8 @@ class Hydration<TApi, TRes>
   extends ParachainNode<TApi, TRes>
   implements IXTokensTransfer, IPolkadotXCMTransfer
 {
+  private static NATIVE_ASSET_ID = 0
+
   constructor() {
     super('Hydration', 'hydradx', 'polkadot', Version.V3)
   }
@@ -260,6 +262,10 @@ class Hydration<TApi, TRes>
 
   transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
     const { asset } = input
+
+    if (asset.symbol === this.getNativeAssetSymbol()) {
+      return XTokensTransferImpl.transferXTokens(input, Hydration.NATIVE_ASSET_ID)
+    }
 
     if (!isForeignAsset(asset)) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)

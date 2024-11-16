@@ -17,8 +17,7 @@ import {
   type TRelayChainSymbol,
   type TNativeAsset
 } from '../../types'
-import { determineRelayChain, getNode } from '../../utils'
-import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
+import { getNode } from '../../utils'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
 
@@ -75,10 +74,7 @@ export const getOtherAssets = (node: TNode): TForeignAsset[] => getAssetsObject(
  */
 export const getAssets = (node: TNodeWithRelayChains): TAsset[] => {
   const { nativeAssets, otherAssets } = getAssetsObject(node)
-  const relayChainAsset = getAssetBySymbolOrId(determineRelayChain(node), {
-    symbol: getRelayChainSymbol(node)
-  })
-  return [...(relayChainAsset ? [relayChainAsset] : []), ...nativeAssets, ...otherAssets]
+  return [...nativeAssets, ...otherAssets]
 }
 
 /**
@@ -88,12 +84,12 @@ export const getAssets = (node: TNodeWithRelayChains): TAsset[] => {
  * @returns An array of asset symbols.
  */
 export const getAllAssetsSymbols = (node: TNodeWithRelayChains): string[] => {
-  const { relayChainAssetSymbol, nativeAssets, otherAssets } = getAssetsObject(node)
+  const { nativeAssets, otherAssets } = getAssetsObject(node)
   const nativeAssetsSymbols = nativeAssets.map(({ symbol }) => symbol)
   const otherAssetsSymbols = otherAssets
     .filter(asset => asset.symbol !== undefined)
     .map(({ symbol }) => symbol) as string[]
-  return [relayChainAssetSymbol, ...nativeAssetsSymbols, ...otherAssetsSymbols]
+  return [...nativeAssetsSymbols, ...otherAssetsSymbols]
 }
 
 /**

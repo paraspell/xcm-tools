@@ -143,6 +143,9 @@ export class GeneralBuilder<TApi, TRes> {
    * @returns An instance of Builder
    */
   to(node: TDestination, paraIdTo?: number): AmountBuilder<TApi, TRes> {
+    if (node === 'Ethereum') {
+      throw new Error('Transfers from Relay chain to Ethereum are not yet supported.')
+    }
     return RelayToParaBuilder.create(this.api, node, this.batchManager, paraIdTo)
   }
 

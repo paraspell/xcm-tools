@@ -13,9 +13,7 @@ import { findAssetByMultiLocation } from './findAssetByMultiLocation'
 export const getAssetBySymbolOrId = (
   node: TNodeWithRelayChains,
   currency: TCurrencyInput,
-  isRelayDestination: boolean = false,
-  destination?: TNodeWithRelayChains,
-  preferForeignAssets = false
+  destination: TNodeWithRelayChains | null
 ): TAsset | null => {
   if (
     ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) ||
@@ -30,15 +28,7 @@ export const getAssetBySymbolOrId = (
 
   let asset: TAsset | undefined
   if ('symbol' in currency) {
-    asset = findAssetBySymbol(
-      node,
-      destination,
-      otherAssets,
-      nativeAssets,
-      currency.symbol,
-      isRelayDestination,
-      preferForeignAssets
-    )
+    asset = findAssetBySymbol(node, destination, otherAssets, nativeAssets, currency.symbol)
   } else if (
     'multilocation' in currency &&
     !isOverrideMultiLocationSpecifier(currency.multilocation)

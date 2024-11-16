@@ -14,8 +14,8 @@ export const getBalanceForeign = async <TApi, TRes>({
   await api.init(node)
 
   const asset =
-    getAssetBySymbolOrId(node, currency, false, undefined, true) ??
-    (node === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency) : null)
+    getAssetBySymbolOrId(node, currency, null) ??
+    (node === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency, null) : null)
 
   if (!asset) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${node}`)

@@ -89,6 +89,7 @@ const sendCommon = async <TApi, TRes>(
   const isBridge =
     (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
     (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot')
+
   const isRelayDestination = destination === undefined
 
   if (!isRelayDestination && !isMultiLocationDestination) {
@@ -130,8 +131,11 @@ const sendCommon = async <TApi, TRes>(
     ? getAssetBySymbolOrId(
         origin,
         currency,
-        isRelayDestination,
-        isTMultiLocation(destination) ? undefined : destination
+        isRelayDestination
+          ? determineRelayChain(origin)
+          : !isTMultiLocation(destination)
+            ? destination
+            : null
       )
     : null
 
@@ -249,10 +253,6 @@ export const transferRelayToParaCommon = async <TApi, TRes>(
   await api.init(determineRelayChain(destination as TNode))
 
   const amountStr = amount.toString()
-
-  if (destination === 'Ethereum') {
-    throw new Error('Relay to para transfers are not supported to Ethereum.')
-  }
 
   if (isMultiLocationDestination) {
     console.warn('Keep alive check is not supported when using MultiLocation as destination.')

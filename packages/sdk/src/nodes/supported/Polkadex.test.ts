@@ -38,4 +38,10 @@ describe('Polkadex', () => {
 
     expect(spy).toHaveBeenCalledWith(mockInput, BigInt(123))
   })
+
+  describe('getProvider', () => {
+    it('should return Polkadex provider', () => {
+      expect(polkadex.getProvider()).toBe('wss://polkadex-parachain-rpc.dwellir.com')
+    })
+  })
 })
