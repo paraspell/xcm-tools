@@ -26,7 +26,7 @@ describe('Amplitude', () => {
 
   it('should initialize with correct values', () => {
     expect(amplitude.node).toBe('Amplitude')
-    expect(amplitude.name).toBe('amplitude')
+    expect(amplitude.info).toBe('amplitude')
     expect(amplitude.type).toBe('kusama')
     expect(amplitude.version).toBe(Version.V3)
   })

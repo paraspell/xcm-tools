@@ -26,7 +26,7 @@ describe('Picasso', () => {
 
   it('should initialize with correct values', () => {
     expect(picasso.node).toBe('Picasso')
-    expect(picasso.name).toBe('picasso')
+    expect(picasso.info).toBe('picasso')
     expect(picasso.type).toBe('kusama')
     expect(picasso.version).toBe(Version.V3)
   })

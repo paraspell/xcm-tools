@@ -27,7 +27,7 @@ describe('Pioneer', () => {
 
   it('should initialize with correct values', () => {
     expect(pioneer.node).toBe('Pioneer')
-    expect(pioneer.name).toBe('pioneer')
+    expect(pioneer.info).toBe('pioneer')
     expect(pioneer.type).toBe('kusama')
     expect(pioneer.version).toBe(Version.V1)
   })

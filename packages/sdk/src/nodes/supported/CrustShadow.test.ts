@@ -30,7 +30,7 @@ describe('CrustShadow', () => {
 
   it('should initialize with correct values', () => {
     expect(crustShadow.node).toBe('CrustShadow')
-    expect(crustShadow.name).toBe('shadow')
+    expect(crustShadow.info).toBe('shadow')
     expect(crustShadow.type).toBe('kusama')
     expect(crustShadow.version).toBe(Version.V3)
   })

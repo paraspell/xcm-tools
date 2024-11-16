@@ -37,7 +37,7 @@ describe('BridgeHubPolkadot', () => {
 
   it('should initialize with correct values', () => {
     expect(bridgeHubPolkadot.node).toBe('BridgeHubPolkadot')
-    expect(bridgeHubPolkadot.name).toBe('polkadotBridgeHub')
+    expect(bridgeHubPolkadot.info).toBe('polkadotBridgeHub')
     expect(bridgeHubPolkadot.type).toBe('polkadot')
     expect(bridgeHubPolkadot.version).toBe(Version.V3)
     expect(bridgeHubPolkadot._assetCheckEnabled).toBe(false)

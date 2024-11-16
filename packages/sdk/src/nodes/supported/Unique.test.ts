@@ -26,7 +26,7 @@ describe('Unique', () => {
 
   it('should initialize with correct values', () => {
     expect(unique.node).toBe('Unique')
-    expect(unique.name).toBe('unique')
+    expect(unique.info).toBe('unique')
     expect(unique.type).toBe('polkadot')
     expect(unique.version).toBe(Version.V3)
   })

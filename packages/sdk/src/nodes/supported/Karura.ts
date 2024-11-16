@@ -2,7 +2,8 @@
 
 import type { TTransferReturn } from '../../types'
 import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
-import { getAllNodeProviders, getNode } from '../../utils'
+import { getNode } from '../../utils'
+import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
 
 class Karura<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -16,7 +17,7 @@ class Karura<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node)[4]
+    return getNodeProviders(this.node)[4]
   }
 }
 

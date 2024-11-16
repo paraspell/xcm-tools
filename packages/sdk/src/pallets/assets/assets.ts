@@ -1,7 +1,8 @@
 // Contains different useful asset query operations from compatible Parachains asset map
 
-import * as assetsMapJson from '../../maps/assets.json' assert { type: 'json' }
+import assetsMapJson from '../../maps/assets.json' assert { type: 'json' }
 import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
+import { getParaId } from '../../nodes/config'
 import type {
   TNodeWithRelayChains,
   TAsset,
@@ -151,15 +152,6 @@ export const getAssetDecimals = (node: TNodeWithRelayChains, symbol: string): nu
   const asset = [...otherAssets, ...nativeAssets].find(o => o.symbol === symbol)
   return asset?.decimals !== undefined ? asset.decimals : null
 }
-
-/**
- * Retrieves the parachain ID for a specified node.
- *
- * @param node - The node for which to get the paraId.
- * @returns The parachain ID of the node.
- */
-export const getParaId = (node: TNodeDotKsmWithRelayChains): number =>
-  getAssetsObject(node).paraId as number
 
 /**
  * Retrieves the node name corresponding to a specified parachain ID.

@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
 import { getNode } from '../../utils'
-import { getAllNodeProviders } from '../../utils/getAllNodeProviders'
 import type { XTokensTransferInput, TRelayToParaOptions } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Moonbeam from './Moonbeam'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
+import { getNodeProviders } from '../config'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -19,8 +19,8 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
   constructRelayToParaParameters: vi.fn()
 }))
 
-vi.mock('../../utils/getAllNodeProviders', () => ({
-  getAllNodeProviders: vi.fn()
+vi.mock('../config', () => ({
+  getNodeProviders: vi.fn()
 }))
 
 describe('Moonbeam', () => {
@@ -43,7 +43,7 @@ describe('Moonbeam', () => {
 
   it('should initialize with correct values', () => {
     expect(moonbeam.node).toBe('Moonbeam')
-    expect(moonbeam.name).toBe('moonbeam')
+    expect(moonbeam.info).toBe('moonbeam')
     expect(moonbeam.type).toBe('polkadot')
     expect(moonbeam.version).toBe(Version.V3)
   })
@@ -82,11 +82,11 @@ describe('Moonbeam', () => {
 
   it('should return the third provider URL from getProvider', () => {
     const mockProviders = ['ws://provider1', 'ws://provider2', 'ws://provider3']
-    vi.mocked(getAllNodeProviders).mockReturnValue(mockProviders)
+    vi.mocked(getNodeProviders).mockReturnValue(mockProviders)
 
     const provider = moonbeam.getProvider()
 
-    expect(getAllNodeProviders).toHaveBeenCalledWith('Moonbeam')
+    expect(getNodeProviders).toHaveBeenCalledWith('Moonbeam')
     expect(provider).toBe('ws://provider3')
   })
 })

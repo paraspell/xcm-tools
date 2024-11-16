@@ -1,6 +1,5 @@
 {
   "Polkadot": {
-    "paraId": 0,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "nativeAssets": [
@@ -12,7 +11,6 @@
     "otherAssets": []
   },
   "Kusama": {
-    "paraId": 0,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "nativeAssets": [
@@ -24,7 +22,6 @@
     "otherAssets": []
   },
   "Polimec": {
-    "paraId": 3344,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PLMC",
     "nativeAssets": [
@@ -84,7 +81,6 @@
     ]
   },
   "Acala": {
-    "paraId": 2000,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ACA",
     "nativeAssets": [
@@ -418,7 +414,6 @@
     ]
   },
   "BridgeHubPolkadot": {
-    "paraId": 1002,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "nativeAssets": [
@@ -430,7 +425,6 @@
     "otherAssets": []
   },
   "BridgeHubKusama": {
-    "paraId": 1002,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "nativeAssets": [
@@ -442,7 +436,6 @@
     "otherAssets": []
   },
   "Astar": {
-    "paraId": 2006,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ASTR",
     "nativeAssets": [
@@ -953,7 +946,6 @@
     ]
   },
   "BifrostPolkadot": {
-    "paraId": 2030,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "BNC",
     "nativeAssets": [
@@ -1349,7 +1341,6 @@
     ]
   },
   "Bitgreen": {
-    "paraId": 2048,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "BBB",
     "nativeAssets": [
@@ -1361,7 +1352,6 @@
     "otherAssets": []
   },
   "Centrifuge": {
-    "paraId": 2031,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "CFG",
     "nativeAssets": [
@@ -1667,7 +1657,6 @@
     ]
   },
   "Subsocial": {
-    "paraId": 2101,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "SUB",
     "nativeAssets": [
@@ -1679,7 +1668,6 @@
     "otherAssets": []
   },
   "ComposableFinance": {
-    "paraId": 2019,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "LAYR",
     "nativeAssets": [
@@ -1819,7 +1807,6 @@
     ]
   },
   "Darwinia": {
-    "paraId": 2046,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "RING",
     "nativeAssets": [
@@ -1885,7 +1872,6 @@
     ]
   },
   "Hydration": {
-    "paraId": 2034,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "HDX",
     "nativeAssets": [
@@ -2676,7 +2662,6 @@
     ]
   },
   "Interlay": {
-    "paraId": 2032,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "INTR",
     "nativeAssets": [
@@ -3022,7 +3007,6 @@
     ]
   },
   "Litentry": {
-    "paraId": 2013,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "LIT",
     "nativeAssets": [
@@ -3034,7 +3018,6 @@
     "otherAssets": []
   },
   "Moonbeam": {
-    "paraId": 2004,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "GLMR",
     "nativeAssets": [
@@ -3906,7 +3889,6 @@
     ]
   },
   "Parallel": {
-    "paraId": 2012,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PARA",
     "nativeAssets": [
@@ -4208,7 +4190,6 @@
     ]
   },
   "AssetHubPolkadot": {
-    "paraId": 1000,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "nativeAssets": [
@@ -4565,7 +4546,6 @@
     ]
   },
   "Altair": {
-    "paraId": 2088,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "AIR",
     "nativeAssets": [
@@ -4646,7 +4626,6 @@
     ]
   },
   "Amplitude": {
-    "paraId": 2124,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "AMPE",
     "nativeAssets": [
@@ -4674,7 +4653,6 @@
     ]
   },
   "Bajun": {
-    "paraId": 2119,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "BAJU",
     "nativeAssets": [
@@ -4686,7 +4664,6 @@
     "otherAssets": []
   },
   "Basilisk": {
-    "paraId": 2090,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "BSX",
     "nativeAssets": [
@@ -4870,7 +4847,6 @@
     ]
   },
   "BifrostKusama": {
-    "paraId": 2001,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "BNC",
     "nativeAssets": [
@@ -5003,7 +4979,6 @@
     ]
   },
   "Calamari": {
-    "paraId": 2084,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KMA",
     "nativeAssets": [
@@ -5367,7 +5342,6 @@
     ]
   },
   "Crab": {
-    "paraId": 2105,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "CRAB",
     "nativeAssets": [
@@ -5385,7 +5359,6 @@
     ]
   },
   "CrustShadow": {
-    "paraId": 2012,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "CSM",
     "nativeAssets": [
@@ -5433,7 +5406,6 @@
     ]
   },
   "Encointer": {
-    "paraId": 1001,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "nativeAssets": [
@@ -5445,7 +5417,6 @@
     "otherAssets": []
   },
   "Imbue": {
-    "paraId": 2121,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "IMBU",
     "nativeAssets": [
@@ -5457,7 +5428,6 @@
     "otherAssets": []
   },
   "KiltSpiritnet": {
-    "paraId": 2086,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "KILT",
     "nativeAssets": [
@@ -5469,7 +5439,6 @@
     "otherAssets": []
   },
   "Integritee": {
-    "paraId": 2015,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "TEER",
     "nativeAssets": [
@@ -5481,7 +5450,6 @@
     "otherAssets": []
   },
   "InvArchTinker": {
-    "paraId": 2125,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "TNKR",
     "nativeAssets": [
@@ -5493,7 +5461,6 @@
     "otherAssets": []
   },
   "Curio": {
-    "paraId": 3339,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "CGT",
     "nativeAssets": [
@@ -5530,7 +5497,6 @@
     ]
   },
   "Karura": {
-    "paraId": 2000,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KAR",
     "nativeAssets": [
@@ -5936,7 +5902,6 @@
     ]
   },
   "Kintsugi": {
-    "paraId": 2092,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KINT",
     "nativeAssets": [
@@ -6083,7 +6048,6 @@
     ]
   },
   "Litmus": {
-    "paraId": 2106,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "LIT",
     "nativeAssets": [
@@ -6095,7 +6059,6 @@
     "otherAssets": []
   },
   "Moonriver": {
-    "paraId": 2023,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "MOVR",
     "nativeAssets": [
@@ -6504,7 +6467,6 @@
     ]
   },
   "ParallelHeiko": {
-    "paraId": 2085,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "HKO",
     "nativeAssets": [
@@ -6673,7 +6635,6 @@
     ]
   },
   "Picasso": {
-    "paraId": 2087,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "PICA",
     "nativeAssets": [
@@ -7036,7 +6997,6 @@
     ]
   },
   "Pioneer": {
-    "paraId": 2096,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "NEER",
     "nativeAssets": [
@@ -7048,7 +7008,6 @@
     "otherAssets": []
   },
   "Quartz": {
-    "paraId": 2095,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "QTZ",
     "nativeAssets": [
@@ -7060,7 +7019,6 @@
     "otherAssets": []
   },
   "RobonomicsKusama": {
-    "paraId": 2048,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "XRT",
     "nativeAssets": [
@@ -7072,7 +7030,6 @@
     "otherAssets": []
   },
   "RobonomicsPolkadot": {
-    "paraId": 3388,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "XRT",
     "nativeAssets": [
@@ -7090,7 +7047,6 @@
     ]
   },
   "PeopleKusama": {
-    "paraId": 1004,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "nativeAssets": [
@@ -7102,7 +7058,6 @@
     "otherAssets": []
   },
   "PeoplePolkadot": {
-    "paraId": 1004,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "nativeAssets": [
@@ -7114,7 +7069,6 @@
     "otherAssets": []
   },
   "Shiden": {
-    "paraId": 2007,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "SDN",
     "nativeAssets": [
@@ -7412,7 +7366,6 @@
     ]
   },
   "AssetHubKusama": {
-    "paraId": 1000,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "nativeAssets": [
@@ -7566,7 +7519,6 @@
     ]
   },
   "CoretimeKusama": {
-    "paraId": 1005,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "nativeAssets": [
@@ -7578,7 +7530,6 @@
     "otherAssets": []
   },
   "CoretimePolkadot": {
-    "paraId": 1005,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "nativeAssets": [
@@ -7590,7 +7541,6 @@
     "otherAssets": []
   },
   "Turing": {
-    "paraId": 2114,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "TUR",
     "nativeAssets": [
@@ -7779,7 +7729,6 @@
     ]
   },
   "Unique": {
-    "paraId": 2037,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "UNQ",
     "nativeAssets": [
@@ -7791,7 +7740,6 @@
     "otherAssets": []
   },
   "Crust": {
-    "paraId": 2008,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "CRU",
     "nativeAssets": [
@@ -7814,7 +7762,6 @@
     ]
   },
   "Manta": {
-    "paraId": 2104,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "MANTA",
     "nativeAssets": [
@@ -7987,7 +7934,6 @@
     ]
   },
   "Nodle": {
-    "paraId": 2026,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "NODL",
     "nativeAssets": [
@@ -7999,7 +7945,6 @@
     "otherAssets": []
   },
   "NeuroWeb": {
-    "paraId": 2043,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "NEURO",
     "nativeAssets": [
@@ -8017,7 +7962,6 @@
     ]
   },
   "Pendulum": {
-    "paraId": 2094,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PEN",
     "nativeAssets": [
@@ -8268,7 +8212,6 @@
     ]
   },
   "Polkadex": {
-    "paraId": 2040,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PDEX",
     "nativeAssets": [
@@ -8340,7 +8283,6 @@
     ]
   },
   "Zeitgeist": {
-    "paraId": 2092,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ZTG",
     "nativeAssets": [
@@ -8420,7 +8362,6 @@
     ]
   },
   "Collectives": {
-    "paraId": 1001,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "nativeAssets": [
@@ -8432,7 +8373,6 @@
     "otherAssets": []
   },
   "Phala": {
-    "paraId": 2035,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PHA",
     "nativeAssets": [
@@ -8966,7 +8906,6 @@
     ]
   },
   "Khala": {
-    "paraId": 2004,
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "PHA",
     "nativeAssets": [
@@ -9242,7 +9181,6 @@
     ]
   },
   "Mythos": {
-    "paraId": 3369,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "MYTH",
     "nativeAssets": [
@@ -9254,7 +9192,6 @@
     "otherAssets": []
   },
   "Peaq": {
-    "paraId": 3338,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PEAQ",
     "nativeAssets": [

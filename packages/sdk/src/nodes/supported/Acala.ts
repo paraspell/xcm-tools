@@ -6,8 +6,8 @@ import {
   Version,
   type XTokensTransferInput
 } from '../../types'
-import { getAllNodeProviders } from '../../utils'
 import { isForeignAsset } from '../../utils/assets'
+import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -26,7 +26,7 @@ class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node)[3]
+    return getNodeProviders(this.node)[3]
   }
 }
 

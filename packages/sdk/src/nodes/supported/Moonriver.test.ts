@@ -35,7 +35,7 @@ describe('Moonriver', () => {
 
   it('should initialize with correct values', () => {
     expect(moonriver.node).toBe('Moonriver')
-    expect(moonriver.name).toBe('moonriver')
+    expect(moonriver.info).toBe('moonriver')
     expect(moonriver.type).toBe('kusama')
     expect(moonriver.version).toBe(Version.V3)
   })
@@ -69,6 +69,12 @@ describe('Moonriver', () => {
       module: 'XcmPallet',
       section: 'limited_reserve_transfer_assets',
       parameters: expectedParameters
+    })
+  })
+
+  describe('getProvider', () => {
+    it('should return Moonbeam foundation provider', () => {
+      expect(moonriver.getProvider()).toBe('wss://wss.api.moonriver.moonbeam.network')
     })
   })
 })

@@ -20,6 +20,10 @@ class Polkadex<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
 
     return XTokensTransferImpl.transferXTokens(input, BigInt(asset.assetId))
   }
+
+  getProvider(): string {
+    return 'wss://polkadex-parachain-rpc.dwellir.com'
+  }
 }
 
 export default Polkadex

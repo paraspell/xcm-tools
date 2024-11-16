@@ -26,7 +26,7 @@ describe('BifrostKusama', () => {
 
   it('should initialize with correct values', () => {
     expect(bifrostKusama.node).toBe('BifrostKusama')
-    expect(bifrostKusama.name).toBe('bifrost')
+    expect(bifrostKusama.info).toBe('bifrost')
     expect(bifrostKusama.type).toBe('kusama')
     expect(bifrostKusama.version).toBe(Version.V3)
   })
@@ -47,5 +47,11 @@ describe('BifrostKusama', () => {
     bifrostKusama.transferXTokens(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, { Native: 'BNC' })
+  })
+
+  describe('getProvider', () => {
+    it('should return LiebiEU provider', () => {
+      expect(bifrostKusama.getProvider()).toBe('wss://bifrost-rpc.liebi.com/ws')
+    })
   })
 })

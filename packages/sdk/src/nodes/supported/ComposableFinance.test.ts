@@ -26,7 +26,7 @@ describe('ComposableFinance', () => {
 
   it('should initialize with correct values', () => {
     expect(composableFinance.node).toBe('ComposableFinance')
-    expect(composableFinance.name).toBe('composable')
+    expect(composableFinance.info).toBe('composable')
     expect(composableFinance.type).toBe('polkadot')
     expect(composableFinance.version).toBe(Version.V3)
   })

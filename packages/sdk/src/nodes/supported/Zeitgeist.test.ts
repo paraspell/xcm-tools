@@ -26,7 +26,7 @@ describe('Zeitgeist', () => {
 
   it('should initialize with correct values', () => {
     expect(zeitgeist.node).toBe('Zeitgeist')
-    expect(zeitgeist.name).toBe('zeitgeist')
+    expect(zeitgeist.info).toBe('zeitgeist')
     expect(zeitgeist.type).toBe('polkadot')
     expect(zeitgeist.version).toBe(Version.V3)
   })

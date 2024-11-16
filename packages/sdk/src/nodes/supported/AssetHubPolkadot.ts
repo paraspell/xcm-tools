@@ -29,12 +29,13 @@ import {
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
-import { getOtherAssets, getParaId } from '../../pallets/assets'
+import { getOtherAssets } from '../../pallets/assets'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { ETHEREUM_JUNCTION } from '../../const'
 import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
 import { isForeignAsset } from '../../utils/assets'
+import { getParaId } from '../config'
 
 const createCustomXcmToBifrost = <TApi, TRes>(
   { api, address, scenario }: PolkadotXCMTransferInput<TApi, TRes>,

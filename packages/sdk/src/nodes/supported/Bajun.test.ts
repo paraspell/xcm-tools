@@ -32,7 +32,7 @@ describe('Bajun', () => {
 
   it('should initialize with correct values', () => {
     expect(bajun.node).toBe('Bajun')
-    expect(bajun.name).toBe('bajun')
+    expect(bajun.info).toBe('bajun')
     expect(bajun.type).toBe('kusama')
     expect(bajun.version).toBe(Version.V3)
   })

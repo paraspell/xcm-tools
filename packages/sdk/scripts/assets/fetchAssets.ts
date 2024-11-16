@@ -12,7 +12,7 @@ import type {
   TNodeAssets,
   TNodePolkadotKusama
 } from '../../src/types'
-import { getNode, getNodeEndpointOption } from '../../src/utils'
+import { getNode } from '../../src/utils'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 import { GLOBAL, nodeToQuery } from './nodeToQueryMap'
 import { fetchEthereumAssets } from './fetchEthereumAssets'
@@ -383,10 +383,6 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
 
       const isError = newData === null
       const oldData = output[nodeName] ?? null
-      const paraId = getNodeEndpointOption(nodeName as TNodePolkadotKusama)?.paraId
-      if (!paraId) {
-        throw new Error(`Cannot find paraId for node ${nodeName}`)
-      }
 
       if (isError && oldData) {
         // If fetching new data fails, keep existing data
@@ -405,7 +401,6 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
         const combinedOtherAssets = [...(newData?.otherAssets ?? []), ...manuallyAddedOtherAssets]
 
         output[nodeName] = {
-          paraId,
           relayChainAssetSymbol: getNode(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
           nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
           nativeAssets: combinedNativeAssets,

@@ -33,7 +33,7 @@ describe('Crab', () => {
 
   it('should initialize with correct values', () => {
     expect(crab.node).toBe('Crab')
-    expect(crab.name).toBe('crab')
+    expect(crab.info).toBe('crab')
     expect(crab.type).toBe('kusama')
     expect(crab.version).toBe(Version.V3)
   })

@@ -29,7 +29,7 @@ describe('Curio', () => {
 
   it('should initialize with correct values', () => {
     expect(curio.node).toBe('Curio')
-    expect(curio.name).toBe('curio')
+    expect(curio.info).toBe('curio')
     expect(curio.type).toBe('kusama')
     expect(curio.version).toBe(Version.V3)
   })

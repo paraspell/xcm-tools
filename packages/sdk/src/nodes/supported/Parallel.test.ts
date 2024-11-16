@@ -26,7 +26,7 @@ describe('Parallel', () => {
 
   it('should initialize with correct values', () => {
     expect(parallel.node).toBe('Parallel')
-    expect(parallel.name).toBe('parallel')
+    expect(parallel.info).toBe('parallel')
     expect(parallel.type).toBe('polkadot')
     expect(parallel.version).toBe(Version.V3)
   })

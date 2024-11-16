@@ -37,7 +37,7 @@ describe('BridgeHubKusama', () => {
 
   it('should initialize with correct values', () => {
     expect(bridgeHubKusama.node).toBe('BridgeHubKusama')
-    expect(bridgeHubKusama.name).toBe('kusamaBridgeHub')
+    expect(bridgeHubKusama.info).toBe('kusamaBridgeHub')
     expect(bridgeHubKusama.type).toBe('kusama')
     expect(bridgeHubKusama.version).toBe(Version.V3)
     expect(bridgeHubKusama._assetCheckEnabled).toBe(false)

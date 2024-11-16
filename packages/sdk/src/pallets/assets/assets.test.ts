@@ -9,13 +9,13 @@ import {
   getAssetsObject,
   getNativeAssets,
   getOtherAssets,
-  getParaId,
   getRelayChainSymbol,
   getTNode,
   hasSupportForAsset
 } from './assets'
 import type { TRelayChainType } from '../../types'
 import { getNode } from '../../utils'
+import { getParaId } from '../../nodes/config'
 
 describe('getAssetsObject', () => {
   it('should return assets object for all nodes', () => {
@@ -25,8 +25,7 @@ describe('getAssetsObject', () => {
         expect.objectContaining({
           relayChainAssetSymbol: expect.any(String),
           nativeAssets: expect.any(Array),
-          otherAssets: expect.any(Array),
-          ...(node !== 'Ethereum' ? { paraId: expect.any(Number) } : {})
+          otherAssets: expect.any(Array)
         })
       )
     })
@@ -127,8 +126,7 @@ describe('getSupportedAssets', () => {
         expect.objectContaining({
           relayChainAssetSymbol: expect.any(String),
           nativeAssets: expect.any(Array),
-          otherAssets: expect.any(Array),
-          ...(node !== 'Ethereum' ? { paraId: expect.any(Number) } : {})
+          otherAssets: expect.any(Array)
         })
       )
     })

@@ -26,7 +26,7 @@ describe('NeuroWeb', () => {
 
   it('should initialize with correct values', () => {
     expect(neuroweb.node).toBe('NeuroWeb')
-    expect(neuroweb.name).toBe('neuroweb')
+    expect(neuroweb.info).toBe('neuroweb')
     expect(neuroweb.type).toBe('polkadot')
     expect(neuroweb.version).toBe(Version.V3)
   })

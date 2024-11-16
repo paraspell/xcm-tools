@@ -37,6 +37,7 @@
     "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/pallets/updatePallets.ts",
     "updateEds": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/eds/updateEds.ts",
     "checkDuplicateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/assets/checkDuplicates.ts",
+    "updateNodeConfigs": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/configs/fetchNodeConfigs.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
@@ -47,7 +48,6 @@
   "peerDependencies": {
     "@polkadot/api": ">= 12.4 < 13",
     "@polkadot/api-base": ">= 12.4 < 13",
-    "@polkadot/apps-config": ">= 0.145",
     "@polkadot/types": ">= 12.4 < 13",
     "@polkadot/util": ">= 13",
     "polkadot-api": ">= 1.7.3 < 2"

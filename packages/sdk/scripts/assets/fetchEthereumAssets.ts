@@ -13,11 +13,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
   const project = new Project()
   const sourceFile = project.createSourceFile('environment.ts', code)
 
-  const snowbridgeEnv = sourceFile.getVariableDeclaration('SNOWBRIDGE_ENV')
-  if (!snowbridgeEnv) {
-    console.log('SNOWBRIDGE_ENV not found')
-    throw new Error('SNOWBRIDGE_ENV not found')
-  }
+  const snowbridgeEnv = sourceFile.getVariableDeclarationOrThrow('SNOWBRIDGE_ENV')
 
   const polkadotMainnet = snowbridgeEnv
     .getInitializerIfKindOrThrow(SyntaxKind.ObjectLiteralExpression)

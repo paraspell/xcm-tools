@@ -27,7 +27,7 @@ describe('Integritee', () => {
 
   it('should initialize with correct values', () => {
     expect(integritee.node).toBe('Integritee')
-    expect(integritee.name).toBe('integritee')
+    expect(integritee.info).toBe('integritee')
     expect(integritee.type).toBe('kusama')
     expect(integritee.version).toBe(Version.V3)
   })

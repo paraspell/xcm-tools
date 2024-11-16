@@ -19,12 +19,16 @@ describe('Module Exports', () => {
   })
 
   it('should export utility functions', () => {
-    expect(sdk.getNodeEndpointOption).toBeDefined()
     expect(sdk.getNode).toBeDefined()
-    expect(sdk.getNodeProvider).toBeDefined()
-    expect(sdk.getAllNodeProviders).toBeDefined()
     expect(sdk.createApiInstanceForNode).toBeDefined()
     expect(sdk.isRelayChain).toBeDefined()
     expect(sdk.determineRelayChain).toBeDefined()
+  })
+
+  it('should export node config functions', () => {
+    expect(sdk.getNodeConfig).toBeDefined()
+    expect(sdk.getNodeProviders).toBeDefined()
+    expect(sdk.getNodeProvider).toBeDefined()
+    expect(sdk.getParaId).toBeDefined()
   })
 })

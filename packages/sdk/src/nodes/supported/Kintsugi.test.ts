@@ -29,7 +29,7 @@ describe('Kintsugi', () => {
 
   it('should initialize with correct values', () => {
     expect(kintsugi.node).toBe('Kintsugi')
-    expect(kintsugi.name).toBe('kintsugi')
+    expect(kintsugi.info).toBe('kintsugi')
     expect(kintsugi.type).toBe('kusama')
     expect(kintsugi.version).toBe(Version.V3)
   })

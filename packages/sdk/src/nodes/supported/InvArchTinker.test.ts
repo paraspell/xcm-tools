@@ -26,7 +26,7 @@ describe('InvArchTinker', () => {
 
   it('should initialize with correct values', () => {
     expect(invArchTinker.node).toBe('InvArchTinker')
-    expect(invArchTinker.name).toBe('tinker')
+    expect(invArchTinker.info).toBe('tinker')
     expect(invArchTinker.type).toBe('kusama')
     expect(invArchTinker.version).toBe(Version.V3)
   })

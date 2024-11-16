@@ -1,9 +1,9 @@
 import { environment, toPolkadot } from '@snowbridge/api'
 import type { TSerializedEthTransfer, TSerializeEthTransferOptions } from '../../../types/TBuilder'
-import { getParaId } from '../../assets'
 import { checkPlanFailure } from './checkPlanFailure'
 import { findEthAsset } from './findEthAsset'
 import { createContext } from './createContext'
+import { getParaId } from '../../../nodes/config'
 
 export const buildEthTransferOptions = async ({
   currency,

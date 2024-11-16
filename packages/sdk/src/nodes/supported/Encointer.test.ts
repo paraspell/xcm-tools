@@ -37,7 +37,7 @@ describe('Encointer', () => {
 
   it('should initialize with correct values', () => {
     expect(encointer.node).toBe('Encointer')
-    expect(encointer.name).toBe('encointer')
+    expect(encointer.info).toBe('encointer')
     expect(encointer.type).toBe('kusama')
     expect(encointer.version).toBe(Version.V3)
   })

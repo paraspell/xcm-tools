@@ -872,7 +872,7 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate Batch XCM call - Parachain to Relay Chain - ${xTransferBatchUrl} (POST)`, async () => {
-      const from: TNode = 'Basilisk';
+      const from: TNode = 'Acala';
       const amount = '1000';
 
       const builder = Builder()
@@ -1109,9 +1109,9 @@ describe('XCM API (e2e)', () => {
       const routerOptions: RouterDto = {
         from: 'Astar',
         exchange: 'HydrationDex',
-        to: 'Moonbeam',
+        to: 'BifrostPolkadot',
         currencyFrom: { symbol: 'ASTR' },
-        currencyTo: { symbol: 'GLMR' },
+        currencyTo: { symbol: 'BNC' },
         amount: '10000000000000000000',
         injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
         recipientAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',

@@ -29,7 +29,7 @@ describe('Interlay', () => {
 
   it('should initialize with correct values', () => {
     expect(interlay.node).toBe('Interlay')
-    expect(interlay.name).toBe('interlay')
+    expect(interlay.info).toBe('interlay')
     expect(interlay.type).toBe('polkadot')
     expect(interlay.version).toBe(Version.V3)
   })

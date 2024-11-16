@@ -1,7 +1,7 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
-import { getNativeAssetSymbol, getParaId } from '../pallets/assets'
+import { getNativeAssetSymbol } from '../pallets/assets'
 import type {
   TRelayChainType,
   TScenario,
@@ -22,7 +22,7 @@ import type {
   XTokensTransferInput
 } from '../types'
 import { Version, Parents } from '../types'
-import { getAllNodeProviders, generateAddressPayload, getFees } from '../utils'
+import { generateAddressPayload, getFees } from '../utils'
 import {
   constructRelayToParaParameters,
   createCurrencySpec,
@@ -30,6 +30,7 @@ import {
 } from '../pallets/xcmPallet/utils'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import XTokensTransferImpl from './xTokens'
+import { getNodeProviders, getParaId } from './config'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
@@ -46,11 +47,11 @@ const supportsPolkadotXCM = (obj: unknown): obj is IPolkadotXCMTransfer => {
 abstract class ParachainNode<TApi, TRes> {
   private readonly _node: TNodePolkadotKusama
 
-  // Property _name maps our node names to names which polkadot libs are using
+  // Property _info maps our node names to names which polkadot libs are using
   // https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayKusama.ts
   // https://github.com/polkadot-js/apps/blob/master/packages/apps-config/src/endpoints/productionRelayPolkadot.ts
   // These names can be found under object key 'info'
-  private readonly _name: string
+  private readonly _info: string
 
   private readonly _type: TRelayChainType
 
@@ -58,15 +59,15 @@ abstract class ParachainNode<TApi, TRes> {
 
   protected _assetCheckEnabled = true
 
-  constructor(node: TNodePolkadotKusama, name: string, type: TRelayChainType, version: Version) {
-    this._name = name
+  constructor(node: TNodePolkadotKusama, info: string, type: TRelayChainType, version: Version) {
+    this._info = info
     this._type = type
     this._node = node
     this._version = version
   }
 
-  get name(): string {
-    return this._name
+  get info(): string {
+    return this._info
   }
 
   get type(): TRelayChainType {
@@ -205,7 +206,11 @@ abstract class ParachainNode<TApi, TRes> {
   }
 
   getProvider(): string {
-    return getAllNodeProviders(this.node)[0]
+    const providers = getNodeProviders(this.node)
+    if (providers.length === 0) {
+      throw new Error(`No providers found for node ${this.node}`)
+    }
+    return providers[0]
   }
 
   async createApiInstance(api: IPolkadotApi<TApi, TRes>): Promise<TApi> {
