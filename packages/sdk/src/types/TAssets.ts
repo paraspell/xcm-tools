@@ -27,7 +27,6 @@ export type TForeignAsset = TBaseAsset &
 export type TAsset = TNativeAsset | TForeignAsset
 
 export type TNodeAssets = {
-  paraId?: number
   relayChainAssetSymbol: TRelayChainSymbol
   nativeAssetSymbol: string
   nativeAssets: TNativeAsset[]

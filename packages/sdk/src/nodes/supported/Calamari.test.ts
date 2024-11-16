@@ -26,7 +26,7 @@ describe('Calamari', () => {
 
   it('should initialize with correct values', () => {
     expect(calamari.node).toBe('Calamari')
-    expect(calamari.name).toBe('calamari')
+    expect(calamari.info).toBe('calamari')
     expect(calamari.type).toBe('kusama')
     expect(calamari.version).toBe(Version.V3)
   })

@@ -35,7 +35,7 @@ describe('Hydration', () => {
 
   it('should initialize with correct values', () => {
     expect(hydration.node).toBe('Hydration')
-    expect(hydration.name).toBe('hydradx')
+    expect(hydration.info).toBe('hydradx')
     expect(hydration.type).toBe('polkadot')
     expect(hydration.version).toBe(Version.V3)
   })
@@ -173,6 +173,12 @@ describe('Hydration', () => {
         asset: { symbol: 'DOT' }
       } as TSendInternalOptions<TPjsApi, Extrinsic>)
       expect(result).toBe(false)
+    })
+  })
+
+  describe('getProvider', () => {
+    it('should return LiebiEU provider', () => {
+      expect(hydration.getProvider()).toBe('wss://rpc.hydradx.cloud')
     })
   })
 })

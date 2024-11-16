@@ -26,7 +26,7 @@ describe('Turing', () => {
 
   it('should initialize with correct values', () => {
     expect(turing.node).toBe('Turing')
-    expect(turing.name).toBe('turing')
+    expect(turing.info).toBe('turing')
     expect(turing.type).toBe('kusama')
     expect(turing.version).toBe(Version.V3)
   })

@@ -11,8 +11,8 @@ import {
   type TSelfReserveAsset,
   type TXcmForeignAsset
 } from '../../types'
-import { getAllNodeProviders } from '../../utils'
 import { isForeignAsset } from '../../utils/assets'
+import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -47,7 +47,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
   }
 
   getProvider(): string {
-    return getAllNodeProviders(this.node)[2]
+    return getNodeProviders(this.node)[2]
   }
 }
 

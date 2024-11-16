@@ -26,7 +26,7 @@ describe('Polkadex', () => {
 
   it('should initialize with correct values', () => {
     expect(polkadex.node).toBe('Polkadex')
-    expect(polkadex.name).toBe('polkadex')
+    expect(polkadex.info).toBe('polkadex')
     expect(polkadex.type).toBe('polkadot')
     expect(polkadex.version).toBe(Version.V3)
   })

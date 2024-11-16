@@ -26,7 +26,7 @@ describe('Imbue', () => {
 
   it('should initialize with correct values', () => {
     expect(imbue.node).toBe('Imbue')
-    expect(imbue.name).toBe('imbue')
+    expect(imbue.info).toBe('imbue')
     expect(imbue.type).toBe('kusama')
     expect(imbue.version).toBe(Version.V3)
   })

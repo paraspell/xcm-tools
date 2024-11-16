@@ -29,7 +29,7 @@ describe('Centrifuge', () => {
 
   it('should initialize with correct values', () => {
     expect(centrifuge.node).toBe('Centrifuge')
-    expect(centrifuge.name).toBe('centrifuge')
+    expect(centrifuge.info).toBe('centrifuge')
     expect(centrifuge.type).toBe('polkadot')
     expect(centrifuge.version).toBe(Version.V3)
   })

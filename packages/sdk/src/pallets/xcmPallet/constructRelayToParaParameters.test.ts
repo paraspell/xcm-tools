@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { Version, Parents } from '../../types'
-import { getParaId } from '../assets'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { DEFAULT_FEE_ASSET } from '../../const'
 import type {
@@ -13,8 +12,9 @@ import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs'
 import type { IPolkadotApi } from '../../api'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
+import { getParaId } from '../../nodes/config'
 
-vi.mock('../assets', () => ({
+vi.mock('../../nodes/config', () => ({
   getParaId: vi.fn()
 }))
 

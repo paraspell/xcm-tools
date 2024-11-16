@@ -1,7 +1,7 @@
 import { DEFAULT_FEE_ASSET } from '../../const'
+import { getParaId } from '../../nodes/config'
 import { Parents, type TRelayToParaOptions, type Version } from '../../types'
 import { generateAddressPayload } from '../../utils'
-import { getParaId } from '../assets'
 import { createCurrencySpec, createPolkadotXcmHeader } from './utils'
 
 export const constructRelayToParaParameters = <TApi, TRes>(

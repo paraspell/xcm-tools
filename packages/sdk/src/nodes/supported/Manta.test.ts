@@ -26,7 +26,7 @@ describe('Manta', () => {
 
   it('should initialize with correct values', () => {
     expect(manta.node).toBe('Manta')
-    expect(manta.name).toBe('manta')
+    expect(manta.info).toBe('manta')
     expect(manta.type).toBe('polkadot')
     expect(manta.version).toBe(Version.V3)
   })

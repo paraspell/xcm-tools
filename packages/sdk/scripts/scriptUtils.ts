@@ -3,7 +3,7 @@
 import * as fs from 'fs'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { type TNodePolkadotKusama } from '../src/types'
-import { getAllNodeProviders, getNodeProvider } from '../src/utils'
+import { getNodeProvider, getNodeProviders } from '../src/nodes/config'
 
 export const readJsonOrReturnEmptyObject = (path: string) => {
   try {
@@ -26,7 +26,7 @@ export const fetchTryMultipleProviders = <T>(
 ): T | null => {
   const providers = (() => {
     try {
-      return getAllNodeProviders(node)
+      return getNodeProviders(node)
     } catch (_e) {
       console.log(`Error retrieving all providers. Using default provider.`)
       return [getNodeProvider(node)]

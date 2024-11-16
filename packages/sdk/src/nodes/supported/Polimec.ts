@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Polimec Parachain
 
-import { getParaId } from '../../pallets/assets'
 import type { IPolkadotApi } from '../../api'
 import { createMultiAsset, createPolkadotXcmHeader } from '../../pallets/xcmPallet/utils'
 import type {
@@ -17,11 +16,12 @@ import type {
   TTransferReturn
 } from '../../types'
 import { Parents, Version } from '../../types'
-import { generateAddressPayload, getAllNodeProviders, isForeignAsset } from '../../utils'
+import { generateAddressPayload, isForeignAsset } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { DOT_MULTILOCATION } from '../../const'
+import { getNodeProviders, getParaId } from '../config'
 
 const GAS_LIMIT = BigInt('1000000000')
 
@@ -219,7 +219,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node)[1]
+    return getNodeProviders(this.node)[1]
   }
 }
 

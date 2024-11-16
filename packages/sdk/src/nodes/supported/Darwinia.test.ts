@@ -39,7 +39,7 @@ describe('Darwinia', () => {
 
   it('should initialize with correct values', () => {
     expect(darwinia.node).toBe('Darwinia')
-    expect(darwinia.name).toBe('darwinia')
+    expect(darwinia.info).toBe('darwinia')
     expect(darwinia.type).toBe('polkadot')
     expect(darwinia.version).toBe(Version.V3)
   })
@@ -95,5 +95,11 @@ describe('Darwinia', () => {
     darwinia.createCurrencySpec(mockAmount, mockScenario, mockVersion)
 
     expect(spy).toHaveBeenCalledWith(mockAmount, mockScenario, mockVersion, undefined, undefined)
+  })
+
+  describe('getProvider', () => {
+    it('should return Dwellir provider', () => {
+      expect(darwinia.getProvider()).toBe('wss://darwinia-rpc.dwellir.com')
+    })
   })
 })

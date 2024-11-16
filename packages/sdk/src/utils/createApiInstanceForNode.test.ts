@@ -6,11 +6,6 @@ import { getNode } from './getNode'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { Extrinsic } from '../pjs/types'
 
-vi.mock('@polkadot/apps-config', () => ({
-  prodRelayPolkadot: { providers: { Provider1: 'wss://polkadotProvider.com' } },
-  prodRelayKusama: { providers: { Provider1: 'wss://kusamaProvider.com' } }
-}))
-
 vi.mock('./createApiInstance', () => ({
   createApiInstance: vi.fn().mockResolvedValue({} as ApiPromise)
 }))
@@ -32,7 +27,7 @@ describe('createApiInstanceForNode', () => {
 
     const result = await createApiInstanceForNode(mockApi, 'Polkadot')
 
-    expect(spy).toHaveBeenCalledWith('wss://polkadotProvider.com')
+    expect(spy).toHaveBeenCalledWith('wss://polkadot-rpc.publicnode.com')
     expect(result).toStrictEqual({})
   })
 
@@ -41,7 +36,7 @@ describe('createApiInstanceForNode', () => {
 
     const result = await createApiInstanceForNode(mockApi, 'Kusama')
 
-    expect(spy).toHaveBeenCalledWith('wss://kusamaProvider.com')
+    expect(spy).toHaveBeenCalledWith('wss://kusama-rpc.publicnode.com')
     expect(result).toBe(mockApiPromise)
   })
 

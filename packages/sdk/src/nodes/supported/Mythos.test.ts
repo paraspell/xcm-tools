@@ -33,7 +33,7 @@ describe('Mythos', () => {
 
   it('should initialize with correct values', () => {
     expect(mythos.node).toBe('Mythos')
-    expect(mythos.name).toBe('mythos')
+    expect(mythos.info).toBe('mythos')
     expect(mythos.type).toBe('polkadot')
     expect(mythos.version).toBe(Version.V3)
   })

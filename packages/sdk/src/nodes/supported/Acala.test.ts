@@ -3,10 +3,10 @@ import type { XTokensTransferInput } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import { getNode } from '../../utils/getNode'
-import { getAllNodeProviders } from '../../utils/getAllNodeProviders'
 import type Acala from './Acala'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
+import { getNodeProviders } from '../config'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -14,8 +14,8 @@ vi.mock('../xTokens', () => ({
   }
 }))
 
-vi.mock('../../utils/getAllNodeProviders', () => ({
-  getAllNodeProviders: vi.fn()
+vi.mock('../config', () => ({
+  getNodeProviders: vi.fn()
 }))
 
 describe('Acala', () => {
@@ -33,7 +33,7 @@ describe('Acala', () => {
 
   it('should initialize with correct values', () => {
     expect(acala.node).toBe('Acala')
-    expect(acala.name).toBe('acala')
+    expect(acala.info).toBe('acala')
     expect(acala.type).toBe('polkadot')
     expect(acala.version).toBe(Version.V3)
   })
@@ -67,11 +67,11 @@ describe('Acala', () => {
       'ws://backup-url',
       'ws://backup-url2'
     ]
-    vi.mocked(getAllNodeProviders).mockReturnValue(mockProviders)
+    vi.mocked(getNodeProviders).mockReturnValue(mockProviders)
 
     const provider = acala.getProvider()
 
-    expect(getAllNodeProviders).toHaveBeenCalledWith(acala.node)
+    expect(getNodeProviders).toHaveBeenCalledWith(acala.node)
     expect(provider).toBe('ws://backup-url2')
   })
 })

@@ -26,7 +26,7 @@ describe('Litentry', () => {
 
   it('should initialize with correct values', () => {
     expect(litentry.node).toBe('Litentry')
-    expect(litentry.name).toBe('litentry')
+    expect(litentry.info).toBe('litentry')
     expect(litentry.type).toBe('polkadot')
     expect(litentry.version).toBe(Version.V3)
   })

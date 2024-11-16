@@ -18,18 +18,15 @@ export const determineRelayChain = (node: TNodeWithRelayChains): TNodeDotKsmWith
  * @param node - The node to check.
  * @returns True if the node is 'Polkadot' or 'Kusama'; otherwise, false.
  */
-export const isRelayChain = (node: TNodeWithRelayChains): boolean =>
+export const isRelayChain = (node: TNodeWithRelayChains): node is 'Polkadot' | 'Kusama' =>
   node === 'Polkadot' || node === 'Kusama'
 
 export { createX1Payload } from './createX1Payload'
 export { deepEqual } from './deepEqual'
 export { generateAddressMultiLocationV4 } from './generateAddressMultiLocationV4'
 export { generateAddressPayload } from './generateAddressPayload'
-export { getNodeProvider } from './getNodeProvider'
-export { getAllNodeProviders } from './getAllNodeProviders'
 export { getFees } from './getFees'
 export { getNode } from './getNode'
 export { createApiInstanceForNode } from './createApiInstanceForNode'
-export { getNodeEndpointOption } from './getNodeEndpointOption'
 export { determineRelayChainSymbol } from './determineRelayChainSymbol'
 export * from './assets'

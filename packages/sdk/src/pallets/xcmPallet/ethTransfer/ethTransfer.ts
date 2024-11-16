@@ -1,10 +1,10 @@
 import { toPolkadot, environment } from '@snowbridge/api'
 import type { TEvmBuilderOptions } from '../../../types/TBuilder'
 import type { AbstractProvider } from 'ethers'
-import { getParaId } from '../../assets'
 import { findEthAsset } from './findEthAsset'
 import { createContext } from './createContext'
 import { checkPlanFailure } from './checkPlanFailure'
+import { getParaId } from '../../../nodes/config'
 
 /**
  * Transfers an Ethereum asset to a Polkadot account.

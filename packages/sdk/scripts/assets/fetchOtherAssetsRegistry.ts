@@ -4,18 +4,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { TAssetJsonMap, TForeignAsset, TNodePolkadotKusama } from '../../src/types'
+import { getParaId } from '../../src/nodes/config'
+import type { TForeignAsset, TNodePolkadotKusama } from '../../src/types'
 import { getNode } from '../../src/utils'
 import type { TRegistryAssets } from './fetchXcmRegistry'
 import { fetchXcmRegistry } from './fetchXcmRegistry'
 
-import assetsMapJson from '../../src/maps/assets.json' assert { type: 'json' }
-const assetsMap = assetsMapJson as TAssetJsonMap
-
 export const fetchAssets = async (node: TNodePolkadotKusama): Promise<TRegistryAssets[]> => {
   const data = await fetchXcmRegistry()
 
-  const paraId = assetsMap[node].paraId
+  const paraId = getParaId(node)
   const relay = getNode(node).type
 
   const isAssetHub = node === 'AssetHubPolkadot' || node === 'AssetHubKusama'

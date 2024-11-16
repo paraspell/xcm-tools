@@ -37,7 +37,7 @@ describe('Collectives', () => {
 
   it('should initialize with correct values', () => {
     expect(collectives.node).toBe('Collectives')
-    expect(collectives.name).toBe('polkadotCollectives')
+    expect(collectives.info).toBe('polkadotCollectives')
     expect(collectives.type).toBe('polkadot')
     expect(collectives.version).toBe(Version.V3)
   })

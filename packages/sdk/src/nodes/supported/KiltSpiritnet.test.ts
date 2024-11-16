@@ -30,7 +30,7 @@ describe('KiltSpiritnet', () => {
 
   it('should initialize with correct values', () => {
     expect(kiltSpiritnet.node).toBe('KiltSpiritnet')
-    expect(kiltSpiritnet.name).toBe('kilt')
+    expect(kiltSpiritnet.info).toBe('kilt')
     expect(kiltSpiritnet.type).toBe('polkadot')
     expect(kiltSpiritnet.version).toBe(Version.V2)
   })
@@ -56,5 +56,11 @@ describe('KiltSpiritnet', () => {
 
   it('should throw NodeNotSupportedError for transferRelayToPara', () => {
     expect(() => kiltSpiritnet.transferRelayToPara()).toThrowError(NodeNotSupportedError)
+  })
+
+  describe('getProvider', () => {
+    it('should return Dwellir provider', () => {
+      expect(kiltSpiritnet.getProvider()).toBe('wss://kilt-rpc.dwellir.com')
+    })
   })
 })

@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { XTokensTransferInput } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
-import { getAllNodeProviders } from '../../utils'
 import { getNode } from '../../utils/getNode'
 import type Basilisk from './Basilisk'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
+import { getNodeProviders } from '../config'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -14,8 +14,8 @@ vi.mock('../xTokens', () => ({
   }
 }))
 
-vi.mock('../../utils', () => ({
-  getAllNodeProviders: vi.fn()
+vi.mock('../config', () => ({
+  getNodeProviders: vi.fn()
 }))
 
 describe('Basilisk', () => {
@@ -29,12 +29,12 @@ describe('Basilisk', () => {
 
   beforeEach(() => {
     basilisk = getNode<ApiPromise, Extrinsic, 'Basilisk'>('Basilisk')
-    vi.mocked(getAllNodeProviders).mockReturnValue(mockProviders)
+    vi.mocked(getNodeProviders).mockReturnValue(mockProviders)
   })
 
   it('should initialize with correct values', () => {
     expect(basilisk.node).toBe('Basilisk')
-    expect(basilisk.name).toBe('basilisk')
+    expect(basilisk.info).toBe('basilisk')
     expect(basilisk.type).toBe('kusama')
     expect(basilisk.version).toBe(Version.V3)
   })
@@ -50,7 +50,7 @@ describe('Basilisk', () => {
   it('should return the second provider URL from getProvider', () => {
     const provider = basilisk.getProvider()
 
-    expect(getAllNodeProviders).toHaveBeenCalledWith(basilisk.node)
+    expect(getNodeProviders).toHaveBeenCalledWith(basilisk.node)
     expect(provider).toBe('wss://preferred-dwellir-rpc')
   })
 })

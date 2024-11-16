@@ -7,7 +7,7 @@ describe('getNode', () => {
     NODE_NAMES_DOT_KSM.forEach(node => {
       const details = getNode(node)
       expect(details).toBeDefined()
-      expect(details.name).toBeTypeOf('string')
+      expect(details.info).toBeTypeOf('string')
       expect(['polkadot', 'kusama']).toContain(details.type)
     })
   })

@@ -32,7 +32,7 @@ describe('Pendulum', () => {
 
   it('should initialize with correct values', () => {
     expect(pendulum.node).toBe('Pendulum')
-    expect(pendulum.name).toBe('pendulum')
+    expect(pendulum.info).toBe('pendulum')
     expect(pendulum.type).toBe('polkadot')
     expect(pendulum.version).toBe(Version.V3)
   })

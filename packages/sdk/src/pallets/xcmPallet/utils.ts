@@ -7,7 +7,6 @@ import {
   type TDestination,
   type TCurrencySelectionHeaderArr
 } from '../../types'
-import { getParaId } from '../assets'
 import type { Junctions, TJunction } from '../../types/TMultiLocation'
 import { type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
@@ -15,6 +14,7 @@ import { findParachainJunction } from './findParachainJunction'
 import { createX1Payload } from '../../utils/createX1Payload'
 import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
 import { InvalidCurrencyError } from '../../errors'
+import { getParaId } from '../../nodes/config'
 
 export const isTMultiLocation = (value: unknown): value is TMultiLocation =>
   typeof value === 'object' && value !== null && 'parents' in value && 'interior' in value

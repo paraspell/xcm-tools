@@ -45,7 +45,7 @@ describe('BifrostPolkadot', () => {
 
   it('should initialize with correct values', () => {
     expect(bifrostPolkadot.node).toBe('BifrostPolkadot')
-    expect(bifrostPolkadot.name).toBe('bifrost')
+    expect(bifrostPolkadot.info).toBe('bifrost')
     expect(bifrostPolkadot.type).toBe('polkadot')
     expect(bifrostPolkadot.version).toBe(Version.V3)
   })
@@ -147,6 +147,12 @@ describe('BifrostPolkadot', () => {
         destination: 'Acala'
       } as TSendInternalOptions<ApiPromise, Extrinsic>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
+    })
+  })
+
+  describe('getProvider', () => {
+    it('should return LiebiEU provider', () => {
+      expect(bifrostPolkadot.getProvider()).toBe('wss://eu.bifrost-polkadot-rpc.liebi.com/ws')
     })
   })
 })

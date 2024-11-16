@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
 import { findEthAsset } from './findEthAsset'
 import { createContext } from './createContext'
-import { getParaId } from '../../assets'
 import type { Context } from '@snowbridge/api'
 import { toPolkadot } from '@snowbridge/api'
 import type { TEvmBuilderOptions } from '../../../types'
 import type { SendValidationResult } from '@snowbridge/api/dist/toPolkadot'
 import transferEthToPolkadot from './ethTransfer'
 import type { AbstractProvider, Signer } from 'ethers'
+import { getParaId } from '../../../nodes/config'
 
 vi.mock('./findEthAsset', () => ({
   findEthAsset: vi.fn()
@@ -17,7 +17,7 @@ vi.mock('./createContext', () => ({
   createContext: vi.fn()
 }))
 
-vi.mock('../../assets', () => ({
+vi.mock('../../../nodes/config', () => ({
   getParaId: vi.fn()
 }))
 

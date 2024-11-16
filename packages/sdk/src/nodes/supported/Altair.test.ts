@@ -26,7 +26,7 @@ describe('Altair', () => {
 
   it('should initialize with correct values', () => {
     expect(altair.node).toBe('Altair')
-    expect(altair.name).toBe('altair')
+    expect(altair.info).toBe('altair')
     expect(altair.type).toBe('kusama')
     expect(altair.version).toBe(Version.V3)
   })

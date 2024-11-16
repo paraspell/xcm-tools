@@ -62,7 +62,6 @@ describe('AssetsService', () => {
 
     it('should return assets object for a valid node', () => {
       const assetsObject: paraspellSdk.TNodeAssets = {
-        paraId,
         relayChainAssetSymbol: symbol,
         nativeAssetSymbol: 'DOT',
         nativeAssets: [{ symbol, decimals }],

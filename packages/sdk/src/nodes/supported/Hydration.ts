@@ -12,13 +12,13 @@ import { type IXTokensTransfer, Parents, Version, type XTokensTransferInput } fr
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 import { InvalidCurrencyError } from '../../errors'
-import { getParaId } from '../../pallets/assets'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { ETHEREUM_JUNCTION } from '../../const'
 import { generateAddressPayload } from '../../utils'
 import type { IPolkadotApi } from '../../api'
 import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
 import { isForeignAsset } from '../../utils/assets'
+import { getNodeProviders, getParaId } from '../config'
 
 const calculateFee = async <TApi, TRes>(api: IPolkadotApi<TApi, TRes>) => {
   const DEFAULT_FEE = BigInt(2_750_872_500_000)
@@ -272,6 +272,11 @@ class Hydration<TApi, TRes>
     return (
       destination !== 'Ethereum' && !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT')
     )
+  }
+
+  getProvider(): string {
+    // Return the second WebSocket URL because the first one is sometimes unreliable.
+    return getNodeProviders(this.node)[1]
   }
 }
 

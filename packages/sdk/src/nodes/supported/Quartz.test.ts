@@ -26,7 +26,7 @@ describe('Quartz', () => {
 
   it('should initialize with correct values', () => {
     expect(quartz.node).toBe('Quartz')
-    expect(quartz.name).toBe('quartz')
+    expect(quartz.info).toBe('quartz')
     expect(quartz.type).toBe('kusama')
     expect(quartz.version).toBe(Version.V3)
     expect(quartz._assetCheckEnabled).toBe(false)

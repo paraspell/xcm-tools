@@ -30,7 +30,7 @@ describe('Crust', () => {
 
   it('should initialize with correct values', () => {
     expect(crust.node).toBe('Crust')
-    expect(crust.name).toBe('crustParachain')
+    expect(crust.info).toBe('crustParachain')
     expect(crust.type).toBe('polkadot')
     expect(crust.version).toBe(Version.V3)
   })

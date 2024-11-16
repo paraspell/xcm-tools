@@ -16,12 +16,6 @@ export {
   SUPPORTED_PALLETS
 } from '../maps/consts'
 export * from './utils'
-export {
-  getNodeEndpointOption,
-  getNode,
-  getNodeProvider,
-  getAllNodeProviders,
-  isRelayChain,
-  determineRelayChain
-} from '../utils'
+export { getNode, isRelayChain, determineRelayChain } from '../utils'
 export * from '../errors'
+export * from '../nodes/config'

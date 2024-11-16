@@ -39,7 +39,7 @@ describe('Astar', () => {
 
   it('should initialize with correct values', () => {
     expect(astar.node).toBe('Astar')
-    expect(astar.name).toBe('astar')
+    expect(astar.info).toBe('astar')
     expect(astar.type).toBe('polkadot')
     expect(astar.version).toBe(Version.V3)
   })

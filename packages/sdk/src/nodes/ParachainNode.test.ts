@@ -16,7 +16,6 @@ import type { Extrinsic } from '../pjs/types'
 import type { IPolkadotApi } from '../api'
 
 vi.mock('../utils', () => ({
-  getAllNodeProviders: vi.fn().mockReturnValue(['provider1']),
   createApiInstance: vi.fn().mockResolvedValue('apiInstance'),
   generateAddressPayload: vi.fn().mockReturnValue('addressPayload'),
   getFees: vi.fn().mockReturnValue('fees'),
@@ -31,7 +30,12 @@ vi.mock('../pallets/xcmPallet/utils', () => ({
 }))
 
 vi.mock('../pallets/assets', () => ({
-  getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
+  getNativeAssetSymbol: vi.fn().mockReturnValue('DOT')
+}))
+
+vi.mock('./config', () => ({
+  getNodeProviders: vi.fn().mockReturnValue(['provider1', 'provider2']),
+  getNodeProvider: vi.fn().mockReturnValue('provider1'),
   getParaId: vi.fn().mockReturnValue(1000)
 }))
 
@@ -91,7 +95,7 @@ describe('ParachainNode', () => {
   })
 
   it('should get the name', () => {
-    expect(node.name).toBe('TestNode')
+    expect(node.info).toBe('TestNode')
   })
 
   it('should get the type', () => {

@@ -36,7 +36,7 @@ describe('CoretimeKusama', () => {
 
   it('should initialize with correct values including assetCheckDisabled', () => {
     expect(coretimeKusama.node).toBe('CoretimeKusama')
-    expect(coretimeKusama.name).toBe('kusamaCoretime')
+    expect(coretimeKusama.info).toBe('kusamaCoretime')
     expect(coretimeKusama.type).toBe('kusama')
     expect(coretimeKusama.version).toBe(Version.V3)
     expect(coretimeKusama._assetCheckEnabled).toBe(false)

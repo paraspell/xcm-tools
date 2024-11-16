@@ -16,8 +16,8 @@ import { InvalidCurrencyError, NodeNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../xTokens'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { type TMultiLocation } from '../../types/TMultiLocation'
-import { getAllNodeProviders } from '../../utils'
 import { isForeignAsset } from '../../utils/assets'
+import { getNodeProviders } from '../config'
 
 class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
@@ -67,7 +67,7 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
 
   getProvider(): string {
     // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getAllNodeProviders(this.node)[2]
+    return getNodeProviders(this.node)[2]
   }
 }
 
