@@ -1,5 +1,27 @@
 # Changelog
 
+## [7.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-v7.1.2...sdk-v7.2.0) (2024-11-16)
+
+
+### Features
+
+* **sdk:** Add asset search by multi-location ✨ ([54d0d46](https://github.com/paraspell/xcm-tools/commit/54d0d46d96e4b17b315856a61563a13209fef026))
+* **sdk:** Add support for abstracted assets selection ✨ ([b5ffed8](https://github.com/paraspell/xcm-tools/commit/b5ffed8958aa5680a5ffc9308f0f7f0dd1c1d727))
+
+
+### Bug Fixes
+
+* **sdk:** Fix asset checks relaychain symbol validation 🛠️ ([bc498ac](https://github.com/paraspell/xcm-tools/commit/bc498ace69ba6b76810cb2aa95969d2027ddfddc))
+* **sdk:** Remove @polkadot/apps-config depencency ([8a5bbc7](https://github.com/paraspell/xcm-tools/commit/8a5bbc7e5f31ec928e4be2714a69f666fd706fd1))
+
+
+### Miscellaneous Chores
+
+* **sdk:** Add advanced symbol selection info ([a4db9c3](https://github.com/paraspell/xcm-tools/commit/a4db9c3dc33768cd247980454f4bbcce3fe49689))
+* **sdk:** Update readme with PJS-less PAPI version ([896bc60](https://github.com/paraspell/xcm-tools/commit/896bc600bbe44efa1b2c26db691b230b7fec7db5))
+* **sdk:** Update README.md ([0fd4655](https://github.com/paraspell/xcm-tools/commit/0fd4655627a7e643d7fff52af8cee9720a91e6b8))
+* **xcm-tools:** Update readme ([66f9278](https://github.com/paraspell/xcm-tools/commit/66f92788d60589dc92e0ec388b1870968551fcbe))
+
 ## [7.1.2](https://github.com/paraspell/xcm-tools/compare/sdk-v7.1.1...sdk-v7.1.2) (2024-11-05)
 
 
