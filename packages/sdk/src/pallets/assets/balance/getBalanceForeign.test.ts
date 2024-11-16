@@ -49,13 +49,7 @@ describe('getBalanceForeign', () => {
       api: mockApi
     })
     expect(createApiInstanceForNode).not.toHaveBeenCalled()
-    expect(getAssetBySymbolOrId).toHaveBeenCalledWith(
-      'Acala',
-      { symbol: 'ACA' },
-      false,
-      undefined,
-      true
-    )
+    expect(getAssetBySymbolOrId).toHaveBeenCalledWith('Acala', { symbol: 'ACA' }, null)
   })
 
   it('should create an API instance if none is provided', async () => {

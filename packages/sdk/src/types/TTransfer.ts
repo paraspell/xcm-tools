@@ -1,7 +1,6 @@
 import type { TMultiLocationHeader } from './TMultiLocation'
 import { type TMultiLocation } from './TMultiLocation'
-import type { TNodePolkadotKusama } from './TNode'
-import { type TNode } from './TNode'
+import type { TNode, TNodePolkadotKusama } from './TNode'
 import { type TMultiAsset } from './TMultiAsset'
 import type { TCurrency, TCurrencyInput, TCurrencySelectionHeaderArr } from './TCurrency'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
@@ -98,6 +97,7 @@ export enum Parents {
 export type TAmount = string | number | bigint
 export type TAddress = string | TMultiLocation
 export type TDestination = TNode | TMultiLocation
+export type TRelayToParaDestination = TNodePolkadotKusama | TMultiLocation
 
 export type TSendBaseOptions<TApi, TRes> = {
   /**
@@ -160,7 +160,7 @@ type TRelayToParaBaseOptions<TApi, TRes> = {
   /**
    * The destination node or multi-location
    */
-  destination: TDestination
+  destination: TRelayToParaDestination
   /**
    * The destination address. A SS58 or H160 format.
    */

@@ -11,7 +11,7 @@ export const constructRelayToParaParameters = <TApi, TRes>(
 ): Record<string, unknown> => {
   // Handle the case when a destination is a multi-location
   const paraId =
-    destination !== undefined && typeof destination !== 'object' && destination !== 'Ethereum'
+    destination !== undefined && typeof destination !== 'object'
       ? (paraIdTo ?? getParaId(destination))
       : undefined
 
@@ -20,6 +20,6 @@ export const constructRelayToParaParameters = <TApi, TRes>(
     beneficiary: generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),
     assets: createCurrencySpec(amount, version, Parents.ZERO),
     fee_asset_item: DEFAULT_FEE_ASSET,
-    ...(includeFee && { weightLimit: 'Unlimited' })
+    ...(includeFee && { weight_limit: 'Unlimited' })
   }
 }

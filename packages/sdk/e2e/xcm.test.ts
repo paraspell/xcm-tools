@@ -14,10 +14,12 @@ import {
   NODE_NAMES_DOT_KSM,
   getSupportedAssets,
   TNodeDotKsmWithRelayChains,
-  ForeignAbstract
+  ForeignAbstract,
+  determineRelayChain
 } from '../src'
 import { type ApiPromise } from '@polkadot/api'
 import { isForeignAsset } from '../src/utils/assets'
+import { getAssetBySymbolOrId } from '../src/pallets/assets/getAssetBySymbolOrId'
 
 const MOCK_AMOUNT = 1000
 const MOCK_ADDRESS = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'
@@ -240,7 +242,7 @@ describe.sequential('XCM - e2e', () => {
     const api = await createApiInstanceForNode('AssetHubPolkadot')
     ethAssetSymbols.forEach(symbol => {
       if (!symbol) return
-      it(`should create transfer tx - ${symbol} from Polkadot to Ethereum`, async () => {
+      it(`should create transfer tx - ${symbol} from AssetHubPolkadot to Ethereum`, async () => {
         const tx = await Builder(api)
           .from('AssetHubPolkadot')
           .to('Ethereum')
@@ -286,9 +288,10 @@ describe.sequential('XCM - e2e', () => {
   })
 
   filteredNodes.forEach(node => {
+    const { nodeTo, asset, assetId } = findTransferableNodeAndAsset(node)
+    if (!nodeTo) return
     describe.sequential(`${node} ParaToPara & ParaToRelay`, () => {
       let api: ApiPromise
-      const { nodeTo, asset, assetId } = findTransferableNodeAndAsset(node)
       beforeAll(async () => {
         api = await createApiInstanceForNode(node)
       })
@@ -341,6 +344,12 @@ describe.sequential('XCM - e2e', () => {
         node !== 'Centrifuge' &&
         node !== 'ParallelHeiko'
       ) {
+        const relayChainAsset = getAssetBySymbolOrId(
+          node,
+          { symbol: getRelayChainSymbol(node) },
+          determineRelayChain(node)
+        )
+        if (!relayChainAsset) return
         it(`should create transfer tx - ParaToRelay ${getRelayChainSymbol(
           node
         )} from ${node} to Relay`, async () => {

@@ -40,8 +40,8 @@ export const getTransferInfo = async <TApi, TRes>({
   const expectedBalanceAfterXCMDelivery = originBalance - xcmFeeDetails.xcmFee
 
   const asset =
-    getAssetBySymbolOrId(origin, currency) ??
-    (origin === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency) : null)
+    getAssetBySymbolOrId(origin, currency, destination) ??
+    (origin === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency, null) : null)
 
   if (!asset) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${origin}`)

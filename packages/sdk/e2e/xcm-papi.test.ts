@@ -14,7 +14,8 @@ import {
   Version,
   getOtherAssets,
   TNodeDotKsmWithRelayChains,
-  ForeignAbstract
+  ForeignAbstract,
+  determineRelayChain
 } from '../src/papi'
 import { getPolkadotSigner, PolkadotSigner } from 'polkadot-api/signer'
 
@@ -26,6 +27,7 @@ import { keccak_256 } from '@noble/hashes/sha3'
 import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { isForeignAsset } from '../src/utils/assets'
+import { getAssetBySymbolOrId } from '../src/pallets/assets/getAssetBySymbolOrId'
 
 const MOCK_AMOUNT = 1000
 const MOCK_ADDRESS = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'
@@ -328,9 +330,10 @@ describe.sequential('XCM - e2e', () => {
     })
   })
   filteredNodes.forEach(node => {
+    const { nodeTo, asset, assetId } = findTransferableNodeAndAsset(node)
+    if (!nodeTo) return
     describe.sequential(`${node} ParaToPara & ParaToRelay`, () => {
       let api: TPapiApi
-      const { nodeTo, asset, assetId } = findTransferableNodeAndAsset(node)
       beforeAll(async () => {
         api = await createOrGetApiInstanceForNode(node)
       })
@@ -387,6 +390,12 @@ describe.sequential('XCM - e2e', () => {
         node !== 'Darwinia' &&
         node !== 'Centrifuge'
       ) {
+        const relayChainAsset = getAssetBySymbolOrId(
+          node,
+          { symbol: getRelayChainSymbol(node) },
+          determineRelayChain(node)
+        )
+        if (!relayChainAsset) return
         it(`should create transfer tx - ParaToRelay ${getRelayChainSymbol(
           node
         )} from ${node} to Relay`, async () => {

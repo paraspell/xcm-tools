@@ -5,15 +5,12 @@ import type {
   TAsset,
   TCurrency,
   TNativeAsset,
-  TNodePolkadotKusama,
   TNodeWithRelayChains,
   TForeignAsset,
   TCurrencySymbolValue
 } from '../../types'
-import { isRelayChain } from '../../utils'
 import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
-import { getDefaultPallet } from '../pallets'
-import { getAssetDecimals, getOtherAssets, getRelayChainSymbol } from './assets'
+import { getOtherAssets } from './assets'
 
 export const throwDuplicateAssetError = (
   symbol: string,
@@ -62,36 +59,13 @@ export const findBestMatches = (
   return matches
 }
 
-const findRelayChainSymbol = (node: TNodeWithRelayChains, symbol: TCurrencySymbolValue) => {
-  const relayChainAssetSymbol = getRelayChainSymbol(node)
-  if (
-    (isSymbolSpecifier(symbol) &&
-      symbol.type === 'Native' &&
-      relayChainAssetSymbol.toLowerCase() === symbol.value.toLowerCase()) ||
-    (!isSymbolSpecifier(symbol) && relayChainAssetSymbol.toLowerCase() === symbol.toLowerCase())
-  ) {
-    const relayChainAsset: TNativeAsset = {
-      symbol: relayChainAssetSymbol,
-      decimals: getAssetDecimals(node, relayChainAssetSymbol) ?? undefined
-    }
-    return relayChainAsset
-  }
-}
-
 export const findAssetBySymbol = (
   node: TNodeWithRelayChains,
-  destination: TNodeWithRelayChains | undefined,
+  destination: TNodeWithRelayChains | null,
   otherAssets: TForeignAsset[],
   nativeAssets: TNativeAsset[],
-  symbol: TCurrencySymbolValue,
-  isRelayDestination: boolean,
-  preferForeignAssets = false
-) => {
-  if (!preferForeignAssets) {
-    const relayChainAssetMatch = findRelayChainSymbol(node, symbol)
-    if (relayChainAssetMatch) return relayChainAssetMatch
-  }
-
+  symbol: TCurrencySymbolValue
+): TAsset | undefined => {
   const supportsESuffix =
     node === 'AssetHubPolkadot' ||
     node === 'AssetHubKusama' ||
@@ -199,11 +173,6 @@ export const findAssetBySymbol = (
   } else {
     const lowerSymbol = symbol.toLowerCase()
 
-    const isPolkadotXcm =
-      !isRelayChain(node) &&
-      node !== 'Ethereum' &&
-      getDefaultPallet(node as TNodePolkadotKusama) === 'PolkadotXcm'
-
     let otherAssetsMatches: TForeignAsset[] = []
     let nativeAssetsMatches: TNativeAsset[] = []
 
@@ -244,9 +213,6 @@ export const findAssetBySymbol = (
       nativeAssetsMatches = findBestMatches(nativeAssets, symbol) as TNativeAsset[]
 
       if (nativeAssetsMatches.length > 0 || otherAssetsMatches.length > 0) {
-        if (isPolkadotXcm) {
-          return nativeAssetsMatches[0] || otherAssetsMatches[0]
-        }
         return otherAssetsMatches[0] || nativeAssetsMatches[0]
       }
 
@@ -255,9 +221,6 @@ export const findAssetBySymbol = (
       nativeAssetsMatches = findBestMatches(nativeAssets, strippedSymbol) as TNativeAsset[]
 
       if (nativeAssetsMatches.length > 0 || otherAssetsMatches.length > 0) {
-        if (isPolkadotXcm) {
-          return nativeAssetsMatches[0] || otherAssetsMatches[0]
-        }
         return otherAssetsMatches[0] || nativeAssetsMatches[0]
       }
 
@@ -276,10 +239,6 @@ export const findAssetBySymbol = (
           otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol) as TForeignAsset[]
           nativeAssetsMatches = findBestMatches(nativeAssets, strippedSymbol) as TNativeAsset[]
 
-          if (node === 'Astar' || node === 'Shiden' || isPolkadotXcm) {
-            return nativeAssetsMatches[0] || otherAssetsMatches[0] || undefined
-          }
-
           const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
 
           if (totalMatches > 1) {
@@ -292,10 +251,6 @@ export const findAssetBySymbol = (
           otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol) as TForeignAsset[]
           nativeAssetsMatches = findBestMatches(nativeAssets, prefixedSymbol) as TNativeAsset[]
 
-          if (node === 'Astar' || node === 'Shiden' || isPolkadotXcm) {
-            return nativeAssetsMatches[0] || otherAssetsMatches[0] || undefined
-          }
-
           const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
 
           if (totalMatches > 1) {
@@ -304,13 +259,9 @@ export const findAssetBySymbol = (
         }
       }
 
-      if (node === 'Astar' || node === 'Shiden' || isPolkadotXcm) {
-        return nativeAssetsMatches[0] || otherAssetsMatches[0] || undefined
-      }
-
       const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
 
-      if (totalMatches > 1 && !isRelayDestination) {
+      if (totalMatches > 1) {
         throwDuplicateAssetError(symbol, nativeAssetsMatches, otherAssetsMatches)
       }
 
@@ -318,12 +269,7 @@ export const findAssetBySymbol = (
     }
   }
 
-  if (assetsMatches.length > 0) return assetsMatches[0]
-
-  const relayChainAssetMatch = findRelayChainSymbol(node, symbol)
-  if (relayChainAssetMatch) return relayChainAssetMatch
-
-  return undefined
+  return assetsMatches[0] || undefined
 }
 
 export const findAssetById = (assets: TForeignAsset[], assetId: TCurrency) => {

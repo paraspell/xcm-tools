@@ -106,7 +106,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
   };
 
   useEffect(() => {
-    if (isNotParaToPara) {
+    if (isNotParaToPara && Object.keys(currencyMap).length === 1) {
       form.setFieldValue("currencyOptionId", Object.keys(currencyMap)[0]);
     }
   }, [isNotParaToPara, currencyMap]);

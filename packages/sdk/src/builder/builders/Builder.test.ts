@@ -736,6 +736,12 @@ describe('Builder', () => {
       })
     })
 
+    it('should fail to initiate a relay to para transfer to ethereum', () => {
+      expect(() =>
+        Builder(mockApi).to('Ethereum').amount(AMOUNT).address(ADDRESS).build()
+      ).toThrow()
+    })
+
     it('should request a relay to para transfer serialized api call', async () => {
       const serializedApiCall = await Builder(mockApi)
         .to(NODE_2)

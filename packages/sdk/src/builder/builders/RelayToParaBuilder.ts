@@ -4,10 +4,10 @@ import {
   transferRelayToPara,
   transferRelayToParaSerializedApiCall
 } from '../../pallets/xcmPallet/transfer'
+import type { TRelayToParaDestination } from '../../types'
 import {
   type TSerializedApiCall,
   type TRelayToParaOptions,
-  type TDestination,
   type TAddress,
   type Version
 } from '../../types'
@@ -30,7 +30,7 @@ class RelayToParaBuilder<TApi, TRes>
     UseKeepAliveFinalBuilder<TApi, TRes>
 {
   private readonly api: IPolkadotApi<TApi, TRes>
-  private readonly to: TDestination
+  private readonly to: TRelayToParaDestination
   private readonly paraIdTo?: number
 
   private _amount: number
@@ -40,7 +40,7 @@ class RelayToParaBuilder<TApi, TRes>
 
   private constructor(
     api: IPolkadotApi<TApi, TRes>,
-    to: TDestination,
+    to: TRelayToParaDestination,
     private batchManager: BatchTransactionManager<TApi, TRes>,
     paraIdTo?: number
   ) {
@@ -52,7 +52,7 @@ class RelayToParaBuilder<TApi, TRes>
 
   static create<TApi, TRes>(
     api: IPolkadotApi<TApi, TRes>,
-    to: TDestination,
+    to: TRelayToParaDestination,
     batchManager: BatchTransactionManager<TApi, TRes>,
     paraIdTo?: number
   ): AmountBuilder<TApi, TRes> {
