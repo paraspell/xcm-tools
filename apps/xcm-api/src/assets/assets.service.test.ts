@@ -42,13 +42,6 @@ describe('AssetsService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('getNodeNames', () => {
-    it('should return the list of node names', () => {
-      const result = service.getNodeNames();
-      expect(result).toEqual(paraspellSdk.NODE_NAMES);
-    });
-  });
-
   describe('getAssetsObject', () => {
     let getAssetsObjectSpy: MockInstance;
 
@@ -448,6 +441,80 @@ describe('AssetsService', () => {
         BadRequestException,
       );
       expect(getTNodeSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getSupportedAssets', () => {
+    let getSupportedAssetsSpy: MockInstance;
+
+    beforeEach(() => {
+      getSupportedAssetsSpy = vi.spyOn(paraspellSdk, 'getSupportedAssets');
+    });
+
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should return supported assets for a valid origin and destination node', () => {
+      const supportedAssets = [{ symbol: 'DOT', decimals }];
+      getSupportedAssetsSpy.mockReturnValue(supportedAssets);
+
+      const nodeOrigin = 'Acala';
+      const nodeDestination = 'Karura';
+
+      const result = service.getSupportedAssets(nodeOrigin, nodeDestination);
+
+      expect(result).toEqual(supportedAssets);
+      expect(getSupportedAssetsSpy).toHaveBeenCalledWith(
+        nodeOrigin,
+        nodeDestination,
+      );
+    });
+
+    it('should throw BadRequestException for invalid origin node', () => {
+      const validateNodeSpy = vi
+        .spyOn(utils, 'validateNode')
+        .mockImplementation(() => {
+          throw new BadRequestException();
+        });
+
+      const nodeOrigin = 'InvalidNode';
+      const nodeDestination = 'Karura';
+
+      expect(() =>
+        service.getSupportedAssets(nodeOrigin, nodeDestination),
+      ).toThrow(BadRequestException);
+
+      expect(validateNodeSpy).toHaveBeenCalledWith(nodeOrigin, {
+        withRelayChains: true,
+      });
+      expect(getSupportedAssetsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid destination node', () => {
+      const validateNodeSpy = vi
+        .spyOn(utils, 'validateNode')
+        .mockImplementation((node: string) => {
+          if (node === 'Acala') {
+            return;
+          }
+          throw new BadRequestException();
+        });
+
+      const nodeOrigin = 'Acala';
+      const nodeDestination = 'InvalidNode';
+
+      expect(() =>
+        service.getSupportedAssets(nodeOrigin, nodeDestination),
+      ).toThrow(BadRequestException);
+
+      expect(validateNodeSpy).toHaveBeenCalledWith(nodeOrigin, {
+        withRelayChains: true,
+      });
+      expect(validateNodeSpy).toHaveBeenCalledWith(nodeDestination, {
+        withRelayChains: true,
+      });
+      expect(getSupportedAssetsSpy).not.toHaveBeenCalled();
     });
   });
 });

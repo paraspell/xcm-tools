@@ -6,6 +6,8 @@ import {
   BatchMode,
   Builder,
   Foreign,
+  NODES_WITH_RELAY_CHAINS,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
   NODE_NAMES,
   NODE_NAMES_DOT_KSM,
   Native,
@@ -86,20 +88,36 @@ describe('XCM API (e2e)', () => {
     });
   });
 
-  describe('Assets controller', () => {
-    const unknownSymbol = 'UnknownSymbol';
-
-    const nodeNamesUrl = '/assets';
-    it(`Get node names - ${nodeNamesUrl} (GFT)`, () => {
+  describe('Node configs controller', () => {
+    const nodeNamesUrl = '/nodes';
+    it(`Get node names - ${nodeNamesUrl} (GET)`, () => {
       return request(app.getHttpServer())
         .get(nodeNamesUrl)
         .expect(200)
-        .expect(NODE_NAMES);
+        .expect(NODES_WITH_RELAY_CHAINS);
     });
+
+    NODES_WITH_RELAY_CHAINS_DOT_KSM.filter(
+      // These nodes do not have ws endpoints
+      (node) => node !== 'Peaq' && node !== 'Polkadex',
+    ).forEach((node) => {
+      it(`should return ws endpoints for all nodes - ${node}`, async () => {
+        return request(app.getHttpServer())
+          .get(`/ws-endpoints/${node}`)
+          .expect(200)
+          .expect((res) => {
+            expect(res.body).toBeDefined();
+          });
+      });
+    });
+  });
+
+  describe('Assets controller', () => {
+    const unknownSymbol = 'UnknownSymbol';
 
     NODE_NAMES_DOT_KSM.forEach((node) => {
       const assetsObjectUrl = `/assets/${node}`;
-      it(`Get assets object - ${assetsObjectUrl} (GFT)`, () => {
+      it(`Get assets object - ${assetsObjectUrl} (GET)`, () => {
         const assetsObject = getAssetsObject(node);
         return request(app.getHttpServer())
           .get(assetsObjectUrl)
@@ -153,7 +171,7 @@ describe('XCM API (e2e)', () => {
       });
 
       const nativeAssetsUrl = `/assets/${node}/native`;
-      it(`Get native assets - ${nativeAssetsUrl} (GFT)`, () => {
+      it(`Get native assets - ${nativeAssetsUrl} (GET)`, () => {
         const nativeAssets = getNativeAssets(node);
         return request(app.getHttpServer())
           .get(nativeAssetsUrl)
@@ -162,7 +180,7 @@ describe('XCM API (e2e)', () => {
       });
 
       const otherAssetsUrl = `/assets/${node}/other`;
-      it(`Get other assets - ${otherAssetsUrl} (GFT)`, () => {
+      it(`Get other assets - ${otherAssetsUrl} (GET)`, () => {
         const otherAssets = getOtherAssets(node);
         return request(app.getHttpServer())
           .get(otherAssetsUrl)
@@ -304,6 +322,15 @@ describe('XCM API (e2e)', () => {
         .post('/balance/Node123/foreign')
         .send(invalidRequest)
         .expect(400);
+    });
+
+    it('should return supported assets', () => {
+      return request(app.getHttpServer())
+        .get('/supported-assets/?origin=Acala&destination=Astar')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toBeDefined();
+        });
     });
   });
 

@@ -3,8 +3,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { AssetsController } from './assets.controller.js';
 import { AssetsService } from './assets.service.js';
-import type { TNode, TNodeAssets } from '@paraspell/sdk';
-import { NODE_NAMES } from '@paraspell/sdk';
+import type { TAsset, TNode, TNodeAssets } from '@paraspell/sdk';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { mockRequestObject } from '../testUtils.js';
 
@@ -34,20 +33,6 @@ describe('AssetsController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
-  });
-
-  describe('getNodeNames', () => {
-    it('should return the list of node names', () => {
-      const mockResult = NODE_NAMES;
-      const spy = vi
-        .spyOn(assetsService, 'getNodeNames')
-        .mockReturnValue(mockResult);
-
-      const result = controller.getNodeNames(mockRequestObject);
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalled();
-    });
   });
 
   describe('getAssetsObject', () => {
@@ -208,6 +193,30 @@ describe('AssetsController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(node);
+    });
+  });
+
+  describe('getSupportedAssets', () => {
+    it('should return supported assets for a valid node origin and destination', () => {
+      const nodeOrigin = 'Acala';
+      const nodeDestination = 'Karura';
+      const mockResult = [
+        {
+          symbol: 'DOT',
+          assetId: '1234',
+        },
+      ] as TAsset[];
+      const spy = vi
+        .spyOn(assetsService, 'getSupportedAssets')
+        .mockReturnValue(mockResult);
+
+      const result = controller.getSupportedAssets(
+        { origin: nodeOrigin, destination: nodeDestination },
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(nodeOrigin, nodeDestination);
     });
   });
 });

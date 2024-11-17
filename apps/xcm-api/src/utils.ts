@@ -4,7 +4,12 @@ import type {
   TNodePolkadotKusama,
   TSerializedApiCall,
 } from '@paraspell/sdk';
-import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '@paraspell/sdk';
+import {
+  NODE_NAMES,
+  NODE_NAMES_DOT_KSM,
+  NODES_WITH_RELAY_CHAINS,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
+} from '@paraspell/sdk';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'web3-validator';
@@ -13,10 +18,15 @@ export const isNumeric = (num: string) => !isNaN(Number(num));
 
 export const validateNode = (
   node: string,
-  { excludeEthereum } = { excludeEthereum: false },
+  options: { excludeEthereum?: boolean; withRelayChains?: boolean } = {},
 ) => {
+  const { excludeEthereum = false, withRelayChains = false } = options;
   const nodeList = excludeEthereum ? NODE_NAMES_DOT_KSM : NODE_NAMES;
-  if (!nodeList.includes(node as TNodePolkadotKusama)) {
+  const withRelaysNodeList = excludeEthereum
+    ? NODES_WITH_RELAY_CHAINS_DOT_KSM
+    : NODES_WITH_RELAY_CHAINS;
+  const usedNodeList = withRelayChains ? withRelaysNodeList : nodeList;
+  if (!usedNodeList.includes(node as TNodePolkadotKusama)) {
     throw new BadRequestException(
       `Node ${node} is not valid. Check docs for valid nodes.`,
     );

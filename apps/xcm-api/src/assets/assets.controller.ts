@@ -4,21 +4,16 @@ import { isNumeric } from '../utils.js';
 import { SymbolDto } from './dto/SymbolDto.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
+import { SupportedAssetsDto } from './dto/SupportedAssetsDto.js';
 
-@Controller('assets')
+@Controller()
 export class AssetsController {
   constructor(
     private assetsService: AssetsService,
     private analyticsService: AnalyticsService,
   ) {}
 
-  @Get()
-  getNodeNames(@Req() req: Request) {
-    this.analyticsService.track(EventName.GET_NODE_NAMES, req);
-    return this.assetsService.getNodeNames();
-  }
-
-  @Get(':node')
+  @Get('assets/:node')
   getAssetsObject(
     @Param('node') nodeOrParaId: string,
     @Query('ecosystem') ecosystem: string | undefined,
@@ -40,7 +35,7 @@ export class AssetsController {
     return this.assetsService.getAssetsObject(nodeOrParaId);
   }
 
-  @Get(':node/id')
+  @Get('assets/:node/id')
   getAssetId(
     @Param('node') node: string,
     @Query() { symbol }: SymbolDto,
@@ -53,7 +48,7 @@ export class AssetsController {
     return this.assetsService.getAssetId(node, symbol);
   }
 
-  @Get(':node/relay-chain-symbol')
+  @Get('assets/:node/relay-chain-symbol')
   getRelayChainSymbol(@Param('node') node: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_RELAYCHAIN_SYMBOL, req, {
       node,
@@ -61,7 +56,7 @@ export class AssetsController {
     return this.assetsService.getRelayChainSymbol(node);
   }
 
-  @Get(':node/native')
+  @Get('assets/:node/native')
   getNativeAssets(@Param('node') node: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_NATIVE_ASSETS, req, {
       node,
@@ -69,7 +64,7 @@ export class AssetsController {
     return this.assetsService.getNativeAssets(node);
   }
 
-  @Get(':node/other')
+  @Get('assets/:node/other')
   getOtherAssets(@Param('node') node: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_OTHER_ASSETS, req, {
       node,
@@ -77,7 +72,7 @@ export class AssetsController {
     return this.assetsService.getOtherAssets(node);
   }
 
-  @Get(':node/all-symbols')
+  @Get('assets/:node/all-symbols')
   getAllAssetsSymbol(@Param('node') node: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_ALL_ASSETS_SYMBOLS, req, {
       node,
@@ -85,7 +80,7 @@ export class AssetsController {
     return this.assetsService.getAllAssetsSymbols(node);
   }
 
-  @Get(':node/decimals')
+  @Get('assets/:node/decimals')
   getDecimals(
     @Param('node') node: string,
     @Query() { symbol }: SymbolDto,
@@ -98,7 +93,7 @@ export class AssetsController {
     return this.assetsService.getDecimals(node, symbol);
   }
 
-  @Get(':node/has-support')
+  @Get('assets/:node/has-support')
   hasSupportForAsset(
     @Param('node') node: string,
     @Query() { symbol }: SymbolDto,
@@ -111,11 +106,22 @@ export class AssetsController {
     return this.assetsService.hasSupportForAsset(node, symbol);
   }
 
-  @Get(':node/para-id')
+  @Get('assets/:node/para-id')
   getParaId(@Param('node') node: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_PARA_ID, req, {
       node,
     });
     return this.assetsService.getParaId(node);
+  }
+
+  @Get('supported-assets')
+  getSupportedAssets(
+    @Query() { origin, destination }: SupportedAssetsDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_SUPPORTED_ASSETS, req, {
+      origin,
+    });
+    return this.assetsService.getSupportedAssets(origin, destination);
   }
 }
