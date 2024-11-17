@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import {
-  NODE_NAMES,
   TNode,
   TNodePolkadotKusama,
   getAllAssetsSymbols,
@@ -15,6 +14,7 @@ import {
   getOtherAssets,
   getParaId,
   getRelayChainSymbol,
+  getSupportedAssets,
   getTNode,
   hasSupportForAsset,
 } from '@paraspell/sdk';
@@ -22,10 +22,6 @@ import { validateNode } from '../utils.js';
 
 @Injectable()
 export class AssetsService {
-  getNodeNames() {
-    return NODE_NAMES;
-  }
-
   getAssetsObject(node: string) {
     validateNode(node);
     return getAssetsObject(node as TNode);
@@ -92,5 +88,11 @@ export class AssetsService {
       );
     }
     return JSON.stringify(node);
+  }
+
+  getSupportedAssets(nodeOrigin: string, nodeDestination: string) {
+    validateNode(nodeOrigin, { withRelayChains: true });
+    validateNode(nodeDestination, { withRelayChains: true });
+    return getSupportedAssets(nodeOrigin as TNode, nodeDestination as TNode);
   }
 }
