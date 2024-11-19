@@ -21,7 +21,8 @@ vi.mock('./buildClaimAssetsInput', () => ({
 describe('claimAssets', () => {
   const apiMock = {
     init: vi.fn(),
-    callTxMethod: vi.fn()
+    callTxMethod: vi.fn(),
+    disconnect: vi.fn()
   } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
   const nodeMock = 'Acala'

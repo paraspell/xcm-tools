@@ -11,16 +11,15 @@ vi.mock('../../../utils', () => ({
 describe('getBalanceNative', () => {
   const apiMock = {
     init: vi.fn(),
-    getBalanceNative: vi.fn()
+    getBalanceNative: vi.fn(),
+    disconnect: vi.fn()
   } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
   it('returns the correct balance when API is provided', async () => {
     const address = '0x123'
     const node = 'Polkadot'
-    const apiMock = {
-      init: vi.fn(),
-      getBalanceNative: vi.fn().mockResolvedValue(BigInt(1000))
-    } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
+
+    vi.spyOn(apiMock, 'getBalanceNative').mockResolvedValue(BigInt(1000))
 
     const balance = await getBalanceNative({
       address,

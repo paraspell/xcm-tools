@@ -46,6 +46,7 @@ describe('PapiApi', () => {
 
     mockPolkadotClient = {
       _request: vi.fn(),
+      destroy: vi.fn(),
       getUnsafeApi: vi.fn().mockReturnValue({
         tx: {
           XcmPallet: {
@@ -129,6 +130,7 @@ describe('PapiApi', () => {
     })
 
     it('should create api instance when _api is undefined', async () => {
+      const papiApi = new PapiApi()
       papiApi.setApi(undefined)
       const mockCreateApiInstanceForNode = vi
         .spyOn(utils, 'createApiInstanceForNode')
@@ -442,6 +444,41 @@ describe('PapiApi', () => {
       const apiInstance = await papiApi.createApiForNode('Acala')
 
       expect(apiInstance).toBeDefined()
+    })
+  })
+
+  describe('disconnect', () => {
+    it('should disconnect the api when _api is a string', async () => {
+      const mockDisconnect = vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
+
+      papiApi.setApi('api')
+      await papiApi.disconnect()
+
+      expect(mockDisconnect).toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
+    })
+
+    it('should disconnect the api when _api is not provided', async () => {
+      const mockDisconnect = vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
+
+      papiApi.setApi(undefined)
+      await papiApi.disconnect()
+
+      expect(mockDisconnect).toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
+    })
+
+    it('should not disconnect the api when _api is provided', async () => {
+      const mockDisconnect = vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
+
+      papiApi.setApi(mockPolkadotClient)
+      await papiApi.disconnect()
+
+      expect(mockDisconnect).not.toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
     })
   })
 })

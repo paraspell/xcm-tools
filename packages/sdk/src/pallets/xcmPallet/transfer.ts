@@ -17,6 +17,7 @@ import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../ass
 import { getNode, determineRelayChain } from '../../utils'
 import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
 import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
+import { isPjsClient } from '../../utils/isPjsClient'
 
 const sendCommon = async <TApi, TRes>(
   options: TSendOptions<TApi, TRes>,
@@ -178,56 +179,64 @@ const sendCommon = async <TApi, TRes>(
 
   await api.init(origin)
 
-  const amountStr = amount?.toString()
+  try {
+    const amountStr = amount?.toString()
 
-  if ('multilocation' in currency || 'multiasset' in currency) {
-    console.warn('Keep alive check is not supported when using MultiLocation as currency.')
-  } else if (typeof address === 'object') {
-    console.warn('Keep alive check is not supported when using MultiLocation as address.')
-  } else if (typeof destination === 'object') {
-    console.warn('Keep alive check is not supported when using MultiLocation as destination.')
-  } else if (destination === 'Ethereum') {
-    console.warn('Keep alive check is not supported when using Ethereum as origin or destination.')
-  } else if (!asset) {
-    console.warn('Keep alive check is not supported when asset check is disabled.')
-  } else {
-    await checkKeepAlive({
-      originApi: api,
-      address,
+    if ('multilocation' in currency || 'multiasset' in currency) {
+      console.warn('Keep alive check is not supported when using MultiLocation as currency.')
+    } else if (typeof address === 'object') {
+      console.warn('Keep alive check is not supported when using MultiLocation as address.')
+    } else if (typeof destination === 'object') {
+      console.warn('Keep alive check is not supported when using MultiLocation as destination.')
+    } else if (destination === 'Ethereum') {
+      console.warn(
+        'Keep alive check is not supported when using Ethereum as origin or destination.'
+      )
+    } else if (!asset) {
+      console.warn('Keep alive check is not supported when asset check is disabled.')
+    } else {
+      await checkKeepAlive({
+        originApi: api,
+        address,
+        amount: amountStr ?? '',
+        originNode: origin,
+        destApi: destApiForKeepAlive,
+        asset,
+        destNode: destination
+      })
+    }
+
+    // In case asset check is disabled, we create asset object from currency symbol
+    const resolvedAsset =
+      asset ??
+      ({
+        symbol: 'symbol' in currency ? currency.symbol : undefined
+      } as TNativeAsset)
+
+    return originNode.transfer({
+      api,
+      asset: resolvedAsset,
       amount: amountStr ?? '',
-      originNode: origin,
-      destApi: destApiForKeepAlive,
-      asset,
-      destNode: destination
+      address,
+      destination,
+      paraIdTo,
+      overridedCurrencyMultiLocation:
+        'multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)
+          ? currency.multilocation.value
+          : 'multiasset' in currency
+            ? currency.multiasset
+            : undefined,
+      feeAsset,
+      version,
+      destApiForKeepAlive,
+      serializedApiCallEnabled,
+      ahAddress
     })
+  } finally {
+    if (isPjsClient(api)) {
+      await api.disconnect()
+    }
   }
-
-  // In case asset check is disabled, we create asset object from currency symbol
-  const resolvedAsset =
-    asset ??
-    ({
-      symbol: 'symbol' in currency ? currency.symbol : undefined
-    } as TNativeAsset)
-
-  return originNode.transfer({
-    api,
-    asset: resolvedAsset,
-    amount: amountStr ?? '',
-    address,
-    destination,
-    paraIdTo,
-    overridedCurrencyMultiLocation:
-      'multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)
-        ? currency.multilocation.value
-        : 'multiasset' in currency
-          ? currency.multiasset
-          : undefined,
-    feeAsset,
-    version,
-    destApiForKeepAlive,
-    serializedApiCallEnabled,
-    ahAddress
-  })
 }
 
 export const sendSerializedApiCall = async <TApi, TRes>(
@@ -252,44 +261,50 @@ export const transferRelayToParaCommon = async <TApi, TRes>(
 
   await api.init(determineRelayChain(destination as TNode))
 
-  const amountStr = amount.toString()
+  try {
+    const amountStr = amount.toString()
 
-  if (isMultiLocationDestination) {
-    console.warn('Keep alive check is not supported when using MultiLocation as destination.')
-  } else if (isAddressMultiLocation) {
-    console.warn('Keep alive check is not supported when using MultiLocation as address.')
-  } else {
-    await checkKeepAlive({
-      originApi: api,
+    if (isMultiLocationDestination) {
+      console.warn('Keep alive check is not supported when using MultiLocation as destination.')
+    } else if (isAddressMultiLocation) {
+      console.warn('Keep alive check is not supported when using MultiLocation as address.')
+    } else {
+      await checkKeepAlive({
+        originApi: api,
+        address,
+        amount: amountStr,
+        destApi: destApiForKeepAlive,
+        asset: { symbol: getRelayChainSymbol(destination) },
+        destNode: destination
+      })
+    }
+
+    const serializedApiCall = getNode(
+      isMultiLocationDestination ? resolveTNodeFromMultiLocation(destination) : destination
+    ).transferRelayToPara({
+      api,
+      destination,
       address,
       amount: amountStr,
-      destApi: destApiForKeepAlive,
-      asset: { symbol: getRelayChainSymbol(destination) },
-      destNode: destination
+      paraIdTo,
+      destApiForKeepAlive,
+      version
     })
-  }
 
-  const serializedApiCall = getNode(
-    isMultiLocationDestination ? resolveTNodeFromMultiLocation(destination) : destination
-  ).transferRelayToPara({
-    api,
-    destination,
-    address,
-    amount: amountStr,
-    paraIdTo,
-    destApiForKeepAlive,
-    version
-  })
+    if (serializedApiCallEnabled) {
+      // Keep compatibility with old serialized call type
+      return {
+        ...serializedApiCall,
+        parameters: Object.values(serializedApiCall.parameters)
+      }
+    }
 
-  if (serializedApiCallEnabled) {
-    // Keep compatibility with old serialized call type
-    return {
-      ...serializedApiCall,
-      parameters: Object.values(serializedApiCall.parameters)
+    return api.callTxMethod(serializedApiCall)
+  } finally {
+    if (isPjsClient(api)) {
+      await api.disconnect()
     }
   }
-
-  return api.callTxMethod(serializedApiCall)
 }
 
 export const transferRelayToPara = async <TApi, TRes>(

@@ -104,14 +104,14 @@ const XcmTransfer = () => {
 
     const signer = await getSigner();
 
+    const Sdk =
+      apiType === "PAPI"
+        ? await import("@paraspell/sdk/papi")
+        : await import("@paraspell/sdk");
+
+    const api = await Sdk.createApiInstanceForNode(from);
+
     try {
-      const Sdk =
-        apiType === "PAPI"
-          ? await import("@paraspell/sdk/papi")
-          : await import("@paraspell/sdk");
-
-      const api = await Sdk.createApiInstanceForNode(from);
-
       let tx: Extrinsic | TPapiTransaction;
       if (useApi) {
         tx = await getTxFromApi(
@@ -178,6 +178,8 @@ const XcmTransfer = () => {
       }
     } finally {
       setLoading(false);
+      if ("disconnect" in api) await api.disconnect();
+      else api.destroy();
     }
   };
 

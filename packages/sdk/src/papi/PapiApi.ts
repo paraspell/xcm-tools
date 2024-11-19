@@ -38,6 +38,8 @@ const unsupportedNodes = [
 class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   private _api?: TPapiApiOrUrl
   private api: TPapiApi
+  private initialized = false
+  private disconnectAllowed = true
 
   setApi(api?: TPapiApiOrUrl): void {
     this._api = api
@@ -48,6 +50,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   async init(node: TNodeDotKsmWithRelayChains): Promise<void> {
+    if (this.initialized) {
+      return
+    }
+
     if (unsupportedNodes.includes(node)) {
       throw new NodeNotSupportedError(`The node ${node} is not yet supported by the Polkadot API.`)
     }
@@ -57,6 +63,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       this.api =
         this._api ?? (await createApiInstanceForNode<TPapiApi, TPapiTransaction>(this, node))
     }
+
+    this.initialized = true
   }
 
   async createApiInstance(wsUrl: string): Promise<TPapiApi> {
@@ -174,6 +182,24 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const api = new PapiApi()
     await api.init(node)
     return api
+  }
+
+  setDisconnectAllowed(allowed: boolean): void {
+    this.disconnectAllowed = allowed
+  }
+
+  getDisconnectAllowed(): boolean {
+    return this.disconnectAllowed
+  }
+
+  disconnect(): Promise<void> {
+    if (!this.disconnectAllowed) return Promise.resolve()
+
+    // Disconnect api only if it was created automatically
+    if (typeof this._api === 'string' || this._api === undefined) {
+      this.api.destroy()
+    }
+    return Promise.resolve()
   }
 }
 

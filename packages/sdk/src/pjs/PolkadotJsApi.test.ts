@@ -52,7 +52,8 @@ describe('PolkadotJsApi', () => {
             entries: vi.fn()
           })
         }
-      }
+      },
+      disconnect: vi.fn()
     } as unknown as TPjsApi
     polkadotApi.setApi(mockApiPromise)
     await polkadotApi.init('Acala')
@@ -60,6 +61,7 @@ describe('PolkadotJsApi', () => {
 
   describe('setApi and getApi', () => {
     it('should set and get the api', async () => {
+      const polkadotApi = new PolkadotJsApi()
       const newApi = {} as TPjsApi
       polkadotApi.setApi(newApi)
       await polkadotApi.init('Acala')
@@ -70,6 +72,7 @@ describe('PolkadotJsApi', () => {
 
   describe('init', () => {
     it('should set api to _api when _api is defined', async () => {
+      const polkadotApi = new PolkadotJsApi()
       const mockApi = {} as TPjsApi
       polkadotApi.setApi(mockApi)
       await polkadotApi.init('Acala')
@@ -77,6 +80,7 @@ describe('PolkadotJsApi', () => {
     })
 
     it('should create api instance when _api is undefined', async () => {
+      const polkadotApi = new PolkadotJsApi()
       polkadotApi.setApi(undefined)
       const mockCreateApiInstanceForNode = vi
         .spyOn(utils, 'createApiInstanceForNode')
@@ -468,6 +472,41 @@ describe('PolkadotJsApi', () => {
       expect(newApi.getApi()).toBe(mockApiPromise)
 
       mockCreateApiInstanceForNode.mockRestore()
+    })
+  })
+
+  describe('disconnect', () => {
+    it('should disconnect the api when _api is a string', async () => {
+      const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
+
+      polkadotApi.setApi('api')
+      await polkadotApi.disconnect()
+
+      expect(mockDisconnect).toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
+    })
+
+    it('should disconnect the api when _api is not provided', async () => {
+      const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
+
+      polkadotApi.setApi(undefined)
+      await polkadotApi.disconnect()
+
+      expect(mockDisconnect).toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
+    })
+
+    it('should not disconnect the api when _api is provided', async () => {
+      const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
+
+      polkadotApi.setApi(mockApiPromise)
+      await polkadotApi.disconnect()
+
+      expect(mockDisconnect).not.toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
     })
   })
 })

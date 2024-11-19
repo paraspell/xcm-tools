@@ -3,8 +3,8 @@ import { createApiInstanceForNode } from '../../../utils'
 import { getNativeAssetSymbol } from '../assets'
 import { getAssetBalance } from './getAssetBalance'
 import type { ApiPromise } from '@polkadot/api'
-import { getBalanceNative } from './getBalanceNative'
-import { getBalanceForeign } from './getBalanceForeign'
+import { getBalanceNativeInternal } from './getBalanceNative'
+import { getBalanceForeignInternal } from './getBalanceForeign'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { Extrinsic } from '../../../pjs/types'
 
@@ -17,11 +17,11 @@ vi.mock('../assets', () => ({
 }))
 
 vi.mock('./getBalanceNative', () => ({
-  getBalanceNative: vi.fn()
+  getBalanceNativeInternal: vi.fn()
 }))
 
 vi.mock('./getBalanceForeign', () => ({
-  getBalanceForeign: vi.fn()
+  getBalanceForeignInternal: vi.fn()
 }))
 
 describe('getAssetBalance', () => {
@@ -29,7 +29,8 @@ describe('getAssetBalance', () => {
 
   beforeEach(() => {
     apiMock = {
-      init: vi.fn()
+      init: vi.fn(),
+      disconnect: vi.fn()
     } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
     vi.mocked(createApiInstanceForNode).mockResolvedValue(apiMock)
   })
@@ -39,11 +40,11 @@ describe('getAssetBalance', () => {
     const node = 'Polkadot'
     const currency = { symbol: 'DOT' }
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getBalanceNative).mockResolvedValue(BigInt(1000))
+    vi.mocked(getBalanceNativeInternal).mockResolvedValue(BigInt(1000))
 
     const result = await getAssetBalance({ api: apiMock, address: account, node, currency })
     expect(result).toEqual(BigInt(1000))
-    expect(getBalanceNative).toHaveBeenCalledWith({ address: account, node, api: apiMock })
+    expect(getBalanceNativeInternal).toHaveBeenCalledWith({ address: account, node, api: apiMock })
   })
 
   it('returns the foreign asset balance when the currency symbol does not match the native symbol', async () => {
@@ -51,11 +52,11 @@ describe('getAssetBalance', () => {
     const node = 'Kusama'
     const currency = { symbol: 'KSM' }
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getBalanceForeign).mockResolvedValue(BigInt(200))
+    vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt(200))
 
     const result = await getAssetBalance({ api: apiMock, address: account, node, currency })
     expect(result).toEqual(BigInt(200))
-    expect(getBalanceForeign).toHaveBeenCalledWith({
+    expect(getBalanceForeignInternal).toHaveBeenCalledWith({
       address: account,
       node,
       currency,
@@ -68,7 +69,7 @@ describe('getAssetBalance', () => {
     const node = 'Kusama'
     const currency = { symbol: 'XYZ' }
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getBalanceForeign).mockResolvedValue(BigInt(0))
+    vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt(0))
 
     const result = await getAssetBalance({ api: apiMock, address: account, node, currency })
     expect(result).toEqual(BigInt(0))

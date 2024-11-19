@@ -12,7 +12,9 @@ import type { IPolkadotApi } from '../../api/IPolkadotApi'
 import type { Extrinsic } from '../../pjs/types'
 
 const apiMock = {
-  calculateTransactionFee: vi.fn().mockResolvedValue(BigInt('1000000000'))
+  init: vi.fn(),
+  calculateTransactionFee: vi.fn().mockResolvedValue(BigInt('1000000000')),
+  disconnect: vi.fn()
 } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
 describe('getOriginFeeDetails', () => {
@@ -27,7 +29,7 @@ describe('getOriginFeeDetails', () => {
     const minTransferableAmount = BigInt('1000000000000')
     const xcmFee = '1000000000'
 
-    vi.spyOn(balanceModule, 'getBalanceNative').mockResolvedValue(nativeBalance)
+    vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
     vi.spyOn(depositModule, 'getMinNativeTransferableAmount').mockReturnValue(minTransferableAmount)
     vi.spyOn(utilsModule, 'createApiInstanceForNode').mockResolvedValue({} as ApiPromise)
 
@@ -83,7 +85,7 @@ describe('getOriginFeeDetails', () => {
     const minTransferableAmount = BigInt('1000000000000')
     const xcmFee = '1000000000'
 
-    vi.spyOn(balanceModule, 'getBalanceNative').mockResolvedValue(nativeBalance)
+    vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
     vi.spyOn(depositModule, 'getMinNativeTransferableAmount').mockReturnValue(minTransferableAmount)
     vi.spyOn(utilsModule, 'createApiInstanceForNode').mockResolvedValue({} as ApiPromise)
 
@@ -139,7 +141,7 @@ describe('getOriginFeeDetails', () => {
     const minTransferableAmount = BigInt('1000000000000')
     const xcmFee = '1000000000'
 
-    vi.spyOn(balanceModule, 'getBalanceNative').mockResolvedValue(nativeBalance)
+    vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
     vi.spyOn(depositModule, 'getMinNativeTransferableAmount').mockReturnValue(minTransferableAmount)
     vi.spyOn(utilsModule, 'createApiInstanceForNode').mockResolvedValue({} as ApiPromise)
 
