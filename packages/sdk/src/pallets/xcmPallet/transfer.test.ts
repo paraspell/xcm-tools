@@ -47,7 +47,8 @@ const mockApi = {
   getApi: vi.fn(),
   setApi: vi.fn(),
   init: vi.fn(),
-  callTxMethod: vi.fn()
+  callTxMethod: vi.fn(),
+  disconnect: vi.fn()
 } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
 describe('send', () => {

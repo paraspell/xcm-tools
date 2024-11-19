@@ -1,11 +1,11 @@
 import { getDefaultPallet } from '../../pallets'
 import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
+import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 import type { TGetBalanceForeignOptions } from '../../../types/TBalance'
 import { InvalidCurrencyError } from '../../../errors'
-import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 
-export const getBalanceForeign = async <TApi, TRes>({
+export const getBalanceForeignInternal = async <TApi, TRes>({
   address,
   node,
   currency,
@@ -21,10 +21,24 @@ export const getBalanceForeign = async <TApi, TRes>({
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${node}`)
   }
 
-  if (getDefaultPallet(node) === 'XTokens') {
+  const defaultPallet = getDefaultPallet(node)
+
+  if (defaultPallet === 'XTokens') {
     return await getBalanceForeignXTokens(api, node, address, asset)
-  } else if (getDefaultPallet(node) === 'PolkadotXcm') {
+  } else if (defaultPallet === 'PolkadotXcm') {
     return await getBalanceForeignPolkadotXcm(api, node, address, asset)
   }
+
   throw new Error('Unsupported pallet')
+}
+
+export const getBalanceForeign = async <TApi, TRes>(
+  options: TGetBalanceForeignOptions<TApi, TRes>
+): Promise<bigint> => {
+  const { api } = options
+  try {
+    return await getBalanceForeignInternal(options)
+  } finally {
+    await api.disconnect()
+  }
 }

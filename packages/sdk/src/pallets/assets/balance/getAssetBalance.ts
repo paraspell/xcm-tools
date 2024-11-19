@@ -1,10 +1,10 @@
 import type { TNodePolkadotKusama } from '../../../types'
 import { getNativeAssetSymbol } from '../assets'
-import { getBalanceNative } from './getBalanceNative'
-import { getBalanceForeign } from './getBalanceForeign'
+import { getBalanceNativeInternal } from './getBalanceNative'
+import { getBalanceForeignInternal } from './getBalanceForeign'
 import type { TGetAssetBalanceOptions } from '../../../types/TBalance'
 
-export const getAssetBalance = async <TApi, TRes>({
+export const getAssetBalanceInternal = async <TApi, TRes>({
   address,
   node,
   currency,
@@ -14,16 +14,28 @@ export const getAssetBalance = async <TApi, TRes>({
 
   const isNativeSymbol =
     'symbol' in currency ? getNativeAssetSymbol(node) === currency.symbol : false
+
   return isNativeSymbol
-    ? await getBalanceNative({
+    ? await getBalanceNativeInternal({
         address,
         node,
         api
       })
-    : ((await getBalanceForeign({
+    : ((await getBalanceForeignInternal({
         address,
         node: node as TNodePolkadotKusama,
         api,
         currency
       })) ?? BigInt(0))
+}
+
+export const getAssetBalance = async <TApi, TRes>(
+  options: TGetAssetBalanceOptions<TApi, TRes>
+): Promise<bigint> => {
+  const { api } = options
+  try {
+    return await getAssetBalanceInternal(options)
+  } finally {
+    await api.disconnect()
+  }
 }

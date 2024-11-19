@@ -26,6 +26,8 @@ const snakeToCamel = (str: string) =>
 class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   private _api?: TPjsApiOrUrl
   private api: TPjsApi
+  private initialized = false
+  private disconnectAllowed = true
 
   setApi(api?: TPjsApiOrUrl): void {
     this._api = api
@@ -36,11 +38,17 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   }
 
   async init(node: TNodeDotKsmWithRelayChains): Promise<void> {
+    if (this.initialized) {
+      return
+    }
+
     if (typeof this._api === 'string') {
       this.api = await this.createApiInstance(this._api)
     } else {
       this.api = this._api ?? (await createApiInstanceForNode<TPjsApi, Extrinsic>(this, node))
     }
+
+    this.initialized = true
   }
 
   async createApiInstance(wsUrl: string): Promise<TPjsApi> {
@@ -159,6 +167,23 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const api = new PolkadotJsApi()
     await api.init(node)
     return api
+  }
+
+  setDisconnectAllowed(allowed: boolean): void {
+    this.disconnectAllowed = allowed
+  }
+
+  getDisconnectAllowed(): boolean {
+    return this.disconnectAllowed
+  }
+
+  async disconnect(): Promise<void> {
+    if (!this.disconnectAllowed) return
+
+    // Disconnect api only if it was created automatically
+    if (typeof this._api === 'string' || this._api === undefined) {
+      await this.api.disconnect()
+    }
   }
 }
 

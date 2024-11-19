@@ -1,6 +1,6 @@
 import { type TNodeDotKsmWithRelayChains, type TEdJsonMap } from '../../types'
 import * as edsMapJson from '../../maps/existential-deposits.json' assert { type: 'json' }
-import { getBalanceNative } from './balance/getBalanceNative'
+import { getBalanceNativeInternal } from './balance/getBalanceNative'
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
 const palletsMap = edsMapJson as TEdJsonMap
 
@@ -19,7 +19,7 @@ export const getMaxNativeTransferableAmount = async <TApi, TRes>(
   node: TNodeDotKsmWithRelayChains
 ): Promise<bigint> => {
   const ed = getExistentialDeposit(node)
-  const nativeBalance = await getBalanceNative({
+  const nativeBalance = await getBalanceNativeInternal({
     address,
     node,
     api

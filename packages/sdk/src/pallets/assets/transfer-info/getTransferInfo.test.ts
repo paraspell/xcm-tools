@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createApiInstanceForNode, determineRelayChainSymbol } from '../../../utils'
 import { getTransferInfo } from './getTransferInfo'
-import { getBalanceNative } from '../balance/getBalanceNative'
-import { getOriginFeeDetails } from '../getOriginFeeDetails'
+import { getBalanceNativeInternal } from '../balance/getBalanceNative'
+import { getOriginFeeDetailsInternal } from '../getOriginFeeDetails'
 import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
-import { getAssetBalance } from '../balance/getAssetBalance'
+import { getAssetBalanceInternal } from '../balance/getAssetBalance'
 import {
   getExistentialDeposit,
   getMaxNativeTransferableAmount,
@@ -37,19 +37,21 @@ vi.mock('../getAssetBySymbolOrId', () => ({
 }))
 
 vi.mock('../balance/getAssetBalance', () => ({
-  getAssetBalance: vi.fn()
+  getAssetBalanceInternal: vi.fn()
 }))
 
 vi.mock('../balance/getBalanceNative', () => ({
-  getBalanceNative: vi.fn()
+  getBalanceNativeInternal: vi.fn()
 }))
 
 vi.mock('../getOriginFeeDetails', () => ({
-  getOriginFeeDetails: vi.fn()
+  getOriginFeeDetailsInternal: vi.fn()
 }))
 
 const apiMock = {
-  init: vi.fn()
+  init: vi.fn(),
+  disconnect: vi.fn(),
+  setDisconnectAllowed: vi.fn()
 } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
 describe('getTransferInfo', () => {
@@ -62,13 +64,13 @@ describe('getTransferInfo', () => {
 
   beforeEach(() => {
     vi.mocked(createApiInstanceForNode).mockResolvedValue({} as ApiPromise)
-    vi.mocked(getBalanceNative).mockResolvedValue(BigInt(5000))
-    vi.mocked(getOriginFeeDetails).mockResolvedValue({
+    vi.mocked(getBalanceNativeInternal).mockResolvedValue(BigInt(5000))
+    vi.mocked(getOriginFeeDetailsInternal).mockResolvedValue({
       xcmFee: BigInt(100),
       sufficientForXCM: true
     })
     vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'DOT', assetId: '1' })
-    vi.mocked(getAssetBalance).mockResolvedValue(BigInt(2000))
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(2000))
     vi.mocked(getExistentialDeposit).mockReturnValue(BigInt('100'))
     vi.mocked(getMinNativeTransferableAmount).mockReturnValue(BigInt('10'))
     vi.mocked(getMaxNativeTransferableAmount).mockResolvedValue(BigInt(4000))
@@ -115,7 +117,7 @@ describe('getTransferInfo', () => {
   })
 
   it('handles errors during API interactions', async () => {
-    vi.mocked(getBalanceNative).mockRejectedValue(new Error('API failure'))
+    vi.mocked(getBalanceNativeInternal).mockRejectedValue(new Error('API failure'))
     await expect(
       getTransferInfo({
         api: apiMock,

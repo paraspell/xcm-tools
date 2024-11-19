@@ -45,6 +45,9 @@ export const checkKeepAlive = async <TApi, TRes>({
     originNode ?? determineRelayChain(destNode as TNodePolkadotKusama)
   )
 
+  const oldDisconnectAllowed = originApi.getDisconnectAllowed()
+  originApi.setDisconnectAllowed(false)
+
   const tx = await createTx<TApi, TRes>(
     originApi,
     destApi,
@@ -54,6 +57,8 @@ export const checkKeepAlive = async <TApi, TRes>({
     originNode,
     destNode
   )
+
+  originApi.setDisconnectAllowed(oldDisconnectAllowed)
 
   if (tx === null) {
     throw new KeepAliveError('Transaction for XCM fee calculation could not be created.')

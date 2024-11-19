@@ -20,7 +20,9 @@ describe('checkKeepAlive', () => {
   const mockApi = {
     getApi: vi.fn().mockReturnValue({}),
     getBalanceNative: vi.fn().mockReturnValue(BigInt(1000000)),
-    calculateTransactionFee: vi.fn().mockResolvedValue(BigInt(100))
+    calculateTransactionFee: vi.fn().mockResolvedValue(BigInt(100)),
+    getDisconnectAllowed: vi.fn().mockReturnValue(true),
+    setDisconnectAllowed: vi.fn()
   } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
   beforeEach(() => {

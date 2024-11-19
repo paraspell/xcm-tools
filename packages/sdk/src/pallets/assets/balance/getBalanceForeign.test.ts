@@ -30,7 +30,8 @@ describe('getBalanceForeign', () => {
   const mockApi = {
     init: vi.fn(),
     getBalanceForeignXTokens: vi.fn(),
-    getBalanceForeign: vi.fn()
+    getBalanceForeign: vi.fn(),
+    disconnect: vi.fn()
   } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
   beforeEach(() => {

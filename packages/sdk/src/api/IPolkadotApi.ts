@@ -26,4 +26,7 @@ export interface IPolkadotApi<TApi, TRes> {
   getFromStorage(key: string): Promise<string>
   clone(): IPolkadotApi<TApi, TRes>
   createApiForNode(node: TNodeWithRelayChains): Promise<IPolkadotApi<TApi, TRes>>
+  setDisconnectAllowed(allowed: boolean): void
+  getDisconnectAllowed(): boolean
+  disconnect(): Promise<void>
 }
