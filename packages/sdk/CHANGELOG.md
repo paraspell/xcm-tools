@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.1...sdk-v7.2.2) (2024-11-19)
+
+
+### Bug Fixes
+
+* **sdk:** Fix getOriginFeeDetails API disconnect 🛠️ ([346ecd0](https://github.com/paraspell/xcm-tools/commit/346ecd0c953f861850290da8ca1494f643388a48))
+* **sdk:** Properly disconnect auto-created API client ✅ ([50735d5](https://github.com/paraspell/xcm-tools/commit/50735d59188c093de293836329bed474cd4c815b))
+
 ## [7.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.0...sdk-v7.2.1) (2024-11-19)
 
 
