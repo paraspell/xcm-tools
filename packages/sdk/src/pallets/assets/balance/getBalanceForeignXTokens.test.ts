@@ -7,7 +7,8 @@ import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 
 const mockApi = {
   getBalanceForeignAssetsAccount: vi.fn(),
-  getBalanceForeignXTokens: vi.fn()
+  getBalanceForeignXTokens: vi.fn(),
+  getBalanceForeignBifrost: vi.fn()
 } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
 describe('getBalanceForeignXTokens', () => {
@@ -43,6 +44,15 @@ describe('getBalanceForeignXTokens', () => {
     expect(spy).toHaveBeenCalledWith(address, asset)
     expect(spy2).not.toHaveBeenCalled()
     expect(balance).toBe(BigInt(3000))
+  })
+
+  it('calls getBalanceForeignBifrost when node is BifrostPolkadot', async () => {
+    const spy = vi.spyOn(mockApi, 'getBalanceForeignBifrost').mockResolvedValue(BigInt(4000))
+    const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
+    const balance = await getBalanceForeignXTokens(mockApi, 'BifrostPolkadot', address, asset)
+    expect(spy).toHaveBeenCalledWith(address, asset)
+    expect(spy2).not.toHaveBeenCalled()
+    expect(balance).toBe(BigInt(4000))
   })
 
   it('returns 0 if getBalanceForeignMoonbeam resolves with 0', async () => {

@@ -48,9 +48,9 @@ describe('PolkadotJsApi', () => {
           account: vi.fn()
         },
         tokens: {
-          accounts: {
+          accounts: Object.assign(vi.fn(), {
             entries: vi.fn()
-          }
+          })
         }
       }
     } as unknown as TPjsApi
@@ -274,6 +274,41 @@ describe('PolkadotJsApi', () => {
         )
         expect(balance).toBe(BigInt(0))
       })
+    })
+  })
+
+  describe('getBalanceForeignBifrost', () => {
+    it('should return the balance when asset matches currencySelection', async () => {
+      const address = 'some_address'
+      const mockResponse = {
+        free: { toString: () => '6000' }
+      } as unknown as VoidFn
+
+      vi.mocked(mockApiPromise.query.tokens.accounts).mockResolvedValue(mockResponse)
+
+      const balance = await polkadotApi.getBalanceForeignBifrost(address, { symbol: 'DOT' })
+
+      expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
+        Token: 'DOT'
+      })
+      expect(balance).toBe(BigInt(6000))
+    })
+
+    it('should return null when no matching asset found', async () => {
+      const address = 'some_address'
+
+      const mockResponse = {
+        free: { toString: () => '0' }
+      } as unknown as VoidFn
+
+      vi.mocked(mockApiPromise.query.tokens.accounts).mockResolvedValue(mockResponse)
+
+      const balance = await polkadotApi.getBalanceForeignBifrost(address, { symbol: 'DOT' })
+
+      expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
+        Token: 'DOT'
+      })
+      expect(balance).toBe(BigInt(0))
     })
   })
 

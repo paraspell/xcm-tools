@@ -17,5 +17,9 @@ export const getBalanceForeignXTokens = async <TApi, TRes>(
     return api.getBalanceForeignAssetsAccount(address, BigInt(asset.assetId))
   }
 
+  if (node === 'BifrostPolkadot' || node === 'BifrostKusama') {
+    return api.getBalanceForeignBifrost(address, asset)
+  }
+
   return api.getBalanceForeignXTokens(address, asset)
 }
