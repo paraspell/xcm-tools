@@ -14,7 +14,8 @@ import type { Extrinsic } from '../../pjs/types'
 const apiMock = {
   init: vi.fn(),
   calculateTransactionFee: vi.fn().mockResolvedValue(BigInt('1000000000')),
-  disconnect: vi.fn()
+  disconnect: vi.fn(),
+  setDisconnectAllowed: vi.fn()
 } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
 describe('getOriginFeeDetails', () => {
