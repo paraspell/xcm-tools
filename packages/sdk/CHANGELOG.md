@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.0...sdk-v7.2.1) (2024-11-19)
+
+
+### Bug Fixes
+
+* **sdk:** Fix Bifrost balance fetching 🔧 ([50455ef](https://github.com/paraspell/xcm-tools/commit/50455ef9e72a25fbfc820583e11d7b05651228a0))
+
 ## [7.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-v7.1.2...sdk-v7.2.0) (2024-11-16)
 
 
