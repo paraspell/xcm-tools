@@ -21,6 +21,7 @@ export interface IPolkadotApi<TApi, TRes> {
   getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint>
   getForeignAssetsByIdBalance(address: string, assetId: string): Promise<bigint>
   getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint>
+  getBalanceForeignBifrost(address: string, asset: TAsset): Promise<bigint>
   getBalanceForeignAssetsAccount(address: string, assetId: bigint | number): Promise<bigint>
   getFromStorage(key: string): Promise<string>
   clone(): IPolkadotApi<TApi, TRes>

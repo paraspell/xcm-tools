@@ -28,7 +28,7 @@ vi.mock('./PapiXcmTransformer', () => ({
   transform: vi.fn().mockReturnValue({ transformed: true })
 }))
 
-vi.mock('../utils', () => ({
+vi.mock('../utils/createApiInstanceForNode', () => ({
   createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient)
 }))
 
@@ -85,6 +85,9 @@ describe('PapiApi', () => {
           },
           Tokens: {
             Accounts: {
+              getValue: vi.fn().mockResolvedValue({
+                free: BigInt(6000)
+              }),
               getEntries: vi.fn().mockResolvedValue([
                 {
                   keyArgs: [
@@ -289,9 +292,30 @@ describe('PapiApi', () => {
     })
   })
 
+  describe('getBalanceForeignBifrost', () => {
+    it('should return the balance when balance exists', async () => {
+      const transformedCurrencySelection = { type: 'Native', value: 'BNC' }
+
+      vi.mocked(transform).mockReturnValue(transformedCurrencySelection)
+
+      papiApi.setApi(mockPolkadotClient)
+      const balance = await papiApi.getBalanceForeignBifrost('some_address', {
+        symbol: 'BNC'
+      })
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      expect(unsafeApi.query.Tokens.Accounts.getValue).toHaveBeenCalledWith(
+        'some_address',
+        transformedCurrencySelection
+      )
+      expect(balance).toBe(BigInt(6000))
+    })
+  })
+
   describe('getBalanceForeignXTokens', () => {
     it('should return the balance when asset matches symbolOrId', async () => {
       papiApi.setApi(mockPolkadotClient)
+
       const balance = await papiApi.getBalanceForeignXTokens('some_address', {
         symbol: 'DOT',
         assetId: '1'

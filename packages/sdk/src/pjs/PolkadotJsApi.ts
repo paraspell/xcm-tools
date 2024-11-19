@@ -13,7 +13,7 @@ import type { StorageKey } from '@polkadot/types'
 import { u32, type UInt } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
 import type { TBalanceResponse } from '../types/TBalance'
-import { createApiInstanceForNode } from '../utils'
+import { createApiInstanceForNode, getNode } from '../utils'
 import { isForeignAsset } from '../utils/assets'
 
 const lowercaseFirstLetter = (value: string) => value.charAt(0).toLowerCase() + value.slice(1)
@@ -97,6 +97,15 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const response: Codec = await this.api.query.foreignAssets.account(assetId, address)
     const obj = response.toJSON() as TBalanceResponse
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
+  }
+
+  async getBalanceForeignBifrost(address: string, asset: TAsset): Promise<bigint> {
+    const currencySelection = getNode('BifrostPolkadot').getCurrencySelection(asset)
+
+    const response: Codec = await this.api.query.tokens.accounts(address, currencySelection)
+
+    const accountData = response ? (response as AccountData) : null
+    return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
   }
 
   async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint> {

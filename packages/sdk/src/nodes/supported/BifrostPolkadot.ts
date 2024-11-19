@@ -25,7 +25,7 @@ export class BifrostPolkadot<TApi, TRes>
     super('BifrostPolkadot', 'bifrost', 'polkadot', Version.V3)
   }
 
-  private getCurrencySelection(asset: TAsset) {
+  getCurrencySelection(asset: TAsset) {
     const nativeAssetSymbol = this.getNativeAssetSymbol()
 
     if (asset.symbol === nativeAssetSymbol) {
