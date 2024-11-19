@@ -74,10 +74,11 @@ export const getOriginFeeDetails = async <TApi, TRes>(
   options: TGetOriginFeeDetailsOptions<TApi, TRes>
 ): Promise<TOriginFeeDetails> => {
   const { api } = options
-
+  api.setDisconnectAllowed(false)
   try {
     return await getOriginFeeDetailsInternal(options)
   } finally {
+    api.setDisconnectAllowed(true)
     await api.disconnect()
   }
 }
