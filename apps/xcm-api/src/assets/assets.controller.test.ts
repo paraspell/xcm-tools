@@ -48,30 +48,10 @@ describe('AssetsController', () => {
         .spyOn(assetsService, 'getAssetsObject')
         .mockReturnValue(mockResult);
 
-      const result = controller.getAssetsObject(
-        node,
-        'polkadot',
-        mockRequestObject,
-      );
+      const result = controller.getAssetsObject(node, mockRequestObject);
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(node);
-    });
-
-    it('should return assets object for a valid parachain id', () => {
-      const paraId = '2009';
-      const spy = vi
-        .spyOn(assetsService, 'getNodeByParaId')
-        .mockReturnValue(paraId);
-
-      const result = controller.getAssetsObject(
-        paraId,
-        'polkadot',
-        mockRequestObject,
-      );
-
-      expect(result).toBe(paraId);
-      expect(spy).toHaveBeenCalledWith(Number(paraId), 'polkadot');
     });
   });
 
@@ -179,20 +159,6 @@ describe('AssetsController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(node, symbol);
-    });
-  });
-
-  describe('getParaId', () => {
-    it('should return parachain id for a valid node', () => {
-      const mockResult = 2009;
-      const spy = vi
-        .spyOn(assetsService, 'getParaId')
-        .mockReturnValue(mockResult);
-
-      const result = controller.getParaId(node, mockRequestObject);
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(node);
     });
   });
 

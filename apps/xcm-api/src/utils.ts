@@ -14,8 +14,6 @@ import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'web3-validator';
 
-export const isNumeric = (num: string) => !isNaN(Number(num));
-
 export const validateNode = (
   node: string,
   options: { excludeEthereum?: boolean; withRelayChains?: boolean } = {},
