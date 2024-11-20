@@ -103,7 +103,7 @@ describe('XCM API (e2e)', () => {
     ).forEach((node) => {
       it(`should return ws endpoints for all nodes - ${node}`, async () => {
         return request(app.getHttpServer())
-          .get(`/ws-endpoints/${node}`)
+          .get(`/nodes/${node}/ws-endpoints`)
           .expect(200)
           .expect((res) => {
             expect(res.body).toBeDefined();
@@ -197,7 +197,7 @@ describe('XCM API (e2e)', () => {
           .expect(symbols);
       });
 
-      const parachainIdUrl = `/assets/${node}/para-id`;
+      const parachainIdUrl = `/nodes/${node}/para-id`;
       it(`Get parachain id - ${parachainIdUrl} (GET)`, () => {
         const paraId = getParaId(node);
         return request(app.getHttpServer())
@@ -261,7 +261,7 @@ describe('XCM API (e2e)', () => {
         .expect(400);
     });
 
-    const parachainIdUnknownNodeUrl = `/assets/${unknownNode}/para-id `;
+    const parachainIdUnknownNodeUrl = `/nodes/${unknownNode}/para-id `;
     it(`Get parachain id - ${parachainIdUnknownNodeUrl} (GET)`, () => {
       return request(app.getHttpServer())
         .get(parachainIdUnknownNodeUrl)

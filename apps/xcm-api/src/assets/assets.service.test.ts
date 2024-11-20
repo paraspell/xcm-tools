@@ -23,7 +23,6 @@ describe('AssetsService', () => {
   const symbol = 'DOT';
   const unknownSymbol = 'UNKNOWN';
   const assetId = '1';
-  const paraId = 2000;
   const decimals = 12;
 
   beforeEach(async () => {
@@ -370,77 +369,6 @@ describe('AssetsService', () => {
 
       expect(validateNodeSpy).toHaveBeenCalledWith(invalidNode);
       expect(hasSupportForAssetSpy).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('AssetsService', () => {
-    let getParaIdSpy: MockInstance;
-
-    beforeEach(() => {
-      getParaIdSpy = vi.spyOn(paraspellSdk, 'getParaId');
-    });
-
-    afterEach(() => {
-      vi.clearAllMocks();
-    });
-
-    describe('getParaId', () => {
-      it('should return parachain ID for a valid node', () => {
-        const result = service.getParaId(node);
-
-        expect(result).toEqual(paraId);
-        expect(getParaIdSpy).toHaveBeenCalledWith(node);
-      });
-
-      it('should throw BadRequestException for invalid node', () => {
-        const validateNodeSpy = vi
-          .spyOn(utils, 'validateNode')
-          .mockImplementation(() => {
-            throw new BadRequestException();
-          });
-        expect(() => service.getParaId(invalidNode)).toThrow(
-          BadRequestException,
-        );
-
-        expect(validateNodeSpy).toHaveBeenCalledWith(invalidNode, {
-          excludeEthereum: true,
-        });
-        expect(getParaIdSpy).not.toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('getNodeByParaId', () => {
-    let getTNodeSpy: MockInstance;
-
-    beforeEach(() => {
-      getTNodeSpy = vi.spyOn(paraspellSdk, 'getTNode');
-    });
-
-    it('should return node by parachain ID', () => {
-      getTNodeSpy.mockReturnValue(node);
-      const result = service.getNodeByParaId(paraId, 'polkadot');
-
-      expect(result).toEqual(JSON.stringify(node));
-      expect(getTNodeSpy).toHaveBeenCalledWith(paraId, 'polkadot');
-    });
-
-    it('should throw NotFoundException for unknown parachain ID', () => {
-      const unknownParaId = 999;
-
-      expect(() => service.getNodeByParaId(unknownParaId, 'polkadot')).toThrow(
-        NotFoundException,
-      );
-      expect(getTNodeSpy).toHaveBeenCalledWith(unknownParaId, 'polkadot');
-    });
-
-    it('should throw BadRequestException for invalid ecosystem', () => {
-      const invalidEcosystem = 'invalid';
-
-      expect(() => service.getNodeByParaId(paraId, invalidEcosystem)).toThrow(
-        BadRequestException,
-      );
-      expect(getTNodeSpy).not.toHaveBeenCalled();
     });
   });
 

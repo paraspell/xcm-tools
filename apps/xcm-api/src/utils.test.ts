@@ -1,18 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { BadRequestException } from '@nestjs/common';
-import { isNumeric, validateNode } from './utils.js';
-
-describe('isNumeric', () => {
-  it('should return true for numeric values', () => {
-    expect(isNumeric('123')).toBe(true);
-    expect(isNumeric('0')).toBe(true);
-  });
-
-  it('should return false for non-numeric values', () => {
-    expect(isNumeric('abc')).toBe(false);
-    expect(isNumeric('123abc')).toBe(false);
-  });
-});
+import { validateNode } from './utils.js';
 
 describe('validateNode', () => {
   it('should not throw for valid node', () => {

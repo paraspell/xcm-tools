@@ -44,6 +44,34 @@ describe('AssetsController', () => {
     });
   });
 
+  describe('getParaId', () => {
+    it('should return parachain id for a valid node', () => {
+      const mockResult = 2009;
+      const spy = vi.spyOn(service, 'getParaId').mockReturnValue(mockResult);
+
+      const result = controller.getParaId(node, mockRequestObject);
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(node);
+    });
+  });
+
+  describe('getNodeByParaId', () => {
+    it('should return assets object for a valid parachain id', () => {
+      const paraId = '2009';
+      const spy = vi.spyOn(service, 'getNodeByParaId').mockReturnValue(paraId);
+
+      const result = controller.getAssetsObject(
+        paraId,
+        'polkadot',
+        mockRequestObject,
+      );
+
+      expect(result).toBe(paraId);
+      expect(spy).toHaveBeenCalledWith(Number(paraId), 'polkadot');
+    });
+  });
+
   describe('getSupportedAssets', () => {
     it('should return supported assets for a valid node origin and destination', () => {
       const mockResult = ['wss://acala.com', 'wss://acala2.com'];

@@ -1,6 +1,5 @@
 import { Controller, Get, Param, Query, Req, Request } from '@nestjs/common';
 import { AssetsService } from './assets.service.js';
-import { isNumeric } from '../utils.js';
 import { SymbolDto } from './dto/SymbolDto.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
@@ -14,25 +13,11 @@ export class AssetsController {
   ) {}
 
   @Get('assets/:node')
-  getAssetsObject(
-    @Param('node') nodeOrParaId: string,
-    @Query('ecosystem') ecosystem: string | undefined,
-    @Req() req: Request,
-  ) {
-    const isParaId = isNumeric(nodeOrParaId);
-    if (isParaId) {
-      this.analyticsService.track(EventName.GET_NODE_BY_PARA_ID, req, {
-        paraId: nodeOrParaId,
-      });
-      return this.assetsService.getNodeByParaId(
-        Number(nodeOrParaId),
-        ecosystem,
-      );
-    }
+  getAssetsObject(@Param('node') node: string, @Req() req: Request) {
     this.analyticsService.track(EventName.GET_ASSETS_OBJECT, req, {
-      node: nodeOrParaId,
+      node,
     });
-    return this.assetsService.getAssetsObject(nodeOrParaId);
+    return this.assetsService.getAssetsObject(node);
   }
 
   @Get('assets/:node/id')
@@ -104,14 +89,6 @@ export class AssetsController {
       symbol,
     });
     return this.assetsService.hasSupportForAsset(node, symbol);
-  }
-
-  @Get('assets/:node/para-id')
-  getParaId(@Param('node') node: string, @Req() req: Request) {
-    this.analyticsService.track(EventName.GET_PARA_ID, req, {
-      node,
-    });
-    return this.assetsService.getParaId(node);
   }
 
   @Get('supported-assets')
