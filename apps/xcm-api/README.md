@@ -309,16 +309,16 @@ const response = await fetch(
 );
 
 //Retrieve Parachain ID for a particular Parachain
-const response = await fetch('http://localhost:3001/assets/:node/para-id');
+const response = await fetch('http://localhost:3001/nodes/:node/para-id');
 
 //Retrieve Parachain name from Parachain ID
-const response = await fetch('http://localhost:3001/assets/:paraID?ecosystem=polkadot');
+const response = await fetch('http://localhost:3001/nodes/:paraID?ecosystem=polkadot');
 
 //Retrieve a list of implemented Parachains
 const response = await fetch('http://localhost:3001/nodes');
 
 //Query list of node WS endpoints
-const response = await fetch('http://localhost:3001/ws-endpoints/:node ');
+const response = await fetch('http://localhost:3001/nodes/:node/ws-endpoints');
 
 //Query supported assets supported between two nodes
 const response = await fetch('http://localhost:3001/supported-assets?origin=:node&destination=:node');
