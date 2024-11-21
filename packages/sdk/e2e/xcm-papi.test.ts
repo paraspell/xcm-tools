@@ -15,7 +15,8 @@ import {
   getOtherAssets,
   TNodeDotKsmWithRelayChains,
   ForeignAbstract,
-  determineRelayChain
+  determineRelayChain,
+  isNodeEvm
 } from '../src/papi'
 import { getPolkadotSigner, PolkadotSigner } from 'polkadot-api/signer'
 
@@ -341,13 +342,15 @@ describe.sequential('XCM - e2e', () => {
         const currency = assetId ? { id: assetId } : { symbol: asset ?? 'DOT' }
         if (currency === null) return
         expect(nodeTo).toBeDefined()
+        const resolvedNode = nodeTo ?? MOCK_POLKADOT_NODE
+        const resolvedAddress = isNodeEvm(resolvedNode) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
         try {
           const tx = await Builder(api)
             .from(node)
-            .to(nodeTo ?? MOCK_POLKADOT_NODE)
+            .to(resolvedNode)
             .currency(currency)
             .amount(MOCK_AMOUNT)
-            .address(MOCK_ADDRESS)
+            .address(resolvedAddress)
             .build()
 
           if (

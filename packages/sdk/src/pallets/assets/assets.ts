@@ -29,6 +29,10 @@ const assetsMap = assetsMapJson as TAssetJsonMap
  */
 export const getAssetsObject = (node: TNodeWithRelayChains): TNodeAssets => assetsMap[node]
 
+export const isNodeEvm = (node: TNodeWithRelayChains): boolean => {
+  return assetsMap[node].isEVM
+}
+
 /**
  * Retrieves the asset ID for a given symbol on a specified node.
  *

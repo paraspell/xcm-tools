@@ -163,6 +163,7 @@ describe('transfer', () => {
       ...MOCK_TRANSFER_OPTIONS,
       currencyTo: { symbol: 'WETH' },
       to: 'Ethereum',
+      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
       exchange: 'HydrationDex',
       assetHubAddress: '0xABC123',
       ethSigner: {} as EthSigner,
@@ -178,6 +179,7 @@ describe('transfer', () => {
       to: 'Ethereum',
       exchange: 'HydrationDex',
       assetHubAddress: '0xABC123',
+      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
       type: TransactionType.TO_ETH,
       ethSigner: {} as EthSigner,
     };

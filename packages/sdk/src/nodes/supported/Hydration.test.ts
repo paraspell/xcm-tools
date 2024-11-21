@@ -178,7 +178,7 @@ describe('Hydration', () => {
 
   describe('getProvider', () => {
     it('should return LiebiEU provider', () => {
-      expect(hydration.getProvider()).toBe('wss://rpc.hydradx.cloud')
+      expect(hydration.getProvider()).toBe('wss://rpc.helikon.io/hydradx')
     })
   })
 })
