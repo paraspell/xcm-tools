@@ -18,6 +18,7 @@ import { GLOBAL, nodeToQuery } from './nodeToQueryMap'
 import { fetchEthereumAssets } from './fetchEthereumAssets'
 import { addAliasesToDuplicateSymbols } from './addAliases'
 import { capitalizeMultiLocation, fetchOtherAssetsRegistry } from './fetchOtherAssetsRegistry'
+import { isNodeEvm } from './isNodeEvm'
 
 const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -360,7 +361,8 @@ const fetchNodeAssets = async (
   return {
     nativeAssets,
     otherAssets,
-    nativeAssetSymbol
+    nativeAssetSymbol,
+    isEVM: isNodeEvm(api)
   }
 }
 
@@ -403,6 +405,7 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
         output[nodeName] = {
           relayChainAssetSymbol: getNode(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
           nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
+          isEVM: newData?.isEVM ?? false,
           nativeAssets: combinedNativeAssets,
           otherAssets: combinedOtherAssets
         }

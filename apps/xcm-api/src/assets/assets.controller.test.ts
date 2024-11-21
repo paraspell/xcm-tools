@@ -39,6 +39,7 @@ describe('AssetsController', () => {
     const mockResult = {
       paraId: 2009,
       relayChainAssetSymbol: 'KSM',
+      isEVM: false,
       nativeAssets: [{ symbol, decimals }],
       otherAssets: [{ assetId: '234123123', symbol: 'FKK', decimals }],
       nativeAssetSymbol: symbol,

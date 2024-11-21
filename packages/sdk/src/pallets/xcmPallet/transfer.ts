@@ -18,6 +18,7 @@ import { getNode, determineRelayChain } from '../../utils'
 import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
 import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
 import { isPjsClient } from '../../utils/isPjsClient'
+import { validateDestinationAddress } from './validateDestinationAddress'
 
 const sendCommon = async <TApi, TRes>(
   options: TSendOptions<TApi, TRes>,
@@ -109,6 +110,8 @@ const sendCommon = async <TApi, TRes>(
     isBridge
       ? false
       : originNode.assetCheckEnabled
+
+  validateDestinationAddress(address, destination)
 
   const isDestAssetHub = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
 

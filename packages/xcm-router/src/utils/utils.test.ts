@@ -132,7 +132,7 @@ export const MOCK_TRANSFER_OPTIONS: TTransferOptionsModified = {
   from: 'Astar',
   exchangeNode: 'Hydration',
   exchange: 'HydrationDex',
-  to: 'Moonbeam',
+  to: 'Interlay',
   currencyFrom: { symbol: 'ASTR' },
   currencyTo: { symbol: 'GLMR' },
   assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },

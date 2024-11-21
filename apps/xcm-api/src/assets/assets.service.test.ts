@@ -56,6 +56,7 @@ describe('AssetsService', () => {
       const assetsObject: paraspellSdk.TNodeAssets = {
         relayChainAssetSymbol: symbol,
         nativeAssetSymbol: 'DOT',
+        isEVM: false,
         nativeAssets: [{ symbol, decimals }],
         otherAssets: [{ assetId, symbol: 'BSK', decimals }],
       };

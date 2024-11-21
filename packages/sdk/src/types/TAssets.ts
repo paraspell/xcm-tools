@@ -29,6 +29,7 @@ export type TAsset = TNativeAsset | TForeignAsset
 export type TNodeAssets = {
   relayChainAssetSymbol: TRelayChainSymbol
   nativeAssetSymbol: string
+  isEVM: boolean
   nativeAssets: TNativeAsset[]
   otherAssets: TForeignAsset[]
 }

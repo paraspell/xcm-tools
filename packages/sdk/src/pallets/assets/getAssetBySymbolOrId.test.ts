@@ -248,12 +248,14 @@ describe('getAssetBySymbolOrId', () => {
         ? {
             nativeAssetSymbol: 'ETH',
             relayChainAssetSymbol: 'DOT',
+            isEVM: false,
             otherAssets: [],
             nativeAssets: []
           }
         : {
             nativeAssetSymbol: 'DOT',
             relayChainAssetSymbol: 'DOT',
+            isEVM: false,
             otherAssets: [
               {
                 assetId: '1',
@@ -277,12 +279,14 @@ describe('getAssetBySymbolOrId', () => {
       return node === 'Ethereum'
         ? {
             nativeAssetSymbol: 'ETH',
+            isEVM: false,
             relayChainAssetSymbol: 'DOT',
             otherAssets: [],
             nativeAssets: []
           }
         : {
             nativeAssetSymbol: 'DOT',
+            isEVM: false,
             relayChainAssetSymbol: 'DOT',
             otherAssets: [
               {
@@ -306,6 +310,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '1',
@@ -330,6 +335,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockResolvedValueOnce({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '1',
@@ -349,6 +355,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '1',
@@ -368,6 +375,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '1',
@@ -387,6 +395,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '1',
@@ -406,6 +415,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '2',
@@ -429,6 +439,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [],
       nativeAssets: [
         {
@@ -446,6 +457,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '1',
@@ -469,6 +481,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '1',
@@ -495,6 +508,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '2',
@@ -513,6 +527,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [],
       nativeAssets: []
     })
@@ -542,6 +557,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '2',
@@ -596,6 +612,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '2',
@@ -650,6 +667,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '2',
@@ -704,6 +722,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
+      isEVM: false,
       otherAssets: [
         {
           assetId: '2',
@@ -747,6 +766,7 @@ describe('getAssetBySymbolOrId', () => {
   it('should find asset by xcm interior - array', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
+      isEVM: false,
       relayChainAssetSymbol: 'DOT',
       otherAssets: [
         {

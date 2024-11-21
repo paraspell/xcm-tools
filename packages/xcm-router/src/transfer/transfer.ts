@@ -16,6 +16,7 @@ import { ethers } from 'ethers';
 import { transferToEthereum } from './transferToEthereum';
 import { transferFromEthereum } from './transferFromEthereum';
 import { findAssetFrom, findAssetTo } from '../assets/assets';
+import { validateDestinationAddress } from '../utils/validateDestinationAddress';
 
 /**
  * This function allows users to send one type of token and receive a different one on the destination chain
@@ -56,6 +57,8 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
     assetHubAddress,
     type,
   } = options;
+
+  validateDestinationAddress(recipientAddress, options.to);
 
   if (evmSigner !== undefined && evmInjectorAddress === undefined) {
     throw new Error('evmInjectorAddress is required when evmSigner is provided');
