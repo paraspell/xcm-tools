@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Kusama
 
-import type { TTransferReturn } from '../../types'
 import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
 import { getNode } from '../../utils'
 import { getNodeProviders } from '../config'
@@ -11,7 +10,7 @@ class BifrostKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXT
     super('BifrostKusama', 'bifrost', 'kusama', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>): TTransferReturn<TRes> {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>): TRes {
     return getNode<TApi, TRes, 'BifrostPolkadot'>('BifrostPolkadot').transferXTokens(input)
   }
 

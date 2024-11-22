@@ -3,7 +3,7 @@ import type {
   TAsset,
   TMultiLocation,
   TNodeWithRelayChains,
-  TSerializedApiCallV2
+  TSerializedApiCall
 } from '../types'
 import type { TApiOrUrl } from '../types/TApi'
 
@@ -13,7 +13,7 @@ export interface IPolkadotApi<TApi, TRes> {
   init(node: TNodeWithRelayChains): Promise<void>
   createApiInstance: (wsUrl: string) => Promise<TApi>
   createAccountId(address: string): HexString
-  callTxMethod(serializedCall: TSerializedApiCallV2): TRes
+  callTxMethod(serializedCall: TSerializedApiCall): TRes
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
   getBalanceNative(address: string): Promise<bigint>
   getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint>

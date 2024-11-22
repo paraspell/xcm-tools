@@ -12,15 +12,7 @@ import { PolkadotClient } from 'polkadot-api';
 
 @Injectable()
 export class BalanceService {
-  async getBalanceNativePjs(node: string, params: BalanceNativeDto) {
-    return await this.getBalanceNative(node, params);
-  }
-
-  async getBalanceNativePapi(node: string, params: BalanceNativeDto) {
-    return await this.getBalanceNative(node, params, true);
-  }
-
-  private async getBalanceNative(
+  async getBalanceNative(
     node: string,
     { address }: BalanceNativeDto,
     usePapi = false,
@@ -47,15 +39,7 @@ export class BalanceService {
     return balance;
   }
 
-  async getBalanceForeignPjs(node: string, params: BalanceForeignDto) {
-    return await this.getBalanceForeign(node, params);
-  }
-
-  async getBalanceForeignPapi(node: string, params: BalanceForeignDto) {
-    return await this.getBalanceForeign(node, params, true);
-  }
-
-  private async getBalanceForeign(
+  async getBalanceForeign(
     node: string,
     { address, currency }: BalanceForeignDto,
     usePapi = false,
@@ -73,6 +57,34 @@ export class BalanceService {
 
     const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getBalanceForeign({
+      address,
+      currency,
+      node: nodeTyped,
+      api: api as ApiPromise & PolkadotClient,
+    });
+    if ('disconnect' in api) await api.disconnect();
+    else api.destroy();
+    return balance === null ? 'null' : balance.toString();
+  }
+
+  async getAssetBalance(
+    node: string,
+    { address, currency }: BalanceForeignDto,
+    usePapi = false,
+  ) {
+    const nodeTyped = node as TNodePolkadotKusama;
+    if (!NODE_NAMES_DOT_KSM.includes(nodeTyped)) {
+      throw new BadRequestException(
+        `Node ${node} is not valid. Check docs for valid nodes.`,
+      );
+    }
+
+    const Sdk = usePapi
+      ? await import('@paraspell/sdk/papi')
+      : await import('@paraspell/sdk');
+
+    const api = await Sdk.createApiInstanceForNode(nodeTyped);
+    const balance = await Sdk.getAssetBalance({
       address,
       currency,
       node: nodeTyped,

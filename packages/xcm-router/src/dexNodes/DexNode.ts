@@ -31,7 +31,7 @@ abstract class ExchangeNode {
   abstract getAssets(api: ApiPromise): Promise<TAssets>;
 
   async createApiInstance(): Promise<ApiPromise> {
-    return await createApiInstanceForNode(this.node);
+    return createApiInstanceForNode(this.node);
   }
 }
 

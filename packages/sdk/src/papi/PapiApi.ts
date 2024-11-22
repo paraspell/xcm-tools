@@ -8,7 +8,7 @@ import type {
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
-  TSerializedApiCallV2
+  TSerializedApiCall
 } from '../types'
 import { createApiInstanceForNode, getNode } from '../utils'
 import { createClient, FixedSizeBinary } from 'polkadot-api'
@@ -82,7 +82,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return FixedSizeBinary.fromAccountId32<32>(address).asHex() as HexString
   }
 
-  callTxMethod({ module, section, parameters }: TSerializedApiCallV2): TPapiTransaction {
+  callTxMethod({ module, section, parameters }: TSerializedApiCall): TPapiTransaction {
     const transformedParameters = transform(parameters)
 
     return this.api.getUnsafeApi().tx[module][section](transformedParameters)
@@ -169,7 +169,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   async getFromStorage(key: string): Promise<string> {
-    return await this.api._request('state_getStorage', [key])
+    return this.api._request('state_getStorage', [key])
   }
 
   clone(): IPolkadotApi<TPapiApi, TPapiTransaction> {

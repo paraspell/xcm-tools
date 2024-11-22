@@ -66,7 +66,6 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
     if (selectedAccount) {
       localStorage.setItem(STORAGE_ADDRESS_KEY, selectedAccount.address);
     } else {
-      console.log("selectedAccount removed", selectedAccount);
       localStorage.removeItem(STORAGE_ADDRESS_KEY);
     }
   }, [selectedAccount]);

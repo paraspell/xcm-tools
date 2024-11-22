@@ -46,7 +46,7 @@ const XcmAnalyserSandbox = () => {
 
   const convert = async ({ useApi, input }: FormValues) => {
     if (useApi) {
-      return await convertUsingApi(input);
+      return convertUsingApi(input);
     }
     return convertUsingSdk(input);
   };

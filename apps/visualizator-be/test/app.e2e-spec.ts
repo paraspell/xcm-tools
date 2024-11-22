@@ -479,8 +479,6 @@ describe('XCM API (e2e)', () => {
           })
           .expect(200);
 
-        console.log(response.body);
-
         expect(response.body.data.totalMessageCounts).toBeInstanceOf(Array);
         expect(response.body.data.totalMessageCounts.length).toBeGreaterThan(0);
         response.body.data.totalMessageCounts.forEach((count) => {

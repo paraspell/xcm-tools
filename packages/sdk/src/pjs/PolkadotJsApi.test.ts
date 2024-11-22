@@ -3,7 +3,7 @@ import type { StorageKey } from '@polkadot/types'
 import { u32 } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
 import PolkadotJsApi from './PolkadotJsApi'
-import type { TSerializedApiCallV2, TMultiLocation } from '../types'
+import type { TSerializedApiCall, TMultiLocation } from '../types'
 import type { Extrinsic, TPjsApi } from '../pjs/types'
 import * as utils from '../utils'
 import type { VoidFn } from '@polkadot/api/types'
@@ -110,7 +110,7 @@ describe('PolkadotJsApi', () => {
 
   describe('callTxMethod', () => {
     it('should create an extrinsic with the provided module, section, and parameters', () => {
-      const serializedCall: TSerializedApiCallV2 = {
+      const serializedCall: TSerializedApiCall = {
         module: 'XTokens',
         section: 'transfer',
         parameters: { beneficiary: 'recipient_address', amount: 1000 }
@@ -123,7 +123,7 @@ describe('PolkadotJsApi', () => {
     })
 
     it('should handle the Utility module differently', () => {
-      const serializedCall: TSerializedApiCallV2 = {
+      const serializedCall: TSerializedApiCall = {
         module: 'Utility',
         section: 'batch_all',
         parameters: { calls: ['call1', 'call2'] }

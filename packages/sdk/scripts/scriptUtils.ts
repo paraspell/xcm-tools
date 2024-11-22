@@ -50,7 +50,7 @@ export const fetchWithTimeout = async <T>(
 ): Promise<T | null> => {
   const TIMEOUT_MS = 10000
   try {
-    return await new Promise<T>((resolve, reject) => {
+    return new Promise<T>((resolve, reject) => {
       const wsProvider = new WsProvider(wsUrl)
 
       const timeoutHandle = setTimeout(() => {
@@ -76,8 +76,8 @@ export const fetchTryMultipleProvidersWithTimeout = async <T>(
   node: TNodePolkadotKusama,
   fetcher: (api: ApiPromise) => T
 ) => {
-  return await fetchTryMultipleProviders(node, async wsUrl => {
-    return await fetchWithTimeout(wsUrl, api => fetcher(api))
+  return fetchTryMultipleProviders(node, async wsUrl => {
+    return fetchWithTimeout(wsUrl, api => fetcher(api))
   })
 }
 

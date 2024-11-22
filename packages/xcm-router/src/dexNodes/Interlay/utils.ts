@@ -18,8 +18,8 @@ export const getCurrency = async (
     }
     const id = getAssetId(node, symbol);
     if (id === null) return null;
-    return await interBTC.assetRegistry.getForeignAsset(Number(id));
+    return interBTC.assetRegistry.getForeignAsset(Number(id));
   } else {
-    return await interBTC.assetRegistry.getForeignAsset(Number(currency.id));
+    return interBTC.assetRegistry.getForeignAsset(Number(currency.id));
   }
 };

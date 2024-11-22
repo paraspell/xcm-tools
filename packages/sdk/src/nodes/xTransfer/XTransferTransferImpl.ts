@@ -3,25 +3,15 @@ import {
   Version,
   type XTransferTransferInput,
   Parents,
-  type TTransferReturn,
   type XTransferSection,
-  type TSerializedApiCallV2
+  type TSerializedApiCall
 } from '../../types'
 import { determineDestWeight } from './determineDestWeight'
 import { getDestination } from './getDestination'
 
 class XTransferTransferImpl {
-  static transferXTransfer<TApi, TRes>(
-    input: XTransferTransferInput<TApi, TRes>
-  ): TTransferReturn<TRes> {
-    const {
-      api,
-      amount,
-      origin,
-      destination,
-      serializedApiCallEnabled,
-      overridedCurrencyMultiLocation
-    } = input
+  static transferXTransfer<TApi, TRes>(input: XTransferTransferInput<TApi, TRes>): TRes {
+    const { api, amount, origin, destination, overridedCurrencyMultiLocation } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
     if (isMultiLocationDestination) {
@@ -40,20 +30,13 @@ class XTransferTransferImpl {
 
     const destWeight = origin === 'Khala' ? null : determineDestWeight(destination)
 
-    const call: TSerializedApiCallV2 = {
+    const call: TSerializedApiCall = {
       module: 'XTransfer',
       section,
       parameters: {
         asset: currencySpec,
         dest,
         dest_weight: destWeight
-      }
-    }
-
-    if (serializedApiCallEnabled === true) {
-      return {
-        ...call,
-        parameters: Object.values(call.parameters)
       }
     }
 

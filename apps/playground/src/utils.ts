@@ -1,4 +1,4 @@
-import type { Extrinsic, TSerializedApiCall } from "@paraspell/sdk";
+import type { Extrinsic } from "@paraspell/sdk";
 import type { TPapiTransaction } from "@paraspell/sdk/papi";
 import type { ApiPromise } from "@polkadot/api";
 import type { Signer } from "@polkadot/api/types";
@@ -25,7 +25,7 @@ export const submitTransactionPapi = async (
   tx: TPapiTransaction,
   signer: PolkadotSigner,
 ): Promise<TxFinalizedPayload> => {
-  return await tx.signAndSubmit(signer);
+  return tx.signAndSubmit(signer);
 };
 
 export const submitTransaction = async (
@@ -35,7 +35,7 @@ export const submitTransaction = async (
   injectorAddress: string,
 ): Promise<string> => {
   await tx.signAsync(injectorAddress, { signer });
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     void tx.send(({ status, dispatchError, txHash }) => {
       if (status.isFinalized) {
         // Check if there are any dispatch errors
@@ -55,11 +55,4 @@ export const submitTransaction = async (
       }
     });
   });
-};
-
-export const buildTx = (
-  api: ApiPromise,
-  { module, section, parameters }: TSerializedApiCall,
-) => {
-  return api.tx[module][section](...parameters);
 };

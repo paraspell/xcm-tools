@@ -6,8 +6,7 @@ import type {
   IPolkadotXCMTransfer,
   PolkadotXCMTransferInput,
   TAsset,
-  TSendInternalOptions,
-  TTransferReturn
+  TSendInternalOptions
 } from '../../types'
 import { type IXTokensTransfer, Parents, Version, type XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -55,9 +54,7 @@ export class BifrostPolkadot<TApi, TRes>
   }
 
   // Handles DOT, WETH transfers to AssetHubPolkadot
-  transferPolkadotXCM<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ): Promise<TTransferReturn<TRes>> {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
     const { amount, overridedCurrency, asset } = input
 
     return Promise.resolve(

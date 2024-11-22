@@ -5,7 +5,7 @@ import type { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import type { AssetClaimDto } from './dto/asset-claim.dto.js';
 import type { RequestWithUser } from '../types/types.js';
-import type { Extrinsic, TTransferReturn } from '@paraspell/sdk';
+import type { Extrinsic } from '@paraspell/sdk';
 
 describe('AssetClaimController', () => {
   let controller: AssetClaimController;
@@ -27,8 +27,7 @@ describe('AssetClaimController', () => {
 
   beforeEach(() => {
     assetClaimService = {
-      claimAssetsPjs: vi.fn(),
-      claimAssetsPapi: vi.fn(),
+      claimAssets: vi.fn(),
     } as unknown as AssetClaimService;
 
     analyticsService = {
@@ -49,13 +48,13 @@ describe('AssetClaimController', () => {
       } as unknown as RequestWithUser;
 
       const spyClaimAssets = vi
-        .spyOn(assetClaimService, 'claimAssetsPjs')
-        .mockResolvedValue('success' as unknown as TTransferReturn<Extrinsic>);
+        .spyOn(assetClaimService, 'claimAssets')
+        .mockResolvedValue('success' as unknown as Extrinsic);
       const spyTrack = vi.spyOn(analyticsService, 'track');
 
       const result = await controller.claimAssets(bodyParams, req);
 
-      expect(spyClaimAssets).toHaveBeenCalledWith(bodyParams);
+      expect(spyClaimAssets).toHaveBeenCalledWith(bodyParams, false);
 
       expect(spyTrack).toHaveBeenCalledWith(EventName.CLAIM_ASSETS, req, {
         from: 'address1',
@@ -67,7 +66,7 @@ describe('AssetClaimController', () => {
   });
 
   describe('claimAssetsHash', () => {
-    it('should call trackAnalytics and claimAssets with hashEnabled set to true', async () => {
+    it('should call trackAnalytics and claimAssets', async () => {
       const req = {
         headers: {
           'user-agent': 'Mozilla/5.0',
@@ -77,15 +76,15 @@ describe('AssetClaimController', () => {
       } as unknown as RequestWithUser;
 
       const spyClaimAssets = vi
-        .spyOn(assetClaimService, 'claimAssetsPjs')
-        .mockResolvedValue('success' as unknown as TTransferReturn<Extrinsic>);
+        .spyOn(assetClaimService, 'claimAssets')
+        .mockResolvedValue('success' as unknown as Extrinsic);
       const spyTrack = vi.spyOn(analyticsService, 'track');
 
-      const result = await controller.claimAssetsHash(bodyParams, req);
+      const result = await controller.claimAssets(bodyParams, req);
 
-      expect(spyClaimAssets).toHaveBeenCalledWith(bodyParams, true);
+      expect(spyClaimAssets).toHaveBeenCalledWith(bodyParams, false);
 
-      expect(spyTrack).toHaveBeenCalledWith(EventName.CLAIM_ASSETS_HASH, req, {
+      expect(spyTrack).toHaveBeenCalledWith(EventName.CLAIM_ASSETS, req, {
         from: 'address1',
         assetLength: 1,
       });
@@ -105,13 +104,13 @@ describe('AssetClaimController', () => {
       } as unknown as RequestWithUser;
 
       const spyClaimAssets = vi
-        .spyOn(assetClaimService, 'claimAssetsPapi')
-        .mockResolvedValue('success' as unknown as TTransferReturn<Extrinsic>);
+        .spyOn(assetClaimService, 'claimAssets')
+        .mockResolvedValue('success' as unknown as Extrinsic);
       const spyTrack = vi.spyOn(analyticsService, 'track');
 
       const result = await controller.claimAssetsPapi(bodyParams, req);
 
-      expect(spyClaimAssets).toHaveBeenCalledWith(bodyParams);
+      expect(spyClaimAssets).toHaveBeenCalledWith(bodyParams, true);
 
       expect(spyTrack).toHaveBeenCalledWith(EventName.CLAIM_ASSETS_PAPI, req, {
         from: 'address1',

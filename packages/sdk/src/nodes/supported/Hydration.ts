@@ -5,8 +5,7 @@ import type {
   IPolkadotXCMTransfer,
   PolkadotXCMTransferInput,
   TSendInternalOptions,
-  TSerializedApiCallV2,
-  TTransferReturn
+  TSerializedApiCall
 } from '../../types'
 import { type IXTokensTransfer, Parents, Version, type XTokensTransferInput } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -141,9 +140,7 @@ class Hydration<TApi, TRes>
     super('Hydration', 'hydradx', 'polkadot', Version.V3)
   }
 
-  async transferToEthereum<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ): Promise<TTransferReturn<TRes>> {
+  async transferToEthereum<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
     const { api, address, asset, scenario, version, destination, amount, ahAddress } = input
     if (!ethers.isAddress(address)) {
       throw new Error('Only Ethereum addresses are supported for Ethereum transfers')
@@ -176,7 +173,7 @@ class Hydration<TApi, TRes>
 
     const fee = await calculateFee(api)
 
-    const call: TSerializedApiCallV2 = {
+    const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
@@ -208,14 +205,12 @@ class Hydration<TApi, TRes>
     return api.callTxMethod(call)
   }
 
-  transferToAssetHub<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ): TTransferReturn<TRes> {
+  transferToAssetHub<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): TRes {
     const { api, scenario, version, destination, amount } = input
 
     const versionOrDefault = version ?? Version.V3
 
-    const call: TSerializedApiCallV2 = {
+    const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
@@ -251,7 +246,7 @@ class Hydration<TApi, TRes>
   // Handles WETH Ethereum transfers
   async transferPolkadotXCM<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
-  ): Promise<TTransferReturn<TRes>> {
+  ): Promise<TRes> {
     const { destination } = input
     if (destination === 'Ethereum') {
       return this.transferToEthereum(input)

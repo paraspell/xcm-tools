@@ -44,7 +44,7 @@ describe('TransferInfoController', () => {
       };
       const mockResult = {} as TTransferInfo;
       const spy = vi
-        .spyOn(service, 'getTransferInfoPjs')
+        .spyOn(service, 'getTransferInfo')
         .mockResolvedValue(mockResult);
 
       const result = await controller.getTransferInfo(
@@ -67,7 +67,7 @@ describe('TransferInfoController', () => {
       };
       const mockResult = {} as TTransferInfo;
       const spy = vi
-        .spyOn(service, 'getTransferInfoPapi')
+        .spyOn(service, 'getTransferInfo')
         .mockResolvedValue(mockResult);
 
       const result = await controller.getTransferInfoPapi(
@@ -76,7 +76,7 @@ describe('TransferInfoController', () => {
       );
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(queryParams);
+      expect(spy).toHaveBeenCalledWith(queryParams, true);
     });
   });
 });

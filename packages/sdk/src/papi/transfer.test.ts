@@ -1,12 +1,7 @@
 import type { MockInstance } from 'vitest'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as transferImpl from '../pallets/xcmPallet/transfer'
-import {
-  transferRelayToPara,
-  transferRelayToParaSerializedApiCall,
-  send,
-  sendSerializedApiCall
-} from './transfer'
+import { transferRelayToPara, send } from './transfer'
 import PapiApi from './PapiApi'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 import type { TRelayToParaOptions, TSendOptions } from '../types'
@@ -68,20 +63,6 @@ describe('Relay Transfer and Send Functions using PapiApi', () => {
     })
   })
 
-  describe('transferRelayToParaSerializedApiCall', () => {
-    it('should call setApi on papiApi and destPapiApi, and call transferRelayToParaSerializedApiCall in transferImpl with correct arguments', async () => {
-      await transferRelayToParaSerializedApiCall(optionsRelayToPara)
-
-      expect(papiApiSetApiSpy).toHaveBeenCalledWith(mockApi)
-      expect(destPapiApiSetApiSpy).toHaveBeenCalledWith(mockDestApi)
-      expect(transferImpl.transferRelayToParaSerializedApiCall).toHaveBeenCalledWith({
-        ...optionsRelayToPara,
-        api: expect.any(PapiApi),
-        destApiForKeepAlive: expect.any(PapiApi)
-      })
-    })
-  })
-
   describe('send', () => {
     it('should call setApi on papiApi and destPapiApi, and call send in transferImpl with correct arguments', async () => {
       await send(optionsSend)
@@ -89,20 +70,6 @@ describe('Relay Transfer and Send Functions using PapiApi', () => {
       expect(papiApiSetApiSpy).toHaveBeenCalledWith(mockApi)
       expect(destPapiApiSetApiSpy).toHaveBeenCalledWith(mockDestApi)
       expect(transferImpl.send).toHaveBeenCalledWith({
-        ...optionsSend,
-        api: expect.any(PapiApi),
-        destApiForKeepAlive: expect.any(PapiApi)
-      })
-    })
-  })
-
-  describe('sendSerializedApiCall', () => {
-    it('should call setApi on papiApi and destPapiApi, and call sendSerializedApiCall in transferImpl with correct arguments', async () => {
-      await sendSerializedApiCall(optionsSend)
-
-      expect(papiApiSetApiSpy).toHaveBeenCalledWith(mockApi)
-      expect(destPapiApiSetApiSpy).toHaveBeenCalledWith(mockDestApi)
-      expect(transferImpl.sendSerializedApiCall).toHaveBeenCalledWith({
         ...optionsSend,
         api: expect.any(PapiApi),
         destApiForKeepAlive: expect.any(PapiApi)

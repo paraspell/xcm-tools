@@ -23,15 +23,7 @@ import { TPapiTransaction } from '@paraspell/sdk/papi';
 
 @Injectable()
 export class XTransferService {
-  async generateXcmCallPjs(options: XTransferDto, hashEnabled = false) {
-    return await this.generateXcmCall(options, hashEnabled);
-  }
-
-  async generateXcmCallPapi(options: XTransferDto) {
-    return await this.generateXcmCall(options, true, true);
-  }
-
-  private async generateXcmCall(
+  async generateXcmCall(
     {
       from,
       to,
@@ -41,7 +33,6 @@ export class XTransferService {
       currency,
       xcmVersion,
     }: XTransferDto,
-    hashEnabled: boolean,
     usePapi = false,
   ) {
     const fromNode = from as TNodePolkadotKusama | undefined;
@@ -83,7 +74,9 @@ export class XTransferService {
       ? await import('@paraspell/sdk/papi')
       : await import('@paraspell/sdk');
 
-    const node = fromNode ?? toNode;
+    const node = !fromNode
+      ? determineRelayChain(toNode as TNodePolkadotKusama)
+      : fromNode;
     const api = await Sdk.createApiInstanceForNode(node as TNodePolkadotKusama);
 
     const builder = Sdk.Builder(api as PolkadotClient & ApiPromise);
@@ -121,9 +114,7 @@ export class XTransferService {
         return (await (tx as TPapiTransaction).getEncodedData()).asHex();
       }
 
-      return hashEnabled
-        ? await finalBuilder.build()
-        : await finalBuilder.buildSerializedApiCall();
+      return await finalBuilder.build();
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||
@@ -140,18 +131,7 @@ export class XTransferService {
     }
   }
 
-  async generateBatchXcmCallPjs(batchDto: BatchXTransferDto) {
-    return await this.generateBatchXcmCall(batchDto);
-  }
-
-  async generateBatchXcmCallPapi(batchDto: BatchXTransferDto) {
-    return await this.generateBatchXcmCall(batchDto, true);
-  }
-
-  private async generateBatchXcmCall(
-    batchDto: BatchXTransferDto,
-    usePapi = false,
-  ) {
+  async generateBatchXcmCall(batchDto: BatchXTransferDto, usePapi = false) {
     const { transfers, options } = batchDto;
 
     if (!transfers || transfers.length === 0) {
@@ -276,10 +256,8 @@ export class XTransferService {
         e instanceof IncompatibleNodesError ||
         e instanceof BadRequestException
       ) {
-        console.error(e);
         throw new BadRequestException(e.message);
       }
-      console.log(e);
 
       throw new InternalServerErrorException((e as Error).message);
     } finally {

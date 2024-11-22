@@ -131,7 +131,7 @@ class AcalaExchangeNode extends ExchangeNode {
   }
 
   async createApiInstance(): Promise<ApiPromise> {
-    return await createAcalaApiInstance(this.node);
+    return createAcalaApiInstance(this.node);
   }
 
   async getAssets(api: ApiPromise): Promise<TAssets> {

@@ -6,7 +6,7 @@ export const getBalanceNativeInternal = async <TApi, TRes>({
   api
 }: TGetBalanceNativeOptions<TApi, TRes>): Promise<bigint> => {
   await api.init(node)
-  return await api.getBalanceNative(address)
+  return api.getBalanceNative(address)
 }
 
 export const getBalanceNative = async <TApi, TRes>(

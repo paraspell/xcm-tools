@@ -1,8 +1,7 @@
 // Implements builder pattern for XCM message creation operations operation
 
-import { send, sendSerializedApiCall } from '../../pallets/xcmPallet/transfer'
+import { send } from '../../pallets/xcmPallet/transfer'
 import type {
-  TSerializedApiCall,
   TSendOptions,
   TAmount,
   TAddress,
@@ -96,12 +95,7 @@ class ParaToRelayBuilder<TApi, TRes>
 
   async build() {
     const options = this.buildOptions()
-    return await send<TApi, TRes>(options)
-  }
-
-  async buildSerializedApiCall(): Promise<TSerializedApiCall> {
-    const options = this.buildOptions()
-    return await sendSerializedApiCall(options)
+    return send<TApi, TRes>(options)
   }
 }
 

@@ -27,23 +27,6 @@ export const transferRelayToPara = (
   })
 }
 
-export const transferRelayToParaSerializedApiCall = (
-  options: Omit<TRelayToParaOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
-    api: TPjsApiOrUrl
-    destApiForKeepAlive: TPjsApiOrUrl
-  }
-) => {
-  const pjsApi = new PolkadotJsApi()
-  pjsApi.setApi(options.api)
-  const destPjsApi = new PolkadotJsApi()
-  destPjsApi.setApi(options.destApiForKeepAlive)
-  return transferImpl.transferRelayToParaSerializedApiCall<TPjsApi, Extrinsic>({
-    ...options,
-    api: pjsApi,
-    destApiForKeepAlive: destPjsApi
-  })
-}
-
 /**
  * Transfers assets from parachain to another parachain or relay chain.
  * @param options - The transfer options.
@@ -60,23 +43,6 @@ export const send = (
   const destPjsApi = new PolkadotJsApi()
   destPjsApi.setApi(options.destApiForKeepAlive)
   return transferImpl.send({
-    ...options,
-    api: pjsApi,
-    destApiForKeepAlive: destPjsApi
-  })
-}
-
-export const sendSerializedApiCall = (
-  options: Omit<TSendOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
-    api: TPjsApiOrUrl
-    destApiForKeepAlive: TPjsApiOrUrl
-  }
-) => {
-  const pjsApi = new PolkadotJsApi()
-  pjsApi.setApi(options.api)
-  const destPjsApi = new PolkadotJsApi()
-  destPjsApi.setApi(options.destApiForKeepAlive)
-  return transferImpl.sendSerializedApiCall({
     ...options,
     api: pjsApi,
     destApiForKeepAlive: destPjsApi

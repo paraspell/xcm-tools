@@ -247,7 +247,7 @@ describe('ParachainNode', () => {
     expect(result).toBe('transferXTokens called')
   })
 
-  it('should return correct serialized API call from transferRelayToPara', () => {
+  it('should return correct API call from transferRelayToPara', () => {
     const options = {} as TRelayToParaOptions<ApiPromise, Extrinsic>
 
     const result = node.transferRelayToPara(options)

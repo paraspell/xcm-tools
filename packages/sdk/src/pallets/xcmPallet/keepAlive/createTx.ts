@@ -12,7 +12,7 @@ export const createTx = async <TApi, TRes>(
   destNode?: TNodePolkadotKusama
 ): Promise<TRes | null> => {
   if (originNode !== undefined && destNode !== undefined) {
-    return await Builder<TApi, TRes>(destApi)
+    return Builder<TApi, TRes>(destApi)
       .from(destNode)
       .to(originNode)
       .currency({ symbol: currencySymbol })
@@ -21,9 +21,9 @@ export const createTx = async <TApi, TRes>(
       .build()
   }
   if (originNode === undefined && destNode !== undefined) {
-    return await Builder<TApi, TRes>(originApi).to(destNode).amount(amount).address(address).build()
+    return Builder<TApi, TRes>(originApi).to(destNode).amount(amount).address(address).build()
   } else if (originNode !== undefined && destNode === undefined) {
-    return await Builder<TApi, TRes>(destApi).to(originNode).amount(amount).address(address).build()
+    return Builder<TApi, TRes>(destApi).to(originNode).amount(amount).address(address).build()
   } else {
     return null
   }

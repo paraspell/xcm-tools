@@ -47,7 +47,7 @@ describe('BalanceService', () => {
       const params: BalanceNativeDto = { address: '0x1234567890' };
 
       await expect(
-        balanceService.getBalanceNativePjs(invalidNode, params),
+        balanceService.getBalanceNative(invalidNode, params),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -64,10 +64,7 @@ describe('BalanceService', () => {
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
 
-      const result = await balanceService.getBalanceNativePjs(
-        validNode,
-        params,
-      );
+      const result = await balanceService.getBalanceNative(validNode, params);
 
       expect(createApiInstanceForNode).toHaveBeenCalledWith(validNode);
       expect(getBalanceNative).toHaveBeenCalledWith({
@@ -94,9 +91,10 @@ describe('BalanceService', () => {
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'destroy');
 
-      const result = await balanceService.getBalanceNativePapi(
+      const result = await balanceService.getBalanceNative(
         validNode,
         params,
+        true,
       );
 
       expect(createApiInstanceForNode).toHaveBeenCalledWith(validNode);
@@ -120,7 +118,7 @@ describe('BalanceService', () => {
       };
 
       await expect(
-        balanceService.getBalanceForeignPjs(invalidNode, params),
+        balanceService.getBalanceForeign(invalidNode, params),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -140,10 +138,7 @@ describe('BalanceService', () => {
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
 
-      const result = await balanceService.getBalanceForeignPjs(
-        validNode,
-        params,
-      );
+      const result = await balanceService.getBalanceForeign(validNode, params);
 
       expect(createApiInstanceForNode).toHaveBeenCalledWith(validNode);
       expect(getBalanceForeign).toHaveBeenCalledWith({
@@ -171,10 +166,7 @@ describe('BalanceService', () => {
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
 
-      const result = await balanceService.getBalanceForeignPjs(
-        validNode,
-        params,
-      );
+      const result = await balanceService.getBalanceForeign(validNode, params);
 
       expect(createApiInstanceForNode).toHaveBeenCalledWith(validNode);
       expect(getBalanceForeign).toHaveBeenCalledWith({
@@ -205,9 +197,10 @@ describe('BalanceService', () => {
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'destroy');
 
-      const result = await balanceService.getBalanceForeignPapi(
+      const result = await balanceService.getBalanceForeign(
         validNode,
         params,
+        true,
       );
 
       expect(createApiInstanceForNodePapi).toHaveBeenCalledWith(validNode);
@@ -220,6 +213,77 @@ describe('BalanceService', () => {
 
       expect(disconnectSpy).toHaveBeenCalled();
       expect(result).toEqual(mockBalance.toString());
+    });
+  });
+
+  describe('getAssetBalance', () => {
+    it('should throw BadRequestException for an invalid node', async () => {
+      const invalidNode = 'invalid-node';
+      const params: BalanceForeignDto = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ' },
+      };
+
+      await expect(
+        balanceService.getBalanceForeign(invalidNode, params),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should return foreign balance as a string for a valid node', async () => {
+      const validNode = 'valid-node';
+      const params: BalanceForeignDto = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ' },
+      };
+      const mockApiInstance = {
+        disconnect: vi.fn(),
+      } as unknown as ApiPromise;
+      const mockBalance = 500n;
+
+      vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiInstance);
+      vi.mocked(getBalanceForeign).mockResolvedValue(mockBalance);
+
+      const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
+
+      const result = await balanceService.getBalanceForeign(validNode, params);
+
+      expect(createApiInstanceForNode).toHaveBeenCalledWith(validNode);
+      expect(getBalanceForeign).toHaveBeenCalledWith({
+        address: params.address,
+        node: validNode,
+        currency: params.currency,
+        api: mockApiInstance,
+      });
+      expect(disconnectSpy).toHaveBeenCalled();
+      expect(result).toEqual(mockBalance.toString());
+    });
+
+    it('should return "null" if foreign balance is null', async () => {
+      const validNode = 'valid-node';
+      const params: BalanceForeignDto = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ' },
+      };
+      const mockApiInstance = {
+        disconnect: vi.fn(),
+      } as unknown as ApiPromise;
+
+      vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiInstance);
+      vi.mocked(getBalanceForeign).mockResolvedValue(BigInt(0));
+
+      const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
+
+      const result = await balanceService.getBalanceForeign(validNode, params);
+
+      expect(createApiInstanceForNode).toHaveBeenCalledWith(validNode);
+      expect(getBalanceForeign).toHaveBeenCalledWith({
+        address: params.address,
+        node: validNode,
+        currency: params.currency,
+        api: mockApiInstance,
+      });
+      expect(disconnectSpy).toHaveBeenCalled();
+      expect(result).toEqual('0');
     });
   });
 });

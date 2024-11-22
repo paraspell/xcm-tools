@@ -116,7 +116,7 @@ const AssetsQueries = () => {
       case "HAS_SUPPORT":
         return `/assets/${node}/has-support`;
       case "PARA_ID":
-        return `/assets/${node}/para-id`;
+        return `/nodes/${node}/para-id`;
       case "BALANCE_NATIVE":
         return apiType === "PAPI"
           ? `/balance/${node}/native-papi`
@@ -147,10 +147,12 @@ const AssetsQueries = () => {
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
     const { useApi, func, address } = formValues;
     const isBalanceQuery =
-      func === "BALANCE_FOREIGN" || func === "BALANCE_NATIVE";
+      func === "BALANCE_FOREIGN" ||
+      func === "BALANCE_NATIVE" ||
+      func === "ASSET_BALANCE";
     const resolvedCurrency = resolveCurrency(formValues);
     if (useApi) {
-      return await fetchFromApi(
+      return fetchFromApi(
         isBalanceQuery
           ? {
               address,
@@ -162,7 +164,7 @@ const AssetsQueries = () => {
         isBalanceQuery,
       );
     } else {
-      return await submitUsingSdk(formValues);
+      return submitUsingSdk(formValues);
     }
   };
 

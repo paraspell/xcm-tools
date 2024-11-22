@@ -8,7 +8,6 @@ export type TAssetClaimOptionsBase = {
   multiAssets: TMultiAsset[]
   address: TAddress
   version?: TVersionClaimAssets
-  serializedApiCallEnabled?: boolean
 }
 
 export type TAssetClaimOptions<TApi, TRes> = WithApi<TAssetClaimOptionsBase, TApi, TRes>

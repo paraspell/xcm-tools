@@ -1,9 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import type {
-  Extrinsic,
-  TNodePolkadotKusama,
-  TSerializedApiCall,
-} from '@paraspell/sdk';
+import type { TNodePolkadotKusama } from '@paraspell/sdk';
 import {
   NODE_NAMES,
   NODE_NAMES_DOT_KSM,
@@ -44,11 +40,3 @@ export const isValidEthereumAddress = (address: string) => isAddress(address);
 
 export const isValidWalletAddress = (address: string) =>
   isValidPolkadotAddress(address) || isValidEthereumAddress(address);
-
-export const serializeExtrinsic = (tx: Extrinsic): TSerializedApiCall => {
-  return {
-    module: tx.method.section,
-    section: tx.method.method,
-    parameters: tx.method.args.map((arg) => arg.toJSON()),
-  };
-};

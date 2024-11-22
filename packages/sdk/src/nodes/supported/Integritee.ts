@@ -5,7 +5,7 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type TSerializedApiCallV2
+  type TSerializedApiCall
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
@@ -22,7 +22,7 @@ class Integritee<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToke
     return XTokensTransferImpl.transferXTokens(input, asset.symbol)
   }
 
-  transferRelayToPara(): TSerializedApiCallV2 {
+  transferRelayToPara(): TSerializedApiCall {
     throw new NodeNotSupportedError()
   }
 }

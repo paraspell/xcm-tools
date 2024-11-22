@@ -12,8 +12,7 @@ import type {
   TMultiLocation,
   TRelayToParaOptions,
   TScenario,
-  TSerializedApiCallV2,
-  TTransferReturn
+  TSerializedApiCall
 } from '../../types'
 import { Parents, Version } from '../../types'
 import { generateAddressPayload, isForeignAsset } from '../../utils'
@@ -106,7 +105,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
 
   async transferPolkadotXCM<TApi, TRes>(
     input: PolkadotXCMTransferInput<TApi, TRes>
-  ): Promise<TTransferReturn<TRes>> {
+  ): Promise<TRes> {
     const { api, version = this.version, destination, address, amount, scenario, paraIdTo } = input
 
     if (scenario === 'ParaToPara' && destination === 'AssetHubPolkadot') {
@@ -134,7 +133,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
 
     const versionOrDefault = version ?? Version.V3
 
-    const call: TSerializedApiCallV2 = {
+    const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
@@ -174,10 +173,10 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
     return Promise.resolve(api.callTxMethod(call))
   }
 
-  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
     const { version = Version.V3, api, address, destination, amount, paraIdTo } = options
 
-    const call: TSerializedApiCallV2 = {
+    const call: TSerializedApiCall = {
       module: 'XcmPallet',
       section: 'transfer_assets_using_type_and_then',
       parameters: {

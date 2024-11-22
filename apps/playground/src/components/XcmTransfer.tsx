@@ -128,7 +128,7 @@ const XcmTransfer = () => {
             currency: determineCurrency(formValues),
           },
           api,
-          apiType === "PJS" ? "/x-transfer-hash" : "/x-transfer-papi",
+          apiType === "PJS" ? "/x-transfer" : "/x-transfer-papi",
           selectedAccount.address,
           apiType,
           "POST",

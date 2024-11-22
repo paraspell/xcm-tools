@@ -22,9 +22,9 @@ export const buildToExchangeExtrinsic = async (
 ): Promise<Extrinsic> => {
   const builder = Builder(api);
   if (from === 'Polkadot' || from === 'Kusama') {
-    return await builder.to(exchange).amount(amount).address(injectorAddress).build();
+    return builder.to(exchange).amount(amount).address(injectorAddress).build();
   }
-  return await builder
+  return builder
     .from(from === 'Ethereum' ? 'AssetHubPolkadot' : from)
     .to(exchange)
     .currency(
@@ -67,12 +67,12 @@ export const buildFromExchangeExtrinsic = async (
 ): Promise<Extrinsic> => {
   const builder = Builder(api);
   if (to === 'Polkadot' || to === 'Kusama') {
-    return await builder.from(exchangeNode).amount(amountOut).address(address).build();
+    return builder.from(exchangeNode).amount(amountOut).address(address).build();
   }
 
   const currencyToExchange = getCurrencyExchange(exchange, currencyTo, assetTo);
 
-  return await builder
+  return builder
     .from(exchangeNode)
     .to(to === 'Ethereum' && !isToEth ? 'AssetHubPolkadot' : to)
     .currency(currencyToExchange)
@@ -87,7 +87,7 @@ export const submitSwap = async (
   swapTx: Extrinsic,
 ): Promise<string> => {
   const { signer, injectorAddress } = options;
-  return await submitTransaction(api, swapTx, signer, injectorAddress);
+  return submitTransaction(api, swapTx, signer, injectorAddress);
 };
 
 export const submitTransferToExchange = async (
@@ -98,12 +98,7 @@ export const submitTransferToExchange = async (
   validateRelayChainCurrency(from, currencyFrom);
   const tx = await buildToExchangeExtrinsic(api, options);
 
-  return await submitTransaction(
-    api,
-    tx,
-    evmSigner ?? signer,
-    evmInjectorAddress ?? injectorAddress,
-  );
+  return submitTransaction(api, tx, evmSigner ?? signer, evmInjectorAddress ?? injectorAddress);
 };
 
 export const submitTransferToDestination = async (
@@ -115,7 +110,7 @@ export const submitTransferToDestination = async (
   const { to, currencyTo, signer, injectorAddress } = options;
   validateRelayChainCurrency(to, currencyTo);
   const tx = await buildFromExchangeExtrinsic(api, options, amountOut, isToEth);
-  return await submitTransaction(api, tx, signer, injectorAddress);
+  return submitTransaction(api, tx, signer, injectorAddress);
 };
 
 export const determineFeeCalcAddress = (

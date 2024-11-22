@@ -7,7 +7,7 @@ import {
   type IXTokensTransfer,
   Version,
   type XTokensTransferInput,
-  type TSerializedApiCallV2,
+  type TSerializedApiCall,
   type TRelayToParaOptions,
   type TXcmForeignAsset,
   type TSelfReserveAsset
@@ -38,7 +38,7 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
-  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
     const { version = Version.V3 } = options
     return {
       module: 'XcmPallet',

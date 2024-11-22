@@ -4,12 +4,7 @@ import * as transferImpl from '../pallets/xcmPallet/transfer'
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 import type { TRelayToParaOptions, TSendOptions } from '../types'
-import {
-  send,
-  sendSerializedApiCall,
-  transferRelayToPara,
-  transferRelayToParaSerializedApiCall
-} from './transfer'
+import { send, transferRelayToPara } from './transfer'
 
 vi.mock('./PolkadotJsApi')
 vi.mock('../pallets/xcmPallet/transfer')
@@ -65,20 +60,6 @@ describe('Relay Transfer and Send Functions', () => {
     })
   })
 
-  describe('transferRelayToParaSerializedApiCall', () => {
-    it('should call setApi on pjsApi and destPjsApi, and call transferRelayToParaSerializedApiCall in transferImpl with correct arguments', async () => {
-      await transferRelayToParaSerializedApiCall(optionsRelayToPara)
-
-      expect(pjsApiSetApiSpy).toHaveBeenCalledWith(mockApi)
-      expect(destPjsApiSetApiSpy).toHaveBeenCalledWith(mockDestApi)
-      expect(transferImpl.transferRelayToParaSerializedApiCall).toHaveBeenCalledWith({
-        ...optionsRelayToPara,
-        api: expect.any(PolkadotJsApi),
-        destApiForKeepAlive: expect.any(PolkadotJsApi)
-      })
-    })
-  })
-
   describe('send', () => {
     it('should call setApi on pjsApi and destPjsApi, and call send in transferImpl with correct arguments', async () => {
       await send(optionsSend)
@@ -86,20 +67,6 @@ describe('Relay Transfer and Send Functions', () => {
       expect(pjsApiSetApiSpy).toHaveBeenCalledWith(mockApi)
       expect(destPjsApiSetApiSpy).toHaveBeenCalledWith(mockDestApi)
       expect(transferImpl.send).toHaveBeenCalledWith({
-        ...optionsSend,
-        api: expect.any(PolkadotJsApi),
-        destApiForKeepAlive: expect.any(PolkadotJsApi)
-      })
-    })
-  })
-
-  describe('sendSerializedApiCall', () => {
-    it('should call setApi on pjsApi and destPjsApi, and call sendSerializedApiCall in transferImpl with correct arguments', async () => {
-      await sendSerializedApiCall(optionsSend)
-
-      expect(pjsApiSetApiSpy).toHaveBeenCalledWith(mockApi)
-      expect(destPjsApiSetApiSpy).toHaveBeenCalledWith(mockDestApi)
-      expect(transferImpl.sendSerializedApiCall).toHaveBeenCalledWith({
         ...optionsSend,
         api: expect.any(PolkadotJsApi),
         destApiForKeepAlive: expect.any(PolkadotJsApi)

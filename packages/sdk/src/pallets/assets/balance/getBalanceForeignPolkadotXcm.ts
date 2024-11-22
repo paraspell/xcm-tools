@@ -10,7 +10,7 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   asset: TAsset
 ): Promise<bigint> => {
   if (node === 'Mythos') {
-    return await api.getMythosForeignBalance(address)
+    return api.getMythosForeignBalance(address)
   }
 
   if (!isForeignAsset(asset)) {

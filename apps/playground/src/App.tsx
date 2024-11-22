@@ -21,10 +21,11 @@ import {
   IconRoute,
 } from "@tabler/icons-react";
 import {
-  BrowserRouter,
+  Navigate,
   Route,
   NavLink as RouterNavLink,
   Routes,
+  useLocation,
 } from "react-router-dom";
 import "./App.css";
 import { useWallet } from "./hooks/useWallet";
@@ -40,6 +41,7 @@ import {
 import type { TApiType, WalletAccount } from "./types";
 import PolkadotWalletSelectModal from "./components/PolkadotWalletSelectModal";
 import { STORAGE_ADDRESS_KEY } from "./providers/WalletProvider";
+import { useEffect } from "react";
 
 const App = () => {
   const [opened, { toggle }] = useDisclosure();
@@ -132,8 +134,15 @@ const App = () => {
 
   const onChangeAccountClick = () => void changeAccount();
 
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/xcm-router" && apiType === "PAPI") {
+      handleApiSwitch("PJS");
+    }
+  }, [location.pathname, apiType]);
+
   const handleApiSwitch = (value: string) => {
-    console.log("handleApiSwitch", value);
     setApiType(value as TApiType);
     setSelectedAccount(undefined);
     setAccounts([]);
@@ -179,139 +188,135 @@ const App = () => {
   };
 
   return (
-    <BrowserRouter>
-      <MantineProvider theme={theme}>
-        <AccountsModal
-          isOpen={accountsModalOpened}
-          onClose={closeAccountsModal}
-          accounts={accounts}
-          onAccountSelect={onAccountSelect}
-          onDisconnect={selectedAccount ? onDisconnect : undefined}
-        />
-        <PolkadotWalletSelectModal
-          isOpen={walletSelectModalOpened}
-          onClose={closeWalletSelectModal}
-          providers={extensions}
-          onProviderSelect={onWalletSelect}
-        />
-        <AppShell
-          header={{ height: 60 }}
-          navbar={{
-            width: 300,
-            breakpoint: "sm",
-            collapsed: { mobile: !opened },
-          }}
-        >
-          <AppShell.Header>
-            <Group h="100%" px="md" justify="space-between">
-              <Burger
-                opened={opened}
-                onClick={toggle}
-                hiddenFrom="sm"
-                size="sm"
-              />
-              <Image src="logo.png" h="100%" p={8} />
+    <MantineProvider theme={theme}>
+      <AccountsModal
+        isOpen={accountsModalOpened}
+        onClose={closeAccountsModal}
+        accounts={accounts}
+        onAccountSelect={onAccountSelect}
+        onDisconnect={selectedAccount ? onDisconnect : undefined}
+      />
+      <PolkadotWalletSelectModal
+        isOpen={walletSelectModalOpened}
+        onClose={closeWalletSelectModal}
+        providers={extensions}
+        onProviderSelect={onWalletSelect}
+      />
+      <AppShell
+        header={{ height: 60 }}
+        navbar={{
+          width: 300,
+          breakpoint: "sm",
+          collapsed: { mobile: !opened },
+        }}
+      >
+        <AppShell.Header>
+          <Group h="100%" px="md" justify="space-between">
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+            />
+            <Image src="logo.png" h="100%" p={8} />
+            <Group>
               <Group>
-                <Group>
-                  <SegmentedControl
-                    value={apiType}
-                    onChange={handleApiSwitch}
-                    disabled={!isInitialized}
-                    data={[
-                      {
-                        value: "PJS",
-                        label: (
-                          <Center style={{ gap: 10 }}>
-                            <IconCode
-                              style={{ width: rem(16), height: rem(16) }}
-                            />
-                            <span>PJS</span>
-                          </Center>
-                        ),
-                      },
-                      {
-                        value: "PAPI",
-                        label: (
-                          <Center style={{ gap: 10 }}>
-                            <IconFileCode
-                              style={{ width: rem(16), height: rem(16) }}
-                            />
-                            <span>PAPI</span>
-                          </Center>
-                        ),
-                      },
-                    ]}
-                  />
-                </Group>
-                {selectedAccount ? (
-                  <Button
-                    onClick={onChangeAccountClick}
-                    variant="outline"
-                    loading={!isInitialized}
-                  >{`${selectedAccount.meta.name} - (${selectedAccount.meta.source})`}</Button>
-                ) : (
-                  <Button
-                    onClick={onConnectWalletClick}
-                    data-testid="btn-connect-wallet"
-                    loading={!isInitialized}
-                  >
-                    Connect wallet
-                  </Button>
-                )}
+                <SegmentedControl
+                  value={apiType}
+                  onChange={handleApiSwitch}
+                  disabled={!isInitialized}
+                  data={[
+                    {
+                      value: "PJS",
+                      label: (
+                        <Center style={{ gap: 10 }}>
+                          <IconCode
+                            style={{ width: rem(16), height: rem(16) }}
+                          />
+                          <span>PJS</span>
+                        </Center>
+                      ),
+                    },
+                    {
+                      value: "PAPI",
+                      disabled:
+                        location.pathname === "/xcm-router" || !isInitialized,
+                      label: (
+                        <Center style={{ gap: 10 }}>
+                          <IconFileCode
+                            style={{ width: rem(16), height: rem(16) }}
+                          />
+                          <span>PAPI</span>
+                        </Center>
+                      ),
+                    },
+                  ]}
+                />
               </Group>
+              {selectedAccount ? (
+                <Button
+                  onClick={onChangeAccountClick}
+                  variant="outline"
+                  loading={!isInitialized}
+                >{`${selectedAccount.meta.name} - (${selectedAccount.meta.source})`}</Button>
+              ) : (
+                <Button
+                  onClick={onConnectWalletClick}
+                  data-testid="btn-connect-wallet"
+                  loading={!isInitialized}
+                >
+                  Connect wallet
+                </Button>
+              )}
             </Group>
-          </AppShell.Header>
-          <AppShell.Navbar p="md">
-            <RouterNavLink to="/" style={{ color: "black" }}>
-              {({ isActive }) => (
-                <NavLink
-                  component="div"
-                  active={isActive}
-                  label="XCM Router Sandbox"
-                  leftSection={<IconRoute size="1rem" stroke={1.5} />}
-                  style={{ borderRadius: 4 }}
-                />
-              )}
-            </RouterNavLink>
-            <RouterNavLink to="/xcm-sdk-sandbox" style={{ color: "black" }}>
-              {({ isActive }) => (
-                <NavLink
-                  component="div"
-                  active={isActive}
-                  label="XCM SDK Sandbox"
-                  leftSection={<IconBoxSeam size="1rem" stroke={1.5} />}
-                  style={{ borderRadius: 4 }}
-                />
-              )}
-            </RouterNavLink>
-            <RouterNavLink
-              to="/xcm-analyser-sandbox"
-              style={{ color: "black" }}
-            >
-              {({ isActive }) => (
-                <NavLink
-                  component="div"
-                  active={isActive}
-                  label="XCM Analyser Sandbox"
-                  leftSection={<IconAnalyze size="1rem" stroke={1.5} />}
-                  style={{ borderRadius: 4 }}
-                />
-              )}
-            </RouterNavLink>
-          </AppShell.Navbar>
-          <AppShell.Main>
-            <Routes>
-              <Route path="/" Component={RouterTransferPage} />
-              <Route path="/xcm-sdk-sandbox" Component={XcmSdkSandbox} />
-              <Route
-                path="/xcm-analyser-sandbox"
-                Component={XcmAnalyserSandbox}
+          </Group>
+        </AppShell.Header>
+        <AppShell.Navbar p="md">
+          <RouterNavLink to="/xcm-sdk" style={{ color: "black" }}>
+            {({ isActive }) => (
+              <NavLink
+                component="div"
+                active={isActive}
+                label="XCM SDK Sandbox"
+                leftSection={<IconBoxSeam size="1rem" stroke={1.5} />}
+                style={{ borderRadius: 4 }}
               />
-            </Routes>
-          </AppShell.Main>
-        </AppShell>
-      </MantineProvider>
-    </BrowserRouter>
+            )}
+          </RouterNavLink>
+          <RouterNavLink to="/xcm-router" style={{ color: "black" }}>
+            {({ isActive }) => (
+              <NavLink
+                component="div"
+                active={isActive}
+                label="XCM Router Sandbox"
+                leftSection={<IconRoute size="1rem" stroke={1.5} />}
+                style={{ borderRadius: 4 }}
+              />
+            )}
+          </RouterNavLink>
+
+          <RouterNavLink to="/xcm-analyser" style={{ color: "black" }}>
+            {({ isActive }) => (
+              <NavLink
+                component="div"
+                active={isActive}
+                label="XCM Analyser Sandbox"
+                leftSection={<IconAnalyze size="1rem" stroke={1.5} />}
+                style={{ borderRadius: 4 }}
+              />
+            )}
+          </RouterNavLink>
+        </AppShell.Navbar>
+        <AppShell.Main>
+          <Routes>
+            <Route path="/" element={<Navigate to="/xcm-sdk" />} />
+            <Route path="/xcm-sdk" Component={XcmSdkSandbox} />
+            <Route path="/xcm-router" Component={RouterTransferPage} />
+            <Route path="/xcm-analyser" Component={XcmAnalyserSandbox} />
+          </Routes>
+        </AppShell.Main>
+      </AppShell>
+    </MantineProvider>
   );
 };
 

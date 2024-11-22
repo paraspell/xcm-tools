@@ -13,15 +13,7 @@ import { TransferInfoDto } from './dto/transfer-info.dto.js';
 
 @Injectable()
 export class TransferInfoService {
-  async getTransferInfoPjs(options: TransferInfoDto) {
-    return await this.getTransferInfo(options);
-  }
-
-  async getTransferInfoPapi(options: TransferInfoDto) {
-    return await this.getTransferInfo(options, true);
-  }
-
-  private async getTransferInfo(
+  async getTransferInfo(
     {
       origin,
       destination,

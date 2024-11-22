@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { BadRequestException } from '@nestjs/common';
-import { z, ZodError } from 'zod';
+import { z } from 'zod';
 import { ZodValidationPipe } from './zod-validation-pipe.js';
 
 describe('ZodValidationPipe', () => {
@@ -29,19 +29,5 @@ describe('ZodValidationPipe', () => {
     expect(() => pipe.transform(invalidValue)).toThrowError(
       BadRequestException,
     );
-  });
-
-  it('should log an error message when validation fails', () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-    const pipe = new ZodValidationPipe(invalidSchema);
-    const invalidValue = { age: -10 };
-
-    try {
-      pipe.transform(invalidValue);
-    } catch (_error) {
-      expect(consoleSpy).toHaveBeenCalledWith('error', expect.any(ZodError));
-    }
-
-    consoleSpy.mockRestore();
   });
 });

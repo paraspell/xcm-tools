@@ -72,7 +72,7 @@ const AssetClaim = () => {
             ],
           },
           api,
-          apiType === "PJS" ? "/asset-claim-hash" : "/asset-claim-papi",
+          apiType === "PJS" ? "/asset-claim" : "/asset-claim-papi",
           selectedAccount.address,
           apiType,
           "POST",

@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Shiden Parachain
 
-import type { TTransferReturn } from '../../types'
 import {
   Version,
   type IPolkadotXCMTransfer,
@@ -20,15 +19,13 @@ class Shiden<TApi, TRes>
     super('Shiden', 'shiden', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ): Promise<TTransferReturn<TRes>> {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
     // Same as Astar, works
     // https://shiden.subscan.io/xcm_message/kusama-97eb47c25c781affa557f36dbd117d49f7e1ab4e
     return getNode<TApi, TRes, 'Astar'>('Astar').transferPolkadotXCM(input)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>): TTransferReturn<TRes> {
+  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>): TRes {
     return getNode<TApi, TRes, 'Astar'>('Astar').transferXTokens(input)
   }
 

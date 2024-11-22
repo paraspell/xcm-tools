@@ -28,20 +28,13 @@ export class AssetClaimController {
   @UsePipes(new ZodValidationPipe(AssetClaimSchema))
   claimAssets(@Body() bodyParams: AssetClaimDto, @Req() req: Request) {
     this.trackAnalytics(EventName.CLAIM_ASSETS, req, bodyParams);
-    return this.xTransferService.claimAssetsPjs(bodyParams);
-  }
-
-  @Post('asset-claim-hash')
-  @UsePipes(new ZodValidationPipe(AssetClaimSchema))
-  claimAssetsHash(@Body() bodyParams: AssetClaimDto, @Req() req: Request) {
-    this.trackAnalytics(EventName.CLAIM_ASSETS_HASH, req, bodyParams);
-    return this.xTransferService.claimAssetsPjs(bodyParams, true);
+    return this.xTransferService.claimAssets(bodyParams, false);
   }
 
   @Post('asset-claim-papi')
   @UsePipes(new ZodValidationPipe(AssetClaimSchema))
   claimAssetsPapi(@Body() bodyParams: AssetClaimDto, @Req() req: Request) {
     this.trackAnalytics(EventName.CLAIM_ASSETS_PAPI, req, bodyParams);
-    return this.xTransferService.claimAssetsPapi(bodyParams);
+    return this.xTransferService.claimAssets(bodyParams, true);
   }
 }

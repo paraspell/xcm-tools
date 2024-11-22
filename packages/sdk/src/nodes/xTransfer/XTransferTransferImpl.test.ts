@@ -51,53 +51,19 @@ describe('XTransferTransferImpl', () => {
       api: {},
       amount: '100',
       origin: 'Khala',
-      destination: mockMultiLocation,
-      serializedApiCallEnabled: false
+      destination: mockMultiLocation
     } as XTransferTransferInput<ApiPromise, Extrinsic>
     expect(() => XTransferTransferImpl.transferXTransfer(input)).toThrow(
       'Multilocation destinations are not supported for specific transfer you are trying to create.'
     )
   })
 
-  it('returns structured data for serialized API calls', () => {
-    const input = {
-      api: mockApi,
-      amount: '100',
-      asset: {
-        symbol: 'PHA',
-        assetId: '123'
-      },
-      recipientAddress: 'Recipient',
-      origin: 'Phala',
-      destination: 'Acala',
-      serializedApiCallEnabled: true
-    } as XTransferTransferInput<ApiPromise, Extrinsic>
-    vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
-    vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
-
-    const mockDestWeight = {
-      refTime: '6000000000',
-      proofSize: '1000000'
-    }
-
-    vi.mocked(determineDestWeight).mockReturnValue(mockDestWeight)
-
-    const result = XTransferTransferImpl.transferXTransfer(input)
-
-    expect(result).toEqual({
-      module: 'XTransfer',
-      section: 'transfer',
-      parameters: [Object.values(mockCurrencySpec)[0][0], mockMultiLocation, mockDestWeight]
-    })
-  })
-
-  it('executes transaction for non-serialized calls with Khala as origin', () => {
+  it('executes transaction with Khala as origin', () => {
     const input = {
       api: mockApi,
       amount: '200',
       origin: 'Khala',
-      destination: 'Phala',
-      serializedApiCallEnabled: false
+      destination: 'Phala'
     } as unknown as XTransferTransferInput<ApiPromise, Extrinsic>
 
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
@@ -118,13 +84,12 @@ describe('XTransferTransferImpl', () => {
     })
   })
 
-  it('executes transaction for non-serialized calls with Phala as origin', () => {
+  it('executes transaction with Phala as origin', () => {
     const input = {
       api: mockApi,
       amount: '200',
       origin: 'Phala',
-      destination: 'Karura',
-      serializedApiCallEnabled: false
+      destination: 'Karura'
     } as unknown as XTransferTransferInput<ApiPromise, Extrinsic>
 
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)

@@ -53,7 +53,7 @@ const TransferInfo = () => {
     const originAddress = formValues.address;
     const currency = resolveCurrency(formValues);
     if (useApi) {
-      return await fetchFromApi(
+      return fetchFromApi(
         {
           origin: formValues.from,
           destination: formValues.to,
@@ -72,7 +72,7 @@ const TransferInfo = () => {
           ? await import("@paraspell/sdk/papi")
           : await import("@paraspell/sdk");
 
-      return await Sdk.getTransferInfo({
+      return Sdk.getTransferInfo({
         origin: formValues.from,
         destination: formValues.to,
         accountOrigin: originAddress,

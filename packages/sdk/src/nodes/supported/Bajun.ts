@@ -7,7 +7,7 @@ import {
 } from '../../errors'
 import {
   type IXTokensTransfer,
-  type TSerializedApiCallV2,
+  type TSerializedApiCall,
   Version,
   type XTokensTransferInput
 } from '../../types'
@@ -33,7 +33,7 @@ class Bajun<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
     return XTokensTransferImpl.transferXTokens(input, asset.symbol)
   }
 
-  transferRelayToPara(): TSerializedApiCallV2 {
+  transferRelayToPara(): TSerializedApiCall {
     throw new NodeNotSupportedError()
   }
 }

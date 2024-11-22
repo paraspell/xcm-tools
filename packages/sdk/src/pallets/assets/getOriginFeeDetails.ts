@@ -16,19 +16,19 @@ const createTx = async <TApi, TRes>(
   destNode: TNodeDotKsmWithRelayChains
 ): Promise<TRes> => {
   if (isRelayChain(originNode)) {
-    return await Builder<TApi, TRes>(api)
+    return Builder<TApi, TRes>(api)
       .to(destNode as TNodePolkadotKusama)
       .amount(amount)
       .address(address)
       .build()
   } else if (isRelayChain(destNode)) {
-    return await Builder<TApi, TRes>(api)
+    return Builder<TApi, TRes>(api)
       .from(originNode as TNodePolkadotKusama)
       .amount(amount)
       .address(address)
       .build()
   } else {
-    return await Builder<TApi, TRes>(api)
+    return Builder<TApi, TRes>(api)
       .from(originNode as TNodePolkadotKusama)
       .to(destNode as TNodePolkadotKusama)
       .currency(currency)

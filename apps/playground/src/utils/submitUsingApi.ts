@@ -4,14 +4,11 @@ import type { PolkadotClient } from "polkadot-api";
 import { Binary } from "polkadot-api";
 import type { TApiType } from "../types";
 import type { ApiPromise } from "@polkadot/api";
-import type {
-  TNodeDotKsmWithRelayChains,
-  TSerializedApiCall,
-} from "@paraspell/sdk";
+import type { TNodeDotKsmWithRelayChains } from "@paraspell/sdk";
 import { createApiInstanceForNode, type Extrinsic } from "@paraspell/sdk";
 import type { TPapiTransaction } from "@paraspell/sdk/papi";
 import type { Signer } from "@polkadot/api/types";
-import { buildTx, submitTransaction } from "../utils";
+import { submitTransaction } from "../utils";
 
 export const fetchFromApi = async <T>(
   params: T,
@@ -26,7 +23,7 @@ export const fetchFromApi = async <T>(
       data: useBody ? params : undefined,
     });
 
-    return await response.data;
+    return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error(error);
@@ -70,9 +67,7 @@ export const getTxFromApi = async <T>(
     return (api as ApiPromise).tx(txHash as string);
   } else {
     const callData = Binary.fromHex(txHash as string);
-    return await (api as PolkadotClient)
-      .getUnsafeApi()
-      .txFromCallData(callData);
+    return (api as PolkadotClient).getUnsafeApi().txFromCallData(callData);
   }
 };
 
@@ -85,17 +80,12 @@ export const submitTxUsingApi = async <T>(
   method: string = "GET",
   useBody = false,
 ) => {
-  const serializedTx = await fetchFromApi(
+  const txHash = (await fetchFromApi(
     { ...params, injectorAddress },
     endpoint,
     method,
     useBody,
-  );
+  )) as string;
   const api = await createApiInstanceForNode(fromNode);
-  await submitTransaction(
-    api,
-    buildTx(api, serializedTx as TSerializedApiCall),
-    signer,
-    injectorAddress,
-  );
+  await submitTransaction(api, api.tx(txHash), signer, injectorAddress);
 };

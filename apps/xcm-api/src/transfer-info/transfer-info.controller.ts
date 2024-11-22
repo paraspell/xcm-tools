@@ -33,7 +33,7 @@ export class TransferInfoController {
   @UsePipes(new ZodValidationPipe(TransferInfoSchema))
   async getTransferInfo(@Body() params: TransferInfoDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, params);
-    return await this.transferInfoService.getTransferInfoPjs(params);
+    return this.transferInfoService.getTransferInfo(params);
   }
 
   @Post('transfer-info-papi')
@@ -43,6 +43,6 @@ export class TransferInfoController {
     @Req() req: Request,
   ) {
     this.trackAnalytics(EventName.GET_TRANSFER_INFO_PAPI, req, params);
-    return await this.transferInfoService.getTransferInfoPapi(params);
+    return this.transferInfoService.getTransferInfo(params, true);
   }
 }

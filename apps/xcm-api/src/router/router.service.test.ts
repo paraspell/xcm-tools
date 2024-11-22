@@ -1,16 +1,14 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { RouterService } from './router.service.js';
-import * as utils from '../utils.js';
 import * as spellRouter from '@paraspell/xcm-router';
 import type { RouterDto } from './dto/RouterDto.js';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import type { MockInstance } from 'vitest';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
-import type { Extrinsic, TNode, TSerializedApiCall } from '@paraspell/sdk';
+import type { TNode } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
 
 vi.mock('@paraspell/xcm-router', async () => {
@@ -20,19 +18,19 @@ vi.mock('@paraspell/xcm-router', async () => {
     buildTransferExtrinsics: vi.fn().mockReturnValue([
       {
         node: 'Ethereum',
-        tx: 'serialized-api-call',
+        tx: '0x123',
         type: 'ETH_TRANSFER',
         statusType: 'TO_EXCHANGE',
       },
       {
         node: 'AssetHubPolkadot',
-        tx: 'serialized-api-call',
+        tx: '0x123',
         type: 'EXTRINSIC',
         statusType: 'SWAP',
       },
       {
         node: 'Astar',
-        tx: 'serialized-api-call',
+        tx: '0x123',
         type: 'EXTRINSIC',
         statusType: 'TO_DESTINATION',
       },
@@ -42,9 +40,6 @@ vi.mock('@paraspell/xcm-router', async () => {
 
 describe('RouterService', () => {
   let service: RouterService;
-  let serializeExtrinsicSpy: MockInstance<
-    (tx: Extrinsic) => TSerializedApiCall
-  >;
 
   const options: RouterDto = {
     from: 'Astar',
@@ -60,7 +55,8 @@ describe('RouterService', () => {
 
   const invalidNode = 'Astarr';
 
-  const serializedTx = 'serialized-api-call';
+  const serializedTx = '0x123';
+
   const serializedExtrinsics = [
     {
       node: 'Ethereum',
@@ -88,10 +84,6 @@ describe('RouterService', () => {
     }).compile();
 
     service = module.get<RouterService>(RouterService);
-
-    serializeExtrinsicSpy = vi
-      .spyOn(utils, 'serializeExtrinsic')
-      .mockReturnValue(serializedTx as unknown as TSerializedApiCall);
   });
 
   it('should be defined', () => {
@@ -102,23 +94,7 @@ describe('RouterService', () => {
     it('should generate 3 extrinsics with manual exchange selection', async () => {
       const spy = vi.spyOn(spellRouter, 'buildTransferExtrinsics');
 
-      const result = await service.generateExtrinsics({
-        ...options,
-        type: undefined,
-      });
-
-      expect(result).toStrictEqual(serializedExtrinsics);
-      expect(spy).toHaveBeenCalledWith({
-        ...options,
-        slippagePct: '1',
-        type: undefined,
-      });
-    });
-
-    it('should generate 3 extrinsics with manual exchange selection - hash', async () => {
-      const spy = vi.spyOn(spellRouter, 'buildTransferExtrinsics');
-
-      const result = await service.generateExtrinsics(options, true);
+      const result = await service.generateExtrinsics(options);
 
       expect(result).toStrictEqual(serializedExtrinsics);
       expect(spy).toHaveBeenCalledWith({
@@ -139,7 +115,6 @@ describe('RouterService', () => {
         BadRequestException,
       );
       expect(spy).not.toHaveBeenCalled();
-      expect(serializeExtrinsicSpy).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid to node', async () => {
@@ -154,7 +129,6 @@ describe('RouterService', () => {
         BadRequestException,
       );
       expect(spy).not.toHaveBeenCalled();
-      expect(serializeExtrinsicSpy).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid exchange node', async () => {
@@ -169,7 +143,6 @@ describe('RouterService', () => {
         BadRequestException,
       );
       expect(spy).not.toHaveBeenCalled();
-      expect(serializeExtrinsicSpy).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid injector address', async () => {
@@ -184,7 +157,6 @@ describe('RouterService', () => {
         BadRequestException,
       );
       expect(spy).not.toHaveBeenCalled();
-      expect(serializeExtrinsicSpy).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid recipient address', async () => {
@@ -199,7 +171,6 @@ describe('RouterService', () => {
         BadRequestException,
       );
       expect(spy).not.toHaveBeenCalled();
-      expect(serializeExtrinsicSpy).not.toHaveBeenCalled();
     });
 
     it('should throw InternalServerError when uknown error occures in the spell router', async () => {

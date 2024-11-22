@@ -40,7 +40,6 @@ export const convertJunctionToReadable = (junctionOriginal: Junction): string | 
   } else if ('globalconsensus' in junction) {
     return `GlobalConsensus(${junction.globalconsensus})`;
   }
-  console.log('junction', junction);
   throw new Error('Unknown junction type');
 };
 

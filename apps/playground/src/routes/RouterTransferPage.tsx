@@ -27,7 +27,7 @@ import TransferStepper from "../components/TransferStepper";
 import Confetti from "react-confetti";
 import type { Signer } from "@polkadot/api/types";
 import axios, { AxiosError } from "axios";
-import { buildTx, submitTransaction } from "../utils";
+import { submitTransaction } from "../utils";
 import ErrorAlert from "../components/ErrorAlert";
 import { useWallet } from "../hooks/useWallet";
 import { API_URL } from "../consts";
@@ -38,7 +38,7 @@ import type { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGatewa
 import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/keyring";
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { isForeignAsset, type TSerializedApiCall } from "@paraspell/sdk";
+import { isForeignAsset } from "@paraspell/sdk";
 import { Web3 } from "web3";
 import type { EIP6963ProviderDetail } from "../types";
 
@@ -242,14 +242,14 @@ const RouterTransferPage = () => {
             // When submitting to exchange, prioritize the evmSigner if available
             await submitTransaction(
               api,
-              buildTx(api, txInfo.tx as unknown as TSerializedApiCall),
+              api.tx(txInfo.tx),
               formValues.evmSigner ?? signer,
               formValues.evmInjectorAddress ?? injectorAddress,
             );
           } else {
             await submitTransaction(
               api,
-              buildTx(api, txInfo.tx as unknown as TSerializedApiCall),
+              api.tx(txInfo.tx),
               signer,
               injectorAddress,
             );

@@ -14,7 +14,7 @@ import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { DuplicateAssetError, IncompatibleNodesError } from '../../errors'
 import type { TNodePolkadotKusama } from '../../types'
 import { type TSendOptions, type TNode, type TMultiAsset, type TMultiLocation } from '../../types'
-import { send, transferRelayToParaSerializedApiCall } from './transfer'
+import { send } from './transfer'
 import ParachainNode from '../../nodes/ParachainNode'
 import { getNode } from '../../utils'
 import Astar from '../../nodes/supported/Astar'
@@ -147,19 +147,6 @@ describe('send', () => {
         destination: 'AssetHubKusama'
       })
     ).rejects.toThrowError(IncompatibleNodesError)
-  })
-
-  it('should call transferRelayToParaSerializedApiCall when passing AssetHubPolkadot, DOT and AssetHubKusama as destination', async () => {
-    const res = await transferRelayToParaSerializedApiCall({
-      api: mockApi,
-      destApiForKeepAlive: mockApi,
-      amount: 1000,
-      address: '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6',
-      destination: 'AssetHubKusama'
-    })
-    expect(res).toHaveProperty('module')
-    expect(res).toHaveProperty('section')
-    expect(res).toHaveProperty('parameters')
   })
 
   it('should not throw an InvalidCurrencyError when passing all defined symbols from all nodes', async () => {
