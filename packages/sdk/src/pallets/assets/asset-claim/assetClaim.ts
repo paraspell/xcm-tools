@@ -1,5 +1,4 @@
 import type { TPallet } from '../../../types'
-import { type TSerializedApiCall } from '../../../types'
 import { type TAssetClaimOptions } from '../../../types/TAssetClaim'
 import { isRelayChain } from '../../../utils'
 import { isPjsClient } from '../../../utils/isPjsClient'
@@ -7,8 +6,8 @@ import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 
 export const claimAssets = async <TApi, TRes>(
   options: TAssetClaimOptions<TApi, TRes>
-): Promise<TRes | TSerializedApiCall> => {
-  const { api, node, serializedApiCallEnabled } = options
+): Promise<TRes> => {
+  const { api, node } = options
 
   await api.init(node)
 
@@ -21,13 +20,6 @@ export const claimAssets = async <TApi, TRes>(
       module,
       section: 'claim_assets',
       parameters: args
-    }
-
-    if (serializedApiCallEnabled === true) {
-      return {
-        ...call,
-        parameters: Object.values(args)
-      }
     }
 
     return api.callTxMethod(call)

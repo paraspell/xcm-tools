@@ -9,7 +9,7 @@ import {
   TNodeWithRelayChains,
 } from '@paraspell/sdk';
 import { RouterDto } from './dto/RouterDto.js';
-import { isValidWalletAddress, serializeExtrinsic } from '../utils.js';
+import { isValidWalletAddress } from '../utils.js';
 import {
   EXCHANGE_NODES,
   TExchangeNode,
@@ -19,7 +19,7 @@ import {
 
 @Injectable()
 export class RouterService {
-  async generateExtrinsics(options: RouterDto, hashEnabled = false) {
+  async generateExtrinsics(options: RouterDto) {
     const {
       from,
       exchange,
@@ -72,15 +72,7 @@ export class RouterService {
         slippagePct,
       });
 
-      return hashEnabled
-        ? txs
-        : txs.map((extrinsic) => ({
-            ...extrinsic,
-            tx:
-              extrinsic.type === 'EXTRINSIC'
-                ? serializeExtrinsic(extrinsic.tx)
-                : extrinsic.tx,
-          }));
+      return txs;
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);

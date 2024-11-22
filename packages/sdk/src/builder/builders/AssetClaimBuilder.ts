@@ -2,7 +2,6 @@ import {
   type TMultiAsset,
   type TNodeWithRelayChains,
   type TAddress,
-  type TSerializedApiCall,
   type TVersionClaimAssets
 } from '../../types'
 import { type TAssetClaimOptions } from '../../types/TAssetClaim'
@@ -91,19 +90,6 @@ class AssetClaimBuilder<TApi, TRes>
   async build() {
     const options = this.buildOptions()
     return (await claimAssets(options)) as TRes
-  }
-
-  /**
-   * Builds and returns a serialized API call for the asset claim.
-   *
-   * @returns A Promise that resolves to the serialized API call.
-   */
-  async buildSerializedApiCall(): Promise<TSerializedApiCall> {
-    const options = this.buildOptions()
-    return claimAssets<TApi, TRes>({
-      ...options,
-      serializedApiCallEnabled: true
-    }) as Promise<TSerializedApiCall>
   }
 }
 

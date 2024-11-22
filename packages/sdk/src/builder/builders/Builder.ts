@@ -3,7 +3,6 @@
 import type {
   TAmount,
   TNode,
-  TSerializedApiCall,
   TCurrencyInput,
   TDestination,
   TAddress,
@@ -182,14 +181,12 @@ export const Builder = <TApi, TRes>(api: IPolkadotApi<TApi, TRes>): GeneralBuild
 
 export interface FinalBuilder<TRes> {
   build: () => Promise<TRes>
-  buildSerializedApiCall: () => Promise<TSerializedApiCall>
 }
 
 export interface UseKeepAliveFinalBuilder<TApi, TRes> extends IAddToBatchBuilder<TApi, TRes> {
   useKeepAlive: (destApi: TApi) => this
   xcmVersion: (version: Version) => this
   build: () => Promise<TRes>
-  buildSerializedApiCall: () => Promise<TSerializedApiCall>
 }
 
 export interface AddressBuilder<TApi, TRes> {

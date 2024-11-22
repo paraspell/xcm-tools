@@ -52,10 +52,7 @@ const PalletsQueries = () => {
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
     const { useApi } = formValues;
     if (useApi) {
-      return await fetchFromApi(
-        formValues,
-        `/pallets/${getEndpoint(formValues)}`,
-      );
+      return fetchFromApi(formValues, `/pallets/${getEndpoint(formValues)}`);
     } else {
       return submitUsingSdk(formValues);
     }

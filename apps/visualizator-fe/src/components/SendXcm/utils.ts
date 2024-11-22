@@ -12,7 +12,7 @@ export const submitTransaction = async (
   injectorAddress: string
 ): Promise<string> => {
   await tx.signAsync(injectorAddress, { signer });
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     void tx.send(({ status, dispatchError, txHash }) => {
       if (status.isFinalized) {
         // Check if there are any dispatch errors

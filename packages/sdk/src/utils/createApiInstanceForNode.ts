@@ -9,7 +9,7 @@ export const createApiInstanceForNode = async <TApi, TRes>(
 ): Promise<TApi> => {
   if (node === 'Polkadot' || node === 'Kusama') {
     const wsUrl = getNodeProvider(node)
-    return await api.createApiInstance(wsUrl)
+    return api.createApiInstance(wsUrl)
   }
-  return await getNode<TApi, TRes, typeof node>(node).createApiInstance(api)
+  return getNode<TApi, TRes, typeof node>(node).createApiInstance(api)
 }

@@ -1,11 +1,11 @@
 // Contains detailed structure of XCM call construction for Crab Parachain
 
-import type { TAsset, TCurrencySelectionHeaderArr, TTransferReturn } from '../../types'
+import type { TAsset, TCurrencySelectionHeaderArr } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type TSerializedApiCallV2,
+  type TSerializedApiCall,
   type TScenario
 } from '../../types'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
@@ -19,9 +19,7 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
     super('Crab', 'crab', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ): Promise<TTransferReturn<TRes>> {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
     // TESTED https://kusama.subscan.io/xcm_message/kusama-ce7396ec470ba0c6516a50075046ee65464572dc
     if (input.scenario === 'ParaToPara') {
       return Promise.resolve(
@@ -31,7 +29,7 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
     throw new ScenarioNotSupportedError(this.node, input.scenario)
   }
 
-  transferRelayToPara(): TSerializedApiCallV2 {
+  transferRelayToPara(): TSerializedApiCall {
     throw new NodeNotSupportedError()
   }
 

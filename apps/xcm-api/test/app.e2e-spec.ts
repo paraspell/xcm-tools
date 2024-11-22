@@ -16,7 +16,6 @@ import {
   TMultiLocation,
   TNode,
   Version,
-  createApiInstanceForNode,
   getAllAssetsSymbols,
   getAssetsObject,
   getDefaultPallet,
@@ -338,25 +337,22 @@ describe('XCM API (e2e)', () => {
     const amount = '1000000000';
     const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
     const xTransferUrl = '/x-transfer';
-    const xTransferHashUrl = '/x-transfer-hash';
     const xTransferBatchUrl = '/x-transfer-batch';
-    const routerUrl = '/router';
-    const routerHashUrl = '/router-hash';
 
-    it(`Generate XCM call - No from or to provided - ${xTransferUrl} (GET)`, () => {
+    it(`Generate XCM call - No from or to provided - ${xTransferUrl}`, () => {
       return request(app.getHttpServer())
-        .get(xTransferUrl)
-        .query({
+        .post(xTransferUrl)
+        .send({
           amount,
           address,
         })
         .expect(400);
     });
 
-    it(`Generate XCM call - Invalid from - ${xTransferUrl} (GET)`, () => {
+    it(`Generate XCM call - Invalid from - ${xTransferUrl}`, () => {
       return request(app.getHttpServer())
-        .get(xTransferUrl)
-        .query({
+        .post(xTransferUrl)
+        .send({
           from: unknownNode,
           amount,
           address,
@@ -364,10 +360,10 @@ describe('XCM API (e2e)', () => {
         .expect(400);
     });
 
-    it(`Generate XCM call - Invalid to - ${xTransferUrl} (GET)`, () => {
+    it(`Generate XCM call - Invalid to - ${xTransferUrl}`, () => {
       return request(app.getHttpServer())
-        .get(xTransferUrl)
-        .query({
+        .post(xTransferUrl)
+        .send({
           to: unknownNode,
           amount,
           address,
@@ -375,10 +371,10 @@ describe('XCM API (e2e)', () => {
         .expect(400);
     });
 
-    it(`Generate XCM call - Parachain to parachain missing currency - ${xTransferUrl} (GET)`, () => {
+    it(`Generate XCM call - Parachain to parachain missing currency - ${xTransferUrl}`, () => {
       return request(app.getHttpServer())
-        .get(xTransferUrl)
-        .query({
+        .post(xTransferUrl)
+        .send({
           from: 'Acala',
           to: 'Basilisk',
           amount,
@@ -387,10 +383,10 @@ describe('XCM API (e2e)', () => {
         .expect(400);
     });
 
-    it(`Generate XCM call - Parachain to parachain invalid currency - ${xTransferUrl} (GET)`, () => {
+    it(`Generate XCM call - Parachain to parachain invalid currency - ${xTransferUrl}`, () => {
       return request(app.getHttpServer())
-        .get(xTransferUrl)
-        .query({
+        .post(xTransferUrl)
+        .send({
           from: 'Acala',
           to: 'Basilisk',
           amount,
@@ -400,19 +396,17 @@ describe('XCM API (e2e)', () => {
         .expect(400);
     });
 
-    it(`Generate XCM call - Parachain to parachain all valid - ${xTransferUrl} (POST)`, async () => {
+    it(`Generate XCM call - Parachain to parachain Native() selector - ${xTransferUrl}`, async () => {
       const from: TNode = 'Acala';
-      const to: TNode = 'Hydration';
-      const currency = { symbol: 'HDX' };
-      const api = await createApiInstanceForNode(from);
-      const serializedApiCall = await Builder(api)
+      const to: TNode = 'Astar';
+      const currency = { symbol: Native('DOT') };
+      const tx = await Builder()
         .from(from)
         .to(to)
         .currency(currency)
         .amount(amount)
         .address(address)
-        .buildSerializedApiCall();
-      await api.disconnect();
+        .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
@@ -423,50 +417,22 @@ describe('XCM API (e2e)', () => {
           currency,
         })
         .expect(201)
-        .expect(serializedApiCall);
-    });
-
-    it(`Generate XCM call - Parachain to parachain Native() selector - ${xTransferUrl} (POST)`, async () => {
-      const from: TNode = 'Acala';
-      const to: TNode = 'Astar';
-      const currency = { symbol: Native('DOT') };
-      const api = await createApiInstanceForNode(from);
-      const tx = await Builder(api)
-        .from(from)
-        .to(to)
-        .currency(currency)
-        .amount(amount)
-        .address(address)
-        .build();
-      await api.disconnect();
-      return request(app.getHttpServer())
-        .post(xTransferHashUrl)
-        .send({
-          from,
-          to,
-          amount,
-          address,
-          currency,
-        })
-        .expect(201)
         .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate XCM call - Parachain to parachain Foreign() selector - ${xTransferUrl} (POST)`, async () => {
+    it(`Generate XCM call - Parachain to parachain Foreign() selector - ${xTransferUrl}`, async () => {
       const from: TNode = 'Astar';
       const to: TNode = 'Acala';
       const currency = { symbol: Foreign('HDX') };
-      const api = await createApiInstanceForNode(from);
-      const tx = await Builder(api)
+      const tx = await Builder()
         .from(from)
         .to(to)
         .currency(currency)
         .amount(amount)
         .address(address)
         .build();
-      await api.disconnect();
       return request(app.getHttpServer())
-        .post(xTransferHashUrl)
+        .post(xTransferUrl)
         .send({
           from,
           to,
@@ -478,12 +444,12 @@ describe('XCM API (e2e)', () => {
         .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate XCM call - Parachain to parachain invalid scenario - ${xTransferHashUrl} (POST)`, async () => {
+    it(`Generate XCM call - Parachain to parachain invalid scenario - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
       const currency = { symbol: 'KSM' };
       return request(app.getHttpServer())
-        .post(xTransferHashUrl)
+        .post(xTransferUrl)
         .send({
           from,
           to,
@@ -494,7 +460,7 @@ describe('XCM API (e2e)', () => {
         .expect(500);
     });
 
-    it(`Generate Batch XCM call - Parachain to parachain all valid - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Parachain to parachain all valid - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to1: TNode = 'Basilisk';
       const to2: TNode = 'Moonriver';
@@ -502,7 +468,7 @@ describe('XCM API (e2e)', () => {
       const amount1 = '1000';
       const amount2 = '2000';
       const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
-      const address2 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+      const address2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
 
       const builder = Builder()
         .from(from)
@@ -547,7 +513,7 @@ describe('XCM API (e2e)', () => {
         .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate Batch XCM call - Invalid Currency Symbol - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Invalid Currency Symbol - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
       const invalidCurrency = { symbol: 'INVALID' };
@@ -576,7 +542,7 @@ describe('XCM API (e2e)', () => {
         });
     });
 
-    it(`Generate Batch XCM call - Different 'from' Nodes - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Different 'from' Nodes - ${xTransferBatchUrl}`, async () => {
       const from1: TNode = 'AssetHubKusama';
       const from2: TNode = 'Moonriver';
       const to: TNode = 'Basilisk';
@@ -615,7 +581,7 @@ describe('XCM API (e2e)', () => {
         });
     });
 
-    it(`Generate Batch XCM call - Invalid Addresses - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Invalid Addresses - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
       const currency = { symbol: 'USDT' };
@@ -644,7 +610,7 @@ describe('XCM API (e2e)', () => {
         });
     });
 
-    it(`Generate Batch XCM call - Empty Transfers Array - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Empty Transfers Array - ${xTransferBatchUrl}`, async () => {
       return request(app.getHttpServer())
         .post(xTransferBatchUrl)
         .send({
@@ -661,7 +627,7 @@ describe('XCM API (e2e)', () => {
         });
     });
 
-    it(`Generate Batch XCM call - Empty Transfers Array - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Empty Transfers Array - ${xTransferBatchUrl}`, async () => {
       return request(app.getHttpServer())
         .post(xTransferBatchUrl)
         .send({
@@ -678,7 +644,7 @@ describe('XCM API (e2e)', () => {
         });
     });
 
-    it(`Generate Batch XCM call - Empty Transfers Array - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Empty Transfers Array - ${xTransferBatchUrl}`, async () => {
       return request(app.getHttpServer())
         .post(xTransferBatchUrl)
         .send({
@@ -695,7 +661,7 @@ describe('XCM API (e2e)', () => {
         });
     });
 
-    it(`Generate Batch XCM call - Invalid Batch Mode - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Invalid Batch Mode - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
       const currency = { symbol: 'USDT' };
@@ -722,7 +688,7 @@ describe('XCM API (e2e)', () => {
         .expect(400); // Expect Bad Request due to invalid batch mode
     });
 
-    it(`Generate Batch XCM call - Missing Required Fields - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Missing Required Fields - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const currency = { symbol: 'USDT' };
 
@@ -741,10 +707,10 @@ describe('XCM API (e2e)', () => {
             mode: BatchMode.BATCH_ALL,
           },
         })
-        .expect(400); // Expect Bad Request due to missing required field
+        .expect(400);
     });
 
-    it(`Generate Batch XCM call - Zero or Negative Amounts - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Zero or Negative Amounts - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
       const currency = { symbol: 'USDT' };
@@ -770,7 +736,7 @@ describe('XCM API (e2e)', () => {
         .expect(400);
     });
 
-    it(`Generate Batch XCM call - Batch Mode 'BATCH' - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Batch Mode 'BATCH' - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to1: TNode = 'Basilisk';
       const to2: TNode = 'Moonriver';
@@ -778,7 +744,7 @@ describe('XCM API (e2e)', () => {
       const amount1 = '1000';
       const amount2 = '2000';
       const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
-      const address2 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+      const address2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
 
       const builder = Builder()
         .from(from)
@@ -823,7 +789,7 @@ describe('XCM API (e2e)', () => {
         .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate Batch XCM call - Single Transfer in Batch - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Single Transfer in Batch - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
       const currency = { symbol: 'USDT' };
@@ -859,7 +825,7 @@ describe('XCM API (e2e)', () => {
         .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate Batch XCM call - Specifying XCM Version - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Specifying XCM Version - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
       const currency = { symbol: 'USDT' };
@@ -898,7 +864,7 @@ describe('XCM API (e2e)', () => {
         .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate Batch XCM call - Parachain to Relay Chain - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Parachain to Relay Chain - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'Acala';
       const amount = '1000';
 
@@ -928,7 +894,7 @@ describe('XCM API (e2e)', () => {
         .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate Batch XCM call - Relay Chain to Parachain - ${xTransferBatchUrl} (POST)`, async () => {
+    it(`Generate Batch XCM call - Relay Chain to Parachain - ${xTransferBatchUrl}`, async () => {
       const to: TNode = 'Basilisk';
       const amount = '1000';
 
@@ -958,21 +924,19 @@ describe('XCM API (e2e)', () => {
         .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate XCM call - Parachain to parachain all valid - ${xTransferHashUrl} (POST)`, async () => {
+    it(`Generate XCM call - Parachain to parachain all valid - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
       const currency = { symbol: 'USDT' };
-      const api = await createApiInstanceForNode(from);
-      const tx = await Builder(api)
+      const tx = await Builder()
         .from(from)
         .to(to)
         .currency(currency)
         .amount(amount)
         .address(address)
         .build();
-      await api.disconnect();
       return request(app.getHttpServer())
-        .post(xTransferHashUrl)
+        .post(xTransferUrl)
         .send({
           from,
           to,
@@ -984,9 +948,9 @@ describe('XCM API (e2e)', () => {
         .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate XCM call - Parachain to parachain override currency - ${xTransferUrl} (GET)`, async () => {
-      const from: TNode = 'Karura';
-      const to: TNode = 'Basilisk';
+    it(`Generate XCM call - Parachain to parachain override currency - ${xTransferUrl}`, async () => {
+      const from: TNode = 'AssetHubPolkadot';
+      const to: TNode = 'Hydration';
       const currency: TMultiLocation = {
         parents: '0',
         interior: {
@@ -995,15 +959,13 @@ describe('XCM API (e2e)', () => {
           },
         },
       };
-      const api = await createApiInstanceForNode(from);
-      const serializedApiCall = await Builder(api)
+      const tx = await Builder()
         .from(from)
         .to(to)
         .currency({ multilocation: Override(currency) })
         .amount(amount)
         .address(address)
-        .buildSerializedApiCall();
-      await api.disconnect();
+        .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
@@ -1014,10 +976,10 @@ describe('XCM API (e2e)', () => {
           currency: { multilocation: Override(currency) },
         })
         .expect(201)
-        .expect(serializedApiCall);
+        .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl} (POST)`, async () => {
+    it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubPolkadot';
       const to: TNode = 'Acala';
       const currency: TMultiAsset = {
@@ -1035,15 +997,13 @@ describe('XCM API (e2e)', () => {
           Fungible: '1000000000',
         },
       };
-      const api = await createApiInstanceForNode(from);
-      const serializedApiCall = await Builder(api)
+      const tx = await Builder()
         .from(from)
         .to(to)
         .currency({ multiasset: [currency] })
         .amount(amount)
         .address(address)
-        .buildSerializedApiCall();
-      await api.disconnect();
+        .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
@@ -1054,76 +1014,66 @@ describe('XCM API (e2e)', () => {
           currency: { multiasset: [currency] },
         })
         .expect(201)
-        .expect(serializedApiCall);
+        .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl} (GET)`, async () => {
+    it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
-      const api = await createApiInstanceForNode(from);
-      const serializedApiCall = await Builder(api)
+      const tx = await Builder()
         .from(from)
         .amount(amount)
         .address(address)
-        .buildSerializedApiCall();
-      await api.disconnect();
+        .build();
       return request(app.getHttpServer())
-        .get(xTransferUrl)
-        .query({
+        .post(xTransferUrl)
+        .send({
           from,
           amount,
           address,
         })
-        .expect(200)
-        .expect(serializedApiCall);
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate XCM call - Relaychain to parachain all valid - ${xTransferUrl} (GET)`, async () => {
+    it(`Generate XCM call - Relaychain to parachain all valid - ${xTransferUrl}`, async () => {
       const to: TNode = 'AssetHubKusama';
-      const api = await createApiInstanceForNode(to);
-      const serializedApiCall = await Builder(api)
-        .to(to)
-        .amount(amount)
-        .address(address)
-        .buildSerializedApiCall();
-      await api.disconnect();
+      const tx = await Builder().to(to).amount(amount).address(address).build();
       return request(app.getHttpServer())
-        .get(xTransferUrl)
-        .query({
+        .post(xTransferUrl)
+        .send({
           to,
           amount,
           address,
         })
-        .expect(200)
-        .expect(serializedApiCall);
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl} (GET)`, async () => {
+    it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
-      const api = await createApiInstanceForNode(from);
-      const serializedApiCall = await Builder(api)
+      const tx = await Builder()
         .from(from)
         .amount(amount)
         .address(address)
         .xcmVersion(Version.V3)
-        .buildSerializedApiCall();
-      await api.disconnect();
+        .build();
       return request(app.getHttpServer())
-        .get(xTransferUrl)
-        .query({
+        .post(xTransferUrl)
+        .send({
           from,
           amount,
           address,
           xcmVersion: Version.V3,
         })
-        .expect(200)
-        .expect(serializedApiCall);
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
     });
 
-    it(`Generate XCM call - Parachain to relaychain invalid version - ${xTransferUrl} (GET)`, async () => {
+    it(`Generate XCM call - Parachain to relaychain invalid version - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       return request(app.getHttpServer())
-        .get(xTransferUrl)
-        .query({
+        .post(xTransferUrl)
+        .send({
           from,
           amount,
           address,
@@ -1131,303 +1081,305 @@ describe('XCM API (e2e)', () => {
         })
         .expect(400);
     });
+  });
 
-    describe('Router controller', () => {
-      const routerOptions: RouterDto = {
-        from: 'Astar',
-        exchange: 'HydrationDex',
-        to: 'BifrostPolkadot',
-        currencyFrom: { symbol: 'ASTR' },
-        currencyTo: { symbol: 'BNC' },
-        amount: '10000000000000000000',
-        injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        recipientAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        slippagePct: '1',
+  describe('Router controller', () => {
+    const amount = '1000000000';
+    const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
+    const routerUrl = '/router';
+
+    const routerOptions: RouterDto = {
+      from: 'Astar',
+      exchange: 'HydrationDex',
+      to: 'BifrostPolkadot',
+      currencyFrom: { symbol: 'ASTR' },
+      currencyTo: { symbol: 'BNC' },
+      amount: '10000000000000000000',
+      injectorAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      recipientAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      slippagePct: '1',
+    };
+
+    it(`Generate router call - manual exchange select - ${routerUrl}`, async () => {
+      return request(app.getHttpServer())
+        .post(routerUrl)
+        .send(routerOptions)
+        .expect(201)
+        .expect((res) => {
+          const data = JSON.parse(res.text);
+          expect(Array.isArray(data)).toBeTruthy();
+          expect(data).toHaveLength(3);
+          data.forEach((txInfo: any) => {
+            expect(txInfo).toHaveProperty('tx');
+            expect(txInfo).toHaveProperty('node');
+            expect(txInfo).toHaveProperty('type');
+            expect(txInfo).toHaveProperty('statusType');
+            expect(txInfo.tx).toBeTypeOf('string');
+          });
+        });
+    });
+
+    it(`Generate router call - manual exchange select - ${routerUrl}`, async () => {
+      return request(app.getHttpServer())
+        .post(routerUrl)
+        .send(routerOptions)
+        .expect(201)
+        .expect((res) => {
+          const data = JSON.parse(res.text);
+          expect(Array.isArray(data)).toBeTruthy();
+          expect(data).toHaveLength(3);
+          data.forEach((txInfo: any) => {
+            expect(txInfo).toHaveProperty('tx');
+            expect(txInfo).toHaveProperty('node');
+            expect(txInfo).toHaveProperty('type');
+            expect(txInfo).toHaveProperty('statusType');
+            expect(txInfo.tx).toBeTypeOf('string');
+          });
+        });
+    });
+
+    it(`Generate router call - automatic exchange select - ${routerUrl}`, async () => {
+      const automaticSelectOptions = {
+        ...routerOptions,
+        exchange: undefined,
       };
 
-      it(`Generate router call - manual exchange select - ${routerUrl} (GET)`, async () => {
-        return request(app.getHttpServer())
-          .get(routerUrl)
-          .query(routerOptions)
-          .expect(200)
-          .expect((res) => {
-            const data = JSON.parse(res.text);
-            expect(Array.isArray(data)).toBeTruthy();
-            expect(data).toHaveLength(3);
-            data.forEach((txInfo: any) => {
-              expect(txInfo).toHaveProperty('tx');
-              expect(txInfo).toHaveProperty('node');
-              expect(txInfo).toHaveProperty('type');
-              expect(txInfo).toHaveProperty('statusType');
-              expect(txInfo.tx).toBeTypeOf('object');
-            });
+      return request(app.getHttpServer())
+        .post(routerUrl)
+        .send(automaticSelectOptions)
+        .expect(201)
+        .expect((res) => {
+          const data = JSON.parse(res.text);
+          expect(Array.isArray(data)).toBeTruthy();
+          expect(data).toHaveLength(3);
+          data.forEach((txInfo: any) => {
+            expect(txInfo).toHaveProperty('tx');
+            expect(txInfo).toHaveProperty('node');
+            expect(txInfo).toHaveProperty('type');
+            expect(txInfo).toHaveProperty('statusType');
+            expect(txInfo.tx).toBeTypeOf('string');
           });
-      });
+        });
+    });
+  });
 
-      it(`Generate router call - manual exchange select - ${routerHashUrl} (POST)`, async () => {
-        return request(app.getHttpServer())
-          .post(routerHashUrl)
-          .send(routerOptions)
-          .expect(201)
-          .expect((res) => {
-            const data = JSON.parse(res.text);
-            expect(Array.isArray(data)).toBeTruthy();
-            expect(data).toHaveLength(3);
-            data.forEach((txInfo: any) => {
-              expect(txInfo).toHaveProperty('tx');
-              expect(txInfo).toHaveProperty('node');
-              expect(txInfo).toHaveProperty('type');
-              expect(txInfo).toHaveProperty('statusType');
-              expect(txInfo.tx).toBeTypeOf('string');
-            });
-          });
-      });
+  describe('Asset claim controller', () => {
+    const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
 
-      it(`Generate router call - automatic exchange select - ${routerUrl} (GET)`, async () => {
-        const automaticSelectOptions = {
-          ...routerOptions,
-          exchange: undefined,
-        };
-
-        return request(app.getHttpServer())
-          .get(routerUrl)
-          .query(automaticSelectOptions)
-          .expect(200)
-          .expect((res) => {
-            const data = JSON.parse(res.text);
-            expect(Array.isArray(data)).toBeTruthy();
-            expect(data).toHaveLength(3);
-            data.forEach((txInfo: any) => {
-              expect(txInfo).toHaveProperty('tx');
-              expect(txInfo).toHaveProperty('node');
-              expect(txInfo).toHaveProperty('type');
-              expect(txInfo).toHaveProperty('statusType');
-              expect(txInfo.tx).toBeTypeOf('object');
-            });
-          });
-      });
+    it('Generate asset claim call - no from provided - /asset-claim', () => {
+      return request(app.getHttpServer())
+        .post('/asset-claim')
+        .send({
+          address,
+        })
+        .expect(400);
     });
 
-    describe('Asset claim controller', () => {
-      it('Generate asset claim call - no from provided - /asset-claim (GET)', () => {
-        return request(app.getHttpServer())
-          .post('/asset-claim')
-          .send({
-            address,
-          })
-          .expect(400);
-      });
-
-      it('Generate asset claim call - invalid from provided - /asset-claim (GET)', () => {
-        return request(app.getHttpServer())
-          .post('/asset-claim')
-          .send({
-            from: unknownNode,
-            address,
-          })
-          .expect(400);
-      });
-
-      it('Generate asset claim call - invalid wallet address - /asset-claim (GET)', () => {
-        return request(app.getHttpServer())
-          .post('/asset-claim')
-          .send({
-            from: mockNode,
-            address: 'InvalidWalletAddress',
-          })
-          .expect(400);
-      });
-
-      it('Generate asset claim call - all valid - /asset-claim (GET)', async () => {
-        const from: TNode = 'AssetHubKusama';
-        const api = await createApiInstanceForNode(from);
-        const fungible = [
-          {
-            id: {
-              Concrete: {
-                parents: 0,
-                interior: {
-                  X1: {
-                    Parachain: '2000',
-                  },
-                },
-              },
-            },
-            fun: {
-              Fungible: '1000000000',
-            },
-          },
-        ];
-        const serializedApiCall = await Builder(api)
-          .claimFrom(from)
-          .fungible(fungible)
-          .account(address)
-          .buildSerializedApiCall();
-        await api.disconnect();
-        return request(app.getHttpServer())
-          .post('/asset-claim')
-          .send({
-            from,
-            fungible,
-            address,
-          })
-          .expect(201)
-          .expect(serializedApiCall);
-      });
-
-      it('Generate asset claim call - all valid - /asset-claim-hash (GET)', async () => {
-        const from: TNode = 'AssetHubKusama';
-        const api = await createApiInstanceForNode(from);
-        const fungible = [
-          {
-            id: {
-              Concrete: {
-                parents: 0,
-                interior: {
-                  X1: {
-                    Parachain: '2000',
-                  },
-                },
-              },
-            },
-            fun: {
-              Fungible: '1000000000',
-            },
-          },
-        ];
-        const tx = await Builder(api)
-          .claimFrom(from)
-          .fungible(fungible)
-          .account(address)
-          .build();
-        await api.disconnect();
-        return request(app.getHttpServer())
-          .post('/asset-claim-hash')
-          .send({
-            from,
-            fungible,
-            address,
-          })
-          .expect(201)
-          .expect(JSON.stringify(tx.toHex()));
-      });
+    it('Generate asset claim call - invalid from provided - /asset-claim', () => {
+      return request(app.getHttpServer())
+        .post('/asset-claim')
+        .send({
+          from: unknownNode,
+          address,
+        })
+        .expect(400);
     });
 
-    describe('Transfer info controller', () => {
-      const transferInfo: TransferInfoDto = {
-        origin: 'Acala',
-        destination: 'Astar',
-        accountOrigin: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        accountDestination: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        currency: { symbol: 'DOT' },
-        amount: '100000000',
-      };
-
-      it('Generate transfer info call - invalid origin provided - /transfer-info (POST)', () => {
-        return request(app.getHttpServer())
-          .post('/transfer-info')
-          .send({
-            ...transferInfo,
-            origin: unknownNode,
-          })
-          .expect(400);
-      });
-
-      it('Generate transfer info call - invalid destination provided - /transfer-info (POST)', () => {
-        return request(app.getHttpServer())
-          .post('/transfer-info')
-          .send({
-            ...transferInfo,
-            destination: unknownNode,
-          })
-          .expect(400);
-      });
-
-      it('Generate transfer info call - invalid wallet address origin - /transfer-info (POST)', () => {
-        return request(app.getHttpServer())
-          .post('/transfer-info')
-          .send({
-            ...transferInfo,
-            accountOrigin: 'InvalidWalletAddress',
-          })
-          .expect(400);
-      });
-
-      it('Generate transfer info call - invalid wallet address destination - /transfer-info (POST)', () => {
-        return request(app.getHttpServer())
-          .post('/transfer-info')
-          .send({
-            ...transferInfo,
-            accountDestination: 'InvalidWalletAddress',
-          })
-          .expect(400);
-      });
-
-      it('Generate transfer info call - all valid - /transfer-info (POST)', async () => {
-        return request(app.getHttpServer())
-          .post('/transfer-info')
-          .send(transferInfo)
-          .expect(201);
-      });
+    it('Generate asset claim call - invalid wallet address - /asset-claim', () => {
+      return request(app.getHttpServer())
+        .post('/asset-claim')
+        .send({
+          from: mockNode,
+          address: 'InvalidWalletAddress',
+        })
+        .expect(400);
     });
 
-    describe('XCM Analyser controller', () => {
-      it('Get MultiLocation paths - No multilocation or xcm provided - /xcm-analyser (POST)', () => {
-        return request(app.getHttpServer()).post('/xcm-analyser').expect(400);
-      });
-
-      it('Get MultiLocation paths - Invalid multilocation provided - /xcm-analyser (POST)', () => {
-        return request(app.getHttpServer())
-          .post('/xcm-analyser')
-          .send({
-            multilocation: {
-              parents: '0',
-              exterior: {
-                X1: {
-                  Parachain: '2000',
-                },
-              },
-            },
-          })
-          .expect(400);
-      });
-
-      it('Get MultiLocation paths - XCM without any multilocations provided - /xcm-analyser (POST)', () => {
-        return request(app.getHttpServer())
-          .post('/xcm-analyser')
-          .send({
-            xcm: ['0x123'],
-          })
-          .expect(201)
-          .expect('[]');
-      });
-
-      it('Get MultiLocation paths - Valid MultiLocation - /xcm-analyser (POST)', () => {
-        return request(app.getHttpServer())
-          .post('/xcm-analyser')
-          .send({
-            multilocation: {
-              parents: '0',
+    it('Generate asset claim call - all valid - /asset-claim', async () => {
+      const from: TNode = 'AssetHubKusama';
+      const fungible = [
+        {
+          id: {
+            Concrete: {
+              parents: 0,
               interior: {
                 X1: {
                   Parachain: '2000',
                 },
               },
             },
-          })
-          .expect(201)
-          .expect('"./Parachain(2000)"');
-      });
+          },
+          fun: {
+            Fungible: '1000000000',
+          },
+        },
+      ];
+      const tx = await Builder()
+        .claimFrom(from)
+        .fungible(fungible)
+        .account(address)
+        .build();
+      return request(app.getHttpServer())
+        .post('/asset-claim')
+        .send({
+          from,
+          fungible,
+          address,
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
+    });
 
-      it('Get MultiLocation paths - Valid XCM - /xcm-analyser (POST)', () => {
-        return request(app.getHttpServer())
-          .post('/xcm-analyser')
-          .send({
-            xcm: ['0x123'],
-          })
-          .expect(201)
-          .expect('[]');
-      });
+    it('Generate asset claim call - all valid - /asset-claim', async () => {
+      const from: TNode = 'AssetHubKusama';
+      const fungible = [
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X1: {
+                  Parachain: '2000',
+                },
+              },
+            },
+          },
+          fun: {
+            Fungible: '1000000000',
+          },
+        },
+      ];
+      const tx = await Builder()
+        .claimFrom(from)
+        .fungible(fungible)
+        .account(address)
+        .build();
+      return request(app.getHttpServer())
+        .post('/asset-claim')
+        .send({
+          from,
+          fungible,
+          address,
+        })
+        .expect(201)
+        .expect(JSON.stringify(tx.toHex()));
+    });
+  });
+
+  describe('Transfer info controller', () => {
+    const transferInfo: TransferInfoDto = {
+      origin: 'Acala',
+      destination: 'Astar',
+      accountOrigin: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      accountDestination: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      currency: { symbol: 'DOT' },
+      amount: '100000000',
+    };
+
+    it('Generate transfer info call - invalid origin provided - /transfer-info', () => {
+      return request(app.getHttpServer())
+        .post('/transfer-info')
+        .send({
+          ...transferInfo,
+          origin: unknownNode,
+        })
+        .expect(400);
+    });
+
+    it('Generate transfer info call - invalid destination provided - /transfer-info', () => {
+      return request(app.getHttpServer())
+        .post('/transfer-info')
+        .send({
+          ...transferInfo,
+          destination: unknownNode,
+        })
+        .expect(400);
+    });
+
+    it('Generate transfer info call - invalid wallet address origin - /transfer-info', () => {
+      return request(app.getHttpServer())
+        .post('/transfer-info')
+        .send({
+          ...transferInfo,
+          accountOrigin: 'InvalidWalletAddress',
+        })
+        .expect(400);
+    });
+
+    it('Generate transfer info call - invalid wallet address destination - /transfer-info', () => {
+      return request(app.getHttpServer())
+        .post('/transfer-info')
+        .send({
+          ...transferInfo,
+          accountDestination: 'InvalidWalletAddress',
+        })
+        .expect(400);
+    });
+
+    it('Generate transfer info call - all valid - /transfer-info', async () => {
+      return request(app.getHttpServer())
+        .post('/transfer-info')
+        .send(transferInfo)
+        .expect(201);
+    });
+  });
+
+  describe('XCM Analyser controller', () => {
+    it('Get MultiLocation paths - No multilocation or xcm provided - /xcm-analyser', () => {
+      return request(app.getHttpServer()).post('/xcm-analyser').expect(400);
+    });
+
+    it('Get MultiLocation paths - Invalid multilocation provided - /xcm-analyser', () => {
+      return request(app.getHttpServer())
+        .post('/xcm-analyser')
+        .send({
+          multilocation: {
+            parents: '0',
+            exterior: {
+              X1: {
+                Parachain: '2000',
+              },
+            },
+          },
+        })
+        .expect(400);
+    });
+
+    it('Get MultiLocation paths - XCM without any multilocations provided - /xcm-analyser', () => {
+      return request(app.getHttpServer())
+        .post('/xcm-analyser')
+        .send({
+          xcm: ['0x123'],
+        })
+        .expect(201)
+        .expect('[]');
+    });
+
+    it('Get MultiLocation paths - Valid MultiLocation - /xcm-analyser', () => {
+      return request(app.getHttpServer())
+        .post('/xcm-analyser')
+        .send({
+          multilocation: {
+            parents: '0',
+            interior: {
+              X1: {
+                Parachain: '2000',
+              },
+            },
+          },
+        })
+        .expect(201)
+        .expect('"./Parachain(2000)"');
+    });
+
+    it('Get MultiLocation paths - Valid XCM - /xcm-analyser', () => {
+      return request(app.getHttpServer())
+        .post('/xcm-analyser')
+        .send({
+          xcm: ['0x123'],
+        })
+        .expect(201)
+        .expect('[]');
     });
   });
 });

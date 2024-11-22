@@ -1,7 +1,6 @@
 // Implements builder pattern for XCM message creation operations operation
 
 import type {
-  TSerializedApiCall,
   TSendOptions,
   TCurrencyInput,
   TAmount,
@@ -15,7 +14,7 @@ import type { AddressBuilder, UseKeepAliveFinalBuilder } from './Builder'
 import { GeneralBuilder, type AmountBuilder, type AmountOrFeeAssetBuilder } from './Builder'
 import type BatchTransactionManager from './BatchTransactionManager'
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
-import { send, sendSerializedApiCall } from '../../pallets/xcmPallet/transfer'
+import { send } from '../../pallets/xcmPallet/transfer'
 
 /**
  * Builder class for constructing transactions between parachains.
@@ -167,16 +166,6 @@ class ParaToParaBuilder<TApi, TRes>
     }
     const options = this.buildOptions()
     return send(options)
-  }
-
-  /**
-   * Builds and returns a serialized API call for the transfer.
-   *
-   * @returns A Promise that resolves to the serialized API call.
-   */
-  async buildSerializedApiCall(): Promise<TSerializedApiCall> {
-    const options = this.buildOptions()
-    return sendSerializedApiCall(options)
   }
 }
 

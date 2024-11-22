@@ -39,8 +39,7 @@ describe('XTokensTransferImpl', () => {
       addressSelection: 'Address',
       destination: mockMultiLocation,
       feeAsset: '0',
-      scenario: 'ParaToPara',
-      serializedApiCallEnabled: false
+      scenario: 'ParaToPara'
     } as XTokensTransferInput<ApiPromise, Extrinsic>
 
     expect(() => XTokensTransferImpl.transferXTokens(input, {})).toThrow(
@@ -48,73 +47,7 @@ describe('XTokensTransferImpl', () => {
     )
   })
 
-  it('returns structured data for serialized transfer calls - feeAsset provided', () => {
-    const input = {
-      api: mockApi,
-      origin: 'Acala',
-      amount: '2000',
-      asset: {
-        symbol: 'ACA',
-        assetId: '123'
-      },
-      fees: 2000,
-      scenario: 'ParaToPara',
-      addressSelection: 'Address',
-      destination: 'AssetHubPolkadot',
-      feeAsset: 'XTK',
-      serializedApiCallEnabled: true
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
-    const currencySelection = '123'
-
-    vi.mocked(getCurrencySelection).mockReturnValue(currencySelection)
-    vi.mocked(getXTokensParameters).mockReturnValue({
-      param1: 'value1',
-      param2: 'value2',
-      param3: 'value3'
-    })
-
-    const result = XTokensTransferImpl.transferXTokens(input, currencySelection)
-
-    expect(result).toEqual({
-      module: 'XTokens',
-      section: 'transfer_multiassets',
-      parameters: ['value1', 'value2', 'value3']
-    })
-  })
-
-  it('returns structured data for serialized transfer calls - feeAsset not provided', () => {
-    const input = {
-      api: mockApi,
-      origin: 'Acala',
-      amount: '2000',
-      asset: {
-        symbol: 'ACA',
-        assetId: '123'
-      },
-      fees: 2000,
-      scenario: 'ParaToPara',
-      addressSelection: 'Address',
-      destination: 'AssetHubPolkadot',
-      serializedApiCallEnabled: true
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
-    const currencySelection = '123'
-
-    vi.mocked(getCurrencySelection).mockReturnValue(currencySelection)
-    vi.mocked(getXTokensParameters).mockReturnValue({
-      param1: 'value1',
-      param2: 'value2',
-      param3: 'value3'
-    })
-    const result = XTokensTransferImpl.transferXTokens(input, currencySelection)
-
-    expect(result).toEqual({
-      module: 'XTokens',
-      section: 'transfer_multiasset',
-      parameters: ['value1', 'value2', 'value3']
-    })
-  })
-
-  it('executes transfer transaction for non-serialized calls', () => {
+  it('executes transfer transaction', () => {
     const input = {
       api: mockApi,
       origin: 'Acala',
@@ -127,8 +60,7 @@ describe('XTokensTransferImpl', () => {
       scenario: 'ParaToPara',
       addressSelection: 'Address',
       destination: 'Hydration',
-      feeAsset: 'HDX',
-      serializedApiCallEnabled: false
+      feeAsset: 'HDX'
     } as XTokensTransferInput<ApiPromise, Extrinsic>
     const currencySelection = '123'
 

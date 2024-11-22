@@ -36,7 +36,7 @@ describe('XTransferController', () => {
 
   describe('generateXcmCall', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
-      const queryParams: XTransferDto = {
+      const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
         amount: 100,
@@ -45,64 +45,16 @@ describe('XTransferController', () => {
       };
       const mockResult = {} as Extrinsic;
       const spy = vi
-        .spyOn(service, 'generateXcmCallPjs')
+        .spyOn(service, 'generateXcmCall')
         .mockResolvedValue(mockResult);
 
       const result = await controller.generateXcmCall(
-        queryParams,
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(queryParams);
-    });
-  });
-
-  describe('generateXcmCallV2', () => {
-    it('should call generateXcmCall service method with correct parameters and return result', async () => {
-      const bodyParams: XTransferDto = {
-        from: 'Acala',
-        to: 'Basilisk',
-        amount: '100',
-        address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        currency: { symbol: 'DOT' },
-      };
-      const mockResult = {} as Extrinsic;
-      const spy = vi
-        .spyOn(service, 'generateXcmCallPjs')
-        .mockResolvedValue(mockResult);
-
-      const result = await controller.generateXcmCallV2(
         bodyParams,
         mockRequestObject,
       );
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams);
-    });
-  });
-
-  describe('generateXcmCallV2Hash', () => {
-    it('should call generateXcmCall service method with correct parameters and return result', async () => {
-      const bodyParams: XTransferDto = {
-        from: 'Acala',
-        to: 'Basilisk',
-        amount: 100,
-        address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        currency: { symbol: 'DOT' },
-      };
-      const mockResult = {} as Extrinsic;
-      const spy = vi
-        .spyOn(service, 'generateXcmCallPjs')
-        .mockResolvedValue(mockResult);
-
-      const result = await controller.generateXcmCallV2Hash(
-        bodyParams,
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams, true);
     });
 
     it('should use papi service method if papi flag is set', async () => {
@@ -115,7 +67,7 @@ describe('XTransferController', () => {
       };
       const mockResult = {} as Extrinsic;
       const spy = vi
-        .spyOn(service, 'generateXcmCallPapi')
+        .spyOn(service, 'generateXcmCall')
         .mockResolvedValue(mockResult);
 
       const result = await controller.generateXcmCallPapi(
@@ -124,7 +76,7 @@ describe('XTransferController', () => {
       );
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams);
+      expect(spy).toHaveBeenCalledWith(bodyParams, true);
     });
   });
 
@@ -151,10 +103,10 @@ describe('XTransferController', () => {
       };
       const mockResult = {} as Extrinsic;
       const spy = vi
-        .spyOn(service, 'generateBatchXcmCallPjs')
+        .spyOn(service, 'generateBatchXcmCall')
         .mockResolvedValue(mockResult);
 
-      const result = await controller.generateXcmCallBatchHash(
+      const result = await controller.generateXcmCallBatch(
         bodyParams,
         mockRequestObject,
       );
@@ -185,7 +137,7 @@ describe('XTransferController', () => {
       };
       const mockResult = {} as Extrinsic;
       const spy = vi
-        .spyOn(service, 'generateBatchXcmCallPapi')
+        .spyOn(service, 'generateBatchXcmCall')
         .mockResolvedValue(mockResult);
 
       const result = await controller.generateXcmCallBatchPapi(
@@ -194,7 +146,7 @@ describe('XTransferController', () => {
       );
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams);
+      expect(spy).toHaveBeenCalledWith(bodyParams, true);
     });
   });
 });

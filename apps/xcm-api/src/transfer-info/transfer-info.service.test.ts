@@ -33,7 +33,7 @@ describe('TransferInfoService', () => {
 
   it('throws BadRequestException if the origin node is not valid', async () => {
     await expect(
-      service.getTransferInfoPjs({
+      service.getTransferInfo({
         origin: 'InvalidNode',
         destination: 'Kusama',
         accountOrigin: '0x123',
@@ -46,7 +46,7 @@ describe('TransferInfoService', () => {
 
   it('throws BadRequestException if the destination node is not valid', async () => {
     await expect(
-      service.getTransferInfoPjs({
+      service.getTransferInfo({
         origin: 'Polkadot',
         destination: 'InvalidNode',
         accountOrigin: '0x123',
@@ -60,7 +60,7 @@ describe('TransferInfoService', () => {
   it('throws BadRequestException if the origin wallet address is invalid', async () => {
     vi.mocked(isValidWalletAddress).mockReturnValueOnce(false);
     await expect(
-      service.getTransferInfoPjs({
+      service.getTransferInfo({
         origin: 'Polkadot',
         destination: 'Kusama',
         accountOrigin: '0x123',
@@ -101,7 +101,7 @@ describe('TransferInfoService', () => {
       },
     };
     vi.mocked(getTransferInfo).mockResolvedValue(mockTransferInfo);
-    const result = await service.getTransferInfoPjs({
+    const result = await service.getTransferInfo({
       origin: 'Polkadot',
       destination: 'Kusama',
       accountOrigin: '0x123',
@@ -142,14 +142,17 @@ describe('TransferInfoService', () => {
       },
     };
     vi.mocked(getTransferInfoPapi).mockResolvedValue(mockTransferInfo);
-    const result = await service.getTransferInfoPapi({
-      origin: 'Polkadot',
-      destination: 'Kusama',
-      accountOrigin: '0x123',
-      accountDestination: '0x456',
-      currency: { symbol: 'DOT' },
-      amount: '1000',
-    });
+    const result = await service.getTransferInfo(
+      {
+        origin: 'Polkadot',
+        destination: 'Kusama',
+        accountOrigin: '0x123',
+        accountDestination: '0x456',
+        currency: { symbol: 'DOT' },
+        amount: '1000',
+      },
+      true,
+    );
     expect(result).toEqual(mockTransferInfo);
   });
 
@@ -158,7 +161,7 @@ describe('TransferInfoService', () => {
       new InvalidCurrencyError('Invalid currency.'),
     );
     await expect(
-      service.getTransferInfoPjs({
+      service.getTransferInfo({
         origin: 'Polkadot',
         destination: 'Kusama',
         accountOrigin: '0x123',
@@ -172,7 +175,7 @@ describe('TransferInfoService', () => {
   it('handles unknown errors by throwing InternalServerErrorException', async () => {
     vi.mocked(getTransferInfo).mockRejectedValue(new Error('Unknown error.'));
     await expect(
-      service.getTransferInfoPjs({
+      service.getTransferInfo({
         origin: 'Polkadot',
         destination: 'Kusama',
         accountOrigin: '0x123',
@@ -188,7 +191,7 @@ describe('TransferInfoService', () => {
       return address === '0x123';
     });
     await expect(
-      service.getTransferInfoPjs({
+      service.getTransferInfo({
         origin: 'Polkadot',
         destination: 'Kusama',
         accountOrigin: '0x123',

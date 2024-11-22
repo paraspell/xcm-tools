@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Request,
-  Get,
-  Post,
-  Query,
-  Req,
-  UsePipes,
-} from '@nestjs/common';
+import { Body, Controller, Request, Post, Req, UsePipes } from '@nestjs/common';
 import { XTransferService } from './x-transfer.service.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
@@ -54,46 +45,32 @@ export class XTransferController {
     });
   }
 
-  @Get('x-transfer')
-  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  generateXcmCall(@Query() queryParams: XTransferDto, @Req() req: Request) {
-    this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, queryParams);
-    return this.xTransferService.generateXcmCallPjs(queryParams);
-  }
-
   @Post('x-transfer')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  generateXcmCallV2(@Body() bodyParams: XTransferDto, @Req() req: Request) {
+  generateXcmCall(@Body() bodyParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
-    return this.xTransferService.generateXcmCallPjs(bodyParams);
-  }
-
-  @Post('x-transfer-hash')
-  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  generateXcmCallV2Hash(@Body() bodyParams: XTransferDto, @Req() req: Request) {
-    this.trackAnalytics(EventName.GENERATE_XCM_CALL_HASH, req, bodyParams);
-    return this.xTransferService.generateXcmCallPjs(bodyParams, true);
+    return this.xTransferService.generateXcmCall(bodyParams);
   }
 
   @Post('x-transfer-papi')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   generateXcmCallPapi(@Body() bodyParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
-    return this.xTransferService.generateXcmCallPapi(bodyParams);
+    return this.xTransferService.generateXcmCall(bodyParams, true);
   }
 
   @Post('x-transfer-batch')
   @UsePipes(new ZodValidationPipe(BatchXTransferDtoSchema))
-  generateXcmCallBatchHash(
+  generateXcmCallBatch(
     @Body() bodyParams: BatchXTransferDto,
     @Req() req: Request,
   ) {
     this.trackAnalyticsBatch(
-      EventName.GENERATE_XCM_CALL_BATCH_HASH,
+      EventName.GENERATE_XCM_CALL_BATCH,
       req,
       bodyParams,
     );
-    return this.xTransferService.generateBatchXcmCallPjs(bodyParams);
+    return this.xTransferService.generateBatchXcmCall(bodyParams);
   }
 
   @Post('x-transfer-batch-papi')
@@ -107,6 +84,6 @@ export class XTransferController {
       req,
       bodyParams,
     );
-    return this.xTransferService.generateBatchXcmCallPapi(bodyParams);
+    return this.xTransferService.generateBatchXcmCall(bodyParams, true);
   }
 }

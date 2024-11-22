@@ -6,7 +6,7 @@ export const createContext = async (
   executionUrl: string | AbstractProvider,
   config: environment.Config
 ) => {
-  return await contextFactory({
+  return contextFactory({
     ethereum: {
       execution_url: executionUrl,
       beacon_url: config.BEACON_HTTP_API

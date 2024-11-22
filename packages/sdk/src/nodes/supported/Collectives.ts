@@ -2,12 +2,12 @@
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { TAsset, TTransferReturn } from '../../types'
+import type { TAsset } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type PolkadotXCMTransferInput,
   Version,
-  type TSerializedApiCallV2,
+  type TSerializedApiCall,
   type TScenario,
   type TRelayToParaOptions
 } from '../../types'
@@ -19,9 +19,7 @@ class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolk
     super('Collectives', 'polkadotCollectives', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ): Promise<TTransferReturn<TRes>> {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
     const { scenario } = input
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
@@ -31,7 +29,7 @@ class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolk
     )
   }
 
-  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
     const { version = Version.V3 } = options
     return {
       module: 'XcmPallet',

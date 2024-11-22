@@ -17,17 +17,8 @@ import { TPapiTransaction } from '@paraspell/sdk/papi';
 
 @Injectable()
 export class AssetClaimService {
-  async claimAssetsPjs(options: AssetClaimDto, hashEnabled = false) {
-    return await this.claimAssets(options, hashEnabled);
-  }
-
-  async claimAssetsPapi(options: AssetClaimDto) {
-    return await this.claimAssets(options, false, true);
-  }
-
-  private async claimAssets(
+  async claimAssets(
     { from, fungible, address }: AssetClaimDto,
-    hashEnabled = false,
     usePapi = false,
   ) {
     const fromNode = from as TNodeDotKsmWithRelayChains | undefined;
@@ -63,9 +54,7 @@ export class AssetClaimService {
         return (await (tx as TPapiTransaction).getEncodedData()).asHex();
       }
 
-      return hashEnabled
-        ? await builder.build()
-        : await builder.buildSerializedApiCall();
+      return await builder.build();
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);

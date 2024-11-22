@@ -3,7 +3,7 @@
 import type { TAsset } from '../../types'
 import {
   Version,
-  type TSerializedApiCallV2,
+  type TSerializedApiCall,
   type IXTokensTransfer,
   type XTokensTransferInput,
   type TScenario,
@@ -42,7 +42,7 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
-  transferRelayToPara(): TSerializedApiCallV2 {
+  transferRelayToPara(): TSerializedApiCall {
     throw new NodeNotSupportedError()
   }
 

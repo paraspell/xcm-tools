@@ -20,10 +20,9 @@ describe('BalanceController', () => {
         {
           provide: BalanceService,
           useValue: {
-            getBalanceNativePjs: vi.fn(),
-            getBalanceNativePapi: vi.fn(),
-            getBalanceForeignPjs: vi.fn(),
-            getBalanceForeignPapi: vi.fn(),
+            getBalanceNative: vi.fn(),
+            getBalanceForeign: vi.fn(),
+            getAssetBalance: vi.fn(),
           },
         },
         {
@@ -50,7 +49,7 @@ describe('BalanceController', () => {
 
       const balanceNativeMock = 1000n;
       const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getBalanceNativePjs')
+        .spyOn(balanceService, 'getBalanceNative')
         .mockResolvedValue(balanceNativeMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
@@ -78,7 +77,7 @@ describe('BalanceController', () => {
 
       const balanceNativeMock = 1000n;
       const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getBalanceNativePapi')
+        .spyOn(balanceService, 'getBalanceNative')
         .mockResolvedValue(balanceNativeMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
@@ -93,7 +92,7 @@ describe('BalanceController', () => {
         req,
         { node },
       );
-      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
+      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params, true);
       expect(result).toEqual(balanceNativeMock);
     });
   });
@@ -109,7 +108,7 @@ describe('BalanceController', () => {
 
       const balanceForeignMock = '500';
       const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getBalanceForeignPjs')
+        .spyOn(balanceService, 'getBalanceForeign')
         .mockResolvedValue(balanceForeignMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
@@ -138,7 +137,7 @@ describe('BalanceController', () => {
 
       const balanceForeignMock = '500';
       const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getBalanceForeignPapi')
+        .spyOn(balanceService, 'getBalanceForeign')
         .mockResolvedValue(balanceForeignMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
@@ -150,6 +149,33 @@ describe('BalanceController', () => {
 
       expect(analyticsServiceSpy).toHaveBeenCalledWith(
         EventName.GET_BALANCE_FOREIGN,
+        req,
+        { node },
+      );
+      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params, true);
+      expect(result).toEqual(balanceForeignMock);
+    });
+  });
+
+  describe('getAssetBalance', () => {
+    it('should track analytics and call BalanceService for asset balance', async () => {
+      const node = 'Acala';
+      const params: BalanceForeignDto = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ' },
+      };
+      const req = {} as Request;
+
+      const balanceForeignMock = '500';
+      const balanceServiceSpy = vi
+        .spyOn(balanceService, 'getAssetBalance')
+        .mockResolvedValue(balanceForeignMock);
+      const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
+
+      const result = await balanceController.getAssetBalance(node, params, req);
+
+      expect(analyticsServiceSpy).toHaveBeenCalledWith(
+        EventName.GET_ASSET_BALANCE,
         req,
         { node },
       );

@@ -2,7 +2,7 @@
 
 import { InvalidCurrencyError } from '../../errors'
 import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { TAsset, TSerializedApiCallV2 } from '../../types'
+import type { TAsset, TSerializedApiCall } from '../../types'
 import {
   type IXTokensTransfer,
   Version,
@@ -37,7 +37,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
-  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
     const { version = Version.V3 } = options
     return {
       module: 'XcmPallet',

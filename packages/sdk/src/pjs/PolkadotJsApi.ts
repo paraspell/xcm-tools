@@ -4,7 +4,7 @@ import type {
   TAsset,
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
-  TSerializedApiCallV2
+  TSerializedApiCall
 } from '../types'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from '../pjs/types'
@@ -60,7 +60,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api.createType('AccountId32', address).toHex()
   }
 
-  callTxMethod({ module, section, parameters }: TSerializedApiCallV2): Extrinsic {
+  callTxMethod({ module, section, parameters }: TSerializedApiCall): Extrinsic {
     const values = Object.values(parameters)
     const moduleLowerCase = lowercaseFirstLetter(module)
     const sectionCamelCase = snakeToCamel(section)

@@ -3,9 +3,8 @@
 import type {
   XTokensTransferInput,
   TXTokensCurrencySelection,
-  TTransferReturn,
   XTokensSection,
-  TSerializedApiCallV2
+  TSerializedApiCall
 } from '../../types'
 import { getCurrencySelection } from './getCurrencySelection'
 import { getXTokensParameters } from './getXTokensParameters'
@@ -15,17 +14,8 @@ class XTokensTransferImpl {
     input: XTokensTransferInput<TApi, TRes>,
     currencySelection: TXTokensCurrencySelection,
     fees: string | number = 'Unlimited'
-  ): TTransferReturn<TRes> {
-    const {
-      api,
-      origin,
-      amount,
-      addressSelection,
-      destination,
-      scenario,
-      feeAsset,
-      serializedApiCallEnabled
-    } = input
+  ): TRes {
+    const { api, origin, amount, addressSelection, destination, scenario, feeAsset } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
     if (isMultiLocationDestination) {
@@ -63,17 +53,10 @@ class XTokensTransferImpl {
       feeAsset
     )
 
-    const call: TSerializedApiCallV2 = {
+    const call: TSerializedApiCall = {
       module: 'XTokens',
       section,
       parameters
-    }
-
-    if (serializedApiCallEnabled === true) {
-      return {
-        ...call,
-        parameters: Object.values(parameters)
-      }
     }
 
     return api.callTxMethod(call)

@@ -14,10 +14,7 @@ import type { Extrinsic } from '../../pjs/types'
 
 vi.mock('../../pallets/xcmPallet/transfer', () => ({
   send: vi.fn(),
-  sendSerializedApiCall: vi.fn(),
-  transferRelayToParaCommon: vi.fn(),
-  transferRelayToPara: vi.fn(),
-  transferRelayToParaSerializedApiCall: vi.fn()
+  transferRelayToPara: vi.fn()
 }))
 
 const NODE: TNode = 'Acala'
@@ -40,12 +37,10 @@ describe('Builder', () => {
     })
   } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
   const destApi = {} as ApiPromise
-  const mockExtrinsic = {} as Extrinsic
-  const mockSerializedApiCall = {
-    module: 'polkadotXcm',
-    section: 'send',
-    parameters: []
-  }
+  const mockExtrinsic = {
+    method: 'transfer',
+    args: []
+  } as unknown as Extrinsic
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -58,13 +53,9 @@ describe('Builder', () => {
 
   describe('Para to para/relay transfer', () => {
     let sendSpy: MockInstance<typeof xcmPallet.send>
-    let sendSerializedApiCallSpy: MockInstance<typeof xcmPallet.sendSerializedApiCall>
 
     beforeEach(() => {
       sendSpy = vi.spyOn(xcmPallet, 'send').mockResolvedValue(mockExtrinsic)
-      sendSerializedApiCallSpy = vi
-        .spyOn(xcmPallet, 'sendSerializedApiCall')
-        .mockResolvedValue(mockSerializedApiCall)
     })
 
     it('should initiate a para to para transfer with currency symbol', async () => {
@@ -87,16 +78,16 @@ describe('Builder', () => {
       })
     })
 
-    it('should initiate a serialized para to para transfer with currency symbol', async () => {
-      const serializedCall = await Builder(mockApi)
+    it('should initiate a para to para transfer with currency symbol', async () => {
+      const tx = await Builder(mockApi)
         .from(NODE)
         .to(NODE_2)
         .currency(CURRENCY)
         .amount(AMOUNT)
         .address(ADDRESS)
-        .buildSerializedApiCall()
+        .build()
 
-      expect(sendSerializedApiCallSpy).toHaveBeenCalledWith({
+      expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
         origin: NODE,
         currency: CURRENCY,
@@ -105,7 +96,7 @@ describe('Builder', () => {
         destination: NODE_2,
         destApiForKeepAlive: expect.any(Object)
       })
-      expect(serializedCall).toEqual(mockSerializedApiCall)
+      expect(tx).toEqual(mockExtrinsic)
     })
 
     it('should initiate a para to para transfer with custom paraId', async () => {
@@ -400,14 +391,10 @@ describe('Builder', () => {
       })
     })
 
-    it('should initiate a serialized para to relay transfer', async () => {
-      const serializedCall = await Builder(mockApi)
-        .from(NODE)
-        .amount(AMOUNT)
-        .address(ADDRESS)
-        .buildSerializedApiCall()
+    it('should initiate a para to relay transfer', async () => {
+      const tx = await Builder(mockApi).from(NODE).amount(AMOUNT).address(ADDRESS).build()
 
-      expect(sendSerializedApiCallSpy).toHaveBeenCalledWith({
+      expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
         origin: NODE,
         currency: {
@@ -417,7 +404,7 @@ describe('Builder', () => {
         address: ADDRESS,
         destApiForKeepAlive: expect.any(Object)
       })
-      expect(serializedCall).toEqual(mockSerializedApiCall)
+      expect(tx).toEqual(mockExtrinsic)
     })
 
     it('should throw if a para to relay amount is null', async () => {
@@ -520,22 +507,18 @@ describe('Builder', () => {
       })
     })
 
-    it('should request a para to para transfer serialized api call with currency id', async () => {
-      const serializedApiCall = await Builder(mockApi)
+    it('should request a para to para transfer api call with currency id', async () => {
+      const txHash = await Builder(mockApi)
         .from(NODE)
         .to(NODE_2)
         .currency({ symbol: 'DOT' })
         .amount(AMOUNT)
         .address(ADDRESS)
-        .buildSerializedApiCall()
+        .build()
 
-      expect(serializedApiCall).toHaveProperty('module')
-      expect(serializedApiCall).toHaveProperty('section')
-      expect(serializedApiCall).toHaveProperty('parameters')
-      expect(serializedApiCall.module).toBeTypeOf('string')
-      expect(serializedApiCall.section).toBeTypeOf('string')
-      expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
-      expect(sendSerializedApiCallSpy).toHaveBeenCalledTimes(1)
+      expect(txHash.method).toBeTypeOf('string')
+      expect(Array.isArray(txHash.args)).toBe(true)
+      expect(sendSpy).toHaveBeenCalledTimes(1)
     })
 
     it('should initiate a para to relay transfer using batching', async () => {
@@ -637,17 +620,11 @@ describe('Builder', () => {
 
   describe('Relay to para transfer', () => {
     let transferRelayToParaSpy: MockInstance<typeof xcmPallet.transferRelayToPara>
-    let transferRelayToParaSerializedApiCallSpy: MockInstance<
-      typeof xcmPallet.transferRelayToParaSerializedApiCall
-    >
 
     beforeEach(() => {
       transferRelayToParaSpy = vi
         .spyOn(xcmPallet, 'transferRelayToPara')
         .mockResolvedValue(mockExtrinsic)
-      transferRelayToParaSerializedApiCallSpy = vi
-        .spyOn(xcmPallet, 'transferRelayToParaSerializedApiCall')
-        .mockResolvedValue(mockSerializedApiCall)
     })
 
     it('should initiate a relay to para transfer', async () => {
@@ -742,20 +719,12 @@ describe('Builder', () => {
       ).toThrow()
     })
 
-    it('should request a relay to para transfer serialized api call', async () => {
-      const serializedApiCall = await Builder(mockApi)
-        .to(NODE_2)
-        .amount(AMOUNT)
-        .address(ADDRESS)
-        .buildSerializedApiCall()
+    it('should request a relay to para transfer api call', async () => {
+      const tx = await Builder(mockApi).to(NODE_2).amount(AMOUNT).address(ADDRESS).build()
 
-      expect(serializedApiCall).toHaveProperty('module')
-      expect(serializedApiCall).toHaveProperty('section')
-      expect(serializedApiCall).toHaveProperty('parameters')
-      expect(serializedApiCall.module).toBeTypeOf('string')
-      expect(serializedApiCall.section).toBeTypeOf('string')
-      expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
-      expect(transferRelayToParaSerializedApiCallSpy).toHaveBeenCalledTimes(1)
+      expect(tx.method).toBeTypeOf('string')
+      expect(Array.isArray(tx.args)).toBe(true)
+      expect(transferRelayToParaSpy).toHaveBeenCalledTimes(1)
     })
 
     it('should initiate a double relay to para transfer using batching', async () => {
@@ -796,25 +765,20 @@ describe('Builder', () => {
       })
     })
 
-    it('should create a serialized claim asset tx with valid output', async () => {
+    it('should create a claim asset tx with valid output', async () => {
       const spy = vi.spyOn(claimAssets, 'default').mockResolvedValue({
-        module: 'polkadotXcm',
-        section: 'claimAssets',
-        parameters: []
+        method: 'claim',
+        args: []
       })
-      const serializedApiCall = await Builder(mockApi)
+      const tx = await Builder(mockApi)
         .claimFrom(NODE)
         .fungible([])
         .account(ADDRESS)
         .xcmVersion(Version.V3)
-        .buildSerializedApiCall()
+        .build()
 
-      expect(serializedApiCall).toHaveProperty('module')
-      expect(serializedApiCall).toHaveProperty('section')
-      expect(serializedApiCall).toHaveProperty('parameters')
-      expect(serializedApiCall.module).toBeTypeOf('string')
-      expect(serializedApiCall.section).toBeTypeOf('string')
-      expect(Array.isArray(serializedApiCall.parameters)).toBe(true)
+      expect(tx).toHaveProperty('method')
+      expect(tx).toHaveProperty('args')
       expect(spy).toHaveBeenCalledTimes(1)
     })
   })

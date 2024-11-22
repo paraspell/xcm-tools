@@ -1,12 +1,7 @@
 // Contains basic call formatting for different XCM Palletss
 
-import type { TNativeAsset, TTransferReturn } from '../../types'
-import {
-  type TSerializedApiCall,
-  type TRelayToParaOptions,
-  type TSendOptions,
-  type TNode
-} from '../../types'
+import type { TNativeAsset } from '../../types'
+import { type TRelayToParaOptions, type TSendOptions, type TNode } from '../../types'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import { IncompatibleNodesError } from '../../errors'
 import { checkKeepAlive } from './keepAlive/checkKeepAlive'
@@ -20,10 +15,7 @@ import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOv
 import { isPjsClient } from '../../utils/isPjsClient'
 import { validateDestinationAddress } from './validateDestinationAddress'
 
-const sendCommon = async <TApi, TRes>(
-  options: TSendOptions<TApi, TRes>,
-  serializedApiCallEnabled = false
-): Promise<TTransferReturn<TRes>> => {
+export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promise<TRes> => {
   const {
     api,
     origin,
@@ -216,7 +208,7 @@ const sendCommon = async <TApi, TRes>(
         symbol: 'symbol' in currency ? currency.symbol : undefined
       } as TNativeAsset)
 
-    return originNode.transfer({
+    return await originNode.transfer({
       api,
       asset: resolvedAsset,
       amount: amountStr ?? '',
@@ -232,7 +224,6 @@ const sendCommon = async <TApi, TRes>(
       feeAsset,
       version,
       destApiForKeepAlive,
-      serializedApiCallEnabled,
       ahAddress
     })
   } finally {
@@ -242,18 +233,9 @@ const sendCommon = async <TApi, TRes>(
   }
 }
 
-export const sendSerializedApiCall = async <TApi, TRes>(
-  options: TSendOptions<TApi, TRes>
-): Promise<TSerializedApiCall> =>
-  sendCommon<TApi, TRes>(options, true) as Promise<TSerializedApiCall>
-
-export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promise<TRes> =>
-  sendCommon(options) as Promise<TRes>
-
-export const transferRelayToParaCommon = async <TApi, TRes>(
-  options: TRelayToParaOptions<TApi, TRes>,
-  serializedApiCallEnabled = false
-): Promise<TTransferReturn<TRes>> => {
+export const transferRelayToPara = async <TApi, TRes>(
+  options: TRelayToParaOptions<TApi, TRes>
+): Promise<TRes> => {
   const { api, destination, amount, address, paraIdTo, destApiForKeepAlive, version } = options
   const isMultiLocationDestination = typeof destination === 'object'
   const isAddressMultiLocation = typeof address === 'object'
@@ -294,14 +276,6 @@ export const transferRelayToParaCommon = async <TApi, TRes>(
       version
     })
 
-    if (serializedApiCallEnabled) {
-      // Keep compatibility with old serialized call type
-      return {
-        ...serializedApiCall,
-        parameters: Object.values(serializedApiCall.parameters)
-      }
-    }
-
     return api.callTxMethod(serializedApiCall)
   } finally {
     if (isPjsClient(api)) {
@@ -309,12 +283,3 @@ export const transferRelayToParaCommon = async <TApi, TRes>(
     }
   }
 }
-
-export const transferRelayToPara = async <TApi, TRes>(
-  options: TRelayToParaOptions<TApi, TRes>
-): Promise<TRes> => transferRelayToParaCommon(options) as Promise<TRes>
-
-export const transferRelayToParaSerializedApiCall = async <TApi, TRes>(
-  options: TRelayToParaOptions<TApi, TRes>
-): Promise<TSerializedApiCall> =>
-  transferRelayToParaCommon<TApi, TRes>(options, true) as Promise<TSerializedApiCall>

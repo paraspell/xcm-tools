@@ -27,40 +27,10 @@ describe('claimAssets', () => {
 
   const nodeMock = 'Acala'
 
-  it('should return serializedApiCall when serializedApiCallEnabled is true', async () => {
+  it('should return extrinsic call', async () => {
     const options: TAssetClaimOptions<ApiPromise, Extrinsic> = {
       api: apiMock,
       node: nodeMock,
-      serializedApiCallEnabled: true,
-      multiAssets: ['asset1', 'asset2'] as unknown as TMultiAsset[],
-      address: 'someAddress',
-      version: Version.V3
-    }
-    const argsMock = {
-      assets: { [Version.V3]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
-      beneficiary: { [Version.V3]: {} as TMultiLocation }
-    }
-    vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
-    vi.mocked(isRelayChain).mockReturnValue(false)
-
-    const result = await claimAssets(options)
-
-    expect(result).toEqual({
-      module: 'PolkadotXcm',
-      section: 'claim_assets',
-      parameters: Object.values(argsMock)
-    })
-    expect(buildClaimAssetsInput).toHaveBeenCalledWith({
-      ...options,
-      api: apiMock
-    })
-  })
-
-  it('should return extrinsic call when serializedApiCallEnabled is false', async () => {
-    const options: TAssetClaimOptions<ApiPromise, Extrinsic> = {
-      api: apiMock,
-      node: nodeMock,
-      serializedApiCallEnabled: false,
       multiAssets: ['asset1', 'asset2'] as unknown as TMultiAsset[],
       address: 'someAddress',
       version: Version.V3
@@ -87,7 +57,6 @@ describe('claimAssets', () => {
     const options: TAssetClaimOptions<ApiPromise, Extrinsic> = {
       api: apiMock,
       node: nodeMock,
-      serializedApiCallEnabled: false,
       multiAssets: ['asset1', 'asset2'] as unknown as TMultiAsset[],
       address: 'someAddress',
       version: Version.V3
@@ -119,7 +88,6 @@ describe('claimAssets', () => {
     const options: TAssetClaimOptions<ApiPromise, Extrinsic> = {
       api: apiMock,
       node: nodeMock,
-      serializedApiCallEnabled: false,
       multiAssets: ['asset1', 'asset2'] as unknown as TMultiAsset[],
       address: 'someAddress',
       version: Version.V3

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import PapiApi from './PapiApi'
 import type { PolkadotClient } from 'polkadot-api'
 import type { TPapiTransaction } from '../papi/types'
-import type { TSerializedApiCallV2, TMultiLocation, TNodeDotKsmWithRelayChains } from '../types'
+import type { TSerializedApiCall, TMultiLocation, TNodeDotKsmWithRelayChains } from '../types'
 import * as utils from '../utils'
 import { createClient, FixedSizeBinary } from 'polkadot-api'
 import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
@@ -178,7 +178,7 @@ describe('PapiApi', () => {
 
   describe('callTxMethod', () => {
     it('should create a transaction with the provided module, section, and parameters', () => {
-      const serializedCall: TSerializedApiCallV2 = {
+      const serializedCall: TSerializedApiCall = {
         module: 'XcmPallet',
         section: 'methodName',
         parameters: { param1: 'value1', param2: 'value2' }

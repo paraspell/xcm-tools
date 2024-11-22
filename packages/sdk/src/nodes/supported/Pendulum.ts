@@ -6,7 +6,7 @@ import {
   ScenarioNotSupportedError
 } from '../../errors'
 import type { IXTokensTransfer, TXcmAsset, XTokensTransferInput } from '../../types'
-import { Version, type TSerializedApiCallV2 } from '../../types'
+import { Version, type TSerializedApiCall } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
@@ -36,7 +36,7 @@ class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }
 
-  transferRelayToPara(): TSerializedApiCallV2 {
+  transferRelayToPara(): TSerializedApiCall {
     throw new NodeNotSupportedError()
   }
 }

@@ -159,5 +159,5 @@ export const performSwap = async (
     toExchangeTx,
     options.injectorAddress,
   );
-  return await dex.swapCurrency(swapApi, options, toDestTransactionFee, toExchangeTransactionFee);
+  return dex.swapCurrency(swapApi, options, toDestTransactionFee, toExchangeTransactionFee);
 };

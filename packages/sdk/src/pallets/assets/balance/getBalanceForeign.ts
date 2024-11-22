@@ -24,9 +24,9 @@ export const getBalanceForeignInternal = async <TApi, TRes>({
   const defaultPallet = getDefaultPallet(node)
 
   if (defaultPallet === 'XTokens') {
-    return await getBalanceForeignXTokens(api, node, address, asset)
+    return getBalanceForeignXTokens(api, node, address, asset)
   } else if (defaultPallet === 'PolkadotXcm') {
-    return await getBalanceForeignPolkadotXcm(api, node, address, asset)
+    return getBalanceForeignPolkadotXcm(api, node, address, asset)
   }
 
   throw new Error('Unsupported pallet')

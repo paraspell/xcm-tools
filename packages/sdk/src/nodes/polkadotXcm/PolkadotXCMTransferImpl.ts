@@ -1,12 +1,7 @@
 // Contains basic structure of polkadotXCM call
 
 import { DEFAULT_FEE_ASSET } from '../../const'
-import type {
-  PolkadotXcmSection,
-  TPallet,
-  TSerializedApiCallV2,
-  TTransferReturn
-} from '../../types'
+import type { PolkadotXcmSection, TPallet, TSerializedApiCall } from '../../types'
 import { type PolkadotXCMTransferInput } from '../../types'
 
 class PolkadotXCMTransferImpl {
@@ -16,15 +11,14 @@ class PolkadotXCMTransferImpl {
       header,
       addressSelection,
       currencySelection,
-      feeAsset = DEFAULT_FEE_ASSET,
-      serializedApiCallEnabled
+      feeAsset = DEFAULT_FEE_ASSET
     }: PolkadotXCMTransferInput<TApi, TRes>,
     section: PolkadotXcmSection,
     fees: 'Unlimited' | { Limited: string } | undefined = undefined
-  ): TTransferReturn<TRes> {
+  ): TRes {
     const module: TPallet = 'PolkadotXcm'
 
-    const call: TSerializedApiCallV2 = {
+    const call: TSerializedApiCall = {
       module,
       section,
       parameters: {
@@ -33,14 +27,6 @@ class PolkadotXCMTransferImpl {
         assets: currencySelection,
         fee_asset_item: feeAsset,
         ...(fees !== undefined ? { weight_limit: fees } : {})
-      }
-    }
-
-    if (serializedApiCallEnabled === true) {
-      // Keep compatible with old serialized call type
-      return {
-        ...call,
-        parameters: Object.values(call.parameters)
       }
     }
 

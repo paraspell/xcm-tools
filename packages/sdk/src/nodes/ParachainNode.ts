@@ -13,11 +13,10 @@ import type {
   TDestination,
   TCurrencySelectionHeaderArr,
   TNodePolkadotKusama,
-  TTransferReturn,
   TMultiAsset,
   TMultiLocation,
   TMultiLocationHeader,
-  TSerializedApiCallV2,
+  TSerializedApiCall,
   TAsset,
   XTokensTransferInput
 } from '../types'
@@ -90,7 +89,7 @@ abstract class ParachainNode<TApi, TRes> {
     return true
   }
 
-  async transfer(options: TSendInternalOptions<TApi, TRes>): Promise<TTransferReturn<TRes>> {
+  async transfer(options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
     const {
       api,
       asset,
@@ -101,8 +100,7 @@ abstract class ParachainNode<TApi, TRes> {
       overridedCurrencyMultiLocation,
       feeAsset,
       version,
-      ahAddress,
-      serializedApiCallEnabled = false
+      ahAddress
     } = options
     const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
     const paraId =
@@ -139,8 +137,7 @@ abstract class ParachainNode<TApi, TRes> {
         paraIdTo: paraId,
         destination,
         overridedCurrencyMultiLocation,
-        feeAsset,
-        serializedApiCallEnabled
+        feeAsset
       }
 
       if (shouldUseMultiasset) {
@@ -157,11 +154,10 @@ abstract class ParachainNode<TApi, TRes> {
         paraId,
         origin: this.node,
         destination,
-        overridedCurrencyMultiLocation,
-        serializedApiCallEnabled
+        overridedCurrencyMultiLocation
       })
     } else if (supportsPolkadotXCM(this)) {
-      return await this.transferPolkadotXCM({
+      return this.transferPolkadotXCM({
         api,
         header: this.createPolkadotXcmHeader(scenario, versionOrDefault, destination, paraId),
         addressSelection: generateAddressPayload(
@@ -187,7 +183,6 @@ abstract class ParachainNode<TApi, TRes> {
         destination,
         paraIdTo: paraId,
         overridedCurrency: overridedCurrencyMultiLocation,
-        serializedApiCallEnabled,
         version,
         ahAddress
       })
@@ -196,7 +191,7 @@ abstract class ParachainNode<TApi, TRes> {
     }
   }
 
-  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
     const { version = Version.V3 } = options
     return {
       module: 'XcmPallet',

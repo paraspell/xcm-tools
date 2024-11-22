@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
-import type { TTransferReturn } from '../../types'
 import {
   Version,
   type IPolkadotXCMTransfer,
@@ -22,9 +21,7 @@ class Astar<TApi, TRes>
     super('Astar', 'astar', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ): Promise<TTransferReturn<TRes>> {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
     // TESTED https://polkadot.subscan.io/xcm_message/polkadot-f2b697df74ebe4b62853fe81b8b7d0522464972d
     return Promise.resolve(
       PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserve_transfer_assets')

@@ -1,16 +1,8 @@
 // Implements builder pattern for Relay chain to Parachain transfer operation
 
-import {
-  transferRelayToPara,
-  transferRelayToParaSerializedApiCall
-} from '../../pallets/xcmPallet/transfer'
+import { transferRelayToPara } from '../../pallets/xcmPallet/transfer'
 import type { TRelayToParaDestination } from '../../types'
-import {
-  type TSerializedApiCall,
-  type TRelayToParaOptions,
-  type TAddress,
-  type Version
-} from '../../types'
+import { type TRelayToParaOptions, type TAddress, type Version } from '../../types'
 import {
   type UseKeepAliveFinalBuilder,
   type AddressBuilder,
@@ -135,17 +127,7 @@ class RelayToParaBuilder<TApi, TRes>
    */
   async build() {
     const options = this.buildOptions()
-    return await transferRelayToPara<TApi, TRes>(options)
-  }
-
-  /**
-   * Builds and returns a serialized API call for the transfer.
-   *
-   * @returns A Promise that resolves to the serialized API call.
-   */
-  async buildSerializedApiCall(): Promise<TSerializedApiCall> {
-    const options = this.buildOptions()
-    return await transferRelayToParaSerializedApiCall(options)
+    return transferRelayToPara<TApi, TRes>(options)
   }
 }
 

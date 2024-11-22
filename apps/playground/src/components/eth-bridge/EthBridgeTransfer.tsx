@@ -42,7 +42,6 @@ const EthBridgeTransfer = () => {
 
   const handleAccountsChanged = (accounts: string[]) => {
     if (accounts.length === 0) {
-      console.log("Please connect to a wallet.");
       setSelectedAccount(null);
       setAccounts([]);
     } else {
@@ -123,8 +122,6 @@ const EthBridgeTransfer = () => {
   const onAccountSelect = (account: string) => {
     setIsAccountModalOpen(false);
     setSelectedAccount(account);
-
-    console.log("Account selected:", account);
   };
 
   useEffect(() => {

@@ -27,23 +27,6 @@ export const transferRelayToPara = (
   })
 }
 
-export const transferRelayToParaSerializedApiCall = (
-  options: Omit<TRelayToParaOptions<TPapiApi, TPapiTransaction>, 'api' | 'destApiForKeepAlive'> & {
-    api: TPapiApiOrUrl
-    destApiForKeepAlive: TPapiApiOrUrl
-  }
-) => {
-  const papiApi = new PapiApi()
-  papiApi.setApi(options.api)
-  const destPapiApi = new PapiApi()
-  destPapiApi.setApi(options.destApiForKeepAlive)
-  return transferImpl.transferRelayToParaSerializedApiCall<TPapiApi, TPapiTransaction>({
-    ...options,
-    api: papiApi,
-    destApiForKeepAlive: destPapiApi
-  })
-}
-
 /**
  * Transfers assets from parachain to another parachain or relay chain.
  * @param options - The transfer options.
@@ -62,23 +45,6 @@ export const send = (
   return transferImpl.send({
     ...options,
     api: papiApi,
-    destApiForKeepAlive: destPapiApi
-  })
-}
-
-export const sendSerializedApiCall = (
-  options: Omit<TSendOptions<TPapiApi, TPapiTransaction>, 'api' | 'destApiForKeepAlive'> & {
-    api: TPapiApiOrUrl
-    destApiForKeepAlive: TPapiApiOrUrl
-  }
-) => {
-  const papiApi = new PapiApi()
-  papiApi.setApi(options.api)
-  const destPapiApi = new PapiApi()
-  destPapiApi.setApi(options.destApiForKeepAlive)
-  return transferImpl.sendSerializedApiCall({
-    ...options,
-    api: destPapiApi,
     destApiForKeepAlive: destPapiApi
   })
 }

@@ -14,8 +14,7 @@ import type {
   PolkadotXcmSection,
   TAsset,
   TDestination,
-  TSerializedApiCallV2,
-  TTransferReturn
+  TSerializedApiCall
 } from '../../types'
 import {
   type IPolkadotXCMTransfer,
@@ -210,9 +209,7 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
-  handleBifrostEthTransfer = <TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ): TTransferReturn<TRes> => {
+  handleBifrostEthTransfer = <TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): TRes => {
     const { api, amount, scenario, version, destination, asset } = input
 
     if (!isForeignAsset(asset)) {
@@ -223,7 +220,7 @@ class AssetHubPolkadot<TApi, TRes>
 
     const ethereumTokenLocation = createEthereumTokenLocation(asset.assetId ?? '')
 
-    const call: TSerializedApiCallV2 = {
+    const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
@@ -318,9 +315,7 @@ class AssetHubPolkadot<TApi, TRes>
     return scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
   }
 
-  transferPolkadotXCM<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ): Promise<TTransferReturn<TRes>> {
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
     const { scenario, asset, destination } = input
 
     if (destination === 'AssetHubKusama') {
@@ -376,7 +371,7 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
-  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCallV2 {
+  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
     const { version = Version.V3 } = options
     return {
       module: 'XcmPallet',

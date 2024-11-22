@@ -23,7 +23,6 @@ export type PolkadotXCMTransferInput<TApi, TRes> = {
   paraIdTo?: number
   feeAsset?: TCurrency
   overridedCurrency?: TMultiLocation | TMultiAsset[]
-  serializedApiCallEnabled?: boolean
   version?: Version
   ahAddress?: string
 }
@@ -40,7 +39,6 @@ export type XTokensTransferInput<TApi, TRes> = {
   paraIdTo?: number
   overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
   feeAsset?: TCurrency
-  serializedApiCallEnabled?: boolean
 }
 
 export type XTransferTransferInput<TApi, TRes> = {
@@ -52,23 +50,18 @@ export type XTransferTransferInput<TApi, TRes> = {
   paraId?: number
   destination?: TDestination
   overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
-  serializedApiCallEnabled?: boolean
 }
 
 export type IPolkadotXCMTransfer = {
-  transferPolkadotXCM: <TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ) => Promise<TTransferReturn<TRes>>
+  transferPolkadotXCM: <TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) => Promise<TRes>
 }
 
 export type IXTokensTransfer = {
-  transferXTokens: <TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) => TTransferReturn<TRes>
+  transferXTokens: <TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) => TRes
 }
 
 export type IXTransferTransfer = {
-  transferXTransfer: <TApi, TRes>(
-    input: XTransferTransferInput<TApi, TRes>
-  ) => TTransferReturn<TRes>
+  transferXTransfer: <TApi, TRes>(input: XTransferTransferInput<TApi, TRes>) => TRes
 }
 
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
@@ -153,7 +146,6 @@ export type TSendInternalOptions<TApi, TRes> = TSendBaseOptions<TApi, TRes> & {
   asset: TAsset
   amount: string
   overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
-  serializedApiCallEnabled?: boolean
 }
 
 type TRelayToParaBaseOptions<TApi, TRes> = {
@@ -192,15 +184,7 @@ export type TRelayToParaOptions<TApi, TRes> = WithApi<
   TRes
 >
 
-export type TTransferReturn<TRes> = TRes | TSerializedApiCall
-
 export type TSerializedApiCall = {
-  module: string
-  section: string
-  parameters: unknown[]
-}
-
-export type TSerializedApiCallV2 = {
   module: TPallet | 'Utility'
   section: string
   parameters: Record<string, unknown>
