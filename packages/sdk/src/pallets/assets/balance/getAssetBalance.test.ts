@@ -74,4 +74,21 @@ describe('getAssetBalance', () => {
     const result = await getAssetBalance({ api: apiMock, address: account, node, currency })
     expect(result).toEqual(BigInt(0))
   })
+
+  it('returns the correct balance when node is Interlay', async () => {
+    const account = '0x234'
+    const node = 'Interlay'
+    const currency = { symbol: 'INTR' }
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('INTR')
+    vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt(1500))
+
+    const result = await getAssetBalance({ api: apiMock, address: account, node, currency })
+    expect(result).toEqual(BigInt(1500))
+    expect(getBalanceForeignInternal).toHaveBeenCalledWith({
+      address: account,
+      node,
+      currency,
+      api: apiMock
+    })
+  })
 })

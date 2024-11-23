@@ -65,7 +65,7 @@ export const capitalizeKeys = (obj: any, depth: number = 1): any => {
   const newObj: any = {}
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const value = obj[key]
+      let value = obj[key]
       const isLeafNode = typeof value !== 'object' || value === null
 
       let capitalizedKey: string
@@ -77,6 +77,22 @@ export const capitalizeKeys = (obj: any, depth: number = 1): any => {
         capitalizedKey = key
       }
 
+      if (key === 'generalKey' && typeof value === 'string') {
+        let data = value
+        const hexString = data.startsWith('0x') ? data.slice(2) : data
+        const byteLength = hexString.length / 2 // Each byte is two hex characters
+
+        // Pad hexString with trailing zeros to make it 32 bytes (64 hex characters)
+        const paddedHexString = hexString.padEnd(64, '0') // 64 hex chars = 32 bytes
+        data = '0x' + paddedHexString
+
+        value = {
+          length: byteLength,
+          data: data
+        }
+      }
+
+      // Recursively process nested objects
       newObj[capitalizedKey] = capitalizeKeys(value, depth + 1)
     }
   }
