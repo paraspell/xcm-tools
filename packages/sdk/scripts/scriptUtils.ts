@@ -50,7 +50,7 @@ export const fetchWithTimeout = async <T>(
 ): Promise<T | null> => {
   const TIMEOUT_MS = 10000
   try {
-    return new Promise<T>((resolve, reject) => {
+    return await new Promise<T>((resolve, reject) => {
       const wsProvider = new WsProvider(wsUrl)
 
       const timeoutHandle = setTimeout(() => {

@@ -3,9 +3,14 @@ import { getBalanceNative } from './getBalanceNative'
 import type { ApiPromise } from '@polkadot/api'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { Extrinsic } from '../../../pjs/types'
+import { getBalanceForeignInternal } from './getBalanceForeign'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn()
+}))
+
+vi.mock('./getBalanceForeign', () => ({
+  getBalanceForeignInternal: vi.fn()
 }))
 
 describe('getBalanceNative', () => {
@@ -27,6 +32,21 @@ describe('getBalanceNative', () => {
       api: apiMock
     })
     expect(balance).toEqual(BigInt(1000))
+  })
+
+  it('returns the correct balance when node is Interlay', async () => {
+    const address = '0x234'
+    const node = 'Interlay'
+
+    vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt(1500))
+
+    const balance = await getBalanceNative({
+      address,
+      node,
+      api: apiMock
+    })
+    expect(balance).toEqual(BigInt(1500))
+    expect(getBalanceForeignInternal).toHaveBeenCalled()
   })
 
   it('returns the correct balance using a fallback API when no API is provided', async () => {

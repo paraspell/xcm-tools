@@ -130,7 +130,7 @@ export const transform = (obj: any): any => {
           continue
         }
 
-        if (k === 'id' && typeof v === 'string' && v.startsWith('0x')) {
+        if (typeof v === 'string' && v.startsWith('0x')) {
           newObj[k] = FixedSizeBinary.fromHex(v)
         } else if (typeof v === 'string') {
           newObj[k] = {

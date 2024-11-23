@@ -1,37 +1,35 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import { getNode } from '../../utils'
-import type { XTokensTransferInput, TRelayToParaOptions } from '../../types'
+import { constructRelayToParaParameters } from '../../pallets/xcmPallet/constructRelayToParaParameters'
+import type { TRelayToParaOptions, PolkadotXCMTransferInput } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../xTokens'
 import type Moonbeam from './Moonbeam'
+import { getNode } from '../../utils'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
-import { getNodeProviders } from '../config'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
+import type { IPolkadotApi } from '../../api'
+import { DOT_MULTILOCATION } from '../../const'
 
-vi.mock('../xTokens', () => ({
+vi.mock('../polkadotXcm', () => ({
   default: {
-    transferXTokens: vi.fn()
+    transferPolkadotXCM: vi.fn()
   }
 }))
 
-vi.mock('../../pallets/xcmPallet/utils', () => ({
+vi.mock('../../pallets/xcmPallet/constructRelayToParaParameters', () => ({
   constructRelayToParaParameters: vi.fn()
-}))
-
-vi.mock('../config', () => ({
-  getNodeProviders: vi.fn()
 }))
 
 describe('Moonbeam', () => {
   let moonbeam: Moonbeam<ApiPromise, Extrinsic>
+
+  const api = {
+    createAccountId: vi.fn()
+  } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: {
-      symbol: 'GLMR',
-      assetId: '123'
-    },
-    amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+    amount: '100',
+    api
+  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
   const mockOptions = {
     destination: 'Moonbeam'
@@ -48,22 +46,128 @@ describe('Moonbeam', () => {
     expect(moonbeam.version).toBe(Version.V3)
   })
 
-  it('should call transferXTokens with SelfReserve when currency matches native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-    vi.spyOn(moonbeam, 'getNativeAssetSymbol').mockReturnValue('GLMR')
+  it('should use correct multiLocation when transfering native asset', async () => {
+    const asset = { symbol: 'GLMR' }
+    const mockInputNative = {
+      ...mockInput,
+      scenario: 'ParaToPara',
+      asset
+    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
-    moonbeam.transferXTokens(mockInput)
+    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'SelfReserve')
+    await moonbeam.transferPolkadotXCM(mockInputNative)
+
+    expect(spy).toHaveBeenCalledWith(
+      {
+        ...mockInputNative,
+        currencySelection: {
+          [Version.V3]: [
+            {
+              fun: {
+                Fungible: mockInput.amount
+              },
+              id: {
+                Concrete: {
+                  parents: 0,
+                  interior: {
+                    X1: {
+                      PalletInstance: 10
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      'transfer_assets',
+      'Unlimited'
+    )
   })
 
-  it('should call transferXTokens with ForeignAsset when currency does not match native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-    vi.spyOn(moonbeam, 'getNativeAssetSymbol').mockReturnValue('NOT_GLMR')
+  it('should use correct multiLocation when transfering DOT to relay', async () => {
+    const asset = { symbol: 'DOT' }
+    const mockInputDot = {
+      ...mockInput,
+      scenario: 'ParaToRelay',
+      asset
+    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
 
-    moonbeam.transferXTokens(mockInput)
+    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: BigInt(123) })
+    await moonbeam.transferPolkadotXCM(mockInputDot)
+
+    expect(spy).toHaveBeenCalledWith(
+      {
+        ...mockInputDot,
+        currencySelection: {
+          [Version.V3]: [
+            {
+              fun: {
+                Fungible: mockInput.amount
+              },
+              id: {
+                Concrete: DOT_MULTILOCATION
+              }
+            }
+          ]
+        }
+      },
+      'transfer_assets',
+      'Unlimited'
+    )
+  })
+
+  it('should use correct multiLocation when transfering USDT', async () => {
+    const asset = {
+      symbol: 'USDT',
+      multiLocation: {
+        parents: 1,
+        interior: {
+          X3: [
+            {
+              Parachain: 1000
+            },
+            {
+              PalletInstance: 50
+            },
+            {
+              GeneralIndex: 1984
+            }
+          ]
+        }
+      }
+    }
+    const mockInputUsdt = {
+      ...mockInput,
+      scenario: 'ParaToPara',
+      asset
+    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+
+    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+
+    await moonbeam.transferPolkadotXCM(mockInputUsdt)
+
+    expect(spy).toHaveBeenCalledWith(
+      {
+        ...mockInputUsdt,
+        currencySelection: {
+          [Version.V3]: [
+            {
+              fun: {
+                Fungible: mockInput.amount
+              },
+              id: {
+                Concrete: asset.multiLocation
+              }
+            }
+          ]
+        }
+      },
+      'transfer_assets',
+      'Unlimited'
+    )
   })
 
   it('should call transferRelayToPara with the correct parameters', () => {
@@ -78,15 +182,5 @@ describe('Moonbeam', () => {
       section: 'limited_reserve_transfer_assets',
       parameters: expectedParameters
     })
-  })
-
-  it('should return the third provider URL from getProvider', () => {
-    const mockProviders = ['ws://provider1', 'ws://provider2', 'ws://provider3']
-    vi.mocked(getNodeProviders).mockReturnValue(mockProviders)
-
-    const provider = moonbeam.getProvider()
-
-    expect(getNodeProviders).toHaveBeenCalledWith('Moonbeam')
-    expect(provider).toBe('ws://provider3')
   })
 })

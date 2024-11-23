@@ -30,6 +30,12 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions }) => {
 
   const isNotParaToPara = isRelayToPara || isParaToRelay;
 
+  useEffect(() => {
+    if (isNotParaToPara) {
+      form.setFieldValue("isCustomCurrency", false);
+    }
+  }, [isNotParaToPara]);
+
   return (
     <Stack gap="xs">
       {form.values.isCustomCurrency &&

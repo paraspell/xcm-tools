@@ -1,4 +1,6 @@
 import type { TGetBalanceNativeOptions } from '../../../types/TBalance'
+import { getAssetsObject } from '../assets'
+import { getBalanceForeignInternal } from './getBalanceForeign'
 
 export const getBalanceNativeInternal = async <TApi, TRes>({
   address,
@@ -6,6 +8,16 @@ export const getBalanceNativeInternal = async <TApi, TRes>({
   api
 }: TGetBalanceNativeOptions<TApi, TRes>): Promise<bigint> => {
   await api.init(node)
+
+  if (node === 'Interlay') {
+    return getBalanceForeignInternal({
+      address,
+      node,
+      api,
+      currency: { symbol: getAssetsObject(node).nativeAssetSymbol }
+    })
+  }
+
   return api.getBalanceNative(address)
 }
 

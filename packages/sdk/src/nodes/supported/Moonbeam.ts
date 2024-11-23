@@ -1,40 +1,68 @@
 // Contains detailed structure of XCM call construction for Moonbeam Parachain
 
+import { DOT_MULTILOCATION } from '../../const'
 import { InvalidCurrencyError } from '../../errors'
-import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { TAsset, TSerializedApiCall } from '../../types'
-import {
-  type IXTokensTransfer,
-  Version,
-  type XTokensTransferInput,
-  type TRelayToParaOptions,
-  type TSelfReserveAsset,
-  type TXcmForeignAsset
+import { constructRelayToParaParameters, createCurrencySpec } from '../../pallets/xcmPallet/utils'
+import type {
+  IPolkadotXCMTransfer,
+  PolkadotXCMTransferInput,
+  TAsset,
+  TMultiLocation,
+  TScenario,
+  TSerializedApiCall
 } from '../../types'
+import { Parents, Version, type TRelayToParaOptions } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../xTokens'
+import PolkadotXCMTransferImpl from '../polkadotXcm'
 
-class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
+class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
     super('Moonbeam', 'moonbeam', 'polkadot', Version.V3)
   }
 
-  private getCurrencySelection(asset: TAsset): TSelfReserveAsset | TXcmForeignAsset {
-    if (asset.symbol === this.getNativeAssetSymbol()) return 'SelfReserve'
+  private getJunctions(asset: TAsset, scenario: TScenario): TMultiLocation {
+    if (scenario === 'ParaToRelay') return DOT_MULTILOCATION
 
-    if (!isForeignAsset(asset) || !asset.assetId) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    if (asset.symbol === this.getNativeAssetSymbol())
+      return {
+        parents: Parents.ZERO,
+        interior: {
+          X1: {
+            PalletInstance: 10
+          }
+        }
+      }
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(
+        'throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)'
+      )
     }
 
-    return { ForeignAsset: BigInt(asset.assetId) }
+    return asset.multiLocation as TMultiLocation
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
-    const { asset } = input
-    const currencySelection = this.getCurrencySelection(asset)
-    return XTokensTransferImpl.transferXTokens(input, currencySelection)
+  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+    const { asset, amount, scenario, version = this.version, overridedCurrency } = input
+    const multiLocation = this.getJunctions(asset, scenario)
+    return Promise.resolve(
+      PolkadotXCMTransferImpl.transferPolkadotXCM(
+        {
+          ...input,
+          currencySelection: createCurrencySpec(
+            amount,
+            version,
+            multiLocation.parents as Parents,
+            overridedCurrency,
+            multiLocation.interior
+          )
+        },
+        'transfer_assets',
+        'Unlimited'
+      )
+    )
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
