@@ -1,5 +1,5 @@
 {
   "packages/xcm-analyser": "1.4.0",
   "packages/xcm-router": "1.4.1",
-  "packages/sdk": "7.2.2"
+  "packages/sdk": "7.2.3"
 }

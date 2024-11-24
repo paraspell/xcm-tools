@@ -1,5 +1,14 @@
 # Changelog
 
+## [7.2.3](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.2...sdk-v7.2.3) (2024-11-24)
+
+
+### Bug Fixes
+
+* Add destination address checks ([f072da7](https://github.com/paraspell/xcm-tools/commit/f072da7c032ed9fb871191f4975115e779608ed0))
+* **sdk:** Fix Moonbeam & Moonriver transfer 🔧 ([f5343f3](https://github.com/paraspell/xcm-tools/commit/f5343f354de1a2568c363facbff455db4a1dfb42))
+* **xcm-api:** Remove old XCM API code 👴 ([973dfde](https://github.com/paraspell/xcm-tools/commit/973dfde2cc6206ebdee90b45bda1cd871c0063b3))
+
 ## [7.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.1...sdk-v7.2.2) (2024-11-19)
 
 
