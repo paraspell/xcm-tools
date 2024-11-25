@@ -6,7 +6,7 @@ import XTransferTransferImpl from './XTransferTransferImpl'
 import type {
   TCurrencySelectionHeaderArr,
   TMultiLocation,
-  XTransferTransferInput
+  TXTransferTransferOptions
 } from '../../types'
 import { Parents, Version } from '../../types'
 import type { ApiPromise } from '@polkadot/api'
@@ -52,7 +52,7 @@ describe('XTransferTransferImpl', () => {
       amount: '100',
       origin: 'Khala',
       destination: mockMultiLocation
-    } as XTransferTransferInput<ApiPromise, Extrinsic>
+    } as TXTransferTransferOptions<ApiPromise, Extrinsic>
     expect(() => XTransferTransferImpl.transferXTransfer(input)).toThrow(
       'Multilocation destinations are not supported for specific transfer you are trying to create.'
     )
@@ -64,7 +64,7 @@ describe('XTransferTransferImpl', () => {
       amount: '200',
       origin: 'Khala',
       destination: 'Phala'
-    } as unknown as XTransferTransferInput<ApiPromise, Extrinsic>
+    } as unknown as TXTransferTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
@@ -90,7 +90,7 @@ describe('XTransferTransferImpl', () => {
       amount: '200',
       origin: 'Phala',
       destination: 'Karura'
-    } as unknown as XTransferTransferInput<ApiPromise, Extrinsic>
+    } as unknown as TXTransferTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)

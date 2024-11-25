@@ -3,7 +3,7 @@ import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
 import { Version, Parents } from '../../types'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
-import type { XTokensTransferInput } from '../../types'
+import type { TXTokensTransferOptions } from '../../types'
 
 vi.mock('../../utils/assets', () => ({
   isForeignAsset: vi.fn()
@@ -33,7 +33,7 @@ describe('getModifiedCurrencySelection', () => {
       asset: { symbol: 'DOT' },
       paraIdTo,
       destination: undefined
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
@@ -53,7 +53,7 @@ describe('getModifiedCurrencySelection', () => {
       asset: { symbol: 'DOT' },
       paraIdTo,
       destination
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
     vi.mocked(getOtherAssets).mockReturnValue([
@@ -90,7 +90,7 @@ describe('getModifiedCurrencySelection', () => {
       asset: { symbol: 'KSM' },
       paraIdTo,
       destination
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
     vi.mocked(getOtherAssets).mockReturnValue([
@@ -129,7 +129,7 @@ describe('getModifiedCurrencySelection', () => {
       asset: { symbol: 'UNKNOWN' },
       paraIdTo,
       destination
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
     vi.mocked(getOtherAssets).mockReturnValue([])
@@ -151,7 +151,7 @@ describe('getModifiedCurrencySelection', () => {
       asset: { assetId: currencyID },
       paraIdTo,
       origin
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
@@ -191,7 +191,7 @@ describe('getModifiedCurrencySelection', () => {
         }
       },
       paraIdTo
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
@@ -222,7 +222,7 @@ describe('getModifiedCurrencySelection', () => {
         xcmInterior: [{ NetworkId: 'Any' }, { Parachain: paraIdTo }]
       },
       paraIdTo
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
@@ -254,7 +254,7 @@ describe('getModifiedCurrencySelection', () => {
       amount,
       asset: { assetId: currencyID },
       paraIdTo
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
 

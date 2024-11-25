@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Subsocial Parachain
 
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
-import type { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
@@ -11,7 +11,7 @@ class Subsocial<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
     super('Subsocial', 'subsocial', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { scenario, asset } = input
 
     if (scenario !== 'ParaToPara') {

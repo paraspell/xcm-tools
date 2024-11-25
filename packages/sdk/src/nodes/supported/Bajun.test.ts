@@ -4,7 +4,7 @@ import {
   InvalidCurrencyError,
   NodeNotSupportedError
 } from '../../errors'
-import type { XTokensTransferInput } from '../../types'
+import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Bajun from './Bajun'
@@ -24,7 +24,7 @@ describe('Bajun', () => {
     scenario: 'ParaToPara',
     asset: { symbol: 'BAJ' },
     amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+  } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     bajun = getNode<ApiPromise, Extrinsic, 'Bajun'>('Bajun')
@@ -38,7 +38,7 @@ describe('Bajun', () => {
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'RelayToPara' } as XTokensTransferInput<
+    const invalidInput = { ...mockInput, scenario: 'RelayToPara' } as TXTokensTransferOptions<
       ApiPromise,
       Extrinsic
     >

@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Karura Parachain
 
-import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
+import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
@@ -10,7 +10,7 @@ class Karura<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
     super('Karura', 'karura', 'kusama', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>): TRes {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>): TRes {
     return getNode<TApi, TRes, 'Acala'>('Acala').transferXTokens(input)
   }
 

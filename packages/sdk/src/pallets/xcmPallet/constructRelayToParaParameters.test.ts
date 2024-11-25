@@ -50,7 +50,7 @@ describe('constructRelayToParaParameters', () => {
       paraIdTo: mockParaId
     } as unknown as TRelayToParaOptions<ApiPromise, Extrinsic>
 
-    const result = constructRelayToParaParameters(options, Version.V1, true)
+    const result = constructRelayToParaParameters(options, Version.V1, { includeFee: true })
 
     expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
       'RelayToPara',
@@ -117,7 +117,7 @@ describe('constructRelayToParaParameters', () => {
       amount: mockAmount
     } as unknown as TRelayToParaOptions<ApiPromise, Extrinsic>
 
-    const result = constructRelayToParaParameters(options, Version.V2, true)
+    const result = constructRelayToParaParameters(options, Version.V2, { includeFee: true })
 
     expect(getParaId).toHaveBeenCalledWith('AnotherParachain')
     expect(createPolkadotXcmHeader).toHaveBeenCalledWith(

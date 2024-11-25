@@ -3,11 +3,11 @@
 import { ethers } from 'ethers'
 import type {
   IPolkadotXCMTransfer,
-  PolkadotXCMTransferInput,
+  TPolkadotXCMTransferOptions,
   TSendInternalOptions,
   TSerializedApiCall
 } from '../../types'
-import { type IXTokensTransfer, Parents, Version, type XTokensTransferInput } from '../../types'
+import { type IXTokensTransfer, Parents, Version, type TXTokensTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 import { InvalidCurrencyError } from '../../errors'
@@ -35,7 +35,7 @@ const calculateFee = async <TApi, TRes>(api: IPolkadotApi<TApi, TRes>) => {
 }
 
 const createCustomXcmAh = <TApi, TRes>(
-  { api, scenario, address }: PolkadotXCMTransferInput<TApi, TRes>,
+  { api, scenario, address }: TPolkadotXCMTransferOptions<TApi, TRes>,
   version: Version
 ) => ({
   [version]: [
@@ -51,7 +51,7 @@ const createCustomXcmAh = <TApi, TRes>(
 })
 
 const createCustomXcmOnDest = <TApi, TRes>(
-  { api, address, asset, scenario, ahAddress }: PolkadotXCMTransferInput<TApi, TRes>,
+  { api, address, asset, scenario, ahAddress }: TPolkadotXCMTransferOptions<TApi, TRes>,
   version: Version
 ) => {
   if (!isForeignAsset(asset)) {
@@ -140,7 +140,9 @@ class Hydration<TApi, TRes>
     super('Hydration', 'hydradx', 'polkadot', Version.V3)
   }
 
-  async transferToEthereum<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+  async transferToEthereum<TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): Promise<TRes> {
     const { api, address, asset, scenario, version, destination, amount, ahAddress } = input
     if (!ethers.isAddress(address)) {
       throw new Error('Only Ethereum addresses are supported for Ethereum transfers')
@@ -205,7 +207,7 @@ class Hydration<TApi, TRes>
     return api.callTxMethod(call)
   }
 
-  transferToAssetHub<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): TRes {
+  transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {
     const { api, scenario, version, destination, amount } = input
 
     const versionOrDefault = version ?? Version.V3
@@ -245,7 +247,7 @@ class Hydration<TApi, TRes>
 
   // Handles WETH Ethereum transfers
   async transferPolkadotXCM<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
     const { destination } = input
     if (destination === 'Ethereum') {
@@ -255,7 +257,7 @@ class Hydration<TApi, TRes>
     return this.transferToAssetHub(input)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
 
     if (asset.symbol === this.getNativeAssetSymbol()) {

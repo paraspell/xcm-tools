@@ -5,7 +5,7 @@ import {
   Version,
   type TSerializedApiCall,
   type IXTokensTransfer,
-  type XTokensTransferInput,
+  type TXTokensTransferOptions,
   type TScenario,
   Parents,
   type TSelfReserveAsset,
@@ -36,7 +36,7 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     return { ForeignAsset: BigInt(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)

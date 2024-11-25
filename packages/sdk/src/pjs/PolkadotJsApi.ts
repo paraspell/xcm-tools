@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type {
-  HexString,
+  THexString,
   TAsset,
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
@@ -56,7 +56,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return ApiPromise.create({ provider: wsProvider })
   }
 
-  createAccountId(address: string): HexString {
+  createAccountId(address: string): THexString {
     return this.api.createType('AccountId32', address).toHex()
   }
 

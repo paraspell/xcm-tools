@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { getCurrencySelection } from './getCurrencySelection'
 import { getXTokensParameters } from './getXTokensParameters'
 import XTokensTransferImpl from './XTokensTransferImpl'
-import type { TMultiLocation, XTokensTransferInput } from '../../types'
+import type { TMultiLocation, TXTokensTransferOptions } from '../../types'
 import { Parents } from '../../types'
 import type { ApiPromise } from '@polkadot/api'
 import type PolkadotJsApi from '../../pjs/PolkadotJsApi'
@@ -40,7 +40,7 @@ describe('XTokensTransferImpl', () => {
       destination: mockMultiLocation,
       feeAsset: '0',
       scenario: 'ParaToPara'
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
     expect(() => XTokensTransferImpl.transferXTokens(input, {})).toThrow(
       'Multilocation destinations are not supported for specific transfer you are trying to create.'
@@ -61,7 +61,7 @@ describe('XTokensTransferImpl', () => {
       addressSelection: 'Address',
       destination: 'Hydration',
       feeAsset: 'HDX'
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
     const currencySelection = '123'
 
     vi.mocked(getCurrencySelection).mockReturnValue(currencySelection)

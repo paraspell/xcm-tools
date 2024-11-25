@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { PolkadotXCMTransferInput } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type NeuroWeb from './NeuroWeb'
@@ -18,7 +18,7 @@ describe('NeuroWeb', () => {
   const mockInput = {
     asset: { symbol: 'DOT' },
     amount: '100'
-  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+  } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     neuroweb = getNode<ApiPromise, Extrinsic, 'NeuroWeb'>('NeuroWeb')

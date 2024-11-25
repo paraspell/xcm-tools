@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { InvalidCurrencyError } from '../../errors'
-import type { XTransferTransferInput } from '../../types'
+import type { TXTransferTransferOptions } from '../../types'
 import { Version } from '../../types'
 import XTransferTransferImpl from '../xTransfer'
 import type Phala from './Phala'
@@ -19,7 +19,7 @@ describe('Phala', () => {
   const mockInput = {
     asset: { symbol: 'PHA' },
     amount: '100'
-  } as XTransferTransferInput<ApiPromise, Extrinsic>
+  } as TXTransferTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     phala = getNode<ApiPromise, Extrinsic, 'Phala'>('Phala')

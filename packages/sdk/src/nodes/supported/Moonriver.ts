@@ -3,15 +3,15 @@
 import { DOT_MULTILOCATION } from '../../const'
 import { InvalidCurrencyError } from '../../errors'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
-import { constructRelayToParaParameters } from '../../pallets/xcmPallet/constructRelayToParaParameters'
 import type {
   IPolkadotXCMTransfer,
-  PolkadotXCMTransferInput,
+  TPolkadotXCMTransferOptions,
   TAsset,
   TMultiLocation,
-  TScenario
+  TScenario,
+  TRelayToParaOverrides
 } from '../../types'
-import { Version, type TSerializedApiCall, type TRelayToParaOptions, Parents } from '../../types'
+import { Version, Parents } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
@@ -44,7 +44,7 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
     return asset.multiLocation as TMultiLocation
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { asset, amount, scenario, version = this.version, overridedCurrency } = input
     const multiLocation = this.getJunctions(asset, scenario)
     return Promise.resolve(
@@ -65,13 +65,8 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
     )
   }
 
-  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
-    const { version = Version.V3 } = options
-    return {
-      module: 'XcmPallet',
-      section: 'limited_reserve_transfer_assets',
-      parameters: constructRelayToParaParameters(options, version, true)
-    }
+  getRelayToParaOverrides(): TRelayToParaOverrides {
+    return { section: 'limited_reserve_transfer_assets', includeFee: true }
   }
 
   getProvider(): string {

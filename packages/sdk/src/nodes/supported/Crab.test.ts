@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import type { PolkadotXCMTransferInput } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Parents, Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { getNode } from '../../utils'
@@ -25,7 +25,7 @@ describe('Crab', () => {
     scenario: 'ParaToPara',
     asset: { symbol: 'KSM' },
     amount: '100'
-  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+  } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     crab = getNode<ApiPromise, Extrinsic, 'Crab'>('Crab')
@@ -39,7 +39,7 @@ describe('Crab', () => {
   })
 
   it('should throw ScenarioNotSupportedError for ParaToRelay scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as PolkadotXCMTransferInput<
+    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
       ApiPromise,
       Extrinsic
     >

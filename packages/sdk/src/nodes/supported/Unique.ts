@@ -4,7 +4,7 @@ import { InvalidCurrencyError } from '../../errors'
 import {
   type IXTokensTransfer,
   Version,
-  type XTokensTransferInput,
+  type TXTokensTransferOptions,
   type TForeignAssetId
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
@@ -16,7 +16,7 @@ class Unique<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
     super('Unique', 'unique', 'polkadot', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
 
     if (!isForeignAsset(asset) || !asset.assetId) {

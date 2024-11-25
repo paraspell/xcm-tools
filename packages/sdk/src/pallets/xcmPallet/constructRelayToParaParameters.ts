@@ -7,7 +7,7 @@ import { createCurrencySpec, createPolkadotXcmHeader } from './utils'
 export const constructRelayToParaParameters = <TApi, TRes>(
   { api, destination, address, amount, paraIdTo }: TRelayToParaOptions<TApi, TRes>,
   version: Version,
-  includeFee = false
+  { includeFee } = { includeFee: false }
 ): Record<string, unknown> => {
   // Handle the case when a destination is a multi-location
   const paraId =

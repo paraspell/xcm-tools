@@ -1,5 +1,5 @@
 import { InvalidCurrencyError } from '../../errors'
-import { type IXTransferTransfer, Version, type XTransferTransferInput } from '../../types'
+import { type IXTransferTransfer, Version, type TXTransferTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTransferTransferImpl from '../xTransfer'
 
@@ -8,7 +8,7 @@ class Phala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTransferT
     super('Phala', 'phala', 'polkadot', Version.V3)
   }
 
-  transferXTransfer<TApi, TRes>(input: XTransferTransferInput<TApi, TRes>) {
+  transferXTransfer<TApi, TRes>(input: TXTransferTransferOptions<TApi, TRes>) {
     const { asset } = input
     if (asset.symbol !== this.getNativeAssetSymbol()) {
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${asset.symbol}`)

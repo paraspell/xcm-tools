@@ -1,5 +1,5 @@
 import { KeepAliveError } from '../../../errors/KeepAliveError'
-import type { CheckKeepAliveOptions, TNodePolkadotKusama } from '../../../types'
+import type { TCheckKeepAliveOptions, TNodePolkadotKusama } from '../../../types'
 import { getAssetsObject } from '../../assets'
 import { determineRelayChain } from '../../../utils'
 import { getExistentialDeposit } from '../../assets/eds'
@@ -13,7 +13,7 @@ export const checkKeepAlive = async <TApi, TRes>({
   destApi,
   asset,
   destNode
-}: CheckKeepAliveOptions<TApi, TRes>): Promise<void> => {
+}: TCheckKeepAliveOptions<TApi, TRes>): Promise<void> => {
   if (destApi.getApi() === undefined) {
     return
   }

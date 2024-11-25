@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { InvalidCurrencyError, NodeNotSupportedError } from '../../errors'
-import type { XTokensTransferInput } from '../../types'
+import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Integritee from './Integritee'
@@ -19,7 +19,7 @@ describe('Integritee', () => {
   const mockInput = {
     asset: { symbol: 'TEER' },
     amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+  } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     integritee = getNode<ApiPromise, Extrinsic, 'Integritee'>('Integritee')

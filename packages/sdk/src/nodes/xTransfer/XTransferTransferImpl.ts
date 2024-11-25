@@ -1,16 +1,16 @@
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import {
   Version,
-  type XTransferTransferInput,
+  type TXTransferTransferOptions,
   Parents,
-  type XTransferSection,
+  type TXTransferSection,
   type TSerializedApiCall
 } from '../../types'
 import { determineDestWeight } from './determineDestWeight'
 import { getDestination } from './getDestination'
 
 class XTransferTransferImpl {
-  static transferXTransfer<TApi, TRes>(input: XTransferTransferInput<TApi, TRes>): TRes {
+  static transferXTransfer<TApi, TRes>(input: TXTransferTransferOptions<TApi, TRes>): TRes {
     const { api, amount, origin, destination, overridedCurrencyMultiLocation } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
@@ -26,7 +26,7 @@ class XTransferTransferImpl {
 
     const dest = getDestination(input)
 
-    const section: XTransferSection = 'transfer'
+    const section: TXTransferSection = 'transfer'
 
     const destWeight = origin === 'Khala' ? null : determineDestWeight(destination)
 

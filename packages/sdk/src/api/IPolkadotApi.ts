@@ -1,5 +1,5 @@
 import type {
-  HexString,
+  THexString,
   TAsset,
   TMultiLocation,
   TNodeWithRelayChains,
@@ -12,7 +12,7 @@ export interface IPolkadotApi<TApi, TRes> {
   getApi(): TApi
   init(node: TNodeWithRelayChains): Promise<void>
   createApiInstance: (wsUrl: string) => Promise<TApi>
-  createAccountId(address: string): HexString
+  createAccountId(address: string): THexString
   callTxMethod(serializedCall: TSerializedApiCall): TRes
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
   getBalanceNative(address: string): Promise<bigint>

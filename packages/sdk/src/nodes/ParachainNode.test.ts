@@ -4,12 +4,12 @@ import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedE
 import type { TRelayToParaOptions } from '../types'
 import {
   Version,
-  type PolkadotXcmSection,
-  type PolkadotXCMTransferInput,
+  type TPolkadotXcmSection,
+  type TPolkadotXCMTransferOptions,
   type TSendInternalOptions,
   type TXTokensCurrencySelection,
-  type XTokensTransferInput,
-  type XTransferTransferInput
+  type TXTokensTransferOptions,
+  type TXTransferTransferOptions
 } from '../types'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../pjs/types'
@@ -41,20 +41,20 @@ vi.mock('./config', () => ({
 
 class TestParachainNode extends ParachainNode<ApiPromise, Extrinsic> {
   transferXTokens(
-    _input: XTokensTransferInput<ApiPromise, Extrinsic>,
+    _input: TXTokensTransferOptions<ApiPromise, Extrinsic>,
     _currencySelection: TXTokensCurrencySelection,
     _fees: string | number = 'Unlimited'
   ) {
     return 'transferXTokens called'
   }
 
-  transferXTransfer(_input: XTransferTransferInput<ApiPromise, Extrinsic>) {
+  transferXTransfer(_input: TXTransferTransferOptions<ApiPromise, Extrinsic>) {
     return 'transferXTransfer called'
   }
 
   transferPolkadotXCM(
-    _options: PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
-    _section: PolkadotXcmSection,
+    _options: TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>,
+    _section: TPolkadotXcmSection,
     _fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ) {
     return 'transferPolkadotXCM called'
@@ -66,15 +66,15 @@ class TestParachainNode extends ParachainNode<ApiPromise, Extrinsic> {
 }
 
 class NoXTokensNode extends ParachainNode<ApiPromise, Extrinsic> {
-  transferXTransfer(_input: XTransferTransferInput<ApiPromise, Extrinsic>) {
+  transferXTransfer(_input: TXTransferTransferOptions<ApiPromise, Extrinsic>) {
     return 'transferXTransfer called'
   }
 }
 
 class OnlyPolkadotXCMNode extends ParachainNode<ApiPromise, Extrinsic> {
   transferPolkadotXCM(
-    _options: PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
-    _section: PolkadotXcmSection,
+    _options: TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>,
+    _section: TPolkadotXcmSection,
     _fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ) {
     return 'transferPolkadotXCM called'

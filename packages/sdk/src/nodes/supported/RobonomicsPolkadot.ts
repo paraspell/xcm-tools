@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Robonomics Parachain
 
-import { type IPolkadotXCMTransfer, type PolkadotXCMTransferInput, Version } from '../../types'
+import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
@@ -12,7 +12,7 @@ class RobonomicsPolkadot<TApi, TRes>
     super('RobonomicsPolkadot', 'robonomics', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     return Promise.resolve(
       PolkadotXCMTransferImpl.transferPolkadotXCM(
         input,

@@ -3,7 +3,7 @@
 import {
   type IXTokensTransfer,
   Version,
-  type XTokensTransferInput,
+  type TXTokensTransferOptions,
   type TForeignOrTokenAsset
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
@@ -15,7 +15,7 @@ class Interlay<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     super('Interlay', 'interlay', 'polkadot', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
     const currencySelection: TForeignOrTokenAsset = isForeignAsset(asset)
       ? { ForeignAsset: Number(asset.assetId) }

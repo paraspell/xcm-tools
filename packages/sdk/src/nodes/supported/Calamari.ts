@@ -4,7 +4,7 @@ import { InvalidCurrencyError } from '../../errors'
 import {
   type IXTokensTransfer,
   Version,
-  type XTokensTransferInput,
+  type TXTokensTransferOptions,
   type TMantaAsset
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
@@ -16,7 +16,7 @@ class Calamari<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     super('Calamari', 'calamari', 'kusama', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     // Currently only option for XCM transfer
     const { asset } = input
 

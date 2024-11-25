@@ -8,9 +8,9 @@ import type { TPallet } from './TPallet'
 import type { WithApi } from './TApi'
 import type { TAsset } from './TAssets'
 
-export type HexString = `0x${string}`
+export type THexString = `0x${string}`
 
-export type PolkadotXCMTransferInput<TApi, TRes> = {
+export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   header: TMultiLocationHeader
   addressSelection: TMultiLocationHeader
@@ -27,7 +27,7 @@ export type PolkadotXCMTransferInput<TApi, TRes> = {
   ahAddress?: string
 }
 
-export type XTokensTransferInput<TApi, TRes> = {
+export type TXTokensTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   asset: TAsset
   amount: string
@@ -41,7 +41,7 @@ export type XTokensTransferInput<TApi, TRes> = {
   feeAsset?: TCurrency
 }
 
-export type XTransferTransferInput<TApi, TRes> = {
+export type TXTransferTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   asset: TAsset
   amount: string
@@ -52,16 +52,16 @@ export type XTransferTransferInput<TApi, TRes> = {
   overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
 }
 
-export type IPolkadotXCMTransfer = {
-  transferPolkadotXCM: <TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) => Promise<TRes>
+export interface IPolkadotXCMTransfer {
+  transferPolkadotXCM: <TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) => Promise<TRes>
 }
 
-export type IXTokensTransfer = {
-  transferXTokens: <TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) => TRes
+export interface IXTokensTransfer {
+  transferXTokens: <TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) => TRes
 }
 
-export type IXTransferTransfer = {
-  transferXTransfer: <TApi, TRes>(input: XTransferTransferInput<TApi, TRes>) => TRes
+export interface IXTransferTransfer {
+  transferXTransfer: <TApi, TRes>(input: TXTransferTransferOptions<TApi, TRes>) => TRes
 }
 
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
@@ -175,6 +175,11 @@ type TRelayToParaBaseOptions<TApi, TRes> = {
   amount: TAmount
 }
 
+export type TRelayToParaOverrides = {
+  section: TXcmPalletSection
+  includeFee: boolean
+}
+
 /**
  * Options for transferring from a relay chain to a parachain
  */
@@ -190,7 +195,7 @@ export type TSerializedApiCall = {
   parameters: Record<string, unknown>
 }
 
-export type CheckKeepAliveOptions<TApi, TRes> = {
+export type TCheckKeepAliveOptions<TApi, TRes> = {
   originApi: IPolkadotApi<TApi, TRes>
   address: string
   amount: string
@@ -205,13 +210,18 @@ export type TDestWeight = {
   proofSize: string
 }
 
-export type XTransferSection = 'transfer'
+export type TXTransferSection = 'transfer'
 
-export type XTokensSection = 'transfer' | 'transfer_multiasset' | 'transfer_multiassets'
+export type TXTokensSection = 'transfer' | 'transfer_multiasset' | 'transfer_multiassets'
 
-export type PolkadotXcmSection =
+export type TPolkadotXcmSection =
   | 'limited_teleport_assets'
   | 'limited_reserve_transfer_assets'
   | 'reserve_transfer_assets'
   | 'reserve_withdraw_assets'
   | 'transfer_assets'
+
+export type TXcmPalletSection =
+  | 'limited_teleport_assets'
+  | 'reserve_transfer_assets'
+  | 'limited_reserve_transfer_assets'

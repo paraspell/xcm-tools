@@ -4,9 +4,9 @@ import {
   Version,
   type IPolkadotXCMTransfer,
   type IXTokensTransfer,
-  type PolkadotXCMTransferInput,
+  type TPolkadotXCMTransferOptions,
   type TSendInternalOptions,
-  type XTokensTransferInput
+  type TXTokensTransferOptions
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
@@ -21,14 +21,14 @@ class Astar<TApi, TRes>
     super('Astar', 'astar', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     // TESTED https://polkadot.subscan.io/xcm_message/polkadot-f2b697df74ebe4b62853fe81b8b7d0522464972d
     return Promise.resolve(
       PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserve_transfer_assets')
     )
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
 
     if (!isForeignAsset(asset) || !asset.assetId) {

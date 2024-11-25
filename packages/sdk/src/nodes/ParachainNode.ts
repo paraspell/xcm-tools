@@ -18,7 +18,8 @@ import type {
   TMultiLocationHeader,
   TSerializedApiCall,
   TAsset,
-  XTokensTransferInput
+  TXTokensTransferOptions,
+  TRelayToParaOverrides
 } from '../types'
 import { Version, Parents } from '../types'
 import { generateAddressPayload, getFees } from '../utils'
@@ -119,7 +120,7 @@ abstract class ParachainNode<TApi, TRes> {
       const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
       const shouldUseMultiasset = isAssetHubDest && !isBifrostOrigin
 
-      const input: XTokensTransferInput<TApi, TRes> = {
+      const input: TXTokensTransferOptions<TApi, TRes> = {
         api,
         asset,
         amount,
@@ -191,12 +192,17 @@ abstract class ParachainNode<TApi, TRes> {
     }
   }
 
+  getRelayToParaOverrides(): TRelayToParaOverrides {
+    return { section: 'reserve_transfer_assets', includeFee: false }
+  }
+
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
     const { version = Version.V3 } = options
+    const { section, includeFee } = this.getRelayToParaOverrides()
     return {
       module: 'XcmPallet',
-      section: 'reserve_transfer_assets',
-      parameters: constructRelayToParaParameters(options, version)
+      section,
+      parameters: constructRelayToParaParameters(options, version, { includeFee })
     }
   }
 

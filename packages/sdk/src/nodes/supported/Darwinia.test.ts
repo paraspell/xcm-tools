@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type {
-  XTokensTransferInput,
+  TXTokensTransferOptions,
   TScenario,
   TSelfReserveAsset,
   TXcmForeignAsset,
@@ -31,7 +31,7 @@ describe('Darwinia', () => {
   const mockInput = {
     asset: { symbol: 'RING', assetId: '123' },
     amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+  } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     darwinia = getNode<ApiPromise, Extrinsic, 'Darwinia'>('Darwinia')

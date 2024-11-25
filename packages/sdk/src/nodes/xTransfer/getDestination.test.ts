@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { ethers } from 'ethers'
 import { getDestination } from './getDestination'
-import type { XTransferTransferInput } from '../../types'
+import type { TXTransferTransferOptions } from '../../types'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
 import type PolkadotJsApi from '../../pjs/PolkadotJsApi'
@@ -21,7 +21,7 @@ describe('getDestination', () => {
       },
       paraId: 1000,
       api: {}
-    } as XTransferTransferInput<ApiPromise, Extrinsic>
+    } as TXTransferTransferOptions<ApiPromise, Extrinsic>
     const result = getDestination(input)
     expect(result).toEqual(input.recipientAddress)
   })
@@ -32,7 +32,7 @@ describe('getDestination', () => {
       recipientAddress: '0x123',
       paraId: 2000,
       api: {}
-    } as XTransferTransferInput<ApiPromise, Extrinsic>
+    } as TXTransferTransferOptions<ApiPromise, Extrinsic>
     const result = getDestination(ethAddressInput)
     expect(result).toEqual({
       parents: 1,
@@ -61,7 +61,7 @@ describe('getDestination', () => {
       recipientAddress: 'someAccountId',
       paraId: 3000,
       api: apiMock
-    } as unknown as XTransferTransferInput<ApiPromise, Extrinsic>
+    } as unknown as TXTransferTransferOptions<ApiPromise, Extrinsic>
 
     const accountIdSpy = vi.spyOn(apiMock, 'createAccountId')
 

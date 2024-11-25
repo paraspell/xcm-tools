@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { XTokensTransferInput } from '../../types'
+import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import { getNode } from '../../utils/getNode'
@@ -18,7 +18,7 @@ describe('Altair', () => {
   const mockInput = {
     asset: { symbol: 'AIR', assetId: '1' },
     amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+  } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     altair = getNode<ApiPromise, Extrinsic, 'Altair'>('Altair')

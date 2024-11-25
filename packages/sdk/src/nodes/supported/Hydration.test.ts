@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ethers } from 'ethers'
 import type {
-  PolkadotXCMTransferInput,
+  TPolkadotXCMTransferOptions,
   TSendInternalOptions,
-  XTokensTransferInput
+  TXTokensTransferOptions
 } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
@@ -44,7 +44,7 @@ describe('Hydration', () => {
     const mockInput = {
       asset: { assetId: '123' },
       amount: '100'
-    } as XTokensTransferInput<TPjsApi, Extrinsic>
+    } as TXTokensTransferOptions<TPjsApi, Extrinsic>
 
     const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
 
@@ -55,7 +55,7 @@ describe('Hydration', () => {
 
   describe('transferPolkadotXCM', () => {
     let mockApi: IPolkadotApi<TPjsApi, Extrinsic>
-    let mockInput: PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    let mockInput: TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     beforeEach(() => {
       mockApi = {
@@ -74,7 +74,7 @@ describe('Hydration', () => {
         destination: 'Ethereum',
         amount: '1000',
         ahAddress: '5Gw3s7q4QLkSWwknsiixu9GR7x6xN5PWQ1YbQGxwSz1Y7DZT'
-      } as PolkadotXCMTransferInput<TPjsApi, Extrinsic>
+      } as TPolkadotXCMTransferOptions<TPjsApi, Extrinsic>
     })
 
     it('should throw error for non-Ethereum address', async () => {

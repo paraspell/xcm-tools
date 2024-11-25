@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { XTokensTransferInput, TForeignOrTokenAsset } from '../../types'
+import type { TXTokensTransferOptions, TForeignOrTokenAsset } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Interlay from './Interlay'
@@ -21,7 +21,7 @@ describe('Interlay', () => {
       assetId: '456'
     },
     amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+  } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     interlay = getNode<ApiPromise, Extrinsic, 'Interlay'>('Interlay')
