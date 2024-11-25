@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { validateDestinationAddress } from './validateDestinationAddress'
 import { ethers } from 'ethers'
-import { isNodeEvm } from '../assets'
-import { InvalidAddressError } from '../../errors'
-import { isTMultiLocation } from './utils'
-import type { TAddress, TDestination } from '../../types'
+import { isNodeEvm } from '../../assets'
+import { InvalidAddressError } from '../../../errors'
+import { isTMultiLocation } from './../utils'
+import type { TAddress, TDestination } from '../../../types'
 
 vi.mock('ethers')
-vi.mock('../assets')
-vi.mock('./utils')
+vi.mock('../../assets')
+vi.mock('../utils')
 
 describe('validateDestinationAddress', () => {
   const mockedIsAddress = vi.mocked(ethers.isAddress)

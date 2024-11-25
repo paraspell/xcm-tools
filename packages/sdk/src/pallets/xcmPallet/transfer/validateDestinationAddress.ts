@@ -1,8 +1,8 @@
 import { ethers } from 'ethers'
-import type { TAddress, TDestination } from '../../types'
-import { isNodeEvm } from '../assets'
-import { InvalidAddressError } from '../../errors'
-import { isTMultiLocation } from './utils'
+import type { TAddress, TDestination } from '../../../types'
+import { isNodeEvm } from '../../assets'
+import { isTMultiLocation } from '../utils'
+import { InvalidAddressError } from '../../../errors'
 
 export const validateDestinationAddress = (
   address: TAddress,

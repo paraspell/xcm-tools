@@ -10,6 +10,7 @@ import type { TApiOrUrl } from '../types/TApi'
 export interface IPolkadotApi<TApi, TRes> {
   setApi(api?: TApiOrUrl<TApi>): void
   getApi(): TApi
+  getApiOrUrl(): TApiOrUrl<TApi> | undefined
   init(node: TNodeWithRelayChains): Promise<void>
   createApiInstance: (wsUrl: string) => Promise<TApi>
   createAccountId(address: string): THexString

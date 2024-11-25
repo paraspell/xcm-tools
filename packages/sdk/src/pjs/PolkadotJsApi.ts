@@ -33,6 +33,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     this._api = api
   }
 
+  getApiOrUrl(): TPjsApiOrUrl | undefined {
+    return this._api
+  }
+
   getApi(): TPjsApi {
     return this.api
   }
