@@ -45,6 +45,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     this._api = api
   }
 
+  getApiOrUrl(): TPapiApiOrUrl | undefined {
+    return this._api
+  }
+
   getApi(): TPapiApi {
     return this.api
   }
