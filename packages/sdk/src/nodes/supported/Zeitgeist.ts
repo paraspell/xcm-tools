@@ -5,7 +5,7 @@ import type { TAsset } from '../../types'
 import {
   type IXTokensTransfer,
   Version,
-  type XTokensTransferInput,
+  type TXTokensTransferOptions,
   type TXcmForeignAsset,
   type TZeitgeistAsset
 } from '../../types'
@@ -28,7 +28,7 @@ class Zeitgeist<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
     return { ForeignAsset: Number(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)

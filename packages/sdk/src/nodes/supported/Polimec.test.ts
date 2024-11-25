@@ -4,7 +4,7 @@ import { Version } from '../../types'
 import { ScenarioNotSupportedError, InvalidCurrencyError } from '../../errors'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '@polkadot/types/interfaces'
-import type { PolkadotXCMTransferInput, TPjsApi, TRelayToParaOptions } from '../../pjs'
+import type { TPolkadotXCMTransferOptions, TPjsApi, TRelayToParaOptions } from '../../pjs'
 import type { IPolkadotApi } from '../../api'
 import { getNode } from '../../utils'
 
@@ -51,7 +51,7 @@ describe('Polimec', () => {
       scenario: 'ParaToPara',
       paraIdTo: 2000,
       asset: { symbol: 'DOT' }
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     await expect(polimec.transferPolkadotXCM(input)).rejects.toThrow(ScenarioNotSupportedError)
   })
@@ -66,7 +66,7 @@ describe('Polimec', () => {
       scenario: 'ParaToRelay',
       paraIdTo: 2000,
       asset: { symbol: 'DOT' }
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(mockApi, 'callTxMethod')
 
@@ -85,7 +85,7 @@ describe('Polimec', () => {
       scenario: 'ParaToRelay',
       paraIdTo: 2000,
       asset: { symbol: 'DOT' }
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(mockApi, 'callTxMethod')
 
@@ -105,7 +105,7 @@ describe('Polimec', () => {
       scenario: 'ParaToPara',
       paraIdTo: 2000,
       asset: { symbol: 'DOT' }
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
@@ -139,7 +139,7 @@ describe('Polimec', () => {
       scenario: 'ParaToPara',
       paraIdTo: 2000,
       asset: { symbol: 'DOT' }
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
@@ -175,7 +175,7 @@ describe('Polimec', () => {
       scenario: 'ParaToPara',
       paraIdTo: 2000,
       asset: { symbol: 'XYZ', multiLocation: assetMultiLocation }
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
@@ -209,7 +209,7 @@ describe('Polimec', () => {
       scenario: 'ParaToPara',
       paraIdTo: 2000,
       asset: { symbol: 'XYZ' }
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     await expect(polimec.transferPolkadotXCM(input)).rejects.toThrow(InvalidCurrencyError)
   })

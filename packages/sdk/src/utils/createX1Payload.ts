@@ -1,5 +1,5 @@
-import type { Junctions, TJunction } from '../types'
+import type { TJunctions, TJunction } from '../types'
 import { Version } from '../types'
 
-export const createX1Payload = (version: Version, junction: TJunction): Junctions =>
+export const createX1Payload = (version: Version, junction: TJunction): TJunctions =>
   version === Version.V4 ? { X1: [junction] } : { X1: junction }

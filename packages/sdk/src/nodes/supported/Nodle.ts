@@ -5,7 +5,7 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import type { IPolkadotXCMTransfer, PolkadotXCMTransferInput } from '../../types'
+import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import { Version, type TSerializedApiCall } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
@@ -15,7 +15,7 @@ class Nodle<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXC
     super('Nodle', 'nodle', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { asset, scenario } = input
 
     if (scenario !== 'ParaToPara') {

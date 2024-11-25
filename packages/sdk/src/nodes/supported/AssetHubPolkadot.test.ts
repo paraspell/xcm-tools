@@ -4,13 +4,12 @@ import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type AssetHubPolkadot from './AssetHubPolkadot'
 import type { TMultiLocationHeader } from '../../types'
-import { Version, type PolkadotXCMTransferInput, type TRelayToParaOptions } from '../../types'
+import { Version, type TPolkadotXCMTransferOptions } from '../../types'
 import { getOtherAssets } from '../../pallets/assets'
 import { getNode } from '../../utils'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic, TPjsApi } from '../../pjs/types'
-import { constructRelayToParaParameters } from '../../pallets/xcmPallet/constructRelayToParaParameters'
 import type { IPolkadotApi } from '../../api'
 
 vi.mock('ethers', () => ({
@@ -38,10 +37,6 @@ vi.mock('../../utils/generateAddressPayload', () => ({
   generateAddressPayload: vi.fn()
 }))
 
-vi.mock('../../pallets/xcmPallet/constructRelayToParaParameters', () => ({
-  constructRelayToParaParameters: vi.fn()
-}))
-
 describe('AssetHubPolkadot', () => {
   let assetHub: AssetHubPolkadot<ApiPromise, Extrinsic>
 
@@ -64,7 +59,7 @@ describe('AssetHubPolkadot', () => {
     paraIdTo: 1001,
     amount: '1000',
     address: 'address'
-  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+  } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -89,7 +84,7 @@ describe('AssetHubPolkadot', () => {
         .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
         .mockReturnValue(mockResult)
 
-      const input = { ...mockInput, asset: { symbol: 'DOT' } } as PolkadotXCMTransferInput<
+      const input = { ...mockInput, asset: { symbol: 'DOT' } } as TPolkadotXCMTransferOptions<
         ApiPromise,
         Extrinsic
       >
@@ -135,7 +130,7 @@ describe('AssetHubPolkadot', () => {
         ...mockInput,
         asset: { symbol: 'ETH' },
         destination: 'Ethereum'
-      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+      } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
       const result = assetHub.handleEthBridgeTransfer(input)
 
       expect(result).toStrictEqual(mockResult)
@@ -155,7 +150,7 @@ describe('AssetHubPolkadot', () => {
         destination: 'Mythos',
         paraIdTo: 2000,
         currencyId: 'MYTH'
-      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+      } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
       const result = assetHub.handleMythosTransfer(input)
 
       expect(result).toStrictEqual(mockResult)
@@ -171,7 +166,7 @@ describe('AssetHubPolkadot', () => {
         currencyId: undefined,
         scenario: 'ParaToPara',
         destination: 'Acala'
-      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+      } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
       expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
@@ -183,7 +178,7 @@ describe('AssetHubPolkadot', () => {
         currencyId: undefined,
         scenario: 'ParaToPara',
         destination: 'Acala'
-      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+      } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
       expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
@@ -198,7 +193,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         scenario: 'RelayToPara'
-      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+      } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
       const result = await assetHub.transferPolkadotXCM(input)
       expect(result).toStrictEqual(mockResult)
@@ -314,21 +309,12 @@ describe('AssetHubPolkadot', () => {
     })
   })
 
-  it('should call transferRelayToPara with the correct parameters', () => {
-    const expectedParameters = { param: 'value' }
-    vi.mocked(constructRelayToParaParameters).mockReturnValue(expectedParameters)
+  it('should call getRelayToParaOverrides with the correct parameters', () => {
+    const result = assetHub.getRelayToParaOverrides()
 
-    const mockOptions = {
-      destination: 'BridgeHubKusama'
-    } as TRelayToParaOptions<ApiPromise, Extrinsic>
-
-    const result = assetHub.transferRelayToPara(mockOptions)
-
-    expect(constructRelayToParaParameters).toHaveBeenCalledWith(mockOptions, Version.V3, true)
     expect(result).toEqual({
-      module: 'XcmPallet',
       section: 'limited_teleport_assets',
-      parameters: expectedParameters
+      includeFee: true
     })
   })
 })

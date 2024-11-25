@@ -4,7 +4,7 @@ import { InvalidCurrencyError, NodeNotSupportedError } from '../../errors'
 import {
   type IXTokensTransfer,
   Version,
-  type XTokensTransferInput,
+  type TXTokensTransferOptions,
   type TSerializedApiCall
 } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -15,7 +15,7 @@ class Integritee<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToke
     super('Integritee', 'integritee', 'kusama', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
     if (asset.symbol === 'KSM')
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency KSM`)

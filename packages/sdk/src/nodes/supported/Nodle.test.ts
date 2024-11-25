@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { PolkadotXCMTransferInput } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { getNode } from '../../utils'
@@ -19,7 +19,7 @@ describe('Nodle', () => {
     asset: { symbol: 'NODL' },
     amount: '100',
     scenario: 'ParaToPara'
-  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+  } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     nodle = getNode<ApiPromise, Extrinsic, 'Nodle'>('Nodle')

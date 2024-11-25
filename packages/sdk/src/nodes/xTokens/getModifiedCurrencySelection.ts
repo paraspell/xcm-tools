@@ -7,7 +7,7 @@ import type {
   TMultiAsset,
   TMultiLocation,
   Version,
-  XTokensTransferInput
+  TXTokensTransferOptions
 } from '../../types'
 import { Parents } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
@@ -18,7 +18,7 @@ const buildMultiLocation = <TApi, TRes>({
   asset,
   origin,
   destination
-}: XTokensTransferInput<TApi, TRes>): TMultiLocation => {
+}: TXTokensTransferOptions<TApi, TRes>): TMultiLocation => {
   if (!isForeignAsset(asset)) {
     if (typeof destination === 'object') {
       return destination
@@ -81,7 +81,7 @@ const buildMultiLocation = <TApi, TRes>({
 
 export const getModifiedCurrencySelection = <TApi, TRes>(
   version: Version,
-  input: XTokensTransferInput<TApi, TRes>
+  input: TXTokensTransferOptions<TApi, TRes>
 ): TCurrencySelectionHeader | TCurrencySelectionHeaderArr => {
   const { amount, feeAsset } = input
   const multiLocation = buildMultiLocation(input)

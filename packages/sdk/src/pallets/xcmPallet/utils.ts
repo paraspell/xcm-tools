@@ -7,7 +7,7 @@ import {
   type TDestination,
   type TCurrencySelectionHeaderArr
 } from '../../types'
-import type { Junctions, TJunction } from '../../types/TMultiLocation'
+import type { TJunctions, TJunction } from '../../types/TMultiLocation'
 import { type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
 import { findParachainJunction } from './findParachainJunction'
@@ -67,7 +67,7 @@ export const createCurrencySpec = (
   version: Version,
   parents: Parents,
   overriddenCurrency?: TMultiLocation | TMultiAsset[],
-  interior: Junctions | 'Here' = 'Here'
+  interior: TJunctions | 'Here' = 'Here'
 ): TCurrencySelectionHeaderArr => {
   if (!overriddenCurrency) {
     return {

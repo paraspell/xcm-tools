@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Basilisk Parachain
 
 import { InvalidCurrencyError } from '../../errors'
-import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
+import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
@@ -12,7 +12,7 @@ class Basilisk<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     super('Basilisk', 'basilisk', 'kusama', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
 
     if (!isForeignAsset(asset)) {

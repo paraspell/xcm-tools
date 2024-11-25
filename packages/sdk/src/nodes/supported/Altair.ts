@@ -2,7 +2,7 @@
 
 import { InvalidCurrencyError } from '../../errors'
 import type { TAsset, TForeignOrNativeAsset } from '../../types'
-import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
+import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
@@ -22,7 +22,7 @@ class Altair<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
     return { ForeignAsset: Number(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)

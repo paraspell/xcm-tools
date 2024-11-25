@@ -5,7 +5,7 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import type { IXTokensTransfer, TXcmAsset, XTokensTransferInput } from '../../types'
+import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { Version, type TSerializedApiCall } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
@@ -16,7 +16,7 @@ class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     super('Pendulum', 'pendulum', 'polkadot', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { scenario, asset } = input
 
     if (scenario !== 'ParaToPara') {

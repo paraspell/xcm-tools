@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { XTokensTransferInput } from '../../types'
+import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Parallel from './Parallel'
@@ -18,7 +18,7 @@ describe('Parallel', () => {
   const mockInput = {
     asset: { symbol: 'PARA', assetId: '123' },
     amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+  } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     parallel = getNode<ApiPromise, Extrinsic, 'Parallel'>('Parallel')

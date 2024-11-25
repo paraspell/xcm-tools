@@ -1,6 +1,6 @@
 import { type Version } from './TTransfer'
 
-export type JunctionType =
+export type TJunctionType =
   | 'Parachain'
   | 'AccountId32'
   | 'AccountIndex64'
@@ -12,81 +12,81 @@ export type JunctionType =
   | 'Plurality'
   | 'GlobalConsensus'
 
-type NetworkId = string | null
-type BodyId = string | null
-type BodyPart = string | null
-type StringOrNumber = string | number
-type StringOrNumberOrBigInt = StringOrNumber | bigint
-type HexString = string
+type TNetworkId = string | null
+type TBodyId = string | null
+type TBodyPart = string | null
+type TStringOrNumber = string | number
+type TStringOrNumberOrBigInt = TStringOrNumber | bigint
+type THexString = string
 
-export interface JunctionParachain {
-  Parachain: StringOrNumberOrBigInt | undefined
+export type TJunctionParachain = {
+  Parachain: TStringOrNumberOrBigInt | undefined
 }
 
-interface JunctionAccountId32 {
+type TJunctionAccountId32 = {
   AccountId32: {
-    network?: NetworkId
-    id: HexString
+    network?: TNetworkId
+    id: THexString
   }
 }
 
-interface JunctionAccountIndex64 {
+type TJunctionAccountIndex64 = {
   AccountIndex64: {
-    network: NetworkId
-    index: StringOrNumberOrBigInt
+    network: TNetworkId
+    index: TStringOrNumberOrBigInt
   }
 }
 
-interface JunctionAccountKey20 {
+type TJunctionAccountKey20 = {
   AccountKey20: {
-    network?: NetworkId
-    key: HexString
+    network?: TNetworkId
+    key: THexString
   }
 }
 
-interface JunctionPalletInstance {
-  PalletInstance: StringOrNumberOrBigInt
+type TJunctionPalletInstance = {
+  PalletInstance: TStringOrNumberOrBigInt
 }
 
-interface JunctionGeneralIndex {
-  GeneralIndex: StringOrNumberOrBigInt
+type TJunctionGeneralIndex = {
+  GeneralIndex: TStringOrNumberOrBigInt
 }
 
-interface JunctionGeneralKey {
+type TJunctionGeneralKey = {
   GeneralKey: {
-    length: StringOrNumberOrBigInt
-    data: HexString
+    length: TStringOrNumberOrBigInt
+    data: THexString
   }
 }
 
-interface JunctionOnlyChild {
+type TJunctionOnlyChild = {
   OnlyChild: string
 }
 
-interface JunctionPlurality {
+type TJunctionPlurality = {
   Plurality: {
-    id: BodyId
-    part: BodyPart
+    id: TBodyId
+    part: TBodyPart
   }
 }
 
-interface JunctionGlobalConsensus {
-  GlobalConsensus: NetworkId | object
+type TJunctionGlobalConsensus = {
+  GlobalConsensus: TNetworkId | object
 }
 
 export type TJunction =
-  | JunctionParachain
-  | JunctionAccountId32
-  | JunctionAccountIndex64
-  | JunctionAccountKey20
-  | JunctionPalletInstance
-  | JunctionGeneralIndex
-  | JunctionGeneralKey
-  | JunctionOnlyChild
-  | JunctionPlurality
-  | JunctionGlobalConsensus
+  | TJunctionParachain
+  | TJunctionAccountId32
+  | TJunctionAccountIndex64
+  | TJunctionAccountKey20
+  | TJunctionPalletInstance
+  | TJunctionGeneralIndex
+  | TJunctionGeneralKey
+  | TJunctionOnlyChild
+  | TJunctionPlurality
+  | TJunctionGlobalConsensus
 
-export interface Junctions {
+export interface TJunctions {
   Here?: null
   X1?: TJunction | [TJunction]
   X2?: [TJunction, TJunction]
@@ -99,8 +99,8 @@ export interface Junctions {
 }
 
 export interface TMultiLocation {
-  parents: StringOrNumber
-  interior: Junctions | 'Here'
+  parents: TStringOrNumber
+  interior: TJunctions | 'Here'
 }
 
 export type TMultiLocationHeader = {

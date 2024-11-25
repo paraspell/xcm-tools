@@ -4,7 +4,7 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import type { PolkadotXCMTransferInput } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type Mythos from './Mythos'
@@ -25,7 +25,7 @@ describe('Mythos', () => {
     scenario: 'ParaToPara',
     destination: 'Acala',
     amount: '100'
-  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+  } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     mythos = getNode<ApiPromise, Extrinsic, 'Mythos'>('Mythos')
@@ -61,7 +61,7 @@ describe('Mythos', () => {
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as PolkadotXCMTransferInput<
+    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
       ApiPromise,
       Extrinsic
     >

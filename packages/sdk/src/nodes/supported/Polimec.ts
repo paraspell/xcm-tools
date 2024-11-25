@@ -4,7 +4,7 @@ import type { IPolkadotApi } from '../../api'
 import { createMultiAsset, createPolkadotXcmHeader } from '../../pallets/xcmPallet/utils'
 import type {
   IPolkadotXCMTransfer,
-  PolkadotXCMTransferInput,
+  TPolkadotXCMTransferOptions,
   TAddress,
   TAsset,
   TCurrencySelectionHeaderArr,
@@ -104,7 +104,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
   }
 
   async transferPolkadotXCM<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
     const { api, version = this.version, destination, address, amount, scenario, paraIdTo } = input
 

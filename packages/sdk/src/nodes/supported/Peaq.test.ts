@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ScenarioNotSupportedError, NodeNotSupportedError } from '../../errors'
-import type { XTokensTransferInput } from '../../types'
+import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Peaq from './Peaq'
@@ -20,7 +20,7 @@ describe('Peaq', () => {
     asset: { assetId: '123' },
     scenario: 'ParaToPara',
     amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+  } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     peaq = getNode<ApiPromise, Extrinsic, 'Peaq'>('Peaq')
@@ -42,7 +42,7 @@ describe('Peaq', () => {
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as XTokensTransferInput<
+    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as TXTokensTransferOptions<
       ApiPromise,
       Extrinsic
     >

@@ -9,7 +9,7 @@ import {
   type IXTokensTransfer,
   type TSerializedApiCall,
   Version,
-  type XTokensTransferInput
+  type TXTokensTransferOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
@@ -19,7 +19,7 @@ class Bajun<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
     super('Bajun', 'bajun', 'kusama', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { scenario, asset } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)

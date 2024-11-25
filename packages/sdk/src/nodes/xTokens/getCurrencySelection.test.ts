@@ -3,7 +3,7 @@ import { getNode } from '../../utils'
 import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
 import { getCurrencySelection } from './getCurrencySelection'
 import type { TCurrencySelectionHeader } from '../../types'
-import { Parents, Version, type XTokensTransferInput } from '../../types'
+import { Parents, Version, type TXTokensTransferOptions } from '../../types'
 import type ParachainNode from '../ParachainNode'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
@@ -45,7 +45,7 @@ describe('getCurrencySelection', () => {
         parents: Parents.ZERO,
         interior: 'Here'
       }
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
     const currencySelection = '123'
     const isAssetHub = false
 
@@ -67,7 +67,7 @@ describe('getCurrencySelection', () => {
       },
       paraIdTo: 1000,
       overridedCurrencyMultiLocation: undefined
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
     const currencySelection = '123'
     const isAssetHub = true
 
@@ -90,7 +90,7 @@ describe('getCurrencySelection', () => {
       },
       paraIdTo: 3000,
       overridedCurrencyMultiLocation: undefined
-    } as XTokensTransferInput<ApiPromise, Extrinsic>
+    } as TXTokensTransferOptions<ApiPromise, Extrinsic>
     const currencySelection = '123'
     const isAssetHub = false
 

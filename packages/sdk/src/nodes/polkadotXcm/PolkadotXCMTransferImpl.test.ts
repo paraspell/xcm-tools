@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import PolkadotXCMTransferImpl from './PolkadotXCMTransferImpl'
 import type {
-  PolkadotXcmSection,
-  PolkadotXCMTransferInput,
+  TPolkadotXcmSection,
+  TPolkadotXCMTransferOptions,
   TCurrencySelectionHeaderArr,
   TMultiLocationHeader
 } from '../../types'
@@ -50,7 +50,7 @@ const mockCurrencySelection: TCurrencySelectionHeaderArr = {
 }
 
 const mockFeeAsset = 1
-const mockSection: PolkadotXcmSection = 'limited_reserve_transfer_assets'
+const mockSection: TPolkadotXcmSection = 'limited_reserve_transfer_assets'
 
 describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
   it('should call api.tx[module][section] with correct parameters when fees is undefined', () => {
@@ -63,7 +63,7 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         addressSelection: mockAddressSelection,
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset
-      } as unknown as PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
+      } as unknown as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>,
       mockSection,
       undefined
     )
@@ -104,7 +104,7 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         addressSelection: mockAddressSelection,
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset
-      } as unknown as PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
+      } as unknown as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>,
       mockSection,
       'Unlimited'
     )
@@ -146,7 +146,7 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         addressSelection: mockAddressSelection,
         currencySelection: mockCurrencySelection,
         feeAsset: mockFeeAsset
-      } as unknown as PolkadotXCMTransferInput<ApiPromise, Extrinsic>,
+      } as unknown as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>,
       mockSection,
       { Limited: '1000' }
     )

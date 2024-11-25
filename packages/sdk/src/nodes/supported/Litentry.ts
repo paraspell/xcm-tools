@@ -3,7 +3,7 @@
 import {
   type IXTokensTransfer,
   Version,
-  type XTokensTransferInput,
+  type TXTokensTransferOptions,
   type TSelfReserveAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -14,7 +14,7 @@ class Litentry<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     super('Litentry', 'litentry', 'polkadot', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const currencySelection: TSelfReserveAsset = 'SelfReserve'
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
   }

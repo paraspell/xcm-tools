@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { constructRelayToParaParameters } from '../../pallets/xcmPallet/constructRelayToParaParameters'
-import type { TRelayToParaOptions, PolkadotXCMTransferInput } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import type Moonbeam from './Moonbeam'
 import { getNode } from '../../utils'
@@ -16,12 +15,8 @@ vi.mock('../polkadotXcm', () => ({
   }
 }))
 
-vi.mock('../../pallets/xcmPallet/constructRelayToParaParameters', () => ({
-  constructRelayToParaParameters: vi.fn()
-}))
-
 describe('Moonbeam', () => {
-  let moonbeam: Moonbeam<ApiPromise, Extrinsic>
+  let node: Moonbeam<ApiPromise, Extrinsic>
 
   const api = {
     createAccountId: vi.fn()
@@ -29,21 +24,17 @@ describe('Moonbeam', () => {
   const mockInput = {
     amount: '100',
     api
-  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
-
-  const mockOptions = {
-    destination: 'Moonbeam'
-  } as TRelayToParaOptions<ApiPromise, Extrinsic>
+  } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    moonbeam = getNode<ApiPromise, Extrinsic, 'Moonbeam'>('Moonbeam')
+    node = getNode<ApiPromise, Extrinsic, 'Moonbeam'>('Moonbeam')
   })
 
   it('should initialize with correct values', () => {
-    expect(moonbeam.node).toBe('Moonbeam')
-    expect(moonbeam.info).toBe('moonbeam')
-    expect(moonbeam.type).toBe('polkadot')
-    expect(moonbeam.version).toBe(Version.V3)
+    expect(node.node).toBe('Moonbeam')
+    expect(node.info).toBe('moonbeam')
+    expect(node.type).toBe('polkadot')
+    expect(node.version).toBe(Version.V3)
   })
 
   it('should use correct multiLocation when transfering native asset', async () => {
@@ -52,11 +43,11 @@ describe('Moonbeam', () => {
       ...mockInput,
       scenario: 'ParaToPara',
       asset
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    await moonbeam.transferPolkadotXCM(mockInputNative)
+    await node.transferPolkadotXCM(mockInputNative)
 
     expect(spy).toHaveBeenCalledWith(
       {
@@ -92,11 +83,11 @@ describe('Moonbeam', () => {
       ...mockInput,
       scenario: 'ParaToRelay',
       asset
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    await moonbeam.transferPolkadotXCM(mockInputDot)
+    await node.transferPolkadotXCM(mockInputDot)
 
     expect(spy).toHaveBeenCalledWith(
       {
@@ -143,11 +134,11 @@ describe('Moonbeam', () => {
       ...mockInput,
       scenario: 'ParaToPara',
       asset
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    await moonbeam.transferPolkadotXCM(mockInputUsdt)
+    await node.transferPolkadotXCM(mockInputUsdt)
 
     expect(spy).toHaveBeenCalledWith(
       {
@@ -170,17 +161,11 @@ describe('Moonbeam', () => {
     )
   })
 
-  it('should call transferRelayToPara with the correct parameters', () => {
-    const expectedParameters = { param: 'value' }
-    vi.mocked(constructRelayToParaParameters).mockReturnValue(expectedParameters)
-
-    const result = moonbeam.transferRelayToPara(mockOptions)
-
-    expect(constructRelayToParaParameters).toHaveBeenCalledWith(mockOptions, Version.V3, true)
+  it('should call getRelayToParaOverrides with the correct parameters', () => {
+    const result = node.getRelayToParaOverrides()
     expect(result).toEqual({
-      module: 'XcmPallet',
       section: 'limited_reserve_transfer_assets',
-      parameters: expectedParameters
+      includeFee: true
     })
   })
 })

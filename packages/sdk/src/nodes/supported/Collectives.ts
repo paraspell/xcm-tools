@@ -1,15 +1,12 @@
 // Contains detailed structure of XCM call construction for Collectives Parachain
 
 import { ScenarioNotSupportedError } from '../../errors'
-import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { TAsset } from '../../types'
+import type { TAsset, TRelayToParaOverrides } from '../../types'
 import {
   type IPolkadotXCMTransfer,
-  type PolkadotXCMTransferInput,
+  type TPolkadotXCMTransferOptions,
   Version,
-  type TSerializedApiCall,
-  type TScenario,
-  type TRelayToParaOptions
+  type TScenario
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
@@ -19,7 +16,7 @@ class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolk
     super('Collectives', 'polkadotCollectives', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { scenario } = input
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
@@ -29,13 +26,8 @@ class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolk
     )
   }
 
-  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
-    const { version = Version.V3 } = options
-    return {
-      module: 'XcmPallet',
-      section: 'limited_teleport_assets',
-      parameters: constructRelayToParaParameters(options, version, true)
-    }
+  getRelayToParaOverrides(): TRelayToParaOverrides {
+    return { section: 'limited_teleport_assets', includeFee: true }
   }
 
   createCurrencySpec(amount: string, scenario: TScenario, version: Version, asset?: TAsset) {

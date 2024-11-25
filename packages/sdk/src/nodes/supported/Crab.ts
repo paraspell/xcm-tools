@@ -3,7 +3,7 @@
 import type { TAsset, TCurrencySelectionHeaderArr } from '../../types'
 import {
   type IPolkadotXCMTransfer,
-  type PolkadotXCMTransferInput,
+  type TPolkadotXCMTransferOptions,
   Version,
   type TSerializedApiCall,
   type TScenario
@@ -19,7 +19,7 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
     super('Crab', 'crab', 'kusama', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     // TESTED https://kusama.subscan.io/xcm_message/kusama-ce7396ec470ba0c6516a50075046ee65464572dc
     if (input.scenario === 'ParaToPara') {
       return Promise.resolve(

@@ -4,7 +4,7 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import type { XTokensTransferInput, TXcmAsset } from '../../types'
+import type { TXTokensTransferOptions, TXcmAsset } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Pendulum from './Pendulum'
@@ -24,7 +24,7 @@ describe('Pendulum', () => {
     asset: { symbol: 'PEN', assetId: '123' },
     scenario: 'ParaToPara',
     amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+  } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     pendulum = getNode<ApiPromise, Extrinsic, 'Pendulum'>('Pendulum')
@@ -47,7 +47,7 @@ describe('Pendulum', () => {
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as XTokensTransferInput<
+    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as TXTokensTransferOptions<
       ApiPromise,
       Extrinsic
     >

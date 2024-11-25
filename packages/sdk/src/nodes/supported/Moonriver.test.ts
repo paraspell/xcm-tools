@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { constructRelayToParaParameters } from '../../pallets/xcmPallet/constructRelayToParaParameters'
-import type { TRelayToParaOptions, PolkadotXCMTransferInput } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import type Moonriver from './Moonriver'
 import { getNode } from '../../utils'
@@ -16,12 +15,8 @@ vi.mock('../polkadotXcm', () => ({
   }
 }))
 
-vi.mock('../../pallets/xcmPallet/constructRelayToParaParameters', () => ({
-  constructRelayToParaParameters: vi.fn()
-}))
-
 describe('Moonriver', () => {
-  let moonriver: Moonriver<ApiPromise, Extrinsic>
+  let node: Moonriver<ApiPromise, Extrinsic>
 
   const api = {
     createAccountId: vi.fn()
@@ -29,21 +24,17 @@ describe('Moonriver', () => {
   const mockInput = {
     amount: '100',
     api
-  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
-
-  const mockOptions = {
-    destination: 'Moonriver'
-  } as TRelayToParaOptions<ApiPromise, Extrinsic>
+  } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    moonriver = getNode<ApiPromise, Extrinsic, 'Moonriver'>('Moonriver')
+    node = getNode<ApiPromise, Extrinsic, 'Moonriver'>('Moonriver')
   })
 
   it('should initialize with correct values', () => {
-    expect(moonriver.node).toBe('Moonriver')
-    expect(moonriver.info).toBe('moonriver')
-    expect(moonriver.type).toBe('kusama')
-    expect(moonriver.version).toBe(Version.V3)
+    expect(node.node).toBe('Moonriver')
+    expect(node.info).toBe('moonriver')
+    expect(node.type).toBe('kusama')
+    expect(node.version).toBe(Version.V3)
   })
 
   it('should use correct multiLocation when transfering native asset', async () => {
@@ -52,11 +43,11 @@ describe('Moonriver', () => {
       ...mockInput,
       scenario: 'ParaToPara',
       asset
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    await moonriver.transferPolkadotXCM(mockInputNative)
+    await node.transferPolkadotXCM(mockInputNative)
 
     expect(spy).toHaveBeenCalledWith(
       {
@@ -92,11 +83,11 @@ describe('Moonriver', () => {
       ...mockInput,
       scenario: 'ParaToRelay',
       asset
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    await moonriver.transferPolkadotXCM(mockInputDot)
+    await node.transferPolkadotXCM(mockInputDot)
 
     expect(spy).toHaveBeenCalledWith(
       {
@@ -143,11 +134,11 @@ describe('Moonriver', () => {
       ...mockInput,
       scenario: 'ParaToPara',
       asset
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    await moonriver.transferPolkadotXCM(mockInputUsdt)
+    await node.transferPolkadotXCM(mockInputUsdt)
 
     expect(spy).toHaveBeenCalledWith(
       {
@@ -170,23 +161,17 @@ describe('Moonriver', () => {
     )
   })
 
-  it('should call transferRelayToPara with the correct parameters', () => {
-    const expectedParameters = { param: 'value' }
-    vi.mocked(constructRelayToParaParameters).mockReturnValue(expectedParameters)
-
-    const result = moonriver.transferRelayToPara(mockOptions)
-
-    expect(constructRelayToParaParameters).toHaveBeenCalledWith(mockOptions, Version.V3, true)
+  it('should call getRelayToParaOverrides with the correct parameters', () => {
+    const result = node.getRelayToParaOverrides()
     expect(result).toEqual({
-      module: 'XcmPallet',
       section: 'limited_reserve_transfer_assets',
-      parameters: expectedParameters
+      includeFee: true
     })
   })
 
   describe('getProvider', () => {
     it('should return Moonbeam foundation provider', () => {
-      expect(moonriver.getProvider()).toBe('wss://wss.api.moonriver.moonbeam.network')
+      expect(node.getProvider()).toBe('wss://wss.api.moonriver.moonbeam.network')
     })
   })
 })

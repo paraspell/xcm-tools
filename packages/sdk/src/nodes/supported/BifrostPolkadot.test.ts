@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type {
-  XTokensTransferInput,
-  PolkadotXCMTransferInput,
+  TXTokensTransferOptions,
+  TPolkadotXCMTransferOptions,
   TSendInternalOptions
 } from '../../types'
 import { Parents, Version } from '../../types'
@@ -32,12 +32,12 @@ describe('BifrostPolkadot', () => {
   const mockXTokensInput = {
     asset: { symbol: 'BNC' },
     amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+  } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   const mockPolkadotXCMInput = {
     amount: '200',
     asset: { symbol: 'WETH' }
-  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+  } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     bifrostPolkadot = getNode<ApiPromise, Extrinsic, 'BifrostPolkadot'>('BifrostPolkadot')

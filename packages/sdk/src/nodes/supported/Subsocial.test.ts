@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { PolkadotXCMTransferInput } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import Subsocial from './Subsocial'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
@@ -30,7 +30,10 @@ describe('Subsocial', () => {
     })
 
     it('should not suppoert ParaToRelay scenario', () => {
-      const input = { scenario: 'ParaToRelay' } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+      const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
+        ApiPromise,
+        Extrinsic
+      >
       expect(() => subsocial.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
 
@@ -38,7 +41,7 @@ describe('Subsocial', () => {
       const input = {
         scenario: 'ParaToPara',
         asset: { symbol: 'XYZ' }
-      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+      } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
       expect(() => subsocial.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
     })
 
@@ -46,7 +49,7 @@ describe('Subsocial', () => {
       const input = {
         scenario: 'ParaToPara',
         asset: { symbol: 'SUB' }
-      } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+      } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
       const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
-import type { XTokensTransferInput, TReserveAsset } from '../../types'
+import type { TXTokensTransferOptions, TReserveAsset } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../xTokens'
 import type Crust from './Crust'
@@ -22,7 +22,7 @@ describe('Crust', () => {
       assetId: '123'
     },
     amount: '100'
-  } as XTokensTransferInput<ApiPromise, Extrinsic>
+  } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
     crust = getNode<ApiPromise, Extrinsic, 'Crust'>('Crust')

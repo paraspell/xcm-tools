@@ -3,26 +3,25 @@
 import { ethers } from 'ethers'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import {
-  constructRelayToParaParameters,
   createBridgeCurrencySpec,
   createBridgePolkadotXcmDest,
   createCurrencySpec,
   createPolkadotXcmHeader
 } from '../../pallets/xcmPallet/utils'
 import type {
-  Junctions,
-  PolkadotXcmSection,
+  TJunctions,
+  TPolkadotXcmSection,
   TAsset,
   TDestination,
-  TSerializedApiCall
+  TSerializedApiCall,
+  TRelayToParaOverrides
 } from '../../types'
 import {
   type IPolkadotXCMTransfer,
-  type PolkadotXCMTransferInput,
+  type TPolkadotXCMTransferOptions,
   Version,
   Parents,
   type TScenario,
-  type TRelayToParaOptions,
   type TMultiAsset,
   type TMultiLocation
 } from '../../types'
@@ -37,7 +36,7 @@ import { isForeignAsset } from '../../utils/assets'
 import { getParaId } from '../config'
 
 const createCustomXcmToBifrost = <TApi, TRes>(
-  { api, address, scenario }: PolkadotXCMTransferInput<TApi, TRes>,
+  { api, address, scenario }: TPolkadotXCMTransferOptions<TApi, TRes>,
   version: Version
 ) => ({
   [version]: [
@@ -61,14 +60,14 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   public handleBridgeTransfer<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>,
+    input: TPolkadotXCMTransferOptions<TApi, TRes>,
     targetChain: 'Polkadot' | 'Kusama'
   ) {
     if (
       (targetChain === 'Kusama' && input.asset.symbol?.toUpperCase() === 'KSM') ||
       (targetChain === 'Polkadot' && input.asset.symbol?.toUpperCase() === 'DOT')
     ) {
-      const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
+      const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
         header: createBridgePolkadotXcmDest(
           Version.V4,
@@ -88,7 +87,7 @@ class AssetHubPolkadot<TApi, TRes>
       (targetChain === 'Polkadot' && input.asset.symbol?.toUpperCase() === 'KSM') ||
       (targetChain === 'Kusama' && input.asset.symbol?.toUpperCase() === 'DOT')
     ) {
-      const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
+      const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
         header: createBridgePolkadotXcmDest(
           Version.V3,
@@ -114,7 +113,7 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
-  public handleEthBridgeTransfer<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  public handleEthBridgeTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
     const { api, scenario, destination, paraIdTo, address, asset } = input
 
     if (!ethers.isAddress(address)) {
@@ -130,7 +129,7 @@ class AssetHubPolkadot<TApi, TRes>
       )
     }
 
-    const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
+    const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
       ...input,
       header: createPolkadotXcmHeader(
         scenario,
@@ -167,7 +166,7 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
-  handleMythosTransfer<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>) {
+  handleMythosTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
     const { api, address, amount, asset, overridedCurrency, scenario, destination, paraIdTo } =
       input
     const version = Version.V2
@@ -183,7 +182,7 @@ class AssetHubPolkadot<TApi, TRes>
         }
       }
     }
-    const modifiedInput: PolkadotXCMTransferInput<TApi, TRes> = {
+    const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
       ...input,
       header: this.createPolkadotXcmHeader(scenario, version, destination, paraId),
       addressSelection: generateAddressPayload(
@@ -209,7 +208,7 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
-  handleBifrostEthTransfer = <TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): TRes => {
+  handleBifrostEthTransfer = <TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes => {
     const { api, amount, scenario, version, destination, asset } = input
 
     if (!isForeignAsset(asset)) {
@@ -253,8 +252,8 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   patchInput<TApi, TRes>(
-    input: PolkadotXCMTransferInput<TApi, TRes>
-  ): PolkadotXCMTransferInput<TApi, TRes> {
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): TPolkadotXCMTransferOptions<TApi, TRes> {
     const {
       asset,
       destination,
@@ -310,12 +309,12 @@ class AssetHubPolkadot<TApi, TRes>
     return input
   }
 
-  private getSection(scenario: TScenario, destination?: TDestination): PolkadotXcmSection {
+  private getSection(scenario: TScenario, destination?: TDestination): TPolkadotXcmSection {
     if (destination === 'Polimec') return 'transfer_assets'
     return scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { scenario, asset, destination } = input
 
     if (destination === 'AssetHubKusama') {
@@ -371,13 +370,8 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
-  transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
-    const { version = Version.V3 } = options
-    return {
-      module: 'XcmPallet',
-      section: 'limited_teleport_assets',
-      parameters: constructRelayToParaParameters(options, version, true)
-    }
+  getRelayToParaOverrides(): TRelayToParaOverrides {
+    return { section: 'limited_teleport_assets', includeFee: true }
   }
 
   createCurrencySpec(
@@ -388,7 +382,7 @@ class AssetHubPolkadot<TApi, TRes>
     overridedMultiLocation?: TMultiLocation | TMultiAsset[]
   ) {
     if (scenario === 'ParaToPara') {
-      const interior: Junctions = {
+      const interior: TJunctions = {
         X2: [
           {
             PalletInstance: 50

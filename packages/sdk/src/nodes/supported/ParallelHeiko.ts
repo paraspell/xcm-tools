@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for ParallelHeiko Parachain
 
-import { type IXTokensTransfer, Version, type XTokensTransferInput } from '../../types'
+import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
@@ -9,7 +9,7 @@ class ParallelHeiko<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXT
     super('ParallelHeiko', 'heiko', 'kusama', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>): TRes {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>): TRes {
     return getNode<TApi, TRes, 'Parallel'>('Parallel').transferXTokens(input)
   }
 }

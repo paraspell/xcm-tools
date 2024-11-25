@@ -4,11 +4,11 @@ import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { getAssetId } from '../../pallets/assets'
 import type {
   IPolkadotXCMTransfer,
-  PolkadotXCMTransferInput,
+  TPolkadotXCMTransferOptions,
   TAsset,
   TSendInternalOptions
 } from '../../types'
-import { type IXTokensTransfer, Parents, Version, type XTokensTransferInput } from '../../types'
+import { type IXTokensTransfer, Parents, Version, type TXTokensTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import XTokensTransferImpl from '../xTokens'
@@ -46,7 +46,7 @@ export class BifrostPolkadot<TApi, TRes>
     return isVToken ? { VToken2: id } : { Token2: id }
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
 
     const currencySelection = this.getCurrencySelection(asset)
@@ -54,7 +54,7 @@ export class BifrostPolkadot<TApi, TRes>
   }
 
   // Handles DOT, WETH transfers to AssetHubPolkadot
-  transferPolkadotXCM<TApi, TRes>(input: PolkadotXCMTransferInput<TApi, TRes>): Promise<TRes> {
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { amount, overridedCurrency, asset } = input
 
     return Promise.resolve(

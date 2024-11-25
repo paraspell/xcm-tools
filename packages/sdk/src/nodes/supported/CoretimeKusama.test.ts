@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { constructRelayToParaParameters } from '../../pallets/xcmPallet/utils'
-import type { PolkadotXCMTransferInput, TRelayToParaOptions } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import type CoretimeKusama from './CoretimeKusama'
@@ -19,33 +18,29 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 }))
 
 describe('CoretimeKusama', () => {
-  let coretimeKusama: CoretimeKusama<ApiPromise, Extrinsic>
+  let node: CoretimeKusama<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'ParaToPara',
     asset: { symbol: 'KSM' },
     amount: '100'
-  } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
-
-  const mockOptions = {
-    destination: 'CoretimeKusama'
-  } as TRelayToParaOptions<ApiPromise, Extrinsic>
+  } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
-    coretimeKusama = getNode<ApiPromise, Extrinsic, 'CoretimeKusama'>('CoretimeKusama')
+    node = getNode<ApiPromise, Extrinsic, 'CoretimeKusama'>('CoretimeKusama')
   })
 
   it('should initialize with correct values including assetCheckDisabled', () => {
-    expect(coretimeKusama.node).toBe('CoretimeKusama')
-    expect(coretimeKusama.info).toBe('kusamaCoretime')
-    expect(coretimeKusama.type).toBe('kusama')
-    expect(coretimeKusama.version).toBe(Version.V3)
-    expect(coretimeKusama._assetCheckEnabled).toBe(false)
+    expect(node.node).toBe('CoretimeKusama')
+    expect(node.info).toBe('kusamaCoretime')
+    expect(node.type).toBe('kusama')
+    expect(node.version).toBe(Version.V3)
+    expect(node._assetCheckEnabled).toBe(false)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    await coretimeKusama.transferPolkadotXCM(mockInput)
+    await node.transferPolkadotXCM(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
   })
@@ -55,9 +50,9 @@ describe('CoretimeKusama', () => {
     const inputWithDifferentScenario = {
       ...mockInput,
       scenario: 'RelayToPara'
-    } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+    } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
-    await coretimeKusama.transferPolkadotXCM(inputWithDifferentScenario)
+    await node.transferPolkadotXCM(inputWithDifferentScenario)
 
     expect(spy).toHaveBeenCalledWith(
       inputWithDifferentScenario,
@@ -66,17 +61,12 @@ describe('CoretimeKusama', () => {
     )
   })
 
-  it('should call transferRelayToPara with the correct parameters', () => {
-    const expectedParameters = { param: 'value' }
-    vi.mocked(constructRelayToParaParameters).mockReturnValue(expectedParameters)
+  it('should call getRelayToParaOverrides with the correct parameters', () => {
+    const result = node.getRelayToParaOverrides()
 
-    const result = coretimeKusama.transferRelayToPara(mockOptions)
-
-    expect(constructRelayToParaParameters).toHaveBeenCalledWith(mockOptions, Version.V3, true)
     expect(result).toEqual({
-      module: 'XcmPallet',
       section: 'limited_teleport_assets',
-      parameters: expectedParameters
+      includeFee: true
     })
   })
 })

@@ -1,9 +1,9 @@
 // Contains basic structure of xToken call
 
 import type {
-  XTokensTransferInput,
+  TXTokensTransferOptions,
   TXTokensCurrencySelection,
-  XTokensSection,
+  TXTokensSection,
   TSerializedApiCall
 } from '../../types'
 import { getCurrencySelection } from './getCurrencySelection'
@@ -11,7 +11,7 @@ import { getXTokensParameters } from './getXTokensParameters'
 
 class XTokensTransferImpl {
   static transferXTokens<TApi, TRes>(
-    input: XTokensTransferInput<TApi, TRes>,
+    input: TXTokensTransferOptions<TApi, TRes>,
     currencySelection: TXTokensCurrencySelection,
     fees: string | number = 'Unlimited'
   ): TRes {
@@ -38,7 +38,7 @@ class XTokensTransferImpl {
       currencySelection
     )
 
-    const section: XTokensSection = shouldUseMultiasset
+    const section: TXTokensSection = shouldUseMultiasset
       ? feeAsset
         ? 'transfer_multiassets'
         : 'transfer_multiasset'

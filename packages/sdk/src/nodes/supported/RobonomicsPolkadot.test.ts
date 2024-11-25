@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { PolkadotXCMTransferInput } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import RobonomicsPolkadot from './RobonomicsPolkadot'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
@@ -28,7 +28,10 @@ describe('RobonomicsPolkadot', () => {
       expect(robonomics).toBeInstanceOf(RobonomicsPolkadot)
     })
     it('should use limitedTeleportAssets when scenario is not ParaToPara', async () => {
-      const input = { scenario: 'ParaToRelay' } as PolkadotXCMTransferInput<ApiPromise, Extrinsic>
+      const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
+        ApiPromise,
+        Extrinsic
+      >
 
       const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 

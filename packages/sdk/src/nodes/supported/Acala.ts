@@ -4,7 +4,7 @@ import {
   type IXTokensTransfer,
   type TForeignOrTokenAsset,
   Version,
-  type XTokensTransferInput
+  type TXTokensTransferOptions
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import { getNodeProviders } from '../config'
@@ -16,7 +16,7 @@ class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
     super('Acala', 'acala', 'polkadot', Version.V3)
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
     const currencySelection: TForeignOrTokenAsset = isForeignAsset(asset)
       ? { ForeignAsset: Number(asset.assetId) }

@@ -5,7 +5,7 @@ import type { TAsset } from '../../types'
 import {
   type IXTokensTransfer,
   Version,
-  type XTokensTransferInput,
+  type TXTokensTransferOptions,
   type TReserveAsset
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
@@ -29,7 +29,7 @@ class CrustShadow<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTok
     return { OtherReserve: BigInt(asset.assetId) }
   }
 
-  transferXTokens<TApi, TRes>(input: XTokensTransferInput<TApi, TRes>) {
+  transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)

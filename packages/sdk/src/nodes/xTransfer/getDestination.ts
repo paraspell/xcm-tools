@@ -3,14 +3,14 @@ import {
   Parents,
   type TJunction,
   type TMultiLocation,
-  type XTransferTransferInput
+  type TXTransferTransferOptions
 } from '../../types'
 
 export const getDestination = <TApi, TRes>({
   recipientAddress,
   paraId,
   api
-}: XTransferTransferInput<TApi, TRes>): TMultiLocation => {
+}: TXTransferTransferOptions<TApi, TRes>): TMultiLocation => {
   const isMultiLocation = typeof recipientAddress === 'object'
   if (isMultiLocation) {
     return recipientAddress
