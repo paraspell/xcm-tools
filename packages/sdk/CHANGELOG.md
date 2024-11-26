@@ -1,5 +1,18 @@
 # Changelog
 
+## [7.2.4](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.3...sdk-v7.2.4) (2024-11-26)
+
+
+### Bug Fixes
+
+* **sdk:** Fix transfer from Polimec to AHP 🔧 ([c2b116c](https://github.com/paraspell/xcm-tools/commit/c2b116c4bd6250c3a58cf2c587543b8c9d93ccc1))
+
+
+### Code Refactoring
+
+* **sdk:** Refactor ParaToPara and ParaToRelay transfer function 🧑‍💻 ([4d49456](https://github.com/paraspell/xcm-tools/commit/4d49456273141a9b973cb31d481331c542e96dac))
+* **sdk:** Refactor transferRelayToPara function 🔧 ([608ff63](https://github.com/paraspell/xcm-tools/commit/608ff638c012fd9c69d44097317d31f424855ede))
+
 ## [7.2.3](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.2...sdk-v7.2.3) (2024-11-24)
 
 
