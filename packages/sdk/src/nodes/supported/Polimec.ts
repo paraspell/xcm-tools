@@ -90,7 +90,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
   }
 
   private getAssetMultiLocation = (asset: TAsset): TMultiLocation => {
-    if (!isForeignAsset(asset) && asset.symbol === 'DOT') {
+    if (asset.symbol === 'DOT') {
       return DOT_MULTILOCATION
     }
 

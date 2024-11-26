@@ -317,4 +317,10 @@ describe('AssetHubPolkadot', () => {
       includeFee: true
     })
   })
+
+  describe('getProvider', () => {
+    it('should return correct provider', () => {
+      expect(assetHub.getProvider()).toBeTypeOf('string')
+    })
+  })
 })
