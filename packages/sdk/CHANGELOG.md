@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.5](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.4...sdk-v7.2.5) (2024-11-30)
+
+
+### Miscellaneous Chores
+
+* Perform November monthly check 🔧 ([6aceb38](https://github.com/paraspell/xcm-tools/commit/6aceb38be5fd65c9f7dbfd037bdcc947c9cf37d8))
+
 ## [7.2.4](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.3...sdk-v7.2.4) (2024-11-26)
 
 
