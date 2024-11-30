@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.4.0...xcm-analyser-v1.5.0) (2024-11-30)
+
+
+### Features
+
+* **sdk:** Add asset search by multi-location ✨ ([54d0d46](https://github.com/paraspell/xcm-tools/commit/54d0d46d96e4b17b315856a61563a13209fef026))
+
+
+### Bug Fixes
+
+* **xcm-api:** Remove old XCM API code 👴 ([973dfde](https://github.com/paraspell/xcm-tools/commit/973dfde2cc6206ebdee90b45bda1cd871c0063b3))
+
+
+### Miscellaneous Chores
+
+* Perform November monthly check 🔧 ([6aceb38](https://github.com/paraspell/xcm-tools/commit/6aceb38be5fd65c9f7dbfd037bdcc947c9cf37d8))
+
 ## [1.4.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.3.4...xcm-analyser-v1.4.0) (2024-11-01)
 
 
