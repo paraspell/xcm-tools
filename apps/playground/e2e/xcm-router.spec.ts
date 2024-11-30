@@ -11,13 +11,6 @@ const exchanges = [
     toCurrency: "DOT - Native",
   },
   {
-    exchange: "BasiliskDex",
-    fromNode: "Karura",
-    toNode: "AssetHubKusama",
-    fromCurrency: "TEER - 8",
-    toCurrency: "KSM - Native",
-  },
-  {
     exchange: "KaruraDex",
     fromNode: "AssetHubKusama",
     toNode: "BifrostKusama",

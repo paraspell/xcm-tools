@@ -7,15 +7,13 @@ type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Ke
   }[Keys]
 
 type TBaseAsset = {
-  symbol?: string
+  symbol: string
   decimals?: number
   manuallyAdded?: boolean
   alias?: string
 }
 
-export type TNativeAsset = TBaseAsset & {
-  symbol: string
-}
+export type TNativeAsset = TBaseAsset
 
 export type TForeignAsset = TBaseAsset &
   AtLeastOne<{

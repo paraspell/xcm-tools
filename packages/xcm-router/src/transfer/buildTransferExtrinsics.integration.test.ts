@@ -9,7 +9,7 @@ describe('buildTransferExtrinsics - integration', () => {
   it('should build transfer extrinsics correctly', async () => {
     const options: TTransferOptions = {
       ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'BasiliskDex',
+      exchange: 'KaruraDex',
       from: 'Kusama',
       to: 'RobonomicsKusama',
       currencyFrom: { symbol: 'KSM' },

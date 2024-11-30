@@ -15,11 +15,11 @@ vi.mock('mixpanel', () => ({
 }));
 
 vi.mock('ua-parser-js', () => ({
-  default: function () {
+  UAParser: function () {
     return {
-      getBrowser: () => ({ name: 'Chrome', version: '93' }),
-      getDevice: () => ({ vendor: 'Apple', model: 'iPhone', type: 'mobile' }),
-      getOS: () => ({ name: 'iOS', version: '14' }),
+      browser: { name: 'Chrome', version: '93' },
+      device: { vendor: 'Apple', model: 'iPhone', type: 'mobile' },
+      os: { name: 'iOS', version: '14' },
     };
   },
 }));

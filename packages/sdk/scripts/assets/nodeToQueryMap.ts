@@ -28,14 +28,12 @@ export const nodeToQuery: Record<TNode, string | null> = {
   CrustShadow: 'assets.metadata',
   Encointer: null, // No assets metadata query
   Imbue: GLOBAL,
-  Integritee: GLOBAL,
   InvArchTinker: null, // Assets query returns empty array
   Karura: GLOBAL,
   Kintsugi: GLOBAL,
   Moonriver: GLOBAL,
   ParallelHeiko: GLOBAL,
   Picasso: 'assetsRegistry.assetSymbol',
-  Pioneer: GLOBAL,
   Quartz: GLOBAL,
   RobonomicsKusama: GLOBAL,
   RobonomicsPolkadot: 'assets.metadata',
@@ -50,7 +48,6 @@ export const nodeToQuery: Record<TNode, string | null> = {
   Nodle: GLOBAL,
   NeuroWeb: 'assets.metadata',
   Pendulum: GLOBAL,
-  Polkadex: 'assets.asset',
   Zeitgeist: 'assetRegistry.metadata',
   Collectives: null,
   Phala: GLOBAL,

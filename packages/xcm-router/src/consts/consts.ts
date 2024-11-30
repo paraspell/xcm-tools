@@ -3,7 +3,6 @@
  */
 export const EXCHANGE_NODES = [
   'HydrationDex',
-  'BasiliskDex',
   'KaruraDex',
   'AcalaDex',
   'KintsugiDex',

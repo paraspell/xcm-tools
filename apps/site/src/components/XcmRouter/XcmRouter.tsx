@@ -118,6 +118,7 @@ const XcmRouter = () => {
             Read more
           </Button>
           <Button
+            variant="outline"
             component="a"
             href="https://github.com/paraspell/xcm-router-template"
             target="_blank"

@@ -15,7 +15,6 @@ const excludedNodes = new Set([
   "Bitgreen",
   "Bajun",
   "CoretimeKusama",
-  "Polkadex",
 ]);
 
 const nodes = NODES_WITH_RELAY_CHAINS.filter(
@@ -34,8 +33,6 @@ const getAssetsForNode = (node: TNodeWithRelayChains): string[] => {
   if (node === "Khala") return ["PHA"];
   if (node === "Phala") return ["PHA"];
   if (node === "Mythos") return ["MYTH"];
-  if (node === "Integritee")
-    return getAllAssetsSymbols(node).filter((asset) => asset !== "KSM");
   return getAllAssetsSymbols(node);
 };
 
@@ -105,9 +102,7 @@ nodes.forEach((node) => {
       }
     );
 
-    if (
-      !["Integritee", "Crust", "CrustShadow", "Phala", "Khala"].includes(node)
-    ) {
+    if (!["Crust", "CrustShadow", "Phala", "Khala"].includes(node)) {
       basePjsTest(
         `Should succeed for ParaToRelay transfer ${node} -> ${relayChain}`,
         async () => {

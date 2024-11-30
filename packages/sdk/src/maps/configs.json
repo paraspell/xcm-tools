@@ -128,10 +128,6 @@
       {
         "name": "LiebiEU",
         "endpoint": "wss://eu.bifrost-polkadot-rpc.liebi.com/ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://bifrost.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -549,7 +545,7 @@
     "providers": [
       {
         "name": "AjunaNetwork",
-        "endpoint": "wss://rpc-parachain.bajun.network"
+        "endpoint": "wss://rpc-para.bajun.network"
       },
       {
         "name": "OnFinality",
@@ -592,17 +588,10 @@
       {
         "name": "LiebiUS",
         "endpoint": "wss://us.bifrost-rpc.liebi.com/ws"
-      }
-    ]
-  },
-  "Pioneer": {
-    "name": "Pioneer",
-    "info": "pioneer",
-    "paraId": 2096,
-    "providers": [
+      },
       {
-        "name": "MetaverseNetwork",
-        "endpoint": "wss://pioneer-rpc-3.bit.country/wss"
+        "name": "RadiumBlock",
+        "endpoint": "wss://bifrost.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -667,21 +656,6 @@
       {
         "name": "Imbue Network 0",
         "endpoint": "wss://kusama.imbuenetwork.com"
-      }
-    ]
-  },
-  "Integritee": {
-    "name": "Integritee Network",
-    "info": "integritee",
-    "paraId": 2015,
-    "providers": [
-      {
-        "name": "Integritee",
-        "endpoint": "wss://kusama.api.integritee.network"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://integritee-kusama.api.onfinality.io/public-ws"
       }
     ]
   },
@@ -957,10 +931,6 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://turing-rpc.dwellir.com"
-      },
-      {
-        "name": "OAK",
-        "endpoint": "wss://rpc.turing.oak.tech"
       }
     ]
   },
@@ -1073,12 +1043,6 @@
         "endpoint": "wss://rpc-pendulum.prd.pendulumchain.tech"
       }
     ]
-  },
-  "Polkadex": {
-    "name": "Polkadex",
-    "info": "polkadex",
-    "paraId": 3363,
-    "providers": []
   },
   "Zeitgeist": {
     "name": "Zeitgeist",

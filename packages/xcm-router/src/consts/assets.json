@@ -41,12 +41,20 @@
       "id": "1000085"
     },
     {
+      "symbol": "vDOT",
+      "id": "15"
+    },
+    {
       "symbol": "HDXb",
       "id": "1000010"
     },
     {
       "symbol": "SUB",
       "id": "24"
+    },
+    {
+      "symbol": "AJUN",
+      "id": "32"
     },
     {
       "symbol": "HDXb",
@@ -83,10 +91,6 @@
     {
       "symbol": "vASTR",
       "id": "33"
-    },
-    {
-      "symbol": "vDOT",
-      "id": "15"
     },
     {
       "symbol": "CFG",
@@ -165,10 +169,6 @@
     {
       "symbol": "TNKR",
       "id": "6"
-    },
-    {
-      "symbol": "BAJU",
-      "id": "18"
     }
   ],
   "KaruraDex": [
@@ -500,6 +500,10 @@
       "id": "0x604cae74cdc395a8824557d422fccf8db6809a2f"
     },
     {
+      "symbol": "JitoSOL",
+      "id": "0xa7fb00459f5896c3bd4df97870b44e868ae663d7"
+    },
+    {
       "symbol": "ARB",
       "id": "0xd53e4ba478cca5080c47435769ff82f41e5e4cd0"
     },
@@ -526,9 +530,6 @@
   ],
   "KintsugiDex": [
     {
-      "symbol": "KSM"
-    },
-    {
       "symbol": "KINT"
     },
     {
@@ -547,8 +548,8 @@
       "symbol": "DOT"
     },
     {
-      "symbol": "VKSM",
-      "id": "5"
+      "symbol": "USDT",
+      "id": "3"
     },
     {
       "symbol": "AUSD",
@@ -559,22 +560,19 @@
       "id": "2"
     },
     {
-      "symbol": "SKSM",
-      "id": "6"
-    },
-    {
-      "symbol": "USDT",
-      "id": "3"
+      "symbol": "VKSM",
+      "id": "5"
     },
     {
       "symbol": "MOVR",
       "id": "4"
+    },
+    {
+      "symbol": "SKSM",
+      "id": "6"
     }
   ],
   "InterlayDex": [
-    {
-      "symbol": "DOT"
-    },
     {
       "symbol": "INTR"
     },
@@ -594,12 +592,20 @@
       "symbol": "KSM"
     },
     {
-      "symbol": "WBNB.wh",
-      "id": "7"
+      "symbol": "USDT",
+      "id": "2"
     },
     {
-      "symbol": "HDX",
-      "id": "13"
+      "symbol": "USDC",
+      "id": "12"
+    },
+    {
+      "symbol": "LDOT",
+      "id": "1"
+    },
+    {
+      "symbol": "WBNB.wh",
+      "id": "7"
     },
     {
       "symbol": "TBTC.wh",
@@ -610,24 +616,12 @@
       "id": "8"
     },
     {
-      "symbol": "LDOT",
-      "id": "1"
-    },
-    {
       "symbol": "WBTC.wh",
       "id": "9"
     },
     {
-      "symbol": "PHA",
-      "id": "14"
-    },
-    {
       "symbol": "stDOT",
       "id": "15"
-    },
-    {
-      "symbol": "USDT",
-      "id": "2"
     },
     {
       "symbol": "GLMR",
@@ -638,6 +632,10 @@
       "id": "6"
     },
     {
+      "symbol": "DAI.wh",
+      "id": "4"
+    },
+    {
       "symbol": "BNC",
       "id": "11"
     },
@@ -646,12 +644,12 @@
       "id": "3"
     },
     {
-      "symbol": "DAI.wh",
-      "id": "4"
+      "symbol": "HDX",
+      "id": "13"
     },
     {
-      "symbol": "USDC",
-      "id": "12"
+      "symbol": "PHA",
+      "id": "14"
     }
   ],
   "BifrostKusamaDex": [

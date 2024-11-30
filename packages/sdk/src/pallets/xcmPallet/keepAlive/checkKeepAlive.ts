@@ -18,10 +18,6 @@ export const checkKeepAlive = async <TApi, TRes>({
     return
   }
 
-  if (asset.symbol === undefined) {
-    throw new KeepAliveError('Currency symbol not found for this asset. Cannot check keep alive.')
-  }
-
   if (
     originNode !== undefined &&
     destNode !== undefined &&

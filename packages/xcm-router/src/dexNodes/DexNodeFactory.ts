@@ -8,7 +8,6 @@ import InterlayExchangeNode from './Interlay/InterlayDex';
 export const record: Record<TExchangeNode, ExchangeNode> = {
   // Reuse classes for Kusama equivalents
   HydrationDex: new HydrationDexExchangeNode('Hydration', 'HydrationDex'),
-  BasiliskDex: new HydrationDexExchangeNode('Basilisk', 'BasiliskDex'),
   AcalaDex: new AcalaExchangeNode('Acala', 'AcalaDex'),
   KaruraDex: new AcalaExchangeNode('Karura', 'KaruraDex'),
   InterlayDex: new InterlayExchangeNode('Interlay', 'InterlayDex'),

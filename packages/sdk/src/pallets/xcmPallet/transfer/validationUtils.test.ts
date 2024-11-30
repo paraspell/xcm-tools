@@ -7,7 +7,6 @@ import {
   validateDestination
 } from './validationUtils'
 import type {
-  TAsset,
   TCurrencyInput,
   TDestination,
   TNodePolkadotKusama,
@@ -564,20 +563,6 @@ describe('validateAssetSupport', () => {
     const assetCheckEnabled = true
     const isBridge = false
     const asset = { symbol: 'TEST' }
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should not throw when asset symbol is undefined', () => {
-    const options = {
-      origin: 'Astar',
-      destination: 'Acala',
-      currency: {}
-    } as TSendOptions<TPjsApi, Extrinsic>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: undefined } as TAsset
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
