@@ -22,7 +22,7 @@ describe('transfer - integration', () => {
   });
 
   it('main transfer function - FULL_TRANSFER scenario - manual exchange', async () => {
-    options.exchange = 'BasiliskDex';
+    options.exchange = 'KaruraDex';
     await expect(transfer(options)).resolves.not.toThrow();
   });
 

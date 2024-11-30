@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Mixpanel from 'mixpanel';
 import { EventName } from './EventName.js';
-import UAParser from 'ua-parser-js';
 import { RequestWithUser } from '../types/types.js';
+import { UAParser } from 'ua-parser-js';
 
 @Injectable()
 export class AnalyticsService {
@@ -30,14 +30,16 @@ export class AnalyticsService {
   ) {
     if (!this.client) return;
     const user = req.user;
-    const parser = new UAParser(req.headers['user-agent'] as string);
+    const { browser, device, os } = UAParser(
+      req.headers['user-agent'] as string,
+    );
     this.client.track(eventName, {
       ...properties,
       ...(user && { distinct_id: user.id }),
       ip: req.headers['x-forwarded-for'] as string,
-      $browser: parser.getBrowser(),
-      $device: parser.getDevice(),
-      $os: parser.getOS(),
+      $browser: browser,
+      $device: device,
+      $os: os,
     });
   }
 

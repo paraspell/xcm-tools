@@ -1,5 +1,0 @@
-workflows:
-  - name: summarize-on-pull-request-creation
-    run:
-      if: $getEventType() == "opened"
-      then: $summarize()

@@ -118,6 +118,7 @@ const XcmApi = () => {
             Read more
           </Button>
           <Button
+            variant="outline"
             component="a"
             href="https://github.com/paraspell/xcm-api-template"
             target="_blank"

@@ -92,7 +92,7 @@ export const getAllAssetsSymbols = (node: TNodeWithRelayChains): string[] => {
   const nativeAssetsSymbols = nativeAssets.map(({ symbol }) => symbol)
   const otherAssetsSymbols = otherAssets
     .filter(asset => asset.symbol !== undefined)
-    .map(({ symbol }) => symbol) as string[]
+    .map(({ symbol }) => symbol)
   return [...nativeAssetsSymbols, ...otherAssetsSymbols]
 }
 

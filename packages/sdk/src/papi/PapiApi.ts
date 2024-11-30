@@ -23,7 +23,6 @@ const unsupportedNodes = [
   'ComposableFinance',
   'Interlay',
   'Parallel',
-  'Pioneer',
   'CrustShadow',
   'Kintsugi',
   'ParallelHeiko',
@@ -31,7 +30,6 @@ const unsupportedNodes = [
   'RobonomicsKusama',
   'Turing',
   'Pendulum',
-  'Polkadex',
   'Subsocial'
 ] as TNodeWithRelayChains[]
 

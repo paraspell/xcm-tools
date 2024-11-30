@@ -17,7 +17,6 @@ import Amplitude from '../nodes/supported/Amplitude'
 import Bajun from '../nodes/supported/Bajun'
 import Basilisk from '../nodes/supported/Basilisk'
 import BifrostKusama from '../nodes/supported/BifrostKusama'
-import Pioneer from '../nodes/supported/Pioneer'
 import Turing from '../nodes/supported/Turing'
 import Picasso from '../nodes/supported/Picasso'
 import ParallelHeiko from '../nodes/supported/ParallelHeiko'
@@ -26,7 +25,6 @@ import Kintsugi from '../nodes/supported/Kintsugi'
 import Calamari from '../nodes/supported/Calamari'
 import CrustShadow from '../nodes/supported/CrustShadow'
 import Imbue from '../nodes/supported/Imbue'
-import Integritee from '../nodes/supported/Integritee'
 import InvArchTinker from '../nodes/supported/InvArchTinker'
 import Karura from '../nodes/supported/Karura'
 import AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
@@ -47,7 +45,6 @@ import Manta from '../nodes/supported/Manta'
 import Nodle from '../nodes/supported/Nodle'
 import NeuroWeb from '../nodes/supported/NeuroWeb'
 import Pendulum from '../nodes/supported/Pendulum'
-import Polkadex from '../nodes/supported/Polkadex'
 import Zeitgeist from '../nodes/supported/Zeitgeist'
 import Collectives from '../nodes/supported/Collectives'
 import Khala from '../nodes/supported/Khala'
@@ -89,12 +86,10 @@ export const NODE_NAMES_DOT_KSM = [
   'Bajun',
   'Basilisk',
   'BifrostKusama',
-  'Pioneer',
   'Calamari',
   'CrustShadow',
   'Crab',
   'Imbue',
-  'Integritee',
   'InvArchTinker',
   'Karura',
   'Kintsugi',
@@ -114,7 +109,6 @@ export const NODE_NAMES_DOT_KSM = [
   'Nodle',
   'NeuroWeb',
   'Pendulum',
-  'Polkadex',
   'Zeitgeist',
   'Collectives',
   'Khala',
@@ -173,12 +167,10 @@ export const nodes = <TApi, TRes>() => ({
   Bajun: new Bajun<TApi, TRes>(),
   Basilisk: new Basilisk<TApi, TRes>(),
   BifrostKusama: new BifrostKusama<TApi, TRes>(),
-  Pioneer: new Pioneer<TApi, TRes>(),
   Calamari: new Calamari<TApi, TRes>(),
   CrustShadow: new CrustShadow<TApi, TRes>(),
   Crab: new Crab<TApi, TRes>(),
   Imbue: new Imbue<TApi, TRes>(),
-  Integritee: new Integritee<TApi, TRes>(),
   InvArchTinker: new InvArchTinker<TApi, TRes>(),
   Karura: new Karura<TApi, TRes>(),
   Kintsugi: new Kintsugi<TApi, TRes>(),
@@ -196,7 +188,6 @@ export const nodes = <TApi, TRes>() => ({
   Nodle: new Nodle<TApi, TRes>(),
   NeuroWeb: new NeuroWeb<TApi, TRes>(),
   Pendulum: new Pendulum<TApi, TRes>(),
-  Polkadex: new Polkadex<TApi, TRes>(),
   Zeitgeist: new Zeitgeist<TApi, TRes>(),
   Collectives: new Collectives<TApi, TRes>(),
   Khala: new Khala<TApi, TRes>(),

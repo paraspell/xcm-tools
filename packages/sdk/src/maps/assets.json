@@ -479,6 +479,27 @@
         }
       },
       {
+        "assetId": "18446744073709551641",
+        "symbol": "GAME",
+        "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 555
+              }
+            ]
+          }
+        }
+      },
+      {
         "assetId": "4294969281",
         "symbol": "USDC",
         "decimals": 6,
@@ -2641,6 +2662,90 @@
         }
       },
       {
+        "assetId": "1001",
+        "symbol": "aDOT",
+        "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x02639ec01313c8775fae74f2dad1118c8a8a86da"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "assetId": "1002",
+        "symbol": "aUSDT",
+        "decimals": 6,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xc64980e4eaf9a1151bd21712b9946b81e41e2b92"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "assetId": "1003",
+        "symbol": "aUSDC",
+        "decimals": 6,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x2ec4884088d84e5c2970a034732e5209b0acfa93"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "assetId": "1004",
+        "symbol": "aWBTC",
+        "decimals": 8,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x02759d14d0d4f452b9c76f5a230750e8857d36f2"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "assetId": "8",
         "symbol": "PHA",
         "decimals": 12,
@@ -4596,6 +4701,25 @@
         ]
       },
       {
+        "assetId": "555",
+        "symbol": "GAME",
+        "decimals": 10,
+        "xcmInterior": [
+          {
+            "Network": "polkadot"
+          },
+          {
+            "Parachain": 1000
+          },
+          {
+            "PalletInstance": 50
+          },
+          {
+            "GeneralIndex": 555
+          }
+        ]
+      },
+      {
         "symbol": "EQ",
         "decimals": 9,
         "multiLocation": {
@@ -5768,18 +5892,6 @@
       {
         "symbol": "KILT",
         "decimals": 15
-      }
-    ],
-    "otherAssets": []
-  },
-  "Integritee": {
-    "relayChainAssetSymbol": "KSM",
-    "nativeAssetSymbol": "TEER",
-    "isEVM": false,
-    "nativeAssets": [
-      {
-        "symbol": "TEER",
-        "decimals": 12
       }
     ],
     "otherAssets": []
@@ -7416,18 +7528,6 @@
       }
     ]
   },
-  "Pioneer": {
-    "relayChainAssetSymbol": "KSM",
-    "nativeAssetSymbol": "NEER",
-    "isEVM": false,
-    "nativeAssets": [
-      {
-        "symbol": "NEER",
-        "decimals": 18
-      }
-    ],
-    "otherAssets": []
-  },
   "Quartz": {
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "QTZ",
@@ -8711,78 +8811,6 @@
             ]
           }
         }
-      }
-    ]
-  },
-  "Polkadex": {
-    "relayChainAssetSymbol": "DOT",
-    "nativeAssetSymbol": "PDEX",
-    "isEVM": false,
-    "nativeAssets": [
-      {
-        "symbol": "PDEX",
-        "decimals": 12
-      }
-    ],
-    "otherAssets": [
-      {
-        "assetId": "226557799181424065994173367616174607641",
-        "symbol": "IBTC",
-        "decimals": 12
-      },
-      {
-        "assetId": "193492391581201937291053139015355410612",
-        "symbol": "PHA",
-        "decimals": 12
-      },
-      {
-        "assetId": "130314105136721928300689838359167097187"
-      },
-      {
-        "assetId": "14826654563114266286226336203450732505"
-      },
-      {
-        "assetId": "222121451965151777636299756141619631150",
-        "symbol": "ASTR",
-        "decimals": 12
-      },
-      {
-        "assetId": "95930534000017180603917534864279132680",
-        "symbol": "DOT",
-        "decimals": 12
-      },
-      {
-        "assetId": "119367686984583275840673742485354142551",
-        "symbol": "DED",
-        "decimals": 12
-      },
-      {
-        "assetId": "339306133874233608313826294843504252047",
-        "symbol": "PINK",
-        "decimals": 12
-      },
-      {
-        "assetId": "3496813586714279103986568049643838918",
-        "symbol": "USDT",
-        "decimals": 12
-      },
-      {
-        "assetId": "32595388462891559990827225517299393930",
-        "symbol": "UNQ",
-        "decimals": 12
-      },
-      {
-        "assetId": "182269558229932594457975666948556356791",
-        "symbol": "GLMR",
-        "decimals": 12
-      },
-      {
-        "assetId": "304494718746685751324769169435167367843",
-        "symbol": "USDC",
-        "decimals": 12
-      },
-      {
-        "assetId": "240851462719321838889739625279903325250"
       }
     ]
   },

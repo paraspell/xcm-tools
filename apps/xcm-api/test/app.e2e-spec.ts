@@ -98,7 +98,7 @@ describe('XCM API (e2e)', () => {
 
     NODES_WITH_RELAY_CHAINS_DOT_KSM.filter(
       // These nodes do not have ws endpoints
-      (node) => node !== 'Peaq' && node !== 'Polkadex',
+      (node) => node !== 'Peaq',
     ).forEach((node) => {
       it(`should return ws endpoints for all nodes - ${node}`, async () => {
         return request(app.getHttpServer())

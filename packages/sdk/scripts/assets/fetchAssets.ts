@@ -107,20 +107,6 @@ const fetchOtherAssetsCurio = async (api: ApiPromise, query: string) => {
     }))
 }
 
-const fetchAssetIdsOnly = async (api: ApiPromise, query: string) => {
-  const [module, section] = query.split('.')
-  const res = await api.query[module][section].entries()
-  return res.map(
-    ([
-      {
-        args: [era]
-      }
-    ]) => ({
-      assetId: era.toString()
-    })
-  )
-}
-
 const fetchOtherAssetsAmplitude = async (api: ApiPromise, query: string) => {
   const [module, section] = query.split('.')
   const res = await api.query[module][section].entries()
@@ -269,17 +255,6 @@ const fetchNodeAssets = async (
   query: string | null
 ): Promise<Partial<TNodeAssets>> => {
   const nativeAssetSymbol = await fetchNativeAsset(api)
-
-  if (node === 'Polkadex') {
-    const nativeAssets = (await fetchNativeAssets(api)) ?? []
-    const otherAssets = await fetchAssetIdsOnly(api, query!)
-    await api.disconnect()
-    return {
-      nativeAssets,
-      otherAssets,
-      nativeAssetSymbol
-    }
-  }
 
   if (node === 'Zeitgeist') {
     const nativeAssets = (await fetchNativeAssets(api)) ?? []

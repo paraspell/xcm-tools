@@ -3,6 +3,7 @@
 import { ScenarioNotSupportedError } from '../../errors'
 import type { TRelayToParaOverrides } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
@@ -22,6 +23,11 @@ class PeoplePolkadot<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
     return { section: 'limited_teleport_assets', includeFee: true }
+  }
+
+  getProvider(): string {
+    // Return the second WebSocket URL because the first one is sometimes unreliable.
+    return getNodeProviders(this.node)[2]
   }
 }
 

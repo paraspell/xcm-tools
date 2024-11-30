@@ -48,8 +48,8 @@
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "Moonbeam": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
   },
   "Parallel": {
     "defaultPallet": "XTokens",
@@ -83,10 +83,6 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
-  "Pioneer": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
-  },
   "Calamari": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
@@ -103,10 +99,6 @@
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
-  "Integritee": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
-  },
   "InvArchTinker": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
@@ -120,8 +112,8 @@
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "Moonriver": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
   },
   "ParallelHeiko": {
     "defaultPallet": "XTokens",
@@ -160,8 +152,8 @@
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "Nodle": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": ["PolkadotXcm"]
   },
   "NeuroWeb": {
     "defaultPallet": "PolkadotXcm",
@@ -172,10 +164,6 @@
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },
   "Zeitgeist": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": ["PolkadotXcm", "XTokens"]
-  },
-  "Polkadex": {
     "defaultPallet": "XTokens",
     "supportedPallets": ["PolkadotXcm", "XTokens"]
   },

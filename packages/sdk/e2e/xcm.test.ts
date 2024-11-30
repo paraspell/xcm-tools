@@ -37,7 +37,6 @@ const getAssetsForNode = (node: TNode): string[] => {
   if (node === 'Phala') return ['PHA']
   if (node === 'Mythos') return ['MYTH']
   if (node === 'Subsocial') return ['SUB']
-  if (node === 'Integritee') return getAllAssetsSymbols(node).filter(asset => asset !== 'KSM')
   return getAllAssetsSymbols(node)
 }
 
@@ -46,7 +45,6 @@ const filteredNodes = NODE_NAMES_DOT_KSM.filter(
     node !== 'Bitgreen' &&
     node !== 'Bajun' &&
     node !== 'CoretimeKusama' &&
-    node !== 'Polkadex' &&
     // Has no assets
     node !== 'Quartz' &&
     node !== 'Pendulum' &&
@@ -325,7 +323,6 @@ describe.sequential('XCM - e2e', () => {
       })
 
       if (
-        node !== 'Integritee' &&
         node !== 'Crust' &&
         node !== 'CrustShadow' &&
         node !== 'Phala' &&

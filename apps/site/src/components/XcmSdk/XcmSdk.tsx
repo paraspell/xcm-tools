@@ -126,6 +126,7 @@ const XcmSdk = () => {
             Get started
           </Button>
           <Button
+            variant="outline"
             component="a"
             href="https://github.com/paraspell/xcm-sdk-template"
             target="_blank"

@@ -42,15 +42,15 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts --sequence.concurrent"
   },
   "dependencies": {
-    "@snowbridge/api": "^0.1.23",
+    "@snowbridge/api": "^0.1.25",
     "ethers": "^6.13.4"
   },
   "peerDependencies": {
-    "@polkadot/api": ">= 12.4 < 13",
-    "@polkadot/api-base": ">= 12.4 < 13",
-    "@polkadot/types": ">= 12.4 < 13",
+    "@polkadot/api": ">= 15.0 < 16",
+    "@polkadot/api-base": ">= 15.0 < 16",
+    "@polkadot/types": ">= 15.0 < 16",
     "@polkadot/util": ">= 13",
-    "polkadot-api": ">= 1.7.3 < 2"
+    "polkadot-api": ">= 1.7.7 < 2"
   },
   "peerDependenciesMeta": {
     "@polkadot/api": {
@@ -72,24 +72,24 @@
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
-    "@codecov/rollup-plugin": "^1.2.1",
-    "@noble/curves": "^1.6.0",
-    "@noble/hashes": "^1.5.0",
-    "@polkadot-labs/hdkd": "^0.0.8",
-    "@polkadot-labs/hdkd-helpers": "^0.0.8",
+    "@codecov/rollup-plugin": "^1.4.0",
+    "@noble/curves": "^1.7.0",
+    "@noble/hashes": "^1.6.1",
+    "@polkadot-labs/hdkd": "^0.0.9",
+    "@polkadot-labs/hdkd-helpers": "^0.0.9",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
-    "@scure/bip32": "^1.5.0",
-    "@scure/bip39": "^1.4.0",
-    "@vitest/coverage-v8": "^2.1.4",
-    "axios": "^1.7.7",
+    "@scure/bip32": "^1.6.0",
+    "@scure/bip39": "^1.5.0",
+    "@vitest/coverage-v8": "^2.1.6",
+    "axios": "^1.7.8",
     "dotenv": "^16.4.5",
-    "prettier": "^3.3.3",
-    "rollup": "^4.24.3",
+    "prettier": "^3.4.1",
+    "rollup": "^4.27.4",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-typescript2": "^0.36.0",
     "ts-morph": "^24.0.0",
     "ts-node": "^10.9.2",
-    "tslib": "^2.8.0"
+    "tslib": "^2.8.1"
   }
 }

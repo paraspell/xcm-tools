@@ -61,19 +61,6 @@ describe('HydrationDex - integration', () => {
     );
   });
 
-  it('should build a transfer extrinsic without error on Basilisk', async () => {
-    const dex = new HydrationExchangeNode('Basilisk', 'BasiliskDex');
-    await testSwap(
-      dex,
-      'Basilisk',
-      { symbol: 'KSM' },
-      { symbol: 'USDT' },
-      '1000000000000',
-      'Karura',
-      'Kusama',
-    );
-  });
-
   it('should return asset symbols', async () => {
     const dex = new HydrationExchangeNode('Hydration', 'HydrationDex');
     const api = await dex.createApiInstance();
