@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.5.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.4.1...xcm-router-v1.5.0) (2024-11-30)
+
+
+### Features
+
+* **sdk:** Add asset search by multi-location ✨ ([54d0d46](https://github.com/paraspell/xcm-tools/commit/54d0d46d96e4b17b315856a61563a13209fef026))
+* **sdk:** Add support for abstracted assets selection ✨ ([b5ffed8](https://github.com/paraspell/xcm-tools/commit/b5ffed8958aa5680a5ffc9308f0f7f0dd1c1d727))
+
+
+### Bug Fixes
+
+* Add destination address checks ([f072da7](https://github.com/paraspell/xcm-tools/commit/f072da7c032ed9fb871191f4975115e779608ed0))
+* **sdk:** Remove @polkadot/apps-config depencency ([8a5bbc7](https://github.com/paraspell/xcm-tools/commit/8a5bbc7e5f31ec928e4be2714a69f666fd706fd1))
+* **xcm-api:** Remove old XCM API code 👴 ([973dfde](https://github.com/paraspell/xcm-tools/commit/973dfde2cc6206ebdee90b45bda1cd871c0063b3))
+
+
+### Miscellaneous Chores
+
+* Perform November monthly check 🔧 ([6aceb38](https://github.com/paraspell/xcm-tools/commit/6aceb38be5fd65c9f7dbfd037bdcc947c9cf37d8))
+
 ## [1.4.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.4.0...xcm-router-v1.4.1) (2024-11-01)
 
 
