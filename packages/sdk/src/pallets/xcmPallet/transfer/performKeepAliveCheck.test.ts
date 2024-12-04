@@ -1,7 +1,14 @@
 import type { MockInstance } from 'vitest'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { checkKeepAlive } from '../keepAlive'
-import type { TAddress, TAsset, TCurrencyInput, TDestination, TSendOptions } from '../../../types'
+import type {
+  TAddress,
+  TAsset,
+  TCurrencyInputWithAmount,
+  TDestination,
+  TSendOptions,
+  WithAmount
+} from '../../../types'
 import type { Extrinsic, TPjsApi } from '../../../pjs'
 import { performKeepAliveCheck } from './performKeepAliveCheck'
 import type { IPolkadotApi } from '../../../api'
@@ -18,11 +25,11 @@ describe('performKeepAliveCheck', () => {
     origin: 'Acala',
     destApiForKeepAlive: {} as IPolkadotApi<TPjsApi, Extrinsic>,
     currency: {
-      symbol: 'ACA'
+      symbol: 'ACA',
+      amount: '100'
     },
-    amount: '100',
     address: 'some-address',
-    destination: undefined
+    destination: 'Polkadot'
   } as TSendOptions<TPjsApi, Extrinsic>
 
   beforeEach(() => {
@@ -39,13 +46,13 @@ describe('performKeepAliveCheck', () => {
       ...options,
       currency: {
         multilocation: {}
-      } as unknown as TCurrencyInput
+      } as unknown as TCurrencyInputWithAmount
     }
 
     await performKeepAliveCheck(modifiedOptions, null)
 
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'Keep alive check is not supported when using MultiLocation as currency.'
+      'Keep alive check is not supported when using MultiLocation / MultiAsset as currency.'
     )
     expect(checkKeepAlive).not.toHaveBeenCalled()
   })
@@ -55,13 +62,13 @@ describe('performKeepAliveCheck', () => {
       ...options,
       currency: {
         multiasset: {}
-      } as unknown as TCurrencyInput
+      } as unknown as TCurrencyInputWithAmount
     }
 
     await performKeepAliveCheck(modifiedOptions, null)
 
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'Keep alive check is not supported when using MultiLocation as currency.'
+      'Keep alive check is not supported when using MultiLocation / MultiAsset as currency.'
     )
     expect(checkKeepAlive).not.toHaveBeenCalled()
   })
@@ -120,39 +127,18 @@ describe('performKeepAliveCheck', () => {
   })
 
   it('should call checkKeepAlive when all conditions are met', async () => {
-    const asset: TAsset | null = {} as TAsset
+    const asset = {} as WithAmount<TAsset>
 
     await performKeepAliveCheck(options, asset)
 
     expect(consoleWarnSpy).not.toHaveBeenCalled()
     expect(checkKeepAlive).toHaveBeenCalledWith({
-      originApi: options.api,
+      api: options.api,
       address: options.address,
-      amount: options.amount,
-      originNode: options.origin,
+      origin: options.origin,
       destApi: options.destApiForKeepAlive,
       asset: asset,
-      destNode: options.destination
-    })
-  })
-
-  it('should handle undefined amount by passing empty string', async () => {
-    const modifiedOptions = {
-      ...options,
-      amount: null
-    }
-    const asset: TAsset | null = {} as TAsset
-
-    await performKeepAliveCheck(modifiedOptions, asset)
-
-    expect(checkKeepAlive).toHaveBeenCalledWith({
-      originApi: options.api,
-      address: options.address,
-      amount: '',
-      originNode: options.origin,
-      destApi: options.destApiForKeepAlive,
-      asset: asset,
-      destNode: options.destination
+      destination: options.destination
     })
   })
 })

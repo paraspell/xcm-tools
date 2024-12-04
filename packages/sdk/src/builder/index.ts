@@ -1,2 +1,2 @@
-export { Builder, UseKeepAliveFinalBuilder, GeneralBuilder } from './builders/Builder'
-export * from './builders/evm-builder/EvmBuilder'
+export { Builder, GeneralBuilder } from './Builder'
+export * from './evm-builder/EvmBuilder'

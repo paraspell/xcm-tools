@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Stack, Title, Box, Group, Button, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import type { TNode } from '@paraspell/sdk';
 import { Builder, createApiInstanceForNode } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
@@ -45,23 +44,12 @@ const SendXcm = () => {
     { from, to, amount, address, currency }: FormValues,
     api: ApiPromise
   ) => {
-    if (from === 'Polkadot' || from === 'Kusama') {
-      return Builder(api)
-        .to(to as TNode)
-        .amount(amount)
-        .address(address)
-        .build();
-    } else if (to === 'Polkadot' || to === 'Kusama') {
-      return Builder(api).from(from).amount(amount).address(address).build();
-    } else {
-      return Builder(api)
-        .from(from)
-        .to(to)
-        .currency({ symbol: currency })
-        .amount(amount)
-        .address(address)
-        .build();
-    }
+    return Builder(api)
+      .from(from)
+      .to(to)
+      .currency({ symbol: currency, amount })
+      .address(address)
+      .build();
   };
 
   const submitUsingSdk = async (

@@ -1,22 +1,15 @@
-import type { TAsset, TSendOptions } from '../../../types'
+import type { TAsset, TSendOptions, WithAmount } from '../../../types'
 import { checkKeepAlive } from '../keepAlive'
 
 export const performKeepAliveCheck = async <TApi, TRes>(
-  {
-    api,
-    origin,
-    destApiForKeepAlive,
-    amount,
-    currency,
-    address,
-    destination
-  }: TSendOptions<TApi, TRes>,
-  asset: TAsset | null
+  options: TSendOptions<TApi, TRes>,
+  asset: WithAmount<TAsset> | null
 ) => {
-  const amountStr = amount?.toString()
-
+  const { api, origin, destination, currency, address, destApiForKeepAlive } = options
   if ('multilocation' in currency || 'multiasset' in currency) {
-    console.warn('Keep alive check is not supported when using MultiLocation as currency.')
+    console.warn(
+      'Keep alive check is not supported when using MultiLocation / MultiAsset as currency.'
+    )
   } else if (typeof address === 'object') {
     console.warn('Keep alive check is not supported when using MultiLocation as address.')
   } else if (typeof destination === 'object') {
@@ -26,14 +19,14 @@ export const performKeepAliveCheck = async <TApi, TRes>(
   } else if (!asset) {
     console.warn('Keep alive check is not supported when asset check is disabled.')
   } else {
-    await checkKeepAlive({
-      originApi: api,
+    const destApi = destApiForKeepAlive ?? api.clone()
+    await checkKeepAlive<TApi, TRes>({
+      api,
+      origin,
+      destination,
       address,
-      amount: amountStr ?? '',
-      originNode: origin,
-      destApi: destApiForKeepAlive,
-      asset,
-      destNode: destination
+      destApi,
+      asset
     })
   }
 }

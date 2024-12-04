@@ -16,8 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('Parallel', () => {
   let parallel: Parallel<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'PARA', assetId: '123' },
-    amount: '100'
+    asset: { symbol: 'PARA', assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

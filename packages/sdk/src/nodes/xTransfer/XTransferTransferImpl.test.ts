@@ -10,12 +10,12 @@ import type {
 } from '../../types'
 import { Parents, Version } from '../../types'
 import type { ApiPromise } from '@polkadot/api'
-import type PolkadotJsApi from '../../pjs/PolkadotJsApi'
-import type { Extrinsic } from '../../pjs/types'
+import type { Extrinsic, TPjsApi } from '../../pjs/types'
+import type { IPolkadotApi } from '../../api'
 
 const mockApi = {
   callTxMethod: vi.fn()
-} as unknown as PolkadotJsApi
+} as unknown as IPolkadotApi<TPjsApi, Extrinsic>
 
 const mockMultiLocation: TMultiLocation = {
   parents: Parents.ONE,
@@ -49,7 +49,6 @@ describe('XTransferTransferImpl', () => {
   it('throws an error for multi-location destinations', () => {
     const input = {
       api: {},
-      amount: '100',
       origin: 'Khala',
       destination: mockMultiLocation
     } as TXTransferTransferOptions<ApiPromise, Extrinsic>
@@ -61,10 +60,10 @@ describe('XTransferTransferImpl', () => {
   it('executes transaction with Khala as origin', () => {
     const input = {
       api: mockApi,
-      amount: '200',
       origin: 'Khala',
-      destination: 'Phala'
-    } as unknown as TXTransferTransferOptions<ApiPromise, Extrinsic>
+      destination: 'Phala',
+      asset: { symbol: 'KSM', amount: 100 }
+    } as TXTransferTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
@@ -87,10 +86,10 @@ describe('XTransferTransferImpl', () => {
   it('executes transaction with Phala as origin', () => {
     const input = {
       api: mockApi,
-      amount: '200',
       origin: 'Phala',
-      destination: 'Karura'
-    } as unknown as TXTransferTransferOptions<ApiPromise, Extrinsic>
+      destination: 'Karura',
+      asset: { symbol: 'KSM', amount: 100 }
+    } as TXTransferTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)

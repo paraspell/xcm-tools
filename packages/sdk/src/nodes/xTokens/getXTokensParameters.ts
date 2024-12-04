@@ -1,21 +1,38 @@
-import type { TXTokensCurrencySelection, TMultiLocationHeader, TCurrency } from '../../types'
+import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
+import type {
+  TXTokensCurrencySelection,
+  TMultiLocationHeader,
+  TAmount,
+  TMultiAssetWithFee,
+  TMultiLocation
+} from '../../types'
 
 export const getXTokensParameters = (
-  isDestAssetHub: boolean,
+  isMultiAssetTransfer: boolean,
   currencySelection: TXTokensCurrencySelection,
   addressSelection: TMultiLocationHeader,
-  amount: string,
+  amount: TAmount,
   fees: string | number,
-  feeAsset?: TCurrency
+  overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
 ): Record<string, unknown> => {
-  if (isDestAssetHub) {
+  if (isMultiAssetTransfer) {
+    const isMultiAsset = overriddenAsset && !isTMultiLocation(overriddenAsset)
+    const feeAssetIndex = isMultiAsset
+      ? overriddenAsset.findIndex(asset => asset.isFeeAsset)
+      : undefined
+
     return {
-      [feeAsset !== undefined ? 'assets' : 'asset']: currencySelection,
-      ...(feeAsset !== undefined && { fee_item: feeAsset }),
+      [isMultiAsset ? 'assets' : 'asset']: currencySelection,
+      ...(isMultiAsset && { fee_item: feeAssetIndex }),
       dest: addressSelection,
       dest_weight_limit: fees
     }
   }
 
-  return { currency_id: currencySelection, amount, dest: addressSelection, dest_weight_limit: fees }
+  return {
+    currency_id: currencySelection,
+    amount: BigInt(amount),
+    dest: addressSelection,
+    dest_weight_limit: fees
+  }
 }

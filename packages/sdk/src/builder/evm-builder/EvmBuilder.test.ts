@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import type { AbstractProvider, Signer } from 'ethers'
-import type { TCurrencyCoreV1, TNodePolkadotKusama } from '../../../types'
-import type { TEvmBuilderOptions } from '../../../types/TBuilder'
-import transferEthToPolkadot from '../../../pallets/xcmPallet/ethTransfer/ethTransfer'
+import type { TCurrencyCoreV1, TNodePolkadotKusama } from '../../types'
+import type { TEvmBuilderOptions } from '../../types/TBuilder'
+import transferEthToPolkadot from '../../pallets/xcmPallet/ethTransfer/ethTransfer'
 import { EvmBuilder } from './EvmBuilder'
 
-vi.mock('../../../pallets/xcmPallet/ethTransfer/ethTransfer', () => ({
+vi.mock('../../pallets/xcmPallet/ethTransfer/ethTransfer', () => ({
   default: vi.fn()
 }))
 
