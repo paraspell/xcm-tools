@@ -68,7 +68,7 @@ export const getNativeAssets = (node: TNode): TNativeAsset[] => getAssetsObject(
  * @param node - The node for which to get other assets.
  * @returns An array of other asset details.
  */
-export const getOtherAssets = (node: TNode): TForeignAsset[] => {
+export const getOtherAssets = (node: TNodeWithRelayChains): TForeignAsset[] => {
   const otherAssets = getAssetsObject(node).otherAssets
   return node === 'AssetHubPolkadot'
     ? [...otherAssets, ...getAssetsObject('Ethereum').otherAssets]
@@ -121,7 +121,7 @@ export const getNativeAssetSymbol = (node: TNodeWithRelayChains): string =>
  * @param symbol - The symbol of the asset to check.
  * @returns True if the asset is supported; otherwise, false.
  */
-export const hasSupportForAsset = (node: TNode, symbol: string): boolean => {
+export const hasSupportForAsset = (node: TNodeWithRelayChains, symbol: string): boolean => {
   const lowerSymbol = symbol.toLowerCase()
   const symbolsToCheck = new Set<string>()
 

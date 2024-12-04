@@ -21,9 +21,8 @@ vi.mock('../xTokens', () => ({
 describe('Pendulum', () => {
   let pendulum: Pendulum<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'PEN', assetId: '123' },
-    scenario: 'ParaToPara',
-    amount: '100'
+    asset: { symbol: 'PEN', assetId: '123', amount: '100' },
+    scenario: 'ParaToPara'
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

@@ -9,14 +9,13 @@ import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
   IncompatibleNodesError,
   InvalidCurrencyError,
-  NODE_NAMES,
-  NODE_NAMES_DOT_KSM,
-  TNodePolkadotKusama,
-  TNode,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
+  NODES_WITH_RELAY_CHAINS,
 } from '@paraspell/sdk';
 import type * as SdkType from '@paraspell/sdk';
 import type * as SdkPapiType from '@paraspell/sdk/papi';
-import { determineRelayChain } from '@paraspell/sdk';
 import { ApiPromise } from '@polkadot/api';
 import { PolkadotClient } from 'polkadot-api';
 import { TPapiTransaction } from '@paraspell/sdk/papi';
@@ -24,40 +23,25 @@ import { TPapiTransaction } from '@paraspell/sdk/papi';
 @Injectable()
 export class XTransferService {
   async generateXcmCall(
-    {
-      from,
-      to,
-      amount,
-      address,
-      ahAddress,
-      currency,
-      xcmVersion,
-    }: XTransferDto,
+    { from, to, address, ahAddress, currency, xcmVersion }: XTransferDto,
     usePapi = false,
   ) {
-    const fromNode = from as TNodePolkadotKusama | undefined;
-    const toNode = to as TNode | undefined;
+    const fromNode = from as TNodeDotKsmWithRelayChains;
+    const toNode = to as TNodeWithRelayChains;
 
-    if (!fromNode && !toNode) {
-      throw new BadRequestException(
-        "You need to provide either 'from' or 'to' parameters",
-      );
-    }
-
-    if (fromNode && !NODE_NAMES_DOT_KSM.includes(fromNode)) {
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
       throw new BadRequestException(
         `Node ${fromNode} is not valid. Check docs for valid nodes.`,
       );
     }
 
-    if (typeof toNode === 'string' && toNode && !NODE_NAMES.includes(toNode)) {
+    if (
+      typeof toNode === 'string' &&
+      !NODES_WITH_RELAY_CHAINS.includes(toNode)
+    ) {
       throw new BadRequestException(
         `Node ${toNode} is not valid. Check docs for valid nodes.`,
       );
-    }
-
-    if (fromNode && toNode && !currency) {
-      throw new BadRequestException(`Currency should not be empty.`);
     }
 
     if (typeof address === 'string' && !isValidWalletAddress(address)) {
@@ -74,35 +58,19 @@ export class XTransferService {
       ? await import('@paraspell/sdk/papi')
       : await import('@paraspell/sdk');
 
-    const node = !fromNode
-      ? determineRelayChain(toNode as TNodePolkadotKusama)
-      : fromNode;
-    const api = await Sdk.createApiInstanceForNode(node as TNodePolkadotKusama);
+    const api = await Sdk.createApiInstanceForNode(fromNode);
 
     const builder = Sdk.Builder(api as PolkadotClient & ApiPromise);
 
     let finalBuilder:
-      | SdkPapiType.UseKeepAliveFinalBuilder
-      | SdkType.UseKeepAliveFinalBuilder;
+      | SdkPapiType.IUseKeepAliveFinalBuilder
+      | SdkType.IUseKeepAliveFinalBuilder;
 
-    if (fromNode && toNode && currency) {
-      // Parachain to parachain
-      finalBuilder = builder
-        .from(fromNode)
-        .to(toNode)
-        .currency(currency)
-        .amount(amount)
-        .address(address, ahAddress);
-    } else if (fromNode) {
-      // Parachain to relaychain
-      finalBuilder = builder.from(fromNode).amount(amount).address(address);
-    } else {
-      // Relaychain to parachain
-      finalBuilder = builder
-        .to(toNode as TNodePolkadotKusama)
-        .amount(amount)
-        .address(address);
-    }
+    finalBuilder = builder
+      .from(fromNode)
+      .to(toNode)
+      .currency(currency)
+      .address(address, ahAddress);
 
     if (xcmVersion) {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);
@@ -139,18 +107,8 @@ export class XTransferService {
     }
 
     const firstTransfer = transfers[0];
-    const fromNode = firstTransfer.from as TNodePolkadotKusama | undefined;
-    const toNode = firstTransfer.to as TNode | undefined;
-
-    if (!fromNode && !toNode) {
-      throw new BadRequestException(
-        "You need to provide either 'from' or 'to' parameters.",
-      );
-    }
-
-    if (toNode && typeof toNode === 'object') {
-      throw new BadRequestException('Please provide ApiPromise instance.');
-    }
+    const fromNode = firstTransfer.from as TNodeDotKsmWithRelayChains;
+    const toNode = firstTransfer.to as TNodeDotKsmWithRelayChains;
 
     const sameFrom = transfers.every((transfer) => transfer.from === fromNode);
 
@@ -160,13 +118,13 @@ export class XTransferService {
       );
     }
 
-    if (fromNode && !NODE_NAMES_DOT_KSM.includes(fromNode)) {
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
       throw new BadRequestException(
         `Node ${fromNode} is not valid. Check docs for valid nodes.`,
       );
     }
 
-    if (toNode && !NODE_NAMES.includes(toNode)) {
+    if (!NODES_WITH_RELAY_CHAINS.includes(toNode)) {
       throw new BadRequestException(
         `Node ${toNode} is not valid. Check docs for valid nodes.`,
       );
@@ -176,30 +134,21 @@ export class XTransferService {
       ? await import('@paraspell/sdk/papi')
       : await import('@paraspell/sdk');
 
-    const api = await Sdk.createApiInstanceForNode(
-      fromNode ?? determineRelayChain(toNode as TNodePolkadotKusama),
-    );
+    const api = await Sdk.createApiInstanceForNode(fromNode);
     let builder = Sdk.Builder(api as PolkadotClient & ApiPromise);
 
     try {
       for (const transfer of transfers) {
-        const transferFromNode = transfer.from as
-          | TNodePolkadotKusama
-          | undefined;
-        const transferToNode = transfer.to as TNodePolkadotKusama | undefined;
+        const transferFromNode = transfer.from as TNodeDotKsmWithRelayChains;
+        const transferToNode = transfer.to as TNodeWithRelayChains;
 
         if (
-          transferToNode &&
           typeof transferToNode === 'string' &&
-          !NODE_NAMES.includes(transferToNode)
+          !NODES_WITH_RELAY_CHAINS.includes(transferToNode)
         ) {
           throw new BadRequestException(
             `Node ${transferToNode} is not valid. Check docs for valid nodes.`,
           );
-        }
-
-        if (transferFromNode && transferToNode && !transfer.currency) {
-          throw new BadRequestException('Currency should not be empty.');
         }
 
         if (
@@ -210,30 +159,14 @@ export class XTransferService {
         }
 
         let finalBuilder:
-          | SdkPapiType.UseKeepAliveFinalBuilder
-          | SdkType.UseKeepAliveFinalBuilder;
+          | SdkPapiType.IUseKeepAliveFinalBuilder
+          | SdkType.IUseKeepAliveFinalBuilder;
 
-        if (transferFromNode && transferToNode && transfer.currency) {
-          // Parachain to parachain
-          finalBuilder = builder
-            .from(transferFromNode)
-            .to(transferToNode)
-            .currency(transfer.currency)
-            .amount(transfer.amount)
-            .address(transfer.address, transfer.ahAddress);
-        } else if (transferFromNode) {
-          // Parachain to relaychain
-          finalBuilder = builder
-            .from(transferFromNode)
-            .amount(transfer.amount)
-            .address(transfer.address);
-        } else {
-          // Relaychain to parachain
-          finalBuilder = builder
-            .to(transferToNode as TNodePolkadotKusama)
-            .amount(transfer.amount)
-            .address(transfer.address);
-        }
+        finalBuilder = builder
+          .from(transferFromNode)
+          .to(transferToNode)
+          .currency(transfer.currency)
+          .address(transfer.address, transfer.ahAddress);
 
         if (transfer.xcmVersion) {
           finalBuilder = finalBuilder.xcmVersion(transfer.xcmVersion);

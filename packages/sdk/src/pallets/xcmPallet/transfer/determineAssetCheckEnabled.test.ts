@@ -7,7 +7,8 @@ import type ParachainNode from '../../../nodes/ParachainNode'
 import type { Extrinsic, TPjsApi } from '../../../pjs'
 
 vi.mock('../../../utils', () => ({
-  getNode: vi.fn()
+  getNode: vi.fn(),
+  isRelayChain: vi.fn()
 }))
 
 vi.mock('../../../utils/multiLocation/isOverrideMultiLocationSpecifier', () => ({

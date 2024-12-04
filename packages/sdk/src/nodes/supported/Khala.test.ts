@@ -17,8 +17,7 @@ vi.mock('../xTransfer', () => ({
 describe('Khala', () => {
   let khala: Khala<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'PHA' },
-    amount: '100'
+    asset: { symbol: 'PHA', amount: '100' }
   } as TXTransferTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
@@ -41,7 +40,7 @@ describe('Khala', () => {
   })
 
   it('should throw InvalidCurrencyError for unsupported currency', () => {
-    const invalidInput = { ...mockInput, asset: { symbol: 'INVALID' } }
+    const invalidInput = { ...mockInput, asset: { symbol: 'INVALID', amount: '100' } }
 
     expect(() => khala.transferXTransfer(invalidInput)).toThrowError(InvalidCurrencyError)
   })

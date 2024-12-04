@@ -19,9 +19,9 @@ describe('Crust', () => {
   const mockInput = {
     asset: {
       symbol: 'CRU',
-      assetId: '123'
-    },
-    amount: '100'
+      assetId: '123',
+      amount: '100'
+    }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
@@ -57,7 +57,8 @@ describe('Crust', () => {
     const invalidInput = {
       ...mockInput,
       asset: {
-        symbol: 'XYZ'
+        symbol: 'XYZ',
+        amount: '100'
       }
     }
     vi.spyOn(crust, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')

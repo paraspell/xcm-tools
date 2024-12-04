@@ -24,7 +24,7 @@ describe('BifrostDex - integration', () => {
     await testSwap(
       dex,
       'BifrostKusama',
-      { symbol: 'BNC' },
+      { symbol: 'KSM' },
       { symbol: 'KAR' },
       '100000000000000',
       'Karura',

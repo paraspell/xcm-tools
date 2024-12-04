@@ -13,6 +13,7 @@ import {
   Native,
   Override,
   TMultiAsset,
+  TMultiAssetWithFee,
   TMultiLocation,
   TNode,
   Version,
@@ -343,7 +344,6 @@ describe('XCM API (e2e)', () => {
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
-          amount,
           address,
         })
         .expect(400);
@@ -354,7 +354,6 @@ describe('XCM API (e2e)', () => {
         .post(xTransferUrl)
         .send({
           from: unknownNode,
-          amount,
           address,
         })
         .expect(400);
@@ -365,7 +364,6 @@ describe('XCM API (e2e)', () => {
         .post(xTransferUrl)
         .send({
           to: unknownNode,
-          amount,
           address,
         })
         .expect(400);
@@ -377,7 +375,6 @@ describe('XCM API (e2e)', () => {
         .send({
           from: 'Acala',
           to: 'Basilisk',
-          amount,
           address,
         })
         .expect(400);
@@ -389,7 +386,6 @@ describe('XCM API (e2e)', () => {
         .send({
           from: 'Acala',
           to: 'Basilisk',
-          amount,
           address,
           currency: 'UknownSymbol',
         })
@@ -399,12 +395,11 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to parachain Native() selector - ${xTransferUrl}`, async () => {
       const from: TNode = 'Acala';
       const to: TNode = 'Astar';
-      const currency = { symbol: Native('DOT') };
+      const currency = { symbol: Native('DOT'), amount };
       const tx = await Builder()
         .from(from)
         .to(to)
         .currency(currency)
-        .amount(amount)
         .address(address)
         .build();
       return request(app.getHttpServer())
@@ -412,7 +407,6 @@ describe('XCM API (e2e)', () => {
         .send({
           from,
           to,
-          amount,
           address,
           currency,
         })
@@ -423,12 +417,11 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to parachain Foreign() selector - ${xTransferUrl}`, async () => {
       const from: TNode = 'Astar';
       const to: TNode = 'Acala';
-      const currency = { symbol: Foreign('HDX') };
+      const currency = { symbol: Foreign('HDX'), amount };
       const tx = await Builder()
         .from(from)
         .to(to)
         .currency(currency)
-        .amount(amount)
         .address(address)
         .build();
       return request(app.getHttpServer())
@@ -436,7 +429,6 @@ describe('XCM API (e2e)', () => {
         .send({
           from,
           to,
-          amount,
           address,
           currency,
         })
@@ -447,13 +439,12 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to parachain invalid scenario - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'KSM' };
+      const currency = { symbol: 'KSM', amount };
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
           from,
           to,
-          amount,
           address,
           currency,
         })
@@ -464,7 +455,7 @@ describe('XCM API (e2e)', () => {
       const from: TNode = 'AssetHubKusama';
       const to1: TNode = 'Basilisk';
       const to2: TNode = 'Moonriver';
-      const currency = { symbol: 'USDT' };
+      const currency = { symbol: 'USDT', amount };
       const amount1 = '1000';
       const amount2 = '2000';
       const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
@@ -474,13 +465,11 @@ describe('XCM API (e2e)', () => {
         .from(from)
         .to(to1)
         .currency(currency)
-        .amount(amount1)
         .address(address1)
         .addToBatch()
         .from(from)
         .to(to2)
         .currency(currency)
-        .amount(amount2)
         .address(address2)
         .addToBatch();
 
@@ -493,14 +482,12 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to: to1,
-              amount: amount1,
               address: address1,
               currency,
             },
             {
               from,
               to: to2,
-              amount: amount2,
               address: address2,
               currency,
             },
@@ -516,8 +503,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate Batch XCM call - Invalid Currency Symbol - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const invalidCurrency = { symbol: 'INVALID' };
-      const amount = '1000';
+      const invalidCurrency = { symbol: 'INVALID', amount };
       const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
 
       return request(app.getHttpServer())
@@ -527,7 +513,6 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              amount,
               address,
               currency: invalidCurrency,
             },
@@ -536,7 +521,7 @@ describe('XCM API (e2e)', () => {
             mode: BatchMode.BATCH_ALL,
           },
         })
-        .expect(400) // Expect Bad Request due to invalid currency
+        .expect(400)
         .expect((res) => {
           expect(res.body.message).toContain('does not support currency');
         });
@@ -546,8 +531,7 @@ describe('XCM API (e2e)', () => {
       const from1: TNode = 'AssetHubKusama';
       const from2: TNode = 'Moonriver';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'USDT' };
-      const amount = '1000';
+      const currency = { symbol: 'USDT', amount };
       const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
 
       return request(app.getHttpServer())
@@ -557,14 +541,12 @@ describe('XCM API (e2e)', () => {
             {
               from: from1,
               to,
-              amount,
               address,
               currency,
             },
             {
               from: from2, // Different 'from' node
               to,
-              amount,
               address,
               currency,
             },
@@ -584,8 +566,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate Batch XCM call - Invalid Addresses - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'USDT' };
-      const amount = '1000';
+      const currency = { symbol: 'USDT', amount };
       const invalidAddress = 'InvalidAddress123';
 
       return request(app.getHttpServer())
@@ -595,7 +576,6 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              amount,
               address: invalidAddress, // Invalid address
               currency,
             },
@@ -664,8 +644,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate Batch XCM call - Invalid Batch Mode - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'USDT' };
-      const amount = '1000';
+      const currency = { symbol: 'USDT', amount };
       const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
       const invalidBatchMode = 'INVALID_MODE';
 
@@ -676,7 +655,6 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              amount,
               address,
               currency,
             },
@@ -698,7 +676,6 @@ describe('XCM API (e2e)', () => {
           transfers: [
             {
               from,
-              // Missing 'amount' field
               address,
               currency,
             },
@@ -713,8 +690,7 @@ describe('XCM API (e2e)', () => {
     it(`Generate Batch XCM call - Zero or Negative Amounts - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'USDT' };
-      const invalidAmount = '-1000'; // Negative amount
+      const currency = { symbol: 'USDT', amount: '-1000' }; // Negative amount
       const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
 
       return request(app.getHttpServer())
@@ -724,7 +700,6 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              amount: invalidAmount,
               address,
               currency,
             },
@@ -740,9 +715,7 @@ describe('XCM API (e2e)', () => {
       const from: TNode = 'AssetHubKusama';
       const to1: TNode = 'Basilisk';
       const to2: TNode = 'Moonriver';
-      const currency = { symbol: 'USDT' };
-      const amount1 = '1000';
-      const amount2 = '2000';
+      const currency = { symbol: 'USDT', amount };
       const address1 = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
       const address2 = '0x1501C1413e4178c38567Ada8945A80351F7B8496';
 
@@ -750,13 +723,11 @@ describe('XCM API (e2e)', () => {
         .from(from)
         .to(to1)
         .currency(currency)
-        .amount(amount1)
         .address(address1)
         .addToBatch()
         .from(from)
         .to(to2)
         .currency(currency)
-        .amount(amount2)
         .address(address2)
         .addToBatch();
 
@@ -769,14 +740,12 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to: to1,
-              amount: amount1,
               address: address1,
               currency,
             },
             {
               from,
               to: to2,
-              amount: amount2,
               address: address2,
               currency,
             },
@@ -792,14 +761,12 @@ describe('XCM API (e2e)', () => {
     it(`Generate Batch XCM call - Single Transfer in Batch - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'USDT' };
-      const amount = '1000';
+      const currency = { symbol: 'USDT', amount: '1000' };
 
       const builder = Builder()
         .from(from)
         .to(to)
         .currency(currency)
-        .amount(amount)
         .address(address)
         .addToBatch();
 
@@ -812,7 +779,6 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              amount,
               address,
               currency,
             },
@@ -828,15 +794,13 @@ describe('XCM API (e2e)', () => {
     it(`Generate Batch XCM call - Specifying XCM Version - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'USDT' };
-      const amount = '1000';
+      const currency = { symbol: 'USDT', amount: '1000' };
       const xcmVersion = Version.V2;
 
       const builder = Builder()
         .from(from)
         .to(to)
         .currency(currency)
-        .amount(amount)
         .address(address)
         .xcmVersion(xcmVersion)
         .addToBatch();
@@ -850,7 +814,6 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              amount,
               address,
               currency,
               xcmVersion,
@@ -866,11 +829,16 @@ describe('XCM API (e2e)', () => {
 
     it(`Generate Batch XCM call - Parachain to Relay Chain - ${xTransferBatchUrl}`, async () => {
       const from: TNode = 'Acala';
-      const amount = '1000';
+
+      const currency = {
+        symbol: 'DOT',
+        amount: '1000',
+      };
 
       const builder = Builder()
         .from(from)
-        .amount(amount)
+        .to('Polkadot')
+        .currency(currency)
         .address(address)
         .addToBatch();
 
@@ -882,7 +850,8 @@ describe('XCM API (e2e)', () => {
           transfers: [
             {
               from,
-              amount,
+              to: 'Polkadot',
+              currency,
               address,
             },
           ],
@@ -896,11 +865,16 @@ describe('XCM API (e2e)', () => {
 
     it(`Generate Batch XCM call - Relay Chain to Parachain - ${xTransferBatchUrl}`, async () => {
       const to: TNode = 'Basilisk';
-      const amount = '1000';
+
+      const currency = {
+        symbol: 'KSM',
+        amount: '1000',
+      };
 
       const builder = Builder()
+        .from('Kusama')
         .to(to)
-        .amount(amount)
+        .currency(currency)
         .address(address)
         .addToBatch();
 
@@ -911,8 +885,9 @@ describe('XCM API (e2e)', () => {
         .send({
           transfers: [
             {
+              from: 'Kusama',
               to,
-              amount,
+              currency,
               address,
             },
           ],
@@ -927,12 +902,11 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to parachain all valid - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
-      const currency = { symbol: 'USDT' };
+      const currency = { symbol: 'USDT', amount };
       const tx = await Builder()
         .from(from)
         .to(to)
         .currency(currency)
-        .amount(amount)
         .address(address)
         .build();
       return request(app.getHttpServer())
@@ -940,7 +914,6 @@ describe('XCM API (e2e)', () => {
         .send({
           from,
           to,
-          amount,
           address,
           currency,
         })
@@ -962,8 +935,7 @@ describe('XCM API (e2e)', () => {
       const tx = await Builder()
         .from(from)
         .to(to)
-        .currency({ multilocation: Override(currency) })
-        .amount(amount)
+        .currency({ multilocation: Override(currency), amount })
         .address(address)
         .build();
       return request(app.getHttpServer())
@@ -971,9 +943,8 @@ describe('XCM API (e2e)', () => {
         .send({
           from,
           to,
-          amount,
           address,
-          currency: { multilocation: Override(currency) },
+          currency: { multilocation: Override(currency), amount },
         })
         .expect(201)
         .expect(JSON.stringify(tx.toHex()));
@@ -982,26 +953,43 @@ describe('XCM API (e2e)', () => {
     it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubPolkadot';
       const to: TNode = 'Acala';
-      const currency: TMultiAsset = {
-        id: {
-          Concrete: {
-            parents: 0,
-            interior: {
-              X1: {
-                Parachain: '2000',
+      const currency: TMultiAssetWithFee[] = [
+        {
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X1: {
+                  Parachain: '2000',
+                },
               },
             },
           },
+          fun: {
+            Fungible: '1000000000',
+          },
         },
-        fun: {
-          Fungible: '1000000000',
+        {
+          isFeeAsset: true,
+          id: {
+            Concrete: {
+              parents: 0,
+              interior: {
+                X1: {
+                  Parachain: '2000',
+                },
+              },
+            },
+          },
+          fun: {
+            Fungible: '1000000000',
+          },
         },
-      };
+      ];
       const tx = await Builder()
         .from(from)
         .to(to)
-        .currency({ multiasset: [currency] })
-        .amount(amount)
+        .currency({ multiasset: currency })
         .address(address)
         .build();
       return request(app.getHttpServer())
@@ -1009,26 +997,31 @@ describe('XCM API (e2e)', () => {
         .send({
           from,
           to,
-          amount,
           address,
-          currency: { multiasset: [currency] },
+          currency: { multiasset: currency },
         })
         .expect(201)
         .expect(JSON.stringify(tx.toHex()));
     });
 
     it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
+      const currency = {
+        symbol: 'KSM',
+        amount,
+      };
+
       const tx = await Builder()
-        .from(from)
-        .amount(amount)
+        .from('AssetHubKusama')
+        .to('Kusama')
+        .currency(currency)
         .address(address)
         .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
-          from,
-          amount,
+          from: 'AssetHubKusama',
+          to: 'Kusama',
+          currency,
           address,
         })
         .expect(201)
@@ -1036,13 +1029,24 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Relaychain to parachain all valid - ${xTransferUrl}`, async () => {
-      const to: TNode = 'AssetHubKusama';
-      const tx = await Builder().to(to).amount(amount).address(address).build();
+      const tx = await Builder()
+        .from('Kusama')
+        .to('AssetHubKusama')
+        .currency({
+          symbol: 'KSM',
+          amount,
+        })
+        .address(address)
+        .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
-          to,
-          amount,
+          from: 'Kusama',
+          to: 'AssetHubKusama',
+          currency: {
+            symbol: 'KSM',
+            amount,
+          },
           address,
         })
         .expect(201)
@@ -1050,18 +1054,25 @@ describe('XCM API (e2e)', () => {
     });
 
     it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl}`, async () => {
-      const from: TNode = 'AssetHubKusama';
       const tx = await Builder()
-        .from(from)
-        .amount(amount)
+        .from('AssetHubKusama')
+        .to('Kusama')
+        .currency({
+          symbol: 'KSM',
+          amount,
+        })
         .address(address)
         .xcmVersion(Version.V3)
         .build();
       return request(app.getHttpServer())
         .post(xTransferUrl)
         .send({
-          from,
-          amount,
+          from: 'AssetHubKusama',
+          to: 'Kusama',
+          currency: {
+            symbol: 'KSM',
+            amount,
+          },
           address,
           xcmVersion: Version.V3,
         })
@@ -1075,7 +1086,11 @@ describe('XCM API (e2e)', () => {
         .post(xTransferUrl)
         .send({
           from,
-          amount,
+          to: 'Kusama',
+          currency: {
+            symbol: 'KSM',
+            amount,
+          },
           address,
           xcmVersion: 'V6',
         })
@@ -1084,8 +1099,6 @@ describe('XCM API (e2e)', () => {
   });
 
   describe('Router controller', () => {
-    const amount = '1000000000';
-    const address = 'FagnR7YW9N2PZfxC3dwSqQjb59Jsz3x35UZ24MqtA4eTVZR';
     const routerUrl = '/router';
 
     const routerOptions: RouterDto = {
@@ -1272,8 +1285,7 @@ describe('XCM API (e2e)', () => {
       destination: 'Astar',
       accountOrigin: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
       accountDestination: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-      currency: { symbol: 'DOT' },
-      amount: '100000000',
+      currency: { symbol: 'DOT', amount: '100000000' },
     };
 
     it('Generate transfer info call - invalid origin provided - /transfer-info', () => {

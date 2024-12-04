@@ -1,7 +1,7 @@
 // Script that pulls XCM Pallets for selected Parachain
 
 import * as palletsMapJson from '../maps/pallets.json' assert { type: 'json' }
-import type { TNodePolkadotKusama } from '../types'
+import type { TNodeDotKsmWithRelayChains, TNodePolkadotKusama } from '../types'
 import { type TPallet, type TPalletJsonMap } from '../types'
 
 const palletsMap = palletsMapJson as TPalletJsonMap
@@ -12,7 +12,7 @@ const palletsMap = palletsMapJson as TPalletJsonMap
  * @param node - The node for which to get the default pallet.
  * @returns The default pallet associated with the node.
  */
-export const getDefaultPallet = (node: TNodePolkadotKusama): TPallet => {
+export const getDefaultPallet = (node: TNodeDotKsmWithRelayChains): TPallet => {
   return palletsMap[node].defaultPallet
 }
 

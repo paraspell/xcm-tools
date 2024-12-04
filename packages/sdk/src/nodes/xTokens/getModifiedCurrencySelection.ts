@@ -12,6 +12,7 @@ import type {
 import { Parents } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import { DOT_MULTILOCATION } from '../../const'
+import { isRelayChain } from '../../utils'
 
 const buildMultiLocation = <TApi, TRes>({
   paraIdTo,
@@ -25,7 +26,7 @@ const buildMultiLocation = <TApi, TRes>({
     }
 
     // ParaToRelay scenario
-    if (destination === undefined) {
+    if (isRelayChain(destination)) {
       return DOT_MULTILOCATION
     }
 
@@ -83,12 +84,12 @@ export const getModifiedCurrencySelection = <TApi, TRes>(
   version: Version,
   input: TXTokensTransferOptions<TApi, TRes>
 ): TCurrencySelectionHeader | TCurrencySelectionHeaderArr => {
-  const { amount, feeAsset } = input
+  const { asset } = input
   const multiLocation = buildMultiLocation(input)
 
-  const multiAsset: TMultiAsset = createMultiAsset(version, amount, multiLocation)
+  const multiAsset: TMultiAsset = createMultiAsset(version, asset.amount, multiLocation)
 
   return {
-    [version]: feeAsset === undefined ? multiAsset : [multiAsset]
+    [version]: multiAsset
   }
 }

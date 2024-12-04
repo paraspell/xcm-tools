@@ -6,6 +6,7 @@ import { getRelayChainSymbol } from '../../assets'
 import { checkKeepAlive } from '../keepAlive'
 import { resolveTNodeFromMultiLocation } from '../utils'
 import type { IPolkadotApi } from '../../../api'
+import type { TMultiLocation } from '../../../pjs'
 import { Version, type Extrinsic, type TPjsApi, type TRelayToParaOptions } from '../../../pjs'
 import type ParachainNode from '../../../nodes/ParachainNode'
 import { transferRelayToPara } from './transferRelayToPara'
@@ -42,7 +43,10 @@ describe('transferRelayToPara', () => {
       init: vi.fn().mockResolvedValue(undefined),
       disconnect: vi.fn().mockResolvedValue(undefined),
       callTxMethod: vi.fn().mockResolvedValue('callTxResult'),
-      getApiOrUrl: vi.fn().mockReturnValue({})
+      getApiOrUrl: vi.fn().mockReturnValue({}),
+      clone: vi.fn().mockReturnValue({
+        getApi: vi.fn().mockReturnValue({})
+      })
     } as unknown as IPolkadotApi<TPjsApi, Extrinsic>
 
     nodeMock = {
@@ -62,12 +66,13 @@ describe('transferRelayToPara', () => {
   })
 
   it('should throw an error when api is undefined and destination is MultiLocation', async () => {
-    const options = {
+    const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {
       api: apiMock,
-      destination: {},
-      amount: 100,
+      origin: 'Polkadot',
+      destination: {} as TMultiLocation,
+      asset: { symbol: 'DOT', amount: 100 },
       address: 'some-address'
-    } as TRelayToParaOptions<TPjsApi, Extrinsic>
+    }
 
     vi.spyOn(apiMock, 'getApiOrUrl').mockReturnValue(undefined)
     const spy = vi.spyOn(apiMock, 'init')
@@ -80,26 +85,27 @@ describe('transferRelayToPara', () => {
   })
 
   it('should initialize api with the correct relay chain', async () => {
-    const options = {
+    const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {
       api: apiMock,
+      origin: 'Polkadot',
       destination: 'Astar',
-      amount: 100,
+      asset: { symbol: 'DOT', amount: 100 },
       address: 'some-address'
-    } as TRelayToParaOptions<TPjsApi, Extrinsic>
+    }
 
     const spy = vi.spyOn(apiMock, 'init')
 
     await transferRelayToPara(options)
 
-    expect(determineRelayChain).toHaveBeenCalledWith(options.destination)
     expect(spy).toHaveBeenCalledWith('Polkadot')
   })
 
   it('should log a warning and not call checkKeepAlive when destination is MultiLocation', async () => {
     const options = {
       api: apiMock,
+      origin: 'Polkadot',
       destination: {},
-      amount: 100,
+      asset: { symbol: 'DOT', amount: 100 },
       address: 'some-address'
     } as TRelayToParaOptions<TPjsApi, Extrinsic>
 
@@ -112,12 +118,14 @@ describe('transferRelayToPara', () => {
   })
 
   it('should log a warning and not call checkKeepAlive when address is MultiLocation', async () => {
-    const options = {
+    const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {
       api: apiMock,
+      origin: 'Polkadot',
       destination: 'Astar',
-      amount: 100,
-      address: {}
-    } as TRelayToParaOptions<TPjsApi, Extrinsic>
+      asset: { symbol: 'DOT', amount: 100 },
+      address: {} as TMultiLocation,
+      destApiForKeepAlive: apiMock
+    }
 
     await transferRelayToPara(options)
 
@@ -128,60 +136,61 @@ describe('transferRelayToPara', () => {
   })
 
   it('should call checkKeepAlive when destination and address are not MultiLocation', async () => {
-    const options = {
+    const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {
       api: apiMock,
+      origin: 'Polkadot',
       destination: 'Astar',
-      amount: 100,
-      address: 'some-address'
-    } as TRelayToParaOptions<TPjsApi, Extrinsic>
+      asset: { symbol: 'DOT', amount: 100 },
+      address: 'some-address',
+      destApiForKeepAlive: apiMock
+    }
 
     await transferRelayToPara(options)
 
-    expect(getRelayChainSymbol).toHaveBeenCalledWith(options.destination)
     expect(checkKeepAlive).toHaveBeenCalledWith({
-      originApi: apiMock,
+      api: apiMock,
+      origin: options.origin,
+      destination: options.destination,
       address: options.address,
-      amount: '100',
       destApi: options.destApiForKeepAlive,
-      asset: { symbol: 'DOT' },
-      destNode: options.destination
+      asset: options.asset
     })
   })
 
   it('should get the serialized api call correctly when destination is MultiLocation', async () => {
-    const options = {
+    const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {
       api: apiMock,
-      destination: {},
-      amount: 100,
+      origin: 'Polkadot',
+      destination: {} as TMultiLocation,
+      asset: { symbol: 'DOT', amount: 100 },
       address: 'some-address'
-    } as TRelayToParaOptions<TPjsApi, Extrinsic>
+    }
 
     const transferSpy = vi.spyOn(nodeMock, 'transferRelayToPara')
     const apiSpy = vi.spyOn(apiMock, 'callTxMethod')
 
     await transferRelayToPara(options)
 
-    expect(resolveTNodeFromMultiLocation).toHaveBeenCalledWith({})
+    expect(resolveTNodeFromMultiLocation).toHaveBeenCalledWith('Polkadot', {})
     expect(getNode).toHaveBeenCalledWith('Acala')
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
+      origin: options.origin,
       destination: {},
-      address: 'some-address',
-      amount: '100',
-      paraIdTo: undefined,
-      destApiForKeepAlive: undefined,
-      version: undefined
+      asset: options.asset,
+      address: 'some-address'
     })
     expect(apiSpy).toHaveBeenCalledWith('serializedApiCall')
   })
 
   it('should get the serialized api call correctly when destination is not MultiLocation', async () => {
-    const options = {
+    const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {
       api: apiMock,
+      origin: 'Polkadot',
       destination: 'Astar',
-      amount: 100,
+      asset: { symbol: 'DOT', amount: 100 },
       address: 'some-address'
-    } as TRelayToParaOptions<TPjsApi, Extrinsic>
+    }
 
     const transferSpy = vi.spyOn(nodeMock, 'transferRelayToPara')
     const apiSpy = vi.spyOn(apiMock, 'callTxMethod')
@@ -191,24 +200,23 @@ describe('transferRelayToPara', () => {
     expect(getNode).toHaveBeenCalledWith(options.destination)
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
+      origin: options.origin,
       destination: options.destination,
-      address: options.address,
-      amount: '100',
-      paraIdTo: undefined,
-      destApiForKeepAlive: undefined,
-      version: undefined
+      asset: options.asset,
+      address: options.address
     })
     expect(apiSpy).toHaveBeenCalledWith('serializedApiCall')
   })
 
   it('should disconnect api if isPjsClient returns true', async () => {
     vi.mocked(isPjsClient).mockReturnValue(true)
-    const options = {
+    const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {
       api: apiMock,
+      origin: 'Polkadot',
       destination: 'Astar',
-      amount: 100,
+      asset: { symbol: 'DOT', amount: 100 },
       address: 'some-address'
-    } as TRelayToParaOptions<TPjsApi, Extrinsic>
+    }
 
     const apiSpy = vi.spyOn(apiMock, 'disconnect')
 
@@ -220,12 +228,13 @@ describe('transferRelayToPara', () => {
 
   it('should not disconnect api if isPjsClient returns false', async () => {
     vi.mocked(isPjsClient).mockReturnValue(false)
-    const options = {
+    const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {
       api: apiMock,
+      origin: 'Polkadot',
       destination: 'Astar',
-      amount: 100,
+      asset: { symbol: 'DOT', amount: 100 },
       address: 'some-address'
-    } as TRelayToParaOptions<TPjsApi, Extrinsic>
+    }
 
     const spy = vi.spyOn(apiMock, 'disconnect')
 
@@ -239,12 +248,13 @@ describe('transferRelayToPara', () => {
     vi.mocked(isPjsClient).mockReturnValue(true)
     apiMock.callTxMethod = vi.fn().mockRejectedValue(new Error('Some error'))
 
-    const options = {
+    const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {
       api: apiMock,
+      origin: 'Polkadot',
       destination: 'Astar',
-      amount: 100,
+      asset: { symbol: 'DOT', amount: 100 },
       address: 'some-address'
-    } as TRelayToParaOptions<TPjsApi, Extrinsic>
+    }
 
     const apiSpy = vi.spyOn(apiMock, 'disconnect')
 
@@ -260,15 +270,16 @@ describe('transferRelayToPara', () => {
       callTxMethod: vi.fn().mockResolvedValue('callTxResult')
     } as unknown as IPolkadotApi<TPjsApi, Extrinsic>
 
-    const options = {
+    const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {
       api: apiMock,
+      origin: 'Polkadot',
       destination: 'Astar',
-      amount: 100,
+      asset: { symbol: 'DOT', amount: 100 },
       address: 'some-address',
       paraIdTo: 2000,
       destApiForKeepAlive: destApiMock,
       version: Version.V3
-    } as TRelayToParaOptions<TPjsApi, Extrinsic>
+    }
 
     const transferSpy = vi.spyOn(nodeMock, 'transferRelayToPara')
 
@@ -276,9 +287,10 @@ describe('transferRelayToPara', () => {
 
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
+      origin: options.origin,
       destination: options.destination,
+      asset: options.asset,
       address: options.address,
-      amount: '100',
       paraIdTo: 2000,
       destApiForKeepAlive: destApiMock,
       version: options.version

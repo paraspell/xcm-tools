@@ -21,8 +21,7 @@ vi.mock('../config', () => ({
 describe('Acala', () => {
   let acala: Acala<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'ACA' },
-    amount: '100'
+    asset: { symbol: 'ACA', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
   const spyTransferXTokens = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
 
@@ -49,7 +48,8 @@ describe('Acala', () => {
       ...mockInput,
       asset: {
         symbol: 'ACA',
-        assetId: 1
+        assetId: 1,
+        amount: '100'
       }
     }
 

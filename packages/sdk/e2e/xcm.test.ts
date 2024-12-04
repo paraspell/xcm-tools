@@ -126,8 +126,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = Builder(api)
         .from('AssetHubPolkadot')
         .to('AssetHubKusama')
-        .currency({ symbol: 'DOT' })
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
       expect(tx).toBeDefined()
@@ -138,8 +137,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = Builder(api)
         .from('AssetHubPolkadot')
         .to('AssetHubKusama')
-        .currency({ symbol: 'KSM' })
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
       expect(tx).toBeDefined()
@@ -150,8 +148,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = Builder(api)
         .from('AssetHubKusama')
         .to('AssetHubPolkadot')
-        .currency({ symbol: 'DOT' })
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
       expect(tx).toBeDefined()
@@ -162,8 +159,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = Builder(api)
         .from('AssetHubKusama')
         .to('AssetHubPolkadot')
-        .currency({ symbol: 'KSM' })
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
       expect(tx).toBeDefined()
@@ -248,8 +244,7 @@ describe.sequential('XCM - e2e', () => {
         const tx = await Builder(api)
           .from('AssetHubPolkadot')
           .to('Ethereum')
-          .currency({ symbol })
-          .amount(MOCK_AMOUNT)
+          .currency({ symbol, amount: MOCK_AMOUNT })
           .address(MOCK_ETH_ADDRESS)
           .build()
         expect(tx).toBeDefined()
@@ -261,30 +256,93 @@ describe.sequential('XCM - e2e', () => {
     it('should create transfer tx - DOT from Relay to Para', async () => {
       const api = await createApiInstanceForNode('Polkadot')
       const tx = await Builder(api)
-        .to(MOCK_POLKADOT_NODE)
-        .amount(MOCK_AMOUNT)
+        .from('Kusama')
+        .to(MOCK_KUSAMA_NODE)
+        .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
       expect(tx).toBeDefined()
     })
     it('should create transfer tx - KSM from Relay to Para', async () => {
       const api = await createApiInstanceForNode('Kusama')
-      const tx = Builder(api).to(MOCK_KUSAMA_NODE).amount(MOCK_AMOUNT).address(MOCK_ADDRESS).build()
+      const tx = Builder(api)
+        .from('Polkadot')
+        .to(MOCK_POLKADOT_NODE)
+        .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
+        .address(MOCK_ADDRESS)
+        .build()
       expect(tx).toBeDefined()
     })
   })
 
-  describe.sequential('Hydration to AssetHub transfer with feeAsset', () => {
-    it('should create transfer tx from Hydration to AssetHubPolkadot with feeAsset(0)', async () => {
+  describe.sequential('Hydration to AssetHub transfer', () => {
+    it('should create transfer tx from Hydration to AssetHubPolkadot', async () => {
       const api = await createApiInstanceForNode('Hydration')
       const tx = await Builder(api)
         .from('Hydration')
         .to('AssetHubPolkadot')
-        .currency({ symbol: ForeignAbstract('USDT1') })
-        .feeAsset('0')
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: ForeignAbstract('USDT1'), amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
+      expect(tx).toBeDefined()
+    })
+
+    it('should create transfer tx from Hydration to AssetHubPolkadot - overridden multiasset', async () => {
+      const api = await createApiInstanceForNode('Hydration')
+      const tx = await Builder(api)
+        .from('Hydration')
+        .to('AssetHubPolkadot')
+        .currency({
+          multiasset: [
+            {
+              symbol: 'WUD',
+              amount: '102928'
+            },
+            {
+              isFeeAsset: true,
+              symbol: ForeignAbstract('USDC2'),
+              amount: '38482'
+            }
+          ]
+        })
+        .address(MOCK_ADDRESS)
+        .build()
+
+      expect(tx).toBeDefined()
+    })
+
+    it('should create transfer tx from Hydration to AssetHubPolkadot - overridden multiasset currency selection', async () => {
+      const api = await createApiInstanceForNode('Hydration')
+      const tx = await Builder(api)
+        .from('Hydration')
+        .to('AssetHubPolkadot')
+        .currency({
+          multiasset: [
+            {
+              id: {
+                Concrete: {
+                  parents: 0,
+                  interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '31337' }] }
+                }
+              },
+              fun: { Fungible: '102928' }
+            },
+            {
+              isFeeAsset: true,
+              id: {
+                Concrete: {
+                  parents: 0,
+                  interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
+                }
+              },
+              fun: { Fungible: '38482' }
+            }
+          ],
+          amount: MOCK_AMOUNT
+        })
+        .address(MOCK_ADDRESS)
+        .build()
+
       expect(tx).toBeDefined()
     })
   })
@@ -307,8 +365,10 @@ describe.sequential('XCM - e2e', () => {
           const tx = await Builder(api)
             .from(node)
             .to(resolvedNode)
-            .currency(currency)
-            .amount(MOCK_AMOUNT)
+            .currency({
+              ...currency,
+              amount: MOCK_AMOUNT
+            })
             .address(resolvedAddress)
             .build()
           expect(tx).toBeDefined()
@@ -359,7 +419,8 @@ describe.sequential('XCM - e2e', () => {
           try {
             const tx = await Builder(api)
               .from(node)
-              .amount(MOCK_AMOUNT)
+              .to(determineRelayChain(node))
+              .currency({ symbol: getRelayChainSymbol(node), amount: MOCK_AMOUNT })
               .address(MOCK_ADDRESS)
               .build()
             expect(tx).toBeDefined()

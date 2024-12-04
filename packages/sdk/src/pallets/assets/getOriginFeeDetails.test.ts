@@ -5,7 +5,7 @@ import * as BuilderModule from '../../builder'
 import * as assetsModule from './assets'
 
 import type { ApiPromise } from '@polkadot/api'
-import type { TCurrencyCore } from '../../types'
+import type { TCurrencyCore, WithAmount } from '../../types'
 import type { TNodeDotKsmWithRelayChains } from '../../types'
 import { getOriginFeeDetails } from './getOriginFeeDetails'
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
@@ -22,8 +22,7 @@ describe('getOriginFeeDetails', () => {
   it('should return correct origin fee details', async () => {
     const originNode = {} as TNodeDotKsmWithRelayChains
     const destinationNode = {} as TNodeDotKsmWithRelayChains
-    const currency = {} as TCurrencyCore
-    const amount = '1000000000000'
+    const currency = {} as WithAmount<TCurrencyCore>
     const account = 'account-address'
 
     const nativeBalance = BigInt('1000000000000000')
@@ -61,7 +60,6 @@ describe('getOriginFeeDetails', () => {
       origin: originNode,
       destination: destinationNode,
       currency,
-      amount,
       account,
       accountDestination: account,
       api: apiMock
@@ -78,8 +76,7 @@ describe('getOriginFeeDetails', () => {
   it('should return correct origin fee details when origin is a relay chain', async () => {
     const originNode = 'Polkadot' as TNodeDotKsmWithRelayChains
     const destinationNode = {} as TNodeDotKsmWithRelayChains
-    const currency = {} as TCurrencyCore
-    const amount = '1000000000000'
+    const currency = {} as WithAmount<TCurrencyCore>
     const account = 'account-address'
 
     const nativeBalance = BigInt('1000000000000000')
@@ -117,7 +114,6 @@ describe('getOriginFeeDetails', () => {
       origin: originNode,
       destination: destinationNode,
       currency,
-      amount,
       account,
       accountDestination: account,
       api: apiMock
@@ -134,8 +130,7 @@ describe('getOriginFeeDetails', () => {
   it('should return correct origin fee details when destination is a relay chain', async () => {
     const originNode = {} as TNodeDotKsmWithRelayChains
     const destinationNode = 'Polkadot' as TNodeDotKsmWithRelayChains
-    const currency = {} as TCurrencyCore
-    const amount = '1000000000000'
+    const currency = {} as WithAmount<TCurrencyCore>
     const account = 'account-address'
 
     const nativeBalance = BigInt('1000000000000000')
@@ -173,7 +168,6 @@ describe('getOriginFeeDetails', () => {
       origin: originNode,
       destination: destinationNode,
       currency,
-      amount,
       account,
       accountDestination: account,
       api: apiMock

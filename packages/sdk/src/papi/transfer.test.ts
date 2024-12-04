@@ -1,31 +1,17 @@
 import type { MockInstance } from 'vitest'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as transferImpl from '../pallets/xcmPallet/transfer'
-import { transferRelayToPara, send } from './transfer'
+import { send } from './transfer'
 import PapiApi from './PapiApi'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
-import type { TRelayToParaOptions, TSendOptions } from '../types'
+import type { TSendOptions } from '../types'
 
 vi.mock('./PapiApi')
 vi.mock('../pallets/xcmPallet/transfer')
 
-describe('Relay Transfer and Send Functions using PapiApi', () => {
+describe('Send function using PapiApi', () => {
   const mockApi = {} as TPapiApi
   const mockDestApi = {} as TPapiApi
-
-  const optionsRelayToPara: Omit<
-    TRelayToParaOptions<TPapiApi, TPapiTransaction>,
-    'api' | 'destApiForKeepAlive'
-  > & {
-    api: TPapiApiOrUrl
-    destApiForKeepAlive: TPapiApiOrUrl
-  } = {
-    api: mockApi,
-    destApiForKeepAlive: mockDestApi
-  } as Omit<TRelayToParaOptions<TPapiApi, TPapiTransaction>, 'api' | 'destApiForKeepAlive'> & {
-    api: TPapiApiOrUrl
-    destApiForKeepAlive: TPapiApiOrUrl
-  }
 
   const optionsSend: Omit<
     TSendOptions<TPapiApi, TPapiTransaction>,
@@ -47,20 +33,6 @@ describe('Relay Transfer and Send Functions using PapiApi', () => {
   beforeEach(() => {
     papiApiSetApiSpy = vi.spyOn(PapiApi.prototype, 'setApi')
     destPapiApiSetApiSpy = vi.spyOn(PapiApi.prototype, 'setApi')
-  })
-
-  describe('transferRelayToPara', () => {
-    it('should call setApi on papiApi and destPapiApi, and call transferRelayToPara in transferImpl with correct arguments', async () => {
-      await transferRelayToPara(optionsRelayToPara)
-
-      expect(papiApiSetApiSpy).toHaveBeenCalledWith(mockApi)
-      expect(destPapiApiSetApiSpy).toHaveBeenCalledWith(mockDestApi)
-      expect(transferImpl.transferRelayToPara).toHaveBeenCalledWith({
-        ...optionsRelayToPara,
-        api: expect.any(PapiApi),
-        destApiForKeepAlive: expect.any(PapiApi)
-      })
-    })
   })
 
   describe('send', () => {

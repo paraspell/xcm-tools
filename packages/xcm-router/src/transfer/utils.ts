@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 import { FALLBACK_FEE_CALC_ADDRESS } from '../consts/consts';
 import { findAssetInExchangeBySymbol } from '../assets/assets';
 
-export const buildToExchangeExtrinsic = async (
+export const buildToExchangeExtrinsic = (
   api: ApiPromise,
   {
     from,
@@ -20,21 +20,20 @@ export const buildToExchangeExtrinsic = async (
     injectorAddress,
   }: TCommonTransferOptionsModified,
 ): Promise<Extrinsic> => {
-  const builder = Builder(api);
-  if (from === 'Polkadot' || from === 'Kusama') {
-    return builder.to(exchange).amount(amount).address(injectorAddress).build();
-  }
-  return builder
+  const currency =
+    from === 'Ethereum'
+      ? assetFrom?.symbol
+        ? { symbol: assetFrom.symbol }
+        : currencyFrom
+      : currencyFrom;
+
+  return Builder(api)
     .from(from === 'Ethereum' ? 'AssetHubPolkadot' : from)
     .to(exchange)
-    .currency(
-      from === 'Ethereum'
-        ? assetFrom?.symbol
-          ? { symbol: assetFrom.symbol }
-          : currencyFrom
-        : currencyFrom,
-    )
-    .amount(amount)
+    .currency({
+      ...currency,
+      amount,
+    })
     .address(injectorAddress)
     .build();
 };
@@ -52,7 +51,7 @@ export const getCurrencyExchange = (
   return { id: exchangeAsset.id ?? '' };
 };
 
-export const buildFromExchangeExtrinsic = async (
+export const buildFromExchangeExtrinsic = (
   api: ApiPromise,
   {
     to,
@@ -65,18 +64,15 @@ export const buildFromExchangeExtrinsic = async (
   amountOut: string,
   isToEth = false,
 ): Promise<Extrinsic> => {
-  const builder = Builder(api);
-  if (to === 'Polkadot' || to === 'Kusama') {
-    return builder.from(exchangeNode).amount(amountOut).address(address).build();
-  }
-
   const currencyToExchange = getCurrencyExchange(exchange, currencyTo, assetTo);
 
-  return builder
+  return Builder(api)
     .from(exchangeNode)
     .to(to === 'Ethereum' && !isToEth ? 'AssetHubPolkadot' : to)
-    .currency(currencyToExchange)
-    .amount(amountOut)
+    .currency({
+      ...currencyToExchange,
+      amount: amountOut,
+    })
     .address(address)
     .build();
 };
