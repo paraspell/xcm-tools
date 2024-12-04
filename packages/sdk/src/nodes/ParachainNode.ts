@@ -8,7 +8,6 @@ import type {
   IXTokensTransfer,
   IPolkadotXCMTransfer,
   IXTransferTransfer,
-  TRelayToParaOptions,
   TSendInternalOptions,
   TDestination,
   TCurrencySelectionHeaderArr,
@@ -19,14 +18,17 @@ import type {
   TSerializedApiCall,
   TAsset,
   TXTokensTransferOptions,
-  TRelayToParaOverrides
+  TRelayToParaOverrides,
+  TAmount,
+  TRelayToParaOptions
 } from '../types'
 import { Version, Parents } from '../types'
-import { generateAddressPayload, getFees } from '../utils'
+import { generateAddressPayload, getFees, isRelayChain } from '../utils'
 import {
   constructRelayToParaParameters,
   createCurrencySpec,
-  createPolkadotXcmHeader
+  createPolkadotXcmHeader,
+  isTMultiLocation
 } from '../pallets/xcmPallet/utils'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import XTokensTransferImpl from './xTokens'
@@ -91,21 +93,12 @@ abstract class ParachainNode<TApi, TRes> {
   }
 
   async transfer(options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
-    const {
-      api,
-      asset,
-      amount,
-      address,
-      destination,
-      paraIdTo,
-      overridedCurrencyMultiLocation,
-      feeAsset,
-      version,
-      ahAddress
-    } = options
-    const scenario: TScenario = destination !== undefined ? 'ParaToPara' : 'ParaToRelay'
+    const { api, asset, address, destination, paraIdTo, overriddenAsset, version, ahAddress } =
+      options
+    const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
+    const scenario: TScenario = isRelayDestination ? 'ParaToRelay' : 'ParaToPara'
     const paraId =
-      destination !== undefined && typeof destination !== 'object' && destination !== 'Ethereum'
+      !isRelayDestination && typeof destination !== 'object' && destination !== 'Ethereum'
         ? (paraIdTo ?? getParaId(destination))
         : undefined
 
@@ -123,7 +116,6 @@ abstract class ParachainNode<TApi, TRes> {
       const input: TXTokensTransferOptions<TApi, TRes> = {
         api,
         asset,
-        amount,
         addressSelection: generateAddressPayload(
           api,
           scenario,
@@ -137,8 +129,7 @@ abstract class ParachainNode<TApi, TRes> {
         scenario,
         paraIdTo: paraId,
         destination,
-        overridedCurrencyMultiLocation,
-        feeAsset
+        overriddenAsset
       }
 
       if (shouldUseMultiasset) {
@@ -150,12 +141,11 @@ abstract class ParachainNode<TApi, TRes> {
       return this.transferXTransfer({
         api,
         asset,
-        amount,
         recipientAddress: address,
         paraId,
         origin: this.node,
         destination,
-        overridedCurrencyMultiLocation
+        overriddenAsset
       })
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
@@ -170,20 +160,18 @@ abstract class ParachainNode<TApi, TRes> {
           paraId
         ),
         address,
-        amount,
         currencySelection: this.createCurrencySpec(
-          amount,
+          asset.amount,
           scenario,
           versionOrDefault,
           asset,
-          overridedCurrencyMultiLocation
+          overriddenAsset
         ),
         asset,
         scenario,
-        feeAsset,
         destination,
         paraIdTo: paraId,
-        overridedCurrency: overridedCurrencyMultiLocation,
+        overriddenAsset,
         version,
         ahAddress
       })
@@ -219,7 +207,7 @@ abstract class ParachainNode<TApi, TRes> {
   }
 
   createCurrencySpec(
-    amount: string,
+    amount: TAmount,
     scenario: TScenario,
     version: Version,
     _asset?: TAsset,
@@ -236,7 +224,7 @@ abstract class ParachainNode<TApi, TRes> {
   createPolkadotXcmHeader(
     scenario: TScenario,
     version: Version,
-    destination?: TDestination,
+    destination: TDestination,
     paraId?: number
   ): TMultiLocationHeader {
     return createPolkadotXcmHeader(scenario, version, destination, paraId)

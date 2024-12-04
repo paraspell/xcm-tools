@@ -18,9 +18,9 @@ describe('Centrifuge', () => {
   const mockInput = {
     asset: {
       symbol: 'CFG',
-      assetId: '123'
-    },
-    amount: '100'
+      assetId: '123',
+      amount: '100'
+    }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

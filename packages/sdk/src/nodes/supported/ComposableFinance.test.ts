@@ -16,8 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('ComposableFinance', () => {
   let composableFinance: ComposableFinance<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'LAYR', assetId: '123' },
-    amount: '100'
+    asset: { symbol: 'LAYR', assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

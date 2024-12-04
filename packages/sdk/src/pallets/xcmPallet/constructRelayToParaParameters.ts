@@ -1,24 +1,26 @@
 import { DEFAULT_FEE_ASSET } from '../../const'
 import { getParaId } from '../../nodes/config'
-import { Parents, type TRelayToParaOptions, type Version } from '../../types'
-import { generateAddressPayload } from '../../utils'
-import { createCurrencySpec, createPolkadotXcmHeader } from './utils'
+import type { TRelayToParaOptions } from '../../types'
+import { Parents, type Version } from '../../types'
+import { generateAddressPayload, isRelayChain } from '../../utils'
+import { createCurrencySpec, createPolkadotXcmHeader, isTMultiLocation } from './utils'
 
 export const constructRelayToParaParameters = <TApi, TRes>(
-  { api, destination, address, amount, paraIdTo }: TRelayToParaOptions<TApi, TRes>,
+  { api, destination, asset, address, paraIdTo }: TRelayToParaOptions<TApi, TRes>,
   version: Version,
   { includeFee } = { includeFee: false }
 ): Record<string, unknown> => {
-  // Handle the case when a destination is a multi-location
+  const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
+
   const paraId =
-    destination !== undefined && typeof destination !== 'object'
+    !isRelayDestination && typeof destination !== 'object'
       ? (paraIdTo ?? getParaId(destination))
       : undefined
 
   return {
     dest: createPolkadotXcmHeader('RelayToPara', version, destination, paraId),
     beneficiary: generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),
-    assets: createCurrencySpec(amount, version, Parents.ZERO),
+    assets: createCurrencySpec(asset.amount, version, Parents.ZERO),
     fee_asset_item: DEFAULT_FEE_ASSET,
     ...(includeFee && { weight_limit: 'Unlimited' })
   }

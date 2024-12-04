@@ -19,7 +19,9 @@ vi.mock('../utils', () => ({
   createApiInstance: vi.fn().mockResolvedValue('apiInstance'),
   generateAddressPayload: vi.fn().mockReturnValue('addressPayload'),
   getFees: vi.fn().mockReturnValue('fees'),
-  verifyMultiLocation: vi.fn()
+  verifyMultiLocation: vi.fn(),
+  isTMultiLocation: vi.fn(),
+  isRelayChain: vi.fn()
 }))
 
 vi.mock('../pallets/xcmPallet/utils', () => ({
@@ -117,8 +119,7 @@ describe('ParachainNode', () => {
   it('should return true for canUseXTokens when using exposeCanUseXTokens', () => {
     const options = {
       api: {} as IPolkadotApi<ApiPromise, Extrinsic>,
-      asset: { symbol: 'DOT' },
-      amount: '100',
+      asset: { symbol: 'DOT', amount: '100' },
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
     expect(node.exposeCanUseXTokens(options)).toBe(true)
@@ -127,8 +128,7 @@ describe('ParachainNode', () => {
   it('should call transferXTokens when supportsXTokens and canUseXTokens return true', async () => {
     const options = {
       api: {},
-      asset: { symbol: 'DOT' },
-      amount: '100',
+      asset: { symbol: 'DOT', amount: '100' },
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
 
@@ -144,8 +144,7 @@ describe('ParachainNode', () => {
     const node = new NoXTokensNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
-      asset: { symbol: 'DOT' },
-      amount: '100',
+      asset: { symbol: 'DOT', amount: '100' },
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
 
@@ -161,8 +160,7 @@ describe('ParachainNode', () => {
     const node = new OnlyPolkadotXCMNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
-      asset: { symbol: 'DOT' },
-      amount: '100',
+      asset: { symbol: 'DOT', amount: '100' },
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
 
@@ -178,8 +176,7 @@ describe('ParachainNode', () => {
     const node = new NoSupportNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {
       api: {},
-      asset: { symbol: 'DOT' },
-      amount: '100',
+      asset: { symbol: 'DOT', amount: '100' },
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
 
@@ -198,8 +195,7 @@ describe('ParachainNode', () => {
 
     const options = {
       api: {},
-      asset: { symbol: 'DOT' },
-      amount: '100',
+      asset: { symbol: 'DOT', amount: '100' },
       address: 'destinationAddress'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
 
@@ -216,8 +212,7 @@ describe('ParachainNode', () => {
   it('should throw error when destination is Polimec and node is not AssetHubPolkadot', async () => {
     const options = {
       api: {},
-      asset: { symbol: 'DOT' },
-      amount: '100',
+      asset: { symbol: 'DOT', amount: '100' },
       address: 'destinationAddress',
       destination: 'Polimec'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
@@ -233,8 +228,7 @@ describe('ParachainNode', () => {
 
     const options = {
       api: {},
-      asset: { symbol: 'DOT' },
-      amount: '100',
+      asset: { symbol: 'DOT', amount: '100' },
       address: 'destinationAddress',
       destination: 'Polimec'
     } as TSendInternalOptions<ApiPromise, Extrinsic>
@@ -279,7 +273,7 @@ describe('ParachainNode', () => {
   })
 
   it('should create Polkadot XCM header', () => {
-    const result = node.createPolkadotXcmHeader('ParaToRelay', Version.V3)
+    const result = node.createPolkadotXcmHeader('ParaToRelay', Version.V3, 'Polkadot')
 
     expect(result).toBe('polkadotXcmHeader')
   })

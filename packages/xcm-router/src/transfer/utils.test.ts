@@ -117,6 +117,98 @@ describe('transfer utils', () => {
       const extrinsic = buildFromExchangeExtrinsic(parachainApi, options, '10000000000');
       expect(extrinsic).toBeDefined();
     });
+
+    it('builds correct Extrinsic when from is Ethereum and assetFrom.symbol is defined', () => {
+      const options: TTransferOptionsModified = {
+        ...transferParams,
+        from: 'Ethereum',
+        assetFrom: { symbol: 'ETH', assetId: '0xeth' },
+        exchangeNode: 'Acala',
+        exchange: 'AcalaDex',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
+      };
+
+      const extrinsic = buildToExchangeExtrinsic(relaychainApi, options);
+      expect(extrinsic).toBeDefined();
+
+      // Should use 'AssetHubPolkadot' as from
+      expect(builderMock.from).toHaveBeenCalledWith('AssetHubPolkadot');
+      expect(builderMock.to).toHaveBeenCalledWith('Acala');
+      // Should use assetFrom.symbol since it's defined
+      expect(builderMock.currency).toHaveBeenCalledWith({
+        symbol: 'ETH',
+        amount: options.amount,
+      });
+      expect(builderMock.address).toHaveBeenCalledWith(options.injectorAddress);
+      expect(builderMock.build).toHaveBeenCalled();
+    });
+
+    it('builds correct Extrinsic when from is Ethereum and assetFrom.symbol is NOT defined', () => {
+      const options: TTransferOptionsModified = {
+        ...transferParams,
+        from: 'Ethereum',
+        currencyFrom: { symbol: 'USDT' },
+        assetFrom: undefined, // no symbol here
+        exchangeNode: 'Acala',
+        exchange: 'AcalaDex',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
+      };
+
+      const extrinsic = buildToExchangeExtrinsic(relaychainApi, options);
+      expect(extrinsic).toBeDefined();
+
+      // Should use 'AssetHubPolkadot' as from
+      expect(builderMock.from).toHaveBeenCalledWith('AssetHubPolkadot');
+      expect(builderMock.to).toHaveBeenCalledWith('Acala');
+      // Should fallback to currencyFrom since assetFrom.symbol is not defined
+      expect(builderMock.currency).toHaveBeenCalledWith({
+        symbol: 'USDT',
+        amount: options.amount,
+      });
+      expect(builderMock.address).toHaveBeenCalledWith(options.injectorAddress);
+      expect(builderMock.build).toHaveBeenCalled();
+    });
+
+    it('handles custom amount and injectorAddress correctly', () => {
+      const customAmount = '999999999999999';
+      const customInjectorAddress = '5D...CustomAddress';
+      const options: TTransferOptionsModified = {
+        ...transferParams,
+        from: 'Polkadot',
+        currencyFrom: { symbol: 'DOT' },
+        exchangeNode: 'Acala',
+        exchange: 'AcalaDex',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
+        amount: customAmount,
+        injectorAddress: customInjectorAddress,
+      };
+
+      const extrinsic = buildToExchangeExtrinsic(relaychainApi, options);
+      expect(extrinsic).toBeDefined();
+
+      expect(builderMock.currency).toHaveBeenCalledWith({
+        symbol: 'DOT',
+        amount: customAmount,
+      });
+      expect(builderMock.address).toHaveBeenCalledWith(customInjectorAddress);
+    });
+
+    it('should still build when currencyFrom is missing and from is not Ethereum', () => {
+      const options: TTransferOptionsModified = {
+        ...transferParams,
+        from: 'Polkadot',
+        exchangeNode: 'Acala',
+        exchange: 'AcalaDex',
+        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
+      };
+
+      const extrinsic = buildToExchangeExtrinsic(relaychainApi, options);
+      expect(extrinsic).toBeDefined();
+      expect(builderMock.currency).toHaveBeenCalledWith({
+        amount: options.amount,
+        symbol: 'ASTR',
+      });
+    });
   });
 
   describe('submitSwap', () => {

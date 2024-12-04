@@ -106,16 +106,6 @@ describe('validateDestinationAddress', () => {
     expect(mockedValidateAddress).not.toHaveBeenCalled()
   })
 
-  it('should not perform validation when destination is undefined', () => {
-    const address = 'some-address'
-    const destination: TDestination | undefined = undefined
-
-    validateDestinationAddress(address, destination)
-
-    expect(mockedIsTMultiLocation).not.toHaveBeenCalled()
-    expect(mockedValidateAddress).not.toHaveBeenCalled()
-  })
-
   it('should not perform validation when destination is a TMultiLocation', () => {
     const address = 'some-address'
     const destination: TDestination = {

@@ -21,8 +21,7 @@ describe('CoretimeKusama', () => {
   let node: CoretimeKusama<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'ParaToPara',
-    asset: { symbol: 'KSM' },
-    amount: '100'
+    asset: { symbol: 'KSM', amount: '100' }
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

@@ -21,8 +21,7 @@ vi.mock('../config', () => ({
 describe('Basilisk', () => {
   let basilisk: Basilisk<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'BSX', assetId: '123' },
-    amount: '100'
+    asset: { symbol: 'BSX', assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   const mockProviders = ['wss://non-preferred-rpc', 'wss://preferred-dwellir-rpc']

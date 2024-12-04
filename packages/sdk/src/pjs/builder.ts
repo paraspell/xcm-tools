@@ -14,9 +14,7 @@ const Builder = (api?: TPjsApiOrUrl) => {
   return InternalBuilder.Builder<TPjsApi, Extrinsic>(pjsApi)
 }
 
-type UseKeepAliveFinalBuilder = InternalBuilder.UseKeepAliveFinalBuilder<TPjsApi, Extrinsic>
-
 const GeneralBuilder = InternalBuilder.GeneralBuilder<TPjsApi, Extrinsic>
 
-export { Builder, UseKeepAliveFinalBuilder, GeneralBuilder }
-export * from '../builder/builders/evm-builder/EvmBuilder'
+export { Builder, GeneralBuilder }
+export * from '../builder/evm-builder/EvmBuilder'

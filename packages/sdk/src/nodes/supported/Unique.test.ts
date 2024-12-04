@@ -16,8 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('Unique', () => {
   let unique: Unique<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'UNQ', assetId: '123' },
-    amount: '100'
+    asset: { symbol: 'UNQ', assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

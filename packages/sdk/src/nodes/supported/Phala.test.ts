@@ -17,8 +17,7 @@ vi.mock('../xTransfer', () => ({
 describe('Phala', () => {
   let phala: Phala<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'PHA' },
-    amount: '100'
+    asset: { symbol: 'PHA', amount: '100' }
   } as TXTransferTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

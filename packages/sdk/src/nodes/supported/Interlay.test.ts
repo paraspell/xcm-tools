@@ -18,9 +18,9 @@ describe('Interlay', () => {
   const mockInput = {
     asset: {
       symbol: 'INTR',
-      assetId: '456'
-    },
-    amount: '100'
+      assetId: '456',
+      amount: '100'
+    }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
@@ -47,7 +47,8 @@ describe('Interlay', () => {
     const inputWithoutCurrencyID = {
       ...mockInput,
       asset: {
-        symbol: 'INTR'
+        symbol: 'INTR',
+        amount: '100'
       }
     }
 

@@ -1,24 +1,19 @@
-import type { TCurrencyInput, TDestination, TNodePolkadotKusama } from '../../../types'
+import type {
+  TAsset,
+  TCurrencyInput,
+  TDestination,
+  TNodeDotKsmWithRelayChains
+} from '../../../types'
 import { getAssetBySymbolOrId } from '../../assets/getAssetBySymbolOrId'
-import { determineRelayChain } from '../../../utils'
 import { isTMultiLocation } from '../utils'
 
 export const resolveAsset = (
   currency: TCurrencyInput,
-  origin: TNodePolkadotKusama,
-  destination: TDestination | undefined,
+  origin: TNodeDotKsmWithRelayChains,
+  destination: TDestination,
   assetCheckEnabled: boolean
-) => {
-  const isRelayDestination = destination === undefined
+): TAsset | null => {
   return assetCheckEnabled
-    ? getAssetBySymbolOrId(
-        origin,
-        currency,
-        isRelayDestination
-          ? determineRelayChain(origin)
-          : !isTMultiLocation(destination)
-            ? destination
-            : null
-      )
+    ? getAssetBySymbolOrId(origin, currency, !isTMultiLocation(destination) ? destination : null)
     : null
 }
