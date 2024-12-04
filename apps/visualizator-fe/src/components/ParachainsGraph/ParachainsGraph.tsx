@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ChannelsQuery, TotalMessageCountsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';
 import Relaychain from '../Relaychain/Relaychain';
@@ -33,6 +33,8 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
     parachainArrangement,
     toggleActiveEditParachain
   } = useSelectedParachain();
+
+  const [refsInitialized, setRefsInitialized] = useState(false);
 
   const groupRef = useRef<Group>(null);
 
@@ -103,6 +105,16 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
 
   const relaychainRef = useRef<Group | null>(null);
 
+  useEffect(() => {
+    const relaychainReady = relaychainRef.current !== null;
+
+    const allParachainsReady = Object.values(parachainRefs.current).every(ref => ref !== null);
+
+    if (relaychainReady && allParachainsReady) {
+      setRefsInitialized(true);
+    }
+  }, [parachainRefs, relaychainRef]);
+
   return (
     <group name={ecosystem} ref={groupRef}>
       <Relaychain
@@ -129,6 +141,7 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
 
       {/* Channels */}
       {ecosystem === Ecosystem.POLKADOT &&
+        refsInitialized &&
         channels.map(channel => {
           const senderKey =
             channel.sender === RELAYCHAIN_ID
