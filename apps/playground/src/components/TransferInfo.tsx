@@ -77,8 +77,10 @@ const TransferInfo = () => {
         destination: formValues.to,
         accountOrigin: originAddress,
         accountDestination: formValues.destinationAddress,
-        currency,
-        amount: formValues.amount,
+        currency: {
+          ...currency,
+          amount: formValues.amount,
+        },
       });
     }
   };

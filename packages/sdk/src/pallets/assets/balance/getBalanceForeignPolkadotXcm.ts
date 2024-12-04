@@ -9,6 +9,14 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   address: string,
   asset: TAsset
 ): Promise<bigint> => {
+  if (node === 'Moonbeam' || node === 'Moonriver') {
+    if (!isForeignAsset(asset) || !asset.assetId) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return api.getBalanceForeignAssetsAccount(address, BigInt(asset.assetId))
+  }
+
   if (node === 'Mythos') {
     return api.getMythosForeignBalance(address)
   }

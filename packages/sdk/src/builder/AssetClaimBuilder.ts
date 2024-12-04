@@ -1,24 +1,23 @@
+import type { IAccountBuilder, IFinalBuilder, IFungibleBuilder, IVersionBuilder } from '../types'
 import {
   type TMultiAsset,
   type TNodeWithRelayChains,
   type TAddress,
   type TVersionClaimAssets
-} from '../../types'
-import { type TAssetClaimOptions } from '../../types/TAssetClaim'
-import {
-  type VersionBuilder,
-  type AccountBuilder,
-  type FinalBuilder,
-  type FungibleBuilder
-} from './Builder'
-import claimAssets from '../../pallets/assets/asset-claim'
-import type { IPolkadotApi } from '../../api/IPolkadotApi'
+} from '../types'
+import { type TAssetClaimOptions } from '../types/TAssetClaim'
+import claimAssets from '../pallets/assets/asset-claim'
+import type { IPolkadotApi } from '../api/IPolkadotApi'
 
 /**
  * Builder class for constructing asset claim transactions.
  */
 class AssetClaimBuilder<TApi, TRes>
-  implements AccountBuilder<TRes>, FungibleBuilder<TRes>, VersionBuilder<TRes>, FinalBuilder<TRes>
+  implements
+    IAccountBuilder<TRes>,
+    IFungibleBuilder<TRes>,
+    IVersionBuilder<TRes>,
+    IFinalBuilder<TRes>
 {
   private readonly api: IPolkadotApi<TApi, TRes>
   private readonly node: TNodeWithRelayChains
@@ -35,7 +34,7 @@ class AssetClaimBuilder<TApi, TRes>
   static create<TApi, TRes>(
     api: IPolkadotApi<TApi, TRes>,
     node: TNodeWithRelayChains
-  ): FungibleBuilder<TRes> {
+  ): IFungibleBuilder<TRes> {
     return new AssetClaimBuilder(api, node)
   }
 

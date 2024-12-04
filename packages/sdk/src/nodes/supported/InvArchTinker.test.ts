@@ -16,8 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('InvArchTinker', () => {
   let invArchTinker: InvArchTinker<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'TNKR', assetId: '123' },
-    amount: '100'
+    asset: { symbol: 'TNKR', assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

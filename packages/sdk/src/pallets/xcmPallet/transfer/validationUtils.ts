@@ -1,64 +1,46 @@
 import { IncompatibleNodesError, InvalidCurrencyError } from '../../../errors'
 import type {
-  TAmount,
   TAsset,
-  TCurrency,
   TCurrencyInput,
   TDestination,
-  TNodePolkadotKusama,
+  TNodeDotKsmWithRelayChains,
   TSendOptions
 } from '../../../types'
+import { isRelayChain } from '../../../utils'
 import { isSymbolSpecifier } from '../../../utils/assets/isSymbolSpecifier'
 import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../../assets'
 import { getDefaultPallet } from '../../pallets'
-import { throwUnsupportedCurrency } from '../utils'
+import { isTMultiLocation, throwUnsupportedCurrency } from '../utils'
 import { isBridgeTransfer } from './isBridgeTransfer'
 
-export const validateCurrency = (
-  currency: TCurrencyInput,
-  amount: TAmount | null,
-  feeAsset: TCurrency | undefined
-) => {
-  if ((!('multiasset' in currency) || 'multilocation' in currency) && amount === null) {
-    throw new Error('Amount is required')
-  }
-
+export const validateCurrency = (currency: TCurrencyInput) => {
   if ('multiasset' in currency) {
-    if (amount !== null) {
-      console.warn(
-        'Amount is ignored when using overriding currency using multiple multi locations. Please set it to null.'
-      )
-    }
-
     if (currency.multiasset.length === 0) {
-      throw new InvalidCurrencyError('Overrided multi assets cannot be empty')
+      throw new InvalidCurrencyError('Overridden multi assets cannot be empty')
     }
 
-    if (currency.multiasset.length === 1 && (feeAsset === 0 || feeAsset !== undefined)) {
-      throw new InvalidCurrencyError('Overrided single multi asset cannot be used with fee asset')
+    if (currency.multiasset.length === 1) {
+      throw new InvalidCurrencyError('Please provide more than one multi asset')
     }
 
-    if (currency.multiasset.length > 1 && feeAsset === undefined) {
+    if (currency.multiasset.length > 1 && !currency.multiasset.some(asset => asset.isFeeAsset)) {
       throw new InvalidCurrencyError(
-        'Overrided multi assets cannot be used without specifying fee asset'
+        'Overridden multi assets cannot be used without specifying fee asset'
       )
     }
 
     if (
       currency.multiasset.length > 1 &&
-      feeAsset !== undefined &&
-      ((feeAsset as number) < 0 || (feeAsset as number) >= currency.multiasset.length)
+      currency.multiasset.filter(asset => asset.isFeeAsset).length > 1
     ) {
-      throw new InvalidCurrencyError(
-        'Fee asset index is out of bounds. Please provide a valid index.'
-      )
+      throw new InvalidCurrencyError('Overridden multi assets cannot have more than one fee asset')
     }
   }
 }
 
 export const validateDestination = (
-  origin: TNodePolkadotKusama,
-  destination: TDestination | undefined
+  origin: TNodeDotKsmWithRelayChains,
+  destination: TDestination
 ) => {
   if (destination === 'Ethereum' && origin !== 'AssetHubPolkadot' && origin !== 'Hydration') {
     throw new IncompatibleNodesError(
@@ -68,7 +50,7 @@ export const validateDestination = (
 
   const isMultiLocationDestination = typeof destination === 'object'
   const isBridge = isBridgeTransfer(origin, destination)
-  const isRelayDestination = destination === undefined
+  const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
 
   if (!isRelayDestination && !isMultiLocationDestination) {
     const originRelayChainSymbol = getRelayChainSymbol(origin)
@@ -99,7 +81,7 @@ export const validateAssetSupport = <TApi, TRes>(
   isBridge: boolean,
   asset: TAsset | null
 ) => {
-  const isRelayDestination = destination === undefined
+  const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
   const isMultiLocationDestination = typeof destination === 'object'
   const isDestAssetHub = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
   const pallet = getDefaultPallet(origin)

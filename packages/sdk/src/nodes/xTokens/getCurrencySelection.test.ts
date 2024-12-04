@@ -36,12 +36,12 @@ describe('getCurrencySelection', () => {
   it('returns overrided currency multi-location when provided', () => {
     const input = {
       origin: 'Acala',
-      amount: '1000',
       asset: {
-        assetId: '123'
+        assetId: '123',
+        amount: '1000'
       },
       paraIdTo: 2000,
-      overridedCurrencyMultiLocation: {
+      overriddenAsset: {
         parents: Parents.ZERO,
         interior: 'Here'
       }
@@ -55,18 +55,18 @@ describe('getCurrencySelection', () => {
     >)
 
     const result = getCurrencySelection(input, isAssetHub, currencySelection)
-    expect(result).toEqual({ V4: input.overridedCurrencyMultiLocation })
+    expect(result).toEqual({ V4: input.overriddenAsset })
   })
 
   it('returns modified currency selection for asset hubs when no override is provided', () => {
     const input = {
       origin: 'Acala',
-      amount: '2000',
       asset: {
-        assetId: '123'
+        assetId: '123',
+        amount: '2000'
       },
       paraIdTo: 1000,
-      overridedCurrencyMultiLocation: undefined
+      overriddenAsset: undefined
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
     const currencySelection = '123'
     const isAssetHub = true
@@ -84,12 +84,12 @@ describe('getCurrencySelection', () => {
   it('returns the unmodified currency selection when not an asset hub and no override provided', () => {
     const input = {
       origin: 'Acala',
-      amount: '3000',
       asset: {
-        assetId: '123'
+        assetId: '123',
+        amount: '3000'
       },
       paraIdTo: 3000,
-      overridedCurrencyMultiLocation: undefined
+      overriddenAsset: undefined
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
     const currencySelection = '123'
     const isAssetHub = false

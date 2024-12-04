@@ -18,9 +18,9 @@ describe('Curio', () => {
   const mockInput = {
     asset: {
       symbol: 'CUR',
-      assetId: '123'
-    },
-    amount: '100'
+      assetId: '123',
+      amount: '100'
+    }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
@@ -47,7 +47,8 @@ describe('Curio', () => {
     const inputWithoutCurrencyID = {
       ...mockInput,
       asset: {
-        symbol: 'CUR'
+        symbol: 'CUR',
+        amount: '100'
       }
     }
 

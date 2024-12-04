@@ -11,7 +11,7 @@ import { getDestination } from './getDestination'
 
 class XTransferTransferImpl {
   static transferXTransfer<TApi, TRes>(input: TXTransferTransferOptions<TApi, TRes>): TRes {
-    const { api, amount, origin, destination, overridedCurrencyMultiLocation } = input
+    const { api, origin, destination, asset, overriddenAsset } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
     if (isMultiLocationDestination) {
@@ -21,7 +21,7 @@ class XTransferTransferImpl {
     }
 
     const currencySpec = Object.values(
-      createCurrencySpec(amount, Version.V1, Parents.ZERO, overridedCurrencyMultiLocation)
+      createCurrencySpec(asset.amount, Version.V1, Parents.ZERO, overriddenAsset)
     )[0][0]
 
     const dest = getDestination(input)

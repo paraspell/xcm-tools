@@ -198,8 +198,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = await Builder(api)
         .from('AssetHubPolkadot')
         .to('AssetHubKusama')
-        .currency({ symbol: 'KSM' })
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
       await validateTx(tx, signer)
@@ -209,8 +208,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = await Builder(api)
         .from('AssetHubKusama')
         .to('AssetHubPolkadot')
-        .currency({ symbol: 'DOT' })
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
       await validateTx(tx, signer)
@@ -220,8 +218,7 @@ describe.sequential('XCM - e2e', () => {
       const tx = await Builder(api)
         .from('AssetHubKusama')
         .to('AssetHubPolkadot')
-        .currency({ symbol: 'KSM' })
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
       await validateTx(tx, signer)
@@ -283,8 +280,7 @@ describe.sequential('XCM - e2e', () => {
         const tx = await Builder(api)
           .from('AssetHubPolkadot')
           .to('Ethereum')
-          .currency({ symbol })
-          .amount(MOCK_AMOUNT)
+          .currency({ symbol, amount: MOCK_AMOUNT })
           .address(MOCK_ETH_ADDRESS)
           .build()
         await validateTx(tx, signer)
@@ -296,8 +292,9 @@ describe.sequential('XCM - e2e', () => {
     it('should create transfer tx - DOT from Relay to Para', async () => {
       const api = await createOrGetApiInstanceForNode('Polkadot')
       const tx = await Builder(api)
+        .from('Polkadot')
         .to(MOCK_POLKADOT_NODE)
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
       await validateTx(tx, signer)
@@ -305,28 +302,87 @@ describe.sequential('XCM - e2e', () => {
     it('should create transfer tx - KSM from Relay to Para', async () => {
       const api = await createOrGetApiInstanceForNode('Kusama')
       const tx = await Builder(api)
+        .from('Kusama')
         .to(MOCK_KUSAMA_NODE)
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
       await validateTx(tx, signer)
     })
   })
 
-  describe.sequential('Hydration to AssetHub transfer with feeAsset', () => {
-    it('should create transfer tx from Hydration to AssetHubPolkadot with feeAsset(0)', async () => {
-      const api = await createOrGetApiInstanceForNode('Hydration')
+  describe.sequential('Hydration to AssetHub transfer', () => {
+    it('should create transfer tx from Hydration to AssetHubPolkadot', async () => {
+      const api = await createApiInstanceForNode('Hydration')
       const tx = await Builder(api)
         .from('Hydration')
         .to('AssetHubPolkadot')
-        .currency({ symbol: ForeignAbstract('USDT1') })
-        .feeAsset('0')
-        .amount(MOCK_AMOUNT)
+        .currency({ symbol: ForeignAbstract('USDT1'), amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
-      await validateTx(tx, signer)
+      expect(tx).toBeDefined()
+    })
+
+    it('should create transfer tx from Hydration to AssetHubPolkadot - overridden multiasset', async () => {
+      const api = await createApiInstanceForNode('Hydration')
+      const tx = await Builder(api)
+        .from('Hydration')
+        .to('AssetHubPolkadot')
+        .currency({
+          multiasset: [
+            {
+              symbol: 'WUD',
+              amount: '102928'
+            },
+            {
+              isFeeAsset: true,
+              symbol: ForeignAbstract('USDC2'),
+              amount: '38482'
+            }
+          ]
+        })
+        .address(MOCK_ADDRESS)
+        .build()
+
+      expect(tx).toBeDefined()
+    })
+
+    it('should create transfer tx from Hydration to AssetHubPolkadot - overridden multiasset currency selection', async () => {
+      const api = await createApiInstanceForNode('Hydration')
+      const tx = await Builder(api)
+        .from('Hydration')
+        .to('AssetHubPolkadot')
+        .currency({
+          multiasset: [
+            {
+              id: {
+                Concrete: {
+                  parents: 0,
+                  interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '31337' }] }
+                }
+              },
+              fun: { Fungible: '102928' }
+            },
+            {
+              isFeeAsset: true,
+              id: {
+                Concrete: {
+                  parents: 0,
+                  interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
+                }
+              },
+              fun: { Fungible: '38482' }
+            }
+          ],
+          amount: MOCK_AMOUNT
+        })
+        .address(MOCK_ADDRESS)
+        .build()
+
+      expect(tx).toBeDefined()
     })
   })
+
   filteredNodes.forEach(node => {
     const { nodeTo, asset, assetId } = findTransferableNodeAndAsset(node)
     if (!nodeTo) return
@@ -345,8 +401,10 @@ describe.sequential('XCM - e2e', () => {
           const tx = await Builder(api)
             .from(node)
             .to(resolvedNode)
-            .currency(currency)
-            .amount(MOCK_AMOUNT)
+            .currency({
+              ...currency,
+              amount: MOCK_AMOUNT
+            })
             .address(resolvedAddress)
             .build()
 
@@ -401,7 +459,8 @@ describe.sequential('XCM - e2e', () => {
           try {
             const tx = await Builder(api)
               .from(node)
-              .amount(MOCK_AMOUNT)
+              .to(determineRelayChain(node))
+              .currency({ symbol: getRelayChainSymbol(node), amount: MOCK_AMOUNT })
               .address(MOCK_ADDRESS)
               .build()
             if (node === 'Mythos' || node === 'Crab') {

@@ -143,7 +143,7 @@ class Hydration<TApi, TRes>
   async transferToEthereum<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, address, asset, scenario, version, destination, amount, ahAddress } = input
+    const { api, address, asset, scenario, version, destination, ahAddress } = input
     if (!ethers.isAddress(address)) {
       throw new Error('Only Ethereum addresses are supported for Ethereum transfers')
     }
@@ -166,7 +166,7 @@ class Hydration<TApi, TRes>
 
     const ethMultiAsset = Object.values(
       createCurrencySpec(
-        amount,
+        asset.amount,
         versionOrDefault,
         Parents.TWO,
         createEthereumTokenLocation(asset.assetId ?? '')
@@ -208,7 +208,7 @@ class Hydration<TApi, TRes>
   }
 
   transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {
-    const { api, scenario, version, destination, amount } = input
+    const { api, asset, scenario, version, destination } = input
 
     const versionOrDefault = version ?? Version.V3
 
@@ -224,7 +224,9 @@ class Hydration<TApi, TRes>
         ),
         assets: {
           [versionOrDefault]: [
-            Object.values(this.createCurrencySpec(amount, 'ParaToRelay', versionOrDefault))[0][0]
+            Object.values(
+              this.createCurrencySpec(asset.amount, 'ParaToRelay', versionOrDefault)
+            )[0][0]
           ]
         },
         assets_transfer_type: 'DestinationReserve',

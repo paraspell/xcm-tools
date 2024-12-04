@@ -1,9 +1,10 @@
 import type { ApiPromise } from '@polkadot/api'
-import { NODE_NAMES_DOT_KSM } from '../../src/maps/consts'
+import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '../../src/maps/consts'
 import type { TPallet, TPalletMap, TPalletJsonMap } from '../../src/types'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 
 const defaultPalletsSortedByPriority: TPallet[] = [
+  'XcmPallet',
   'XTransfer',
   'XTokens',
   'OrmlXTokens',
@@ -30,7 +31,7 @@ const composePalletMapObject = async (api: ApiPromise): Promise<TPalletMap> => {
 
 export const fetchAllNodesPallets = async (assetsMapJson: unknown) => {
   const output = JSON.parse(JSON.stringify(assetsMapJson)) as TPalletJsonMap
-  for (const node of NODE_NAMES_DOT_KSM) {
+  for (const node of NODES_WITH_RELAY_CHAINS_DOT_KSM) {
     console.log(`Fetching pallets for ${node}...`)
 
     const newData = await fetchTryMultipleProvidersWithTimeout(node, api =>

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type Polimec from './Polimec'
+import type { TPolkadotXCMTransferOptions, TRelayToParaOptions } from '../../types'
 import { Version } from '../../types'
 import { ScenarioNotSupportedError, InvalidCurrencyError } from '../../errors'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '@polkadot/types/interfaces'
-import type { TPolkadotXCMTransferOptions, TPjsApi, TRelayToParaOptions } from '../../pjs'
 import type { IPolkadotApi } from '../../api'
 import { getNode } from '../../utils'
 
@@ -20,6 +20,7 @@ vi.mock('../polkadotXcm', () => ({
 
 import { DOT_MULTILOCATION } from '../../const'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
+import type { TPjsApi } from '../../pjs'
 
 describe('Polimec', () => {
   let polimec: Polimec<TPjsApi, Extrinsic>
@@ -47,10 +48,9 @@ describe('Polimec', () => {
       version: Version.V3,
       destination: 'Acala',
       address: 'SomeAddress',
-      amount: '1000',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT' }
+      asset: { symbol: 'DOT', amount: '1000' }
     } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     await expect(polimec.transferPolkadotXCM(input)).rejects.toThrow(ScenarioNotSupportedError)
@@ -62,10 +62,9 @@ describe('Polimec', () => {
       version: Version.V3,
       destination: 'Acala',
       address: 'SomeAddress',
-      amount: '1000',
       scenario: 'ParaToRelay',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT' }
+      asset: { symbol: 'DOT', amount: '1000' }
     } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(mockApi, 'callTxMethod')
@@ -81,10 +80,9 @@ describe('Polimec', () => {
       api: mockApi,
       destination: 'Acala',
       address: 'SomeAddress',
-      amount: '1000',
       scenario: 'ParaToRelay',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT' }
+      asset: { symbol: 'DOT', amount: '1000' }
     } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(mockApi, 'callTxMethod')
@@ -101,10 +99,9 @@ describe('Polimec', () => {
       version: Version.V3,
       destination: 'AssetHubPolkadot',
       address: 'SomeAddress',
-      amount: '1000',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT' }
+      asset: { symbol: 'DOT', amount: '1000' }
     } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
@@ -135,10 +132,9 @@ describe('Polimec', () => {
       version: Version.V3,
       destination: 'AssetHubPolkadot',
       address: 'SomeAddress',
-      amount: '1000',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT' }
+      asset: { symbol: 'DOT', amount: '1000' }
     } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
@@ -171,10 +167,9 @@ describe('Polimec', () => {
       version: Version.V3,
       destination: 'AssetHubPolkadot',
       address: 'SomeAddress',
-      amount: '1000',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'XYZ', multiLocation: assetMultiLocation }
+      asset: { symbol: 'XYZ', multiLocation: assetMultiLocation, amount: '1000' }
     } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
@@ -205,10 +200,9 @@ describe('Polimec', () => {
       version: Version.V3,
       destination: 'AssetHubPolkadot',
       address: 'SomeAddress',
-      amount: '1000',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'XYZ' }
+      asset: { symbol: 'XYZ', amount: '1000' }
     } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     await expect(polimec.transferPolkadotXCM(input)).rejects.toThrow(InvalidCurrencyError)
@@ -220,8 +214,8 @@ describe('Polimec', () => {
       api: mockApi,
       address: 'SomeAddress',
       destination: 'Acala',
-      amount: '1000',
-      paraIdTo: 2000
+      paraIdTo: 2000,
+      asset: { symbol: 'DOT', amount: '1000' }
     } as TRelayToParaOptions<ApiPromise, Extrinsic>
 
     const call = polimec.transferRelayToPara(options)
@@ -242,8 +236,8 @@ describe('Polimec', () => {
       api: mockApi,
       address: 'SomeAddress',
       destination: 'Acala',
-      amount: '1000',
-      paraIdTo: 2000
+      paraIdTo: 2000,
+      asset: { symbol: 'DOT', amount: '1000' }
     } as TRelayToParaOptions<ApiPromise, Extrinsic>
 
     const call = polimec.transferRelayToPara(options)

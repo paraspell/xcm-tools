@@ -45,17 +45,17 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { asset, amount, scenario, version = this.version, overridedCurrency } = input
+    const { asset, scenario, version = this.version, overriddenAsset } = input
     const multiLocation = this.getJunctions(asset, scenario)
     return Promise.resolve(
       PolkadotXCMTransferImpl.transferPolkadotXCM(
         {
           ...input,
           currencySelection: createCurrencySpec(
-            amount,
+            asset.amount,
             version,
             multiLocation.parents as Parents,
-            overridedCurrency,
+            overriddenAsset,
             multiLocation.interior
           )
         },

@@ -1,8 +1,18 @@
 import type { TMultiLocationHeader } from './TMultiLocation'
 import { type TMultiLocation } from './TMultiLocation'
-import type { TNode, TNodePolkadotKusama } from './TNode'
+import type {
+  TNodeDotKsmWithRelayChains,
+  TNodePolkadotKusama,
+  TNodeWithRelayChains,
+  TRelaychain
+} from './TNode'
 import { type TMultiAsset } from './TMultiAsset'
-import type { TCurrency, TCurrencyInput, TCurrencySelectionHeaderArr } from './TCurrency'
+import type {
+  TCurrencyInputWithAmount,
+  TCurrencySelectionHeaderArr,
+  TMultiAssetWithFee,
+  WithAmount
+} from './TCurrency'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { TPallet } from './TPallet'
 import type { WithApi } from './TApi'
@@ -14,42 +24,37 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   header: TMultiLocationHeader
   addressSelection: TMultiLocationHeader
-  amount: string
   address: TAddress
   currencySelection: TCurrencySelectionHeaderArr
   scenario: TScenario
-  asset: TAsset
-  destination?: TDestination
+  asset: WithAmount<TAsset>
+  destination: TDestination
   paraIdTo?: number
-  feeAsset?: TCurrency
-  overridedCurrency?: TMultiLocation | TMultiAsset[]
+  overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   version?: Version
   ahAddress?: string
 }
 
 export type TXTokensTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  asset: TAsset
-  amount: string
+  asset: WithAmount<TAsset>
   addressSelection: TMultiLocationHeader
   fees: number
   scenario: TScenario
   origin: TNodePolkadotKusama
-  destination?: TDestination
+  destination: TDestination
   paraIdTo?: number
-  overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
-  feeAsset?: TCurrency
+  overriddenAsset?: TMultiLocation | TMultiAsset[]
 }
 
 export type TXTransferTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  asset: TAsset
-  amount: string
+  asset: WithAmount<TAsset>
   recipientAddress: TAddress
   origin: TNodePolkadotKusama
   paraId?: number
-  destination?: TDestination
-  overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
+  destination: TDestination
+  overriddenAsset?: TMultiLocation | TMultiAsset[]
 }
 
 export interface IPolkadotXCMTransfer {
@@ -89,7 +94,7 @@ export enum Parents {
 
 export type TAmount = string | number | bigint
 export type TAddress = string | TMultiLocation
-export type TDestination = TNode | TMultiLocation
+export type TDestination = TNodeWithRelayChains | TMultiLocation
 export type TRelayToParaDestination = TNodePolkadotKusama | TMultiLocation
 
 export type TSendBaseOptions<TApi, TRes> = {
@@ -104,15 +109,11 @@ export type TSendBaseOptions<TApi, TRes> = {
   /**
    * The destination node or multi-location
    */
-  destination?: TDestination
+  destination: TDestination
   /**
    * The optional destination parachain ID
    */
   paraIdTo?: number
-  /**
-   * The optional overrided fee asset
-   */
-  feeAsset?: TCurrency
   /**
    * The optional destination API instance required for keep-alive
    */
@@ -130,25 +131,24 @@ export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions<TApi, TRes>, TAp
   /**
    * The origin node
    */
-  origin: TNodePolkadotKusama
+  origin: TNodeDotKsmWithRelayChains
   /**
    * The currency to transfer. Either ID, symbol, multi-location, or multi-asset
    */
-  currency: TCurrencyInput
-  /**
-   * The amount to transfer. Can be a number, string, or bigint
-   */
-  amount: TAmount | null
+  currency: TCurrencyInputWithAmount
 }
 
 export type TSendInternalOptions<TApi, TRes> = TSendBaseOptions<TApi, TRes> & {
   api: IPolkadotApi<TApi, TRes>
-  asset: TAsset
-  amount: string
-  overridedCurrencyMultiLocation?: TMultiLocation | TMultiAsset[]
+  asset: WithAmount<TAsset>
+  overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
 }
 
 type TRelayToParaBaseOptions<TApi, TRes> = {
+  /**
+   * The origin node
+   */
+  origin: TRelaychain
   /**
    * The destination node or multi-location
    */
@@ -164,15 +164,15 @@ type TRelayToParaBaseOptions<TApi, TRes> = {
   /**
    * The optional destination API instance required for keep-alive
    */
-  destApiForKeepAlive: IPolkadotApi<TApi, TRes>
+  destApiForKeepAlive?: IPolkadotApi<TApi, TRes>
   /**
    * The optional overrided XCM version
    */
   version?: Version
   /**
-   * The amount to transfer
+   * The DOT or KSM asset to transfer
    */
-  amount: TAmount
+  asset: WithAmount<TAsset>
 }
 
 export type TRelayToParaOverrides = {
@@ -196,13 +196,12 @@ export type TSerializedApiCall = {
 }
 
 export type TCheckKeepAliveOptions<TApi, TRes> = {
-  originApi: IPolkadotApi<TApi, TRes>
+  api: IPolkadotApi<TApi, TRes>
   address: string
-  amount: string
-  originNode?: TNodePolkadotKusama
+  origin: TNodeDotKsmWithRelayChains
   destApi: IPolkadotApi<TApi, TRes>
-  asset: TAsset
-  destNode?: TNodePolkadotKusama
+  asset: WithAmount<TAsset>
+  destination: TNodeDotKsmWithRelayChains
 }
 
 export type TDestWeight = {

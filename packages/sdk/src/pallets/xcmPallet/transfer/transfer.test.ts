@@ -21,7 +21,8 @@ import { isPjsClient } from '../../../utils/isPjsClient'
 
 vi.mock('../../../utils', () => ({
   getNode: vi.fn(),
-  isPjsClient: vi.fn()
+  isPjsClient: vi.fn(),
+  isRelayChain: vi.fn()
 }))
 
 vi.mock('../../../utils/isPjsClient', () => ({
@@ -93,8 +94,7 @@ describe('send', () => {
     const options = {
       api: apiMock,
       origin: 'Acala',
-      currency: { symbol: 'TEST' },
-      amount: 100,
+      currency: { symbol: 'TEST', amount: '100' },
       address: 'some-address',
       destination: 'Astar'
     } as TSendOptions<TPjsApi, Extrinsic>
@@ -104,7 +104,7 @@ describe('send', () => {
 
     const result = await send(options)
 
-    expect(validateCurrency).toHaveBeenCalledWith(options.currency, options.amount, undefined)
+    expect(validateCurrency).toHaveBeenCalledWith(options.currency)
     expect(validateDestination).toHaveBeenCalledWith(options.origin, options.destination)
     expect(validateDestinationAddress).toHaveBeenCalledWith(options.address, options.destination)
     expect(validateAssetSpecifiers).toHaveBeenCalledWith(true, options.currency)
@@ -112,17 +112,14 @@ describe('send', () => {
 
     expect(apiSpy).toHaveBeenCalledWith(options.origin)
 
-    expect(performKeepAliveCheck).toHaveBeenCalledWith(options, { symbol: 'TEST' })
+    expect(performKeepAliveCheck).toHaveBeenCalledWith(options, { symbol: 'TEST', amount: '100' })
 
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
-      asset: { symbol: 'TEST' },
-      amount: '100',
+      asset: { symbol: 'TEST', amount: '100' },
       address: options.address,
       destination: options.destination,
       paraIdTo: options.paraIdTo,
-      overridedCurrencyMultiLocation: undefined,
-      feeAsset: undefined,
       version: options.version,
       destApiForKeepAlive: options.destApiForKeepAlive,
       ahAddress: options.ahAddress
@@ -142,12 +139,10 @@ describe('send', () => {
     const options = {
       api: apiMock,
       origin: 'Acala',
-      currency: { symbol: 'TEST' },
-      amount: 100,
-      address: 'some-address',
-      destination: 'Astar'
+      destination: 'Astar',
+      currency: { symbol: 'DOT', amount: '100' },
+      address: 'some-address'
     } as TSendOptions<TPjsApi, Extrinsic>
-
     const transferSpy = vi.spyOn(originNodeMock, 'transfer')
 
     const result = await send(options)
@@ -159,7 +154,7 @@ describe('send', () => {
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        asset: { symbol: 'TEST' }
+        asset: { symbol: 'DOT', amount: '100' }
       })
     )
 
@@ -172,8 +167,7 @@ describe('send', () => {
     const options = {
       api: apiMock,
       origin: 'Acala',
-      currency: { symbol: 'TEST' },
-      amount: 100,
+      currency: { symbol: 'TEST', amount: 100 },
       address: 'some-address',
       destination: 'Astar'
     } as TSendOptions<TPjsApi, Extrinsic>
@@ -194,8 +188,7 @@ describe('send', () => {
     const options = {
       api: apiMock,
       origin: 'Acala',
-      currency: { symbol: 'TEST' },
-      amount: 100,
+      currency: { symbol: 'TEST', amount: 100 },
       address: 'some-address',
       destination: 'Astar'
     } as TSendOptions<TPjsApi, Extrinsic>
@@ -215,8 +208,9 @@ describe('send', () => {
     const options = {
       api: apiMock,
       origin: 'Acala',
-      currency: {},
-      amount: 100,
+      currency: {
+        amount: 100
+      },
       address: 'some-address',
       destination: 'Astar'
     } as TSendOptions<TPjsApi, Extrinsic>
@@ -227,7 +221,7 @@ describe('send', () => {
     expect(apiSpy).not.toHaveBeenCalled()
   })
 
-  it('should handle overridedCurrencyMultiLocation when multilocation is present and isOverrideMultiLocationSpecifier returns true', async () => {
+  it('should handle overriddenAsset when multilocation is present and isOverrideMultiLocationSpecifier returns true', async () => {
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
 
     const currency = { multilocation: { type: 'Override', value: {} } }
@@ -238,7 +232,6 @@ describe('send', () => {
       currency: currency as {
         multilocation: TMultiLocationValueWithOverride
       },
-      amount: 100,
       address: 'some-address',
       destination: 'Astar'
     } as TSendOptions<TPjsApi, Extrinsic>
@@ -251,19 +244,18 @@ describe('send', () => {
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        overridedCurrencyMultiLocation: {}
+        overriddenAsset: {}
       })
     )
 
     expect(result).toBe('transferResult')
   })
 
-  it('should handle overridedCurrencyMultiLocation when multiasset is present', async () => {
+  it('should handle overriddenAsset when multiasset is present', async () => {
     const options = {
       api: apiMock,
       origin: 'Acala',
       currency: { multiasset: [] } as TCurrencyInput,
-      amount: 100,
       address: 'some-address',
       destination: 'Astar'
     } as TSendOptions<TPjsApi, Extrinsic>
@@ -274,30 +266,7 @@ describe('send', () => {
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        overridedCurrencyMultiLocation: []
-      })
-    )
-
-    expect(result).toBe('transferResult')
-  })
-
-  it('should use amount as empty string if amount is undefined', async () => {
-    const options = {
-      api: apiMock,
-      origin: 'Acala',
-      currency: { symbol: 'TEST' },
-      amount: null,
-      address: 'some-address',
-      destination: 'Astar'
-    } as TSendOptions<TPjsApi, Extrinsic>
-
-    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
-
-    const result = await send(options)
-
-    expect(transferSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        amount: ''
+        overriddenAsset: []
       })
     )
 
@@ -308,16 +277,13 @@ describe('send', () => {
     const options = {
       api: apiMock,
       origin: 'Acala',
-      currency: { symbol: 'TEST' },
-      amount: 100,
+      currency: { symbol: 'TEST', amount: 100 },
       address: 'some-address',
       destination: 'Astar',
       paraIdTo: undefined,
-      feeAsset: undefined,
       version: undefined,
-      destApiForKeepAlive: undefined,
       ahAddress: undefined
-    } as unknown as TSendOptions<TPjsApi, Extrinsic>
+    } as TSendOptions<TPjsApi, Extrinsic>
 
     const transferSpy = vi.spyOn(originNodeMock, 'transfer')
 
@@ -326,7 +292,6 @@ describe('send', () => {
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         paraIdTo: undefined,
-        feeAsset: undefined,
         version: undefined,
         destApiForKeepAlive: undefined,
         ahAddress: undefined
