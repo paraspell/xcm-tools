@@ -1,5 +1,5 @@
 import type { WithApi } from './TApi'
-import type { TCurrencyCore } from './TCurrency'
+import type { TCurrencyCore, WithAmount } from './TCurrency'
 import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from './TNode'
 
 export type TTransferInfo = {
@@ -38,8 +38,7 @@ export type TGetTransferInfoOptionsBase = {
   destination: TNodeDotKsmWithRelayChains
   accountOrigin: string
   accountDestination: string
-  currency: TCurrencyCore
-  amount: string
+  currency: WithAmount<TCurrencyCore>
 }
 
 export type TGetTransferInfoOptions<TApi, TRes> = WithApi<TGetTransferInfoOptionsBase, TApi, TRes>

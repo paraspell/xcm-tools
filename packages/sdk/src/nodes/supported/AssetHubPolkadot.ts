@@ -6,7 +6,8 @@ import {
   createBridgeCurrencySpec,
   createBridgePolkadotXcmDest,
   createCurrencySpec,
-  createPolkadotXcmHeader
+  createPolkadotXcmHeader,
+  isTMultiLocation
 } from '../../pallets/xcmPallet/utils'
 import type {
   TJunctions,
@@ -14,7 +15,8 @@ import type {
   TAsset,
   TDestination,
   TSerializedApiCall,
-  TRelayToParaOverrides
+  TRelayToParaOverrides,
+  TAmount
 } from '../../types'
 import {
   type IPolkadotXCMTransfer,
@@ -34,6 +36,7 @@ import { ETHEREUM_JUNCTION } from '../../const'
 import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
 import { isForeignAsset } from '../../utils/assets'
 import { getNodeProviders, getParaId } from '../config'
+import { isRelayChain } from '../../utils'
 
 const createCustomXcmToBifrost = <TApi, TRes>(
   { api, address, scenario }: TPolkadotXCMTransferOptions<TApi, TRes>,
@@ -76,7 +79,7 @@ class AssetHubPolkadot<TApi, TRes>
           input.paraIdTo
         ),
         addressSelection: generateAddressMultiLocationV4(input.api, input.address),
-        currencySelection: createBridgeCurrencySpec(input.amount, targetChain)
+        currencySelection: createBridgeCurrencySpec(input.asset.amount, targetChain)
       }
       return PolkadotXCMTransferImpl.transferPolkadotXCM(
         modifiedInput,
@@ -96,10 +99,10 @@ class AssetHubPolkadot<TApi, TRes>
           input.paraIdTo
         ),
         currencySelection: createCurrencySpec(
-          input.amount,
+          input.asset.amount,
           Version.V3,
           Parents.ONE,
-          input.overridedCurrency
+          input.overriddenAsset
         )
       }
       return PolkadotXCMTransferImpl.transferPolkadotXCM(
@@ -147,7 +150,7 @@ class AssetHubPolkadot<TApi, TRes>
         this.version,
         paraIdTo
       ),
-      currencySelection: createCurrencySpec(input.amount, Version.V3, Parents.TWO, {
+      currencySelection: createCurrencySpec(input.asset.amount, Version.V3, Parents.TWO, {
         parents: Parents.TWO,
         interior: {
           X2: [
@@ -167,11 +170,11 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   handleMythosTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
-    const { api, address, amount, asset, overridedCurrency, scenario, destination, paraIdTo } =
-      input
+    const { api, address, asset, overriddenAsset, scenario, destination, paraIdTo } = input
     const version = Version.V2
+    const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
     const paraId =
-      destination !== undefined && typeof destination !== 'object' && destination !== 'Ethereum'
+      !isRelayDestination && typeof destination !== 'object' && destination !== 'Ethereum'
         ? (paraIdTo ?? getParaId(destination))
         : undefined
     const customMultiLocation: TMultiLocation = {
@@ -194,11 +197,11 @@ class AssetHubPolkadot<TApi, TRes>
         paraId
       ),
       currencySelection: this.createCurrencySpec(
-        amount,
+        asset.amount,
         scenario,
         version,
         asset,
-        overridedCurrency ?? customMultiLocation
+        overriddenAsset ?? customMultiLocation
       )
     }
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
@@ -209,7 +212,7 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   handleBifrostEthTransfer = <TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes => {
-    const { api, amount, scenario, version, destination, asset } = input
+    const { api, scenario, version, destination, asset } = input
 
     if (!isForeignAsset(asset)) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
@@ -232,7 +235,7 @@ class AssetHubPolkadot<TApi, TRes>
         assets: {
           [versionOrDefault]: [
             Object.values(
-              createCurrencySpec(amount, versionOrDefault, Parents.TWO, ethereumTokenLocation)
+              createCurrencySpec(asset.amount, versionOrDefault, Parents.TWO, ethereumTokenLocation)
             )[0][0]
           ]
         },
@@ -254,17 +257,7 @@ class AssetHubPolkadot<TApi, TRes>
   patchInput<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): TPolkadotXCMTransferOptions<TApi, TRes> {
-    const {
-      asset,
-      destination,
-      paraIdTo,
-      amount,
-      overridedCurrency,
-      scenario,
-      api,
-      version,
-      address
-    } = input
+    const { asset, destination, paraIdTo, overriddenAsset, scenario, api, version, address } = input
 
     if (
       (asset.symbol?.toUpperCase() === 'USDT' || asset.symbol?.toUpperCase() === 'USDC') &&
@@ -283,11 +276,11 @@ class AssetHubPolkadot<TApi, TRes>
           paraIdTo
         ),
         currencySelection: this.createCurrencySpec(
-          amount,
+          asset.amount,
           scenario,
           versionOrDefault,
           asset,
-          overridedCurrency
+          overriddenAsset
         )
       }
     }
@@ -297,11 +290,11 @@ class AssetHubPolkadot<TApi, TRes>
       return {
         ...input,
         currencySelection: super.createCurrencySpec(
-          amount,
+          asset.amount,
           'ParaToRelay',
           versionOrDefault,
           asset,
-          overridedCurrency
+          overriddenAsset
         )
       }
     }
@@ -309,7 +302,7 @@ class AssetHubPolkadot<TApi, TRes>
     return input
   }
 
-  private getSection(scenario: TScenario, destination?: TDestination): TPolkadotXcmSection {
+  private getSection(scenario: TScenario, destination: TDestination): TPolkadotXcmSection {
     if (destination === 'Polimec') return 'transfer_assets'
     return scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
   }
@@ -375,7 +368,7 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   createCurrencySpec(
-    amount: string,
+    amount: TAmount,
     scenario: TScenario,
     version: Version,
     asset?: TAsset,

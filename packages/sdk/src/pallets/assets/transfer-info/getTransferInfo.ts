@@ -13,7 +13,6 @@ export const getTransferInfo = async <TApi, TRes>({
   accountOrigin,
   accountDestination,
   currency,
-  amount,
   api
 }: TGetTransferInfoOptions<TApi, TRes>): Promise<TTransferInfo> => {
   await api.init(origin)
@@ -33,7 +32,6 @@ export const getTransferInfo = async <TApi, TRes>({
       origin,
       destination,
       currency,
-      amount,
       account: accountOrigin,
       accountDestination,
       api

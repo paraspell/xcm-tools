@@ -39,7 +39,8 @@ vi.mock('../../assets', () => ({
 }))
 
 vi.mock('../utils', () => ({
-  throwUnsupportedCurrency: vi.fn()
+  throwUnsupportedCurrency: vi.fn(),
+  isTMultiLocation: vi.fn()
 }))
 
 describe('validateCurrency', () => {
@@ -53,136 +54,45 @@ describe('validateCurrency', () => {
     consoleWarnSpy.mockRestore()
   })
 
-  it('should throw "Amount is required" when amount is null and currency does not have multiasset or has multilocation', () => {
-    const currency = {} as TCurrencyInput
-    const amount = null
-    const feeAsset = undefined
-
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow('Amount is required')
-  })
-
-  it('should not throw when amount is provided and currency does not have multiasset', () => {
-    const currency = {} as TCurrencyInput
-    const amount = 100
-    const feeAsset = undefined
-
-    expect(() => validateCurrency(currency, amount, feeAsset)).not.toThrow()
-  })
-
-  it('should throw "Amount is required" when amount is null and currency has multilocation', () => {
-    const currency = { multilocation: {} } as TCurrencyInput
-    const amount = null
-    const feeAsset = undefined
-
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow('Amount is required')
-  })
-
-  it('should warn when amount is not null and currency has multiasset', () => {
-    const currency = { multiasset: [{}] } as TCurrencyInput
-    const amount = 100
-    const feeAsset = undefined
-
-    validateCurrency(currency, amount, feeAsset)
-
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'Amount is ignored when using overriding currency using multiple multi locations. Please set it to null.'
-    )
-  })
-
   it('should throw InvalidCurrencyError when currency.multiasset is empty', () => {
     const currency = { multiasset: [] } as TCurrencyInput
-    const amount = null
-    const feeAsset = undefined
 
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(InvalidCurrencyError)
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(
-      'Overrided multi assets cannot be empty'
-    )
+    expect(() => validateCurrency(currency)).toThrow(InvalidCurrencyError)
+    expect(() => validateCurrency(currency)).toThrow('Overridden multi assets cannot be empty')
   })
 
-  it('should throw InvalidCurrencyError when currency.multiasset has length 1 and feeAsset is 0', () => {
-    const currency = { multiasset: [{}] } as TCurrencyInput
-    const amount = null
-    const feeAsset = 0
+  it('should throw InvalidCurrencyError when currency.multiasset has length 1 and feeAsset is specified', () => {
+    const currency = { multiasset: [{ isFeeAsset: true }] } as TCurrencyInput
 
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(InvalidCurrencyError)
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(
-      'Overrided single multi asset cannot be used with fee asset'
-    )
-  })
-
-  it('should throw InvalidCurrencyError when currency.multiasset has length 1 and feeAsset is defined', () => {
-    const currency = { multiasset: [{}] } as TCurrencyInput
-    const amount = null
-    const feeAsset = 'someFeeAsset'
-
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(InvalidCurrencyError)
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(
-      'Overrided single multi asset cannot be used with fee asset'
-    )
+    expect(() => validateCurrency(currency)).toThrow(InvalidCurrencyError)
+    expect(() => validateCurrency(currency)).toThrow('Please provide more than one multi asset')
   })
 
   it('should throw InvalidCurrencyError when currency.multiasset has length >1 and feeAsset is undefined', () => {
     const currency = { multiasset: [{}, {}] } as TCurrencyInput
-    const amount = null
-    const feeAsset = undefined
 
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(InvalidCurrencyError)
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(
-      'Overrided multi assets cannot be used without specifying fee asset'
-    )
-  })
-
-  it('should throw InvalidCurrencyError when feeAsset index is out of bounds (negative)', () => {
-    const currency = { multiasset: [{}, {}] } as TCurrencyInput
-    const amount = null
-    const feeAsset = -1
-
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(InvalidCurrencyError)
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(
-      'Fee asset index is out of bounds. Please provide a valid index.'
-    )
-  })
-
-  it('should throw InvalidCurrencyError when feeAsset index is out of bounds (too large)', () => {
-    const currency = { multiasset: [{}, {}] } as TCurrencyInput
-    const amount = null
-    const feeAsset = 2
-
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(InvalidCurrencyError)
-    expect(() => validateCurrency(currency, amount, feeAsset)).toThrow(
-      'Fee asset index is out of bounds. Please provide a valid index.'
+    expect(() => validateCurrency(currency)).toThrow(InvalidCurrencyError)
+    expect(() => validateCurrency(currency)).toThrow(
+      'Overridden multi assets cannot be used without specifying fee asset'
     )
   })
 
   it('should not throw when currency has multiasset with length >1 and valid feeAsset index', () => {
-    const currency = { multiasset: [{}, {}] } as TCurrencyInput
-    const amount = null
-    const feeAsset = 0
+    const currency = { multiasset: [{}, { isFeeAsset: true }] } as TCurrencyInput
 
-    expect(() => validateCurrency(currency, amount, feeAsset)).not.toThrow()
+    expect(() => validateCurrency(currency)).not.toThrow()
   })
 
-  it('should not throw when currency has multiasset with length 1 and feeAsset is undefined', () => {
+  it('should throw when currency has multiasset with length 1 or less', () => {
     const currency = { multiasset: [{}] } as TCurrencyInput
-    const amount = null
-    const feeAsset = undefined
 
-    expect(() => validateCurrency(currency, amount, feeAsset)).not.toThrow()
-  })
-
-  it('should not throw when amount is null and currency has multiasset', () => {
-    const currency = { multiasset: [{}] } as TCurrencyInput
-    const amount = null
-    const feeAsset = undefined
-
-    expect(() => validateCurrency(currency, amount, feeAsset)).not.toThrow()
+    expect(() => validateCurrency(currency)).toThrow('Please provide more than one multi asset')
   })
 })
 
 describe('validateDestination', () => {
   let origin: TNodePolkadotKusama
-  let destination: TDestination | undefined
+  let destination: TDestination
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -214,7 +124,7 @@ describe('validateDestination', () => {
 
   it('should not throw when destination is undefined (relay destination)', () => {
     origin = 'AssetHubPolkadot'
-    destination = undefined
+    destination = 'Polkadot'
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
   })
@@ -279,7 +189,7 @@ describe('validateDestination', () => {
 
   it('should not throw when origin and destination relay chain symbols match even if destination is undefined', () => {
     origin = 'Acala'
-    destination = undefined
+    destination = 'Polkadot'
 
     vi.mocked(isBridgeTransfer).mockReturnValue(false)
     // Relay chain symbols are not checked when destination is undefined
@@ -542,7 +452,7 @@ describe('validateAssetSupport', () => {
   it('should not throw when destination is relay (undefined)', () => {
     const options = {
       origin: 'Acala',
-      destination: undefined,
+      destination: 'Polkadot',
       currency: { symbol: 'TEST' }
     } as TSendOptions<TPjsApi, Extrinsic>
 

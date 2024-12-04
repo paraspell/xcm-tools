@@ -1,7 +1,7 @@
 import type { AbstractProvider, Signer } from 'ethers'
-import type { TCurrencyCoreV1, TNodePolkadotKusama } from '../../../types'
-import type { TEvmBuilderOptions, TOptionalEvmBuilderOptions } from '../../../types/TBuilder'
-import transferEthToPolkadot from '../../../pallets/xcmPallet/ethTransfer/ethTransfer'
+import type { TCurrencyCoreV1, TNodePolkadotKusama } from '../../types'
+import type { TEvmBuilderOptions, TOptionalEvmBuilderOptions } from '../../types/TBuilder'
+import transferEthToPolkadot from '../../pallets/xcmPallet/ethTransfer/ethTransfer'
 
 /**
  * Builder class for constructing transfers from Ethereum to Polkadot.

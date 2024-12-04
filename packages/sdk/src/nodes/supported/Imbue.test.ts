@@ -16,8 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('Imbue', () => {
   let imbue: Imbue<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'IMBU' },
-    amount: '100'
+    asset: { symbol: 'IMBU', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

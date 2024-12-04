@@ -1,5 +1,6 @@
 // Contains basic structure of xToken call
 
+import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import type {
   TXTokensTransferOptions,
   TXTokensCurrencySelection,
@@ -15,7 +16,7 @@ class XTokensTransferImpl {
     currencySelection: TXTokensCurrencySelection,
     fees: string | number = 'Unlimited'
   ): TRes {
-    const { api, origin, amount, addressSelection, destination, scenario, feeAsset } = input
+    const { api, origin, asset, addressSelection, destination, scenario, overriddenAsset } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
     if (isMultiLocationDestination) {
@@ -38,8 +39,10 @@ class XTokensTransferImpl {
       currencySelection
     )
 
+    const isMultiAsset = overriddenAsset && !isTMultiLocation(overriddenAsset)
+
     const section: TXTokensSection = shouldUseMultiasset
-      ? feeAsset
+      ? isMultiAsset
         ? 'transfer_multiassets'
         : 'transfer_multiasset'
       : 'transfer'
@@ -48,9 +51,9 @@ class XTokensTransferImpl {
       shouldUseMultiasset,
       modifiedCurrencySelection,
       addressSelection,
-      amount,
+      asset.amount,
       fees,
-      feeAsset
+      overriddenAsset
     )
 
     const call: TSerializedApiCall = {

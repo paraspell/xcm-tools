@@ -39,9 +39,8 @@ describe('XTransferController', () => {
       const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        amount: 100,
         address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        currency: { symbol: 'DOT' },
+        currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = {} as Extrinsic;
       const spy = vi
@@ -61,9 +60,8 @@ describe('XTransferController', () => {
       const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        amount: 100,
         address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        currency: { symbol: 'DOT' },
+        currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = {} as Extrinsic;
       const spy = vi
@@ -87,16 +85,14 @@ describe('XTransferController', () => {
           {
             from: 'Acala',
             to: 'Astar',
-            amount: 100,
             address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-            currency: { symbol: 'ACA' },
+            currency: { symbol: 'ACA', amount: 100 },
           },
           {
             from: 'Acala',
             to: 'Astar',
-            amount: 100,
             address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-            currency: { symbol: 'ACA' },
+            currency: { symbol: 'ACA', amount: 100 },
           },
         ],
         options: { mode: BatchMode.BATCH },
@@ -121,16 +117,14 @@ describe('XTransferController', () => {
           {
             from: 'Acala',
             to: 'Astar',
-            amount: 100,
             address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-            currency: { symbol: 'ACA' },
+            currency: { symbol: 'ACA', amount: 100 },
           },
           {
             from: 'Acala',
             to: 'Astar',
-            amount: 100,
             address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-            currency: { symbol: 'ACA' },
+            currency: { symbol: 'ACA', amount: 100 },
           },
         ],
         options: { mode: BatchMode.BATCH },

@@ -17,7 +17,6 @@ const builderMock = {
   from: vi.fn().mockReturnThis(),
   to: vi.fn().mockReturnThis(),
   currency: vi.fn().mockReturnThis(),
-  amount: vi.fn().mockReturnThis(),
   address: vi.fn().mockReturnThis(),
   xcmVersion: vi.fn().mockReturnThis(),
   addToBatch: vi.fn().mockReturnThis(),
@@ -42,7 +41,6 @@ const papiBuilderMock = {
   from: vi.fn().mockReturnThis(),
   to: vi.fn().mockReturnThis(),
   currency: vi.fn().mockReturnThis(),
-  amount: vi.fn().mockReturnThis(),
   address: vi.fn().mockReturnThis(),
   xcmVersion: vi.fn().mockReturnThis(),
   addToBatch: vi.fn().mockReturnThis(),
@@ -72,9 +70,8 @@ vi.mock('@paraspell/sdk/papi', async () => {
 describe('XTransferService', () => {
   let service: XTransferService;
 
-  const amount = 100;
   const address = '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96';
-  const currency = { symbol: 'DOT' };
+  const currency = { symbol: 'DOT', amount: 100 };
   const batchTransaction = 'batch-transaction';
   const invalidNode = 'InvalidNode';
   const txHash = '0x123';
@@ -95,7 +92,6 @@ describe('XTransferService', () => {
       const xTransferDto: XTransferDto = {
         from,
         to,
-        amount,
         address,
         currency,
       };
@@ -107,17 +103,14 @@ describe('XTransferService', () => {
       expect(builderMock.from).toHaveBeenCalledWith(from);
       expect(builderMock.to).toHaveBeenCalledWith(to);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
-      expect(builderMock.amount).toHaveBeenCalledWith(amount);
       expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
     it('should generate XCM call for parachain to relaychain transfer', async () => {
-      const from: TNode = 'Acala';
-
       const xTransferDto: XTransferDto = {
-        from,
-        amount,
+        from: 'Acala',
+        to: 'Polkadot',
         address,
         currency,
       };
@@ -125,18 +118,19 @@ describe('XTransferService', () => {
       const result = await service.generateXcmCall(xTransferDto);
 
       expect(result).toHaveProperty('toHex');
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(from);
-      expect(builderMock.from).toHaveBeenCalledWith(from);
-      expect(builderMock.amount).toHaveBeenCalledWith(amount);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(createApiInstanceForNode).toHaveBeenCalledWith('Acala');
+      expect(builderMock.from).toHaveBeenCalledWith('Acala');
+      expect(builderMock.to).toHaveBeenCalledWith('Polkadot');
+      expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
     it('should generate XCM call for relaychain to parachain transfer', async () => {
       const to: TNode = 'Acala';
       const xTransferDto: XTransferDto = {
+        from: 'Polkadot',
         to,
-        amount,
+        currency: { symbol: 'DOT', amount: 100 },
         address,
       };
 
@@ -144,9 +138,9 @@ describe('XTransferService', () => {
 
       expect(result).toHaveProperty('toHex');
       expect(createApiInstanceForNode).toHaveBeenCalledWith('Polkadot');
+      expect(builderMock.from).toHaveBeenCalledWith('Polkadot');
       expect(builderMock.to).toHaveBeenCalledWith(to);
-      expect(builderMock.amount).toHaveBeenCalledWith(amount);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
       expect(builderMock.build).toHaveBeenCalled();
     });
 
@@ -155,7 +149,6 @@ describe('XTransferService', () => {
       const xTransferDto: XTransferDto = {
         from,
         to: 'Astar',
-        amount,
         address,
         currency,
       };
@@ -171,7 +164,7 @@ describe('XTransferService', () => {
     it('should throw BadRequestException for invalid from node', async () => {
       const xTransferDto: XTransferDto = {
         from: invalidNode,
-        amount,
+        to: 'Basilisk',
         address,
         currency,
       };
@@ -184,38 +177,10 @@ describe('XTransferService', () => {
 
     it('should throw BadRequestException for invalid to node', async () => {
       const xTransferDto: XTransferDto = {
-        to: invalidNode,
-        amount,
-        address,
-        currency,
-      };
-
-      await expect(service.generateXcmCall(xTransferDto)).rejects.toThrow(
-        BadRequestException,
-      );
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
-    });
-
-    it('should throw BadRequestException when from and to node are missing', async () => {
-      const xTransferDto: XTransferDto = {
-        amount,
-        address,
-        currency,
-      };
-
-      await expect(service.generateXcmCall(xTransferDto)).rejects.toThrow(
-        BadRequestException,
-      );
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
-    });
-
-    it('should throw BadRequestException for missing currency in parachain to parachain transfer', async () => {
-      const xTransferDto: XTransferDto = {
         from: 'Acala',
-        to: 'Basilisk',
-        amount,
+        to: invalidNode,
         address,
-        currency: undefined,
+        currency,
       };
 
       await expect(service.generateXcmCall(xTransferDto)).rejects.toThrow(
@@ -228,7 +193,6 @@ describe('XTransferService', () => {
       const xTransferDto: XTransferDto = {
         from: 'Acala',
         to: 'Moonriver',
-        amount,
         address,
         currency,
       };
@@ -237,7 +201,6 @@ describe('XTransferService', () => {
         from: vi.fn().mockReturnThis(),
         to: vi.fn().mockReturnThis(),
         currency: vi.fn().mockReturnThis(),
-        amount: vi.fn().mockReturnThis(),
         address: vi.fn().mockReturnThis(),
         xcmVersion: vi.fn().mockReturnThis(),
         addToBatch: vi.fn().mockReturnThis(),
@@ -261,7 +224,6 @@ describe('XTransferService', () => {
       const xTransferDto: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        amount,
         address,
         currency,
       };
@@ -270,7 +232,6 @@ describe('XTransferService', () => {
         from: vi.fn().mockReturnThis(),
         to: vi.fn().mockReturnThis(),
         currency: vi.fn().mockReturnThis(),
-        amount: vi.fn().mockReturnThis(),
         address: vi.fn().mockReturnThis(),
         xcmVersion: vi.fn().mockReturnThis(),
         addToBatch: vi.fn().mockReturnThis(),
@@ -292,7 +253,6 @@ describe('XTransferService', () => {
       const xTransferDto: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        amount,
         address: 'invalid-address',
         currency,
       };
@@ -307,7 +267,6 @@ describe('XTransferService', () => {
       const xTransferDto: XTransferDto = {
         from: 'Acala',
         to: 'AssetHubPolkadot',
-        amount,
         address,
         currency,
         xcmVersion: paraspellSdk.Version.V2,
@@ -317,7 +276,6 @@ describe('XTransferService', () => {
         from: vi.fn().mockReturnThis(),
         to: vi.fn().mockReturnThis(),
         currency: vi.fn().mockReturnThis(),
-        amount: vi.fn().mockReturnThis(),
         address: vi.fn().mockReturnThis(),
         xcmVersion: vi.fn().mockReturnThis(),
         build: vi.fn().mockReturnValue(txHash),
@@ -337,7 +295,6 @@ describe('XTransferService', () => {
       const xTransferDto: XTransferDto = {
         from: 'Hydration',
         to: 'Ethereum',
-        amount,
         address,
         currency,
       };
@@ -358,7 +315,6 @@ describe('XTransferService', () => {
         from: vi.fn().mockReturnThis(),
         to: vi.fn().mockReturnThis(),
         currency: vi.fn().mockReturnThis(),
-        amount: vi.fn().mockReturnThis(),
         address: vi.fn().mockReturnThis(),
         xcmVersion: vi.fn().mockReturnThis(),
         addToBatch: vi.fn().mockReturnThis(),
@@ -375,14 +331,12 @@ describe('XTransferService', () => {
           {
             from,
             to: to1,
-            amount,
             address,
             currency,
           },
           {
             from,
             to: to2,
-            amount,
             address,
             currency,
           },
@@ -400,18 +354,16 @@ describe('XTransferService', () => {
       expect(builderMock.to).toHaveBeenCalledWith(to1);
       expect(builderMock.to).toHaveBeenCalledWith(to2);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
-      expect(builderMock.amount).toHaveBeenCalledWith(amount);
       expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(2);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
 
     it('should generate batch XCM call for valid relay to parachain transfers', async () => {
-      const to: TNode = 'Acala';
-
       const builderMock = {
+        from: vi.fn().mockReturnThis(),
         to: vi.fn().mockReturnThis(),
-        amount: vi.fn().mockReturnThis(),
+        currency: vi.fn().mockReturnThis(),
         address: vi.fn().mockReturnThis(),
         xcmVersion: vi.fn().mockReturnThis(),
         addToBatch: vi.fn().mockReturnThis(),
@@ -426,8 +378,9 @@ describe('XTransferService', () => {
       const batchDto: BatchXTransferDto = {
         transfers: [
           {
-            to,
-            amount,
+            from: 'Polkadot',
+            to: 'Acala',
+            currency: { symbol: 'DOT', amount: 100 },
             address,
           },
         ],
@@ -440,9 +393,9 @@ describe('XTransferService', () => {
 
       expect(result).toBe(batchTransaction);
       expect(createApiInstanceForNode).toHaveBeenCalledWith('Polkadot');
-      expect(builderMock.to).toHaveBeenCalledWith(to);
-      expect(builderMock.amount).toHaveBeenCalledWith(amount);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.from).toHaveBeenCalledWith('Polkadot');
+      expect(builderMock.to).toHaveBeenCalledWith('Acala');
+      expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(1);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
@@ -461,23 +414,6 @@ describe('XTransferService', () => {
       expect(createApiInstanceForNode).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException when from and to are missing', async () => {
-      const batchDto: BatchXTransferDto = {
-        transfers: [
-          {
-            amount,
-            address,
-            currency,
-          },
-        ],
-      };
-
-      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
-        BadRequestException,
-      );
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
-    });
-
     it('should throw BadRequestException when transfers have different from nodes', async () => {
       const from1: TNode = 'Acala';
       const from2: TNode = 'Basilisk';
@@ -488,14 +424,12 @@ describe('XTransferService', () => {
           {
             from: from1,
             to,
-            amount,
             address,
             currency,
           },
           {
             from: from2,
             to,
-            amount,
             address,
             currency,
           },
@@ -516,7 +450,6 @@ describe('XTransferService', () => {
           {
             from: invalidNode,
             to,
-            amount,
             address,
             currency,
           },
@@ -537,7 +470,6 @@ describe('XTransferService', () => {
           {
             from,
             to: invalidNode,
-            amount,
             address,
             currency,
           },
@@ -559,33 +491,11 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            amount,
             address: 'invalid-address',
             currency,
           },
         ],
       };
-
-      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
-    it('should throw BadRequestException for missing currency in parachain to parachain transfer', async () => {
-      const from: TNode = 'Acala';
-      const to: TNode = 'Basilisk';
-
-      const batchDto = {
-        transfers: [
-          {
-            from,
-            to,
-            amount,
-            address,
-            // currency is missing
-          },
-        ],
-      } as unknown as BatchXTransferDto;
 
       await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
         BadRequestException,
@@ -601,7 +511,6 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            amount,
             address,
             currency,
           },
@@ -619,7 +528,7 @@ describe('XTransferService', () => {
     it('should throw BadRequestException for invalid currency', async () => {
       const from: TNode = 'Acala';
       const to: TNode = 'Basilisk';
-      const invalidCurrency = { symbol: 'UNKNOWN' };
+      const invalidCurrency = { symbol: 'UNKNOWN', amount: 100 };
 
       const builderMockWithError = {
         from: vi.fn().mockReturnThis(),
@@ -627,7 +536,6 @@ describe('XTransferService', () => {
         currency: vi.fn().mockImplementation(() => {
           throw new InvalidCurrencyError('Invalid currency');
         }),
-        amount: vi.fn().mockReturnThis(),
         address: vi.fn().mockReturnThis(),
         addToBatch: vi.fn().mockReturnThis(),
       };
@@ -643,7 +551,6 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            amount,
             address,
             currency: invalidCurrency,
           },
@@ -664,7 +571,6 @@ describe('XTransferService', () => {
         from: vi.fn().mockReturnThis(),
         to: vi.fn().mockReturnThis(),
         currency: vi.fn().mockReturnThis(),
-        amount: vi.fn().mockReturnThis(),
         address: vi.fn().mockReturnThis(),
         addToBatch: vi.fn().mockReturnThis(),
         buildBatch: vi.fn().mockImplementation(() => {
@@ -683,7 +589,6 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            amount,
             address,
             currency,
           },
@@ -705,7 +610,6 @@ describe('XTransferService', () => {
           {
             from,
             to: toNode,
-            amount,
             address,
             currency,
           },
@@ -728,14 +632,12 @@ describe('XTransferService', () => {
           {
             from,
             to: 'Acala',
-            amount,
             address,
             currency,
           },
           {
             from,
             to: invalidToNode, // Invalid to node
-            amount,
             address,
             currency,
           },
@@ -756,7 +658,6 @@ describe('XTransferService', () => {
         from: vi.fn().mockReturnThis(),
         to: vi.fn().mockReturnThis(),
         currency: vi.fn().mockReturnThis(),
-        amount: vi.fn().mockReturnThis(),
         address: vi.fn().mockReturnThis(),
         addToBatch: vi.fn().mockReturnThis(),
         xcmVersion: vi.fn().mockReturnThis(),
@@ -771,7 +672,8 @@ describe('XTransferService', () => {
         transfers: [
           {
             from,
-            amount,
+            to: 'Polkadot',
+            currency: { symbol: 'DOT' },
             address,
           },
         ],
@@ -783,8 +685,8 @@ describe('XTransferService', () => {
       expect(result).toBe(batchTransaction);
       expect(createApiInstanceForNode).toHaveBeenCalledWith(from);
       expect(builderMock.from).toHaveBeenCalledWith(from);
-      expect(builderMock.amount).toHaveBeenCalledWith(amount);
-      expect(builderMock.address).toHaveBeenCalledWith(address);
+      expect(builderMock.to).toHaveBeenCalledWith('Polkadot');
+      expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
       expect(builderMock.addToBatch).toHaveBeenCalledTimes(1);
       expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
@@ -798,7 +700,6 @@ describe('XTransferService', () => {
           {
             from,
             to,
-            amount,
             address,
             currency,
             xcmVersion: paraspellSdk.Version.V2,
@@ -810,7 +711,6 @@ describe('XTransferService', () => {
         from: vi.fn().mockReturnThis(),
         to: vi.fn().mockReturnThis(),
         currency: vi.fn().mockReturnThis(),
-        amount: vi.fn().mockReturnThis(),
         address: vi.fn().mockReturnThis(),
         addToBatch: vi.fn().mockReturnThis(),
         xcmVersion: vi.fn().mockReturnThis(),

@@ -1,4 +1,10 @@
-import type { TAmount, TCurrencyInput, TNodePolkadotKusama } from '../../types'
+import type {
+  TAmount,
+  TCurrencyInput,
+  TNodeDotKsmWithRelayChains,
+  TNodePolkadotKusama,
+  TRelaychain
+} from '../../types'
 import {
   Version,
   Parents,
@@ -15,12 +21,16 @@ import { createX1Payload } from '../../utils/createX1Payload'
 import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
 import { InvalidCurrencyError } from '../../errors'
 import { getParaId } from '../../nodes/config'
+import { determineRelayChain } from '../../utils'
 
 export const isTMultiLocation = (value: unknown): value is TMultiLocation =>
   typeof value === 'object' && value !== null && 'parents' in value && 'interior' in value
 
+export const isTMultiAsset = (value: unknown): value is TMultiAsset =>
+  typeof value === 'object' && value !== null && 'id' in value && 'fun' in value
+
 export const createBridgeCurrencySpec = (
-  amount: string,
+  amount: TAmount,
   ecosystem: 'Polkadot' | 'Kusama'
 ): TCurrencySelectionHeaderArr => {
   return {
@@ -37,7 +47,7 @@ export const createBridgeCurrencySpec = (
           }
         },
         fun: {
-          Fungible: amount
+          Fungible: amount.toString()
         }
       }
     ]
@@ -93,7 +103,7 @@ export const createCurrencySpec = (
 export const createPolkadotXcmHeader = (
   scenario: TScenario,
   version: Version,
-  destination?: TDestination,
+  destination: TDestination,
   nodeId?: number,
   junction?: TJunction,
   parents?: Parents
@@ -123,7 +133,7 @@ export const createPolkadotXcmHeader = (
 export const createBridgePolkadotXcmDest = (
   version: Version,
   ecosystem: 'Kusama' | 'Polkadot',
-  destination?: TDestination,
+  destination: TDestination,
   nodeId?: number
 ): TMultiLocationHeader => {
   const multiLocation: TMultiLocation = {
@@ -146,6 +156,7 @@ export const createBridgePolkadotXcmDest = (
 }
 
 export const resolveTNodeFromMultiLocation = (
+  relayChain: TRelaychain,
   multiLocation: TMultiLocation
 ): TNodePolkadotKusama => {
   const parachainId = findParachainJunction(multiLocation)
@@ -153,7 +164,11 @@ export const resolveTNodeFromMultiLocation = (
     throw new Error('Parachain ID not found in destination multi location.')
   }
 
-  const node = NODE_NAMES_DOT_KSM.find(nodeName => getParaId(nodeName) === parachainId) ?? null
+  const node =
+    NODE_NAMES_DOT_KSM.find(
+      nodeName =>
+        getParaId(nodeName) === parachainId && determineRelayChain(nodeName) === relayChain
+    ) ?? null
 
   if (node === null) {
     throw new Error('Node with specified paraId not found in destination multi location.')
@@ -164,7 +179,7 @@ export const resolveTNodeFromMultiLocation = (
 
 export const throwUnsupportedCurrency = (
   currency: TCurrencyInput,
-  node: TNodePolkadotKusama,
+  node: TNodeDotKsmWithRelayChains,
   { isDestination } = { isDestination: false }
 ) => {
   if ('multilocation' in currency) {

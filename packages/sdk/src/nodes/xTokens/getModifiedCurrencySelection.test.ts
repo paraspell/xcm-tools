@@ -23,34 +23,30 @@ describe('getModifiedCurrencySelection', () => {
     vi.clearAllMocks()
   })
 
-  it('throws error when asset is not foreign and destination is undefined', () => {
+  it('throws error when asset is not foreign and destination is relaychain', () => {
     const version = Version.V1
-    const amount = '500'
     const paraIdTo = 1000
 
     const xTransferInput = {
-      amount,
-      asset: { symbol: 'DOT' },
+      asset: { symbol: 'DOT', amount: '500' },
       paraIdTo,
-      destination: undefined
+      destination: 'Polkadot'
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
     expect(getModifiedCurrencySelection(version, xTransferInput)).toEqual({
-      [version]: createMultiAsset(version, amount, DOT_MULTILOCATION)
+      [version]: createMultiAsset(version, xTransferInput.asset.amount, DOT_MULTILOCATION)
     })
   })
 
   it('returns assetHubAsset.multiLocation when asset is not foreign and assetHubAsset.multiLocation is defined', () => {
     const version = Version.V1
-    const amount = '1000'
     const paraIdTo = 1000
     const destination = 'AssetHubPolkadot'
 
     const xTransferInput = {
-      amount,
-      asset: { symbol: 'DOT' },
+      asset: { symbol: 'DOT', amount: '1000' },
       paraIdTo,
       destination
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
@@ -73,7 +69,7 @@ describe('getModifiedCurrencySelection', () => {
           }
         },
         fun: {
-          Fungible: amount
+          Fungible: xTransferInput.asset.amount
         }
       }
     })
@@ -86,8 +82,7 @@ describe('getModifiedCurrencySelection', () => {
     const destination = 'AssetHubPolkadot'
 
     const xTransferInput = {
-      amount,
-      asset: { symbol: 'KSM' },
+      asset: { symbol: 'KSM', amount: '2000' },
       paraIdTo,
       destination
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
@@ -120,13 +115,11 @@ describe('getModifiedCurrencySelection', () => {
 
   it('throws InvalidCurrencyError when assetHubAsset is undefined', () => {
     const version = Version.V1
-    const amount = '500'
     const paraIdTo = 1000
     const destination = 'AssetHubPolkadot'
 
     const xTransferInput = {
-      amount,
-      asset: { symbol: 'UNKNOWN' },
+      asset: { symbol: 'UNKNOWN', amount: '500' },
       paraIdTo,
       destination
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
@@ -141,14 +134,12 @@ describe('getModifiedCurrencySelection', () => {
 
   it('returns default multiLocation for Bifrost origin', () => {
     const version = Version.V2
-    const amount = '1000'
     const currencyID = '123'
     const paraIdTo = 2000
     const origin = 'BifrostPolkadot'
 
     const xTransferInput = {
-      amount,
-      asset: { assetId: currencyID },
+      asset: { assetId: currencyID, amount: '1000' },
       paraIdTo,
       origin
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
@@ -171,7 +162,7 @@ describe('getModifiedCurrencySelection', () => {
           }
         },
         fun: {
-          Fungible: amount
+          Fungible: xTransferInput.asset.amount
         }
       }
     })
@@ -179,16 +170,15 @@ describe('getModifiedCurrencySelection', () => {
 
   it('returns asset.multiLocation when it is defined', () => {
     const version = Version.V3
-    const amount = '1500'
     const paraIdTo = 3000
 
     const xTransferInput = {
-      amount,
       asset: {
         multiLocation: {
           parents: Parents.ONE,
           interior: 'Here'
-        }
+        },
+        amount: '1500'
       },
       paraIdTo
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
@@ -205,7 +195,7 @@ describe('getModifiedCurrencySelection', () => {
           }
         },
         fun: {
-          Fungible: amount
+          Fungible: xTransferInput.asset.amount
         }
       }
     })
@@ -213,13 +203,12 @@ describe('getModifiedCurrencySelection', () => {
 
   it('returns asset.xcmInterior when asset.multiLocation is undefined but xcmInterior is defined', () => {
     const version = Version.V3
-    const amount = '1500'
     const paraIdTo = 3000
 
     const xTransferInput = {
-      amount,
       asset: {
-        xcmInterior: [{ NetworkId: 'Any' }, { Parachain: paraIdTo }]
+        xcmInterior: [{ NetworkId: 'Any' }, { Parachain: paraIdTo }],
+        amount: '1500'
       },
       paraIdTo
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
@@ -238,7 +227,7 @@ describe('getModifiedCurrencySelection', () => {
           }
         },
         fun: {
-          Fungible: amount
+          Fungible: xTransferInput.asset.amount
         }
       }
     })
@@ -246,13 +235,11 @@ describe('getModifiedCurrencySelection', () => {
 
   it('returns default multiLocation when asset.multiLocation and xcmInterior are undefined', () => {
     const version = Version.V2
-    const amount = '1000'
     const currencyID = '123'
     const paraIdTo = 2000
 
     const xTransferInput = {
-      amount,
-      asset: { assetId: currencyID },
+      asset: { assetId: currencyID, amount: '1000' },
       paraIdTo
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
@@ -274,7 +261,7 @@ describe('getModifiedCurrencySelection', () => {
           }
         },
         fun: {
-          Fungible: amount
+          Fungible: xTransferInput.asset.amount
         }
       }
     })

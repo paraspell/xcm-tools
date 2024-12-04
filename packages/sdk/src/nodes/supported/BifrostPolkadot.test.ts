@@ -30,13 +30,11 @@ vi.mock('../polkadotXcm', () => ({
 describe('BifrostPolkadot', () => {
   let bifrostPolkadot: BifrostPolkadot<ApiPromise, Extrinsic>
   const mockXTokensInput = {
-    asset: { symbol: 'BNC' },
-    amount: '100'
+    asset: { symbol: 'BNC', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   const mockPolkadotXCMInput = {
-    amount: '200',
-    asset: { symbol: 'WETH' }
+    asset: { symbol: 'WETH', amount: '100' }
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
@@ -68,10 +66,10 @@ describe('BifrostPolkadot', () => {
       {
         ...mockPolkadotXCMInput,
         currencySelection: createCurrencySpec(
-          mockPolkadotXCMInput.amount,
+          mockPolkadotXCMInput.asset.amount,
           Version.V3,
           2, // Parents.TWO
-          mockPolkadotXCMInput.overridedCurrency,
+          mockPolkadotXCMInput.overriddenAsset,
           {
             X2: [
               ETHEREUM_JUNCTION,
@@ -90,17 +88,22 @@ describe('BifrostPolkadot', () => {
   it('should call transferPolkadotXCM with correct parameters for DOT transfer', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    await bifrostPolkadot.transferPolkadotXCM({ ...mockPolkadotXCMInput, asset: { symbol: 'DOT' } })
+    const asset = { symbol: 'DOT', amount: '100' }
+
+    await bifrostPolkadot.transferPolkadotXCM({
+      ...mockPolkadotXCMInput,
+      asset
+    })
 
     expect(spy).toHaveBeenCalledWith(
       {
         ...mockPolkadotXCMInput,
-        asset: { symbol: 'DOT' },
+        asset,
         currencySelection: createCurrencySpec(
-          mockPolkadotXCMInput.amount,
+          mockPolkadotXCMInput.asset.amount,
           Version.V3,
           Parents.ONE,
-          mockPolkadotXCMInput.overridedCurrency
+          mockPolkadotXCMInput.overriddenAsset
         )
       },
       'transfer_assets',

@@ -22,8 +22,7 @@ describe('Bajun', () => {
   let bajun: Bajun<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'ParaToPara',
-    asset: { symbol: 'BAJ' },
-    amount: '100'
+    asset: { symbol: 'BAJ', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
@@ -52,7 +51,8 @@ describe('Bajun', () => {
     const invalidInput = {
       ...mockInput,
       asset: {
-        symbol: 'INVALID'
+        symbol: 'INVALID',
+        amount: '100'
       }
     }
     vi.spyOn(bajun, 'getNativeAssetSymbol').mockReturnValue('BAJ')

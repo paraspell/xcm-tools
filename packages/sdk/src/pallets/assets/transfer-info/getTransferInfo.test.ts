@@ -80,8 +80,7 @@ describe('getTransferInfo', () => {
       destination,
       accountOrigin,
       accountDestination,
-      currency,
-      amount: '100'
+      currency
     })
 
     expect(transferInfo).toMatchObject({
@@ -122,8 +121,7 @@ describe('getTransferInfo', () => {
         destination,
         accountOrigin,
         accountDestination,
-        currency,
-        amount: '100'
+        currency
       })
     ).rejects.toThrow('API failure')
   })
@@ -137,8 +135,7 @@ describe('getTransferInfo', () => {
         destination,
         accountOrigin,
         accountDestination,
-        currency,
-        amount: '100'
+        currency
       })
     ).rejects.toThrow(InvalidCurrencyError)
   })

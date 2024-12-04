@@ -1,7 +1,11 @@
 // Contains detailed structure of XCM call construction for Polimec Parachain
 
 import type { IPolkadotApi } from '../../api'
-import { createMultiAsset, createPolkadotXcmHeader } from '../../pallets/xcmPallet/utils'
+import {
+  createMultiAsset,
+  createPolkadotXcmHeader,
+  isTMultiLocation
+} from '../../pallets/xcmPallet/utils'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -10,12 +14,12 @@ import type {
   TCurrencySelectionHeaderArr,
   TDestination,
   TMultiLocation,
-  TRelayToParaOptions,
   TScenario,
-  TSerializedApiCall
+  TSerializedApiCall,
+  TRelayToParaOptions
 } from '../../types'
 import { Parents, Version } from '../../types'
-import { generateAddressPayload, isForeignAsset } from '../../utils'
+import { generateAddressPayload, isForeignAsset, isRelayChain } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
@@ -28,12 +32,13 @@ const createCustomXcmPolimec = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   address: TAddress,
   scenario: TScenario,
-  destination: TDestination | undefined,
+  destination: TDestination,
   paraIdTo: number | undefined,
   version: Version
 ) => {
+  const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
   const paraId =
-    destination !== undefined && typeof destination !== 'object' && destination !== 'Ethereum'
+    !isRelayDestination && typeof destination !== 'object' && destination !== 'Ethereum'
       ? (paraIdTo ?? getParaId(destination))
       : undefined
   return {
@@ -106,12 +111,16 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, version = this.version, destination, address, amount, scenario, paraIdTo } = input
+    const { api, version = this.version, asset, destination, address, scenario, paraIdTo } = input
 
     if (scenario === 'ParaToPara' && destination === 'AssetHubPolkadot') {
       const currencySelection: TCurrencySelectionHeaderArr = {
         [version]: [
-          createMultiAsset(version, amount.toString(), this.getAssetMultiLocation(input.asset))
+          createMultiAsset(
+            version,
+            asset.amount.toString(),
+            this.getAssetMultiLocation(input.asset)
+          )
         ]
       }
 
@@ -145,7 +154,9 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
         ),
         assets: {
           [versionOrDefault]: [
-            Object.values(this.createCurrencySpec(amount, 'RelayToPara', versionOrDefault))[0][0]
+            Object.values(
+              this.createCurrencySpec(asset.amount, 'RelayToPara', versionOrDefault)
+            )[0][0]
           ]
         },
         assets_transfer_type: 'Teleport',
@@ -174,7 +185,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
-    const { version = Version.V3, api, address, destination, amount, paraIdTo } = options
+    const { version = Version.V3, api, asset, address, destination, paraIdTo } = options
 
     const call: TSerializedApiCall = {
       module: 'XcmPallet',
@@ -188,7 +199,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
         ),
         assets: {
           [version]: [
-            Object.values(this.createCurrencySpec(amount.toString(), 'RelayToPara', version))[0][0]
+            Object.values(this.createCurrencySpec(asset.amount, 'RelayToPara', version))[0][0]
           ]
         },
         assets_transfer_type: 'Teleport',

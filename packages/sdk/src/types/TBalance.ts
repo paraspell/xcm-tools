@@ -1,4 +1,4 @@
-import type { TCurrencyCore, TNodeDotKsmWithRelayChains, TNodePolkadotKusama } from '.'
+import type { TCurrencyCore, TNodeDotKsmWithRelayChains, TNodePolkadotKusama, WithAmount } from '.'
 import type { WithApi } from './TApi'
 
 export type TBalanceResponse = {
@@ -84,11 +84,7 @@ export type TGetOriginFeeDetailsOptionsBase = {
   /**
    * The currency to transfer.
    */
-  currency: TCurrencyCore
-  /**
-   * The amount to transfer.
-   */
-  amount: string
+  currency: WithAmount<TCurrencyCore>
   /**
    * The origin account.
    */

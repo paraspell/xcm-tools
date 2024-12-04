@@ -1,6 +1,6 @@
 import type { TJunction, TMultiLocation } from './TMultiLocation'
 import type { TMultiAsset } from './TMultiAsset'
-import type { Version } from './TTransfer'
+import type { TAmount, Version } from './TTransfer'
 
 export type TCurrency = string | number | bigint
 
@@ -29,6 +29,9 @@ export type TCurrencyCore =
       multilocation: TMultiLocationValue
     }
 
+export type TCurrencyCoreWithFee = WithAmount<TCurrencyCore> & { isFeeAsset?: boolean }
+export type TMultiAssetWithFee = TMultiAsset & { isFeeAsset?: boolean }
+
 export type TCurrencyCoreV1 =
   | {
       symbol: string
@@ -41,17 +44,21 @@ export type TMultiLocationValue = string | TMultiLocation | TJunction[]
 
 export type TMultiLocationValueWithOverride = TMultiLocationValue | TOverrideMultiLocationSpecifier
 
+export type TCurrencyInputWithAmount =
+  | WithAmount<
+      TCurrencySymbol | { id: TCurrency } | { multilocation: TMultiLocationValueWithOverride }
+    >
+  | { multiasset: TMultiAssetWithFee[] | TCurrencyCoreWithFee[] }
+
 export type TCurrencyInput =
   | TCurrencySymbol
-  | {
-      id: TCurrency
-    }
-  | {
-      multilocation: TMultiLocationValueWithOverride
-    }
-  | {
-      multiasset: TMultiAsset[]
-    }
+  | { id: TCurrency }
+  | { multilocation: TMultiLocationValueWithOverride }
+  | { multiasset: TMultiAssetWithFee[] | TCurrencyCoreWithFee[] }
+
+export type WithAmount<TBase> = TBase & {
+  amount: TAmount
+}
 
 export interface TCurrencySelection {
   id: {

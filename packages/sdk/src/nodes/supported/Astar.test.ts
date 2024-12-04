@@ -24,13 +24,11 @@ describe('Astar', () => {
   let astar: Astar<ApiPromise, Extrinsic>
   const mockPolkadotXCMInput = {
     scenario: 'ParaToPara',
-    asset: { symbol: 'DOT' },
-    amount: '100'
+    asset: { symbol: 'DOT', amount: '100' }
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   const mockXTokensInput = {
-    asset: { assetId: '123' },
-    amount: '100'
+    asset: { assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
