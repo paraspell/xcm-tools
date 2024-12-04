@@ -33,6 +33,19 @@ export const MultiAssetSchema = z.union([
 
 export type TMultiAsset = z.infer<typeof MultiAssetSchema>;
 
+const MultiAssetWithFeeSchema = MultiAssetSchema.and(
+  z.object({
+    isFeeAsset: z.boolean().optional(),
+  }),
+);
+
+const AmountSchema = z.union([
+  z.string().refine(validateAmount, {
+    message: 'Amount must be a positive number',
+  }),
+  z.number().positive({ message: 'Amount must be a positive number' }),
+]);
+
 export const SymbolSpecifierSchema = z.object({
   type: z.enum(['Native', 'Foreign', 'ForeignAbstract']),
   value: z.string(),
@@ -83,36 +96,55 @@ export const CurrencyCoreSchema = z.union([
   }),
 ]);
 
+export const CurrencyCoreWithAmountSchema = CurrencyCoreSchema.and(
+  z.object({
+    amount: AmountSchema,
+  }),
+);
+
+const CurrencyCoreWithFeeSchema = CurrencyCoreWithAmountSchema.and(
+  z.object({
+    isFeeAsset: z.boolean().optional(),
+  }),
+);
+
+const CurrencyCoreWithMLOverride = z
+  .union([
+    CurrencySymbolSchema,
+    z.object({
+      id: z.union([z.string(), z.number(), z.bigint()]),
+    }),
+    z.object({
+      multilocation: MultiLocationValueWithOverrideSchema,
+    }),
+  ])
+  .and(
+    z.object({
+      amount: AmountSchema,
+    }),
+  );
+
 export const CurrencySchema = z.union([
-  CurrencySymbolSchema,
+  CurrencyCoreWithMLOverride,
   z.object({
-    id: z.union([z.string(), z.number(), z.bigint()]),
-  }),
-  z.object({
-    multilocation: MultiLocationValueWithOverrideSchema,
-  }),
-  z.object({
-    multiasset: z.array(MultiAssetSchema),
+    multiasset: z.union([
+      z.array(MultiAssetWithFeeSchema),
+      z.array(CurrencyCoreWithFeeSchema),
+    ]),
   }),
 ]);
 
 const versionValues = Object.values(Version) as [Version, ...Version[]];
 
 export const XTransferDtoSchema = z.object({
-  from: z.string().optional(),
-  to: z.union([z.string().optional(), MultiLocationSchema]),
-  amount: z.union([
-    z.string().refine(validateAmount, {
-      message: 'Amount must be a positive number',
-    }),
-    z.number().positive({ message: 'Amount must be a positive number' }),
-  ]),
+  from: z.string(),
+  to: z.union([z.string(), MultiLocationSchema]),
   address: z.union([
     z.string().min(1, { message: 'Address is required' }),
     MultiLocationSchema,
   ]),
   ahAddress: z.string().optional(),
-  currency: CurrencySchema.optional(),
+  currency: CurrencySchema,
   xcmVersion: z.enum(versionValues).optional(),
 });
 

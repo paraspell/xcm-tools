@@ -18,8 +18,7 @@ describe('Collectives', () => {
   let node: Collectives<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'RelayToPara',
-    asset: { symbol: 'DOT' },
-    amount: '100'
+    asset: { symbol: 'DOT', amount: '100' }
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

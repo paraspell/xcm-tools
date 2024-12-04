@@ -3,13 +3,12 @@ import ErrorAlert from "./ErrorAlert";
 import type { FormValuesTransformed } from "./TransferForm";
 import TransferForm from "./TransferForm";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
+import type { TCurrencyInputWithAmount } from "@paraspell/sdk";
 import {
   isForeignAsset,
   Override,
   type Extrinsic,
-  type TCurrencyInput,
   type TMultiLocation,
-  type TNode,
   type TNodePolkadotKusama,
 } from "@paraspell/sdk";
 import type { TPapiTransaction } from "@paraspell/sdk/papi";
@@ -49,32 +48,37 @@ const XcmTransfer = () => {
     customCurrency,
     customCurrencyType,
     currency,
-  }: FormValuesTransformed): TCurrencyInput => {
+    amount,
+  }: FormValuesTransformed): TCurrencyInputWithAmount => {
     if (isCustomCurrency) {
       if (customCurrencyType === "id") {
         return {
           id: customCurrency,
+          amount,
         };
       } else if (customCurrencyType === "symbol") {
         return {
           symbol: customCurrency,
+          amount,
         };
       } else if (customCurrencyType === "overridenMultilocation") {
         return {
           multilocation: Override(JSON.parse(customCurrency) as TMultiLocation),
+          amount,
         };
       } else {
         return {
           multilocation: JSON.parse(customCurrency) as TMultiLocation,
+          amount,
         };
       }
     } else if (currency) {
       if (isForeignAsset(currency) && ethers.isAddress(currency.assetId)) {
-        return { symbol: currency.symbol ?? "" };
+        return { symbol: currency.symbol ?? "", amount };
       }
 
       if (!isForeignAsset(currency)) {
-        return { symbol: currency.symbol ?? "" };
+        return { symbol: currency.symbol ?? "", amount };
       }
 
       const hasDuplicateIds = isRelayChain(from)
@@ -83,9 +87,10 @@ const XcmTransfer = () => {
             (asset) => asset.assetId === currency.assetId,
           ).length > 1;
       return hasDuplicateIds
-        ? { symbol: currency.symbol ?? "" }
+        ? { symbol: currency.symbol ?? "", amount }
         : {
             id: currency.assetId ?? "",
+            amount,
           };
     } else {
       throw Error("Currency is required");
@@ -93,7 +98,7 @@ const XcmTransfer = () => {
   };
 
   const submit = async (formValues: FormValuesTransformed) => {
-    const { from, to, amount, address, ahAddress, useApi } = formValues;
+    const { from, to, address, ahAddress, useApi } = formValues;
 
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -136,23 +141,12 @@ const XcmTransfer = () => {
         );
       } else {
         const builder = Sdk.Builder(api as ApiPromise & PolkadotClient);
-        if (from === "Polkadot" || from === "Kusama") {
-          tx = await builder
-            .to(to as TNode)
-            .amount(amount)
-            .address(address)
-            .build();
-        } else if (to === "Polkadot" || to === "Kusama") {
-          tx = await builder.from(from).amount(amount).address(address).build();
-        } else {
-          tx = await builder
-            .from(from)
-            .to(to)
-            .currency(determineCurrency(formValues))
-            .amount(amount)
-            .address(address, ahAddress)
-            .build();
-        }
+        tx = await builder
+          .from(from)
+          .to(to)
+          .currency(determineCurrency(formValues))
+          .address(address, ahAddress)
+          .build();
       }
 
       if (apiType === "PAPI") {

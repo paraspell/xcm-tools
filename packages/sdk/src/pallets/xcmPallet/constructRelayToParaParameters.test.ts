@@ -4,6 +4,7 @@ import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { DEFAULT_FEE_ASSET } from '../../const'
 import type {
   TCurrencySelectionHeaderArr,
+  TMultiLocation,
   TMultiLocationHeader,
   TRelayToParaOptions
 } from '../../types'
@@ -24,7 +25,8 @@ vi.mock('../../utils/generateAddressPayload', () => ({
 
 vi.mock('./utils', () => ({
   createCurrencySpec: vi.fn(),
-  createPolkadotXcmHeader: vi.fn()
+  createPolkadotXcmHeader: vi.fn(),
+  isTMultiLocation: vi.fn()
 }))
 
 describe('constructRelayToParaParameters', () => {
@@ -46,9 +48,9 @@ describe('constructRelayToParaParameters', () => {
       api: mockApi,
       destination: 'Acala',
       address: mockAddress,
-      amount: mockAmount,
-      paraIdTo: mockParaId
-    } as unknown as TRelayToParaOptions<ApiPromise, Extrinsic>
+      paraIdTo: mockParaId,
+      asset: { amount: mockAmount }
+    } as TRelayToParaOptions<ApiPromise, Extrinsic>
 
     const result = constructRelayToParaParameters(options, Version.V1, { includeFee: true })
 
@@ -79,17 +81,17 @@ describe('constructRelayToParaParameters', () => {
   it('should construct parameters without fee for multi-location destination', () => {
     const options = {
       api: mockApi,
-      destination: 'SomeParachain',
+      destination: 'Acala',
       address: mockAddress,
-      amount: mockAmount
-    } as unknown as TRelayToParaOptions<ApiPromise, Extrinsic>
+      asset: { amount: mockAmount }
+    } as TRelayToParaOptions<ApiPromise, Extrinsic>
 
     const result = constructRelayToParaParameters(options, Version.V3)
 
     expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
       'RelayToPara',
       Version.V3,
-      'SomeParachain',
+      options.destination,
       mockParaId
     )
     expect(generateAddressPayload).toHaveBeenCalledWith(
@@ -112,18 +114,18 @@ describe('constructRelayToParaParameters', () => {
   it('should construct parameters without specifying paraIdTo and include fee', () => {
     const options = {
       api: mockApi,
-      destination: 'AnotherParachain',
+      destination: 'Acala',
       address: mockAddress,
-      amount: mockAmount
-    } as unknown as TRelayToParaOptions<ApiPromise, Extrinsic>
+      asset: { amount: mockAmount }
+    } as TRelayToParaOptions<ApiPromise, Extrinsic>
 
     const result = constructRelayToParaParameters(options, Version.V2, { includeFee: true })
 
-    expect(getParaId).toHaveBeenCalledWith('AnotherParachain')
+    expect(getParaId).toHaveBeenCalledWith(options.destination)
     expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
       'RelayToPara',
       Version.V2,
-      'AnotherParachain',
+      options.destination,
       mockParaId
     )
     expect(generateAddressPayload).toHaveBeenCalledWith(
@@ -147,17 +149,24 @@ describe('constructRelayToParaParameters', () => {
   it('should construct parameters with undefined paraId when destination is an object', () => {
     const options = {
       api: mockApi,
-      destination: { type: 'MultiLocation', value: 'ComplexDestination' },
+      destination: {
+        parents: Parents.ZERO,
+        interior: [
+          {
+            X1: { Parachain: 1000 }
+          }
+        ]
+      } as TMultiLocation,
       address: mockAddress,
-      amount: mockAmount
-    } as unknown as TRelayToParaOptions<ApiPromise, Extrinsic>
+      asset: { amount: mockAmount }
+    } as TRelayToParaOptions<ApiPromise, Extrinsic>
 
     const result = constructRelayToParaParameters(options, Version.V1)
 
     expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
       'RelayToPara',
       Version.V1,
-      { type: 'MultiLocation', value: 'ComplexDestination' },
+      options.destination,
       undefined
     )
     expect(generateAddressPayload).toHaveBeenCalledWith(

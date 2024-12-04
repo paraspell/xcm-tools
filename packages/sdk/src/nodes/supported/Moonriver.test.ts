@@ -22,8 +22,11 @@ describe('Moonriver', () => {
     createAccountId: vi.fn()
   } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
   const mockInput = {
-    amount: '100',
-    api
+    api,
+    asset: {
+      symbol: 'MOVR',
+      amount: 100
+    }
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
@@ -38,11 +41,10 @@ describe('Moonriver', () => {
   })
 
   it('should use correct multiLocation when transfering native asset', async () => {
-    const asset = { symbol: 'MOVR' }
     const mockInputNative = {
       ...mockInput,
       scenario: 'ParaToPara',
-      asset
+      asset: { symbol: 'MOVR', amount: 100 }
     } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
@@ -56,7 +58,7 @@ describe('Moonriver', () => {
           [Version.V3]: [
             {
               fun: {
-                Fungible: mockInput.amount
+                Fungible: mockInput.asset.amount
               },
               id: {
                 Concrete: {
@@ -78,11 +80,10 @@ describe('Moonriver', () => {
   })
 
   it('should use correct multiLocation when transfering DOT to relay', async () => {
-    const asset = { symbol: 'DOT' }
     const mockInputDot = {
       ...mockInput,
       scenario: 'ParaToRelay',
-      asset
+      asset: { symbol: 'DOT', amount: 100 }
     } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
@@ -96,7 +97,7 @@ describe('Moonriver', () => {
           [Version.V3]: [
             {
               fun: {
-                Fungible: mockInput.amount
+                Fungible: mockInput.asset.amount
               },
               id: {
                 Concrete: DOT_MULTILOCATION
@@ -128,7 +129,8 @@ describe('Moonriver', () => {
             }
           ]
         }
-      }
+      },
+      amount: 100
     }
     const mockInputUsdt = {
       ...mockInput,
@@ -147,7 +149,7 @@ describe('Moonriver', () => {
           [Version.V3]: [
             {
               fun: {
-                Fungible: mockInput.amount
+                Fungible: mockInput.asset.amount
               },
               id: {
                 Concrete: asset.multiLocation

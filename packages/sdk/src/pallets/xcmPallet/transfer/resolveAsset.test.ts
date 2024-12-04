@@ -25,7 +25,7 @@ describe('resolveAsset', () => {
   it('should return null when assetCheckEnabled is false', () => {
     const currency = {} as TCurrencyInput
     const origin = 'Acala' as TNodePolkadotKusama
-    const destination: TDestination | undefined = 'Astar'
+    const destination: TDestination = 'Astar'
     const assetCheckEnabled = false
 
     const result = resolveAsset(currency, origin, destination, assetCheckEnabled)
@@ -37,7 +37,7 @@ describe('resolveAsset', () => {
   it('should call getAssetBySymbolOrId with determineRelayChain(origin) when destination is undefined', () => {
     const currency = {} as TCurrencyInput
     const origin = 'Acala' as TNodePolkadotKusama
-    const destination: TDestination | undefined = undefined
+    const destination: TDestination = 'Polkadot'
     const assetCheckEnabled = true
     const asset = {} as TAsset
 
@@ -46,8 +46,6 @@ describe('resolveAsset', () => {
 
     const result = resolveAsset(currency, origin, destination, assetCheckEnabled)
 
-    expect(determineRelayChain).toHaveBeenCalledWith(origin)
-    expect(isTMultiLocation).not.toHaveBeenCalled()
     expect(getAssetBySymbolOrId).toHaveBeenCalledWith(origin, currency, 'Polkadot')
     expect(result).toBe(asset)
   })
@@ -55,7 +53,7 @@ describe('resolveAsset', () => {
   it('should call getAssetBySymbolOrId with destination when destination is defined and !isTMultiLocation(destination) is true', () => {
     const currency = {} as TCurrencyInput
     const origin = 'Acala' as TNodePolkadotKusama
-    const destination: TDestination | undefined = 'Astar'
+    const destination: TDestination = 'Astar'
     const assetCheckEnabled = true
     const asset = {} as TAsset
 
@@ -73,7 +71,7 @@ describe('resolveAsset', () => {
   it('should call getAssetBySymbolOrId with null when destination is defined and !isTMultiLocation(destination) is false', () => {
     const currency = {} as TCurrencyInput
     const origin = 'Acala' as TNodePolkadotKusama
-    const destination: TDestination | undefined = 'Astar'
+    const destination: TDestination = 'Astar'
     const assetCheckEnabled = true
 
     const asset = {} as TAsset

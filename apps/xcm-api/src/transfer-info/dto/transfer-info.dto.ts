@@ -1,6 +1,5 @@
-import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
+import { CurrencyCoreWithAmountSchema } from '../../x-transfer/dto/XTransferDto.js';
 import { z } from 'zod';
-import { validateAmount } from '../../utils/validateAmount.js';
 
 export const TransferInfoSchema = z.object({
   origin: z.string(),
@@ -9,13 +8,7 @@ export const TransferInfoSchema = z.object({
   accountDestination: z
     .string()
     .min(1, { message: 'Destination address is required' }),
-  currency: CurrencyCoreSchema,
-  amount: z.union([
-    z.string().refine(validateAmount, {
-      message: 'Amount must be a positive number',
-    }),
-    z.number().positive({ message: 'Amount must be a positive number' }),
-  ]),
+  currency: CurrencyCoreWithAmountSchema,
 });
 
 export type TransferInfoDto = z.infer<typeof TransferInfoSchema>;

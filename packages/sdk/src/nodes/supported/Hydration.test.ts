@@ -42,8 +42,7 @@ describe('Hydration', () => {
 
   it('should call transferXTokens with currencyID', () => {
     const mockInput = {
-      asset: { assetId: '123' },
-      amount: '100'
+      asset: { assetId: '123', amount: '100' }
     } as TXTokensTransferOptions<TPjsApi, Extrinsic>
 
     const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
@@ -69,10 +68,9 @@ describe('Hydration', () => {
       mockInput = {
         api: mockApi,
         address: ethers.Wallet.createRandom().address,
-        asset: { symbol: 'WETH', assetId: '0x1234567890abcdef' },
+        asset: { symbol: 'WETH', assetId: '0x1234567890abcdef', amount: '1000' },
         scenario: 'RelayToPara',
         destination: 'Ethereum',
-        amount: '1000',
         ahAddress: '5Gw3s7q4QLkSWwknsiixu9GR7x6xN5PWQ1YbQGxwSz1Y7DZT'
       } as TPolkadotXCMTransferOptions<TPjsApi, Extrinsic>
     })
@@ -115,7 +113,8 @@ describe('Hydration', () => {
     it('should create call for AssetHub destination DOT transfer', async () => {
       mockInput.destination = 'AssetHubPolkadot'
       mockInput.asset = {
-        symbol: 'DOT'
+        symbol: 'DOT',
+        amount: '1000'
       }
 
       const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
@@ -134,7 +133,7 @@ describe('Hydration', () => {
 
     it('should create call for AssetHub destination DOT transfer', async () => {
       mockInput.destination = 'AssetHubPolkadot'
-      mockInput.asset = { symbol: 'DOT', assetId: '3' }
+      mockInput.asset = { symbol: 'DOT', assetId: '3', amount: '1000' }
 
       const transferToAhSpy = vi.spyOn(hydration, 'transferToAssetHub')
       const spy = vi.spyOn(mockApi, 'callTxMethod')
