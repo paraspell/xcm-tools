@@ -16,8 +16,7 @@ vi.mock('../polkadotXcm', () => ({
 describe('NeuroWeb', () => {
   let neuroweb: NeuroWeb<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'DOT' },
-    amount: '100'
+    asset: { symbol: 'DOT', amount: '100' }
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

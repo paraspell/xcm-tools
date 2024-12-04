@@ -29,8 +29,7 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
 describe('Darwinia', () => {
   let darwinia: Darwinia<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'RING', assetId: '123' },
-    amount: '100'
+    asset: { symbol: 'RING', assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

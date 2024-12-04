@@ -18,8 +18,7 @@ describe('BridgeHubKusama', () => {
   let node: BridgeHubKusama<ApiPromise, Extrinsic>
   const mockInput = {
     scenario: 'RelayToPara',
-    asset: { symbol: 'KSM' },
-    amount: '100'
+    asset: { symbol: 'KSM', amount: '100' }
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

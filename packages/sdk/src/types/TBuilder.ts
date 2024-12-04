@@ -1,6 +1,8 @@
 import type { Signer } from 'ethers'
-import type { TNodePolkadotKusama } from './TNode'
-import type { TCurrencyCoreV1 } from './TCurrency'
+import type { TNodeDotKsmWithRelayChains, TNodePolkadotKusama, TNodeWithRelayChains } from './TNode'
+import type { TCurrencyCoreV1, TCurrencyInputWithAmount } from './TCurrency'
+import type { TAddress, TDestination, TVersionClaimAssets, Version } from './TTransfer'
+import type { TMultiAsset } from './TMultiAsset'
 
 /**
  * The options for the Ethereum to Polkadot transfer builder.
@@ -70,4 +72,48 @@ export type TBatchOptions = {
    * `BATCH` - commits each successful call regardless if a call fails.
    */
   mode: BatchMode
+}
+
+export interface IFromBuilder<TApi, TRes> {
+  from: (node: TNodeDotKsmWithRelayChains) => IToBuilder<TApi, TRes>
+  claimFrom: (node: TNodeWithRelayChains) => IFungibleBuilder<TRes>
+  buildBatch: (options?: TBatchOptions) => Promise<TRes>
+}
+
+export interface IToBuilder<TApi, TRes> {
+  to: (node: TDestination, paraIdTo?: number) => ICurrencyBuilder<TApi, TRes>
+}
+
+export interface ICurrencyBuilder<TApi, TRes> {
+  currency: (currency: TCurrencyInputWithAmount) => IAddressBuilder<TApi, TRes>
+}
+
+export interface IFinalBuilder<TRes> {
+  build: () => Promise<TRes>
+}
+
+export interface IAddressBuilder<TApi, TRes> {
+  address: (address: TAddress, ahAddress?: string) => IUseKeepAliveFinalBuilder<TApi, TRes>
+}
+
+export interface IFungibleBuilder<TRes> {
+  fungible: (multiAssets: TMultiAsset[]) => IAccountBuilder<TRes>
+}
+
+export interface IAccountBuilder<TRes> {
+  account: (address: TAddress) => IVersionBuilder<TRes>
+}
+
+export interface IVersionBuilder<TRes> extends IFinalBuilder<TRes> {
+  xcmVersion: (version: TVersionClaimAssets) => IFinalBuilder<TRes>
+}
+
+export interface IAddToBatchBuilder<TApi, TRes> {
+  addToBatch(): IFromBuilder<TApi, TRes>
+}
+
+export interface IUseKeepAliveFinalBuilder<TApi, TRes> extends IAddToBatchBuilder<TApi, TRes> {
+  useKeepAlive: (destApi: TApi) => this
+  xcmVersion: (version: Version) => this
+  build: () => Promise<TRes>
 }

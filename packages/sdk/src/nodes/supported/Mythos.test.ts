@@ -21,10 +21,9 @@ vi.mock('../polkadotXcm', () => ({
 describe('Mythos', () => {
   let mythos: Mythos<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'MYTH' },
+    asset: { symbol: 'MYTH', amount: '100' },
     scenario: 'ParaToPara',
-    destination: 'Acala',
-    amount: '100'
+    destination: 'Acala'
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

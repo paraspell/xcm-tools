@@ -7,12 +7,11 @@ export const getCurrencySelection = <TApi, TRes>(
   isAssetHub: boolean,
   currencySelection: TXTokensCurrencySelection
 ): TXTokensCurrencySelection => {
-  const { origin, overridedCurrencyMultiLocation } = input
+  const { origin, overriddenAsset } = input
 
   const { version } = getNode(origin)
 
-  if (overridedCurrencyMultiLocation !== undefined)
-    return { [version]: overridedCurrencyMultiLocation }
+  if (overriddenAsset !== undefined) return { [version]: overriddenAsset }
 
   if (isAssetHub) {
     return getModifiedCurrencySelection(version, input)

@@ -16,8 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('Manta', () => {
   let manta: Manta<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { assetId: '123' },
-    amount: '100'
+    asset: { assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

@@ -14,9 +14,7 @@ const Builder = (api?: TPapiApiOrUrl) => {
   return InternalBuilder.Builder<TPapiApi, TPapiTransaction>(papiApi)
 }
 
-type UseKeepAliveFinalBuilder = InternalBuilder.UseKeepAliveFinalBuilder<TPapiApi, TPapiTransaction>
-
 const GeneralBuilder = InternalBuilder.GeneralBuilder<TPapiApi, TPapiTransaction>
 
-export { Builder, UseKeepAliveFinalBuilder, GeneralBuilder }
-export * from '../builder/builders/evm-builder/EvmBuilder'
+export { Builder, GeneralBuilder }
+export * from '../builder/evm-builder/EvmBuilder'
