@@ -50,15 +50,15 @@ describe('AssetHubPolkadot', () => {
 
   const mockInput = {
     api: mockApi,
-    asset: { symbol: 'DOT' },
+    asset: { symbol: 'DOT', amount: '1000' },
     currencySelection: {},
     currencyId: '0',
     scenario: 'ParaToRelay',
     header: {},
     addressSelection: {},
     paraIdTo: 1001,
-    amount: '1000',
-    address: 'address'
+    address: 'address',
+    destination: 'Polkadot'
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {
@@ -95,7 +95,7 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('throws InvalidCurrencyError for unsupported currency', () => {
-      const input = { ...mockInput, asset: { symbol: 'UNKNOWN' } }
+      const input = { ...mockInput, asset: { symbol: 'UNKNOWN', amount: 100 } }
       expect(() => assetHub.handleBridgeTransfer(input, 'Polkadot')).toThrow(InvalidCurrencyError)
     })
   })
@@ -162,7 +162,7 @@ describe('AssetHubPolkadot', () => {
     it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'DOT' },
+        asset: { symbol: 'DOT', amount: '1000' },
         currencyId: undefined,
         scenario: 'ParaToPara',
         destination: 'Acala'
@@ -174,7 +174,7 @@ describe('AssetHubPolkadot', () => {
     it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'KSM' },
+        asset: { symbol: 'KSM', amount: '1000' },
         currencyId: undefined,
         scenario: 'ParaToPara',
         destination: 'Acala'
@@ -238,7 +238,8 @@ describe('AssetHubPolkadot', () => {
       mockInput.destination = 'BifrostPolkadot'
       mockInput.asset = {
         symbol: 'WETH',
-        assetId: '0x123'
+        assetId: '0x123',
+        amount: '1000'
       }
 
       vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'WETH', assetId: '0x123' }])
@@ -255,7 +256,8 @@ describe('AssetHubPolkadot', () => {
 
     it('should modify input for USDT currencySymbol', async () => {
       mockInput.asset = {
-        symbol: 'USDT'
+        symbol: 'USDT',
+        amount: '1000'
       }
       mockInput.scenario = 'ParaToPara'
       mockInput.destination = 'BifrostPolkadot'
@@ -273,7 +275,8 @@ describe('AssetHubPolkadot', () => {
     it('should modify input for USDC currencyId', async () => {
       mockInput.asset = {
         symbol: 'USDC',
-        assetId: '1'
+        assetId: '1',
+        amount: '1000'
       }
       mockInput.scenario = 'ParaToPara'
       mockInput.destination = 'BifrostPolkadot'
@@ -291,7 +294,8 @@ describe('AssetHubPolkadot', () => {
     it('should modify input for DOT transfer to Hydration', async () => {
       mockInput.destination = 'Hydration'
       mockInput.asset = {
-        symbol: 'DOT'
+        symbol: 'DOT',
+        amount: '1000'
       }
 
       vi.mocked(getOtherAssets).mockImplementation(node =>

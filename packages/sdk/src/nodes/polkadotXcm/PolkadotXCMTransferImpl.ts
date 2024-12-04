@@ -1,7 +1,8 @@
 // Contains basic structure of polkadotXCM call
 
 import { DEFAULT_FEE_ASSET } from '../../const'
-import type { TPolkadotXcmSection, TPallet, TSerializedApiCall } from '../../types'
+import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
+import type { TPolkadotXcmSection, TSerializedApiCall } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 
 class PolkadotXCMTransferImpl {
@@ -11,21 +12,24 @@ class PolkadotXCMTransferImpl {
       header,
       addressSelection,
       currencySelection,
-      feeAsset = DEFAULT_FEE_ASSET
+      overriddenAsset
     }: TPolkadotXCMTransferOptions<TApi, TRes>,
     section: TPolkadotXcmSection,
     fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ): TRes {
-    const module: TPallet = 'PolkadotXcm'
+    const feeAssetIndex =
+      overriddenAsset === undefined || isTMultiLocation(overriddenAsset)
+        ? DEFAULT_FEE_ASSET
+        : overriddenAsset.findIndex(asset => asset.isFeeAsset)
 
     const call: TSerializedApiCall = {
-      module,
+      module: 'PolkadotXcm',
       section,
       parameters: {
         dest: header,
         beneficiary: addressSelection,
         assets: currencySelection,
-        fee_asset_item: feeAsset,
+        fee_asset_item: feeAssetIndex,
         ...(fees !== undefined ? { weight_limit: fees } : {})
       }
     }

@@ -16,8 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('Altair', () => {
   let altair: Altair<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'AIR', assetId: '1' },
-    amount: '100'
+    asset: { symbol: 'AIR', assetId: '1', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

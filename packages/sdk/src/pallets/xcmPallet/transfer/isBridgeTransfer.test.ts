@@ -30,16 +30,16 @@ describe('isBridgeTransfer', () => {
     expect(result).toBe(false)
   })
 
-  it('should return false when origin is AssetHubPolkadot and destination is undefined', () => {
+  it('should return false when origin is AssetHubPolkadot and destination is relaychain', () => {
     const origin = 'AssetHubPolkadot'
-    const destination = undefined
+    const destination = 'Polkadot'
     const result = isBridgeTransfer(origin, destination)
     expect(result).toBe(false)
   })
 
-  it('should return false when origin is AssetHubKusama and destination is undefined', () => {
+  it('should return false when origin is AssetHubKusama and destination is relaychain', () => {
     const origin = 'AssetHubKusama'
-    const destination = undefined
+    const destination = 'Kusama'
     const result = isBridgeTransfer(origin, destination)
     expect(result).toBe(false)
   })

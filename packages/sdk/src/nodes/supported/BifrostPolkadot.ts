@@ -55,17 +55,17 @@ export class BifrostPolkadot<TApi, TRes>
 
   // Handles DOT, WETH transfers to AssetHubPolkadot
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { amount, overridedCurrency, asset } = input
+    const { overriddenAsset, asset } = input
 
     return Promise.resolve(
       PolkadotXCMTransferImpl.transferPolkadotXCM(
         {
           ...input,
           currencySelection: createCurrencySpec(
-            amount,
+            asset.amount,
             this.version,
             asset.symbol === 'DOT' ? Parents.ONE : Parents.TWO,
-            overridedCurrency,
+            overriddenAsset,
             asset.symbol === 'WETH'
               ? {
                   X2: [

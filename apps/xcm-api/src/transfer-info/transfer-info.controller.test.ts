@@ -39,8 +39,7 @@ describe('TransferInfoController', () => {
         destination: 'Basilisk',
         accountOrigin: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
         accountDestination: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        currency: { symbol: 'DOT' },
-        amount: 100,
+        currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = {} as TTransferInfo;
       const spy = vi
@@ -62,8 +61,7 @@ describe('TransferInfoController', () => {
         destination: 'Basilisk',
         accountOrigin: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
         accountDestination: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
-        currency: { symbol: 'DOT' },
-        amount: 100,
+        currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = {} as TTransferInfo;
       const spy = vi

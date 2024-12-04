@@ -17,9 +17,8 @@ vi.mock('../xTokens', () => ({
 describe('Peaq', () => {
   let peaq: Peaq<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { assetId: '123' },
-    scenario: 'ParaToPara',
-    amount: '100'
+    asset: { assetId: '123', amount: '100' },
+    scenario: 'ParaToPara'
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

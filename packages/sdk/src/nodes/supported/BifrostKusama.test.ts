@@ -16,8 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('BifrostKusama', () => {
   let bifrostKusama: BifrostKusama<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'BNC' },
-    amount: '100'
+    asset: { symbol: 'BNC', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

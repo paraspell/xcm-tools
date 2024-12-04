@@ -1,20 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { createApiInstanceForNode, determineRelayChainSymbol } from '../../../utils'
+import { createApiInstanceForNode } from '../../../utils'
 import { getTransferInfo } from './getTransferInfo'
 import { getBalanceNativeInternal } from '../balance/getBalanceNative'
 import { getOriginFeeDetailsInternal } from '../getOriginFeeDetails'
 import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
 import { getMaxNativeTransferableAmount } from '../getTransferableAmount'
-import type { ApiPromise } from '@polkadot/api'
-import { getExistentialDeposit, getNativeAssetSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../../errors'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import type { Extrinsic } from '../../../pjs/types'
+import type { Extrinsic, TPjsApi } from '../../../pjs/types'
+import { getNativeAssetSymbol, getRelayChainSymbol, getExistentialDeposit } from '../assets'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn(),
-  determineRelayChainSymbol: vi.fn(),
   getNativeAssetSymbol: vi.fn()
 }))
 
@@ -24,7 +22,8 @@ vi.mock('../getTransferableAmount', () => ({
 
 vi.mock('../assets', () => ({
   getNativeAssetSymbol: vi.fn(),
-  getExistentialDeposit: vi.fn()
+  getExistentialDeposit: vi.fn(),
+  getRelayChainSymbol: vi.fn()
 }))
 
 vi.mock('../getAssetBySymbolOrId', () => ({
@@ -46,19 +45,23 @@ vi.mock('../getOriginFeeDetails', () => ({
 const apiMock = {
   init: vi.fn(),
   disconnect: vi.fn(),
-  setDisconnectAllowed: vi.fn()
-} as unknown as IPolkadotApi<ApiPromise, Extrinsic>
+  setDisconnectAllowed: vi.fn(),
+  clone: vi.fn().mockReturnValue({
+    init: vi.fn(),
+    disconnect: vi.fn(),
+    setDisconnectAllowed: vi.fn()
+  })
+} as unknown as IPolkadotApi<TPjsApi, Extrinsic>
 
 describe('getTransferInfo', () => {
   const origin = 'Polkadot'
   const destination = 'Kusama'
   const accountOrigin = '0x123'
   const accountDestination = '0x456'
-  const currency = { symbol: 'DOT' }
-  const amount = '1000'
+  const currency = { symbol: 'DOT', amount: '1000' }
 
   beforeEach(() => {
-    vi.mocked(createApiInstanceForNode).mockResolvedValue({} as ApiPromise)
+    vi.mocked(createApiInstanceForNode).mockResolvedValue({} as TPjsApi)
     vi.mocked(getBalanceNativeInternal).mockResolvedValue(BigInt(5000))
     vi.mocked(getOriginFeeDetailsInternal).mockResolvedValue({
       xcmFee: BigInt(100),
@@ -77,15 +80,14 @@ describe('getTransferInfo', () => {
       destination,
       accountOrigin,
       accountDestination,
-      currency,
-      amount
+      currency
     })
 
     expect(transferInfo).toMatchObject({
       chain: {
         origin,
         destination,
-        ecosystem: determineRelayChainSymbol(origin)
+        ecosystem: getRelayChainSymbol(origin)
       },
       currencyBalanceOrigin: {
         balance: BigInt(2000),
@@ -119,8 +121,7 @@ describe('getTransferInfo', () => {
         destination,
         accountOrigin,
         accountDestination,
-        currency,
-        amount
+        currency
       })
     ).rejects.toThrow('API failure')
   })
@@ -134,8 +135,7 @@ describe('getTransferInfo', () => {
         destination,
         accountOrigin,
         accountDestination,
-        currency,
-        amount
+        currency
       })
     ).rejects.toThrow(InvalidCurrencyError)
   })
