@@ -1,6 +1,6 @@
 // Contains important call creation utils (Selection of fees,formating of header and more.. )
 
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '../types'
+import type { TNodeWithRelayChains, TRelaychain } from '../types'
 import { getRelayChainSymbol } from '../pallets/assets'
 
 /**
@@ -9,7 +9,7 @@ import { getRelayChainSymbol } from '../pallets/assets'
  * @param node - The node for which to determine the relay chain.
  * @returns 'Kusama' if the node's relay chain symbol is 'KSM'; otherwise, 'Polkadot'.
  */
-export const determineRelayChain = (node: TNodeWithRelayChains): TNodeDotKsmWithRelayChains =>
+export const determineRelayChain = (node: TNodeWithRelayChains): TRelaychain =>
   getRelayChainSymbol(node) === 'KSM' ? 'Kusama' : 'Polkadot'
 
 /**
@@ -28,5 +28,4 @@ export { generateAddressPayload } from './generateAddressPayload'
 export { getFees } from './getFees'
 export { getNode } from './getNode'
 export { createApiInstanceForNode } from './createApiInstanceForNode'
-export { determineRelayChainSymbol } from './determineRelayChainSymbol'
 export * from './assets'

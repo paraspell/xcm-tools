@@ -16,8 +16,7 @@ vi.mock('../polkadotXcm', () => ({
 describe('Nodle', () => {
   let nodle: Nodle<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'NODL' },
-    amount: '100',
+    asset: { symbol: 'NODL', amount: '100' },
     scenario: 'ParaToPara'
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 

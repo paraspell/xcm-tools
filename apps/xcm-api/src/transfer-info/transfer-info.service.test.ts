@@ -38,8 +38,7 @@ describe('TransferInfoService', () => {
         destination: 'Kusama',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: { symbol: 'DOT' },
-        amount: '1000',
+        currency: { symbol: 'DOT', amount: '1000' },
       }),
     ).rejects.toThrow(BadRequestException);
   });
@@ -51,8 +50,7 @@ describe('TransferInfoService', () => {
         destination: 'InvalidNode',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: { symbol: 'DOT' },
-        amount: '1000',
+        currency: { symbol: 'DOT', amount: '1000' },
       }),
     ).rejects.toThrow(BadRequestException);
   });
@@ -65,8 +63,7 @@ describe('TransferInfoService', () => {
         destination: 'Kusama',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: { symbol: 'DOT' },
-        amount: '1000',
+        currency: { symbol: 'DOT', amount: '1000' },
       }),
     ).rejects.toThrow(BadRequestException);
   });
@@ -106,8 +103,7 @@ describe('TransferInfoService', () => {
       destination: 'Kusama',
       accountOrigin: '0x123',
       accountDestination: '0x456',
-      currency: { symbol: 'DOT' },
-      amount: '1000',
+      currency: { symbol: 'DOT', amount: '1000' },
     });
     expect(result).toEqual(mockTransferInfo);
   });
@@ -148,8 +144,7 @@ describe('TransferInfoService', () => {
         destination: 'Kusama',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: { symbol: 'DOT' },
-        amount: '1000',
+        currency: { symbol: 'DOT', amount: '1000' },
       },
       true,
     );
@@ -166,8 +161,7 @@ describe('TransferInfoService', () => {
         destination: 'Kusama',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: { symbol: 'DOT' },
-        amount: '1000',
+        currency: { symbol: 'DOT', amount: '1000' },
       }),
     ).rejects.toThrow(BadRequestException);
   });
@@ -180,8 +174,7 @@ describe('TransferInfoService', () => {
         destination: 'Kusama',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: { symbol: 'DOT' },
-        amount: '1000',
+        currency: { symbol: 'DOT', amount: '1000' },
       }),
     ).rejects.toThrow(InternalServerErrorException);
   });
@@ -196,8 +189,7 @@ describe('TransferInfoService', () => {
         destination: 'Kusama',
         accountOrigin: '0x123',
         accountDestination: '0x456',
-        currency: { symbol: 'DOT' },
-        amount: '1000',
+        currency: { symbol: 'DOT', amount: '1000' },
       }),
     ).rejects.toThrow('Invalid destination wallet address.');
   });

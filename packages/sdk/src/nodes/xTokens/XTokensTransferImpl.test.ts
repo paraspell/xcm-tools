@@ -32,13 +32,12 @@ describe('XTokensTransferImpl', () => {
       origin: 'Acala',
       asset: {
         symbol: 'ACA',
-        assetId: '123'
+        assetId: '123',
+        amount: '1000'
       },
       fees: 1000,
-      amount: '1000',
       addressSelection: 'Address',
       destination: mockMultiLocation,
-      feeAsset: '0',
       scenario: 'ParaToPara'
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
@@ -51,16 +50,15 @@ describe('XTokensTransferImpl', () => {
     const input = {
       api: mockApi,
       origin: 'Acala',
-      amount: '3000',
       asset: {
         symbol: 'ACA',
-        assetId: '123'
+        assetId: '123',
+        amount: '3000'
       },
       fees: 3000,
       scenario: 'ParaToPara',
       addressSelection: 'Address',
-      destination: 'Hydration',
-      feeAsset: 'HDX'
+      destination: 'Hydration'
     } as TXTokensTransferOptions<ApiPromise, Extrinsic>
     const currencySelection = '123'
 

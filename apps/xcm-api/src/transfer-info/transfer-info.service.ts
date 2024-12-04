@@ -20,7 +20,6 @@ export class TransferInfoService {
       accountOrigin,
       accountDestination,
       currency,
-      amount,
     }: TransferInfoDto,
     usePapi = false,
   ) {
@@ -58,7 +57,6 @@ export class TransferInfoService {
         accountOrigin,
         accountDestination,
         currency,
-        amount: amount.toString(),
       });
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {

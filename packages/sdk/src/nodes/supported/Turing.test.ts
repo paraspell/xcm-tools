@@ -16,8 +16,7 @@ vi.mock('../xTokens', () => ({
 describe('Turing', () => {
   let turing: Turing<ApiPromise, Extrinsic>
   const mockInput = {
-    asset: { symbol: 'TUR', assetId: '123' },
-    amount: '100'
+    asset: { symbol: 'TUR', assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

@@ -20,12 +20,11 @@ export class TransferInfoController {
     req: Request,
     params: TransferInfoDto,
   ) {
-    const { origin, destination, currency, amount } = params;
+    const { origin, destination, currency } = params;
     this.analyticsService.track(eventName, req, {
       origin,
       destination,
       currency: JSON.stringify(currency),
-      amount,
     });
   }
 

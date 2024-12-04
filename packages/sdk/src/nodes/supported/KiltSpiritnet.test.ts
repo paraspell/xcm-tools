@@ -19,9 +19,9 @@ describe('KiltSpiritnet', () => {
   const mockInput = {
     scenario: 'ParaToPara',
     asset: {
-      symbol: 'KILT'
-    },
-    amount: '100'
+      symbol: 'KILT',
+      amount: '100'
+    }
   } as TPolkadotXCMTransferOptions<ApiPromise, Extrinsic>
 
   beforeEach(() => {

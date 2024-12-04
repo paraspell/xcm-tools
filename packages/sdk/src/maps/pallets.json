@@ -226,5 +226,13 @@
   "PeopleKusama": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": ["PolkadotXcm"]
+  },
+  "Polkadot": {
+    "defaultPallet": "XcmPallet",
+    "supportedPallets": ["XcmPallet"]
+  },
+  "Kusama": {
+    "defaultPallet": "XcmPallet",
+    "supportedPallets": ["XcmPallet"]
   }
 }
