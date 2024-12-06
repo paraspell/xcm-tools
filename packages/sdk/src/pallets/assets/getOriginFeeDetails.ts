@@ -1,11 +1,11 @@
 import type { TCurrencyCore, TNodePolkadotKusama, TOriginFeeDetails } from '../../types'
 import { type TNodeDotKsmWithRelayChains } from '../../types'
 import { getBalanceNativeInternal } from './balance/getBalanceNative'
-import { getMinNativeTransferableAmount } from './getExistentialDeposit'
 import { isRelayChain } from '../../utils'
 import { Builder } from '../../builder'
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
 import type { TGetOriginFeeDetailsOptions } from '../../types/TBalance'
+import { getExistentialDeposit } from './assets'
 
 const createTx = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
@@ -61,8 +61,8 @@ export const getOriginFeeDetailsInternal = async <TApi, TRes>({
     api
   })
 
-  const minTransferableAmount = getMinNativeTransferableAmount(origin)
-  const sufficientForXCM = nativeBalance - minTransferableAmount - xcmFeeWithMargin > 0
+  const existentialDeposit = BigInt(getExistentialDeposit(origin) ?? '0')
+  const sufficientForXCM = nativeBalance - existentialDeposit - xcmFeeWithMargin > 0
 
   return {
     sufficientForXCM,

@@ -4,6 +4,7 @@ import { InvalidCurrencyError } from '../../errors'
 import type { TAsset } from '../../types'
 import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
+import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -26,5 +27,10 @@ export class Centrifuge<TApi, TRes> extends ParachainNode<TApi, TRes> implements
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
+  }
+
+  getProvider(): string {
+    // Return the second WebSocket URL because the first one is sometimes unreliable.
+    return getNodeProviders(this.node)[1]
   }
 }

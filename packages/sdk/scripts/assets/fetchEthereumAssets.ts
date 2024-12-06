@@ -35,11 +35,6 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
     SyntaxKind.ArrayLiteralExpression
   )
 
-  // remove property minimumTransferAmount from each token object
-  tokenArray.forEachChild(token => {
-    token.getLastChildByKindOrThrow(SyntaxKind.PropertyAssignment).remove()
-  })
-
   const assets: TForeignAsset[] = []
 
   tokenArray.forEachChild(token => {
@@ -54,9 +49,17 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
       .getFirstChildByKindOrThrow(SyntaxKind.StringLiteral)
       .getText()
 
+    const ed = item
+      .getChildAtIndexIfKindOrThrow(4, SyntaxKind.PropertyAssignment)
+      .getFirstChildByKindOrThrow(SyntaxKind.BigIntLiteral)
+      .getText()
+
+    const edTransformed = ed.replace(/_/g, '').replace('n', '')
+
     assets.push({
       symbol: JSON.parse(symbol),
       assetId: JSON.parse(assetId),
+      existentialDeposit: edTransformed.toString(),
       multiLocation: {
         parents: 2,
         interior: {

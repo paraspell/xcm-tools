@@ -2,7 +2,7 @@
 
 import * as fs from 'fs'
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { type TNodePolkadotKusama } from '../src/types'
+import type { TNodeDotKsmWithRelayChains } from '../src/types'
 import { getNodeProvider, getNodeProviders } from '../src/nodes/config'
 
 export const readJsonOrReturnEmptyObject = (path: string) => {
@@ -21,7 +21,7 @@ export const checkForNodeJsEnvironment = () => {
 }
 
 export const fetchTryMultipleProviders = <T>(
-  node: TNodePolkadotKusama,
+  node: TNodeDotKsmWithRelayChains,
   fetcher: (wsUrl: string) => T
 ): T | null => {
   const providers = (() => {
@@ -73,7 +73,7 @@ export const fetchWithTimeout = async <T>(
 }
 
 export const fetchTryMultipleProvidersWithTimeout = async <T>(
-  node: TNodePolkadotKusama,
+  node: TNodeDotKsmWithRelayChains,
   fetcher: (api: ApiPromise) => T
 ) => {
   return fetchTryMultipleProviders(node, async wsUrl => {

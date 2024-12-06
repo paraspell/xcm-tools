@@ -5,13 +5,9 @@ import { getBalanceNativeInternal } from '../balance/getBalanceNative'
 import { getOriginFeeDetailsInternal } from '../getOriginFeeDetails'
 import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
-import {
-  getExistentialDeposit,
-  getMaxNativeTransferableAmount,
-  getMinNativeTransferableAmount
-} from '../getExistentialDeposit'
+import { getMaxNativeTransferableAmount } from '../getTransferableAmount'
 import type { ApiPromise } from '@polkadot/api'
-import { getNativeAssetSymbol } from '../assets'
+import { getExistentialDeposit, getNativeAssetSymbol } from '../assets'
 import { InvalidCurrencyError } from '../../../errors'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { Extrinsic } from '../../../pjs/types'
@@ -22,14 +18,13 @@ vi.mock('../../../utils', () => ({
   getNativeAssetSymbol: vi.fn()
 }))
 
-vi.mock('../getExistentialDeposit', () => ({
-  getExistentialDeposit: vi.fn(),
-  getMinNativeTransferableAmount: vi.fn(),
+vi.mock('../getTransferableAmount', () => ({
   getMaxNativeTransferableAmount: vi.fn()
 }))
 
 vi.mock('../assets', () => ({
-  getNativeAssetSymbol: vi.fn()
+  getNativeAssetSymbol: vi.fn(),
+  getExistentialDeposit: vi.fn()
 }))
 
 vi.mock('../getAssetBySymbolOrId', () => ({
@@ -71,8 +66,7 @@ describe('getTransferInfo', () => {
     })
     vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'DOT', assetId: '1' })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(2000))
-    vi.mocked(getExistentialDeposit).mockReturnValue(BigInt('100'))
-    vi.mocked(getMinNativeTransferableAmount).mockReturnValue(BigInt('10'))
+    vi.mocked(getExistentialDeposit).mockReturnValue('100')
     vi.mocked(getMaxNativeTransferableAmount).mockResolvedValue(BigInt(4000))
   })
 
@@ -105,7 +99,7 @@ describe('getTransferInfo', () => {
         },
         existentialDeposit: BigInt(100),
         asset: getNativeAssetSymbol(origin),
-        minNativeTransferableAmount: BigInt(10),
+        minNativeTransferableAmount: BigInt(100),
         maxNativeTransferableAmount: BigInt(4000)
       },
       destinationFeeBalance: {

@@ -3,6 +3,9 @@ import { getBalanceForeign as getBalanceForeignImpl } from '../pallets/assets/ba
 import { getTransferInfo as getTransferInfoImpl } from '../pallets/assets/transfer-info/getTransferInfo'
 import { getAssetBalance as getAssetBalanceImpl } from '../pallets/assets/balance/getAssetBalance'
 import { getOriginFeeDetails as getOriginFeeDetailsImpl } from '../pallets/assets/getOriginFeeDetails'
+import { getMaxNativeTransferableAmount as getMaxNativeTransferableAmountImpl } from '../pallets/assets/getTransferableAmount'
+import { getMaxForeignTransferableAmount as getMaxForeignTransferableAmountImpl } from '../pallets/assets/getTransferableAmount'
+import { getTransferableAmount as getTransferableAmountImpl } from '../pallets/assets/getTransferableAmount'
 import { default as claimAssetsImpl } from '../pallets/assets/asset-claim'
 import type { Extrinsic, TPjsApi } from './types'
 import { createPolkadotJsApiCall } from './utils'
@@ -46,8 +49,19 @@ export const getOriginFeeDetails = createPolkadotJsApiCall(
   getOriginFeeDetailsImpl<TPjsApi, Extrinsic>
 )
 
+export const getMaxNativeTransferableAmount = createPolkadotJsApiCall(
+  getMaxNativeTransferableAmountImpl<TPjsApi, Extrinsic>
+)
+
+export const getMaxForeignTransferableAmount = createPolkadotJsApiCall(
+  getMaxForeignTransferableAmountImpl<TPjsApi, Extrinsic>
+)
+
+export const getTransferableAmount = createPolkadotJsApiCall(
+  getTransferableAmountImpl<TPjsApi, Extrinsic>
+)
+
 export * from '../pallets/assets/assets'
-export * from '../pallets/assets/eds'
 export * from '../pallets/assets/assetSelectors'
 export * from '../pallets/assets/multiLocationSelectors'
 export { getSupportedAssets } from '../pallets/assets/getSupportedAssets'

@@ -1,8 +1,7 @@
 import { KeepAliveError } from '../../../errors/KeepAliveError'
 import type { TCheckKeepAliveOptions, TNodePolkadotKusama } from '../../../types'
-import { getAssetsObject } from '../../assets'
+import { getAssetsObject, getExistentialDeposit } from '../../assets'
 import { determineRelayChain } from '../../../utils'
-import { getExistentialDeposit } from '../../assets/eds'
 import { createTx } from './createTx'
 
 export const checkKeepAlive = async <TApi, TRes>({

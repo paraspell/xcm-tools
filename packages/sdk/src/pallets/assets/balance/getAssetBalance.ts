@@ -15,7 +15,7 @@ export const getAssetBalanceInternal = async <TApi, TRes>({
   const isNativeSymbol =
     'symbol' in currency ? getNativeAssetSymbol(node) === currency.symbol : false
 
-  return isNativeSymbol && node !== 'Interlay'
+  return isNativeSymbol && node !== 'Interlay' && node !== 'Kintsugi'
     ? await getBalanceNativeInternal({
         address,
         node,

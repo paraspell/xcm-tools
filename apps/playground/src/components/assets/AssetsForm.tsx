@@ -10,7 +10,12 @@ import {
   TextInput,
 } from "@mantine/core";
 import type { TNode } from "@paraspell/sdk";
-import { NODE_NAMES, NODE_NAMES_DOT_KSM } from "@paraspell/sdk";
+import {
+  NODE_NAMES,
+  NODE_NAMES_DOT_KSM,
+  NODES_WITH_RELAY_CHAINS,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
+} from "@paraspell/sdk";
 import type { TAssetsQuery } from "../../types";
 import { ASSET_QUERIES } from "../../consts";
 
@@ -47,15 +52,26 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
     funcVal === "DECIMALS" ||
     funcVal == "HAS_SUPPORT" ||
     funcVal === "BALANCE_FOREIGN" ||
-    funcVal === "ASSET_BALANCE";
+    funcVal === "ASSET_BALANCE" ||
+    funcVal === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
+    funcVal === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+    funcVal === "TRANSFERABLE_AMOUNT" ||
+    funcVal === "EXISTENTIAL_DEPOSIT";
 
   const supportsCurrencyType =
-    funcVal === "BALANCE_FOREIGN" || funcVal === "ASSET_BALANCE";
+    funcVal === "BALANCE_FOREIGN" ||
+    funcVal === "ASSET_BALANCE" ||
+    funcVal === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
+    funcVal === "TRANSFERABLE_AMOUNT" ||
+    funcVal === "EXISTENTIAL_DEPOSIT";
 
   const showAddressInput =
     funcVal === "BALANCE_FOREIGN" ||
     funcVal === "BALANCE_NATIVE" ||
-    funcVal === "ASSET_BALANCE";
+    funcVal === "ASSET_BALANCE" ||
+    funcVal === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+    funcVal === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
+    funcVal === "TRANSFERABLE_AMOUNT";
 
   const onSubmitInternal = (formValues: FormValues) => {
     const { func } = formValues;
@@ -71,14 +87,47 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
     funcVal === "PARA_ID" ||
     funcVal === "BALANCE_NATIVE" ||
     funcVal === "BALANCE_FOREIGN" ||
-    funcVal === "ASSET_BALANCE";
+    funcVal === "ASSET_BALANCE" ||
+    funcVal === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+    funcVal === "MAX_FOREIGN_TRANSFERABLE_AMOUNT";
 
-  const nodeList = notSupportsEthereum ? NODE_NAMES_DOT_KSM : NODE_NAMES;
+  const supportsRelayChains =
+    funcVal === "ASSETS_OBJECT" ||
+    funcVal === "NATIVE_ASSETS" ||
+    funcVal === "BALANCE_NATIVE" ||
+    funcVal === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+    funcVal === "EXISTENTIAL_DEPOSIT" ||
+    funcVal === "TRANSFERABLE_AMOUNT";
+
+  const optionalCurrency =
+    funcVal === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+    funcVal === "EXISTENTIAL_DEPOSIT";
+
+  const getNodeList = () => {
+    if (notSupportsEthereum && supportsRelayChains) {
+      return NODES_WITH_RELAY_CHAINS_DOT_KSM;
+    }
+
+    if (notSupportsEthereum && !supportsRelayChains) {
+      return NODE_NAMES_DOT_KSM;
+    }
+
+    if (!notSupportsEthereum && supportsRelayChains) {
+      return NODES_WITH_RELAY_CHAINS;
+    }
+
+    return NODE_NAMES;
+  };
+
+  const nodeList = getNodeList();
 
   useEffect(() => {
-    if (form.values.node === "Ethereum" && notSupportsEthereum) {
+    if (!nodeList.includes(form.values.node as (typeof nodeList)[0])) {
       form.setFieldValue("node", "Acala");
     }
+  }, [nodeList, form.values.node]);
+
+  useEffect(() => {
     if (showSymbolInput) {
       form.setFieldValue("currency", "");
       form.setFieldValue("currencyType", "symbol");
@@ -120,7 +169,11 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
               form.values.currencyType === "symbol") && (
               <TextInput
                 flex={1}
-                label={supportsCurrencyType ? "Currency" : "Symbol"}
+                label={
+                  supportsCurrencyType
+                    ? `Currency ${optionalCurrency ? "(optional)" : ""}`
+                    : `Symbol ${optionalCurrency ? "(optional)" : ""}`
+                }
                 placeholder={
                   supportsCurrencyType
                     ? "GLMR"
@@ -128,7 +181,7 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
                       ? "Asset ID"
                       : "Symbol"
                 }
-                required
+                required={!optionalCurrency}
                 data-testid="input-currency"
                 {...form.getInputProps("currency")}
               />

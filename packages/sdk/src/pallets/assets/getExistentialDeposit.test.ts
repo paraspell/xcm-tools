@@ -1,61 +1,137 @@
-import { describe, it, expect, vi } from 'vitest'
-import {
-  getExistentialDeposit,
-  getMinNativeTransferableAmount,
-  getMaxNativeTransferableAmount
-} from './getExistentialDeposit'
-import * as edsMapJson from '../../maps/existential-deposits.json'
-import { getBalanceNativeInternal } from './balance/getBalanceNative'
-import type { TNodeDotKsmWithRelayChains } from '../../types'
-import type { IPolkadotApi } from '../../api/IPolkadotApi'
-import type { ApiPromise } from '@polkadot/api'
-import type { Extrinsic } from '../../pjs/types'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { getExistentialDeposit } from './getExistentialDeposit'
+import { InvalidCurrencyError } from '../../errors'
+import { getAssetsObject } from './assets' // Adjust path accordingly
+import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
+import type { TNodeWithRelayChains, TCurrencyCore, TNodeAssets } from '../../types'
 
-vi.mock('./balance/getBalanceNative', () => ({
-  getBalanceNativeInternal: vi.fn()
+vi.mock('./assets', () => ({
+  getAssetsObject: vi.fn()
 }))
 
-describe('Existential Deposit and Transferable Amounts', () => {
-  const apiMock = {
-    disconnect: vi.fn()
-  } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
-  const mockPalletsMap = edsMapJson as { [key: string]: string }
-  const mockNode: TNodeDotKsmWithRelayChains = 'Polkadot'
-  const mockAddress = '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa'
+vi.mock('./getAssetBySymbolOrId', () => ({
+  getAssetBySymbolOrId: vi.fn()
+}))
 
-  it('should return the correct existential deposit', () => {
-    const ed = getExistentialDeposit(mockNode)
-    expect(ed).toBe(BigInt(mockPalletsMap[mockNode]))
+describe('getExistentialDeposit', () => {
+  const mockedGetAssetsObject = vi.mocked(getAssetsObject)
+  const mockedGetAssetBySymbolOrId = vi.mocked(getAssetBySymbolOrId)
+
+  beforeEach(() => {
+    vi.clearAllMocks()
   })
 
-  it('should return the correct minimum native transferable amount', () => {
-    const ed = getExistentialDeposit(mockNode)
-    const expectedMinTransferableAmount = ed + ed / BigInt(10)
-    const result = getMinNativeTransferableAmount(mockNode)
+  it('should return the ED of the first native asset if currency is not provided', () => {
+    const node: TNodeWithRelayChains = 'Acala'
+    const ed = '1000000000'
 
-    expect(result).toBe(expectedMinTransferableAmount)
+    mockedGetAssetsObject.mockReturnValue({
+      nativeAssets: [{ symbol: 'ACA', existentialDeposit: ed }],
+      otherAssets: []
+    } as unknown as TNodeAssets)
+
+    const result = getExistentialDeposit(node)
+    expect(result).toBe(ed)
   })
 
-  it('should return the correct maximum native transferable amount', async () => {
-    const mockBalance = BigInt(1000000000000)
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(mockBalance)
+  it('should return null if currency is not provided and native asset has no ED', () => {
+    const node: TNodeWithRelayChains = 'Acala'
 
-    const ed = getExistentialDeposit(mockNode)
-    const expectedMaxTransferableAmount = mockBalance - ed - ed / BigInt(10)
+    mockedGetAssetsObject.mockReturnValue({
+      nativeAssets: [{ symbol: 'ACA' }], // no existentialDeposit field
+      otherAssets: []
+    } as unknown as TNodeAssets)
 
-    const result = await getMaxNativeTransferableAmount(apiMock, mockAddress, mockNode)
-
-    expect(result).toBe(
-      expectedMaxTransferableAmount > BigInt(0) ? expectedMaxTransferableAmount : BigInt(0)
-    )
+    const result = getExistentialDeposit(node)
+    expect(result).toBeNull()
   })
 
-  it('should return 0 for maximum native transferable amount if balance is too low', async () => {
-    const mockBalance = BigInt(5000)
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(mockBalance)
+  it('should return the ED of the foreign asset if currency is provided and asset is found', () => {
+    const node: TNodeWithRelayChains = 'Karura'
+    const currency: TCurrencyCore = { symbol: 'KSM' }
+    const ed = '500000000'
 
-    const result = await getMaxNativeTransferableAmount(apiMock, mockAddress, mockNode)
+    mockedGetAssetsObject.mockReturnValue({
+      nativeAssets: [{ symbol: 'KAR', existentialDeposit: '1000000000' }],
+      otherAssets: []
+    } as unknown as TNodeAssets)
 
-    expect(result).toBe(BigInt(0))
+    mockedGetAssetBySymbolOrId.mockReturnValue({
+      symbol: 'KSM',
+      existentialDeposit: ed
+    })
+
+    const result = getExistentialDeposit(node, currency)
+    expect(result).toBe(ed)
+  })
+
+  it('should return null if currency is provided, asset is found, but no ED is present', () => {
+    const node: TNodeWithRelayChains = 'Karura'
+    const currency: TCurrencyCore = { symbol: 'KSM' }
+
+    mockedGetAssetsObject.mockReturnValue({
+      nativeAssets: [{ symbol: 'KAR', existentialDeposit: '1000000000' }],
+      otherAssets: []
+    } as unknown as TNodeAssets)
+
+    mockedGetAssetBySymbolOrId.mockReturnValue({
+      symbol: 'KSM' // no existentialDeposit field
+    })
+
+    const result = getExistentialDeposit(node, currency)
+    expect(result).toBeNull()
+  })
+
+  it('should try Ethereum if node is AssetHubPolkadot and asset not found initially', () => {
+    const node: TNodeWithRelayChains = 'AssetHubPolkadot'
+    const currency: TCurrencyCore = { symbol: 'DOT' }
+    const ed = '750000000'
+
+    mockedGetAssetsObject.mockReturnValue({
+      nativeAssets: [{ symbol: 'ASSET', existentialDeposit: '1000000000' }],
+      otherAssets: []
+    } as unknown as TNodeAssets)
+
+    // First call returns null
+    mockedGetAssetBySymbolOrId.mockReturnValueOnce(null)
+    // Second call (with Ethereum node) returns the asset
+    mockedGetAssetBySymbolOrId.mockReturnValueOnce({
+      symbol: 'DOT',
+      existentialDeposit: ed
+    })
+
+    const result = getExistentialDeposit(node, currency)
+    expect(getAssetBySymbolOrId).toHaveBeenCalledTimes(2)
+    expect(result).toBe(ed)
+  })
+
+  it('should throw InvalidCurrencyError if asset not found even after checking Ethereum node for AssetHubPolkadot', () => {
+    const node: TNodeWithRelayChains = 'AssetHubPolkadot'
+    const currency: TCurrencyCore = { symbol: 'DOT' }
+
+    mockedGetAssetsObject.mockReturnValue({
+      nativeAssets: [{ symbol: 'ASSET', existentialDeposit: '1000000000' }],
+      otherAssets: []
+    } as unknown as TNodeAssets)
+
+    mockedGetAssetBySymbolOrId
+      .mockReturnValueOnce(null) // Not found in AssetHubPolkadot
+      .mockReturnValueOnce(null) // Not found in Ethereum fallback
+
+    expect(() => getExistentialDeposit(node, currency)).toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw InvalidCurrencyError if asset not found in non-AssetHubPolkadot node', () => {
+    const node: TNodeWithRelayChains = 'Karura'
+    const currency: TCurrencyCore = { symbol: 'KSM' }
+
+    mockedGetAssetsObject.mockReturnValue({
+      nativeAssets: [{ symbol: 'KAR', existentialDeposit: '1000000000' }],
+      otherAssets: []
+    } as unknown as TNodeAssets)
+
+    mockedGetAssetBySymbolOrId.mockReturnValue(null)
+
+    expect(() => getExistentialDeposit(node, currency)).toThrow(InvalidCurrencyError)
   })
 })

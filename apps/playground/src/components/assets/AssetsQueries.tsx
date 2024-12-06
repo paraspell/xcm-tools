@@ -8,7 +8,9 @@ import AssetsForm from "./AssetsForm";
 import type {
   TCurrencyCore,
   TMultiLocation,
+  TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
+  TNodeWithRelayChains,
 } from "@paraspell/sdk";
 import {
   getAllAssetsSymbols,
@@ -94,6 +96,34 @@ const AssetsQueries = () => {
           node: node as TNodePolkadotKusama,
           currency: resolvedCurrency,
         });
+      case "MAX_NATIVE_TRANSFERABLE_AMOUNT":
+        return Sdk.getMaxNativeTransferableAmount({
+          address,
+          node: node as TNodeDotKsmWithRelayChains,
+          currency:
+            (resolvedCurrency as { symbol: string }).symbol.length > 0
+              ? (resolvedCurrency as { symbol: string })
+              : undefined,
+        });
+      case "MAX_FOREIGN_TRANSFERABLE_AMOUNT":
+        return Sdk.getMaxForeignTransferableAmount({
+          address,
+          node: node as TNodePolkadotKusama,
+          currency: resolvedCurrency,
+        });
+      case "TRANSFERABLE_AMOUNT":
+        return Sdk.getTransferableAmount({
+          address,
+          node: node as TNodePolkadotKusama,
+          currency: resolvedCurrency,
+        });
+      case "EXISTENTIAL_DEPOSIT":
+        return Sdk.getExistentialDeposit(
+          node as TNodeWithRelayChains,
+          (resolvedCurrency as { symbol: string }).symbol.length > 0
+            ? (resolvedCurrency as { symbol: string })
+            : undefined,
+        );
     }
   };
 
@@ -129,6 +159,20 @@ const AssetsQueries = () => {
         return apiType === "PAPI"
           ? `/balance/${node}/asset-papi`
           : `/balance/${node}/asset`;
+      case "MAX_NATIVE_TRANSFERABLE_AMOUNT":
+        return apiType === "PAPI"
+          ? `/balance/${node}/max-native-transferable-amount-papi`
+          : `/balance/${node}/max-native-transferable-amount`;
+      case "MAX_FOREIGN_TRANSFERABLE_AMOUNT":
+        return apiType === "PAPI"
+          ? `/balance/${node}/max-foreign-transferable-amount-papi`
+          : `/balance/${node}/max-foreign-transferable-amount`;
+      case "TRANSFERABLE_AMOUNT":
+        return apiType === "PAPI"
+          ? `/balance/${node}/transferable-amount-papi`
+          : `/balance/${node}/transferable`;
+      case "EXISTENTIAL_DEPOSIT":
+        return `/balance/${node}/existential-deposit`;
     }
   };
 
@@ -146,22 +190,30 @@ const AssetsQueries = () => {
 
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
     const { useApi, func, address } = formValues;
-    const isBalanceQuery =
+    const shouldUsePost =
       func === "BALANCE_FOREIGN" ||
       func === "BALANCE_NATIVE" ||
-      func === "ASSET_BALANCE";
+      func === "ASSET_BALANCE" ||
+      func === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+      func === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
+      func === "TRANSFERABLE_AMOUNT" ||
+      func === "EXISTENTIAL_DEPOSIT";
     const resolvedCurrency = resolveCurrency(formValues);
     if (useApi) {
       return fetchFromApi(
-        isBalanceQuery
+        shouldUsePost
           ? {
               address,
-              currency: resolvedCurrency,
+              ...((func === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+                func === "EXISTENTIAL_DEPOSIT") &&
+              (resolvedCurrency as { symbol: string }).symbol.length === 0
+                ? {}
+                : { currency: resolvedCurrency }),
             }
           : formValues,
         `${getEndpoint(formValues)}`,
-        isBalanceQuery ? "POST" : "GET",
-        isBalanceQuery,
+        shouldUsePost ? "POST" : "GET",
+        shouldUsePost,
       );
     } else {
       return submitUsingSdk(formValues);
