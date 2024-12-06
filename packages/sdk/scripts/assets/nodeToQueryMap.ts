@@ -2,65 +2,65 @@ import type { TNode } from '../../src/types'
 
 export const GLOBAL = 'GLOBAL_XCM_REGISTRY'
 
-export const nodeToQuery: Record<TNode, string | null> = {
+export const nodeToQuery: Record<TNode, string[]> = {
   // Chain state query: <module>.<section> for assets metadata
   // Or GLOBAL flag to use global XCM registry
-  Acala: GLOBAL,
-  Astar: GLOBAL,
-  BifrostPolkadot: GLOBAL,
-  Bitgreen: null, // No assets metadata query
-  Centrifuge: GLOBAL,
-  ComposableFinance: 'assetsRegistry.assetSymbol',
-  Darwinia: GLOBAL,
-  Hydration: GLOBAL,
-  Interlay: GLOBAL,
-  Litentry: GLOBAL,
-  Moonbeam: GLOBAL,
-  Parallel: GLOBAL,
-  AssetHubPolkadot: GLOBAL,
-  Altair: GLOBAL,
-  Amplitude: 'assetRegistry.metadata',
-  Bajun: GLOBAL,
-  Basilisk: GLOBAL,
-  BifrostKusama: GLOBAL,
-  Calamari: GLOBAL,
-  Crab: 'assets.metadata',
-  CrustShadow: 'assets.metadata',
-  Encointer: null, // No assets metadata query
-  Imbue: GLOBAL,
-  InvArchTinker: null, // Assets query returns empty array
-  Karura: GLOBAL,
-  Kintsugi: GLOBAL,
-  Moonriver: GLOBAL,
-  ParallelHeiko: GLOBAL,
-  Picasso: 'assetsRegistry.assetSymbol',
-  Quartz: GLOBAL,
-  RobonomicsKusama: GLOBAL,
-  RobonomicsPolkadot: 'assets.metadata',
-  PeopleKusama: null, // Does not support ParaToPara transfers
-  PeoplePolkadot: null, // Does not support ParaToPara transfers
-  Shiden: GLOBAL,
-  AssetHubKusama: GLOBAL,
-  Turing: GLOBAL,
-  Unique: GLOBAL,
-  Crust: 'assets.metadata',
-  Manta: 'assets.metadata',
-  Nodle: GLOBAL,
-  NeuroWeb: 'assets.metadata',
-  Pendulum: GLOBAL,
-  Zeitgeist: 'assetRegistry.metadata',
-  Collectives: null,
-  Phala: GLOBAL,
-  Khala: GLOBAL,
-  CoretimeKusama: null,
-  CoretimePolkadot: null,
-  Subsocial: null, // No assets metadata query
-  KiltSpiritnet: null, // No assets metadata query
-  Curio: 'assetRegistry.metadata',
-  BridgeHubPolkadot: null,
-  BridgeHubKusama: null,
-  Mythos: null, // No assets metadata query
-  Peaq: 'assets.metadata',
-  Polimec: 'foreignAssets.metadata',
-  Ethereum: null
+  Acala: [GLOBAL, 'assetRegistry.assetMetadatas'],
+  Astar: [GLOBAL, 'assets.metadata'],
+  BifrostPolkadot: [GLOBAL, 'assetRegistry.currencyMetadatas'],
+  Bitgreen: [], // No assets metadata query
+  Centrifuge: [GLOBAL, 'ormlAssetRegistry.metadata'],
+  ComposableFinance: ['assetsRegistry.assetSymbol'],
+  Darwinia: [GLOBAL, 'assets.metadata'],
+  Hydration: [GLOBAL, 'assetRegistry.assets'],
+  Interlay: [GLOBAL, 'assetRegistry.metadata'], // !!! PROBLEM native assets eds
+  Litentry: ['assets.metadata'],
+  Moonbeam: [GLOBAL, 'assets.metadata'],
+  Parallel: [GLOBAL, 'assets.metadata'],
+  AssetHubPolkadot: [GLOBAL, 'assets.metadata'],
+  Altair: [GLOBAL, 'ormlAssetRegistry.metadata'],
+  Amplitude: ['assetRegistry.metadata'],
+  Bajun: ['assets.metadata'],
+  Basilisk: [GLOBAL, 'assetRegistry.assetMetadataMap'],
+  BifrostKusama: [GLOBAL, 'assetRegistry.currencyMetadatas'],
+  Calamari: [GLOBAL, 'assets.metadata'],
+  Crab: ['assets.metadata'],
+  CrustShadow: ['assets.metadata'],
+  Encointer: [], // No assets metadata query
+  Imbue: [],
+  InvArchTinker: [], // Assets query returns empty array
+  Karura: [GLOBAL, 'assetRegistry.assetMetadatas'],
+  Kintsugi: [GLOBAL, 'assetRegistry.metadata'], // !!! PROBLEM native assets eds
+  Moonriver: [GLOBAL, 'assets.metadata'],
+  ParallelHeiko: [GLOBAL, 'assets.metadata'],
+  Picasso: ['assetsRegistry.assetSymbol'],
+  Quartz: [],
+  RobonomicsKusama: ['assets.metadata'],
+  RobonomicsPolkadot: ['assets.metadata'],
+  PeopleKusama: [], // Does not support ParaToPara transfers
+  PeoplePolkadot: [], // Does not support ParaToPara transfers
+  Shiden: [GLOBAL, 'assets.metadata'],
+  AssetHubKusama: [GLOBAL, 'assets.metadata'],
+  Turing: [GLOBAL, 'assetRegistry.metadata'],
+  Unique: [],
+  Crust: ['assets.metadata'],
+  Manta: ['assets.metadata'],
+  Nodle: [],
+  NeuroWeb: ['assets.metadata'],
+  Pendulum: [GLOBAL, 'assetRegistry.metadata'],
+  Zeitgeist: ['assetRegistry.metadata'],
+  Collectives: [],
+  Phala: [GLOBAL, 'assets.metadata'],
+  Khala: [GLOBAL, 'assets.metadata'],
+  CoretimeKusama: [],
+  CoretimePolkadot: [],
+  Subsocial: [], // No assets metadata query
+  KiltSpiritnet: [], // No assets metadata query
+  Curio: ['assetRegistry.metadata'],
+  BridgeHubPolkadot: [],
+  BridgeHubKusama: [],
+  Mythos: [], // No assets metadata query
+  Peaq: ['assets.metadata'],
+  Polimec: ['foreignAssets.metadata'],
+  Ethereum: []
 }

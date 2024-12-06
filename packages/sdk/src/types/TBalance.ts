@@ -18,6 +18,12 @@ export type TGetBalanceNativeOptionsBase = {
    * The node on which to query the balance.
    */
   node: TNodeDotKsmWithRelayChains
+  /**
+   * The native currency to query.
+   */
+  currency?: {
+    symbol: string
+  }
 }
 
 export type TGetBalanceNativeOptions<TApi, TRes> = WithApi<TGetBalanceNativeOptionsBase, TApi, TRes>
@@ -99,6 +105,71 @@ export type TGetOriginFeeDetailsOptionsBase = {
 
 export type TGetOriginFeeDetailsOptions<TApi, TRes> = WithApi<
   TGetOriginFeeDetailsOptionsBase,
+  TApi,
+  TRes
+>
+
+export type TGetMaxNativeTransferableAmountOptionsBase = {
+  /**
+   * The address of the account.
+   */
+  address: string
+  /**
+   * The node on which to query the balance.
+   */
+  node: TNodeDotKsmWithRelayChains
+  /**
+   * The currency to query.
+   */
+  currency?: {
+    symbol: string
+  }
+}
+
+export type TGetMaxNativeTransferableAmountOptions<TApi, TRes> = WithApi<
+  TGetMaxNativeTransferableAmountOptionsBase,
+  TApi,
+  TRes
+>
+
+export type TGetMaxForeignTransferableAmountOptionsBase = {
+  /**
+   * The address of the account.
+   */
+  address: string
+  /**
+   * The node on which to query the balance.
+   */
+  node: TNodePolkadotKusama
+  /**
+   * The currency to query.
+   */
+  currency: TCurrencyCore
+}
+
+export type TGetMaxForeignTransferableAmountOptions<TApi, TRes> = WithApi<
+  TGetMaxForeignTransferableAmountOptionsBase,
+  TApi,
+  TRes
+>
+
+export type TGetTransferableAmountOptionsBase = {
+  /**
+   * The address of the account.
+   */
+  address: string
+  /**
+   * The node on which to query the balance.
+   */
+  node: TNodeDotKsmWithRelayChains
+  /**
+   * The currency to query.
+   */
+  currency: TCurrencyCore
+}
+
+export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
+  TGetTransferableAmountOptionsBase,
   TApi,
   TRes
 >

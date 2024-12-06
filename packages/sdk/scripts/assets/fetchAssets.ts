@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -19,39 +20,102 @@ import { fetchEthereumAssets } from './fetchEthereumAssets'
 import { addAliasesToDuplicateSymbols } from './addAliases'
 import { capitalizeMultiLocation, fetchOtherAssetsRegistry } from './fetchOtherAssetsRegistry'
 import { isNodeEvm } from './isNodeEvm'
+import { fetchBifrostForeignAssets, fetchBifrostNativeAssets } from './fetchBifrostAssets'
+import { fetchOtherAssetsCentrifuge } from './fetchAssetsCentrifuge'
+import { fetchExistentialDeposit } from './fetchEd'
+import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
+import { getNativeAssetSymbol } from '../../src/pallets/assets'
+import { fetchComposableAssets } from './fetchComposableAssets'
+import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
 
-const fetchNativeAssets = async (api: ApiPromise): Promise<TNativeAsset[]> => {
+const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
   const json = propertiesRes.toHuman()
   const symbols = json.tokenSymbol as string[]
   const decimals = json.tokenDecimals as string[]
   return symbols.map((symbol, i) => ({
     symbol,
-    decimals: decimals[i] ? +decimals[i] : +decimals[0]
+    decimals: decimals[i] ? +decimals[i] : +decimals[0],
+    existentialDeposit: fetchExistentialDeposit(api) ?? '0'
   }))
 }
 
-const fetchOtherAssets = async (api: ApiPromise, query: string): Promise<TForeignAsset[]> => {
+const fetchNativeAssets = async (
+  node: TNodePolkadotKusama,
+  api: ApiPromise,
+  query: string
+): Promise<TNativeAsset[]> => {
+  let nativeAssets: TNativeAsset[] = []
+
+  if (node === 'Curio') {
+    nativeAssets = await fetchNativeAssetsCurio(api, query)
+  }
+
+  if (node === 'BifrostPolkadot' || node === 'BifrostKusama') {
+    nativeAssets = await fetchBifrostNativeAssets(api, query)
+  }
+
+  if (node === 'Acala' || node === 'Karura') {
+    nativeAssets = await fetchAcalaNativeAssets(api, query)
+  }
+
+  const transformed = nativeAssets.length > 0 ? nativeAssets : await fetchNativeAssetsDefault(api)
+
+  const nativeSymbol = getNativeAssetSymbol(node)
+
+  const reordered = transformed.sort((a, b) => {
+    if (a.symbol === nativeSymbol) return -1
+    if (b.symbol === nativeSymbol) return 1
+    return 0
+  })
+
+  return reordered.map(asset => ({
+    ...asset,
+    existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
+  }))
+}
+
+const fetchOtherAssetsDefault = async (
+  node: TNodePolkadotKusama,
+  api: ApiPromise,
+  query: string
+): Promise<TForeignAsset[]> => {
   const [module, section] = query.split('.')
+
   const res = await api.query[module][section].entries()
 
-  return res
-    .map(
-      ([
+  const results = await Promise.all(
+    res.map(
+      async ([
         {
           args: [era]
         },
         value
       ]) => {
-        const { symbol, decimals } = value.toHuman() as any
+        const valueHuman = value.toHuman() as any
+        const resDetail =
+          api.query[module] && api.query[module].hasOwnProperty('asset')
+            ? await api.query[module].asset(era)
+            : undefined
+        const resDetail2 =
+          node === 'Basilisk' ? await api.query.assetRegistry.assets(era) : undefined
+
         return {
           assetId: era.toString(),
-          symbol,
-          decimals: +decimals
+          symbol: valueHuman.symbol,
+          decimals: +valueHuman.decimals,
+          existentialDeposit:
+            valueHuman.existentialDeposit ??
+            valueHuman.minimalBalance ??
+            (resDetail?.toHuman() as any)?.existentialDeposit ??
+            (resDetail?.toHuman() as any)?.minBalance ??
+            (resDetail?.toHuman() as any)?.minimalBalance ??
+            (resDetail2?.toHuman() as any)?.existentialDeposit
         }
       }
     )
-    .filter(asset => asset.symbol !== null)
+  )
+  return results.filter(asset => asset.symbol !== null)
 }
 
 const fetchNativeAssetsCurio = async (api: ApiPromise, query: string) => {
@@ -65,18 +129,20 @@ const fetchNativeAssetsCurio = async (api: ApiPromise, query: string) => {
         },
         value
       ]) => {
-        const { symbol, decimals } = value.toHuman() as any
+        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
         return {
           assetId: era.toHuman(),
           symbol,
-          decimals: +decimals
+          decimals: +decimals,
+          existentialDeposit
         }
       }
     )
     .filter(asset => Object.keys(asset.assetId ?? {})[0] === 'Token')
     .map(asset => ({
       symbol: asset.symbol,
-      decimals: asset.decimals
+      decimals: asset.decimals,
+      existentialDeposit: asset.existentialDeposit
     }))
 }
 
@@ -91,11 +157,12 @@ const fetchOtherAssetsCurio = async (api: ApiPromise, query: string) => {
         },
         value
       ]) => {
-        const { symbol, decimals } = value.toHuman() as any
+        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
         return {
           assetId: era.toHuman(),
           symbol,
-          decimals: +decimals
+          decimals: +decimals,
+          existentialDeposit
         }
       }
     )
@@ -103,7 +170,8 @@ const fetchOtherAssetsCurio = async (api: ApiPromise, query: string) => {
     .map(asset => ({
       assetId: Object.values(asset.assetId ?? {})[0],
       symbol: asset.symbol,
-      decimals: asset.decimals
+      decimals: asset.decimals,
+      existentialDeposit: asset.existentialDeposit
     }))
 }
 
@@ -125,101 +193,15 @@ const fetchOtherAssetsAmplitude = async (api: ApiPromise, query: string) => {
         },
         value
       ]) => {
-        const { symbol, decimals } = value.toHuman() as any
+        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
         return {
           assetId: Object.values(era.toHuman() ?? {})[0].replaceAll(',', ''),
           symbol,
-          decimals: +decimals
+          decimals: +decimals,
+          existentialDeposit
         }
       }
     )
-}
-
-const fetchOtherAssetsInnerType = async (api: ApiPromise, query: string) => {
-  const [module, section] = query.split('.')
-  const symbolsResponse = await api.query[module][section].entries()
-  const assetsWithoutDecimals = symbolsResponse.map(
-    ([
-      {
-        args: [era]
-      },
-      value
-    ]) => {
-      const { inner: symbol } = value.toHuman() as any
-      const assetId = era.toHuman() as string
-      const numberAssetId = assetId.replace(/[,]/g, '')
-      return {
-        assetId: numberAssetId,
-        symbol
-      }
-    }
-  )
-  const decimalsResponse = await api.query[module].assetDecimals.entries()
-  const assetsWithoutSymbols = decimalsResponse.map(
-    ([
-      {
-        args: [era]
-      },
-      value
-    ]) => {
-      const assetId = era.toHuman() as string
-      const numberAssetId = assetId.replace(/[,]/g, '')
-      return { assetId: numberAssetId, decimals: +(value.toHuman() as number) }
-    }
-  )
-
-  return assetsWithoutDecimals
-    .map(assetWithoutDecimals => {
-      const matchingAsset = assetsWithoutSymbols.find(
-        assetWithoutSymbols => assetWithoutSymbols.assetId === assetWithoutDecimals.assetId
-      )
-      return matchingAsset ? { ...assetWithoutDecimals, decimals: matchingAsset.decimals } : null
-    })
-    .filter(asset => asset !== null) as unknown as TForeignAsset[]
-}
-
-const fetchAssetsType2 = async (api: ApiPromise, query: string): Promise<Partial<TNodeAssets>> => {
-  const [module, section] = query.split('.')
-  const res = await api.query[module][section].entries()
-
-  const nativeAssets = res
-    .filter(
-      ([
-        {
-          args: [era]
-        }
-      ]) => Object.prototype.hasOwnProperty.call(era.toHuman(), 'NativeAssetId')
-    )
-    .map(([, value]) => {
-      const { symbol, decimals } = value.toHuman() as any
-      return { symbol, decimals: +decimals }
-    })
-
-  const otherAssets = res
-    .filter(
-      ([
-        {
-          args: [era]
-        }
-      ]) => !Object.prototype.hasOwnProperty.call(era.toHuman(), 'NativeAssetId')
-    )
-    .map(
-      ([
-        {
-          args: [era]
-        },
-        value
-      ]) => {
-        const { symbol, decimals } = value.toHuman() as any
-        return {
-          assetId: Object.values(era.toHuman() ?? {})[0],
-          symbol,
-          decimals: +decimals
-        }
-      }
-    )
-
-  return { nativeAssets, otherAssets }
 }
 
 const fetchNativeAsset = async (api: ApiPromise): Promise<string> => {
@@ -231,111 +213,156 @@ const fetchNativeAsset = async (api: ApiPromise): Promise<string> => {
 
 const fetchMultiLocations = async (api: ApiPromise): Promise<TForeignAsset[]> => {
   const res = await api.query.foreignAssets.metadata.entries()
-  return res.map(
-    ([
-      {
-        args: [era]
-      },
-      value
-    ]) => {
-      const multiLocation = era.toJSON() ?? {}
-      const { symbol, decimals } = value.toHuman() as any
-      return {
-        symbol,
-        decimals: +decimals,
-        multiLocation: multiLocation as object
+
+  const results = await Promise.all(
+    res.map(
+      async ([
+        {
+          args: [era]
+        },
+        value
+      ]) => {
+        const multiLocation = era.toJSON() ?? {}
+        const resDetail = await api.query.foreignAssets.asset(era)
+        const { symbol, decimals } = value.toHuman() as any
+
+        return {
+          symbol,
+          decimals: +decimals,
+          multiLocation: multiLocation as object,
+          existentialDeposit: (resDetail.toHuman() as any).minBalance.replace(/,/g, '')
+        }
       }
-    }
+    )
   )
+
+  return results
+}
+
+const fetchOtherAssets = async (
+  node: TNodePolkadotKusama,
+  api: ApiPromise,
+  query: string
+): Promise<TForeignAsset[]> => {
+  let otherAssets: TForeignAsset[] = []
+  if (node === 'Zeitgeist' || node === 'Acala' || node === 'Karura') {
+    otherAssets = await fetchAcalaForeignAssets(api, query)
+  }
+
+  if (node === 'Amplitude') {
+    otherAssets = await fetchOtherAssetsAmplitude(api, query)
+  }
+
+  if (node === 'Curio') {
+    otherAssets = await fetchOtherAssetsCurio(api, query)
+  }
+
+  if (node === 'Picasso' || node === 'ComposableFinance') {
+    otherAssets = await fetchComposableAssets(api, query)
+  }
+
+  if (node === 'BifrostPolkadot' || node === 'BifrostKusama') {
+    otherAssets = await fetchBifrostForeignAssets(api, query)
+  }
+
+  if (node === 'Centrifuge' || node === 'Altair') {
+    otherAssets = await fetchOtherAssetsCentrifuge(api, query)
+  }
+
+  if (node === 'Pendulum') {
+    otherAssets = await fetchPendulumForeignAssets(api, query)
+  }
+
+  return otherAssets.length > 0 ? otherAssets : fetchOtherAssetsDefault(node, api, query)
 }
 
 const fetchNodeAssets = async (
   node: TNodePolkadotKusama,
   api: ApiPromise,
-  query: string | null
+  query: string[]
 ): Promise<Partial<TNodeAssets>> => {
   const nativeAssetSymbol = await fetchNativeAsset(api)
 
-  if (node === 'Zeitgeist') {
-    const nativeAssets = (await fetchNativeAssets(api)) ?? []
-    const { otherAssets } = (await fetchAssetsType2(api, query!)) ?? []
-    await api.disconnect()
-    return {
-      nativeAssets,
-      otherAssets,
-      nativeAssetSymbol
-    }
-  }
-  if (node === 'Amplitude') {
-    const nativeAssets = (await fetchNativeAssets(api)) ?? []
-    const otherAssets = query ? await fetchOtherAssetsAmplitude(api, query) : []
-    await api.disconnect()
-    return {
-      nativeAssets,
-      otherAssets,
-      nativeAssetSymbol
-    }
+  const hasGlobal = query.includes(GLOBAL)
+  const queryPath = hasGlobal ? query[1] : query[0]
+
+  let globalOtherAssets: TForeignAsset[] = []
+  let queryOtherAssets: TForeignAsset[] = []
+
+  if (hasGlobal) {
+    globalOtherAssets = await fetchOtherAssetsRegistry(node)
   }
 
-  // Different format of data
-  if (node === 'Curio') {
-    const nativeAssets = query ? await fetchNativeAssetsCurio(api, query) : []
-    const otherAssets = query ? await fetchOtherAssetsCurio(api, query) : []
-    await api.disconnect()
-    return {
-      nativeAssets,
-      otherAssets,
-      nativeAssetSymbol
-    }
+  if (queryPath) {
+    queryOtherAssets = await fetchOtherAssets(node, api, queryPath)
   }
 
-  if (node === 'Picasso' || node === 'ComposableFinance') {
-    const nativeAssets = (await fetchNativeAssets(api)) ?? []
-    const otherAssets = query ? await fetchOtherAssetsInnerType(api, query) : []
-    await api.disconnect()
-    return {
-      nativeAssets,
-      otherAssets,
-      nativeAssetSymbol
-    }
+  let mergedAssets = globalOtherAssets.map(globalAsset => {
+    const matchingQueryAsset = queryOtherAssets.find(
+      queryAsset => queryAsset.assetId === globalAsset.assetId
+    )
+    return matchingQueryAsset
+      ? {
+          ...globalAsset,
+          existentialDeposit: matchingQueryAsset.existentialDeposit?.replace(/,/g, '')
+        }
+      : globalAsset
+  })
+
+  if (mergedAssets.length === 0 && queryOtherAssets.length > 0) {
+    mergedAssets.push(
+      ...queryOtherAssets.map(asset => ({
+        ...asset,
+        existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
+      }))
+    )
   }
 
-  const nativeAssets = (await fetchNativeAssets(api)) ?? []
-
-  let otherAssets: TForeignAsset[]
-
-  try {
-    otherAssets =
-      query === GLOBAL
-        ? await fetchOtherAssetsRegistry(node)
-        : typeof query === 'string'
-          ? await fetchOtherAssets(api, query)
-          : []
-  } catch (e) {
-    console.warn(`Failed to fetch other assets for ${node}: ${e.message}`)
-    otherAssets = []
-  }
+  const nativeAssets = (await fetchNativeAssets(node, api, queryPath)) ?? []
 
   const isAssetHub = node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
 
   if (isAssetHub) {
     const foreignAssets = await fetchMultiLocations(api)
-    const transformedForeignAssets = foreignAssets.map(asset => {
-      return {
-        ...asset,
-        multiLocation: asset.multiLocation
-          ? (capitalizeMultiLocation(asset.multiLocation) as TMultiLocation)
-          : undefined
-      } as TForeignAsset
-    })
-    otherAssets.push(...transformedForeignAssets)
+
+    const transformedForeignAssets = foreignAssets.map(asset => ({
+      ...asset,
+      multiLocation: asset.multiLocation
+        ? (capitalizeMultiLocation(asset.multiLocation) as TMultiLocation)
+        : undefined
+    })) as TForeignAsset[]
+
+    // Add transformed foreign assets to the merged list
+    mergedAssets.push(...transformedForeignAssets)
+
+    // Check for unmatched assets by ID and attempt to match by symbol
+    const unmatchedAssets = queryOtherAssets.filter(
+      queryAsset => !mergedAssets.some(asset => asset.assetId === queryAsset.assetId)
+    )
+
+    if (unmatchedAssets.length > 0) {
+      const symbolMatches = unmatchedAssets.filter(queryAsset =>
+        mergedAssets.some(asset => asset.symbol === queryAsset.symbol)
+      )
+
+      mergedAssets.push(
+        ...symbolMatches.map(asset => ({
+          ...asset,
+          existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
+        }))
+      )
+    }
+
+    mergedAssets = mergedAssets.filter(asset => asset.multiLocation || asset.xcmInterior)
   }
+
+  mergedAssets = mergedAssets.filter(asset => asset.assetId !== 'Native')
 
   await api.disconnect()
 
   return {
     nativeAssets,
-    otherAssets,
+    otherAssets: mergedAssets,
     nativeAssetSymbol,
     isEVM: isNodeEvm(api)
   }

@@ -509,4 +509,14 @@ describe('PolkadotJsApi', () => {
       mockDisconnect.mockRestore()
     })
   })
+
+  describe('getBalanceNativeAcala', () => {
+    it('should return the free balance as bigint', async () => {
+      polkadotApi.setApi(mockApiPromise)
+      const balance = await polkadotApi.getBalanceNativeAcala('some_address', 'AUSD')
+
+      expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledOnce()
+      expect(balance).toBe(BigInt(0))
+    })
+  })
 })

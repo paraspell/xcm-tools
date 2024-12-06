@@ -11,6 +11,7 @@ type TBaseAsset = {
   decimals?: number
   manuallyAdded?: boolean
   alias?: string
+  existentialDeposit?: string
 }
 
 export type TNativeAsset = TBaseAsset

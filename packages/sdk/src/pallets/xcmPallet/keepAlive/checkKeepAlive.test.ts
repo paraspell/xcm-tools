@@ -1,18 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { checkKeepAlive } from './checkKeepAlive'
 import { KeepAliveError } from '../../../errors/KeepAliveError'
-import { getExistentialDeposit } from '../../assets/eds'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { Extrinsic } from '../../../pjs/types'
 import type { ApiPromise } from '@polkadot/api'
+import { getExistentialDeposit } from '../../assets'
 
 vi.mock('../keepAlive/createTx', () => ({
   createTx: vi.fn().mockResolvedValue({} as Extrinsic)
 }))
 
-vi.mock('../../assets/eds', () => ({
-  getExistentialDeposit: vi.fn().mockReturnValue('0')
-}))
+vi.mock(import('../../assets'), async importOriginal => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    getExistentialDeposit: vi.fn().mockReturnValue('0')
+  }
+})
 
 describe('checkKeepAlive', () => {
   const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'

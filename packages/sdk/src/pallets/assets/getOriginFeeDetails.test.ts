@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import * as balanceModule from './balance/getBalanceNative'
-import * as depositModule from './getExistentialDeposit'
 import * as utilsModule from '../../utils'
 import * as BuilderModule from '../../builder'
+import * as assetsModule from './assets'
 
 import type { ApiPromise } from '@polkadot/api'
 import type { TCurrencyCore } from '../../types'
@@ -27,11 +27,11 @@ describe('getOriginFeeDetails', () => {
     const account = 'account-address'
 
     const nativeBalance = BigInt('1000000000000000')
-    const minTransferableAmount = BigInt('1000000000000')
+    const ed = '1000000000000'
     const xcmFee = '1000000000'
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
-    vi.spyOn(depositModule, 'getMinNativeTransferableAmount').mockReturnValue(minTransferableAmount)
+    vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
     vi.spyOn(utilsModule, 'createApiInstanceForNode').mockResolvedValue({} as ApiPromise)
 
     const mockTx = {
@@ -83,11 +83,11 @@ describe('getOriginFeeDetails', () => {
     const account = 'account-address'
 
     const nativeBalance = BigInt('1000000000000000')
-    const minTransferableAmount = BigInt('1000000000000')
+    const ed = '1000000000000'
     const xcmFee = '1000000000'
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
-    vi.spyOn(depositModule, 'getMinNativeTransferableAmount').mockReturnValue(minTransferableAmount)
+    vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
     vi.spyOn(utilsModule, 'createApiInstanceForNode').mockResolvedValue({} as ApiPromise)
 
     const mockTx = {
@@ -139,11 +139,11 @@ describe('getOriginFeeDetails', () => {
     const account = 'account-address'
 
     const nativeBalance = BigInt('1000000000000000')
-    const minTransferableAmount = BigInt('1000000000000')
+    const ed = '1000000000000'
     const xcmFee = '1000000000'
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
-    vi.spyOn(depositModule, 'getMinNativeTransferableAmount').mockReturnValue(minTransferableAmount)
+    vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
     vi.spyOn(utilsModule, 'createApiInstanceForNode').mockResolvedValue({} as ApiPromise)
 
     const mockTx = {

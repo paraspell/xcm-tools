@@ -1,29 +1,30 @@
-import { type TNodeDotKsmWithRelayChains, type TEdJsonMap } from '../../types'
-import * as edsMapJson from '../../maps/existential-deposits.json' assert { type: 'json' }
-import { getBalanceNativeInternal } from './balance/getBalanceNative'
-import type { IPolkadotApi } from '../../api/IPolkadotApi'
-const palletsMap = edsMapJson as TEdJsonMap
+import { InvalidCurrencyError } from '../../errors'
+import type { TCurrencyCore, TNodeWithRelayChains } from '../../types'
+import { getAssetsObject } from './assets'
+import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 
-export const getExistentialDeposit = (node: TNodeDotKsmWithRelayChains): bigint =>
-  BigInt(palletsMap[node] as string)
+/**
+ * Retrieves the existential deposit value for a given node.
+ *
+ * @param node - The node for which to get the existential deposit.
+ * @returns The existential deposit as a string if available; otherwise, null.
+ */
+export const getExistentialDeposit = (
+  node: TNodeWithRelayChains,
+  currency?: TCurrencyCore
+): string | null => {
+  const assetsObject = getAssetsObject(node)
+  if (!currency) {
+    return assetsObject.nativeAssets[0].existentialDeposit ?? null
+  }
 
-export const getMinNativeTransferableAmount = (node: TNodeDotKsmWithRelayChains): bigint => {
-  const ed = getExistentialDeposit(node)
-  const tenPercent = ed / BigInt(10)
-  return ed + tenPercent
-}
+  const asset =
+    getAssetBySymbolOrId(node, currency, null) ??
+    (node === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency, null) : null)
 
-export const getMaxNativeTransferableAmount = async <TApi, TRes>(
-  api: IPolkadotApi<TApi, TRes>,
-  address: string,
-  node: TNodeDotKsmWithRelayChains
-): Promise<bigint> => {
-  const ed = getExistentialDeposit(node)
-  const nativeBalance = await getBalanceNativeInternal({
-    address,
-    node,
-    api
-  })
-  const maxTransferableAmount = nativeBalance - ed - ed / BigInt(10)
-  return maxTransferableAmount > BigInt(0) ? maxTransferableAmount : BigInt(0)
+  if (!asset) {
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${node}`)
+  }
+
+  return asset.existentialDeposit ?? null
 }

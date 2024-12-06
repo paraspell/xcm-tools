@@ -3,6 +3,9 @@ import { getBalanceForeign as getBalanceForeignImpl } from '../pallets/assets/ba
 import { getTransferInfo as getTransferInfoImpl } from '../pallets/assets/transfer-info/getTransferInfo'
 import { getAssetBalance as getAssetBalanceImpl } from '../pallets/assets/balance/getAssetBalance'
 import { getOriginFeeDetails as getOriginFeeDetailsImpl } from '../pallets/assets/getOriginFeeDetails'
+import { getMaxNativeTransferableAmount as getMaxNativeTransferableAmountImpl } from '../pallets/assets/getTransferableAmount'
+import { getMaxForeignTransferableAmount as getMaxForeignTransferableAmountImpl } from '../pallets/assets/getTransferableAmount'
+import { getTransferableAmount as getTransferableAmountImpl } from '../pallets/assets/getTransferableAmount'
 import { default as claimAssetsImpl } from '../pallets/assets/asset-claim'
 import { createPapiApiCall } from './utils'
 import type { TPapiApi, TPapiTransaction } from './types'
@@ -48,8 +51,19 @@ export const getOriginFeeDetails = createPapiApiCall(
   getOriginFeeDetailsImpl<TPapiApi, TPapiTransaction>
 )
 
+export const getMaxNativeTransferableAmount = createPapiApiCall(
+  getMaxNativeTransferableAmountImpl<TPapiApi, TPapiTransaction>
+)
+
+export const getMaxForeignTransferableAmount = createPapiApiCall(
+  getMaxForeignTransferableAmountImpl<TPapiApi, TPapiTransaction>
+)
+
+export const getTransferableAmount = createPapiApiCall(
+  getTransferableAmountImpl<TPapiApi, TPapiTransaction>
+)
+
 export * from '../pallets/assets/assets'
-export * from '../pallets/assets/eds'
 export * from '../pallets/assets/assetSelectors'
 export * from '../pallets/assets/multiLocationSelectors'
 export { getSupportedAssets } from '../pallets/assets/getSupportedAssets'

@@ -481,4 +481,15 @@ describe('PapiApi', () => {
       mockDisconnect.mockRestore()
     })
   })
+
+  describe('getBalanceNativeAcala', () => {
+    it('should return the free balance as bigint', async () => {
+      papiApi.setApi(mockPolkadotClient)
+      const balance = await papiApi.getBalanceNativeAcala('some_address', 'AUSD')
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      expect(unsafeApi.query.Tokens.Accounts.getValue).toHaveBeenCalledOnce()
+      expect(balance).toBe(BigInt(6000))
+    })
+  })
 })

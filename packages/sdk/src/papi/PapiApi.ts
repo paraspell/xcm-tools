@@ -141,6 +141,17 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
   }
 
+  async getBalanceNativeAcala(address: string, symbol: string): Promise<bigint> {
+    const transformedParameters = transform({ Token: symbol })
+
+    const response = await this.api
+      .getUnsafeApi()
+      .query.Tokens.Accounts.getValue(address, transformedParameters)
+
+    const accountData = response ? response : null
+    return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
+  }
+
   async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint> {
     const response = await this.api.getUnsafeApi().query.Tokens.Accounts.getEntries(address)
 

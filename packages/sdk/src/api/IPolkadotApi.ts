@@ -17,6 +17,7 @@ export interface IPolkadotApi<TApi, TRes> {
   callTxMethod(serializedCall: TSerializedApiCall): TRes
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
   getBalanceNative(address: string): Promise<bigint>
+  getBalanceNativeAcala(address: string, symbol: string): Promise<bigint>
   getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint>
   getMythosForeignBalance(address: string): Promise<bigint>
   getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint>

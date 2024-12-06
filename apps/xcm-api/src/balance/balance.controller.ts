@@ -11,6 +11,10 @@ import {
   BalanceForeignDto,
   BalanceForeignDtoSchema,
 } from './dto/BalanceForeignDto.js';
+import {
+  ExistentialDepositDto,
+  ExistentialDepositDtoSchema,
+} from './dto/ExistentialDepositDto.js';
 
 @Controller('balance')
 export class BalanceController {
@@ -82,5 +86,120 @@ export class BalanceController {
       node,
     });
     return this.balanceService.getAssetBalance(node, params);
+  }
+
+  @Post(':node/max-foreign-transferable-amount-papi')
+  getMaxForeignTransferableAmountPapi(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(BalanceForeignDtoSchema))
+    params: BalanceForeignDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(
+      EventName.GET_MAX_FOREIGN_TRANSFERABLE_AMOUNT,
+      req,
+      {
+        node,
+      },
+    );
+    return this.balanceService.getMaxForeignTransferableAmount(
+      node,
+      params,
+      true,
+    );
+  }
+
+  @Post(':node/max-foreign-transferable-amount')
+  getMaxForeignTransferableAmount(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(BalanceForeignDtoSchema))
+    params: BalanceForeignDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(
+      EventName.GET_MAX_FOREIGN_TRANSFERABLE_AMOUNT,
+      req,
+      {
+        node,
+      },
+    );
+    return this.balanceService.getMaxForeignTransferableAmount(node, params);
+  }
+
+  @Post(':node/max-native-transferable-amount-papi')
+  getMaxNativeTransferableAmountPapi(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(BalanceNativeDtoSchema))
+    params: BalanceNativeDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(
+      EventName.GET_MAX_FOREIGN_TRANSFERABLE_AMOUNT,
+      req,
+      {
+        node,
+      },
+    );
+    return this.balanceService.getMaxNativeTransferableAmount(
+      node,
+      params,
+      true,
+    );
+  }
+
+  @Post(':node/max-native-transferable-amount')
+  getMaxNativeTransferableAmount(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(BalanceNativeDtoSchema))
+    params: BalanceNativeDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(
+      EventName.GET_MAX_FOREIGN_TRANSFERABLE_AMOUNT,
+      req,
+      {
+        node,
+      },
+    );
+    return this.balanceService.getMaxNativeTransferableAmount(node, params);
+  }
+
+  @Post(':node/transferable-amount')
+  getTransferableAmount(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(BalanceForeignDtoSchema))
+    params: BalanceForeignDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_TRANSFERABLE_AMOUNT, req, {
+      node,
+    });
+    return this.balanceService.getTransferableAmount(node, params);
+  }
+
+  @Post(':node/transferable-amount-papi')
+  getTransferableAmountPapi(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(BalanceForeignDtoSchema))
+    params: BalanceForeignDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_TRANSFERABLE_AMOUNT, req, {
+      node,
+    });
+    return this.balanceService.getTransferableAmount(node, params, true);
+  }
+
+  @Post(':node/existential-deposit')
+  getExistentialDeposit(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(ExistentialDepositDtoSchema))
+    params: ExistentialDepositDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_EXISTENTIAL_DEPOSIT, req, {
+      node,
+    });
+    return this.balanceService.getExistentialDeposit(node, params);
   }
 }

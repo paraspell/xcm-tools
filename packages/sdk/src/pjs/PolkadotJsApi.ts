@@ -120,6 +120,15 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
   }
 
+  async getBalanceNativeAcala(address: string, symbol: string): Promise<bigint> {
+    const response: Codec = await this.api.query.tokens.accounts(address, {
+      Token: symbol
+    })
+
+    const accountData = response ? (response as AccountData) : null
+    return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
+  }
+
   async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint> {
     const response: Array<[StorageKey<AnyTuple>, Codec]> =
       await this.api.query.tokens.accounts.entries(address)

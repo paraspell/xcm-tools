@@ -1,15 +1,11 @@
 import { InvalidCurrencyError } from '../../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../../types/TTransferInfo'
 import { determineRelayChainSymbol } from '../../../utils'
-import { getNativeAssetSymbol } from '../assets'
+import { getExistentialDeposit, getNativeAssetSymbol } from '../assets'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
 import { getBalanceNativeInternal } from '../balance/getBalanceNative'
 import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
-import {
-  getExistentialDeposit,
-  getMaxNativeTransferableAmount,
-  getMinNativeTransferableAmount
-} from '../getExistentialDeposit'
+import { getMaxNativeTransferableAmount } from '../getTransferableAmount'
 import { getOriginFeeDetailsInternal } from '../getOriginFeeDetails'
 
 export const getTransferInfo = async <TApi, TRes>({
@@ -72,12 +68,12 @@ export const getTransferInfo = async <TApi, TRes>({
         xcmFee: xcmFeeDetails,
         existentialDeposit: BigInt(getExistentialDeposit(origin) ?? 0),
         asset: getNativeAssetSymbol(origin),
-        minNativeTransferableAmount: getMinNativeTransferableAmount(origin),
-        maxNativeTransferableAmount: await getMaxNativeTransferableAmount(
+        minNativeTransferableAmount: BigInt(getExistentialDeposit(origin) ?? '0'),
+        maxNativeTransferableAmount: await getMaxNativeTransferableAmount({
           api,
-          accountOrigin,
-          origin
-        )
+          address: accountOrigin,
+          node: origin
+        })
       },
       destinationFeeBalance: {
         balance: await getBalanceNativeInternal({
@@ -86,7 +82,7 @@ export const getTransferInfo = async <TApi, TRes>({
           api
         }),
         currency: getNativeAssetSymbol(destination),
-        existentialDeposit: getExistentialDeposit(destination)
+        existentialDeposit: BigInt(getExistentialDeposit(destination) ?? '0')
       }
     }
   } finally {
