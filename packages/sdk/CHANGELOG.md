@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.6](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.5...sdk-v7.2.6) (2024-12-07)
+
+
+### Bug Fixes
+
+* **sdk:** Add existential deposits for foreign assets ✨ ([0c9b2bf](https://github.com/paraspell/xcm-tools/commit/0c9b2bfbb5bdc7309b74af21c7dfcef35aac2967))
+
 ## [7.2.5](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.4...sdk-v7.2.5) (2024-11-30)
 
 
