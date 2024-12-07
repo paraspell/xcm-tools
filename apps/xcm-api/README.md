@@ -346,6 +346,53 @@ const response = await fetch("http://localhost:3001/balance/:node/foreign", {
         currency: "Currency" //Replace "Currency" with either {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson}
     })
 });
+
+//Retrieve max transferable amount for specific account, specific foreign asset on specific chain
+const response = await fetch("http://localhost:3001/balance/:node/max-foreign-transferable-amount", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        address: "Address", // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
+        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson}
+    })
+});
+
+//Retrieve max transferable amount for specific account, specific native asset on specific chain
+const response = await fetch("http://localhost:3001/balance/:node/max-native-transferable-amount", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        address: "Address", // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
+        currency?: "Currency" //Replace "Currency" with {symbol: currencySymbol}
+    })
+});
+
+//Retrieve max transferable amount for specific account, specific asset on specific chain
+const response = await fetch("http://localhost:3001/balance/:node/transferable-amount", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        address: "Address", // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
+        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson}
+    })
+});
+
+//Retrieve existential deposit for specific assets on selected chain
+const response = await fetch("http://localhost:3001/balance/:node/existential-deposit", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson}
+    })
+});
 ```
 
 ### XCM Pallet

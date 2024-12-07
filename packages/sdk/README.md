@@ -322,15 +322,17 @@ import { getExistentialDeposit } from "@paraspell/sdk";
 //PAPI
 import { getExistentialDeposit } from "@paraspell/sdk/papi";
 
-const ed = getExistentialDeposit('Acala')
+//Currency is an optional parameter. If you wish to query native asset, currency parameter is not necessary.
+//Currency can be either {symbol: assetSymbol}, {id: assetId}, {multilocation: assetMultilocation}.
+const ed = getExistentialDeposit(node, currency?)
 ```
 
 ### XCM Transfer info
 ```ts
 //PJS
-import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails } from "@paraspell/sdk";
+import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails, getMaxNativeTransferableAmount, getMaxForeignTransferableAmount, getTransferableAmount } from "@paraspell/sdk";
 //PAPI
-import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails } from "@paraspell/sdk/papi"; 
+import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails, getMaxNativeTransferableAmount, getMaxForeignTransferableAmount, getTransferableAmount } from "@paraspell/sdk/papi"; 
 
 //Get balance of foreign currency
 await getBalanceForeign({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, api /* api/ws_url_string optional */})
@@ -341,8 +343,15 @@ await getBalanceNative({address, node, api /* api/ws_url_string optional */})
 //Get fee information regarding XCM call
 await getOriginFeeDetails({from, to, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, originAddress, destinationAddress, api /* api/ws_url_string optional */, feeMargin /* 10% by default */})
 
-//Retrieves the asset balance for a given account on a specified node.
+//Retrieves the asset balance for a given account on a specified node. (You do not need to specify if it is native or foreign).
 await getAssetBalance({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, api /* api/ws_url_string optional */});
+
+//Retrieves maximal transferable balance of chain's native asset (Balance-AssetED) (If a node has more native assets, the asset selection has to be provided. Otherwise the parameter is optional).
+await getMaxNativeTransferableAmount({address, node, currency /*- {symbol: currencySymbol} */)
+//Retrives maximal transferable balance of chain's foreign asset (Balance-AssetED)
+await getMaxForeignTransferableAmount({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/});
+//Combines the getMaxNative and getMaxForeign transferable amount functions into one, so you don't have to specify whether you want a native or foreign asset.
+await getTransferableAmount({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/});
 
 //Get all the information about XCM transfer
 await getTransferInfo({from, to, address, destinationAddress, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, api /* api/ws_url_string optional */})
