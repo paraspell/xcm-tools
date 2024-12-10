@@ -17,7 +17,7 @@
       <img alt="snyk" src="https://snyk.io/test/github/paraspell/sdk/badge.svg" />
     </a>
   </p>
-  <p>Currently supporting 58 Polkadot & Kusama nodes list <a href = "https://paraspell.github.io/docs/supported.html"\>[here]</p>
+  <p>Supporting every XCM Active Parachain <a href = "https://paraspell.github.io/docs/supported.html"\>[list]</p>
   <p>SDK documentation <a href = "https://paraspell.github.io/docs/" \>[here]</p>
    <p>SDK starter template project <a href = "https://github.com/paraspell/xcm-sdk-template" \>[here]</p>
 </div>
@@ -89,22 +89,20 @@ import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk/papi'; //Only n
 NOTES:
 - If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' to the end of currencyID. Eg: .currency({id: 42259045809535163221576417993425387648n}) will mean you transfer xcDOT.
 - You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948).
-- You can now add an optional parameter useKeepAlive which will ensure, that you send more than the existential deposit.
-- Since v5 you can fully customize all multilocations (address, currency and destination). Instead of a string parameter simply pass an object with multilocation instead for more information refer to the following PR https://github.com/paraspell/xcm-tools/pull/199.
-- Fee asset is now a required builder parameter when you enter a multilocation array.
-- When using a multilocation array the amount parameter is overridden.
-- Multilocation arrays are now available. Customize your asset multilocations by .currency({multiasset: [{multilocation1},{multilocation2}..{multilocationN}]}) For more information refer to the official documentation or following PR https://github.com/paraspell/xcm-tools/pull/224.
 - POLKADOT <> KUSAMA Bridge is now available! Try sending DOT or KSM between AssetHubs - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
 - You can now customize XCM Version! Try using .xcmVersion parameter after address in builder.
 - POLKADOT <> ETHEREUM Bridge is now available! Try sending WETH between the ecosystems - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
+- ParaSpell now offers advanced asset symbol selection {symbol: "symbol"} for non duplicate assets, {symbol: Native("symbol")} or {symbol: Foreign("symbol")} if the duplicates are between native and foreign assets and {symbol: ForeignAbstract("symbol")} if the duplicates are in foreign assets only. You will get an error that will guide you further if you simply start with {symbol: "symbol"}.
+- You can now select assets by multilocation by simply using { multilocation: string | JSON }. The custom multilocation selection remains supported, but in order to use it you now have to use override - {multilocation: Override('Custom Multilocation')}.
+- The balance queries also support multilocation asset selection
 ```
 
 ```
 Latest news:
-- ParaSpell now offers advanced asset symbol selection {symbol: "symbol"} for non duplicate assets, {symbol: Native("symbol")} or {symbol: Foreign("symbol")} if the duplicates are between native and foreign assets and {symbol: ForeignAbstract("symbol")} if the duplicates are in foreign assets only. You will get an error that will guide you further if you simply start with {symbol: "symbol"}.
-- You can now select assets by multilocation by simply using { multilocation: string | JSON }. The custom multilocation selection remains supported, but in order to use it you now have to use override - {multilocation: Override('Custom Multilocation')}.
-- The balance queries also support multilocation asset selection
 - PAPI version of SDK is now fully PJS-less (We removed apps/config as dependency entirely).
+- You can now query foreign asset minimal deposits also.
+- Since v8, amount moved closer to currency selection and specifying from and to parameters is no longer optional to save code.
+- More information on v8 major breaking change: https://github.com/paraspell/xcm-tools/pull/554
 ```
 
 ### Builder pattern:
@@ -114,69 +112,67 @@ Latest news:
 await Builder(/*node api/ws_url_string - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
-      .currency({id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson} | {multilocation: Override('Custom Multilocation')} | {multiasset: multilocationJsonArray})
+      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
       /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
-      .amount(amount) // Overriden when using MultilocationArray
       .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
       /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
       .build()
 /*
 EXAMPLE:
-await Builder()
-      .from('Hydration')
-      .to('BifrostPolkadot')
-      .currency({symbol:'BNC'})
-      .amount(1000000000000)
-      .address('4FCUYBMe2sbq5KosN22emsPUydS8XUwZhJ6VUZesmouGu6qd')
-      .build()
+const tx = await Builder()
+  .from('Acala')
+  .to('Astar')
+  .currency({
+    symbol: 'ACA',
+    amount: '1000000000'
+  })
+  .address(address)
+  .build();
 */
 ```
 ##### Transfer assets from the Relay chain to Parachain
 ```ts
 await Builder(/*node api/ws_url_string - optional*/)
+      .from(RELAY_NODE) //Kusama or Polkadot
       .to(NODE/*,customParaId - optional*/ | Multilocation object)
-      .amount(amount)
+      .currency({symbol: 'DOT', amount: amount})
       .address(address | Multilocation object)
       /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
       .build()
 /*
 EXAMPLE:
-await Builder()
-      .to('AssetHubPolkadot')
-      .amount(1000000000000)
-      .address('141NGS2jjZca5Ss2Nysth2stJ6rimcnufCNHnh5ExSsftn7U')
-      .build()
+const tx = await Builder()
+  .from('Polkadot')
+  .to('Astar')
+  .currency({
+    symbol: 'DOT',
+    amount: '1000000000'
+  })
+  .address(address)
+  .build();
 */
 ```
 ##### Transfer assets from Parachain to Relay chain
 ```ts
 await Builder(/*node api/ws_url_string - optional*/)
       .from(NODE)
-      .amount(amount)
+      .to(RELAY_NODE) //Kusama or Polkadot
+      .currency({symbol: 'DOT', amount: amount})
       .address(address | Multilocation object)
       /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
       .build()
 /*
 EXAMPLE:
-await Builder()
-      .from('AssetHubPolkadot')
-      .amount(1000000000000)
-      .address('141NGS2jjZca5Ss2Nysth2stJ6rimcnufCNHnh5ExSsftn7U')
-      .build()
+const tx = await Builder()
+  .from('Astar')
+  .to('Polkadot')
+  .currency({
+    symbol: 'DOT',
+    amount: '1000000000'
+  })
+  .address(address)
+  .build();
 */
-```
-##### Use keepAlive option
-```
-NOTE: Custom multilocations are not available when keepALive check is used
-```
-```ts
-await Builder(/*node api/ws_url_string - optional*/)
-      .from(NODE)
-      .amount(amount)
-      .address(address)
-      .useKeepAlive(destinationParaAPI)
-      /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
-      .build()
 ```
 
 ##### Batch calls
@@ -185,69 +181,19 @@ You can batch XCM calls and execute multiple XCM calls within one call. All thre
 await Builder(/*node api/ws_url_string - optional*/)
       .from(NODE) //Ensure, that origin node is the same in all batched XCM Calls.
       .to(NODE_2) //Any compatible Parachain
-      .currency(currency) //Currency to transfer (If Para->Para), otherwise you do not need to specify .currency()
-      .amount(amount) 
+      .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
       .address(address | Multilocation object)
       .addToBatch()
 
       .from(NODE) //Ensure, that origin node is the same in all batched XCM Calls.
       .to(NODE_3) //Any compatible Parachain
-      .currency(currency) //Currency to transfer (If Para->Para), otherwise you do not need to specify .currency()
-      .amount(amount)
+      .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
       .address(address | Multilocation object)
       .addToBatch()
       .buildBatch({ 
           // This settings object is optional and batch all is the default option
           mode: BatchMode.BATCH_ALL //or BatchMode.BATCH
       })
-```
-
-### Function pattern:
-```
-NOTES:
-- Since version v5 there was a breaking change introduced. You now pass single object with properties instead of parameters
-- Since v5 you can fully customize all multilocations (address, currency and destination). Instead of string parameter simply pass object with multilocation instead for more information refer to the following PR https://github.com/paraspell/xcm-tools/pull/199.
-- Custom multilocations are not available when keepALive check is used
-```
-```ts
-// Transfer assets from Parachain to Parachain
-await paraspell.xcmPallet.send(
-    {
-      api?: ApiPromise/Ws_url_string,
-      origin: origin  Parachain  name  string,
-      currency: {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson} | {multilocation: Override('Custom Multilocation')} | {multiasset: multilocationJsonArray} ,
-      feeAsset? - Fee asset select id
-      amount: any,
-      to: destination  address  string | Multilocation object,
-      destination: destination  Parachain  ID | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/,
-      paraIdTo?: number,
-      destApiForKeepAlive?: ApiPromise
-    }
-)
-
-// Transfer assets from Parachain to Relay chain
-await paraspell.xcmPallet.send(
-  {
-    api?: ApiPromise/Ws_url_string,
-    origin: origin  Parachain  name  string,
-    amount: any,
-    to: destination  address  string | Multilocation object,
-    paraIdTo?: number,
-    destApiForKeepAlive?: ApiPromise
-  }
-)
-
-// Transfer assets from Relay chain to Parachain
-await paraspell.xcmPallet.transferRelayToPara(
-  {
-    api?: ApiPromise/Ws_url_string,
-    destination: destination  Parachain  ID | Multilocation object,
-    amount: any,
-    to: destination  address  string | Multilocation object,
-    paraIdTo?: number,
-    destApiForKeepAlive?: ApiPromise
-  }
-)
 ```
 
 ### Asset claim:
