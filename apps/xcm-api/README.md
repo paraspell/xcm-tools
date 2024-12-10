@@ -42,16 +42,14 @@ A complete guide on this section can be found in [official docs](https://paraspe
 
 Possible parameters:
 
-- `from`: (optional): Represents the Parachain from which the assets will be transferred.
-- `to`: (optional): Represents the Parachain to which the assets will be transferred. This can also be custom multilocation.
-- `currency`: (optional): Represents the asset being sent. It should be a string value. This can also be custom multilocation.
-- `amount`: (required): Specifies the amount of assets to transfer. It should be a numeric value.
+- `from`: (required): Represents the Parachain from which the assets will be transferred.
+- `to`: (required): Represents the Parachain to which the assets will be transferred. This can also be custom multilocation.
+- `currency`: (required): Represents the asset being sent. It should be a string value. This can also be custom multilocation.
 - `address`: (required): Specifies the address of the recipient. This can also be custom multilocation.
 - `xcmVersion`: (optional): Specifies manually selected XCM version if pre-selected does not work. Format: Vx - where x = version number eg. V4.
 
 ```
 NOTICE:
-- The latest version switched to the POST method for XCM Transfers, but we kept GET method support. It will however be deprecated at some point. Please consider switching to POST method.
 - API now returns you transaction hash instead of transaction instruction that needs to be parsed! Implementation is as easy as api.tx(receivedHash).
 - `-hash` is now deprecated and endpoint format returned back to be without -hash. Eg. 'x-transfer' instead of 'x-transfer-hash'
 ```
@@ -64,8 +62,9 @@ const response = await fetch('http://localhost:3001/x-transfer', {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
+    from: 'Polkadot' //Or Kusama
     to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
-    amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
+    currency: {symbol: 'DOT', amount: amount}
     address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
   }),
@@ -79,7 +78,8 @@ const response = await fetch('http://localhost:3001/x-transfer', {
   },
   body: JSON.stringify({
     from: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
-    amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
+    to: 'Polkadot' //Or Kusama
+    currency: {symbol: 'DOT', amount: amount}
     address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
   }),
@@ -94,8 +94,7 @@ const response = await fetch('http://localhost:3001/x-transfer', {
   body: JSON.stringify({
     from: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
     to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
-    currency: { currencySpec }, //{id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson} | {multilocation: "type": "Override","value": "CustomAssetMultilocationJson"} | {multiasset: multilocationJsonArray}
-    amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
+    currency: { currencySpec }, //{id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}}
     address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
   }),
@@ -119,8 +118,8 @@ const response = await fetch('http://localhost:3001/x-transfer', {
           X2: [{ PalletInstance: '50' }, { GeneralIndex: '41' }],
         },
       },
+      amount: amount
     },
-    amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
   }),
 });
