@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.5.0...xcm-router-v2.0.0) (2024-12-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains
+
+### Features
+
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains ([24201a6](https://github.com/paraspell/xcm-tools/commit/24201a614c1e82b2db9760b9d7f39ee31beacd22))
+
 ## [1.5.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.4.1...xcm-router-v1.5.0) (2024-11-30)
 
 
