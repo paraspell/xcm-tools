@@ -1,5 +1,21 @@
 # Changelog
 
+## [8.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.6...sdk-v8.0.0) (2024-12-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains
+
+### Features
+
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains ([24201a6](https://github.com/paraspell/xcm-tools/commit/24201a614c1e82b2db9760b9d7f39ee31beacd22))
+
+
+### Miscellaneous Chores
+
+* **sdk:** fix readme ([129871d](https://github.com/paraspell/xcm-tools/commit/129871dda4df521ca5c92bd58a4017c05c1def4e))
+
 ## [7.2.6](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.5...sdk-v7.2.6) (2024-12-07)
 
 
