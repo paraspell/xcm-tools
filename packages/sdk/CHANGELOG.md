@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.7](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.6...sdk-v7.2.7) (2024-12-11)
+
+
+### Bug Fixes
+
+* **sdk:** Fix Centrifuge balance query 🔧 ([f780996](https://github.com/paraspell/xcm-tools/commit/f78099684042d4b2427cc258a7c62464d2d1e897))
+
 ## [7.2.6](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.5...sdk-v7.2.6) (2024-12-07)
 
 
