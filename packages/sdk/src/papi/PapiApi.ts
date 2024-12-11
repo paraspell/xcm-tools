@@ -8,7 +8,8 @@ import type {
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
-  TSerializedApiCall
+  TSerializedApiCall,
+  TNodePolkadotKusama
 } from '../types'
 import { createApiInstanceForNode, getNode } from '../utils'
 import { createClient, FixedSizeBinary } from 'polkadot-api'
@@ -152,8 +153,18 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
   }
 
-  async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint> {
-    const response = await this.api.getUnsafeApi().query.Tokens.Accounts.getEntries(address)
+  async getBalanceForeignXTokens(
+    node: TNodePolkadotKusama,
+    address: string,
+    asset: TAsset
+  ): Promise<bigint> {
+    let pallet = 'Tokens'
+
+    if (node === 'Centrifuge' || node === 'Altair') {
+      pallet = 'OrmlTokens'
+    }
+
+    const response = await this.api.getUnsafeApi().query[pallet].Accounts.getEntries(address)
 
     const entry = response.find(({ keyArgs }) => {
       const [_address, assetItem] = keyArgs

@@ -105,6 +105,11 @@ describe('PapiApi', () => {
                 }
               ])
             }
+          },
+          OrmlTokens: {
+            Accounts: {
+              getEntries: vi.fn().mockResolvedValue([])
+            }
           }
         }
       })
@@ -318,7 +323,7 @@ describe('PapiApi', () => {
     it('should return the balance when asset matches symbolOrId', async () => {
       papiApi.setApi(mockPolkadotClient)
 
-      const balance = await papiApi.getBalanceForeignXTokens('some_address', {
+      const balance = await papiApi.getBalanceForeignXTokens('Acala', 'some_address', {
         symbol: 'DOT',
         assetId: '1'
       })
@@ -348,7 +353,7 @@ describe('PapiApi', () => {
         }
       ])
 
-      const balance = await papiApi.getBalanceForeignXTokens('some_address', {
+      const balance = await papiApi.getBalanceForeignXTokens('Acala', 'some_address', {
         symbol: 'DOT',
         assetId: '1'
       })
@@ -376,7 +381,7 @@ describe('PapiApi', () => {
         }
       ])
 
-      const balance = await papiApi.getBalanceForeignXTokens('some_address', {
+      const balance = await papiApi.getBalanceForeignXTokens('Acala', 'some_address', {
         symbol: 'DOT',
         assetId: '1'
       })
@@ -388,7 +393,19 @@ describe('PapiApi', () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.query.Tokens.Accounts.getEntries = vi.fn().mockResolvedValue([])
 
-      const balance = await papiApi.getBalanceForeignXTokens('some_address', {
+      const balance = await papiApi.getBalanceForeignXTokens('Acala', 'some_address', {
+        symbol: 'DOT',
+        assetId: '1'
+      })
+
+      expect(balance).toEqual(BigInt(0))
+    })
+
+    it('should return null when no matching asset found - Centrifuge', async () => {
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.query.OrmlTokens.Accounts.getEntries = vi.fn().mockResolvedValue([])
+
+      const balance = await papiApi.getBalanceForeignXTokens('Centrifuge', 'some_address', {
         symbol: 'DOT',
         assetId: '1'
       })

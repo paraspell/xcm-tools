@@ -41,7 +41,7 @@ describe('getBalanceForeignXTokens', () => {
     const spy = vi.spyOn(mockApi, 'getBalanceForeignXTokens').mockResolvedValue(BigInt(3000))
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignAssetsAccount')
     const balance = await getBalanceForeignXTokens(mockApi, 'Acala', address, asset)
-    expect(spy).toHaveBeenCalledWith(address, asset)
+    expect(spy).toHaveBeenCalledWith('Acala', address, asset)
     expect(spy2).not.toHaveBeenCalled()
     expect(balance).toBe(BigInt(3000))
   })

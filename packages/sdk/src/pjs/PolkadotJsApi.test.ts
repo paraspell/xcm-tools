@@ -51,6 +51,11 @@ describe('PolkadotJsApi', () => {
           accounts: Object.assign(vi.fn(), {
             entries: vi.fn()
           })
+        },
+        ormlTokens: {
+          accounts: Object.assign(vi.fn(), {
+            entries: vi.fn()
+          })
         }
       },
       disconnect: vi.fn()
@@ -328,7 +333,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([mockEntry])
 
-      const balance = await polkadotApi.getBalanceForeignXTokens(address, {
+      const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
         symbol: 'DOT',
         assetId: '1'
       })
@@ -341,11 +346,24 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([])
 
-      const balance = await polkadotApi.getBalanceForeignXTokens(address, {
+      const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
         symbol: 'DOT',
         assetId: '1'
       })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
+      expect(balance).toBe(BigInt(0))
+    })
+
+    it('should return null when no matching asset found - Centrifuge', async () => {
+      const address = 'some_address'
+
+      vi.mocked(mockApiPromise.query.ormlTokens.accounts.entries).mockResolvedValue([])
+
+      const balance = await polkadotApi.getBalanceForeignXTokens('Centrifuge', address, {
+        symbol: 'DOT',
+        assetId: '1'
+      })
+      expect(mockApiPromise.query.ormlTokens.accounts.entries).toHaveBeenCalledWith(address)
       expect(balance).toBe(BigInt(0))
     })
 
@@ -368,7 +386,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([mockEntry])
 
-      const balance = await polkadotApi.getBalanceForeignXTokens(address, {
+      const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
         symbol: 'DOT',
         assetId: '1'
       })
@@ -395,7 +413,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.query.tokens.accounts.entries).mockResolvedValue([mockEntry])
 
-      const balance = await polkadotApi.getBalanceForeignXTokens(address, {
+      const balance = await polkadotApi.getBalanceForeignXTokens('Acala', address, {
         symbol: 'DOT',
         assetId: '1'
       })
