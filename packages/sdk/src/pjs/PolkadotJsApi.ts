@@ -4,7 +4,8 @@ import type {
   TAsset,
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
-  TSerializedApiCall
+  TSerializedApiCall,
+  TNodePolkadotKusama
 } from '../types'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from '../pjs/types'
@@ -129,9 +130,19 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
   }
 
-  async getBalanceForeignXTokens(address: string, asset: TAsset): Promise<bigint> {
+  async getBalanceForeignXTokens(
+    node: TNodePolkadotKusama,
+    address: string,
+    asset: TAsset
+  ): Promise<bigint> {
+    let pallet = 'tokens'
+
+    if (node === 'Centrifuge' || node === 'Altair') {
+      pallet = 'ormlTokens'
+    }
+
     const response: Array<[StorageKey<AnyTuple>, Codec]> =
-      await this.api.query.tokens.accounts.entries(address)
+      await this.api.query[pallet].accounts.entries(address)
 
     const entry = response.find(
       ([

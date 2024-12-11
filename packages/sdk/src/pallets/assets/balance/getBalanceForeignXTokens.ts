@@ -21,5 +21,5 @@ export const getBalanceForeignXTokens = async <TApi, TRes>(
     return api.getBalanceForeignBifrost(address, asset)
   }
 
-  return api.getBalanceForeignXTokens(address, asset)
+  return api.getBalanceForeignXTokens(node, address, asset)
 }
