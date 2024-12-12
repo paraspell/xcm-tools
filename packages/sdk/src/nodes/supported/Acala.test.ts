@@ -6,7 +6,6 @@ import { getNode } from '../../utils/getNode'
 import type Acala from './Acala'
 import type { ApiPromise } from '@polkadot/api'
 import type { Extrinsic } from '../../pjs/types'
-import { getNodeProviders } from '../config'
 
 vi.mock('../xTokens', () => ({
   default: {
@@ -58,20 +57,5 @@ describe('Acala', () => {
     expect(spyTransferXTokens).toHaveBeenCalledWith(inputWithCurrencyID, {
       ForeignAsset: 1
     })
-  })
-
-  it('should return the second WebSocket URL from getProvider', () => {
-    const mockProviders = [
-      'ws://unreliable-url',
-      'ws://reliable-url',
-      'ws://backup-url',
-      'ws://backup-url2'
-    ]
-    vi.mocked(getNodeProviders).mockReturnValue(mockProviders)
-
-    const provider = acala.getProvider()
-
-    expect(getNodeProviders).toHaveBeenCalledWith(acala.node)
-    expect(provider).toBe('ws://backup-url2')
   })
 })

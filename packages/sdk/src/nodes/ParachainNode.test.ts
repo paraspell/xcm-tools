@@ -253,19 +253,6 @@ describe('ParachainNode', () => {
     })
   })
 
-  it('should return the first provider from getProvider', () => {
-    expect(node.getProvider()).toBe('provider1')
-  })
-
-  it('should create API instance', async () => {
-    const mockApi = {
-      createApiInstance: vi.fn().mockResolvedValue('apiInstance')
-    } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
-    const apiInstance = await node.createApiInstance(mockApi)
-
-    expect(apiInstance).toBe('apiInstance')
-  })
-
   it('should create currency spec', () => {
     const result = node.createCurrencySpec('100', 'ParaToRelay', Version.V3, { symbol: 'DOT' })
 

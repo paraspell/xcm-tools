@@ -3,7 +3,6 @@
 import { InvalidCurrencyError } from '../../errors'
 import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
-import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
 import XTokensTransferImpl from '../xTokens'
 
@@ -20,11 +19,6 @@ class Basilisk<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     }
 
     return XTokensTransferImpl.transferXTokens(input, Number(asset.assetId))
-  }
-
-  getProvider(): string {
-    // Prefer Dwellir RPC endpoint
-    return getNodeProviders(this.node)[1]
   }
 }
 
