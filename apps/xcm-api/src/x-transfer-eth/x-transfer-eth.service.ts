@@ -15,7 +15,6 @@ import { XTransferEthDto } from './dto/x-transfer-eth.dto.js';
 export class XTransferEthService {
   async generateEthCall({
     to,
-    amount,
     address,
     destAddress,
     currency,
@@ -35,7 +34,6 @@ export class XTransferEthService {
     try {
       return await buildEthTransferOptions({
         to: toNode,
-        amount: amount.toString(),
         address,
         destAddress,
         currency,

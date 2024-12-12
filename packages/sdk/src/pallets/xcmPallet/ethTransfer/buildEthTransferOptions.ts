@@ -9,8 +9,7 @@ export const buildEthTransferOptions = async ({
   currency,
   to,
   address,
-  destAddress,
-  amount
+  destAddress
 }: TSerializeEthTransferOptions): Promise<TSerializedEthTransfer> => {
   const ethAsset = findEthAsset(currency)
 
@@ -32,7 +31,7 @@ export const buildEthTransferOptions = async ({
     destAddress,
     ethAsset.assetId ?? '',
     destParaId,
-    BigInt(amount),
+    BigInt(currency.amount),
     BigInt(0)
   )
 

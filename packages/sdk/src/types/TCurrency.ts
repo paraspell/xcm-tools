@@ -40,6 +40,8 @@ export type TCurrencyCoreV1 =
       id: TCurrency
     }
 
+export type TCurrencyCoreV1WithAmount = WithAmount<TCurrencyCoreV1>
+
 export type TMultiLocationValue = string | TMultiLocation | TJunction[]
 
 export type TMultiLocationValueWithOverride = TMultiLocationValue | TOverrideMultiLocationSpecifier

@@ -6,7 +6,7 @@ import {
   IconSend2,
   IconWallet,
 } from "@tabler/icons-react";
-import XcmTransfer from "../components/XcmTransfer";
+import XcmTransfer from "../components/transfer/XcmTransfer";
 import AssetsQueries from "../components/assets/AssetsQueries";
 import PalletsQueries from "../components/pallets/PalletsQueries";
 import TransferInfo from "../components/TransferInfo";
