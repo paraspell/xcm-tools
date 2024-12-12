@@ -28,10 +28,9 @@ describe('XTransferEthService', () => {
   it('should throw BadRequestException if the node is invalid', async () => {
     const dto: XTransferEthDto = {
       to: 'InvalidNode',
-      amount: 100,
       address: '0xAddress',
       destAddress: '1DestinationAddress',
-      currency: { symbol: 'DOT' },
+      currency: { symbol: 'DOT', amount: 100 },
     };
 
     await expect(service.generateEthCall(dto)).rejects.toThrow(
@@ -45,10 +44,9 @@ describe('XTransferEthService', () => {
   it('should throw BadRequestException if the destination address is invalid', async () => {
     const dto: XTransferEthDto = {
       to: 'Polkadot',
-      amount: 100,
       address: '0xAddress',
       destAddress: 'InvalidAddress',
-      currency: { symbol: 'DOT' },
+      currency: { symbol: 'DOT', amount: 100 },
     };
 
     vi.mocked(isValidPolkadotAddress).mockReturnValue(false);
@@ -64,10 +62,9 @@ describe('XTransferEthService', () => {
   it('should return the result from buildEthTransferOptions for valid input', async () => {
     const dto: XTransferEthDto = {
       to: 'Polkadot',
-      amount: 100,
       address: '0xAddress',
       destAddress: '1DestinationAddress',
-      currency: { symbol: 'DOT' },
+      currency: { symbol: 'DOT', amount: 100 },
     };
 
     const mockResult = { success: true };
@@ -82,20 +79,18 @@ describe('XTransferEthService', () => {
     expect(result).toBe(mockResult);
     expect(buildEthTransferOptions).toHaveBeenCalledWith({
       to: 'Polkadot',
-      amount: '100',
       address: '0xAddress',
       destAddress: '1DestinationAddress',
-      currency: { symbol: 'DOT' },
+      currency: { symbol: 'DOT', amount: 100 },
     });
   });
 
   it('should throw InternalServerErrorException when buildEthTransferOptions throws an error', async () => {
     const dto: XTransferEthDto = {
       to: 'Polkadot',
-      amount: 100,
       address: '0xAddress',
       destAddress: '1DestinationAddress',
-      currency: { symbol: 'DOT' },
+      currency: { symbol: 'DOT', amount: 100 },
     };
 
     vi.mocked(isValidPolkadotAddress).mockReturnValue(true);

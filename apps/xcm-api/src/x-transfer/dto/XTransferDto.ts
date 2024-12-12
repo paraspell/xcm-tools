@@ -86,6 +86,12 @@ export const CurrencyCoreSchemaV1 = z.union([
     .required(),
 ]);
 
+export const CurrencyCoreSchemaV1WithAmount = CurrencyCoreSchemaV1.and(
+  z.object({
+    amount: AmountSchema,
+  }),
+);
+
 export const CurrencyCoreSchema = z.union([
   CurrencySymbolSchema,
   z.object({

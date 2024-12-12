@@ -104,6 +104,26 @@ describe('buildTransferExtrinsics', () => {
     expect(toExchangeTxSpy).toHaveBeenCalled();
   });
 
+  it('should build transfer extrinsics correctly - manual exchange selection - From Ethereum', async () => {
+    const options: TBuildTransferExtrinsicsOptions = {
+      ...MOCK_TRANSFER_OPTIONS,
+      exchange: 'AcalaDex',
+      from: 'Ethereum',
+      currencyFrom: { symbol: 'WETH' },
+      assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
+      ethAddress: '0x1234567890123456789012345678901234567890',
+    };
+    const result = await buildTransferExtrinsics(options);
+
+    expect(result).toBeDefined();
+    expect(result).toHaveLength(4);
+    expect(createApiInstanceForNode).toHaveBeenCalled();
+    expect(validateSpy).toHaveBeenCalledTimes(2);
+    expect(feeSpy).toHaveBeenCalledTimes(2);
+    expect(fromExchangeTxSpy).toHaveBeenCalledTimes(2);
+    expect(toExchangeTxSpy).toHaveBeenCalled();
+  });
+
   it('should build transfer extrinsics correctly - auto exchange selection', async () => {
     const options = {
       ...MOCK_TRANSFER_OPTIONS,

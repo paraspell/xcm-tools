@@ -164,18 +164,20 @@ const RouterTransferForm: FC<Props> = ({
     },
   });
 
-  useEffect(() => {
-    if (form.values.from === "Ethereum" || form.values.to === "Ethereum") {
-      onAccountDisconnect();
-    }
-  }, [form.values.from, form.values.to]);
+  const { from, to, exchange } = form.getValues();
 
   useEffect(() => {
-    if (form.values.from !== "Ethereum" || form.values.to !== "Ethereum") {
+    if (from === "Ethereum" || to === "Ethereum") {
+      onAccountDisconnect();
+    }
+  }, [from, to]);
+
+  useEffect(() => {
+    if (from !== "Ethereum" || to !== "Ethereum") {
       onAssetHubAccountDisconnect();
       onEthWalletDisconnect();
     }
-  }, [form.values.from, form.values.to]);
+  }, [from, to]);
 
   const connectAssetHubWallet = async () => {
     try {
@@ -234,11 +236,7 @@ const RouterTransferForm: FC<Props> = ({
     currencyToMap,
     isFromNotParaToPara,
     isToNotParaToPara,
-  } = useRouterCurrencyOptions(
-    form.values.from,
-    form.values.exchange,
-    form.values.to,
-  );
+  } = useRouterCurrencyOptions(from, exchange, to);
 
   const onSubmitInternal = (values: TRouterFormValues) => {
     const currencyFrom = currencyFromMap[values.currencyFromOptionId];
@@ -388,12 +386,7 @@ const RouterTransferForm: FC<Props> = ({
         />
 
         <Select
-          key={
-            form.values.from +
-            form.values.exchange +
-            form.values.to +
-            "currencyFrom"
-          }
+          key={from + exchange + to + "currencyFrom"}
           label="Currency From"
           placeholder="Pick value"
           data={currencyFromOptions}
@@ -406,12 +399,7 @@ const RouterTransferForm: FC<Props> = ({
         />
 
         <Select
-          key={
-            form.values.from +
-            form.values.exchange +
-            form.values.to +
-            "currencyTo"
-          }
+          key={from + exchange + to + "currencyTo"}
           label="Currency To"
           placeholder="Pick value"
           data={currencyToOptions}
@@ -472,8 +460,7 @@ const RouterTransferForm: FC<Props> = ({
             data-testid="checkbox-api"
           />
           <Button.Group orientation="vertical">
-            {(form.values.from === "Ethereum" ||
-              form.values.to === "Ethereum") && (
+            {(from === "Ethereum" || to === "Ethereum") && (
               <Button
                 size="xs"
                 variant="outline"
@@ -486,8 +473,7 @@ const RouterTransferForm: FC<Props> = ({
                   : "Connect Ethereum Wallet"}
               </Button>
             )}
-            {(form.values.from === "Ethereum" ||
-              form.values.to === "Ethereum") && (
+            {(from === "Ethereum" || to === "Ethereum") && (
               <Button
                 size="xs"
                 variant="outline"
@@ -500,20 +486,19 @@ const RouterTransferForm: FC<Props> = ({
                   : "Connect AssetHub wallet"}
               </Button>
             )}
-            {form.values.from !== "Ethereum" &&
-              form.values.to !== "Ethereum" && (
-                <Button
-                  size="xs"
-                  variant="outline"
-                  onClick={onConnectEvmWallet}
-                  rightSection={infoEvmWallet}
-                  data-testid="connect-evm-wallet"
-                >
-                  {selectedAccount
-                    ? `${selectedAccount?.meta.name} (${selectedAccount?.meta.source})`
-                    : "Connect EVM wallet"}
-                </Button>
-              )}
+            {from !== "Ethereum" && to !== "Ethereum" && (
+              <Button
+                size="xs"
+                variant="outline"
+                onClick={onConnectEvmWallet}
+                rightSection={infoEvmWallet}
+                data-testid="connect-evm-wallet"
+              >
+                {selectedAccount
+                  ? `${selectedAccount?.meta.name} (${selectedAccount?.meta.source})`
+                  : "Connect EVM wallet"}
+              </Button>
+            )}
           </Button.Group>
         </Group>
 

@@ -65,10 +65,9 @@ describe('transferEthToPolkadot', () => {
     const mockProvider = {} as AbstractProvider
 
     const options: TEvmBuilderOptions = {
-      currency: { symbol: 'ETH' },
+      currency: { symbol: 'ETH', amount: '1000000' },
       to: 'AssetHubPolkadot',
       address: '0xSenderAddress',
-      amount: '1000000',
       signer: {} as Signer
     }
 
