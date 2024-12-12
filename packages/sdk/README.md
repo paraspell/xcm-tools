@@ -103,13 +103,14 @@ Latest news:
 - You can now query foreign asset minimal deposits also.
 - Since v8, amount moved closer to currency selection and specifying from and to parameters is no longer optional to save code.
 - More information on v8 major breaking change: https://github.com/paraspell/xcm-tools/pull/554
+- XCM SDK Now supports API Failsafe - If one endpoint doesn't work it automatically switches to the next one.
 ```
 
 ### Builder pattern:
 
 ##### Transfer assets from Parachain to Parachain
 ```ts
-await Builder(/*node api/ws_url_string - optional*/)
+await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
       .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
@@ -131,7 +132,7 @@ const tx = await Builder()
 ```
 ##### Transfer assets from the Relay chain to Parachain
 ```ts
-await Builder(/*node api/ws_url_string - optional*/)
+await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(RELAY_NODE) //Kusama or Polkadot
       .to(NODE/*,customParaId - optional*/ | Multilocation object)
       .currency({symbol: 'DOT', amount: amount})
@@ -153,7 +154,7 @@ const tx = await Builder()
 ```
 ##### Transfer assets from Parachain to Relay chain
 ```ts
-await Builder(/*node api/ws_url_string - optional*/)
+await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE)
       .to(RELAY_NODE) //Kusama or Polkadot
       .currency({symbol: 'DOT', amount: amount})
@@ -177,7 +178,7 @@ const tx = await Builder()
 ##### Batch calls
 You can batch XCM calls and execute multiple XCM calls within one call. All three scenarios (Para->Para, Para->Relay, Relay->Para) can be used and combined.
 ```js
-await Builder(/*node api/ws_url_string - optional*/)
+await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE) //Ensure, that origin node is the same in all batched XCM Calls.
       .to(NODE_2) //Any compatible Parachain
       .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
@@ -198,7 +199,7 @@ await Builder(/*node api/ws_url_string - optional*/)
 ### Asset claim:
 ```ts
 //Claim XCM trapped assets from the selected chain
-await Builder(api/ws_url_string)
+await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .claimFrom(NODE)
       .fungible(MultilocationArray (Only one multilocation allowed) [{Multilocation}])
       .account(address | Multilocation object)
