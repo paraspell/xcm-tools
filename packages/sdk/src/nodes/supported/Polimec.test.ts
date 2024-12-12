@@ -252,9 +252,4 @@ describe('Polimec', () => {
     expect(call.parameters).toHaveProperty('custom_xcm_on_dest')
     expect(call.parameters).toHaveProperty('weight_limit', 'Unlimited')
   })
-
-  it('should return the second provider URL in getProvider', () => {
-    const provider = polimec.getProvider()
-    expect(provider).toBe('wss://rpc.helikon.io/polimec')
-  })
 })

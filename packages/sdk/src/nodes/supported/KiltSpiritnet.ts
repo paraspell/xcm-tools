@@ -7,7 +7,6 @@ import {
   type TPolkadotXCMTransferOptions,
   type TSerializedApiCall
 } from '../../types'
-import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
@@ -27,11 +26,6 @@ class KiltSpiritnet<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPo
 
   transferRelayToPara(): TSerializedApiCall {
     throw new NodeNotSupportedError()
-  }
-
-  getProvider(): string {
-    // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getNodeProviders(this.node)[1]
   }
 }
 

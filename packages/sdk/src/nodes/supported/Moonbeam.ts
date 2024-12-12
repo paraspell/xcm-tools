@@ -13,7 +13,6 @@ import type {
 } from '../../types'
 import { Parents, Version } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
-import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
@@ -67,10 +66,6 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
     return { section: 'limited_reserve_transfer_assets', includeFee: true }
-  }
-
-  getProvider(): string {
-    return getNodeProviders(this.node)[2]
   }
 }
 

@@ -57,10 +57,4 @@ describe('KiltSpiritnet', () => {
   it('should throw NodeNotSupportedError for transferRelayToPara', () => {
     expect(() => kiltSpiritnet.transferRelayToPara()).toThrowError(NodeNotSupportedError)
   })
-
-  describe('getProvider', () => {
-    it('should return Dwellir provider', () => {
-      expect(kiltSpiritnet.getProvider()).toBe('wss://kilt-rpc.dwellir.com')
-    })
-  })
 })

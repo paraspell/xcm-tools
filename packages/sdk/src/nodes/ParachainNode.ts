@@ -30,9 +30,8 @@ import {
   createPolkadotXcmHeader,
   isTMultiLocation
 } from '../pallets/xcmPallet/utils'
-import type { IPolkadotApi } from '../api/IPolkadotApi'
 import XTokensTransferImpl from './xTokens'
-import { getNodeProviders, getParaId } from './config'
+import { getParaId } from './config'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
@@ -192,18 +191,6 @@ abstract class ParachainNode<TApi, TRes> {
       section,
       parameters: constructRelayToParaParameters(options, version, { includeFee })
     }
-  }
-
-  getProvider(): string {
-    const providers = getNodeProviders(this.node)
-    if (providers.length === 0) {
-      throw new Error(`No providers found for node ${this.node}`)
-    }
-    return providers[0]
-  }
-
-  async createApiInstance(api: IPolkadotApi<TApi, TRes>): Promise<TApi> {
-    return api.createApiInstance(this.getProvider())
   }
 
   createCurrencySpec(
