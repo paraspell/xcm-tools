@@ -1,5 +1,24 @@
 # Changelog
 
+## [8.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.7...sdk-v8.0.0) (2024-12-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains
+
+### Features
+
+* **playground:** Add support for multi-assets to playground 🛝 ([4bf8a07](https://github.com/paraspell/xcm-tools/commit/4bf8a07e8ece2fd338aa6143362d236f66bf2b86))
+* **sdk:** Add fail-safe support ✨ ([96aed57](https://github.com/paraspell/xcm-tools/commit/96aed572f384d12bf8dc70a1e4b0774b7cc9306b))
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains ([dd6d69b](https://github.com/paraspell/xcm-tools/commit/dd6d69bbb780471b453b1bdffe5d95692fbd5c55))
+
+
+### Miscellaneous Chores
+
+* **sdk:** Add changes ([a0dcad7](https://github.com/paraspell/xcm-tools/commit/a0dcad717afa1bd0942c6a0597320fdec05d8f44))
+* **sdk:** fix readme ([f923362](https://github.com/paraspell/xcm-tools/commit/f9233626c5dc7710113e4df53d638b0e16cfb348))
+
 ## [7.2.7](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.6...sdk-v7.2.7) (2024-12-11)
 
 
