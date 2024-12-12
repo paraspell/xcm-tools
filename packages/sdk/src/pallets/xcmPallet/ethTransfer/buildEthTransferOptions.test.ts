@@ -60,11 +60,10 @@ describe('buildEthTransferOptions', () => {
     } as SendValidationResult)
 
     const options: TSerializeEthTransferOptions = {
-      currency: { symbol: 'ETH' },
+      currency: { symbol: 'ETH', amount: '1000000' },
       to: 'AssetHubPolkadot',
       address: '0xSenderAddress',
-      destAddress: '0xDestinationAddress',
-      amount: '1000000'
+      destAddress: '0xDestinationAddress'
     }
 
     const result = await buildEthTransferOptions(options)
@@ -83,11 +82,10 @@ describe('buildEthTransferOptions', () => {
     })
 
     const options: TSerializeEthTransferOptions = {
-      currency: { symbol: 'ETH' },
+      currency: { symbol: 'ETH', amount: '1000000' },
       to: 'AssetHubPolkadot',
       address: '0xSenderAddress',
-      destAddress: '0xDestinationAddress',
-      amount: '1000000'
+      destAddress: '0xDestinationAddress'
     }
 
     await expect(buildEthTransferOptions(options)).rejects.toThrow('Asset not found')
@@ -109,11 +107,10 @@ describe('buildEthTransferOptions', () => {
     } as SendValidationResult)
 
     const options: TSerializeEthTransferOptions = {
-      currency: { symbol: 'ETH' },
+      currency: { symbol: 'ETH', amount: '1000000' },
       to: 'AssetHubPolkadot',
       address: '0xSenderAddress',
-      destAddress: '0xDestinationAddress',
-      amount: '1000000'
+      destAddress: '0xDestinationAddress'
     }
 
     await expect(buildEthTransferOptions(options)).rejects.toThrow('Failed to validate send')
