@@ -47,7 +47,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       return
     }
 
-    if (typeof this._api === 'string') {
+    if (typeof this._api === 'string' || this._api instanceof Array) {
       this.api = await this.createApiInstance(this._api)
     } else {
       this.api = this._api ?? (await createApiInstanceForNode<TPjsApi, Extrinsic>(this, node))
@@ -56,7 +56,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     this.initialized = true
   }
 
-  async createApiInstance(wsUrl: string): Promise<TPjsApi> {
+  async createApiInstance(wsUrl: string | string[]): Promise<TPjsApi> {
     const wsProvider = new WsProvider(wsUrl)
     return ApiPromise.create({ provider: wsProvider })
   }

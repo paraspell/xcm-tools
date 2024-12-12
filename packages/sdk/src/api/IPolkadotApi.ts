@@ -13,7 +13,7 @@ export interface IPolkadotApi<TApi, TRes> {
   getApi(): TApi
   getApiOrUrl(): TApiOrUrl<TApi> | undefined
   init(node: TNodeWithRelayChains): Promise<void>
-  createApiInstance: (wsUrl: string) => Promise<TApi>
+  createApiInstance: (wsUrl: string | string[]) => Promise<TApi>
   createAccountId(address: string): THexString
   callTxMethod(serializedCall: TSerializedApiCall): TRes
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
