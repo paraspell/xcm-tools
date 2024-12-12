@@ -60,7 +60,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (unsupportedNodes.includes(node)) {
       throw new NodeNotSupportedError(`The node ${node} is not yet supported by the Polkadot API.`)
     }
-    if (typeof this._api === 'string') {
+    if (typeof this._api === 'string' || this._api instanceof Array) {
       this.api = await this.createApiInstance(this._api)
     } else {
       this.api =
@@ -70,7 +70,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     this.initialized = true
   }
 
-  async createApiInstance(wsUrl: string): Promise<TPapiApi> {
+  async createApiInstance(wsUrl: string | string[]): Promise<TPapiApi> {
     const isNodeJs = typeof window === 'undefined'
     let getWsProvider
     if (isNodeJs) {
@@ -78,7 +78,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     } else {
       getWsProvider = (await import('polkadot-api/ws-provider/web')).getWsProvider
     }
-    return Promise.resolve(createClient(withPolkadotSdkCompat(getWsProvider(wsUrl))))
+
+    const provider = wsUrl instanceof Array ? getWsProvider(wsUrl) : getWsProvider(wsUrl)
+
+    return Promise.resolve(createClient(withPolkadotSdkCompat(provider)))
   }
 
   createAccountId(address: string): THexString {

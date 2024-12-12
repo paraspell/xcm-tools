@@ -36,10 +36,6 @@ class Peaq<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTran
   transferRelayToPara(): TSerializedApiCall {
     throw new NodeNotSupportedError()
   }
-
-  getProvider() {
-    return 'wss://peaq.api.onfinality.io/public-ws'
-  }
 }
 
 export default Peaq
