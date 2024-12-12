@@ -14,7 +14,6 @@ import PolkadotXCMTransferImpl from '../polkadotXcm'
 import XTokensTransferImpl from '../xTokens'
 import { ETHEREUM_JUNCTION } from '../../const'
 import { isForeignAsset } from '../../utils/assets'
-import { getNodeProviders } from '../config'
 
 export class BifrostPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>
@@ -86,10 +85,5 @@ export class BifrostPolkadot<TApi, TRes>
 
   protected canUseXTokens({ asset, destination }: TSendInternalOptions<TApi, TRes>): boolean {
     return (asset.symbol !== 'WETH' && asset.symbol !== 'DOT') || destination !== 'AssetHubPolkadot'
-  }
-
-  getProvider(): string {
-    // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getNodeProviders(this.node)[4]
   }
 }

@@ -55,9 +55,4 @@ describe('PeoplePolkadot', () => {
       includeFee: true
     })
   })
-
-  it('should return the second provider URL in getProvider', () => {
-    const provider = node.getProvider()
-    expect(provider).toBe('wss://rpc-people-polkadot.luckyfriday.io')
-  })
 })

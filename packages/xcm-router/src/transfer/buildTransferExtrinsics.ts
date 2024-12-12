@@ -1,4 +1,8 @@
-import { buildEthTransferOptions, createApiInstanceForNode, getNodeProvider } from '@paraspell/sdk';
+import {
+  buildEthTransferOptions,
+  createApiInstanceForNode,
+  getNodeProviders,
+} from '@paraspell/sdk';
 import createDexNodeInstance from '../dexNodes/DexNodeFactory';
 import {
   TransactionType,
@@ -297,7 +301,7 @@ export const buildTransferExtrinsics = async (
 
   const txsWithWsProviders = transactions.map((tx) => ({
     ...tx,
-    wsProvider: tx.node === 'Ethereum' ? '' : getNodeProvider(tx.node),
+    wsProvider: tx.node === 'Ethereum' ? '' : getNodeProviders(tx.node)[0],
   }));
 
   return txsWithWsProviders;

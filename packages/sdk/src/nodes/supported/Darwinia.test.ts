@@ -95,10 +95,4 @@ describe('Darwinia', () => {
 
     expect(spy).toHaveBeenCalledWith(mockAmount, mockScenario, mockVersion, undefined, undefined)
   })
-
-  describe('getProvider', () => {
-    it('should return Dwellir provider', () => {
-      expect(darwinia.getProvider()).toBe('wss://darwinia-rpc.dwellir.com')
-    })
-  })
 })

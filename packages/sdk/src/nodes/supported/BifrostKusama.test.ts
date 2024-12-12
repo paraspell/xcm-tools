@@ -47,10 +47,4 @@ describe('BifrostKusama', () => {
 
     expect(spy).toHaveBeenCalledWith(mockInput, { Native: 'BNC' })
   })
-
-  describe('getProvider', () => {
-    it('should return LiebiEU provider', () => {
-      expect(bifrostKusama.getProvider()).toBe('wss://bifrost-rpc.liebi.com/ws')
-    })
-  })
 })

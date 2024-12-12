@@ -24,7 +24,7 @@ import ParachainNode from '../ParachainNode'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 import { DOT_MULTILOCATION } from '../../const'
-import { getNodeProviders, getParaId } from '../config'
+import { getParaId } from '../config'
 
 const GAS_LIMIT = BigInt('1000000000')
 
@@ -225,11 +225,6 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
     }
 
     return call
-  }
-
-  getProvider(): string {
-    // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getNodeProviders(this.node)[1]
   }
 }
 
