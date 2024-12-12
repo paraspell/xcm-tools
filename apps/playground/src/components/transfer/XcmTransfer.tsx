@@ -1,9 +1,15 @@
 import { Stack, Title, Box } from "@mantine/core";
-import ErrorAlert from "./ErrorAlert";
-import type { FormValuesTransformed } from "./TransferForm";
-import TransferForm from "./TransferForm";
+import ErrorAlert from "../ErrorAlert";
+import type {
+  FormValuesTransformed,
+  TCurrencyEntryTransformed,
+} from "./XcmTransferForm";
+import XcmTransferForm from "./XcmTransferForm";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import type { TCurrencyInputWithAmount } from "@paraspell/sdk";
+import type {
+  TCurrencyCoreWithFee,
+  TCurrencyInputWithAmount,
+} from "@paraspell/sdk";
 import {
   isForeignAsset,
   Override,
@@ -16,9 +22,9 @@ import { getOtherAssets, isRelayChain } from "@paraspell/sdk/papi";
 import type { PolkadotClient, PolkadotSigner } from "polkadot-api";
 import type { Signer } from "@polkadot/api/types";
 import { useState, useEffect } from "react";
-import { submitTransaction, submitTransactionPapi } from "../utils";
-import { getTxFromApi } from "../utils/submitUsingApi";
-import { useWallet } from "../hooks/useWallet";
+import { submitTransaction, submitTransactionPapi } from "../../utils";
+import { getTxFromApi } from "../../utils/submitUsingApi";
+import { useWallet } from "../../hooks/useWallet";
 import type { ApiPromise } from "@polkadot/api";
 import { ethers } from "ethers";
 
@@ -42,14 +48,16 @@ const XcmTransfer = () => {
     }
   }, [error, scrollIntoView]);
 
-  const determineCurrency = ({
-    from,
-    isCustomCurrency,
-    customCurrency,
-    customCurrencyType,
-    currency,
-    amount,
-  }: FormValuesTransformed): TCurrencyInputWithAmount => {
+  const determineCurrency = (
+    { from }: FormValuesTransformed,
+    {
+      isCustomCurrency,
+      customCurrency,
+      customCurrencyType,
+      currency,
+      amount,
+    }: TCurrencyEntryTransformed,
+  ): TCurrencyInputWithAmount => {
     if (isCustomCurrency) {
       if (customCurrencyType === "id") {
         return {
@@ -98,7 +106,7 @@ const XcmTransfer = () => {
   };
 
   const submit = async (formValues: FormValuesTransformed) => {
-    const { from, to, address, ahAddress, useApi } = formValues;
+    const { from, to, currencies, address, ahAddress, useApi } = formValues;
 
     if (!selectedAccount) {
       alert("No account selected, connect wallet first");
@@ -117,6 +125,14 @@ const XcmTransfer = () => {
     const api = await Sdk.createApiInstanceForNode(from);
 
     try {
+      const useMultiAssets = currencies.length > 1;
+      const currencyInputs = currencies.map((c) => {
+        return {
+          ...determineCurrency(formValues, c),
+          ...(useMultiAssets && { isFeeAsset: c.isFeeAsset }),
+        };
+      });
+
       let tx: Extrinsic | TPapiTransaction;
       if (useApi) {
         tx = await getTxFromApi(
@@ -130,7 +146,12 @@ const XcmTransfer = () => {
               formValues.to === "Polkadot" || formValues.to === "Kusama"
                 ? undefined
                 : formValues.to,
-            currency: determineCurrency(formValues),
+            currency:
+              currencyInputs.length === 1
+                ? currencyInputs[0]
+                : {
+                    multiasset: currencyInputs,
+                  },
           },
           api,
           apiType === "PJS" ? "/x-transfer" : "/x-transfer-papi",
@@ -144,7 +165,13 @@ const XcmTransfer = () => {
         tx = await builder
           .from(from)
           .to(to)
-          .currency(determineCurrency(formValues))
+          .currency(
+            currencyInputs.length === 1
+              ? currencyInputs[0]
+              : {
+                  multiasset: currencyInputs as TCurrencyCoreWithFee[],
+                },
+          )
           .address(address, ahAddress)
           .build();
       }
@@ -186,7 +213,7 @@ const XcmTransfer = () => {
     <Stack gap="xl">
       <Stack w="100%" maw={400} mx="auto" gap="lg">
         <Title order={3}>New XCM transfer</Title>
-        <TransferForm onSubmit={onSubmit} loading={loading} />
+        <XcmTransferForm onSubmit={onSubmit} loading={loading} />
       </Stack>
       <Box ref={targetRef}>
         {alertOpened && (
