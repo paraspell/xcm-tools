@@ -152,10 +152,4 @@ describe('BifrostPolkadot', () => {
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
     })
   })
-
-  describe('getProvider', () => {
-    it('should return LiebiEU provider', () => {
-      expect(bifrostPolkadot.getProvider()).toBe('wss://eu.bifrost-polkadot-rpc.liebi.com/ws')
-    })
-  })
 })

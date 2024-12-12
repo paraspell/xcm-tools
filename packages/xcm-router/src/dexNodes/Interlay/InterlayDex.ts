@@ -1,5 +1,5 @@
 import type { TForeignAsset } from '@paraspell/sdk';
-import { getAssets, getNodeProvider } from '@paraspell/sdk';
+import { getAssets, getNodeProviders } from '@paraspell/sdk';
 import ExchangeNode from '../DexNode';
 import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
 import { createInterBtcApi, newMonetaryAmount } from 'inter-exchange';
@@ -26,7 +26,7 @@ class InterlayExchangeNode extends ExchangeNode {
     _toDestTransactionFee: BigNumber,
     toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
-    const interBTC = await createInterBtcApi(getNodeProvider(this.node), 'mainnet');
+    const interBTC = await createInterBtcApi(getNodeProviders(this.node)[0], 'mainnet');
 
     const assetFromInfo = await getCurrency(
       {
