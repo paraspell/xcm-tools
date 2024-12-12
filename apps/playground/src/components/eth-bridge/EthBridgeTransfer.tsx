@@ -148,8 +148,7 @@ const EthBridgeTransfer = () => {
 
     await EvmBuilder(provider)
       .to(to)
-      .amount(amount)
-      .currency({ symbol: currency?.symbol ?? "" })
+      .currency({ symbol: currency?.symbol ?? "", amount })
       .address(address)
       .signer(signer)
       .build();
