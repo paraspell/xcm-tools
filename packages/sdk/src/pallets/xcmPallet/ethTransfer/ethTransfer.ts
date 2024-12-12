@@ -18,7 +18,7 @@ import { getParaId } from '../../../nodes/config'
  */
 const transferEthToPolkadot = async (
   provider: AbstractProvider,
-  { signer, address, to, amount, currency }: TEvmBuilderOptions
+  { signer, address, to, currency }: TEvmBuilderOptions
 ) => {
   const ethAsset = findEthAsset(currency)
 
@@ -33,7 +33,7 @@ const transferEthToPolkadot = async (
     address,
     ethAsset.assetId ?? '',
     destParaId,
-    BigInt(amount),
+    BigInt(currency.amount),
     BigInt(0)
   )
 

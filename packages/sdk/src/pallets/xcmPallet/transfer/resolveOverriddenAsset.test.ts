@@ -110,7 +110,7 @@ describe('resolveOverriddenAsset', () => {
 
     const result = resolveOverriddenAsset(options, false, true)
 
-    expect(validateAssetSupport).toHaveBeenCalledTimes(1)
+    expect(validateAssetSupport).toHaveBeenCalledTimes(2)
     expect(getAssetBySymbolOrId).toHaveBeenCalledTimes(multiasset.length)
     expect(createMultiAsset).toHaveBeenCalledTimes(multiasset.length)
     expect(result).toEqual([

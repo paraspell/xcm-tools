@@ -45,33 +45,33 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
-  const funcVal = form.values.func;
+  const { func, node, currencyType } = form.getValues();
 
   const showSymbolInput =
-    funcVal === "ASSET_ID" ||
-    funcVal === "DECIMALS" ||
-    funcVal == "HAS_SUPPORT" ||
-    funcVal === "BALANCE_FOREIGN" ||
-    funcVal === "ASSET_BALANCE" ||
-    funcVal === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
-    funcVal === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
-    funcVal === "TRANSFERABLE_AMOUNT" ||
-    funcVal === "EXISTENTIAL_DEPOSIT";
+    func === "ASSET_ID" ||
+    func === "DECIMALS" ||
+    func == "HAS_SUPPORT" ||
+    func === "BALANCE_FOREIGN" ||
+    func === "ASSET_BALANCE" ||
+    func === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
+    func === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+    func === "TRANSFERABLE_AMOUNT" ||
+    func === "EXISTENTIAL_DEPOSIT";
 
   const supportsCurrencyType =
-    funcVal === "BALANCE_FOREIGN" ||
-    funcVal === "ASSET_BALANCE" ||
-    funcVal === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
-    funcVal === "TRANSFERABLE_AMOUNT" ||
-    funcVal === "EXISTENTIAL_DEPOSIT";
+    func === "BALANCE_FOREIGN" ||
+    func === "ASSET_BALANCE" ||
+    func === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
+    func === "TRANSFERABLE_AMOUNT" ||
+    func === "EXISTENTIAL_DEPOSIT";
 
   const showAddressInput =
-    funcVal === "BALANCE_FOREIGN" ||
-    funcVal === "BALANCE_NATIVE" ||
-    funcVal === "ASSET_BALANCE" ||
-    funcVal === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
-    funcVal === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
-    funcVal === "TRANSFERABLE_AMOUNT";
+    func === "BALANCE_FOREIGN" ||
+    func === "BALANCE_NATIVE" ||
+    func === "ASSET_BALANCE" ||
+    func === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+    func === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
+    func === "TRANSFERABLE_AMOUNT";
 
   const onSubmitInternal = (formValues: FormValues) => {
     const { func } = formValues;
@@ -84,24 +84,23 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
   };
 
   const notSupportsEthereum =
-    funcVal === "PARA_ID" ||
-    funcVal === "BALANCE_NATIVE" ||
-    funcVal === "BALANCE_FOREIGN" ||
-    funcVal === "ASSET_BALANCE" ||
-    funcVal === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
-    funcVal === "MAX_FOREIGN_TRANSFERABLE_AMOUNT";
+    func === "PARA_ID" ||
+    func === "BALANCE_NATIVE" ||
+    func === "BALANCE_FOREIGN" ||
+    func === "ASSET_BALANCE" ||
+    func === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+    func === "MAX_FOREIGN_TRANSFERABLE_AMOUNT";
 
   const supportsRelayChains =
-    funcVal === "ASSETS_OBJECT" ||
-    funcVal === "NATIVE_ASSETS" ||
-    funcVal === "BALANCE_NATIVE" ||
-    funcVal === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
-    funcVal === "EXISTENTIAL_DEPOSIT" ||
-    funcVal === "TRANSFERABLE_AMOUNT";
+    func === "ASSETS_OBJECT" ||
+    func === "NATIVE_ASSETS" ||
+    func === "BALANCE_NATIVE" ||
+    func === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
+    func === "EXISTENTIAL_DEPOSIT" ||
+    func === "TRANSFERABLE_AMOUNT";
 
   const optionalCurrency =
-    funcVal === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
-    funcVal === "EXISTENTIAL_DEPOSIT";
+    func === "MAX_NATIVE_TRANSFERABLE_AMOUNT" || func === "EXISTENTIAL_DEPOSIT";
 
   const getNodeList = () => {
     if (notSupportsEthereum && supportsRelayChains) {
@@ -122,17 +121,17 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
   const nodeList = getNodeList();
 
   useEffect(() => {
-    if (!nodeList.includes(form.values.node as (typeof nodeList)[0])) {
+    if (!nodeList.includes(node as (typeof nodeList)[0])) {
       form.setFieldValue("node", "Acala");
     }
-  }, [nodeList, form.values.node]);
+  }, [nodeList, node]);
 
   useEffect(() => {
     if (showSymbolInput) {
       form.setFieldValue("currency", "");
       form.setFieldValue("currencyType", "symbol");
     }
-  }, [form.values.func]);
+  }, [func]);
 
   const onSelectCurrencyTypeClick = () => {
     form.setFieldValue("currency", "");
@@ -165,8 +164,7 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
 
         {showSymbolInput && (
           <Stack gap="xs">
-            {(form.values.currencyType === "id" ||
-              form.values.currencyType === "symbol") && (
+            {(currencyType === "id" || currencyType === "symbol") && (
               <TextInput
                 flex={1}
                 label={
@@ -177,7 +175,7 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
                 placeholder={
                   supportsCurrencyType
                     ? "GLMR"
-                    : form.values.currencyType === "id"
+                    : currencyType === "id"
                       ? "Asset ID"
                       : "Symbol"
                 }
@@ -187,7 +185,7 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
               />
             )}
 
-            {form.values.currencyType === "multilocation" && (
+            {currencyType === "multilocation" && (
               <JsonInput
                 placeholder="Input Multi-Location JSON or interior junctions JSON to search for and identify the asset"
                 formatOnBlur

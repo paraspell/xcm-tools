@@ -16,8 +16,10 @@ export const transferFromEthereum = async (options: TTransferOptionsModified) =>
   await EvmBuilder(provider)
     .to('AssetHubPolkadot')
     .address(assetHubAddress ?? '')
-    .amount(amount)
-    .currency(currencyFrom)
+    .currency({
+      ...currencyFrom,
+      amount: amount,
+    })
     .signer(ethSigner as Signer)
     .build();
   maybeUpdateTransferStatus(onStatusChange, {

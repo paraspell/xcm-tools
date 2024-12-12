@@ -1,6 +1,6 @@
 import type { Signer } from 'ethers'
 import type { TNodeDotKsmWithRelayChains, TNodePolkadotKusama, TNodeWithRelayChains } from './TNode'
-import type { TCurrencyCoreV1, TCurrencyInputWithAmount } from './TCurrency'
+import type { TCurrencyCoreV1WithAmount, TCurrencyInputWithAmount } from './TCurrency'
 import type { TAddress, TDestination, TVersionClaimAssets, Version } from './TTransfer'
 import type { TMultiAsset } from './TMultiAsset'
 
@@ -13,13 +13,9 @@ export type TEvmBuilderOptions = {
    */
   to: TNodePolkadotKusama
   /**
-   * The amount to transfer.
-   */
-  amount: string
-  /**
    * The currency to transfer. Symbol or ID.
    */
-  currency: TCurrencyCoreV1
+  currency: TCurrencyCoreV1WithAmount
   /**
    * The Polkadot destination address.
    */

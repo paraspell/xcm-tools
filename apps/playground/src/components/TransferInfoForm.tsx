@@ -52,27 +52,25 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
-  const isNotParaToPara =
-    form.values.from === "Polkadot" ||
-    form.values.from === "Kusama" ||
-    form.values.to === "Polkadot" ||
-    form.values.to === "Kusama";
+  const { from, to, customCurrencyType } = form.getValues();
+
+  const isNotParaToPara = isRelayChain(from) || isRelayChain(to);
 
   const onSelectCurrencyTypeClick = () => {
     form.setFieldValue("currency", "");
   };
 
   useEffect(() => {
-    if (isRelayChain(form.values.from) || isRelayChain(form.values.to)) {
+    if (isNotParaToPara) {
       form.setFieldValue("customCurrencyType", "symbol");
-      if (isRelayChain(form.values.from)) {
-        form.setFieldValue("currency", getRelayChainSymbol(form.values.from));
+      if (isRelayChain(from)) {
+        form.setFieldValue("currency", getRelayChainSymbol(from));
       }
-      if (isRelayChain(form.values.to)) {
-        form.setFieldValue("currency", getRelayChainSymbol(form.values.to));
+      if (isRelayChain(to)) {
+        form.setFieldValue("currency", getRelayChainSymbol(to));
       }
     }
-  }, [form.values.from, form.values.to]);
+  }, [from, to]);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -100,22 +98,19 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
         />
 
         <Stack gap="xs">
-          {(form.values.customCurrencyType === "id" ||
-            form.values.customCurrencyType === "symbol") && (
+          {(customCurrencyType === "id" || customCurrencyType === "symbol") && (
             <TextInput
               disabled={isNotParaToPara}
               flex={1}
               label="Currency"
-              placeholder={
-                form.values.customCurrencyType === "id" ? "Asset ID" : "Symbol"
-              }
+              placeholder={customCurrencyType === "id" ? "Asset ID" : "Symbol"}
               required
               data-testid="input-currency"
               {...form.getInputProps("currency")}
             />
           )}
 
-          {form.values.customCurrencyType === "multilocation" && (
+          {customCurrencyType === "multilocation" && (
             <JsonInput
               placeholder="Input Multi-Location JSON or interior junctions JSON to search for and identify the asset"
               formatOnBlur

@@ -39,10 +39,9 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
-  const { currencyOptions, currencyMap } = useCurrencyOptions(
-    "Ethereum",
-    form.values.to,
-  );
+  const { to } = form.getValues();
+
+  const { currencyOptions, currencyMap } = useCurrencyOptions("Ethereum", to);
 
   const onSubmitInternal = (values: FormValues) => {
     const currency = currencyMap[values.currencyOptionId];
