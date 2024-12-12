@@ -41,10 +41,12 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
           .getText()
           .replace(/['"`]/g, '')
 
-        providerEntries.push({
-          name: providerName,
-          endpoint: endpoint
-        })
+        if (endpoint.startsWith('wss://')) {
+          providerEntries.push({
+            name: providerName,
+            endpoint: endpoint
+          })
+        }
       })
 
       return providerEntries
@@ -69,12 +71,23 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
       const providersValue = providersProp.getFirstDescendantByKindOrThrow(
         SyntaxKind.ObjectLiteralExpression
       )
-      const providers = parseProviders(providersValue)
 
       const paraIdProp = endpointOption.getProperty('paraId')
       const paraId = paraIdProp
         ? Number(paraIdProp.getFirstDescendantByKindOrThrow(SyntaxKind.NumericLiteral).getText())
         : undefined
+
+      const PEAQ_PARA_ID = 3338
+
+      const providers =
+        paraId === PEAQ_PARA_ID
+          ? [
+              {
+                name: 'OnFinality',
+                endpoint: 'wss://peaq.api.onfinality.io/public-ws'
+              }
+            ]
+          : parseProviders(providersValue)
 
       return {
         name: chainName,

@@ -174,10 +174,4 @@ describe('Hydration', () => {
       expect(result).toBe(false)
     })
   })
-
-  describe('getProvider', () => {
-    it('should return LiebiEU provider', () => {
-      expect(hydration.getProvider()).toBe('wss://hydradx.paras.ibp.network')
-    })
-  })
 })

@@ -45,11 +45,4 @@ describe('Basilisk', () => {
 
     expect(spy).toHaveBeenCalledWith(mockInput, Number(123))
   })
-
-  it('should return the second provider URL from getProvider', () => {
-    const provider = basilisk.getProvider()
-
-    expect(getNodeProviders).toHaveBeenCalledWith(basilisk.node)
-    expect(provider).toBe('wss://preferred-dwellir-rpc')
-  })
 })

@@ -2,7 +2,6 @@
 
 import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
 import { getNode } from '../../utils'
-import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
 
 class BifrostKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -12,11 +11,6 @@ class BifrostKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXT
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>): TRes {
     return getNode<TApi, TRes, 'BifrostPolkadot'>('BifrostPolkadot').transferXTokens(input)
-  }
-
-  getProvider(): string {
-    // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getNodeProviders(this.node)[1]
   }
 }
 

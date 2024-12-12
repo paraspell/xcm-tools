@@ -2,50 +2,41 @@ import { describe, it, expect, vi } from 'vitest'
 import type { ApiPromise } from '@polkadot/api'
 import type { TNodeDotKsmWithRelayChains } from '../types'
 import { createApiInstanceForNode } from './createApiInstanceForNode'
-import { getNode } from './getNode'
+import { getNodeProviders } from '../nodes/config'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { Extrinsic } from '../pjs/types'
 
-vi.mock('./createApiInstance', () => ({
-  createApiInstance: vi.fn().mockResolvedValue({} as ApiPromise)
+vi.mock('../nodes/config', () => ({
+  getNodeProviders: vi.fn((node: TNodeDotKsmWithRelayChains) => {
+    if (node === 'Polkadot') return 'wss://polkadot-rpc.publicnode.com'
+    if (node === 'Kusama') return 'wss://kusama-rpc.publicnode.com'
+    return 'wss://some-other-node-rpc.com'
+  })
 }))
 
-vi.mock('./getNode', () => ({
-  getNode: vi
-    .fn()
-    .mockReturnValue({ createApiInstance: vi.fn().mockResolvedValue({} as ApiPromise) })
-}))
-
+const mockApiPromise = {} as ApiPromise
 const mockApi = {
-  createApiInstance: vi.fn()
+  createApiInstance: vi.fn().mockResolvedValue(mockApiPromise)
 } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
 
 describe('createApiInstanceForNode', () => {
-  const mockApiPromise = {} as ApiPromise
-  it('should create an ApiPromise instance for Polkadot', async () => {
-    const spy = vi.spyOn(mockApi, 'createApiInstance').mockResolvedValueOnce(mockApiPromise)
-
+  it('should create an ApiPromise instance with single url', async () => {
+    const urls = ['wss://polkadot-rpc.publicnode.com']
+    vi.mocked(getNodeProviders).mockReturnValueOnce(urls)
     const result = await createApiInstanceForNode(mockApi, 'Polkadot')
 
-    expect(spy).toHaveBeenCalledWith('wss://polkadot-rpc.publicnode.com')
-    expect(result).toStrictEqual({})
-  })
-
-  it('should create an ApiPromise instance for Kusama', async () => {
-    const spy = vi.spyOn(mockApi, 'createApiInstance').mockResolvedValueOnce(mockApiPromise)
-
-    const result = await createApiInstanceForNode(mockApi, 'Kusama')
-
-    expect(spy).toHaveBeenCalledWith('wss://kusama-rpc.publicnode.com')
+    expect(getNodeProviders).toHaveBeenCalledWith('Polkadot')
+    expect(mockApi.createApiInstance).toHaveBeenCalledWith(urls)
     expect(result).toBe(mockApiPromise)
   })
 
-  it('should call getNode and create an ApiPromise instance for other nodes', async () => {
-    const node = 'SomeOtherNode' as TNodeDotKsmWithRelayChains
+  it('should create an ApiPromise instance with multiple urls', async () => {
+    const urls = ['wss://acala-rpc.publicnode.com', 'wss://acala1-rpc.publicnode.com']
+    vi.mocked(getNodeProviders).mockReturnValueOnce(urls)
+    const result = await createApiInstanceForNode(mockApi, 'Acala')
 
-    const result = await createApiInstanceForNode(mockApi, node)
-
-    expect(getNode).toHaveBeenCalledWith(node)
-    expect(result).toStrictEqual(mockApiPromise)
+    expect(getNodeProviders).toHaveBeenCalledWith('Acala')
+    expect(mockApi.createApiInstance).toHaveBeenCalledWith(urls)
+    expect(result).toBe(mockApiPromise)
   })
 })

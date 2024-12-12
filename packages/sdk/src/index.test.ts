@@ -28,7 +28,6 @@ describe('Module Exports', () => {
   it('should export node config functions', () => {
     expect(sdk.getNodeConfig).toBeDefined()
     expect(sdk.getNodeProviders).toBeDefined()
-    expect(sdk.getNodeProvider).toBeDefined()
     expect(sdk.getParaId).toBeDefined()
   })
 })

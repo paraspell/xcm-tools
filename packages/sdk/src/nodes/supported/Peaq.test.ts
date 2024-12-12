@@ -52,9 +52,4 @@ describe('Peaq', () => {
   it('should throw NodeNotSupportedError for transferRelayToPara', () => {
     expect(() => peaq.transferRelayToPara()).toThrowError(NodeNotSupportedError)
   })
-
-  it('should return the correct provider URL', () => {
-    const provider = peaq.getProvider()
-    expect(provider).toBe('wss://peaq.api.onfinality.io/public-ws')
-  })
 })

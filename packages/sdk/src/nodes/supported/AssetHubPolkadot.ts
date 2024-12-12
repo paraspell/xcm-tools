@@ -35,7 +35,7 @@ import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { ETHEREUM_JUNCTION } from '../../const'
 import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
 import { isForeignAsset } from '../../utils/assets'
-import { getNodeProviders, getParaId } from '../config'
+import { getParaId } from '../config'
 import { isRelayChain } from '../../utils'
 
 const createCustomXcmToBifrost = <TApi, TRes>(
@@ -396,11 +396,6 @@ class AssetHubPolkadot<TApi, TRes>
     } else {
       return super.createCurrencySpec(amount, scenario, version, asset)
     }
-  }
-
-  getProvider(): string {
-    // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getNodeProviders(this.node)[1]
   }
 }
 
