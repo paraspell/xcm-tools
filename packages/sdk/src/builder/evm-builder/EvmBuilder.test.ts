@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import type { AbstractProvider, Signer } from 'ethers'
-import type { TCurrencyCoreV1, TNodePolkadotKusama } from '../../types'
+import type { TCurrencyCoreV1WithAmount, TNodePolkadotKusama } from '../../types'
 import type { TEvmBuilderOptions } from '../../types/TBuilder'
 import transferEthToPolkadot from '../../pallets/xcmPallet/ethTransfer/ethTransfer'
 import { EvmBuilder } from './EvmBuilder'
@@ -13,17 +13,15 @@ describe('EvmBuilderClass', () => {
   let provider: AbstractProvider
   let signer: Signer
   let node: TNodePolkadotKusama
-  let currency: TCurrencyCoreV1
+  let currency: TCurrencyCoreV1WithAmount
   let address: string
-  let amount: string
 
   beforeEach(() => {
     provider = {} as AbstractProvider
     signer = {} as Signer
     node = {} as TNodePolkadotKusama
-    currency = {} as TCurrencyCoreV1
+    currency = {} as TCurrencyCoreV1WithAmount
     address = '0x1234567890abcdef'
-    amount = '100'
   })
 
   it('should throw an error if required parameters are missing', async () => {
@@ -33,18 +31,12 @@ describe('EvmBuilderClass', () => {
   })
 
   it('should set all required parameters and call transferEthToPolkadot', async () => {
-    const builder = EvmBuilder(provider)
-      .to(node)
-      .amount(amount)
-      .currency(currency)
-      .address(address)
-      .signer(signer)
+    const builder = EvmBuilder(provider).to(node).currency(currency).address(address).signer(signer)
 
     await builder.build()
 
     expect(transferEthToPolkadot).toHaveBeenCalledWith(provider, {
       to: node,
-      amount,
       currency,
       address,
       signer
@@ -53,18 +45,13 @@ describe('EvmBuilderClass', () => {
 
   it('should return the builder instance when setting parameters', () => {
     const builder = EvmBuilder(provider)
-    const result = builder
-      .to(node)
-      .amount(amount)
-      .currency(currency)
-      .address(address)
-      .signer(signer)
+    const result = builder.to(node).currency(currency).address(address).signer(signer)
 
     expect(result).toBe(builder)
   })
 
   it('should throw an error if build is called without all required parameters', async () => {
-    const builder = EvmBuilder(provider).to(node).amount(amount).currency(currency)
+    const builder = EvmBuilder(provider).to(node).currency(currency)
 
     await expect(builder.build()).rejects.toThrow('Builder object is missing parameter: address')
   })
