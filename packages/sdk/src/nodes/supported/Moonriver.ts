@@ -13,7 +13,6 @@ import type {
 } from '../../types'
 import { Version, Parents } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
-import { getNodeProviders } from '../config'
 import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../polkadotXcm'
 
@@ -67,11 +66,6 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
     return { section: 'limited_reserve_transfer_assets', includeFee: true }
-  }
-
-  getProvider(): string {
-    // Return the second WebSocket URL because the first one is sometimes unreliable.
-    return getNodeProviders(this.node)[3]
   }
 }
 

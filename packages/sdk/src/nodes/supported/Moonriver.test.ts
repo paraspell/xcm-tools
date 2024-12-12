@@ -170,10 +170,4 @@ describe('Moonriver', () => {
       includeFee: true
     })
   })
-
-  describe('getProvider', () => {
-    it('should return Moonbeam foundation provider', () => {
-      expect(node.getProvider()).toBe('wss://wss.api.moonriver.moonbeam.network')
-    })
-  })
 })

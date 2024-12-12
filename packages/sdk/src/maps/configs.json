@@ -64,6 +64,14 @@
         "endpoint": "wss://acala-rpc.dwellir.com"
       },
       {
+        "name": "IBP1",
+        "endpoint": "wss://acala.ibp.network"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://acala.dotters.network"
+      },
+      {
         "name": "OnFinality",
         "endpoint": "wss://acala-polkadot.api.onfinality.io/public-ws"
       }
@@ -97,10 +105,6 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://astar.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "light client",
-        "endpoint": "light://substrate-connect/polkadot/astar"
       }
     ]
   },
@@ -304,7 +308,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://hydradx.paras.ibp.network"
+        "endpoint": "wss://hydration.ibp.network"
       },
       {
         "name": "IBP2",
@@ -395,6 +399,10 @@
     "paraId": 2012,
     "providers": [
       {
+        "name": "Gatotech",
+        "endpoint": "wss://parallel.gatotech.network"
+      },
+      {
         "name": "Parallel",
         "endpoint": "wss://polkadot-parallel-rpc.parallel.fi"
       }
@@ -415,7 +423,7 @@
       },
       {
         "name": "IBP1",
-        "endpoint": "wss://sys.ibp.network/statemine"
+        "endpoint": "wss://sys.ibp.network/asset-hub-kusama"
       },
       {
         "name": "IBP2",
@@ -475,6 +483,10 @@
     "info": "polkadotCoretime",
     "paraId": 1005,
     "providers": [
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/coretime-polkadot"
+      },
       {
         "name": "IBP2",
         "endpoint": "wss://coretime-polkadot.dotters.network"
@@ -667,10 +679,6 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://tinkernet-rpc.dwellir.com"
-      },
-      {
-        "name": "light client",
-        "endpoint": "light://substrate-connect/kusama/tinkernet"
       }
     ]
   },
@@ -916,10 +924,6 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://shiden.public.curie.radiumblock.co/ws"
-      },
-      {
-        "name": "light client",
-        "endpoint": "light://substrate-connect/kusama/shiden"
       }
     ]
   },
@@ -1220,7 +1224,12 @@
     "name": "peaq",
     "info": "peaq",
     "paraId": 3338,
-    "providers": []
+    "providers": [
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://peaq.api.onfinality.io/public-ws"
+      }
+    ]
   },
   "Polimec": {
     "name": "Polimec",
@@ -1301,10 +1310,6 @@
       {
         "name": "SubQuery",
         "endpoint": "wss://polkadot.rpc.subquery.network/public/ws"
-      },
-      {
-        "name": "light client",
-        "endpoint": "light://substrate-connect/polkadot"
       }
     ]
   },
@@ -1352,10 +1357,6 @@
       {
         "name": "Stakeworld",
         "endpoint": "wss://ksm-rpc.stakeworld.io"
-      },
-      {
-        "name": "light client",
-        "endpoint": "light://substrate-connect/kusama"
       }
     ]
   }
