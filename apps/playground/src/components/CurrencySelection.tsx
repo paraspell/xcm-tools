@@ -11,71 +11,88 @@ import {
   JsonInput,
 } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
-import type { FormValues } from "./TransferForm";
+import type { FormValues } from "./transfer/XcmTransferForm";
 import { isRelayChain } from "@paraspell/sdk";
 
 type Props = {
   form: UseFormReturnType<FormValues>;
   currencyOptions: ComboboxItem[];
+  index: number;
 };
 
-const CurrencySelection: FC<Props> = ({ form, currencyOptions }) => {
-  useEffect(() => {
-    if (!form.values.customCurrencyType) return;
-    form.setFieldValue("customCurrency", "");
-  }, [form.values.customCurrencyType]);
+const CurrencySelection: FC<Props> = ({ form, currencyOptions, index }) => {
+  const { from, to, currencies } = form.getValues();
 
-  const isRelayToPara = isRelayChain(form.values.from);
-  const isParaToRelay = isRelayChain(form.values.to);
+  const isCustomCurrency = currencies[index].isCustomCurrency;
+  const customCurrencyType = currencies[index].customCurrencyType;
+
+  useEffect(() => {
+    if (!customCurrencyType) return;
+    form.setFieldValue(`currencies.${index}.customCurrency`, "");
+  }, [customCurrencyType]);
+
+  const isRelayToPara = isRelayChain(from);
+  const isParaToRelay = isRelayChain(to);
 
   const isNotParaToPara = isRelayToPara || isParaToRelay;
 
+  // If it's not para-to-para, we do not allow custom currencies
   useEffect(() => {
     if (isNotParaToPara) {
-      form.setFieldValue("isCustomCurrency", false);
+      form.setFieldValue(`currencies.${index}.isCustomCurrency`, false);
     }
   }, [isNotParaToPara]);
 
+  const options = [
+    { label: "Asset ID", value: "id" },
+    { label: "Symbol", value: "symbol" },
+    { label: "Multi-location", value: "multilocation" },
+    ...(currencies.length === 1
+      ? [{ label: "Override Multi-location", value: "overridenMultilocation" }]
+      : []),
+  ];
+
+  const size = currencies.length > 1 ? "xs" : "sm";
+
   return (
     <Stack gap="xs">
-      {form.values.isCustomCurrency &&
-        (form.values.customCurrencyType === "id" ||
-          form.values.customCurrencyType === "symbol") && (
+      {isCustomCurrency &&
+        (customCurrencyType === "id" || customCurrencyType === "symbol") && (
           <TextInput
+            size={size}
             label="Custom currency"
-            placeholder={
-              form.values.customCurrencyType === "id" ? "Asset ID" : "Symbol"
-            }
+            placeholder={customCurrencyType === "id" ? "Asset ID" : "Symbol"}
             required
-            {...form.getInputProps("customCurrency")}
+            {...form.getInputProps(`currencies.${index}.customCurrency`)}
           />
         )}
 
-      {form.values.isCustomCurrency &&
-        form.values.customCurrencyType === "multilocation" && (
-          <JsonInput
-            placeholder="Input Multi-Location JSON or interior junctions JSON to search for and identify the asset"
-            formatOnBlur
-            autosize
-            minRows={10}
-            {...form.getInputProps("customCurrency")}
-          />
-        )}
+      {isCustomCurrency && customCurrencyType === "multilocation" && (
+        <JsonInput
+          size={size}
+          placeholder="Input Multi-Location JSON or interior junctions JSON"
+          formatOnBlur
+          autosize
+          minRows={10}
+          {...form.getInputProps(`currencies.${index}.customCurrency`)}
+        />
+      )}
 
-      {form.values.isCustomCurrency &&
-        form.values.customCurrencyType === "overridenMultilocation" && (
-          <JsonInput
-            placeholder="Provide the XCM Multi-Location JSON to override the default configuration"
-            formatOnBlur
-            autosize
-            minRows={10}
-            {...form.getInputProps("customCurrency")}
-          />
-        )}
+      {isCustomCurrency && customCurrencyType === "overridenMultilocation" && (
+        <JsonInput
+          size={size}
+          placeholder="Provide the XCM Multi-Location JSON to override the default configuration"
+          formatOnBlur
+          autosize
+          minRows={10}
+          {...form.getInputProps(`currencies.${index}.customCurrency`)}
+        />
+      )}
 
-      {!form.values.isCustomCurrency && (
+      {!isCustomCurrency && (
         <Select
-          key={form.values.from + form.values.to}
+          key={from + to}
+          size={size}
           label="Currency"
           placeholder="Pick value"
           data={currencyOptions}
@@ -84,29 +101,35 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions }) => {
           searchable
           required
           data-testid="select-currency"
-          {...form.getInputProps("currencyOptionId")}
+          {...form.getInputProps(`currencies.${index}.currencyOptionId`)}
         />
       )}
+
       {!isNotParaToPara && (
         <Group>
-          <Checkbox
-            size="xs"
-            label="Select custom asset"
-            {...form.getInputProps("isCustomCurrency", { type: "checkbox" })}
-          />
-          {form.values.isCustomCurrency && (
+          <Group>
+            <Checkbox
+              size="xs"
+              label="Select custom asset"
+              {...form.getInputProps(`currencies.${index}.isCustomCurrency`, {
+                type: "checkbox",
+              })}
+            />
+            {currencies.length > 1 && (
+              <Checkbox
+                size="xs"
+                label="Is fee asset"
+                {...form.getInputProps(`currencies.${index}.isFeeAsset`, {
+                  type: "checkbox",
+                })}
+              />
+            )}
+          </Group>
+          {isCustomCurrency && (
             <SegmentedControl
               size="xs"
-              data={[
-                { label: "Asset ID", value: "id" },
-                { label: "Symbol", value: "symbol" },
-                { label: "Multi-location", value: "multilocation" },
-                {
-                  label: "Override Multi-location",
-                  value: "overridenMultilocation",
-                },
-              ]}
-              {...form.getInputProps("customCurrencyType")}
+              data={options}
+              {...form.getInputProps(`currencies.${index}.customCurrencyType`)}
             />
           )}
         </Group>

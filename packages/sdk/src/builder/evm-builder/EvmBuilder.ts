@@ -1,5 +1,5 @@
 import type { AbstractProvider, Signer } from 'ethers'
-import type { TCurrencyCoreV1, TNodePolkadotKusama } from '../../types'
+import type { TCurrencyCoreV1WithAmount, TNodePolkadotKusama } from '../../types'
 import type { TEvmBuilderOptions, TOptionalEvmBuilderOptions } from '../../types/TBuilder'
 import transferEthToPolkadot from '../../pallets/xcmPallet/ethTransfer/ethTransfer'
 
@@ -28,23 +28,12 @@ class EvmBuilderClass {
   }
 
   /**
-   * Specifies the amount to transfer.
-   *
-   * @param amount - The amount to transfer, as a string.
-   * @returns An instance of EvmBuilder
-   */
-  amount(amount: string): this {
-    this._options.amount = amount
-    return this
-  }
-
-  /**
    * Specifies the currency to transfer.
    *
    * @param currency - The currency to be transferred.
    * @returns An instance of EvmBuilder
    */
-  currency(currency: TCurrencyCoreV1): this {
+  currency(currency: TCurrencyCoreV1WithAmount): this {
     this._options.currency = currency
     return this
   }
@@ -77,13 +66,7 @@ class EvmBuilderClass {
    * @throws Error if any required parameters are missing.
    */
   async build(): Promise<void> {
-    const requiredParams: Array<keyof TEvmBuilderOptions> = [
-      'to',
-      'amount',
-      'currency',
-      'address',
-      'signer'
-    ]
+    const requiredParams: Array<keyof TEvmBuilderOptions> = ['to', 'currency', 'address', 'signer']
 
     for (const param of requiredParams) {
       if (this._options[param] === undefined) {

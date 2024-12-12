@@ -40,9 +40,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
         )
       }
 
-      if (!currency.isFeeAsset) {
-        validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
-      }
+      validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
       const originTyped = origin as TNodePolkadotKusama
       const originNode = getNode<TApi, TRes, typeof originTyped>(originTyped)
