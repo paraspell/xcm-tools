@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.8](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.7...sdk-v7.2.8) (2024-12-14)
+
+
+### Bug Fixes
+
+* **sdk:** Fix incomplete Assethub asset symbols 🔧 ([f03aa32](https://github.com/paraspell/xcm-tools/commit/f03aa32e243051e9caf3474884863e737bc7030e))
+
 ## [7.2.7](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.6...sdk-v7.2.7) (2024-12-11)
 
 
