@@ -68,7 +68,12 @@ export const getNativeAssets = (node: TNode): TNativeAsset[] => getAssetsObject(
  * @param node - The node for which to get other assets.
  * @returns An array of other asset details.
  */
-export const getOtherAssets = (node: TNode): TForeignAsset[] => getAssetsObject(node).otherAssets
+export const getOtherAssets = (node: TNode): TForeignAsset[] => {
+  const otherAssets = getAssetsObject(node).otherAssets
+  return node === 'AssetHubPolkadot'
+    ? [...otherAssets, ...getAssetsObject('Ethereum').otherAssets]
+    : otherAssets
+}
 
 /**
  * Retrieves the complete list of assets for a specified node, including relay chain asset, native, and other assets.
@@ -90,10 +95,14 @@ export const getAssets = (node: TNodeWithRelayChains): TAsset[] => {
 export const getAllAssetsSymbols = (node: TNodeWithRelayChains): string[] => {
   const { nativeAssets, otherAssets } = getAssetsObject(node)
   const nativeAssetsSymbols = nativeAssets.map(({ symbol }) => symbol)
-  const otherAssetsSymbols = otherAssets
-    .filter(asset => asset.symbol !== undefined)
-    .map(({ symbol }) => symbol)
-  return [...nativeAssetsSymbols, ...otherAssetsSymbols]
+  const otherAssetsSymbols = otherAssets.map(({ symbol }) => symbol)
+
+  const ethAssetsSymbols =
+    node === 'AssetHubPolkadot'
+      ? getAssetsObject('Ethereum').otherAssets.map(({ symbol }) => symbol)
+      : []
+
+  return [...nativeAssetsSymbols, ...otherAssetsSymbols, ...ethAssetsSymbols]
 }
 
 /**
