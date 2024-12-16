@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.5.0...xcm-router-v2.0.0) (2024-12-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains
+
+### Features
+
+* **playground:** Add support for multi-assets to playground 🛝 ([82cb7e2](https://github.com/paraspell/xcm-tools/commit/82cb7e230d64c0840c0d23e800beff0ac2465ba0))
+* **sdk:** Add fail-safe support ✨ ([ca80e96](https://github.com/paraspell/xcm-tools/commit/ca80e967002492481c25092693d7227060896211))
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains ([40165ca](https://github.com/paraspell/xcm-tools/commit/40165ca2c6ee1f077d8c6d229b746b5cb7aa3095))
+
 ## [1.5.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.4.1...xcm-router-v1.5.0) (2024-11-30)
 
 
