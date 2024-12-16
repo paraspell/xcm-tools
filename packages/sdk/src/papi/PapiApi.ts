@@ -9,7 +9,9 @@ import type {
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
   TSerializedApiCall,
-  TNodePolkadotKusama
+  TNodePolkadotKusama,
+  TDryRunBaseOptions,
+  TDryRunResult
 } from '../types'
 import { createApiInstanceForNode, getNode } from '../utils'
 import { createClient, FixedSizeBinary } from 'polkadot-api'
@@ -19,6 +21,7 @@ import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { transform } from './PapiXcmTransformer'
 import { NodeNotSupportedError } from '../errors'
 import { isForeignAsset } from '../utils/assets'
+import { computeEstimatedFeeFromDryRun } from '../utils/dryRun/computeFeeFromDryRun'
 
 const unsupportedNodes = [
   'ComposableFinance',
@@ -209,6 +212,36 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const api = new PapiApi()
     await api.init(node)
     return api
+  }
+
+  async getDryRun({
+    tx,
+    address,
+    node
+  }: TDryRunBaseOptions<TPapiTransaction>): Promise<TDryRunResult> {
+    const result = await this.api.getUnsafeApi().apis.DryRunApi.dry_run_call(
+      {
+        type: 'system',
+        value: {
+          type: 'Signed',
+          value: address
+        }
+      },
+      tx.decodedCall
+    )
+
+    console.log(result)
+
+    const isSuccess = result.success && result.value.execution_result.success
+
+    if (!isSuccess) {
+      const failureReason = result.value.execution_result.value.error.value.value.type
+      return Promise.resolve({ success: false, failureReason })
+    }
+
+    const executionFee = await this.calculateTransactionFee(tx, address)
+    const fee = computeEstimatedFeeFromDryRun(result, node, executionFee)
+    return Promise.resolve({ success: true, fee })
   }
 
   setDisconnectAllowed(allowed: boolean): void {

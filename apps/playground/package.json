@@ -18,9 +18,9 @@
     "init-e2e": "pnpm init-polkadot-ext && pnpm init-metamask-ext"
   },
   "dependencies": {
-    "@mantine/core": "^7.14.3",
-    "@mantine/form": "^7.14.3",
-    "@mantine/hooks": "^7.14.3",
+    "@mantine/core": "^7.15.1",
+    "@mantine/form": "^7.15.1",
+    "@mantine/hooks": "^7.15.1",
     "@paraspell/sdk": "workspace:*",
     "@paraspell/xcm-analyser": "workspace:*",
     "@paraspell/xcm-router": "workspace:*",

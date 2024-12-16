@@ -1,4 +1,4 @@
-import { Stack, Title, Box } from "@mantine/core";
+import { Stack, Title, Box, Alert, Text } from "@mantine/core";
 import ErrorAlert from "../ErrorAlert";
 import type {
   FormValuesTransformed,
@@ -27,6 +27,8 @@ import { getTxFromApi } from "../../utils/submitUsingApi";
 import { useWallet } from "../../hooks/useWallet";
 import type { ApiPromise } from "@polkadot/api";
 import { ethers } from "ethers";
+import { IconJson } from "@tabler/icons-react";
+import { replaceBigInt } from "../../utils/replaceBigInt";
 
 const XcmTransfer = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
@@ -37,6 +39,13 @@ const XcmTransfer = () => {
   const [error, setError] = useState<Error>();
 
   const [loading, setLoading] = useState(false);
+
+  const [output, setOutput] = useState<string>();
+
+  const [
+    outputAlertOpened,
+    { open: openOutputAlert, close: closeOutputAlert },
+  ] = useDisclosure(false);
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -56,7 +65,7 @@ const XcmTransfer = () => {
       customCurrencyType,
       currency,
       amount,
-    }: TCurrencyEntryTransformed,
+    }: TCurrencyEntryTransformed
   ): TCurrencyInputWithAmount => {
     if (isCustomCurrency) {
       if (customCurrencyType === "id") {
@@ -92,7 +101,7 @@ const XcmTransfer = () => {
       const hasDuplicateIds = isRelayChain(from)
         ? false
         : getOtherAssets(from as TNodePolkadotKusama).filter(
-            (asset) => asset.assetId === currency.assetId,
+            (asset) => asset.assetId === currency.assetId
           ).length > 1;
       return hasDuplicateIds
         ? { symbol: currency.symbol ?? "", amount }
@@ -105,7 +114,10 @@ const XcmTransfer = () => {
     }
   };
 
-  const submit = async (formValues: FormValuesTransformed) => {
+  const submit = async (
+    formValues: FormValuesTransformed,
+    isDryRun: boolean
+  ) => {
     const { from, to, currencies, address, ahAddress, useApi } = formValues;
 
     if (!selectedAccount) {
@@ -158,7 +170,7 @@ const XcmTransfer = () => {
           selectedAccount.address,
           apiType,
           "POST",
-          true,
+          true
         );
       } else {
         const builder = Sdk.Builder(api as ApiPromise & PolkadotClient);
@@ -170,27 +182,38 @@ const XcmTransfer = () => {
               ? currencyInputs[0]
               : {
                   multiasset: currencyInputs as TCurrencyCoreWithFee[],
-                },
+                }
           )
           .address(address, ahAddress)
           .build();
       }
 
-      if (apiType === "PAPI") {
-        await submitTransactionPapi(
-          tx as TPapiTransaction,
-          signer as PolkadotSigner,
-        );
+      if (isDryRun) {
+        const result = await Sdk.getDryRun({
+          api: api as ApiPromise & PolkadotClient,
+          tx: tx as Extrinsic & TPapiTransaction,
+          address: selectedAccount.address,
+          node: from,
+        });
+        setOutput(JSON.stringify(result, replaceBigInt, 2));
+        openOutputAlert();
+        closeAlert();
       } else {
-        await submitTransaction(
-          api as ApiPromise,
-          tx as Extrinsic,
-          signer as Signer,
-          selectedAccount.address,
-        );
+        if (apiType === "PAPI") {
+          await submitTransactionPapi(
+            tx as TPapiTransaction,
+            signer as PolkadotSigner
+          );
+        } else {
+          await submitTransaction(
+            api as ApiPromise,
+            tx as Extrinsic,
+            signer as Signer,
+            selectedAccount.address
+          );
+        }
+        alert("Transaction was successful!");
       }
-
-      alert("Transaction was successful!");
     } catch (e) {
       if (e instanceof Error) {
         console.error(e);
@@ -204,10 +227,12 @@ const XcmTransfer = () => {
     }
   };
 
-  const onSubmit = (formValues: FormValuesTransformed) =>
-    void submit(formValues);
+  const onSubmit = (formValues: FormValuesTransformed, isDryRun: boolean) =>
+    void submit(formValues, isDryRun);
 
   const onAlertCloseClick = () => closeAlert();
+
+  const onOutputAlertCloseClick = () => closeOutputAlert();
 
   return (
     <Stack gap="xl">
@@ -220,6 +245,24 @@ const XcmTransfer = () => {
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
             {error?.message}
           </ErrorAlert>
+        )}
+      </Box>
+      <Box>
+        {outputAlertOpened && (
+          <Alert
+            color="green"
+            title="Output"
+            icon={<IconJson size={24} />}
+            withCloseButton
+            onClose={onOutputAlertCloseClick}
+            mt="lg"
+            style={{ overflowWrap: "anywhere" }}
+            data-testid="output"
+          >
+            <Text component="pre" size="sm">
+              {output}
+            </Text>
+          </Alert>
         )}
       </Box>
     </Stack>

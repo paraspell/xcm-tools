@@ -1,7 +1,7 @@
 // Contains all important exports
 
-export * as xcmPallet from '../pallets/xcmPallet'
-export * from '../pallets/xcmPallet'
+export * as xcmPallet from './transfer'
+export * from './transfer'
 export * as assets from './assets'
 export * from './assets'
 export * from '../pallets/pallets'

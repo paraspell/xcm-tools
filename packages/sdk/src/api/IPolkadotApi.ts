@@ -4,9 +4,11 @@ import type {
   TMultiLocation,
   TNodeWithRelayChains,
   TSerializedApiCall,
-  TNodePolkadotKusama
+  TNodePolkadotKusama,
+  TDryRunBaseOptions
 } from '../types'
 import type { TApiOrUrl } from '../types/TApi'
+import type { TDryRunResult } from '../types/TDryRun'
 
 export interface IPolkadotApi<TApi, TRes> {
   setApi(api?: TApiOrUrl<TApi>): void
@@ -33,6 +35,7 @@ export interface IPolkadotApi<TApi, TRes> {
   getFromStorage(key: string): Promise<string>
   clone(): IPolkadotApi<TApi, TRes>
   createApiForNode(node: TNodeWithRelayChains): Promise<IPolkadotApi<TApi, TRes>>
+  getDryRun(options: TDryRunBaseOptions<TRes>): Promise<TDryRunResult>
   setDisconnectAllowed(allowed: boolean): void
   getDisconnectAllowed(): boolean
   disconnect(): Promise<void>

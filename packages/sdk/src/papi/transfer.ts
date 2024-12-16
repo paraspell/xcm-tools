@@ -2,6 +2,7 @@ import * as transferImpl from '../pallets/xcmPallet/transfer'
 import type { TSendOptions } from '../types'
 import PapiApi from './PapiApi'
 import type { TPapiApiOrUrl, TPapiApi, TPapiTransaction } from './types'
+import { createPapiApiCall } from './utils'
 
 /**
  * Transfers assets from parachain to another parachain or from/to relay chain.
@@ -24,5 +25,7 @@ export const send = (
     destApiForKeepAlive: destPapiApi
   })
 }
+
+export const getDryRun = createPapiApiCall(transferImpl.getDryRun<TPapiApi, TPapiTransaction>)
 
 export * from '../pallets/xcmPallet/ethTransfer'

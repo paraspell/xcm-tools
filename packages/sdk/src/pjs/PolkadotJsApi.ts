@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type {
   THexString,
@@ -5,7 +8,9 @@ import type {
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
   TSerializedApiCall,
-  TNodePolkadotKusama
+  TNodePolkadotKusama,
+  TDryRunBaseOptions,
+  TDryRunResult
 } from '../types'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from '../pjs/types'
@@ -16,6 +21,7 @@ import type { AnyTuple, Codec } from '@polkadot/types/types'
 import type { TBalanceResponse } from '../types/TBalance'
 import { createApiInstanceForNode, getNode } from '../utils'
 import { isForeignAsset } from '../utils/assets'
+import { computeEstimatedFeeFromDryRunPjs } from '../utils/dryRun/computeFeeFromDryRunPjs'
 
 const lowercaseFirstLetter = (value: string) => value.charAt(0).toLowerCase() + value.slice(1)
 
@@ -191,6 +197,34 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const api = new PolkadotJsApi()
     await api.init(node)
     return api
+  }
+
+  async getDryRun({ tx, address, node }: TDryRunBaseOptions<Extrinsic>): Promise<TDryRunResult> {
+    const result = (
+      await this.api.call.dryRunApi.dryRunCall(
+        {
+          system: {
+            Signed: address
+          }
+        },
+        tx
+      )
+    ).toJSON() as any
+
+    console.log(result)
+
+    const isSuccess = result.Ok && result.Ok.executionResult.Ok
+
+    if (!isSuccess) {
+      const failureReason = result.Ok.executionResult.Err.error
+      console.log(result.Ok.executionResult.Err)
+
+      return { success: false, failureReason }
+    }
+
+    const executionFee = await this.calculateTransactionFee(tx, address)
+    const fee = computeEstimatedFeeFromDryRunPjs(result, node, executionFee)
+    return { success: true, fee }
   }
 
   setDisconnectAllowed(allowed: boolean): void {

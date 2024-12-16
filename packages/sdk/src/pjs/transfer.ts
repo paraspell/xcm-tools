@@ -2,6 +2,7 @@ import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 import * as transferImpl from '../pallets/xcmPallet/transfer'
 import type { TSendOptions } from '../types'
 import PolkadotJsApi from './PolkadotJsApi'
+import { createPolkadotJsApiCall } from './utils'
 
 /**
  * Transfers assets from parachain to another parachain or from/to relay chain.
@@ -24,5 +25,7 @@ export const send = (
     destApiForKeepAlive: destPjsApi
   })
 }
+
+export const getDryRun = createPolkadotJsApiCall(transferImpl.getDryRun<TPjsApi, Extrinsic>)
 
 export * from '../pallets/xcmPallet/ethTransfer'
