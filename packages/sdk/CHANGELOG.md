@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.9](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.8...sdk-v7.2.9) (2024-12-16)
+
+
+### Bug Fixes
+
+* **sdk:** Fix Moonbeam foreign assets 🔧 ([cf046df](https://github.com/paraspell/xcm-tools/commit/cf046dffb8687d4c3ed5c70a60cc55eccdfbb945))
+
 ## [7.2.8](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.7...sdk-v7.2.8) (2024-12-14)
 
 
