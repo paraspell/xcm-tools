@@ -27,6 +27,7 @@ import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAss
 import { getNativeAssetSymbol } from '../../src/pallets/assets'
 import { fetchComposableAssets } from './fetchComposableAssets'
 import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
+import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -271,6 +272,10 @@ const fetchOtherAssets = async (
 
   if (node === 'Pendulum') {
     otherAssets = await fetchPendulumForeignAssets(api, query)
+  }
+
+  if (node === 'Moonbeam' || node === 'Moonriver') {
+    otherAssets = await fetchMoonbeamForeignAssets(api, query)
   }
 
   return otherAssets.length > 0 ? otherAssets : fetchOtherAssetsDefault(node, api, query)

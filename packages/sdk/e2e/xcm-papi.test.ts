@@ -45,6 +45,7 @@ const getAssetsForNode = (node: TNode): string[] => {
   if (node === 'Phala') return ['PHA']
   if (node === 'Mythos') return ['MYTH']
   if (node === 'Subsocial') return ['SUB']
+  if (node === 'KiltSpiritnet') return ['KILT']
   return getAllAssetsSymbols(node)
 }
 
@@ -84,7 +85,9 @@ const findTransferableNodeAndAsset = (
 
     const filteredNodes =
       node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
-        ? nodeAssets.filter(symbol => symbol !== 'DOT' && symbol !== 'KSM' && symbol !== 'GLMR')
+        ? nodeAssets.filter(
+            symbol => symbol !== 'DOT' && symbol !== 'KSM' && symbol !== 'GLMR' && symbol !== 'KILT'
+          )
         : nodeAssets
 
     const commonAsset = filteredNodes.filter(asset => allFromAssets.includes(asset))[0]

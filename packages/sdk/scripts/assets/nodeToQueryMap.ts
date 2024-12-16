@@ -13,9 +13,9 @@ export const nodeToQuery: Record<TNode, string[]> = {
   ComposableFinance: ['assetsRegistry.assetSymbol'],
   Darwinia: [GLOBAL, 'assets.metadata'],
   Hydration: [GLOBAL, 'assetRegistry.assets'],
-  Interlay: [GLOBAL, 'assetRegistry.metadata'], // !!! PROBLEM native assets eds
+  Interlay: [GLOBAL, 'assetRegistry.metadata'],
   Litentry: ['assets.metadata'],
-  Moonbeam: [GLOBAL, 'assets.metadata'],
+  Moonbeam: ['assetManager.assetIdType'],
   Parallel: [GLOBAL, 'assets.metadata'],
   AssetHubPolkadot: [GLOBAL, 'assets.metadata'],
   Altair: [GLOBAL, 'ormlAssetRegistry.metadata'],
@@ -30,8 +30,8 @@ export const nodeToQuery: Record<TNode, string[]> = {
   Imbue: [],
   InvArchTinker: [], // Assets query returns empty array
   Karura: [GLOBAL, 'assetRegistry.assetMetadatas'],
-  Kintsugi: [GLOBAL, 'assetRegistry.metadata'], // !!! PROBLEM native assets eds
-  Moonriver: [GLOBAL, 'assets.metadata'],
+  Kintsugi: [GLOBAL, 'assetRegistry.metadata'],
+  Moonriver: ['assetManager.assetIdType'],
   ParallelHeiko: [GLOBAL, 'assets.metadata'],
   Picasso: ['assetsRegistry.assetSymbol'],
   Quartz: [],
