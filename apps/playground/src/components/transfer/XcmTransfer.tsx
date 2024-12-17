@@ -1,4 +1,4 @@
-import { Stack, Title, Box } from "@mantine/core";
+import { Stack, Title, Box, Alert, Text } from "@mantine/core";
 import ErrorAlert from "../ErrorAlert";
 import type {
   FormValuesTransformed,
@@ -23,10 +23,12 @@ import type { PolkadotClient, PolkadotSigner } from "polkadot-api";
 import type { Signer } from "@polkadot/api/types";
 import { useState, useEffect } from "react";
 import { submitTransaction, submitTransactionPapi } from "../../utils";
-import { getTxFromApi } from "../../utils/submitUsingApi";
+import { fetchFromApi, getTxFromApi } from "../../utils/submitUsingApi";
 import { useWallet } from "../../hooks/useWallet";
 import type { ApiPromise } from "@polkadot/api";
 import { ethers } from "ethers";
+import { IconJson } from "@tabler/icons-react";
+import { replaceBigInt } from "../../utils/replaceBigInt";
 
 const XcmTransfer = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
@@ -37,6 +39,13 @@ const XcmTransfer = () => {
   const [error, setError] = useState<Error>();
 
   const [loading, setLoading] = useState(false);
+
+  const [output, setOutput] = useState<string>();
+
+  const [
+    outputAlertOpened,
+    { open: openOutputAlert, close: closeOutputAlert },
+  ] = useDisclosure(false);
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -105,7 +114,10 @@ const XcmTransfer = () => {
     }
   };
 
-  const submit = async (formValues: FormValuesTransformed) => {
+  const submit = async (
+    formValues: FormValuesTransformed,
+    isDryRun: boolean,
+  ) => {
     const { from, to, currencies, address, ahAddress, useApi } = formValues;
 
     if (!selectedAccount) {
@@ -138,14 +150,6 @@ const XcmTransfer = () => {
         tx = await getTxFromApi(
           {
             ...formValues,
-            from:
-              formValues.from === "Polkadot" || formValues.from === "Kusama"
-                ? undefined
-                : formValues.from,
-            to:
-              formValues.to === "Polkadot" || formValues.to === "Kusama"
-                ? undefined
-                : formValues.to,
             currency:
               currencyInputs.length === 1
                 ? currencyInputs[0]
@@ -176,25 +180,56 @@ const XcmTransfer = () => {
           .build();
       }
 
-      if (apiType === "PAPI") {
-        await submitTransactionPapi(
-          tx as TPapiTransaction,
-          signer as PolkadotSigner,
-        );
+      if (isDryRun) {
+        let result;
+        if (useApi) {
+          result = await fetchFromApi(
+            {
+              ...formValues,
+              injectorAddress: selectedAccount.address,
+              currency:
+                currencyInputs.length === 1
+                  ? currencyInputs[0]
+                  : {
+                      multiasset: currencyInputs,
+                    },
+            },
+            "/dry-run",
+            "POST",
+            true,
+          );
+        } else {
+          result = await Sdk.getDryRun({
+            api: api as ApiPromise & PolkadotClient,
+            tx: tx as Extrinsic & TPapiTransaction,
+            address: selectedAccount.address,
+            node: from,
+          });
+        }
+        setOutput(JSON.stringify(result, replaceBigInt, 2));
+        openOutputAlert();
+        closeAlert();
       } else {
-        await submitTransaction(
-          api as ApiPromise,
-          tx as Extrinsic,
-          signer as Signer,
-          selectedAccount.address,
-        );
+        if (apiType === "PAPI") {
+          await submitTransactionPapi(
+            tx as TPapiTransaction,
+            signer as PolkadotSigner,
+          );
+        } else {
+          await submitTransaction(
+            api as ApiPromise,
+            tx as Extrinsic,
+            signer as Signer,
+            selectedAccount.address,
+          );
+        }
+        alert("Transaction was successful!");
       }
-
-      alert("Transaction was successful!");
     } catch (e) {
       if (e instanceof Error) {
         console.error(e);
         setError(e);
+        closeOutputAlert();
         openAlert();
       }
     } finally {
@@ -204,10 +239,12 @@ const XcmTransfer = () => {
     }
   };
 
-  const onSubmit = (formValues: FormValuesTransformed) =>
-    void submit(formValues);
+  const onSubmit = (formValues: FormValuesTransformed, isDryRun: boolean) =>
+    void submit(formValues, isDryRun);
 
   const onAlertCloseClick = () => closeAlert();
+
+  const onOutputAlertCloseClick = () => closeOutputAlert();
 
   return (
     <Stack gap="xl">
@@ -220,6 +257,24 @@ const XcmTransfer = () => {
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
             {error?.message}
           </ErrorAlert>
+        )}
+      </Box>
+      <Box>
+        {outputAlertOpened && (
+          <Alert
+            color="green"
+            title="Output"
+            icon={<IconJson size={24} />}
+            withCloseButton
+            onClose={onOutputAlertCloseClick}
+            mt="lg"
+            style={{ overflowWrap: "anywhere" }}
+            data-testid="output"
+          >
+            <Text component="pre" size="sm">
+              {output}
+            </Text>
+          </Alert>
         )}
       </Box>
     </Stack>

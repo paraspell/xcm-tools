@@ -12,9 +12,10 @@ import * as claimAssets from '../pallets/assets/asset-claim'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { Extrinsic } from '../pjs/types'
 
-vi.mock('../../pallets/xcmPallet/transfer', () => ({
+vi.mock('../pallets/xcmPallet/transfer', () => ({
   send: vi.fn(),
-  transferRelayToPara: vi.fn()
+  transferRelayToPara: vi.fn(),
+  getDryRun: vi.fn()
 }))
 
 const NODE: TNode = 'Acala'
@@ -30,6 +31,7 @@ describe('Builder', () => {
     init: vi.fn(),
     setApi: vi.fn(),
     callTxMethod: vi.fn(),
+    setDisconnectAllowed: vi.fn(),
     clone: vi.fn().mockReturnValue({
       init: vi.fn(),
       setApi: vi.fn(),
@@ -718,6 +720,28 @@ describe('Builder', () => {
 
       expect(tx).toHaveProperty('method')
       expect(tx).toHaveProperty('args')
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('Dry run', () => {
+    it('should dry run a normal transfer', async () => {
+      const spy = vi.mocked(xcmPallet.getDryRun).mockResolvedValue({
+        success: true,
+        fee: BigInt(1000)
+      })
+
+      const result = await Builder(mockApi)
+        .from(NODE)
+        .to(NODE_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .dryRun()
+
+      expect(result).toEqual({
+        success: true,
+        fee: BigInt(1000)
+      })
       expect(spy).toHaveBeenCalledTimes(1)
     })
   })

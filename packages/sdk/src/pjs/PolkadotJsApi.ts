@@ -1,11 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type {
-  THexString,
   TAsset,
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
   TSerializedApiCall,
-  TNodePolkadotKusama
+  TNodePolkadotKusama,
+  TDryRunBaseOptions,
+  TDryRunResult,
+  TModuleError
 } from '../types'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from '../pjs/types'
@@ -16,6 +21,9 @@ import type { AnyTuple, Codec } from '@polkadot/types/types'
 import type { TBalanceResponse } from '../types/TBalance'
 import { createApiInstanceForNode, getNode } from '../utils'
 import { isForeignAsset } from '../utils/assets'
+import { computeFeeFromDryRunPjs } from '../utils/dryRun/computeFeeFromDryRunPjs'
+import { resolveModuleError } from '../utils/dryRun/resolveModuleError'
+import { getAssetsObject } from '../pallets/assets'
 
 const lowercaseFirstLetter = (value: string) => value.charAt(0).toLowerCase() + value.slice(1)
 
@@ -30,19 +38,19 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   private initialized = false
   private disconnectAllowed = true
 
-  setApi(api?: TPjsApiOrUrl): void {
+  setApi(api?: TPjsApiOrUrl) {
     this._api = api
   }
 
-  getApiOrUrl(): TPjsApiOrUrl | undefined {
+  getApiOrUrl() {
     return this._api
   }
 
-  getApi(): TPjsApi {
+  getApi() {
     return this.api
   }
 
-  async init(node: TNodeDotKsmWithRelayChains): Promise<void> {
+  async init(node: TNodeDotKsmWithRelayChains) {
     if (this.initialized) {
       return
     }
@@ -56,16 +64,16 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     this.initialized = true
   }
 
-  async createApiInstance(wsUrl: string | string[]): Promise<TPjsApi> {
+  async createApiInstance(wsUrl: string | string[]) {
     const wsProvider = new WsProvider(wsUrl)
     return ApiPromise.create({ provider: wsProvider })
   }
 
-  createAccountId(address: string): THexString {
+  createAccountId(address: string) {
     return this.api.createType('AccountId32', address).toHex()
   }
 
-  callTxMethod({ module, section, parameters }: TSerializedApiCall): Extrinsic {
+  callTxMethod({ module, section, parameters }: TSerializedApiCall) {
     const values = Object.values(parameters)
     const moduleLowerCase = lowercaseFirstLetter(module)
     const sectionCamelCase = snakeToCamel(section)
@@ -77,42 +85,42 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api.tx[moduleLowerCase][sectionCamelCase](...values)
   }
 
-  async calculateTransactionFee(tx: Extrinsic, address: string): Promise<bigint> {
+  async calculateTransactionFee(tx: Extrinsic, address: string) {
     const { partialFee } = await tx.paymentInfo(address)
     return partialFee.toBigInt()
   }
 
-  async getBalanceNative(address: string): Promise<bigint> {
+  async getBalanceNative(address: string) {
     const response = (await this.api.query.system.account(address)) as AccountInfo
     return (response.data.free as UInt).toBigInt()
   }
 
-  async getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint> {
+  async getBalanceForeignPolkadotXcm(address: string, id?: string) {
     const parsedId = new u32(this.api.registry, id)
     const response: Codec = await this.api.query.assets.account(parsedId, address)
     const obj = response.toJSON() as TBalanceResponse
     return obj.balance ? BigInt(obj.balance) : BigInt(0)
   }
 
-  async getMythosForeignBalance(address: string): Promise<bigint> {
+  async getMythosForeignBalance(address: string) {
     const response: Codec = await this.api.query.balances.account(address)
     const obj = response.toJSON() as TBalanceResponse
     return obj.free ? BigInt(obj.free) : BigInt(0)
   }
 
-  async getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint> {
+  async getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation) {
     const response: Codec = await this.api.query.foreignAssets.account(multiLocation, address)
     const obj = response.toJSON() as TBalanceResponse
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
-  async getForeignAssetsByIdBalance(address: string, assetId: string): Promise<bigint> {
+  async getForeignAssetsByIdBalance(address: string, assetId: string) {
     const response: Codec = await this.api.query.foreignAssets.account(assetId, address)
     const obj = response.toJSON() as TBalanceResponse
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
-  async getBalanceForeignBifrost(address: string, asset: TAsset): Promise<bigint> {
+  async getBalanceForeignBifrost(address: string, asset: TAsset) {
     const currencySelection = getNode('BifrostPolkadot').getCurrencySelection(asset)
 
     const response: Codec = await this.api.query.tokens.accounts(address, currencySelection)
@@ -121,7 +129,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
   }
 
-  async getBalanceNativeAcala(address: string, symbol: string): Promise<bigint> {
+  async getBalanceNativeAcala(address: string, symbol: string) {
     const response: Codec = await this.api.query.tokens.accounts(address, {
       Token: symbol
     })
@@ -130,11 +138,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
   }
 
-  async getBalanceForeignXTokens(
-    node: TNodePolkadotKusama,
-    address: string,
-    asset: TAsset
-  ): Promise<bigint> {
+  async getBalanceForeignXTokens(node: TNodePolkadotKusama, address: string, asset: TAsset) {
     let pallet = 'tokens'
 
     if (node === 'Centrifuge' || node === 'Altair') {
@@ -170,38 +174,67 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
   }
 
-  async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number): Promise<bigint> {
+  async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number) {
     const response = await this.api.query.assets.account(assetId, address)
     const obj = response.toJSON() as TBalanceResponse
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
-  async getFromStorage(key: string): Promise<string> {
+  async getFromStorage(key: string) {
     const response = (await this.api.rpc.state.getStorage(key)) as Codec
     return response.toHex()
   }
 
-  clone(): IPolkadotApi<TPjsApi, Extrinsic> {
+  clone() {
     return new PolkadotJsApi()
   }
 
-  async createApiForNode(
-    node: TNodeDotKsmWithRelayChains
-  ): Promise<IPolkadotApi<TPjsApi, Extrinsic>> {
+  async createApiForNode(node: TNodeDotKsmWithRelayChains) {
     const api = new PolkadotJsApi()
     await api.init(node)
     return api
   }
 
-  setDisconnectAllowed(allowed: boolean): void {
+  async getDryRun({ tx, address, node }: TDryRunBaseOptions<Extrinsic>): Promise<TDryRunResult> {
+    const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
+
+    if (!supportsDryRunApi) {
+      throw new Error(`DryRunApi is not available on node ${node}`)
+    }
+
+    const result = (
+      await this.api.call.dryRunApi.dryRunCall(
+        {
+          system: {
+            Signed: address
+          }
+        },
+        tx
+      )
+    ).toHuman() as any
+
+    const isSuccess = result.Ok && result.Ok.executionResult.Ok
+
+    if (!isSuccess) {
+      const moduleError = result.Ok.executionResult.Err.error.Module
+      const failureReason = resolveModuleError(node, moduleError as TModuleError)
+      return { success: false, failureReason }
+    }
+
+    const executionFee = await this.calculateTransactionFee(tx, address)
+    const fee = computeFeeFromDryRunPjs(result, node, executionFee)
+    return { success: true, fee }
+  }
+
+  setDisconnectAllowed(allowed: boolean) {
     this.disconnectAllowed = allowed
   }
 
-  getDisconnectAllowed(): boolean {
+  getDisconnectAllowed() {
     return this.disconnectAllowed
   }
 
-  async disconnect(): Promise<void> {
+  async disconnect() {
     if (!this.disconnectAllowed) return
 
     // Disconnect api only if it was created automatically

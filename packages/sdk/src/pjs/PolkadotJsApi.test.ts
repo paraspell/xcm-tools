@@ -8,6 +8,14 @@ import type { Extrinsic, TPjsApi } from '../pjs/types'
 import * as utils from '../utils'
 import type { VoidFn } from '@polkadot/api/types'
 
+vi.mock('../utils/dryRun/computeFeeFromDryRunPjs', () => ({
+  computeFeeFromDryRunPjs: vi.fn().mockReturnValue(BigInt(1000))
+}))
+
+vi.mock('../utils/dryRun/resolveModuleError', () => ({
+  resolveModuleError: vi.fn().mockReturnValue('ModuleError')
+}))
+
 describe('PolkadotJsApi', () => {
   let polkadotApi: PolkadotJsApi
   let mockApiPromise: TPjsApi
@@ -19,6 +27,11 @@ describe('PolkadotJsApi', () => {
         toHex: vi.fn().mockReturnValue('0x1234567890abcdef')
       }),
       registry: {},
+      call: {
+        dryRunApi: {
+          dryRunCall: vi.fn()
+        }
+      },
       rpc: {
         state: {
           getStorage: vi
@@ -535,6 +548,70 @@ describe('PolkadotJsApi', () => {
 
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledOnce()
       expect(balance).toBe(BigInt(0))
+    })
+  })
+
+  describe('getDryRun', () => {
+    it('should return sucess when dryRunCall is successful', async () => {
+      const mockExtrinsic = {
+        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => BigInt(1000) } })
+      } as unknown as Extrinsic
+
+      const address = 'some_address'
+      const node = 'Astar'
+
+      const mockResponse = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: {
+            executionResult: { Ok: true }
+          }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(mockResponse)
+
+      const result = await polkadotApi.getDryRun({ tx: mockExtrinsic, address, node })
+
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
+        { system: { Signed: address } },
+        mockExtrinsic
+      )
+
+      expect(result).toEqual({
+        success: true,
+        fee: BigInt(1000)
+      })
+    })
+
+    it('should return failureReason when dryRunCall is not successful', async () => {
+      const mockExtrinsic = {
+        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => BigInt(1000) } })
+      } as unknown as Extrinsic
+
+      const address = 'some_address'
+      const node = 'Astar'
+
+      const mockResponse = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: {
+            executionResult: { Err: { error: { Module: 'ModuleError' } } }
+          }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(mockResponse)
+
+      const result = await polkadotApi.getDryRun({ tx: mockExtrinsic, address, node })
+
+      expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
+        { system: { Signed: address } },
+        mockExtrinsic
+      )
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'ModuleError'
+      })
     })
   })
 })

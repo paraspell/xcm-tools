@@ -34,6 +34,7 @@ vi.mock('@paraspell/sdk', async () => {
       disconnect: vi.fn(),
     }),
     Builder: vi.fn().mockImplementation(() => builderMock),
+    getDryRun: vi.fn().mockResolvedValue('hash'),
   };
 });
 
@@ -302,6 +303,60 @@ describe('XTransferService', () => {
       await expect(service.generateXcmCall(xTransferDto)).rejects.toThrow(
         BadRequestException,
       );
+    });
+
+    it('should get dry run result if isDryRun is set', async () => {
+      const xTransferDto: XTransferDto = {
+        from: 'Acala',
+        to: 'Basilisk',
+        address,
+        currency,
+      };
+
+      const builderMock = {
+        from: vi.fn().mockReturnThis(),
+        to: vi.fn().mockReturnThis(),
+        currency: vi.fn().mockReturnThis(),
+        address: vi.fn().mockReturnThis(),
+        xcmVersion: vi.fn().mockReturnThis(),
+        addToBatch: vi.fn().mockReturnThis(),
+        buildBatch: vi.fn().mockReturnValue('batch-transaction'),
+        build: vi.fn().mockResolvedValue({
+          getEncodedData: vi.fn().mockResolvedValue({
+            asHex: vi.fn().mockReturnValue('hash'),
+          }),
+        }),
+      };
+
+      vi.spyOn(paraspellSdk, 'Builder').mockReturnValue(
+        builderMock as unknown as ReturnType<typeof paraspellSdk.Builder>,
+      );
+
+      const result = await service.generateXcmCall(xTransferDto, false, true);
+
+      expect(result).toBe('hash');
+    });
+
+    it('should throw BadRequestException when address is missing in dry run', async () => {
+      const xTransferDto: XTransferDto = {
+        from: 'Acala',
+        to: 'Basilisk',
+        currency,
+        address: {
+          parents: 1,
+          interior: {
+            X1: [
+              {
+                Parachain: 1000,
+              },
+            ],
+          },
+        },
+      };
+
+      await expect(
+        service.generateXcmCall(xTransferDto, false, true),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 

@@ -3,6 +3,7 @@ import type { TNodeDotKsmWithRelayChains, TNodePolkadotKusama, TNodeWithRelayCha
 import type { TCurrencyCoreV1WithAmount, TCurrencyInputWithAmount } from './TCurrency'
 import type { TAddress, TDestination, TVersionClaimAssets, Version } from './TTransfer'
 import type { TMultiAsset } from './TMultiAsset'
+import type { TDryRunResult } from './TDryRun'
 
 /**
  * The options for the Ethereum to Polkadot transfer builder.
@@ -112,4 +113,5 @@ export interface IUseKeepAliveFinalBuilder<TApi, TRes> extends IAddToBatchBuilde
   useKeepAlive: (destApi: TApi) => this
   xcmVersion: (version: Version) => this
   build: () => Promise<TRes>
+  dryRun: () => Promise<TDryRunResult>
 }

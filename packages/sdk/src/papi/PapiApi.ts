@@ -9,7 +9,9 @@ import type {
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
   TSerializedApiCall,
-  TNodePolkadotKusama
+  TNodePolkadotKusama,
+  TDryRunBaseOptions,
+  TDryRunResult
 } from '../types'
 import { createApiInstanceForNode, getNode } from '../utils'
 import { createClient, FixedSizeBinary } from 'polkadot-api'
@@ -19,6 +21,8 @@ import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { transform } from './PapiXcmTransformer'
 import { NodeNotSupportedError } from '../errors'
 import { isForeignAsset } from '../utils/assets'
+import { computeFeeFromDryRun } from '../utils/dryRun/computeFeeFromDryRun'
+import { getAssetsObject } from '../pallets/assets'
 
 const unsupportedNodes = [
   'ComposableFinance',
@@ -40,19 +44,19 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   private initialized = false
   private disconnectAllowed = true
 
-  setApi(api?: TPapiApiOrUrl): void {
+  setApi(api?: TPapiApiOrUrl) {
     this._api = api
   }
 
-  getApiOrUrl(): TPapiApiOrUrl | undefined {
+  getApiOrUrl() {
     return this._api
   }
 
-  getApi(): TPapiApi {
+  getApi() {
     return this.api
   }
 
-  async init(node: TNodeDotKsmWithRelayChains): Promise<void> {
+  async init(node: TNodeDotKsmWithRelayChains) {
     if (this.initialized) {
       return
     }
@@ -70,7 +74,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     this.initialized = true
   }
 
-  async createApiInstance(wsUrl: string | string[]): Promise<TPapiApi> {
+  async createApiInstance(wsUrl: string | string[]) {
     const isNodeJs = typeof window === 'undefined'
     let getWsProvider
     if (isNodeJs) {
@@ -84,39 +88,39 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return Promise.resolve(createClient(withPolkadotSdkCompat(provider)))
   }
 
-  createAccountId(address: string): THexString {
+  createAccountId(address: string) {
     return FixedSizeBinary.fromAccountId32<32>(address).asHex() as THexString
   }
 
-  callTxMethod({ module, section, parameters }: TSerializedApiCall): TPapiTransaction {
+  callTxMethod({ module, section, parameters }: TSerializedApiCall) {
     const transformedParameters = transform(parameters)
 
     return this.api.getUnsafeApi().tx[module][section](transformedParameters)
   }
 
-  async calculateTransactionFee(tx: TPapiTransaction, address: string): Promise<bigint> {
+  async calculateTransactionFee(tx: TPapiTransaction, address: string) {
     return tx.getEstimatedFees(address)
   }
 
-  async getBalanceNative(address: string): Promise<bigint> {
+  async getBalanceNative(address: string) {
     const res = await this.api.getUnsafeApi().query.System.Account.getValue(address)
 
     return res.data.free as bigint
   }
 
-  async getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint> {
+  async getBalanceForeignPolkadotXcm(address: string, id?: string) {
     const res = await this.api.getUnsafeApi().query.Assets.Account.getValue(id, address)
 
     return res && res.balance ? BigInt(res.balance) : BigInt(0)
   }
 
-  async getMythosForeignBalance(address: string): Promise<bigint> {
+  async getMythosForeignBalance(address: string) {
     const res = await this.api.getUnsafeApi().query.Balances.Account.getValue(address)
 
     return res && res.free ? BigInt(res.free) : BigInt(0)
   }
 
-  async getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint> {
+  async getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation) {
     const transformedMultiLocation = transform(multiLocation)
 
     const res = await this.api
@@ -126,13 +130,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return BigInt(res === undefined ? 0 : res.balance)
   }
 
-  async getForeignAssetsByIdBalance(address: string, assetId: string): Promise<bigint> {
+  async getForeignAssetsByIdBalance(address: string, assetId: string) {
     const res = await this.api.getUnsafeApi().query.ForeignAssets.Account.getValue(assetId, address)
 
     return BigInt(res === undefined ? 0 : res.balance)
   }
 
-  async getBalanceForeignBifrost(address: string, asset: TAsset): Promise<bigint> {
+  async getBalanceForeignBifrost(address: string, asset: TAsset) {
     const currencySelection = getNode('BifrostPolkadot').getCurrencySelection(asset)
 
     const transformedParameters = transform(currencySelection)
@@ -145,7 +149,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
   }
 
-  async getBalanceNativeAcala(address: string, symbol: string): Promise<bigint> {
+  async getBalanceNativeAcala(address: string, symbol: string) {
     const transformedParameters = transform({ Token: symbol })
 
     const response = await this.api
@@ -156,11 +160,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
   }
 
-  async getBalanceForeignXTokens(
-    node: TNodePolkadotKusama,
-    address: string,
-    asset: TAsset
-  ): Promise<bigint> {
+  async getBalanceForeignXTokens(node: TNodePolkadotKusama, address: string, asset: TAsset) {
     let pallet = 'Tokens'
 
     if (node === 'Centrifuge' || node === 'Altair') {
@@ -189,7 +189,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return entry?.value ? BigInt(entry.value.free.toString()) : BigInt(0)
   }
 
-  async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number): Promise<bigint> {
+  async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number) {
     const response = await this.api.getUnsafeApi().query.Assets.Account.getValue(assetId, address)
 
     return BigInt(response === undefined ? 0 : response.balance)
@@ -199,27 +199,59 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return this.api._request('state_getStorage', [key])
   }
 
-  clone(): IPolkadotApi<TPapiApi, TPapiTransaction> {
+  clone() {
     return new PapiApi()
   }
 
-  async createApiForNode(
-    node: TNodeDotKsmWithRelayChains
-  ): Promise<IPolkadotApi<TPapiApi, TPapiTransaction>> {
+  async createApiForNode(node: TNodeDotKsmWithRelayChains) {
     const api = new PapiApi()
     await api.init(node)
     return api
   }
 
-  setDisconnectAllowed(allowed: boolean): void {
+  async getDryRun({
+    tx,
+    address,
+    node
+  }: TDryRunBaseOptions<TPapiTransaction>): Promise<TDryRunResult> {
+    const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
+
+    if (!supportsDryRunApi) {
+      throw new Error(`DryRunApi is not available on node ${node}`)
+    }
+
+    const result = await this.api.getUnsafeApi().apis.DryRunApi.dry_run_call(
+      {
+        type: 'system',
+        value: {
+          type: 'Signed',
+          value: address
+        }
+      },
+      tx.decodedCall
+    )
+
+    const isSuccess = result.success && result.value.execution_result.success
+    if (!isSuccess) {
+      const failureReason = result.value.execution_result.value.error.value.value.type
+      return Promise.resolve({ success: false, failureReason })
+    }
+
+    const executionFee = await this.calculateTransactionFee(tx, address)
+    const fee = computeFeeFromDryRun(result, node, executionFee)
+
+    return Promise.resolve({ success: true, fee })
+  }
+
+  setDisconnectAllowed(allowed: boolean) {
     this.disconnectAllowed = allowed
   }
 
-  getDisconnectAllowed(): boolean {
+  getDisconnectAllowed() {
     return this.disconnectAllowed
   }
 
-  disconnect(): Promise<void> {
+  disconnect() {
     if (!this.disconnectAllowed) return Promise.resolve()
 
     // Disconnect api only if it was created automatically

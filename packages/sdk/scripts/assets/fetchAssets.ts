@@ -28,6 +28,7 @@ import { getNativeAssetSymbol } from '../../src/pallets/assets'
 import { fetchComposableAssets } from './fetchComposableAssets'
 import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
 import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
+import { supportsDryRunApi } from './supportsDryRunApi'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -369,7 +370,8 @@ const fetchNodeAssets = async (
     nativeAssets,
     otherAssets: mergedAssets,
     nativeAssetSymbol,
-    isEVM: isNodeEvm(api)
+    isEVM: isNodeEvm(api),
+    supportsDryRunApi: supportsDryRunApi(api)
   }
 }
 
@@ -413,6 +415,7 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
           relayChainAssetSymbol: getNode(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
           nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
           isEVM: newData?.isEVM ?? false,
+          supportsDryRunApi: newData?.supportsDryRunApi ?? false,
           nativeAssets: combinedNativeAssets,
           otherAssets: combinedOtherAssets
         }
