@@ -8,6 +8,7 @@ import { createClient, FixedSizeBinary } from 'polkadot-api'
 import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
 import { getWsProvider } from 'polkadot-api/ws-provider/node'
 import { transform } from './PapiXcmTransformer'
+import { computeFeeFromDryRun } from '../utils/dryRun/computeFeeFromDryRun'
 
 vi.mock('polkadot-api/ws-provider/node', () => ({
   getWsProvider: vi.fn().mockReturnValue((_onMessage: (message: string) => void) => ({
@@ -28,6 +29,10 @@ vi.mock('./PapiXcmTransformer', () => ({
   transform: vi.fn().mockReturnValue({ transformed: true })
 }))
 
+vi.mock('../utils/dryRun/computeFeeFromDryRun', () => ({
+  computeFeeFromDryRun: vi.fn()
+}))
+
 vi.mock('../utils/createApiInstanceForNode', () => ({
   createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient)
 }))
@@ -36,6 +41,7 @@ describe('PapiApi', () => {
   let papiApi: PapiApi
   let mockPolkadotClient: PolkadotClient
   let mockTransaction: TPapiTransaction
+  let mockDryRunResult
 
   beforeEach(async () => {
     papiApi = new PapiApi()
@@ -44,10 +50,24 @@ describe('PapiApi', () => {
       getEstimatedFees: vi.fn().mockResolvedValue(BigInt(1000))
     } as unknown as TPapiTransaction
 
+    mockDryRunResult = {
+      success: true,
+      value: {
+        execution_result: {
+          sucesss: true
+        }
+      }
+    }
+
     mockPolkadotClient = {
       _request: vi.fn(),
       destroy: vi.fn(),
       getUnsafeApi: vi.fn().mockReturnValue({
+        apis: {
+          DryRunApi: {
+            dry_run_call: vi.fn().mockResolvedValue(mockDryRunResult)
+          }
+        },
         tx: {
           XcmPallet: {
             methodName: vi.fn().mockReturnValue(mockTransaction)
@@ -507,6 +527,82 @@ describe('PapiApi', () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Tokens.Accounts.getValue).toHaveBeenCalledOnce()
       expect(balance).toBe(BigInt(6000))
+    })
+  })
+
+  describe('getDryRun', () => {
+    it('should return success with calculated fee', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: true
+          }
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_call = vi.fn().mockResolvedValue(mockApiResponse)
+
+      papiApi.setApi(mockPolkadotClient)
+
+      vi.mocked(computeFeeFromDryRun).mockReturnValue(BigInt(500))
+
+      const result = await papiApi.getDryRun({
+        tx: mockTransaction,
+        address: 'some_address',
+        node: 'AssetHubPolkadot'
+      })
+
+      expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
+        {
+          type: 'system',
+          value: { type: 'Signed', value: 'some_address' }
+        },
+        undefined
+      )
+
+      expect(result).toEqual({ success: true, fee: BigInt(500) })
+    })
+
+    it('should return failure with failure reason', async () => {
+      const mockApiResponse = {
+        success: false,
+        value: {
+          execution_result: {
+            value: {
+              error: {
+                value: {
+                  value: {
+                    type: 'SomeError'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_call = vi.fn().mockResolvedValue(mockApiResponse)
+
+      papiApi.setApi(mockPolkadotClient)
+
+      const result = await papiApi.getDryRun({
+        tx: mockTransaction,
+        address: 'some_address',
+        node: 'Moonbeam'
+      })
+
+      expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
+        {
+          type: 'system',
+          value: { type: 'Signed', value: 'some_address' }
+        },
+        undefined
+      )
+
+      expect(result).toEqual({ success: false, failureReason: 'SomeError' })
     })
   })
 })

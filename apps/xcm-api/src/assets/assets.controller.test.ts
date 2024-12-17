@@ -40,6 +40,7 @@ describe('AssetsController', () => {
       paraId: 2009,
       relayChainAssetSymbol: 'KSM',
       isEVM: false,
+      supportsDryRunApi: false,
       nativeAssets: [{ symbol, decimals }],
       otherAssets: [{ assetId: '234123123', symbol: 'FKK', decimals }],
       nativeAssetSymbol: symbol,

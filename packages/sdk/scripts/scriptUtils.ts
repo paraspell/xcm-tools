@@ -3,7 +3,7 @@
 import * as fs from 'fs'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { TNodeDotKsmWithRelayChains } from '../src/types'
-import { getNodeProvider, getNodeProviders } from '../src/nodes/config'
+import { getNodeProviders } from '../src/nodes/config'
 
 export const readJsonOrReturnEmptyObject = (path: string) => {
   try {
@@ -24,14 +24,7 @@ export const fetchTryMultipleProviders = <T>(
   node: TNodeDotKsmWithRelayChains,
   fetcher: (wsUrl: string) => T
 ): T | null => {
-  const providers = (() => {
-    try {
-      return getNodeProviders(node)
-    } catch (_e) {
-      console.log(`Error retrieving all providers. Using default provider.`)
-      return [getNodeProvider(node)]
-    }
-  })()
+  const providers = getNodeProviders(node)
   for (const provider of providers) {
     try {
       console.log(`Trying ${provider}...`)

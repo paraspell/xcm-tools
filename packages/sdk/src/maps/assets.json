@@ -3,6 +3,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -16,6 +17,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -29,6 +31,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PLMC",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "PLMC",
@@ -93,6 +96,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ACA",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "ACA",
@@ -474,6 +478,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -487,6 +492,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -500,6 +506,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ASTR",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "ASTR",
@@ -1110,6 +1117,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "BNC",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "BNC",
@@ -1541,6 +1549,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "BBB",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "BBB",
@@ -1554,6 +1563,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "CFG",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "CFG",
@@ -1857,6 +1867,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "SUB",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "SUB",
@@ -1870,6 +1881,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "LAYR",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "LAYR",
@@ -2036,6 +2048,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "RING",
     "isEVM": true,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "RING",
@@ -2106,6 +2119,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "HDX",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "HDX",
@@ -2609,6 +2623,31 @@
         "alias": "sUSDS2"
       },
       {
+        "assetId": "1000753",
+        "symbol": "SUI",
+        "decimals": 9,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x484ecce6775143d3335ed2c7bcb22151c53b9f49"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "2652520"
+      },
+      {
         "assetId": "18",
         "symbol": "DAI",
         "decimals": 18,
@@ -2659,6 +2698,31 @@
         },
         "existentialDeposit": "10000",
         "alias": "USDT2"
+      },
+      {
+        "assetId": "1000752",
+        "symbol": "SOL",
+        "decimals": 9,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x99fec54a5ad36d50a4bba3a41cab983a5bb86a7d"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "46339"
       },
       {
         "assetId": "9",
@@ -3155,6 +3219,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "INTR",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "INTR",
@@ -3531,6 +3596,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "LIT",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "LIT",
@@ -3544,6 +3610,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "GLMR",
     "isEVM": true,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "GLMR",
@@ -4515,6 +4582,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PARA",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "PARA",
@@ -4852,6 +4920,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -5272,6 +5341,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "AIR",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "AIR",
@@ -5342,6 +5412,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "AMPE",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "AMPE",
@@ -5374,6 +5445,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "BAJU",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "BAJU",
@@ -5387,6 +5459,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "BSX",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "BSX",
@@ -5600,6 +5673,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "BNC",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "BNC",
@@ -5761,6 +5835,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KMA",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "KMA",
@@ -6194,6 +6269,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "CRAB",
     "isEVM": true,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "CRAB",
@@ -6214,6 +6290,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "CSM",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "CSM",
@@ -6270,6 +6347,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -6283,6 +6361,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "IMBU",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "IMBU",
@@ -6296,6 +6375,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "KILT",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "KILT",
@@ -6309,6 +6389,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "TNKR",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "TNKR",
@@ -6322,6 +6403,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "CGT",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "CGT",
@@ -6365,6 +6447,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KAR",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "KAR",
@@ -6826,6 +6909,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KINT",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "KINT",
@@ -7005,6 +7089,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "MOVR",
     "isEVM": true,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "MOVR",
@@ -7472,6 +7557,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "HKO",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "HKO",
@@ -7663,6 +7749,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "PICA",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "PICA",
@@ -8097,6 +8184,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "QTZ",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "QTZ",
@@ -8110,6 +8198,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "XRT",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "XRT",
@@ -8136,6 +8225,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "XRT",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "XRT",
@@ -8156,6 +8246,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -8169,6 +8260,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -8182,6 +8274,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "SDN",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "SDN",
@@ -8522,6 +8615,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -8704,6 +8798,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -8717,6 +8812,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -8730,6 +8826,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "TUR",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "TUR",
@@ -8949,6 +9046,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "UNQ",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "UNQ",
@@ -8962,6 +9060,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "CRU",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "CRU",
@@ -8988,6 +9087,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "MANTA",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "MANTA",
@@ -9194,6 +9294,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "NODL",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "NODL",
@@ -9207,6 +9308,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "NEURO",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "NEURO",
@@ -9227,6 +9329,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PEN",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "PEN",
@@ -9479,6 +9582,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ZTG",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "ZTG",
@@ -9573,6 +9677,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -9586,6 +9691,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PHA",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "PHA",
@@ -9893,6 +9999,7 @@
   },
   "Ethereum": {
     "isEVM": true,
+    "supportsDryRunApi": false,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ETH",
     "nativeAssets": [
@@ -10172,6 +10279,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "PHA",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "PHA",
@@ -10489,6 +10597,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "MYTH",
     "isEVM": true,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "MYTH",
@@ -10502,6 +10611,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PEAQ",
     "isEVM": false,
+    "supportsDryRunApi": false,
     "nativeAssets": [
       {
         "symbol": "PEAQ",

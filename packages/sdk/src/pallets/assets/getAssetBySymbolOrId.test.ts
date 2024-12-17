@@ -249,6 +249,7 @@ describe('getAssetBySymbolOrId', () => {
             nativeAssetSymbol: 'ETH',
             relayChainAssetSymbol: 'DOT',
             isEVM: false,
+            supportsDryRunApi: false,
             otherAssets: [],
             nativeAssets: []
           }
@@ -256,6 +257,7 @@ describe('getAssetBySymbolOrId', () => {
             nativeAssetSymbol: 'DOT',
             relayChainAssetSymbol: 'DOT',
             isEVM: false,
+            supportsDryRunApi: false,
             otherAssets: [
               {
                 assetId: '1',
@@ -280,6 +282,7 @@ describe('getAssetBySymbolOrId', () => {
         ? {
             nativeAssetSymbol: 'ETH',
             isEVM: false,
+            supportsDryRunApi: false,
             relayChainAssetSymbol: 'DOT',
             otherAssets: [],
             nativeAssets: []
@@ -287,6 +290,7 @@ describe('getAssetBySymbolOrId', () => {
         : {
             nativeAssetSymbol: 'DOT',
             isEVM: false,
+            supportsDryRunApi: false,
             relayChainAssetSymbol: 'DOT',
             otherAssets: [
               {
@@ -311,6 +315,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '1',
@@ -336,6 +341,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '1',
@@ -356,6 +362,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '1',
@@ -376,6 +383,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '1',
@@ -396,6 +404,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '1',
@@ -416,6 +425,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '2',
@@ -440,6 +450,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [],
       nativeAssets: [
         {
@@ -458,6 +469,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '1',
@@ -482,6 +494,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '1',
@@ -509,6 +522,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '2',
@@ -528,6 +542,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [],
       nativeAssets: []
     })
@@ -558,6 +573,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '2',
@@ -613,6 +629,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '2',
@@ -668,6 +685,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '2',
@@ -723,6 +741,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       otherAssets: [
         {
           assetId: '2',
@@ -767,6 +786,7 @@ describe('getAssetBySymbolOrId', () => {
     vi.spyOn(assetFunctions, 'getAssetsObject').mockReturnValue({
       nativeAssetSymbol: 'DOT',
       isEVM: false,
+      supportsDryRunApi: false,
       relayChainAssetSymbol: 'DOT',
       otherAssets: [
         {

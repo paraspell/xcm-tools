@@ -13,6 +13,7 @@ import {
   TNodeWithRelayChains,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   NODES_WITH_RELAY_CHAINS,
+  Extrinsic,
 } from '@paraspell/sdk';
 import type * as SdkType from '@paraspell/sdk';
 import type * as SdkPapiType from '@paraspell/sdk/papi';
@@ -25,6 +26,7 @@ export class XTransferService {
   async generateXcmCall(
     { from, to, address, ahAddress, currency, xcmVersion }: XTransferDto,
     usePapi = false,
+    isDryRun = false,
   ) {
     const fromNode = from as TNodeDotKsmWithRelayChains;
     const toNode = to as TNodeWithRelayChains;
@@ -77,16 +79,31 @@ export class XTransferService {
     }
 
     try {
+      const tx = await finalBuilder.build();
+
+      if (isDryRun) {
+        if (typeof address !== 'string') {
+          throw new BadRequestException('Address is required for dry run.');
+        }
+
+        return await Sdk.getDryRun({
+          api: api as ApiPromise & PolkadotClient,
+          address,
+          node: fromNode,
+          tx: tx as Extrinsic & TPapiTransaction,
+        });
+      }
+
       if (usePapi) {
-        const tx = await finalBuilder.build();
         return (await (tx as TPapiTransaction).getEncodedData()).asHex();
       }
 
-      return await finalBuilder.build();
+      return tx;
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||
-        e instanceof IncompatibleNodesError
+        e instanceof IncompatibleNodesError ||
+        e instanceof BadRequestException
       ) {
         console.log(e);
         throw new BadRequestException(e.message);

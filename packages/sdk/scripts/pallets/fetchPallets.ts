@@ -1,6 +1,6 @@
 import type { ApiPromise } from '@polkadot/api'
 import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '../../src/maps/consts'
-import type { TPallet, TPalletMap, TPalletJsonMap } from '../../src/types'
+import type { TPallet, TPalletMap, TPalletJsonMap, TPalletDetails } from '../../src/types'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 
 const defaultPalletsSortedByPriority: TPallet[] = [
@@ -12,16 +12,21 @@ const defaultPalletsSortedByPriority: TPallet[] = [
   'RelayerXcm'
 ]
 
-const fetchPallets = async (api: ApiPromise) => {
+const fetchPallets = async (api: ApiPromise): Promise<TPalletDetails[]> => {
   const res = await api.rpc.state.getMetadata()
-  return res.asLatest.pallets.map(val => val.name.toHuman())
+  return res.asLatest.pallets.map(val => ({
+    name: val.name.toHuman() as TPallet,
+    index: val.index.toNumber()
+  }))
 }
 
 const composePalletMapObject = async (api: ApiPromise): Promise<TPalletMap> => {
-  const pallets = (await fetchPallets(api)) as TPallet[]
-  const supportedPallets = pallets.filter(pallet => defaultPalletsSortedByPriority.includes(pallet))
+  const palletDetails = await fetchPallets(api)
+  const supportedPallets = palletDetails.filter(pallet =>
+    defaultPalletsSortedByPriority.includes(pallet.name)
+  )
   const defaultPallet = defaultPalletsSortedByPriority.find(pallet =>
-    supportedPallets.includes(pallet)
+    supportedPallets.map(item => item.name).includes(pallet)
   ) as TPallet
   return {
     defaultPallet,

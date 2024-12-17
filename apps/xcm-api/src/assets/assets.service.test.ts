@@ -57,6 +57,7 @@ describe('AssetsService', () => {
         relayChainAssetSymbol: symbol,
         nativeAssetSymbol: 'DOT',
         isEVM: false,
+        supportsDryRunApi: false,
         nativeAssets: [{ symbol, decimals }],
         otherAssets: [{ assetId, symbol: 'BSK', decimals }],
       };

@@ -143,4 +143,24 @@ describe('XTransferController', () => {
       expect(spy).toHaveBeenCalledWith(bodyParams, true);
     });
   });
+
+  describe('getDryRun', () => {
+    it('should call generateXcmCall service method with correct parameters and return result', async () => {
+      const bodyParams: XTransferDto = {
+        from: 'Acala',
+        to: 'Basilisk',
+        address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        currency: { symbol: 'DOT', amount: 100 },
+      };
+      const mockResult = {} as Extrinsic;
+      const spy = vi
+        .spyOn(service, 'generateXcmCall')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.dryRun(bodyParams, mockRequestObject);
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams, false, true);
+    });
+  });
 });

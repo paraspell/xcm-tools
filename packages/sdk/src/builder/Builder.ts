@@ -19,7 +19,7 @@ import type {
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { send } from '../pallets/xcmPallet/transfer'
+import { getDryRun, send } from '../pallets/xcmPallet/transfer'
 import { isRelayChain } from '../utils'
 import { isTMultiLocation } from '../pallets/xcmPallet/utils'
 
@@ -187,6 +187,24 @@ export class GeneralBuilder<TApi, TRes>
 
     const options = this.createOptions()
     return send(options)
+  }
+
+  async dryRun() {
+    this.api.setDisconnectAllowed(false)
+    const tx = await this.build()
+
+    if (typeof this._address !== 'string') {
+      throw new Error('Address must be a string when using dryRun')
+    }
+
+    this.api.setDisconnectAllowed(true)
+
+    return getDryRun({
+      api: this.api,
+      tx,
+      address: this._address,
+      node: this._from
+    })
   }
 }
 

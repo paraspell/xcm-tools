@@ -1,6 +1,6 @@
 import { useForm } from "@mantine/form";
 import { isValidWalletAddress } from "../../utils";
-import type { FC } from "react";
+import type { FC, FormEvent } from "react";
 import { useEffect } from "react";
 import {
   ActionIcon,
@@ -8,6 +8,7 @@ import {
   Checkbox,
   Fieldset,
   Group,
+  Menu,
   Select,
   Stack,
   TextInput,
@@ -23,7 +24,12 @@ import {
 } from "@paraspell/sdk";
 import useCurrencyOptions from "../../hooks/useCurrencyOptions";
 import CurrencySelection from "../CurrencySelection";
-import { IconPlus, IconTrash } from "@tabler/icons-react";
+import {
+  IconChevronDown,
+  IconLocationCheck,
+  IconPlus,
+  IconTrash,
+} from "@tabler/icons-react";
 
 export type TCurrencyEntry = {
   currencyOptionId: string;
@@ -54,7 +60,7 @@ export type FormValuesTransformed = FormValues & {
 };
 
 type Props = {
-  onSubmit: (values: FormValuesTransformed) => void;
+  onSubmit: (values: FormValuesTransformed, isDryRun: boolean) => void;
   loading: boolean;
 };
 
@@ -84,7 +90,6 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
       currencies: {
         currencyOptionId: (value, values, path) => {
           const index = Number(path.split(".")[1]);
-          console.log("index", index);
           if (values.currencies[index].isCustomCurrency) {
             return values.currencies[index].customCurrency
               ? null
@@ -119,7 +124,11 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
     to,
   );
 
-  const onSubmitInternal = (values: FormValues) => {
+  const onSubmitInternal = (
+    values: FormValues,
+    _event: FormEvent<HTMLFormElement> | undefined,
+    isDryRun = false,
+  ) => {
     // Transform each currency entry
     const transformedCurrencies = values.currencies.map((currEntry) => {
       if (currEntry.isCustomCurrency) {
@@ -141,7 +150,14 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
       currencies: transformedCurrencies,
     };
 
-    onSubmit(transformedValues);
+    onSubmit(transformedValues, isDryRun);
+  };
+
+  const onSubmitInternalDryRun = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), undefined, true);
+    }
   };
 
   useEffect(() => {
@@ -259,9 +275,32 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           data-testid="checkbox-api"
         />
 
-        <Button type="submit" loading={loading} data-testid="submit">
-          Submit transaction
-        </Button>
+        <Button.Group>
+          <Button type="submit" loading={loading} data-testid="submit" flex={1}>
+            Submit transaction
+          </Button>
+
+          <Menu shadow="md" width={200} position="bottom-end">
+            <Menu.Target>
+              <Button
+                style={{
+                  borderLeft: "1px solid #ff93c0",
+                }}
+              >
+                <IconChevronDown />
+              </Button>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<IconLocationCheck size={16} />}
+                onClick={onSubmitInternalDryRun}
+              >
+                Dry run
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </Button.Group>
       </Stack>
     </form>
   );
