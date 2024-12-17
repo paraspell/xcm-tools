@@ -19,19 +19,19 @@ describe('getBalanceForeignXTokens', () => {
     vi.clearAllMocks()
   })
 
-  it('calls getBalanceForeignMoonbeam when node is Moonbeam', async () => {
+  it('calls getBalanceForeignMoonbeam when node is Astar', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceForeignAssetsAccount').mockResolvedValue(BigInt(1000))
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
-    const balance = await getBalanceForeignXTokens(mockApi, 'Moonbeam', address, asset)
+    const balance = await getBalanceForeignXTokens(mockApi, 'Astar', address, asset)
     expect(spy).toHaveBeenCalledWith(address, BigInt(asset.assetId ?? ''))
     expect(spy2).not.toHaveBeenCalled()
     expect(balance).toBe(BigInt(1000))
   })
 
-  it('calls getBalanceForeignMoonbeam when node is Moonriver', async () => {
+  it('calls getBalanceForeignAssetsAccount when node is Shiden', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceForeignAssetsAccount').mockResolvedValue(BigInt(2000))
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
-    const balance = await getBalanceForeignXTokens(mockApi, 'Moonriver', address, asset)
+    const balance = await getBalanceForeignXTokens(mockApi, 'Shiden', address, asset)
     expect(spy).toHaveBeenCalledWith(address, BigInt(asset.assetId ?? ''))
     expect(spy2).not.toHaveBeenCalled()
     expect(balance).toBe(BigInt(2000))
@@ -57,7 +57,7 @@ describe('getBalanceForeignXTokens', () => {
 
   it('returns 0 if getBalanceForeignMoonbeam resolves with 0', async () => {
     vi.spyOn(mockApi, 'getBalanceForeignAssetsAccount').mockResolvedValue(BigInt(0))
-    const balance = await getBalanceForeignXTokens(mockApi, 'Moonbeam', address, asset)
+    const balance = await getBalanceForeignXTokens(mockApi, 'Astar', address, asset)
     expect(balance).toEqual(BigInt(0))
   })
 
@@ -69,7 +69,7 @@ describe('getBalanceForeignXTokens', () => {
 
   it('throws InvalidCurrencyError if asset has no assetId', async () => {
     await expect(
-      getBalanceForeignXTokens(mockApi, 'Moonbeam', address, {
+      getBalanceForeignXTokens(mockApi, 'Astar', address, {
         symbol: 'AssetName'
       } as TNativeAsset)
     ).rejects.toThrow(InvalidCurrencyError)

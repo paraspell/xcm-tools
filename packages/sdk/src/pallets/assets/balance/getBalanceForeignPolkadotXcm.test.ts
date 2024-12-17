@@ -3,6 +3,7 @@ import type { ApiPromise } from '@polkadot/api'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { Extrinsic } from '../../../pjs/types'
+import { InvalidCurrencyError } from '../../../errors'
 
 vi.mock('./getAssetHubMultiLocation', () => ({
   getAssetHubMultiLocation: vi.fn()
@@ -38,5 +39,54 @@ describe('getBalanceForeignPolkadotXcm', () => {
     })
 
     expect(result).toBe(BigInt(500))
+  })
+
+  it('should return balance for Polimec node', async () => {
+    const mockApi = {
+      getForeignAssetsByIdBalance: vi.fn().mockResolvedValue(BigInt(200))
+    } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
+
+    const result = await getBalanceForeignPolkadotXcm(mockApi, 'Polimec', 'some-address', {
+      symbol: 'DOT',
+      assetId: '1'
+    })
+
+    expect(result).toBe(BigInt(200))
+  })
+
+  it('should return balance for Moonbeam node', async () => {
+    const mockApi = {
+      getBalanceForeignAssetsAccount: vi.fn().mockResolvedValue(BigInt(300))
+    } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
+
+    const result = await getBalanceForeignPolkadotXcm(mockApi, 'Moonbeam', 'some-address', {
+      symbol: 'DOT',
+      assetId: '1'
+    })
+
+    expect(result).toBe(BigInt(300))
+  })
+
+  it('should return balance for Moonriver node', async () => {
+    const mockApi = {
+      getBalanceForeignAssetsAccount: vi.fn().mockResolvedValue(BigInt(400))
+    } as unknown as IPolkadotApi<ApiPromise, Extrinsic>
+
+    const result = await getBalanceForeignPolkadotXcm(mockApi, 'Moonriver', 'some-address', {
+      symbol: 'DOT',
+      assetId: '1'
+    })
+
+    expect(result).toBe(BigInt(400))
+  })
+
+  it('should throw error if asset is not foreign', async () => {
+    const mockApi = {} as unknown as IPolkadotApi<ApiPromise, Extrinsic>
+
+    await expect(
+      getBalanceForeignPolkadotXcm(mockApi, 'Moonriver', 'some-address', {
+        symbol: 'DOT'
+      })
+    ).rejects.toThrowError(InvalidCurrencyError)
   })
 })
