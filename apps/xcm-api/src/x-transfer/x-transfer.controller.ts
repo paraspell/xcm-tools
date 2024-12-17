@@ -45,6 +45,13 @@ export class XTransferController {
     });
   }
 
+  @Post('dry-run')
+  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
+  dryRun(@Body() bodyParams: XTransferDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
+    return this.xTransferService.generateXcmCall(bodyParams, false, true);
+  }
+
   @Post('x-transfer')
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   generateXcmCall(@Body() bodyParams: XTransferDto, @Req() req: Request) {

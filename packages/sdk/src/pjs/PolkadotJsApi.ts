@@ -209,7 +209,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         },
         tx
       )
-    ).toJSON() as any
+    ).toHuman() as any
 
     console.log(result)
 
