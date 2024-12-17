@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.2.10](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.9...sdk-v7.2.10) (2024-12-17)
+
+
+### Bug Fixes
+
+* **sdk:** Fix Moonbeam balance querying 🛠️ ([83360eb](https://github.com/paraspell/xcm-tools/commit/83360ebb1daf62ace1ce3bd52aeb25671c534528))
+
 ## [7.2.9](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.8...sdk-v7.2.9) (2024-12-16)
 
 
