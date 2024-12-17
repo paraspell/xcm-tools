@@ -1,12 +1,11 @@
 import { InvalidCurrencyError } from '../../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../../types/TTransferInfo'
-import { determineRelayChainSymbol } from '../../../utils'
-import { getExistentialDeposit, getNativeAssetSymbol } from '../assets'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
 import { getBalanceNativeInternal } from '../balance/getBalanceNative'
 import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
 import { getMaxNativeTransferableAmount } from '../getTransferableAmount'
 import { getOriginFeeDetailsInternal } from '../getOriginFeeDetails'
+import { getExistentialDeposit, getNativeAssetSymbol, getRelayChainSymbol } from '../assets'
 
 export const getTransferInfo = async <TApi, TRes>({
   origin,
@@ -19,6 +18,9 @@ export const getTransferInfo = async <TApi, TRes>({
 }: TGetTransferInfoOptions<TApi, TRes>): Promise<TTransferInfo> => {
   await api.init(origin)
   api.setDisconnectAllowed(false)
+  const destApi = api.clone()
+  await destApi.init(destination)
+  destApi.setDisconnectAllowed(false)
 
   try {
     const originBalance = await getBalanceNativeInternal({
@@ -51,7 +53,7 @@ export const getTransferInfo = async <TApi, TRes>({
       chain: {
         origin,
         destination,
-        ecosystem: determineRelayChainSymbol(origin)
+        ecosystem: getRelayChainSymbol(origin)
       },
       currencyBalanceOrigin: {
         balance: await getAssetBalanceInternal({
@@ -79,7 +81,7 @@ export const getTransferInfo = async <TApi, TRes>({
         balance: await getBalanceNativeInternal({
           address: accountDestination,
           node: destination,
-          api
+          api: destApi
         }),
         currency: getNativeAssetSymbol(destination),
         existentialDeposit: BigInt(getExistentialDeposit(destination) ?? '0')
@@ -87,6 +89,8 @@ export const getTransferInfo = async <TApi, TRes>({
     }
   } finally {
     api.setDisconnectAllowed(true)
+    api.setDisconnectAllowed(true)
     await api.disconnect()
+    await destApi.disconnect()
   }
 }
