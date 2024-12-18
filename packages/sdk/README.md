@@ -196,6 +196,20 @@ await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       })
 ```
 
+### Dryrun your XCM Calls:
+```ts
+//Builder pattern
+const result = await Builder(API /*optional*/)
+        .from(NODE)
+        .to(NODE_2)
+        .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
+        .address(ADDRESS)
+        .dryRun()
+
+//Function pattern
+getDryRun({Api, /*optional*/ node, address, tx /* Extrinsic object*/})
+```
+
 ### Asset claim:
 ```ts
 //Claim XCM trapped assets from the selected chain

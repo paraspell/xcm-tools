@@ -125,6 +125,25 @@ const response = await fetch('http://localhost:3001/x-transfer', {
 });
 ```
 
+### Dry run your XCM Calls
+
+A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#dry-run).
+
+```js
+const response = await fetch('http://localhost:3001/dry-run', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Parachain', // Replace "Parachain" with sender Parachain or Relay chain, e.g., "Acala"
+    to: 'Parachain', // Replace "Parachain" with destination Parachain or Relay chain, e.g., "Moonbeam" or custom Multilocation
+    currency: { currencySpec }, //{id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}}
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+    //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
+  }),
+```
+
 ### Batch call
 
 A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#batch-call).
