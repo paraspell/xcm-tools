@@ -704,7 +704,7 @@ importers:
         specifier: '>= 1.7.7 < 2'
         version: 1.7.7(@swc/core@1.9.3)(bufferutil@4.0.8)(jiti@2.3.3)(postcss@8.4.49)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.4.5)
     devDependencies:
-      '@babel/plugin-syntax-import-assertions':
+      '@babel/plugin-syntax-import-attributes':
         specifier: ^7.26.0
         version: 7.26.0(@babel/core@7.26.0)
       '@babel/preset-env':
@@ -904,7 +904,7 @@ importers:
       '@babel/core':
         specifier: ^7.26.0
         version: 7.26.0
-      '@babel/plugin-syntax-import-assertions':
+      '@babel/plugin-syntax-import-attributes':
         specifier: ^7.26.0
         version: 7.26.0(@babel/core@7.26.0)
       '@babel/preset-env':

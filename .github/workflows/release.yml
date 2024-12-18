@@ -19,7 +19,7 @@ jobs:
         if: ${{ steps.release.outputs.releases_created }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           registry-url: "https://registry.npmjs.org"
         if: ${{ steps.release.outputs.releases_created }}
       - uses: pnpm/action-setup@v4

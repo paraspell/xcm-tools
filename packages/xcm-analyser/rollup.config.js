@@ -1,5 +1,4 @@
 import typescript from 'rollup-plugin-typescript2';
-import json from '@rollup/plugin-json';
 import dts from 'rollup-plugin-dts';
 import { babel } from '@rollup/plugin-babel';
 import { codecovRollupPlugin } from '@codecov/rollup-plugin';
@@ -14,10 +13,8 @@ export default [
     output: [{ file: './dist/index.mjs', format: 'esm' }],
     plugins: [
       typescript(),
-      json(),
       babel({
         extensions: ['.ts'],
-        plugins: ['@babel/plugin-syntax-import-assertions'],
         babelHelpers: 'bundled',
         presets: ['@babel/preset-env'],
       }),
