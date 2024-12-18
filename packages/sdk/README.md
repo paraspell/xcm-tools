@@ -196,7 +196,7 @@ await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       })
 ```
 
-### Dryrun your XCM Calls:
+### Dry run your XCM Calls:
 ```ts
 //Builder pattern
 const result = await Builder(API /*optional*/)
@@ -207,7 +207,7 @@ const result = await Builder(API /*optional*/)
         .dryRun()
 
 //Function pattern
-getDryRun({Api, /*optional*/ node, node, address, tx /* Extrinsic object*/})
+getDryRun({api /*optional*/,  node, address, tx /* Extrinsic object */})
 ```
 
 ### Asset claim:

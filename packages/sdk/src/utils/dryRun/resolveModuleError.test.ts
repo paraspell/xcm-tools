@@ -33,6 +33,15 @@ describe('resolveModuleError', () => {
     expect(failureReason).toBe(Object.values(PolkadotXcmError)[1])
   })
 
+  it('should return the failure reason for PolkadotXcm pallet', () => {
+    const error: TModuleError = { index: '2', error: '0002' }
+    vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 2, name: 'PolkadotXcm' }])
+
+    const failureReason = resolveModuleError(mockNode, error)
+
+    expect(failureReason).toBe(Object.values(PolkadotXcmError)[2])
+  })
+
   it('should throw an error if pallet is not supported', () => {
     const error: TModuleError = { index: '3', error: '0000' }
     vi.mocked(getSupportedPalletsDetails).mockReturnValue([{ index: 3, name: 'RelayerXcm' }])

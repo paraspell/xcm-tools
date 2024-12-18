@@ -18,7 +18,7 @@ export const resolveModuleError = (node: TNodeDotKsmWithRelayChains, error: TMod
 
   const { name } = palletDetails
 
-  if (name !== 'XTokens' && name !== 'PolkadotXcm') {
+  if (name !== 'XTokens' && name !== 'PolkadotXcm' && name !== 'XcmPallet') {
     throw new Error(`Pallet ${name} is not supported`)
   }
 
