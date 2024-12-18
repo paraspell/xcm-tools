@@ -17,7 +17,7 @@ export default [
       json(),
       babel({
         extensions: ['.ts'],
-        plugins: ['@babel/plugin-syntax-import-assertions'],
+        plugins: ['@babel/plugin-syntax-import-attributes'],
         babelHelpers: 'bundled',
         presets: ['@babel/preset-env'],
       }),

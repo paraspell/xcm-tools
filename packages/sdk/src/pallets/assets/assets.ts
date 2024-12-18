@@ -1,6 +1,6 @@
 // Contains different useful asset query operations from compatible Parachains asset map
 
-import assetsMapJson from '../../maps/assets.json' assert { type: 'json' }
+import assetsMapJson from '../../maps/assets.json' with { type: 'json' }
 import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
 import { getParaId } from '../../nodes/config'
 import type {
