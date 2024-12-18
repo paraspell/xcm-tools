@@ -207,7 +207,7 @@ const result = await Builder(API /*optional*/)
         .dryRun()
 
 //Function pattern
-getDryRun({Api, /*optional*/ node, address, tx /* Extrinsic object*/})
+getDryRun({Api, /*optional*/ node, node, address, tx /* Extrinsic object*/})
 ```
 
 ### Asset claim:
