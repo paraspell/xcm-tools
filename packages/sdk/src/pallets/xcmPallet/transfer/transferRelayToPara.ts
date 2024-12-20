@@ -50,7 +50,7 @@ export const transferRelayToPara = async <TApi, TRes>(
 
     return api.callTxMethod(serializedApiCall)
   } finally {
-    if (isPjsClient(api)) {
+    if (isPjsClient(api.getApi())) {
       await api.disconnect()
     }
   }

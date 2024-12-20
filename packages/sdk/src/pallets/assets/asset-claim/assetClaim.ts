@@ -24,7 +24,7 @@ export const claimAssets = async <TApi, TRes>(
 
     return api.callTxMethod(call)
   } finally {
-    if (isPjsClient(api)) {
+    if (isPjsClient(api.getApi())) {
       await api.disconnect()
     }
   }
