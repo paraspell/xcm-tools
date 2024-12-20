@@ -46,7 +46,8 @@ describe('transferRelayToPara', () => {
       getApiOrUrl: vi.fn().mockReturnValue({}),
       clone: vi.fn().mockReturnValue({
         getApi: vi.fn().mockReturnValue({})
-      })
+      }),
+      getApi: vi.fn()
     } as unknown as IPolkadotApi<TPjsApi, Extrinsic>
 
     nodeMock = {
@@ -222,7 +223,7 @@ describe('transferRelayToPara', () => {
 
     await transferRelayToPara(options)
 
-    expect(isPjsClient).toHaveBeenCalledWith(apiMock)
+    expect(isPjsClient).toHaveBeenCalledWith(apiMock.getApi())
     expect(apiSpy).toHaveBeenCalled()
   })
 
@@ -240,7 +241,7 @@ describe('transferRelayToPara', () => {
 
     await transferRelayToPara(options)
 
-    expect(isPjsClient).toHaveBeenCalledWith(apiMock)
+    expect(isPjsClient).toHaveBeenCalledWith(apiMock.getApi())
     expect(spy).not.toHaveBeenCalled()
   })
 
@@ -267,7 +268,8 @@ describe('transferRelayToPara', () => {
     const destApiMock = {
       init: vi.fn().mockResolvedValue(undefined),
       disconnect: vi.fn().mockResolvedValue(undefined),
-      callTxMethod: vi.fn().mockResolvedValue('callTxResult')
+      callTxMethod: vi.fn().mockResolvedValue('callTxResult'),
+      getApi: vi.fn()
     } as unknown as IPolkadotApi<TPjsApi, Extrinsic>
 
     const options: TRelayToParaOptions<TPjsApi, Extrinsic> = {

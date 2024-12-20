@@ -69,7 +69,8 @@ describe('send', () => {
 
     apiMock = {
       init: vi.fn().mockResolvedValue(undefined),
-      disconnect: vi.fn().mockResolvedValue(undefined)
+      disconnect: vi.fn().mockResolvedValue(undefined),
+      getApi: vi.fn()
     } as unknown as IPolkadotApi<TPjsApi, Extrinsic>
 
     originNodeMock = {
@@ -125,7 +126,7 @@ describe('send', () => {
       ahAddress: options.ahAddress
     })
 
-    expect(isPjsClient).toHaveBeenCalledWith(apiMock)
+    expect(isPjsClient).toHaveBeenCalledWith(apiMock.getApi())
 
     expect(apiDisconnectSpy).toHaveBeenCalled()
 
@@ -174,7 +175,7 @@ describe('send', () => {
 
     const result = await send(options)
 
-    expect(isPjsClient).toHaveBeenCalledWith(apiMock)
+    expect(isPjsClient).toHaveBeenCalledWith(apiMock.getApi())
 
     const apiSpy = vi.spyOn(apiMock, 'init')
     expect(apiSpy).not.toHaveBeenCalled()

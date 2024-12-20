@@ -107,7 +107,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       ahAddress
     })
   } finally {
-    if (isPjsClient(api)) {
+    if (isPjsClient(api.getApi())) {
       await api.disconnect()
     }
   }
