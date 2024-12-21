@@ -124,60 +124,6 @@ await RouterBuilder
         .buildAndSend()
 ```
 
-##  Function pattern with automatic exchange selection (Based on best price)
-
-If you wish to have an exchange chain selection based on the best price outcome, you can opt for an automatic exchange selection method. This method can be selected by **not using**  `exchange:` parameter in the call. The router will then automatically select the best exchange chain for you based on the best price outcome.
-
-```js
-await transfer({
-        from: 'Polkadot', //Origin Parachain/Relay chain
-        to: 'Interlay', //Destination Parachain/Relay chain
-        currencyFrom: {symbol: 'DOT'}, // Currency to send {id: currencyID} | {symbol: currencySymbol}
-        currencyTo: {symbol: 'INTR'}, // Currency to receive {id: currencyID} | {symbol: currencySymbol}
-        amount: '100000', // Amount to send
-        slippagePct: '1', // Max slipppage percentage
-        injectorAddress: selectedAccount.address, //Injector address
-        address: recipientAddress, //Recipient address
-        signer: injector.signer,  //Signer
-        //evmInjectorAddress: evmInjector address,   //Optional parameters when origin node is EVM based (Required with evmSigner)
-        //evmSigner: EVM signer,                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
-
-        onStatusChange: (status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
-          console.log(status.hashes);   //Transaction hashes
-          console.log(status.status);   //Transaction statuses
-          console.log(status.type);     //Transaction types
-        },
-});
-
-```
-
-##  Function pattern with manual exchange selection
-
-If you wish to select your exchange chain manually, you can provide the additional `exchange:` parameter to the call. The router will then use the exchange chain of your choice.
-
-```js
-await transfer({
-        from: 'Polkadot', //Origin Parachain/Relay chain
-        exchange: 'AcalaDex', //Exchange Parachain
-        to: 'Interlay', //Destination Parachain/Relay chain
-        currencyFrom: {symbol: 'DOT'}, // Currency to send
-        currencyTo: {symbol: 'INTR'}, // Currency to receive
-        amount: '100000', // Amount to send
-        slippagePct: '1', // Max slipppage percentage
-        injectorAddress: selectedAccount.address, //Injector address
-        address: recipientAddress, //Recipient address
-        signer: injector.signer,  //Signer
-        //evmInjectorAddress: evmInjector address,   //Optional parameters when origin node is EVM based (Required with evmSigner)
-        //evmSigner: EVM signer,                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
-
-        onStatusChange: (status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
-          console.log(status.hashes);   //Transaction hashes
-          console.log(status.status);   //Transaction statuses
-          console.log(status.type);     //Transaction types
-        },
-});
-```
-
 ## Snowbridge
 You can now use Ethereum <> Polkadot bridge in the XCM Router. There are two scenarios to this transfer.
 
