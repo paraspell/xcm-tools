@@ -22,7 +22,7 @@
 <br /><br />
 
 ### Introduction
-XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation, that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within one call and three signatures. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **8 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **524** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
+XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within one call and three signatures. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **8 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **524** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
 
 **Exchanges implemented:**
 - Acala / 36 Pools available
@@ -51,11 +51,11 @@ npm install || yarn add @paraspell/xcm-router
 
 ## Importing package to your project
 
-Builder pattern:
+Builder:
 ```ts
 import { RouterBuilder } from '@paraspell/xcm-router'
 ```
-Other patterns:
+Other exposed functions/ways:
 ```js
 // ESM
 import * as xcmRouter from '@paraspell/xcm-router'
@@ -71,7 +71,7 @@ import { transfer,
 
 # Implementation
 
-## Builder pattern with automatic exchange selection (Based on best price)
+## Automatic exchange selection (Based on best price)
 
 If you wish to have an exchange chain selection based on the best price outcome, you can opt for an automatic exchange selection method. This method can be selected by **not using** the `.exchange()` parameter in the call. The router will then automatically select the best exchange chain for you based on the best price outcome.
 
@@ -97,7 +97,7 @@ await RouterBuilder
         .buildAndSend()
 ```
 
-##  Builder pattern with manual exchange selection
+## Manual exchange selection
 
 If you wish to select your exchange chain manually, you can provide the additional `.exchange()` parameter to the call. The router will then use the exchange chain of your choice.
 
