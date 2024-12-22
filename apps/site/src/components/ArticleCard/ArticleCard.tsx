@@ -8,9 +8,17 @@ type Props = {
   image: string;
   date: string;
   link: string;
+  containImage?: boolean;
 };
 
-const ArticleCard: FC<Props> = ({ title, category, image, date, link }) => (
+const ArticleCard: FC<Props> = ({
+  title,
+  category,
+  image,
+  date,
+  link,
+  containImage = true,
+}) => (
   <Card
     component="a"
     href={link}
@@ -30,7 +38,7 @@ const ArticleCard: FC<Props> = ({ title, category, image, date, link }) => (
         src={image}
         maw={{ base: undefined, xs: 200 }}
         h={160}
-        fit="contain"
+        fit={containImage ? "contain" : "cover"}
         p="lg"
       />
       <div className={classes.body}>

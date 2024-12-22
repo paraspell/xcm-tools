@@ -12,6 +12,14 @@ const Research = () => (
       innovative, future-proof solutions for decentralized systems.
     </Text>
     <ArticleCard
+      title="First pallet-agnostic cross-chain NFT pallet for Polkadot Paraverse"
+      category="Networks"
+      image="https://miro.medium.com/v2/resize:fit:720/format:webp/1*ylhcUQCKgZ4o2A478x09cw.png"
+      date="Nov 19, 2024"
+      link="https://medium.com/networkers-fiit-stu/first-pallet-agnostic-cross-chain-nft-pallet-for-polkadot-paraverse-10a18a31b8ea"
+      containImage={false}
+    />
+    <ArticleCard
       title="The first XCM Router in the Polkadot ecosystem meant to boost cross-chain exchange implementations"
       category="Networks"
       image="https://miro.medium.com/v2/resize:fit:720/format:webp/1*9RIeW92uopi866WUKVn7Iw.png"
