@@ -29,6 +29,7 @@
     "@polkadot/extension-inject": "^0.56.2",
     "@polkadot/keyring": "^13.2.3",
     "@polkadot/util": "^13.2.3",
+    "@polkadot/util-crypto": "^13.2.3",
     "@snowbridge/contract-types": "^0.1.25",
     "@tabler/icons-react": "^3.23.0",
     "axios": "^1.7.8",
@@ -38,6 +39,7 @@
     "react-confetti": "^6.1.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.0.1",
+    "viem": "^2.21.56",
     "web3": "^4.15.0",
     "web3-validator": "^2.0.6"
   },

@@ -1,19 +1,29 @@
 import type { AbstractProvider, Signer } from 'ethers'
-import type { TCurrencyCoreV1WithAmount, TNodePolkadotKusama } from '../../types'
-import type { TEvmBuilderOptions, TOptionalEvmBuilderOptions } from '../../types/TBuilder'
-import transferEthToPolkadot from '../../pallets/xcmPallet/ethTransfer/ethTransfer'
+import type {
+  TCurrencyCoreV1WithAmount,
+  TEvmBuilderOptions,
+  TNodePolkadotKusama,
+  TOptionalEvmBuilderOptions
+} from '../../types'
+import { transferMoonbeamEvm } from '../../pallets/xcmPallet/ethTransfer/moonbeam/transferMoonbeamEvm'
+import { transferEthToPolkadot } from '../../pallets/xcmPallet/ethTransfer/ethTransfer'
+import type { IPolkadotApi } from '../../api'
 
 /**
  * Builder class for constructing transfers from Ethereum to Polkadot.
  */
-class EvmBuilderClass {
-  private readonly _options: TOptionalEvmBuilderOptions
+export class EvmBuilderClass<TApi, TRes> {
+  _options: TOptionalEvmBuilderOptions<TApi, TRes>
 
-  private readonly _provider: AbstractProvider
-
-  constructor(provider: AbstractProvider) {
-    this._provider = provider
+  constructor(api: IPolkadotApi<TApi, TRes>, provider?: AbstractProvider) {
     this._options = {}
+    this._options.api = api
+    this._options.provider = provider
+  }
+
+  from(node: 'Ethereum' | 'Moonbeam' | 'Moonriver'): this {
+    this._options.from = node
+    return this
   }
 
   /**
@@ -65,8 +75,14 @@ class EvmBuilderClass {
    *
    * @throws Error if any required parameters are missing.
    */
-  async build(): Promise<void> {
-    const requiredParams: Array<keyof TEvmBuilderOptions> = ['to', 'currency', 'address', 'signer']
+  async build(): Promise<string> {
+    const requiredParams: Array<keyof TEvmBuilderOptions<TApi, TRes>> = [
+      'from',
+      'to',
+      'currency',
+      'address',
+      'signer'
+    ]
 
     for (const param of requiredParams) {
       if (this._options[param] === undefined) {
@@ -74,7 +90,14 @@ class EvmBuilderClass {
       }
     }
 
-    await transferEthToPolkadot(this._provider, this._options as TEvmBuilderOptions)
+    if (this._options.from === 'Moonbeam' || this._options.from === 'Moonriver') {
+      return await transferMoonbeamEvm(this._options as TEvmBuilderOptions<TApi, TRes>)
+    }
+
+    return (
+      (await transferEthToPolkadot(this._options as TEvmBuilderOptions<TApi, TRes>)).result.success
+        ?.ethereum.blockHash ?? ''
+    )
   }
 }
 
@@ -84,4 +107,7 @@ class EvmBuilderClass {
  * @param provider - The Ethereum provider to use for the transfer.
  * @returns An instance of EvmBuilder class
  */
-export const EvmBuilder = (provider: AbstractProvider) => new EvmBuilderClass(provider)
+export const EvmBuilder = <TApi, TRes>(
+  api: IPolkadotApi<TApi, TRes>,
+  provider?: AbstractProvider
+) => new EvmBuilderClass(api, provider)

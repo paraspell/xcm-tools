@@ -1,17 +1,26 @@
 import { useForm } from "@mantine/form";
 import type { FC } from "react";
-import { Button, Checkbox, Select, Stack, TextInput } from "@mantine/core";
+import {
+  Button,
+  Checkbox,
+  Select,
+  Stack,
+  Switch,
+  TextInput,
+} from "@mantine/core";
 import type { TAsset, TNodePolkadotKusama } from "@paraspell/sdk";
 import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from "@paraspell/sdk";
 import { isValidPolkadotAddress } from "../../utils";
 import useCurrencyOptions from "../../hooks/useCurrencyOptions";
 
 export type FormValues = {
+  from: "Ethereum" | "Moonbeam";
   to: TNodePolkadotKusama;
   currencyOptionId: string;
   address: string;
   amount: string;
   useApi: boolean;
+  useViem: boolean;
 };
 
 export type FormValuesTransformed = FormValues & {
@@ -23,14 +32,16 @@ type Props = {
   loading: boolean;
 };
 
-const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
+const EvmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
+      from: "Ethereum",
       to: "AssetHubPolkadot",
       currencyOptionId: "",
       amount: "1000000000",
       address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
       useApi: false,
+      useViem: false,
     },
 
     validate: {
@@ -39,9 +50,10 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
-  const { to } = form.getValues();
-
-  const { currencyOptions, currencyMap } = useCurrencyOptions("Ethereum", to);
+  const { currencyOptions, currencyMap } = useCurrencyOptions(
+    form.values.from,
+    form.values.to,
+  );
 
   const onSubmitInternal = (values: FormValues) => {
     const currency = currencyMap[values.currencyOptionId];
@@ -58,14 +70,20 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   return (
     <form onSubmit={form.onSubmit(onSubmitInternal)}>
       <Stack>
+        <Switch
+          label="Use viem?"
+          data-testid="switch-api"
+          {...form.getInputProps("useViem")}
+        />
+
         <Select
           label="From"
           placeholder="Pick value"
-          data={["Ethereum"]}
+          data={["Ethereum", "Moonbeam", "Moonriver"]}
           allowDeselect={false}
           searchable
-          disabled
-          value="Ethereum"
+          data-testid="select-source"
+          {...form.getInputProps("from")}
         />
 
         <Select
@@ -80,6 +98,7 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
         />
 
         <Select
+          key={form.values.from + form.values.to}
           label="Currency"
           placeholder="Pick value"
           data={currencyOptions}
@@ -120,4 +139,4 @@ const EthBridgeTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   );
 };
 
-export default EthBridgeTransferForm;
+export default EvmTransferForm;

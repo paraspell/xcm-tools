@@ -61,6 +61,7 @@ describe('transferFromEthereum', () => {
 
   it('should successfully handle a transfer from Ethereum', async () => {
     vi.mocked(EvmBuilder).mockImplementationOnce((() => ({
+      from: vi.fn().mockReturnThis(),
       to: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
       amount: vi.fn().mockReturnThis(),
@@ -84,6 +85,7 @@ describe('transferFromEthereum', () => {
   it('should handle errors during the transfer process', async () => {
     const error = new Error('Failed to build transaction');
     vi.mocked(EvmBuilder).mockImplementationOnce((() => ({
+      from: vi.fn().mockReturnThis(),
       to: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
       amount: vi.fn().mockReturnThis(),

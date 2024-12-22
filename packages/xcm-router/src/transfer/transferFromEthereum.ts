@@ -14,6 +14,7 @@ export const transferFromEthereum = async (options: TTransferOptionsModified) =>
     status: TransactionStatus.IN_PROGRESS,
   });
   await EvmBuilder(provider)
+    .from('Ethereum')
     .to('AssetHubPolkadot')
     .address(assetHubAddress ?? '')
     .currency({

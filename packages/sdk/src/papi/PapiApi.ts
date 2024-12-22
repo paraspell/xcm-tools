@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import type {
-  THexString,
   TAsset,
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
@@ -89,7 +88,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   createAccountId(address: string) {
-    return FixedSizeBinary.fromAccountId32<32>(address).asHex() as THexString
+    return FixedSizeBinary.fromAccountId32<32>(address).asHex()
+  }
+
+  accountToHex(address: string, isPrefixed = true) {
+    const binary = FixedSizeBinary.fromAccountId32<32>(address)
+    return binary.asHex().slice(isPrefixed ? 2 : 0)
   }
 
   callTxMethod({ module, section, parameters }: TSerializedApiCall) {

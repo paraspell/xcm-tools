@@ -10,7 +10,7 @@ import type { XTransferEthDto } from './dto/x-transfer-eth.dto.js';
 import { XTransferEthService } from './x-transfer-eth.service.js';
 
 vi.mock('@paraspell/sdk', () => ({
-  NODE_NAMES_DOT_KSM: ['Polkadot', 'Kusama'],
+  NODE_NAMES_DOT_KSM: ['Polkadot', 'Kusama', 'AssetHubPolkadot'],
   buildEthTransferOptions: vi.fn(),
 }));
 
@@ -25,8 +25,26 @@ describe('XTransferEthService', () => {
     service = new XTransferEthService();
   });
 
-  it('should throw BadRequestException if the node is invalid', async () => {
+  it('should throw BadRequestException if the from node is invalid', async () => {
     const dto: XTransferEthDto = {
+      from: 'InvalidNode',
+      to: 'AssetHubPolkadot',
+      address: '0xAddress',
+      destAddress: '1DestinationAddress',
+      currency: { symbol: 'DOT', amount: 100 },
+    };
+
+    await expect(service.generateEthCall(dto)).rejects.toThrow(
+      BadRequestException,
+    );
+    await expect(service.generateEthCall(dto)).rejects.toThrow(
+      'Node InvalidNode is not valid. Check docs for valid nodes.',
+    );
+  });
+
+  it('should throw BadRequestException if the to node is invalid', async () => {
+    const dto: XTransferEthDto = {
+      from: 'Ethereum',
       to: 'InvalidNode',
       address: '0xAddress',
       destAddress: '1DestinationAddress',
@@ -43,7 +61,8 @@ describe('XTransferEthService', () => {
 
   it('should throw BadRequestException if the destination address is invalid', async () => {
     const dto: XTransferEthDto = {
-      to: 'Polkadot',
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
       address: '0xAddress',
       destAddress: 'InvalidAddress',
       currency: { symbol: 'DOT', amount: 100 },
@@ -61,7 +80,8 @@ describe('XTransferEthService', () => {
 
   it('should return the result from buildEthTransferOptions for valid input', async () => {
     const dto: XTransferEthDto = {
-      to: 'Polkadot',
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
       address: '0xAddress',
       destAddress: '1DestinationAddress',
       currency: { symbol: 'DOT', amount: 100 },
@@ -78,7 +98,8 @@ describe('XTransferEthService', () => {
 
     expect(result).toBe(mockResult);
     expect(buildEthTransferOptions).toHaveBeenCalledWith({
-      to: 'Polkadot',
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
       address: '0xAddress',
       destAddress: '1DestinationAddress',
       currency: { symbol: 'DOT', amount: 100 },
@@ -87,7 +108,8 @@ describe('XTransferEthService', () => {
 
   it('should throw InternalServerErrorException when buildEthTransferOptions throws an error', async () => {
     const dto: XTransferEthDto = {
-      to: 'Polkadot',
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
       address: '0xAddress',
       destAddress: '1DestinationAddress',
       currency: { symbol: 'DOT', amount: 100 },

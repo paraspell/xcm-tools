@@ -18,8 +18,6 @@ import type { TPallet } from './TPallet'
 import type { WithApi } from './TApi'
 import type { TAsset } from './TAssets'
 
-export type THexString = `0x${string}`
-
 export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   header: TMultiLocationHeader
