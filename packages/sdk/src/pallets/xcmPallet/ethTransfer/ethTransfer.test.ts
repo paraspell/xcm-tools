@@ -5,9 +5,12 @@ import type { Context } from '@snowbridge/api'
 import { toPolkadot } from '@snowbridge/api'
 import type { TEvmBuilderOptions } from '../../../types'
 import type { SendValidationResult } from '@snowbridge/api/dist/toPolkadot'
-import transferEthToPolkadot from './ethTransfer'
+import { transferEthToPolkadot } from './ethTransfer'
 import type { AbstractProvider, Signer } from 'ethers'
 import { getParaId } from '../../../nodes/config'
+import type { Extrinsic, TPjsApi } from '../../../pjs'
+import type { IPolkadotApi } from '../../../api'
+import type { WalletClient } from 'viem'
 
 vi.mock('./findEthAsset', () => ({
   findEthAsset: vi.fn()
@@ -62,16 +65,19 @@ describe('transferEthToPolkadot', () => {
     } as SendValidationResult)
     vi.mocked(toPolkadot).send.mockResolvedValue({})
 
-    const mockProvider = {} as AbstractProvider
-
-    const options: TEvmBuilderOptions = {
+    const options: TEvmBuilderOptions<TPjsApi, Extrinsic> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+      provider: {} as AbstractProvider,
       currency: { symbol: 'ETH', amount: '1000000' },
+      from: 'Ethereum',
       to: 'AssetHubPolkadot',
       address: '0xSenderAddress',
-      signer: {} as Signer
+      signer: {
+        provider: {}
+      } as Signer
     }
 
-    const result = await transferEthToPolkadot(mockProvider, options)
+    const result = await transferEthToPolkadot(options)
 
     expect(result).toEqual({
       result: {},
@@ -84,5 +90,40 @@ describe('transferEthToPolkadot', () => {
         }
       }
     })
+  })
+
+  it('throws error if provider is not provided', async () => {
+    const options: TEvmBuilderOptions<TPjsApi, Extrinsic> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+      currency: { symbol: 'ETH', amount: '1000000' },
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
+      address: '0xSenderAddress',
+      signer: {
+        provider: {}
+      } as Signer
+    }
+
+    await expect(transferEthToPolkadot(options)).rejects.toThrow(
+      'provider parameter is required for Snowbridge transfers.'
+    )
+  })
+
+  it('throws error if signer is not an ethers signer', async () => {
+    const options: TEvmBuilderOptions<TPjsApi, Extrinsic> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+      provider: {} as AbstractProvider,
+      currency: { symbol: 'ETH', amount: '1000000' },
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
+      address: '0xSenderAddress',
+      signer: {
+        otherProvider: {}
+      } as unknown as WalletClient
+    }
+
+    await expect(transferEthToPolkadot(options)).rejects.toThrow(
+      'Snowbridge does not support Viem provider yet.'
+    )
   })
 })

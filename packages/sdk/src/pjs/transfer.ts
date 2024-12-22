@@ -1,6 +1,7 @@
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 import * as transferImpl from '../pallets/xcmPallet/transfer'
-import type { TSendOptions } from '../types'
+import * as ethTransferImpl from '../pallets/xcmPallet/ethTransfer/ethTransfer'
+import type { TEvmBuilderOptions, TSendOptions } from '../types'
 import PolkadotJsApi from './PolkadotJsApi'
 import { createPolkadotJsApiCall } from './utils'
 
@@ -28,4 +29,12 @@ export const send = (
 
 export const getDryRun = createPolkadotJsApiCall(transferImpl.getDryRun<TPjsApi, Extrinsic>)
 
-export * from '../pallets/xcmPallet/ethTransfer'
+export const transferEthToPolkadot = (
+  options: Omit<TEvmBuilderOptions<TPjsApi, Extrinsic>, 'api'>
+) =>
+  ethTransferImpl.transferEthToPolkadot({
+    ...options,
+    api: new PolkadotJsApi()
+  })
+
+export * from '../pallets/xcmPallet/ethTransfer/buildEthTransferOptions'

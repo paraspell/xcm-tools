@@ -11,7 +11,7 @@ import AssetsQueries from "../components/assets/AssetsQueries";
 import PalletsQueries from "../components/pallets/PalletsQueries";
 import TransferInfo from "../components/TransferInfo";
 import AssetClaim from "../components/asset-claim/AssetClaim";
-import EthBridgeTransfer from "../components/eth-bridge/EthBridgeTransfer";
+import EvmTransfer from "../components/evm-transfer/EvmTransfer";
 
 const XcmSdkSandbox = () => {
   const iconStyle = { width: rem(12), height: rem(12) };
@@ -56,11 +56,11 @@ const XcmSdkSandbox = () => {
           Asset Claim
         </Tabs.Tab>
         <Tabs.Tab
-          value="eth-bridge"
+          value="evm-transfer"
           leftSection={<IconWallet style={iconStyle} />}
-          data-testid="tab-eth-bridge"
+          data-testid="tab-evm-transfer"
         >
-          ETH Bridge
+          EVM Transfer
         </Tabs.Tab>
       </Tabs.List>
 
@@ -85,8 +85,8 @@ const XcmSdkSandbox = () => {
           <AssetClaim />
         </Tabs.Panel>
 
-        <Tabs.Panel value="eth-bridge">
-          <EthBridgeTransfer />
+        <Tabs.Panel value="evm-transfer">
+          <EvmTransfer />
         </Tabs.Panel>
       </Container>
     </Tabs>

@@ -88,6 +88,7 @@ export const buildTransferExtrinsics = async (
   if (type === TransactionType.TO_EXCHANGE) {
     if (from === 'Ethereum' && assetHubAddress) {
       const fromEthereumTx = await buildEthTransferOptions({
+        from: 'Ethereum',
         to: 'AssetHubPolkadot',
         address: ethAddress ?? '',
         destAddress: assetHubAddress,
@@ -173,6 +174,7 @@ export const buildTransferExtrinsics = async (
     }
   } else if (type === TransactionType.FROM_ETH && assetHubAddress) {
     const fromEthereumTx = await buildEthTransferOptions({
+      from: 'Ethereum',
       to: 'AssetHubPolkadot',
       address: ethAddress ?? '',
       destAddress: assetHubAddress,
@@ -208,6 +210,7 @@ export const buildTransferExtrinsics = async (
     // TO_EXCHANGE
     if (from === 'Ethereum' && assetHubAddress) {
       const fromEthereumTx = await buildEthTransferOptions({
+        from: 'Ethereum',
         to: 'AssetHubPolkadot',
         address: ethAddress ?? '',
         destAddress: assetHubAddress,

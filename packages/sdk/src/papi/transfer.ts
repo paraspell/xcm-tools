@@ -1,5 +1,6 @@
 import * as transferImpl from '../pallets/xcmPallet/transfer'
-import type { TSendOptions } from '../types'
+import * as ethTransferImpl from '../pallets/xcmPallet/ethTransfer'
+import type { TEvmBuilderOptions, TSendOptions } from '../types'
 import PapiApi from './PapiApi'
 import type { TPapiApiOrUrl, TPapiApi, TPapiTransaction } from './types'
 import { createPapiApiCall } from './utils'
@@ -28,4 +29,12 @@ export const send = (
 
 export const getDryRun = createPapiApiCall(transferImpl.getDryRun<TPapiApi, TPapiTransaction>)
 
-export * from '../pallets/xcmPallet/ethTransfer'
+export const transferEthToPolkadot = (
+  options: Omit<TEvmBuilderOptions<TPapiApi, TPapiTransaction>, 'api'>
+) =>
+  ethTransferImpl.transferEthToPolkadot({
+    ...options,
+    api: new PapiApi()
+  })
+
+export * from '../pallets/xcmPallet/ethTransfer/buildEthTransferOptions'

@@ -1,14 +1,12 @@
 import { Stack, Title, Box, Button } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { useState, useEffect } from "react";
-import type { BrowserProvider, LogDescription } from "ethers";
+import type { BrowserProvider, LogDescription, Signer } from "ethers";
 import { ethers } from "ethers";
 import ErrorAlert from "../ErrorAlert";
-import type {
-  FormValues,
-  FormValuesTransformed,
-} from "./EthBridgeTransferForm";
-import EthBridgeTransferForm from "./EthBridgeTransferForm";
+import type { FormValues, FormValuesTransformed } from "./EvmTransferForm";
+import EvmTransferForm from "./EvmTransferForm";
+import type { TNode } from "@paraspell/sdk";
 import { EvmBuilder } from "@paraspell/sdk";
 import { fetchFromApi } from "../../utils/submitUsingApi";
 import { IGateway__factory } from "@snowbridge/contract-types";
@@ -19,8 +17,11 @@ import { Web3 } from "web3";
 import type { EIP6963ProviderDetail, TEthBridgeApiResponse } from "../../types";
 import EthWalletSelectModal from "../EthWalletSelectModal";
 import EthAccountsSelectModal from "../EthAccountsSelectModal";
+import type { Address } from "viem";
+import { createWalletClient, custom } from "viem";
+import { moonbeam, mainnet, moonriver } from "viem/chains";
 
-const EthBridgeTransfer = () => {
+const EvmTransfer = () => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
 
@@ -131,26 +132,45 @@ const EthBridgeTransfer = () => {
   }, [error, scrollIntoView]);
 
   const submitEthTransactionSdk = async ({
+    from,
     to,
     amount,
     currency,
     address,
+    useViem,
   }: FormValuesTransformed) => {
     if (!provider) {
       throw new Error("Provider not initialized");
     }
 
-    const signer = await provider.getSigner();
+    const getChain = (node: TNode) => {
+      if (node === "Moonbeam") {
+        return moonbeam;
+      }
+      if (node === "Moonriver") {
+        return moonriver;
+      }
+      return mainnet;
+    };
+
+    const signer = useViem
+      ? createWalletClient({
+          account: selectedAccount as Address,
+          chain: getChain(from),
+          transport: custom(window.ethereum!),
+        })
+      : await provider.getSigner();
 
     if (!signer) {
       throw new Error("Signer not initialized");
     }
 
     await EvmBuilder(provider)
+      .from(from)
       .to(to)
       .currency({ symbol: currency?.symbol ?? "", amount })
       .address(address)
-      .signer(signer)
+      .signer(signer as Signer)
       .build();
   };
 
@@ -232,6 +252,8 @@ const EthBridgeTransfer = () => {
       throw new Error("No account selected!");
     }
 
+    console.log("Submitting transaction with values:", formValues);
+
     setLoading(true);
 
     try {
@@ -267,7 +289,7 @@ const EthBridgeTransfer = () => {
   return (
     <Stack gap="xl">
       <Stack w="100%" maw={400} mx="auto" gap="lg">
-        <Title order={3}>Ethereum Bridge Transfer</Title>
+        <Title order={3}>EVM Transfer</Title>
         <Button
           size="xs"
           variant="outline"
@@ -278,7 +300,7 @@ const EthBridgeTransfer = () => {
             ? `Connected: ${selectedAccount.substring(0, 6)}...${selectedAccount.substring(selectedAccount.length - 4)}`
             : "Connect Ethereum Wallet"}
         </Button>
-        <EthBridgeTransferForm onSubmit={onSubmit} loading={loading} />
+        <EvmTransferForm onSubmit={onSubmit} loading={loading} />
       </Stack>
       <Box ref={targetRef}>
         {alertOpened && (
@@ -306,4 +328,4 @@ const EthBridgeTransfer = () => {
   );
 };
 
-export default EthBridgeTransfer;
+export default EvmTransfer;

@@ -1,13 +1,15 @@
 import type { MockInstance } from 'vitest'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as transferImpl from '../pallets/xcmPallet/transfer'
-import { send } from './transfer'
+import * as ethTransferImpl from '../pallets/xcmPallet/ethTransfer/ethTransfer'
+import { send, transferEthToPolkadot } from './transfer'
 import PapiApi from './PapiApi'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
-import type { TSendOptions } from '../types'
+import type { TEvmBuilderOptions, TSendOptions } from '../types'
 
 vi.mock('./PapiApi')
 vi.mock('../pallets/xcmPallet/transfer')
+vi.mock('../pallets/xcmPallet/ethTransfer/ethTransfer')
 
 describe('Send function using PapiApi', () => {
   const mockApi = {} as TPapiApi
@@ -45,6 +47,19 @@ describe('Send function using PapiApi', () => {
         ...optionsSend,
         api: expect.any(PapiApi),
         destApiForKeepAlive: expect.any(PapiApi)
+      })
+    })
+  })
+
+  describe('transferEthToPolkadot', () => {
+    it('should call transferEthToPolkadot in ethTransferImpl with correct arguments', async () => {
+      const options = {} as TEvmBuilderOptions<TPapiApi, TPapiTransaction>
+
+      await transferEthToPolkadot(options)
+
+      expect(ethTransferImpl.transferEthToPolkadot).toHaveBeenCalledWith({
+        ...options,
+        api: expect.any(PapiApi)
       })
     })
   })

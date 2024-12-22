@@ -1,14 +1,20 @@
-import type { Signer } from 'ethers'
+import type { AbstractProvider, Signer } from 'ethers'
 import type { TNodeDotKsmWithRelayChains, TNodePolkadotKusama, TNodeWithRelayChains } from './TNode'
 import type { TCurrencyCoreV1WithAmount, TCurrencyInputWithAmount } from './TCurrency'
 import type { TAddress, TDestination, TVersionClaimAssets, Version } from './TTransfer'
 import type { TMultiAsset } from './TMultiAsset'
 import type { TDryRunResult } from './TDryRun'
+import type { WithApi } from './TApi'
+import type { WalletClient } from 'viem'
 
 /**
  * The options for the Ethereum to Polkadot transfer builder.
  */
-export type TEvmBuilderOptions = {
+export type TEvmBuilderOptionsBase = {
+  /**
+   * The source node. Can be either 'Ethereum' or 'Moonbeam'.
+   */
+  from: 'Ethereum' | 'Moonbeam' | 'Moonriver'
   /**
    * The destination node on Polkadot network.
    */
@@ -24,10 +30,14 @@ export type TEvmBuilderOptions = {
   /**
    * The Ethereum signer.
    */
-  signer: Signer
+  signer: Signer | WalletClient
 }
 
-export type TSerializeEthTransferOptions = Omit<TEvmBuilderOptions, 'signer'> & {
+export type TEvmBuilderOptions<TApi, TRes> = WithApi<TEvmBuilderOptionsBase, TApi, TRes> & {
+  provider?: AbstractProvider
+}
+
+export type TSerializeEthTransferOptions = Omit<TEvmBuilderOptionsBase, 'signer'> & {
   destAddress: string
 }
 
@@ -43,7 +53,9 @@ type OptionalProperties<T> = {
   [P in keyof T]?: T[P] | undefined
 }
 
-export type TOptionalEvmBuilderOptions = OptionalProperties<TEvmBuilderOptions>
+export type TOptionalEvmBuilderOptions<TApi, TRes> = OptionalProperties<
+  TEvmBuilderOptions<TApi, TRes>
+>
 
 /**
  * The options for the batch builder.

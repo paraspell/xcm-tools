@@ -1,10 +1,4 @@
-import type {
-  TAmount,
-  TCurrencyInput,
-  TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama,
-  TRelaychain
-} from '../../types'
+import type { TAmount, TRelaychain, TNodePolkadotKusama, TCurrencyInput } from '../../types'
 import {
   Version,
   Parents,
@@ -179,9 +173,9 @@ export const resolveTNodeFromMultiLocation = (
 
 export const throwUnsupportedCurrency = (
   currency: TCurrencyInput,
-  node: TNodeDotKsmWithRelayChains,
+  node: string,
   { isDestination } = { isDestination: false }
-) => {
+): never => {
   if ('multilocation' in currency) {
     throw new InvalidCurrencyError(`
       Selected chain doesn't support multilocation you provided. Maybe you meant custom multilocation. If so, you need to use override option. Your selection should look like this: {multilocation: Override(${JSON.stringify(currency.multilocation)})}.`)

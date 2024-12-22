@@ -1,10 +1,10 @@
 import { toPolkadot, environment } from '@snowbridge/api'
 import type { TEvmBuilderOptions } from '../../../types/TBuilder'
-import type { AbstractProvider } from 'ethers'
 import { findEthAsset } from './findEthAsset'
 import { createContext } from './createContext'
 import { checkPlanFailure } from './checkPlanFailure'
 import { getParaId } from '../../../nodes/config'
+import { isEthersSigner } from './utils'
 
 /**
  * Transfers an Ethereum asset to a Polkadot account.
@@ -16,10 +16,21 @@ import { getParaId } from '../../../nodes/config'
  *
  * @throws Will throw an error if the transfer validation fails or if the transfer cannot be completed.
  */
-const transferEthToPolkadot = async (
-  provider: AbstractProvider,
-  { signer, address, to, currency }: TEvmBuilderOptions
-) => {
+export const transferEthToPolkadot = async <TApi, TRes>({
+  provider,
+  signer,
+  address,
+  to,
+  currency
+}: TEvmBuilderOptions<TApi, TRes>) => {
+  if (!provider) {
+    throw new Error('provider parameter is required for Snowbridge transfers.')
+  }
+
+  if (!isEthersSigner(signer)) {
+    throw new Error('Snowbridge does not support Viem provider yet.')
+  }
+
   const ethAsset = findEthAsset(currency)
 
   const env = environment.SNOWBRIDGE_ENV['polkadot_mainnet']
@@ -46,5 +57,3 @@ const transferEthToPolkadot = async (
     plan
   }
 }
-
-export default transferEthToPolkadot

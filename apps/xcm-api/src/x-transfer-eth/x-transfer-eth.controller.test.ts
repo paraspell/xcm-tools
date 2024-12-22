@@ -35,6 +35,7 @@ describe('XTransferEthController', () => {
   describe('generateXcmCall', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
       const queryParams: XTransferEthDto = {
+        from: 'Ethereum',
         to: 'AssetHubPolkadot',
         address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
         currency: { symbol: 'WETH', amount: 100 },

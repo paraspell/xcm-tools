@@ -24,6 +24,8 @@ import { isForeignAsset } from '../utils/assets'
 import { computeFeeFromDryRunPjs } from '../utils/dryRun/computeFeeFromDryRunPjs'
 import { resolveModuleError } from '../utils/dryRun/resolveModuleError'
 import { getAssetsObject } from '../pallets/assets'
+import { decodeAddress } from '@polkadot/util-crypto'
+import { u8aToHex } from '@polkadot/util'
 
 const lowercaseFirstLetter = (value: string) => value.charAt(0).toLowerCase() + value.slice(1)
 
@@ -71,6 +73,11 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
   createAccountId(address: string) {
     return this.api.createType('AccountId32', address).toHex()
+  }
+
+  accountToHex(address: string, isPrefixed = true) {
+    const uint8Array = decodeAddress(address)
+    return u8aToHex(uint8Array, -1, isPrefixed)
   }
 
   callTxMethod({ module, section, parameters }: TSerializedApiCall) {

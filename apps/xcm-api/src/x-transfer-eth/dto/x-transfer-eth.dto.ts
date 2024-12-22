@@ -2,6 +2,7 @@ import { CurrencyCoreSchemaV1WithAmount } from '../../x-transfer/dto/XTransferDt
 import { z } from 'zod';
 
 export const XTransferEthDtoSchema = z.object({
+  from: z.string(),
   to: z.string(),
   address: z.string().min(1, { message: 'Source address is required' }),
   destAddress: z
