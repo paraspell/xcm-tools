@@ -24,27 +24,19 @@
 
 <br /><br />
 <br /><br />
+
 ## Installation
 
 ### Install dependencies
 
-Install peer dependencies according to the choice of API package. 
-
 ParaSpell XCM SDK is the 🥇 in the ecosystem to support both **PolkadotJS** and **PolkadotAPI**.
 
-```
-NOTE: Make sure to set PeerDependencyInstall flag to false on your package manager (Because it will install both API packages instead of just one)
-For example on PNPM: `pnpm config set auto-install-peers false`
-```
+**This version of SDK uses PolkadotAPI** if you wish to use **PolkadotJS** version please reffer to [following package](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-pjs).
+
 
 ```bash
-#Choose a package and install its dependencies below (SDK is built in a way, that only one library has to be installed)
-
 #Polkadot API peer dependencies
 pnpm | npm install || yarn add polkadot-api 
-
-#PolkadotJS peer dependencies
-pnpm | npm install || yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/util
 ```
 
 ### Install SDK 
@@ -58,30 +50,21 @@ pnpm | npm install || yarn add @paraspell/sdk
 Builder pattern:
 ```js
 // Polkadot API version
-import { Builder } from '@paraspell/sdk/papi'
-
-// Polkadot JS version
 import { Builder } from '@paraspell/sdk'
 ```
 
 Other patterns:
 ```js
-// ESM PAPI
-import * as paraspell from '@paraspell/sdk/papi'
-// ESM PJS
+// ESM
 import * as paraspell from '@paraspell/sdk'
 
-// CommonJS PAPI
-const paraspell = require('@paraspell/sdk/papi')
-
-// CommonJS PJS
+// CommonJS
 const paraspell = require('@paraspell/sdk')
 ```
 
 Interaction with further asset symbol abstraction:
 ```js 
-import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk'; //Only needed when advanced asset symbol selection is used. PJS version.
-import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk/papi'; //Only needed when advanced asset symbol selection is used. PAPI version.
+import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk'; //Only needed when advanced asset symbol selection is used.
 ```
 ## Implementation
 
@@ -260,10 +243,7 @@ paraspell.NODE_NAMES
 
 ### Parachain XCM Pallet queries
 ```ts
-//PJS
-import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk'
-//PAPI
-import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk/papi'
+import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk';
 
 //Retrieve default pallet for specific Parachain 
 getDefaultPallet(node: TNode)
@@ -277,10 +257,7 @@ console.log(SUPPORTED_PALLETS)
 
 ### Existential deposit queries
 ```ts
-//PJS
 import { getExistentialDeposit } from "@paraspell/sdk";
-//PAPI
-import { getExistentialDeposit } from "@paraspell/sdk/papi";
 
 //Currency is an optional parameter. If you wish to query native asset, currency parameter is not necessary.
 //Currency can be either {symbol: assetSymbol}, {id: assetId}, {multilocation: assetMultilocation}.
@@ -289,10 +266,7 @@ const ed = getExistentialDeposit(node, currency?)
 
 ### XCM Transfer info
 ```ts
-//PJS
 import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails, getMaxNativeTransferableAmount, getMaxForeignTransferableAmount, getTransferableAmount } from "@paraspell/sdk";
-//PAPI
-import { getTransferInfo, getBalanceForeign, getBalanceNative, getOriginFeeDetails, getMaxNativeTransferableAmount, getMaxForeignTransferableAmount, getTransferableAmount } from "@paraspell/sdk/papi"; 
 
 //Get balance of foreign currency
 await getBalanceForeign({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, api /* api/ws_url_string optional */})
@@ -328,12 +302,6 @@ await getTransferInfo({from, to, address, destinationAddress, currency /*- {id: 
 
 - Run end-to-end tests using `pnpm test:e2e`
 
-- Update Parachain registered assets in the map using script - `pnpm updateAssets`
-
-- Update XCM pallets in the map using script - `pnpm updatePallets`
-
-- Update existential deposits in the map using script - `pnpm updateEds` 
-
 - Run all core tests and checks using `pnpm runAll`
 
 XCM SDK can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
@@ -348,11 +316,7 @@ Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/p
 
 <div align="center">
  <p align="center">
-    <a href="https://github.com/w3f/Grants-Program/pull/1245">
       <img width="200" alt="version" src="https://user-images.githubusercontent.com/55763425/211145923-f7ee2a57-3e63-4b7d-9674-2da9db46b2ee.png" />
-    </a>
-    <a href="https://kusama.subsquare.io/referenda/417">
       <img width="200" alt="version" src="https://github.com/paraspell/xcm-sdk/assets/55763425/9ed74ebe-9b29-4efd-8e3e-7467ac4caed6" />
-    </a>
  </p>
 </div>
