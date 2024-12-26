@@ -1,4 +1,4 @@
-import { type Extrinsic } from '@paraspell/sdk';
+import { type Extrinsic } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
 import { type Signer } from '@polkadot/types/types';
 

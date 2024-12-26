@@ -4,19 +4,22 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import type { TTransferInfo } from '@paraspell/sdk';
-import { getTransferInfo, InvalidCurrencyError } from '@paraspell/sdk';
-import { getTransferInfo as getTransferInfoPapi } from '@paraspell/sdk/papi';
+import {
+  getTransferInfo as getTransferInfoPapi,
+  InvalidCurrencyError,
+} from '@paraspell/sdk';
 import { TransferInfoService } from './transfer-info.service.js';
 import { isValidWalletAddress } from '../utils.js';
+import { getTransferInfo } from '@paraspell/sdk-pjs';
+
+vi.mock('@paraspell/sdk-pjs', () => ({
+  getTransferInfo: vi.fn(),
+}));
 
 vi.mock('@paraspell/sdk', () => ({
   getTransferInfo: vi.fn(),
   NODES_WITH_RELAY_CHAINS_DOT_KSM: ['Polkadot', 'Kusama'],
   InvalidCurrencyError: class extends Error {},
-}));
-
-vi.mock('@paraspell/sdk/papi', () => ({
-  getTransferInfo: vi.fn(),
 }));
 
 vi.mock('../utils', () => ({

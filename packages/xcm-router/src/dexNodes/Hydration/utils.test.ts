@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Asset, TradeRouter } from '@galacticcouncil/sdk';
-import type { TCurrencyCoreV1 } from '@paraspell/sdk';
+import type { TCurrencyCoreV1 } from '@paraspell/sdk-pjs';
 import { getAssetInfo } from './utils';
 
 describe('getAssetInfo', () => {

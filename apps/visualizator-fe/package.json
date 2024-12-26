@@ -23,7 +23,7 @@
     "@mantine/form": "^7.14.3",
     "@mantine/hooks": "^7.14.3",
     "@mantine/notifications": "^7.14.3",
-    "@paraspell/sdk": "workspace:*",
+    "@paraspell/sdk-pjs": "workspace:*",
     "@polkadot/api": "^15.0.1",
     "@polkadot/apps-config": "^0.146.1",
     "@polkadot/extension-dapp": "^0.56.2",

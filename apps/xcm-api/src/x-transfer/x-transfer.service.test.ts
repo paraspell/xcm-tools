@@ -8,10 +8,13 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import * as paraspellSdk from '@paraspell/sdk';
-import * as paraspellSdkPapi from '@paraspell/sdk/papi';
+import * as paraspellSdk from '@paraspell/sdk-pjs';
+import * as paraspellSdkPapi from '@paraspell/sdk';
 import type { TNode } from '@paraspell/sdk';
-import { InvalidCurrencyError, createApiInstanceForNode } from '@paraspell/sdk';
+import {
+  InvalidCurrencyError,
+  createApiInstanceForNode,
+} from '@paraspell/sdk-pjs';
 
 const builderMock = {
   from: vi.fn().mockReturnThis(),
@@ -26,8 +29,8 @@ const builderMock = {
   }),
 };
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
+vi.mock('@paraspell/sdk-pjs', async () => {
+  const actual = await vi.importActual('@paraspell/sdk-pjs');
   return {
     ...actual,
     createApiInstanceForNode: vi.fn().mockResolvedValue({
@@ -57,8 +60,8 @@ const papiBuilderMock = {
   }),
 };
 
-vi.mock('@paraspell/sdk/papi', async () => {
-  const actual = await vi.importActual('@paraspell/sdk/papi');
+vi.mock('@paraspell/sdk', async () => {
+  const actual = await vi.importActual('@paraspell/sdk');
   return {
     ...actual,
     createApiInstanceForNode: vi.fn().mockResolvedValue({

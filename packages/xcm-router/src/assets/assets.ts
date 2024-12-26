@@ -1,5 +1,9 @@
-import type { TNodeWithRelayChains, TAsset as SdkTAsset, TCurrencyCoreV1 } from '@paraspell/sdk';
-import { getAssets, isForeignAsset } from '@paraspell/sdk';
+import type {
+  TNodeWithRelayChains,
+  TAsset as SdkTAsset,
+  TCurrencyCoreV1,
+} from '@paraspell/sdk-pjs';
+import { getAssets, isForeignAsset } from '@paraspell/sdk-pjs';
 import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
 import type { TAssetsRecord, TAutoSelect, TExchangeNode } from '../types';
 

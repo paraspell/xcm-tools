@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { options } from '@acala-network/api';
-import type { TNodePolkadotKusama } from '@paraspell/sdk';
-import { getNodeProviders, type Extrinsic } from '@paraspell/sdk';
+import type { TNodePolkadotKusama } from '@paraspell/sdk-pjs';
+import { getNodeProviders, type Extrinsic } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 import { type Wallet } from '@acala-network/sdk';
 import { type TSwapOptions } from '../../types';

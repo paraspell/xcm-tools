@@ -1,26 +1,32 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import {
-  Builder,
   type TNode,
-  createApiInstanceForNode,
   getAllAssetsSymbols,
   getRelayChainSymbol,
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
   getAssetId,
   NodeNotSupportedError,
-  getOtherAssets,
-  Version,
   NODE_NAMES_DOT_KSM,
   getSupportedAssets,
+  Version,
+  getOtherAssets,
   TNodeDotKsmWithRelayChains,
   ForeignAbstract,
   determineRelayChain,
-  isNodeEvm
-} from '../src'
-import { type ApiPromise } from '@polkadot/api'
-import { isForeignAsset } from '../src/utils/assets'
-import { getAssetBySymbolOrId } from '../src/pallets/assets/getAssetBySymbolOrId'
+  isNodeEvm,
+  isForeignAsset,
+  getAssetBySymbolOrId
+} from '@paraspell/sdk-core'
+import { getPolkadotSigner, PolkadotSigner } from 'polkadot-api/signer'
+import { Builder, createApiInstanceForNode } from '../src'
+import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
+import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
+import { secp256k1 } from '@noble/curves/secp256k1'
+import { keccak_256 } from '@noble/hashes/sha3'
+import { mnemonicToSeedSync } from '@scure/bip39'
+import { HDKey } from '@scure/bip32'
+import { TPapiApi, TPapiTransaction } from '../src'
 
 const MOCK_AMOUNT = 1000
 const MOCK_ADDRESS = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'
@@ -46,9 +52,21 @@ const filteredNodes = NODE_NAMES_DOT_KSM.filter(
     node !== 'Bitgreen' &&
     node !== 'Bajun' &&
     node !== 'CoretimeKusama' &&
-    // Has no assets
-    node !== 'Quartz' &&
+    // PAPI UNSUPPORTED NODES START
+    node !== 'ComposableFinance' &&
+    node !== 'Interlay' &&
+    node !== 'Parallel' &&
+    node !== 'CrustShadow' &&
+    node !== 'Kintsugi' &&
+    node !== 'ParallelHeiko' &&
+    node !== 'Picasso' &&
+    node !== 'RobonomicsKusama' &&
+    node !== 'RobonomicsPolkadot' &&
+    node !== 'Turing' &&
     node !== 'Pendulum' &&
+    node !== 'Subsocial' &&
+    // has no assets
+    node !== 'Quartz' &&
     node !== 'InvArchTinker' &&
     node !== 'Unique'
 )
@@ -93,14 +111,69 @@ const findTransferableNodeAndAsset = (
   return { nodeTo, asset: foundAsset, assetId: getAssetId(from, foundAsset ?? '') }
 }
 
+const validateTx = async (tx: TPapiTransaction, signer: PolkadotSigner) => {
+  expect(tx).toBeDefined()
+  const hex = await tx.sign(signer)
+  expect(hex).toBeDefined()
+}
+
 describe.sequential('XCM - e2e', () => {
+  const apiPool: Record<string, TPapiApi> = {}
+
+  async function createOrGetApiInstanceForNode(
+    node: TNodeDotKsmWithRelayChains
+  ): Promise<TPapiApi> {
+    if (!apiPool[node]) {
+      const api = await createApiInstanceForNode(node)
+      apiPool[node] = api
+    }
+    return apiPool[node]
+  }
+
+  const miniSecret = entropyToMiniSecret(mnemonicToEntropy(DEV_PHRASE))
+  const derive = sr25519CreateDerive(miniSecret)
+  const aliceKeyPair = derive('//Alice')
+  const signer = getPolkadotSigner(aliceKeyPair.publicKey, 'Sr25519', aliceKeyPair.sign)
+
+  const signEcdsa = (
+    hasher: (input: Uint8Array) => Uint8Array,
+    value: Uint8Array,
+    priv: Uint8Array
+  ) => {
+    const signature = secp256k1.sign(hasher(value), priv)
+    const signedBytes = signature.toCompactRawBytes()
+
+    const result = new Uint8Array(signedBytes.length + 1)
+    result.set(signedBytes)
+    result[signedBytes.length] = signature.recovery
+
+    return result
+  }
+
+  const getEvmEcdsaSigner = (privateKey: Uint8Array): PolkadotSigner => {
+    const publicAddress = keccak_256(secp256k1.getPublicKey(privateKey, false).slice(1)).slice(-20)
+
+    return getPolkadotSigner(publicAddress, 'Ecdsa', input =>
+      signEcdsa(keccak_256, input, privateKey)
+    )
+  }
+
+  const seed = mnemonicToSeedSync(DEV_PHRASE)
+  const hdkey = HDKey.fromMasterSeed(seed)
+  const keyPair = hdkey.derive(`m/44'/60'/0'/0/0`)
+  const privateKey = keyPair.privateKey
+  if (!privateKey) {
+    throw new Error('Failed to derive private key')
+  }
+  const evmSigner = getEvmEcdsaSigner(privateKey)
+
   describe('AssetClaim', () => {
     ;(
       ['Polkadot', 'Kusama', 'AssetHubPolkadot', 'AssetHubKusama'] as TNodeDotKsmWithRelayChains[]
     ).forEach(node => {
       it('should create asset claim tx', async () => {
-        const api = await createApiInstanceForNode(node)
-        const tx = Builder(api)
+        const api = await createOrGetApiInstanceForNode(node)
+        const tx = await Builder(api)
           .claimFrom(node)
           .fungible([
             {
@@ -117,80 +190,44 @@ describe.sequential('XCM - e2e', () => {
           ])
           .account(MOCK_ADDRESS)
           .build()
-        expect(tx).toBeDefined()
+        await validateTx(tx, signer)
       })
     })
 
-    it('should create bridge transfer tx AssetHubPolkadot -> AssetHubKusama (DOT)', async () => {
-      const api = await createApiInstanceForNode('AssetHubPolkadot')
-      const tx = Builder(api)
-        .from('AssetHubPolkadot')
-        .to('AssetHubKusama')
-        .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
-        .address(MOCK_ADDRESS)
-        .build()
-      expect(tx).toBeDefined()
-    })
-
     it('should create bridge transfer tx AssetHubPolkadot -> AssetHubKusama (KSM)', async () => {
-      const api = await createApiInstanceForNode('AssetHubPolkadot')
-      const tx = Builder(api)
+      const api = await createOrGetApiInstanceForNode('AssetHubPolkadot')
+      const tx = await Builder(api)
         .from('AssetHubPolkadot')
         .to('AssetHubKusama')
         .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
-      expect(tx).toBeDefined()
+      await validateTx(tx, signer)
     })
-
     it('should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (DOT)', async () => {
-      const api = await createApiInstanceForNode('AssetHubPolkadot')
-      const tx = Builder(api)
+      const api = await createOrGetApiInstanceForNode('AssetHubKusama')
+      const tx = await Builder(api)
         .from('AssetHubKusama')
         .to('AssetHubPolkadot')
         .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
-      expect(tx).toBeDefined()
+      await validateTx(tx, signer)
     })
-
     it('should create bridge transfer tx AssetHubKusama -> AssetHubPolkadot (KSM)', async () => {
-      const api = await createApiInstanceForNode('AssetHubPolkadot')
-      const tx = Builder(api)
+      const api = await createOrGetApiInstanceForNode('AssetHubKusama')
+      const tx = await Builder(api)
         .from('AssetHubKusama')
         .to('AssetHubPolkadot')
         .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
-      expect(tx).toBeDefined()
-    })
-
-    it('should create asset claim tx V1', async () => {
-      const api = await createApiInstanceForNode('AssetHubPolkadot')
-      const tx = Builder(api)
-        .claimFrom('AssetHubPolkadot')
-        .fungible([
-          {
-            id: {
-              Concrete: {
-                parents: 0,
-                interior: {
-                  Here: null
-                }
-              }
-            },
-            fun: { Fungible: 1000 }
-          }
-        ])
-        .account(MOCK_ADDRESS)
-        .xcmVersion(Version.V2)
-        .build()
-      expect(tx).toBeDefined()
+      await validateTx(tx, signer)
     })
 
     it('should create asset claim tx V2', async () => {
-      const api = await createApiInstanceForNode('AssetHubPolkadot')
-      const tx = Builder(api)
+      const api = await createOrGetApiInstanceForNode('AssetHubPolkadot')
+      const tx = await Builder(api)
         .claimFrom('AssetHubPolkadot')
         .fungible([
           {
@@ -211,9 +248,9 @@ describe.sequential('XCM - e2e', () => {
       expect(tx).toBeDefined()
     })
 
-    it('should create asset claim tx V4', async () => {
-      const api = await createApiInstanceForNode('AssetHubPolkadot')
-      const tx = Builder(api)
+    it('should create asset claim tx V3', async () => {
+      const api = await createOrGetApiInstanceForNode('AssetHubPolkadot')
+      const tx = await Builder(api)
         .claimFrom('AssetHubPolkadot')
         .fungible([
           {
@@ -231,47 +268,47 @@ describe.sequential('XCM - e2e', () => {
         .account(MOCK_ADDRESS)
         .xcmVersion(Version.V3)
         .build()
-      expect(tx).toBeDefined()
+      await validateTx(tx, signer)
     })
   })
 
   describe('Ethereum transfers', async () => {
     const ethAssetSymbols = getOtherAssets('Ethereum').map(asset => asset.symbol)
-    const api = await createApiInstanceForNode('AssetHubPolkadot')
+    const api = await createOrGetApiInstanceForNode('AssetHubPolkadot')
     ethAssetSymbols.forEach(symbol => {
       if (!symbol) return
-      it(`should create transfer tx - ${symbol} from AssetHubPolkadot to Ethereum`, async () => {
+      it(`should create transfer tx - ${symbol} from Polkadot to Ethereum`, async () => {
         const tx = await Builder(api)
           .from('AssetHubPolkadot')
           .to('Ethereum')
           .currency({ symbol, amount: MOCK_AMOUNT })
           .address(MOCK_ETH_ADDRESS)
           .build()
-        expect(tx).toBeDefined()
+        await validateTx(tx, signer)
       })
     })
   })
 
   describe.sequential('RelayToPara', () => {
     it('should create transfer tx - DOT from Relay to Para', async () => {
-      const api = await createApiInstanceForNode('Polkadot')
+      const api = await createOrGetApiInstanceForNode('Polkadot')
+      const tx = await Builder(api)
+        .from('Polkadot')
+        .to(MOCK_POLKADOT_NODE)
+        .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
+        .address(MOCK_ADDRESS)
+        .build()
+      await validateTx(tx, signer)
+    })
+    it('should create transfer tx - KSM from Relay to Para', async () => {
+      const api = await createOrGetApiInstanceForNode('Kusama')
       const tx = await Builder(api)
         .from('Kusama')
         .to(MOCK_KUSAMA_NODE)
         .currency({ symbol: 'KSM', amount: MOCK_AMOUNT })
         .address(MOCK_ADDRESS)
         .build()
-      expect(tx).toBeDefined()
-    })
-    it('should create transfer tx - KSM from Relay to Para', async () => {
-      const api = await createApiInstanceForNode('Kusama')
-      const tx = Builder(api)
-        .from('Polkadot')
-        .to(MOCK_POLKADOT_NODE)
-        .currency({ symbol: 'DOT', amount: MOCK_AMOUNT })
-        .address(MOCK_ADDRESS)
-        .build()
-      expect(tx).toBeDefined()
+      await validateTx(tx, signer)
     })
   })
 
@@ -351,9 +388,9 @@ describe.sequential('XCM - e2e', () => {
     const { nodeTo, asset, assetId } = findTransferableNodeAndAsset(node)
     if (!nodeTo) return
     describe.sequential(`${node} ParaToPara & ParaToRelay`, () => {
-      let api: ApiPromise
+      let api: TPapiApi
       beforeAll(async () => {
-        api = await createApiInstanceForNode(node)
+        api = await createOrGetApiInstanceForNode(node)
       })
       it(`should create transfer tx - ParaToPara ${asset} from ${node} to ${nodeTo}`, async () => {
         const currency = assetId ? { id: assetId } : { symbol: asset ?? 'DOT' }
@@ -371,7 +408,18 @@ describe.sequential('XCM - e2e', () => {
             })
             .address(resolvedAddress)
             .build()
-          expect(tx).toBeDefined()
+
+          if (
+            node === 'Moonriver' ||
+            node === 'Moonbeam' ||
+            node === 'Mythos' ||
+            node === 'Crab' ||
+            node === 'Darwinia'
+          ) {
+            await validateTx(tx, evmSigner)
+          } else {
+            await validateTx(tx, signer)
+          }
         } catch (error) {
           if (error instanceof NoXCMSupportImplementedError) {
             expect(error).toBeInstanceOf(NoXCMSupportImplementedError)
@@ -384,17 +432,12 @@ describe.sequential('XCM - e2e', () => {
           }
         }
       })
-
       if (
         node !== 'Crust' &&
-        node !== 'CrustShadow' &&
         node !== 'Phala' &&
         node !== 'Khala' &&
         node !== 'Manta' &&
-        node !== 'Turing' &&
         node !== 'Zeitgeist' &&
-        node !== 'Picasso' &&
-        node !== 'Parallel' &&
         node !== 'Moonriver' &&
         node !== 'Calamari' &&
         node !== 'Basilisk' &&
@@ -403,9 +446,7 @@ describe.sequential('XCM - e2e', () => {
         node !== 'Moonbeam' &&
         node !== 'Hydration' &&
         node !== 'Darwinia' &&
-        node !== 'ComposableFinance' &&
-        node !== 'Centrifuge' &&
-        node !== 'ParallelHeiko'
+        node !== 'Centrifuge'
       ) {
         const relayChainAsset = getAssetBySymbolOrId(
           node,
@@ -423,7 +464,11 @@ describe.sequential('XCM - e2e', () => {
               .currency({ symbol: getRelayChainSymbol(node), amount: MOCK_AMOUNT })
               .address(MOCK_ADDRESS)
               .build()
-            expect(tx).toBeDefined()
+            if (node === 'Mythos' || node === 'Crab') {
+              await validateTx(tx, evmSigner)
+            } else {
+              await validateTx(tx, signer)
+            }
           } catch (error) {
             if (error instanceof NoXCMSupportImplementedError) {
               expect(error).toBeInstanceOf(NoXCMSupportImplementedError)

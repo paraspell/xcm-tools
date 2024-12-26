@@ -1,13 +1,13 @@
 import { Stack, Title, Box } from "@mantine/core";
 import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import type { Extrinsic } from "@paraspell/sdk";
+import type { Extrinsic } from "@paraspell/sdk-pjs";
+import type { TPapiTransaction } from "@paraspell/sdk";
 import { useState, useEffect } from "react";
 import { useWallet } from "../../hooks/useWallet";
 import ErrorAlert from "../ErrorAlert";
 import type { FormValues } from "./AssetClaimForm";
 import AssetClaimForm from "./AssetClaimForm";
 import { getTxFromApi } from "../../utils/submitUsingApi";
-import type { TPapiTransaction } from "@paraspell/sdk/papi";
 import type { ApiPromise } from "@polkadot/api";
 import type { PolkadotClient, PolkadotSigner } from "polkadot-api";
 import { submitTransaction, submitTransactionPapi } from "../../utils";
@@ -45,8 +45,8 @@ const AssetClaim = () => {
 
     const Sdk =
       apiType === "PAPI"
-        ? await import("@paraspell/sdk/papi")
-        : await import("@paraspell/sdk");
+        ? await import("@paraspell/sdk")
+        : await import("@paraspell/sdk-pjs");
 
     const api = await Sdk.createApiInstanceForNode(from);
 

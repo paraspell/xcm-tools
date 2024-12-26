@@ -13,7 +13,7 @@ import { isValidWalletAddress } from '../utils.js';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
 import { ApiPromise } from '@polkadot/api';
 import { PolkadotClient } from 'polkadot-api';
-import { TPapiTransaction } from '@paraspell/sdk/papi';
+import { TPapiTransaction } from '@paraspell/sdk';
 
 @Injectable()
 export class AssetClaimService {
@@ -38,8 +38,8 @@ export class AssetClaimService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(fromNode);
 

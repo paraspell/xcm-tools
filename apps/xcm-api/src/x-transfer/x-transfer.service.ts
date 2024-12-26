@@ -13,13 +13,13 @@ import {
   TNodeWithRelayChains,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   NODES_WITH_RELAY_CHAINS,
-  Extrinsic,
 } from '@paraspell/sdk';
-import type * as SdkType from '@paraspell/sdk';
-import type * as SdkPapiType from '@paraspell/sdk/papi';
+import type * as SdkType from '@paraspell/sdk-pjs';
+import type * as SdkPapiType from '@paraspell/sdk';
 import { ApiPromise } from '@polkadot/api';
 import { PolkadotClient } from 'polkadot-api';
-import { TPapiTransaction } from '@paraspell/sdk/papi';
+import { TPapiTransaction } from '@paraspell/sdk';
+import { Extrinsic } from '@paraspell/sdk-pjs';
 
 @Injectable()
 export class XTransferService {
@@ -57,8 +57,8 @@ export class XTransferService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(fromNode);
 
@@ -148,8 +148,8 @@ export class XTransferService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(fromNode);
     let builder = Sdk.Builder(api as PolkadotClient & ApiPromise);

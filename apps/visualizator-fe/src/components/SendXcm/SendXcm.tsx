@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Stack, Title, Box, Group, Button, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Builder, createApiInstanceForNode } from '@paraspell/sdk';
+import { Builder, createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
 import type { Signer } from '@polkadot/api/types';

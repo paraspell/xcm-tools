@@ -14,6 +14,7 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      NODE_OPTIONS: "--max_old_space_size=8192"
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
@@ -31,12 +32,28 @@ jobs:
       - run: pnpm format:check
       - run: pnpm lint:check
       - run: pnpm test:cov
+      - name: Upload XCM SDK core coverage report to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/sdk-core
+          flags: xcm-sdk-core
+          fail_ci_if_error: false
+          verbose: true
       - name: Upload XCM SDK coverage report to Codecov
         uses: codecov/codecov-action@v4.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/sdk
           flags: xcm-sdk
+          fail_ci_if_error: false
+          verbose: true
+      - name: Upload XCM SDK PJS coverage report to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/sdk-pjs
+          flags: xcm-sdk-pjs
           fail_ci_if_error: false
           verbose: true
       - name: Upload XCM Analyser coverage report to Codecov

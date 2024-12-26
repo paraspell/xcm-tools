@@ -1,4 +1,4 @@
-import { createApiInstanceForNode } from '@paraspell/sdk';
+import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import createDexNodeInstance from '../dexNodes/DexNodeFactory';
 import {
   type TTransferOptionsModified,

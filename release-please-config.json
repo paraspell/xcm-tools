@@ -18,8 +18,23 @@
     { "type": "ci", "section": "Continuous Integration", "hidden": false }
   ],
   "packages": {
-    "packages/sdk": {},
+    "packages/sdk-core": {
+      "component": "sdk-core"
+    },
+    "packages/sdk": {
+      "component": "sdk"
+    },
+    "packages/sdk-pjs": {
+      "component": "sdk-pjs"
+    },
     "packages/xcm-router": {},
     "packages/xcm-analyser": {}
-  }
+  },
+  "plugins": [
+    {
+      "type": "linked-versions",
+      "groupName": "SDK group",
+      "components": ["sdk-core", "sdk", "sdk-pjs"]
+    }
+  ]
 }

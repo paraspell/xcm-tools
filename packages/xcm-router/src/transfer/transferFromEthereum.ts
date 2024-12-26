@@ -1,4 +1,4 @@
-import { EvmBuilder } from '@paraspell/sdk';
+import { EvmBuilder } from '@paraspell/sdk-pjs';
 import type { TTransferOptionsModified } from '../types';
 import { TransactionType, TransactionStatus } from '../types';
 import { maybeUpdateTransferStatus } from '../utils/utils';

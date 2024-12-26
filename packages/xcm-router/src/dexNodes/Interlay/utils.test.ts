@@ -1,11 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { InterBtcApi, CurrencyExt, ForeignAsset } from 'inter-exchange';
-import type { TCurrencyCoreV1 } from '@paraspell/sdk';
-import type { TNode } from '@paraspell/sdk';
-import { getAssetId } from '@paraspell/sdk';
+import type { TCurrencyCoreV1, TNode } from '@paraspell/sdk-pjs';
+import { getAssetId } from '@paraspell/sdk-pjs';
 import { getCurrency } from './utils';
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk-pjs', () => ({
   getAssetId: vi.fn(),
 }));
 

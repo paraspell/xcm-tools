@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { transferToEthereum } from './transferToEthereum';
-import { createApiInstanceForNode } from '@paraspell/sdk';
+import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { TTransferOptionsModified } from '../types';
 import { TransactionType, TransactionStatus } from '../types';
 import { maybeUpdateTransferStatus } from '../utils/utils';
@@ -9,7 +9,7 @@ import type { Signer } from '@polkadot/types/types';
 import type { Signer as EthersSigner } from 'ethers';
 import type { ApiPromise } from '@polkadot/api';
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk-pjs', () => ({
   createApiInstanceForNode: vi.fn(),
 }));
 vi.mock('../utils/utils', () => ({

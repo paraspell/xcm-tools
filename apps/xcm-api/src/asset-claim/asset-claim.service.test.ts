@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AssetClaimService } from './asset-claim.service.js';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import * as sdk from '@paraspell/sdk';
-import * as sdkPapi from '@paraspell/sdk/papi';
+import * as sdk from '@paraspell/sdk-pjs';
+import * as sdkPapi from '@paraspell/sdk';
 import * as utils from '../utils.js';
 import {
   BadRequestException,
@@ -13,9 +13,11 @@ import type { ApiPromise } from '@polkadot/api';
 import type { AssetClaimDto } from './dto/asset-claim.dto.js';
 import type { PolkadotClient } from 'polkadot-api';
 
-vi.mock('@paraspell/sdk', async () => {
+vi.mock('@paraspell/sdk-pjs', async () => {
   const actual =
-    await vi.importActual<typeof import('@paraspell/sdk')>('@paraspell/sdk');
+    await vi.importActual<typeof import('@paraspell/sdk-pjs')>(
+      '@paraspell/sdk-pjs',
+    );
   return {
     ...actual,
     createApiInstanceForNode: vi.fn(),
@@ -29,10 +31,9 @@ vi.mock('@paraspell/sdk', async () => {
   };
 });
 
-vi.mock('@paraspell/sdk/papi', async () => {
-  const actual = await vi.importActual<typeof import('@paraspell/sdk/papi')>(
-    '@paraspell/sdk/papi',
-  );
+vi.mock('@paraspell/sdk', async () => {
+  const actual =
+    await vi.importActual<typeof import('@paraspell/sdk')>('@paraspell/sdk');
   return {
     ...actual,
     createApiInstanceForNode: vi.fn(),

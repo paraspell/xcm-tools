@@ -21,7 +21,7 @@ import {
   type TokenList,
   DEFULT_TOKEN_LIST_MAP,
 } from '@crypto-dex-sdk/token-lists';
-import { type TNode } from '@paraspell/sdk';
+import { type TNode } from '@paraspell/sdk-pjs';
 
 export type TokenMap = Readonly<Record<string, { token: WrappedTokenInfo; list?: TokenList }>>;
 export type ChainTokenMap = Readonly<Record<number, TokenMap>>;

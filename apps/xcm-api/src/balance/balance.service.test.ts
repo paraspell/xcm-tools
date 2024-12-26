@@ -9,7 +9,7 @@ import {
   getMaxForeignTransferableAmount,
   getMaxNativeTransferableAmount,
   getTransferableAmount,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-pjs';
 import {
   createApiInstanceForNode as createApiInstanceForNodePapi,
   getBalanceNative as getBalanceNativePapi,
@@ -18,14 +18,14 @@ import {
   getMaxNativeTransferableAmount as getMaxNativeTransferableAmountPapi,
   getTransferableAmount as getTransferableAmountPapi,
   getExistentialDeposit as getExistentialDepositPapi,
-} from '@paraspell/sdk/papi';
+} from '@paraspell/sdk';
 import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
 import type { ApiPromise } from '@polkadot/api';
 import type { PolkadotClient } from 'polkadot-api';
 import type { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk-pjs', () => ({
   createApiInstanceForNode: vi.fn(),
   getBalanceForeign: vi.fn(),
   getBalanceNative: vi.fn(),
@@ -38,7 +38,7 @@ vi.mock('@paraspell/sdk', () => ({
   NODES_WITH_RELAY_CHAINS_DOT_KSM: ['valid-node'],
 }));
 
-vi.mock('@paraspell/sdk/papi', () => ({
+vi.mock('@paraspell/sdk', () => ({
   createApiInstanceForNode: vi.fn(),
   getBalanceForeign: vi.fn(),
   getBalanceNative: vi.fn(),

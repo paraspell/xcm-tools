@@ -33,6 +33,7 @@
     "@nestjs/throttler": "^6.2.1",
     "@nestjs/typeorm": "^10.0.2",
     "@paraspell/sdk": "workspace:*",
+    "@paraspell/sdk-pjs": "workspace:*",
     "@paraspell/xcm-analyser": "workspace:*",
     "@paraspell/xcm-router": "workspace:*",
     "@polkadot/api": "^15.0.1",

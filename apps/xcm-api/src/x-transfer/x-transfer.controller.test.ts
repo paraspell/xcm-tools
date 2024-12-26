@@ -6,8 +6,9 @@ import { XTransferService } from './x-transfer.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import type { XTransferDto } from './dto/XTransferDto.js';
-import { BatchMode, type Extrinsic } from '@paraspell/sdk';
+import { BatchMode } from '@paraspell/sdk';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
 
 // Integration tests to ensure controller and service are working together
 describe('XTransferController', () => {

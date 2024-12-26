@@ -47,8 +47,8 @@ export class TransferInfoService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     try {
       return await Sdk.getTransferInfo({

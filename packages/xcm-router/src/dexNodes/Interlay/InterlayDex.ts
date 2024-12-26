@@ -1,5 +1,5 @@
-import type { TForeignAsset } from '@paraspell/sdk';
-import { getAssets, getNodeProviders } from '@paraspell/sdk';
+import type { TForeignAsset } from '@paraspell/sdk-pjs';
+import { getAssets, getNodeProviders } from '@paraspell/sdk-pjs';
 import ExchangeNode from '../DexNode';
 import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
 import { createInterBtcApi, newMonetaryAmount } from 'inter-exchange';

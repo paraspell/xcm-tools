@@ -1,7 +1,7 @@
 import ExchangeNode from '../DexNode';
 import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
 import type { ApiPromise } from '@polkadot/api';
-import { getParaId } from '@paraspell/sdk';
+import { getParaId } from '@paraspell/sdk-pjs';
 import { getBestTrade, getFilteredPairs, getTokenMap } from './bifrostUtils';
 import { Amount, Token, getCurrencyCombinations, type TokenMap } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';

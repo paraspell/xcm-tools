@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Unit tests for submitTransaction function
 
-import { type Extrinsic } from '@paraspell/sdk';
+import { type Extrinsic } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
 import { type H256 } from '@polkadot/types/interfaces';
 import {

@@ -1,11 +1,11 @@
 // Unit tests for DexNode class
 
 import { describe, it, expect, vi } from 'vitest';
-import { type TNode, createApiInstanceForNode } from '@paraspell/sdk';
+import { type TNode, createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import BifrostExchangeNode from './Bifrost/BifrostDex';
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
+vi.mock('@paraspell/sdk-pjs', async () => {
+  const actual = await vi.importActual('@paraspell/sdk-pjs');
   return {
     ...actual,
     createApiInstanceForNode: vi.fn().mockResolvedValue('mockApiPromise'),

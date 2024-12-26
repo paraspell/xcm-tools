@@ -1,0 +1,65 @@
+{
+  "name": "@paraspell/sdk-core",
+  "version": "7.2.10",
+  "description": "SDK core for ParaSpell XCM/XCMP tool for developers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paraspell/xcm-tools.git",
+    "directory": "packages/sdk-core"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "compile": "tsc --noEmit",
+    "build": "rollup -c",
+    "lint:check": "eslint src",
+    "lint": "eslint --fix .",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "test:watch": "vitest",
+    "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/assets/updateAssets.ts",
+    "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/pallets/updatePallets.ts",
+    "updateEds": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/eds/updateEds.ts",
+    "checkDuplicateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/assets/checkDuplicates.ts",
+    "updateNodeConfigs": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/configs/fetchNodeConfigs.ts",
+    "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
+  },
+  "dependencies": {
+    "ethers": "^6.13.4",
+    "viem": "^2.21.56"
+  },
+  "devDependencies": {
+    "@babel/plugin-syntax-import-attributes": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@codecov/rollup-plugin": "^1.4.0",
+    "@polkadot/api": "^15.0.1",
+    "@polkadot/types": "^15.0.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-json": "^6.1.0",
+    "@vitest/coverage-v8": "^2.1.6",
+    "axios": "^1.7.8",
+    "dotenv": "^16.4.5",
+    "prettier": "^3.4.1",
+    "rollup": "^4.27.4",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "ts-morph": "^24.0.0",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.8.1"
+  }
+}

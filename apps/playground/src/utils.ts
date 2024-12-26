@@ -1,5 +1,5 @@
-import type { Extrinsic } from "@paraspell/sdk";
-import type { TPapiTransaction } from "@paraspell/sdk/papi";
+import type { TPapiTransaction } from "@paraspell/sdk";
+import type { Extrinsic } from "@paraspell/sdk-pjs";
 import type { ApiPromise } from "@polkadot/api";
 import type { Signer } from "@polkadot/api/types";
 import { encodeAddress, decodeAddress } from "@polkadot/keyring";

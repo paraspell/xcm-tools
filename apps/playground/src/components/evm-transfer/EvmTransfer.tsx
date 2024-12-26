@@ -7,7 +7,7 @@ import ErrorAlert from "../ErrorAlert";
 import type { FormValues, FormValuesTransformed } from "./EvmTransferForm";
 import EvmTransferForm from "./EvmTransferForm";
 import type { TNode } from "@paraspell/sdk";
-import { EvmBuilder } from "@paraspell/sdk";
+import { EvmBuilder } from "@paraspell/sdk-pjs";
 import { fetchFromApi } from "../../utils/submitUsingApi";
 import { IGateway__factory } from "@snowbridge/contract-types";
 import type { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
