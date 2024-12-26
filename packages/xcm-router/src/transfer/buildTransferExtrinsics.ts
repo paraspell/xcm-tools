@@ -1,8 +1,4 @@
-import {
-  buildEthTransferOptions,
-  createApiInstanceForNode,
-  getNodeProviders,
-} from '@paraspell/sdk';
+import { xcmPallet, createApiInstanceForNode, getNodeProviders } from '@paraspell/sdk-pjs';
 import createDexNodeInstance from '../dexNodes/DexNodeFactory';
 import {
   TransactionType,
@@ -87,7 +83,7 @@ export const buildTransferExtrinsics = async (
 
   if (type === TransactionType.TO_EXCHANGE) {
     if (from === 'Ethereum' && assetHubAddress) {
-      const fromEthereumTx = await buildEthTransferOptions({
+      const fromEthereumTx = await xcmPallet.buildEthTransferOptions({
         from: 'Ethereum',
         to: 'AssetHubPolkadot',
         address: ethAddress ?? '',
@@ -173,7 +169,7 @@ export const buildTransferExtrinsics = async (
       });
     }
   } else if (type === TransactionType.FROM_ETH && assetHubAddress) {
-    const fromEthereumTx = await buildEthTransferOptions({
+    const fromEthereumTx = await xcmPallet.buildEthTransferOptions({
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
       address: ethAddress ?? '',
@@ -209,7 +205,7 @@ export const buildTransferExtrinsics = async (
   } else {
     // TO_EXCHANGE
     if (from === 'Ethereum' && assetHubAddress) {
-      const fromEthereumTx = await buildEthTransferOptions({
+      const fromEthereumTx = await xcmPallet.buildEthTransferOptions({
         from: 'Ethereum',
         to: 'AssetHubPolkadot',
         address: ethAddress ?? '',

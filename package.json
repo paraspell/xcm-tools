@@ -19,7 +19,7 @@
     "vitest": "^2.1.6"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "resolutions": {
     "@polkadot/types-codec": "^15.0.1",
@@ -38,14 +38,14 @@
     "test:integration": "turbo run test:integration",
     "test:e2e": "turbo run test:e2e",
     "build": "turbo run build",
-    "run:playground": "pnpm --filter=playground dev",
-    "run:api": "pnpm --filter=xcm-api start:dev",
-    "run:lightspell-site": "pnpm --filter=lightspell-site dev",
-    "run:paraspell-site": "pnpm --filter=site dev",
-    "run:updateAssets": "pnpm --filter=sdk updateAssets",
-    "run:updateRouterAssets": "pnpm --filter=xcm-router updateAssets",
-    "run:updatePallets": "pnpm --filter=sdk updatePallets",
-    "run:updateEds": "pnpm --filter=sdk updateEds"
+    "run:playground": "pnpm --filter playground dev",
+    "run:api": "pnpm --filter xcm-api start:dev",
+    "run:lightspell-site": "pnpm --filter lightspell-site dev",
+    "run:paraspell-site": "pnpm --filter site dev",
+    "run:updateAssets": "pnpm --filter sdk-core updateAssets",
+    "run:updateRouterAssets": "pnpm --filter xcm-router updateAssets",
+    "run:updatePallets": "pnpm --filter sdk-core updatePallets",
+    "run:updateEds": "pnpm --filter sdk-core updateEds"
   },
   "packageManager": "pnpm@9.14.4"
 }

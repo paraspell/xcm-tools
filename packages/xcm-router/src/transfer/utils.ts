@@ -1,5 +1,5 @@
-import type { TAsset, TCurrencyCoreV1 } from '@paraspell/sdk';
-import { type Extrinsic, Builder } from '@paraspell/sdk';
+import type { TAsset, TCurrencyCoreV1 } from '@paraspell/sdk-pjs';
+import { type Extrinsic, Builder } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
 import type { TExchangeNode } from '../types';
 import { type TCommonTransferOptionsModified, type TTransferOptionsModified } from '../types';

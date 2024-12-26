@@ -69,8 +69,8 @@ const TransferInfo = () => {
     } else {
       const Sdk =
         apiType === "PAPI"
-          ? await import("@paraspell/sdk/papi")
-          : await import("@paraspell/sdk");
+          ? await import("@paraspell/sdk")
+          : await import("@paraspell/sdk-pjs");
 
       return Sdk.getTransferInfo({
         origin: formValues.from,

@@ -13,12 +13,12 @@ import * as selectBestExchange from './selectBestExchange';
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { Signer as EthSigner } from 'ethers';
 import type { Signer } from '@polkadot/types/types';
-import type { Extrinsic } from '@paraspell/sdk';
-import { createApiInstanceForNode } from '@paraspell/sdk';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
+import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
+vi.mock('@paraspell/sdk-pjs', async () => {
+  const actual = await vi.importActual('@paraspell/sdk-pjs');
   return {
     ...actual,
     createApiInstanceForNode: vi.fn().mockResolvedValue({

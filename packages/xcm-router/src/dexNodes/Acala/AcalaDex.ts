@@ -1,4 +1,4 @@
-import type { Extrinsic } from '@paraspell/sdk';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
 import ExchangeNode from '../DexNode';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';

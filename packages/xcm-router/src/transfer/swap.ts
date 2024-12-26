@@ -2,7 +2,7 @@ import { type ApiPromise } from '@polkadot/api';
 import { type TTransferOptionsModified, TransactionType, TransactionStatus } from '../types';
 import { calculateTransactionFee, maybeUpdateTransferStatus } from '../utils/utils';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic, submitSwap } from './utils';
-import { type Extrinsic } from '@paraspell/sdk';
+import { type Extrinsic } from '@paraspell/sdk-pjs';
 import type ExchangeNode from '../dexNodes/DexNode';
 
 export const createSwapExtrinsic = async (

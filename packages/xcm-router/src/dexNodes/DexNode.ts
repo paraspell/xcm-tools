@@ -1,5 +1,5 @@
-import type { TNodePolkadotKusama } from '@paraspell/sdk';
-import { createApiInstanceForNode } from '@paraspell/sdk';
+import type { TNodePolkadotKusama } from '@paraspell/sdk-pjs';
+import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { TSwapResult, TSwapOptions, TAssets, TExchangeNode } from '../types';
 import type { ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';

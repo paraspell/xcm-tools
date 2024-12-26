@@ -1,7 +1,7 @@
 import { BigNumber, type TradeRouter, bnum, type Asset } from '@galacticcouncil/sdk';
 import { type TSwapOptions } from '../../types';
-import type { TCurrencyCoreV1 } from '@paraspell/sdk';
-import { type TNode, type Extrinsic, getAssetDecimals } from '@paraspell/sdk';
+import type { TCurrencyCoreV1 } from '@paraspell/sdk-pjs';
+import { type TNode, type Extrinsic, getAssetDecimals } from '@paraspell/sdk-pjs';
 import { FEE_BUFFER } from '../../consts/consts';
 import { calculateTransactionFee } from '../../utils/utils';
 import Logger from '../../Logger/Logger';

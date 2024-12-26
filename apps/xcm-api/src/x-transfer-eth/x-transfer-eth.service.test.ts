@@ -4,12 +4,12 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import type { TSerializedEthTransfer } from '@paraspell/sdk';
-import { buildEthTransferOptions } from '@paraspell/sdk';
+import { buildEthTransferOptions } from '@paraspell/sdk-pjs';
 import { isValidPolkadotAddress } from '../utils.js';
 import type { XTransferEthDto } from './dto/x-transfer-eth.dto.js';
 import { XTransferEthService } from './x-transfer-eth.service.js';
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk-pjs', () => ({
   NODE_NAMES_DOT_KSM: ['Polkadot', 'Kusama', 'AssetHubPolkadot'],
   buildEthTransferOptions: vi.fn(),
 }));

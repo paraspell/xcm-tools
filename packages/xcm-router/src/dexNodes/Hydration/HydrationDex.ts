@@ -1,4 +1,4 @@
-import { getAssetDecimals, InvalidCurrencyError, type Extrinsic } from '@paraspell/sdk';
+import { getAssetDecimals, InvalidCurrencyError, type Extrinsic } from '@paraspell/sdk-pjs';
 import ExchangeNode from '../DexNode';
 import { PoolService, TradeRouter, BigNumber, PoolType } from '@galacticcouncil/sdk';
 import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';

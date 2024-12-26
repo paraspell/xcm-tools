@@ -5,7 +5,7 @@ import type {
   TAsset as SdkTAsset,
   TNodePolkadotKusama,
   TCurrencyCoreV1,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-pjs';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts/consts';
 import type { Signer as EthSigner } from 'ethers';

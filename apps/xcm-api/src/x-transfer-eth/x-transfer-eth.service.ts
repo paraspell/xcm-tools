@@ -3,13 +3,10 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import {
-  NODE_NAMES_DOT_KSM,
-  TNodePolkadotKusama,
-  buildEthTransferOptions,
-} from '@paraspell/sdk';
+import { NODE_NAMES_DOT_KSM, TNodePolkadotKusama } from '@paraspell/sdk';
 import { isValidPolkadotAddress } from '../utils.js';
 import { XTransferEthDto } from './dto/x-transfer-eth.dto.js';
+import { buildEthTransferOptions } from '@paraspell/sdk-pjs';
 
 @Injectable()
 export class XTransferEthService {

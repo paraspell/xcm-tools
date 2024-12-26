@@ -10,19 +10,21 @@ import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import type { TBuildTransferExtrinsicsOptions } from '../types';
 import { TransactionType } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
-import type { Extrinsic } from '@paraspell/sdk';
-import { buildEthTransferOptions, createApiInstanceForNode } from '@paraspell/sdk';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
+import { xcmPallet, createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
+vi.mock('@paraspell/sdk-pjs', async () => {
+  const actual = await vi.importActual('@paraspell/sdk-pjs');
   return {
     ...actual,
     createApiInstanceForNode: vi.fn().mockResolvedValue({
       disconnect: () => {},
     }),
-    buildEthTransferOptions: vi.fn(),
+    xcmPallet: {
+      buildEthTransferOptions: vi.fn(),
+    },
   };
 });
 
@@ -51,7 +53,7 @@ describe('buildTransferExtrinsics', () => {
       swapCurrency: vi.fn().mockResolvedValue({}),
     } as unknown as ExchangeNode);
 
-    vi.mocked(buildEthTransferOptions).mockResolvedValue({
+    vi.spyOn(xcmPallet, 'buildEthTransferOptions').mockResolvedValue({
       token: 'token123',
       destinationParaId: 1000,
       destinationFee: BigInt(500),

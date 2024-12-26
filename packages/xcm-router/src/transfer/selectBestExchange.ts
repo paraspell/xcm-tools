@@ -1,4 +1,4 @@
-import { type TNode, createApiInstanceForNode } from '@paraspell/sdk';
+import { type TNode, createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import { EXCHANGE_NODES } from '../consts/consts';
 import createDexNodeInstance from '../dexNodes/DexNodeFactory';
 import { type TCommonTransferOptionsModified, type TCommonTransferOptions } from '../types';

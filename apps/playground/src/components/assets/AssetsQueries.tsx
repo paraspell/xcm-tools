@@ -55,8 +55,8 @@ const AssetsQueries = () => {
     const { func, node, currency, address } = formValues;
     const Sdk =
       apiType === "PAPI"
-        ? await import("@paraspell/sdk/papi")
-        : await import("@paraspell/sdk");
+        ? await import("@paraspell/sdk")
+        : await import("@paraspell/sdk-pjs");
 
     const resolvedCurrency = resolveCurrency(formValues);
 

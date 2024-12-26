@@ -7,9 +7,17 @@ flag_management:
       - type: patch
         target: 90%
   individual_flags:
+    - name: xcm-sdk-core
+      paths:
+        - packages/sdk-core
+      carryforward: true
     - name: xcm-sdk
       paths:
         - packages/sdk
+      carryforward: true
+    - name: xcm-sdk-pjs
+      paths:
+        - packages/sdk-pjs
       carryforward: true
     - name: xcm-analyser
       paths:

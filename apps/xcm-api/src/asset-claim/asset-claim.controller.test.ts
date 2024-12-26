@@ -5,7 +5,7 @@ import type { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import type { AssetClaimDto } from './dto/asset-claim.dto.js';
 import type { RequestWithUser } from '../types/types.js';
-import type { Extrinsic } from '@paraspell/sdk';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
 
 describe('AssetClaimController', () => {
   let controller: AssetClaimController;

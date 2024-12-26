@@ -1,7 +1,7 @@
 // Unit tests for general utils
 
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
-import { type Extrinsic, InvalidCurrencyError, createApiInstanceForNode } from '@paraspell/sdk';
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
+import { type Extrinsic, InvalidCurrencyError, createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import {
   calculateTransactionFee,

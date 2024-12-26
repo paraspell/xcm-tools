@@ -8,11 +8,9 @@ import {
   Foreign,
   NODES_WITH_RELAY_CHAINS,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
-  NODE_NAMES,
   NODE_NAMES_DOT_KSM,
   Native,
   Override,
-  TMultiAsset,
   TMultiAssetWithFee,
   TMultiLocation,
   TNode,
@@ -26,7 +24,7 @@ import {
   getRelayChainSymbol,
   getSupportedPallets,
   hasSupportForAsset,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-pjs';
 import { RouterDto } from '../src/router/dto/RouterDto';
 import { describe, beforeAll, it, expect } from 'vitest';
 import { TransferInfoDto } from '../src/transfer-info/dto/transfer-info.dto';

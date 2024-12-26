@@ -6,11 +6,11 @@ import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
 } from './assets';
-import type { TAsset, TCurrencyCoreV1, TNodeWithRelayChains } from '@paraspell/sdk';
-import { getAssets } from '@paraspell/sdk';
+import type { TAsset, TCurrencyCoreV1, TNodeWithRelayChains } from '@paraspell/sdk-pjs';
+import { getAssets } from '@paraspell/sdk-pjs';
 import type { TAutoSelect, TExchangeNode } from '../types';
 
-vi.mock('@paraspell/sdk', () => ({
+vi.mock('@paraspell/sdk-pjs', () => ({
   getAssets: vi.fn(),
 }));
 

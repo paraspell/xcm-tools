@@ -28,8 +28,8 @@ export class BalanceService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getBalanceNative({
@@ -56,8 +56,8 @@ export class BalanceService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getBalanceForeign({
@@ -84,8 +84,8 @@ export class BalanceService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getAssetBalance({
@@ -112,8 +112,8 @@ export class BalanceService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getMaxNativeTransferableAmount({
@@ -140,8 +140,8 @@ export class BalanceService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getMaxForeignTransferableAmount({
@@ -168,8 +168,8 @@ export class BalanceService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getTransferableAmount({
@@ -196,8 +196,8 @@ export class BalanceService {
     }
 
     const Sdk = usePapi
-      ? await import('@paraspell/sdk/papi')
-      : await import('@paraspell/sdk');
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
 
     return Sdk.getExistentialDeposit(nodeTyped, currency);
   }

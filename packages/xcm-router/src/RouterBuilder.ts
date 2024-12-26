@@ -6,8 +6,8 @@ import {
   TransactionType,
   type TTransferOptions,
 } from '.';
-import type { TCurrencyCoreV1 } from '@paraspell/sdk';
-import { type TNodeWithRelayChains } from '@paraspell/sdk';
+import type { TCurrencyCoreV1 } from '@paraspell/sdk-pjs';
+import { type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
 import { type Signer as EthSigner } from 'ethers';
 
 export interface TRouterBuilderOptions {

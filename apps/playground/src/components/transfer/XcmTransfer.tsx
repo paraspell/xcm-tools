@@ -12,13 +12,13 @@ import type {
 } from "@paraspell/sdk";
 import {
   isForeignAsset,
+  getOtherAssets,
+  isRelayChain,
   Override,
-  type Extrinsic,
   type TMultiLocation,
   type TNodePolkadotKusama,
+  type TPapiTransaction,
 } from "@paraspell/sdk";
-import type { TPapiTransaction } from "@paraspell/sdk/papi";
-import { getOtherAssets, isRelayChain } from "@paraspell/sdk/papi";
 import type { PolkadotClient, PolkadotSigner } from "polkadot-api";
 import type { Signer } from "@polkadot/api/types";
 import { useState, useEffect } from "react";
@@ -29,6 +29,7 @@ import type { ApiPromise } from "@polkadot/api";
 import { ethers } from "ethers";
 import { IconJson } from "@tabler/icons-react";
 import { replaceBigInt } from "../../utils/replaceBigInt";
+import type { Extrinsic } from "@paraspell/sdk-pjs";
 
 const XcmTransfer = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
@@ -131,8 +132,8 @@ const XcmTransfer = () => {
 
     const Sdk =
       apiType === "PAPI"
-        ? await import("@paraspell/sdk/papi")
-        : await import("@paraspell/sdk");
+        ? await import("@paraspell/sdk")
+        : await import("@paraspell/sdk-pjs");
 
     const api = await Sdk.createApiInstanceForNode(from);
 

@@ -14,7 +14,7 @@ import {
   type TNodeWithRelayChains,
   createApiInstanceForNode,
   type Extrinsic,
-} from '@paraspell/sdk';
+} from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
 import * as transactionUtils from '../utils/submitTransaction';
 import { FALLBACK_FEE_CALC_ADDRESS } from '../consts/consts';
@@ -31,8 +31,8 @@ const builderMock = {
   } as unknown as Extrinsic),
 };
 
-vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk');
+vi.mock('@paraspell/sdk-pjs', async () => {
+  const actual = await vi.importActual('@paraspell/sdk-pjs');
   return {
     ...actual,
     createApiInstanceForNode: vi.fn().mockResolvedValue(undefined),
