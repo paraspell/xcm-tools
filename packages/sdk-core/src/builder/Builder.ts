@@ -41,6 +41,8 @@ export class GeneralBuilder<TApi, TRes>
   private _ahAddress?: string
   private _destApi: IPolkadotApi<TApi, TRes>
   private _version?: Version
+  private _pallet?: string
+  private _method?: string
 
   constructor(
     private readonly batchManager: BatchTransactionManager<TApi, TRes>,
@@ -135,6 +137,18 @@ export class GeneralBuilder<TApi, TRes>
     return this
   }
 
+  /**
+   * Sets a custom pallet for the transaction.
+   *
+   * @param palletName - The name of the custom pallet to be used.
+   * @returns An instance of the Builder.
+   */
+  customPallet(pallet: string, method: string): this {
+    this._pallet = pallet
+    this._method = method
+    return this
+  }
+
   private createOptions(): TSendOptions<TApi, TRes> {
     return {
       api: this.api,
@@ -145,7 +159,9 @@ export class GeneralBuilder<TApi, TRes>
       paraIdTo: this._paraIdTo,
       destApiForKeepAlive: this._destApi,
       version: this._version,
-      ahAddress: this._ahAddress
+      ahAddress: this._ahAddress,
+      pallet: this._pallet,
+      method: this._method
     }
   }
 

@@ -152,6 +152,8 @@ export const XTransferDtoSchema = z.object({
   ahAddress: z.string().optional(),
   currency: CurrencySchema,
   xcmVersion: z.enum(versionValues).optional(),
+  pallet: z.string().optional(),
+  method: z.string().optional(),
 });
 
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;

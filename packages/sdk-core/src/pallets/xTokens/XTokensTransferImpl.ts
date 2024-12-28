@@ -5,7 +5,8 @@ import type {
   TXTokensTransferOptions,
   TXTokensCurrencySelection,
   TXTokensSection,
-  TSerializedApiCall
+  TSerializedApiCall,
+  TPallet
 } from '../../types'
 import { getCurrencySelection } from './utils/getCurrencySelection'
 import { getXTokensParameters } from './utils/getXTokensParameters'
@@ -16,7 +17,17 @@ class XTokensTransferImpl {
     currencySelection: TXTokensCurrencySelection,
     fees: string | number = 'Unlimited'
   ): TRes {
-    const { api, origin, asset, addressSelection, destination, scenario, overriddenAsset } = input
+    const {
+      api,
+      origin,
+      asset,
+      addressSelection,
+      destination,
+      scenario,
+      overriddenAsset,
+      pallet,
+      method
+    } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
     if (isMultiLocationDestination) {
@@ -58,8 +69,8 @@ class XTokensTransferImpl {
     )
 
     const call: TSerializedApiCall = {
-      module: 'XTokens',
-      section,
+      module: (pallet as TPallet) ?? 'XTokens',
+      section: method ?? section,
       parameters
     }
 

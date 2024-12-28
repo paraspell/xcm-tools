@@ -7,8 +7,18 @@ import { checkKeepAlive } from './keepAlive'
 export const transferRelayToPara = async <TApi, TRes>(
   options: TRelayToParaOptions<TApi, TRes>
 ): Promise<TRes> => {
-  const { api, origin, destination, asset, address, paraIdTo, destApiForKeepAlive, version } =
-    options
+  const {
+    api,
+    origin,
+    destination,
+    asset,
+    address,
+    paraIdTo,
+    destApiForKeepAlive,
+    version,
+    pallet,
+    method
+  } = options
   const isMultiLocationDestination = typeof destination === 'object'
   const isAddressMultiLocation = typeof address === 'object'
 
@@ -45,7 +55,9 @@ export const transferRelayToPara = async <TApi, TRes>(
       paraIdTo,
       destApiForKeepAlive,
       asset,
-      version
+      version,
+      pallet,
+      method
     })
 
     return api.callTxMethod(serializedApiCall)

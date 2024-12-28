@@ -20,7 +20,8 @@ import type {
   TXTokensTransferOptions,
   TRelayToParaOverrides,
   TAmount,
-  TRelayToParaOptions
+  TRelayToParaOptions,
+  TPallet
 } from '../types'
 import { Version, Parents } from '../types'
 import { generateAddressPayload, getFees, isRelayChain } from '../utils'
@@ -92,8 +93,18 @@ abstract class ParachainNode<TApi, TRes> {
   }
 
   async transfer(options: TSendInternalOptions<TApi, TRes>): Promise<TRes> {
-    const { api, asset, address, destination, paraIdTo, overriddenAsset, version, ahAddress } =
-      options
+    const {
+      api,
+      asset,
+      address,
+      destination,
+      paraIdTo,
+      overriddenAsset,
+      version,
+      ahAddress,
+      pallet,
+      method
+    } = options
     const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
     const scenario: TScenario = isRelayDestination ? 'ParaToRelay' : 'ParaToPara'
     const paraId =
@@ -128,7 +139,9 @@ abstract class ParachainNode<TApi, TRes> {
         scenario,
         paraIdTo: paraId,
         destination,
-        overriddenAsset
+        overriddenAsset,
+        pallet,
+        method
       }
 
       if (shouldUseMultiasset) {
@@ -144,7 +157,9 @@ abstract class ParachainNode<TApi, TRes> {
         paraId,
         origin: this.node,
         destination,
-        overriddenAsset
+        overriddenAsset,
+        pallet,
+        method
       })
     } else if (supportsPolkadotXCM(this)) {
       return this.transferPolkadotXCM({
@@ -172,7 +187,9 @@ abstract class ParachainNode<TApi, TRes> {
         paraIdTo: paraId,
         overriddenAsset,
         version,
-        ahAddress
+        ahAddress,
+        pallet,
+        method
       })
     } else {
       throw new NoXCMSupportImplementedError(this._node)
@@ -184,11 +201,11 @@ abstract class ParachainNode<TApi, TRes> {
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
-    const { version = Version.V3 } = options
+    const { version = Version.V3, pallet, method } = options
     const { section, includeFee } = this.getRelayToParaOverrides()
     return {
-      module: 'XcmPallet',
-      section,
+      module: (pallet as TPallet) ?? 'XcmPallet',
+      section: method ?? section,
       parameters: constructRelayToParaParameters(options, version, { includeFee })
     }
   }
