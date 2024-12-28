@@ -234,7 +234,7 @@ Possible parameters:
 - `currencyTo`: (required): Represents the received asset.
 - `amount`: (required): Specifies the amount of assets to transfer.
 - `slippagePct`: (required): Specifies the slippage percentage.
-- `address`: (required): Specifies the recipient's address.
+- `recipientAddress`: (required): Specifies the recipient's address.
 - `injectorAddress`: (required): Specifies the sender's address.
 
 ```js
@@ -251,7 +251,7 @@ const response = await fetch('http://localhost:3001/router', {
     currencyTo: { CurrencySpec }, // {id: currencyID} | {symbol: currencySymbol}
     amount: 'Amount', // Amount to send
     slippagePct: 'Pct', // Max slipppage percentage
-    address: 'Address', //Recipient address
+    recipientAddress: 'Address', //Recipient address
     injectorAddress: 'InjectorAddress', //Address of sender
   }),
 });
