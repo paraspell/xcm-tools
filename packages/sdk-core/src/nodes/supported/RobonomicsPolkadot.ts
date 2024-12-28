@@ -2,7 +2,7 @@
 
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class RobonomicsPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>

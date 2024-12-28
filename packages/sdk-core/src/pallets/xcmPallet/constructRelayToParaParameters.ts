@@ -1,4 +1,4 @@
-import { DEFAULT_FEE_ASSET } from '../../const'
+import { DEFAULT_FEE_ASSET } from '../../constants'
 import { getParaId } from '../../nodes/config'
 import type { TRelayToParaOptions } from '../../types'
 import { Parents, type Version } from '../../types'

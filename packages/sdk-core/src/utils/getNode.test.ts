@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { getNode } from '.'
-import { NODE_NAMES_DOT_KSM } from '../maps/consts'
+import { NODE_NAMES_DOT_KSM } from '../constants'
 
 describe('getNode', () => {
   it('should return node detail for all nodes', () => {

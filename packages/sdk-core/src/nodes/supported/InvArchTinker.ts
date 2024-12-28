@@ -4,7 +4,7 @@ import { InvalidCurrencyError } from '../../errors'
 import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 
 class InvArchTinker<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

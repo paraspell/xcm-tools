@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type Encointer from './Encointer'
 import { getNode } from '../../utils'
 
-vi.mock('../polkadotXcm', () => ({
+vi.mock('../../pallets/polkadotXcm', () => ({
   default: {
     transferPolkadotXCM: vi.fn()
   }

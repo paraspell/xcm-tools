@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import { getNode } from '../../utils/getNode'
 import type Amplitude from './Amplitude'
 
-vi.mock('../xTokens', () => ({
+vi.mock('../../pallets/xTokens', () => ({
   default: {
     transferXTokens: vi.fn()
   }

@@ -10,9 +10,9 @@ import type {
 } from '../../types'
 import { type IXTokensTransfer, Parents, Version, type TXTokensTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
-import XTokensTransferImpl from '../xTokens'
-import { ETHEREUM_JUNCTION } from '../../const'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import XTokensTransferImpl from '../../pallets/xTokens'
+import { ETHEREUM_JUNCTION } from '../../constants'
 import { isForeignAsset } from '../../utils/assets'
 
 export class BifrostPolkadot<TApi, TRes>

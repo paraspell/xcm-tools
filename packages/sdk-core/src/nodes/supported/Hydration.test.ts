@@ -6,13 +6,13 @@ import type {
   TXTokensTransferOptions
 } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type Hydration from './Hydration'
 import { getNode } from '../../utils'
 import { InvalidCurrencyError } from '../../errors'
 import type { IPolkadotApi } from '../../api'
 
-vi.mock('../xTokens', () => ({
+vi.mock('../../pallets/xTokens', () => ({
   default: {
     transferXTokens: vi.fn()
   }

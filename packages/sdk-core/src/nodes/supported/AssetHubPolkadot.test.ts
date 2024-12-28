@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ethers } from 'ethers'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type AssetHubPolkadot from './AssetHubPolkadot'
 import type { TMultiLocationHeader } from '../../types'
 import { Version, type TPolkadotXCMTransferOptions } from '../../types'

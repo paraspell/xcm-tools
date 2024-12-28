@@ -3,9 +3,9 @@ import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Quartz from './Quartz'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 
-vi.mock('../xTokens', () => ({
+vi.mock('../../pallets/xTokens', () => ({
   default: {
     transferXTokens: vi.fn()
   }

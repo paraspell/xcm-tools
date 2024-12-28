@@ -4,7 +4,7 @@ import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class Subsocial<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {

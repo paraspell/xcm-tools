@@ -3,11 +3,11 @@ import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import type Moonriver from './Moonriver'
 import { getNode } from '../../utils'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { IPolkadotApi } from '../../api'
-import { DOT_MULTILOCATION } from '../../const'
+import { DOT_MULTILOCATION } from '../../constants'
 
-vi.mock('../polkadotXcm', () => ({
+vi.mock('../../pallets/polkadotXcm', () => ({
   default: {
     transferPolkadotXCM: vi.fn()
   }

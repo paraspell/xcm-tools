@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Moonbeam Parachain
 
-import { DOT_MULTILOCATION } from '../../const'
+import { DOT_MULTILOCATION } from '../../constants'
 import { InvalidCurrencyError } from '../../errors'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import type {
@@ -14,7 +14,7 @@ import type {
 import { Parents, Version } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {

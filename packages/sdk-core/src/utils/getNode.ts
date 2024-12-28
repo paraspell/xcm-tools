@@ -1,4 +1,4 @@
-import { nodes } from '../maps/consts'
+import { nodes } from '../constants'
 
 /**
  * Retrieves the node instance for a given node.

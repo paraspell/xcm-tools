@@ -12,7 +12,7 @@ import {
   type TXTokensTransferOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Bajun<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

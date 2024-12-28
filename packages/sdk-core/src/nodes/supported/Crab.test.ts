@@ -2,12 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Parents, Version } from '../../types'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { getNode } from '../../utils'
 import type Crab from './Crab'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 
-vi.mock('../polkadotXcm', () => ({
+vi.mock('../../pallets/polkadotXcm', () => ({
   default: {
     transferPolkadotXCM: vi.fn()
   }

@@ -1,4 +1,4 @@
-import { ETHEREUM_JUNCTION } from '../../const'
+import { ETHEREUM_JUNCTION } from '../../constants'
 import { Parents, type TMultiLocation } from '../../types'
 
 export const createEthereumTokenLocation = (currencyId: string): TMultiLocation => ({

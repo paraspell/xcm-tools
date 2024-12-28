@@ -9,7 +9,7 @@ import {
   type TScenario
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {

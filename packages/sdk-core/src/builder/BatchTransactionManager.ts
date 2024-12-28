@@ -1,5 +1,5 @@
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { send } from '../pallets/xcmPallet/transfer'
+import { send } from '../transfer'
 import type { TNodeDotKsmWithRelayChains, TSendOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
 

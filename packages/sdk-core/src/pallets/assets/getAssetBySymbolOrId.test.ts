@@ -1,7 +1,7 @@
 // Contains tests for different Asset queries used in XCM call creation
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { NODE_NAMES } from '../../maps/consts'
+import { NODE_NAMES } from '../../constants'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 import * as assetFunctions from './assets'
 import { getDefaultPallet } from '../pallets'

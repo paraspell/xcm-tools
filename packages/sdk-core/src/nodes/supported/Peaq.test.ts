@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ScenarioNotSupportedError, NodeNotSupportedError } from '../../errors'
 import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type Peaq from './Peaq'
 import { getNode } from '../../utils/getNode'
 
-vi.mock('../xTokens', () => ({
+vi.mock('../../pallets/xTokens', () => ({
   default: {
     transferXTokens: vi.fn()
   }

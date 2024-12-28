@@ -1,7 +1,7 @@
 // Contains different useful asset query operations from compatible Parachains asset map
 
 import assetsMapJson from '../../maps/assets.json' with { type: 'json' }
-import { NODE_NAMES_DOT_KSM } from '../../maps/consts'
+import { NODE_NAMES_DOT_KSM } from '../../constants'
 import { getParaId } from '../../nodes/config'
 import type {
   TNodeWithRelayChains,

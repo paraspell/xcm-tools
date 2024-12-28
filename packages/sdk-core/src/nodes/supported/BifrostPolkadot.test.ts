@@ -5,21 +5,21 @@ import type {
   TSendInternalOptions
 } from '../../types'
 import { Parents, Version } from '../../types'
-import XTokensTransferImpl from '../xTokens'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import XTokensTransferImpl from '../../pallets/xTokens'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { BifrostPolkadot } from './BifrostPolkadot'
 import { getNode } from '../../utils'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { getAssetId } from '../../pallets/assets'
-import { ETHEREUM_JUNCTION } from '../../const'
+import { ETHEREUM_JUNCTION } from '../../constants'
 
-vi.mock('../xTokens', () => ({
+vi.mock('../../pallets/xTokens', () => ({
   default: {
     transferXTokens: vi.fn()
   }
 }))
 
-vi.mock('../polkadotXcm', () => ({
+vi.mock('../../pallets/polkadotXcm', () => ({
   default: {
     transferPolkadotXCM: vi.fn()
   }

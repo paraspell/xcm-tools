@@ -13,7 +13,7 @@ import {
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 import { InvalidCurrencyError, NodeNotSupportedError } from '../../errors'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { type TMultiLocation } from '../../types/TMultiLocation'
 import { isForeignAsset } from '../../utils/assets'

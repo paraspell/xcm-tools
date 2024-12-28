@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { ETHEREUM_JUNCTION } from '../../const'
+import { ETHEREUM_JUNCTION } from '../../constants'
 import type { TMultiLocation } from '../../types'
 import { Parents } from '../../types'
 import { createEthereumTokenLocation } from './createEthereumTokenLocation'

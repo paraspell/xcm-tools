@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import ParachainNode from './ParachainNode'
-import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
+import { NoXCMSupportImplementedError } from '../errors'
 import type { TRelayToParaOptions } from '../types'
 import {
   Version,
@@ -12,6 +12,8 @@ import {
   type TXTransferTransferOptions
 } from '../types'
 import type { IPolkadotApi } from '../api'
+
+vi.mock('../constants/nodes', () => ({}))
 
 vi.mock('../utils', () => ({
   createApiInstance: vi.fn().mockResolvedValue('apiInstance'),
@@ -35,7 +37,6 @@ vi.mock('../pallets/assets', () => ({
 
 vi.mock('./config', () => ({
   getNodeProviders: vi.fn().mockReturnValue(['provider1', 'provider2']),
-  getNodeProvider: vi.fn().mockReturnValue('provider1'),
   getParaId: vi.fn().mockReturnValue(1000)
 }))
 

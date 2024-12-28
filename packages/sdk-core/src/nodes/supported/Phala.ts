@@ -1,7 +1,7 @@
 import { InvalidCurrencyError } from '../../errors'
 import { type IXTransferTransfer, Version, type TXTransferTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
-import XTransferTransferImpl from '../xTransfer'
+import XTransferTransferImpl from '../../pallets/xTransfer'
 
 class Phala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTransferTransfer {
   constructor() {

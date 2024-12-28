@@ -28,11 +28,11 @@ import {
   type TMultiLocation
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { getOtherAssets } from '../../pallets/assets'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
-import { ETHEREUM_JUNCTION } from '../../const'
+import { ETHEREUM_JUNCTION } from '../../constants'
 import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
 import { isForeignAsset } from '../../utils/assets'
 import { getParaId } from '../config'
