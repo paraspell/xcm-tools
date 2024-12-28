@@ -1,4 +1,4 @@
-import { type SUPPORTED_PALLETS } from '../maps/consts'
+import { type SUPPORTED_PALLETS } from '../constants'
 import type { TNodeDotKsmWithRelayChains } from './TNode'
 
 export type TPallet = (typeof SUPPORTED_PALLETS)[number]

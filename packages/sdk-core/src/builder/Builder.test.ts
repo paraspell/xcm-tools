@@ -4,13 +4,13 @@ import type { MockInstance } from 'vitest'
 import { vi, describe, expect, it, beforeEach } from 'vitest'
 import type { TCurrencyInputWithAmount } from '../types'
 import { Version, type TNode } from '../types'
-import * as xcmPallet from '../pallets/xcmPallet/transfer'
+import * as xcmPallet from '../transfer'
 import { getRelayChainSymbol } from '../pallets/assets'
 import { Builder } from './Builder'
 import * as claimAssets from '../pallets/assets/asset-claim'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 
-vi.mock('../pallets/xcmPallet/transfer', () => ({
+vi.mock('../transfer', () => ({
   send: vi.fn(),
   transferRelayToPara: vi.fn(),
   getDryRun: vi.fn()

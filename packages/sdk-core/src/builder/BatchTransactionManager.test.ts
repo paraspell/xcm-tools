@@ -3,9 +3,9 @@ import BatchTransactionManager from './BatchTransactionManager'
 import type { TSendOptions } from '../types'
 import { BatchMode } from '../types'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { send } from '../pallets/xcmPallet'
+import { send } from '../transfer'
 
-vi.mock('../pallets/xcmPallet/transfer', () => ({
+vi.mock('../transfer', () => ({
   send: vi.fn()
 }))
 

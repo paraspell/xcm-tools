@@ -22,8 +22,8 @@ import { Parents, Version } from '../../types'
 import { generateAddressPayload, isForeignAsset, isRelayChain } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
-import { DOT_MULTILOCATION } from '../../const'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { DOT_MULTILOCATION } from '../../constants'
 import { getParaId } from '../config'
 
 const GAS_LIMIT = BigInt('1000000000')

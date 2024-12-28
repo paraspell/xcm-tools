@@ -1,4 +1,4 @@
-import { type NODES_WITH_RELAY_CHAINS, type NODE_NAMES } from '../maps/consts'
+import { type NODES_WITH_RELAY_CHAINS, type NODE_NAMES } from '../constants'
 
 export type TRelaychain = 'Polkadot' | 'Kusama'
 export type TNode = (typeof NODE_NAMES)[number]

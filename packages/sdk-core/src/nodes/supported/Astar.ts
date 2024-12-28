@@ -10,8 +10,8 @@ import {
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
-import XTokensTransferImpl from '../xTokens'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Astar<TApi, TRes>
   extends ParachainNode<TApi, TRes>

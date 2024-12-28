@@ -1,7 +1,6 @@
 // Contains tests for different Asset operation functions
 
 import { describe, expect, it } from 'vitest'
-import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '../../maps/consts'
 import {
   getAllAssetsSymbols,
   getAssetDecimals,
@@ -16,6 +15,7 @@ import {
 import type { TRelayChainType } from '../../types'
 import { getNode } from '../../utils'
 import { getParaId } from '../../nodes/config'
+import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '../../constants'
 
 describe('getAssetsObject', () => {
   it('should return assets object for all nodes', () => {

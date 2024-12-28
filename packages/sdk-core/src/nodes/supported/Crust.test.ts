@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import type { TXTokensTransferOptions, TReserveAsset } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type Crust from './Crust'
 import { getNode } from '../../utils'
 
-vi.mock('../xTokens', () => ({
+vi.mock('../../pallets/xTokens', () => ({
   default: {
     transferXTokens: vi.fn()
   }

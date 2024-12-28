@@ -2,7 +2,7 @@
 
 import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Imbue<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

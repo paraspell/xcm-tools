@@ -30,8 +30,8 @@ import {
   createPolkadotXcmHeader,
   isTMultiLocation
 } from '../pallets/xcmPallet/utils'
-import XTokensTransferImpl from './xTokens'
 import { getParaId } from './config'
+import XTokensTransferImpl from '../pallets/xTokens'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj

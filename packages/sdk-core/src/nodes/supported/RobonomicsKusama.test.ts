@@ -2,10 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import RobonomicsKusama from './RobonomicsKusama'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
-vi.mock('../polkadotXcm', async () => {
-  const actual = await vi.importActual<typeof import('../polkadotXcm')>('../polkadotXcm')
+vi.mock('../../pallets/polkadotXcm', async () => {
+  const actual = await vi.importActual<typeof import('../../pallets/polkadotXcm')>(
+    '../../pallets/polkadotXcm'
+  )
   return {
     default: {
       ...actual.default,

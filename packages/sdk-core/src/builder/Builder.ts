@@ -19,7 +19,7 @@ import type {
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { getDryRun, send } from '../pallets/xcmPallet/transfer'
+import { getDryRun, send } from '../transfer'
 import { isRelayChain } from '../utils'
 import { isTMultiLocation } from '../pallets/xcmPallet/utils'
 

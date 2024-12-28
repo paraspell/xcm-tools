@@ -5,14 +5,14 @@ import { Version } from '../../types'
 import { ScenarioNotSupportedError, InvalidCurrencyError } from '../../errors'
 import type { IPolkadotApi } from '../../api'
 import { getNode } from '../../utils'
-import { DOT_MULTILOCATION } from '../../const'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import { DOT_MULTILOCATION } from '../../constants'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 vi.mock('../../pallets/assets', () => ({
   getParaId: vi.fn().mockReturnValue(1000)
 }))
 
-vi.mock('../polkadotXcm', () => ({
+vi.mock('../../pallets/polkadotXcm', () => ({
   default: {
     transferPolkadotXCM: vi.fn().mockResolvedValue('mocked polkadotXcm result')
   }

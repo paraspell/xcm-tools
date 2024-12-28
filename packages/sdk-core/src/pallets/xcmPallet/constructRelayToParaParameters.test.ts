@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { Version, Parents } from '../../types'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
-import { DEFAULT_FEE_ASSET } from '../../const'
+import { DEFAULT_FEE_ASSET } from '../../constants'
 import type {
   TCurrencySelectionHeaderArr,
   TMultiLocation,

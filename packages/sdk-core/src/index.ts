@@ -1,8 +1,8 @@
 // Contains all important exports
 
 export * from './api'
-export * as xcmPallet from './pallets/xcmPallet'
-export * from './pallets/xcmPallet'
+export * as xcmPallet from './transfer'
+export * from './transfer'
 export * as assets from './pallets/assets'
 export * from './pallets/assets'
 export * from './pallets/pallets'
@@ -15,7 +15,7 @@ export {
   NODES_WITH_RELAY_CHAINS,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   SUPPORTED_PALLETS
-} from './maps/consts'
+} from './constants'
 export * from './utils'
 export * from './errors'
 export * from './nodes/config'

@@ -4,7 +4,7 @@ import type { TForeignOrTokenAsset } from '../../types'
 import { Version, type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Curio<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

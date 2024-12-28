@@ -6,11 +6,11 @@ import {
 } from '../../errors'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
-import PolkadotXCMTransferImpl from '../polkadotXcm'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type Mythos from './Mythos'
 import { getNode } from '../../utils'
 
-vi.mock('../polkadotXcm', () => ({
+vi.mock('../../pallets/polkadotXcm', () => ({
   default: {
     transferPolkadotXCM: vi.fn()
   }

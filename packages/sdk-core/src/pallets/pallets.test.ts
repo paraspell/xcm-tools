@@ -1,7 +1,7 @@
 // Contains tests for querying Parachain XCM Pallets compatibility
 
 import { describe, expect, it } from 'vitest'
-import { NODE_NAMES_DOT_KSM, SUPPORTED_PALLETS } from '../maps/consts'
+import { NODE_NAMES_DOT_KSM, SUPPORTED_PALLETS } from '../constants'
 import { type TNode, type TPallet } from '../types'
 import { getDefaultPallet, getSupportedPallets } from './pallets'
 

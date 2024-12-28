@@ -8,13 +8,13 @@ import type {
 } from '../../types'
 import { Version, Parents } from '../../types'
 import { NodeNotSupportedError } from '../../errors'
-import XTokensTransferImpl from '../xTokens'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type Darwinia from './Darwinia'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
-vi.mock('../xTokens', () => ({
+vi.mock('../../pallets/xTokens', () => ({
   default: {
     transferXTokens: vi.fn()
   }
