@@ -361,6 +361,54 @@ describe('XTransferService', () => {
         service.generateXcmCall(xTransferDto, false, true),
       ).rejects.toThrow(BadRequestException);
     });
+
+    it('should throw BadRequestException when pallet or method are not provided', async () => {
+      const xTransferDto: XTransferDto = {
+        from: 'Acala',
+        to: 'Basilisk',
+        address,
+        currency,
+        pallet: 'Balances',
+      };
+
+      await expect(service.generateXcmCall(xTransferDto)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should succeed when both pallet and method are provided', async () => {
+      const xTransferDto: XTransferDto = {
+        from: 'Acala',
+        to: 'Basilisk',
+        address,
+        currency,
+        pallet: 'Balances',
+        method: 'transfer',
+      };
+
+      const builderMock = {
+        from: vi.fn().mockReturnThis(),
+        to: vi.fn().mockReturnThis(),
+        currency: vi.fn().mockReturnThis(),
+        address: vi.fn().mockReturnThis(),
+        xcmVersion: vi.fn().mockReturnThis(),
+        addToBatch: vi.fn().mockReturnThis(),
+        customPallet: vi.fn().mockReturnThis(),
+        build: vi.fn().mockReturnValue(txHash),
+      };
+
+      vi.spyOn(paraspellSdk, 'Builder').mockReturnValue(
+        builderMock as unknown as ReturnType<typeof paraspellSdk.Builder>,
+      );
+
+      const result = await service.generateXcmCall(xTransferDto);
+
+      expect(result).toBe(txHash);
+      expect(builderMock.customPallet).toHaveBeenCalledWith(
+        'Balances',
+        'transfer',
+      );
+    });
   });
 
   describe('generateBatchXcmCall', () => {
@@ -784,6 +832,68 @@ describe('XTransferService', () => {
       expect(result).toBe(batchTransaction);
       expect(builderMock.xcmVersion).toHaveBeenCalledWith(
         paraspellSdk.Version.V2,
+      );
+    });
+
+    it('should throw BadRequestException when pallet or method not provided', async () => {
+      const from: TNode = 'Acala';
+      const to: TNode = 'Basilisk';
+
+      const batchDto: BatchXTransferDto = {
+        transfers: [
+          {
+            from,
+            to,
+            address,
+            currency,
+            pallet: 'Balances',
+          },
+        ],
+      };
+
+      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should succeed when pallet and method are provided', async () => {
+      const from: TNode = 'Acala';
+      const to: TNode = 'Basilisk';
+
+      const batchDto: BatchXTransferDto = {
+        transfers: [
+          {
+            from,
+            to,
+            address,
+            currency,
+            pallet: 'Balances',
+            method: 'transfer',
+          },
+        ],
+      };
+
+      const builderMock = {
+        from: vi.fn().mockReturnThis(),
+        to: vi.fn().mockReturnThis(),
+        currency: vi.fn().mockReturnThis(),
+        address: vi.fn().mockReturnThis(),
+        addToBatch: vi.fn().mockReturnThis(),
+        xcmVersion: vi.fn().mockReturnThis(),
+        customPallet: vi.fn().mockReturnThis(),
+        buildBatch: vi.fn().mockResolvedValue('batch-transaction'),
+      };
+
+      vi.spyOn(paraspellSdk, 'Builder').mockReturnValue(
+        builderMock as unknown as ReturnType<typeof paraspellSdk.Builder>,
+      );
+
+      const result = await service.generateBatchXcmCall(batchDto);
+
+      expect(result).toBe(batchTransaction);
+      expect(builderMock.customPallet).toHaveBeenCalledWith(
+        'Balances',
+        'transfer',
       );
     });
   });

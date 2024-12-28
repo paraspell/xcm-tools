@@ -2,7 +2,7 @@
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import { isTMultiLocation } from '../xcmPallet/utils'
-import type { TPolkadotXcmSection, TSerializedApiCall } from '../../types'
+import type { TPallet, TPolkadotXcmSection, TSerializedApiCall } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 
 class PolkadotXCMTransferImpl {
@@ -12,7 +12,9 @@ class PolkadotXCMTransferImpl {
       header,
       addressSelection,
       currencySelection,
-      overriddenAsset
+      overriddenAsset,
+      pallet,
+      method
     }: TPolkadotXCMTransferOptions<TApi, TRes>,
     section: TPolkadotXcmSection,
     fees: 'Unlimited' | { Limited: string } | undefined = undefined
@@ -23,8 +25,8 @@ class PolkadotXCMTransferImpl {
         : overriddenAsset.findIndex(asset => asset.isFeeAsset)
 
     const call: TSerializedApiCall = {
-      module: 'PolkadotXcm',
-      section,
+      module: (pallet as TPallet) ?? 'PolkadotXcm',
+      section: method ?? section,
       parameters: {
         dest: header,
         beneficiary: addressSelection,

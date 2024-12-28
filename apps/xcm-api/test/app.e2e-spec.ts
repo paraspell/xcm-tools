@@ -1094,6 +1094,25 @@ describe('XCM API (e2e)', () => {
         })
         .expect(400);
     });
+
+    it(`Generate XCM call - Parachain to relaychain override pallet and method - ${xTransferUrl}`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const currency = {
+        symbol: 'KSM',
+        amount,
+      };
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from,
+          to: 'Kusama',
+          currency,
+          address,
+          pallet: 'Balances',
+          method: 'transfer',
+        })
+        .expect(500);
+    });
   });
 
   describe('Router controller', () => {

@@ -31,6 +31,8 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   version?: Version
   ahAddress?: string
+  pallet?: string
+  method?: string
 }
 
 export type TXTokensTransferOptions<TApi, TRes> = {
@@ -43,6 +45,8 @@ export type TXTokensTransferOptions<TApi, TRes> = {
   destination: TDestination
   paraIdTo?: number
   overriddenAsset?: TMultiLocation | TMultiAsset[]
+  pallet?: string
+  method?: string
 }
 
 export type TXTransferTransferOptions<TApi, TRes> = {
@@ -53,6 +57,8 @@ export type TXTransferTransferOptions<TApi, TRes> = {
   paraId?: number
   destination: TDestination
   overriddenAsset?: TMultiLocation | TMultiAsset[]
+  pallet?: string
+  method?: string
 }
 
 export interface IPolkadotXCMTransfer {
@@ -120,6 +126,14 @@ export type TSendBaseOptions<TApi, TRes> = {
    * The optional overrided XCM version
    */
   version?: Version
+  /**
+   * The optional pallet override
+   */
+  pallet?: string
+  /**
+   * The optional pallet method override
+   */
+  method?: string
 }
 
 /**
@@ -171,6 +185,14 @@ type TRelayToParaBaseOptions<TApi, TRes> = {
    * The DOT or KSM asset to transfer
    */
   asset: WithAmount<TAsset>
+  /**
+   * The optional pallet override
+   */
+  pallet?: string
+  /**
+   * The optional pallet method override
+   */
+  method?: string
 }
 
 export type TRelayToParaOverrides = {

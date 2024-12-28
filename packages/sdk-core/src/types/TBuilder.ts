@@ -124,6 +124,7 @@ export interface IAddToBatchBuilder<TApi, TRes> {
 export interface IUseKeepAliveFinalBuilder<TApi, TRes> extends IAddToBatchBuilder<TApi, TRes> {
   useKeepAlive: (destApi: TApi) => this
   xcmVersion: (version: Version) => this
+  customPallet: (pallet: string, method: string) => this
   build: () => Promise<TRes>
   dryRun: () => Promise<TDryRunResult>
 }

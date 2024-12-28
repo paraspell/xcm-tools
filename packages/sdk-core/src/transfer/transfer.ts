@@ -28,7 +28,9 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     paraIdTo,
     destApiForKeepAlive,
     version,
-    ahAddress
+    ahAddress,
+    pallet,
+    method
   } = options
 
   validateCurrency(currency)
@@ -67,7 +69,9 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       },
       paraIdTo,
       destApiForKeepAlive,
-      version
+      version,
+      pallet,
+      method
     })
   }
 
@@ -104,7 +108,9 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       overriddenAsset,
       version,
       destApiForKeepAlive,
-      ahAddress
+      ahAddress,
+      pallet,
+      method
     })
   } finally {
     if (isPjsClient(api.getApi())) {

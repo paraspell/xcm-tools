@@ -24,7 +24,16 @@ import { Extrinsic } from '@paraspell/sdk-pjs';
 @Injectable()
 export class XTransferService {
   async generateXcmCall(
-    { from, to, address, ahAddress, currency, xcmVersion }: XTransferDto,
+    {
+      from,
+      to,
+      address,
+      ahAddress,
+      currency,
+      xcmVersion,
+      pallet,
+      method,
+    }: XTransferDto,
     usePapi = false,
     isDryRun = false,
   ) {
@@ -56,6 +65,10 @@ export class XTransferService {
       );
     }
 
+    if ((pallet && !method) || (!pallet && method)) {
+      throw new BadRequestException('Both pallet and method are required.');
+    }
+
     const Sdk = usePapi
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
@@ -76,6 +89,10 @@ export class XTransferService {
 
     if (xcmVersion) {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);
+    }
+
+    if (pallet && method) {
+      finalBuilder = finalBuilder.customPallet(pallet, method);
     }
 
     try {
@@ -175,6 +192,13 @@ export class XTransferService {
           throw new BadRequestException('Invalid wallet address.');
         }
 
+        if (
+          (transfer.pallet && !transfer.method) ||
+          (!transfer.pallet && transfer.method)
+        ) {
+          throw new BadRequestException('Both pallet and method are required.');
+        }
+
         let finalBuilder:
           | SdkPapiType.IUseKeepAliveFinalBuilder
           | SdkType.IUseKeepAliveFinalBuilder;
@@ -187,6 +211,13 @@ export class XTransferService {
 
         if (transfer.xcmVersion) {
           finalBuilder = finalBuilder.xcmVersion(transfer.xcmVersion);
+        }
+
+        if (transfer.pallet && transfer.method) {
+          finalBuilder = finalBuilder.customPallet(
+            transfer.pallet,
+            transfer.method,
+          );
         }
 
         builder = finalBuilder.addToBatch();
