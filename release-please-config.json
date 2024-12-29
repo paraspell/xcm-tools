@@ -30,10 +30,11 @@
     "packages/xcm-router": {},
     "packages/xcm-analyser": {}
   },
+  "group-pull-request-title-pattern": "chore${scope}: release SDKgroup libraries",
   "plugins": [
     {
       "type": "linked-versions",
-      "groupName": "SDK group",
+      "groupName": "SDKgroup",
       "components": ["sdk-core", "sdk", "sdk-pjs"]
     }
   ]
