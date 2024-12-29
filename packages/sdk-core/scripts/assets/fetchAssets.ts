@@ -94,7 +94,7 @@ const fetchOtherAssetsDefault = async (
         },
         value
       ]) => {
-        const valueHuman = value.toHuman()
+        const valueHuman = value.toHuman() as any
         const resDetail =
           api.query[module] && api.query[module].hasOwnProperty('asset')
             ? await api.query[module].asset(era)
@@ -131,7 +131,7 @@ const fetchNativeAssetsCurio = async (api: ApiPromise, query: string) => {
         },
         value
       ]) => {
-        const { symbol, decimals, existentialDeposit } = value.toHuman()
+        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
         return {
           assetId: era.toHuman(),
           symbol,
@@ -159,7 +159,7 @@ const fetchOtherAssetsCurio = async (api: ApiPromise, query: string) => {
         },
         value
       ]) => {
-        const { symbol, decimals, existentialDeposit } = value.toHuman()
+        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
         return {
           assetId: era.toHuman(),
           symbol,
@@ -195,7 +195,7 @@ const fetchOtherAssetsAmplitude = async (api: ApiPromise, query: string) => {
         },
         value
       ]) => {
-        const { symbol, decimals, existentialDeposit } = value.toHuman()
+        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
         return {
           assetId: Object.values(era.toHuman() ?? {})[0].replaceAll(',', ''),
           symbol,
@@ -226,7 +226,7 @@ const fetchMultiLocations = async (api: ApiPromise): Promise<TForeignAsset[]> =>
       ]) => {
         const multiLocation = era.toJSON() ?? {}
         const resDetail = await api.query.foreignAssets.asset(era)
-        const { symbol, decimals } = value.toHuman()
+        const { symbol, decimals } = value.toHuman() as any
 
         return {
           symbol,

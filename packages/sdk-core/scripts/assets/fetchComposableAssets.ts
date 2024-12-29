@@ -1,4 +1,5 @@
- 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset } from '../../src/types'
@@ -18,7 +19,7 @@ export const fetchComposableAssets = async (
         },
         value
       ]) => {
-        const { inner: symbol } = value.toHuman()
+        const { inner: symbol } = value.toHuman() as any
         const assetId = era.toHuman() as string
         const numberAssetId = assetId.replace(/[,]/g, '')
 

@@ -1,5 +1,5 @@
 import type { ApiPromise } from '@polkadot/api'
-import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '../../src/maps/consts'
+import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '../../src/constants'
 import type { TPallet, TPalletMap, TPalletJsonMap, TPalletDetails } from '../../src/types'
 import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
 

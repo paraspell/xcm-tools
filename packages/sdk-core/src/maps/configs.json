@@ -276,10 +276,6 @@
         "endpoint": "wss://rpc.darwinia.network"
       },
       {
-        "name": "Dcdao",
-        "endpoint": "wss://darwinia-rpc.dcdao.box"
-      },
-      {
         "name": "Dwellir",
         "endpoint": "wss://darwinia-rpc.dwellir.com"
       },
@@ -562,10 +558,6 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://bajun.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://bajun.public.curie.radiumblock.co/ws"
       }
     ]
   },

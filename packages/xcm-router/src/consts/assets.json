@@ -101,6 +101,10 @@
       "id": "102"
     },
     {
+      "symbol": "AAVE",
+      "id": "1000624"
+    },
+    {
       "symbol": "PHA",
       "id": "8"
     },
@@ -478,6 +482,10 @@
     {
       "symbol": "APE",
       "id": "0xf4c723e61709d90f89939c1852f516e373d418a8"
+    },
+    {
+      "symbol": "Nemo",
+      "id": "0xfa904c86b73fd041d6cc2aeed9e6ec0148fd51da"
     },
     {
       "symbol": "LDO",

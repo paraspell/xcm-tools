@@ -19,7 +19,7 @@ export const fetchMoonbeamForeignAssets = async (
         },
         value
       ]) => {
-        const { xcm } = value.toJSON()
+        const { xcm } = value.toJSON() as any
         const assetId = era.toHuman() as string
         const numberAssetId = assetId.replace(/[,]/g, '')
 
