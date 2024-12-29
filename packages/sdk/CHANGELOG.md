@@ -1,5 +1,43 @@
 # Changelog
 
+## [8.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.10...sdk-v8.0.0) (2024-12-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* Split SDK into separate packages for PJS and PAPI ✨
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains
+
+### Features
+
+* **playground:** Add support for multi-assets to playground 🛝 ([132f475](https://github.com/paraspell/xcm-tools/commit/132f4753e49f89f479cd29043b67917ad9993755))
+* **sdk-core:** Add support for pallet/method override ✨ ([aa11c6b](https://github.com/paraspell/xcm-tools/commit/aa11c6b0b8484b7566d76b6d2c6bf1821b840b6d))
+* **sdk:** Add dry run support ✨ ([b544a7f](https://github.com/paraspell/xcm-tools/commit/b544a7f58951f2e4830147641b80c1bfe24fc0bb))
+* **sdk:** Add fail-safe support ✨ ([18b1328](https://github.com/paraspell/xcm-tools/commit/18b1328ba3f079d03adebc67ba2d15634d115055))
+* **sdk:** Add support for Moonbeam EVM transfers ✨ ([d30ba8e](https://github.com/paraspell/xcm-tools/commit/d30ba8e941c9f0835b35d9887339e88e9f1986e8))
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains ([395b45e](https://github.com/paraspell/xcm-tools/commit/395b45e2d1bfe68c84cea7d19b44e16f2a3b4cd8))
+* Split SDK into separate packages for PJS and PAPI ✨ ([ff465e9](https://github.com/paraspell/xcm-tools/commit/ff465e92e57640f525c7d350afec0b9dcf364453))
+
+
+### Bug Fixes
+
+* **sdk:** Fix Dry run call for relaychains 🛠️ ([4c9a35d](https://github.com/paraspell/xcm-tools/commit/4c9a35d68fba5734337f9b490fc2384a18521dbe))
+* **sdk:** Fix PAPI client automatic disconnect 🔧 ([f858e03](https://github.com/paraspell/xcm-tools/commit/f858e0390cb50964b64b6b84f0ccf1ab30c58185))
+
+
+### Miscellaneous Chores
+
+* Perform monthly maintenance check  👨‍🔧 ([000a28a](https://github.com/paraspell/xcm-tools/commit/000a28a265e560e7eaac82ca73766b3e1e8a4a2d))
+* **sdk:** Add changes ([64af95c](https://github.com/paraspell/xcm-tools/commit/64af95c3eaba8003793e2ed56c50ebeb92921554))
+* **sdk:** fix readme ([0ec4dcc](https://github.com/paraspell/xcm-tools/commit/0ec4dcc25fc381001e0d4827bd2d41e92ac872e5))
+* **xcm-tools:** Add readme ([4de56b2](https://github.com/paraspell/xcm-tools/commit/4de56b24d62a3158e07a701334b81ed2d1722a98))
+* **xcm-tools:** Update readme ([c10bdbb](https://github.com/paraspell/xcm-tools/commit/c10bdbb8ce16b5e8700c30f8b82d1912f604b966))
+
+
+### Continuous Integration
+
+* Update Node.js to v22 LTS 📦 ([f7d4902](https://github.com/paraspell/xcm-tools/commit/f7d49029e295fb4bd3840ab27abe40d3168beae5))
+
 ## [7.2.10](https://github.com/paraspell/xcm-tools/compare/sdk-v7.2.9...sdk-v7.2.10) (2024-12-17)
 
 
