@@ -5,7 +5,7 @@
 import axios from 'axios'
 import { Project, SyntaxKind, Node } from 'ts-morph'
 import { writeFileSync } from 'fs'
-import { NODE_NAMES_DOT_KSM } from '../../src/maps/consts'
+import { NODE_NAMES_DOT_KSM } from '../../src/constants'
 import { getNode } from '../../src/utils'
 import type { TNodeConfig, TProviderEntry, TNodeDotKsmWithRelayChains } from '../../src/types'
 

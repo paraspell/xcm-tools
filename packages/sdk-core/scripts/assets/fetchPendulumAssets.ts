@@ -1,4 +1,5 @@
- 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset } from '../../src/types'
@@ -27,7 +28,7 @@ export const fetchPendulumForeignAssets = async (
         },
         value
       ]) => {
-        const { symbol, decimals, existentialDeposit } = value.toHuman()
+        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
         return {
           assetId: Object.values(era.toHuman() ?? {})[0],
           symbol,
