@@ -1,4 +1,5 @@
- 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -22,8 +23,8 @@ export const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string)
         },
         value
       ]) => {
-        const { symbol, decimals, existentialDeposit } = value.toHuman()
-        const eraObj = era
+        const { symbol, decimals, existentialDeposit } = value.toHuman() as any
+        const eraObj = era as any
         return {
           assetId:
             eraObj.type === 'Tranche'

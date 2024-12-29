@@ -5207,6 +5207,21 @@
         "existentialDeposit": "1000000000"
       },
       {
+        "symbol": "LAOS",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3370
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1"
+      },
+      {
         "symbol": "BNC",
         "decimals": 12,
         "multiLocation": {
