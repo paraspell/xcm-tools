@@ -1,4 +1,4 @@
- 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset, TNativeAsset } from '../../src/types'
@@ -32,7 +32,7 @@ const fetchAssets = async (
         },
         value
       ]) => {
-        const { symbol, decimals, existentialDeposit, minimalBalance } = value.toHuman()
+        const { symbol, decimals, existentialDeposit, minimalBalance } = value.toHuman() as any
         return {
           assetId: Object.values(era.toHuman() ?? {})[0],
           symbol,
