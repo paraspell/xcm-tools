@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.1](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.0...xcm-analyser-v1.5.1) (2024-12-29)
+
+
+### Miscellaneous Chores
+
+* Perform monthly maintenance check  👨‍🔧 ([000a28a](https://github.com/paraspell/xcm-tools/commit/000a28a265e560e7eaac82ca73766b3e1e8a4a2d))
+
+
+### Continuous Integration
+
+* Update Node.js to v22 LTS 📦 ([f7d4902](https://github.com/paraspell/xcm-tools/commit/f7d49029e295fb4bd3840ab27abe40d3168beae5))
+
 ## [1.5.0](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.4.0...xcm-analyser-v1.5.0) (2024-11-30)
 
 
