@@ -8,7 +8,6 @@ import type ParachainNode from '../nodes/ParachainNode'
 import { getRelayChainSymbol } from '../pallets/assets'
 import { resolveTNodeFromMultiLocation } from '../pallets/xcmPallet/utils'
 import { Version, type TMultiLocation, type TRelayToParaOptions } from '../types'
-import { checkKeepAlive } from './keepAlive'
 
 vi.mock('../utils', () => ({
   determineRelayChain: vi.fn(),
@@ -21,10 +20,6 @@ vi.mock('../utils/isPjsClient', () => ({
 
 vi.mock('../pallets/assets', () => ({
   getRelayChainSymbol: vi.fn()
-}))
-
-vi.mock('./keepAlive', () => ({
-  checkKeepAlive: vi.fn()
 }))
 
 vi.mock('../pallets/xcmPallet/utils', () => ({
@@ -98,63 +93,6 @@ describe('transferRelayToPara', () => {
     await transferRelayToPara(options)
 
     expect(spy).toHaveBeenCalledWith('Polkadot')
-  })
-
-  it('should log a warning and not call checkKeepAlive when destination is MultiLocation', async () => {
-    const options = {
-      api: apiMock,
-      origin: 'Polkadot',
-      destination: {},
-      asset: { symbol: 'DOT', amount: 100 },
-      address: 'some-address'
-    } as TRelayToParaOptions<unknown, unknown>
-
-    await transferRelayToPara(options)
-
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'Keep alive check is not supported when using MultiLocation as destination.'
-    )
-    expect(checkKeepAlive).not.toHaveBeenCalled()
-  })
-
-  it('should log a warning and not call checkKeepAlive when address is MultiLocation', async () => {
-    const options: TRelayToParaOptions<unknown, unknown> = {
-      api: apiMock,
-      origin: 'Polkadot',
-      destination: 'Astar',
-      asset: { symbol: 'DOT', amount: 100 },
-      address: {} as TMultiLocation,
-      destApiForKeepAlive: apiMock
-    }
-
-    await transferRelayToPara(options)
-
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'Keep alive check is not supported when using MultiLocation as address.'
-    )
-    expect(checkKeepAlive).not.toHaveBeenCalled()
-  })
-
-  it('should call checkKeepAlive when destination and address are not MultiLocation', async () => {
-    const options: TRelayToParaOptions<unknown, unknown> = {
-      api: apiMock,
-      origin: 'Polkadot',
-      destination: 'Astar',
-      asset: { symbol: 'DOT', amount: 100 },
-      address: 'some-address',
-      destApiForKeepAlive: apiMock
-    }
-
-    await transferRelayToPara(options)
-
-    expect(checkKeepAlive).toHaveBeenCalledWith({
-      api: apiMock,
-      origin: options.origin,
-      destination: options.destination,
-      address: options.address,
-      destApi: options.destApiForKeepAlive,
-      asset: options.asset
-    })
   })
 
   it('should get the serialized api call correctly when destination is MultiLocation', async () => {
@@ -264,13 +202,6 @@ describe('transferRelayToPara', () => {
   })
 
   it('should pass optional parameters when provided', async () => {
-    const destApiMock = {
-      init: vi.fn().mockResolvedValue(undefined),
-      disconnect: vi.fn().mockResolvedValue(undefined),
-      callTxMethod: vi.fn().mockResolvedValue('callTxResult'),
-      getApi: vi.fn()
-    } as unknown as IPolkadotApi<unknown, unknown>
-
     const options: TRelayToParaOptions<unknown, unknown> = {
       api: apiMock,
       origin: 'Polkadot',
@@ -278,7 +209,6 @@ describe('transferRelayToPara', () => {
       asset: { symbol: 'DOT', amount: 100 },
       address: 'some-address',
       paraIdTo: 2000,
-      destApiForKeepAlive: destApiMock,
       version: Version.V3
     }
 
@@ -293,7 +223,6 @@ describe('transferRelayToPara', () => {
       asset: options.asset,
       address: options.address,
       paraIdTo: 2000,
-      destApiForKeepAlive: destApiMock,
       version: options.version
     })
   })

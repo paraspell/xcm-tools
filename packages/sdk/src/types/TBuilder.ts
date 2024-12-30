@@ -1,7 +1,4 @@
+import type { IFinalBuilderWithOptions as OriginalIFinalBuilderWithOptions } from '@paraspell/sdk-core'
 import type { TPapiApi, TPapiTransaction } from '../types'
-import type { IUseKeepAliveFinalBuilder as OriginalIUseKeepAliveFinalBuilder } from '@paraspell/sdk-core'
 
-export type IUseKeepAliveFinalBuilder = OriginalIUseKeepAliveFinalBuilder<
-  TPapiApi,
-  TPapiTransaction
->
+export type IFinalBuilderWithOptions = OriginalIFinalBuilderWithOptions<TPapiApi, TPapiTransaction>

@@ -78,8 +78,8 @@ export class XTransferService {
     const builder = Sdk.Builder(api as PolkadotClient & ApiPromise);
 
     let finalBuilder:
-      | SdkPapiType.IUseKeepAliveFinalBuilder
-      | SdkType.IUseKeepAliveFinalBuilder;
+      | SdkPapiType.IFinalBuilderWithOptions
+      | SdkType.IFinalBuilderWithOptions;
 
     finalBuilder = builder
       .from(fromNode)
@@ -200,8 +200,8 @@ export class XTransferService {
         }
 
         let finalBuilder:
-          | SdkPapiType.IUseKeepAliveFinalBuilder
-          | SdkType.IUseKeepAliveFinalBuilder;
+          | SdkPapiType.IFinalBuilderWithOptions
+          | SdkType.IFinalBuilderWithOptions;
 
         finalBuilder = builder
           .from(transferFromNode)

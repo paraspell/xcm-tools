@@ -101,7 +101,7 @@ export type TAddress = string | TMultiLocation
 export type TDestination = TNodeWithRelayChains | TMultiLocation
 export type TRelayToParaDestination = TNodePolkadotKusama | TMultiLocation
 
-export type TSendBaseOptions<TApi, TRes> = {
+export type TSendBaseOptions = {
   /**
    * The destination address. A SS58 or H160 format.
    */
@@ -119,10 +119,6 @@ export type TSendBaseOptions<TApi, TRes> = {
    */
   paraIdTo?: number
   /**
-   * The optional destination API instance required for keep-alive
-   */
-  destApiForKeepAlive: IPolkadotApi<TApi, TRes>
-  /**
    * The optional overrided XCM version
    */
   version?: Version
@@ -139,7 +135,7 @@ export type TSendBaseOptions<TApi, TRes> = {
 /**
  * Options for transferring from a parachain to another parachain or relay chain
  */
-export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions<TApi, TRes>, TApi, TRes> & {
+export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions, TApi, TRes> & {
   /**
    * The origin node
    */
@@ -150,13 +146,13 @@ export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions<TApi, TRes>, TAp
   currency: TCurrencyInputWithAmount
 }
 
-export type TSendInternalOptions<TApi, TRes> = TSendBaseOptions<TApi, TRes> & {
+export type TSendInternalOptions<TApi, TRes> = TSendBaseOptions & {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
 }
 
-type TRelayToParaBaseOptions<TApi, TRes> = {
+type TRelayToParaBaseOptions = {
   /**
    * The origin node
    */
@@ -173,10 +169,6 @@ type TRelayToParaBaseOptions<TApi, TRes> = {
    * The optional destination parachain ID
    */
   paraIdTo?: number
-  /**
-   * The optional destination API instance required for keep-alive
-   */
-  destApiForKeepAlive?: IPolkadotApi<TApi, TRes>
   /**
    * The optional overrided XCM version
    */
@@ -203,25 +195,12 @@ export type TRelayToParaOverrides = {
 /**
  * Options for transferring from a relay chain to a parachain
  */
-export type TRelayToParaOptions<TApi, TRes> = WithApi<
-  TRelayToParaBaseOptions<TApi, TRes>,
-  TApi,
-  TRes
->
+export type TRelayToParaOptions<TApi, TRes> = WithApi<TRelayToParaBaseOptions, TApi, TRes>
 
 export type TSerializedApiCall = {
   module: TPallet | 'Utility'
   section: string
   parameters: Record<string, unknown>
-}
-
-export type TCheckKeepAliveOptions<TApi, TRes> = {
-  api: IPolkadotApi<TApi, TRes>
-  address: string
-  origin: TNodeDotKsmWithRelayChains
-  destApi: IPolkadotApi<TApi, TRes>
-  asset: WithAmount<TAsset>
-  destination: TNodeDotKsmWithRelayChains
 }
 
 export type TDestWeight = {

@@ -13,7 +13,6 @@ import {
   validateDestination
 } from './utils/validationUtils'
 import { validateDestinationAddress } from './utils/validateDestinationAddress'
-import { performKeepAliveCheck } from './utils/performKeepAliveCheck'
 import { getNode } from '../utils'
 import { isPjsClient } from '../utils/isPjsClient'
 import type { TCurrencyInput, TMultiLocationValueWithOverride, TSendOptions } from '../types'
@@ -42,10 +41,6 @@ vi.mock('./utils/determineAssetCheckEnabled', () => ({
 
 vi.mock('./utils/isBridgeTransfer', () => ({
   isBridgeTransfer: vi.fn()
-}))
-
-vi.mock('./utils/performKeepAliveCheck', () => ({
-  performKeepAliveCheck: vi.fn()
 }))
 
 vi.mock('./utils/resolveAsset', () => ({
@@ -112,8 +107,6 @@ describe('send', () => {
 
     expect(apiSpy).toHaveBeenCalledWith(options.origin)
 
-    expect(performKeepAliveCheck).toHaveBeenCalledWith(options, { symbol: 'TEST', amount: '100' })
-
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
       asset: { symbol: 'TEST', amount: '100' },
@@ -121,7 +114,6 @@ describe('send', () => {
       destination: options.destination,
       paraIdTo: options.paraIdTo,
       version: options.version,
-      destApiForKeepAlive: options.destApiForKeepAlive,
       ahAddress: options.ahAddress
     })
 
@@ -149,8 +141,6 @@ describe('send', () => {
 
     expect(validateAssetSpecifiers).toHaveBeenCalledWith(false, options.currency)
     expect(validateAssetSupport).toHaveBeenCalledWith(options, false, false, null)
-
-    expect(performKeepAliveCheck).toHaveBeenCalledWith(options, null)
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -293,7 +283,6 @@ describe('send', () => {
       expect.objectContaining({
         paraIdTo: undefined,
         version: undefined,
-        destApiForKeepAlive: undefined,
         ahAddress: undefined
       })
     )

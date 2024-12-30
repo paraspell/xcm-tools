@@ -102,7 +102,7 @@ export interface IFinalBuilder<TRes> {
 }
 
 export interface IAddressBuilder<TApi, TRes> {
-  address: (address: TAddress, ahAddress?: string) => IUseKeepAliveFinalBuilder<TApi, TRes>
+  address: (address: TAddress, ahAddress?: string) => IFinalBuilderWithOptions<TApi, TRes>
 }
 
 export interface IFungibleBuilder<TRes> {
@@ -121,8 +121,7 @@ export interface IAddToBatchBuilder<TApi, TRes> {
   addToBatch(): IFromBuilder<TApi, TRes>
 }
 
-export interface IUseKeepAliveFinalBuilder<TApi, TRes> extends IAddToBatchBuilder<TApi, TRes> {
-  useKeepAlive: (destApi: TApi) => this
+export interface IFinalBuilderWithOptions<TApi, TRes> extends IAddToBatchBuilder<TApi, TRes> {
   xcmVersion: (version: Version) => this
   customPallet: (pallet: string, method: string) => this
   build: () => Promise<TRes>

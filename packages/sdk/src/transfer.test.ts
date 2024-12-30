@@ -11,28 +11,17 @@ vi.mock('@paraspell/sdk-core')
 
 describe('Send function using PapiApi', () => {
   const mockApi = {} as TPapiApi
-  const mockDestApi = {} as TPapiApi
 
-  const optionsSend: Omit<
-    TSendOptions<TPapiApi, TPapiTransaction>,
-    'api' | 'destApiForKeepAlive'
-  > & {
+  const optionsSend = {
+    api: mockApi
+  } as Omit<TSendOptions<TPapiApi, TPapiTransaction>, 'api'> & {
     api: TPapiApiOrUrl
-    destApiForKeepAlive: TPapiApiOrUrl
-  } = {
-    api: mockApi,
-    destApiForKeepAlive: mockDestApi
-  } as Omit<TSendOptions<TPapiApi, TPapiTransaction>, 'api' | 'destApiForKeepAlive'> & {
-    api: TPapiApiOrUrl
-    destApiForKeepAlive: TPapiApiOrUrl
   }
 
   let papiApiSetApiSpy: MockInstance
-  let destPapiApiSetApiSpy: MockInstance
 
   beforeEach(() => {
     papiApiSetApiSpy = vi.spyOn(PapiApi.prototype, 'setApi')
-    destPapiApiSetApiSpy = vi.spyOn(PapiApi.prototype, 'setApi')
   })
 
   describe('send', () => {
@@ -40,11 +29,9 @@ describe('Send function using PapiApi', () => {
       await send(optionsSend)
 
       expect(papiApiSetApiSpy).toHaveBeenCalledWith(mockApi)
-      expect(destPapiApiSetApiSpy).toHaveBeenCalledWith(mockDestApi)
       expect(sdkCore.send).toHaveBeenCalledWith({
         ...optionsSend,
-        api: expect.any(PapiApi),
-        destApiForKeepAlive: expect.any(PapiApi)
+        api: expect.any(PapiApi)
       })
     })
   })

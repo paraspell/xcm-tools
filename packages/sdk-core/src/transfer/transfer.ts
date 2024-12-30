@@ -6,7 +6,6 @@ import { isPjsClient } from '../utils/isPjsClient'
 import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
 import { isBridgeTransfer } from './utils/isBridgeTransfer'
-import { performKeepAliveCheck } from './utils/performKeepAliveCheck'
 import { resolveAsset } from './utils/resolveAsset'
 import {
   validateCurrency,
@@ -26,7 +25,6 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     address,
     destination,
     paraIdTo,
-    destApiForKeepAlive,
     version,
     ahAddress,
     pallet,
@@ -68,7 +66,6 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
         amount: 'multiasset' in currency ? 0 : currency.amount
       },
       paraIdTo,
-      destApiForKeepAlive,
       version,
       pallet,
       method
@@ -80,16 +77,6 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   await api.init(origin)
 
   try {
-    await performKeepAliveCheck(
-      options,
-      asset
-        ? {
-            ...asset,
-            amount: 'multiasset' in currency ? 0 : currency.amount
-          }
-        : null
-    )
-
     // In case asset check is disabled, we create asset object from currency symbol
     const resolvedAsset =
       asset ??
@@ -107,7 +94,6 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       paraIdTo,
       overriddenAsset,
       version,
-      destApiForKeepAlive,
       ahAddress,
       pallet,
       method
