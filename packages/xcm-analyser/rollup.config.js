@@ -1,4 +1,4 @@
-import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
 import dts from 'rollup-plugin-dts';
 import { babel } from '@rollup/plugin-babel';
 import { codecovRollupPlugin } from '@codecov/rollup-plugin';
