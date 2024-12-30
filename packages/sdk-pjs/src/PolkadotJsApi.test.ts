@@ -12,7 +12,7 @@ import type { ApiPromise } from '@polkadot/api'
 vi.mock('@paraspell/sdk-core', async importOriginal => {
   return {
     ...(await importOriginal<typeof import('@paraspell/sdk-core')>()),
-    computeFeeFromDryRunPjs: vi.fn().mockReturnValue(BigInt(1000)),
+    computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
     createApiInstanceForNodePjs: vi.fn().mockResolvedValue({} as ApiPromise),
     resolveModuleError: vi.fn().mockReturnValue('ModuleError')
   }
@@ -51,7 +51,7 @@ describe('PolkadotJsApi', () => {
       },
       query: {
         system: {
-          account: vi.fn().mockResolvedValue({ data: { free: { toBigInt: () => BigInt(2000) } } })
+          account: vi.fn().mockResolvedValue({ data: { free: { toBigInt: () => 2000n } } })
         },
         assets: {
           account: vi.fn().mockResolvedValue({ toJSON: () => ({ balance: '3000' }) })
@@ -159,7 +159,7 @@ describe('PolkadotJsApi', () => {
   describe('calculateTransactionFee', () => {
     it('should return the partial fee as bigint', async () => {
       const mockExtrinsic = {
-        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => BigInt(1000) } })
+        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 1000n } })
       } as unknown as Extrinsic
       const address = 'some_address'
 
@@ -168,7 +168,7 @@ describe('PolkadotJsApi', () => {
       const fee = await polkadotApi.calculateTransactionFee(mockExtrinsic, address)
 
       expect(spy).toHaveBeenCalledWith(address)
-      expect(fee).toBe(BigInt(1000))
+      expect(fee).toBe(1000n)
     })
   })
 
@@ -179,7 +179,7 @@ describe('PolkadotJsApi', () => {
       const balance = await polkadotApi.getBalanceNative(address)
 
       expect(mockApiPromise.query.system.account).toHaveBeenCalledWith(address)
-      expect(balance).toBe(BigInt(2000))
+      expect(balance).toBe(2000n)
     })
   })
 
@@ -192,7 +192,7 @@ describe('PolkadotJsApi', () => {
       const balance = await polkadotApi.getBalanceForeignPolkadotXcm(address, id)
 
       expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(parsedId, address)
-      expect(balance).toBe(BigInt(3000))
+      expect(balance).toBe(3000n)
     })
 
     it('should return null when balance does not exist', async () => {
@@ -211,7 +211,7 @@ describe('PolkadotJsApi', () => {
       const balance = await polkadotApi.getBalanceForeignPolkadotXcm(address, id)
 
       expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(parsedId, address)
-      expect(balance).toBe(BigInt(0))
+      expect(balance).toBe(0n)
     })
 
     describe('getMythosForeignBalance', () => {
@@ -229,7 +229,7 @@ describe('PolkadotJsApi', () => {
         const balance = await polkadotApi.getMythosForeignBalance(address)
 
         expect(mockApiPromise.query.balances.account).toHaveBeenCalledWith(address)
-        expect(balance).toBe(BigInt(4000))
+        expect(balance).toBe(4000n)
       })
 
       it('should return null when free balance does not exist', async () => {
@@ -246,7 +246,7 @@ describe('PolkadotJsApi', () => {
         const balance = await polkadotApi.getMythosForeignBalance(address)
 
         expect(mockApiPromise.query.balances.account).toHaveBeenCalledWith(address)
-        expect(balance).toBe(BigInt(0))
+        expect(balance).toBe(0n)
       })
     })
 
@@ -276,7 +276,7 @@ describe('PolkadotJsApi', () => {
           multiLocation,
           address
         )
-        expect(balance).toBe(BigInt(5000))
+        expect(balance).toBe(5000n)
       })
 
       it('should return 0 when balance does not exist', async () => {
@@ -296,7 +296,7 @@ describe('PolkadotJsApi', () => {
           multiLocation,
           address
         )
-        expect(balance).toBe(BigInt(0))
+        expect(balance).toBe(0n)
       })
     })
   })
@@ -315,7 +315,7 @@ describe('PolkadotJsApi', () => {
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
         Token: 'DOT'
       })
-      expect(balance).toBe(BigInt(6000))
+      expect(balance).toBe(6000n)
     })
 
     it('should return null when no matching asset found', async () => {
@@ -332,7 +332,7 @@ describe('PolkadotJsApi', () => {
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
         Token: 'DOT'
       })
-      expect(balance).toBe(BigInt(0))
+      expect(balance).toBe(0n)
     })
   })
 
@@ -353,7 +353,7 @@ describe('PolkadotJsApi', () => {
         assetId: '1'
       })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBe(BigInt(6000))
+      expect(balance).toBe(6000n)
     })
 
     it('should return null when no matching asset found', async () => {
@@ -366,7 +366,7 @@ describe('PolkadotJsApi', () => {
         assetId: '1'
       })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBe(BigInt(0))
+      expect(balance).toBe(0n)
     })
 
     it('should return null when no matching asset found - Centrifuge', async () => {
@@ -379,7 +379,7 @@ describe('PolkadotJsApi', () => {
         assetId: '1'
       })
       expect(mockApiPromise.query.ormlTokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBe(BigInt(0))
+      expect(balance).toBe(0n)
     })
 
     it('should return balance when assetItem is object by symbol', async () => {
@@ -406,7 +406,7 @@ describe('PolkadotJsApi', () => {
         assetId: '1'
       })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBe(BigInt(6000))
+      expect(balance).toBe(6000n)
     })
 
     it('should return balance when assetItem is object by id', async () => {
@@ -433,7 +433,7 @@ describe('PolkadotJsApi', () => {
         assetId: '1'
       })
       expect(mockApiPromise.query.tokens.accounts.entries).toHaveBeenCalledWith(address)
-      expect(balance).toBe(BigInt(6000))
+      expect(balance).toBe(6000n)
     })
   })
 
@@ -446,10 +446,10 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.query.assets.account).mockResolvedValue(mockResponse)
 
-      const balance = await polkadotApi.getBalanceForeignAssetsAccount(address, BigInt(1))
+      const balance = await polkadotApi.getBalanceForeignAssetsAccount(address, 1n)
 
-      expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(BigInt(1), address)
-      expect(balance).toBe(BigInt(7000))
+      expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(1n, address)
+      expect(balance).toBe(7000n)
     })
 
     it('should return null when balance does not exist', async () => {
@@ -463,7 +463,7 @@ describe('PolkadotJsApi', () => {
       const balance = await polkadotApi.getBalanceForeignAssetsAccount(address, 1)
 
       expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(1, address)
-      expect(balance).toEqual(BigInt(0))
+      expect(balance).toEqual(0n)
     })
   })
 
@@ -549,14 +549,14 @@ describe('PolkadotJsApi', () => {
       const balance = await polkadotApi.getBalanceNativeAcala('some_address', 'AUSD')
 
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledOnce()
-      expect(balance).toBe(BigInt(0))
+      expect(balance).toBe(0n)
     })
   })
 
   describe('getDryRun', () => {
     it('should return sucess when dryRunCall is successful', async () => {
       const mockExtrinsic = {
-        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => BigInt(1000) } })
+        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 1000n } })
       } as unknown as Extrinsic
 
       const address = 'some_address'
@@ -581,13 +581,13 @@ describe('PolkadotJsApi', () => {
 
       expect(result).toEqual({
         success: true,
-        fee: BigInt(1000)
+        fee: 1000n
       })
     })
 
     it('should return failureReason when dryRunCall is not successful', async () => {
       const mockExtrinsic = {
-        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => BigInt(1000) } })
+        paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 1000n } })
       } as unknown as Extrinsic
 
       const address = 'some_address'

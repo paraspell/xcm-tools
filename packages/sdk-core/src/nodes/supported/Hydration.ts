@@ -20,7 +20,7 @@ import { isForeignAsset } from '../../utils/assets'
 import { getParaId } from '../config'
 
 const calculateFee = async <TApi, TRes>(api: IPolkadotApi<TApi, TRes>) => {
-  const DEFAULT_FEE = BigInt(2_750_872_500_000)
+  const DEFAULT_FEE = 2_750_872_500_000n
 
   const ahApi = await api.createApiForNode('AssetHubPolkadot')
 
@@ -28,9 +28,9 @@ const calculateFee = async <TApi, TRes>(api: IPolkadotApi<TApi, TRes>) => {
   const leFeeHex = feeStorageItem.replace('0x', '')
   const leFee = BigInt('0x' + leFeeHex.split('').reverse().join(''))
 
-  const transfer_bridge_fee = leFee === BigInt(0) ? DEFAULT_FEE : BigInt(leFee.toString())
+  const transfer_bridge_fee = leFee === 0n ? DEFAULT_FEE : BigInt(leFee.toString())
 
-  const transfer_assethub_execution_fee = BigInt(2200000000)
+  const transfer_assethub_execution_fee = 2200000000n
   return (transfer_bridge_fee + transfer_assethub_execution_fee).toString() // ~6.248 DOT (10 decimals)
 }
 
@@ -100,7 +100,7 @@ const createCustomXcmOnDest = <TApi, TRes>(
                       X1: [{ AccountKey20: { network: null, key: asset.assetId } }]
                     }
                   },
-                  fun: { Fungible: BigInt(1) }
+                  fun: { Fungible: 1n }
                 },
                 weight_limit: 'Unlimited'
               }

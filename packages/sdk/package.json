@@ -42,7 +42,7 @@
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
-    "@codecov/rollup-plugin": "^1.4.0",
+    "@codecov/rollup-plugin": "^1.7.0",
     "@noble/curves": "^1.7.0",
     "@noble/hashes": "^1.6.1",
     "@polkadot-labs/hdkd": "^0.0.10",

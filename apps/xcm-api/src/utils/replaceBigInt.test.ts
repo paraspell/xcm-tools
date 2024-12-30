@@ -3,7 +3,7 @@ import { replaceBigInt } from './replaceBigInt.js';
 
 describe('replaceBigInt', () => {
   it('should convert bigint to string', () => {
-    const result = replaceBigInt('', BigInt(123456789));
+    const result = replaceBigInt('', 123456789n);
     expect(result).toBe('123456789');
   });
 

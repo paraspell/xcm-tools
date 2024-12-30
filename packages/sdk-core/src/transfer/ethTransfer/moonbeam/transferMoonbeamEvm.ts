@@ -16,7 +16,7 @@ import { getDestinationMultilocation } from './getDestinationMultilocation'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
 
-const U_64_MAX = BigInt('18446744073709551615')
+const U_64_MAX = 18446744073709551615n
 const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000804'
 const NATIVE_ASSET_ID = '0x0000000000000000000000000000000000000802'
 

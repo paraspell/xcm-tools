@@ -109,13 +109,13 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const parsedId = new u32(this.api.registry, id)
     const response: Codec = await this.api.query.assets.account(parsedId, address)
     const obj = response.toJSON() as TBalanceResponse
-    return obj.balance ? BigInt(obj.balance) : BigInt(0)
+    return obj.balance ? BigInt(obj.balance) : 0n
   }
 
   async getMythosForeignBalance(address: string) {
     const response: Codec = await this.api.query.balances.account(address)
     const obj = response.toJSON() as TBalanceResponse
-    return obj.free ? BigInt(obj.free) : BigInt(0)
+    return obj.free ? BigInt(obj.free) : 0n
   }
 
   async getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation) {
@@ -136,7 +136,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const response: Codec = await this.api.query.tokens.accounts(address, currencySelection)
 
     const accountData = response ? (response as AccountData) : null
-    return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
+    return accountData ? BigInt(accountData.free.toString()) : 0n
   }
 
   async getBalanceNativeAcala(address: string, symbol: string) {
@@ -145,7 +145,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     })
 
     const accountData = response ? (response as AccountData) : null
-    return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
+    return accountData ? BigInt(accountData.free.toString()) : 0n
   }
 
   async getBalanceForeignXTokens(node: TNodePolkadotKusama, address: string, asset: TAsset) {
@@ -181,7 +181,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     )
 
     const accountData = entry ? (entry[1] as AccountData) : null
-    return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
+    return accountData ? BigInt(accountData.free.toString()) : 0n
   }
 
   async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number) {

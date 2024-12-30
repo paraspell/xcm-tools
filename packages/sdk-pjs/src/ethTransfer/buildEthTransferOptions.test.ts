@@ -54,8 +54,8 @@ describe('buildEthTransferOptions', () => {
       success: {
         token: 'token123',
         destinationParaId: 1000,
-        destinationFee: BigInt(500),
-        amount: BigInt(1000)
+        destinationFee: 500n,
+        amount: 1000n
       }
     } as SendValidationResult)
 
@@ -72,8 +72,8 @@ describe('buildEthTransferOptions', () => {
     expect(result).toEqual({
       token: 'token123',
       destinationParaId: 1000,
-      destinationFee: BigInt(500),
-      amount: BigInt(1000)
+      destinationFee: 500n,
+      amount: 1000n
     })
   })
 

@@ -52,7 +52,7 @@ describe('Transferable Amounts', () => {
 
   describe('getMaxNativeTransferableAmount', () => {
     it('should return the correct maximum native transferable amount', async () => {
-      const mockBalance = BigInt(1000000000000)
+      const mockBalance = 1000000000000n
       vi.mocked(getBalanceNativeInternal).mockResolvedValue(mockBalance)
       vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
 
@@ -65,13 +65,11 @@ describe('Transferable Amounts', () => {
         node: mockNode
       })
 
-      expect(result).toBe(
-        expectedMaxTransferableAmount > BigInt(0) ? expectedMaxTransferableAmount : BigInt(0)
-      )
+      expect(result).toBe(expectedMaxTransferableAmount > 0n ? expectedMaxTransferableAmount : 0n)
     })
 
     it('should return 0 if native balance is too low', async () => {
-      const mockBalance = BigInt(5000)
+      const mockBalance = 5000n
       vi.mocked(getBalanceNativeInternal).mockResolvedValue(mockBalance)
       vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
 
@@ -81,7 +79,7 @@ describe('Transferable Amounts', () => {
         node: mockNode
       })
 
-      expect(result).toBe(BigInt(0))
+      expect(result).toBe(0n)
     })
 
     it('should throw an error if existential deposit cannot be obtained', async () => {
@@ -106,7 +104,7 @@ describe('Transferable Amounts', () => {
     }
 
     it('should return the correct max foreign transferable amount', async () => {
-      const mockBalance = BigInt('2000000000000')
+      const mockBalance = 2000000000000n
       const edBN = BigInt(mockAsset.existentialDeposit)
       vi.mocked(getAssetBySymbolOrId).mockReturnValue(mockAsset)
       vi.mocked(getBalanceForeignInternal).mockResolvedValue(mockBalance)
@@ -120,11 +118,11 @@ describe('Transferable Amounts', () => {
       })
 
       const expected = mockBalance - edBN
-      expect(result).toBe(expected > BigInt(0) ? expected : BigInt(0))
+      expect(result).toBe(expected > 0n ? expected : 0n)
     })
 
     it('should return 0 if foreign balance is too low', async () => {
-      const mockBalance = BigInt('500000000') // less than the ED
+      const mockBalance = 500000000n // less than the ED
       vi.mocked(getAssetBySymbolOrId).mockReturnValue(mockAsset)
       vi.mocked(getBalanceForeignInternal).mockResolvedValue(mockBalance)
 
@@ -135,7 +133,7 @@ describe('Transferable Amounts', () => {
         currency: mockCurrency
       })
 
-      expect(result).toBe(BigInt(0))
+      expect(result).toBe(0n)
     })
 
     it('should throw InvalidCurrencyError if asset not found', async () => {
@@ -182,7 +180,7 @@ describe('Transferable Amounts', () => {
     it('should call getMaxNativeTransferableAmount if asset is native', async () => {
       vi.mocked(getAssetBySymbolOrId).mockReturnValue(nativeAsset)
       vi.mocked(isForeignAsset).mockReturnValue(false)
-      vi.mocked(getBalanceNativeInternal).mockResolvedValue(BigInt(1000000000000))
+      vi.mocked(getBalanceNativeInternal).mockResolvedValue(1000000000000n)
       vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
 
       const result = await getTransferableAmount({
@@ -195,13 +193,13 @@ describe('Transferable Amounts', () => {
       // Check that it didn't call foreign functions
       expect(getBalanceForeignInternal).not.toHaveBeenCalled()
       expect(getBalanceNativeInternal).toHaveBeenCalled()
-      expect(result).toBeGreaterThan(BigInt(0))
+      expect(result).toBeGreaterThan(0n)
     })
 
     it('should call getMaxForeignTransferableAmount if asset is foreign', async () => {
       vi.mocked(getAssetBySymbolOrId).mockReturnValue(foreignAsset)
       vi.mocked(isForeignAsset).mockReturnValue(true)
-      vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt('2000000000000'))
+      vi.mocked(getBalanceForeignInternal).mockResolvedValue(2000000000000n)
 
       const result = await getTransferableAmount({
         api: apiMock,
@@ -213,7 +211,7 @@ describe('Transferable Amounts', () => {
       // Check that it didn't call native function
       expect(getBalanceNativeInternal).not.toHaveBeenCalled()
       expect(getBalanceForeignInternal).toHaveBeenCalled()
-      expect(result).toBeGreaterThan(BigInt(0))
+      expect(result).toBeGreaterThan(0n)
     })
 
     it('should throw InvalidCurrencyError if asset is not found', async () => {
@@ -243,7 +241,7 @@ describe('Transferable Amounts', () => {
         currency: { symbol: 'DOT' }
       })
 
-      expect(result).toBe(BigInt(0))
+      expect(result).toBe(0n)
     })
 
     it('should return 0 if foreign balance is lower than ED when calling getTransferableAmount', async () => {
@@ -258,7 +256,7 @@ describe('Transferable Amounts', () => {
         currency: mockCurrency
       })
 
-      expect(result).toBe(BigInt(0))
+      expect(result).toBe(0n)
     })
   })
 })

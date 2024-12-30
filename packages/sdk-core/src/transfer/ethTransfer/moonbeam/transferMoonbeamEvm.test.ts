@@ -134,7 +134,7 @@ describe('transferMoonbeamEvm', () => {
       '0x0000000000000000000000000000000000000802',
       mockCurrency.amount,
       ['someDestination'],
-      BigInt('18446744073709551615')
+      18446744073709551615n
     ])
   })
 
@@ -190,7 +190,7 @@ describe('transferMoonbeamEvm', () => {
       ],
       1,
       ['someDestination'],
-      BigInt('18446744073709551615')
+      18446744073709551615n
     ])
   })
 
@@ -209,7 +209,7 @@ describe('transferMoonbeamEvm', () => {
       '0xformattedAsset',
       '1234',
       ['someDestination'],
-      BigInt('18446744073709551615')
+      18446744073709551615n
     ])
   })
 

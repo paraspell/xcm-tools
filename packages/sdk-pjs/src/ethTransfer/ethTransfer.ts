@@ -44,7 +44,7 @@ export const transferEthToPolkadot = async <TApi, TRes>({
     ethAsset.assetId ?? '',
     destParaId,
     BigInt(currency.amount),
-    BigInt(0)
+    0n
   )
 
   checkPlanFailure(plan)

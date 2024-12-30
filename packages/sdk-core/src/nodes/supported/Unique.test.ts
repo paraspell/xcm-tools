@@ -33,6 +33,6 @@ describe('Unique', () => {
 
     unique.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAssetId: BigInt(123) })
+    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAssetId: 123n })
   })
 })

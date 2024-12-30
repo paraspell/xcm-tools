@@ -16,7 +16,7 @@ describe('getDryRun', () => {
 
     const mockResult: TDryRunResult = {
       success: true,
-      fee: BigInt(1000)
+      fee: 1000n
     }
 
     vi.spyOn(apiMock, 'getDryRun').mockResolvedValue(mockResult)

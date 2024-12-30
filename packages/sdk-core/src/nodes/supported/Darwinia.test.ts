@@ -56,7 +56,7 @@ describe('Darwinia', () => {
 
     darwinia.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: BigInt(123) } as TXcmForeignAsset)
+    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: 123n } as TXcmForeignAsset)
   })
 
   it('should throw NodeNotSupportedError for transferRelayToPara', () => {

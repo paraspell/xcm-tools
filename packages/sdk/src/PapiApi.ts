@@ -119,13 +119,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   async getBalanceForeignPolkadotXcm(address: string, id?: string) {
     const res = await this.api.getUnsafeApi().query.Assets.Account.getValue(id, address)
 
-    return res && res.balance ? BigInt(res.balance) : BigInt(0)
+    return res && res.balance ? BigInt(res.balance) : 0n
   }
 
   async getMythosForeignBalance(address: string) {
     const res = await this.api.getUnsafeApi().query.Balances.Account.getValue(address)
 
-    return res && res.free ? BigInt(res.free) : BigInt(0)
+    return res && res.free ? BigInt(res.free) : 0n
   }
 
   async getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation) {
@@ -154,7 +154,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       .query.Tokens.Accounts.getValue(address, transformedParameters)
 
     const accountData = response ? response : null
-    return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
+    return accountData ? BigInt(accountData.free.toString()) : 0n
   }
 
   async getBalanceNativeAcala(address: string, symbol: string) {
@@ -165,7 +165,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       .query.Tokens.Accounts.getValue(address, transformedParameters)
 
     const accountData = response ? response : null
-    return accountData ? BigInt(accountData.free.toString()) : BigInt(0)
+    return accountData ? BigInt(accountData.free.toString()) : 0n
   }
 
   async getBalanceForeignXTokens(node: TNodePolkadotKusama, address: string, asset: TAsset) {
@@ -194,7 +194,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       )
     })
 
-    return entry?.value ? BigInt(entry.value.free.toString()) : BigInt(0)
+    return entry?.value ? BigInt(entry.value.free.toString()) : 0n
   }
 
   async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number) {

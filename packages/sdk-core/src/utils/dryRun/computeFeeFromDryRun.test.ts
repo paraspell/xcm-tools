@@ -29,8 +29,8 @@ describe('computeFeeFromDryRun', () => {
               type: 'FeesPaid',
               value: {
                 fees: [
-                  { fun: { type: 'Fungible', value: BigInt(500) }, id: 'tokenId1' },
-                  { fun: { type: 'Fungible', value: BigInt(300) }, id: 'tokenId2' }
+                  { fun: { type: 'Fungible', value: 500n }, id: 'tokenId1' },
+                  { fun: { type: 'Fungible', value: 300n }, id: 'tokenId2' }
                 ]
               }
             }
@@ -44,10 +44,10 @@ describe('computeFeeFromDryRun', () => {
       id === 'tokenId1' ? 'nativeSymbol' : null
     )
 
-    const executionFee = BigInt(200)
+    const executionFee = 200n
     const result = computeFeeFromDryRun(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(BigInt(700)) // 500 (delivery fee) + 200 (execution fee)
+    expect(result).toBe(700n) // 500 (delivery fee) + 200 (execution fee)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
     expect(getMultiLocationTokenId).toHaveBeenCalledTimes(2)
   })
@@ -61,7 +61,7 @@ describe('computeFeeFromDryRun', () => {
             value: {
               type: 'FeesPaid',
               value: {
-                fees: [{ fun: { type: 'Fungible', value: BigInt(500) }, id: 'tokenId1' }]
+                fees: [{ fun: { type: 'Fungible', value: 500n }, id: 'tokenId1' }]
               }
             }
           }
@@ -72,10 +72,10 @@ describe('computeFeeFromDryRun', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
     vi.mocked(getMultiLocationTokenId).mockReturnValue(null)
 
-    const executionFee = BigInt(200)
+    const executionFee = 200n
     const result = computeFeeFromDryRun(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(BigInt(200)) // Only execution fee
+    expect(result).toBe(200n) // Only execution fee
     expect(getMultiLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
   })
 
@@ -89,8 +89,8 @@ describe('computeFeeFromDryRun', () => {
               type: 'FeesPaid',
               value: {
                 fees: [
-                  { fun: { type: 'NonFungible', value: BigInt(500) }, id: 'tokenId1' },
-                  { fun: { type: 'Fungible', value: BigInt(300) }, id: 'tokenId2' }
+                  { fun: { type: 'NonFungible', value: 500n }, id: 'tokenId1' },
+                  { fun: { type: 'Fungible', value: 300n }, id: 'tokenId2' }
                 ]
               }
             }
@@ -104,10 +104,10 @@ describe('computeFeeFromDryRun', () => {
       id === 'tokenId2' ? 'nativeSymbol' : null
     )
 
-    const executionFee = BigInt(200)
+    const executionFee = 200n
     const result = computeFeeFromDryRun(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(BigInt(500)) // 300 (delivery fee) + 200 (execution fee)
+    expect(result).toBe(500n) // 300 (delivery fee) + 200 (execution fee)
   })
 
   it('should return 0 if no matching events are found', () => {
@@ -124,10 +124,10 @@ describe('computeFeeFromDryRun', () => {
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
 
-    const executionFee = BigInt(0)
+    const executionFee = 0n
     const result = computeFeeFromDryRun(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(BigInt(0))
+    expect(result).toBe(0n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
     expect(getMultiLocationTokenId).not.toHaveBeenCalled()
   })
@@ -141,9 +141,9 @@ describe('computeFeeFromDryRun', () => {
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
 
-    const executionFee = BigInt(300)
+    const executionFee = 300n
     const result = computeFeeFromDryRun(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(BigInt(300)) // Only execution fee
+    expect(result).toBe(300n) // Only execution fee
   })
 })

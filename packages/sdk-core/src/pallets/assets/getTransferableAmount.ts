@@ -33,7 +33,7 @@ export const getMaxNativeTransferableAmount = async <TApi, TRes>({
   })
 
   const maxTransferableAmount = nativeBalance - edBN
-  return maxTransferableAmount > BigInt(0) ? maxTransferableAmount : BigInt(0)
+  return maxTransferableAmount > 0n ? maxTransferableAmount : 0n
 }
 
 export const getMaxForeignTransferableAmount = async <TApi, TRes>({
@@ -70,7 +70,7 @@ export const getMaxForeignTransferableAmount = async <TApi, TRes>({
     currency
   })
   const maxTransferableAmount = balance - edBN
-  return maxTransferableAmount > BigInt(0) ? maxTransferableAmount : BigInt(0)
+  return maxTransferableAmount > 0n ? maxTransferableAmount : 0n
 }
 
 export const getTransferableAmount = async <TApi, TRes>({

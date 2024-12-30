@@ -65,7 +65,7 @@ describe('transform', () => {
     }
     const expected = {
       type: 'OtherReserve',
-      value: BigInt('12345678901234567890')
+      value: 12345678901234567890n
     }
     expect(transform(input)).toEqual(expected)
   })
@@ -107,7 +107,7 @@ describe('transform', () => {
     const expected = {
       type: 'Ethereum',
       value: {
-        chain_id: BigInt(1)
+        chain_id: 1n
       }
     }
     expect(transform(input)).toEqual(expected)
@@ -203,7 +203,7 @@ describe('transform', () => {
     const expected = {
       fee_item: 5,
       currency_id: 100,
-      amount: BigInt('5000000000'),
+      amount: 5000000000n,
       dest_weight: undefined,
       id: `FixedSizeBinary(0xdeadbeef)`,
       other_field: {
@@ -477,7 +477,7 @@ describe('transform', () => {
       type: 'complex_key',
       value: {
         fee_item: 5,
-        amount: BigInt('1234'),
+        amount: 1234n,
         id: `FixedSizeBinary(0x1234abcd)`,
         nested_object: {
           currency_id: { type: 'invalid_currency' },

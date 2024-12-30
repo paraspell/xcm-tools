@@ -40,7 +40,7 @@ describe('getBalanceForeign', () => {
   })
 
   it('should use the provided API instance if passed', async () => {
-    vi.spyOn(mockApi, 'getBalanceForeignXTokens').mockResolvedValue(BigInt(1000))
+    vi.spyOn(mockApi, 'getBalanceForeignXTokens').mockResolvedValue(1000n)
     await getBalanceForeign({
       address: 'address',
       node: 'Acala',
@@ -63,7 +63,7 @@ describe('getBalanceForeign', () => {
   })
 
   it('returns balance for XTokens pallet', async () => {
-    vi.mocked(getBalanceForeignXTokens).mockResolvedValue(BigInt(1000))
+    vi.mocked(getBalanceForeignXTokens).mockResolvedValue(1000n)
     const result = await getBalanceForeign({
       address: 'address',
       node: 'Acala',
@@ -71,11 +71,11 @@ describe('getBalanceForeign', () => {
       api: mockApi
     })
     expect(getBalanceForeignXTokens).toHaveBeenCalled()
-    expect(result).toBe(BigInt(1000))
+    expect(result).toBe(1000n)
   })
 
   it('returns balance for PolkadotXcm pallet', async () => {
-    vi.mocked(getBalanceForeignPolkadotXcm).mockResolvedValue(BigInt(2000))
+    vi.mocked(getBalanceForeignPolkadotXcm).mockResolvedValue(2000n)
     const result = await getBalanceForeign({
       address: 'address',
       node: 'Subsocial',
@@ -83,7 +83,7 @@ describe('getBalanceForeign', () => {
       api: mockApi
     })
     expect(getBalanceForeignPolkadotXcm).toHaveBeenCalled()
-    expect(result).toBe(BigInt(2000))
+    expect(result).toBe(2000n)
   })
 
   it('throws an error for unsupported pallet', async () => {

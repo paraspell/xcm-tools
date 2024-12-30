@@ -179,7 +179,7 @@ describe('BalanceService', () => {
       } as unknown as ApiPromise;
 
       vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiInstance);
-      vi.mocked(getBalanceForeign).mockResolvedValue(BigInt(0));
+      vi.mocked(getBalanceForeign).mockResolvedValue(0n);
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
 
@@ -286,7 +286,7 @@ describe('BalanceService', () => {
       } as unknown as ApiPromise;
 
       vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApiInstance);
-      vi.mocked(getBalanceForeign).mockResolvedValue(BigInt(0));
+      vi.mocked(getBalanceForeign).mockResolvedValue(0n);
 
       const disconnectSpy = vi.spyOn(mockApiInstance, 'disconnect');
 

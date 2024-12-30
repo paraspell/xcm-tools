@@ -33,6 +33,6 @@ describe('Manta', () => {
 
     manta.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { MantaCurrency: BigInt('123') })
+    expect(spy).toHaveBeenCalledWith(mockInput, { MantaCurrency: 123n })
   })
 })

@@ -20,7 +20,7 @@ const NODE: TNode = 'Acala'
 const NODE_2: TNode = 'Hydration'
 const AMOUNT = 1000
 const CURRENCY = { symbol: 'ACA', amount: AMOUNT }
-const CURRENCY_ID = BigInt(-1)
+const CURRENCY_ID = -1n
 const ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
 const PARA_ID_TO = 1999
 
@@ -644,7 +644,7 @@ describe('Builder', () => {
     it('should dry run a normal transfer', async () => {
       const spy = vi.mocked(xcmPallet.getDryRun).mockResolvedValue({
         success: true,
-        fee: BigInt(1000)
+        fee: 1000n
       })
 
       const result = await Builder(mockApi)
@@ -656,7 +656,7 @@ describe('Builder', () => {
 
       expect(result).toEqual({
         success: true,
-        fee: BigInt(1000)
+        fee: 1000n
       })
       expect(spy).toHaveBeenCalledTimes(1)
     })
