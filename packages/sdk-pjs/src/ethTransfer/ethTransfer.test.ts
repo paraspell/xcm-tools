@@ -58,8 +58,8 @@ describe('transferEthToPolkadot', () => {
       success: {
         token: 'token123',
         destinationParaId: 1000,
-        destinationFee: BigInt(500),
-        amount: BigInt(1000)
+        destinationFee: 500n,
+        amount: 1000n
       }
     } as SendValidationResult)
     vi.mocked(toPolkadot).send.mockResolvedValue({})
@@ -84,8 +84,8 @@ describe('transferEthToPolkadot', () => {
         success: {
           token: 'token123',
           destinationParaId: 1000,
-          destinationFee: BigInt(500),
-          amount: BigInt(1000)
+          destinationFee: 500n,
+          amount: 1000n
         }
       }
     })

@@ -53,6 +53,6 @@ describe('Astar', () => {
 
     astar.transferXTokens(mockXTokensInput)
 
-    expect(spy).toHaveBeenCalledWith(mockXTokensInput, BigInt(123))
+    expect(spy).toHaveBeenCalledWith(mockXTokensInput, 123n)
   })
 })

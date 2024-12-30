@@ -59,7 +59,7 @@ describe('PapiApi', () => {
     papiApi = new PapiApi()
 
     mockTransaction = {
-      getEstimatedFees: vi.fn().mockResolvedValue(BigInt(1000))
+      getEstimatedFees: vi.fn().mockResolvedValue(1000n)
     } as unknown as TPapiTransaction
 
     mockDryRunResult = {
@@ -90,7 +90,7 @@ describe('PapiApi', () => {
             Account: {
               getValue: vi.fn().mockResolvedValue({
                 data: {
-                  free: BigInt(2000)
+                  free: 2000n
                 }
               })
             }
@@ -98,28 +98,28 @@ describe('PapiApi', () => {
           Assets: {
             Account: {
               getValue: vi.fn().mockResolvedValue({
-                balance: BigInt(3000)
+                balance: 3000n
               })
             }
           },
           Balances: {
             Account: {
               getValue: vi.fn().mockResolvedValue({
-                free: BigInt(4000)
+                free: 4000n
               })
             }
           },
           ForeignAssets: {
             Account: {
               getValue: vi.fn().mockResolvedValue({
-                balance: BigInt(5000)
+                balance: 5000n
               })
             }
           },
           Tokens: {
             Accounts: {
               getValue: vi.fn().mockResolvedValue({
-                free: BigInt(6000)
+                free: 6000n
               }),
               getEntries: vi.fn().mockResolvedValue([
                 {
@@ -241,7 +241,7 @@ describe('PapiApi', () => {
     it('should return the estimated fee as bigint', async () => {
       const fee = await papiApi.calculateTransactionFee(mockTransaction, 'some_address')
       expect(mockTransaction.getEstimatedFees).toHaveBeenCalledWith('some_address')
-      expect(fee).toBe(BigInt(1000))
+      expect(fee).toBe(1000n)
     })
   })
 
@@ -252,7 +252,7 @@ describe('PapiApi', () => {
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.System.Account.getValue).toHaveBeenCalledWith('some_address')
-      expect(balance).toBe(BigInt(2000))
+      expect(balance).toBe(2000n)
     })
   })
 
@@ -266,7 +266,7 @@ describe('PapiApi', () => {
         'asset_id',
         'some_address'
       )
-      expect(balance).toBe(BigInt(3000))
+      expect(balance).toBe(3000n)
     })
 
     it('should return null when balance does not exist', async () => {
@@ -275,7 +275,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getBalanceForeignPolkadotXcm('some_address', 'asset_id')
 
-      expect(balance).toBe(BigInt(0))
+      expect(balance).toBe(0n)
     })
   })
 
@@ -286,7 +286,7 @@ describe('PapiApi', () => {
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Balances.Account.getValue).toHaveBeenCalledWith('some_address')
-      expect(balance).toBe(BigInt(4000))
+      expect(balance).toBe(4000n)
     })
 
     it('should return null when free balance does not exist', async () => {
@@ -295,7 +295,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getMythosForeignBalance('some_address')
 
-      expect(balance).toEqual(BigInt(0))
+      expect(balance).toEqual(0n)
     })
   })
 
@@ -318,7 +318,7 @@ describe('PapiApi', () => {
         transform(multiLocation),
         'some_address'
       )
-      expect(balance).toBe(BigInt(5000))
+      expect(balance).toBe(5000n)
     })
 
     it('should return 0 when balance does not exist', async () => {
@@ -327,7 +327,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getAssetHubForeignBalance('some_address', multiLocation)
 
-      expect(balance).toBe(BigInt(0))
+      expect(balance).toBe(0n)
     })
   })
 
@@ -347,7 +347,7 @@ describe('PapiApi', () => {
         'some_address',
         transformedCurrencySelection
       )
-      expect(balance).toBe(BigInt(6000))
+      expect(balance).toBe(6000n)
     })
   })
 
@@ -362,7 +362,7 @@ describe('PapiApi', () => {
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Tokens.Accounts.getEntries).toHaveBeenCalledWith('some_address')
-      expect(balance).toBe(BigInt(6000))
+      expect(balance).toBe(6000n)
     })
 
     it('should return the balance when asset matches object by id', async () => {
@@ -390,7 +390,7 @@ describe('PapiApi', () => {
         assetId: '1'
       })
 
-      expect(balance).toBe(BigInt(6000))
+      expect(balance).toBe(6000n)
     })
 
     it('should return the balance when asset matches object by symbol', async () => {
@@ -418,7 +418,7 @@ describe('PapiApi', () => {
         assetId: '1'
       })
 
-      expect(balance).toBe(BigInt(6000))
+      expect(balance).toBe(6000n)
     })
 
     it('should return null when no matching asset found', async () => {
@@ -430,7 +430,7 @@ describe('PapiApi', () => {
         assetId: '1'
       })
 
-      expect(balance).toEqual(BigInt(0))
+      expect(balance).toEqual(0n)
     })
 
     it('should return null when no matching asset found - Centrifuge', async () => {
@@ -442,7 +442,7 @@ describe('PapiApi', () => {
         assetId: '1'
       })
 
-      expect(balance).toEqual(BigInt(0))
+      expect(balance).toEqual(0n)
     })
   })
 
@@ -453,7 +453,7 @@ describe('PapiApi', () => {
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Assets.Account.getValue).toHaveBeenCalledWith(1, 'some_address')
-      expect(balance).toBe(BigInt(3000))
+      expect(balance).toBe(3000n)
     })
 
     it('should return 0 when balance does not exist', async () => {
@@ -462,7 +462,7 @@ describe('PapiApi', () => {
 
       const balance = await papiApi.getBalanceForeignAssetsAccount('some_address', 1)
 
-      expect(balance).toBe(BigInt(0))
+      expect(balance).toEqual(0n)
     })
   })
 
@@ -538,7 +538,7 @@ describe('PapiApi', () => {
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Tokens.Accounts.getValue).toHaveBeenCalledOnce()
-      expect(balance).toBe(BigInt(6000))
+      expect(balance).toBe(6000n)
     })
   })
 
@@ -558,7 +558,7 @@ describe('PapiApi', () => {
 
       papiApi.setApi(mockPolkadotClient)
 
-      vi.mocked(computeFeeFromDryRun).mockReturnValue(BigInt(500))
+      vi.mocked(computeFeeFromDryRun).mockReturnValue(500n)
 
       const result = await papiApi.getDryRun({
         tx: mockTransaction,
@@ -574,7 +574,7 @@ describe('PapiApi', () => {
         undefined
       )
 
-      expect(result).toEqual({ success: true, fee: BigInt(500) })
+      expect(result).toEqual({ success: true, fee: 500n })
     })
 
     it('should return failure with failure reason', async () => {

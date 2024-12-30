@@ -35,7 +35,7 @@ export const buildEthTransferOptions = async ({
     ethAsset.assetId ?? '',
     destParaId,
     BigInt(currency.amount),
-    BigInt(0)
+    0n
   )
 
   checkPlanFailure(plan)

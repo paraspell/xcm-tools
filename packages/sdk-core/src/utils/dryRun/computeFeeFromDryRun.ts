@@ -34,7 +34,7 @@ export const computeFeeFromDryRun = (
   // Sum the fees that match the feeToken
   const totalDeliveryFees = deliveryFees
     .filter(df => df.tokenSymbol === nativeAssetSymbol)
-    .reduce((acc, df) => acc + df.plancks, BigInt(0))
+    .reduce((acc, df) => acc + df.plancks, 0n)
 
   return totalDeliveryFees + executionFee
 }

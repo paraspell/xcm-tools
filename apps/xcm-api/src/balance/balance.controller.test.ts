@@ -198,7 +198,7 @@ describe('BalanceController', () => {
       };
       const req = {} as Request;
 
-      const maxForeignAmountMock = BigInt('10000');
+      const maxForeignAmountMock = 10000n;
       const balanceServiceSpy = vi
         .spyOn(balanceService, 'getMaxForeignTransferableAmount')
         .mockResolvedValue(maxForeignAmountMock);
@@ -228,7 +228,7 @@ describe('BalanceController', () => {
       };
       const req = {} as Request;
 
-      const maxForeignAmountMock = BigInt('10000');
+      const maxForeignAmountMock = 10000n;
       const balanceServiceSpy = vi
         .spyOn(balanceService, 'getMaxForeignTransferableAmount')
         .mockResolvedValue(maxForeignAmountMock);
@@ -259,7 +259,7 @@ describe('BalanceController', () => {
       };
       const req = {} as Request;
 
-      const maxNativeAmountMock = BigInt('20000');
+      const maxNativeAmountMock = 20000n;
       const balanceServiceSpy = vi
         .spyOn(balanceService, 'getMaxNativeTransferableAmount')
         .mockResolvedValue(maxNativeAmountMock);
@@ -288,7 +288,7 @@ describe('BalanceController', () => {
       };
       const req = {} as Request;
 
-      const maxNativeAmountMock = BigInt('20000');
+      const maxNativeAmountMock = 20000n;
       const balanceServiceSpy = vi
         .spyOn(balanceService, 'getMaxNativeTransferableAmount')
         .mockResolvedValue(maxNativeAmountMock);
@@ -319,7 +319,7 @@ describe('BalanceController', () => {
       };
       const req = {} as Request;
 
-      const amountMock = BigInt('20000');
+      const amountMock = 20000n;
       const balanceServiceSpy = vi
         .spyOn(balanceService, 'getTransferableAmount')
         .mockResolvedValue(amountMock);
@@ -348,7 +348,7 @@ describe('BalanceController', () => {
       };
       const req = {} as Request;
 
-      const amountMock = BigInt('20000');
+      const amountMock = 20000n;
       const balanceServiceSpy = vi
         .spyOn(balanceService, 'getTransferableAmount')
         .mockResolvedValue(amountMock);

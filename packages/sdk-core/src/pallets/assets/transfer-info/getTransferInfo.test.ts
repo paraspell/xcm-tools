@@ -61,15 +61,15 @@ describe('getTransferInfo', () => {
 
   beforeEach(() => {
     vi.mocked(createApiInstanceForNode).mockResolvedValue({})
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(BigInt(5000))
+    vi.mocked(getBalanceNativeInternal).mockResolvedValue(5000n)
     vi.mocked(getOriginFeeDetailsInternal).mockResolvedValue({
-      xcmFee: BigInt(100),
+      xcmFee: 100n,
       sufficientForXCM: true
     })
     vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'DOT', assetId: '1' })
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(2000))
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(2000n)
     vi.mocked(getExistentialDeposit).mockReturnValue('100')
-    vi.mocked(getMaxNativeTransferableAmount).mockResolvedValue(BigInt(4000))
+    vi.mocked(getMaxNativeTransferableAmount).mockResolvedValue(4000n)
   })
 
   it('constructs the correct transfer info object', async () => {
@@ -89,24 +89,24 @@ describe('getTransferInfo', () => {
         ecosystem: getRelayChainSymbol(origin)
       },
       currencyBalanceOrigin: {
-        balance: BigInt(2000),
+        balance: 2000n,
         currency: 'DOT'
       },
       originFeeBalance: {
-        balance: BigInt(5000),
-        expectedBalanceAfterXCMFee: BigInt(4900),
+        balance: 5000n,
+        expectedBalanceAfterXCMFee: 4900n,
         xcmFee: {
-          xcmFee: BigInt(100)
+          xcmFee: 100n
         },
-        existentialDeposit: BigInt(100),
+        existentialDeposit: 100n,
         asset: getNativeAssetSymbol(origin),
-        minNativeTransferableAmount: BigInt(100),
-        maxNativeTransferableAmount: BigInt(4000)
+        minNativeTransferableAmount: 100n,
+        maxNativeTransferableAmount: 4000n
       },
       destinationFeeBalance: {
-        balance: BigInt(5000),
+        balance: 5000n,
         currency: getNativeAssetSymbol(destination),
-        existentialDeposit: BigInt(100)
+        existentialDeposit: 100n
       }
     })
   })

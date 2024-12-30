@@ -22,28 +22,28 @@ describe('getBalanceNative', () => {
     const address = '0x123'
     const node = 'Polkadot'
 
-    vi.spyOn(apiMock, 'getBalanceNative').mockResolvedValue(BigInt(1000))
+    vi.spyOn(apiMock, 'getBalanceNative').mockResolvedValue(1000n)
 
     const balance = await getBalanceNative({
       address,
       node,
       api: apiMock
     })
-    expect(balance).toEqual(BigInt(1000))
+    expect(balance).toEqual(1000n)
   })
 
   it('returns the correct balance when node is Interlay', async () => {
     const address = '0x234'
     const node = 'Interlay'
 
-    vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt(1500))
+    vi.mocked(getBalanceForeignInternal).mockResolvedValue(1500n)
 
     const balance = await getBalanceNative({
       address,
       node,
       api: apiMock
     })
-    expect(balance).toEqual(BigInt(1500))
+    expect(balance).toEqual(1500n)
     expect(getBalanceForeignInternal).toHaveBeenCalled()
   })
 
@@ -51,7 +51,7 @@ describe('getBalanceNative', () => {
     const address = '0x456'
     const node = 'Kusama'
 
-    vi.spyOn(apiMock, 'getBalanceNative').mockResolvedValue(BigInt(2000))
+    vi.spyOn(apiMock, 'getBalanceNative').mockResolvedValue(2000n)
     const initSpy = vi.spyOn(apiMock, 'init')
 
     const balance = await getBalanceNative({
@@ -59,7 +59,7 @@ describe('getBalanceNative', () => {
       node,
       api: apiMock
     })
-    expect(balance).toEqual(BigInt(2000))
+    expect(balance).toEqual(2000n)
     expect(initSpy).toHaveBeenCalledWith(node)
   })
 

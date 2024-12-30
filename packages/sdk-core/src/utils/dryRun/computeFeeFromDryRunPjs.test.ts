@@ -51,10 +51,10 @@ describe('computeFeeFromDryRunPjs', () => {
       Object.keys(id.interior)[0] === 'X1' ? 'nativeSymbol' : null
     )
 
-    const executionFee = BigInt(200)
+    const executionFee = 200n
     const result = computeFeeFromDryRunPjs(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(BigInt(700)) // 500 (delivery fee) + 200 (execution fee)
+    expect(result).toBe(700n) // 500 (delivery fee) + 200 (execution fee)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
     expect(getMultiLocationTokenIdPjs).toHaveBeenCalledTimes(2)
   })
@@ -82,10 +82,10 @@ describe('computeFeeFromDryRunPjs', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
     vi.mocked(getMultiLocationTokenIdPjs).mockReturnValue(null)
 
-    const executionFee = BigInt(200)
+    const executionFee = 200n
     const result = computeFeeFromDryRunPjs(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(BigInt(200)) // Only execution fee
+    expect(result).toBe(200n) // Only execution fee
     expect(getMultiLocationTokenIdPjs).toHaveBeenCalledWith(
       { parents: 1, interior: { X1: [{ Parachain: 1000 }] } },
       mockNode
@@ -123,10 +123,10 @@ describe('computeFeeFromDryRunPjs', () => {
       Object.keys(id.interior)[0] === 'X2' ? 'nativeSymbol' : null
     )
 
-    const executionFee = BigInt(200)
+    const executionFee = 200n
     const result = computeFeeFromDryRunPjs(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(BigInt(500)) // 300 (delivery fee) + 200 (execution fee)
+    expect(result).toBe(500n) // 300 (delivery fee) + 200 (execution fee)
   })
 
   it('should return 0 if no matching events are found', () => {
@@ -144,10 +144,10 @@ describe('computeFeeFromDryRunPjs', () => {
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
 
-    const executionFee = BigInt(0)
+    const executionFee = 0n
     const result = computeFeeFromDryRunPjs(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(BigInt(0))
+    expect(result).toBe(0n)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
     expect(getMultiLocationTokenIdPjs).not.toHaveBeenCalled()
   })
@@ -161,9 +161,9 @@ describe('computeFeeFromDryRunPjs', () => {
 
     vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
 
-    const executionFee = BigInt(300)
+    const executionFee = 300n
     const result = computeFeeFromDryRunPjs(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(BigInt(300)) // Only execution fee
+    expect(result).toBe(300n) // Only execution fee
   })
 })

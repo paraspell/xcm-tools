@@ -10,7 +10,7 @@ import type { IPolkadotApi } from '../../api/IPolkadotApi'
 
 const apiMock = {
   init: vi.fn(),
-  calculateTransactionFee: vi.fn().mockResolvedValue(BigInt('1000000000')),
+  calculateTransactionFee: vi.fn().mockResolvedValue(1000000000n),
   disconnect: vi.fn(),
   setDisconnectAllowed: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
@@ -22,9 +22,9 @@ describe('getOriginFeeDetails', () => {
     const currency = {} as WithAmount<TCurrencyCore>
     const account = 'account-address'
 
-    const nativeBalance = BigInt('1000000000000000')
+    const nativeBalance = 1000000000000000n
     const ed = '1000000000000'
-    const xcmFee = '1000000000'
+    const xcmFee = 1000000000n
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
     vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
@@ -64,7 +64,7 @@ describe('getOriginFeeDetails', () => {
 
     expect(result).toEqual({
       sufficientForXCM: true,
-      xcmFee: BigInt(xcmFee)
+      xcmFee
     })
 
     consoleLogSpy.mockRestore()
@@ -76,9 +76,9 @@ describe('getOriginFeeDetails', () => {
     const currency = {} as WithAmount<TCurrencyCore>
     const account = 'account-address'
 
-    const nativeBalance = BigInt('1000000000000000')
+    const nativeBalance = 1000000000000000n
     const ed = '1000000000000'
-    const xcmFee = '1000000000'
+    const xcmFee = 1000000000n
 
     vi.spyOn(balanceModule, 'getBalanceNativeInternal').mockResolvedValue(nativeBalance)
     vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(ed)
@@ -130,7 +130,7 @@ describe('getOriginFeeDetails', () => {
     const currency = {} as WithAmount<TCurrencyCore>
     const account = 'account-address'
 
-    const nativeBalance = BigInt('1000000000000000')
+    const nativeBalance = 1000000000000000n
     const ed = '1000000000000'
     const xcmFee = '1000000000'
 

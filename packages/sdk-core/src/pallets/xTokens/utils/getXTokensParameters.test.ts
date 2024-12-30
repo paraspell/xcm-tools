@@ -15,7 +15,7 @@ describe('getXTokensParameters', () => {
     const result = getXTokensParameters(false, 'DOT', mockMultiLocationHeader, '1000', '10')
     expect(result).toEqual({
       currency_id: 'DOT',
-      amount: BigInt('1000'),
+      amount: 1000n,
       dest: mockMultiLocationHeader,
       dest_weight_limit: '10'
     })
@@ -77,7 +77,7 @@ describe('getXTokensParameters', () => {
     )
     expect(result).toEqual({
       currency_id: 'DOT',
-      amount: BigInt(1000),
+      amount: 1000n,
       dest: mockMultiLocationHeader,
       dest_weight_limit: '10'
     })

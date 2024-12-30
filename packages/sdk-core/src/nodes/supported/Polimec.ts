@@ -26,7 +26,7 @@ import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { DOT_MULTILOCATION } from '../../constants'
 import { getParaId } from '../config'
 
-const GAS_LIMIT = BigInt('1000000000')
+const GAS_LIMIT = 1000000000n
 
 const createCustomXcmPolimec = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
@@ -64,7 +64,7 @@ const createCustomXcmPolimec = <TApi, TRes>(
                     }
                   },
                   fun: {
-                    Fungible: BigInt(GAS_LIMIT)
+                    Fungible: GAS_LIMIT
                   }
                 },
                 weight_limit: 'Unlimited'

@@ -33,6 +33,6 @@ describe('ComposableFinance', () => {
 
     composableFinance.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, BigInt(123))
+    expect(spy).toHaveBeenCalledWith(mockInput, 123n)
   })
 })

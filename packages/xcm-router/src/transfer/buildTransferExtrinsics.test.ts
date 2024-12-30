@@ -56,9 +56,9 @@ describe('buildTransferExtrinsics', () => {
     vi.spyOn(xcmPallet, 'buildEthTransferOptions').mockResolvedValue({
       token: 'token123',
       destinationParaId: 1000,
-      destinationFee: BigInt(500),
-      amount: BigInt(1000),
-      fee: BigInt(100),
+      destinationFee: 500n,
+      amount: 1000n,
+      fee: 100n,
     });
 
     vi.mocked(createApiInstanceForNode).mockResolvedValue({

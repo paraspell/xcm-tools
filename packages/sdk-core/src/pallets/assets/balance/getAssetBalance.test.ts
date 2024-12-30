@@ -38,10 +38,10 @@ describe('getAssetBalance', () => {
     const node = 'Polkadot'
     const currency = { symbol: 'DOT' }
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getBalanceNativeInternal).mockResolvedValue(BigInt(1000))
+    vi.mocked(getBalanceNativeInternal).mockResolvedValue(1000n)
 
     const result = await getAssetBalance({ api: apiMock, address: account, node, currency })
-    expect(result).toEqual(BigInt(1000))
+    expect(result).toEqual(1000n)
     expect(getBalanceNativeInternal).toHaveBeenCalledWith({ address: account, node, api: apiMock })
   })
 
@@ -50,10 +50,10 @@ describe('getAssetBalance', () => {
     const node = 'Kusama'
     const currency = { symbol: 'KSM' }
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt(200))
+    vi.mocked(getBalanceForeignInternal).mockResolvedValue(200n)
 
     const result = await getAssetBalance({ api: apiMock, address: account, node, currency })
-    expect(result).toEqual(BigInt(200))
+    expect(result).toEqual(200n)
     expect(getBalanceForeignInternal).toHaveBeenCalledWith({
       address: account,
       node,
@@ -67,10 +67,10 @@ describe('getAssetBalance', () => {
     const node = 'Kusama'
     const currency = { symbol: 'XYZ' }
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-    vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt(0))
+    vi.mocked(getBalanceForeignInternal).mockResolvedValue(0n)
 
     const result = await getAssetBalance({ api: apiMock, address: account, node, currency })
-    expect(result).toEqual(BigInt(0))
+    expect(result).toEqual(0n)
   })
 
   it('returns the correct balance when node is Interlay', async () => {
@@ -78,10 +78,10 @@ describe('getAssetBalance', () => {
     const node = 'Interlay'
     const currency = { symbol: 'INTR' }
     vi.mocked(getNativeAssetSymbol).mockReturnValue('INTR')
-    vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt(1500))
+    vi.mocked(getBalanceForeignInternal).mockResolvedValue(1500n)
 
     const result = await getAssetBalance({ api: apiMock, address: account, node, currency })
-    expect(result).toEqual(BigInt(1500))
+    expect(result).toEqual(1500n)
     expect(getBalanceForeignInternal).toHaveBeenCalledWith({
       address: account,
       node,

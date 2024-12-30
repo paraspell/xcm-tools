@@ -26,7 +26,7 @@ export const getAssetBalanceInternal = async <TApi, TRes>({
         node: node as TNodePolkadotKusama,
         api,
         currency
-      })) ?? BigInt(0))
+      })) ?? 0n)
 }
 
 export const getAssetBalance = async <TApi, TRes>(

@@ -14,7 +14,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
   it('should return balance for Mythos node', async () => {
     const mockApi = {
-      getMythosForeignBalance: vi.fn().mockResolvedValue(BigInt(1000))
+      getMythosForeignBalance: vi.fn().mockResolvedValue(1000n)
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const result = await getBalanceForeignPolkadotXcm(mockApi, 'Mythos', 'some-address', {
@@ -22,13 +22,13 @@ describe('getBalanceForeignPolkadotXcm', () => {
       assetId: '1'
     })
 
-    expect(result).toBe(BigInt(1000))
+    expect(result).toBe(1000n)
   })
 
   it('should return balance for AssetHubPolkadot node', async () => {
     const mockApi = {
-      getAssetHubForeignBalance: vi.fn().mockResolvedValue(BigInt(500)),
-      getBalanceForeignAssetsAccount: vi.fn().mockResolvedValue(BigInt(500))
+      getAssetHubForeignBalance: vi.fn().mockResolvedValue(500n),
+      getBalanceForeignAssetsAccount: vi.fn().mockResolvedValue(500n)
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const result = await getBalanceForeignPolkadotXcm(mockApi, 'AssetHubPolkadot', 'some-address', {
@@ -36,12 +36,12 @@ describe('getBalanceForeignPolkadotXcm', () => {
       assetId: '1'
     })
 
-    expect(result).toBe(BigInt(500))
+    expect(result).toBe(500n)
   })
 
   it('should return balance for Polimec node', async () => {
     const mockApi = {
-      getForeignAssetsByIdBalance: vi.fn().mockResolvedValue(BigInt(200))
+      getForeignAssetsByIdBalance: vi.fn().mockResolvedValue(200n)
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const result = await getBalanceForeignPolkadotXcm(mockApi, 'Polimec', 'some-address', {
@@ -49,12 +49,12 @@ describe('getBalanceForeignPolkadotXcm', () => {
       assetId: '1'
     })
 
-    expect(result).toBe(BigInt(200))
+    expect(result).toBe(200n)
   })
 
   it('should return balance for Moonbeam node', async () => {
     const mockApi = {
-      getBalanceForeignAssetsAccount: vi.fn().mockResolvedValue(BigInt(300))
+      getBalanceForeignAssetsAccount: vi.fn().mockResolvedValue(300n)
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const result = await getBalanceForeignPolkadotXcm(mockApi, 'Moonbeam', 'some-address', {
@@ -62,12 +62,12 @@ describe('getBalanceForeignPolkadotXcm', () => {
       assetId: '1'
     })
 
-    expect(result).toBe(BigInt(300))
+    expect(result).toBe(300n)
   })
 
   it('should return balance for Moonriver node', async () => {
     const mockApi = {
-      getBalanceForeignAssetsAccount: vi.fn().mockResolvedValue(BigInt(400))
+      getBalanceForeignAssetsAccount: vi.fn().mockResolvedValue(400n)
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const result = await getBalanceForeignPolkadotXcm(mockApi, 'Moonriver', 'some-address', {
@@ -75,7 +75,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
       assetId: '1'
     })
 
-    expect(result).toBe(BigInt(400))
+    expect(result).toBe(400n)
   })
 
   it('should throw error if asset is not foreign', async () => {

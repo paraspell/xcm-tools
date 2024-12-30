@@ -68,7 +68,7 @@ export const getTransferInfo = async <TApi, TRes>({
         xcmFee: xcmFeeDetails,
         existentialDeposit: BigInt(getExistentialDeposit(origin) ?? 0),
         asset: getNativeAssetSymbol(origin),
-        minNativeTransferableAmount: BigInt(getExistentialDeposit(origin) ?? '0'),
+        minNativeTransferableAmount: BigInt(getExistentialDeposit(origin) ?? 0),
         maxNativeTransferableAmount: await getMaxNativeTransferableAmount({
           api,
           address: accountOrigin,
@@ -82,7 +82,7 @@ export const getTransferInfo = async <TApi, TRes>({
           api: destApi
         }),
         currency: getNativeAssetSymbol(destination),
-        existentialDeposit: BigInt(getExistentialDeposit(destination) ?? '0')
+        existentialDeposit: BigInt(getExistentialDeposit(destination) ?? 0)
       }
     }
   } finally {
