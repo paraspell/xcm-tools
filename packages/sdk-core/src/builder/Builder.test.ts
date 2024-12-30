@@ -36,7 +36,6 @@ describe('Builder', () => {
       clone: vi.fn()
     })
   } as unknown as IPolkadotApi<unknown, unknown>
-  const destApi = {} as unknown
   const mockExtrinsic = {
     method: 'transfer',
     args: []
@@ -131,26 +130,6 @@ describe('Builder', () => {
       })
     })
 
-    it('should initiate a para to para transfer with custom useKeepAlive', async () => {
-      await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2, PARA_ID_TO)
-        .currency(CURRENCY)
-        .address(ADDRESS)
-        .useKeepAlive(destApi)
-        .build()
-
-      expect(sendSpy).toHaveBeenCalledWith({
-        api: mockApi,
-        origin: NODE,
-        currency: CURRENCY,
-        address: ADDRESS,
-        destination: NODE_2,
-        paraIdTo: PARA_ID_TO,
-        destApiForKeepAlive: expect.any(Object)
-      })
-    })
-
     it('should initiate a para to para transfer with overriden version', async () => {
       const version = Version.V2
 
@@ -169,30 +148,6 @@ describe('Builder', () => {
         address: ADDRESS,
         destination: NODE_2,
         paraIdTo: PARA_ID_TO,
-        version
-      })
-    })
-
-    it('should initiate a para to para transfer with custom useKeepAlive and overriden version', async () => {
-      const version = Version.V2
-
-      await Builder(mockApi)
-        .from(NODE)
-        .to(NODE_2, PARA_ID_TO)
-        .currency(CURRENCY)
-        .address(ADDRESS)
-        .useKeepAlive(destApi)
-        .xcmVersion(version)
-        .build()
-
-      expect(sendSpy).toHaveBeenCalledWith({
-        api: mockApi,
-        origin: NODE,
-        currency: CURRENCY,
-        address: ADDRESS,
-        destination: NODE_2,
-        paraIdTo: PARA_ID_TO,
-        destApiForKeepAlive: expect.any(Object),
         version
       })
     })
@@ -342,7 +297,6 @@ describe('Builder', () => {
         .to('Polkadot')
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
-        .useKeepAlive(destApi)
         .build()
 
       expect(sendSpy).toHaveBeenCalledWith({
@@ -353,8 +307,7 @@ describe('Builder', () => {
           symbol: currency,
           amount: AMOUNT
         },
-        address: ADDRESS,
-        destApiForKeepAlive: expect.any(Object)
+        address: ADDRESS
       })
     })
 
@@ -366,21 +319,14 @@ describe('Builder', () => {
         ]
       }
 
-      await Builder(mockApi)
-        .from(NODE)
-        .to('Polkadot')
-        .currency(currency)
-        .address(ADDRESS)
-        .useKeepAlive(destApi)
-        .build()
+      await Builder(mockApi).from(NODE).to('Polkadot').currency(currency).address(ADDRESS).build()
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
         origin: NODE,
         destination: 'Polkadot',
         currency,
-        address: ADDRESS,
-        destApiForKeepAlive: expect.any(Object)
+        address: ADDRESS
       })
     })
 
@@ -409,7 +355,7 @@ describe('Builder', () => {
       })
     })
 
-    it('should initiate a para to relay transfer with fee asset, keep alive and overriden version', async () => {
+    it('should initiate a para to relay transfer with fee asset and overriden version', async () => {
       const currency: TCurrencyInputWithAmount = {
         multiasset: [
           { symbol: 'DOT', amount: AMOUNT },
@@ -423,7 +369,6 @@ describe('Builder', () => {
         .to('Polkadot')
         .currency(currency)
         .address(ADDRESS)
-        .useKeepAlive(destApi)
         .xcmVersion(version)
         .build()
 
@@ -433,7 +378,6 @@ describe('Builder', () => {
         destination: 'Polkadot',
         currency: currency,
         address: ADDRESS,
-        destApiForKeepAlive: expect.any(Object),
         version
       })
     })
@@ -573,27 +517,7 @@ describe('Builder', () => {
       })
     })
 
-    it('should initiate a relay to para transfer with useKeepAlive', async () => {
-      await Builder(mockApi)
-        .from('Polkadot')
-        .to(NODE, PARA_ID_TO)
-        .currency({ symbol: 'DOT', amount: AMOUNT })
-        .address(ADDRESS)
-        .useKeepAlive(destApi)
-        .build()
-
-      expect(sendSpy).toHaveBeenCalledWith({
-        api: mockApi,
-        origin: 'Polkadot',
-        destination: NODE,
-        currency: { symbol: 'DOT', amount: AMOUNT },
-        address: ADDRESS,
-        paraIdTo: PARA_ID_TO,
-        destApiForKeepAlive: expect.anything()
-      })
-    })
-
-    it('should initiate a relay to para transfer with useKeepAlive and overriden version', async () => {
+    it('should initiate a relay to para transfer with overriden version', async () => {
       const version = Version.V2
 
       await Builder(mockApi)
@@ -601,7 +525,6 @@ describe('Builder', () => {
         .to(NODE, PARA_ID_TO)
         .currency({ symbol: 'DOT', amount: AMOUNT })
         .address(ADDRESS)
-        .useKeepAlive(destApi)
         .xcmVersion(version)
         .build()
 
@@ -612,7 +535,6 @@ describe('Builder', () => {
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS,
         paraIdTo: PARA_ID_TO,
-        destApiForKeepAlive: expect.anything(),
         version
       })
     })

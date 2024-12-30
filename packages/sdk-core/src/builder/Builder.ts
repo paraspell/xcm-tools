@@ -11,7 +11,7 @@ import type {
   IToBuilder,
   ICurrencyBuilder,
   IAddressBuilder,
-  IUseKeepAliveFinalBuilder,
+  IFinalBuilderWithOptions,
   IFungibleBuilder,
   TCurrencyInputWithAmount,
   TSendOptions
@@ -31,7 +31,7 @@ export class GeneralBuilder<TApi, TRes>
     IToBuilder<TApi, TRes>,
     ICurrencyBuilder<TApi, TRes>,
     IAddressBuilder<TApi, TRes>,
-    IUseKeepAliveFinalBuilder<TApi, TRes>
+    IFinalBuilderWithOptions<TApi, TRes>
 {
   private _from: TNodeDotKsmWithRelayChains
   private _to: TDestination
@@ -39,7 +39,6 @@ export class GeneralBuilder<TApi, TRes>
   private _paraIdTo?: number
   private _address: TAddress
   private _ahAddress?: string
-  private _destApi: IPolkadotApi<TApi, TRes>
   private _version?: Version
   private _pallet?: string
   private _method?: string
@@ -115,18 +114,6 @@ export class GeneralBuilder<TApi, TRes>
   }
 
   /**
-   * Specifies to use the keep-alive option for the destination account to keep account active.
-   *
-   * @param destApi - The API instance of the destination chain.
-   * @returns An instance of Builder
-   */
-  useKeepAlive(destApi: TApi): this {
-    this._destApi = this.api.clone()
-    this._destApi.setApi(destApi)
-    return this
-  }
-
-  /**
    * Sets the XCM version to be used for the transfer.
    *
    * @param version - The XCM version.
@@ -157,7 +144,6 @@ export class GeneralBuilder<TApi, TRes>
       address: this._address,
       destination: this._to,
       paraIdTo: this._paraIdTo,
-      destApiForKeepAlive: this._destApi,
       version: this._version,
       ahAddress: this._ahAddress,
       pallet: this._pallet,

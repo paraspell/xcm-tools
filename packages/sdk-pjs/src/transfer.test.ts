@@ -22,25 +22,17 @@ vi.mock('@paraspell/sdk-core', async importOriginal => {
 
 describe('Send Function using PolkadotJsAPI', () => {
   const mockApi = {} as TPjsApi
-  const mockDestApi = {} as TPjsApi
 
-  const optionsSend: Omit<TSendOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
+  const optionsSend = {
+    api: mockApi
+  } as unknown as Omit<TSendOptions<TPjsApi, Extrinsic>, 'api'> & {
     api: TPjsApiOrUrl
-    destApiForKeepAlive: TPjsApiOrUrl
-  } = {
-    api: mockApi,
-    destApiForKeepAlive: mockDestApi
-  } as unknown as Omit<TSendOptions<TPjsApi, Extrinsic>, 'api' | 'destApiForKeepAlive'> & {
-    api: TPjsApiOrUrl
-    destApiForKeepAlive: TPjsApiOrUrl
   }
 
   let pjsApiSetApiSpy: MockInstance
-  let destPjsApiSetApiSpy: MockInstance
 
   beforeEach(() => {
     pjsApiSetApiSpy = vi.spyOn(PolkadotJsApi.prototype, 'setApi')
-    destPjsApiSetApiSpy = vi.spyOn(PolkadotJsApi.prototype, 'setApi')
   })
 
   describe('send', () => {
@@ -48,11 +40,9 @@ describe('Send Function using PolkadotJsAPI', () => {
       await send(optionsSend)
 
       expect(pjsApiSetApiSpy).toHaveBeenCalledWith(mockApi)
-      expect(destPjsApiSetApiSpy).toHaveBeenCalledWith(mockDestApi)
       expect(sdkCore.send).toHaveBeenCalledWith({
         ...optionsSend,
-        api: expect.any(PolkadotJsApi),
-        destApiForKeepAlive: expect.any(PolkadotJsApi)
+        api: expect.any(PolkadotJsApi)
       })
     })
   })
