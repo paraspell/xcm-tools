@@ -40,6 +40,8 @@ apps | - XCM Playground
      | - XCM Visualizator BE
 
 packages | - XCM SDK
+         | - XCM SDK-PJS
+         | - XCM SDK-Core
          | - XCM Router
          | - XCM Analyser
 ```
