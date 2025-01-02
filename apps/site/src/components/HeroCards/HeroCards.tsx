@@ -26,9 +26,9 @@ const codeForSdk = `
       .from('Acala')
       .to('Hydration')      
       .currency({
-        symbol : 'ACA' 
+        symbol : 'ACA',
+        amount: 100000000000 
       })
-      .amount(100000000000)    
       .address(address)    
       .build()   
     `;
