@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.0.0...xcm-router-v2.0.1) (2025-01-03)
+
+
+### Bug Fixes
+
+* Enable support for bigint literals ✨ ([0090106](https://github.com/paraspell/xcm-tools/commit/0090106babe2dcecf66d4eaa532d3963a230958b))
+* Fix package json warnings 🔧 ([de6ea5d](https://github.com/paraspell/xcm-tools/commit/de6ea5df89513753b7a83e4053121a4b207a97c5))
+* Update Rollup TypeScript plugin to official version ⬆ ([20c0f25](https://github.com/paraspell/xcm-tools/commit/20c0f25224a86b859ac1ad043c5cf04febdf743e))
+
 ## [2.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.5.0...xcm-router-v2.0.0) (2024-12-29)
 
 
