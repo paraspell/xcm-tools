@@ -1,5 +1,15 @@
 # Changelog
 
+## [8.0.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.0.0...sdk-pjs-v8.0.1) (2025-01-03)
+
+
+### Bug Fixes
+
+* Enable support for bigint literals ✨ ([0090106](https://github.com/paraspell/xcm-tools/commit/0090106babe2dcecf66d4eaa532d3963a230958b))
+* Fix assets export 🛠️ ([cdf1d03](https://github.com/paraspell/xcm-tools/commit/cdf1d03a90e11c9f15a76c6fd77475f89e71d536))
+* **sdk-core:** Remove keep alive feature 🔧 ([5d7761e](https://github.com/paraspell/xcm-tools/commit/5d7761ede0c87e7b6c00e4d1f416323409211870))
+* Update Rollup TypeScript plugin to official version ⬆ ([20c0f25](https://github.com/paraspell/xcm-tools/commit/20c0f25224a86b859ac1ad043c5cf04febdf743e))
+
 ## [8.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v7.2.10...sdk-pjs-v8.0.0) (2024-12-29)
 
 
