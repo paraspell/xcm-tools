@@ -1,6 +1,6 @@
 import type { AbstractProvider, Signer } from 'ethers'
-import type { TNodeDotKsmWithRelayChains, TNodePolkadotKusama, TNodeWithRelayChains } from './TNode'
-import type { TCurrencyCoreV1WithAmount, TCurrencyInputWithAmount } from './TCurrency'
+import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from './TNode'
+import type { TCurrencyInputWithAmount } from './TCurrency'
 import type { TAddress, TDestination, TVersionClaimAssets, Version } from './TTransfer'
 import type { TMultiAsset } from './TMultiAsset'
 import type { TDryRunResult } from './TDryRun'
@@ -18,11 +18,11 @@ export type TEvmBuilderOptionsBase = {
   /**
    * The destination node on Polkadot network.
    */
-  to: TNodePolkadotKusama
+  to: TNodeDotKsmWithRelayChains
   /**
    * The currency to transfer. Symbol or ID.
    */
-  currency: TCurrencyCoreV1WithAmount
+  currency: TCurrencyInputWithAmount
   /**
    * The Polkadot destination address.
    */

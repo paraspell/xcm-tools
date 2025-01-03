@@ -1,6 +1,6 @@
 import type { IPolkadotApi } from '../../../api'
 import { getNodeConfig } from '../../../nodes/config'
-import type { TNodePolkadotKusama } from '../../../types'
+import type { TNodeDotKsmWithRelayChains } from '../../../types'
 import { getAssetsObject } from '../../../pallets/assets'
 
 // Partially inspired by Moonbeam XCM-SDK
@@ -8,7 +8,7 @@ import { getAssetsObject } from '../../../pallets/assets'
 export const getDestinationMultilocation = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   address: string,
-  destination: TNodePolkadotKusama
+  destination: TNodeDotKsmWithRelayChains
 ) => {
   const { isEVM } = getAssetsObject(destination)
   const accountType = isEVM ? '03' : '01'
@@ -19,5 +19,5 @@ export const getDestinationMultilocation = <TApi, TRes>(
 
   const { paraId } = getNodeConfig(destination)
 
-  return [1, [`0x0000000${paraId.toString(16)}`, acc]]
+  return [1, paraId ? [`0x0000000${paraId.toString(16)}`, acc] : [acc]]
 }

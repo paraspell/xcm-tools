@@ -244,4 +244,33 @@ describe('transferMoonbeamEvm', () => {
     })
     expect(result).toBe('0xStringHash')
   })
+
+  it('throws if passed multiasset currency', async () => {
+    await expect(
+      transferMoonbeamEvm({
+        api: mockApi,
+        from: 'Moonbeam',
+        to: 'AssetHubPolkadot',
+        signer: mockSigner,
+        address: mockAddress,
+        currency: { multiasset: [], amount: '1234' }
+      })
+    ).rejects.toThrowError()
+  })
+
+  it('throws if trying to override multilocation', async () => {
+    await expect(
+      transferMoonbeamEvm({
+        api: mockApi,
+        from: 'Moonbeam',
+        to: 'AssetHubPolkadot',
+        signer: mockSigner,
+        address: mockAddress,
+        currency: {
+          multilocation: { type: 'Override', value: { parents: 1, interior: {} } },
+          amount: 1000
+        }
+      })
+    ).rejects.toThrowError()
+  })
 })

@@ -252,8 +252,6 @@ const EvmTransfer = () => {
       throw new Error("No account selected!");
     }
 
-    console.log("Submitting transaction with values:", formValues);
-
     setLoading(true);
 
     try {

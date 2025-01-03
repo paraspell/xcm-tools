@@ -1,9 +1,9 @@
 import type {
   TOptionalEvmBuilderOptions,
   IPolkadotApi,
-  TNodePolkadotKusama,
-  TCurrencyCoreV1WithAmount,
-  TEvmBuilderOptions
+  TEvmBuilderOptions,
+  TCurrencyInputWithAmount,
+  TNodeDotKsmWithRelayChains
 } from '@paraspell/sdk-core'
 import { transferMoonbeamEvm } from '@paraspell/sdk-core'
 import type { AbstractProvider, Signer } from 'ethers'
@@ -31,7 +31,7 @@ export class EvmBuilderClass<TApi, TRes> {
    * @param node - The Polkadot node to which the transfer will be made.
    * @returns An instance of EvmBuilder
    */
-  to(node: TNodePolkadotKusama): this {
+  to(node: TNodeDotKsmWithRelayChains): this {
     this._options.to = node
     return this
   }
@@ -42,7 +42,7 @@ export class EvmBuilderClass<TApi, TRes> {
    * @param currency - The currency to be transferred.
    * @returns An instance of EvmBuilder
    */
-  currency(currency: TCurrencyCoreV1WithAmount): this {
+  currency(currency: TCurrencyInputWithAmount): this {
     this._options.currency = currency
     return this
   }
