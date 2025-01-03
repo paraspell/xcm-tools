@@ -62,3 +62,25 @@ export const getMaxForeignTransferableAmount = createPolkadotJsApiCall(
 export const getTransferableAmount = createPolkadotJsApiCall(
   getTransferableAmountImpl<TPjsApi, Extrinsic>
 )
+
+export {
+  getAssetsObject,
+  isNodeEvm,
+  getAssetId,
+  getRelayChainSymbol,
+  getNativeAssets,
+  getOtherAssets,
+  getAssets,
+  getAllAssetsSymbols,
+  getNativeAssetSymbol,
+  hasSupportForAsset,
+  getAssetDecimals,
+  getTNode,
+  getExistentialDeposit,
+  Native,
+  Foreign,
+  ForeignAbstract,
+  Override,
+  getSupportedAssets,
+  getAssetBySymbolOrId
+} from '@paraspell/sdk-core'

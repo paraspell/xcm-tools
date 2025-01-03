@@ -1,9 +1,7 @@
 // Contains all important exports
 
 export * from './api'
-export * as xcmPallet from './transfer'
 export * from './transfer'
-export * as assets from './pallets/assets'
 export * from './pallets/assets'
 export * from './pallets/pallets'
 export * from './builder'

@@ -64,3 +64,25 @@ export const getMaxForeignTransferableAmount = createPapiApiCall(
 export const getTransferableAmount = createPapiApiCall(
   getTransferableAmountImpl<TPapiApi, TPapiTransaction>
 )
+
+export {
+  getAssetsObject,
+  isNodeEvm,
+  getAssetId,
+  getRelayChainSymbol,
+  getNativeAssets,
+  getOtherAssets,
+  getAssets,
+  getAllAssetsSymbols,
+  getNativeAssetSymbol,
+  hasSupportForAsset,
+  getAssetDecimals,
+  getTNode,
+  getExistentialDeposit,
+  Native,
+  Foreign,
+  ForeignAbstract,
+  Override,
+  getSupportedAssets,
+  getAssetBySymbolOrId
+} from '@paraspell/sdk-core'
