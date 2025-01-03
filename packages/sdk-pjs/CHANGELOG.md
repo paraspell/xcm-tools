@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.0.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.0.1...sdk-pjs-v8.0.2) (2025-01-03)
+
+
+### Bug Fixes
+
+* Improve EVM builder ✨ ([76afbf3](https://github.com/paraspell/xcm-tools/commit/76afbf3505460fbe85d4a91190a45e14cd8f2491))
+
 ## [8.0.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.0.0...sdk-pjs-v8.0.1) (2025-01-03)
 
 
