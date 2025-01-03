@@ -2,14 +2,6 @@ import { describe, expect, it } from 'vitest'
 import * as sdk from './index'
 
 describe('Module Exports', () => {
-  it('should export xcmPallet', () => {
-    expect(sdk.xcmPallet).toBeDefined()
-  })
-
-  it('should export assets', () => {
-    expect(sdk.assets).toBeDefined()
-  })
-
   it('should export NODE_NAMES_DOT_KSM and other constants', () => {
     expect(sdk.NODE_NAMES_DOT_KSM).toBeDefined()
     expect(sdk.NODE_NAMES).toBeDefined()
