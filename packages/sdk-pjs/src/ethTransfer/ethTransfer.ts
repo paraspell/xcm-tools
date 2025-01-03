@@ -1,9 +1,15 @@
 import { toPolkadot, environment } from '@snowbridge/api'
-import { findEthAsset } from './findEthAsset'
 import { createContext } from './createContext'
 import { checkPlanFailure } from './checkPlanFailure'
 import { isEthersSigner } from './utils'
-import { getParaId, type TEvmBuilderOptions } from '@paraspell/sdk-core'
+import {
+  getAssetBySymbolOrId,
+  getParaId,
+  InvalidCurrencyError,
+  isForeignAsset,
+  isOverrideMultiLocationSpecifier,
+  type TEvmBuilderOptions
+} from '@paraspell/sdk-core'
 
 /**
  * Transfers an Ethereum asset to a Polkadot account.
@@ -22,6 +28,14 @@ export const transferEthToPolkadot = async <TApi, TRes>({
   to,
   currency
 }: TEvmBuilderOptions<TApi, TRes>) => {
+  if ('multiasset' in currency) {
+    throw new Error('Multiassets syntax is not supported for Evm transfers')
+  }
+
+  if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
+    throw new Error('Override multilocation is not supported for Evm transfers')
+  }
+
   if (!provider) {
     throw new Error('provider parameter is required for Snowbridge transfers.')
   }
@@ -30,18 +44,28 @@ export const transferEthToPolkadot = async <TApi, TRes>({
     throw new Error('Snowbridge does not support Viem provider yet.')
   }
 
-  const ethAsset = findEthAsset(currency)
+  const ethAsset = getAssetBySymbolOrId('Ethereum', currency, to)
+
+  if (ethAsset === null) {
+    throw new InvalidCurrencyError(
+      `Origin node Ethereum does not support currency ${JSON.stringify(currency)}.`
+    )
+  }
 
   const env = environment.SNOWBRIDGE_ENV['polkadot_mainnet']
   const context = await createContext(provider, env.config)
 
   const destParaId = getParaId(to)
 
+  if (!isForeignAsset(ethAsset) || ethAsset.assetId === undefined) {
+    throw new InvalidCurrencyError('Selected asset has no asset id')
+  }
+
   const plan = await toPolkadot.validateSend(
     context,
     signer,
     address,
-    ethAsset.assetId ?? '',
+    ethAsset.assetId,
     destParaId,
     BigInt(currency.amount),
     0n

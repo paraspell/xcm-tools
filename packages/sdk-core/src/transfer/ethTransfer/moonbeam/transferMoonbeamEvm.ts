@@ -15,6 +15,7 @@ import { getDestinationMultilocation } from './getDestinationMultilocation'
 
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
+import { isOverrideMultiLocationSpecifier } from '../../../utils/multiLocation/isOverrideMultiLocationSpecifier'
 
 const U_64_MAX = 18446744073709551615n
 const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000804'
@@ -29,6 +30,14 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
   address,
   currency
 }: TEvmBuilderOptions<TApi, TRes>): Promise<string> => {
+  if ('multiasset' in currency) {
+    throw new Error('Multiassets syntax is not supported for Evm transfers')
+  }
+
+  if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
+    throw new Error('Override multilocation is not supported for Evm transfers')
+  }
+
   const contract = isEthersSigner(signer)
     ? new Contract(CONTRACT_ADDRESS, abi, signer)
     : getContract({

@@ -2,10 +2,7 @@ import type { TMultiLocationValueWithOverride, TOverrideMultiLocationSpecifier }
 
 export const isOverrideMultiLocationSpecifier = (
   multiLocationSpecifier: TMultiLocationValueWithOverride
-): multiLocationSpecifier is TOverrideMultiLocationSpecifier => {
-  return (
-    typeof multiLocationSpecifier === 'object' &&
-    'type' in multiLocationSpecifier &&
-    'value' in multiLocationSpecifier
-  )
-}
+): multiLocationSpecifier is TOverrideMultiLocationSpecifier =>
+  typeof multiLocationSpecifier === 'object' &&
+  'type' in multiLocationSpecifier &&
+  'value' in multiLocationSpecifier
