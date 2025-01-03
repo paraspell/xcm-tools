@@ -2,14 +2,18 @@
   "name": "@paraspell/sdk",
   "version": "8.0.2",
   "description": "SDK for ParaSpell XCM/XCMP tool for developers",
-  "repository": "@paraspell/sdk",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paraspell/xcm-tools.git",
+    "directory": "packages/sdk"
+  },
   "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     }
   },
   "main": "dist/index.cjs",
