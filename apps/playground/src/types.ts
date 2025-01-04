@@ -1,5 +1,5 @@
-import type { ASSET_QUERIES, PALLETS_QUERIES } from "./consts";
-import type { Web3 } from "web3";
+import type { ASSET_QUERIES, PALLETS_QUERIES } from './consts';
+import type { Web3 } from 'web3';
 
 export type TAssetsQuery = (typeof ASSET_QUERIES)[number];
 
@@ -18,7 +18,7 @@ export type EIP6963ProviderDetail = ValueType<
   Awaited<ReturnType<typeof Web3.requestEIP6963Providers>>
 >;
 
-export type TApiType = "PJS" | "PAPI";
+export type TApiType = 'PJS' | 'PAPI';
 
 export type WalletAccount = {
   address: string;

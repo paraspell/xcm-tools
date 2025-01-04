@@ -1,5 +1,5 @@
-import { useForm } from "@mantine/form";
-import type { FC } from "react";
+import { useForm } from '@mantine/form';
+import type { FC } from 'react';
 import {
   Button,
   Checkbox,
@@ -7,14 +7,14 @@ import {
   Stack,
   Switch,
   TextInput,
-} from "@mantine/core";
-import type { TAsset, TNodePolkadotKusama } from "@paraspell/sdk";
-import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from "@paraspell/sdk";
-import { isValidPolkadotAddress } from "../../utils";
-import useCurrencyOptions from "../../hooks/useCurrencyOptions";
+} from '@mantine/core';
+import type { TAsset, TNodePolkadotKusama } from '@paraspell/sdk';
+import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '@paraspell/sdk';
+import { isValidPolkadotAddress } from '../../utils';
+import useCurrencyOptions from '../../hooks/useCurrencyOptions';
 
 export type FormValues = {
-  from: "Ethereum" | "Moonbeam";
+  from: 'Ethereum' | 'Moonbeam';
   to: TNodePolkadotKusama;
   currencyOptionId: string;
   address: string;
@@ -35,18 +35,18 @@ type Props = {
 const EvmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
-      from: "Ethereum",
-      to: "AssetHubPolkadot",
-      currencyOptionId: "",
-      amount: "1000000000",
-      address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
+      currencyOptionId: '',
+      amount: '1000000000',
+      address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
       useApi: false,
       useViem: false,
     },
 
     validate: {
       address: (value) =>
-        isValidPolkadotAddress(value) ? null : "Invalid address",
+        isValidPolkadotAddress(value) ? null : 'Invalid address',
     },
   });
 
@@ -73,17 +73,17 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
         <Switch
           label="Use viem?"
           data-testid="switch-api"
-          {...form.getInputProps("useViem")}
+          {...form.getInputProps('useViem')}
         />
 
         <Select
           label="From"
           placeholder="Pick value"
-          data={["Ethereum", "Moonbeam", "Moonriver"]}
+          data={['Ethereum', 'Moonbeam', 'Moonriver']}
           allowDeselect={false}
           searchable
           data-testid="select-source"
-          {...form.getInputProps("from")}
+          {...form.getInputProps('from')}
         />
 
         <Select
@@ -94,7 +94,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           searchable
           required
           data-testid="select-destination"
-          {...form.getInputProps("to")}
+          {...form.getInputProps('to')}
         />
 
         <Select
@@ -106,7 +106,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           searchable
           required
           data-testid="select-currency"
-          {...form.getInputProps("currencyOptionId")}
+          {...form.getInputProps('currencyOptionId')}
         />
 
         <TextInput
@@ -114,7 +114,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           placeholder="0x0000000"
           required
           data-testid="input-address"
-          {...form.getInputProps("address")}
+          {...form.getInputProps('address')}
         />
 
         <TextInput
@@ -122,12 +122,12 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           placeholder="0"
           required
           data-testid="input-amount"
-          {...form.getInputProps("amount")}
+          {...form.getInputProps('amount')}
         />
 
         <Checkbox
           label="Use XCM API"
-          {...form.getInputProps("useApi")}
+          {...form.getInputProps('useApi')}
           data-testid="checkbox-api"
         />
 

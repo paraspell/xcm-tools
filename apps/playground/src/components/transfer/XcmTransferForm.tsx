@@ -1,7 +1,7 @@
-import { useForm } from "@mantine/form";
-import { isValidWalletAddress } from "../../utils";
-import type { FC, FormEvent } from "react";
-import { useEffect } from "react";
+import { useForm } from '@mantine/form';
+import { isValidWalletAddress } from '../../utils';
+import type { FC, FormEvent } from 'react';
+import { useEffect } from 'react';
 import {
   ActionIcon,
   Button,
@@ -12,24 +12,24 @@ import {
   Select,
   Stack,
   TextInput,
-} from "@mantine/core";
+} from '@mantine/core';
 import type {
   TAsset,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
-} from "@paraspell/sdk";
+} from '@paraspell/sdk';
 import {
   NODES_WITH_RELAY_CHAINS,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
-} from "@paraspell/sdk";
-import useCurrencyOptions from "../../hooks/useCurrencyOptions";
-import CurrencySelection from "../CurrencySelection";
+} from '@paraspell/sdk';
+import useCurrencyOptions from '../../hooks/useCurrencyOptions';
+import CurrencySelection from '../CurrencySelection';
 import {
   IconChevronDown,
   IconLocationCheck,
   IconPlus,
   IconTrash,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
 
 export type TCurrencyEntry = {
   currencyOptionId: string;
@@ -38,10 +38,10 @@ export type TCurrencyEntry = {
   isFeeAsset: boolean;
   isCustomCurrency: boolean;
   customCurrencyType?:
-    | "id"
-    | "symbol"
-    | "multilocation"
-    | "overridenMultilocation";
+    | 'id'
+    | 'symbol'
+    | 'multilocation'
+    | 'overridenMultilocation';
 };
 
 export type FormValues = {
@@ -67,50 +67,50 @@ type Props = {
 const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
-      from: "Astar",
-      to: "Moonbeam",
+      from: 'Astar',
+      to: 'Moonbeam',
       currencies: [
         {
-          currencyOptionId: "",
-          customCurrency: "",
-          amount: "10000000000000000000",
+          currencyOptionId: '',
+          customCurrency: '',
+          amount: '10000000000000000000',
           isFeeAsset: false,
           isCustomCurrency: false,
-          customCurrencyType: "id",
+          customCurrencyType: 'id',
         },
       ],
-      address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
-      ahAddress: "",
+      address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      ahAddress: '',
       useApi: false,
     },
 
     validate: {
       address: (value) =>
-        isValidWalletAddress(value) ? null : "Invalid address",
+        isValidWalletAddress(value) ? null : 'Invalid address',
       currencies: {
         currencyOptionId: (value, values, path) => {
-          const index = Number(path.split(".")[1]);
+          const index = Number(path.split('.')[1]);
           if (values.currencies[index].isCustomCurrency) {
             return values.currencies[index].customCurrency
               ? null
-              : "Custom currency is required";
+              : 'Custom currency is required';
           } else {
-            return value ? null : "Currency selection is required";
+            return value ? null : 'Currency selection is required';
           }
         },
         customCurrency: (value, values, path) => {
-          const index = Number(path.split(".")[1]);
+          const index = Number(path.split('.')[1]);
           if (values.currencies[index].isCustomCurrency) {
-            return value ? null : "Custom currency is required";
+            return value ? null : 'Custom currency is required';
           }
           return null;
         },
       },
       ahAddress: (value, values) => {
-        if (values.to === "Ethereum" && values.from === "Hydration") {
+        if (values.to === 'Ethereum' && values.from === 'Hydration') {
           return value
             ? null
-            : "AssetHub address is required for transfers to Ethereum";
+            : 'AssetHub address is required for transfers to Ethereum';
         }
         return null;
       },
@@ -163,7 +163,7 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   useEffect(() => {
     if (isNotParaToPara && Object.keys(currencyMap).length === 1) {
       form.setFieldValue(
-        "currencies.0.currencyOptionId",
+        'currencies.0.currencyOptionId',
         Object.keys(currencyMap)[0],
       );
     }
@@ -180,7 +180,7 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           searchable
           required
           data-testid="select-origin"
-          {...form.getInputProps("from")}
+          {...form.getInputProps('from')}
         />
 
         <Select
@@ -191,7 +191,7 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           searchable
           required
           data-testid="select-destination"
-          {...form.getInputProps("to")}
+          {...form.getInputProps('to')}
         />
 
         <Stack gap="md">
@@ -211,7 +211,7 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
                   <TextInput
                     label="Amount"
                     placeholder="0"
-                    size={currencies.length > 1 ? "xs" : "sm"}
+                    size={currencies.length > 1 ? 'xs' : 'sm'}
                     required
                     data-testid={`input-amount-${index}`}
                     {...form.getInputProps(`currencies.${index}.amount`)}
@@ -225,7 +225,7 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
                     pos="absolute"
                     right={20}
                     top={-25}
-                    onClick={() => form.removeListItem("currencies", index)}
+                    onClick={() => form.removeListItem('currencies', index)}
                   >
                     <IconTrash size={16} />
                   </ActionIcon>
@@ -239,12 +239,12 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
             size="compact-xs"
             leftSection={<IconPlus size={16} />}
             onClick={() =>
-              form.insertListItem("currencies", {
-                currencyOptionId: "",
-                customCurrency: "",
-                amount: "10000000000000000000",
+              form.insertListItem('currencies', {
+                currencyOptionId: '',
+                customCurrency: '',
+                amount: '10000000000000000000',
                 isCustomCurrency: false,
-                customCurrencyType: "id",
+                customCurrencyType: 'id',
               })
             }
           >
@@ -257,21 +257,21 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           placeholder="0x0000000"
           required
           data-testid="input-address"
-          {...form.getInputProps("address")}
+          {...form.getInputProps('address')}
         />
 
-        {form.values.to === "Ethereum" && form.values.from === "Hydration" && (
+        {form.values.to === 'Ethereum' && form.values.from === 'Hydration' && (
           <TextInput
             label="AssetHub address"
             placeholder="0x0000000"
             data-testid="input-ahaddress"
-            {...form.getInputProps("ahAddress")}
+            {...form.getInputProps('ahAddress')}
           />
         )}
 
         <Checkbox
           label="Use XCM API"
-          {...form.getInputProps("useApi")}
+          {...form.getInputProps('useApi')}
           data-testid="checkbox-api"
         />
 
@@ -284,7 +284,7 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
             <Menu.Target>
               <Button
                 style={{
-                  borderLeft: "1px solid #ff93c0",
+                  borderLeft: '1px solid #ff93c0',
                 }}
               >
                 <IconChevronDown />

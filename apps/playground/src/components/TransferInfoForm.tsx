@@ -1,6 +1,6 @@
-import { useForm } from "@mantine/form";
-import { isValidWalletAddress } from "../utils";
-import { useEffect, type FC } from "react";
+import { useForm } from '@mantine/form';
+import { isValidWalletAddress } from '../utils';
+import { useEffect, type FC } from 'react';
 import {
   Button,
   Checkbox,
@@ -9,13 +9,13 @@ import {
   Select,
   Stack,
   TextInput,
-} from "@mantine/core";
-import type { TNodeDotKsmWithRelayChains } from "@paraspell/sdk";
+} from '@mantine/core';
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
 import {
   getRelayChainSymbol,
   isRelayChain,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
-} from "@paraspell/sdk";
+} from '@paraspell/sdk';
 
 export type FormValues = {
   from: TNodeDotKsmWithRelayChains;
@@ -25,7 +25,7 @@ export type FormValues = {
   destinationAddress: string;
   amount: string;
   useApi: boolean;
-  customCurrencyType?: "id" | "symbol" | "multilocation";
+  customCurrencyType?: 'id' | 'symbol' | 'multilocation';
 };
 
 type Props = {
@@ -36,19 +36,19 @@ type Props = {
 const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
-      from: "Acala",
-      to: "Astar",
-      currency: "",
-      amount: "10000000000000000000",
-      address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
-      destinationAddress: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
-      customCurrencyType: "symbol",
+      from: 'Acala',
+      to: 'Astar',
+      currency: '',
+      amount: '10000000000000000000',
+      address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      destinationAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      customCurrencyType: 'symbol',
       useApi: false,
     },
 
     validate: {
       address: (value) =>
-        isValidWalletAddress(value) ? null : "Invalid address",
+        isValidWalletAddress(value) ? null : 'Invalid address',
     },
   });
 
@@ -57,17 +57,17 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
   const isNotParaToPara = isRelayChain(from) || isRelayChain(to);
 
   const onSelectCurrencyTypeClick = () => {
-    form.setFieldValue("currency", "");
+    form.setFieldValue('currency', '');
   };
 
   useEffect(() => {
     if (isNotParaToPara) {
-      form.setFieldValue("customCurrencyType", "symbol");
+      form.setFieldValue('customCurrencyType', 'symbol');
       if (isRelayChain(from)) {
-        form.setFieldValue("currency", getRelayChainSymbol(from));
+        form.setFieldValue('currency', getRelayChainSymbol(from));
       }
       if (isRelayChain(to)) {
-        form.setFieldValue("currency", getRelayChainSymbol(to));
+        form.setFieldValue('currency', getRelayChainSymbol(to));
       }
     }
   }, [from, to]);
@@ -83,7 +83,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           required
           allowDeselect={false}
           data-testid="select-origin"
-          {...form.getInputProps("from")}
+          {...form.getInputProps('from')}
         />
 
         <Select
@@ -94,29 +94,29 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           required
           allowDeselect={false}
           data-testid="select-destination"
-          {...form.getInputProps("to")}
+          {...form.getInputProps('to')}
         />
 
         <Stack gap="xs">
-          {(customCurrencyType === "id" || customCurrencyType === "symbol") && (
+          {(customCurrencyType === 'id' || customCurrencyType === 'symbol') && (
             <TextInput
               disabled={isNotParaToPara}
               flex={1}
               label="Currency"
-              placeholder={customCurrencyType === "id" ? "Asset ID" : "Symbol"}
+              placeholder={customCurrencyType === 'id' ? 'Asset ID' : 'Symbol'}
               required
               data-testid="input-currency"
-              {...form.getInputProps("currency")}
+              {...form.getInputProps('currency')}
             />
           )}
 
-          {customCurrencyType === "multilocation" && (
+          {customCurrencyType === 'multilocation' && (
             <JsonInput
               placeholder="Input Multi-Location JSON or interior junctions JSON to search for and identify the asset"
               formatOnBlur
               autosize
               minRows={10}
-              {...form.getInputProps("currency")}
+              {...form.getInputProps('currency')}
             />
           )}
 
@@ -126,11 +126,11 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
             size="xs"
             pb={8}
             data={[
-              { label: "Asset ID", value: "id" },
-              { label: "Symbol", value: "symbol" },
-              { label: "Multi-location", value: "multilocation" },
+              { label: 'Asset ID', value: 'id' },
+              { label: 'Symbol', value: 'symbol' },
+              { label: 'Multi-location', value: 'multilocation' },
             ]}
-            {...form.getInputProps("customCurrencyType")}
+            {...form.getInputProps('customCurrencyType')}
           />
         </Stack>
 
@@ -139,7 +139,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           placeholder="0x0000000"
           required
           data-testid="input-address"
-          {...form.getInputProps("address")}
+          {...form.getInputProps('address')}
         />
 
         <TextInput
@@ -147,7 +147,7 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           placeholder="0x0000000"
           required
           data-testid="input-destination-address"
-          {...form.getInputProps("destinationAddress")}
+          {...form.getInputProps('destinationAddress')}
         />
 
         <TextInput
@@ -155,12 +155,12 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
           placeholder="0"
           required
           data-testid="input-amount"
-          {...form.getInputProps("amount")}
+          {...form.getInputProps('amount')}
         />
 
         <Checkbox
           label="Use XCM API"
-          {...form.getInputProps("useApi")}
+          {...form.getInputProps('useApi')}
           data-testid="checkbox-api"
         />
 

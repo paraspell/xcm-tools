@@ -1,11 +1,11 @@
-import type { TPapiTransaction } from "@paraspell/sdk";
-import type { Extrinsic } from "@paraspell/sdk-pjs";
-import type { ApiPromise } from "@polkadot/api";
-import type { Signer } from "@polkadot/api/types";
-import { encodeAddress, decodeAddress } from "@polkadot/keyring";
-import { isHex, hexToU8a } from "@polkadot/util";
-import type { PolkadotSigner, TxFinalizedPayload } from "polkadot-api";
-import { isAddress } from "web3-validator";
+import type { TPapiTransaction } from '@paraspell/sdk';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
+import type { ApiPromise } from '@polkadot/api';
+import type { Signer } from '@polkadot/api/types';
+import { encodeAddress, decodeAddress } from '@polkadot/keyring';
+import { isHex, hexToU8a } from '@polkadot/util';
+import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
+import { isAddress } from 'web3-validator';
 
 export const isValidPolkadotAddress = (address: string) => {
   try {
@@ -44,7 +44,7 @@ export const submitTransaction = async (
             const decoded = api.registry.findMetaError(dispatchError.asModule);
             const { docs, name, section } = decoded;
 
-            reject(new Error(`${section}.${name}: ${docs.join(" ")}`));
+            reject(new Error(`${section}.${name}: ${docs.join(' ')}`));
           } else {
             reject(new Error(dispatchError.toString()));
           }

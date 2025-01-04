@@ -1,15 +1,15 @@
-import { Stack, Title, Box, Alert, Text } from "@mantine/core";
-import ErrorAlert from "../ErrorAlert";
+import { Stack, Title, Box, Alert, Text } from '@mantine/core';
+import ErrorAlert from '../ErrorAlert';
 import type {
   FormValuesTransformed,
   TCurrencyEntryTransformed,
-} from "./XcmTransferForm";
-import XcmTransferForm from "./XcmTransferForm";
-import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
+} from './XcmTransferForm';
+import XcmTransferForm from './XcmTransferForm';
+import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type {
   TCurrencyCoreWithFee,
   TCurrencyInputWithAmount,
-} from "@paraspell/sdk";
+} from '@paraspell/sdk';
 import {
   isForeignAsset,
   getOtherAssets,
@@ -18,18 +18,18 @@ import {
   type TMultiLocation,
   type TNodePolkadotKusama,
   type TPapiTransaction,
-} from "@paraspell/sdk";
-import type { PolkadotClient, PolkadotSigner } from "polkadot-api";
-import type { Signer } from "@polkadot/api/types";
-import { useState, useEffect } from "react";
-import { submitTransaction, submitTransactionPapi } from "../../utils";
-import { fetchFromApi, getTxFromApi } from "../../utils/submitUsingApi";
-import { useWallet } from "../../hooks/useWallet";
-import type { ApiPromise } from "@polkadot/api";
-import { ethers } from "ethers";
-import { IconJson } from "@tabler/icons-react";
-import { replaceBigInt } from "../../utils/replaceBigInt";
-import type { Extrinsic } from "@paraspell/sdk-pjs";
+} from '@paraspell/sdk';
+import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
+import type { Signer } from '@polkadot/api/types';
+import { useState, useEffect } from 'react';
+import { submitTransaction, submitTransactionPapi } from '../../utils';
+import { fetchFromApi, getTxFromApi } from '../../utils/submitUsingApi';
+import { useWallet } from '../../hooks/useWallet';
+import type { ApiPromise } from '@polkadot/api';
+import { ethers } from 'ethers';
+import { IconJson } from '@tabler/icons-react';
+import { replaceBigInt } from '../../utils/replaceBigInt';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
 
 const XcmTransfer = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
@@ -69,17 +69,17 @@ const XcmTransfer = () => {
     }: TCurrencyEntryTransformed,
   ): TCurrencyInputWithAmount => {
     if (isCustomCurrency) {
-      if (customCurrencyType === "id") {
+      if (customCurrencyType === 'id') {
         return {
           id: customCurrency,
           amount,
         };
-      } else if (customCurrencyType === "symbol") {
+      } else if (customCurrencyType === 'symbol') {
         return {
           symbol: customCurrency,
           amount,
         };
-      } else if (customCurrencyType === "overridenMultilocation") {
+      } else if (customCurrencyType === 'overridenMultilocation') {
         return {
           multilocation: Override(JSON.parse(customCurrency) as TMultiLocation),
           amount,
@@ -92,11 +92,11 @@ const XcmTransfer = () => {
       }
     } else if (currency) {
       if (isForeignAsset(currency) && ethers.isAddress(currency.assetId)) {
-        return { symbol: currency.symbol ?? "", amount };
+        return { symbol: currency.symbol ?? '', amount };
       }
 
       if (!isForeignAsset(currency)) {
-        return { symbol: currency.symbol ?? "", amount };
+        return { symbol: currency.symbol ?? '', amount };
       }
 
       const hasDuplicateIds = isRelayChain(from)
@@ -105,13 +105,13 @@ const XcmTransfer = () => {
             (asset) => asset.assetId === currency.assetId,
           ).length > 1;
       return hasDuplicateIds
-        ? { symbol: currency.symbol ?? "", amount }
+        ? { symbol: currency.symbol ?? '', amount }
         : {
-            id: currency.assetId ?? "",
+            id: currency.assetId ?? '',
             amount,
           };
     } else {
-      throw Error("Currency is required");
+      throw Error('Currency is required');
     }
   };
 
@@ -122,8 +122,8 @@ const XcmTransfer = () => {
     const { from, to, currencies, address, ahAddress, useApi } = formValues;
 
     if (!selectedAccount) {
-      alert("No account selected, connect wallet first");
-      throw Error("No account selected!");
+      alert('No account selected, connect wallet first');
+      throw Error('No account selected!');
     }
 
     setLoading(true);
@@ -131,9 +131,9 @@ const XcmTransfer = () => {
     const signer = await getSigner();
 
     const Sdk =
-      apiType === "PAPI"
-        ? await import("@paraspell/sdk")
-        : await import("@paraspell/sdk-pjs");
+      apiType === 'PAPI'
+        ? await import('@paraspell/sdk')
+        : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(from);
 
@@ -159,10 +159,10 @@ const XcmTransfer = () => {
                   },
           },
           api,
-          apiType === "PJS" ? "/x-transfer" : "/x-transfer-papi",
+          apiType === 'PJS' ? '/x-transfer' : '/x-transfer-papi',
           selectedAccount.address,
           apiType,
-          "POST",
+          'POST',
           true,
         );
       } else {
@@ -195,8 +195,8 @@ const XcmTransfer = () => {
                       multiasset: currencyInputs,
                     },
             },
-            "/dry-run",
-            "POST",
+            '/dry-run',
+            'POST',
             true,
           );
         } else {
@@ -211,7 +211,7 @@ const XcmTransfer = () => {
         openOutputAlert();
         closeAlert();
       } else {
-        if (apiType === "PAPI") {
+        if (apiType === 'PAPI') {
           await submitTransactionPapi(
             tx as TPapiTransaction,
             signer as PolkadotSigner,
@@ -224,7 +224,7 @@ const XcmTransfer = () => {
             selectedAccount.address,
           );
         }
-        alert("Transaction was successful!");
+        alert('Transaction was successful!');
       }
     } catch (e) {
       if (e instanceof Error) {
@@ -236,7 +236,7 @@ const XcmTransfer = () => {
       }
     } finally {
       setLoading(false);
-      if ("disconnect" in api) await api.disconnect();
+      if ('disconnect' in api) await api.disconnect();
       else api.destroy();
     }
   };
@@ -270,7 +270,7 @@ const XcmTransfer = () => {
             withCloseButton
             onClose={onOutputAlertCloseClick}
             mt="lg"
-            style={{ overflowWrap: "anywhere" }}
+            style={{ overflowWrap: 'anywhere' }}
             data-testid="output"
           >
             <Text component="pre" size="sm">

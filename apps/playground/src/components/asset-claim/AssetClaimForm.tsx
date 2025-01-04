@@ -1,14 +1,14 @@
-import { Stack, Select, TextInput, Button, Checkbox } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import type { TNodeDotKsmWithRelayChains } from "@paraspell/sdk";
-import type { FC } from "react";
-import { isValidWalletAddress } from "../../utils";
+import { Stack, Select, TextInput, Button, Checkbox } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
+import type { FC } from 'react';
+import { isValidWalletAddress } from '../../utils';
 
 const SUPPORTED_NODES: TNodeDotKsmWithRelayChains[] = [
-  "Polkadot",
-  "Kusama",
-  "AssetHubPolkadot",
-  "AssetHubKusama",
+  'Polkadot',
+  'Kusama',
+  'AssetHubPolkadot',
+  'AssetHubKusama',
 ];
 
 export type FormValues = {
@@ -26,15 +26,15 @@ type Props = {
 const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
-      from: "Polkadot",
-      amount: "10000000000000000000",
-      address: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
+      from: 'Polkadot',
+      amount: '10000000000000000000',
+      address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
       useApi: false,
     },
 
     validate: {
       address: (value) =>
-        isValidWalletAddress(value) ? null : "Invalid address",
+        isValidWalletAddress(value) ? null : 'Invalid address',
     },
   });
 
@@ -49,7 +49,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           required
           allowDeselect={false}
           data-testid="select-origin"
-          {...form.getInputProps("from")}
+          {...form.getInputProps('from')}
         />
 
         <TextInput
@@ -57,7 +57,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           placeholder="0x0000000"
           required
           data-testid="input-address"
-          {...form.getInputProps("address")}
+          {...form.getInputProps('address')}
         />
 
         <TextInput
@@ -65,12 +65,12 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
           placeholder="0"
           required
           data-testid="input-amount"
-          {...form.getInputProps("amount")}
+          {...form.getInputProps('amount')}
         />
 
         <Checkbox
           label="Use XCM API"
-          {...form.getInputProps("useApi")}
+          {...form.getInputProps('useApi')}
           data-testid="checkbox-api"
         />
 

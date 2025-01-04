@@ -1,25 +1,25 @@
-import { Stack, Title, Box, Button } from "@mantine/core";
-import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import { useState, useEffect } from "react";
-import type { BrowserProvider, LogDescription, Signer } from "ethers";
-import { ethers } from "ethers";
-import ErrorAlert from "../ErrorAlert";
-import type { FormValues, FormValuesTransformed } from "./EvmTransferForm";
-import EvmTransferForm from "./EvmTransferForm";
-import type { TNode } from "@paraspell/sdk";
-import { EvmBuilder } from "@paraspell/sdk-pjs";
-import { fetchFromApi } from "../../utils/submitUsingApi";
-import { IGateway__factory } from "@snowbridge/contract-types";
-import type { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
-import { u8aToHex } from "@polkadot/util";
-import { decodeAddress } from "@polkadot/keyring";
-import { Web3 } from "web3";
-import type { EIP6963ProviderDetail, TEthBridgeApiResponse } from "../../types";
-import EthWalletSelectModal from "../EthWalletSelectModal";
-import EthAccountsSelectModal from "../EthAccountsSelectModal";
-import type { Address } from "viem";
-import { createWalletClient, custom } from "viem";
-import { moonbeam, mainnet, moonriver } from "viem/chains";
+import { Stack, Title, Box, Button } from '@mantine/core';
+import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import { useState, useEffect } from 'react';
+import type { BrowserProvider, LogDescription, Signer } from 'ethers';
+import { ethers } from 'ethers';
+import ErrorAlert from '../ErrorAlert';
+import type { FormValues, FormValuesTransformed } from './EvmTransferForm';
+import EvmTransferForm from './EvmTransferForm';
+import type { TNode } from '@paraspell/sdk';
+import { EvmBuilder } from '@paraspell/sdk-pjs';
+import { fetchFromApi } from '../../utils/submitUsingApi';
+import { IGateway__factory } from '@snowbridge/contract-types';
+import type { MultiAddressStruct } from '@snowbridge/contract-types/dist/IGateway';
+import { u8aToHex } from '@polkadot/util';
+import { decodeAddress } from '@polkadot/keyring';
+import { Web3 } from 'web3';
+import type { EIP6963ProviderDetail, TEthBridgeApiResponse } from '../../types';
+import EthWalletSelectModal from '../EthWalletSelectModal';
+import EthAccountsSelectModal from '../EthAccountsSelectModal';
+import type { Address } from 'viem';
+import { createWalletClient, custom } from 'viem';
+import { moonbeam, mainnet, moonriver } from 'viem/chains';
 
 const EvmTransfer = () => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -55,10 +55,10 @@ const EvmTransfer = () => {
     if (selectedProvider && selectedProvider.provider) {
       const provider = selectedProvider.provider;
 
-      provider.on("accountsChanged", handleAccountsChanged);
+      provider.on('accountsChanged', handleAccountsChanged);
 
       return () => {
-        provider.removeListener("accountsChanged", handleAccountsChanged);
+        provider.removeListener('accountsChanged', handleAccountsChanged);
       };
     }
   }, [selectedProvider]);
@@ -68,7 +68,7 @@ const EvmTransfer = () => {
       const providerMap = await Web3.requestEIP6963Providers();
 
       if (providerMap.size === 0) {
-        alert("No compatible Ethereum wallets found.");
+        alert('No compatible Ethereum wallets found.');
         return;
       }
 
@@ -77,7 +77,7 @@ const EvmTransfer = () => {
       setProviders(providerArray);
       setIsWalletModalOpen(true);
     } catch (_e) {
-      alert("An error occurred while fetching wallet providers.");
+      alert('An error occurred while fetching wallet providers.');
     }
   };
 
@@ -89,7 +89,7 @@ const EvmTransfer = () => {
       const provider = providerInfo.provider;
 
       if (!provider) {
-        alert("Selected provider is not available.");
+        alert('Selected provider is not available.');
         return;
       }
 
@@ -98,19 +98,19 @@ const EvmTransfer = () => {
       setSelectedProvider(providerInfo);
 
       const accounts = (await tempProvider.send(
-        "eth_requestAccounts",
+        'eth_requestAccounts',
         [],
       )) as string[];
 
       if (accounts.length === 0) {
-        alert("No accounts found in the selected wallet.");
+        alert('No accounts found in the selected wallet.');
         return;
       }
 
       setAccounts(accounts);
       setIsAccountModalOpen(true);
     } catch (_error) {
-      alert("An error occurred while connecting to the wallet.");
+      alert('An error occurred while connecting to the wallet.');
     }
   };
 
@@ -138,14 +138,14 @@ const EvmTransfer = () => {
     useViem,
   }: FormValuesTransformed) => {
     if (!provider) {
-      throw new Error("Provider not initialized");
+      throw new Error('Provider not initialized');
     }
 
     const getChain = (node: TNode) => {
-      if (node === "Moonbeam") {
+      if (node === 'Moonbeam') {
         return moonbeam;
       }
-      if (node === "Moonriver") {
+      if (node === 'Moonriver') {
         return moonriver;
       }
       return mainnet;
@@ -160,13 +160,13 @@ const EvmTransfer = () => {
       : await provider.getSigner();
 
     if (!signer) {
-      throw new Error("Signer not initialized");
+      throw new Error('Signer not initialized');
     }
 
     await EvmBuilder(provider)
       .from(from)
       .to(to)
-      .currency({ symbol: currency?.symbol ?? "", amount })
+      .currency({ symbol: currency?.symbol ?? '', amount })
       .address(address)
       .signer(signer as Signer)
       .build();
@@ -175,13 +175,13 @@ const EvmTransfer = () => {
   const submitEthTransactionApi = async (formValues: FormValuesTransformed) => {
     const { currency } = formValues;
     if (!provider) {
-      throw new Error("Provider not initialized");
+      throw new Error('Provider not initialized');
     }
 
     const signer = await provider.getSigner();
 
     if (!signer) {
-      throw new Error("Signer not initialized");
+      throw new Error('Signer not initialized');
     }
 
     const apiResponse = (await fetchFromApi(
@@ -189,14 +189,14 @@ const EvmTransfer = () => {
         ...formValues,
         destAddress: formValues.address,
         address: await signer.getAddress(),
-        currency: { symbol: currency?.symbol ?? "" },
+        currency: { symbol: currency?.symbol ?? '' },
       },
-      "/x-transfer-eth",
-      "POST",
+      '/x-transfer-eth',
+      'POST',
       true,
     )) as TEthBridgeApiResponse;
 
-    const GATEWAY_CONTRACT = "0xEDa338E4dC46038493b885327842fD3E301CaB39";
+    const GATEWAY_CONTRACT = '0xEDa338E4dC46038493b885327842fD3E301CaB39';
 
     const contract = IGateway__factory.connect(GATEWAY_CONTRACT, signer);
 
@@ -204,7 +204,7 @@ const EvmTransfer = () => {
 
     const address: MultiAddressStruct = {
       data: abi.encode(
-        ["bytes32"],
+        ['bytes32'],
         [u8aToHex(decodeAddress(formValues.address))],
       ),
       kind: 1,
@@ -223,11 +223,11 @@ const EvmTransfer = () => {
     const receipt = await response.wait(1);
 
     if (receipt === null) {
-      throw new Error("Error waiting for transaction completion");
+      throw new Error('Error waiting for transaction completion');
     }
 
     if (receipt?.status !== 1) {
-      throw new Error("Transaction failed");
+      throw new Error('Transaction failed');
     }
 
     const events: LogDescription[] = [];
@@ -246,8 +246,8 @@ const EvmTransfer = () => {
 
   const submit = async (formValues: FormValues) => {
     if (!selectedAccount) {
-      alert("No account selected, connect wallet first");
-      throw new Error("No account selected!");
+      alert('No account selected, connect wallet first');
+      throw new Error('No account selected!');
     }
 
     setLoading(true);
@@ -258,7 +258,7 @@ const EvmTransfer = () => {
       } else {
         await submitEthTransactionSdk(formValues);
       }
-      alert("Transaction was successful!");
+      alert('Transaction was successful!');
     } catch (e) {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
@@ -295,7 +295,7 @@ const EvmTransfer = () => {
         >
           {selectedAccount
             ? `Connected: ${selectedAccount.substring(0, 6)}...${selectedAccount.substring(selectedAccount.length - 4)}`
-            : "Connect Ethereum Wallet"}
+            : 'Connect Ethereum Wallet'}
         </Button>
         <EvmTransferForm onSubmit={onSubmit} loading={loading} />
       </Stack>
@@ -303,8 +303,8 @@ const EvmTransfer = () => {
         {alertOpened && (
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
             {error?.message
-              .split("\n\n")
-              .map((line, index) => <p key={index}>{line}</p>)}{" "}
+              .split('\n\n')
+              .map((line, index) => <p key={index}>{line}</p>)}{' '}
           </ErrorAlert>
         )}
       </Box>

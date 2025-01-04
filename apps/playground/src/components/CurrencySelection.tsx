@@ -1,6 +1,6 @@
-import type { FC } from "react";
-import { useEffect } from "react";
-import type { ComboboxItem } from "@mantine/core";
+import type { FC } from 'react';
+import { useEffect } from 'react';
+import type { ComboboxItem } from '@mantine/core';
 import {
   Select,
   Stack,
@@ -9,10 +9,10 @@ import {
   Group,
   SegmentedControl,
   JsonInput,
-} from "@mantine/core";
-import type { UseFormReturnType } from "@mantine/form";
-import type { FormValues } from "./transfer/XcmTransferForm";
-import { isRelayChain } from "@paraspell/sdk";
+} from '@mantine/core';
+import type { UseFormReturnType } from '@mantine/form';
+import type { FormValues } from './transfer/XcmTransferForm';
+import { isRelayChain } from '@paraspell/sdk';
 
 type Props = {
   form: UseFormReturnType<FormValues>;
@@ -28,7 +28,7 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions, index }) => {
 
   useEffect(() => {
     if (!customCurrencyType) return;
-    form.setFieldValue(`currencies.${index}.customCurrency`, "");
+    form.setFieldValue(`currencies.${index}.customCurrency`, '');
   }, [customCurrencyType]);
 
   const isRelayToPara = isRelayChain(from);
@@ -44,30 +44,30 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions, index }) => {
   }, [isNotParaToPara]);
 
   const options = [
-    { label: "Asset ID", value: "id" },
-    { label: "Symbol", value: "symbol" },
-    { label: "Multi-location", value: "multilocation" },
+    { label: 'Asset ID', value: 'id' },
+    { label: 'Symbol', value: 'symbol' },
+    { label: 'Multi-location', value: 'multilocation' },
     ...(currencies.length === 1
-      ? [{ label: "Override Multi-location", value: "overridenMultilocation" }]
+      ? [{ label: 'Override Multi-location', value: 'overridenMultilocation' }]
       : []),
   ];
 
-  const size = currencies.length > 1 ? "xs" : "sm";
+  const size = currencies.length > 1 ? 'xs' : 'sm';
 
   return (
     <Stack gap="xs">
       {isCustomCurrency &&
-        (customCurrencyType === "id" || customCurrencyType === "symbol") && (
+        (customCurrencyType === 'id' || customCurrencyType === 'symbol') && (
           <TextInput
             size={size}
             label="Custom currency"
-            placeholder={customCurrencyType === "id" ? "Asset ID" : "Symbol"}
+            placeholder={customCurrencyType === 'id' ? 'Asset ID' : 'Symbol'}
             required
             {...form.getInputProps(`currencies.${index}.customCurrency`)}
           />
         )}
 
-      {isCustomCurrency && customCurrencyType === "multilocation" && (
+      {isCustomCurrency && customCurrencyType === 'multilocation' && (
         <JsonInput
           size={size}
           placeholder="Input Multi-Location JSON or interior junctions JSON"
@@ -78,7 +78,7 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions, index }) => {
         />
       )}
 
-      {isCustomCurrency && customCurrencyType === "overridenMultilocation" && (
+      {isCustomCurrency && customCurrencyType === 'overridenMultilocation' && (
         <JsonInput
           size={size}
           placeholder="Provide the XCM Multi-Location JSON to override the default configuration"
@@ -112,7 +112,7 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions, index }) => {
               size="xs"
               label="Select custom asset"
               {...form.getInputProps(`currencies.${index}.isCustomCurrency`, {
-                type: "checkbox",
+                type: 'checkbox',
               })}
             />
             {currencies.length > 1 && (
@@ -120,7 +120,7 @@ const CurrencySelection: FC<Props> = ({ form, currencyOptions, index }) => {
                 size="xs"
                 label="Is fee asset"
                 {...form.getInputProps(`currencies.${index}.isFeeAsset`, {
-                  type: "checkbox",
+                  type: 'checkbox',
                 })}
               />
             )}

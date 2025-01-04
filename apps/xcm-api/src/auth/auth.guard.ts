@@ -36,7 +36,9 @@ export class AuthGuard implements CanActivate {
       });
       request.user = dbUser;
       return true;
-    } catch (_e) {
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
       throw new ForbiddenException(
         `The provided API key is not valid. Please generate a new one. Alternatively, if you want to use the API with free rate limiting, remove the key from the headers.`,
       );

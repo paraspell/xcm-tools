@@ -1,17 +1,17 @@
-import { Stack, Title, Box, Alert, Text } from "@mantine/core";
-import ErrorAlert from "../ErrorAlert";
-import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import { useState, useEffect } from "react";
-import { fetchFromApi } from "../../utils/submitUsingApi";
-import type { FormValues } from "./AssetsForm";
-import AssetsForm from "./AssetsForm";
+import { Stack, Title, Box, Alert, Text } from '@mantine/core';
+import ErrorAlert from '../ErrorAlert';
+import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import { useState, useEffect } from 'react';
+import { fetchFromApi } from '../../utils/submitUsingApi';
+import type { FormValues } from './AssetsForm';
+import AssetsForm from './AssetsForm';
 import type {
   TCurrencyCore,
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
   TNodeWithRelayChains,
-} from "@paraspell/sdk";
+} from '@paraspell/sdk';
 import {
   getAllAssetsSymbols,
   getAssetDecimals,
@@ -22,9 +22,9 @@ import {
   getParaId,
   getRelayChainSymbol,
   hasSupportForAsset,
-} from "@paraspell/sdk";
-import { IconJson } from "@tabler/icons-react";
-import { useWallet } from "../../hooks/useWallet";
+} from '@paraspell/sdk';
+import { IconJson } from '@tabler/icons-react';
+import { useWallet } from '../../hooks/useWallet';
 
 const AssetsQueries = () => {
   const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
@@ -54,49 +54,49 @@ const AssetsQueries = () => {
   const submitUsingSdk = async (formValues: FormValues) => {
     const { func, node, currency, address } = formValues;
     const Sdk =
-      apiType === "PAPI"
-        ? await import("@paraspell/sdk")
-        : await import("@paraspell/sdk-pjs");
+      apiType === 'PAPI'
+        ? await import('@paraspell/sdk')
+        : await import('@paraspell/sdk-pjs');
 
     const resolvedCurrency = resolveCurrency(formValues);
 
     switch (func) {
-      case "ASSETS_OBJECT":
+      case 'ASSETS_OBJECT':
         return getAssetsObject(node);
-      case "ASSET_ID":
+      case 'ASSET_ID':
         return getAssetId(node, currency);
-      case "RELAYCHAIN_SYMBOL":
+      case 'RELAYCHAIN_SYMBOL':
         return getRelayChainSymbol(node);
-      case "NATIVE_ASSETS":
+      case 'NATIVE_ASSETS':
         return getNativeAssets(node);
-      case "OTHER_ASSETS":
+      case 'OTHER_ASSETS':
         return getOtherAssets(node);
-      case "ALL_SYMBOLS":
+      case 'ALL_SYMBOLS':
         return getAllAssetsSymbols(node);
-      case "DECIMALS":
+      case 'DECIMALS':
         return getAssetDecimals(node, currency);
-      case "HAS_SUPPORT":
+      case 'HAS_SUPPORT':
         return hasSupportForAsset(node, currency);
-      case "PARA_ID":
+      case 'PARA_ID':
         return getParaId(node as TNodePolkadotKusama);
-      case "BALANCE_NATIVE":
+      case 'BALANCE_NATIVE':
         return Sdk.getBalanceNative({
           address,
           node: node as TNodePolkadotKusama,
         });
-      case "BALANCE_FOREIGN":
+      case 'BALANCE_FOREIGN':
         return Sdk.getBalanceForeign({
           address,
           node: node as TNodePolkadotKusama,
           currency: resolvedCurrency,
         });
-      case "ASSET_BALANCE":
+      case 'ASSET_BALANCE':
         return Sdk.getAssetBalance({
           address,
           node: node as TNodePolkadotKusama,
           currency: resolvedCurrency,
         });
-      case "MAX_NATIVE_TRANSFERABLE_AMOUNT":
+      case 'MAX_NATIVE_TRANSFERABLE_AMOUNT':
         return Sdk.getMaxNativeTransferableAmount({
           address,
           node: node as TNodeDotKsmWithRelayChains,
@@ -105,19 +105,19 @@ const AssetsQueries = () => {
               ? (resolvedCurrency as { symbol: string })
               : undefined,
         });
-      case "MAX_FOREIGN_TRANSFERABLE_AMOUNT":
+      case 'MAX_FOREIGN_TRANSFERABLE_AMOUNT':
         return Sdk.getMaxForeignTransferableAmount({
           address,
           node: node as TNodePolkadotKusama,
           currency: resolvedCurrency,
         });
-      case "TRANSFERABLE_AMOUNT":
+      case 'TRANSFERABLE_AMOUNT':
         return Sdk.getTransferableAmount({
           address,
           node: node as TNodePolkadotKusama,
           currency: resolvedCurrency,
         });
-      case "EXISTENTIAL_DEPOSIT":
+      case 'EXISTENTIAL_DEPOSIT':
         return Sdk.getExistentialDeposit(
           node as TNodeWithRelayChains,
           (resolvedCurrency as { symbol: string }).symbol.length > 0
@@ -129,59 +129,59 @@ const AssetsQueries = () => {
 
   const getEndpoint = ({ func, node }: FormValues) => {
     switch (func) {
-      case "ASSETS_OBJECT":
+      case 'ASSETS_OBJECT':
         return `/assets/${node}`;
-      case "ASSET_ID":
+      case 'ASSET_ID':
         return `/assets/${node}/id`;
-      case "RELAYCHAIN_SYMBOL":
+      case 'RELAYCHAIN_SYMBOL':
         return `/assets/${node}/relay-chain-symbol`;
-      case "NATIVE_ASSETS":
+      case 'NATIVE_ASSETS':
         return `/assets/${node}/native`;
-      case "OTHER_ASSETS":
+      case 'OTHER_ASSETS':
         return `/assets/${node}/other`;
-      case "ALL_SYMBOLS":
+      case 'ALL_SYMBOLS':
         return `/assets/${node}/all-symbols`;
-      case "DECIMALS":
+      case 'DECIMALS':
         return `/assets/${node}/decimals`;
-      case "HAS_SUPPORT":
+      case 'HAS_SUPPORT':
         return `/assets/${node}/has-support`;
-      case "PARA_ID":
+      case 'PARA_ID':
         return `/nodes/${node}/para-id`;
-      case "BALANCE_NATIVE":
-        return apiType === "PAPI"
+      case 'BALANCE_NATIVE':
+        return apiType === 'PAPI'
           ? `/balance/${node}/native-papi`
           : `/balance/${node}/native`;
-      case "BALANCE_FOREIGN":
-        return apiType === "PAPI"
+      case 'BALANCE_FOREIGN':
+        return apiType === 'PAPI'
           ? `/balance/${node}/foreign-papi`
           : `/balance/${node}/foreign`;
-      case "ASSET_BALANCE":
-        return apiType === "PAPI"
+      case 'ASSET_BALANCE':
+        return apiType === 'PAPI'
           ? `/balance/${node}/asset-papi`
           : `/balance/${node}/asset`;
-      case "MAX_NATIVE_TRANSFERABLE_AMOUNT":
-        return apiType === "PAPI"
+      case 'MAX_NATIVE_TRANSFERABLE_AMOUNT':
+        return apiType === 'PAPI'
           ? `/balance/${node}/max-native-transferable-amount-papi`
           : `/balance/${node}/max-native-transferable-amount`;
-      case "MAX_FOREIGN_TRANSFERABLE_AMOUNT":
-        return apiType === "PAPI"
+      case 'MAX_FOREIGN_TRANSFERABLE_AMOUNT':
+        return apiType === 'PAPI'
           ? `/balance/${node}/max-foreign-transferable-amount-papi`
           : `/balance/${node}/max-foreign-transferable-amount`;
-      case "TRANSFERABLE_AMOUNT":
-        return apiType === "PAPI"
+      case 'TRANSFERABLE_AMOUNT':
+        return apiType === 'PAPI'
           ? `/balance/${node}/transferable-amount-papi`
           : `/balance/${node}/transferable`;
-      case "EXISTENTIAL_DEPOSIT":
+      case 'EXISTENTIAL_DEPOSIT':
         return `/balance/${node}/existential-deposit`;
     }
   };
 
   const resolveCurrency = (formValues: FormValues): TCurrencyCore => {
-    if (formValues.currencyType === "multilocation") {
+    if (formValues.currencyType === 'multilocation') {
       return {
         multilocation: JSON.parse(formValues.currency) as TMultiLocation,
       };
-    } else if (formValues.currencyType === "id") {
+    } else if (formValues.currencyType === 'id') {
       return { id: formValues.currency };
     } else {
       return { symbol: formValues.currency };
@@ -191,28 +191,28 @@ const AssetsQueries = () => {
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
     const { useApi, func, address } = formValues;
     const shouldUsePost =
-      func === "BALANCE_FOREIGN" ||
-      func === "BALANCE_NATIVE" ||
-      func === "ASSET_BALANCE" ||
-      func === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
-      func === "MAX_FOREIGN_TRANSFERABLE_AMOUNT" ||
-      func === "TRANSFERABLE_AMOUNT" ||
-      func === "EXISTENTIAL_DEPOSIT";
+      func === 'BALANCE_FOREIGN' ||
+      func === 'BALANCE_NATIVE' ||
+      func === 'ASSET_BALANCE' ||
+      func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
+      func === 'MAX_FOREIGN_TRANSFERABLE_AMOUNT' ||
+      func === 'TRANSFERABLE_AMOUNT' ||
+      func === 'EXISTENTIAL_DEPOSIT';
     const resolvedCurrency = resolveCurrency(formValues);
     if (useApi) {
       return fetchFromApi(
         shouldUsePost
           ? {
               address,
-              ...((func === "MAX_NATIVE_TRANSFERABLE_AMOUNT" ||
-                func === "EXISTENTIAL_DEPOSIT") &&
+              ...((func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
+                func === 'EXISTENTIAL_DEPOSIT') &&
               (resolvedCurrency as { symbol: string }).symbol.length === 0
                 ? {}
                 : { currency: resolvedCurrency }),
             }
           : formValues,
         `${getEndpoint(formValues)}`,
-        shouldUsePost ? "POST" : "GET",
+        shouldUsePost ? 'POST' : 'GET',
         shouldUsePost,
       );
     } else {
@@ -225,7 +225,7 @@ const AssetsQueries = () => {
 
     try {
       const output = await getQueryResult(formValues);
-      if (typeof output === "bigint") {
+      if (typeof output === 'bigint') {
         setOutput(output.toString());
       } else {
         setOutput(JSON.stringify(output, null, 2));
@@ -275,7 +275,7 @@ const AssetsQueries = () => {
             withCloseButton
             onClose={onOutputAlertCloseClick}
             mt="lg"
-            style={{ overflowWrap: "anywhere" }}
+            style={{ overflowWrap: 'anywhere' }}
             data-testid="output"
           >
             <Text component="pre" size="sm">

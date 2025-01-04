@@ -1,12 +1,12 @@
-import { Box, Container, Stack, Title } from "@mantine/core";
-import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import { useEffect, useState } from "react";
-import ErrorAlert from "../components/ErrorAlert";
-import OutputAlert from "../components/OutputAlert";
-import type { FormValues } from "../components/analyser/AnalyserForm";
-import AnalyserForm from "../components/analyser/AnalyserForm";
-import { convertMultilocationToUrlJson } from "@paraspell/xcm-analyser";
-import { fetchFromApi } from "../utils/submitUsingApi";
+import { Box, Container, Stack, Title } from '@mantine/core';
+import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
+import ErrorAlert from '../components/ErrorAlert';
+import OutputAlert from '../components/OutputAlert';
+import type { FormValues } from '../components/analyser/AnalyserForm';
+import AnalyserForm from '../components/analyser/AnalyserForm';
+import { convertMultilocationToUrlJson } from '@paraspell/xcm-analyser';
+import { fetchFromApi } from '../utils/submitUsingApi';
 
 const XcmAnalyserSandbox = () => {
   const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
@@ -38,8 +38,8 @@ const XcmAnalyserSandbox = () => {
   const convertUsingApi = async (input: string) => {
     return fetchFromApi(
       { multilocation: JSON.parse(input) as Record<string, unknown> },
-      "/xcm-analyser",
-      "POST",
+      '/xcm-analyser',
+      'POST',
       true,
     );
   };

@@ -2,20 +2,20 @@ import {
   web3Accounts,
   web3Enable,
   web3FromAddress,
-} from "@polkadot/extension-dapp";
-import type { PropsWithChildren } from "react";
-import { useEffect, useState } from "react";
-import { WalletContext } from "./WalletContext";
-import type { TApiType, WalletAccount } from "../types";
+} from '@polkadot/extension-dapp';
+import type { PropsWithChildren } from 'react';
+import { useEffect, useState } from 'react';
+import { WalletContext } from './WalletContext';
+import type { TApiType, WalletAccount } from '../types';
 import {
   connectInjectedExtension,
   getInjectedExtensions,
   type InjectedExtension,
-} from "polkadot-api/pjs-signer";
+} from 'polkadot-api/pjs-signer';
 
-export const STORAGE_ADDRESS_KEY = "paraspell_wallet_address";
-const STORAGE_API_TYPE_KEY = "paraspell_api_type";
-const STORAGE_EXTENSION_KEY = "paraspell_connected_extension";
+export const STORAGE_ADDRESS_KEY = 'paraspell_wallet_address';
+const STORAGE_API_TYPE_KEY = 'paraspell_api_type';
+const STORAGE_EXTENSION_KEY = 'paraspell_connected_extension';
 
 const getAddressFromLocalStorage = (): string | undefined => {
   return localStorage.getItem(STORAGE_ADDRESS_KEY) || undefined;
@@ -23,7 +23,7 @@ const getAddressFromLocalStorage = (): string | undefined => {
 
 const getApiTypeFromLocalStorage = (): TApiType | undefined => {
   const apiType = localStorage.getItem(STORAGE_API_TYPE_KEY);
-  return apiType === "PJS" || apiType === "PAPI" ? apiType : undefined;
+  return apiType === 'PJS' || apiType === 'PAPI' ? apiType : undefined;
 };
 
 const getExtensionFromLocalStorage = (): string | undefined => {
@@ -40,7 +40,7 @@ const setExtensionInLocalStorage = (extensionName: string | undefined) => {
 
 const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [apiType, setApiType] = useState<TApiType>(
-    getApiTypeFromLocalStorage() || "PJS",
+    getApiTypeFromLocalStorage() || 'PJS',
   );
 
   const [extensions, setExtensions] = useState<string[]>([]);
@@ -81,11 +81,11 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
       }
 
       if (savedApiType && savedAddress) {
-        if (savedApiType === "PJS") {
-          const allInjected = await web3Enable("Paraspell");
+        if (savedApiType === 'PJS') {
+          const allInjected = await web3Enable('Paraspell');
 
           if (!allInjected.length) {
-            alert("No wallet extension found, install it to connect");
+            alert('No wallet extension found, install it to connect');
             setAccounts([]);
             setSelectedAccount(undefined);
             return;
@@ -109,19 +109,19 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
           } else {
             setSelectedAccount(undefined);
           }
-        } else if (savedApiType === "PAPI") {
+        } else if (savedApiType === 'PAPI') {
           const extensions = getInjectedExtensions();
           setExtensions(extensions);
 
           if (!extensions.length) {
-            alert("No wallet extension found, install it to connect");
+            alert('No wallet extension found, install it to connect');
             setAccounts([]);
             setSelectedAccount(undefined);
             return;
           }
 
           if (!savedExtensionName || !extensions.includes(savedExtensionName)) {
-            alert("Previously connected extension not found");
+            alert('Previously connected extension not found');
             setAccounts([]);
             setSelectedAccount(undefined);
             return;
@@ -159,17 +159,17 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (apiType === "PJS" && selectedAccount) {
-      void web3Enable("Paraspell");
+    if (apiType === 'PJS' && selectedAccount) {
+      void web3Enable('Paraspell');
     }
   }, [selectedAccount, apiType]);
 
   const getSigner = async () => {
     if (!selectedAccount) {
-      throw new Error("No selected account");
+      throw new Error('No selected account');
     }
 
-    if (apiType === "PJS") {
+    if (apiType === 'PJS') {
       const injector = await web3FromAddress(selectedAccount.address);
       return injector.signer;
     } else {
@@ -177,7 +177,7 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
         ?.getAccounts()
         .find((account) => account.address === selectedAccount.address);
       if (!account) {
-        throw new Error("No selected account");
+        throw new Error('No selected account');
       }
       return account.polkadotSigner;
     }
