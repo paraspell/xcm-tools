@@ -7,41 +7,41 @@ import {
   Loader,
   Group,
   Center,
-} from "@mantine/core";
+} from '@mantine/core';
 import type {
   TTxProgressInfo,
   TExchangeNode,
   TExtrinsicInfo,
   TEthOptionsInfo,
-} from "@paraspell/xcm-router";
+} from '@paraspell/xcm-router';
 import {
   TransactionType,
   TransactionStatus,
   RouterBuilder,
-} from "@paraspell/xcm-router";
-import { web3FromAddress } from "@polkadot/extension-dapp";
-import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import { useEffect, useState } from "react";
-import type { TRouterFormValuesTransformed } from "../components/RouterTransferForm";
-import RouterTransferForm from "../components/RouterTransferForm";
-import TransferStepper from "../components/TransferStepper";
-import Confetti from "react-confetti";
-import type { Signer } from "@polkadot/api/types";
-import axios, { AxiosError } from "axios";
-import { submitTransaction } from "../utils";
-import ErrorAlert from "../components/ErrorAlert";
-import { useWallet } from "../hooks/useWallet";
-import { API_URL } from "../consts";
-import type { BrowserProvider, LogDescription } from "ethers";
-import { ethers } from "ethers";
-import { IGateway__factory } from "@snowbridge/contract-types";
-import type { MultiAddressStruct } from "@snowbridge/contract-types/dist/IGateway";
-import { u8aToHex } from "@polkadot/util";
-import { decodeAddress } from "@polkadot/keyring";
-import { ApiPromise, WsProvider } from "@polkadot/api";
-import { isForeignAsset } from "@paraspell/sdk";
-import { Web3 } from "web3";
-import type { EIP6963ProviderDetail } from "../types";
+} from '@paraspell/xcm-router';
+import { web3FromAddress } from '@polkadot/extension-dapp';
+import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
+import type { TRouterFormValuesTransformed } from '../components/RouterTransferForm';
+import RouterTransferForm from '../components/RouterTransferForm';
+import TransferStepper from '../components/TransferStepper';
+import Confetti from 'react-confetti';
+import type { Signer } from '@polkadot/api/types';
+import axios, { AxiosError } from 'axios';
+import { submitTransaction } from '../utils';
+import ErrorAlert from '../components/ErrorAlert';
+import { useWallet } from '../hooks/useWallet';
+import { API_URL } from '../consts';
+import type { BrowserProvider, LogDescription } from 'ethers';
+import { ethers } from 'ethers';
+import { IGateway__factory } from '@snowbridge/contract-types';
+import type { MultiAddressStruct } from '@snowbridge/contract-types/dist/IGateway';
+import { u8aToHex } from '@polkadot/util';
+import { decodeAddress } from '@polkadot/keyring';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { isForeignAsset } from '@paraspell/sdk';
+import { Web3 } from 'web3';
+import type { EIP6963ProviderDetail } from '../types';
 
 const RouterTransferPage = () => {
   const { selectedAccount } = useWallet();
@@ -92,7 +92,7 @@ const RouterTransferPage = () => {
       const providerMap = await Web3.requestEIP6963Providers();
 
       if (providerMap.size === 0) {
-        alert("No compatible Ethereum wallets found.");
+        alert('No compatible Ethereum wallets found.');
         return;
       }
 
@@ -101,8 +101,8 @@ const RouterTransferPage = () => {
       setProviders(providerArray);
       setIsEthWalletModalOpen(true);
     } catch (error) {
-      console.error("Error fetching providers:", error);
-      alert("An error occurred while fetching wallet providers.");
+      console.error('Error fetching providers:', error);
+      alert('An error occurred while fetching wallet providers.');
     }
   };
 
@@ -114,7 +114,7 @@ const RouterTransferPage = () => {
       const provider = providerInfo.provider;
 
       if (!provider) {
-        alert("Selected provider is not available.");
+        alert('Selected provider is not available.');
         return;
       }
 
@@ -123,20 +123,20 @@ const RouterTransferPage = () => {
       setSelectedProvider(providerInfo);
 
       const accounts = (await tempProvider.send(
-        "eth_requestAccounts",
+        'eth_requestAccounts',
         [],
       )) as string[];
 
       if (accounts.length === 0) {
-        alert("No accounts found in the selected wallet.");
+        alert('No accounts found in the selected wallet.');
         return;
       }
 
       setEthAccounts(accounts);
       setIsEthAccountModalOpen(true);
     } catch (error) {
-      console.error("Error connecting to wallet:", error);
-      alert("An error occurred while connecting to the wallet.");
+      console.error('Error connecting to wallet:', error);
+      alert('An error occurred while connecting to the wallet.');
     }
   };
 
@@ -176,12 +176,12 @@ const RouterTransferPage = () => {
       .currencyFrom(
         isForeignAsset(currencyFrom) && currencyFrom.assetId
           ? { id: currencyFrom.assetId }
-          : { symbol: currencyFrom.symbol ?? "" },
+          : { symbol: currencyFrom.symbol ?? '' },
       )
       .currencyTo(
         isForeignAsset(currencyTo) && currencyTo.assetId
           ? { id: currencyTo.assetId }
-          : { symbol: currencyTo.symbol ?? "" },
+          : { symbol: currencyTo.symbol ?? '' },
       )
       .amount(amount)
       .injectorAddress(injectorAddress)
@@ -211,10 +211,10 @@ const RouterTransferPage = () => {
           ...formValues,
           currencyFrom: isForeignAsset(currencyFrom)
             ? { id: currencyFrom.assetId }
-            : { symbol: currencyFrom.symbol ?? "" },
+            : { symbol: currencyFrom.symbol ?? '' },
           currencyTo: isForeignAsset(currencyTo)
             ? { id: currencyTo.assetId }
-            : { symbol: currencyTo.symbol ?? "" },
+            : { symbol: currencyTo.symbol ?? '' },
           type: TransactionType[transactionType],
           exchange: exchange ?? undefined,
           injectorAddress,
@@ -234,7 +234,7 @@ const RouterTransferPage = () => {
           status: TransactionStatus.IN_PROGRESS,
         });
 
-        if (txInfo.type === "EXTRINSIC") {
+        if (txInfo.type === 'EXTRINSIC') {
           // Handling of Polkadot transaction
           const api = await ApiPromise.create({
             provider: new WsProvider(txInfo.wsProvider),
@@ -258,10 +258,10 @@ const RouterTransferPage = () => {
         } else {
           // Handling of Ethereum transaction
           const apiResponse = txInfo.tx;
-          const GATEWAY_CONTRACT = "0xEDa338E4dC46038493b885327842fD3E301CaB39";
+          const GATEWAY_CONTRACT = '0xEDa338E4dC46038493b885327842fD3E301CaB39';
 
           if (!provider) {
-            throw new Error("Provider not initialized");
+            throw new Error('Provider not initialized');
           }
 
           const tempSigner = await provider.getSigner(formValues.ethAddress);
@@ -275,14 +275,14 @@ const RouterTransferPage = () => {
 
           const address: MultiAddressStruct = {
             data: abi.encode(
-              ["bytes32"],
+              ['bytes32'],
               [u8aToHex(decodeAddress(formValues.assetHubAddress))],
             ),
             kind: 1,
           };
 
           if (!apiResponse) {
-            throw new Error("No response from API");
+            throw new Error('No response from API');
           }
 
           const response = await contract.sendToken(
@@ -298,11 +298,11 @@ const RouterTransferPage = () => {
           const receipt = await response.wait(1);
 
           if (receipt === null) {
-            throw new Error("Error waiting for transaction completion");
+            throw new Error('Error waiting for transaction completion');
           }
 
           if (receipt?.status !== 1) {
-            throw new Error("Transaction failed");
+            throw new Error('Transaction failed');
           }
 
           const events: LogDescription[] = [];
@@ -324,17 +324,17 @@ const RouterTransferPage = () => {
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error(error);
-        let errorMessage = "Error while fetching data.";
+        let errorMessage = 'Error while fetching data.';
         if (error.response === undefined) {
-          errorMessage += " Make sure the API is running.";
+          errorMessage += ' Make sure the API is running.';
         } else {
           // Append the server-provided error message if available
           const serverMessage =
             error.response.data &&
             (error.response.data as { message: string }).message
-              ? " Server response: " +
+              ? ' Server response: ' +
                 (error.response.data as { message: string }).message
-              : "";
+              : '';
           errorMessage += serverMessage;
         }
         throw new Error(errorMessage);
@@ -348,8 +348,8 @@ const RouterTransferPage = () => {
   const submit = async (formValues: TRouterFormValuesTransformed) => {
     const { useApi } = formValues;
     if (!selectedAccount) {
-      alert("No account selected, connect wallet first");
-      throw Error("No account selected!");
+      alert('No account selected, connect wallet first');
+      throw Error('No account selected!');
     }
 
     setLoading(true);
@@ -357,14 +357,14 @@ const RouterTransferPage = () => {
     const injector = await web3FromAddress(selectedAccount.address);
 
     const exchange =
-      formValues.exchange === "Auto select" ? undefined : formValues.exchange;
+      formValues.exchange === 'Auto select' ? undefined : formValues.exchange;
 
     const originalError = console.error;
     console.error = (...args: unknown[]) => {
       if (
         args.length > 1 &&
-        typeof args[2] === "string" &&
-        args[2].includes("ExtrinsicStatus::")
+        typeof args[2] === 'string' &&
+        args[2].includes('ExtrinsicStatus::')
       ) {
         setError(new Error(args[2]));
         openAlert();
@@ -395,7 +395,7 @@ const RouterTransferPage = () => {
         );
       }
       setRunConfetti(true);
-      alert("Transaction was successful!");
+      alert('Transaction was successful!');
     } catch (e) {
       if (e instanceof Error) {
         console.error(e);
@@ -463,7 +463,7 @@ const RouterTransferPage = () => {
           {alertOpened && (
             <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
               {error?.message
-                .split("\n\n")
+                .split('\n\n')
                 .map((line, index) => <p key={index}>{line}</p>)}
             </ErrorAlert>
           )}

@@ -1,5 +1,5 @@
-import { Modal, Stack, Button } from "@mantine/core";
-import type { FC } from "react";
+import { Modal, Stack, Button } from '@mantine/core';
+import type { FC } from 'react';
 
 type Props = {
   isOpen: boolean;

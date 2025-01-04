@@ -2,13 +2,13 @@ import {
   isForeignAsset,
   type TAsset,
   type TNodeWithRelayChains,
-} from "@paraspell/sdk";
-import { useMemo } from "react";
-import type { TAutoSelect, TExchangeNode } from "@paraspell/xcm-router";
+} from '@paraspell/sdk';
+import { useMemo } from 'react';
+import type { TAutoSelect, TExchangeNode } from '@paraspell/xcm-router';
 import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
-} from "@paraspell/xcm-router";
+} from '@paraspell/xcm-router';
 
 const useRouterCurrencyOptions = (
   from: TNodeWithRelayChains,
@@ -28,7 +28,7 @@ const useRouterCurrencyOptions = (
   const currencyFromMap = useMemo(
     () =>
       supportedAssetsFrom.reduce((map: Record<string, TAsset>, asset) => {
-        const key = `${asset.symbol ?? "NO_SYMBOL"}-${isForeignAsset(asset) ? asset.assetId : "NO_ID"}`;
+        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${isForeignAsset(asset) ? asset.assetId : 'NO_ID'}`;
         map[key] = asset;
         return map;
       }, {}),
@@ -38,7 +38,7 @@ const useRouterCurrencyOptions = (
   const currencyToMap = useMemo(
     () =>
       supportedAssetsTo.reduce((map: Record<string, TAsset>, asset) => {
-        const key = `${asset.symbol ?? "NO_SYMBOL"}-${isForeignAsset(asset) ? asset.assetId : "NO_ID"}`;
+        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${isForeignAsset(asset) ? asset.assetId : 'NO_ID'}`;
         map[key] = asset;
         return map;
       }, {}),
@@ -49,7 +49,7 @@ const useRouterCurrencyOptions = (
     () =>
       Object.keys(currencyFromMap).map((key) => ({
         value: key,
-        label: `${currencyFromMap[key].symbol} - ${isForeignAsset(currencyFromMap[key]) ? currencyFromMap[key].assetId : "Native"}`,
+        label: `${currencyFromMap[key].symbol} - ${isForeignAsset(currencyFromMap[key]) ? currencyFromMap[key].assetId : 'Native'}`,
       })),
     [currencyFromMap],
   );
@@ -58,13 +58,13 @@ const useRouterCurrencyOptions = (
     () =>
       Object.keys(currencyToMap).map((key) => ({
         value: key,
-        label: `${currencyToMap[key].symbol} - ${isForeignAsset(currencyToMap[key]) ? currencyToMap[key].assetId : "Native"}`,
+        label: `${currencyToMap[key].symbol} - ${isForeignAsset(currencyToMap[key]) ? currencyToMap[key].assetId : 'Native'}`,
       })),
     [currencyToMap],
   );
 
-  const isFromNotParaToPara = from === "Polkadot" || from === "Kusama";
-  const isToNotParaToPara = to === "Polkadot" || to === "Kusama";
+  const isFromNotParaToPara = from === 'Polkadot' || from === 'Kusama';
+  const isToNotParaToPara = to === 'Polkadot' || to === 'Kusama';
 
   return {
     currencyFromOptions,

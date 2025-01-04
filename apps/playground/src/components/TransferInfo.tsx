@@ -1,14 +1,14 @@
-import { Stack, Title, Box } from "@mantine/core";
-import ErrorAlert from "./ErrorAlert";
-import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import { useState, useEffect } from "react";
-import { useWallet } from "../hooks/useWallet";
-import type { FormValues } from "./TransferInfoForm";
-import TransferInfoForm from "./TransferInfoForm";
-import OutputAlert from "./OutputAlert";
-import { fetchFromApi } from "../utils/submitUsingApi";
-import { replaceBigInt } from "../utils/replaceBigInt";
-import type { TCurrencyCore, TMultiLocation } from "@paraspell/sdk";
+import { Stack, Title, Box } from '@mantine/core';
+import ErrorAlert from './ErrorAlert';
+import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import { useState, useEffect } from 'react';
+import { useWallet } from '../hooks/useWallet';
+import type { FormValues } from './TransferInfoForm';
+import TransferInfoForm from './TransferInfoForm';
+import OutputAlert from './OutputAlert';
+import { fetchFromApi } from '../utils/submitUsingApi';
+import { replaceBigInt } from '../utils/replaceBigInt';
+import type { TCurrencyCore, TMultiLocation } from '@paraspell/sdk';
 
 const TransferInfo = () => {
   const { selectedAccount, apiType } = useWallet();
@@ -37,11 +37,11 @@ const TransferInfo = () => {
   }, [error, scrollIntoView]);
 
   const resolveCurrency = (formValues: FormValues): TCurrencyCore => {
-    if (formValues.customCurrencyType === "multilocation") {
+    if (formValues.customCurrencyType === 'multilocation') {
       return {
         multilocation: JSON.parse(formValues.currency) as TMultiLocation,
       };
-    } else if (formValues.customCurrencyType === "id") {
+    } else if (formValues.customCurrencyType === 'id') {
       return { id: formValues.currency };
     } else {
       return { symbol: formValues.currency };
@@ -63,14 +63,14 @@ const TransferInfo = () => {
           amount: formValues.amount,
         },
         `/transfer-info`,
-        "POST",
+        'POST',
         true,
       );
     } else {
       const Sdk =
-        apiType === "PAPI"
-          ? await import("@paraspell/sdk")
-          : await import("@paraspell/sdk-pjs");
+        apiType === 'PAPI'
+          ? await import('@paraspell/sdk')
+          : await import('@paraspell/sdk-pjs');
 
       return Sdk.getTransferInfo({
         origin: formValues.from,
@@ -89,8 +89,8 @@ const TransferInfo = () => {
     closeAlert();
     closeOutputAlert();
     if (!selectedAccount) {
-      alert("No account selected, connect wallet first");
-      throw Error("No account selected!");
+      alert('No account selected, connect wallet first');
+      throw Error('No account selected!');
     }
 
     setLoading(true);

@@ -1,22 +1,22 @@
-import { API_URL } from "../consts";
-import axios, { AxiosError } from "axios";
-import type { PolkadotClient } from "polkadot-api";
-import { Binary } from "polkadot-api";
-import type { TApiType } from "../types";
-import type { ApiPromise } from "@polkadot/api";
-import type { Signer } from "@polkadot/api/types";
-import { submitTransaction } from "../utils";
+import { API_URL } from '../consts';
+import axios, { AxiosError } from 'axios';
+import type { PolkadotClient } from 'polkadot-api';
+import { Binary } from 'polkadot-api';
+import type { TApiType } from '../types';
+import type { ApiPromise } from '@polkadot/api';
+import type { Signer } from '@polkadot/api/types';
+import { submitTransaction } from '../utils';
 import {
   createApiInstanceForNode,
   type Extrinsic,
   type TNodeDotKsmWithRelayChains,
-} from "@paraspell/sdk-pjs";
-import type { TPapiTransaction } from "@paraspell/sdk";
+} from '@paraspell/sdk-pjs';
+import type { TPapiTransaction } from '@paraspell/sdk';
 
 export const fetchFromApi = async <T>(
   params: T,
   endpoint: string,
-  method = "GET",
+  method = 'GET',
   useBody: boolean = false,
 ): Promise<unknown> => {
   try {
@@ -29,16 +29,16 @@ export const fetchFromApi = async <T>(
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      let errorMessage = "Error while fetching data.";
+      let errorMessage = 'Error while fetching data.';
       if (error.response === undefined) {
         errorMessage += " Couldn't connect to API.";
       } else {
         const serverMessage =
           error.response.data &&
           (error.response.data as { message: string }).message
-            ? " Server response: " +
+            ? ' Server response: ' +
               (error.response.data as { message: string }).message
-            : "";
+            : '';
         errorMessage += serverMessage;
       }
       throw new Error(errorMessage);
@@ -54,7 +54,7 @@ export const getTxFromApi = async <T>(
   endpoint: string,
   injectorAddress: string,
   apiType: TApiType,
-  method: string = "GET",
+  method: string = 'GET',
   useBody = false,
 ): Promise<Extrinsic | TPapiTransaction> => {
   const txHash = await fetchFromApi(
@@ -64,7 +64,7 @@ export const getTxFromApi = async <T>(
     useBody,
   );
 
-  if (apiType === "PJS") {
+  if (apiType === 'PJS') {
     return (api as ApiPromise).tx(txHash as string);
   } else {
     const callData = Binary.fromHex(txHash as string);
@@ -78,7 +78,7 @@ export const submitTxUsingApi = async <T>(
   endpoint: string,
   injectorAddress: string,
   signer: Signer,
-  method: string = "GET",
+  method: string = 'GET',
   useBody = false,
 ) => {
   const txHash = (await fetchFromApi(

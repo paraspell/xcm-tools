@@ -1,6 +1,6 @@
-import { Modal, Stack, Button } from "@mantine/core";
-import type { FC } from "react";
-import type { WalletAccount } from "../types";
+import { Modal, Stack, Button } from '@mantine/core';
+import type { FC } from 'react';
+import type { WalletAccount } from '../types';
 
 type Props = {
   isOpen: boolean;
@@ -16,7 +16,7 @@ const AccountsModal: FC<Props> = ({
   onClose,
   accounts,
   onAccountSelect,
-  title = "Select account",
+  title = 'Select account',
   onDisconnect,
 }) => {
   const onAccountSelectInternal = (account: WalletAccount) => () => {
@@ -34,7 +34,7 @@ const AccountsModal: FC<Props> = ({
             onClick={onAccountSelectInternal(account)}
             data-testid="btn-account"
           >
-            {`${account.meta.name} (${account.meta.source}) - ${account.address.replace(/(.{10})..+/, "$1…")}`}
+            {`${account.meta.name} (${account.meta.source}) - ${account.address.replace(/(.{10})..+/, '$1…')}`}
           </Button>
         ))}
         {onDisconnect && (

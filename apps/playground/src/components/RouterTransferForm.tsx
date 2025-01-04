@@ -1,9 +1,9 @@
-import { useForm } from "@mantine/form";
-import type { TAutoSelect, TExchangeNode } from "@paraspell/xcm-router";
-import { EXCHANGE_NODES, TransactionType } from "@paraspell/xcm-router";
-import { isValidWalletAddress } from "../utils";
-import type { FC } from "react";
-import { useEffect, useState } from "react";
+import { useForm } from '@mantine/form';
+import type { TAutoSelect, TExchangeNode } from '@paraspell/xcm-router';
+import { EXCHANGE_NODES, TransactionType } from '@paraspell/xcm-router';
+import { isValidWalletAddress } from '../utils';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Text,
   Button,
@@ -15,20 +15,20 @@ import {
   Tooltip,
   Center,
   rem,
-} from "@mantine/core";
-import type { TAsset, TNodeWithRelayChains } from "@paraspell/sdk";
-import { NODES_WITH_RELAY_CHAINS } from "@paraspell/sdk";
-import type { Signer } from "@polkadot/api/types";
-import { web3Accounts, web3FromAddress } from "@polkadot/extension-dapp";
-import AccountsModal from "./AccountsModal";
-import { useDisclosure } from "@mantine/hooks";
-import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import { ethers } from "ethers";
-import { IconInfoCircle } from "@tabler/icons-react";
-import useRouterCurrencyOptions from "../hooks/useRouterCurrencyOptions";
-import EthWalletSelectModal from "./EthWalletSelectModal";
-import EthAccountsSelectModal from "./EthAccountsSelectModal";
-import type { EIP6963ProviderDetail, WalletAccount } from "../types";
+} from '@mantine/core';
+import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
+import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
+import type { Signer } from '@polkadot/api/types';
+import { web3Accounts, web3FromAddress } from '@polkadot/extension-dapp';
+import AccountsModal from './AccountsModal';
+import { useDisclosure } from '@mantine/hooks';
+import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { ethers } from 'ethers';
+import { IconInfoCircle } from '@tabler/icons-react';
+import useRouterCurrencyOptions from '../hooks/useRouterCurrencyOptions';
+import EthWalletSelectModal from './EthWalletSelectModal';
+import EthAccountsSelectModal from './EthAccountsSelectModal';
+import type { EIP6963ProviderDetail, WalletAccount } from '../types';
 
 export type TRouterFormValues = {
   from: TNodeWithRelayChains;
@@ -108,7 +108,7 @@ const RouterTransferForm: FC<Props> = ({
   const onEthAccountSelect = (account: string) => {
     setSelectedEthAccount(account);
     setIsEthAccountModalOpen(false);
-    form.setFieldValue("ethAddress", account);
+    form.setFieldValue('ethAddress', account);
   };
 
   const onAssetHubAccountSelect = (account: WalletAccount) => () => {
@@ -120,46 +120,46 @@ const RouterTransferForm: FC<Props> = ({
     void (async () => {
       if (selectedAccount) {
         const injector = await web3FromAddress(selectedAccount.address);
-        form.setFieldValue("evmSigner", injector.signer);
-        form.setFieldValue("evmInjectorAddress", selectedAccount.address);
+        form.setFieldValue('evmSigner', injector.signer);
+        form.setFieldValue('evmInjectorAddress', selectedAccount.address);
       }
     })();
   }, [selectedAccount]);
 
   useEffect(() => {
     if (selectedEthAccount) {
-      form.setFieldValue("ethAddress", selectedEthAccount);
+      form.setFieldValue('ethAddress', selectedEthAccount);
     }
   }, [selectedEthAccount]);
 
   useEffect(() => {
     if (selectedAssetHubAccount) {
-      form.setFieldValue("assetHubAddress", selectedAssetHubAccount.address);
+      form.setFieldValue('assetHubAddress', selectedAssetHubAccount.address);
     }
   }, [selectedAssetHubAccount]);
 
   const form = useForm<TRouterFormValues>({
     initialValues: {
-      from: "Astar",
-      to: "Moonbeam",
-      exchange: "Auto select",
-      currencyFromOptionId: "",
-      currencyToOptionId: "",
-      amount: "10000000000000000000",
-      recipientAddress: "5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96",
-      slippagePct: "1",
-      transactionType: "FULL_TRANSFER",
+      from: 'Astar',
+      to: 'Moonbeam',
+      exchange: 'Auto select',
+      currencyFromOptionId: '',
+      currencyToOptionId: '',
+      amount: '10000000000000000000',
+      recipientAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      slippagePct: '1',
+      transactionType: 'FULL_TRANSFER',
       useApi: false,
     },
 
     validate: {
       recipientAddress: (value) =>
-        isValidWalletAddress(value) ? null : "Invalid address",
+        isValidWalletAddress(value) ? null : 'Invalid address',
       currencyFromOptionId: (value) => {
-        return value ? null : "Currency from selection is required";
+        return value ? null : 'Currency from selection is required';
       },
       currencyToOptionId: (value) => {
-        return value ? null : "Currency to selection is required";
+        return value ? null : 'Currency to selection is required';
       },
     },
   });
@@ -167,13 +167,13 @@ const RouterTransferForm: FC<Props> = ({
   const { from, to, exchange } = form.getValues();
 
   useEffect(() => {
-    if (from === "Ethereum" || to === "Ethereum") {
+    if (from === 'Ethereum' || to === 'Ethereum') {
       onAccountDisconnect();
     }
   }, [from, to]);
 
   useEffect(() => {
-    if (from !== "Ethereum" || to !== "Ethereum") {
+    if (from !== 'Ethereum' || to !== 'Ethereum') {
       onAssetHubAccountDisconnect();
       onEthWalletDisconnect();
     }
@@ -187,7 +187,7 @@ const RouterTransferForm: FC<Props> = ({
       );
       openAssetHubModal();
     } catch (_e) {
-      alert("Failed to connect EVM wallet");
+      alert('Failed to connect EVM wallet');
     }
   };
 
@@ -201,7 +201,7 @@ const RouterTransferForm: FC<Props> = ({
       );
       openModal();
     } catch (_e) {
-      alert("Failed to connect EVM wallet");
+      alert('Failed to connect EVM wallet');
     }
   };
 
@@ -209,20 +209,20 @@ const RouterTransferForm: FC<Props> = ({
 
   const onAccountDisconnect = () => {
     setSelectedAccount(undefined);
-    form.setFieldValue("evmSigner", undefined);
-    form.setFieldValue("evmInjectorAddress", undefined);
+    form.setFieldValue('evmSigner', undefined);
+    form.setFieldValue('evmInjectorAddress', undefined);
     closeModal();
   };
 
   const onAssetHubAccountDisconnect = () => {
     setSelectedAssetHubAccount(undefined);
-    form.setFieldValue("assetHubAddress", undefined);
+    form.setFieldValue('assetHubAddress', undefined);
     closeAssetHubModal();
   };
 
   const onEthWalletDisconnectInternal = () => {
     setSelectedEthAccount(null);
-    form.setFieldValue("ethSigner", undefined);
+    form.setFieldValue('ethSigner', undefined);
     setIsEthWalletModalOpen(false);
     onEthWalletDisconnect();
   };
@@ -254,9 +254,9 @@ const RouterTransferForm: FC<Props> = ({
       label="You need to connect your Ethereum wallet when choosing Ethereum as the origin or destination chain"
       position="top-end"
       withArrow
-      transitionProps={{ transition: "pop-bottom-right" }}
+      transitionProps={{ transition: 'pop-bottom-right' }}
     >
-      <Text component="div" style={{ cursor: "help" }}>
+      <Text component="div" style={{ cursor: 'help' }}>
         <Center>
           <IconInfoCircle
             style={{ width: rem(18), height: rem(18) }}
@@ -272,9 +272,9 @@ const RouterTransferForm: FC<Props> = ({
       label="You need to connect your AssetHub wallet (Polkadot wallet) when choosing Ethereum as the origin or destination chain"
       position="top-end"
       withArrow
-      transitionProps={{ transition: "pop-bottom-right" }}
+      transitionProps={{ transition: 'pop-bottom-right' }}
     >
-      <Text component="div" style={{ cursor: "help" }}>
+      <Text component="div" style={{ cursor: 'help' }}>
         <Center>
           <IconInfoCircle
             style={{ width: rem(18), height: rem(18) }}
@@ -290,9 +290,9 @@ const RouterTransferForm: FC<Props> = ({
       label="You need to connect yout Polkadot EVM wallet when choosing EVM chain as origin"
       position="top-end"
       withArrow
-      transitionProps={{ transition: "pop-bottom-right" }}
+      transitionProps={{ transition: 'pop-bottom-right' }}
     >
-      <Text component="div" style={{ cursor: "help" }}>
+      <Text component="div" style={{ cursor: 'help' }}>
         <Center>
           <IconInfoCircle
             style={{ width: rem(18), height: rem(18) }}
@@ -306,7 +306,7 @@ const RouterTransferForm: FC<Props> = ({
   useEffect(() => {
     if (isFromNotParaToPara) {
       form.setFieldValue(
-        "currencyFromOptionId",
+        'currencyFromOptionId',
         Object.keys(currencyFromMap)[0],
       );
     }
@@ -314,7 +314,7 @@ const RouterTransferForm: FC<Props> = ({
 
   useEffect(() => {
     if (isToNotParaToPara) {
-      form.setFieldValue("currencyToOptionId", Object.keys(currencyToMap)[0]);
+      form.setFieldValue('currencyToOptionId', Object.keys(currencyToMap)[0]);
     }
   }, [isToNotParaToPara, currencyToMap]);
 
@@ -358,18 +358,18 @@ const RouterTransferForm: FC<Props> = ({
           searchable
           required
           data-testid="select-from"
-          {...form.getInputProps("from")}
+          {...form.getInputProps('from')}
         />
 
         <Select
           label="Exchange node"
           placeholder="Pick value"
-          data={["Auto select", ...EXCHANGE_NODES]}
+          data={['Auto select', ...EXCHANGE_NODES]}
           allowDeselect={false}
           searchable
           required
           data-testid="select-exchange"
-          {...form.getInputProps("exchange")}
+          {...form.getInputProps('exchange')}
         />
 
         <Select
@@ -380,11 +380,11 @@ const RouterTransferForm: FC<Props> = ({
           searchable
           required
           data-testid="select-to"
-          {...form.getInputProps("to")}
+          {...form.getInputProps('to')}
         />
 
         <Select
-          key={from + exchange + to + "currencyFrom"}
+          key={from + exchange + to + 'currencyFrom'}
           label="Currency From"
           placeholder="Pick value"
           data={currencyFromOptions}
@@ -393,11 +393,11 @@ const RouterTransferForm: FC<Props> = ({
           searchable
           required
           data-testid="select-currency-from"
-          {...form.getInputProps("currencyFromOptionId")}
+          {...form.getInputProps('currencyFromOptionId')}
         />
 
         <Select
-          key={from + exchange + to + "currencyTo"}
+          key={from + exchange + to + 'currencyTo'}
           label="Currency To"
           placeholder="Pick value"
           data={currencyToOptions}
@@ -406,7 +406,7 @@ const RouterTransferForm: FC<Props> = ({
           searchable
           required
           data-testid="select-currency-to"
-          {...form.getInputProps("currencyToOptionId")}
+          {...form.getInputProps('currencyToOptionId')}
         />
 
         <TextInput
@@ -414,7 +414,7 @@ const RouterTransferForm: FC<Props> = ({
           placeholder="0x0000000"
           required
           data-testid="input-recipient-address"
-          {...form.getInputProps("recipientAddress")}
+          {...form.getInputProps('recipientAddress')}
         />
 
         <TextInput
@@ -422,7 +422,7 @@ const RouterTransferForm: FC<Props> = ({
           placeholder="0"
           required
           data-testid="input-amount"
-          {...form.getInputProps("amount")}
+          {...form.getInputProps('amount')}
         />
 
         <Select
@@ -440,7 +440,7 @@ const RouterTransferForm: FC<Props> = ({
           required
           data-testid="select-transaction-type"
           allowDeselect={false}
-          {...form.getInputProps("transactionType")}
+          {...form.getInputProps('transactionType')}
         />
 
         <TextInput
@@ -448,17 +448,17 @@ const RouterTransferForm: FC<Props> = ({
           placeholder="1"
           required
           data-testid="input-slippage-pct"
-          {...form.getInputProps("slippagePct")}
+          {...form.getInputProps('slippagePct')}
         />
 
         <Group justify="space-between">
           <Checkbox
             label="Use XCM API"
-            {...form.getInputProps("useApi")}
+            {...form.getInputProps('useApi')}
             data-testid="checkbox-api"
           />
           <Button.Group orientation="vertical">
-            {(from === "Ethereum" || to === "Ethereum") && (
+            {(from === 'Ethereum' || to === 'Ethereum') && (
               <Button
                 size="xs"
                 variant="outline"
@@ -468,10 +468,10 @@ const RouterTransferForm: FC<Props> = ({
               >
                 {selectedEthAccount
                   ? `Connected: ${selectedEthAccount.substring(0, 6)}...${selectedEthAccount.substring(selectedEthAccount.length - 4)}`
-                  : "Connect Ethereum Wallet"}
+                  : 'Connect Ethereum Wallet'}
               </Button>
             )}
-            {(from === "Ethereum" || to === "Ethereum") && (
+            {(from === 'Ethereum' || to === 'Ethereum') && (
               <Button
                 size="xs"
                 variant="outline"
@@ -481,10 +481,10 @@ const RouterTransferForm: FC<Props> = ({
               >
                 {selectedAssetHubAccount
                   ? `${selectedAssetHubAccount?.meta.name} (${selectedAssetHubAccount?.meta.source})`
-                  : "Connect AssetHub wallet"}
+                  : 'Connect AssetHub wallet'}
               </Button>
             )}
-            {from !== "Ethereum" && to !== "Ethereum" && (
+            {from !== 'Ethereum' && to !== 'Ethereum' && (
               <Button
                 size="xs"
                 variant="outline"
@@ -494,7 +494,7 @@ const RouterTransferForm: FC<Props> = ({
               >
                 {selectedAccount
                   ? `${selectedAccount?.meta.name} (${selectedAccount?.meta.source})`
-                  : "Connect EVM wallet"}
+                  : 'Connect EVM wallet'}
               </Button>
             )}
           </Button.Group>

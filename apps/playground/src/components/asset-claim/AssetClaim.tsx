@@ -1,17 +1,17 @@
-import { Stack, Title, Box } from "@mantine/core";
-import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import type { Extrinsic } from "@paraspell/sdk-pjs";
-import type { TPapiTransaction } from "@paraspell/sdk";
-import { useState, useEffect } from "react";
-import { useWallet } from "../../hooks/useWallet";
-import ErrorAlert from "../ErrorAlert";
-import type { FormValues } from "./AssetClaimForm";
-import AssetClaimForm from "./AssetClaimForm";
-import { getTxFromApi } from "../../utils/submitUsingApi";
-import type { ApiPromise } from "@polkadot/api";
-import type { PolkadotClient, PolkadotSigner } from "polkadot-api";
-import { submitTransaction, submitTransactionPapi } from "../../utils";
-import type { Signer } from "@polkadot/api/types";
+import { Stack, Title, Box } from '@mantine/core';
+import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
+import type { TPapiTransaction } from '@paraspell/sdk';
+import { useState, useEffect } from 'react';
+import { useWallet } from '../../hooks/useWallet';
+import ErrorAlert from '../ErrorAlert';
+import type { FormValues } from './AssetClaimForm';
+import AssetClaimForm from './AssetClaimForm';
+import { getTxFromApi } from '../../utils/submitUsingApi';
+import type { ApiPromise } from '@polkadot/api';
+import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
+import { submitTransaction, submitTransactionPapi } from '../../utils';
+import type { Signer } from '@polkadot/api/types';
 
 const AssetClaim = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
@@ -37,16 +37,16 @@ const AssetClaim = () => {
     const { useApi, from, amount, address } = formValues;
 
     if (!selectedAccount) {
-      alert("No account selected, connect wallet first");
-      throw Error("No account selected!");
+      alert('No account selected, connect wallet first');
+      throw Error('No account selected!');
     }
 
     setLoading(true);
 
     const Sdk =
-      apiType === "PAPI"
-        ? await import("@paraspell/sdk")
-        : await import("@paraspell/sdk-pjs");
+      apiType === 'PAPI'
+        ? await import('@paraspell/sdk')
+        : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(from);
 
@@ -63,8 +63,8 @@ const AssetClaim = () => {
               {
                 id: {
                   Concrete: {
-                    parents: from === "Polkadot" || from === "Kusama" ? 0 : 1,
-                    interior: "Here",
+                    parents: from === 'Polkadot' || from === 'Kusama' ? 0 : 1,
+                    interior: 'Here',
                   },
                 },
                 fun: { Fungible: amount },
@@ -72,10 +72,10 @@ const AssetClaim = () => {
             ],
           },
           api,
-          apiType === "PJS" ? "/asset-claim" : "/asset-claim-papi",
+          apiType === 'PJS' ? '/asset-claim' : '/asset-claim-papi',
           selectedAccount.address,
           apiType,
-          "POST",
+          'POST',
           true,
         );
       } else {
@@ -85,7 +85,7 @@ const AssetClaim = () => {
             {
               id: {
                 Concrete: {
-                  parents: from === "Polkadot" || from === "Kusama" ? 0 : 1,
+                  parents: from === 'Polkadot' || from === 'Kusama' ? 0 : 1,
                   interior: {
                     Here: null,
                   },
@@ -98,7 +98,7 @@ const AssetClaim = () => {
           .build();
       }
 
-      if (apiType === "PAPI") {
+      if (apiType === 'PAPI') {
         await submitTransactionPapi(
           tx as TPapiTransaction,
           signer as PolkadotSigner,
@@ -112,7 +112,7 @@ const AssetClaim = () => {
         );
       }
 
-      alert("Transaction was successful!");
+      alert('Transaction was successful!');
     } catch (e) {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console

@@ -1,6 +1,6 @@
-import { Text, Alert } from "@mantine/core";
-import { IconJson, IconLink } from "@tabler/icons-react";
-import type { FC, ReactNode } from "react";
+import { Text, Alert } from '@mantine/core';
+import { IconJson, IconLink } from '@tabler/icons-react';
+import type { FC, ReactNode } from 'react';
 
 const jsonIcon = <IconJson size={24} />;
 const linkIcon = <IconLink size={24} />;
@@ -19,7 +19,7 @@ const OutputAlert: FC<Props> = ({ children, onClose, useLinkIcon }) => (
     withCloseButton
     onClose={onClose}
     mt="lg"
-    style={{ overflowWrap: "anywhere" }}
+    style={{ overflowWrap: 'anywhere' }}
     data-testid="output"
   >
     <Text component="pre" size="sm">

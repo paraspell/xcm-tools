@@ -1,12 +1,12 @@
-import { Stack, Title, Box } from "@mantine/core";
-import ErrorAlert from "../ErrorAlert";
-import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import { useState, useEffect } from "react";
-import { fetchFromApi } from "../../utils/submitUsingApi";
-import { getDefaultPallet, getSupportedPallets } from "@paraspell/sdk";
-import type { FormValues } from "./PalletsForm";
-import PalletsForm from "./PalletsForm";
-import OutputAlert from "../OutputAlert";
+import { Stack, Title, Box } from '@mantine/core';
+import ErrorAlert from '../ErrorAlert';
+import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import { useState, useEffect } from 'react';
+import { fetchFromApi } from '../../utils/submitUsingApi';
+import { getDefaultPallet, getSupportedPallets } from '@paraspell/sdk';
+import type { FormValues } from './PalletsForm';
+import PalletsForm from './PalletsForm';
+import OutputAlert from '../OutputAlert';
 
 const PalletsQueries = () => {
   const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
@@ -33,18 +33,18 @@ const PalletsQueries = () => {
 
   const submitUsingSdk = ({ func, node }: FormValues) => {
     switch (func) {
-      case "ALL_PALLETS":
+      case 'ALL_PALLETS':
         return getSupportedPallets(node);
-      case "DEFAULT_PALLET":
+      case 'DEFAULT_PALLET':
         return getDefaultPallet(node);
     }
   };
 
   const getEndpoint = ({ func, node }: FormValues) => {
     switch (func) {
-      case "ALL_PALLETS":
+      case 'ALL_PALLETS':
         return `${node}`;
-      case "DEFAULT_PALLET":
+      case 'DEFAULT_PALLET':
         return `${node}/default`;
     }
   };

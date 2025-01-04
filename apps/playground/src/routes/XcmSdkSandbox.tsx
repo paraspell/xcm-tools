@@ -1,17 +1,17 @@
-import { Container, Tabs, rem } from "@mantine/core";
+import { Container, Tabs, rem } from '@mantine/core';
 import {
   IconBoxAlignBottomRight,
   IconCoins,
   IconSend,
   IconSend2,
   IconWallet,
-} from "@tabler/icons-react";
-import XcmTransfer from "../components/transfer/XcmTransfer";
-import AssetsQueries from "../components/assets/AssetsQueries";
-import PalletsQueries from "../components/pallets/PalletsQueries";
-import TransferInfo from "../components/TransferInfo";
-import AssetClaim from "../components/asset-claim/AssetClaim";
-import EvmTransfer from "../components/evm-transfer/EvmTransfer";
+} from '@tabler/icons-react';
+import XcmTransfer from '../components/transfer/XcmTransfer';
+import AssetsQueries from '../components/assets/AssetsQueries';
+import PalletsQueries from '../components/pallets/PalletsQueries';
+import TransferInfo from '../components/TransferInfo';
+import AssetClaim from '../components/asset-claim/AssetClaim';
+import EvmTransfer from '../components/evm-transfer/EvmTransfer';
 
 const XcmSdkSandbox = () => {
   const iconStyle = { width: rem(12), height: rem(12) };

@@ -1,6 +1,6 @@
-import { Button, Checkbox, JsonInput, Stack } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import type { FC } from "react";
+import { Button, Checkbox, JsonInput, Stack } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import type { FC } from 'react';
 
 export type FormValues = {
   input: string;
@@ -15,7 +15,7 @@ type Props = {
 const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
-      input: "",
+      input: '',
       useApi: false,
     },
   });
@@ -30,11 +30,11 @@ const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
           minRows={10}
           required
           data-testid="input"
-          {...form.getInputProps("input")}
+          {...form.getInputProps('input')}
         />
         <Checkbox
           label="Use XCM API"
-          {...form.getInputProps("useApi")}
+          {...form.getInputProps('useApi')}
           data-testid="checkbox-api"
         />
         <Button type="submit" loading={loading} data-testid="submit">
