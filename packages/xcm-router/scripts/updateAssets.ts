@@ -11,6 +11,7 @@ export const writeJsonSync = (path: string, data: any) => {
 void (async () => {
   const record: Record<string, TAssets> = {};
   for (const exchangeNode of EXCHANGE_NODES) {
+    // eslint-disable-next-line no-console
     console.log(`Fetching ${exchangeNode} assets...`);
     const dex = createDexNodeInstance(exchangeNode);
     const api = await dex.createApiInstance();

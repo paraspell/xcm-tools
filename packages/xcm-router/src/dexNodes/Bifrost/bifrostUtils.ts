@@ -159,6 +159,7 @@ export function tokensToChainTokenMap(tokens: TokenList): ChainTokenMap {
   const map = infos.reduce<Mutable<ChainTokenMap>>((map, info) => {
     const token = new WrappedTokenInfo(info, list);
     if (map[token.chainId]?.[token.address] !== undefined) {
+      // eslint-disable-next-line no-console
       console.warn(`Duplicate token skipped: ${token.address}`);
       return map;
     }

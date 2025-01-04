@@ -144,7 +144,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
         'Transfering Snowbridge assets from AssetHub to other parachains is not yet supported.',
       );
     } else if (from === dex.node) {
-      console.log('Assets are already on the exchange');
+      // Assets are already on the exchange
     } else {
       await transferToExchange(modifiedOptions, originApi);
     }
@@ -175,7 +175,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
         amount,
       );
     } else if (to === dex.node) {
-      console.log('Exchange node is the destination. Assets are already on the destination');
+      // Exchange node is the destination. Assets are already on the destination
     } else {
       await transferToDestination(modifiedOptions, amount, swapApi);
     }
@@ -207,7 +207,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
         'Transfering Snowbridge assets from AssetHub to other parachains is not yet supported.',
       );
     } else if (from === dex.node) {
-      console.log('Assets are already on the exchange');
+      // Assets are already on the exchange
     } else {
       await transferToExchange(modifiedOptions, originApi);
     }
@@ -235,7 +235,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
         amountOut,
       );
     } else if (to === dex.node) {
-      console.log('Exchange node is the destination. Assets are already on the destination');
+      // Exchange node is the destination. Assets are already on the destination
     } else {
       await transferToDestination(modifiedOptions, amountOut, swapApi);
     }

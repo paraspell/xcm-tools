@@ -29,7 +29,6 @@ export const fetchFromApi = async <T>(
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      console.error(error);
       let errorMessage = "Error while fetching data.";
       if (error.response === undefined) {
         errorMessage += " Couldn't connect to API.";
@@ -44,7 +43,6 @@ export const fetchFromApi = async <T>(
       }
       throw new Error(errorMessage);
     } else if (error instanceof Error) {
-      console.error(error);
       throw new Error(error.message);
     }
   }

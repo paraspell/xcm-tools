@@ -234,6 +234,7 @@ const AssetsQueries = () => {
       closeErrorAlert();
     } catch (e) {
       if (e instanceof Error) {
+        // eslint-disable-next-line no-console
         console.error(e);
         setError(e);
         openErrorAlert();

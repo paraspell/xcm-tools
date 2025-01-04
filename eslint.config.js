@@ -46,6 +46,7 @@ export default tseslint.config(
       },
     },
     rules: {
+      "no-console": "error",
       "tsdoc/syntax": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
@@ -80,17 +81,17 @@ export default tseslint.config(
       "apps/{playground,visualizator-fe,landing-page}/**/*.ts",
       "apps/{playground,visualizator-fe,landing-page}/**/*.tsx",
     ],
-    ...reactPlugin.configs.flat.recommended,
+    ...reactPlugin.configs.flat?.recommended,
     rules: {
-      ...reactPlugin.configs.flat.recommended.rules,
+      ...reactPlugin.configs.flat?.recommended.rules,
       ...reactPlugin.configs.flat["jsx-runtime"].rules,
       "react/prop-types": "off",
       "react/no-unknown-property": "off",
     },
     languageOptions: {
-      ...reactPlugin.configs.flat.recommended.languageOptions,
+      ...reactPlugin.configs.flat?.recommended.languageOptions,
       parserOptions: {
-        ...reactPlugin.configs.flat.recommended.languageOptions.parserOptions,
+        ...reactPlugin.configs.flat?.recommended.languageOptions.parserOptions,
         ...reactPlugin.configs.flat["jsx-runtime"].languageOptions
           .parserOptions,
       },
