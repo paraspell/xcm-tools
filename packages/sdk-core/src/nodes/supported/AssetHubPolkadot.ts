@@ -6,8 +6,7 @@ import {
   createBridgeCurrencySpec,
   createBridgePolkadotXcmDest,
   createCurrencySpec,
-  createPolkadotXcmHeader,
-  isTMultiLocation
+  createPolkadotXcmHeader
 } from '../../pallets/xcmPallet/utils'
 import type {
   TJunctions,
@@ -36,7 +35,7 @@ import { ETHEREUM_JUNCTION } from '../../constants'
 import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
 import { isForeignAsset } from '../../utils/assets'
 import { getParaId } from '../config'
-import { isRelayChain } from '../../utils'
+import { resolveParaId } from '../../utils/resolveParaId'
 
 const createCustomXcmToBifrost = <TApi, TRes>(
   { api, address, scenario }: TPolkadotXCMTransferOptions<TApi, TRes>,
@@ -172,11 +171,7 @@ class AssetHubPolkadot<TApi, TRes>
   handleMythosTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
     const { api, address, asset, overriddenAsset, scenario, destination, paraIdTo } = input
     const version = Version.V2
-    const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
-    const paraId =
-      !isRelayDestination && typeof destination !== 'object' && destination !== 'Ethereum'
-        ? (paraIdTo ?? getParaId(destination))
-        : undefined
+    const paraId = resolveParaId(paraIdTo, destination)
     const customMultiLocation: TMultiLocation = {
       parents: Parents.ONE,
       interior: {

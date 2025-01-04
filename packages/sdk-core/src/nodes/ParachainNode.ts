@@ -31,8 +31,8 @@ import {
   createPolkadotXcmHeader,
   isTMultiLocation
 } from '../pallets/xcmPallet/utils'
-import { getParaId } from './config'
 import XTokensTransferImpl from '../pallets/xTokens'
+import { resolveParaId } from '../utils/resolveParaId'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
@@ -107,10 +107,7 @@ abstract class ParachainNode<TApi, TRes> {
     } = options
     const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
     const scenario: TScenario = isRelayDestination ? 'ParaToRelay' : 'ParaToPara'
-    const paraId =
-      !isRelayDestination && typeof destination !== 'object' && destination !== 'Ethereum'
-        ? (paraIdTo ?? getParaId(destination))
-        : undefined
+    const paraId = resolveParaId(paraIdTo, destination)
 
     if (destination === 'Polimec' && this.node !== 'AssetHubPolkadot') {
       throw new Error('Sending assets to Polimec is supported only from AssetHubPolkadot')
