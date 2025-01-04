@@ -1,21 +1,15 @@
 import { DEFAULT_FEE_ASSET } from '../../constants'
-import { getParaId } from '../../nodes/config'
 import type { TRelayToParaOptions } from '../../types'
 import { Parents, type Version } from '../../types'
-import { generateAddressPayload, isRelayChain } from '../../utils'
-import { createCurrencySpec, createPolkadotXcmHeader, isTMultiLocation } from './utils'
+import { generateAddressPayload, resolveParaId } from '../../utils'
+import { createCurrencySpec, createPolkadotXcmHeader } from './utils'
 
 export const constructRelayToParaParameters = <TApi, TRes>(
   { api, destination, asset, address, paraIdTo }: TRelayToParaOptions<TApi, TRes>,
   version: Version,
   { includeFee } = { includeFee: false }
 ): Record<string, unknown> => {
-  const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
-
-  const paraId =
-    !isRelayDestination && typeof destination !== 'object'
-      ? (paraIdTo ?? getParaId(destination))
-      : undefined
+  const paraId = resolveParaId(paraIdTo, destination)
 
   return {
     dest: createPolkadotXcmHeader('RelayToPara', version, destination, paraId),

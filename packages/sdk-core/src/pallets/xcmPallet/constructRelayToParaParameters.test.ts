@@ -1,30 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { Version, Parents } from '../../types'
-import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type {
   TCurrencySelectionHeaderArr,
-  TMultiLocation,
   TMultiLocationHeader,
   TRelayToParaOptions
 } from '../../types'
 import { createCurrencySpec, createPolkadotXcmHeader } from './utils'
 import type { IPolkadotApi } from '../../api'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
-import { getParaId } from '../../nodes/config'
+import { generateAddressPayload, resolveParaId } from '../../utils'
 
-vi.mock('../../nodes/config', () => ({
-  getParaId: vi.fn()
-}))
-
-vi.mock('../../utils/generateAddressPayload', () => ({
-  generateAddressPayload: vi.fn()
+vi.mock('../../utils', () => ({
+  generateAddressPayload: vi.fn(),
+  resolveParaId: vi.fn()
 }))
 
 vi.mock('./utils', () => ({
   createCurrencySpec: vi.fn(),
-  createPolkadotXcmHeader: vi.fn(),
-  isTMultiLocation: vi.fn()
+  createPolkadotXcmHeader: vi.fn()
 }))
 
 describe('constructRelayToParaParameters', () => {
@@ -33,23 +27,23 @@ describe('constructRelayToParaParameters', () => {
   const mockAddress = 'address123'
   const mockParaId = 100
 
+  const options = {
+    api: mockApi,
+    destination: 'Acala',
+    address: mockAddress,
+    paraIdTo: mockParaId,
+    asset: { amount: mockAmount }
+  } as TRelayToParaOptions<unknown, unknown>
+
   beforeEach(() => {
     vi.resetAllMocks()
     vi.mocked(generateAddressPayload).mockReturnValue('mockedBeneficiary' as TMultiLocationHeader)
-    vi.mocked(createPolkadotXcmHeader).mockReturnValue('mockedDest' as TMultiLocationHeader)
+    vi.mocked(resolveParaId).mockReturnValue(mockParaId)
     vi.mocked(createCurrencySpec).mockReturnValue('mockedAssets' as TCurrencySelectionHeaderArr)
-    vi.mocked(getParaId).mockReturnValue(mockParaId)
+    vi.mocked(createPolkadotXcmHeader).mockReturnValue('mockedDest' as TMultiLocationHeader)
   })
 
   it('should construct parameters with multi-location destination and include fee', () => {
-    const options = {
-      api: mockApi,
-      destination: 'Acala',
-      address: mockAddress,
-      paraIdTo: mockParaId,
-      asset: { amount: mockAmount }
-    } as TRelayToParaOptions<unknown, unknown>
-
     const result = constructRelayToParaParameters(options, Version.V1, { includeFee: true })
 
     expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
@@ -77,13 +71,6 @@ describe('constructRelayToParaParameters', () => {
   })
 
   it('should construct parameters without fee for multi-location destination', () => {
-    const options = {
-      api: mockApi,
-      destination: 'Acala',
-      address: mockAddress,
-      asset: { amount: mockAmount }
-    } as TRelayToParaOptions<unknown, unknown>
-
     const result = constructRelayToParaParameters(options, Version.V3)
 
     expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
@@ -110,16 +97,18 @@ describe('constructRelayToParaParameters', () => {
   })
 
   it('should construct parameters without specifying paraIdTo and include fee', () => {
-    const options = {
-      api: mockApi,
-      destination: 'Acala',
-      address: mockAddress,
-      asset: { amount: mockAmount }
-    } as TRelayToParaOptions<unknown, unknown>
+    const paraIdTo = undefined
 
-    const result = constructRelayToParaParameters(options, Version.V2, { includeFee: true })
+    const result = constructRelayToParaParameters(
+      {
+        ...options,
+        paraIdTo
+      },
+      Version.V2,
+      { includeFee: true }
+    )
 
-    expect(getParaId).toHaveBeenCalledWith(options.destination)
+    expect(resolveParaId).toHaveBeenCalledWith(paraIdTo, options.destination)
     expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
       'RelayToPara',
       Version.V2,
@@ -141,46 +130,6 @@ describe('constructRelayToParaParameters', () => {
       assets: 'mockedAssets',
       fee_asset_item: DEFAULT_FEE_ASSET,
       weight_limit: 'Unlimited'
-    })
-  })
-
-  it('should construct parameters with undefined paraId when destination is an object', () => {
-    const options = {
-      api: mockApi,
-      destination: {
-        parents: Parents.ZERO,
-        interior: [
-          {
-            X1: { Parachain: 1000 }
-          }
-        ]
-      } as TMultiLocation,
-      address: mockAddress,
-      asset: { amount: mockAmount }
-    } as TRelayToParaOptions<unknown, unknown>
-
-    const result = constructRelayToParaParameters(options, Version.V1)
-
-    expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
-      'RelayToPara',
-      Version.V1,
-      options.destination,
-      undefined
-    )
-    expect(generateAddressPayload).toHaveBeenCalledWith(
-      mockApi,
-      'RelayToPara',
-      null,
-      mockAddress,
-      Version.V1,
-      undefined
-    )
-    expect(createCurrencySpec).toHaveBeenCalledWith(mockAmount, Version.V1, Parents.ZERO)
-    expect(result).toEqual({
-      dest: 'mockedDest',
-      beneficiary: 'mockedBeneficiary',
-      assets: 'mockedAssets',
-      fee_asset_item: DEFAULT_FEE_ASSET
     })
   })
 })

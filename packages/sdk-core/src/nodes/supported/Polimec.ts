@@ -1,11 +1,7 @@
 // Contains detailed structure of XCM call construction for Polimec Parachain
 
 import type { IPolkadotApi } from '../../api'
-import {
-  createMultiAsset,
-  createPolkadotXcmHeader,
-  isTMultiLocation
-} from '../../pallets/xcmPallet/utils'
+import { createMultiAsset, createPolkadotXcmHeader } from '../../pallets/xcmPallet/utils'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -19,12 +15,13 @@ import type {
   TRelayToParaOptions
 } from '../../types'
 import { Parents, Version } from '../../types'
-import { generateAddressPayload, isForeignAsset, isRelayChain } from '../../utils'
+import { generateAddressPayload, isForeignAsset } from '../../utils'
 import ParachainNode from '../ParachainNode'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { DOT_MULTILOCATION } from '../../constants'
 import { getParaId } from '../config'
+import { resolveParaId } from '../../utils/resolveParaId'
 
 const GAS_LIMIT = 1000000000n
 
@@ -36,11 +33,7 @@ const createCustomXcmPolimec = <TApi, TRes>(
   paraIdTo: number | undefined,
   version: Version
 ) => {
-  const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
-  const paraId =
-    !isRelayDestination && typeof destination !== 'object' && destination !== 'Ethereum'
-      ? (paraIdTo ?? getParaId(destination))
-      : undefined
+  const paraId = resolveParaId(paraIdTo, destination)
   return {
     [version]: [
       {
