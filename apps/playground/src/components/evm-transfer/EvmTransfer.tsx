@@ -76,8 +76,7 @@ const EvmTransfer = () => {
 
       setProviders(providerArray);
       setIsWalletModalOpen(true);
-    } catch (error) {
-      console.error("Error fetching providers:", error);
+    } catch (_e) {
       alert("An error occurred while fetching wallet providers.");
     }
   };
@@ -110,8 +109,7 @@ const EvmTransfer = () => {
 
       setAccounts(accounts);
       setIsAccountModalOpen(true);
-    } catch (error) {
-      console.error("Error connecting to wallet:", error);
+    } catch (_error) {
       alert("An error occurred while connecting to the wallet.");
     }
   };
@@ -263,6 +261,7 @@ const EvmTransfer = () => {
       alert("Transaction was successful!");
     } catch (e) {
       if (e instanceof Error) {
+        // eslint-disable-next-line no-console
         console.error(e);
         setError(e);
         openAlert();

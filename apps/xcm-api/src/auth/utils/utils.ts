@@ -42,6 +42,7 @@ export const sendEmail = async (
     },
     (err) => {
       if (err) {
+        // eslint-disable-next-line no-console
         console.error('Error sending email:', err);
       }
     },

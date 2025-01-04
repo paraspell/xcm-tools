@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type { MultiLocation } from '../src/types';
 import { convertMultilocationToUrl, convertXCMToUrls } from '../src/converter/convert';
 

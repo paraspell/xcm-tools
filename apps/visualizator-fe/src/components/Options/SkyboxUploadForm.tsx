@@ -84,12 +84,12 @@ const SkyboxUploadForm = () => {
 
     Promise.all(promises)
       .then(() => {
-        console.log('All images have been saved successfully!');
         setSkyboxTrigger(current => current + 1);
         showSuccessNotification();
       })
       .catch(error => {
         showErrorNotification();
+        // eslint-disable-next-line no-console
         console.error('An error occurred while saving images:', error);
       })
       .finally(() => {

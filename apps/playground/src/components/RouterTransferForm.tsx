@@ -186,8 +186,7 @@ const RouterTransferForm: FC<Props> = ({
         allAccounts.filter((account) => !ethers.isAddress(account.address)),
       );
       openAssetHubModal();
-    } catch (error) {
-      console.error("Failed to connect EVM wallet:", error);
+    } catch (_e) {
       alert("Failed to connect EVM wallet");
     }
   };
@@ -201,8 +200,7 @@ const RouterTransferForm: FC<Props> = ({
         allAccounts.filter((account) => ethers.isAddress(account.address)),
       );
       openModal();
-    } catch (error) {
-      console.error("Failed to connect EVM wallet:", error);
+    } catch (_e) {
       alert("Failed to connect EVM wallet");
     }
   };

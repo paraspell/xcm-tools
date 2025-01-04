@@ -122,7 +122,6 @@ export class XTransferService {
         e instanceof IncompatibleNodesError ||
         e instanceof BadRequestException
       ) {
-        console.log(e);
         throw new BadRequestException(e.message);
       }
       const error = e as Error;

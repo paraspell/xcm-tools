@@ -31,6 +31,7 @@ export async function fetchCallMulti<T>({
 
       return transformedValues as T;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
       return options.defaultValue as T;
     }

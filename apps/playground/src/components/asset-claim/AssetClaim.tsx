@@ -115,6 +115,7 @@ const AssetClaim = () => {
       alert("Transaction was successful!");
     } catch (e) {
       if (e instanceof Error) {
+        // eslint-disable-next-line no-console
         console.error(e);
         setError(e);
         openAlert();

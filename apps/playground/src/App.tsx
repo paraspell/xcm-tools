@@ -107,8 +107,7 @@ const App = () => {
   const connectWallet = async () => {
     try {
       await initAccounts();
-    } catch (error) {
-      console.error("Failed to connect wallet:", error);
+    } catch (_e) {
       alert("Failed to connect wallet");
     }
   };
@@ -126,8 +125,7 @@ const App = () => {
         await initAccounts();
       }
       openAccountsModal();
-    } catch (error) {
-      console.error("Failed to change account:", error);
+    } catch (_e) {
       alert("Failed to change account");
     }
   };
@@ -173,8 +171,7 @@ const App = () => {
       );
       closeWalletSelectModal();
       openAccountsModal();
-    } catch (error) {
-      console.error("Failed to connect to wallet:", error);
+    } catch (_e) {
       alert("Failed to connect to wallet");
       closeWalletSelectModal();
     }

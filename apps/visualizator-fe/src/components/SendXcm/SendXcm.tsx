@@ -77,6 +77,7 @@ const SendXcm = () => {
       alert(t('transactionSuccess'));
     } catch (e) {
       if (e instanceof Error) {
+        // eslint-disable-next-line no-console
         console.error(e);
         setError(e);
         openAlert();
@@ -101,8 +102,7 @@ const SendXcm = () => {
     try {
       await initAccounts();
       openModal();
-    } catch (e) {
-      console.error('Failed to connect wallet', e);
+    } catch (_e) {
       alert('Failed to connect wallet');
     }
   };
@@ -115,8 +115,7 @@ const SendXcm = () => {
         await initAccounts();
       }
       openModal();
-    } catch (e) {
-      console.error('Failed to change account', e);
+    } catch (_e) {
       alert('Failed to change account');
     }
   };

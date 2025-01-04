@@ -85,7 +85,7 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
           const allInjected = await web3Enable("Paraspell");
 
           if (!allInjected.length) {
-            console.warn("No wallet extension found, install it to connect");
+            alert("No wallet extension found, install it to connect");
             setAccounts([]);
             setSelectedAccount(undefined);
             return;
@@ -114,14 +114,14 @@ const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
           setExtensions(extensions);
 
           if (!extensions.length) {
-            console.warn("No wallet extension found, install it to connect");
+            alert("No wallet extension found, install it to connect");
             setAccounts([]);
             setSelectedAccount(undefined);
             return;
           }
 
           if (!savedExtensionName || !extensions.includes(savedExtensionName)) {
-            console.warn("Previously connected extension not found");
+            alert("Previously connected extension not found");
             setAccounts([]);
             setSelectedAccount(undefined);
             return;

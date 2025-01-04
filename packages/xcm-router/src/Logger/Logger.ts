@@ -3,6 +3,7 @@ const Logger = {
     const isEnabled = true;
     const isTestMode = process.env.VITEST === 'true';
     if (isEnabled || isTestMode) {
+      // eslint-disable-next-line no-console
       console.log(...messages);
     }
   },
