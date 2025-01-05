@@ -556,7 +556,7 @@ describe('XCM API (e2e)', () => {
         .expect(400) // Expect Bad Request due to different 'from' nodes
         .expect((res) => {
           expect(res.body.message).toContain(
-            'All transactions must have the same origin.',
+            'All transactions in the batch must have the same origin.',
           );
         });
     });
