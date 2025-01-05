@@ -3,9 +3,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { isValidWalletAddress } from '../utils.js';
-import { XTransferDto } from './dto/XTransferDto.js';
-import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import {
   IncompatibleNodesError,
   InvalidCurrencyError,
@@ -13,30 +10,21 @@ import {
   TNodeWithRelayChains,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   NODES_WITH_RELAY_CHAINS,
+  TPapiApi,
+  IFromBuilder,
+  TPapiTransaction,
 } from '@paraspell/sdk';
-import type * as SdkType from '@paraspell/sdk-pjs';
-import type * as SdkPapiType from '@paraspell/sdk';
-import { ApiPromise } from '@polkadot/api';
-import { PolkadotClient } from 'polkadot-api';
-import { TPapiTransaction } from '@paraspell/sdk';
-import { Extrinsic } from '@paraspell/sdk-pjs';
+
+import { isValidWalletAddress } from '../utils.js';
+import { XTransferDto } from './dto/XTransferDto.js';
+import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
+import { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 
 @Injectable()
 export class XTransferService {
-  async generateXcmCall(
-    {
-      from,
-      to,
-      address,
-      ahAddress,
-      currency,
-      xcmVersion,
-      pallet,
-      method,
-    }: XTransferDto,
-    usePapi = false,
-    isDryRun = false,
-  ) {
+  private validateTransfer(transfer: XTransferDto) {
+    const { from, to, address, ahAddress, pallet, method } = transfer;
+
     const fromNode = from as TNodeDotKsmWithRelayChains;
     const toNode = to as TNodeWithRelayChains;
 
@@ -68,22 +56,28 @@ export class XTransferService {
     if ((pallet && !method) || (!pallet && method)) {
       throw new BadRequestException('Both pallet and method are required.');
     }
+  }
 
-    const Sdk = usePapi
-      ? await import('@paraspell/sdk')
-      : await import('@paraspell/sdk-pjs');
+  private buildXTransfer(
+    builder:
+      | IFromBuilder<TPjsApi, Extrinsic>
+      | IFromBuilder<TPapiApi, TPapiTransaction>,
+    transfer: XTransferDto,
+  ) {
+    const {
+      from,
+      to,
+      currency,
+      address,
+      ahAddress,
+      xcmVersion,
+      pallet,
+      method,
+    } = transfer;
 
-    const api = await Sdk.createApiInstanceForNode(fromNode);
-
-    const builder = Sdk.Builder(api as PolkadotClient & ApiPromise);
-
-    let finalBuilder:
-      | SdkPapiType.IFinalBuilderWithOptions
-      | SdkType.IFinalBuilderWithOptions;
-
-    finalBuilder = builder
-      .from(fromNode)
-      .to(toNode)
+    let finalBuilder = builder
+      .from(from as TNodeDotKsmWithRelayChains)
+      .to(to as TNodeWithRelayChains)
       .currency(currency)
       .address(address, ahAddress);
 
@@ -95,27 +89,42 @@ export class XTransferService {
       finalBuilder = finalBuilder.customPallet(pallet, method);
     }
 
+    return finalBuilder;
+  }
+
+  async generateXcmCall(
+    transfer: XTransferDto,
+    usePapi = false,
+    isDryRun = false,
+  ) {
+    this.validateTransfer(transfer);
+
+    const { from, address } = transfer;
+    const fromNode = from as TNodeDotKsmWithRelayChains;
+
+    const Sdk = usePapi
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
+
+    const api = await Sdk.createApiInstanceForNode(fromNode);
+
+    const builder = Sdk.Builder(api as TPapiApi & TPjsApi);
+
     try {
-      const tx = await finalBuilder.build();
+      const finalBuilder = this.buildXTransfer(builder, transfer);
 
       if (isDryRun) {
         if (typeof address !== 'string') {
           throw new BadRequestException('Address is required for dry run.');
         }
-
-        return await Sdk.getDryRun({
-          api: api as ApiPromise & PolkadotClient,
-          address,
-          node: fromNode,
-          tx: tx as Extrinsic & TPapiTransaction,
-        });
+        return await finalBuilder.dryRun();
       }
 
-      if (usePapi) {
-        return (await (tx as TPapiTransaction).getEncodedData()).asHex();
-      }
+      const tx = await finalBuilder.build();
 
-      return tx;
+      return usePapi
+        ? (await (tx as TPapiTransaction).getEncodedData()).asHex()
+        : tx;
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||
@@ -124,8 +133,7 @@ export class XTransferService {
       ) {
         throw new BadRequestException(e.message);
       }
-      const error = e as Error;
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerErrorException((e as Error).message);
     } finally {
       if ('disconnect' in api) await api.disconnect();
       else api.destroy();
@@ -139,24 +147,22 @@ export class XTransferService {
       throw new BadRequestException('Transfers array cannot be empty.');
     }
 
-    const firstTransfer = transfers[0];
-    const fromNode = firstTransfer.from as TNodeDotKsmWithRelayChains;
-    const toNode = firstTransfer.to as TNodeDotKsmWithRelayChains;
+    const fromNode = transfers[0].from as TNodeDotKsmWithRelayChains;
+    const toNode = transfers[0].to as TNodeDotKsmWithRelayChains;
 
     const sameFrom = transfers.every((transfer) => transfer.from === fromNode);
-
     if (!sameFrom) {
       throw new BadRequestException(
-        'All transactions must have the same origin.',
+        'All transactions in the batch must have the same origin.',
       );
     }
 
+    // Validate only the first fromNode because all transactions have the same origin
     if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
       throw new BadRequestException(
         `Node ${fromNode} is not valid. Check docs for valid nodes.`,
       );
     }
-
     if (!NODES_WITH_RELAY_CHAINS.includes(toNode)) {
       throw new BadRequestException(
         `Node ${toNode} is not valid. Check docs for valid nodes.`,
@@ -168,68 +174,20 @@ export class XTransferService {
       : await import('@paraspell/sdk-pjs');
 
     const api = await Sdk.createApiInstanceForNode(fromNode);
-    let builder = Sdk.Builder(api as PolkadotClient & ApiPromise);
+    let builder = Sdk.Builder(api as TPjsApi & TPapiApi);
 
     try {
       for (const transfer of transfers) {
-        const transferFromNode = transfer.from as TNodeDotKsmWithRelayChains;
-        const transferToNode = transfer.to as TNodeWithRelayChains;
-
-        if (
-          typeof transferToNode === 'string' &&
-          !NODES_WITH_RELAY_CHAINS.includes(transferToNode)
-        ) {
-          throw new BadRequestException(
-            `Node ${transferToNode} is not valid. Check docs for valid nodes.`,
-          );
-        }
-
-        if (
-          typeof transfer.address === 'string' &&
-          !isValidWalletAddress(transfer.address)
-        ) {
-          throw new BadRequestException('Invalid wallet address.');
-        }
-
-        if (
-          (transfer.pallet && !transfer.method) ||
-          (!transfer.pallet && transfer.method)
-        ) {
-          throw new BadRequestException('Both pallet and method are required.');
-        }
-
-        let finalBuilder:
-          | SdkPapiType.IFinalBuilderWithOptions
-          | SdkType.IFinalBuilderWithOptions;
-
-        finalBuilder = builder
-          .from(transferFromNode)
-          .to(transferToNode)
-          .currency(transfer.currency)
-          .address(transfer.address, transfer.ahAddress);
-
-        if (transfer.xcmVersion) {
-          finalBuilder = finalBuilder.xcmVersion(transfer.xcmVersion);
-        }
-
-        if (transfer.pallet && transfer.method) {
-          finalBuilder = finalBuilder.customPallet(
-            transfer.pallet,
-            transfer.method,
-          );
-        }
-
+        this.validateTransfer(transfer);
+        const finalBuilder = this.buildXTransfer(builder, transfer);
         builder = finalBuilder.addToBatch();
       }
 
-      if (usePapi) {
-        const tx = await builder.buildBatch(options ?? undefined);
-        return (
-          await (tx as SdkPapiType.TPapiTransaction).getEncodedData()
-        ).asHex();
-      }
+      const tx = await builder.buildBatch(options ?? undefined);
 
-      return await builder.buildBatch(options ?? undefined);
+      return usePapi
+        ? (await (tx as TPapiTransaction).getEncodedData()).asHex()
+        : tx;
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||
@@ -238,7 +196,6 @@ export class XTransferService {
       ) {
         throw new BadRequestException(e.message);
       }
-
       throw new InternalServerErrorException((e as Error).message);
     } finally {
       if ('disconnect' in api) await api.disconnect();
