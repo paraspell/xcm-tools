@@ -96,8 +96,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   accountToHex(address: string, isPrefixed = true) {
-    const binary = FixedSizeBinary.fromAccountId32<32>(address)
-    return binary.asHex().slice(isPrefixed ? 2 : 0)
+    const hex = this.createAccountId(address)
+    return isPrefixed ? hex : hex.slice(2)
   }
 
   callTxMethod({ module, section, parameters }: TSerializedApiCall) {

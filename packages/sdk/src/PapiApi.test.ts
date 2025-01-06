@@ -542,6 +542,32 @@ describe('PapiApi', () => {
     })
   })
 
+  describe('accountToHex', () => {
+    it('should return the hex representation of the account - prefixed', () => {
+      const account = 'some_account'
+      const hexAccount = '0x1234567890abcdef'
+
+      const spy = vi.spyOn(papiApi, 'createAccountId').mockReturnValue(hexAccount)
+
+      const result = papiApi.accountToHex(account)
+
+      expect(spy).toHaveBeenCalledWith(account)
+      expect(result).toBe(hexAccount)
+    })
+
+    it('should return the account if the output should not start with 0x', () => {
+      const account = 'some_account'
+      const hexAccount = '0x1234567890abcdef'
+
+      const spy = vi.spyOn(papiApi, 'createAccountId').mockReturnValue(hexAccount)
+
+      const result = papiApi.accountToHex(account, false)
+
+      expect(spy).toHaveBeenCalledWith(account)
+      expect(result).toBe('1234567890abcdef')
+    })
+  })
+
   describe('getDryRun', () => {
     it('should return success with calculated fee', async () => {
       const mockApiResponse = {

@@ -1,13 +1,14 @@
 import { Stack, Title, Box, Button } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useState, useEffect } from 'react';
-import type { BrowserProvider, LogDescription, Signer } from 'ethers';
+import type { BrowserProvider, LogDescription } from 'ethers';
 import { ethers } from 'ethers';
 import ErrorAlert from '../ErrorAlert';
 import type { FormValues, FormValuesTransformed } from './EvmTransferForm';
 import EvmTransferForm from './EvmTransferForm';
 import type { TNode } from '@paraspell/sdk';
-import { EvmBuilder } from '@paraspell/sdk-pjs';
+import { EvmBuilder as EvmBuilderPJS } from '@paraspell/sdk-pjs';
+import { EvmBuilder } from '@paraspell/sdk';
 import { fetchFromApi } from '../../utils/submitUsingApi';
 import { IGateway__factory } from '@snowbridge/contract-types';
 import type { MultiAddressStruct } from '@snowbridge/contract-types/dist/IGateway';
@@ -20,6 +21,7 @@ import EthAccountsSelectModal from '../EthAccountsSelectModal';
 import type { Address } from 'viem';
 import { createWalletClient, custom } from 'viem';
 import { moonbeam, mainnet, moonriver } from 'viem/chains';
+import { useWallet } from '../../hooks/useWallet';
 
 const EvmTransfer = () => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -36,6 +38,7 @@ const EvmTransfer = () => {
   const [accounts, setAccounts] = useState<string[]>([]);
   const [selectedProvider, setSelectedProvider] =
     useState<EIP6963ProviderDetail | null>(null);
+  const { apiType } = useWallet();
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -163,12 +166,28 @@ const EvmTransfer = () => {
       throw new Error('Signer not initialized');
     }
 
-    await EvmBuilder(provider)
+    const currencyInput = { symbol: currency?.symbol ?? '', amount };
+
+    if (apiType === 'PAPI') {
+      if (from === 'Ethereum') {
+        throw new Error('Snowbridge does not support PAPI yet');
+      }
+
+      await EvmBuilder()
+        .from(from)
+        .to(to)
+        .currency(currencyInput)
+        .address(address)
+        .signer(signer)
+        .build();
+    }
+
+    await EvmBuilderPJS(provider)
       .from(from)
       .to(to)
-      .currency({ symbol: currency?.symbol ?? '', amount })
+      .currency(currencyInput)
       .address(address)
-      .signer(signer as Signer)
+      .signer(signer)
       .build();
   };
 
