@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.0.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.0.2...sdk-core-v8.0.3) (2025-01-06)
+
+
+### Bug Fixes
+
+* Fix package json warnings 🔧 ([de6ea5d](https://github.com/paraspell/xcm-tools/commit/de6ea5df89513753b7a83e4053121a4b207a97c5))
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor parachainId resolving 🔧 ([425a1b3](https://github.com/paraspell/xcm-tools/commit/425a1b3a21de29269b74e472f19efd32e0e9eff9))
+
 ## [8.0.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.0.1...sdk-core-v8.0.2) (2025-01-03)
 
 

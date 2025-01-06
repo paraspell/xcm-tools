@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.0.3](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.0.2...sdk-pjs-v8.0.3) (2025-01-06)
+
+
+### Bug Fixes
+
+* Fix package json warnings 🔧 ([de6ea5d](https://github.com/paraspell/xcm-tools/commit/de6ea5df89513753b7a83e4053121a4b207a97c5))
+
+
+### Build System
+
+* Bump React version to v19 📦 ([3a3bbfe](https://github.com/paraspell/xcm-tools/commit/3a3bbfed4d1532fe7d09e89e5958ee1e8dd975d9))
+
 ## [8.0.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.0.1...sdk-pjs-v8.0.2) (2025-01-03)
 
 
