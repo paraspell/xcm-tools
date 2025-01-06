@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.0.3](https://github.com/paraspell/xcm-tools/compare/sdk-v8.0.2...sdk-v8.0.3) (2025-01-06)
+
+
+### Bug Fixes
+
+* Fix Evm Moonbeam transfer for PAPI 🔧 ([1e29cfa](https://github.com/paraspell/xcm-tools/commit/1e29cfa93308dceacd35ba5ca17f6e2d2d7b6288))
+* Fix package json warnings 🔧 ([de6ea5d](https://github.com/paraspell/xcm-tools/commit/de6ea5df89513753b7a83e4053121a4b207a97c5))
+
 ## [8.0.2](https://github.com/paraspell/xcm-tools/compare/sdk-v8.0.1...sdk-v8.0.2) (2025-01-03)
 
 
