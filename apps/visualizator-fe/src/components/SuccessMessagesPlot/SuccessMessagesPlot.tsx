@@ -31,6 +31,7 @@ const SuccessMessagesPlot = forwardRef<HTMLDivElement, Props>(({ counts }, ref) 
       data={chartData}
       dataKey="category"
       tooltipAnimationDuration={200}
+      minBarSize={3}
       series={[
         { name: t('success'), color: 'green' },
         { name: t('failure'), color: 'red' }

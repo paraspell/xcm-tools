@@ -8,6 +8,7 @@ import type {
 import { transferMoonbeamEvm } from '@paraspell/sdk-core'
 import type { AbstractProvider, Signer } from 'ethers'
 import { transferEthToPolkadot } from '../ethTransfer'
+import type { WalletClient } from 'viem'
 /**
  * Builder class for constructing transfers from Ethereum to Polkadot.
  */
@@ -64,7 +65,7 @@ export class EvmBuilderClass<TApi, TRes> {
    * @param signer - The Ethereum signer to authorize the transfer.
    * @returns An instance of EvmBuilder
    */
-  signer(signer: Signer): this {
+  signer(signer: Signer | WalletClient): this {
     this._options.signer = signer
     return this
   }

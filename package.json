@@ -25,7 +25,8 @@
     "@polkadot/types-codec": "^15.0.2",
     "@polkadot/api": "^15.0.2",
     "@polkadot/types": "^15.0.2",
-    "@crypto-dex-sdk/chain": "0.1.2"
+    "@crypto-dex-sdk/chain": "0.1.2",
+    "react-is": "19.0.0"
   },
   "scripts": {
     "compile": "turbo run compile",

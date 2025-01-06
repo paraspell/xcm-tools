@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { Stack, Flex } from '@mantine/core';
 import { animated, useSpring } from '@react-spring/web';
 import { PageRoute } from '../PageRoute';
 import CollapseButton from './CollapseButton';
 import TabNavigator from './TabNavigator/TabNavigator';
-import { useState } from 'react';
+
+const AnimatedDiv = animated('div');
 
 const RightPanel = () => {
   const [width, setWidth] = useState('40%');
@@ -15,7 +17,7 @@ const RightPanel = () => {
 
   const isCollapsed = width === '0%';
   return (
-    <animated.div style={props}>
+    <AnimatedDiv style={props}>
       <Stack h="100%" w="100%" pos="relative" bg="white">
         <CollapseButton onClick={toggleWidth} isCollapsed={isCollapsed} />
         <Flex flex={1} w="100%" justify="center">
@@ -25,7 +27,7 @@ const RightPanel = () => {
           <TabNavigator />
         </Flex>
       </Stack>
-    </animated.div>
+    </AnimatedDiv>
   );
 };
 

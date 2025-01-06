@@ -123,21 +123,23 @@ const ParachainsGraph: FC<Props> = ({ channels, totalMessageCounts, ecosystem })
         isSelected={parachains.includes('Polkadot')}
         ref={relaychainRef}
       />
-      {sortedParachainNames?.map((node, index) => (
-        <Parachain
-          key={node}
-          name={node}
-          index={index}
-          onClick={handleParachainClick}
-          onRightClick={onRightClick}
-          isSelected={parachains.includes(node)}
-          scale={calculateParachainScale(node)}
-          ecosystem={ecosystem}
-          ref={el => {
-            parachainRefs.current[`${ecosystem};${node}`] = el;
-          }}
-        />
-      ))}
+      {sortedParachainNames?.map((node, index) => {
+        return (
+          <Parachain
+            key={node}
+            name={node}
+            index={index}
+            onClick={handleParachainClick}
+            onRightClick={onRightClick}
+            isSelected={parachains.includes(node)}
+            scale={calculateParachainScale(node)}
+            ecosystem={ecosystem}
+            ref={el => {
+              parachainRefs.current[`${ecosystem};${node}`] = el;
+            }}
+          />
+        );
+      })}
 
       {/* Channels */}
       {ecosystem === Ecosystem.POLKADOT &&
