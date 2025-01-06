@@ -66,7 +66,7 @@ const ChannelAlert: FC<Props> = ({ loading, channelFrom, channelTo, onClose }) =
         bg="rgba(255,255,255,0.8)"
       >
         {loading && (
-          <Center h="100%">
+          <Center h="100%" w="100%">
             <Loader size="xs" />
           </Center>
         )}

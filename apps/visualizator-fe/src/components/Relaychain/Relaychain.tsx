@@ -1,6 +1,7 @@
 import type { ThreeEvent } from '@react-three/fiber';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import type { FC } from 'react';
+import { useEffect, useImperativeHandle, useRef } from 'react';
 import type { SphereGeometry, Mesh, Group } from 'three';
 import { Color, TextureLoader } from 'three';
 import { adjustUVs } from '../../utils/adjustUVs';
@@ -12,10 +13,11 @@ const SCALE_FACTOR = 2.25;
 type Props = {
   onClick: (event: ThreeEvent<MouseEvent>) => void;
   ecosystem: Ecosystem;
+  ref: React.RefObject<Group | null>;
   isSelected?: boolean;
 };
 
-const Relaychain = forwardRef<Group, Props>(({ onClick, ecosystem, isSelected }, ref) => {
+const Relaychain: FC<Props> = ({ ref, onClick, ecosystem, isSelected }) => {
   const logo = getRelaychainLogo(ecosystem);
   const texture = useLoader(TextureLoader, logo);
   const sphereRef = useRef<Mesh>(null);
@@ -55,7 +57,7 @@ const Relaychain = forwardRef<Group, Props>(({ onClick, ecosystem, isSelected },
       </mesh>
     </group>
   );
-});
+};
 
 Relaychain.displayName = 'Relaychain';
 

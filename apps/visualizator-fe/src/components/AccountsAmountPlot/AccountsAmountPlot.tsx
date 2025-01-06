@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import type { FC, RefObject } from 'react';
 import type { AccountCountsQuery } from '../../gql/graphql';
 import Highcharts from 'highcharts';
 import type { HighchartsReactRefObject } from 'highcharts-react-official';
@@ -11,9 +11,10 @@ HC_more(Highcharts);
 
 type Props = {
   counts: AccountCountsQuery['accountCounts'];
+  ref: RefObject<HighchartsReactRefObject | null>;
 };
 
-const AccountsAmountPlot = forwardRef<HighchartsReactRefObject, Props>(({ counts }, ref) => {
+const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
   const { t } = useTranslation();
   const handlePointClick = (point: CustomPoint) => {
     void navigator.clipboard.writeText(point.name);
@@ -84,7 +85,7 @@ const AccountsAmountPlot = forwardRef<HighchartsReactRefObject, Props>(({ counts
   };
 
   return <HighchartsReact ref={ref} highcharts={Highcharts} options={options} />;
-});
+};
 
 AccountsAmountPlot.displayName = 'AccountsAmountPlot';
 

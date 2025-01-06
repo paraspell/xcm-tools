@@ -50,14 +50,18 @@ const AssetsTransferedPlotContainer = () => {
 
   if (loading) {
     return (
-      <Center h="100%">
+      <Center h="100%" w="100%">
         <Loader size="xs" />
       </Center>
     );
   }
 
   if (error) {
-    return <div>{t('error')}</div>;
+    return (
+      <Center h="100%" w="100%">
+        {t('error')}
+      </Center>
+    );
   }
 
   return (

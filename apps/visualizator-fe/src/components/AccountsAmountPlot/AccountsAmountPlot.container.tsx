@@ -62,7 +62,11 @@ const AccountsAmountPlotContainer = () => {
   }
 
   if (error) {
-    return <div>{t('error')}</div>;
+    return (
+      <Center h="100%" w="100%">
+        {t('error')}
+      </Center>
+    );
   }
 
   return (

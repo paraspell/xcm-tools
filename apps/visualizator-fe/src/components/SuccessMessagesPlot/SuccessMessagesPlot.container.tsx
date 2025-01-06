@@ -34,16 +34,19 @@ const SuccessMessagesPlotContainer = () => {
 
   if (loading) {
     return (
-      <Center h="100%">
+      <Center h="100%" w="100%">
         <Loader size="xs" />
       </Center>
     );
   }
 
   if (error) {
-    return <div>{t('error')}</div>;
+    return (
+      <Center h="100%" w="100%">
+        {t('error')}
+      </Center>
+    );
   }
-
   const onDownloadZipClick = () => {
     if (!data) throw new Error('Could not download data.');
 
@@ -72,7 +75,7 @@ const SuccessMessagesPlotContainer = () => {
           onDownloadSvgClick={onDownloadSvgClick}
         />
       </Group>
-      <SuccessMessagesPlot ref={ref} counts={data?.messageCounts ?? []} />;
+      <SuccessMessagesPlot ref={ref} counts={data?.messageCounts ?? []} />
     </Stack>
   );
 };

@@ -4,6 +4,8 @@ import logoSrc from '../../assets/logo.png';
 import classes from './LogoLoader.module.css';
 import { useSpring, animated } from '@react-spring/web';
 
+const AnimatedDiv = animated('div');
+
 const LogoLoader = () => {
   const springs = useSpring({
     from: { opacity: 0 },
@@ -12,7 +14,7 @@ const LogoLoader = () => {
   });
 
   return (
-    <animated.div style={springs}>
+    <AnimatedDiv style={springs}>
       <Stack align="center" gap={0}>
         <Image w={128} src={logoSrc} />
         <Stack gap={0} align="center" mt="md" mb="sm">
@@ -21,7 +23,7 @@ const LogoLoader = () => {
         </Stack>
         <CssLoader />
       </Stack>
-    </animated.div>
+    </AnimatedDiv>
   );
 };
 
