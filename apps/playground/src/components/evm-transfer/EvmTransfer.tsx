@@ -180,15 +180,15 @@ const EvmTransfer = () => {
         .address(address)
         .signer(signer)
         .build();
+    } else {
+      await EvmBuilderPJS(provider)
+        .from(from)
+        .to(to)
+        .currency(currencyInput)
+        .address(address)
+        .signer(signer)
+        .build();
     }
-
-    await EvmBuilderPJS(provider)
-      .from(from)
-      .to(to)
-      .currency(currencyInput)
-      .address(address)
-      .signer(signer)
-      .build();
   };
 
   const submitEthTransactionApi = async (formValues: FormValuesTransformed) => {
