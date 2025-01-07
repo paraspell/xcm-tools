@@ -2,7 +2,7 @@ import { Amount, Native, type Token } from '@crypto-dex-sdk/currency';
 import BigNumber from 'bignumber.js';
 import { getBestTrade } from './bifrostUtils';
 import { type Pool } from '@crypto-dex-sdk/amm';
-import Logger from '../../Logger/Logger';
+import Logger from '../../../Logger/Logger';
 
 export const convertAmount = (
   feeAmount: BigNumber,

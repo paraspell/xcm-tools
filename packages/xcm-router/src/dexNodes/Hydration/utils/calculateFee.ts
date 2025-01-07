@@ -1,10 +1,12 @@
-import { BigNumber, type TradeRouter, bnum, type Asset } from '@galacticcouncil/sdk';
-import { type TSwapOptions } from '../../types';
-import type { TCurrencyCoreV1 } from '@paraspell/sdk-pjs';
-import { type TNode, type Extrinsic, getAssetDecimals } from '@paraspell/sdk-pjs';
-import { FEE_BUFFER } from '../../consts/consts';
-import { calculateTransactionFee } from '../../utils/utils';
-import Logger from '../../Logger/Logger';
+import type { Asset, TradeRouter } from '@galacticcouncil/sdk';
+import type { TSwapOptions } from '../../../types';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
+import { getAssetDecimals, type TNode } from '@paraspell/sdk-pjs';
+import BigNumber from 'bignumber.js';
+import { getAssetInfo, getMinAmountOut } from './utils';
+import { calculateTransactionFee } from '../../../utils/utils';
+import Logger from '../../../Logger/Logger';
+import { FEE_BUFFER } from '../../../consts';
 
 export const calculateFee = async (
   { amount, slippagePct, feeCalcAddress }: TSwapOptions,
@@ -88,44 +90,4 @@ export const calculateFee = async (
   );
 
   return finalFee.shiftedBy(currencyFromDecimals);
-};
-
-export const PCT_100 = bnum('100');
-
-export const calculateSlippage = (amount: BigNumber, slippagePct: string) => {
-  const slippage = amount.div(PCT_100).multipliedBy(slippagePct);
-  return slippage.decimalPlaces(0, 1);
-};
-
-export const getMinAmountOut = (
-  amountOut: BigNumber,
-  assetOutDecimals: number,
-  slippagePct: string,
-): { amount: BigNumber; decimals: number } => {
-  const slippage = calculateSlippage(amountOut, slippagePct);
-  const minAmountOut = amountOut.minus(slippage);
-
-  return {
-    amount: minAmountOut,
-    decimals: assetOutDecimals,
-  };
-};
-
-export const getAssetInfo = async (
-  tradeRouter: TradeRouter,
-  currency: TCurrencyCoreV1,
-): Promise<Asset | undefined> => {
-  const assets = await tradeRouter.getAllAssets();
-
-  if (
-    assets.filter((asset) =>
-      'symbol' in currency ? asset.symbol === currency.symbol : asset.id === currency.id,
-    ).length > 1
-  ) {
-    throw new Error('Duplicate currency found in HydrationDex.');
-  }
-
-  return 'symbol' in currency
-    ? assets.find((asset) => asset.symbol === currency.symbol)
-    : assets.find((asset) => asset.id === currency.id);
 };

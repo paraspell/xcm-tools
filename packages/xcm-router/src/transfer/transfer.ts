@@ -8,7 +8,7 @@ import {
 } from '../types';
 import { delay, maybeUpdateTransferStatus } from '../utils/utils';
 import { transferToExchange } from './transferToExchange';
-import { swap, createSwapExtrinsic } from './swap';
+import { swap } from './swap';
 import { transferToDestination } from './transferToDestination';
 import { selectBestExchange } from './selectBestExchange';
 import { determineFeeCalcAddress } from './utils';
@@ -17,6 +17,7 @@ import { transferToEthereum } from './transferToEthereum';
 import { transferFromEthereum } from './transferFromEthereum';
 import { findAssetFrom, findAssetTo } from '../assets/assets';
 import { validateDestinationAddress } from '../utils/validateDestinationAddress';
+import { createSwapTx } from './createSwapTx';
 
 /**
  * This function allows users to send one type of token and receive a different one on the destination chain
@@ -153,7 +154,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       from === 'Ethereum' ? 'AssetHubPolkadot' : from,
     );
     const swapApi = await dex.createApiInstance();
-    const { tx: swapTx } = await createSwapExtrinsic(originApi, swapApi, dex, modifiedOptions);
+    const { tx: swapTx } = await createSwapTx(originApi, swapApi, dex, modifiedOptions);
     await swap(modifiedOptions, swapTx, swapApi);
   } else if (type === TransactionType.TO_DESTINATION) {
     const swapApi = await dex.createApiInstance();
@@ -194,12 +195,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
       from === 'Ethereum' ? 'AssetHubPolkadot' : from,
     );
     const swapApi = await dex.createApiInstance();
-    const { tx: swapTx, amountOut } = await createSwapExtrinsic(
-      originApi,
-      swapApi,
-      dex,
-      modifiedOptions,
-    );
+    const { tx: swapTx, amountOut } = await createSwapTx(originApi, swapApi, dex, modifiedOptions);
 
     if (from === 'Ethereum' && assetHubAddress) {
       await transferFromEthereum(modifiedOptions);

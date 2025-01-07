@@ -6,7 +6,7 @@ import { type TCommonTransferOptionsModified, type TTransferOptionsModified } fr
 import { validateRelayChainCurrency } from '../utils/utils';
 import { submitTransaction } from '../utils/submitTransaction';
 import { ethers } from 'ethers';
-import { FALLBACK_FEE_CALC_ADDRESS } from '../consts/consts';
+import { FALLBACK_FEE_CALC_ADDRESS } from '../consts';
 import { findAssetInExchangeBySymbol } from '../assets/assets';
 
 export const buildToExchangeExtrinsic = (

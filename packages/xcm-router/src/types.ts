@@ -7,7 +7,7 @@ import type {
   TCurrencyCoreV1,
 } from '@paraspell/sdk-pjs';
 import { type Signer } from '@polkadot/types/types';
-import { type EXCHANGE_NODES } from './consts/consts';
+import { type EXCHANGE_NODES } from './consts';
 import type { Signer as EthSigner } from 'ethers';
 
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];

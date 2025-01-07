@@ -19,7 +19,7 @@ import {
 } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../transfer/utils';
-import { FALLBACK_FEE_CALC_ADDRESS } from '../consts/consts';
+import { FALLBACK_FEE_CALC_ADDRESS } from '../consts';
 
 describe('validateRelayChainCurrency', () => {
   it('should not throw an error for valid Polkadot currency', () => {

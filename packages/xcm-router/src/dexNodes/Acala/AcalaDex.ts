@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import type { ApiPromise } from '@polkadot/api';
 import { calculateAcalaTransactionFee, createAcalaApiInstance } from './utils';
 import BigNumber from 'bignumber.js';
-import { FEE_BUFFER } from '../../consts/consts';
+import { FEE_BUFFER } from '../../consts';
 import Logger from '../../Logger/Logger';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 
