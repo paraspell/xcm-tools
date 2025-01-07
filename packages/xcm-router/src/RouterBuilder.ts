@@ -5,6 +5,7 @@ import {
   type TTxProgressInfo,
   TransactionType,
   type TTransferOptions,
+  buildTransferExtrinsics,
 } from '.';
 import type { TCurrencyCoreV1 } from '@paraspell/sdk-pjs';
 import { type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
@@ -216,12 +217,7 @@ export class RouterBuilderObject {
     return this;
   }
 
-  /**
-   * Validates the required parameters and executes the transfer.
-   *
-   * @throws Error if required parameters are missing.
-   */
-  async build(): Promise<void> {
+  private checkRequiredParams(skipSigner = false): void {
     const requiredParams: Array<keyof TRouterBuilderOptions> = [
       'from',
       'to',
@@ -230,15 +226,41 @@ export class RouterBuilderObject {
       'amount',
       'recipientAddress',
       'injectorAddress',
-      'signer',
       'slippagePct',
     ];
+
+    if (!skipSigner) {
+      requiredParams.push('signer');
+    }
 
     for (const param of requiredParams) {
       if (this._routerBuilderOptions[param] === undefined) {
         throw new Error(`Builder object is missing parameter: ${param}`);
       }
     }
+  }
+
+  /**
+   * Builds the transfer extrinsics and returns the extrinsic hashes.
+   *
+   * @throws Error if required parameters are missing.
+   */
+  async buildHashes() {
+    this.checkRequiredParams(true);
+
+    return buildTransferExtrinsics({
+      ...(this._routerBuilderOptions as TTransferOptions),
+      type: this._routerBuilderOptions.type ?? TransactionType.FULL_TRANSFER,
+    });
+  }
+
+  /**
+   * Executes the transfer with the provided parameters.
+   *
+   * @throws Error if required parameters are missing.
+   */
+  async build(): Promise<void> {
+    this.checkRequiredParams();
 
     await transfer({
       ...(this._routerBuilderOptions as TTransferOptions),

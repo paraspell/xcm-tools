@@ -1,12 +1,13 @@
 import { getAssetDecimals, InvalidCurrencyError, type Extrinsic } from '@paraspell/sdk-pjs';
 import ExchangeNode from '../DexNode';
-import { PoolService, TradeRouter, BigNumber, PoolType } from '@galacticcouncil/sdk';
+import { PoolService, TradeRouter, PoolType } from '@galacticcouncil/sdk';
 import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
 import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
 import type { ApiPromise } from '@polkadot/api';
-import { FEE_BUFFER } from '../../consts/consts';
+import { FEE_BUFFER } from '../../consts';
 import Logger from '../../Logger/Logger';
 import { SmallAmountError } from '../../errors/SmallAmountError';
+import BigNumber from 'bignumber.js';
 
 class HydrationExchangeNode extends ExchangeNode {
   async swapCurrency(

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { Asset, TradeRouter } from '@galacticcouncil/sdk';
-import type { TCurrencyCoreV1 } from '@paraspell/sdk-pjs';
-import { getAssetInfo } from './utils';
+import { bnum, type Asset, type TradeRouter } from '@galacticcouncil/sdk';
+import type { TCurrencyCoreV1, TNode } from '@paraspell/sdk-pjs';
+import { calculateSlippage, getAssetInfo, getMinAmountOut } from './utils';
 
 describe('getAssetInfo', () => {
   const mockAssets: Asset[] = [
@@ -74,5 +74,65 @@ describe('getAssetInfo', () => {
     await expect(getAssetInfo(mockTradeRouter, currency)).rejects.toThrow(
       'Duplicate currency found in HydrationDex.',
     );
+  });
+});
+
+vi.mock('@paraspell/sdk-pjs', async () => {
+  const originalModule = await vi.importActual('@paraspell/sdk-pjs');
+  return {
+    ...originalModule,
+    getAssetDecimals: (_node: TNode, symbol: string): number | null => {
+      if (symbol === 'HDX') return 12;
+      if (symbol === 'BSX') return 12;
+      return null;
+    },
+  };
+});
+
+describe('calculateSlippage', () => {
+  it('should calculate slippage correctly (simple test)', () => {
+    const amount = bnum('1000');
+    const slippagePct = '1'; // 1%
+    // slippage = 1000 / 100 * 1 = 10
+    // returns decimalPlaces(0, 1) => 10
+    const result = calculateSlippage(amount, slippagePct);
+    expect(result.toString()).toBe('10');
+  });
+
+  it('should return 0 if slippagePct is 0', () => {
+    const amount = bnum('1000');
+    const slippagePct = '0'; // 0%
+    const result = calculateSlippage(amount, slippagePct);
+    expect(result.toString()).toBe('0');
+  });
+
+  it('should handle large slippagePct', () => {
+    const amount = bnum('1000');
+    const slippagePct = '50'; // 50%
+    // slippage = 1000 / 100 * 50 = 500
+    const result = calculateSlippage(amount, slippagePct);
+    expect(result.toString()).toBe('500');
+  });
+});
+
+describe('getMinAmountOut', () => {
+  it('should calculate minAmountOut with no slippage', () => {
+    const amountOut = bnum('1000');
+    const decimals = 12;
+    const slippagePct = '0';
+    const { amount, decimals: resultDecimals } = getMinAmountOut(amountOut, decimals, slippagePct);
+    expect(amount.toString()).toBe('1000');
+    expect(resultDecimals).toBe(decimals);
+  });
+
+  it('should calculate minAmountOut with slippage', () => {
+    const amountOut = bnum('1000');
+    const decimals = 12;
+    const slippagePct = '5'; // 5%
+    // slippage = 1000 * (5/100) = 50
+    // minAmountOut = 1000 - 50 = 950
+    const { amount, decimals: resultDecimals } = getMinAmountOut(amountOut, decimals, slippagePct);
+    expect(amount.toString()).toBe('950');
+    expect(resultDecimals).toBe(decimals);
   });
 });

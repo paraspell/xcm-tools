@@ -1,5 +1,5 @@
 import { type TNode, createApiInstanceForNode } from '@paraspell/sdk-pjs';
-import { EXCHANGE_NODES } from '../consts/consts';
+import { EXCHANGE_NODES } from '../consts';
 import createDexNodeInstance from '../dexNodes/DexNodeFactory';
 import { type TCommonTransferOptionsModified, type TCommonTransferOptions } from '../types';
 import { calculateTransactionFee } from '../utils/utils';

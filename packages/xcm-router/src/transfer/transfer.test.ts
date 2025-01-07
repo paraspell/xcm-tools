@@ -16,6 +16,7 @@ import type { Signer } from '@polkadot/types/types';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
+import { createSwapTx } from './createSwapTx';
 
 vi.mock('@paraspell/sdk-pjs', async () => {
   const actual = await vi.importActual('@paraspell/sdk-pjs');
@@ -27,10 +28,13 @@ vi.mock('@paraspell/sdk-pjs', async () => {
   };
 });
 
+vi.mock('./createSwapTx', () => ({
+  createSwapTx: vi.fn(),
+}));
+
 describe('transfer', () => {
   let transferToExchangeSpy: MockInstance;
   let swapSpy: MockInstance;
-  let createSwapExtrinsicSpy: MockInstance;
   let transferToDestinationSpy: MockInstance;
   let transferToEthereumSpy: MockInstance;
   let transferFromEthereumSpy: MockInstance;
@@ -44,7 +48,7 @@ describe('transfer', () => {
       .spyOn(transferToExchange, 'transferToExchange')
       .mockResolvedValue('');
     swapSpy = vi.spyOn(swap, 'swap').mockResolvedValue('');
-    createSwapExtrinsicSpy = vi.spyOn(swap, 'createSwapExtrinsic').mockResolvedValue({
+    vi.mocked(createSwapTx).mockResolvedValue({
       amountOut: '1',
       tx: {} as Extrinsic,
     });
@@ -73,7 +77,7 @@ describe('transfer', () => {
     };
     await transfer(options);
     expect(transferToExchangeSpy).toHaveBeenCalled();
-    expect(createSwapExtrinsicSpy).toHaveBeenCalled();
+    expect(createSwapTx).toHaveBeenCalled();
     expect(swapSpy).toHaveBeenCalled();
     expect(transferToDestinationSpy).toHaveBeenCalled();
   });

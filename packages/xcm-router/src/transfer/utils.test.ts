@@ -17,7 +17,7 @@ import {
 } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
 import * as transactionUtils from '../utils/submitTransaction';
-import { FALLBACK_FEE_CALC_ADDRESS } from '../consts/consts';
+import { FALLBACK_FEE_CALC_ADDRESS } from '../consts';
 
 const builderMock = {
   from: vi.fn().mockReturnThis(),

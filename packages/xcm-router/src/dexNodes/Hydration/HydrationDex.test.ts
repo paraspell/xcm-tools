@@ -1,91 +1,234 @@
-// Integration tests for HydrationExchangeNodeDex
-
-import { describe, expect, it } from 'vitest';
-import { type TTransferOptionsModified } from '../../types';
-import HydrationExchangeNode from './HydrationDex';
-import { MOCK_TRANSFER_OPTIONS, performSwap } from '../../utils/utils.test';
-import type { TCurrencyCoreV1, TNodePolkadotKusama } from '@paraspell/sdk-pjs';
-import { type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import type { Asset } from '@galacticcouncil/sdk';
+import { TradeRouter } from '@galacticcouncil/sdk';
+import { getAssetDecimals, InvalidCurrencyError, type Extrinsic } from '@paraspell/sdk-pjs';
+import type { ApiPromise } from '@polkadot/api';
 import { SmallAmountError } from '../../errors/SmallAmountError';
-import type ExchangeNode from '../DexNode';
-import { findAssetFrom, findAssetTo } from '../../assets/assets';
+import * as utils from './utils';
+import HydrationExchangeNode from './HydrationDex';
+import type { TSwapOptions } from '../../types';
+import BigNumber from 'bignumber.js';
 
-export async function testSwap(
-  dex: ExchangeNode,
-  exchange: TNodePolkadotKusama,
-  currencyFrom: TCurrencyCoreV1,
-  currencyTo: TCurrencyCoreV1,
-  amount: string,
-  to: TNodeWithRelayChains,
-  from: TNodeWithRelayChains,
-  checkTx = true,
-): Promise<void> {
-  const assetFrom = findAssetFrom(from, dex.exchangeNode, currencyFrom);
+vi.mock('@galacticcouncil/sdk', () => ({
+  PoolService: vi.fn(),
+  TradeRouter: vi.fn().mockImplementation(() => ({
+    getAllAssets: vi.fn(),
+    getBestSell: vi.fn(),
+    getBestSpotPrice: vi.fn(),
+  })),
+  PoolType: {
+    XYK: 'xyk',
+  },
+}));
 
-  if (!assetFrom && 'id' in currencyFrom) {
-    throw new Error(`Currency from ${JSON.stringify(currencyFrom)} not found in ${from}.`);
-  }
+vi.mock('@paraspell/sdk-pjs', () => ({
+  getAssetDecimals: vi.fn(),
+  InvalidCurrencyError: class extends Error {},
+}));
 
-  const assetTo = findAssetTo(dex.exchangeNode, from, to, currencyTo, exchange === undefined);
+vi.mock('./utils', () => ({
+  getAssetInfo: vi.fn(),
+  getMinAmountOut: vi.fn(),
+  calculateFee: vi.fn(),
+}));
 
-  if (!assetTo && 'id' in currencyTo) {
-    throw new Error(`Currency to ${JSON.stringify(currencyTo)} not found in ${from}.`);
-  }
+describe('HydrationExchangeNode', () => {
+  const api = {} as ApiPromise;
+  let node: HydrationExchangeNode;
 
-  const options: TTransferOptionsModified = {
-    ...MOCK_TRANSFER_OPTIONS,
-    currencyFrom,
-    currencyTo,
-    assetFrom,
-    assetTo,
-    amount,
-    to,
-    exchangeNode: exchange,
-    from,
-  };
-  const tx = await performSwap(options, dex);
-  if (checkTx) expect(tx).toBeDefined();
-}
+  beforeEach(() => {
+    vi.clearAllMocks();
 
-describe('HydrationDex - integration', () => {
-  it('should build a transfer extrinsic without error on Hydration', async () => {
-    const dex = new HydrationExchangeNode('Hydration', 'HydrationDex');
-    await testSwap(
-      dex,
-      'Hydration',
-      { symbol: 'ASTR' },
-      { symbol: 'BNC' },
-      '38821036538894063687',
-      'BifrostPolkadot',
-      'Astar',
-    );
+    node = new HydrationExchangeNode('Hydration', 'HydrationDex');
   });
 
-  it('should return asset symbols', async () => {
-    const dex = new HydrationExchangeNode('Hydration', 'HydrationDex');
-    const api = await dex.createApiInstance();
-    const assets = await dex.getAssets(api);
-    expect(assets.length).toBeGreaterThan(0);
-    assets.forEach((asset) => {
-      expect(asset.symbol).toBeDefined();
-      expect(asset.symbol).not.toBeNull();
-      expect(asset).toHaveProperty('symbol');
-      expect(asset).toHaveProperty('id');
+  describe('swapCurrency', () => {
+    it('throws if currencyFrom does not exist', async () => {
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce(undefined);
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '2' } as Asset);
+
+      const options = {
+        assetFrom: { symbol: 'NON_EXISTENT' },
+        assetTo: { symbol: 'XYZ' },
+        currencyFrom: {},
+        currencyTo: {},
+        slippagePct: '1',
+        amount: '100',
+      } as TSwapOptions;
+      const toDestTransactionFee = BigNumber('10');
+
+      await expect(node.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+        InvalidCurrencyError,
+      );
+    });
+
+    it('throws if currencyTo does not exist', async () => {
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '1' } as Asset);
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce(undefined);
+
+      const options = {
+        assetFrom: { symbol: 'ABC' },
+        assetTo: { symbol: 'NON_EXISTENT' },
+        currencyFrom: {},
+        currencyTo: {},
+        slippagePct: '1',
+        amount: '100',
+      } as TSwapOptions;
+
+      const toDestTransactionFee = BigNumber('10');
+
+      await expect(node.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+        InvalidCurrencyError,
+      );
+    });
+
+    it('throws if either currencyFromDecimals or currencyToDecimals is falsy', async () => {
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 0, id: '1' } as Asset);
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '2' } as Asset);
+
+      const options = {
+        assetFrom: { symbol: 'ABC' },
+        assetTo: { symbol: 'XYZ' },
+        currencyFrom: {},
+        currencyTo: {},
+        slippagePct: '1',
+        amount: '100',
+      } as TSwapOptions;
+
+      const toDestTransactionFee = BigNumber('10');
+
+      await expect(node.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+        InvalidCurrencyError,
+      );
+    });
+
+    it('throws if the amountWithoutFee becomes negative', async () => {
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '1' } as Asset);
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '2' } as Asset);
+
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('150'));
+
+      const options = {
+        assetFrom: { symbol: 'ABC' },
+        assetTo: { symbol: 'XYZ' },
+        currencyFrom: {},
+        currencyTo: {},
+        slippagePct: '1',
+        amount: '100',
+      } as TSwapOptions;
+
+      const toDestTransactionFee = BigNumber('10');
+
+      await expect(node.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+        SmallAmountError,
+      );
+    });
+
+    it('calls tradeRouter.getBestSell with correct arguments and returns correct tx / amountOut', async () => {
+      vi.spyOn(utils, 'getAssetInfo')
+        .mockResolvedValueOnce({ decimals: 12, id: '1', symbol: 'ABC' } as Asset)
+        .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
+        .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset);
+
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('10'));
+      vi.spyOn(utils, 'getMinAmountOut').mockReturnValue({ amount: BigNumber('80'), decimals: 12 });
+
+      const mockToTxGet = vi.fn().mockResolvedValue('mockExtrinsic' as unknown as Extrinsic);
+      const mockTrade = {
+        amountOut: new BigNumber('10000000000000000'),
+        toTx: vi.fn().mockReturnValue({ get: mockToTxGet }),
+      };
+
+      vi.mocked(TradeRouter).mockImplementation(
+        () =>
+          ({
+            getBestSell: vi.fn().mockResolvedValue(mockTrade),
+            getBestSpotPrice: vi
+              .fn()
+              .mockResolvedValue({ amount: new BigNumber('1'), decimals: 12 }),
+          }) as unknown as TradeRouter,
+      );
+
+      vi.mocked(getAssetDecimals).mockReturnValue(12);
+
+      const options = {
+        assetFrom: { symbol: 'ABC' },
+        assetTo: { symbol: 'XYZ' },
+        currencyFrom: {},
+        currencyTo: {},
+        slippagePct: '1',
+        amount: '10000',
+      } as TSwapOptions;
+      const toDestTransactionFee = new BigNumber('10');
+
+      const result = await node.swapCurrency(api, options, toDestTransactionFee);
+
+      expect(result.tx).toBe('mockExtrinsic');
+      expect(typeof result.amountOut).toBe('string');
+
+      expect(mockTrade.toTx).toHaveBeenCalledWith(new BigNumber('80'));
+      expect(mockToTxGet).toHaveBeenCalled();
+    });
+
+    it('throws SmallAmountError if final amountOut is negative after fees', async () => {
+      vi.spyOn(utils, 'getAssetInfo')
+        .mockResolvedValueOnce({ decimals: 12, id: '1', symbol: 'ABC' } as Asset)
+        .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
+        .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset);
+
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('10'));
+      vi.spyOn(utils, 'getMinAmountOut').mockReturnValue({ amount: BigNumber('80'), decimals: 12 });
+
+      const mockToTxGet = vi.fn().mockResolvedValue('mockExtrinsic' as unknown as Extrinsic);
+      const mockTrade = {
+        amountOut: new BigNumber('5'),
+        toTx: vi.fn().mockReturnValue({ get: mockToTxGet }),
+      };
+      vi.mocked(TradeRouter).mockImplementation(
+        () =>
+          ({
+            getBestSell: vi.fn().mockResolvedValue(mockTrade),
+            getBestSpotPrice: vi
+              .fn()
+              .mockResolvedValue({ amount: new BigNumber('1'), decimals: 12 }),
+          }) as unknown as TradeRouter,
+      );
+
+      vi.mocked(getAssetDecimals).mockReturnValue(12);
+
+      const options = {
+        assetFrom: { symbol: 'ABC' },
+        assetTo: { symbol: 'XYZ' },
+        currencyFrom: {},
+        currencyTo: {},
+        slippagePct: '1',
+        amount: '100',
+      } as TSwapOptions;
+
+      const toDestTransactionFee = BigNumber('99999');
+
+      await expect(node.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+        SmallAmountError,
+      );
     });
   });
 
-  it('should throw SmallAmountError when the amount is too small to cover fees', async () => {
-    const dex = new HydrationExchangeNode('Hydration', 'HydrationDex');
-    await expect(
-      testSwap(
-        dex,
-        'Hydration',
-        { symbol: 'ASTR' },
-        { symbol: 'BNC' },
-        '100',
-        'BifrostPolkadot',
-        'Astar',
-      ),
-    ).rejects.toThrow(SmallAmountError);
+  describe('getAssets', () => {
+    it('returns a list of assets in the correct format', async () => {
+      const mockAssets = [
+        { symbol: 'ABC', id: 1 },
+        { symbol: 'XYZ', id: 2 },
+      ];
+      vi.mocked(TradeRouter).mockImplementation(
+        () =>
+          ({
+            getAllAssets: vi.fn().mockResolvedValue(mockAssets),
+          }) as unknown as TradeRouter,
+      );
+
+      const assets = await node.getAssets(api);
+
+      expect(assets).toEqual(mockAssets);
+    });
   });
 });

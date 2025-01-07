@@ -2,19 +2,14 @@ import ExchangeNode from '../DexNode';
 import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
 import type { ApiPromise } from '@polkadot/api';
 import { getParaId } from '@paraspell/sdk-pjs';
-import { getBestTrade, getFilteredPairs, getTokenMap } from './bifrostUtils';
-import { Amount, Token, getCurrencyCombinations, type TokenMap } from '@crypto-dex-sdk/currency';
+import { convertAmount, findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
+import { Amount, Token, getCurrencyCombinations } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import { Percent } from '@crypto-dex-sdk/math';
 import BigNumber from 'bignumber.js';
-import { convertAmount } from './utils';
-import { FEE_BUFFER } from '../../consts/consts';
+import { FEE_BUFFER } from '../../consts';
 import Logger from '../../Logger/Logger';
 import { SmallAmountError } from '../../errors/SmallAmountError';
-
-const findToken = (tokenMap: TokenMap, symbol: string): Token | undefined => {
-  return Object.values(tokenMap).find((item) => item.wrapped.symbol === symbol)?.wrapped;
-};
 
 class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(

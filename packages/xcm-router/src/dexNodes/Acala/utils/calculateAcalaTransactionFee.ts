@@ -1,44 +1,14 @@
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { options } from '@acala-network/api';
-import type { TNodePolkadotKusama } from '@paraspell/sdk-pjs';
-import { getNodeProviders, type Extrinsic } from '@paraspell/sdk-pjs';
-import BigNumber from 'bignumber.js';
-import { type Wallet } from '@acala-network/sdk';
-import { type TSwapOptions } from '../../types';
-import { type AggregateDex } from '@acala-network/sdk-swap';
+import type { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber, type Token } from '@acala-network/sdk-core';
+import type { AggregateDex } from '@acala-network/sdk-swap';
+import type { TSwapOptions } from '../../../types';
+import BigNumber from 'bignumber.js';
 import { firstValueFrom } from 'rxjs';
-import { FEE_BUFFER } from '../../consts/consts';
-import { calculateTransactionFee } from '../../utils/utils';
-import Logger from '../../Logger/Logger';
-
-export const createAcalaApiInstance = async (node: TNodePolkadotKusama): Promise<ApiPromise> => {
-  const provider = new WsProvider(getNodeProviders(node), 100);
-  const api = new ApiPromise(
-    options({
-      provider,
-    }),
-  );
-  await api.isReady;
-  return api;
-};
-
-export const convertCurrency = async (
-  wallet: Wallet,
-  nativeCurrencySymbol: string,
-  otherCurrencySymbol: string,
-  otherCurrencyAmount: number,
-): Promise<number> => {
-  const nativeUsdPrice = (await wallet.getPrice(nativeCurrencySymbol)).toNumber();
-  const otherUsdPrice = (await wallet.getPrice(otherCurrencySymbol)).toNumber();
-
-  if (otherUsdPrice === 0) {
-    throw new Error(`Could not fetch price for ${otherCurrencySymbol}`);
-  }
-
-  const feeInUsd = otherCurrencyAmount * nativeUsdPrice;
-  return feeInUsd / otherUsdPrice;
-};
+import type { Extrinsic } from '@paraspell/sdk-pjs';
+import { calculateTransactionFee } from '../../../utils/utils';
+import Logger from '../../../Logger/Logger';
+import { convertCurrency } from './utils';
+import { FEE_BUFFER } from '../../../consts';
 
 export const calculateAcalaTransactionFee = async (
   dex: AggregateDex,

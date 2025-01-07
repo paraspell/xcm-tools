@@ -22,6 +22,7 @@ import {
   DEFULT_TOKEN_LIST_MAP,
 } from '@crypto-dex-sdk/token-lists';
 import { type TNode } from '@paraspell/sdk-pjs';
+import { type TokenMap as SdkTokenMap } from '@crypto-dex-sdk/currency';
 
 export type TokenMap = Readonly<Record<string, { token: WrappedTokenInfo; list?: TokenList }>>;
 export type ChainTokenMap = Readonly<Record<number, TokenMap>>;
@@ -213,3 +214,6 @@ export const getBestTrade = (
 
   return trades[0];
 };
+
+export const findToken = (tokenMap: SdkTokenMap, symbol: string): Token | undefined =>
+  Object.values(tokenMap).find((item) => item.wrapped.symbol === symbol)?.wrapped;
