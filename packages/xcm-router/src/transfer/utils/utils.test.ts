@@ -8,16 +8,16 @@ import {
   submitTransferToDestination,
   submitTransferToExchange,
 } from './utils';
-import { type TTransferOptionsModified } from '../types';
-import { transferParams } from '../RouterBuilder.test';
+import { type TTransferOptionsModified } from '../../types';
+import { transferParams } from '../../RouterBuilder.test';
 import {
   type TNodeWithRelayChains,
   createApiInstanceForNode,
   type Extrinsic,
 } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
-import * as transactionUtils from '../utils/submitTransaction';
-import { FALLBACK_FEE_CALC_ADDRESS } from '../consts';
+import * as transactionUtils from '../../utils/submitTransaction';
+import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
 
 const builderMock = {
   from: vi.fn().mockReturnThis(),

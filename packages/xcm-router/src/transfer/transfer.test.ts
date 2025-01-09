@@ -222,7 +222,7 @@ describe('transfer', () => {
     const options: TTransferOptions = {
       ...MOCK_TRANSFER_OPTIONS,
       exchange: 'HydrationDex',
-      evmInjectorAddress: '0xDEF456',
+      evmInjectorAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
       evmSigner: undefined,
     };
     await expect(transfer(options)).rejects.toThrow(
