@@ -259,11 +259,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return this.disconnectAllowed
   }
 
-  disconnect() {
-    if (!this.disconnectAllowed) return Promise.resolve()
+  disconnect(force = false) {
+    if (!force && !this.disconnectAllowed) return Promise.resolve()
 
     // Disconnect api only if it was created automatically
-    if (typeof this._api === 'string' || this._api === undefined) {
+    if (force || typeof this._api === 'string' || this._api === undefined) {
       this.api.destroy()
     }
     return Promise.resolve()

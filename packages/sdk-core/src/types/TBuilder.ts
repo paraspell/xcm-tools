@@ -98,6 +98,7 @@ export interface ICurrencyBuilder<TApi, TRes> {
 }
 
 export interface IFinalBuilder<TRes> {
+  disconnect: () => Promise<void>
   build: () => Promise<TRes>
 }
 
@@ -124,6 +125,7 @@ export interface IAddToBatchBuilder<TApi, TRes> {
 export interface IFinalBuilderWithOptions<TApi, TRes> extends IAddToBatchBuilder<TApi, TRes> {
   xcmVersion: (version: Version) => this
   customPallet: (pallet: string, method: string) => this
+  disconnect: () => Promise<void>
   build: () => Promise<TRes>
   dryRun: () => Promise<TDryRunResult>
 }
