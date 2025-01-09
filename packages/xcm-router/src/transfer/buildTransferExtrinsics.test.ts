@@ -11,7 +11,7 @@ import type { TBuildTransferExtrinsicsOptions } from '../types';
 import { TransactionType } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
-import { xcmPallet, createApiInstanceForNode } from '@paraspell/sdk-pjs';
+import { createApiInstanceForNode, buildEthTransferOptions } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
@@ -22,9 +22,7 @@ vi.mock('@paraspell/sdk-pjs', async () => {
     createApiInstanceForNode: vi.fn().mockResolvedValue({
       disconnect: () => {},
     }),
-    xcmPallet: {
-      buildEthTransferOptions: vi.fn(),
-    },
+    buildEthTransferOptions: vi.fn(),
   };
 });
 
@@ -53,7 +51,7 @@ describe('buildTransferExtrinsics', () => {
       swapCurrency: vi.fn().mockResolvedValue({}),
     } as unknown as ExchangeNode);
 
-    vi.spyOn(xcmPallet, 'buildEthTransferOptions').mockResolvedValue({
+    vi.mocked(buildEthTransferOptions).mockResolvedValue({
       token: 'token123',
       destinationParaId: 1000,
       destinationFee: 500n,
@@ -93,6 +91,7 @@ describe('buildTransferExtrinsics', () => {
       exchange: 'AcalaDex',
       currencyTo: { symbol: 'WETH' },
       assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
+      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
       to: 'Ethereum',
     };
     const result = await buildTransferExtrinsics(options);
@@ -184,6 +183,7 @@ describe('buildTransferExtrinsics', () => {
       ...MOCK_TRANSFER_OPTIONS,
       exchange: 'AcalaDex',
       to: 'Ethereum',
+      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
       assetHubAddress: undefined,
     };
     await expect(buildTransferExtrinsics(options)).rejects.toThrow(
@@ -251,6 +251,7 @@ describe('buildTransferExtrinsics', () => {
       from: 'Hydration',
       to: 'Ethereum',
       type: TransactionType.TO_ETH,
+      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
       assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
       ethAddress: '0x1234567890123456789012345678901234567890',
     };
@@ -262,6 +263,7 @@ describe('buildTransferExtrinsics', () => {
   it('handles TO_DESTINATION transaction type correctly', async () => {
     const options: TBuildTransferExtrinsicsOptions = {
       ...MOCK_TRANSFER_OPTIONS,
+      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
       exchange: 'AcalaDex',
       currencyTo: { symbol: 'WBTC' },
       from: 'Hydration',
@@ -311,6 +313,7 @@ describe('buildTransferExtrinsics', () => {
   it('handles TO_EXCHANGE transaction type correctly - from Ethereum to Ethereum', async () => {
     const options: TBuildTransferExtrinsicsOptions = {
       ...MOCK_TRANSFER_OPTIONS,
+      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
       exchange: 'HydrationDex',
       from: 'Ethereum',
       currencyFrom: { symbol: 'WETH' },
