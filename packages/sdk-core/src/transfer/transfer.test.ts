@@ -14,17 +14,12 @@ import {
 } from './utils/validationUtils'
 import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import { getNode } from '../utils'
-import { isPjsClient } from '../utils/isPjsClient'
 import type { TCurrencyInput, TMultiLocationValueWithOverride, TSendOptions } from '../types'
 
 vi.mock('../utils', () => ({
   getNode: vi.fn(),
   isPjsClient: vi.fn(),
   isRelayChain: vi.fn()
-}))
-
-vi.mock('../utils/isPjsClient', () => ({
-  isPjsClient: vi.fn()
 }))
 
 vi.mock('../utils/multiLocation/isOverrideMultiLocationSpecifier', () => ({
@@ -72,9 +67,6 @@ describe('send', () => {
     } as unknown as ParachainNode<unknown, unknown>
 
     vi.mocked(getNode).mockReturnValue(originNodeMock)
-
-    vi.mocked(isPjsClient).mockReturnValue(true)
-
     vi.mocked(isBridgeTransfer).mockReturnValue(false)
     vi.mocked(determineAssetCheckEnabled).mockReturnValue(true)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' })
@@ -95,7 +87,6 @@ describe('send', () => {
     } as TSendOptions<unknown, unknown>
     const transferSpy = vi.spyOn(originNodeMock, 'transfer')
     const apiSpy = vi.spyOn(apiMock, 'init')
-    const apiDisconnectSpy = vi.spyOn(apiMock, 'disconnect')
 
     const result = await send(options)
 
@@ -116,10 +107,6 @@ describe('send', () => {
       version: options.version,
       ahAddress: options.ahAddress
     })
-
-    expect(isPjsClient).toHaveBeenCalledWith(apiMock.getApi())
-
-    expect(apiDisconnectSpy).toHaveBeenCalled()
 
     expect(result).toBe('transferResult')
   })
@@ -151,28 +138,7 @@ describe('send', () => {
     expect(result).toBe('transferResult')
   })
 
-  it('should not disconnect if api is not a PjsClient', async () => {
-    vi.mocked(isPjsClient).mockReturnValue(false)
-
-    const options = {
-      api: apiMock,
-      origin: 'Acala',
-      currency: { symbol: 'TEST', amount: 100 },
-      address: 'some-address',
-      destination: 'Astar'
-    } as TSendOptions<unknown, unknown>
-
-    const result = await send(options)
-
-    expect(isPjsClient).toHaveBeenCalledWith(apiMock.getApi())
-
-    const apiSpy = vi.spyOn(apiMock, 'init')
-    expect(apiSpy).not.toHaveBeenCalled()
-
-    expect(result).toBe('transferResult')
-  })
-
-  it('should handle exceptions and still disconnect if api is a PjsClient', async () => {
+  it('should handle exceptions', async () => {
     apiMock.init = vi.fn().mockRejectedValue(new Error('Initialization Error'))
 
     const options = {

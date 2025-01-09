@@ -2,7 +2,6 @@
 
 import type { TNativeAsset, TRelayToParaDestination, TSendOptions } from '../types'
 import { getNode, isRelayChain } from '../utils'
-import { isPjsClient } from '../utils/isPjsClient'
 import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
 import { isBridgeTransfer } from './utils/isBridgeTransfer'
@@ -76,31 +75,25 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   await api.init(origin)
 
-  try {
-    // In case asset check is disabled, we create asset object from currency symbol
-    const resolvedAsset =
-      asset ??
-      ({
-        symbol: 'symbol' in currency ? currency.symbol : undefined
-      } as TNativeAsset)
+  // In case asset check is disabled, we create asset object from currency symbol
+  const resolvedAsset =
+    asset ??
+    ({
+      symbol: 'symbol' in currency ? currency.symbol : undefined
+    } as TNativeAsset)
 
-    const originNode = getNode<TApi, TRes, typeof origin>(origin)
+  const originNode = getNode<TApi, TRes, typeof origin>(origin)
 
-    return await originNode.transfer({
-      api,
-      asset: { ...resolvedAsset, amount: 'multiasset' in currency ? 0 : currency.amount },
-      address,
-      destination,
-      paraIdTo,
-      overriddenAsset,
-      version,
-      ahAddress,
-      pallet,
-      method
-    })
-  } finally {
-    if (isPjsClient(api.getApi())) {
-      await api.disconnect()
-    }
-  }
+  return originNode.transfer({
+    api,
+    asset: { ...resolvedAsset, amount: 'multiasset' in currency ? 0 : currency.amount },
+    address,
+    destination,
+    paraIdTo,
+    overriddenAsset,
+    version,
+    ahAddress,
+    pallet,
+    method
+  })
 }

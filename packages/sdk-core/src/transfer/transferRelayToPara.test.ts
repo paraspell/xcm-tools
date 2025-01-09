@@ -1,7 +1,6 @@
 import type { MockInstance } from 'vitest'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { determineRelayChain, getNode } from '../utils'
-import { isPjsClient } from '../utils/isPjsClient'
 import { transferRelayToPara } from './transferRelayToPara'
 import type { IPolkadotApi } from '../api'
 import type ParachainNode from '../nodes/ParachainNode'
@@ -12,10 +11,6 @@ import { Version, type TMultiLocation, type TRelayToParaOptions } from '../types
 vi.mock('../utils', () => ({
   determineRelayChain: vi.fn(),
   getNode: vi.fn()
-}))
-
-vi.mock('../utils/isPjsClient', () => ({
-  isPjsClient: vi.fn()
 }))
 
 vi.mock('../pallets/assets', () => ({
@@ -49,7 +44,6 @@ describe('transferRelayToPara', () => {
     } as unknown as ParachainNode<unknown, unknown>
 
     vi.mocked(getNode).mockReturnValue(nodeMock)
-    vi.mocked(isPjsClient).mockReturnValue(true)
     vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
     vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
     vi.mocked(resolveTNodeFromMultiLocation).mockReturnValue('Acala')
@@ -146,44 +140,7 @@ describe('transferRelayToPara', () => {
     expect(apiSpy).toHaveBeenCalledWith('serializedApiCall')
   })
 
-  it('should disconnect api if isPjsClient returns true', async () => {
-    vi.mocked(isPjsClient).mockReturnValue(true)
-    const options: TRelayToParaOptions<unknown, unknown> = {
-      api: apiMock,
-      origin: 'Polkadot',
-      destination: 'Astar',
-      asset: { symbol: 'DOT', amount: 100 },
-      address: 'some-address'
-    }
-
-    const apiSpy = vi.spyOn(apiMock, 'disconnect')
-
-    await transferRelayToPara(options)
-
-    expect(isPjsClient).toHaveBeenCalledWith(apiMock.getApi())
-    expect(apiSpy).toHaveBeenCalled()
-  })
-
-  it('should not disconnect api if isPjsClient returns false', async () => {
-    vi.mocked(isPjsClient).mockReturnValue(false)
-    const options: TRelayToParaOptions<unknown, unknown> = {
-      api: apiMock,
-      origin: 'Polkadot',
-      destination: 'Astar',
-      asset: { symbol: 'DOT', amount: 100 },
-      address: 'some-address'
-    }
-
-    const spy = vi.spyOn(apiMock, 'disconnect')
-
-    await transferRelayToPara(options)
-
-    expect(isPjsClient).toHaveBeenCalledWith(apiMock.getApi())
-    expect(spy).not.toHaveBeenCalled()
-  })
-
-  it('should handle exceptions and still disconnect api if isPjsClient returns true', async () => {
-    vi.mocked(isPjsClient).mockReturnValue(true)
+  it('should handle exceptions', async () => {
     apiMock.callTxMethod = vi.fn().mockRejectedValue(new Error('Some error'))
 
     const options: TRelayToParaOptions<unknown, unknown> = {
@@ -194,11 +151,7 @@ describe('transferRelayToPara', () => {
       address: 'some-address'
     }
 
-    const apiSpy = vi.spyOn(apiMock, 'disconnect')
-
     await expect(transferRelayToPara(options)).rejects.toThrow('Some error')
-
-    expect(apiSpy).toHaveBeenCalled()
   })
 
   it('should pass optional parameters when provided', async () => {

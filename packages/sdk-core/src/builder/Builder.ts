@@ -208,6 +208,10 @@ export class GeneralBuilder<TApi, TRes>
       node: this._from
     })
   }
+
+  async disconnect() {
+    return this.api.disconnect(true)
+  }
 }
 
 /**

@@ -529,6 +529,29 @@ describe('PapiApi', () => {
 
       mockDisconnect.mockRestore()
     })
+
+    it('should disconnect the api when force is true', async () => {
+      const mockDisconnect = vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
+
+      papiApi.setApi('api')
+      await papiApi.disconnect(true)
+
+      expect(mockDisconnect).toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
+    })
+
+    it('should not disconnect the api when force is false and disconnect is not allowed', async () => {
+      const mockDisconnect = vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
+
+      papiApi.setApi('api')
+      papiApi.setDisconnectAllowed(false)
+      await papiApi.disconnect(false)
+
+      expect(mockDisconnect).not.toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
+    })
   })
 
   describe('getBalanceNativeAcala', () => {

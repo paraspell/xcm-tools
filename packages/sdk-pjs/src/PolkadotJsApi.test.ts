@@ -541,6 +541,29 @@ describe('PolkadotJsApi', () => {
 
       mockDisconnect.mockRestore()
     })
+
+    it('should disconnect the api when force is true', async () => {
+      const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
+
+      polkadotApi.setApi('api')
+      await polkadotApi.disconnect(true)
+
+      expect(mockDisconnect).toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
+    })
+
+    it('should not disconnect the api when force is false and disconnectAllowed is false', async () => {
+      const mockDisconnect = vi.spyOn(mockApiPromise, 'disconnect').mockResolvedValue()
+
+      polkadotApi.setApi('api')
+      polkadotApi.setDisconnectAllowed(false)
+      await polkadotApi.disconnect(false)
+
+      expect(mockDisconnect).not.toHaveBeenCalled()
+
+      mockDisconnect.mockRestore()
+    })
   })
 
   describe('getBalanceNativeAcala', () => {

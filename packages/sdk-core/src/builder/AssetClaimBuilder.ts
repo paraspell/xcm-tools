@@ -90,6 +90,10 @@ class AssetClaimBuilder<TApi, TRes>
     const options = this.buildOptions()
     return (await claimAssets(options)) as TRes
   }
+
+  async disconnect() {
+    return this.api.disconnect(true)
+  }
 }
 
 export default AssetClaimBuilder

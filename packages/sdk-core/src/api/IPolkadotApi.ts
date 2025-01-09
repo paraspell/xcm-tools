@@ -38,5 +38,5 @@ export interface IPolkadotApi<TApi, TRes> {
   getDryRun(options: TDryRunBaseOptions<TRes>): Promise<TDryRunResult>
   setDisconnectAllowed(allowed: boolean): void
   getDisconnectAllowed(): boolean
-  disconnect(): Promise<void>
+  disconnect(force?: boolean): Promise<void>
 }

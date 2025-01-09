@@ -30,6 +30,7 @@ describe('Builder', () => {
     setApi: vi.fn(),
     callTxMethod: vi.fn(),
     setDisconnectAllowed: vi.fn(),
+    disconnect: vi.fn(),
     clone: vi.fn().mockReturnValue({
       init: vi.fn(),
       setApi: vi.fn(),
@@ -607,6 +608,25 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledTimes(2)
     })
+
+    it('should disconnect the api after building', async () => {
+      const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+
+      const builder = Builder(mockApi)
+        .from('Polkadot')
+        .to(NODE_2)
+        .currency({ symbol: 'DOT', amount: AMOUNT })
+        .address(ADDRESS)
+
+      const tx = await builder.build()
+      expect(tx).toBeDefined()
+
+      await builder.disconnect()
+
+      expect(disconnectAllowedSpy).not.toHaveBeenCalled()
+      expect(disconnectSpy).toHaveBeenCalledWith(true)
+    })
   })
 
   describe('Claim asset', () => {
@@ -636,6 +656,27 @@ describe('Builder', () => {
 
       expect(tx).toHaveProperty('method')
       expect(tx).toHaveProperty('args')
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+
+    it('should disconnect the api after building', async () => {
+      const spy = vi.spyOn(claimAssets, 'claimAssets').mockResolvedValue({
+        method: 'claim',
+        args: []
+      })
+
+      const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+      const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+
+      const builder = Builder(mockApi).claimFrom(NODE).fungible([]).account(ADDRESS)
+
+      const tx = await builder.build()
+      expect(tx).toBeDefined()
+
+      await builder.disconnect()
+
+      expect(disconnectAllowedSpy).not.toHaveBeenCalled()
+      expect(disconnectSpy).toHaveBeenCalledWith(true)
       expect(spy).toHaveBeenCalledTimes(1)
     })
   })

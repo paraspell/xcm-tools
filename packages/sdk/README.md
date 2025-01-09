@@ -78,32 +78,38 @@ NOTES:
 - ParaSpell now offers advanced asset symbol selection {symbol: "symbol"} for non duplicate assets, {symbol: Native("symbol")} or {symbol: Foreign("symbol")} if the duplicates are between native and foreign assets and {symbol: ForeignAbstract("symbol")} if the duplicates are in foreign assets only. You will get an error that will guide you further if you simply start with {symbol: "symbol"}.
 - You can now select assets by multilocation by simply using { multilocation: string | JSON }. The custom multilocation selection remains supported, but in order to use it you now have to use override - {multilocation: Override('Custom Multilocation')}.
 - The balance queries also support multilocation asset selection
+- PAPI version of SDK is now fully PJS-less (We removed apps/config as dependency entirely).
+- You can now query foreign asset minimal deposits also.
 ```
 
 ```
 Latest news:
-- PAPI version of SDK is now fully PJS-less (We removed apps/config as dependency entirely).
-- You can now query foreign asset minimal deposits also.
 - Since v8, amount moved closer to currency selection and specifying from and to parameters is no longer optional to save code.
 - More information on v8 major breaking change: https://github.com/paraspell/xcm-tools/pull/554
 - XCM SDK Now supports API Failsafe - If one endpoint doesn't work it automatically switches to the next one.
+- Builder now allows you to directly disconnect API.
 ```
 
 ### Builder pattern:
 
 ##### Transfer assets from Parachain to Parachain
 ```ts
-await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
       .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
       .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
       /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call
         .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some node but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
-      .build()
+
+const tx = await builder.build()
+
+//Make sure to disconnect API after it is no longer used (eg. after transaction)
+await builder.disconnect()
+
 /*
 EXAMPLE:
-const tx = await Builder()
+const builder = Builder()
   .from('Acala')
   .to('Astar')
   .currency({
@@ -111,22 +117,31 @@ const tx = await Builder()
     amount: '1000000000'
   })
   .address(address)
-  .build();
+
+const tx = await builder.build()
+
+//Disconnect API after TX
+await builder.disconnect()
 */
 ```
 ##### Transfer assets from the Relay chain to Parachain
 ```ts
-await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(RELAY_NODE) //Kusama or Polkadot
       .to(NODE/*,customParaId - optional*/ | Multilocation object)
       .currency({symbol: 'DOT', amount: amount})
       .address(address | Multilocation object)
       /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call
         .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some node but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
-      .build()
+
+const tx = await builder.build()
+
+//Make sure to disconnect API after it is no longer used (eg. after transaction)
+await builder.disconnect()
+
 /*
 EXAMPLE:
-const tx = await Builder()
+const builder = await Builder()
   .from('Polkadot')
   .to('Astar')
   .currency({
@@ -134,22 +149,31 @@ const tx = await Builder()
     amount: '1000000000'
   })
   .address(address)
-  .build();
+
+const tx = await builder.build()
+
+//Disconnect API after TX
+await builder.disconnect()
 */
 ```
 ##### Transfer assets from Parachain to Relay chain
 ```ts
-await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE)
       .to(RELAY_NODE) //Kusama or Polkadot
       .currency({symbol: 'DOT', amount: amount})
       .address(address | Multilocation object)
       /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call
         .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some node but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
-      .build()
+
+const tx = await builder.build()
+
+//Make sure to disconnect API after it is no longer used (eg. after transaction)
+await builder.disconnect()
+
 /*
 EXAMPLE:
-const tx = await Builder()
+const builder = await Builder()
   .from('Astar')
   .to('Polkadot')
   .currency({
@@ -157,14 +181,18 @@ const tx = await Builder()
     amount: '1000000000'
   })
   .address(address)
-  .build();
+
+const tx = await builder.build()
+
+//Disconnect API after TX
+await builder.disconnect()
 */
 ```
 
 ##### Batch calls
 You can batch XCM calls and execute multiple XCM calls within one call. All three scenarios (Para->Para, Para->Relay, Relay->Para) can be used and combined.
 ```js
-await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE) //Ensure, that origin node is the same in all batched XCM Calls.
       .to(NODE_2) //Any compatible Parachain
       .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
@@ -176,10 +204,14 @@ await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .currency({currencySelection, amount}) //Currency to transfer - options as in scenarios above
       .address(address | Multilocation object)
       .addToBatch()
-      .buildBatch({ 
+      
+const tx = await builder.buildBatch({ 
           // This settings object is optional and batch all is the default option
           mode: BatchMode.BATCH_ALL //or BatchMode.BATCH
       })
+
+//Make sure to disconnect API after it is no longer used (eg. after transaction)
+await builder.disconnect()
 ```
 
 ### Dry run your XCM Calls:
@@ -199,12 +231,16 @@ getDryRun({api /*optional*/,  node, address, tx /* Extrinsic object */})
 ### Asset claim:
 ```ts
 //Claim XCM trapped assets from the selected chain
-await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .claimFrom(NODE)
       .fungible(MultilocationArray (Only one multilocation allowed) [{Multilocation}])
       .account(address | Multilocation object)
       /*.xcmVersion(Version.V3) Optional parameter, by default V3. XCM Version ENUM if a different XCM version is needed (Supported V2 & V3). Requires importing Version enum.*/
-      .build()
+
+const tx = await builder.build()
+
+//Make sure to disconnect API after it is no longer used (eg. after transaction)
+await builder.disconnect()
 ```
 
 ### Asset queries:
