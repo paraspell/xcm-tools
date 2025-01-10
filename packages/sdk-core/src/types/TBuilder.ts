@@ -87,6 +87,7 @@ export interface IFromBuilder<TApi, TRes> {
   from: (node: TNodeDotKsmWithRelayChains) => IToBuilder<TApi, TRes>
   claimFrom: (node: TNodeWithRelayChains) => IFungibleBuilder<TRes>
   buildBatch: (options?: TBatchOptions) => Promise<TRes>
+  disconnect: () => Promise<void>
 }
 
 export interface IToBuilder<TApi, TRes> {

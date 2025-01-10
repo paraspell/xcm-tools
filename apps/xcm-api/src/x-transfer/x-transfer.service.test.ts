@@ -9,11 +9,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import type { TDryRunResult, TNode } from '@paraspell/sdk';
-import {
-  IncompatibleNodesError,
-  InvalidCurrencyError,
-  createApiInstanceForNode,
-} from '@paraspell/sdk';
+import { IncompatibleNodesError, InvalidCurrencyError } from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
 import * as paraspellSdkPjs from '@paraspell/sdk-pjs';
 
@@ -43,15 +39,13 @@ const builderMock = {
     }),
   }),
   dryRun: vi.fn().mockResolvedValue(dryRunResult),
+  disconnect: vi.fn(),
 };
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
   return {
     ...actual,
-    createApiInstanceForNode: vi.fn().mockResolvedValue({
-      destroy: vi.fn(),
-    }),
     Builder: vi.fn().mockImplementation(() => builderMock),
   };
 });
@@ -67,15 +61,13 @@ const builderMockPjs = {
   buildBatch: vi.fn().mockReturnValue(txHashBatch),
   build: vi.fn().mockResolvedValue(txHash),
   dryRun: vi.fn().mockResolvedValue(dryRunResult),
+  disconnect: vi.fn(),
 };
 
 vi.mock('@paraspell/sdk-pjs', async () => {
   const actual = await vi.importActual('@paraspell/sdk-pjs');
   return {
     ...actual,
-    createApiInstanceForNode: vi.fn().mockResolvedValue({
-      destroy: vi.fn(),
-    }),
     Builder: vi.fn().mockImplementation(() => builderMockPjs),
   };
 });
@@ -112,7 +104,6 @@ describe('XTransferService', () => {
       const result = await service.generateXcmCall(xTransferDto, true);
 
       expect(result).toBeTypeOf('string');
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(xTransferDto.from);
       expect(builderMock.from).toHaveBeenCalledWith(xTransferDto.from);
       expect(builderMock.to).toHaveBeenCalledWith(xTransferDto.to);
       expect(builderMock.currency).toHaveBeenCalledWith(currency);
@@ -128,9 +119,6 @@ describe('XTransferService', () => {
       const result = await service.generateXcmCall(xTransferDto);
 
       expect(result).toBeTypeOf('string');
-      expect(paraspellSdkPjs.createApiInstanceForNode).toHaveBeenCalledWith(
-        xTransferDto.from,
-      );
       expect(builderMockPjs.from).toHaveBeenCalledWith(xTransferDto.from);
       expect(builderMockPjs.to).toHaveBeenCalledWith(xTransferDto.to);
       expect(builderMockPjs.currency).toHaveBeenCalledWith(currency);
@@ -147,7 +135,6 @@ describe('XTransferService', () => {
       const result = await service.generateXcmCall(options, true);
 
       expect(result).toBeTypeOf('string');
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(options.from);
       expect(builderMock.from).toHaveBeenCalledWith(options.from);
       expect(builderMock.to).toHaveBeenCalledWith(options.to);
       expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
@@ -164,7 +151,6 @@ describe('XTransferService', () => {
       const result = await service.generateXcmCall(options, true);
 
       expect(result).toBeTypeOf('string');
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(options.from);
       expect(builderMock.from).toHaveBeenCalledWith(options.from);
       expect(builderMock.to).toHaveBeenCalledWith(options.to);
       expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
@@ -180,7 +166,6 @@ describe('XTransferService', () => {
       await expect(service.generateXcmCall(options)).rejects.toThrow(
         BadRequestException,
       );
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid to node', async () => {
@@ -192,7 +177,6 @@ describe('XTransferService', () => {
       await expect(service.generateXcmCall(options)).rejects.toThrow(
         BadRequestException,
       );
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
     });
 
     it('should throw IncompatibleNodesError for incompatible from and to nodes', async () => {
@@ -218,7 +202,6 @@ describe('XTransferService', () => {
       await expect(service.generateXcmCall(options, true)).rejects.toThrow(
         BadRequestException,
       );
-      expect(createApiInstanceForNode).toHaveBeenCalled();
     });
 
     it('should throw InternalServerError when uknown error occures in the SDK', async () => {
@@ -244,7 +227,6 @@ describe('XTransferService', () => {
       await expect(service.generateXcmCall(options, true)).rejects.toThrow(
         InternalServerErrorException,
       );
-      expect(createApiInstanceForNode).toHaveBeenCalled();
     });
 
     it('should throw on invalid wallet address', async () => {
@@ -256,7 +238,6 @@ describe('XTransferService', () => {
       await expect(service.generateXcmCall(options)).rejects.toThrow(
         BadRequestException,
       );
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
     });
 
     it('should specify xcm version if provided', async () => {
@@ -366,9 +347,6 @@ describe('XTransferService', () => {
       const result = await service.generateBatchXcmCall(batchDto);
 
       expect(result).toBe(txHashBatch);
-      expect(paraspellSdkPjs.createApiInstanceForNode).toHaveBeenCalledWith(
-        from,
-      );
       expect(builderMockPjs.from).toHaveBeenCalledTimes(2);
       expect(builderMockPjs.to).toHaveBeenCalledWith(to1);
       expect(builderMockPjs.to).toHaveBeenCalledWith(to2);
@@ -406,7 +384,6 @@ describe('XTransferService', () => {
       const result = await service.generateBatchXcmCall(batchDto, true);
 
       expect(result).toBe(txHashBatch);
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(from);
       expect(builderMock.from).toHaveBeenCalledTimes(2);
       expect(builderMock.to).toHaveBeenCalledWith(to1);
       expect(builderMock.to).toHaveBeenCalledWith(to2);
@@ -434,7 +411,6 @@ describe('XTransferService', () => {
       const result = await service.generateBatchXcmCall(batchDto, true);
 
       expect(result).toBe(txHashBatch);
-      expect(createApiInstanceForNode).toHaveBeenCalledWith('Polkadot');
       expect(builderMock.from).toHaveBeenCalledWith('Polkadot');
       expect(builderMock.to).toHaveBeenCalledWith('Acala');
       expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
@@ -453,7 +429,6 @@ describe('XTransferService', () => {
       await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
         BadRequestException,
       );
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when transfers have different from nodes', async () => {
@@ -481,7 +456,6 @@ describe('XTransferService', () => {
       await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
         BadRequestException,
       );
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid from node', async () => {
@@ -501,7 +475,6 @@ describe('XTransferService', () => {
       await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
         BadRequestException,
       );
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid to node', async () => {
@@ -521,7 +494,6 @@ describe('XTransferService', () => {
       await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
         BadRequestException,
       );
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid wallet address', async () => {
@@ -576,7 +548,6 @@ describe('XTransferService', () => {
       await expect(
         service.generateBatchXcmCall(batchDto, true),
       ).rejects.toThrow(BadRequestException);
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(from);
     });
 
     it('should handle unknown errors from SDK', async () => {
@@ -610,7 +581,6 @@ describe('XTransferService', () => {
       await expect(
         service.generateBatchXcmCall(batchDto, true),
       ).rejects.toThrow(InternalServerErrorException);
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(from);
     });
 
     it('should throw BadRequestException when toNode is an object', async () => {
@@ -631,8 +601,6 @@ describe('XTransferService', () => {
       await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
         BadRequestException,
       );
-
-      expect(createApiInstanceForNode).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid transferToNode in transfers', async () => {
@@ -659,8 +627,6 @@ describe('XTransferService', () => {
       await expect(
         service.generateBatchXcmCall(batchDto, true),
       ).rejects.toThrow(BadRequestException);
-
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(from);
     });
 
     it('should generate batch XCM call for transfers with only fromNode (parachain to relaychain)', async () => {
@@ -681,7 +647,6 @@ describe('XTransferService', () => {
       const result = await service.generateBatchXcmCall(batchDto, true);
 
       expect(result).toBe(txHashBatch);
-      expect(createApiInstanceForNode).toHaveBeenCalledWith(from);
       expect(builderMock.from).toHaveBeenCalledWith(from);
       expect(builderMock.to).toHaveBeenCalledWith('Polkadot');
       expect(builderMock.address).toHaveBeenCalledWith(address, undefined);

@@ -99,16 +99,13 @@ export class XTransferService {
   ) {
     this.validateTransfer(transfer);
 
-    const { from, address } = transfer;
-    const fromNode = from as TNodeDotKsmWithRelayChains;
+    const { address } = transfer;
 
     const Sdk = usePapi
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(fromNode);
-
-    const builder = Sdk.Builder(api as TPapiApi & TPjsApi);
+    const builder = Sdk.Builder();
 
     try {
       const finalBuilder = this.buildXTransfer(builder, transfer);
@@ -135,8 +132,7 @@ export class XTransferService {
       }
       throw new InternalServerErrorException((e as Error).message);
     } finally {
-      if ('disconnect' in api) await api.disconnect();
-      else api.destroy();
+      await builder.disconnect();
     }
   }
 
@@ -173,8 +169,7 @@ export class XTransferService {
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(fromNode);
-    let builder = Sdk.Builder(api as TPjsApi & TPapiApi);
+    let builder = Sdk.Builder();
 
     try {
       for (const transfer of transfers) {
@@ -198,8 +193,7 @@ export class XTransferService {
       }
       throw new InternalServerErrorException((e as Error).message);
     } finally {
-      if ('disconnect' in api) await api.disconnect();
-      else api.destroy();
+      await builder.disconnect();
     }
   }
 }

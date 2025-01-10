@@ -9,8 +9,6 @@ import {
 } from '@paraspell/sdk';
 import { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import { BalanceForeignDto } from './dto/BalanceForeignDto.js';
-import { ApiPromise } from '@polkadot/api';
-import { PolkadotClient } from 'polkadot-api';
 import { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 
 @Injectable()
@@ -31,16 +29,11 @@ export class BalanceService {
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(nodeTyped);
-    const balance = await Sdk.getBalanceNative({
+    return await Sdk.getBalanceNative({
       address,
       node: nodeTyped,
-      api: api as ApiPromise & PolkadotClient,
       currency,
     });
-    if ('disconnect' in api) await api.disconnect();
-    else api.destroy();
-    return balance;
   }
 
   async getBalanceForeign(
@@ -59,15 +52,11 @@ export class BalanceService {
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getBalanceForeign({
       address,
       currency,
       node: nodeTyped,
-      api: api as ApiPromise & PolkadotClient,
     });
-    if ('disconnect' in api) await api.disconnect();
-    else api.destroy();
     return balance === null ? 'null' : balance.toString();
   }
 
@@ -87,15 +76,11 @@ export class BalanceService {
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getAssetBalance({
       address,
       currency,
       node: nodeTyped,
-      api: api as ApiPromise & PolkadotClient,
     });
-    if ('disconnect' in api) await api.disconnect();
-    else api.destroy();
     return balance === null ? 'null' : balance.toString();
   }
 
@@ -115,15 +100,11 @@ export class BalanceService {
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getMaxNativeTransferableAmount({
       address,
       node: nodeTyped,
-      api: api as ApiPromise & PolkadotClient,
       currency,
     });
-    if ('disconnect' in api) await api.disconnect();
-    else api.destroy();
     return balance;
   }
 
@@ -143,15 +124,11 @@ export class BalanceService {
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(nodeTyped);
     const balance = await Sdk.getMaxForeignTransferableAmount({
       address,
       currency,
       node: nodeTyped,
-      api: api as ApiPromise & PolkadotClient,
     });
-    if ('disconnect' in api) await api.disconnect();
-    else api.destroy();
     return balance;
   }
 
@@ -171,16 +148,11 @@ export class BalanceService {
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(nodeTyped);
-    const balance = await Sdk.getTransferableAmount({
+    return await Sdk.getTransferableAmount({
       address,
       currency,
       node: nodeTyped,
-      api: api as ApiPromise & PolkadotClient,
     });
-    if ('disconnect' in api) await api.disconnect();
-    else api.destroy();
-    return balance;
   }
 
   async getExistentialDeposit(

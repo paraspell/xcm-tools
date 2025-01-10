@@ -245,6 +245,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   }
 
   async disconnect(force = false) {
+    if (!this.initialized) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return
 
     // Disconnect api only if it was created automatically

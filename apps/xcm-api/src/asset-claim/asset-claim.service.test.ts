@@ -9,9 +9,7 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import type { ApiPromise } from '@polkadot/api';
 import type { AssetClaimDto } from './dto/asset-claim.dto.js';
-import type { PolkadotClient } from 'polkadot-api';
 
 vi.mock('@paraspell/sdk-pjs', async () => {
   const actual =
@@ -20,7 +18,6 @@ vi.mock('@paraspell/sdk-pjs', async () => {
     );
   return {
     ...actual,
-    createApiInstanceForNode: vi.fn(),
     Builder: vi.fn(() => ({
       claimFrom: vi.fn().mockReturnThis(),
       fungible: vi.fn().mockReturnThis(),
@@ -36,7 +33,6 @@ vi.mock('@paraspell/sdk', async () => {
     await vi.importActual<typeof import('@paraspell/sdk')>('@paraspell/sdk');
   return {
     ...actual,
-    createApiInstanceForNode: vi.fn(),
     Builder: vi.fn(() => ({
       claimFrom: vi.fn().mockReturnThis(),
       fungible: vi.fn().mockReturnThis(),
@@ -108,14 +104,10 @@ describe('AssetClaimService', () => {
     } as AssetClaimDto;
     sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
-    vi.mocked(sdk.createApiInstanceForNode).mockResolvedValue({
-      disconnect: vi.fn(),
-    } as unknown as ApiPromise);
 
     const result = await service.claimAssets(dto);
 
     expect(result).toEqual('hash');
-    expect(sdk.createApiInstanceForNode).toHaveBeenCalledWith('Acala');
   });
 
   it('successfully claims assets when parameters are valid with hash enabled', async () => {
@@ -136,14 +128,9 @@ describe('AssetClaimService', () => {
     } as AssetClaimDto;
     sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
-    vi.mocked(sdk.createApiInstanceForNode).mockResolvedValue({
-      disconnect: vi.fn(),
-    } as unknown as ApiPromise);
-
     const result = await service.claimAssets(dto);
 
     expect(result).toEqual('hash');
-    expect(sdk.createApiInstanceForNode).toHaveBeenCalledWith('Acala');
   });
 
   it('throws BadRequestException when InvalidCurrencyError is thrown', async () => {
@@ -154,9 +141,6 @@ describe('AssetClaimService', () => {
     const dto = { from: 'Acala', fungible: [], address: 'validAddress' };
     sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
-    vi.mocked(sdk.createApiInstanceForNode).mockResolvedValue({
-      disconnect: vi.fn(),
-    } as unknown as ApiPromise);
 
     await expect(service.claimAssets(dto)).rejects.toThrow(
       new BadRequestException('Invalid currency error'),
@@ -171,9 +155,6 @@ describe('AssetClaimService', () => {
     const dto = { from: 'Acala', fungible: [], address: 'validAddress' };
     sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
-    vi.mocked(sdk.createApiInstanceForNode).mockResolvedValue({
-      disconnect: vi.fn(),
-    } as unknown as ApiPromise);
 
     await expect(service.claimAssets(dto)).rejects.toThrow(
       new InternalServerErrorException('Some internal error'),
@@ -198,13 +179,9 @@ describe('AssetClaimService', () => {
     } as AssetClaimDto;
     sdkPapi.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
     vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
-    vi.mocked(sdkPapi.createApiInstanceForNode).mockResolvedValue({
-      destroy: vi.fn(),
-    } as unknown as PolkadotClient);
 
     const result = await service.claimAssets(dto, true);
 
     expect(result).toEqual('hash');
-    expect(sdkPapi.createApiInstanceForNode).toHaveBeenCalledWith('Acala');
   });
 });

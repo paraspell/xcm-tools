@@ -5,15 +5,15 @@ import {
 } from '@nestjs/common';
 import {
   InvalidCurrencyError,
+  IVersionBuilder,
   NODES_WITH_RELAY_CHAINS,
   TMultiAsset,
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
-import { ApiPromise } from '@polkadot/api';
-import { PolkadotClient } from 'polkadot-api';
 import { TPapiTransaction } from '@paraspell/sdk';
+import { Extrinsic } from '@paraspell/sdk-pjs';
 
 @Injectable()
 export class AssetClaimService {
@@ -41,20 +41,21 @@ export class AssetClaimService {
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(fromNode);
-
+    let builder:
+      | IVersionBuilder<TPapiTransaction>
+      | IVersionBuilder<Extrinsic>
+      | undefined;
     try {
-      const builder = Sdk.Builder(api as ApiPromise & PolkadotClient)
+      builder = Sdk.Builder()
         .claimFrom(fromNode)
         .fungible(fungible as TMultiAsset[])
         .account(address);
 
-      if (usePapi) {
-        const tx = await builder.build();
-        return (await (tx as TPapiTransaction).getEncodedData()).asHex();
-      }
+      const tx = await builder.build();
 
-      return await builder.build();
+      return usePapi
+        ? (await (tx as TPapiTransaction).getEncodedData()).asHex()
+        : tx;
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);
@@ -63,8 +64,7 @@ export class AssetClaimService {
         throw new InternalServerErrorException(e.message);
       }
     } finally {
-      if ('disconnect' in api) await api.disconnect();
-      else api.destroy();
+      await builder?.disconnect();
     }
   }
 }
