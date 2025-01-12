@@ -63,6 +63,12 @@ export const transform = (obj: any): any => {
         return {
           type: key,
           value: {
+            network:
+              value.network === 'any'
+                ? {
+                    type: 'Any'
+                  }
+                : undefined,
             key: FixedSizeBinary.fromHex(value.key)
           }
         }

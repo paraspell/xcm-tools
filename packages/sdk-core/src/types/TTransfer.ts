@@ -204,8 +204,8 @@ export type TSerializedApiCall = {
 }
 
 export type TDestWeight = {
-  refTime: string
-  proofSize: string
+  ref_time: bigint
+  proof_size: bigint
 }
 
 export type TXTransferSection = 'transfer'

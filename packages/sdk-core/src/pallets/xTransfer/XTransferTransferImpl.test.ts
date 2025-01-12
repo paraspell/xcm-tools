@@ -93,8 +93,8 @@ describe('XTransferTransferImpl', () => {
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
 
     const mockDestWeight = {
-      refTime: '6000000000',
-      proofSize: '1000000'
+      ref_time: 6000000000n,
+      proof_size: 1000000n
     }
 
     vi.mocked(determineDestWeight).mockReturnValue(mockDestWeight)
