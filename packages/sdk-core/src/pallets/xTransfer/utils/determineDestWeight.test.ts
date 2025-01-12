@@ -6,17 +6,17 @@ import type { TNode } from '../../../types'
 describe('determineDestWeight', () => {
   it('returns correct weight for Astar', () => {
     const result = determineDestWeight('Astar')
-    expect(result).toEqual({ refTime: '6000000000', proofSize: '1000000' })
+    expect(result).toEqual({ ref_time: 6000000000n, proof_size: 1000000n })
   })
 
   it('returns correct weight for Moonbeam', () => {
     const result = determineDestWeight('Moonbeam')
-    expect(result).toEqual({ refTime: '5000000000', proofSize: '0' })
+    expect(result).toEqual({ ref_time: 5000000000n, proof_size: 0n })
   })
 
   it('returns correct weight for Hydration', () => {
     const result = determineDestWeight('Hydration')
-    expect(result).toEqual({ refTime: '5000000000', proofSize: '0' })
+    expect(result).toEqual({ ref_time: 5000000000n, proof_size: 0n })
   })
 
   it('throws an error for unsupported nodes', () => {

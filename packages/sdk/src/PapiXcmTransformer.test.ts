@@ -251,6 +251,36 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should handle nested arrays and objects - AccountKey20 V2', () => {
+    const input = [
+      {
+        AccountKey20: {
+          key: '0xabcdef',
+          network: 'any'
+        }
+      },
+      {
+        OtherReserve: '1000'
+      }
+    ]
+
+    const expected = [
+      {
+        type: 'AccountKey20',
+        value: {
+          network: { type: 'Any' },
+          key: `FixedSizeBinary(0xabcdef)`
+        }
+      },
+      {
+        type: 'OtherReserve',
+        value: 1000
+      }
+    ]
+
+    expect(transform(input)).toEqual(expected)
+  })
+
   it('should handle nested arrays and objects', () => {
     const input = [
       {

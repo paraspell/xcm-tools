@@ -9,5 +9,5 @@
     "strictNullChecks": true,
     "skipLibCheck": true
   },
-  "include": ["src", "vitest.config.ts"]
+  "include": ["src", "vitest.config.ts", "e2e"]
 }

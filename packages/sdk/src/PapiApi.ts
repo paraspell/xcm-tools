@@ -102,7 +102,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
   callTxMethod({ module, section, parameters }: TSerializedApiCall) {
     const transformedParameters = transform(parameters)
-
     return this.api.getUnsafeApi().tx[module][section](transformedParameters)
   }
 
