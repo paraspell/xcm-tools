@@ -34,7 +34,7 @@ export const nodeToQuery: Record<TNode, string[]> = {
   Moonriver: ['assetManager.assetIdType'],
   ParallelHeiko: [GLOBAL, 'assets.metadata'],
   Picasso: ['assetsRegistry.assetSymbol'],
-  Quartz: [],
+  Quartz: ['foreignAssets.collectionToForeignAsset'],
   RobonomicsKusama: ['assets.metadata'],
   RobonomicsPolkadot: ['assets.metadata'],
   PeopleKusama: [], // Does not support ParaToPara transfers
@@ -42,7 +42,7 @@ export const nodeToQuery: Record<TNode, string[]> = {
   Shiden: [GLOBAL, 'assets.metadata'],
   AssetHubKusama: [GLOBAL, 'assets.metadata'],
   Turing: [GLOBAL, 'assetRegistry.metadata'],
-  Unique: [],
+  Unique: ['foreignAssets.collectionToForeignAsset'],
   Crust: ['assets.metadata'],
   Manta: ['assets.metadata'],
   Nodle: [],

@@ -29,6 +29,7 @@ import { fetchComposableAssets } from './fetchComposableAssets'
 import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
 import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 import { supportsDryRunApi } from './supportsDryRunApi'
+import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -277,6 +278,10 @@ const fetchOtherAssets = async (
 
   if (node === 'Moonbeam' || node === 'Moonriver') {
     otherAssets = await fetchMoonbeamForeignAssets(api, query)
+  }
+
+  if (node === 'Unique' || node === 'Quartz') {
+    otherAssets = await fetchUniqueForeignAssets(api, query)
   }
 
   return otherAssets.length > 0 ? otherAssets : fetchOtherAssetsDefault(node, api, query)

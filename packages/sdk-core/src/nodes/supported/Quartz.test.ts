@@ -14,7 +14,7 @@ vi.mock('../../pallets/xTokens', () => ({
 describe('Quartz', () => {
   let quartz: Quartz<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'QTZ', assetId: '123', amount: '100' }
+    asset: { symbol: 'USDt', assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -26,14 +26,32 @@ describe('Quartz', () => {
     expect(quartz.info).toBe('quartz')
     expect(quartz.type).toBe('kusama')
     expect(quartz.version).toBe(Version.V3)
-    expect(quartz._assetCheckEnabled).toBe(false)
   })
 
-  it('should call transferXTokens with ForeignAssetId', () => {
+  it('should call transferXTokens with asset id', () => {
     const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     quartz.transferXTokens(mockInput)
+    expect(spy).toHaveBeenCalledWith(mockInput, 123)
+  })
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAssetId: 123n })
+  it('should call transferXTokens with NativeAssetId', () => {
+    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
+    const input = {
+      asset: {
+        ...mockInput.asset,
+        symbol: 'QTZ'
+      }
+    } as TXTokensTransferOptions<unknown, unknown>
+    quartz.transferXTokens(input)
+    expect(spy).toHaveBeenCalledWith(input, 0)
+  })
+
+  it('should throw InvalidCurrencyError if asset has no assetId', () => {
+    const input = {
+      asset: {
+        symbol: 'DOT'
+      }
+    } as TXTokensTransferOptions<unknown, unknown>
+    expect(() => quartz.transferXTokens(input)).toThrowError()
   })
 })

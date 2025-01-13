@@ -9069,7 +9069,83 @@
         "existentialDeposit": "0"
       }
     ],
-    "otherAssets": []
+    "otherAssets": [
+      {
+        "assetId": "459",
+        "symbol": "PINK",
+        "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 23
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "0"
+      },
+      {
+        "assetId": "473",
+        "symbol": "USDt",
+        "decimals": 6,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "0"
+      },
+      {
+        "assetId": "498",
+        "symbol": "GLMR",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "0"
+      },
+      {
+        "assetId": "437",
+        "symbol": "DOT",
+        "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "existentialDeposit": "0"
+      }
+    ]
   },
   "Crust": {
     "relayChainAssetSymbol": "DOT",
