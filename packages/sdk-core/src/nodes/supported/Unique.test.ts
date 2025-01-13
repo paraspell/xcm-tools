@@ -14,7 +14,7 @@ vi.mock('../../pallets/xTokens', () => ({
 describe('Unique', () => {
   let unique: Unique<unknown, unknown>
   const mockInput = {
-    asset: { symbol: 'UNQ', assetId: '123', amount: '100' }
+    asset: { symbol: 'GLMR', assetId: '123', amount: '100' }
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -28,11 +28,30 @@ describe('Unique', () => {
     expect(unique.version).toBe(Version.V3)
   })
 
-  it('should call transferXTokens with ForeignAssetId', () => {
+  it('should call transferXTokens with asset id', () => {
     const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     unique.transferXTokens(mockInput)
+    expect(spy).toHaveBeenCalledWith(mockInput, 123)
+  })
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAssetId: 123n })
+  it('should call transferXTokens with NativeAssetId', () => {
+    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
+    const input = {
+      asset: {
+        ...mockInput.asset,
+        symbol: 'UNQ'
+      }
+    } as TXTokensTransferOptions<unknown, unknown>
+    unique.transferXTokens(input)
+    expect(spy).toHaveBeenCalledWith(input, 0)
+  })
+
+  it('should throw InvalidCurrencyError if asset has no assetId', () => {
+    const input = {
+      asset: {
+        symbol: 'DOT'
+      }
+    } as TXTokensTransferOptions<unknown, unknown>
+    expect(() => unique.transferXTokens(input)).toThrowError()
   })
 })

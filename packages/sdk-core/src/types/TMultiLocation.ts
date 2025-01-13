@@ -48,7 +48,7 @@ type TJunctionPalletInstance = {
   PalletInstance: TStringOrNumberOrBigInt
 }
 
-type TJunctionGeneralIndex = {
+export type TJunctionGeneralIndex = {
   GeneralIndex: TStringOrNumberOrBigInt
 }
 
