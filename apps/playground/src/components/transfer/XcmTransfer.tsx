@@ -1,4 +1,13 @@
-import { Stack, Title, Box, Alert, Text } from '@mantine/core';
+import {
+  Stack,
+  Box,
+  Alert,
+  Text,
+  Title,
+  Center,
+  useMantineColorScheme,
+  Badge,
+} from '@mantine/core';
 import ErrorAlert from '../ErrorAlert';
 import type {
   FormValuesTransformed,
@@ -22,14 +31,21 @@ import {
 import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
 import type { Signer } from '@polkadot/api/types';
 import { useState, useEffect } from 'react';
-import { submitTransaction, submitTransactionPapi } from '../../utils';
-import { fetchFromApi, getTxFromApi } from '../../utils/submitUsingApi';
+import {
+  submitTransaction,
+  submitTransactionPapi,
+  fetchFromApi,
+  getTxFromApi,
+  replaceBigInt,
+} from '../../utils';
 import { useWallet } from '../../hooks/useWallet';
 import type { ApiPromise } from '@polkadot/api';
 import { ethers } from 'ethers';
 import { IconJson } from '@tabler/icons-react';
-import { replaceBigInt } from '../../utils/replaceBigInt';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
+import { CodeHighlight } from '@mantine/code-highlight';
+
+const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 const XcmTransfer = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
@@ -248,10 +264,36 @@ const XcmTransfer = () => {
 
   const onOutputAlertCloseClick = () => closeOutputAlert();
 
+  const theme = useMantineColorScheme();
+
   return (
     <Stack gap="xl">
-      <Stack w="100%" maw={400} mx="auto" gap="lg">
-        <Title order={3}>New XCM transfer</Title>
+      <Stack w="100%" maw={460} mx="auto" gap="0">
+        <Box px="xl" pb="xl">
+          <Center mb="xs">
+            <Title order={2}>XCM Transfer 🪄</Title>
+          </Center>
+
+          <Center>
+            <Badge
+              variant="light"
+              radius="xl"
+              mb="md"
+              style={{ textTransform: 'unset' }}
+            >
+              v{VERSION}
+            </Badge>
+          </Center>
+
+          <Text
+            size="xs"
+            c={theme.colorScheme === 'light' ? 'gray.7' : 'dark.1'}
+            fw={700}
+            ta="center"
+          >
+            Easily transfer assets across Paraverse 🪐 using XCM.
+          </Text>
+        </Box>
         <XcmTransferForm onSubmit={onSubmit} loading={loading} />
       </Stack>
       <Box ref={targetRef}>
@@ -262,7 +304,7 @@ const XcmTransfer = () => {
         )}
       </Box>
       <Box>
-        {outputAlertOpened && (
+        {outputAlertOpened && output && (
           <Alert
             color="green"
             title="Output"
@@ -272,10 +314,18 @@ const XcmTransfer = () => {
             mt="lg"
             style={{ overflowWrap: 'anywhere' }}
             data-testid="output"
+            p="xl"
           >
-            <Text component="pre" size="sm">
-              {output}
-            </Text>
+            <CodeHighlight
+              code={output}
+              lang="json"
+              style={{
+                padding: 0,
+                borderRadius: 16,
+                marginTop: 20,
+                backgroundColor: 'transparent',
+              }}
+            />
           </Alert>
         )}
       </Box>

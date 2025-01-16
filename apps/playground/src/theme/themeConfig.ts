@@ -1,5 +1,5 @@
 import type { MantineColorsTuple } from '@mantine/core';
-import { createTheme } from '@mantine/core';
+import { createTheme, Modal, Select, TextInput } from '@mantine/core';
 
 const themePalette: MantineColorsTuple = [
   '#ffe9f6',
@@ -18,5 +18,26 @@ export const theme = createTheme({
   primaryColor: 'mainColor',
   colors: {
     mainColor: themePalette,
+  },
+  defaultRadius: 'lg',
+  components: {
+    TextInput: TextInput.extend({
+      defaultProps: {
+        withAsterisk: false,
+      },
+    }),
+    Select: Select.extend({
+      defaultProps: {
+        withAsterisk: false,
+      },
+    }),
+    Modal: Modal.extend({
+      defaultProps: {
+        overlayProps: {
+          backgroundOpacity: 0.55,
+          blur: 3,
+        },
+      },
+    }),
   },
 });

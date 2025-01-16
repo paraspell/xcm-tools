@@ -6,13 +6,20 @@ import {
   validateCurrency,
   validateDestination
 } from './validationUtils'
-import type { TCurrencyInput, TDestination, TNodePolkadotKusama, TSendOptions } from '../../types'
+import type {
+  TCurrencyInput,
+  TDestination,
+  TNodeDotKsmWithRelayChains,
+  TNodePolkadotKusama,
+  TSendOptions
+} from '../../types'
 import { IncompatibleNodesError, InvalidCurrencyError } from '../../errors'
 import { isBridgeTransfer } from './isBridgeTransfer'
 import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../../pallets/assets'
 import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
 import { getDefaultPallet } from '../../pallets/pallets'
-import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
+import { isTMultiLocation, throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
+import { isRelayChain } from '../../utils'
 
 vi.mock('./isBridgeTransfer', () => ({
   isBridgeTransfer: vi.fn()
@@ -37,10 +44,15 @@ vi.mock('../../pallets/xcmPallet/utils', () => ({
   isTMultiLocation: vi.fn()
 }))
 
+vi.mock('../../utils', () => ({
+  isRelayChain: vi.fn()
+}))
+
 describe('validateCurrency', () => {
   let consoleWarnSpy: MockInstance
 
   beforeEach(() => {
+    vi.resetAllMocks()
     consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
   })
 
@@ -85,7 +97,7 @@ describe('validateCurrency', () => {
 })
 
 describe('validateDestination', () => {
-  let origin: TNodePolkadotKusama
+  let origin: TNodeDotKsmWithRelayChains
   let destination: TDestination
 
   beforeEach(() => {
@@ -186,10 +198,21 @@ describe('validateDestination', () => {
     destination = 'Polkadot'
 
     vi.mocked(isBridgeTransfer).mockReturnValue(false)
-    // Relay chain symbols are not checked when destination is undefined
+    vi.mocked(isRelayChain).mockImplementation(node => node === destination)
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
     expect(vi.mocked(getRelayChainSymbol)).not.toHaveBeenCalled()
+  })
+
+  it('should throw when origin and destination are relay chains', () => {
+    origin = 'Polkadot'
+    destination = 'Kusama'
+
+    vi.mocked(isRelayChain).mockReturnValue(true)
+    vi.mocked(isTMultiLocation).mockReturnValue(false)
+
+    expect(() => validateDestination(origin, destination)).toThrow()
+    expect(isRelayChain).toHaveBeenCalled()
   })
 })
 
@@ -372,6 +395,7 @@ describe('validateAssetSupport', () => {
     const asset = { symbol: 'UNSUPPORTED' }
 
     vi.mocked(hasSupportForAsset).mockReturnValue(false)
+    vi.mocked(isRelayChain).mockReturnValue(false)
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
       InvalidCurrencyError

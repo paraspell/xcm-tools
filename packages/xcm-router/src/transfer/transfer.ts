@@ -1,7 +1,6 @@
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
-import type { TTransferOptionsModified } from '../types';
-import { type TTransferOptions, TransactionType } from '../types';
+import { TransactionType, type TTransferOptions, type TTransferOptionsModified } from '../types';
 import { delay } from '../utils/utils';
 import { transferToExchange } from './transferToExchange';
 import { swap } from './swap';

@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { findAssetFrom, findAssetTo } from '../../assets/assets';
-import createDexNodeInstance from '../../dexNodes/DexNodeFactory';
+import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
 import { maybeUpdateTransferStatus } from '../../utils/utils';
 import { selectBestExchange } from '../selectBestExchange';
 import { determineFeeCalcAddress } from './utils';
@@ -14,7 +14,7 @@ vi.mock('../../assets/assets', () => ({
 }));
 
 vi.mock('../../dexNodes/DexNodeFactory', () => ({
-  default: vi.fn(),
+  createDexNodeInstance: vi.fn(),
 }));
 
 vi.mock('../../utils/utils', () => ({

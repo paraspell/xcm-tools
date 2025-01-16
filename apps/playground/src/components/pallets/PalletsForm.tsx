@@ -1,10 +1,12 @@
 import { useForm } from '@mantine/form';
 import type { FC } from 'react';
-import { Button, Checkbox, Select, Stack } from '@mantine/core';
+import { Button, Paper, Select, Stack } from '@mantine/core';
 import type { TNodePolkadotKusama } from '@paraspell/sdk';
 import { NODE_NAMES_DOT_KSM } from '@paraspell/sdk';
 import type { TPalletsQuery } from '../../types';
 import { PALLETS_QUERIES } from '../../consts';
+import { XcmApiCheckbox } from '../XcmApiCheckbox';
+import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type FormValues = {
   func: TPalletsQuery;
@@ -27,41 +29,36 @@ const PalletsForm: FC<Props> = ({ onSubmit, loading }) => {
   });
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack>
-        <Select
-          label="Function"
-          placeholder="Pick value"
-          data={PALLETS_QUERIES}
-          searchable
-          required
-          allowDeselect={false}
-          data-testid="select-func"
-          {...form.getInputProps('func')}
-        />
+    <Paper p="xl" shadow="md">
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        <Stack>
+          <Select
+            label="Function"
+            placeholder="Pick value"
+            data={PALLETS_QUERIES}
+            searchable
+            required
+            allowDeselect={false}
+            data-testid="select-func"
+            {...form.getInputProps('func')}
+          />
 
-        <Select
-          label="Node"
-          placeholder="Pick value"
-          data={NODE_NAMES_DOT_KSM}
-          searchable
-          required
-          allowDeselect={false}
-          data-testid="select-node"
-          {...form.getInputProps('node')}
-        />
+          <ParachainSelect
+            label="Node"
+            placeholder="Pick value"
+            data={NODE_NAMES_DOT_KSM}
+            data-testid="select-node"
+            {...form.getInputProps('node')}
+          />
 
-        <Checkbox
-          label="Use XCM API"
-          {...form.getInputProps('useApi')}
-          data-testid="checkbox-api"
-        />
+          <XcmApiCheckbox {...form.getInputProps('useApi')} />
 
-        <Button type="submit" loading={loading} data-testid="submit">
-          Submit
-        </Button>
-      </Stack>
-    </form>
+          <Button type="submit" loading={loading} data-testid="submit">
+            Submit
+          </Button>
+        </Stack>
+      </form>
+    </Paper>
   );
 };
 

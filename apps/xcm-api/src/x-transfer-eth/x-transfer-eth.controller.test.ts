@@ -37,9 +37,9 @@ describe('XTransferEthController', () => {
       const queryParams: XTransferEthDto = {
         from: 'Ethereum',
         to: 'AssetHubPolkadot',
-        address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         currency: { symbol: 'WETH', amount: 100 },
-        destAddress: '0x5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        destAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       };
       const mockResult = {} as TSerializedEthTransfer;
       const spy = vi

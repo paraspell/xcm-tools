@@ -5,11 +5,10 @@ import { useEffect } from 'react';
 import {
   ActionIcon,
   Button,
-  Checkbox,
   Fieldset,
   Group,
   Menu,
-  Select,
+  Paper,
   Stack,
   TextInput,
 } from '@mantine/core';
@@ -28,8 +27,12 @@ import {
   IconChevronDown,
   IconLocationCheck,
   IconPlus,
+  IconTransfer,
   IconTrash,
 } from '@tabler/icons-react';
+import { XcmApiCheckbox } from '../XcmApiCheckbox';
+import { useWallet } from '../../hooks/useWallet';
+import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type TCurrencyEntry = {
   currencyOptionId: string;
@@ -68,7 +71,7 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
       from: 'Astar',
-      to: 'Moonbeam',
+      to: 'Hydration',
       currencies: [
         {
           currencyOptionId: '',
@@ -79,7 +82,7 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
           customCurrencyType: 'id',
         },
       ],
-      address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       ahAddress: '',
       useApi: false,
     },
@@ -169,140 +172,177 @@ const XcmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
     }
   }, [isNotParaToPara, currencyMap]);
 
+  const onSwap = () => {
+    const { from, to } = form.getValues();
+    if (to !== 'Ethereum') {
+      form.setFieldValue('from', to);
+      form.setFieldValue('to', from);
+    }
+  };
+
+  const { connectWallet, selectedAccount, isInitialized, isLoadingExtensions } =
+    useWallet();
+
+  const onConnectWalletClick = () => void connectWallet();
+
   return (
-    <form onSubmit={form.onSubmit(onSubmitInternal)}>
-      <Stack>
-        <Select
-          label="Origin node"
-          placeholder="Pick value"
-          data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
-          allowDeselect={false}
-          searchable
-          required
-          data-testid="select-origin"
-          {...form.getInputProps('from')}
-        />
-
-        <Select
-          label="Destination node"
-          placeholder="Pick value"
-          data={NODES_WITH_RELAY_CHAINS}
-          allowDeselect={false}
-          searchable
-          required
-          data-testid="select-destination"
-          {...form.getInputProps('to')}
-        />
-
-        <Stack gap="md">
-          {currencies.map((_, index) => (
-            <Fieldset
-              key={index}
-              legend={currencies.length > 1 ? `Asset ${index + 1}` : undefined}
-              pos="relative"
-            >
-              <Group>
-                <Stack gap={4} flex={1}>
-                  <CurrencySelection
-                    form={form}
-                    index={index}
-                    currencyOptions={currencyOptions}
-                  />
-                  <TextInput
-                    label="Amount"
-                    placeholder="0"
-                    size={currencies.length > 1 ? 'xs' : 'sm'}
-                    required
-                    data-testid={`input-amount-${index}`}
-                    {...form.getInputProps(`currencies.${index}.amount`)}
-                  />
-                </Stack>
-                {form.values.currencies.length > 1 && (
-                  <ActionIcon
-                    color="red"
-                    variant="subtle"
-                    bg="white"
-                    pos="absolute"
-                    right={20}
-                    top={-25}
-                    onClick={() => form.removeListItem('currencies', index)}
-                  >
-                    <IconTrash size={16} />
-                  </ActionIcon>
-                )}
-              </Group>
-            </Fieldset>
-          ))}
-
-          <Button
-            variant="transparent"
-            size="compact-xs"
-            leftSection={<IconPlus size={16} />}
-            onClick={() =>
-              form.insertListItem('currencies', {
-                currencyOptionId: '',
-                customCurrency: '',
-                amount: '10000000000000000000',
-                isCustomCurrency: false,
-                customCurrencyType: 'id',
-              })
-            }
-          >
-            Add another asset
-          </Button>
-        </Stack>
-
-        <TextInput
-          label="Recipient address"
-          placeholder="0x0000000"
-          required
-          data-testid="input-address"
-          {...form.getInputProps('address')}
-        />
-
-        {form.values.to === 'Ethereum' && form.values.from === 'Hydration' && (
-          <TextInput
-            label="AssetHub address"
-            placeholder="0x0000000"
-            data-testid="input-ahaddress"
-            {...form.getInputProps('ahAddress')}
+    <Paper p="xl" shadow="md">
+      <form onSubmit={form.onSubmit(onSubmitInternal)}>
+        <Stack gap="lg">
+          <ParachainSelect
+            label="Origin"
+            placeholder="Pick value"
+            description="Select the origin chain"
+            data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
+            data-testid="select-origin"
+            {...form.getInputProps('from')}
           />
-        )}
 
-        <Checkbox
-          label="Use XCM API"
-          {...form.getInputProps('useApi')}
-          data-testid="checkbox-api"
-        />
+          <ActionIcon
+            variant="outline"
+            style={{ margin: '0 auto', marginBottom: -12 }}
+          >
+            <IconTransfer
+              size={24}
+              style={{ rotate: '90deg' }}
+              onClick={onSwap}
+            />
+          </ActionIcon>
 
-        <Button.Group>
-          <Button type="submit" loading={loading} data-testid="submit" flex={1}>
-            Submit transaction
-          </Button>
+          <ParachainSelect
+            label="Destination"
+            placeholder="Pick value"
+            description="Select the destination chain"
+            data={NODES_WITH_RELAY_CHAINS}
+            data-testid="select-destination"
+            {...form.getInputProps('to')}
+          />
 
-          <Menu shadow="md" width={200} position="bottom-end">
-            <Menu.Target>
+          <Stack gap="md">
+            {currencies.map((_, index) => (
+              <Fieldset
+                key={index}
+                legend={
+                  currencies.length > 1 ? `Asset ${index + 1}` : undefined
+                }
+                pos="relative"
+              >
+                <Group>
+                  <Stack gap={4} flex={1}>
+                    <CurrencySelection
+                      form={form}
+                      index={index}
+                      currencyOptions={currencyOptions}
+                    />
+                    <TextInput
+                      label="Amount"
+                      placeholder="0"
+                      size={currencies.length > 1 ? 'xs' : 'sm'}
+                      required
+                      data-testid={`input-amount-${index}`}
+                      {...form.getInputProps(`currencies.${index}.amount`)}
+                    />
+                  </Stack>
+                  {form.values.currencies.length > 1 && (
+                    <ActionIcon
+                      color="red"
+                      variant="subtle"
+                      bg="white"
+                      pos="absolute"
+                      right={20}
+                      top={-25}
+                      onClick={() => form.removeListItem('currencies', index)}
+                    >
+                      <IconTrash size={16} />
+                    </ActionIcon>
+                  )}
+                </Group>
+              </Fieldset>
+            ))}
+
+            <Button
+              variant="transparent"
+              size="compact-xs"
+              leftSection={<IconPlus size={16} />}
+              onClick={() =>
+                form.insertListItem('currencies', {
+                  currencyOptionId: '',
+                  customCurrency: '',
+                  amount: '10000000000000000000',
+                  isCustomCurrency: false,
+                  customCurrencyType: 'id',
+                })
+              }
+            >
+              Add another asset
+            </Button>
+          </Stack>
+
+          <TextInput
+            label="Recipient address"
+            description="SS58 or Ethereum address"
+            placeholder="Enter address"
+            required
+            data-testid="input-address"
+            {...form.getInputProps('address')}
+          />
+
+          {form.values.to === 'Ethereum' &&
+            form.values.from === 'Hydration' && (
+              <TextInput
+                label="AssetHub address"
+                placeholder="Enter address"
+                data-testid="input-ahaddress"
+                {...form.getInputProps('ahAddress')}
+              />
+            )}
+
+          <XcmApiCheckbox {...form.getInputProps('useApi')} />
+
+          {selectedAccount ? (
+            <Button.Group>
               <Button
-                style={{
-                  borderLeft: '1px solid #ff93c0',
-                }}
+                type="submit"
+                loading={loading}
+                flex={1}
+                data-testid="submit"
               >
-                <IconChevronDown />
+                Submit transaction
               </Button>
-            </Menu.Target>
 
-            <Menu.Dropdown>
-              <Menu.Item
-                leftSection={<IconLocationCheck size={16} />}
-                onClick={onSubmitInternalDryRun}
-              >
-                Dry run
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </Button.Group>
-      </Stack>
-    </form>
+              <Menu shadow="md" width={200} position="bottom-end">
+                <Menu.Target>
+                  <Button
+                    style={{
+                      borderLeft: '1px solid #ff93c0',
+                    }}
+                  >
+                    <IconChevronDown />
+                  </Button>
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  <Menu.Item
+                    leftSection={<IconLocationCheck size={16} />}
+                    onClick={onSubmitInternalDryRun}
+                  >
+                    Dry run
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </Button.Group>
+          ) : (
+            <Button
+              onClick={onConnectWalletClick}
+              data-testid="btn-connect-wallet"
+              loading={!isInitialized || isLoadingExtensions}
+            >
+              Connect wallet
+            </Button>
+          )}
+        </Stack>
+      </form>
+    </Paper>
   );
 };
 

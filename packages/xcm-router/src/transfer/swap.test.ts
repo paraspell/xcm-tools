@@ -3,10 +3,10 @@ import * as transferUtils from './utils';
 import * as utils from '../utils/utils';
 import { type ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
-import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import { swap } from './swap';
 import { type Extrinsic } from '@paraspell/sdk-pjs';
 import type { TTransferOptionsModified } from '../types';
+import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
 
 describe('swap', () => {
   let options: TTransferOptionsModified;

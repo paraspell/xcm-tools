@@ -2,8 +2,8 @@ import { useForm } from '@mantine/form';
 import { useEffect, type FC } from 'react';
 import {
   Button,
-  Checkbox,
   JsonInput,
+  Paper,
   SegmentedControl,
   Select,
   Stack,
@@ -18,6 +18,8 @@ import {
 } from '@paraspell/sdk';
 import type { TAssetsQuery } from '../../types';
 import { ASSET_QUERIES } from '../../consts';
+import { XcmApiCheckbox } from '../XcmApiCheckbox';
+import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type FormValues = {
   func: TAssetsQuery;
@@ -138,101 +140,96 @@ const AssetsForm: FC<Props> = ({ onSubmit, loading }) => {
   };
 
   return (
-    <form onSubmit={form.onSubmit(onSubmitInternal)}>
-      <Stack>
-        <Select
-          label="Function"
-          placeholder="Pick value"
-          data={ASSET_QUERIES}
-          searchable
-          required
-          allowDeselect={false}
-          data-testid="select-func"
-          {...form.getInputProps('func')}
-        />
-
-        <Select
-          label="Node"
-          placeholder="Pick value"
-          data={nodeList}
-          searchable
-          required
-          allowDeselect={false}
-          data-testid="select-node"
-          {...form.getInputProps('node')}
-        />
-
-        {showSymbolInput && (
-          <Stack gap="xs">
-            {(currencyType === 'id' || currencyType === 'symbol') && (
-              <TextInput
-                flex={1}
-                label={
-                  supportsCurrencyType
-                    ? `Currency ${optionalCurrency ? '(optional)' : ''}`
-                    : `Symbol ${optionalCurrency ? '(optional)' : ''}`
-                }
-                placeholder={
-                  supportsCurrencyType
-                    ? 'GLMR'
-                    : currencyType === 'id'
-                      ? 'Asset ID'
-                      : 'Symbol'
-                }
-                required={!optionalCurrency}
-                data-testid="input-currency"
-                {...form.getInputProps('currency')}
-              />
-            )}
-
-            {currencyType === 'multilocation' && (
-              <JsonInput
-                placeholder="Input Multi-Location JSON or interior junctions JSON to search for and identify the asset"
-                formatOnBlur
-                autosize
-                minRows={10}
-                {...form.getInputProps('currency')}
-              />
-            )}
-
-            {supportsCurrencyType && (
-              <SegmentedControl
-                size="xs"
-                pb={8}
-                data={[
-                  { label: 'Asset ID', value: 'id' },
-                  { label: 'Symbol', value: 'symbol' },
-                  { label: 'Multi-location', value: 'multilocation' },
-                ]}
-                onClick={onSelectCurrencyTypeClick}
-                data-testid="currency-type"
-                {...form.getInputProps('currencyType')}
-              />
-            )}
-          </Stack>
-        )}
-
-        {showAddressInput && (
-          <TextInput
-            label="Address"
-            placeholder="0x0000000"
+    <Paper p="xl" shadow="md">
+      <form onSubmit={form.onSubmit(onSubmitInternal)}>
+        <Stack>
+          <Select
+            label="Function"
+            placeholder="Pick value"
+            data={ASSET_QUERIES}
+            searchable
             required
-            data-testid="address-input"
-            {...form.getInputProps('address')}
+            allowDeselect={false}
+            data-testid="select-func"
+            {...form.getInputProps('func')}
           />
-        )}
 
-        <Checkbox
-          label="Use XCM API"
-          {...form.getInputProps('useApi')}
-          data-testid="checkbox-api"
-        />
+          <ParachainSelect
+            label="Node"
+            placeholder="Pick value"
+            data={nodeList}
+            data-testid="select-node"
+            {...form.getInputProps('node')}
+          />
 
-        <Button type="submit" loading={loading} data-testid="submit">
-          Submit
-        </Button>
-      </Stack>
-    </form>
+          {showSymbolInput && (
+            <Stack gap="xs">
+              {(currencyType === 'id' || currencyType === 'symbol') && (
+                <TextInput
+                  flex={1}
+                  label={
+                    supportsCurrencyType
+                      ? `Currency ${optionalCurrency ? '(optional)' : ''}`
+                      : `Symbol ${optionalCurrency ? '(optional)' : ''}`
+                  }
+                  placeholder={
+                    supportsCurrencyType
+                      ? 'GLMR'
+                      : currencyType === 'id'
+                        ? 'Asset ID'
+                        : 'Symbol'
+                  }
+                  required={!optionalCurrency}
+                  data-testid="input-currency"
+                  {...form.getInputProps('currency')}
+                />
+              )}
+
+              {currencyType === 'multilocation' && (
+                <JsonInput
+                  placeholder="Input Multi-Location JSON or interior junctions JSON to search for and identify the asset"
+                  formatOnBlur
+                  autosize
+                  minRows={10}
+                  {...form.getInputProps('currency')}
+                />
+              )}
+
+              {supportsCurrencyType && (
+                <SegmentedControl
+                  size="xs"
+                  pb={8}
+                  data={[
+                    { label: 'Asset ID', value: 'id' },
+                    { label: 'Symbol', value: 'symbol' },
+                    { label: 'Multi-location', value: 'multilocation' },
+                  ]}
+                  onClick={onSelectCurrencyTypeClick}
+                  data-testid="currency-type"
+                  {...form.getInputProps('currencyType')}
+                />
+              )}
+            </Stack>
+          )}
+
+          {showAddressInput && (
+            <TextInput
+              label="Address"
+              placeholder="Enter address"
+              required
+              data-testid="address-input"
+              {...form.getInputProps('address')}
+            />
+          )}
+
+          <XcmApiCheckbox {...form.getInputProps('useApi')} />
+
+          <Button type="submit" loading={loading} data-testid="submit">
+            Submit
+          </Button>
+        </Stack>
+      </form>
+    </Paper>
   );
 };
 

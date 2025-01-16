@@ -1,0 +1,15 @@
+.root {
+  &:hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-1),
+      var(--mantine-color-dark-5)
+    );
+  }
+}
+
+.section {
+  &[data-position='right'] {
+    flex: 1;
+    justify-content: flex-end;
+  }
+}

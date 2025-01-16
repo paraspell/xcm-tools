@@ -109,6 +109,9 @@ importers:
 
   apps/playground:
     dependencies:
+      '@mantine/code-highlight':
+        specifier: ^7.15.2
+        version: 7.15.2(@mantine/core@7.15.2(@mantine/hooks@7.15.2(react@19.0.0))(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@mantine/hooks@7.15.2(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@mantine/core':
         specifier: ^7.15.2
         version: 7.15.2(@mantine/hooks@7.15.2(react@19.0.0))(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -118,6 +121,9 @@ importers:
       '@mantine/hooks':
         specifier: ^7.15.2
         version: 7.15.2(react@19.0.0)
+      '@mantinex/dev-icons':
+        specifier: ^1.1.0
+        version: 1.1.0(@mantine/core@7.15.2(@mantine/hooks@7.15.2(react@19.0.0))(@types/react@19.0.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@mantine/hooks@7.15.2(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -133,6 +139,9 @@ importers:
       '@polkadot/api':
         specifier: ^15.0.2
         version: 15.0.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@polkadot/apps-config':
+        specifier: ^0.146.1
+        version: 0.146.1(@polkadot/keyring@13.2.3(@polkadot/util-crypto@13.2.3(@polkadot/util@13.2.3))(@polkadot/util@13.2.3))(bufferutil@4.0.8)(react-dom@19.0.0(react@19.0.0))(react-is@19.0.0)(react@19.0.0)(utf-8-validate@5.0.10)
       '@polkadot/extension-dapp':
         specifier: ^0.57.1
         version: 0.57.1(@polkadot/api@15.0.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.2.3(@polkadot/util@13.2.3))(@polkadot/util@13.2.3)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -157,6 +166,9 @@ importers:
       axios:
         specifier: ^1.7.9
         version: 1.7.9
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       ethers:
         specifier: ^6.13.4
         version: 6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)

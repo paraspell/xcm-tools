@@ -1,30 +1,36 @@
-import { Text, Alert } from '@mantine/core';
+import type { FC } from 'react';
+import { Alert } from '@mantine/core';
 import { IconJson, IconLink } from '@tabler/icons-react';
-import type { FC, ReactNode } from 'react';
-
-const jsonIcon = <IconJson size={24} />;
-const linkIcon = <IconLink size={24} />;
+import { CodeHighlight } from '@mantine/code-highlight';
 
 type Props = {
-  children: ReactNode;
   onClose: () => void;
   useLinkIcon?: boolean;
+  output: string;
 };
 
-const OutputAlert: FC<Props> = ({ children, onClose, useLinkIcon }) => (
+const OutputAlert: FC<Props> = ({ output, onClose, useLinkIcon }) => (
   <Alert
     color="green"
     title="Output"
-    icon={useLinkIcon ? linkIcon : jsonIcon}
+    icon={useLinkIcon ? <IconLink size={24} /> : <IconJson size={24} />}
     withCloseButton
     onClose={onClose}
     mt="lg"
+    p="xl"
     style={{ overflowWrap: 'anywhere' }}
     data-testid="output"
   >
-    <Text component="pre" size="sm">
-      {children}
-    </Text>
+    <CodeHighlight
+      code={output}
+      lang="json"
+      style={{
+        padding: 0,
+        borderRadius: 16,
+        marginTop: 20,
+        backgroundColor: 'transparent',
+      }}
+    />
   </Alert>
 );
 

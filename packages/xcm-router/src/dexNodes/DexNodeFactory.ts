@@ -16,8 +16,6 @@ export const record: Record<TExchangeNode, ExchangeNode> = {
   BifrostKusamaDex: new BifrostExchangeNode('BifrostKusama', 'BifrostKusamaDex'),
 };
 
-const createDexNodeInstance = (node: TExchangeNode): ExchangeNode => {
+export const createDexNodeInstance = (node: TExchangeNode): ExchangeNode => {
   return record[node];
 };
-
-export default createDexNodeInstance;

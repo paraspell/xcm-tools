@@ -1,8 +1,11 @@
-import { Stack, Select, TextInput, Button, Checkbox } from '@mantine/core';
+import type { FC } from 'react';
+import { Stack, TextInput, Button, Paper } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
-import type { FC } from 'react';
 import { isValidWalletAddress } from '../../utils';
+import { XcmApiCheckbox } from '../XcmApiCheckbox';
+import { useWallet } from '../../hooks/useWallet';
+import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 const SUPPORTED_NODES: TNodeDotKsmWithRelayChains[] = [
   'Polkadot',
@@ -28,7 +31,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
     initialValues: {
       from: 'Polkadot',
       amount: '10000000000000000000',
-      address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       useApi: false,
     },
 
@@ -38,47 +41,57 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
+  const { connectWallet, selectedAccount, isInitialized, isLoadingExtensions } =
+    useWallet();
+
+  const onConnectWalletClick = () => void connectWallet();
+
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack>
-        <Select
-          label="Node"
-          placeholder="Pick value"
-          data={[...SUPPORTED_NODES]}
-          searchable
-          required
-          allowDeselect={false}
-          data-testid="select-origin"
-          {...form.getInputProps('from')}
-        />
+    <Paper p="xl" shadow="md">
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        <Stack>
+          <ParachainSelect
+            label="Node"
+            placeholder="Pick value"
+            data={SUPPORTED_NODES}
+            data-testid="select-origin"
+            {...form.getInputProps('from')}
+          />
 
-        <TextInput
-          label="Recipient address"
-          placeholder="0x0000000"
-          required
-          data-testid="input-address"
-          {...form.getInputProps('address')}
-        />
+          <TextInput
+            label="Recipient address"
+            placeholder="Enter address"
+            required
+            data-testid="input-address"
+            {...form.getInputProps('address')}
+          />
 
-        <TextInput
-          label="Amount"
-          placeholder="0"
-          required
-          data-testid="input-amount"
-          {...form.getInputProps('amount')}
-        />
+          <TextInput
+            label="Amount"
+            placeholder="0"
+            required
+            data-testid="input-amount"
+            {...form.getInputProps('amount')}
+          />
 
-        <Checkbox
-          label="Use XCM API"
-          {...form.getInputProps('useApi')}
-          data-testid="checkbox-api"
-        />
+          <XcmApiCheckbox {...form.getInputProps('useApi')} />
 
-        <Button type="submit" loading={loading} data-testid="submit">
-          Claim asset
-        </Button>
-      </Stack>
-    </form>
+          {selectedAccount ? (
+            <Button type="submit" loading={loading} data-testid="submit">
+              Claim asset
+            </Button>
+          ) : (
+            <Button
+              onClick={onConnectWalletClick}
+              data-testid="btn-connect-wallet"
+              loading={!isInitialized || isLoadingExtensions}
+            >
+              Connect wallet
+            </Button>
+          )}
+        </Stack>
+      </form>
+    </Paper>
   );
 };
 

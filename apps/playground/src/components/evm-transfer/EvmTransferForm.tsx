@@ -1,17 +1,12 @@
 import { useForm } from '@mantine/form';
 import type { FC } from 'react';
-import {
-  Button,
-  Checkbox,
-  Select,
-  Stack,
-  Switch,
-  TextInput,
-} from '@mantine/core';
+import { Button, Paper, Select, Stack, Switch, TextInput } from '@mantine/core';
 import type { TAsset, TNodePolkadotKusama } from '@paraspell/sdk';
 import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '@paraspell/sdk';
 import { isValidPolkadotAddress } from '../../utils';
 import useCurrencyOptions from '../../hooks/useCurrencyOptions';
+import { XcmApiCheckbox } from '../XcmApiCheckbox';
+import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type FormValues = {
   from: 'Ethereum' | 'Moonbeam';
@@ -39,7 +34,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
       to: 'AssetHubPolkadot',
       currencyOptionId: '',
       amount: '1000000000',
-      address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       useApi: false,
       useViem: false,
     },
@@ -68,74 +63,67 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading }) => {
   };
 
   return (
-    <form onSubmit={form.onSubmit(onSubmitInternal)}>
-      <Stack>
-        <Switch
-          label="Use viem?"
-          data-testid="switch-api"
-          {...form.getInputProps('useViem')}
-        />
+    <Paper p="xl" shadow="md">
+      <form onSubmit={form.onSubmit(onSubmitInternal)}>
+        <Stack>
+          <Switch
+            label="Use viem?"
+            data-testid="switch-api"
+            {...form.getInputProps('useViem')}
+          />
 
-        <Select
-          label="From"
-          placeholder="Pick value"
-          data={['Ethereum', 'Moonbeam', 'Moonriver']}
-          allowDeselect={false}
-          searchable
-          data-testid="select-source"
-          {...form.getInputProps('from')}
-        />
+          <ParachainSelect
+            label="From"
+            placeholder="Pick value"
+            data={['Ethereum', 'Moonbeam', 'Moonriver']}
+            data-testid="select-source"
+            {...form.getInputProps('from')}
+          />
 
-        <Select
-          label="To"
-          placeholder="Pick value"
-          data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
-          allowDeselect={false}
-          searchable
-          required
-          data-testid="select-destination"
-          {...form.getInputProps('to')}
-        />
+          <ParachainSelect
+            label="To"
+            placeholder="Pick value"
+            data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
+            data-testid="select-destination"
+            {...form.getInputProps('to')}
+          />
 
-        <Select
-          key={form.values.from + form.values.to}
-          label="Currency"
-          placeholder="Pick value"
-          data={currencyOptions}
-          allowDeselect={false}
-          searchable
-          required
-          data-testid="select-currency"
-          {...form.getInputProps('currencyOptionId')}
-        />
+          <Select
+            key={form.values.from + form.values.to}
+            label="Currency"
+            placeholder="Pick value"
+            data={currencyOptions}
+            allowDeselect={false}
+            searchable
+            required
+            data-testid="select-currency"
+            {...form.getInputProps('currencyOptionId')}
+          />
 
-        <TextInput
-          label="Recipient address"
-          placeholder="0x0000000"
-          required
-          data-testid="input-address"
-          {...form.getInputProps('address')}
-        />
+          <TextInput
+            label="Recipient address"
+            placeholder="Enter address"
+            required
+            data-testid="input-address"
+            {...form.getInputProps('address')}
+          />
 
-        <TextInput
-          label="Amount"
-          placeholder="0"
-          required
-          data-testid="input-amount"
-          {...form.getInputProps('amount')}
-        />
+          <TextInput
+            label="Amount"
+            placeholder="0"
+            required
+            data-testid="input-amount"
+            {...form.getInputProps('amount')}
+          />
 
-        <Checkbox
-          label="Use XCM API"
-          {...form.getInputProps('useApi')}
-          data-testid="checkbox-api"
-        />
+          <XcmApiCheckbox {...form.getInputProps('useApi')} />
 
-        <Button type="submit" loading={loading} data-testid="submit">
-          Submit transaction
-        </Button>
-      </Stack>
-    </form>
+          <Button type="submit" loading={loading} data-testid="submit">
+            Submit transaction
+          </Button>
+        </Stack>
+      </form>
+    </Paper>
   );
 };
 

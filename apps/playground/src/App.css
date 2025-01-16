@@ -1,3 +1,28 @@
 a {
   text-decoration: none;
 }
+
+:root[data-mantine-color-scheme='dark'] {
+  --color-body: var(--mantine-color-dark-6);
+}
+
+:root[data-mantine-color-scheme='light'] {
+  --color-body: var(--mantine-color-gray-0);
+}
+
+body {
+  background-color: var(--color-body);
+}
+
+.active-link {
+  background-color: var(--mantine-color-mainColor-light) !important;
+  color: var(--mantine-color-mainColor-4) !important;
+}
+
+.mantine-CodeHighlight-copy {
+  display: none;
+}
+
+.mantine-CodeHighlight-pre {
+  padding: 0;
+}

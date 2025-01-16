@@ -1,14 +1,23 @@
-import { Stack, Title, Box } from '@mantine/core';
-import ErrorAlert from './ErrorAlert';
+import {
+  Stack,
+  Box,
+  Center,
+  Title,
+  Text,
+  useMantineColorScheme,
+  Badge,
+} from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import type { TCurrencyCore, TMultiLocation } from '@paraspell/sdk';
+import ErrorAlert from '../ErrorAlert';
 import { useState, useEffect } from 'react';
-import { useWallet } from '../hooks/useWallet';
+import { useWallet } from '../../hooks/useWallet';
 import type { FormValues } from './TransferInfoForm';
 import TransferInfoForm from './TransferInfoForm';
-import OutputAlert from './OutputAlert';
-import { fetchFromApi } from '../utils/submitUsingApi';
-import { replaceBigInt } from '../utils/replaceBigInt';
-import type { TCurrencyCore, TMultiLocation } from '@paraspell/sdk';
+import OutputAlert from '../OutputAlert';
+import { fetchFromApi, replaceBigInt } from '../../utils';
+
+const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 const TransferInfo = () => {
   const { selectedAccount, apiType } = useWallet();
@@ -118,10 +127,37 @@ const TransferInfo = () => {
 
   const onOutputAlertCloseClick = () => closeOutputAlert();
 
+  const theme = useMantineColorScheme();
+
   return (
     <Stack gap="xl">
-      <Stack w="100%" maw={400} mx="auto" gap="lg">
-        <Title order={3}>Transfer info</Title>
+      <Stack w="100%" maw={450} mx="auto" gap="lg">
+        <Box px="xl" pb="xl">
+          <Center mb="sm">
+            <Title order={2}>Transfer Info 📩</Title>
+          </Center>
+
+          <Center>
+            <Badge
+              variant="light"
+              radius="xl"
+              mb="md"
+              style={{ textTransform: 'unset' }}
+            >
+              v{VERSION}
+            </Badge>
+          </Center>
+
+          <Text
+            size="xs"
+            c={theme.colorScheme === 'light' ? 'gray.7' : 'dark.1'}
+            fw={700}
+            ta="center"
+          >
+            The transfer info feature provides essential details, including
+            fees, transfer sufficiency, and more.
+          </Text>
+        </Box>
         <TransferInfoForm onSubmit={onSubmit} loading={loading} />
       </Stack>
       <Box ref={targetRef}>
@@ -130,10 +166,12 @@ const TransferInfo = () => {
             {error?.message}
           </ErrorAlert>
         )}
-        {outputAlertOpened && (
-          <OutputAlert useLinkIcon onClose={onOutputAlertCloseClick}>
-            {output}
-          </OutputAlert>
+        {outputAlertOpened && output && (
+          <OutputAlert
+            useLinkIcon
+            output={output}
+            onClose={onOutputAlertCloseClick}
+          />
         )}
       </Box>
     </Stack>

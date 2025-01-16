@@ -1,8 +1,7 @@
 // Unit tests for general utils
 
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
-import { type Extrinsic, InvalidCurrencyError, createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
+import { type Extrinsic, InvalidCurrencyError } from '@paraspell/sdk-pjs';
 import {
   calculateTransactionFee,
   delay,
@@ -10,16 +9,7 @@ import {
   validateRelayChainCurrency,
 } from './utils';
 import BigNumber from 'bignumber.js';
-import {
-  type TTxProgressInfo,
-  TransactionStatus,
-  TransactionType,
-  type TSwapResult,
-  type TTransferOptionsModified,
-} from '../types';
-import type ExchangeNode from '../dexNodes/DexNode';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from '../transfer/utils';
-import { FALLBACK_FEE_CALC_ADDRESS } from '../consts';
+import { type TTxProgressInfo, TransactionStatus, TransactionType } from '../types';
 
 describe('validateRelayChainCurrency', () => {
   it('should not throw an error for valid Polkadot currency', () => {
@@ -124,40 +114,3 @@ describe('maybeUpdateTransferStatus', () => {
     }).not.toThrow();
   });
 });
-
-export const MOCK_ADDRESS = '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96';
-export const MOCK_SLIIPPAGE = '1';
-
-export const MOCK_TRANSFER_OPTIONS: TTransferOptionsModified = {
-  from: 'Astar',
-  exchangeNode: 'Hydration',
-  exchange: 'HydrationDex',
-  to: 'Interlay',
-  currencyFrom: { symbol: 'ASTR' },
-  currencyTo: { symbol: 'GLMR' },
-  assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
-  assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
-  amount: '10000000000000000000',
-  slippagePct: '1',
-  injectorAddress: MOCK_ADDRESS,
-  recipientAddress: MOCK_ADDRESS,
-  signer: {},
-  type: TransactionType.FULL_TRANSFER,
-  feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
-};
-
-export const performSwap = async (
-  options: TTransferOptionsModified,
-  dex: ExchangeNode,
-): Promise<TSwapResult> => {
-  const originApi = await createApiInstanceForNode(options.from as TNodeDotKsmWithRelayChains);
-  const swapApi = await dex.createApiInstance();
-  const toDestTx = await buildFromExchangeExtrinsic(swapApi, options, options.amount);
-  const toExchangeTx = await buildToExchangeExtrinsic(originApi, options);
-  const toDestTransactionFee = await calculateTransactionFee(toDestTx, options.injectorAddress);
-  const toExchangeTransactionFee = await calculateTransactionFee(
-    toExchangeTx,
-    options.injectorAddress,
-  );
-  return dex.swapCurrency(swapApi, options, toDestTransactionFee, toExchangeTransactionFee);
-};
