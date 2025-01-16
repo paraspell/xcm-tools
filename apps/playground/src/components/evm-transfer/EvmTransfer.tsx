@@ -1,4 +1,13 @@
-import { Stack, Title, Box, Button } from '@mantine/core';
+import {
+  Stack,
+  Box,
+  Button,
+  useMantineColorScheme,
+  Center,
+  Title,
+  Text,
+  Badge,
+} from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useState, useEffect } from 'react';
 import type { BrowserProvider, LogDescription } from 'ethers';
@@ -9,7 +18,7 @@ import EvmTransferForm from './EvmTransferForm';
 import type { TNode } from '@paraspell/sdk';
 import { EvmBuilder as EvmBuilderPJS } from '@paraspell/sdk-pjs';
 import { EvmBuilder } from '@paraspell/sdk';
-import { fetchFromApi } from '../../utils/submitUsingApi';
+import { fetchFromApi } from '../../utils';
 import { IGateway__factory } from '@snowbridge/contract-types';
 import type { MultiAddressStruct } from '@snowbridge/contract-types/dist/IGateway';
 import { u8aToHex } from '@polkadot/util';
@@ -22,6 +31,8 @@ import type { Address } from 'viem';
 import { createWalletClient, custom } from 'viem';
 import { moonbeam, mainnet, moonriver } from 'viem/chains';
 import { useWallet } from '../../hooks/useWallet';
+
+const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 const EvmTransfer = () => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -302,13 +313,39 @@ const EvmTransfer = () => {
     setIsWalletModalOpen(false);
   };
 
+  const theme = useMantineColorScheme();
+
   return (
     <Stack gap="xl">
-      <Stack w="100%" maw={400} mx="auto" gap="lg">
-        <Title order={3}>EVM Transfer</Title>
+      <Stack w="100%" maw={450} mx="auto" gap="lg">
+        <Box px="xl" pb="xl">
+          <Center mb="sm">
+            <Title order={2}>EVM transfer ✨</Title>
+          </Center>
+
+          <Center>
+            <Badge
+              variant="light"
+              radius="xl"
+              mb="md"
+              style={{ textTransform: 'unset' }}
+            >
+              v{VERSION}
+            </Badge>
+          </Center>
+
+          <Text
+            size="xs"
+            c={theme.colorScheme === 'light' ? 'gray.7' : 'dark.1'}
+            fw={700}
+            ta="center"
+          >
+            Easily transfer assets from an EVM compatible Parachain.
+          </Text>
+        </Box>
         <Button
           size="xs"
-          variant="outline"
+          variant="light"
           onClick={onConnectWallet}
           data-testid="btn-connect-eth-wallet"
         >

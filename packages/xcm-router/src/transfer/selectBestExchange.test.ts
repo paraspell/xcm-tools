@@ -3,14 +3,14 @@
 import { describe, it, expect, vi, afterAll, beforeAll, type MockInstance } from 'vitest';
 import * as utils from '../utils/utils';
 import * as transferUtils from './utils';
-import * as dexNodeFactory from '../dexNodes/DexNodeFactory';
 import { selectBestExchange } from './selectBestExchange';
-import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import { type TTransferOptions } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
+import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
+import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
 
 vi.mock('@paraspell/sdk-pjs', async () => {
   const actual = await vi.importActual('@paraspell/sdk-pjs');
@@ -19,6 +19,10 @@ vi.mock('@paraspell/sdk-pjs', async () => {
     createApiInstanceForNode: vi.fn().mockResolvedValue(undefined),
   };
 });
+
+vi.mock('../dexNodes/DexNodeFactory', () => ({
+  createDexNodeInstance: vi.fn(),
+}));
 
 describe('selectBestExchange', () => {
   let options: TTransferOptions;
@@ -45,7 +49,7 @@ describe('selectBestExchange', () => {
       currencyTo: { id: '18446744073709551616' },
       exchange: 'AcalaDex',
     };
-    vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
+    vi.mocked(createDexNodeInstance).mockReturnValue({
       node: 'Acala',
       createApiInstance: vi.fn().mockResolvedValue({}),
       swapCurrency: vi.fn().mockResolvedValue({ amountOut: '1' }),
@@ -67,7 +71,7 @@ describe('selectBestExchange', () => {
       currencyTo: { id: '18446744073709551616' },
       exchange: 'AcalaDex',
     };
-    vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
+    vi.mocked(createDexNodeInstance).mockReturnValue({
       node: 'Acala',
       createApiInstance: vi.fn().mockResolvedValue({}),
       swapCurrency: vi.fn().mockResolvedValue(Promise.reject(new Error('test'))),
@@ -83,7 +87,7 @@ describe('selectBestExchange', () => {
       currencyTo: { id: '1000099' },
       exchange: 'AcalaDex',
     };
-    vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
+    vi.mocked(createDexNodeInstance).mockReturnValue({
       node: 'Acala',
       createApiInstance: vi.fn().mockResolvedValue({}),
       swapCurrency: vi.fn().mockResolvedValue({ amountOut: '1' }),

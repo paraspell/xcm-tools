@@ -1,6 +1,16 @@
-import { Button, Checkbox, JsonInput, Stack } from '@mantine/core';
+import { Button, JsonInput, Paper, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { FC } from 'react';
+import { XcmApiCheckbox } from '../XcmApiCheckbox';
+
+const PLACEHOLDER_MULTI_LOCATION = `{
+  "parents": 1,
+  "interior": {
+    "X1": {
+      "Parachain": 1000
+    }
+  }
+}`;
 
 export type FormValues = {
   input: string;
@@ -21,27 +31,30 @@ const AnalyserForm: FC<Props> = ({ onSubmit, loading }) => {
   });
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Stack>
-        <JsonInput
-          placeholder="Enter Multi-Location JSON here"
-          formatOnBlur
-          autosize
-          minRows={10}
-          required
-          data-testid="input"
-          {...form.getInputProps('input')}
-        />
-        <Checkbox
-          label="Use XCM API"
-          {...form.getInputProps('useApi')}
-          data-testid="checkbox-api"
-        />
-        <Button type="submit" loading={loading} data-testid="submit">
-          Convert
-        </Button>
-      </Stack>
-    </form>
+    <Paper p="xl" shadow="md">
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        <Stack gap="lg">
+          <JsonInput
+            label="Multi-Location"
+            description="Enter the multi-location in JSON format"
+            placeholder={PLACEHOLDER_MULTI_LOCATION}
+            formatOnBlur
+            autosize
+            minRows={10}
+            required
+            withAsterisk={false}
+            data-testid="input"
+            {...form.getInputProps('input')}
+          />
+
+          <XcmApiCheckbox {...form.getInputProps('useApi')} />
+
+          <Button type="submit" loading={loading} data-testid="submit">
+            Convert
+          </Button>
+        </Stack>
+      </form>
+    </Paper>
   );
 };
 

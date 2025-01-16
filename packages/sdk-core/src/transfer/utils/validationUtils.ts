@@ -42,6 +42,12 @@ export const validateDestination = (
   origin: TNodeDotKsmWithRelayChains,
   destination: TDestination
 ) => {
+  if (isRelayChain(origin) && !isTMultiLocation(destination) && isRelayChain(destination)) {
+    throw new IncompatibleNodesError(
+      'Direct relay chain to relay chain transfers are not supported. Please use Polkadot <-> Kusama bridge through AssetHub.'
+    )
+  }
+
   if (destination === 'Ethereum' && origin !== 'AssetHubPolkadot' && origin !== 'Hydration') {
     throw new IncompatibleNodesError(
       'Transfers to Ethereum are only supported from AssetHubPolkadot and Hydration.'

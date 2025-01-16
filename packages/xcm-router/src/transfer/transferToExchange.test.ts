@@ -4,8 +4,8 @@ import { vi, describe, it, expect } from 'vitest';
 import * as transferUtils from './utils';
 import * as utils from '../utils/utils';
 import { type ApiPromise } from '@polkadot/api';
-import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import { transferToExchange } from './transferToExchange';
+import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
 
 describe('transferToExchange', () => {
   it('updates status and returns transaction hash on successful transfer to exchange', async () => {

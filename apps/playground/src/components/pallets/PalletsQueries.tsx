@@ -1,12 +1,22 @@
-import { Stack, Title, Box } from '@mantine/core';
+import {
+  Stack,
+  Box,
+  useMantineColorScheme,
+  Center,
+  Title,
+  Text,
+  Badge,
+} from '@mantine/core';
 import ErrorAlert from '../ErrorAlert';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useState, useEffect } from 'react';
-import { fetchFromApi } from '../../utils/submitUsingApi';
+import { fetchFromApi } from '../../utils';
 import { getDefaultPallet, getSupportedPallets } from '@paraspell/sdk';
 import type { FormValues } from './PalletsForm';
 import PalletsForm from './PalletsForm';
 import OutputAlert from '../OutputAlert';
+
+const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 const PalletsQueries = () => {
   const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
@@ -89,10 +99,37 @@ const PalletsQueries = () => {
     closeOutputAlert();
   };
 
+  const theme = useMantineColorScheme();
+
   return (
     <Stack gap="xl">
-      <Stack w="100%" maw={400} mx="auto" gap="lg">
-        <Title order={3}>Pallets queries</Title>
+      <Stack w="100%" maw={450} mx="auto" gap="lg">
+        <Box px="xl" pb="xl">
+          <Center mb="sm">
+            <Title order={2}>Pallets 📦</Title>
+          </Center>
+
+          <Center>
+            <Badge
+              variant="light"
+              radius="xl"
+              mb="md"
+              style={{ textTransform: 'unset' }}
+            >
+              v{VERSION}
+            </Badge>
+          </Center>
+
+          <Text
+            size="xs"
+            c={theme.colorScheme === 'light' ? 'gray.7' : 'dark.1'}
+            fw={700}
+            ta="center"
+          >
+            Query the supported pallets and the default pallet for transfers for
+            a given node.
+          </Text>
+        </Box>
         <PalletsForm onSubmit={onSubmit} loading={loading} />
       </Stack>
       <Box ref={targetRef}>
@@ -103,8 +140,8 @@ const PalletsQueries = () => {
         )}
       </Box>
       <Box>
-        {outputAlertOpened && (
-          <OutputAlert onClose={onOutputAlertCloseClick}>{output}</OutputAlert>
+        {outputAlertOpened && output && (
+          <OutputAlert output={output} onClose={onOutputAlertCloseClick} />
         )}
       </Box>
     </Stack>

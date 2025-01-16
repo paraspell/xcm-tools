@@ -40,7 +40,7 @@ describe('XTransferController', () => {
       const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = {} as Extrinsic;
@@ -61,7 +61,7 @@ describe('XTransferController', () => {
       const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = {} as Extrinsic;
@@ -86,13 +86,13 @@ describe('XTransferController', () => {
           {
             from: 'Acala',
             to: 'Astar',
-            address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+            address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
             currency: { symbol: 'ACA', amount: 100 },
           },
           {
             from: 'Acala',
             to: 'Astar',
-            address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+            address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
             currency: { symbol: 'ACA', amount: 100 },
           },
         ],
@@ -118,13 +118,13 @@ describe('XTransferController', () => {
           {
             from: 'Acala',
             to: 'Astar',
-            address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+            address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
             currency: { symbol: 'ACA', amount: 100 },
           },
           {
             from: 'Acala',
             to: 'Astar',
-            address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+            address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
             currency: { symbol: 'ACA', amount: 100 },
           },
         ],
@@ -150,7 +150,7 @@ describe('XTransferController', () => {
       const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = {} as Extrinsic;

@@ -5,9 +5,9 @@ import AcalaExchangeNode from './Acala/AcalaDex';
 import BifrostExchangeNode from './Bifrost/BifrostDex';
 import HydrationExchangeNode from './Hydration/HydrationDex';
 import InterlayExchangeNode from './Interlay/InterlayDex';
-import createDexNodeInstance from './DexNodeFactory';
 import { type TExchangeNode } from '../types';
 import type ExchangeNode from './DexNode';
+import { createDexNodeInstance } from './DexNodeFactory';
 
 describe('createDexNodeInstance', () => {
   const testCases: Array<{ node: TExchangeNode; expectedClass: typeof ExchangeNode }> = [

@@ -1,4 +1,12 @@
-import { Stack, Title, Box } from '@mantine/core';
+import {
+  Stack,
+  Box,
+  useMantineColorScheme,
+  Center,
+  Title,
+  Text,
+  Badge,
+} from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { TPapiTransaction } from '@paraspell/sdk';
@@ -7,11 +15,13 @@ import { useWallet } from '../../hooks/useWallet';
 import ErrorAlert from '../ErrorAlert';
 import type { FormValues } from './AssetClaimForm';
 import AssetClaimForm from './AssetClaimForm';
-import { getTxFromApi } from '../../utils/submitUsingApi';
+import { getTxFromApi } from '../../utils';
 import type { ApiPromise } from '@polkadot/api';
 import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
 import { submitTransaction, submitTransactionPapi } from '../../utils';
 import type { Signer } from '@polkadot/api/types';
+
+const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 const AssetClaim = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
@@ -131,10 +141,36 @@ const AssetClaim = () => {
     closeAlert();
   };
 
+  const theme = useMantineColorScheme();
+
   return (
     <Stack gap="xl">
-      <Stack w="100%" maw={400} mx="auto" gap="lg">
-        <Title order={3}>Asset Claim</Title>
+      <Stack w="100%" maw={450} mx="auto" gap="lg">
+        <Box px="xl" pb="xl">
+          <Center mb="sm">
+            <Title order={2}>Asset Claim 🪙</Title>
+          </Center>
+
+          <Center>
+            <Badge
+              variant="light"
+              radius="xl"
+              mb="md"
+              style={{ textTransform: 'unset' }}
+            >
+              v{VERSION}
+            </Badge>
+          </Center>
+
+          <Text
+            size="xs"
+            c={theme.colorScheme === 'light' ? 'gray.7' : 'dark.1'}
+            fw={700}
+            ta="center"
+          >
+            Recover assets that have been trapped in the cross-chain transfers.
+          </Text>
+        </Box>
         <AssetClaimForm onSubmit={onSubmit} loading={loading} />
       </Stack>
       <Box ref={targetRef}>

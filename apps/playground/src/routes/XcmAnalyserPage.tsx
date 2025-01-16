@@ -1,4 +1,13 @@
-import { Box, Container, Stack, Title } from '@mantine/core';
+import {
+  Badge,
+  Box,
+  Center,
+  Container,
+  Stack,
+  Text,
+  Title,
+  useMantineColorScheme,
+} from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import ErrorAlert from '../components/ErrorAlert';
@@ -6,9 +15,11 @@ import OutputAlert from '../components/OutputAlert';
 import type { FormValues } from '../components/analyser/AnalyserForm';
 import AnalyserForm from '../components/analyser/AnalyserForm';
 import { convertMultilocationToUrlJson } from '@paraspell/xcm-analyser';
-import { fetchFromApi } from '../utils/submitUsingApi';
+import { fetchFromApi } from '../utils';
 
-const XcmAnalyserSandbox = () => {
+const VERSION = import.meta.env.VITE_XCM_ANALYSER_VERSION as string;
+
+export const XcmAnalyserPage = () => {
   const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
     useDisclosure(false);
   const [
@@ -82,11 +93,38 @@ const XcmAnalyserSandbox = () => {
     closeOutputAlert();
   };
 
+  const theme = useMantineColorScheme();
+
   return (
-    <Container p="xl">
+    <Container px="xl" pb="xl">
       <Stack gap="xs">
-        <Stack w="100%" maw={400} mx="auto" gap="lg">
-          <Title order={3}>XCM Analyser Sandbox</Title>
+        <Stack w="100%" maw={460} mx="auto" gap="0">
+          <Box px="xl" pb="xl">
+            <Center mb="xs">
+              <Title order={2}>XCM Analyser 🔎 </Title>
+            </Center>
+
+            <Center>
+              <Badge
+                variant="light"
+                radius="xl"
+                mb="md"
+                style={{ textTransform: 'unset' }}
+              >
+                v{VERSION}
+              </Badge>
+            </Center>
+
+            <Text
+              size="xs"
+              c={theme.colorScheme === 'light' ? 'gray.7' : 'dark.1'}
+              fw={700}
+              ta="center"
+            >
+              This tool allows you to convert multi-locations to human readable
+              format (URLs)
+            </Text>
+          </Box>
           <AnalyserForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Box ref={targetRef}>
@@ -97,15 +135,15 @@ const XcmAnalyserSandbox = () => {
           )}
         </Box>
         <Box>
-          {outputAlertOpened && (
-            <OutputAlert useLinkIcon onClose={onOutputAlertCloseClick}>
-              {output}
-            </OutputAlert>
+          {outputAlertOpened && output && (
+            <OutputAlert
+              useLinkIcon
+              output={output}
+              onClose={onOutputAlertCloseClick}
+            />
           )}
         </Box>
       </Stack>
     </Container>
   );
 };
-
-export default XcmAnalyserSandbox;

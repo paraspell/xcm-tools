@@ -1,15 +1,8 @@
 // Unit tests for main entry point functions
 
-import { vi, describe, it, expect, beforeEach, type MockInstance } from 'vitest';
-import * as transferToExchange from './transferToExchange';
-import * as swap from './swap';
-import * as transferToDestination from './transferToDestination';
-import * as transferToEthereum from './transferToEthereum';
-import * as transferFromEthereum from './transferFromEthereum';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { transfer } from './transfer';
-import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import { TransactionType, type TTransferOptions } from '../types';
-import * as selectBestExchange from './selectBestExchange';
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { Signer as EthSigner } from 'ethers';
 import type { Signer } from '@polkadot/types/types';
@@ -17,6 +10,14 @@ import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import { createSwapTx } from './createSwapTx';
+import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
+import { transferToExchange } from './transferToExchange';
+import { swap } from './swap';
+import { transferToDestination } from './transferToDestination';
+import { transferToEthereum } from './transferToEthereum';
+import { transferFromEthereum } from './transferFromEthereum';
+import { selectBestExchange } from './selectBestExchange';
+import { createAcalaApiInstance } from '../dexNodes/Acala/utils';
 
 vi.mock('@paraspell/sdk-pjs', async () => {
   const actual = await vi.importActual('@paraspell/sdk-pjs');
@@ -28,42 +29,73 @@ vi.mock('@paraspell/sdk-pjs', async () => {
   };
 });
 
+vi.mock('./utils', async () => {
+  const actual = await vi.importActual('./utils');
+  return {
+    ...actual,
+    buildFromExchangeExtrinsic: vi.fn(),
+    buildToExchangeExtrinsic: vi.fn(),
+  };
+});
+
 vi.mock('./createSwapTx', () => ({
   createSwapTx: vi.fn(),
 }));
 
-describe('transfer', () => {
-  let transferToExchangeSpy: MockInstance;
-  let swapSpy: MockInstance;
-  let transferToDestinationSpy: MockInstance;
-  let transferToEthereumSpy: MockInstance;
-  let transferFromEthereumSpy: MockInstance;
+vi.mock('../utils/utils', () => ({
+  delay: vi.fn(),
+  calculateTransactionFee: vi.fn(),
+}));
 
+vi.mock('./transferToExchange', () => ({
+  transferToExchange: vi.fn(),
+}));
+
+vi.mock('./swap', () => ({
+  swap: vi.fn(),
+}));
+
+vi.mock('./transferToDestination', () => ({
+  transferToDestination: vi.fn(),
+}));
+
+vi.mock('./transferToEthereum', () => ({
+  transferToEthereum: vi.fn(),
+}));
+
+vi.mock('./transferFromEthereum', () => ({
+  transferFromEthereum: vi.fn(),
+}));
+
+vi.mock('./selectBestExchange', () => ({
+  selectBestExchange: vi.fn(),
+}));
+
+vi.mock('../../dexNodes/DexNodeFactory', () => ({
+  createDexNodeInstance: vi.fn(),
+}));
+
+vi.mock('../dexNodes/Acala/utils', () => ({
+  createAcalaApiInstance: vi.fn(),
+}));
+
+describe('transfer', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-  });
-
-  beforeEach(() => {
-    transferToExchangeSpy = vi
-      .spyOn(transferToExchange, 'transferToExchange')
-      .mockResolvedValue('');
-    swapSpy = vi.spyOn(swap, 'swap').mockResolvedValue('');
+    vi.mocked(transferToExchange).mockResolvedValue('');
+    vi.mocked(swap).mockResolvedValue('');
     vi.mocked(createSwapTx).mockResolvedValue({
       amountOut: '1',
       tx: {} as Extrinsic,
     });
-    transferToDestinationSpy = vi
-      .spyOn(transferToDestination, 'transferToDestination')
-      .mockResolvedValue('');
+    vi.mocked(transferToDestination).mockResolvedValue('');
 
-    transferToEthereumSpy = vi.spyOn(transferToEthereum, 'transferToEthereum').mockResolvedValue();
-    transferFromEthereumSpy = vi
-      .spyOn(transferFromEthereum, 'transferFromEthereum')
-      .mockResolvedValue();
-    transferFromEthereumSpy = vi
-      .spyOn(transferFromEthereum, 'transferFromEthereum')
-      .mockResolvedValue();
-
+    vi.mocked(transferToEthereum).mockResolvedValue();
+    vi.mocked(transferFromEthereum).mockResolvedValue();
+    vi.mocked(transferFromEthereum).mockResolvedValue();
+    vi.mocked(createAcalaApiInstance).mockResolvedValue({
+      disconnect: async () => {},
+    } as ApiPromise);
     vi.mocked(createApiInstanceForNode).mockResolvedValue({
       disconnect: async () => {},
     } as ApiPromise);
@@ -76,10 +108,10 @@ describe('transfer', () => {
       type: TransactionType.FULL_TRANSFER,
     };
     await transfer(options);
-    expect(transferToExchangeSpy).toHaveBeenCalled();
+    expect(transferToExchange).toHaveBeenCalled();
     expect(createSwapTx).toHaveBeenCalled();
-    expect(swapSpy).toHaveBeenCalled();
-    expect(transferToDestinationSpy).toHaveBeenCalled();
+    expect(swap).toHaveBeenCalled();
+    expect(transferToDestination).toHaveBeenCalled();
   });
 
   it('main transfer function - FULL_TRANSFER scenario - auto exchange', async () => {
@@ -91,24 +123,22 @@ describe('transfer', () => {
       type: TransactionType.FULL_TRANSFER,
     };
 
-    const selectBestExchangeSpy = vi
-      .spyOn(selectBestExchange, 'selectBestExchange')
-      .mockReturnValue(
-        Promise.resolve({
-          node: 'Acala',
-          exchangeNode: 'AcalaDex',
-          createApiInstance: vi.fn().mockResolvedValue({
-            disconnect: () => {},
-          }),
-          swapCurrency: vi.fn().mockResolvedValue({}),
-        } as unknown as ExchangeNode),
-      );
+    vi.mocked(selectBestExchange).mockReturnValue(
+      Promise.resolve({
+        node: 'Acala',
+        exchangeNode: 'AcalaDex',
+        createApiInstance: vi.fn().mockResolvedValue({
+          disconnect: () => {},
+        }),
+        swapCurrency: vi.fn().mockResolvedValue({}),
+      } as unknown as ExchangeNode),
+    );
 
     await transfer(options);
-    expect(transferToExchangeSpy).toHaveBeenCalled();
-    expect(swapSpy).toHaveBeenCalled();
-    expect(selectBestExchangeSpy).toHaveBeenCalledTimes(1);
-    expect(transferToDestinationSpy).toHaveBeenCalled();
+    expect(transferToExchange).toHaveBeenCalled();
+    expect(swap).toHaveBeenCalled();
+    expect(selectBestExchange).toHaveBeenCalledTimes(1);
+    expect(transferToDestination).toHaveBeenCalled();
   });
 
   it('main transfer function - TO_EXCHANGE scenario', async () => {
@@ -118,9 +148,9 @@ describe('transfer', () => {
       type: TransactionType.TO_EXCHANGE,
     };
     await transfer(options);
-    expect(transferToExchangeSpy).toHaveBeenCalled();
-    expect(swapSpy).not.toHaveBeenCalled();
-    expect(transferToDestinationSpy).not.toHaveBeenCalled();
+    expect(transferToExchange).toHaveBeenCalled();
+    expect(swap).not.toHaveBeenCalled();
+    expect(transferToDestination).not.toHaveBeenCalled();
   });
 
   it('main transfer function - TO_EXCHANGE - Ethereum scenario', async () => {
@@ -134,8 +164,8 @@ describe('transfer', () => {
       type: TransactionType.TO_EXCHANGE,
     };
     await expect(transfer(options)).rejects.toThrow();
-    expect(transferFromEthereumSpy).toHaveBeenCalled();
-    expect(transferToExchangeSpy).not.toHaveBeenCalled();
+    expect(transferFromEthereum).toHaveBeenCalled();
+    expect(transferToExchange).not.toHaveBeenCalled();
   });
 
   it('main transfer function - SWAP scenario', async () => {
@@ -145,9 +175,9 @@ describe('transfer', () => {
       type: TransactionType.SWAP,
     };
     await transfer(options);
-    expect(transferToExchangeSpy).not.toHaveBeenCalled();
-    expect(swapSpy).toHaveBeenCalled();
-    expect(transferToDestinationSpy).not.toHaveBeenCalled();
+    expect(transferToExchange).not.toHaveBeenCalled();
+    expect(swap).toHaveBeenCalled();
+    expect(transferToDestination).not.toHaveBeenCalled();
   });
 
   it('main transfer function - TO_DESTINATION scenario', async () => {
@@ -157,9 +187,9 @@ describe('transfer', () => {
       type: TransactionType.TO_DESTINATION,
     };
     await transfer(options);
-    expect(transferToExchangeSpy).not.toHaveBeenCalled();
-    expect(swapSpy).not.toHaveBeenCalled();
-    expect(transferToDestinationSpy).toHaveBeenCalled();
+    expect(transferToExchange).not.toHaveBeenCalled();
+    expect(swap).not.toHaveBeenCalled();
+    expect(transferToDestination).toHaveBeenCalled();
   });
 
   it('main transfer function - TO_ETH scenario', async () => {
@@ -173,7 +203,7 @@ describe('transfer', () => {
       ethSigner: {} as EthSigner,
     };
     await transfer(options);
-    expect(transferToEthereumSpy).toHaveBeenCalled();
+    expect(transferToEthereum).toHaveBeenCalled();
   });
 
   it('main transfer function - TO_ETH scenario - TYPE', async () => {
@@ -188,7 +218,7 @@ describe('transfer', () => {
       ethSigner: {} as EthSigner,
     };
     await transfer(options);
-    expect(transferToEthereumSpy).toHaveBeenCalled();
+    expect(transferToEthereum).toHaveBeenCalled();
   });
 
   it('main transfer function - FROM_ETH scenario', async () => {
@@ -201,7 +231,7 @@ describe('transfer', () => {
       ethSigner: {} as EthSigner,
     };
     await expect(transfer(options)).rejects.toThrow();
-    expect(transferToExchangeSpy).not.toHaveBeenCalled();
+    expect(transferToExchange).not.toHaveBeenCalled();
   });
 
   it('main transfer function - FROM_ETH scenario - TYPE', async () => {
@@ -215,7 +245,7 @@ describe('transfer', () => {
       ethSigner: {} as EthSigner,
     };
     await transfer(options);
-    expect(transferFromEthereumSpy).toHaveBeenCalled();
+    expect(transferFromEthereum).toHaveBeenCalled();
   });
 
   it('error handling - evmInjectorAddress without evmSigner', async () => {
@@ -298,7 +328,7 @@ describe('transfer', () => {
       type: TransactionType.TO_EXCHANGE,
     };
     await transfer(options);
-    expect(transferToExchangeSpy).not.toHaveBeenCalled();
+    expect(transferToExchange).not.toHaveBeenCalled();
   });
 
   it('skips extrinsic building for transactions already on the exchange - FULL_TRANSFER', async () => {
@@ -309,7 +339,7 @@ describe('transfer', () => {
       type: TransactionType.FULL_TRANSFER,
     };
     await transfer(options);
-    expect(transferToExchangeSpy).not.toHaveBeenCalled();
+    expect(transferToExchange).not.toHaveBeenCalled();
   });
 
   it('skips extrinsic building for transactions already on destination', async () => {
@@ -320,7 +350,7 @@ describe('transfer', () => {
       type: TransactionType.TO_DESTINATION,
     };
     await transfer(options);
-    expect(transferToDestinationSpy).not.toHaveBeenCalled();
+    expect(transferToDestination).not.toHaveBeenCalled();
   });
 
   it('skips extrinsic building for transactions already on destination - FULL_TRANSFER', async () => {
@@ -331,6 +361,6 @@ describe('transfer', () => {
       type: TransactionType.FULL_TRANSFER,
     };
     await transfer(options);
-    expect(transferToDestinationSpy).not.toHaveBeenCalled();
+    expect(transferToDestination).not.toHaveBeenCalled();
   });
 });

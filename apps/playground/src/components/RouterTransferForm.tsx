@@ -1,13 +1,12 @@
+import { useEffect, useState } from 'react';
+import type { FC } from 'react';
 import { useForm } from '@mantine/form';
 import type { TAutoSelect, TExchangeNode } from '@paraspell/xcm-router';
 import { EXCHANGE_NODES, TransactionType } from '@paraspell/xcm-router';
 import { isValidWalletAddress } from '../utils';
-import type { FC } from 'react';
-import { useEffect, useState } from 'react';
 import {
   Text,
   Button,
-  Checkbox,
   Group,
   Select,
   Stack,
@@ -15,12 +14,13 @@ import {
   Tooltip,
   Center,
   rem,
+  Paper,
 } from '@mantine/core';
 import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
 import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import { web3Accounts, web3FromAddress } from '@polkadot/extension-dapp';
-import AccountsModal from './AccountsModal';
+import AccountSelectModal from './AccountSelectModal/AccountSelectModal';
 import { useDisclosure } from '@mantine/hooks';
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ethers } from 'ethers';
@@ -28,7 +28,10 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import useRouterCurrencyOptions from '../hooks/useRouterCurrencyOptions';
 import EthWalletSelectModal from './EthWalletSelectModal';
 import EthAccountsSelectModal from './EthAccountsSelectModal';
-import type { EIP6963ProviderDetail, WalletAccount } from '../types';
+import type { EIP6963ProviderDetail, TWalletAccount } from '../types';
+import { XcmApiCheckbox } from './XcmApiCheckbox';
+import { useWallet } from '../hooks/useWallet';
+import { ParachainSelect } from './ParachainSelect/ParachainSelect';
 
 export type TRouterFormValues = {
   from: TNodeWithRelayChains;
@@ -91,16 +94,16 @@ const RouterTransferForm: FC<Props> = ({
   const [assetHubAccounts, setAssetHubAccounts] = useState<
     InjectedAccountWithMeta[]
   >([]);
-  const [selectedAccount, setSelectedAccount] = useState<WalletAccount>();
+  const [selectedAccount, setSelectedAccount] = useState<TWalletAccount>();
 
   const [selectedAssetHubAccount, setSelectedAssetHubAccount] =
-    useState<WalletAccount>();
+    useState<TWalletAccount>();
 
   const [selectedEthAccount, setSelectedEthAccount] = useState<string | null>(
     null,
   );
 
-  const onAccountSelect = (account: WalletAccount) => () => {
+  const onAccountSelect = (account: TWalletAccount) => () => {
     setSelectedAccount(account);
     closeModal();
   };
@@ -111,7 +114,7 @@ const RouterTransferForm: FC<Props> = ({
     form.setFieldValue('ethAddress', account);
   };
 
-  const onAssetHubAccountSelect = (account: WalletAccount) => () => {
+  const onAssetHubAccountSelect = (account: TWalletAccount) => () => {
     setSelectedAssetHubAccount(account);
     closeAssetHubModal();
   };
@@ -141,12 +144,12 @@ const RouterTransferForm: FC<Props> = ({
   const form = useForm<TRouterFormValues>({
     initialValues: {
       from: 'Astar',
-      to: 'Moonbeam',
+      to: 'Hydration',
       exchange: 'Auto select',
       currencyFromOptionId: '',
       currencyToOptionId: '',
       amount: '10000000000000000000',
-      recipientAddress: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96',
+      recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       slippagePct: '1',
       transactionType: 'FULL_TRANSFER',
       useApi: false,
@@ -318,193 +321,210 @@ const RouterTransferForm: FC<Props> = ({
     }
   }, [isToNotParaToPara, currencyToMap]);
 
+  const {
+    connectWallet,
+    selectedAccount: selectedAccountPolkadot,
+    isInitialized,
+    isLoadingExtensions,
+  } = useWallet();
+
+  const onConnectWalletClick = () => void connectWallet();
+
   return (
-    <form onSubmit={form.onSubmit(onSubmitInternal)}>
-      <Stack>
-        <EthWalletSelectModal
-          isOpen={isEthWalletModalOpen}
-          onClose={() => setIsEthWalletModalOpen(false)}
-          providers={ethProviders}
-          onProviderSelect={onEthProviderSelect}
-          onDisconnect={onEthWalletDisconnectInternal}
-        />
-        <EthAccountsSelectModal
-          isOpen={isEthAccountModalOpen}
-          onClose={() => setIsEthAccountModalOpen(false)}
-          accounts={ethAccounts}
-          onAccountSelect={onEthAccountSelect}
-        />
-        <AccountsModal
-          isOpen={modalOpened}
-          onClose={closeModal}
-          accounts={accounts}
-          onAccountSelect={onAccountSelect}
-          title="Select evm account"
-          onDisconnect={onAccountDisconnect}
-        />
-        <AccountsModal
-          isOpen={assetHubModalOpened}
-          onClose={closeAssetHubModal}
-          accounts={assetHubAccounts}
-          onAccountSelect={onAssetHubAccountSelect}
-          title="Select AssetHub account"
-          onDisconnect={onAssetHubAccountDisconnect}
-        />
-        <Select
-          label="Origin node"
-          placeholder="Pick value"
-          data={[...NODES_WITH_RELAY_CHAINS]}
-          allowDeselect={false}
-          searchable
-          required
-          data-testid="select-from"
-          {...form.getInputProps('from')}
-        />
-
-        <Select
-          label="Exchange node"
-          placeholder="Pick value"
-          data={['Auto select', ...EXCHANGE_NODES]}
-          allowDeselect={false}
-          searchable
-          required
-          data-testid="select-exchange"
-          {...form.getInputProps('exchange')}
-        />
-
-        <Select
-          label="Destination node"
-          placeholder="Pick value"
-          data={[...NODES_WITH_RELAY_CHAINS]}
-          allowDeselect={false}
-          searchable
-          required
-          data-testid="select-to"
-          {...form.getInputProps('to')}
-        />
-
-        <Select
-          key={from + exchange + to + 'currencyFrom'}
-          label="Currency From"
-          placeholder="Pick value"
-          data={currencyFromOptions}
-          allowDeselect={false}
-          disabled={isFromNotParaToPara}
-          searchable
-          required
-          data-testid="select-currency-from"
-          {...form.getInputProps('currencyFromOptionId')}
-        />
-
-        <Select
-          key={from + exchange + to + 'currencyTo'}
-          label="Currency To"
-          placeholder="Pick value"
-          data={currencyToOptions}
-          allowDeselect={false}
-          disabled={isToNotParaToPara}
-          searchable
-          required
-          data-testid="select-currency-to"
-          {...form.getInputProps('currencyToOptionId')}
-        />
-
-        <TextInput
-          label="Recipient address"
-          placeholder="0x0000000"
-          required
-          data-testid="input-recipient-address"
-          {...form.getInputProps('recipientAddress')}
-        />
-
-        <TextInput
-          label="Amount"
-          placeholder="0"
-          required
-          data-testid="input-amount"
-          {...form.getInputProps('amount')}
-        />
-
-        <Select
-          label="Transaction type"
-          placeholder="Pick value"
-          data={[
-            TransactionType.TO_EXCHANGE.toString(),
-            TransactionType.TO_DESTINATION.toString(),
-            TransactionType.SWAP.toString(),
-            TransactionType.FULL_TRANSFER.toString(),
-            TransactionType.FROM_ETH.toString(),
-            TransactionType.TO_ETH.toString(),
-          ]}
-          searchable
-          required
-          data-testid="select-transaction-type"
-          allowDeselect={false}
-          {...form.getInputProps('transactionType')}
-        />
-
-        <TextInput
-          label="Slippage percentage (%)"
-          placeholder="1"
-          required
-          data-testid="input-slippage-pct"
-          {...form.getInputProps('slippagePct')}
-        />
-
-        <Group justify="space-between">
-          <Checkbox
-            label="Use XCM API"
-            {...form.getInputProps('useApi')}
-            data-testid="checkbox-api"
+    <Paper p="xl" shadow="md">
+      <form onSubmit={form.onSubmit(onSubmitInternal)}>
+        <Stack gap="lg">
+          <EthWalletSelectModal
+            isOpen={isEthWalletModalOpen}
+            onClose={() => setIsEthWalletModalOpen(false)}
+            providers={ethProviders}
+            onProviderSelect={onEthProviderSelect}
+            onDisconnect={onEthWalletDisconnectInternal}
           />
-          <Button.Group orientation="vertical">
-            {(from === 'Ethereum' || to === 'Ethereum') && (
-              <Button
-                size="xs"
-                variant="outline"
-                onClick={onConnectEthWallet}
-                rightSection={infoEthWallet}
-                data-testid="connect-eth-wallet"
-              >
-                {selectedEthAccount
-                  ? `Connected: ${selectedEthAccount.substring(0, 6)}...${selectedEthAccount.substring(selectedEthAccount.length - 4)}`
-                  : 'Connect Ethereum Wallet'}
-              </Button>
-            )}
-            {(from === 'Ethereum' || to === 'Ethereum') && (
-              <Button
-                size="xs"
-                variant="outline"
-                onClick={onConnectAssetHubWallet}
-                rightSection={infoAssetHubWallet}
-                data-testid="connect-asset-hub-wallet"
-              >
-                {selectedAssetHubAccount
-                  ? `${selectedAssetHubAccount?.meta.name} (${selectedAssetHubAccount?.meta.source})`
-                  : 'Connect AssetHub wallet'}
-              </Button>
-            )}
-            {from !== 'Ethereum' && to !== 'Ethereum' && (
-              <Button
-                size="xs"
-                variant="outline"
-                onClick={onConnectEvmWallet}
-                rightSection={infoEvmWallet}
-                data-testid="connect-evm-wallet"
-              >
-                {selectedAccount
-                  ? `${selectedAccount?.meta.name} (${selectedAccount?.meta.source})`
-                  : 'Connect EVM wallet'}
-              </Button>
-            )}
-          </Button.Group>
-        </Group>
+          <EthAccountsSelectModal
+            isOpen={isEthAccountModalOpen}
+            onClose={() => setIsEthAccountModalOpen(false)}
+            accounts={ethAccounts}
+            onAccountSelect={onEthAccountSelect}
+          />
+          <AccountSelectModal
+            isOpen={modalOpened}
+            onClose={closeModal}
+            accounts={accounts}
+            onAccountSelect={onAccountSelect}
+            title="Select evm account"
+            onDisconnect={onAccountDisconnect}
+          />
+          <AccountSelectModal
+            isOpen={assetHubModalOpened}
+            onClose={closeAssetHubModal}
+            accounts={assetHubAccounts}
+            onAccountSelect={onAssetHubAccountSelect}
+            title="Select AssetHub account"
+            onDisconnect={onAssetHubAccountDisconnect}
+          />
 
-        <Button type="submit" loading={loading} data-testid="submit">
-          Submit transaction
-        </Button>
-      </Stack>
-    </form>
+          <ParachainSelect
+            label="Origin"
+            placeholder="Pick value"
+            description="Select the chain you're sending from"
+            data={NODES_WITH_RELAY_CHAINS}
+            data-testid="select-from"
+            {...form.getInputProps('from')}
+          />
+
+          <Select
+            label="Exchange"
+            placeholder="Pick value"
+            data={['Auto select', ...EXCHANGE_NODES]}
+            allowDeselect={false}
+            searchable
+            required
+            data-testid="select-exchange"
+            description="Select the chain where the asset swap will take place"
+            {...form.getInputProps('exchange')}
+          />
+
+          <ParachainSelect
+            label="Destination"
+            placeholder="Pick value"
+            data={[...NODES_WITH_RELAY_CHAINS]}
+            data-testid="select-to"
+            description="Select the chain that will receive the swapped assets"
+            {...form.getInputProps('to')}
+          />
+
+          <Select
+            key={from + exchange + to + 'currencyFrom'}
+            label="Currency From"
+            placeholder="Pick value"
+            data={currencyFromOptions}
+            allowDeselect={false}
+            disabled={isFromNotParaToPara}
+            searchable
+            required
+            data-testid="select-currency-from"
+            {...form.getInputProps('currencyFromOptionId')}
+          />
+
+          <Select
+            key={from + exchange + to + 'currencyTo'}
+            label="Currency To"
+            placeholder="Pick value"
+            data={currencyToOptions}
+            allowDeselect={false}
+            disabled={isToNotParaToPara}
+            searchable
+            required
+            data-testid="select-currency-to"
+            {...form.getInputProps('currencyToOptionId')}
+          />
+
+          <TextInput
+            label="Recipient address"
+            description="SS58 or Ethereum address"
+            placeholder="Enter address"
+            required
+            data-testid="input-recipient-address"
+            {...form.getInputProps('recipientAddress')}
+          />
+
+          <TextInput
+            label="Amount"
+            placeholder="0"
+            required
+            data-testid="input-amount"
+            {...form.getInputProps('amount')}
+          />
+
+          <Select
+            label="Transaction type"
+            placeholder="Pick value"
+            data={[
+              TransactionType.TO_EXCHANGE.toString(),
+              TransactionType.TO_DESTINATION.toString(),
+              TransactionType.SWAP.toString(),
+              TransactionType.FULL_TRANSFER.toString(),
+              TransactionType.FROM_ETH.toString(),
+              TransactionType.TO_ETH.toString(),
+            ]}
+            searchable
+            required
+            data-testid="select-transaction-type"
+            allowDeselect={false}
+            {...form.getInputProps('transactionType')}
+          />
+
+          <TextInput
+            label="Slippage percentage (%)"
+            placeholder="1"
+            required
+            data-testid="input-slippage-pct"
+            {...form.getInputProps('slippagePct')}
+          />
+
+          <Group justify="space-between">
+            <XcmApiCheckbox {...form.getInputProps('useApi')} />
+
+            <Button.Group orientation="vertical">
+              {(from === 'Ethereum' || to === 'Ethereum') && (
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={onConnectEthWallet}
+                  rightSection={infoEthWallet}
+                  data-testid="connect-eth-wallet"
+                >
+                  {selectedEthAccount
+                    ? `Connected: ${selectedEthAccount.substring(0, 6)}...${selectedEthAccount.substring(selectedEthAccount.length - 4)}`
+                    : 'Connect Ethereum Wallet'}
+                </Button>
+              )}
+              {(from === 'Ethereum' || to === 'Ethereum') && (
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={onConnectAssetHubWallet}
+                  rightSection={infoAssetHubWallet}
+                  data-testid="connect-asset-hub-wallet"
+                >
+                  {selectedAssetHubAccount
+                    ? `${selectedAssetHubAccount?.meta.name} (${selectedAssetHubAccount?.meta.source})`
+                    : 'Connect AssetHub wallet'}
+                </Button>
+              )}
+              {from !== 'Ethereum' && to !== 'Ethereum' && (
+                <Button
+                  size="xs"
+                  variant="outline"
+                  onClick={onConnectEvmWallet}
+                  rightSection={infoEvmWallet}
+                  data-testid="connect-evm-wallet"
+                >
+                  {selectedAccount
+                    ? `${selectedAccount?.meta.name} (${selectedAccount?.meta.source})`
+                    : 'Connect EVM wallet'}
+                </Button>
+              )}
+            </Button.Group>
+          </Group>
+
+          {selectedAccountPolkadot ? (
+            <Button type="submit" loading={loading} data-testid="submit">
+              Submit transaction
+            </Button>
+          ) : (
+            <Button
+              onClick={onConnectWalletClick}
+              data-testid="btn-connect-wallet"
+              loading={!isInitialized || isLoadingExtensions}
+            >
+              Connect wallet
+            </Button>
+          )}
+        </Stack>
+      </form>
+    </Paper>
   );
 };
 

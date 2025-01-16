@@ -27,7 +27,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
       to: 'Moonbeam',
       currency: 'GLMR',
       amount: '10000000000000000000',
-      address: '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96'
+      address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC'
     },
 
     validate: {
@@ -69,7 +69,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
 
         <TextInput
           label={t('recipientAddress')}
-          placeholder="0x0000000"
+          placeholder="Enter address"
           required
           {...form.getInputProps('address')}
         />

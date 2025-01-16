@@ -1,22 +1,26 @@
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 import { createContext } from 'react';
-import type { TApiType, WalletAccount } from '../types';
+import type { TApiType, TWalletAccount } from '../types';
 import type { InjectedExtension } from 'polkadot-api/pjs-signer';
 
 type WalletState = {
-  selectedAccount?: WalletAccount;
-  setSelectedAccount: (account: WalletAccount | undefined) => void;
+  selectedAccount?: TWalletAccount;
+  setSelectedAccount: (account: TWalletAccount | undefined) => void;
   extensions: string[];
   setExtensions: (wallets: string[]) => void;
   injectedExtension: InjectedExtension | undefined;
   setInjectedExtension: (extension: InjectedExtension | undefined) => void;
   setExtensionInLocalStorage: (extensionName: string | undefined) => void;
-  accounts: WalletAccount[];
-  setAccounts: (accounts: WalletAccount[]) => void;
+  accounts: TWalletAccount[];
+  setAccounts: (accounts: TWalletAccount[]) => void;
   apiType: TApiType;
   setApiType: (type: TApiType) => void;
   getSigner: () => Promise<PolkadotSigner | Signer>;
+  connectWallet: () => Promise<void>;
+  changeAccount: () => Promise<void>;
+  handleApiSwitch: (value: TApiType) => void;
+  isLoadingExtensions: boolean;
   isInitialized: boolean;
 };
 
@@ -33,6 +37,10 @@ const defaultWalletState: WalletState = {
   apiType: 'PJS',
   setApiType: () => {},
   getSigner: () => Promise.resolve({} as PolkadotSigner),
+  connectWallet: () => Promise.resolve(),
+  changeAccount: () => Promise.resolve(),
+  handleApiSwitch: (_value: TApiType) => {},
+  isLoadingExtensions: false,
   isInitialized: false,
 };
 

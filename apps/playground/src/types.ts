@@ -1,5 +1,7 @@
+import type { FC } from 'react';
 import type { ASSET_QUERIES, PALLETS_QUERIES } from './consts';
 import type { Web3 } from 'web3';
+import type { IconProps } from '@tabler/icons-react';
 
 export type TAssetsQuery = (typeof ASSET_QUERIES)[number];
 
@@ -20,10 +22,21 @@ export type EIP6963ProviderDetail = ValueType<
 
 export type TApiType = 'PJS' | 'PAPI';
 
-export type WalletAccount = {
+export type TWalletAccount = {
   address: string;
   meta: {
     name?: string;
     source?: string;
   };
+};
+
+export type TExtension = {
+  id: string;
+  name: string;
+};
+
+export type TNavItem = {
+  label: string;
+  url: string;
+  Icon: FC<IconProps>;
 };

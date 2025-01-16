@@ -75,7 +75,7 @@ vi.mock('@paraspell/sdk-pjs', async () => {
 describe('XTransferService', () => {
   let service: XTransferService;
 
-  const address = '5F5586mfsnM6durWRLptYt3jSUs55KEmahdodQ5tQMr9iY96';
+  const address = '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC';
   const currency = { symbol: 'DOT', amount: 100 };
   const invalidNode = 'InvalidNode';
 

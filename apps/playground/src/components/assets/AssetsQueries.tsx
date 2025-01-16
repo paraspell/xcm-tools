@@ -1,8 +1,17 @@
-import { Stack, Title, Box, Alert, Text } from '@mantine/core';
+import {
+  Stack,
+  Box,
+  Alert,
+  Text,
+  useMantineColorScheme,
+  Center,
+  Title,
+  Badge,
+} from '@mantine/core';
 import ErrorAlert from '../ErrorAlert';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useState, useEffect } from 'react';
-import { fetchFromApi } from '../../utils/submitUsingApi';
+import { fetchFromApi } from '../../utils';
 import type { FormValues } from './AssetsForm';
 import AssetsForm from './AssetsForm';
 import type {
@@ -25,6 +34,9 @@ import {
 } from '@paraspell/sdk';
 import { IconJson } from '@tabler/icons-react';
 import { useWallet } from '../../hooks/useWallet';
+import { CodeHighlight } from '@mantine/code-highlight';
+
+const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 const AssetsQueries = () => {
   const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
@@ -251,12 +263,37 @@ const AssetsQueries = () => {
 
   const onOutputAlertCloseClick = () => closeOutputAlert();
 
-  const jsonIcon = <IconJson size={24} />;
+  const theme = useMantineColorScheme();
 
   return (
     <Stack gap="xl">
-      <Stack w="100%" maw={400} mx="auto" gap="lg">
-        <Title order={3}>Assets queries</Title>
+      <Stack w="100%" maw={450} mx="auto" gap="lg">
+        <Box px="xl" pb="xl">
+          <Center mb="sm">
+            <Title order={2}>Assets 💰</Title>
+          </Center>
+
+          <Center>
+            <Badge
+              variant="light"
+              radius="xl"
+              mb="md"
+              style={{ textTransform: 'unset' }}
+            >
+              v{VERSION}
+            </Badge>
+          </Center>
+
+          <Text
+            size="xs"
+            c={theme.colorScheme === 'light' ? 'gray.7' : 'dark.1'}
+            fw={700}
+            ta="center"
+          >
+            Retrieve asset data from compatible parachains, including details
+            like asset decimals and registered assets.
+          </Text>
+        </Box>
         <AssetsForm onSubmit={onSubmit} loading={loading} />
       </Stack>
       <Box ref={targetRef}>
@@ -267,20 +304,28 @@ const AssetsQueries = () => {
         )}
       </Box>
       <Box>
-        {outputAlertOpened && (
+        {outputAlertOpened && output && (
           <Alert
             color="green"
             title="Output"
-            icon={jsonIcon}
+            icon={<IconJson size={24} />}
             withCloseButton
             onClose={onOutputAlertCloseClick}
             mt="lg"
             style={{ overflowWrap: 'anywhere' }}
             data-testid="output"
+            p="xl"
           >
-            <Text component="pre" size="sm">
-              {output}
-            </Text>
+            <CodeHighlight
+              code={output}
+              lang="json"
+              style={{
+                padding: 0,
+                borderRadius: 16,
+                marginTop: 20,
+                backgroundColor: 'transparent',
+              }}
+            />
           </Alert>
         )}
       </Box>

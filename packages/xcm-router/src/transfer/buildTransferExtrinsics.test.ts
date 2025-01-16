@@ -3,10 +3,8 @@
 import { describe, it, expect, vi, type MockInstance, beforeEach, afterEach } from 'vitest';
 import * as utils from '../utils/utils';
 import * as transferUtils from './utils';
-import * as dexNodeFactory from '../dexNodes/DexNodeFactory';
 import * as selectBestExchange from './selectBestExchange';
 import { buildTransferExtrinsics } from './buildTransferExtrinsics';
-import { MOCK_TRANSFER_OPTIONS } from '../utils/utils.test';
 import type { TBuildTransferExtrinsicsOptions } from '../types';
 import { TransactionType } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
@@ -14,6 +12,8 @@ import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { createApiInstanceForNode, buildEthTransferOptions } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
+import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
+import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
 
 vi.mock('@paraspell/sdk-pjs', async () => {
   const actual = await vi.importActual('@paraspell/sdk-pjs');
@@ -25,6 +25,10 @@ vi.mock('@paraspell/sdk-pjs', async () => {
     buildEthTransferOptions: vi.fn(),
   };
 });
+
+vi.mock('../dexNodes/DexNodeFactory', () => ({
+  createDexNodeInstance: vi.fn(),
+}));
 
 describe('buildTransferExtrinsics', () => {
   let fromExchangeTxSpy: MockInstance,
@@ -42,7 +46,7 @@ describe('buildTransferExtrinsics', () => {
 
     feeSpy = vi.spyOn(utils, 'calculateTransactionFee').mockResolvedValue(BigNumber(100));
     validateSpy = vi.spyOn(utils, 'validateRelayChainCurrency').mockResolvedValue();
-    vi.spyOn(dexNodeFactory, 'default').mockReturnValue({
+    vi.mocked(createDexNodeInstance).mockReturnValue({
       node: 'Acala',
       exchangeNode: 'AcalaDex',
       createApiInstance: vi.fn().mockResolvedValue({

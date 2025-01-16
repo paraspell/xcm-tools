@@ -1,5 +1,5 @@
 import { findAssetFrom, findAssetTo } from '../../assets/assets';
-import createDexNodeInstance from '../../dexNodes/DexNodeFactory';
+import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
 import {
   TransactionStatus,
   TransactionType,

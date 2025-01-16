@@ -7,6 +7,10 @@ import {
   Loader,
   Group,
   Center,
+  Image,
+  Text,
+  useMantineColorScheme,
+  Badge,
 } from '@mantine/core';
 import type {
   TTxProgressInfo,
@@ -43,7 +47,9 @@ import { isForeignAsset } from '@paraspell/sdk';
 import { Web3 } from 'web3';
 import type { EIP6963ProviderDetail } from '../types';
 
-const RouterTransferPage = () => {
+const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
+
+export const XcmRouterPage = () => {
   const { selectedAccount } = useWallet();
 
   const [alertOpened, { open: openAlert, close: closeAlert }] =
@@ -427,11 +433,39 @@ const RouterTransferPage = () => {
     setIsEthWalletModalOpen(false);
   };
 
+  const theme = useMantineColorScheme();
+
   return (
-    <Container p="xl">
+    <Container px="xl" pb="xl">
       <Stack gap="xl">
-        <Stack w="100%" maw={400} mx="auto" gap="lg">
-          <Title order={3}>New SpellRouter transfer</Title>
+        <Stack w="100%" maw={460} mx="auto" gap="0">
+          <Box px="xl" pb="xl">
+            <Center>
+              <Image src="/spellrouter.png" fit="contain" w={220} p={8} />
+            </Center>
+
+            <Center>
+              <Badge
+                variant="light"
+                radius="xl"
+                mb="md"
+                style={{ textTransform: 'unset' }}
+              >
+                v{VERSION}
+              </Badge>
+            </Center>
+
+            <Text
+              size="xs"
+              c={theme.colorScheme === 'light' ? 'gray.7' : 'dark.1'}
+              fw={700}
+              ta="center"
+            >
+              Easily exchange and transfer cross-chain assets between two
+              parachains using XCM.
+            </Text>
+          </Box>
+
           <RouterTransferForm
             onSubmit={onSubmit}
             loading={loading}
@@ -479,5 +513,3 @@ const RouterTransferPage = () => {
     </Container>
   );
 };
-
-export default RouterTransferPage;
