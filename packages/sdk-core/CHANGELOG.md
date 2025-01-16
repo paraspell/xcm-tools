@@ -1,5 +1,27 @@
 # Changelog
 
+## [8.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.0.3...sdk-core-v8.1.0) (2025-01-16)
+
+
+### Features
+
+* **sdk-core:** Add builder method for api disconnecting & Update docs ([5771425](https://github.com/paraspell/xcm-tools/commit/5771425b5c33ae788c03171d5c27c755a9add1d1))
+
+
+### Bug Fixes
+
+* Add missing assets ✨ ([d33347c](https://github.com/paraspell/xcm-tools/commit/d33347c7cd3b279239c9d7c7dbf7511f6424937f))
+
+
+### Code Refactoring
+
+* **xcm-api:** Use automatic api creating ✨ ([3e840b1](https://github.com/paraspell/xcm-tools/commit/3e840b1ab1d141c97bfd6322d83a62d4199d9305))
+
+
+### Tests
+
+* Refactor and improve SDK e2e tests 🧪 ([7220d0d](https://github.com/paraspell/xcm-tools/commit/7220d0dc529ab7e08a35cc3cb2e87e5569634792))
+
 ## [8.0.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.0.2...sdk-core-v8.0.3) (2025-01-06)
 
 
