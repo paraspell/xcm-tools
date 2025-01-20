@@ -55,6 +55,7 @@ export const Header: FC<Props> = ({
         style={{
           transition: 'all 150ms',
           opacity: isPinned ? 0 : 1,
+          'mask-image': 'linear-gradient(135deg, black 30%, transparent 65%)',
         }}
       >
         <Box
