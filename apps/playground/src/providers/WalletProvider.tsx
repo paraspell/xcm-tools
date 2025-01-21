@@ -17,6 +17,7 @@ import { DAPP_NAME } from '../constants/constants';
 import { useDisclosure } from '@mantine/hooks';
 import AccountSelectModal from '../components/AccountSelectModal/AccountSelectModal';
 import PolkadotWalletSelectModal from '../components/WalletSelectModal/WalletSelectModal';
+import { showErrorNotification } from '../utils/notifications';
 
 export const STORAGE_ADDRESS_KEY = 'paraspell_wallet_address';
 const STORAGE_API_TYPE_KEY = 'paraspell_api_type';
@@ -105,7 +106,9 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
           const allInjected = await web3Enable('Paraspell');
 
           if (!allInjected.length) {
-            alert('No wallet extension found, install it to connect');
+            showErrorNotification(
+              'No wallet extension found, install it to connect',
+            );
             setAccounts([]);
             setSelectedAccount(undefined);
             return;
@@ -134,14 +137,16 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
           setExtensions(extensions);
 
           if (!extensions.length) {
-            alert('No wallet extension found, install it to connect');
+            showErrorNotification(
+              'No wallet extension found, install it to connect',
+            );
             setAccounts([]);
             setSelectedAccount(undefined);
             return;
           }
 
           if (!savedExtensionName || !extensions.includes(savedExtensionName)) {
-            alert('Previously connected extension not found');
+            showErrorNotification('Previously connected extension not found');
             setAccounts([]);
             setSelectedAccount(undefined);
             return;
@@ -207,7 +212,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
     const extensions = getInjectedExtensions();
 
     if (!extensions.length) {
-      alert('No wallet extension found, install it to connect');
+      showErrorNotification('No wallet extension found, install it to connect');
       throw Error('No Wallet Extension Found!');
     }
 
@@ -219,7 +224,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
     const extensions = await web3Enable(DAPP_NAME);
 
     if (!extensions.length) {
-      alert('No wallet extension found, install it to connect');
+      showErrorNotification('No wallet extension found, install it to connect');
       throw Error('No Wallet Extension Found!');
     }
 
@@ -241,7 +246,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
       await initExtensions();
       setIsLoadingExtensions(false);
     } catch (e) {
-      alert('Failed to connect wallet' + JSON.stringify(e));
+      showErrorNotification('Failed to connect wallet' + JSON.stringify(e));
     }
   };
 
@@ -257,7 +262,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
       }
       openAccountsModal();
     } catch (_e) {
-      alert('Failed to change account');
+      showErrorNotification('Failed to change account');
     }
   };
 
@@ -278,7 +283,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
       const accounts = selectedExtension.getAccounts();
 
       if (!accounts.length) {
-        alert('No accounts found in the selected wallet');
+        showErrorNotification('No accounts found in the selected wallet');
         throw Error('No accounts found in the selected wallet');
       }
 
@@ -294,7 +299,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
       closeWalletSelectModal();
       openAccountsModal();
     } catch (_e) {
-      alert('Failed to connect to wallet');
+      showErrorNotification('Failed to connect to wallet');
       closeWalletSelectModal();
     }
   };
@@ -317,7 +322,7 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
       closeWalletSelectModal();
       openAccountsModal();
     } catch (_e) {
-      alert('Failed to connect to wallet');
+      showErrorNotification('Failed to connect to wallet');
     }
   };
 

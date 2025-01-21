@@ -16,6 +16,7 @@ import type { FormValues } from './TransferInfoForm';
 import TransferInfoForm from './TransferInfoForm';
 import OutputAlert from '../OutputAlert';
 import { fetchFromApi, replaceBigInt } from '../../utils';
+import { showErrorNotification } from '../../utils/notifications';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
@@ -98,7 +99,7 @@ const TransferInfo = () => {
     closeAlert();
     closeOutputAlert();
     if (!selectedAccount) {
-      alert('No account selected, connect wallet first');
+      showErrorNotification('No account selected, connect wallet first');
       throw Error('No account selected!');
     }
 
@@ -113,6 +114,7 @@ const TransferInfo = () => {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
         console.error(e);
+        showErrorNotification(e.message);
         setError(e);
         openAlert();
       }

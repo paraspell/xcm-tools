@@ -16,6 +16,7 @@ import type { FormValues } from '../components/analyser/AnalyserForm';
 import AnalyserForm from '../components/analyser/AnalyserForm';
 import { convertMultilocationToUrlJson } from '@paraspell/xcm-analyser';
 import { fetchFromApi } from '../utils';
+import { showErrorNotification } from '../utils/notifications';
 
 const VERSION = import.meta.env.VITE_XCM_ANALYSER_VERSION as string;
 
@@ -74,6 +75,7 @@ export const XcmAnalyserPage = () => {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
         console.error(e);
+        showErrorNotification(e.message);
         setError(e);
         openErrorAlert();
         closeOutputAlert();

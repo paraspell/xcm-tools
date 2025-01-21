@@ -22,6 +22,7 @@
     "@mantine/core": "^7.15.2",
     "@mantine/form": "^7.15.2",
     "@mantine/hooks": "^7.15.2",
+    "@mantine/notifications": "^7.15.2",
     "@mantinex/dev-icons": "^1.1.0",
     "@paraspell/sdk": "workspace:*",
     "@paraspell/sdk-pjs": "workspace:*",

@@ -35,6 +35,7 @@ import {
 import { IconJson } from '@tabler/icons-react';
 import { useWallet } from '../../hooks/useWallet';
 import { CodeHighlight } from '@mantine/code-highlight';
+import { showErrorNotification } from '../../utils/notifications';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
@@ -248,6 +249,7 @@ const AssetsQueries = () => {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
         console.error(e);
+        showErrorNotification(e.message);
         setError(e);
         openErrorAlert();
         closeOutputAlert();

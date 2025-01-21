@@ -20,6 +20,11 @@ import type { ApiPromise } from '@polkadot/api';
 import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
 import { submitTransaction, submitTransactionPapi } from '../../utils';
 import type { Signer } from '@polkadot/api/types';
+import {
+  showErrorNotification,
+  showLoadingNotification,
+  showSuccessNotification,
+} from '../../utils/notifications';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
@@ -47,11 +52,15 @@ const AssetClaim = () => {
     const { useApi, from, amount, address } = formValues;
 
     if (!selectedAccount) {
-      alert('No account selected, connect wallet first');
+      showErrorNotification('No account selected, connect wallet first');
       throw Error('No account selected!');
     }
 
     setLoading(true);
+    let notifId = showLoadingNotification(
+      'Processing',
+      'Waiting to sign transaction',
+    );
 
     const Sdk =
       apiType === 'PAPI'
@@ -112,6 +121,13 @@ const AssetClaim = () => {
         await submitTransactionPapi(
           tx as TPapiTransaction,
           signer as PolkadotSigner,
+          () => {
+            notifId = showLoadingNotification(
+              'Processing',
+              'Transaction is being processed',
+              notifId,
+            );
+          },
         );
       } else {
         await submitTransaction(
@@ -119,14 +135,26 @@ const AssetClaim = () => {
           tx as Extrinsic,
           signer as Signer,
           selectedAccount.address,
+          () => {
+            notifId = showLoadingNotification(
+              'Processing',
+              'Transaction is being processed',
+              notifId,
+            );
+          },
         );
       }
 
-      alert('Transaction was successful!');
+      showSuccessNotification(
+        notifId ?? '',
+        'Success',
+        'Transaction was successful',
+      );
     } catch (e) {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
         console.error(e);
+        showErrorNotification(e.message, notifId);
         setError(e);
         openAlert();
       }

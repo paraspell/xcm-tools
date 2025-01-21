@@ -9,10 +9,12 @@ export const submitTransaction = async (
   tx: Extrinsic,
   signer: Signer,
   injectorAddress: string,
+  onSign?: () => void,
 ): Promise<string> => {
   await tx.signAsync(injectorAddress, { signer });
+  if (onSign) onSign();
   return new Promise((resolve, reject) => {
-    void tx.send(({ status, dispatchError, txHash }) => {
+    tx.send(({ status, dispatchError, txHash }) => {
       if (status.isFinalized) {
         // Check if there are any dispatch errors
         if (dispatchError !== undefined) {
@@ -29,6 +31,9 @@ export const submitTransaction = async (
           resolve(txHash.toString());
         }
       }
+    }).catch((error) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      reject(new Error(error));
     });
   });
 };
@@ -36,6 +41,24 @@ export const submitTransaction = async (
 export const submitTransactionPapi = async (
   tx: TPapiTransaction,
   signer: PolkadotSigner,
+  onSign?: () => void,
 ): Promise<TxFinalizedPayload> => {
-  return tx.signAndSubmit(signer);
+  return new Promise((resolve, reject) => {
+    return tx.signSubmitAndWatch(signer).subscribe((event) => {
+      if (event.type === 'signed') {
+        if (onSign) onSign();
+      }
+
+      if (
+        event.type === 'finalized' ||
+        (event.type === 'txBestBlocksState' && event.found)
+      ) {
+        if (!event.ok) {
+          reject(new Error(JSON.stringify(event.dispatchError.value)));
+        } else {
+          resolve(event);
+        }
+      }
+    });
+  });
 };

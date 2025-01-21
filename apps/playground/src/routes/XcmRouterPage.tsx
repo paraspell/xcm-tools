@@ -46,6 +46,11 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { isForeignAsset } from '@paraspell/sdk';
 import { Web3 } from 'web3';
 import type { EIP6963ProviderDetail } from '../types';
+import {
+  showErrorNotification,
+  showLoadingNotification,
+  showSuccessNotification,
+} from '../utils/notifications';
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
@@ -98,7 +103,7 @@ export const XcmRouterPage = () => {
       const providerMap = await Web3.requestEIP6963Providers();
 
       if (providerMap.size === 0) {
-        alert('No compatible Ethereum wallets found.');
+        showErrorNotification('No compatible Ethereum wallets found.');
         return;
       }
 
@@ -108,7 +113,9 @@ export const XcmRouterPage = () => {
       setIsEthWalletModalOpen(true);
     } catch (error) {
       console.error('Error fetching providers:', error);
-      alert('An error occurred while fetching wallet providers.');
+      showErrorNotification(
+        'An error occurred while fetching wallet providers.',
+      );
     }
   };
 
@@ -120,7 +127,7 @@ export const XcmRouterPage = () => {
       const provider = providerInfo.provider;
 
       if (!provider) {
-        alert('Selected provider is not available.');
+        showErrorNotification('Selected provider is not available.');
         return;
       }
 
@@ -134,7 +141,7 @@ export const XcmRouterPage = () => {
       )) as string[];
 
       if (accounts.length === 0) {
-        alert('No accounts found in the selected wallet.');
+        showErrorNotification('No accounts found in the selected wallet.');
         return;
       }
 
@@ -142,7 +149,9 @@ export const XcmRouterPage = () => {
       setIsEthAccountModalOpen(true);
     } catch (error) {
       console.error('Error connecting to wallet:', error);
-      alert('An error occurred while connecting to the wallet.');
+      showErrorNotification(
+        'An error occurred while connecting to the wallet.',
+      );
     }
   };
 
@@ -329,6 +338,7 @@ export const XcmRouterPage = () => {
       }
     } catch (error) {
       if (error instanceof AxiosError) {
+        showErrorNotification('Error while fetching data.');
         console.error(error);
         let errorMessage = 'Error while fetching data.';
         if (error.response === undefined) {
@@ -354,11 +364,15 @@ export const XcmRouterPage = () => {
   const submit = async (formValues: TRouterFormValuesTransformed) => {
     const { useApi } = formValues;
     if (!selectedAccount) {
-      alert('No account selected, connect wallet first');
+      showErrorNotification('No account selected, connect wallet first');
       throw Error('No account selected!');
     }
 
     setLoading(true);
+    const notifId = showLoadingNotification(
+      'Processing',
+      'Transaction is being processed',
+    );
 
     const injector = await web3FromAddress(selectedAccount.address);
 
@@ -401,10 +415,15 @@ export const XcmRouterPage = () => {
         );
       }
       setRunConfetti(true);
-      alert('Transaction was successful!');
+      showSuccessNotification(
+        notifId ?? '',
+        'Success',
+        'Transaction was successful',
+      );
     } catch (e) {
       if (e instanceof Error) {
         console.error(e);
+        showErrorNotification(e.message, notifId);
         setError(e);
         openAlert();
         setShowStepper(false);
