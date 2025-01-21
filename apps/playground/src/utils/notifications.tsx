@@ -55,10 +55,21 @@ export const showLoadingNotification = (
 const checkIcon = <IconCheck size={18} />;
 
 export const showSuccessNotification = (
-  notifToUpdateId: string,
+  notifToUpdateId: string | undefined,
   title: string,
   message: string,
 ) => {
+  if (!notifToUpdateId) {
+    return notifications.show({
+      color: 'teal',
+      title,
+      message,
+      icon: checkIcon,
+      loading: false,
+      autoClose: 2000,
+    });
+  }
+
   notifications.update({
     id: notifToUpdateId,
     color: 'teal',

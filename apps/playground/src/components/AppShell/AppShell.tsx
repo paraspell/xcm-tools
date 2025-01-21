@@ -13,7 +13,16 @@ import {
 } from '@mantine/core';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { PageRoute } from '../PageRoute';
-import { XcmAnalyserPage, XcmRouterPage } from '../../routes';
+import {
+  AssetClaimPage,
+  AssetsQueriesPage,
+  EvmTransferPage,
+  PalletsQueriesPage,
+  TransferInfoPage,
+  XcmAnalyserPage,
+  XcmRouterPage,
+  XcmTransferPage,
+} from '../../routes';
 import {
   IconBoxSeam,
   IconBrandGithubFilled,
@@ -33,12 +42,6 @@ import { Header } from './Header/Header';
 import { useWallet } from '../../hooks/useWallet';
 import { useEffect, useState } from 'react';
 import classes from './Navbar.module.css';
-import XcmTransfer from '../transfer/XcmTransfer';
-import EvmTransfer from '../evm-transfer/EvmTransfer';
-import AssetsQueries from '../assets/AssetsQueries';
-import PalletsQueries from '../pallets/PalletsQueries';
-import TransferInfo from '../transfer-info/TransferInfo';
-import AssetClaim from '../asset-claim/AssetClaim';
 import { NAVIGATION_ITEMS } from '../../constants/constants';
 
 export const AppShell = () => {
@@ -248,19 +251,28 @@ export const AppShell = () => {
           />
           <Route
             path={PageRoute.XCM_SDK.XCM_TRANSFER}
-            Component={XcmTransfer}
+            Component={XcmTransferPage}
           />
           <Route
             path={PageRoute.XCM_SDK.EVM_TRANSFER}
-            Component={EvmTransfer}
+            Component={EvmTransferPage}
           />
-          <Route path={PageRoute.XCM_SDK.ASSETS} Component={AssetsQueries} />
-          <Route path={PageRoute.XCM_SDK.PALLETS} Component={PalletsQueries} />
+          <Route
+            path={PageRoute.XCM_SDK.ASSETS}
+            Component={AssetsQueriesPage}
+          />
+          <Route
+            path={PageRoute.XCM_SDK.PALLETS}
+            Component={PalletsQueriesPage}
+          />
           <Route
             path={PageRoute.XCM_SDK.TRANSFER_INFO}
-            Component={TransferInfo}
+            Component={TransferInfoPage}
           />
-          <Route path={PageRoute.XCM_SDK.ASSET_CLAIM} Component={AssetClaim} />
+          <Route
+            path={PageRoute.XCM_SDK.ASSET_CLAIM}
+            Component={AssetClaimPage}
+          />
           <Route path={PageRoute.XCM_ROUTER} Component={XcmRouterPage} />
           <Route path={PageRoute.XCM_ANALYSER} Component={XcmAnalyserPage} />
         </Routes>

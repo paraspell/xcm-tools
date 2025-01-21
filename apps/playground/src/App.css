@@ -26,3 +26,7 @@ body {
 .mantine-CodeHighlight-pre {
   padding: 0;
 }
+
+.mantine-Pagination-root .mantine-Group-root {
+  justify-content: center;
+}

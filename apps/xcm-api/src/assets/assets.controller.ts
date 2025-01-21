@@ -1,9 +1,23 @@
-import { Controller, Get, Param, Query, Req, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  Request,
+} from '@nestjs/common';
 import { AssetsService } from './assets.service.js';
 import { SymbolDto } from './dto/SymbolDto.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import { SupportedAssetsDto } from './dto/SupportedAssetsDto.js';
+import {
+  OriginFeeDetailsDto,
+  OriginFeeDetailsDtoSchema,
+} from './dto/OriginFeeDetailsDto.js';
+import { ZodValidationPipe } from '../zod-validation-pipe.js';
 
 @Controller()
 export class AssetsController {
@@ -100,5 +114,20 @@ export class AssetsController {
       origin,
     });
     return this.assetsService.getSupportedAssets(origin, destination);
+  }
+
+  @Post('origin-fee-details')
+  getOriginFeeDetails(
+    @Body(new ZodValidationPipe(OriginFeeDetailsDtoSchema))
+    params: OriginFeeDetailsDto,
+    @Req() req: Request,
+  ) {
+    const { origin, destination, currency } = params;
+    this.analyticsService.track(EventName.GET_SUPPORTED_ASSETS, req, {
+      origin,
+      destination,
+      currency: JSON.stringify(currency),
+    });
+    return this.assetsService.getOriginFeeDetails(params);
   }
 }
