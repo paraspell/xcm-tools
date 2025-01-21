@@ -31,6 +31,11 @@ import type { Address } from 'viem';
 import { createWalletClient, custom } from 'viem';
 import { moonbeam, mainnet, moonriver } from 'viem/chains';
 import { useWallet } from '../../hooks/useWallet';
+import {
+  showErrorNotification,
+  showLoadingNotification,
+  showSuccessNotification,
+} from '../../utils/notifications';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
@@ -82,7 +87,7 @@ const EvmTransfer = () => {
       const providerMap = await Web3.requestEIP6963Providers();
 
       if (providerMap.size === 0) {
-        alert('No compatible Ethereum wallets found.');
+        showErrorNotification('No compatible Ethereum wallets found.');
         return;
       }
 
@@ -91,7 +96,9 @@ const EvmTransfer = () => {
       setProviders(providerArray);
       setIsWalletModalOpen(true);
     } catch (_e) {
-      alert('An error occurred while fetching wallet providers.');
+      showErrorNotification(
+        'An error occurred while fetching wallet providers.',
+      );
     }
   };
 
@@ -103,7 +110,7 @@ const EvmTransfer = () => {
       const provider = providerInfo.provider;
 
       if (!provider) {
-        alert('Selected provider is not available.');
+        showErrorNotification('Selected provider is not available.');
         return;
       }
 
@@ -117,14 +124,16 @@ const EvmTransfer = () => {
       )) as string[];
 
       if (accounts.length === 0) {
-        alert('No accounts found in the selected wallet.');
+        showErrorNotification('No accounts found in the selected wallet.');
         return;
       }
 
       setAccounts(accounts);
       setIsAccountModalOpen(true);
     } catch (_error) {
-      alert('An error occurred while connecting to the wallet.');
+      showErrorNotification(
+        'An error occurred while connecting to the wallet.',
+      );
     }
   };
 
@@ -276,11 +285,15 @@ const EvmTransfer = () => {
 
   const submit = async (formValues: FormValues) => {
     if (!selectedAccount) {
-      alert('No account selected, connect wallet first');
+      showErrorNotification('No account selected, connect wallet first');
       throw new Error('No account selected!');
     }
 
     setLoading(true);
+    const notifId = showLoadingNotification(
+      'Processing',
+      'Transaction is being processed',
+    );
 
     try {
       if (formValues.useApi) {
@@ -288,11 +301,16 @@ const EvmTransfer = () => {
       } else {
         await submitEthTransactionSdk(formValues);
       }
-      alert('Transaction was successful!');
+      showSuccessNotification(
+        notifId ?? '',
+        'Success',
+        'Transaction was successful',
+      );
     } catch (e) {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
         console.error(e);
+        showErrorNotification(e.message, notifId);
         setError(e);
         openAlert();
       }

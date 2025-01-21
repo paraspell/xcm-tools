@@ -15,6 +15,7 @@ import { getDefaultPallet, getSupportedPallets } from '@paraspell/sdk';
 import type { FormValues } from './PalletsForm';
 import PalletsForm from './PalletsForm';
 import OutputAlert from '../OutputAlert';
+import { showErrorNotification } from '../../utils/notifications';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
@@ -80,6 +81,7 @@ const PalletsQueries = () => {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
         console.error(e);
+        showErrorNotification(e.message);
         setError(e);
         openErrorAlert();
         closeOutputAlert();

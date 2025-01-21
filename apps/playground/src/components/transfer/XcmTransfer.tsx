@@ -44,13 +44,18 @@ import { ethers } from 'ethers';
 import { IconJson } from '@tabler/icons-react';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { CodeHighlight } from '@mantine/code-highlight';
+import {
+  showErrorNotification,
+  showLoadingNotification,
+  showSuccessNotification,
+} from '../../utils/notifications';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
 const XcmTransfer = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
 
-  const [alertOpened, { open: openAlert, close: closeAlert }] =
+  const [errorAlertOpened, { open: openErrorAlert, close: closeErrorAlert }] =
     useDisclosure(false);
 
   const [error, setError] = useState<Error>();
@@ -138,11 +143,15 @@ const XcmTransfer = () => {
     const { from, to, currencies, address, ahAddress, useApi } = formValues;
 
     if (!selectedAccount) {
-      alert('No account selected, connect wallet first');
+      showErrorNotification('No account selected, connect wallet first');
       throw Error('No account selected!');
     }
 
     setLoading(true);
+    let notifId = showLoadingNotification(
+      'Processing',
+      isDryRun ? 'Dry run is being processed' : 'Waiting to sign transaction',
+    );
 
     const signer = await getSigner();
 
@@ -225,12 +234,24 @@ const XcmTransfer = () => {
         }
         setOutput(JSON.stringify(result, replaceBigInt, 2));
         openOutputAlert();
-        closeAlert();
+        closeErrorAlert();
+        showSuccessNotification(
+          notifId ?? '',
+          'Success',
+          'Dry run was successful',
+        );
       } else {
         if (apiType === 'PAPI') {
           await submitTransactionPapi(
             tx as TPapiTransaction,
             signer as PolkadotSigner,
+            () => {
+              notifId = showLoadingNotification(
+                'Processing',
+                'Transaction is being processed',
+                notifId,
+              );
+            },
           );
         } else {
           await submitTransaction(
@@ -238,17 +259,29 @@ const XcmTransfer = () => {
             tx as Extrinsic,
             signer as Signer,
             selectedAccount.address,
+            () => {
+              notifId = showLoadingNotification(
+                'Processing',
+                'Transaction is being processed',
+                notifId,
+              );
+            },
           );
         }
-        alert('Transaction was successful!');
+        showSuccessNotification(
+          notifId ?? '',
+          'Success',
+          'Transaction was successful',
+        );
       }
     } catch (e) {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
         console.error(e);
+        showErrorNotification(e.message, notifId);
         setError(e);
         closeOutputAlert();
-        openAlert();
+        openErrorAlert();
       }
     } finally {
       setLoading(false);
@@ -260,7 +293,7 @@ const XcmTransfer = () => {
   const onSubmit = (formValues: FormValuesTransformed, isDryRun: boolean) =>
     void submit(formValues, isDryRun);
 
-  const onAlertCloseClick = () => closeAlert();
+  const onAlertCloseClick = () => closeErrorAlert();
 
   const onOutputAlertCloseClick = () => closeOutputAlert();
 
@@ -297,7 +330,7 @@ const XcmTransfer = () => {
         <XcmTransferForm onSubmit={onSubmit} loading={loading} />
       </Stack>
       <Box ref={targetRef}>
-        {alertOpened && (
+        {errorAlertOpened && (
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
             {error?.message}
           </ErrorAlert>

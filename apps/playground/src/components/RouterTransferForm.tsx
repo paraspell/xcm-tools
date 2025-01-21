@@ -32,6 +32,7 @@ import type { EIP6963ProviderDetail, TWalletAccount } from '../types';
 import { XcmApiCheckbox } from './XcmApiCheckbox';
 import { useWallet } from '../hooks/useWallet';
 import { ParachainSelect } from './ParachainSelect/ParachainSelect';
+import { showErrorNotification } from '../utils/notifications';
 
 export type TRouterFormValues = {
   from: TNodeWithRelayChains;
@@ -190,7 +191,7 @@ const RouterTransferForm: FC<Props> = ({
       );
       openAssetHubModal();
     } catch (_e) {
-      alert('Failed to connect EVM wallet');
+      showErrorNotification('Failed to connect AssetHub wallet');
     }
   };
 
@@ -204,7 +205,7 @@ const RouterTransferForm: FC<Props> = ({
       );
       openModal();
     } catch (_e) {
-      alert('Failed to connect EVM wallet');
+      showErrorNotification('Failed to connect EVM wallet');
     }
   };
 
