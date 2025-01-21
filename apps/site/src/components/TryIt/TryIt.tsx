@@ -27,7 +27,7 @@ const Tryit = () => {
         <div className={classes.controls}>
           <Button
             component="a"
-            href="https://playground.paraspell.xyz/xcm-sdk-sandbox"
+            href="https://playground.paraspell.xyz/xcm-sdk/xcm-transfer"
             target="_blank"
             size="lg"
             radius="lg"
