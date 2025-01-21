@@ -37,7 +37,9 @@ export const fetchFromApi = async <T>(
           error.response.data &&
           (error.response.data as { message: string }).message
             ? ' Server response: ' +
-              (error.response.data as { message: string }).message
+              JSON.stringify(
+                (error.response.data as { message: string }).message,
+              )
             : '';
         errorMessage += serverMessage;
       }

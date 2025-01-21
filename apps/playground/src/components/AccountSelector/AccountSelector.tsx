@@ -23,10 +23,8 @@ export const AccountSelector: FC<Props> = ({ accounts, value, onChange }) => {
   ));
 
   return (
-    <>
-      <Radio.Group value={value} onChange={onChange}>
-        <Stack gap="xs">{cards}</Stack>
-      </Radio.Group>
-    </>
+    <Radio.Group value={value} onChange={onChange}>
+      <Stack gap="xs">{cards}</Stack>
+    </Radio.Group>
   );
 };

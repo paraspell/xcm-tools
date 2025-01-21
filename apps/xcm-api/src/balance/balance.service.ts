@@ -66,7 +66,7 @@ export class BalanceService {
     usePapi = false,
   ) {
     const nodeTyped = node as TNodePolkadotKusama;
-    if (!NODE_NAMES_DOT_KSM.includes(nodeTyped)) {
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(nodeTyped)) {
       throw new BadRequestException(
         `Node ${node} is not valid. Check docs for valid nodes.`,
       );

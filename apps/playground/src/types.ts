@@ -40,3 +40,10 @@ export type TNavItem = {
   url: string;
   Icon: FC<IconProps>;
 };
+
+export type TSubmitType =
+  | 'default'
+  | 'update'
+  | 'delete'
+  | 'dryRun'
+  | 'addToBatch';

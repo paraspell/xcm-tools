@@ -1,6 +1,6 @@
 .wrapper {
   min-height: rem(400px);
-  border-radius: var(--mantine-radius-md);
+  border-radius: var(--mantine-radius-lg);
   padding: 24px;
 }
 
@@ -24,7 +24,7 @@
 .form {
   background-color: var(--mantine-color-white);
   padding: var(--mantine-spacing-xl);
-  border-radius: var(--mantine-radius-md);
+  border-radius: var(--mantine-radius-lg);
   box-shadow: var(--mantine-shadow-xl);
   display: flex;
   flex-direction: column;
