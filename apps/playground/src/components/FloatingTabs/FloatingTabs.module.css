@@ -8,6 +8,10 @@
     var(--mantine-color-dark-8)
   );
   margin-right: 48px;
+
+  @media (max-width: 1430px) {
+    margin-right: 0px;
+  }
 }
 
 .control {

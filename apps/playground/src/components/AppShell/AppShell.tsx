@@ -107,13 +107,17 @@ export const AppShell = () => {
       header={{ height: pinned ? 100 : 64, offset: false }}
       navbar={{
         width: 280,
-        breakpoint: 'sm',
+        breakpoint: 'xs',
         collapsed: { mobile: !opened },
       }}
-      padding={64}
+      padding={{
+        base: 16,
+        xs: 24,
+      }}
       style={{
-        paddingLeft: 150,
-        paddingRight: 150,
+        paddingTop: 48,
+        paddingLeft: 0,
+        paddingRight: 0,
       }}
       layout="alt"
     >
@@ -142,7 +146,12 @@ export const AppShell = () => {
           onConnectWalletClick={onConnectWalletClick}
         />
       </MantineAppShell.Header>
-      <MantineAppShell.Navbar>
+      <MantineAppShell.Navbar
+        withBorder={false}
+        style={{
+          paddingTop: opened ? 100 : 0,
+        }}
+      >
         <Paper shadow="sm" radius={0} className={classes.navbar}>
           <Group className={classes.header} pt="0" pb="lg">
             <Group w={160} flex={1}>

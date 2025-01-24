@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import type { MantineSize } from '@mantine/core';
 import {
   Box,
   Burger,
@@ -6,6 +7,7 @@ import {
   Group,
   Image,
   useComputedColorScheme,
+  useMatches,
 } from '@mantine/core';
 import { useWallet } from '../../../hooks/useWallet';
 import { FloatingTabs } from '../../FloatingTabs/FloatingTabs';
@@ -43,6 +45,11 @@ export const Header: FC<Props> = ({
 
   const colorScheme = useComputedColorScheme();
 
+  const size = useMatches<MantineSize>({
+    base: 'xs',
+    sm: 'sm',
+  });
+
   return (
     <>
       <Box
@@ -52,6 +59,7 @@ export const Header: FC<Props> = ({
         left={0}
         bottom={-20}
         bg={colorScheme === 'light' ? 'white' : 'dark.7'}
+        visibleFrom="sm"
         style={{
           transition: 'all 150ms',
           opacity: isPinned ? 0 : 1,
@@ -85,11 +93,11 @@ export const Header: FC<Props> = ({
           }}
         />
       </Box>
-      <Group h="100%" justify="flex-end">
+      <Group h="100%" justify="flex-end" gap={0}>
         <Burger
           opened={menuOpened}
           onClick={onMenuClick}
-          hiddenFrom="sm"
+          hiddenFrom="xs"
           size="sm"
         />
         <Group gap="lg" flex={1} justify="flex-end">
@@ -98,12 +106,14 @@ export const Header: FC<Props> = ({
             value={apiType}
             onChange={onApiTypeChange}
             apiTypeInitialized={apiTypeInitialized}
+            size={size}
           />
           {selectedAccount ? (
             <Button
               onClick={onChangeAccountClick}
               variant="outline"
               loading={!apiTypeInitialized}
+              size={size}
               rightSection={
                 <Image
                   ml={2}

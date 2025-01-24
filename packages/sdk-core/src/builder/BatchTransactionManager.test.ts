@@ -11,7 +11,7 @@ vi.mock('../transfer', () => ({
 
 const mockApi = {
   init: vi.fn(),
-  callTxMethod: vi.fn()
+  callBatchMethod: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
 describe('BatchTransactionManager', () => {
@@ -60,7 +60,7 @@ describe('BatchTransactionManager', () => {
     })
 
     it('uses batch when BATCH mode is selected', async () => {
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'callBatchMethod')
       const manager = new BatchTransactionManager()
       manager.addTransaction({ origin: 'Acala' } as TSendOptions<unknown, unknown>)
       vi.mocked(send).mockResolvedValue({ hash: 'hash' })

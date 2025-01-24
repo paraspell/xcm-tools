@@ -6,7 +6,7 @@ import PolkadotJsApi from './PolkadotJsApi'
 import * as sdkCore from '@paraspell/sdk-core'
 import type { VoidFn } from '@polkadot/api/types'
 import type { Extrinsic, TPjsApi } from './types'
-import type { TMultiLocation, TSerializedApiCall } from '@paraspell/sdk-core'
+import { BatchMode, type TMultiLocation, type TSerializedApiCall } from '@paraspell/sdk-core'
 import type { ApiPromise } from '@polkadot/api'
 
 vi.mock('@paraspell/sdk-core', async importOriginal => {
@@ -46,7 +46,8 @@ describe('PolkadotJsApi', () => {
           transfer: vi.fn().mockReturnValue('mocked_extrinsic')
         },
         utility: {
-          batchAll: vi.fn().mockReturnValue('mocked_utility_extrinsic')
+          batch: vi.fn().mockReturnValue('mocked_utility_extrinsic'),
+          batch_all: vi.fn().mockReturnValue('mocked_utility_extrinsic')
         }
       },
       query: {
@@ -141,17 +142,26 @@ describe('PolkadotJsApi', () => {
       expect(mockApiPromise.tx.xTokens.transfer).toHaveBeenCalledWith('recipient_address', 1000)
       expect(result).toBe('mocked_extrinsic')
     })
+  })
 
-    it('should handle the Utility module differently', () => {
-      const serializedCall: TSerializedApiCall = {
-        module: 'Utility',
-        section: 'batch_all',
-        parameters: { calls: ['call1', 'call2'] }
-      }
+  describe('callBatchMethod', () => {
+    it('should create a batch extrinsic with the provided calls and BATCH mode', () => {
+      const calls = ['call1', 'call2'] as unknown as Extrinsic[]
+      const mode = BatchMode.BATCH
 
-      const result = polkadotApi.callTxMethod(serializedCall)
+      const result = polkadotApi.callBatchMethod(calls, mode)
 
-      expect(mockApiPromise.tx.utility.batchAll).toHaveBeenCalledWith('call1', 'call2')
+      expect(mockApiPromise.tx.utility.batch).toHaveBeenCalledWith(calls)
+      expect(result).toBe('mocked_utility_extrinsic')
+    })
+
+    it('should create a batch_all extrinsic with the provided calls and BATCH_ALL mode', () => {
+      const calls = ['call1', 'call2'] as unknown as Extrinsic[]
+      const mode = BatchMode.BATCH_ALL
+
+      const result = polkadotApi.callBatchMethod(calls, mode)
+
+      expect(mockApiPromise.tx.utility.batch_all).toHaveBeenCalledWith(calls)
       expect(result).toBe('mocked_utility_extrinsic')
     })
   })

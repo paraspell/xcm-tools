@@ -29,6 +29,7 @@ describe('Builder', () => {
     init: vi.fn(),
     setApi: vi.fn(),
     callTxMethod: vi.fn(),
+    callBatchMethod: vi.fn(),
     setDisconnectAllowed: vi.fn(),
     disconnect: vi.fn(),
     clone: vi.fn().mockReturnValue({
