@@ -44,21 +44,27 @@ export const submitTransactionPapi = async (
   onSign?: () => void,
 ): Promise<TxFinalizedPayload> => {
   return new Promise((resolve, reject) => {
-    return tx.signSubmitAndWatch(signer).subscribe((event) => {
-      if (event.type === 'signed') {
-        if (onSign) onSign();
-      }
-
-      if (
-        event.type === 'finalized' ||
-        (event.type === 'txBestBlocksState' && event.found)
-      ) {
-        if (!event.ok) {
-          reject(new Error(JSON.stringify(event.dispatchError.value)));
-        } else {
-          resolve(event);
+    return tx.signSubmitAndWatch(signer).subscribe({
+      next: (event) => {
+        if (event.type === 'signed') {
+          if (onSign) onSign();
         }
-      }
+
+        if (
+          event.type === 'finalized' ||
+          (event.type === 'txBestBlocksState' && event.found)
+        ) {
+          if (!event.ok) {
+            reject(new Error(JSON.stringify(event.dispatchError.value)));
+          } else {
+            resolve(event);
+          }
+        }
+      },
+      error: (error) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        reject(new Error(error));
+      },
     });
   });
 };

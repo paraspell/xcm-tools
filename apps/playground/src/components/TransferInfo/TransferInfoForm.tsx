@@ -29,6 +29,11 @@ export type FormValues = {
   amount: string;
   useApi: boolean;
   customCurrencyType?: 'id' | 'symbol' | 'multilocation';
+  customCurrencySymbolSpecifier?:
+    | 'auto'
+    | 'native'
+    | 'foreign'
+    | 'foreignAbstract';
 };
 
 type Props = {
@@ -80,6 +85,13 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
     form.setFieldValue('from', to);
     form.setFieldValue('to', from);
   };
+
+  const symbolSpecifierOptions = [
+    { label: 'Auto', value: 'auto' },
+    { label: 'Native', value: 'native' },
+    { label: 'Foreign', value: 'foreign' },
+    { label: 'Foreign abstract', value: 'foreignAbstract' },
+  ];
 
   return (
     <Paper p="xl" shadow="md">
@@ -149,6 +161,14 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
               ]}
               {...form.getInputProps('customCurrencyType')}
             />
+            {customCurrencyType === 'symbol' && (
+              <SegmentedControl
+                size="xs"
+                w="100%"
+                data={symbolSpecifierOptions}
+                {...form.getInputProps(`customCurrencySymbolSpecifier`)}
+              />
+            )}
           </Stack>
 
           <TextInput

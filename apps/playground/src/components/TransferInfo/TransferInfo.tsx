@@ -7,7 +7,13 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TCurrencyCore, TMultiLocation } from '@paraspell/sdk';
+import {
+  Foreign,
+  ForeignAbstract,
+  Native,
+  type TCurrencyCore,
+  type TMultiLocation,
+} from '@paraspell/sdk';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { useState, useEffect } from 'react';
 import { useWallet } from '../../hooks/useWallet';
@@ -54,7 +60,27 @@ const TransferInfo = () => {
     } else if (formValues.customCurrencyType === 'id') {
       return { id: formValues.currency };
     } else {
-      return { symbol: formValues.currency };
+      if (formValues.customCurrencySymbolSpecifier === 'native') {
+        return {
+          symbol: Native(formValues.currency),
+        };
+      }
+
+      if (formValues.customCurrencySymbolSpecifier === 'foreign') {
+        return {
+          symbol: Foreign(formValues.currency),
+        };
+      }
+
+      if (formValues.customCurrencySymbolSpecifier === 'foreignAbstract') {
+        return {
+          symbol: ForeignAbstract(formValues.currency),
+        };
+      }
+
+      return {
+        symbol: formValues.currency,
+      };
     }
   };
 

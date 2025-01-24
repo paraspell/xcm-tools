@@ -35,11 +35,7 @@ class BatchTransactionManager<TApi, TRes> {
     const results = this.transactionOptions.map(options => send(options))
     const txs = await Promise.all(results)
 
-    return api.callTxMethod({
-      module: 'Utility',
-      section: mode === BatchMode.BATCH_ALL ? 'batch_all' : 'batch',
-      parameters: { data: [txs] }
-    })
+    return api.callBatchMethod(txs, mode)
   }
 }
 

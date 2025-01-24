@@ -5,7 +5,8 @@ import type {
   TSerializedApiCall,
   TNodePolkadotKusama,
   TDryRunBaseOptions,
-  TDryRunResult
+  TDryRunResult,
+  BatchMode
 } from '../types'
 import type { TApiOrUrl } from '../types/TApi'
 
@@ -18,6 +19,7 @@ export interface IPolkadotApi<TApi, TRes> {
   createAccountId(address: string): string
   accountToHex(address: string, isPrefixed?: boolean): string
   callTxMethod(serializedCall: TSerializedApiCall): TRes
+  callBatchMethod(calls: TRes[], mode: BatchMode): TRes
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
   getBalanceNative(address: string): Promise<bigint>
   getBalanceNativeAcala(address: string, symbol: string): Promise<bigint>

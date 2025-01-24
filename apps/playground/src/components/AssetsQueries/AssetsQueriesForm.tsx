@@ -177,6 +177,13 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const isOriginFee = func === 'ORIGIN_FEE_DETAILS';
 
+  const symbolSpecifierOptions = [
+    { label: 'Auto', value: 'auto' },
+    { label: 'Native', value: 'native' },
+    { label: 'Foreign', value: 'foreign' },
+    { label: 'Foreign abstract', value: 'foreignAbstract' },
+  ];
+
   return (
     <Paper p="xl" shadow="md">
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
@@ -257,6 +264,14 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
                   onClick={onSelectCurrencyTypeClick}
                   data-testid="currency-type"
                   {...form.getInputProps('currencyType')}
+                />
+              )}
+              {supportsCurrencyType && !isRelay && currencyType == 'symbol' && (
+                <SegmentedControl
+                  size="xs"
+                  w="100%"
+                  data={symbolSpecifierOptions}
+                  {...form.getInputProps(`customCurrencySymbolSpecifier`)}
                 />
               )}
             </Stack>
