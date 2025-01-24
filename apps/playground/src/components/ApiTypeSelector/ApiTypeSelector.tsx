@@ -1,3 +1,4 @@
+import type { MantineSize } from '@mantine/core';
 import { Center, SegmentedControl } from '@mantine/core';
 import type { TApiType } from '../../types';
 import type { FC } from 'react';
@@ -9,12 +10,14 @@ type Props = {
   value: TApiType;
   onChange: (apiType: TApiType) => void;
   apiTypeInitialized: boolean;
+  size: MantineSize;
 };
 
 export const ApiTypeSelector: FC<Props> = ({
   value,
   onChange,
   apiTypeInitialized,
+  size,
 }) => {
   const onChangeInternal = (value: string) => {
     onChange(value as TApiType);
@@ -50,6 +53,7 @@ export const ApiTypeSelector: FC<Props> = ({
 
   return (
     <SegmentedControl
+      size={size}
       value={value}
       onChange={onChangeInternal}
       disabled={!apiTypeInitialized}

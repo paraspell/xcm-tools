@@ -7,6 +7,7 @@ import { getWsProvider } from 'polkadot-api/ws-provider/node'
 import { transform } from './PapiXcmTransformer'
 import type { TPapiTransaction } from './types'
 import {
+  BatchMode,
   computeFeeFromDryRun,
   type TMultiLocation,
   type TNodeDotKsmWithRelayChains,
@@ -234,6 +235,40 @@ describe('PapiApi', () => {
 
       expect(result).toBe(mockTransaction)
       expect(mockTxMethod).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('callBatchMethod', () => {
+    it('should call the batch method with the provided calls and BATCH mode', () => {
+      const calls = [mockTransaction, mockTransaction]
+      const mode = BatchMode.BATCH_ALL
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.tx.Utility = {
+        batch: vi.fn(),
+        batch_all: vi.fn()
+      }
+
+      papiApi.callBatchMethod(calls, mode)
+
+      expect(unsafeApi.tx.Utility.batch).not.toHaveBeenCalled()
+      expect(unsafeApi.tx.Utility.batch_all).toHaveBeenCalledOnce()
+    })
+
+    it('should call the batch method with the provided calls and BATCH_ALL mode', () => {
+      const calls = [mockTransaction, mockTransaction]
+      const mode = BatchMode.BATCH
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.tx.Utility = {
+        batch: vi.fn(),
+        batch_all: vi.fn()
+      }
+
+      papiApi.callBatchMethod(calls, mode)
+
+      expect(unsafeApi.tx.Utility.batch).toHaveBeenCalledOnce()
+      expect(unsafeApi.tx.Utility.batch_all).not.toHaveBeenCalled()
     })
   })
 

@@ -1,6 +1,12 @@
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
-import { FloatingIndicator, Group, rem, UnstyledButton } from '@mantine/core';
+import {
+  Box,
+  FloatingIndicator,
+  Group,
+  rem,
+  UnstyledButton,
+} from '@mantine/core';
 import classes from './FloatingTabs.module.css';
 import { Link, useLocation } from 'react-router-dom';
 import type { TNavItem } from '../../types';
@@ -49,13 +55,13 @@ export const FloatingTabs: FC<Props> = ({ data }) => {
   ));
 
   return (
-    <div className={classes.root} ref={setRootRef}>
+    <Box className={classes.root} visibleFrom="xl" ref={setRootRef}>
       {controls}
       <FloatingIndicator
         target={controlsRefs[active]}
         parent={rootRef}
         className={classes.indicator}
       />
-    </div>
+    </Box>
   );
 };
