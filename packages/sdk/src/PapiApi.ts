@@ -11,6 +11,7 @@ import type {
   TNodePolkadotKusama,
   TSerializedApiCall
 } from '@paraspell/sdk-core'
+import { BatchMode } from '@paraspell/sdk-core'
 import {
   computeFeeFromDryRun,
   createApiInstanceForNode,
@@ -103,6 +104,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   callTxMethod({ module, section, parameters }: TSerializedApiCall) {
     const transformedParameters = transform(parameters)
     return this.api.getUnsafeApi().tx[module][section](transformedParameters)
+  }
+
+  callBatchMethod(calls: TPapiTransaction[], mode: BatchMode) {
+    const section = mode === BatchMode.BATCH_ALL ? 'batch_all' : 'batch'
+    return this.api
+      .getUnsafeApi()
+      .tx.Utility[section]({ calls: calls.map(call => call.decodedCall) })
   }
 
   async calculateTransactionFee(tx: TPapiTransaction, address: string) {

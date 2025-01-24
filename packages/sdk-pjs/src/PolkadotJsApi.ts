@@ -18,6 +18,7 @@ import type {
   TNodePolkadotKusama,
   TSerializedApiCall
 } from '@paraspell/sdk-core'
+import { BatchMode } from '@paraspell/sdk-core'
 import {
   computeFeeFromDryRunPjs,
   createApiInstanceForNode,
@@ -88,11 +89,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const moduleLowerCase = lowercaseFirstLetter(module)
     const sectionCamelCase = snakeToCamel(section)
 
-    if (module === 'Utility') {
-      return this.api.tx[moduleLowerCase][sectionCamelCase](...(values[0] as Extrinsic[]))
-    }
-
     return this.api.tx[moduleLowerCase][sectionCamelCase](...values)
+  }
+
+  callBatchMethod(calls: Extrinsic[], mode: BatchMode) {
+    const section = mode === BatchMode.BATCH_ALL ? 'batch_all' : 'batch'
+    return this.api.tx.utility[section](calls)
   }
 
   async calculateTransactionFee(tx: Extrinsic, address: string) {
