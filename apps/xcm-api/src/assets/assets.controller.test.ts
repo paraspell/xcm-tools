@@ -6,6 +6,7 @@ import { AssetsService } from './assets.service.js';
 import type { TAsset, TNode, TNodeAssets } from '@paraspell/sdk';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { mockRequestObject } from '../testUtils.js';
+import type { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 
 // Integration tests to ensure controller and service are working together
 describe('AssetsController', () => {
@@ -185,6 +186,28 @@ describe('AssetsController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(nodeOrigin, nodeDestination);
+    });
+  });
+
+  describe('getOriginFeeDetails', () => {
+    it('should return origin fee details for a valid origin and destination', async () => {
+      const origin = 'Acala';
+      const destination = 'Karura';
+      const mockResult = {
+        sufficientForXCM: true,
+        xcmFee: 100n,
+      };
+      const spy = vi
+        .spyOn(assetsService, 'getOriginFeeDetails')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getOriginFeeDetails(
+        { origin, destination } as OriginFeeDetailsDto,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith({ origin, destination });
     });
   });
 });

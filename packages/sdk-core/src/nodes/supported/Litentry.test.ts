@@ -1,38 +1,64 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { TXTokensTransferOptions, TSelfReserveAsset } from '../../types'
-import { Version } from '../../types'
-import XTokensTransferImpl from '../../pallets/xTokens'
-import type Litentry from './Litentry'
+import { Version, type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
+import Litentry from './Litentry'
 
-vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
+vi.mock('../../pallets/polkadotXcm', async () => {
+  const actual = await vi.importActual<typeof import('../../pallets/polkadotXcm')>(
+    '../../pallets/polkadotXcm'
+  )
+  return {
+    default: {
+      ...actual.default,
+      transferPolkadotXCM: vi.fn()
+    }
   }
-}))
+})
 
 describe('Litentry', () => {
-  let litentry: Litentry<unknown, unknown>
-  const mockInput = {
-    asset: { assetId: '123', amount: '100' }
-  } as TXTokensTransferOptions<unknown, unknown>
+  describe('transferPolkadotXCM', () => {
+    let litentry: Litentry<unknown, unknown>
 
-  beforeEach(() => {
-    litentry = getNode<unknown, unknown, 'Litentry'>('Litentry')
-  })
+    beforeEach(() => {
+      litentry = getNode<unknown, unknown, 'Litentry'>('Litentry')
+    })
 
-  it('should initialize with correct values', () => {
-    expect(litentry.node).toBe('Litentry')
-    expect(litentry.info).toBe('litentry')
-    expect(litentry.type).toBe('polkadot')
-    expect(litentry.version).toBe(Version.V3)
-  })
+    it('should be instantiated correctly', () => {
+      expect(litentry).toBeInstanceOf(Litentry)
+    })
 
-  it('should call transferXTokens with SelfReserve', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
+    it('should initialize with correct values', () => {
+      expect(litentry.node).toBe('Litentry')
+      expect(litentry.info).toBe('litentry')
+      expect(litentry.type).toBe('polkadot')
+      expect(litentry.version).toBe(Version.V3)
+    })
 
-    litentry.transferXTokens(mockInput)
+    it('should not suppoert ParaToRelay scenario', () => {
+      const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
+      expect(() => litentry.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+    })
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'SelfReserve' as TSelfReserveAsset)
+    it('should only support native currency', () => {
+      const input = {
+        scenario: 'ParaToPara',
+        asset: { symbol: 'XYZ' }
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+      expect(() => litentry.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
+      const input = {
+        scenario: 'ParaToPara',
+        asset: { symbol: 'LIT' }
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+
+      await litentry.transferPolkadotXCM(input)
+      expect(spy).toHaveBeenCalledWith(input, 'limited_reserve_transfer_assets', 'Unlimited')
+    })
   })
 })

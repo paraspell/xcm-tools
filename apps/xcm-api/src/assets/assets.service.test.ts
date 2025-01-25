@@ -7,6 +7,7 @@ import * as paraspellSdk from '@paraspell/sdk';
 import type { TNode } from '@paraspell/sdk';
 import * as utils from '../utils.js';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import type { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
@@ -445,6 +446,91 @@ describe('AssetsService', () => {
         withRelayChains: true,
       });
       expect(getSupportedAssetsSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getOriginFeeDetails', () => {
+    it('should return origin fee details for a valid origin and destination node', async () => {
+      const nodeOrigin = 'Acala';
+      const nodeDestination = 'Karura';
+
+      const getOriginFeeDetailsSpy = vi
+        .spyOn(paraspellSdk, 'getOriginFeeDetails')
+        .mockResolvedValue({ xcmFee: 1n, sufficientForXCM: true });
+
+      const validateNodeSpy = vi.spyOn(utils, 'validateNode');
+
+      const result = await service.getOriginFeeDetails({
+        origin: nodeOrigin,
+        destination: nodeDestination,
+      } as OriginFeeDetailsDto);
+
+      expect(result).toEqual({ xcmFee: 1n, sufficientForXCM: true });
+      expect(validateNodeSpy).toHaveBeenCalledWith(nodeOrigin, {
+        withRelayChains: true,
+        excludeEthereum: true,
+      });
+      expect(validateNodeSpy).toHaveBeenCalledWith(nodeDestination, {
+        withRelayChains: true,
+        excludeEthereum: true,
+      });
+      expect(getOriginFeeDetailsSpy).toHaveBeenCalledWith({
+        origin: nodeOrigin,
+        destination: nodeDestination,
+      });
+    });
+
+    it('should throw BadRequestException for invalid origin node', () => {
+      const nodeOrigin = 'InvalidNode';
+      const nodeDestination = 'Karura';
+
+      const validateNodeSpy = vi
+        .spyOn(utils, 'validateNode')
+        .mockImplementation(() => {
+          throw new BadRequestException();
+        });
+
+      expect(() =>
+        service.getOriginFeeDetails({
+          origin: nodeOrigin,
+          destination: nodeDestination,
+        } as OriginFeeDetailsDto),
+      ).toThrow(BadRequestException);
+
+      expect(validateNodeSpy).toHaveBeenCalledWith(nodeOrigin, {
+        withRelayChains: true,
+        excludeEthereum: true,
+      });
+    });
+
+    it('should throw BadRequestException for invalid destination node', () => {
+      const nodeOrigin = 'Acala';
+      const nodeDestination = 'InvalidNode';
+
+      const validateNodeSpy = vi
+        .spyOn(utils, 'validateNode')
+        .mockImplementation((node: string) => {
+          if (node === 'Acala') {
+            return;
+          }
+          throw new BadRequestException();
+        });
+
+      expect(() =>
+        service.getOriginFeeDetails({
+          origin: nodeOrigin,
+          destination: nodeDestination,
+        } as OriginFeeDetailsDto),
+      ).toThrow(BadRequestException);
+
+      expect(validateNodeSpy).toHaveBeenCalledWith(nodeOrigin, {
+        withRelayChains: true,
+        excludeEthereum: true,
+      });
+      expect(validateNodeSpy).toHaveBeenCalledWith(nodeDestination, {
+        withRelayChains: true,
+        excludeEthereum: true,
+      });
     });
   });
 });

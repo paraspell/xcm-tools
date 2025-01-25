@@ -29,24 +29,6 @@ export const fetchAssets = async (node: TNodePolkadotKusama): Promise<TRegistryA
   return isAssetHub ? assets.filter(asset => !!asset.xcmInteriorKey) : assets
 }
 
-const processMultiLocation = (multiLocation: any, symbol: string, isBifrost: boolean): any => {
-  if (
-    symbol === 'WETH' &&
-    multiLocation?.interior?.x2?.some((junction: any) => junction?.globalConsensus?.ethereum)
-  ) {
-    multiLocation.parents = 2
-  }
-
-  if (isBifrost) {
-    const x2 = multiLocation['interior']['x2']
-    if (Array.isArray(x2) && x2.length === 2 && Array.isArray(x2[1])) {
-      multiLocation['interior']['x2'] = [x2[0], x2[1][0]]
-    }
-  }
-
-  return multiLocation
-}
-
 export const capitalizeMultiLocation = (obj: any) => {
   obj.interior = capitalizeKeys(obj.interior)
   return obj
@@ -130,7 +112,6 @@ export const fetchOtherAssetsRegistry = async (
           : undefined
 
       if (multiLocation) {
-        multiLocation = processMultiLocation(multiLocation, item.symbol, isBifrost)
         multiLocation = capitalizeMultiLocation(multiLocation)
       }
 

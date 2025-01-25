@@ -93,7 +93,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   }
 
   callBatchMethod(calls: Extrinsic[], mode: BatchMode) {
-    const section = mode === BatchMode.BATCH_ALL ? 'batch_all' : 'batch'
+    const section = mode === BatchMode.BATCH_ALL ? 'batchAll' : 'batch'
     return this.api.tx.utility[section](calls)
   }
 

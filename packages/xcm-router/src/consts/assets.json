@@ -25,10 +25,6 @@
       "id": "25"
     },
     {
-      "symbol": "GLMR",
-      "id": "16"
-    },
-    {
       "symbol": "MYTH",
       "id": "30"
     },
@@ -79,6 +75,10 @@
     {
       "symbol": "2-Pool",
       "id": "101"
+    },
+    {
+      "symbol": "GLMR",
+      "id": "16"
     },
     {
       "symbol": "BNC",
@@ -143,36 +143,6 @@
     {
       "symbol": "USDC",
       "id": "22"
-    }
-  ],
-  "BasiliskDex": [
-    {
-      "symbol": "BSX",
-      "id": "0"
-    },
-    {
-      "symbol": "USDT",
-      "id": "14"
-    },
-    {
-      "symbol": "aUSD",
-      "id": "2"
-    },
-    {
-      "symbol": "XRT",
-      "id": "16"
-    },
-    {
-      "symbol": "KSM",
-      "id": "1"
-    },
-    {
-      "symbol": "TEER",
-      "id": "17"
-    },
-    {
-      "symbol": "TNKR",
-      "id": "6"
     }
   ],
   "KaruraDex": [
@@ -404,6 +374,10 @@
       "id": "14"
     },
     {
+      "symbol": "DAMN",
+      "id": "19"
+    },
+    {
       "symbol": "EQD",
       "id": "8"
     },
@@ -422,6 +396,10 @@
     {
       "symbol": "ASTR",
       "id": "2"
+    },
+    {
+      "symbol": "LOTY",
+      "id": "20"
     },
     {
       "symbol": "PHA",
@@ -454,6 +432,10 @@
     {
       "symbol": "EQ",
       "id": "7"
+    },
+    {
+      "symbol": "LOVA",
+      "id": "18"
     },
     {
       "symbol": "CFG",
