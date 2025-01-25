@@ -1,5 +1,35 @@
 # Changelog
 
+## [2.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.0.0...xcm-router-v2.1.0) (2025-01-25)
+
+
+### Features
+
+* **playground:** Improve playground ✨ ([441fa6f](https://github.com/paraspell/xcm-tools/commit/441fa6fb197f2b8f35f34c14fd8f94dcdc15635d))
+
+
+### Bug Fixes
+
+* Add no-console rule to ESlint configuration ✨ ([d58a744](https://github.com/paraspell/xcm-tools/commit/d58a744c8fb4a892697eed9fca0f5514c7dfb243))
+* Enable support for bigint literals ✨ ([0090106](https://github.com/paraspell/xcm-tools/commit/0090106babe2dcecf66d4eaa532d3963a230958b))
+* Fix package json warnings 🔧 ([de6ea5d](https://github.com/paraspell/xcm-tools/commit/de6ea5df89513753b7a83e4053121a4b207a97c5))
+* Update Rollup TypeScript plugin to official version ⬆ ([20c0f25](https://github.com/paraspell/xcm-tools/commit/20c0f25224a86b859ac1ad043c5cf04febdf743e))
+
+
+### Miscellaneous Chores
+
+* Perform monthly check 🔧 ([b459bc4](https://github.com/paraspell/xcm-tools/commit/b459bc48044711b02e3ed1bf0ea1d9ddecd32098))
+
+
+### Code Refactoring
+
+* **xcm-router:** Refactor transfer functions 🔧 ([420db1e](https://github.com/paraspell/xcm-tools/commit/420db1ec3361add1a24764ac0d6a6d6353d31032))
+
+
+### Tests
+
+* **xcm-router:** Speed up XCM Router tests 🧪 ([e1e2373](https://github.com/paraspell/xcm-tools/commit/e1e2373f6c4b7a515d6af8d805d66bef28b19110))
+
 ## [2.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v1.5.0...xcm-router-v2.0.0) (2024-12-29)
 
 
