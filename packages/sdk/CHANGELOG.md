@@ -1,5 +1,18 @@
 # Changelog
 
+## [8.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.1.0...sdk-v8.2.0) (2025-01-25)
+
+
+### Bug Fixes
+
+* Fix batch transfers for PAPI & Improve playground symbol selection ✨ ([e6f38b1](https://github.com/paraspell/xcm-tools/commit/e6f38b17bdb7dd9cdc6d898485c7ba2a2ed8e191))
+* **playground:** Improve mobile responsivity📱 ([ecdf91b](https://github.com/paraspell/xcm-tools/commit/ecdf91b14882b72b637f800cd76d08f1ecf8f6aa))
+
+
+### Miscellaneous Chores
+
+* Perform monthly check 🔧 ([b459bc4](https://github.com/paraspell/xcm-tools/commit/b459bc48044711b02e3ed1bf0ea1d9ddecd32098))
+
 ## [8.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.0.3...sdk-v8.1.0) (2025-01-16)
 
 
