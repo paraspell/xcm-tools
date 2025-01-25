@@ -31,7 +31,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PLMC",
     "isEVM": false,
-    "supportsDryRunApi": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "PLMC",
@@ -130,6 +130,28 @@
       }
     ],
     "otherAssets": [
+      {
+        "assetId": "18",
+        "symbol": "LOVA",
+        "decimals": 12,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000028
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1"
+      },
       {
         "assetId": "14",
         "symbol": "USDC",
@@ -239,6 +261,50 @@
           }
         },
         "existentialDeposit": "3000"
+      },
+      {
+        "assetId": "19",
+        "symbol": "DAMN",
+        "decimals": 12,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 22222012
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1"
+      },
+      {
+        "assetId": "20",
+        "symbol": "LOTY",
+        "decimals": 12,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000069
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "100000000"
       },
       {
         "assetId": "0",
@@ -2129,11 +2195,54 @@
     ],
     "otherAssets": [
       {
+        "assetId": "1000771",
+        "symbol": "KSM",
+        "decimals": 12,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "GlobalConsensus": {
+                "kusama": null
+              }
+            }
+          }
+        },
+        "existentialDeposit": "313283208"
+      },
+      {
+        "assetId": "1000766",
+        "symbol": "USDC",
+        "decimals": 6,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10000",
+        "alias": "USDC1"
+      },
+      {
         "assetId": "1000625",
         "symbol": "sUSDe",
         "decimals": 18,
         "multiLocation": {
-          "parents": 1,
+          "parents": 2,
           "interior": {
             "X2": [
               {
@@ -2171,7 +2280,7 @@
         "symbol": "AAVE",
         "decimals": 18,
         "multiLocation": {
-          "parents": 1,
+          "parents": 2,
           "interior": {
             "X2": [
               {
@@ -2197,7 +2306,7 @@
         "symbol": "WBTC",
         "decimals": 8,
         "multiLocation": {
-          "parents": 1,
+          "parents": 2,
           "interior": {
             "X2": [
               {
@@ -2224,7 +2333,7 @@
         "symbol": "sUSDS",
         "decimals": 18,
         "multiLocation": {
-          "parents": 1,
+          "parents": 2,
           "interior": {
             "X2": [
               {
@@ -2245,6 +2354,59 @@
         },
         "existentialDeposit": "9910802775024780",
         "alias": "sUSDS1"
+      },
+      {
+        "assetId": "1000767",
+        "symbol": "USDT",
+        "decimals": 6,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10000",
+        "alias": "USDT2"
+      },
+      {
+        "assetId": "1000765",
+        "symbol": "tBTC",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "106803374987"
       },
       {
         "assetId": "1000189",
@@ -2339,7 +2501,7 @@
           }
         },
         "existentialDeposit": "10000",
-        "alias": "USDC2"
+        "alias": "USDC3"
       },
       {
         "assetId": "4",
@@ -2452,7 +2614,7 @@
           }
         },
         "existentialDeposit": "10000",
-        "alias": "USDC3"
+        "alias": "USDC4"
       },
       {
         "assetId": "1000100",
@@ -2523,7 +2685,7 @@
           }
         },
         "existentialDeposit": "10000",
-        "alias": "USDC1"
+        "alias": "USDC2"
       },
       {
         "assetId": "20",
@@ -2697,7 +2859,7 @@
           }
         },
         "existentialDeposit": "10000",
-        "alias": "USDT2"
+        "alias": "USDT3"
       },
       {
         "assetId": "1000752",
@@ -2962,6 +3124,28 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0x2ec4884088d84e5c2970a034732e5209b0acfa93"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "0"
+      },
+      {
+        "assetId": "1005",
+        "symbol": "avDOT",
+        "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x0e13b904f4168f93814216b6874ca8349457f263"
                 }
               }
             ]
@@ -5035,6 +5219,26 @@
         "existentialDeposit": "3000"
       },
       {
+        "assetId": "22222012",
+        "symbol": "DAMN",
+        "decimals": 12,
+        "xcmInterior": [
+          {
+            "Network": "polkadot"
+          },
+          {
+            "Parachain": 1000
+          },
+          {
+            "PalletInstance": 50
+          },
+          {
+            "GeneralIndex": 22222012
+          }
+        ],
+        "existentialDeposit": "1000000000000"
+      },
+      {
         "assetId": "23",
         "symbol": "PINK",
         "decimals": 10,
@@ -5113,6 +5317,46 @@
           }
         ],
         "existentialDeposit": "1000000"
+      },
+      {
+        "assetId": "50000028",
+        "symbol": "LOVA",
+        "decimals": 12,
+        "xcmInterior": [
+          {
+            "Network": "polkadot"
+          },
+          {
+            "Parachain": 1000
+          },
+          {
+            "PalletInstance": 50
+          },
+          {
+            "GeneralIndex": 50000028
+          }
+        ],
+        "existentialDeposit": "1000000000000"
+      },
+      {
+        "assetId": "50000069",
+        "symbol": "LOTY",
+        "decimals": 12,
+        "xcmInterior": [
+          {
+            "Network": "polkadot"
+          },
+          {
+            "Parachain": 1000
+          },
+          {
+            "PalletInstance": 50
+          },
+          {
+            "GeneralIndex": 50000069
+          }
+        ],
+        "existentialDeposit": "100000000"
       },
       {
         "assetId": "555",
@@ -5200,6 +5444,21 @@
             "X1": [
               {
                 "Parachain": 2039
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000"
+      },
+      {
+        "symbol": "PLMC",
+        "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3344
               }
             ]
           }
@@ -6284,7 +6543,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "CRAB",
     "isEVM": true,
-    "supportsDryRunApi": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "CRAB",
@@ -10358,6 +10617,30 @@
               {
                 "AccountKey20": {
                   "key": "0x5d3d01fd6d2ad1169b17918eb4f153c6616288eb"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "AAVE",
+        "assetId": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+        "existentialDeposit": "1",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chain_id": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "key": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9"
                 }
               }
             ]

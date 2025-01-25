@@ -10,31 +10,14 @@ import {
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 import type { TNode } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
+import { TransactionType } from '@paraspell/xcm-router';
 
 vi.mock('@paraspell/xcm-router', async () => {
   const actual = await vi.importActual('@paraspell/xcm-router');
   return {
     ...actual,
-    buildTransferExtrinsics: vi.fn().mockReturnValue([
-      {
-        node: 'Ethereum',
-        tx: '0x123',
-        type: 'ETH_TRANSFER',
-        statusType: 'TO_EXCHANGE',
-      },
-      {
-        node: 'AssetHubPolkadot',
-        tx: '0x123',
-        type: 'EXTRINSIC',
-        statusType: 'SWAP',
-      },
-      {
-        node: 'Astar',
-        tx: '0x123',
-        type: 'EXTRINSIC',
-        statusType: 'TO_DESTINATION',
-      },
-    ]),
+    buildTransferExtrinsics: vi.fn(),
   };
 });
 
@@ -60,7 +43,13 @@ describe('RouterService', () => {
   const serializedExtrinsics = [
     {
       node: 'Ethereum',
-      tx: serializedTx,
+      tx: {
+        token: '0x123',
+        destinationParaId: 1,
+        destinationFee: 0n,
+        amount: 1000000000000000000n,
+        fee: 1n,
+      },
       type: 'ETH_TRANSFER',
       statusType: 'TO_EXCHANGE',
     },
@@ -79,6 +68,35 @@ describe('RouterService', () => {
   ];
 
   beforeEach(async () => {
+    vi.resetAllMocks();
+
+    vi.spyOn(spellRouter, 'buildTransferExtrinsics').mockResolvedValue([
+      {
+        node: 'Ethereum',
+        tx: {
+          token: '0x123',
+          destinationParaId: 1,
+          destinationFee: 0n,
+          amount: 1000000000000000000n,
+          fee: 1n,
+        },
+        type: 'ETH_TRANSFER',
+        statusType: TransactionType.TO_EXCHANGE,
+      },
+      {
+        node: 'AssetHubPolkadot',
+        tx: '0x123' as unknown as Extrinsic,
+        type: 'EXTRINSIC',
+        statusType: TransactionType.SWAP,
+      },
+      {
+        node: 'Astar',
+        tx: '0x123' as unknown as Extrinsic,
+        type: 'EXTRINSIC',
+        statusType: TransactionType.TO_DESTINATION,
+      },
+    ]);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [RouterService],
     }).compile();

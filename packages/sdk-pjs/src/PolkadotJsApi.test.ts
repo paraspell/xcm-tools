@@ -47,7 +47,7 @@ describe('PolkadotJsApi', () => {
         },
         utility: {
           batch: vi.fn().mockReturnValue('mocked_utility_extrinsic'),
-          batch_all: vi.fn().mockReturnValue('mocked_utility_extrinsic')
+          batchAll: vi.fn().mockReturnValue('mocked_utility_extrinsic')
         }
       },
       query: {
@@ -161,7 +161,7 @@ describe('PolkadotJsApi', () => {
 
       const result = polkadotApi.callBatchMethod(calls, mode)
 
-      expect(mockApiPromise.tx.utility.batch_all).toHaveBeenCalledWith(calls)
+      expect(mockApiPromise.tx.utility.batchAll).toHaveBeenCalledWith(calls)
       expect(result).toBe('mocked_utility_extrinsic')
     })
   })

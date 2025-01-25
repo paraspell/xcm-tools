@@ -63,6 +63,10 @@ export const generateTransferScenarios = (originNode: TNode) => {
         continue
       }
 
+      if (originNode === 'Polimec' && destNode === 'AssetHubPolkadot' && asset.symbol === 'PLMC') {
+        continue
+      }
+
       const notCompatible =
         ['DOT', 'KSM'].includes(asset.symbol) &&
         (destNode === 'AssetHubPolkadot' || destNode === 'AssetHubKusama')

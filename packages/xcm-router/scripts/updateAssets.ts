@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { EXCHANGE_NODES } from '../src/consts';
-import createDexNodeInstance from '../src/dexNodes/DexNodeFactory';
+import { createDexNodeInstance } from '../src/dexNodes/DexNodeFactory';
 import type { TAssets } from '../src/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
