@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.5.2](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.1...xcm-analyser-v1.5.2) (2025-01-25)
+
+
+### Bug Fixes
+
+* Add no-console rule to ESlint configuration ✨ ([d58a744](https://github.com/paraspell/xcm-tools/commit/d58a744c8fb4a892697eed9fca0f5514c7dfb243))
+* Enable support for bigint literals ✨ ([0090106](https://github.com/paraspell/xcm-tools/commit/0090106babe2dcecf66d4eaa532d3963a230958b))
+* Fix package json warnings 🔧 ([de6ea5d](https://github.com/paraspell/xcm-tools/commit/de6ea5df89513753b7a83e4053121a4b207a97c5))
+* Update Rollup TypeScript plugin to official version ⬆ ([20c0f25](https://github.com/paraspell/xcm-tools/commit/20c0f25224a86b859ac1ad043c5cf04febdf743e))
+
+
+### Miscellaneous Chores
+
+* Perform monthly check 🔧 ([b459bc4](https://github.com/paraspell/xcm-tools/commit/b459bc48044711b02e3ed1bf0ea1d9ddecd32098))
+
 ## [1.5.1](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.0...xcm-analyser-v1.5.1) (2024-12-29)
 
 
