@@ -6,8 +6,6 @@ import { transferToExchange } from './transferToExchange';
 import { swap } from './swap';
 import { transferToDestination } from './transferToDestination';
 import { prepareTransformedOptions } from './utils';
-import { transferToEthereum } from './transferToEthereum';
-import { transferFromEthereum } from './transferFromEthereum';
 import { createSwapTx } from './createSwapTx';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 
@@ -15,14 +13,9 @@ const moveFundsFromOriginToExchange = async (
   originApi: TPjsApi,
   transformedOptions: TTransferOptionsModified,
 ) => {
-  const { from, assetHubAddress, exchangeNode } = transformedOptions;
+  const { from, exchangeNode } = transformedOptions;
 
-  if (from === 'Ethereum' && assetHubAddress) {
-    await transferFromEthereum(transformedOptions);
-    throw new Error(
-      'Transferring Snowbridge assets from AssetHub to other parachains is not yet supported.',
-    );
-  } else if (from === exchangeNode) {
+  if (from === exchangeNode) {
     // Assets are already on the exchange node. No action needed.
     return;
   } else {
@@ -58,7 +51,7 @@ const moveFundsFromOriginToExchange = async (
  * @throws An error if required parameters are missing or invalid.
  */
 export const transfer = async (options: TTransferOptions): Promise<void> => {
-  const { evmSigner, evmInjectorAddress, ethSigner, assetHubAddress, type } = options;
+  const { evmSigner, evmInjectorAddress, type } = options;
 
   validateTransferOptions(options);
 
@@ -70,64 +63,27 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
     throw new Error('evmSigner is required when evmInjectorAddress is provided');
   }
 
-  if ((options.from === 'Ethereum' || options.to === 'Ethereum') && ethSigner === undefined) {
-    throw new Error('Eth signer is required when transferring to or from Ethereum');
-  }
-
   const { options: transformedOptions, dex } = await prepareTransformedOptions(options);
 
   const { from, to, amount, exchangeNode } = transformedOptions;
 
   if (type === TransactionType.TO_EXCHANGE) {
-    const originApi = await createApiInstanceForNode(
-      from === 'Ethereum' ? 'AssetHubPolkadot' : from,
-    );
+    const originApi = await createApiInstanceForNode(from);
     await moveFundsFromOriginToExchange(originApi, transformedOptions);
   } else if (type === TransactionType.SWAP) {
-    const originApi = await createApiInstanceForNode(
-      from === 'Ethereum' ? 'AssetHubPolkadot' : from,
-    );
+    const originApi = await createApiInstanceForNode(from);
     const swapApi = await dex.createApiInstance();
     const { tx: swapTx } = await createSwapTx(originApi, swapApi, dex, transformedOptions);
     await swap(transformedOptions, swapTx, swapApi);
   } else if (type === TransactionType.TO_DESTINATION) {
     const swapApi = await dex.createApiInstance();
-    if (to === 'Ethereum' && assetHubAddress) {
-      await transferToDestination(
-        {
-          ...transformedOptions,
-          to: 'AssetHubPolkadot',
-        },
-        amount,
-        swapApi,
-      );
-      await delay(1000);
-      await transferToEthereum(
-        {
-          ...transformedOptions,
-          exchangeNode: 'AssetHubPolkadot',
-        },
-        amount,
-      );
-    } else if (to === exchangeNode) {
+    if (to === exchangeNode) {
       // Exchange node is the destination. Assets are already on the destination
     } else {
       await transferToDestination(transformedOptions, amount, swapApi);
     }
-  } else if (type === TransactionType.FROM_ETH) {
-    await transferFromEthereum(transformedOptions);
-  } else if (type === TransactionType.TO_ETH && assetHubAddress) {
-    await transferToEthereum(
-      {
-        ...transformedOptions,
-        exchangeNode: 'AssetHubPolkadot',
-      },
-      amount,
-    );
   } else {
-    const originApi = await createApiInstanceForNode(
-      from === 'Ethereum' ? 'AssetHubPolkadot' : from,
-    );
+    const originApi = await createApiInstanceForNode(from);
     const swapApi = await dex.createApiInstance();
     const { tx: swapTx, amountOut } = await createSwapTx(
       originApi,
@@ -142,25 +98,7 @@ export const transfer = async (options: TTransferOptions): Promise<void> => {
     await swap(transformedOptions, swapTx, swapApi);
     await delay(1000);
 
-    if (to === 'Ethereum' && assetHubAddress) {
-      await transferToDestination(
-        {
-          ...transformedOptions,
-          to: 'AssetHubPolkadot',
-          recipientAddress: assetHubAddress,
-        },
-        amountOut,
-        swapApi,
-      );
-      await delay(1000);
-      await transferToEthereum(
-        {
-          ...transformedOptions,
-          exchangeNode: 'AssetHubPolkadot',
-        },
-        amountOut,
-      );
-    } else if (to === exchangeNode) {
+    if (to === exchangeNode) {
       // Assets already on the destination
     } else {
       await transferToDestination(transformedOptions, amountOut, swapApi);

@@ -4,7 +4,6 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { transfer } from './transfer';
 import { TransactionType, type TTransferOptions } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
-import type { Signer as EthSigner } from 'ethers';
 import type { Signer } from '@polkadot/types/types';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
@@ -14,8 +13,6 @@ import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
 import { transferToExchange } from './transferToExchange';
 import { swap } from './swap';
 import { transferToDestination } from './transferToDestination';
-import { transferToEthereum } from './transferToEthereum';
-import { transferFromEthereum } from './transferFromEthereum';
 import { selectBestExchange } from './selectBestExchange';
 import { createAcalaApiInstance } from '../dexNodes/Acala/utils';
 
@@ -89,10 +86,6 @@ describe('transfer', () => {
       tx: {} as Extrinsic,
     });
     vi.mocked(transferToDestination).mockResolvedValue('');
-
-    vi.mocked(transferToEthereum).mockResolvedValue();
-    vi.mocked(transferFromEthereum).mockResolvedValue();
-    vi.mocked(transferFromEthereum).mockResolvedValue();
     vi.mocked(createAcalaApiInstance).mockResolvedValue({
       disconnect: async () => {},
     } as ApiPromise);
@@ -153,21 +146,6 @@ describe('transfer', () => {
     expect(transferToDestination).not.toHaveBeenCalled();
   });
 
-  it('main transfer function - TO_EXCHANGE - Ethereum scenario', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      from: 'Ethereum',
-      currencyFrom: { symbol: 'WETH' },
-      exchange: 'HydrationDex',
-      assetHubAddress: '0xABC123',
-      ethSigner: {} as EthSigner,
-      type: TransactionType.TO_EXCHANGE,
-    };
-    await expect(transfer(options)).rejects.toThrow();
-    expect(transferFromEthereum).toHaveBeenCalled();
-    expect(transferToExchange).not.toHaveBeenCalled();
-  });
-
   it('main transfer function - SWAP scenario', async () => {
     const options: TTransferOptions = {
       ...MOCK_TRANSFER_OPTIONS,
@@ -190,62 +168,6 @@ describe('transfer', () => {
     expect(transferToExchange).not.toHaveBeenCalled();
     expect(swap).not.toHaveBeenCalled();
     expect(transferToDestination).toHaveBeenCalled();
-  });
-
-  it('main transfer function - TO_ETH scenario', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      currencyTo: { symbol: 'WETH' },
-      to: 'Ethereum',
-      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      exchange: 'HydrationDex',
-      assetHubAddress: '0xABC123',
-      ethSigner: {} as EthSigner,
-    };
-    await transfer(options);
-    expect(transferToEthereum).toHaveBeenCalled();
-  });
-
-  it('main transfer function - TO_ETH scenario - TYPE', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      currencyTo: { symbol: 'WETH' },
-      to: 'Ethereum',
-      exchange: 'HydrationDex',
-      assetHubAddress: '0xABC123',
-      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      type: TransactionType.TO_ETH,
-      ethSigner: {} as EthSigner,
-    };
-    await transfer(options);
-    expect(transferToEthereum).toHaveBeenCalled();
-  });
-
-  it('main transfer function - FROM_ETH scenario', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      from: 'Ethereum',
-      currencyFrom: { symbol: 'WETH' },
-      exchange: 'HydrationDex',
-      assetHubAddress: '0xABC123',
-      ethSigner: {} as EthSigner,
-    };
-    await expect(transfer(options)).rejects.toThrow();
-    expect(transferToExchange).not.toHaveBeenCalled();
-  });
-
-  it('main transfer function - FROM_ETH scenario - TYPE', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      from: 'Ethereum',
-      currencyFrom: { symbol: 'WETH' },
-      exchange: 'HydrationDex',
-      assetHubAddress: '0xABC123',
-      type: TransactionType.FROM_ETH,
-      ethSigner: {} as EthSigner,
-    };
-    await transfer(options);
-    expect(transferFromEthereum).toHaveBeenCalled();
   });
 
   it('error handling - evmInjectorAddress without evmSigner', async () => {
@@ -292,31 +214,6 @@ describe('transfer', () => {
     };
     await expect(transfer(options)).rejects.toThrow(
       'Injector address cannot be an Ethereum address. Please use an Evm injector address instead.',
-    );
-  });
-
-  it('error handling - missing assetHubAddress', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      from: 'Ethereum',
-      exchange: 'HydrationDex',
-      assetHubAddress: undefined,
-    };
-    await expect(transfer(options)).rejects.toThrow(
-      'AssetHub address is required when transferring to or from Ethereum',
-    );
-  });
-
-  it('error handling - missing ethSigner', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      from: 'Ethereum',
-      exchange: 'HydrationDex',
-      assetHubAddress: '0xABC123',
-      ethSigner: undefined,
-    };
-    await expect(transfer(options)).rejects.toThrow(
-      'Eth signer is required when transferring to or from Ethereum',
     );
   });
 

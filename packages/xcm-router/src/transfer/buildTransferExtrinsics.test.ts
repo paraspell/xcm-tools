@@ -80,24 +80,21 @@ describe('buildTransferExtrinsics', () => {
     expect(toExchangeTxSpy).toHaveBeenCalled();
   });
 
-  it('should build transfer extrinsics correctly - manual exchange selection - To Ethereum', async () => {
+  it('should build transfer extrinsics correctly - manual exchange selection', async () => {
     const options: TBuildTransferExtrinsicsOptions = {
       ...MOCK_TRANSFER_OPTIONS,
-      from: 'Hydration',
       exchange: 'AcalaDex',
-      currencyTo: { symbol: 'WETH' },
-      assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
-      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      to: 'Ethereum',
+      from: 'Hydration',
+      currencyFrom: { symbol: 'WETH' },
     };
     const result = await buildTransferExtrinsics(options);
 
     expect(result).toBeDefined();
-    expect(result).toHaveLength(4);
+    expect(result).toHaveLength(3);
     expect(createApiInstanceForNode).toHaveBeenCalled();
     expect(validateSpy).toHaveBeenCalledTimes(2);
     expect(feeSpy).toHaveBeenCalledTimes(2);
-    expect(fromExchangeTxSpy).toHaveBeenCalledTimes(3);
+    expect(fromExchangeTxSpy).toHaveBeenCalledTimes(2);
     expect(toExchangeTxSpy).toHaveBeenCalled();
   });
 
@@ -154,32 +151,6 @@ describe('buildTransferExtrinsics', () => {
     );
   });
 
-  it('throws error when AssetHub address is required but not provided', async () => {
-    const options: TBuildTransferExtrinsicsOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-      to: 'Ethereum',
-      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      assetHubAddress: undefined,
-    };
-    await expect(buildTransferExtrinsics(options)).rejects.toThrow(
-      'AssetHub address is required when transferring to or from Ethereum',
-    );
-  });
-
-  it('throws error when Ethereum address is required but not provided', async () => {
-    const options: TBuildTransferExtrinsicsOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      from: 'Ethereum',
-      exchange: 'AcalaDex',
-      ethAddress: undefined,
-      assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
-    };
-    await expect(buildTransferExtrinsics(options)).rejects.toThrow(
-      'Ethereum address is required when transferring from Ethereum',
-    );
-  });
-
   it('correctly processes transactions based on the specified transaction type', async () => {
     const options: TBuildTransferExtrinsicsOptions = {
       ...MOCK_TRANSFER_OPTIONS,
@@ -202,23 +173,6 @@ describe('buildTransferExtrinsics', () => {
     await expect(buildTransferExtrinsics(options)).rejects.toThrow('Failed to create API instance');
   });
 
-  it('handles TO_ETH transaction type correctly', async () => {
-    const options: TBuildTransferExtrinsicsOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-      currencyTo: { symbol: 'WETH' },
-      from: 'Hydration',
-      to: 'Ethereum',
-      type: TransactionType.TO_ETH,
-      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
-      ethAddress: '0x1234567890123456789012345678901234567890',
-    };
-    const result = await buildTransferExtrinsics(options);
-    expect(result[0].node).toBe('AssetHubPolkadot');
-    expect(result[0].type).toBe('EXTRINSIC');
-  });
-
   it('handles TO_DESTINATION transaction type correctly', async () => {
     const options: TBuildTransferExtrinsicsOptions = {
       ...MOCK_TRANSFER_OPTIONS,
@@ -226,19 +180,15 @@ describe('buildTransferExtrinsics', () => {
       exchange: 'AcalaDex',
       currencyTo: { symbol: 'WBTC' },
       from: 'Hydration',
-      to: 'Ethereum',
+      to: 'Moonbeam',
       type: TransactionType.TO_DESTINATION,
-      assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
-      ethAddress: '0x1234567890123456789012345678901234567890',
     };
     const result = await buildTransferExtrinsics(options);
     expect(result[0].node).toBe('Acala');
     expect(result[0].type).toBe('EXTRINSIC');
-    expect(result[1].node).toBe('AssetHubPolkadot');
-    expect(result[1].type).toBe('EXTRINSIC');
   });
 
-  it('handles TO_DESTINATION transaction type correctly - non Ethereum', async () => {
+  it('handles TO_DESTINATION transaction type correctly', async () => {
     const options: TBuildTransferExtrinsicsOptions = {
       ...MOCK_TRANSFER_OPTIONS,
       exchange: 'AcalaDex',
@@ -255,37 +205,17 @@ describe('buildTransferExtrinsics', () => {
       ...MOCK_TRANSFER_OPTIONS,
       exchange: 'HydrationDex',
       to: 'Acala',
-      from: 'Ethereum',
+      from: 'AssetHubPolkadot',
       currencyFrom: { symbol: 'WETH' },
       currencyTo: { symbol: 'WBTC' },
       type: TransactionType.TO_EXCHANGE,
-      assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
-      ethAddress: '0x1234567890123456789012345678901234567890',
     };
     const result = await buildTransferExtrinsics(options);
     expect(result[0].node).toBe('AssetHubPolkadot');
     expect(result[0].type).toBe('EXTRINSIC');
   });
 
-  it('handles TO_EXCHANGE transaction type correctly - from Ethereum to Ethereum', async () => {
-    const options: TBuildTransferExtrinsicsOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      exchange: 'HydrationDex',
-      from: 'Ethereum',
-      currencyFrom: { symbol: 'WETH' },
-      currencyTo: { symbol: 'WBTC' },
-      to: 'Ethereum',
-      type: TransactionType.TO_EXCHANGE,
-      assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
-      ethAddress: '0x1234567890123456789012345678901234567890',
-    };
-    const result = await buildTransferExtrinsics(options);
-    expect(result[0].node).toBe('AssetHubPolkadot');
-    expect(result[0].type).toBe('EXTRINSIC');
-  });
-
-  it('handles TO_EXCHANGE transaction type correctly - non Ethereum', async () => {
+  it('handles TO_EXCHANGE transaction type correctly', async () => {
     const options: TBuildTransferExtrinsicsOptions = {
       ...MOCK_TRANSFER_OPTIONS,
       exchange: 'AcalaDex',

@@ -5,16 +5,10 @@ import { validateDestinationAddress } from '../../utils/validateDestinationAddre
 export const validateTransferOptions = (
   options: Pick<
     TTransferOptions,
-    | 'evmInjectorAddress'
-    | 'injectorAddress'
-    | 'assetHubAddress'
-    | 'recipientAddress'
-    | 'from'
-    | 'to'
+    'evmInjectorAddress' | 'injectorAddress' | 'recipientAddress' | 'to'
   >,
 ) => {
-  const { evmInjectorAddress, injectorAddress, assetHubAddress, recipientAddress, from, to } =
-    options;
+  const { evmInjectorAddress, injectorAddress, recipientAddress, to } = options;
 
   validateDestinationAddress(recipientAddress, to);
 
@@ -26,9 +20,5 @@ export const validateTransferOptions = (
     throw new Error(
       'Injector address cannot be an Ethereum address. Please use an Evm injector address instead.',
     );
-  }
-
-  if ((from === 'Ethereum' || to === 'Ethereum') && assetHubAddress === undefined) {
-    throw new Error('AssetHub address is required when transferring to or from Ethereum');
   }
 };

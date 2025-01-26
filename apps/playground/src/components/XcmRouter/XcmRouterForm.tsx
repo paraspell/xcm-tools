@@ -446,8 +446,6 @@ export const XcmRouterForm: FC<Props> = ({
               TransactionType.TO_DESTINATION.toString(),
               TransactionType.SWAP.toString(),
               TransactionType.FULL_TRANSFER.toString(),
-              TransactionType.FROM_ETH.toString(),
-              TransactionType.TO_ETH.toString(),
             ]}
             searchable
             required

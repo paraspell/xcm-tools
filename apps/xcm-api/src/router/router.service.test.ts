@@ -42,15 +42,9 @@ describe('RouterService', () => {
 
   const serializedExtrinsics = [
     {
-      node: 'Ethereum',
-      tx: {
-        token: '0x123',
-        destinationParaId: 1,
-        destinationFee: 0n,
-        amount: 1000000000000000000n,
-        fee: 1n,
-      },
-      type: 'ETH_TRANSFER',
+      node: 'Hydration',
+      tx: serializedTx,
+      type: 'EXTRINSIC',
       statusType: 'TO_EXCHANGE',
     },
     {
@@ -72,15 +66,9 @@ describe('RouterService', () => {
 
     vi.spyOn(spellRouter, 'buildTransferExtrinsics').mockResolvedValue([
       {
-        node: 'Ethereum',
-        tx: {
-          token: '0x123',
-          destinationParaId: 1,
-          destinationFee: 0n,
-          amount: 1000000000000000000n,
-          fee: 1n,
-        },
-        type: 'ETH_TRANSFER',
+        node: 'Hydration',
+        tx: '0x123' as unknown as Extrinsic,
+        type: 'EXTRINSIC',
         statusType: TransactionType.TO_EXCHANGE,
       },
       {

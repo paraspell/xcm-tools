@@ -1,14 +1,12 @@
 import type {
-  TNodeWithRelayChains,
   Extrinsic,
-  TSerializedEthTransfer,
   TAsset as SdkTAsset,
   TNodePolkadotKusama,
   TCurrencyCoreV1,
+  TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk-pjs';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts';
-import type { Signer as EthSigner } from 'ethers';
 
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 
@@ -33,8 +31,6 @@ export enum TransactionType {
   SWAP = 'SWAP',
   TO_DESTINATION = 'TO_DESTINATION',
   FULL_TRANSFER = 'FULL_TRANSFER',
-  FROM_ETH = 'FROM_ETH',
-  TO_ETH = 'TO_ETH',
 }
 
 /**
@@ -75,11 +71,11 @@ export interface TTransferOptions {
   /**
    * The origin node to transfer from.
    */
-  from: TNodeWithRelayChains;
+  from: TNodeDotKsmWithRelayChains;
   /**
    * The destination node to transfer to.
    */
-  to: TNodeWithRelayChains;
+  to: TNodeDotKsmWithRelayChains;
   /**
    * The origin currency.
    */
@@ -102,10 +98,6 @@ export interface TTransferOptions {
    */
   evmInjectorAddress?: string;
   /**
-   * The AssetHub address. Used for transfers to and from Ethereum.
-   */
-  assetHubAddress?: string;
-  /**
    * The recipient address.
    */
   recipientAddress: string;
@@ -122,10 +114,6 @@ export interface TTransferOptions {
    */
   evmSigner?: Signer;
   /**
-   * The Ethereum signer instance.
-   */
-  ethSigner?: EthSigner;
-  /**
    * The exchange node to use for the transfer.
    */
   exchange?: TExchangeNode;
@@ -141,10 +129,8 @@ export interface TTransferOptions {
 
 export type TBuildTransferExtrinsicsOptions = Omit<
   TTransferOptions,
-  'onStatusChange' | 'signer' | 'evmSigner' | 'ethSigner'
-> & {
-  ethAddress?: string;
-};
+  'onStatusChange' | 'signer' | 'evmSigner'
+>;
 
 export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> & {
   exchangeNode: TNodePolkadotKusama;
@@ -165,7 +151,7 @@ export type TAssets = Array<TAsset>;
 export type TAssetsRecord = Record<TExchangeNode, TAssets>;
 
 export type TBasicInfo = {
-  node: TNodeWithRelayChains;
+  node: TNodeDotKsmWithRelayChains;
   statusType: TransactionType;
   wsProvider?: string;
 };
@@ -175,11 +161,6 @@ export type TExtrinsicInfo = TBasicInfo & {
   type: 'EXTRINSIC';
 };
 
-export type TEthOptionsInfo = TBasicInfo & {
-  tx: TSerializedEthTransfer | undefined;
-  type: 'ETH_TRANSFER';
-};
-
-export type TBuildTransferExtrinsicsResult = Array<TExtrinsicInfo | TEthOptionsInfo>;
+export type TBuildTransferExtrinsicsResult = TExtrinsicInfo[];
 
 export type TAutoSelect = 'Auto select';
