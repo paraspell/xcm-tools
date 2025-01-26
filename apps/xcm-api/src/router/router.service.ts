@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import {
   InvalidCurrencyError,
-  NODES_WITH_RELAY_CHAINS,
-  TNodeWithRelayChains,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
+  TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk';
 import { RouterDto } from './dto/RouterDto.js';
 import { isValidWalletAddress } from '../utils.js';
@@ -31,11 +31,11 @@ export class RouterService {
       type,
     } = options;
 
-    const fromNode = from as TNodeWithRelayChains;
+    const fromNode = from as TNodeDotKsmWithRelayChains;
     const exchangeNode = exchange as TExchangeNode;
-    const toNode = to as TNodeWithRelayChains;
+    const toNode = to as TNodeDotKsmWithRelayChains;
 
-    if (!NODES_WITH_RELAY_CHAINS.includes(fromNode)) {
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
       throw new BadRequestException(
         `Node ${from} is not valid. Check docs for valid nodes.`,
       );
@@ -47,7 +47,7 @@ export class RouterService {
       );
     }
 
-    if (!NODES_WITH_RELAY_CHAINS.includes(toNode)) {
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(toNode)) {
       throw new BadRequestException(
         `Node ${to} is not valid. Check docs for valid nodes.`,
       );

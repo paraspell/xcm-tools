@@ -15,7 +15,6 @@ import type {
   TTxProgressInfo,
   TExchangeNode,
   TExtrinsicInfo,
-  TEthOptionsInfo,
 } from '@paraspell/xcm-router';
 import {
   TransactionType,
@@ -235,9 +234,7 @@ export const XcmRouter = () => {
         },
       );
 
-      const txs = (await response.data) as Array<
-        TExtrinsicInfo | TEthOptionsInfo
-      >;
+      const txs = (await response.data) as TExtrinsicInfo[];
 
       for (const txInfo of txs) {
         onStatusChange({
@@ -245,28 +242,27 @@ export const XcmRouter = () => {
           status: TransactionStatus.IN_PROGRESS,
         });
 
-        if (txInfo.type === 'EXTRINSIC') {
-          // Handling of Polkadot transaction
-          const api = await ApiPromise.create({
-            provider: new WsProvider(txInfo.wsProvider),
-          });
-          if (txInfo.statusType === TransactionType.TO_EXCHANGE) {
-            // When submitting to exchange, prioritize the evmSigner if available
-            await submitTransaction(
-              api,
-              api.tx(txInfo.tx),
-              formValues.evmSigner ?? signer,
-              formValues.evmInjectorAddress ?? injectorAddress,
-            );
-          } else {
-            await submitTransaction(
-              api,
-              api.tx(txInfo.tx),
-              signer,
-              injectorAddress,
-            );
-          }
+        // Handling of Polkadot transaction
+        const api = await ApiPromise.create({
+          provider: new WsProvider(txInfo.wsProvider),
+        });
+        if (txInfo.statusType === TransactionType.TO_EXCHANGE) {
+          // When submitting to exchange, prioritize the evmSigner if available
+          await submitTransaction(
+            api,
+            api.tx(txInfo.tx),
+            formValues.evmSigner ?? signer,
+            formValues.evmInjectorAddress ?? injectorAddress,
+          );
+        } else {
+          await submitTransaction(
+            api,
+            api.tx(txInfo.tx),
+            signer,
+            injectorAddress,
+          );
         }
+
         onStatusChange({
           type: txInfo.type as TransactionType,
           status: TransactionStatus.SUCCESS,

@@ -17,7 +17,6 @@ describe('validateTransferOptions', () => {
     const mockOptions = {
       evmInjectorAddress: undefined,
       injectorAddress: 'someInjectorAddress',
-      assetHubAddress: 'someAssetHubAddress',
       recipientAddress: 'someRecipient',
       from: 'Astar',
       to: 'Polkadot',
@@ -37,7 +36,6 @@ describe('validateTransferOptions', () => {
     const mockOptions = {
       evmInjectorAddress: invalidEvmAddress,
       injectorAddress: 'someAddress',
-      assetHubAddress: 'someAssetHubAddress',
       recipientAddress: 'someRecipient',
       from: 'Polkadot',
       to: 'Astar',
@@ -53,7 +51,6 @@ describe('validateTransferOptions', () => {
     const mockOptions = {
       evmInjectorAddress: validEvmAddress,
       injectorAddress: 'somePolkadotAddress',
-      assetHubAddress: 'someAssetHubAddress',
       recipientAddress: 'someRecipient',
       from: 'Polkadot',
       to: 'Astar',
@@ -67,7 +64,6 @@ describe('validateTransferOptions', () => {
     const mockOptions = {
       evmInjectorAddress: undefined,
       injectorAddress: ethAddress,
-      assetHubAddress: 'someAssetHubAddress',
       recipientAddress: 'someRecipient',
       from: 'Polkadot',
       to: 'Astar',
@@ -78,39 +74,10 @@ describe('validateTransferOptions', () => {
     );
   });
 
-  it('should throw error if transferring to or from Ethereum but no assetHubAddress is provided', () => {
-    const mockOptions = {
-      evmInjectorAddress: undefined,
-      injectorAddress: 'somePolkadotAddress',
-      assetHubAddress: undefined,
-      recipientAddress: 'someRecipient',
-      from: 'Ethereum',
-      to: 'Polkadot',
-    } as TTransferOptions;
-
-    expect(() => validateTransferOptions(mockOptions)).toThrow(
-      'AssetHub address is required when transferring to or from Ethereum',
-    );
-  });
-
-  it('should not throw error when transferring to/from Ethereum if assetHubAddress is provided', () => {
-    const mockOptions = {
-      evmInjectorAddress: undefined,
-      injectorAddress: 'somePolkadotAddress',
-      assetHubAddress: 'someAssetHubAddress',
-      recipientAddress: 'someRecipient',
-      from: 'Ethereum',
-      to: 'Polkadot',
-    } as TTransferOptions;
-
-    expect(() => validateTransferOptions(mockOptions)).not.toThrow();
-  });
-
   it('should not throw any error for a normal valid scenario', () => {
     const mockOptions = {
       evmInjectorAddress: undefined,
       injectorAddress: 'somePolkadotAddress',
-      assetHubAddress: 'someAssetHubAddress',
       recipientAddress: 'someRecipient',
       from: 'Polkadot',
       to: 'Astar',
