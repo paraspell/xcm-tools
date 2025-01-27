@@ -1,13 +1,7 @@
 // Unit tests for transfer utils
 
 import { describe, it, expect, beforeAll, vi, afterAll } from 'vitest';
-import {
-  buildFromExchangeExtrinsic,
-  buildToExchangeExtrinsic,
-  submitSwap,
-  submitTransferToDestination,
-  submitTransferToExchange,
-} from './utils';
+import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 import { type TTransferOptionsModified } from '../../types';
 import { transferParams } from '../../RouterBuilder.test';
 import {
@@ -16,7 +10,6 @@ import {
   type Extrinsic,
 } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
-import * as transactionUtils from '../../utils/submitTransaction';
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
 
 const builderMock = {
@@ -157,90 +150,6 @@ describe('transfer utils', () => {
         amount: options.amount,
         symbol: 'ASTR',
       });
-    });
-  });
-
-  describe('submitSwap', () => {
-    it('submits a swap and returns amountOut and txHash', async () => {
-      const spy = vi.spyOn(transactionUtils, 'submitTransaction').mockResolvedValue('mockedTxHash');
-      const options: TTransferOptionsModified = {
-        ...transferParams,
-        exchangeNode: 'Acala',
-        exchange: 'AcalaDex',
-        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
-        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
-        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
-      };
-
-      const txHash = await submitSwap(parachainApi, options, {
-        signAsync: vi.fn().mockResolvedValue('signedTx'),
-        send: vi.fn().mockResolvedValue('sentTx'),
-      } as unknown as Extrinsic);
-
-      expect(txHash).toBeDefined();
-      expect(txHash).toBe('mockedTxHash');
-      expect(spy).toHaveBeenCalledWith(
-        parachainApi,
-        expect.objectContaining({
-          signAsync: expect.any(Function),
-          send: expect.any(Function),
-        }),
-        options.signer,
-        options.injectorAddress,
-      );
-    });
-  });
-
-  describe('submitTransferToExchange', () => {
-    it('submits a transfer and returns a transaction hash', async () => {
-      const spy = vi.spyOn(transactionUtils, 'submitTransaction').mockResolvedValue('mockedTxHash');
-      const options: TTransferOptionsModified = {
-        ...transferParams,
-        exchangeNode: 'Acala',
-        exchange: 'AcalaDex',
-        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
-        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
-        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
-      };
-      const result = await submitTransferToExchange(relaychainApi, options);
-
-      expect(result).toBe('mockedTxHash');
-      expect(spy).toHaveBeenCalledWith(
-        relaychainApi,
-        expect.objectContaining({
-          signAsync: expect.any(Function),
-          send: expect.any(Function),
-        }),
-        options.signer,
-        options.injectorAddress,
-      );
-    });
-  });
-
-  describe('submitTransferToDestination', () => {
-    it('submits a transfer and returns a transaction hash', async () => {
-      const spy = vi.spyOn(transactionUtils, 'submitTransaction').mockResolvedValue('mockedTxHash');
-      const options: TTransferOptionsModified = {
-        ...transferParams,
-        exchangeNode: 'Acala',
-        exchange: 'AcalaDex',
-        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
-        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
-        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
-      };
-
-      const result = await submitTransferToDestination(parachainApi, options, '10000000000');
-
-      expect(result).toBe('mockedTxHash');
-      expect(spy).toHaveBeenCalledWith(
-        parachainApi,
-        expect.objectContaining({
-          signAsync: expect.any(Function),
-          send: expect.any(Function),
-        }),
-        options.signer,
-        options.injectorAddress,
-      );
     });
   });
 });

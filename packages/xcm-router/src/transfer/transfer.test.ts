@@ -1,263 +1,162 @@
-// Unit tests for main entry point functions
-
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { transfer } from './transfer';
-import { TransactionType, type TTransferOptions } from '../types';
-import type ExchangeNode from '../dexNodes/DexNode';
-import type { Signer } from '@polkadot/types/types';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
+import type { TRouterEvent, TRouterPlan, TTransferOptions } from '../types';
+import { RouterEventType } from '../types';
+
+vi.mock('@paraspell/sdk-pjs', () => {
+  return {
+    createApiInstanceForNode: vi.fn(),
+  };
+});
+
+vi.mock('./utils/validateTransferOptions', () => {
+  return {
+    validateTransferOptions: vi.fn(),
+  };
+});
+
+vi.mock('./utils', () => {
+  return {
+    prepareTransformedOptions: vi.fn(),
+  };
+});
+
+vi.mock('./buildTransactions', () => {
+  return {
+    buildTransactions: vi.fn(),
+  };
+});
+
+vi.mock('./executeRouterPlan', () => {
+  return {
+    executeRouterPlan: vi.fn(),
+  };
+});
+
+import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
-import type { ApiPromise } from '@polkadot/api';
-import { createSwapTx } from './createSwapTx';
-import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
-import { transferToExchange } from './transferToExchange';
-import { swap } from './swap';
-import { transferToDestination } from './transferToDestination';
-import { selectBestExchange } from './selectBestExchange';
-import { createAcalaApiInstance } from '../dexNodes/Acala/utils';
-
-vi.mock('@paraspell/sdk-pjs', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-pjs');
-  return {
-    ...actual,
-    createApiInstanceForNode: vi.fn().mockResolvedValue({
-      disconnect: async () => {},
-    }),
-  };
-});
-
-vi.mock('./utils', async () => {
-  const actual = await vi.importActual('./utils');
-  return {
-    ...actual,
-    buildFromExchangeExtrinsic: vi.fn(),
-    buildToExchangeExtrinsic: vi.fn(),
-  };
-});
-
-vi.mock('./createSwapTx', () => ({
-  createSwapTx: vi.fn(),
-}));
-
-vi.mock('../utils/utils', () => ({
-  delay: vi.fn(),
-  calculateTransactionFee: vi.fn(),
-}));
-
-vi.mock('./transferToExchange', () => ({
-  transferToExchange: vi.fn(),
-}));
-
-vi.mock('./swap', () => ({
-  swap: vi.fn(),
-}));
-
-vi.mock('./transferToDestination', () => ({
-  transferToDestination: vi.fn(),
-}));
-
-vi.mock('./transferToEthereum', () => ({
-  transferToEthereum: vi.fn(),
-}));
-
-vi.mock('./transferFromEthereum', () => ({
-  transferFromEthereum: vi.fn(),
-}));
-
-vi.mock('./selectBestExchange', () => ({
-  selectBestExchange: vi.fn(),
-}));
-
-vi.mock('../../dexNodes/DexNodeFactory', () => ({
-  createDexNodeInstance: vi.fn(),
-}));
-
-vi.mock('../dexNodes/Acala/utils', () => ({
-  createAcalaApiInstance: vi.fn(),
-}));
+import { validateTransferOptions } from './utils/validateTransferOptions';
+import { prepareTransformedOptions } from './utils';
+import { buildTransactions } from './buildTransactions';
+import { executeRouterPlan } from './executeRouterPlan';
+import type ExchangeNode from '../dexNodes/DexNode';
 
 describe('transfer', () => {
+  const mockOriginApi = {
+    disconnect: vi.fn(),
+  };
+
+  const mockSwapApi = {
+    disconnect: vi.fn(),
+  };
+
   beforeEach(() => {
-    vi.resetAllMocks();
-    vi.mocked(transferToExchange).mockResolvedValue('');
-    vi.mocked(swap).mockResolvedValue('');
-    vi.mocked(createSwapTx).mockResolvedValue({
-      amountOut: '1',
-      tx: {} as Extrinsic,
+    vi.clearAllMocks();
+
+    vi.mocked(validateTransferOptions).mockImplementation(() => {});
+    vi.mocked(createApiInstanceForNode).mockResolvedValue(mockOriginApi as unknown as TPjsApi);
+    vi.mocked(prepareTransformedOptions).mockResolvedValue({
+      options: {} as Awaited<ReturnType<typeof prepareTransformedOptions>>['options'],
+      dex: {
+        createApiInstance: vi.fn().mockResolvedValue(mockSwapApi),
+      } as unknown as ExchangeNode,
     });
-    vi.mocked(transferToDestination).mockResolvedValue('');
-    vi.mocked(createAcalaApiInstance).mockResolvedValue({
-      disconnect: async () => {},
-    } as ApiPromise);
-    vi.mocked(createApiInstanceForNode).mockResolvedValue({
-      disconnect: async () => {},
-    } as ApiPromise);
+    vi.mocked(buildTransactions).mockResolvedValue([] as TRouterPlan);
+    vi.mocked(executeRouterPlan).mockResolvedValue(undefined);
   });
 
-  it('main transfer function - FULL_TRANSFER scenario - manual exchange', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-      type: TransactionType.FULL_TRANSFER,
-    };
-    await transfer(options);
-    expect(transferToExchange).toHaveBeenCalled();
-    expect(createSwapTx).toHaveBeenCalled();
-    expect(swap).toHaveBeenCalled();
-    expect(transferToDestination).toHaveBeenCalled();
+  it('should call validateTransferOptions with the initial options', async () => {
+    const initialOptions = {
+      from: 'Polkadot',
+      to: 'Kusama',
+    } as TTransferOptions;
+
+    await transfer(initialOptions);
+
+    expect(validateTransferOptions).toHaveBeenCalledTimes(1);
+    expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
   });
 
-  it('main transfer function - FULL_TRANSFER scenario - auto exchange', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      currencyFrom: { id: '18446744073709551619' },
-      currencyTo: { id: '18446744073709551616' },
-      exchange: undefined,
-      type: TransactionType.FULL_TRANSFER,
-    };
+  it('should throw an error if evmSigner is provided without evmInjectorAddress', async () => {
+    const options = {
+      evmSigner: {},
+      from: 'Polkadot',
+      to: 'Astar',
+    } as TTransferOptions;
 
-    vi.mocked(selectBestExchange).mockReturnValue(
-      Promise.resolve({
-        node: 'Acala',
-        exchangeNode: 'AcalaDex',
-        createApiInstance: vi.fn().mockResolvedValue({
-          disconnect: () => {},
-        }),
-        swapCurrency: vi.fn().mockResolvedValue({}),
-      } as unknown as ExchangeNode),
-    );
-
-    await transfer(options);
-    expect(transferToExchange).toHaveBeenCalled();
-    expect(swap).toHaveBeenCalled();
-    expect(selectBestExchange).toHaveBeenCalledTimes(1);
-    expect(transferToDestination).toHaveBeenCalled();
-  });
-
-  it('main transfer function - TO_EXCHANGE scenario', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-      type: TransactionType.TO_EXCHANGE,
-    };
-    await transfer(options);
-    expect(transferToExchange).toHaveBeenCalled();
-    expect(swap).not.toHaveBeenCalled();
-    expect(transferToDestination).not.toHaveBeenCalled();
-  });
-
-  it('main transfer function - SWAP scenario', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-      type: TransactionType.SWAP,
-    };
-    await transfer(options);
-    expect(transferToExchange).not.toHaveBeenCalled();
-    expect(swap).toHaveBeenCalled();
-    expect(transferToDestination).not.toHaveBeenCalled();
-  });
-
-  it('main transfer function - TO_DESTINATION scenario', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-      type: TransactionType.TO_DESTINATION,
-    };
-    await transfer(options);
-    expect(transferToExchange).not.toHaveBeenCalled();
-    expect(swap).not.toHaveBeenCalled();
-    expect(transferToDestination).toHaveBeenCalled();
-  });
-
-  it('error handling - evmInjectorAddress without evmSigner', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'HydrationDex',
-      evmInjectorAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-      evmSigner: undefined,
-    };
-    await expect(transfer(options)).rejects.toThrow(
-      'evmSigner is required when evmInjectorAddress is provided',
-    );
-  });
-
-  it('error handling - evmSigner without evmInjectorAddress', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'HydrationDex',
-      evmInjectorAddress: undefined,
-      evmSigner: {} as Signer,
-    };
     await expect(transfer(options)).rejects.toThrow(
       'evmInjectorAddress is required when evmSigner is provided',
     );
   });
 
-  it('error handling - invalid evmInjectorAddress', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'HydrationDex',
-      evmInjectorAddress: 'INVALID',
-      evmSigner: {} as Signer,
-    };
+  it('should throw an error if evmInjectorAddress is provided without evmSigner', async () => {
+    const options = {
+      evmInjectorAddress: '0x123',
+      from: 'Polkadot',
+      to: 'Astar',
+    } as TTransferOptions;
+
     await expect(transfer(options)).rejects.toThrow(
-      'Evm injector address is not a valid Ethereum address',
+      'evmSigner is required when evmInjectorAddress is provided',
     );
   });
 
-  it('error handling - invalid injectorAddress', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'HydrationDex',
-      injectorAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-    };
-    await expect(transfer(options)).rejects.toThrow(
-      'Injector address cannot be an Ethereum address. Please use an Evm injector address instead.',
-    );
+  it('should call onStatusChange with SELECTING_EXCHANGE if exchange is undefined', async () => {
+    const onStatusChange = vi.fn() as (info: TRouterEvent) => void;
+    const options = {
+      from: 'Polkadot',
+      exchange: undefined,
+      to: 'Kusama',
+      onStatusChange,
+    } as TTransferOptions;
+
+    await transfer(options);
+
+    expect(onStatusChange).toHaveBeenCalledTimes(1);
+    expect(onStatusChange).toHaveBeenCalledWith({
+      type: RouterEventType.SELECTING_EXCHANGE,
+    });
   });
 
-  it('skips extrinsic building for transactions already on the exchange', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      from: 'Acala',
+  it('should not call onStatusChange with SELECTING_EXCHANGE if exchange is provided', async () => {
+    const onStatusChange = vi.fn() as (info: TRouterEvent) => void;
+    const options = {
+      from: 'Polkadot',
+      to: 'Kusama',
       exchange: 'AcalaDex',
-      type: TransactionType.TO_EXCHANGE,
-    };
+      onStatusChange,
+    } as TTransferOptions;
+
     await transfer(options);
-    expect(transferToExchange).not.toHaveBeenCalled();
+
+    expect(onStatusChange).not.toHaveBeenCalledWith({
+      type: RouterEventType.SELECTING_EXCHANGE,
+    });
   });
 
-  it('skips extrinsic building for transactions already on the exchange - FULL_TRANSFER', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      from: 'Acala',
-      exchange: 'AcalaDex',
-      type: TransactionType.FULL_TRANSFER,
-    };
+  it('should call prepareTransformedOptions, buildTransactions, and executeRouterPlan', async () => {
+    const options = {
+      from: 'Polkadot',
+      to: 'Kusama',
+    } as TTransferOptions;
+
     await transfer(options);
-    expect(transferToExchange).not.toHaveBeenCalled();
+
+    expect(prepareTransformedOptions).toHaveBeenCalledTimes(1);
+    expect(buildTransactions).toHaveBeenCalledTimes(1);
+    expect(executeRouterPlan).toHaveBeenCalledTimes(1);
   });
 
-  it('skips extrinsic building for transactions already on destination', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      to: 'Acala',
-      exchange: 'AcalaDex',
-      type: TransactionType.TO_DESTINATION,
-    };
-    await transfer(options);
-    expect(transferToDestination).not.toHaveBeenCalled();
-  });
+  it('should create and disconnect both originApi and swapApi', async () => {
+    const options = {
+      from: 'Polkadot',
+      to: 'Kusama',
+    } as TTransferOptions;
 
-  it('skips extrinsic building for transactions already on destination - FULL_TRANSFER', async () => {
-    const options: TTransferOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      to: 'Acala',
-      exchange: 'AcalaDex',
-      type: TransactionType.FULL_TRANSFER,
-    };
     await transfer(options);
-    expect(transferToDestination).not.toHaveBeenCalled();
+
+    expect(createApiInstanceForNode).toHaveBeenCalledWith('Polkadot');
+    expect(mockOriginApi.disconnect).toHaveBeenCalledTimes(1);
+    expect(mockSwapApi.disconnect).toHaveBeenCalledTimes(1);
   });
 });

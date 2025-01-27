@@ -1,34 +1,13 @@
 import { type Signer } from '@polkadot/types/types';
-import {
-  type TExchangeNode,
-  transfer,
-  type TTxProgressInfo,
-  TransactionType,
-  type TTransferOptions,
-  buildTransferExtrinsics,
-} from '.';
-import type { TCurrencyCoreV1 } from '@paraspell/sdk-pjs';
-import { type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
-import { type Signer as EthSigner } from 'ethers';
+import { type TExchangeNode, transfer, type TRouterEvent, type TTransferOptions } from '.';
+import type {
+  TCurrencyCoreV1,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
+} from '@paraspell/sdk-pjs';
+import { buildApiTransactions } from './transfer/buildApiTransactions';
 
-export interface TRouterBuilderOptions {
-  from?: TNodeWithRelayChains;
-  exchange?: TExchangeNode;
-  to?: TNodeWithRelayChains;
-  currencyFrom?: TCurrencyCoreV1;
-  currencyTo?: TCurrencyCoreV1;
-  amount?: string;
-  injectorAddress?: string;
-  evmInjectorAddress?: string;
-  recipientAddress?: string;
-  assetHubAddress?: string;
-  slippagePct?: string;
-  ethSigner?: EthSigner;
-  signer?: Signer;
-  evmSigner?: Signer;
-  type?: TransactionType;
-  onStatusChange?: (info: TTxProgressInfo) => void;
-}
+export type TRouterBuilderOptions = Partial<TTransferOptions>;
 
 /**
  * Builder class for constructing and executing cross-chain transfers using the XCM Router.
@@ -47,7 +26,7 @@ export class RouterBuilderObject {
    * @param node - The origin node.
    * @returns The current builder instance.
    */
-  from(node: TNodeWithRelayChains): this {
+  from(node: TNodeDotKsmWithRelayChains): this {
     this._routerBuilderOptions.from = node;
     return this;
   }
@@ -130,17 +109,6 @@ export class RouterBuilderObject {
   }
 
   /**
-   * Specifies the AssetHub address, required for Ethereum transfers.
-   *
-   * @param assetHubAddress - The AssetHub address.
-   * @returns The current builder instance.
-   */
-  assetHubAddress(assetHubAddress: string | undefined): this {
-    this._routerBuilderOptions.assetHubAddress = assetHubAddress;
-    return this;
-  }
-
-  /**
    * Specifies the Polkadot signer for the transaction.
    *
    * @param signer - The Polkadot signer instance.
@@ -148,17 +116,6 @@ export class RouterBuilderObject {
    */
   signer(signer: Signer): this {
     this._routerBuilderOptions.signer = signer;
-    return this;
-  }
-
-  /**
-   * Specifies the Ethereum signer instance, required for Ethereum transfers.
-   *
-   * @param ethSigner - The Ethereum signer instance.
-   * @returns The current builder instance.
-   */
-  ethSigner(ethSigner: EthSigner | undefined): this {
-    this._routerBuilderOptions.ethSigner = ethSigner;
     return this;
   }
 
@@ -196,28 +153,17 @@ export class RouterBuilderObject {
   }
 
   /**
-   * Specifies the type of transaction to execute.
-   *
-   * @param transactionType - The transaction type.
-   * @returns The current builder instance.
-   */
-  transactionType(transactionType: TransactionType): this {
-    this._routerBuilderOptions.type = transactionType;
-    return this;
-  }
-
-  /**
    * Sets a callback to receive status updates during the transfer.
    *
    * @param callback - The status change callback.
    * @returns The current builder instance.
    */
-  onStatusChange(callback: (status: TTxProgressInfo) => void): this {
+  onStatusChange(callback: (status: TRouterEvent) => void): this {
     this._routerBuilderOptions.onStatusChange = callback;
     return this;
   }
 
-  private checkRequiredParams(skipSigner = false): void {
+  private checkRequiredParams(isApi = false): void {
     const requiredParams: Array<keyof TRouterBuilderOptions> = [
       'from',
       'to',
@@ -229,7 +175,7 @@ export class RouterBuilderObject {
       'slippagePct',
     ];
 
-    if (!skipSigner) {
+    if (!isApi) {
       requiredParams.push('signer');
     }
 
@@ -241,31 +187,19 @@ export class RouterBuilderObject {
   }
 
   /**
-   * Builds the transfer extrinsics and returns the extrinsic hashes.
-   *
-   * @throws Error if required parameters are missing.
-   */
-  async buildHashes() {
-    this.checkRequiredParams(true);
-
-    return buildTransferExtrinsics({
-      ...(this._routerBuilderOptions as TTransferOptions),
-      type: this._routerBuilderOptions.type ?? TransactionType.FULL_TRANSFER,
-    });
-  }
-
-  /**
    * Executes the transfer with the provided parameters.
    *
    * @throws Error if required parameters are missing.
    */
   async build(): Promise<void> {
     this.checkRequiredParams();
+    await transfer(this._routerBuilderOptions as TTransferOptions);
+  }
 
-    await transfer({
-      ...(this._routerBuilderOptions as TTransferOptions),
-      type: this._routerBuilderOptions.type ?? TransactionType.FULL_TRANSFER,
-    });
+  async buildTransactions() {
+    const isApi = true;
+    this.checkRequiredParams(isApi);
+    return buildApiTransactions(this._routerBuilderOptions as TTransferOptions);
   }
 }
 
@@ -276,12 +210,13 @@ export class RouterBuilderObject {
  * ```typescript
  * await RouterBuilder()
  *   .from('Polkadot')
+ *   .exchange('HydrationDex')
  *   .to('Astar')
  *   .currencyFrom({ symbol: 'DOT' })
  *   .currencyTo({ symbol: 'ASTR' })
- *   .amount('1000000')
+ *   .amount(1000000n)
  *   .slippagePct('1')
- *   .injectorAddress('your_injector_address')
+ *   .injectorAddress('sender_address')
  *   .recipientAddress('recipient_address')
  *   .signer(yourSigner)
  *   .onStatusChange((status) => {

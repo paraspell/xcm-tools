@@ -1,40 +1,18 @@
 import { findAssetFrom, findAssetTo } from '../../assets/assets';
 import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
-import {
-  TransactionStatus,
-  TransactionType,
-  type TBuildTransferExtrinsicsOptions,
-  type TTransferOptions,
-} from '../../types';
-import { maybeUpdateTransferStatus } from '../../utils/utils';
+import { type TBuildTransactionsOptions, type TTransferOptions } from '../../types';
 import { selectBestExchange } from '../selectBestExchange';
 import { determineFeeCalcAddress } from './utils';
 
 export const prepareTransformedOptions = async <
-  T extends TTransferOptions | TBuildTransferExtrinsicsOptions,
+  T extends TTransferOptions | TBuildTransactionsOptions,
 >(
   options: T,
 ) => {
   const { exchange } = options;
 
-  if ('onStatusChange' in options) {
-    maybeUpdateTransferStatus(options.onStatusChange, {
-      type: TransactionType.TO_EXCHANGE,
-      status: TransactionStatus.IN_PROGRESS,
-      isAutoSelectingExchange: exchange === undefined,
-    });
-  }
-
   const dex =
     exchange !== undefined ? createDexNodeInstance(exchange) : await selectBestExchange(options);
-
-  if ('onStatusChange' in options) {
-    maybeUpdateTransferStatus(options.onStatusChange, {
-      type: TransactionType.TO_EXCHANGE,
-      status: TransactionStatus.IN_PROGRESS,
-      isAutoSelectingExchange: false,
-    });
-  }
 
   const assetFrom = findAssetFrom(options.from, dex.exchangeNode, options.currencyFrom);
 

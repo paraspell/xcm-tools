@@ -2,9 +2,7 @@ import type { TAsset, TCurrencyCoreV1 } from '@paraspell/sdk-pjs';
 import { type Extrinsic, Builder } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
 import type { TExchangeNode } from '../../types';
-import { type TCommonTransferOptionsModified, type TTransferOptionsModified } from '../../types';
-import { validateRelayChainCurrency } from '../../utils/utils';
-import { submitTransaction } from '../../utils/submitTransaction';
+import { type TCommonTransferOptionsModified } from '../../types';
 import { ethers } from 'ethers';
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
 import { findAssetInExchangeBySymbol } from '../../assets/assets';
@@ -69,37 +67,6 @@ export const buildFromExchangeExtrinsic = (
     })
     .address(address)
     .build();
-};
-
-export const submitSwap = async (
-  api: ApiPromise,
-  options: TTransferOptionsModified,
-  swapTx: Extrinsic,
-): Promise<string> => {
-  const { signer, injectorAddress } = options;
-  return submitTransaction(api, swapTx, signer, injectorAddress);
-};
-
-export const submitTransferToExchange = async (
-  api: ApiPromise,
-  options: TTransferOptionsModified,
-): Promise<string> => {
-  const { from, currencyFrom, signer, injectorAddress, evmSigner, evmInjectorAddress } = options;
-  validateRelayChainCurrency(from, currencyFrom);
-  const tx = await buildToExchangeExtrinsic(api, options);
-
-  return submitTransaction(api, tx, evmSigner ?? signer, evmInjectorAddress ?? injectorAddress);
-};
-
-export const submitTransferToDestination = async (
-  api: ApiPromise,
-  options: TTransferOptionsModified,
-  amountOut: string,
-): Promise<string> => {
-  const { to, currencyTo, signer, injectorAddress } = options;
-  validateRelayChainCurrency(to, currencyTo);
-  const tx = await buildFromExchangeExtrinsic(api, options, amountOut);
-  return submitTransaction(api, tx, signer, injectorAddress);
 };
 
 export const determineFeeCalcAddress = (

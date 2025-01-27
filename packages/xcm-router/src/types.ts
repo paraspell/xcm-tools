@@ -4,6 +4,8 @@ import type {
   TNodePolkadotKusama,
   TCurrencyCoreV1,
   TNodeDotKsmWithRelayChains,
+  TPjsApi,
+  TNodeWithRelayChains,
 } from '@paraspell/sdk-pjs';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts';
@@ -26,42 +28,25 @@ export interface TSwapResult {
   amountOut: string;
 }
 
-export enum TransactionType {
-  TO_EXCHANGE = 'TO_EXCHANGE',
+export enum RouterEventType {
+  SELECTING_EXCHANGE = 'SELECTING_EXCHANGE',
+  TRANSFER = 'TRANSFER',
   SWAP = 'SWAP',
-  TO_DESTINATION = 'TO_DESTINATION',
-  FULL_TRANSFER = 'FULL_TRANSFER',
+  COMPLETED = 'COMPLETED',
 }
 
 /**
  * The transaction progress information.
  */
-export interface TTxProgressInfo {
-  /**
-   * When true the exchange will be selected automatically.
-   */
-  isAutoSelectingExchange?: boolean;
+export interface TRouterEvent {
   /**
    * The currently executed transaction type.
    */
-  type: TransactionType;
-  /**
-   * The transaction hashes grouped by transaction type.
-   */
-  hashes?: {
-    [TransactionType.TO_EXCHANGE]?: string;
-    [TransactionType.SWAP]?: string;
-    [TransactionType.TO_DESTINATION]?: string;
-  };
-  /**
-   * The current transaction status. Either 'IN_PROGRESS' or 'SUCCESS'.
-   */
-  status: TransactionStatus;
-}
-
-export enum TransactionStatus {
-  IN_PROGRESS = 'IN_PROGRESS',
-  SUCCESS = 'SUCCESS',
+  type: RouterEventType;
+  node?: TNodeDotKsmWithRelayChains;
+  destinationNode?: TNodeWithRelayChains;
+  currentStep?: number;
+  totalSteps?: number;
 }
 
 /**
@@ -73,9 +58,13 @@ export interface TTransferOptions {
    */
   from: TNodeDotKsmWithRelayChains;
   /**
+   * The exchange node to use for the transfer.
+   */
+  exchange?: TExchangeNode;
+  /**
    * The destination node to transfer to.
    */
-  to: TNodeDotKsmWithRelayChains;
+  to: TNodeWithRelayChains;
   /**
    * The origin currency.
    */
@@ -113,32 +102,31 @@ export interface TTransferOptions {
    * The Polkadot EVM signer instance.
    */
   evmSigner?: Signer;
-  /**
-   * The exchange node to use for the transfer.
-   */
-  exchange?: TExchangeNode;
+
   /**
    * The callback function to call when the transaction status changes.
    */
-  onStatusChange?: (info: TTxProgressInfo) => void;
-  /**
-   * Execute only the specific part of the transfer. Used for debugging and testing purposes.
-   */
-  type?: TransactionType;
+  onStatusChange?: (info: TRouterEvent) => void;
 }
 
-export type TBuildTransferExtrinsicsOptions = Omit<
+export type TBuildTransactionsOptions = Omit<
   TTransferOptions,
   'onStatusChange' | 'signer' | 'evmSigner'
 >;
 
-export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> & {
+export type TBuildTransactionsOptionsModified = TBuildTransactionsOptions &
+  TAdditionalTransferOptions;
+
+export type TAdditionalTransferOptions = {
   exchangeNode: TNodePolkadotKusama;
   exchange: TExchangeNode;
   assetFrom?: SdkTAsset;
   assetTo?: SdkTAsset;
   feeCalcAddress: string;
 };
+
+export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> &
+  TAdditionalTransferOptions;
 
 export type TCommonTransferOptions = Omit<TTransferOptions, 'signer'>;
 export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'signer'>;
@@ -150,17 +138,27 @@ export type TAsset = {
 export type TAssets = Array<TAsset>;
 export type TAssetsRecord = Record<TExchangeNode, TAssets>;
 
-export type TBasicInfo = {
-  node: TNodeDotKsmWithRelayChains;
-  statusType: TransactionType;
-  wsProvider?: string;
-};
-
-export type TExtrinsicInfo = TBasicInfo & {
-  tx: Extrinsic;
-  type: 'EXTRINSIC';
-};
-
-export type TBuildTransferExtrinsicsResult = TExtrinsicInfo[];
-
 export type TAutoSelect = 'Auto select';
+
+export enum TransactionType {
+  TRANSFER = 'TRANSFER',
+  SWAP = 'SWAP',
+}
+
+export type TTransaction = {
+  api: TPjsApi;
+  node: TNodeDotKsmWithRelayChains;
+  destinationNode?: TNodeWithRelayChains;
+  type: TransactionType;
+  tx: Extrinsic;
+};
+
+export type TRouterPlan = TTransaction[];
+
+export type TExecuteRouterPlanOptions = {
+  signer: Signer;
+  senderAddress: string;
+  evmSigner?: Signer;
+  evmSenderAddress?: string;
+  onStatusChange?: (info: TRouterEvent) => void;
+};

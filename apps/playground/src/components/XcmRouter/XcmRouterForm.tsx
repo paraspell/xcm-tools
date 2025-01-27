@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { FC } from 'react';
 import { useForm } from '@mantine/form';
 import type { TAutoSelect, TExchangeNode } from '@paraspell/xcm-router';
-import { EXCHANGE_NODES, TransactionType } from '@paraspell/xcm-router';
+import { EXCHANGE_NODES } from '@paraspell/xcm-router';
 import { isValidWalletAddress } from '../../utils';
 import {
   Text,
@@ -16,7 +16,11 @@ import {
   rem,
   Paper,
 } from '@mantine/core';
-import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
+import type {
+  TAsset,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
+} from '@paraspell/sdk';
 import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
 import type { Signer } from '@polkadot/api/types';
 import { web3Accounts, web3FromAddress } from '@polkadot/extension-dapp';
@@ -26,16 +30,14 @@ import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ethers } from 'ethers';
 import { IconInfoCircle } from '@tabler/icons-react';
 import useRouterCurrencyOptions from '../../hooks/useRouterCurrencyOptions';
-import EthWalletSelectModal from '../EthWalletSelectModal';
-import EthAccountsSelectModal from '../EthAccountsSelectModal';
-import type { EIP6963ProviderDetail, TWalletAccount } from '../../types';
+import type { TWalletAccount } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { useWallet } from '../../hooks/useWallet';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { showErrorNotification } from '../../utils/notifications';
 
 export type TRouterFormValues = {
-  from: TNodeWithRelayChains;
+  from: TNodeDotKsmWithRelayChains;
   exchange: TExchangeNode | TAutoSelect;
   to: TNodeWithRelayChains;
   currencyFromOptionId: string;
@@ -43,12 +45,9 @@ export type TRouterFormValues = {
   recipientAddress: string;
   amount: string;
   slippagePct: string;
-  transactionType: keyof typeof TransactionType;
   useApi: boolean;
   evmSigner?: Signer;
   evmInjectorAddress?: string;
-  assetHubAddress?: string;
-  ethAddress?: string;
 };
 
 export type TRouterFormValuesTransformed = TRouterFormValues & {
@@ -59,65 +58,17 @@ export type TRouterFormValuesTransformed = TRouterFormValues & {
 type Props = {
   onSubmit: (values: TRouterFormValuesTransformed) => void;
   loading: boolean;
-  onConnectEthWallet: () => void;
-  ethProviders: EIP6963ProviderDetail[];
-  onEthProviderSelect: (providerInfo: EIP6963ProviderDetail) => void;
-  onEthWalletDisconnect: () => void;
-  ethAccounts: string[];
-  isEthWalletModalOpen: boolean;
-  setIsEthWalletModalOpen: (isOpen: boolean) => void;
-  isEthAccountModalOpen: boolean;
-  setIsEthAccountModalOpen: (isOpen: boolean) => void;
 };
 
-export const XcmRouterForm: FC<Props> = ({
-  onSubmit,
-  loading,
-  onConnectEthWallet,
-  ethProviders,
-  onEthProviderSelect,
-  onEthWalletDisconnect,
-  ethAccounts,
-  isEthWalletModalOpen,
-  setIsEthWalletModalOpen,
-  isEthAccountModalOpen,
-  setIsEthAccountModalOpen,
-}) => {
+export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
   const [modalOpened, { open: openModal, close: closeModal }] =
     useDisclosure(false);
-
-  const [
-    assetHubModalOpened,
-    { open: openAssetHubModal, close: closeAssetHubModal },
-  ] = useDisclosure(false);
-
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-  const [assetHubAccounts, setAssetHubAccounts] = useState<
-    InjectedAccountWithMeta[]
-  >([]);
   const [selectedAccount, setSelectedAccount] = useState<TWalletAccount>();
-
-  const [selectedAssetHubAccount, setSelectedAssetHubAccount] =
-    useState<TWalletAccount>();
-
-  const [selectedEthAccount, setSelectedEthAccount] = useState<string | null>(
-    null,
-  );
 
   const onAccountSelect = (account: TWalletAccount) => () => {
     setSelectedAccount(account);
     closeModal();
-  };
-
-  const onEthAccountSelect = (account: string) => {
-    setSelectedEthAccount(account);
-    setIsEthAccountModalOpen(false);
-    form.setFieldValue('ethAddress', account);
-  };
-
-  const onAssetHubAccountSelect = (account: TWalletAccount) => () => {
-    setSelectedAssetHubAccount(account);
-    closeAssetHubModal();
   };
 
   useEffect(() => {
@@ -130,18 +81,6 @@ export const XcmRouterForm: FC<Props> = ({
     })();
   }, [selectedAccount]);
 
-  useEffect(() => {
-    if (selectedEthAccount) {
-      form.setFieldValue('ethAddress', selectedEthAccount);
-    }
-  }, [selectedEthAccount]);
-
-  useEffect(() => {
-    if (selectedAssetHubAccount) {
-      form.setFieldValue('assetHubAddress', selectedAssetHubAccount.address);
-    }
-  }, [selectedAssetHubAccount]);
-
   const form = useForm<TRouterFormValues>({
     initialValues: {
       from: 'Astar',
@@ -152,7 +91,6 @@ export const XcmRouterForm: FC<Props> = ({
       amount: '10000000000000000000',
       recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       slippagePct: '1',
-      transactionType: 'FULL_TRANSFER',
       useApi: false,
     },
 
@@ -169,33 +107,6 @@ export const XcmRouterForm: FC<Props> = ({
   });
 
   const { from, to, exchange } = form.getValues();
-
-  useEffect(() => {
-    if (from === 'Ethereum' || to === 'Ethereum') {
-      onAccountDisconnect();
-    }
-  }, [from, to]);
-
-  useEffect(() => {
-    if (from !== 'Ethereum' || to !== 'Ethereum') {
-      onAssetHubAccountDisconnect();
-      onEthWalletDisconnect();
-    }
-  }, [from, to]);
-
-  const connectAssetHubWallet = async () => {
-    try {
-      const allAccounts = await web3Accounts();
-      setAssetHubAccounts(
-        allAccounts.filter((account) => !ethers.isAddress(account.address)),
-      );
-      openAssetHubModal();
-    } catch (_e) {
-      showErrorNotification('Failed to connect AssetHub wallet');
-    }
-  };
-
-  const onConnectAssetHubWallet = () => void connectAssetHubWallet();
 
   const connectEvmWallet = async () => {
     try {
@@ -216,19 +127,6 @@ export const XcmRouterForm: FC<Props> = ({
     form.setFieldValue('evmSigner', undefined);
     form.setFieldValue('evmInjectorAddress', undefined);
     closeModal();
-  };
-
-  const onAssetHubAccountDisconnect = () => {
-    setSelectedAssetHubAccount(undefined);
-    form.setFieldValue('assetHubAddress', undefined);
-    closeAssetHubModal();
-  };
-
-  const onEthWalletDisconnectInternal = () => {
-    setSelectedEthAccount(null);
-    form.setFieldValue('ethSigner', undefined);
-    setIsEthWalletModalOpen(false);
-    onEthWalletDisconnect();
   };
 
   const {
@@ -252,42 +150,6 @@ export const XcmRouterForm: FC<Props> = ({
 
     onSubmit(transformedValues);
   };
-
-  const infoEthWallet = (
-    <Tooltip
-      label="You need to connect your Ethereum wallet when choosing Ethereum as the origin or destination chain"
-      position="top-end"
-      withArrow
-      transitionProps={{ transition: 'pop-bottom-right' }}
-    >
-      <Text component="div" style={{ cursor: 'help' }}>
-        <Center>
-          <IconInfoCircle
-            style={{ width: rem(18), height: rem(18) }}
-            stroke={1.5}
-          />
-        </Center>
-      </Text>
-    </Tooltip>
-  );
-
-  const infoAssetHubWallet = (
-    <Tooltip
-      label="You need to connect your AssetHub wallet (Polkadot wallet) when choosing Ethereum as the origin or destination chain"
-      position="top-end"
-      withArrow
-      transitionProps={{ transition: 'pop-bottom-right' }}
-    >
-      <Text component="div" style={{ cursor: 'help' }}>
-        <Center>
-          <IconInfoCircle
-            style={{ width: rem(18), height: rem(18) }}
-            stroke={1.5}
-          />
-        </Center>
-      </Text>
-    </Tooltip>
-  );
 
   const infoEvmWallet = (
     <Tooltip
@@ -335,19 +197,6 @@ export const XcmRouterForm: FC<Props> = ({
     <Paper p="xl" shadow="md">
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
         <Stack gap="lg">
-          <EthWalletSelectModal
-            isOpen={isEthWalletModalOpen}
-            onClose={() => setIsEthWalletModalOpen(false)}
-            providers={ethProviders}
-            onProviderSelect={onEthProviderSelect}
-            onDisconnect={onEthWalletDisconnectInternal}
-          />
-          <EthAccountsSelectModal
-            isOpen={isEthAccountModalOpen}
-            onClose={() => setIsEthAccountModalOpen(false)}
-            accounts={ethAccounts}
-            onAccountSelect={onEthAccountSelect}
-          />
           <AccountSelectModal
             isOpen={modalOpened}
             onClose={closeModal}
@@ -355,14 +204,6 @@ export const XcmRouterForm: FC<Props> = ({
             onAccountSelect={onAccountSelect}
             title="Select evm account"
             onDisconnect={onAccountDisconnect}
-          />
-          <AccountSelectModal
-            isOpen={assetHubModalOpened}
-            onClose={closeAssetHubModal}
-            accounts={assetHubAccounts}
-            onAccountSelect={onAssetHubAccountSelect}
-            title="Select AssetHub account"
-            onDisconnect={onAssetHubAccountDisconnect}
           />
 
           <ParachainSelect
@@ -438,22 +279,6 @@ export const XcmRouterForm: FC<Props> = ({
             {...form.getInputProps('amount')}
           />
 
-          <Select
-            label="Transaction type"
-            placeholder="Pick value"
-            data={[
-              TransactionType.TO_EXCHANGE.toString(),
-              TransactionType.TO_DESTINATION.toString(),
-              TransactionType.SWAP.toString(),
-              TransactionType.FULL_TRANSFER.toString(),
-            ]}
-            searchable
-            required
-            data-testid="select-transaction-type"
-            allowDeselect={false}
-            {...form.getInputProps('transactionType')}
-          />
-
           <TextInput
             label="Slippage percentage (%)"
             placeholder="1"
@@ -468,45 +293,17 @@ export const XcmRouterForm: FC<Props> = ({
             />
 
             <Button.Group orientation="vertical">
-              {(from === 'Ethereum' || to === 'Ethereum') && (
-                <Button
-                  size="xs"
-                  variant="outline"
-                  onClick={onConnectEthWallet}
-                  rightSection={infoEthWallet}
-                  data-testid="connect-eth-wallet"
-                >
-                  {selectedEthAccount
-                    ? `Connected: ${selectedEthAccount.substring(0, 6)}...${selectedEthAccount.substring(selectedEthAccount.length - 4)}`
-                    : 'Connect Ethereum Wallet'}
-                </Button>
-              )}
-              {(from === 'Ethereum' || to === 'Ethereum') && (
-                <Button
-                  size="xs"
-                  variant="outline"
-                  onClick={onConnectAssetHubWallet}
-                  rightSection={infoAssetHubWallet}
-                  data-testid="connect-asset-hub-wallet"
-                >
-                  {selectedAssetHubAccount
-                    ? `${selectedAssetHubAccount?.meta.name} (${selectedAssetHubAccount?.meta.source})`
-                    : 'Connect AssetHub wallet'}
-                </Button>
-              )}
-              {from !== 'Ethereum' && to !== 'Ethereum' && (
-                <Button
-                  size="xs"
-                  variant="outline"
-                  onClick={onConnectEvmWallet}
-                  rightSection={infoEvmWallet}
-                  data-testid="connect-evm-wallet"
-                >
-                  {selectedAccount
-                    ? `${selectedAccount?.meta.name} (${selectedAccount?.meta.source})`
-                    : 'Connect EVM wallet'}
-                </Button>
-              )}
+              <Button
+                size="xs"
+                variant="outline"
+                onClick={onConnectEvmWallet}
+                rightSection={infoEvmWallet}
+                data-testid="connect-evm-wallet"
+              >
+                {selectedAccount
+                  ? `${selectedAccount?.meta.name} (${selectedAccount?.meta.source})`
+                  : 'Connect EVM wallet'}
+              </Button>
             </Button.Group>
           </Group>
 
