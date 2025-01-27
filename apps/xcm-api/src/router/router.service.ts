@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
+  getNodeProviders,
   InvalidCurrencyError,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
@@ -12,9 +13,8 @@ import { RouterDto } from './dto/RouterDto.js';
 import { isValidWalletAddress } from '../utils.js';
 import {
   EXCHANGE_NODES,
+  RouterBuilder,
   TExchangeNode,
-  TransactionType,
-  buildTransferExtrinsics,
 } from '@paraspell/xcm-router';
 
 @Injectable()
@@ -24,11 +24,12 @@ export class RouterService {
       from,
       exchange,
       to,
+      currencyFrom,
+      currencyTo,
       amount,
       injectorAddress,
       recipientAddress,
       slippagePct = '1',
-      type,
     } = options;
 
     const fromNode = from as TNodeDotKsmWithRelayChains;
@@ -62,17 +63,25 @@ export class RouterService {
     }
 
     try {
-      const txs = await buildTransferExtrinsics({
-        ...options,
-        type: type ? TransactionType[type] : undefined,
-        from: fromNode,
-        exchange: exchangeNode,
-        to: toNode,
-        amount: amount.toString(),
-        slippagePct,
-      });
+      const transactions = await RouterBuilder()
+        .from(fromNode)
+        .exchange(exchangeNode)
+        .to(toNode)
+        .currencyFrom(currencyFrom)
+        .currencyTo(currencyTo)
+        .amount(amount.toString())
+        .injectorAddress(injectorAddress)
+        .recipientAddress(recipientAddress)
+        .slippagePct(slippagePct)
+        .buildTransactions();
 
-      return txs;
+      return transactions.map((transaction) => ({
+        node: transaction.node,
+        destinationNode: transaction.destinationNode,
+        type: transaction.type,
+        tx: transaction.tx,
+        wsProviders: getNodeProviders(transaction.node),
+      }));
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);
@@ -80,6 +89,7 @@ export class RouterService {
       if (e instanceof Error) {
         throw new InternalServerErrorException(e.message);
       }
+      throw e;
     }
   }
 }

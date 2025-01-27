@@ -1,7 +1,6 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { RouterService } from './router.service.js';
-import * as spellRouter from '@paraspell/xcm-router';
 import type { RouterDto } from './dto/RouterDto.js';
 import {
   BadRequestException,
@@ -10,14 +9,46 @@ import {
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 import type { TNode } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
-import { TransactionType } from '@paraspell/xcm-router';
+import * as spellRouter from '@paraspell/xcm-router';
+
+const txHash = '0x123';
+
+const serializedExtrinsics = [
+  {
+    node: 'Astar',
+    tx: txHash,
+    type: 'TRANSFER',
+  },
+  {
+    node: 'Acala',
+    tx: txHash,
+    type: 'SWAP',
+  },
+  {
+    node: 'Moonbeam',
+    tx: txHash,
+    type: 'TRANSFER',
+  },
+];
+
+const builderMock = {
+  from: vi.fn().mockReturnThis(),
+  exchange: vi.fn().mockReturnThis(),
+  to: vi.fn().mockReturnThis(),
+  currencyFrom: vi.fn().mockReturnThis(),
+  currencyTo: vi.fn().mockReturnThis(),
+  amount: vi.fn().mockReturnThis(),
+  injectorAddress: vi.fn().mockReturnThis(),
+  recipientAddress: vi.fn().mockReturnThis(),
+  slippagePct: vi.fn().mockReturnThis(),
+  buildTransactions: vi.fn().mockResolvedValue(serializedExtrinsics),
+};
 
 vi.mock('@paraspell/xcm-router', async () => {
   const actual = await vi.importActual('@paraspell/xcm-router');
   return {
     ...actual,
-    buildTransferExtrinsics: vi.fn(),
+    RouterBuilder: vi.fn().mockImplementation(() => builderMock),
   };
 });
 
@@ -33,58 +64,12 @@ describe('RouterService', () => {
     amount: '1000000000000000000',
     injectorAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
     recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-    type: spellRouter.TransactionType.TO_DESTINATION,
   };
 
   const invalidNode = 'Astarr';
 
-  const serializedTx = '0x123';
-
-  const serializedExtrinsics = [
-    {
-      node: 'Hydration',
-      tx: serializedTx,
-      type: 'EXTRINSIC',
-      statusType: 'TO_EXCHANGE',
-    },
-    {
-      node: 'AssetHubPolkadot',
-      tx: serializedTx,
-      type: 'EXTRINSIC',
-      statusType: 'SWAP',
-    },
-    {
-      node: 'Astar',
-      tx: serializedTx,
-      type: 'EXTRINSIC',
-      statusType: 'TO_DESTINATION',
-    },
-  ];
-
   beforeEach(async () => {
-    vi.resetAllMocks();
-
-    vi.spyOn(spellRouter, 'buildTransferExtrinsics').mockResolvedValue([
-      {
-        node: 'Hydration',
-        tx: '0x123' as unknown as Extrinsic,
-        type: 'EXTRINSIC',
-        statusType: TransactionType.TO_EXCHANGE,
-      },
-      {
-        node: 'AssetHubPolkadot',
-        tx: '0x123' as unknown as Extrinsic,
-        type: 'EXTRINSIC',
-        statusType: TransactionType.SWAP,
-      },
-      {
-        node: 'Astar',
-        tx: '0x123' as unknown as Extrinsic,
-        type: 'EXTRINSIC',
-        statusType: TransactionType.TO_DESTINATION,
-      },
-    ]);
-
+    vi.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [RouterService],
     }).compile();
@@ -98,15 +83,21 @@ describe('RouterService', () => {
 
   describe('generateExtrinsics', () => {
     it('should generate 3 extrinsics with manual exchange selection', async () => {
-      const spy = vi.spyOn(spellRouter, 'buildTransferExtrinsics');
+      vi.spyOn(spellRouter, 'RouterBuilder').mockReturnValue(
+        builderMock as unknown as ReturnType<typeof spellRouter.RouterBuilder>,
+      );
 
       const result = await service.generateExtrinsics(options);
 
-      expect(result).toStrictEqual(serializedExtrinsics);
-      expect(spy).toHaveBeenCalledWith({
-        ...options,
-        slippagePct: '1',
+      result.forEach((transaction, index) => {
+        expect(transaction.node).toBe(serializedExtrinsics[index].node);
+        expect(transaction.tx).toBe(serializedExtrinsics[index].tx);
+        expect(transaction.type).toBe(serializedExtrinsics[index].type);
       });
+
+      expect(builderMock.from).toHaveBeenCalledWith('Astar');
+      expect(builderMock.exchange).toHaveBeenCalledWith('AcalaDex');
+      expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');
     });
 
     it('should throw BadRequestException for invalid from node', async () => {
@@ -115,12 +106,11 @@ describe('RouterService', () => {
         from: invalidNode as TNode,
       };
 
-      const spy = vi.spyOn(spellRouter, 'buildTransferExtrinsics');
-
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
         BadRequestException,
       );
-      expect(spy).not.toHaveBeenCalled();
+
+      expect(builderMock.from).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid to node', async () => {
@@ -129,12 +119,10 @@ describe('RouterService', () => {
         to: invalidNode as TNode,
       };
 
-      const spy = vi.spyOn(spellRouter, 'buildTransferExtrinsics');
-
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
         BadRequestException,
       );
-      expect(spy).not.toHaveBeenCalled();
+      expect(builderMock.from).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid exchange node', async () => {
@@ -143,12 +131,10 @@ describe('RouterService', () => {
         exchange: invalidNode as TNode,
       };
 
-      const spy = vi.spyOn(spellRouter, 'buildTransferExtrinsics');
-
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
         BadRequestException,
       );
-      expect(spy).not.toHaveBeenCalled();
+      expect(builderMock.from).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid injector address', async () => {
@@ -157,12 +143,11 @@ describe('RouterService', () => {
         injectorAddress: invalidNode,
       };
 
-      const spy = vi.spyOn(spellRouter, 'buildTransferExtrinsics');
-
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
         BadRequestException,
       );
-      expect(spy).not.toHaveBeenCalled();
+
+      expect(builderMock.from).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException for invalid recipient address', async () => {
@@ -171,19 +156,25 @@ describe('RouterService', () => {
         recipientAddress: invalidNode,
       };
 
-      const spy = vi.spyOn(spellRouter, 'buildTransferExtrinsics');
-
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
         BadRequestException,
       );
-      expect(spy).not.toHaveBeenCalled();
+
+      expect(builderMock.from).not.toHaveBeenCalled();
     });
 
     it('should throw InternalServerError when uknown error occures in the spell router', async () => {
-      vi.spyOn(spellRouter, 'buildTransferExtrinsics').mockImplementation(
-        () => {
-          throw new Error('Unknown error');
-        },
+      const builderMockWithError = {
+        ...builderMock,
+        buildTransactions: vi.fn().mockImplementation(() => {
+          throw new Error('Invalid currency');
+        }),
+      };
+
+      vi.spyOn(spellRouter, 'RouterBuilder').mockReturnValue(
+        builderMockWithError as unknown as ReturnType<
+          typeof spellRouter.RouterBuilder
+        >,
       );
 
       await expect(service.generateExtrinsics(options)).rejects.toThrow(
@@ -192,10 +183,17 @@ describe('RouterService', () => {
     });
 
     it('should throw InvalidCurrencyError when InvalidCurrencyError error occures in the spell router', async () => {
-      vi.spyOn(spellRouter, 'buildTransferExtrinsics').mockImplementation(
-        () => {
-          throw new InvalidCurrencyError('Unknown error');
-        },
+      const builderMockWithError = {
+        ...builderMock,
+        buildTransactions: vi.fn().mockImplementation(() => {
+          throw new InvalidCurrencyError('Invalid currency');
+        }),
+      };
+
+      vi.spyOn(spellRouter, 'RouterBuilder').mockReturnValue(
+        builderMockWithError as unknown as ReturnType<
+          typeof spellRouter.RouterBuilder
+        >,
       );
 
       await expect(service.generateExtrinsics(options)).rejects.toThrow(

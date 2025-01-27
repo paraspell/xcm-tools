@@ -1,5 +1,5 @@
 import { FALLBACK_FEE_CALC_ADDRESS } from '../consts';
-import { TransactionType, type TTransferOptionsModified } from '../types';
+import { type TTransferOptionsModified } from '../types';
 
 export const MOCK_ADDRESS = '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC';
 export const MOCK_SLIIPPAGE = '1';
@@ -18,6 +18,5 @@ export const MOCK_TRANSFER_OPTIONS: TTransferOptionsModified = {
   injectorAddress: MOCK_ADDRESS,
   recipientAddress: MOCK_ADDRESS,
   signer: {},
-  type: TransactionType.FULL_TRANSFER,
   feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
 };

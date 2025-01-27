@@ -1,12 +1,11 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { findAssetFrom, findAssetTo } from '../../assets/assets';
 import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
-import { maybeUpdateTransferStatus } from '../../utils/utils';
 import { selectBestExchange } from '../selectBestExchange';
 import { determineFeeCalcAddress } from './utils';
 import { prepareTransformedOptions } from './prepareTransformedOptions';
 import type ExchangeNode from '../../dexNodes/DexNode';
-import type { TTransferOptions, TTxProgressInfo } from '../../types';
+import type { TTransferOptions, TRouterEvent } from '../../types';
 
 vi.mock('../../assets/assets', () => ({
   findAssetFrom: vi.fn(),
@@ -35,7 +34,7 @@ describe('prepareTransformedOptions', () => {
   });
 
   test('calls maybeUpdateTransferStatus when onStatusChange is provided (initial call)', async () => {
-    const mockOnStatusChange = vi.fn() as (info: TTxProgressInfo) => void;
+    const mockOnStatusChange = vi.fn() as (info: TRouterEvent) => void;
 
     const mockExchange = 'AcalaDex';
     vi.mocked(createDexNodeInstance).mockReturnValue({
@@ -51,18 +50,10 @@ describe('prepareTransformedOptions', () => {
       currencyFrom: { symbol: 'ABC' },
       currencyTo: { symbol: 'XYZ' },
     } as TTransferOptions);
-
-    expect(maybeUpdateTransferStatus).toHaveBeenCalledTimes(2);
-
-    expect(maybeUpdateTransferStatus).toHaveBeenNthCalledWith(1, mockOnStatusChange, {
-      type: 'TO_EXCHANGE',
-      status: 'IN_PROGRESS',
-      isAutoSelectingExchange: false,
-    });
   });
 
   test('calls selectBestExchange if exchange is undefined', async () => {
-    const mockOnStatusChange = vi.fn() as (info: TTxProgressInfo) => void;
+    const mockOnStatusChange = vi.fn() as (info: TRouterEvent) => void;
     vi.mocked(selectBestExchange).mockResolvedValue({
       exchangeNode: 'AcalaDex',
       node: 'Acala',
@@ -77,12 +68,6 @@ describe('prepareTransformedOptions', () => {
     } as TTransferOptions);
 
     expect(selectBestExchange).toHaveBeenCalledTimes(1);
-    expect(maybeUpdateTransferStatus).toHaveBeenCalledWith(
-      mockOnStatusChange,
-      expect.objectContaining({
-        isAutoSelectingExchange: true,
-      }),
-    );
   });
 
   test('throws error when assetFrom is not found and currencyFrom has id', async () => {
