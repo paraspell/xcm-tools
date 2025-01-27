@@ -16,7 +16,7 @@ describe.sequential('E2E tests', () => {
         .injectorAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
-        .buildHashes();
+        .buildTransactions();
 
       expect(hashes).toBeDefined();
       expect(hashes.length).toBe(3);
@@ -33,7 +33,7 @@ describe.sequential('E2E tests', () => {
         .injectorAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
-        .buildHashes();
+        .buildTransactions();
 
       expect(hashes).toBeDefined();
       expect(hashes.length).toBe(3);
@@ -52,7 +52,7 @@ describe.sequential('E2E tests', () => {
         .injectorAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
-        .buildHashes();
+        .buildTransactions();
 
       expect(hashes).toBeDefined();
       expect(hashes.length).toBe(3);
@@ -69,7 +69,7 @@ describe.sequential('E2E tests', () => {
         .injectorAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
-        .buildHashes();
+        .buildTransactions();
 
       expect(hashes).toBeDefined();
       expect(hashes.length).toBe(3);
@@ -88,7 +88,7 @@ describe.sequential('E2E tests', () => {
         .injectorAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
-        .buildHashes();
+        .buildTransactions();
 
       expect(hashes).toBeDefined();
       expect(hashes.length).toBe(3);
@@ -107,7 +107,7 @@ describe.sequential('E2E tests', () => {
         .injectorAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
-        .buildHashes();
+        .buildTransactions();
 
       expect(hashes).toBeDefined();
       expect(hashes.length).toBe(3);
@@ -124,7 +124,7 @@ describe.sequential('E2E tests', () => {
         .injectorAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
-        .buildHashes();
+        .buildTransactions();
 
       expect(hashes).toBeDefined();
       expect(hashes.length).toBe(3);

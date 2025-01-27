@@ -12,15 +12,12 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import type {
-  TTxProgressInfo,
   TExchangeNode,
-  TExtrinsicInfo,
+  TRouterEvent,
+  TTransaction,
 } from '@paraspell/xcm-router';
-import {
-  TransactionType,
-  TransactionStatus,
-  RouterBuilder,
-} from '@paraspell/xcm-router';
+import { RouterEventType } from '@paraspell/xcm-router';
+import { TransactionType, RouterBuilder } from '@paraspell/xcm-router';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
@@ -34,12 +31,7 @@ import { submitTransaction } from '../../utils';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { useWallet } from '../../hooks/useWallet';
 import { API_URL } from '../../consts';
-import type { BrowserProvider } from 'ethers';
-import { ethers } from 'ethers';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { isForeignAsset } from '@paraspell/sdk';
-import { Web3 } from 'web3';
-import type { EIP6963ProviderDetail } from '../../types';
 import {
   showErrorNotification,
   showLoadingNotification,
@@ -59,19 +51,11 @@ export const XcmRouter = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [progressInfo, setProgressInfo] = useState<TTxProgressInfo>();
+  const [progressInfo, setProgressInfo] = useState<TRouterEvent>();
 
   const [showStepper, setShowStepper] = useState(false);
 
   const [runConfetti, setRunConfetti] = useState(false);
-
-  const [providers, setProviders] = useState<EIP6963ProviderDetail[]>([]);
-  const [isEthWalletModalOpen, setIsEthWalletModalOpen] = useState(false);
-  const [provider, setProvider] = useState<BrowserProvider>();
-  const [_selectedProvider, setSelectedProvider] =
-    useState<EIP6963ProviderDetail | null>(null);
-  const [ethAccounts, setEthAccounts] = useState<string[]>([]);
-  const [isEthAccountModalOpen, setIsEthAccountModalOpen] = useState(false);
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -89,69 +73,8 @@ export const XcmRouter = () => {
     }
   }, [showStepper, scrollIntoView]);
 
-  const onStatusChange = (status: TTxProgressInfo) => {
+  const onStatusChange = (status: TRouterEvent) => {
     setProgressInfo(status);
-  };
-
-  const connectEthWallet = async () => {
-    try {
-      const providerMap = await Web3.requestEIP6963Providers();
-
-      if (providerMap.size === 0) {
-        showErrorNotification('No compatible Ethereum wallets found.');
-        return;
-      }
-
-      const providerArray = Array.from(providerMap.values());
-
-      setProviders(providerArray);
-      setIsEthWalletModalOpen(true);
-    } catch (error) {
-      console.error('Error fetching providers:', error);
-      showErrorNotification(
-        'An error occurred while fetching wallet providers.',
-      );
-    }
-  };
-
-  const onConnectEthWallet = () => void connectEthWallet();
-
-  const selectEthProvider = async (providerInfo: EIP6963ProviderDetail) => {
-    try {
-      setIsEthWalletModalOpen(false);
-      const provider = providerInfo.provider;
-
-      if (!provider) {
-        showErrorNotification('Selected provider is not available.');
-        return;
-      }
-
-      const tempProvider = new ethers.BrowserProvider(provider);
-      setProvider(tempProvider);
-      setSelectedProvider(providerInfo);
-
-      const accounts = (await tempProvider.send(
-        'eth_requestAccounts',
-        [],
-      )) as string[];
-
-      if (accounts.length === 0) {
-        showErrorNotification('No accounts found in the selected wallet.');
-        return;
-      }
-
-      setEthAccounts(accounts);
-      setIsEthAccountModalOpen(true);
-    } catch (error) {
-      console.error('Error connecting to wallet:', error);
-      showErrorNotification(
-        'An error occurred while connecting to the wallet.',
-      );
-    }
-  };
-
-  const onEthProviderSelect = (provider: EIP6963ProviderDetail) => {
-    void selectEthProvider(provider);
   };
 
   const submitUsingRouterModule = async (
@@ -168,41 +91,23 @@ export const XcmRouter = () => {
       amount,
       recipientAddress,
       evmInjectorAddress,
-      assetHubAddress,
       slippagePct,
       evmSigner,
-      ethAddress,
-      transactionType,
     } = formValues;
-
-    const ethSigner = provider
-      ? await provider.getSigner(ethAddress)
-      : undefined;
 
     await RouterBuilder()
       .from(from)
       .to(to)
       .exchange(exchange)
-      .currencyFrom(
-        isForeignAsset(currencyFrom) && currencyFrom.assetId
-          ? { id: currencyFrom.assetId }
-          : { symbol: currencyFrom.symbol ?? '' },
-      )
-      .currencyTo(
-        isForeignAsset(currencyTo) && currencyTo.assetId
-          ? { id: currencyTo.assetId }
-          : { symbol: currencyTo.symbol ?? '' },
-      )
+      .currencyFrom({ symbol: currencyFrom.symbol })
+      .currencyTo({ symbol: currencyTo.symbol })
       .amount(amount)
       .injectorAddress(injectorAddress)
       .recipientAddress(recipientAddress)
       .evmInjectorAddress(evmInjectorAddress)
-      .assetHubAddress(assetHubAddress)
       .signer(signer)
-      .ethSigner(ethSigner)
       .evmSigner(evmSigner)
       .slippagePct(slippagePct)
-      .transactionType(TransactionType[transactionType])
       .onStatusChange(onStatusChange)
       .build();
   };
@@ -213,19 +118,14 @@ export const XcmRouter = () => {
     injectorAddress: string,
     signer: Signer,
   ) => {
-    const { currencyFrom, currencyTo, transactionType } = formValues;
+    const { currencyFrom, currencyTo } = formValues;
     try {
       const response = await axios.post(
         `${API_URL}/router`,
         {
           ...formValues,
-          currencyFrom: isForeignAsset(currencyFrom)
-            ? { id: currencyFrom.assetId }
-            : { symbol: currencyFrom.symbol ?? '' },
-          currencyTo: isForeignAsset(currencyTo)
-            ? { id: currencyTo.assetId }
-            : { symbol: currencyTo.symbol ?? '' },
-          type: TransactionType[transactionType],
+          currencyFrom: { symbol: currencyFrom.symbol },
+          currencyTo: { symbol: currencyTo.symbol },
           exchange: exchange ?? undefined,
           injectorAddress,
         },
@@ -234,40 +134,44 @@ export const XcmRouter = () => {
         },
       );
 
-      const txs = (await response.data) as TExtrinsicInfo[];
+      const transactions = (await response.data) as (TTransaction & {
+        wsProviders: string[];
+      })[];
 
-      for (const txInfo of txs) {
+      for (const [
+        index,
+        { node, type, wsProviders, tx },
+      ] of transactions.entries()) {
         onStatusChange({
-          type: txInfo.type as TransactionType,
-          status: TransactionStatus.IN_PROGRESS,
+          node,
+          type: index !== 1 ? RouterEventType.TRANSFER : RouterEventType.SWAP,
+          currentStep: index,
+          totalSteps: transactions.length,
         });
 
-        // Handling of Polkadot transaction
         const api = await ApiPromise.create({
-          provider: new WsProvider(txInfo.wsProvider),
+          provider: new WsProvider(wsProviders),
         });
-        if (txInfo.statusType === TransactionType.TO_EXCHANGE) {
+
+        if (type === TransactionType.TRANSFER && index === 0) {
           // When submitting to exchange, prioritize the evmSigner if available
           await submitTransaction(
             api,
-            api.tx(txInfo.tx),
+            api.tx(tx),
             formValues.evmSigner ?? signer,
             formValues.evmInjectorAddress ?? injectorAddress,
           );
         } else {
-          await submitTransaction(
-            api,
-            api.tx(txInfo.tx),
-            signer,
-            injectorAddress,
-          );
+          await submitTransaction(api, api.tx(tx), signer, injectorAddress);
         }
-
-        onStatusChange({
-          type: txInfo.type as TransactionType,
-          status: TransactionStatus.SUCCESS,
-        });
       }
+
+      onStatusChange({
+        type: RouterEventType.COMPLETED,
+        node: transactions[transactions.length - 1].node,
+        currentStep: transactions.length - 1,
+        totalSteps: transactions.length,
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         showErrorNotification('Error while fetching data.');
@@ -377,13 +281,6 @@ export const XcmRouter = () => {
     setRunConfetti(false);
   };
 
-  const onEthWalletDisconnect = () => {
-    setProvider(undefined);
-    setSelectedProvider(null);
-    setEthAccounts([]);
-    setIsEthWalletModalOpen(false);
-  };
-
   const theme = useMantineColorScheme();
 
   return (
@@ -410,34 +307,24 @@ export const XcmRouter = () => {
             </Text>
           </Box>
 
-          <XcmRouterForm
-            onSubmit={onSubmit}
-            loading={loading}
-            onConnectEthWallet={onConnectEthWallet}
-            ethAccounts={ethAccounts}
-            ethProviders={providers}
-            onEthWalletDisconnect={onEthWalletDisconnect}
-            onEthProviderSelect={onEthProviderSelect}
-            isEthWalletModalOpen={isEthWalletModalOpen}
-            setIsEthWalletModalOpen={setIsEthWalletModalOpen}
-            isEthAccountModalOpen={isEthAccountModalOpen}
-            setIsEthAccountModalOpen={setIsEthAccountModalOpen}
-          />
+          <XcmRouterForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Box ref={targetRef}>
-          {progressInfo?.isAutoSelectingExchange && (
-            <Center>
-              <Group mt="md">
-                <Loader />
-                <Title order={4}>Searching for best exchange rate</Title>
-              </Group>
-            </Center>
-          )}
-          {showStepper && !progressInfo?.isAutoSelectingExchange && (
-            <Box mt="md">
-              <TransferStepper progressInfo={progressInfo} />
-            </Box>
-          )}
+          {progressInfo &&
+            progressInfo?.type === RouterEventType.SELECTING_EXCHANGE && (
+              <Center>
+                <Group mt="md">
+                  <Loader />
+                  <Title order={4}>Searching for best exchange rate</Title>
+                </Group>
+              </Center>
+            )}
+          {showStepper &&
+            progressInfo?.type !== RouterEventType.SELECTING_EXCHANGE && (
+              <Box mt="md">
+                <TransferStepper progressInfo={progressInfo} />
+              </Box>
+            )}
           {alertOpened && (
             <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
               {error?.message
