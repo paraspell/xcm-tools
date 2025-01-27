@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.2.0...sdk-pjs-v8.2.1) (2025-01-27)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix dry run 🔧 ([7864be5](https://github.com/paraspell/xcm-tools/commit/7864be50ff1de8a398920e44a6d4eb2bcbc217a7))
+
 ## [8.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.1.0...sdk-pjs-v8.2.0) (2025-01-25)
 
 
