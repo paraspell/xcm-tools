@@ -99,7 +99,7 @@ export class XTransferService {
   ) {
     this.validateTransfer(transfer);
 
-    const { address } = transfer;
+    const { senderAddress } = transfer;
 
     const Sdk = usePapi
       ? await import('@paraspell/sdk')
@@ -111,10 +111,13 @@ export class XTransferService {
       const finalBuilder = this.buildXTransfer(builder, transfer);
 
       if (isDryRun) {
-        if (typeof address !== 'string') {
-          throw new BadRequestException('Address is required for dry run.');
+        if (!senderAddress) {
+          throw new BadRequestException(
+            'Sender address is required for dry run.',
+          );
         }
-        return await finalBuilder.dryRun();
+
+        return await finalBuilder.dryRun(senderAddress);
       }
 
       const tx = await finalBuilder.build();

@@ -445,7 +445,7 @@ const XcmTransfer = () => {
           result = await fetchFromApi(
             {
               ...formValues,
-              injectorAddress: selectedAccount.address,
+              senderAddress: selectedAccount.address,
               currency:
                 currencyInputs.length === 1
                   ? currencyInputs[0]

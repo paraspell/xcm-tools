@@ -154,6 +154,7 @@ export const XTransferDtoSchema = z.object({
   xcmVersion: z.enum(versionValues).optional(),
   pallet: z.string().optional(),
   method: z.string().optional(),
+  senderAddress: z.string().optional(),
 });
 
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
