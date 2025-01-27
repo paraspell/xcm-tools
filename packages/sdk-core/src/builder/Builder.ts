@@ -191,20 +191,16 @@ export class GeneralBuilder<TApi, TRes>
     return send(options)
   }
 
-  async dryRun() {
+  async dryRun(senderAddress: string) {
     this.api.setDisconnectAllowed(false)
     const tx = await this.build()
-
-    if (typeof this._address !== 'string') {
-      throw new Error('Address must be a string when using dryRun')
-    }
 
     this.api.setDisconnectAllowed(true)
 
     return getDryRun({
       api: this.api,
       tx,
-      address: this._address,
+      address: senderAddress,
       node: this._from
     })
   }

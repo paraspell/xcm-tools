@@ -266,7 +266,14 @@ describe('XTransferService', () => {
     });
 
     it('should get dry run result if isDryRun is set', async () => {
-      const result = await service.generateXcmCall(xTransferDto, true, true);
+      const result = await service.generateXcmCall(
+        {
+          ...xTransferDto,
+          senderAddress: 'sender-address',
+        },
+        true,
+        true,
+      );
       expect(result).toBe(dryRunResult);
     });
 

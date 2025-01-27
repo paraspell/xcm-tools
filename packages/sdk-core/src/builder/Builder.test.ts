@@ -689,12 +689,14 @@ describe('Builder', () => {
         fee: 1000n
       })
 
+      const SENDER_ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
+
       const result = await Builder(mockApi)
         .from(NODE)
         .to(NODE_2)
         .currency(CURRENCY)
         .address(ADDRESS)
-        .dryRun()
+        .dryRun(SENDER_ADDRESS)
 
       expect(result).toEqual({
         success: true,

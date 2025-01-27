@@ -222,10 +222,10 @@ const result = await Builder(API /*optional*/)
         .to(NODE_2)
         .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
         .address(ADDRESS)
-        .dryRun()
+        .dryRun(SENDER_ADDRESS)
 
 //Function pattern
-getDryRun({api /*optional*/,  node, address, tx /* Extrinsic object */})
+getDryRun({api /*optional*/,  node, address /*sender address*/, tx /* Extrinsic object */})
 ```
 
 ### Asset claim:

@@ -128,5 +128,5 @@ export interface IFinalBuilderWithOptions<TApi, TRes> extends IAddToBatchBuilder
   customPallet: (pallet: string, method: string) => this
   disconnect: () => Promise<void>
   build: () => Promise<TRes>
-  dryRun: () => Promise<TDryRunResult>
+  dryRun: (senderAddress: string) => Promise<TDryRunResult>
 }
