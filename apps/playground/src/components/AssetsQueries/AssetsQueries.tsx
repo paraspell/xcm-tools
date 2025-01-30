@@ -162,18 +162,18 @@ export const AssetsQueries = () => {
         </Box>
         <AssetsQueriesForm onSubmit={onSubmit} loading={loading} />
       </Stack>
-      <Box ref={targetRef}>
+      <Center ref={targetRef}>
         {errorAlertOpened && (
           <ErrorAlert onAlertCloseClick={closeErrorAlert}>
             {error?.message}
           </ErrorAlert>
         )}
-      </Box>
-      <Box>
+      </Center>
+      <Center>
         {outputAlertOpened && output && (
           <OutputAlert output={output} onClose={closeOutputAlert} />
         )}
-      </Box>
+      </Center>
     </Stack>
   );
 };

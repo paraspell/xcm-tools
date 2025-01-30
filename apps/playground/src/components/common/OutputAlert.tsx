@@ -23,6 +23,8 @@ export const OutputAlert: FC<Props> = ({
     mt="lg"
     p="xl"
     style={{ overflowWrap: 'anywhere' }}
+    maw={800}
+    w="100%"
     data-testid="output"
   >
     <CodeHighlight
@@ -33,7 +35,6 @@ export const OutputAlert: FC<Props> = ({
         borderRadius: 16,
         marginTop: 20,
         backgroundColor: 'transparent',
-        maxWidth: 700,
       }}
     />
   </Alert>

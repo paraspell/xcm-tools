@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { CurrencyCoreSchemaV1 } from '../../x-transfer/dto/XTransferDto.js';
-import { TransactionType } from '@paraspell/xcm-router';
 import { validateAmount } from '../../utils/validateAmount.js';
 
 export const RouterDtoSchema = z.object({
@@ -30,7 +29,6 @@ export const RouterDtoSchema = z.object({
     z.number().positive({ message: 'Amount must be a positive number' }),
   ]),
   slippagePct: z.string().optional(),
-  type: z.nativeEnum(TransactionType).optional(),
 });
 
 export type RouterDto = z.infer<typeof RouterDtoSchema>;

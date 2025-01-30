@@ -1,22 +1,20 @@
 import { isNodeEvm } from '@paraspell/sdk-pjs';
 import type { TExecuteRouterPlanOptions } from '../types';
-import { RouterEventType, TransactionType, type TRouterPlan } from '../types';
+import { type TRouterPlan } from '../types';
 import { submitTransaction } from '../utils/submitTransaction';
 
 export const executeRouterPlan = async (
   plan: TRouterPlan,
   { signer, senderAddress, evmSigner, evmSenderAddress, onStatusChange }: TExecuteRouterPlanOptions,
 ): Promise<void> => {
-  for (const [index, { api, tx, type, node, destinationNode }] of plan.entries()) {
-    if (onStatusChange) {
-      onStatusChange({
-        node,
-        destinationNode,
-        type: type === TransactionType.TRANSFER ? RouterEventType.TRANSFER : RouterEventType.SWAP,
-        currentStep: index,
-        totalSteps: plan.length,
-      });
-    }
+  for (const [currentStep, { api, tx, type, node, destinationNode }] of plan.entries()) {
+    onStatusChange?.({
+      node,
+      destinationNode,
+      type,
+      currentStep: currentStep,
+      routerPlan: plan,
+    });
 
     if (isNodeEvm(node)) {
       if (!evmSigner || !evmSenderAddress) {
@@ -29,11 +27,9 @@ export const executeRouterPlan = async (
     }
   }
 
-  if (onStatusChange) {
-    onStatusChange({
-      type: RouterEventType.COMPLETED,
-      currentStep: plan.length - 1,
-      totalSteps: plan.length,
-    });
-  }
+  onStatusChange?.({
+    type: 'COMPLETED',
+    currentStep: plan.length - 1,
+    routerPlan: plan,
+  });
 };

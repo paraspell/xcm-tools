@@ -28,25 +28,32 @@ export interface TSwapResult {
   amountOut: string;
 }
 
-export enum RouterEventType {
-  SELECTING_EXCHANGE = 'SELECTING_EXCHANGE',
-  TRANSFER = 'TRANSFER',
-  SWAP = 'SWAP',
-  COMPLETED = 'COMPLETED',
-}
+export type TRouterEventType = TTransactionType | 'SELECTING_EXCHANGE' | 'COMPLETED';
 
 /**
  * The transaction progress information.
  */
 export interface TRouterEvent {
   /**
-   * The currently executed transaction type.
+   * Current execution phase type
    */
-  type: RouterEventType;
+  type: TRouterEventType;
+  /**
+   * Full transaction plan for visualization
+   */
+  routerPlan?: TRouterPlan;
+  /**
+   * Current transaction's origin node
+   */
   node?: TNodeDotKsmWithRelayChains;
+  /**
+   * Current transaction's destination node
+   */
   destinationNode?: TNodeWithRelayChains;
+  /**
+   * 0-based step index of current operation
+   */
   currentStep?: number;
-  totalSteps?: number;
 }
 
 /**
@@ -140,16 +147,13 @@ export type TAssetsRecord = Record<TExchangeNode, TAssets>;
 
 export type TAutoSelect = 'Auto select';
 
-export enum TransactionType {
-  TRANSFER = 'TRANSFER',
-  SWAP = 'SWAP',
-}
+export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';
 
 export type TTransaction = {
   api: TPjsApi;
   node: TNodeDotKsmWithRelayChains;
   destinationNode?: TNodeWithRelayChains;
-  type: TransactionType;
+  type: TTransactionType;
   tx: Extrinsic;
 };
 

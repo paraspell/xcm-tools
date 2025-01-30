@@ -2,7 +2,7 @@ import type { TForeignAsset } from '@paraspell/sdk-pjs';
 import { getAssets, getNodeProviders } from '@paraspell/sdk-pjs';
 import ExchangeNode from '../DexNode';
 import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
-import { createInterBtcApi, newMonetaryAmount } from 'inter-exchange';
+import { createInterBtcApi, createSubstrateAPI, newMonetaryAmount } from 'inter-exchange';
 import { type ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import BigNumber from 'bignumber.js';
@@ -99,6 +99,10 @@ class InterlayExchangeNode extends ExchangeNode {
       id: asset.assetId,
     }));
     return Promise.resolve(transformedAssets);
+  }
+
+  async createApiInstance(): Promise<ApiPromise> {
+    return createSubstrateAPI(getNodeProviders(this.node)[0]);
   }
 }
 
