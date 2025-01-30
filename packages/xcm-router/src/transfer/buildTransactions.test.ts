@@ -1,15 +1,20 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 import type { TBuildTransactionsOptions } from '../types';
-import { TransactionType } from '../types';
-import * as utils from './utils';
-import * as createSwapTxModule from './createSwapTx';
 import { buildTransactions } from './buildTransactions';
 import type { prepareTransformedOptions } from './utils';
 import type ExchangeNode from '../dexNodes/DexNode';
+import * as utils from './utils';
+import * as createSwapTxModule from './createSwapTx';
 
 const originApi = {} as TPjsApi;
-const swapApi = {} as TPjsApi;
+const swapApi = {
+  tx: {
+    utility: {
+      batch: vi.fn().mockReturnValue('batchTx' as unknown as Extrinsic),
+    },
+  },
+} as unknown as TPjsApi;
 
 vi.mock('./utils', async (importOriginal) => {
   const actual = await importOriginal<typeof utils>();
@@ -56,7 +61,7 @@ describe('buildTransactions', () => {
         api: swapApi,
         node: 'Acala',
         tx: 'swapTx',
-        type: TransactionType.SWAP,
+        type: 'SWAP',
       },
     ]);
 
@@ -90,13 +95,13 @@ describe('buildTransactions', () => {
         node: 'BifrostPolkadot',
         destinationNode: 'Acala',
         tx: 'toExchangeTx',
-        type: TransactionType.TRANSFER,
+        type: 'TRANSFER',
       },
       {
         api: swapApi,
         node: 'Acala',
         tx: 'swapTx',
-        type: TransactionType.SWAP,
+        type: 'SWAP',
       },
     ]);
   });
@@ -123,17 +128,11 @@ describe('buildTransactions', () => {
 
     expect(result).toEqual([
       {
-        api: swapApi,
-        node: 'Acala',
-        tx: 'swapTx',
-        type: TransactionType.SWAP,
-      },
-      {
-        api: swapApi,
+        api: expect.any(Object),
         node: 'Acala',
         destinationNode: 'Crust',
-        tx: 'toDestTx',
-        type: TransactionType.TRANSFER,
+        tx: 'batchTx',
+        type: 'SWAP_AND_TRANSFER',
       },
     ]);
   });
@@ -163,24 +162,18 @@ describe('buildTransactions', () => {
 
     expect(result).toEqual([
       {
-        api: originApi,
+        api: expect.any(Object),
         node: 'BifrostPolkadot',
         destinationNode: 'Acala',
         tx: 'toExchangeTx',
-        type: TransactionType.TRANSFER,
+        type: 'TRANSFER',
       },
       {
-        api: swapApi,
-        node: 'Acala',
-        tx: 'swapTx',
-        type: TransactionType.SWAP,
-      },
-      {
-        api: swapApi,
+        api: expect.any(Object),
         node: 'Acala',
         destinationNode: 'Crust',
-        tx: 'toDestTx',
-        type: TransactionType.TRANSFER,
+        tx: 'batchTx',
+        type: 'SWAP_AND_TRANSFER',
       },
     ]);
   });

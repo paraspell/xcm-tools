@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { transfer } from './transfer';
 import type { TRouterEvent, TRouterPlan, TTransferOptions } from '../types';
-import { RouterEventType } from '../types';
 
 vi.mock('@paraspell/sdk-pjs', () => {
   return {
@@ -114,7 +113,7 @@ describe('transfer', () => {
 
     expect(onStatusChange).toHaveBeenCalledTimes(1);
     expect(onStatusChange).toHaveBeenCalledWith({
-      type: RouterEventType.SELECTING_EXCHANGE,
+      type: 'SELECTING_EXCHANGE',
     });
   });
 
@@ -130,7 +129,7 @@ describe('transfer', () => {
     await transfer(options);
 
     expect(onStatusChange).not.toHaveBeenCalledWith({
-      type: RouterEventType.SELECTING_EXCHANGE,
+      type: 'SELECTING_EXCHANGE',
     });
   });
 
