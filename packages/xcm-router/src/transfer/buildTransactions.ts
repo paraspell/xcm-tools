@@ -1,6 +1,6 @@
 import type { TPjsApi } from '@paraspell/sdk-pjs';
 import type { TRouterPlan } from '../types';
-import { TransactionType, type TBuildTransactionsOptions } from '../types';
+import { type TBuildTransactionsOptions } from '../types';
 import {
   buildFromExchangeExtrinsic,
   buildToExchangeExtrinsic,
@@ -33,24 +33,25 @@ export const buildTransactions = async (
       node: from,
       destinationNode: exchangeNode,
       tx: toExchangeTx,
-      type: TransactionType.TRANSFER,
+      type: 'TRANSFER',
     });
   }
 
-  transactions.push({
-    api: swapApi,
-    node: dex.node,
-    tx: swapTx,
-    type: TransactionType.SWAP,
-  });
-
   if (toDestTx) {
+    const batchedTx = swapApi.tx.utility.batch([swapTx, toDestTx]);
     transactions.push({
       api: swapApi,
       node: dex.node,
       destinationNode: to,
-      tx: toDestTx,
-      type: TransactionType.TRANSFER,
+      tx: batchedTx,
+      type: 'SWAP_AND_TRANSFER',
+    });
+  } else {
+    transactions.push({
+      api: swapApi,
+      node: dex.node,
+      tx: swapTx,
+      type: 'SWAP',
     });
   }
 

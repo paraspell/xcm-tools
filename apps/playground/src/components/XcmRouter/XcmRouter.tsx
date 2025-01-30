@@ -16,8 +16,7 @@ import type {
   TRouterEvent,
   TTransaction,
 } from '@paraspell/xcm-router';
-import { RouterEventType } from '@paraspell/xcm-router';
-import { TransactionType, RouterBuilder } from '@paraspell/xcm-router';
+import { RouterBuilder } from '@paraspell/xcm-router';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
@@ -144,16 +143,16 @@ export const XcmRouter = () => {
       ] of transactions.entries()) {
         onStatusChange({
           node,
-          type: index !== 1 ? RouterEventType.TRANSFER : RouterEventType.SWAP,
+          type,
           currentStep: index,
-          totalSteps: transactions.length,
+          routerPlan: transactions,
         });
 
         const api = await ApiPromise.create({
           provider: new WsProvider(wsProviders),
         });
 
-        if (type === TransactionType.TRANSFER && index === 0) {
+        if (type === 'TRANSFER' && index === 0) {
           // When submitting to exchange, prioritize the evmSigner if available
           await submitTransaction(
             api,
@@ -167,10 +166,10 @@ export const XcmRouter = () => {
       }
 
       onStatusChange({
-        type: RouterEventType.COMPLETED,
+        type: 'COMPLETED',
         node: transactions[transactions.length - 1].node,
         currentStep: transactions.length - 1,
-        totalSteps: transactions.length,
+        routerPlan: transactions,
       });
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -222,7 +221,9 @@ export const XcmRouter = () => {
         typeof args[2] === 'string' &&
         args[2].includes('ExtrinsicStatus::')
       ) {
-        setError(new Error(args[2]));
+        const error = new Error(args[2]);
+        showErrorNotification(error.message, notifId);
+        setError(error);
         openAlert();
         setShowStepper(false);
         setLoading(false);
@@ -283,6 +284,9 @@ export const XcmRouter = () => {
 
   const theme = useMantineColorScheme();
 
+  const width = window.innerWidth;
+  const height = document.body.scrollHeight;
+
   return (
     <Container px="xl" pb="xl">
       <Stack gap="xl">
@@ -310,21 +314,19 @@ export const XcmRouter = () => {
           <XcmRouterForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Box ref={targetRef}>
-          {progressInfo &&
-            progressInfo?.type === RouterEventType.SELECTING_EXCHANGE && (
-              <Center>
-                <Group mt="md">
-                  <Loader />
-                  <Title order={4}>Searching for best exchange rate</Title>
-                </Group>
-              </Center>
-            )}
-          {showStepper &&
-            progressInfo?.type !== RouterEventType.SELECTING_EXCHANGE && (
-              <Box mt="md">
-                <TransferStepper progressInfo={progressInfo} />
-              </Box>
-            )}
+          {progressInfo && progressInfo?.type === 'SELECTING_EXCHANGE' && (
+            <Center>
+              <Group mt="md">
+                <Loader />
+                <Title order={4}>Searching for best exchange rate</Title>
+              </Group>
+            </Center>
+          )}
+          {showStepper && progressInfo?.type !== 'SELECTING_EXCHANGE' && (
+            <Center mt="md">
+              <TransferStepper progressInfo={progressInfo} />
+            </Center>
+          )}
           {alertOpened && (
             <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
               {error?.message
@@ -340,6 +342,8 @@ export const XcmRouter = () => {
         numberOfPieces={500}
         tweenDuration={10000}
         onConfettiComplete={onConfettiComplete}
+        width={width}
+        height={height}
       />
     </Container>
   );

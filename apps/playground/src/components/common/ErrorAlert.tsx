@@ -17,6 +17,8 @@ export const ErrorAlert: FC<Props> = ({ children, onAlertCloseClick }) => (
     onClose={onAlertCloseClick}
     mt="lg"
     style={{ overflowWrap: 'anywhere' }}
+    maw={800}
+    w="100%"
     data-testid="error"
   >
     {children}

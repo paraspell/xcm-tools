@@ -2,7 +2,6 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 import { isNodeEvm } from '@paraspell/sdk-pjs';
 import type { TRouterPlan } from '../types';
-import { RouterEventType, TransactionType } from '../types';
 import { submitTransaction } from '../utils/submitTransaction';
 import { executeRouterPlan } from './executeRouterPlan';
 import type { Signer } from '@polkadot/types/types';
@@ -34,14 +33,14 @@ describe('executeRouterPlan', () => {
     {
       api: {} as unknown as TPjsApi,
       tx: 'tx1' as unknown as Extrinsic,
-      type: TransactionType.TRANSFER,
+      type: 'TRANSFER',
       node: 'Astar',
       destinationNode: 'Moonbeam',
     },
     {
       api: {} as unknown as TPjsApi,
       tx: 'tx2' as unknown as Extrinsic,
-      type: TransactionType.SWAP,
+      type: 'SWAP',
       node: 'Unique',
     },
   ] as TRouterPlan;
@@ -59,20 +58,62 @@ describe('executeRouterPlan', () => {
     expect(mockOnStatusChange).toHaveBeenNthCalledWith(1, {
       node: 'Astar',
       destinationNode: 'Moonbeam',
-      type: RouterEventType.TRANSFER,
+      type: 'TRANSFER',
       currentStep: 0,
-      totalSteps: 2,
+      routerPlan: [
+        {
+          api: {},
+          destinationNode: 'Moonbeam',
+          node: 'Astar',
+          tx: 'tx1',
+          type: 'TRANSFER',
+        },
+        {
+          api: {},
+          node: 'Unique',
+          tx: 'tx2',
+          type: 'SWAP',
+        },
+      ],
     });
     expect(mockOnStatusChange).toHaveBeenNthCalledWith(2, {
       node: 'Unique',
-      type: RouterEventType.SWAP,
+      type: 'SWAP',
       currentStep: 1,
-      totalSteps: 2,
+      routerPlan: [
+        {
+          api: {},
+          destinationNode: 'Moonbeam',
+          node: 'Astar',
+          tx: 'tx1',
+          type: 'TRANSFER',
+        },
+        {
+          api: {},
+          node: 'Unique',
+          tx: 'tx2',
+          type: 'SWAP',
+        },
+      ],
     });
     expect(mockOnStatusChange).toHaveBeenNthCalledWith(3, {
-      type: RouterEventType.COMPLETED,
+      type: 'COMPLETED',
       currentStep: 1,
-      totalSteps: 2,
+      routerPlan: [
+        {
+          api: {},
+          destinationNode: 'Moonbeam',
+          node: 'Astar',
+          tx: 'tx1',
+          type: 'TRANSFER',
+        },
+        {
+          api: {},
+          node: 'Unique',
+          tx: 'tx2',
+          type: 'SWAP',
+        },
+      ],
     });
 
     // Verify transaction submissions
@@ -108,9 +149,9 @@ describe('executeRouterPlan', () => {
   test('should handle empty plan gracefully', async () => {
     await executeRouterPlan([], baseOptions);
     expect(mockOnStatusChange).toHaveBeenCalledWith({
-      type: RouterEventType.COMPLETED,
+      type: 'COMPLETED',
+      routerPlan: [],
       currentStep: -1,
-      totalSteps: 0,
     });
     expect(submitTransaction).not.toHaveBeenCalled();
   });

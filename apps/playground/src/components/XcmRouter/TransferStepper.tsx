@@ -1,72 +1,71 @@
 import { Stepper, Title } from '@mantine/core';
-import type { TRouterEvent } from '@paraspell/xcm-router';
-import { RouterEventType } from '@paraspell/xcm-router';
-import type { FC } from 'react';
-
-const getActiveStep = (progressInfo?: TRouterEvent) => {
-  if (!progressInfo) {
-    return 0;
-  }
-
-  if (progressInfo.type === RouterEventType.COMPLETED) {
-    return 3;
-  }
-
-  if (
-    progressInfo.type === RouterEventType.TRANSFER &&
-    progressInfo.currentStep === 0
-  ) {
-    return 0;
-  } else if (progressInfo.type === RouterEventType.SWAP) {
-    return 1;
-  } else if (
-    progressInfo.type === RouterEventType.TRANSFER &&
-    progressInfo.currentStep === 2
-  ) {
-    return 2;
-  }
-
-  return 0;
-};
+import type { TRouterEvent, TTransactionType } from '@paraspell/xcm-router';
+import { useEffect, useState } from 'react';
 
 type Props = {
   progressInfo?: TRouterEvent;
 };
 
-export const TransferStepper: FC<Props> = ({ progressInfo }) => {
-  const active = getActiveStep(progressInfo);
+const getStepInfo = (type: TTransactionType) => {
+  switch (type) {
+    case 'TRANSFER':
+      return ['Transfer to exchange', ''];
+    case 'SWAP':
+      return ['Swap tokens', ''];
+    case 'SWAP_AND_TRANSFER':
+      return ['Swap tokens & Transfer to destination', ''];
+    default:
+      return ['Unknown', 'Unknown'];
+  }
+};
+
+export const TransferStepper = ({ progressInfo }: Props) => {
+  const [steps, setSteps] = useState<
+    { label: string; description: string; type: TTransactionType }[]
+  >([]);
+
+  useEffect(() => {
+    if (!progressInfo?.routerPlan) return;
+
+    const transactionTypes = progressInfo?.routerPlan.map((t) => t.type);
+    const uniqueTypes = Array.from(new Set(transactionTypes));
+
+    const newSteps = uniqueTypes.map((type) => {
+      const [label, description] = getStepInfo(type);
+      return {
+        type,
+        label,
+        description,
+      };
+    });
+
+    setSteps(newSteps);
+  }, [progressInfo?.routerPlan]);
+
+  const currentStep = progressInfo?.currentStep ?? 0;
+  const totalSteps = steps.length;
 
   return (
-    <Stepper active={active}>
-      <Stepper.Step
-        label="Transfer to exchange chain"
-        description=""
-        loading={
-          progressInfo?.type === RouterEventType.TRANSFER &&
-          progressInfo.currentStep === 0
-        }
-      ></Stepper.Step>
+    <Stepper
+      maw={700}
+      w="100%"
+      active={progressInfo?.type === 'COMPLETED' ? totalSteps : currentStep}
+    >
+      {steps.map((step, index) => (
+        <Stepper.Step
+          key={index}
+          label={step.label}
+          loading={index === currentStep}
+        />
+      ))}
 
-      <Stepper.Step
-        label="Swap"
-        description=""
-        loading={progressInfo?.type === RouterEventType.SWAP}
-      ></Stepper.Step>
-
-      <Stepper.Step
-        label="Transfer to destination chain"
-        description=""
-        loading={
-          progressInfo?.type === RouterEventType.TRANSFER &&
-          progressInfo.currentStep === 2
-        }
-      ></Stepper.Step>
-
-      <Stepper.Completed>
-        <Title order={4} style={{ textAlign: 'center' }} mt="md">
-          Your transaction was successful!
-        </Title>
-      </Stepper.Completed>
+      {progressInfo?.type === 'COMPLETED' && (
+        <Stepper.Completed>
+          <Title order={4} ta="center" mt="md">
+            Your transaction was successful!
+          </Title>
+        </Stepper.Completed>
+      )}
     </Stepper>
   );
 };

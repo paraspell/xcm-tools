@@ -1,5 +1,5 @@
 import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
-import { RouterEventType, type TTransferOptions } from '../types';
+import { type TTransferOptions } from '../types';
 import { prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 import { buildTransactions } from './buildTransactions';
@@ -46,9 +46,9 @@ export const transfer = async (initialOptions: TTransferOptions): Promise<void> 
     throw new Error('evmSigner is required when evmInjectorAddress is provided');
   }
 
-  if (onStatusChange && exchange === undefined) {
-    onStatusChange({
-      type: RouterEventType.SELECTING_EXCHANGE,
+  if (exchange === undefined) {
+    onStatusChange?.({
+      type: 'SELECTING_EXCHANGE',
     });
   }
 

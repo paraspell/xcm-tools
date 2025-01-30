@@ -19,7 +19,24 @@ describe.sequential('E2E tests', () => {
         .buildTransactions();
 
       expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(3);
+      expect(hashes.length).toBe(2);
+    });
+
+    it('should build a transfer extrinsic without error for DOT to ACA on AcalaDex - 1 signature', async () => {
+      const hashes = await RouterBuilder()
+        .from('Acala')
+        .exchange('AcalaDex')
+        .to('Astar')
+        .currencyFrom({ symbol: 'DOT' })
+        .currencyTo({ symbol: 'ACA' })
+        .amount('5000000000')
+        .injectorAddress(MOCK_ADDRESS)
+        .recipientAddress(MOCK_ADDRESS)
+        .slippagePct('0.01')
+        .buildTransactions();
+
+      expect(hashes).toBeDefined();
+      expect(hashes.length).toBe(1);
     });
 
     it('should build a transfer extrinsic without error for KSM to BNC on KaruraDex', async () => {
@@ -36,7 +53,7 @@ describe.sequential('E2E tests', () => {
         .buildTransactions();
 
       expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(3);
+      expect(hashes.length).toBe(2);
     });
   });
 
@@ -55,7 +72,7 @@ describe.sequential('E2E tests', () => {
         .buildTransactions();
 
       expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(3);
+      expect(hashes.length).toBe(2);
     });
 
     it('should build a transfer extrinsic without error on Bifrost Kusama', async () => {
@@ -72,7 +89,7 @@ describe.sequential('E2E tests', () => {
         .buildTransactions();
 
       expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(3);
+      expect(hashes.length).toBe(2);
     });
   });
 
@@ -91,26 +108,26 @@ describe.sequential('E2E tests', () => {
         .buildTransactions();
 
       expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(3);
+      expect(hashes.length).toBe(2);
     });
   });
 
   describe('InterlayDex', () => {
     it('should build a transfer extrinsic without error on Interlay', async () => {
-      const hashes = await RouterBuilder()
-        .from('Polkadot')
+      const transactions = await RouterBuilder()
+        .from('Zeitgeist')
         .exchange('InterlayDex')
-        .to('Acala')
-        .currencyFrom({ symbol: 'DOT' })
-        .currencyTo({ symbol: 'INTR' })
+        .to('Phala')
+        .currencyFrom({ symbol: 'INTR' })
+        .currencyTo({ symbol: 'IBTC' })
         .amount('5000000000')
         .injectorAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
         .buildTransactions();
 
-      expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(3);
+      expect(transactions).toBeDefined();
+      expect(transactions.length).toBe(2);
     });
 
     it('should build a transfer extrinsic without error on Kintsugi', async () => {
@@ -127,7 +144,7 @@ describe.sequential('E2E tests', () => {
         .buildTransactions();
 
       expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(3);
+      expect(hashes.length).toBe(2);
     });
   });
 });
