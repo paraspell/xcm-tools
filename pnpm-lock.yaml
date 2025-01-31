@@ -995,8 +995,8 @@ importers:
         specifier: ^0.1.2
         version: 0.1.2(@crypto-dex-sdk/currency@0.1.2)(@crypto-dex-sdk/format@0.1.2)(@crypto-dex-sdk/math@0.1.2)(@ethersproject/address@5.7.0)
       '@galacticcouncil/sdk':
-        specifier: 5.2.0
-        version: 5.2.0(@polkadot/api-augment@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-base@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.4.1)(@polkadot/types-codec@15.4.1)(@polkadot/types-create@15.4.1)(@polkadot/types-known@15.4.1)(@polkadot/types@15.4.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(@polkadot/util@13.3.1)
+        specifier: ^5.3.0
+        version: 5.3.0(@polkadot/api-augment@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-base@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.4.1)(@polkadot/types-codec@15.4.1)(@polkadot/types-create@15.4.1)(@polkadot/types-known@15.4.1)(@polkadot/types@15.4.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(@polkadot/util@13.3.1)
       '@paraspell/sdk-pjs':
         specifier: workspace:*
         version: link:../sdk-pjs
@@ -1061,6 +1061,9 @@ importers:
       '@codecov/rollup-plugin':
         specifier: ^1.8.0
         version: 1.8.0(rollup@4.32.0)
+      '@galacticcouncil/api-augment':
+        specifier: ^0.3.0
+        version: 0.3.0
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.0.4(@babel/core@7.26.7)(@types/babel__core@7.20.5)(rollup@4.32.0)
@@ -2610,6 +2613,9 @@ packages:
   '@frequency-chain/api-augment@1.11.1':
     resolution: {integrity: sha512-CzVjeGrWl8tbTavygZLUICrncjCC54hM5ioJU1Og2OPoX2P4GYf8xoks8MIyj1yOrYX++mzM6Uf0+nCh77QyFw==}
 
+  '@galacticcouncil/api-augment@0.3.0':
+    resolution: {integrity: sha512-f14ftbivheBK8kSnqd8hSQlMPuVLY9571S5yx0LPU6K6m78F3pDPl09OEuJ+dSKHOw8hWzmFxiv0wRMYvDkeKA==}
+
   '@galacticcouncil/math-lbp@1.0.0':
     resolution: {integrity: sha512-G5WsqJpQEkHcN8oFKxPOYqh7GSrt/6X6YQJWTNjxm9aKpXc/xQlTYXybML2J4wZ4VywEnqvX3CmpPfOg7wQkLg==}
 
@@ -2625,8 +2631,8 @@ packages:
   '@galacticcouncil/math-xyk@1.0.0':
     resolution: {integrity: sha512-n44M7jKes5Rxr4RQZ5W7kscTfoO4xwhW3VL/VyaEP1KEHMavlICpDNOlCwO/k6RTr+UXU8cHLJZdBzGFa2soJA==}
 
-  '@galacticcouncil/sdk@5.2.0':
-    resolution: {integrity: sha512-1NV9EoYtXGMwKJ2qukpcSpTaO94hSkr9CCGpIRFTGFZhIPWTI5r1dX+ZmMYW3JCJhVhiDIm79PgpPS7c19ao4A==}
+  '@galacticcouncil/sdk@5.3.0':
+    resolution: {integrity: sha512-Jd1qFrL0BB1pHUtOIL8RWhrmSkd9E7x14NpwUqV+4cOe8/M8DP11u9yToW6dLCMDDpX9yA4l8XtHGFnVu0knTA==}
     peerDependencies:
       '@polkadot/api': ^15.4.1
       '@polkadot/api-augment': ~14.0.1
@@ -13356,6 +13362,8 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  '@galacticcouncil/api-augment@0.3.0': {}
+
   '@galacticcouncil/math-lbp@1.0.0': {}
 
   '@galacticcouncil/math-liquidity-mining@1.0.0': {}
@@ -13366,7 +13374,7 @@ snapshots:
 
   '@galacticcouncil/math-xyk@1.0.0': {}
 
-  '@galacticcouncil/sdk@5.2.0(@polkadot/api-augment@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-base@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.4.1)(@polkadot/types-codec@15.4.1)(@polkadot/types-create@15.4.1)(@polkadot/types-known@15.4.1)(@polkadot/types@15.4.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(@polkadot/util@13.3.1)':
+  '@galacticcouncil/sdk@5.3.0(@polkadot/api-augment@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-base@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.4.1)(@polkadot/types-codec@15.4.1)(@polkadot/types-create@15.4.1)(@polkadot/types-known@15.4.1)(@polkadot/types@15.4.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(@polkadot/util@13.3.1)':
     dependencies:
       '@galacticcouncil/math-lbp': 1.0.0
       '@galacticcouncil/math-liquidity-mining': 1.0.0
