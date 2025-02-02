@@ -11,12 +11,10 @@ export const RouterDtoSchema = z.object({
   recipientAddress: z
     .string()
     .min(1, { message: 'Recipient address is required' }),
-  injectorAddress: z
+  senderAddress: z.string().min(1, { message: 'Sender address is required' }),
+  evmSenderAddress: z
     .string()
-    .min(1, { message: 'Injector address is required' }),
-  evmInjectorAddress: z
-    .string()
-    .min(1, 'Evm injector address is required')
+    .min(1, 'Evm sender address is required')
     .optional(),
   assetHubAddress: z
     .string()

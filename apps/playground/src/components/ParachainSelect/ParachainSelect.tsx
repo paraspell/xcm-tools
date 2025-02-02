@@ -37,7 +37,9 @@ export const ParachainSelect: FC<Props> = (props) => {
     <Select
       placeholder="Pick value"
       renderOption={renderSelectOption}
-      leftSection={<Image src={icon} width={16} height={16} radius="xl" />}
+      leftSection={
+        icon ? <Image src={icon} width={16} height={16} radius="xl" /> : null
+      }
       nothingFoundMessage="Nothing found..."
       allowDeselect={false}
       searchable

@@ -50,8 +50,6 @@ describe('HydrationExchangeNode', () => {
       const options = {
         assetFrom: { symbol: 'NON_EXISTENT' },
         assetTo: { symbol: 'XYZ' },
-        currencyFrom: {},
-        currencyTo: {},
         slippagePct: '1',
         amount: '100',
       } as TSwapOptions;
@@ -69,8 +67,6 @@ describe('HydrationExchangeNode', () => {
       const options = {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'NON_EXISTENT' },
-        currencyFrom: {},
-        currencyTo: {},
         slippagePct: '1',
         amount: '100',
       } as TSwapOptions;
@@ -89,8 +85,6 @@ describe('HydrationExchangeNode', () => {
       const options = {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
-        currencyFrom: {},
-        currencyTo: {},
         slippagePct: '1',
         amount: '100',
       } as TSwapOptions;
@@ -111,8 +105,6 @@ describe('HydrationExchangeNode', () => {
       const options = {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
-        currencyFrom: {},
-        currencyTo: {},
         slippagePct: '1',
         amount: '100',
       } as TSwapOptions;
@@ -154,8 +146,6 @@ describe('HydrationExchangeNode', () => {
       const options = {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
-        currencyFrom: {},
-        currencyTo: {},
         slippagePct: '1',
         amount: '10000',
       } as TSwapOptions;
@@ -199,8 +189,6 @@ describe('HydrationExchangeNode', () => {
       const options = {
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
-        currencyFrom: {},
-        currencyTo: {},
         slippagePct: '1',
         amount: '100',
       } as TSwapOptions;

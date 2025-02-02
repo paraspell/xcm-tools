@@ -1,4 +1,3 @@
-import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import { type TTransferOptions } from '../types';
 import { prepareTransformedOptions } from './utils';
 import { validateTransferOptions } from './utils/validateTransferOptions';
@@ -19,7 +18,7 @@ import { executeRouterPlan } from './executeRouterPlan';
  *   currencyTo: { symbol: 'ASTR' },
  *   amount: '1000000',
  *   slippagePct: '1',
- *   injectorAddress: 'your_injector_address',
+ *   senderAddress: 'your_injector_address',
  *   recipientAddress: 'recipient_address',
  *   signer: 'your_signer',
  *   onStatusChange: (status) => {
@@ -33,40 +32,47 @@ import { executeRouterPlan } from './executeRouterPlan';
  * @throws An error if required parameters are missing or invalid.
  */
 export const transfer = async (initialOptions: TTransferOptions): Promise<void> => {
-  const { from, exchange, signer, evmSigner, injectorAddress, evmInjectorAddress, onStatusChange } =
-    initialOptions;
+  const {
+    exchange: exchangeNode,
+    signer,
+    evmSigner,
+    senderAddress,
+    evmSenderAddress,
+    onStatusChange,
+  } = initialOptions;
 
   validateTransferOptions(initialOptions);
 
-  if (evmSigner !== undefined && evmInjectorAddress === undefined) {
-    throw new Error('evmInjectorAddress is required when evmSigner is provided');
+  if (evmSigner !== undefined && evmSenderAddress === undefined) {
+    throw new Error('evmSenderAddress is required when evmSigner is provided');
   }
 
-  if (evmInjectorAddress !== undefined && evmSigner === undefined) {
-    throw new Error('evmSigner is required when evmInjectorAddress is provided');
+  if (evmSenderAddress !== undefined && evmSigner === undefined) {
+    throw new Error('evmSigner is required when evmSenderAddress is provided');
   }
 
-  if (exchange === undefined) {
+  if (exchangeNode === undefined) {
     onStatusChange?.({
       type: 'SELECTING_EXCHANGE',
     });
   }
 
-  const { options, dex } = await prepareTransformedOptions(initialOptions);
+  const { dex, options } = await prepareTransformedOptions(initialOptions);
 
-  const originApi = await createApiInstanceForNode(from);
-  const swapApi = await dex.createApiInstance();
+  const { origin, exchange } = options;
 
-  const routerPlan = await buildTransactions(originApi, swapApi, options);
+  try {
+    const routerPlan = await buildTransactions(dex, options);
 
-  await executeRouterPlan(routerPlan, {
-    signer,
-    senderAddress: injectorAddress,
-    evmSigner,
-    evmSenderAddress: evmInjectorAddress,
-    onStatusChange,
-  });
-
-  await originApi.disconnect();
-  await swapApi.disconnect();
+    await executeRouterPlan(routerPlan, {
+      signer,
+      senderAddress,
+      evmSigner,
+      evmSenderAddress,
+      onStatusChange,
+    });
+  } finally {
+    if (origin) await origin.api.disconnect();
+    await exchange.api.disconnect();
+  }
 };

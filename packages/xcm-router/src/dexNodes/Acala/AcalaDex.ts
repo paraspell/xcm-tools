@@ -19,17 +19,13 @@ class AcalaExchangeNode extends ExchangeNode {
     toDestTransactionFee: BigNumber,
     toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
-    const { assetFrom, assetTo, currencyFrom, currencyTo, amount } = options;
+    const { assetFrom, assetTo, amount } = options;
 
     const wallet = new Wallet(api);
     await wallet.isReady;
 
-    const fromToken = wallet.getToken(
-      assetFrom?.symbol ?? ('symbol' in currencyFrom ? currencyFrom.symbol : ''),
-    );
-    const toToken = wallet.getToken(
-      assetTo?.symbol ?? ('symbol' in currencyTo ? currencyTo.symbol : ''),
-    );
+    const fromToken = wallet.getToken(assetFrom.symbol);
+    const toToken = wallet.getToken(assetTo.symbol);
 
     const acalaDex = new AcalaDex({ api, wallet });
 

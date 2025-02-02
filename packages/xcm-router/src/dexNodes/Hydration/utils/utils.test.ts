@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { bnum, type Asset, type TradeRouter } from '@galacticcouncil/sdk';
-import type { TCurrencyCoreV1, TNode } from '@paraspell/sdk-pjs';
+import type { TAsset, TCurrencyCoreV1, TNode } from '@paraspell/sdk-pjs';
 import { calculateSlippage, getAssetInfo, getMinAmountOut } from './utils';
 
 describe('getAssetInfo', () => {
@@ -31,7 +31,7 @@ describe('getAssetInfo', () => {
   it('should return asset by id if found', async () => {
     const spy = vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
-    const currency: TCurrencyCoreV1 = { id: '2' };
+    const currency: TAsset = { symbol: 'HDX', assetId: '2' };
     const asset = await getAssetInfo(mockTradeRouter, currency);
 
     expect(asset).toEqual(mockAssets[1]);
@@ -46,34 +46,6 @@ describe('getAssetInfo', () => {
 
     expect(asset).toBeUndefined();
     expect(spy).toHaveBeenCalledOnce();
-  });
-
-  it('should throw an error if duplicate assets are found by symbol', async () => {
-    const duplicateAssets = [
-      { id: '1', symbol: 'BTC' } as unknown as Asset,
-      { id: '4', symbol: 'BTC' } as unknown as Asset,
-    ];
-    vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(duplicateAssets);
-
-    const currency: TCurrencyCoreV1 = { symbol: 'BTC' };
-
-    await expect(getAssetInfo(mockTradeRouter, currency)).rejects.toThrow(
-      'Duplicate currency found in HydrationDex.',
-    );
-  });
-
-  it('should throw an error if duplicate assets are found by id', async () => {
-    const duplicateAssets = [
-      { id: '1', symbol: 'BTC' } as unknown as Asset,
-      { id: '1', symbol: 'ETH' } as unknown as Asset,
-    ];
-    vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(duplicateAssets);
-
-    const currency: TCurrencyCoreV1 = { id: '1' };
-
-    await expect(getAssetInfo(mockTradeRouter, currency)).rejects.toThrow(
-      'Duplicate currency found in HydrationDex.',
-    );
   });
 });
 

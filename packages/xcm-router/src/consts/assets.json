@@ -33,12 +33,12 @@
       "id": "1000081"
     },
     {
-      "symbol": "WUD",
-      "id": "1000085"
-    },
-    {
       "symbol": "vDOT",
       "id": "15"
+    },
+    {
+      "symbol": "WUD",
+      "id": "1000085"
     },
     {
       "symbol": "HDXb",
@@ -81,8 +81,16 @@
       "id": "16"
     },
     {
+      "symbol": "iBTC",
+      "id": "11"
+    },
+    {
       "symbol": "BNC",
       "id": "14"
+    },
+    {
+      "symbol": "WBTC",
+      "id": "19"
     },
     {
       "symbol": "RING",
@@ -117,6 +125,10 @@
       "id": "9"
     },
     {
+      "symbol": "SOL",
+      "id": "1000752"
+    },
+    {
       "symbol": "H2O",
       "id": "1"
     },
@@ -131,14 +143,6 @@
     {
       "symbol": "USDT",
       "id": "23"
-    },
-    {
-      "symbol": "iBTC",
-      "id": "11"
-    },
-    {
-      "symbol": "WBTC",
-      "id": "19"
     },
     {
       "symbol": "USDC",
@@ -668,10 +672,12 @@
       "symbol": "vKSM"
     },
     {
-      "symbol": "USDT"
+      "symbol": "USDT",
+      "id": "0"
     },
     {
-      "symbol": "KBTC"
+      "symbol": "KBTC",
+      "id": "2"
     },
     {
       "symbol": "vBNC"
@@ -688,25 +694,32 @@
       "symbol": "BNC"
     },
     {
-      "symbol": "vFIL"
+      "symbol": "vFIL",
+      "id": "4"
     },
     {
-      "symbol": "GLMR"
+      "symbol": "GLMR",
+      "id": "1"
     },
     {
-      "symbol": "vGLMR"
+      "symbol": "vGLMR",
+      "id": "1"
     },
     {
-      "symbol": "DOT"
+      "symbol": "DOT",
+      "id": "0"
     },
     {
-      "symbol": "vDOT"
+      "symbol": "vDOT",
+      "id": "0"
     },
     {
-      "symbol": "vsDOT"
+      "symbol": "vsDOT",
+      "id": "0"
     },
     {
-      "symbol": "FIL"
+      "symbol": "FIL",
+      "id": "4"
     }
   ]
 }

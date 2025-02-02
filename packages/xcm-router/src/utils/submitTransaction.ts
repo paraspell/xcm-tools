@@ -6,9 +6,9 @@ export const submitTransaction = async (
   api: ApiPromise,
   tx: Extrinsic,
   signer: Signer,
-  injectorAddress: string,
+  senderAddress: string,
 ): Promise<string> => {
-  await tx.signAsync(injectorAddress, { signer });
+  await tx.signAsync(senderAddress, { signer });
   return new Promise((resolve, reject) => {
     void tx.send(({ status, dispatchError, txHash }) => {
       if (status.isFinalized) {

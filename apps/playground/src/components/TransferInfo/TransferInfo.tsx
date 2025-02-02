@@ -181,7 +181,7 @@ const TransferInfo = () => {
         </Box>
         <TransferInfoForm onSubmit={onSubmit} loading={loading} />
       </Stack>
-      <Box ref={targetRef}>
+      <Center ref={targetRef}>
         {alertOpened && (
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
             {error?.message}
@@ -194,7 +194,7 @@ const TransferInfo = () => {
             onClose={onOutputAlertCloseClick}
           />
         )}
-      </Box>
+      </Center>
     </Stack>
   );
 };

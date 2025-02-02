@@ -2,38 +2,36 @@ import type {
   Extrinsic,
   TAsset as SdkTAsset,
   TNodePolkadotKusama,
-  TCurrencyCoreV1,
   TNodeDotKsmWithRelayChains,
   TPjsApi,
   TNodeWithRelayChains,
+  TCurrencyInput,
 } from '@paraspell/sdk-pjs';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts';
 
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 
-export interface TSwapOptions {
-  currencyFrom: TCurrencyCoreV1;
-  currencyTo: TCurrencyCoreV1;
-  assetFrom?: SdkTAsset;
-  assetTo?: SdkTAsset;
+export type TSwapOptions = {
+  assetFrom: SdkTAsset;
+  assetTo: SdkTAsset;
   amount: string;
   slippagePct: string;
-  injectorAddress: string;
+  senderAddress: string;
   feeCalcAddress: string;
-}
+};
 
-export interface TSwapResult {
+export type TSwapResult = {
   tx: Extrinsic;
   amountOut: string;
-}
+};
 
 export type TRouterEventType = TTransactionType | 'SELECTING_EXCHANGE' | 'COMPLETED';
 
 /**
  * The transaction progress information.
  */
-export interface TRouterEvent {
+export type TRouterEvent = {
   /**
    * Current execution phase type
    */
@@ -54,16 +52,18 @@ export interface TRouterEvent {
    * 0-based step index of current operation
    */
   currentStep?: number;
-}
+};
+
+export type TStatusChangeCallback = (info: TRouterEvent) => void;
 
 /**
  * The options for an XCM Router transfer.
  */
-export interface TTransferOptions {
+export type TTransferOptions = {
   /**
    * The origin node to transfer from.
    */
-  from: TNodeDotKsmWithRelayChains;
+  from?: TNodeDotKsmWithRelayChains;
   /**
    * The exchange node to use for the transfer.
    */
@@ -71,28 +71,28 @@ export interface TTransferOptions {
   /**
    * The destination node to transfer to.
    */
-  to: TNodeWithRelayChains;
+  to?: TNodeWithRelayChains;
   /**
    * The origin currency.
    */
-  currencyFrom: TCurrencyCoreV1;
+  currencyFrom: TCurrencyInput;
   /**
    * The destination currency that the origin currency will be exchanged to.
    */
-  currencyTo: TCurrencyCoreV1;
+  currencyTo: TCurrencyInput;
   /**
    * The amount to transfer.
    * @example '1000000000000000'
    */
   amount: string;
   /**
-   * The injector address.
+   * The sender address.
    */
-  injectorAddress: string;
+  senderAddress: string;
   /**
    * The EVM injector address. Used when dealing with EVM nodes.
    */
-  evmInjectorAddress?: string;
+  evmSenderAddress?: string;
   /**
    * The recipient address.
    */
@@ -113,22 +113,30 @@ export interface TTransferOptions {
   /**
    * The callback function to call when the transaction status changes.
    */
-  onStatusChange?: (info: TRouterEvent) => void;
-}
+  onStatusChange?: TStatusChangeCallback;
+};
 
 export type TBuildTransactionsOptions = Omit<
   TTransferOptions,
   'onStatusChange' | 'signer' | 'evmSigner'
 >;
 
-export type TBuildTransactionsOptionsModified = TBuildTransactionsOptions &
+export type TBuildTransactionsOptionsModified = Omit<TBuildTransactionsOptions, 'exchange'> &
   TAdditionalTransferOptions;
 
 export type TAdditionalTransferOptions = {
-  exchangeNode: TNodePolkadotKusama;
-  exchange: TExchangeNode;
-  assetFrom?: SdkTAsset;
-  assetTo?: SdkTAsset;
+  origin?: {
+    api: TPjsApi;
+    node: TNodeDotKsmWithRelayChains;
+    assetFrom: SdkTAsset;
+  };
+  exchange: {
+    api: TPjsApi;
+    baseNode: TNodePolkadotKusama;
+    exchangeNode: TExchangeNode;
+    assetFrom: TRouterAsset;
+    assetTo: TRouterAsset;
+  };
   feeCalcAddress: string;
 };
 
@@ -138,11 +146,11 @@ export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> &
 export type TCommonTransferOptions = Omit<TTransferOptions, 'signer'>;
 export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'signer'>;
 
-export type TAsset = {
+export type TRouterAsset = {
   symbol: string;
   id?: string;
 };
-export type TAssets = Array<TAsset>;
+export type TAssets = Array<TRouterAsset>;
 export type TAssetsRecord = Record<TExchangeNode, TAssets>;
 
 export type TAutoSelect = 'Auto select';
@@ -164,5 +172,5 @@ export type TExecuteRouterPlanOptions = {
   senderAddress: string;
   evmSigner?: Signer;
   evmSenderAddress?: string;
-  onStatusChange?: (info: TRouterEvent) => void;
+  onStatusChange?: TStatusChangeCallback;
 };

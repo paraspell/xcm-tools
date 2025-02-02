@@ -19,14 +19,13 @@ vi.mock('../utils/utils', () => ({
 }));
 
 describe('createSwapTx', () => {
-  const originApi = {} as ApiPromise;
   const swapApi = {} as ApiPromise;
   let exchangeNode: ExchangeNode;
   let options: TTransferOptionsModified;
   let dummyExtrinsic: Extrinsic;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
 
     exchangeNode = {
       swapCurrency: vi.fn(),
@@ -35,6 +34,13 @@ describe('createSwapTx', () => {
     options = {
       amount: '1000',
       feeCalcAddress: 'someFeeCalcAddress',
+      exchange: {
+        api: swapApi,
+      },
+      origin: {
+        node: 'Acala',
+      },
+      to: 'Astar',
     } as TTransferOptionsModified;
 
     dummyExtrinsic = { method: { toHex: () => '0x123' } } as unknown as Extrinsic;
@@ -51,13 +57,13 @@ describe('createSwapTx', () => {
   it('should build extrinsics, calculate fees, and call swapCurrency', async () => {
     const spy = vi.spyOn(exchangeNode, 'swapCurrency');
 
-    const result = await createSwapTx(originApi, swapApi, exchangeNode, options);
+    const result = await createSwapTx(exchangeNode, options);
 
     expect(buildFromExchangeExtrinsic).toHaveBeenCalledOnce();
-    expect(buildFromExchangeExtrinsic).toHaveBeenCalledWith(swapApi, options, '1000');
+    expect(buildFromExchangeExtrinsic).toHaveBeenCalledWith(options);
 
     expect(buildToExchangeExtrinsic).toHaveBeenCalledOnce();
-    expect(buildToExchangeExtrinsic).toHaveBeenCalledWith(originApi, options);
+    expect(buildToExchangeExtrinsic).toHaveBeenCalledWith(options);
 
     expect(calculateTransactionFee).toHaveBeenCalledTimes(2);
     expect(calculateTransactionFee).toHaveBeenNthCalledWith(
@@ -80,21 +86,9 @@ describe('createSwapTx', () => {
     });
   });
 
-  it('should propagate errors if buildFromExchangeExtrinsic fails', async () => {
-    vi.mocked(buildFromExchangeExtrinsic).mockRejectedValue(
-      new Error('buildFromExchangeExtrinsic failed'),
-    );
-
-    await expect(createSwapTx(originApi, swapApi, exchangeNode, options)).rejects.toThrowError(
-      'buildFromExchangeExtrinsic failed',
-    );
-  });
-
   it('should propagate errors if swapCurrency fails', async () => {
     vi.spyOn(exchangeNode, 'swapCurrency').mockRejectedValue(new Error('swapCurrency failed'));
 
-    await expect(createSwapTx(originApi, swapApi, exchangeNode, options)).rejects.toThrowError(
-      'swapCurrency failed',
-    );
+    await expect(createSwapTx(exchangeNode, options)).rejects.toThrowError('swapCurrency failed');
   });
 });

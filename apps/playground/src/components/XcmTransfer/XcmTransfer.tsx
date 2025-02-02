@@ -138,11 +138,11 @@ const XcmTransfer = () => {
       }
     } else if (currency) {
       if (isForeignAsset(currency) && ethers.isAddress(currency.assetId)) {
-        return { symbol: currency.symbol ?? '' };
+        return { symbol: currency.symbol };
       }
 
       if (!isForeignAsset(currency)) {
-        return { symbol: currency.symbol ?? '' };
+        return { symbol: currency.symbol };
       }
 
       const hasDuplicateIds = isRelayChain(from)
@@ -151,7 +151,7 @@ const XcmTransfer = () => {
             (asset) => asset.assetId === currency.assetId,
           ).length > 1;
       return hasDuplicateIds
-        ? { symbol: currency.symbol ?? '' }
+        ? { symbol: currency.symbol }
         : {
             id: currency.assetId ?? '',
           };

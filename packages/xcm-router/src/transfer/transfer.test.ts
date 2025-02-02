@@ -1,6 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { transfer } from './transfer';
-import type { TRouterEvent, TRouterPlan, TTransferOptions } from '../types';
+import type {
+  TAdditionalTransferOptions,
+  TBuildTransactionsOptions,
+  TRouterEvent,
+  TRouterPlan,
+  TTransferOptions,
+} from '../types';
+import type { TPjsApi } from '@paraspell/sdk-pjs';
+import { validateTransferOptions } from './utils/validateTransferOptions';
+import { prepareTransformedOptions } from './utils';
+import { buildTransactions } from './buildTransactions';
+import { executeRouterPlan } from './executeRouterPlan';
+import type ExchangeNode from '../dexNodes/DexNode';
 
 vi.mock('@paraspell/sdk-pjs', () => {
   return {
@@ -32,31 +44,33 @@ vi.mock('./executeRouterPlan', () => {
   };
 });
 
-import type { TPjsApi } from '@paraspell/sdk-pjs';
-import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
-import { validateTransferOptions } from './utils/validateTransferOptions';
-import { prepareTransformedOptions } from './utils';
-import { buildTransactions } from './buildTransactions';
-import { executeRouterPlan } from './executeRouterPlan';
-import type ExchangeNode from '../dexNodes/DexNode';
-
 describe('transfer', () => {
   const mockOriginApi = {
     disconnect: vi.fn(),
-  };
+  } as unknown as TPjsApi;
 
   const mockSwapApi = {
     disconnect: vi.fn(),
-  };
+  } as unknown as TPjsApi;
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     vi.mocked(validateTransferOptions).mockImplementation(() => {});
-    vi.mocked(createApiInstanceForNode).mockResolvedValue(mockOriginApi as unknown as TPjsApi);
     vi.mocked(prepareTransformedOptions).mockResolvedValue({
-      options: {} as Awaited<ReturnType<typeof prepareTransformedOptions>>['options'],
+      options: {
+        slippagePct: '1',
+        origin: {
+          node: 'Acala',
+          api: mockOriginApi,
+          assetFrom: { symbol: 'ACA' },
+        },
+        exchange: {
+          api: mockSwapApi,
+        },
+      } as unknown as TBuildTransactionsOptions & TAdditionalTransferOptions,
       dex: {
+        node: 'Acala',
         createApiInstance: vi.fn().mockResolvedValue(mockSwapApi),
       } as unknown as ExchangeNode,
     });
@@ -76,7 +90,7 @@ describe('transfer', () => {
     expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
   });
 
-  it('should throw an error if evmSigner is provided without evmInjectorAddress', async () => {
+  it('should throw an error if evmSigner is provided without evmSenderAddress', async () => {
     const options = {
       evmSigner: {},
       from: 'Polkadot',
@@ -84,19 +98,19 @@ describe('transfer', () => {
     } as TTransferOptions;
 
     await expect(transfer(options)).rejects.toThrow(
-      'evmInjectorAddress is required when evmSigner is provided',
+      'evmSenderAddress is required when evmSigner is provided',
     );
   });
 
-  it('should throw an error if evmInjectorAddress is provided without evmSigner', async () => {
+  it('should throw an error if evmSenderAddress is provided without evmSigner', async () => {
     const options = {
-      evmInjectorAddress: '0x123',
+      evmSenderAddress: '0x123',
       from: 'Polkadot',
       to: 'Astar',
     } as TTransferOptions;
 
     await expect(transfer(options)).rejects.toThrow(
-      'evmSigner is required when evmInjectorAddress is provided',
+      'evmSigner is required when evmSenderAddress is provided',
     );
   });
 
@@ -152,10 +166,12 @@ describe('transfer', () => {
       to: 'Kusama',
     } as TTransferOptions;
 
+    const originDisconnectSpy = vi.spyOn(mockOriginApi, 'disconnect');
+    const swapDisconnectSpy = vi.spyOn(mockSwapApi, 'disconnect');
+
     await transfer(options);
 
-    expect(createApiInstanceForNode).toHaveBeenCalledWith('Polkadot');
-    expect(mockOriginApi.disconnect).toHaveBeenCalledTimes(1);
-    expect(mockSwapApi.disconnect).toHaveBeenCalledTimes(1);
+    expect(originDisconnectSpy).toHaveBeenCalledTimes(1);
+    expect(swapDisconnectSpy).toHaveBeenCalledTimes(1);
   });
 });

@@ -29,11 +29,11 @@ export const throwDuplicateAssetError = (
   }
 }
 
-export const findBestMatches = (
-  assets: TAsset[],
+export const findBestMatches = <T extends { symbol: string; alias?: string }>(
+  assets: T[],
   value: string,
   property: 'symbol' | 'alias' = 'symbol'
-): TAsset[] => {
+): T[] => {
   // First, exact match
   let matches = assets.filter(asset => asset[property] === value)
   if (matches.length > 0) {
@@ -119,7 +119,7 @@ export const findAssetBySymbol = (
         }
 
         // If not found, search normal assets with '.e' suffix
-        otherAssetsMatches = findBestMatches(otherAssets, value) as TForeignAsset[]
+        otherAssetsMatches = findBestMatches(otherAssets, value)
 
         if (otherAssetsMatches.length > 1) {
           throwDuplicateAssetError(value, [], otherAssetsMatches)
@@ -128,7 +128,7 @@ export const findAssetBySymbol = (
         }
 
         // If still not found, search normal assets without suffix
-        otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol) as TForeignAsset[]
+        otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
 
         if (otherAssetsMatches.length > 1) {
           throwDuplicateAssetError(value, [], otherAssetsMatches)
@@ -140,19 +140,19 @@ export const findAssetBySymbol = (
         return undefined
       } else {
         // Symbol does not end with '.e', proceed with existing logic
-        otherAssetsMatches = findBestMatches(otherAssets, value) as TForeignAsset[]
+        otherAssetsMatches = findBestMatches(otherAssets, value)
 
         if (otherAssetsMatches.length === 0) {
           if (lowerSymbol.startsWith('xc')) {
             // Symbol starts with 'xc', try stripping 'xc' prefix
             const strippedSymbol = value.substring(2)
 
-            otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol) as TForeignAsset[]
+            otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
           } else {
             // Try adding 'xc' prefix
             const prefixedSymbol = `xc${value}`
 
-            otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol) as TForeignAsset[]
+            otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol)
           }
         }
 
@@ -209,16 +209,16 @@ export const findAssetBySymbol = (
       }
 
       // If not found, search normal assets with '.e' suffix
-      otherAssetsMatches = findBestMatches(otherAssets, symbol) as TForeignAsset[]
-      nativeAssetsMatches = findBestMatches(nativeAssets, symbol) as TNativeAsset[]
+      otherAssetsMatches = findBestMatches(otherAssets, symbol)
+      nativeAssetsMatches = findBestMatches(nativeAssets, symbol)
 
       if (nativeAssetsMatches.length > 0 || otherAssetsMatches.length > 0) {
         return otherAssetsMatches[0] || nativeAssetsMatches[0]
       }
 
       // If still not found, search normal assets without suffix
-      otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol) as TForeignAsset[]
-      nativeAssetsMatches = findBestMatches(nativeAssets, strippedSymbol) as TNativeAsset[]
+      otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
+      nativeAssetsMatches = findBestMatches(nativeAssets, strippedSymbol)
 
       if (nativeAssetsMatches.length > 0 || otherAssetsMatches.length > 0) {
         return otherAssetsMatches[0] || nativeAssetsMatches[0]
@@ -228,16 +228,16 @@ export const findAssetBySymbol = (
       return undefined
     } else {
       // Symbol does not end with '.e'
-      otherAssetsMatches = findBestMatches(otherAssets, symbol) as TForeignAsset[]
-      nativeAssetsMatches = findBestMatches(nativeAssets, symbol) as TNativeAsset[]
+      otherAssetsMatches = findBestMatches(otherAssets, symbol)
+      nativeAssetsMatches = findBestMatches(nativeAssets, symbol)
 
       if (otherAssetsMatches.length === 0 && nativeAssetsMatches.length === 0) {
         if (lowerSymbol.startsWith('xc')) {
           // Symbol starts with 'xc', try stripping 'xc' prefix
           const strippedSymbol = symbol.substring(2)
 
-          otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol) as TForeignAsset[]
-          nativeAssetsMatches = findBestMatches(nativeAssets, strippedSymbol) as TNativeAsset[]
+          otherAssetsMatches = findBestMatches(otherAssets, strippedSymbol)
+          nativeAssetsMatches = findBestMatches(nativeAssets, strippedSymbol)
 
           const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
 
@@ -248,8 +248,8 @@ export const findAssetBySymbol = (
           // Try adding 'xc' prefix
           const prefixedSymbol = `xc${symbol}`
 
-          otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol) as TForeignAsset[]
-          nativeAssetsMatches = findBestMatches(nativeAssets, prefixedSymbol) as TNativeAsset[]
+          otherAssetsMatches = findBestMatches(otherAssets, prefixedSymbol)
+          nativeAssetsMatches = findBestMatches(nativeAssets, prefixedSymbol)
 
           const totalMatches = otherAssetsMatches.length + nativeAssetsMatches.length
 

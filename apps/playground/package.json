@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "compile": "tsc",
     "preview": "vite preview",
     "lint:check": "eslint .",
     "lint": "eslint --fix .",
@@ -44,7 +45,6 @@
     "react-confetti": "^6.2.2",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.3",
-    "react-use": "^17.6.0",
     "viem": "^2.22.13",
     "web3": "^4.16.0",
     "web3-validator": "^2.0.6"
