@@ -1,72 +1,82 @@
-import { findAssetFrom, findAssetTo } from '../../assets/assets';
-import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
 import {
-  TransactionStatus,
-  TransactionType,
-  type TBuildTransferExtrinsicsOptions,
-  type TTransferOptions,
-} from '../../types';
-import { maybeUpdateTransferStatus } from '../../utils/utils';
+  createApiInstanceForNode,
+  getAssetBySymbolOrId,
+  hasSupportForAsset,
+} from '@paraspell/sdk-pjs';
+import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets/assets';
+import type ExchangeNode from '../../dexNodes/DexNode';
+import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
+import type { TAdditionalTransferOptions } from '../../types';
+import { type TBuildTransactionsOptions, type TTransferOptions } from '../../types';
 import { selectBestExchange } from '../selectBestExchange';
 import { determineFeeCalcAddress } from './utils';
 
 export const prepareTransformedOptions = async <
-  T extends TTransferOptions | TBuildTransferExtrinsicsOptions,
+  T extends TTransferOptions | TBuildTransactionsOptions,
 >(
   options: T,
-) => {
-  const { exchange } = options;
-
-  if ('onStatusChange' in options) {
-    maybeUpdateTransferStatus(options.onStatusChange, {
-      type: TransactionType.TO_EXCHANGE,
-      status: TransactionStatus.IN_PROGRESS,
-      isAutoSelectingExchange: exchange === undefined,
-    });
-  }
+): Promise<{ dex: ExchangeNode; options: T & TAdditionalTransferOptions }> => {
+  const { from, to, currencyFrom, currencyTo, exchange } = options;
 
   const dex =
     exchange !== undefined ? createDexNodeInstance(exchange) : await selectBestExchange(options);
 
-  if ('onStatusChange' in options) {
-    maybeUpdateTransferStatus(options.onStatusChange, {
-      type: TransactionType.TO_EXCHANGE,
-      status: TransactionStatus.IN_PROGRESS,
-      isAutoSelectingExchange: false,
-    });
-  }
+  const originSpecified = from && from !== dex.node;
+  const destinationSpecified = to && to !== dex.node;
 
-  const assetFrom = findAssetFrom(options.from, dex.exchangeNode, options.currencyFrom);
+  const assetFromOrigin = originSpecified
+    ? getAssetBySymbolOrId(from, currencyFrom, dex.node)
+    : undefined;
 
-  if (!assetFrom && 'id' in options.currencyFrom) {
+  if (originSpecified && !assetFromOrigin) {
     throw new Error(
       `Currency from ${JSON.stringify(options.currencyFrom)} not found in ${options.from}.`,
     );
   }
 
-  const assetTo = findAssetTo(
-    dex.exchangeNode,
-    options.from,
-    options.to,
-    options.currencyTo,
-    exchange === undefined,
-  );
+  const assetFromExchange =
+    originSpecified && assetFromOrigin
+      ? getExchangeAssetByOriginAsset(dex.node, dex.exchangeNode, assetFromOrigin)
+      : getExchangeAsset(dex.node, dex.exchangeNode, currencyFrom);
 
-  if (!assetTo && 'id' in options.currencyTo) {
+  if (!assetFromExchange) {
     throw new Error(
-      `Currency to ${JSON.stringify(options.currencyTo)} not found in ${options.from}.`,
+      `Currency from ${JSON.stringify(options.currencyFrom)} not found in ${dex.exchangeNode}.`,
     );
+  }
+
+  const assetTo = getExchangeAsset(dex.node, dex.exchangeNode, currencyTo);
+
+  if (!assetTo) {
+    throw new Error(
+      `Currency to ${JSON.stringify(options.currencyTo)} not found in ${dex.exchangeNode}.`,
+    );
+  }
+
+  if (destinationSpecified && !hasSupportForAsset(to, assetTo.symbol)) {
+    throw new Error(`Currency to ${JSON.stringify(options.currencyTo)} not supported by ${to}.`);
   }
 
   return {
     dex,
     options: {
       ...options,
-      exchangeNode: dex.node,
-      exchange: dex.exchangeNode,
-      assetFrom,
-      assetTo,
-      feeCalcAddress: determineFeeCalcAddress(options.injectorAddress, options.recipientAddress),
+      origin:
+        originSpecified && assetFromOrigin
+          ? {
+              api: await createApiInstanceForNode(from),
+              node: from,
+              assetFrom: assetFromOrigin,
+            }
+          : undefined,
+      exchange: {
+        api: await dex.createApiInstance(),
+        baseNode: dex.node,
+        exchangeNode: dex.exchangeNode,
+        assetFrom: assetFromExchange,
+        assetTo,
+      },
+      feeCalcAddress: determineFeeCalcAddress(options.senderAddress, options.recipientAddress),
     },
   };
 };

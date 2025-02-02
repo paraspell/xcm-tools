@@ -1,110 +1,98 @@
 import type {
-  TNodeWithRelayChains,
   Extrinsic,
-  TSerializedEthTransfer,
   TAsset as SdkTAsset,
   TNodePolkadotKusama,
-  TCurrencyCoreV1,
+  TNodeDotKsmWithRelayChains,
+  TPjsApi,
+  TNodeWithRelayChains,
+  TCurrencyInput,
 } from '@paraspell/sdk-pjs';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts';
-import type { Signer as EthSigner } from 'ethers';
 
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 
-export interface TSwapOptions {
-  currencyFrom: TCurrencyCoreV1;
-  currencyTo: TCurrencyCoreV1;
-  assetFrom?: SdkTAsset;
-  assetTo?: SdkTAsset;
+export type TSwapOptions = {
+  assetFrom: SdkTAsset;
+  assetTo: SdkTAsset;
   amount: string;
   slippagePct: string;
-  injectorAddress: string;
+  senderAddress: string;
   feeCalcAddress: string;
-}
+};
 
-export interface TSwapResult {
+export type TSwapResult = {
   tx: Extrinsic;
   amountOut: string;
-}
+};
 
-export enum TransactionType {
-  TO_EXCHANGE = 'TO_EXCHANGE',
-  SWAP = 'SWAP',
-  TO_DESTINATION = 'TO_DESTINATION',
-  FULL_TRANSFER = 'FULL_TRANSFER',
-  FROM_ETH = 'FROM_ETH',
-  TO_ETH = 'TO_ETH',
-}
+export type TRouterEventType = TTransactionType | 'SELECTING_EXCHANGE' | 'COMPLETED';
 
 /**
  * The transaction progress information.
  */
-export interface TTxProgressInfo {
+export type TRouterEvent = {
   /**
-   * When true the exchange will be selected automatically.
+   * Current execution phase type
    */
-  isAutoSelectingExchange?: boolean;
+  type: TRouterEventType;
   /**
-   * The currently executed transaction type.
+   * Full transaction plan for visualization
    */
-  type: TransactionType;
+  routerPlan?: TRouterPlan;
   /**
-   * The transaction hashes grouped by transaction type.
+   * Current transaction's origin node
    */
-  hashes?: {
-    [TransactionType.TO_EXCHANGE]?: string;
-    [TransactionType.SWAP]?: string;
-    [TransactionType.TO_DESTINATION]?: string;
-  };
+  node?: TNodeDotKsmWithRelayChains;
   /**
-   * The current transaction status. Either 'IN_PROGRESS' or 'SUCCESS'.
+   * Current transaction's destination node
    */
-  status: TransactionStatus;
-}
+  destinationNode?: TNodeWithRelayChains;
+  /**
+   * 0-based step index of current operation
+   */
+  currentStep?: number;
+};
 
-export enum TransactionStatus {
-  IN_PROGRESS = 'IN_PROGRESS',
-  SUCCESS = 'SUCCESS',
-}
+export type TStatusChangeCallback = (info: TRouterEvent) => void;
 
 /**
  * The options for an XCM Router transfer.
  */
-export interface TTransferOptions {
+export type TTransferOptions = {
   /**
    * The origin node to transfer from.
    */
-  from: TNodeWithRelayChains;
+  from?: TNodeDotKsmWithRelayChains;
+  /**
+   * The exchange node to use for the transfer.
+   */
+  exchange?: TExchangeNode;
   /**
    * The destination node to transfer to.
    */
-  to: TNodeWithRelayChains;
+  to?: TNodeWithRelayChains;
   /**
    * The origin currency.
    */
-  currencyFrom: TCurrencyCoreV1;
+  currencyFrom: TCurrencyInput;
   /**
    * The destination currency that the origin currency will be exchanged to.
    */
-  currencyTo: TCurrencyCoreV1;
+  currencyTo: TCurrencyInput;
   /**
    * The amount to transfer.
    * @example '1000000000000000'
    */
   amount: string;
   /**
-   * The injector address.
+   * The sender address.
    */
-  injectorAddress: string;
+  senderAddress: string;
   /**
    * The EVM injector address. Used when dealing with EVM nodes.
    */
-  evmInjectorAddress?: string;
-  /**
-   * The AssetHub address. Used for transfers to and from Ethereum.
-   */
-  assetHubAddress?: string;
+  evmSenderAddress?: string;
   /**
    * The recipient address.
    */
@@ -121,38 +109,39 @@ export interface TTransferOptions {
    * The Polkadot EVM signer instance.
    */
   evmSigner?: Signer;
-  /**
-   * The Ethereum signer instance.
-   */
-  ethSigner?: EthSigner;
-  /**
-   * The exchange node to use for the transfer.
-   */
-  exchange?: TExchangeNode;
+
   /**
    * The callback function to call when the transaction status changes.
    */
-  onStatusChange?: (info: TTxProgressInfo) => void;
-  /**
-   * Execute only the specific part of the transfer. Used for debugging and testing purposes.
-   */
-  type?: TransactionType;
-}
-
-export type TBuildTransferExtrinsicsOptions = Omit<
-  TTransferOptions,
-  'onStatusChange' | 'signer' | 'evmSigner' | 'ethSigner'
-> & {
-  ethAddress?: string;
+  onStatusChange?: TStatusChangeCallback;
 };
 
-export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> & {
-  exchangeNode: TNodePolkadotKusama;
-  exchange: TExchangeNode;
-  assetFrom?: SdkTAsset;
-  assetTo?: SdkTAsset;
+export type TBuildTransactionsOptions = Omit<
+  TTransferOptions,
+  'onStatusChange' | 'signer' | 'evmSigner'
+>;
+
+export type TBuildTransactionsOptionsModified = Omit<TBuildTransactionsOptions, 'exchange'> &
+  TAdditionalTransferOptions;
+
+export type TAdditionalTransferOptions = {
+  origin?: {
+    api: TPjsApi;
+    node: TNodeDotKsmWithRelayChains;
+    assetFrom: SdkTAsset;
+  };
+  exchange: {
+    api: TPjsApi;
+    baseNode: TNodePolkadotKusama;
+    exchangeNode: TExchangeNode;
+    assetFrom: SdkTAsset;
+    assetTo: SdkTAsset;
+  };
   feeCalcAddress: string;
 };
+
+export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> &
+  TAdditionalTransferOptions;
 
 export type TCommonTransferOptions = Omit<TTransferOptions, 'signer'>;
 export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'signer'>;
@@ -164,22 +153,24 @@ export type TAsset = {
 export type TAssets = Array<TAsset>;
 export type TAssetsRecord = Record<TExchangeNode, TAssets>;
 
-export type TBasicInfo = {
-  node: TNodeWithRelayChains;
-  statusType: TransactionType;
-  wsProvider?: string;
-};
-
-export type TExtrinsicInfo = TBasicInfo & {
-  tx: Extrinsic;
-  type: 'EXTRINSIC';
-};
-
-export type TEthOptionsInfo = TBasicInfo & {
-  tx: TSerializedEthTransfer | undefined;
-  type: 'ETH_TRANSFER';
-};
-
-export type TBuildTransferExtrinsicsResult = Array<TExtrinsicInfo | TEthOptionsInfo>;
-
 export type TAutoSelect = 'Auto select';
+
+export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';
+
+export type TTransaction = {
+  api: TPjsApi;
+  node: TNodeDotKsmWithRelayChains;
+  destinationNode?: TNodeWithRelayChains;
+  type: TTransactionType;
+  tx: Extrinsic;
+};
+
+export type TRouterPlan = TTransaction[];
+
+export type TExecuteRouterPlanOptions = {
+  signer: Signer;
+  senderAddress: string;
+  evmSigner?: Signer;
+  evmSenderAddress?: string;
+  onStatusChange?: TStatusChangeCallback;
+};

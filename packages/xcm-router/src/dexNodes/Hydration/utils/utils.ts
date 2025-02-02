@@ -1,6 +1,6 @@
 import type { BigNumber } from '@galacticcouncil/sdk';
 import { type TradeRouter, bnum, type Asset } from '@galacticcouncil/sdk';
-import type { TCurrencyCoreV1 } from '@paraspell/sdk-pjs';
+import { isForeignAsset, type TAsset } from '@paraspell/sdk-pjs';
 
 export const PCT_100 = bnum('100');
 
@@ -25,19 +25,10 @@ export const getMinAmountOut = (
 
 export const getAssetInfo = async (
   tradeRouter: TradeRouter,
-  currency: TCurrencyCoreV1,
+  asset: TAsset,
 ): Promise<Asset | undefined> => {
   const assets = await tradeRouter.getAllAssets();
-
-  if (
-    assets.filter((asset) =>
-      'symbol' in currency ? asset.symbol === currency.symbol : asset.id === currency.id,
-    ).length > 1
-  ) {
-    throw new Error('Duplicate currency found in HydrationDex.');
-  }
-
-  return 'symbol' in currency
-    ? assets.find((asset) => asset.symbol === currency.symbol)
-    : assets.find((asset) => asset.id === currency.id);
+  return isForeignAsset(asset)
+    ? assets.find((a) => a.id === asset.assetId)
+    : assets.find((a) => a.symbol === asset.symbol);
 };

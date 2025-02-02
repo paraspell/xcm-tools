@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "compile": "tsc",
     "preview": "vite preview",
     "lint:check": "eslint .",
     "lint": "eslint --fix .",

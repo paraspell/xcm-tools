@@ -1,70 +1,71 @@
 import { Stepper, Title } from '@mantine/core';
-import type { TTxProgressInfo } from '@paraspell/xcm-router';
-import { TransactionStatus, TransactionType } from '@paraspell/xcm-router';
-import type { FC } from 'react';
-
-const getActiveStep = (progressInfo?: TTxProgressInfo) => {
-  if (!progressInfo) {
-    return 0;
-  }
-
-  if (
-    progressInfo.type === TransactionType.TO_DESTINATION &&
-    progressInfo.status === TransactionStatus.SUCCESS
-  ) {
-    return 3;
-  }
-
-  switch (progressInfo.type) {
-    case TransactionType.TO_EXCHANGE:
-      return 0;
-    case TransactionType.SWAP:
-      return 1;
-    case TransactionType.TO_DESTINATION:
-      return 2;
-    default:
-      return 0;
-  }
-};
+import type { TRouterEvent, TTransactionType } from '@paraspell/xcm-router';
+import { useEffect, useState } from 'react';
 
 type Props = {
-  progressInfo?: TTxProgressInfo;
+  progressInfo?: TRouterEvent;
 };
 
-export const TransferStepper: FC<Props> = ({ progressInfo }) => {
-  const active = getActiveStep(progressInfo);
+const getStepInfo = (type: TTransactionType) => {
+  switch (type) {
+    case 'TRANSFER':
+      return ['Transfer to exchange', ''];
+    case 'SWAP':
+      return ['Swap tokens', ''];
+    case 'SWAP_AND_TRANSFER':
+      return ['Swap tokens & Transfer to destination', ''];
+    default:
+      return ['Unknown', 'Unknown'];
+  }
+};
+
+export const TransferStepper = ({ progressInfo }: Props) => {
+  const [steps, setSteps] = useState<
+    { label: string; description: string; type: TTransactionType }[]
+  >([]);
+
+  useEffect(() => {
+    if (!progressInfo?.routerPlan) return;
+
+    const transactionTypes = progressInfo?.routerPlan.map((t) => t.type);
+    const uniqueTypes = Array.from(new Set(transactionTypes));
+
+    const newSteps = uniqueTypes.map((type) => {
+      const [label, description] = getStepInfo(type);
+      return {
+        type,
+        label,
+        description,
+      };
+    });
+
+    setSteps(newSteps);
+  }, [progressInfo?.routerPlan]);
+
+  const currentStep = progressInfo?.currentStep ?? 0;
+  const totalSteps = steps.length;
 
   return (
-    <Stepper active={active}>
-      <Stepper.Step
-        label="Transfer to exchange chain"
-        description=""
-        loading={
-          progressInfo?.type === TransactionType.TO_EXCHANGE &&
-          progressInfo.status === TransactionStatus.IN_PROGRESS
-        }
-      ></Stepper.Step>
-      <Stepper.Step
-        label="Swap"
-        description=""
-        loading={
-          progressInfo?.type === TransactionType.SWAP &&
-          progressInfo.status === TransactionStatus.IN_PROGRESS
-        }
-      ></Stepper.Step>
-      <Stepper.Step
-        label="Transfer to destination chain"
-        description=""
-        loading={
-          progressInfo?.type === TransactionType.TO_DESTINATION &&
-          progressInfo.status === TransactionStatus.IN_PROGRESS
-        }
-      ></Stepper.Step>
-      <Stepper.Completed>
-        <Title order={4} style={{ textAlign: 'center' }} mt="md">
-          Your transaction was successful!
-        </Title>
-      </Stepper.Completed>
+    <Stepper
+      maw={700}
+      w={totalSteps > 1 ? '100%' : 'auto'}
+      active={progressInfo?.type === 'COMPLETED' ? totalSteps : currentStep}
+    >
+      {steps.map((step, index) => (
+        <Stepper.Step
+          key={index}
+          label={step.label}
+          loading={index === currentStep}
+        />
+      ))}
+
+      {progressInfo?.type === 'COMPLETED' && (
+        <Stepper.Completed>
+          <Title order={4} ta="center" mt="md">
+            Your transaction was successful!
+          </Title>
+        </Stepper.Completed>
+      )}
     </Stepper>
   );
 };

@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { CurrencyCoreSchemaV1 } from '../../x-transfer/dto/XTransferDto.js';
-import { TransactionType } from '@paraspell/xcm-router';
 import { validateAmount } from '../../utils/validateAmount.js';
 
 export const RouterDtoSchema = z.object({
@@ -12,12 +11,10 @@ export const RouterDtoSchema = z.object({
   recipientAddress: z
     .string()
     .min(1, { message: 'Recipient address is required' }),
-  injectorAddress: z
+  senderAddress: z.string().min(1, { message: 'Sender address is required' }),
+  evmSenderAddress: z
     .string()
-    .min(1, { message: 'Injector address is required' }),
-  evmInjectorAddress: z
-    .string()
-    .min(1, 'Evm injector address is required')
+    .min(1, 'Evm sender address is required')
     .optional(),
   assetHubAddress: z
     .string()
@@ -30,7 +27,6 @@ export const RouterDtoSchema = z.object({
     z.number().positive({ message: 'Amount must be a positive number' }),
   ]),
   slippagePct: z.string().optional(),
-  type: z.nativeEnum(TransactionType).optional(),
 });
 
 export type RouterDto = z.infer<typeof RouterDtoSchema>;

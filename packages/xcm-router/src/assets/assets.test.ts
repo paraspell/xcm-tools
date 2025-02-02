@@ -56,13 +56,12 @@ describe('findAssetFrom', () => {
 
 describe('findAssetTo', () => {
   it('should return correct asset when found', () => {
-    const fromNode: TNodeWithRelayChains = 'Acala';
     const exchange: TExchangeNode = 'HydrationDex';
     const toNode: TNodeWithRelayChains = 'Hydration';
     const currency = { symbol: 'USDT' } as TCurrencyCoreV1;
     vi.mocked(getAssets).mockReturnValue([{ symbol: 'USDT', assetId: '10' }] as TAsset[]);
 
-    const result = findAssetTo(exchange, fromNode, toNode, currency);
+    const result = findAssetTo(exchange, toNode, currency);
     expect(result).toEqual({ symbol: 'USDT', assetId: '10' });
   });
 });

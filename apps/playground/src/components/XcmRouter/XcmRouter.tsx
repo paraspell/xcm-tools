@@ -12,16 +12,11 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import type {
-  TTxProgressInfo,
   TExchangeNode,
-  TExtrinsicInfo,
-  TEthOptionsInfo,
+  TRouterEvent,
+  TTransaction,
 } from '@paraspell/xcm-router';
-import {
-  TransactionType,
-  TransactionStatus,
-  RouterBuilder,
-} from '@paraspell/xcm-router';
+import { RouterBuilder } from '@paraspell/xcm-router';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
@@ -35,22 +30,16 @@ import { submitTransaction } from '../../utils';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { useWallet } from '../../hooks/useWallet';
 import { API_URL } from '../../consts';
-import type { BrowserProvider, LogDescription } from 'ethers';
-import { ethers } from 'ethers';
-import { IGateway__factory } from '@snowbridge/contract-types';
-import type { MultiAddressStruct } from '@snowbridge/contract-types/dist/IGateway';
-import { u8aToHex } from '@polkadot/util';
-import { decodeAddress } from '@polkadot/keyring';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { isForeignAsset } from '@paraspell/sdk';
-import { Web3 } from 'web3';
-import type { EIP6963ProviderDetail } from '../../types';
 import {
   showErrorNotification,
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
 import { VersionBadge } from '../common/VersionBadge';
+import type { TAsset, TMultiLocation } from '@paraspell/sdk-pjs';
+import { isForeignAsset, type TCurrencyInput } from '@paraspell/sdk-pjs';
+import { ethers } from 'ethers';
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
@@ -64,19 +53,11 @@ export const XcmRouter = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [progressInfo, setProgressInfo] = useState<TTxProgressInfo>();
+  const [progressInfo, setProgressInfo] = useState<TRouterEvent>();
 
   const [showStepper, setShowStepper] = useState(false);
 
   const [runConfetti, setRunConfetti] = useState(false);
-
-  const [providers, setProviders] = useState<EIP6963ProviderDetail[]>([]);
-  const [isEthWalletModalOpen, setIsEthWalletModalOpen] = useState(false);
-  const [provider, setProvider] = useState<BrowserProvider>();
-  const [_selectedProvider, setSelectedProvider] =
-    useState<EIP6963ProviderDetail | null>(null);
-  const [ethAccounts, setEthAccounts] = useState<string[]>([]);
-  const [isEthAccountModalOpen, setIsEthAccountModalOpen] = useState(false);
 
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
     offset: 0,
@@ -94,69 +75,24 @@ export const XcmRouter = () => {
     }
   }, [showStepper, scrollIntoView]);
 
-  const onStatusChange = (status: TTxProgressInfo) => {
+  const onStatusChange = (status: TRouterEvent) => {
     setProgressInfo(status);
   };
 
-  const connectEthWallet = async () => {
-    try {
-      const providerMap = await Web3.requestEIP6963Providers();
-
-      if (providerMap.size === 0) {
-        showErrorNotification('No compatible Ethereum wallets found.');
-        return;
-      }
-
-      const providerArray = Array.from(providerMap.values());
-
-      setProviders(providerArray);
-      setIsEthWalletModalOpen(true);
-    } catch (error) {
-      console.error('Error fetching providers:', error);
-      showErrorNotification(
-        'An error occurred while fetching wallet providers.',
-      );
+  const determineCurrency = (asset: TAsset): TCurrencyInput => {
+    if (isForeignAsset(asset) && ethers.isAddress(asset.assetId)) {
+      return { symbol: asset.symbol };
     }
-  };
 
-  const onConnectEthWallet = () => void connectEthWallet();
-
-  const selectEthProvider = async (providerInfo: EIP6963ProviderDetail) => {
-    try {
-      setIsEthWalletModalOpen(false);
-      const provider = providerInfo.provider;
-
-      if (!provider) {
-        showErrorNotification('Selected provider is not available.');
-        return;
-      }
-
-      const tempProvider = new ethers.BrowserProvider(provider);
-      setProvider(tempProvider);
-      setSelectedProvider(providerInfo);
-
-      const accounts = (await tempProvider.send(
-        'eth_requestAccounts',
-        [],
-      )) as string[];
-
-      if (accounts.length === 0) {
-        showErrorNotification('No accounts found in the selected wallet.');
-        return;
-      }
-
-      setEthAccounts(accounts);
-      setIsEthAccountModalOpen(true);
-    } catch (error) {
-      console.error('Error connecting to wallet:', error);
-      showErrorNotification(
-        'An error occurred while connecting to the wallet.',
-      );
+    if (!isForeignAsset(asset)) {
+      return { symbol: asset.symbol };
     }
-  };
 
-  const onEthProviderSelect = (provider: EIP6963ProviderDetail) => {
-    void selectEthProvider(provider);
+    if (asset.assetId) return { id: asset.assetId };
+    if (asset.multiLocation)
+      return { multilocation: asset.multiLocation as TMultiLocation };
+
+    throw new Error('Invalid currency input');
   };
 
   const submitUsingRouterModule = async (
@@ -173,41 +109,23 @@ export const XcmRouter = () => {
       amount,
       recipientAddress,
       evmInjectorAddress,
-      assetHubAddress,
       slippagePct,
       evmSigner,
-      ethAddress,
-      transactionType,
     } = formValues;
-
-    const ethSigner = provider
-      ? await provider.getSigner(ethAddress)
-      : undefined;
 
     await RouterBuilder()
       .from(from)
-      .to(to)
       .exchange(exchange)
-      .currencyFrom(
-        isForeignAsset(currencyFrom) && currencyFrom.assetId
-          ? { id: currencyFrom.assetId }
-          : { symbol: currencyFrom.symbol ?? '' },
-      )
-      .currencyTo(
-        isForeignAsset(currencyTo) && currencyTo.assetId
-          ? { id: currencyTo.assetId }
-          : { symbol: currencyTo.symbol ?? '' },
-      )
+      .to(to)
+      .currencyFrom(determineCurrency(currencyFrom))
+      .currencyTo(determineCurrency(currencyTo))
       .amount(amount)
-      .injectorAddress(injectorAddress)
+      .senderAddress(injectorAddress)
       .recipientAddress(recipientAddress)
-      .evmInjectorAddress(evmInjectorAddress)
-      .assetHubAddress(assetHubAddress)
+      .evmSenderAddress(evmInjectorAddress)
       .signer(signer)
-      .ethSigner(ethSigner)
       .evmSigner(evmSigner)
       .slippagePct(slippagePct)
-      .transactionType(TransactionType[transactionType])
       .onStatusChange(onStatusChange)
       .build();
   };
@@ -218,19 +136,14 @@ export const XcmRouter = () => {
     injectorAddress: string,
     signer: Signer,
   ) => {
-    const { currencyFrom, currencyTo, transactionType } = formValues;
+    const { currencyFrom, currencyTo } = formValues;
     try {
       const response = await axios.post(
         `${API_URL}/router`,
         {
           ...formValues,
-          currencyFrom: isForeignAsset(currencyFrom)
-            ? { id: currencyFrom.assetId }
-            : { symbol: currencyFrom.symbol ?? '' },
-          currencyTo: isForeignAsset(currencyTo)
-            ? { id: currencyTo.assetId }
-            : { symbol: currencyTo.symbol ?? '' },
-          type: TransactionType[transactionType],
+          currencyFrom: { symbol: currencyFrom.symbol },
+          currencyTo: { symbol: currencyTo.symbol },
           exchange: exchange ?? undefined,
           injectorAddress,
         },
@@ -239,103 +152,44 @@ export const XcmRouter = () => {
         },
       );
 
-      const txs = (await response.data) as Array<
-        TExtrinsicInfo | TEthOptionsInfo
-      >;
+      const transactions = (await response.data) as (TTransaction & {
+        wsProviders: string[];
+      })[];
 
-      for (const txInfo of txs) {
+      for (const [
+        index,
+        { node, type, wsProviders, tx },
+      ] of transactions.entries()) {
         onStatusChange({
-          type: txInfo.type as TransactionType,
-          status: TransactionStatus.IN_PROGRESS,
+          node,
+          type,
+          currentStep: index,
+          routerPlan: transactions,
         });
 
-        if (txInfo.type === 'EXTRINSIC') {
-          // Handling of Polkadot transaction
-          const api = await ApiPromise.create({
-            provider: new WsProvider(txInfo.wsProvider),
-          });
-          if (txInfo.statusType === TransactionType.TO_EXCHANGE) {
-            // When submitting to exchange, prioritize the evmSigner if available
-            await submitTransaction(
-              api,
-              api.tx(txInfo.tx),
-              formValues.evmSigner ?? signer,
-              formValues.evmInjectorAddress ?? injectorAddress,
-            );
-          } else {
-            await submitTransaction(
-              api,
-              api.tx(txInfo.tx),
-              signer,
-              injectorAddress,
-            );
-          }
+        const api = await ApiPromise.create({
+          provider: new WsProvider(wsProviders),
+        });
+
+        if (type === 'TRANSFER' && index === 0) {
+          // When submitting to exchange, prioritize the evmSigner if available
+          await submitTransaction(
+            api,
+            api.tx(tx),
+            formValues.evmSigner ?? signer,
+            formValues.evmInjectorAddress ?? injectorAddress,
+          );
         } else {
-          // Handling of Ethereum transaction
-          const apiResponse = txInfo.tx;
-          const GATEWAY_CONTRACT = '0xEDa338E4dC46038493b885327842fD3E301CaB39';
-
-          if (!provider) {
-            throw new Error('Provider not initialized');
-          }
-
-          const tempSigner = await provider.getSigner(formValues.ethAddress);
-
-          const contract = IGateway__factory.connect(
-            GATEWAY_CONTRACT,
-            tempSigner,
-          );
-
-          const abi = ethers.AbiCoder.defaultAbiCoder();
-
-          const address: MultiAddressStruct = {
-            data: abi.encode(
-              ['bytes32'],
-              [u8aToHex(decodeAddress(formValues.assetHubAddress))],
-            ),
-            kind: 1,
-          };
-
-          if (!apiResponse) {
-            throw new Error('No response from API');
-          }
-
-          const response = await contract.sendToken(
-            apiResponse.token,
-            apiResponse.destinationParaId,
-            address,
-            apiResponse.destinationFee,
-            apiResponse.amount,
-            {
-              value: apiResponse.fee,
-            },
-          );
-          const receipt = await response.wait(1);
-
-          if (receipt === null) {
-            throw new Error('Error waiting for transaction completion');
-          }
-
-          if (receipt?.status !== 1) {
-            throw new Error('Transaction failed');
-          }
-
-          const events: LogDescription[] = [];
-          receipt.logs.forEach((log) => {
-            const event = contract.interface.parseLog({
-              topics: [...log.topics],
-              data: log.data,
-            });
-            if (event !== null) {
-              events.push(event);
-            }
-          });
+          await submitTransaction(api, api.tx(tx), signer, injectorAddress);
         }
-        onStatusChange({
-          type: txInfo.type as TransactionType,
-          status: TransactionStatus.SUCCESS,
-        });
       }
+
+      onStatusChange({
+        type: 'COMPLETED',
+        node: transactions[transactions.length - 1].node,
+        currentStep: transactions.length - 1,
+        routerPlan: transactions,
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         showErrorNotification('Error while fetching data.');
@@ -386,7 +240,9 @@ export const XcmRouter = () => {
         typeof args[2] === 'string' &&
         args[2].includes('ExtrinsicStatus::')
       ) {
-        setError(new Error(args[2]));
+        const error = new Error(args[2]);
+        showErrorNotification(error.message, notifId);
+        setError(error);
         openAlert();
         setShowStepper(false);
         setLoading(false);
@@ -445,17 +301,13 @@ export const XcmRouter = () => {
     setRunConfetti(false);
   };
 
-  const onEthWalletDisconnect = () => {
-    setProvider(undefined);
-    setSelectedProvider(null);
-    setEthAccounts([]);
-    setIsEthWalletModalOpen(false);
-  };
-
   const theme = useMantineColorScheme();
 
+  const width = window.innerWidth;
+  const height = document.body.scrollHeight;
+
   return (
-    <Container px="xl" pb="xl">
+    <Container px="xl" pb="128">
       <Stack gap="xl">
         <Stack w="100%" maw={460} mx="auto" gap="0">
           <Box px="xl" pb="xl">
@@ -478,22 +330,10 @@ export const XcmRouter = () => {
             </Text>
           </Box>
 
-          <XcmRouterForm
-            onSubmit={onSubmit}
-            loading={loading}
-            onConnectEthWallet={onConnectEthWallet}
-            ethAccounts={ethAccounts}
-            ethProviders={providers}
-            onEthWalletDisconnect={onEthWalletDisconnect}
-            onEthProviderSelect={onEthProviderSelect}
-            isEthWalletModalOpen={isEthWalletModalOpen}
-            setIsEthWalletModalOpen={setIsEthWalletModalOpen}
-            isEthAccountModalOpen={isEthAccountModalOpen}
-            setIsEthAccountModalOpen={setIsEthAccountModalOpen}
-          />
+          <XcmRouterForm onSubmit={onSubmit} loading={loading} />
         </Stack>
         <Box ref={targetRef}>
-          {progressInfo?.isAutoSelectingExchange && (
+          {progressInfo && progressInfo?.type === 'SELECTING_EXCHANGE' && (
             <Center>
               <Group mt="md">
                 <Loader />
@@ -501,10 +341,10 @@ export const XcmRouter = () => {
               </Group>
             </Center>
           )}
-          {showStepper && !progressInfo?.isAutoSelectingExchange && (
-            <Box mt="md">
+          {showStepper && progressInfo?.type !== 'SELECTING_EXCHANGE' && (
+            <Center mt="md">
               <TransferStepper progressInfo={progressInfo} />
-            </Box>
+            </Center>
           )}
           {alertOpened && (
             <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
@@ -521,6 +361,8 @@ export const XcmRouter = () => {
         numberOfPieces={500}
         tweenDuration={10000}
         onConfettiComplete={onConfettiComplete}
+        width={width}
+        height={height}
       />
     </Container>
   );

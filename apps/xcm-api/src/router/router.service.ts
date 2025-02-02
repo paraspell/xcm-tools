@@ -4,17 +4,17 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
+  getNodeProviders,
   InvalidCurrencyError,
-  NODES_WITH_RELAY_CHAINS,
-  TNodeWithRelayChains,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
+  TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk';
 import { RouterDto } from './dto/RouterDto.js';
 import { isValidWalletAddress } from '../utils.js';
 import {
   EXCHANGE_NODES,
+  RouterBuilder,
   TExchangeNode,
-  TransactionType,
-  buildTransferExtrinsics,
 } from '@paraspell/xcm-router';
 
 @Injectable()
@@ -24,18 +24,20 @@ export class RouterService {
       from,
       exchange,
       to,
+      currencyFrom,
+      currencyTo,
       amount,
-      injectorAddress,
+      senderAddress,
+      evmSenderAddress,
       recipientAddress,
       slippagePct = '1',
-      type,
     } = options;
 
-    const fromNode = from as TNodeWithRelayChains;
+    const fromNode = from as TNodeDotKsmWithRelayChains;
     const exchangeNode = exchange as TExchangeNode;
-    const toNode = to as TNodeWithRelayChains;
+    const toNode = to as TNodeDotKsmWithRelayChains;
 
-    if (!NODES_WITH_RELAY_CHAINS.includes(fromNode)) {
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
       throw new BadRequestException(
         `Node ${from} is not valid. Check docs for valid nodes.`,
       );
@@ -47,14 +49,18 @@ export class RouterService {
       );
     }
 
-    if (!NODES_WITH_RELAY_CHAINS.includes(toNode)) {
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(toNode)) {
       throw new BadRequestException(
         `Node ${to} is not valid. Check docs for valid nodes.`,
       );
     }
 
-    if (!isValidWalletAddress(injectorAddress)) {
-      throw new BadRequestException('Invalid injector wallet address.');
+    if (!isValidWalletAddress(senderAddress)) {
+      throw new BadRequestException('Invalid sender wallet address.');
+    }
+
+    if (evmSenderAddress && !isValidWalletAddress(evmSenderAddress)) {
+      throw new BadRequestException('Invalid EVM sender wallet address.');
     }
 
     if (!isValidWalletAddress(recipientAddress)) {
@@ -62,17 +68,26 @@ export class RouterService {
     }
 
     try {
-      const txs = await buildTransferExtrinsics({
-        ...options,
-        type: type ? TransactionType[type] : undefined,
-        from: fromNode,
-        exchange: exchangeNode,
-        to: toNode,
-        amount: amount.toString(),
-        slippagePct,
-      });
+      const transactions = await RouterBuilder()
+        .from(fromNode)
+        .exchange(exchangeNode)
+        .to(toNode)
+        .currencyFrom(currencyFrom)
+        .currencyTo(currencyTo)
+        .amount(amount.toString())
+        .senderAddress(senderAddress)
+        .evmSenderAddress(evmSenderAddress)
+        .recipientAddress(recipientAddress)
+        .slippagePct(slippagePct)
+        .buildTransactions();
 
-      return txs;
+      return transactions.map((transaction) => ({
+        node: transaction.node,
+        destinationNode: transaction.destinationNode,
+        type: transaction.type,
+        tx: transaction.tx,
+        wsProviders: getNodeProviders(transaction.node),
+      }));
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);
@@ -80,6 +95,7 @@ export class RouterService {
       if (e instanceof Error) {
         throw new InternalServerErrorException(e.message);
       }
+      throw e;
     }
   }
 }

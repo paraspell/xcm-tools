@@ -366,7 +366,7 @@ const EvmTransfer = () => {
         </Button>
         <EvmTransferForm onSubmit={onSubmit} loading={loading} />
       </Stack>
-      <Box ref={targetRef}>
+      <Center ref={targetRef}>
         {alertOpened && (
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
             {error?.message
@@ -374,7 +374,7 @@ const EvmTransfer = () => {
               .map((line, index) => <p key={index}>{line}</p>)}{' '}
           </ErrorAlert>
         )}
-      </Box>
+      </Center>
       <EthWalletSelectModal
         isOpen={isWalletModalOpen}
         onClose={() => setIsWalletModalOpen(false)}
