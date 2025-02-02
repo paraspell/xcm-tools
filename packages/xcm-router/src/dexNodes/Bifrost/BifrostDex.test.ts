@@ -11,9 +11,13 @@ import type { Token } from '@crypto-dex-sdk/currency';
 import BifrostExchangeNode from './BifrostDex';
 import type { Trade } from '@crypto-dex-sdk/amm';
 
-vi.mock('@paraspell/sdk-pjs', () => ({
-  getParaId: vi.fn(),
-}));
+vi.mock('@paraspell/sdk-pjs', async () => {
+  const actualModule = await vi.importActual('@paraspell/sdk-pjs');
+  return {
+    ...actualModule,
+    getParaId: vi.fn(),
+  };
+});
 
 vi.mock('./utils', () => ({
   findToken: vi.fn(),
@@ -90,10 +94,8 @@ describe('BifrostExchangeNode', () => {
     const swapOptions = {
       assetFrom: { symbol: 'BNC' },
       assetTo: { symbol: 'KSM' },
-      currencyFrom: { symbol: 'BNC' },
-      currencyTo: { symbol: 'KSM' },
       amount: '1000000',
-      injectorAddress: '5xxxxxx',
+      senderAddress: '5xxxxxx',
       slippagePct: '0.5',
     } as TSwapOptions;
     const mockToDestTransactionFee = new BigNumber('1000');

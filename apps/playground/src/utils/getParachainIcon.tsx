@@ -5,7 +5,11 @@ import {
   prodRelayKusama,
 } from '@polkadot/apps-config/endpoints';
 
-export const getParachainIcon = (node: TNodeWithRelayChains) => {
+export const getParachainIcon = (node?: TNodeWithRelayChains) => {
+  if (!node) {
+    return null;
+  }
+
   if (node === 'Polkadot') {
     return prodRelayPolkadot.ui.logo;
   }

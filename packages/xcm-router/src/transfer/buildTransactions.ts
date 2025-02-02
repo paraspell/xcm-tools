@@ -1,46 +1,49 @@
-import type { TPjsApi } from '@paraspell/sdk-pjs';
-import type { TRouterPlan } from '../types';
-import { type TBuildTransactionsOptions } from '../types';
-import {
-  buildFromExchangeExtrinsic,
-  buildToExchangeExtrinsic,
-  prepareTransformedOptions,
-} from './utils';
+import type { TBuildTransactionsOptionsModified, TRouterPlan } from '../types';
+import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 import { createSwapTx } from './createSwapTx';
+import type ExchangeNode from '../dexNodes/DexNode';
 
 export const buildTransactions = async (
-  originApi: TPjsApi,
-  swapApi: TPjsApi,
-  initialOptions: TBuildTransactionsOptions,
+  dex: ExchangeNode,
+  options: TBuildTransactionsOptionsModified,
 ): Promise<TRouterPlan> => {
-  const { options, dex } = await prepareTransformedOptions(initialOptions);
-
-  const { from, to, exchangeNode } = options;
+  const { origin, exchange, to } = options;
 
   const transactions: TRouterPlan = [];
 
   const toExchangeTx =
-    from !== exchangeNode ? await buildToExchangeExtrinsic(originApi, options) : undefined;
+    origin && origin.node !== exchange.baseNode
+      ? await buildToExchangeExtrinsic({
+          ...options,
+          origin,
+        })
+      : undefined;
 
-  const { tx: swapTx, amountOut } = await createSwapTx(originApi, swapApi, dex, options);
+  const { tx: swapTx, amountOut } = await createSwapTx(dex, options);
 
   const toDestTx =
-    to !== exchangeNode ? await buildFromExchangeExtrinsic(swapApi, options, amountOut) : undefined;
+    to && to !== exchange.baseNode
+      ? await buildFromExchangeExtrinsic({
+          ...options,
+          to,
+          amount: amountOut,
+        })
+      : undefined;
 
-  if (toExchangeTx) {
+  if (origin && toExchangeTx) {
     transactions.push({
-      api: originApi,
-      node: from,
-      destinationNode: exchangeNode,
+      api: origin.api,
+      node: origin.node,
+      destinationNode: exchange.baseNode,
       tx: toExchangeTx,
       type: 'TRANSFER',
     });
   }
 
   if (toDestTx) {
-    const batchedTx = swapApi.tx.utility.batch([swapTx, toDestTx]);
+    const batchedTx = exchange.api.tx.utility.batch([swapTx, toDestTx]);
     transactions.push({
-      api: swapApi,
+      api: exchange.api,
       node: dex.node,
       destinationNode: to,
       tx: batchedTx,
@@ -48,7 +51,7 @@ export const buildTransactions = async (
     });
   } else {
     transactions.push({
-      api: swapApi,
+      api: exchange.api,
       node: dex.node,
       tx: swapTx,
       type: 'SWAP',

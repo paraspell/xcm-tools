@@ -15,17 +15,17 @@ class HydrationExchangeNode extends ExchangeNode {
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
-    const { assetFrom, assetTo, currencyFrom, currencyTo, slippagePct, amount } = options;
+    const { assetFrom, assetTo, slippagePct, amount } = options;
     const poolService = new PoolService(api);
     const tradeRouter = new TradeRouter(
       poolService,
       this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
     );
     const currencyFromInfo = await getAssetInfo(tradeRouter, {
-      symbol: assetFrom?.symbol ?? ('symbol' in currencyFrom ? currencyFrom.symbol : ''),
+      symbol: assetFrom.symbol,
     });
     const currencyToInfo = await getAssetInfo(tradeRouter, {
-      symbol: assetTo?.symbol ?? ('symbol' in currencyTo ? currencyTo.symbol : ''),
+      symbol: assetTo.symbol,
     });
 
     if (currencyFromInfo === undefined) {

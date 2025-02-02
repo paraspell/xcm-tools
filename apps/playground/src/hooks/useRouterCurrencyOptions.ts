@@ -4,16 +4,20 @@ import {
   type TNodeWithRelayChains,
 } from '@paraspell/sdk';
 import { useMemo } from 'react';
-import type { TAutoSelect, TExchangeNode } from '@paraspell/xcm-router';
+import type {
+  TAutoSelect,
+  TExchangeNode,
+  TRouterAsset,
+} from '@paraspell/xcm-router';
 import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
 } from '@paraspell/xcm-router';
 
 const useRouterCurrencyOptions = (
-  from: TNodeWithRelayChains,
+  from: TNodeWithRelayChains | undefined,
   exchangeNode: TExchangeNode | TAutoSelect,
-  to: TNodeWithRelayChains,
+  to: TNodeWithRelayChains | undefined,
 ) => {
   const supportedAssetsFrom = useMemo(
     () => getSupportedAssetsFrom(from, exchangeNode),
@@ -21,7 +25,7 @@ const useRouterCurrencyOptions = (
   );
 
   const supportedAssetsTo = useMemo(
-    () => getSupportedAssetsTo(from, exchangeNode, to),
+    () => getSupportedAssetsTo(exchangeNode, to),
     [exchangeNode, to],
   );
 
@@ -37,8 +41,8 @@ const useRouterCurrencyOptions = (
 
   const currencyToMap = useMemo(
     () =>
-      supportedAssetsTo.reduce((map: Record<string, TAsset>, asset) => {
-        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${isForeignAsset(asset) ? asset.assetId : 'NO_ID'}`;
+      supportedAssetsTo.reduce((map: Record<string, TRouterAsset>, asset) => {
+        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${asset.id ? asset.id : 'NO_ID'}`;
         map[key] = asset;
         return map;
       }, {}),
@@ -49,7 +53,7 @@ const useRouterCurrencyOptions = (
     () =>
       Object.keys(currencyFromMap).map((key) => ({
         value: key,
-        label: `${currencyFromMap[key].symbol} - ${isForeignAsset(currencyFromMap[key]) ? currencyFromMap[key].assetId : 'Native'}`,
+        label: `${currencyFromMap[key].symbol} - ${isForeignAsset(currencyFromMap[key]) ? (currencyFromMap[key].assetId ?? 'Multi-location') : 'Native'}`,
       })),
     [currencyFromMap],
   );
@@ -58,7 +62,7 @@ const useRouterCurrencyOptions = (
     () =>
       Object.keys(currencyToMap).map((key) => ({
         value: key,
-        label: `${currencyToMap[key].symbol} - ${isForeignAsset(currencyToMap[key]) ? currencyToMap[key].assetId : 'Native'}`,
+        label: `${currencyToMap[key].symbol} - ${currencyToMap[key].id ? (currencyToMap[key].id ?? 'Multi-location') : 'Native'}`,
       })),
     [currencyToMap],
   );

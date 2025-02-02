@@ -13,7 +13,7 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'DOT' })
         .currencyTo({ symbol: 'ACA' })
         .amount('5000000000')
-        .injectorAddress(MOCK_ADDRESS)
+        .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
         .buildTransactions();
@@ -30,7 +30,7 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'DOT' })
         .currencyTo({ symbol: 'ACA' })
         .amount('5000000000')
-        .injectorAddress(MOCK_ADDRESS)
+        .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
         .buildTransactions();
@@ -47,7 +47,7 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'KSM' })
         .currencyTo({ symbol: 'BNC' })
         .amount('22000000000000')
-        .injectorAddress(MOCK_ADDRESS)
+        .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
         .buildTransactions();
@@ -66,7 +66,7 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'BNC' })
         .currencyTo({ symbol: 'DOT' })
         .amount('100000000000000')
-        .injectorAddress(MOCK_ADDRESS)
+        .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
         .buildTransactions();
@@ -83,7 +83,7 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'KSM' })
         .currencyTo({ symbol: 'KAR' })
         .amount('100000000000000')
-        .injectorAddress(MOCK_ADDRESS)
+        .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
         .buildTransactions();
@@ -102,7 +102,24 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'ASTR' })
         .currencyTo({ symbol: 'BNC' })
         .amount('38821036538894063687')
-        .injectorAddress(MOCK_ADDRESS)
+        .senderAddress(MOCK_ADDRESS)
+        .recipientAddress(MOCK_ADDRESS)
+        .slippagePct('0.01')
+        .buildTransactions();
+
+      expect(hashes).toBeDefined();
+      expect(hashes.length).toBe(2);
+    });
+
+    it('should build a transfer extrinsic without error on Hydration', async () => {
+      const hashes = await RouterBuilder()
+        .from('AssetHubPolkadot')
+        .exchange('HydrationDex')
+        .to('Hydration')
+        .currencyFrom({ id: 1984 })
+        .currencyTo({ symbol: 'DOT' })
+        .amount('38821036538894063687')
+        .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
         .buildTransactions();
@@ -121,7 +138,7 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'INTR' })
         .currencyTo({ symbol: 'IBTC' })
         .amount('5000000000')
-        .injectorAddress(MOCK_ADDRESS)
+        .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
         .buildTransactions();
@@ -138,7 +155,25 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'KSM' })
         .currencyTo({ symbol: 'KINT' })
         .amount('5000000000')
-        .injectorAddress(MOCK_ADDRESS)
+        .senderAddress(MOCK_ADDRESS)
+        .recipientAddress(MOCK_ADDRESS)
+        .slippagePct('0.01')
+        .buildTransactions();
+
+      expect(hashes).toBeDefined();
+      expect(hashes.length).toBe(2);
+    });
+  });
+
+  describe('Auto exchange selection', () => {
+    it('should build a transfer extrinsic without error for DOT to ACA', async () => {
+      const hashes = await RouterBuilder()
+        .from('Polkadot')
+        .to('Astar')
+        .currencyFrom({ symbol: 'DOT' })
+        .currencyTo({ symbol: 'ACA' })
+        .amount('5000000000')
+        .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('0.01')
         .buildTransactions();

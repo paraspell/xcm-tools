@@ -1,7 +1,7 @@
 import ExchangeNode from '../DexNode';
 import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
 import type { ApiPromise } from '@polkadot/api';
-import { getParaId } from '@paraspell/sdk-pjs';
+import { getOtherAssets, getParaId } from '@paraspell/sdk-pjs';
 import { convertAmount, findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 import { Amount, Token, getCurrencyCombinations } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
@@ -14,34 +14,20 @@ import { SmallAmountError } from '../../errors/SmallAmountError';
 class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
-    {
-      assetFrom,
-      assetTo,
-      currencyFrom,
-      currencyTo,
-      amount,
-      injectorAddress,
-      slippagePct,
-    }: TSwapOptions,
+    { assetFrom, assetTo, amount, senderAddress, slippagePct }: TSwapOptions,
     toDestTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     const chainId = getParaId(this.node);
 
     const tokenMap = getTokenMap(this.node, chainId);
 
-    const tokenWrappedFrom = findToken(
-      tokenMap,
-      assetFrom?.symbol ?? ('symbol' in currencyFrom ? currencyFrom.symbol : ''),
-    );
+    const tokenWrappedFrom = findToken(tokenMap, assetFrom.symbol);
 
     if (tokenWrappedFrom === undefined) {
       throw new Error('Currency from not found');
     }
 
-    const tokenWrappedTo = findToken(
-      tokenMap,
-      assetTo?.symbol ?? ('symbol' in currencyTo ? currencyTo.symbol : ''),
-    );
+    const tokenWrappedTo = findToken(tokenMap, assetTo.symbol);
 
     if (tokenWrappedTo === undefined) {
       throw new Error('Currency to not found');
@@ -106,7 +92,7 @@ class BifrostExchangeNode extends ExchangeNode {
     const { extrinsic } = SwapRouter.swapCallParameters(trade, {
       api,
       allowedSlippage,
-      recipient: injectorAddress,
+      recipient: senderAddress,
       deadline,
     });
 
@@ -145,7 +131,10 @@ class BifrostExchangeNode extends ExchangeNode {
   async getAssets(_api: ApiPromise): Promise<TAssets> {
     const chainId = getParaId(this.node);
     const tokenMap = getTokenMap(this.node, chainId);
-    const assets = Object.values(tokenMap).map((item) => ({ symbol: item.wrapped.symbol ?? '' }));
+    const assets = Object.values(tokenMap).map((item) => ({
+      symbol: item.wrapped.symbol ?? '',
+      id: getOtherAssets(this.node).find((asset) => asset.symbol === item.wrapped.symbol)?.assetId,
+    }));
     return Promise.resolve(assets);
   }
 }

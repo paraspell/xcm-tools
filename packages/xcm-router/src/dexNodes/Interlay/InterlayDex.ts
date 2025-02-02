@@ -14,39 +14,19 @@ import { SmallAmountError } from '../../errors/SmallAmountError';
 class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
-    {
-      injectorAddress,
-      assetFrom,
-      assetTo,
-      currencyFrom,
-      currencyTo,
-      amount,
-      slippagePct,
-    }: TSwapOptions,
+    { senderAddress, assetFrom, assetTo, amount, slippagePct }: TSwapOptions,
     _toDestTransactionFee: BigNumber,
     toExchangeTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     const interBTC = await createInterBtcApi(getNodeProviders(this.node)[0], 'mainnet');
 
-    const assetFromInfo = await getCurrency(
-      {
-        symbol: assetFrom?.symbol ?? ('symbol' in currencyFrom ? currencyFrom.symbol : ''),
-      },
-      interBTC,
-      this.node,
-    );
+    const assetFromInfo = await getCurrency(interBTC, assetFrom);
 
     if (assetFromInfo === null) {
       throw new Error('Currency from is invalid.');
     }
 
-    const assetToInfo = await getCurrency(
-      {
-        symbol: assetTo?.symbol ?? ('symbol' in currencyTo ? currencyTo.symbol : ''),
-      },
-      interBTC,
-      this.node,
-    );
+    const assetToInfo = await getCurrency(interBTC, assetTo);
 
     if (assetToInfo === null) {
       throw new Error('Currency to is invalid.');
@@ -83,7 +63,7 @@ class InterlayExchangeNode extends ExchangeNode {
     const currentBlockNumber = new BN(currentBlock.toString());
     const deadline = currentBlockNumber.add(new BN(150));
 
-    const trade1 = interBTC.amm.swap(trade, outputAmount, injectorAddress, deadline.toString());
+    const trade1 = interBTC.amm.swap(trade, outputAmount, senderAddress, deadline.toString());
     const extrinsic = trade1.extrinsic;
 
     return {

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "compile": "tsc",
     "preview": "vite preview",
     "codegen": "graphql-codegen --require dotenv/config --config codegen.ts",
     "lint:check": "eslint .",

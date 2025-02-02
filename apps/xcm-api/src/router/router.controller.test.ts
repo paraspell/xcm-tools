@@ -40,7 +40,7 @@ describe('RouterController', () => {
         currencyFrom: { symbol: 'ASTR' },
         currencyTo: { symbol: 'GLMR' },
         amount: '1000000000000000000',
-        injectorAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        senderAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       };
 
@@ -67,7 +67,7 @@ describe('RouterController', () => {
         currencyFrom: { symbol: 'ASTR' },
         currencyTo: { symbol: 'GLMR' },
         amount: '1000000000000000000',
-        injectorAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        senderAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       };
 

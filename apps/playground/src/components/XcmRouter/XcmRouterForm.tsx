@@ -37,9 +37,9 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import { showErrorNotification } from '../../utils/notifications';
 
 export type TRouterFormValues = {
-  from: TNodeDotKsmWithRelayChains;
+  from?: TNodeDotKsmWithRelayChains;
   exchange: TExchangeNode | TAutoSelect;
-  to: TNodeWithRelayChains;
+  to?: TNodeWithRelayChains;
   currencyFromOptionId: string;
   currencyToOptionId: string;
   recipientAddress: string;
@@ -84,8 +84,8 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<TRouterFormValues>({
     initialValues: {
       from: 'Astar',
-      to: 'Hydration',
       exchange: 'Auto select',
+      to: 'Hydration',
       currencyFromOptionId: '',
       currencyToOptionId: '',
       amount: '10000000000000000000',
@@ -103,7 +103,14 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       currencyToOptionId: (value) => {
         return value ? null : 'Currency to selection is required';
       },
+      exchange: (value, values) => {
+        if (value === 'Auto select' && !values.from) {
+          return 'Origin must be set to use Auto select';
+        }
+        return null;
+      },
     },
+    validateInputOnChange: ['exchange'],
   });
 
   const { from, to, exchange } = form.getValues();
@@ -146,7 +153,14 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       return;
     }
 
-    const transformedValues = { ...values, currencyFrom, currencyTo };
+    const transformedValues = {
+      ...values,
+      currencyFrom,
+      currencyTo: {
+        ...currencyTo,
+        assetId: currencyTo.id,
+      },
+    };
 
     onSubmit(transformedValues);
   };
@@ -168,6 +182,10 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       </Text>
     </Tooltip>
   );
+
+  useEffect(() => {
+    form.validateField('exchange');
+  }, [form.values.from]);
 
   useEffect(() => {
     if (isFromNotParaToPara) {
@@ -211,6 +229,9 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
             placeholder="Pick value"
             description="Select the chain you're sending from"
             data={NODES_WITH_RELAY_CHAINS}
+            allowDeselect={true}
+            required={false}
+            clearable
             data-testid="select-from"
             {...form.getInputProps('from')}
           />
@@ -233,6 +254,9 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
             data={[...NODES_WITH_RELAY_CHAINS]}
             data-testid="select-to"
             description="Select the chain that will receive the swapped assets"
+            allowDeselect={true}
+            required={false}
+            clearable
             {...form.getInputProps('to')}
           />
 

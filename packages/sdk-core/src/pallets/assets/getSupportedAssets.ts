@@ -8,7 +8,7 @@ import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
  * @param symbol - The symbol to normalize.
  * @returns The normalized symbol.
  */
-const normalizeSymbol = (symbol: string | undefined): string => {
+export const normalizeSymbol = (symbol: string | undefined): string => {
   if (!symbol) return ''
   const lowerSymbol = symbol.toLowerCase()
   return lowerSymbol.startsWith('xc') ? lowerSymbol.substring(2) : lowerSymbol

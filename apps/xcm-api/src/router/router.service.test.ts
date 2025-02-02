@@ -9,7 +9,7 @@ import {
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 import type { TNode } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
-import * as spellRouter from '@paraspell/xcm-router';
+import { RouterBuilder } from '@paraspell/xcm-router';
 
 const txHash = '0x123';
 
@@ -38,7 +38,8 @@ const builderMock = {
   currencyFrom: vi.fn().mockReturnThis(),
   currencyTo: vi.fn().mockReturnThis(),
   amount: vi.fn().mockReturnThis(),
-  injectorAddress: vi.fn().mockReturnThis(),
+  senderAddress: vi.fn().mockReturnThis(),
+  evmSenderAddress: vi.fn().mockReturnThis(),
   recipientAddress: vi.fn().mockReturnThis(),
   slippagePct: vi.fn().mockReturnThis(),
   buildTransactions: vi.fn().mockResolvedValue(serializedExtrinsics),
@@ -62,7 +63,7 @@ describe('RouterService', () => {
     currencyFrom: { symbol: 'ASTR' },
     currencyTo: { symbol: 'GLMR' },
     amount: '1000000000000000000',
-    injectorAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+    senderAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
     recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
   };
 
@@ -83,8 +84,8 @@ describe('RouterService', () => {
 
   describe('generateExtrinsics', () => {
     it('should generate 3 extrinsics with manual exchange selection', async () => {
-      vi.spyOn(spellRouter, 'RouterBuilder').mockReturnValue(
-        builderMock as unknown as ReturnType<typeof spellRouter.RouterBuilder>,
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMock as unknown as ReturnType<typeof RouterBuilder>,
       );
 
       const result = await service.generateExtrinsics(options);
@@ -140,7 +141,7 @@ describe('RouterService', () => {
     it('should throw BadRequestException for invalid injector address', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
-        injectorAddress: invalidNode,
+        senderAddress: invalidNode,
       };
 
       await expect(service.generateExtrinsics(modifiedOptions)).rejects.toThrow(
@@ -171,10 +172,8 @@ describe('RouterService', () => {
         }),
       };
 
-      vi.spyOn(spellRouter, 'RouterBuilder').mockReturnValue(
-        builderMockWithError as unknown as ReturnType<
-          typeof spellRouter.RouterBuilder
-        >,
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMockWithError as unknown as ReturnType<typeof RouterBuilder>,
       );
 
       await expect(service.generateExtrinsics(options)).rejects.toThrow(
@@ -190,10 +189,8 @@ describe('RouterService', () => {
         }),
       };
 
-      vi.spyOn(spellRouter, 'RouterBuilder').mockReturnValue(
-        builderMockWithError as unknown as ReturnType<
-          typeof spellRouter.RouterBuilder
-        >,
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMockWithError as unknown as ReturnType<typeof RouterBuilder>,
       );
 
       await expect(service.generateExtrinsics(options)).rejects.toThrow(

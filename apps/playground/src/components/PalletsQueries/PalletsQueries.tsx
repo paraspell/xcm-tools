@@ -127,18 +127,18 @@ const PalletsQueries = () => {
         </Box>
         <PalletsQueriesForm onSubmit={onSubmit} loading={loading} />
       </Stack>
-      <Box ref={targetRef}>
+      <Center ref={targetRef}>
         {errorAlertOpened && (
           <ErrorAlert onAlertCloseClick={onErrorAlertCloseClick}>
             {error?.message}
           </ErrorAlert>
         )}
-      </Box>
-      <Box>
+      </Center>
+      <Center>
         {outputAlertOpened && output && (
           <OutputAlert output={output} onClose={onOutputAlertCloseClick} />
         )}
-      </Box>
+      </Center>
     </Stack>
   );
 };

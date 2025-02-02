@@ -1,16 +1,16 @@
 // Unit tests for transfer utils
 
 import { describe, it, expect, beforeAll, vi, afterAll } from 'vitest';
+import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from './utils';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
-import { type TTransferOptionsModified } from '../../types';
-import { transferParams } from '../../RouterBuilder.test';
+import { transferParams } from '../../builder/RouterBuilder.test';
 import {
   type TNodeWithRelayChains,
   createApiInstanceForNode,
   type Extrinsic,
 } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
-import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
+import type { TAdditionalTransferOptions } from '../../types';
 
 const builderMock = {
   from: vi.fn().mockReturnThis(),
@@ -48,108 +48,122 @@ describe('transfer utils', () => {
 
   describe('buildToExchangeExtrinsic', () => {
     it('builds correct Extrinsic for Polkadot origin', () => {
-      const from: TNodeWithRelayChains = 'Polkadot';
-      const options: TTransferOptionsModified = {
+      const options: TBuildToExchangeTxOptions = {
         ...transferParams,
-        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
-        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
-        from,
-        exchange: 'AcalaDex',
-        exchangeNode: 'Acala',
-        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
+        origin: {
+          api: relaychainApi,
+          node: 'Polkadot',
+          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        },
+        exchange: {
+          baseNode: 'Acala',
+        } as TAdditionalTransferOptions['exchange'],
       };
 
-      const extrinsic = buildToExchangeExtrinsic(relaychainApi, options);
+      const extrinsic = buildToExchangeExtrinsic(options);
       expect(extrinsic).toBeDefined();
     });
 
     it('builds correct Extrinsic for non-Polkadot/Kusama origin', () => {
       const from: TNodeWithRelayChains = 'Astar';
-      const options: TTransferOptionsModified = {
+      const options: TBuildToExchangeTxOptions = {
         ...transferParams,
-        from,
-        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
-        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
-        exchangeNode: 'Acala',
-        exchange: 'AcalaDex',
-        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
+        origin: {
+          api: parachainApi,
+          node: from,
+          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        },
+        exchange: {
+          baseNode: 'Acala',
+        } as TAdditionalTransferOptions['exchange'],
       };
 
-      const extrinsic = buildToExchangeExtrinsic(parachainApi, options);
+      const extrinsic = buildToExchangeExtrinsic(options);
       expect(extrinsic).toBeDefined();
+    });
+
+    it('handles custom amount and senderAddress correctly', () => {
+      const customAmount = '999999999999999';
+      const customSenderAddress = '5D...CustomAddress';
+      const options: TBuildToExchangeTxOptions = {
+        ...transferParams,
+        senderAddress: customSenderAddress,
+        origin: {
+          api: parachainApi,
+          node: 'Acala',
+          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        },
+        exchange: {
+          baseNode: 'Acala',
+        } as TAdditionalTransferOptions['exchange'],
+        amount: customAmount,
+      };
+
+      const extrinsic = buildToExchangeExtrinsic(options);
+      expect(extrinsic).toBeDefined();
+
+      expect(builderMock.currency).toHaveBeenCalledWith({
+        id: '0x1234567890abcdef',
+        amount: customAmount,
+      });
+      expect(builderMock.address).toHaveBeenCalledWith(customSenderAddress);
+    });
+
+    it('should still build when currencyFrom is missing and from is not Ethereum', () => {
+      const options: TBuildToExchangeTxOptions = {
+        ...transferParams,
+        origin: {
+          api: parachainApi,
+          node: 'Acala',
+          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+        },
+        exchange: {
+          baseNode: 'Acala',
+        } as TAdditionalTransferOptions['exchange'],
+      };
+
+      const extrinsic = buildToExchangeExtrinsic(options);
+      expect(extrinsic).toBeDefined();
+      expect(builderMock.currency).toHaveBeenCalledWith({
+        amount: options.amount,
+        id: '0x1234567890abcdef',
+      });
     });
   });
 
   describe('buildFromExchangeExtrinsic', () => {
     it('builds correct Extrinsic for Polkadot destination', () => {
       const to: TNodeWithRelayChains = 'Polkadot';
-      const options: TTransferOptionsModified = {
+      const options: TBuildFromExchangeTxOptions = {
         ...transferParams,
         to,
-        exchangeNode: 'Acala',
-        exchange: 'AcalaDex',
-        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
-        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
-        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
+        exchange: {
+          api: parachainApi,
+          baseNode: 'Acala',
+          exchangeNode: 'AcalaDex',
+          assetFrom: { symbol: 'ASTR', id: '0x1234567890abcdef' },
+          assetTo: { symbol: 'GLMR', id: '0xabcdef1234567890' },
+        },
       };
-      const extrinsic = buildFromExchangeExtrinsic(parachainApi, options, '10000000000');
+      const extrinsic = buildFromExchangeExtrinsic(options);
       expect(extrinsic).toBeDefined();
     });
 
     it('builds correct Extrinsic for non-Polkadot/Kusama destination', () => {
       const to: TNodeWithRelayChains = 'Astar';
-      const options: TTransferOptionsModified = {
+      const options: TBuildFromExchangeTxOptions = {
         ...transferParams,
         to,
-        exchangeNode: 'Acala',
-        exchange: 'AcalaDex',
-        assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
-        assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
-        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
+        exchange: {
+          api: parachainApi,
+          baseNode: 'Acala',
+          exchangeNode: 'AcalaDex',
+          assetFrom: { symbol: 'ASTR', id: '0x1234567890abcdef' },
+          assetTo: { symbol: 'GLMR', id: '0xabcdef1234567890' },
+        },
       };
-      const extrinsic = buildFromExchangeExtrinsic(parachainApi, options, '10000000000');
+      const extrinsic = buildFromExchangeExtrinsic(options);
       expect(extrinsic).toBeDefined();
-    });
-
-    it('handles custom amount and injectorAddress correctly', () => {
-      const customAmount = '999999999999999';
-      const customInjectorAddress = '5D...CustomAddress';
-      const options: TTransferOptionsModified = {
-        ...transferParams,
-        from: 'Polkadot',
-        currencyFrom: { symbol: 'DOT' },
-        exchangeNode: 'Acala',
-        exchange: 'AcalaDex',
-        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
-        amount: customAmount,
-        injectorAddress: customInjectorAddress,
-      };
-
-      const extrinsic = buildToExchangeExtrinsic(relaychainApi, options);
-      expect(extrinsic).toBeDefined();
-
-      expect(builderMock.currency).toHaveBeenCalledWith({
-        symbol: 'DOT',
-        amount: customAmount,
-      });
-      expect(builderMock.address).toHaveBeenCalledWith(customInjectorAddress);
-    });
-
-    it('should still build when currencyFrom is missing and from is not Ethereum', () => {
-      const options: TTransferOptionsModified = {
-        ...transferParams,
-        from: 'Polkadot',
-        exchangeNode: 'Acala',
-        exchange: 'AcalaDex',
-        feeCalcAddress: FALLBACK_FEE_CALC_ADDRESS,
-      };
-
-      const extrinsic = buildToExchangeExtrinsic(relaychainApi, options);
-      expect(extrinsic).toBeDefined();
-      expect(builderMock.currency).toHaveBeenCalledWith({
-        amount: options.amount,
-        symbol: 'ASTR',
-      });
     });
   });
 });

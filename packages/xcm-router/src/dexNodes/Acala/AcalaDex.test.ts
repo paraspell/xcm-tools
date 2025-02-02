@@ -115,8 +115,6 @@ describe('AcalaExchangeNode', () => {
     const baseSwapOptions = {
       assetFrom: { symbol: 'DOT' },
       assetTo: { symbol: 'ACA' },
-      currencyFrom: { symbol: 'DOT' },
-      currencyTo: { symbol: 'ACA' },
       amount: '100',
     } as TSwapOptions;
 

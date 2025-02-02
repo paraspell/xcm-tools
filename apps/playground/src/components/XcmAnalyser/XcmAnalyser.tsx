@@ -122,14 +122,14 @@ export const XcmAnalyser = () => {
           </Box>
           <AnalyserForm onSubmit={onSubmit} loading={loading} />
         </Stack>
-        <Box ref={targetRef}>
+        <Center ref={targetRef}>
           {errorAlertOpened && (
             <ErrorAlert onAlertCloseClick={onErrorAlertCloseClick}>
               {error?.message}
             </ErrorAlert>
           )}
-        </Box>
-        <Box>
+        </Center>
+        <Center>
           {outputAlertOpened && output && (
             <OutputAlert
               useLinkIcon
@@ -137,7 +137,7 @@ export const XcmAnalyser = () => {
               onClose={onOutputAlertCloseClick}
             />
           )}
-        </Box>
+        </Center>
       </Stack>
     </Container>
   );
