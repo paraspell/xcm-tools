@@ -48,7 +48,7 @@ export const TransferStepper = ({ progressInfo }: Props) => {
   return (
     <Stepper
       maw={700}
-      w="100%"
+      w={totalSteps > 1 ? '100%' : 'auto'}
       active={progressInfo?.type === 'COMPLETED' ? totalSteps : currentStep}
     >
       {steps.map((step, index) => (

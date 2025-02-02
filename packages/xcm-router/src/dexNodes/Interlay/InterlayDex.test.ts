@@ -74,11 +74,9 @@ describe('InterlayExchangeNode', () => {
         .mockResolvedValueOnce({ name: 'mockCurrencyTo' } as CurrencyExt);
 
       const swapOptions = {
-        injectorAddress: 'fake-address',
+        senderAddress: 'fake-address',
         assetFrom: { symbol: 'FAKE' },
         assetTo: { symbol: 'REAL' },
-        currencyFrom: { symbol: 'FAKE' },
-        currencyTo: { symbol: 'REAL' },
         amount: '100',
         slippagePct: '1',
       } as TSwapOptions;
@@ -99,11 +97,9 @@ describe('InterlayExchangeNode', () => {
         .mockResolvedValueOnce(null);
 
       const swapOptions = {
-        injectorAddress: 'fake-address',
+        senderAddress: 'fake-address',
         assetFrom: { symbol: 'REAL' },
         assetTo: { symbol: 'FAKE' },
-        currencyFrom: { symbol: 'REAL' },
-        currencyTo: { symbol: 'FAKE' },
         amount: '100',
         slippagePct: '1',
       } as TSwapOptions;
@@ -122,11 +118,9 @@ describe('InterlayExchangeNode', () => {
       vi.mocked(getCurrency).mockResolvedValue({ name: 'mockCurrency' } as CurrencyExt);
 
       const swapOptions = {
-        injectorAddress: 'fake-address',
+        senderAddress: 'fake-address',
         assetFrom: { symbol: 'REAL' },
         assetTo: { symbol: 'REAL2' },
-        currencyFrom: { symbol: 'REAL' },
-        currencyTo: { symbol: 'REAL2' },
         amount: '1',
         slippagePct: '1',
       } as TSwapOptions;
@@ -145,11 +139,9 @@ describe('InterlayExchangeNode', () => {
       mockInterBtcApi.amm.getOptimalTrade.mockReturnValueOnce(null);
 
       const swapOptions = {
-        injectorAddress: 'fake-address',
+        senderAddress: 'fake-address',
         assetFrom: { symbol: 'REAL' },
         assetTo: { symbol: 'REAL2' },
-        currencyFrom: { symbol: 'REAL' },
-        currencyTo: { symbol: 'REAL2' },
         amount: '100',
         slippagePct: '1',
       } as TSwapOptions;
@@ -166,11 +158,9 @@ describe('InterlayExchangeNode', () => {
 
     it('returns a successful swap result', async () => {
       const swapOptions = {
-        injectorAddress: 'fake-address',
+        senderAddress: 'fake-address',
         assetFrom: { symbol: 'REAL' },
         assetTo: { symbol: 'REAL2' },
-        currencyFrom: { symbol: 'REAL' },
-        currencyTo: { symbol: 'REAL2' },
         amount: '100',
         slippagePct: '1',
       } as TSwapOptions;

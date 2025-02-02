@@ -124,7 +124,7 @@ describe('prepareTransformedOptions', () => {
       to: 'Astar',
       currencyFrom: { symbol: 'ABC' },
       currencyTo: { symbol: 'XYZ' },
-      injectorAddress: '0x123',
+      senderAddress: '0x123',
       recipientAddress: '0x456',
       exchange: 'AcalaDex',
     } as TTransferOptions;

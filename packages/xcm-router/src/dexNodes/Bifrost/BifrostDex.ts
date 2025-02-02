@@ -14,34 +14,20 @@ import { SmallAmountError } from '../../errors/SmallAmountError';
 class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
-    {
-      assetFrom,
-      assetTo,
-      currencyFrom,
-      currencyTo,
-      amount,
-      injectorAddress,
-      slippagePct,
-    }: TSwapOptions,
+    { assetFrom, assetTo, amount, senderAddress, slippagePct }: TSwapOptions,
     toDestTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     const chainId = getParaId(this.node);
 
     const tokenMap = getTokenMap(this.node, chainId);
 
-    const tokenWrappedFrom = findToken(
-      tokenMap,
-      assetFrom?.symbol ?? ('symbol' in currencyFrom ? currencyFrom.symbol : ''),
-    );
+    const tokenWrappedFrom = findToken(tokenMap, assetFrom.symbol);
 
     if (tokenWrappedFrom === undefined) {
       throw new Error('Currency from not found');
     }
 
-    const tokenWrappedTo = findToken(
-      tokenMap,
-      assetTo?.symbol ?? ('symbol' in currencyTo ? currencyTo.symbol : ''),
-    );
+    const tokenWrappedTo = findToken(tokenMap, assetTo.symbol);
 
     if (tokenWrappedTo === undefined) {
       throw new Error('Currency to not found');
@@ -106,7 +92,7 @@ class BifrostExchangeNode extends ExchangeNode {
     const { extrinsic } = SwapRouter.swapCallParameters(trade, {
       api,
       allowedSlippage,
-      recipient: injectorAddress,
+      recipient: senderAddress,
       deadline,
     });
 
@@ -145,7 +131,9 @@ class BifrostExchangeNode extends ExchangeNode {
   async getAssets(_api: ApiPromise): Promise<TAssets> {
     const chainId = getParaId(this.node);
     const tokenMap = getTokenMap(this.node, chainId);
-    const assets = Object.values(tokenMap).map((item) => ({ symbol: item.wrapped.symbol ?? '' }));
+    const assets = Object.values(tokenMap).map((item) => ({
+      symbol: item.wrapped.symbol ?? '',
+    }));
     return Promise.resolve(assets);
   }
 }

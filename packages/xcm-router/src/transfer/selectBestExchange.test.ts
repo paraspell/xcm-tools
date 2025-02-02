@@ -4,7 +4,7 @@ import { describe, it, expect, vi, afterAll, beforeAll, type MockInstance } from
 import * as utils from '../utils/utils';
 import * as transferUtils from './utils';
 import { selectBestExchange } from './selectBestExchange';
-import { type TTransferOptions } from '../types';
+import type { TCommonTransferOptions } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
@@ -25,7 +25,7 @@ vi.mock('../dexNodes/DexNodeFactory', () => ({
 }));
 
 describe('selectBestExchange', () => {
-  let options: TTransferOptions;
+  let options: TCommonTransferOptions;
   let fromExchangeTxSpy: MockInstance, toExchangeTxSpy: MockInstance, feeSpy: MockInstance;
 
   beforeAll(() => {

@@ -37,6 +37,9 @@ import {
   showSuccessNotification,
 } from '../../utils/notifications';
 import { VersionBadge } from '../common/VersionBadge';
+import type { TAsset, TMultiLocation } from '@paraspell/sdk-pjs';
+import { isForeignAsset, type TCurrencyInput } from '@paraspell/sdk-pjs';
+import { ethers } from 'ethers';
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
@@ -76,6 +79,22 @@ export const XcmRouter = () => {
     setProgressInfo(status);
   };
 
+  const determineCurrency = (asset: TAsset): TCurrencyInput => {
+    if (isForeignAsset(asset) && ethers.isAddress(asset.assetId)) {
+      return { symbol: asset.symbol };
+    }
+
+    if (!isForeignAsset(asset)) {
+      return { symbol: asset.symbol };
+    }
+
+    if (asset.assetId) return { id: asset.assetId };
+    if (asset.multiLocation)
+      return { multilocation: asset.multiLocation as TMultiLocation };
+
+    throw new Error('Invalid currency input');
+  };
+
   const submitUsingRouterModule = async (
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeNode | undefined,
@@ -96,14 +115,14 @@ export const XcmRouter = () => {
 
     await RouterBuilder()
       .from(from)
-      .to(to)
       .exchange(exchange)
-      .currencyFrom({ symbol: currencyFrom.symbol })
-      .currencyTo({ symbol: currencyTo.symbol })
+      .to(to)
+      .currencyFrom(determineCurrency(currencyFrom))
+      .currencyTo(determineCurrency(currencyTo))
       .amount(amount)
-      .injectorAddress(injectorAddress)
+      .senderAddress(injectorAddress)
       .recipientAddress(recipientAddress)
-      .evmInjectorAddress(evmInjectorAddress)
+      .evmSenderAddress(evmInjectorAddress)
       .signer(signer)
       .evmSigner(evmSigner)
       .slippagePct(slippagePct)
@@ -288,7 +307,7 @@ export const XcmRouter = () => {
   const height = document.body.scrollHeight;
 
   return (
-    <Container px="xl" pb="xl">
+    <Container px="xl" pb="128">
       <Stack gap="xl">
         <Stack w="100%" maw={460} mx="auto" gap="0">
           <Box px="xl" pb="xl">

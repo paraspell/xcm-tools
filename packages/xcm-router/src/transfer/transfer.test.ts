@@ -76,7 +76,7 @@ describe('transfer', () => {
     expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
   });
 
-  it('should throw an error if evmSigner is provided without evmInjectorAddress', async () => {
+  it('should throw an error if evmSigner is provided without evmSenderAddress', async () => {
     const options = {
       evmSigner: {},
       from: 'Polkadot',
@@ -84,13 +84,13 @@ describe('transfer', () => {
     } as TTransferOptions;
 
     await expect(transfer(options)).rejects.toThrow(
-      'evmInjectorAddress is required when evmSigner is provided',
+      'evmSenderAddress is required when evmSigner is provided',
     );
   });
 
-  it('should throw an error if evmInjectorAddress is provided without evmSigner', async () => {
+  it('should throw an error if evmSenderAddress is provided without evmSigner', async () => {
     const options = {
-      evmInjectorAddress: '0x123',
+      evmSenderAddress: '0x123',
       from: 'Polkadot',
       to: 'Astar',
     } as TTransferOptions;

@@ -27,7 +27,8 @@ export class RouterService {
       currencyFrom,
       currencyTo,
       amount,
-      injectorAddress,
+      senderAddress,
+      evmSenderAddress,
       recipientAddress,
       slippagePct = '1',
     } = options;
@@ -54,8 +55,12 @@ export class RouterService {
       );
     }
 
-    if (!isValidWalletAddress(injectorAddress)) {
-      throw new BadRequestException('Invalid injector wallet address.');
+    if (!isValidWalletAddress(senderAddress)) {
+      throw new BadRequestException('Invalid sender wallet address.');
+    }
+
+    if (evmSenderAddress && !isValidWalletAddress(evmSenderAddress)) {
+      throw new BadRequestException('Invalid EVM sender wallet address.');
     }
 
     if (!isValidWalletAddress(recipientAddress)) {
@@ -70,7 +75,8 @@ export class RouterService {
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
         .amount(amount.toString())
-        .injectorAddress(injectorAddress)
+        .senderAddress(senderAddress)
+        .evmSenderAddress(evmSenderAddress)
         .recipientAddress(recipientAddress)
         .slippagePct(slippagePct)
         .buildTransactions();

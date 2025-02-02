@@ -194,13 +194,13 @@ const AssetClaim = () => {
         </Box>
         <AssetClaimForm onSubmit={onSubmit} loading={loading} />
       </Stack>
-      <Box ref={targetRef}>
+      <Center ref={targetRef}>
         {alertOpened && (
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
             {error?.message}
           </ErrorAlert>
         )}
-      </Box>
+      </Center>
     </Stack>
   );
 };

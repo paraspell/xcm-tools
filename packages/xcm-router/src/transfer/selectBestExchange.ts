@@ -1,28 +1,24 @@
-import { type TNode, createApiInstanceForNode } from '@paraspell/sdk-pjs';
+import { getAssetBySymbolOrId, hasSupportForAsset, type TNode } from '@paraspell/sdk-pjs';
 import { EXCHANGE_NODES } from '../consts';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
 import { type TCommonTransferOptionsModified, type TCommonTransferOptions } from '../types';
-import { calculateTransactionFee } from '../utils/utils';
-import {
-  buildFromExchangeExtrinsic,
-  buildToExchangeExtrinsic,
-  determineFeeCalcAddress,
-} from './utils';
+import { determineFeeCalcAddress } from './utils';
 import BigNumber from 'bignumber.js';
 import type ExchangeNode from '../dexNodes/DexNode';
 import Logger from '../Logger/Logger';
-import { findAssetFrom, findAssetTo, supportsCurrency } from '../assets/assets';
+import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets/assets';
+import { calculateFromExchangeFee, calculateToExchangeFee } from './createSwapTx';
 
 export const selectBestExchange = async (
   options: TCommonTransferOptions,
 ): Promise<ExchangeNode> => {
-  const { from, amount, currencyFrom, currencyTo } = options;
+  const { from, to, currencyFrom, currencyTo } = options;
 
-  const assetFrom = findAssetFrom(options.from, undefined, options.currencyFrom);
+  const assetFromOrigin = from ? getAssetBySymbolOrId(from, currencyFrom, null) : undefined;
 
-  if (!assetFrom) {
+  if (from && !assetFromOrigin) {
     throw new Error(
-      `Currency from ${JSON.stringify(options.currencyFrom)} is not supported by ${options.from}`,
+      `Currency from ${JSON.stringify(options.currencyFrom)} not found in ${options.from}.`,
     );
   }
 
@@ -35,34 +31,25 @@ export const selectBestExchange = async (
   for (const exchangeNode of EXCHANGE_NODES) {
     const dex = createDexNodeInstance(exchangeNode);
 
-    const assetFrom = findAssetFrom(options.from, dex.exchangeNode, options.currencyFrom);
+    const originSpecified = from && from !== dex.node;
+    const destinationSpecified = to && to !== dex.node;
 
-    if (!assetFrom && 'id' in options.currencyFrom) {
+    const assetFromExchange =
+      originSpecified && assetFromOrigin
+        ? getExchangeAssetByOriginAsset(dex.node, dex.exchangeNode, assetFromOrigin)
+        : getExchangeAsset(dex.node, dex.exchangeNode, currencyFrom);
+
+    if (!assetFromExchange) {
       continue;
     }
 
-    const assetTo = findAssetTo(
-      dex.exchangeNode,
-      options.from,
-      options.to,
-      options.currencyTo,
-      true,
-    );
+    const assetTo = getExchangeAsset(dex.node, dex.exchangeNode, currencyTo);
 
-    if (!assetTo && 'id' in options.currencyTo) {
+    if (!assetTo) {
       continue;
     }
 
-    const currencyFromSymbol =
-      assetFrom?.symbol ?? ('symbol' in options.currencyFrom ? options.currencyFrom.symbol : '');
-
-    const currencyToSymbol =
-      assetTo?.symbol ?? ('symbol' in options.currencyTo ? options.currencyTo.symbol : '');
-
-    if (
-      !supportsCurrency(exchangeNode, { symbol: currencyFromSymbol }) ||
-      !supportsCurrency(exchangeNode, { symbol: currencyToSymbol })
-    ) {
+    if (destinationSpecified && !hasSupportForAsset(to, assetTo.symbol)) {
       continue;
     }
 
@@ -70,36 +57,31 @@ export const selectBestExchange = async (
 
     const modifiedOptions: TCommonTransferOptionsModified = {
       ...options,
-      exchangeNode: dex.node,
-      exchange: dex.exchangeNode,
-      currencyFrom: { symbol: currencyFromSymbol },
-      currencyTo: { symbol: currencyToSymbol },
-      assetFrom,
-      assetTo,
-      feeCalcAddress: determineFeeCalcAddress(options.injectorAddress, options.recipientAddress),
+      exchange: {
+        api: await dex.createApiInstance(),
+        baseNode: dex.node,
+        exchangeNode: dex.exchangeNode,
+        assetFrom: assetFromExchange,
+        assetTo,
+      },
+      feeCalcAddress: determineFeeCalcAddress(options.senderAddress, options.recipientAddress),
     };
-    const originApi = await createApiInstanceForNode(from);
-    const swapApi = await dex.createApiInstance();
     try {
-      const toDestTx = await buildFromExchangeExtrinsic(swapApi, modifiedOptions, amount);
-      const toDestTransactionFee = await calculateTransactionFee(
-        toDestTx,
-        modifiedOptions.feeCalcAddress,
-      );
-      const toExchangeTx = await buildToExchangeExtrinsic(originApi, modifiedOptions);
-      const toExchangeTransactionFee = await calculateTransactionFee(
-        toExchangeTx,
-        modifiedOptions.feeCalcAddress,
-      );
+      const toExchangeTxFee = await calculateToExchangeFee(modifiedOptions);
+      const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);
+
       const swapResult = await dex.swapCurrency(
-        swapApi,
+        modifiedOptions.exchange.api,
         {
           ...modifiedOptions,
           feeCalcAddress: modifiedOptions.feeCalcAddress,
+          assetFrom: modifiedOptions.exchange.assetFrom,
+          assetTo: modifiedOptions.exchange.assetTo,
         },
-        toDestTransactionFee,
-        toExchangeTransactionFee,
+        toDestTxFee,
+        toExchangeTxFee,
       );
+
       const amountOut = new BigNumber(swapResult.amountOut);
       if (amountOut.gt(maxAmountOut)) {
         bestExchange = dex;

@@ -2,10 +2,26 @@ import type {
   TNodeWithRelayChains,
   TAsset as SdkTAsset,
   TCurrencyCoreV1,
+  TCurrencyInput,
+  TNodePolkadotKusama,
+  TForeignAsset,
+  TMultiLocation,
+  TJunction,
 } from '@paraspell/sdk-pjs';
-import { getAssets, isForeignAsset } from '@paraspell/sdk-pjs';
+import {
+  deepEqual,
+  findAssetById,
+  findAssetByMultiLocation,
+  findAssetBySymbol,
+  findBestMatches,
+  getAssetBySymbolOrId,
+  getAssets,
+  isForeignAsset,
+  isOverrideMultiLocationSpecifier,
+} from '@paraspell/sdk-pjs';
 import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
-import type { TAssetsRecord, TAutoSelect, TExchangeNode } from '../types';
+import type { TAsset, TAssetsRecord, TAutoSelect, TExchangeNode } from '../types';
+import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
 
 const assetsMap = assetsMapJson as TAssetsRecord;
 
@@ -19,52 +35,88 @@ export const supportsCurrency = (
     : assets.some((asset) => asset.id === currency.id);
 };
 
-export const findAssetFrom = (
-  from: TNodeWithRelayChains,
-  exchange: TExchangeNode | undefined,
-  currency: TCurrencyCoreV1,
-): SdkTAsset | undefined => {
-  const fromAssets = getAssets(from);
-  if (exchange === undefined) {
-    return getAssets(from).find((asset) =>
-      'symbol' in currency
-        ? asset.symbol === currency.symbol
-        : isForeignAsset(asset) && asset.assetId === currency.id,
+export const getExchangeAssetByOriginAsset = (
+  exchangeBaseNode: TNodePolkadotKusama,
+  exchange: TExchangeNode,
+  originAsset: TAsset,
+) => {
+  // Try searching by symbol fist, if duplicates are found, search by multi-location
+
+  const assets = assetsMap[exchange];
+
+  const candidates = findBestMatches(assets, originAsset.symbol);
+
+  if (candidates.length === 0) {
+    // No matching asset found by symbol.
+    return undefined;
+  }
+
+  if (candidates.length === 1) {
+    // Exactly one asset found by symbol.
+    return candidates[0];
+  }
+
+  if (!isForeignAsset(originAsset)) {
+    // Origin asset is a native asset, but multiple candidates were found.
+    return undefined;
+  }
+
+  // Origin asset is a foreign asset, try matching by multi-location.
+  return candidates.find((asset) => {
+    if (asset.id === undefined) return false;
+    const sdkAsset = getAssetBySymbolOrId(
+      exchangeBaseNode,
+      { id: asset.id },
+      null,
+    ) as TForeignAsset;
+    if (sdkAsset.multiLocation === undefined) return false;
+    return deepEqual(sdkAsset.multiLocation, originAsset.multiLocation);
+  });
+};
+
+export const getExchangeAsset = (
+  exchangeBaseNode: TNodePolkadotKusama,
+  exchange: TExchangeNode,
+  currency: TCurrencyInput,
+): TAsset | null => {
+  if (
+    ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) ||
+    'multiasset' in currency
+  ) {
+    throw new Error(
+      'XCM Router does not support multi-location override or multi-asset currencies yet.',
     );
   }
 
-  return fromAssets.find((asset) =>
-    'symbol' in currency
-      ? asset.symbol === currency.symbol
-      : isForeignAsset(asset) && asset.assetId === currency.id,
-  );
-};
+  const assets = assetsMap[exchange];
 
-export const findAssetTo = (
-  _exchange: TExchangeNode,
-  from: TNodeWithRelayChains,
-  _to: TNodeWithRelayChains,
-  currency: TCurrencyCoreV1,
-  isAutomaticSelection = false,
-): SdkTAsset | undefined => {
-  const fromAssets = getAssets(from);
-  if (isAutomaticSelection) {
-    return fromAssets.find((asset) =>
-      'symbol' in currency
-        ? asset.symbol === currency.symbol
-        : isForeignAsset(asset) && asset.assetId === currency.id,
+  const nativeAssets = assets.filter((asset) => asset.id === undefined);
+  const otherAssets = assets
+    .filter((asset) => asset.id !== undefined)
+    .map((asset) => ({ ...asset, assetId: asset.id })) as TForeignAsset[];
+
+  let asset: TAsset | undefined;
+  if ('symbol' in currency) {
+    asset = findAssetBySymbol(exchangeBaseNode, null, otherAssets, nativeAssets, currency.symbol);
+  } else if (
+    'multilocation' in currency &&
+    !isOverrideMultiLocationSpecifier(currency.multilocation)
+  ) {
+    asset = findAssetByMultiLocation(
+      otherAssets,
+      currency.multilocation as string | TMultiLocation | TJunction[],
     );
+  } else if ('id' in currency) {
+    asset = findAssetById(otherAssets, currency.id);
+  } else {
+    throw new Error('Invalid currency input');
   }
 
-  return fromAssets.find((asset) =>
-    'symbol' in currency
-      ? asset.symbol === currency.symbol
-      : isForeignAsset(asset) && asset.assetId === currency.id,
-  );
-};
+  if (asset) {
+    return asset;
+  }
 
-export const findAssetInExchangeBySymbol = (exchange: TExchangeNode, currencySymbol: string) => {
-  return assetsMap[exchange].find((asset) => asset.symbol === currencySymbol);
+  return null;
 };
 
 /**
@@ -75,16 +127,24 @@ export const findAssetInExchangeBySymbol = (exchange: TExchangeNode, currencySym
  * @returns An array of supported assets.
  */
 export const getSupportedAssetsFrom = (
-  from: TNodeWithRelayChains,
+  from: TNodeWithRelayChains | undefined,
   exchange: TExchangeNode | TAutoSelect,
 ): SdkTAsset[] => {
   if (exchange === 'Auto select') {
+    if (!from) return [];
     return getAssets(from);
   }
 
-  const fromAssets = getAssets(from);
   const exchangeAssets = assetsMap[exchange];
 
+  if (!from || from === createDexNodeInstance(exchange).node) {
+    return exchangeAssets.map((asset) => ({
+      ...asset,
+      assetId: asset.id,
+    }));
+  }
+
+  const fromAssets = getAssets(from);
   return fromAssets.filter((fromAsset) =>
     exchangeAssets.some((exchangeAsset) => exchangeAsset.symbol === fromAsset.symbol),
   );
@@ -99,22 +159,28 @@ export const getSupportedAssetsFrom = (
  * @returns An array of supported assets.
  */
 export const getSupportedAssetsTo = (
-  origin: TNodeWithRelayChains,
   exchange: TExchangeNode | TAutoSelect,
-  to: TNodeWithRelayChains,
-): SdkTAsset[] => {
-  const originAssets = getAssets(origin);
-  const toAssets = getAssets(to);
+  to: TNodeWithRelayChains | undefined,
+): TAsset[] => {
   if (exchange === 'Auto select') {
-    return originAssets.filter((originAsset) =>
-      toAssets.some((toAsset) => toAsset.symbol === originAsset.symbol),
+    let exchangeAssets = Object.values(assetsMap).flat();
+    if (to) {
+      const toAssets = getAssets(to);
+      exchangeAssets = exchangeAssets.filter((asset) =>
+        toAssets.some((toAsset) => toAsset.symbol === asset.symbol),
+      );
+    }
+    return exchangeAssets;
+  }
+
+  let exchangeAssets = assetsMap[exchange];
+
+  if (to) {
+    const toAssets = getAssets(to);
+    exchangeAssets = exchangeAssets.filter((asset) =>
+      toAssets.some((toAsset) => toAsset.symbol === asset.symbol),
     );
   }
 
-  const exchangeAssets = assetsMap[exchange];
-  return originAssets
-    .filter((originAsset) =>
-      exchangeAssets.some((exchangeAsset) => exchangeAsset.symbol === originAsset.symbol),
-    )
-    .filter((originAsset) => toAssets.some((toAsset) => toAsset.symbol === originAsset.symbol));
+  return exchangeAssets;
 };

@@ -90,10 +90,8 @@ describe('BifrostExchangeNode', () => {
     const swapOptions = {
       assetFrom: { symbol: 'BNC' },
       assetTo: { symbol: 'KSM' },
-      currencyFrom: { symbol: 'BNC' },
-      currencyTo: { symbol: 'KSM' },
       amount: '1000000',
-      injectorAddress: '5xxxxxx',
+      senderAddress: '5xxxxxx',
       slippagePct: '0.5',
     } as TSwapOptions;
     const mockToDestTransactionFee = new BigNumber('1000');

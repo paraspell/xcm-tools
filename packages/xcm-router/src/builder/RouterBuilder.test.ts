@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, type MockInstance } from 'vitest';
-import * as index from './index';
+import * as index from '../index';
 import { RouterBuilder } from './RouterBuilder';
 import { type Signer } from '@polkadot/api/types';
 
@@ -10,7 +10,7 @@ export const transferParams: index.TTransferOptions = {
   currencyFrom: { symbol: 'ASTR' },
   currencyTo: { symbol: 'GLMR' },
   amount: '1000000000',
-  injectorAddress: 'YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg',
+  senderAddress: 'YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg',
   recipientAddress: 'YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg',
   signer: {} as unknown as Signer,
   slippagePct: '1',
@@ -23,7 +23,7 @@ const {
   currencyFrom,
   currencyTo,
   amount,
-  injectorAddress,
+  senderAddress,
   recipientAddress,
   signer,
   slippagePct,
@@ -45,7 +45,7 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .injectorAddress(injectorAddress)
+      .senderAddress(senderAddress)
       .recipientAddress(recipientAddress)
       .signer(signer)
       .slippagePct(slippagePct)
@@ -64,7 +64,7 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .injectorAddress(injectorAddress)
+      .senderAddress(senderAddress)
       .recipientAddress(recipientAddress)
       .signer(signer)
       .slippagePct(slippagePct)
@@ -86,11 +86,11 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .injectorAddress(injectorAddress)
+      .senderAddress(senderAddress)
       .recipientAddress(recipientAddress)
       .signer(signer)
       .slippagePct(slippagePct)
-      .evmInjectorAddress(evmInjectorAddress)
+      .evmSenderAddress(evmInjectorAddress)
       .evmSigner(evmSigner)
       .onStatusChange(onStatusChange)
       .build();
@@ -112,7 +112,7 @@ describe('Builder', () => {
       .currencyFrom(currencyFrom)
       .currencyTo(currencyTo)
       .amount(amount)
-      .injectorAddress(injectorAddress)
+      .senderAddress(senderAddress)
       .recipientAddress(recipientAddress)
       .signer(signer)
       .slippagePct(slippagePct)
@@ -131,9 +131,24 @@ describe('Builder', () => {
         .currencyFrom(currencyFrom)
         .currencyTo(currencyTo)
         .amount(amount)
-        .injectorAddress(injectorAddress)
+        .senderAddress(senderAddress)
         .recipientAddress(recipientAddress)
         .signer(signer)
+        .slippagePct(slippagePct)
+        .build();
+    }).rejects.toThrowError();
+  });
+
+  it('should fail to construct a transfer when from, exchange and to are missing', async () => {
+    await expect(async () => {
+      await RouterBuilder()
+        .currencyFrom(currencyFrom)
+        .currencyTo(currencyTo)
+        .amount(amount)
+        .senderAddress(senderAddress)
+        .recipientAddress(recipientAddress)
+        .signer(signer)
+        .slippagePct(slippagePct)
         .build();
     }).rejects.toThrowError();
   });

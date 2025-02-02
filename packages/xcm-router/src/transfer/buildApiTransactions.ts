@@ -1,4 +1,3 @@
-import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { TRouterPlan } from '../types';
 import { type TBuildTransactionsOptions } from '../types';
 import { prepareTransformedOptions } from './utils';
@@ -12,15 +11,12 @@ export const buildApiTransactions = async (
 
   const { options, dex } = await prepareTransformedOptions(initialOptions);
 
-  const { from } = options;
-
-  const originApi = await createApiInstanceForNode(from);
-  const swapApi = await dex.createApiInstance();
+  const { origin, exchange } = options;
 
   try {
-    return await buildTransactions(originApi, swapApi, options);
+    return await buildTransactions(dex, options);
   } finally {
-    await originApi.disconnect();
-    await swapApi.disconnect();
+    if (origin) await origin.api.disconnect();
+    await exchange.api.disconnect();
   }
 };
