@@ -17,6 +17,9 @@ jobs:
       NODE_OPTIONS: "--max_old_space_size=8192"
     steps:
       - uses: actions/checkout@v4
+      - name: Set alternate npm integrity keys
+        run: |
+          echo COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" >> $GITHUB_ENV
       - run: corepack enable
       - uses: actions/setup-node@v4
         with:
