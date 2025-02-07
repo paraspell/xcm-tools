@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { describe, it, expect, vi } from 'vitest'
 import { createContext } from './createContext'
-import type { Context } from '@snowbridge/api'
-import { toPolkadot } from '@snowbridge/api'
-import type { SendValidationResult } from '@snowbridge/api/dist/toPolkadot'
+import { toPolkadotV2, type Context } from '@snowbridge/api'
 import { transferEthToPolkadot } from './ethTransfer'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
@@ -13,6 +12,7 @@ import {
   isOverrideMultiLocationSpecifier
 } from '@paraspell/sdk-core'
 import type { Extrinsic, TPjsApi } from '../types'
+import { beforeEach } from 'node:test'
 
 vi.mock('./createContext', () => ({
   createContext: vi.fn()
@@ -26,46 +26,59 @@ vi.mock('@paraspell/sdk-core', () => ({
   isOverrideMultiLocationSpecifier: vi.fn().mockReturnValue(false)
 }))
 
-vi.mock('@snowbridge/api', () => ({
-  toPolkadot: {
-    validateSend: vi.fn()
-  }
-}))
-
-vi.mock('@snowbridge/api', async importOriginal => {
-  const actual = await importOriginal<typeof import('@snowbridge/api')>()
+vi.mock('@snowbridge/api', async () => {
+  const actual = await vi.importActual<typeof import('@snowbridge/api')>('@snowbridge/api')
   return {
     ...actual,
-    toPolkadot: {
-      validateSend: vi.fn(),
-      send: vi.fn()
+    toPolkadotV2: {
+      ...actual.toPolkadotV2,
+      getDeliveryFee: vi.fn().mockResolvedValue(100n),
+      createTransfer: vi.fn().mockResolvedValue({
+        tx: {}
+      }),
+      validateTransfer: vi.fn().mockResolvedValue({
+        logs: []
+      }),
+      getMessageReceipt: vi.fn().mockResolvedValue({ some: 'receipt' })
+    },
+    assetsV2: {
+      buildRegistry: vi.fn().mockImplementation(contextData => ({ contextData })),
+      fromContext: vi.fn().mockResolvedValue({
+        polkadot: () => ({}),
+        ethereum: () => ({}),
+        bridgeHub: async () => ({}),
+        assetHub: async () => ({}),
+        parachain: async () => ({})
+      })
     }
   }
 })
 
-vi.mock('./checkPlanFailure', () => ({
-  checkPlanFailure: vi.fn()
-}))
-
 describe('transferEthToPolkadot', () => {
-  it('successfully returns serialized eth transfer options', async () => {
-    const mockAsset = { symbol: '', assetId: 'eth-asset-id' }
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(mockAsset)
-    vi.mocked(createContext).mockResolvedValue({
-      config: {},
-      ethereum: {},
-      polkadot: {}
-    } as Context)
+  beforeEach(() => {
+    vi.resetAllMocks()
+  })
+
+  it('successfully returns tx response and message receipt', async () => {
+    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
     vi.mocked(getParaId).mockReturnValue(1000)
-    vi.mocked(toPolkadot).validateSend.mockResolvedValue({
-      success: {
-        token: 'token123',
-        destinationParaId: 1000,
-        destinationFee: 500n,
-        amount: 1000n
-      }
-    } as SendValidationResult)
-    vi.mocked(toPolkadot).send.mockResolvedValue({})
+    vi.mocked(createContext).mockReturnValue({
+      config: {},
+      ethereum: () => ({}),
+      polkadot: () => ({}),
+      gateway: () => ({}),
+      bridgeHub: async () => ({}),
+      assetHub: async () => ({}),
+      parachain: async () => ({})
+    } as unknown as Context)
+    const fakeSigner = {
+      provider: {},
+      getAddress: vi.fn().mockResolvedValue('0xFakeAddress'),
+      sendTransaction: vi.fn().mockResolvedValue({
+        hash: '0xFakeHash',
+        wait: vi.fn().mockResolvedValue({ hash: '0xFakeReceiptHash' })
+      })
+    } as unknown as Signer
 
     const options: TEvmBuilderOptions<TPjsApi, Extrinsic> = {
       api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
@@ -74,23 +87,17 @@ describe('transferEthToPolkadot', () => {
       from: 'Ethereum',
       to: 'AssetHubPolkadot',
       address: '0xSenderAddress',
-      signer: {
-        provider: {}
-      } as Signer
+      signer: fakeSigner
     }
 
     const result = await transferEthToPolkadot(options)
 
     expect(result).toEqual({
-      result: {},
-      plan: {
-        success: {
-          token: 'token123',
-          destinationParaId: 1000,
-          destinationFee: 500n,
-          amount: 1000n
-        }
-      }
+      response: {
+        hash: '0xFakeHash',
+        wait: expect.any(Function)
+      },
+      messageReceipt: { some: 'receipt' }
     })
   })
 
@@ -208,6 +215,127 @@ describe('transferEthToPolkadot', () => {
 
     await expect(transferEthToPolkadot(options)).rejects.toThrow(
       'Override multilocation is not supported for Evm transfers'
+    )
+  })
+
+  it('throws error if message receipt is missing', async () => {
+    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
+    vi.mocked(getParaId).mockReturnValue(1000)
+    vi.mocked(createContext).mockReturnValue({
+      config: {},
+      ethereum: () => ({}),
+      polkadot: () => ({}),
+      gateway: () => ({}),
+      bridgeHub: async () => ({}),
+      assetHub: async () => ({}),
+      parachain: async () => ({})
+    } as unknown as Context)
+
+    vi.spyOn(toPolkadotV2, 'validateTransfer').mockResolvedValue({
+      logs: []
+    } as unknown as toPolkadotV2.Validation)
+
+    vi.spyOn(toPolkadotV2, 'getMessageReceipt').mockResolvedValue(null)
+    const fakeSigner = {
+      provider: {},
+      getAddress: vi.fn().mockResolvedValue('0xFakeAddress'),
+      sendTransaction: vi.fn().mockResolvedValue({
+        hash: '0xFakeHash',
+        wait: vi.fn().mockResolvedValue({ hash: '0xFakeReceiptHash' })
+      })
+    } as unknown as Signer
+
+    const options: TEvmBuilderOptions<TPjsApi, Extrinsic> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+      provider: {} as AbstractProvider,
+      currency: { symbol: 'ETH', amount: '1000000' },
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
+      address: '0xSenderAddress',
+      signer: fakeSigner
+    }
+
+    await expect(transferEthToPolkadot(options)).rejects.toThrow(
+      /Transaction 0xFakeReceiptHash did not emit a message./
+    )
+  })
+
+  it('throws error if transaction receipt is missing', async () => {
+    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
+    vi.mocked(getParaId).mockReturnValue(1000)
+    vi.mocked(createContext).mockReturnValue({
+      config: {},
+      ethereum: () => ({}),
+      polkadot: () => ({}),
+      gateway: () => ({}),
+      bridgeHub: async () => ({}),
+      assetHub: async () => ({}),
+      parachain: async () => ({})
+    } as unknown as Context)
+
+    vi.spyOn(toPolkadotV2, 'validateTransfer').mockResolvedValue({
+      logs: []
+    } as unknown as toPolkadotV2.Validation)
+
+    const fakeSigner = {
+      provider: {},
+      getAddress: vi.fn().mockResolvedValue('0xFakeAddress'),
+      sendTransaction: vi.fn().mockResolvedValue({
+        hash: '0xFakeHash',
+        wait: vi.fn().mockResolvedValue(null)
+      })
+    } as unknown as Signer
+
+    const options: TEvmBuilderOptions<TPjsApi, Extrinsic> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+      provider: {} as AbstractProvider,
+      currency: { symbol: 'ETH', amount: '1000000' },
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
+      address: '0xSenderAddress',
+      signer: fakeSigner
+    }
+
+    await expect(transferEthToPolkadot(options)).rejects.toThrow(
+      /Transaction 0xFakeHash not included./
+    )
+  })
+
+  it('throws error if validation fails', async () => {
+    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'Ethereum', assetId: 'eth-asset-id' })
+    vi.mocked(getParaId).mockReturnValue(1000)
+    vi.mocked(createContext).mockReturnValue({
+      config: {},
+      ethereum: () => ({}),
+      polkadot: () => ({}),
+      gateway: () => ({}),
+      bridgeHub: async () => ({}),
+      assetHub: async () => ({}),
+      parachain: async () => ({})
+    } as unknown as Context)
+
+    vi.spyOn(toPolkadotV2, 'validateTransfer').mockResolvedValue({
+      logs: [{ kind: toPolkadotV2.ValidationKind.Error, message: 'Validation error occurred' }]
+    } as toPolkadotV2.Validation)
+
+    const fakeSigner = {
+      provider: {},
+      getAddress: vi.fn().mockResolvedValue('0xFakeAddress'),
+      sendTransaction: vi.fn()
+    } as unknown as Signer
+
+    const options: TEvmBuilderOptions<TPjsApi, Extrinsic> = {
+      api: {} as IPolkadotApi<TPjsApi, Extrinsic>,
+      provider: {} as AbstractProvider,
+      currency: { symbol: 'ETH', amount: '1000000' },
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
+      address: '0xSenderAddress',
+      signer: fakeSigner
+    }
+
+    await expect(transferEthToPolkadot(options)).rejects.toThrow(
+      /Validation failed with following errors: \n\n Validation error occurred/
     )
   })
 })

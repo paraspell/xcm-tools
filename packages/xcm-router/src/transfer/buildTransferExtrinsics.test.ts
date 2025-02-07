@@ -9,7 +9,7 @@ import type { TBuildTransferExtrinsicsOptions } from '../types';
 import { TransactionType } from '../types';
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
-import { createApiInstanceForNode, buildEthTransferOptions } from '@paraspell/sdk-pjs';
+import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
@@ -55,14 +55,6 @@ describe('buildTransferExtrinsics', () => {
       swapCurrency: vi.fn().mockResolvedValue({}),
     } as unknown as ExchangeNode);
 
-    vi.mocked(buildEthTransferOptions).mockResolvedValue({
-      token: 'token123',
-      destinationParaId: 1000,
-      destinationFee: 500n,
-      amount: 1000n,
-      fee: 100n,
-    });
-
     vi.mocked(createApiInstanceForNode).mockResolvedValue({
       disconnect: async () => {},
     } as ApiPromise);
@@ -106,26 +98,6 @@ describe('buildTransferExtrinsics', () => {
     expect(validateSpy).toHaveBeenCalledTimes(2);
     expect(feeSpy).toHaveBeenCalledTimes(2);
     expect(fromExchangeTxSpy).toHaveBeenCalledTimes(3);
-    expect(toExchangeTxSpy).toHaveBeenCalled();
-  });
-
-  it('should build transfer extrinsics correctly - manual exchange selection - From Ethereum', async () => {
-    const options: TBuildTransferExtrinsicsOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-      from: 'Ethereum',
-      currencyFrom: { symbol: 'WETH' },
-      assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
-      ethAddress: '0x1234567890123456789012345678901234567890',
-    };
-    const result = await buildTransferExtrinsics(options);
-
-    expect(result).toBeDefined();
-    expect(result).toHaveLength(4);
-    expect(createApiInstanceForNode).toHaveBeenCalled();
-    expect(validateSpy).toHaveBeenCalledTimes(2);
-    expect(feeSpy).toHaveBeenCalledTimes(2);
-    expect(fromExchangeTxSpy).toHaveBeenCalledTimes(2);
     expect(toExchangeTxSpy).toHaveBeenCalled();
   });
 
@@ -230,23 +202,6 @@ describe('buildTransferExtrinsics', () => {
     await expect(buildTransferExtrinsics(options)).rejects.toThrow('Failed to create API instance');
   });
 
-  it('handles FROM_ETH transaction type correctly', async () => {
-    const options: TBuildTransferExtrinsicsOptions = {
-      ...MOCK_TRANSFER_OPTIONS,
-      exchange: 'AcalaDex',
-      from: 'Ethereum',
-      to: 'Hydration',
-      currencyTo: { symbol: 'WBTC' },
-      currencyFrom: { symbol: 'WETH' },
-      type: TransactionType.FROM_ETH,
-      assetHubAddress: '14Ghg2yZAxxNhiDF97iYrgk7CwRErEmQR4UpuXaa7JXpVKig',
-      ethAddress: '0x1234567890123456789012345678901234567890',
-    };
-    const result = await buildTransferExtrinsics(options);
-    expect(result[0].node).toBe('Ethereum');
-    expect(result[0].type).toBe('ETH_TRANSFER');
-  });
-
   it('handles TO_ETH transaction type correctly', async () => {
     const options: TBuildTransferExtrinsicsOptions = {
       ...MOCK_TRANSFER_OPTIONS,
@@ -308,10 +263,8 @@ describe('buildTransferExtrinsics', () => {
       ethAddress: '0x1234567890123456789012345678901234567890',
     };
     const result = await buildTransferExtrinsics(options);
-    expect(result[0].node).toBe('Ethereum');
-    expect(result[0].type).toBe('ETH_TRANSFER');
-    expect(result[1].node).toBe('AssetHubPolkadot');
-    expect(result[1].type).toBe('EXTRINSIC');
+    expect(result[0].node).toBe('AssetHubPolkadot');
+    expect(result[0].type).toBe('EXTRINSIC');
   });
 
   it('handles TO_EXCHANGE transaction type correctly - from Ethereum to Ethereum', async () => {
@@ -328,10 +281,8 @@ describe('buildTransferExtrinsics', () => {
       ethAddress: '0x1234567890123456789012345678901234567890',
     };
     const result = await buildTransferExtrinsics(options);
-    expect(result[0].node).toBe('Ethereum');
-    expect(result[0].type).toBe('ETH_TRANSFER');
-    expect(result[1].node).toBe('AssetHubPolkadot');
-    expect(result[1].type).toBe('EXTRINSIC');
+    expect(result[0].node).toBe('AssetHubPolkadot');
+    expect(result[0].type).toBe('EXTRINSIC');
   });
 
   it('handles TO_EXCHANGE transaction type correctly - non Ethereum', async () => {

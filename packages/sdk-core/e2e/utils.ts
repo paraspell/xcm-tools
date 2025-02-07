@@ -94,6 +94,12 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
   validateTx: (tx: TRes, signer: TSigner) => Promise<void>,
   filteredNodes: TNodePolkadotKusama[]
 ) => {
+  const reorderedNodes = filteredNodes.slice().sort((a, b) => {
+    if (a === 'Acala') return 1 // Move a down if it is 'Acala'
+    if (b === 'Acala') return -1 // Move b down if it is 'Acala'
+    return 0 // Otherwise, maintain original order
+  })
+
   describe.sequential('XCM - e2e', () => {
     const apiPool: Record<string, TApi> = {}
 
@@ -354,7 +360,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
     })
 
-    filteredNodes.forEach(node => {
+    reorderedNodes.forEach(node => {
       const scenarios = generateTransferScenarios(node)
       const relayChainAsset = getAssetBySymbolOrId(
         node,

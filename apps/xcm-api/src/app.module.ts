@@ -22,7 +22,6 @@ import path from 'path';
 import { AssetClaimModule } from './asset-claim/asset-claim.module.js';
 import { TransferInfoModule } from './transfer-info/transfer-info.module.js';
 import { XcmAnalyserModule } from './xcm-analyser/xcm-analyser.module.js';
-import { XTransferEthModule } from './x-transfer-eth/x-transfer-eth.module.js';
 import { BalanceModule } from './balance/balance.module.js';
 import { NodeConfigsModule } from './node-configs/node-configs.module.js';
 
@@ -33,7 +32,6 @@ const __dirname = path.dirname(__filename);
   imports: [
     AnalyticsModule,
     XTransferModule,
-    XTransferEthModule,
     AssetClaimModule,
     TransferInfoModule,
     XcmAnalyserModule,

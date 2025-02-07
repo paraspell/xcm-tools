@@ -1,2 +1,4 @@
 export * from './ethTransfer'
-export * from './buildEthTransferOptions'
+export * from './depositToken'
+export * from './approveToken'
+export * from './getTokenBalance'

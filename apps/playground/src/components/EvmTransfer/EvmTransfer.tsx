@@ -9,21 +9,20 @@ import {
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useState, useEffect } from 'react';
-import type { BrowserProvider, LogDescription } from 'ethers';
+import type { BrowserProvider } from 'ethers';
 import { ethers } from 'ethers';
 import { ErrorAlert } from '../common/ErrorAlert';
-import type { FormValues, FormValuesTransformed } from './EvmTransferForm';
+import type { FormValuesTransformed } from './EvmTransferForm';
 import EvmTransferForm from './EvmTransferForm';
 import type { TNode } from '@paraspell/sdk';
-import { EvmBuilder as EvmBuilderPJS } from '@paraspell/sdk-pjs';
+import {
+  depositToken,
+  approveToken,
+  EvmBuilder as EvmBuilderPJS,
+} from '@paraspell/sdk-pjs';
 import { EvmBuilder } from '@paraspell/sdk';
-import { fetchFromApi } from '../../utils';
-import { IGateway__factory } from '@snowbridge/contract-types';
-import type { MultiAddressStruct } from '@snowbridge/contract-types/dist/IGateway';
-import { u8aToHex } from '@polkadot/util';
-import { decodeAddress } from '@polkadot/keyring';
 import { Web3 } from 'web3';
-import type { EIP6963ProviderDetail, TEthBridgeApiResponse } from '../../types';
+import type { EIP6963ProviderDetail, TEvmSubmitType } from '../../types';
 import EthWalletSelectModal from '../EthWalletSelectModal';
 import EthAccountsSelectModal from '../EthAccountsSelectModal';
 import type { Address } from 'viem';
@@ -211,8 +210,7 @@ const EvmTransfer = () => {
     }
   };
 
-  const submitEthTransactionApi = async (formValues: FormValuesTransformed) => {
-    const { currency } = formValues;
+  const submitDeposit = async (formValues: FormValuesTransformed) => {
     if (!provider) {
       throw new Error('Provider not initialized');
     }
@@ -223,84 +221,20 @@ const EvmTransfer = () => {
       throw new Error('Signer not initialized');
     }
 
-    const apiResponse = (await fetchFromApi(
-      {
-        ...formValues,
-        destAddress: formValues.address,
-        address: await signer.getAddress(),
-        currency: { symbol: currency?.symbol ?? '' },
-      },
-      '/x-transfer-eth',
-      'POST',
-      true,
-    )) as TEthBridgeApiResponse;
-
-    const GATEWAY_CONTRACT = '0xEDa338E4dC46038493b885327842fD3E301CaB39';
-
-    const contract = IGateway__factory.connect(GATEWAY_CONTRACT, signer);
-
-    const abi = ethers.AbiCoder.defaultAbiCoder();
-
-    const address: MultiAddressStruct = {
-      data: abi.encode(
-        ['bytes32'],
-        [u8aToHex(decodeAddress(formValues.address))],
-      ),
-      kind: 1,
-    };
-
-    const response = await contract.sendToken(
-      apiResponse.token,
-      apiResponse.destinationParaId,
-      address,
-      apiResponse.destinationFee,
-      apiResponse.amount,
-      {
-        value: apiResponse.fee,
-      },
-    );
-    const receipt = await response.wait(1);
-
-    if (receipt === null) {
-      throw new Error('Error waiting for transaction completion');
-    }
-
-    if (receipt?.status !== 1) {
-      throw new Error('Transaction failed');
-    }
-
-    const events: LogDescription[] = [];
-    receipt.logs.forEach((log) => {
-      const event = contract.interface.parseLog({
-        topics: [...log.topics],
-        data: log.data,
-      });
-      if (event !== null) {
-        events.push(event);
-      }
-    });
-
-    return true;
-  };
-
-  const submit = async (formValues: FormValues) => {
-    if (!selectedAccount) {
-      showErrorNotification('No account selected, connect wallet first');
-      throw new Error('No account selected!');
-    }
-
     setLoading(true);
     const notifId = showLoadingNotification(
       'Processing',
       'Transaction is being processed',
     );
 
+    const { amount, currency } = formValues;
+
+    if (!currency?.symbol) {
+      throw new Error('Currency symbol not found');
+    }
+
     try {
-      if (formValues.useApi) {
-        await submitEthTransactionApi(formValues);
-      } else {
-        await submitEthTransactionSdk(formValues);
-      }
+      await depositToken(signer, BigInt(amount), currency?.symbol);
       showSuccessNotification(
         notifId ?? '',
         'Success',
@@ -319,7 +253,98 @@ const EvmTransfer = () => {
     }
   };
 
-  const onSubmit = (formValues: FormValues) => void submit(formValues);
+  const submitApprove = async (formValues: FormValuesTransformed) => {
+    if (!provider) {
+      throw new Error('Provider not initialized');
+    }
+
+    const signer = await provider.getSigner();
+
+    if (!signer) {
+      throw new Error('Signer not initialized');
+    }
+
+    setLoading(true);
+    const notifId = showLoadingNotification(
+      'Processing',
+      'Transaction is being processed',
+    );
+
+    const { amount, currency } = formValues;
+
+    if (!currency?.symbol) {
+      throw new Error('Currency symbol not found');
+    }
+
+    try {
+      await approveToken(signer, BigInt(amount), currency?.symbol);
+      showSuccessNotification(
+        notifId ?? '',
+        'Success',
+        'Transaction was successful',
+      );
+    } catch (e) {
+      if (e instanceof Error) {
+        // eslint-disable-next-line no-console
+        console.error(e);
+        showErrorNotification(e.message, notifId);
+        setError(e);
+        openAlert();
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submit = async (
+    formValues: FormValuesTransformed,
+    submitType: TEvmSubmitType,
+  ) => {
+    if (!selectedAccount) {
+      showErrorNotification('No account selected, connect wallet first');
+      throw new Error('No account selected!');
+    }
+
+    if (submitType === 'approve') {
+      await submitApprove(formValues);
+      return;
+    }
+
+    if (submitType === 'deposit') {
+      await submitDeposit(formValues);
+      return;
+    }
+
+    setLoading(true);
+    const notifId = showLoadingNotification(
+      'Processing',
+      'Transaction is being processed',
+    );
+
+    try {
+      await submitEthTransactionSdk(formValues);
+      showSuccessNotification(
+        notifId ?? '',
+        'Success',
+        'Transaction was successful',
+      );
+    } catch (e) {
+      if (e instanceof Error) {
+        // eslint-disable-next-line no-console
+        console.error(e);
+        showErrorNotification(e.message, notifId);
+        setError(e);
+        openAlert();
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onSubmit = (
+    formValues: FormValuesTransformed,
+    submitType: TEvmSubmitType,
+  ) => void submit(formValues, submitType);
 
   const onAlertCloseClick = () => {
     closeAlert();
@@ -364,7 +389,11 @@ const EvmTransfer = () => {
             ? `Connected: ${selectedAccount.substring(0, 6)}...${selectedAccount.substring(selectedAccount.length - 4)}`
             : 'Connect Ethereum Wallet'}
         </Button>
-        <EvmTransferForm onSubmit={onSubmit} loading={loading} />
+        <EvmTransferForm
+          onSubmit={onSubmit}
+          loading={loading}
+          provider={provider}
+        />
       </Stack>
       <Box ref={targetRef}>
         {alertOpened && (

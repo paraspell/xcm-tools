@@ -35,7 +35,6 @@
     "@polkadot/keyring": "^13.3.1",
     "@polkadot/util": "^13.3.1",
     "@polkadot/util-crypto": "^13.3.1",
-    "@snowbridge/contract-types": "^0.1.28",
     "@tabler/icons-react": "^3.29.0",
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
