@@ -39,6 +39,10 @@ describe('buildTransactions', () => {
       baseNode: 'Acala',
       api: swapApi,
     },
+    destination: {
+      address: 'someAddress',
+      node: 'Crust',
+    },
   } as TBuildTransactionsOptionsModified;
 
   beforeEach(() => {
@@ -63,6 +67,10 @@ describe('buildTransactions', () => {
         exchangeNode: 'AcalaDex',
       },
       to: 'Acala',
+      destination: {
+        address: 'someAddress',
+        node: 'Acala',
+      },
     });
 
     expect(result).toEqual([
@@ -140,6 +148,10 @@ describe('buildTransactions', () => {
       ...options,
       from: 'BifrostPolkadot',
       to: 'Crust',
+      destination: {
+        address: 'someAddress',
+        node: 'Crust',
+      },
     });
 
     expect(result).toEqual([

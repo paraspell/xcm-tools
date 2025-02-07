@@ -48,7 +48,7 @@ export const getExchangeAsset = (
   let asset: TRouterAsset | undefined;
   if ('symbol' in currency) {
     if (isSymbolSpecifier(currency.symbol)) {
-      throw new Error('Cannot use currency specifiers when usign exchange auto select');
+      throw new Error('Cannot use currency specifiers when using exchange auto select');
     }
 
     const matches = findBestMatches(assets, currency.symbol);

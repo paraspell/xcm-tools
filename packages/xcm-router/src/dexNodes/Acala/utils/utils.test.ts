@@ -1,38 +1,71 @@
-// Unit tests for Acala utils
+import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { options } from '@acala-network/api';
+import { getNodeProviders } from '@paraspell/sdk-pjs';
+import type { TNodePolkadotKusama } from '@paraspell/sdk-pjs';
+import { createAcalaApiInstance } from './utils';
 
-import { describe, it, expect, vi } from 'vitest';
-import { convertCurrency } from './utils';
-import { type Wallet } from '@acala-network/sdk';
+vi.mock('@polkadot/api', () => {
+  const mockIsReady = vi.fn().mockResolvedValue(undefined);
+  const MockApiPromise = vi.fn().mockImplementation(() => ({
+    isReady: mockIsReady,
+  }));
 
-const INITIAL_AMOUNT = 100;
-const PRICE_ACA_TO_DOT = 2;
-const PRICE_DOT_TO_ACA = 0.5;
-const PRICE_ERROR = 0;
+  const MockWsProvider = vi.fn();
 
-describe('convertCurrency', () => {
-  it('should correctly convert currency amounts from ACA to DOT', async () => {
-    const walletMock: Wallet = {
-      getPrice: vi
-        .fn()
-        .mockResolvedValueOnce({ toNumber: () => PRICE_ACA_TO_DOT })
-        .mockResolvedValueOnce({ toNumber: () => PRICE_DOT_TO_ACA }),
-    } as unknown as Wallet;
+  return {
+    ApiPromise: MockApiPromise,
+    WsProvider: MockWsProvider,
+  };
+});
 
-    const result = await convertCurrency(walletMock, 'ACA', 'DOT', INITIAL_AMOUNT);
-    const expectedConversion: number = INITIAL_AMOUNT * (PRICE_ACA_TO_DOT / PRICE_DOT_TO_ACA);
-    expect(result).toBe(expectedConversion);
+vi.mock('@acala-network/api', () => ({
+  options: vi.fn().mockReturnValue({ some: 'options' }),
+}));
+
+vi.mock('@paraspell/sdk-pjs', () => ({
+  getNodeProviders: vi.fn().mockReturnValue('wss://mock-provider'),
+}));
+
+describe('createAcalaApiInstance', () => {
+  const mockNode = 'acala' as TNodePolkadotKusama;
+  const mockProvider = { connected: true } as unknown as WsProvider;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(WsProvider).mockImplementation(() => mockProvider);
   });
 
-  it('should throw an error if unable to fetch price for DOT', async () => {
-    const walletMock: Wallet = {
-      getPrice: vi
-        .fn()
-        .mockResolvedValueOnce({ toNumber: () => PRICE_ACA_TO_DOT })
-        .mockResolvedValueOnce({ toNumber: () => PRICE_ERROR }),
-    } as unknown as Wallet;
+  test('should create API instance with correct configuration', async () => {
+    const api = await createAcalaApiInstance(mockNode);
+    expect(getNodeProviders).toHaveBeenCalledWith(mockNode);
+    expect(WsProvider).toHaveBeenCalledWith('wss://mock-provider', 100);
+    expect(options).toHaveBeenCalledWith({ provider: mockProvider });
+    expect(ApiPromise).toHaveBeenCalledWith({ some: 'options' });
+    expect(api).toBeDefined();
+    expect(api.isReady).toBeDefined();
+  });
 
-    await expect(convertCurrency(walletMock, 'ACA', 'DOT', INITIAL_AMOUNT)).rejects.toThrow(
-      'Could not fetch price for DOT',
+  test('should handle provider (or API) connection errors', async () => {
+    const mockError = new Error('Connection failed');
+    vi.mocked(ApiPromise).mockImplementationOnce(
+      () =>
+        ({
+          isReady: Promise.reject(mockError),
+        }) as unknown as ApiPromise,
     );
+    await expect(createAcalaApiInstance(mockNode)).rejects.toThrow('Connection failed');
+  });
+
+  test('should properly await API readiness', async () => {
+    const mockIsReady = vi.fn().mockResolvedValue(true);
+    vi.mocked(ApiPromise).mockImplementationOnce(
+      () =>
+        ({
+          isReady: mockIsReady,
+        }) as unknown as ApiPromise,
+    );
+    const api = await createAcalaApiInstance(mockNode);
+    expect(api).toBeDefined();
   });
 });

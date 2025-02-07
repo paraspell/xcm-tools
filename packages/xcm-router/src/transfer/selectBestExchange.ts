@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import type ExchangeNode from '../dexNodes/DexNode';
 import Logger from '../Logger/Logger';
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
-import { calculateFromExchangeFee, calculateToExchangeFee } from './createSwapTx';
+import { calculateFromExchangeFee, calculateToExchangeWeight } from './createSwapTx';
 
 export const selectBestExchange = async (
   options: TCommonTransferOptions,
@@ -77,7 +77,7 @@ export const selectBestExchange = async (
         },
         feeCalcAddress: determineFeeCalcAddress(options.senderAddress, options.recipientAddress),
       };
-      const toExchangeTxFee = await calculateToExchangeFee(modifiedOptions);
+      const toExchangeTxFee = await calculateToExchangeWeight(modifiedOptions);
       const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);
 
       const swapResult = await dex.swapCurrency(

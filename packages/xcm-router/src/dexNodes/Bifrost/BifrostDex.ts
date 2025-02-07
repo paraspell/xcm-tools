@@ -1,13 +1,13 @@
 import ExchangeNode from '../DexNode';
 import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
 import type { ApiPromise } from '@polkadot/api';
-import { getOtherAssets, getParaId } from '@paraspell/sdk-pjs';
-import { convertAmount, findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
+import { getNativeAssetSymbol, getOtherAssets, getParaId } from '@paraspell/sdk-pjs';
+import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 import { Amount, Token, getCurrencyCombinations } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import { Percent } from '@crypto-dex-sdk/math';
 import BigNumber from 'bignumber.js';
-import { FEE_BUFFER } from '../../consts';
+import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import Logger from '../../Logger/Logger';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 
@@ -15,7 +15,7 @@ class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
     { assetFrom, assetTo, amount, senderAddress, slippagePct }: TSwapOptions,
-    toDestTransactionFee: BigNumber,
+    toDestTxFee: BigNumber,
   ): Promise<TSwapResult> {
     const chainId = getParaId(this.node);
 
@@ -40,15 +40,13 @@ class BifrostExchangeNode extends ExchangeNode {
 
     const pairs = await getFilteredPairs(api, chainId, currencyCombinations);
 
-    const toDestFee = convertAmount(toDestTransactionFee, tokenFrom, chainId, pairs);
-
-    Logger.log('Fee in bnc', toDestFee.toString());
-
+    Logger.log('To dest tx fee in native currency:', toDestTxFee.toString());
     Logger.log('Original amount', amount);
 
     const amountBN = new BigNumber(amount);
 
-    const amountWithoutFee = amountBN.minus(toDestFee.multipliedBy(FEE_BUFFER)).decimalPlaces(0);
+    const amountWithoutFee = amountBN.minus(amountBN.times(DEST_FEE_BUFFER_PCT));
+    Logger.log('Amount modified', amountWithoutFee.toString());
 
     if (amountWithoutFee.isNegative()) {
       throw new SmallAmountError(
@@ -56,30 +54,7 @@ class BifrostExchangeNode extends ExchangeNode {
       );
     }
 
-    Logger.log('Amount modified', amountWithoutFee.toString());
-
-    const amountIn = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
-
-    const tradeForSwapFee = getBestTrade(chainId, pairs, amountIn, tokenTo);
-
-    const swapFeePct = tradeForSwapFee.descriptions.reduce((sum, item) => sum + item.fee, 0);
-
-    const swapFeePctWithBuffer = swapFeePct * FEE_BUFFER;
-
-    const amountWithoutSwapFee = amountWithoutFee
-      .multipliedBy(1 - swapFeePctWithBuffer / 100)
-      .decimalPlaces(0);
-
-    if (amountWithoutSwapFee.isNegative()) {
-      throw new SmallAmountError(
-        'The provided amount is too small to cover the swap fees. Please provide a larger amount.',
-      );
-    }
-
-    Logger.log('feePct', swapFeePct);
-    Logger.log('amount without swap fee', amountWithoutSwapFee.toString());
-
-    const amountInFinal = Amount.fromRawAmount(tokenFrom, amountWithoutSwapFee.toString());
+    const amountInFinal = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
 
     const trade = getBestTrade(chainId, pairs, amountInFinal, tokenTo);
 
@@ -104,27 +79,18 @@ class BifrostExchangeNode extends ExchangeNode {
       .shiftedBy(tokenTo.decimals)
       .decimalPlaces(0);
 
-    const toDestFeeOut = convertAmount(toDestTransactionFee, tokenTo, chainId, pairs);
-
-    Logger.log('out fee in bnc', toDestFeeOut.toString());
-
-    const amountOutFinalBN = amountOutBN
-      .minus(toDestFeeOut.multipliedBy(FEE_BUFFER))
-      .decimalPlaces(0);
-
-    if (amountOutFinalBN.isNegative()) {
-      throw new SmallAmountError(
-        'The amount after deducting fees is negative. Please provide a larger amount.',
-      );
+    const nativeSymbol = getNativeAssetSymbol(this.node);
+    if (tokenTo.symbol === nativeSymbol) {
+      const amountOutWithFee = amountOutBN.minus(toDestTxFee).multipliedBy(FEE_BUFFER);
+      Logger.log('Amount out with fee:', amountOutWithFee.toString());
+      return { tx: extrinsic[0], amountOut: amountOutWithFee.toString() };
     }
 
-    Logger.log(trade.outputAmount.toFixed().toString());
-    Logger.log(amountOutBN.toString());
-    Logger.log(amountOutFinalBN.toString());
+    Logger.log('Calculated amount out:', amountOutBN.toString());
 
     return {
       tx: extrinsic[0],
-      amountOut: amountOutFinalBN.toString(),
+      amountOut: amountOutBN.toString(),
     };
   }
 

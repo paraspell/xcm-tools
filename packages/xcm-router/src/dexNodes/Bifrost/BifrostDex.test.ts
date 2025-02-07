@@ -1,9 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import BigNumber from 'bignumber.js';
-import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { getParaId } from '@paraspell/sdk-pjs';
-import { convertAmount, findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
+import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import type { ApiPromise } from '@polkadot/api';
 import type { TSwapOptions } from '../../types';
@@ -109,7 +108,6 @@ describe('BifrostExchangeNode', () => {
       vi.mocked(findToken).mockImplementation((tokenMap, symbol) => {
         return tokenMap[symbol];
       });
-      vi.mocked(convertAmount).mockImplementation((bn: BigNumber) => new BigNumber(bn.toString()));
       vi.mocked(getFilteredPairs).mockResolvedValue([]);
       vi.mocked(getBestTrade).mockReturnValue({
         descriptions: [{ fee: 0.5 }],
@@ -140,26 +138,6 @@ describe('BifrostExchangeNode', () => {
       ).rejects.toThrowError('Currency to not found');
     });
 
-    it('should throw a SmallAmountError if amountWithoutFee is negative', async () => {
-      vi.mocked(convertAmount).mockReturnValue(new BigNumber('2000000'));
-
-      await expect(
-        node.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
-      ).rejects.toThrowError(SmallAmountError);
-    });
-
-    it('should throw a SmallAmountError if amountWithoutSwapFee is negative', async () => {
-      vi.mocked(convertAmount).mockReturnValue(new BigNumber('0'));
-      vi.mocked(getBestTrade).mockReturnValue({
-        descriptions: [{ fee: 100 }],
-        outputAmount: { toFixed: () => '0' },
-      } as Trade);
-
-      await expect(
-        node.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
-      ).rejects.toThrowError(SmallAmountError);
-    });
-
     it('should throw an error if extrinsic is null', async () => {
       vi.spyOn(SwapRouter, 'swapCallParameters').mockReturnValue({
         extrinsic: null,
@@ -168,25 +146,6 @@ describe('BifrostExchangeNode', () => {
       await expect(
         node.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
       ).rejects.toThrowError('Extrinsic is null');
-    });
-
-    it('should throw a SmallAmountError if final output after fees is negative', async () => {
-      vi.mocked(getBestTrade).mockReturnValueOnce({
-        descriptions: [{ fee: 0.5 }],
-        outputAmount: { toFixed: () => '500000' },
-      } as Trade);
-      vi.mocked(getBestTrade).mockReturnValueOnce({
-        descriptions: [{ fee: 0.5 }],
-        outputAmount: { toFixed: () => '400000' },
-      } as Trade);
-
-      vi.mocked(convertAmount)
-        .mockReturnValueOnce(new BigNumber('1000000'))
-        .mockReturnValueOnce(new BigNumber('6000000'));
-
-      await expect(
-        node.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
-      ).rejects.toThrowError(SmallAmountError);
     });
 
     it('should return the extrinsic and final amountOut if successful', async () => {
@@ -199,11 +158,6 @@ describe('BifrostExchangeNode', () => {
           descriptions: [{ fee: 0.5 }],
           outputAmount: { toFixed: () => '1' },
         } as Trade);
-
-      vi.mocked(convertAmount)
-        .mockReturnValueOnce(new BigNumber('1'))
-        .mockReturnValueOnce(new BigNumber('1'))
-        .mockReturnValue(new BigNumber('1'));
 
       vi.spyOn(SwapRouter, 'swapCallParameters').mockReturnValue({
         extrinsic: [{} as Extrinsic],
@@ -219,7 +173,7 @@ describe('BifrostExchangeNode', () => {
       );
 
       expect(result.tx).toEqual({});
-      expect(result.amountOut).toEqual('399999999999999999');
+      expect(result.amountOut).toEqual('1000000000000');
     });
   });
 });

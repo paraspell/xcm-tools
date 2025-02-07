@@ -1,20 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import BigNumber from 'bignumber.js';
-import { calculateAcalaTransactionFee } from './calculateAcalaTransactionFee';
+import { calculateAcalaSwapFee } from './calculateAcalaSwapFee';
 import type { AggregateDex } from '@acala-network/sdk-swap';
 import type { Wallet } from '@acala-network/sdk';
 import type { Token } from '@acala-network/sdk-core';
 import type { TSwapOptions } from '../../../types';
 import { firstValueFrom } from 'rxjs';
-import { calculateTransactionFee } from '../../../utils/utils';
-import { convertCurrency } from './utils';
+import { calculateTxFee } from '../../../utils';
 
 vi.mock('./utils', () => ({
   convertCurrency: vi.fn(),
 }));
 
-vi.mock('../../../utils/utils', () => ({
-  calculateTransactionFee: vi.fn(),
+vi.mock('../../../utils', () => ({
+  calculateTxFee: vi.fn(),
 }));
 
 vi.mock('rxjs', () => ({
@@ -79,27 +78,21 @@ describe('calculateAcalaTransactionFee', () => {
     const swapResultMock = { result: 'mockSwapResult' };
     vi.mocked(firstValueFrom).mockResolvedValue(swapResultMock);
 
-    vi.mocked(calculateTransactionFee).mockResolvedValue(new BigNumber('0.1'));
+    vi.mocked(calculateTxFee).mockResolvedValue(new BigNumber('0.1'));
 
-    vi.mocked(convertCurrency).mockResolvedValue(5);
-
-    const toDestTransactionFee = new BigNumber('0.05');
-
-    const result = await calculateAcalaTransactionFee(
+    const result = await calculateAcalaSwapFee(
       dexMock as AggregateDex,
       walletMock as Wallet,
       tokenFromMock as Token,
       tokenToMock as Token,
       swapOptionsMock as TSwapOptions,
-      toDestTransactionFee,
     );
 
     expect(dexMock.swap).toHaveBeenCalledTimes(1);
     expect(firstValueFrom).toHaveBeenCalledTimes(1);
     expect(dexMock.getTradingTx).toHaveBeenCalledWith(swapResultMock);
-    expect(calculateTransactionFee).toHaveBeenCalledWith(extrinsicMock, 'some-address');
-    expect(convertCurrency).toHaveBeenCalledWith(walletMock, 'ACA', 'DOT', 0.00000000000015);
-    expect(result.toString()).toEqual('75000000000');
+    expect(calculateTxFee).toHaveBeenCalledWith(extrinsicMock, 'some-address');
+    expect(result.toString()).toEqual('0.1');
   });
 
   it('calculates fee when tokenFrom IS the native currency', async () => {
@@ -111,22 +104,16 @@ describe('calculateAcalaTransactionFee', () => {
     const swapResultMock = { result: 'mockSwapResult2' };
     vi.mocked(firstValueFrom).mockResolvedValue(swapResultMock);
 
-    vi.mocked(calculateTransactionFee).mockResolvedValue(new BigNumber('0.1'));
+    vi.mocked(calculateTxFee).mockResolvedValue(new BigNumber('0.1'));
 
-    vi.mocked(convertCurrency).mockResolvedValue(9999);
-
-    const toDestTransactionFee = new BigNumber('0.05');
-
-    const result = await calculateAcalaTransactionFee(
+    const result = await calculateAcalaSwapFee(
       dexMock as AggregateDex,
       walletMock as Wallet,
       tokenMock as Token,
       tokenToMock as Token,
       swapOptionsMock as TSwapOptions,
-      toDestTransactionFee,
     );
 
-    expect(result.toString()).toBe('0.15');
-    expect(convertCurrency).not.toHaveBeenCalled();
+    expect(result.toString()).toBe('0.1');
   });
 });

@@ -9,6 +9,7 @@ import type {
 } from '@paraspell/sdk-pjs';
 import { type Signer } from '@polkadot/types/types';
 import { type EXCHANGE_NODES } from './consts';
+import type BigNumber from 'bignumber.js';
 
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 
@@ -96,7 +97,7 @@ export type TTransferOptions = {
   /**
    * The recipient address.
    */
-  recipientAddress: string;
+  recipientAddress?: string;
   /**
    * The slippage percentage.
    */
@@ -137,7 +138,16 @@ export type TAdditionalTransferOptions = {
     assetFrom: TRouterAsset;
     assetTo: TRouterAsset;
   };
+  destination?: {
+    node: TNodeWithRelayChains;
+    address: string;
+  };
   feeCalcAddress: string;
+};
+
+export type TWeight = {
+  refTime: BigNumber;
+  proofSize: BigNumber;
 };
 
 export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> &
@@ -170,6 +180,7 @@ export type TRouterPlan = TTransaction[];
 export type TExecuteRouterPlanOptions = {
   signer: Signer;
   senderAddress: string;
+  destination?: TNodeWithRelayChains;
   evmSigner?: Signer;
   evmSenderAddress?: string;
   onStatusChange?: TStatusChangeCallback;

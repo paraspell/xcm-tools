@@ -7,7 +7,7 @@ export const buildTransactions = async (
   dex: ExchangeNode,
   options: TBuildTransactionsOptionsModified,
 ): Promise<TRouterPlan> => {
-  const { origin, exchange, to } = options;
+  const { origin, exchange, destination } = options;
 
   const transactions: TRouterPlan = [];
 
@@ -22,10 +22,10 @@ export const buildTransactions = async (
   const { tx: swapTx, amountOut } = await createSwapTx(dex, options);
 
   const toDestTx =
-    to && to !== exchange.baseNode
+    destination && destination.node !== exchange.baseNode
       ? await buildFromExchangeExtrinsic({
-          ...options,
-          to,
+          exchange,
+          destination,
           amount: amountOut,
         })
       : undefined;
@@ -45,7 +45,7 @@ export const buildTransactions = async (
     transactions.push({
       api: exchange.api,
       node: dex.node,
-      destinationNode: to,
+      destinationNode: destination?.node,
       tx: batchedTx,
       type: 'SWAP_AND_TRANSFER',
     });

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { RouterBuilder } from '../src';
 
-const MOCK_ADDRESS = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty';
+const MOCK_ADDRESS = '23hBHVjKq6bRNL3FoYeq7ugZnvVcgjTaoUoWXcKPaNSgxAR3';
 
 describe.sequential('E2E tests', () => {
   describe('AcalaDex', () => {
@@ -13,8 +13,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'DOT' })
         .currencyTo({ symbol: 'ACA' })
         .amount('5000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .senderAddress('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
+        .recipientAddress('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
         .slippagePct('0.01')
         .buildTransactions();
 
@@ -30,8 +30,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'DOT' })
         .currencyTo({ symbol: 'ACA' })
         .amount('5000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .senderAddress('23hBHVjKq6bRNL3FoYeq7ugZnvVcgjTaoUoWXcKPaNSgxAR3')
+        .recipientAddress('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
         .slippagePct('0.01')
         .buildTransactions();
 
@@ -47,8 +47,8 @@ describe.sequential('E2E tests', () => {
         .currencyFrom({ symbol: 'KSM' })
         .currencyTo({ symbol: 'BNC' })
         .amount('22000000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
+        .senderAddress('FPuDZQ6kmbc7roYZHce6hZAd3MGFGRRHxNTc9AysXgnhTjh')
+        .recipientAddress('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
         .slippagePct('0.01')
         .buildTransactions();
 

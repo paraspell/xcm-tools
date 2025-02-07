@@ -4,7 +4,7 @@ import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { getAssetDecimals, type TNode } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 import { getAssetInfo, getMinAmountOut } from './utils';
-import { calculateTransactionFee } from '../../../utils/utils';
+import { calculateTxFee } from '../../../utils';
 import Logger from '../../../Logger/Logger';
 import { FEE_BUFFER } from '../../../consts';
 
@@ -41,17 +41,8 @@ export const calculateFee = async (
     throw new Error('Native currency decimals not found');
   }
 
-  const currencyFromPriceInfo = await tradeRouter.getBestSpotPrice(
-    currencyFromInfo.id,
-    nativeCurrencyInfo.id,
-  );
-
-  if (currencyFromPriceInfo === undefined) {
-    throw new Error('Price not found');
-  }
-
-  const tx: Extrinsic = trade.toTx(minAmountOut.amount).get();
-  const swapFee = await calculateTransactionFee(tx, feeCalcAddress);
+  const tx = trade.toTx(minAmountOut.amount).get<Extrinsic>();
+  const swapFee = await calculateTxFee(tx, feeCalcAddress);
   const swapFeeNativeCurrency = new BigNumber(swapFee.toString());
   const feeInNativeCurrency = swapFeeNativeCurrency
     .plus(toDestTransactionFee)
@@ -65,6 +56,15 @@ export const calculateFee = async (
   if (currencyFromInfo.symbol === nativeCurrencyInfo.symbol) return feeInNativeCurrency;
 
   const feeNativeCurrencyNormalNumber = feeInNativeCurrency.shiftedBy(-nativeCurrencyDecimals);
+
+  const currencyFromPriceInfo = await tradeRouter.getBestSpotPrice(
+    currencyFromInfo.id,
+    nativeCurrencyInfo.id,
+  );
+
+  if (currencyFromPriceInfo === undefined) {
+    throw new Error('Price not found');
+  }
 
   const currencyFromPrice = currencyFromPriceInfo.amount;
   const currencyFromPriceNormalNumber = currencyFromPrice.shiftedBy(
@@ -83,7 +83,7 @@ export const calculateFee = async (
   const finalFee = currencyFromFee.multipliedBy(FEE_BUFFER);
 
   Logger.log(
-    'Total fee in currency from with buffer 50%:',
+    'Total fee in currency from with buffer 10%:',
     finalFee.toString(),
     ' ',
     currencyFromInfo.symbol,

@@ -1,12 +1,12 @@
 import type { TForeignAsset } from '@paraspell/sdk-pjs';
-import { getAssets, getNodeProviders } from '@paraspell/sdk-pjs';
+import { getAssets, getNativeAssetSymbol, getNodeProviders } from '@paraspell/sdk-pjs';
 import ExchangeNode from '../DexNode';
-import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
+import type { TSwapResult, TSwapOptions, TAssets, TWeight } from '../../types';
 import { createInterBtcApi, createSubstrateAPI, newMonetaryAmount } from 'inter-exchange';
 import { type ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import BigNumber from 'bignumber.js';
-import { FEE_BUFFER } from '../../consts';
+import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import Logger from '../../Logger/Logger';
 import { getCurrency } from './utils';
 import { SmallAmountError } from '../../errors/SmallAmountError';
@@ -15,8 +15,8 @@ class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
     { senderAddress, assetFrom, assetTo, amount, slippagePct }: TSwapOptions,
-    _toDestTransactionFee: BigNumber,
-    toExchangeTransactionFee: BigNumber,
+    toDestTransactionFee: BigNumber,
+    _toExchangeTxWeight: TWeight,
   ): Promise<TSwapResult> {
     const interBTC = await createInterBtcApi(getNodeProviders(this.node)[0], 'mainnet');
 
@@ -34,9 +34,7 @@ class InterlayExchangeNode extends ExchangeNode {
 
     const amountBN = new BigNumber(amount);
 
-    const toExchangeFeeWithBuffer = toExchangeTransactionFee.multipliedBy(FEE_BUFFER);
-
-    const amountWithoutFee = amountBN.minus(toExchangeFeeWithBuffer);
+    const amountWithoutFee = amountBN.minus(amountBN.times(DEST_FEE_BUFFER_PCT));
 
     if (amountWithoutFee.isNegative()) {
       throw new SmallAmountError(
@@ -64,10 +62,22 @@ class InterlayExchangeNode extends ExchangeNode {
     const deadline = currentBlockNumber.add(new BN(150));
 
     const trade1 = interBTC.amm.swap(trade, outputAmount, senderAddress, deadline.toString());
-    const extrinsic = trade1.extrinsic;
+    const tx = trade1.extrinsic;
+
+    const amountOutBN = BigNumber(trade.outputAmount.toString(true));
+
+    const nativeSymbol = getNativeAssetSymbol(this.node);
+    if (assetTo.symbol === nativeSymbol) {
+      const amountOutWithFee = amountOutBN
+        .minus(toDestTransactionFee)
+        .multipliedBy(FEE_BUFFER)
+        .decimalPlaces(0);
+      Logger.log('Amount out with fee:', amountOutWithFee.toString());
+      return { tx, amountOut: amountOutWithFee.toString() };
+    }
 
     return {
-      tx: extrinsic,
+      tx,
       amountOut: trade.outputAmount.toString(true),
     };
   }

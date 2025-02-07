@@ -95,7 +95,9 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param recipientAddress - The recipient address.
    * @returns The current builder instance.
    */
-  recipientAddress(address: string): RouterBuilderCore<T & { recipientAddress: string }> {
+  recipientAddress(
+    address: string | undefined,
+  ): RouterBuilderCore<T & { recipientAddress: string | undefined }> {
     return new RouterBuilderCore({ ...this._options, recipientAddress: address });
   }
 

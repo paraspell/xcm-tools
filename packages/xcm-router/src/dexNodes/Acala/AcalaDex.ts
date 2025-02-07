@@ -1,14 +1,14 @@
-import type { Extrinsic } from '@paraspell/sdk-pjs';
+import { getBalanceNative, getNativeAssetSymbol, type Extrinsic } from '@paraspell/sdk-pjs';
 import ExchangeNode from '../DexNode';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
 import { Wallet } from '@acala-network/sdk';
-import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
+import type { TSwapResult, TSwapOptions, TAssets, TWeight } from '../../types';
 import { firstValueFrom } from 'rxjs';
 import type { ApiPromise } from '@polkadot/api';
-import { calculateAcalaTransactionFee, createAcalaApiInstance } from './utils';
+import { calculateAcalaSwapFee, createAcalaApiInstance } from './utils';
 import BigNumber from 'bignumber.js';
-import { FEE_BUFFER } from '../../consts';
+import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import Logger from '../../Logger/Logger';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 
@@ -17,9 +17,9 @@ class AcalaExchangeNode extends ExchangeNode {
     api: ApiPromise,
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
-    toExchangeTransactionFee: BigNumber,
+    _toExchangeTxWeight: TWeight,
   ): Promise<TSwapResult> {
-    const { assetFrom, assetTo, amount } = options;
+    const { assetFrom, assetTo, amount, senderAddress } = options;
 
     const wallet = new Wallet(api);
     await wallet.isReady;
@@ -37,30 +37,28 @@ class AcalaExchangeNode extends ExchangeNode {
 
     const amountBN = new BigNumber(amount);
 
-    const feeInCurrencyFromBN = await calculateAcalaTransactionFee(
-      dex,
-      wallet,
-      fromToken,
-      toToken,
-      options,
-      toDestTransactionFee,
-    );
+    const swapFee = await calculateAcalaSwapFee(dex, wallet, fromToken, toToken, options);
+    const totalNativeCurrencyFee = swapFee.plus(toDestTransactionFee).multipliedBy(FEE_BUFFER);
 
-    Logger.log(
-      'XCM to exch. fee:',
-      toExchangeTransactionFee.shiftedBy(-fromToken.decimals).toString(),
-      fromToken.symbol,
-    );
+    Logger.log('Total fee native:', totalNativeCurrencyFee.toString());
 
-    const toExchangeFeeWithBuffer = toExchangeTransactionFee.multipliedBy(FEE_BUFFER);
+    const balance = await getBalanceNative({
+      api,
+      address: senderAddress,
+      node: this.node,
+    });
 
-    Logger.log(
-      'XCM to exch. fee /w buffer:',
-      toExchangeFeeWithBuffer.shiftedBy(-fromToken.decimals).toString(),
-      fromToken.symbol,
-    );
+    Logger.log('Native currency balance:', balance.toString());
 
-    const amountWithoutFee = amountBN.minus(feeInCurrencyFromBN).minus(toExchangeFeeWithBuffer);
+    const balanceBN = new BigNumber(balance.toString());
+
+    if (balanceBN.isLessThan(totalNativeCurrencyFee)) {
+      throw new SmallAmountError(
+        `The native currency balance on ${this.node} is too low to cover the fees. Please provide a larger amount.`,
+      );
+    }
+
+    const amountWithoutFee = amountBN.minus(amountBN.times(DEST_FEE_BUFFER_PCT));
 
     if (amountWithoutFee.isNegative()) {
       throw new SmallAmountError(
@@ -88,42 +86,22 @@ class AcalaExchangeNode extends ExchangeNode {
     const amountOut = tradeResult.result.output.amount.toString();
     const amountOutBN = new BigNumber(amountOut).shiftedBy(toToken.decimals);
 
+    const nativeAssetSymbol = getNativeAssetSymbol(this.node);
+
+    if (toToken.symbol === nativeAssetSymbol) {
+      const amountOutWithFee = amountOutBN
+        .minus(toDestTransactionFee)
+        .multipliedBy(FEE_BUFFER)
+        .decimalPlaces(0);
+      Logger.log('Amount out with fee:', amountOutWithFee.toString());
+      Logger.log('Amount out decimals', toToken.decimals);
+      return { tx, amountOut: amountOutWithFee.toString() };
+    }
+
     Logger.log('Calculated amount out:', amountOutBN.toString());
     Logger.log('Amount out decimals', toToken.decimals);
 
-    const nativeCurrency = wallet.consts.nativeCurrency;
-    const nativeCurrencyDecimals = wallet.getToken(nativeCurrency).decimals;
-
-    const convertedFeeNativeCurrency = toDestTransactionFee
-      .shiftedBy(-nativeCurrencyDecimals)
-      .toNumber();
-
-    const nativeCurrencyUsdPrice = (await wallet.getPrice(nativeCurrency)).toNumber();
-    const currencyToUsdPrice = (await wallet.getPrice(toToken.symbol)).toNumber();
-
-    if (currencyToUsdPrice === 0) {
-      throw new Error(`Could not fetch price for ${toToken.symbol}`);
-    }
-
-    const feeInUsd = convertedFeeNativeCurrency * nativeCurrencyUsdPrice;
-
-    const feeInCurrencyTo = (feeInUsd / currencyToUsdPrice) * FEE_BUFFER;
-
-    Logger.log('Amount out fee', feeInCurrencyTo.toString(), nativeCurrency);
-
-    const currencyToFeeBnum = new BigNumber(feeInCurrencyTo).shiftedBy(toToken.decimals);
-    const amountOutModified = amountOutBN.minus(currencyToFeeBnum).decimalPlaces(0);
-
-    if (amountOutModified.isNegative()) {
-      throw new SmallAmountError(
-        'The amount after deducting fees is negative. Please provide a larger amount.',
-      );
-    }
-
-    Logger.log('Amount out original', amountOut.toString());
-    Logger.log('Amount out modified', amountOutModified.toString());
-
-    return { tx, amountOut: amountOutModified.toString() };
+    return { tx, amountOut: amountOutBN.toString() };
   }
 
   async createApiInstance(): Promise<ApiPromise> {

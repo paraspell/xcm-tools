@@ -87,6 +87,12 @@ export const XcmRouter = () => {
       return { symbol: asset.symbol };
     }
 
+    if (asset.assetId === undefined && asset.multiLocation === undefined) {
+      return { symbol: asset.symbol };
+    }
+
+    console.log('asset', asset);
+
     if (ethers.isAddress(asset.assetId)) {
       return { symbol: asset.symbol };
     }

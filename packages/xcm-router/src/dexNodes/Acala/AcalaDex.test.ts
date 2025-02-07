@@ -3,8 +3,13 @@ import BigNumber from 'bignumber.js';
 import type { ApiPromise } from '@polkadot/api';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { TSwapOptions, TSwapResult } from '../../types';
-import { createAcalaApiInstance, calculateAcalaTransactionFee } from './utils';
+import { createAcalaApiInstance, calculateAcalaSwapFee } from './utils';
 import AcalaExchangeNode from './AcalaDex';
+
+vi.mock('@paraspell/sdk-pjs', () => ({
+  getBalanceNative: vi.fn().mockResolvedValue(new BigNumber(100)),
+  getNativeAssetSymbol: vi.fn().mockReturnValue('ACA'),
+}));
 
 vi.mock('@acala-network/sdk-core', () => ({
   FixedPointNumber: vi.fn().mockImplementation((value: string) => ({
@@ -71,7 +76,7 @@ vi.mock('./utils', () => {
     createAcalaApiInstance: vi.fn().mockResolvedValue({
       isMockApi: true,
     }),
-    calculateAcalaTransactionFee: vi.fn().mockImplementation(() => {
+    calculateAcalaSwapFee: vi.fn().mockImplementation(() => {
       return new BigNumber(1);
     }),
   };
@@ -123,33 +128,24 @@ describe('AcalaExchangeNode', () => {
         mockApi,
         baseSwapOptions,
         new BigNumber(0.01),
-        new BigNumber(0.01),
+        { proofSize: BigNumber(0), refTime: BigNumber(0) },
       );
 
-      expect(calculateAcalaTransactionFee).toHaveBeenCalled();
+      expect(calculateAcalaSwapFee).toHaveBeenCalled();
       expect(result).toHaveProperty('tx');
       expect(result).toHaveProperty('amountOut');
-      expect(result.amountOut).toBe('42000000000000');
+      expect(result.amountOut).toBe('46200000000000');
     });
 
     it('should throw SmallAmountError if the amount is too small to cover fees', async () => {
-      vi.mocked(calculateAcalaTransactionFee).mockResolvedValueOnce(new BigNumber(9999));
+      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(new BigNumber(9999));
 
       await expect(
-        node.swapCurrency(mockApi, baseSwapOptions, new BigNumber(0.01), new BigNumber(0.01)),
+        node.swapCurrency(mockApi, baseSwapOptions, new BigNumber(0.01), {
+          proofSize: BigNumber(0),
+          refTime: BigNumber(0),
+        }),
       ).rejects.toThrow(SmallAmountError);
-    });
-
-    it('should throw an error if price for currencyTo is 0', async () => {
-      const zeroPriceSwapOptions = {
-        ...baseSwapOptions,
-        assetTo: { symbol: 'DOT-0price' },
-        currencyTo: { symbol: 'DOT-0price' },
-      };
-
-      await expect(
-        node.swapCurrency(mockApi, zeroPriceSwapOptions, new BigNumber(0.01), new BigNumber(0.01)),
-      ).rejects.toThrowError('Could not fetch price for DOT-0price');
     });
   });
 });

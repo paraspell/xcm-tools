@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import BigNumber from 'bignumber.js';
-import { calculateTransactionFee } from '../../../utils/utils';
+import { calculateTxFee } from '../../../utils';
 import type { Asset } from '@galacticcouncil/sdk';
 import { TradeRouter } from '@galacticcouncil/sdk';
 import { getAssetDecimals, type Extrinsic } from '@paraspell/sdk-pjs';
@@ -17,8 +17,8 @@ vi.mock('@galacticcouncil/sdk', () => ({
   bnum: vi.fn(),
 }));
 
-vi.mock('../../../utils/utils', () => ({
-  calculateTransactionFee: vi.fn(),
+vi.mock('../../../utils', () => ({
+  calculateTxFee: vi.fn(),
 }));
 
 vi.mock('./utils', async () => {
@@ -51,7 +51,7 @@ describe('calculateFee', () => {
         }) as unknown as TradeRouter,
     );
 
-    vi.mocked(calculateTransactionFee).mockResolvedValue(BigNumber(10));
+    vi.mocked(calculateTxFee).mockResolvedValue(BigNumber(10));
 
     vi.mocked(getAssetInfo).mockImplementation((_router, asset) => {
       if ('symbol' in asset && asset.symbol === 'HDX') {
@@ -191,7 +191,7 @@ describe('calculateFee', () => {
       }),
     } as unknown as TradeRouter;
 
-    vi.mocked(calculateTransactionFee).mockResolvedValue(BigNumber(10));
+    vi.mocked(calculateTxFee).mockResolvedValue(BigNumber(10));
 
     const result = await calculateFee(
       options,
@@ -228,7 +228,7 @@ describe('calculateFee', () => {
       getAllAssets: vi.fn(),
     } as unknown as TradeRouter;
 
-    vi.mocked(calculateTransactionFee).mockResolvedValue(BigNumber(10));
+    vi.mocked(calculateTxFee).mockResolvedValue(BigNumber(10));
 
     const finalFeeBN = await calculateFee(
       options,
@@ -240,6 +240,6 @@ describe('calculateFee', () => {
       'Hydration',
       BigNumber(2),
     );
-    expect(finalFeeBN.toString()).toBe('10500000000000');
+    expect(finalFeeBN.toString()).toBe('7700000000000');
   });
 });
