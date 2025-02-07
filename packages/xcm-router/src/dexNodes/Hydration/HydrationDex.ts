@@ -93,7 +93,14 @@ class HydrationExchangeNode extends ExchangeNode {
       throw new Error('Native currency decimals not found');
     }
 
-    const priceInfo = await tradeRouter.getBestSpotPrice(currencyToInfo.id, nativeCurrencyInfo.id);
+    let priceInfo = await tradeRouter.getBestSpotPrice(currencyToInfo.id, nativeCurrencyInfo.id);
+
+    if (currencyToInfo.id === nativeCurrencyInfo.id) {
+      priceInfo = {
+        amount: BigNumber(1),
+        decimals: nativeCurrencyDecimals,
+      };
+    }
 
     if (priceInfo === undefined) {
       throw new Error('Price not found');

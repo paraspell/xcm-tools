@@ -35,18 +35,4 @@ describe('getDryRun', () => {
     expect(initSpy).toHaveBeenCalledWith(node)
     expect(disconnectSpy).toHaveBeenCalled()
   })
-
-  it('throws an error if the node is Kusama', async () => {
-    const address = '0x123'
-    const node = 'Kusama'
-
-    await expect(
-      getDryRun({
-        api: apiMock,
-        node,
-        address,
-        tx: {}
-      })
-    ).rejects.toThrow('Kusama is temporarily disable due to unknown error in DryRun.')
-  })
 })

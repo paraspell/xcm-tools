@@ -133,10 +133,12 @@ describe('transfer utils', () => {
 
   describe('buildFromExchangeExtrinsic', () => {
     it('builds correct Extrinsic for Polkadot destination', () => {
-      const to: TNodeWithRelayChains = 'Polkadot';
       const options: TBuildFromExchangeTxOptions = {
         ...transferParams,
-        to,
+        destination: {
+          node: 'Polkadot',
+          address: 'MOCK_ADDRESS',
+        },
         exchange: {
           api: parachainApi,
           baseNode: 'Acala',
@@ -150,10 +152,12 @@ describe('transfer utils', () => {
     });
 
     it('builds correct Extrinsic for non-Polkadot/Kusama destination', () => {
-      const to: TNodeWithRelayChains = 'Astar';
       const options: TBuildFromExchangeTxOptions = {
         ...transferParams,
-        to,
+        destination: {
+          node: 'Astar',
+          address: 'MOCK_ADDRESS',
+        },
         exchange: {
           api: parachainApi,
           baseNode: 'Acala',

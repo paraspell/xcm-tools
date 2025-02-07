@@ -9,7 +9,11 @@ export const validateTransferOptions = (options: TBuildTransactionsOptions) => {
     throw new Error('Cannot use automatic exchange selection without specifying the origin node');
   }
 
-  if (to) validateDestinationAddress(recipientAddress, to);
+  if (to && !recipientAddress) {
+    throw new Error('Recipient address is required when destination node is specified');
+  }
+
+  if (to && recipientAddress) validateDestinationAddress(recipientAddress, to);
 
   if (evmSenderAddress !== undefined && !ethers.isAddress(evmSenderAddress)) {
     throw new Error('Evm injector address is not a valid Ethereum address');

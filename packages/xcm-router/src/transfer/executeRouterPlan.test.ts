@@ -1,17 +1,24 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
-import { isNodeEvm } from '@paraspell/sdk-pjs';
-import type { TRouterPlan } from '../types';
+import { isNodeEvm, getBalanceNative } from '@paraspell/sdk-pjs';
+import type { TExecuteRouterPlanOptions, TRouterPlan } from '../types';
 import { submitTransaction } from '../utils/submitTransaction';
 import { executeRouterPlan } from './executeRouterPlan';
 import type { Signer } from '@polkadot/types/types';
+import { calculateTxFeeDryRun } from '../utils';
+import BigNumber from 'bignumber.js';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
   isNodeEvm: vi.fn(),
+  getBalanceNative: vi.fn(),
 }));
 
 vi.mock('../utils/submitTransaction', () => ({
   submitTransaction: vi.fn(),
+}));
+
+vi.mock('../utils', () => ({
+  calculateTxFeeDryRun: vi.fn(),
 }));
 
 describe('executeRouterPlan', () => {
@@ -49,74 +56,32 @@ describe('executeRouterPlan', () => {
     vi.clearAllMocks();
     vi.mocked(isNodeEvm).mockImplementation((node) => node === 'Unique');
     vi.mocked(submitTransaction).mockResolvedValue('');
+    vi.mocked(getBalanceNative).mockResolvedValue(10000000000n);
+    vi.mocked(calculateTxFeeDryRun).mockResolvedValue(BigNumber(5000000000));
   });
 
   test('should execute plan with both EVM and non-EVM transactions', async () => {
-    await executeRouterPlan(mockPlan, baseOptions);
-
+    await executeRouterPlan(mockPlan, { ...baseOptions, destination: 'Moonbeam' });
     expect(mockOnStatusChange).toHaveBeenCalledTimes(3);
     expect(mockOnStatusChange).toHaveBeenNthCalledWith(1, {
       node: 'Astar',
       destinationNode: 'Moonbeam',
       type: 'TRANSFER',
       currentStep: 0,
-      routerPlan: [
-        {
-          api: {},
-          destinationNode: 'Moonbeam',
-          node: 'Astar',
-          tx: 'tx1',
-          type: 'TRANSFER',
-        },
-        {
-          api: {},
-          node: 'Unique',
-          tx: 'tx2',
-          type: 'SWAP',
-        },
-      ],
+      routerPlan: mockPlan,
     });
     expect(mockOnStatusChange).toHaveBeenNthCalledWith(2, {
       node: 'Unique',
       type: 'SWAP',
       currentStep: 1,
-      routerPlan: [
-        {
-          api: {},
-          destinationNode: 'Moonbeam',
-          node: 'Astar',
-          tx: 'tx1',
-          type: 'TRANSFER',
-        },
-        {
-          api: {},
-          node: 'Unique',
-          tx: 'tx2',
-          type: 'SWAP',
-        },
-      ],
+      routerPlan: mockPlan,
     });
     expect(mockOnStatusChange).toHaveBeenNthCalledWith(3, {
       type: 'COMPLETED',
       currentStep: 1,
-      routerPlan: [
-        {
-          api: {},
-          destinationNode: 'Moonbeam',
-          node: 'Astar',
-          tx: 'tx1',
-          type: 'TRANSFER',
-        },
-        {
-          api: {},
-          node: 'Unique',
-          tx: 'tx2',
-          type: 'SWAP',
-        },
-      ],
+      routerPlan: mockPlan,
     });
 
-    // Verify transaction submissions
     expect(submitTransaction).toHaveBeenCalledTimes(2);
     expect(submitTransaction).toHaveBeenNthCalledWith(
       1,
@@ -137,17 +102,17 @@ describe('executeRouterPlan', () => {
   test('should throw error for EVM transaction without EVM signer/sender', async () => {
     const invalidOptions = {
       ...baseOptions,
+      destination: 'Moonbeam',
       evmSigner: undefined,
       evmSenderAddress: undefined,
-    };
-
+    } as TExecuteRouterPlanOptions;
     await expect(executeRouterPlan(mockPlan, invalidOptions)).rejects.toThrow(
       'EVM signer and sender address must be provided for EVM nodes.',
     );
   });
 
   test('should handle empty plan gracefully', async () => {
-    await executeRouterPlan([], baseOptions);
+    await executeRouterPlan([], { ...baseOptions, destination: 'Moonbeam' });
     expect(mockOnStatusChange).toHaveBeenCalledWith({
       type: 'COMPLETED',
       routerPlan: [],
@@ -157,8 +122,11 @@ describe('executeRouterPlan', () => {
   });
 
   test('should work without onStatusChange callback', async () => {
-    const optionsWithoutCallback = { ...baseOptions, onStatusChange: undefined };
-    await executeRouterPlan(mockPlan, optionsWithoutCallback);
+    await executeRouterPlan(mockPlan, {
+      ...baseOptions,
+      destination: 'Moonbeam',
+      onStatusChange: undefined,
+    });
     expect(submitTransaction).toHaveBeenCalledTimes(2);
   });
 
@@ -170,7 +138,7 @@ describe('executeRouterPlan', () => {
 
     vi.mocked(isNodeEvm).mockImplementation((node) => node === 'Ethereum');
 
-    await executeRouterPlan(mixedPlan, baseOptions);
+    await executeRouterPlan(mixedPlan, { ...baseOptions, destination: 'Moonbeam' });
 
     expect(submitTransaction).toHaveBeenNthCalledWith(
       1,
@@ -186,5 +154,67 @@ describe('executeRouterPlan', () => {
       mockSigner,
       mockSenderAddress,
     );
+  });
+
+  test('should run fee dry run when transferring from BifrostPolkadot to destinationNode', async () => {
+    const plan = [
+      {
+        api: {} as unknown as TPjsApi,
+        tx: 'txBifrost' as unknown as Extrinsic,
+        type: 'TRANSFER',
+        node: 'BifrostPolkadot',
+        destinationNode: 'Astar',
+      },
+    ] as TRouterPlan;
+
+    await executeRouterPlan(plan, {
+      ...baseOptions,
+      destination: 'Astar',
+    });
+    expect(calculateTxFeeDryRun).toHaveBeenCalledWith(
+      plan[0].api,
+      'BifrostPolkadot',
+      'txBifrost',
+      mockSenderAddress,
+    );
+    expect(getBalanceNative).toHaveBeenCalledWith({
+      api: plan[0].api,
+      address: mockSenderAddress,
+      node: 'BifrostPolkadot',
+    });
+    expect(submitTransaction).toHaveBeenCalledWith(
+      plan[0].api,
+      'txBifrost',
+      mockSigner,
+      mockSenderAddress,
+    );
+  });
+
+  test('should throw error if BifrostPolkadot insufficient balance for fees', async () => {
+    const plan = [
+      {
+        api: {} as unknown as TPjsApi,
+        tx: 'txInsufficient' as unknown as Extrinsic,
+        type: 'TRANSFER',
+        node: 'BifrostPolkadot',
+        destinationNode: 'Astar',
+      },
+    ] as TRouterPlan;
+
+    vi.mocked(calculateTxFeeDryRun).mockResolvedValue(BigNumber(50000000000));
+    vi.mocked(getBalanceNative).mockResolvedValue(1000n);
+
+    await expect(
+      executeRouterPlan(plan, {
+        ...baseOptions,
+        destination: 'Astar',
+      }),
+    ).rejects.toThrow(
+      'Insufficient balance to cover fees for transfer from BifrostPolkadot to Astar',
+    );
+
+    expect(calculateTxFeeDryRun).toHaveBeenCalled();
+    expect(getBalanceNative).toHaveBeenCalled();
+    expect(submitTransaction).not.toHaveBeenCalled();
   });
 });

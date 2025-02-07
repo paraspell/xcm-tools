@@ -67,6 +67,7 @@ export const transfer = async (initialOptions: TTransferOptions): Promise<void> 
     await executeRouterPlan(routerPlan, {
       signer,
       senderAddress,
+      destination: options.destination?.node,
       evmSigner,
       evmSenderAddress,
       onStatusChange,

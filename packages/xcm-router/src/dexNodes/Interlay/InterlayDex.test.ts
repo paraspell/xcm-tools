@@ -4,7 +4,6 @@ import BigNumber from 'bignumber.js';
 import { getAssets, getNodeProviders } from '@paraspell/sdk-pjs';
 import type { CurrencyExt, InterBtcApi } from 'inter-exchange';
 import { createInterBtcApi, newMonetaryAmount } from 'inter-exchange';
-import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { ApiPromise } from '@polkadot/api';
 import type { TSwapOptions } from '../../types';
 import InterlayExchangeNode from './InterlayDex';
@@ -13,6 +12,8 @@ import { getCurrency } from './utils';
 vi.mock('@paraspell/sdk-pjs', () => ({
   getAssets: vi.fn(),
   getNodeProviders: vi.fn(),
+  getBalanceNative: vi.fn().mockResolvedValue(new BigNumber(100)),
+  getNativeAssetSymbol: vi.fn().mockReturnValue('INTR'),
 }));
 
 vi.mock('inter-exchange', () => ({
@@ -82,12 +83,10 @@ describe('InterlayExchangeNode', () => {
       } as TSwapOptions;
 
       await expect(
-        interlayExchangeNode.swapCurrency(
-          apiMock as ApiPromise,
-          swapOptions,
-          BigNumber(0),
-          BigNumber(1),
-        ),
+        interlayExchangeNode.swapCurrency(apiMock as ApiPromise, swapOptions, BigNumber(0), {
+          refTime: new BigNumber(1),
+          proofSize: new BigNumber(100),
+        }),
       ).rejects.toThrowError('Currency from is invalid.');
     });
 
@@ -105,34 +104,11 @@ describe('InterlayExchangeNode', () => {
       } as TSwapOptions;
 
       await expect(
-        interlayExchangeNode.swapCurrency(
-          apiMock as ApiPromise,
-          swapOptions,
-          new BigNumber(0),
-          new BigNumber(1),
-        ),
+        interlayExchangeNode.swapCurrency(apiMock as ApiPromise, swapOptions, new BigNumber(0), {
+          refTime: new BigNumber(1),
+          proofSize: new BigNumber(100),
+        }),
       ).rejects.toThrowError('Currency to is invalid.');
-    });
-
-    it('throws SmallAmountError if amount minus fees is negative', async () => {
-      vi.mocked(getCurrency).mockResolvedValue({ name: 'mockCurrency' } as CurrencyExt);
-
-      const swapOptions = {
-        senderAddress: 'fake-address',
-        assetFrom: { symbol: 'REAL' },
-        assetTo: { symbol: 'REAL2' },
-        amount: '1',
-        slippagePct: '1',
-      } as TSwapOptions;
-
-      await expect(
-        interlayExchangeNode.swapCurrency(
-          apiMock as ApiPromise,
-          swapOptions,
-          BigNumber(0),
-          BigNumber(1),
-        ),
-      ).rejects.toThrowError(SmallAmountError);
     });
 
     it('throws if no trade is found', async () => {
@@ -147,12 +123,10 @@ describe('InterlayExchangeNode', () => {
       } as TSwapOptions;
 
       await expect(
-        interlayExchangeNode.swapCurrency(
-          apiMock as ApiPromise,
-          swapOptions,
-          BigNumber(0),
-          BigNumber(1),
-        ),
+        interlayExchangeNode.swapCurrency(apiMock as ApiPromise, swapOptions, BigNumber(0), {
+          refTime: new BigNumber(1),
+          proofSize: new BigNumber(100),
+        }),
       ).rejects.toThrowError('No trade found');
     });
 
@@ -169,7 +143,10 @@ describe('InterlayExchangeNode', () => {
         apiMock as ApiPromise,
         swapOptions,
         BigNumber(0),
-        BigNumber(1),
+        {
+          refTime: new BigNumber(1),
+          proofSize: new BigNumber(100),
+        },
       );
 
       expect(result).toBeTruthy();

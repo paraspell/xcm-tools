@@ -1,34 +1,37 @@
 import type ExchangeNode from '../dexNodes/DexNode';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
-import { calculateTransactionFee } from '../utils/utils';
-import type { TBuildTransactionsOptionsModified } from '../types';
+import type { TBuildTransactionsOptionsModified, TWeight } from '../types';
 import BigNumber from 'bignumber.js';
+import { calculateTxFee, getTxWeight } from '../utils';
 
 export const calculateFromExchangeFee = async (options: TBuildTransactionsOptionsModified) => {
-  const { to, exchange, feeCalcAddress } = options;
-  if (!to || to === exchange.baseNode) return BigNumber(0);
+  const { exchange, destination, amount, feeCalcAddress } = options;
+  if (!destination || destination.node === exchange.baseNode) return BigNumber(0);
   const tx = await buildFromExchangeExtrinsic({
-    ...options,
-    to,
+    exchange,
+    destination,
+    amount,
   });
-  return calculateTransactionFee(tx, feeCalcAddress);
+  return calculateTxFee(tx, feeCalcAddress);
 };
 
-export const calculateToExchangeFee = async (options: TBuildTransactionsOptionsModified) => {
+export const calculateToExchangeWeight = async (
+  options: TBuildTransactionsOptionsModified,
+): Promise<TWeight> => {
   const { origin, feeCalcAddress } = options;
-  if (!origin) return BigNumber(0);
+  if (!origin) return { refTime: BigNumber(0), proofSize: BigNumber(0) };
   const tx = await buildToExchangeExtrinsic({
     ...options,
     origin,
   });
-  return calculateTransactionFee(tx, feeCalcAddress);
+  return getTxWeight(tx, feeCalcAddress);
 };
 
 export const createSwapTx = async (
   exchange: ExchangeNode,
   options: TBuildTransactionsOptionsModified,
 ) => {
-  const toExchangeTxFee = await calculateToExchangeFee(options);
+  const toExchangeTxFee = await calculateToExchangeWeight(options);
   const toDestTxFee = await calculateFromExchangeFee(options);
 
   return exchange.swapCurrency(

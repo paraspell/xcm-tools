@@ -1,5 +1,4 @@
-import type { environment } from '@snowbridge/api'
-import { Context } from '@snowbridge/api'
+import { Context, type environment } from '@snowbridge/api'
 import type { AbstractProvider } from 'ethers'
 
 export const createContext = (
@@ -14,8 +13,8 @@ export const createContext = (
     polkadot: {
       assetHubParaId: config.ASSET_HUB_PARAID,
       bridgeHubParaId: config.BRIDGE_HUB_PARAID,
-      relaychain: config.RELAY_CHAIN_URL,
-      parachains: config.PARACHAINS
+      parachains: config.PARACHAINS,
+      relaychain: config.RELAY_CHAIN_URL
     },
     appContracts: {
       gateway: config.GATEWAY_CONTRACT,

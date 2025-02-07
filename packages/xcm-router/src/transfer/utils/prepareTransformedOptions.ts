@@ -16,7 +16,7 @@ export const prepareTransformedOptions = async <
 >(
   options: T,
 ): Promise<{ dex: ExchangeNode; options: T & TAdditionalTransferOptions }> => {
-  const { from, to, currencyFrom, currencyTo, exchange } = options;
+  const { from, to, currencyFrom, currencyTo, exchange, senderAddress, recipientAddress } = options;
 
   const dex =
     exchange !== undefined ? createDexNodeInstance(exchange) : await selectBestExchange(options);
@@ -76,7 +76,14 @@ export const prepareTransformedOptions = async <
         assetFrom: assetFromExchange,
         assetTo,
       },
-      feeCalcAddress: determineFeeCalcAddress(options.senderAddress, options.recipientAddress),
+      destination:
+        destinationSpecified && recipientAddress
+          ? {
+              node: to,
+              address: recipientAddress,
+            }
+          : undefined,
+      feeCalcAddress: determineFeeCalcAddress(senderAddress, recipientAddress),
     },
   };
 };

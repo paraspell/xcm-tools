@@ -3,7 +3,6 @@ import type {
   TCurrencyInput,
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
 } from '@paraspell/sdk-pjs';
 import { Builder, isForeignAsset } from '@paraspell/sdk-pjs';
 import type { TAdditionalTransferOptions } from '../../types';
@@ -48,37 +47,35 @@ export const buildToExchangeExtrinsic = ({
 
 export type TBuildFromExchangeTxOptions = {
   exchange: TAdditionalTransferOptions['exchange'];
-  to: TNodeWithRelayChains;
-  recipientAddress: string;
+  destination: NonNullable<TAdditionalTransferOptions['destination']>;
   amount: string;
 };
 
 export const buildFromExchangeExtrinsic = ({
   exchange: { api, baseNode, assetTo },
-  to,
-  recipientAddress,
+  destination,
   amount,
 }: TBuildFromExchangeTxOptions) =>
   Builder(api)
     .from(baseNode)
-    .to(to)
+    .to(destination.node)
     .currency({
       ...getCurrencySelection(baseNode, assetTo),
       amount,
     })
-    .address(recipientAddress)
+    .address(destination.address)
     .build();
 
 export const determineFeeCalcAddress = (
   injectorAddress: string,
-  recipientAddress: string,
+  recipientAddress?: string,
 ): string => {
   if (!ethers.isAddress(injectorAddress)) {
     // Use wallet address for fee calculation
     return injectorAddress;
   }
 
-  if (!ethers.isAddress(recipientAddress)) {
+  if (recipientAddress && !ethers.isAddress(recipientAddress)) {
     // Use recipient address for fee calculation
     return recipientAddress;
   }

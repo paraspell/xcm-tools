@@ -179,7 +179,7 @@ const EvmTransfer = () => {
           chain: getChain(from),
           transport: custom(window.ethereum!),
         })
-      : await provider.getSigner();
+      : await provider.getSigner(selectedAccount as Address);
 
     if (!signer) {
       throw new Error('Signer not initialized');

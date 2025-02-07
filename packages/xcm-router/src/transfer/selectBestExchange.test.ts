@@ -7,7 +7,7 @@ import type ExchangeNode from '../dexNodes/DexNode';
 import BigNumber from 'bignumber.js';
 import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
-import { calculateFromExchangeFee, calculateToExchangeFee } from './createSwapTx';
+import { calculateFromExchangeFee, calculateToExchangeWeight } from './createSwapTx';
 
 vi.mock('../dexNodes/DexNodeFactory', () => ({
   createDexNodeInstance: vi.fn(),
@@ -17,6 +17,7 @@ vi.mock('./createSwapTx', () => ({
   createSwapTx: vi.fn(),
   calculateFromExchangeFee: vi.fn(),
   calculateToExchangeFee: vi.fn(),
+  calculateToExchangeWeight: vi.fn(),
 }));
 
 describe('selectBestExchange', () => {
@@ -27,7 +28,10 @@ describe('selectBestExchange', () => {
     calculateFromExchangeFeeSpy = vi
       .mocked(calculateFromExchangeFee)
       .mockResolvedValue(BigNumber(10));
-    calculateToExchangeFeeSpy = vi.mocked(calculateToExchangeFee).mockResolvedValue(BigNumber(10));
+    calculateToExchangeFeeSpy = vi.mocked(calculateToExchangeWeight).mockResolvedValue({
+      proofSize: BigNumber(10),
+      refTime: BigNumber(10),
+    });
   });
 
   afterAll(() => {
