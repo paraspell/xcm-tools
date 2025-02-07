@@ -22,4 +22,4 @@ export const transferEthToPolkadot = (
     api: new PolkadotJsApi()
   })
 
-export * from './ethTransfer/buildEthTransferOptions'
+export { depositToken, approveToken, getTokenBalance } from './ethTransfer'

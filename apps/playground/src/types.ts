@@ -47,3 +47,5 @@ export type TSubmitType =
   | 'delete'
   | 'dryRun'
   | 'addToBatch';
+
+export type TEvmSubmitType = 'default' | 'approve' | 'deposit';

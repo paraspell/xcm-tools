@@ -94,10 +94,11 @@ export class EvmBuilderClass<TApi, TRes> {
       return await transferMoonbeamEvm(this._options as TEvmBuilderOptions<TApi, TRes>)
     }
 
-    return (
-      (await transferEthToPolkadot(this._options as TEvmBuilderOptions<TApi, TRes>)).result.success
-        ?.ethereum.blockHash ?? ''
+    const { response } = await transferEthToPolkadot(
+      this._options as TEvmBuilderOptions<TApi, TRes>
     )
+
+    return response.hash
   }
 }
 
