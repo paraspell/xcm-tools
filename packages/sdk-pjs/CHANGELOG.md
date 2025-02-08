@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.2.1...sdk-pjs-v8.2.2) (2025-02-08)
+
+
+### Bug Fixes
+
+* **sdk-pjs:** Fix Snowbridge transfers not working for some wallets 🔧 ([b846b70](https://github.com/paraspell/xcm-tools/commit/b846b708e90675b3e47c3da1b2142a1ef2528f0a))
+
 ## [8.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.2.0...sdk-pjs-v8.2.1) (2025-01-27)
 
 
