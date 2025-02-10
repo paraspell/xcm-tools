@@ -177,4 +177,6 @@ export const getTNode = (
   )
 }
 
+export * from './getAssetMultiLocation'
+
 export * from './getExistentialDeposit'

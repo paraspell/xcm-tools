@@ -134,6 +134,50 @@ describe('AssetsService', () => {
     });
   });
 
+  describe('getAssetMultiLocation', () => {
+    let getAssetMultiLocationSpy: MockInstance;
+
+    beforeEach(() => {
+      getAssetMultiLocationSpy = vi.spyOn(
+        paraspellSdk,
+        'getAssetMultiLocation',
+      );
+    });
+
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should return asset multi location for a valid node and symbol', () => {
+      const assetMultiLocation = { currency: { symbol } };
+      getAssetMultiLocationSpy.mockReturnValue(assetMultiLocation);
+
+      const result = service.getAssetMultiLocation(node, {
+        currency: { symbol },
+      });
+
+      expect(result).toEqual(JSON.stringify(assetMultiLocation));
+      expect(getAssetMultiLocationSpy).toHaveBeenCalledWith(node, { symbol });
+    });
+
+    it('should throw BadRequestException for invalid node', () => {
+      const validateNodeSpy = vi
+        .spyOn(utils, 'validateNode')
+        .mockImplementation(() => {
+          throw new BadRequestException();
+        });
+
+      expect(() =>
+        service.getAssetMultiLocation(invalidNode, { currency: { symbol } }),
+      ).toThrow(BadRequestException);
+
+      expect(validateNodeSpy).toHaveBeenCalledWith(invalidNode, {
+        withRelayChains: true,
+      });
+      expect(getAssetMultiLocationSpy).not.toHaveBeenCalled();
+    });
+  });
+
   describe('getRelayChainSymbol', () => {
     let getRelayChainSymbolSpy: MockInstance;
 

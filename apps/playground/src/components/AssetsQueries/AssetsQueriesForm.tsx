@@ -59,6 +59,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const showSymbolInput =
     func === 'ASSET_ID' ||
+    func === 'ASSET_MULTILOCATION' ||
     func === 'DECIMALS' ||
     func == 'HAS_SUPPORT' ||
     func === 'BALANCE_NATIVE' ||
@@ -71,6 +72,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'ORIGIN_FEE_DETAILS';
 
   const supportsCurrencyType =
+    func === 'ASSET_MULTILOCATION' ||
     func === 'BALANCE_FOREIGN' ||
     func === 'ASSET_BALANCE' ||
     func === 'MAX_FOREIGN_TRANSFERABLE_AMOUNT' ||

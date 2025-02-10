@@ -18,6 +18,10 @@ import {
   OriginFeeDetailsDtoSchema,
 } from './dto/OriginFeeDetailsDto.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
+import {
+  AssetMultiLocationDto,
+  AssetMultiLocationDtoSchema,
+} from './dto/AssetMultiLocationDto.js';
 
 @Controller()
 export class AssetsController {
@@ -45,6 +49,19 @@ export class AssetsController {
       symbol,
     });
     return this.assetsService.getAssetId(node, symbol);
+  }
+
+  @Post('assets/:node/multilocation')
+  getAssetMultiLocation(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(AssetMultiLocationDtoSchema))
+    params: AssetMultiLocationDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_ASSET_MULTILOCATION, req, {
+      node,
+    });
+    return this.assetsService.getAssetMultiLocation(node, params);
   }
 
   @Get('assets/:node/relay-chain-symbol')
