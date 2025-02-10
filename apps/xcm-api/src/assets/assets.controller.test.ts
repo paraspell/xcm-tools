@@ -73,6 +73,24 @@ describe('AssetsController', () => {
     });
   });
 
+  describe('getAssetMultiLocation', () => {
+    it('should return asset multi location for a valid node and symbol', () => {
+      const mockResult = JSON.stringify({ currency: { symbol } });
+      const spy = vi
+        .spyOn(assetsService, 'getAssetMultiLocation')
+        .mockReturnValue(mockResult);
+
+      const result = controller.getAssetMultiLocation(
+        node,
+        { currency: { symbol } },
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(node, { currency: { symbol } });
+    });
+  });
+
   describe('getRelayChainSymbol', () => {
     it('should return relay chain symbol for a valid node', () => {
       const mockResult = 'KSM';

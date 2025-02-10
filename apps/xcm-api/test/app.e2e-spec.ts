@@ -228,6 +228,16 @@ describe('XCM API (e2e)', () => {
         .expect(404);
     });
 
+    it(`Get asset multilocation`, () =>
+      request(app.getHttpServer())
+        .post(`/assets/AssetHubPolkadot/multilocation`)
+        .send({
+          currency: {
+            symbol: 'USDt',
+          },
+        })
+        .expect(200));
+
     const relayChainSymbolUknownNodeUrl = `/assets/${unknownNode}/relay-chain-symbol`;
     it(`Get relaychain symbol - ${relayChainSymbolUknownNodeUrl} (GET)`, () => {
       return request(app.getHttpServer())
@@ -1125,7 +1135,7 @@ describe('XCM API (e2e)', () => {
       currencyFrom: { symbol: 'ASTR' },
       currencyTo: { symbol: 'BNC' },
       amount: '10000000000000000000',
-      injectorAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+      senderAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       slippagePct: '1',
     };

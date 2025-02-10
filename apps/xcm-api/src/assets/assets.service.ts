@@ -2,9 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   TNode,
   TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
   getAllAssetsSymbols,
   getAssetDecimals,
   getAssetId,
+  getAssetMultiLocation,
   getAssetsObject,
   getNativeAssets,
   getOriginFeeDetails,
@@ -15,6 +17,7 @@ import {
 } from '@paraspell/sdk';
 import { validateNode } from '../utils.js';
 import { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
+import { AssetMultiLocationDto } from './dto/AssetMultiLocationDto.js';
 
 @Injectable()
 export class AssetsService {
@@ -30,6 +33,13 @@ export class AssetsService {
       throw new NotFoundException(`Asset id for symbol ${symbol} not found.`);
     }
     return id;
+  }
+
+  getAssetMultiLocation(node: string, { currency }: AssetMultiLocationDto) {
+    validateNode(node, { withRelayChains: true });
+    return JSON.stringify(
+      getAssetMultiLocation(node as TNodeWithRelayChains, currency),
+    );
   }
 
   getRelayChainSymbol(node: string) {
