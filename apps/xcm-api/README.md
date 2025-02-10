@@ -234,15 +234,15 @@ It is advised to use at least 120s timeout with this endpoint (Because API has t
 
 Possible parameters:
 
-- `from`: (required): Represents the Parachain from which the assets will be transferred.
+- `from`: (optional): Represents the Parachain from which the assets will be transferred.
 - `exchange`: (optional): Represents the Parachain DEX on which tokens will be exchanged (If not provided, DEX is selected automatically based on best price output).
-- `to`: (required): Represents the Parachain to which the assets will be transferred.
+- `to`: (optional): Represents the Parachain to which the assets will be transferred.
 - `currencyFrom`: (required): Represents the asset being sent.
 - `currencyTo`: (required): Represents the received asset.
 - `amount`: (required): Specifies the amount of assets to transfer.
 - `slippagePct`: (required): Specifies the slippage percentage.
 - `recipientAddress`: (required): Specifies the recipient's address.
-- `injectorAddress`: (required): Specifies the sender's address.
+- `senderAddress`: (required): Specifies the sender's address.
 
 ```js
 const response = await fetch('http://localhost:3001/router', {
@@ -251,15 +251,15 @@ const response = await fetch('http://localhost:3001/router', {
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    from: 'Chain', //Origin Parachain/Relay chain
+    from: 'Chain', //Origin Parachain/Relay chain - OPTIONAL PARAMETER
     exchange: 'Dex', //Exchange Parachain/Relay chain //Optional parameter, if not specified exchange will be auto-selected
-    to: 'Chain', //Destination Parachain/Relay chain
-    currencyFrom: { CurrencySpec }, // {id: currencyID} | {symbol: currencySymbol}
-    currencyTo: { CurrencySpec }, // {id: currencyID} | {symbol: currencySymbol}
+    to: 'Chain', //Destination Parachain/Relay chain - OPTIONAL PARAMETER
+    currencyFrom: { CurrencySpec }, // {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+    currencyTo: { CurrencySpec }, // {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
     amount: 'Amount', // Amount to send
     slippagePct: 'Pct', // Max slipppage percentage
     recipientAddress: 'Address', //Recipient address
-    injectorAddress: 'InjectorAddress', //Address of sender
+    senderAddress: 'InjectorAddress', //Address of sender
   }),
 });
 ```
