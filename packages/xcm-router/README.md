@@ -77,16 +77,16 @@ If you wish to have an exchange chain selection based on the best price outcome,
 
  ```js
 await RouterBuilder
-        .from('Polkadot')   //Origin Parachain/Relay chain
-        .to('Astar')    //Destination Parachain/Relay chain
-        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID} | {symbol: currencySymbol}
-        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID} | {symbol: currencySymbol}
+        .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
+        .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
+        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
         .amount('1000000')  // Amount to send
         .slippagePct('1')   // Max slipppage percentage
-        .injectorAddress(injectorAddress)   //Injector address
+        .senderAddress(injectorAddress)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
         .signer(injector.signer)    //Signer
-        //.evmInjectorAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
+        //.evmSenderAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
         //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
 
         .onStatusChange((status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
@@ -103,17 +103,17 @@ If you wish to select your exchange chain manually, you can provide the addition
 
  ```js
 await RouterBuilder
-        .from('Polkadot')   //Origin Parachain/Relay chain
+        .from('Polkadot')   //Origin Parachain/Relay chain - OPTIONAL PARAMETER
         .exchange('HydraDDex')    //Exchange Parachain
-        .to('Astar')    //Destination Parachain/Relay chain
-        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID} | {symbol: currencySymbol}
-        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID} | {symbol: currencySymbol}
+        .to('Astar')    //Destination Parachain/Relay chain - OPTIONAL PARAMETER
+        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+        .currencyTo({symbol: 'ASTR'})    // Currency to receive {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
         .amount('1000000')  // Amount to send
         .slippagePct('1')   // Max slipppage percentage
-        .injectorAddress(selectedAccount.address)   //Injector address
+        .senderAddress(selectedAccount.address)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
         .signer(injector.signer)    //Signer
-        //.evmInjectorAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
+        //.evmSignerAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
         //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
 
         .onStatusChange((status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
@@ -122,61 +122,6 @@ await RouterBuilder
           console.log(status.type);    //Transaction types
         })
         .buildAndSend()
-```
-
-## Snowbridge
-You can now use Ethereum <> Polkadot bridge in the XCM Router. There are two scenarios to this transfer.
-
-### Polkadot -> Ethereum
-Following scenario works just like normal transfer, you just select Ethereum as destination chain. See example below.
-
-```js
-await RouterBuilder
-        .from('Origin')   //Origin Parachain/Relay chain
-        .to('Ethereum')   
-        .currencyFrom({symbol: 'DOT'})    // Currency to send {id: currencyID} | {symbol: currencySymbol}
-        .currencyTo({symbol: 'WETH'})    // Any currency supported by Ethereum bridge (WETH, WBTC and more) - {id: currencyID} | {symbol: currencySymbol}
-        .amount('1000000')  // Amount to send
-        .slippagePct('1')   // Max slipppage percentage
-        .injectorAddress(selectedAccount.address)   //Injector address
-        .recipientAddress(recipientAddress) //Recipient address
-        .signer(injector.signer)    //Signer
-        //.evmInjectorAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
-        //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
-
-        .onStatusChange((status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
-          console.log(status.hashes);   //Transaction hashes
-          console.log(status.status);   //Transaction statuses
-          console.log(status.type);    //Transaction types
-        })
-        .buildAndSend()
-```
-
-### Ethereum -> Polkadot
-The other scenario is a little different as it requires other parameters because Ethereum has different wallets and signers.
-
-```js
-await RouterBuilder()
-    .from('Ethereum')     
-    .to('Destination')     //Destination Chain
-    .currencyTo({symbol: 'WETH'})    // Any currency supported by Ethereum bridge (WETH, WBTC and more) - {id: currencyID} | {symbol: currencySymbol}
-    .currencyTo({symbol: 'GLMR'})   // Currency to receive {id: currencyID} | {symbol: currencySymbol}
-    .amount('1000000')  // Amount to send
-    .injectorAddress(selectedAccount.address)   //Injector address
-    .recipientAddress(recipientAddress) //Recipient address
-    .signer(injector.signer)    //Signer
-    .slippagePct('1')   // Max slipppage percentage
-    .onStatusChange(onStatusChange)
-    .assetHubAddress(address) //Asset Hub address where currency from Ethereum will be sent
-    .ethSigner(ethSigner) // Ethereum signer
-    .build();
-
-    .onStatusChange((status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
-      console.log(status.hashes);   //Transaction hashes
-      console.log(status.status);   //Transaction statuses
-      console.log(status.type);    //Transaction types
-    })
-    .buildAndSend()
 ```
 
 ## List of DEX chains, assets, and Parachains supported by XCM Router
