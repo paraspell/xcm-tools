@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.1.0...xcm-router-v2.2.0) (2025-02-10)
+
+
+### Features
+
+* **xcm-router:** Remove Snowbridge support 🔧 ([cb5e5f3](https://github.com/paraspell/xcm-tools/commit/cb5e5f3737f607aa734e551279f53cf34d735915))
+
+
+### Bug Fixes
+
+* **sdk-pjs:** Fix Snowbridge transfers not working for some wallets 🔧 ([b846b70](https://github.com/paraspell/xcm-tools/commit/b846b708e90675b3e47c3da1b2142a1ef2528f0a))
+* **xcm-router:** Modify fee calculations ([9e0f19b](https://github.com/paraspell/xcm-tools/commit/9e0f19bab007b58033dacde352e2529530b380b5))
+
+
+### Code Refactoring
+
+* **xcm-router:** Enhance XCM Router to use only 2 signatures ✍️ ([f4f1761](https://github.com/paraspell/xcm-tools/commit/f4f17614a2842af69b4b8ef0480f3df531ce9eed))
+* **xcm-router:** Improve asset selection and validation 🪄 ([138f633](https://github.com/paraspell/xcm-tools/commit/138f633fbe3e2de851dd70be305e792208350320))
+* **xcm-router:** Refactor to use route plan object 🛠️ ([3650a42](https://github.com/paraspell/xcm-tools/commit/3650a4254c9fa8dc442a8b0fe00abfcc91b7d63d))
+
+
+### Build System
+
+* **xcm-router:** Bump @galacticcouncil/sdk to v5.3.0 📦 ([8830300](https://github.com/paraspell/xcm-tools/commit/8830300d594f14f1780dbf918212e3d88a34ec2d))
+
 ## [2.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.0.0...xcm-router-v2.1.0) (2025-01-25)
 
 
