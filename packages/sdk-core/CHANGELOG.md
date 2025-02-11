@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.3.0...sdk-core-v8.3.1) (2025-02-11)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix incorrect type for getOriginFee function 🔧 ([7bd0128](https://github.com/paraspell/xcm-tools/commit/7bd01286ada88028ca5567233b5b82c3a306e5d6))
+
 ## [8.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.2.2...sdk-core-v8.3.0) (2025-02-11)
 
 
