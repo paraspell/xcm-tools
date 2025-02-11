@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { validateDestinationAddress } from './validateDestinationAddress';
 import { InvalidAddressError, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
-import { ethers } from 'ethers';
+import { ethers } from 'ethers-v6';
 import { isNodeEvm } from '@paraspell/sdk-pjs';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
@@ -9,7 +9,7 @@ vi.mock('@paraspell/sdk-pjs', () => ({
   InvalidAddressError: class InvalidAddressError extends Error {},
 }));
 
-vi.mock('ethers', () => ({
+vi.mock('ethers-v6', () => ({
   ethers: {
     isAddress: vi.fn(),
   },

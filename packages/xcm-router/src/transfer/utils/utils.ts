@@ -5,8 +5,8 @@ import type {
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk-pjs';
 import { Builder, isForeignAsset } from '@paraspell/sdk-pjs';
-import type { TAdditionalTransferOptions } from '../../types';
-import { ethers } from 'ethers';
+import type { TDestinationInfo, TExchangeInfo, TOriginInfo } from '../../types';
+import { ethers } from 'ethers-v6';
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
 
 export const getCurrencySelection = (
@@ -23,8 +23,8 @@ export const getCurrencySelection = (
 };
 
 export type TBuildToExchangeTxOptions = {
-  origin: NonNullable<TAdditionalTransferOptions['origin']>;
-  exchange: TAdditionalTransferOptions['exchange'];
+  origin: TOriginInfo;
+  exchange: TExchangeInfo;
   senderAddress: string;
   amount: string;
 };
@@ -46,8 +46,8 @@ export const buildToExchangeExtrinsic = ({
     .build();
 
 export type TBuildFromExchangeTxOptions = {
-  exchange: TAdditionalTransferOptions['exchange'];
-  destination: NonNullable<TAdditionalTransferOptions['destination']>;
+  exchange: TExchangeInfo;
+  destination: TDestinationInfo;
   amount: string;
 };
 

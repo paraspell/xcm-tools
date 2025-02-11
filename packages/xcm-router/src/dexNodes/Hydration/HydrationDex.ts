@@ -16,6 +16,7 @@ class HydrationExchangeNode extends ExchangeNode {
     toDestTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
     const { assetFrom, assetTo, slippagePct, amount } = options;
+
     const poolService = new PoolService(api);
     const tradeRouter = new TradeRouter(
       poolService,

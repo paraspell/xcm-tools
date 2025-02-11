@@ -4,7 +4,7 @@ import type { TNodePolkadotKusama } from '@paraspell/sdk-pjs';
 import { getNodeProviders } from '@paraspell/sdk-pjs';
 
 export const createAcalaApiInstance = async (node: TNodePolkadotKusama): Promise<ApiPromise> => {
-  const provider = new WsProvider(getNodeProviders(node), 100);
+  const provider = new WsProvider(getNodeProviders(node).reverse());
   const api = new ApiPromise(
     options({
       provider,

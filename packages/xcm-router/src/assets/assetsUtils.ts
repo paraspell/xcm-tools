@@ -13,7 +13,13 @@ export const getExchangeAssets = (
     const foundAsset = getOtherAssets(exchangeBaseNode).find(
       (otherAsset) => otherAsset.assetId === asset.id,
     );
-    return { ...asset, assetId: asset.id, multiLocation: foundAsset?.multiLocation };
+    return {
+      ...asset,
+      ...(asset.id !== undefined ? { assetId: asset.id } : {}),
+      ...(foundAsset?.multiLocation !== undefined
+        ? { multiLocation: foundAsset.multiLocation }
+        : {}),
+    };
   });
 };
 

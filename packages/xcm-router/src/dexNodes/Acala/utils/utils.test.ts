@@ -24,7 +24,7 @@ vi.mock('@acala-network/api', () => ({
 }));
 
 vi.mock('@paraspell/sdk-pjs', () => ({
-  getNodeProviders: vi.fn().mockReturnValue('wss://mock-provider'),
+  getNodeProviders: vi.fn().mockReturnValue(['wss://mock-provider']),
 }));
 
 describe('createAcalaApiInstance', () => {
@@ -39,7 +39,7 @@ describe('createAcalaApiInstance', () => {
   test('should create API instance with correct configuration', async () => {
     const api = await createAcalaApiInstance(mockNode);
     expect(getNodeProviders).toHaveBeenCalledWith(mockNode);
-    expect(WsProvider).toHaveBeenCalledWith('wss://mock-provider', 100);
+    expect(WsProvider).toHaveBeenCalledWith(['wss://mock-provider']);
     expect(options).toHaveBeenCalledWith({ provider: mockProvider });
     expect(ApiPromise).toHaveBeenCalledWith({ some: 'options' });
     expect(api).toBeDefined();

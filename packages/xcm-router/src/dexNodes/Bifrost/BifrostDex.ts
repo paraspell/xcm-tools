@@ -14,9 +14,11 @@ import { SmallAmountError } from '../../errors/SmallAmountError';
 class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
-    { assetFrom, assetTo, amount, senderAddress, slippagePct }: TSwapOptions,
+    options: TSwapOptions,
     toDestTxFee: BigNumber,
   ): Promise<TSwapResult> {
+    const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin } = options;
+
     const chainId = getParaId(this.node);
 
     const tokenMap = getTokenMap(this.node, chainId);
@@ -45,7 +47,9 @@ class BifrostExchangeNode extends ExchangeNode {
 
     const amountBN = new BigNumber(amount);
 
-    const amountWithoutFee = amountBN.minus(amountBN.times(DEST_FEE_BUFFER_PCT));
+    const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
+
+    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
     Logger.log('Amount modified', amountWithoutFee.toString());
 
     if (amountWithoutFee.isNegative()) {
