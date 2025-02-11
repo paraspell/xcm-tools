@@ -1,5 +1,22 @@
 # Changelog
 
+## [8.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.2.2...sdk-core-v8.3.0) (2025-02-11)
+
+
+### Features
+
+* **sdk:** Add getAssetMultiLocation function ✨ ([60161ab](https://github.com/paraspell/xcm-tools/commit/60161ab4fa668d9d658665ba54e449a31f2406ce))
+
+
+### Bug Fixes
+
+* **xcm-router:** Modify fee calculations ([9e0f19b](https://github.com/paraspell/xcm-tools/commit/9e0f19bab007b58033dacde352e2529530b380b5))
+
+
+### Code Refactoring
+
+* **xcm-router:** Improve asset selection and validation 🪄 ([138f633](https://github.com/paraspell/xcm-tools/commit/138f633fbe3e2de851dd70be305e792208350320))
+
 ## [8.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.2.1...sdk-core-v8.2.2) (2025-02-08)
 
 
