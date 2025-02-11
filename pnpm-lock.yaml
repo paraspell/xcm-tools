@@ -950,23 +950,23 @@ importers:
   packages/xcm-router:
     dependencies:
       '@acala-network/api':
-        specifier: ^6.1.3
-        version: 6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+        specifier: ^6.2.0
+        version: 6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@acala-network/app-util':
-        specifier: ^4.1.5
-        version: 4.1.5
+        specifier: ^4.1.8-14
+        version: 4.1.8-14
       '@acala-network/eth-providers':
-        specifier: ^2.8.10
-        version: 2.8.10(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: ^2.9.5
+        version: 2.9.5(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@acala-network/sdk':
-        specifier: 4.1.9-13
-        version: 4.1.9-13(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.8.10(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@acala-network/types@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(ethers@6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+        specifier: 4.1.11
+        version: 4.1.11(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.5(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@acala-network/sdk-core':
-        specifier: 4.1.9-13
-        version: 4.1.9-13(@acala-network/types@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+        specifier: 4.1.11
+        version: 4.1.11(@acala-network/types@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@acala-network/sdk-swap':
-        specifier: 4.1.9-13
-        version: 4.1.9-13(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.8.10(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@acala-network/types@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(ethers@6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+        specifier: 4.1.11
+        version: 4.1.11(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.5(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@acala-network/sdk-wallet':
         specifier: 4.1.8-14
         version: 4.1.8-14(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -1022,8 +1022,11 @@ importers:
         specifier: ^9.1.2
         version: 9.1.2
       ethers:
-        specifier: ^6.13.5
-        version: 6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: ^5.7.0
+        version: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ethers-v6:
+        specifier: npm:ethers@^6.13.5
+        version: ethers@6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       inter-exchange:
         specifier: ^2.0.0
         version: 2.0.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -1097,41 +1100,41 @@ importers:
 
 packages:
 
-  '@acala-network/api-derive@6.1.3':
-    resolution: {integrity: sha512-r9/7Vzk2od1sf9Tt85OPfrsMl1WHtMTtwHi0hT62512lZONwjRejOUWc9A+oxrwjp6s8J3fTSBZvnsRfngLbgQ==}
+  '@acala-network/api-derive@6.2.0':
+    resolution: {integrity: sha512-cSWiuQKyYrJ2Rf5VtQpVceh3aXkwqzz1dEWw4THfPxV2N8GuemkdQs+V7rZ70zPqIOEYC4MkUAlDPVRaSb0Pmw==}
     peerDependencies:
       '@polkadot/api': ^15.4.1
 
-  '@acala-network/api@6.1.3':
-    resolution: {integrity: sha512-2EsPg7ASMoS5bbiQFdHLcjuoSLIZUBp5bQK9S8fOI15JMxSBH16+udjqYYUN++hgSBxnM7/qn+o8DJV4cP9vUA==}
+  '@acala-network/api@6.2.0':
+    resolution: {integrity: sha512-HFbQ7AOswBroU5JEZijzWW84ZvoKojCjBPoqkc3J511GcI1SKNzP9fjd4J9EmVfXordgnR+NPzVMPCg32GmT4A==}
     peerDependencies:
       '@polkadot/api': ^15.4.1
 
-  '@acala-network/app-util@4.1.5':
-    resolution: {integrity: sha512-yzuBxLvxY2lz6cGHQqIePzetD2QwepVpXb5cmPU6NyqrBsMm1Cqx9yxrDOT90Z5hc6nbfwY8sOeh8rGl2wCxeQ==}
+  '@acala-network/app-util@4.1.8-14':
+    resolution: {integrity: sha512-5z9dnoImupIUl2LEvIJtkTFn4hP6SqQ/Kf3vg2LZJ9MspiKeOKRSqAHINSqFAIoXwdt0g2cpseUti3nUtu372A==}
 
   '@acala-network/contracts@4.3.4':
     resolution: {integrity: sha512-oBgXGUjRW+lRo9TWGtCB1+OpEOFfhxW//wReb7V/YdbEElVvYuKw3lmfly/eZ/mdBgqxA3eXxNW0AgXiyOn2NQ==}
 
-  '@acala-network/eth-providers@2.8.10':
-    resolution: {integrity: sha512-Gieh1jgUmyuDiEhRxHQBGdoJ5AnQD9ExHFB8WY1TYdXhgCUYvtxF++b4HtcYtgp/WJNtRp7+f23zYk4v6d/srg==}
+  '@acala-network/eth-providers@2.9.5':
+    resolution: {integrity: sha512-Blrey0irtk92tar4tUGp2QD/3nydtF2tsb6tOGW7g2MmHKThPKSHj6Un5InWgp4SZjI0Au//tMb+GZgBiY5t2w==}
     peerDependencies:
-      '@acala-network/api': 6.1.3
+      '@acala-network/api': ~6.2.0
       '@polkadot/api': ^15.4.1
 
-  '@acala-network/eth-transactions@2.8.10':
-    resolution: {integrity: sha512-RcmzOndP8nDqZM1Anl9KKYGj0qplh9l+f7e5gTpKOXArkSwaPL6ZLJKukivO3fCA9Try84Q5ENtfxVxnRVpZjQ==}
+  '@acala-network/eth-transactions@2.9.5':
+    resolution: {integrity: sha512-I3dSgF0RGigiFiy8hweAhNxkeJGdSpedf0jmSJfSZSGVliCF53usQhKDFO1dChFDGipoTUh1RqpeR1IRS1q+Xg==}
     peerDependencies:
       '@polkadot/util-crypto': ^13.0.2
 
-  '@acala-network/sdk-core@4.1.9-13':
-    resolution: {integrity: sha512-29cV/cZfeBdrNgGE1m0LJBJ5+4rxjRXGYLRaxkoXXVbns8UWaY7BY/JvisY0mgiJNOKfEvEHvGQIgu+MwMNrsw==}
+  '@acala-network/sdk-core@4.1.11':
+    resolution: {integrity: sha512-PyxUWCF7ADrH3wzPNqLHscICDoY93qZswuyTJo/58AhUo93wOyEbKOm8Tr5sFOsPWRodebEIaU9JF8hDHDDeZg==}
     peerDependencies:
       '@acala-network/types': ^6
       '@polkadot/api': ^15.4.1
 
-  '@acala-network/sdk-swap@4.1.9-13':
-    resolution: {integrity: sha512-QZDfNrQVkJi+wbfYanJ2/5BOPsb4mgl7gRventgDh0QQsT2MAz700dS1NFmey+tAsy53B/KLVSKoI3sRRs/3Eg==}
+  '@acala-network/sdk-swap@4.1.11':
+    resolution: {integrity: sha512-MpcuR9i24QCxuACXeKvQIiiQizhyLAvCv+yZPllt88dtFz/QRdr2bPcOtDtHCSXFzqQAdA2q2TiQfi78KvZL6w==}
     peerDependencies:
       '@acala-network/types': ^6
       '@polkadot/api': ^15.4.1
@@ -1139,8 +1142,8 @@ packages:
   '@acala-network/sdk-wallet@4.1.8-14':
     resolution: {integrity: sha512-A50fwZKkRE9A0InMz+5RlpzuCWJLcb3Bstx2PSFteokZHaYqBJYHFMU6yB9zGMRl8iADNr9cQ22QPitK4o2H7Q==}
 
-  '@acala-network/sdk@4.1.9-13':
-    resolution: {integrity: sha512-fpJGMI66pbFeRg37TP6z0T8tk3hCdlsjFgAwAdVBcVD0zYrQrTf31gCctDP+E7fPrCPEanRq6wrisie/ECz62A==}
+  '@acala-network/sdk@4.1.11':
+    resolution: {integrity: sha512-Piqv2JvQzXSz0IwlyChbfVfC1fXYdIH7KTjOO/krvUvra4KKO8p9hWFHIVZUyeHf0E7e8arEqzaiicL3iL/jJw==}
     peerDependencies:
       '@acala-network/api': ^5
       '@acala-network/eth-providers': ~2.7.18
@@ -1152,8 +1155,8 @@ packages:
     peerDependencies:
       '@polkadot/types': ^15.4.1
 
-  '@acala-network/types@6.1.3':
-    resolution: {integrity: sha512-I2TsX4NJRS0JX5a1Ff+PTNpxNzpIyBPAQyl57/d4uMoTlTKuRMFyAs7lilRk1uj2IF6/TNNta5eCCmrBgIc4uQ==}
+  '@acala-network/types@6.2.0':
+    resolution: {integrity: sha512-83s59yUnj3+J/olsm0Krd1C9KwoRRsvJ/hwzJ4aHEAAwRwPI+VOCux4oPmKoWiBt/P+AuGKwaVWQdDs3XW824Q==}
     peerDependencies:
       '@polkadot/api': ^15.4.1
 
@@ -1977,10 +1980,6 @@ packages:
     resolution: {integrity: sha512-HrcgcIESLm9aIR842yhJ5RWan/gebQUJ6E/E5+rf0y9o6oj7w0Br+sWuL6kEQ/o/AdfvR1Je9jG18/gnpwjEyA==}
     peerDependencies:
       '@babel/core': ^7.0.0-0 || ^8.0.0-0 <8.0.0
-
-  '@babel/runtime@7.24.5':
-    resolution: {integrity: sha512-Nms86NXrsaeU9vbBJKni6gXiEXZ4CVpYVzEjDH9Sb8vmZ3UljyA1GSOJl/6LGPO8EHLuSF9H+IxNXHPX8QHJ4g==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.25.0':
     resolution: {integrity: sha512-7dRy4DwXwtzBrPbZflqxnvfxLF8kdZXPkhymtDeFoFqE6ldzjQFgYTtYIFARcLEYDrqfBfYcZt1WqFxRoyC9Rw==}
@@ -11349,29 +11348,29 @@ packages:
 
 snapshots:
 
-  '@acala-network/api-derive@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@acala-network/api-derive@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
-      '@acala-network/types': 6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@acala-network/types': 6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@polkadot/api': 15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
-  '@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
-      '@acala-network/api-derive': 6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@acala-network/types': 6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@acala-network/api-derive': 6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@acala-network/types': 6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@polkadot/api': 15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
-  '@acala-network/app-util@4.1.5':
+  '@acala-network/app-util@4.1.8-14':
     dependencies:
-      '@babel/runtime': 7.24.5
+      '@babel/runtime': 7.26.0
       bignumber.js: 9.1.2
 
   '@acala-network/contracts@4.3.4': {}
 
-  '@acala-network/eth-providers@2.8.10(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@acala-network/eth-providers@2.9.5(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
-      '@acala-network/api': 6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@acala-network/api': 6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@acala-network/contracts': 4.3.4
-      '@acala-network/eth-transactions': 2.8.10(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@acala-network/eth-transactions': 2.9.5(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/api': 15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       bn.js: 5.2.1
       ethers: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -11384,7 +11383,7 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@acala-network/eth-transactions@2.8.10(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@acala-network/eth-transactions@2.9.5(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       ethers: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -11392,18 +11391,18 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@acala-network/sdk-core@4.1.9-13(@acala-network/types@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@acala-network/sdk-core@4.1.11(@acala-network/types@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
-      '@acala-network/types': 6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@acala-network/types': 6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@polkadot/api': 15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       bignumber.js: 9.1.2
       lodash: 4.17.21
 
-  '@acala-network/sdk-swap@4.1.9-13(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.8.10(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@acala-network/types@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(ethers@6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@acala-network/sdk-swap@4.1.11(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.5(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
-      '@acala-network/sdk': 4.1.9-13(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.8.10(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@acala-network/types@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(ethers@6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@acala-network/sdk-core': 4.1.9-13(@acala-network/types@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@acala-network/types': 6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@acala-network/sdk': 4.1.11(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.5(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@acala-network/sdk-core': 4.1.11(@acala-network/types@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@acala-network/types': 6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@polkadot/api': 15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       rxjs: 7.8.1
     transitivePeerDependencies:
@@ -11424,14 +11423,14 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@acala-network/sdk@4.1.9-13(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.8.10(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@acala-network/types@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(ethers@6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@acala-network/sdk@4.1.11(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.5(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(ethers@5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
-      '@acala-network/api': 6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@acala-network/eth-providers': 2.8.10(@acala-network/api@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@acala-network/sdk-core': 4.1.9-13(@acala-network/types@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@acala-network/api': 6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@acala-network/eth-providers': 2.9.5(@acala-network/api@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@13.3.1))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@acala-network/sdk-core': 4.1.11(@acala-network/types@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@polkadot/api': 15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       axios: 0.24.0
-      ethers: 6.13.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ethers: 5.7.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       graphql: 16.10.0
       graphql-request: 4.3.0(graphql@16.10.0)
       lodash: 4.17.21
@@ -11446,7 +11445,7 @@ snapshots:
     dependencies:
       '@polkadot/types': 15.4.1
 
-  '@acala-network/types@6.1.3(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@acala-network/types@6.2.0(@polkadot/api@15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
       '@polkadot/api': 15.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
@@ -12533,10 +12532,6 @@ snapshots:
       '@babel/helper-plugin-utils': 7.25.9
       '@babel/types': 7.26.0
       esutils: 2.0.3
-
-  '@babel/runtime@7.24.5':
-    dependencies:
-      regenerator-runtime: 0.14.1
 
   '@babel/runtime@7.25.0':
     dependencies:

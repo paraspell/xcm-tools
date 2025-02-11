@@ -14,10 +14,12 @@ import { SmallAmountError } from '../../errors/SmallAmountError';
 class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(
     api: ApiPromise,
-    { senderAddress, assetFrom, assetTo, amount, slippagePct }: TSwapOptions,
+    options: TSwapOptions,
     toDestTransactionFee: BigNumber,
     _toExchangeTxWeight: TWeight,
   ): Promise<TSwapResult> {
+    const { senderAddress, assetFrom, assetTo, amount, slippagePct, origin } = options;
+
     const interBTC = await createInterBtcApi(getNodeProviders(this.node)[0], 'mainnet');
 
     const assetFromInfo = await getCurrency(interBTC, assetFrom);
@@ -34,7 +36,9 @@ class InterlayExchangeNode extends ExchangeNode {
 
     const amountBN = new BigNumber(amount);
 
-    const amountWithoutFee = amountBN.minus(amountBN.times(DEST_FEE_BUFFER_PCT));
+    const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
+
+    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
 
     if (amountWithoutFee.isNegative()) {
       throw new SmallAmountError(

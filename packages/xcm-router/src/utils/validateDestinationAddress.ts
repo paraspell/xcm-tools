@@ -1,5 +1,5 @@
 import { InvalidAddressError, isNodeEvm, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
-import { ethers } from 'ethers';
+import { ethers } from 'ethers-v6';
 
 export const validateDestinationAddress = (address: string, destination: TNodeWithRelayChains) => {
   if (typeof address === 'string') {

@@ -20,6 +20,7 @@ export type TSwapOptions = {
   slippagePct: string;
   senderAddress: string;
   feeCalcAddress: string;
+  origin?: TOriginInfo;
 };
 
 export type TSwapResult = {
@@ -125,23 +126,29 @@ export type TBuildTransactionsOptions = Omit<
 export type TBuildTransactionsOptionsModified = Omit<TBuildTransactionsOptions, 'exchange'> &
   TAdditionalTransferOptions;
 
+export type TOriginInfo = {
+  api: TPjsApi;
+  node: TNodeDotKsmWithRelayChains;
+  assetFrom: SdkTAsset;
+};
+
+export type TExchangeInfo = {
+  api: TPjsApi;
+  baseNode: TNodePolkadotKusama;
+  exchangeNode: TExchangeNode;
+  assetFrom: TRouterAsset;
+  assetTo: TRouterAsset;
+};
+
+export type TDestinationInfo = {
+  node: TNodeWithRelayChains;
+  address: string;
+};
+
 export type TAdditionalTransferOptions = {
-  origin?: {
-    api: TPjsApi;
-    node: TNodeDotKsmWithRelayChains;
-    assetFrom: SdkTAsset;
-  };
-  exchange: {
-    api: TPjsApi;
-    baseNode: TNodePolkadotKusama;
-    exchangeNode: TExchangeNode;
-    assetFrom: TRouterAsset;
-    assetTo: TRouterAsset;
-  };
-  destination?: {
-    node: TNodeWithRelayChains;
-    address: string;
-  };
+  origin?: TOriginInfo;
+  exchange: TExchangeInfo;
+  destination?: TDestinationInfo;
   feeCalcAddress: string;
 };
 

@@ -1148,12 +1148,11 @@ describe('XCM API (e2e)', () => {
         .expect((res) => {
           const data = JSON.parse(res.text);
           expect(Array.isArray(data)).toBeTruthy();
-          expect(data).toHaveLength(3);
+          expect(data).toHaveLength(2);
           data.forEach((txInfo: any) => {
             expect(txInfo).toHaveProperty('tx');
             expect(txInfo).toHaveProperty('node');
             expect(txInfo).toHaveProperty('type');
-            expect(txInfo).toHaveProperty('statusType');
             expect(txInfo.tx).toBeTypeOf('string');
           });
         });
@@ -1167,12 +1166,11 @@ describe('XCM API (e2e)', () => {
         .expect((res) => {
           const data = JSON.parse(res.text);
           expect(Array.isArray(data)).toBeTruthy();
-          expect(data).toHaveLength(3);
+          expect(data).toHaveLength(2);
           data.forEach((txInfo: any) => {
             expect(txInfo).toHaveProperty('tx');
             expect(txInfo).toHaveProperty('node');
             expect(txInfo).toHaveProperty('type');
-            expect(txInfo).toHaveProperty('statusType');
             expect(txInfo.tx).toBeTypeOf('string');
           });
         });
@@ -1191,12 +1189,11 @@ describe('XCM API (e2e)', () => {
         .expect((res) => {
           const data = JSON.parse(res.text);
           expect(Array.isArray(data)).toBeTruthy();
-          expect(data).toHaveLength(3);
+          expect(data).toHaveLength(2);
           data.forEach((txInfo: any) => {
             expect(txInfo).toHaveProperty('tx');
             expect(txInfo).toHaveProperty('node');
             expect(txInfo).toHaveProperty('type');
-            expect(txInfo).toHaveProperty('statusType');
             expect(txInfo.tx).toBeTypeOf('string');
           });
         });

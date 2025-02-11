@@ -19,7 +19,7 @@ class AcalaExchangeNode extends ExchangeNode {
     toDestTransactionFee: BigNumber,
     _toExchangeTxWeight: TWeight,
   ): Promise<TSwapResult> {
-    const { assetFrom, assetTo, amount, senderAddress } = options;
+    const { assetFrom, assetTo, amount, senderAddress, origin } = options;
 
     const wallet = new Wallet(api);
     await wallet.isReady;
@@ -58,7 +58,9 @@ class AcalaExchangeNode extends ExchangeNode {
       );
     }
 
-    const amountWithoutFee = amountBN.minus(amountBN.times(DEST_FEE_BUFFER_PCT));
+    const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
+
+    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
 
     if (amountWithoutFee.isNegative()) {
       throw new SmallAmountError(
