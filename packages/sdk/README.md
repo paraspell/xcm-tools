@@ -278,6 +278,9 @@ paraspell.assets.getTNode(nodeID: number)
 
 // Import all compatible nodes as constant
 paraspell.NODE_NAMES
+
+// Get multilocation for asset id or symbol on specific chain
+getAssetMultiLocation(chainFrom, { symbol: symbol } | { id: assetId })
 ```
 
 ### Parachain XCM Pallet queries
