@@ -33,6 +33,7 @@ export const callSdkFunc = (
     amount,
     address,
     accountDestination,
+    ahAccount,
   } = formValues;
   const chosenSdk = apiType === 'PAPI' ? Sdk : SdkPjs;
 
@@ -109,6 +110,7 @@ export const callSdkFunc = (
         },
         account: address,
         accountDestination,
+        ahAccount,
       }),
   };
 

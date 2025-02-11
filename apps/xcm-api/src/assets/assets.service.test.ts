@@ -516,7 +516,6 @@ describe('AssetsService', () => {
       });
       expect(validateNodeSpy).toHaveBeenCalledWith(nodeDestination, {
         withRelayChains: true,
-        excludeEthereum: true,
       });
       expect(getOriginFeeDetailsSpy).toHaveBeenCalledWith({
         origin: nodeOrigin,
@@ -573,7 +572,6 @@ describe('AssetsService', () => {
       });
       expect(validateNodeSpy).toHaveBeenCalledWith(nodeDestination, {
         withRelayChains: true,
-        excludeEthereum: true,
       });
     });
   });
