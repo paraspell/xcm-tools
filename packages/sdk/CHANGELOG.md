@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.2.2...sdk-v8.3.0) (2025-02-11)
+
+
+### Bug Fixes
+
+* **xcm-router:** Modify fee calculations ([9e0f19b](https://github.com/paraspell/xcm-tools/commit/9e0f19bab007b58033dacde352e2529530b380b5))
+
 ## [8.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-v8.2.1...sdk-v8.2.2) (2025-02-08)
 
 
