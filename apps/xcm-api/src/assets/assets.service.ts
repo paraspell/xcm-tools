@@ -85,7 +85,7 @@ export class AssetsService {
   getOriginFeeDetails(params: OriginFeeDetailsDto) {
     const { origin, destination } = params;
     validateNode(origin, { withRelayChains: true, excludeEthereum: true });
-    validateNode(destination, { withRelayChains: true, excludeEthereum: true });
+    validateNode(destination, { withRelayChains: true });
 
     return getOriginFeeDetails({
       ...params,

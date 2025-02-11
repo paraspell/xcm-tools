@@ -9,6 +9,7 @@ export const OriginFeeDetailsDtoSchema = z.object({
   accountDestination: z
     .string()
     .min(1, { message: 'Destination address is required' }),
+  ahAccount: z.string().optional(),
 });
 
 export type OriginFeeDetailsDto = z.infer<typeof OriginFeeDetailsDtoSchema>;

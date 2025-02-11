@@ -9,7 +9,10 @@ import {
   Stack,
   TextInput,
 } from '@mantine/core';
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
+import type {
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
+} from '@paraspell/sdk';
 import {
   getRelayChainSymbol,
   isRelayChain,
@@ -26,11 +29,12 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 export type FormValues = {
   func: TAssetsQuery;
   node: TNodeDotKsmWithRelayChains;
-  nodeDestination: TNodeDotKsmWithRelayChains;
+  nodeDestination: TNodeWithRelayChains;
   currency: string;
   amount: string;
   address: string;
   accountDestination: string;
+  ahAccount: string;
   useApi: boolean;
   currencyType?: 'id' | 'symbol' | 'multilocation';
 };
@@ -49,13 +53,14 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
       currency: '',
       address: '',
       accountDestination: '',
+      ahAccount: '',
       amount: '',
       useApi: false,
       currencyType: 'symbol',
     },
   });
 
-  const { func, node, currencyType } = form.getValues();
+  const { func, node, currencyType, nodeDestination } = form.getValues();
 
   const showSymbolInput =
     func === 'ASSET_ID' ||
@@ -214,7 +219,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             <ParachainSelect
               label={'Destination node'}
               placeholder="Pick value"
-              data={nodeList}
+              data={NODES_WITH_RELAY_CHAINS}
               required
               data-testid="select-node-destination"
               {...form.getInputProps('nodeDestination')}
@@ -306,6 +311,16 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
               required
               data-testid="address-input"
               {...form.getInputProps('accountDestination')}
+            />
+          )}
+
+          {isOriginFee && nodeDestination === 'Ethereum' && (
+            <TextInput
+              label="AssetHub address"
+              placeholder="Enter address"
+              required
+              data-testid="ah-address-input"
+              {...form.getInputProps('ahAccount')}
             />
           )}
 

@@ -1,4 +1,10 @@
-import type { TCurrencyCore, TNodeDotKsmWithRelayChains, TNodePolkadotKusama, WithAmount } from '.'
+import type {
+  TCurrencyCore,
+  TNodeDotKsmWithRelayChains,
+  TNodePolkadotKusama,
+  TNodeWithRelayChains,
+  WithAmount
+} from '.'
 import type { WithApi } from './TApi'
 
 export type TBalanceResponse = {
@@ -80,7 +86,7 @@ export type TGetOriginFeeDetailsOptionsBase = {
   /**
    * The destination node.
    */
-  destination: TNodeDotKsmWithRelayChains
+  destination: TNodeWithRelayChains
   /**
    * The currency to transfer.
    */
@@ -93,6 +99,10 @@ export type TGetOriginFeeDetailsOptionsBase = {
    * The destination account.
    */
   accountDestination: string
+  /**
+   * The AssetHub address
+   */
+  ahAccount?: string
   /**
    * The fee margin percentage.
    */
