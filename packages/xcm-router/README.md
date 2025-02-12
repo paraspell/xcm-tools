@@ -38,15 +38,19 @@ XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows 
 
 # Installation
 #### Install dependencies
+
+```
+⚠️ NOTE
+Enabling Wasm is required by Hydration SDK in order for XCM-Router to work in your dAPP. You can either enable it in web app config or by plugin.
+```
+
 ```bash
-//PNPM temporarily unsupported
-npm install || yarn add @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
+yarn add || pnpm | npm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
 ```
 
 #### Install XCM Router
 ```bash
-//PNPM temporarily unsupported
-npm install || yarn add @paraspell/xcm-router
+yarn add || pnpm | npm install @paraspell/xcm-router
 ```
 
 ## Importing package to your project
