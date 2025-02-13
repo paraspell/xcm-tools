@@ -52,7 +52,7 @@ describe('Litentry', () => {
     it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
       const input = {
         scenario: 'ParaToPara',
-        asset: { symbol: 'LIT' }
+        asset: { symbol: 'HEI' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')

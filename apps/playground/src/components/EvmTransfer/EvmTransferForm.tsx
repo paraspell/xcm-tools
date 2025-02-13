@@ -10,20 +10,21 @@ import {
   TextInput,
   Text,
 } from '@mantine/core';
-import type { TAsset, TNodePolkadotKusama } from '@paraspell/sdk';
-import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '@paraspell/sdk';
+import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
+import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
 import { isValidPolkadotAddress } from '../../utils';
 import useCurrencyOptions from '../../hooks/useCurrencyOptions';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import type { TEvmSubmitType } from '../../types';
-import { formatEther, type BrowserProvider } from 'ethers';
+import { ethers, formatEther, type BrowserProvider } from 'ethers';
 import { getTokenBalance } from '@paraspell/sdk-pjs';
 
 export type FormValues = {
   from: 'Ethereum' | 'Moonbeam';
-  to: TNodePolkadotKusama;
+  to: TNodeWithRelayChains;
   currencyOptionId: string;
   address: string;
+  ahAddress: string;
   amount: string;
   useViem: boolean;
 };
@@ -46,12 +47,17 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
       currencyOptionId: '',
       amount: '1000000000',
       address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+      ahAddress: '',
       useViem: false,
     },
 
     validate: {
       address: (value) =>
-        isValidPolkadotAddress(value) ? null : 'Invalid address',
+        isValidPolkadotAddress(value) || ethers.isAddress(value)
+          ? null
+          : 'Invalid address',
+      ahAddress: (value, values) =>
+        values.from === 'Moonbeam' && values.to === 'Ethereum' && !value,
     },
   });
 
@@ -140,7 +146,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
           <ParachainSelect
             label="To"
             placeholder="Pick value"
-            data={NODES_WITH_RELAY_CHAINS_DOT_KSM}
+            data={NODES_WITH_RELAY_CHAINS}
             data-testid="select-destination"
             {...form.getInputProps('to')}
           />
@@ -164,6 +170,15 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
             data-testid="input-address"
             {...form.getInputProps('address')}
           />
+
+          {form.values.from === 'Moonbeam' && form.values.to === 'Ethereum' && (
+            <TextInput
+              label="AssetHub address"
+              placeholder="Enter address"
+              data-testid="input-ah-address"
+              {...form.getInputProps('ahAddress')}
+            />
+          )}
 
           <TextInput
             label="Amount"

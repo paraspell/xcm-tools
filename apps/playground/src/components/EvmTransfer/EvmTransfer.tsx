@@ -14,7 +14,7 @@ import { ethers } from 'ethers';
 import { ErrorAlert } from '../common/ErrorAlert';
 import type { FormValuesTransformed } from './EvmTransferForm';
 import EvmTransferForm from './EvmTransferForm';
-import type { TNode } from '@paraspell/sdk';
+import type { TNode, TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
 import {
   depositToken,
   approveToken,
@@ -157,6 +157,7 @@ const EvmTransfer = () => {
     amount,
     currency,
     address,
+    ahAddress,
     useViem,
   }: FormValuesTransformed) => {
     if (!provider) {
@@ -194,7 +195,7 @@ const EvmTransfer = () => {
 
       await EvmBuilder()
         .from(from)
-        .to(to)
+        .to(to as TNodeDotKsmWithRelayChains)
         .currency(currencyInput)
         .address(address)
         .signer(signer)
@@ -204,7 +205,7 @@ const EvmTransfer = () => {
         .from(from)
         .to(to)
         .currency(currencyInput)
-        .address(address)
+        .address(address, ahAddress)
         .signer(signer)
         .build();
     }

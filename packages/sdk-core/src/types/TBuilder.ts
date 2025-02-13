@@ -18,7 +18,7 @@ export type TEvmBuilderOptionsBase = {
   /**
    * The destination node on Polkadot network.
    */
-  to: TNodeDotKsmWithRelayChains
+  to: TNodeWithRelayChains
   /**
    * The currency to transfer. Symbol or ID.
    */
@@ -27,6 +27,10 @@ export type TEvmBuilderOptionsBase = {
    * The Polkadot destination address.
    */
   address: string
+  /**
+   * The AssetHub address
+   */
+  ahAddress?: string
   /**
    * The Ethereum signer.
    */

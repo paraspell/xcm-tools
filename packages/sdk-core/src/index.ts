@@ -12,7 +12,9 @@ export {
   NODE_NAMES,
   NODES_WITH_RELAY_CHAINS,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
-  SUPPORTED_PALLETS
+  SUPPORTED_PALLETS,
+  ETH_CHAIN_ID,
+  ETHEREUM_JUNCTION
 } from './constants'
 export * from './utils'
 export * from './errors'

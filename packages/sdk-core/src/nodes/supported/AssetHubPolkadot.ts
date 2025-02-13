@@ -32,7 +32,6 @@ import { getOtherAssets } from '../../pallets/assets'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { ETHEREUM_JUNCTION } from '../../constants'
-import { createEthereumTokenLocation } from '../../utils/multiLocation/createEthereumTokenLocation'
 import { isForeignAsset } from '../../utils/assets'
 import { getParaId } from '../config'
 import { resolveParaId } from '../../utils/resolveParaId'
@@ -122,13 +121,12 @@ class AssetHubPolkadot<TApi, TRes>
       throw new Error('Only Ethereum addresses are supported for Ethereum transfers')
     }
 
-    const ethAssets = getOtherAssets('Ethereum')
-    const ethAsset = ethAssets.find(asset => asset.symbol === asset.symbol)
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+    }
 
-    if (!ethAsset) {
-      throw new InvalidCurrencyError(
-        `Currency ${asset.symbol} is not supported for Ethereum transfers`
-      )
+    if (!asset.multiLocation) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
     }
 
     const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
@@ -149,17 +147,12 @@ class AssetHubPolkadot<TApi, TRes>
         this.version,
         paraIdTo
       ),
-      currencySelection: createCurrencySpec(input.asset.amount, Version.V3, Parents.TWO, {
-        parents: Parents.TWO,
-        interior: {
-          X2: [
-            ETHEREUM_JUNCTION,
-            {
-              AccountKey20: { key: ethAsset.assetId ?? '' }
-            }
-          ]
-        }
-      })
+      currencySelection: createCurrencySpec(
+        input.asset.amount,
+        Version.V3,
+        Parents.TWO,
+        asset.multiLocation as TMultiLocation
+      )
     }
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
       modifiedInput,
@@ -210,12 +203,14 @@ class AssetHubPolkadot<TApi, TRes>
     const { api, scenario, version, destination, asset } = input
 
     if (!isForeignAsset(asset)) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+    }
+
+    if (!asset.multiLocation) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
     }
 
     const versionOrDefault = version ?? this.version
-
-    const ethereumTokenLocation = createEthereumTokenLocation(asset.assetId ?? '')
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
@@ -230,14 +225,19 @@ class AssetHubPolkadot<TApi, TRes>
         assets: {
           [versionOrDefault]: [
             Object.values(
-              createCurrencySpec(asset.amount, versionOrDefault, Parents.TWO, ethereumTokenLocation)
+              createCurrencySpec(
+                asset.amount,
+                versionOrDefault,
+                Parents.TWO,
+                asset.multiLocation as TMultiLocation
+              )
             )[0][0]
           ]
         },
         assets_transfer_type: 'LocalReserve',
         remote_fees_id: {
           [versionOrDefault]: {
-            Concrete: ethereumTokenLocation
+            Concrete: asset.multiLocation
           }
         },
         fees_transfer_type: 'LocalReserve',

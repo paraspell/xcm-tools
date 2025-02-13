@@ -65,9 +65,9 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
         interior: {
           X2: [
             {
-              GlobalConsensus: { Ethereum: { chain_id: 1 } }
+              GlobalConsensus: { Ethereum: { chainId: 1 } }
             },
-            { AccountKey20: { key: JSON.parse(assetId) } }
+            { AccountKey20: { network: null, key: JSON.parse(assetId) } }
           ]
         }
       }

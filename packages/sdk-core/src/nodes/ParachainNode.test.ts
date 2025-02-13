@@ -21,7 +21,8 @@ vi.mock('../utils', () => ({
   getFees: vi.fn().mockReturnValue('fees'),
   verifyMultiLocation: vi.fn(),
   isTMultiLocation: vi.fn(),
-  isRelayChain: vi.fn()
+  isRelayChain: vi.fn(),
+  isForeignAsset: vi.fn().mockReturnValue(true)
 }))
 
 vi.mock('../pallets/xcmPallet/utils', () => ({
@@ -32,12 +33,18 @@ vi.mock('../pallets/xcmPallet/utils', () => ({
 }))
 
 vi.mock('../pallets/assets', () => ({
-  getNativeAssetSymbol: vi.fn().mockReturnValue('DOT')
+  getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
+  findAssetByMultiLocation: vi.fn().mockReturnValue({ symbol: 'DOT' }),
+  getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT' }])
 }))
 
 vi.mock('./config', () => ({
   getNodeProviders: vi.fn().mockReturnValue(['provider1', 'provider2']),
   getParaId: vi.fn().mockReturnValue(1000)
+}))
+
+vi.mock('../utils/ethereum/calculateFee', () => ({
+  calculateFee: vi.fn().mockReturnValue('fee')
 }))
 
 class TestParachainNode extends ParachainNode<unknown, unknown> {
@@ -63,6 +70,10 @@ class TestParachainNode extends ParachainNode<unknown, unknown> {
 
   public exposeCanUseXTokens(options: TSendInternalOptions<unknown, unknown>): boolean {
     return this.canUseXTokens(options)
+  }
+
+  public exposeTransferToEthereum(options: TPolkadotXCMTransferOptions<unknown, unknown>) {
+    return this.transferToEthereum(options)
   }
 }
 
@@ -264,7 +275,25 @@ describe('ParachainNode', () => {
     expect(result).toBe('polkadotXcmHeader')
   })
 
-  it('should get native asset symbol', () => {
-    expect(node.getNativeAssetSymbol()).toBe('DOT')
+  it('should perform transfer to ethereum', async () => {
+    const options = {
+      api: {
+        createAccountId: vi.fn(),
+        createApiForNode: vi.fn(),
+        callTxMethod: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>,
+      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
+      ahAddress: '0x123'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    const spy = vi.spyOn(options.api, 'callTxMethod')
+
+    await node.exposeTransferToEthereum(options)
+
+    expect(spy).toHaveBeenCalledWith({
+      module: 'PolkadotXcm',
+      section: 'transfer_assets_using_type_and_then',
+      parameters: expect.any(Object)
+    })
   })
 })
