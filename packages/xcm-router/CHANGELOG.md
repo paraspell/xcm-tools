@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.2.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.2.0...xcm-router-v2.2.1) (2025-02-13)
+
+
+### Bug Fixes
+
+* **xcm-router:** Update Acala SDK to latest version 📦 ([011fb29](https://github.com/paraspell/xcm-tools/commit/011fb2931fd9de98acc40706a1e2a0eb9b07be27))
+
+
+### Miscellaneous Chores
+
+* **xcm-router:** Update README.md ([879f672](https://github.com/paraspell/xcm-tools/commit/879f6725dd7e360e1faa94e7bb793a491ef77d33))
+
 ## [2.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.1.0...xcm-router-v2.2.0) (2025-02-10)
 
 
