@@ -274,7 +274,7 @@ paraspell.assets.getAssetDecimals(node: TNode, symbol: string)
 paraspell.assets.getParaId(node: TNode)
 
 // Get specific TNode from nodeID
-paraspell.assets.getTNode(nodeID: number)
+paraspell.assets.getTNode(nodeID: number, ecosystem: 'polkadot' || 'kusama' || 'ethereum') //When Ethereum ecosystem is selected please fill nodeID as 1 to select Ethereum.
 
 // Import all compatible nodes as constant
 paraspell.NODE_NAMES
