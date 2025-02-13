@@ -225,6 +225,9 @@ const XcmTransferForm: FC<Props> = ({
     return null;
   }
 
+  const isEthDest =
+    (from === 'Hydration' || from === 'BifrostPolkadot') && to === 'Ethereum';
+
   return (
     <Paper p="xl" shadow="md">
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
@@ -327,15 +330,14 @@ const XcmTransferForm: FC<Props> = ({
             {...form.getInputProps('address')}
           />
 
-          {form.values.to === 'Ethereum' &&
-            form.values.from === 'Hydration' && (
-              <TextInput
-                label="AssetHub address"
-                placeholder="Enter address"
-                data-testid="input-ahaddress"
-                {...form.getInputProps('ahAddress')}
-              />
-            )}
+          {isEthDest && (
+            <TextInput
+              label="AssetHub address"
+              placeholder="Enter address"
+              data-testid="input-ahaddress"
+              {...form.getInputProps('ahAddress')}
+            />
+          )}
 
           <XcmApiCheckbox
             {...form.getInputProps('useApi', { type: 'checkbox' })}

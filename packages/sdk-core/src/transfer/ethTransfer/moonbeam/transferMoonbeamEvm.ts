@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TransactionResponse } from 'ethers'
 import { Contract } from 'ethers'
-import type { TEvmBuilderOptions, TForeignAsset } from '../../../types'
+import type { TEvmBuilderOptions, TForeignAsset, TNodeDotKsmWithRelayChains } from '../../../types'
 import { getNativeAssetSymbol } from '../../../pallets/assets'
 import { getAssetBySymbolOrId } from '../../../pallets/assets/getAssetBySymbolOrId'
 import { InvalidCurrencyError } from '../../../errors'
@@ -71,7 +71,11 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     asset = formatAssetIdToERC20(foundAsset.assetId)
   }
 
-  const destMultiLocation = getDestinationMultilocation(api, address, to)
+  const destMultiLocation = getDestinationMultilocation(
+    api,
+    address,
+    to as TNodeDotKsmWithRelayChains
+  )
 
   const weight = U_64_MAX
 

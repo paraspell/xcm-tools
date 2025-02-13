@@ -1,0 +1,106 @@
+import { ETHEREUM_JUNCTION } from '../../constants'
+import { InvalidCurrencyError } from '../../errors'
+import { findAssetByMultiLocation, getOtherAssets } from '../../pallets/assets'
+import {
+  Parents,
+  type TMultiLocation,
+  type TPolkadotXCMTransferOptions,
+  type Version
+} from '../../types'
+import { isForeignAsset } from '../assets'
+import { generateAddressPayload } from '../generateAddressPayload'
+
+export const createCustomXcmOnDest = <TApi, TRes>(
+  { api, address, asset, scenario, ahAddress }: TPolkadotXCMTransferOptions<TApi, TRes>,
+  version: Version
+) => {
+  if (!isForeignAsset(asset)) {
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+  }
+
+  if (!asset.multiLocation) {
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
+  }
+
+  const ethAsset = findAssetByMultiLocation(
+    getOtherAssets('Ethereum'),
+    asset.multiLocation as TMultiLocation
+  )
+
+  if (!ethAsset) {
+    throw new InvalidCurrencyError(
+      `Could not obtain Ethereum asset address for ${JSON.stringify(asset)}`
+    )
+  }
+
+  return {
+    [version]: [
+      {
+        SetAppendix: [
+          {
+            DepositAsset: {
+              assets: { Wild: 'All' },
+              beneficiary: Object.values(
+                generateAddressPayload(
+                  api,
+                  scenario,
+                  'PolkadotXcm',
+                  ahAddress ?? '',
+                  version,
+                  undefined
+                )
+              )[0]
+            }
+          }
+        ]
+      },
+      {
+        InitiateReserveWithdraw: {
+          assets: {
+            Wild: {
+              AllOf: { id: asset.multiLocation, fun: 'Fungible' }
+            }
+          },
+          reserve: {
+            parents: Parents.TWO,
+            interior: { X1: [ETHEREUM_JUNCTION] }
+          },
+          xcm: [
+            {
+              BuyExecution: {
+                fees: {
+                  id: {
+                    parents: Parents.ZERO,
+                    interior: {
+                      X1: [{ AccountKey20: { network: null, key: ethAsset.assetId } }]
+                    }
+                  },
+                  fun: { Fungible: 1n }
+                },
+                weight_limit: 'Unlimited'
+              }
+            },
+            {
+              DepositAsset: {
+                assets: { Wild: { AllCounted: 1 } },
+                beneficiary: {
+                  parents: Parents.ZERO,
+                  interior: {
+                    X1: [
+                      {
+                        AccountKey20: {
+                          network: null,
+                          key: address
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

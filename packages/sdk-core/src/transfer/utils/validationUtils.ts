@@ -48,7 +48,12 @@ export const validateDestination = (
     )
   }
 
-  if (destination === 'Ethereum' && origin !== 'AssetHubPolkadot' && origin !== 'Hydration') {
+  if (
+    destination === 'Ethereum' &&
+    origin !== 'AssetHubPolkadot' &&
+    origin !== 'Hydration' &&
+    origin !== 'BifrostPolkadot'
+  ) {
     throw new IncompatibleNodesError(
       'Transfers to Ethereum are only supported from AssetHubPolkadot and Hydration.'
     )

@@ -48,4 +48,9 @@ describe('getParaId', () => {
     expect(result).toBe(0)
     expect(getNodeConfig).toHaveBeenCalledWith(mockNode)
   })
+
+  it('should handle Ethereum node with a paraId of 1', () => {
+    const result = getParaId('Ethereum')
+    expect(result).toBe(1)
+  })
 })

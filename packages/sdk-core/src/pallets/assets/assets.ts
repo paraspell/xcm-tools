@@ -3,13 +3,7 @@
 import assetsMapJson from '../../maps/assets.json' with { type: 'json' }
 import { NODE_NAMES_DOT_KSM } from '../../constants'
 import { getParaId } from '../../nodes/config'
-import type {
-  TNodeWithRelayChains,
-  TAsset,
-  TRelayChainType,
-  TNodeDotKsmWithRelayChains,
-  TForeignAsset
-} from '../../types'
+import type { TNodeWithRelayChains, TAsset, TEcosystemType, TForeignAsset } from '../../types'
 import {
   type TNodeAssets,
   type TAssetJsonMap,
@@ -164,10 +158,14 @@ export const getAssetDecimals = (node: TNodeWithRelayChains, symbol: string): nu
  */
 export const getTNode = (
   paraId: number,
-  ecosystem: TRelayChainType
-): TNodeDotKsmWithRelayChains | null => {
+  ecosystem: TEcosystemType
+): TNodeWithRelayChains | null => {
   if (paraId === 0) {
     return ecosystem === 'polkadot' ? 'Polkadot' : 'Kusama'
+  }
+
+  if (paraId === 1) {
+    return 'Ethereum'
   }
 
   return (

@@ -9,7 +9,6 @@ import { Version } from '../../types'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type Hydration from './Hydration'
 import { getNode } from '../../utils'
-import { InvalidCurrencyError } from '../../errors'
 import type { IPolkadotApi } from '../../api'
 
 vi.mock('../../pallets/xTokens', () => ({
@@ -58,7 +57,8 @@ describe('Hydration', () => {
       mockApi = {
         callTxMethod: vi.fn().mockResolvedValue('success'),
         createApiForNode: vi.fn().mockResolvedValue({
-          getFromStorage: vi.fn().mockResolvedValue('0x0000000000000000')
+          getFromStorage: vi.fn().mockResolvedValue('0x0000000000000000'),
+          disconnect: vi.fn()
         }),
         createAccountId: vi.fn().mockReturnValue('0x0000000000000000')
       } as unknown as IPolkadotApi<unknown, unknown>
@@ -66,25 +66,35 @@ describe('Hydration', () => {
       mockInput = {
         api: mockApi,
         address: ethers.Wallet.createRandom().address,
-        asset: { symbol: 'WETH', assetId: '0x1234567890abcdef', amount: '1000' },
+        asset: {
+          symbol: 'WETH',
+          assetId: '0x1234567890abcdef',
+          amount: '1000',
+          multiLocation: {
+            parents: 2,
+            interior: {
+              X2: [
+                {
+                  GlobalConsensus: {
+                    Ethereum: {
+                      chainId: 1
+                    }
+                  }
+                },
+                {
+                  AccountKey20: {
+                    network: null,
+                    key: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+                  }
+                }
+              ]
+            }
+          }
+        },
         scenario: 'RelayToPara',
         destination: 'Ethereum',
         ahAddress: '5Gw3s7q4QLkSWwknsiixu9GR7x6xN5PWQ1YbQGxwSz1Y7DZT'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
-    })
-
-    it('should throw error for non-Ethereum address', async () => {
-      mockInput.address = 'invalidAddress'
-
-      await expect(hydration.transferPolkadotXCM(mockInput)).rejects.toThrow(
-        'Only Ethereum addresses are supported for Ethereum transfers'
-      )
-    })
-
-    it('should throw InvalidCurrencyError for unsupported currency', async () => {
-      mockInput.asset.symbol = 'DOT'
-
-      await expect(hydration.transferPolkadotXCM(mockInput)).rejects.toThrow(InvalidCurrencyError)
     })
 
     it('should throw error if ahAddress is undefined', async () => {
@@ -108,7 +118,7 @@ describe('Hydration', () => {
       })
     })
 
-    it('should create call for AssetHub destination DOT transfer', async () => {
+    it('should create call for AssetHub destination DOT transfer using symbol', async () => {
       mockInput.destination = 'AssetHubPolkadot'
       mockInput.asset = {
         symbol: 'DOT',
@@ -129,7 +139,7 @@ describe('Hydration', () => {
       })
     })
 
-    it('should create call for AssetHub destination DOT transfer', async () => {
+    it('should create call for AssetHub destination DOT transfer using assetId', async () => {
       mockInput.destination = 'AssetHubPolkadot'
       mockInput.asset = { symbol: 'DOT', assetId: '3', amount: '1000' }
 

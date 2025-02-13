@@ -1,4 +1,5 @@
-import type { TNodeDotKsmWithRelayChains } from '../../types'
+import { ETH_PARA_ID } from '../../constants'
+import type { TNodeWithRelayChains } from '../../types'
 import { getNodeConfig } from './getNodeConfig'
 
 /**
@@ -7,4 +8,10 @@ import { getNodeConfig } from './getNodeConfig'
  * @param node - The node for which to get the paraId.
  * @returns The parachain ID of the node.
  */
-export const getParaId = (node: TNodeDotKsmWithRelayChains): number => getNodeConfig(node).paraId
+export const getParaId = (node: TNodeWithRelayChains): number => {
+  if (node === 'Ethereum') {
+    return ETH_PARA_ID
+  }
+
+  return getNodeConfig(node).paraId
+}
