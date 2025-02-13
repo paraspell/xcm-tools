@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.3.1...sdk-core-v8.4.0) (2025-02-13)
+
+
+### Features
+
+* Add support for new Snowbridge routes ✨ ([cd87b23](https://github.com/paraspell/xcm-tools/commit/cd87b23193c0fd84d09e33e0892e97c6646fedc4))
+
 ## [8.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.3.0...sdk-core-v8.3.1) (2025-02-11)
 
 
