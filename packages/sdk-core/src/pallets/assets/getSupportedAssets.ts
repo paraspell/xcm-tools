@@ -1,5 +1,6 @@
 import type { TAsset, TNodeWithRelayChains } from '../../types'
 import { getAssets, getOtherAssets } from './assets'
+import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 
 /**
@@ -29,7 +30,10 @@ export const getSupportedAssets = (
   const destinationAssets = getAssets(destination)
 
   if (destination === 'Ethereum' || origin === 'Ethereum') {
-    return getOtherAssets('Ethereum')
+    const otherAssets = getOtherAssets(origin)
+    const ethereumCompatibleAssets = filterEthCompatibleAssets(otherAssets)
+    const ethereumAssets = getOtherAssets('Ethereum')
+    return [...ethereumCompatibleAssets, ...ethereumAssets]
   }
 
   if (

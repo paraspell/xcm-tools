@@ -53,7 +53,7 @@ export class BifrostPolkadot<TApi, TRes>
   }
 
   // Handles DOT, WETH transfers to AssetHubPolkadot
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { overriddenAsset, asset } = input
 
     return Promise.resolve(
@@ -83,7 +83,17 @@ export class BifrostPolkadot<TApi, TRes>
     )
   }
 
+  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+    const { destination } = input
+    if (destination === 'Ethereum') {
+      return this.transferToEthereum(input)
+    }
+
+    return this.transferToAssetHub(input)
+  }
+
   protected canUseXTokens({ asset, destination }: TSendInternalOptions<TApi, TRes>): boolean {
+    if (destination === 'Ethereum') return false
     return (asset.symbol !== 'WETH' && asset.symbol !== 'DOT') || destination !== 'AssetHubPolkadot'
   }
 }

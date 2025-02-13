@@ -94,6 +94,10 @@ export const createCurrencySpec = (
       }
 }
 
+export const createVersionedMultiLocation = (version: Version, multiLocation: TMultiLocation) => ({
+  [version]: multiLocation
+})
+
 export const createPolkadotXcmHeader = (
   scenario: TScenario,
   version: Version,

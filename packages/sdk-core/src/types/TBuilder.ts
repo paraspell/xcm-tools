@@ -28,6 +28,10 @@ export type TEvmBuilderOptionsBase = {
    */
   address: string
   /**
+   * The AssetHub address
+   */
+  ahAddress?: string
+  /**
    * The Ethereum signer.
    */
   signer: Signer | WalletClient

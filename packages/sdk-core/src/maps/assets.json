@@ -2114,7 +2114,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "RING",
     "isEVM": true,
-    "supportsDryRunApi": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "RING",
@@ -2238,6 +2238,84 @@
         "alias": "USDC1"
       },
       {
+        "assetId": "1000796",
+        "symbol": "LDO",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x5a98fcbea516cf06857215779fd812ca3bef1b32"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "5102040816326530"
+      },
+      {
+        "assetId": "1000795",
+        "symbol": "SKY",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x56072c95faa701256059aa122697b133aded9279"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "211685012701101000"
+      },
+      {
+        "assetId": "1000794",
+        "symbol": "LINK",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x514910771af9ca656af840dff83e8264ecf986ca"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "436681222707424"
+      },
+      {
         "assetId": "1000625",
         "symbol": "sUSDe",
         "decimals": 18,
@@ -2354,6 +2432,32 @@
         },
         "existentialDeposit": "9910802775024780",
         "alias": "sUSDS1"
+      },
+      {
+        "assetId": "1000809",
+        "symbol": "wstETH",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "3244646333550"
       },
       {
         "assetId": "1000767",
@@ -3396,6 +3500,20 @@
           }
         },
         "existentialDeposit": "21367521367521400"
+      },
+      {
+        "assetId": "3370",
+        "symbol": "LAOS",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "Parachain": 3370
+            }
+          }
+        },
+        "existentialDeposit": "1"
       }
     ]
   },
@@ -3778,12 +3896,12 @@
   },
   "Litentry": {
     "relayChainAssetSymbol": "DOT",
-    "nativeAssetSymbol": "LIT",
+    "nativeAssetSymbol": "HEI",
     "isEVM": false,
     "supportsDryRunApi": false,
     "nativeAssets": [
       {
-        "symbol": "LIT",
+        "symbol": "HEI",
         "decimals": 18,
         "existentialDeposit": "100000000000000000"
       }
@@ -3930,6 +4048,28 @@
                 "GeneralKey": {
                   "length": 2,
                   "data": "0x0804000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1"
+      },
+      {
+        "assetId": "66249247788835743307843320271452141931",
+        "symbol": "xcvBNC",
+        "decimals": 12,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0101000000000000000000000000000000000000000000000000000000000000"
                 }
               }
             ]
@@ -10370,12 +10510,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
                 }
               }
@@ -10394,12 +10535,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
                 }
               }
@@ -10418,12 +10560,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
                 }
               }
@@ -10442,12 +10585,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0x6982508145454ce325ddbe47a25d4ec3d2311933"
                 }
               }
@@ -10466,12 +10610,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0x582d872a1b094fc48f5de31d3b73f2d9be47def1"
                 }
               }
@@ -10490,12 +10635,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
                 }
               }
@@ -10514,12 +10660,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
                 }
               }
@@ -10538,12 +10685,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
                 }
               }
@@ -10562,12 +10710,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0xdac17f958d2ee523a2206206994597c13d831ec7"
                 }
               }
@@ -10586,12 +10735,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0x6b175474e89094c44da98b954eedeac495271d0f"
                 }
               }
@@ -10610,12 +10760,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0x5d3d01fd6d2ad1169b17918eb4f153c6616288eb"
                 }
               }
@@ -10634,12 +10785,13 @@
               {
                 "GlobalConsensus": {
                   "Ethereum": {
-                    "chain_id": 1
+                    "chainId": 1
                   }
                 }
               },
               {
                 "AccountKey20": {
+                  "network": null,
                   "key": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9"
                 }
               }

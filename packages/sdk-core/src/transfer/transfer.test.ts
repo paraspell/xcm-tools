@@ -229,6 +229,19 @@ describe('send', () => {
     expect(result).toBe('transferResult')
   })
 
+  it('should throw error if ahAddress is in EVM format', async () => {
+    const options = {
+      api: apiMock,
+      origin: 'Acala',
+      currency: { symbol: 'TEST', amount: 100 },
+      address: 'some-address',
+      destination: 'Astar',
+      ahAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496'
+    } as TSendOptions<unknown, unknown>
+
+    await expect(send(options)).rejects.toThrow()
+  })
+
   it('should not include optional parameters if they are undefined', async () => {
     const options = {
       api: apiMock,
