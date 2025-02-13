@@ -54,8 +54,9 @@ export class EvmBuilderClass<TApi, TRes> {
    * @param address - The Polkadot address to receive the transfer.
    * @returns An instance of EvmBuilder
    */
-  address(address: string): this {
+  address(address: string, ahAddress?: string): this {
     this._options.address = address
+    this._options.ahAddress = ahAddress
     return this
   }
 

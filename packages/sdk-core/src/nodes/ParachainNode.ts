@@ -3,7 +3,7 @@
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { getNativeAssetSymbol } from '../pallets/assets'
 import type {
-  TRelayChainType,
+  TEcosystemType,
   TScenario,
   IXTokensTransfer,
   IPolkadotXCMTransfer,
@@ -21,10 +21,11 @@ import type {
   TRelayToParaOverrides,
   TAmount,
   TRelayToParaOptions,
-  TPallet
+  TPallet,
+  TPolkadotXCMTransferOptions
 } from '../types'
 import { Version, Parents } from '../types'
-import { generateAddressPayload, getFees, isRelayChain } from '../utils'
+import { generateAddressPayload, getFees, isForeignAsset, isRelayChain } from '../utils'
 import {
   constructRelayToParaParameters,
   createCurrencySpec,
@@ -33,6 +34,10 @@ import {
 } from '../pallets/xcmPallet/utils'
 import XTokensTransferImpl from '../pallets/xTokens'
 import { resolveParaId } from '../utils/resolveParaId'
+import { InvalidCurrencyError } from '../errors'
+import { calculateFee } from '../utils/ethereum/calculateFee'
+import { getParaId } from './config'
+import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
@@ -55,13 +60,13 @@ abstract class ParachainNode<TApi, TRes> {
   // These names can be found under object key 'info'
   private readonly _info: string
 
-  private readonly _type: TRelayChainType
+  private readonly _type: TEcosystemType
 
   private readonly _version: Version
 
   protected _assetCheckEnabled = true
 
-  constructor(node: TNodePolkadotKusama, info: string, type: TRelayChainType, version: Version) {
+  constructor(node: TNodePolkadotKusama, info: string, type: TEcosystemType, version: Version) {
     this._info = info
     this._type = type
     this._node = node
@@ -72,7 +77,7 @@ abstract class ParachainNode<TApi, TRes> {
     return this._info
   }
 
-  get type(): TRelayChainType {
+  get type(): TEcosystemType {
     return this._type
   }
 
@@ -233,6 +238,66 @@ abstract class ParachainNode<TApi, TRes> {
 
   getNativeAssetSymbol(): string {
     return getNativeAssetSymbol(this.node)
+  }
+
+  protected async transferToEthereum<TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): Promise<TRes> {
+    const { api, asset, scenario, version, destination, ahAddress } = input
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    if (ahAddress === undefined) {
+      throw new Error('AssetHub address is required for Ethereum transfers')
+    }
+
+    const versionOrDefault = version ?? Version.V4
+
+    const ethMultiAsset = Object.values(
+      createCurrencySpec(
+        asset.amount,
+        versionOrDefault,
+        Parents.TWO,
+        asset.multiLocation as TMultiLocation
+      )
+    )[0][0]
+
+    const ahApi = await api.createApiForNode('AssetHubPolkadot')
+
+    const fee = await calculateFee(ahApi)
+
+    const call: TSerializedApiCall = {
+      module: 'PolkadotXcm',
+      section: 'transfer_assets_using_type_and_then',
+      parameters: {
+        dest: this.createPolkadotXcmHeader(
+          scenario,
+          versionOrDefault,
+          destination,
+          getParaId('AssetHubPolkadot')
+        ),
+        assets: {
+          [versionOrDefault]: [
+            Object.values(this.createCurrencySpec(fee, 'ParaToRelay', versionOrDefault))[0][0],
+            ethMultiAsset
+          ]
+        },
+        assets_transfer_type: 'DestinationReserve',
+        remote_fees_id: {
+          [versionOrDefault]: {
+            parents: Parents.ONE,
+            interior: 'Here'
+          }
+        },
+        fees_transfer_type: 'DestinationReserve',
+        custom_xcm_on_dest: createCustomXcmOnDest(input, versionOrDefault),
+        weight_limit: 'Unlimited'
+      }
+    }
+
+    return api.callTxMethod(call)
   }
 }
 

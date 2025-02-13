@@ -126,7 +126,7 @@ describe('AssetHubPolkadot', () => {
 
       const input = {
         ...mockInput,
-        asset: { symbol: 'ETH' },
+        asset: { symbol: 'ETH', assetId: '0x123', multiLocation: {} },
         destination: 'Ethereum'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       const result = assetHub.handleEthBridgeTransfer(input)
@@ -237,10 +237,13 @@ describe('AssetHubPolkadot', () => {
       mockInput.asset = {
         symbol: 'WETH',
         assetId: '0x123',
-        amount: '1000'
+        amount: '1000',
+        multiLocation: {}
       }
 
-      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'WETH', assetId: '0x123' }])
+      vi.mocked(getOtherAssets).mockReturnValue([
+        { symbol: 'WETH', assetId: '0x123', multiLocation: {} }
+      ])
       vi.mocked(generateAddressPayload).mockReturnValue({
         [Version.V3]: {}
       } as unknown as TMultiLocationHeader)
