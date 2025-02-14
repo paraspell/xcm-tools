@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.4.0...sdk-core-v8.4.1) (2025-02-14)
+
+
+### Bug Fixes
+
+* **sdk-core:** Randomize multiple ws providers for Hydration 🔧 ([78242e9](https://github.com/paraspell/xcm-tools/commit/78242e9632182694ce46331b26653e97fb61dd59))
+
 ## [8.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.3.1...sdk-core-v8.4.0) (2025-02-13)
 
 
