@@ -1,11 +1,17 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import type { Signer } from 'ethers'
 import { EvmBuilder } from './EvmBuilder'
-import type {
-  IPolkadotApi,
-  TCurrencyInputWithAmount,
-  TNodePolkadotKusama
+import {
+  transferMoonbeamToEth,
+  type IPolkadotApi,
+  type TCurrencyInputWithAmount,
+  type TNodePolkadotKusama
 } from '@paraspell/sdk-core'
+
+vi.mock('@paraspell/sdk-core', () => ({
+  transferMoonbeamToEth: vi.fn(),
+  validateAddress: vi.fn()
+}))
 
 const mockApi = {
   init: vi.fn(),
@@ -47,5 +53,18 @@ describe('EvmBuilderClass', () => {
     const builder = EvmBuilder(mockApi).from('Moonbeam').to(node).currency(currency)
 
     await expect(builder.build()).rejects.toThrow('Builder object is missing parameter: address')
+  })
+
+  it('should call transferMoonbeamToEth if from is Moonbeam and to is Ethereum', async () => {
+    const builder = EvmBuilder(mockApi)
+      .from('Moonbeam')
+      .to('Ethereum')
+      .currency(currency)
+      .address(address)
+      .signer(signer)
+
+    await builder.build()
+
+    expect(transferMoonbeamToEth).toHaveBeenCalled()
   })
 })

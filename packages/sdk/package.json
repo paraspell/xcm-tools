@@ -38,7 +38,8 @@
   "dependencies": {
     "@paraspell/sdk-core": "workspace:*",
     "ethers": "^6.13.5",
-    "viem": "^2.22.22"
+    "viem": "^2.22.22",
+    "@noble/hashes": "^1.7.1"
   },
   "peerDependencies": {
     "polkadot-api": ">= 1.8.4 < 2"
@@ -48,7 +49,6 @@
     "@babel/preset-env": "^7.26.7",
     "@codecov/rollup-plugin": "^1.8.0",
     "@noble/curves": "^1.8.1",
-    "@noble/hashes": "^1.7.1",
     "@polkadot-labs/hdkd": "^0.0.10",
     "@polkadot-labs/hdkd-helpers": "^0.0.10",
     "@rollup/plugin-babel": "^6.0.4",

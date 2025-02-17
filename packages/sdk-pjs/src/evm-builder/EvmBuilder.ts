@@ -5,11 +5,10 @@ import type {
   TCurrencyInputWithAmount,
   TNodeWithRelayChains
 } from '@paraspell/sdk-core'
-import { transferMoonbeamEvm } from '@paraspell/sdk-core'
+import { transferMoonbeamEvm, transferMoonbeamToEth } from '@paraspell/sdk-core'
 import type { AbstractProvider, Signer } from 'ethers'
 import { transferEthToPolkadot } from '../ethTransfer'
 import type { WalletClient } from 'viem'
-import { transferMoonbeamToEth } from '../ethTransfer/transferMoonbeamToEth'
 import { validateAddress } from '@paraspell/sdk-core'
 
 /**

@@ -57,10 +57,14 @@ describe('Hydration', () => {
       mockApi = {
         callTxMethod: vi.fn().mockResolvedValue('success'),
         createApiForNode: vi.fn().mockResolvedValue({
-          getFromStorage: vi.fn().mockResolvedValue('0x0000000000000000'),
+          getFromRpc: vi.fn().mockResolvedValue('0x0000000000000000'),
           disconnect: vi.fn()
         }),
-        accountToHex: vi.fn().mockReturnValue('0x0000000000000000')
+        getFromRpc: vi.fn().mockResolvedValue('0x0000000000000000'),
+        accountToHex: vi.fn().mockReturnValue('0x0000000000000000'),
+        stringToUint8a: vi.fn().mockReturnValue(new Uint8Array(0)),
+        hexToUint8a: vi.fn().mockReturnValue(new Uint8Array(0)),
+        blake2AsHex: vi.fn().mockReturnValue('0x0000000000000000')
       } as unknown as IPolkadotApi<unknown, unknown>
 
       mockInput = {
@@ -108,7 +112,10 @@ describe('Hydration', () => {
     it('should call api.callTxMethod with correct parameters', async () => {
       const spy = vi.spyOn(mockApi, 'callTxMethod')
 
-      await hydration.transferPolkadotXCM(mockInput)
+      await hydration.transferPolkadotXCM({
+        ...mockInput,
+        senderAddress: '5Gw3s7q'
+      })
 
       expect(spy).toHaveBeenCalled()
       expect(spy).toHaveBeenCalledWith({

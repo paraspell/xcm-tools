@@ -5,7 +5,7 @@ import { getParaEthTransferFees } from './getParaEthTransferFees'
 describe('getParaEthTransferFees', () => {
   it('uses default fee when storage is 0x00000000', async () => {
     const mockAhApi = {
-      getFromStorage: vi.fn().mockResolvedValueOnce('0x00000000'),
+      getFromRpc: vi.fn().mockResolvedValueOnce('0x00000000'),
       disconnect: vi.fn().mockResolvedValueOnce(undefined)
     } as unknown as IPolkadotApi<unknown, unknown>
 
@@ -19,7 +19,7 @@ describe('getParaEthTransferFees', () => {
 
   it('uses storage fee when storage is a valid non-zero hex', async () => {
     const mockAhApi = {
-      getFromStorage: vi.fn().mockResolvedValueOnce('0x01000000'),
+      getFromRpc: vi.fn().mockResolvedValueOnce('0x01000000'),
       disconnect: vi.fn().mockResolvedValueOnce(undefined)
     } as unknown as IPolkadotApi<unknown, unknown>
 
@@ -33,7 +33,7 @@ describe('getParaEthTransferFees', () => {
 
   it('handles an empty string - empty storage response', async () => {
     const mockAhApi = {
-      getFromStorage: vi.fn().mockResolvedValueOnce('0x'),
+      getFromRpc: vi.fn().mockResolvedValueOnce('0x'),
       disconnect: vi.fn().mockResolvedValueOnce(undefined)
     } as unknown as IPolkadotApi<unknown, unknown>
 

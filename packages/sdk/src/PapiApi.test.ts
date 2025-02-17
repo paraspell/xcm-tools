@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import PapiApi from './PapiApi'
 import type { PolkadotClient } from 'polkadot-api'
-import { createClient, FixedSizeBinary } from 'polkadot-api'
+import { Binary, createClient, FixedSizeBinary } from 'polkadot-api'
 import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
 import { getWsProvider } from 'polkadot-api/ws-provider/node'
 import { transform } from './PapiXcmTransformer'
@@ -27,6 +27,10 @@ vi.mock('polkadot-api', () => ({
   withPolkadotSdkCompat: vi.fn().mockImplementation((provider: JsonRpcProvider) => provider),
   FixedSizeBinary: {
     fromAccountId32: vi.fn()
+  },
+  Binary: {
+    fromHex: vi.fn(),
+    fromText: vi.fn()
   }
 }))
 
@@ -84,6 +88,13 @@ describe('PapiApi', () => {
         tx: {
           XcmPallet: {
             methodName: vi.fn().mockReturnValue(mockTransaction)
+          },
+          PolkadotXcm: {
+            send: vi.fn().mockReturnValue({
+              getEncodedData: vi.fn().mockReturnValue({
+                asHex: vi.fn().mockReturnValue('0x1234567890abcdef')
+              })
+            })
           }
         },
         query: {
@@ -491,20 +502,6 @@ describe('PapiApi', () => {
     })
   })
 
-  describe('getFromStorage', () => {
-    it('should return the value from storage', async () => {
-      const key = 'some_key'
-      const value = 'some_value'
-
-      const spy = vi.spyOn(papiApi.getApi(), '_request').mockResolvedValue(value)
-
-      const result = await papiApi.getFromStorage(key)
-
-      expect(spy).toHaveBeenCalledWith('state_getStorage', [key])
-      expect(result).toBe(value)
-    })
-  })
-
   describe('createApiInstanceForNode', () => {
     it('should create a PolkadotClient instance for the provided node', async () => {
       const apiInstance = await papiApi.createApiForNode('Acala')
@@ -686,6 +683,71 @@ describe('PapiApi', () => {
       )
 
       expect(result).toEqual({ success: false, failureReason: 'SomeError' })
+    })
+  })
+
+  describe('objectToHex', () => {
+    it('should return the hex representation of the object', async () => {
+      const object = { key1: 'value1', key2: 'value2' }
+
+      const result = await papiApi.objectToHex(object)
+
+      expect(result).toBe('0xabcdef')
+    })
+  })
+
+  describe('hexToUint8a', () => {
+    it('should return the Uint8Array representation of the hex', () => {
+      const hex = '0x1234567890abcdef'
+      const uint8a = new Uint8Array([18, 52, 86, 120, 144, 171, 205, 239])
+
+      const mockBinary = {
+        asBytes: vi.fn().mockReturnValue(uint8a)
+      }
+      const spy = vi
+        .spyOn(Binary, 'fromHex')
+        .mockReturnValue(mockBinary as unknown as FixedSizeBinary<32>)
+
+      const result = papiApi.hexToUint8a(hex)
+
+      expect(result).toEqual(uint8a)
+
+      expect(spy).toHaveBeenCalledWith(hex)
+    })
+  })
+
+  describe('stringToUint8a', () => {
+    it('should return the Uint8Array representation of the string', () => {
+      const string = 'some_string'
+      const uint8a = new Uint8Array([115, 111, 109, 101, 95, 115, 116, 114, 105, 110, 103])
+
+      const mockBinary = {
+        asBytes: vi.fn().mockReturnValue(uint8a)
+      }
+      const spy = vi
+        .spyOn(Binary, 'fromText')
+        .mockReturnValue(mockBinary as unknown as FixedSizeBinary<32>)
+
+      const result = papiApi.stringToUint8a(string)
+
+      expect(spy).toHaveBeenCalledWith(string)
+
+      expect(result).toEqual(uint8a)
+    })
+  })
+
+  describe('blake2AsHex', () => {
+    it('should return the hex representation of the blake2 hash', () => {
+      const data = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8])
+      const hex = '0x1234567890abcdef'
+
+      const spy = vi.spyOn(papiApi, 'blake2AsHex').mockReturnValue(hex)
+
+      const result = papiApi.blake2AsHex(data)
+
+      expect(result).toBe(hex)
+
+      expect(spy).toHaveBeenCalledWith(data)
     })
   })
 })

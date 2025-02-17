@@ -39,6 +39,7 @@ export class GeneralBuilder<TApi, TRes>
   private _paraIdTo?: number
   private _address: TAddress
   private _ahAddress?: string
+  private _senderAddress?: string
   private _version?: Version
   private _pallet?: string
   private _method?: string
@@ -107,9 +108,10 @@ export class GeneralBuilder<TApi, TRes>
    * @param address - The destination address.
    * @returns An instance of Builder
    */
-  address(address: TAddress, ahAddress?: string): this {
+  address(address: TAddress, ahAddress?: string, senderAddress?: string): this {
     this._address = address
     this._ahAddress = ahAddress
+    this._senderAddress = senderAddress
     return this
   }
 
@@ -146,6 +148,7 @@ export class GeneralBuilder<TApi, TRes>
       paraIdTo: this._paraIdTo,
       version: this._version,
       ahAddress: this._ahAddress,
+      senderAddress: this._senderAddress,
       pallet: this._pallet,
       method: this._method
     }

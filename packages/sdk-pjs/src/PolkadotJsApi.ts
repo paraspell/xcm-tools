@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -6,8 +7,8 @@ import type { AccountData, AccountInfo } from '@polkadot/types/interfaces'
 import type { StorageKey } from '@polkadot/types'
 import { u32, type UInt } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
-import { decodeAddress } from '@polkadot/util-crypto'
-import { isHex, u8aToHex } from '@polkadot/util'
+import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto'
+import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import type {
   TAsset,
   TBalanceResponse,
@@ -92,6 +93,18 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   callBatchMethod(calls: Extrinsic[], mode: BatchMode) {
     const section = mode === BatchMode.BATCH_ALL ? 'batchAll' : 'batch'
     return this.api.tx.utility[section](calls)
+  }
+
+  objectToHex(obj: unknown, typeName: string) {
+    return Promise.resolve(this.api.createType(typeName, obj).toHex())
+  }
+
+  hexToUint8a(hex: string) {
+    return hexToU8a(hex)
+  }
+
+  stringToUint8a(str: string) {
+    return stringToU8a(str)
   }
 
   async calculateTransactionFee(tx: Extrinsic, address: string) {
@@ -189,9 +202,17 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
-  async getFromStorage(key: string) {
-    const response = (await this.api.rpc.state.getStorage(key)) as Codec
+  async getFromRpc(module: string, method: string, key: string) {
+    const rpcModule = (this.api.rpc as any)[module]
+    if (!rpcModule || !rpcModule[method]) {
+      throw new Error(`RPC method ${module}.${method} not available`)
+    }
+    const response = (await rpcModule[method](key)) as Codec
     return response.toHex()
+  }
+
+  blake2AsHex(data: Uint8Array) {
+    return blake2AsHex(data)
   }
 
   clone() {

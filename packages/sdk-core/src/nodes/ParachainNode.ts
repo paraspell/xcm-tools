@@ -1,7 +1,7 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
-import { getNativeAssetSymbol } from '../pallets/assets'
+import { findAssetByMultiLocation, getNativeAssetSymbol, getOtherAssets } from '../pallets/assets'
 import type {
   TEcosystemType,
   TScenario,
@@ -38,6 +38,7 @@ import { InvalidCurrencyError } from '../errors'
 import { getParaId } from './config'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { getParaEthTransferFees } from '../transfer'
+import { generateMessageId } from '../utils/ethereum/generateMessageId'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
@@ -107,6 +108,7 @@ abstract class ParachainNode<TApi, TRes> {
       overriddenAsset,
       version,
       ahAddress,
+      senderAddress,
       pallet,
       method
     } = options
@@ -190,6 +192,7 @@ abstract class ParachainNode<TApi, TRes> {
         overriddenAsset,
         version,
         ahAddress,
+        senderAddress,
         pallet,
         method
       })
@@ -243,7 +246,7 @@ abstract class ParachainNode<TApi, TRes> {
   protected async transferToEthereum<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, asset, scenario, version, destination, ahAddress } = input
+    const { api, asset, scenario, version, destination, address, ahAddress, senderAddress } = input
 
     if (!isForeignAsset(asset)) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
@@ -251,6 +254,14 @@ abstract class ParachainNode<TApi, TRes> {
 
     if (ahAddress === undefined) {
       throw new Error('AssetHub address is required for Ethereum transfers')
+    }
+
+    if (senderAddress === undefined) {
+      throw new Error('Sender address is required for Ethereum transfers')
+    }
+
+    if (isTMultiLocation(address)) {
+      throw new Error('Multi-location address is not supported for Ethereum transfers')
     }
 
     const versionOrDefault = version ?? Version.V4
@@ -269,6 +280,26 @@ abstract class ParachainNode<TApi, TRes> {
     const [bridgeFee, executionFee] = await getParaEthTransferFees(ahApi)
 
     const fee = (bridgeFee + executionFee).toString()
+
+    const ethAsset = findAssetByMultiLocation(
+      getOtherAssets('Ethereum'),
+      asset.multiLocation as TMultiLocation
+    )
+
+    if (!ethAsset || !ethAsset.assetId) {
+      throw new InvalidCurrencyError(
+        `Could not obtain Ethereum asset address for ${JSON.stringify(asset)}`
+      )
+    }
+
+    const messageId = await generateMessageId(
+      api,
+      senderAddress,
+      getParaId(this.node),
+      ethAsset.assetId,
+      address,
+      asset.amount
+    )
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
@@ -294,7 +325,7 @@ abstract class ParachainNode<TApi, TRes> {
           }
         },
         fees_transfer_type: 'DestinationReserve',
-        custom_xcm_on_dest: createCustomXcmOnDest(input, versionOrDefault),
+        custom_xcm_on_dest: createCustomXcmOnDest(input, versionOrDefault, messageId),
         weight_limit: 'Unlimited'
       }
     }

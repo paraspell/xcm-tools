@@ -1,7 +1,7 @@
 // Contains basic call formatting for different XCM Palletss
 
 import type { TNativeAsset, TRelayToParaDestination, TSendOptions } from '../types'
-import { getNode, isRelayChain } from '../utils'
+import { getNode, isRelayChain, validateAddress } from '../utils'
 import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
 import { isBridgeTransfer } from './utils/isBridgeTransfer'
@@ -27,6 +27,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     paraIdTo,
     version,
     ahAddress,
+    senderAddress,
     pallet,
     method
   } = options
@@ -34,6 +35,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   validateCurrency(currency)
   validateDestination(origin, destination)
   validateDestinationAddress(address, destination)
+  if (senderAddress) validateAddress(senderAddress, origin, false)
 
   if (ahAddress && ethers.isAddress(ahAddress)) {
     throw new Error('AssetHub address needs to be in Substrate format')
@@ -98,6 +100,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     overriddenAsset,
     version,
     ahAddress,
+    senderAddress,
     pallet,
     method
   })

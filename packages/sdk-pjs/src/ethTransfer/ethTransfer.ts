@@ -1,10 +1,10 @@
 import { assetsV2, environment, toPolkadotV2 } from '@snowbridge/api'
 import { createContext } from './createContext'
-import { isEthersSigner } from './utils'
 import {
   getAssetBySymbolOrId,
   getParaId,
   InvalidCurrencyError,
+  isEthersSigner,
   isForeignAsset,
   isOverrideMultiLocationSpecifier,
   type TEvmBuilderOptions

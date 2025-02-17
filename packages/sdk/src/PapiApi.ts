@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -11,7 +13,7 @@ import type {
   TNodePolkadotKusama,
   TSerializedApiCall
 } from '@paraspell/sdk-core'
-import { BatchMode } from '@paraspell/sdk-core'
+import { BatchMode, Parents, Version } from '@paraspell/sdk-core'
 import {
   computeFeeFromDryRun,
   createApiInstanceForNode,
@@ -25,8 +27,10 @@ import {
 } from '@paraspell/sdk-core'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
-import { createClient, FixedSizeBinary } from 'polkadot-api'
+import { Binary, createClient, FixedSizeBinary } from 'polkadot-api'
 import { transform } from './PapiXcmTransformer'
+import { blake2b } from '@noble/hashes/blake2b'
+import { bytesToHex } from '@noble/hashes/utils'
 
 const unsupportedNodes = [
   'ComposableFinance',
@@ -41,6 +45,10 @@ const unsupportedNodes = [
   'Pendulum',
   'Subsocial'
 ] as TNodeWithRelayChains[]
+
+const isHex = (str: string) => {
+  return typeof str === 'string' && /^0x[0-9a-fA-F]+$/.test(str)
+}
 
 class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   private _api?: TPapiApiOrUrl
@@ -93,10 +101,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   accountToHex(address: string, isPrefixed = true) {
-    const isHex = (str: string) => {
-      return typeof str === 'string' && /^0x[0-9a-fA-F]+$/.test(str)
-    }
-
     if (isHex(address)) return address
 
     const hex = FixedSizeBinary.fromAccountId32<32>(address).asHex()
@@ -113,6 +117,40 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return this.api
       .getUnsafeApi()
       .tx.Utility[section]({ calls: calls.map(call => call.decodedCall) })
+  }
+
+  async objectToHex(obj: unknown) {
+    const transformedObj = transform(obj)
+
+    const tx = this.api.getUnsafeApi().tx.PolkadotXcm.send({
+      dest: {
+        type: Version.V4,
+        value: {
+          parents: Parents.ZERO,
+          interior: {
+            type: 'Here'
+          }
+        }
+      },
+      message: transformedObj
+    })
+
+    const removeFirst5Bytes = (hexString: string) => '0x' + hexString.slice(12)
+
+    const encodedData = await tx.getEncodedData()
+    return removeFirst5Bytes(encodedData.asHex())
+  }
+
+  hexToUint8a(hex: string) {
+    return Binary.fromHex(hex).asBytes()
+  }
+
+  stringToUint8a(str: string) {
+    return Binary.fromText(str).asBytes()
+  }
+
+  blake2AsHex(data: Uint8Array) {
+    return `0x${bytesToHex(blake2b(data, { dkLen: 32 }))}`
   }
 
   async calculateTransactionFee(tx: TPapiTransaction, address: string) {
@@ -212,8 +250,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return BigInt(response === undefined ? 0 : response.balance)
   }
 
-  async getFromStorage(key: string): Promise<string> {
-    return this.api._request('state_getStorage', [key])
+  async getFromRpc(module: string, method: string, key: string): Promise<string> {
+    const value = await this.api._request(`${module}_${method}`, [key])
+    return isHex(value) ? value : '0x' + value.toString(16).padStart(8, '0')
   }
 
   clone() {

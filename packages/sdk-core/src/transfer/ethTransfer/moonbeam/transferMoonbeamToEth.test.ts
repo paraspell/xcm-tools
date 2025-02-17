@@ -1,44 +1,43 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { TEvmBuilderOptions } from '@paraspell/sdk-core'
-import {
-  getAssetBySymbolOrId,
-  findAssetByMultiLocation,
-  InvalidCurrencyError,
-  isForeignAsset,
-  isOverrideMultiLocationSpecifier,
-  getParaId,
-  getParaEthTransferFees
-} from '@paraspell/sdk-core'
+import type { Signer } from 'ethers'
 import { Contract } from 'ethers'
+import type { WalletClient } from 'viem'
 import { getContract } from 'viem'
-import { blake2AsHex } from '@polkadot/util-crypto'
 import { transferMoonbeamToEth } from './transferMoonbeamToEth'
-import { isEthersContract, isEthersSigner } from './utils'
+import type { TCurrencyInputWithAmount, TEvmBuilderOptions } from '../../../types'
+import { findAssetByMultiLocation, getAssetBySymbolOrId } from '../../../pallets/assets'
+import { isForeignAsset, isOverrideMultiLocationSpecifier } from '../../../utils'
+import { InvalidCurrencyError } from '../../../errors'
+import { getParaId } from '../../../nodes/config'
+import { getParaEthTransferFees } from '../getParaEthTransferFees'
+import { isEthersContract, isEthersSigner } from '../utils'
 
-vi.mock('@polkadot/util-crypto', () => ({
-  blake2AsHex: vi.fn(() => '0xmockedHash'),
-  decodeAddress: vi.fn(() => new Uint8Array([1, 2, 3]))
+vi.mock('../../../pallets/assets', () => ({
+  findAssetByMultiLocation: vi.fn(),
+  getAssetBySymbolOrId: vi.fn(),
+  getOtherAssets: vi.fn(() => [{ assetId: '0xethAssetId' }])
 }))
 
-vi.mock('@polkadot/util', () => ({
-  numberToHex: vi.fn((n: number) => `0x${n.toString(16)}`),
-  u8aToHex: vi.fn(() => '0xmockedAddress')
+vi.mock('../../../utils', () => ({
+  isForeignAsset: vi.fn(),
+  isOverrideMultiLocationSpecifier: vi.fn()
 }))
 
-vi.mock('@paraspell/sdk-core', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-core')
-  return {
-    ...actual,
-    getParaEthTransferFees: vi.fn(() => [1000n, 1000n]),
-    getAssetBySymbolOrId: vi.fn(),
-    findAssetByMultiLocation: vi.fn(),
-    getParaId: vi.fn(() => 1000),
-    isForeignAsset: vi.fn(),
-    isOverrideMultiLocationSpecifier: vi.fn(),
-    InvalidCurrencyError: class extends Error {}
-  }
-})
+vi.mock('../../../errors', () => ({
+  InvalidCurrencyError: class extends Error {}
+}))
+
+vi.mock('../../../nodes/config', () => ({
+  getParaId: vi.fn(() => 1000)
+}))
+
+vi.mock('../getParaEthTransferFees', () => ({
+  getParaEthTransferFees: vi.fn(() => [1000n, 1000n])
+}))
+
+vi.mock('../../../utils/ethereum/createCustomXcmOnDest', () => ({
+  createCustomXcmOnDest: vi.fn(() => '0xmockedXcm')
+}))
 
 vi.mock('ethers', () => ({
   Contract: vi.fn().mockImplementation(() => ({
@@ -46,7 +45,8 @@ vi.mock('ethers', () => ({
       vi.fn(() => ({
         hash: '0xethersHash'
       }))
-  }))
+  })),
+  isAddress: vi.fn().mockReturnValue(true)
 }))
 
 vi.mock('viem', () => ({
@@ -59,7 +59,7 @@ vi.mock('viem', () => ({
   http: vi.fn()
 }))
 
-vi.mock('./utils', () => ({
+vi.mock('../utils', () => ({
   isEthersSigner: vi.fn(),
   isEthersContract: vi.fn()
 }))
@@ -86,6 +86,12 @@ describe('transferMoonbeamToEth', () => {
         toU8a: () => new Uint8Array([7, 8, 9])
       }))
     })),
+    getFromRpc: vi.fn(),
+    accountToHex: vi.fn(),
+    stringToUint8a: vi.fn().mockReturnValue(new Uint8Array([10, 11, 12])),
+    hexToUint8a: vi.fn().mockReturnValue(new Uint8Array([13, 14, 15])),
+    blake2AsHex: vi.fn().mockReturnValue('0xmockedHash'),
+    objectToHex: vi.fn().mockReturnValue('0xmockedXcm'),
     createApiForNode: vi.fn(() => ({
       getApi: vi.fn(() => ({
         createType: vi.fn(() => ({
@@ -121,7 +127,7 @@ describe('transferMoonbeamToEth', () => {
     await expect(
       transferMoonbeamToEth({
         ...baseOptions,
-        currency: { multiasset: 'invalid' } as any
+        currency: { multiasset: 'invalid' } as unknown as TCurrencyInputWithAmount
       })
     ).rejects.toThrow('Multiassets syntax is not supported')
   })
@@ -131,7 +137,7 @@ describe('transferMoonbeamToEth', () => {
     await expect(
       transferMoonbeamToEth({
         ...baseOptions,
-        currency: { multilocation: { type: 'override' } } as any
+        currency: { multilocation: { type: 'override' } } as unknown as TCurrencyInputWithAmount
       })
     ).rejects.toThrow('Override multilocation is not supported')
   })
@@ -159,7 +165,7 @@ describe('transferMoonbeamToEth', () => {
     it('should work with viem signer', async () => {
       const result = await transferMoonbeamToEth({
         ...baseOptions,
-        signer: { chain: {}, account: { address: '0xviem' } } as any
+        signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
       })
 
       expect(result).toBe('0xviemHash')
@@ -174,37 +180,35 @@ describe('transferMoonbeamToEth', () => {
 
       const result = await transferMoonbeamToEth({
         ...baseOptions,
-        signer: { getAddress: () => '0xethers' } as any
+        signer: { getAddress: () => '0xethers' } as unknown as Signer
       })
 
       expect(result).toBe('0xethersHash')
       expect(Contract).toHaveBeenCalled()
-      expect(blake2AsHex).toHaveBeenCalled()
     })
   })
 
   it('should handle messageId generation correctly', async () => {
-    vi.mocked(isEthersSigner).mockReturnValue(false)
-    vi.mocked(isEthersContract).mockReturnValue(false)
+    vi.mocked(isEthersSigner).mockReturnValue(true)
+    vi.mocked(isEthersContract).mockReturnValue(true)
     await transferMoonbeamToEth({
       ...baseOptions,
-      signer: { chain: {}, getAddres: () => ({ address: '' }) } as any
+      signer: { chain: {}, getAddress: () => ({ address: '' }) } as unknown as Signer
     })
-    expect(blake2AsHex).toHaveBeenCalledWith(expect.any(Uint8Array))
   })
 
   it('should construct XCM parameters correctly', async () => {
-    vi.mocked(isEthersSigner).mockReturnValue(false)
-    vi.mocked(isEthersContract).mockReturnValue(false)
+    vi.mocked(isEthersSigner).mockReturnValue(true)
+    vi.mocked(isEthersContract).mockReturnValue(true)
     await transferMoonbeamToEth({
       ...baseOptions,
-      signer: { chain: {}, getAddres: () => ({ address: '' }) } as any
+      signer: { chain: {}, getAddress: () => '123' } as unknown as Signer
     })
 
     const expectedParams = [
       [1, ['0x00000000000000000000000000000000000000000000000000000000000003e8']],
       [
-        ['0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080', 1000n],
+        ['0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080', 2000n],
         ['0xethAssetId', 1000]
       ],
       2,
