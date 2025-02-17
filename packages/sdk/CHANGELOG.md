@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.4.2](https://github.com/paraspell/xcm-tools/compare/sdk-v8.4.1...sdk-v8.4.2) (2025-02-17)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize SDKgroup versions
+
 ## [8.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-v8.4.0...sdk-v8.4.1) (2025-02-14)
 
 
