@@ -72,6 +72,11 @@ export const transform = (obj: any): any => {
             key: FixedSizeBinary.fromHex(value.key)
           }
         }
+      } else if (key === 'SetTopic') {
+        return {
+          type: key,
+          value: FixedSizeBinary.fromHex(value)
+        }
       } else if (key === 'X1' && Array.isArray(value)) {
         return {
           type: key,

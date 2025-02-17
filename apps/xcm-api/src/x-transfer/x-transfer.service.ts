@@ -73,13 +73,14 @@ export class XTransferService {
       xcmVersion,
       pallet,
       method,
+      senderAddress,
     } = transfer;
 
     let finalBuilder = builder
       .from(from as TNodeDotKsmWithRelayChains)
       .to(to as TNodeWithRelayChains)
       .currency(currency)
-      .address(address, ahAddress);
+      .address(address, ahAddress, senderAddress);
 
     if (xcmVersion) {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);

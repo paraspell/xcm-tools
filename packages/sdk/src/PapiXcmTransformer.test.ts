@@ -128,6 +128,18 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should handle SetTopic', () => {
+    const input = {
+      SetTopic: '0xabcdef1234567890'
+    }
+    const expected = {
+      type: 'SetTopic',
+      value: `FixedSizeBinary(0xabcdef1234567890)`
+    }
+
+    expect(transform(input)).toEqual(expected)
+  })
+
   it('should handle X1 with a single element', () => {
     const input = {
       X1: [

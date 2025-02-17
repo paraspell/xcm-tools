@@ -5,7 +5,12 @@ export const getParaEthTransferFees = async <TApi, TRes>(
 ): Promise<[bigint, bigint]> => {
   const DEFAULT_FEE = 2_750_872_500_000n
 
-  const feeStorageItem = await ahApi.getFromStorage('0x5fbc5c7ba58845ad1f1a9a7c5bc12fad')
+  const feeStorageItem = await ahApi.getFromRpc(
+    'state',
+    'getStorage',
+    '0x5fbc5c7ba58845ad1f1a9a7c5bc12fad'
+  )
+
   const leFeeHex = feeStorageItem.replace('0x', '')
 
   await ahApi.disconnect()

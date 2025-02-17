@@ -263,7 +263,7 @@ const XcmTransfer = () => {
                 ? currencyInputs[0]
                 : { multiasset: currencyInputs as TCurrencyCoreWithFee[] },
             )
-            .address(address, ahAddress)
+            .address(address, ahAddress, selectedAccount.address)
             .addToBatch();
         }
 
@@ -435,7 +435,7 @@ const XcmTransfer = () => {
                   multiasset: currencyInputs as TCurrencyCoreWithFee[],
                 },
           )
-          .address(address, ahAddress)
+          .address(address, ahAddress, selectedAccount.address)
           .build();
       }
 

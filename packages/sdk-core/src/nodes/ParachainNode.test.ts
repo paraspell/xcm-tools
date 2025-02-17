@@ -12,6 +12,7 @@ import {
   type TXTransferTransferOptions
 } from '../types'
 import type { IPolkadotApi } from '../api'
+import { findAssetByMultiLocation } from '../pallets/assets'
 
 vi.mock('../constants/nodes', () => ({}))
 
@@ -35,7 +36,7 @@ vi.mock('../pallets/xcmPallet/utils', () => ({
 vi.mock('../pallets/assets', () => ({
   getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
   findAssetByMultiLocation: vi.fn().mockReturnValue({ symbol: 'DOT' }),
-  getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT' }])
+  getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT', assetId: '123' }])
 }))
 
 vi.mock('./config', () => ({
@@ -45,6 +46,14 @@ vi.mock('./config', () => ({
 
 vi.mock('../transfer/ethTransfer', () => ({
   getParaEthTransferFees: vi.fn().mockReturnValue('fee')
+}))
+
+vi.mock('../utils/ethereum/createCustomXcmOnDest', () => ({
+  createCustomXcmOnDest: vi.fn(() => '0xmockedXcm')
+}))
+
+vi.mock('../utils/ethereum/generateMessageId', () => ({
+  generateMessageId: vi.fn().mockReturnValue('0xmessageId')
 }))
 
 class TestParachainNode extends ParachainNode<unknown, unknown> {
@@ -283,13 +292,17 @@ describe('ParachainNode', () => {
       api: {
         accountToHex: vi.fn(),
         createApiForNode: vi.fn(),
-        callTxMethod: vi.fn()
+        callTxMethod: vi.fn(),
+        getFromRpc: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
       asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
-      ahAddress: '0x123'
+      ahAddress: '0x123',
+      senderAddress: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const spy = vi.spyOn(options.api, 'callTxMethod')
+
+    vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: 'WETH', assetId: '123' })
 
     await node.exposeTransferToEthereum(options)
 

@@ -507,7 +507,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.rpc.state.getStorage).mockResolvedValue(mockResponse)
 
-      const result = await polkadotApi.getFromStorage(key)
+      const result = await polkadotApi.getFromRpc('state', 'getStorage', key)
 
       expect(mockApiPromise.rpc.state.getStorage).toHaveBeenCalledWith(key)
 
@@ -660,6 +660,38 @@ describe('PolkadotJsApi', () => {
         success: false,
         failureReason: 'ModuleError'
       })
+    })
+  })
+
+  describe('objectToHex', () => {
+    it('should return the object as hex string', async () => {
+      const object = { key: 'value' }
+      const result = await polkadotApi.objectToHex(object, 'XcmVersionedXcm')
+      expect(result).toBe('0x1234567890abcdef')
+    })
+  })
+
+  describe('hexToUint8a', () => {
+    it('should return the hex string as Uint8Array', () => {
+      const hex = '0x1234567890abcdef'
+      const result = polkadotApi.hexToUint8a(hex)
+      expect(result).toBeInstanceOf(Uint8Array)
+    })
+  })
+
+  describe('stringToUint8a', () => {
+    it('should return the string as Uint8Array', () => {
+      const str = 'some string'
+      const result = polkadotApi.stringToUint8a(str)
+      expect(result).toBeInstanceOf(Uint8Array)
+    })
+  })
+
+  describe('blake2AsHex', () => {
+    it('should return the data as hex string', () => {
+      const data = new Uint8Array(8)
+      const result = polkadotApi.blake2AsHex(data)
+      expect(result).toBe('0x81e47a19e6b29b0a65b9591762ce5143ed30d0261e5d24a3201752506b20f15c')
     })
   })
 })

@@ -12,7 +12,8 @@ import { generateAddressPayload } from '../generateAddressPayload'
 
 export const createCustomXcmOnDest = <TApi, TRes>(
   { api, address, asset, scenario, ahAddress }: TPolkadotXCMTransferOptions<TApi, TRes>,
-  version: Version
+  version: Version,
+  messageId: string
 ) => {
   if (!isForeignAsset(asset)) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
@@ -97,9 +98,15 @@ export const createCustomXcmOnDest = <TApi, TRes>(
                   }
                 }
               }
+            },
+            {
+              SetTopic: messageId
             }
           ]
         }
+      },
+      {
+        SetTopic: messageId
       }
     ]
   }

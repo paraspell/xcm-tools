@@ -3,9 +3,9 @@ import type {
   IPolkadotApi,
   TEvmBuilderOptions,
   TOptionalEvmBuilderOptions,
-  TNodeDotKsmWithRelayChains
+  TNodeWithRelayChains
 } from '@paraspell/sdk-core'
-import { transferMoonbeamEvm } from '@paraspell/sdk-core'
+import { transferMoonbeamEvm, transferMoonbeamToEth, validateAddress } from '@paraspell/sdk-core'
 import type { Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 
@@ -31,7 +31,7 @@ export class EvmBuilderClass<TApi, TRes> {
    * @param node - The Polkadot node to which the transfer will be made.
    * @returns An instance of EvmBuilder
    */
-  to(node: TNodeDotKsmWithRelayChains): this {
+  to(node: TNodeWithRelayChains): this {
     this._options.to = node
     return this
   }
@@ -53,8 +53,9 @@ export class EvmBuilderClass<TApi, TRes> {
    * @param address - The Polkadot address to receive the transfer.
    * @returns An instance of EvmBuilder
    */
-  address(address: string): this {
+  address(address: string, ahAddress?: string): this {
     this._options.address = address
+    this._options.ahAddress = ahAddress
     return this
   }
 
@@ -87,6 +88,12 @@ export class EvmBuilderClass<TApi, TRes> {
       if (this._options[param] === undefined) {
         throw new Error(`Builder object is missing parameter: ${param}`)
       }
+    }
+
+    validateAddress(this._options.address as string, this._options.to as TNodeWithRelayChains)
+
+    if (this._options.from === 'Moonbeam' && this._options.to === 'Ethereum') {
+      return transferMoonbeamToEth(this._options as TEvmBuilderOptions<TApi, TRes>)
     }
 
     return await transferMoonbeamEvm(this._options as TEvmBuilderOptions<TApi, TRes>)
