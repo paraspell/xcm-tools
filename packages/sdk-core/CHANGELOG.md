@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.4.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.4.1...sdk-core-v8.4.2) (2025-02-17)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix AssetHub fee calculation 🛠️ ([971db0d](https://github.com/paraspell/xcm-tools/commit/971db0d92453d11bc7bba5398e833cee6f51d98b))
+
 ## [8.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.4.0...sdk-core-v8.4.1) (2025-02-14)
 
 

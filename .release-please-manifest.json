@@ -1,7 +1,7 @@
 {
   "packages/xcm-analyser": "1.5.2",
   "packages/xcm-router": "2.2.1",
-  "packages/sdk": "8.4.1",
-  "packages/sdk-core": "8.4.1",
-  "packages/sdk-pjs": "8.4.1"
+  "packages/sdk": "8.4.2",
+  "packages/sdk-core": "8.4.2",
+  "packages/sdk-pjs": "8.4.2"
 }
