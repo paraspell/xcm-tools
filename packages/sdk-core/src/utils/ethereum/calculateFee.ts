@@ -8,10 +8,20 @@ export const calculateFee = async <TApi, TRes>(ahApi: IPolkadotApi<TApi, TRes>) 
 
   await ahApi.disconnect()
 
-  const leFee = BigInt('0x' + leFeeHex.split('').reverse().join(''))
+  const bytes = leFeeHex.match(/.{1,2}/g) || []
+  const reversedHex = bytes.reverse().join('')
 
-  const transfer_bridge_fee = leFee === 0n ? DEFAULT_FEE : BigInt(leFee.toString())
+  const validReversedHex = reversedHex === '' ? '0' : reversedHex
+  const leFee = BigInt('0x' + validReversedHex)
 
-  const transfer_assethub_execution_fee = 2200000000n
-  return (transfer_bridge_fee + transfer_assethub_execution_fee).toString()
+  const transferBridgeFee = leFee === 0n ? DEFAULT_FEE : BigInt(leFee.toString())
+
+  const transferAssethubExecutionFee = 2200000000n
+
+  const totalFee = transferBridgeFee + transferAssethubExecutionFee
+
+  // Adding a 10% margin
+  const finalFee = (totalFee * 110n) / 100n
+
+  return finalFee.toString()
 }
