@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.4.2...sdk-core-v8.5.0) (2025-02-18)
+
+
+### Features
+
+* Add eth fee function & new transfers ✨ ([0ec3c78](https://github.com/paraspell/xcm-tools/commit/0ec3c78e449c58640b4f439eeb5a32b332d70e92))
+
 ## [8.4.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.4.1...sdk-core-v8.4.2) (2025-02-17)
 
 
