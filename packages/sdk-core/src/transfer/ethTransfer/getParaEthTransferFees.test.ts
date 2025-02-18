@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
-import { calculateFee } from './calculateFee'
 import type { IPolkadotApi } from '../../api'
+import { getParaEthTransferFees } from './getParaEthTransferFees'
 
-describe('calculateFee', () => {
+describe('getParaEthTransferFees', () => {
   it('uses default fee when storage is 0x00000000', async () => {
     const mockAhApi = {
       getFromStorage: vi.fn().mockResolvedValueOnce('0x00000000'),
@@ -10,8 +10,10 @@ describe('calculateFee', () => {
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const spy = vi.spyOn(mockAhApi, 'disconnect')
-    const result = await calculateFee(mockAhApi)
-    expect(result).toBe('3028379750000')
+    const [transferBridgeFee, transferAssethubExecutionFee] =
+      await getParaEthTransferFees(mockAhApi)
+    expect(transferBridgeFee).toBe(3025959750000n)
+    expect(transferAssethubExecutionFee).toBe(2420000000n)
     expect(spy).toHaveBeenCalled()
   })
 
@@ -22,8 +24,10 @@ describe('calculateFee', () => {
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const spy = vi.spyOn(mockAhApi, 'disconnect')
-    const result = await calculateFee(mockAhApi)
-    expect(result).toBe('2420000001')
+    const [transferBridgeFee, transferAssethubExecutionFee] =
+      await getParaEthTransferFees(mockAhApi)
+    expect(transferBridgeFee).toBe(1n)
+    expect(transferAssethubExecutionFee).toBe(2420000000n)
     expect(spy).toHaveBeenCalled()
   })
 
@@ -34,8 +38,10 @@ describe('calculateFee', () => {
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const spy = vi.spyOn(mockAhApi, 'disconnect')
-    const result = await calculateFee(mockAhApi)
-    expect(result).toBe('3028379750000')
+    const [transferBridgeFee, transferAssethubExecutionFee] =
+      await getParaEthTransferFees(mockAhApi)
+    expect(transferBridgeFee).toBe(3025959750000n)
+    expect(transferAssethubExecutionFee).toBe(2420000000n)
     expect(spy).toHaveBeenCalled()
   })
 })

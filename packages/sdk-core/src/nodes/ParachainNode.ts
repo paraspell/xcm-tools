@@ -35,9 +35,9 @@ import {
 import XTokensTransferImpl from '../pallets/xTokens'
 import { resolveParaId } from '../utils/resolveParaId'
 import { InvalidCurrencyError } from '../errors'
-import { calculateFee } from '../utils/ethereum/calculateFee'
 import { getParaId } from './config'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
+import { getParaEthTransferFees } from '../transfer'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
@@ -266,7 +266,9 @@ abstract class ParachainNode<TApi, TRes> {
 
     const ahApi = await api.createApiForNode('AssetHubPolkadot')
 
-    const fee = await calculateFee(ahApi)
+    const [bridgeFee, executionFee] = await getParaEthTransferFees(ahApi)
+
+    const fee = (bridgeFee + executionFee).toString()
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',

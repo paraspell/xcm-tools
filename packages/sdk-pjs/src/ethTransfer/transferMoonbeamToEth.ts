@@ -4,7 +4,7 @@ import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto'
 import type { BytesLike, TransactionResponse } from 'ethers'
 import { Contract } from 'ethers'
 import { numberToHex, u8aToHex } from '@polkadot/util'
-import { calculateFee } from '@paraspell/sdk-core'
+import { getParaEthTransferFees } from '@paraspell/sdk-core'
 import abi from './abi-xcm.json' with { type: 'json' }
 import type { TMultiLocation } from '@paraspell/sdk-core'
 import {
@@ -207,7 +207,9 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
   })
   const customXcmOnDest: BytesLike = xcmOnDest.toHex()
 
-  const transferFee = await calculateFee(assetHubApi)
+  const [bridgeFee, executionFee] = await getParaEthTransferFees(assetHubApi)
+
+  const transferFee = (bridgeFee + executionFee).toString()
 
   // Partially inspired by Moonbeam XCM-SDK
   // https://github.com/moonbeam-foundation/xcm-sdk/blob/ab835c15bf41612604b1c858d956a9f07705ed65/packages/sdk/src/contract/contracts/Xtokens/Xtokens.ts#L53
