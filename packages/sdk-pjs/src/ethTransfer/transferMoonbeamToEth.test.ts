@@ -4,11 +4,11 @@ import type { TEvmBuilderOptions } from '@paraspell/sdk-core'
 import {
   getAssetBySymbolOrId,
   findAssetByMultiLocation,
-  calculateFee,
   InvalidCurrencyError,
   isForeignAsset,
   isOverrideMultiLocationSpecifier,
-  getParaId
+  getParaId,
+  getParaEthTransferFees
 } from '@paraspell/sdk-core'
 import { Contract } from 'ethers'
 import { getContract } from 'viem'
@@ -30,7 +30,7 @@ vi.mock('@paraspell/sdk-core', async () => {
   const actual = await vi.importActual('@paraspell/sdk-core')
   return {
     ...actual,
-    calculateFee: vi.fn(() => 1000n),
+    getParaEthTransferFees: vi.fn(() => [1000n, 1000n]),
     getAssetBySymbolOrId: vi.fn(),
     findAssetByMultiLocation: vi.fn(),
     getParaId: vi.fn(() => 1000),
@@ -165,7 +165,7 @@ describe('transferMoonbeamToEth', () => {
       expect(result).toBe('0xviemHash')
       expect(getContract).toHaveBeenCalled()
       expect(getParaId).toHaveBeenCalledWith('AssetHubPolkadot')
-      expect(calculateFee).toHaveBeenCalled()
+      expect(getParaEthTransferFees).toHaveBeenCalled()
     })
 
     it('should work with ethers signer', async () => {

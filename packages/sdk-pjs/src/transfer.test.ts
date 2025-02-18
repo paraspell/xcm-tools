@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as sdkCore from '@paraspell/sdk-core'
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
-import { send, transferEthToPolkadot } from './transfer'
+import { getParaEthTransferFees, send, transferEthToPolkadot } from './transfer'
 import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import type { TEvmBuilderOptions, TSendOptions } from '@paraspell/sdk-core'
 
@@ -16,7 +16,8 @@ vi.mock('./ethTransfer', () => ({
 vi.mock('@paraspell/sdk-core', async importOriginal => {
   return {
     ...(await importOriginal<typeof import('@paraspell/sdk-core')>()),
-    send: vi.fn()
+    send: vi.fn(),
+    getParaEthTransferFees: vi.fn()
   }
 })
 
@@ -30,9 +31,11 @@ describe('Send Function using PolkadotJsAPI', () => {
   }
 
   let pjsApiSetApiSpy: MockInstance
+  let pjsApiInitSpy: MockInstance
 
   beforeEach(() => {
     pjsApiSetApiSpy = vi.spyOn(PolkadotJsApi.prototype, 'setApi')
+    pjsApiInitSpy = vi.spyOn(PolkadotJsApi.prototype, 'init')
   })
 
   describe('send', () => {
@@ -65,6 +68,16 @@ describe('Send Function using PolkadotJsAPI', () => {
         ...options,
         api: expect.any(PolkadotJsApi)
       })
+    })
+  })
+
+  describe('getParaEthTransferFees', () => {
+    it('should call setApi on pjsApi and destPjsApi, and call getParaEthTransferFees in transferImpl with correct arguments', async () => {
+      await getParaEthTransferFees(mockApi)
+
+      expect(pjsApiSetApiSpy).toHaveBeenCalledWith(mockApi)
+      expect(pjsApiInitSpy).toHaveBeenCalledWith('AssetHubPolkadot')
+      expect(sdkCore.getParaEthTransferFees).toHaveBeenCalledWith(expect.any(PolkadotJsApi))
     })
   })
 })

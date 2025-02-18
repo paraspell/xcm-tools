@@ -280,7 +280,13 @@ class AssetHubPolkadot<TApi, TRes>
       }
     }
 
-    if ((destination === 'Hydration' || destination === 'Polimec') && asset.symbol === 'DOT') {
+    if (
+      (destination === 'Hydration' ||
+        destination === 'Polimec' ||
+        destination === 'Moonbeam' ||
+        destination === 'BifrostPolkadot') &&
+      asset.symbol === 'DOT'
+    ) {
       const versionOrDefault = version ?? this.version
       return {
         ...input,
@@ -298,7 +304,7 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   private getSection(scenario: TScenario, destination: TDestination): TPolkadotXcmSection {
-    if (destination === 'Polimec') return 'transfer_assets'
+    if (destination === 'Polimec' || destination === 'Moonbeam') return 'transfer_assets'
     return scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
   }
 
@@ -332,7 +338,9 @@ class AssetHubPolkadot<TApi, TRes>
       asset.symbol === 'DOT' &&
       !isForeignAsset(asset) &&
       destination !== 'Hydration' &&
-      destination !== 'Polimec'
+      destination !== 'Polimec' &&
+      destination !== 'Moonbeam' &&
+      destination !== 'BifrostPolkadot'
     ) {
       throw new ScenarioNotSupportedError(
         this.node,

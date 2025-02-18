@@ -2,7 +2,7 @@
 
 export * from '@paraspell/sdk-core'
 export * as xcmPallet from './transfer'
-export { send, getDryRun } from './transfer'
+export { send, getDryRun, getParaEthTransferFees } from './transfer'
 export * as assets from './assets'
 export {
   getBalanceNative,

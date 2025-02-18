@@ -8,7 +8,8 @@ export {
   transferEthToPolkadot,
   depositToken,
   approveToken,
-  getTokenBalance
+  getTokenBalance,
+  getParaEthTransferFees
 } from './transfer'
 export * as assets from './assets'
 export {

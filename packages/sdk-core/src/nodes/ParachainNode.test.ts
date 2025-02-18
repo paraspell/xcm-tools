@@ -43,8 +43,8 @@ vi.mock('./config', () => ({
   getParaId: vi.fn().mockReturnValue(1000)
 }))
 
-vi.mock('../utils/ethereum/calculateFee', () => ({
-  calculateFee: vi.fn().mockReturnValue('fee')
+vi.mock('../transfer/ethTransfer', () => ({
+  getParaEthTransferFees: vi.fn().mockReturnValue('fee')
 }))
 
 class TestParachainNode extends ParachainNode<unknown, unknown> {
