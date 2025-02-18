@@ -331,6 +331,10 @@ await getTransferableAmount({address, node, currency /*- {id: currencyID} | {sym
 
 //Get all the information about XCM transfer
 await getTransferInfo({from, to, address, destinationAddress, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, api /* api/ws_url_string optional */})
+
+//Get bridge and execution fee for transfer from Parachain to Ethereum. Returns as an object of 2 values
+await getParaEthTransferFees(/*api - optional (Can also be WS port string or array o WS ports. Must be AssetHubPolkadot WS!)*/): [bridgeFee, executionFee]
+
 ```
 
 ## 💻 Tests
