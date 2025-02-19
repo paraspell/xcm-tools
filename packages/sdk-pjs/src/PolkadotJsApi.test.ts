@@ -320,7 +320,9 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.query.tokens.accounts).mockResolvedValue(mockResponse)
 
-      const balance = await polkadotApi.getBalanceForeignBifrost(address, { symbol: 'DOT' })
+      const balance = await polkadotApi.getBalanceForeignBifrost(address, {
+        symbol: 'DOT'
+      } as sdkCore.TAsset)
 
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
         Token: 'DOT'
@@ -337,7 +339,9 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.query.tokens.accounts).mockResolvedValue(mockResponse)
 
-      const balance = await polkadotApi.getBalanceForeignBifrost(address, { symbol: 'DOT' })
+      const balance = await polkadotApi.getBalanceForeignBifrost(address, {
+        symbol: 'DOT'
+      } as sdkCore.TAsset)
 
       expect(mockApiPromise.query.tokens.accounts).toHaveBeenCalledWith(address, {
         Token: 'DOT'

@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type AssetHubPolkadot from './AssetHubPolkadot'
-import type { TMultiLocationHeader } from '../../types'
+import type { TMultiLocationHeader, TNativeAsset, WithAmount } from '../../types'
 import { Version, type TPolkadotXCMTransferOptions } from '../../types'
 import { getOtherAssets } from '../../pallets/assets'
 import { getNode } from '../../utils'
@@ -48,7 +48,7 @@ describe('AssetHubPolkadot', () => {
 
   const mockInput = {
     api: mockApi,
-    asset: { symbol: 'DOT', amount: '1000' },
+    asset: { symbol: 'DOT', amount: '1000', isNative: true },
     currencySelection: {},
     currencyId: '0',
     scenario: 'ParaToRelay',
@@ -93,7 +93,10 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('throws InvalidCurrencyError for unsupported currency', () => {
-      const input = { ...mockInput, asset: { symbol: 'UNKNOWN', amount: 100 } }
+      const input = {
+        ...mockInput,
+        asset: { symbol: 'UNKNOWN', amount: 100, isNative: true } as WithAmount<TNativeAsset>
+      }
       expect(() => assetHub.handleBridgeTransfer(input, 'Polkadot')).toThrow(InvalidCurrencyError)
     })
   })
@@ -160,7 +163,7 @@ describe('AssetHubPolkadot', () => {
     it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'DOT', amount: '1000' },
+        asset: { symbol: 'DOT', amount: '1000', isNative: true } as WithAmount<TNativeAsset>,
         currencyId: undefined,
         scenario: 'ParaToPara',
         destination: 'Acala'
@@ -172,7 +175,7 @@ describe('AssetHubPolkadot', () => {
     it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', () => {
       const input = {
         ...mockInput,
-        asset: { symbol: 'KSM', amount: '1000' },
+        asset: { symbol: 'KSM', amount: '1000', isNative: true } as WithAmount<TNativeAsset>,
         currencyId: undefined,
         scenario: 'ParaToPara',
         destination: 'Acala'
@@ -258,8 +261,9 @@ describe('AssetHubPolkadot', () => {
     it('should modify input for USDT currencySymbol', async () => {
       mockInput.asset = {
         symbol: 'USDT',
-        amount: '1000'
-      }
+        amount: '1000',
+        isNative: true
+      } as WithAmount<TNativeAsset>
       mockInput.scenario = 'ParaToPara'
       mockInput.destination = 'BifrostPolkadot'
 
@@ -296,8 +300,9 @@ describe('AssetHubPolkadot', () => {
       mockInput.destination = 'Hydration'
       mockInput.asset = {
         symbol: 'DOT',
-        amount: '1000'
-      }
+        amount: '1000',
+        isNative: true
+      } as WithAmount<TNativeAsset>
 
       vi.mocked(getOtherAssets).mockImplementation(node =>
         node === 'Ethereum' ? [] : [{ symbol: 'DOT', assetId: '' }]

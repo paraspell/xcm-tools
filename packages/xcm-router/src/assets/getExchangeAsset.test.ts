@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import type { TCurrencyInput, TForeignAsset, TNodePolkadotKusama } from '@paraspell/sdk-pjs';
+import type {
+  TCurrencyInput,
+  TForeignAsset,
+  TMultiLocation,
+  TNativeAsset,
+  TNodePolkadotKusama,
+} from '@paraspell/sdk-pjs';
 import {
   getOtherAssets,
   findAssetBySymbol,
@@ -8,6 +14,7 @@ import {
   findBestMatches,
   isSymbolSpecifier,
   isOverrideMultiLocationSpecifier,
+  getNativeAssets,
 } from '@paraspell/sdk-pjs';
 import type { TRouterAsset } from '../types';
 import { getExchangeAssets } from './assetsUtils';
@@ -15,6 +22,7 @@ import { getExchangeAsset } from './getExchangeAsset';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
   getOtherAssets: vi.fn(),
+  getNativeAssets: vi.fn(),
   findAssetBySymbol: vi.fn(),
   findAssetByMultiLocation: vi.fn(),
   findAssetById: vi.fn(),
@@ -31,7 +39,7 @@ vi.mock('./assetsUtils', () => ({
 describe('getExchangeAsset', () => {
   const mockExchangeBaseNode = 'polkadot' as TNodePolkadotKusama;
   const mockExchange = 'AcalaDex';
-  const mockNativeAsset: TRouterAsset = { symbol: 'DOT' };
+  const mockNativeAsset: TNativeAsset = { symbol: 'DOT', isNative: true };
   const mockForeignAsset: TForeignAsset = {
     symbol: 'USDT',
     assetId: '123',
@@ -43,6 +51,7 @@ describe('getExchangeAsset', () => {
 
     vi.mocked(getExchangeAssets).mockReturnValue([mockNativeAsset, mockForeignAsset]);
     vi.mocked(getOtherAssets).mockReturnValue([mockForeignAsset]);
+    vi.mocked(getNativeAssets).mockReturnValue([mockNativeAsset]);
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false);
     vi.mocked(isSymbolSpecifier).mockReturnValue(false);
   });
@@ -98,6 +107,22 @@ describe('getExchangeAsset', () => {
     expect(findAssetByMultiLocation).toHaveBeenCalled();
   });
 
+  test('should find native asset by multilocation', () => {
+    const multiLocation = { parents: 0, interior: 'Here' } as TMultiLocation;
+    const currency = { multilocation: multiLocation } as TCurrencyInput;
+
+    vi.mocked(findAssetByMultiLocation)
+      .mockReturnValueOnce(undefined)
+      .mockReturnValueOnce(mockNativeAsset as TForeignAsset);
+
+    const result = getExchangeAsset(mockExchangeBaseNode, mockExchange, currency);
+
+    expect(result).toEqual(mockNativeAsset);
+    expect(findAssetByMultiLocation).toHaveBeenCalledTimes(2);
+    expect(findAssetByMultiLocation).toHaveBeenNthCalledWith(1, expect.any(Array), multiLocation);
+    expect(findAssetByMultiLocation).toHaveBeenNthCalledWith(2, expect.any(Array), multiLocation);
+  });
+
   test('should find asset by id', () => {
     const currency = { id: '123' };
     vi.mocked(findAssetById).mockReturnValue(mockForeignAsset);
@@ -124,7 +149,10 @@ describe('getExchangeAsset', () => {
   });
 
   test('should enhance foreign assets with multiLocation from otherAssets', () => {
-    const foreignAssetWithoutLocation = { ...mockForeignAsset, multiLocation: undefined };
+    const foreignAssetWithoutLocation = {
+      ...mockForeignAsset,
+      multiLocation: undefined,
+    } as TForeignAsset;
     const otherAssets = [mockForeignAsset];
 
     vi.mocked(getExchangeAssets).mockReturnValue([foreignAssetWithoutLocation]);

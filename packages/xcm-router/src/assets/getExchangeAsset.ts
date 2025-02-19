@@ -4,6 +4,7 @@ import type {
   TForeignAsset,
   TMultiLocation,
   TJunction,
+  TNativeAsset,
 } from '@paraspell/sdk-pjs';
 import {
   isOverrideMultiLocationSpecifier,
@@ -14,6 +15,7 @@ import {
   findAssetByMultiLocation,
   findAssetById,
   isForeignAsset,
+  getNativeAssets,
 } from '@paraspell/sdk-pjs';
 import type { TExchangeNode, TRouterAsset } from '../types';
 import { getExchangeAssets } from './assetsUtils';
@@ -35,7 +37,15 @@ export const getExchangeAsset = (
 
   const assets = getExchangeAssets(exchangeBaseNode, exchange);
 
-  const nativeAssets = assets.filter((asset) => !isForeignAsset(asset));
+  const nativeAssets = assets
+    .filter((asset) => !('id' in asset))
+    .map((asset) => {
+      const foundAsset = getNativeAssets(exchangeBaseNode).find(
+        (otherAsset) => otherAsset.symbol.toLowerCase() === asset.symbol.toLowerCase(),
+      );
+      return { ...asset, isNative: true, multiLocation: foundAsset?.multiLocation };
+    }) as TNativeAsset[];
+
   const otherAssets = assets
     .filter((asset) => isForeignAsset(asset))
     .map((asset) => {
@@ -64,10 +74,15 @@ export const getExchangeAsset = (
     'multilocation' in currency &&
     !isOverrideMultiLocationSpecifier(currency.multilocation)
   ) {
-    asset = findAssetByMultiLocation(
-      otherAssets,
-      currency.multilocation as string | TMultiLocation | TJunction[],
-    );
+    asset =
+      findAssetByMultiLocation(
+        otherAssets,
+        currency.multilocation as string | TMultiLocation | TJunction[],
+      ) ??
+      findAssetByMultiLocation(
+        nativeAssets as TForeignAsset[],
+        currency.multilocation as string | TMultiLocation | TJunction[],
+      );
   } else if ('id' in currency) {
     asset = findAssetById(otherAssets, currency.id);
   } else {

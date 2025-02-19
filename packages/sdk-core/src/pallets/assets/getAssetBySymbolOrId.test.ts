@@ -329,7 +329,8 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssets: [
         {
           symbol: 'DOT',
-          decimals: 10
+          decimals: 10,
+          isNative: true
         }
       ]
     })
@@ -455,7 +456,8 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssets: [
         {
           symbol: 'DOT',
-          decimals: 10
+          decimals: 10,
+          isNative: true
         }
       ]
     })
@@ -510,7 +512,8 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssets: [
         {
           symbol: 'DOT',
-          decimals: 10
+          decimals: 10,
+          isNative: true
         }
       ]
     })

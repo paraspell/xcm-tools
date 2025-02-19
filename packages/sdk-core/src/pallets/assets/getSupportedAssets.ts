@@ -1,4 +1,4 @@
-import type { TAsset, TNodeWithRelayChains } from '../../types'
+import type { TAsset, TForeignAsset, TNodeWithRelayChains } from '../../types'
 import { getAssets, getOtherAssets } from './assets'
 import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
@@ -55,7 +55,7 @@ export const getSupportedAssets = (
       supportedAssets.push({
         assetId: wethAsset.assetId,
         symbol: `${wethAsset.symbol}.e`
-      })
+      } as TForeignAsset)
   }
 
   return supportedAssets

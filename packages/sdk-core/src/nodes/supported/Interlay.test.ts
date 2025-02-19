@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { TXTokensTransferOptions, TForeignOrTokenAsset } from '../../types'
+import type {
+  TXTokensTransferOptions,
+  TForeignOrTokenAsset,
+  WithAmount,
+  TNativeAsset
+} from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type Interlay from './Interlay'
@@ -46,8 +51,9 @@ describe('Interlay', () => {
       ...mockInput,
       asset: {
         symbol: 'INTR',
-        amount: '100'
-      }
+        amount: '100',
+        isNative: true
+      } as WithAmount<TNativeAsset>
     }
 
     interlay.transferXTokens(inputWithoutCurrencyID)

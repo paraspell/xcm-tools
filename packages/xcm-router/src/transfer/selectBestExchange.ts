@@ -1,3 +1,4 @@
+import type { TAsset } from '@paraspell/sdk-pjs';
 import { getAssetBySymbolOrId, hasSupportForAsset, type TNode } from '@paraspell/sdk-pjs';
 import { EXCHANGE_NODES } from '../consts';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
@@ -85,8 +86,8 @@ export const selectBestExchange = async (
         {
           ...modifiedOptions,
           feeCalcAddress: modifiedOptions.feeCalcAddress,
-          assetFrom: modifiedOptions.exchange.assetFrom,
-          assetTo: modifiedOptions.exchange.assetTo,
+          assetFrom: modifiedOptions.exchange.assetFrom as TAsset,
+          assetTo: modifiedOptions.exchange.assetTo as TAsset,
         },
         toDestTxFee,
         toExchangeTxFee,

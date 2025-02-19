@@ -59,7 +59,9 @@ describe('AssetsService', () => {
         nativeAssetSymbol: 'DOT',
         isEVM: false,
         supportsDryRunApi: false,
-        nativeAssets: [{ symbol, decimals }],
+        nativeAssets: [
+          { symbol, decimals, isNative: true },
+        ] as paraspellSdk.TNativeAsset[],
         otherAssets: [{ assetId, symbol: 'BSK', decimals }],
       };
 

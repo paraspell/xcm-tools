@@ -48,10 +48,10 @@ describe('getSupportedAssetsTo', () => {
     const dummyExchange: TExchangeNode = 'AcalaDex';
     const dummyNode = { node: 'Acala' } as ExchangeNode;
     vi.mocked(createDexNodeInstance).mockReturnValue(dummyNode);
-    const exchangeAssets = [{ symbol: 'ABC' }, { symbol: 'DEF' }];
+    const exchangeAssets = [{ symbol: 'ABC' }, { symbol: 'DEF' }] as TAsset[];
     vi.mocked(getExchangeAssets).mockReturnValue(exchangeAssets);
     const toNode: TNodeWithRelayChains = 'Astar';
-    vi.mocked(getAssets).mockReturnValue([{ symbol: 'abc' }]);
+    vi.mocked(getAssets).mockReturnValue([{ symbol: 'abc' }] as TAsset[]);
 
     const result = getSupportedAssetsTo(dummyExchange, toNode);
 
@@ -70,8 +70,8 @@ describe('getSupportedAssetsTo', () => {
       return {} as ExchangeNode;
     });
 
-    const assets1 = [{ symbol: 'ABC' }];
-    const assets2 = [{ symbol: 'DEF' }];
+    const assets1 = [{ symbol: 'ABC' }] as TAsset[];
+    const assets2 = [{ symbol: 'DEF' }] as TAsset[];
     vi.mocked(getExchangeAssets).mockImplementation(
       (_node: TNodePolkadotKusama, exchangeNode: TExchangeNode) => {
         if (exchangeNode === 'AcalaDex') return assets1;
@@ -98,8 +98,8 @@ describe('getSupportedAssetsTo', () => {
       return {} as ExchangeNode;
     });
 
-    const assets1 = [{ symbol: 'ABC' }];
-    const assets2 = [{ symbol: 'DEF' }];
+    const assets1 = [{ symbol: 'ABC' }] as TAsset[];
+    const assets2 = [{ symbol: 'DEF' }] as TAsset[];
     vi.mocked(getExchangeAssets).mockImplementation(
       (_node: TNodePolkadotKusama, exchangeNode: TExchangeNode) => {
         if (exchangeNode === 'AcalaDex') return assets1;
@@ -109,7 +109,7 @@ describe('getSupportedAssetsTo', () => {
     );
 
     const toNode = 'Astar';
-    vi.mocked(getAssets).mockReturnValue([{ symbol: 'DEF' }]);
+    vi.mocked(getAssets).mockReturnValue([{ symbol: 'DEF' }] as TAsset[]);
 
     const result = getSupportedAssetsTo(autoSelect, toNode);
 

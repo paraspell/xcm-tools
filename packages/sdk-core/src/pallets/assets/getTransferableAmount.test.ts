@@ -10,7 +10,7 @@ import { getExistentialDeposit } from './assets'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 import { InvalidCurrencyError } from '../../errors'
 import { isForeignAsset } from '../../utils'
-import type { TNodeDotKsmWithRelayChains } from '../../types'
+import type { TAsset, TNativeAsset, TNodeDotKsmWithRelayChains } from '../../types'
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
 
 vi.mock('./balance/getBalanceNative', () => ({
@@ -150,7 +150,7 @@ describe('Transferable Amounts', () => {
     })
 
     it('should throw an error if existential deposit cannot be obtained for the asset', async () => {
-      const noEDAsset = { symbol: 'UNQ' } // no existentialDeposit field
+      const noEDAsset = { symbol: 'UNQ' } as TAsset // no existentialDeposit field
       vi.mocked(getAssetBySymbolOrId).mockReturnValue(noEDAsset)
 
       await expect(
@@ -169,11 +169,13 @@ describe('Transferable Amounts', () => {
   describe('getTransferableAmount', () => {
     const mockCurrency = { symbol: 'UNQ' }
     const nativeAsset = {
-      symbol: 'DOT'
+      symbol: 'DOT',
+      isNative: true
       // Suppose native asset's ED is directly from getExistentialDeposit
-    }
+    } as TNativeAsset
     const foreignAsset = {
       symbol: 'UNQ',
+      assetId: '1',
       existentialDeposit: '1000000000'
     }
 

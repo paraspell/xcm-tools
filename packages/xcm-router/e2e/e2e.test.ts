@@ -22,6 +22,74 @@ describe.sequential('E2E tests', () => {
       expect(hashes.length).toBe(2);
     });
 
+    it('should build a transfer extrinsic without error for DOT to ACA (specified by multi-location) on AcalaDex', async () => {
+      const hashes = await RouterBuilder()
+        .from('Polkadot')
+        .exchange('AcalaDex')
+        .to('Astar')
+        .currencyFrom({ symbol: 'DOT' })
+        .currencyTo({
+          multilocation: {
+            parents: 1,
+            interior: {
+              X2: [
+                {
+                  Parachain: 2000,
+                },
+                {
+                  GeneralKey: {
+                    length: 2,
+                    data: '0x0000000000000000000000000000000000000000000000000000000000000000',
+                  },
+                },
+              ],
+            },
+          },
+        })
+        .amount('5000000000')
+        .senderAddress('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
+        .recipientAddress('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
+        .slippagePct('0.01')
+        .buildTransactions();
+
+      expect(hashes).toBeDefined();
+      expect(hashes.length).toBe(2);
+    });
+
+    it('should build a transfer extrinsic without error for ACA to DOT (specified by multi-location) on AcalaDex', async () => {
+      const hashes = await RouterBuilder()
+        .from('Acala')
+        .exchange('AcalaDex')
+        .to('Astar')
+        .currencyFrom({
+          multilocation: {
+            parents: 1,
+            interior: {
+              X2: [
+                {
+                  Parachain: 2000,
+                },
+                {
+                  GeneralKey: {
+                    length: 2,
+                    data: '0x0000000000000000000000000000000000000000000000000000000000000000',
+                  },
+                },
+              ],
+            },
+          },
+        })
+        .currencyTo({ symbol: 'DOT' })
+        .amount('5000000000')
+        .senderAddress('13pahaKHzBr9ojzckDrbLu2KL54g8uANv5GCNmtNwpVp8ugq')
+        .recipientAddress('YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg')
+        .slippagePct('0.01')
+        .buildTransactions();
+
+      expect(hashes).toBeDefined();
+      expect(hashes.length).toBe(1);
+    });
+
     it('should build a transfer extrinsic without error for DOT to ACA on AcalaDex - 1 signature', async () => {
       const hashes = await RouterBuilder()
         .from('Acala')

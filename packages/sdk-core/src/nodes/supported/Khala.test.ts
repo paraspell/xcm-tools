@@ -38,7 +38,7 @@ describe('Khala', () => {
   })
 
   it('should throw InvalidCurrencyError for unsupported currency', () => {
-    const invalidInput = { ...mockInput, asset: { symbol: 'INVALID', amount: '100' } }
+    const invalidInput = { ...mockInput, asset: { symbol: 'INVALID', amount: '100', assetId: '1' } }
 
     expect(() => khala.transferXTransfer(invalidInput)).toThrowError(InvalidCurrencyError)
   })

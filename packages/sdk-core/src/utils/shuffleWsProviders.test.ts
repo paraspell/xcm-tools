@@ -9,9 +9,16 @@ describe('shuffleWsProviders', () => {
     expect(result).toHaveLength(providers.length)
   })
 
-  it('returns the same array reference if node is not "hydration"', () => {
+  it('returns a shuffled copy if node is "Acala"', () => {
     const providers = ['wss://one', 'wss://two', 'wss://three']
     const result = shuffleWsProviders('Acala', providers)
+    expect(result.sort()).toEqual(providers.sort())
+    expect(result).toHaveLength(providers.length)
+  })
+
+  it('returns the same array reference if node is not "hydration"', () => {
+    const providers = ['wss://one', 'wss://two', 'wss://three']
+    const result = shuffleWsProviders('Altair', providers)
     expect(result).toBe(providers)
   })
 

@@ -1,4 +1,4 @@
-import type { TAsset, TCurrencyInput, TNodeWithRelayChains } from '../../types'
+import type { TAsset, TCurrencyInput, TForeignAsset, TNodeWithRelayChains } from '../../types'
 import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
 import { getAssetsObject, getOtherAssets } from './assets'
 import { findAssetById, findAssetBySymbol } from './assetsUtils'
@@ -45,7 +45,9 @@ export const getAssetBySymbolOrId = (
     !isOverrideMultiLocationSpecifier(currency.multilocation)
   ) {
     const resolvedAssets = isEthereumDestination ? getEthereumAssets() : otherAssets
-    asset = findAssetByMultiLocation(resolvedAssets, currency.multilocation)
+    asset =
+      findAssetByMultiLocation(resolvedAssets, currency.multilocation) ??
+      findAssetByMultiLocation(nativeAssets as TForeignAsset[], currency.multilocation)
   } else if ('id' in currency) {
     if (isEthereumDestination) {
       asset =

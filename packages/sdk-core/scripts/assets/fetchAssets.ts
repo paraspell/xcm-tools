@@ -30,6 +30,8 @@ import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
 import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 import { supportsDryRunApi } from './supportsDryRunApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
+import { fetchXcmRegistry, TRegistryAssets } from './fetchXcmRegistry'
+import { getParaId } from '../../src/nodes/config'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -38,6 +40,7 @@ const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]
   const decimals = json.tokenDecimals as string[]
   return symbols.map((symbol, i) => ({
     symbol,
+    isNative: true,
     decimals: decimals[i] ? +decimals[i] : +decimals[0],
     existentialDeposit: fetchExistentialDeposit(api) ?? '0'
   }))
@@ -72,10 +75,57 @@ const fetchNativeAssets = async (
     return 0
   })
 
-  return reordered.map(asset => ({
-    ...asset,
-    existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
-  }))
+  const data = await fetchXcmRegistry()
+
+  const paraId = getParaId(node)
+  const relay = getNode(node).type as 'polkadot' | 'kusama'
+
+  const assets = data.assets[relay].find(item => item.paraID === paraId)?.data as
+    | TRegistryAssets[]
+    | undefined
+
+  const assetsRegistry = data.xcmRegistry.find(item => item.relayChain === relay)?.data
+
+  if (!assets || !assetsRegistry) {
+    return reordered.map(asset => ({
+      ...asset,
+      isNative: true,
+      existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
+    }))
+  }
+
+  return reordered.map(asset => {
+    const matchingGlobalAsset = assets?.find(
+      a => a.symbol.toLowerCase() === asset.symbol.toLowerCase()
+    )
+
+    let xcmInteriorKey = matchingGlobalAsset?.xcmInteriorKey
+
+    if (!xcmInteriorKey) {
+      return {
+        ...asset,
+        isNative: true,
+        existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
+      }
+    }
+
+    const foundAsset = assetsRegistry[xcmInteriorKey]
+
+    if (!foundAsset || !foundAsset.xcmV1MultiLocation) {
+      return {
+        ...asset,
+        isNative: true,
+        existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
+      }
+    }
+
+    return {
+      ...asset,
+      isNative: true,
+      existentialDeposit: asset.existentialDeposit?.replace(/,/g, ''),
+      multiLocation: capitalizeMultiLocation(foundAsset.xcmV1MultiLocation.v1)
+    }
+  })
 }
 
 const fetchOtherAssetsDefault = async (
@@ -121,7 +171,7 @@ const fetchOtherAssetsDefault = async (
   return results.filter(asset => asset.symbol !== null)
 }
 
-const fetchNativeAssetsCurio = async (api: ApiPromise, query: string) => {
+const fetchNativeAssetsCurio = async (api: ApiPromise, query: string): Promise<TNativeAsset[]> => {
   const [module, section] = query.split('.')
   const res = await api.query[module][section].entries()
   return res
@@ -143,6 +193,7 @@ const fetchNativeAssetsCurio = async (api: ApiPromise, query: string) => {
     )
     .filter(asset => Object.keys(asset.assetId ?? {})[0] === 'Token')
     .map(asset => ({
+      isNative: true,
       symbol: asset.symbol,
       decimals: asset.decimals,
       existentialDeposit: asset.existentialDeposit

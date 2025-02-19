@@ -1,6 +1,6 @@
 import type { Asset, TradeRouter } from '@galacticcouncil/sdk';
 import type { TSwapOptions } from '../../../types';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
+import type { Extrinsic, TAsset } from '@paraspell/sdk-pjs';
 import { getAssetDecimals, type TNode } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 import { getAssetInfo, getMinAmountOut } from './utils';
@@ -29,7 +29,7 @@ export const calculateFee = async (
 
   const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
     symbol: node === 'Hydration' ? 'HDX' : 'BSX',
-  });
+  } as TAsset);
 
   if (nativeCurrencyInfo === undefined) {
     throw new Error('Native currency not found');

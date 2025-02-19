@@ -60,7 +60,7 @@ export const buildFromExchangeExtrinsic = ({
     .from(baseNode)
     .to(destination.node)
     .currency({
-      ...getCurrencySelection(baseNode, assetTo),
+      ...getCurrencySelection(baseNode, assetTo as TAsset),
       amount,
     })
     .address(destination.address)

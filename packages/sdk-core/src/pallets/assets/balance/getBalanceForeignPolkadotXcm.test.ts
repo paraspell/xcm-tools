@@ -83,7 +83,8 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     await expect(
       getBalanceForeignPolkadotXcm(mockApi, 'Moonriver', 'some-address', {
-        symbol: 'DOT'
+        symbol: 'DOT',
+        isNative: true
       })
     ).rejects.toThrowError(InvalidCurrencyError)
   })

@@ -81,6 +81,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
     nativeAssetSymbol: 'ETH',
     nativeAssets: [
       {
+        isNative: true,
         symbol: 'ETH',
         decimals: 18
       }

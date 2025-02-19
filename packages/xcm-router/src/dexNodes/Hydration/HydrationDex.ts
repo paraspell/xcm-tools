@@ -1,3 +1,4 @@
+import type { TAsset } from '@paraspell/sdk-pjs';
 import { getAssetDecimals, InvalidCurrencyError, type Extrinsic } from '@paraspell/sdk-pjs';
 import ExchangeNode from '../DexNode';
 import { PoolService, TradeRouter, PoolType } from '@galacticcouncil/sdk';
@@ -24,10 +25,10 @@ class HydrationExchangeNode extends ExchangeNode {
     );
     const currencyFromInfo = await getAssetInfo(tradeRouter, {
       symbol: assetFrom.symbol,
-    });
+    } as TAsset);
     const currencyToInfo = await getAssetInfo(tradeRouter, {
       symbol: assetTo.symbol,
-    });
+    } as TAsset);
 
     if (currencyFromInfo === undefined) {
       throw new InvalidCurrencyError("Currency from doesn't exist");
@@ -82,7 +83,7 @@ class HydrationExchangeNode extends ExchangeNode {
 
     const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
       symbol: this.node === 'Hydration' ? 'HDX' : 'BSX',
-    });
+    } as TAsset);
 
     if (nativeCurrencyInfo === undefined) {
       throw new InvalidCurrencyError('Native currency not found');

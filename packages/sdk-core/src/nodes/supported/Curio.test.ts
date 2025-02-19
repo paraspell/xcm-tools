@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { TXTokensTransferOptions, TForeignOrTokenAsset } from '../../types'
+import type {
+  TXTokensTransferOptions,
+  TForeignOrTokenAsset,
+  WithAmount,
+  TNativeAsset
+} from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type Curio from './Curio'
@@ -46,8 +51,9 @@ describe('Curio', () => {
       ...mockInput,
       asset: {
         symbol: 'CUR',
-        amount: '100'
-      }
+        amount: '100',
+        isNative: true
+      } as WithAmount<TNativeAsset>
     }
 
     curio.transferXTokens(inputWithoutCurrencyID)

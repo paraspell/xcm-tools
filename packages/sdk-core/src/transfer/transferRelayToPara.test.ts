@@ -6,6 +6,7 @@ import type { IPolkadotApi } from '../api'
 import type ParachainNode from '../nodes/ParachainNode'
 import { getRelayChainSymbol } from '../pallets/assets'
 import { resolveTNodeFromMultiLocation } from '../pallets/xcmPallet/utils'
+import type { TAsset, WithAmount } from '../types'
 import { Version, type TMultiLocation, type TRelayToParaOptions } from '../types'
 
 vi.mock('../utils', () => ({
@@ -59,7 +60,7 @@ describe('transferRelayToPara', () => {
       api: apiMock,
       origin: 'Polkadot',
       destination: {} as TMultiLocation,
-      asset: { symbol: 'DOT', amount: 100 },
+      asset: { symbol: 'DOT', amount: 100 } as WithAmount<TAsset>,
       address: 'some-address'
     }
 
@@ -78,7 +79,7 @@ describe('transferRelayToPara', () => {
       api: apiMock,
       origin: 'Polkadot',
       destination: 'Astar',
-      asset: { symbol: 'DOT', amount: 100 },
+      asset: { symbol: 'DOT', amount: 100 } as WithAmount<TAsset>,
       address: 'some-address'
     }
 
@@ -94,7 +95,7 @@ describe('transferRelayToPara', () => {
       api: apiMock,
       origin: 'Polkadot',
       destination: {} as TMultiLocation,
-      asset: { symbol: 'DOT', amount: 100 },
+      asset: { symbol: 'DOT', amount: 100 } as WithAmount<TAsset>,
       address: 'some-address'
     }
 
@@ -120,7 +121,7 @@ describe('transferRelayToPara', () => {
       api: apiMock,
       origin: 'Polkadot',
       destination: 'Astar',
-      asset: { symbol: 'DOT', amount: 100 },
+      asset: { symbol: 'DOT', amount: 100 } as WithAmount<TAsset>,
       address: 'some-address'
     }
 
@@ -147,7 +148,7 @@ describe('transferRelayToPara', () => {
       api: apiMock,
       origin: 'Polkadot',
       destination: 'Astar',
-      asset: { symbol: 'DOT', amount: 100 },
+      asset: { symbol: 'DOT', amount: 100 } as WithAmount<TAsset>,
       address: 'some-address'
     }
 
@@ -159,7 +160,7 @@ describe('transferRelayToPara', () => {
       api: apiMock,
       origin: 'Polkadot',
       destination: 'Astar',
-      asset: { symbol: 'DOT', amount: 100 },
+      asset: { symbol: 'DOT', amount: 100 } as WithAmount<TAsset>,
       address: 'some-address',
       paraIdTo: 2000,
       version: Version.V3

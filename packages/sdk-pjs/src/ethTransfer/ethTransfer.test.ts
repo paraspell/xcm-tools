@@ -5,7 +5,7 @@ import { toPolkadotV2, type Context } from '@snowbridge/api'
 import { transferEthToPolkadot } from './ethTransfer'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
-import type { IPolkadotApi, TEvmBuilderOptions } from '@paraspell/sdk-core'
+import type { IPolkadotApi, TAsset, TEvmBuilderOptions } from '@paraspell/sdk-core'
 import {
   getAssetBySymbolOrId,
   getParaId,
@@ -155,7 +155,7 @@ describe('transferEthToPolkadot', () => {
   })
 
   it('throws error if asset has no asset id', async () => {
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: '' })
+    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: '' } as TAsset)
 
     const options: TEvmBuilderOptions<TPjsApi, Extrinsic> = {
       api: {} as IPolkadotApi<TPjsApi, Extrinsic>,

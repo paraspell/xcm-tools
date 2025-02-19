@@ -3,7 +3,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { AssetsController } from './assets.controller.js';
 import { AssetsService } from './assets.service.js';
-import type { TAsset, TNode, TNodeAssets } from '@paraspell/sdk';
+import type { TAsset, TNativeAsset, TNode, TNodeAssets } from '@paraspell/sdk';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import type { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
@@ -42,7 +42,7 @@ describe('AssetsController', () => {
       relayChainAssetSymbol: 'KSM',
       isEVM: false,
       supportsDryRunApi: false,
-      nativeAssets: [{ symbol, decimals }],
+      nativeAssets: [{ symbol, decimals, isNative: true }],
       otherAssets: [{ assetId: '234123123', symbol: 'FKK', decimals }],
       nativeAssetSymbol: symbol,
     } as TNodeAssets;
@@ -107,7 +107,9 @@ describe('AssetsController', () => {
 
   describe('getNativeAssets', () => {
     it('should return native assets for a valid node', () => {
-      const mockResult = [{ symbol, decimals }];
+      const mockResult = [
+        { symbol, decimals, isNative: true },
+      ] as TNativeAsset[];
       const spy = vi
         .spyOn(assetsService, 'getNativeAssets')
         .mockReturnValue(mockResult);

@@ -122,6 +122,7 @@ describe('Hydration', () => {
       mockInput.destination = 'AssetHubPolkadot'
       mockInput.asset = {
         symbol: 'DOT',
+        assetId: '1',
         amount: '1000'
       }
 
