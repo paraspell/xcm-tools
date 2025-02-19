@@ -99,8 +99,8 @@ const XcmSdk = () => {
         >
           <List.Item>
             <b>Multi-chain compatibility</b> – Seamlessly interact with every
-            XCM compatible Parachain or Relay chain across the Polkadot and Kusama
-            ecosystems.
+            XCM compatible Parachain or Relay chain across the Polkadot and
+            Kusama ecosystems.
           </List.Item>
           <List.Item>
             <b>Extensive asset support</b> – Manage both native and foreign

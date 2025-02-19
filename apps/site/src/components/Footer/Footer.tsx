@@ -75,7 +75,8 @@ export const Footer = () => {
         <div className={classes.logo}>
           <Image src="logo.png" p={8} />
           <Text size="xs" c="dimmed" className={classes.description}>
-            A XCM Tool set designed to unify the cross-chain experience on Polkadot.
+            A XCM Tool set designed to unify the cross-chain experience on
+            Polkadot.
           </Text>
         </div>
         <div className={classes.groups}>

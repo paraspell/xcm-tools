@@ -34,7 +34,11 @@ function ContactIcon({
 const MOCKDATA = [
   { title: "Email", description: "info.lightspell@gmail.com", icon: IconAt },
   { title: "Address", description: "Bratislava, Slovakia", icon: IconMapPin },
-  { title: "Working hours", description: "9 a.m. – 5 p.m. Mon. - Fri.", icon: IconSun },
+  {
+    title: "Working hours",
+    description: "9 a.m. – 5 p.m. Mon. - Fri.",
+    icon: IconSun,
+  },
 ];
 
 export function ContactIconsList() {
