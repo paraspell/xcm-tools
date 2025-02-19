@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.2.1...xcm-router-v2.2.2) (2025-02-19)
+
+
+### Bug Fixes
+
+* **sdk-core:** Add multi-locations to native assets ([8e40da1](https://github.com/paraspell/xcm-tools/commit/8e40da1450722e37de7cf0365a806e424b58c453))
+
 ## [2.2.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.2.0...xcm-router-v2.2.1) (2025-02-13)
 
 
