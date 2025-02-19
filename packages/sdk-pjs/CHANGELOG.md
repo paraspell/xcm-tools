@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.5.0...sdk-pjs-v8.5.1) (2025-02-19)
+
+
+### Bug Fixes
+
+* **sdk-core:** Add multi-locations to native assets ([8e40da1](https://github.com/paraspell/xcm-tools/commit/8e40da1450722e37de7cf0365a806e424b58c453))
+
 ## [8.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.4.2...sdk-pjs-v8.5.0) (2025-02-18)
 
 
