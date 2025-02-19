@@ -14,7 +14,10 @@ type TBaseAsset = {
   existentialDeposit?: string
 }
 
-export type TNativeAsset = TBaseAsset
+export type TNativeAsset = TBaseAsset & {
+  isNative: true
+  multiLocation?: object
+}
 
 export type TForeignAsset = TBaseAsset &
   AtLeastOne<{

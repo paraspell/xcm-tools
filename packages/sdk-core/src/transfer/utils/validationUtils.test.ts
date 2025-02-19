@@ -7,8 +7,10 @@ import {
   validateDestination
 } from './validationUtils'
 import type {
+  TAsset,
   TCurrencyInput,
   TDestination,
+  TNativeAsset,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
   TSendOptions
@@ -284,10 +286,10 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' }
+    const asset = { symbol: 'TEST' } as TAsset
 
     vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
-    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'TEST' }])
+    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'TEST', isNative: true }])
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
       InvalidCurrencyError
@@ -306,10 +308,10 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = true
-    const asset = { symbol: 'TEST' }
+    const asset = { symbol: 'TEST' } as TAsset
 
     vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
-    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'TEST' }])
+    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'TEST' } as TNativeAsset])
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
@@ -323,7 +325,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' }
+    const asset = { symbol: 'TEST' } as TAsset
 
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
     vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
@@ -340,7 +342,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' }
+    const asset = { symbol: 'TEST' } as TAsset
 
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
     vi.mocked(getDefaultPallet).mockReturnValue('PolkadotXcm')
@@ -357,7 +359,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' }
+    const asset = { symbol: 'TEST' } as TAsset
 
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
     vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
@@ -374,11 +376,14 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'DOT' }
+    const asset = { symbol: 'DOT' } as TAsset
 
     vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
-    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'DOT' }, { symbol: 'KSM' }])
+    vi.mocked(getNativeAssets).mockReturnValue([
+      { symbol: 'DOT', isNative: true },
+      { symbol: 'KSM', isNative: true }
+    ])
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
@@ -392,7 +397,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'UNSUPPORTED' }
+    const asset = { symbol: 'UNSUPPORTED' } as TAsset
 
     vi.mocked(hasSupportForAsset).mockReturnValue(false)
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -414,7 +419,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'SUPPORTED' }
+    const asset = { symbol: 'SUPPORTED' } as TAsset
 
     vi.mocked(hasSupportForAsset).mockReturnValue(true)
 
@@ -476,7 +481,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' }
+    const asset = { symbol: 'TEST' } as TAsset
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
@@ -490,7 +495,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' }
+    const asset = { symbol: 'TEST' } as TAsset
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
@@ -504,7 +509,7 @@ describe('validateAssetSupport', () => {
 
     const assetCheckEnabled = true
     const isBridge = false
-    const asset = { symbol: 'TEST' }
+    const asset = { symbol: 'TEST' } as TAsset
 
     expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })

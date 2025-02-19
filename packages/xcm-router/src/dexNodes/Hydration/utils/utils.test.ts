@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { bnum, type Asset, type TradeRouter } from '@galacticcouncil/sdk';
-import type { TAsset, TCurrencyCoreV1, TNode } from '@paraspell/sdk-pjs';
+import type { TAsset, TNode } from '@paraspell/sdk-pjs';
 import { calculateSlippage, getAssetInfo, getMinAmountOut } from './utils';
 
 describe('getAssetInfo', () => {
@@ -21,7 +21,7 @@ describe('getAssetInfo', () => {
   it('should return asset by symbol if found', async () => {
     const spy = vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
-    const currency: TCurrencyCoreV1 = { symbol: 'BTC' };
+    const currency = { symbol: 'BTC' } as TAsset;
     const asset = await getAssetInfo(mockTradeRouter, currency);
 
     expect(asset).toEqual(mockAssets[0]);
@@ -41,7 +41,7 @@ describe('getAssetInfo', () => {
   it('should return undefined if asset is not found', async () => {
     const spy = vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
-    const currency: TCurrencyCoreV1 = { symbol: 'XRP' }; // Non-existent symbol
+    const currency: TAsset = { symbol: 'XRP' } as TAsset; // Non-existent symbol
     const asset = await getAssetInfo(mockTradeRouter, currency);
 
     expect(asset).toBeUndefined();

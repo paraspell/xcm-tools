@@ -4,6 +4,7 @@ export const isForeignAsset = (asset: TAsset): asset is TForeignAsset => {
   return (
     typeof asset === 'object' &&
     asset !== null &&
-    ('assetId' in asset || 'multiLocation' in asset || 'xcmInterior' in asset)
+    ('assetId' in asset || 'multiLocation' in asset || 'xcmInterior' in asset) &&
+    !('isNative' in asset)
   )
 }

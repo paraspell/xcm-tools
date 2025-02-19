@@ -4,7 +4,7 @@ import {
   InvalidCurrencyError,
   NodeNotSupportedError
 } from '../../errors'
-import type { TXTokensTransferOptions } from '../../types'
+import type { TNativeAsset, TXTokensTransferOptions, WithAmount } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type Bajun from './Bajun'
@@ -50,8 +50,9 @@ describe('Bajun', () => {
       ...mockInput,
       asset: {
         symbol: 'INVALID',
+        isNative: true,
         amount: '100'
-      }
+      } as WithAmount<TNativeAsset>
     }
     vi.spyOn(bajun, 'getNativeAssetSymbol').mockReturnValue('BAJ')
 

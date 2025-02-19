@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getAssetMultiLocation } from './getAssetMultiLocation'
-import type { TNodeWithRelayChains } from '../../types'
+import type { TAsset, TNativeAsset, TNodeWithRelayChains } from '../../types'
 import { Parents } from '../../types'
 import { isForeignAsset } from '../../utils'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
@@ -27,7 +27,7 @@ describe('getAssetMultiLocation', () => {
   })
 
   it('returns null if asset is not a foreign asset', () => {
-    const asset = { symbol: 'TEST' }
+    const asset = { symbol: 'TEST', isNative: true } as TNativeAsset
     vi.mocked(getAssetBySymbolOrId).mockReturnValue(asset)
     vi.mocked(isForeignAsset).mockReturnValue(false)
     const result = getAssetMultiLocation(node, currency)
@@ -62,7 +62,7 @@ describe('getAssetMultiLocation', () => {
   })
 
   it('returns null if neither multiLocation nor xcmInterior exists', () => {
-    const asset = { symbol: 'TEST' }
+    const asset = { symbol: 'TEST' } as TAsset
     vi.mocked(getAssetBySymbolOrId).mockReturnValue(asset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
     const result = getAssetMultiLocation(node, currency)

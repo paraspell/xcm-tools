@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
-import type { TXTokensTransferOptions, TReserveAsset } from '../../types'
+import type { TXTokensTransferOptions, TReserveAsset, WithAmount, TNativeAsset } from '../../types'
 import { Version } from '../../types'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type CrustShadow from './CrustShadow'
@@ -56,8 +56,9 @@ describe('CrustShadow', () => {
       ...mockInput,
       asset: {
         symbol: 'INVALID',
-        amount: '100'
-      }
+        amount: '100',
+        isNative: true
+      } as WithAmount<TNativeAsset>
     }
     vi.spyOn(crustShadow, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
 

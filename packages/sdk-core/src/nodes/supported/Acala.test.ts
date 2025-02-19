@@ -45,7 +45,7 @@ describe('Acala', () => {
       ...mockInput,
       asset: {
         symbol: 'ACA',
-        assetId: 1,
+        assetId: '1',
         amount: '100'
       }
     }

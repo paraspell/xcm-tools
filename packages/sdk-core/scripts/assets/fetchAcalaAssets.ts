@@ -48,6 +48,7 @@ export const fetchAcalaNativeAssets = async (
   query: string
 ): Promise<TNativeAsset[]> => {
   return (await fetchAssets(api, query, true)).map(asset => ({
+    isNative: true,
     symbol: asset.symbol,
     decimals: asset.decimals,
     existentialDeposit: asset.existentialDeposit

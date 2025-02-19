@@ -3,7 +3,7 @@ import { getExistentialDeposit } from './getExistentialDeposit'
 import { InvalidCurrencyError } from '../../errors'
 import { getAssetsObject } from './assets' // Adjust path accordingly
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
-import type { TNodeWithRelayChains, TCurrencyCore, TNodeAssets } from '../../types'
+import type { TNodeWithRelayChains, TCurrencyCore, TNodeAssets, TAsset } from '../../types'
 
 vi.mock('./assets', () => ({
   getAssetsObject: vi.fn()
@@ -58,6 +58,7 @@ describe('getExistentialDeposit', () => {
 
     mockedGetAssetBySymbolOrId.mockReturnValue({
       symbol: 'KSM',
+      assetId: '1',
       existentialDeposit: ed
     })
 
@@ -76,7 +77,7 @@ describe('getExistentialDeposit', () => {
 
     mockedGetAssetBySymbolOrId.mockReturnValue({
       symbol: 'KSM' // no existentialDeposit field
-    })
+    } as TAsset)
 
     const result = getExistentialDeposit(node, currency)
     expect(result).toBeNull()
@@ -98,7 +99,7 @@ describe('getExistentialDeposit', () => {
     mockedGetAssetBySymbolOrId.mockReturnValueOnce({
       symbol: 'DOT',
       existentialDeposit: ed
-    })
+    } as TAsset)
 
     const result = getExistentialDeposit(node, currency)
     expect(getAssetBySymbolOrId).toHaveBeenCalledTimes(2)

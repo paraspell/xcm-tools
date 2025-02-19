@@ -2,7 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type {
   TXTokensTransferOptions,
   TPolkadotXCMTransferOptions,
-  TSendInternalOptions
+  TSendInternalOptions,
+  TAsset,
+  WithAmount
 } from '../../types'
 import { Parents, Version } from '../../types'
 import XTokensTransferImpl from '../../pallets/xTokens'
@@ -86,7 +88,7 @@ describe('BifrostPolkadot', () => {
   it('should call transferPolkadotXCM with correct parameters for DOT transfer', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-    const asset = { symbol: 'DOT', amount: '100' }
+    const asset = { symbol: 'DOT', amount: '100' } as WithAmount<TAsset>
 
     await bifrostPolkadot.transferPolkadotXCM({
       ...mockPolkadotXCMInput,

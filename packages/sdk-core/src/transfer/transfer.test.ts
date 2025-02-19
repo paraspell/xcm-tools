@@ -14,7 +14,12 @@ import {
 } from './utils/validationUtils'
 import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import { getNode } from '../utils'
-import type { TCurrencyInput, TMultiLocationValueWithOverride, TSendOptions } from '../types'
+import type {
+  TAsset,
+  TCurrencyInput,
+  TMultiLocationValueWithOverride,
+  TSendOptions
+} from '../types'
 
 vi.mock('../utils', () => ({
   getNode: vi.fn(),
@@ -69,7 +74,7 @@ describe('send', () => {
     vi.mocked(getNode).mockReturnValue(originNodeMock)
     vi.mocked(isBridgeTransfer).mockReturnValue(false)
     vi.mocked(determineAssetCheckEnabled).mockReturnValue(true)
-    vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' })
+    vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAsset)
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
   })
 

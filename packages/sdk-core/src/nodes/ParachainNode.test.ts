@@ -264,7 +264,10 @@ describe('ParachainNode', () => {
   })
 
   it('should create currency spec', () => {
-    const result = node.createCurrencySpec('100', 'ParaToRelay', Version.V3, { symbol: 'DOT' })
+    const result = node.createCurrencySpec('100', 'ParaToRelay', Version.V3, {
+      symbol: 'DOT',
+      isNative: true
+    })
 
     expect(result).toBe('currencySpec')
   })

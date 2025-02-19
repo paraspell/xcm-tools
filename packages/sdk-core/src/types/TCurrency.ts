@@ -32,16 +32,6 @@ export type TCurrencyCore =
 export type TCurrencyCoreWithFee = WithAmount<TCurrencyCore> & { isFeeAsset?: boolean }
 export type TMultiAssetWithFee = TMultiAsset & { isFeeAsset?: boolean }
 
-export type TCurrencyCoreV1 =
-  | {
-      symbol: string
-    }
-  | {
-      id: TCurrency
-    }
-
-export type TCurrencyCoreV1WithAmount = WithAmount<TCurrencyCoreV1>
-
 export type TMultiLocationValue = string | TMultiLocation | TJunction[]
 
 export type TMultiLocationValueWithOverride = TMultiLocationValue | TOverrideMultiLocationSpecifier

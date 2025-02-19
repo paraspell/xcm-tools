@@ -11,7 +11,7 @@ describe('getExchangeAssetByOriginAsset', () => {
   it('returns undefined when no candidates are found by symbol', () => {
     vi.spyOn(sdkPjs, 'findBestMatches').mockReturnValue([]);
 
-    const originAsset = { symbol: 'BTC' };
+    const originAsset = { symbol: 'BTC' } as sdkPjs.TAsset;
     const result = getExchangeAssetByOriginAsset('Acala', 'AcalaDex', originAsset);
 
     expect(result).toBeUndefined();
@@ -23,7 +23,7 @@ describe('getExchangeAssetByOriginAsset', () => {
 
     const isForeignAssetSpy = vi.spyOn(sdkPjs, 'isForeignAsset');
 
-    const originAsset = { symbol: 'DOT' };
+    const originAsset = { symbol: 'DOT' } as sdkPjs.TAsset;
     const result = getExchangeAssetByOriginAsset('Acala', 'AcalaDex', originAsset);
 
     expect(result).toBe(mockAsset);
@@ -35,7 +35,7 @@ describe('getExchangeAssetByOriginAsset', () => {
     vi.spyOn(sdkPjs, 'findBestMatches').mockReturnValue(candidates);
     vi.spyOn(sdkPjs, 'isForeignAsset').mockReturnValue(false);
 
-    const originAsset = { symbol: 'DOT' };
+    const originAsset = { symbol: 'DOT' } as sdkPjs.TAsset;
     const result = getExchangeAssetByOriginAsset('Acala', 'AcalaDex', originAsset);
 
     expect(result).toBeUndefined();

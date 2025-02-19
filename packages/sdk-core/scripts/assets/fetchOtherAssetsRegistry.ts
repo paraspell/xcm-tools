@@ -14,7 +14,7 @@ export const fetchAssets = async (node: TNodePolkadotKusama): Promise<TRegistryA
   const data = await fetchXcmRegistry()
 
   const paraId = getParaId(node)
-  const relay = getNode(node).type
+  const relay = getNode(node).type as 'polkadot' | 'kusama'
 
   const isAssetHub = node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
 

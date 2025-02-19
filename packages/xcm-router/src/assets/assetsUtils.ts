@@ -19,7 +19,7 @@ export const getExchangeAssets = (
       ...(foundAsset?.multiLocation !== undefined
         ? { multiLocation: foundAsset.multiLocation }
         : {}),
-    };
+    } as TAsset;
   });
 };
 

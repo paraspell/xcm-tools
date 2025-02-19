@@ -3,6 +3,7 @@ import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 import type { TBuildTransactionsOptionsModified, TWeight } from '../types';
 import BigNumber from 'bignumber.js';
 import { calculateTxFee, getTxWeight } from '../utils';
+import type { TAsset } from '@paraspell/sdk-pjs';
 
 export const calculateFromExchangeFee = async (options: TBuildTransactionsOptionsModified) => {
   const { exchange, destination, amount, feeCalcAddress } = options;
@@ -38,8 +39,8 @@ export const createSwapTx = async (
     options.exchange.api,
     {
       ...options,
-      assetFrom: options.exchange.assetFrom,
-      assetTo: options.exchange.assetTo,
+      assetFrom: options.exchange.assetFrom as TAsset,
+      assetTo: options.exchange.assetTo as TAsset,
     },
     toDestTxFee,
     toExchangeTxFee,

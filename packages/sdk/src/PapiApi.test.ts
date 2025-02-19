@@ -375,7 +375,7 @@ describe('PapiApi', () => {
       papiApi.setApi(mockPolkadotClient)
       const balance = await papiApi.getBalanceForeignBifrost('some_address', {
         symbol: 'BNC'
-      })
+      } as sdkCore.TAsset)
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Tokens.Accounts.getValue).toHaveBeenCalledWith(

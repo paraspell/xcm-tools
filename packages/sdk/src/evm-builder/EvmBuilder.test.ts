@@ -3,7 +3,7 @@ import type { Signer } from 'ethers'
 import { EvmBuilder } from './EvmBuilder'
 import type {
   IPolkadotApi,
-  TCurrencyCoreV1WithAmount,
+  TCurrencyInputWithAmount,
   TNodePolkadotKusama
 } from '@paraspell/sdk-core'
 
@@ -15,13 +15,13 @@ const mockApi = {
 describe('EvmBuilderClass', () => {
   let signer: Signer
   let node: TNodePolkadotKusama
-  let currency: TCurrencyCoreV1WithAmount
+  let currency: TCurrencyInputWithAmount
   let address: string
 
   beforeEach(() => {
     signer = {} as Signer
     node = {} as TNodePolkadotKusama
-    currency = {} as TCurrencyCoreV1WithAmount
+    currency = {} as TCurrencyInputWithAmount
     address = '0x1234567890abcdef'
   })
 
