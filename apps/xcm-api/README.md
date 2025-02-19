@@ -6,7 +6,7 @@
   <h4 align="center"> Enhance the cross-chain experience of your Polkadot/Kusama decentralized application.</h4>
   <p align="center">
     <a href="https://github.com/paraspell/xcm-sdk/actions">
-      <img alt="build" src="https://github.com/paraspell/xcm-api/actions/workflows/ci.yml/badge.svg" />
+      <img alt="build" src="https://github.com/paraspell/xcm-tools/actions/workflows/ci.yml/badge.svg" />
     </a>
   </p>
   <p align="center"> Now live at https://api.lightspell.xyz/</p>

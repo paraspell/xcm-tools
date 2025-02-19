@@ -11,7 +11,7 @@
       <img alt="downloads" src="https://img.shields.io/npm/dm/@paraspell/sdk?style=flat-square" />
     </a>
     <a href="https://github.com/paraspell/xcm-sdk/actions">
-      <img alt="build" src="https://github.com/paraspell/xcm-sdk/actions/workflows/release.yml/badge.svg" />
+      <img alt="build" src="https://github.com/paraspell/xcm-tools/actions/workflows/ci.yml/badge.svg" />
     </a>
     <a href="https://snyk.io/test/github/paraspell/sdk">
       <img alt="snyk" src="https://snyk.io/test/github/paraspell/sdk/badge.svg" />
@@ -225,7 +225,7 @@ const result = await Builder(API /*optional*/)
         .dryRun(SENDER_ADDRESS)
 
 //Function pattern
-getDryRun({api /*optional*/,  node, address /*sender address*/, tx /* Extrinsic object */})
+await getDryRun({api /*optional*/,  node, address /*sender address*/, tx /* Extrinsic object */})
 ```
 
 ### Asset claim:
@@ -334,9 +334,8 @@ await getTransferableAmount({address, node, currency /*- {id: currencyID} | {sym
 //Get all the information about XCM transfer
 await getTransferInfo({from, to, address, destinationAddress, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, api /* api/ws_url_string optional */})
 
-//Get bridge and execution fee for transfer from Parachain to Ethereum. Returns as an object of 2 values
-await getParaEthTransferFees(/*api - optional (Can also be WS port string or array o WS ports. Must be AssetHubPolkadot WS!)*/): [bridgeFee, executionFee]
-
+//Get bridge and execution fee for transfer from Parachain to Ethereum. Returns as an object of 2 values - [bridgeFee, executionFee]
+await getParaEthTransferFees(/*api - optional (Can also be WS port string or array o WS ports. Must be AssetHubPolkadot WS!)*/)
 ```
 
 ## 💻 Tests

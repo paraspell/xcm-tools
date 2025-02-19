@@ -34,7 +34,7 @@ const data = [
     icon: IconRocket,
     title: "Simplified Development",
     description:
-      "Achieve cross-chain swaps with a single call and three signatures, improving the user experience.",
+      "Achieve cross-chain swaps with a single call and only two signatures, improving the user experience.",
   },
 ];
 

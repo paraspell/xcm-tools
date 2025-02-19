@@ -1,6 +1,6 @@
 # XCM-Tools Playground 🛝
 
-Following Playground serves as testing/preview tool for our set of state-of-the-art XCM tools: [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk), [XCM API](https://github.com/paraspell/xcm-tools/tree/main/apps/xcm-api) & [XCM Router](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-router)
+Following Playground serves as testing/preview tool for set of state-of-the-art XCM tools: [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk), [XCM API](https://github.com/paraspell/xcm-tools/tree/main/apps/xcm-api), [XCM Router](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-router) & [XCM Analyser](https://github.com/paraspell/xcm-tools/tree/main/packages/xcm-analyser)
 
 The playground is now also deployed: [https://playground.paraspell.xyz/](https://playground.paraspell.xyz/)
 

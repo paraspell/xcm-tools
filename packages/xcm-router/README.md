@@ -11,7 +11,7 @@
       <img alt="downloads" src="https://img.shields.io/npm/dm/@paraspell/xcm-router?style=flat-square" />
     </a>
     <a href="https://github.com/paraspell/xcm-sdk/actions">
-      <img alt="build" src="https://github.com/paraspell/xcm-router/actions/workflows/ci.yml/badge.svg" />
+      <img alt="build" src="https://github.com/paraspell/xcm-tools/actions/workflows/ci.yml/badge.svg" />
     </a>
   </p>
   <p>XCM Router documentation <a href = "https://paraspell.github.io/docs/router/getting-strtd" \>[here]</p>
@@ -22,7 +22,7 @@
 <br /><br />
 
 ### Introduction
-XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within one call and three signatures. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **8 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **524** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
+XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within **one call and only two signatures**. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **8 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **524** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
 
 **Exchanges implemented:**
 - Acala / 36 Pools available

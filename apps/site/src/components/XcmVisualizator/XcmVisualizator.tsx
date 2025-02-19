@@ -78,6 +78,17 @@ const XcmVisualizator = () => (
         >
           Open XCM Visualizator
         </Button>
+        <Button
+            variant="outline"
+            component="a"
+            href="https://paraspell.github.io/docs/visualizator/user-guide.html"
+            target="_blank"
+            size="lg"
+            radius="lg"
+            mt="xl"
+          >
+            User guide
+          </Button>
       </div>
     </div>
     <Box

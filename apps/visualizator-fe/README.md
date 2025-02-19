@@ -7,7 +7,7 @@
   <h4 align="center">Effortlessly Decode and Visualize Complex Cross-Chain Messaging Data.</h4>
   <p align="center">
     <a href="https://github.com/paraspell/xcm-sdk/actions">
-      <img alt="build" src="https://github.com/paraspell/xcm-api/actions/workflows/ci.yml/badge.svg" />
+      <img alt="build" src="https://github.com/paraspell/xcm-tools/actions/workflows/ci.yml/badge.svg" />
     </a>
   </p>
   <p align="center"> Now live at https://xcm-visualizator.tech/</p>
@@ -38,7 +38,6 @@ Potential investors or network stakeholders can now observe important details ab
 - Customize the selected time frame
 - Customize colour schemes to make your desired details stand out even more
 - Always have the latest data - Visualizator updates for new XCM messages every day (Automatically)
-- Deployed and ready to try on a live server at https://xcm-visualizator.tech/
 - Open source and 100% free forever
 
 ## Problem addressed
