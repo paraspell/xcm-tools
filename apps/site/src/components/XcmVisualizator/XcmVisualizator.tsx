@@ -86,6 +86,7 @@ const XcmVisualizator = () => (
           size="lg"
           radius="lg"
           mt="xl"
+          ml="md"
         >
           User guide
         </Button>
