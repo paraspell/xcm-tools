@@ -16,7 +16,7 @@ import type {
   TRouterEvent,
   TTransaction,
 } from '@paraspell/xcm-router';
-import { RouterBuilder } from '@paraspell/xcm-router';
+import { createDexNodeInstance, RouterBuilder } from '@paraspell/xcm-router';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
@@ -37,8 +37,16 @@ import {
   showSuccessNotification,
 } from '../../utils/notifications';
 import { VersionBadge } from '../common/VersionBadge';
-import type { TAsset, TMultiLocation } from '@paraspell/sdk-pjs';
-import { isForeignAsset, type TCurrencyInput } from '@paraspell/sdk-pjs';
+import type {
+  TAsset,
+  TMultiLocation,
+  TNodeDotKsmWithRelayChains,
+} from '@paraspell/sdk-pjs';
+import {
+  getOtherAssets,
+  isForeignAsset,
+  type TCurrencyInput,
+} from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers';
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
@@ -80,6 +88,7 @@ export const XcmRouter = () => {
   };
 
   const determineCurrency = (
+    node: TNodeDotKsmWithRelayChains | undefined,
     asset: TAsset,
     isAutoExchange = false,
   ): TCurrencyInput => {
@@ -91,8 +100,6 @@ export const XcmRouter = () => {
       return { symbol: asset.symbol };
     }
 
-    console.log('asset', asset);
-
     if (ethers.isAddress(asset.assetId)) {
       return { symbol: asset.symbol };
     }
@@ -101,6 +108,15 @@ export const XcmRouter = () => {
       return asset.multiLocation
         ? { multilocation: asset.multiLocation as TMultiLocation }
         : { symbol: asset.symbol };
+    }
+
+    const hasDuplicateIds =
+      node &&
+      getOtherAssets(node).filter((other) => other.assetId === asset.assetId)
+        .length > 1;
+
+    if (hasDuplicateIds) {
+      return { symbol: asset.symbol };
     }
 
     if (asset.assetId) return { id: asset.assetId };
@@ -132,8 +148,23 @@ export const XcmRouter = () => {
       .from(from)
       .exchange(exchange)
       .to(to)
-      .currencyFrom(determineCurrency(currencyFrom))
-      .currencyTo(determineCurrency(currencyTo, exchange === undefined))
+      .currencyFrom(
+        determineCurrency(
+          from
+            ? from
+            : exchange
+              ? createDexNodeInstance(exchange).node
+              : undefined,
+          currencyFrom,
+        ),
+      )
+      .currencyTo(
+        determineCurrency(
+          exchange ? createDexNodeInstance(exchange).node : undefined,
+          currencyTo,
+          exchange === undefined,
+        ),
+      )
       .amount(amount)
       .senderAddress(injectorAddress)
       .recipientAddress(recipientAddress)

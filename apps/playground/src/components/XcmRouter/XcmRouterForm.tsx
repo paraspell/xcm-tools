@@ -159,7 +159,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       currencyTo: {
         ...currencyTo,
         assetId: currencyTo.id,
-      },
+      } as TAsset,
     };
 
     onSubmit(transformedValues);
