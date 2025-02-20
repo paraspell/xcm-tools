@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.2.2...xcm-router-v2.2.3) (2025-02-20)
+
+
+### Build System
+
+* **xcm-router:** Update Bifrost DEX SDK 📦 ([fe85f27](https://github.com/paraspell/xcm-tools/commit/fe85f273c6371c27a97e86c57d59b8913f5bff68))
+
 ## [2.2.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.2.1...xcm-router-v2.2.2) (2025-02-19)
 
 
