@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.5.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.5.1...sdk-core-v8.5.2) (2025-02-20)
+
+
+### Build System
+
+* **xcm-router:** Update Bifrost DEX SDK 📦 ([fe85f27](https://github.com/paraspell/xcm-tools/commit/fe85f273c6371c27a97e86c57d59b8913f5bff68))
+
 ## [8.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.5.0...sdk-core-v8.5.1) (2025-02-19)
 
 
