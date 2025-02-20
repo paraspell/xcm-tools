@@ -29,11 +29,11 @@ describe('createApiInstanceForNode', () => {
   })
 
   it('should create an ApiPromise instance with multiple urls', async () => {
-    const urls = ['wss://acala-rpc.publicnode.com', 'wss://acala1-rpc.publicnode.com']
+    const urls = ['wss://altair-rpc.publicnode.com', 'wss://altair-rpc.publicnode.com']
     vi.mocked(getNodeProviders).mockReturnValueOnce(urls)
-    const result = await createApiInstanceForNode(mockApi, 'Acala')
+    const result = await createApiInstanceForNode(mockApi, 'Altair')
 
-    expect(getNodeProviders).toHaveBeenCalledWith('Acala')
+    expect(getNodeProviders).toHaveBeenCalledWith('Altair')
     expect(mockApi.createApiInstance).toHaveBeenCalledWith(urls)
     expect(result).toBe(mockApiPromise)
   })
