@@ -16,7 +16,7 @@ vi.mock('../../../utils', () => ({
 
 describe('buildBeneficiaryInput', () => {
   const apiMock = {
-    createAccountId: vi.fn()
+    accountToHex: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
   it('should return the address if it is a TMultiLocation', () => {
@@ -51,7 +51,7 @@ describe('buildBeneficiaryInput', () => {
     const accountId32 = '0xabcdef'
     vi.mocked(ethers.isAddress).mockReturnValue(false)
 
-    const accountSpy = vi.spyOn(apiMock, 'createAccountId').mockReturnValue(accountId32)
+    const accountSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accountId32)
 
     const result = buildBeneficiaryInput(apiMock, nonEthAddress)
 

@@ -26,7 +26,7 @@ export const getDestination = <TApi, TRes>({
       }
     : {
         AccountId32: {
-          id: api.createAccountId(recipientAddress)
+          id: api.accountToHex(recipientAddress)
         }
       }
 

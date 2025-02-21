@@ -16,7 +16,7 @@ describe('generateAddressMultiLocationV4', () => {
 
   beforeEach(() => {
     apiMock = {
-      createAccountId: vi.fn()
+      accountToHex: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
   })
 
@@ -47,7 +47,7 @@ describe('generateAddressMultiLocationV4', () => {
     const standardAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
     const accIDMock = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
-    const accountIdSpy = vi.spyOn(apiMock, 'createAccountId').mockReturnValue(accIDMock)
+    const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
 
     const result = generateAddressMultiLocationV4(apiMock, standardAddress)
 
@@ -67,7 +67,7 @@ describe('generateAddressMultiLocationV4', () => {
     const invalidEthAddress = '0xinvalidEthAddress'
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
     const accIDMock = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
-    const accountIdSpy = vi.spyOn(apiMock, 'createAccountId').mockReturnValue(accIDMock)
+    const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
 
     const result = generateAddressMultiLocationV4(apiMock, invalidEthAddress)
 

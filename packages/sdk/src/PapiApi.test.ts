@@ -196,24 +196,6 @@ describe('PapiApi', () => {
     })
   })
 
-  describe('createAccountId', () => {
-    it('should return a hex string representation of the AccountId', () => {
-      const address = 'some_address'
-      const mockFixedSizeBinary = {
-        asHex: vi.fn().mockReturnValue('0x1234567890abcdef')
-      }
-      const spy = vi
-        .spyOn(FixedSizeBinary, 'fromAccountId32')
-        .mockReturnValue(mockFixedSizeBinary as unknown as FixedSizeBinary<32>)
-
-      const result = papiApi.createAccountId(address)
-
-      expect(spy).toHaveBeenCalledWith(address)
-      expect(mockFixedSizeBinary.asHex).toHaveBeenCalled()
-      expect(result).toBe('0x1234567890abcdef')
-    })
-  })
-
   describe('callTxMethod', () => {
     it('should create a transaction with the provided module, section, and parameters', () => {
       const serializedCall: TSerializedApiCall = {
@@ -605,7 +587,12 @@ describe('PapiApi', () => {
       const account = 'some_account'
       const hexAccount = '0x1234567890abcdef'
 
-      const spy = vi.spyOn(papiApi, 'createAccountId').mockReturnValue(hexAccount)
+      const mockFixedSizeBinary = {
+        asHex: vi.fn().mockReturnValue('0x1234567890abcdef')
+      }
+      const spy = vi
+        .spyOn(FixedSizeBinary, 'fromAccountId32')
+        .mockReturnValue(mockFixedSizeBinary as unknown as FixedSizeBinary<32>)
 
       const result = papiApi.accountToHex(account)
 
@@ -615,13 +602,13 @@ describe('PapiApi', () => {
 
     it('should return the account if the output should not start with 0x', () => {
       const account = 'some_account'
-      const hexAccount = '0x1234567890abcdef'
+      const hexAccount = '1234567890abcdef'
 
-      const spy = vi.spyOn(papiApi, 'createAccountId').mockReturnValue(hexAccount)
+      const spy = vi.spyOn(papiApi, 'accountToHex').mockReturnValue(hexAccount)
 
       const result = papiApi.accountToHex(account, false)
 
-      expect(spy).toHaveBeenCalledWith(account)
+      expect(spy).toHaveBeenCalledWith(account, false)
       expect(result).toBe('1234567890abcdef')
     })
   })
