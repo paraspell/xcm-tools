@@ -26,7 +26,7 @@ export const generateAddressPayload = <TApi, TRes>(
         interior: createX1Payload(version, {
           AccountId32: {
             ...(version === Version.V1 && { network: 'any' }),
-            id: api.createAccountId(recipientAddress)
+            id: api.accountToHex(recipientAddress)
           }
         })
       }
@@ -52,7 +52,7 @@ export const generateAddressPayload = <TApi, TRes>(
               : {
                   AccountId32: {
                     ...((version === Version.V1 || version === Version.V2) && { network: 'any' }),
-                    id: api.createAccountId(recipientAddress)
+                    id: api.accountToHex(recipientAddress)
                   }
                 }
           ]
@@ -77,7 +77,7 @@ export const generateAddressPayload = <TApi, TRes>(
             : {
                 AccountId32: {
                   ...((version === Version.V1 || version === Version.V2) && { network: 'any' }),
-                  id: api.createAccountId(recipientAddress)
+                  id: api.accountToHex(recipientAddress)
                 }
               }
         )
@@ -92,7 +92,7 @@ export const generateAddressPayload = <TApi, TRes>(
         version,
         isEthAddress
           ? { AccountKey20: { key: recipientAddress } }
-          : { AccountId32: { id: api.createAccountId(recipientAddress) } }
+          : { AccountId32: { id: api.accountToHex(recipientAddress) } }
       )
     }
   }

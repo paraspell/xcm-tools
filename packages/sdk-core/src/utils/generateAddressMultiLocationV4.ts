@@ -20,7 +20,7 @@ export const generateAddressMultiLocationV4 = <TApi, TRes>(
         X1: [
           isEthAddress
             ? { AccountKey20: { key: address } }
-            : { AccountId32: { id: api.createAccountId(address), network: null } }
+            : { AccountId32: { id: api.accountToHex(address), network: null } }
         ]
       }
     }

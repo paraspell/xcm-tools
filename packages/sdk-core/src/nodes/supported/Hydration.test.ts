@@ -60,7 +60,7 @@ describe('Hydration', () => {
           getFromStorage: vi.fn().mockResolvedValue('0x0000000000000000'),
           disconnect: vi.fn()
         }),
-        createAccountId: vi.fn().mockReturnValue('0x0000000000000000')
+        accountToHex: vi.fn().mockReturnValue('0x0000000000000000')
       } as unknown as IPolkadotApi<unknown, unknown>
 
       mockInput = {

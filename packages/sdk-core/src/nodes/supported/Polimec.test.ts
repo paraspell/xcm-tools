@@ -23,7 +23,7 @@ describe('Polimec', () => {
 
   const mockApi = {
     callTxMethod: vi.fn().mockReturnValue('mocked result'),
-    createAccountId: vi.fn().mockReturnValue('0x0000000000000000')
+    accountToHex: vi.fn().mockReturnValue('0x0000000000000000')
   } as unknown as IPolkadotApi<unknown, unknown>
 
   beforeEach(() => {

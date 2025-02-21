@@ -21,7 +21,7 @@ describe('generateAddressPayload', () => {
 
   beforeEach(() => {
     apiMock = {
-      createAccountId: vi.fn()
+      accountToHex: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
   })
 
@@ -45,7 +45,7 @@ describe('generateAddressPayload', () => {
     const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     const accIDMock = '0x1234567890abcdef'
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
-    const accountIdSpy = vi.spyOn(apiMock, 'createAccountId').mockReturnValue(accIDMock)
+    const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
     vi.mocked(createX1Payload).mockReturnValue({
       X1: [{ AccountId32: { id: accIDMock, network: 'any' } }]
     })
@@ -98,7 +98,7 @@ describe('generateAddressPayload', () => {
     const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     const accIDMock = '0x1234567890abcdef'
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
-    const acccountIdSpy = vi.spyOn(apiMock, 'createAccountId').mockReturnValue(accIDMock)
+    const acccountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
     vi.mocked(createX1Payload).mockReturnValue({
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
     })
@@ -126,7 +126,7 @@ describe('generateAddressPayload', () => {
     const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     const accIDMock = '0x1234567890abcdef'
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
-    const acccountIdSpy = vi.spyOn(apiMock, 'createAccountId').mockReturnValue(accIDMock)
+    const acccountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
     vi.mocked(createX1Payload).mockReturnValue({
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
     })
@@ -154,7 +154,7 @@ describe('generateAddressPayload', () => {
     const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     const accIDMock = '0x1234567890abcdef'
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
-    const accountIdSpy = vi.spyOn(apiMock, 'createAccountId').mockReturnValue(accIDMock)
+    const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
 
     const result = generateAddressPayload(
       apiMock,
@@ -182,7 +182,7 @@ describe('generateAddressPayload', () => {
     const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     const accIDMock = '0x1234567890abcdef'
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
-    const accountIdSpy = vi.spyOn(apiMock, 'createAccountId').mockReturnValue(accIDMock)
+    const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
     vi.mocked(createX1Payload).mockReturnValue({
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
     })

@@ -53,7 +53,7 @@ describe('getDestination', () => {
     vi.mocked(ethers.isAddress).mockReturnValue(false)
     const mockAddress = '0x123'
     const apiMock = {
-      createAccountId: vi.fn().mockReturnValue(mockAddress)
+      accountToHex: vi.fn().mockReturnValue(mockAddress)
     } as unknown as IPolkadotApi<unknown, unknown>
     const nonEthAddressInput = {
       recipientAddress: 'someAccountId',
@@ -61,7 +61,7 @@ describe('getDestination', () => {
       api: apiMock
     } as unknown as TXTransferTransferOptions<unknown, unknown>
 
-    const accountIdSpy = vi.spyOn(apiMock, 'createAccountId')
+    const accountIdSpy = vi.spyOn(apiMock, 'accountToHex')
 
     const result = getDestination(nonEthAddressInput)
     expect(result).toEqual({

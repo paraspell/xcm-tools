@@ -281,7 +281,7 @@ describe('ParachainNode', () => {
   it('should perform transfer to ethereum', async () => {
     const options = {
       api: {
-        createAccountId: vi.fn(),
+        accountToHex: vi.fn(),
         createApiForNode: vi.fn(),
         callTxMethod: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,

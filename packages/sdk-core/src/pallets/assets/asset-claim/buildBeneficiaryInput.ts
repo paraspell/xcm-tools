@@ -23,7 +23,7 @@ export const buildBeneficiaryInput = <TApi, TRes>(
           }
         : {
             AccountId32: {
-              id: api.createAccountId(address)
+              id: api.accountToHex(address)
             }
           }
     }
