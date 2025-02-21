@@ -46,22 +46,7 @@ describe('getAssetMultiLocation', () => {
     expect(result).toEqual(multiLocation)
   })
 
-  it('constructs multiLocation from xcmInterior if multiLocation is absent', () => {
-    const junction1 = { Parachain: 100 }
-    const junction2 = { Parachain: 200 }
-    const junction3 = { Parachain: 300 }
-    const junction4 = { Parachain: 400 }
-    const asset = { symbol: 'TEST', xcmInterior: [junction1, junction2, junction3, junction4] }
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(asset)
-    vi.mocked(isForeignAsset).mockReturnValue(true)
-    const result = getAssetMultiLocation(node, currency)
-    expect(result).toEqual({
-      parents: Parents.ZERO,
-      interior: { X2: [junction3, junction4] }
-    })
-  })
-
-  it('returns null if neither multiLocation nor xcmInterior exists', () => {
+  it('returns null if multiLocation does not exists', () => {
     const asset = { symbol: 'TEST' } as TAsset
     vi.mocked(getAssetBySymbolOrId).mockReturnValue(asset)
     vi.mocked(isForeignAsset).mockReturnValue(true)

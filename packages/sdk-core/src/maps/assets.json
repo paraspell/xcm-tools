@@ -5497,260 +5497,286 @@
         "assetId": "1024",
         "symbol": "NCTR",
         "decimals": 18,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 1024
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1024
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "100000000"
       },
       {
         "assetId": "1337",
         "symbol": "USDC",
         "decimals": 6,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 1337
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1337
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "10000"
       },
       {
         "assetId": "17",
         "symbol": "WIFD",
         "decimals": 10,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 17
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 17
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "1"
       },
       {
         "assetId": "1984",
         "symbol": "USDt",
         "decimals": 6,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 1984
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "10000"
       },
       {
         "assetId": "21",
         "symbol": "WBTC",
         "decimals": 8,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 21
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 21
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "3000"
       },
       {
         "assetId": "22222012",
         "symbol": "DAMN",
         "decimals": 12,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 22222012
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 22222012
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "1000000000000"
       },
       {
         "assetId": "23",
         "symbol": "PINK",
         "decimals": 10,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 23
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 23
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "1"
       },
       {
         "assetId": "30",
         "symbol": "DED",
         "decimals": 10,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 30
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 30
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "1"
       },
       {
         "assetId": "31337",
         "symbol": "WUD",
         "decimals": 10,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 31337
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 31337
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "10000000"
       },
       {
         "assetId": "42069",
         "symbol": "STINK",
         "decimals": 10,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 42069
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 42069
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "1000000"
       },
       {
         "assetId": "50000028",
         "symbol": "LOVA",
         "decimals": 12,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 50000028
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000028
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "1000000000000"
       },
       {
         "assetId": "50000069",
         "symbol": "LOTY",
         "decimals": 12,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 50000069
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 50000069
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "100000000"
       },
       {
         "assetId": "555",
         "symbol": "GAME",
         "decimals": 10,
-        "xcmInterior": [
-          {
-            "Network": "polkadot"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 555
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 555
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "100000"
       },
       {
@@ -9722,80 +9748,88 @@
         "assetId": "16",
         "symbol": "ARIS",
         "decimals": 8,
-        "xcmInterior": [
-          {
-            "Network": "kusama"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 16
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "10000000"
       },
       {
         "assetId": "1984",
         "symbol": "USDt",
         "decimals": 6,
-        "xcmInterior": [
-          {
-            "Network": "kusama"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 1984
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "100"
       },
       {
         "assetId": "223",
         "symbol": "BILL",
         "decimals": 8,
-        "xcmInterior": [
-          {
-            "Network": "kusama"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 223
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 223
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "10000"
       },
       {
         "assetId": "8",
         "symbol": "RMRK",
         "decimals": 10,
-        "xcmInterior": [
-          {
-            "Network": "kusama"
-          },
-          {
-            "Parachain": 1000
-          },
-          {
-            "PalletInstance": 50
-          },
-          {
-            "GeneralIndex": 8
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
           }
-        ],
+        },
         "existentialDeposit": "10000"
       },
       {

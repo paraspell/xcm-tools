@@ -3,7 +3,6 @@ import type {
   TCurrencyInput,
   TForeignAsset,
   TMultiLocation,
-  TJunction,
   TNativeAsset,
 } from '@paraspell/sdk-pjs';
 import {
@@ -75,13 +74,10 @@ export const getExchangeAsset = (
     !isOverrideMultiLocationSpecifier(currency.multilocation)
   ) {
     asset =
-      findAssetByMultiLocation(
-        otherAssets,
-        currency.multilocation as string | TMultiLocation | TJunction[],
-      ) ??
+      findAssetByMultiLocation(otherAssets, currency.multilocation as string | TMultiLocation) ??
       findAssetByMultiLocation(
         nativeAssets as TForeignAsset[],
-        currency.multilocation as string | TMultiLocation | TJunction[],
+        currency.multilocation as string | TMultiLocation,
       );
   } else if ('id' in currency) {
     asset = findAssetById(otherAssets, currency.id);

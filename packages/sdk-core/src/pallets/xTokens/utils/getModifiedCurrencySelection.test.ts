@@ -72,44 +72,6 @@ describe('getModifiedCurrencySelection', () => {
     })
   })
 
-  it('returns assetHubAsset.xcmInterior when asset is not foreign and assetHubAsset.xcmInterior is defined', () => {
-    const version = Version.V2
-    const amount = '2000'
-    const paraIdTo = 2000
-    const destination = 'AssetHubPolkadot'
-
-    const xTransferInput = {
-      asset: { symbol: 'KSM', amount: '2000' },
-      paraIdTo,
-      destination
-    } as TXTokensTransferOptions<unknown, unknown>
-
-    vi.mocked(isForeignAsset).mockReturnValue(false)
-    vi.mocked(getOtherAssets).mockReturnValue([
-      {
-        symbol: 'KSM',
-        xcmInterior: [{ NetworkId: 'Any' }]
-      }
-    ])
-
-    const result = getModifiedCurrencySelection(version, xTransferInput)
-    expect(result).toEqual({
-      [version]: {
-        id: {
-          Concrete: {
-            parents: Parents.ONE,
-            interior: {
-              X1: [{ NetworkId: 'Any' }]
-            }
-          }
-        },
-        fun: {
-          Fungible: amount
-        }
-      }
-    })
-  })
-
   it('throws InvalidCurrencyError when assetHubAsset is undefined', () => {
     const version = Version.V1
     const paraIdTo = 1000
@@ -198,39 +160,7 @@ describe('getModifiedCurrencySelection', () => {
     })
   })
 
-  it('returns asset.xcmInterior when asset.multiLocation is undefined but xcmInterior is defined', () => {
-    const version = Version.V3
-    const paraIdTo = 3000
-
-    const xTransferInput = {
-      asset: {
-        xcmInterior: [{ NetworkId: 'Any' }, { Parachain: paraIdTo }],
-        amount: '1500'
-      },
-      paraIdTo
-    } as TXTokensTransferOptions<unknown, unknown>
-
-    vi.mocked(isForeignAsset).mockReturnValue(true)
-
-    const result = getModifiedCurrencySelection(version, xTransferInput)
-    expect(result).toEqual({
-      [version]: {
-        id: {
-          Concrete: {
-            parents: Parents.ONE,
-            interior: {
-              X2: [{ NetworkId: 'Any' }, { Parachain: paraIdTo }]
-            }
-          }
-        },
-        fun: {
-          Fungible: xTransferInput.asset.amount
-        }
-      }
-    })
-  })
-
-  it('returns default multiLocation when asset.multiLocation and xcmInterior are undefined', () => {
+  it('returns default multiLocation when asset.multiLocation is undefiend', () => {
     const version = Version.V2
     const currencyID = '123'
     const paraIdTo = 2000

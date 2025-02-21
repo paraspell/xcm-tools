@@ -13,11 +13,6 @@ describe('isForeignAsset', () => {
     expect(isForeignAsset(asset)).toBe(true)
   })
 
-  it('returns true for an asset with "xcmInterior" and no "isNative"', () => {
-    const asset = { symbol: 'DOT', xcmInterior: [] } as TAsset
-    expect(isForeignAsset(asset)).toBe(true)
-  })
-
   it('returns false for an asset with "isNative" true', () => {
     const asset = { isNative: true } as TAsset
     expect(isForeignAsset(asset)).toBe(false)
