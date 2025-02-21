@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.5.2](https://github.com/paraspell/xcm-tools/compare/sdk-v8.5.1...sdk-v8.5.2) (2025-02-21)
+
+
+### Bug Fixes
+
+* **sdk-core:** Accept public key address 📇 ([46ed82d](https://github.com/paraspell/xcm-tools/commit/46ed82d6c140b2a02d5449e10b2d3df0a49f10cd))
+
 ## [8.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-v8.5.0...sdk-v8.5.1) (2025-02-19)
 
 
