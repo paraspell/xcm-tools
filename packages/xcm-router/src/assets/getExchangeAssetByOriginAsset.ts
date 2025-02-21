@@ -1,10 +1,4 @@
-import type {
-  TNodePolkadotKusama,
-  TAsset,
-  TForeignAsset,
-  TMultiLocation,
-  TJunction,
-} from '@paraspell/sdk-pjs';
+import type { TNodePolkadotKusama, TAsset, TForeignAsset } from '@paraspell/sdk-pjs';
 import {
   deepEqual,
   findBestMatches,
@@ -12,7 +6,6 @@ import {
   isForeignAsset,
 } from '@paraspell/sdk-pjs';
 import type { TAssetsRecord, TExchangeNode, TRouterAsset } from '../types';
-import { compareXcmInteriors, extractJunctions } from './assetsUtils';
 import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
 const assetsMap = assetsMapJson as TAssetsRecord;
 
@@ -51,15 +44,12 @@ export const getExchangeAssetByOriginAsset = (
       null,
     ) as TForeignAsset;
 
-    if (sdkAsset.multiLocation === undefined || sdkAsset.xcmInterior) return false;
+    if (sdkAsset.multiLocation === undefined) return false;
 
     if (sdkAsset.multiLocation && originAsset.multiLocation) {
       return deepEqual(sdkAsset.multiLocation, originAsset.multiLocation);
     }
 
-    return compareXcmInteriors(
-      extractJunctions(sdkAsset.multiLocation as TMultiLocation),
-      originAsset.xcmInterior as TJunction[],
-    );
+    return false;
   });
 };

@@ -23,7 +23,6 @@ export type TForeignAsset = TBaseAsset &
   AtLeastOne<{
     assetId?: string
     multiLocation?: object
-    xcmInterior?: object[]
   }>
 
 export type TAsset = TNativeAsset | TForeignAsset

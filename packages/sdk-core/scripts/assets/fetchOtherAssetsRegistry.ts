@@ -85,6 +85,7 @@ export const fetchOtherAssetsRegistry = async (
   node: TNodePolkadotKusama
 ): Promise<TForeignAsset[]> => {
   const assets = await fetchAssets(node)
+  const data = await fetchXcmRegistry()
 
   const isAssetHub = node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
   const isBifrost = node === 'BifrostPolkadot' || node === 'BifrostKusama'
@@ -106,30 +107,26 @@ export const fetchOtherAssetsRegistry = async (
         ? (Object.values(item.xcmV1MultiLocation)[0] as object)
         : undefined
 
-      let xcmInterior =
-        isAssetHub && item.xcmInteriorKey
-          ? (JSON.parse(item.xcmInteriorKey) as object[])
-          : undefined
-
       if (multiLocation) {
         multiLocation = capitalizeMultiLocation(multiLocation)
       }
 
-      if (xcmInterior) {
-        xcmInterior = xcmInterior.map((junction: any) => {
-          //capitalize first letter
-          const key = Object.keys(junction)[0]
-          const value = junction[key]
-          return { [key.charAt(0).toUpperCase() + key.slice(1)]: value }
-        })
+      const paraId = getParaId(node)
+      const relay = getNode(node).type as 'polkadot' | 'kusama'
+      let xcmInteriorKey = item.xcmInteriorKey
+
+      const assetsRegistry = data.xcmRegistry.find(item => item.relayChain === relay)?.data
+
+      if (!multiLocation && xcmInteriorKey && assetsRegistry && assetsRegistry[xcmInteriorKey]) {
+        const foundAsset = assetsRegistry[xcmInteriorKey]
+        multiLocation = capitalizeMultiLocation(foundAsset.xcmV1MultiLocation.v1)
       }
 
       return {
         assetId: sanitizedId,
         symbol: item.symbol,
         decimals: item.decimals,
-        multiLocation: multiLocation,
-        xcmInterior: xcmInterior
+        multiLocation: multiLocation
       }
     })
 }

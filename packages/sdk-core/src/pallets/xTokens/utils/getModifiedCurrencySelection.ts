@@ -41,13 +41,6 @@ const buildMultiLocation = <TApi, TRes>({
 
     if (assetHubAsset.multiLocation) {
       return assetHubAsset.multiLocation as TMultiLocation
-    } else if (assetHubAsset.xcmInterior) {
-      return {
-        parents: Parents.ONE,
-        interior: {
-          [`X${assetHubAsset.xcmInterior.length}`]: assetHubAsset.xcmInterior
-        }
-      }
     }
 
     throw new InvalidCurrencyError(`Asset ${asset.symbol} has no multiLocation`)
@@ -68,13 +61,6 @@ const buildMultiLocation = <TApi, TRes>({
 
   if (asset.multiLocation) {
     return asset.multiLocation as TMultiLocation
-  } else if (asset.xcmInterior) {
-    return {
-      parents: Parents.ONE,
-      interior: {
-        [`X${asset.xcmInterior.length}`]: asset.xcmInterior
-      }
-    }
   } else {
     return createDefaultMultiLocation(asset.assetId as string)
   }

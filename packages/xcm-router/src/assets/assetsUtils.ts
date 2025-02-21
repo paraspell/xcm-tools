@@ -1,5 +1,5 @@
-import type { TNodePolkadotKusama, TMultiLocation, TJunction, TAsset } from '@paraspell/sdk-pjs';
-import { deepEqual, getOtherAssets } from '@paraspell/sdk-pjs';
+import type { TNodePolkadotKusama, TAsset } from '@paraspell/sdk-pjs';
+import { getOtherAssets } from '@paraspell/sdk-pjs';
 import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
 import type { TAssetsRecord, TExchangeNode } from '../types';
 
@@ -21,29 +21,4 @@ export const getExchangeAssets = (
         : {}),
     } as TAsset;
   });
-};
-
-export const extractJunctions = (multiLocation: TMultiLocation): TJunction[] => {
-  const { interior } = multiLocation;
-
-  if (interior === 'Here') return [];
-
-  const xKey = Object.keys(interior).find((key) => key.startsWith('X'));
-  return xKey ? (interior as Record<string, TJunction[]>)[xKey] : [];
-};
-
-export const compareXcmInteriors = (
-  value: TJunction[] | undefined,
-  other: TJunction[] | undefined,
-) => {
-  if (value === undefined || other === undefined) return false;
-  const filterJunctions = (junctions: TJunction[]) =>
-    junctions.filter((junction) => !('Network' in junction));
-
-  const filteredValue = filterJunctions(value);
-  const filteredOther = filterJunctions(other);
-
-  if (filteredValue.length !== filteredOther.length) return false;
-
-  return filteredValue.every((junction, index) => deepEqual(junction, filteredOther[index]));
 };

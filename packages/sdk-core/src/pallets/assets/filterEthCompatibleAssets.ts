@@ -1,4 +1,4 @@
-import type { TForeignAsset, TJunction, TMultiLocation } from '../../types'
+import type { TForeignAsset, TMultiLocation } from '../../types'
 import { getOtherAssets } from './assets'
 import { findAssetByMultiLocation } from './findAssetByMultiLocation'
 
@@ -6,11 +6,9 @@ export const filterEthCompatibleAssets = (assets: TForeignAsset[]): TForeignAsse
   const ethAssets = getOtherAssets('Ethereum')
 
   return assets.filter(asset => {
-    const assetMultiLoc = asset.multiLocation || asset.xcmInterior
+    const assetMultiLoc = asset.multiLocation
     if (!assetMultiLoc) return false
 
-    return Boolean(
-      findAssetByMultiLocation(ethAssets, assetMultiLoc as TMultiLocation | TJunction[])
-    )
+    return Boolean(findAssetByMultiLocation(ethAssets, assetMultiLoc as TMultiLocation))
   })
 }

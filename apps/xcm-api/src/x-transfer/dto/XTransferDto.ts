@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Version } from '@paraspell/sdk';
-import { MultiLocationSchema, JunctionSchema } from '@paraspell/xcm-analyser';
+import { MultiLocationSchema } from '@paraspell/xcm-analyser';
 import { validateAmount } from '../../utils/validateAmount.js';
 
 const StringOrNumber = z
@@ -56,11 +56,7 @@ const OverrideMultiLocationSpecifierSchema = z.object({
   value: MultiLocationSchema,
 });
 
-const MultiLocationValueSchema = z.union([
-  z.string(),
-  MultiLocationSchema,
-  z.array(JunctionSchema),
-]);
+const MultiLocationValueSchema = z.union([z.string(), MultiLocationSchema]);
 
 const MultiLocationValueWithOverrideSchema = z.union([
   MultiLocationValueSchema,

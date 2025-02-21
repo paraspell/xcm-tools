@@ -1,4 +1,4 @@
-import type { TJunction, TMultiLocation } from './TMultiLocation'
+import type { TMultiLocation } from './TMultiLocation'
 import type { TMultiAsset } from './TMultiAsset'
 import type { TAmount, Version } from './TTransfer'
 
@@ -32,7 +32,7 @@ export type TCurrencyCore =
 export type TCurrencyCoreWithFee = WithAmount<TCurrencyCore> & { isFeeAsset?: boolean }
 export type TMultiAssetWithFee = TMultiAsset & { isFeeAsset?: boolean }
 
-export type TMultiLocationValue = string | TMultiLocation | TJunction[]
+export type TMultiLocationValue = string | TMultiLocation
 
 export type TMultiLocationValueWithOverride = TMultiLocationValue | TOverrideMultiLocationSpecifier
 
