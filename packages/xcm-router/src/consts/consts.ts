@@ -2,6 +2,8 @@
  * Supported exchange nodes
  */
 export const EXCHANGE_NODES = [
+  'AssetHubPolkadotDex',
+  'AssetHubKusamaDex',
   'HydrationDex',
   'KaruraDex',
   'AcalaDex',

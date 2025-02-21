@@ -5484,6 +5484,12 @@
         "symbol": "DOT",
         "isNative": true,
         "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
         "existentialDeposit": "100000000"
       },
       {
@@ -9735,6 +9741,12 @@
         "symbol": "KSM",
         "isNative": true,
         "decimals": 12,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
         "existentialDeposit": "3333333"
       },
       {

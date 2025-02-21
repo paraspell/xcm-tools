@@ -42,7 +42,7 @@
     "@noble/hashes": "^1.7.1"
   },
   "peerDependencies": {
-    "polkadot-api": ">= 1.8.4 < 2"
+    "polkadot-api": ">= 1.9.2 < 2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",

@@ -1,4 +1,145 @@
 {
+  "AssetHubPolkadotDex": [
+    {
+      "symbol": "DOT"
+    },
+    {
+      "symbol": "KSM"
+    },
+    {
+      "symbol": "NCTR",
+      "id": "1024"
+    },
+    {
+      "symbol": "USDC",
+      "id": "1337"
+    },
+    {
+      "symbol": "WIFD",
+      "id": "17"
+    },
+    {
+      "symbol": "USDt",
+      "id": "1984"
+    },
+    {
+      "symbol": "WBTC",
+      "id": "21"
+    },
+    {
+      "symbol": "DAMN",
+      "id": "22222012"
+    },
+    {
+      "symbol": "PINK",
+      "id": "23"
+    },
+    {
+      "symbol": "DED",
+      "id": "30"
+    },
+    {
+      "symbol": "WUD",
+      "id": "31337"
+    },
+    {
+      "symbol": "STINK",
+      "id": "42069"
+    },
+    {
+      "symbol": "LOVA",
+      "id": "50000028"
+    },
+    {
+      "symbol": "LOTY",
+      "id": "50000069"
+    },
+    {
+      "symbol": "GAME",
+      "id": "555"
+    },
+    {
+      "symbol": "EQ"
+    },
+    {
+      "symbol": "WETH"
+    },
+    {
+      "symbol": "KSM"
+    },
+    {
+      "symbol": "TEER"
+    },
+    {
+      "symbol": "PLMC"
+    },
+    {
+      "symbol": "LAOS"
+    },
+    {
+      "symbol": "BNC"
+    },
+    {
+      "symbol": "EQD"
+    },
+    {
+      "symbol": "GLMR"
+    },
+    {
+      "symbol": "MYTH"
+    },
+    {
+      "symbol": "vDOT"
+    },
+    {
+      "symbol": "HDX"
+    },
+    {
+      "symbol": "ETH"
+    },
+    {
+      "symbol": "AJUN"
+    }
+  ],
+  "AssetHubKusamaDex": [
+    {
+      "symbol": "KSM"
+    },
+    {
+      "symbol": "DOT"
+    },
+    {
+      "symbol": "ARIS",
+      "id": "16"
+    },
+    {
+      "symbol": "USDt",
+      "id": "1984"
+    },
+    {
+      "symbol": "BILL",
+      "id": "223"
+    },
+    {
+      "symbol": "RMRK",
+      "id": "8"
+    },
+    {
+      "symbol": "DOT"
+    },
+    {
+      "symbol": "TNKR"
+    },
+    {
+      "symbol": "FREN"
+    },
+    {
+      "symbol": "MOVR"
+    },
+    {
+      "symbol": "TEER"
+    }
+  ],
   "HydrationDex": [
     {
       "symbol": "HDX",
@@ -37,6 +178,10 @@
       "id": "15"
     },
     {
+      "symbol": "LAOS",
+      "id": "3370"
+    },
+    {
       "symbol": "WUD",
       "id": "1000085"
     },
@@ -51,6 +196,10 @@
     {
       "symbol": "AJUN",
       "id": "32"
+    },
+    {
+      "symbol": "KSM",
+      "id": "1000771"
     },
     {
       "symbol": "HDXb",
@@ -115,6 +264,10 @@
     {
       "symbol": "PHA",
       "id": "8"
+    },
+    {
+      "symbol": "tBTC",
+      "id": "1000765"
     },
     {
       "symbol": "ZTG",

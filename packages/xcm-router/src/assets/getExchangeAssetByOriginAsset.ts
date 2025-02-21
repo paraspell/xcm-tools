@@ -27,7 +27,10 @@ export const getExchangeAssetByOriginAsset = (
 
   if (candidates.length === 1) {
     // Exactly one asset found by symbol.
-    return candidates[0];
+    const candidate = candidates[0];
+    return originAsset.multiLocation
+      ? { ...candidate, multiLocation: originAsset.multiLocation }
+      : candidate;
   }
 
   if (!isForeignAsset(originAsset)) {
@@ -36,7 +39,7 @@ export const getExchangeAssetByOriginAsset = (
   }
 
   // Origin asset is a foreign asset, try matching by multi-location.
-  return candidates.find((asset) => {
+  const candidateByML = candidates.find((asset) => {
     if (asset.id === undefined) return false;
     const sdkAsset = getAssetBySymbolOrId(
       exchangeBaseNode,
@@ -52,4 +55,8 @@ export const getExchangeAssetByOriginAsset = (
 
     return false;
   });
+
+  return candidateByML && originAsset.multiLocation
+    ? { ...candidateByML, multiLocation: originAsset.multiLocation }
+    : candidateByML;
 };

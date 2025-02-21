@@ -7,17 +7,14 @@ import type {
 } from '@paraspell/sdk-pjs';
 import {
   isOverrideMultiLocationSpecifier,
-  getOtherAssets,
   isSymbolSpecifier,
   findBestMatches,
   findAssetBySymbol,
   findAssetByMultiLocation,
   findAssetById,
-  isForeignAsset,
-  getNativeAssets,
 } from '@paraspell/sdk-pjs';
 import type { TExchangeNode, TRouterAsset } from '../types';
-import { getExchangeAssets } from './assetsUtils';
+import { getExchangeAssets } from './getExchangeAssets';
 
 export const getExchangeAsset = (
   exchangeBaseNode: TNodePolkadotKusama,
@@ -36,23 +33,14 @@ export const getExchangeAsset = (
 
   const assets = getExchangeAssets(exchangeBaseNode, exchange);
 
-  const nativeAssets = assets
-    .filter((asset) => !('id' in asset))
-    .map((asset) => {
-      const foundAsset = getNativeAssets(exchangeBaseNode).find(
-        (otherAsset) => otherAsset.symbol.toLowerCase() === asset.symbol.toLowerCase(),
-      );
-      return { ...asset, isNative: true, multiLocation: foundAsset?.multiLocation };
-    }) as TNativeAsset[];
+  const nativeAssets = assets.filter((asset) => 'isNative' in asset) as TNativeAsset[];
 
   const otherAssets = assets
-    .filter((asset) => isForeignAsset(asset))
-    .map((asset) => {
-      const foundAsset = getOtherAssets(exchangeBaseNode).find(
-        (otherAsset) => otherAsset.assetId === asset.assetId,
-      );
-      return { ...asset, multiLocation: foundAsset?.multiLocation };
-    }) as TForeignAsset[];
+    .filter((asset) => !('isNative' in asset))
+    .map((asset) => ({
+      ...asset,
+      ...(asset.id !== undefined ? { assetId: asset.id } : {}),
+    })) as TForeignAsset[];
 
   let asset: TRouterAsset | undefined;
   if ('symbol' in currency) {
