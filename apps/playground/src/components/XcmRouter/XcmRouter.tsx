@@ -112,8 +112,10 @@ export const XcmRouter = () => {
 
     const hasDuplicateIds =
       node &&
-      getOtherAssets(node).filter((other) => other.assetId === asset.assetId)
-        .length > 1;
+      getOtherAssets(node).filter(
+        (other) =>
+          other.assetId !== undefined && other.assetId === asset.assetId,
+      ).length > 1;
 
     if (hasDuplicateIds) {
       return { symbol: asset.symbol };

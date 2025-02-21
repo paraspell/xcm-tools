@@ -2,7 +2,7 @@ import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk-pjs';
 import { getAssets, normalizeSymbol } from '@paraspell/sdk-pjs';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
 import type { TExchangeNode, TAutoSelect } from '../types';
-import { getExchangeAssets } from './assetsUtils';
+import { getExchangeAssets } from './getExchangeAssets';
 
 /**
  * Retrieves the list of assets supported for transfer from the origin node to the exchange node.
@@ -23,7 +23,13 @@ export const getSupportedAssetsFrom = (
   const exchangeAssets = getExchangeAssets(createDexNodeInstance(exchange).node, exchange);
 
   if (!from || from === createDexNodeInstance(exchange).node) {
-    return exchangeAssets;
+    return exchangeAssets.map(
+      (exchangeAsset) =>
+        ({
+          ...exchangeAsset,
+          ...(exchangeAsset.id !== undefined ? { assetId: exchangeAsset.id } : {}),
+        }) as TAsset,
+    );
   }
 
   const fromAssets = getAssets(from);

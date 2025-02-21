@@ -2,7 +2,7 @@ import { getAssets, normalizeSymbol, type TNodeWithRelayChains } from '@paraspel
 import type { TAutoSelect, TExchangeNode, TRouterAsset } from '../types';
 import { EXCHANGE_NODES } from '../consts';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
-import { getExchangeAssets } from './assetsUtils';
+import { getExchangeAssets } from './getExchangeAssets';
 
 /**
  * Retrieves the list of assets supported for transfer to the destination node.

@@ -17,7 +17,7 @@ import {
   getNativeAssets,
 } from '@paraspell/sdk-pjs';
 import type { TRouterAsset } from '../types';
-import { getExchangeAssets } from './assetsUtils';
+import { getExchangeAssets } from './getExchangeAssets';
 import { getExchangeAsset } from './getExchangeAsset';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
@@ -32,7 +32,7 @@ vi.mock('@paraspell/sdk-pjs', () => ({
   isForeignAsset: (_asset: TRouterAsset) => true,
 }));
 
-vi.mock('./assetsUtils', () => ({
+vi.mock('./getExchangeAssets', () => ({
   getExchangeAssets: vi.fn(),
 }));
 

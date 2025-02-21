@@ -166,6 +166,7 @@ export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'sig
 export type TRouterAsset = {
   symbol: string;
   id?: string;
+  multiLocation?: object;
 };
 export type TAssets = Array<TRouterAsset>;
 export type TAssetsRecord = Record<TExchangeNode, TAssets>;

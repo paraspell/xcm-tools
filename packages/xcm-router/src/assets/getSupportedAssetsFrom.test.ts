@@ -3,7 +3,7 @@ import type { TNodeWithRelayChains, TAsset } from '@paraspell/sdk-pjs';
 import { getAssets, normalizeSymbol } from '@paraspell/sdk-pjs';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
 import type { TExchangeNode, TAutoSelect } from '../types';
-import { getExchangeAssets } from './assetsUtils';
+import { getExchangeAssets } from './getExchangeAssets';
 import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
 import type ExchangeNode from '../dexNodes/DexNode';
 
@@ -17,7 +17,7 @@ vi.mock('../dexNodes/DexNodeFactory', () => ({
   createDexNodeInstance: vi.fn(),
 }));
 
-vi.mock('./assetsUtils', () => ({
+vi.mock('./getExchangeAssets', () => ({
   getExchangeAssets: vi.fn(),
 }));
 

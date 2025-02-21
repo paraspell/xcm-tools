@@ -65,7 +65,10 @@ describe('getExchangeAssetByOriginAsset', () => {
     } as sdkPjs.TForeignAsset;
     const result = getExchangeAssetByOriginAsset('Acala', 'AcalaDex', originAsset);
 
-    expect(result).toBe(candidate1);
+    expect(result).toStrictEqual({
+      ...candidate1,
+      multiLocation: 'ml1',
+    });
     expect(sdkPjs.deepEqual).toHaveBeenCalledWith('ml1', 'ml1');
   });
 

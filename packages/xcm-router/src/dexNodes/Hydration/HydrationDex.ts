@@ -39,12 +39,12 @@ class HydrationExchangeNode extends ExchangeNode {
     const currencyFromDecimals = currencyFromInfo?.decimals;
     const currencyToDecimals = currencyToInfo?.decimals;
 
-    if (!currencyFromDecimals || !currencyToDecimals) {
-      throw new InvalidCurrencyError('Decimals not found for entered currencies.');
+    if (!currencyFromDecimals) {
+      throw new InvalidCurrencyError('Decimals not found for currency from.');
     }
 
-    if (currencyFromDecimals === null || currencyToDecimals === null) {
-      throw new InvalidCurrencyError('Decimals not found for currency from');
+    if (!currencyToDecimals) {
+      throw new InvalidCurrencyError('Decimals not found for currency to');
     }
 
     const amountBnum = BigNumber(amount);
