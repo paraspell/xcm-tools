@@ -116,16 +116,25 @@ describe('PolkadotJsApi', () => {
     })
   })
 
-  describe('createAccountId', () => {
-    it('should return a hex string representation of the AccountId', () => {
-      const address = '5F3sa2TJAWMqDhXG6jhV4N8ko9gKph2TGpR67TgeSmDTZyDg'
+  describe('accountToHex', () => {
+    it('should return the hex address as hex string', () => {
+      const address = '0x1234567890abcdef'
 
-      const spy = vi.spyOn(mockApiPromise, 'createType')
+      const result = polkadotApi.accountToHex(address)
 
-      const result = polkadotApi.createAccountId(address)
+      expect(result).toBe(address)
+    })
 
-      expect(spy).toHaveBeenCalledWith('AccountId32', address)
-      expect(result).toBe('0x1234567890abcdef')
+    it('should return the address as hex string without prefix', () => {
+      const address = '7LgutW4uapAUb9XtHjsRmemvWmkyfukPSw1Sr5LwqqUGTKjf'
+      const result = polkadotApi.accountToHex(address, false)
+      expect(result).toBe('88ca48e3e1d0f1c50bd6b504e1312d21f5bd45ed147e3c30c77eb5e4d63bdc63')
+    })
+
+    it('should return the address as hex string with prefiex', () => {
+      const address = '7LgutW4uapAUb9XtHjsRmemvWmkyfukPSw1Sr5LwqqUGTKjf'
+      const result = polkadotApi.accountToHex(address, true)
+      expect(result).toBe('0x88ca48e3e1d0f1c50bd6b504e1312d21f5bd45ed147e3c30c77eb5e4d63bdc63')
     })
   })
 

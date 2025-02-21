@@ -16,7 +16,6 @@ export interface IPolkadotApi<TApi, TRes> {
   getApiOrUrl(): TApiOrUrl<TApi> | undefined
   init(node: TNodeWithRelayChains): Promise<void>
   createApiInstance: (wsUrl: string | string[]) => Promise<TApi>
-  createAccountId(address: string): string
   accountToHex(address: string, isPrefixed?: boolean): string
   callTxMethod(serializedCall: TSerializedApiCall): TRes
   callBatchMethod(calls: TRes[], mode: BatchMode): TRes

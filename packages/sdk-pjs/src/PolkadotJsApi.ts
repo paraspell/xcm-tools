@@ -7,7 +7,7 @@ import type { StorageKey } from '@polkadot/types'
 import { u32, type UInt } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
 import { decodeAddress } from '@polkadot/util-crypto'
-import { u8aToHex } from '@polkadot/util'
+import { isHex, u8aToHex } from '@polkadot/util'
 import type {
   TAsset,
   TBalanceResponse,
@@ -75,11 +75,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return ApiPromise.create({ provider: wsProvider })
   }
 
-  createAccountId(address: string) {
-    return this.api.createType('AccountId32', address).toHex()
-  }
-
   accountToHex(address: string, isPrefixed = true) {
+    if (isHex(address)) return address
     const uint8Array = decodeAddress(address)
     return u8aToHex(uint8Array, -1, isPrefixed)
   }

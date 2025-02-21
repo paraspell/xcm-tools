@@ -92,12 +92,14 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return Promise.resolve(createClient(withPolkadotSdkCompat(provider)))
   }
 
-  createAccountId(address: string) {
-    return FixedSizeBinary.fromAccountId32<32>(address).asHex()
-  }
-
   accountToHex(address: string, isPrefixed = true) {
-    const hex = this.createAccountId(address)
+    const isHex = (str: string) => {
+      return typeof str === 'string' && /^0x[0-9a-fA-F]+$/.test(str)
+    }
+
+    if (isHex(address)) return address
+
+    const hex = FixedSizeBinary.fromAccountId32<32>(address).asHex()
     return isPrefixed ? hex : hex.slice(2)
   }
 
