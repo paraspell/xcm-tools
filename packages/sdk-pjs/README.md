@@ -333,6 +333,9 @@ await getTransferInfo({from, to, address, destinationAddress, currency /*- {id: 
 
 //Get bridge and execution fee for transfer from Parachain to Ethereum. Returns as an object of 2 values - [bridgeFee, executionFee]
 await getParaEthTransferFees(/*api - optional (Can also be WS port string or array o WS ports. Must be AssetHubPolkadot WS!)*/)
+
+//Verify whether XCM message you wish to send will reach above existential deposit on destination chain.
+await verifyEdOnDestination(node,  currency: {symbol: || id: || multilocation: .. ,amount: 100000n}, address)
 ```
 
 ## 💻 Tests
