@@ -23,7 +23,7 @@ import { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 @Injectable()
 export class XTransferService {
   private validateTransfer(transfer: XTransferDto) {
-    const { from, to, address, ahAddress, pallet, method } = transfer;
+    const { from, to, address, pallet, method, senderAddress } = transfer;
 
     const fromNode = from as TNodeDotKsmWithRelayChains;
     const toNode = to as TNodeWithRelayChains;
@@ -47,9 +47,9 @@ export class XTransferService {
       throw new BadRequestException('Invalid wallet address.');
     }
 
-    if (fromNode === 'Hydration' && toNode === 'Ethereum' && !ahAddress) {
+    if (fromNode === 'Hydration' && toNode === 'Ethereum' && !senderAddress) {
       throw new BadRequestException(
-        'AssetHub address is required when transferring from Hydration to Ethereum.',
+        'Sender address is required when transferring to Ethereum.',
       );
     }
 
@@ -69,7 +69,6 @@ export class XTransferService {
       to,
       currency,
       address,
-      ahAddress,
       xcmVersion,
       pallet,
       method,
@@ -80,7 +79,7 @@ export class XTransferService {
       .from(from as TNodeDotKsmWithRelayChains)
       .to(to as TNodeWithRelayChains)
       .currency(currency)
-      .address(address, ahAddress, senderAddress);
+      .address(address, senderAddress);
 
     if (xcmVersion) {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import PapiApi from './PapiApi'
-import type { PolkadotClient } from 'polkadot-api'
-import { Binary, createClient, FixedSizeBinary } from 'polkadot-api'
+import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
+import { AccountId, Binary, createClient, FixedSizeBinary } from 'polkadot-api'
 import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
 import { getWsProvider } from 'polkadot-api/ws-provider/node'
 import { transform } from './PapiXcmTransformer'
@@ -31,7 +31,8 @@ vi.mock('polkadot-api', () => ({
   Binary: {
     fromHex: vi.fn(),
     fromText: vi.fn()
-  }
+  },
+  AccountId: vi.fn()
 }))
 
 vi.mock('./PapiXcmTransformer', () => ({
@@ -748,6 +749,44 @@ describe('PapiApi', () => {
       expect(result).toBe(hex)
 
       expect(spy).toHaveBeenCalledWith(data)
+    })
+  })
+
+  describe('getFromRpc', () => {
+    it('should call _request with correct parameters for non-system module', async () => {
+      const module = 'foo'
+      const method = 'bar'
+      const key = 'nonHexKey'
+      const rpcMethod = `${module}_${method}`
+      const returnedValue = 123
+
+      vi.mocked(AccountId).mockReturnValue({
+        dec: vi.fn().mockReturnValue(key)
+      } as unknown as Codec<SS58String>)
+      const spy = vi.spyOn(mockPolkadotClient, '_request').mockResolvedValue(returnedValue)
+
+      const result = await papiApi.getFromRpc(module, method, key)
+
+      expect(spy).toHaveBeenCalledWith(rpcMethod, [key])
+      expect(result).toBe('0x0000007b')
+    })
+
+    it('should call _request with converted key for system module when key is hex', async () => {
+      const module = 'system'
+      const method = 'doSomething'
+      const hexKey = '0xabcdef'
+      const fakeDec = vi.fn().mockReturnValue(`ss58(${hexKey})`)
+      vi.mocked(AccountId).mockReturnValue({ dec: fakeDec } as unknown as Codec<SS58String>)
+
+      const rpcMethod = `${module}_${method}`
+      const returnedValue = '0xdeadbeef'
+      const spy = vi.spyOn(mockPolkadotClient, '_request').mockResolvedValue(returnedValue)
+
+      const result = await papiApi.getFromRpc(module, method, hexKey)
+
+      expect(fakeDec).toHaveBeenCalledWith(hexKey)
+      expect(spy).toHaveBeenCalledWith(rpcMethod, [`ss58(${hexKey})`])
+      expect(result).toBe(returnedValue)
     })
   })
 })

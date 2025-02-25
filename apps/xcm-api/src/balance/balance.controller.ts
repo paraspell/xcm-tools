@@ -15,6 +15,10 @@ import {
   ExistentialDepositDto,
   ExistentialDepositDtoSchema,
 } from './dto/ExistentialDepositDto.js';
+import {
+  VerifyEdOnDestDto,
+  VerifyEdOnDestDtoSchema,
+} from './dto/VerifyEdOnDestDto.js';
 
 @Controller('balance')
 export class BalanceController {
@@ -201,5 +205,18 @@ export class BalanceController {
       node,
     });
     return this.balanceService.getExistentialDeposit(node, params);
+  }
+
+  @Post(':node/verify-ed-on-destination')
+  verifyEdOnDestination(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(VerifyEdOnDestDtoSchema))
+    params: VerifyEdOnDestDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.VERIFY_ED_ON_DESTINATION, req, {
+      node,
+    });
+    return this.balanceService.verifyEdOnDestination(node, params);
   }
 }

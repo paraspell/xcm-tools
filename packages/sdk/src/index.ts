@@ -13,7 +13,8 @@ export {
   getOriginFeeDetails,
   getMaxNativeTransferableAmount,
   getMaxForeignTransferableAmount,
-  getTransferableAmount
+  getTransferableAmount,
+  verifyEdOnDestination
 } from './assets'
 export { Builder, GeneralBuilder, EvmBuilder } from './builder'
 export * from './types'

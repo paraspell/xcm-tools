@@ -108,11 +108,7 @@ export interface IFinalBuilder<TRes> {
 }
 
 export interface IAddressBuilder<TApi, TRes> {
-  address: (
-    address: TAddress,
-    ahAddress?: string,
-    senderAddress?: string
-  ) => IFinalBuilderWithOptions<TApi, TRes>
+  address: (address: TAddress, senderAddress?: string) => IFinalBuilderWithOptions<TApi, TRes>
 }
 
 export interface IFungibleBuilder<TRes> {

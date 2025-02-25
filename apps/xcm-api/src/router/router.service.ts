@@ -81,13 +81,20 @@ export class RouterService {
         .slippagePct(slippagePct)
         .buildTransactions();
 
-      return transactions.map((transaction) => ({
+      const response = transactions.map((transaction) => ({
         node: transaction.node,
         destinationNode: transaction.destinationNode,
         type: transaction.type,
         tx: transaction.tx,
+        ...(transaction.type === 'SWAP' && {
+          amountOut: transaction.amountOut,
+        }),
         wsProviders: getNodeProviders(transaction.node),
       }));
+
+      await Promise.all(transactions.map((item) => item.api.disconnect()));
+
+      return response;
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);
