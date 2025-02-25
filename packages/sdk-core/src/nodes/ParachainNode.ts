@@ -107,7 +107,6 @@ abstract class ParachainNode<TApi, TRes> {
       paraIdTo,
       overriddenAsset,
       version,
-      ahAddress,
       senderAddress,
       pallet,
       method
@@ -191,7 +190,6 @@ abstract class ParachainNode<TApi, TRes> {
         paraIdTo: paraId,
         overriddenAsset,
         version,
-        ahAddress,
         senderAddress,
         pallet,
         method
@@ -246,18 +244,14 @@ abstract class ParachainNode<TApi, TRes> {
   protected async transferToEthereum<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, asset, scenario, version, destination, address, ahAddress, senderAddress } = input
+    const { api, asset, scenario, version, destination, address, senderAddress } = input
 
     if (!isForeignAsset(asset)) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    if (ahAddress === undefined) {
-      throw new Error('AssetHub address is required for Ethereum transfers')
-    }
-
     if (senderAddress === undefined) {
-      throw new Error('Sender address is required for Ethereum transfers')
+      throw new Error('Sender address is required for transfers to Ethereum')
     }
 
     if (isTMultiLocation(address)) {

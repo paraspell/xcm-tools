@@ -69,25 +69,6 @@ const CurrencySymbolSchema = z.object({
   symbol: CurrencySymbolValueSchema,
 });
 
-export const CurrencyCoreSchemaV1 = z.union([
-  z
-    .object({
-      symbol: z.string(),
-    })
-    .required(),
-  z
-    .object({
-      id: z.union([z.string(), z.number(), z.bigint()]),
-    })
-    .required(),
-]);
-
-export const CurrencyCoreSchemaV1WithAmount = CurrencyCoreSchemaV1.and(
-  z.object({
-    amount: AmountSchema,
-  }),
-);
-
 export const CurrencyCoreSchema = z.union([
   CurrencySymbolSchema,
   z.object({
@@ -145,7 +126,6 @@ export const XTransferDtoSchema = z.object({
     z.string().min(1, { message: 'Address is required' }),
     MultiLocationSchema,
   ]),
-  ahAddress: z.string().optional(),
   currency: CurrencySchema,
   xcmVersion: z.enum(versionValues).optional(),
   pallet: z.string().optional(),

@@ -23,6 +23,7 @@ export enum EventName {
   GET_TRANSFERABLE_AMOUNT = 'Get Transferable Amount',
   GET_EXISTENTIAL_DEPOSIT = 'Get Existential Deposit',
   GET_ORIGIN_FEE_DETAILS = 'Get Origin fee details',
+  VERIFY_ED_ON_DESTINATION = 'Verify ED on Destination',
   GENERATE_XCM_CALL = 'Generate XCM Call',
   GENERATE_XCM_CALL_BATCH = 'Generate XCM Call Batch',
   GENERATE_XCM_CALL_BATCH_PAPI = 'Generate XCM Call Batch Papi',

@@ -96,17 +96,8 @@ describe('Hydration', () => {
           }
         },
         scenario: 'RelayToPara',
-        destination: 'Ethereum',
-        ahAddress: '5Gw3s7q4QLkSWwknsiixu9GR7x6xN5PWQ1YbQGxwSz1Y7DZT'
+        destination: 'Ethereum'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
-    })
-
-    it('should throw error if ahAddress is undefined', async () => {
-      mockInput.ahAddress = undefined
-
-      await expect(hydration.transferPolkadotXCM(mockInput)).rejects.toThrow(
-        'AssetHub address is required for Ethereum transfers'
-      )
     })
 
     it('should call api.callTxMethod with correct parameters', async () => {

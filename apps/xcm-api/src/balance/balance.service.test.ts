@@ -8,6 +8,7 @@ import {
   getMaxForeignTransferableAmount,
   getMaxNativeTransferableAmount,
   getTransferableAmount,
+  verifyEdOnDestination,
 } from '@paraspell/sdk-pjs';
 import {
   getBalanceNative as getBalanceNativePapi,
@@ -16,6 +17,7 @@ import {
   getMaxNativeTransferableAmount as getMaxNativeTransferableAmountPapi,
   getTransferableAmount as getTransferableAmountPapi,
   getExistentialDeposit as getExistentialDepositPapi,
+  verifyEdOnDestination as verifyEdOnDestinationPapi,
 } from '@paraspell/sdk';
 import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
@@ -28,6 +30,7 @@ vi.mock('@paraspell/sdk-pjs', () => ({
   getMaxNativeTransferableAmount: vi.fn(),
   getTransferableAmount: vi.fn(),
   getExistentialDeposit: vi.fn(),
+  verifyEdOnDestination: vi.fn(),
   NODE_NAMES_DOT_KSM: ['valid-node'],
   NODES_WITH_RELAY_CHAINS: ['valid-node'],
   NODES_WITH_RELAY_CHAINS_DOT_KSM: ['valid-node'],
@@ -40,6 +43,7 @@ vi.mock('@paraspell/sdk', () => ({
   getMaxNativeTransferableAmount: vi.fn(),
   getTransferableAmount: vi.fn(),
   getExistentialDeposit: vi.fn(),
+  verifyEdOnDestination: vi.fn(),
   NODE_NAMES_DOT_KSM: ['valid-node'],
   NODES_WITH_RELAY_CHAINS: ['valid-node'],
   NODES_WITH_RELAY_CHAINS_DOT_KSM: ['valid-node'],
@@ -460,6 +464,63 @@ describe('BalanceService', () => {
         params.currency,
       );
       expect(result).toEqual(edMock);
+    });
+  });
+
+  describe('verifyEdOnDestination', () => {
+    it('should throw BadRequestException for an invalid node', async () => {
+      const invalidNode = 'invalid-node';
+      const params = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ', amount: '100' },
+      };
+
+      await expect(
+        balanceService.verifyEdOnDestination(invalidNode, params),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should return true if ED is valid for a valid node using PJS', async () => {
+      const validNode = 'valid-node';
+      const params = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ', amount: '100' },
+      };
+
+      vi.mocked(verifyEdOnDestination).mockResolvedValue(true);
+
+      const result = await balanceService.verifyEdOnDestination(
+        validNode,
+        params,
+      );
+
+      expect(verifyEdOnDestination).toHaveBeenCalledWith({
+        ...params,
+        node: validNode,
+      });
+      expect(result).toEqual(true);
+    });
+
+    it('should return true if ED is valid for a valid node using PAPI', async () => {
+      const validNode = 'valid-node';
+      const params = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ', amount: '100' },
+      };
+
+      vi.mocked(verifyEdOnDestinationPapi).mockResolvedValue(true);
+
+      const result = await balanceService.verifyEdOnDestination(
+        validNode,
+        params,
+        true,
+      );
+
+      expect(verifyEdOnDestinationPapi).toHaveBeenCalledWith({
+        ...params,
+        node: validNode,
+      });
+      expect(result).toEqual(true);
     });
   });
 });

@@ -11,7 +11,7 @@ import { isForeignAsset } from '../assets'
 import { generateAddressPayload } from '../generateAddressPayload'
 
 export const createCustomXcmOnDest = <TApi, TRes>(
-  { api, address, asset, scenario, ahAddress }: TPolkadotXCMTransferOptions<TApi, TRes>,
+  { api, address, asset, scenario, senderAddress }: TPolkadotXCMTransferOptions<TApi, TRes>,
   version: Version,
   messageId: string
 ) => {
@@ -21,6 +21,10 @@ export const createCustomXcmOnDest = <TApi, TRes>(
 
   if (!asset.multiLocation) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
+  }
+
+  if (!senderAddress) {
+    throw new InvalidCurrencyError(`Please provide senderAddress`)
   }
 
   const ethAsset = findAssetByMultiLocation(
@@ -46,7 +50,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
                   api,
                   scenario,
                   'PolkadotXcm',
-                  ahAddress ?? '',
+                  senderAddress,
                   version,
                   undefined
                 )

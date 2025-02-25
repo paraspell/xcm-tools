@@ -79,6 +79,7 @@ describe('buildTransactions', () => {
         node: 'Acala',
         tx: 'swapTx',
         type: 'SWAP',
+        amountOut: 1000n,
       },
     ]);
 
@@ -106,6 +107,7 @@ describe('buildTransactions', () => {
         node: 'Acala',
         tx: 'swapTx',
         type: 'SWAP',
+        amountOut: 1000n,
       },
     ]);
   });

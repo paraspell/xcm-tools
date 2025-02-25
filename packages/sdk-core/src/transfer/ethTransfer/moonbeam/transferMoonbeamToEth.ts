@@ -82,9 +82,9 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
         }
       })
 
-  const sender = isEthersSigner(signer) ? await signer.getAddress() : signer.account?.address
+  const senderAddress = isEthersSigner(signer) ? await signer.getAddress() : signer.account?.address
 
-  if (!sender) {
+  if (!senderAddress) {
     throw new Error('Unable to get sender address')
   }
 
@@ -92,7 +92,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
 
   const messageId = await generateMessageId(
     api,
-    sender,
+    senderAddress,
     getParaId(from),
     ethAsset.assetId,
     address,
@@ -105,7 +105,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
       destination: to,
       address,
       scenario: 'ParaToPara',
-      ahAddress,
+      senderAddress,
       asset: { ...foundAsset, amount: currency.amount },
       header: {} as TMultiLocationHeader,
       currencySelection: {},

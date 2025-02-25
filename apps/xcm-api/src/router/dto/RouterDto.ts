@@ -1,13 +1,13 @@
 import { z } from 'zod';
-import { CurrencyCoreSchemaV1 } from '../../x-transfer/dto/XTransferDto.js';
+import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
 import { validateAmount } from '../../utils/validateAmount.js';
 
 export const RouterDtoSchema = z.object({
   from: z.string(),
   exchange: z.string().optional(),
   to: z.string(),
-  currencyFrom: CurrencyCoreSchemaV1,
-  currencyTo: CurrencyCoreSchemaV1,
+  currencyFrom: CurrencyCoreSchema,
+  currencyTo: CurrencyCoreSchema,
   recipientAddress: z
     .string()
     .min(1, { message: 'Recipient address is required' }),

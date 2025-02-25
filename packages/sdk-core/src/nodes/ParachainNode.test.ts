@@ -296,7 +296,6 @@ describe('ParachainNode', () => {
         getFromRpc: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
       asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
-      ahAddress: '0x123',
       senderAddress: '0x456'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 

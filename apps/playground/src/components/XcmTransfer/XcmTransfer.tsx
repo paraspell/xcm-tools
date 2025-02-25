@@ -247,7 +247,7 @@ const XcmTransfer = () => {
         const builder = Sdk.Builder(api as ApiPromise & PolkadotClient);
 
         for (const item of items) {
-          const { from, to, currencies, address, ahAddress } = item;
+          const { from, to, currencies, address } = item;
           const useMultiAssets = currencies.length > 1;
           const currencyInputs = currencies.map((c) => ({
             ...determineCurrency(item, c),
@@ -263,7 +263,7 @@ const XcmTransfer = () => {
                 ? currencyInputs[0]
                 : { multiasset: currencyInputs as TCurrencyCoreWithFee[] },
             )
-            .address(address, ahAddress, selectedAccount.address)
+            .address(address, selectedAccount.address)
             .addToBatch();
         }
 
@@ -314,7 +314,7 @@ const XcmTransfer = () => {
     formValues: FormValuesTransformed,
     submitType: TSubmitType,
   ) => {
-    const { from, to, currencies, address, ahAddress, useApi } = formValues;
+    const { from, to, currencies, address, useApi } = formValues;
 
     if (submitType === 'delete') {
       setBatchItems((prevItems) => {
@@ -435,7 +435,7 @@ const XcmTransfer = () => {
                   multiasset: currencyInputs as TCurrencyCoreWithFee[],
                 },
           )
-          .address(address, ahAddress, selectedAccount.address)
+          .address(address, selectedAccount.address)
           .build();
       }
 
