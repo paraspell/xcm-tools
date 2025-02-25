@@ -428,6 +428,18 @@ const response = await fetch("http://localhost:3001/assets/:node/multilocation",
         currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"}
     })
 });
+
+//Verify whether XCM message you wish to send will reach above existential deposit on destination chain.
+const response = await fetch("http://localhost:3001/balance/:node/foreign", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        address: "Address", // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
+        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson}
+    })
+});
 ```
 
 ### XCM Pallet
