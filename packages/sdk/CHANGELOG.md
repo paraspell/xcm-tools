@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-v8.5.2...sdk-v8.5.3) (2025-02-25)
+
+
+### Bug Fixes
+
+* Add PAPI support for Moonbeam -&gt; Ethereum transfer ✨ ([84b80c3](https://github.com/paraspell/xcm-tools/commit/84b80c3539106313b6cfa90279f1eee249ecabdd))
+* Remove ahAddress field in favor of senderAddress & Router fixes 🔧 ([9c2680a](https://github.com/paraspell/xcm-tools/commit/9c2680afe64caec8b7e91b2e1a584cf8e527eb8e))
+
 ## [8.5.2](https://github.com/paraspell/xcm-tools/compare/sdk-v8.5.1...sdk-v8.5.2) (2025-02-21)
 
 
