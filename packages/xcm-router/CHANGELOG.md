@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.2.3](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.2.2...xcm-router-v2.2.3) (2025-02-25)
+
+
+### Bug Fixes
+
+* Remove ahAddress field in favor of senderAddress & Router fixes 🔧 ([9c2680a](https://github.com/paraspell/xcm-tools/commit/9c2680afe64caec8b7e91b2e1a584cf8e527eb8e))
+* **sdk-core:** Add complete multi-locations for AH assets ([8d5e2ce](https://github.com/paraspell/xcm-tools/commit/8d5e2ce855f9becd5afb446d88e36111ec8bf47f))
+
+
+### Build System
+
+* **xcm-router:** Update Bifrost DEX SDK 📦 ([fe85f27](https://github.com/paraspell/xcm-tools/commit/fe85f273c6371c27a97e86c57d59b8913f5bff68))
+
 ## [2.2.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.2.1...xcm-router-v2.2.2) (2025-02-19)
 
 
