@@ -10,6 +10,7 @@ import {
 import { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import { BalanceForeignDto } from './dto/BalanceForeignDto.js';
 import { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
+import { VerifyEdOnDestDto } from './dto/VerifyEdOnDestDto.js';
 
 @Injectable()
 export class BalanceService {
@@ -172,5 +173,28 @@ export class BalanceService {
       : await import('@paraspell/sdk-pjs');
 
     return Sdk.getExistentialDeposit(nodeTyped, currency);
+  }
+
+  async verifyEdOnDestination(
+    node: string,
+    { address, currency }: VerifyEdOnDestDto,
+    usePapi = false,
+  ) {
+    const nodeTyped = node as TNodeDotKsmWithRelayChains;
+    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(nodeTyped)) {
+      throw new BadRequestException(
+        `Node ${node} is not valid. Check docs for valid nodes.`,
+      );
+    }
+
+    const Sdk = usePapi
+      ? await import('@paraspell/sdk')
+      : await import('@paraspell/sdk-pjs');
+
+    return Sdk.verifyEdOnDestination({
+      node: nodeTyped,
+      address,
+      currency,
+    });
   }
 }

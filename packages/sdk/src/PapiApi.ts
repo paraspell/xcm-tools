@@ -27,7 +27,7 @@ import {
 } from '@paraspell/sdk-core'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
-import { Binary, createClient, FixedSizeBinary } from 'polkadot-api'
+import { AccountId, Binary, createClient, FixedSizeBinary } from 'polkadot-api'
 import { transform } from './PapiXcmTransformer'
 import { blake2b } from '@noble/hashes/blake2b'
 import { bytesToHex } from '@noble/hashes/utils'
@@ -251,7 +251,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   }
 
   async getFromRpc(module: string, method: string, key: string): Promise<string> {
-    const value = await this.api._request(`${module}_${method}`, [key])
+    const toSS58 = AccountId().dec
+    const value = await this.api._request(`${module}_${method}`, [
+      module === 'system' && isHex(key) ? toSS58(key) : key
+    ])
     return isHex(value) ? value : '0x' + value.toString(16).padStart(8, '0')
   }
 

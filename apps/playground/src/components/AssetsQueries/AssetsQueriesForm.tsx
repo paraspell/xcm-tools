@@ -34,7 +34,6 @@ export type FormValues = {
   amount: string;
   address: string;
   accountDestination: string;
-  ahAccount: string;
   useApi: boolean;
   currencyType?: 'id' | 'symbol' | 'multilocation';
 };
@@ -53,14 +52,13 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
       currency: '',
       address: '',
       accountDestination: '',
-      ahAccount: '',
       amount: '',
       useApi: false,
       currencyType: 'symbol',
     },
   });
 
-  const { func, node, currencyType, nodeDestination } = form.getValues();
+  const { func, node, currencyType } = form.getValues();
 
   const showSymbolInput =
     func === 'ASSET_ID' ||
@@ -74,7 +72,8 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
     func === 'TRANSFERABLE_AMOUNT' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
-    func === 'ORIGIN_FEE_DETAILS';
+    func === 'ORIGIN_FEE_DETAILS' ||
+    func === 'VERIFY_ED_ON_DESTINATION';
 
   const supportsCurrencyType =
     func === 'ASSET_MULTILOCATION' ||
@@ -83,7 +82,8 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'MAX_FOREIGN_TRANSFERABLE_AMOUNT' ||
     func === 'TRANSFERABLE_AMOUNT' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
-    func === 'ORIGIN_FEE_DETAILS';
+    func === 'ORIGIN_FEE_DETAILS' ||
+    func === 'VERIFY_ED_ON_DESTINATION';
 
   const showAddressInput =
     func === 'BALANCE_FOREIGN' ||
@@ -92,7 +92,8 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
     func === 'MAX_FOREIGN_TRANSFERABLE_AMOUNT' ||
     func === 'TRANSFERABLE_AMOUNT' ||
-    func === 'ORIGIN_FEE_DETAILS';
+    func === 'ORIGIN_FEE_DETAILS' ||
+    func === 'VERIFY_ED_ON_DESTINATION';
 
   const onSubmitInternal = (formValues: FormValues) => {
     const { func } = formValues;
@@ -111,7 +112,8 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'ASSET_BALANCE' ||
     func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
     func === 'MAX_FOREIGN_TRANSFERABLE_AMOUNT' ||
-    func === 'ORIGIN_FEE_DETAILS';
+    func === 'ORIGIN_FEE_DETAILS' ||
+    func === 'VERIFY_ED_ON_DESTINATION';
 
   const supportsRelayChains =
     func === 'ASSETS_OBJECT' ||
@@ -121,12 +123,16 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'TRANSFERABLE_AMOUNT' ||
     func === 'ASSET_BALANCE' ||
-    func === 'ORIGIN_FEE_DETAILS';
+    func === 'ORIGIN_FEE_DETAILS' ||
+    func === 'VERIFY_ED_ON_DESTINATION';
 
   const optionalCurrency =
     func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'BALANCE_NATIVE';
+
+  const supportsAmount =
+    func === 'ORIGIN_FEE_DETAILS' || func === 'VERIFY_ED_ON_DESTINATION';
 
   const getNodeList = () => {
     if (notSupportsEthereum && supportsRelayChains) {
@@ -284,7 +290,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             </Stack>
           )}
 
-          {isOriginFee && (
+          {supportsAmount && (
             <TextInput
               label="Amount"
               placeholder="0"
@@ -311,16 +317,6 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
               required
               data-testid="address-input"
               {...form.getInputProps('accountDestination')}
-            />
-          )}
-
-          {isOriginFee && nodeDestination === 'Ethereum' && (
-            <TextInput
-              label="AssetHub address"
-              placeholder="Enter address"
-              required
-              data-testid="ah-address-input"
-              {...form.getInputProps('ahAccount')}
             />
           )}
 

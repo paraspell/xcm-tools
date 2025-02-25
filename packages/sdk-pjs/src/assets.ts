@@ -7,7 +7,8 @@ import {
   getOriginFeeDetails as getOriginFeeDetailsImpl,
   getMaxNativeTransferableAmount as getMaxNativeTransferableAmountImpl,
   getMaxForeignTransferableAmount as getMaxForeignTransferableAmountImpl,
-  getTransferableAmount as getTransferableAmountImpl
+  getTransferableAmount as getTransferableAmountImpl,
+  verifyEdOnDestination as verifyEdOnDestinationImpl
 } from '@paraspell/sdk-core'
 import type { Extrinsic, TPjsApi } from './types'
 import { createPolkadotJsApiCall } from './utils'
@@ -61,6 +62,10 @@ export const getMaxForeignTransferableAmount = createPolkadotJsApiCall(
 
 export const getTransferableAmount = createPolkadotJsApiCall(
   getTransferableAmountImpl<TPjsApi, Extrinsic>
+)
+
+export const verifyEdOnDestination = createPolkadotJsApiCall(
+  verifyEdOnDestinationImpl<TPjsApi, Extrinsic>
 )
 
 export {

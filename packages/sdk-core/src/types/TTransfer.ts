@@ -30,7 +30,6 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   paraIdTo?: number
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   version?: Version
-  ahAddress?: string
   senderAddress?: string
   pallet?: string
   method?: string
@@ -108,11 +107,7 @@ export type TSendBaseOptions = {
    */
   address: TAddress
   /**
-   * The optional AssetHub address used when transfering to Ethereum
-   */
-  ahAddress?: string
-  /**
-   * The optional sender address. A SS58 or H160 format.
+   * The optional sender address. A SS58
    */
   senderAddress?: string
   /**

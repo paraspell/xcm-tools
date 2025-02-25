@@ -59,7 +59,6 @@ export type FormValues = {
   to: TNodeWithRelayChains;
   currencies: TCurrencyEntry[];
   address: string;
-  ahAddress: string;
   useApi: boolean;
 };
 
@@ -100,7 +99,6 @@ const XcmTransferForm: FC<Props> = ({
         },
       ],
       address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-      ahAddress: '',
       useApi: false,
     },
 
@@ -125,14 +123,6 @@ const XcmTransferForm: FC<Props> = ({
           }
           return null;
         },
-      },
-      ahAddress: (value, values) => {
-        if (values.to === 'Ethereum' && values.from === 'Hydration') {
-          return value
-            ? null
-            : 'AssetHub address is required for transfers to Ethereum';
-        }
-        return null;
       },
     },
   });
@@ -224,9 +214,6 @@ const XcmTransferForm: FC<Props> = ({
   if (!isVisible) {
     return null;
   }
-
-  const isEthDest =
-    (from === 'Hydration' || from === 'BifrostPolkadot') && to === 'Ethereum';
 
   return (
     <Paper p="xl" shadow="md">
@@ -329,15 +316,6 @@ const XcmTransferForm: FC<Props> = ({
             data-testid="input-address"
             {...form.getInputProps('address')}
           />
-
-          {isEthDest && (
-            <TextInput
-              label="AssetHub address"
-              placeholder="Enter address"
-              data-testid="input-ahaddress"
-              {...form.getInputProps('ahAddress')}
-            />
-          )}
 
           <XcmApiCheckbox
             {...form.getInputProps('useApi', { type: 'checkbox' })}

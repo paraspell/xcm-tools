@@ -75,6 +75,7 @@ export const AssetsQueries = () => {
       'TRANSFERABLE_AMOUNT',
       'EXISTENTIAL_DEPOSIT',
       'ORIGIN_FEE_DETAILS',
+      'VERIFY_ED_ON_DESTINATION',
     ]);
 
     const resolvedCurrency = resolveCurrency(formValues);
@@ -83,7 +84,9 @@ export const AssetsQueries = () => {
       const shouldUsePost = postCalls.has(func);
 
       return fetchFromApi(
-        shouldUsePost && func !== 'ORIGIN_FEE_DETAILS'
+        shouldUsePost &&
+          func !== 'ORIGIN_FEE_DETAILS' &&
+          func !== 'VERIFY_ED_ON_DESTINATION'
           ? {
               address,
               ...('symbol' in resolvedCurrency &&
@@ -99,6 +102,14 @@ export const AssetsQueries = () => {
                     account: address,
                     origin: formValues.node,
                     destination: formValues.nodeDestination,
+                    currency: {
+                      ...resolvedCurrency,
+                      amount: formValues.amount,
+                    },
+                  }
+                : {}),
+              ...(func === 'VERIFY_ED_ON_DESTINATION'
+                ? {
                     currency: {
                       ...resolvedCurrency,
                       amount: formValues.amount,
