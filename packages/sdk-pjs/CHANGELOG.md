@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.5.2...sdk-pjs-v8.5.3) (2025-02-25)
+
+
+### Bug Fixes
+
+* Add PAPI support for Moonbeam -&gt; Ethereum transfer ✨ ([84b80c3](https://github.com/paraspell/xcm-tools/commit/84b80c3539106313b6cfa90279f1eee249ecabdd))
+
 ## [8.5.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.5.1...sdk-pjs-v8.5.2) (2025-02-21)
 
 
