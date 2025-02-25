@@ -7,7 +7,8 @@ import {
   getOriginFeeDetails as getOriginFeeDetailsImpl,
   getMaxNativeTransferableAmount as getMaxNativeTransferableAmountImpl,
   getMaxForeignTransferableAmount as getMaxForeignTransferableAmountImpl,
-  getTransferableAmount as getTransferableAmountImpl
+  getTransferableAmount as getTransferableAmountImpl,
+  verifyEdOnDestination as verifyEdOnDestinationImpl
 } from '@paraspell/sdk-core'
 import { createPapiApiCall } from './utils'
 import type { TPapiApi, TPapiTransaction } from './types'
@@ -63,6 +64,10 @@ export const getMaxForeignTransferableAmount = createPapiApiCall(
 
 export const getTransferableAmount = createPapiApiCall(
   getTransferableAmountImpl<TPapiApi, TPapiTransaction>
+)
+
+export const verifyEdOnDestination = createPapiApiCall(
+  verifyEdOnDestinationImpl<TPapiApi, TPapiTransaction>
 )
 
 export {

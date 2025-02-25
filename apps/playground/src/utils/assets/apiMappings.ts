@@ -26,6 +26,7 @@ export const getApiEndpoint = (
     TRANSFERABLE_AMOUNT: `/balance/${node}/transferable-amount${papiSuffix}`,
     EXISTENTIAL_DEPOSIT: `/balance/${node}/existential-deposit`,
     ORIGIN_FEE_DETAILS: `/origin-fee-details`,
+    VERIFY_ED_ON_DESTINATION: `/balance/${node}/verify-ed-on-destination`,
   };
 
   return endpoints[func] ?? '/';

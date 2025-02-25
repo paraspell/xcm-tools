@@ -100,10 +100,6 @@ export type TGetOriginFeeDetailsOptionsBase = {
    */
   accountDestination: string
   /**
-   * The AssetHub address
-   */
-  ahAccount?: string
-  /**
    * The fee margin percentage.
    */
   feeMarginPercentage?: number
@@ -176,6 +172,18 @@ export type TGetTransferableAmountOptionsBase = {
 
 export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
   TGetTransferableAmountOptionsBase,
+  TApi,
+  TRes
+>
+
+export type TVerifyEdOnDestinationOptionsBase = {
+  node: TNodeDotKsmWithRelayChains
+  address: string
+  currency: WithAmount<TCurrencyCore>
+}
+
+export type TVerifyEdOnDestinationOptions<TApi, TRes> = WithApi<
+  TVerifyEdOnDestinationOptionsBase,
   TApi,
   TRes
 >

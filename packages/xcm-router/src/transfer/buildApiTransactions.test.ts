@@ -1,5 +1,4 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
-import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { validateTransferOptions } from './utils/validateTransferOptions';
 import { prepareTransformedOptions } from './utils';
 import { buildTransactions } from './buildTransactions';
@@ -24,8 +23,6 @@ vi.mock('./buildTransactions', () => ({
 }));
 
 describe('buildApiTransactions', () => {
-  const mockOriginApi = { disconnect: vi.fn() } as unknown as TPjsApi;
-  const mockSwapApi = { disconnect: vi.fn() } as unknown as TPjsApi;
   const mockTransactions = [{ tx: 'test' }] as unknown as TRouterPlan;
 
   const initialOptions = {
@@ -44,16 +41,12 @@ describe('buildApiTransactions', () => {
         slippagePct: '1',
         origin: {
           node: 'Acala',
-          api: mockOriginApi,
           assetFrom: { symbol: 'ACA' },
         },
-        exchange: {
-          api: mockSwapApi,
-        },
+        exchange: {},
       } as unknown as TBuildTransactionsOptions & TAdditionalTransferOptions,
       dex: {
         node: 'Acala',
-        createApiInstance: vi.fn().mockResolvedValue(mockSwapApi),
       } as unknown as ExchangeNode,
     });
 
@@ -61,19 +54,11 @@ describe('buildApiTransactions', () => {
   });
 
   test('should create API instances, build transactions, and disconnect', async () => {
-    const disconnectSpy = vi.spyOn(mockOriginApi, 'disconnect');
-    const swapDisconnectSpy = vi.spyOn(mockSwapApi, 'disconnect');
-
     const result = await buildApiTransactions(initialOptions as TBuildTransactionsOptions);
 
     expect(validateTransferOptions).toHaveBeenCalledWith(initialOptions);
-
     expect(prepareTransformedOptions).toHaveBeenCalledWith(initialOptions);
-
     expect(buildTransactions).toHaveBeenCalledOnce();
-    expect(disconnectSpy).toHaveBeenCalled();
-    expect(swapDisconnectSpy).toHaveBeenCalled();
-
     expect(result).toEqual(mockTransactions);
   });
 
@@ -81,13 +66,8 @@ describe('buildApiTransactions', () => {
     const mockError = new Error('Build transactions failed');
     vi.mocked(buildTransactions).mockRejectedValueOnce(mockError);
 
-    const disconnectSpy = vi.spyOn(mockOriginApi, 'disconnect');
-    const swapDisconnectSpy = vi.spyOn(mockSwapApi, 'disconnect');
-
     await expect(buildApiTransactions(initialOptions as TBuildTransactionsOptions)).rejects.toThrow(
       mockError,
     );
-    expect(disconnectSpy).toHaveBeenCalled();
-    expect(swapDisconnectSpy).toHaveBeenCalled();
   });
 });

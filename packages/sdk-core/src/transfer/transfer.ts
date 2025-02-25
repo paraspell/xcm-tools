@@ -15,7 +15,6 @@ import {
 import { transferRelayToPara } from './transferRelayToPara'
 import { isTMultiLocation } from '../pallets/xcmPallet/utils'
 import { resolveOverriddenAsset } from './utils/resolveOverriddenAsset'
-import { ethers } from 'ethers'
 
 export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promise<TRes> => {
   const {
@@ -26,7 +25,6 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     destination,
     paraIdTo,
     version,
-    ahAddress,
     senderAddress,
     pallet,
     method
@@ -36,10 +34,6 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   validateDestination(origin, destination)
   validateDestinationAddress(address, destination)
   if (senderAddress) validateAddress(senderAddress, origin, false)
-
-  if (ahAddress && ethers.isAddress(ahAddress)) {
-    throw new Error('AssetHub address needs to be in Substrate format')
-  }
 
   if (isRelayChain(origin) && !isTMultiLocation(destination) && isRelayChain(destination)) {
     throw new Error('Relay chain to relay chain transfers are not supported.')
@@ -99,7 +93,6 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     paraIdTo,
     overriddenAsset,
     version,
-    ahAddress,
     senderAddress,
     pallet,
     method

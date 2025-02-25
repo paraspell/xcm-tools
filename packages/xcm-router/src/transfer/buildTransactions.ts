@@ -54,6 +54,7 @@ export const buildTransactions = async (
       api: exchange.api,
       node: dex.node,
       tx: swapTx,
+      amountOut: BigInt(amountOut),
       type: 'SWAP',
     });
   }

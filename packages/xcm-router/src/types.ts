@@ -174,13 +174,23 @@ export type TAutoSelect = 'Auto select';
 
 export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';
 
-export type TTransaction = {
+type TBaseTransaction = {
   api: TPjsApi;
   node: TNodeDotKsmWithRelayChains;
   destinationNode?: TNodeWithRelayChains;
-  type: TTransactionType;
   tx: Extrinsic;
 };
+
+export type TSwapTransaction = TBaseTransaction & {
+  type: 'SWAP';
+  amountOut: bigint;
+};
+
+export type TNonSwapTransaction = TBaseTransaction & {
+  type: 'TRANSFER' | 'SWAP_AND_TRANSFER';
+};
+
+export type TTransaction = TSwapTransaction | TNonSwapTransaction;
 
 export type TRouterPlan = TTransaction[];
 

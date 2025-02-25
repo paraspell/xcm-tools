@@ -109,8 +109,7 @@ describe('send', () => {
       address: options.address,
       destination: options.destination,
       paraIdTo: options.paraIdTo,
-      version: options.version,
-      ahAddress: options.ahAddress
+      version: options.version
     })
 
     expect(result).toBe('transferResult')
@@ -234,14 +233,14 @@ describe('send', () => {
     expect(result).toBe('transferResult')
   })
 
-  it('should throw error if ahAddress is in EVM format', async () => {
+  it('should throw error if senderAddress is in EVM format', async () => {
     const options = {
       api: apiMock,
       origin: 'Acala',
       currency: { symbol: 'TEST', amount: 100 },
       address: 'some-address',
       destination: 'Astar',
-      ahAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496'
+      senderAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496'
     } as TSendOptions<unknown, unknown>
 
     await expect(send(options)).rejects.toThrow()
@@ -256,7 +255,7 @@ describe('send', () => {
       destination: 'Astar',
       paraIdTo: undefined,
       version: undefined,
-      ahAddress: undefined
+      senderAddress: undefined
     } as TSendOptions<unknown, unknown>
 
     const transferSpy = vi.spyOn(originNodeMock, 'transfer')
@@ -267,7 +266,7 @@ describe('send', () => {
       expect.objectContaining({
         paraIdTo: undefined,
         version: undefined,
-        ahAddress: undefined
+        senderAddress: undefined
       })
     )
 

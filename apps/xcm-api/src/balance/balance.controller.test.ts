@@ -8,6 +8,7 @@ import { EventName } from '../analytics/EventName.js';
 import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
 import type { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
+import type { VerifyEdOnDestDto } from './dto/VerifyEdOnDestDto.js';
 
 describe('BalanceController', () => {
   let balanceController: BalanceController;
@@ -28,6 +29,7 @@ describe('BalanceController', () => {
             getMaxNativeTransferableAmount: vi.fn(),
             getTransferableAmount: vi.fn(),
             getExistentialDeposit: vi.fn(),
+            verifyEdOnDestination: vi.fn(),
           },
         },
         {
@@ -397,6 +399,66 @@ describe('BalanceController', () => {
       );
       expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
       expect(result).toEqual(edMock);
+    });
+  });
+
+  describe('verifyEdOnDestination', () => {
+    it('should track analytics and call BalanceService for verifying ED on destination PAPI', async () => {
+      const node = 'Acala';
+      const params: VerifyEdOnDestDto = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ', amount: '100' },
+      };
+      const req = {} as Request;
+
+      const resultMock = true;
+      const balanceServiceSpy = vi
+        .spyOn(balanceService, 'verifyEdOnDestination')
+        .mockResolvedValue(resultMock);
+      const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
+
+      const result = await balanceController.verifyEdOnDestination(
+        node,
+        params,
+        req,
+      );
+
+      expect(analyticsServiceSpy).toHaveBeenCalledWith(
+        EventName.VERIFY_ED_ON_DESTINATION,
+        req,
+        { node },
+      );
+      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
+      expect(result).toEqual(resultMock);
+    });
+
+    it('should track analytics and call BalanceService for verifying ED on destination PJS', async () => {
+      const node = 'Acala';
+      const params: VerifyEdOnDestDto = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ', amount: '100' },
+      };
+      const req = {} as Request;
+
+      const resultMock = true;
+      const balanceServiceSpy = vi
+        .spyOn(balanceService, 'verifyEdOnDestination')
+        .mockResolvedValue(resultMock);
+      const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
+
+      const result = await balanceController.verifyEdOnDestination(
+        node,
+        params,
+        req,
+      );
+
+      expect(analyticsServiceSpy).toHaveBeenCalledWith(
+        EventName.VERIFY_ED_ON_DESTINATION,
+        req,
+        { node },
+      );
+      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
+      expect(result).toEqual(resultMock);
     });
   });
 });
