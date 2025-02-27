@@ -175,6 +175,9 @@ export const getTNode = (
   )
 }
 
-export * from './getAssetMultiLocation'
+export const hasDryRunSupport = (node: TNodeWithRelayChains): boolean => {
+  return getAssetsObject(node).supportsDryRunApi
+}
 
+export * from './getAssetMultiLocation'
 export * from './getExistentialDeposit'
