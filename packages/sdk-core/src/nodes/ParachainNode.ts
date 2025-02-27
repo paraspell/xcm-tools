@@ -10,11 +10,9 @@ import type {
   IXTransferTransfer,
   TSendInternalOptions,
   TDestination,
-  TCurrencySelectionHeaderArr,
   TNodePolkadotKusama,
   TMultiAsset,
   TMultiLocation,
-  TMultiLocationHeader,
   TSerializedApiCall,
   TAsset,
   TXTokensTransferOptions,
@@ -22,13 +20,15 @@ import type {
   TAmount,
   TRelayToParaOptions,
   TPallet,
-  TPolkadotXCMTransferOptions
+  TPolkadotXCMTransferOptions,
+  TXcmVersioned
 } from '../types'
 import { Version, Parents } from '../types'
 import { generateAddressPayload, getFees, isForeignAsset, isRelayChain } from '../utils'
 import {
   constructRelayToParaParameters,
   createCurrencySpec,
+  createMultiAsset,
   createPolkadotXcmHeader,
   isTMultiLocation
 } from '../pallets/xcmPallet/utils'
@@ -39,6 +39,7 @@ import { getParaId } from './config'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { getParaEthTransferFees } from '../transfer'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
+import { DOT_MULTILOCATION } from '../constants'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj
@@ -219,7 +220,7 @@ abstract class ParachainNode<TApi, TRes> {
     version: Version,
     _asset?: TAsset,
     overridedMultiLocation?: TMultiLocation | TMultiAsset[]
-  ): TCurrencySelectionHeaderArr {
+  ): TXcmVersioned<TMultiAsset[]> {
     return createCurrencySpec(
       amount,
       version,
@@ -233,7 +234,7 @@ abstract class ParachainNode<TApi, TRes> {
     version: Version,
     destination: TDestination,
     paraId?: number
-  ): TMultiLocationHeader {
+  ): TXcmVersioned<TMultiLocation> {
     return createPolkadotXcmHeader(scenario, version, destination, paraId)
   }
 
@@ -260,14 +261,11 @@ abstract class ParachainNode<TApi, TRes> {
 
     const versionOrDefault = version ?? Version.V4
 
-    const ethMultiAsset = Object.values(
-      createCurrencySpec(
-        asset.amount,
-        versionOrDefault,
-        Parents.TWO,
-        asset.multiLocation as TMultiLocation
-      )
-    )[0][0]
+    const ethMultiAsset = createMultiAsset(
+      versionOrDefault,
+      asset.amount,
+      asset.multiLocation as TMultiLocation
+    )
 
     const ahApi = await api.createApiForNode('AssetHubPolkadot')
 
@@ -307,7 +305,7 @@ abstract class ParachainNode<TApi, TRes> {
         ),
         assets: {
           [versionOrDefault]: [
-            Object.values(this.createCurrencySpec(fee, 'ParaToRelay', versionOrDefault))[0][0],
+            createMultiAsset(versionOrDefault, fee, DOT_MULTILOCATION),
             ethMultiAsset
           ]
         },

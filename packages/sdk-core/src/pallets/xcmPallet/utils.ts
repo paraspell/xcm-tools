@@ -1,12 +1,12 @@
-import type { TAmount, TRelaychain, TNodePolkadotKusama, TCurrencyInput } from '../../types'
-import {
-  Version,
-  Parents,
-  type TMultiLocationHeader,
-  type TScenario,
-  type TDestination,
-  type TCurrencySelectionHeaderArr
+import type {
+  TAmount,
+  TRelaychain,
+  TNodePolkadotKusama,
+  TCurrencyInput,
+  OneKey,
+  TXcmVersioned
 } from '../../types'
+import { Version, Parents, type TScenario, type TDestination } from '../../types'
 import type { TJunctions, TJunction } from '../../types/TMultiLocation'
 import { type TMultiLocation } from '../../types/TMultiLocation'
 import { type TMultiAsset } from '../../types/TMultiAsset'
@@ -26,7 +26,7 @@ export const isTMultiAsset = (value: unknown): value is TMultiAsset =>
 export const createBridgeCurrencySpec = (
   amount: TAmount,
   ecosystem: 'Polkadot' | 'Kusama'
-): TCurrencySelectionHeaderArr => {
+): TXcmVersioned<TMultiAsset[]> => {
   return {
     [Version.V4]: [
       {
@@ -66,32 +66,35 @@ export const createMultiAsset = (
   }
 }
 
+export const addXcmVersionHeader = <T, V extends Version>(obj: T, version: V) =>
+  ({ [version]: obj }) as OneKey<V, T>
+
+export const getCurrency = (
+  amount: TAmount,
+  version: Version,
+  parents: Parents,
+  overriddenCurrency?: TMultiLocation | TMultiAsset[],
+  interior: TJunctions | 'Here' = 'Here'
+) => {
+  if (!overriddenCurrency) {
+    return [createMultiAsset(version, amount, { parents, interior })]
+  }
+
+  return isTMultiLocation(overriddenCurrency)
+    ? [createMultiAsset(version, amount, overriddenCurrency)]
+    : // It must be TMultiAsset if not TMultiLocation
+      overriddenCurrency
+}
+
 export const createCurrencySpec = (
   amount: TAmount,
   version: Version,
   parents: Parents,
   overriddenCurrency?: TMultiLocation | TMultiAsset[],
   interior: TJunctions | 'Here' = 'Here'
-): TCurrencySelectionHeaderArr => {
-  if (!overriddenCurrency) {
-    return {
-      [version]: [
-        createMultiAsset(version, amount, {
-          parents,
-          interior
-        })
-      ]
-    }
-  }
-
-  return isTMultiLocation(overriddenCurrency)
-    ? {
-        [version]: [createMultiAsset(version, amount, overriddenCurrency)]
-      }
-    : // It must be TMultiAsset if not TMultiLocation
-      {
-        [version]: overriddenCurrency
-      }
+): TXcmVersioned<TMultiAsset[]> => {
+  const currency = getCurrency(amount, version, parents, overriddenCurrency, interior)
+  return addXcmVersionHeader(currency, version)
 }
 
 export const createVersionedMultiLocation = (version: Version, multiLocation: TMultiLocation) => ({
@@ -105,7 +108,7 @@ export const createPolkadotXcmHeader = (
   nodeId?: number,
   junction?: TJunction,
   parents?: Parents
-): TMultiLocationHeader => {
+): TXcmVersioned<TMultiLocation> => {
   const parentsResolved = parents ?? (scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE)
   const interior =
     scenario === 'ParaToRelay'
@@ -117,15 +120,13 @@ export const createPolkadotXcmHeader = (
           }
         )
 
-  const isMultiLocationDestination = typeof destination === 'object'
-  return {
-    [version]: isMultiLocationDestination
+  const isMultiLocationDestination = isTMultiLocation(destination)
+  return addXcmVersionHeader(
+    isMultiLocationDestination
       ? destination
-      : {
-          parents: parentsResolved,
-          interior
-        }
-  }
+      : ({ parents: parentsResolved, interior } as TMultiLocation),
+    version
+  )
 }
 
 export const createBridgePolkadotXcmDest = (
@@ -133,7 +134,7 @@ export const createBridgePolkadotXcmDest = (
   ecosystem: 'Kusama' | 'Polkadot',
   destination: TDestination,
   nodeId?: number
-): TMultiLocationHeader => {
+): TXcmVersioned<TMultiLocation> => {
   const multiLocation: TMultiLocation = {
     parents: Parents.TWO,
     interior: {
@@ -147,10 +148,8 @@ export const createBridgePolkadotXcmDest = (
       ]
     }
   }
-  const isMultiLocationDestination = typeof destination === 'object'
-  return {
-    [version]: isMultiLocationDestination ? destination : multiLocation
-  }
+  const isMultiLocationDestination = isTMultiLocation(destination)
+  return addXcmVersionHeader(isMultiLocationDestination ? destination : multiLocation, version)
 }
 
 export const resolveTNodeFromMultiLocation = (

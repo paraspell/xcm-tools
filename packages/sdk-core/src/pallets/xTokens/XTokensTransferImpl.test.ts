@@ -2,7 +2,12 @@ import { describe, it, expect, vi } from 'vitest'
 import { getCurrencySelection } from './utils/getCurrencySelection'
 import { getXTokensParameters } from './utils/getXTokensParameters'
 import XTokensTransferImpl from './XTokensTransferImpl'
-import type { TMultiLocation, TXTokensTransferOptions } from '../../types'
+import type {
+  TMultiLocation,
+  TXcmVersioned,
+  TXTokensCurrencySelection,
+  TXTokensTransferOptions
+} from '../../types'
 import { Parents } from '../../types'
 import type { IPolkadotApi } from '../../api'
 
@@ -34,12 +39,14 @@ describe('XTokensTransferImpl', () => {
         amount: '1000'
       },
       fees: 1000,
-      addressSelection: 'Address',
+      addressSelection: {} as TXcmVersioned<TMultiLocation>,
       destination: mockMultiLocation,
       scenario: 'ParaToPara'
     } as TXTokensTransferOptions<unknown, unknown>
 
-    expect(() => XTokensTransferImpl.transferXTokens(input, {})).toThrow(
+    expect(() =>
+      XTokensTransferImpl.transferXTokens(input, {} as TXTokensCurrencySelection)
+    ).toThrow(
       'Multilocation destinations are not supported for specific transfer you are trying to create.'
     )
   })
@@ -55,7 +62,7 @@ describe('XTokensTransferImpl', () => {
       },
       fees: 3000,
       scenario: 'ParaToPara',
-      addressSelection: 'Address',
+      addressSelection: {} as TXcmVersioned<TMultiLocation>,
       destination: 'Hydration'
     } as TXTokensTransferOptions<unknown, unknown>
     const currencySelection = '123'

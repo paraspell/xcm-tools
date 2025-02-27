@@ -29,6 +29,7 @@ vi.mock('../utils', () => ({
 vi.mock('../pallets/xcmPallet/utils', () => ({
   constructRelayToParaParameters: vi.fn().mockReturnValue('parameters'),
   createCurrencySpec: vi.fn().mockReturnValue('currencySpec'),
+  createMultiAsset: vi.fn().mockReturnValue('multiAsset'),
   createPolkadotXcmHeader: vi.fn().mockReturnValue('polkadotXcmHeader'),
   isTMultiLocation: vi.fn()
 }))

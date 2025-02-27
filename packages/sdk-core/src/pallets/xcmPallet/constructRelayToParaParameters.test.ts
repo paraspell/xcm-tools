@@ -1,11 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { Version, Parents } from '../../types'
 import { DEFAULT_FEE_ASSET } from '../../constants'
-import type {
-  TCurrencySelectionHeaderArr,
-  TMultiLocationHeader,
-  TRelayToParaOptions
-} from '../../types'
+import type { TMultiAsset, TMultiLocation, TRelayToParaOptions, TXcmVersioned } from '../../types'
 import { createCurrencySpec, createPolkadotXcmHeader } from './utils'
 import type { IPolkadotApi } from '../../api'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
@@ -37,10 +33,14 @@ describe('constructRelayToParaParameters', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(generateAddressPayload).mockReturnValue('mockedBeneficiary' as TMultiLocationHeader)
+    vi.mocked(generateAddressPayload).mockReturnValue(
+      'mockedBeneficiary' as unknown as TXcmVersioned<TMultiLocation>
+    )
     vi.mocked(resolveParaId).mockReturnValue(mockParaId)
-    vi.mocked(createCurrencySpec).mockReturnValue('mockedAssets' as TCurrencySelectionHeaderArr)
-    vi.mocked(createPolkadotXcmHeader).mockReturnValue('mockedDest' as TMultiLocationHeader)
+    vi.mocked(createCurrencySpec).mockReturnValue({} as TXcmVersioned<TMultiAsset[]>)
+    vi.mocked(createPolkadotXcmHeader).mockReturnValue(
+      'mockedDest' as unknown as TXcmVersioned<TMultiLocation>
+    )
   })
 
   it('should construct parameters with multi-location destination and include fee', () => {
@@ -64,7 +64,7 @@ describe('constructRelayToParaParameters', () => {
     expect(result).toEqual({
       dest: 'mockedDest',
       beneficiary: 'mockedBeneficiary',
-      assets: 'mockedAssets',
+      assets: {},
       fee_asset_item: DEFAULT_FEE_ASSET,
       weight_limit: 'Unlimited'
     })
@@ -91,7 +91,7 @@ describe('constructRelayToParaParameters', () => {
     expect(result).toEqual({
       dest: 'mockedDest',
       beneficiary: 'mockedBeneficiary',
-      assets: 'mockedAssets',
+      assets: {},
       fee_asset_item: DEFAULT_FEE_ASSET
     })
   })
@@ -127,7 +127,7 @@ describe('constructRelayToParaParameters', () => {
     expect(result).toEqual({
       dest: 'mockedDest',
       beneficiary: 'mockedBeneficiary',
-      assets: 'mockedAssets',
+      assets: {},
       fee_asset_item: DEFAULT_FEE_ASSET,
       weight_limit: 'Unlimited'
     })

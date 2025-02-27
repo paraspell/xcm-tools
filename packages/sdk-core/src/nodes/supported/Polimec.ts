@@ -1,18 +1,23 @@
 // Contains detailed structure of XCM call construction for Polimec Parachain
 
 import type { IPolkadotApi } from '../../api'
-import { createMultiAsset, createPolkadotXcmHeader } from '../../pallets/xcmPallet/utils'
+import {
+  addXcmVersionHeader,
+  createMultiAsset,
+  createPolkadotXcmHeader
+} from '../../pallets/xcmPallet/utils'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
   TAddress,
   TAsset,
-  TCurrencySelectionHeaderArr,
   TDestination,
   TMultiLocation,
   TScenario,
   TSerializedApiCall,
-  TRelayToParaOptions
+  TRelayToParaOptions,
+  TXcmVersioned,
+  TMultiAsset
 } from '../../types'
 import { Parents, Version } from '../../types'
 import { generateAddressPayload, isForeignAsset } from '../../utils'
@@ -107,15 +112,16 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
     const { api, version = this.version, asset, destination, address, scenario, paraIdTo } = input
 
     if (scenario === 'ParaToPara' && destination === 'AssetHubPolkadot') {
-      const currencySelection: TCurrencySelectionHeaderArr = {
-        [version]: [
+      const currencySelection: TXcmVersioned<TMultiAsset[]> = addXcmVersionHeader(
+        [
           createMultiAsset(
             version,
             asset.amount.toString(),
             this.getAssetMultiLocation(input.asset)
           )
-        ]
-      }
+        ],
+        version
+      )
 
       return Promise.resolve(
         PolkadotXCMTransferImpl.transferPolkadotXCM(
@@ -146,11 +152,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
           getParaId('AssetHubPolkadot')
         ),
         assets: {
-          [versionOrDefault]: [
-            Object.values(
-              this.createCurrencySpec(asset.amount, 'RelayToPara', versionOrDefault)
-            )[0][0]
-          ]
+          [versionOrDefault]: [createMultiAsset(versionOrDefault, asset.amount, DOT_MULTILOCATION)]
         },
         assets_transfer_type: 'Teleport',
         remote_fees_id: {
@@ -191,9 +193,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
           getParaId('AssetHubPolkadot')
         ),
         assets: {
-          [version]: [
-            Object.values(this.createCurrencySpec(asset.amount, 'RelayToPara', version))[0][0]
-          ]
+          [version]: [createMultiAsset(version, asset.amount, DOT_MULTILOCATION)]
         },
         assets_transfer_type: 'Teleport',
         remote_fees_id: {

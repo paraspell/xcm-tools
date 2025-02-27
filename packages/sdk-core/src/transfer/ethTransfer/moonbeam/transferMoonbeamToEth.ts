@@ -5,7 +5,7 @@ import { Contract } from 'ethers'
 import abi from './abi-xcm.json' with { type: 'json' }
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
-import type { TMultiLocationHeader } from '../../../types'
+import type { TMultiAsset, TXcmVersioned } from '../../../types'
 import { Version, type TEvmBuilderOptions, type TMultiLocation } from '../../../types'
 import { isForeignAsset, isOverrideMultiLocationSpecifier } from '../../../utils'
 import {
@@ -107,9 +107,9 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
       scenario: 'ParaToPara',
       senderAddress,
       asset: { ...foundAsset, amount: currency.amount },
-      header: {} as TMultiLocationHeader,
-      currencySelection: {},
-      addressSelection: {}
+      header: {} as TXcmVersioned<TMultiLocation>,
+      currencySelection: {} as TXcmVersioned<TMultiAsset[]>,
+      addressSelection: {} as TXcmVersioned<TMultiLocation>
     },
     Version.V4,
     messageId
