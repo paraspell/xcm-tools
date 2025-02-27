@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { bnum, type Asset, type TradeRouter } from '@galacticcouncil/sdk';
 import type { TAsset, TNode } from '@paraspell/sdk-pjs';
 import { calculateSlippage, getAssetInfo, getMinAmountOut } from './utils';
+import type { TRouterAsset } from '../../../types';
 
 describe('getAssetInfo', () => {
   const mockAssets: Asset[] = [
@@ -31,7 +32,7 @@ describe('getAssetInfo', () => {
   it('should return asset by id if found', async () => {
     const spy = vi.spyOn(mockTradeRouter, 'getAllAssets').mockResolvedValue(mockAssets);
 
-    const currency: TAsset = { symbol: 'HDX', assetId: '2' };
+    const currency: TRouterAsset = { symbol: 'HDX', id: '2' };
     const asset = await getAssetInfo(mockTradeRouter, currency);
 
     expect(asset).toEqual(mockAssets[1]);

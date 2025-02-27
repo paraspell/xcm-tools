@@ -176,4 +176,54 @@ describe('BifrostExchangeNode', () => {
       expect(result.amountOut).toEqual('1000000000000');
     });
   });
+
+  describe('getAmountOut', () => {
+    const swapOptions = {
+      assetFrom: { symbol: 'BNC' },
+      assetTo: { symbol: 'KSM' },
+      amount: '1000000',
+    } as TSwapOptions;
+
+    beforeEach(() => {
+      vi.mocked(getParaId).mockReturnValue(2001);
+      vi.mocked(getTokenMap).mockReturnValue({
+        BNC: { wrapped: { symbol: 'BNC', decimals: 12 } } as Token,
+        KSM: { wrapped: { symbol: 'KSM', decimals: 12 } } as Token,
+      });
+      vi.mocked(findToken).mockImplementation((tokenMap, symbol) => {
+        return tokenMap[symbol];
+      });
+      vi.mocked(getFilteredPairs).mockResolvedValue([]);
+      vi.mocked(getBestTrade).mockReturnValue({
+        descriptions: [{ fee: 0.5 }],
+        outputAmount: {
+          toFixed: () => '500000',
+        },
+      } as Trade);
+    });
+
+    it('should throw an error if currency from token is not found', async () => {
+      vi.mocked(findToken).mockImplementationOnce(() => undefined);
+
+      await expect(node.getAmountOut(mockApi, swapOptions)).rejects.toThrowError(
+        'Currency from not found',
+      );
+    });
+
+    it('should throw an error if currency to token is not found', async () => {
+      vi.mocked(findToken)
+        .mockImplementationOnce((tm, symbol) => tm[symbol])
+        .mockImplementationOnce(() => undefined);
+
+      await expect(node.getAmountOut(mockApi, swapOptions)).rejects.toThrowError(
+        'Currency to not found',
+      );
+    });
+
+    it('should return the amount out', async () => {
+      const result = await node.getAmountOut(mockApi, swapOptions);
+
+      expect(result).toEqual(1n);
+    });
+  });
 });

@@ -1,8 +1,8 @@
 import ExchangeNode from '../DexNode';
-import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
+import type { TSwapResult, TSwapOptions, TAssets, TGetAmountOutOptions } from '../../types';
 import type { ApiPromise } from '@polkadot/api';
 import type { TForeignAsset, TMultiLocation } from '@paraspell/sdk-pjs';
-import { getAssets, getNativeAssetSymbol, isForeignAsset, Parents } from '@paraspell/sdk-pjs';
+import { getAssets, getNativeAssetSymbol, Parents } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { getQuotedAmount } from './utils';
@@ -48,7 +48,7 @@ class AssetHubExchangeNode extends ExchangeNode {
       amountWithoutFee.toString(),
       minAmountOut,
       senderAddress,
-      !isForeignAsset(assetFrom),
+      assetFrom.id === undefined,
     );
 
     const toDestFeeCurrencyTo =
@@ -78,6 +78,31 @@ class AssetHubExchangeNode extends ExchangeNode {
       tx,
       amountOut: finalAmountOut.toString(),
     };
+  }
+
+  async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions) {
+    const { assetFrom, assetTo, amount, origin } = options;
+
+    if (!assetFrom.multiLocation) {
+      throw new Error('Asset from multiLocation not found');
+    }
+
+    if (!assetTo.multiLocation) {
+      throw new Error('Asset to multiLocation not found');
+    }
+
+    const amountIn = BigNumber(amount);
+    const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
+    const amountWithoutFee = amountIn.minus(amountIn.times(pctDestFee));
+
+    const { amountOut } = await getQuotedAmount(
+      api,
+      assetFrom.multiLocation as TMultiLocation,
+      assetTo.multiLocation as TMultiLocation,
+      amountWithoutFee,
+    );
+
+    return amountOut;
   }
 
   async getAssets(_api: ApiPromise): Promise<TAssets> {

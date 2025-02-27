@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import { calculateTxFee } from '../../../utils';
 import type { Asset } from '@galacticcouncil/sdk';
 import { TradeRouter } from '@galacticcouncil/sdk';
-import { getAssetDecimals, type Extrinsic } from '@paraspell/sdk-pjs';
+import { getAssetDecimals, getNativeAssetSymbol, type Extrinsic } from '@paraspell/sdk-pjs';
 import type { TSwapOptions } from '../../../types';
 import { calculateFee } from './calculateFee';
 import { getAssetInfo } from './utils';
@@ -31,6 +31,7 @@ vi.mock('./utils', async () => {
 
 vi.mock('@paraspell/sdk-pjs', () => ({
   getAssetDecimals: vi.fn(),
+  getNativeAssetSymbol: vi.fn(),
 }));
 
 describe('calculateFee', () => {
@@ -139,6 +140,8 @@ describe('calculateFee', () => {
   });
 
   it('should throw if price is not found', async () => {
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
+
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
         amountOut: new BigNumber('1000'),
@@ -180,6 +183,8 @@ describe('calculateFee', () => {
     const currencyFromInfo = { id: '9999', symbol: 'HDX' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'KSM' } as Asset;
 
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
+
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
         amountOut: new BigNumber('1000'),
@@ -215,6 +220,8 @@ describe('calculateFee', () => {
     } as TSwapOptions;
     const currencyFromInfo = { id: '1', symbol: 'KSM' } as Asset;
     const currencyToInfo = { id: '2', symbol: 'DOT' } as Asset;
+
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
 
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({

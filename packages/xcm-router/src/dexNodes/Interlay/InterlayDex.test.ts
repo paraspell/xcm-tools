@@ -178,4 +178,62 @@ describe('InterlayExchangeNode', () => {
       ]);
     });
   });
+
+  describe('getAmountOut', () => {
+    it('throws if assetFrom is invalid', async () => {
+      vi.mocked(getCurrency).mockResolvedValueOnce(null);
+
+      const options = {
+        assetFrom: { symbol: 'FAKE' },
+        assetTo: { symbol: 'REAL' },
+        amount: '100',
+      };
+
+      await expect(
+        interlayExchangeNode.getAmountOut(apiMock as ApiPromise, options),
+      ).rejects.toThrowError('Currency from is invalid.');
+    });
+
+    it('throws if assetTo is invalid', async () => {
+      vi.mocked(getCurrency)
+        .mockResolvedValueOnce({ name: 'mockCurrencyFrom' } as CurrencyExt)
+        .mockResolvedValueOnce(null);
+
+      const options = {
+        assetFrom: { symbol: 'REAL' },
+        assetTo: { symbol: 'FAKE' },
+        amount: '100',
+      };
+
+      await expect(
+        interlayExchangeNode.getAmountOut(apiMock as ApiPromise, options),
+      ).rejects.toThrowError('Currency to is invalid.');
+    });
+
+    it('throws if no trade is found', async () => {
+      mockInterBtcApi.amm.getOptimalTrade.mockReturnValueOnce(null);
+
+      const options = {
+        assetFrom: { symbol: 'REAL' },
+        assetTo: { symbol: 'REAL2' },
+        amount: '100',
+      };
+
+      await expect(
+        interlayExchangeNode.getAmountOut(apiMock as ApiPromise, options),
+      ).rejects.toThrowError('No trade found');
+    });
+
+    it('returns a successful amount out', async () => {
+      const options = {
+        assetFrom: { symbol: 'REAL' },
+        assetTo: { symbol: 'REAL2' },
+        amount: '100',
+      };
+
+      const result = await interlayExchangeNode.getAmountOut(apiMock as ApiPromise, options);
+
+      expect(result).toBe(12345n);
+    });
+  });
 });

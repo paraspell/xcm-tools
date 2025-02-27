@@ -7,6 +7,7 @@ import type { TTransferOptions } from '../types';
 vi.mock('../transfer', () => ({
   buildApiTransactions: vi.fn(),
   transfer: vi.fn(),
+  getBestAmountOut: vi.fn(),
 }));
 
 export const transferParams: TTransferOptions = {
@@ -38,10 +39,12 @@ const {
 describe('Builder', () => {
   let transferSpy: MockInstance;
   let buildApiTransactionsSpy: MockInstance;
+  let getBestAmountOutSpy: MockInstance;
 
   beforeEach(() => {
     transferSpy = vi.mocked(transfer).mockResolvedValue(undefined);
     buildApiTransactionsSpy = vi.mocked(buildApiTransactions).mockResolvedValue([]);
+    getBestAmountOutSpy = vi.mocked(transfer).mockResolvedValue(undefined);
   });
 
   it('should construct transactions using RouterBuilder', async () => {
@@ -148,5 +151,18 @@ describe('Builder', () => {
       onStatusChange,
       exchange: undefined,
     });
+  });
+
+  it('should get best amount out', async () => {
+    await RouterBuilder()
+      .from(from)
+      .exchange(exchange)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .getBestAmountOut();
+
+    expect(getBestAmountOutSpy).toHaveBeenCalledWith(transferParams);
   });
 });

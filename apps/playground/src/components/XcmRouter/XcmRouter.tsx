@@ -26,7 +26,7 @@ import { TransferStepper } from './TransferStepper';
 import Confetti from 'react-confetti';
 import type { Signer } from '@polkadot/api/types';
 import axios, { AxiosError } from 'axios';
-import { submitTransaction } from '../../utils';
+import { fetchFromApi, replaceBigInt, submitTransaction } from '../../utils';
 import { ErrorAlert } from '../common/ErrorAlert';
 import { useWallet } from '../../hooks/useWallet';
 import { API_URL } from '../../consts';
@@ -48,6 +48,8 @@ import {
   type TCurrencyInput,
 } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers';
+import type { TRouterSubmitType } from '../../types';
+import { OutputAlert } from '../common/OutputAlert';
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
@@ -56,6 +58,13 @@ export const XcmRouter = () => {
 
   const [alertOpened, { open: openAlert, close: closeAlert }] =
     useDisclosure(false);
+
+  const [
+    outputAlertOpened,
+    { open: openOutputAlert, close: closeOutputAlert },
+  ] = useDisclosure(false);
+
+  const [output, setOutput] = useState<string>();
 
   const [error, setError] = useState<Error>();
 
@@ -263,11 +272,67 @@ export const XcmRouter = () => {
     }
   };
 
-  const submit = async (formValues: TRouterFormValuesTransformed) => {
+  const submitGetBestAmountOut = async (
+    formValues: TRouterFormValuesTransformed,
+    exchange: TExchangeNode | undefined,
+  ) => {
+    const { useApi, from, to, currencyFrom, currencyTo } = formValues;
+
+    setLoading(true);
+
+    try {
+      let result;
+      if (useApi) {
+        result = await fetchFromApi(formValues, '/dry-run', 'POST', true);
+      } else {
+        result = await RouterBuilder()
+          .from(from)
+          .exchange(exchange)
+          .to(to)
+          .currencyFrom(
+            determineCurrency(
+              from
+                ? from
+                : exchange
+                  ? createDexNodeInstance(exchange).node
+                  : undefined,
+              currencyFrom,
+            ),
+          )
+          .currencyTo(
+            determineCurrency(
+              exchange ? createDexNodeInstance(exchange).node : undefined,
+              currencyTo,
+              exchange === undefined,
+            ),
+          )
+          .amount(formValues.amount)
+          .getBestAmountOut();
+      }
+      setOutput(JSON.stringify(result, replaceBigInt, 2));
+      openOutputAlert();
+      closeAlert();
+      showSuccessNotification(undefined, 'Success', 'Best amount fetched');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submit = async (
+    formValues: TRouterFormValuesTransformed,
+    submitType: TRouterSubmitType,
+  ) => {
     const { useApi } = formValues;
     if (!selectedAccount) {
       showErrorNotification('No account selected, connect wallet first');
       throw Error('No account selected!');
+    }
+
+    closeOutputAlert();
+
+    if (submitType === 'getBestAmountOut') {
+      await submitGetBestAmountOut(formValues, undefined);
+      return;
     }
 
     setLoading(true);
@@ -338,8 +403,10 @@ export const XcmRouter = () => {
     setLoading(false);
   };
 
-  const onSubmit = (formValues: TRouterFormValuesTransformed) =>
-    void submit(formValues);
+  const onSubmit = (
+    formValues: TRouterFormValuesTransformed,
+    submitType: TRouterSubmitType,
+  ) => void submit(formValues, submitType);
 
   const onAlertCloseClick = () => {
     closeAlert();
@@ -353,6 +420,8 @@ export const XcmRouter = () => {
 
   const width = window.innerWidth;
   const height = document.body.scrollHeight;
+
+  const onOutputAlertCloseClick = () => closeOutputAlert();
 
   return (
     <Container px="xl" pb="128">
@@ -400,6 +469,11 @@ export const XcmRouter = () => {
                 .split('\n\n')
                 .map((line, index) => <p key={index}>{line}</p>)}
             </ErrorAlert>
+          )}
+        </Box>
+        <Box>
+          {outputAlertOpened && output && (
+            <OutputAlert output={output} onClose={onOutputAlertCloseClick} />
           )}
         </Box>
       </Stack>

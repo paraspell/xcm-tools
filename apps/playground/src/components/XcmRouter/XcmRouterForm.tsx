@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { FC } from 'react';
+import type { FC, FormEvent } from 'react';
 import { useForm } from '@mantine/form';
 import type { TAutoSelect, TExchangeNode } from '@paraspell/xcm-router';
 import { EXCHANGE_NODES } from '@paraspell/xcm-router';
@@ -15,6 +15,7 @@ import {
   Center,
   rem,
   Paper,
+  Menu,
 } from '@mantine/core';
 import type {
   TAsset,
@@ -28,9 +29,9 @@ import AccountSelectModal from '../AccountSelectModal/AccountSelectModal';
 import { useDisclosure } from '@mantine/hooks';
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ethers } from 'ethers';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconChevronDown, IconInfoCircle, Icon123 } from '@tabler/icons-react';
 import useRouterCurrencyOptions from '../../hooks/useRouterCurrencyOptions';
-import type { TWalletAccount } from '../../types';
+import type { TRouterSubmitType, TWalletAccount } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { useWallet } from '../../hooks/useWallet';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
@@ -56,7 +57,10 @@ export type TRouterFormValuesTransformed = TRouterFormValues & {
 };
 
 type Props = {
-  onSubmit: (values: TRouterFormValuesTransformed) => void;
+  onSubmit: (
+    values: TRouterFormValuesTransformed,
+    submitType: TRouterSubmitType,
+  ) => void;
   loading: boolean;
 };
 
@@ -145,7 +149,11 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     isToNotParaToPara,
   } = useRouterCurrencyOptions(from, exchange, to);
 
-  const onSubmitInternal = (values: TRouterFormValues) => {
+  const onSubmitInternal = (
+    values: TRouterFormValues,
+    _event: FormEvent<HTMLFormElement> | undefined,
+    submitType: TRouterSubmitType = 'default',
+  ) => {
     const currencyFrom = currencyFromMap[values.currencyFromOptionId];
     const currencyTo = currencyToMap[values.currencyToOptionId];
 
@@ -162,7 +170,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       } as TAsset,
     };
 
-    onSubmit(transformedValues);
+    onSubmit(transformedValues, submitType);
   };
 
   const infoEvmWallet = (
@@ -210,6 +218,21 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
   } = useWallet();
 
   const onConnectWalletClick = () => void connectWallet();
+
+  const onSubmitInternalBestAmount = () => {
+    const results = [
+      form.validateField('from'),
+      form.validateField('exchange'),
+      form.validateField('to'),
+      form.validateField('currencyFromOptionId'),
+      form.validateField('currencyToOptionId'),
+      form.validateField('amount'),
+    ];
+    const isValid = results.every((result) => !result.hasError);
+    if (isValid) {
+      onSubmitInternal(form.getValues(), undefined, 'getBestAmountOut');
+    }
+  };
 
   return (
     <Paper p="xl" shadow="md">
@@ -332,9 +355,36 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
           </Group>
 
           {selectedAccountPolkadot ? (
-            <Button type="submit" loading={loading} data-testid="submit">
-              Submit transaction
-            </Button>
+            <Button.Group>
+              <Button
+                type="submit"
+                loading={loading}
+                flex={1}
+                data-testid="submit"
+              >
+                Submit transaction
+              </Button>
+              <Menu shadow="md" width={200} position="bottom-end">
+                <Menu.Target>
+                  <Button
+                    style={{
+                      borderLeft: '1px solid #ff93c0',
+                    }}
+                  >
+                    <IconChevronDown />
+                  </Button>
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  <Menu.Item
+                    leftSection={<Icon123 size={16} />}
+                    onClick={onSubmitInternalBestAmount}
+                  >
+                    Get best amount out
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </Button.Group>
           ) : (
             <Button
               onClick={onConnectWalletClick}

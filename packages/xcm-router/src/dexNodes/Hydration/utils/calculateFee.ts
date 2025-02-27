@@ -1,7 +1,7 @@
 import type { Asset, TradeRouter } from '@galacticcouncil/sdk';
 import type { TSwapOptions } from '../../../types';
 import type { Extrinsic, TAsset } from '@paraspell/sdk-pjs';
-import { getAssetDecimals, type TNode } from '@paraspell/sdk-pjs';
+import { getAssetDecimals, getNativeAssetSymbol, type TNode } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 import { getAssetInfo, getMinAmountOut } from './utils';
 import { calculateTxFee } from '../../../utils';
@@ -9,7 +9,11 @@ import Logger from '../../../Logger/Logger';
 import { FEE_BUFFER } from '../../../consts';
 
 export const calculateFee = async (
-  { amount, slippagePct, feeCalcAddress }: TSwapOptions,
+  {
+    amount,
+    slippagePct,
+    feeCalcAddress,
+  }: Pick<TSwapOptions, 'amount' | 'slippagePct' | 'feeCalcAddress'>,
   tradeRouter: TradeRouter,
   currencyFromInfo: Asset,
   currencyToInfo: Asset,
@@ -28,7 +32,7 @@ export const calculateFee = async (
   const minAmountOut = getMinAmountOut(trade.amountOut, currencyToDecimals, slippagePct);
 
   const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
-    symbol: node === 'Hydration' ? 'HDX' : 'BSX',
+    symbol: getNativeAssetSymbol(node),
   } as TAsset);
 
   if (nativeCurrencyInfo === undefined) {

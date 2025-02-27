@@ -1,5 +1,5 @@
 import ExchangeNode from '../DexNode';
-import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
+import type { TSwapResult, TSwapOptions, TAssets, TGetAmountOutOptions } from '../../types';
 import type { ApiPromise } from '@polkadot/api';
 import { getNativeAssetSymbol, getOtherAssets, getParaId } from '@paraspell/sdk-pjs';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
@@ -96,6 +96,46 @@ class BifrostExchangeNode extends ExchangeNode {
       tx: extrinsic[0],
       amountOut: amountOutBN.toString(),
     };
+  }
+
+  async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint> {
+    const { assetFrom, assetTo, amount, origin } = options;
+
+    const chainId = getParaId(this.node);
+
+    const tokenMap = getTokenMap(this.node, chainId);
+
+    const tokenWrappedFrom = findToken(tokenMap, assetFrom.symbol);
+
+    if (tokenWrappedFrom === undefined) {
+      throw new Error('Currency from not found');
+    }
+
+    const tokenWrappedTo = findToken(tokenMap, assetTo.symbol);
+
+    if (tokenWrappedTo === undefined) {
+      throw new Error('Currency to not found');
+    }
+
+    const tokenFrom = new Token(tokenWrappedFrom.wrapped);
+    const tokenTo = new Token(tokenWrappedTo.wrapped);
+
+    const currencyCombinations = getCurrencyCombinations(chainId, tokenFrom, tokenTo);
+
+    const pairs = await getFilteredPairs(api, chainId, currencyCombinations);
+
+    const amountBN = new BigNumber(amount);
+
+    const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
+
+    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
+
+    const amountIn = Amount.fromRawAmount(tokenFrom, amountWithoutFee.toString());
+    const trade = getBestTrade(chainId, pairs, amountIn, tokenTo);
+
+    const amountOut = trade.outputAmount.toFixed();
+
+    return BigInt(amountOut);
   }
 
   async getAssets(_api: ApiPromise): Promise<TAssets> {

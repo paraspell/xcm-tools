@@ -155,4 +155,23 @@ describe('AssetHubExchangeNode', () => {
       expect(vi.mocked(sdkGetAssets)).toHaveBeenCalledWith('AssetHubPolkadot');
     });
   });
+
+  describe('getAmountOut', () => {
+    it('should return amountOut', async () => {
+      const firstQuote = {
+        amountOut: BigInt('2000'),
+        usedFromML: assetFromML,
+        usedToML: assetToML,
+      };
+      vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
+      const amountOut = await instance.getAmountOut(api, baseSwapOptions);
+      expect(amountOut).toEqual(2000n);
+      expect(vi.mocked(getQuotedAmount)).toHaveBeenCalledWith(
+        api,
+        assetFromML,
+        assetToML,
+        new BigNumber('1000'),
+      );
+    });
+  });
 });
