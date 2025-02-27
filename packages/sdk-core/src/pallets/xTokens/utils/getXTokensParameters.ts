@@ -1,16 +1,16 @@
 import { isTMultiLocation } from '../../xcmPallet/utils'
 import type {
   TXTokensCurrencySelection,
-  TMultiLocationHeader,
   TAmount,
   TMultiAssetWithFee,
-  TMultiLocation
+  TMultiLocation,
+  TXcmVersioned
 } from '../../../types'
 
 export const getXTokensParameters = (
   isMultiAssetTransfer: boolean,
   currencySelection: TXTokensCurrencySelection,
-  addressSelection: TMultiLocationHeader,
+  addressSelection: TXcmVersioned<TMultiLocation>,
   amount: TAmount,
   fees: string | number,
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]

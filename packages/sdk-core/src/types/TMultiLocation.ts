@@ -1,5 +1,3 @@
-import { type Version } from './TTransfer'
-
 export type TJunctionType =
   | 'Parachain'
   | 'AccountId32'
@@ -101,8 +99,4 @@ export interface TJunctions {
 export interface TMultiLocation {
   parents: TStringOrNumber
   interior: TJunctions | 'Here'
-}
-
-export type TMultiLocationHeader = {
-  [key in Version]?: TMultiLocation
 }

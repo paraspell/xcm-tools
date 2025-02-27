@@ -1,5 +1,6 @@
 import type { TXTokensCurrencySelection, TXTokensTransferOptions } from '../../../types'
 import { getNode } from '../../../utils'
+import { addXcmVersionHeader } from '../../xcmPallet/utils'
 import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
 
 export const getCurrencySelection = <TApi, TRes>(
@@ -11,7 +12,7 @@ export const getCurrencySelection = <TApi, TRes>(
 
   const { version } = getNode(origin)
 
-  if (overriddenAsset !== undefined) return { [version]: overriddenAsset }
+  if (overriddenAsset !== undefined) return addXcmVersionHeader(overriddenAsset, version)
 
   if (isAssetHub) {
     return getModifiedCurrencySelection(version, input)

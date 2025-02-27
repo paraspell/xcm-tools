@@ -3,8 +3,9 @@ import PolkadotXCMTransferImpl from './PolkadotXCMTransferImpl'
 import type {
   TPolkadotXcmSection,
   TPolkadotXCMTransferOptions,
-  TCurrencySelectionHeaderArr,
-  TMultiLocationHeader
+  TXcmVersioned,
+  TMultiAsset,
+  TMultiLocation
 } from '../../types'
 import { Version } from '../../types'
 import type { IPolkadotApi } from '../../api'
@@ -13,7 +14,7 @@ const mockApi = {
   callTxMethod: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
-const mockHeader: TMultiLocationHeader = {
+const mockVersionedMultiLocation: TXcmVersioned<TMultiLocation> = {
   [Version.V4]: {
     parents: 0,
     interior: {
@@ -22,16 +23,7 @@ const mockHeader: TMultiLocationHeader = {
   }
 }
 
-const mockAddressSelection: TMultiLocationHeader = {
-  [Version.V4]: {
-    parents: 0,
-    interior: {
-      Here: null
-    }
-  }
-}
-
-const mockCurrencySelection: TCurrencySelectionHeaderArr = {
+const mockCurrencySelection: TXcmVersioned<TMultiAsset[]> = {
   [Version.V4]: [
     {
       id: {
@@ -56,8 +48,8 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
         api: mockApi,
-        header: mockHeader,
-        addressSelection: mockAddressSelection,
+        header: mockVersionedMultiLocation,
+        addressSelection: mockVersionedMultiLocation,
         currencySelection: mockCurrencySelection
       } as TPolkadotXCMTransferOptions<unknown, unknown>,
       mockSection,
@@ -83,8 +75,8 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
             }
           ]
         },
-        beneficiary: mockAddressSelection,
-        dest: mockHeader,
+        beneficiary: mockVersionedMultiLocation,
+        dest: mockVersionedMultiLocation,
         fee_asset_item: 0
       }
     })
@@ -96,8 +88,8 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
         api: mockApi,
-        header: mockHeader,
-        addressSelection: mockAddressSelection,
+        header: mockVersionedMultiLocation,
+        addressSelection: mockVersionedMultiLocation,
         currencySelection: mockCurrencySelection
       } as TPolkadotXCMTransferOptions<unknown, unknown>,
       mockSection,
@@ -123,8 +115,8 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
             }
           ]
         },
-        beneficiary: mockAddressSelection,
-        dest: mockHeader,
+        beneficiary: mockVersionedMultiLocation,
+        dest: mockVersionedMultiLocation,
         fee_asset_item: 0,
         weight_limit: 'Unlimited'
       }
@@ -137,8 +129,8 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
         api: mockApi,
-        header: mockHeader,
-        addressSelection: mockAddressSelection,
+        header: mockVersionedMultiLocation,
+        addressSelection: mockVersionedMultiLocation,
         currencySelection: mockCurrencySelection
       } as TPolkadotXCMTransferOptions<unknown, unknown>,
       mockSection,
@@ -164,8 +156,8 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
             }
           ]
         },
-        beneficiary: mockAddressSelection,
-        dest: mockHeader,
+        beneficiary: mockVersionedMultiLocation,
+        dest: mockVersionedMultiLocation,
         fee_asset_item: 0,
         weight_limit: { Limited: '1000' }
       }
@@ -178,8 +170,8 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
         api: mockApi,
-        header: mockHeader,
-        addressSelection: mockAddressSelection,
+        header: mockVersionedMultiLocation,
+        addressSelection: mockVersionedMultiLocation,
         currencySelection: mockCurrencySelection,
         overriddenAsset: [
           {
@@ -229,8 +221,8 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
             }
           ]
         },
-        beneficiary: mockAddressSelection,
-        dest: mockHeader,
+        beneficiary: mockVersionedMultiLocation,
+        dest: mockVersionedMultiLocation,
         fee_asset_item: 1
       }
     })

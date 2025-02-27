@@ -4,7 +4,8 @@ import type {
   TScenario,
   TSelfReserveAsset,
   TXcmForeignAsset,
-  TCurrencySelectionHeaderArr
+  TXcmVersioned,
+  TMultiAsset
 } from '../../types'
 import { Version, Parents } from '../../types'
 import { NodeNotSupportedError } from '../../errors'
@@ -64,10 +65,10 @@ describe('Darwinia', () => {
   })
 
   it('should call createCurrencySpec with PalletInstance 5 for ParaToPara scenario', () => {
-    const expectedSpec = { param: 'value' } as TCurrencySelectionHeaderArr
+    const expectedSpec = { [Version.V4]: [] } as TXcmVersioned<TMultiAsset[]>
     const mockScenario: TScenario = 'ParaToPara'
     const mockAmount = '100'
-    const mockVersion = Version.V3
+    const mockVersion = Version.V4
     vi.mocked(createCurrencySpec).mockReturnValue(expectedSpec)
 
     const result = darwinia.createCurrencySpec(mockAmount, mockScenario, mockVersion)

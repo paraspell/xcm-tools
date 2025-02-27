@@ -1,13 +1,12 @@
 import { InvalidCurrencyError } from '../../../errors'
-import { createMultiAsset } from '../../xcmPallet/utils'
+import { addXcmVersionHeader, createMultiAsset } from '../../xcmPallet/utils'
 import { getOtherAssets } from '../../assets'
 import type {
-  TCurrencySelectionHeader,
-  TCurrencySelectionHeaderArr,
   TMultiAsset,
   TMultiLocation,
   Version,
-  TXTokensTransferOptions
+  TXTokensTransferOptions,
+  TXcmVersioned
 } from '../../../types'
 import { Parents } from '../../../types'
 import { isForeignAsset } from '../../../utils/assets'
@@ -69,13 +68,11 @@ const buildMultiLocation = <TApi, TRes>({
 export const getModifiedCurrencySelection = <TApi, TRes>(
   version: Version,
   input: TXTokensTransferOptions<TApi, TRes>
-): TCurrencySelectionHeader | TCurrencySelectionHeaderArr => {
-  const { asset } = input
+): TXcmVersioned<TMultiAsset | TMultiAsset[]> => {
+  const {
+    asset: { amount }
+  } = input
   const multiLocation = buildMultiLocation(input)
-
-  const multiAsset: TMultiAsset = createMultiAsset(version, asset.amount, multiLocation)
-
-  return {
-    [version]: multiAsset
-  }
+  const multiAsset = createMultiAsset(version, amount, multiLocation)
+  return addXcmVersionHeader(multiAsset, version)
 }

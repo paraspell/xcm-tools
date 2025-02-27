@@ -1,4 +1,3 @@
-import type { TMultiLocationHeader } from './TMultiLocation'
 import { type TMultiLocation } from './TMultiLocation'
 import type {
   TNodeDotKsmWithRelayChains,
@@ -9,8 +8,8 @@ import type {
 import { type TMultiAsset } from './TMultiAsset'
 import type {
   TCurrencyInputWithAmount,
-  TCurrencySelectionHeaderArr,
   TMultiAssetWithFee,
+  TXcmVersioned,
   WithAmount
 } from './TCurrency'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
@@ -20,10 +19,10 @@ import type { TAsset } from './TAssets'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  header: TMultiLocationHeader
-  addressSelection: TMultiLocationHeader
+  header: TXcmVersioned<TMultiLocation>
+  addressSelection: TXcmVersioned<TMultiLocation>
   address: TAddress
-  currencySelection: TCurrencySelectionHeaderArr
+  currencySelection: TXcmVersioned<TMultiAsset[]>
   scenario: TScenario
   asset: WithAmount<TAsset>
   destination: TDestination
@@ -38,7 +37,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
 export type TXTokensTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
-  addressSelection: TMultiLocationHeader
+  addressSelection: TXcmVersioned<TMultiLocation>
   fees: number
   scenario: TScenario
   origin: TNodePolkadotKusama

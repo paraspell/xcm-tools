@@ -3,7 +3,13 @@ import { ethers } from 'ethers'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type AssetHubPolkadot from './AssetHubPolkadot'
-import type { TMultiLocationHeader, TNativeAsset, WithAmount } from '../../types'
+import type {
+  TMultiAsset,
+  TMultiLocation,
+  TNativeAsset,
+  TXcmVersioned,
+  WithAmount
+} from '../../types'
 import { Version, type TPolkadotXCMTransferOptions } from '../../types'
 import { getOtherAssets } from '../../pallets/assets'
 import { getNode } from '../../utils'
@@ -49,11 +55,11 @@ describe('AssetHubPolkadot', () => {
   const mockInput = {
     api: mockApi,
     asset: { symbol: 'DOT', amount: '1000', isNative: true },
-    currencySelection: {},
+    currencySelection: {} as TXcmVersioned<TMultiAsset[]>,
     currencyId: '0',
     scenario: 'ParaToRelay',
-    header: {},
-    addressSelection: {},
+    header: {} as TXcmVersioned<TMultiLocation>,
+    addressSelection: {} as TXcmVersioned<TMultiLocation>,
     paraIdTo: 1001,
     address: 'address',
     destination: 'Polkadot'
@@ -249,7 +255,7 @@ describe('AssetHubPolkadot', () => {
       ])
       vi.mocked(generateAddressPayload).mockReturnValue({
         [Version.V3]: {}
-      } as unknown as TMultiLocationHeader)
+      } as TXcmVersioned<TMultiLocation>)
 
       const handleBifrostEthTransferSpy = vi.spyOn(assetHub, 'handleBifrostEthTransfer')
 

@@ -1,14 +1,10 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
+import { getCurrency } from '../../pallets/xcmPallet/utils'
 import { determineDestWeight } from './utils/determineDestWeight'
 import { getDestination } from './utils/getDestination'
 import XTransferTransferImpl from './XTransferTransferImpl'
-import type {
-  TCurrencySelectionHeaderArr,
-  TMultiLocation,
-  TXTransferTransferOptions
-} from '../../types'
-import { Parents, Version } from '../../types'
+import type { TMultiAsset, TMultiLocation, TXTransferTransferOptions } from '../../types'
+import { Parents } from '../../types'
 import type { IPolkadotApi } from '../../api'
 
 const mockApi = {
@@ -20,19 +16,17 @@ const mockMultiLocation: TMultiLocation = {
   interior: 'Here'
 }
 
-const mockCurrencySpec: TCurrencySelectionHeaderArr = {
-  [Version.V4]: [
-    {
-      id: mockMultiLocation,
-      fun: {
-        Fungible: '123'
-      }
+const mockMultiAssets: TMultiAsset[] = [
+  {
+    id: mockMultiLocation,
+    fun: {
+      Fungible: '123'
     }
-  ]
-}
+  }
+]
 
 vi.mock('../xcmPallet/utils', () => ({
-  createCurrencySpec: vi.fn()
+  getCurrency: vi.fn()
 }))
 
 vi.mock('./utils/determineDestWeight', () => ({
@@ -63,7 +57,7 @@ describe('XTransferTransferImpl', () => {
       asset: { symbol: 'KSM', amount: 100 }
     } as TXTransferTransferOptions<unknown, unknown>
 
-    vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
+    vi.mocked(getCurrency).mockReturnValue(mockMultiAssets)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
 
     const callSpy = vi.spyOn(mockApi, 'callTxMethod')
@@ -74,7 +68,7 @@ describe('XTransferTransferImpl', () => {
       module: 'XTransfer',
       section: 'transfer',
       parameters: {
-        asset: Object.values(mockCurrencySpec)[0][0],
+        asset: mockMultiAssets[0],
         dest: mockMultiLocation,
         dest_weight: null
       }
@@ -89,7 +83,7 @@ describe('XTransferTransferImpl', () => {
       asset: { symbol: 'KSM', amount: 100 }
     } as TXTransferTransferOptions<unknown, unknown>
 
-    vi.mocked(createCurrencySpec).mockReturnValue(mockCurrencySpec)
+    vi.mocked(getCurrency).mockReturnValue(mockMultiAssets)
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
 
     const mockDestWeight = {
@@ -107,7 +101,7 @@ describe('XTransferTransferImpl', () => {
       module: 'XTransfer',
       section: 'transfer',
       parameters: {
-        asset: Object.values(mockCurrencySpec)[0][0],
+        asset: mockMultiAssets[0],
         dest: mockMultiLocation,
         dest_weight: mockDestWeight
       }

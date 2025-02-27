@@ -31,11 +31,7 @@ class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolk
   }
 
   createCurrencySpec(amount: string, scenario: TScenario, version: Version, asset?: TAsset) {
-    if (scenario === 'ParaToPara') {
-      return {}
-    } else {
-      return super.createCurrencySpec(amount, scenario, version, asset)
-    }
+    return super.createCurrencySpec(amount, scenario, version, asset)
   }
 }
 

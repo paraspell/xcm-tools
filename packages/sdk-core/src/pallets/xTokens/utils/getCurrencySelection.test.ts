@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { getNode } from '../../../utils'
 import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
 import { getCurrencySelection } from './getCurrencySelection'
-import type { TCurrencySelectionHeader } from '../../../types'
+import type { TMultiAsset, TXcmVersioned } from '../../../types'
 import { Parents, Version, type TXTokensTransferOptions } from '../../../types'
 import type ParachainNode from '../../../nodes/ParachainNode'
 
@@ -14,7 +14,7 @@ vi.mock('./getModifiedCurrencySelection', () => ({
   getModifiedCurrencySelection: vi.fn()
 }))
 
-const mockCurrencySelectionHeader: TCurrencySelectionHeader = {
+const mockCurrencySelectionHeader: TXcmVersioned<TMultiAsset> = {
   [Version.V4]: {
     id: {
       Concrete: {

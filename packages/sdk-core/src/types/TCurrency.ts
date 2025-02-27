@@ -52,29 +52,13 @@ export type WithAmount<TBase> = TBase & {
   amount: TAmount
 }
 
-export interface TCurrencySelection {
-  id: {
-    Concrete: TMultiLocation
-  }
-  fun: {
-    Fungible: string
-  }
-}
+export type OneKey<K extends string, V = unknown> = {
+  [P in K]: Record<P, V> & Partial<Record<Exclude<K, P>, never>> extends infer O
+    ? { [Q in keyof O]: O[Q] }
+    : never
+}[K]
 
-export type TCurrencySelectionV4 = {
-  id: TMultiLocation
-  fun: {
-    Fungible: string
-  }
-}
-
-export type TCurrencySelectionHeader = {
-  [key in Version]?: TCurrencySelection | TCurrencySelectionV4
-}
-
-export type TCurrencySelectionHeaderArr = {
-  [key in Version]?: [TCurrencySelection | TCurrencySelectionV4]
-}
+export type TXcmVersioned<T> = OneKey<Version, T>
 
 export type TXcmForeignAsset = {
   ForeignAsset: string | number | bigint | undefined
@@ -119,8 +103,7 @@ export type TBifrostToken =
   | { Token2: number }
 
 export type TXTokensCurrencySelection =
-  | TCurrencySelectionHeader
-  | TCurrencySelectionHeaderArr
+  | TXcmVersioned<TMultiLocation | TMultiAsset | TMultiAsset[]>
   | TXcmForeignAsset
   | TForeignAssetId
   | TForeignOrTokenAsset

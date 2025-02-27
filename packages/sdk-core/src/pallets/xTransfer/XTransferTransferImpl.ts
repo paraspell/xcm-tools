@@ -1,4 +1,4 @@
-import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
+import { getCurrency } from '../../pallets/xcmPallet/utils'
 import type { TPallet } from '../../types'
 import {
   Version,
@@ -21,9 +21,7 @@ class XTransferTransferImpl {
       )
     }
 
-    const currencySpec = Object.values(
-      createCurrencySpec(asset.amount, Version.V1, Parents.ZERO, overriddenAsset)
-    )[0][0]
+    const currencySpec = getCurrency(asset.amount, Version.V1, Parents.ZERO, overriddenAsset)[0]
 
     const dest = getDestination(input)
 

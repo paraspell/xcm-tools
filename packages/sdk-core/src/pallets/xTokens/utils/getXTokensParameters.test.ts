@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { getXTokensParameters } from './getXTokensParameters'
-import type { TMultiAssetWithFee, TMultiLocationHeader } from '../../../types'
+import type { TMultiAssetWithFee, TMultiLocation, TXcmVersioned } from '../../../types'
 import { Parents, Version } from '../../../types'
 
-const mockMultiLocationHeader: TMultiLocationHeader = {
+const mockMultiLocationHeader: TXcmVersioned<TMultiLocation> = {
   [Version.V4]: {
     parents: Parents.ONE,
     interior: 'Here'

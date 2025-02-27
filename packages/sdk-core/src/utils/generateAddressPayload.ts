@@ -1,8 +1,9 @@
-import type { TAddress, TMultiLocationHeader, TPallet, TScenario } from '../types'
+import type { TAddress, TMultiLocation, TPallet, TScenario, TXcmVersioned } from '../types'
 import { Parents, Version } from '../types'
 import { ethers } from 'ethers'
 import { createX1Payload } from './createX1Payload'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
+import { addXcmVersionHeader } from '../pallets/xcmPallet/utils'
 
 export const generateAddressPayload = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
@@ -11,17 +12,17 @@ export const generateAddressPayload = <TApi, TRes>(
   recipientAddress: TAddress,
   version: Version,
   nodeId: number | undefined
-): TMultiLocationHeader => {
+): TXcmVersioned<TMultiLocation> => {
   const isMultiLocation = typeof recipientAddress === 'object'
   if (isMultiLocation) {
-    return { [version]: recipientAddress }
+    return addXcmVersionHeader(recipientAddress, version)
   }
 
   const isEthAddress = ethers.isAddress(recipientAddress)
 
   if (scenario === 'ParaToRelay') {
-    return {
-      [version]: {
+    return addXcmVersionHeader(
+      {
         parents: pallet === 'XTokens' ? Parents.ONE : Parents.ZERO,
         interior: createX1Payload(version, {
           AccountId32: {
@@ -29,13 +30,14 @@ export const generateAddressPayload = <TApi, TRes>(
             id: api.accountToHex(recipientAddress)
           }
         })
-      }
-    }
+      },
+      version
+    )
   }
 
   if (scenario === 'ParaToPara' && pallet === 'XTokens') {
-    return {
-      [version]: {
+    return addXcmVersionHeader(
+      {
         parents: Parents.ONE,
         interior: {
           X2: [
@@ -57,13 +59,14 @@ export const generateAddressPayload = <TApi, TRes>(
                 }
           ]
         }
-      }
-    }
+      } as TMultiLocation,
+      version
+    )
   }
 
   if (scenario === 'ParaToPara' && pallet === 'PolkadotXcm') {
-    return {
-      [version]: {
+    return addXcmVersionHeader(
+      {
         parents: Parents.ZERO,
         interior: createX1Payload(
           version,
@@ -81,12 +84,13 @@ export const generateAddressPayload = <TApi, TRes>(
                 }
               }
         )
-      }
-    }
+      },
+      version
+    )
   }
 
-  return {
-    [version]: {
+  return addXcmVersionHeader(
+    {
       parents: Parents.ZERO,
       interior: createX1Payload(
         version,
@@ -94,6 +98,7 @@ export const generateAddressPayload = <TApi, TRes>(
           ? { AccountKey20: { key: recipientAddress } }
           : { AccountId32: { id: api.accountToHex(recipientAddress) } }
       )
-    }
-  }
+    },
+    version
+  )
 }
