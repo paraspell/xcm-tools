@@ -1,11 +1,16 @@
 import type { TAsset } from '@paraspell/sdk-pjs';
-import { getAssetDecimals, InvalidCurrencyError, type Extrinsic } from '@paraspell/sdk-pjs';
+import {
+  getAssetDecimals,
+  getNativeAssetSymbol,
+  InvalidCurrencyError,
+  type Extrinsic,
+} from '@paraspell/sdk-pjs';
 import ExchangeNode from '../DexNode';
 import { PoolService, TradeRouter, PoolType } from '@galacticcouncil/sdk';
 import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
-import type { TSwapResult, TSwapOptions, TAssets } from '../../types';
+import type { TSwapResult, TSwapOptions, TAssets, TGetAmountOutOptions } from '../../types';
 import type { ApiPromise } from '@polkadot/api';
-import { FEE_BUFFER } from '../../consts';
+import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import Logger from '../../Logger/Logger';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import BigNumber from 'bignumber.js';
@@ -82,7 +87,7 @@ class HydrationExchangeNode extends ExchangeNode {
     const amountOut = trade.amountOut;
 
     const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
-      symbol: this.node === 'Hydration' ? 'HDX' : 'BSX',
+      symbol: getNativeAssetSymbol(this.node),
     } as TAsset);
 
     if (nativeCurrencyInfo === undefined) {
@@ -131,6 +136,51 @@ class HydrationExchangeNode extends ExchangeNode {
     Logger.log('Amount out modified', amountOutModified.toString());
 
     return { tx, amountOut: amountOutModified.toString() };
+  }
+
+  async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint> {
+    const { assetFrom, assetTo, amount, origin } = options;
+
+    const poolService = new PoolService(api);
+    const tradeRouter = new TradeRouter(
+      poolService,
+      this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
+    );
+    const currencyFromInfo = await getAssetInfo(tradeRouter, assetFrom);
+    const currencyToInfo = await getAssetInfo(tradeRouter, assetTo);
+
+    if (currencyFromInfo === undefined) {
+      throw new InvalidCurrencyError("Currency from doesn't exist");
+    }
+
+    if (currencyToInfo === undefined) {
+      throw new InvalidCurrencyError("Currency to doesn't exist");
+    }
+
+    const currencyFromDecimals = currencyFromInfo?.decimals;
+    const currencyToDecimals = currencyToInfo?.decimals;
+
+    if (!currencyFromDecimals) {
+      throw new InvalidCurrencyError('Decimals not found for currency from');
+    }
+
+    if (!currencyToDecimals) {
+      throw new InvalidCurrencyError('Decimals not found for currency to');
+    }
+
+    const amountBN = new BigNumber(amount);
+    const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
+    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
+
+    const amountNormalized = amountWithoutFee.shiftedBy(-currencyFromDecimals);
+
+    const trade = await tradeRouter.getBestSell(
+      currencyFromInfo.id,
+      currencyToInfo.id,
+      amountNormalized,
+    );
+
+    return BigInt(trade.amountOut.toString());
   }
 
   async getAssets(api: ApiPromise): Promise<TAssets> {

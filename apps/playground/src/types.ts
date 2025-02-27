@@ -49,3 +49,5 @@ export type TSubmitType =
   | 'addToBatch';
 
 export type TEvmSubmitType = 'default' | 'approve' | 'deposit';
+
+export type TRouterSubmitType = 'default' | 'getBestAmountOut';

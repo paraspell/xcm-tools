@@ -1,6 +1,6 @@
 import type { BigNumber } from '@galacticcouncil/sdk';
 import { type TradeRouter, bnum, type Asset } from '@galacticcouncil/sdk';
-import { isForeignAsset, type TAsset } from '@paraspell/sdk-pjs';
+import type { TRouterAsset } from '../../../types';
 
 export const PCT_100 = bnum('100');
 
@@ -25,10 +25,10 @@ export const getMinAmountOut = (
 
 export const getAssetInfo = async (
   tradeRouter: TradeRouter,
-  asset: TAsset,
+  asset: TRouterAsset,
 ): Promise<Asset | undefined> => {
   const assets = await tradeRouter.getAllAssets();
-  return isForeignAsset(asset)
-    ? assets.find((a) => a.id === asset.assetId)
+  return asset.id
+    ? assets.find((a) => a.id === asset.id)
     : assets.find((a) => a.symbol === asset.symbol);
 };

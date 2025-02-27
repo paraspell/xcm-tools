@@ -7,10 +7,11 @@ import type {
 import type {
   TBuildTransactionsOptions,
   TExchangeNode,
+  TGetBestAmountOutOptions,
   TStatusChangeCallback,
   TTransferOptions,
 } from '../types';
-import { buildApiTransactions, transfer } from '../transfer';
+import { buildApiTransactions, transfer, getBestAmountOut } from '../transfer';
 
 /**
  * Builder class for constructing and executing cross-chain transfers using the XCM Router.
@@ -179,6 +180,10 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    */
   buildTransactions(this: RouterBuilderCore<TBuildTransactionsOptions>) {
     return buildApiTransactions(this._options);
+  }
+
+  getBestAmountOut(this: RouterBuilderCore<TGetBestAmountOutOptions>) {
+    return getBestAmountOut(this._options);
   }
 }
 

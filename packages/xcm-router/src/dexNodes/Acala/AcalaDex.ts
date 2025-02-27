@@ -3,7 +3,13 @@ import ExchangeNode from '../DexNode';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
 import { Wallet } from '@acala-network/sdk';
-import type { TSwapResult, TSwapOptions, TAssets, TWeight } from '../../types';
+import type {
+  TSwapResult,
+  TSwapOptions,
+  TAssets,
+  TWeight,
+  TGetAmountOutOptions,
+} from '../../types';
 import { firstValueFrom } from 'rxjs';
 import type { ApiPromise } from '@polkadot/api';
 import { calculateAcalaSwapFee, createAcalaApiInstance } from './utils';
@@ -104,6 +110,45 @@ class AcalaExchangeNode extends ExchangeNode {
     Logger.log('Amount out decimals', toToken.decimals);
 
     return { tx, amountOut: amountOutBN.toString() };
+  }
+
+  async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions) {
+    const { assetFrom, assetTo, amount, origin } = options;
+
+    const wallet = new Wallet(api);
+    await wallet.isReady;
+
+    const fromToken = wallet.getToken(assetFrom.symbol);
+    const toToken = wallet.getToken(assetTo.symbol);
+
+    const acalaDex = new AcalaDex({ api, wallet });
+
+    const dex = new AggregateDex({
+      api,
+      wallet,
+      providers: [acalaDex],
+    });
+
+    const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
+
+    const amountBN = new BigNumber(amount);
+    const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
+
+    const tradeResult = await firstValueFrom(
+      dex.swap({
+        path: [fromToken, toToken],
+        source: 'aggregate',
+        mode: 'EXACT_INPUT',
+        input: new FixedPointNumber(
+          amountWithoutFee.shiftedBy(-fromToken.decimals).toString(),
+          fromToken.decimals,
+        ),
+      }),
+    );
+
+    const amountOut = tradeResult.result.output.amount.toString();
+
+    return BigInt(amountOut);
   }
 
   async createApiInstance(): Promise<ApiPromise> {

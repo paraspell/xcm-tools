@@ -1,6 +1,6 @@
 import type {
   Extrinsic,
-  TAsset as SdkTAsset,
+  TAsset,
   TNodePolkadotKusama,
   TNodeDotKsmWithRelayChains,
   TPjsApi,
@@ -14,13 +14,20 @@ import type BigNumber from 'bignumber.js';
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 
 export type TSwapOptions = {
-  assetFrom: SdkTAsset;
-  assetTo: SdkTAsset;
+  assetFrom: TRouterAsset;
+  assetTo: TRouterAsset;
   amount: string;
   slippagePct: string;
   senderAddress: string;
   feeCalcAddress: string;
   origin?: TOriginInfo;
+};
+
+export type TGetAmountOutOptions = {
+  origin?: TOriginInfo;
+  assetFrom: TRouterAsset;
+  assetTo: TRouterAsset;
+  amount: string;
 };
 
 export type TSwapResult = {
@@ -118,6 +125,22 @@ export type TTransferOptions = {
   onStatusChange?: TStatusChangeCallback;
 };
 
+export type TGetBestAmountOutOptions = Omit<
+  TTransferOptions,
+  | 'onStatusChange'
+  | 'signer'
+  | 'evmSigner'
+  | 'recipientAddress'
+  | 'slippagePct'
+  | 'senderAddress'
+  | 'evmSenderAddress'
+>;
+
+export type TGetBestAmountOutResult = {
+  exchange: TExchangeNode;
+  amountOut: bigint;
+};
+
 export type TBuildTransactionsOptions = Omit<
   TTransferOptions,
   'onStatusChange' | 'signer' | 'evmSigner'
@@ -129,7 +152,7 @@ export type TBuildTransactionsOptionsModified = Omit<TBuildTransactionsOptions, 
 export type TOriginInfo = {
   api: TPjsApi;
   node: TNodeDotKsmWithRelayChains;
-  assetFrom: SdkTAsset;
+  assetFrom: TAsset;
 };
 
 export type TExchangeInfo = {

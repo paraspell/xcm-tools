@@ -148,4 +148,19 @@ describe('AcalaExchangeNode', () => {
       ).rejects.toThrow(SmallAmountError);
     });
   });
+
+  describe('getAmountOut', () => {
+    const mockApi = {} as ApiPromise;
+    const baseSwapOptions = {
+      assetFrom: { symbol: 'DOT' },
+      assetTo: { symbol: 'ACA' },
+      amount: '100',
+    } as TSwapOptions;
+
+    it('should return the amountOut with fee deducted', async () => {
+      const result = await node.getAmountOut(mockApi, baseSwapOptions);
+
+      expect(result).toBe(42n);
+    });
+  });
 });

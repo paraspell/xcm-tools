@@ -1,7 +1,13 @@
 import type { TForeignAsset } from '@paraspell/sdk-pjs';
 import { getAssets, getNativeAssetSymbol, getNodeProviders } from '@paraspell/sdk-pjs';
 import ExchangeNode from '../DexNode';
-import type { TSwapResult, TSwapOptions, TAssets, TWeight } from '../../types';
+import type {
+  TSwapResult,
+  TSwapOptions,
+  TAssets,
+  TWeight,
+  TGetAmountOutOptions,
+} from '../../types';
 import { createInterBtcApi, createSubstrateAPI, newMonetaryAmount } from 'inter-exchange';
 import { type ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
@@ -84,6 +90,40 @@ class InterlayExchangeNode extends ExchangeNode {
       tx,
       amountOut: trade.outputAmount.toString(true),
     };
+  }
+
+  async getAmountOut(_api: ApiPromise, options: TGetAmountOutOptions) {
+    const { assetFrom, assetTo, amount } = options;
+
+    const interBTC = await createInterBtcApi(getNodeProviders(this.node)[0], 'mainnet');
+
+    const assetFromInfo = await getCurrency(interBTC, assetFrom);
+
+    if (assetFromInfo === null) {
+      throw new Error('Currency from is invalid.');
+    }
+
+    const assetToInfo = await getCurrency(interBTC, assetTo);
+
+    if (assetToInfo === null) {
+      throw new Error('Currency to is invalid.');
+    }
+
+    const amountBN = new BigNumber(amount);
+
+    const inputAmount = newMonetaryAmount(amountBN.toString(), assetFromInfo);
+
+    const liquidityPools = await interBTC.amm.getLiquidityPools();
+
+    const trade = interBTC.amm.getOptimalTrade(inputAmount, assetToInfo, liquidityPools);
+
+    if (trade === null) {
+      throw new Error('No trade found');
+    }
+
+    const outputAmount = trade.outputAmount;
+
+    return BigInt(outputAmount.toString(true));
   }
 
   async getAssets(_api: ApiPromise): Promise<TAssets> {

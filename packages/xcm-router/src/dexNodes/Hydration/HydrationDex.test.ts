@@ -6,7 +6,7 @@ import type { ApiPromise } from '@polkadot/api';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import * as utils from './utils';
 import HydrationExchangeNode from './HydrationDex';
-import type { TSwapOptions } from '../../types';
+import type { TGetAmountOutOptions, TSwapOptions } from '../../types';
 import BigNumber from 'bignumber.js';
 
 vi.mock('@galacticcouncil/sdk', () => ({
@@ -24,6 +24,7 @@ vi.mock('@galacticcouncil/sdk', () => ({
 vi.mock('@paraspell/sdk-pjs', () => ({
   getAssetDecimals: vi.fn(),
   InvalidCurrencyError: class extends Error {},
+  getNativeAssetSymbol: vi.fn(),
 }));
 
 vi.mock('./utils', () => ({
@@ -217,6 +218,29 @@ describe('HydrationExchangeNode', () => {
       const assets = await node.getAssets(api);
 
       expect(assets).toEqual(mockAssets);
+    });
+  });
+
+  describe('getAmountOut', () => {
+    it('returns the correct amountOut', async () => {
+      const mockTradeRouter = {
+        getBestSell: vi.fn().mockResolvedValue({ amountOut: new BigNumber('100') }),
+      };
+      vi.mocked(TradeRouter).mockImplementation(() => mockTradeRouter as unknown as TradeRouter);
+
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '1' } as Asset);
+      vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '2' } as Asset);
+
+      const options = {
+        assetFrom: { symbol: 'DOT' },
+        assetTo: { symbol: 'HDX' },
+        amount: '100',
+        origin: {},
+      } as TGetAmountOutOptions;
+
+      const amountOut = await node.getAmountOut(api, options);
+
+      expect(amountOut).toBe(100n);
     });
   });
 });
