@@ -22,7 +22,7 @@
 <br /><br />
 
 ### Introduction
-XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within **one call and only two signatures**. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **8 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **524** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
+XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within **one call and only two signatures**. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **10 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **572** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
 
 **Exchanges implemented:**
 - Acala / 36 Pools available
@@ -33,6 +33,8 @@ XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows 
 - Interlay / 10 Pools available / Requires native token for swaps
 - Karura / 136 Pools available
 - Kintsugi / 6 Pools available / Requires native token for swaps
+- AssetHubPolkadot / 32 Pools available / Requires specific native tokens for swaps
+- AssetHubKusama / 16 Pools available / Requires specific native tokens for swaps
 
 ```NOTE: Some exchanges require native tokens in order to proceed with swaps.```
 
@@ -129,6 +131,25 @@ await RouterBuilder
         .buildAndSend()
 ```
 
+## Get amount out for your currency pair
+
+To retrieve exchange amount, that you receive for your desired asset pair you can use following function. This function returns 2 parameters. Name of best fitting DEX (Automatic selection - can be further used for manual selection) and Amount out
+
+```
+const result = await RouterBuilder()
+      .from('Astar') //Optional parameter
+      .to('Acala') //Optional parameter
+      .exchange('Hydration') //Optional parameter
+      .currencyFrom({ symbol: 'ASTR' }) 
+      .currencyTo({ symbol: 'DOT' })
+      .amount(10000000000n)
+      .getBestAmountOut();
+
+console.log(result.amountOut)
+console.log(result.exchange)
+```
+
+
 ## List of DEX chains, assets, and Parachains supported by XCM Router
 
 | DEX | Can send to/receive from | Supported assets | Notes |
@@ -141,6 +162,8 @@ await RouterBuilder
 |Bifrost Polkadot DEX| Polkadot Relay, AssetHubPolkadot, Moonbeam, Astar, Interlay| BNC, vDOT, vsDOT, USDT, FIL, vFIL, ASTR, vASTR, GLMR, vGLMR, MANTA, vMANTA|Chain requires native BNC asset for fees.|
 |Interlay DEX| Polkadot Relay, Acala, Astar, Parallel, PolkadotAssetHub, HydraDX, BifrostPolkadot |INTR, DOT, IBTC, USDT, VDOT| Chain requires native INTR asset for fees.|
 |Kintsugi DEX| Kusama Relay, Karura, KusamaAssetHub, Parallel Heiko, BifrostKusama|KINT,KSM,KBTC,USDT|Chain requires native KINT asset for fees.|
+|AssetHubPolkadot| Polkadot Relay, Any Parachain it has HRMP channel with | DOT, WETH.e, USDC, USDT, LAOS, MYTH, WBBTC.e, ASX, BILL, DEMO, TATE, PINK, MODE, MVPW, PIGS, DED, wstETH.e, TTT, KSM, tBTC.e, PEPE.e, SHIB.e, TON.e, NAT, NT2, DOTA, STINK, MTC, AJUN, GGI, GLMR, NIN |
+|AssetHubKusama| Kusama Relay, Any Parachain it has HRMP channel with | KSM, DOT, USDC, USDT, BILLCOIN, WOOD, dUSD, TACP, TSM, MA42, USDT, DMO, JAM |
 
 ## 💻 Testing
 
