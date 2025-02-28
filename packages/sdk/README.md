@@ -226,6 +226,11 @@ const result = await Builder(API /*optional*/)
 
 //Function pattern
 await getDryRun({api /*optional*/,  node, address /*sender address*/, tx /* Extrinsic object */})
+
+//Check Parachain for DryRun support - returns true/false
+import { hasDryRunSupport } from "@paraspell/sdk-pjs";
+
+const result = hasDryRunSupport(node)
 ```
 
 ### Asset claim:
