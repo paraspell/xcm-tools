@@ -41,11 +41,11 @@ class XTokensTransferImpl {
 
     const isAstarOrShidenToRelay =
       scenario === 'ParaToRelay' && (origin === 'Astar' || origin === 'Shiden')
-
+    const isTuring = origin === 'Turing'
     const isMultiAsset = overriddenAsset && !isTMultiLocation(overriddenAsset)
 
     const shouldUseMultiasset =
-      isAstarOrShidenToRelay || (isAssetHubDest && !isBifrostOrigin) || !!isMultiAsset
+      isTuring || isAstarOrShidenToRelay || (isAssetHubDest && !isBifrostOrigin) || !!isMultiAsset
 
     const modifiedCurrencySelection = getCurrencySelection(
       input,

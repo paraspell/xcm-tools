@@ -236,7 +236,7 @@ describe('XCM API (e2e)', () => {
             symbol: 'USDt',
           },
         })
-        .expect(200));
+        .expect(201));
 
     const relayChainSymbolUknownNodeUrl = `/assets/${unknownNode}/relay-chain-symbol`;
     it(`Get relaychain symbol - ${relayChainSymbolUknownNodeUrl} (GET)`, () => {

@@ -138,7 +138,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
           <ParachainSelect
             label="From"
             placeholder="Pick value"
-            data={['Ethereum', 'Moonbeam', 'Moonriver']}
+            data={['Ethereum', 'Moonbeam', 'Moonriver', 'Darwinia']}
             data-testid="select-source"
             {...form.getInputProps('from')}
           />

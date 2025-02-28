@@ -8,5 +8,5 @@ export const validateTx = async (tx: Extrinsic) => {
 export const filteredNodes = NODE_NAMES_DOT_KSM.filter(
   node =>
     // WS endpoint not working
-    node !== 'InvArchTinker'
+    node !== 'InvArchTinker' && node !== 'Darwinia'
 )

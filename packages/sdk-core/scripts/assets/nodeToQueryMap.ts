@@ -14,7 +14,7 @@ export const nodeToQuery: Record<TNode, string[]> = {
   Darwinia: [GLOBAL, 'assets.metadata'],
   Hydration: [GLOBAL, 'assetRegistry.assets'],
   Interlay: [GLOBAL, 'assetRegistry.metadata'],
-  Litentry: ['assets.metadata'],
+  Heima: ['assets.metadata'],
   Moonbeam: ['assetManager.assetIdType'],
   Parallel: [GLOBAL, 'assets.metadata'],
   AssetHubPolkadot: [GLOBAL, 'assets.metadata'],
@@ -51,7 +51,6 @@ export const nodeToQuery: Record<TNode, string[]> = {
   Zeitgeist: ['assetRegistry.metadata'],
   Collectives: [],
   Phala: [GLOBAL, 'assets.metadata'],
-  Khala: [GLOBAL, 'assets.metadata'],
   CoretimeKusama: [],
   CoretimePolkadot: [],
   Subsocial: [], // No assets metadata query

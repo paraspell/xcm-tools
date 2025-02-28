@@ -41,7 +41,7 @@ describe('XTransferTransferImpl', () => {
   it('throws an error for multi-location destinations', () => {
     const input = {
       api: {},
-      origin: 'Khala',
+      origin: 'Phala',
       destination: mockMultiLocation
     } as TXTransferTransferOptions<unknown, unknown>
     expect(() => XTransferTransferImpl.transferXTransfer(input)).toThrow(
@@ -49,11 +49,11 @@ describe('XTransferTransferImpl', () => {
     )
   })
 
-  it('executes transaction with Khala as origin', () => {
+  it('executes transaction with Phala as origin', () => {
     const input = {
       api: mockApi,
-      origin: 'Khala',
-      destination: 'Phala',
+      origin: 'Phala',
+      destination: 'Basilisk',
       asset: { symbol: 'KSM', amount: 100 }
     } as TXTransferTransferOptions<unknown, unknown>
 
@@ -70,7 +70,7 @@ describe('XTransferTransferImpl', () => {
       parameters: {
         asset: mockMultiAssets[0],
         dest: mockMultiLocation,
-        dest_weight: null
+        dest_weight: undefined
       }
     })
   })

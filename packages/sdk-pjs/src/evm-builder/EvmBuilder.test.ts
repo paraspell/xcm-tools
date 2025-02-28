@@ -1,14 +1,27 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import type { AbstractProvider, Signer } from 'ethers'
 import { EvmBuilder } from './EvmBuilder'
-import type {
-  IPolkadotApi,
-  TCurrencyInputWithAmount,
-  TNodePolkadotKusama
+import {
+  type IPolkadotApi,
+  type TCurrencyInputWithAmount,
+  type TNodePolkadotKusama
 } from '@paraspell/sdk-core'
 
 vi.mock('../../pallets/xcmPallet/ethTransfer/ethTransfer', () => ({
   transferEthToPolkadot: vi.fn().mockResolvedValue({
+    result: {
+      success: {
+        ethereum: {
+          blockHash: '0x1234567890abcdef'
+        }
+      }
+    }
+  })
+}))
+
+vi.mock('@paraspell/sdk-core', () => ({
+  validateAddress: vi.fn().mockReturnValue(true),
+  transferMoonbeamEvm: vi.fn().mockResolvedValue({
     result: {
       success: {
         ethereum: {
@@ -55,6 +68,19 @@ describe('EvmBuilderClass', () => {
       .signer(signer)
 
     expect(result).toBe(builder)
+  })
+
+  it('should return the builder instance when setting parameters from Darwinia', () => {
+    const builder = EvmBuilder(mockApi, provider)
+    const result = builder
+      .from('Darwinia')
+      .to(node)
+      .currency(currency)
+      .address(address)
+      .signer(signer)
+      .build()
+
+    expect(result).toBeDefined()
   })
 
   it('should throw an error if build is called without all required parameters', async () => {

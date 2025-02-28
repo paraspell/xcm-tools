@@ -20,7 +20,7 @@ export class EvmBuilderClass<TApi, TRes> {
     this._options.api = api
   }
 
-  from(node: 'Moonbeam' | 'Moonriver'): this {
+  from(node: 'Moonbeam' | 'Moonriver' | 'Darwinia'): this {
     this._options.from = node
     return this
   }

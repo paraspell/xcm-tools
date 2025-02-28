@@ -1,6 +1,6 @@
-import { expect, Page } from "@playwright/test";
-import { basePjsTest, setupPolkadotExtension } from "./basePjsTest";
-import { PolkadotjsExtensionPage } from "./pom";
+import { expect, Page } from '@playwright/test';
+import { basePjsTest, setupPolkadotExtension } from './basePjsTest';
+import { PolkadotjsExtensionPage } from './pom';
 import {
   NODES_WITH_RELAY_CHAINS,
   getRelayChainSymbol,
@@ -8,45 +8,44 @@ import {
   getAllAssetsSymbols,
   TNode,
   NODE_NAMES_DOT_KSM,
-} from "@paraspell/sdk";
+} from '@paraspell/sdk';
 
 const excludedNodes = new Set([
-  "Quartz",
-  "Bitgreen",
-  "Bajun",
-  "CoretimeKusama",
+  'Quartz',
+  'Bitgreen',
+  'Bajun',
+  'CoretimeKusama',
 ]);
 
 const nodes = NODES_WITH_RELAY_CHAINS.filter(
-  (node) => !excludedNodes.has(node)
+  (node) => !excludedNodes.has(node),
 );
 
 function getRelayChainForNode(node: TNodeWithRelayChains): string {
-  return getRelayChainSymbol(node) === "DOT" ? "Polkadot" : "Kusama";
+  return getRelayChainSymbol(node) === 'DOT' ? 'Polkadot' : 'Kusama';
 }
 
 const getAssetsForNode = (node: TNodeWithRelayChains): string[] => {
-  if (node === "Pendulum") return ["PEN"];
-  if (node === "Nodle") return ["NODL"];
-  if (node === "Crust") return ["EQD"];
-  if (node === "CrustShadow") return ["KAR"];
-  if (node === "Khala") return ["PHA"];
-  if (node === "Phala") return ["PHA"];
-  if (node === "Mythos") return ["MYTH"];
+  if (node === 'Pendulum') return ['PEN'];
+  if (node === 'Nodle') return ['NODL'];
+  if (node === 'Crust') return ['EQD'];
+  if (node === 'CrustShadow') return ['KAR'];
+  if (node === 'Phala') return ['PHA'];
+  if (node === 'Mythos') return ['MYTH'];
   return getAllAssetsSymbols(node);
 };
 
 const findTransferableNode = (
-  from: TNodeWithRelayChains
+  from: TNodeWithRelayChains,
 ): TNode | undefined => {
   const allFromAssets = getAssetsForNode(from);
 
   const nodeTo = NODE_NAMES_DOT_KSM.filter(
-    (node) => getRelayChainSymbol(node) === getRelayChainSymbol(from)
+    (node) => getRelayChainSymbol(node) === getRelayChainSymbol(from),
   ).find((node) => {
     const nodeAssets = getAllAssetsSymbols(node);
     const commonAsset = nodeAssets.filter((asset) =>
-      allFromAssets.includes(asset)
+      allFromAssets.includes(asset),
     )[0];
     return commonAsset !== undefined;
   });
@@ -66,7 +65,7 @@ nodes.forEach((node) => {
 
     basePjsTest.beforeAll(async ({ context }) => {
       ({ appPage, extensionPage } = await setupPolkadotExtension(context));
-      await appPage.goto("/xcm-sdk-sandbox");
+      await appPage.goto('/xcm-sdk-sandbox');
     });
 
     basePjsTest.beforeEach(async () => {
@@ -76,86 +75,86 @@ nodes.forEach((node) => {
     basePjsTest(
       `Should succeed for ParaToPara transfer ${node} -> ${anotherParaNode}`,
       async () => {
-        await appPage.getByTestId("select-origin").click();
-        await appPage.getByRole("option", { name: node, exact: true }).click();
+        await appPage.getByTestId('select-origin').click();
+        await appPage.getByRole('option', { name: node, exact: true }).click();
 
-        await appPage.getByTestId("select-destination").click();
+        await appPage.getByTestId('select-destination').click();
         await appPage
-          .getByRole("option", { name: anotherParaNode, exact: true })
+          .getByRole('option', { name: anotherParaNode, exact: true })
           .click();
 
-        await appPage.getByTestId("select-currency").click();
-        await appPage.getByRole("option").first().click();
+        await appPage.getByTestId('select-currency').click();
+        await appPage.getByRole('option').first().click();
 
-        await appPage.getByTestId("submit").click();
+        await appPage.getByTestId('submit').click();
 
         await appPage.waitForTimeout(3000);
-        const error = appPage.getByTestId("error");
+        const error = appPage.getByTestId('error');
         await expect(
           error,
-          (await error.isVisible()) ? await error.innerText() : ""
+          (await error.isVisible()) ? await error.innerText() : '',
         ).not.toBeVisible();
 
         await extensionPage.navigate();
         await extensionPage.isPopupOpen();
         await extensionPage.close();
-      }
+      },
     );
 
-    if (!["Crust", "CrustShadow", "Phala", "Khala"].includes(node)) {
+    if (!['Crust', 'CrustShadow', 'Phala'].includes(node)) {
       basePjsTest(
         `Should succeed for ParaToRelay transfer ${node} -> ${relayChain}`,
         async () => {
-          await appPage.getByTestId("select-origin").click();
+          await appPage.getByTestId('select-origin').click();
           await appPage
-            .getByRole("option", { name: node, exact: true })
+            .getByRole('option', { name: node, exact: true })
             .click();
 
-          await appPage.getByTestId("select-destination").click();
+          await appPage.getByTestId('select-destination').click();
           await appPage
-            .getByRole("option", { name: relayChain, exact: true })
+            .getByRole('option', { name: relayChain, exact: true })
             .click();
 
-          await appPage.getByTestId("submit").click();
+          await appPage.getByTestId('submit').click();
 
           await appPage.waitForTimeout(3000);
-          const error = appPage.getByTestId("error");
+          const error = appPage.getByTestId('error');
           await expect(
             error,
-            (await error.isVisible()) ? await error.innerText() : ""
+            (await error.isVisible()) ? await error.innerText() : '',
           ).not.toBeVisible();
 
           await extensionPage.navigate();
           await extensionPage.isPopupOpen();
           await extensionPage.close();
-        }
+        },
       );
     }
 
     basePjsTest(
       `Should succeed for RelayToPara transfer ${relayChain} -> ${node}`,
       async () => {
-        await appPage.getByTestId("select-origin").click();
+        await appPage.getByTestId('select-origin').click();
         await appPage
-          .getByRole("option", { name: relayChain, exact: true })
+          .getByRole('option', { name: relayChain, exact: true })
           .click();
 
-        await appPage.getByTestId("select-destination").click();
-        await appPage.getByRole("option", { name: node, exact: true }).click();
+        await appPage.getByTestId('select-destination').click();
+        await appPage.getByRole('option', { name: node, exact: true }).click();
 
-        await appPage.getByTestId("submit").click();
+        await appPage.getByTestId('submit').click();
 
         await appPage.waitForTimeout(3000);
-        const error = appPage.getByTestId("error");
+        const error = appPage.getByTestId('error');
         await expect(
           error,
-          (await error.isVisible()) ? await error.innerText() : ""
+          (await error.isVisible()) ? await error.innerText() : '',
         ).not.toBeVisible();
 
         await extensionPage.navigate();
         await extensionPage.isPopupOpen();
         await extensionPage.close();
-      }
+      },
     );
   });
 });

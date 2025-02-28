@@ -23,7 +23,7 @@ import {
   Foreign
 } from '../src'
 
-const supportsOnlyNativeAsset: TNode[] = ['Nodle', 'Pendulum', 'Phala', 'Khala', 'Subsocial']
+const supportsOnlyNativeAsset: TNode[] = ['Nodle', 'Pendulum', 'Phala', 'Subsocial']
 
 const assetIdRequired: TNode[] = [
   'Manta',
@@ -40,7 +40,7 @@ const assetIdRequired: TNode[] = [
   'Picasso'
 ]
 
-export const doesNotSupportParaToRelay: TNode[] = ['Phala', 'Khala', 'Peaq', 'Pendulum']
+export const doesNotSupportParaToRelay: TNode[] = ['Phala', 'Peaq', 'Pendulum']
 
 export const generateTransferScenarios = (originNode: TNode) => {
   const scenarios = []
