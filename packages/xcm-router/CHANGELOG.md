@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.2.3...xcm-router-v2.3.0) (2025-02-28)
+
+
+### Features
+
+* **xcm-router:** Add getBestAmountOut function to builder 🪄 ([8e0e46e](https://github.com/paraspell/xcm-tools/commit/8e0e46e9d16b1fae7b53df5266519034598ffd9b))
+* **xcm-router:** Add support for AssetHub DEX ✨ ([274ad41](https://github.com/paraspell/xcm-tools/commit/274ad41d8e7f70f327d2918a8d2fd0aca5374101))
+
+
+### Miscellaneous Chores
+
+* Perform monthly check 🔧 ([fdcb194](https://github.com/paraspell/xcm-tools/commit/fdcb194681947b4e92ff8b34ebd7b3c84e6d0048))
+
 ## [2.2.3](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.2.2...xcm-router-v2.2.3) (2025-02-25)
 
 
