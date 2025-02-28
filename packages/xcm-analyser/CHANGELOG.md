@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.3](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.2...xcm-analyser-v1.5.3) (2025-02-28)
+
+
+### Miscellaneous Chores
+
+* Perform monthly check 🔧 ([fdcb194](https://github.com/paraspell/xcm-tools/commit/fdcb194681947b4e92ff8b34ebd7b3c84e6d0048))
+
 ## [1.5.2](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.1...xcm-analyser-v1.5.2) (2025-01-25)
 
 
