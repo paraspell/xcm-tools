@@ -212,11 +212,12 @@ const XcmTransfer = () => {
         : await import('@paraspell/sdk-pjs');
 
     const firstItem = items[0];
-    const api = await Sdk.createApiInstanceForNode(firstItem.from);
 
+    let api;
     try {
       let tx: Extrinsic | TPapiTransaction;
       if (firstItem.useApi) {
+        api = await Sdk.createApiInstanceForNode(firstItem.from);
         tx = await getTxFromApi(
           {
             transfers: items.map((item) => {
@@ -244,7 +245,7 @@ const XcmTransfer = () => {
           true,
         );
       } else {
-        const builder = Sdk.Builder(api as ApiPromise & PolkadotClient);
+        const builder = Sdk.Builder();
 
         for (const item of items) {
           const { from, to, currencies, address } = item;
@@ -268,6 +269,7 @@ const XcmTransfer = () => {
         }
 
         tx = await builder.buildBatch({ mode: BatchMode[batchMode] });
+        api = builder.getApi();
       }
 
       const signer = await getSigner();
@@ -296,8 +298,10 @@ const XcmTransfer = () => {
       }
     } finally {
       setLoading(false);
-      if ('disconnect' in api) await api.disconnect();
-      else api.destroy();
+      if (api) {
+        if ('disconnect' in api) await api.disconnect();
+        else api.destroy();
+      }
     }
   };
 

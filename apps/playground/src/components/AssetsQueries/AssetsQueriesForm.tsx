@@ -124,7 +124,8 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'TRANSFERABLE_AMOUNT' ||
     func === 'ASSET_BALANCE' ||
     func === 'ORIGIN_FEE_DETAILS' ||
-    func === 'VERIFY_ED_ON_DESTINATION';
+    func === 'VERIFY_ED_ON_DESTINATION' ||
+    func === 'HAS_DRY_RUN_SUPPORT';
 
   const optionalCurrency =
     func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||

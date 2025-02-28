@@ -16,7 +16,7 @@ import type { FormValues } from './AssetClaimForm';
 import AssetClaimForm from './AssetClaimForm';
 import { getTxFromApi } from '../../utils';
 import type { ApiPromise } from '@polkadot/api';
-import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
+import type { PolkadotSigner } from 'polkadot-api';
 import { submitTransaction, submitTransactionPapi } from '../../utils';
 import type { Signer } from '@polkadot/api/types';
 import {
@@ -67,13 +67,13 @@ const AssetClaim = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(from);
-
     const signer = await getSigner();
 
+    let api;
     try {
       let tx: Extrinsic | TPapiTransaction;
       if (useApi) {
+        api = await Sdk.createApiInstanceForNode(from);
         tx = await getTxFromApi(
           {
             from,
@@ -98,7 +98,8 @@ const AssetClaim = () => {
           true,
         );
       } else {
-        tx = await Sdk.Builder(api as ApiPromise & PolkadotClient)
+        const builder = Sdk.Builder();
+        tx = await builder
           .claimFrom(from)
           .fungible([
             {
@@ -115,6 +116,7 @@ const AssetClaim = () => {
           ])
           .account(address)
           .build();
+        api = builder.getApi();
       }
 
       if (apiType === 'PAPI') {
@@ -160,6 +162,10 @@ const AssetClaim = () => {
       }
     } finally {
       setLoading(false);
+      if (api) {
+        if ('disconnect' in api) await api.disconnect();
+        else api.destroy();
+      }
     }
   };
 

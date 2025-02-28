@@ -6,6 +6,7 @@ import {
   createBridgeCurrencySpec,
   createBridgePolkadotXcmDest,
   createCurrencySpec,
+  createMultiAsset,
   createPolkadotXcmHeader
 } from '../../pallets/xcmPallet/utils'
 import type {
@@ -44,8 +45,10 @@ const createCustomXcmToBifrost = <TApi, TRes>(
     {
       DepositAsset: {
         assets: { Wild: 'All' },
-        beneficiary: Object.values(
-          generateAddressPayload(api, scenario, 'PolkadotXcm', address, version, undefined)
+        beneficiary: (
+          Object.values(
+            generateAddressPayload(api, scenario, 'PolkadotXcm', address, version, undefined)
+          ) as TMultiLocation[]
         )[0]
       }
     }
@@ -224,14 +227,7 @@ class AssetHubPolkadot<TApi, TRes>
         ),
         assets: {
           [versionOrDefault]: [
-            Object.values(
-              createCurrencySpec(
-                asset.amount,
-                versionOrDefault,
-                Parents.TWO,
-                asset.multiLocation as TMultiLocation
-              )
-            )[0][0]
+            createMultiAsset(versionOrDefault, asset.amount, asset.multiLocation as TMultiLocation)
           ]
         },
         assets_transfer_type: 'LocalReserve',

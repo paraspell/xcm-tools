@@ -48,8 +48,17 @@ const createCustomXcmPolimec = <TApi, TRes>(
               AllCounted: 1
             }
           },
-          dest: Object.values(
-            createPolkadotXcmHeader(scenario, version, destination, paraId, undefined, Parents.ONE)
+          dest: (
+            Object.values(
+              createPolkadotXcmHeader(
+                scenario,
+                version,
+                destination,
+                paraId,
+                undefined,
+                Parents.ONE
+              )
+            ) as TMultiLocation[]
           )[0],
           xcm: [
             {
@@ -75,8 +84,17 @@ const createCustomXcmPolimec = <TApi, TRes>(
                     AllCounted: 1
                   }
                 },
-                beneficiary: Object.values(
-                  generateAddressPayload(api, scenario, 'PolkadotXcm', address, version, undefined)
+                beneficiary: (
+                  Object.values(
+                    generateAddressPayload(
+                      api,
+                      scenario,
+                      'PolkadotXcm',
+                      address,
+                      version,
+                      undefined
+                    )
+                  ) as TMultiLocation[]
                 )[0]
               }
             }

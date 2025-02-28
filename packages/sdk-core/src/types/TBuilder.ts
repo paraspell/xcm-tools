@@ -89,8 +89,9 @@ export type TBatchOptions = {
 
 export interface IFromBuilder<TApi, TRes> {
   from: (node: TNodeDotKsmWithRelayChains) => IToBuilder<TApi, TRes>
-  claimFrom: (node: TNodeWithRelayChains) => IFungibleBuilder<TRes>
+  claimFrom: (node: TNodeWithRelayChains) => IFungibleBuilder<TApi, TRes>
   buildBatch: (options?: TBatchOptions) => Promise<TRes>
+  getApi: () => TApi
   disconnect: () => Promise<void>
 }
 
@@ -102,8 +103,9 @@ export interface ICurrencyBuilder<TApi, TRes> {
   currency: (currency: TCurrencyInputWithAmount) => IAddressBuilder<TApi, TRes>
 }
 
-export interface IFinalBuilder<TRes> {
+export interface IFinalBuilder<TApi, TRes> {
   disconnect: () => Promise<void>
+  getApi: () => TApi
   build: () => Promise<TRes>
 }
 
@@ -111,16 +113,16 @@ export interface IAddressBuilder<TApi, TRes> {
   address: (address: TAddress, senderAddress?: string) => IFinalBuilderWithOptions<TApi, TRes>
 }
 
-export interface IFungibleBuilder<TRes> {
-  fungible: (multiAssets: TMultiAsset[]) => IAccountBuilder<TRes>
+export interface IFungibleBuilder<TApi, TRes> {
+  fungible: (multiAssets: TMultiAsset[]) => IAccountBuilder<TApi, TRes>
 }
 
-export interface IAccountBuilder<TRes> {
-  account: (address: TAddress) => IVersionBuilder<TRes>
+export interface IAccountBuilder<TApi, TRes> {
+  account: (address: TAddress) => IVersionBuilder<TApi, TRes>
 }
 
-export interface IVersionBuilder<TRes> extends IFinalBuilder<TRes> {
-  xcmVersion: (version: TVersionClaimAssets) => IFinalBuilder<TRes>
+export interface IVersionBuilder<TApi, TRes> extends IFinalBuilder<TApi, TRes> {
+  xcmVersion: (version: TVersionClaimAssets) => IFinalBuilder<TApi, TRes>
 }
 
 export interface IAddToBatchBuilder<TApi, TRes> {
@@ -131,6 +133,7 @@ export interface IFinalBuilderWithOptions<TApi, TRes> extends IAddToBatchBuilder
   xcmVersion: (version: Version) => this
   customPallet: (pallet: string, method: string) => this
   disconnect: () => Promise<void>
+  getApi: () => TApi
   build: () => Promise<TRes>
   dryRun: (senderAddress: string) => Promise<TDryRunResult>
 }

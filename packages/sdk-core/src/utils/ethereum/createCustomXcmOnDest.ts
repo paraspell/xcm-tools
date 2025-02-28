@@ -45,15 +45,17 @@ export const createCustomXcmOnDest = <TApi, TRes>(
           {
             DepositAsset: {
               assets: { Wild: 'All' },
-              beneficiary: Object.values(
-                generateAddressPayload(
-                  api,
-                  scenario,
-                  'PolkadotXcm',
-                  senderAddress,
-                  version,
-                  undefined
-                )
+              beneficiary: (
+                Object.values(
+                  generateAddressPayload(
+                    api,
+                    scenario,
+                    'PolkadotXcm',
+                    senderAddress,
+                    version,
+                    undefined
+                  )
+                ) as TMultiLocation[]
               )[0]
             }
           }

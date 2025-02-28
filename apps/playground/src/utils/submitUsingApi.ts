@@ -4,13 +4,7 @@ import type { PolkadotClient } from 'polkadot-api';
 import { Binary } from 'polkadot-api';
 import type { TApiType } from '../types';
 import type { ApiPromise } from '@polkadot/api';
-import type { Signer } from '@polkadot/api/types';
-import { submitTransaction } from '../utils';
-import {
-  createApiInstanceForNode,
-  type Extrinsic,
-  type TNodeDotKsmWithRelayChains,
-} from '@paraspell/sdk-pjs';
+import { type Extrinsic } from '@paraspell/sdk-pjs';
 import type { TPapiTransaction } from '@paraspell/sdk';
 
 export const fetchFromApi = async <T>(
@@ -72,23 +66,4 @@ export const getTxFromApi = async <T>(
     const callData = Binary.fromHex(txHash as string);
     return (api as PolkadotClient).getUnsafeApi().txFromCallData(callData);
   }
-};
-
-export const submitTxUsingApi = async <T>(
-  params: T,
-  fromNode: TNodeDotKsmWithRelayChains,
-  endpoint: string,
-  injectorAddress: string,
-  signer: Signer,
-  method: string = 'GET',
-  useBody = false,
-) => {
-  const txHash = (await fetchFromApi(
-    { ...params, injectorAddress },
-    endpoint,
-    method,
-    useBody,
-  )) as string;
-  const api = await createApiInstanceForNode(fromNode);
-  await submitTransaction(api, api.tx(txHash), signer, injectorAddress);
 };

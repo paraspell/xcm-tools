@@ -14,10 +14,10 @@ import type { IPolkadotApi } from '../api/IPolkadotApi'
  */
 class AssetClaimBuilder<TApi, TRes>
   implements
-    IAccountBuilder<TRes>,
-    IFungibleBuilder<TRes>,
-    IVersionBuilder<TRes>,
-    IFinalBuilder<TRes>
+    IAccountBuilder<TApi, TRes>,
+    IFungibleBuilder<TApi, TRes>,
+    IVersionBuilder<TApi, TRes>,
+    IFinalBuilder<TApi, TRes>
 {
   private readonly api: IPolkadotApi<TApi, TRes>
   private readonly node: TNodeWithRelayChains
@@ -34,7 +34,7 @@ class AssetClaimBuilder<TApi, TRes>
   static create<TApi, TRes>(
     api: IPolkadotApi<TApi, TRes>,
     node: TNodeWithRelayChains
-  ): IFungibleBuilder<TRes> {
+  ): IFungibleBuilder<TApi, TRes> {
     return new AssetClaimBuilder(api, node)
   }
 
@@ -91,6 +91,20 @@ class AssetClaimBuilder<TApi, TRes>
     return (await claimAssets(options)) as TRes
   }
 
+  /**
+   * Returns the API instance used by the builder.
+   *
+   * @returns The API instance.
+   */
+  getApi() {
+    return this.api.getApi()
+  }
+
+  /**
+   * Disconnects the API.
+   *
+   * @returns A Promise that resolves when the API is disconnected.
+   */
   async disconnect() {
     return this.api.disconnect(true)
   }

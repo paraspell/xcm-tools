@@ -9,11 +9,12 @@ import {
   NODES_WITH_RELAY_CHAINS,
   TMultiAsset,
   TNodeDotKsmWithRelayChains,
+  TPapiApi,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
 import { TPapiTransaction } from '@paraspell/sdk';
-import { Extrinsic } from '@paraspell/sdk-pjs';
+import { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 
 @Injectable()
 export class AssetClaimService {
@@ -42,8 +43,8 @@ export class AssetClaimService {
       : await import('@paraspell/sdk-pjs');
 
     let builder:
-      | IVersionBuilder<TPapiTransaction>
-      | IVersionBuilder<Extrinsic>
+      | IVersionBuilder<TPapiApi, TPapiTransaction>
+      | IVersionBuilder<TPjsApi, Extrinsic>
       | undefined;
     try {
       builder = Sdk.Builder()

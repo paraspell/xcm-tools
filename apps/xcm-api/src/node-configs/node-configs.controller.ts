@@ -41,4 +41,12 @@ export class NodeConfigsController {
     });
     return this.service.getNodeByParaId(Number(paraId), ecosystem);
   }
+
+  @Get(':node/has-dry-run-support')
+  hasDryRunSupport(@Param('node') node: string, @Req() req: Request) {
+    this.analyticsService.track(EventName.HAS_DRY_RUN_SUPPORT, req, {
+      node,
+    });
+    return this.service.hasDryRunSupport(node);
+  }
 }

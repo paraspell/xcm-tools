@@ -115,4 +115,12 @@ describe('AssetsService', () => {
       expect(result).toEqual(paraspellSdk.getNodeProviders(node));
     });
   });
+
+  describe('hasDryRunSupport', () => {
+    it('should return true if node has dry run support', () => {
+      vi.spyOn(paraspellSdk, 'hasDryRunSupport').mockReturnValue(false);
+      const result = service.hasDryRunSupport(node);
+      expect(result).toEqual(false);
+    });
+  });
 });
