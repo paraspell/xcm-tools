@@ -14,7 +14,7 @@ export type TEvmBuilderOptionsBase = {
   /**
    * The source node. Can be either 'Ethereum' or 'Moonbeam'.
    */
-  from: 'Ethereum' | 'Moonbeam' | 'Moonriver'
+  from: 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'
   /**
    * The destination node on Polkadot network.
    */

@@ -3,7 +3,7 @@ import { Version, type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
-import Litentry from './Litentry'
+import Heima from './Heima'
 
 vi.mock('../../pallets/polkadotXcm', async () => {
   const actual = await vi.importActual<typeof import('../../pallets/polkadotXcm')>(
@@ -17,28 +17,28 @@ vi.mock('../../pallets/polkadotXcm', async () => {
   }
 })
 
-describe('Litentry', () => {
+describe('Heima', () => {
   describe('transferPolkadotXCM', () => {
-    let litentry: Litentry<unknown, unknown>
+    let heima: Heima<unknown, unknown>
 
     beforeEach(() => {
-      litentry = getNode<unknown, unknown, 'Litentry'>('Litentry')
+      heima = getNode<unknown, unknown, 'Heima'>('Heima')
     })
 
     it('should be instantiated correctly', () => {
-      expect(litentry).toBeInstanceOf(Litentry)
+      expect(heima).toBeInstanceOf(Heima)
     })
 
     it('should initialize with correct values', () => {
-      expect(litentry.node).toBe('Litentry')
-      expect(litentry.info).toBe('litentry')
-      expect(litentry.type).toBe('polkadot')
-      expect(litentry.version).toBe(Version.V3)
+      expect(heima.node).toBe('Heima')
+      expect(heima.info).toBe('litentry')
+      expect(heima.type).toBe('polkadot')
+      expect(heima.version).toBe(Version.V3)
     })
 
     it('should not suppoert ParaToRelay scenario', () => {
       const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => litentry.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+      expect(() => heima.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
 
     it('should only support native currency', () => {
@@ -46,7 +46,7 @@ describe('Litentry', () => {
         scenario: 'ParaToPara',
         asset: { symbol: 'XYZ' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => litentry.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
+      expect(() => heima.transferPolkadotXCM(input)).toThrow(InvalidCurrencyError)
     })
 
     it('should use limitedReserveTransferAssets when scenario is ParaToPara', async () => {
@@ -57,7 +57,7 @@ describe('Litentry', () => {
 
       const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
-      await litentry.transferPolkadotXCM(input)
+      await heima.transferPolkadotXCM(input)
       expect(spy).toHaveBeenCalledWith(input, 'limited_reserve_transfer_assets', 'Unlimited')
     })
   })

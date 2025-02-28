@@ -415,7 +415,7 @@ const fetchNodeAssets = async (
       )
     }
 
-    mergedAssets = mergedAssets.filter(asset => asset.multiLocation || asset.xcmInterior)
+    mergedAssets = mergedAssets.filter(asset => asset.multiLocation)
   }
 
   mergedAssets = mergedAssets.filter(asset => asset.assetId !== 'Native')

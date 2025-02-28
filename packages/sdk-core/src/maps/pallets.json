@@ -96,15 +96,11 @@
     ]
   },
   "Darwinia": {
-    "defaultPallet": "XTokens",
+    "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
         "name": "PolkadotXcm",
         "index": 33
-      },
-      {
-        "name": "XTokens",
-        "index": 46
       }
     ]
   },
@@ -134,7 +130,7 @@
       }
     ]
   },
-  "Litentry": {
+  "Heima": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
       {
@@ -511,19 +507,6 @@
       {
         "name": "PolkadotXcm",
         "index": 31
-      }
-    ]
-  },
-  "Khala": {
-    "defaultPallet": "XTransfer",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 33
-      },
-      {
-        "name": "XTransfer",
-        "index": 82
       }
     ]
   },

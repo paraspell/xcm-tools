@@ -12,7 +12,7 @@ import { getDestination } from './utils/getDestination'
 
 class XTransferTransferImpl {
   static transferXTransfer<TApi, TRes>(input: TXTransferTransferOptions<TApi, TRes>): TRes {
-    const { api, origin, destination, asset, overriddenAsset, pallet, method } = input
+    const { api, destination, asset, overriddenAsset, pallet, method } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
     if (isMultiLocationDestination) {
@@ -27,7 +27,7 @@ class XTransferTransferImpl {
 
     const section: TXTransferSection = 'transfer'
 
-    const destWeight = origin === 'Khala' ? null : determineDestWeight(destination)
+    const destWeight = determineDestWeight(destination)
 
     const call: TSerializedApiCall = {
       module: (pallet as TPallet) ?? 'XTransfer',

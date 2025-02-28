@@ -7,7 +7,7 @@ import { Centrifuge } from '../nodes/supported/Centrifuge'
 import ComposableFinance from '../nodes/supported/ComposableFinance'
 import Hydration from '../nodes/supported/Hydration'
 import Interlay from '../nodes/supported/Interlay'
-import Litentry from '../nodes/supported/Litentry'
+import Heima from '../nodes/supported/Heima'
 import Moonbeam from '../nodes/supported/Moonbeam'
 import Parallel from '../nodes/supported/Parallel'
 import Altair from '../nodes/supported/Altair'
@@ -45,7 +45,6 @@ import NeuroWeb from '../nodes/supported/NeuroWeb'
 import Pendulum from '../nodes/supported/Pendulum'
 import Zeitgeist from '../nodes/supported/Zeitgeist'
 import Collectives from '../nodes/supported/Collectives'
-import Khala from '../nodes/supported/Khala'
 import Phala from '../nodes/supported/Phala'
 import Subsocial from '../nodes/supported/Subsocial'
 import KiltSpiritnet from '../nodes/supported/KiltSpiritnet'
@@ -71,7 +70,7 @@ export const nodes = <TApi, TRes>() => ({
   Darwinia: new Darwinia<TApi, TRes>(),
   Hydration: new Hydration<TApi, TRes>(),
   Interlay: new Interlay<TApi, TRes>(),
-  Litentry: new Litentry<TApi, TRes>(),
+  Heima: new Heima<TApi, TRes>(),
   Moonbeam: new Moonbeam<TApi, TRes>(),
   Parallel: new Parallel<TApi, TRes>(),
   AssetHubKusama: new AssetHubKusama<TApi, TRes>(),
@@ -106,7 +105,6 @@ export const nodes = <TApi, TRes>() => ({
   Pendulum: new Pendulum<TApi, TRes>(),
   Zeitgeist: new Zeitgeist<TApi, TRes>(),
   Collectives: new Collectives<TApi, TRes>(),
-  Khala: new Khala<TApi, TRes>(),
   Phala: new Phala<TApi, TRes>(),
   Subsocial: new Subsocial<TApi, TRes>(),
   KiltSpiritnet: new KiltSpiritnet<TApi, TRes>(),

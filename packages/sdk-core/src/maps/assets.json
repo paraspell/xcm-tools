@@ -4096,7 +4096,7 @@
       }
     ]
   },
-  "Litentry": {
+  "Heima": {
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "HEI",
     "isEVM": false,
@@ -6178,7 +6178,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "BSX",
     "isEVM": false,
-    "supportsDryRunApi": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "BSX",
@@ -9397,8 +9397,8 @@
     "nativeAssets": [
       {
         "symbol": "SDN",
-        "decimals": 18,
         "isNative": true,
+        "decimals": 18,
         "existentialDeposit": "1000000"
       }
     ],
@@ -10531,9 +10531,22 @@
     "nativeAssets": [
       {
         "symbol": "NODL",
-        "decimals": 11,
         "isNative": true,
-        "existentialDeposit": "10000"
+        "decimals": 11,
+        "existentialDeposit": "10000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2026
+              },
+              {
+                "PalletInstance": 2
+              }
+            ]
+          }
+        }
       }
     ],
     "otherAssets": []
@@ -10875,7 +10888,7 @@
         "symbol": "ZTG",
         "isNative": true,
         "decimals": 10,
-        "existentialDeposit": "50000000",
+        "existentialDeposit": "5000000000",
         "multiLocation": {
           "parents": 1,
           "interior": {
@@ -11623,325 +11636,6 @@
             ]
           }
         }
-      }
-    ]
-  },
-  "Khala": {
-    "relayChainAssetSymbol": "KSM",
-    "nativeAssetSymbol": "PHA",
-    "isEVM": false,
-    "supportsDryRunApi": false,
-    "nativeAssets": [
-      {
-        "symbol": "PHA",
-        "decimals": 12,
-        "isNative": true,
-        "existentialDeposit": "10000000000"
-      }
-    ],
-    "otherAssets": [
-      {
-        "assetId": "0",
-        "symbol": "KSM",
-        "decimals": 12,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "1",
-        "symbol": "KAR",
-        "decimals": 12,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "4",
-        "symbol": "aUSD",
-        "decimals": 12,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "2",
-        "symbol": "BNC",
-        "decimals": 12,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2001
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "3",
-        "symbol": "ZLK",
-        "decimals": 18,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2001
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0207000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "12",
-        "symbol": "SDN",
-        "decimals": 18,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2007
-            }
-          }
-        },
-        "existentialDeposit": "10000000000000000"
-      },
-      {
-        "assetId": "6",
-        "symbol": "MOVR",
-        "decimals": 18,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2023
-              },
-              {
-                "PalletInstance": 10
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "8",
-        "symbol": "KMA",
-        "decimals": 12,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2084
-            }
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "7",
-        "symbol": "HKO",
-        "decimals": 12,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2085
-              },
-              {
-                "GeneralKey": {
-                  "length": 3,
-                  "data": "0x484b4f0000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "15",
-        "symbol": "PICA",
-        "decimals": 12,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2087
-            }
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "5",
-        "symbol": "BSX",
-        "decimals": 12,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2090
-              },
-              {
-                "GeneralKey": {
-                  "length": 4,
-                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000",
-        "alias": "BSX1"
-      },
-      {
-        "assetId": "9",
-        "symbol": "BSX",
-        "decimals": 12,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2090
-              },
-              {
-                "GeneralIndex": 0
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000",
-        "alias": "BSX2"
-      },
-      {
-        "assetId": "13",
-        "symbol": "NEER",
-        "decimals": 18,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2096
-              },
-              {
-                "GeneralKey": {
-                  "length": 9,
-                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000000000"
-      },
-      {
-        "assetId": "14",
-        "symbol": "BIT",
-        "decimals": 18,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2096
-              },
-              {
-                "GeneralKey": {
-                  "length": 9,
-                  "data": "0x0200000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000000000"
-      },
-      {
-        "assetId": "11",
-        "symbol": "CRAB",
-        "decimals": 18,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2105
-              },
-              {
-                "PalletInstance": 5
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "10000000000000000"
-      },
-      {
-        "assetId": "10",
-        "symbol": "TUR",
-        "decimals": 10,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2114
-            }
-          }
-        },
-        "existentialDeposit": "100000000"
       }
     ]
   },

@@ -5,8 +5,8 @@ export const formatAssetIdToERC20 = (id: string) => {
     return id
   }
 
-  if (!/^\d{38,39}$/.test(id)) {
-    throw new Error(`Asset id: ${id} must be a string and have 38-39 digits`)
+  if (!(/^\d{38,39}$/.test(id) || /^\d{4}$/.test(id))) {
+    throw new Error(`Asset id: ${id} must be a string and have either 4 digits or 38-39 digits`)
   }
 
   return `0xffffffff${BigInt(id).toString(16).padStart(32, '0')}`

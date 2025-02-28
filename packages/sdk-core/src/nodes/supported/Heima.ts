@@ -1,4 +1,4 @@
-// Contains detailed structure of XCM call construction for Litentry Parachain
+// Contains detailed structure of XCM call construction for Heima Parachain
 
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
@@ -6,9 +6,9 @@ import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../ty
 import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
-class Litentry<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
+class Heima<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Litentry', 'litentry', 'polkadot', Version.V3)
+    super('Heima', 'litentry', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
@@ -32,4 +32,4 @@ class Litentry<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
   }
 }
 
-export default Litentry
+export default Heima

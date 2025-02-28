@@ -64,4 +64,13 @@ describe('Crab', () => {
       }
     })
   })
+
+  it('should call createCurrencySpec with correct values - ParaToRelay', () => {
+    crab.createCurrencySpec('100', 'ParaToRelay', Version.V3)
+    expect(createCurrencySpec).toHaveBeenCalledWith('100', Version.V3, Parents.ZERO, undefined, {
+      X1: {
+        PalletInstance: 5
+      }
+    })
+  })
 })

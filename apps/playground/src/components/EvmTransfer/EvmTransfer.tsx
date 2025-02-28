@@ -27,7 +27,7 @@ import EthWalletSelectModal from '../EthWalletSelectModal';
 import EthAccountsSelectModal from '../EthAccountsSelectModal';
 import type { Address } from 'viem';
 import { createWalletClient, custom } from 'viem';
-import { moonbeam, mainnet, moonriver } from 'viem/chains';
+import { moonbeam, mainnet, moonriver, darwinia } from 'viem/chains';
 import { useWallet } from '../../hooks/useWallet';
 import {
   showErrorNotification,
@@ -170,6 +170,9 @@ const EvmTransfer = () => {
       }
       if (node === 'Moonriver') {
         return moonriver;
+      }
+      if (node === 'Darwinia') {
+        return darwinia;
       }
       return mainnet;
     };

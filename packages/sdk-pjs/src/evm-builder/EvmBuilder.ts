@@ -23,7 +23,7 @@ export class EvmBuilderClass<TApi, TRes> {
     this._options.provider = provider
   }
 
-  from(node: 'Ethereum' | 'Moonbeam' | 'Moonriver'): this {
+  from(node: 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'): this {
     this._options.from = node
     return this
   }
@@ -99,7 +99,11 @@ export class EvmBuilderClass<TApi, TRes> {
       return transferMoonbeamToEth(this._options as TEvmBuilderOptions<TApi, TRes>)
     }
 
-    if (this._options.from === 'Moonbeam' || this._options.from === 'Moonriver') {
+    if (
+      this._options.from === 'Moonbeam' ||
+      this._options.from === 'Moonriver' ||
+      this._options.from === 'Darwinia'
+    ) {
       return await transferMoonbeamEvm(this._options as TEvmBuilderOptions<TApi, TRes>)
     }
 

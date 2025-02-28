@@ -5,6 +5,10 @@
     "paraId": 1000,
     "providers": [
       {
+        "name": "Blockops",
+        "endpoint": "wss://polkadot-assethub-rpc.blockops.network/ws"
+      },
+      {
         "name": "Dwellir",
         "endpoint": "wss://asset-hub-polkadot-rpc.dwellir.com"
       },
@@ -331,8 +335,8 @@
       }
     ]
   },
-  "Litentry": {
-    "name": "Litentry",
+  "Heima": {
+    "name": "Heima",
     "info": "litentry",
     "paraId": 2013,
     "providers": [
@@ -397,10 +401,6 @@
       {
         "name": "Gatotech",
         "endpoint": "wss://parallel.gatotech.network"
-      },
-      {
-        "name": "Parallel",
-        "endpoint": "wss://polkadot-parallel-rpc.parallel.fi"
       }
     ]
   },
@@ -554,10 +554,6 @@
       {
         "name": "AjunaNetwork",
         "endpoint": "wss://rpc-para.bajun.network"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://bajun.api.onfinality.io/public-ws"
       }
     ]
   },
@@ -641,10 +637,6 @@
       {
         "name": "Darwinia",
         "endpoint": "wss://crab-rpc.darwinia.network/"
-      },
-      {
-        "name": "Dcdao",
-        "endpoint": "wss://crab-rpc.dcdao.box"
       },
       {
         "name": "Dwellir",
@@ -1048,10 +1040,6 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://zeitgeist.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "ZeitgeistPM",
-        "endpoint": "wss://main.rpc.zeitgeist.pm/ws"
       }
     ]
   },
@@ -1098,33 +1086,6 @@
       }
     ]
   },
-  "Khala": {
-    "name": "Khala Network",
-    "info": "khala",
-    "paraId": 2004,
-    "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://khala-rpc.dwellir.com"
-      },
-      {
-        "name": "Helikon",
-        "endpoint": "wss://rpc.helikon.io/khala"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://khala.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "Phala",
-        "endpoint": "wss://khala-api.phala.network/ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://khala.public.curie.radiumblock.co/ws"
-      }
-    ]
-  },
   "Phala": {
     "name": "Phala Network",
     "info": "phala",
@@ -1141,10 +1102,6 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://phala.api.onfinality.io/public-ws"
-      },
-      {
-        "name": "Phala",
-        "endpoint": "wss://api.phala.network/ws"
       },
       {
         "name": "RadiumBlock",
@@ -1173,10 +1130,6 @@
     "paraId": 2086,
     "providers": [
       {
-        "name": "BOTLabs",
-        "endpoint": "wss://spiritnet.kilt.io/"
-      },
-      {
         "name": "Dwellir",
         "endpoint": "wss://kilt-rpc.dwellir.com"
       },
@@ -1187,6 +1140,10 @@
       {
         "name": "IBP2",
         "endpoint": "wss://kilt.dotters.network"
+      },
+      {
+        "name": "KILT Foundation",
+        "endpoint": "wss://spiritnet.kilt.io/"
       }
     ]
   },
@@ -1209,6 +1166,14 @@
       {
         "name": "Helikon",
         "endpoint": "wss://rpc.helikon.io/mythos"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://mythos.ibp.network"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://mythos.dotters.network"
       },
       {
         "name": "parity",
@@ -1276,6 +1241,10 @@
         "endpoint": "wss://polkadot-rpc-tn.dwellir.com"
       },
       {
+        "name": "Helixstreet",
+        "endpoint": "wss://rpc-polkadot.helixstreet.io"
+      },
+      {
         "name": "IBP1",
         "endpoint": "wss://rpc.ibp.network/polkadot"
       },
@@ -1290,6 +1259,10 @@
       {
         "name": "OnFinality",
         "endpoint": "wss://polkadot.api.onfinality.io/public-ws"
+      },
+      {
+        "name": "Permanence DAO EU",
+        "endpoint": "wss://polkadot.rpc.permanence.io"
       },
       {
         "name": "RadiumBlock",
@@ -1325,6 +1298,10 @@
       {
         "name": "Dwellir Tunisia",
         "endpoint": "wss://kusama-rpc-tn.dwellir.com"
+      },
+      {
+        "name": "Helixstreet",
+        "endpoint": "wss://rpc-kusama.helixstreet.io"
       },
       {
         "name": "IBP1",
