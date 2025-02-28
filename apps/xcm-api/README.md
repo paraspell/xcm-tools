@@ -456,6 +456,9 @@ const response = await fetch('http://localhost:3001/pallets/:node/default');
 
 //Return an array of supported pallets for specific Parachain
 const response = await fetch('http://localhost:3001/pallets/:node');
+
+//Return Parachain support for DryRun
+const response = await fetch('http://localhost:3001/nodes/:node/has-dry-run-support');
 ```
 
 ## Running the API locally
