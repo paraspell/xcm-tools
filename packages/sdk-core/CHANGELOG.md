@@ -1,5 +1,24 @@
 # Changelog
 
+## [8.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.5.3...sdk-core-v8.6.0) (2025-02-28)
+
+
+### Features
+
+* **sdk-core:** Add function for querying dry-run support 🪄 ([a6d3b8d](https://github.com/paraspell/xcm-tools/commit/a6d3b8d30acfb9af0d77788243da8813ca4d662c))
+* **xcm-router:** Add support for AssetHub DEX ✨ ([274ad41](https://github.com/paraspell/xcm-tools/commit/274ad41d8e7f70f327d2918a8d2fd0aca5374101))
+
+
+### Miscellaneous Chores
+
+* Perform monthly check 🔧 ([fdcb194](https://github.com/paraspell/xcm-tools/commit/fdcb194681947b4e92ff8b34ebd7b3c84e6d0048))
+
+
+### Code Refactoring
+
+* **playground:** Use automatic api creation ✨ ([0caa420](https://github.com/paraspell/xcm-tools/commit/0caa4204fc35970c4461df975510f01246556a1d))
+* **sdk-core:** Improve currency related types 🪛 ([aad04ba](https://github.com/paraspell/xcm-tools/commit/aad04ba0854a8fd25aa1f7828bb4fe172b8635a4))
+
 ## [8.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.5.2...sdk-core-v8.5.3) (2025-02-25)
 
 

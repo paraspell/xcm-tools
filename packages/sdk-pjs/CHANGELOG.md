@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.5.3...sdk-pjs-v8.6.0) (2025-02-28)
+
+
+### Miscellaneous Chores
+
+* Perform monthly check 🔧 ([fdcb194](https://github.com/paraspell/xcm-tools/commit/fdcb194681947b4e92ff8b34ebd7b3c84e6d0048))
+
 ## [8.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.5.2...sdk-pjs-v8.5.3) (2025-02-25)
 
 

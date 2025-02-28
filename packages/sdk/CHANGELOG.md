@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.5.3...sdk-v8.6.0) (2025-02-28)
+
+
+### Features
+
+* **xcm-router:** Add support for AssetHub DEX ✨ ([274ad41](https://github.com/paraspell/xcm-tools/commit/274ad41d8e7f70f327d2918a8d2fd0aca5374101))
+
+
+### Miscellaneous Chores
+
+* Perform monthly check 🔧 ([fdcb194](https://github.com/paraspell/xcm-tools/commit/fdcb194681947b4e92ff8b34ebd7b3c84e6d0048))
+
 ## [8.5.3](https://github.com/paraspell/xcm-tools/compare/sdk-v8.5.2...sdk-v8.5.3) (2025-02-25)
 
 
