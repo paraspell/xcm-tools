@@ -86,7 +86,7 @@ export class GeneralBuilder<TApi, TRes>
    * @param node - The node from which to claim assets.
    * @returns An instance of Builder
    */
-  claimFrom(node: TNodeWithRelayChains): IFungibleBuilder<TRes> {
+  claimFrom(node: TNodeWithRelayChains): IFungibleBuilder<TApi, TRes> {
     return AssetClaimBuilder.create(this.api, node)
   }
 
@@ -203,6 +203,15 @@ export class GeneralBuilder<TApi, TRes>
       address: senderAddress,
       node: this._from
     })
+  }
+
+  /**
+   * Returns the API instance used by the builder.
+   *
+   * @returns The API instance.
+   */
+  getApi() {
+    return this.api.getApi()
   }
 
   async disconnect() {

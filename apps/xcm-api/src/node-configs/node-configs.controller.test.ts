@@ -85,4 +85,18 @@ describe('AssetsController', () => {
       expect(spy).toHaveBeenCalledWith(node);
     });
   });
+
+  describe('hasDryRunSupport', () => {
+    it('should return true if node has dry run support', () => {
+      const mockResult = true;
+      const spy = vi
+        .spyOn(service, 'hasDryRunSupport')
+        .mockReturnValue(mockResult);
+
+      const result = controller.hasDryRunSupport(node, mockRequestObject);
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(node);
+    });
+  });
 });

@@ -2,6 +2,7 @@
 
 import type {
   IPolkadotXCMTransfer,
+  TMultiLocation,
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
   TSerializedApiCall
@@ -13,6 +14,8 @@ import { InvalidCurrencyError } from '../../errors'
 import { generateAddressPayload } from '../../utils'
 import { isForeignAsset } from '../../utils/assets'
 import { getParaId } from '../config'
+import { createMultiAsset } from '../../pallets/xcmPallet/utils'
+import { DOT_MULTILOCATION } from '../../constants'
 
 const createCustomXcmAh = <TApi, TRes>(
   { api, scenario, address }: TPolkadotXCMTransferOptions<TApi, TRes>,
@@ -22,8 +25,10 @@ const createCustomXcmAh = <TApi, TRes>(
     {
       DepositAsset: {
         assets: { Wild: { AllCounted: 1 } },
-        beneficiary: Object.values(
-          generateAddressPayload(api, scenario, 'PolkadotXcm', address, version, undefined)
+        beneficiary: (
+          Object.values(
+            generateAddressPayload(api, scenario, 'PolkadotXcm', address, version, undefined)
+          ) as TMultiLocation[]
         )[0]
       }
     }
@@ -56,11 +61,7 @@ class Hydration<TApi, TRes>
           getParaId('AssetHubPolkadot')
         ),
         assets: {
-          [versionOrDefault]: [
-            Object.values(
-              this.createCurrencySpec(asset.amount, 'ParaToRelay', versionOrDefault)
-            )[0][0]
-          ]
+          [versionOrDefault]: [createMultiAsset(versionOrDefault, asset.amount, DOT_MULTILOCATION)]
         },
         assets_transfer_type: 'DestinationReserve',
         remote_fees_id: {

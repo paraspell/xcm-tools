@@ -119,6 +119,8 @@ export const callSdkFunc = (
           amount,
         },
       }),
+    HAS_DRY_RUN_SUPPORT: () =>
+      Promise.resolve(chosenSdk.hasDryRunSupport(node)),
   };
 
   const action = sdkActions[func];

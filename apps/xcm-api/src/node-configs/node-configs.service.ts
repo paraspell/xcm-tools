@@ -7,9 +7,11 @@ import {
   NODES_WITH_RELAY_CHAINS,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
+  TNodeWithRelayChains,
   getNodeProviders,
   getParaId,
   getTNode,
+  hasDryRunSupport,
 } from '@paraspell/sdk';
 import { validateNode } from '../utils.js';
 
@@ -42,5 +44,10 @@ export class NodeConfigsService {
   getWsEndpoints(node: string) {
     validateNode(node, { excludeEthereum: true, withRelayChains: true });
     return getNodeProviders(node as TNodeDotKsmWithRelayChains);
+  }
+
+  hasDryRunSupport(node: string) {
+    validateNode(node, { withRelayChains: true });
+    return hasDryRunSupport(node as TNodeWithRelayChains);
   }
 }
