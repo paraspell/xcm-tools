@@ -19,10 +19,10 @@ import { resolveOverriddenAsset } from './utils/resolveOverriddenAsset'
 export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promise<TRes> => {
   const {
     api,
-    origin,
+    from: origin,
     currency,
     address,
-    destination,
+    to: destination,
     paraIdTo,
     version,
     senderAddress,
@@ -89,7 +89,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     api,
     asset: { ...resolvedAsset, amount: 'multiasset' in currency ? 0 : currency.amount },
     address,
-    destination,
+    to: destination,
     paraIdTo,
     overriddenAsset,
     version,

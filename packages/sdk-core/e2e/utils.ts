@@ -17,10 +17,10 @@ import {
   determineRelayChain,
   isNodeEvm,
   TNodePolkadotKusama,
-  IFromBuilder,
   TApiOrUrl,
   Native,
-  Foreign
+  Foreign,
+  GeneralBuilder
 } from '../src'
 
 const supportsOnlyNativeAsset: TNode[] = ['Nodle', 'Pendulum', 'Phala', 'Subsocial']
@@ -87,7 +87,7 @@ const MOCK_ADDRESS = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'
 const MOCK_ETH_ADDRESS = '0x1501C1413e4178c38567Ada8945A80351F7B8496'
 
 export const generateE2eTests = <TApi, TRes, TSigner>(
-  Builder: (api?: TApiOrUrl<TApi>) => IFromBuilder<TApi, TRes>,
+  Builder: (api?: TApiOrUrl<TApi>) => GeneralBuilder<TApi, TRes>,
   createApiInstanceForNode: (node: TNodeDotKsmWithRelayChains) => Promise<TApi>,
   signer: TSigner,
   evmSigner: TSigner,

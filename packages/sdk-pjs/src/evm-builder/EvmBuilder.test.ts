@@ -1,35 +1,27 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import type { AbstractProvider, Signer } from 'ethers'
+import type { Signer } from 'ethers'
 import { EvmBuilder } from './EvmBuilder'
 import {
+  transferMoonbeamEvm,
+  transferMoonbeamToEth,
+  validateAddress,
   type IPolkadotApi,
-  type TCurrencyInputWithAmount,
-  type TNodePolkadotKusama
+  type TCurrencyInputWithAmount
 } from '@paraspell/sdk-core'
+import { transferEthToPolkadot } from '../ethTransfer'
 
-vi.mock('../../pallets/xcmPallet/ethTransfer/ethTransfer', () => ({
+vi.mock('../ethTransfer', () => ({
   transferEthToPolkadot: vi.fn().mockResolvedValue({
-    result: {
-      success: {
-        ethereum: {
-          blockHash: '0x1234567890abcdef'
-        }
-      }
+    response: {
+      hash: '0x1234567890abcdef'
     }
   })
 }))
 
 vi.mock('@paraspell/sdk-core', () => ({
   validateAddress: vi.fn().mockReturnValue(true),
-  transferMoonbeamEvm: vi.fn().mockResolvedValue({
-    result: {
-      success: {
-        ethereum: {
-          blockHash: '0x1234567890abcdef'
-        }
-      }
-    }
-  })
+  transferMoonbeamToEth: vi.fn(),
+  transferMoonbeamEvm: vi.fn()
 }))
 
 const mockApi = {
@@ -38,54 +30,76 @@ const mockApi = {
 } as unknown as IPolkadotApi<unknown, unknown>
 
 describe('EvmBuilderClass', () => {
-  let provider: AbstractProvider
   let signer: Signer
-  let node: TNodePolkadotKusama
   let currency: TCurrencyInputWithAmount
   let address: string
 
   beforeEach(() => {
-    provider = {} as AbstractProvider
     signer = {} as Signer
-    node = {} as TNodePolkadotKusama
     currency = {} as TCurrencyInputWithAmount
     address = '0x1234567890abcdef'
   })
 
-  it('should throw an error if required parameters are missing', async () => {
-    const builder = EvmBuilder(mockApi, provider)
+  it('should call transferMoonbeamToEth if from is Moonbeam and to is Ethereum', async () => {
+    const builder = EvmBuilder(mockApi)
+      .from('Moonbeam')
+      .to('Ethereum')
+      .currency(currency)
+      .address(address)
+      .signer(signer)
 
-    await expect(builder.build()).rejects.toThrow('Builder object is missing parameter: from')
+    await builder.build()
+
+    expect(validateAddress).toHaveBeenCalledWith(address, 'Ethereum')
+    expect(transferMoonbeamToEth).toHaveBeenCalledWith({
+      api: mockApi,
+      from: 'Moonbeam',
+      to: 'Ethereum',
+      currency,
+      address,
+      signer
+    })
   })
 
-  it('should return the builder instance when setting parameters', () => {
-    const builder = EvmBuilder(mockApi, provider)
-    const result = builder
+  it('should call transferMoonbeamEvm if from is Moonbeam, Moonriver, or Darwinia', async () => {
+    const builder = EvmBuilder(mockApi)
+      .from('Moonbeam')
+      .to('Polkadot')
+      .currency(currency)
+      .address(address)
+      .signer(signer)
+
+    await builder.build()
+
+    expect(validateAddress).toHaveBeenCalledWith(address, 'Polkadot')
+    expect(transferMoonbeamEvm).toHaveBeenCalledWith({
+      api: mockApi,
+      from: 'Moonbeam',
+      to: 'Polkadot',
+      currency,
+      address,
+      signer
+    })
+  })
+
+  it('should call transferEthToPolkadot if from is Ethereum', async () => {
+    const builder = EvmBuilder(mockApi)
       .from('Ethereum')
-      .to(node)
+      .to('AssetHubPolkadot')
       .currency(currency)
       .address(address)
       .signer(signer)
 
-    expect(result).toBe(builder)
-  })
+    await builder.build()
 
-  it('should return the builder instance when setting parameters from Darwinia', () => {
-    const builder = EvmBuilder(mockApi, provider)
-    const result = builder
-      .from('Darwinia')
-      .to(node)
-      .currency(currency)
-      .address(address)
-      .signer(signer)
-      .build()
-
-    expect(result).toBeDefined()
-  })
-
-  it('should throw an error if build is called without all required parameters', async () => {
-    const builder = EvmBuilder(mockApi, provider).from('Ethereum').to(node).currency(currency)
-
-    await expect(builder.build()).rejects.toThrow('Builder object is missing parameter: address')
+    expect(validateAddress).toHaveBeenCalledWith(address, 'Polkadot')
+    expect(transferEthToPolkadot).toHaveBeenCalledWith({
+      api: mockApi,
+      from: 'Ethereum',
+      to: 'AssetHubPolkadot',
+      currency,
+      address,
+      signer
+    })
   })
 })

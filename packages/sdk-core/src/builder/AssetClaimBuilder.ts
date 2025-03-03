@@ -1,41 +1,18 @@
-import type { IAccountBuilder, IFinalBuilder, IFungibleBuilder, IVersionBuilder } from '../types'
-import {
-  type TMultiAsset,
-  type TNodeWithRelayChains,
-  type TAddress,
-  type TVersionClaimAssets
-} from '../types'
-import { type TAssetClaimOptions } from '../types/TAssetClaim'
+import { type TMultiAsset, type TAddress, type TVersionClaimAssets } from '../types'
+import type { TAssetClaimOptionsBase } from '../types/TAssetClaim'
 import { claimAssets } from '../pallets/assets/asset-claim'
-import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { IPolkadotApi } from '../api'
 
 /**
  * Builder class for constructing asset claim transactions.
  */
-class AssetClaimBuilder<TApi, TRes>
-  implements
-    IAccountBuilder<TApi, TRes>,
-    IFungibleBuilder<TApi, TRes>,
-    IVersionBuilder<TApi, TRes>,
-    IFinalBuilder<TApi, TRes>
-{
-  private readonly api: IPolkadotApi<TApi, TRes>
-  private readonly node: TNodeWithRelayChains
+export class AssetClaimBuilder<TApi, TRes, T extends Partial<TAssetClaimOptionsBase> = object> {
+  readonly api: IPolkadotApi<TApi, TRes>
+  readonly _options: T
 
-  private _multiAssets: TMultiAsset[]
-  private _address: TAddress
-  private _version?: TVersionClaimAssets
-
-  private constructor(api: IPolkadotApi<TApi, TRes>, node: TNodeWithRelayChains) {
+  constructor(api: IPolkadotApi<TApi, TRes>, options?: T) {
     this.api = api
-    this.node = node
-  }
-
-  static create<TApi, TRes>(
-    api: IPolkadotApi<TApi, TRes>,
-    node: TNodeWithRelayChains
-  ): IFungibleBuilder<TApi, TRes> {
-    return new AssetClaimBuilder(api, node)
+    this._options = options ?? ({} as T)
   }
 
   /**
@@ -44,9 +21,10 @@ class AssetClaimBuilder<TApi, TRes>
    * @param multiAssets - An array of assets to claim in a multi-asset format.
    * @returns An instance of Builder
    */
-  fungible(multiAssets: TMultiAsset[]): this {
-    this._multiAssets = multiAssets
-    return this
+  fungible(
+    multiAssets: TMultiAsset[]
+  ): AssetClaimBuilder<TApi, TRes, T & { multiAssets: TMultiAsset[] }> {
+    return new AssetClaimBuilder(this.api, { ...this._options, multiAssets })
   }
 
   /**
@@ -55,9 +33,8 @@ class AssetClaimBuilder<TApi, TRes>
    * @param address - The destination account address.
    * @returns An instance of Builder
    */
-  account(address: TAddress): this {
-    this._address = address
-    return this
+  account(address: TAddress): AssetClaimBuilder<TApi, TRes, T & { address: TAddress }> {
+    return new AssetClaimBuilder(this.api, { ...this._options, address })
   }
 
   /**
@@ -66,19 +43,10 @@ class AssetClaimBuilder<TApi, TRes>
    * @param version - The XCM version.
    * @returns An instance of Builder
    */
-  xcmVersion(version: TVersionClaimAssets): this {
-    this._version = version
-    return this
-  }
-
-  private buildOptions(): TAssetClaimOptions<TApi, TRes> {
-    return {
-      api: this.api,
-      node: this.node,
-      multiAssets: this._multiAssets,
-      address: this._address,
-      version: this._version
-    }
+  xcmVersion(
+    version: TVersionClaimAssets
+  ): AssetClaimBuilder<TApi, TRes, T & { version: TVersionClaimAssets }> {
+    return new AssetClaimBuilder(this.api, { ...this._options, version })
   }
 
   /**
@@ -86,9 +54,8 @@ class AssetClaimBuilder<TApi, TRes>
    *
    * @returns A Promise that resolves to the asset claim extrinsic.
    */
-  async build() {
-    const options = this.buildOptions()
-    return (await claimAssets(options)) as TRes
+  build(this: AssetClaimBuilder<TApi, TRes, TAssetClaimOptionsBase>) {
+    return claimAssets({ api: this.api, ...this._options })
   }
 
   /**
@@ -105,7 +72,7 @@ class AssetClaimBuilder<TApi, TRes>
    *
    * @returns A Promise that resolves when the API is disconnected.
    */
-  async disconnect() {
+  disconnect() {
     return this.api.disconnect(true)
   }
 }

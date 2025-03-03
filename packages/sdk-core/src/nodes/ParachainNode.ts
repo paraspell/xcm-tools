@@ -104,7 +104,7 @@ abstract class ParachainNode<TApi, TRes> {
       api,
       asset,
       address,
-      destination,
+      to: destination,
       paraIdTo,
       overriddenAsset,
       version,

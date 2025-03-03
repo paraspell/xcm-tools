@@ -46,8 +46,8 @@ describe('resolveOverriddenAsset', () => {
 
   const defaultOptions = {
     currency: { symbol: 'TEST', amount: '1000' },
-    origin: mockOrigin,
-    destination: mockDestination
+    from: mockOrigin,
+    to: mockDestination
   } as TSendOptions<unknown, unknown>
 
   beforeEach(() => {

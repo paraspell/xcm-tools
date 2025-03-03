@@ -279,8 +279,8 @@ describe('validateAssetSupport', () => {
 
   it('should throw InvalidCurrencyError when asset symbol matches native asset in destination', () => {
     const options = {
-      origin: 'Acala',
-      destination: 'AssetHubPolkadot',
+      from: 'Acala',
+      to: 'AssetHubPolkadot',
       currency: { symbol: 'TEST' }
     } as TSendOptions<unknown, unknown>
 
@@ -301,8 +301,8 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when isBridge is true', () => {
     const options = {
-      origin: 'Acala',
-      destination: 'AssetHubPolkadot',
+      from: 'Acala',
+      to: 'AssetHubPolkadot',
       currency: { symbol: 'TEST' }
     } as TSendOptions<unknown, unknown>
 
@@ -318,8 +318,8 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when destination is not AssetHub', () => {
     const options = {
-      origin: 'Acala',
-      destination: 'Astar',
+      from: 'Acala',
+      to: 'Astar',
       currency: { symbol: 'TEST' }
     } as TSendOptions<unknown, unknown>
 
@@ -335,8 +335,8 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when pallet is not XTokens', () => {
     const options = {
-      origin: 'Acala',
-      destination: 'AssetHubPolkadot',
+      from: 'Acala',
+      to: 'AssetHubPolkadot',
       currency: { symbol: 'TEST' }
     } as TSendOptions<unknown, unknown>
 
@@ -352,8 +352,8 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when origin is Bifrost', () => {
     const options = {
-      origin: 'BifrostPolkadot',
-      destination: 'AssetHubPolkadot',
+      from: 'BifrostPolkadot',
+      to: 'AssetHubPolkadot',
       currency: { symbol: 'TEST' }
     } as TSendOptions<unknown, unknown>
 
@@ -369,8 +369,8 @@ describe('validateAssetSupport', () => {
 
   it('should filter out DOT from native assets when origin is Hydration', () => {
     const options = {
-      origin: 'Hydration',
-      destination: 'AssetHubPolkadot',
+      from: 'Hydration',
+      to: 'AssetHubPolkadot',
       currency: { symbol: 'DOT' }
     } as TSendOptions<unknown, unknown>
 
@@ -390,8 +390,8 @@ describe('validateAssetSupport', () => {
 
   it('should throw InvalidCurrencyError when destination does not support asset', () => {
     const options = {
-      origin: 'Acala',
-      destination: 'Astar',
+      from: 'Acala',
+      to: 'Astar',
       currency: { symbol: 'UNSUPPORTED' }
     } as TSendOptions<unknown, unknown>
 
@@ -412,8 +412,8 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when destination supports asset', () => {
     const options = {
-      origin: 'Acala',
-      destination: 'Astar',
+      from: 'Acala',
+      to: 'Astar',
       currency: { symbol: 'SUPPORTED' }
     } as TSendOptions<unknown, unknown>
 
@@ -428,8 +428,8 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when assetCheckEnabled is false', () => {
     const options = {
-      origin: 'Acala',
-      destination: 'Astar',
+      from: 'Acala',
+      to: 'Astar',
       currency: { symbol: 'ANY' }
     } as TSendOptions<unknown, unknown>
 
@@ -442,8 +442,8 @@ describe('validateAssetSupport', () => {
 
   it('should call throwUnsupportedCurrency when asset is null and assetCheckEnabled is true', () => {
     const options = {
-      origin: 'Acala',
-      destination: 'Astar',
+      from: 'Acala',
+      to: 'Astar',
       currency: { symbol: 'UNKNOWN' }
     } as TSendOptions<unknown, unknown>
 
@@ -453,13 +453,13 @@ describe('validateAssetSupport', () => {
 
     validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
-    expect(throwUnsupportedCurrency).toHaveBeenCalledWith(options.currency, options.origin)
+    expect(throwUnsupportedCurrency).toHaveBeenCalledWith(options.currency, options.from)
   })
 
   it('should not call throwUnsupportedCurrency when isBridge is true', () => {
     const options = {
-      origin: 'Astar',
-      destination: 'Acala',
+      from: 'Astar',
+      to: 'Acala',
       currency: { symbol: 'UNKNOWN' }
     } as TSendOptions<unknown, unknown>
 
@@ -474,8 +474,8 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when destination is relay (undefined)', () => {
     const options = {
-      origin: 'Acala',
-      destination: 'Polkadot',
+      from: 'Acala',
+      to: 'Polkadot',
       currency: { symbol: 'TEST' }
     } as TSendOptions<unknown, unknown>
 
@@ -488,8 +488,8 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when destination is a MultiLocation object', () => {
     const options = {
-      origin: 'Acala',
-      destination: {} as TDestination,
+      from: 'Acala',
+      to: {} as TDestination,
       currency: { symbol: 'TEST' }
     } as TSendOptions<unknown, unknown>
 
@@ -502,8 +502,8 @@ describe('validateAssetSupport', () => {
 
   it('should not throw when currency has id', () => {
     const options = {
-      origin: 'Astar',
-      destination: 'Acala',
+      from: 'Astar',
+      to: 'Acala',
       currency: { id: 'some-id' }
     } as TSendOptions<unknown, unknown>
 

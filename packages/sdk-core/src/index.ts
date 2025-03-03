@@ -6,7 +6,6 @@ export * from './pallets/assets'
 export * from './pallets/pallets'
 export * from './builder'
 export * from './types'
-export { IFinalBuilderWithOptions } from './types/TBuilder'
 export {
   NODE_NAMES_DOT_KSM,
   NODE_NAMES,

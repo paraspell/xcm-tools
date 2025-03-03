@@ -23,7 +23,7 @@ describe('BatchTransactionManager', () => {
     it('adds a transaction to the manager', () => {
       const manager = new BatchTransactionManager()
       expect(manager.isEmpty()).toBe(true)
-      manager.addTransaction({ origin: 'Acala' } as TSendOptions<unknown, unknown>)
+      manager.addTransaction({ from: 'Acala' } as TSendOptions<unknown, unknown>)
       expect(manager.isEmpty()).toBe(false)
     })
   })
@@ -36,7 +36,7 @@ describe('BatchTransactionManager', () => {
 
     it('returns false when transactions are present', () => {
       const manager = new BatchTransactionManager()
-      manager.addTransaction({ origin: 'Acala' } as TSendOptions<unknown, unknown>)
+      manager.addTransaction({ from: 'Acala' } as TSendOptions<unknown, unknown>)
       expect(manager.isEmpty()).toBe(false)
     })
   })
@@ -51,8 +51,8 @@ describe('BatchTransactionManager', () => {
 
     it('calls sendTransaction for each added transaction and batches them with batchAll', async () => {
       const manager = new BatchTransactionManager()
-      manager.addTransaction({ origin: 'Acala' } as TSendOptions<unknown, unknown>)
-      manager.addTransaction({ origin: 'Acala' } as TSendOptions<unknown, unknown>)
+      manager.addTransaction({ from: 'Acala' } as TSendOptions<unknown, unknown>)
+      manager.addTransaction({ from: 'Acala' } as TSendOptions<unknown, unknown>)
       vi.mocked(send).mockResolvedValue({ hash: 'hash' })
 
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH_ALL })
@@ -62,7 +62,7 @@ describe('BatchTransactionManager', () => {
     it('uses batch when BATCH mode is selected', async () => {
       const spy = vi.spyOn(mockApi, 'callBatchMethod')
       const manager = new BatchTransactionManager()
-      manager.addTransaction({ origin: 'Acala' } as TSendOptions<unknown, unknown>)
+      manager.addTransaction({ from: 'Acala' } as TSendOptions<unknown, unknown>)
       vi.mocked(send).mockResolvedValue({ hash: 'hash' })
 
       await manager.buildBatch(mockApi, 'Acala', { mode: BatchMode.BATCH })
@@ -73,7 +73,7 @@ describe('BatchTransactionManager', () => {
     it('uses batchAll when BATCH_ALL mode is selected', async () => {
       const manager = new BatchTransactionManager()
       manager.addTransaction({
-        origin: 'Acala',
+        from: 'Acala',
         currency: {
           symbol: 'ACA',
           amount: 100
@@ -88,8 +88,8 @@ describe('BatchTransactionManager', () => {
 
     it('should fail if different origins are used', async () => {
       const manager = new BatchTransactionManager()
-      manager.addTransaction({ origin: 'Acala' } as TSendOptions<unknown, unknown>)
-      manager.addTransaction({ origin: 'Karura' } as TSendOptions<unknown, unknown>)
+      manager.addTransaction({ from: 'Acala' } as TSendOptions<unknown, unknown>)
+      manager.addTransaction({ from: 'Karura' } as TSendOptions<unknown, unknown>)
       vi.mocked(send).mockResolvedValue({ hash: 'hash' })
 
       await expect(

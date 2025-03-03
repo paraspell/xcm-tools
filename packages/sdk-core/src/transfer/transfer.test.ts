@@ -85,10 +85,10 @@ describe('send', () => {
   it('should perform the send operation successfully', async () => {
     const options = {
       api: apiMock,
-      origin: 'Acala',
+      from: 'Acala',
       currency: { symbol: 'TEST', amount: '100' },
       address: 'some-address',
-      destination: 'Astar'
+      to: 'Astar'
     } as TSendOptions<unknown, unknown>
     const transferSpy = vi.spyOn(originNodeMock, 'transfer')
     const apiSpy = vi.spyOn(apiMock, 'init')
@@ -96,18 +96,18 @@ describe('send', () => {
     const result = await send(options)
 
     expect(validateCurrency).toHaveBeenCalledWith(options.currency)
-    expect(validateDestination).toHaveBeenCalledWith(options.origin, options.destination)
-    expect(validateDestinationAddress).toHaveBeenCalledWith(options.address, options.destination)
+    expect(validateDestination).toHaveBeenCalledWith(options.from, options.to)
+    expect(validateDestinationAddress).toHaveBeenCalledWith(options.address, options.to)
     expect(validateAssetSpecifiers).toHaveBeenCalledWith(true, options.currency)
     expect(validateAssetSupport).toHaveBeenCalledWith(options, true, false, { symbol: 'TEST' })
 
-    expect(apiSpy).toHaveBeenCalledWith(options.origin)
+    expect(apiSpy).toHaveBeenCalledWith(options.from)
 
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
       asset: { symbol: 'TEST', amount: '100' },
       address: options.address,
-      destination: options.destination,
+      to: options.to,
       paraIdTo: options.paraIdTo,
       version: options.version
     })
@@ -121,8 +121,8 @@ describe('send', () => {
 
     const options = {
       api: apiMock,
-      origin: 'Acala',
-      destination: 'Astar',
+      from: 'Acala',
+      to: 'Astar',
       currency: { symbol: 'DOT', amount: '100' },
       address: 'some-address'
     } as TSendOptions<unknown, unknown>
@@ -147,10 +147,10 @@ describe('send', () => {
 
     const options = {
       api: apiMock,
-      origin: 'Acala',
+      from: 'Acala',
       currency: { symbol: 'TEST', amount: 100 },
       address: 'some-address',
-      destination: 'Astar'
+      to: 'Astar'
     } as TSendOptions<unknown, unknown>
 
     const apiSpy = vi.spyOn(apiMock, 'init')
@@ -167,12 +167,12 @@ describe('send', () => {
 
     const options = {
       api: apiMock,
-      origin: 'Acala',
+      from: 'Acala',
       currency: {
         amount: 100
       },
       address: 'some-address',
-      destination: 'Astar'
+      to: 'Astar'
     } as TSendOptions<unknown, unknown>
 
     await expect(send(options)).rejects.toThrow('Invalid currency')
@@ -188,12 +188,12 @@ describe('send', () => {
 
     const options = {
       api: apiMock,
-      origin: 'Acala',
+      from: 'Acala',
       currency: currency as {
         multilocation: TMultiLocationValueWithOverride
       },
       address: 'some-address',
-      destination: 'Astar'
+      to: 'Astar'
     } as TSendOptions<unknown, unknown>
 
     const transferSpy = vi.spyOn(originNodeMock, 'transfer')
@@ -214,10 +214,10 @@ describe('send', () => {
   it('should handle overriddenAsset when multiasset is present', async () => {
     const options = {
       api: apiMock,
-      origin: 'Acala',
+      from: 'Acala',
       currency: { multiasset: [] } as TCurrencyInput,
       address: 'some-address',
-      destination: 'Astar'
+      to: 'Astar'
     } as TSendOptions<unknown, unknown>
 
     const transferSpy = vi.spyOn(originNodeMock, 'transfer')
@@ -236,10 +236,10 @@ describe('send', () => {
   it('should throw error if senderAddress is in EVM format', async () => {
     const options = {
       api: apiMock,
-      origin: 'Acala',
+      from: 'Acala',
       currency: { symbol: 'TEST', amount: 100 },
       address: 'some-address',
-      destination: 'Astar',
+      to: 'Astar',
       senderAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496'
     } as TSendOptions<unknown, unknown>
 
@@ -249,10 +249,10 @@ describe('send', () => {
   it('should not include optional parameters if they are undefined', async () => {
     const options = {
       api: apiMock,
-      origin: 'Acala',
+      from: 'Acala',
       currency: { symbol: 'TEST', amount: 100 },
       address: 'some-address',
-      destination: 'Astar',
+      to: 'Astar',
       paraIdTo: undefined,
       version: undefined,
       senderAddress: undefined
