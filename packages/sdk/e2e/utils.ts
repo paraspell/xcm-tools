@@ -5,16 +5,7 @@ import { mnemonicToSeedSync } from '@scure/bip39'
 import { HDKey } from '@scure/bip32'
 import { DEV_PHRASE, entropyToMiniSecret, mnemonicToEntropy } from '@polkadot-labs/hdkd-helpers'
 import { sr25519CreateDerive } from '@polkadot-labs/hdkd'
-import {
-  getAssets,
-  getNativeAssetSymbol,
-  getRelayChainSymbol,
-  hasSupportForAsset,
-  isForeignAsset,
-  NODE_NAMES_DOT_KSM,
-  TNode,
-  TPapiTransaction
-} from '../src'
+import { NODE_NAMES_DOT_KSM, TPapiTransaction } from '../src'
 import { expect } from 'vitest'
 
 export const createSr25519Signer = () => {

@@ -115,7 +115,7 @@ describe('BifrostPolkadot', () => {
     it('should return false when currency symbol is WETH and destination is AssetHubPolkadot', () => {
       const options = {
         asset: { symbol: 'WETH' },
-        destination: 'AssetHubPolkadot'
+        to: 'AssetHubPolkadot'
       } as TSendInternalOptions<unknown, unknown>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(false)
     })
@@ -123,7 +123,7 @@ describe('BifrostPolkadot', () => {
     it('should return false when currency symbol is DOT and destination is AssetHubPolkadot', () => {
       const options: TSendInternalOptions<unknown, unknown> = {
         asset: { symbol: 'DOT' },
-        destination: 'AssetHubPolkadot'
+        to: 'AssetHubPolkadot'
       } as TSendInternalOptions<unknown, unknown>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(false)
     })
@@ -131,7 +131,7 @@ describe('BifrostPolkadot', () => {
     it('should return true when currency symbol is not WETH or DOT and destination is AssetHubPolkadot', () => {
       const options: TSendInternalOptions<unknown, unknown> = {
         asset: { symbol: 'BNC' },
-        destination: 'AssetHubPolkadot'
+        to: 'AssetHubPolkadot'
       } as TSendInternalOptions<unknown, unknown>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
     })
@@ -139,7 +139,7 @@ describe('BifrostPolkadot', () => {
     it('should return true when currency symbol is WETH but destination is not AssetHubPolkadot', () => {
       const options: TSendInternalOptions<unknown, unknown> = {
         asset: { symbol: 'WETH' },
-        destination: 'Acala'
+        to: 'Acala'
       } as TSendInternalOptions<unknown, unknown>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
     })
@@ -147,7 +147,7 @@ describe('BifrostPolkadot', () => {
     it('should return true when currency ymbol is DOT but destination is not AssetHubPolkadot', () => {
       const options: TSendInternalOptions<unknown, unknown> = {
         asset: { symbol: 'DOT' },
-        destination: 'Acala'
+        to: 'Acala'
       } as TSendInternalOptions<unknown, unknown>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
     })

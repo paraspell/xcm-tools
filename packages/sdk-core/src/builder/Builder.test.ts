@@ -64,10 +64,10 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
+        from: NODE,
         currency: CURRENCY,
         address: ADDRESS,
-        destination: NODE_2
+        to: NODE_2
       })
     })
 
@@ -81,10 +81,10 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
+        from: NODE,
         currency: CURRENCY,
         address: ADDRESS,
-        destination: NODE_2
+        to: NODE_2
       })
       expect(tx).toEqual(mockExtrinsic)
     })
@@ -99,10 +99,10 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
+        from: NODE,
         currency: CURRENCY,
         address: ADDRESS,
-        destination: NODE_2,
+        to: NODE_2,
         paraIdTo: PARA_ID_TO
       })
     })
@@ -121,13 +121,13 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
+        from: NODE,
         currency: {
           id: ASSET_ID,
           amount: AMOUNT
         },
         address: ADDRESS,
-        destination: NODE_2,
+        to: NODE_2,
         paraIdTo: PARA_ID_TO
       })
     })
@@ -145,10 +145,10 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
+        from: NODE,
         currency: CURRENCY,
         address: ADDRESS,
-        destination: NODE_2,
+        to: NODE_2,
         paraIdTo: PARA_ID_TO,
         version
       })
@@ -164,10 +164,10 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
+        from: NODE,
         currency: { id: CURRENCY_ID, amount: AMOUNT },
         address: ADDRESS,
-        destination: NODE_2
+        to: NODE_2
       })
     })
 
@@ -182,10 +182,10 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
+        from: NODE,
         currency,
         address: ADDRESS,
-        destination: NODE_2
+        to: NODE_2
       })
     })
 
@@ -241,10 +241,10 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
+        from: NODE,
         currency,
         address: ADDRESS,
-        destination: NODE_2
+        to: NODE_2
       })
     })
 
@@ -260,8 +260,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
-        destination: 'Polkadot',
+        from: NODE,
+        to: 'Polkadot',
         currency: {
           symbol: currency,
           amount: AMOUNT
@@ -280,8 +280,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
-        destination: 'Polkadot',
+        from: NODE,
+        to: 'Polkadot',
         currency: {
           symbol: getRelayChainSymbol(NODE),
           amount: AMOUNT
@@ -303,8 +303,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
-        destination: 'Polkadot',
+        from: NODE,
+        to: 'Polkadot',
         currency: {
           symbol: currency,
           amount: AMOUNT
@@ -325,8 +325,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
-        destination: 'Polkadot',
+        from: NODE,
+        to: 'Polkadot',
         currency,
         address: ADDRESS
       })
@@ -346,8 +346,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
-        destination: 'Polkadot',
+        from: NODE,
+        to: 'Polkadot',
         currency: {
           symbol: currency,
           amount: AMOUNT
@@ -376,8 +376,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
-        destination: 'Polkadot',
+        from: NODE,
+        to: 'Polkadot',
         currency: currency,
         address: ADDRESS,
         version
@@ -411,8 +411,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
-        destination: 'Polkadot',
+        from: NODE,
+        to: 'Polkadot',
         currency: {
           symbol: getRelayChainSymbol(NODE),
           amount: AMOUNT
@@ -434,8 +434,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
-        destination: NODE_2,
+        from: NODE,
+        to: NODE_2,
         currency: CURRENCY,
         address: ADDRESS
       })
@@ -457,8 +457,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: NODE,
-        destination: NODE_2,
+        from: NODE,
+        to: NODE_2,
         currency: CURRENCY,
         address: ADDRESS
       })
@@ -494,8 +494,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: 'Polkadot',
-        destination: NODE,
+        from: 'Polkadot',
+        to: NODE,
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS
       })
@@ -511,8 +511,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: 'Polkadot',
-        destination: NODE,
+        from: 'Polkadot',
+        to: NODE,
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS,
         paraIdTo: PARA_ID_TO
@@ -532,8 +532,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: 'Polkadot',
-        destination: NODE,
+        from: 'Polkadot',
+        to: NODE,
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS,
         paraIdTo: PARA_ID_TO,
@@ -554,8 +554,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: 'Polkadot',
-        destination: NODE,
+        from: 'Polkadot',
+        to: NODE,
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS,
         paraIdTo: PARA_ID_TO,
@@ -601,8 +601,8 @@ describe('Builder', () => {
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
-        origin: 'Polkadot',
-        destination: NODE_2,
+        from: 'Polkadot',
+        to: NODE_2,
         currency: { symbol: 'DOT', amount: AMOUNT },
         address: ADDRESS
       })

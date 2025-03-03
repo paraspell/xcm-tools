@@ -87,7 +87,7 @@ export const validateAssetSpecifiers = (assetCheckEnabled: boolean, currency: TC
 }
 
 export const validateAssetSupport = <TApi, TRes>(
-  { origin, destination, currency }: TSendOptions<TApi, TRes>,
+  { from: origin, to: destination, currency }: TSendOptions<TApi, TRes>,
   assetCheckEnabled: boolean,
   isBridge: boolean,
   asset: TAsset | null

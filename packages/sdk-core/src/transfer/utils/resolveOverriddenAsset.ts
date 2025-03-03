@@ -16,7 +16,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
   isBridge: boolean,
   assetCheckEnabled: boolean
 ): TMultiLocation | TMultiAssetWithFee[] | undefined => {
-  const { currency, origin, destination } = options
+  const { currency, from: origin, to: destination } = options
   if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
     return currency.multilocation.value
   }

@@ -92,7 +92,7 @@ export class BifrostPolkadot<TApi, TRes>
     return this.transferToAssetHub(input)
   }
 
-  protected canUseXTokens({ asset, destination }: TSendInternalOptions<TApi, TRes>): boolean {
+  protected canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
     if (destination === 'Ethereum') return false
     return (asset.symbol !== 'WETH' && asset.symbol !== 'DOT') || destination !== 'AssetHubPolkadot'
   }

@@ -107,7 +107,7 @@ class Hydration<TApi, TRes>
     return XTokensTransferImpl.transferXTokens(input, Number(asset.assetId))
   }
 
-  protected canUseXTokens({ destination, asset }: TSendInternalOptions<TApi, TRes>): boolean {
+  protected canUseXTokens({ to: destination, asset }: TSendInternalOptions<TApi, TRes>): boolean {
     return (
       destination !== 'Ethereum' && !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT')
     )

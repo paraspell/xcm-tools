@@ -5,7 +5,7 @@ import type { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import type { AssetClaimDto } from './dto/asset-claim.dto.js';
 import type { RequestWithUser } from '../types/types.js';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
+import type { TPapiTransaction } from '@paraspell/sdk';
 
 describe('AssetClaimController', () => {
   let controller: AssetClaimController;
@@ -49,7 +49,7 @@ describe('AssetClaimController', () => {
 
       const spyClaimAssets = vi
         .spyOn(assetClaimService, 'claimAssets')
-        .mockResolvedValue('success' as unknown as Extrinsic);
+        .mockResolvedValue('success' as unknown as TPapiTransaction);
       const spyTrack = vi.spyOn(analyticsService, 'track');
 
       const result = await controller.claimAssets(bodyParams, req);
@@ -77,7 +77,7 @@ describe('AssetClaimController', () => {
 
       const spyClaimAssets = vi
         .spyOn(assetClaimService, 'claimAssets')
-        .mockResolvedValue('success' as unknown as Extrinsic);
+        .mockResolvedValue('success' as unknown as TPapiTransaction);
       const spyTrack = vi.spyOn(analyticsService, 'track');
 
       const result = await controller.claimAssets(bodyParams, req);
@@ -105,7 +105,7 @@ describe('AssetClaimController', () => {
 
       const spyClaimAssets = vi
         .spyOn(assetClaimService, 'claimAssets')
-        .mockResolvedValue('success' as unknown as Extrinsic);
+        .mockResolvedValue('success' as unknown as TPapiTransaction);
       const spyTrack = vi.spyOn(analyticsService, 'track');
 
       const result = await controller.claimAssetsPapi(bodyParams, req);

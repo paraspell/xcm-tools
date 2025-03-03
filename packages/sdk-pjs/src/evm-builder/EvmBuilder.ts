@@ -1,5 +1,4 @@
 import type {
-  TOptionalEvmBuilderOptions,
   IPolkadotApi,
   TEvmBuilderOptions,
   TCurrencyInputWithAmount,
@@ -10,22 +9,24 @@ import type { AbstractProvider, Signer } from 'ethers'
 import { transferEthToPolkadot } from '../ethTransfer'
 import type { WalletClient } from 'viem'
 import { validateAddress } from '@paraspell/sdk-core'
+import type { TEvmNodeFrom } from '@paraspell/sdk-core/src'
 
 /**
  * Builder class for constructing transfers from Ethereum to Polkadot.
  */
-export class EvmBuilderClass<TApi, TRes> {
-  _options: TOptionalEvmBuilderOptions<TApi, TRes>
+export class EvmBuilderCore<
+  TApi,
+  TRes,
+  T extends Partial<TEvmBuilderOptions<TApi, TRes>> = object
+> {
+  protected readonly _options: T
 
-  constructor(api: IPolkadotApi<TApi, TRes>, provider?: AbstractProvider) {
-    this._options = {}
-    this._options.api = api
-    this._options.provider = provider
+  constructor(options: T) {
+    this._options = options
   }
 
-  from(node: 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'): this {
-    this._options.from = node
-    return this
+  from(node: TEvmNodeFrom): EvmBuilderCore<TApi, TRes, T & { from: TEvmNodeFrom }> {
+    return new EvmBuilderCore({ ...this._options, from: node })
   }
 
   /**
@@ -34,9 +35,8 @@ export class EvmBuilderClass<TApi, TRes> {
    * @param node - The Polkadot node to which the transfer will be made.
    * @returns An instance of EvmBuilder
    */
-  to(node: TNodeWithRelayChains): this {
-    this._options.to = node
-    return this
+  to(node: TNodeWithRelayChains): EvmBuilderCore<TApi, TRes, T & { to: TNodeWithRelayChains }> {
+    return new EvmBuilderCore({ ...this._options, to: node })
   }
 
   /**
@@ -45,9 +45,10 @@ export class EvmBuilderClass<TApi, TRes> {
    * @param currency - The currency to be transferred.
    * @returns An instance of EvmBuilder
    */
-  currency(currency: TCurrencyInputWithAmount): this {
-    this._options.currency = currency
-    return this
+  currency(
+    currency: TCurrencyInputWithAmount
+  ): EvmBuilderCore<TApi, TRes, T & { currency: TCurrencyInputWithAmount }> {
+    return new EvmBuilderCore({ ...this._options, currency })
   }
 
   /**
@@ -56,10 +57,11 @@ export class EvmBuilderClass<TApi, TRes> {
    * @param address - The Polkadot address to receive the transfer.
    * @returns An instance of EvmBuilder
    */
-  address(address: string, ahAddress?: string): this {
-    this._options.address = address
-    this._options.ahAddress = ahAddress
-    return this
+  address(
+    address: string,
+    ahAddress?: string
+  ): EvmBuilderCore<TApi, TRes, T & { address: string }> {
+    return new EvmBuilderCore({ ...this._options, address, ahAddress })
   }
 
   /**
@@ -68,9 +70,10 @@ export class EvmBuilderClass<TApi, TRes> {
    * @param signer - The Ethereum signer to authorize the transfer.
    * @returns An instance of EvmBuilder
    */
-  signer(signer: Signer | WalletClient): this {
-    this._options.signer = signer
-    return this
+  signer(
+    signer: Signer | WalletClient
+  ): EvmBuilderCore<TApi, TRes, T & { signer: Signer | WalletClient }> {
+    return new EvmBuilderCore({ ...this._options, signer })
   }
 
   /**
@@ -78,43 +81,20 @@ export class EvmBuilderClass<TApi, TRes> {
    *
    * @throws Error if any required parameters are missing.
    */
-  async build(): Promise<string> {
-    const requiredParams: Array<keyof TEvmBuilderOptions<TApi, TRes>> = [
-      'from',
-      'to',
-      'currency',
-      'address',
-      'signer'
-    ]
+  async build(this: EvmBuilderCore<TApi, TRes, TEvmBuilderOptions<TApi, TRes>>): Promise<string> {
+    const { from, to, address } = this._options
+    validateAddress(address, to)
 
-    for (const param of requiredParams) {
-      if (this._options[param] === undefined) {
-        throw new Error(`Builder object is missing parameter: ${param}`)
-      }
+    if (from === 'Moonbeam' && to === 'Ethereum') {
+      return transferMoonbeamToEth(this._options)
     }
 
-    validateAddress(this._options.address as string, this._options.to as TNodeWithRelayChains)
-
-    if (this._options.from === 'Moonbeam' && this._options.to === 'Ethereum') {
-      return transferMoonbeamToEth(this._options as TEvmBuilderOptions<TApi, TRes>)
-    }
-
-    if (
-      this._options.from === 'Moonbeam' ||
-      this._options.from === 'Moonriver' ||
-      this._options.from === 'Darwinia'
-    ) {
-      return await transferMoonbeamEvm(this._options as TEvmBuilderOptions<TApi, TRes>)
-    }
-
-    if (this._options.from === 'Ethereum') {
-      const { response } = await transferEthToPolkadot(
-        this._options as TEvmBuilderOptions<TApi, TRes>
-      )
+    if (from === 'Moonbeam' || from === 'Moonriver' || from === 'Darwinia') {
+      return transferMoonbeamEvm(this._options)
+    } else {
+      const { response } = await transferEthToPolkadot(this._options)
       return response.hash
     }
-
-    throw new Error('Scenario not supported')
   }
 }
 
@@ -127,4 +107,4 @@ export class EvmBuilderClass<TApi, TRes> {
 export const EvmBuilder = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   provider?: AbstractProvider
-) => new EvmBuilderClass(api, provider)
+) => new EvmBuilderCore({ api, provider })

@@ -4,17 +4,17 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
+  AssetClaimBuilder,
   InvalidCurrencyError,
-  IVersionBuilder,
   NODES_WITH_RELAY_CHAINS,
+  TAssetClaimOptionsBase,
   TMultiAsset,
   TNodeDotKsmWithRelayChains,
   TPapiApi,
+  TPapiTransaction,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
-import { TPapiTransaction } from '@paraspell/sdk';
-import { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 
 @Injectable()
 export class AssetClaimService {
@@ -43,20 +43,21 @@ export class AssetClaimService {
       : await import('@paraspell/sdk-pjs');
 
     let builder:
-      | IVersionBuilder<TPapiApi, TPapiTransaction>
-      | IVersionBuilder<TPjsApi, Extrinsic>
+      | AssetClaimBuilder<TPapiApi, TPapiTransaction, TAssetClaimOptionsBase>
       | undefined;
     try {
       builder = Sdk.Builder()
         .claimFrom(fromNode)
         .fungible(fungible as TMultiAsset[])
-        .account(address);
+        .account(address) as AssetClaimBuilder<
+        TPapiApi,
+        TPapiTransaction,
+        TAssetClaimOptionsBase
+      >;
 
       const tx = await builder.build();
 
-      return usePapi
-        ? (await (tx as TPapiTransaction).getEncodedData()).asHex()
-        : tx;
+      return usePapi ? (await tx.getEncodedData()).asHex() : tx;
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);

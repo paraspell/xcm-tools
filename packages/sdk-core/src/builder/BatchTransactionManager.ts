@@ -26,7 +26,7 @@ class BatchTransactionManager<TApi, TRes> {
       throw new Error('No transactions to batch.')
     }
 
-    const sameFrom = this.transactionOptions.every(tx => tx.origin === from)
+    const sameFrom = this.transactionOptions.every(tx => tx.from === from)
 
     if (!sameFrom) {
       throw new Error('All transactions must have the same origin.')

@@ -102,6 +102,10 @@ export type TRelayToParaDestination = TNodePolkadotKusama | TMultiLocation
 
 export type TSendBaseOptions = {
   /**
+   * The origin node
+   */
+  from: TNodeDotKsmWithRelayChains
+  /**
    * The destination address. A SS58 or H160 format.
    */
   address: TAddress
@@ -112,7 +116,11 @@ export type TSendBaseOptions = {
   /**
    * The destination node or multi-location
    */
-  destination: TDestination
+  to: TDestination
+  /**
+   * The currency to transfer. Either ID, symbol, multi-location, or multi-asset
+   */
+  currency: TCurrencyInputWithAmount
   /**
    * The optional destination parachain ID
    */
@@ -134,18 +142,9 @@ export type TSendBaseOptions = {
 /**
  * Options for transferring from a parachain to another parachain or relay chain
  */
-export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions, TApi, TRes> & {
-  /**
-   * The origin node
-   */
-  origin: TNodeDotKsmWithRelayChains
-  /**
-   * The currency to transfer. Either ID, symbol, multi-location, or multi-asset
-   */
-  currency: TCurrencyInputWithAmount
-}
+export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions, TApi, TRes>
 
-export type TSendInternalOptions<TApi, TRes> = TSendBaseOptions & {
+export type TSendInternalOptions<TApi, TRes> = Omit<TSendBaseOptions, 'from' | 'currency'> & {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]

@@ -10,15 +10,15 @@ import {
   TNodeWithRelayChains,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   NODES_WITH_RELAY_CHAINS,
+  Builder,
+  GeneralBuilder,
   TPapiApi,
-  IFromBuilder,
   TPapiTransaction,
+  TSendBaseOptions,
 } from '@paraspell/sdk';
-
 import { isValidWalletAddress } from '../utils.js';
 import { XTransferDto } from './dto/XTransferDto.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
-import { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 
 @Injectable()
 export class XTransferService {
@@ -59,9 +59,7 @@ export class XTransferService {
   }
 
   private buildXTransfer(
-    builder:
-      | IFromBuilder<TPjsApi, Extrinsic>
-      | IFromBuilder<TPapiApi, TPapiTransaction>,
+    builder: ReturnType<typeof Builder>,
     transfer: XTransferDto,
   ) {
     const {
@@ -108,7 +106,10 @@ export class XTransferService {
     const builder = Sdk.Builder();
 
     try {
-      const finalBuilder = this.buildXTransfer(builder, transfer);
+      const finalBuilder = this.buildXTransfer(
+        builder as ReturnType<typeof Builder>,
+        transfer,
+      );
 
       if (isDryRun) {
         if (!senderAddress) {
@@ -122,9 +123,7 @@ export class XTransferService {
 
       const tx = await finalBuilder.build();
 
-      return usePapi
-        ? (await (tx as TPapiTransaction).getEncodedData()).asHex()
-        : tx;
+      return usePapi ? (await tx.getEncodedData()).asHex() : tx;
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||
@@ -172,7 +171,11 @@ export class XTransferService {
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    let builder = Sdk.Builder();
+    let builder = Sdk.Builder() as GeneralBuilder<
+      TPapiApi,
+      TPapiTransaction,
+      TSendBaseOptions
+    >;
 
     try {
       for (const transfer of transfers) {
@@ -183,9 +186,7 @@ export class XTransferService {
 
       const tx = await builder.buildBatch(options ?? undefined);
 
-      return usePapi
-        ? (await (tx as TPapiTransaction).getEncodedData()).asHex()
-        : tx;
+      return usePapi ? (await tx.getEncodedData()).asHex() : tx;
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||

@@ -234,7 +234,7 @@ describe('ParachainNode', () => {
       api: {},
       asset: { symbol: 'DOT', amount: '100' },
       address: 'destinationAddress',
-      destination: 'Polimec'
+      to: 'Polimec'
     } as TSendInternalOptions<unknown, unknown>
 
     await expect(node.transfer(options)).rejects.toThrowError(
@@ -250,7 +250,7 @@ describe('ParachainNode', () => {
       api: {},
       asset: { symbol: 'DOT', amount: '100' },
       address: 'destinationAddress',
-      destination: 'Polimec'
+      to: 'Polimec'
     } as TSendInternalOptions<unknown, unknown>
 
     const transferXTokensSpy = vi.spyOn(node, 'transferXTokens')

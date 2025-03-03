@@ -7,14 +7,8 @@ import type {
   Version,
   TBatchOptions,
   TNodeDotKsmWithRelayChains,
-  IFromBuilder,
-  IToBuilder,
-  ICurrencyBuilder,
-  IAddressBuilder,
-  IFinalBuilderWithOptions,
-  IFungibleBuilder,
   TCurrencyInputWithAmount,
-  TSendOptions
+  TSendBaseOptions
 } from '../types'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
@@ -26,31 +20,17 @@ import { isTMultiLocation } from '../pallets/xcmPallet/utils'
 /**
  * A builder class for constructing Para-to-Para, Para-to-Relay, Relay-to-Para transactions and asset claims.
  */
-export class GeneralBuilder<TApi, TRes>
-  implements
-    IToBuilder<TApi, TRes>,
-    ICurrencyBuilder<TApi, TRes>,
-    IAddressBuilder<TApi, TRes>,
-    IFinalBuilderWithOptions<TApi, TRes>
-{
-  private _from: TNodeDotKsmWithRelayChains
-  private _to: TDestination
-  private _currency: TCurrencyInputWithAmount
-  private _paraIdTo?: number
-  private _address: TAddress
-  private _senderAddress?: string
-  private _version?: Version
-  private _pallet?: string
-  private _method?: string
+export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = object> {
+  readonly api: IPolkadotApi<TApi, TRes>
+  readonly _options: T
 
   constructor(
-    private readonly batchManager: BatchTransactionManager<TApi, TRes>,
-    private readonly api: IPolkadotApi<TApi, TRes>,
-    from?: TNodeDotKsmWithRelayChains
+    api: IPolkadotApi<TApi, TRes>,
+    readonly batchManager: BatchTransactionManager<TApi, TRes>,
+    options?: T
   ) {
-    if (from) {
-      this._from = from
-    }
+    this.api = api
+    this._options = options ?? ({} as T)
   }
 
   /**
@@ -59,9 +39,10 @@ export class GeneralBuilder<TApi, TRes>
    * @param node - The node from which the transaction originates.
    * @returns An instance of Builder
    */
-  from(node: TNodeDotKsmWithRelayChains) {
-    this._from = node
-    return this
+  from(
+    node: TNodeDotKsmWithRelayChains
+  ): GeneralBuilder<TApi, TRes, T & { from: TNodeDotKsmWithRelayChains }> {
+    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, from: node })
   }
 
   /**
@@ -71,13 +52,15 @@ export class GeneralBuilder<TApi, TRes>
    * @param paraIdTo - (Optional) The parachain ID of the destination node.
    * @returns An instance of Builder
    */
-  to(node: TDestination, paraIdTo?: number) {
-    if (isRelayChain(this._from) && node === 'Ethereum') {
+  to(node: TDestination, paraIdTo?: number): GeneralBuilder<TApi, TRes, T & { to: TDestination }> {
+    if (this._options.from && isRelayChain(this._options.from) && node === 'Ethereum') {
       throw new Error('Transfers from Relay chain to Ethereum are not yet supported.')
     }
-    this._to = node
-    this._paraIdTo = paraIdTo
-    return this
+    return new GeneralBuilder(this.api, this.batchManager, {
+      ...this._options,
+      to: node,
+      paraIdTo
+    })
   }
 
   /**
@@ -86,8 +69,10 @@ export class GeneralBuilder<TApi, TRes>
    * @param node - The node from which to claim assets.
    * @returns An instance of Builder
    */
-  claimFrom(node: TNodeWithRelayChains): IFungibleBuilder<TApi, TRes> {
-    return AssetClaimBuilder.create(this.api, node)
+  claimFrom(node: TNodeWithRelayChains) {
+    return new AssetClaimBuilder<TApi, TRes, { node: TNodeWithRelayChains }>(this.api, {
+      node
+    })
   }
 
   /**
@@ -96,9 +81,10 @@ export class GeneralBuilder<TApi, TRes>
    * @param currency - The currency to be transferred.
    * @returns An instance of Builder
    */
-  currency(currency: TCurrencyInputWithAmount): this {
-    this._currency = currency
-    return this
+  currency(
+    currency: TCurrencyInputWithAmount
+  ): GeneralBuilder<TApi, TRes, T & { currency: TCurrencyInputWithAmount }> {
+    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, currency })
   }
 
   /**
@@ -107,10 +93,15 @@ export class GeneralBuilder<TApi, TRes>
    * @param address - The destination address.
    * @returns An instance of Builder
    */
-  address(address: TAddress, senderAddress?: string): this {
-    this._address = address
-    this._senderAddress = senderAddress
-    return this
+  address(
+    address: TAddress,
+    senderAddress?: string
+  ): GeneralBuilder<TApi, TRes, T & { address: TAddress }> {
+    return new GeneralBuilder(this.api, this.batchManager, {
+      ...this._options,
+      address,
+      senderAddress
+    })
   }
 
   /**
@@ -119,9 +110,8 @@ export class GeneralBuilder<TApi, TRes>
    * @param version - The XCM version.
    * @returns An instance of Builder
    */
-  xcmVersion(version: Version): this {
-    this._version = version
-    return this
+  xcmVersion(version: Version) {
+    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, version })
   }
 
   /**
@@ -130,25 +120,8 @@ export class GeneralBuilder<TApi, TRes>
    * @param palletName - The name of the custom pallet to be used.
    * @returns An instance of the Builder.
    */
-  customPallet(pallet: string, method: string): this {
-    this._pallet = pallet
-    this._method = method
-    return this
-  }
-
-  private createOptions(): TSendOptions<TApi, TRes> {
-    return {
-      api: this.api,
-      origin: this._from,
-      currency: this._currency,
-      address: this._address,
-      destination: this._to,
-      paraIdTo: this._paraIdTo,
-      version: this._version,
-      senderAddress: this._senderAddress,
-      pallet: this._pallet,
-      method: this._method
-    }
+  customPallet(pallet: string, method: string) {
+    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, pallet, method })
   }
 
   /**
@@ -156,9 +129,17 @@ export class GeneralBuilder<TApi, TRes>
    *
    * @returns An instance of Builder
    */
-  addToBatch() {
-    this.batchManager.addTransaction(this.createOptions())
-    return new GeneralBuilder(this.batchManager, this.api, this._from)
+  addToBatch(
+    this: GeneralBuilder<TApi, TRes, TSendBaseOptions>
+  ): GeneralBuilder<TApi, TRes, T & { from: TNodeDotKsmWithRelayChains }> {
+    this.batchManager.addTransaction({ api: this.api, ...this._options })
+    return new GeneralBuilder<TApi, TRes, T & { from: TNodeDotKsmWithRelayChains }>(
+      this.api,
+      this.batchManager,
+      {
+        from: this._options.from
+      } as T & { from: TNodeDotKsmWithRelayChains }
+    )
   }
 
   /**
@@ -167,8 +148,8 @@ export class GeneralBuilder<TApi, TRes>
    * @param options - (Optional) Options to customize the batch transaction.
    * @returns A Extrinsic representing the batched transactions.
    */
-  async buildBatch(options?: TBatchOptions) {
-    return this.batchManager.buildBatch(this.api, this._from, options)
+  async buildBatch(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>, options?: TBatchOptions) {
+    return this.batchManager.buildBatch(this.api, this._options.from, options)
   }
 
   /**
@@ -176,22 +157,25 @@ export class GeneralBuilder<TApi, TRes>
    *
    * @returns A Promise that resolves to the transfer extrinsic.
    */
-  async build() {
+  async build(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>) {
     if (!this.batchManager.isEmpty()) {
       throw new Error(
         'Transaction manager contains batched items. Use buildBatch() to process them.'
       )
     }
 
-    if (!isTMultiLocation(this._to) && isRelayChain(this._from) && isRelayChain(this._to)) {
+    if (
+      !isTMultiLocation(this._options.to) &&
+      isRelayChain(this._options.from) &&
+      isRelayChain(this._options.to)
+    ) {
       throw new Error('Transfers between relay chains are not yet supported.')
     }
 
-    const options = this.createOptions()
-    return send(options)
+    return send({ api: this.api, ...this._options })
   }
 
-  async dryRun(senderAddress: string) {
+  async dryRun(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>, senderAddress: string) {
     this.api.setDisconnectAllowed(false)
     const tx = await this.build()
 
@@ -201,7 +185,7 @@ export class GeneralBuilder<TApi, TRes>
       api: this.api,
       tx,
       address: senderAddress,
-      node: this._from
+      node: this._options.from
     })
   }
 
@@ -214,7 +198,12 @@ export class GeneralBuilder<TApi, TRes>
     return this.api.getApi()
   }
 
-  async disconnect() {
+  /**
+   * Disconnects the API.
+   *
+   * @returns A Promise that resolves when the API is disconnected.
+   */
+  disconnect() {
     return this.api.disconnect(true)
   }
 }
@@ -225,6 +214,5 @@ export class GeneralBuilder<TApi, TRes>
  * @param api - The API instance to use for building transactions. If not provided, a new instance will be created.
  * @returns A new Builder instance.
  */
-export const Builder = <TApi, TRes>(api: IPolkadotApi<TApi, TRes>): IFromBuilder<TApi, TRes> => {
-  return new GeneralBuilder(new BatchTransactionManager(), api)
-}
+export const Builder = <TApi, TRes>(api: IPolkadotApi<TApi, TRes>) =>
+  new GeneralBuilder<TApi, TRes>(api, new BatchTransactionManager())

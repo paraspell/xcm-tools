@@ -6,9 +6,8 @@ import { XTransferService } from './x-transfer.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import type { XTransferDto } from './dto/XTransferDto.js';
-import { BatchMode } from '@paraspell/sdk';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
+import { BatchMode, type TPapiTransaction } from '@paraspell/sdk';
 
 // Integration tests to ensure controller and service are working together
 describe('XTransferController', () => {
@@ -43,7 +42,7 @@ describe('XTransferController', () => {
         address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         currency: { symbol: 'DOT', amount: 100 },
       };
-      const mockResult = {} as Extrinsic;
+      const mockResult = {} as TPapiTransaction;
       const spy = vi
         .spyOn(service, 'generateXcmCall')
         .mockResolvedValue(mockResult);
@@ -64,7 +63,7 @@ describe('XTransferController', () => {
         address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         currency: { symbol: 'DOT', amount: 100 },
       };
-      const mockResult = {} as Extrinsic;
+      const mockResult = {} as TPapiTransaction;
       const spy = vi
         .spyOn(service, 'generateXcmCall')
         .mockResolvedValue(mockResult);
@@ -98,7 +97,7 @@ describe('XTransferController', () => {
         ],
         options: { mode: BatchMode.BATCH },
       };
-      const mockResult = {} as Extrinsic;
+      const mockResult = {} as TPapiTransaction;
       const spy = vi
         .spyOn(service, 'generateBatchXcmCall')
         .mockResolvedValue(mockResult);
@@ -130,7 +129,7 @@ describe('XTransferController', () => {
         ],
         options: { mode: BatchMode.BATCH },
       };
-      const mockResult = {} as Extrinsic;
+      const mockResult = {} as TPapiTransaction;
       const spy = vi
         .spyOn(service, 'generateBatchXcmCall')
         .mockResolvedValue(mockResult);
@@ -153,7 +152,7 @@ describe('XTransferController', () => {
         address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         currency: { symbol: 'DOT', amount: 100 },
       };
-      const mockResult = {} as Extrinsic;
+      const mockResult = {} as TPapiTransaction;
       const spy = vi
         .spyOn(service, 'generateXcmCall')
         .mockResolvedValue(mockResult);
