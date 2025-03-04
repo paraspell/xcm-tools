@@ -16,6 +16,6 @@ export {
   getTransferableAmount,
   verifyEdOnDestination
 } from './assets'
-export { Builder, EvmBuilder } from './builder'
+export { Builder, GeneralBuilder, EvmBuilder } from './builder'
 export * from './types'
 export { createApiInstanceForNode } from './utils'

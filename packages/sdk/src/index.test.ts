@@ -60,7 +60,6 @@ describe('Index Exports', () => {
 
   it('should export builder classes', () => {
     expect(moduleExports.Builder).toBeDefined()
-    expect(moduleExports.GeneralBuilder).toBeDefined()
     expect(moduleExports.EvmBuilder).toBeDefined()
   })
 

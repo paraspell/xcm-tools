@@ -1,4 +1,5 @@
 import type { AbstractProvider } from 'ethers'
+import type { GeneralBuilder as GeneralBuilderCore, TSendBaseOptions } from '@paraspell/sdk-core'
 import { Builder as BuilderImpl } from '@paraspell/sdk-core'
 import { EvmBuilder as EvmBuilderImpl } from './evm-builder/EvmBuilder'
 import PolkadotJsApi from './PolkadotJsApi'
@@ -15,6 +16,12 @@ export const Builder = (api?: TPjsApiOrUrl) => {
   pjsApi.setApi(api)
   return BuilderImpl<TPjsApi, Extrinsic>(pjsApi)
 }
+
+export type GeneralBuilder<T extends Partial<TSendBaseOptions> = object> = GeneralBuilderCore<
+  TPjsApi,
+  Extrinsic,
+  T
+>
 
 export const EvmBuilder = (provider?: AbstractProvider) => {
   const pjsApi = new PolkadotJsApi()

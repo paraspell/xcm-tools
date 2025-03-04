@@ -14,7 +14,12 @@ import type {
 } from './XcmTransferForm';
 import XcmTransferForm from './XcmTransferForm';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TCurrencyCoreWithFee, TCurrencyInput } from '@paraspell/sdk';
+import type {
+  GeneralBuilder,
+  TCurrencyCoreWithFee,
+  TCurrencyInput,
+  TPapiApiOrUrl,
+} from '@paraspell/sdk';
 import { BatchMode } from '@paraspell/sdk';
 import {
   isForeignAsset,
@@ -41,7 +46,8 @@ import {
 import { useWallet } from '../../hooks/useWallet';
 import type { ApiPromise } from '@polkadot/api';
 import { ethers } from 'ethers';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
+import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
+import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import {
   showErrorNotification,
   showLoadingNotification,
@@ -211,6 +217,9 @@ const XcmTransfer = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
+    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
+      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
+
     const firstItem = items[0];
 
     let api;
@@ -245,9 +254,32 @@ const XcmTransfer = () => {
           true,
         );
       } else {
-        const builder = Sdk.Builder();
+        if (items.length < 1) {
+          throw Error('No items to batch');
+        }
 
-        for (const item of items) {
+        const [firstItem, ...restItems] = items;
+
+        const { from, to, currencies, address } = firstItem;
+        const useMultiAssets = currencies.length > 1;
+        const currencyInputs = currencies.map((c) => ({
+          ...determineCurrency(firstItem, c),
+          amount: c.amount,
+          ...(useMultiAssets && { isFeeAsset: c.isFeeAsset }),
+        }));
+
+        let builder = Builder()
+          .from(from)
+          .to(to)
+          .currency(
+            currencyInputs.length === 1
+              ? currencyInputs[0]
+              : { multiasset: currencyInputs as TCurrencyCoreWithFee[] },
+          )
+          .address(address, selectedAccount.address)
+          .addToBatch();
+
+        for (const item of restItems) {
           const { from, to, currencies, address } = item;
           const useMultiAssets = currencies.length > 1;
           const currencyInputs = currencies.map((c) => ({
@@ -255,8 +287,7 @@ const XcmTransfer = () => {
             amount: c.amount,
             ...(useMultiAssets && { isFeeAsset: c.isFeeAsset }),
           }));
-
-          builder
+          builder = builder
             .from(from)
             .to(to)
             .currency(
@@ -312,6 +343,61 @@ const XcmTransfer = () => {
     }
     closeBatchTypeModal();
     void submitBatch([...batchItems, lastFormValues], value);
+  };
+
+  const performDryRun = async (
+    formValues: FormValuesTransformed,
+    selectedAccount: { address: string },
+    notifId: string | undefined,
+  ) => {
+    const Sdk =
+      apiType === 'PAPI'
+        ? await import('@paraspell/sdk')
+        : await import('@paraspell/sdk-pjs');
+
+    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
+      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
+
+    const { from, to, currencies, address, useApi } = formValues;
+    const useMultiAssets = currencies.length > 1;
+    const currencyInputs = currencies.map((c) => ({
+      ...determineCurrency(formValues, c),
+      amount: c.amount,
+      ...(useMultiAssets && { isFeeAsset: c.isFeeAsset }),
+    }));
+
+    let result;
+    if (useApi) {
+      result = await fetchFromApi(
+        {
+          ...formValues,
+          senderAddress: selectedAccount.address,
+          currency:
+            currencyInputs.length === 1
+              ? currencyInputs[0]
+              : { multiasset: currencyInputs },
+        },
+        '/dry-run',
+        'POST',
+        true,
+      );
+    } else {
+      result = await Builder()
+        .from(from)
+        .to(to)
+        .currency(
+          currencyInputs.length === 1
+            ? currencyInputs[0]
+            : { multiasset: currencyInputs as TCurrencyCoreWithFee[] },
+        )
+        .address(address, selectedAccount.address)
+        .dryRun(selectedAccount.address);
+    }
+
+    setOutput(JSON.stringify(result, replaceBigInt, 2));
+    openOutputAlert();
+    closeErrorAlert();
+    showSuccessNotification(notifId ?? '', 'Success', 'Dry run was successful');
   };
 
   const submit = async (
@@ -396,9 +482,16 @@ const XcmTransfer = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
-    const api = await Sdk.createApiInstanceForNode(from);
+    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
+      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
 
+    let api;
     try {
+      if (submitType === 'dryRun') {
+        await performDryRun(formValues, selectedAccount, notifId);
+        return;
+      }
+
       const useMultiAssets = currencies.length > 1;
       const currencyInputs = currencies.map((c) => {
         return {
@@ -408,8 +501,9 @@ const XcmTransfer = () => {
         };
       });
 
-      let tx: Extrinsic | TPapiTransaction;
+      let tx: Extrinsic | TPapiTransaction | undefined;
       if (useApi) {
+        api = await Sdk.createApiInstanceForNode(from);
         tx = await getTxFromApi(
           {
             ...formValues,
@@ -428,8 +522,7 @@ const XcmTransfer = () => {
           true,
         );
       } else {
-        const builder = Sdk.Builder(api as ApiPromise & PolkadotClient);
-        tx = await builder
+        const builder = Builder()
           .from(from)
           .to(to)
           .currency(
@@ -439,58 +532,30 @@ const XcmTransfer = () => {
                   multiasset: currencyInputs as TCurrencyCoreWithFee[],
                 },
           )
-          .address(address, selectedAccount.address)
-          .build();
+          .address(address, selectedAccount.address);
+        tx = await builder.build();
+        api = builder.getApi();
       }
 
-      if (submitType === 'dryRun') {
-        let result;
-        if (useApi) {
-          result = await fetchFromApi(
-            {
-              ...formValues,
-              senderAddress: selectedAccount.address,
-              currency:
-                currencyInputs.length === 1
-                  ? currencyInputs[0]
-                  : {
-                      multiasset: currencyInputs,
-                    },
-            },
-            '/dry-run',
-            'POST',
-            true,
-          );
-        } else {
-          result = await Sdk.getDryRun({
-            api: api as ApiPromise & PolkadotClient,
-            tx: tx as Extrinsic & TPapiTransaction,
-            address: selectedAccount.address,
-            node: from,
-          });
-        }
-        setOutput(JSON.stringify(result, replaceBigInt, 2));
-        openOutputAlert();
-        closeErrorAlert();
-        showSuccessNotification(
-          notifId ?? '',
-          'Success',
-          'Dry run was successful',
-        );
-      } else {
-        await submitTx(api, tx, signer, selectedAccount.address, () => {
-          notifId = showLoadingNotification(
-            'Processing',
-            'Transaction is being processed',
-            notifId,
-          );
-        });
-        showSuccessNotification(
-          notifId ?? '',
-          'Success',
-          'Transaction was successful',
-        );
+      if (!tx) {
+        throw Error('Transaction is undefined');
       }
+      if (!api) {
+        throw Error('API is undefined');
+      }
+
+      await submitTx(api, tx, signer, selectedAccount.address, () => {
+        notifId = showLoadingNotification(
+          'Processing',
+          'Transaction is being processed',
+          notifId,
+        );
+      });
+      showSuccessNotification(
+        notifId ?? '',
+        'Success',
+        'Transaction was successful',
+      );
     } catch (e) {
       if (e instanceof Error) {
         // eslint-disable-next-line no-console
@@ -502,8 +567,10 @@ const XcmTransfer = () => {
       }
     } finally {
       setLoading(false);
-      if ('disconnect' in api) await api.disconnect();
-      else api.destroy();
+      if (api) {
+        if ('disconnect' in api) await api.disconnect();
+        else api.destroy();
+      }
     }
   };
 
@@ -576,18 +643,18 @@ const XcmTransfer = () => {
             py="lg"
           />
         </Stack>
-        <Box ref={targetRef}>
+        <Center ref={targetRef}>
           {errorAlertOpened && (
             <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
               {error?.message}
             </ErrorAlert>
           )}
-        </Box>
-        <Box>
+        </Center>
+        <Center>
           {outputAlertOpened && output && (
             <OutputAlert output={output} onClose={onOutputAlertCloseClick} />
           )}
-        </Box>
+        </Center>
       </Stack>
     </>
   );
