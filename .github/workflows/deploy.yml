@@ -13,6 +13,7 @@ jobs:
       visualizator_changed: ${{ steps.filter.outputs.visualizator }}
       xcm_api_changed: ${{ steps.filter.outputs.xcm_api }}
     steps:
+      - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
         id: filter
         with:
