@@ -2,6 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { getDryRun } from './getDryRun'
 import type { TDryRunResult } from '../types'
+import { validateAddress } from '../utils'
+
+vi.mock('../utils', () => ({
+  validateAddress: vi.fn()
+}))
 
 describe('getDryRun', () => {
   const apiMock = {
@@ -31,6 +36,7 @@ describe('getDryRun', () => {
       tx: {}
     })
 
+    expect(validateAddress).toHaveBeenCalledWith(address, node, false)
     expect(result).toEqual(mockResult)
     expect(initSpy).toHaveBeenCalledWith(node)
     expect(disconnectSpy).toHaveBeenCalled()
