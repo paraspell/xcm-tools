@@ -1,17 +1,30 @@
-name: Deploy Visualizator Backend
+name: Deploy Apps
 
 on:
   push:
     branches:
       - main
-    paths:
-      - "apps/visualizator-be/**"
-
-  # Enables manual trigger of the workflow
   workflow_dispatch:
 
 jobs:
-  ci:
+  filter:
+    runs-on: ubuntu-latest
+    outputs:
+      visualizator_changed: ${{ steps.filter.outputs.visualizator }}
+      xcm_api_changed: ${{ steps.filter.outputs.xcm_api }}
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            visualizator:
+              - 'apps/visualizator-be/**'
+            xcm_api:
+              - 'apps/xcm-api/**'
+
+  deploy_visualizator_backend:
+    needs: filter
+    if: ${{ needs.filter.outputs.visualizator_changed == 'true' }}
     runs-on: self-hosted
     steps:
       - run: git pull
@@ -19,5 +32,18 @@ jobs:
       - run: pnpm --filter visualizator-be build
       - name: Restart PM2 process
         run: pm2 restart visualizator-be
+        env:
+          PM2_HOME: /${{ secrets.USER }}/.pm2
+
+  deploy_xcm_api:
+    needs: filter
+    if: ${{ needs.filter.outputs.xcm_api_changed == 'true' }}
+    runs-on: self-hosted
+    steps:
+      - run: git pull
+      - run: pnpm install
+      - run: pnpm --filter xcm-api build
+      - name: Restart PM2 process
+        run: pm2 restart xcm-api
         env:
           PM2_HOME: /${{ secrets.USER }}/.pm2
