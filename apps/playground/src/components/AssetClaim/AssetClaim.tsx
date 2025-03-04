@@ -7,8 +7,12 @@ import {
   Text,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
-import type { TPapiTransaction } from '@paraspell/sdk';
+import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
+import type {
+  GeneralBuilder,
+  TPapiApiOrUrl,
+  TPapiTransaction,
+} from '@paraspell/sdk';
 import { useState, useEffect } from 'react';
 import { useWallet } from '../../hooks/useWallet';
 import { ErrorAlert } from '../common/ErrorAlert';
@@ -25,6 +29,7 @@ import {
   showSuccessNotification,
 } from '../../utils/notifications';
 import { VersionBadge } from '../common/VersionBadge';
+import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 
@@ -67,6 +72,9 @@ const AssetClaim = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
+    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
+      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
+
     const signer = await getSigner();
 
     let api;
@@ -98,7 +106,7 @@ const AssetClaim = () => {
           true,
         );
       } else {
-        const builder = Sdk.Builder();
+        const builder = Builder();
         tx = await builder
           .claimFrom(from)
           .fungible([

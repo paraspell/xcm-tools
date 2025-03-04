@@ -12,8 +12,6 @@ import {
   NODES_WITH_RELAY_CHAINS,
   Builder,
   GeneralBuilder,
-  TPapiApi,
-  TPapiTransaction,
   TSendBaseOptions,
 } from '@paraspell/sdk';
 import { isValidWalletAddress } from '../utils.js';
@@ -171,11 +169,7 @@ export class XTransferService {
       ? await import('@paraspell/sdk')
       : await import('@paraspell/sdk-pjs');
 
-    let builder = Sdk.Builder() as GeneralBuilder<
-      TPapiApi,
-      TPapiTransaction,
-      TSendBaseOptions
-    >;
+    let builder = Sdk.Builder() as GeneralBuilder<TSendBaseOptions>;
 
     try {
       for (const transfer of transfers) {
