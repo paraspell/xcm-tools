@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.6.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.6.0...sdk-core-v8.6.1) (2025-03-05)
+
+
+### Bug Fixes
+
+* **sdk-core:** Validate sender address in dry-run function 🛠️ ([f71efde](https://github.com/paraspell/xcm-tools/commit/f71efde6c1419bf15f5e9b8775d901483d410731))
+
+
+### Code Refactoring
+
+* Improve builder type safety 🔧 ([41389de](https://github.com/paraspell/xcm-tools/commit/41389dee44246fc83d46f45512f97433fd773b50))
+
 ## [8.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.5.3...sdk-core-v8.6.0) (2025-02-28)
 
 

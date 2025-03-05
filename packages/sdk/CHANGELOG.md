@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.6.1](https://github.com/paraspell/xcm-tools/compare/sdk-v8.6.0...sdk-v8.6.1) (2025-03-05)
+
+
+### Code Refactoring
+
+* Improve builder type safety 🔧 ([41389de](https://github.com/paraspell/xcm-tools/commit/41389dee44246fc83d46f45512f97433fd773b50))
+* **playground:** Use builder method for dry-run 🔧 ([915662f](https://github.com/paraspell/xcm-tools/commit/915662f88103de5e6bc060f10fbef4ea73acc7d5))
+
 ## [8.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.5.3...sdk-v8.6.0) (2025-02-28)
 
 
