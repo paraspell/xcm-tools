@@ -88,26 +88,15 @@ export class XTransferService {
     return finalBuilder;
   }
 
-  async generateXcmCall(
-    transfer: XTransferDto,
-    usePapi = false,
-    isDryRun = false,
-  ) {
+  async generateXcmCall(transfer: XTransferDto, isDryRun = false) {
     this.validateTransfer(transfer);
 
     const { senderAddress } = transfer;
 
-    const Sdk = usePapi
-      ? await import('@paraspell/sdk')
-      : await import('@paraspell/sdk-pjs');
-
-    const builder = Sdk.Builder();
+    const builder = Builder();
 
     try {
-      const finalBuilder = this.buildXTransfer(
-        builder as ReturnType<typeof Builder>,
-        transfer,
-      );
+      const finalBuilder = this.buildXTransfer(builder, transfer);
 
       if (isDryRun) {
         if (!senderAddress) {
@@ -121,7 +110,8 @@ export class XTransferService {
 
       const tx = await finalBuilder.build();
 
-      return usePapi ? (await tx.getEncodedData()).asHex() : tx;
+      const encoded = await tx.getEncodedData();
+      return encoded.asHex();
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||
@@ -136,7 +126,7 @@ export class XTransferService {
     }
   }
 
-  async generateBatchXcmCall(batchDto: BatchXTransferDto, usePapi = false) {
+  async generateBatchXcmCall(batchDto: BatchXTransferDto) {
     const { transfers, options } = batchDto;
 
     if (!transfers || transfers.length === 0) {
@@ -165,11 +155,7 @@ export class XTransferService {
       );
     }
 
-    const Sdk = usePapi
-      ? await import('@paraspell/sdk')
-      : await import('@paraspell/sdk-pjs');
-
-    let builder = Sdk.Builder() as GeneralBuilder<TSendBaseOptions>;
+    let builder = Builder() as GeneralBuilder<TSendBaseOptions>;
 
     try {
       for (const transfer of transfers) {
@@ -180,7 +166,8 @@ export class XTransferService {
 
       const tx = await builder.buildBatch(options ?? undefined);
 
-      return usePapi ? (await tx.getEncodedData()).asHex() : tx;
+      const encoded = await tx.getEncodedData();
+      return encoded.asHex();
     } catch (e) {
       if (
         e instanceof InvalidCurrencyError ||

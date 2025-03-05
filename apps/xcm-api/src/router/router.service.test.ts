@@ -10,13 +10,12 @@ import { vi, describe, beforeEach, it, expect } from 'vitest';
 import type { TNode } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
 import { RouterBuilder } from '@paraspell/xcm-router';
-import type { TPjsApi } from '@paraspell/sdk-pjs';
 
 const txHash = '0x123';
 
 const mockApi = {
   disconnect: vi.fn(),
-} as unknown as TPjsApi;
+};
 
 const serializedExtrinsics = [
   {

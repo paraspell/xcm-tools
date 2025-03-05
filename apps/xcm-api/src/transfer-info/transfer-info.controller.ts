@@ -34,14 +34,4 @@ export class TransferInfoController {
     this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, params);
     return this.transferInfoService.getTransferInfo(params);
   }
-
-  @Post('transfer-info-papi')
-  @UsePipes(new ZodValidationPipe(TransferInfoSchema))
-  async getTransferInfoPapi(
-    @Body() params: TransferInfoDto,
-    @Req() req: Request,
-  ) {
-    this.trackAnalytics(EventName.GET_TRANSFER_INFO_PAPI, req, params);
-    return this.transferInfoService.getTransferInfo(params, true);
-  }
 }

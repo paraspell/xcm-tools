@@ -7,7 +7,7 @@ import { mockRequestObject } from '../testUtils.js';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import type { XTransferDto } from './dto/XTransferDto.js';
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
-import { BatchMode, type TPapiTransaction } from '@paraspell/sdk';
+import { BatchMode } from '@paraspell/sdk';
 
 // Integration tests to ensure controller and service are working together
 describe('XTransferController', () => {
@@ -42,7 +42,7 @@ describe('XTransferController', () => {
         address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         currency: { symbol: 'DOT', amount: 100 },
       };
-      const mockResult = {} as TPapiTransaction;
+      const mockResult = 'hash';
       const spy = vi
         .spyOn(service, 'generateXcmCall')
         .mockResolvedValue(mockResult);
@@ -55,30 +55,9 @@ describe('XTransferController', () => {
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams);
     });
-
-    it('should use papi service method if papi flag is set', async () => {
-      const bodyParams: XTransferDto = {
-        from: 'Acala',
-        to: 'Basilisk',
-        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
-      const mockResult = {} as TPapiTransaction;
-      const spy = vi
-        .spyOn(service, 'generateXcmCall')
-        .mockResolvedValue(mockResult);
-
-      const result = await controller.generateXcmCallPapi(
-        bodyParams,
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams, true);
-    });
   });
 
-  describe('generateXcmCallBatchHash', () => {
+  describe('generateXcmCallBatch', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
       const bodyParams: BatchXTransferDto = {
         transfers: [
@@ -97,7 +76,7 @@ describe('XTransferController', () => {
         ],
         options: { mode: BatchMode.BATCH },
       };
-      const mockResult = {} as TPapiTransaction;
+      const mockResult = 'hash';
       const spy = vi
         .spyOn(service, 'generateBatchXcmCall')
         .mockResolvedValue(mockResult);
@@ -110,38 +89,6 @@ describe('XTransferController', () => {
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams);
     });
-
-    it('should use papi service method if papi flag is set', async () => {
-      const bodyParams: BatchXTransferDto = {
-        transfers: [
-          {
-            from: 'Acala',
-            to: 'Astar',
-            address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-            currency: { symbol: 'ACA', amount: 100 },
-          },
-          {
-            from: 'Acala',
-            to: 'Astar',
-            address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-            currency: { symbol: 'ACA', amount: 100 },
-          },
-        ],
-        options: { mode: BatchMode.BATCH },
-      };
-      const mockResult = {} as TPapiTransaction;
-      const spy = vi
-        .spyOn(service, 'generateBatchXcmCall')
-        .mockResolvedValue(mockResult);
-
-      const result = await controller.generateXcmCallBatchPapi(
-        bodyParams,
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams, true);
-    });
   });
 
   describe('getDryRun', () => {
@@ -152,7 +99,7 @@ describe('XTransferController', () => {
         address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         currency: { symbol: 'DOT', amount: 100 },
       };
-      const mockResult = {} as TPapiTransaction;
+      const mockResult = 'hash';
       const spy = vi
         .spyOn(service, 'generateXcmCall')
         .mockResolvedValue(mockResult);
@@ -160,7 +107,7 @@ describe('XTransferController', () => {
       const result = await controller.dryRun(bodyParams, mockRequestObject);
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams, false, true);
+      expect(spy).toHaveBeenCalledWith(bodyParams, true);
     });
   });
 });

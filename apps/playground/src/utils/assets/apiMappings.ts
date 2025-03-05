@@ -1,12 +1,6 @@
-import type { TApiType, TAssetsQuery } from '../../types';
+import type { TAssetsQuery } from '../../types';
 
-export const getApiEndpoint = (
-  func: TAssetsQuery,
-  node: string,
-  apiType: TApiType,
-): string => {
-  const papiSuffix = apiType === 'PAPI' ? '-papi' : '';
-
+export const getApiEndpoint = (func: TAssetsQuery, node: string): string => {
   const endpoints: Record<TAssetsQuery, string> = {
     ASSETS_OBJECT: `/assets/${node}`,
     ASSET_ID: `/assets/${node}/id`,
@@ -18,12 +12,12 @@ export const getApiEndpoint = (
     DECIMALS: `/assets/${node}/decimals`,
     HAS_SUPPORT: `/assets/${node}/has-support`,
     PARA_ID: `/nodes/${node}/para-id`,
-    BALANCE_NATIVE: `/balance/${node}/native${papiSuffix}`,
-    BALANCE_FOREIGN: `/balance/${node}/foreign${papiSuffix}`,
-    ASSET_BALANCE: `/balance/${node}/asset${papiSuffix}`,
-    MAX_NATIVE_TRANSFERABLE_AMOUNT: `/balance/${node}/max-native-transferable-amount${papiSuffix}`,
-    MAX_FOREIGN_TRANSFERABLE_AMOUNT: `/balance/${node}/max-foreign-transferable-amount${papiSuffix}`,
-    TRANSFERABLE_AMOUNT: `/balance/${node}/transferable-amount${papiSuffix}`,
+    BALANCE_NATIVE: `/balance/${node}/native`,
+    BALANCE_FOREIGN: `/balance/${node}/foreign`,
+    ASSET_BALANCE: `/balance/${node}/asset`,
+    MAX_NATIVE_TRANSFERABLE_AMOUNT: `/balance/${node}/max-native-transferable-amount`,
+    MAX_FOREIGN_TRANSFERABLE_AMOUNT: `/balance/${node}/max-foreign-transferable-amount`,
+    TRANSFERABLE_AMOUNT: `/balance/${node}/transferable-amount`,
     EXISTENTIAL_DEPOSIT: `/balance/${node}/existential-deposit`,
     ORIGIN_FEE_DETAILS: `/origin-fee-details`,
     VERIFY_ED_ON_DESTINATION: `/balance/${node}/verify-ed-on-destination`,

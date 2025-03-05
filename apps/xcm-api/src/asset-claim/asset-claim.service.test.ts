@@ -2,31 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AssetClaimService } from './asset-claim.service.js';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import * as sdk from '@paraspell/sdk-pjs';
-import * as sdkPapi from '@paraspell/sdk';
+import * as sdk from '@paraspell/sdk';
 import * as utils from '../utils.js';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import type { AssetClaimDto } from './dto/asset-claim.dto.js';
-
-vi.mock('@paraspell/sdk-pjs', async () => {
-  const actual =
-    await vi.importActual<typeof import('@paraspell/sdk-pjs')>(
-      '@paraspell/sdk-pjs',
-    );
-  return {
-    ...actual,
-    Builder: vi.fn(() => ({
-      claimFrom: vi.fn().mockReturnThis(),
-      fungible: vi.fn().mockReturnThis(),
-      account: vi.fn().mockReturnThis(),
-      build: vi.fn().mockResolvedValue('hash'),
-      disconnect: vi.fn(),
-    })),
-  };
-});
 
 vi.mock('@paraspell/sdk', async () => {
   const actual =
@@ -159,29 +141,5 @@ describe('AssetClaimService', () => {
     await expect(service.claimAssets(dto)).rejects.toThrow(
       new InternalServerErrorException('Some internal error'),
     );
-  });
-
-  it('uses papi when usePapi is true', async () => {
-    const dto = {
-      from: 'Acala',
-      fungible: [
-        {
-          id: {
-            parents: 2,
-            interior: {
-              X1: { Parachain: 1000 },
-            },
-          },
-          fun: { Fungible: '100' },
-        },
-      ],
-      address: 'validAddress',
-    } as AssetClaimDto;
-    sdkPapi.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
-    vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
-
-    const result = await service.claimAssets(dto, true);
-
-    expect(result).toEqual('hash');
   });
 });

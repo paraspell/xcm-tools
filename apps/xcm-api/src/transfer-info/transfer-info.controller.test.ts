@@ -54,27 +54,5 @@ describe('TransferInfoController', () => {
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(queryParams);
     });
-
-    it('should call getTransferInfoPapi service method with correct parameters and return result', async () => {
-      const queryParams: TransferInfoDto = {
-        origin: 'Acala',
-        destination: 'Basilisk',
-        accountOrigin: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-        accountDestination: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-        currency: { symbol: 'DOT', amount: 100 },
-      };
-      const mockResult = {} as TTransferInfo;
-      const spy = vi
-        .spyOn(service, 'getTransferInfo')
-        .mockResolvedValue(mockResult);
-
-      const result = await controller.getTransferInfoPapi(
-        queryParams,
-        mockRequestObject,
-      );
-
-      expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(queryParams, true);
-    });
   });
 });
