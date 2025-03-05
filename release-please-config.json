@@ -27,15 +27,17 @@
     "packages/sdk-pjs": {
       "component": "sdk-pjs"
     },
-    "packages/xcm-router": {},
+    "packages/xcm-router": {
+      "component": "xcm-router"
+    },
     "packages/xcm-analyser": {}
   },
-  "group-pull-request-title-pattern": "chore${scope}: release SDKgroup libraries",
+  "group-pull-request-title-pattern": "chore${scope}: release main libraries",
   "plugins": [
     {
       "type": "linked-versions",
-      "groupName": "SDKgroup",
-      "components": ["sdk-core", "sdk", "sdk-pjs"]
+      "groupName": "main",
+      "components": ["sdk-core", "sdk", "sdk-pjs", "xcm-router"]
     }
   ]
 }
