@@ -1,24 +1,29 @@
 import { useState } from 'react';
-import { Stack, Title, Box, Group, Button, Modal } from '@mantine/core';
+import { Stack, Title, Box, Group, Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Builder, createApiInstanceForNode } from '@paraspell/sdk-pjs';
-import type { ApiPromise } from '@polkadot/api';
-import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
-import type { Signer } from '@polkadot/api/types';
+import { Builder, createApiInstanceForNode } from '@paraspell/sdk';
 import { submitTransaction } from './utils';
 import type { FormValues } from './SendXcmForm';
 import TransferForm from './SendXcmForm';
 import ErrorAlert from '../ErrorAlert';
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useWallet } from '../../hooks/useWallet';
 import { useTranslation } from 'react-i18next';
-import { NAME } from '../../consts/consts';
+import type { InjectedExtension, PolkadotSigner } from 'polkadot-api/pjs-signer';
+import { connectInjectedExtension, getInjectedExtensions } from 'polkadot-api/pjs-signer';
+import type { PolkadotClient } from 'polkadot-api';
+import WalletSelectModal from '../WalletSelectModal/WalletSelectModal';
+import type { TWalletAccount } from '../../types';
+import AccountSelectModal from '../AccountSelectModal/AccountSelectModal';
 
 const SendXcm = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'sendXcmForm' });
   const { selectedAccount, setSelectedAccount } = useWallet();
 
-  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
+  const [extensions, setExtensions] = useState<string[]>([]);
+
+  const [injectedExtension, setInjectedExtension] = useState<InjectedExtension>();
+
+  const [accounts, setAccounts] = useState<TWalletAccount[]>([]);
 
   const [alertOpened, { open: openAlert, close: closeAlert }] = useDisclosure(false);
 
@@ -26,23 +31,26 @@ const SendXcm = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
+  const [accountsModalOpened, { open: openAccountsModal, close: closeAccountsModal }] =
+    useDisclosure(false);
 
-  const initAccounts = async () => {
-    const allInjected = await web3Enable(NAME);
+  const [walletSelectModalOpened, { open: openWalletSelectModal, close: closeWalletSelectModal }] =
+    useDisclosure(false);
 
-    if (!allInjected) {
+  const initExtensions = () => {
+    const extensions = getInjectedExtensions();
+
+    if (!extensions) {
       alert(t('noWalletExtensionFound'));
       throw Error(t('noWalletExtensionFound'));
     }
 
-    const allAccounts = await web3Accounts();
-    setAccounts(allAccounts);
+    setExtensions(extensions);
   };
 
   const createTransferTx = (
     { from, to, amount, address, currency }: FormValues,
-    api: ApiPromise
+    api: PolkadotClient
   ) => {
     return Builder(api)
       .from(from)
@@ -52,14 +60,10 @@ const SendXcm = () => {
       .build();
   };
 
-  const submitUsingSdk = async (
-    formValues: FormValues,
-    injectorAddress: string,
-    signer: Signer
-  ) => {
+  const submitUsingSdk = async (formValues: FormValues, signer: PolkadotSigner) => {
     const api = await createApiInstanceForNode(formValues.from);
     const tx = await createTransferTx(formValues, api);
-    await submitTransaction(api, tx, signer, injectorAddress);
+    await submitTransaction(tx, signer);
   };
 
   const submit = async (formValues: FormValues) => {
@@ -70,10 +74,10 @@ const SendXcm = () => {
 
     setLoading(true);
 
-    const injector = await web3FromAddress(selectedAccount.address);
+    const signer = await getSigner();
 
     try {
-      await submitUsingSdk(formValues, selectedAccount.address, injector.signer);
+      await submitUsingSdk(formValues, signer);
       alert(t('transactionSuccess'));
     } catch (e) {
       if (e instanceof Error) {
@@ -89,38 +93,92 @@ const SendXcm = () => {
 
   const onSubmit = (formValues: FormValues) => void submit(formValues);
 
+  const getSigner = async () => {
+    if (!selectedAccount) {
+      throw new Error('No selected account');
+    }
+
+    if (!injectedExtension && !selectedAccount.meta.source) {
+      throw new Error('No selected extension');
+    }
+
+    const extension =
+      !injectedExtension && selectedAccount.meta.source
+        ? await connectInjectedExtension(selectedAccount.meta.source)
+        : injectedExtension;
+
+    const account = extension
+      ?.getAccounts()
+      .find(account => account.address === selectedAccount.address);
+    if (!account) {
+      throw new Error('No selected account');
+    }
+    return account.polkadotSigner;
+  };
+
   const onAlertCloseClick = () => {
     closeAlert();
   };
 
-  const onAccountSelect = (account: InjectedAccountWithMeta) => () => {
+  const onAccountSelect = (account: TWalletAccount) => {
     setSelectedAccount(account);
-    closeModal();
+    closeAccountsModal();
   };
 
-  const connectWallet = async () => {
+  const onConnectWalletClick = () => {
     try {
-      await initAccounts();
-      openModal();
+      initExtensions();
+      openWalletSelectModal();
     } catch (_e) {
       alert('Failed to connect wallet');
     }
   };
 
-  const onConnectWalletClick = () => void connectWallet();
+  const onExtensionSelect = (extension: string) => void selectExtension(extension);
 
-  const changeAccount = async () => {
+  const selectExtension = async (walletName: string) => {
+    try {
+      const selectedExtension = await connectInjectedExtension(walletName);
+      setInjectedExtension(selectedExtension);
+      const accounts = selectedExtension.getAccounts();
+
+      if (!accounts.length) {
+        alert('No accounts found in the selected wallet');
+        throw Error('No accounts found in the selected wallet');
+      }
+
+      setAccounts(
+        accounts.map(account => ({
+          address: account.address,
+          meta: {
+            name: account.name,
+            source: selectedExtension.name
+          }
+        }))
+      );
+      closeWalletSelectModal();
+      openAccountsModal();
+    } catch (_e) {
+      alert('Failed to connect to wallet');
+      closeWalletSelectModal();
+    }
+  };
+
+  const onChangeAccountClick = () => {
     try {
       if (!accounts.length) {
-        await initAccounts();
+        initExtensions();
       }
-      openModal();
+      openWalletSelectModal();
     } catch (_e) {
       alert('Failed to change account');
     }
   };
 
-  const onChangeAccountClick = () => void changeAccount();
+  const onDisconnect = () => {
+    setSelectedAccount(undefined);
+    closeAccountsModal();
+  };
 
   return (
     <Stack gap="xl">
@@ -143,23 +201,19 @@ const SendXcm = () => {
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>{error?.message}</ErrorAlert>
         )}
       </Box>
-      <Modal opened={modalOpened} onClose={closeModal} title={t('selectAccount')} centered>
-        <Stack gap="xs">
-          {accounts.map(account => (
-            <Button
-              size="lg"
-              variant="subtle"
-              key={account.address}
-              onClick={onAccountSelect(account)}
-            >
-              {`${account.meta.name} (${account.meta.source}) - ${account.address.replace(
-                /(.{10})..+/,
-                '$1…'
-              )}`}
-            </Button>
-          ))}
-        </Stack>
-      </Modal>
+      <AccountSelectModal
+        isOpen={accountsModalOpened}
+        onClose={closeAccountsModal}
+        accounts={accounts}
+        onAccountSelect={onAccountSelect}
+        onDisconnect={selectedAccount ? onDisconnect : undefined}
+      />
+      <WalletSelectModal
+        isOpen={walletSelectModalOpened}
+        onClose={closeWalletSelectModal}
+        providers={extensions}
+        onProviderSelect={onExtensionSelect}
+      />
     </Stack>
   );
 };

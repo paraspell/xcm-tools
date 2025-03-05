@@ -6,7 +6,7 @@ import HighchartsReact from 'highcharts-react-official';
 import HC_more from 'highcharts/highcharts-more';
 import { useTranslation } from 'react-i18next';
 import type { ChartDataItem, CustomPoint } from '../../types/types';
-import { encodeAddress } from '@polkadot/keyring';
+import { FixedSizeBinary } from 'polkadot-api';
 HC_more(Highcharts);
 
 type Props = {
@@ -54,7 +54,7 @@ const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
 
         let encodedAddress;
         try {
-          encodedAddress = encodeAddress(address, 0);
+          encodedAddress = FixedSizeBinary.fromAccountId32<32>(address).asHex();
         } catch (_e) {
           encodedAddress = address;
         }

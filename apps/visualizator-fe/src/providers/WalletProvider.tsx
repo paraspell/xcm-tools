@@ -1,34 +1,28 @@
-import { web3Enable } from '@polkadot/extension-dapp';
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import type { PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import { useEffect, useState } from 'react';
 import { WalletContext } from '../context/WalletContext';
-import { NAME } from '../consts/consts';
+import type { TWalletAccount } from '../types';
 
-const STORAGE_KEY = 'wallet-state-xcm-visualizator';
+const STORAGE_KEY = 'wallet-xcm-visualizator';
 
-const getWalletStateFromLocalStorage = (): InjectedAccountWithMeta | undefined => {
+const getWalletStateFromLocalStorage = (): TWalletAccount | undefined => {
   const walletState = localStorage.getItem(STORAGE_KEY);
 
   if (!walletState) {
     return undefined;
   }
 
-  return JSON.parse(walletState) as InjectedAccountWithMeta;
+  return JSON.parse(walletState) as TWalletAccount;
 };
 
-const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
-  const [selectedAccount, setSelectedAccount] = useState<InjectedAccountWithMeta | undefined>(
+const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
+  const [selectedAccount, setSelectedAccount] = useState<TWalletAccount | undefined>(
     getWalletStateFromLocalStorage
   );
 
   useEffect(() => {
     if (selectedAccount) localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedAccount));
   }, [selectedAccount]);
-
-  useEffect(() => {
-    void web3Enable(NAME);
-  }, []);
 
   return (
     <WalletContext.Provider value={{ selectedAccount, setSelectedAccount }}>

@@ -424,27 +424,12 @@ importers:
       '@mantine/notifications':
         specifier: ^7.17.0
         version: 7.17.0(@mantine/core@7.17.0(@mantine/hooks@7.17.0(react@19.0.0))(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@mantine/hooks@7.17.0(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      '@paraspell/sdk-pjs':
+      '@paraspell/sdk':
         specifier: workspace:*
-        version: link:../../packages/sdk-pjs
-      '@polkadot/api':
-        specifier: ^15.7.1
-        version: 15.7.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        version: link:../../packages/sdk
       '@polkadot/apps-config':
         specifier: ^0.150.2
         version: 0.150.2(@polkadot/keyring@13.4.3(@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3))(@polkadot/util@13.4.3))(@swc/core@1.11.5(@swc/helpers@0.5.15))(bufferutil@4.0.8)(jiti@2.3.3)(postcss@8.5.3)(react-dom@19.0.0(react@19.0.0))(react-is@19.0.0)(react@19.0.0)(utf-8-validate@5.0.10)(yaml@2.4.5)
-      '@polkadot/extension-dapp':
-        specifier: ^0.58.4
-        version: 0.58.4(@polkadot/api@15.7.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3))(@polkadot/util@13.4.3)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@polkadot/extension-inject':
-        specifier: ^0.58.4
-        version: 0.58.4(@polkadot/api@15.7.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@13.4.3)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@polkadot/keyring':
-        specifier: ^13.4.3
-        version: 13.4.3(@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3))(@polkadot/util@13.4.3)
-      '@polkadot/util':
-        specifier: ^13.4.3
-        version: 13.4.3
       '@react-spring/web':
         specifier: ^9.7.5
         version: 9.7.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -484,6 +469,9 @@ importers:
       jszip:
         specifier: ^3.10.1
         version: 3.10.1
+      polkadot-api:
+        specifier: ^1.9.3
+        version: 1.9.3(@swc/core@1.11.5(@swc/helpers@0.5.15))(bufferutil@4.0.8)(jiti@2.3.3)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.4.5)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -499,9 +487,6 @@ importers:
       three:
         specifier: ^0.169.0
         version: 0.169.0
-      web3-validator:
-        specifier: ^2.0.6
-        version: 2.0.6
     devDependencies:
       '@types/d3-ease':
         specifier: ^3.0.2
