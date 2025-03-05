@@ -22,3 +22,11 @@ export enum Ecosystem {
   KUSAMA = 'Kusama',
   WESTEND = 'Westend'
 }
+
+export type TWalletAccount = {
+  address: string;
+  meta: {
+    name?: string;
+    source?: string;
+  };
+};

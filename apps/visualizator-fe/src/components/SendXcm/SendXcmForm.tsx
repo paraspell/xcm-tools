@@ -1,9 +1,8 @@
 import type { FC } from 'react';
 import { useForm } from '@mantine/form';
-import { isValidWalletAddress } from './utils';
 import { Button, Select, Stack, TextInput } from '@mantine/core';
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-pjs';
-import { isRelayChain, NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk-pjs';
+import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk';
+import { isRelayChain, NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
 import { useTranslation } from 'react-i18next';
 
 export type FormValues = {
@@ -24,14 +23,10 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<FormValues>({
     initialValues: {
       from: 'Astar',
-      to: 'Moonbeam',
+      to: 'Acala',
       currency: 'GLMR',
       amount: '10000000000000000000',
       address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC'
-    },
-
-    validate: {
-      address: value => (isValidWalletAddress(value) ? null : 'Invalid address')
     }
   });
 

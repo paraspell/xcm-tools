@@ -1,3 +1,8 @@
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
+import '@mantine/charts/styles.css';
+import '@mantine/notifications/styles.css';
+import './style.css';
 import { Box, Flex, MantineProvider } from '@mantine/core';
 import SelectedParachainProvider from './context/SelectedParachain/SelectedParachainContext';
 import WalletProvider from './providers/WalletProvider';

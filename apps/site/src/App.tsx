@@ -9,7 +9,7 @@ import { theme } from "./theme";
 
 const App = () => (
   <BrowserRouter>
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} forceColorScheme="light">
       <AppShell />
       <ScrollToAnchor />
     </MantineProvider>
