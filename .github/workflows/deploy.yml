@@ -30,7 +30,7 @@ jobs:
     steps:
       - run: git pull
       - run: pnpm install
-      - run: pnpm --filter visualizator-be build
+      - run: pnpm --filter visualizator-be... build
       - name: Restart PM2 process
         run: pm2 restart visualizator-be
         env:
@@ -43,7 +43,7 @@ jobs:
     steps:
       - run: git pull
       - run: pnpm install
-      - run: pnpm --filter xcm-api build
+      - run: pnpm --filter xcm-api... build
       - name: Restart PM2 process
         run: pm2 restart xcm-api
         env:

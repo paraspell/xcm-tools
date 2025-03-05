@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useRef } from 'react';
 import type { Mesh, MeshStandardMaterial, InstancedMesh } from 'three';
-import { DoubleSide, LineCurve3, Object3D, TubeGeometry } from 'three';
+import { DoubleSide, LineCurve3, Object3D, TubeGeometry, Vector3 } from 'three';
 import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useFrame } from '@react-three/fiber';
@@ -46,16 +46,17 @@ const LineBetween: FC<Props> = ({
   const messageIdRef = useRef<number>(0);
   const nextSpawnTimeRef = useRef<number>(0);
   const sphereMeshRef = useRef<InstancedMesh>(null);
+  const dummyRef = useRef(new Object3D());
+  const targetRef = useRef(new Vector3());
+  const prevStartRef = useRef<Vector3 | null>(null);
+  const prevEndRef = useRef<Vector3 | null>(null);
 
   const minSphereSize = 0.05;
   const maxSphereSize = 1;
   const sphereSize = Math.min(Math.max(lineWidth * 0.6, minSphereSize), maxSphereSize);
-
   const maxLineWidth = 0.5;
-
   const baseSpawnRate = 0.05;
   const spawnRateMultiplier = 2;
-
   const minMessageSpeed = 0.1;
   const maxMessageSpeed = 0.4;
   const messageSpeed =
@@ -76,17 +77,25 @@ const LineBetween: FC<Props> = ({
     if (startObject && endObject && meshRef.current) {
       const startPosition = startObject.position;
       const endPosition = endObject.position;
+      const needUpdate =
+        !prevStartRef.current ||
+        !prevEndRef.current ||
+        !prevStartRef.current.equals(startPosition) ||
+        !prevEndRef.current.equals(endPosition);
 
-      if (!curveRef.current) {
-        curveRef.current = new LineCurve3(startPosition.clone(), endPosition.clone());
-      } else {
-        curveRef.current.v1.copy(startPosition);
-        curveRef.current.v2.copy(endPosition);
+      if (needUpdate) {
+        prevStartRef.current = startPosition.clone();
+        prevEndRef.current = endPosition.clone();
+        if (!curveRef.current) {
+          curveRef.current = new LineCurve3(startPosition.clone(), endPosition.clone());
+        } else {
+          curveRef.current.v1.copy(startPosition);
+          curveRef.current.v2.copy(endPosition);
+        }
+        const tubeGeometry = new TubeGeometry(curveRef.current, 12, lineWidth, 6, false);
+        meshRef.current.geometry.dispose();
+        meshRef.current.geometry = tubeGeometry;
       }
-
-      const tubeGeometry = new TubeGeometry(curveRef.current, 12, lineWidth, 6, false);
-      meshRef.current.geometry.dispose();
-      meshRef.current.geometry = tubeGeometry;
 
       if (materialRef.current) {
         materialRef.current.color.set(color);
@@ -97,54 +106,39 @@ const LineBetween: FC<Props> = ({
     }
 
     if (curveRef.current && sphereMeshRef.current) {
-      const messages = messagesRef.current;
-
-      messages.forEach(message => {
+      messagesRef.current.forEach(message => {
         message.t += delta * message.speed * message.direction;
       });
-      messagesRef.current = messages.filter(message => message.t >= 0 && message.t <= 1);
-
+      messagesRef.current = messagesRef.current.filter(message => message.t >= 0 && message.t <= 1);
       const mesh = sphereMeshRef.current;
-      const dummy = new Object3D();
-
+      const dummy = dummyRef.current;
+      const target = targetRef.current;
       messagesRef.current.forEach((message, i) => {
         const t = message.t;
         const position = curveRef.current!.getPointAt(t);
         dummy.position.copy(position);
-
         const tangent = curveRef.current!.getTangentAt(t);
-        dummy.lookAt(position.clone().add(tangent));
-
+        target.copy(position).add(tangent);
+        dummy.lookAt(target);
         dummy.scale.set(sphereSize, sphereSize, sphereSize);
-
         dummy.updateMatrix();
-
         mesh.setMatrixAt(i, dummy.matrix);
       });
-
       mesh.count = messagesRef.current.length;
       mesh.instanceMatrix.needsUpdate = true;
-
       if (time >= nextSpawnTimeRef.current) {
         const spawnRate = baseSpawnRate + lineWidth * spawnRateMultiplier;
-
         const averageSpawnInterval = 1 / spawnRate;
-
         const nextInterval = averageSpawnInterval * (0.5 + Math.random());
-
         nextSpawnTimeRef.current = time + nextInterval;
-
         const newMessage: Message = {
           id: messageIdRef.current++,
           t: 0,
           direction: Math.random() < 0.5 ? 1 : -1,
           speed: messageSpeed * (0.8 + 0.4 * Math.random())
         };
-
         newMessage.t = newMessage.direction === 1 ? 0 : 1;
-
         messagesRef.current.push(newMessage);
-
         if (messagesRef.current.length > 1000) {
           messagesRef.current.shift();
         }
