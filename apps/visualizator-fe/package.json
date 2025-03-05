@@ -33,7 +33,7 @@
     "d3-ease": "^3.0.1",
     "dayjs": "^1.11.13",
     "graphql": "^16.10.0",
-    "highcharts": "^11.4.8",
+    "highcharts": "^12.1.2",
     "highcharts-react-official": "^3.2.1",
     "i18next": "^24.2.2",
     "i18next-browser-languagedetector": "^8.0.4",

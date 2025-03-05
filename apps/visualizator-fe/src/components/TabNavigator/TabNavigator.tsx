@@ -18,6 +18,7 @@ const TabNavigator: FC<Props> = ({ defaultValue = PageRoute.SCENE_2D_MSG_SUCCESS
   return (
     <Tabs
       defaultValue={defaultValue}
+      keepMounted={false}
       variant="pills"
       p="md"
       w="100%"

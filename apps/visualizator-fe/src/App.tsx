@@ -35,7 +35,7 @@ const App = () => (
   <ApolloProvider client={client}>
     <WalletProvider>
       <SelectedParachainProvider>
-        <MantineProvider>
+        <MantineProvider forceColorScheme="light">
           <Box pos="relative" h="100%">
             <LoadingScreen useApolloNetworkStatus={useApolloNetworkStatus} />
             <Notifications />
