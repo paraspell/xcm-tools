@@ -24,7 +24,7 @@ import {
   getRelayChainSymbol,
   getSupportedPallets,
   hasSupportForAsset,
-} from '@paraspell/sdk-pjs';
+} from '@paraspell/sdk';
 import { RouterDto } from '../src/router/dto/RouterDto';
 import { describe, beforeAll, it, expect } from 'vitest';
 import { TransferInfoDto } from '../src/transfer-info/dto/transfer-info.dto';
@@ -419,7 +419,7 @@ describe('XCM API (e2e)', () => {
           currency,
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate XCM call - Parachain to parachain Foreign() selector - ${xTransferUrl}`, async () => {
@@ -441,7 +441,7 @@ describe('XCM API (e2e)', () => {
           currency,
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate XCM call - Parachain to parachain invalid scenario - ${xTransferUrl}`, async () => {
@@ -505,7 +505,7 @@ describe('XCM API (e2e)', () => {
           },
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate Batch XCM call - Invalid Currency Symbol - ${xTransferBatchUrl}`, async () => {
@@ -763,7 +763,7 @@ describe('XCM API (e2e)', () => {
           },
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate Batch XCM call - Single Transfer in Batch - ${xTransferBatchUrl}`, async () => {
@@ -796,7 +796,7 @@ describe('XCM API (e2e)', () => {
           },
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate Batch XCM call - Specifying XCM Version - ${xTransferBatchUrl}`, async () => {
@@ -832,7 +832,7 @@ describe('XCM API (e2e)', () => {
           },
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate Batch XCM call - Parachain to Relay Chain - ${xTransferBatchUrl}`, async () => {
@@ -868,7 +868,7 @@ describe('XCM API (e2e)', () => {
           },
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate Batch XCM call - Relay Chain to Parachain - ${xTransferBatchUrl}`, async () => {
@@ -904,7 +904,7 @@ describe('XCM API (e2e)', () => {
           },
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate XCM call - Parachain to parachain all valid - ${xTransferUrl}`, async () => {
@@ -926,17 +926,17 @@ describe('XCM API (e2e)', () => {
           currency,
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate XCM call - Parachain to parachain override currency - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubPolkadot';
       const to: TNode = 'Hydration';
       const currency: TMultiLocation = {
-        parents: '0',
+        parents: 0,
         interior: {
           X1: {
-            Parachain: '2000',
+            Parachain: 2000,
           },
         },
       };
@@ -955,7 +955,7 @@ describe('XCM API (e2e)', () => {
           currency: { multilocation: Override(currency), amount },
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {
@@ -968,7 +968,7 @@ describe('XCM API (e2e)', () => {
               parents: 0,
               interior: {
                 X1: {
-                  Parachain: '2000',
+                  Parachain: 2000,
                 },
               },
             },
@@ -984,7 +984,7 @@ describe('XCM API (e2e)', () => {
               parents: 0,
               interior: {
                 X1: {
-                  Parachain: '2000',
+                  Parachain: 2000,
                 },
               },
             },
@@ -1009,7 +1009,7 @@ describe('XCM API (e2e)', () => {
           currency: { multiasset: currency },
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl}`, async () => {
@@ -1033,7 +1033,7 @@ describe('XCM API (e2e)', () => {
           address,
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate XCM call - Relaychain to parachain all valid - ${xTransferUrl}`, async () => {
@@ -1058,7 +1058,7 @@ describe('XCM API (e2e)', () => {
           address,
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate XCM call - Parachain to relaychain all valid - ${xTransferUrl}`, async () => {
@@ -1085,7 +1085,7 @@ describe('XCM API (e2e)', () => {
           xcmVersion: Version.V3,
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
 
     it(`Generate XCM call - Parachain to relaychain invalid version - ${xTransferUrl}`, async () => {
@@ -1241,7 +1241,7 @@ describe('XCM API (e2e)', () => {
               parents: 0,
               interior: {
                 X1: {
-                  Parachain: '2000',
+                  Parachain: 2000,
                 },
               },
             },
@@ -1264,42 +1264,7 @@ describe('XCM API (e2e)', () => {
           address,
         })
         .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
-    });
-
-    it('Generate asset claim call - all valid - /asset-claim', async () => {
-      const from: TNode = 'AssetHubKusama';
-      const fungible = [
-        {
-          id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X1: {
-                  Parachain: '2000',
-                },
-              },
-            },
-          },
-          fun: {
-            Fungible: '1000000000',
-          },
-        },
-      ];
-      const tx = await Builder()
-        .claimFrom(from)
-        .fungible(fungible)
-        .account(address)
-        .build();
-      return request(app.getHttpServer())
-        .post('/asset-claim')
-        .send({
-          from,
-          fungible,
-          address,
-        })
-        .expect(201)
-        .expect(JSON.stringify(tx.toHex()));
+        .expect((await tx.getEncodedData()).asHex());
     });
   });
 

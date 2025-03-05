@@ -4,17 +4,9 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import type { TTransferInfo } from '@paraspell/sdk';
-import {
-  getTransferInfo as getTransferInfoPapi,
-  InvalidCurrencyError,
-} from '@paraspell/sdk';
+import { getTransferInfo, InvalidCurrencyError } from '@paraspell/sdk';
 import { TransferInfoService } from './transfer-info.service.js';
 import { isValidWalletAddress } from '../utils.js';
-import { getTransferInfo } from '@paraspell/sdk-pjs';
-
-vi.mock('@paraspell/sdk-pjs', () => ({
-  getTransferInfo: vi.fn(),
-}));
 
 vi.mock('@paraspell/sdk', () => ({
   getTransferInfo: vi.fn(),
@@ -108,49 +100,6 @@ describe('TransferInfoService', () => {
       accountDestination: '0x456',
       currency: { symbol: 'DOT', amount: '1000' },
     });
-    expect(result).toEqual(mockTransferInfo);
-  });
-
-  it('handles usePapi true by calling getTransferInfo from papi', async () => {
-    const mockTransferInfo: TTransferInfo = {
-      chain: {
-        origin: 'Polkadot',
-        destination: 'Acala',
-        ecosystem: 'polkadot',
-      },
-      currencyBalanceOrigin: {
-        balance: 1000n,
-        currency: 'DOT',
-      },
-      originFeeBalance: {
-        balance: 1000n,
-        expectedBalanceAfterXCMFee: 1000n,
-        xcmFee: {
-          sufficientForXCM: true,
-          xcmFee: 1000n,
-        },
-        existentialDeposit: 1000n,
-        asset: 'DOT',
-        minNativeTransferableAmount: 1000n,
-        maxNativeTransferableAmount: 1000n,
-      },
-      destinationFeeBalance: {
-        balance: 1000n,
-        currency: 'DOT',
-        existentialDeposit: 1000n,
-      },
-    };
-    vi.mocked(getTransferInfoPapi).mockResolvedValue(mockTransferInfo);
-    const result = await service.getTransferInfo(
-      {
-        origin: 'Polkadot',
-        destination: 'Kusama',
-        accountOrigin: '0x123',
-        accountDestination: '0x456',
-        currency: { symbol: 'DOT', amount: '1000' },
-      },
-      true,
-    );
     expect(result).toEqual(mockTransferInfo);
   });
 

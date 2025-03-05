@@ -49,7 +49,7 @@ export class XTransferController {
   @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
   dryRun(@Body() bodyParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
-    return this.xTransferService.generateXcmCall(bodyParams, false, true);
+    return this.xTransferService.generateXcmCall(bodyParams, true);
   }
 
   @Post('x-transfer')
@@ -57,13 +57,6 @@ export class XTransferController {
   generateXcmCall(@Body() bodyParams: XTransferDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
     return this.xTransferService.generateXcmCall(bodyParams);
-  }
-
-  @Post('x-transfer-papi')
-  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  generateXcmCallPapi(@Body() bodyParams: XTransferDto, @Req() req: Request) {
-    this.trackAnalytics(EventName.GENERATE_XCM_CALL, req, bodyParams);
-    return this.xTransferService.generateXcmCall(bodyParams, true);
   }
 
   @Post('x-transfer-batch')
@@ -78,19 +71,5 @@ export class XTransferController {
       bodyParams,
     );
     return this.xTransferService.generateBatchXcmCall(bodyParams);
-  }
-
-  @Post('x-transfer-batch-papi')
-  @UsePipes(new ZodValidationPipe(BatchXTransferDtoSchema))
-  generateXcmCallBatchPapi(
-    @Body() bodyParams: BatchXTransferDto,
-    @Req() req: Request,
-  ) {
-    this.trackAnalyticsBatch(
-      EventName.GENERATE_XCM_CALL_BATCH_PAPI,
-      req,
-      bodyParams,
-    );
-    return this.xTransferService.generateBatchXcmCall(bodyParams, true);
   }
 }

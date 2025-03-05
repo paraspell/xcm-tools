@@ -569,9 +569,6 @@ importers:
       '@paraspell/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
-      '@paraspell/sdk-pjs':
-        specifier: workspace:*
-        version: link:../../packages/sdk-pjs
       '@paraspell/xcm-analyser':
         specifier: workspace:*
         version: link:../../packages/xcm-analyser

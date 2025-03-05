@@ -80,7 +80,7 @@ export const AssetsQueries = () => {
 
     const resolvedCurrency = resolveCurrency(formValues);
     if (useApi) {
-      const endpoint = getApiEndpoint(func, formValues.node, apiType);
+      const endpoint = getApiEndpoint(func, formValues.node);
       const shouldUsePost = postCalls.has(func);
 
       return fetchFromApi(

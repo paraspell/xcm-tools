@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
+  getTransferInfo,
   InvalidCurrencyError,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
@@ -13,16 +14,13 @@ import { TransferInfoDto } from './dto/transfer-info.dto.js';
 
 @Injectable()
 export class TransferInfoService {
-  async getTransferInfo(
-    {
-      origin,
-      destination,
-      accountOrigin,
-      accountDestination,
-      currency,
-    }: TransferInfoDto,
-    usePapi = false,
-  ) {
+  async getTransferInfo({
+    origin,
+    destination,
+    accountOrigin,
+    accountDestination,
+    currency,
+  }: TransferInfoDto) {
     const originNode = origin as TNodeDotKsmWithRelayChains | undefined;
     const destNode = destination as TNodeDotKsmWithRelayChains | undefined;
 
@@ -46,12 +44,8 @@ export class TransferInfoService {
       throw new BadRequestException('Invalid destination wallet address.');
     }
 
-    const Sdk = usePapi
-      ? await import('@paraspell/sdk')
-      : await import('@paraspell/sdk-pjs');
-
     try {
-      return await Sdk.getTransferInfo({
+      return await getTransferInfo({
         origin: originNode as TNodeDotKsmWithRelayChains,
         destination: destNode as TNodeDotKsmWithRelayChains,
         accountOrigin,

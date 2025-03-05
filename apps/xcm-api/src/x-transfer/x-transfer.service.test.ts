@@ -11,7 +11,6 @@ import {
 import type { TDryRunResult, TNode } from '@paraspell/sdk';
 import { IncompatibleNodesError, InvalidCurrencyError } from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
-import * as paraspellSdkPjs from '@paraspell/sdk-pjs';
 
 const txHash = '0x123';
 const txHashBatch = '0x123456';
@@ -50,28 +49,6 @@ vi.mock('@paraspell/sdk', async () => {
   };
 });
 
-const builderMockPjs = {
-  from: vi.fn().mockReturnThis(),
-  to: vi.fn().mockReturnThis(),
-  currency: vi.fn().mockReturnThis(),
-  address: vi.fn().mockReturnThis(),
-  xcmVersion: vi.fn().mockReturnThis(),
-  addToBatch: vi.fn().mockReturnThis(),
-  customPallet: vi.fn().mockReturnThis(),
-  buildBatch: vi.fn().mockReturnValue(txHashBatch),
-  build: vi.fn().mockResolvedValue(txHash),
-  dryRun: vi.fn().mockResolvedValue(dryRunResult),
-  disconnect: vi.fn(),
-};
-
-vi.mock('@paraspell/sdk-pjs', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-pjs');
-  return {
-    ...actual,
-    Builder: vi.fn().mockImplementation(() => builderMockPjs),
-  };
-});
-
 describe('XTransferService', () => {
   let service: XTransferService;
 
@@ -101,7 +78,7 @@ describe('XTransferService', () => {
 
   describe('generateXcmCall', () => {
     it('should generate XCM call for parachain to parachain transfer', async () => {
-      const result = await service.generateXcmCall(xTransferDto, true);
+      const result = await service.generateXcmCall(xTransferDto);
 
       expect(result).toBeTypeOf('string');
       expect(builderMock.from).toHaveBeenCalledWith(xTransferDto.from);
@@ -111,19 +88,19 @@ describe('XTransferService', () => {
       expect(builderMock.build).toHaveBeenCalled();
     });
 
-    it('should generate XCM call for parachain to parachain transfer - PJS', async () => {
-      vi.spyOn(paraspellSdkPjs, 'Builder').mockReturnValue(
-        builderMockPjs as unknown as ReturnType<typeof paraspellSdkPjs.Builder>,
+    it('should generate XCM call for parachain to parachain transfer', async () => {
+      vi.spyOn(paraspellSdk, 'Builder').mockReturnValue(
+        builderMock as unknown as ReturnType<typeof paraspellSdk.Builder>,
       );
 
       const result = await service.generateXcmCall(xTransferDto);
 
       expect(result).toBeTypeOf('string');
-      expect(builderMockPjs.from).toHaveBeenCalledWith(xTransferDto.from);
-      expect(builderMockPjs.to).toHaveBeenCalledWith(xTransferDto.to);
-      expect(builderMockPjs.currency).toHaveBeenCalledWith(currency);
-      expect(builderMockPjs.address).toHaveBeenCalledWith(address, undefined);
-      expect(builderMockPjs.build).toHaveBeenCalled();
+      expect(builderMock.from).toHaveBeenCalledWith(xTransferDto.from);
+      expect(builderMock.to).toHaveBeenCalledWith(xTransferDto.to);
+      expect(builderMock.currency).toHaveBeenCalledWith(currency);
+      expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
+      expect(builderMock.build).toHaveBeenCalled();
     });
 
     it('should generate XCM call for parachain to relaychain transfer', async () => {
@@ -132,7 +109,7 @@ describe('XTransferService', () => {
         to: 'Polkadot',
       };
 
-      const result = await service.generateXcmCall(options, true);
+      const result = await service.generateXcmCall(options);
 
       expect(result).toBeTypeOf('string');
       expect(builderMock.from).toHaveBeenCalledWith(options.from);
@@ -148,7 +125,7 @@ describe('XTransferService', () => {
         currency: { symbol: 'DOT', amount: 100 },
       };
 
-      const result = await service.generateXcmCall(options, true);
+      const result = await service.generateXcmCall(options);
 
       expect(result).toBeTypeOf('string');
       expect(builderMock.from).toHaveBeenCalledWith(options.from);
@@ -199,7 +176,7 @@ describe('XTransferService', () => {
         >,
       );
 
-      await expect(service.generateXcmCall(options, true)).rejects.toThrow(
+      await expect(service.generateXcmCall(options)).rejects.toThrow(
         BadRequestException,
       );
     });
@@ -224,7 +201,7 @@ describe('XTransferService', () => {
         >,
       );
 
-      await expect(service.generateXcmCall(options, true)).rejects.toThrow(
+      await expect(service.generateXcmCall(options)).rejects.toThrow(
         InternalServerErrorException,
       );
     });
@@ -246,7 +223,7 @@ describe('XTransferService', () => {
         xcmVersion: paraspellSdk.Version.V2,
       };
 
-      await service.generateXcmCall(options, true);
+      await service.generateXcmCall(options);
 
       expect(builderMock.xcmVersion).toHaveBeenCalledWith(
         paraspellSdk.Version.V2,
@@ -272,7 +249,6 @@ describe('XTransferService', () => {
           senderAddress: 'sender-address',
         },
         true,
-        true,
       );
       expect(result).toBe(dryRunResult);
     });
@@ -292,9 +268,9 @@ describe('XTransferService', () => {
         },
       };
 
-      await expect(
-        service.generateXcmCall(options, true, true),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.generateXcmCall(options, true)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should throw BadRequestException when pallet or method are not provided', async () => {
@@ -315,7 +291,7 @@ describe('XTransferService', () => {
         method: 'transfer',
       };
 
-      const result = await service.generateXcmCall(options, true);
+      const result = await service.generateXcmCall(options);
 
       expect(result).toBe(txHash);
       expect(builderMock.customPallet).toHaveBeenCalledWith(
@@ -326,7 +302,7 @@ describe('XTransferService', () => {
   });
 
   describe('generateBatchXcmCall', () => {
-    it('should generate batch XCM call for valid transfers - PJS', async () => {
+    it('should generate batch XCM call for valid transfers', async () => {
       const from: TNode = 'Acala';
       const to1: TNode = 'Basilisk';
       const to2: TNode = 'Moonriver';
@@ -354,13 +330,13 @@ describe('XTransferService', () => {
       const result = await service.generateBatchXcmCall(batchDto);
 
       expect(result).toBe(txHashBatch);
-      expect(builderMockPjs.from).toHaveBeenCalledTimes(2);
-      expect(builderMockPjs.to).toHaveBeenCalledWith(to1);
-      expect(builderMockPjs.to).toHaveBeenCalledWith(to2);
-      expect(builderMockPjs.currency).toHaveBeenCalledWith(currency);
-      expect(builderMockPjs.address).toHaveBeenCalledWith(address, undefined);
-      expect(builderMockPjs.addToBatch).toHaveBeenCalledTimes(2);
-      expect(builderMockPjs.buildBatch).toHaveBeenCalledWith(batchDto.options);
+      expect(builderMock.from).toHaveBeenCalledTimes(2);
+      expect(builderMock.to).toHaveBeenCalledWith(to1);
+      expect(builderMock.to).toHaveBeenCalledWith(to2);
+      expect(builderMock.currency).toHaveBeenCalledWith(currency);
+      expect(builderMock.address).toHaveBeenCalledWith(address, undefined);
+      expect(builderMock.addToBatch).toHaveBeenCalledTimes(2);
+      expect(builderMock.buildBatch).toHaveBeenCalledWith(batchDto.options);
     });
 
     it('should generate batch XCM call for valid transfers', async () => {
@@ -388,7 +364,7 @@ describe('XTransferService', () => {
         },
       };
 
-      const result = await service.generateBatchXcmCall(batchDto, true);
+      const result = await service.generateBatchXcmCall(batchDto);
 
       expect(result).toBe(txHashBatch);
       expect(builderMock.from).toHaveBeenCalledTimes(2);
@@ -415,7 +391,7 @@ describe('XTransferService', () => {
         },
       };
 
-      const result = await service.generateBatchXcmCall(batchDto, true);
+      const result = await service.generateBatchXcmCall(batchDto);
 
       expect(result).toBe(txHashBatch);
       expect(builderMock.from).toHaveBeenCalledWith('Polkadot');
@@ -552,9 +528,9 @@ describe('XTransferService', () => {
         ],
       };
 
-      await expect(
-        service.generateBatchXcmCall(batchDto, true),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should handle unknown errors from SDK', async () => {
@@ -585,9 +561,9 @@ describe('XTransferService', () => {
         ],
       };
 
-      await expect(
-        service.generateBatchXcmCall(batchDto, true),
-      ).rejects.toThrow(InternalServerErrorException);
+      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
 
     it('should throw BadRequestException when toNode is an object', async () => {
@@ -631,9 +607,9 @@ describe('XTransferService', () => {
         ],
       };
 
-      await expect(
-        service.generateBatchXcmCall(batchDto, true),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.generateBatchXcmCall(batchDto)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should generate batch XCM call for transfers with only fromNode (parachain to relaychain)', async () => {
@@ -651,7 +627,7 @@ describe('XTransferService', () => {
         options: undefined,
       } as unknown as BatchXTransferDto;
 
-      const result = await service.generateBatchXcmCall(batchDto, true);
+      const result = await service.generateBatchXcmCall(batchDto);
 
       expect(result).toBe(txHashBatch);
       expect(builderMock.from).toHaveBeenCalledWith(from);
@@ -677,7 +653,7 @@ describe('XTransferService', () => {
         ],
       };
 
-      const result = await service.generateBatchXcmCall(batchDto, true);
+      const result = await service.generateBatchXcmCall(batchDto);
 
       expect(result).toBe(txHashBatch);
       expect(builderMock.xcmVersion).toHaveBeenCalledWith(
@@ -723,7 +699,7 @@ describe('XTransferService', () => {
         ],
       };
 
-      const result = await service.generateBatchXcmCall(batchDto, true);
+      const result = await service.generateBatchXcmCall(batchDto);
 
       expect(result).toBe(txHashBatch);
       expect(builderMock.customPallet).toHaveBeenCalledWith(
