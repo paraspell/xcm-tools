@@ -53,14 +53,6 @@ const AccountsAmountPlotContainer = () => {
     downloadSvg(ref.current.chart.container as HTMLDivElement);
   };
 
-  if (loading) {
-    return (
-      <Center h="100%" w="100%">
-        <Loader size="xs" />
-      </Center>
-    );
-  }
-
   if (error) {
     return (
       <Center h="100%" w="100%">
@@ -86,9 +78,15 @@ const AccountsAmountPlotContainer = () => {
           />
         </Flex>
       </Group>
-      <Group flex={1} w="100%" justify="center">
-        <AccountsAmountPlot ref={ref} counts={data?.accountCounts ?? []} />
-      </Group>
+      {loading ? (
+        <Center h="100%" w="100%">
+          <Loader size="xs" />
+        </Center>
+      ) : (
+        <Group flex={1} w="100%" h="100%" justify="center">
+          <AccountsAmountPlot ref={ref} counts={data?.accountCounts ?? []} />
+        </Group>
+      )}
     </Stack>
   );
 };

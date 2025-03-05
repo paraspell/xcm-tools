@@ -3,11 +3,10 @@ import type { AccountCountsQuery } from '../../gql/graphql';
 import Highcharts from 'highcharts';
 import type { HighchartsReactRefObject } from 'highcharts-react-official';
 import HighchartsReact from 'highcharts-react-official';
-import HC_more from 'highcharts/highcharts-more';
 import { useTranslation } from 'react-i18next';
 import type { ChartDataItem, CustomPoint } from '../../types/types';
 import { FixedSizeBinary } from 'polkadot-api';
-HC_more(Highcharts);
+import 'highcharts/highcharts-more';
 
 type Props = {
   counts: AccountCountsQuery['accountCounts'];
@@ -22,14 +21,11 @@ const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
 
   const options: Highcharts.Options = {
     chart: {
-      type: 'packedbubble',
-      width: null,
-      height: '37%'
+      type: 'packedbubble'
     },
     title: {
       text: ''
     },
-    responsive: {},
     series: [
       {
         type: 'packedbubble',
@@ -48,7 +44,7 @@ const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
         pointerEvents: 'auto'
       },
       formatter: function () {
-        const point = this.point as CustomPoint;
+        const point = this as CustomPoint;
         const { name } = point;
         const address = name.startsWith('0x') ? name : `0x${name}`;
 
@@ -69,7 +65,7 @@ const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
         dataLabels: {
           enabled: true,
           formatter: function () {
-            const point = this.point as CustomPoint;
+            const point = this as CustomPoint;
             return point.value > 1000 ? `${point.name.substring(0, 10)}...` : '';
           }
         },
@@ -84,7 +80,14 @@ const AccountsAmountPlot: FC<Props> = ({ ref, counts }) => {
     }
   };
 
-  return <HighchartsReact ref={ref} highcharts={Highcharts} options={options} />;
+  return (
+    <HighchartsReact
+      ref={ref}
+      highcharts={Highcharts}
+      options={options}
+      containerProps={{ style: { height: '100%' } }}
+    />
+  );
 };
 
 AccountsAmountPlot.displayName = 'AccountsAmountPlot';
