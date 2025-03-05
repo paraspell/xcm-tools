@@ -27,8 +27,8 @@
     "@paraspell/sdk": "workspace:*",
     "@polkadot/apps-config": "^0.150.2",
     "@react-spring/web": "^9.7.5",
-    "@react-three/drei": "^9.120.5",
-    "@react-three/fiber": "^9.0.0-rc.1",
+    "@react-three/drei": "^10.0.4",
+    "@react-three/fiber": "^9.0.4",
     "@tabler/icons-react": "^3.30.0",
     "d3-ease": "^3.0.1",
     "dayjs": "^1.11.13",
@@ -44,7 +44,7 @@
     "react-apollo-network-status": "^5.3.1",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
-    "three": "^0.169.0"
+    "three": "^0.174.0"
   },
   "devDependencies": {
     "@types/d3-ease": "^3.0.2",
