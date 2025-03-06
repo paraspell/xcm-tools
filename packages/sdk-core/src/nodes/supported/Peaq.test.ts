@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { ScenarioNotSupportedError, NodeNotSupportedError } from '../../errors'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../../pallets/xTokens'
-import type Peaq from './Peaq'
 import { getNode } from '../../utils/getNode'
+import type Peaq from './Peaq'
 
 vi.mock('../../pallets/xTokens', () => ({
   default: {

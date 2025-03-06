@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
-import { getBalanceNative } from './getBalanceNative'
+import { describe, expect, it, vi } from 'vitest'
+
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { getBalanceForeignInternal } from './getBalanceForeign'
+import { getBalanceNative } from './getBalanceNative'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn()

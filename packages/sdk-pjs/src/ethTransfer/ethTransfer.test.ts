@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/require-await */
-import { describe, it, expect, vi } from 'vitest'
-import { createContext } from './createContext'
-import { toPolkadotV2, type Context } from '@snowbridge/api'
-import { transferEthToPolkadot } from './ethTransfer'
-import type { AbstractProvider, Signer } from 'ethers'
-import type { WalletClient } from 'viem'
+import { beforeEach } from 'node:test'
+
 import type { IPolkadotApi, TAsset, TEvmBuilderOptions } from '@paraspell/sdk-core'
 import {
   getAssetBySymbolOrId,
@@ -12,8 +8,14 @@ import {
   isEthersSigner,
   isOverrideMultiLocationSpecifier
 } from '@paraspell/sdk-core'
+import { type Context, toPolkadotV2 } from '@snowbridge/api'
+import type { AbstractProvider, Signer } from 'ethers'
+import type { WalletClient } from 'viem'
+import { describe, expect, it, vi } from 'vitest'
+
 import type { Extrinsic, TPjsApi } from '../types'
-import { beforeEach } from 'node:test'
+import { createContext } from './createContext'
+import { transferEthToPolkadot } from './ethTransfer'
 
 vi.mock('./createContext', () => ({
   createContext: vi.fn()

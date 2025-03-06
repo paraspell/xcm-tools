@@ -1,21 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, type TPolkadotXCMTransferOptions } from '../../types'
-import { getNode } from '../../utils'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { getNode } from '../../utils'
 import Heima from './Heima'
 
-vi.mock('../../pallets/polkadotXcm', async () => {
-  const actual = await vi.importActual<typeof import('../../pallets/polkadotXcm')>(
-    '../../pallets/polkadotXcm'
-  )
-  return {
-    default: {
-      ...actual.default,
-      transferPolkadotXCM: vi.fn()
-    }
+vi.mock('../../pallets/polkadotXcm', () => ({
+  default: {
+    transferPolkadotXCM: vi.fn()
   }
-})
+}))
 
 describe('Heima', () => {
   describe('transferPolkadotXCM', () => {

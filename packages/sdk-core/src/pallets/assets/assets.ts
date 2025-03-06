@@ -1,15 +1,15 @@
 // Contains different useful asset query operations from compatible Parachains asset map
 
-import assetsMapJson from '../../maps/assets.json' with { type: 'json' }
 import { NODE_NAMES_DOT_KSM } from '../../constants'
+import assetsMapJson from '../../maps/assets.json' with { type: 'json' }
 import { getParaId } from '../../nodes/config'
-import type { TNodeWithRelayChains, TAsset, TEcosystemType, TForeignAsset } from '../../types'
+import type { TAsset, TEcosystemType, TForeignAsset, TNodeWithRelayChains } from '../../types'
 import {
-  type TNodeAssets,
   type TAssetJsonMap,
+  type TNativeAsset,
   type TNode,
-  type TRelayChainSymbol,
-  type TNativeAsset
+  type TNodeAssets,
+  type TRelayChainSymbol
 } from '../../types'
 import { getNode } from '../../utils'
 

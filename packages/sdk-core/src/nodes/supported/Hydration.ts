@@ -1,5 +1,9 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
+import { DOT_MULTILOCATION } from '../../constants'
+import { InvalidCurrencyError } from '../../errors'
+import { createMultiAsset } from '../../pallets/xcmPallet/utils'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
   TMultiLocation,
@@ -7,15 +11,11 @@ import type {
   TSendInternalOptions,
   TSerializedApiCall
 } from '../../types'
-import { type IXTokensTransfer, Parents, Version, type TXTokensTransferOptions } from '../../types'
-import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../../pallets/xTokens'
-import { InvalidCurrencyError } from '../../errors'
+import { type IXTokensTransfer, Parents, type TXTokensTransferOptions, Version } from '../../types'
 import { generateAddressPayload } from '../../utils'
 import { isForeignAsset } from '../../utils/assets'
 import { getParaId } from '../config'
-import { createMultiAsset } from '../../pallets/xcmPallet/utils'
-import { DOT_MULTILOCATION } from '../../constants'
+import ParachainNode from '../ParachainNode'
 
 const createCustomXcmAh = <TApi, TRes>(
   { api, scenario, address }: TPolkadotXCMTransferOptions<TApi, TRes>,

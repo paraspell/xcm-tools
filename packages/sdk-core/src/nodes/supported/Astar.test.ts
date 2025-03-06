@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { TXTokensTransferOptions, TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type Astar from './Astar'
+import type { TPolkadotXCMTransferOptions, TXTokensTransferOptions } from '../../types'
+import { Version } from '../../types'
 import { getNode } from '../../utils'
+import type Astar from './Astar'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
   default: {

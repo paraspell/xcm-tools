@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Kusama
 
-import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
+import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 

@@ -1,6 +1,9 @@
 // Contains detailed structure of XCM call construction for Polimec Parachain
 
 import type { IPolkadotApi } from '../../api'
+import { DOT_MULTILOCATION } from '../../constants'
+import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
   addXcmVersionHeader,
   createMultiAsset,
@@ -8,25 +11,22 @@ import {
 } from '../../pallets/xcmPallet/utils'
 import type {
   IPolkadotXCMTransfer,
-  TPolkadotXCMTransferOptions,
   TAddress,
   TAsset,
   TDestination,
+  TMultiAsset,
   TMultiLocation,
+  TPolkadotXCMTransferOptions,
+  TRelayToParaOptions,
   TScenario,
   TSerializedApiCall,
-  TRelayToParaOptions,
-  TXcmVersioned,
-  TMultiAsset
+  TXcmVersioned
 } from '../../types'
 import { Parents, Version } from '../../types'
 import { generateAddressPayload, isForeignAsset } from '../../utils'
-import ParachainNode from '../ParachainNode'
-import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { DOT_MULTILOCATION } from '../../constants'
-import { getParaId } from '../config'
 import { resolveParaId } from '../../utils/resolveParaId'
+import { getParaId } from '../config'
+import ParachainNode from '../ParachainNode'
 
 const GAS_LIMIT = 1000000000n
 

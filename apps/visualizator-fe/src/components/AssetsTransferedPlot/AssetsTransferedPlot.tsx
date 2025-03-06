@@ -1,11 +1,12 @@
+import { BarChart } from '@mantine/charts';
 import type { ReactNode } from 'react';
 import { forwardRef, useMemo } from 'react';
-import { aggregateDataByParachain } from './utils/aggregateDataByParachain';
-import type { TAssetCounts } from '../../types/types';
 import { useTranslation } from 'react-i18next';
-import { generateSeries } from './utils/generateSeries';
-import { BarChart } from '@mantine/charts';
+
+import type { TAssetCounts } from '../../types/types';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
+import { aggregateDataByParachain } from './utils/aggregateDataByParachain';
+import { generateSeries } from './utils/generateSeries';
 
 type Props = {
   counts: TAssetCounts;

@@ -1,11 +1,12 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../api'
 import { getCurrency } from '../../pallets/xcmPallet/utils'
+import type { TMultiAsset, TMultiLocation, TXTransferTransferOptions } from '../../types'
+import { Parents } from '../../types'
 import { determineDestWeight } from './utils/determineDestWeight'
 import { getDestination } from './utils/getDestination'
 import XTransferTransferImpl from './XTransferTransferImpl'
-import type { TMultiAsset, TMultiLocation, TXTransferTransferOptions } from '../../types'
-import { Parents } from '../../types'
-import type { IPolkadotApi } from '../../api'
 
 const mockApi = {
   callTxMethod: vi.fn()

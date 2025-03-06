@@ -1,10 +1,11 @@
+import { LineChart } from '@mantine/charts';
 import type { ReactNode } from 'react';
 import { forwardRef, useState } from 'react';
-import { LineChart } from '@mantine/charts';
-import type { MessageCountsByDayQuery } from '../../gql/graphql';
-import { getParachainById, getParachainColor } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
+
+import type { MessageCountsByDayQuery } from '../../gql/graphql';
 import { Ecosystem } from '../../types/types';
+import { getParachainById, getParachainColor } from '../../utils/utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
 type Payload = {

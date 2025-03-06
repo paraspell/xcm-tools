@@ -1,10 +1,11 @@
-import type { FC } from 'react';
 import type { MultiSelectProps } from '@mantine/core';
 import { MultiSelect } from '@mantine/core';
-import type { SelectedParachain } from '../context/SelectedParachain/SelectedParachainContext';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getNodesByEcosystem } from '../utils/utils';
+
+import type { SelectedParachain } from '../context/SelectedParachain/SelectedParachainContext';
 import { Ecosystem } from '../types/types';
+import { getNodesByEcosystem } from '../utils/utils';
 
 type Props = MultiSelectProps & {
   value: SelectedParachain[];

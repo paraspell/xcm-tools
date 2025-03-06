@@ -1,5 +1,6 @@
-import type { ReactNode, Dispatch, SetStateAction } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { createContext, useState } from 'react';
+
 import type { ChannelsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';
 import { Ecosystem } from '../../types/types';

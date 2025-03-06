@@ -1,17 +1,17 @@
+import { DOT_MULTILOCATION } from '../../../constants'
 import { InvalidCurrencyError } from '../../../errors'
-import { addXcmVersionHeader, createMultiAsset } from '../../xcmPallet/utils'
-import { getOtherAssets } from '../../assets'
 import type {
   TMultiAsset,
   TMultiLocation,
-  Version,
+  TXcmVersioned,
   TXTokensTransferOptions,
-  TXcmVersioned
+  Version
 } from '../../../types'
 import { Parents } from '../../../types'
-import { isForeignAsset } from '../../../utils/assets'
-import { DOT_MULTILOCATION } from '../../../constants'
 import { isRelayChain } from '../../../utils'
+import { isForeignAsset } from '../../../utils/assets'
+import { getOtherAssets } from '../../assets'
+import { addXcmVersionHeader, createMultiAsset } from '../../xcmPallet/utils'
 
 const buildMultiLocation = <TApi, TRes>({
   paraIdTo,

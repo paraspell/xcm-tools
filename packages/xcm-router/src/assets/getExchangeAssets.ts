@@ -1,4 +1,5 @@
 import { isForeignAsset, type TNodePolkadotKusama } from '@paraspell/sdk-pjs';
+
 import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
 import type { TAssetsRecord, TExchangeNode, TRouterAsset } from '../types';
 import { getSdkAssetByRouterAsset } from './getSdkAssetByRouterAsset';

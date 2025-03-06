@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+
 import { InvalidAddressError } from '../errors'
 import { isNodeEvm } from '../pallets/assets'
 import type { TAddress, TNodeWithRelayChains } from '../types'

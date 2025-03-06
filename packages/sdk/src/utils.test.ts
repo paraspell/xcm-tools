@@ -1,10 +1,11 @@
-import type { MockInstance } from 'vitest'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
-import { createApiInstanceForNode, createPapiApiCall } from './utils'
+import type { MockInstance } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import PapiApi from './PapiApi'
 import type { TPapiApi } from './types'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-core'
+import { createApiInstanceForNode, createPapiApiCall } from './utils'
 
 vi.mock('./PapiApi')
 vi.mock('@paraspell/sdk-core')

@@ -1,41 +1,42 @@
-import { useEffect, useState } from 'react';
-import type { FC, FormEvent } from 'react';
-import { useForm } from '@mantine/form';
-import type { TAutoSelect, TExchangeNode } from '@paraspell/xcm-router';
-import { EXCHANGE_NODES } from '@paraspell/xcm-router';
-import { isValidWalletAddress } from '../../utils';
 import {
-  Text,
   Button,
+  Center,
   Group,
+  Menu,
+  Paper,
+  rem,
   Select,
   Stack,
+  Text,
   TextInput,
   Tooltip,
-  Center,
-  rem,
-  Paper,
-  Menu,
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
 import type {
   TAsset,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
 } from '@paraspell/sdk';
 import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
+import type { TAutoSelect, TExchangeNode } from '@paraspell/xcm-router';
+import { EXCHANGE_NODES } from '@paraspell/xcm-router';
 import type { Signer } from '@polkadot/api/types';
 import { web3Accounts, web3FromAddress } from '@polkadot/extension-dapp';
-import AccountSelectModal from '../AccountSelectModal/AccountSelectModal';
-import { useDisclosure } from '@mantine/hooks';
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { Icon123, IconChevronDown, IconInfoCircle } from '@tabler/icons-react';
 import { ethers } from 'ethers';
-import { IconChevronDown, IconInfoCircle, Icon123 } from '@tabler/icons-react';
+import type { FC, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+
 import useRouterCurrencyOptions from '../../hooks/useRouterCurrencyOptions';
-import type { TRouterSubmitType, TWalletAccount } from '../../types';
-import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { useWallet } from '../../hooks/useWallet';
-import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
+import type { TRouterSubmitType, TWalletAccount } from '../../types';
+import { isValidWalletAddress } from '../../utils';
 import { showErrorNotification } from '../../utils/notifications';
+import AccountSelectModal from '../AccountSelectModal/AccountSelectModal';
+import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
+import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type TRouterFormValues = {
   from?: TNodeDotKsmWithRelayChains;

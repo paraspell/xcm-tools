@@ -1,10 +1,11 @@
+import { BarChart } from '@mantine/charts';
 import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
-import type { MessageCountsQuery } from '../../gql/graphql';
-import { BarChart } from '@mantine/charts';
-import { getParachainById } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
+
+import type { MessageCountsQuery } from '../../gql/graphql';
 import { Ecosystem } from '../../types/types';
+import { getParachainById } from '../../utils/utils';
 import CustomChartTooltip from './CustomChartTooltip/CustomChartTooltip';
 
 type Props = {

@@ -1,20 +1,21 @@
 import {
-  Title,
-  SimpleGrid,
-  Text,
   Button,
-  ThemeIcon,
   Grid,
   rem,
+  SimpleGrid,
+  Text,
+  ThemeIcon,
+  Title,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import {
-  IconReceiptOff,
+  IconCloudUpload,
   IconFileCode,
   IconPackageOff,
-  IconCloudUpload,
+  IconReceiptOff,
 } from "@tabler/icons-react";
+
 import classes from "./Features.module.css";
-import { useMediaQuery } from "@mantine/hooks";
 
 const features = [
   {

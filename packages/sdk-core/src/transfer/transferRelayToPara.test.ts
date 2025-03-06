@@ -1,13 +1,14 @@
 import type { MockInstance } from 'vitest'
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { determineRelayChain, getNode } from '../utils'
-import { transferRelayToPara } from './transferRelayToPara'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import type { IPolkadotApi } from '../api'
 import type ParachainNode from '../nodes/ParachainNode'
 import { getRelayChainSymbol } from '../pallets/assets'
 import { resolveTNodeFromMultiLocation } from '../pallets/xcmPallet/utils'
 import type { TAsset, WithAmount } from '../types'
-import { Version, type TMultiLocation, type TRelayToParaOptions } from '../types'
+import { type TMultiLocation, type TRelayToParaOptions, Version } from '../types'
+import { determineRelayChain, getNode } from '../utils'
+import { transferRelayToPara } from './transferRelayToPara'
 
 vi.mock('../utils', () => ({
   determineRelayChain: vi.fn(),

@@ -1,7 +1,7 @@
+import { ActionIcon, Group, Slider, Text } from "@mantine/core";
+import { IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react";
 import type { FC } from "react";
-import { useRef, useState, useEffect } from "react";
-import { ActionIcon, Slider, Group, Text } from "@mantine/core";
-import { IconPlayerPlay, IconPlayerPause } from "@tabler/icons-react";
+import { useEffect, useRef, useState } from "react";
 
 const formatTime = (time: number) => {
   if (isNaN(time)) return "00:00";

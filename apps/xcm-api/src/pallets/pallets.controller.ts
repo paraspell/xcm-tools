@@ -1,7 +1,8 @@
 import { Controller, Get, Param, Req, Request } from '@nestjs/common';
-import { PalletsService } from './pallets.service.js';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
+import { PalletsService } from './pallets.service.js';
 
 @Controller('pallets')
 export class PalletsController {

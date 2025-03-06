@@ -1,13 +1,14 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AssetClaimService } from './asset-claim.service.js';
-import type { TestingModule } from '@nestjs/testing';
-import { Test } from '@nestjs/testing';
-import * as sdk from '@paraspell/sdk';
-import * as utils from '../utils.js';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import * as sdk from '@paraspell/sdk';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import * as utils from '../utils.js';
+import { AssetClaimService } from './asset-claim.service.js';
 import type { AssetClaimDto } from './dto/asset-claim.dto.js';
 
 vi.mock('@paraspell/sdk', async () => {

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { CurrencyCoreWithAmountSchema } from '../../x-transfer/dto/XTransferDto.js';
 
 export const VerifyEdOnDestDtoSchema = z.object({

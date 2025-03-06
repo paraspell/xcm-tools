@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest'
-import { isForeignAsset } from './isForeignAsset'
+import { describe, expect, it } from 'vitest'
+
 import type { TAsset } from '../../types'
+import { isForeignAsset } from './isForeignAsset'
 
 describe('isForeignAsset', () => {
   it('returns true for an asset with "assetId" and no "isNative"', () => {

@@ -15,8 +15,9 @@ import {
   TNodeWithRelayChains,
   verifyEdOnDestination,
 } from '@paraspell/sdk';
-import { BalanceNativeDto } from './dto/BalanceNativeDto.js';
+
 import { BalanceForeignDto } from './dto/BalanceForeignDto.js';
+import { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 import { VerifyEdOnDestDto } from './dto/VerifyEdOnDestDto.js';
 

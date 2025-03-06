@@ -1,4 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
 import { getNativeAssetSymbol, getOtherAssets } from '../../pallets/assets'
 import type { TForeignAsset, TNodeDotKsmWithRelayChains } from '../../types'
 import { getMultiLocationTokenId } from './getMultiLocationTokenId'

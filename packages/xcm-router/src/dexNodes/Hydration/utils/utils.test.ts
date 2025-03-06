@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { bnum, type Asset, type TradeRouter } from '@galacticcouncil/sdk';
+import { type Asset, bnum, type TradeRouter } from '@galacticcouncil/sdk';
 import type { TAsset, TNode } from '@paraspell/sdk-pjs';
-import { calculateSlippage, getAssetInfo, getMinAmountOut } from './utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { TRouterAsset } from '../../../types';
+import { calculateSlippage, getAssetInfo, getMinAmountOut } from './utils';
 
 describe('getAssetInfo', () => {
   const mockAssets: Asset[] = [

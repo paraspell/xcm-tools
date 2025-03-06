@@ -1,7 +1,8 @@
-import { useState, type FC } from 'react';
-import { Modal, Stack, Button, Radio, Group, Text } from '@mantine/core';
-import classes from './AccountSelectModal.module.css';
+import { Button, Group, Modal, Radio, Stack, Text } from '@mantine/core';
 import type { BatchMode } from '@paraspell/sdk';
+import { type FC, useState } from 'react';
+
+import classes from './AccountSelectModal.module.css';
 
 type Props = {
   isOpen: boolean;

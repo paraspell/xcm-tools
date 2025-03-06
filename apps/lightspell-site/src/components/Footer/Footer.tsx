@@ -1,16 +1,17 @@
 import {
-  Text,
-  Container,
   ActionIcon,
-  Group,
-  rem,
   Button,
+  Container,
+  Group,
   Image,
+  rem,
+  Text,
 } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons-react";
-import classes from "./Footer.module.css";
 import { Link } from "react-router-dom";
+
 import { links } from "../AppShell/links";
+import classes from "./Footer.module.css";
 
 const data = [
   {

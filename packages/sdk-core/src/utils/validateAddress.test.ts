@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { validateAddress } from './validateAddress'
-import { InvalidAddressError } from '../errors'
 import { ethers } from 'ethers'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { InvalidAddressError } from '../errors'
 import { isNodeEvm } from '../pallets/assets'
 import type { TAddress, TNodeWithRelayChains } from '../types'
+import { validateAddress } from './validateAddress'
 
 vi.mock('ethers', () => ({
   ethers: {

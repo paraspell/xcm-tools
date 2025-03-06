@@ -1,5 +1,5 @@
-import type { TMultiLocation } from './TMultiLocation'
 import type { TMultiAsset } from './TMultiAsset'
+import type { TMultiLocation } from './TMultiLocation'
 import type { TAmount, Version } from './TTransfer'
 
 export type TCurrency = string | number | bigint

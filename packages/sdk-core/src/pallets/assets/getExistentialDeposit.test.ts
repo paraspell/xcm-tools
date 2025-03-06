@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getExistentialDeposit } from './getExistentialDeposit'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { InvalidCurrencyError } from '../../errors'
+import type { TAsset, TCurrencyCore, TNodeAssets, TNodeWithRelayChains } from '../../types'
 import { getAssetsObject } from './assets' // Adjust path accordingly
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
-import type { TNodeWithRelayChains, TCurrencyCore, TNodeAssets, TAsset } from '../../types'
+import { getExistentialDeposit } from './getExistentialDeposit'
 
 vi.mock('./assets', () => ({
   getAssetsObject: vi.fn()

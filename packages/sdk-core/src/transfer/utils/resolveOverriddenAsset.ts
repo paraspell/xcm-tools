@@ -1,4 +1,6 @@
 import { InvalidCurrencyError } from '../../errors'
+import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
+import { createMultiAsset, isTMultiAsset, isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import type {
   TMultiAssetWithFee,
   TMultiLocation,
@@ -7,8 +9,6 @@ import type {
 } from '../../types'
 import { getNode, isForeignAsset } from '../../utils'
 import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
-import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
-import { createMultiAsset, isTMultiAsset, isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import { validateAssetSupport } from './validationUtils'
 
 export const resolveOverriddenAsset = <TApi, TRes>(

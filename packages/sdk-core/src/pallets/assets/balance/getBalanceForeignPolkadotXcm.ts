@@ -1,6 +1,6 @@
-import type { TAsset, TMultiLocation, TNodePolkadotKusama } from '../../../types'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { InvalidCurrencyError } from '../../../errors'
+import type { TAsset, TMultiLocation, TNodePolkadotKusama } from '../../../types'
 import { isForeignAsset } from '../../../utils/assets'
 
 export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(

@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getAssets, getBalanceNative, getNodeProviders } from '@paraspell/sdk-pjs';
+import type { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import BigNumber from 'bignumber.js';
-import { getAssets, getNodeProviders } from '@paraspell/sdk-pjs';
 import type { CurrencyExt, InterBtcApi } from 'inter-exchange';
 import { createInterBtcApi, newMonetaryAmount } from 'inter-exchange';
-import type { ApiPromise } from '@polkadot/api';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { TSwapOptions } from '../../types';
 import InterlayExchangeNode from './InterlayDex';
 import { getCurrency } from './utils';
@@ -12,7 +13,7 @@ import { getCurrency } from './utils';
 vi.mock('@paraspell/sdk-pjs', () => ({
   getAssets: vi.fn(),
   getNodeProviders: vi.fn(),
-  getBalanceNative: vi.fn().mockResolvedValue(new BigNumber(100)),
+  getBalanceNative: vi.fn(),
   getNativeAssetSymbol: vi.fn().mockReturnValue('INTR'),
 }));
 
@@ -42,6 +43,7 @@ describe('InterlayExchangeNode', () => {
 
     vi.mocked(getNodeProviders).mockReturnValue(['FakeProviderURL']);
     vi.mocked(createInterBtcApi).mockResolvedValue(mockInterBtcApi as unknown as InterBtcApi);
+    vi.mocked(getBalanceNative).mockResolvedValue(1000n);
     mockInterBtcApi.amm.getLiquidityPools.mockResolvedValue(['mockLiquidityPool']);
     mockInterBtcApi.amm.swap.mockReturnValue({ extrinsic: 'mockExtrinsic' });
 

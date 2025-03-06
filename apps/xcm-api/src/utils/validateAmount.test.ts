@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { validateAmount } from './validateAmount.js';
 
 describe('validateAmount', () => {

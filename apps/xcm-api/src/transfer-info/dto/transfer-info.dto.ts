@@ -1,5 +1,6 @@
-import { CurrencyCoreWithAmountSchema } from '../../x-transfer/dto/XTransferDto.js';
 import { z } from 'zod';
+
+import { CurrencyCoreWithAmountSchema } from '../../x-transfer/dto/XTransferDto.js';
 
 export const TransferInfoSchema = z.object({
   origin: z.string(),

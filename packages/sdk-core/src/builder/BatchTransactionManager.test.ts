@@ -1,9 +1,10 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import BatchTransactionManager from './BatchTransactionManager'
-import type { TSendOptions } from '../types'
-import { BatchMode } from '../types'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { send } from '../transfer'
+import type { TSendOptions } from '../types'
+import { BatchMode } from '../types'
+import BatchTransactionManager from './BatchTransactionManager'
 
 vi.mock('../transfer', () => ({
   send: vi.fn()

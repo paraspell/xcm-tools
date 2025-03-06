@@ -1,4 +1,5 @@
 import type { BarChartSeries } from '@mantine/charts';
+
 import type { TAssetCounts } from '../../../types/types';
 import { colorPallete } from '../color-pallete';
 

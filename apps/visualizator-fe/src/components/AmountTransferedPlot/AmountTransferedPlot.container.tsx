@@ -1,18 +1,19 @@
-import { useRef, useState } from 'react';
-import { messageCountsByDayQueryDocument } from '../../api/messages';
-import AmountTransferedPlot from './AmountTransferedPlot';
-import { getParachainId } from '../../utils/utils';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { useQuery } from '@apollo/client';
-import { useTranslation } from 'react-i18next';
-import { Ecosystem } from '../../types/types';
 import { Center, Checkbox, Group, Loader, Stack, Title, Tooltip } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import DownloadButtons from '../DownloadButtons';
-import downloadSvg from '../../utils/downloadSvg';
+import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { messageCountsByDayQueryDocument } from '../../api/messages';
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { MessageCountsByDayQuery } from '../../gql/graphql';
+import { Ecosystem } from '../../types/types';
 import convertToCsv from '../../utils/convertToCsv';
+import downloadSvg from '../../utils/downloadSvg';
 import { downloadZip } from '../../utils/downloadZip';
+import { getParachainId } from '../../utils/utils';
+import DownloadButtons from '../DownloadButtons';
+import AmountTransferedPlot from './AmountTransferedPlot';
 
 const now = Date.now();
 

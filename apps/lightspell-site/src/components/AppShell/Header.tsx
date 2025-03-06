@@ -1,7 +1,8 @@
+import { Anchor, Burger, Button, Container, Group, Image } from "@mantine/core";
 import type { FC } from "react";
-import { Container, Group, Burger, Image, Button, Anchor } from "@mantine/core";
-import classes from "./Header.module.css";
 import { Link } from "react-router-dom";
+
+import classes from "./Header.module.css";
 import { links } from "./links";
 
 type Props = {

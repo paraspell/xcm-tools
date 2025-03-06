@@ -1,14 +1,14 @@
 // Contains detailed structure of XCM call construction for Kintsugi Parachain
 
+import XTokensTransferImpl from '../../pallets/xTokens'
 import {
   type IXTokensTransfer,
-  Version,
+  type TForeignOrTokenAsset,
   type TXTokensTransferOptions,
-  type TForeignOrTokenAsset
+  Version
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Kintsugi<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

@@ -1,17 +1,17 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import {
-  Version,
   type IPolkadotXCMTransfer,
   type IXTokensTransfer,
   type TPolkadotXCMTransferOptions,
   type TSendInternalOptions,
-  type TXTokensTransferOptions
+  type TXTokensTransferOptions,
+  Version
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Astar<TApi, TRes>
   extends ParachainNode<TApi, TRes>

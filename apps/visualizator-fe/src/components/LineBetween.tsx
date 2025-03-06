@@ -1,10 +1,12 @@
-import type { FC } from 'react';
-import { useRef } from 'react';
-import type { Mesh, MeshStandardMaterial, InstancedMesh } from 'three';
-import { DoubleSide, LineCurve3, Object3D, TubeGeometry, Vector3 } from 'three';
-import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useFrame } from '@react-three/fiber';
+import type { FC } from 'react';
+import { useRef } from 'react';
+import type { InstancedMesh, Mesh, MeshStandardMaterial } from 'three';
+import { Vector3 } from 'three';
+import { DoubleSide, LineCurve3, Object3D, TubeGeometry } from 'three';
+
+import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
 
 type Props = {
   startObject: Object3D | null;

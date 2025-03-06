@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import {
-  TNodePolkadotKusama,
   getDefaultPallet,
   getSupportedPallets,
+  TNodePolkadotKusama,
 } from '@paraspell/sdk';
+
 import { validateNode } from '../utils.js';
 
 @Injectable()

@@ -1,42 +1,17 @@
 /* eslint-disable no-console */
 import {
-  Title,
-  Stack,
-  Container,
   Box,
-  Loader,
-  Group,
   Center,
+  Container,
+  Group,
   Image,
+  Loader,
+  Stack,
   Text,
+  Title,
   useMantineColorScheme,
 } from '@mantine/core';
-import type {
-  TExchangeNode,
-  TRouterEvent,
-  TTransaction,
-} from '@paraspell/xcm-router';
-import { createDexNodeInstance, RouterBuilder } from '@paraspell/xcm-router';
-import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
-import type { TRouterFormValuesTransformed } from '../../components/XcmRouter/XcmRouterForm';
-import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
-import { TransferStepper } from './TransferStepper';
-import Confetti from 'react-confetti';
-import type { Signer } from '@polkadot/api/types';
-import axios, { AxiosError } from 'axios';
-import { fetchFromApi, replaceBigInt, submitTransaction } from '../../utils';
-import { ErrorAlert } from '../common/ErrorAlert';
-import { useWallet } from '../../hooks/useWallet';
-import { API_URL } from '../../consts';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import {
-  showErrorNotification,
-  showLoadingNotification,
-  showSuccessNotification,
-} from '../../utils/notifications';
-import { VersionBadge } from '../common/VersionBadge';
 import type {
   TAsset,
   TMultiLocation,
@@ -47,9 +22,35 @@ import {
   isForeignAsset,
   type TCurrencyInput,
 } from '@paraspell/sdk-pjs';
+import type {
+  TExchangeNode,
+  TRouterEvent,
+  TTransaction,
+} from '@paraspell/xcm-router';
+import { createDexNodeInstance, RouterBuilder } from '@paraspell/xcm-router';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import type { Signer } from '@polkadot/api/types';
+import { web3FromAddress } from '@polkadot/extension-dapp';
+import axios, { AxiosError } from 'axios';
 import { ethers } from 'ethers';
+import { useEffect, useState } from 'react';
+import Confetti from 'react-confetti';
+
+import type { TRouterFormValuesTransformed } from '../../components/XcmRouter/XcmRouterForm';
+import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
+import { API_URL } from '../../consts';
+import { useWallet } from '../../hooks/useWallet';
 import type { TRouterSubmitType } from '../../types';
+import { fetchFromApi, replaceBigInt, submitTransaction } from '../../utils';
+import {
+  showErrorNotification,
+  showLoadingNotification,
+  showSuccessNotification,
+} from '../../utils/notifications';
+import { ErrorAlert } from '../common/ErrorAlert';
 import { OutputAlert } from '../common/OutputAlert';
+import { VersionBadge } from '../common/VersionBadge';
+import { TransferStepper } from './TransferStepper';
 
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 

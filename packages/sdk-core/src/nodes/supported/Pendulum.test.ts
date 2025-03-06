@@ -1,14 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import {
   InvalidCurrencyError,
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import type { TXTokensTransferOptions, TXcmAsset } from '../../types'
-import { Version } from '../../types'
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type Pendulum from './Pendulum'
+import type { TXcmAsset, TXTokensTransferOptions } from '../../types'
+import { Version } from '../../types'
 import { getNode } from '../../utils'
+import type Pendulum from './Pendulum'
 
 vi.mock('../../pallets/xTokens', () => ({
   default: {

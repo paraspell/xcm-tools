@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
-import axios from 'axios';
 import { InternalServerErrorException } from '@nestjs/common';
+import axios from 'axios';
+import { describe, expect, it, vi } from 'vitest';
+
 import { validateRecaptcha } from './validateRecaptcha.js';
 
 vi.mock('axios');

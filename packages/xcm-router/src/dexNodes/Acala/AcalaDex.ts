@@ -1,22 +1,23 @@
-import { getBalanceNative, getNativeAssetSymbol, type Extrinsic } from '@paraspell/sdk-pjs';
-import ExchangeNode from '../DexNode';
+import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
-import { Wallet } from '@acala-network/sdk';
-import type {
-  TSwapResult,
-  TSwapOptions,
-  TAssets,
-  TWeight,
-  TGetAmountOutOptions,
-} from '../../types';
-import { firstValueFrom } from 'rxjs';
+import { type Extrinsic, getBalanceNative, getNativeAssetSymbol } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
-import { calculateAcalaSwapFee, createAcalaApiInstance } from './utils';
 import BigNumber from 'bignumber.js';
+import { firstValueFrom } from 'rxjs';
+
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
-import Logger from '../../Logger/Logger';
 import { SmallAmountError } from '../../errors/SmallAmountError';
+import Logger from '../../Logger/Logger';
+import type {
+  TAssets,
+  TGetAmountOutOptions,
+  TSwapOptions,
+  TSwapResult,
+  TWeight,
+} from '../../types';
+import ExchangeNode from '../DexNode';
+import { calculateAcalaSwapFee, createAcalaApiInstance } from './utils';
 
 class AcalaExchangeNode extends ExchangeNode {
   async swapCurrency(

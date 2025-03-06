@@ -1,16 +1,17 @@
 // Unit tests for transfer utils
 
-import { describe, it, expect, beforeAll, vi, afterAll } from 'vitest';
-import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from './utils';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
-import { transferParams } from '../../builder/RouterBuilder.test';
 import {
-  type TNodeWithRelayChains,
   createApiInstanceForNode,
   type Extrinsic,
+  type TNodeWithRelayChains,
 } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+
+import { transferParams } from '../../builder/RouterBuilder.test';
 import type { TAdditionalTransferOptions } from '../../types';
+import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from './utils';
+import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 
 const builderMock = {
   from: vi.fn().mockReturnThis(),

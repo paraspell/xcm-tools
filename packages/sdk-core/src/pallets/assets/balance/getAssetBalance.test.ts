@@ -1,10 +1,11 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { createApiInstanceForNode } from '../../../utils'
 import { getNativeAssetSymbol } from '../assets'
 import { getAssetBalance } from './getAssetBalance'
-import { getBalanceNativeInternal } from './getBalanceNative'
 import { getBalanceForeignInternal } from './getBalanceForeign'
-import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import { getBalanceNativeInternal } from './getBalanceNative'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn()

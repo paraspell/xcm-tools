@@ -1,11 +1,12 @@
 import { Button, FileInput, rem, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { saveImageToDB } from '../../utils/idbUtils';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { notifications } from '@mantine/notifications';
-import { useState } from 'react';
 import { IconPhotoUp } from '@tabler/icons-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
+import { saveImageToDB } from '../../utils/idbUtils';
 
 type FormValues = {
   right: File | null;

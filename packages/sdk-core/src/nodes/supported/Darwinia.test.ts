@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version } from '../../types'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { NodeNotSupportedError } from '../../errors'
-import type Darwinia from './Darwinia'
+import { Version } from '../../types'
 import { getNode } from '../../utils'
+import type Darwinia from './Darwinia'
 
 vi.mock('../../pallets/xTokens', () => ({
   default: {

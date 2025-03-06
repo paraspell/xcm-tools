@@ -1,8 +1,8 @@
-import type { FC } from 'react';
-import { useForm } from '@mantine/form';
 import { Button, Select, Stack, TextInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk';
 import { isRelayChain, NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type FormValues = {

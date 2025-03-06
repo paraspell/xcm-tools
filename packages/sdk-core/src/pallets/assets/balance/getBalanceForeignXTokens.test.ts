@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import type { IPolkadotApi } from '../../../api'
+import { InvalidCurrencyError } from '../../../errors'
 import type { TAsset, TNativeAsset } from '../../../types'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
-import { InvalidCurrencyError } from '../../../errors'
 
 const mockApi = {
   getBalanceForeignAssetsAccount: vi.fn(),

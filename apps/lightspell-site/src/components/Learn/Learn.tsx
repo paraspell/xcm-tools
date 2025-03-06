@@ -1,20 +1,21 @@
 import {
-  Title,
-  Text,
   Button,
-  Grid,
   Code,
-  Tabs,
-  rem,
+  Grid,
   Paper,
+  rem,
+  Tabs,
+  Text,
+  Title,
 } from "@mantine/core";
-import classes from "./Learn.module.css";
+import { useMediaQuery } from "@mantine/hooks";
 import {
   IconBrandJavascript,
   IconBrandPython,
   IconBrandRust,
 } from "@tabler/icons-react";
-import { useMediaQuery } from "@mantine/hooks";
+
+import classes from "./Learn.module.css";
 
 const NODE_JS_CODE = `// Define API URL
 const API_URL = 'https://api.lightspell.xyz'

@@ -1,7 +1,8 @@
 import { Grid, Text, Title } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
+
 import GeneralOptions from './GeneralOptions';
 import SkyboxUploadForm from './SkyboxUploadForm';
-import { useTranslation } from 'react-i18next';
 
 const Options = () => {
   const { t } = useTranslation('translation', {

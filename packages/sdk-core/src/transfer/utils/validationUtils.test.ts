@@ -1,11 +1,10 @@
 import type { MockInstance } from 'vitest'
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import {
-  validateAssetSpecifiers,
-  validateAssetSupport,
-  validateCurrency,
-  validateDestination
-} from './validationUtils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { IncompatibleNodesError, InvalidCurrencyError } from '../../errors'
+import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../../pallets/assets'
+import { getDefaultPallet } from '../../pallets/pallets'
+import { isTMultiLocation, throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type {
   TAsset,
   TCurrencyInput,
@@ -15,13 +14,15 @@ import type {
   TNodePolkadotKusama,
   TSendOptions
 } from '../../types'
-import { IncompatibleNodesError, InvalidCurrencyError } from '../../errors'
-import { isBridgeTransfer } from './isBridgeTransfer'
-import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../../pallets/assets'
-import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
-import { getDefaultPallet } from '../../pallets/pallets'
-import { isTMultiLocation, throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import { isRelayChain } from '../../utils'
+import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
+import { isBridgeTransfer } from './isBridgeTransfer'
+import {
+  validateAssetSpecifiers,
+  validateAssetSupport,
+  validateCurrency,
+  validateDestination
+} from './validationUtils'
 
 vi.mock('./isBridgeTransfer', () => ({
   isBridgeTransfer: vi.fn()

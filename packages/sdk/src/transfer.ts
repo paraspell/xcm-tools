@@ -1,11 +1,12 @@
 import {
-  send as sendImpl,
   getDryRun as getDryRunImpl,
-  getParaEthTransferFees as getEthFeesImpl
+  getParaEthTransferFees as getEthFeesImpl,
+  send as sendImpl
 } from '@paraspell/sdk-core'
+
+import PapiApi from './PapiApi'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 import { createPapiApiCall } from './utils'
-import PapiApi from './PapiApi'
 
 /**
  * Transfers assets from parachain to another parachain or from/to relay chain.

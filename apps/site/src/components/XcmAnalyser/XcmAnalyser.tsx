@@ -1,16 +1,17 @@
 import {
-  Text,
-  Title,
+  Box,
   Button,
-  ThemeIcon,
+  List,
   rem,
   SimpleGrid,
-  List,
-  Box,
+  Text,
+  ThemeIcon,
+  Title,
 } from "@mantine/core";
-import classes from "./XcmAnalyser.module.css";
-import { IconArrowsExchange, IconPuzzle, IconCheck } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
+import { IconArrowsExchange, IconCheck, IconPuzzle } from "@tabler/icons-react";
+
+import classes from "./XcmAnalyser.module.css";
 
 const data = [
   {

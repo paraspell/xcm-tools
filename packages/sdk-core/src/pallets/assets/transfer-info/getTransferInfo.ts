@@ -1,11 +1,11 @@
 import { InvalidCurrencyError } from '../../../errors'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../../types/TTransferInfo'
+import { getExistentialDeposit, getNativeAssetSymbol, getRelayChainSymbol } from '../assets'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
 import { getBalanceNativeInternal } from '../balance/getBalanceNative'
 import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
-import { getMaxNativeTransferableAmount } from '../getTransferableAmount'
 import { getOriginFeeDetailsInternal } from '../getOriginFeeDetails'
-import { getExistentialDeposit, getNativeAssetSymbol, getRelayChainSymbol } from '../assets'
+import { getMaxNativeTransferableAmount } from '../getTransferableAmount'
 
 export const getTransferInfo = async <TApi, TRes>({
   origin,

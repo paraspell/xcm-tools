@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { loadLinksPreset } from "@tsparticles/preset-links";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
-import { loadLinksPreset } from "@tsparticles/preset-links";
+import { useEffect, useState } from "react";
 
 const ParticlesNetwork = () => {
   const [init, setInit] = useState(false);

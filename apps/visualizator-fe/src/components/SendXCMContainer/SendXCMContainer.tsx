@@ -1,7 +1,8 @@
 import { Button, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import SendXcm from '../SendXcm/SendXcm';
 import { useTranslation } from 'react-i18next';
+
+import SendXcm from '../SendXcm/SendXcm';
 
 const SendXCMContainer = () => {
   const { t } = useTranslation();

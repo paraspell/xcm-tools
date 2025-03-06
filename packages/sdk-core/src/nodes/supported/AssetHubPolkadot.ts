@@ -1,7 +1,11 @@
 // Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
 import { ethers } from 'ethers'
+
+import { ETHEREUM_JUNCTION } from '../../constants'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
+import { getOtherAssets } from '../../pallets/assets'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
   createBridgeCurrencySpec,
   createBridgePolkadotXcmDest,
@@ -10,32 +14,29 @@ import {
   createPolkadotXcmHeader
 } from '../../pallets/xcmPallet/utils'
 import type {
-  TJunctions,
-  TPolkadotXcmSection,
+  TAmount,
   TAsset,
   TDestination,
-  TSerializedApiCall,
+  TJunctions,
+  TPolkadotXcmSection,
   TRelayToParaOverrides,
-  TAmount
+  TSerializedApiCall
 } from '../../types'
 import {
   type IPolkadotXCMTransfer,
-  type TPolkadotXCMTransferOptions,
-  Version,
   Parents,
-  type TScenario,
   type TMultiAsset,
-  type TMultiLocation
+  type TMultiLocation,
+  type TPolkadotXCMTransferOptions,
+  type TScenario,
+  Version
 } from '../../types'
-import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { getOtherAssets } from '../../pallets/assets'
+import { isForeignAsset } from '../../utils/assets'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
-import { ETHEREUM_JUNCTION } from '../../constants'
-import { isForeignAsset } from '../../utils/assets'
-import { getParaId } from '../config'
 import { resolveParaId } from '../../utils/resolveParaId'
+import { getParaId } from '../config'
+import ParachainNode from '../ParachainNode'
 
 const createCustomXcmToBifrost = <TApi, TRes>(
   { api, address, scenario }: TPolkadotXCMTransferOptions<TApi, TRes>,

@@ -1,23 +1,24 @@
+import { useDisclosure } from '@mantine/hooks';
 import {
   web3Accounts,
   web3Enable,
   web3FromAddress,
   web3FromSource,
 } from '@polkadot/extension-dapp';
-import type { PropsWithChildren } from 'react';
-import { useEffect, useState } from 'react';
-import { WalletContext } from './WalletContext';
-import type { TApiType, TWalletAccount } from '../types';
 import {
   connectInjectedExtension,
   getInjectedExtensions,
   type InjectedExtension,
 } from 'polkadot-api/pjs-signer';
-import { DAPP_NAME } from '../constants/constants';
-import { useDisclosure } from '@mantine/hooks';
+import type { PropsWithChildren } from 'react';
+import { useEffect, useState } from 'react';
+
 import AccountSelectModal from '../components/AccountSelectModal/AccountSelectModal';
 import PolkadotWalletSelectModal from '../components/WalletSelectModal/WalletSelectModal';
+import { DAPP_NAME } from '../constants/constants';
+import type { TApiType, TWalletAccount } from '../types';
 import { showErrorNotification } from '../utils/notifications';
+import { WalletContext } from './WalletContext';
 
 export const STORAGE_ADDRESS_KEY = 'paraspell_wallet_address';
 const STORAGE_API_TYPE_KEY = 'paraspell_api_type';

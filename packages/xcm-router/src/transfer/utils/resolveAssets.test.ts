@@ -1,10 +1,11 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { resolveAssets } from './resolveAssets';
 import type { TAsset, TCurrencyInput, TNodePolkadotKusama } from '@paraspell/sdk-pjs';
 import { getAssetBySymbolOrId, hasSupportForAsset } from '@paraspell/sdk-pjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
-import type { TExchangeNode, TTransferOptions } from '../../types';
 import type ExchangeNode from '../../dexNodes/DexNode';
+import type { TExchangeNode, TTransferOptions } from '../../types';
+import { resolveAssets } from './resolveAssets';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
   getAssetBySymbolOrId: vi.fn(),

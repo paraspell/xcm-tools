@@ -1,8 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
 import type { ConfigService } from '@nestjs/config';
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { typeOrmConfig } from './typeorm.config.js';
+import { describe, expect, it, vi } from 'vitest';
+
 import { User } from '../users/user.entity.js';
+import { typeOrmConfig } from './typeorm.config.js';
 
 describe('typeOrmConfig', () => {
   const mockConfigService = {

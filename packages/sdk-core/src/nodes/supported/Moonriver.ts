@@ -2,19 +2,19 @@
 
 import { DOT_MULTILOCATION } from '../../constants'
 import { InvalidCurrencyError } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
 import type {
   IPolkadotXCMTransfer,
-  TPolkadotXCMTransferOptions,
   TAsset,
   TMultiLocation,
-  TScenario,
-  TRelayToParaOverrides
+  TPolkadotXCMTransferOptions,
+  TRelayToParaOverrides,
+  TScenario
 } from '../../types'
-import { Version, Parents } from '../../types'
+import { Parents, Version } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {

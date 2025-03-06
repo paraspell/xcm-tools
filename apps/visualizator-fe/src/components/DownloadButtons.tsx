@@ -1,4 +1,4 @@
-import { Group, ActionIcon, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Tooltip } from '@mantine/core';
 import { IconDownload, IconPhotoDown } from '@tabler/icons-react';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,10 +1,11 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
-import { validateTransferOptions } from './utils/validateTransferOptions';
-import { prepareTransformedOptions } from './utils';
-import { buildTransactions } from './buildTransactions';
-import type { TAdditionalTransferOptions, TBuildTransactionsOptions, TRouterPlan } from '../types';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+
 import type ExchangeNode from '../dexNodes/DexNode';
+import type { TAdditionalTransferOptions, TBuildTransactionsOptions, TRouterPlan } from '../types';
 import { buildApiTransactions } from './buildApiTransactions';
+import { buildTransactions } from './buildTransactions';
+import { prepareTransformedOptions } from './utils';
+import { validateTransferOptions } from './utils/validateTransferOptions';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
   createApiInstanceForNode: vi.fn(),

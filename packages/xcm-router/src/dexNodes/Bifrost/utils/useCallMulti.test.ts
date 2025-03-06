@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
 import type { ApiPromise } from '@polkadot/api';
 import type { QueryableStorageMultiArg } from '@polkadot/api/types';
+import { describe, expect, it, vi } from 'vitest';
+
 import { fetchCallMulti } from './useCallMulti';
 
 describe('fetchCallMulti', () => {

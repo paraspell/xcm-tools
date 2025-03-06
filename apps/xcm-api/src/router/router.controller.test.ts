@@ -1,10 +1,11 @@
-import { vi, describe, beforeEach, it, expect } from 'vitest';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { RouterController } from './router.controller.js';
-import { RouterService } from './router.service.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import type { RouterDto } from './dto/RouterDto.js';
+import { RouterController } from './router.controller.js';
+import { RouterService } from './router.service.js';
 
 // Integration tests to ensure controller and service are working together
 describe('RouterController', () => {

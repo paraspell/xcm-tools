@@ -1,6 +1,7 @@
 import { Button, JsonInput, Paper, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { FC } from 'react';
+
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 
 const PLACEHOLDER_MULTI_LOCATION = `{

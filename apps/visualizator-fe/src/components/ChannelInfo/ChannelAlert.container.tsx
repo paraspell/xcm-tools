@@ -1,11 +1,12 @@
-import { channelQueryDocument } from '../../api/channels';
-import ChannelAlert from './ChannelAlert';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
+import { useQuery } from '@apollo/client';
 import type { FC } from 'react';
 import { useEffect } from 'react';
-import { useQuery } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
+
+import { channelQueryDocument } from '../../api/channels';
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { ChannelsQuery } from '../../gql/graphql';
+import ChannelAlert from './ChannelAlert';
 
 type Props = {
   selectedChannel: ChannelsQuery['channels'][number];

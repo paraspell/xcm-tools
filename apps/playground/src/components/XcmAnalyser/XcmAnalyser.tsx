@@ -8,14 +8,15 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import { convertMultilocationToUrlJson } from '@paraspell/xcm-analyser';
 import { useEffect, useState } from 'react';
-import { ErrorAlert } from '../common/ErrorAlert';
-import { OutputAlert } from '../common/OutputAlert';
+
 import type { FormValues } from '../../components/XcmAnalyser/XcmAnalyserForm';
 import AnalyserForm from '../../components/XcmAnalyser/XcmAnalyserForm';
-import { convertMultilocationToUrlJson } from '@paraspell/xcm-analyser';
 import { fetchFromApi } from '../../utils';
 import { showErrorNotification } from '../../utils/notifications';
+import { ErrorAlert } from '../common/ErrorAlert';
+import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
 
 const VERSION = import.meta.env.VITE_XCM_ANALYSER_VERSION as string;

@@ -1,4 +1,5 @@
-import { Title, Accordion, Anchor } from "@mantine/core";
+import { Accordion, Anchor, Title } from "@mantine/core";
+
 import classes from "./Faq.module.css";
 
 export function Faq() {

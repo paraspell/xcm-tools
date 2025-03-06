@@ -1,4 +1,7 @@
 import { IncompatibleNodesError, InvalidCurrencyError } from '../../errors'
+import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../../pallets/assets'
+import { getDefaultPallet } from '../../pallets/pallets'
+import { isTMultiLocation, throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type {
   TAsset,
   TCurrencyInput,
@@ -8,10 +11,7 @@ import type {
 } from '../../types'
 import { isRelayChain } from '../../utils'
 import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
-import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../../pallets/assets'
-import { getDefaultPallet } from '../../pallets/pallets'
 import { isBridgeTransfer } from './isBridgeTransfer'
-import { isTMultiLocation, throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 
 export const validateCurrency = (currency: TCurrencyInput) => {
   if ('multiasset' in currency) {

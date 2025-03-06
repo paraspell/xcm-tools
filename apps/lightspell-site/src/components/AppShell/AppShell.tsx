@@ -1,12 +1,13 @@
 import { AppShell as MantineAppShell } from "@mantine/core";
-import { Footer } from "../Footer/Footer";
-import ScrollToTop from "../ScrollToTop";
 import { useDisclosure } from "@mantine/hooks";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
+import { Footer } from "../Footer/Footer";
+import Routes from "../Routes";
+import ScrollToTop from "../ScrollToTop";
 import Header from "./Header";
 import Navbar from "./Navbar";
-import Routes from "../Routes";
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 
 const AppShell = () => {
   const [opened, { toggle, close }] = useDisclosure();

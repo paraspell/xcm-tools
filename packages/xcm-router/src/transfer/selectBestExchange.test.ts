@@ -1,13 +1,14 @@
 // Unit tests for selectBestExchange function
 
-import { describe, it, expect, vi, afterAll, beforeAll, type MockInstance } from 'vitest';
-import { selectBestExchange } from './selectBestExchange';
-import type { TCommonTransferOptions } from '../types';
-import type ExchangeNode from '../dexNodes/DexNode';
 import BigNumber from 'bignumber.js';
-import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
+import { afterAll, beforeAll, describe, expect, it, type MockInstance, vi } from 'vitest';
+
+import type ExchangeNode from '../dexNodes/DexNode';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
+import type { TCommonTransferOptions } from '../types';
+import { MOCK_TRANSFER_OPTIONS } from '../utils/testUtils';
 import { calculateFromExchangeFee, calculateToExchangeWeight } from './createSwapTx';
+import { selectBestExchange } from './selectBestExchange';
 
 vi.mock('../dexNodes/DexNodeFactory', () => ({
   createDexNodeInstance: vi.fn(),

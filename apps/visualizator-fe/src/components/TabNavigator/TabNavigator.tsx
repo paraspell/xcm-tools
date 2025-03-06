@@ -1,12 +1,13 @@
-import { Tabs, rem } from '@mantine/core';
-import { PageRoute } from '../../PageRoute';
+import { rem, Tabs } from '@mantine/core';
 import { IconAsset, IconChartBubble, IconCheck, IconClock } from '@tabler/icons-react';
-import Scene2dMessagesStatus from '../../pages/Scene2dMessagesStatus';
-import Scene2dAssetsChart from '../../pages/Scene2dAssetsChart';
-import Scene2dAmountsByDay from '../../pages/Scene2dAmountsByDay';
-import Scene2dBubblePlot from '../../pages/Scene2dBubblePlot';
-import { useTranslation } from 'react-i18next';
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { PageRoute } from '../../PageRoute';
+import Scene2dAmountsByDay from '../../pages/Scene2dAmountsByDay';
+import Scene2dAssetsChart from '../../pages/Scene2dAssetsChart';
+import Scene2dBubblePlot from '../../pages/Scene2dBubblePlot';
+import Scene2dMessagesStatus from '../../pages/Scene2dMessagesStatus';
 
 type Props = {
   defaultValue?: PageRoute;

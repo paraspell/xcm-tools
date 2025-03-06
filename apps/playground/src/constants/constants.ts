@@ -6,6 +6,7 @@ import {
   IconSend2,
   IconWallet,
 } from '@tabler/icons-react';
+
 import { PageRoute } from '../components/PageRoute';
 import type { TNavItem } from '../types';
 

@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
-import { generateMessageId } from './generateMessageId'
+import { describe, expect, it, vi } from 'vitest'
+
 import type { IPolkadotApi } from '../../api'
+import { generateMessageId } from './generateMessageId'
 
 describe('generateMessageId', () => {
   it('should generate the correct message id', async () => {

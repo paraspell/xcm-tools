@@ -1,6 +1,3 @@
-import type { FC } from 'react';
-import { useState } from 'react';
-import { IconChevronRight } from '@tabler/icons-react';
 import {
   Box,
   Collapse,
@@ -9,10 +6,14 @@ import {
   ThemeIcon,
   UnstyledButton,
 } from '@mantine/core';
-import classes from './LinksGroup.module.css';
-import { NavLink } from 'react-router-dom';
+import { IconChevronRight } from '@tabler/icons-react';
 import cx from 'clsx';
+import type { FC } from 'react';
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+
 import type { TNavItem } from '../../types';
+import classes from './LinksGroup.module.css';
 
 type Props = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

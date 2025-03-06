@@ -1,18 +1,18 @@
 // Contains detailed structure of XCM call construction for Bajun Parachain
 
 import {
-  ScenarioNotSupportedError,
+  InvalidCurrencyError,
   NodeNotSupportedError,
-  InvalidCurrencyError
+  ScenarioNotSupportedError
 } from '../../errors'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import {
   type IXTokensTransfer,
   type TSerializedApiCall,
-  Version,
-  type TXTokensTransferOptions
+  type TXTokensTransferOptions,
+  Version
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Bajun<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

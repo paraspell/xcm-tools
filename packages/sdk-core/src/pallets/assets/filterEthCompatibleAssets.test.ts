@@ -1,8 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { getOtherAssets } from './assets'
-import { findAssetByMultiLocation } from './findAssetByMultiLocation'
-import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import type { TForeignAsset, TMultiLocation } from '../../types'
+import { getOtherAssets } from './assets'
+import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
+import { findAssetByMultiLocation } from './findAssetByMultiLocation'
 
 vi.mock('./assets', () => ({
   getOtherAssets: vi.fn()

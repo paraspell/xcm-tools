@@ -1,12 +1,13 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import type { TTransferInfo } from '@paraspell/sdk';
 import { getTransferInfo, InvalidCurrencyError } from '@paraspell/sdk';
-import { TransferInfoService } from './transfer-info.service.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { isValidWalletAddress } from '../utils.js';
+import { TransferInfoService } from './transfer-info.service.js';
 
 vi.mock('@paraspell/sdk', () => ({
   getTransferInfo: vi.fn(),

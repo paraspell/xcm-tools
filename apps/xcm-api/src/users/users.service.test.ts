@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { UsersService } from './users.service.js';
 import type { Repository } from 'typeorm';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { User } from './user.entity.js';
+import { UsersService } from './users.service.js';
 
 describe('UsersService', () => {
   let service: UsersService;

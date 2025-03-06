@@ -1,12 +1,13 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { BalanceController } from './balance.controller.js';
-import { BalanceService } from './balance.service.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
-import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
+import { BalanceController } from './balance.controller.js';
+import { BalanceService } from './balance.service.js';
 import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
+import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import type { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 import type { VerifyEdOnDestDto } from './dto/VerifyEdOnDestDto.js';
 

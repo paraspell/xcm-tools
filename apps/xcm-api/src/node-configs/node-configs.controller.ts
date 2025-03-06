@@ -1,7 +1,8 @@
 import { Controller, Get, Param, Query, Req, Request } from '@nestjs/common';
-import { NodeConfigsService } from './node-configs.service.js';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
+import { NodeConfigsService } from './node-configs.service.js';
 
 @Controller('nodes')
 export class NodeConfigsController {

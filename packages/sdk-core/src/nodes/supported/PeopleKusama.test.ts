@@ -1,21 +1,16 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { ScenarioNotSupportedError } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import PeopleKusama from './PeopleKusama'
-import { ScenarioNotSupportedError } from '../../errors'
 
-vi.mock('../../pallets/polkadotXcm', async () => {
-  const actual = await vi.importActual<typeof import('../../pallets/polkadotXcm')>(
-    '../../pallets/polkadotXcm'
-  )
-  return {
-    default: {
-      ...actual.default,
-      transferPolkadotXCM: vi.fn()
-    }
+vi.mock('../../pallets/polkadotXcm', () => ({
+  default: {
+    transferPolkadotXCM: vi.fn()
   }
-})
+}))
 
 describe('PeopleKusama', () => {
   let node: PeopleKusama<unknown, unknown>

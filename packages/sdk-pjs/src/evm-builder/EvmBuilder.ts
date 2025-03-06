@@ -1,15 +1,16 @@
 import type {
   IPolkadotApi,
-  TEvmBuilderOptions,
   TCurrencyInputWithAmount,
+  TEvmBuilderOptions,
   TNodeWithRelayChains
 } from '@paraspell/sdk-core'
 import { transferMoonbeamEvm, transferMoonbeamToEth } from '@paraspell/sdk-core'
-import type { AbstractProvider, Signer } from 'ethers'
-import { transferEthToPolkadot } from '../ethTransfer'
-import type { WalletClient } from 'viem'
 import { validateAddress } from '@paraspell/sdk-core'
 import type { TEvmNodeFrom } from '@paraspell/sdk-core/src'
+import type { AbstractProvider, Signer } from 'ethers'
+import type { WalletClient } from 'viem'
+
+import { transferEthToPolkadot } from '../ethTransfer'
 
 /**
  * Builder class for constructing transfers from Ethereum to Polkadot.

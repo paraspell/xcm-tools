@@ -5,15 +5,15 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import {
   type IXTokensTransfer,
-  Version,
+  type TSerializedApiCall,
   type TXTokensTransferOptions,
-  type TSerializedApiCall
+  Version
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Peaq<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

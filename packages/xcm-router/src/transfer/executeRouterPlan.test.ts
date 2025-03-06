@@ -1,12 +1,13 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
-import { isNodeEvm, getBalanceNative } from '@paraspell/sdk-pjs';
+import { getBalanceNative, isNodeEvm } from '@paraspell/sdk-pjs';
+import type { Signer } from '@polkadot/types/types';
+import BigNumber from 'bignumber.js';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+
 import type { TExecuteRouterPlanOptions, TRouterPlan } from '../types';
+import { calculateTxFeeDryRun } from '../utils';
 import { submitTransaction } from '../utils/submitTransaction';
 import { executeRouterPlan } from './executeRouterPlan';
-import type { Signer } from '@polkadot/types/types';
-import { calculateTxFeeDryRun } from '../utils';
-import BigNumber from 'bignumber.js';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
   isNodeEvm: vi.fn(),

@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { InterBtcApi, CurrencyExt, ForeignAsset } from 'inter-exchange';
+import type { CurrencyExt, ForeignAsset, InterBtcApi } from 'inter-exchange';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { getCurrency } from './utils';
 
 describe('getCurrency', () => {

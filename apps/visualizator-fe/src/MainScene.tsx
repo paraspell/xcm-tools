@@ -1,10 +1,11 @@
-import { useRef, useEffect, useState } from 'react';
-import { Vector3 } from 'three';
-import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, TransformControls } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
+import { useEffect, useRef, useState } from 'react';
+import { Vector3 } from 'three';
+
 import ParachainsGraphContainer from './components/ParachainsGraph/ParachainsGraph.container';
-import { Ecosystem } from './types/types';
 import { useSelectedParachain } from './context/SelectedParachain/useSelectedParachain';
+import { Ecosystem } from './types/types';
 
 const CAMERA_POSITION = new Vector3(48, 10, 0);
 const RADIUS = 25;

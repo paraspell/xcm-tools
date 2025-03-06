@@ -1,6 +1,7 @@
-import { z } from 'zod';
 import { Version } from '@paraspell/sdk';
 import { MultiLocationSchema } from '@paraspell/xcm-analyser';
+import { z } from 'zod';
+
 import { validateAmount } from '../../utils/validateAmount.js';
 
 const StringOrNumber = z

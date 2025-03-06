@@ -2,23 +2,24 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { TransactionResponse } from 'ethers'
 import { Contract } from 'ethers'
-import abi from './abi-xcm.json' with { type: 'json' }
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
-import type { TMultiAsset, TXcmVersioned } from '../../../types'
-import { Version, type TEvmBuilderOptions, type TMultiLocation } from '../../../types'
-import { isForeignAsset, isOverrideMultiLocationSpecifier } from '../../../utils'
+
+import { InvalidCurrencyError } from '../../../errors'
+import { getParaId } from '../../../nodes/config'
 import {
   findAssetByMultiLocation,
   getAssetBySymbolOrId,
   getOtherAssets
 } from '../../../pallets/assets'
-import { InvalidCurrencyError } from '../../../errors'
-import { isEthersContract, isEthersSigner } from '../utils'
-import { getParaId } from '../../../nodes/config'
+import type { TMultiAsset, TXcmVersioned } from '../../../types'
+import { type TEvmBuilderOptions, type TMultiLocation, Version } from '../../../types'
+import { isForeignAsset, isOverrideMultiLocationSpecifier } from '../../../utils'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
-import { getParaEthTransferFees } from '../getParaEthTransferFees'
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
+import { getParaEthTransferFees } from '../getParaEthTransferFees'
+import { isEthersContract, isEthersSigner } from '../utils'
+import abi from './abi-xcm.json' with { type: 'json' }
 
 // https://github.com/moonbeam-foundation/moonbeam/blob/b2b1bde7ced13aad4bd2928effc415c521fd48cb/runtime/moonbeam/src/precompiles.rs#L281
 const xcmInterfacePrecompile = '0x000000000000000000000000000000000000081A'

@@ -1,11 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { TNodeWithRelayChains, TAsset } from '@paraspell/sdk-pjs';
+import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk-pjs';
 import { getAssets, normalizeSymbol } from '@paraspell/sdk-pjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type ExchangeNode from '../dexNodes/DexNode';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
-import type { TExchangeNode, TAutoSelect } from '../types';
+import type { TAutoSelect, TExchangeNode } from '../types';
 import { getExchangeAssets } from './getExchangeAssets';
 import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
-import type ExchangeNode from '../dexNodes/DexNode';
 
 // Mock external dependencies
 vi.mock('@paraspell/sdk-pjs', () => ({

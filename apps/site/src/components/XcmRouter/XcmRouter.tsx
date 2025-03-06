@@ -1,21 +1,22 @@
 import {
-  Text,
-  Title,
+  Box,
   Button,
-  ThemeIcon,
+  List,
   rem,
   SimpleGrid,
-  List,
-  Box,
+  Text,
+  ThemeIcon,
+  Title,
 } from "@mantine/core";
-import classes from "./XcmRouter.module.css";
+import { useMediaQuery } from "@mantine/hooks";
 import {
+  IconCheck,
   IconExchange,
   IconNetwork,
   IconRocket,
-  IconCheck,
 } from "@tabler/icons-react";
-import { useMediaQuery } from "@mantine/hooks";
+
+import classes from "./XcmRouter.module.css";
 
 const data = [
   {

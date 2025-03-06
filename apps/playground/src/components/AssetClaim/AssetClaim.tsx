@@ -1,35 +1,36 @@
 import {
-  Stack,
   Box,
-  useMantineColorScheme,
   Center,
-  Title,
+  Stack,
   Text,
+  Title,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type {
   GeneralBuilder,
   TPapiApiOrUrl,
   TPapiTransaction,
 } from '@paraspell/sdk';
-import { useState, useEffect } from 'react';
-import { useWallet } from '../../hooks/useWallet';
-import { ErrorAlert } from '../common/ErrorAlert';
-import type { FormValues } from './AssetClaimForm';
-import AssetClaimForm from './AssetClaimForm';
-import { getTxFromApi } from '../../utils';
+import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
+import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
-import type { PolkadotSigner } from 'polkadot-api';
-import { submitTransaction, submitTransactionPapi } from '../../utils';
 import type { Signer } from '@polkadot/api/types';
+import type { PolkadotSigner } from 'polkadot-api';
+import { useEffect, useState } from 'react';
+
+import { useWallet } from '../../hooks/useWallet';
+import { getTxFromApi } from '../../utils';
+import { submitTransaction, submitTransactionPapi } from '../../utils';
 import {
   showErrorNotification,
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
+import { ErrorAlert } from '../common/ErrorAlert';
 import { VersionBadge } from '../common/VersionBadge';
-import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
+import type { FormValues } from './AssetClaimForm';
+import AssetClaimForm from './AssetClaimForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 

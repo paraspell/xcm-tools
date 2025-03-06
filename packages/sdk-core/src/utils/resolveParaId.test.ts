@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('../pallets/xcmPallet/utils', () => ({
   isTMultiLocation: vi.fn()
@@ -10,11 +10,11 @@ vi.mock('../nodes/config', () => ({
   getParaId: vi.fn()
 }))
 
-import { isTMultiLocation } from '../pallets/xcmPallet/utils'
-import { isRelayChain } from '.'
 import { getParaId } from '../nodes/config'
-import { resolveParaId } from './resolveParaId'
+import { isTMultiLocation } from '../pallets/xcmPallet/utils'
 import type { TMultiLocation } from '../types'
+import { isRelayChain } from '.'
+import { resolveParaId } from './resolveParaId'
 
 describe('resolveParaId', () => {
   const parachain = 'Acala'

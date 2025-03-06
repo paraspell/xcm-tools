@@ -1,10 +1,11 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
 import { getSupportedPalletsDetails } from '../../pallets/pallets'
 import {
   PolkadotXcmError,
-  XTokensError,
   type TModuleError,
-  type TNodeDotKsmWithRelayChains
+  type TNodeDotKsmWithRelayChains,
+  XTokensError
 } from '../../types'
 import { resolveModuleError } from './resolveModuleError'
 

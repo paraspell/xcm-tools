@@ -1,8 +1,9 @@
 import { Body, Controller, Post, Req, Request } from '@nestjs/common';
-import { RouterService } from './router.service.js';
-import { RouterDto } from './dto/RouterDto.js';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
+import { RouterDto } from './dto/RouterDto.js';
+import { RouterService } from './router.service.js';
 
 @Controller()
 export class RouterController {

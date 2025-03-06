@@ -1,12 +1,13 @@
-import * as indexExports from './index';
-import * as Transfer from './transfer/transfer';
-import * as BuildTransactions from './transfer/buildTransactions';
-import * as BuildApiTransactions from './transfer/buildApiTransactions';
-import * as Types from './types';
-import * as Consts from './consts';
-import * as RouterBuilder from './builder/RouterBuilder';
+import { describe, expect, it } from 'vitest';
+
 import { getSupportedAssetsFrom, getSupportedAssetsTo } from './assets';
-import { describe, it, expect } from 'vitest';
+import * as RouterBuilder from './builder/RouterBuilder';
+import * as Consts from './consts';
+import * as indexExports from './index';
+import * as BuildApiTransactions from './transfer/buildApiTransactions';
+import * as BuildTransactions from './transfer/buildTransactions';
+import * as Transfer from './transfer/transfer';
+import * as Types from './types';
 
 describe('Index re-exports', () => {
   const moduleExports = indexExports as Record<string, unknown>;

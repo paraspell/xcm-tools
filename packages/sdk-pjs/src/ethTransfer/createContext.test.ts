@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
 import { Context } from '@snowbridge/api'
-import { createContext } from './createContext'
 import type { Config } from '@snowbridge/api/dist/environment'
+import { describe, expect, it, vi } from 'vitest'
+
+import { createContext } from './createContext'
 
 vi.mock('@snowbridge/api', () => ({
   Context: vi.fn().mockImplementation(() => ({}))

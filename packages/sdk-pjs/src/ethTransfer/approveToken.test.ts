@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { approveToken } from './approveToken'
 import { environment } from '@snowbridge/api'
 import type { WETH9 } from '@snowbridge/contract-types'
 import { WETH9__factory } from '@snowbridge/contract-types'
 import type { Signer } from 'ethers'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { approveToken } from './approveToken'
 
 describe('approveToken', () => {
   const tokenSymbol = 'TEST'

@@ -1,21 +1,21 @@
-import type {
-  TAmount,
-  TRelaychain,
-  TNodePolkadotKusama,
-  TCurrencyInput,
-  OneKey,
-  TXcmVersioned
-} from '../../types'
-import { Version, Parents, type TScenario, type TDestination } from '../../types'
-import type { TJunctions, TJunction } from '../../types/TMultiLocation'
-import { type TMultiLocation } from '../../types/TMultiLocation'
-import { type TMultiAsset } from '../../types/TMultiAsset'
-import { findParachainJunction } from '../../utils/findParachainJunction'
-import { createX1Payload } from '../../utils/createX1Payload'
 import { NODE_NAMES_DOT_KSM } from '../../constants'
 import { InvalidCurrencyError } from '../../errors'
 import { getParaId } from '../../nodes/config'
+import type {
+  OneKey,
+  TAmount,
+  TCurrencyInput,
+  TNodePolkadotKusama,
+  TRelaychain,
+  TXcmVersioned
+} from '../../types'
+import { Parents, type TDestination, type TScenario, Version } from '../../types'
+import { type TMultiAsset } from '../../types/TMultiAsset'
+import type { TJunction, TJunctions } from '../../types/TMultiLocation'
+import { type TMultiLocation } from '../../types/TMultiLocation'
 import { determineRelayChain } from '../../utils'
+import { createX1Payload } from '../../utils/createX1Payload'
+import { findParachainJunction } from '../../utils/findParachainJunction'
 
 export const isTMultiLocation = (value: unknown): value is TMultiLocation =>
   typeof value === 'object' && value !== null && 'parents' in value && 'interior' in value

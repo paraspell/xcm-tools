@@ -1,16 +1,17 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { getQuotedAmount } from './utils';
+import type { TForeignAsset, TMultiLocation } from '@paraspell/sdk-pjs';
 import {
   getAssets as sdkGetAssets,
   getNativeAssetSymbol,
   isForeignAsset,
   Parents,
 } from '@paraspell/sdk-pjs';
-import BigNumber from 'bignumber.js';
 import type { ApiPromise } from '@polkadot/api';
-import type { TMultiLocation, TForeignAsset } from '@paraspell/sdk-pjs';
-import type { TSwapOptions, TSwapResult, TAssets } from '../../types';
+import BigNumber from 'bignumber.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type { TAssets, TSwapOptions, TSwapResult } from '../../types';
 import AssetHubExchangeNode from './AssetHubDex';
+import { getQuotedAmount } from './utils';
 
 vi.mock('./utils', () => ({
   getQuotedAmount: vi.fn(),

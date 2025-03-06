@@ -1,5 +1,3 @@
-import { assetsV2, environment, toPolkadotV2 } from '@snowbridge/api'
-import { createContext } from './createContext'
 import {
   getAssetBySymbolOrId,
   getParaId,
@@ -9,7 +7,10 @@ import {
   isOverrideMultiLocationSpecifier,
   type TEvmBuilderOptions
 } from '@paraspell/sdk-core'
+import { assetsV2, environment, toPolkadotV2 } from '@snowbridge/api'
 import type { RegistryOptions } from '@snowbridge/api/dist/assets_v2'
+
+import { createContext } from './createContext'
 
 /**
  * Transfers an Ethereum asset to a Polkadot account.

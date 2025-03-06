@@ -1,12 +1,13 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ForbiddenException } from '@nestjs/common';
-import { AuthService } from './auth.service.js';
-import type { JwtService } from '@nestjs/jwt';
-import type { UsersService } from '../users/users.service.js';
 import type { ConfigService } from '@nestjs/config';
+import type { JwtService } from '@nestjs/jwt';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type { UsersService } from '../users/users.service.js';
+import { validateRecaptcha } from '../utils/validateRecaptcha.js';
+import { AuthService } from './auth.service.js';
 import type { HigherRequestLimitDto } from './dto/HigherRequestLimitDto.js';
 import { sendEmail } from './utils/utils.js';
-import { validateRecaptcha } from '../utils/validateRecaptcha.js';
 
 vi.mock('./utils/utils.js', () => ({
   sendEmail: vi.fn(),

@@ -1,11 +1,12 @@
-import { describe, it, expect, vi } from 'vitest'
-import { createApiInstanceForNode, isRelayChain } from '../../../utils'
-import { buildClaimAssetsInput } from './buildClaimAssetsInput'
+import { describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { TMultiAsset, TMultiLocation } from '../../../types'
 import { Version } from '../../../types'
 import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
+import { createApiInstanceForNode, isRelayChain } from '../../../utils'
 import { claimAssets } from './assetClaim'
-import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn(),

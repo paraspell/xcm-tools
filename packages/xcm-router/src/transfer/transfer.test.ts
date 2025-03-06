@@ -1,5 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { transfer } from './transfer';
+import type { TPjsApi } from '@paraspell/sdk-pjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type ExchangeNode from '../dexNodes/DexNode';
 import type {
   TAdditionalTransferOptions,
   TBuildTransactionsOptions,
@@ -7,12 +9,11 @@ import type {
   TRouterPlan,
   TTransferOptions,
 } from '../types';
-import type { TPjsApi } from '@paraspell/sdk-pjs';
-import { validateTransferOptions } from './utils/validateTransferOptions';
-import { prepareTransformedOptions } from './utils';
 import { buildTransactions } from './buildTransactions';
 import { executeRouterPlan } from './executeRouterPlan';
-import type ExchangeNode from '../dexNodes/DexNode';
+import { transfer } from './transfer';
+import { prepareTransformedOptions } from './utils';
+import { validateTransferOptions } from './utils/validateTransferOptions';
 
 vi.mock('@paraspell/sdk-pjs', () => {
   return {

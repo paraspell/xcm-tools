@@ -1,6 +1,6 @@
-import type { FC, ReactNode } from 'react';
 import { Alert } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
+import type { FC, ReactNode } from 'react';
 
 const alertIcon = <IconAlertCircle size={24} />;
 

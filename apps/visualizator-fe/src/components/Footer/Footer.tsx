@@ -1,10 +1,11 @@
 import { Box, Button, Group, Paper } from '@mantine/core';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import ParachainSelector from '../ParachainSelector';
-import DateRangePicker from '../DateRangePicker';
 import { useDisclosure } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
+
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
+import DateRangePicker from '../DateRangePicker';
 import OptionsModal from '../Options/OptionsModal';
+import ParachainSelector from '../ParachainSelector';
 
 const Footer = () => {
   const { t } = useTranslation();

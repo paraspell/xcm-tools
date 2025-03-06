@@ -1,9 +1,10 @@
 import { Anchor, Button, Divider, Group, Menu, Stack } from "@mantine/core";
-import { links } from "./links";
-import { Link } from "react-router-dom";
-import classes from "./Navbar.module.css";
-import { IconChevronDown } from "@tabler/icons-react";
 import { GithubIcon } from "@mantinex/dev-icons";
+import { IconChevronDown } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
+
+import { links } from "./links";
+import classes from "./Navbar.module.css";
 
 const Navbar = () => {
   const items = links.map((link) => {

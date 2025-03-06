@@ -1,11 +1,3 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import PapiApi from './PapiApi'
-import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
-import { AccountId, Binary, createClient, FixedSizeBinary } from 'polkadot-api'
-import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
-import { getWsProvider } from 'polkadot-api/ws-provider/node'
-import { transform } from './PapiXcmTransformer'
-import type { TPapiTransaction } from './types'
 import {
   BatchMode,
   computeFeeFromDryRun,
@@ -14,6 +6,15 @@ import {
   type TSerializedApiCall
 } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
+import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
+import { AccountId, Binary, createClient, FixedSizeBinary } from 'polkadot-api'
+import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
+import { getWsProvider } from 'polkadot-api/ws-provider/node'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import PapiApi from './PapiApi'
+import { transform } from './PapiXcmTransformer'
+import type { TPapiTransaction } from './types'
 
 vi.mock('polkadot-api/ws-provider/node', () => ({
   getWsProvider: vi.fn().mockReturnValue((_onMessage: (message: string) => void) => ({

@@ -1,7 +1,8 @@
+import { Group, Radio, Stack, Text } from '@mantine/core';
 import type { FC } from 'react';
-import { Radio, Group, Stack, Text } from '@mantine/core';
-import classes from './AccountSelector.module.css';
+
 import type { TWalletAccount } from '../../types/types';
+import classes from './AccountSelector.module.css';
 
 type Props = {
   accounts: TWalletAccount[];

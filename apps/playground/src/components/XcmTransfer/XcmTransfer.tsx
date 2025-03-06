@@ -1,18 +1,12 @@
 import {
-  Stack,
   Box,
+  Center,
+  Pagination,
+  Stack,
   Text,
   Title,
-  Center,
   useMantineColorScheme,
-  Pagination,
 } from '@mantine/core';
-import { ErrorAlert } from '../common/ErrorAlert';
-import type {
-  FormValuesTransformed,
-  TCurrencyEntryTransformed,
-} from './XcmTransferForm';
-import XcmTransferForm from './XcmTransferForm';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type {
   GeneralBuilder,
@@ -22,41 +16,48 @@ import type {
 } from '@paraspell/sdk';
 import { BatchMode } from '@paraspell/sdk';
 import {
-  isForeignAsset,
+  Foreign,
+  ForeignAbstract,
   getOtherAssets,
+  isForeignAsset,
   isRelayChain,
+  Native,
   Override,
   type TMultiLocation,
   type TNodePolkadotKusama,
   type TPapiTransaction,
-  Native,
-  Foreign,
-  ForeignAbstract,
 } from '@paraspell/sdk';
-import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
+import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
+import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
+import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
-import { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
+import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
+import { useEffect, useState } from 'react';
+
+import { useWallet } from '../../hooks/useWallet';
+import type { TSubmitType } from '../../types';
 import {
-  submitTransaction,
-  submitTransactionPapi,
   fetchFromApi,
   getTxFromApi,
   replaceBigInt,
+  submitTransaction,
+  submitTransactionPapi,
 } from '../../utils';
-import { useWallet } from '../../hooks/useWallet';
-import type { ApiPromise } from '@polkadot/api';
-import { ethers } from 'ethers';
-import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
-import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import {
   showErrorNotification,
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
-import { VersionBadge } from '../common/VersionBadge';
-import { OutputAlert } from '../common/OutputAlert';
-import type { TSubmitType } from '../../types';
 import BatchTypeSelectModal from '../BatchTypeSelectModal/BatchTypeSelectModal';
+import { ErrorAlert } from '../common/ErrorAlert';
+import { OutputAlert } from '../common/OutputAlert';
+import { VersionBadge } from '../common/VersionBadge';
+import type {
+  FormValuesTransformed,
+  TCurrencyEntryTransformed,
+} from './XcmTransferForm';
+import XcmTransferForm from './XcmTransferForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 

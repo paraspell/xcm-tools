@@ -1,21 +1,22 @@
 import {
-  Stack,
   Box,
-  useMantineColorScheme,
   Center,
-  Title,
+  Stack,
   Text,
+  Title,
+  useMantineColorScheme,
 } from '@mantine/core';
-import { ErrorAlert } from '../common/ErrorAlert';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import { useState, useEffect } from 'react';
-import { fetchFromApi } from '../../utils';
 import { getDefaultPallet, getSupportedPallets } from '@paraspell/sdk';
+import { useEffect, useState } from 'react';
+
+import { fetchFromApi } from '../../utils';
+import { showErrorNotification } from '../../utils/notifications';
+import { ErrorAlert } from '../common/ErrorAlert';
+import { OutputAlert } from '../common/OutputAlert';
+import { VersionBadge } from '../common/VersionBadge';
 import type { FormValues } from './PalletsQueriesForm';
 import PalletsQueriesForm from './PalletsQueriesForm';
-import { OutputAlert } from '../common/OutputAlert';
-import { showErrorNotification } from '../../utils/notifications';
-import { VersionBadge } from '../common/VersionBadge';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 

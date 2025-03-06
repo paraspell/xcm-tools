@@ -1,6 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { InvalidCurrencyError } from '../../errors'
-import { resolveOverriddenAsset } from './resolveOverriddenAsset'
+import type ParachainNode from '../../nodes/ParachainNode'
+import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
+import { createMultiAsset, isTMultiAsset, isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import type {
   TAsset,
   TMultiAsset,
@@ -11,10 +14,8 @@ import type {
 } from '../../types'
 import { getNode, isForeignAsset } from '../../utils'
 import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
-import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
-import { createMultiAsset, isTMultiAsset, isTMultiLocation } from '../../pallets/xcmPallet/utils'
+import { resolveOverriddenAsset } from './resolveOverriddenAsset'
 import { validateAssetSupport } from './validationUtils'
-import type ParachainNode from '../../nodes/ParachainNode'
 
 vi.mock('../../utils', () => ({
   getNode: vi.fn(),

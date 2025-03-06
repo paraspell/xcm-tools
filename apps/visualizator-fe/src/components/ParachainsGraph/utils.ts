@@ -1,4 +1,5 @@
 import { Vector3 } from 'three';
+
 import type { Ecosystem } from '../../types/types';
 import { getNodesByEcosystem } from '../../utils/utils';
 

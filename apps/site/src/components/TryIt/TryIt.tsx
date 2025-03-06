@@ -1,6 +1,7 @@
-import { Text, Title, Button, Image, Box, Flex } from "@mantine/core";
-import classes from "./TryIt.module.css";
+import { Box, Button, Flex, Image, Text, Title } from "@mantine/core";
+
 import playgroundMockupImg from "../../assets/playground-mockup-h.png";
+import classes from "./TryIt.module.css";
 
 const Tryit = () => {
   return (

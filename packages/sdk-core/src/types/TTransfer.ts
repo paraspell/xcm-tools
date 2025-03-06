@@ -1,3 +1,13 @@
+import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { WithApi } from './TApi'
+import type { TAsset } from './TAssets'
+import type {
+  TCurrencyInputWithAmount,
+  TMultiAssetWithFee,
+  TXcmVersioned,
+  WithAmount
+} from './TCurrency'
+import { type TMultiAsset } from './TMultiAsset'
 import { type TMultiLocation } from './TMultiLocation'
 import type {
   TNodeDotKsmWithRelayChains,
@@ -5,17 +15,7 @@ import type {
   TNodeWithRelayChains,
   TRelaychain
 } from './TNode'
-import { type TMultiAsset } from './TMultiAsset'
-import type {
-  TCurrencyInputWithAmount,
-  TMultiAssetWithFee,
-  TXcmVersioned,
-  WithAmount
-} from './TCurrency'
-import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { TPallet } from './TPallet'
-import type { WithApi } from './TApi'
-import type { TAsset } from './TAssets'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>

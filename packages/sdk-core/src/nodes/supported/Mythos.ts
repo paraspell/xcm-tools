@@ -5,14 +5,14 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
-  Version,
-  type TSerializedApiCall
+  type TSerializedApiCall,
+  Version
 } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {

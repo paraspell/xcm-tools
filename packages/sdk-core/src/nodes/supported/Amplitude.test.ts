@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../../pallets/xTokens'
 import { getNode } from '../../utils/getNode'
 import type Amplitude from './Amplitude'
 

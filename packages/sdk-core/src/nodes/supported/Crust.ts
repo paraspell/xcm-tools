@@ -1,16 +1,16 @@
 // Contains detailed structure of XCM call construction for Crust Parachain
 
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type { TAsset } from '../../types'
 import {
   type IXTokensTransfer,
-  Version,
+  type TReserveAsset,
   type TXTokensTransferOptions,
-  type TReserveAsset
+  Version
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Crust<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

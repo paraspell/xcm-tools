@@ -1,7 +1,7 @@
-import type { FC } from 'react';
+import { CodeHighlight } from '@mantine/code-highlight';
 import { Alert } from '@mantine/core';
 import { IconJson, IconLink } from '@tabler/icons-react';
-import { CodeHighlight } from '@mantine/code-highlight';
+import type { FC } from 'react';
 
 type Props = {
   onClose: () => void;

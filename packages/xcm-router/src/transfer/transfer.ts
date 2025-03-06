@@ -1,8 +1,8 @@
 import { type TTransferOptions } from '../types';
-import { prepareTransformedOptions } from './utils';
-import { validateTransferOptions } from './utils/validateTransferOptions';
 import { buildTransactions } from './buildTransactions';
 import { executeRouterPlan } from './executeRouterPlan';
+import { prepareTransformedOptions } from './utils';
+import { validateTransferOptions } from './utils/validateTransferOptions';
 
 /**
  * This function allows users to send one type of token and receive a different one on the destination chain

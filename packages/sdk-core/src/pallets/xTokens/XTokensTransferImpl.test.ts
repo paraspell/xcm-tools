@@ -1,7 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { getCurrencySelection } from './utils/getCurrencySelection'
-import { getXTokensParameters } from './utils/getXTokensParameters'
-import XTokensTransferImpl from './XTokensTransferImpl'
+import { describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../api'
 import type {
   TMultiLocation,
   TXcmVersioned,
@@ -9,7 +8,9 @@ import type {
   TXTokensTransferOptions
 } from '../../types'
 import { Parents } from '../../types'
-import type { IPolkadotApi } from '../../api'
+import { getCurrencySelection } from './utils/getCurrencySelection'
+import { getXTokensParameters } from './utils/getXTokensParameters'
+import XTokensTransferImpl from './XTokensTransferImpl'
 
 vi.mock('./utils/getCurrencySelection', () => ({
   getCurrencySelection: vi.fn()

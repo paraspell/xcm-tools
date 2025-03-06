@@ -1,2 +1,2 @@
-export * from './utils';
 export * from './calculateAcalaSwapFee';
+export * from './utils';

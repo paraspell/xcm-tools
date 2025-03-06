@@ -5,12 +5,13 @@ import { type Extrinsic } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
 import { type H256 } from '@polkadot/types/interfaces';
 import {
-  type SignerPayloadJSON,
-  type SignerResult,
-  type SignerPayloadRaw,
   type ISubmittableResult,
+  type SignerPayloadJSON,
+  type SignerPayloadRaw,
+  type SignerResult,
 } from '@polkadot/types/types';
-import { vi, describe, it, expect } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
 import { submitTransaction } from './submitTransaction';
 
 class MockApiPromise {

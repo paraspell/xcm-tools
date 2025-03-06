@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getAssetMultiLocation } from './getAssetMultiLocation'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import type { TAsset, TNativeAsset, TNodeWithRelayChains } from '../../types'
 import { Parents } from '../../types'
 import { isForeignAsset } from '../../utils'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
+import { getAssetMultiLocation } from './getAssetMultiLocation'
 
 vi.mock('../../utils', () => ({
   isForeignAsset: vi.fn()

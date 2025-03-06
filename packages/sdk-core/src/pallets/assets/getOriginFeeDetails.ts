@@ -1,8 +1,8 @@
-import type { TOriginFeeDetails } from '../../types'
-import { getBalanceNativeInternal } from './balance/getBalanceNative'
 import { Builder } from '../../builder'
+import type { TOriginFeeDetails } from '../../types'
 import type { TGetOriginFeeDetailsOptions } from '../../types/TBalance'
 import { getExistentialDeposit } from './assets'
+import { getBalanceNativeInternal } from './balance/getBalanceNative'
 
 export const getOriginFeeDetailsInternal = async <TApi, TRes>({
   api,

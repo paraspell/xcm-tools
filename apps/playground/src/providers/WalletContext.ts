@@ -1,8 +1,9 @@
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
-import { createContext } from 'react';
-import type { TApiType, TWalletAccount } from '../types';
 import type { InjectedExtension } from 'polkadot-api/pjs-signer';
+import { createContext } from 'react';
+
+import type { TApiType, TWalletAccount } from '../types';
 
 type WalletState = {
   selectedAccount?: TWalletAccount;

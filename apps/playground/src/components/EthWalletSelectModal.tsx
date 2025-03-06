@@ -1,6 +1,7 @@
-import { Modal, Stack, Button, Image } from '@mantine/core';
-import type { EIP6963ProviderDetail } from '../types';
+import { Button, Image, Modal, Stack } from '@mantine/core';
 import type { FC } from 'react';
+
+import type { EIP6963ProviderDetail } from '../types';
 
 type Props = {
   isOpen: boolean;

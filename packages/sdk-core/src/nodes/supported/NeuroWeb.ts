@@ -1,8 +1,8 @@
 // Contains detailed structure of XCM call construction for OriginTrail Parachain
 
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class NeuroWeb<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {

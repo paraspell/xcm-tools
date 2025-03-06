@@ -1,9 +1,9 @@
 import {
-  Stack,
   Box,
   Center,
-  Title,
+  Stack,
   Text,
+  Title,
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
@@ -14,15 +14,16 @@ import {
   type TCurrencyCore,
   type TMultiLocation,
 } from '@paraspell/sdk';
-import { ErrorAlert } from '../common/ErrorAlert';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
 import { useWallet } from '../../hooks/useWallet';
-import type { FormValues } from './TransferInfoForm';
-import TransferInfoForm from './TransferInfoForm';
-import { OutputAlert } from '../common/OutputAlert';
 import { fetchFromApi, replaceBigInt } from '../../utils';
 import { showErrorNotification } from '../../utils/notifications';
+import { ErrorAlert } from '../common/ErrorAlert';
+import { OutputAlert } from '../common/OutputAlert';
 import { VersionBadge } from '../common/VersionBadge';
+import type { FormValues } from './TransferInfoForm';
+import TransferInfoForm from './TransferInfoForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 

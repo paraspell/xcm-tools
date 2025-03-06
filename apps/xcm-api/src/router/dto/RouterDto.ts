@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
+
 import { validateAmount } from '../../utils/validateAmount.js';
+import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
 
 export const RouterDtoSchema = z.object({
   from: z.string(),

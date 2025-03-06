@@ -5,13 +5,14 @@ import tseslint from "typescript-eslint";
 import prettierConfig from "eslint-config-prettier";
 import reactPlugin from "eslint-plugin-react";
 import tsDocsPlugin from "eslint-plugin-tsdoc";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
 
 export default tseslint.config(
   {
     settings: {
       react: {
-        version: "18.3.1",
+        version: "19.0.0",
       },
     },
   },
@@ -39,6 +40,7 @@ export default tseslint.config(
   {
     plugins: {
       tsdoc: tsDocsPlugin,
+      "simple-import-sort": simpleImportSort,
     },
     languageOptions: {
       parserOptions: {
@@ -69,6 +71,8 @@ export default tseslint.config(
           fixStyle: "separate-type-imports",
         },
       ],
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
     },
   },
   {

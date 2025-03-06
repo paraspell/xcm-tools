@@ -1,12 +1,13 @@
-import { vi, describe, beforeEach, it, expect } from 'vitest';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { mockRequestObject } from '../testUtils.js';
+import type { TTransferInfo } from '@paraspell/sdk';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
+import { mockRequestObject } from '../testUtils.js';
+import type { TransferInfoDto } from './dto/transfer-info.dto.js';
 import { TransferInfoController } from './transfer-info.controller.js';
 import { TransferInfoService } from './transfer-info.service.js';
-import type { TransferInfoDto } from './dto/transfer-info.dto.js';
-import type { TTransferInfo } from '@paraspell/sdk';
 
 describe('TransferInfoController', () => {
   let controller: TransferInfoController;

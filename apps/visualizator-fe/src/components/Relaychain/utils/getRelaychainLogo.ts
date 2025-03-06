@@ -1,7 +1,7 @@
-import { Ecosystem } from '../../../types/types';
-import polkadotPng from '../../../logos/polkadot1.png';
 import kusamaPng from '../../../logos/kusama.png';
+import polkadotPng from '../../../logos/polkadot1.png';
 import westendPng from '../../../logos/westend.png';
+import { Ecosystem } from '../../../types/types';
 
 export const getRelaychainLogo = (ecosystem: Ecosystem) => {
   switch (ecosystem) {

@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { transformMultiLocation } from './transformMultiLocation';
 import type { TMultiLocation } from '@paraspell/sdk-pjs';
 import { Parents } from '@paraspell/sdk-pjs';
+import { describe, expect, it } from 'vitest';
+
+import { transformMultiLocation } from './transformMultiLocation';
 
 describe('transformMultiLocation', () => {
   it('should return interior as "Here" if input interior is "Here"', () => {

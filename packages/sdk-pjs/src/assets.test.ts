@@ -1,21 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { describe, it, expect, vi } from 'vitest'
 import {
-  getBalanceNative,
-  getBalanceForeign,
-  getTransferInfo,
-  getAssetBalance,
-  claimAssets
-} from './assets'
-import { createPolkadotJsApiCall } from './utils'
-import {
-  getBalanceNative as getBalanceNativeImpl,
-  getBalanceForeign as getBalanceForeignImpl,
-  getTransferInfo as getTransferInfoImpl,
+  claimAssets as claimAssetsImpl,
   getAssetBalance as getAssetBalanceImpl,
-  claimAssets as claimAssetsImpl
+  getBalanceForeign as getBalanceForeignImpl,
+  getBalanceNative as getBalanceNativeImpl,
+  getTransferInfo as getTransferInfoImpl
 } from '@paraspell/sdk-core'
+import { describe, expect, it, vi } from 'vitest'
+
+import {
+  claimAssets,
+  getAssetBalance,
+  getBalanceForeign,
+  getBalanceNative,
+  getTransferInfo
+} from './assets'
 import type { Extrinsic, TPjsApi } from './types'
+import { createPolkadotJsApiCall } from './utils'
 
 vi.mock('./utils', () => ({
   createPolkadotJsApiCall: vi.fn()

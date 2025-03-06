@@ -1,5 +1,6 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
 import * as sdkPjs from '@paraspell/sdk-pjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { getExchangeAssetByOriginAsset } from './getExchangeAssetByOriginAsset';
 
 describe('getExchangeAssetByOriginAsset', () => {

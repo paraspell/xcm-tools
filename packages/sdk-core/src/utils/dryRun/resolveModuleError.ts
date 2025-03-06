@@ -1,9 +1,9 @@
 import { getSupportedPalletsDetails } from '../../pallets/pallets'
 import {
   PolkadotXcmError,
-  XTokensError,
   type TModuleError,
-  type TNodeDotKsmWithRelayChains
+  type TNodeDotKsmWithRelayChains,
+  XTokensError
 } from '../../types'
 
 export const resolveModuleError = (node: TNodeDotKsmWithRelayChains, error: TModuleError) => {

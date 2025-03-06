@@ -1,8 +1,9 @@
 import { ethers } from 'ethers'
+
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { TAddress, TMultiLocation } from '../../../types'
 import { Parents } from '../../../types'
 import { isTMultiLocation } from '../../xcmPallet/utils'
-import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 
 export const buildBeneficiaryInput = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,

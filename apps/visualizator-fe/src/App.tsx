@@ -1,18 +1,14 @@
-import '@mantine/core/styles.css';
-import '@mantine/dates/styles.css';
-import '@mantine/charts/styles.css';
-import '@mantine/notifications/styles.css';
-import './style.css';
+import { ApolloProvider } from '@apollo/client';
+import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { Box, Flex, MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
+import { createNetworkStatusNotifier } from 'react-apollo-network-status';
+
+import LeftPanel from './components/LeftPanel';
+import LoadingScreen from './components/LoadingScreen/LoadingScreen';
+import RightPanel from './components/RightPanel';
 import SelectedParachainProvider from './context/SelectedParachain/SelectedParachainContext';
 import WalletProvider from './providers/WalletProvider';
-import { ApolloProvider } from '@apollo/client';
-import { Notifications } from '@mantine/notifications';
-import LoadingScreen from './components/LoadingScreen/LoadingScreen';
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
-import { createNetworkStatusNotifier } from 'react-apollo-network-status';
-import LeftPanel from './components/LeftPanel';
-import RightPanel from './components/RightPanel';
 
 const { link, useApolloNetworkStatus } = createNetworkStatusNotifier();
 

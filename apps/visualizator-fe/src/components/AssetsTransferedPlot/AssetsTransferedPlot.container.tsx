@@ -1,17 +1,18 @@
-import { useRef } from 'react';
-import { assetCountsBySymbolQueryDocument } from '../../api/messages';
-import AssetsTransferedPlot from './AssetsTransferedPlot';
-import { getParachainId } from '../../utils/utils';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import { useQuery } from '@apollo/client';
-import { useTranslation } from 'react-i18next';
-import { Ecosystem } from '../../types/types';
 import { Center, Group, Loader, Stack, Title } from '@mantine/core';
-import downloadSvg from '../../utils/downloadSvg';
-import DownloadButtons from '../DownloadButtons';
+import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { assetCountsBySymbolQueryDocument } from '../../api/messages';
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { AssetCountsBySymbolQuery } from '../../gql/graphql';
+import { Ecosystem } from '../../types/types';
 import convertToCsv from '../../utils/convertToCsv';
+import downloadSvg from '../../utils/downloadSvg';
 import { downloadZip } from '../../utils/downloadZip';
+import { getParachainId } from '../../utils/utils';
+import DownloadButtons from '../DownloadButtons';
+import AssetsTransferedPlot from './AssetsTransferedPlot';
 
 const now = Date.now();
 

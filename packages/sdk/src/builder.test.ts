@@ -1,8 +1,9 @@
-import type { MockInstance } from 'vitest'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as sdkCore from '@paraspell/sdk-core'
-import PapiApi from './PapiApi'
+import type { MockInstance } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { Builder } from './builder'
+import PapiApi from './PapiApi'
 import type { TPapiApi } from './types'
 
 vi.mock('./PapiApi')

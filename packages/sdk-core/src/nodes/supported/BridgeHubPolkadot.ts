@@ -1,10 +1,10 @@
 // Contains detailed structure of XCM call construction for BridgeHubPolkadot Parachain
 
 import { ScenarioNotSupportedError } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class BridgeHubPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>

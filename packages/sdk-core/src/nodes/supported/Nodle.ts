@@ -5,10 +5,10 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
-import { Version, type TSerializedApiCall } from '../../types'
-import ParachainNode from '../ParachainNode'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
+import { type TSerializedApiCall, Version } from '../../types'
+import ParachainNode from '../ParachainNode'
 
 class Nodle<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {

@@ -1,4 +1,5 @@
 import { Flex, Image, SimpleGrid, Stack, Title } from "@mantine/core";
+
 import web3FoundationLogoImg from "../../assets/web3foundation.svg";
 
 const Sponsors = () => (

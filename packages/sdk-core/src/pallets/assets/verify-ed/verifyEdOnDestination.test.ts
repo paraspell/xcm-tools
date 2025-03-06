@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../../api'
+import type { TVerifyEdOnDestinationOptions } from '../../../types'
 import * as utils from '../../../utils'
 import * as balanceModule from '../balance/getAssetBalance'
 import * as existentialModule from '../getExistentialDeposit'
 import { verifyEdOnDestination } from './verifyEdOnDestination'
-import type { TVerifyEdOnDestinationOptions } from '../../../types'
-import type { IPolkadotApi } from '../../../api'
 import * as internal from './verifyEdOnDestinationInternal'
 
 describe('verifyEdOnDestinationInternal', () => {

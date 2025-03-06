@@ -1,10 +1,11 @@
-import { useForm } from '@mantine/form';
-import type { FC } from 'react';
 import { Button, Paper, Select, Stack } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import type { TNodePolkadotKusama } from '@paraspell/sdk';
 import { NODE_NAMES_DOT_KSM } from '@paraspell/sdk';
-import type { TPalletsQuery } from '../../types';
+import type { FC } from 'react';
+
 import { PALLETS_QUERIES } from '../../consts';
+import type { TPalletsQuery } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 

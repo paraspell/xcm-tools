@@ -1,9 +1,10 @@
-import { describe, it, expect, vi } from 'vitest';
 import BigNumber from 'bignumber.js';
-import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
-import { selectBestExchangeCommon } from './selectBestExchangeCommon';
+import { describe, expect, it, vi } from 'vitest';
+
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
+import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
+import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
 vi.mock('./selectBestExchangeCommon', () => ({
   selectBestExchangeCommon: vi.fn(),

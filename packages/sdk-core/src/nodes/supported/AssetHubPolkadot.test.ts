@@ -1,8 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ethers } from 'ethers'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../api'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
+import { getOtherAssets } from '../../pallets/assets'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import type AssetHubPolkadot from './AssetHubPolkadot'
 import type {
   TMultiAsset,
   TMultiLocation,
@@ -10,11 +12,10 @@ import type {
   TXcmVersioned,
   WithAmount
 } from '../../types'
-import { Version, type TPolkadotXCMTransferOptions } from '../../types'
-import { getOtherAssets } from '../../pallets/assets'
+import { type TPolkadotXCMTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
-import type { IPolkadotApi } from '../../api'
+import type AssetHubPolkadot from './AssetHubPolkadot'
 
 vi.mock('ethers', () => ({
   ethers: {

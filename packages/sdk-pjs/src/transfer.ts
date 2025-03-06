@@ -1,12 +1,13 @@
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 import type { TEvmBuilderOptions } from '@paraspell/sdk-core'
 import {
-  send as sendImpl,
   getDryRun as getDryRunImpl,
-  getParaEthTransferFees as getEthFeesImpl
+  getParaEthTransferFees as getEthFeesImpl,
+  send as sendImpl
 } from '@paraspell/sdk-core'
+
 import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 import { createPolkadotJsApiCall } from './utils'
 
 /**
@@ -33,4 +34,4 @@ export const getParaEthTransferFees = async (api?: TPjsApiOrUrl) => {
   return getEthFeesImpl<TPjsApi, Extrinsic>(pjsApi)
 }
 
-export { depositToken, approveToken, getTokenBalance } from './ethTransfer'
+export { approveToken, depositToken, getTokenBalance } from './ethTransfer'

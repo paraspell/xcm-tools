@@ -1,5 +1,3 @@
-import { useEffect, useState, type FC, type FormEvent } from 'react';
-import { useForm } from '@mantine/form';
 import {
   Button,
   Group,
@@ -7,17 +5,20 @@ import {
   Select,
   Stack,
   Switch,
-  TextInput,
   Text,
+  TextInput,
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
 import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
-import { isValidPolkadotAddress } from '../../utils';
-import useCurrencyOptions from '../../hooks/useCurrencyOptions';
-import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
-import type { TEvmSubmitType } from '../../types';
-import { ethers, formatEther, type BrowserProvider } from 'ethers';
 import { getTokenBalance } from '@paraspell/sdk-pjs';
+import { type BrowserProvider, ethers, formatEther } from 'ethers';
+import { type FC, type FormEvent, useEffect, useState } from 'react';
+
+import useCurrencyOptions from '../../hooks/useCurrencyOptions';
+import type { TEvmSubmitType } from '../../types';
+import { isValidPolkadotAddress } from '../../utils';
+import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type FormValues = {
   from: 'Ethereum' | 'Moonbeam';

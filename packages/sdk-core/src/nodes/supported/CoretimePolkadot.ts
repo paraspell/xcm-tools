@@ -1,9 +1,9 @@
 // Contains detailed structure of XCM call construction for CoretimePolkadot Parachain
 
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class CoretimePolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>

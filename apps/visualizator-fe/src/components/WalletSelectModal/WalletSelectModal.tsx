@@ -1,8 +1,9 @@
+import { Button, Modal, Stack } from '@mantine/core';
 import type { FC } from 'react';
-import { Modal, Stack, Button } from '@mantine/core';
-import classes from './WalletSelectModal.module.css';
+
 import { getExtensionInfo } from '../../utils/getExtensionInfo';
 import { WalletButton } from '../WalletButton/WalletButton';
+import classes from './WalletSelectModal.module.css';
 
 type Props = {
   isOpen: boolean;

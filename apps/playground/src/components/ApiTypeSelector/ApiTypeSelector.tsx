@@ -1,7 +1,8 @@
 import type { MantineSize } from '@mantine/core';
 import { Center, SegmentedControl } from '@mantine/core';
-import type { TApiType } from '../../types';
 import type { FC } from 'react';
+
+import type { TApiType } from '../../types';
 import { PageRoute } from '../PageRoute';
 import { PapiLogo } from './assets/PapiLogo';
 import { PolkadotJsLogo } from './assets/PolkadotJsLogo';

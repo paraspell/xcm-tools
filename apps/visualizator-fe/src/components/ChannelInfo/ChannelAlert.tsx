@@ -11,15 +11,16 @@ import {
   Stack,
   Text
 } from '@mantine/core';
-import type { ChannelQuery } from '../../gql/graphql';
+import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import type { FC } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
-import { getParachainById } from '../../utils/utils';
-import { Ecosystem } from '../../types/types';
-import dayjs from 'dayjs';
+
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
+import type { ChannelQuery } from '../../gql/graphql';
+import { Ecosystem } from '../../types/types';
+import { getParachainById } from '../../utils/utils';
 
 type Props = {
   loading?: boolean;

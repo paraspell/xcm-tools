@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { getNativeAssetSymbol } from '../../pallets/assets'
-import { getMultiLocationTokenId } from './getMultiLocationTokenId'
 import type { TNodeDotKsmWithRelayChains } from '../../types'
 import { computeFeeFromDryRun } from './computeFeeFromDryRun'
+import { getMultiLocationTokenId } from './getMultiLocationTokenId'
 
 vi.mock('../../pallets/assets', () => ({
   getNativeAssetSymbol: vi.fn()

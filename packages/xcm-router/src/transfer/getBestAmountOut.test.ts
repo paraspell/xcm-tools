@@ -1,11 +1,12 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { getBestAmountOut } from './getBestAmountOut';
+import type { TAsset } from '@paraspell/sdk-pjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type ExchangeNode from '../dexNodes/DexNode';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
+import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
+import { getBestAmountOut } from './getBestAmountOut';
 import { selectBestExchangeAmountOut } from './selectBestExchangeAmountOut';
 import { resolveAssets } from './utils/resolveAssets';
-import type ExchangeNode from '../dexNodes/DexNode';
-import type { TAsset } from '@paraspell/sdk-pjs';
-import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
 
 vi.mock('../dexNodes/DexNodeFactory', () => ({
   createDexNodeInstance: vi.fn(),

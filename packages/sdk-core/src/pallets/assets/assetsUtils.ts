@@ -4,10 +4,10 @@ import { DuplicateAssetError, DuplicateAssetIdError, InvalidCurrencyError } from
 import type {
   TAsset,
   TCurrency,
-  TNativeAsset,
-  TNodeWithRelayChains,
+  TCurrencySymbolValue,
   TForeignAsset,
-  TCurrencySymbolValue
+  TNativeAsset,
+  TNodeWithRelayChains
 } from '../../types'
 import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
 import { getOtherAssets } from './assets'

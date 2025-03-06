@@ -1,12 +1,13 @@
-import type { TNodePolkadotKusama, TAsset, TForeignAsset } from '@paraspell/sdk-pjs';
+import type { TAsset, TForeignAsset, TNodePolkadotKusama } from '@paraspell/sdk-pjs';
 import {
   deepEqual,
   findBestMatches,
   getAssetBySymbolOrId,
   isForeignAsset,
 } from '@paraspell/sdk-pjs';
-import type { TAssetsRecord, TExchangeNode, TRouterAsset } from '../types';
+
 import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
+import type { TAssetsRecord, TExchangeNode, TRouterAsset } from '../types';
 const assetsMap = assetsMapJson as TAssetsRecord;
 
 export const getExchangeAssetByOriginAsset = (
