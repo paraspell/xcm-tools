@@ -1,12 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../utils/validateDestinationAddress', () => ({
   validateDestinationAddress: vi.fn(),
 }));
 
+import type { TTransferOptions } from '../../types';
 import { validateDestinationAddress } from '../../utils/validateDestinationAddress';
 import { validateTransferOptions } from './validateTransferOptions';
-import type { TTransferOptions } from '../../types';
 
 describe('validateTransferOptions', () => {
   beforeEach(() => {

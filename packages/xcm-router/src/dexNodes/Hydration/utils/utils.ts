@@ -1,5 +1,6 @@
 import type { BigNumber } from '@galacticcouncil/sdk';
-import { type TradeRouter, bnum, type Asset } from '@galacticcouncil/sdk';
+import { type Asset, bnum, type TradeRouter } from '@galacticcouncil/sdk';
+
 import type { TRouterAsset } from '../../../types';
 
 export const PCT_100 = bnum('100');

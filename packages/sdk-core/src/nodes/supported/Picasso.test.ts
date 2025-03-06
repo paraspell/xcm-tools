@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../../pallets/xTokens'
-import type Picasso from './Picasso'
 import { getNode } from '../../utils'
+import type Picasso from './Picasso'
 
 vi.mock('../../pallets/xTokens', () => ({
   default: {

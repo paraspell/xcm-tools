@@ -1,9 +1,10 @@
-import type { FC } from 'react';
 import type { SelectProps } from '@mantine/core';
 import { Group, Image, Select } from '@mantine/core';
-import { IconCheck } from '@tabler/icons-react';
-import { getParachainIcon } from '../../utils/getParachainIcon';
 import type { TNodePolkadotKusama } from '@paraspell/sdk-pjs';
+import { IconCheck } from '@tabler/icons-react';
+import type { FC } from 'react';
+
+import { getParachainIcon } from '../../utils/getParachainIcon';
 
 const iconProps = {
   stroke: 1.5,

@@ -1,8 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
-  TNode,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
   getAllAssetsSymbols,
   getAssetDecimals,
   getAssetId,
@@ -14,10 +11,14 @@ import {
   getRelayChainSymbol,
   getSupportedAssets,
   hasSupportForAsset,
+  TNode,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
 } from '@paraspell/sdk';
+
 import { validateNode } from '../utils.js';
-import { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 import { AssetMultiLocationDto } from './dto/AssetMultiLocationDto.js';
+import { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 
 @Injectable()
 export class AssetsService {

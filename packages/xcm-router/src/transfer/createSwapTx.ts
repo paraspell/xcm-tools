@@ -1,9 +1,10 @@
-import type ExchangeNode from '../dexNodes/DexNode';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
-import type { TBuildTransactionsOptionsModified, TWeight } from '../types';
-import BigNumber from 'bignumber.js';
-import { calculateTxFee, getTxWeight } from '../utils';
 import type { TAsset } from '@paraspell/sdk-pjs';
+import BigNumber from 'bignumber.js';
+
+import type ExchangeNode from '../dexNodes/DexNode';
+import type { TBuildTransactionsOptionsModified, TWeight } from '../types';
+import { calculateTxFee, getTxWeight } from '../utils';
+import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 
 export const calculateFromExchangeFee = async (options: TBuildTransactionsOptionsModified) => {
   const { exchange, destination, amount, feeCalcAddress } = options;

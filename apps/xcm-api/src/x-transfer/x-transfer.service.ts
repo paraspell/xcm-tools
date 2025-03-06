@@ -4,19 +4,20 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
-  IncompatibleNodesError,
-  InvalidCurrencyError,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
-  NODES_WITH_RELAY_CHAINS_DOT_KSM,
-  NODES_WITH_RELAY_CHAINS,
   Builder,
   GeneralBuilder,
+  IncompatibleNodesError,
+  InvalidCurrencyError,
+  NODES_WITH_RELAY_CHAINS,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
   TSendBaseOptions,
 } from '@paraspell/sdk';
+
 import { isValidWalletAddress } from '../utils.js';
-import { XTransferDto } from './dto/XTransferDto.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
+import { XTransferDto } from './dto/XTransferDto.js';
 
 @Injectable()
 export class XTransferService {

@@ -1,6 +1,6 @@
-import type { FC } from 'react';
 import type { CheckboxProps } from '@mantine/core';
 import { Anchor, Checkbox } from '@mantine/core';
+import type { FC } from 'react';
 
 export const XcmApiCheckbox: FC<CheckboxProps> = (props) => (
   <Checkbox

@@ -1,13 +1,14 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type { Asset } from '@galacticcouncil/sdk';
 import { TradeRouter } from '@galacticcouncil/sdk';
-import { getAssetDecimals, InvalidCurrencyError, type Extrinsic } from '@paraspell/sdk-pjs';
+import { type Extrinsic, getAssetDecimals, InvalidCurrencyError } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
-import { SmallAmountError } from '../../errors/SmallAmountError';
-import * as utils from './utils';
-import HydrationExchangeNode from './HydrationDex';
-import type { TGetAmountOutOptions, TSwapOptions } from '../../types';
 import BigNumber from 'bignumber.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { SmallAmountError } from '../../errors/SmallAmountError';
+import type { TGetAmountOutOptions, TSwapOptions } from '../../types';
+import HydrationExchangeNode from './HydrationDex';
+import * as utils from './utils';
 
 vi.mock('@galacticcouncil/sdk', () => ({
   PoolService: vi.fn(),

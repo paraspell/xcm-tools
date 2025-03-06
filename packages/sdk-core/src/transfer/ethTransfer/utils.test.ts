@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest'
 import type { Contract, Signer } from 'ethers'
 import type { Abi, GetContractReturnType, WalletClient } from 'viem'
+import { describe, expect, it } from 'vitest'
+
 import { isEthersContract, isEthersSigner } from './utils'
 
 describe('isEthersSigner', () => {

@@ -9,13 +9,14 @@ import {
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk';
-import { RouterDto } from './dto/RouterDto.js';
-import { isValidWalletAddress } from '../utils.js';
 import {
   EXCHANGE_NODES,
   RouterBuilder,
   TExchangeNode,
 } from '@paraspell/xcm-router';
+
+import { isValidWalletAddress } from '../utils.js';
+import { RouterDto } from './dto/RouterDto.js';
 
 @Injectable()
 export class RouterService {

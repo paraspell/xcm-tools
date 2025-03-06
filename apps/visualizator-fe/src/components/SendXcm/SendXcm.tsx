@@ -1,19 +1,20 @@
-import { useState } from 'react';
-import { Stack, Title, Box, Group, Button } from '@mantine/core';
+import { Box, Button, Group, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Builder, createApiInstanceForNode } from '@paraspell/sdk';
-import { submitTransaction } from './utils';
-import type { FormValues } from './SendXcmForm';
-import TransferForm from './SendXcmForm';
-import ErrorAlert from '../ErrorAlert';
-import { useWallet } from '../../hooks/useWallet';
-import { useTranslation } from 'react-i18next';
+import type { PolkadotClient } from 'polkadot-api';
 import type { InjectedExtension, PolkadotSigner } from 'polkadot-api/pjs-signer';
 import { connectInjectedExtension, getInjectedExtensions } from 'polkadot-api/pjs-signer';
-import type { PolkadotClient } from 'polkadot-api';
-import WalletSelectModal from '../WalletSelectModal/WalletSelectModal';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { useWallet } from '../../hooks/useWallet';
 import type { TWalletAccount } from '../../types';
 import AccountSelectModal from '../AccountSelectModal/AccountSelectModal';
+import ErrorAlert from '../ErrorAlert';
+import WalletSelectModal from '../WalletSelectModal/WalletSelectModal';
+import type { FormValues } from './SendXcmForm';
+import TransferForm from './SendXcmForm';
+import { submitTransaction } from './utils';
 
 const SendXcm = () => {
   const { t } = useTranslation('translation', { keyPrefix: 'sendXcmForm' });

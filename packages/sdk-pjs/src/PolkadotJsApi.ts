@@ -2,13 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { ApiPromise, WsProvider } from '@polkadot/api'
-import type { AccountData, AccountInfo } from '@polkadot/types/interfaces'
-import type { StorageKey } from '@polkadot/types'
-import { u32, type UInt } from '@polkadot/types'
-import type { AnyTuple, Codec } from '@polkadot/types/types'
-import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto'
-import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
 import type {
   TAsset,
   TBalanceResponse,
@@ -25,11 +18,19 @@ import {
   createApiInstanceForNode,
   getAssetsObject,
   getNode,
+  type IPolkadotApi,
   isForeignAsset,
   resolveModuleError,
-  type IPolkadotApi,
   type TNodeDotKsmWithRelayChains
 } from '@paraspell/sdk-core'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+import type { StorageKey } from '@polkadot/types'
+import { u32, type UInt } from '@polkadot/types'
+import type { AccountData, AccountInfo } from '@polkadot/types/interfaces'
+import type { AnyTuple, Codec } from '@polkadot/types/types'
+import { hexToU8a, isHex, stringToU8a, u8aToHex } from '@polkadot/util'
+import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto'
+
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 
 const lowercaseFirstLetter = (value: string) => value.charAt(0).toLowerCase() + value.slice(1)

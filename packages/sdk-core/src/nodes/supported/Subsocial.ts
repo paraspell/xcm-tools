@@ -1,10 +1,10 @@
 // Contains detailed structure of XCM call construction for Subsocial Parachain
 
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class Subsocial<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {

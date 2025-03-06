@@ -1,15 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ethers } from 'ethers'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../api'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
   TXTokensTransferOptions
 } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../../pallets/xTokens'
-import type Hydration from './Hydration'
 import { getNode } from '../../utils'
-import type { IPolkadotApi } from '../../api'
+import type Hydration from './Hydration'
 
 vi.mock('../../pallets/xTokens', () => ({
   default: {

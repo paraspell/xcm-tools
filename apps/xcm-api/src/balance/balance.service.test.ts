@@ -1,9 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BadRequestException } from '@nestjs/common';
-import { BalanceService } from './balance.service.js';
-import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
-import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
-import type { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 import {
   getBalanceForeign,
   getBalanceNative,
@@ -13,6 +8,12 @@ import {
   getTransferableAmount,
   verifyEdOnDestination,
 } from '@paraspell/sdk';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { BalanceService } from './balance.service.js';
+import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
+import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
+import type { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 
 vi.mock('@paraspell/sdk', () => ({
   getBalanceForeign: vi.fn(),

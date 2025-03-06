@@ -1,14 +1,14 @@
 // Contains detailed structure of XCM call construction for Acala Parachain
 
+import XTokensTransferImpl from '../../pallets/xTokens'
 import {
   type IXTokensTransfer,
   type TForeignOrTokenAsset,
-  Version,
-  type TXTokensTransferOptions
+  type TXTokensTransferOptions,
+  Version
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

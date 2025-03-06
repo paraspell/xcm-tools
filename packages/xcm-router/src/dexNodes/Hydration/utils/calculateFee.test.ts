@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import BigNumber from 'bignumber.js';
-import { calculateTxFee } from '../../../utils';
 import type { Asset } from '@galacticcouncil/sdk';
 import { TradeRouter } from '@galacticcouncil/sdk';
-import { getAssetDecimals, getNativeAssetSymbol, type Extrinsic } from '@paraspell/sdk-pjs';
+import { type Extrinsic, getAssetDecimals, getNativeAssetSymbol } from '@paraspell/sdk-pjs';
+import BigNumber from 'bignumber.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { TSwapOptions } from '../../../types';
+import { calculateTxFee } from '../../../utils';
 import { calculateFee } from './calculateFee';
 import { getAssetInfo } from './utils';
 

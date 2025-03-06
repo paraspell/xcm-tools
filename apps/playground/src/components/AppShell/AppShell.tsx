@@ -1,28 +1,17 @@
 import {
   ActionIcon,
+  Anchor,
   AppShell as MantineAppShell,
+  Button,
   Group,
   Image,
   Paper,
   Stack,
-  Button,
-  Anchor,
-  useMantineColorScheme,
   useComputedColorScheme,
+  useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { PageRoute } from '../PageRoute';
-import {
-  AssetClaimPage,
-  AssetsQueriesPage,
-  EvmTransferPage,
-  PalletsQueriesPage,
-  TransferInfoPage,
-  XcmAnalyserPage,
-  XcmRouterPage,
-  XcmTransferPage,
-} from '../../routes';
+import { useDisclosure } from '@mantine/hooks';
 import {
   IconBoxSeam,
   IconBrandGithubFilled,
@@ -36,13 +25,25 @@ import {
   IconWorldWww,
   IconZoomCode,
 } from '@tabler/icons-react';
-import { LinksGroup } from '../LinksGroup/LinksGroup';
-import { useDisclosure } from '@mantine/hooks';
-import { Header } from './Header/Header';
-import { useWallet } from '../../hooks/useWallet';
 import { useEffect, useState } from 'react';
-import classes from './Navbar.module.css';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+
 import { NAVIGATION_ITEMS } from '../../constants/constants';
+import { useWallet } from '../../hooks/useWallet';
+import {
+  AssetClaimPage,
+  AssetsQueriesPage,
+  EvmTransferPage,
+  PalletsQueriesPage,
+  TransferInfoPage,
+  XcmAnalyserPage,
+  XcmRouterPage,
+  XcmTransferPage,
+} from '../../routes';
+import { LinksGroup } from '../LinksGroup/LinksGroup';
+import { PageRoute } from '../PageRoute';
+import { Header } from './Header/Header';
+import classes from './Navbar.module.css';
 
 export const AppShell = () => {
   const [opened, { toggle }] = useDisclosure();

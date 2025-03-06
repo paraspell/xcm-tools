@@ -1,7 +1,8 @@
-import { vi, describe, beforeEach, it, expect } from 'vitest';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { NODES_WITH_RELAY_CHAINS, type TNode } from '@paraspell/sdk';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { mockRequestObject } from '../testUtils.js';
 import { NodeConfigsController } from './node-configs.controller.js';

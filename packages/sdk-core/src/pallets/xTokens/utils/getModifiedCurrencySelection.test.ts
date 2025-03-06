@@ -1,11 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
-import { Version, Parents } from '../../../types'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { DOT_MULTILOCATION } from '../../../constants'
 import type { TXTokensTransferOptions } from '../../../types'
+import { Parents, Version } from '../../../types'
 import { isForeignAsset } from '../../../utils/assets'
 import { getOtherAssets } from '../../assets'
-import { DOT_MULTILOCATION } from '../../../constants'
 import { createMultiAsset } from '../../xcmPallet/utils'
+import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
 
 vi.mock('../../../utils/assets', () => ({
   isForeignAsset: vi.fn()

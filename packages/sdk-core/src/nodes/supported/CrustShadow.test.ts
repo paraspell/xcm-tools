@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
-import type { TXTokensTransferOptions, TReserveAsset, WithAmount, TNativeAsset } from '../../types'
-import { Version } from '../../types'
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type CrustShadow from './CrustShadow'
+import type { TNativeAsset, TReserveAsset, TXTokensTransferOptions, WithAmount } from '../../types'
+import { Version } from '../../types'
 import { getNode } from '../../utils'
+import type CrustShadow from './CrustShadow'
 
 vi.mock('../../pallets/xTokens', () => ({
   default: {

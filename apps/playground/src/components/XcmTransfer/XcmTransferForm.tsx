@@ -1,7 +1,3 @@
-import { useForm } from '@mantine/form';
-import { isValidWalletAddress } from '../../utils';
-import type { FC, FormEvent } from 'react';
-import { useEffect } from 'react';
 import {
   ActionIcon,
   Button,
@@ -13,6 +9,7 @@ import {
   TextInput,
   useComputedColorScheme,
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import type {
   TAsset,
   TNodeDotKsmWithRelayChains,
@@ -22,8 +19,6 @@ import {
   NODES_WITH_RELAY_CHAINS,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
 } from '@paraspell/sdk';
-import useCurrencyOptions from '../../hooks/useCurrencyOptions';
-import { CurrencySelection } from '../common/CurrencySelection';
 import {
   IconChevronDown,
   IconLocationCheck,
@@ -31,10 +26,16 @@ import {
   IconTransfer,
   IconTrash,
 } from '@tabler/icons-react';
-import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
+import type { FC, FormEvent } from 'react';
+import { useEffect } from 'react';
+
+import useCurrencyOptions from '../../hooks/useCurrencyOptions';
 import { useWallet } from '../../hooks/useWallet';
-import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 import type { TSubmitType } from '../../types';
+import { isValidWalletAddress } from '../../utils';
+import { CurrencySelection } from '../common/CurrencySelection';
+import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
+import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type TCurrencyEntry = {
   currencyOptionId: string;

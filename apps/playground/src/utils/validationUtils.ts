@@ -1,5 +1,5 @@
-import { encodeAddress, decodeAddress } from '@polkadot/keyring';
-import { isHex, hexToU8a } from '@polkadot/util';
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
+import { hexToU8a, isHex } from '@polkadot/util';
 import { isAddress } from 'web3-validator';
 
 export const isValidPolkadotAddress = (address: string) => {

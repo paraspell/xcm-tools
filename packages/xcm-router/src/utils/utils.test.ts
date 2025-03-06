@@ -1,9 +1,10 @@
 // Unit tests for general utils
 
-import { describe, it, expect } from 'vitest';
 import { type Extrinsic } from '@paraspell/sdk-pjs';
-import { calculateTxFee } from '.';
 import BigNumber from 'bignumber.js';
+import { describe, expect, it } from 'vitest';
+
+import { calculateTxFee } from '.';
 
 interface RuntimeDispatchInfoMock {
   partialFee: { toString: () => string };

@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
-import { getNodeConfig } from './getNodeConfig'
+import { describe, expect, it, vi } from 'vitest'
+
 import type { TNodeDotKsmWithRelayChains } from '../../types'
+import { getNodeConfig } from './getNodeConfig'
 
 vi.mock('../../maps/configs.json', () => ({
   default: {

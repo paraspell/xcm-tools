@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { MultiLocationSchema } from '@paraspell/xcm-analyser';
+import { z } from 'zod';
 
 export const XcmAnalyserSchema = z.object({
   multilocation: MultiLocationSchema.optional(),

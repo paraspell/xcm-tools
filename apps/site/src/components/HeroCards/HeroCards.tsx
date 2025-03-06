@@ -1,17 +1,18 @@
-import {
-  Text,
-  Image,
-  Box,
-  Group,
-  Paper,
-  Title,
-  em,
-  Stack,
-} from "@mantine/core";
-import visualizatorImg from "../../assets/visualizator-mockup-1-compressed.png";
-import visualizatorLogoImg from "../../assets/visualizator_logo.png";
 import { CodeHighlight } from "@mantine/code-highlight";
+import {
+  Box,
+  em,
+  Group,
+  Image,
+  Paper,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+
+import visualizatorLogoImg from "../../assets/visualizator_logo.png";
+import visualizatorImg from "../../assets/visualizator-mockup-1-compressed.png";
 
 const codeForAnalyser = `
   convertMultilocationToUrl({

@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { transform, checkAndConvertToNumberOrBigInt } from './PapiXcmTransformer'
+import { describe, expect, it, vi } from 'vitest'
+
+import { checkAndConvertToNumberOrBigInt, transform } from './PapiXcmTransformer'
 
 vi.mock('polkadot-api', () => ({
   FixedSizeBinary: {

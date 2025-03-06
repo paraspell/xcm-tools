@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
-import { determineRelayChain } from '../../utils'
 import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import type { TAsset, TCurrencyInput, TDestination, TNodePolkadotKusama } from '../../types'
+import { determineRelayChain } from '../../utils'
 import { resolveAsset } from './resolveAsset'
 
 vi.mock('../../pallets/assets/getAssetBySymbolOrId', () => ({

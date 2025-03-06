@@ -1,12 +1,13 @@
 import type { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber, type Token } from '@acala-network/sdk-core';
 import type { AggregateDex } from '@acala-network/sdk-swap';
-import type { TSwapOptions } from '../../../types';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 import { firstValueFrom } from 'rxjs';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
-import { calculateTxFee } from '../../../utils';
+
 import Logger from '../../../Logger/Logger';
+import type { TSwapOptions } from '../../../types';
+import { calculateTxFee } from '../../../utils';
 
 export const calculateAcalaSwapFee = async (
   dex: AggregateDex,

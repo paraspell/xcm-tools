@@ -1,9 +1,10 @@
-import type { MockInstance } from 'vitest'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import * as sdkCore from '@paraspell/sdk-core'
-import PolkadotJsApi from './PolkadotJsApi'
-import { Builder } from './builder'
 import type { ApiPromise } from '@polkadot/api'
+import type { MockInstance } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { Builder } from './builder'
+import PolkadotJsApi from './PolkadotJsApi'
 
 vi.mock('./PolkadotJsApi')
 vi.mock('@paraspell/sdk-core')

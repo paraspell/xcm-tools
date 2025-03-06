@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import * as ethers from 'ethers'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../api'
 import type { TAddress } from '../types'
 import { Parents, Version } from '../types'
 import { generateAddressMultiLocationV4 } from './generateAddressMultiLocationV4'
-import * as ethers from 'ethers'
-import type { IPolkadotApi } from '../api'
 
 vi.mock('ethers', () => ({
   ethers: {

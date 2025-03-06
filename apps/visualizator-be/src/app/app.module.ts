@@ -1,13 +1,14 @@
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { MessageModule } from '../messages/messages.module';
-import { Asset, Message } from '../messages/message.entity';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+
 import { Channel } from '../channels/channel.entity';
 import { ChannelModule } from '../channels/channels.module';
-import { ScheduleModule } from '@nestjs/schedule';
+import { Asset, Message } from '../messages/message.entity';
+import { MessageModule } from '../messages/messages.module';
 
 const typeOrmConfig = (config: ConfigService): TypeOrmModuleOptions => ({
   type: 'postgres',

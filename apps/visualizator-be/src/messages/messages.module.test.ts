@@ -1,9 +1,10 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { MessageService } from './messages.service';
-import { MessageResolver } from './messages.resolver';
+
 import { Message } from './message.entity';
+import { MessageResolver } from './messages.resolver';
+import { MessageService } from './messages.service';
 
 describe('MessageModule', () => {
   let module: TestingModule;

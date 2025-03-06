@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { AuthController } from './auth.controller.js';
-import type { AuthService } from './auth.service.js';
+import type { Response } from 'express';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
+import { AuthController } from './auth.controller.js';
+import type { AuthService } from './auth.service.js';
 import { HigherRequestLimitDto } from './dto/HigherRequestLimitDto.js';
-import type { Response } from 'express';
 
 describe('AuthController', () => {
   let authController: AuthController;

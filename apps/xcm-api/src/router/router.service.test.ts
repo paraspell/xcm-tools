@@ -1,15 +1,16 @@
-import type { TestingModule } from '@nestjs/testing';
-import { Test } from '@nestjs/testing';
-import { RouterService } from './router.service.js';
-import type { RouterDto } from './dto/RouterDto.js';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { vi, describe, beforeEach, it, expect } from 'vitest';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import type { TNode } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
 import { RouterBuilder } from '@paraspell/xcm-router';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type { RouterDto } from './dto/RouterDto.js';
+import { RouterService } from './router.service.js';
 
 const txHash = '0x123';
 

@@ -1,4 +1,3 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type {
   TCurrencyInput,
   TForeignAsset,
@@ -7,18 +6,20 @@ import type {
   TNodePolkadotKusama,
 } from '@paraspell/sdk-pjs';
 import {
-  getOtherAssets,
-  findAssetBySymbol,
-  findAssetByMultiLocation,
   findAssetById,
+  findAssetByMultiLocation,
+  findAssetBySymbol,
   findBestMatches,
-  isSymbolSpecifier,
-  isOverrideMultiLocationSpecifier,
   getNativeAssets,
+  getOtherAssets,
+  isOverrideMultiLocationSpecifier,
+  isSymbolSpecifier,
 } from '@paraspell/sdk-pjs';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+
 import type { TRouterAsset } from '../types';
-import { getExchangeAssets } from './getExchangeAssets';
 import { getExchangeAsset } from './getExchangeAsset';
+import { getExchangeAssets } from './getExchangeAssets';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
   getOtherAssets: vi.fn(),

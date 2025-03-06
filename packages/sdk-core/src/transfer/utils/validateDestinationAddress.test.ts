@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
-import { validateDestinationAddress } from './validateDestinationAddress'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import { InvalidAddressError } from '../../errors'
+import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import type { TAddress, TDestination } from '../../types'
 import { validateAddress } from '../../utils/validateAddress'
-import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
+import { validateDestinationAddress } from './validateDestinationAddress'
 
 vi.mock('../../utils/validateAddress', () => ({
   validateAddress: vi.fn()

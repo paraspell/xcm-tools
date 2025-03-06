@@ -1,30 +1,9 @@
 // Contains selection of compatible XCM pallet for each compatible Parachain and create transfer function
 
+import { DOT_MULTILOCATION } from '../constants'
+import { InvalidCurrencyError } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import { findAssetByMultiLocation, getNativeAssetSymbol, getOtherAssets } from '../pallets/assets'
-import type {
-  TEcosystemType,
-  TScenario,
-  IXTokensTransfer,
-  IPolkadotXCMTransfer,
-  IXTransferTransfer,
-  TSendInternalOptions,
-  TDestination,
-  TNodePolkadotKusama,
-  TMultiAsset,
-  TMultiLocation,
-  TSerializedApiCall,
-  TAsset,
-  TXTokensTransferOptions,
-  TRelayToParaOverrides,
-  TAmount,
-  TRelayToParaOptions,
-  TPallet,
-  TPolkadotXCMTransferOptions,
-  TXcmVersioned
-} from '../types'
-import { Version, Parents } from '../types'
-import { generateAddressPayload, getFees, isForeignAsset, isRelayChain } from '../utils'
 import {
   constructRelayToParaParameters,
   createCurrencySpec,
@@ -33,13 +12,34 @@ import {
   isTMultiLocation
 } from '../pallets/xcmPallet/utils'
 import XTokensTransferImpl from '../pallets/xTokens'
-import { resolveParaId } from '../utils/resolveParaId'
-import { InvalidCurrencyError } from '../errors'
-import { getParaId } from './config'
-import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { getParaEthTransferFees } from '../transfer'
+import type {
+  IPolkadotXCMTransfer,
+  IXTokensTransfer,
+  IXTransferTransfer,
+  TAmount,
+  TAsset,
+  TDestination,
+  TEcosystemType,
+  TMultiAsset,
+  TMultiLocation,
+  TNodePolkadotKusama,
+  TPallet,
+  TPolkadotXCMTransferOptions,
+  TRelayToParaOptions,
+  TRelayToParaOverrides,
+  TScenario,
+  TSendInternalOptions,
+  TSerializedApiCall,
+  TXcmVersioned,
+  TXTokensTransferOptions
+} from '../types'
+import { Parents, Version } from '../types'
+import { generateAddressPayload, getFees, isForeignAsset, isRelayChain } from '../utils'
+import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
-import { DOT_MULTILOCATION } from '../constants'
+import { resolveParaId } from '../utils/resolveParaId'
+import { getParaId } from './config'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
   return typeof obj === 'object' && obj !== null && 'transferXTokens' in obj

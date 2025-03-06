@@ -1,15 +1,16 @@
-import ExchangeNode from '../DexNode';
-import type { TSwapResult, TSwapOptions, TAssets, TGetAmountOutOptions } from '../../types';
-import type { ApiPromise } from '@polkadot/api';
-import { getNativeAssetSymbol, getOtherAssets, getParaId } from '@paraspell/sdk-pjs';
-import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
-import { Amount, Token, getCurrencyCombinations } from '@crypto-dex-sdk/currency';
-import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
+import { Amount, getCurrencyCombinations, Token } from '@crypto-dex-sdk/currency';
 import { Percent } from '@crypto-dex-sdk/math';
+import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
+import { getNativeAssetSymbol, getOtherAssets, getParaId } from '@paraspell/sdk-pjs';
+import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
+
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
-import Logger from '../../Logger/Logger';
 import { SmallAmountError } from '../../errors/SmallAmountError';
+import Logger from '../../Logger/Logger';
+import type { TAssets, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import ExchangeNode from '../DexNode';
+import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 
 class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(

@@ -1,10 +1,11 @@
-import { describe, it, expect, vi } from 'vitest'
-import { buildClaimAssetsInput } from './buildClaimAssetsInput'
-import { buildBeneficiaryInput } from './buildBeneficiaryInput'
+import { describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { TMultiAsset } from '../../../types'
 import { Version } from '../../../types'
 import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
-import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import { buildBeneficiaryInput } from './buildBeneficiaryInput'
+import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 
 vi.mock('./buildBeneficiaryInput', () => ({
   buildBeneficiaryInput: vi.fn()

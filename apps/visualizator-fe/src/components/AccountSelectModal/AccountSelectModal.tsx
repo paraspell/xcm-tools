@@ -1,8 +1,9 @@
-import { Modal, Stack, Button } from '@mantine/core';
-import { useEffect, useState, type FC } from 'react';
+import { Button, Modal, Stack } from '@mantine/core';
+import { type FC, useEffect, useState } from 'react';
+
+import type { TWalletAccount } from '../../types';
 import { AccountSelector } from '../AccountSelector/AccountSelector';
 import classes from './AccountSelectModal.module.css';
-import type { TWalletAccount } from '../../types';
 
 type Props = {
   isOpen: boolean;

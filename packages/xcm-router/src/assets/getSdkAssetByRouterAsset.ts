@@ -1,8 +1,8 @@
 import type {
-  TNodePolkadotKusama,
+  TAsset,
   TForeignAsset,
   TMultiLocation,
-  TAsset,
+  TNodePolkadotKusama,
 } from '@paraspell/sdk-pjs';
 import {
   findBestMatches,
@@ -10,6 +10,7 @@ import {
   getAssets,
   isForeignAsset,
 } from '@paraspell/sdk-pjs';
+
 import type { TRouterAsset } from '../types';
 
 export const getSdkAssetByRouterAsset = (

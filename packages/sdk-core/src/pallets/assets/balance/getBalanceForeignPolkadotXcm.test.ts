@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { InvalidCurrencyError } from '../../../errors'
+import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 
 vi.mock('./getAssetHubMultiLocation', () => ({
   getAssetHubMultiLocation: vi.fn()

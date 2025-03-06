@@ -1,11 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { Version, Parents } from '../../types'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../api'
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TMultiAsset, TMultiLocation, TRelayToParaOptions, TXcmVersioned } from '../../types'
-import { createCurrencySpec, createPolkadotXcmHeader } from './utils'
-import type { IPolkadotApi } from '../../api'
-import { constructRelayToParaParameters } from './constructRelayToParaParameters'
+import { Parents, Version } from '../../types'
 import { generateAddressPayload, resolveParaId } from '../../utils'
+import { constructRelayToParaParameters } from './constructRelayToParaParameters'
+import { createCurrencySpec, createPolkadotXcmHeader } from './utils'
 
 vi.mock('../../utils', () => ({
   generateAddressPayload: vi.fn(),

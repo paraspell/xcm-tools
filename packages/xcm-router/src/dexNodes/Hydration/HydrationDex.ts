@@ -1,19 +1,20 @@
+import { PoolService, PoolType, TradeRouter } from '@galacticcouncil/sdk';
 import type { TAsset } from '@paraspell/sdk-pjs';
 import {
+  type Extrinsic,
   getAssetDecimals,
   getNativeAssetSymbol,
   InvalidCurrencyError,
-  type Extrinsic,
 } from '@paraspell/sdk-pjs';
-import ExchangeNode from '../DexNode';
-import { PoolService, TradeRouter, PoolType } from '@galacticcouncil/sdk';
-import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
-import type { TSwapResult, TSwapOptions, TAssets, TGetAmountOutOptions } from '../../types';
 import type { ApiPromise } from '@polkadot/api';
-import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
-import Logger from '../../Logger/Logger';
-import { SmallAmountError } from '../../errors/SmallAmountError';
 import BigNumber from 'bignumber.js';
+
+import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
+import { SmallAmountError } from '../../errors/SmallAmountError';
+import Logger from '../../Logger/Logger';
+import type { TAssets, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import ExchangeNode from '../DexNode';
+import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
 
 class HydrationExchangeNode extends ExchangeNode {
   async swapCurrency(

@@ -1,14 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import {
   InvalidCurrencyError,
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import type Mythos from './Mythos'
 import { getNode } from '../../utils'
+import type Mythos from './Mythos'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
   default: {

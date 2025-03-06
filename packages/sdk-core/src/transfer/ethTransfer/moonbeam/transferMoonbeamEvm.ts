@@ -2,20 +2,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TransactionResponse } from 'ethers'
 import { Contract } from 'ethers'
-import type { TEvmBuilderOptions, TForeignAsset, TNodeDotKsmWithRelayChains } from '../../../types'
-import { getNativeAssetSymbol } from '../../../pallets/assets'
-import { getAssetBySymbolOrId } from '../../../pallets/assets/getAssetBySymbolOrId'
-import { InvalidCurrencyError } from '../../../errors'
-import { isForeignAsset } from '../../../utils'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
-import { isEthersContract, isEthersSigner } from '../utils'
-import { formatAssetIdToERC20 } from './formatAssetIdToERC20'
-import { getDestinationMultilocation } from './getDestinationMultilocation'
 
+import { InvalidCurrencyError } from '../../../errors'
+import { getNativeAssetSymbol } from '../../../pallets/assets'
+import { getAssetBySymbolOrId } from '../../../pallets/assets/getAssetBySymbolOrId'
+import type { TEvmBuilderOptions, TForeignAsset, TNodeDotKsmWithRelayChains } from '../../../types'
+import { isForeignAsset } from '../../../utils'
+import { isOverrideMultiLocationSpecifier } from '../../../utils/multiLocation/isOverrideMultiLocationSpecifier'
+import { isEthersContract, isEthersSigner } from '../utils'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
-import { isOverrideMultiLocationSpecifier } from '../../../utils/multiLocation/isOverrideMultiLocationSpecifier'
+import { formatAssetIdToERC20 } from './formatAssetIdToERC20'
+import { getDestinationMultilocation } from './getDestinationMultilocation'
 
 const U_64_MAX = 18446744073709551615n
 const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000804'

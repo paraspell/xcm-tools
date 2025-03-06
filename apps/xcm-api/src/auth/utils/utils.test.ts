@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
 import type { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
 import { google } from 'googleapis';
+import * as nodemailer from 'nodemailer';
+import { describe, expect, it, vi } from 'vitest';
+
 import { sendEmail } from './utils.js';
 
 vi.mock('nodemailer');

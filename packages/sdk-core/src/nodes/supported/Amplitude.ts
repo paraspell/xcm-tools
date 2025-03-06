@@ -1,15 +1,15 @@
 // Contains detailed structure of XCM call construction for Amplitude Parachain
 
 import { InvalidCurrencyError } from '../../errors'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import {
   type IXTokensTransfer,
-  Version,
+  type TXcmAsset,
   type TXTokensTransferOptions,
-  type TXcmAsset
+  Version
 } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Amplitude<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

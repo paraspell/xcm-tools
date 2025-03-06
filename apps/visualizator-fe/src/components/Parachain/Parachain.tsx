@@ -1,19 +1,20 @@
-import type { FC, RefCallback } from 'react';
-import { useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { Text } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
 import { useFrame, useLoader } from '@react-three/fiber';
+import { easePoly } from 'd3-ease';
+import type { FC, RefCallback } from 'react';
+import { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import type { Group, Mesh, MeshStandardMaterial, SphereGeometry, Vector3 } from 'three';
 import { Color, TextureLoader } from 'three';
-import { getParachainPosition } from '../ParachainsGraph/utils';
-import { getLogoScaleFactor, getNodeLogo } from './utils';
-import { getParachainColor } from '../../utils/utils';
-import { lightenColor } from '../../utils/lightenColor';
-import { adjustUVs } from '../../utils/adjustUVs';
-import type { Ecosystem } from '../../types/types';
+
 import { FONT_URL } from '../../consts/consts';
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import { easePoly } from 'd3-ease';
+import type { Ecosystem } from '../../types/types';
+import { adjustUVs } from '../../utils/adjustUVs';
+import { lightenColor } from '../../utils/lightenColor';
+import { getParachainColor } from '../../utils/utils';
+import { getParachainPosition } from '../ParachainsGraph/utils';
+import { getLogoScaleFactor, getNodeLogo } from './utils';
 
 type Props = {
   name: string;

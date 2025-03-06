@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type ParachainNode from '../../nodes/ParachainNode'
+import type { TCurrencyInput, TNodePolkadotKusama } from '../../types'
 import { getNode } from '../../utils'
 import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
-import type { TCurrencyInput, TNodePolkadotKusama } from '../../types'
 import { determineAssetCheckEnabled } from './determineAssetCheckEnabled'
-import type ParachainNode from '../../nodes/ParachainNode'
 
 vi.mock('../../utils', () => ({
   getNode: vi.fn(),

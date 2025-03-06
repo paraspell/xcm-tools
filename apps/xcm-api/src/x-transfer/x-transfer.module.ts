@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { XTransferService } from './x-transfer.service.js';
+
 import { XTransferController } from './x-transfer.controller.js';
+import { XTransferService } from './x-transfer.service.js';
 
 @Module({
   controllers: [XTransferController],

@@ -1,5 +1,5 @@
-import type { TAddress, TDestination } from '../../types'
 import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
+import type { TAddress, TDestination } from '../../types'
 import { validateAddress } from '../../utils/validateAddress'
 
 export const validateDestinationAddress = (address: TAddress, destination: TDestination) => {

@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { ScenarioNotSupportedError } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import type Collectives from './Collectives'
 import { getNode } from '../../utils/getNode'
+import type Collectives from './Collectives'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
   default: {

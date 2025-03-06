@@ -1,6 +1,7 @@
-import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
-import { CountOption } from '../count-option';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+
 import { returnInt } from '../../utils/graphql.utils';
+import { CountOption } from '../count-option';
 
 registerEnumType(CountOption, {
   name: 'CountOption',

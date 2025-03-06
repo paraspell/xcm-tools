@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
 import { getAssets, getOtherAssets } from './assets'
-import { getSupportedAssets } from './getSupportedAssets'
 import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
+import { getSupportedAssets } from './getSupportedAssets'
 
 vi.mock('./assets', () => ({
   getAssets: vi.fn(),

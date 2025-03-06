@@ -1,11 +1,12 @@
-import { API_URL } from '../consts';
+import type { TPapiTransaction } from '@paraspell/sdk';
+import { type Extrinsic } from '@paraspell/sdk-pjs';
+import type { ApiPromise } from '@polkadot/api';
 import axios, { AxiosError } from 'axios';
 import type { PolkadotClient } from 'polkadot-api';
 import { Binary } from 'polkadot-api';
+
+import { API_URL } from '../consts';
 import type { TApiType } from '../types';
-import type { ApiPromise } from '@polkadot/api';
-import { type Extrinsic } from '@paraspell/sdk-pjs';
-import type { TPapiTransaction } from '@paraspell/sdk';
 
 export const fetchFromApi = async <T>(
   params: T,

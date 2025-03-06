@@ -1,25 +1,26 @@
 import {
-  Stack,
   Box,
-  Text,
-  useMantineColorScheme,
   Center,
+  Stack,
+  Text,
   Title,
+  useMantineColorScheme,
 } from '@mantine/core';
-import { ErrorAlert } from '../common/ErrorAlert';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import { useState, useEffect } from 'react';
+import type { TCurrencyCore, TMultiLocation } from '@paraspell/sdk';
+import { useEffect, useState } from 'react';
+
+import { useWallet } from '../../hooks/useWallet';
+import type { TAssetsQuery } from '../../types';
 import { fetchFromApi, replaceBigInt } from '../../utils';
+import { getApiEndpoint } from '../../utils/assets/apiMappings';
+import { callSdkFunc } from '../../utils/assets/sdkMappings';
+import { showErrorNotification } from '../../utils/notifications';
+import { ErrorAlert } from '../common/ErrorAlert';
+import { OutputAlert } from '../common/OutputAlert';
+import { VersionBadge } from '../common/VersionBadge';
 import type { FormValues } from './AssetsQueriesForm';
 import { AssetsQueriesForm } from './AssetsQueriesForm';
-import type { TCurrencyCore, TMultiLocation } from '@paraspell/sdk';
-import { useWallet } from '../../hooks/useWallet';
-import { showErrorNotification } from '../../utils/notifications';
-import { VersionBadge } from '../common/VersionBadge';
-import { OutputAlert } from '../common/OutputAlert';
-import { callSdkFunc } from '../../utils/assets/sdkMappings';
-import { getApiEndpoint } from '../../utils/assets/apiMappings';
-import type { TAssetsQuery } from '../../types';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 

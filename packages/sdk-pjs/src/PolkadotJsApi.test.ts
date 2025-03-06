@@ -1,13 +1,14 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import * as sdkCore from '@paraspell/sdk-core'
+import { BatchMode, type TMultiLocation, type TSerializedApiCall } from '@paraspell/sdk-core'
+import type { ApiPromise } from '@polkadot/api'
+import type { VoidFn } from '@polkadot/api/types'
 import type { StorageKey } from '@polkadot/types'
 import { u32 } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import PolkadotJsApi from './PolkadotJsApi'
-import * as sdkCore from '@paraspell/sdk-core'
-import type { VoidFn } from '@polkadot/api/types'
 import type { Extrinsic, TPjsApi } from './types'
-import { BatchMode, type TMultiLocation, type TSerializedApiCall } from '@paraspell/sdk-core'
-import type { ApiPromise } from '@polkadot/api'
 
 vi.mock('@paraspell/sdk-core', async importOriginal => {
   return {

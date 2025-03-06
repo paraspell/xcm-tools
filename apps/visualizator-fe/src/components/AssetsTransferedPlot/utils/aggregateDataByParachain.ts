@@ -1,5 +1,6 @@
 import type { TFunction } from 'i18next';
-import type { TAssetCounts, TAggregatedData } from '../../../types/types';
+
+import type { TAggregatedData, TAssetCounts } from '../../../types/types';
 import { Ecosystem } from '../../../types/types';
 import { getParachainById } from '../../../utils/utils';
 

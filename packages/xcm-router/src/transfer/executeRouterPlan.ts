@@ -1,10 +1,11 @@
 import { getBalanceNative, isNodeEvm } from '@paraspell/sdk-pjs';
+import BigNumber from 'bignumber.js';
+
+import { FEE_BUFFER } from '../consts';
 import type { TExecuteRouterPlanOptions } from '../types';
 import { type TRouterPlan } from '../types';
-import { submitTransaction } from '../utils/submitTransaction';
 import { calculateTxFeeDryRun } from '../utils';
-import BigNumber from 'bignumber.js';
-import { FEE_BUFFER } from '../consts';
+import { submitTransaction } from '../utils/submitTransaction';
 
 export const executeRouterPlan = async (
   plan: TRouterPlan,

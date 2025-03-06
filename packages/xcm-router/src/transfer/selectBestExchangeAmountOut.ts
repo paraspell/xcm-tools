@@ -1,5 +1,6 @@
-import type { TGetBestAmountOutOptions } from '../types';
 import BigNumber from 'bignumber.js';
+
+import type { TGetBestAmountOutOptions } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
 export const selectBestExchangeAmountOut = async (options: TGetBestAmountOutOptions) =>

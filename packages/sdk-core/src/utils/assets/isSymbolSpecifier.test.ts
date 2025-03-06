@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest'
-import { isSymbolSpecifier } from './isSymbolSpecifier'
+import { describe, expect, it } from 'vitest'
+
 import type { TCurrencySymbolValue, TSymbolSpecifier } from '../../types'
+import { isSymbolSpecifier } from './isSymbolSpecifier'
 
 describe('isSymbolSpecifier', () => {
   it('should return true for a valid TSymbolSpecifier object', () => {

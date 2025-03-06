@@ -1,8 +1,9 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { getDryRun } from './getDryRun'
 import type { TDryRunResult } from '../types'
 import { validateAddress } from '../utils'
+import { getDryRun } from './getDryRun'
 
 vi.mock('../utils', () => ({
   validateAddress: vi.fn()

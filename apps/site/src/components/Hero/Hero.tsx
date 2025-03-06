@@ -1,18 +1,19 @@
 import {
-  Container,
-  Text,
-  Button,
-  Group,
-  Title,
-  Image,
   Box,
+  Button,
+  Container,
   Flex,
+  Group,
+  Image,
+  Text,
+  Title,
 } from "@mantine/core";
-import classes from "./Hero.module.css";
-import ParticlesNetwork from "../ParticlesNetwork";
 import { useEffect, useMemo, useRef, useState } from "react";
+
 import HeroCards from "../HeroCards/HeroCards";
+import ParticlesNetwork from "../ParticlesNetwork";
 import Sparkle from "../Sparkle/Sparkle";
+import classes from "./Hero.module.css";
 
 export const Hero = () => {
   const memoizedParticles = useMemo(() => <ParticlesNetwork />, []);

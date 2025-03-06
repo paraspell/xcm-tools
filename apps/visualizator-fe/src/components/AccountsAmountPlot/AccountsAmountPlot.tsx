@@ -1,11 +1,14 @@
-import type { FC, RefObject } from 'react';
-import type { AccountCountsQuery } from '../../gql/graphql';
+// eslint-disable-next-line simple-import-sort/imports
 import Highcharts from 'highcharts';
 import type { HighchartsReactRefObject } from 'highcharts-react-official';
 import HighchartsReact from 'highcharts-react-official';
-import { useTranslation } from 'react-i18next';
-import type { ChartDataItem, CustomPoint } from '../../types/types';
 import { FixedSizeBinary } from 'polkadot-api';
+import type { FC, RefObject } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import type { AccountCountsQuery } from '../../gql/graphql';
+import type { ChartDataItem, CustomPoint } from '../../types/types';
+
 import 'highcharts/highcharts-more';
 
 type Props = {

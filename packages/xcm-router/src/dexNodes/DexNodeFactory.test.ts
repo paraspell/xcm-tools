@@ -1,13 +1,14 @@
 // Unit tests for DexNodeFactory
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
+import { type TExchangeNode } from '../types';
 import AcalaExchangeNode from './Acala/AcalaDex';
 import BifrostExchangeNode from './Bifrost/BifrostDex';
-import HydrationExchangeNode from './Hydration/HydrationDex';
-import InterlayExchangeNode from './Interlay/InterlayDex';
-import { type TExchangeNode } from '../types';
 import type ExchangeNode from './DexNode';
 import { createDexNodeInstance } from './DexNodeFactory';
+import HydrationExchangeNode from './Hydration/HydrationDex';
+import InterlayExchangeNode from './Interlay/InterlayDex';
 
 describe('createDexNodeInstance', () => {
   const testCases: Array<{ node: TExchangeNode; expectedClass: typeof ExchangeNode }> = [

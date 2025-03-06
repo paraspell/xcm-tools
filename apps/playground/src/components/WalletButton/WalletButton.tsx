@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import type { ButtonProps } from '@mantine/core';
 import {
   Button,
@@ -7,6 +6,8 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
+import type { FC } from 'react';
+
 import classes from './WalletButton.module.css';
 
 type Props = ButtonProps & {

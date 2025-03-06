@@ -1,6 +1,6 @@
 import type {
-  MultiLocation,
   Junction,
+  MultiLocation,
   TJunctionAccountId32,
   TJunctionAccountIndex64,
   TJunctionAccountKey20,

@@ -1,8 +1,9 @@
-import { describe, expect, it, vi, beforeEach, type MockInstance } from 'vitest';
-import { RouterBuilder } from './RouterBuilder';
 import { type Signer } from '@polkadot/api/types';
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
+
 import { buildApiTransactions, transfer } from '../transfer';
 import type { TTransferOptions } from '../types';
+import { RouterBuilder } from './RouterBuilder';
 
 vi.mock('../transfer', () => ({
   buildApiTransactions: vi.fn(),

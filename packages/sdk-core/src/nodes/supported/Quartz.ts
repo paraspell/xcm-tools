@@ -2,7 +2,7 @@
 
 import { InvalidCurrencyError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
-import { Version, type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
+import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import { isForeignAsset } from '../../utils'
 import ParachainNode from '../ParachainNode'
 

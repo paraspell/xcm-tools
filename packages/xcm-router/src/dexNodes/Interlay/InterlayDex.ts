@@ -1,21 +1,22 @@
 import type { TForeignAsset } from '@paraspell/sdk-pjs';
 import { getAssets, getNativeAssetSymbol, getNodeProviders } from '@paraspell/sdk-pjs';
-import ExchangeNode from '../DexNode';
-import type {
-  TSwapResult,
-  TSwapOptions,
-  TAssets,
-  TWeight,
-  TGetAmountOutOptions,
-} from '../../types';
-import { createInterBtcApi, createSubstrateAPI, newMonetaryAmount } from 'inter-exchange';
 import { type ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import BigNumber from 'bignumber.js';
+import { createInterBtcApi, createSubstrateAPI, newMonetaryAmount } from 'inter-exchange';
+
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
-import Logger from '../../Logger/Logger';
-import { getCurrency } from './utils';
 import { SmallAmountError } from '../../errors/SmallAmountError';
+import Logger from '../../Logger/Logger';
+import type {
+  TAssets,
+  TGetAmountOutOptions,
+  TSwapOptions,
+  TSwapResult,
+  TWeight,
+} from '../../types';
+import ExchangeNode from '../DexNode';
+import { getCurrency } from './utils';
 
 class InterlayExchangeNode extends ExchangeNode {
   async swapCurrency(

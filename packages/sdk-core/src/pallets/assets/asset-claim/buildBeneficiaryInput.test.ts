@@ -1,8 +1,9 @@
-import { describe, it, expect, vi } from 'vitest'
-import { buildBeneficiaryInput } from './buildBeneficiaryInput'
 import { ethers } from 'ethers'
-import { Parents } from '../../../types'
+import { describe, expect, it, vi } from 'vitest'
+
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import { Parents } from '../../../types'
+import { buildBeneficiaryInput } from './buildBeneficiaryInput'
 
 vi.mock('ethers', () => ({
   ethers: {

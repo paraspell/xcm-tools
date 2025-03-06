@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest'
-import { Native, Foreign, ForeignAbstract } from './assetSelectors'
+import { describe, expect, it } from 'vitest'
+
 import type { TSymbolSpecifier } from '../../types'
+import { Foreign, ForeignAbstract, Native } from './assetSelectors'
 
 describe('Symbol Specifiers', () => {
   const symbol = 'TEST'

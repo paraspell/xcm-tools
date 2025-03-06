@@ -1,16 +1,17 @@
 import { Body, Controller, Param, Post, Req, Request } from '@nestjs/common';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
-import { BalanceService } from './balance.service.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
-import {
-  BalanceNativeDto,
-  BalanceNativeDtoSchema,
-} from './dto/BalanceNativeDto.js';
+import { BalanceService } from './balance.service.js';
 import {
   BalanceForeignDto,
   BalanceForeignDtoSchema,
 } from './dto/BalanceForeignDto.js';
+import {
+  BalanceNativeDto,
+  BalanceNativeDtoSchema,
+} from './dto/BalanceNativeDto.js';
 import {
   ExistentialDepositDto,
   ExistentialDepositDtoSchema,

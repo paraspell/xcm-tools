@@ -1,19 +1,19 @@
 // Contains detailed structure of XCM call construction for AssetHubKusama Parachain
 
 import { ScenarioNotSupportedError } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TAsset, TRelayToParaOverrides } from '../../types'
 import {
   type IPolkadotXCMTransfer,
-  type TPolkadotXCMTransferOptions,
-  Version,
-  type TScenario,
   type TMultiAsset,
-  type TMultiLocation
+  type TMultiLocation,
+  type TPolkadotXCMTransferOptions,
+  type TScenario,
+  Version
 } from '../../types'
 import { getNode } from '../../utils'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {

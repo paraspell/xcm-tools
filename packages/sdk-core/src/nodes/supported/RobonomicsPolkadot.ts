@@ -1,8 +1,8 @@
 // Contains detailed structure of XCM call construction for Robonomics Parachain
 
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 
 class RobonomicsPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>

@@ -3,7 +3,6 @@ import {
   type TAsset,
   type TNodeWithRelayChains,
 } from '@paraspell/sdk';
-import { useMemo } from 'react';
 import type {
   TAutoSelect,
   TExchangeNode,
@@ -13,6 +12,7 @@ import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
 } from '@paraspell/xcm-router';
+import { useMemo } from 'react';
 
 const useRouterCurrencyOptions = (
   from: TNodeWithRelayChains | undefined,

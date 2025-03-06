@@ -1,12 +1,13 @@
-import { describe, it, expect, vi } from 'vitest'
-import * as balanceModule from './balance/getBalanceNative'
-import * as utilsModule from '../../utils'
+import { describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
 import * as BuilderModule from '../../builder'
-import * as assetsModule from './assets'
 import type { TCurrencyCore, WithAmount } from '../../types'
 import type { TNodeDotKsmWithRelayChains } from '../../types'
+import * as utilsModule from '../../utils'
+import * as assetsModule from './assets'
+import * as balanceModule from './balance/getBalanceNative'
 import { getOriginFeeDetails } from './getOriginFeeDetails'
-import type { IPolkadotApi } from '../../api/IPolkadotApi'
 
 const apiMock = {
   init: vi.fn(),

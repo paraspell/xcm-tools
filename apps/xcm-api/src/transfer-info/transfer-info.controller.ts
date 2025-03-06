@@ -1,12 +1,13 @@
-import { Controller, Request, Req, UsePipes, Post, Body } from '@nestjs/common';
+import { Body, Controller, Post, Req, Request, UsePipes } from '@nestjs/common';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
-import { TransferInfoService } from './transfer-info.service.js';
 import {
   TransferInfoDto,
   TransferInfoSchema,
 } from './dto/transfer-info.dto.js';
+import { TransferInfoService } from './transfer-info.service.js';
 
 @Controller()
 export class TransferInfoController {

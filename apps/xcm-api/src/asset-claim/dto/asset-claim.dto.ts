@@ -1,5 +1,6 @@
-import { MultiAssetSchema } from '../../x-transfer/dto/XTransferDto.js';
 import { z } from 'zod';
+
+import { MultiAssetSchema } from '../../x-transfer/dto/XTransferDto.js';
 
 export const AssetClaimSchema = z.object({
   from: z.string().optional(),

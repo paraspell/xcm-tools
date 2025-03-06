@@ -1,13 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { ApiPromise } from '@polkadot/api';
 import type { TNodeAssets } from '@paraspell/sdk-pjs';
-import { getAssetsObject, type Extrinsic } from '@paraspell/sdk-pjs';
+import { type Extrinsic, getAssetsObject } from '@paraspell/sdk-pjs';
+import type { ApiPromise } from '@polkadot/api';
+import BigNumber from 'bignumber.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { TTransferOptionsModified } from '../types';
+import { calculateTxFee } from '../utils';
 import { createSwapTx } from './createSwapTx';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
-import { calculateTxFee } from '../utils';
-import BigNumber from 'bignumber.js';
 
 vi.mock('./utils', () => ({
   buildFromExchangeExtrinsic: vi.fn(),

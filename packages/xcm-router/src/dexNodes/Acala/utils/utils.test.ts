@@ -1,8 +1,9 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
-import { ApiPromise, WsProvider } from '@polkadot/api';
 import { options } from '@acala-network/api';
-import { getNodeProviders } from '@paraspell/sdk-pjs';
 import type { TNodePolkadotKusama } from '@paraspell/sdk-pjs';
+import { getNodeProviders } from '@paraspell/sdk-pjs';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+
 import { createAcalaApiInstance } from './utils';
 
 vi.mock('@polkadot/api', () => {

@@ -1,6 +1,6 @@
-import { buildBeneficiaryInput } from './buildBeneficiaryInput'
 import { Version } from '../../../types'
 import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
+import { buildBeneficiaryInput } from './buildBeneficiaryInput'
 
 export const buildClaimAssetsInput = <TApi, TRes>({
   api,

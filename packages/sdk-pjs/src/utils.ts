@@ -1,5 +1,6 @@
 import type { IPolkadotApi, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-core'
 import { createApiInstanceForNode as createApiInstanceForNodeInternal } from '@paraspell/sdk-core'
+
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 

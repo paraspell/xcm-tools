@@ -1,7 +1,8 @@
 import { Button, Container, Group, Text, Title } from "@mantine/core";
-import classes from "./NotFound.module.css";
-import Illustration from "./Illustration";
 import { Link } from "react-router-dom";
+
+import Illustration from "./Illustration";
+import classes from "./NotFound.module.css";
 
 const NotFound = () => (
   <Container className={classes.root}>

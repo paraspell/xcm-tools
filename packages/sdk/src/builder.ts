@@ -1,9 +1,10 @@
 import type { GeneralBuilder as GeneralBuilderCore, TSendBaseOptions } from '@paraspell/sdk-core'
 import { Builder as BuilderImpl } from '@paraspell/sdk-core'
+import type { PolkadotClient } from 'polkadot-api'
+
 import { EvmBuilder as EvmBuilderImpl } from './evm-builder/EvmBuilder'
 import PapiApi from './PapiApi'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
-import type { PolkadotClient } from 'polkadot-api'
 
 /**
  * Creates a new Builder instance.

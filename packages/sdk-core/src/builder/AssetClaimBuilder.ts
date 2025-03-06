@@ -1,7 +1,7 @@
-import { type TMultiAsset, type TAddress, type TVersionClaimAssets } from '../types'
-import type { TAssetClaimOptionsBase } from '../types/TAssetClaim'
-import { claimAssets } from '../pallets/assets/asset-claim'
 import type { IPolkadotApi } from '../api'
+import { claimAssets } from '../pallets/assets/asset-claim'
+import { type TAddress, type TMultiAsset, type TVersionClaimAssets } from '../types'
+import type { TAssetClaimOptionsBase } from '../types/TAssetClaim'
 
 /**
  * Builder class for constructing asset claim transactions.

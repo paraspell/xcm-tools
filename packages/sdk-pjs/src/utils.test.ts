@@ -1,10 +1,11 @@
-import type { MockInstance } from 'vitest'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
-import { createApiInstanceForNode, createPolkadotJsApiCall } from './utils'
+import type { MockInstance } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import PolkadotJsApi from './PolkadotJsApi'
 import type { TPjsApi } from './types'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-core'
+import { createApiInstanceForNode, createPolkadotJsApiCall } from './utils'
 
 vi.mock('./PolkadotJsApi')
 vi.mock('@paraspell/sdk-core')

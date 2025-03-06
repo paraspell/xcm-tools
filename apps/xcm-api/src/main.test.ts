@@ -1,8 +1,9 @@
-import type { Mock } from 'vitest';
-import { describe, it, vi, expect, beforeAll } from 'vitest';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import type { Mock } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
+
+import { AppModule } from './app.module.js';
 
 vi.mock('@nestjs/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@nestjs/core')>();

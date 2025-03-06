@@ -5,9 +5,10 @@ import type {
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk-pjs';
 import { Builder, isForeignAsset } from '@paraspell/sdk-pjs';
-import type { TDestinationInfo, TExchangeInfo, TOriginInfo } from '../../types';
 import { ethers } from 'ethers-v6';
+
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
+import type { TDestinationInfo, TExchangeInfo, TOriginInfo } from '../../types';
 
 export const getCurrencySelection = (
   node: TNodeDotKsmWithRelayChains,

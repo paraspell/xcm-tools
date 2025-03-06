@@ -1,19 +1,20 @@
-import { useRef, useState } from 'react';
-import { accountXcmCountsQueryDocument } from '../../api/messages';
-import AccountsAmountPlot from './AccountsAmountPlot';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import { getParachainId } from '../../utils/utils';
 import { useQuery } from '@apollo/client';
-import { useTranslation } from 'react-i18next';
-import { Ecosystem } from '../../types/types';
 import { Center, Flex, Group, Loader, Stack } from '@mantine/core';
-import SliderInput from '../SliderInput';
 import type { HighchartsReactRefObject } from 'highcharts-react-official';
-import DownloadButtons from '../DownloadButtons';
+import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { accountXcmCountsQueryDocument } from '../../api/messages';
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { AccountCountsQuery } from '../../gql/graphql';
+import { Ecosystem } from '../../types/types';
 import convertToCsv from '../../utils/convertToCsv';
-import { downloadZip } from '../../utils/downloadZip';
 import downloadSvg from '../../utils/downloadSvg';
+import { downloadZip } from '../../utils/downloadZip';
+import { getParachainId } from '../../utils/utils';
+import DownloadButtons from '../DownloadButtons';
+import SliderInput from '../SliderInput';
+import AccountsAmountPlot from './AccountsAmountPlot';
 
 const now = Date.now();
 

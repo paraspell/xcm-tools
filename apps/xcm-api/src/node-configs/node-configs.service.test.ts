@@ -1,12 +1,13 @@
-import type { MockInstance } from 'vitest';
-import { vi, describe, beforeEach, it, expect, afterEach } from 'vitest';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import * as paraspellSdk from '@paraspell/sdk';
-import * as utils from '../utils.js';
 import type { TNode } from '@paraspell/sdk';
+import * as paraspellSdk from '@paraspell/sdk';
+import type { MockInstance } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import * as utils from '../utils.js';
 import { NodeConfigsService } from './node-configs.service.js';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');

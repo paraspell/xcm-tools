@@ -1,11 +1,12 @@
 import { Container, Stack } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
+
 import { ContactUs } from "../components/ContactUs/ContactUs";
+import { Faq } from "../components/Faq/Faq";
 import { Features } from "../components/Features/Features";
 import { Hero } from "../components/Hero/Hero";
-import { Faq } from "../components/Faq/Faq";
-import { Tryit } from "../components/TryIt/TryIt";
-import { useMediaQuery } from "@mantine/hooks";
 import { Learn } from "../components/Learn/Learn";
+import { Tryit } from "../components/TryIt/TryIt";
 
 const HomePage = () => {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");

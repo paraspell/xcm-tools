@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getDestinationMultilocation } from './getDestinationMultilocation'
-import { getAssetsObject } from '../../../pallets/assets'
-import { getNodeConfig } from '../../../nodes/config'
-import type { TNodeAssets, TNodeConfig, TNodePolkadotKusama } from '../../../types'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import type { IPolkadotApi } from '../../../api'
+import { getNodeConfig } from '../../../nodes/config'
+import { getAssetsObject } from '../../../pallets/assets'
+import type { TNodeAssets, TNodeConfig, TNodePolkadotKusama } from '../../../types'
+import { getDestinationMultilocation } from './getDestinationMultilocation'
 
 vi.mock('../../../pallets/assets', () => ({
   getAssetsObject: vi.fn()

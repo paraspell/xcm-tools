@@ -1,10 +1,11 @@
-import type { MockInstance } from 'vitest'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import * as sdkCore from '@paraspell/sdk-core'
-import PapiApi from './PapiApi'
-import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 import type { TSendOptions } from '@paraspell/sdk-core'
+import * as sdkCore from '@paraspell/sdk-core'
+import type { MockInstance } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import PapiApi from './PapiApi'
 import { getParaEthTransferFees, send } from './transfer'
+import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 
 vi.mock('./PapiApi')
 vi.mock('@paraspell/sdk-core')

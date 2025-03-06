@@ -1,10 +1,10 @@
 // Contains detailed structure of XCM call construction for Parallel Parachain
 
 import { InvalidCurrencyError } from '../../errors'
-import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
+import XTokensTransferImpl from '../../pallets/xTokens'
+import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Parallel<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

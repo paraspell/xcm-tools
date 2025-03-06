@@ -1,6 +1,11 @@
 // Contains tests for different Asset operation functions
 
 import { describe, expect, it } from 'vitest'
+
+import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '../../constants'
+import { getParaId } from '../../nodes/config'
+import type { TEcosystemType } from '../../types'
+import { getNode } from '../../utils'
 import {
   getAllAssetsSymbols,
   getAssetDecimals,
@@ -12,10 +17,6 @@ import {
   getTNode,
   hasSupportForAsset
 } from './assets'
-import type { TEcosystemType } from '../../types'
-import { getNode } from '../../utils'
-import { getParaId } from '../../nodes/config'
-import { NODE_NAMES, NODE_NAMES_DOT_KSM } from '../../constants'
 
 describe('getAssetsObject', () => {
   it('should return assets object for all nodes', () => {

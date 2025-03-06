@@ -1,5 +1,3 @@
-import type { FC } from 'react';
-import { useEffect, useState } from 'react';
 import {
   Box,
   FloatingIndicator,
@@ -7,9 +5,12 @@ import {
   rem,
   UnstyledButton,
 } from '@mantine/core';
-import classes from './FloatingTabs.module.css';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+
 import type { TNavItem } from '../../types';
+import classes from './FloatingTabs.module.css';
 
 type Props = {
   data: TNavItem[];

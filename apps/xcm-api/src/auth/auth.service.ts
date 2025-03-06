@@ -1,12 +1,13 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { HigherRequestLimitDto } from './dto/HigherRequestLimitDto.js';
-import { sendEmail } from './utils/utils.js';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+
 import { UsersService } from '../users/users.service.js';
+import { validateRecaptcha } from '../utils/validateRecaptcha.js';
+import { HigherRequestLimitDto } from './dto/HigherRequestLimitDto.js';
 import { generateConfirmationEmailHtml } from './utils/generateConfirmationEmailHtml.js';
 import { generateNewHigherLimitRequestHtml } from './utils/generateNewHigherLimitRequestHtml.js';
-import { validateRecaptcha } from '../utils/validateRecaptcha.js';
+import { sendEmail } from './utils/utils.js';
 
 const sendEmails = async (
   { email, reason, requestedLimit }: HigherRequestLimitDto,

@@ -1,7 +1,7 @@
-import MainScene from '../MainScene';
 import Canvas3D from '../components/Canvas3D';
 import Lights from '../components/Lights';
 import SkyBox from '../components/Skybox';
+import MainScene from '../MainScene';
 
 const Scene3d = () => (
   <div id="canvas-container">

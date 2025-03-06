@@ -1,40 +1,41 @@
 import {
-  Stack,
   Box,
   Button,
-  useMantineColorScheme,
   Center,
-  Title,
+  Stack,
   Text,
+  Title,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import { useState, useEffect } from 'react';
-import type { BrowserProvider } from 'ethers';
-import { ethers } from 'ethers';
-import { ErrorAlert } from '../common/ErrorAlert';
-import type { FormValuesTransformed } from './EvmTransferForm';
-import EvmTransferForm from './EvmTransferForm';
 import type { TNode } from '@paraspell/sdk';
+import { EvmBuilder } from '@paraspell/sdk';
 import {
-  depositToken,
   approveToken,
+  depositToken,
   EvmBuilder as EvmBuilderPJS,
 } from '@paraspell/sdk-pjs';
-import { EvmBuilder } from '@paraspell/sdk';
-import { Web3 } from 'web3';
-import type { EIP6963ProviderDetail, TEvmSubmitType } from '../../types';
-import EthWalletSelectModal from '../EthWalletSelectModal';
-import EthAccountsSelectModal from '../EthAccountsSelectModal';
+import type { BrowserProvider } from 'ethers';
+import { ethers } from 'ethers';
+import { useEffect, useState } from 'react';
 import type { Address } from 'viem';
 import { createWalletClient, custom } from 'viem';
-import { moonbeam, mainnet, moonriver, darwinia } from 'viem/chains';
+import { darwinia, mainnet, moonbeam, moonriver } from 'viem/chains';
+import { Web3 } from 'web3';
+
 import { useWallet } from '../../hooks/useWallet';
+import type { EIP6963ProviderDetail, TEvmSubmitType } from '../../types';
 import {
   showErrorNotification,
   showLoadingNotification,
   showSuccessNotification,
 } from '../../utils/notifications';
+import { ErrorAlert } from '../common/ErrorAlert';
 import { VersionBadge } from '../common/VersionBadge';
+import EthAccountsSelectModal from '../EthAccountsSelectModal';
+import EthWalletSelectModal from '../EthWalletSelectModal';
+import type { FormValuesTransformed } from './EvmTransferForm';
+import EvmTransferForm from './EvmTransferForm';
 
 const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
 

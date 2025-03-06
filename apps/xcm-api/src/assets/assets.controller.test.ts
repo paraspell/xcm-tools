@@ -1,11 +1,12 @@
-import { vi, describe, beforeEach, it, expect } from 'vitest';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { AssetsController } from './assets.controller.js';
-import { AssetsService } from './assets.service.js';
 import type { TAsset, TNativeAsset, TNode, TNodeAssets } from '@paraspell/sdk';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { mockRequestObject } from '../testUtils.js';
+import { AssetsController } from './assets.controller.js';
+import { AssetsService } from './assets.service.js';
 import type { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 
 // Integration tests to ensure controller and service are working together

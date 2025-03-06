@@ -1,17 +1,18 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import { InvalidCurrencyError } from '../../errors'
+import type { TAsset, TNativeAsset, TNodeDotKsmWithRelayChains } from '../../types'
+import { isForeignAsset } from '../../utils'
+import { getExistentialDeposit } from './assets'
+import { getBalanceForeignInternal } from './balance/getBalanceForeign'
+import { getBalanceNativeInternal } from './balance/getBalanceNative'
+import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 import {
-  getMaxNativeTransferableAmount,
   getMaxForeignTransferableAmount,
+  getMaxNativeTransferableAmount,
   getTransferableAmount
 } from './getTransferableAmount'
-import { getBalanceNativeInternal } from './balance/getBalanceNative'
-import { getBalanceForeignInternal } from './balance/getBalanceForeign'
-import { getExistentialDeposit } from './assets'
-import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
-import { InvalidCurrencyError } from '../../errors'
-import { isForeignAsset } from '../../utils'
-import type { TAsset, TNativeAsset, TNodeDotKsmWithRelayChains } from '../../types'
-import type { IPolkadotApi } from '../../api/IPolkadotApi'
 
 vi.mock('./balance/getBalanceNative', () => ({
   getBalanceNativeInternal: vi.fn()
@@ -30,14 +31,11 @@ vi.mock('./assets', () => ({
   isNodeEvm: vi.fn()
 }))
 
-vi.mock('../../utils', async () => {
-  const actual = await vi.importActual<typeof import('../../utils')>('../../utils')
-  return {
-    ...actual,
-    isForeignAsset: vi.fn(),
-    validateAddress: vi.fn()
-  }
-})
+vi.mock('../../utils', () => ({
+  isForeignAsset: vi.fn(),
+  validateAddress: vi.fn(),
+  isRelayChain: vi.fn().mockImplementation(chain => chain === 'Polkadot' || chain === 'Kusama')
+}))
 
 describe('Transferable Amounts', () => {
   const apiMock = {

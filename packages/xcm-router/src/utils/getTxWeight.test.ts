@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
-import BigNumber from 'bignumber.js';
-import { getTxWeight } from './getTxWeight';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
+import BigNumber from 'bignumber.js';
+import { describe, expect, it, vi } from 'vitest';
+
+import { getTxWeight } from './getTxWeight';
 
 describe('getTxWeight', () => {
   it('should return correct weight values as BigNumber', async () => {

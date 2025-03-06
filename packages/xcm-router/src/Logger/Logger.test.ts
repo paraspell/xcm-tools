@@ -1,13 +1,14 @@
 import {
-  describe,
-  it,
-  expect,
-  vi,
-  type MockInstance,
   afterAll,
   afterEach,
   beforeAll,
+  describe,
+  expect,
+  it,
+  type MockInstance,
+  vi,
 } from 'vitest';
+
 import Logger from './Logger';
 
 // Unit tests for Logger class

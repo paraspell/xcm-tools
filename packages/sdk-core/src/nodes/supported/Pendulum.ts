@@ -5,11 +5,11 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
-import { Version, type TSerializedApiCall } from '../../types'
+import { type TSerializedApiCall, Version } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

@@ -1,9 +1,9 @@
 // Contains basic structure of polkadotXCM call
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
-import { isTMultiLocation } from '../xcmPallet/utils'
 import type { TPallet, TPolkadotXcmSection, TSerializedApiCall } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
+import { isTMultiLocation } from '../xcmPallet/utils'
 
 class PolkadotXCMTransferImpl {
   static transferPolkadotXCM<TApi, TRes>(

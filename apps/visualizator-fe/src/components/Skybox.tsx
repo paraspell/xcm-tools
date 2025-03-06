@@ -1,8 +1,9 @@
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
 import { CubeTextureLoader } from 'three';
-import { loadImageFromDB } from '../utils/idbUtils';
+
 import { useSelectedParachain } from '../context/SelectedParachain/useSelectedParachain';
+import { loadImageFromDB } from '../utils/idbUtils';
 
 const SkyBox = () => {
   const { scene } = useThree();

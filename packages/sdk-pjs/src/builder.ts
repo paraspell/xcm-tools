@@ -1,6 +1,7 @@
-import type { AbstractProvider } from 'ethers'
 import type { GeneralBuilder as GeneralBuilderCore, TSendBaseOptions } from '@paraspell/sdk-core'
 import { Builder as BuilderImpl } from '@paraspell/sdk-core'
+import type { AbstractProvider } from 'ethers'
+
 import { EvmBuilder as EvmBuilderImpl } from './evm-builder/EvmBuilder'
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'

@@ -1,9 +1,10 @@
-import type { SelectedParachain } from '../context/SelectedParachain/SelectedParachainContext';
 import {
   prodRelayKusama,
   prodRelayPolkadot,
   testRelayWestend
 } from '@polkadot/apps-config/endpoints';
+
+import type { SelectedParachain } from '../context/SelectedParachain/SelectedParachainContext';
 import { Ecosystem } from '../types/types';
 
 export const getParachainId = (parachain: SelectedParachain, ecosystem: Ecosystem): number => {

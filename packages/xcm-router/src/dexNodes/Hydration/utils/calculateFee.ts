@@ -1,12 +1,13 @@
 import type { Asset, TradeRouter } from '@galacticcouncil/sdk';
-import type { TSwapOptions } from '../../../types';
 import type { Extrinsic, TAsset } from '@paraspell/sdk-pjs';
 import { getAssetDecimals, getNativeAssetSymbol, type TNode } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
-import { getAssetInfo, getMinAmountOut } from './utils';
-import { calculateTxFee } from '../../../utils';
-import Logger from '../../../Logger/Logger';
+
 import { FEE_BUFFER } from '../../../consts';
+import Logger from '../../../Logger/Logger';
+import type { TSwapOptions } from '../../../types';
+import { calculateTxFee } from '../../../utils';
+import { getAssetInfo, getMinAmountOut } from './utils';
 
 export const calculateFee = async (
   {

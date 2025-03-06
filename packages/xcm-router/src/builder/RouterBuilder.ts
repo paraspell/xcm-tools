@@ -1,9 +1,11 @@
-import { type Signer } from '@polkadot/types/types';
 import type {
   TCurrencyInput,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
 } from '@paraspell/sdk-pjs';
+import { type Signer } from '@polkadot/types/types';
+
+import { buildApiTransactions, getBestAmountOut, transfer } from '../transfer';
 import type {
   TBuildTransactionsOptions,
   TExchangeNode,
@@ -11,7 +13,6 @@ import type {
   TStatusChangeCallback,
   TTransferOptions,
 } from '../types';
-import { buildApiTransactions, transfer, getBestAmountOut } from '../transfer';
 
 /**
  * Builder class for constructing and executing cross-chain transfers using the XCM Router.

@@ -1,18 +1,19 @@
 import {
-  Text,
-  Title,
-  Button,
-  ThemeIcon,
-  rem,
-  List,
   Box,
+  Button,
   Group,
   Image,
+  List,
+  rem,
+  Text,
+  ThemeIcon,
+  Title,
 } from "@mantine/core";
-import classes from "./XcmVisualizator.module.css";
 import { IconCheck } from "@tabler/icons-react";
+
 import visualizatorLogoImg from "../../assets/visualizator_logo.png";
 import visualizatorMockupImg from "../../assets/visualizator-mockup-2-h.png";
+import classes from "./XcmVisualizator.module.css";
 
 const XcmVisualizator = () => (
   <div className={classes.wrapper} id="xcm-visualizator">

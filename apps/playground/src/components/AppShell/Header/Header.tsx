@@ -1,4 +1,3 @@
-import type { FC } from 'react';
 import type { MantineSize } from '@mantine/core';
 import {
   Box,
@@ -9,12 +8,14 @@ import {
   useComputedColorScheme,
   useMatches,
 } from '@mantine/core';
-import { useWallet } from '../../../hooks/useWallet';
-import { FloatingTabs } from '../../FloatingTabs/FloatingTabs';
-import { ApiTypeSelector } from '../../ApiTypeSelector/ApiTypeSelector';
+import type { FC } from 'react';
+
 import { NAVIGATION_ITEMS } from '../../../constants/constants';
-import { getExtensionInfo } from '../../../utils/getExtensionInfo';
+import { useWallet } from '../../../hooks/useWallet';
 import type { TApiType } from '../../../types';
+import { getExtensionInfo } from '../../../utils/getExtensionInfo';
+import { ApiTypeSelector } from '../../ApiTypeSelector/ApiTypeSelector';
+import { FloatingTabs } from '../../FloatingTabs/FloatingTabs';
 
 type Props = {
   onMenuClick: () => void;

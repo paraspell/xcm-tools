@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { AssetClaimController } from './asset-claim.controller.js';
-import type { AssetClaimService } from './asset-claim.service.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
-import type { AssetClaimDto } from './dto/asset-claim.dto.js';
 import type { RequestWithUser } from '../types/types.js';
+import { AssetClaimController } from './asset-claim.controller.js';
+import type { AssetClaimService } from './asset-claim.service.js';
+import type { AssetClaimDto } from './dto/asset-claim.dto.js';
 
 describe('AssetClaimController', () => {
   let controller: AssetClaimController;

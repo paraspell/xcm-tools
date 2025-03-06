@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+
 import type { TWalletAccount } from '../types';
 
 interface WalletState {

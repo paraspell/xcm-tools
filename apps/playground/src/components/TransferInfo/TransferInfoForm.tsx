@@ -1,6 +1,3 @@
-import { useForm } from '@mantine/form';
-import { isValidWalletAddress } from '../../utils';
-import { useEffect, type FC } from 'react';
 import {
   ActionIcon,
   Button,
@@ -10,14 +7,18 @@ import {
   Stack,
   TextInput,
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
 import {
   getRelayChainSymbol,
   isRelayChain,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
 } from '@paraspell/sdk';
-import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { IconTransfer } from '@tabler/icons-react';
+import { type FC, useEffect } from 'react';
+
+import { isValidWalletAddress } from '../../utils';
+import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type FormValues = {

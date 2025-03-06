@@ -1,6 +1,7 @@
 import { Box } from '@mantine/core';
-import EcosystemSelect from './EcosystemSelect';
+
 import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
+import EcosystemSelect from './EcosystemSelect';
 
 const EcosystemSelectContainer = () => {
   const { selectedEcosystem, setSelectedEcosystem } = useSelectedParachain();

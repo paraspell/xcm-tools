@@ -1,5 +1,9 @@
+import type {
+  TCurrencyCore,
+  TNodePolkadotKusama,
+  TNodeWithRelayChains,
+} from '@paraspell/sdk';
 import * as Sdk from '@paraspell/sdk';
-import * as SdkPjs from '@paraspell/sdk-pjs';
 import {
   getAllAssetsSymbols,
   getAssetDecimals,
@@ -12,11 +16,8 @@ import {
   getRelayChainSymbol,
   hasSupportForAsset,
 } from '@paraspell/sdk';
-import type {
-  TCurrencyCore,
-  TNodePolkadotKusama,
-  TNodeWithRelayChains,
-} from '@paraspell/sdk';
+import * as SdkPjs from '@paraspell/sdk-pjs';
+
 import type { FormValues } from '../../components/AssetsQueries/AssetsQueriesForm';
 import type { TApiType, TAssetsQuery } from '../../types';
 

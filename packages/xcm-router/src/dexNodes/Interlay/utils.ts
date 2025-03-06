@@ -1,4 +1,5 @@
 import { type InterBtcApi } from 'inter-exchange';
+
 import type { TRouterAsset } from '../../types';
 
 export const getCurrency = async (interBTC: InterBtcApi, asset: TRouterAsset) => {

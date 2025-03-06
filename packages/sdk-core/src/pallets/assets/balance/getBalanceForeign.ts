@@ -1,9 +1,9 @@
+import { InvalidCurrencyError } from '../../../errors'
+import type { TGetBalanceForeignOptions } from '../../../types/TBalance'
 import { getDefaultPallet } from '../../pallets'
 import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
-import type { TGetBalanceForeignOptions } from '../../../types/TBalance'
-import { InvalidCurrencyError } from '../../../errors'
 
 export const getBalanceForeignInternal = async <TApi, TRes>({
   address,

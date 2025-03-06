@@ -1,11 +1,11 @@
 import { getCurrency } from '../../pallets/xcmPallet/utils'
 import type { TPallet } from '../../types'
 import {
-  Version,
-  type TXTransferTransferOptions,
   Parents,
+  type TSerializedApiCall,
   type TXTransferSection,
-  type TSerializedApiCall
+  type TXTransferTransferOptions,
+  Version
 } from '../../types'
 import { determineDestWeight } from './utils/determineDestWeight'
 import { getDestination } from './utils/getDestination'

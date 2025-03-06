@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import BigNumber from 'bignumber.js';
 import type { ApiPromise } from '@polkadot/api';
+import BigNumber from 'bignumber.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { TSwapOptions, TSwapResult } from '../../types';
-import { createAcalaApiInstance, calculateAcalaSwapFee } from './utils';
 import AcalaExchangeNode from './AcalaDex';
+import { calculateAcalaSwapFee, createAcalaApiInstance } from './utils';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
   getBalanceNative: vi.fn().mockResolvedValue(new BigNumber(100)),

@@ -1,12 +1,12 @@
 // Contains detailed structure of XCM call construction for Shiden Parachain
 
 import {
-  Version,
   type IPolkadotXCMTransfer,
   type IXTokensTransfer,
   type TPolkadotXCMTransferOptions,
   type TSendInternalOptions,
-  type TXTokensTransferOptions
+  type TXTokensTransferOptions,
+  Version
 } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'

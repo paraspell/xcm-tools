@@ -1,5 +1,6 @@
 import type { FC, PropsWithChildren } from 'react';
 import { useEffect, useState } from 'react';
+
 import { WalletContext } from '../context/WalletContext';
 import type { TWalletAccount } from '../types';
 

@@ -1,13 +1,14 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  Injectable,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service.js';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { RequestWithUser } from '../types/types.js';
+import { UsersService } from '../users/users.service.js';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

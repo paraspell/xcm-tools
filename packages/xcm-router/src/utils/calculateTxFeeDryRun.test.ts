@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import BigNumber from 'bignumber.js';
-import { calculateTxFeeDryRun } from './calculateTxFeeDryRun';
-import { DRY_RUN_FEE_BUFFER } from '../consts';
 import * as sdkPjs from '@paraspell/sdk-pjs';
+import BigNumber from 'bignumber.js';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { DRY_RUN_FEE_BUFFER } from '../consts';
+import { calculateTxFeeDryRun } from './calculateTxFeeDryRun';
 
 describe('calculateTxFeeDryRun', () => {
   const api = {} as unknown as sdkPjs.TPjsApi;

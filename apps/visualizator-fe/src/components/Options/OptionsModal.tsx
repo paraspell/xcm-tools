@@ -1,7 +1,8 @@
-import type { FC } from 'react';
 import { Modal, Title } from '@mantine/core';
-import Options from './Options';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import Options from './Options';
 
 type Props = {
   opened: boolean;

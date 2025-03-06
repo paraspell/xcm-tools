@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { ZodError } from 'zod';
+
 import { type MultiLocation } from '../types';
 import { convertMultilocationToUrl, convertXCMToUrls } from './convert';
-import { ZodError } from 'zod';
 
 describe('convert', () => {
   it('convert multilocation to URL', () => {

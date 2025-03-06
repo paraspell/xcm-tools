@@ -1,14 +1,15 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import type { Signer } from 'ethers'
-import { EvmBuilder } from './EvmBuilder'
 import {
+  type IPolkadotApi,
+  type TCurrencyInputWithAmount,
   transferMoonbeamEvm,
   transferMoonbeamToEth,
-  validateAddress,
-  type IPolkadotApi,
-  type TCurrencyInputWithAmount
+  validateAddress
 } from '@paraspell/sdk-core'
+import type { Signer } from 'ethers'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { transferEthToPolkadot } from '../ethTransfer'
+import { EvmBuilder } from './EvmBuilder'
 
 vi.mock('../ethTransfer', () => ({
   transferEthToPolkadot: vi.fn().mockResolvedValue({

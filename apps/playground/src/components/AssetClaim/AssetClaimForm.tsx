@@ -1,10 +1,11 @@
-import type { FC } from 'react';
-import { Stack, TextInput, Button, Paper } from '@mantine/core';
+import { Button, Paper, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
+import type { FC } from 'react';
+
+import { useWallet } from '../../hooks/useWallet';
 import { isValidWalletAddress } from '../../utils';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
-import { useWallet } from '../../hooks/useWallet';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 const SUPPORTED_NODES: TNodeDotKsmWithRelayChains[] = [

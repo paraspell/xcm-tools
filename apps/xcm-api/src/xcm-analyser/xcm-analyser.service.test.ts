@@ -1,16 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { XcmAnalyserService } from './xcm-analyser.service.js';
 import {
   convertMultilocationToUrl,
   convertXCMToUrls,
 } from '@paraspell/xcm-analyser';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { XcmAnalyserService } from './xcm-analyser.service.js';
 
 vi.mock('@paraspell/xcm-analyser', () => ({
   convertMultilocationToUrl: vi.fn(),

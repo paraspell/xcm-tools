@@ -1,15 +1,16 @@
+import type { ThreeEvent } from '@react-three/fiber';
 import type { FC } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { Group, Object3D } from 'three';
+
+import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
 import type { ChannelsQuery, TotalMessageCountsQuery } from '../../gql/graphql';
 import { CountOption } from '../../gql/graphql';
-import Relaychain from '../Relaychain/Relaychain';
-import Parachain from '../Parachain/Parachain';
-import LineBetween from '../LineBetween';
-import type { Group, Object3D } from 'three';
-import { useSelectedParachain } from '../../context/SelectedParachain/useSelectedParachain';
-import { getNodesByEcosystem, getParachainById, getParachainId } from '../../utils/utils';
 import { Ecosystem } from '../../types/types';
-import type { ThreeEvent } from '@react-three/fiber';
+import { getNodesByEcosystem, getParachainById, getParachainId } from '../../utils/utils';
+import LineBetween from '../LineBetween';
+import Parachain from '../Parachain/Parachain';
+import Relaychain from '../Relaychain/Relaychain';
 
 const calculateLineWidth = (messageCount: number): number => {
   const baseLineWidth = 0.035;

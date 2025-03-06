@@ -1,2 +1,2 @@
-export * from './utils';
 export * from './calculateFee';
+export * from './utils';

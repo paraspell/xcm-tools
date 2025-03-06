@@ -1,8 +1,8 @@
 import { AccountXcmCountType } from './account-msg-count.model';
 import { AssetCount } from './asset-count.model';
+import { MessageCount } from './message-count.model';
 import { MessageCountByDay } from './message-count-by-day.model';
 import { MessageCountByStatus } from './message-count-by-status.model';
-import { MessageCount } from './message-count.model';
 
 describe('AccountXcmCountType', () => {
   it('should create an AccountXcmCountType object with the correct fields', () => {

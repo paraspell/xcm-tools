@@ -1,8 +1,9 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../api/IPolkadotApi'
+import { getNodeProviders } from '../nodes/config'
 import type { TNodeDotKsmWithRelayChains } from '../types'
 import { createApiInstanceForNode } from './createApiInstanceForNode'
-import { getNodeProviders } from '../nodes/config'
-import type { IPolkadotApi } from '../api/IPolkadotApi'
 
 vi.mock('../nodes/config', () => ({
   getNodeProviders: vi.fn((node: TNodeDotKsmWithRelayChains) => {

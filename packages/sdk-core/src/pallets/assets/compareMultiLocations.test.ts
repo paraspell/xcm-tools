@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest'
-import { compareMultiLocations } from './compareMultiLocations'
+import { describe, expect, it } from 'vitest'
+
 import type { TForeignAsset } from '../../types'
+import { compareMultiLocations } from './compareMultiLocations'
 
 describe('compareMultiLocations', () => {
   it('should return true when input matches sanitized asset.multiLocation (comma removed)', () => {

@@ -1,7 +1,8 @@
 import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk-pjs';
 import { getAssets, normalizeSymbol } from '@paraspell/sdk-pjs';
+
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
-import type { TExchangeNode, TAutoSelect } from '../types';
+import type { TAutoSelect, TExchangeNode } from '../types';
 import { getExchangeAssets } from './getExchangeAssets';
 
 /**

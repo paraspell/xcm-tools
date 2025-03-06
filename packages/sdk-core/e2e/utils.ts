@@ -258,7 +258,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
 
     describe.sequential('Hydration to AssetHub transfer', () => {
       it('should create transfer tx from Hydration to AssetHubPolkadot', async () => {
-        const api = await createApiInstanceForNode('Hydration')
+        const api = await createOrGetApiInstanceForNode('Hydration')
         const tx = await Builder(api)
           .from('Hydration')
           .to('AssetHubPolkadot')
@@ -269,7 +269,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
 
       it('should create transfer tx from Hydration to AssetHubPolkadot - overridden multiasset', async () => {
-        const api = await createApiInstanceForNode('Hydration')
+        const api = await createOrGetApiInstanceForNode('Hydration')
         const tx = await Builder(api)
           .from('Hydration')
           .to('AssetHubPolkadot')
@@ -293,7 +293,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       })
 
       it('should create transfer tx from Hydration to AssetHubPolkadot - overridden multiasset currency selection', async () => {
-        const api = await createApiInstanceForNode('Hydration')
+        const api = await createOrGetApiInstanceForNode('Hydration')
         const tx = await Builder(api)
           .from('Hydration')
           .to('AssetHubPolkadot')

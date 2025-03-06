@@ -1,14 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import {
-  ScenarioNotSupportedError,
   InvalidCurrencyError,
-  NodeNotSupportedError
+  NodeNotSupportedError,
+  ScenarioNotSupportedError
 } from '../../errors'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type { TNativeAsset, TXTokensTransferOptions, WithAmount } from '../../types'
 import { Version } from '../../types'
-import XTokensTransferImpl from '../../pallets/xTokens'
-import type Bajun from './Bajun'
 import { getNode } from '../../utils'
+import type Bajun from './Bajun'
 
 vi.mock('../../pallets/xTokens', () => ({
   default: {

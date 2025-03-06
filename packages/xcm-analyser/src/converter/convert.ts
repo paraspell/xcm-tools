@@ -1,8 +1,8 @@
 import {
-  MultiLocationSchema,
   type Junction,
   type JunctionType,
   type MultiLocation,
+  MultiLocationSchema,
 } from '../types';
 import { convertJunctionToReadable, findMultiLocationInObject } from '../utils/utils';
 

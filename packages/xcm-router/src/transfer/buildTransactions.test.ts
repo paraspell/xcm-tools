@@ -1,10 +1,11 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+
+import type ExchangeNode from '../dexNodes/DexNode';
 import type { TBuildTransactionsOptionsModified } from '../types';
 import { buildTransactions } from './buildTransactions';
-import type ExchangeNode from '../dexNodes/DexNode';
-import * as utils from './utils';
 import * as createSwapTxModule from './createSwapTx';
+import * as utils from './utils';
 
 const originApi = {} as TPjsApi;
 const swapApi = {

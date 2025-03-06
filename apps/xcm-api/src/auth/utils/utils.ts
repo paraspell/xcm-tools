@@ -1,6 +1,6 @@
-import * as nodemailer from 'nodemailer';
-import { google } from 'googleapis';
 import type { ConfigService } from '@nestjs/config';
+import { google } from 'googleapis';
+import * as nodemailer from 'nodemailer';
 const OAuth2 = google.auth.OAuth2;
 
 export const sendEmail = async (

@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ChartSeries, ChartTooltipProps } from '@mantine/charts';
 import type { Factory } from '@mantine/core';
 import {
   ActionIcon,
@@ -17,14 +18,14 @@ import {
   useProps,
   useStyles
 } from '@mantine/core';
-import classes from './CustomChartTooltip.module.css';
-import type { ChartSeries, ChartTooltipProps } from '@mantine/charts';
-import { useTranslation } from 'react-i18next';
-import { getParachainId } from '../../../utils/utils';
-import { Ecosystem } from '../../../types/types';
-import dayjs from 'dayjs';
 import { IconX } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import type { MouseEvent } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { Ecosystem } from '../../../types/types';
+import { getParachainId } from '../../../utils/utils';
+import classes from './CustomChartTooltip.module.css';
 
 type ChartSeriesLabels = Record<string, string | undefined>;
 

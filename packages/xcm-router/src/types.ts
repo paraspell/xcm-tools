@@ -1,15 +1,16 @@
 import type {
   Extrinsic,
   TAsset,
-  TNodePolkadotKusama,
-  TNodeDotKsmWithRelayChains,
-  TPjsApi,
-  TNodeWithRelayChains,
   TCurrencyInput,
+  TNodeDotKsmWithRelayChains,
+  TNodePolkadotKusama,
+  TNodeWithRelayChains,
+  TPjsApi,
 } from '@paraspell/sdk-pjs';
 import { type Signer } from '@polkadot/types/types';
-import { type EXCHANGE_NODES } from './consts';
 import type BigNumber from 'bignumber.js';
+
+import { type EXCHANGE_NODES } from './consts';
 
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 

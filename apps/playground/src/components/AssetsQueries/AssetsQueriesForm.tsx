@@ -1,5 +1,3 @@
-import { useForm } from '@mantine/form';
-import { useEffect, useRef, type FC } from 'react';
 import {
   Button,
   JsonInput,
@@ -9,6 +7,7 @@ import {
   Stack,
   TextInput,
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import type {
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
@@ -21,8 +20,10 @@ import {
   NODES_WITH_RELAY_CHAINS,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
 } from '@paraspell/sdk';
-import type { TAssetsQuery } from '../../types';
+import { type FC, useEffect, useRef } from 'react';
+
 import { ASSET_QUERIES } from '../../consts';
+import type { TAssetsQuery } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 

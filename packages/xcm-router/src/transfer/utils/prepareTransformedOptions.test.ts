@@ -1,13 +1,14 @@
-import { describe, test, expect, beforeEach, vi } from 'vitest';
-import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
-import { selectBestExchange } from '../selectBestExchange';
-import { determineFeeCalcAddress } from './utils';
-import { prepareTransformedOptions } from './prepareTransformedOptions';
-import type ExchangeNode from '../../dexNodes/DexNode';
-import type { TTransferOptions } from '../../types';
-import * as assets from '../../assets';
 import * as sdkPjs from '@paraspell/sdk-pjs';
 import { getAssetBySymbolOrId } from '@paraspell/sdk-pjs';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+
+import * as assets from '../../assets';
+import type ExchangeNode from '../../dexNodes/DexNode';
+import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
+import type { TTransferOptions } from '../../types';
+import { selectBestExchange } from '../selectBestExchange';
+import { prepareTransformedOptions } from './prepareTransformedOptions';
+import { determineFeeCalcAddress } from './utils';
 
 vi.mock('../../dexNodes/DexNodeFactory', () => ({
   createDexNodeInstance: vi.fn(),

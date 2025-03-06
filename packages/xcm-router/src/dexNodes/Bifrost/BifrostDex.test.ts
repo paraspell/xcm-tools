@@ -1,14 +1,15 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import BigNumber from 'bignumber.js';
+import type { Trade } from '@crypto-dex-sdk/amm';
+import type { Token } from '@crypto-dex-sdk/currency';
+import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { getParaId } from '@paraspell/sdk-pjs';
-import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
-import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import type { ApiPromise } from '@polkadot/api';
+import BigNumber from 'bignumber.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { TSwapOptions } from '../../types';
-import type { Token } from '@crypto-dex-sdk/currency';
 import BifrostExchangeNode from './BifrostDex';
-import type { Trade } from '@crypto-dex-sdk/amm';
+import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 
 vi.mock('@paraspell/sdk-pjs', async () => {
   const actualModule = await vi.importActual('@paraspell/sdk-pjs');

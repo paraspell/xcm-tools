@@ -1,13 +1,14 @@
 import { AppShell as MantineAppShell } from "@mantine/core";
-import { Footer } from "../Footer/Footer";
-import ScrollToTop from "../ScrollToTop";
 import { useDisclosure } from "@mantine/hooks";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
+import { Footer } from "../Footer/Footer";
+import Routes from "../Routes";
+import ScrollToTop from "../ScrollToTop";
+import StickyBar from "../StickyBar";
 import Header from "./Header";
 import Navbar from "./Navbar";
-import Routes from "../Routes";
-import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import StickyBar from "../StickyBar";
 
 const AppShell = () => {
   const [pinned, setPinned] = useState(true);

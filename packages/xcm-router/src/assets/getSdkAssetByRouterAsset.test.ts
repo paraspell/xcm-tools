@@ -1,14 +1,15 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { getSdkAssetByRouterAsset } from './getSdkAssetByRouterAsset';
+import type { TAsset, TCurrencyInput, TForeignAsset, TMultiLocation } from '@paraspell/sdk-pjs';
 import {
-  getAssets,
+  deepEqual,
   findBestMatches,
   getAssetBySymbolOrId,
+  getAssets,
   isForeignAsset,
-  deepEqual,
 } from '@paraspell/sdk-pjs';
-import type { TAsset, TCurrencyInput, TForeignAsset, TMultiLocation } from '@paraspell/sdk-pjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { TRouterAsset } from '../types';
+import { getSdkAssetByRouterAsset } from './getSdkAssetByRouterAsset';
 
 const exchangeBaseNode = 'Acala';
 

@@ -8,20 +8,21 @@ import {
   Req,
   Request,
 } from '@nestjs/common';
-import { AssetsService } from './assets.service.js';
-import { SymbolDto } from './dto/SymbolDto.js';
+
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
-import { SupportedAssetsDto } from './dto/SupportedAssetsDto.js';
-import {
-  OriginFeeDetailsDto,
-  OriginFeeDetailsDtoSchema,
-} from './dto/OriginFeeDetailsDto.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
+import { AssetsService } from './assets.service.js';
 import {
   AssetMultiLocationDto,
   AssetMultiLocationDtoSchema,
 } from './dto/AssetMultiLocationDto.js';
+import {
+  OriginFeeDetailsDto,
+  OriginFeeDetailsDtoSchema,
+} from './dto/OriginFeeDetailsDto.js';
+import { SupportedAssetsDto } from './dto/SupportedAssetsDto.js';
+import { SymbolDto } from './dto/SymbolDto.js';
 
 @Controller()
 export class AssetsController {

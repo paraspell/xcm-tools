@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { Stack, Flex } from '@mantine/core';
+import { Flex, Stack } from '@mantine/core';
 import { animated, useSpring } from '@react-spring/web';
+import { useState } from 'react';
+
 import { PageRoute } from '../PageRoute';
 import CollapseButton from './CollapseButton';
 import TabNavigator from './TabNavigator/TabNavigator';

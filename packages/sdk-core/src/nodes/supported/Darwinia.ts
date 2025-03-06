@@ -1,8 +1,8 @@
 // Contains detailed structure of XCM call construction for Darwinia Parachain
 
-import { Version, type TSerializedApiCall } from '../../types'
-import ParachainNode from '../ParachainNode'
 import { NodeNotSupportedError } from '../../errors'
+import { type TSerializedApiCall, Version } from '../../types'
+import ParachainNode from '../ParachainNode'
 
 class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> {
   constructor() {

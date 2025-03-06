@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { ScenarioNotSupportedError } from '../../errors'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'

@@ -1,5 +1,6 @@
-import { Text, Box, Stack, rem } from "@mantine/core";
-import { IconSun, IconMapPin, IconAt } from "@tabler/icons-react";
+import { Box, rem, Stack, Text } from "@mantine/core";
+import { IconAt, IconMapPin, IconSun } from "@tabler/icons-react";
+
 import classes from "./ContactIcons.module.css";
 
 interface ContactIconProps

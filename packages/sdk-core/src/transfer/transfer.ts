@@ -1,20 +1,20 @@
 // Contains basic call formatting for different XCM Palletss
 
+import { isTMultiLocation } from '../pallets/xcmPallet/utils'
 import type { TNativeAsset, TRelayToParaDestination, TSendOptions } from '../types'
 import { getNode, isRelayChain, validateAddress } from '../utils'
-import { validateDestinationAddress } from './utils/validateDestinationAddress'
+import { transferRelayToPara } from './transferRelayToPara'
 import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
 import { isBridgeTransfer } from './utils/isBridgeTransfer'
 import { resolveAsset } from './utils/resolveAsset'
-import {
-  validateCurrency,
-  validateDestination,
-  validateAssetSpecifiers,
-  validateAssetSupport
-} from './utils/validationUtils'
-import { transferRelayToPara } from './transferRelayToPara'
-import { isTMultiLocation } from '../pallets/xcmPallet/utils'
 import { resolveOverriddenAsset } from './utils/resolveOverriddenAsset'
+import { validateDestinationAddress } from './utils/validateDestinationAddress'
+import {
+  validateAssetSpecifiers,
+  validateAssetSupport,
+  validateCurrency,
+  validateDestination
+} from './utils/validationUtils'
 
 export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promise<TRes> => {
   const {

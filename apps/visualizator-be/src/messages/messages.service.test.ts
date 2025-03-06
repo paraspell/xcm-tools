@@ -2,9 +2,10 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
+
+import { CountOption } from './count-option';
 import { Message } from './message.entity';
 import { MessageService } from './messages.service';
-import { CountOption } from './count-option';
 
 describe('MessageService', () => {
   let service: MessageService;

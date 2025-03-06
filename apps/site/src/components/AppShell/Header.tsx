@@ -1,18 +1,19 @@
-import type { FC } from "react";
 import {
+  Anchor,
+  Burger,
+  Button,
   Container,
   Group,
-  Burger,
   Image,
-  Button,
-  Anchor,
   Menu,
 } from "@mantine/core";
-import classes from "./Header.module.css";
-import { Link } from "react-router-dom";
-import { links } from "./links";
 import { GithubIcon } from "@mantinex/dev-icons";
 import { IconChevronDown } from "@tabler/icons-react";
+import type { FC } from "react";
+import { Link } from "react-router-dom";
+
+import classes from "./Header.module.css";
+import { links } from "./links";
 
 type Props = {
   menuOpened: boolean;

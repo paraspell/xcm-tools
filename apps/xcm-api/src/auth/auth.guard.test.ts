@@ -1,10 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
-import { AuthGuard } from './auth.guard.js';
+import type { ExecutionContext } from '@nestjs/common';
 import { ForbiddenException } from '@nestjs/common';
 import type { JwtService } from '@nestjs/jwt';
-import type { UsersService } from '../users/users.service.js';
+import { describe, expect, it, vi } from 'vitest';
+
 import type { AnalyticsService } from '../analytics/analytics.service.js';
-import type { ExecutionContext } from '@nestjs/common';
+import type { UsersService } from '../users/users.service.js';
+import { AuthGuard } from './auth.guard.js';
 
 describe('AuthGuard (try/catch)', () => {
   it('should catch the error and throw a ForbiddenException when JWT verification fails', async () => {

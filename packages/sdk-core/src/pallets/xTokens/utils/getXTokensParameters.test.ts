@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest'
-import { getXTokensParameters } from './getXTokensParameters'
+import { describe, expect, it } from 'vitest'
+
 import type { TMultiAssetWithFee, TMultiLocation, TXcmVersioned } from '../../../types'
 import { Parents, Version } from '../../../types'
+import { getXTokensParameters } from './getXTokensParameters'
 
 const mockMultiLocationHeader: TXcmVersioned<TMultiLocation> = {
   [Version.V4]: {

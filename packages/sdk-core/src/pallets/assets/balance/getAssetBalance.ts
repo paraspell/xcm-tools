@@ -1,8 +1,8 @@
 import type { TNodePolkadotKusama } from '../../../types'
-import { getNativeAssetSymbol } from '../assets'
-import { getBalanceNativeInternal } from './getBalanceNative'
-import { getBalanceForeignInternal } from './getBalanceForeign'
 import type { TGetAssetBalanceOptions } from '../../../types/TBalance'
+import { getNativeAssetSymbol } from '../assets'
+import { getBalanceForeignInternal } from './getBalanceForeign'
+import { getBalanceNativeInternal } from './getBalanceNative'
 
 export const getAssetBalanceInternal = async <TApi, TRes>({
   address,

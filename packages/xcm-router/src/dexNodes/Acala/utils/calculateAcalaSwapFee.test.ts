@@ -1,12 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import BigNumber from 'bignumber.js';
-import { calculateAcalaSwapFee } from './calculateAcalaSwapFee';
-import type { AggregateDex } from '@acala-network/sdk-swap';
 import type { Wallet } from '@acala-network/sdk';
 import type { Token } from '@acala-network/sdk-core';
-import type { TSwapOptions } from '../../../types';
+import type { AggregateDex } from '@acala-network/sdk-swap';
+import BigNumber from 'bignumber.js';
 import { firstValueFrom } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type { TSwapOptions } from '../../../types';
 import { calculateTxFee } from '../../../utils';
+import { calculateAcalaSwapFee } from './calculateAcalaSwapFee';
 
 vi.mock('./utils', () => ({
   convertCurrency: vi.fn(),

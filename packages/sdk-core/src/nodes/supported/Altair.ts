@@ -1,11 +1,11 @@
 // Contains detailed structure of XCM call construction for Altair Parachain
 
 import { InvalidCurrencyError } from '../../errors'
+import XTokensTransferImpl from '../../pallets/xTokens'
 import type { TAsset, TForeignOrNativeAsset } from '../../types'
-import { type IXTokensTransfer, Version, type TXTokensTransferOptions } from '../../types'
+import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
-import XTokensTransferImpl from '../../pallets/xTokens'
 
 class Altair<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {

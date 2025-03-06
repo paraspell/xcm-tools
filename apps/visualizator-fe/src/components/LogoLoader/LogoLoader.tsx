@@ -1,8 +1,9 @@
-import { Stack, Image } from '@mantine/core';
-import { CssLoader } from '../CssLoader/CssLoader';
+import { Image, Stack } from '@mantine/core';
+import { animated, useSpring } from '@react-spring/web';
+
 import logoSrc from '../../assets/logo.png';
+import { CssLoader } from '../CssLoader/CssLoader';
 import classes from './LogoLoader.module.css';
-import { useSpring, animated } from '@react-spring/web';
 
 const AnimatedDiv = animated('div');
 

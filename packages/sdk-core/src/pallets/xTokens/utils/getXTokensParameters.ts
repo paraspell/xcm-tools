@@ -1,11 +1,11 @@
-import { isTMultiLocation } from '../../xcmPallet/utils'
 import type {
-  TXTokensCurrencySelection,
   TAmount,
   TMultiAssetWithFee,
   TMultiLocation,
-  TXcmVersioned
+  TXcmVersioned,
+  TXTokensCurrencySelection
 } from '../../../types'
+import { isTMultiLocation } from '../../xcmPallet/utils'
 
 export const getXTokensParameters = (
   isMultiAssetTransfer: boolean,

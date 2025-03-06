@@ -1,8 +1,8 @@
 import type { TNodeWithRelayChains } from '@paraspell/sdk';
-import { getParaId, determineRelayChain } from '@paraspell/sdk';
+import { determineRelayChain, getParaId } from '@paraspell/sdk';
 import {
-  prodRelayPolkadot,
   prodRelayKusama,
+  prodRelayPolkadot,
 } from '@polkadot/apps-config/endpoints';
 
 export const getParachainIcon = (node?: TNodeWithRelayChains) => {

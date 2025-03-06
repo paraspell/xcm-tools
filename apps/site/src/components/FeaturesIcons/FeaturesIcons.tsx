@@ -1,10 +1,11 @@
-import { Text, Container, ThemeIcon, Title, SimpleGrid } from "@mantine/core";
-import classes from "./FeaturesIcons.module.css";
+import { Container, SimpleGrid, Text, ThemeIcon, Title } from "@mantine/core";
 import {
   IconCloudUpload,
   IconFileCode,
   IconReceiptOff,
 } from "@tabler/icons-react";
+
+import classes from "./FeaturesIcons.module.css";
 
 const data = [
   {

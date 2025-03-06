@@ -7,6 +7,7 @@ import {
   convertMultilocationToUrl,
   convertXCMToUrls,
 } from '@paraspell/xcm-analyser';
+
 import { XcmAnalyserDto } from './dto/xcm-analyser.dto.js';
 
 @Injectable()

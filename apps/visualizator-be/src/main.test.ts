@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+
 import { AppModule } from './app/app.module';
 
 jest.mock('@nestjs/core', () => ({

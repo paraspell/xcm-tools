@@ -1,11 +1,12 @@
-import { describe, beforeEach, it, expect, vi } from 'vitest';
+import { ConfigService } from '@nestjs/config';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { AnalyticsService } from './analytics.service.js';
-import { ConfigService } from '@nestjs/config';
-import { EventName } from './EventName.js';
-import type { RequestWithUser } from '../types/types.js';
 import * as Mixpanel from 'mixpanel';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import type { RequestWithUser } from '../types/types.js';
+import { AnalyticsService } from './analytics.service.js';
+import { EventName } from './EventName.js';
 
 vi.mock('mixpanel', () => ({
   init: vi.fn().mockReturnValue({

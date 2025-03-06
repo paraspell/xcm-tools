@@ -1,12 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type Polimec from './Polimec'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type { IPolkadotApi } from '../../api'
+import { DOT_MULTILOCATION } from '../../constants'
+import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
+import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TRelayToParaOptions } from '../../types'
 import { Version } from '../../types'
-import { ScenarioNotSupportedError, InvalidCurrencyError } from '../../errors'
-import type { IPolkadotApi } from '../../api'
 import { getNode } from '../../utils'
-import { DOT_MULTILOCATION } from '../../constants'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import type Polimec from './Polimec'
 
 vi.mock('../../pallets/assets', () => ({
   getParaId: vi.fn().mockReturnValue(1000)

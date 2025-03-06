@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
 import { BadRequestException } from '@nestjs/common';
+import { describe, expect, it } from 'vitest';
+
 import { validateNode } from './utils.js';
 
 describe('validateNode', () => {

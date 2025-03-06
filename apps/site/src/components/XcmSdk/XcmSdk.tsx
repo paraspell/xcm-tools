@@ -1,14 +1,14 @@
 import {
-  Text,
-  Title,
+  Box,
   Button,
-  ThemeIcon,
+  List,
   rem,
   SimpleGrid,
-  List,
-  Box,
+  Text,
+  ThemeIcon,
+  Title,
 } from "@mantine/core";
-import classes from "./XcmSdk.module.css";
+import { useMediaQuery } from "@mantine/hooks";
 import {
   IconBoxAlignBottomRight,
   IconBuildingBridge2,
@@ -16,7 +16,8 @@ import {
   IconCoins,
   IconSend,
 } from "@tabler/icons-react";
-import { useMediaQuery } from "@mantine/hooks";
+
+import classes from "./XcmSdk.module.css";
 
 const data = [
   {

@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
-import { getParaId } from './getParaId'
-import { getNodeConfig } from './getNodeConfig'
+import { describe, expect, it, vi } from 'vitest'
+
 import type { TNodeConfig, TNodeDotKsmWithRelayChains } from '../../types'
+import { getNodeConfig } from './getNodeConfig'
+import { getParaId } from './getParaId'
 
 vi.mock('./getNodeConfig', () => ({
   getNodeConfig: vi.fn()

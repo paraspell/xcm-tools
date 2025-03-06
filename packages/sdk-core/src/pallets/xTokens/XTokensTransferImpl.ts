@@ -2,11 +2,11 @@
 
 import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import type {
-  TXTokensTransferOptions,
+  TPallet,
+  TSerializedApiCall,
   TXTokensCurrencySelection,
   TXTokensSection,
-  TSerializedApiCall,
-  TPallet
+  TXTokensTransferOptions
 } from '../../types'
 import { getCurrencySelection } from './utils/getCurrencySelection'
 import { getXTokensParameters } from './utils/getXTokensParameters'

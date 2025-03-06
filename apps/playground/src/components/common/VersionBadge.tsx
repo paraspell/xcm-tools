@@ -1,5 +1,5 @@
-import type { FC } from 'react';
 import { Badge } from '@mantine/core';
+import type { FC } from 'react';
 
 type Props = {
   version: string;

@@ -1,7 +1,7 @@
-import type { FC } from 'react';
-import { DatePickerInput } from '@mantine/dates';
 import { rem } from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
 import { IconCalendar } from '@tabler/icons-react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type Props = {

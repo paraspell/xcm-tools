@@ -1,8 +1,9 @@
-import { describe, it, expect, vi } from 'vitest'
 import { ethers } from 'ethers'
-import { getDestination } from './getDestination'
-import type { TXTransferTransferOptions } from '../../../types'
+import { describe, expect, it, vi } from 'vitest'
+
 import type { IPolkadotApi } from '../../../api'
+import type { TXTransferTransferOptions } from '../../../types'
+import { getDestination } from './getDestination'
 
 vi.mock('ethers', () => ({
   ethers: {

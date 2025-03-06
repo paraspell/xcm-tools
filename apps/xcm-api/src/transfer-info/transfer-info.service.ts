@@ -9,6 +9,7 @@ import {
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk';
+
 import { isValidWalletAddress } from '../utils.js';
 import { TransferInfoDto } from './dto/transfer-info.dto.js';
 

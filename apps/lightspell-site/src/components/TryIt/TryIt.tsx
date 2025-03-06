@@ -1,12 +1,13 @@
-import { Text, Title, Button, SimpleGrid, ThemeIcon, rem } from "@mantine/core";
-import classes from "./TryIt.module.css";
+import { Button, rem, SimpleGrid, Text, ThemeIcon, Title } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import {
   IconBoxAlignBottomRight,
   IconBuildingBridge2,
   IconCoins,
   IconSend,
 } from "@tabler/icons-react";
-import { useMediaQuery } from "@mantine/hooks";
+
+import classes from "./TryIt.module.css";
 
 const data = [
   {
