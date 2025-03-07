@@ -7,7 +7,6 @@ import type { TAsset, TEcosystemType, TForeignAsset, TNodeWithRelayChains } from
 import {
   type TAssetJsonMap,
   type TNativeAsset,
-  type TNode,
   type TNodeAssets,
   type TRelayChainSymbol
 } from '../../types'
@@ -34,7 +33,7 @@ export const isNodeEvm = (node: TNodeWithRelayChains): boolean => {
  * @param symbol - The symbol of the asset.
  * @returns The asset ID if found; otherwise, null.
  */
-export const getAssetId = (node: TNode, symbol: string): string | null => {
+export const getAssetId = (node: TNodeWithRelayChains, symbol: string): string | null => {
   const asset = getAssetsObject(node).otherAssets.find(o => o.symbol === symbol)
   return asset != null && asset.assetId ? asset.assetId : null
 }
@@ -54,7 +53,8 @@ export const getRelayChainSymbol = (node: TNodeWithRelayChains): TRelayChainSymb
  * @param node - The node for which to get native assets.
  * @returns An array of native asset details.
  */
-export const getNativeAssets = (node: TNode): TNativeAsset[] => getAssetsObject(node).nativeAssets
+export const getNativeAssets = (node: TNodeWithRelayChains): TNativeAsset[] =>
+  getAssetsObject(node).nativeAssets
 
 /**
  * Retrieves the list of other (non-native) assets for a specified node.

@@ -5495,6 +5495,7 @@
       {
         "symbol": "KSM",
         "decimals": 12,
+        "isNative": true,
         "manuallyAdded": true
       }
     ],
@@ -9752,6 +9753,7 @@
       {
         "symbol": "DOT",
         "decimals": 12,
+        "isNative": true,
         "manuallyAdded": true
       }
     ],
