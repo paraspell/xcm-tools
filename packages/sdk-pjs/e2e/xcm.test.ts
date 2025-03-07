@@ -1,5 +1,5 @@
 import { Builder, createApiInstanceForNode } from '../src'
-import { generateE2eTests } from '../../sdk-core/e2e/utils'
+import { generateE2eTests } from '../../sdk-core/e2e'
 import { filteredNodes, validateTx } from './utils'
 
 // PolkadotJs can validate transactions without a signer
