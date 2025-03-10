@@ -78,6 +78,7 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
         : undefined
 
       const PEAQ_PARA_ID = 3338
+      const HYDRATION_PARA_ID = 2034
 
       const providers =
         paraId === PEAQ_PARA_ID
@@ -89,12 +90,18 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
             ]
           : parseProviders(providersValue)
 
+      // Filter out the non RPC compliant Hydration endpoint
+      const filteredProviders =
+        paraId === HYDRATION_PARA_ID
+          ? providers.filter(p => p.name !== 'Galactic Council')
+          : providers
+
       return {
         name: chainName,
         info,
         paraId: paraId ?? 0,
         relayChain: relayChainName,
-        providers
+        providers: filteredProviders
       }
     }
 

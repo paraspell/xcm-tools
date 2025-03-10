@@ -299,10 +299,6 @@
         "endpoint": "wss://hydration-rpc.n.dwellir.com"
       },
       {
-        "name": "Galactic Council",
-        "endpoint": "wss://rpc.hydradx.cloud"
-      },
-      {
         "name": "Helikon",
         "endpoint": "wss://rpc.helikon.io/hydradx"
       },
@@ -488,6 +484,10 @@
         "endpoint": "wss://coretime-polkadot.dotters.network"
       },
       {
+        "name": "LuckyFriday",
+        "endpoint": "wss://rpc-coretime-polkadot.luckyfriday.io"
+      },
+      {
         "name": "Parity",
         "endpoint": "wss://polkadot-coretime-rpc.polkadot.io"
       }
@@ -513,6 +513,10 @@
       {
         "name": "IBP2",
         "endpoint": "wss://encointer-kusama.dotters.network"
+      },
+      {
+        "name": "LuckyFriday",
+        "endpoint": "wss://rpc-encointer-kusama.luckyfriday.io"
       }
     ]
   },
