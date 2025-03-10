@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.6.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.3.0...xcm-router-v8.6.1) (2025-03-10)
+
+
+### Build System
+
+* Add sort-imports ESlint rule ✨ ([d9bd402](https://github.com/paraspell/xcm-tools/commit/d9bd4024ba87f6c8fedad012100ea76fdf7658c8))
+
 ## [2.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.2.3...xcm-router-v2.3.0) (2025-02-28)
 
 
