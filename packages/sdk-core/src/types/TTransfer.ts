@@ -23,11 +23,11 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   addressSelection: TXcmVersioned<TMultiLocation>
   address: TAddress
   currencySelection: TXcmVersioned<TMultiAsset[]>
+  overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   scenario: TScenario
   asset: WithAmount<TAsset>
   destination: TDestination
   paraIdTo?: number
-  overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   version?: Version
   senderAddress?: string
   pallet?: string
@@ -43,7 +43,7 @@ export type TXTokensTransferOptions<TApi, TRes> = {
   origin: TNodePolkadotKusama
   destination: TDestination
   paraIdTo?: number
-  overriddenAsset?: TMultiLocation | TMultiAsset[]
+  overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   pallet?: string
   method?: string
 }

@@ -51,7 +51,8 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         api: mockApi,
         header: mockVersionedMultiLocation,
         addressSelection: mockVersionedMultiLocation,
-        currencySelection: mockCurrencySelection
+        currencySelection: mockCurrencySelection,
+        asset: { amount: '123' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>,
       mockSection,
       undefined
@@ -89,6 +90,7 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
         api: mockApi,
+        asset: { amount: '123' },
         header: mockVersionedMultiLocation,
         addressSelection: mockVersionedMultiLocation,
         currencySelection: mockCurrencySelection
@@ -130,6 +132,7 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
     PolkadotXCMTransferImpl.transferPolkadotXCM(
       {
         api: mockApi,
+        asset: { amount: '123' },
         header: mockVersionedMultiLocation,
         addressSelection: mockVersionedMultiLocation,
         currencySelection: mockCurrencySelection
@@ -161,70 +164,6 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         dest: mockVersionedMultiLocation,
         fee_asset_item: 0,
         weight_limit: { Limited: '1000' }
-      }
-    })
-  })
-
-  it('should call api.tx[module][section] with correct parameters when overridedCurrency is provided', () => {
-    const callSpy = vi.spyOn(mockApi, 'callTxMethod')
-
-    PolkadotXCMTransferImpl.transferPolkadotXCM(
-      {
-        api: mockApi,
-        header: mockVersionedMultiLocation,
-        addressSelection: mockVersionedMultiLocation,
-        currencySelection: mockCurrencySelection,
-        overriddenAsset: [
-          {
-            id: {
-              parents: 0,
-              interior: {
-                Here: null
-              }
-            },
-            fun: {
-              Fungible: '123'
-            }
-          },
-          {
-            isFeeAsset: true,
-            id: {
-              parents: 0,
-              interior: {
-                Here: null
-              }
-            },
-            fun: {
-              Fungible: '456'
-            }
-          }
-        ]
-      } as TPolkadotXCMTransferOptions<unknown, unknown>,
-      mockSection
-    )
-
-    expect(callSpy).toHaveBeenCalledWith({
-      module: 'PolkadotXcm',
-      section: mockSection,
-      parameters: {
-        assets: {
-          V4: [
-            {
-              id: {
-                parents: 0,
-                interior: {
-                  Here: null
-                }
-              },
-              fun: {
-                Fungible: '123'
-              }
-            }
-          ]
-        },
-        beneficiary: mockVersionedMultiLocation,
-        dest: mockVersionedMultiLocation,
-        fee_asset_item: 1
       }
     })
   })

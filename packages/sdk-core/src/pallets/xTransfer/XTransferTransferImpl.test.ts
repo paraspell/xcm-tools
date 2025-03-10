@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getCurrency } from '../../pallets/xcmPallet/utils'
+import { createMultiAsset, maybeOverrideMultiAssets } from '../../pallets/xcmPallet/utils'
 import type { TMultiAsset, TMultiLocation, TXTransferTransferOptions } from '../../types'
 import { Parents } from '../../types'
 import { determineDestWeight } from './utils/determineDestWeight'
@@ -17,17 +17,16 @@ const mockMultiLocation: TMultiLocation = {
   interior: 'Here'
 }
 
-const mockMultiAssets: TMultiAsset[] = [
-  {
-    id: mockMultiLocation,
-    fun: {
-      Fungible: '123'
-    }
+const mockMultiAsset: TMultiAsset = {
+  id: mockMultiLocation,
+  fun: {
+    Fungible: '123'
   }
-]
+}
 
 vi.mock('../xcmPallet/utils', () => ({
-  getCurrency: vi.fn()
+  createMultiAsset: vi.fn(),
+  maybeOverrideMultiAssets: vi.fn()
 }))
 
 vi.mock('./utils/determineDestWeight', () => ({
@@ -58,7 +57,8 @@ describe('XTransferTransferImpl', () => {
       asset: { symbol: 'KSM', amount: 100 }
     } as TXTransferTransferOptions<unknown, unknown>
 
-    vi.mocked(getCurrency).mockReturnValue(mockMultiAssets)
+    vi.mocked(createMultiAsset).mockReturnValue(mockMultiAsset)
+    vi.mocked(maybeOverrideMultiAssets).mockReturnValue([mockMultiAsset])
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
 
     const callSpy = vi.spyOn(mockApi, 'callTxMethod')
@@ -69,7 +69,7 @@ describe('XTransferTransferImpl', () => {
       module: 'XTransfer',
       section: 'transfer',
       parameters: {
-        asset: mockMultiAssets[0],
+        asset: mockMultiAsset,
         dest: mockMultiLocation,
         dest_weight: undefined
       }
@@ -84,7 +84,8 @@ describe('XTransferTransferImpl', () => {
       asset: { symbol: 'KSM', amount: 100 }
     } as TXTransferTransferOptions<unknown, unknown>
 
-    vi.mocked(getCurrency).mockReturnValue(mockMultiAssets)
+    vi.mocked(createMultiAsset).mockReturnValue(mockMultiAsset)
+    vi.mocked(maybeOverrideMultiAssets).mockReturnValue([mockMultiAsset])
     vi.mocked(getDestination).mockReturnValue(mockMultiLocation)
 
     const mockDestWeight = {
@@ -102,7 +103,7 @@ describe('XTransferTransferImpl', () => {
       module: 'XTransfer',
       section: 'transfer',
       parameters: {
-        asset: mockMultiAssets[0],
+        asset: mockMultiAsset,
         dest: mockMultiLocation,
         dest_weight: mockDestWeight
       }

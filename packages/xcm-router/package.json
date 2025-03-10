@@ -55,7 +55,7 @@
     "@polkadot/types-codec": "^15.7.1",
     "@polkadot/util": "^13.4.3",
     "@zenlink-types/bifrost": "^1.7.7",
-    "axios": "^1.8.1",
+    "axios": "^1.8.2",
     "bignumber.js": "^9.1.2",
     "ethers-v6": "npm:ethers@^6.13.5",
     "ethers": "^5.7.0",

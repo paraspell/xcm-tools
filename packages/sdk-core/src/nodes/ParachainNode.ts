@@ -6,9 +6,9 @@ import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedE
 import { findAssetByMultiLocation, getNativeAssetSymbol, getOtherAssets } from '../pallets/assets'
 import {
   constructRelayToParaParameters,
-  createCurrencySpec,
   createMultiAsset,
   createPolkadotXcmHeader,
+  createVersionedMultiAssets,
   isTMultiLocation
 } from '../pallets/xcmPallet/utils'
 import XTokensTransferImpl from '../pallets/xTokens'
@@ -178,18 +178,12 @@ abstract class ParachainNode<TApi, TRes> {
           paraId
         ),
         address,
-        currencySelection: this.createCurrencySpec(
-          asset.amount,
-          scenario,
-          versionOrDefault,
-          asset,
-          overriddenAsset
-        ),
+        currencySelection: this.createCurrencySpec(asset.amount, scenario, versionOrDefault, asset),
+        overriddenAsset,
         asset,
         scenario,
         destination,
         paraIdTo: paraId,
-        overriddenAsset,
         version,
         senderAddress,
         pallet,
@@ -218,15 +212,12 @@ abstract class ParachainNode<TApi, TRes> {
     amount: TAmount,
     scenario: TScenario,
     version: Version,
-    _asset?: TAsset,
-    overridedMultiLocation?: TMultiLocation | TMultiAsset[]
+    _asset?: TAsset
   ): TXcmVersioned<TMultiAsset[]> {
-    return createCurrencySpec(
-      amount,
-      version,
-      scenario === 'ParaToRelay' ? Parents.ONE : Parents.ZERO,
-      overridedMultiLocation
-    )
+    return createVersionedMultiAssets(version, amount, {
+      parents: scenario === 'ParaToRelay' ? Parents.ONE : Parents.ZERO,
+      interior: 'Here'
+    })
   }
 
   createPolkadotXcmHeader(

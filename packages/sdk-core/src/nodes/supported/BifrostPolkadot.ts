@@ -3,7 +3,7 @@
 import { ETHEREUM_JUNCTION } from '../../constants'
 import { getAssetId } from '../../pallets/assets'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
+import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
@@ -54,28 +54,26 @@ export class BifrostPolkadot<TApi, TRes>
 
   // Handles DOT, WETH transfers to AssetHubPolkadot
   transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { overriddenAsset, asset } = input
+    const { asset } = input
 
     return Promise.resolve(
       PolkadotXCMTransferImpl.transferPolkadotXCM(
         {
           ...input,
-          currencySelection: createCurrencySpec(
-            asset.amount,
-            this.version,
-            asset.symbol === 'DOT' ? Parents.ONE : Parents.TWO,
-            overriddenAsset,
-            asset.symbol === 'WETH'
-              ? {
-                  X2: [
-                    ETHEREUM_JUNCTION,
-                    {
-                      AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
-                    }
-                  ]
-                }
-              : undefined
-          )
+          currencySelection: createVersionedMultiAssets(this.version, asset.amount, {
+            parents: asset.symbol === 'DOT' ? Parents.ONE : Parents.TWO,
+            interior:
+              asset.symbol === 'WETH'
+                ? {
+                    X2: [
+                      ETHEREUM_JUNCTION,
+                      {
+                        AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
+                      }
+                    ]
+                  }
+                : 'Here'
+          })
         },
         'transfer_assets',
         'Unlimited'

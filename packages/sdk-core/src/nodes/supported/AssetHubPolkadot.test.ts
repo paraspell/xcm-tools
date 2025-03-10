@@ -57,7 +57,6 @@ describe('AssetHubPolkadot', () => {
     api: mockApi,
     asset: { symbol: 'DOT', amount: '1000', isNative: true },
     currencySelection: {} as TXcmVersioned<TMultiAsset[]>,
-    currencyId: '0',
     scenario: 'ParaToRelay',
     header: {} as TXcmVersioned<TMultiLocation>,
     addressSelection: {} as TXcmVersioned<TMultiLocation>,
@@ -156,8 +155,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         destination: 'Mythos',
-        paraIdTo: 2000,
-        currencyId: 'MYTH'
+        paraIdTo: 2000
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       const result = assetHub.handleMythosTransfer(input)
 
@@ -171,7 +169,6 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         asset: { symbol: 'DOT', amount: '1000', isNative: true } as WithAmount<TNativeAsset>,
-        currencyId: undefined,
         scenario: 'ParaToPara',
         destination: 'Acala'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -183,7 +180,6 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         asset: { symbol: 'KSM', amount: '1000', isNative: true } as WithAmount<TNativeAsset>,
-        currencyId: undefined,
         scenario: 'ParaToPara',
         destination: 'Acala'
       } as TPolkadotXCMTransferOptions<unknown, unknown>

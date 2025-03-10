@@ -11,7 +11,7 @@ import type {
 } from '../../types'
 import { Parents, type TDestination, type TScenario, Version } from '../../types'
 import { type TMultiAsset } from '../../types/TMultiAsset'
-import type { TJunction, TJunctions } from '../../types/TMultiLocation'
+import type { TJunction } from '../../types/TMultiLocation'
 import { type TMultiLocation } from '../../types/TMultiLocation'
 import { determineRelayChain } from '../../utils'
 import { createX1Payload } from '../../utils/createX1Payload'
@@ -22,31 +22,6 @@ export const isTMultiLocation = (value: unknown): value is TMultiLocation =>
 
 export const isTMultiAsset = (value: unknown): value is TMultiAsset =>
   typeof value === 'object' && value !== null && 'id' in value && 'fun' in value
-
-export const createBridgeCurrencySpec = (
-  amount: TAmount,
-  ecosystem: 'Polkadot' | 'Kusama'
-): TXcmVersioned<TMultiAsset[]> => {
-  return {
-    [Version.V4]: [
-      {
-        id: {
-          parents: Parents.TWO,
-          interior: {
-            X1: [
-              {
-                GlobalConsensus: ecosystem
-              }
-            ]
-          }
-        },
-        fun: {
-          Fungible: amount.toString()
-        }
-      }
-    ]
-  }
-}
 
 export const createMultiAsset = (
   version: Version,
@@ -69,32 +44,41 @@ export const createMultiAsset = (
 export const addXcmVersionHeader = <T, V extends Version>(obj: T, version: V) =>
   ({ [version]: obj }) as OneKey<V, T>
 
-export const getCurrency = (
-  amount: TAmount,
+export const extractVersionFromHeader = <T>(versionHeader: OneKey<Version, T>): [Version, T] => {
+  const keys = Object.keys(versionHeader) as Version[]
+  if (keys.length !== 1) {
+    throw new Error('Invalid version header: expected exactly one key.')
+  }
+  const version = keys[0]
+  const value = versionHeader[version]
+  if (value === undefined) {
+    throw new Error('Invalid version header: value is undefined.')
+  }
+  return [version, value]
+}
+
+export const maybeOverrideMultiAssets = (
   version: Version,
-  parents: Parents,
-  overriddenCurrency?: TMultiLocation | TMultiAsset[],
-  interior: TJunctions | 'Here' = 'Here'
+  amount: TAmount,
+  multiAssets: TMultiAsset[],
+  overriddenCurrency?: TMultiLocation | TMultiAsset[]
 ) => {
   if (!overriddenCurrency) {
-    return [createMultiAsset(version, amount, { parents, interior })]
+    return multiAssets
   }
 
   return isTMultiLocation(overriddenCurrency)
     ? [createMultiAsset(version, amount, overriddenCurrency)]
-    : // It must be TMultiAsset if not TMultiLocation
-      overriddenCurrency
+    : overriddenCurrency
 }
 
-export const createCurrencySpec = (
-  amount: TAmount,
+export const createVersionedMultiAssets = (
   version: Version,
-  parents: Parents,
-  overriddenCurrency?: TMultiLocation | TMultiAsset[],
-  interior: TJunctions | 'Here' = 'Here'
-): TXcmVersioned<TMultiAsset[]> => {
-  const currency = getCurrency(amount, version, parents, overriddenCurrency, interior)
-  return addXcmVersionHeader(currency, version)
+  amount: TAmount,
+  multiLocation: TMultiLocation
+) => {
+  const multiAssets = createMultiAsset(version, amount, multiLocation)
+  return addXcmVersionHeader([multiAssets], version)
 }
 
 export const createVersionedMultiLocation = (version: Version, multiLocation: TMultiLocation) => ({

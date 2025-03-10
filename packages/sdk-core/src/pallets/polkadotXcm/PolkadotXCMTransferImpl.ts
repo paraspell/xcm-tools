@@ -1,15 +1,21 @@
 // Contains basic structure of polkadotXCM call
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
-import type { TPallet, TPolkadotXcmSection, TSerializedApiCall } from '../../types'
+import type { TMultiAsset, TPallet, TPolkadotXcmSection, TSerializedApiCall } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
-import { isTMultiLocation } from '../xcmPallet/utils'
+import {
+  addXcmVersionHeader,
+  extractVersionFromHeader,
+  isTMultiLocation,
+  maybeOverrideMultiAssets
+} from '../xcmPallet/utils'
 
 class PolkadotXCMTransferImpl {
   static transferPolkadotXCM<TApi, TRes>(
     {
       api,
       header,
+      asset,
       addressSelection,
       currencySelection,
       overriddenAsset,
@@ -19,6 +25,13 @@ class PolkadotXCMTransferImpl {
     section: TPolkadotXcmSection,
     fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ): TRes {
+    const [version, multiAssets] = extractVersionFromHeader<TMultiAsset[]>(currencySelection)
+
+    const resolvedMultiAssets = addXcmVersionHeader(
+      maybeOverrideMultiAssets(version, asset.amount, multiAssets, overriddenAsset),
+      version
+    )
+
     const feeAssetIndex =
       overriddenAsset === undefined || isTMultiLocation(overriddenAsset)
         ? DEFAULT_FEE_ASSET
@@ -30,7 +43,7 @@ class PolkadotXCMTransferImpl {
       parameters: {
         dest: header,
         beneficiary: addressSelection,
-        assets: currencySelection,
+        assets: resolvedMultiAssets,
         fee_asset_item: feeAssetIndex,
         ...(fees !== undefined ? { weight_limit: fees } : {})
       }

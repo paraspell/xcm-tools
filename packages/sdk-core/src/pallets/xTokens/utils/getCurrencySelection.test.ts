@@ -32,28 +32,6 @@ const mockCurrencySelectionHeader: TXcmVersioned<TMultiAsset> = {
 }
 
 describe('getCurrencySelection', () => {
-  it('returns overrided currency multi-location when provided', () => {
-    const input = {
-      origin: 'Acala',
-      asset: {
-        assetId: '123',
-        amount: '1000'
-      },
-      paraIdTo: 2000,
-      overriddenAsset: {
-        parents: Parents.ZERO,
-        interior: 'Here'
-      }
-    } as TXTokensTransferOptions<unknown, unknown>
-    const currencySelection = '123'
-    const isAssetHub = false
-
-    vi.mocked(getNode).mockReturnValue({ version: Version.V4 } as ParachainNode<unknown, unknown>)
-
-    const result = getCurrencySelection(input, isAssetHub, currencySelection)
-    expect(result).toEqual({ V4: input.overriddenAsset })
-  })
-
   it('returns modified currency selection for asset hubs when no override is provided', () => {
     const input = {
       origin: 'Acala',

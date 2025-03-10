@@ -3,8 +3,8 @@
 import { NodeNotSupportedError } from '../../errors'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
-import type { TAsset, TMultiLocation } from '../../types'
+import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
+import type { TAsset } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   Parents,
@@ -34,22 +34,18 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
     throw new NodeNotSupportedError()
   }
 
-  createCurrencySpec(
-    amount: string,
-    scenario: TScenario,
-    version: Version,
-    _asset?: TAsset,
-    overridedMultiLocation?: TMultiLocation
-  ) {
+  createCurrencySpec(amount: string, scenario: TScenario, version: Version, _asset?: TAsset) {
     if (scenario === 'ParaToPara') {
-      const interior = {
-        X1: {
-          PalletInstance: 5
+      return createVersionedMultiAssets(version, amount, {
+        parents: Parents.ZERO,
+        interior: {
+          X1: {
+            PalletInstance: 5
+          }
         }
-      }
-      return createCurrencySpec(amount, version, Parents.ZERO, overridedMultiLocation, interior)
+      })
     } else {
-      return super.createCurrencySpec(amount, scenario, version, undefined, overridedMultiLocation)
+      return super.createCurrencySpec(amount, scenario, version)
     }
   }
 }
