@@ -6,7 +6,7 @@ import type { TMultiAsset, TMultiLocation, TRelayToParaOptions, TXcmVersioned } 
 import { Parents, Version } from '../../types'
 import { generateAddressPayload, resolveParaId } from '../../utils'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
-import { createCurrencySpec, createPolkadotXcmHeader } from './utils'
+import { createPolkadotXcmHeader, createVersionedMultiAssets } from './utils'
 
 vi.mock('../../utils', () => ({
   generateAddressPayload: vi.fn(),
@@ -14,7 +14,7 @@ vi.mock('../../utils', () => ({
 }))
 
 vi.mock('./utils', () => ({
-  createCurrencySpec: vi.fn(),
+  createVersionedMultiAssets: vi.fn(),
   createPolkadotXcmHeader: vi.fn()
 }))
 
@@ -38,7 +38,7 @@ describe('constructRelayToParaParameters', () => {
       'mockedBeneficiary' as unknown as TXcmVersioned<TMultiLocation>
     )
     vi.mocked(resolveParaId).mockReturnValue(mockParaId)
-    vi.mocked(createCurrencySpec).mockReturnValue({} as TXcmVersioned<TMultiAsset[]>)
+    vi.mocked(createVersionedMultiAssets).mockReturnValue({} as TXcmVersioned<TMultiAsset[]>)
     vi.mocked(createPolkadotXcmHeader).mockReturnValue(
       'mockedDest' as unknown as TXcmVersioned<TMultiLocation>
     )
@@ -61,7 +61,10 @@ describe('constructRelayToParaParameters', () => {
       Version.V1,
       mockParaId
     )
-    expect(createCurrencySpec).toHaveBeenCalledWith(mockAmount, Version.V1, Parents.ZERO)
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V1, mockAmount, {
+      parents: Parents.ZERO,
+      interior: 'Here'
+    })
     expect(result).toEqual({
       dest: 'mockedDest',
       beneficiary: 'mockedBeneficiary',
@@ -88,7 +91,10 @@ describe('constructRelayToParaParameters', () => {
       Version.V3,
       mockParaId
     )
-    expect(createCurrencySpec).toHaveBeenCalledWith(mockAmount, Version.V3, Parents.ZERO)
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, mockAmount, {
+      parents: Parents.ZERO,
+      interior: 'Here'
+    })
     expect(result).toEqual({
       dest: 'mockedDest',
       beneficiary: 'mockedBeneficiary',
@@ -124,7 +130,10 @@ describe('constructRelayToParaParameters', () => {
       Version.V2,
       mockParaId
     )
-    expect(createCurrencySpec).toHaveBeenCalledWith(mockAmount, Version.V2, Parents.ZERO)
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V2, mockAmount, {
+      parents: Parents.ZERO,
+      interior: 'Here'
+    })
     expect(result).toEqual({
       dest: 'mockedDest',
       beneficiary: 'mockedBeneficiary',

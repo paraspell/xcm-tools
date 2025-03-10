@@ -2,22 +2,20 @@
 
 import { ethers } from 'ethers'
 
-import { ETHEREUM_JUNCTION } from '../../constants'
+import { DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import { getOtherAssets } from '../../pallets/assets'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
-  createBridgeCurrencySpec,
   createBridgePolkadotXcmDest,
-  createCurrencySpec,
   createMultiAsset,
-  createPolkadotXcmHeader
+  createPolkadotXcmHeader,
+  createVersionedMultiAssets
 } from '../../pallets/xcmPallet/utils'
 import type {
   TAmount,
   TAsset,
   TDestination,
-  TJunctions,
   TPolkadotXcmSection,
   TRelayToParaOverrides,
   TSerializedApiCall
@@ -25,7 +23,6 @@ import type {
 import {
   type IPolkadotXCMTransfer,
   Parents,
-  type TMultiAsset,
   type TMultiLocation,
   type TPolkadotXCMTransferOptions,
   type TScenario,
@@ -72,16 +69,31 @@ class AssetHubPolkadot<TApi, TRes>
       (targetChain === 'Kusama' && input.asset.symbol?.toUpperCase() === 'KSM') ||
       (targetChain === 'Polkadot' && input.asset.symbol?.toUpperCase() === 'DOT')
     ) {
+      const overriddenVersion = Version.V4
+      const customMultiLocation: TMultiLocation = {
+        parents: Parents.TWO,
+        interior: {
+          X1: [
+            {
+              GlobalConsensus: targetChain
+            }
+          ]
+        }
+      }
       const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
         header: createBridgePolkadotXcmDest(
-          Version.V4,
+          overriddenVersion,
           targetChain,
           input.destination,
           input.paraIdTo
         ),
         addressSelection: generateAddressMultiLocationV4(input.api, input.address),
-        currencySelection: createBridgeCurrencySpec(input.asset.amount, targetChain)
+        currencySelection: createVersionedMultiAssets(
+          overriddenVersion,
+          input.asset.amount,
+          customMultiLocation
+        )
       }
       return PolkadotXCMTransferImpl.transferPolkadotXCM(
         modifiedInput,
@@ -92,19 +104,19 @@ class AssetHubPolkadot<TApi, TRes>
       (targetChain === 'Polkadot' && input.asset.symbol?.toUpperCase() === 'KSM') ||
       (targetChain === 'Kusama' && input.asset.symbol?.toUpperCase() === 'DOT')
     ) {
+      const overriddenVersion = Version.V3
       const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
         header: createBridgePolkadotXcmDest(
-          Version.V3,
+          overriddenVersion,
           targetChain,
           input.destination,
           input.paraIdTo
         ),
-        currencySelection: createCurrencySpec(
+        currencySelection: createVersionedMultiAssets(
+          overriddenVersion,
           input.asset.amount,
-          Version.V3,
-          Parents.ONE,
-          input.overriddenAsset
+          DOT_MULTILOCATION
         )
       }
       return PolkadotXCMTransferImpl.transferPolkadotXCM(
@@ -151,10 +163,9 @@ class AssetHubPolkadot<TApi, TRes>
         this.version,
         paraIdTo
       ),
-      currencySelection: createCurrencySpec(
-        input.asset.amount,
+      currencySelection: createVersionedMultiAssets(
         Version.V3,
-        Parents.TWO,
+        asset.amount,
         asset.multiLocation as TMultiLocation
       )
     }
@@ -166,7 +177,7 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   handleMythosTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
-    const { api, address, asset, overriddenAsset, scenario, destination, paraIdTo } = input
+    const { api, address, asset, scenario, destination, paraIdTo } = input
     const version = Version.V2
     const paraId = resolveParaId(paraIdTo, destination)
     const customMultiLocation: TMultiLocation = {
@@ -188,13 +199,7 @@ class AssetHubPolkadot<TApi, TRes>
         version,
         paraId
       ),
-      currencySelection: this.createCurrencySpec(
-        asset.amount,
-        scenario,
-        version,
-        asset,
-        overriddenAsset ?? customMultiLocation
-      )
+      currencySelection: createVersionedMultiAssets(version, asset.amount, customMultiLocation)
     }
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
       modifiedInput,
@@ -249,7 +254,7 @@ class AssetHubPolkadot<TApi, TRes>
   patchInput<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): TPolkadotXCMTransferOptions<TApi, TRes> {
-    const { asset, destination, paraIdTo, overriddenAsset, scenario, api, version, address } = input
+    const { asset, destination, paraIdTo, scenario, api, version, address } = input
 
     if (
       (asset.symbol?.toUpperCase() === 'USDT' || asset.symbol?.toUpperCase() === 'USDC') &&
@@ -267,13 +272,7 @@ class AssetHubPolkadot<TApi, TRes>
           versionOrDefault,
           paraIdTo
         ),
-        currencySelection: this.createCurrencySpec(
-          asset.amount,
-          scenario,
-          versionOrDefault,
-          asset,
-          overriddenAsset
-        )
+        currencySelection: this.createCurrencySpec(asset.amount, scenario, versionOrDefault, asset)
       }
     }
 
@@ -287,12 +286,10 @@ class AssetHubPolkadot<TApi, TRes>
       const versionOrDefault = version ?? this.version
       return {
         ...input,
-        currencySelection: super.createCurrencySpec(
-          asset.amount,
-          'ParaToRelay',
+        currencySelection: createVersionedMultiAssets(
           versionOrDefault,
-          asset,
-          overriddenAsset
+          asset.amount,
+          DOT_MULTILOCATION
         )
       }
     }
@@ -367,32 +364,29 @@ class AssetHubPolkadot<TApi, TRes>
     return { section: 'limited_teleport_assets', includeFee: true }
   }
 
-  createCurrencySpec(
-    amount: TAmount,
-    scenario: TScenario,
-    version: Version,
-    asset?: TAsset,
-    overridedMultiLocation?: TMultiLocation | TMultiAsset[]
-  ) {
+  createCurrencySpec(amount: TAmount, scenario: TScenario, version: Version, asset?: TAsset) {
     if (scenario === 'ParaToPara') {
-      const interior: TJunctions = {
-        X2: [
-          {
-            PalletInstance: 50
-          },
-          {
-            // TODO: Handle missing assedId
-            GeneralIndex: asset && isForeignAsset(asset) && asset.assetId ? asset.assetId : 0
-          }
-        ]
-      }
       const multiLocation =
-        overridedMultiLocation !== undefined
-          ? overridedMultiLocation
-          : asset && isForeignAsset(asset)
-            ? (asset.multiLocation as TMultiLocation)
-            : undefined
-      return createCurrencySpec(amount, version, Parents.ZERO, multiLocation, interior)
+        asset && isForeignAsset(asset) ? (asset.multiLocation as TMultiLocation) : undefined
+
+      return createVersionedMultiAssets(
+        version,
+        amount,
+        multiLocation ?? {
+          parents: Parents.ZERO,
+          interior: {
+            X2: [
+              {
+                PalletInstance: 50
+              },
+              {
+                // TODO: Handle missing assedId
+                GeneralIndex: asset && isForeignAsset(asset) && asset.assetId ? asset.assetId : 0
+              }
+            ]
+          }
+        }
+      )
     } else {
       return super.createCurrencySpec(amount, scenario, version, asset)
     }

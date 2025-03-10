@@ -40,7 +40,7 @@ describe('Altair', () => {
 
   it('should call transferXTokens with ForeignAsset when currency does not match the native asset', () => {
     const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-    const inputWithCurrencyID = { ...mockInput, currencyID: '1' }
+    const inputWithCurrencyID = { ...mockInput, asset: { ...mockInput.asset, assetId: '1' } }
     vi.spyOn(altair, 'getNativeAssetSymbol').mockReturnValue('NOT_AIR')
 
     altair.transferXTokens(inputWithCurrencyID)

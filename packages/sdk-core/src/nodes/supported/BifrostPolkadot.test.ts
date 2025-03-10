@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ETHEREUM_JUNCTION } from '../../constants'
+import { DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { getAssetId } from '../../pallets/assets'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
+import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type {
   TAsset,
@@ -66,18 +66,19 @@ describe('BifrostPolkadot', () => {
     expect(spy).toHaveBeenCalledWith(
       {
         ...mockPolkadotXCMInput,
-        currencySelection: createCurrencySpec(
-          mockPolkadotXCMInput.asset.amount,
+        currencySelection: createVersionedMultiAssets(
           Version.V3,
-          2, // Parents.TWO
-          mockPolkadotXCMInput.overriddenAsset,
+          mockPolkadotXCMInput.asset.amount,
           {
-            X2: [
-              ETHEREUM_JUNCTION,
-              {
-                AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
-              }
-            ]
+            parents: Parents.TWO,
+            interior: {
+              X2: [
+                ETHEREUM_JUNCTION,
+                {
+                  AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
+                }
+              ]
+            }
           }
         )
       },
@@ -100,11 +101,10 @@ describe('BifrostPolkadot', () => {
       {
         ...mockPolkadotXCMInput,
         asset,
-        currencySelection: createCurrencySpec(
-          mockPolkadotXCMInput.asset.amount,
+        currencySelection: createVersionedMultiAssets(
           Version.V3,
-          Parents.ONE,
-          mockPolkadotXCMInput.overriddenAsset
+          mockPolkadotXCMInput.asset.amount,
+          DOT_MULTILOCATION
         )
       },
       'transfer_assets',

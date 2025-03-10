@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createCurrencySpec } from '../../pallets/xcmPallet/utils'
+import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Parents, Version } from '../../types'
 import { getNode } from '../../utils'
@@ -15,7 +15,7 @@ vi.mock('../../pallets/polkadotXcm', () => ({
 }))
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
-  createCurrencySpec: vi.fn()
+  createVersionedMultiAssets: vi.fn()
 }))
 
 describe('Crab', () => {
@@ -59,18 +59,24 @@ describe('Crab', () => {
 
   it('should call createCurrencySpec with correct values', () => {
     crab.createCurrencySpec('100', 'ParaToPara', Version.V3)
-    expect(createCurrencySpec).toHaveBeenCalledWith('100', Version.V3, Parents.ZERO, undefined, {
-      X1: {
-        PalletInstance: 5
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, '100', {
+      parents: Parents.ZERO,
+      interior: {
+        X1: {
+          PalletInstance: 5
+        }
       }
     })
   })
 
   it('should call createCurrencySpec with correct values - ParaToRelay', () => {
     crab.createCurrencySpec('100', 'ParaToRelay', Version.V3)
-    expect(createCurrencySpec).toHaveBeenCalledWith('100', Version.V3, Parents.ZERO, undefined, {
-      X1: {
-        PalletInstance: 5
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, '100', {
+      parents: Parents.ZERO,
+      interior: {
+        X1: {
+          PalletInstance: 5
+        }
       }
     })
   })

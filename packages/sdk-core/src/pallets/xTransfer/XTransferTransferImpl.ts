@@ -1,4 +1,3 @@
-import { getCurrency } from '../../pallets/xcmPallet/utils'
 import type { TPallet } from '../../types'
 import {
   Parents,
@@ -7,6 +6,7 @@ import {
   type TXTransferTransferOptions,
   Version
 } from '../../types'
+import { createMultiAsset, maybeOverrideMultiAssets } from '../xcmPallet/utils'
 import { determineDestWeight } from './utils/determineDestWeight'
 import { getDestination } from './utils/getDestination'
 
@@ -21,7 +21,21 @@ class XTransferTransferImpl {
       )
     }
 
-    const currencySpec = getCurrency(asset.amount, Version.V1, Parents.ZERO, overriddenAsset)[0]
+    const version = Version.V1
+
+    const multiAssets = [
+      createMultiAsset(version, asset.amount, {
+        parents: Parents.ZERO,
+        interior: 'Here'
+      })
+    ]
+
+    const resolvedMultiAssets = maybeOverrideMultiAssets(
+      version,
+      asset.amount,
+      multiAssets,
+      overriddenAsset
+    )
 
     const dest = getDestination(input)
 
@@ -33,7 +47,7 @@ class XTransferTransferImpl {
       module: (pallet as TPallet) ?? 'XTransfer',
       section: method ?? section,
       parameters: {
-        asset: currencySpec,
+        asset: resolvedMultiAssets[0],
         dest,
         dest_weight: destWeight
       }

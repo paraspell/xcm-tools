@@ -11,7 +11,11 @@ import { Parents } from '../../../types'
 import { isRelayChain } from '../../../utils'
 import { isForeignAsset } from '../../../utils/assets'
 import { getOtherAssets } from '../../assets'
-import { addXcmVersionHeader, createMultiAsset } from '../../xcmPallet/utils'
+import {
+  addXcmVersionHeader,
+  createMultiAsset,
+  maybeOverrideMultiAssets
+} from '../../xcmPallet/utils'
 
 const buildMultiLocation = <TApi, TRes>({
   paraIdTo,
@@ -70,9 +74,19 @@ export const getModifiedCurrencySelection = <TApi, TRes>(
   input: TXTokensTransferOptions<TApi, TRes>
 ): TXcmVersioned<TMultiAsset | TMultiAsset[]> => {
   const {
-    asset: { amount }
+    asset: { amount },
+    overriddenAsset
   } = input
+
+  if (overriddenAsset) {
+    return addXcmVersionHeader(
+      maybeOverrideMultiAssets(version, amount, [], overriddenAsset),
+      version
+    )
+  }
+
   const multiLocation = buildMultiLocation(input)
   const multiAsset = createMultiAsset(version, amount, multiLocation)
+
   return addXcmVersionHeader(multiAsset, version)
 }

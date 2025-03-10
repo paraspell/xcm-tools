@@ -5,8 +5,6 @@ import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TAsset, TRelayToParaOverrides } from '../../types'
 import {
   type IPolkadotXCMTransfer,
-  type TMultiAsset,
-  type TMultiLocation,
   type TPolkadotXCMTransferOptions,
   type TScenario,
   Version
@@ -54,20 +52,8 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     return { section: 'limited_teleport_assets', includeFee: true }
   }
 
-  createCurrencySpec(
-    amount: string,
-    scenario: TScenario,
-    version: Version,
-    asset?: TAsset,
-    overridedMultiLocation?: TMultiLocation | TMultiAsset[]
-  ) {
-    return getNode('AssetHubPolkadot').createCurrencySpec(
-      amount,
-      scenario,
-      version,
-      asset,
-      overridedMultiLocation
-    )
+  createCurrencySpec(amount: string, scenario: TScenario, version: Version, asset?: TAsset) {
+    return getNode('AssetHubPolkadot').createCurrencySpec(amount, scenario, version, asset)
   }
 }
 
