@@ -1,5 +1,28 @@
 # Changelog
 
+## [8.6.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.6.0...sdk-pjs-v8.6.1) (2025-03-10)
+
+
+### Bug Fixes
+
+* **sdk-core:** Validate sender address in dry-run function 🛠️ ([f71efde](https://github.com/paraspell/xcm-tools/commit/f71efde6c1419bf15f5e9b8775d901483d410731))
+
+
+### Code Refactoring
+
+* Improve builder type safety 🔧 ([41389de](https://github.com/paraspell/xcm-tools/commit/41389dee44246fc83d46f45512f97433fd773b50))
+* **playground:** Use builder method for dry-run 🔧 ([915662f](https://github.com/paraspell/xcm-tools/commit/915662f88103de5e6bc060f10fbef4ea73acc7d5))
+
+
+### Tests
+
+* **sdk-core:** Add assets E2E tests 🧪 ([e3dee4e](https://github.com/paraspell/xcm-tools/commit/e3dee4edd4d80cb4a806ed711862e5b9e3bb862e))
+
+
+### Build System
+
+* Add sort-imports ESlint rule ✨ ([d9bd402](https://github.com/paraspell/xcm-tools/commit/d9bd4024ba87f6c8fedad012100ea76fdf7658c8))
+
 ## [8.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.5.3...sdk-pjs-v8.6.0) (2025-02-28)
 
 
