@@ -1,3 +1,4 @@
+import type { TNodeWithRelayChains } from '../types'
 import { Parents, type TJunction, type TMultiLocation } from '../types'
 
 export const DEFAULT_FEE_ASSET = 0
@@ -105,3 +106,11 @@ export const SUPPORTED_PALLETS = [
   'XTransfer',
   'XcmPallet'
 ] as const
+
+export const SYSTEM_NODES_POLKADOT: TNodeWithRelayChains[] = [
+  'PeoplePolkadot',
+  'CoretimePolkadot',
+  'Collectives'
+]
+
+export const SYSTEM_NODES_KUSAMA: TNodeWithRelayChains[] = ['PeopleKusama', 'CoretimeKusama']

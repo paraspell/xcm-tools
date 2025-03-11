@@ -44,13 +44,27 @@
     ],
     "otherAssets": [
       {
-        "assetId": "10",
-        "symbol": "DOT",
-        "decimals": 10,
-        "existentialDeposit": "100000000"
+        "symbol": "USDC",
+        "decimals": 6,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1337
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "70000"
       },
       {
-        "assetId": "1984",
         "symbol": "USDt",
         "decimals": 6,
         "multiLocation": {
@@ -72,26 +86,15 @@
         "existentialDeposit": "70000"
       },
       {
-        "assetId": "1337",
-        "symbol": "USDC",
-        "decimals": 6,
+        "symbol": "DOT",
+        "decimals": 10,
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 1337
-              }
-            ]
+            "Here": null
           }
         },
-        "existentialDeposit": "70000"
+        "existentialDeposit": "100000000"
       }
     ]
   },

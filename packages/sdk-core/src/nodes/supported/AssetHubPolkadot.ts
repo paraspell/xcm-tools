@@ -2,7 +2,7 @@
 
 import { ethers } from 'ethers'
 
-import { DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
+import { DOT_MULTILOCATION, ETHEREUM_JUNCTION, SYSTEM_NODES_POLKADOT } from '../../constants'
 import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import { getOtherAssets } from '../../pallets/assets'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
@@ -10,7 +10,8 @@ import {
   createBridgePolkadotXcmDest,
   createMultiAsset,
   createPolkadotXcmHeader,
-  createVersionedMultiAssets
+  createVersionedMultiAssets,
+  isTMultiLocation
 } from '../../pallets/xcmPallet/utils'
 import type {
   TAmount,
@@ -298,8 +299,12 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   private getSection(scenario: TScenario, destination: TDestination): TPolkadotXcmSection {
+    const isSystemNode =
+      !isTMultiLocation(destination) && SYSTEM_NODES_POLKADOT.includes(destination)
     if (destination === 'Polimec' || destination === 'Moonbeam') return 'transfer_assets'
-    return scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
+    return scenario === 'ParaToPara' && !isSystemNode
+      ? 'limited_reserve_transfer_assets'
+      : 'limited_teleport_assets'
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
@@ -327,6 +332,9 @@ class AssetHubPolkadot<TApi, TRes>
       return Promise.resolve(this.handleBifrostEthTransfer(input))
     }
 
+    const isSystemNode =
+      !isTMultiLocation(destination) && SYSTEM_NODES_POLKADOT.includes(destination)
+
     if (
       scenario === 'ParaToPara' &&
       asset.symbol === 'DOT' &&
@@ -334,7 +342,9 @@ class AssetHubPolkadot<TApi, TRes>
       destination !== 'Hydration' &&
       destination !== 'Polimec' &&
       destination !== 'Moonbeam' &&
-      destination !== 'BifrostPolkadot'
+      destination !== 'BifrostPolkadot' &&
+      destination !== 'PeoplePolkadot' &&
+      !isSystemNode
     ) {
       throw new ScenarioNotSupportedError(
         this.node,
@@ -366,8 +376,7 @@ class AssetHubPolkadot<TApi, TRes>
 
   createCurrencySpec(amount: TAmount, scenario: TScenario, version: Version, asset?: TAsset) {
     if (scenario === 'ParaToPara') {
-      const multiLocation =
-        asset && isForeignAsset(asset) ? (asset.multiLocation as TMultiLocation) : undefined
+      const multiLocation = asset ? (asset.multiLocation as TMultiLocation) : undefined
 
       return createVersionedMultiAssets(
         version,

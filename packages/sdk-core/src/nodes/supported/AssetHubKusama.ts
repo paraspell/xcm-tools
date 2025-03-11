@@ -1,7 +1,9 @@
 // Contains detailed structure of XCM call construction for AssetHubKusama Parachain
 
+import { SYSTEM_NODES_KUSAMA } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import type { TAsset, TRelayToParaOverrides } from '../../types'
 import {
   type IPolkadotXCMTransfer,
@@ -27,7 +29,14 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
       return Promise.resolve(getNode('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot'))
     }
 
-    if (scenario === 'ParaToPara' && asset.symbol === 'KSM' && !isForeignAsset(asset)) {
+    const isSystemNode = !isTMultiLocation(destination) && SYSTEM_NODES_KUSAMA.includes(destination)
+
+    if (
+      scenario === 'ParaToPara' &&
+      asset.symbol === 'KSM' &&
+      !isForeignAsset(asset) &&
+      !isSystemNode
+    ) {
       throw new ScenarioNotSupportedError(
         this.node,
         scenario,
@@ -44,7 +53,9 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     }
 
     const section =
-      scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
+      scenario === 'ParaToPara' && !isSystemNode
+        ? 'limited_reserve_transfer_assets'
+        : 'limited_teleport_assets'
     return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited'))
   }
 
