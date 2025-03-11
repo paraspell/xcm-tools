@@ -32,6 +32,7 @@ import { supportsDryRunApi } from './supportsDryRunApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
 import { fetchXcmRegistry, TRegistryAssets } from './fetchXcmRegistry'
 import { getParaId } from '../../src/nodes/config'
+import { fetchPolimecForeignAssets } from './fetchPolimecAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -333,6 +334,10 @@ const fetchOtherAssets = async (
 
   if (node === 'Unique' || node === 'Quartz') {
     otherAssets = await fetchUniqueForeignAssets(api, query)
+  }
+
+  if (node === 'Polimec') {
+    otherAssets = await fetchPolimecForeignAssets(api, query)
   }
 
   return otherAssets.length > 0 ? otherAssets : fetchOtherAssetsDefault(node, api, query)
