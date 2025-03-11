@@ -1,5 +1,20 @@
 # Changelog
 
+## [8.6.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.6.1...sdk-core-v8.6.2) (2025-03-11)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix AH -&gt; system chains transfers 🔧 ([e65d436](https://github.com/paraspell/xcm-tools/commit/e65d436721c02cf4cb32b2444906d1cf00b2bb5d))
+* **sdk-core:** Fix Polimec foreign assets fetching 🪙 ([00ebcc5](https://github.com/paraspell/xcm-tools/commit/00ebcc52edfaba51a848b38fffd3f1f37ab457c5))
+* **sdk-core:** Fix Polimec foreign assets fetching 🪙 ([d5530bb](https://github.com/paraspell/xcm-tools/commit/d5530bb21278355c7c77eae15e4f5b68d2452baf))
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor override currency logic 🔧 ([6f4f636](https://github.com/paraspell/xcm-tools/commit/6f4f63685402907efb18b6346ce4c189773d219f))
+* **sdk-core:** Refactor override currency logic 🔧 ([905e9c5](https://github.com/paraspell/xcm-tools/commit/905e9c5355fd7e0f1e8defbef34d4247e6b39f9d))
+
 ## [8.6.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.6.0...sdk-core-v8.6.1) (2025-03-10)
 
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.6.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.6.1...xcm-router-v8.6.2) (2025-03-11)
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor override currency logic 🔧 ([6f4f636](https://github.com/paraspell/xcm-tools/commit/6f4f63685402907efb18b6346ce4c189773d219f))
+* **sdk-core:** Refactor override currency logic 🔧 ([905e9c5](https://github.com/paraspell/xcm-tools/commit/905e9c5355fd7e0f1e8defbef34d4247e6b39f9d))
+
 ## [8.6.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v2.3.0...xcm-router-v8.6.1) (2025-03-10)
 
 
