@@ -103,6 +103,7 @@ abstract class ParachainNode<TApi, TRes> {
     const {
       api,
       asset,
+      feeAsset,
       address,
       to: destination,
       paraIdTo,
@@ -181,6 +182,7 @@ abstract class ParachainNode<TApi, TRes> {
         currencySelection: this.createCurrencySpec(asset.amount, scenario, versionOrDefault, asset),
         overriddenAsset,
         asset,
+        feeAsset,
         scenario,
         destination,
         paraIdTo: paraId,

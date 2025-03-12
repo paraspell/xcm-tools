@@ -26,11 +26,11 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   }
 
   if (node === 'Polimec') {
-    if (asset.assetId === undefined) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    if (asset.multiLocation === undefined) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multi-location`)
     }
 
-    return api.getForeignAssetsByIdBalance(address, asset.assetId)
+    return api.getAssetHubForeignBalance(address, asset.multiLocation as TMultiLocation)
   }
 
   if (node === 'AssetHubPolkadot') {

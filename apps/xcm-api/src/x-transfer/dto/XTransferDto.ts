@@ -34,12 +34,6 @@ export const MultiAssetSchema = z.union([
 
 export type TMultiAsset = z.infer<typeof MultiAssetSchema>;
 
-const MultiAssetWithFeeSchema = MultiAssetSchema.and(
-  z.object({
-    isFeeAsset: z.boolean().optional(),
-  }),
-);
-
 const AmountSchema = z.union([
   z.string().refine(validateAmount, {
     message: 'Amount must be a positive number',
@@ -86,12 +80,6 @@ export const CurrencyCoreWithAmountSchema = CurrencyCoreSchema.and(
   }),
 );
 
-const CurrencyCoreWithFeeSchema = CurrencyCoreWithAmountSchema.and(
-  z.object({
-    isFeeAsset: z.boolean().optional(),
-  }),
-);
-
 const CurrencyCoreWithMLOverride = z
   .union([
     CurrencySymbolSchema,
@@ -112,8 +100,8 @@ export const CurrencySchema = z.union([
   CurrencyCoreWithMLOverride,
   z.object({
     multiasset: z.union([
-      z.array(MultiAssetWithFeeSchema),
-      z.array(CurrencyCoreWithFeeSchema),
+      z.array(MultiAssetSchema),
+      z.array(CurrencyCoreWithAmountSchema),
     ]),
   }),
 ]);

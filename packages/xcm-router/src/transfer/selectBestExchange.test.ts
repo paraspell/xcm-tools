@@ -30,8 +30,8 @@ describe('selectBestExchange', () => {
       .mocked(calculateFromExchangeFee)
       .mockResolvedValue(BigNumber(10));
     calculateToExchangeFeeSpy = vi.mocked(calculateToExchangeWeight).mockResolvedValue({
-      proofSize: BigNumber(10),
-      refTime: BigNumber(10),
+      proofSize: 10n,
+      refTime: 10n,
     });
   });
 

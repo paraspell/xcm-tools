@@ -23,6 +23,12 @@ export interface IPolkadotApi<TApi, TRes> {
   hexToUint8a(hex: string): Uint8Array
   stringToUint8a(str: string): Uint8Array
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
+  quoteAhPrice(
+    fromMl: TMultiLocation,
+    toMl: TMultiLocation,
+    amountIn: bigint,
+    includeFee?: boolean
+  ): Promise<bigint | undefined>
   getBalanceNative(address: string): Promise<bigint>
   getBalanceNativeAcala(address: string, symbol: string): Promise<bigint>
   getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint>

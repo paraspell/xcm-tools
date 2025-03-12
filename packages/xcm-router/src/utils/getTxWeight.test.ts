@@ -1,5 +1,4 @@
 import type { Extrinsic } from '@paraspell/sdk-pjs';
-import BigNumber from 'bignumber.js';
 import { describe, expect, it, vi } from 'vitest';
 
 import { getTxWeight } from './getTxWeight';
@@ -9,8 +8,12 @@ describe('getTxWeight', () => {
     const mockTx = {
       paymentInfo: vi.fn().mockResolvedValue({
         weight: {
-          refTime: 1234,
-          proofSize: 5678,
+          refTime: {
+            toBigInt: vi.fn().mockReturnValue(1234n),
+          },
+          proofSize: {
+            toBigInt: vi.fn().mockReturnValue(5678n),
+          },
         },
       }),
     } as unknown as Extrinsic;
@@ -18,8 +21,10 @@ describe('getTxWeight', () => {
     const spy = vi.spyOn(mockTx, 'paymentInfo');
     const result = await getTxWeight(mockTx, address);
     expect(spy).toHaveBeenCalledWith(address);
-    expect(result.refTime.isEqualTo(new BigNumber(1234))).toBe(true);
-    expect(result.proofSize.isEqualTo(new BigNumber(5678))).toBe(true);
+    expect(result).toEqual({
+      refTime: 1234n,
+      proofSize: 5678n,
+    });
   });
 
   it('should propagate error if tx.paymentInfo fails', async () => {

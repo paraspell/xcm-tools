@@ -1,8 +1,8 @@
-import type { TAsset } from '@paraspell/sdk-pjs';
+import type { TAsset, TWeight } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 
 import type ExchangeNode from '../dexNodes/DexNode';
-import type { TBuildTransactionsOptionsModified, TWeight } from '../types';
+import type { TBuildTransactionsOptionsModified } from '../types';
 import { calculateTxFee, getTxWeight } from '../utils';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 
@@ -21,7 +21,7 @@ export const calculateToExchangeWeight = async (
   options: TBuildTransactionsOptionsModified,
 ): Promise<TWeight> => {
   const { origin, feeCalcAddress } = options;
-  if (!origin) return { refTime: BigNumber(0), proofSize: BigNumber(0) };
+  if (!origin) return { refTime: 0n, proofSize: 0n };
   const tx = await buildToExchangeExtrinsic({
     ...options,
     origin,

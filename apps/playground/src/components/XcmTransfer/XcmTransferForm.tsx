@@ -34,6 +34,7 @@ import { useWallet } from '../../hooks/useWallet';
 import type { TSubmitType } from '../../types';
 import { isValidWalletAddress } from '../../utils';
 import { CurrencySelection } from '../common/CurrencySelection';
+import { FeeAssetSelection } from '../common/FeeAssetSelection';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
@@ -41,7 +42,6 @@ export type TCurrencyEntry = {
   currencyOptionId: string;
   customCurrency: string;
   amount: string;
-  isFeeAsset: boolean;
   isCustomCurrency: boolean;
   customCurrencyType?:
     | 'id'
@@ -59,6 +59,7 @@ export type FormValues = {
   from: TNodeDotKsmWithRelayChains;
   to: TNodeWithRelayChains;
   currencies: TCurrencyEntry[];
+  feeAsset: Omit<TCurrencyEntry, 'amount'>;
   address: string;
   useApi: boolean;
 };
@@ -67,6 +68,7 @@ export type TCurrencyEntryTransformed = TCurrencyEntry & { currency?: TAsset };
 
 export type FormValuesTransformed = FormValues & {
   currencies: TCurrencyEntryTransformed[];
+  transformedFeeAsset?: TCurrencyEntryTransformed;
 };
 
 type Props = {
@@ -93,12 +95,18 @@ const XcmTransferForm: FC<Props> = ({
           currencyOptionId: '',
           customCurrency: '',
           amount: '10000000000000000000',
-          isFeeAsset: false,
           isCustomCurrency: false,
           customCurrencyType: 'id',
           customCurrencySymbolSpecifier: 'auto',
         },
       ],
+      feeAsset: {
+        currencyOptionId: '',
+        customCurrency: '',
+        isCustomCurrency: false,
+        customCurrencyType: 'id',
+        customCurrencySymbolSpecifier: 'auto',
+      },
       address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
       useApi: false,
     },
@@ -125,6 +133,11 @@ const XcmTransferForm: FC<Props> = ({
           return null;
         },
       },
+      feeAsset(value, values) {
+        return !value && values.currencies.length > 1
+          ? 'Fee asset is required'
+          : null;
+      },
     },
   });
 
@@ -135,30 +148,37 @@ const XcmTransferForm: FC<Props> = ({
     to,
   );
 
+  const transformCurrency = (entry: TCurrencyEntry) => {
+    if (entry.isCustomCurrency) {
+      // Custom currency doesn't map to currencyMap
+      return { ...entry };
+    }
+
+    const currency = currencyMap[entry.currencyOptionId];
+
+    if (!currency) {
+      return { ...entry };
+    }
+
+    return { ...entry, currency };
+  };
+
   const onSubmitInternal = (
     values: FormValues,
     _event: FormEvent<HTMLFormElement> | undefined,
     submitType: TSubmitType = 'default',
   ) => {
     // Transform each currency entry
-    const transformedCurrencies = values.currencies.map((currEntry) => {
-      if (currEntry.isCustomCurrency) {
-        // Custom currency doesn't map to currencyMap
-        return { ...currEntry };
-      }
+    const transformedCurrencies = values.currencies.map(transformCurrency);
 
-      const currency = currencyMap[currEntry.currencyOptionId];
-
-      if (!currency) {
-        return { ...currEntry };
-      }
-
-      return { ...currEntry, currency };
-    });
+    const transformedFeeAsset = values.feeAsset.currencyOptionId
+      ? transformCurrency(values.feeAsset as TCurrencyEntry)
+      : undefined;
 
     const transformedValues: FormValuesTransformed = {
       ...values,
       currencies: transformedCurrencies,
+      transformedFeeAsset,
     };
 
     if (submitType === 'dryRun' || submitType === 'delete') {
@@ -308,6 +328,8 @@ const XcmTransferForm: FC<Props> = ({
               Add another asset
             </Button>
           </Stack>
+
+          <FeeAssetSelection form={form} currencyOptions={currencyOptions} />
 
           <TextInput
             label="Recipient address"

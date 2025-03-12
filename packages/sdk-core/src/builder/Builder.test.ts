@@ -176,7 +176,7 @@ describe('Builder', () => {
       const currency: TCurrencyInputWithAmount = {
         multiasset: [
           { id: CURRENCY_ID, amount: AMOUNT },
-          { symbol: 'USDT', amount: 10000, isFeeAsset: true }
+          { symbol: 'USDT', amount: 10000 }
         ]
       }
       await Builder(mockApi).from(NODE).to(NODE_2).currency(currency).address(ADDRESS).build()
@@ -215,7 +215,6 @@ describe('Builder', () => {
             }
           },
           {
-            isFeeAsset: true,
             id: {
               Concrete: {
                 parents: 0,
@@ -318,17 +317,27 @@ describe('Builder', () => {
       const currency: TCurrencyInputWithAmount = {
         multiasset: [
           { symbol: 'DOT', amount: AMOUNT },
-          { symbol: 'USDT', amount: 10000, isFeeAsset: true }
+          { symbol: 'USDT', amount: 10000 }
         ]
       }
+      const feeAsset = {
+        symbol: 'USDT'
+      }
 
-      await Builder(mockApi).from(NODE).to('Polkadot').currency(currency).address(ADDRESS).build()
+      await Builder(mockApi)
+        .from(NODE)
+        .to('Polkadot')
+        .currency(currency)
+        .feeAsset(feeAsset)
+        .address(ADDRESS)
+        .build()
 
       expect(sendSpy).toHaveBeenCalledWith({
         api: mockApi,
         from: NODE,
         to: 'Polkadot',
         currency,
+        feeAsset,
         address: ADDRESS
       })
     })
@@ -362,15 +371,19 @@ describe('Builder', () => {
       const currency: TCurrencyInputWithAmount = {
         multiasset: [
           { symbol: 'DOT', amount: AMOUNT },
-          { symbol: 'USDT', amount: 10000, isFeeAsset: true }
+          { symbol: 'USDT', amount: 10000 }
         ]
       }
       const version = Version.V2
+      const feeAsset = {
+        symbol: 'USDT'
+      }
 
       await Builder(mockApi)
         .from(NODE)
         .to('Polkadot')
         .currency(currency)
+        .feeAsset(feeAsset)
         .address(ADDRESS)
         .xcmVersion(version)
         .build()
@@ -380,6 +393,7 @@ describe('Builder', () => {
         from: NODE,
         to: 'Polkadot',
         currency: currency,
+        feeAsset,
         address: ADDRESS,
         version
       })

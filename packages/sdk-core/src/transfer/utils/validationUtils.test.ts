@@ -71,9 +71,9 @@ describe('validateCurrency', () => {
   })
 
   it('should throw InvalidCurrencyError when currency.multiasset has length 1 and feeAsset is specified', () => {
-    const currency = { multiasset: [{ isFeeAsset: true }] } as TCurrencyInput
+    const currency = { multiasset: [{ symbol: 'DOT' }] } as TCurrencyInput
 
-    expect(() => validateCurrency(currency)).toThrow(InvalidCurrencyError)
+    expect(() => validateCurrency(currency, { symbol: 'DOT' })).toThrow(InvalidCurrencyError)
     expect(() => validateCurrency(currency)).toThrow('Please provide more than one multi asset')
   })
 
@@ -87,9 +87,9 @@ describe('validateCurrency', () => {
   })
 
   it('should not throw when currency has multiasset with length >1 and valid feeAsset index', () => {
-    const currency = { multiasset: [{}, { isFeeAsset: true }] } as TCurrencyInput
+    const currency = { multiasset: [{}, {}] } as TCurrencyInput
 
-    expect(() => validateCurrency(currency)).not.toThrow()
+    expect(() => validateCurrency(currency, { symbol: 'DOT' })).not.toThrow()
   })
 
   it('should throw when currency has multiasset with length 1 or less', () => {

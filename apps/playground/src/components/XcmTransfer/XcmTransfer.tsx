@@ -10,9 +10,10 @@ import {
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import type {
   GeneralBuilder,
-  TCurrencyCoreWithFee,
+  TCurrencyCore,
   TCurrencyInput,
   TPapiApiOrUrl,
+  WithAmount,
 } from '@paraspell/sdk';
 import { BatchMode } from '@paraspell/sdk';
 import {
@@ -231,18 +232,16 @@ const XcmTransfer = () => {
         tx = await getTxFromApi(
           {
             transfers: items.map((item) => {
-              const useMultiAssets = item.currencies.length > 1;
               const currencyInputs = item.currencies.map((c) => ({
                 ...determineCurrency(item, c),
                 amount: c.amount,
-                ...(useMultiAssets && { isFeeAsset: c.isFeeAsset }),
               }));
               return {
                 ...item,
                 currency:
                   currencyInputs.length === 1
                     ? currencyInputs[0]
-                    : { multiasset: currencyInputs as TCurrencyCoreWithFee[] },
+                    : { multiasset: currencyInputs as TCurrencyCore[] },
               };
             }),
             options: { mode: batchMode },
@@ -261,12 +260,11 @@ const XcmTransfer = () => {
 
         const [firstItem, ...restItems] = items;
 
-        const { from, to, currencies, address } = firstItem;
-        const useMultiAssets = currencies.length > 1;
+        const { from, to, currencies, transformedFeeAsset, address } =
+          firstItem;
         const currencyInputs = currencies.map((c) => ({
           ...determineCurrency(firstItem, c),
           amount: c.amount,
-          ...(useMultiAssets && { isFeeAsset: c.isFeeAsset }),
         }));
 
         let builder = Builder()
@@ -275,18 +273,21 @@ const XcmTransfer = () => {
           .currency(
             currencyInputs.length === 1
               ? currencyInputs[0]
-              : { multiasset: currencyInputs as TCurrencyCoreWithFee[] },
+              : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
+          )
+          .feeAsset(
+            transformedFeeAsset
+              ? determineCurrency(firstItem, transformedFeeAsset)
+              : undefined,
           )
           .address(address, selectedAccount.address)
           .addToBatch();
 
         for (const item of restItems) {
           const { from, to, currencies, address } = item;
-          const useMultiAssets = currencies.length > 1;
           const currencyInputs = currencies.map((c) => ({
             ...determineCurrency(item, c),
             amount: c.amount,
-            ...(useMultiAssets && { isFeeAsset: c.isFeeAsset }),
           }));
           builder = builder
             .from(from)
@@ -294,7 +295,12 @@ const XcmTransfer = () => {
             .currency(
               currencyInputs.length === 1
                 ? currencyInputs[0]
-                : { multiasset: currencyInputs as TCurrencyCoreWithFee[] },
+                : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
+            )
+            .feeAsset(
+              transformedFeeAsset
+                ? determineCurrency(firstItem, transformedFeeAsset)
+                : undefined,
             )
             .address(address, selectedAccount.address)
             .addToBatch();
@@ -359,12 +365,11 @@ const XcmTransfer = () => {
     const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
       ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
 
-    const { from, to, currencies, address, useApi } = formValues;
-    const useMultiAssets = currencies.length > 1;
+    const { from, to, currencies, transformedFeeAsset, address, useApi } =
+      formValues;
     const currencyInputs = currencies.map((c) => ({
       ...determineCurrency(formValues, c),
       amount: c.amount,
-      ...(useMultiAssets && { isFeeAsset: c.isFeeAsset }),
     }));
 
     let result;
@@ -389,7 +394,12 @@ const XcmTransfer = () => {
         .currency(
           currencyInputs.length === 1
             ? currencyInputs[0]
-            : { multiasset: currencyInputs as TCurrencyCoreWithFee[] },
+            : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
+        )
+        .feeAsset(
+          transformedFeeAsset
+            ? determineCurrency(formValues, transformedFeeAsset)
+            : undefined,
         )
         .address(address, selectedAccount.address)
         .dryRun(selectedAccount.address);
@@ -405,7 +415,8 @@ const XcmTransfer = () => {
     formValues: FormValuesTransformed,
     submitType: TSubmitType,
   ) => {
-    const { from, to, currencies, address, useApi } = formValues;
+    const { from, to, currencies, transformedFeeAsset, address, useApi } =
+      formValues;
 
     if (submitType === 'delete') {
       setBatchItems((prevItems) => {
@@ -493,12 +504,10 @@ const XcmTransfer = () => {
         return;
       }
 
-      const useMultiAssets = currencies.length > 1;
       const currencyInputs = currencies.map((c) => {
         return {
           ...determineCurrency(formValues, c),
           amount: c.amount,
-          ...(useMultiAssets && { isFeeAsset: c.isFeeAsset }),
         };
       });
 
@@ -530,8 +539,13 @@ const XcmTransfer = () => {
             currencyInputs.length === 1
               ? currencyInputs[0]
               : {
-                  multiasset: currencyInputs as TCurrencyCoreWithFee[],
+                  multiasset: currencyInputs as WithAmount<TCurrencyCore>[],
                 },
+          )
+          .feeAsset(
+            transformedFeeAsset
+              ? determineCurrency(formValues, transformedFeeAsset)
+              : undefined,
           )
           .address(address, selectedAccount.address);
         tx = await builder.build();

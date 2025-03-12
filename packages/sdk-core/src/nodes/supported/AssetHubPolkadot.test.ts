@@ -14,7 +14,10 @@ import type {
 } from '../../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
+import { createExecuteXcm } from '../../utils/createExecuteXcm'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
+import { transformMultiLocation } from '../../utils/multiLocation'
+import { validateAddress } from '../../utils/validateAddress'
 import type AssetHubPolkadot from './AssetHubPolkadot'
 
 vi.mock('ethers', () => ({
@@ -40,6 +43,18 @@ vi.mock('../../utils/generateAddressMultiLocationV4', () => ({
 
 vi.mock('../../utils/generateAddressPayload', () => ({
   generateAddressPayload: vi.fn()
+}))
+
+vi.mock('../../utils/multiLocation', () => ({
+  transformMultiLocation: vi.fn()
+}))
+
+vi.mock('../../utils/validateAddress', () => ({
+  validateAddress: vi.fn()
+}))
+
+vi.mock('../../utils/createExecuteXcm', () => ({
+  createExecuteXcm: vi.fn()
 }))
 
 describe('AssetHubPolkadot', () => {
@@ -328,6 +343,94 @@ describe('AssetHubPolkadot', () => {
     expect(result).toEqual({
       section: 'limited_teleport_assets',
       includeFee: true
+    })
+  })
+
+  describe('handleExecuteTransfer', () => {
+    beforeEach(() => {
+      vi.mocked(validateAddress).mockImplementation(() => {})
+    })
+
+    it('should throw error when senderAddress is not provided', async () => {
+      const input = { ...mockInput, senderAddress: undefined }
+      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
+        'Please provide senderAddress'
+      )
+    })
+
+    it('should throw error if dry run fails (success is false)', async () => {
+      const input = {
+        ...mockInput,
+        senderAddress: '0xvalid',
+        asset: { ...mockInput.asset, multiLocation: {} }
+      }
+      mockApi.getDryRun = vi.fn().mockResolvedValue({ success: false, fee: 0n, weight: 0n })
+      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow()
+    })
+
+    it('should throw error if dry run weight is not found', async () => {
+      const input = {
+        ...mockInput,
+        senderAddress: '0xvalid',
+        asset: { ...mockInput.asset, multiLocation: {} }
+      }
+      mockApi.getDryRun = vi.fn().mockResolvedValue({ success: true, fee: 10000n, weight: null })
+      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
+        'Dry run failed: weight not found'
+      )
+    })
+
+    it('should throw error if fee conversion fails (quoteAhPrice returns falsy)', async () => {
+      const input = {
+        ...mockInput,
+        senderAddress: '0xvalid',
+        asset: { ...mockInput.asset, multiLocation: {} }
+      }
+      input.asset.amount = '1000000'
+      mockApi.getDryRun = vi.fn().mockResolvedValue({ success: true, fee: 10000n, weight: 5000n })
+      vi.mocked(transformMultiLocation).mockReturnValue({
+        transformed: true
+      } as unknown as TMultiLocation)
+      mockApi.quoteAhPrice = vi.fn().mockResolvedValue(null)
+      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
+        `Pool DOT -> ${input.asset.symbol} not found.`
+      )
+    })
+
+    it('should throw error if asset amount is insufficient after fee conversion', async () => {
+      const input = {
+        ...mockInput,
+        senderAddress: '0xvalid',
+        asset: { ...mockInput.asset, multiLocation: {} }
+      }
+      input.asset.amount = '100'
+      mockApi.getDryRun = vi.fn().mockResolvedValue({ success: true, fee: 10000n, weight: 5000n })
+      vi.mocked(transformMultiLocation).mockReturnValue({
+        transformed: true
+      } as unknown as TMultiLocation)
+      mockApi.quoteAhPrice = vi.fn().mockResolvedValue(150n)
+      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
+        `Insufficient balance. Fee: 150, Amount: ${input.asset.amount}`
+      )
+    })
+
+    it('should successfully create and return executeXcm transaction', async () => {
+      const input = {
+        ...mockInput,
+        senderAddress: '0xvalid',
+        asset: { ...mockInput.asset, multiLocation: {} }
+      }
+      input.asset.amount = '1000000'
+      const dryRunResult = { success: true, fee: 10000n, weight: 5000n }
+      mockApi.getDryRun = vi.fn().mockResolvedValue(dryRunResult)
+      vi.mocked(transformMultiLocation).mockReturnValue({
+        transformed: true
+      } as unknown as TMultiLocation)
+      mockApi.quoteAhPrice = vi.fn().mockResolvedValue(500n)
+      vi.mocked(createExecuteXcm).mockReturnValueOnce('dummyTx').mockReturnValueOnce('finalTx')
+      const result = await assetHub['handleExecuteTransfer'](input)
+      expect(result).toBe('finalTx')
+      expect(createExecuteXcm).toHaveBeenCalledWith(input, dryRunResult.weight, 750n)
     })
   })
 })

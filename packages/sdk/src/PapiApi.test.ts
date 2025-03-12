@@ -73,7 +73,13 @@ describe('PapiApi', () => {
       success: true,
       value: {
         execution_result: {
-          sucesss: true
+          sucesss: true,
+          value: {
+            actual_weight: {
+              ref_time: 0n,
+              proof_size: 0n
+            }
+          }
         }
       }
     }
@@ -85,6 +91,9 @@ describe('PapiApi', () => {
         apis: {
           DryRunApi: {
             dry_run_call: vi.fn().mockResolvedValue(mockDryRunResult)
+          },
+          AssetConversionApi: {
+            quote_price_exact_tokens_for_tokens: vi.fn().mockResolvedValue(1n)
           }
         },
         tx: {
@@ -618,6 +627,12 @@ describe('PapiApi', () => {
         success: true,
         value: {
           execution_result: {
+            value: {
+              actual_weight: {
+                ref_time: 0n,
+                proof_size: 0n
+              }
+            },
             success: true
           }
         }
@@ -644,7 +659,14 @@ describe('PapiApi', () => {
         undefined
       )
 
-      expect(result).toEqual({ success: true, fee: 500n })
+      expect(result).toEqual({
+        success: true,
+        fee: 500n,
+        weight: {
+          refTime: 0n,
+          proofSize: 0n
+        }
+      })
     })
 
     it('should return failure with failure reason', async () => {
@@ -788,6 +810,61 @@ describe('PapiApi', () => {
       expect(fakeDec).toHaveBeenCalledWith(hexKey)
       expect(spy).toHaveBeenCalledWith(rpcMethod, [`ss58(${hexKey})`])
       expect(result).toBe(returnedValue)
+    })
+  })
+
+  describe('quoteAhPrices', () => {
+    it('should return the quote for the provided asset', async () => {
+      const mlFrom = {
+        parents: 1,
+        interior: {
+          X1: {
+            Parachain: 1000
+          }
+        }
+      }
+      const mlTo = {
+        parents: 1,
+        interior: {
+          X1: {
+            Parachain: 1001
+          }
+        }
+      }
+
+      const amountIn = 1000n
+      const quote = await papiApi.quoteAhPrice(mlFrom, mlTo, amountIn)
+
+      expect(quote).toBe(1n)
+    })
+
+    it('should return undefined when quote is not available', async () => {
+      const mlFrom = {
+        parents: 1,
+        interior: {
+          X1: {
+            Parachain: 1000
+          }
+        }
+      }
+      const mlTo = {
+        parents: 1,
+        interior: {
+          X1: {
+            Parachain: 1001
+          }
+        }
+      }
+
+      const amountIn = 1000n
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.AssetConversionApi.quote_price_exact_tokens_for_tokens = vi
+        .fn()
+        .mockResolvedValue(undefined)
+
+      const quote = await papiApi.quoteAhPrice(mlFrom, mlTo, amountIn)
+
+      expect(quote).toBeUndefined()
     })
   })
 })

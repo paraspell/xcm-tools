@@ -29,10 +29,13 @@ import {
   type TScenario,
   Version
 } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
+import { isAssetEqual, isForeignAsset } from '../../utils/assets'
+import { createExecuteXcm } from '../../utils/createExecuteXcm'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'
+import { transformMultiLocation } from '../../utils/multiLocation'
 import { resolveParaId } from '../../utils/resolveParaId'
+import { validateAddress } from '../../utils/validateAddress'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
 
@@ -210,7 +213,7 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   handleBifrostEthTransfer = <TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes => {
-    const { api, scenario, version, destination, asset } = input
+    const { api, scenario, version = this.version, destination, asset } = input
 
     if (!isForeignAsset(asset)) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
@@ -220,31 +223,29 @@ class AssetHubPolkadot<TApi, TRes>
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
     }
 
-    const versionOrDefault = version ?? this.version
-
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: this.createPolkadotXcmHeader(
           scenario,
-          versionOrDefault,
+          version,
           destination,
           getParaId('BifrostPolkadot')
         ),
         assets: {
-          [versionOrDefault]: [
-            createMultiAsset(versionOrDefault, asset.amount, asset.multiLocation as TMultiLocation)
+          [version]: [
+            createMultiAsset(version, asset.amount, asset.multiLocation as TMultiLocation)
           ]
         },
         assets_transfer_type: 'LocalReserve',
         remote_fees_id: {
-          [versionOrDefault]: {
+          [version]: {
             Concrete: asset.multiLocation
           }
         },
         fees_transfer_type: 'LocalReserve',
-        custom_xcm_on_dest: createCustomXcmToBifrost(input, versionOrDefault),
+        custom_xcm_on_dest: createCustomXcmToBifrost(input, version),
         weight_limit: 'Unlimited'
       }
     }
@@ -255,7 +256,7 @@ class AssetHubPolkadot<TApi, TRes>
   patchInput<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): TPolkadotXCMTransferOptions<TApi, TRes> {
-    const { asset, destination, paraIdTo, scenario, api, version, address } = input
+    const { asset, destination, paraIdTo, scenario, api, version = this.version, address } = input
 
     if (
       (asset.symbol?.toUpperCase() === 'USDT' || asset.symbol?.toUpperCase() === 'USDC') &&
@@ -284,14 +285,9 @@ class AssetHubPolkadot<TApi, TRes>
         destination === 'BifrostPolkadot') &&
       asset.symbol === 'DOT'
     ) {
-      const versionOrDefault = version ?? this.version
       return {
         ...input,
-        currencySelection: createVersionedMultiAssets(
-          versionOrDefault,
-          asset.amount,
-          DOT_MULTILOCATION
-        )
+        currencySelection: createVersionedMultiAssets(version, asset.amount, DOT_MULTILOCATION)
       }
     }
 
@@ -307,8 +303,61 @@ class AssetHubPolkadot<TApi, TRes>
       : 'limited_teleport_assets'
   }
 
+  private async handleExecuteTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
+    const { api, senderAddress, asset } = input
+
+    if (!senderAddress) {
+      throw new Error('Please provide senderAddress')
+    }
+
+    validateAddress(senderAddress, this.node, false)
+
+    const MIN_FEE = 150000n
+    const maxU64 = (1n << 64n) - 1n
+    const dummyTx = createExecuteXcm(input, { refTime: maxU64, proofSize: maxU64 }, MIN_FEE)
+
+    const dryRunResult = await api.getDryRun({
+      node: this.node,
+      tx: dummyTx,
+      address: senderAddress
+    })
+
+    if (!dryRunResult.success) {
+      throw new Error(`Dry run failed: ${dryRunResult.failureReason}`)
+    }
+
+    if (!dryRunResult.weight) {
+      throw new Error('Dry run failed: weight not found')
+    }
+
+    const feeDotShifted = dryRunResult.fee / 10n
+
+    const toMl = transformMultiLocation(asset.multiLocation as TMultiLocation)
+    const feeConverted = await api.quoteAhPrice(DOT_MULTILOCATION, toMl, feeDotShifted)
+
+    if (!feeConverted) {
+      throw new Error(`Pool DOT -> ${asset.symbol} not found.`)
+    }
+
+    if (BigInt(asset.amount) - feeConverted < 0) {
+      throw new Error(`Insufficient balance. Fee: ${feeConverted}, Amount: ${asset.amount}`)
+    }
+
+    const feeConvertedPadded = (feeConverted * 3n) / 2n // increases fee by 50%
+
+    return createExecuteXcm(input, dryRunResult.weight, feeConvertedPadded)
+  }
+
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, asset, destination } = input
+    const { scenario, asset, destination, feeAsset } = input
+
+    if (feeAsset) {
+      if (!isAssetEqual(feeAsset, asset)) {
+        throw new InvalidCurrencyError(`Fee asset does not match transfer asset.`)
+      }
+
+      return Promise.resolve(this.handleExecuteTransfer(input))
+    }
 
     if (destination === 'AssetHubKusama') {
       return Promise.resolve(this.handleBridgeTransfer<TApi, TRes>(input, 'Kusama'))

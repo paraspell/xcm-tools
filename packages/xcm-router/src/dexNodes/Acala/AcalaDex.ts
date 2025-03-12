@@ -1,6 +1,7 @@
 import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
+import type { TWeight } from '@paraspell/sdk-pjs';
 import { type Extrinsic, getBalanceNative, getNativeAssetSymbol } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
@@ -9,13 +10,7 @@ import { firstValueFrom } from 'rxjs';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type {
-  TAssets,
-  TGetAmountOutOptions,
-  TSwapOptions,
-  TSwapResult,
-  TWeight,
-} from '../../types';
+import type { TAssets, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { calculateAcalaSwapFee, createAcalaApiInstance } from './utils';
 

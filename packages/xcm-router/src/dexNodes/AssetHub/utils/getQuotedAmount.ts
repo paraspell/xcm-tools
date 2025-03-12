@@ -1,8 +1,6 @@
-import { type TMultiLocation } from '@paraspell/sdk-pjs';
+import { type TMultiLocation, transformMultiLocation } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';
-
-import { transformMultiLocation } from '../utils/transformMultiLocation';
 
 export const getQuotedAmount = async (
   api: ApiPromise,

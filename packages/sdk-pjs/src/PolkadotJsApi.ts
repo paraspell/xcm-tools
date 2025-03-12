@@ -10,7 +10,8 @@ import type {
   TModuleError,
   TMultiLocation,
   TNodePolkadotKusama,
-  TSerializedApiCall
+  TSerializedApiCall,
+  TWeight
 } from '@paraspell/sdk-core'
 import { BatchMode } from '@paraspell/sdk-core'
 import {
@@ -111,6 +112,22 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   async calculateTransactionFee(tx: Extrinsic, address: string) {
     const { partialFee } = await tx.paymentInfo(address)
     return partialFee.toBigInt()
+  }
+
+  async quoteAhPrice(
+    fromMl: TMultiLocation,
+    toMl: TMultiLocation,
+    amountIn: bigint,
+    includeFee = true
+  ) {
+    const quoted = await this.api.call.assetConversionApi.quotePriceExactTokensForTokens(
+      fromMl,
+      toMl,
+      amountIn.toString(),
+      includeFee
+    )
+
+    return quoted.toJSON() !== null ? BigInt(quoted.toString()) : undefined
   }
 
   async getBalanceNative(address: string) {
@@ -233,16 +250,16 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       throw new Error(`DryRunApi is not available on node ${node}`)
     }
 
-    const result = (
-      await this.api.call.dryRunApi.dryRunCall(
-        {
-          system: {
-            Signed: address
-          }
-        },
-        tx
-      )
-    ).toHuman() as any
+    const response = await this.api.call.dryRunApi.dryRunCall(
+      {
+        system: {
+          Signed: address
+        }
+      },
+      tx
+    )
+
+    const result = response.toHuman() as any
 
     const isSuccess = result.Ok && result.Ok.executionResult.Ok
 
@@ -254,7 +271,17 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
 
     const executionFee = await this.calculateTransactionFee(tx, address)
     const fee = computeFeeFromDryRunPjs(result, node, executionFee)
-    return { success: true, fee }
+
+    const actualWeight = (response.toJSON() as any).ok.executionResult.ok.actualWeight
+
+    const weight: TWeight | undefined = actualWeight
+      ? {
+          refTime: BigInt(actualWeight.refTime as string),
+          proofSize: BigInt(actualWeight.proofSize as string)
+        }
+      : undefined
+
+    return { success: true, fee, weight }
   }
 
   setDisconnectAllowed(allowed: boolean) {

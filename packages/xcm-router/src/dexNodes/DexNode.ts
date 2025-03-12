@@ -1,4 +1,4 @@
-import type { TNodePolkadotKusama } from '@paraspell/sdk-pjs';
+import type { TNodePolkadotKusama, TWeight } from '@paraspell/sdk-pjs';
 import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';
@@ -9,7 +9,6 @@ import type {
   TGetAmountOutOptions,
   TSwapOptions,
   TSwapResult,
-  TWeight,
 } from '../types';
 
 abstract class ExchangeNode {

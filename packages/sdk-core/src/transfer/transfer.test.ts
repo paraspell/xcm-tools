@@ -14,6 +14,7 @@ import { send } from './transfer'
 import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
 import { isBridgeTransfer } from './utils/isBridgeTransfer'
 import { resolveAsset } from './utils/resolveAsset'
+import { resolveFeeAsset } from './utils/resolveFeeAsset'
 import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import {
   validateAssetSpecifiers,
@@ -48,6 +49,10 @@ vi.mock('./utils/resolveAsset', () => ({
   resolveAsset: vi.fn()
 }))
 
+vi.mock('./utils/resolveFeeAsset', () => ({
+  resolveFeeAsset: vi.fn()
+}))
+
 vi.mock('./utils/validationUtils', () => ({
   validateCurrency: vi.fn(),
   validateDestination: vi.fn(),
@@ -76,6 +81,7 @@ describe('send', () => {
     vi.mocked(isBridgeTransfer).mockReturnValue(false)
     vi.mocked(determineAssetCheckEnabled).mockReturnValue(true)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAsset)
+    vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAsset)
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
   })
 
@@ -96,7 +102,7 @@ describe('send', () => {
 
     const result = await send(options)
 
-    expect(validateCurrency).toHaveBeenCalledWith(options.currency)
+    expect(validateCurrency).toHaveBeenCalledWith(options.currency, options.feeAsset)
     expect(validateDestination).toHaveBeenCalledWith(options.from, options.to)
     expect(validateDestinationAddress).toHaveBeenCalledWith(options.address, options.to)
     expect(validateAssetSpecifiers).toHaveBeenCalledWith(true, options.currency)
@@ -217,6 +223,7 @@ describe('send', () => {
       api: apiMock,
       from: 'Acala',
       currency: { multiasset: [] } as TCurrencyInput,
+      feeAsset: { symbol: 'FEE' },
       address: 'some-address',
       to: 'Astar'
     } as TSendOptions<unknown, unknown>
