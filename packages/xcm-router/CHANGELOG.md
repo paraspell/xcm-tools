@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.7.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.6.2...xcm-router-v8.7.0) (2025-03-12)
+
+
+### Features
+
+* **sdk-core:** Add support for PolkadotXCM execute transfers ✨ ([7387c96](https://github.com/paraspell/xcm-tools/commit/7387c96ab45dbc4e20cfa8254f808c5d621504b7))
+* **sdk-core:** Add support for PolkadotXCM execute transfers ✨ ([3fee6ac](https://github.com/paraspell/xcm-tools/commit/3fee6ac6f45808758ebcbf1fedddbd3e825bcbd2))
+
 ## [8.6.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.6.1...xcm-router-v8.6.2) (2025-03-11)
 
 
