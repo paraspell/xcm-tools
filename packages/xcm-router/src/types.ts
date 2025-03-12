@@ -8,7 +8,6 @@ import type {
   TPjsApi,
 } from '@paraspell/sdk-pjs';
 import { type Signer } from '@polkadot/types/types';
-import type BigNumber from 'bignumber.js';
 
 import { type EXCHANGE_NODES } from './consts';
 
@@ -174,11 +173,6 @@ export type TAdditionalTransferOptions = {
   exchange: TExchangeInfo;
   destination?: TDestinationInfo;
   feeCalcAddress: string;
-};
-
-export type TWeight = {
-  refTime: BigNumber;
-  proofSize: BigNumber;
 };
 
 export type TTransferOptionsModified = Omit<TTransferOptions, 'exchange'> &

@@ -18,22 +18,17 @@ import type { FormValues } from '../XcmTransfer/XcmTransferForm';
 type Props = {
   form: UseFormReturnType<FormValues>;
   currencyOptions: ComboboxItem[];
-  index: number;
 };
 
-export const CurrencySelection: FC<Props> = ({
-  form,
-  currencyOptions,
-  index,
-}) => {
-  const { from, to, currencies } = form.getValues();
+export const FeeAssetSelection: FC<Props> = ({ form, currencyOptions }) => {
+  const { from, to, feeAsset } = form.getValues();
 
-  const isCustomCurrency = currencies[index].isCustomCurrency;
-  const customCurrencyType = currencies[index].customCurrencyType;
+  const isCustomCurrency = feeAsset.isCustomCurrency;
+  const customCurrencyType = feeAsset.customCurrencyType;
 
   useEffect(() => {
     if (!customCurrencyType) return;
-    form.setFieldValue(`currencies.${index}.customCurrency`, '');
+    form.setFieldValue(`feeAsset.customCurrency`, '');
   }, [customCurrencyType]);
 
   const isRelayToPara = isRelayChain(from);
@@ -44,7 +39,7 @@ export const CurrencySelection: FC<Props> = ({
   // If it's not para-to-para, we do not allow custom currencies
   useEffect(() => {
     if (isNotParaToPara) {
-      form.setFieldValue(`currencies.${index}.isCustomCurrency`, false);
+      form.setFieldValue(`feeAsset.isCustomCurrency`, false);
     }
   }, [isNotParaToPara]);
 
@@ -52,9 +47,6 @@ export const CurrencySelection: FC<Props> = ({
     { label: 'Asset ID', value: 'id' },
     { label: 'Symbol', value: 'symbol' },
     { label: 'Multi-location', value: 'multilocation' },
-    ...(currencies.length === 1
-      ? [{ label: 'Override Multi-location', value: 'overridenMultilocation' }]
-      : []),
   ];
 
   const symbolSpecifierOptions = [
@@ -64,7 +56,7 @@ export const CurrencySelection: FC<Props> = ({
     { label: 'Foreign abstract', value: 'foreignAbstract' },
   ];
 
-  const size = currencies.length > 1 ? 'xs' : 'sm';
+  const size = 'sm';
 
   return (
     <Stack gap="xs">
@@ -75,7 +67,7 @@ export const CurrencySelection: FC<Props> = ({
             label="Custom currency"
             placeholder={customCurrencyType === 'id' ? 'Asset ID' : 'Symbol'}
             required
-            {...form.getInputProps(`currencies.${index}.customCurrency`)}
+            {...form.getInputProps(`feeAsset.customCurrency`)}
           />
         )}
 
@@ -86,7 +78,7 @@ export const CurrencySelection: FC<Props> = ({
           formatOnBlur
           autosize
           minRows={10}
-          {...form.getInputProps(`currencies.${index}.customCurrency`)}
+          {...form.getInputProps(`feeAsset.customCurrency`)}
         />
       )}
 
@@ -97,7 +89,7 @@ export const CurrencySelection: FC<Props> = ({
           formatOnBlur
           autosize
           minRows={10}
-          {...form.getInputProps(`currencies.${index}.customCurrency`)}
+          {...form.getInputProps(`feeAsset.customCurrency`)}
         />
       )}
 
@@ -105,15 +97,15 @@ export const CurrencySelection: FC<Props> = ({
         <Select
           key={from + to}
           size={size}
-          label="Currency"
+          label="Fee asset"
+          description="This asset will be used to pay fees"
           placeholder="Pick value"
           data={currencyOptions}
           allowDeselect={false}
           disabled={isRelayToPara}
           searchable
-          required
           data-testid="select-currency"
-          {...form.getInputProps(`currencies.${index}.currencyOptionId`)}
+          {...form.getInputProps(`feeAsset.currencyOptionId`)}
         />
       )}
 
@@ -123,7 +115,7 @@ export const CurrencySelection: FC<Props> = ({
             <Checkbox
               size="xs"
               label="Select custom asset"
-              {...form.getInputProps(`currencies.${index}.isCustomCurrency`, {
+              {...form.getInputProps(`feeAsset.isCustomCurrency`, {
                 type: 'checkbox',
               })}
             />
@@ -133,9 +125,7 @@ export const CurrencySelection: FC<Props> = ({
               <SegmentedControl
                 size="xs"
                 data={options}
-                {...form.getInputProps(
-                  `currencies.${index}.customCurrencyType`,
-                )}
+                {...form.getInputProps(`feeAsset.customCurrencyType`)}
               />
             )}
             {isCustomCurrency && customCurrencyType === 'symbol' && (
@@ -144,7 +134,7 @@ export const CurrencySelection: FC<Props> = ({
                 w="100%"
                 data={symbolSpecifierOptions}
                 {...form.getInputProps(
-                  `currencies.${index}.customCurrencySymbolSpecifier`,
+                  `feeAsset.customCurrencySymbolSpecifier`,
                 )}
               />
             )}

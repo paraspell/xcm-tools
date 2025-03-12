@@ -7,6 +7,7 @@ import { transferRelayToPara } from './transferRelayToPara'
 import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
 import { isBridgeTransfer } from './utils/isBridgeTransfer'
 import { resolveAsset } from './utils/resolveAsset'
+import { resolveFeeAsset } from './utils/resolveFeeAsset'
 import { resolveOverriddenAsset } from './utils/resolveOverriddenAsset'
 import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import {
@@ -21,6 +22,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     api,
     from: origin,
     currency,
+    feeAsset,
     address,
     to: destination,
     paraIdTo,
@@ -30,7 +32,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     method
   } = options
 
-  validateCurrency(currency)
+  validateCurrency(currency, feeAsset)
   validateDestination(origin, destination)
   validateDestinationAddress(address, destination)
   if (senderAddress) validateAddress(senderAddress, origin, false)
@@ -45,6 +47,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   validateAssetSpecifiers(assetCheckEnabled, currency)
   const asset = resolveAsset(currency, origin, destination, assetCheckEnabled)
+  const resolvedFeeAsset = feeAsset ? resolveFeeAsset(feeAsset, origin, destination) : undefined
   validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
   if (isRelayChain(origin)) {
@@ -72,7 +75,12 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     })
   }
 
-  const overriddenAsset = resolveOverriddenAsset(options, isBridge, assetCheckEnabled)
+  const overriddenAsset = resolveOverriddenAsset(
+    options,
+    isBridge,
+    assetCheckEnabled,
+    resolvedFeeAsset
+  )
 
   await api.init(origin)
 
@@ -88,6 +96,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   return originNode.transfer({
     api,
     asset: { ...resolvedAsset, amount: 'multiasset' in currency ? 0 : currency.amount },
+    feeAsset: resolvedFeeAsset,
     address,
     to: destination,
     paraIdTo,

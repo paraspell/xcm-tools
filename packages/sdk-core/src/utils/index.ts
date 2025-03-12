@@ -30,6 +30,6 @@ export { generateAddressMultiLocationV4 } from './generateAddressMultiLocationV4
 export { generateAddressPayload } from './generateAddressPayload'
 export { getFees } from './getFees'
 export { getNode } from './getNode'
-export * from './multiLocation/isOverrideMultiLocationSpecifier'
+export * from './multiLocation'
 export * from './resolveParaId'
 export * from './validateAddress'

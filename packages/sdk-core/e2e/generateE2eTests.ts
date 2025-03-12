@@ -220,12 +220,12 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                 amount: '102928'
               },
               {
-                isFeeAsset: true,
                 symbol: ForeignAbstract('USDC2'),
                 amount: '38482'
               }
             ]
           })
+          .feeAsset({ symbol: ForeignAbstract('USDC2') })
           .address(MOCK_ADDRESS)
           .build()
 
@@ -249,7 +249,6 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                 fun: { Fungible: '102928' }
               },
               {
-                isFeeAsset: true,
                 id: {
                   Concrete: {
                     parents: 0,
@@ -261,6 +260,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             ],
             amount: MOCK_AMOUNT
           })
+          .feeAsset({ symbol: ForeignAbstract('USDC2') })
           .address(MOCK_ADDRESS)
           .build()
 

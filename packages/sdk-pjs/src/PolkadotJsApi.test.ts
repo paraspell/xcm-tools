@@ -33,6 +33,12 @@ describe('PolkadotJsApi', () => {
       call: {
         dryRunApi: {
           dryRunCall: vi.fn()
+        },
+        assetConversionApi: {
+          quotePriceExactTokensForTokens: vi.fn().mockResolvedValue({
+            toJSON: vi.fn().mockResolvedValue(1n),
+            toString: vi.fn().mockReturnValue('1')
+          })
         }
       },
       rpc: {
@@ -614,6 +620,9 @@ describe('PolkadotJsApi', () => {
           Ok: {
             executionResult: { Ok: true }
           }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: { executionResult: { ok: { actualWeight: { refTime: '1000', proofSize: '2000' } } } }
         })
       } as unknown as Codec
 
@@ -628,7 +637,11 @@ describe('PolkadotJsApi', () => {
 
       expect(result).toEqual({
         success: true,
-        fee: 1000n
+        fee: 1000n,
+        weight: {
+          refTime: 1000n,
+          proofSize: 2000n
+        }
       })
     })
 
@@ -693,6 +706,72 @@ describe('PolkadotJsApi', () => {
       const data = new Uint8Array(8)
       const result = polkadotApi.blake2AsHex(data)
       expect(result).toBe('0x81e47a19e6b29b0a65b9591762ce5143ed30d0261e5d24a3201752506b20f15c')
+    })
+  })
+
+  describe('quoteAhPrice', () => {
+    it('should return the price as bigint', async () => {
+      const fromMl = {
+        parents: 1,
+        interior: {
+          X1: {
+            Parachain: 1000
+          }
+        }
+      }
+
+      const toMl = {
+        parents: 1,
+        interior: {
+          X1: {
+            Parachain: 2000
+          }
+        }
+      }
+
+      const amountIn = 1000n
+
+      const price = await polkadotApi.quoteAhPrice(fromMl, toMl, amountIn)
+
+      expect(
+        mockApiPromise.call.assetConversionApi.quotePriceExactTokensForTokens
+      ).toHaveBeenCalledWith(fromMl, toMl, '1000', true)
+      expect(price).toBe(1n)
+    })
+
+    it('should return undefined when quoted is null', async () => {
+      const fromMl = {
+        parents: 1,
+        interior: {
+          X1: {
+            Parachain: 1000
+          }
+        }
+      }
+
+      const toMl = {
+        parents: 1,
+        interior: {
+          X1: {
+            Parachain: 2000
+          }
+        }
+      }
+
+      const amountIn = 1000n
+
+      vi.mocked(
+        mockApiPromise.call.assetConversionApi.quotePriceExactTokensForTokens
+      ).mockResolvedValue({
+        toJSON: vi.fn().mockReturnValue(null)
+      })
+
+      const price = await polkadotApi.quoteAhPrice(fromMl, toMl, amountIn)
+
+      expect(
+        mockApiPromise.call.assetConversionApi.quotePriceExactTokensForTokens
+      ).toHaveBeenCalledWith(fromMl, toMl, '1000', true)
+      expect(price).toBeUndefined()
     })
   })
 })

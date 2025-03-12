@@ -13,7 +13,7 @@ import { isRelayChain } from '../../utils'
 import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
 import { isBridgeTransfer } from './isBridgeTransfer'
 
-export const validateCurrency = (currency: TCurrencyInput) => {
+export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
   if ('multiasset' in currency) {
     if (currency.multiasset.length === 0) {
       throw new InvalidCurrencyError('Overridden multi assets cannot be empty')
@@ -23,17 +23,10 @@ export const validateCurrency = (currency: TCurrencyInput) => {
       throw new InvalidCurrencyError('Please provide more than one multi asset')
     }
 
-    if (currency.multiasset.length > 1 && !currency.multiasset.some(asset => asset.isFeeAsset)) {
+    if (currency.multiasset.length > 1 && !feeAsset) {
       throw new InvalidCurrencyError(
         'Overridden multi assets cannot be used without specifying fee asset'
       )
-    }
-
-    if (
-      currency.multiasset.length > 1 &&
-      currency.multiasset.filter(asset => asset.isFeeAsset).length > 1
-    ) {
-      throw new InvalidCurrencyError('Overridden multi assets cannot have more than one fee asset')
     }
   }
 }

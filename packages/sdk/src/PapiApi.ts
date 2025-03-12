@@ -13,7 +13,8 @@ import type {
   TDryRunResult,
   TMultiLocation,
   TNodePolkadotKusama,
-  TSerializedApiCall
+  TSerializedApiCall,
+  TWeight
 } from '@paraspell/sdk-core'
 import { BatchMode, Parents, Version } from '@paraspell/sdk-core'
 import {
@@ -158,6 +159,27 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return tx.getEstimatedFees(address)
   }
 
+  async quoteAhPrice(
+    fromMl: TMultiLocation,
+    toMl: TMultiLocation,
+    amountIn: bigint,
+    includeFee = true
+  ) {
+    const transformedFromMl = transform(fromMl)
+    const transformedToMl = transform(toMl)
+
+    const response = await this.api
+      .getUnsafeApi()
+      .apis.AssetConversionApi.quote_price_exact_tokens_for_tokens(
+        transformedFromMl,
+        transformedToMl,
+        amountIn,
+        includeFee
+      )
+
+    return response ? BigInt(response) : undefined
+  }
+
   async getBalanceNative(address: string) {
     const res = await this.api.getUnsafeApi().query.System.Account.getValue(address)
 
@@ -300,7 +322,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const executionFee = await this.calculateTransactionFee(tx, address)
     const fee = computeFeeFromDryRun(result, node, executionFee)
 
-    return Promise.resolve({ success: true, fee })
+    const actualWeight = result.value.execution_result.value.actual_weight
+
+    const weight: TWeight | undefined = actualWeight
+      ? { refTime: actualWeight.ref_time, proofSize: actualWeight.proof_size }
+      : undefined
+
+    return Promise.resolve({ success: true, fee, weight })
   }
 
   setDisconnectAllowed(allowed: boolean) {

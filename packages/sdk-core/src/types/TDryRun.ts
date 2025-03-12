@@ -1,5 +1,6 @@
 import type { WithApi } from './TApi'
 import type { TNodeDotKsmWithRelayChains } from './TNode'
+import type { TWeight } from './TTransfer'
 
 export type TDryRunBaseOptions<TRes> = {
   /**
@@ -22,6 +23,7 @@ export type TDryRunResult =
   | {
       success: true
       fee: bigint
+      weight?: TWeight
     }
   | {
       success: false

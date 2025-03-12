@@ -2,6 +2,7 @@ import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { WithApi } from './TApi'
 import type { TAsset } from './TAssets'
 import type {
+  TCurrencyInput,
   TCurrencyInputWithAmount,
   TMultiAssetWithFee,
   TXcmVersioned,
@@ -26,6 +27,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   scenario: TScenario
   asset: WithAmount<TAsset>
+  feeAsset?: TAsset
   destination: TDestination
   paraIdTo?: number
   version?: Version
@@ -122,6 +124,10 @@ export type TSendBaseOptions = {
    */
   currency: TCurrencyInputWithAmount
   /**
+   * The optional fee asset. Either ID, symbol, or multi-location
+   */
+  feeAsset?: TCurrencyInput
+  /**
    * The optional destination parachain ID
    */
   paraIdTo?: number
@@ -144,9 +150,13 @@ export type TSendBaseOptions = {
  */
 export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions, TApi, TRes>
 
-export type TSendInternalOptions<TApi, TRes> = Omit<TSendBaseOptions, 'from' | 'currency'> & {
+export type TSendInternalOptions<TApi, TRes> = Omit<
+  TSendBaseOptions,
+  'from' | 'currency' | 'feeAsset'
+> & {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
+  feeAsset?: TAsset
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
 }
 
@@ -221,3 +231,8 @@ export type TXcmPalletSection =
   | 'limited_teleport_assets'
   | 'reserve_transfer_assets'
   | 'limited_reserve_transfer_assets'
+
+export type TWeight = {
+  refTime: bigint
+  proofSize: bigint
+}

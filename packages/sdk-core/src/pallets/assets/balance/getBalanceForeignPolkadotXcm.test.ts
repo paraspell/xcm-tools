@@ -42,12 +42,12 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
   it('should return balance for Polimec node', async () => {
     const mockApi = {
-      getForeignAssetsByIdBalance: vi.fn().mockResolvedValue(200n)
+      getAssetHubForeignBalance: vi.fn().mockResolvedValue(200n)
     } as unknown as IPolkadotApi<unknown, unknown>
 
     const result = await getBalanceForeignPolkadotXcm(mockApi, 'Polimec', 'some-address', {
       symbol: 'DOT',
-      assetId: '1'
+      multiLocation: { foo: 'bar' }
     })
 
     expect(result).toBe(200n)

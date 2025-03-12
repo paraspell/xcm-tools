@@ -1,4 +1,4 @@
-import type { TForeignAsset } from '@paraspell/sdk-pjs';
+import type { TForeignAsset, TWeight } from '@paraspell/sdk-pjs';
 import { getAssets, getNativeAssetSymbol, getNodeProviders } from '@paraspell/sdk-pjs';
 import { type ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
@@ -8,13 +8,7 @@ import { createInterBtcApi, createSubstrateAPI, newMonetaryAmount } from 'inter-
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type {
-  TAssets,
-  TGetAmountOutOptions,
-  TSwapOptions,
-  TSwapResult,
-  TWeight,
-} from '../../types';
+import type { TAssets, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { getCurrency } from './utils';
 

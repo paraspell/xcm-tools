@@ -6,6 +6,7 @@ import { getDryRun, send } from '../transfer'
 import type {
   TAddress,
   TBatchOptions,
+  TCurrencyInput,
   TCurrencyInputWithAmount,
   TDestination,
   TNodeDotKsmWithRelayChains,
@@ -122,6 +123,16 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    */
   customPallet(pallet: string, method: string) {
     return new GeneralBuilder(this.api, this.batchManager, { ...this._options, pallet, method })
+  }
+
+  /**
+   * Optional fee asset for the transaction.
+   *
+   * @param currency - The currency to be used for the fee.
+   * @returns An instance of the Builder
+   */
+  feeAsset(currency: TCurrencyInput | undefined) {
+    return new GeneralBuilder(this.api, this.batchManager, { ...this._options, feeAsset: currency })
   }
 
   /**

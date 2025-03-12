@@ -86,8 +86,8 @@ describe('InterlayExchangeNode', () => {
 
       await expect(
         interlayExchangeNode.swapCurrency(apiMock as ApiPromise, swapOptions, BigNumber(0), {
-          refTime: new BigNumber(1),
-          proofSize: new BigNumber(100),
+          refTime: 1n,
+          proofSize: 100n,
         }),
       ).rejects.toThrowError('Currency from is invalid.');
     });
@@ -107,8 +107,8 @@ describe('InterlayExchangeNode', () => {
 
       await expect(
         interlayExchangeNode.swapCurrency(apiMock as ApiPromise, swapOptions, new BigNumber(0), {
-          refTime: new BigNumber(1),
-          proofSize: new BigNumber(100),
+          refTime: 1n,
+          proofSize: 100n,
         }),
       ).rejects.toThrowError('Currency to is invalid.');
     });
@@ -126,8 +126,8 @@ describe('InterlayExchangeNode', () => {
 
       await expect(
         interlayExchangeNode.swapCurrency(apiMock as ApiPromise, swapOptions, BigNumber(0), {
-          refTime: new BigNumber(1),
-          proofSize: new BigNumber(100),
+          refTime: 1n,
+          proofSize: 100n,
         }),
       ).rejects.toThrowError('No trade found');
     });
@@ -146,8 +146,8 @@ describe('InterlayExchangeNode', () => {
         swapOptions,
         BigNumber(0),
         {
-          refTime: new BigNumber(1),
-          proofSize: new BigNumber(100),
+          refTime: 1n,
+          proofSize: 100n,
         },
       );
 

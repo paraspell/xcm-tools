@@ -29,7 +29,6 @@ export type TCurrencyCore =
       multilocation: TMultiLocationValue
     }
 
-export type TCurrencyCoreWithFee = WithAmount<TCurrencyCore> & { isFeeAsset?: boolean }
 export type TMultiAssetWithFee = TMultiAsset & { isFeeAsset?: boolean }
 
 export type TMultiLocationValue = string | TMultiLocation
@@ -40,13 +39,13 @@ export type TCurrencyInputWithAmount =
   | WithAmount<
       TCurrencySymbol | { id: TCurrency } | { multilocation: TMultiLocationValueWithOverride }
     >
-  | { multiasset: TMultiAssetWithFee[] | TCurrencyCoreWithFee[] }
+  | { multiasset: TMultiAsset[] | WithAmount<TCurrencyCore>[] }
 
 export type TCurrencyInput =
   | TCurrencySymbol
   | { id: TCurrency }
   | { multilocation: TMultiLocationValueWithOverride }
-  | { multiasset: TMultiAssetWithFee[] | TCurrencyCoreWithFee[] }
+  | { multiasset: TMultiAsset[] | WithAmount<TCurrencyCore>[] }
 
 export type WithAmount<TBase> = TBase & {
   amount: TAmount
