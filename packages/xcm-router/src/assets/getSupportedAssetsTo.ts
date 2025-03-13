@@ -1,8 +1,7 @@
 import { getAssets, normalizeSymbol, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
 
 import { EXCHANGE_NODES } from '../consts';
-import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
-import type { TAutoSelect, TExchangeNode, TRouterAsset } from '../types';
+import type { TExchangeInput, TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeAssets';
 
 /**
@@ -14,12 +13,12 @@ import { getExchangeAssets } from './getExchangeAssets';
  * @returns An array of supported assets.
  */
 export const getSupportedAssetsTo = (
-  exchange: TExchangeNode | TAutoSelect,
+  exchange: TExchangeInput,
   to: TNodeWithRelayChains | undefined,
 ): TRouterAsset[] => {
-  if (exchange === 'Auto select') {
+  if (exchange === undefined) {
     let allExchangeAssets = EXCHANGE_NODES.map((exchangeNode) =>
-      getExchangeAssets(createDexNodeInstance(exchangeNode).node, exchangeNode),
+      getExchangeAssets(exchangeNode),
     ).flat();
     if (to) {
       const toAssets = getAssets(to);
@@ -33,7 +32,9 @@ export const getSupportedAssetsTo = (
     return allExchangeAssets;
   }
 
-  let exchangeAssets = getExchangeAssets(createDexNodeInstance(exchange).node, exchange);
+  let exchangeAssets = Array.isArray(exchange)
+    ? exchange.flatMap((exchange) => getExchangeAssets(exchange))
+    : getExchangeAssets(exchange);
 
   if (to) {
     const toAssets = getAssets(to);

@@ -171,9 +171,10 @@ const XcmTransferForm: FC<Props> = ({
     // Transform each currency entry
     const transformedCurrencies = values.currencies.map(transformCurrency);
 
-    const transformedFeeAsset = values.feeAsset.currencyOptionId
-      ? transformCurrency(values.feeAsset as TCurrencyEntry)
-      : undefined;
+    const transformedFeeAsset =
+      values.feeAsset.currencyOptionId || values.feeAsset.isCustomCurrency
+        ? transformCurrency(values.feeAsset as TCurrencyEntry)
+        : undefined;
 
     const transformedValues: FormValuesTransformed = {
       ...values,
@@ -231,6 +232,9 @@ const XcmTransferForm: FC<Props> = ({
   };
 
   const colorScheme = useComputedColorScheme();
+
+  const isVisibleFeeAsset =
+    currencies.length > 1 || from === 'AssetHubPolkadot';
 
   if (!isVisible) {
     return null;
@@ -329,7 +333,9 @@ const XcmTransferForm: FC<Props> = ({
             </Button>
           </Stack>
 
-          <FeeAssetSelection form={form} currencyOptions={currencyOptions} />
+          {isVisibleFeeAsset && (
+            <FeeAssetSelection form={form} currencyOptions={currencyOptions} />
+          )}
 
           <TextInput
             label="Recipient address"

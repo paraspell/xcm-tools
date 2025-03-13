@@ -8,7 +8,7 @@ import { type Signer } from '@polkadot/types/types';
 import { buildApiTransactions, getBestAmountOut, transfer } from '../transfer';
 import type {
   TBuildTransactionsOptions,
-  TExchangeNode,
+  TExchangeInput,
   TGetBestAmountOutOptions,
   TStatusChangeCallback,
   TTransferOptions,
@@ -43,9 +43,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param node - The exchange node, or `undefined` to auto-select.
    * @returns The current builder instance.
    */
-  exchange(
-    node: TExchangeNode | undefined,
-  ): RouterBuilderCore<T & { exchange: TExchangeNode | undefined }> {
+  exchange(node: TExchangeInput): RouterBuilderCore<T & { exchange: TExchangeInput }> {
     return new RouterBuilderCore({ ...this._options, exchange: node });
   }
 

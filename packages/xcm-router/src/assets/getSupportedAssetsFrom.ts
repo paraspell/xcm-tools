@@ -2,7 +2,7 @@ import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk-pjs';
 import { getAssets, normalizeSymbol } from '@paraspell/sdk-pjs';
 
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
-import type { TAutoSelect, TExchangeNode } from '../types';
+import type { TExchangeInput } from '../types';
 import { getExchangeAssets } from './getExchangeAssets';
 
 /**
@@ -14,16 +14,18 @@ import { getExchangeAssets } from './getExchangeAssets';
  */
 export const getSupportedAssetsFrom = (
   from: TNodeWithRelayChains | undefined,
-  exchange: TExchangeNode | TAutoSelect,
+  exchange: TExchangeInput,
 ): TAsset[] => {
-  if (exchange === 'Auto select') {
+  if (exchange === undefined) {
     if (!from) return [];
     return getAssets(from);
   }
 
-  const exchangeAssets = getExchangeAssets(createDexNodeInstance(exchange).node, exchange);
+  const exchangeAssets = Array.isArray(exchange)
+    ? exchange.flatMap((exchange) => getExchangeAssets(exchange))
+    : getExchangeAssets(exchange);
 
-  if (!from || from === createDexNodeInstance(exchange).node) {
+  if (!from || (!Array.isArray(exchange) && from === createDexNodeInstance(exchange).node)) {
     return exchangeAssets.map(
       (exchangeAsset) =>
         ({

@@ -13,18 +13,20 @@ import type {
   TSendOptions
 } from '../../types'
 import { getNode, isAssetEqual, isForeignAsset } from '../../utils'
-import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
+import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
 import { validateAssetSupport } from './validationUtils'
 
 vi.mock('../../utils', () => ({
   getNode: vi.fn(),
   isForeignAsset: vi.fn(),
-  isAssetEqual: vi.fn()
+  isAssetEqual: vi.fn(),
+  deepEqual: vi.fn()
 }))
 
-vi.mock('../../utils/multiLocation/isOverrideMultiLocationSpecifier', () => ({
-  isOverrideMultiLocationSpecifier: vi.fn()
+vi.mock('../../utils/multiLocation', () => ({
+  isOverrideMultiLocationSpecifier: vi.fn(),
+  extractMultiAssetLoc: vi.fn().mockResolvedValue({} as TMultiLocation)
 }))
 
 vi.mock('../../pallets/assets/getAssetBySymbolOrId', () => ({
@@ -53,7 +55,7 @@ describe('resolveOverriddenAsset', () => {
   } as TSendOptions<unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
     vi.mocked(isTMultiAsset).mockReturnValue(false)
     vi.mocked(isTMultiLocation).mockReturnValue(false)
@@ -87,23 +89,25 @@ describe('resolveOverriddenAsset', () => {
     const multiasset = [{}, {}] as TMultiAssetWithFee[]
     const options = {
       ...defaultOptions,
-      currency: { multiasset }
+      currency: { multiasset },
+      feeAsset: { multilocation: {} }
     } as TSendOptions<unknown, unknown>
 
     vi.mocked(isTMultiAsset).mockReturnValue(true)
 
-    const result = resolveOverriddenAsset(options, false, false, {} as TAsset)
+    const result = resolveOverriddenAsset(options, false, false, { symbol: 'ASSET2' } as TAsset)
     expect(result).toEqual(multiasset)
   })
 
   it('resolves multiasset by fetching assets when not all items are TMultiAsset', () => {
     const multiasset = [
       { symbol: 'ASSET1', amount: '1000' },
-      { symbol: 'ASSET2', amount: '2000', isFeeAsset: true }
+      { symbol: 'ASSET2', amount: '2000' }
     ]
     const options = {
       ...defaultOptions,
-      currency: { multiasset }
+      currency: { multiasset },
+      feeAsset: { symbol: 'ASSET2' }
     }
 
     vi.mocked(isTMultiAsset).mockImplementationOnce(() => false)
@@ -137,6 +141,54 @@ describe('resolveOverriddenAsset', () => {
 
     expect(() => resolveOverriddenAsset(options, false, false, {} as TAsset)).toThrow(
       InvalidCurrencyError
+    )
+  })
+
+  it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset is provided', () => {
+    const options = {
+      ...defaultOptions,
+      currency: { multiasset: [{}, {}] }
+    } as TSendOptions<unknown, unknown>
+
+    vi.mocked(isTMultiAsset).mockReturnValue(true)
+
+    expect(() => resolveOverriddenAsset(options, false, false, {} as TAsset)).toThrow(
+      'Overridden multi assets cannot be used without specifying fee asset'
+    )
+  })
+
+  it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset by not multi-location', () => {
+    const options = {
+      ...defaultOptions,
+      currency: { multiasset: [{}, {}] },
+      feeAsset: { symbol: 'ASSET' }
+    } as TSendOptions<unknown, unknown>
+
+    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
+    vi.mocked(isTMultiAsset).mockReturnValue(true)
+
+    expect(() =>
+      resolveOverriddenAsset(options, false, false, { symbol: 'ASSET' } as TAsset)
+    ).toThrow('Fee asset must be specified by multilocation when using raw overridden multi assets')
+  })
+
+  it('throws an InvalidCurrencyError if using raw multi-assets and no fee asset uses override multi-location', () => {
+    const options = {
+      ...defaultOptions,
+      currency: { multiasset: [{}, {}] },
+      feeAsset: {
+        multilocation: {
+          type: 'Override',
+          value: {}
+        }
+      }
+    } as TSendOptions<unknown, unknown>
+
+    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
+    vi.mocked(isTMultiAsset).mockReturnValue(true)
+
+    expect(() => resolveOverriddenAsset(options, false, false, {} as TAsset)).toThrow(
+      'Fee asset cannot be an overridden multi location specifier'
     )
   })
 

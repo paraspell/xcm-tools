@@ -3,11 +3,7 @@ import {
   type TAsset,
   type TNodeWithRelayChains,
 } from '@paraspell/sdk';
-import type {
-  TAutoSelect,
-  TExchangeNode,
-  TRouterAsset,
-} from '@paraspell/xcm-router';
+import type { TExchangeInput, TRouterAsset } from '@paraspell/xcm-router';
 import {
   getSupportedAssetsFrom,
   getSupportedAssetsTo,
@@ -16,7 +12,7 @@ import { useMemo } from 'react';
 
 const useRouterCurrencyOptions = (
   from: TNodeWithRelayChains | undefined,
-  exchangeNode: TExchangeNode | TAutoSelect,
+  exchangeNode: TExchangeInput,
   to: TNodeWithRelayChains | undefined,
 ) => {
   const supportedAssetsFrom = useMemo(

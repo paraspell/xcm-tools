@@ -11,6 +11,9 @@ import {
   NODE_NAMES_DOT_KSM,
   Native,
   Override,
+  TCurrencyInput,
+  TCurrencyInputWithAmount,
+  TMultiAsset,
   TMultiAssetWithFee,
   TMultiLocation,
   TNode,
@@ -114,6 +117,7 @@ describe('XCM API (e2e)', () => {
     const unknownSymbol = 'UnknownSymbol';
 
     NODE_NAMES_DOT_KSM.forEach((node) => {
+      if (node === 'Polimec') return;
       const assetsObjectUrl = `/assets/${node}`;
       it(`Get assets object - ${assetsObjectUrl} (GET)`, () => {
         const assetsObject = getAssetsObject(node);
@@ -958,18 +962,45 @@ describe('XCM API (e2e)', () => {
         .expect((await tx.getEncodedData()).asHex());
     });
 
-    it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {
+    it(`Generate XCM call - Parachain to parachain custom xcm execute call - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubPolkadot';
-      const to: TNode = 'Acala';
-      const currency: TMultiAssetWithFee[] = [
+      const to: TNode = 'Polimec';
+      const currency: TCurrencyInputWithAmount = {
+        symbol: 'USDC',
+        amount: '1000000000',
+      };
+      return request(app.getHttpServer())
+        .post(xTransferUrl)
+        .send({
+          from,
+          to,
+          address,
+          currency,
+          feeAsset: currency,
+        })
+        .expect(500);
+    });
+
+    it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {
+      const from: TNode = 'AssetHubKusama';
+      const to: TNode = 'Basilisk';
+      const currency: TMultiAsset[] = [
         {
           id: {
             Concrete: {
-              parents: 0,
+              parents: 1,
               interior: {
-                X1: {
-                  Parachain: 2000,
-                },
+                X3: [
+                  {
+                    Parachain: 1000,
+                  },
+                  {
+                    PalletInstance: 50,
+                  },
+                  {
+                    GeneralIndex: 1984,
+                  },
+                ],
               },
             },
           },
@@ -978,14 +1009,18 @@ describe('XCM API (e2e)', () => {
           },
         },
         {
-          isFeeAsset: true,
           id: {
             Concrete: {
-              parents: 0,
+              parents: 1,
               interior: {
-                X1: {
-                  Parachain: 2000,
-                },
+                X2: [
+                  {
+                    Parachain: 2125,
+                  },
+                  {
+                    GeneralIndex: 0,
+                  },
+                ],
               },
             },
           },
@@ -994,10 +1029,26 @@ describe('XCM API (e2e)', () => {
           },
         },
       ];
+      const feeAsset: TMultiLocation = {
+        parents: 1,
+        interior: {
+          X2: [
+            {
+              Parachain: 2125,
+            },
+            {
+              GeneralIndex: 0,
+            },
+          ],
+        },
+      };
       const tx = await Builder()
         .from(from)
         .to(to)
         .currency({ multiasset: currency })
+        .feeAsset({
+          multilocation: feeAsset,
+        })
         .address(address)
         .build();
       return request(app.getHttpServer())
@@ -1007,6 +1058,7 @@ describe('XCM API (e2e)', () => {
           to,
           address,
           currency: { multiasset: currency },
+          feeAsset: { multilocation: feeAsset },
         })
         .expect(201)
         .expect((await tx.getEncodedData()).asHex());

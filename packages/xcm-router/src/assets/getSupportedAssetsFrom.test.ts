@@ -4,11 +4,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeNode from '../dexNodes/DexNode';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
-import type { TAutoSelect, TExchangeNode } from '../types';
+import type { TExchangeNode } from '../types';
 import { getExchangeAssets } from './getExchangeAssets';
 import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
 
-// Mock external dependencies
 vi.mock('@paraspell/sdk-pjs', () => ({
   getAssets: vi.fn(),
   normalizeSymbol: vi.fn((symbol: string) => symbol.toLowerCase()),
@@ -55,7 +54,7 @@ describe('getSupportedAssetsFrom', () => {
 
   it('should return all assets from node when exchange is auto select', () => {
     const fromNode = 'Acala' as TNodeWithRelayChains;
-    const exchange: TAutoSelect = 'Auto select';
+    const exchange = undefined;
     const fromAssets: TAsset[] = [{ symbol: 'ACA', assetId: '1000099' }];
     vi.mocked(getAssets).mockReturnValue(fromAssets);
 
@@ -136,8 +135,7 @@ describe('getSupportedAssetsFrom', () => {
   });
 
   it('should return empty array when exchange is Auto select and from is undefined', () => {
-    const exchange: TAutoSelect = 'Auto select';
-
+    const exchange = undefined;
     const result = getSupportedAssetsFrom(undefined, exchange);
 
     expect(result).toEqual([]);

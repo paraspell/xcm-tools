@@ -9,7 +9,7 @@ export const getBestAmountOut = async (
   const { exchange, amount } = options;
 
   const dex =
-    exchange !== undefined
+    exchange !== undefined && !Array.isArray(exchange)
       ? createDexNodeInstance(exchange)
       : await selectBestExchangeAmountOut(options);
 

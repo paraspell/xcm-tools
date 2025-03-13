@@ -260,7 +260,12 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             ],
             amount: MOCK_AMOUNT
           })
-          .feeAsset({ symbol: ForeignAbstract('USDC2') })
+          .feeAsset({
+            multilocation: {
+              parents: 0,
+              interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
+            }
+          })
           .address(MOCK_ADDRESS)
           .build()
 

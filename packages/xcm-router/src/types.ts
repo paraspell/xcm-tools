@@ -76,7 +76,7 @@ export type TTransferOptions = {
   /**
    * The exchange node to use for the transfer.
    */
-  exchange?: TExchangeNode;
+  exchange?: TExchangeInput;
   /**
    * The destination node to transfer to.
    */
@@ -189,7 +189,10 @@ export type TRouterAsset = {
 export type TAssets = Array<TRouterAsset>;
 export type TAssetsRecord = Record<TExchangeNode, TAssets>;
 
-export type TAutoSelect = 'Auto select';
+export type TExchangeInput =
+  | TExchangeNode
+  | [TExchangeNode, TExchangeNode, ...TExchangeNode[]]
+  | undefined;
 
 export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';
 

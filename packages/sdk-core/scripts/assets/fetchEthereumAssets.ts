@@ -35,7 +35,25 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
     SyntaxKind.ArrayLiteralExpression
   )
 
-  const assets: TForeignAsset[] = []
+  const assets: TForeignAsset[] = [
+    {
+      symbol: 'ETH',
+      assetId: '0x0000000000000000000000000000000000000000',
+      existentialDeposit: '15000000000000',
+      multiLocation: {
+        parents: 1,
+        interior: {
+          X1: {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 
   tokenArray.forEachChild(token => {
     const item = token.getFirstChildByKindOrThrow(SyntaxKind.SyntaxList)

@@ -223,7 +223,7 @@ describe('send', () => {
       api: apiMock,
       from: 'Acala',
       currency: { multiasset: [] } as TCurrencyInput,
-      feeAsset: { symbol: 'FEE' },
+      feeAsset: { multilocation: {} },
       address: 'some-address',
       to: 'Astar'
     } as TSendOptions<unknown, unknown>

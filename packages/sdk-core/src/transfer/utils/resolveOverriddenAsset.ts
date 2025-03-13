@@ -3,23 +3,23 @@ import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
 import { createMultiAsset, isTMultiAsset, isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import type {
   TAsset,
-  TMultiAsset,
+  TMultiAssetWithFee,
   TMultiLocation,
   TNodePolkadotKusama,
   TSendOptions
 } from '../../types'
-import { getNode, isForeignAsset } from '../../utils'
+import { deepEqual, getNode, isForeignAsset } from '../../utils'
 import { isAssetEqual } from '../../utils'
-import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
+import { extractMultiAssetLoc, isOverrideMultiLocationSpecifier } from '../../utils/multiLocation'
 import { validateAssetSupport } from './validationUtils'
 
 export const resolveOverriddenAsset = <TApi, TRes>(
   options: TSendOptions<TApi, TRes>,
   isBridge: boolean,
   assetCheckEnabled: boolean,
-  feeAsset: TAsset | undefined
-): TMultiLocation | TMultiAsset[] | undefined => {
-  const { currency, from: origin, to: destination } = options
+  resolvedFeeAsset: TAsset | undefined
+): TMultiLocation | TMultiAssetWithFee[] | undefined => {
+  const { currency, feeAsset, from: origin, to: destination } = options
   if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
     return currency.multilocation.value
   }
@@ -31,8 +31,28 @@ export const resolveOverriddenAsset = <TApi, TRes>(
       )
     }
 
+    if ('multilocation' in feeAsset && isOverrideMultiLocationSpecifier(feeAsset.multilocation)) {
+      throw new InvalidCurrencyError('Fee asset cannot be an overridden multi location specifier')
+    }
+
     if (currency.multiasset.every(asset => isTMultiAsset(asset))) {
-      return currency.multiasset
+      if (!feeAsset) {
+        throw new InvalidCurrencyError('Fee asset not provided')
+      }
+
+      if (!('multilocation' in feeAsset)) {
+        throw new InvalidCurrencyError(
+          'Fee asset must be specified by multilocation when using raw overridden multi assets'
+        )
+      }
+
+      return currency.multiasset.map(multiAsset => {
+        const ml = extractMultiAssetLoc(multiAsset)
+        return {
+          ...multiAsset,
+          isFeeAsset: deepEqual(ml, feeAsset.multilocation)
+        }
+      })
     }
 
     // MultiAsset is an array of TCurrencyCore, search for assets
@@ -55,12 +75,16 @@ export const resolveOverriddenAsset = <TApi, TRes>(
         )
       }
 
+      if (!resolvedFeeAsset) {
+        throw new InvalidCurrencyError('Fee asset not found')
+      }
+
       validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
       const originTyped = origin as TNodePolkadotKusama
       const originNode = getNode<TApi, TRes, typeof originTyped>(originTyped)
       return {
-        isFeeAsset: isAssetEqual(feeAsset, asset),
+        isFeeAsset: isAssetEqual(resolvedFeeAsset, asset),
         ...createMultiAsset(
           originNode.version,
           currency.amount,

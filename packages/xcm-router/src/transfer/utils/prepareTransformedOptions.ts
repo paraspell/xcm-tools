@@ -16,7 +16,9 @@ export const prepareTransformedOptions = async <
   const { from, to, exchange, senderAddress, recipientAddress } = options;
 
   const dex =
-    exchange !== undefined ? createDexNodeInstance(exchange) : await selectBestExchange(options);
+    exchange !== undefined && !Array.isArray(exchange)
+      ? createDexNodeInstance(exchange)
+      : await selectBestExchange(options);
 
   const { assetFromOrigin, assetFromExchange, assetTo } = resolveAssets(dex, options);
 

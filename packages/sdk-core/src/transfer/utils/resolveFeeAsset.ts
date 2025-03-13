@@ -1,11 +1,16 @@
 import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
-import { isTMultiLocation, throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
+import {
+  isTMultiAsset,
+  isTMultiLocation,
+  throwUnsupportedCurrency
+} from '../../pallets/xcmPallet/utils'
 import type { TAsset, TCurrencyInput, TDestination, TNodeDotKsmWithRelayChains } from '../../types'
 
 export const resolveFeeAsset = (
   feeAsset: TCurrencyInput,
   origin: TNodeDotKsmWithRelayChains,
-  destination: TDestination
+  destination: TDestination,
+  currency: TCurrencyInput
 ): TAsset | undefined => {
   const asset = getAssetBySymbolOrId(
     origin,
@@ -13,7 +18,10 @@ export const resolveFeeAsset = (
     !isTMultiLocation(destination) ? destination : null
   )
 
-  if (!asset) {
+  const usesRawOverriddenMultiAssets =
+    'multiasset' in currency && currency.multiasset.every(isTMultiAsset)
+
+  if (!asset && !usesRawOverriddenMultiAssets) {
     throwUnsupportedCurrency(feeAsset, origin)
   }
 

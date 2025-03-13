@@ -81,7 +81,7 @@ describe('prepareTransformedOptions', () => {
     vi.mocked(getAssetBySymbolOrId).mockReturnValue(null);
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow(
-      `Currency from ${JSON.stringify(mockOptions.currencyFrom)} not found in ${mockOptions.exchange}.`,
+      `Currency from ${JSON.stringify(mockOptions.currencyFrom)} not found in ${mockOptions.exchange?.toString()}.`,
     );
   });
 

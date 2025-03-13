@@ -20,7 +20,7 @@ export const selectBestExchangeCommon = async <
     options: T,
   ) => Promise<BigNumber>,
 ): Promise<ExchangeNode> => {
-  const { from, to, currencyFrom, currencyTo } = options;
+  const { from, exchange, to, currencyFrom, currencyTo } = options;
 
   const assetFromOrigin = from ? getAssetBySymbolOrId(from, currencyFrom, null) : undefined;
 
@@ -40,11 +40,13 @@ export const selectBestExchangeCommon = async <
     `Selecting best exchange for asset pair ${assetFromOrigin?.symbol} -> ${JSON.stringify('symbol' in currencyTo ? currencyTo.symbol : '')}`,
   );
 
+  const filteredExchangeNodes = Array.isArray(exchange) ? exchange : EXCHANGE_NODES;
+
   let bestExchange: ExchangeNode | undefined;
   let maxAmountOut: BigNumber = new BigNumber(0);
   const errors = new Map<TNode, Error>();
   let triedAnyExchange = false;
-  for (const exchangeNode of EXCHANGE_NODES) {
+  for (const exchangeNode of filteredExchangeNodes) {
     const dex = createDexNodeInstance(exchangeNode);
 
     const originSpecified = from && from !== dex.node;

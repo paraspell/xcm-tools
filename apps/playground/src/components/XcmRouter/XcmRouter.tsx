@@ -23,6 +23,7 @@ import {
   type TCurrencyInput,
 } from '@paraspell/sdk-pjs';
 import type {
+  TExchangeInput,
   TExchangeNode,
   TRouterEvent,
   TTransaction,
@@ -131,16 +132,17 @@ export const XcmRouter = () => {
       return { symbol: asset.symbol };
     }
 
-    if (asset.assetId) return { id: asset.assetId };
     if (asset.multiLocation)
       return { multilocation: asset.multiLocation as TMultiLocation };
+
+    if (asset.assetId) return { id: asset.assetId };
 
     throw new Error('Invalid currency input');
   };
 
   const submitUsingRouterModule = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeNode | undefined,
+    exchange: TExchangeInput,
     injectorAddress: string,
     signer: Signer,
   ) => {
@@ -164,7 +166,7 @@ export const XcmRouter = () => {
         determineCurrency(
           from
             ? from
-            : exchange
+            : exchange && !Array.isArray(exchange)
               ? createDexNodeInstance(exchange).node
               : undefined,
           currencyFrom,
@@ -172,9 +174,11 @@ export const XcmRouter = () => {
       )
       .currencyTo(
         determineCurrency(
-          exchange ? createDexNodeInstance(exchange).node : undefined,
+          exchange && !Array.isArray(exchange)
+            ? createDexNodeInstance(exchange).node
+            : undefined,
           currencyTo,
-          exchange === undefined,
+          exchange === undefined || Array.isArray(exchange),
         ),
       )
       .amount(amount)
@@ -190,7 +194,7 @@ export const XcmRouter = () => {
 
   const submitUsingApi = async (
     formValues: TRouterFormValuesTransformed,
-    exchange: TExchangeNode | undefined,
+    exchange: TExchangeNode | TExchangeNode[] | undefined,
     injectorAddress: string,
     signer: Signer,
   ) => {
@@ -344,8 +348,11 @@ export const XcmRouter = () => {
 
     const injector = await web3FromAddress(selectedAccount.address);
 
-    const exchange =
-      formValues.exchange === 'Auto select' ? undefined : formValues.exchange;
+    const exchange = (
+      formValues.exchange && formValues.exchange?.length > 1
+        ? formValues.exchange
+        : formValues.exchange?.[0]
+    ) as TExchangeNode | undefined;
 
     const originalError = console.error;
     console.error = (...args: unknown[]) => {
