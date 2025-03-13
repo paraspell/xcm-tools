@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.7.1...sdk-pjs-v8.8.0) (2025-03-13)
+
+
+### Features
+
+* **xcm-router:** Add support for precise exchange auto-select ✨ ([ee018a3](https://github.com/paraspell/xcm-tools/commit/ee018a38f72cba5b8e20b4f7d537a6ad4027f92a))
+
 ## [8.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.7.0...sdk-pjs-v8.7.1) (2025-03-13)
 
 
