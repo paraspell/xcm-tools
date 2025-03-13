@@ -11366,13 +11366,7 @@
     "supportsDryRunApi": false,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ETH",
-    "nativeAssets": [
-      {
-        "isNative": true,
-        "symbol": "ETH",
-        "decimals": 18
-      }
-    ],
+    "nativeAssets": [],
     "otherAssets": [
       {
         "symbol": "ETH",
