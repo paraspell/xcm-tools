@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.8.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.8.0...sdk-core-v8.8.1) (2025-03-13)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix failing e2e tests 🧪 ([5c8785b](https://github.com/paraspell/xcm-tools/commit/5c8785bbd3cb675826fc6f0a31cd8230e86811a3))
+* **sdk-core:** Fix failing e2e tests 🧪 ([3b2d097](https://github.com/paraspell/xcm-tools/commit/3b2d0973958eee78e5f802300cb5c57ab8ec8188))
+
 ## [8.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.7.1...sdk-core-v8.8.0) (2025-03-13)
 
 
