@@ -211,7 +211,12 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
           getParaId('AssetHubPolkadot')
         ),
         assets: {
-          [version]: [createMultiAsset(version, asset.amount, DOT_MULTILOCATION)]
+          [version]: [
+            createMultiAsset(version, asset.amount, {
+              parents: Parents.ZERO,
+              interior: 'Here'
+            })
+          ]
         },
         assets_transfer_type: 'Teleport',
         remote_fees_id: {
