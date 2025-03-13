@@ -1,7 +1,11 @@
 import { IncompatibleNodesError, InvalidCurrencyError } from '../../errors'
 import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../../pallets/assets'
 import { getDefaultPallet } from '../../pallets/pallets'
-import { isTMultiLocation, throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
+import {
+  isTMultiAsset,
+  isTMultiLocation,
+  throwUnsupportedCurrency
+} from '../../pallets/xcmPallet/utils'
 import type {
   TAsset,
   TCurrencyInput,
@@ -23,7 +27,11 @@ export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyI
       throw new InvalidCurrencyError('Please provide more than one multi asset')
     }
 
-    if (currency.multiasset.length > 1 && !feeAsset) {
+    if (
+      currency.multiasset.length > 1 &&
+      !currency.multiasset.every(asset => isTMultiAsset(asset)) &&
+      !feeAsset
+    ) {
       throw new InvalidCurrencyError(
         'Overridden multi assets cannot be used without specifying fee asset'
       )

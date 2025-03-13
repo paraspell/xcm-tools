@@ -6,6 +6,7 @@ import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
 import { getOtherAssets } from '../../pallets/assets'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type {
+  TAsset,
   TMultiAsset,
   TMultiLocation,
   TNativeAsset,
@@ -431,6 +432,30 @@ describe('AssetHubPolkadot', () => {
       const result = await assetHub['handleExecuteTransfer'](input)
       expect(result).toBe('finalTx')
       expect(createExecuteXcm).toHaveBeenCalledWith(input, dryRunResult.weight, 750n)
+    })
+
+    it('should throw error if using overridden multi-assets with xcm execute transfer', () => {
+      const input = {
+        ...mockInput,
+        overriddenAsset: {},
+        senderAddress: '0xvalid',
+        feeAsset: {} as TAsset
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+      expect(() => assetHub['transferPolkadotXCM'](input)).toThrow(
+        'Cannot use overridden multi-assets with XCM execute'
+      )
+    })
+
+    it('should throw error if fee asset does not match', () => {
+      const input = {
+        ...mockInput,
+        senderAddress: '0xvalid',
+        feeAsset: { symbol: 'DOT' } as TAsset,
+        asset: { symbol: 'KSM', amount: 10000 } as WithAmount<TNativeAsset>
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+      expect(() => assetHub['transferPolkadotXCM'](input)).toThrow(
+        'Fee asset does not match transfer asset.'
+      )
     })
   })
 })

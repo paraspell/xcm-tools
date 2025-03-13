@@ -116,6 +116,7 @@ export const XTransferDtoSchema = z.object({
     MultiLocationSchema,
   ]),
   currency: CurrencySchema,
+  feeAsset: CurrencyCoreSchema.optional(),
   xcmVersion: z.enum(versionValues).optional(),
   pallet: z.string().optional(),
   method: z.string().optional(),

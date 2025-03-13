@@ -32,7 +32,7 @@ export const getExchangeAsset = (
     );
   }
 
-  const assets = getExchangeAssets(exchangeBaseNode, exchange);
+  const assets = getExchangeAssets(exchange);
 
   const nativeAssets = assets.filter((asset) => 'isNative' in asset) as TNativeAsset[];
 

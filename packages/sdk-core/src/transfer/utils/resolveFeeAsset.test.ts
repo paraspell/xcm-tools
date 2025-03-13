@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
 import { isTMultiLocation, throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
-import type { TAsset, TMultiLocation } from '../../types'
+import type { TAsset, TCurrencyInput, TMultiLocation } from '../../types'
 import { resolveFeeAsset } from './resolveFeeAsset'
 
 vi.mock('../../pallets/assets/getAssetBySymbolOrId', () => ({
@@ -24,11 +24,12 @@ describe('resolveFeeAsset', () => {
     const fakeAsset = { id: 'asset1' } as unknown as TAsset
     vi.mocked(getAssetBySymbolOrId).mockReturnValue(fakeAsset)
 
+    const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAsset
     const origin = 'Acala'
     const destination = 'Astar'
 
-    const result = resolveFeeAsset(feeAsset, origin, destination)
+    const result = resolveFeeAsset(feeAsset, origin, destination, feeCurrency)
     expect(result).toEqual(fakeAsset)
     expect(getAssetBySymbolOrId).toHaveBeenCalledWith(origin, feeAsset, destination)
   })
@@ -38,11 +39,12 @@ describe('resolveFeeAsset', () => {
     const fakeAsset = { id: 'asset2' } as unknown as TAsset
     vi.mocked(getAssetBySymbolOrId).mockReturnValue(fakeAsset)
 
+    const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAsset
     const origin = 'Acala'
     const destination = {} as TMultiLocation
 
-    const result = resolveFeeAsset(feeAsset, origin, destination)
+    const result = resolveFeeAsset(feeAsset, origin, destination, feeCurrency)
     expect(result).toEqual(fakeAsset)
     expect(getAssetBySymbolOrId).toHaveBeenCalledWith(origin, feeAsset, null)
   })
@@ -51,6 +53,7 @@ describe('resolveFeeAsset', () => {
     vi.mocked(isTMultiLocation).mockReturnValue(false)
     vi.mocked(getAssetBySymbolOrId).mockReturnValue(null)
 
+    const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAsset
     const origin = 'Acala'
     const destination = 'Astar'
@@ -59,7 +62,9 @@ describe('resolveFeeAsset', () => {
       throw new Error('Unsupported currency')
     })
 
-    expect(() => resolveFeeAsset(feeAsset, origin, destination)).toThrow('Unsupported currency')
+    expect(() => resolveFeeAsset(feeAsset, origin, destination, feeCurrency)).toThrow(
+      'Unsupported currency'
+    )
     expect(getAssetBySymbolOrId).toHaveBeenCalledWith(origin, feeAsset, destination)
     expect(throwUnsupportedCurrency).toHaveBeenCalledWith(feeAsset, origin)
   })

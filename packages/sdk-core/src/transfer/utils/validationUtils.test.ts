@@ -44,7 +44,8 @@ vi.mock('../../pallets/assets', () => ({
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
   throwUnsupportedCurrency: vi.fn(),
-  isTMultiLocation: vi.fn()
+  isTMultiLocation: vi.fn(),
+  isTMultiAsset: vi.fn()
 }))
 
 vi.mock('../../utils', () => ({
@@ -86,7 +87,7 @@ describe('validateCurrency', () => {
     )
   })
 
-  it('should not throw when currency has multiasset with length >1 and valid feeAsset index', () => {
+  it('should not throw when currency has multiasset with length >1 and valid feeAsset', () => {
     const currency = { multiasset: [{}, {}] } as TCurrencyInput
 
     expect(() => validateCurrency(currency, { symbol: 'DOT' })).not.toThrow()

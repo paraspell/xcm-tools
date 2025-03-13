@@ -349,9 +349,13 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, asset, destination, feeAsset } = input
+    const { scenario, asset, destination, feeAsset, overriddenAsset } = input
 
     if (feeAsset) {
+      if (overriddenAsset) {
+        throw new InvalidCurrencyError('Cannot use overridden multi-assets with XCM execute')
+      }
+
       if (!isAssetEqual(feeAsset, asset)) {
         throw new InvalidCurrencyError(`Fee asset does not match transfer asset.`)
       }

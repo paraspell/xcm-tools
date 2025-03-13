@@ -1,4 +1,4 @@
-export { getSupportedAssetsFrom, getSupportedAssetsTo } from './assets';
+export { getExchangeAssets, getSupportedAssetsFrom, getSupportedAssetsTo } from './assets';
 export * from './builder/RouterBuilder';
 export * from './consts';
 export { createDexNodeInstance } from './dexNodes/DexNodeFactory';

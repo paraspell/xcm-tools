@@ -47,7 +47,9 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   validateAssetSpecifiers(assetCheckEnabled, currency)
   const asset = resolveAsset(currency, origin, destination, assetCheckEnabled)
-  const resolvedFeeAsset = feeAsset ? resolveFeeAsset(feeAsset, origin, destination) : undefined
+  const resolvedFeeAsset = feeAsset
+    ? resolveFeeAsset(feeAsset, origin, destination, currency)
+    : undefined
   validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
   if (isRelayChain(origin)) {

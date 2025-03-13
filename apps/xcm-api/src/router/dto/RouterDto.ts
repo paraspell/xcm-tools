@@ -5,7 +5,14 @@ import { CurrencyCoreSchema } from '../../x-transfer/dto/XTransferDto.js';
 
 export const RouterDtoSchema = z.object({
   from: z.string(),
-  exchange: z.string().optional(),
+  exchange: z
+    .union([
+      z.string(),
+      z
+        .array(z.string())
+        .min(2, { message: 'Exchange array must contain at least 2 strings' }),
+    ])
+    .optional(),
   to: z.string(),
   currencyFrom: CurrencyCoreSchema,
   currencyTo: CurrencyCoreSchema,

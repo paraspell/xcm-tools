@@ -21,7 +21,7 @@ export class RouterController {
       params;
     this.analyticsService.track(eventName, req, {
       from,
-      exchange: exchange ?? 'unknown',
+      exchange: exchange ? exchange.toString() : 'unknown',
       to,
       currencyFrom: JSON.stringify(currencyFrom),
       currencyTo: JSON.stringify(currencyTo),

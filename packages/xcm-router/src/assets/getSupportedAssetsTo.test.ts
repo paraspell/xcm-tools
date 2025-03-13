@@ -1,11 +1,11 @@
-import type { TAsset, TNodePolkadotKusama, TNodeWithRelayChains } from '@paraspell/sdk-pjs';
+import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk-pjs';
 import { getAssets } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { EXCHANGE_NODES } from '../consts';
 import type ExchangeNode from '../dexNodes/DexNode';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
-import type { TAutoSelect, TExchangeNode } from '../types';
+import type { TExchangeNode } from '../types';
 import { getExchangeAssets } from './getExchangeAssets';
 import { getSupportedAssetsTo } from './getSupportedAssetsTo';
 
@@ -40,8 +40,7 @@ describe('getSupportedAssetsTo', () => {
 
     const result = getSupportedAssetsTo(dummyExchange, undefined);
 
-    expect(createDexNodeInstance).toHaveBeenCalledWith(dummyExchange);
-    expect(getExchangeAssets).toHaveBeenCalledWith(dummyNode.node, dummyExchange);
+    expect(getExchangeAssets).toHaveBeenCalledWith(dummyExchange);
     expect(result).toEqual(exchangeAssets);
   });
 
@@ -61,7 +60,7 @@ describe('getSupportedAssetsTo', () => {
   });
 
   it('should return flattened assets from all exchange nodes when exchange is "Auto select" and "to" is undefined', () => {
-    const autoSelect: TExchangeNode | TAutoSelect = 'Auto select';
+    const exchange = undefined;
     const node1 = 'Acala';
     const node2 = 'BifrostPolkadot';
 
@@ -73,23 +72,20 @@ describe('getSupportedAssetsTo', () => {
 
     const assets1 = [{ symbol: 'ABC' }] as TAsset[];
     const assets2 = [{ symbol: 'DEF' }] as TAsset[];
-    vi.mocked(getExchangeAssets).mockImplementation(
-      (_node: TNodePolkadotKusama, exchangeNode: TExchangeNode) => {
-        if (exchangeNode === 'AcalaDex') return assets1;
-        if (exchangeNode === 'BifrostPolkadotDex') return assets2;
-        return [];
-      },
-    );
+    vi.mocked(getExchangeAssets).mockImplementation((exchangeNode) => {
+      if (exchangeNode === 'AcalaDex') return assets1;
+      if (exchangeNode === 'BifrostPolkadotDex') return assets2;
+      return [];
+    });
 
-    const result = getSupportedAssetsTo(autoSelect, undefined);
+    const result = getSupportedAssetsTo(exchange, undefined);
 
-    expect(createDexNodeInstance).toHaveBeenCalledTimes(EXCHANGE_NODES.length);
     expect(getExchangeAssets).toHaveBeenCalledTimes(EXCHANGE_NODES.length);
     expect(result).toEqual([...assets1, ...assets2]);
   });
 
   it('should filter flattened assets based on "to" assets when exchange is "Auto select"', () => {
-    const autoSelect: TExchangeNode | TAutoSelect = 'Auto select';
+    const exchange = undefined;
     const node1 = 'Acala';
     const node2 = 'BifrostPolkadot';
 
@@ -101,18 +97,16 @@ describe('getSupportedAssetsTo', () => {
 
     const assets1 = [{ symbol: 'ABC' }] as TAsset[];
     const assets2 = [{ symbol: 'DEF' }] as TAsset[];
-    vi.mocked(getExchangeAssets).mockImplementation(
-      (_node: TNodePolkadotKusama, exchangeNode: TExchangeNode) => {
-        if (exchangeNode === 'AcalaDex') return assets1;
-        if (exchangeNode === 'BifrostPolkadotDex') return assets2;
-        return [];
-      },
-    );
+    vi.mocked(getExchangeAssets).mockImplementation((exchangeNode) => {
+      if (exchangeNode === 'AcalaDex') return assets1;
+      if (exchangeNode === 'BifrostPolkadotDex') return assets2;
+      return [];
+    });
 
     const toNode = 'Astar';
     vi.mocked(getAssets).mockReturnValue([{ symbol: 'DEF' }] as TAsset[]);
 
-    const result = getSupportedAssetsTo(autoSelect, toNode);
+    const result = getSupportedAssetsTo(exchange, toNode);
 
     expect(getAssets).toHaveBeenCalledWith(toNode);
     expect(result).toEqual([{ symbol: 'DEF' }]);

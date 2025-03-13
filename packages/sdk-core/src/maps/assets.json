@@ -1520,28 +1520,6 @@
         "existentialDeposit": "1000000000000"
       },
       {
-        "assetId": "4",
-        "symbol": "vFIL",
-        "decimals": 18,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0904000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000000"
-      },
-      {
         "assetId": "9",
         "symbol": "BNCS",
         "decimals": 12,
@@ -1562,28 +1540,6 @@
           }
         },
         "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "4",
-        "symbol": "FIL",
-        "decimals": 18,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0804000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000000"
       },
       {
         "assetId": "8",
@@ -1671,28 +1627,6 @@
         "existentialDeposit": "1000000"
       },
       {
-        "assetId": "0",
-        "symbol": "vsDOT",
-        "decimals": 10,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2030
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0403000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000"
-      },
-      {
         "assetId": "7",
         "symbol": "INTR",
         "decimals": 10,
@@ -1715,6 +1649,68 @@
         "existentialDeposit": "10000000"
       },
       {
+        "assetId": "15",
+        "symbol": "ETH",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            }
+          }
+        },
+        "existentialDeposit": "15000000000000"
+      },
+      {
+        "assetId": "4",
+        "symbol": "vFIL",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0904000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000"
+      },
+      {
+        "assetId": "4",
+        "symbol": "FIL",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0804000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000000"
+      },
+      {
         "assetId": "3",
         "symbol": "ASTR",
         "decimals": 18,
@@ -1727,6 +1723,28 @@
           }
         },
         "existentialDeposit": "10000000000000000"
+      },
+      {
+        "assetId": "0",
+        "symbol": "vsDOT",
+        "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0403000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000"
       }
     ]
   },
@@ -3653,6 +3671,20 @@
           }
         },
         "existentialDeposit": "205888408"
+      },
+      {
+        "assetId": "252525",
+        "symbol": "EWT",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "Parachain": 3345
+            }
+          }
+        },
+        "existentialDeposit": "3244646333550"
       },
       {
         "assetId": "30",
@@ -11343,6 +11375,23 @@
     ],
     "otherAssets": [
       {
+        "symbol": "ETH",
+        "assetId": "0x0000000000000000000000000000000000000000",
+        "existentialDeposit": "15000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      {
         "symbol": "WETH",
         "assetId": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
         "existentialDeposit": "15000000000000",
@@ -11648,7 +11697,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "MYTH",
     "isEVM": true,
-    "supportsDryRunApi": false,
+    "supportsDryRunApi": true,
     "nativeAssets": [
       {
         "symbol": "MYTH",

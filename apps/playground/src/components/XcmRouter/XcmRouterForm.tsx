@@ -3,6 +3,7 @@ import {
   Center,
   Group,
   Menu,
+  MultiSelect,
   Paper,
   rem,
   Select,
@@ -19,7 +20,7 @@ import type {
   TNodeWithRelayChains,
 } from '@paraspell/sdk';
 import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
-import type { TAutoSelect, TExchangeNode } from '@paraspell/xcm-router';
+import type { TExchangeInput, TExchangeNode } from '@paraspell/xcm-router';
 import { EXCHANGE_NODES } from '@paraspell/xcm-router';
 import type { Signer } from '@polkadot/api/types';
 import { web3Accounts, web3FromAddress } from '@polkadot/extension-dapp';
@@ -40,7 +41,7 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 
 export type TRouterFormValues = {
   from?: TNodeDotKsmWithRelayChains;
-  exchange: TExchangeNode | TAutoSelect;
+  exchange?: TExchangeNode[];
   to?: TNodeWithRelayChains;
   currencyFromOptionId: string;
   currencyToOptionId: string;
@@ -52,7 +53,11 @@ export type TRouterFormValues = {
   evmInjectorAddress?: string;
 };
 
-export type TRouterFormValuesTransformed = TRouterFormValues & {
+export type TRouterFormValuesTransformed = Omit<
+  TRouterFormValues,
+  'exchange'
+> & {
+  exchange: TExchangeNode;
   currencyFrom: TAsset;
   currencyTo: TAsset;
 };
@@ -89,7 +94,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
   const form = useForm<TRouterFormValues>({
     initialValues: {
       from: 'Astar',
-      exchange: 'Auto select',
+      exchange: undefined,
       to: 'Hydration',
       currencyFromOptionId: '',
       currencyToOptionId: '',
@@ -109,7 +114,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
         return value ? null : 'Currency to selection is required';
       },
       exchange: (value, values) => {
-        if (value === 'Auto select' && !values.from) {
+        if (value === undefined && !values.from) {
           return 'Origin must be set to use Auto select';
         }
         return null;
@@ -141,6 +146,20 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     closeModal();
   };
 
+  const getExchange = (exchange: TExchangeNode[] | undefined) => {
+    if (Array.isArray(exchange)) {
+      if (exchange.length === 1) {
+        return exchange[0];
+      }
+
+      if (exchange.length === 0) {
+        return undefined;
+      }
+    }
+
+    return exchange;
+  };
+
   const {
     currencyFromOptions,
     currencyFromMap,
@@ -148,7 +167,11 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     currencyToMap,
     isFromNotParaToPara,
     isToNotParaToPara,
-  } = useRouterCurrencyOptions(from, exchange, to);
+  } = useRouterCurrencyOptions(
+    from,
+    getExchange(exchange) as TExchangeInput,
+    to,
+  );
 
   const onSubmitInternal = (
     values: TRouterFormValues,
@@ -164,6 +187,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
 
     const transformedValues = {
       ...values,
+      exchange: getExchange(values.exchange) as TExchangeNode,
       currencyFrom,
       currencyTo: {
         ...currencyTo,
@@ -260,13 +284,14 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
             {...form.getInputProps('from')}
           />
 
-          <Select
+          <MultiSelect
             label="Exchange"
-            placeholder="Pick value"
-            data={['Auto select', ...EXCHANGE_NODES]}
-            allowDeselect={false}
+            placeholder={exchange?.length ? 'Pick value' : 'Auto select'}
+            data={EXCHANGE_NODES}
             searchable
+            clearable
             required
+            withAsterisk={false}
             data-testid="select-exchange"
             description="Select the chain where the asset swap will take place"
             {...form.getInputProps('exchange')}
@@ -285,7 +310,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
           />
 
           <Select
-            key={from + exchange + to + 'currencyFrom'}
+            key={`${from?.toString()}${exchange?.toString()}${to?.toString()}currencyFrom`}
             label="Currency From"
             placeholder="Pick value"
             data={currencyFromOptions}
@@ -298,7 +323,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
           />
 
           <Select
-            key={from + exchange + to + 'currencyTo'}
+            key={`${from?.toString()}${exchange?.toString()}${to?.toString()}currencyTo`}
             label="Currency To"
             placeholder="Pick value"
             data={currencyToOptions}

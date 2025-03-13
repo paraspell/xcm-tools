@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { RouterBuilder } from '../src';
-import { Foreign } from '@paraspell/sdk-pjs';
 
 const MOCK_ADDRESS = '23hBHVjKq6bRNL3FoYeq7ugZnvVcgjTaoUoWXcKPaNSgxAR3';
 
@@ -285,6 +284,23 @@ describe.sequential('E2E tests', () => {
     it('should build a transfer extrinsic without error for DOT to ACA', async () => {
       const hashes = await RouterBuilder()
         .from('Polkadot')
+        .to('Astar')
+        .currencyFrom({ symbol: 'DOT' })
+        .currencyTo({ symbol: 'ACA' })
+        .amount('5000000000')
+        .senderAddress(MOCK_ADDRESS)
+        .recipientAddress(MOCK_ADDRESS)
+        .slippagePct('1')
+        .buildTransactions();
+
+      expect(hashes).toBeDefined();
+      expect(hashes.length).toBe(2);
+    });
+
+    it('should build a transfer extrinsic without error for DOT to ACA - 2 exchanges', async () => {
+      const hashes = await RouterBuilder()
+        .from('Polkadot')
+        .exchange(['AcalaDex', 'HydrationDex'])
         .to('Astar')
         .currencyFrom({ symbol: 'DOT' })
         .currencyTo({ symbol: 'ACA' })

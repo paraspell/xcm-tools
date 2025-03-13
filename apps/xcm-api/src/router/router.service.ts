@@ -46,7 +46,7 @@ export class RouterService {
 
     if (exchange && !EXCHANGE_NODES.includes(exchangeNode)) {
       throw new BadRequestException(
-        `Exchange ${exchange} is not valid. Check docs for valid exchanges.`,
+        `Exchange ${exchange.toString()} is not valid. Check docs for valid exchanges.`,
       );
     }
 

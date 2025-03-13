@@ -24,6 +24,7 @@ const builderMock = {
   from: vi.fn().mockReturnThis(),
   to: vi.fn().mockReturnThis(),
   currency: vi.fn().mockReturnThis(),
+  feeAsset: vi.fn().mockReturnThis(),
   address: vi.fn().mockReturnThis(),
   xcmVersion: vi.fn().mockReturnThis(),
   addToBatch: vi.fn().mockReturnThis(),

@@ -65,6 +65,7 @@ export class XTransferService {
       from,
       to,
       currency,
+      feeAsset,
       address,
       xcmVersion,
       pallet,
@@ -76,6 +77,7 @@ export class XTransferService {
       .from(from as TNodeDotKsmWithRelayChains)
       .to(to as TNodeWithRelayChains)
       .currency(currency)
+      .feeAsset(feeAsset)
       .address(address, senderAddress);
 
     if (xcmVersion) {
