@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.7.0...sdk-core-v8.7.1) (2025-03-13)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix Polkadot -&gt; Polimec transfer 🔧 ([2c508a4](https://github.com/paraspell/xcm-tools/commit/2c508a44ad6f92be2427d3fbcb84bcfbcfc6a448))
+* **sdk-core:** Fix Polkadot -&gt; Polimec transfer 🔧 ([ef5ac26](https://github.com/paraspell/xcm-tools/commit/ef5ac263afdc6d6418ab495a9f09449ba994f014))
+
 ## [8.7.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.6.2...sdk-core-v8.7.0) (2025-03-12)
 
 
