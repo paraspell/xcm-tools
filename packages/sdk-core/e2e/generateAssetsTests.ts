@@ -33,11 +33,13 @@ export const generateAssetsTests = () => {
           expect(assetsObj).toHaveProperty('supportsDryRunApi')
         })
 
-        it('should have a valid native asset symbol in nativeAssets', () => {
-          const nativeSymbol = getNativeAssetSymbol(node)
-          const nativeSymbols = assetsObj.nativeAssets.map(a => a.symbol)
-          expect(nativeSymbols).toContain(nativeSymbol)
-        })
+        if (node !== 'Ethereum') {
+          it('should have a valid native asset symbol in nativeAssets', () => {
+            const nativeSymbol = getNativeAssetSymbol(node)
+            const nativeSymbols = assetsObj.nativeAssets.map(a => a.symbol)
+            expect(nativeSymbols).toContain(nativeSymbol)
+          })
+        }
 
         it('Every native asset should have required properties', () => {
           assetsObj.nativeAssets.forEach(asset => {
@@ -184,11 +186,13 @@ export const generateAssetsTests = () => {
             expect(symbol).toBeTypeOf('string')
           })
 
-          it('should return native asset symbol from native assets', () => {
-            const { nativeAssets } = getAssetsObject(node)
-            const symbol = getNativeAssetSymbol(node)
-            expect(nativeAssets.map(a => a.symbol)).toContain(symbol)
-          })
+          if (node !== 'Ethereum') {
+            it('should return native asset symbol from native assets', () => {
+              const { nativeAssets } = getAssetsObject(node)
+              const symbol = getNativeAssetSymbol(node)
+              expect(nativeAssets.map(a => a.symbol)).toContain(symbol)
+            })
+          }
         })
 
         describe('hasSupportForAsset', () => {

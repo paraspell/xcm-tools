@@ -105,8 +105,10 @@ export const getAllAssetsSymbols = (node: TNodeWithRelayChains): string[] => {
  * @param node - The node for which to get the native asset symbol.
  * @returns The symbol of the native asset.
  */
-export const getNativeAssetSymbol = (node: TNodeWithRelayChains): string =>
-  getAssetsObject(node).nativeAssetSymbol
+export const getNativeAssetSymbol = (node: TNodeWithRelayChains): string => {
+  if (node === 'Ethereum') return 'ETH'
+  return getAssetsObject(node).nativeAssetSymbol
+}
 
 /**
  * Determines whether a specified node supports an asset with the given symbol.
