@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.8.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.7.1...xcm-router-v8.8.0) (2025-03-13)
+
+
+### Features
+
+* **xcm-router:** Add support for precise exchange auto-select ✨ ([ee018a3](https://github.com/paraspell/xcm-tools/commit/ee018a38f72cba5b8e20b4f7d537a6ad4027f92a))
+* **xcm-router:** Add support for precise exchange auto-select ✨ ([18d65d8](https://github.com/paraspell/xcm-tools/commit/18d65d8dead2ef68c71e956a41ea0b1dcca3993b))
+
 ## [8.7.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.7.0...xcm-router-v8.7.1) (2025-03-13)
 
 
