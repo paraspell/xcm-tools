@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAsset } from '../../src/types'
-import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
+import type { TForeignAsset } from '../src'
 
-export const fetchMoonbeamForeignAssets = async (
+export const fetchComposableAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<TForeignAsset[]> => {
   const [module, section] = query.split('.')
   const symbolsResponse = await api.query[module][section].entries()
 
-  return await Promise.all(
+  const assets = await Promise.all(
     symbolsResponse.map(
       async ([
         {
@@ -19,23 +19,22 @@ export const fetchMoonbeamForeignAssets = async (
         },
         value
       ]) => {
-        const { xcm } = value.toJSON() as any
+        const { inner: symbol } = value.toHuman() as any
         const assetId = era.toHuman() as string
         const numberAssetId = assetId.replace(/[,]/g, '')
 
-        const metadata = await api.query.assets.metadata(era)
-        const { symbol, decimals } = metadata.toHuman() as any
-        const details = await api.query.assets.asset(era)
-        const { minBalance } = details.toHuman() as any
+        const decimals = await api.query[module].assetDecimals(era)
+        const existentialDeposit = await api.query[module].existentialDeposit(era)
 
         return {
           assetId: numberAssetId,
           symbol,
           decimals: +decimals,
-          multiLocation: capitalizeMultiLocation(xcm),
-          existentialDeposit: minBalance
+          existentialDeposit: existentialDeposit.toHuman() as string
         }
       }
     )
   )
+
+  return assets
 }

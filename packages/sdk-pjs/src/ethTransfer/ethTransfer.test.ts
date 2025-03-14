@@ -9,6 +9,7 @@ import {
   isOverrideMultiLocationSpecifier
 } from '@paraspell/sdk-core'
 import { type Context, toPolkadotV2 } from '@snowbridge/api'
+import type { ValidationResult } from '@snowbridge/api/dist/toPolkadot_v2'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
@@ -242,7 +243,7 @@ describe('transferEthToPolkadot', () => {
 
     vi.spyOn(toPolkadotV2, 'validateTransfer').mockResolvedValue({
       logs: []
-    } as unknown as toPolkadotV2.Validation)
+    } as unknown as ValidationResult)
 
     vi.spyOn(toPolkadotV2, 'getMessageReceipt').mockResolvedValue(null)
     const fakeSigner = {
@@ -284,7 +285,7 @@ describe('transferEthToPolkadot', () => {
 
     vi.spyOn(toPolkadotV2, 'validateTransfer').mockResolvedValue({
       logs: []
-    } as unknown as toPolkadotV2.Validation)
+    } as unknown as ValidationResult)
 
     const fakeSigner = {
       provider: {},
@@ -326,7 +327,7 @@ describe('transferEthToPolkadot', () => {
 
     vi.spyOn(toPolkadotV2, 'validateTransfer').mockResolvedValue({
       logs: [{ kind: toPolkadotV2.ValidationKind.Error, message: 'Validation error occurred' }]
-    } as toPolkadotV2.Validation)
+    } as unknown as ValidationResult)
 
     const fakeSigner = {
       provider: {},

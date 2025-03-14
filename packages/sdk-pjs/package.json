@@ -37,8 +37,8 @@
   },
   "dependencies": {
     "@paraspell/sdk-core": "workspace:*",
-    "@snowbridge/api": "0.1.32",
-    "@snowbridge/contract-types": "0.1.32",
+    "@snowbridge/api": "0.1.44",
+    "@snowbridge/contract-types": "0.1.44",
     "ethers": "^6.13.5",
     "viem": "^2.23.5"
   },

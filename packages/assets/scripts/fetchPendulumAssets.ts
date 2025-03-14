@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAsset } from '../../src/types'
+import type { TForeignAsset } from '../src'
 
 export const fetchPendulumForeignAssets = async (
   api: ApiPromise,

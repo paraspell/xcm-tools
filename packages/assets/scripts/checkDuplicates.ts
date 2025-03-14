@@ -1,5 +1,5 @@
-import assetsMapJson from '../../src/maps/assets.json' with { type: 'json' }
-import type { TAssetJsonMap } from '../../src/types'
+import assetsMapJson from '../src/maps/assets.json' with { type: 'json' }
+import type { TAssetJsonMap } from '../src'
 
 const assetsMap = assetsMapJson as TAssetJsonMap
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { TForeignAsset, TNodeAssets } from '../../src/types'
+import type { TForeignAsset, TNodeAssets } from '../src'
 import axios from 'axios'
 import { Project, SyntaxKind } from 'ts-morph'
 

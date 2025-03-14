@@ -1,6 +1,6 @@
 // Script that updates asset map for compatible nodes
 
-import { handleDataFetching } from '../../../sdk-common/scripts/scriptUtils'
+import { handleDataFetching } from '../../sdk-common/scripts/scriptUtils'
 import { fetchAllNodesAssets } from './fetchAssets'
 
 const JSON_FILE_PATH = './src/maps/assets.json'

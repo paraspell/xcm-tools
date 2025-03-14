@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import type {
-  TForeignAsset,
+import type { TForeignAsset } from '../src/types'
+import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
+import {
+  getParaId,
   TJunctionGeneralIndex,
   TJunctionParachain,
   TMultiLocation
-} from '../../src/types'
-import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
-import { getAssetBySymbolOrId } from '../../src/pallets/assets'
-import { NODES_WITH_RELAY_CHAINS } from '../../src'
-import { getParaId } from '../../src/nodes/config'
+} from '../../sdk-core/src'
+import { findAsset } from '../src'
+import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk-common'
 
 const findSimilarAsset = (multilocation: TMultiLocation) => {
   if (multilocation.interior !== 'Here' && multilocation.interior.X3) {
@@ -18,13 +18,13 @@ const findSimilarAsset = (multilocation: TMultiLocation) => {
 
     if (paraId === getParaId('AssetHubPolkadot')) {
       const id = (multilocation.interior.X3[2] as TJunctionGeneralIndex)['GeneralIndex']
-      const asset = getAssetBySymbolOrId('AssetHubPolkadot', { id }, null)
+      const asset = findAsset('AssetHubPolkadot', { id }, null)
       if (asset) return asset
     }
   }
 
   for (const node of NODES_WITH_RELAY_CHAINS) {
-    const asset = getAssetBySymbolOrId(node, { multilocation }, null)
+    const asset = findAsset(node, { multilocation }, null)
     if (asset) return asset
   }
   return null

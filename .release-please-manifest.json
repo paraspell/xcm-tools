@@ -3,5 +3,7 @@
   "packages/xcm-router": "8.8.0",
   "packages/sdk": "8.8.0",
   "packages/sdk-core": "8.8.0",
-  "packages/sdk-pjs": "8.8.0"
+  "packages/sdk-pjs": "8.8.0",
+  "packages/sdk-common": "8.8.0",
+  "packages/assets": "8.8.0"
 }

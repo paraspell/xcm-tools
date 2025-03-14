@@ -1,5 +1,5 @@
-import type { TAssetJsonMap, TNode } from '../../src'
-import { isForeignAsset } from '../../src/utils/assets'
+import { TNode } from '@paraspell/sdk-common'
+import { TAssetJsonMap, isForeignAsset } from '../src'
 
 function collectDuplicateSymbolsInChains(assetsMap: TAssetJsonMap): {
   [node: string]: { [symbol: string]: string[] }

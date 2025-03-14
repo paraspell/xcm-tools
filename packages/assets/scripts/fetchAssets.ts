@@ -4,17 +4,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import type {
-  TAssetJsonMap,
-  TForeignAsset,
-  TMultiLocation,
-  TNativeAsset,
-  TNode,
-  TNodeAssets,
-  TNodePolkadotKusama
-} from '../../src'
-import { getNode } from '../../src/utils'
-import { fetchTryMultipleProvidersWithTimeout } from '../../../sdk-common/scripts/scriptUtils'
+import {
+  getNativeAssetSymbol,
+  type TAssetJsonMap,
+  type TForeignAsset,
+  type TNativeAsset,
+  type TNodeAssets
+} from '../src'
+import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/scriptUtils'
 import { GLOBAL, nodeToQuery } from './nodeToQueryMap'
 import { fetchEthereumAssets } from './fetchEthereumAssets'
 import { addAliasesToDuplicateSymbols } from './addAliases'
@@ -24,15 +21,15 @@ import { fetchBifrostForeignAssets, fetchBifrostNativeAssets } from './fetchBifr
 import { fetchOtherAssetsCentrifuge } from './fetchAssetsCentrifuge'
 import { fetchExistentialDeposit } from './fetchEd'
 import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAssets'
-import { getNativeAssetSymbol } from '../../src/pallets/assets'
 import { fetchComposableAssets } from './fetchComposableAssets'
 import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
 import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 import { supportsDryRunApi } from './supportsDryRunApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
 import { fetchXcmRegistry, TRegistryAssets } from './fetchXcmRegistry'
-import { getNodeProviders, getParaId } from '../../src/nodes/config'
 import { fetchPolimecForeignAssets } from './fetchPolimecAssets'
+import { TMultiLocation, TNode, TNodePolkadotKusama } from '@paraspell/sdk-common'
+import { getNodeProviders, getParaId, getNode } from '../../sdk-core/src'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()

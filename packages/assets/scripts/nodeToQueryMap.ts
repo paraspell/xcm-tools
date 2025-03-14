@@ -1,4 +1,4 @@
-import type { TNode } from '../../src'
+import { TNode } from '@paraspell/sdk-common'
 
 export const GLOBAL = 'GLOBAL_XCM_REGISTRY'
 

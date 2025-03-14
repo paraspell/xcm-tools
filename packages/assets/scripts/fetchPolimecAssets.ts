@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
-import type { TForeignAsset, TMultiLocation } from '../../src/types'
+import type { TForeignAsset } from '../src/types'
 import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
+import { TMultiLocation } from '@paraspell/sdk-common'
 
 export const fetchPolimecForeignAssets = async (
   api: ApiPromise,
