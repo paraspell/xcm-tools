@@ -1,9 +1,11 @@
+import type { TMultiAsset } from '@paraspell/assets'
+import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DEFAULT_FEE_ASSET } from '../../constants'
-import type { TMultiAsset, TMultiLocation, TRelayToParaOptions, TXcmVersioned } from '../../types'
-import { Parents, Version } from '../../types'
+import type { TRelayToParaOptions, TXcmVersioned } from '../../types'
+import { Version } from '../../types'
 import { generateAddressPayload, resolveParaId } from '../../utils'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
 import { createPolkadotXcmHeader, createVersionedMultiAssets } from './utils'

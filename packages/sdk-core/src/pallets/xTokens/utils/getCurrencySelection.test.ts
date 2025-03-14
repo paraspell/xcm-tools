@@ -1,8 +1,10 @@
+import type { TMultiAsset } from '@paraspell/assets'
+import { Parents } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type ParachainNode from '../../../nodes/ParachainNode'
-import type { TMultiAsset, TXcmVersioned } from '../../../types'
-import { Parents, type TXTokensTransferOptions, Version } from '../../../types'
+import type { TXcmVersioned } from '../../../types'
+import { type TXTokensTransferOptions, Version } from '../../../types'
 import { getNode } from '../../../utils'
 import { getCurrencySelection } from './getCurrencySelection'
 import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'

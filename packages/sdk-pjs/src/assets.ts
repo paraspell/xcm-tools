@@ -70,10 +70,10 @@ export const verifyEdOnDestination = createPolkadotJsApiCall(
 )
 
 export {
+  findAsset,
   Foreign,
   ForeignAbstract,
   getAllAssetsSymbols,
-  getAssetBySymbolOrId,
   getAssetDecimals,
   getAssetId,
   getAssets,

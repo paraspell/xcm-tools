@@ -1,9 +1,9 @@
+import type { TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TNode, TNodeWithRelayChains } from '@paraspell/sdk-common'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 
 import type { WithApi } from './TApi'
-import type { TCurrencyInputWithAmount } from './TCurrency'
-import type { TNode, TNodeWithRelayChains } from './TNode'
 
 export type TEvmNodeFrom = Extract<TNode, 'Ethereum' | 'Moonbeam' | 'Moonriver' | 'Darwinia'>
 

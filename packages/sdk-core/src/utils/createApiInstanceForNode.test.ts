@@ -1,8 +1,8 @@
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { getNodeProviders } from '../nodes/config'
-import type { TNodeDotKsmWithRelayChains } from '../types'
 import { createApiInstanceForNode } from './createApiInstanceForNode'
 
 vi.mock('../nodes/config', () => ({

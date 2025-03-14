@@ -1,16 +1,21 @@
+import type { TAsset, TCurrencyInput } from '@paraspell/assets'
+import { findAsset } from '@paraspell/assets'
+import type { TMultiLocation } from '@paraspell/sdk-common'
+import { isTMultiLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
-import { isTMultiLocation, throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
-import type { TAsset, TCurrencyInput, TMultiLocation } from '../../types'
+import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import { resolveFeeAsset } from './resolveFeeAsset'
 
-vi.mock('../../pallets/assets/getAssetBySymbolOrId', () => ({
-  getAssetBySymbolOrId: vi.fn()
+vi.mock('@paraspell/assets', () => ({
+  findAsset: vi.fn()
+}))
+
+vi.mock('@paraspell/sdk-common', () => ({
+  isTMultiLocation: vi.fn()
 }))
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
-  isTMultiLocation: vi.fn(),
   throwUnsupportedCurrency: vi.fn()
 }))
 
@@ -22,7 +27,7 @@ describe('resolveFeeAsset', () => {
   it('returns asset when found and destination is not a TMultiLocation', () => {
     vi.mocked(isTMultiLocation).mockReturnValue(false)
     const fakeAsset = { id: 'asset1' } as unknown as TAsset
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(fakeAsset)
+    vi.mocked(findAsset).mockReturnValue(fakeAsset)
 
     const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAsset
@@ -31,13 +36,13 @@ describe('resolveFeeAsset', () => {
 
     const result = resolveFeeAsset(feeAsset, origin, destination, feeCurrency)
     expect(result).toEqual(fakeAsset)
-    expect(getAssetBySymbolOrId).toHaveBeenCalledWith(origin, feeAsset, destination)
+    expect(findAsset).toHaveBeenCalledWith(origin, feeAsset, destination)
   })
 
   it('returns asset when found and destination is a TMultiLocation', () => {
     vi.mocked(isTMultiLocation).mockReturnValue(true)
     const fakeAsset = { id: 'asset2' } as unknown as TAsset
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(fakeAsset)
+    vi.mocked(findAsset).mockReturnValue(fakeAsset)
 
     const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAsset
@@ -46,12 +51,12 @@ describe('resolveFeeAsset', () => {
 
     const result = resolveFeeAsset(feeAsset, origin, destination, feeCurrency)
     expect(result).toEqual(fakeAsset)
-    expect(getAssetBySymbolOrId).toHaveBeenCalledWith(origin, feeAsset, null)
+    expect(findAsset).toHaveBeenCalledWith(origin, feeAsset, null)
   })
 
   it('throws error when asset is not found', () => {
     vi.mocked(isTMultiLocation).mockReturnValue(false)
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(null)
+    vi.mocked(findAsset).mockReturnValue(null)
 
     const feeCurrency = {} as TCurrencyInput
     const feeAsset = 'feeAssetSymbol' as unknown as TAsset
@@ -65,7 +70,7 @@ describe('resolveFeeAsset', () => {
     expect(() => resolveFeeAsset(feeAsset, origin, destination, feeCurrency)).toThrow(
       'Unsupported currency'
     )
-    expect(getAssetBySymbolOrId).toHaveBeenCalledWith(origin, feeAsset, destination)
+    expect(findAsset).toHaveBeenCalledWith(origin, feeAsset, destination)
     expect(throwUnsupportedCurrency).toHaveBeenCalledWith(feeAsset, origin)
   })
 })

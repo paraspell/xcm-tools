@@ -1,10 +1,8 @@
 // Contains detailed structure of XCM call construction for Peaq Parachain
 
-import {
-  InvalidCurrencyError,
-  NodeNotSupportedError,
-  ScenarioNotSupportedError
-} from '../../errors'
+import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+
+import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import {
   type IXTokensTransfer,
@@ -12,7 +10,6 @@ import {
   type TXTokensTransferOptions,
   Version
 } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 
 class Peaq<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {

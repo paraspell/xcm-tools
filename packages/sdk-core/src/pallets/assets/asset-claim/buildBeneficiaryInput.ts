@@ -1,9 +1,8 @@
+import { isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import type { TAddress, TMultiLocation } from '../../../types'
-import { Parents } from '../../../types'
-import { isTMultiLocation } from '../../xcmPallet/utils'
+import type { TAddress } from '../../../types'
 
 export const buildBeneficiaryInput = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,

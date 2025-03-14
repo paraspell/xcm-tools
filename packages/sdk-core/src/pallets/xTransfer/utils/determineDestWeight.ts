@@ -1,5 +1,7 @@
+import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+
 import { NodeNotSupportedError } from '../../../errors'
-import type { TDestWeight, TNodeWithRelayChains } from '../../../types'
+import type { TDestWeight } from '../../../types'
 
 export const determineDestWeight = (destNode?: TNodeWithRelayChains): TDestWeight | never => {
   if (destNode === 'Astar') {

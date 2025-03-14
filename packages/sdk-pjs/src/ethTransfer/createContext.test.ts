@@ -1,5 +1,6 @@
+import { ETH_CHAIN_ID, getParaId } from '@paraspell/sdk-core'
 import { Context } from '@snowbridge/api'
-import type { Config } from '@snowbridge/api/dist/environment'
+import type { Config, SnowbridgeEnvironment } from '@snowbridge/api/dist/environment'
 import { describe, expect, it, vi } from 'vitest'
 
 import { createContext } from './createContext'
@@ -14,7 +15,9 @@ vi.mock('ethers', () => ({
 describe('createContext', () => {
   const mockConfig: Config = {
     BEACON_HTTP_API: 'http://beacon-api.test',
-    ETHEREUM_API: (secret: string) => `http://ethereum-api.test/${secret}`,
+    ETHEREUM_CHAINS: {
+      '1': () => 'http://ethereum-chain.test'
+    },
     RELAY_CHAIN_URL: 'http://relay-chain.test',
     GATEWAY_CONTRACT: '0xGatewayContract',
     BEEFY_CONTRACT: '0xBeefyContract',
@@ -29,21 +32,33 @@ describe('createContext', () => {
     }
   }
 
+  const mockEnv: SnowbridgeEnvironment = {
+    name: 'test-environment',
+    ethChainId: 1,
+    config: mockConfig,
+    locations: []
+  }
+
   it('creates a context with the correct structure', () => {
     const executionUrl = 'http://execution-url.test'
 
-    createContext(executionUrl, mockConfig)
+    createContext(executionUrl, mockEnv)
 
     expect(Context).toHaveBeenCalledWith({
+      environment: mockEnv.name,
       ethereum: {
-        execution_url: executionUrl,
+        ethChainId: mockEnv.ethChainId,
+        ethChains: {
+          [ETH_CHAIN_ID.toString()]: executionUrl,
+          [getParaId('Moonbeam')]: 'https://rpc.api.moonbeam.network'
+        },
         beacon_url: mockConfig.BEACON_HTTP_API
       },
       polkadot: {
         assetHubParaId: mockConfig.ASSET_HUB_PARAID,
         bridgeHubParaId: mockConfig.BRIDGE_HUB_PARAID,
-        relaychain: mockConfig.RELAY_CHAIN_URL,
-        parachains: mockConfig.PARACHAINS
+        parachains: mockConfig.PARACHAINS,
+        relaychain: mockConfig.RELAY_CHAIN_URL
       },
       appContracts: {
         gateway: mockConfig.GATEWAY_CONTRACT,

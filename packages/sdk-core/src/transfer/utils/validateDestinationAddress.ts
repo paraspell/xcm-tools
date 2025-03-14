@@ -1,4 +1,5 @@
-import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
+import { isTMultiLocation } from '@paraspell/sdk-common'
+
 import type { TAddress, TDestination } from '../../types'
 import { validateAddress } from '../../utils/validateAddress'
 

@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
+import type { TMultiAsset } from '@paraspell/assets'
+import {
+  findAsset,
+  findAssetByMultiLocation,
+  getOtherAssets,
+  InvalidCurrencyError,
+  isForeignAsset,
+  isOverrideMultiLocationSpecifier
+} from '@paraspell/assets'
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import type { TransactionResponse } from 'ethers'
 import { Contract } from 'ethers'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
-import { InvalidCurrencyError } from '../../../errors'
 import { getParaId } from '../../../nodes/config'
-import {
-  findAssetByMultiLocation,
-  getAssetBySymbolOrId,
-  getOtherAssets
-} from '../../../pallets/assets'
-import type { TMultiAsset, TXcmVersioned } from '../../../types'
-import { type TEvmBuilderOptions, type TMultiLocation, Version } from '../../../types'
-import { isForeignAsset, isOverrideMultiLocationSpecifier } from '../../../utils'
+import { type TEvmBuilderOptions, type TXcmVersioned, Version } from '../../../types'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
@@ -46,7 +48,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
     throw new Error('Override multilocation is not supported for Evm transfers')
   }
 
-  const foundAsset = getAssetBySymbolOrId(from, currency, to)
+  const foundAsset = findAsset(from, currency, to)
 
   if (foundAsset === null) {
     throw new InvalidCurrencyError(

@@ -1,6 +1,6 @@
+import type { TJunction } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import type { TJunction } from '../types'
 import { Version } from '../types'
 import { createX1Payload } from './createX1Payload'
 

@@ -1,21 +1,25 @@
 // Contains detailed structure of XCM call construction for AssetHubPolkadot Parachain
 
+import type { TAmount, TAsset } from '@paraspell/assets'
+import {
+  getOtherAssets,
+  InvalidCurrencyError,
+  isAssetEqual,
+  isForeignAsset
+} from '@paraspell/assets'
+import { isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 
 import { DOT_MULTILOCATION, ETHEREUM_JUNCTION, SYSTEM_NODES_POLKADOT } from '../../constants'
-import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
-import { getOtherAssets } from '../../pallets/assets'
+import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
   createBridgePolkadotXcmDest,
   createMultiAsset,
   createPolkadotXcmHeader,
-  createVersionedMultiAssets,
-  isTMultiLocation
+  createVersionedMultiAssets
 } from '../../pallets/xcmPallet/utils'
 import type {
-  TAmount,
-  TAsset,
   TDestination,
   TPolkadotXcmSection,
   TRelayToParaOverrides,
@@ -23,13 +27,10 @@ import type {
 } from '../../types'
 import {
   type IPolkadotXCMTransfer,
-  Parents,
-  type TMultiLocation,
   type TPolkadotXCMTransferOptions,
   type TScenario,
   Version
 } from '../../types'
-import { isAssetEqual, isForeignAsset } from '../../utils/assets'
 import { createExecuteXcm } from '../../utils/createExecuteXcm'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { generateAddressPayload } from '../../utils/generateAddressPayload'

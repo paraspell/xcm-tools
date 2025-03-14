@@ -1,14 +1,14 @@
 // Contains builder pattern tests for different Builder pattern functionalities
 
+import { getRelayChainSymbol, type TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TNode } from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { getRelayChainSymbol } from '../pallets/assets'
 import * as claimAssets from '../pallets/assets/asset-claim'
 import * as xcmPallet from '../transfer'
-import type { TCurrencyInputWithAmount } from '../types'
-import { type TNode, Version } from '../types'
+import { Version } from '../types'
 import { Builder } from './Builder'
 
 vi.mock('../transfer', () => ({

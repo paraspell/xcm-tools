@@ -1,6 +1,8 @@
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { send } from '../transfer'
-import type { TNodeDotKsmWithRelayChains, TSendOptions } from '../types'
+import type { TSendOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
 
 class BatchTransactionManager<TApi, TRes> {

@@ -1,8 +1,9 @@
+import { isNodeEvm } from '@paraspell/assets'
+import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 
 import { InvalidAddressError } from '../errors'
-import { isNodeEvm } from '../pallets/assets'
-import type { TAddress, TNodeWithRelayChains } from '../types'
+import type { TAddress } from '../types'
 
 export const validateAddress = (
   address: TAddress,

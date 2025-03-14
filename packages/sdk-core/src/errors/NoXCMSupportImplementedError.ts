@@ -1,4 +1,4 @@
-import { type TNode } from '../types'
+import type { TNode } from '@paraspell/sdk-common'
 
 /**
  * Used to inform user, that Parachain they wish to use has not yet implemented full XCM Support

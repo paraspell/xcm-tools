@@ -1,6 +1,6 @@
+import { NODE_NAMES_DOT_KSM } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import { NODE_NAMES_DOT_KSM } from '../constants'
 import { getNode } from '.'
 
 describe('getNode', () => {

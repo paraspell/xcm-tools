@@ -1,19 +1,15 @@
 // Implements general builder pattern, this is Builder main file
 
+import type { TCurrencyInput, TCurrencyInputWithAmount } from '@paraspell/assets'
+import {
+  isTMultiLocation,
+  type TNodeDotKsmWithRelayChains,
+  type TNodeWithRelayChains
+} from '@paraspell/sdk-common'
+
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { isTMultiLocation } from '../pallets/xcmPallet/utils'
 import { getDryRun, send } from '../transfer'
-import type {
-  TAddress,
-  TBatchOptions,
-  TCurrencyInput,
-  TCurrencyInputWithAmount,
-  TDestination,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
-  TSendBaseOptions,
-  Version
-} from '../types'
+import type { TAddress, TBatchOptions, TDestination, TSendBaseOptions, Version } from '../types'
 import { isRelayChain } from '../utils'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'

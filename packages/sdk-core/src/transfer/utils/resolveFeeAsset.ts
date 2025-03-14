@@ -1,10 +1,9 @@
-import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
-import {
-  isTMultiAsset,
-  isTMultiLocation,
-  throwUnsupportedCurrency
-} from '../../pallets/xcmPallet/utils'
-import type { TAsset, TCurrencyInput, TDestination, TNodeDotKsmWithRelayChains } from '../../types'
+import type { TAsset } from '@paraspell/assets'
+import { findAsset, isTMultiAsset, type TCurrencyInput } from '@paraspell/assets'
+import { isTMultiLocation, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
+import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
+import type { TDestination } from '../../types'
 
 export const resolveFeeAsset = (
   feeAsset: TCurrencyInput,
@@ -12,11 +11,7 @@ export const resolveFeeAsset = (
   destination: TDestination,
   currency: TCurrencyInput
 ): TAsset | undefined => {
-  const asset = getAssetBySymbolOrId(
-    origin,
-    feeAsset,
-    !isTMultiLocation(destination) ? destination : null
-  )
+  const asset = findAsset(origin, feeAsset, !isTMultiLocation(destination) ? destination : null)
 
   const usesRawOverriddenMultiAssets =
     'multiasset' in currency && currency.multiasset.every(isTMultiAsset)

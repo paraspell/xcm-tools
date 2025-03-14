@@ -1,5 +1,5 @@
 import * as sdkPjs from '@paraspell/sdk-pjs';
-import { getAssetBySymbolOrId } from '@paraspell/sdk-pjs';
+import { findAsset } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import * as assets from '../../assets';
@@ -33,7 +33,7 @@ vi.mock('@paraspell/sdk-pjs', async (importOriginal) => {
     ...mod,
     hasSupportForAsset: vi.fn(),
     createApiInstanceForNode: vi.fn(),
-    getAssetBySymbolOrId: vi.fn(),
+    findAsset: vi.fn(),
   };
 });
 
@@ -78,7 +78,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(null);
+    vi.mocked(findAsset).mockReturnValue(null);
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow(
       `Currency from ${JSON.stringify(mockOptions.currencyFrom)} not found in ${mockOptions.exchange?.toString()}.`,
@@ -100,7 +100,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'ACA' } as sdkPjs.TAsset);
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPjs.TAsset);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(undefined);
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow(
@@ -123,7 +123,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'ACA' } as sdkPjs.TAsset);
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPjs.TAsset);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'EXCHANGE_ACA' });
     vi.mocked(assets.getExchangeAsset).mockReturnValue(null);
 
@@ -147,7 +147,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'ACA' } as sdkPjs.TAsset);
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPjs.TAsset);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'EXCHANGE_ACA' });
     vi.mocked(assets.getExchangeAsset).mockReturnValue({ symbol: 'ASTR' });
     vi.mocked(sdkPjs.hasSupportForAsset).mockReturnValue(false);
@@ -179,7 +179,7 @@ describe('prepareTransformedOptions', () => {
     const mockExchangeAssetTo = { symbol: 'ASTR' };
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(mockOriginAsset);
+    vi.mocked(findAsset).mockReturnValue(mockOriginAsset);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(mockExchangeAssetFrom);
     vi.mocked(assets.getExchangeAsset).mockReturnValue(mockExchangeAssetTo);
     vi.mocked(sdkPjs.hasSupportForAsset).mockReturnValue(true);

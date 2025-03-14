@@ -1,15 +1,11 @@
+import { getSupportedPalletsDetails } from '@paraspell/pallets'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import { getSupportedPalletsDetails } from '../../pallets/pallets'
-import {
-  PolkadotXcmError,
-  type TModuleError,
-  type TNodeDotKsmWithRelayChains,
-  XTokensError
-} from '../../types'
+import { PolkadotXcmError, type TModuleError, XTokensError } from '../../types'
 import { resolveModuleError } from './resolveModuleError'
 
-vi.mock('../../pallets/pallets', () => ({
+vi.mock('@paraspell/pallets', () => ({
   getSupportedPalletsDetails: vi.fn()
 }))
 

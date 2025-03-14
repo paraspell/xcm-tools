@@ -1,4 +1,5 @@
-import type { TNodeDotKsmWithRelayChains } from '../../types'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
 import { getNodeConfig } from './getNodeConfig'
 
 export const getNodeProviders = (node: TNodeDotKsmWithRelayChains): string[] => {

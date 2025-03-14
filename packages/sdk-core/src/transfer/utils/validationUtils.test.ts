@@ -1,21 +1,25 @@
+import type { TAsset, TNativeAsset } from '@paraspell/assets'
+import {
+  getNativeAssets,
+  getRelayChainSymbol,
+  hasSupportForAsset,
+  InvalidCurrencyError,
+  isSymbolSpecifier,
+  type TCurrencyInput
+} from '@paraspell/assets'
+import { getDefaultPallet } from '@paraspell/pallets'
+import {
+  isTMultiLocation,
+  type TNodeDotKsmWithRelayChains,
+  type TNodePolkadotKusama
+} from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { IncompatibleNodesError, InvalidCurrencyError } from '../../errors'
-import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../../pallets/assets'
-import { getDefaultPallet } from '../../pallets/pallets'
-import { isTMultiLocation, throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
-import type {
-  TAsset,
-  TCurrencyInput,
-  TDestination,
-  TNativeAsset,
-  TNodeDotKsmWithRelayChains,
-  TNodePolkadotKusama,
-  TSendOptions
-} from '../../types'
+import { IncompatibleNodesError } from '../../errors'
+import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
+import type { TDestination, TSendOptions } from '../../types'
 import { isRelayChain } from '../../utils'
-import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
 import { isBridgeTransfer } from './isBridgeTransfer'
 import {
   validateAssetSpecifiers,
@@ -28,24 +32,25 @@ vi.mock('./isBridgeTransfer', () => ({
   isBridgeTransfer: vi.fn()
 }))
 
-vi.mock('../../utils/assets/isSymbolSpecifier', () => ({
-  isSymbolSpecifier: vi.fn()
-}))
-
-vi.mock('../../pallets/pallets', () => ({
+vi.mock('@paraspell/pallets', () => ({
   getDefaultPallet: vi.fn()
 }))
 
-vi.mock('../../pallets/assets', () => ({
+vi.mock('@paraspell/sdk-common', () => ({
+  isTMultiLocation: vi.fn()
+}))
+
+vi.mock('@paraspell/assets', () => ({
   getRelayChainSymbol: vi.fn(),
   getNativeAssets: vi.fn(),
-  hasSupportForAsset: vi.fn()
+  hasSupportForAsset: vi.fn(),
+  InvalidCurrencyError: class extends Error {},
+  isSymbolSpecifier: vi.fn(),
+  isTMultiAsset: vi.fn()
 }))
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
-  throwUnsupportedCurrency: vi.fn(),
-  isTMultiLocation: vi.fn(),
-  isTMultiAsset: vi.fn()
+  throwUnsupportedCurrency: vi.fn()
 }))
 
 vi.mock('../../utils', () => ({

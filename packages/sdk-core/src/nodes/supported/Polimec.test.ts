@@ -1,8 +1,9 @@
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
-import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TRelayToParaOptions } from '../../types'
 import { Version } from '../../types'

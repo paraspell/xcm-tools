@@ -1,4 +1,4 @@
-import type { TJunctionParachain, TMultiLocation } from '../types'
+import type { TJunctionParachain, TMultiLocation } from '@paraspell/sdk-common'
 
 export const findParachainJunction = (multilocation: TMultiLocation): number | null => {
   const { interior } = multilocation

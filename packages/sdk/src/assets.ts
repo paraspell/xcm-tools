@@ -72,10 +72,10 @@ export const verifyEdOnDestination = createPapiApiCall(
 )
 
 export {
+  findAsset,
   Foreign,
   ForeignAbstract,
   getAllAssetsSymbols,
-  getAssetBySymbolOrId,
   getAssetDecimals,
   getAssetId,
   getAssets,

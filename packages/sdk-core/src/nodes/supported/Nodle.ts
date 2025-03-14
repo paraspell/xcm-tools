@@ -1,10 +1,8 @@
 // Contains detailed structure of XCM call construction for Nodle Parachain
 
-import {
-  InvalidCurrencyError,
-  NodeNotSupportedError,
-  ScenarioNotSupportedError
-} from '../../errors'
+import { InvalidCurrencyError } from '@paraspell/assets'
+
+import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
 import { type TSerializedApiCall, Version } from '../../types'

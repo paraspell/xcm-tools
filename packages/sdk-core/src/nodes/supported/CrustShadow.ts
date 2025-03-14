@@ -1,15 +1,14 @@
 // Contains detailed structure of XCM call construction for CrustShadow Parachain
 
-import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
+import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TAsset } from '../../types'
 import {
   type IXTokensTransfer,
   type TReserveAsset,
   type TXTokensTransferOptions,
   Version
 } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 
 class CrustShadow<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {

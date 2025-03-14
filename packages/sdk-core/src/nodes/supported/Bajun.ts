@@ -1,10 +1,8 @@
 // Contains detailed structure of XCM call construction for Bajun Parachain
 
-import {
-  InvalidCurrencyError,
-  NodeNotSupportedError,
-  ScenarioNotSupportedError
-} from '../../errors'
+import { InvalidCurrencyError } from '@paraspell/assets'
+
+import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import {
   type IXTokensTransfer,

@@ -1,7 +1,7 @@
-import { InvalidCurrencyError } from '../../../errors'
+import { findAsset, InvalidCurrencyError } from '@paraspell/assets'
+import { getDefaultPallet } from '@paraspell/pallets'
+
 import type { TGetBalanceForeignOptions } from '../../../types/TBalance'
-import { getDefaultPallet } from '../../pallets'
-import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 
@@ -14,8 +14,8 @@ export const getBalanceForeignInternal = async <TApi, TRes>({
   await api.init(node)
 
   const asset =
-    getAssetBySymbolOrId(node, currency, null) ??
-    (node === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency, null) : null)
+    findAsset(node, currency, null) ??
+    (node === 'AssetHubPolkadot' ? findAsset('Ethereum', currency, null) : null)
 
   if (!asset) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${node}`)

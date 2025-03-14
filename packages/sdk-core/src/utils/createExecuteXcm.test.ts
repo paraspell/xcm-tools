@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createPolkadotXcmHeader, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
-import type {
-  TMultiLocation,
-  TPolkadotXCMTransferOptions,
-  TSerializedApiCall,
-  TXcmVersioned
-} from '../types'
+import type { TPolkadotXCMTransferOptions, TSerializedApiCall, TXcmVersioned } from '../types'
 import { Version } from '../types'
 import { createExecuteXcm } from './createExecuteXcm'
 import { generateAddressPayload } from './generateAddressPayload'

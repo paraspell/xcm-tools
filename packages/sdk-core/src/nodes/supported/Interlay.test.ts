@@ -1,12 +1,8 @@
+import type { TNativeAsset, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type {
-  TForeignOrTokenAsset,
-  TNativeAsset,
-  TXTokensTransferOptions,
-  WithAmount
-} from '../../types'
+import type { TForeignOrTokenAsset, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Interlay from './Interlay'

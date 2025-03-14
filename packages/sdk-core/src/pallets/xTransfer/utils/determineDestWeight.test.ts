@@ -1,7 +1,7 @@
+import type { TNode } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
 import { NodeNotSupportedError } from '../../../errors'
-import type { TNode } from '../../../types'
 import { determineDestWeight } from './determineDestWeight'
 
 describe('determineDestWeight', () => {

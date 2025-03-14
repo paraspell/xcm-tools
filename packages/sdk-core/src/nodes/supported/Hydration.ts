@@ -1,19 +1,19 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
+import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+
 import { DOT_MULTILOCATION } from '../../constants'
-import { InvalidCurrencyError } from '../../errors'
 import { createMultiAsset } from '../../pallets/xcmPallet/utils'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
-  TMultiLocation,
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
   TSerializedApiCall
 } from '../../types'
-import { type IXTokensTransfer, Parents, type TXTokensTransferOptions, Version } from '../../types'
+import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import { generateAddressPayload } from '../../utils'
-import { isForeignAsset } from '../../utils/assets'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
 

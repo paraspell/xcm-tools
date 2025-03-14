@@ -1,9 +1,9 @@
+import { isOverrideMultiLocationSpecifier, type TCurrencyInput } from '@paraspell/assets'
+import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type ParachainNode from '../../nodes/ParachainNode'
-import type { TCurrencyInput, TNodePolkadotKusama } from '../../types'
 import { getNode } from '../../utils'
-import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
 import { determineAssetCheckEnabled } from './determineAssetCheckEnabled'
 
 vi.mock('../../utils', () => ({
@@ -11,7 +11,7 @@ vi.mock('../../utils', () => ({
   isRelayChain: vi.fn()
 }))
 
-vi.mock('../../utils/multiLocation/isOverrideMultiLocationSpecifier', () => ({
+vi.mock('@paraspell/assets', () => ({
   isOverrideMultiLocationSpecifier: vi.fn()
 }))
 

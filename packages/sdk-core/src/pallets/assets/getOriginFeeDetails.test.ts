@@ -1,11 +1,11 @@
+import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
+import * as assetsModule from '@paraspell/assets'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
 import * as BuilderModule from '../../builder'
-import type { TCurrencyCore, WithAmount } from '../../types'
-import type { TNodeDotKsmWithRelayChains } from '../../types'
 import * as utilsModule from '../../utils'
-import * as assetsModule from './assets'
 import * as balanceModule from './balance/getBalanceNative'
 import { getOriginFeeDetails } from './getOriginFeeDetails'
 

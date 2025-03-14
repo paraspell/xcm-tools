@@ -1,8 +1,8 @@
+import { getNativeAssetSymbol } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { createApiInstanceForNode } from '../../../utils'
-import { getNativeAssetSymbol } from '../assets'
 import { getAssetBalance } from './getAssetBalance'
 import { getBalanceForeignInternal } from './getBalanceForeign'
 import { getBalanceNativeInternal } from './getBalanceNative'
@@ -11,7 +11,7 @@ vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn()
 }))
 
-vi.mock('../assets', () => ({
+vi.mock('@paraspell/assets', () => ({
   getNativeAssetSymbol: vi.fn()
 }))
 

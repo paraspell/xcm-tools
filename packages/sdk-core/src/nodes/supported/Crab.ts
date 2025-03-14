@@ -1,13 +1,14 @@
 // Contains detailed structure of XCM call construction for Crab Parachain
 
+import type { TAsset } from '@paraspell/assets'
+import { Parents } from '@paraspell/sdk-common'
+
 import { NodeNotSupportedError } from '../../errors'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
-import type { TAsset } from '../../types'
 import {
   type IPolkadotXCMTransfer,
-  Parents,
   type TPolkadotXCMTransferOptions,
   type TScenario,
   type TSerializedApiCall,

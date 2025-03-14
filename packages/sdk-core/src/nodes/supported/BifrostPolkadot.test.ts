@@ -1,18 +1,18 @@
+import type { TAsset, WithAmount } from '@paraspell/assets'
+import { getAssetId } from '@paraspell/assets'
+import { Parents } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
-import { getAssetId } from '../../pallets/assets'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type {
-  TAsset,
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
-  TXTokensTransferOptions,
-  WithAmount
+  TXTokensTransferOptions
 } from '../../types'
-import { Parents, Version } from '../../types'
+import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type { BifrostPolkadot } from './BifrostPolkadot'
 

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { getNativeAssetSymbol, getOtherAssets } from '../../pallets/assets'
-import type { TForeignAsset, TMultiLocation, TNodeDotKsmWithRelayChains } from '../../types'
+import type { TForeignAsset } from '@paraspell/assets'
+import { getNativeAssetSymbol, getOtherAssets } from '@paraspell/assets'
+import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 export const getMultiLocationTokenIdPjs = (
   location: TMultiLocation,

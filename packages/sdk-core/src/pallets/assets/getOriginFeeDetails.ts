@@ -1,7 +1,8 @@
+import { getExistentialDeposit } from '@paraspell/assets'
+
 import { Builder } from '../../builder'
 import type { TOriginFeeDetails } from '../../types'
 import type { TGetOriginFeeDetailsOptions } from '../../types/TBalance'
-import { getExistentialDeposit } from './assets'
 import { getBalanceNativeInternal } from './balance/getBalanceNative'
 
 export const getOriginFeeDetailsInternal = async <TApi, TRes>({

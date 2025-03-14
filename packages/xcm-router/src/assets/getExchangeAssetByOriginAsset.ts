@@ -1,10 +1,5 @@
 import type { TAsset, TForeignAsset, TNodePolkadotKusama } from '@paraspell/sdk-pjs';
-import {
-  deepEqual,
-  findBestMatches,
-  getAssetBySymbolOrId,
-  isForeignAsset,
-} from '@paraspell/sdk-pjs';
+import { deepEqual, findAsset, findBestMatches, isForeignAsset } from '@paraspell/sdk-pjs';
 
 import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
 import type { TAssetsRecord, TExchangeNode, TRouterAsset } from '../types';
@@ -42,11 +37,7 @@ export const getExchangeAssetByOriginAsset = (
   // Origin asset is a foreign asset, try matching by multi-location.
   const candidateByML = candidates.find((asset) => {
     if (asset.id === undefined) return false;
-    const sdkAsset = getAssetBySymbolOrId(
-      exchangeBaseNode,
-      { id: asset.id },
-      null,
-    ) as TForeignAsset;
+    const sdkAsset = findAsset(exchangeBaseNode, { id: asset.id }, null) as TForeignAsset;
 
     if (sdkAsset.multiLocation === undefined) return false;
 

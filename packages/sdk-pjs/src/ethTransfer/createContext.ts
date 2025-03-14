@@ -1,13 +1,21 @@
-import { Context, type environment } from '@snowbridge/api'
+import { ETH_CHAIN_ID, getParaId } from '@paraspell/sdk-core'
+import { Context } from '@snowbridge/api'
+import type { SnowbridgeEnvironment } from '@snowbridge/api/dist/environment'
 import type { AbstractProvider } from 'ethers'
 
 export const createContext = (
   executionUrl: string | AbstractProvider,
-  config: environment.Config
-) =>
-  new Context({
+  env: SnowbridgeEnvironment
+) => {
+  const config = env.config
+  return new Context({
+    environment: env.name,
     ethereum: {
-      execution_url: executionUrl,
+      ethChainId: env.ethChainId,
+      ethChains: {
+        [ETH_CHAIN_ID.toString()]: executionUrl,
+        [getParaId('Moonbeam')]: 'https://rpc.api.moonbeam.network'
+      },
       beacon_url: config.BEACON_HTTP_API
     },
     polkadot: {
@@ -21,3 +29,4 @@ export const createContext = (
       beefy: config.BEEFY_CONTRACT
     }
   })
+}

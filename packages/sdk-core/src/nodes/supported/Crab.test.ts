@@ -1,10 +1,11 @@
+import { Parents } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Parents, Version } from '../../types'
+import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Crab from './Crab'
 

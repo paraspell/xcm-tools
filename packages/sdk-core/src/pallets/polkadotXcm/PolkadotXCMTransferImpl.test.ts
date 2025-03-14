@@ -1,13 +1,9 @@
+import type { TMultiAsset } from '@paraspell/assets'
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import type {
-  TMultiAsset,
-  TMultiLocation,
-  TPolkadotXcmSection,
-  TPolkadotXCMTransferOptions,
-  TXcmVersioned
-} from '../../types'
+import type { TPolkadotXcmSection, TPolkadotXCMTransferOptions, TXcmVersioned } from '../../types'
 import { Version } from '../../types'
 import PolkadotXCMTransferImpl from './PolkadotXCMTransferImpl'
 

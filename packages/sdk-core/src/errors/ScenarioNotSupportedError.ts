@@ -1,4 +1,6 @@
-import { type TNode, type TScenario } from '../types'
+import type { TNode } from '@paraspell/sdk-common'
+
+import { type TScenario } from '../types'
 
 /**
  * Used to inform user, that Parachain they wish to use does not support scenario they wish to use yet

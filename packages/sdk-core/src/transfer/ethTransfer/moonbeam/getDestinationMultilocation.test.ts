@@ -1,12 +1,14 @@
+import type { TNodeAssets } from '@paraspell/assets'
+import { getAssetsObject } from '@paraspell/assets'
+import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
 import { getNodeConfig } from '../../../nodes/config'
-import { getAssetsObject } from '../../../pallets/assets'
-import type { TNodeAssets, TNodeConfig, TNodePolkadotKusama } from '../../../types'
+import type { TNodeConfig } from '../../../types'
 import { getDestinationMultilocation } from './getDestinationMultilocation'
 
-vi.mock('../../../pallets/assets', () => ({
+vi.mock('@paraspell/assets', () => ({
   getAssetsObject: vi.fn()
 }))
 

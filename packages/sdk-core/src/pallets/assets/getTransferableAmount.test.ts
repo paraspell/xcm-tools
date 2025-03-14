@@ -1,13 +1,16 @@
+import type { TAsset, TNativeAsset } from '@paraspell/assets'
+import {
+  findAsset,
+  getExistentialDeposit,
+  InvalidCurrencyError,
+  isForeignAsset
+} from '@paraspell/assets'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
-import { InvalidCurrencyError } from '../../errors'
-import type { TAsset, TNativeAsset, TNodeDotKsmWithRelayChains } from '../../types'
-import { isForeignAsset } from '../../utils'
-import { getExistentialDeposit } from './assets'
 import { getBalanceForeignInternal } from './balance/getBalanceForeign'
 import { getBalanceNativeInternal } from './balance/getBalanceNative'
-import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 import {
   getMaxForeignTransferableAmount,
   getMaxNativeTransferableAmount,
@@ -22,17 +25,15 @@ vi.mock('./balance/getBalanceForeign', () => ({
   getBalanceForeignInternal: vi.fn()
 }))
 
-vi.mock('./getAssetBySymbolOrId', () => ({
-  getAssetBySymbolOrId: vi.fn()
-}))
-
-vi.mock('./assets', () => ({
+vi.mock('@paraspell/assets', () => ({
+  findAsset: vi.fn(),
   getExistentialDeposit: vi.fn(),
-  isNodeEvm: vi.fn()
+  isNodeEvm: vi.fn(),
+  isForeignAsset: vi.fn(),
+  InvalidCurrencyError: class extends Error {}
 }))
 
 vi.mock('../../utils', () => ({
-  isForeignAsset: vi.fn(),
   validateAddress: vi.fn(),
   isRelayChain: vi.fn().mockImplementation(chain => chain === 'Polkadot' || chain === 'Kusama')
 }))
@@ -104,7 +105,7 @@ describe('Transferable Amounts', () => {
     it('should return the correct max foreign transferable amount', async () => {
       const mockBalance = 2000000000000n
       const edBN = BigInt(mockAsset.existentialDeposit)
-      vi.mocked(getAssetBySymbolOrId).mockReturnValue(mockAsset)
+      vi.mocked(findAsset).mockReturnValue(mockAsset)
       vi.mocked(getBalanceForeignInternal).mockResolvedValue(mockBalance)
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
@@ -121,7 +122,7 @@ describe('Transferable Amounts', () => {
 
     it('should return 0 if foreign balance is too low', async () => {
       const mockBalance = 500000000n // less than the ED
-      vi.mocked(getAssetBySymbolOrId).mockReturnValue(mockAsset)
+      vi.mocked(findAsset).mockReturnValue(mockAsset)
       vi.mocked(getBalanceForeignInternal).mockResolvedValue(mockBalance)
 
       const result = await getMaxForeignTransferableAmount({
@@ -135,7 +136,7 @@ describe('Transferable Amounts', () => {
     })
 
     it('should throw InvalidCurrencyError if asset not found', async () => {
-      vi.mocked(getAssetBySymbolOrId).mockReturnValue(null)
+      vi.mocked(findAsset).mockReturnValue(null)
 
       await expect(
         getMaxForeignTransferableAmount({
@@ -148,8 +149,8 @@ describe('Transferable Amounts', () => {
     })
 
     it('should throw an error if existential deposit cannot be obtained for the asset', async () => {
-      const noEDAsset = { symbol: 'UNQ' } as TAsset // no existentialDeposit field
-      vi.mocked(getAssetBySymbolOrId).mockReturnValue(noEDAsset)
+      const noEDAsset = { symbol: 'UNQ' } as TAsset
+      vi.mocked(findAsset).mockReturnValue(noEDAsset)
 
       await expect(
         getMaxForeignTransferableAmount({
@@ -178,7 +179,7 @@ describe('Transferable Amounts', () => {
     }
 
     it('should call getMaxNativeTransferableAmount if asset is native', async () => {
-      vi.mocked(getAssetBySymbolOrId).mockReturnValue(nativeAsset)
+      vi.mocked(findAsset).mockReturnValue(nativeAsset)
       vi.mocked(isForeignAsset).mockReturnValue(false)
       vi.mocked(getBalanceNativeInternal).mockResolvedValue(1000000000000n)
       vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
@@ -197,7 +198,7 @@ describe('Transferable Amounts', () => {
     })
 
     it('should call getMaxForeignTransferableAmount if asset is foreign', async () => {
-      vi.mocked(getAssetBySymbolOrId).mockReturnValue(foreignAsset)
+      vi.mocked(findAsset).mockReturnValue(foreignAsset)
       vi.mocked(isForeignAsset).mockReturnValue(true)
       vi.mocked(getBalanceForeignInternal).mockResolvedValue(2000000000000n)
 
@@ -215,7 +216,7 @@ describe('Transferable Amounts', () => {
     })
 
     it('should throw InvalidCurrencyError if asset is not found', async () => {
-      vi.mocked(getAssetBySymbolOrId).mockReturnValue(null)
+      vi.mocked(findAsset).mockReturnValue(null)
       vi.mocked(isForeignAsset).mockReturnValue(false)
 
       await expect(
@@ -229,7 +230,7 @@ describe('Transferable Amounts', () => {
     })
 
     it('should return 0 if native balance is lower than ED when calling getTransferableAmount', async () => {
-      vi.mocked(getAssetBySymbolOrId).mockReturnValue(nativeAsset)
+      vi.mocked(findAsset).mockReturnValue(nativeAsset)
       vi.mocked(isForeignAsset).mockReturnValue(false)
       vi.mocked(getBalanceNativeInternal).mockResolvedValue(BigInt(5000))
       vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
@@ -245,7 +246,7 @@ describe('Transferable Amounts', () => {
     })
 
     it('should return 0 if foreign balance is lower than ED when calling getTransferableAmount', async () => {
-      vi.mocked(getAssetBySymbolOrId).mockReturnValue(foreignAsset)
+      vi.mocked(findAsset).mockReturnValue(foreignAsset)
       vi.mocked(isForeignAsset).mockReturnValue(true)
       vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt('500000000')) // less than ED
 

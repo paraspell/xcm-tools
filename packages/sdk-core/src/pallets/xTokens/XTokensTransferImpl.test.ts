@@ -1,13 +1,8 @@
+import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import type {
-  TMultiLocation,
-  TXcmVersioned,
-  TXTokensCurrencySelection,
-  TXTokensTransferOptions
-} from '../../types'
-import { Parents } from '../../types'
+import type { TXcmVersioned, TXTokensCurrencySelection, TXTokensTransferOptions } from '../../types'
 import { getCurrencySelection } from './utils/getCurrencySelection'
 import { getXTokensParameters } from './utils/getXTokensParameters'
 import XTokensTransferImpl from './XTokensTransferImpl'

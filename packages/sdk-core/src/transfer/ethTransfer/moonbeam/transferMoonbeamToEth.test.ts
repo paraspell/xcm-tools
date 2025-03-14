@@ -1,30 +1,29 @@
+import type { TCurrencyInputWithAmount } from '@paraspell/assets'
+import {
+  findAsset,
+  findAssetByMultiLocation,
+  InvalidCurrencyError,
+  isForeignAsset,
+  isOverrideMultiLocationSpecifier
+} from '@paraspell/assets'
 import type { Signer } from 'ethers'
 import { Contract } from 'ethers'
 import type { WalletClient } from 'viem'
 import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { InvalidCurrencyError } from '../../../errors'
 import { getParaId } from '../../../nodes/config'
-import { findAssetByMultiLocation, getAssetBySymbolOrId } from '../../../pallets/assets'
-import type { TCurrencyInputWithAmount, TEvmBuilderOptions } from '../../../types'
-import { isForeignAsset, isOverrideMultiLocationSpecifier } from '../../../utils'
+import type { TEvmBuilderOptions } from '../../../types'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
 import { isEthersContract, isEthersSigner } from '../utils'
 import { transferMoonbeamToEth } from './transferMoonbeamToEth'
 
-vi.mock('../../../pallets/assets', () => ({
+vi.mock('@paraspell/assets', () => ({
   findAssetByMultiLocation: vi.fn(),
-  getAssetBySymbolOrId: vi.fn(),
-  getOtherAssets: vi.fn(() => [{ assetId: '0xethAssetId' }])
-}))
-
-vi.mock('../../../utils', () => ({
+  findAsset: vi.fn(),
+  getOtherAssets: vi.fn(() => [{ assetId: '0xethAssetId' }]),
   isForeignAsset: vi.fn(),
-  isOverrideMultiLocationSpecifier: vi.fn()
-}))
-
-vi.mock('../../../errors', () => ({
+  isOverrideMultiLocationSpecifier: vi.fn(),
   InvalidCurrencyError: class extends Error {}
 }))
 
@@ -114,7 +113,7 @@ describe('transferMoonbeamToEth', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue({
+    vi.mocked(findAsset).mockReturnValue({
       symbol: '',
       multiLocation: { valid: 'location' },
       assetId: '0xmockedAssetId'
@@ -144,7 +143,7 @@ describe('transferMoonbeamToEth', () => {
   })
 
   it('should throw InvalidCurrencyError when asset not found', async () => {
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(null)
+    vi.mocked(findAsset).mockReturnValue(null)
     await expect(transferMoonbeamToEth(baseOptions)).rejects.toThrow(InvalidCurrencyError)
   })
 

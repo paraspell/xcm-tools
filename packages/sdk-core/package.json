@@ -32,13 +32,13 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/assets/updateAssets.ts",
-    "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/pallets/updatePallets.ts",
-    "checkDuplicateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/assets/checkDuplicates.ts",
     "updateNodeConfigs": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/configs/fetchNodeConfigs.ts",
     "runAll": "pnpm compile && pnpm format:write && pnpm lint && pnpm test"
   },
   "dependencies": {
+    "@paraspell/assets": "workspace:*",
+    "@paraspell/pallets": "workspace:*",
+    "@paraspell/sdk-common": "workspace:*",
     "ethers": "^6.13.5",
     "viem": "^2.23.5"
   },

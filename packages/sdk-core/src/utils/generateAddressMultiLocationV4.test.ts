@@ -1,9 +1,10 @@
+import { Parents } from '@paraspell/sdk-common'
 import * as ethers from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import type { TAddress } from '../types'
-import { Parents, Version } from '../types'
+import { Version } from '../types'
 import { generateAddressMultiLocationV4 } from './generateAddressMultiLocationV4'
 
 vi.mock('ethers', () => ({

@@ -1,6 +1,6 @@
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { TNodeDotKsmWithRelayChains } from '../../types'
 import { getNodeConfig } from './getNodeConfig'
 
 vi.mock('../../maps/configs.json', () => ({

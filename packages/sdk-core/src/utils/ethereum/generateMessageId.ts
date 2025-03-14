@@ -1,5 +1,6 @@
+import type { TAmount } from '@paraspell/assets'
+
 import type { IPolkadotApi } from '../../api'
-import type { TAmount } from '../../types'
 
 export const generateMessageId = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,

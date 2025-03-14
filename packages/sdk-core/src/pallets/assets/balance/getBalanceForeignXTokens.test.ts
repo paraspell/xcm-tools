@@ -1,8 +1,7 @@
+import { InvalidCurrencyError, type TAsset, type TNativeAsset } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
-import { InvalidCurrencyError } from '../../../errors'
-import type { TAsset, TNativeAsset } from '../../../types'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 
 const mockApi = {

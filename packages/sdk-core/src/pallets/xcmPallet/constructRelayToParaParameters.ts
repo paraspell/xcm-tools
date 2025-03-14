@@ -1,6 +1,8 @@
+import { Parents } from '@paraspell/sdk-common'
+
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TRelayToParaOptions } from '../../types'
-import { Parents, type Version } from '../../types'
+import { type Version } from '../../types'
 import { generateAddressPayload, resolveParaId } from '../../utils'
 import { createPolkadotXcmHeader, createVersionedMultiAssets } from './utils'
 

@@ -1,9 +1,14 @@
-import { InvalidCurrencyError } from '../../../errors'
+import {
+  findAsset,
+  getExistentialDeposit,
+  getNativeAssetSymbol,
+  getRelayChainSymbol,
+  InvalidCurrencyError
+} from '@paraspell/assets'
+
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../../types/TTransferInfo'
-import { getExistentialDeposit, getNativeAssetSymbol, getRelayChainSymbol } from '../assets'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
 import { getBalanceNativeInternal } from '../balance/getBalanceNative'
-import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
 import { getOriginFeeDetailsInternal } from '../getOriginFeeDetails'
 import { getMaxNativeTransferableAmount } from '../getTransferableAmount'
 
@@ -40,8 +45,8 @@ export const getTransferInfo = async <TApi, TRes>({
     const expectedBalanceAfterXCMDelivery = originBalance - xcmFeeDetails.xcmFee
 
     const asset =
-      getAssetBySymbolOrId(origin, currency, destination) ??
-      (origin === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency, null) : null)
+      findAsset(origin, currency, destination) ??
+      (origin === 'AssetHubPolkadot' ? findAsset('Ethereum', currency, null) : null)
 
     if (!asset) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${origin}`)

@@ -1,8 +1,12 @@
 // Contains detailed structure of XCM call construction for Polimec Parachain
 
+import type { TMultiAsset } from '@paraspell/assets'
+import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
-import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
   addXcmVersionHeader,
@@ -12,18 +16,15 @@ import {
 import type {
   IPolkadotXCMTransfer,
   TAddress,
-  TAsset,
   TDestination,
-  TMultiAsset,
-  TMultiLocation,
   TPolkadotXCMTransferOptions,
   TRelayToParaOptions,
   TScenario,
   TSerializedApiCall,
   TXcmVersioned
 } from '../../types'
-import { Parents, Version } from '../../types'
-import { generateAddressPayload, isForeignAsset } from '../../utils'
+import { Version } from '../../types'
+import { generateAddressPayload } from '../../utils'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'

@@ -1,5 +1,5 @@
 import {
-  getAssetBySymbolOrId,
+  findAsset,
   getParaId,
   InvalidCurrencyError,
   isEthersSigner,
@@ -45,7 +45,7 @@ export const transferEthToPolkadot = async <TApi, TRes>({
     throw new Error('Snowbridge does not support Viem provider yet.')
   }
 
-  const ethAsset = getAssetBySymbolOrId('Ethereum', currency, to)
+  const ethAsset = findAsset('Ethereum', currency, to)
 
   if (ethAsset === null) {
     throw new InvalidCurrencyError(
@@ -54,7 +54,7 @@ export const transferEthToPolkadot = async <TApi, TRes>({
   }
 
   const env = environment.SNOWBRIDGE_ENV['polkadot_mainnet']
-  const context = createContext(provider, env.config)
+  const context = createContext(provider, env)
 
   const destParaId = getParaId(to)
 
@@ -87,7 +87,11 @@ export const transferEthToPolkadot = async <TApi, TRes>({
   })
 
   const fee = await toPolkadotV2.getDeliveryFee(
-    context.gateway(),
+    {
+      gateway: context.gateway(),
+      assetHub: await context.assetHub(),
+      destination: await context.parachain(destParaId)
+    },
     registry,
     ethAsset.assetId,
     destParaId

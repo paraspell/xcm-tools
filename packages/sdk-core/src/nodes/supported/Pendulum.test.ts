@@ -1,10 +1,7 @@
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import {
-  InvalidCurrencyError,
-  NodeNotSupportedError,
-  ScenarioNotSupportedError
-} from '../../errors'
+import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type { TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'

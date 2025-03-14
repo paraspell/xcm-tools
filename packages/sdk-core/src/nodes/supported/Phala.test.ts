@@ -1,6 +1,6 @@
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { InvalidCurrencyError } from '../../errors'
 import XTransferTransferImpl from '../../pallets/xTransfer'
 import type { TXTransferTransferOptions } from '../../types'
 import { Version } from '../../types'
