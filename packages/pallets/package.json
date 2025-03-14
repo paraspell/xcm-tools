@@ -1,11 +1,11 @@
 {
-  "name": "@paraspell/assets",
+  "name": "@paraspell/pallets",
   "version": "8.8.0",
-  "description": "Assets for ParaSpell XCM/XCMP tool for developers",
+  "description": "Pallets for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/paraspell/xcm-tools.git",
-    "directory": "packages/assets"
+    "directory": "packages/pallets"
   },
   "license": "MIT",
   "type": "module",
@@ -32,8 +32,7 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updateAssets.ts",
-    "checkDuplicateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/assets/checkDuplicates.ts"
+    "updatePallets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updatePallets.ts"
   },
   "dependencies": {
     "@paraspell/sdk-common": "workspace:*"
@@ -53,7 +52,6 @@
     "prettier": "^3.5.2",
     "rollup": "^4.34.8",
     "rollup-plugin-dts": "^6.1.1",
-    "ts-morph": "^25.0.1",
     "ts-node": "^10.9.2"
   }
 }

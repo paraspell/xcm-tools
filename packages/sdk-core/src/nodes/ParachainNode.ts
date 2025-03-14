@@ -10,6 +10,7 @@ import {
   type TAsset,
   type TMultiAsset
 } from '@paraspell/assets'
+import type { TPallet } from '@paraspell/pallets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import {
   isTMultiLocation,
@@ -33,7 +34,6 @@ import type {
   IXTokensTransfer,
   IXTransferTransfer,
   TDestination,
-  TPallet,
   TPolkadotXCMTransferOptions,
   TRelayToParaOptions,
   TRelayToParaOverrides,

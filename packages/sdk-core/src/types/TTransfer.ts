@@ -6,6 +6,7 @@ import type {
   TMultiAssetWithFee,
   WithAmount
 } from '@paraspell/assets'
+import type { TPallet } from '@paraspell/pallets'
 import type {
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
@@ -17,7 +18,6 @@ import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { WithApi } from './TApi'
 import type { TXcmVersioned } from './TCurrency'
 import type { TRelaychain } from './TNode'
-import type { TPallet } from './TPallet'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>

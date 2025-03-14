@@ -18,18 +18,6 @@ export const DOT_MULTILOCATION: TMultiLocation = {
   interior: 'Here'
 }
 
-/**
- * Supported XCM pallets.
- */
-export const SUPPORTED_PALLETS = [
-  'XTokens',
-  'OrmlXTokens',
-  'PolkadotXcm',
-  'RelayerXcm',
-  'XTransfer',
-  'XcmPallet'
-] as const
-
 export const SYSTEM_NODES_POLKADOT: TNodeWithRelayChains[] = [
   'PeoplePolkadot',
   'CoretimePolkadot',

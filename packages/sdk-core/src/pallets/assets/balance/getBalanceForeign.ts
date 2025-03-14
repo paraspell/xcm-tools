@@ -1,7 +1,7 @@
 import { findAsset, InvalidCurrencyError } from '@paraspell/assets'
+import { getDefaultPallet } from '@paraspell/pallets'
 
 import type { TGetBalanceForeignOptions } from '../../../types/TBalance'
-import { getDefaultPallet } from '../../pallets'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 

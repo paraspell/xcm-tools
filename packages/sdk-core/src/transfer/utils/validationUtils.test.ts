@@ -7,6 +7,7 @@ import {
   isSymbolSpecifier,
   type TCurrencyInput
 } from '@paraspell/assets'
+import { getDefaultPallet } from '@paraspell/pallets'
 import {
   isTMultiLocation,
   type TNodeDotKsmWithRelayChains,
@@ -16,7 +17,6 @@ import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { IncompatibleNodesError } from '../../errors'
-import { getDefaultPallet } from '../../pallets/pallets'
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type { TDestination, TSendOptions } from '../../types'
 import { isRelayChain } from '../../utils'
@@ -32,7 +32,7 @@ vi.mock('./isBridgeTransfer', () => ({
   isBridgeTransfer: vi.fn()
 }))
 
-vi.mock('../../pallets/pallets', () => ({
+vi.mock('@paraspell/pallets', () => ({
   getDefaultPallet: vi.fn()
 }))
 

@@ -1,8 +1,8 @@
 import type { ApiPromise } from '@polkadot/api'
-import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '../../src'
-import type { TPallet, TPalletMap, TPalletJsonMap, TPalletDetails } from '../../src/types'
-import { fetchTryMultipleProvidersWithTimeout } from '../../../sdk-common/scripts/scriptUtils'
-import { getNodeProviders } from '../../src/nodes/config'
+import type { TPallet, TPalletMap, TPalletJsonMap, TPalletDetails } from '../src'
+import { fetchTryMultipleProvidersWithTimeout } from '../../sdk-common/scripts/scriptUtils'
+import { getNodeProviders } from '../../sdk-core/src'
+import { NODES_WITH_RELAY_CHAINS_DOT_KSM } from '@paraspell/sdk-common'
 
 const defaultPalletsSortedByPriority: TPallet[] = [
   'XcmPallet',

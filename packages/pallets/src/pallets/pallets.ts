@@ -28,3 +28,8 @@ export const getSupportedPallets = (node: TNodeDotKsmWithRelayChains): TPallet[]
 
 export const getSupportedPalletsDetails = (node: TNodeDotKsmWithRelayChains): TPalletDetails[] =>
   palletsMap[node].supportedPallets
+
+export const getPalletIndex = (
+  node: TNodeDotKsmWithRelayChains,
+  pallet: TPallet
+): number | undefined => palletsMap[node].supportedPallets.find(p => p.name === pallet)?.index

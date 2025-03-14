@@ -1,9 +1,9 @@
 import { findAsset, InvalidCurrencyError } from '@paraspell/assets'
+import * as palletsModule from '@paraspell/pallets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { createApiInstanceForNode } from '../../../utils'
-import * as palletsModule from '../../pallets'
 import { getBalanceForeign } from './getBalanceForeign'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
