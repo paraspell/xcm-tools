@@ -1,11 +1,7 @@
+import { Parents, type TJunction, type TMultiLocation } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 
-import {
-  Parents,
-  type TJunction,
-  type TMultiLocation,
-  type TXTransferTransferOptions
-} from '../../../types'
+import { type TXTransferTransferOptions } from '../../../types'
 
 export const getDestination = <TApi, TRes>({
   recipientAddress,

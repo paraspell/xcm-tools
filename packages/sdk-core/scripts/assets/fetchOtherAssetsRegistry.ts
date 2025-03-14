@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { getParaId } from '../../src/nodes/config'
-import type { TForeignAsset, TNodePolkadotKusama } from '../../src/types'
+import type { TForeignAsset, TNodePolkadotKusama } from '../../src'
 import { getNode } from '../../src/utils'
 import type { TRegistryAssets } from './fetchXcmRegistry'
 import { fetchXcmRegistry } from './fetchXcmRegistry'

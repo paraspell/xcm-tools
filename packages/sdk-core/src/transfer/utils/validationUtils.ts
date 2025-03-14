@@ -1,20 +1,20 @@
-import { IncompatibleNodesError, InvalidCurrencyError } from '../../errors'
-import { getNativeAssets, getRelayChainSymbol, hasSupportForAsset } from '../../pallets/assets'
-import { getDefaultPallet } from '../../pallets/pallets'
+import type { TAsset } from '@paraspell/assets'
 import {
+  getNativeAssets,
+  getRelayChainSymbol,
+  hasSupportForAsset,
+  InvalidCurrencyError,
+  isSymbolSpecifier,
   isTMultiAsset,
-  isTMultiLocation,
-  throwUnsupportedCurrency
-} from '../../pallets/xcmPallet/utils'
-import type {
-  TAsset,
-  TCurrencyInput,
-  TDestination,
-  TNodeDotKsmWithRelayChains,
-  TSendOptions
-} from '../../types'
+  type TCurrencyInput
+} from '@paraspell/assets'
+import { isTMultiLocation, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
+import { IncompatibleNodesError } from '../../errors'
+import { getDefaultPallet } from '../../pallets/pallets'
+import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
+import type { TDestination, TSendOptions } from '../../types'
 import { isRelayChain } from '../../utils'
-import { isSymbolSpecifier } from '../../utils/assets/isSymbolSpecifier'
 import { isBridgeTransfer } from './isBridgeTransfer'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {

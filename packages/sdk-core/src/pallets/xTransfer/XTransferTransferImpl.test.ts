@@ -1,9 +1,10 @@
+import type { TMultiAsset } from '@paraspell/assets'
+import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { createMultiAsset, maybeOverrideMultiAssets } from '../../pallets/xcmPallet/utils'
-import type { TMultiAsset, TMultiLocation, TXTransferTransferOptions } from '../../types'
-import { Parents } from '../../types'
+import type { TXTransferTransferOptions } from '../../types'
 import { determineDestWeight } from './utils/determineDestWeight'
 import { getDestination } from './utils/getDestination'
 import XTransferTransferImpl from './XTransferTransferImpl'

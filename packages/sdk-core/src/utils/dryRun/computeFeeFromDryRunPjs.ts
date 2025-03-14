@@ -2,8 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getNativeAssetSymbol } from '../../pallets/assets'
-import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '../../types'
+import { getNativeAssetSymbol } from '@paraspell/assets'
+import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
 import { getMultiLocationTokenIdPjs } from './getMultiLocationTokenIdPjs'
 
 export const computeFeeFromDryRunPjs = (

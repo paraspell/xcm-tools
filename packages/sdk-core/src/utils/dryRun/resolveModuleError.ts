@@ -1,10 +1,7 @@
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
 import { getSupportedPalletsDetails } from '../../pallets/pallets'
-import {
-  PolkadotXcmError,
-  type TModuleError,
-  type TNodeDotKsmWithRelayChains,
-  XTokensError
-} from '../../types'
+import { PolkadotXcmError, type TModuleError, XTokensError } from '../../types'
 
 export const resolveModuleError = (node: TNodeDotKsmWithRelayChains, error: TModuleError) => {
   const palletDetails = getSupportedPalletsDetails(node).find(p => p.index === Number(error.index))

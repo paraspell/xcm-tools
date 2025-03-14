@@ -1,27 +1,15 @@
-import { NODE_NAMES_DOT_KSM } from '../../constants'
-import { InvalidCurrencyError } from '../../errors'
+import type { TAmount } from '@paraspell/assets'
+import { InvalidCurrencyError, type TCurrencyInput, type TMultiAsset } from '@paraspell/assets'
+import type { TJunction, TMultiLocation } from '@paraspell/sdk-common'
+import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
+import { NODE_NAMES_DOT_KSM, type TNodePolkadotKusama } from '@paraspell/sdk-common'
+
 import { getParaId } from '../../nodes/config'
-import type {
-  OneKey,
-  TAmount,
-  TCurrencyInput,
-  TNodePolkadotKusama,
-  TRelaychain,
-  TXcmVersioned
-} from '../../types'
-import { Parents, type TDestination, type TScenario, Version } from '../../types'
-import { type TMultiAsset } from '../../types/TMultiAsset'
-import type { TJunction } from '../../types/TMultiLocation'
-import { type TMultiLocation } from '../../types/TMultiLocation'
+import type { OneKey, TRelaychain, TXcmVersioned } from '../../types'
+import { type TDestination, type TScenario, Version } from '../../types'
 import { determineRelayChain } from '../../utils'
 import { createX1Payload } from '../../utils/createX1Payload'
 import { findParachainJunction } from '../../utils/findParachainJunction'
-
-export const isTMultiLocation = (value: unknown): value is TMultiLocation =>
-  typeof value === 'object' && value !== null && 'parents' in value && 'interior' in value
-
-export const isTMultiAsset = (value: unknown): value is TMultiAsset =>
-  typeof value === 'object' && value !== null && 'id' in value && 'fun' in value
 
 export const createMultiAsset = (
   version: Version,

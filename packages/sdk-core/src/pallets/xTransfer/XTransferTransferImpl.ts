@@ -1,6 +1,7 @@
+import { Parents } from '@paraspell/sdk-common'
+
 import type { TPallet } from '../../types'
 import {
-  Parents,
   type TSerializedApiCall,
   type TXTransferSection,
   type TXTransferTransferOptions,

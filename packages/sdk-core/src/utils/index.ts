@@ -1,7 +1,9 @@
 // Contains important call creation utils (Selection of fees,formating of header and more.. )
 
-import { getRelayChainSymbol } from '../pallets/assets'
-import type { TNodeWithRelayChains, TRelaychain } from '../types'
+import { getRelayChainSymbol } from '@paraspell/assets'
+import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+
+import type { TRelaychain } from '../types'
 
 /**
  * Determines the relay chain for a given node.
@@ -21,10 +23,8 @@ export const determineRelayChain = (node: TNodeWithRelayChains): TRelaychain =>
 export const isRelayChain = (node: TNodeWithRelayChains): node is 'Polkadot' | 'Kusama' =>
   node === 'Polkadot' || node === 'Kusama'
 
-export * from './assets'
 export { createApiInstanceForNode } from './createApiInstanceForNode'
 export { createX1Payload } from './createX1Payload'
-export { deepEqual } from './deepEqual'
 export * from './dryRun'
 export { generateAddressMultiLocationV4 } from './generateAddressMultiLocationV4'
 export { generateAddressPayload } from './generateAddressPayload'

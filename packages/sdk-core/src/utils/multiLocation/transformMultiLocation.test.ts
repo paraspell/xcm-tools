@@ -1,7 +1,6 @@
+import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import type { TMultiLocation } from '../../types'
-import { Parents } from '../../types'
 import { transformMultiLocation } from './transformMultiLocation'
 
 describe('transformMultiLocation', () => {

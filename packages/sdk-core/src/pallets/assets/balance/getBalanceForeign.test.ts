@@ -1,10 +1,9 @@
+import { findAsset, InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import { InvalidCurrencyError } from '../../../errors'
 import { createApiInstanceForNode } from '../../../utils'
 import * as palletsModule from '../../pallets'
-import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
 import { getBalanceForeign } from './getBalanceForeign'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
@@ -13,8 +12,9 @@ vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn()
 }))
 
-vi.mock('../getAssetBySymbolOrId', () => ({
-  getAssetBySymbolOrId: vi.fn()
+vi.mock('@paraspell/assets', () => ({
+  findAsset: vi.fn(),
+  InvalidCurrencyError: class extends Error {}
 }))
 
 vi.mock('./getBalanceForeignXTokens', () => ({
@@ -37,7 +37,7 @@ describe('getBalanceForeign', () => {
     vi.resetAllMocks()
 
     vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApi)
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'DOT', assetId: '123' })
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'DOT', assetId: '123' })
   })
 
   it('should use the provided API instance if passed', async () => {
@@ -49,7 +49,7 @@ describe('getBalanceForeign', () => {
       api: mockApi
     })
     expect(createApiInstanceForNode).not.toHaveBeenCalled()
-    expect(getAssetBySymbolOrId).toHaveBeenCalledWith('Acala', { symbol: 'ACA' }, null)
+    expect(findAsset).toHaveBeenCalledWith('Acala', { symbol: 'ACA' }, null)
   })
 
   it('should create an API instance if none is provided', async () => {
@@ -100,7 +100,7 @@ describe('getBalanceForeign', () => {
   })
 
   it('throws an error for invalid currency', async () => {
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(null)
+    vi.mocked(findAsset).mockReturnValue(null)
     await expect(
       getBalanceForeign({
         address: 'address',

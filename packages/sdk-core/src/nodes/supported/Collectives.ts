@@ -1,8 +1,10 @@
 // Contains detailed structure of XCM call construction for Collectives Parachain
 
+import type { TAsset } from '@paraspell/assets'
+
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import type { TAsset, TRelayToParaOverrides } from '../../types'
+import type { TRelayToParaOverrides } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,

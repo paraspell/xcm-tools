@@ -1,7 +1,9 @@
+import type { TMultiAssetWithFee } from '@paraspell/assets'
+import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import type { TMultiAssetWithFee, TMultiLocation, TXcmVersioned } from '../../../types'
-import { Parents, Version } from '../../../types'
+import type { TXcmVersioned } from '../../../types'
+import { Version } from '../../../types'
 import { getXTokensParameters } from './getXTokensParameters'
 
 const mockMultiLocationHeader: TXcmVersioned<TMultiLocation> = {

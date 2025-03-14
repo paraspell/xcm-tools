@@ -1,5 +1,7 @@
 // Contains detailed structure of XCM call construction for Interlay Parachain
 
+import { isForeignAsset } from '@paraspell/assets'
+
 import XTokensTransferImpl from '../../pallets/xTokens'
 import {
   type IXTokensTransfer,
@@ -7,7 +9,6 @@ import {
   type TXTokensTransferOptions,
   Version
 } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 
 class Interlay<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {

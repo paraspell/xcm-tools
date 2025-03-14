@@ -1,8 +1,8 @@
+import { Parents } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import { Parents } from '../../../types'
 import { buildBeneficiaryInput } from './buildBeneficiaryInput'
 
 vi.mock('ethers', () => ({

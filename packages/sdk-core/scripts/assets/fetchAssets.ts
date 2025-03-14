@@ -12,9 +12,9 @@ import type {
   TNode,
   TNodeAssets,
   TNodePolkadotKusama
-} from '../../src/types'
+} from '../../src'
 import { getNode } from '../../src/utils'
-import { fetchTryMultipleProvidersWithTimeout } from '../scriptUtils'
+import { fetchTryMultipleProvidersWithTimeout } from '../../../sdk-common/scripts/scriptUtils'
 import { GLOBAL, nodeToQuery } from './nodeToQueryMap'
 import { fetchEthereumAssets } from './fetchEthereumAssets'
 import { addAliasesToDuplicateSymbols } from './addAliases'
@@ -31,7 +31,7 @@ import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
 import { supportsDryRunApi } from './supportsDryRunApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
 import { fetchXcmRegistry, TRegistryAssets } from './fetchXcmRegistry'
-import { getParaId } from '../../src/nodes/config'
+import { getNodeProviders, getParaId } from '../../src/nodes/config'
 import { fetchPolimecForeignAssets } from './fetchPolimecAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
@@ -449,8 +449,10 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
       newData = await fetchEthereumAssets()
       output[nodeName] = newData
     } else {
-      newData = await fetchTryMultipleProvidersWithTimeout(nodeName as TNodePolkadotKusama, api =>
-        fetchNodeAssets(nodeName as TNodePolkadotKusama, api, query)
+      newData = await fetchTryMultipleProvidersWithTimeout(
+        nodeName as TNodePolkadotKusama,
+        getNodeProviders,
+        api => fetchNodeAssets(nodeName as TNodePolkadotKusama, api, query)
       )
 
       const isError = newData === null

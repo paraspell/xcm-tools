@@ -1,6 +1,9 @@
 // Script that updates XCM Pallets map for compatible nodes
 
-import { checkForNodeJsEnvironment, handleDataFetching } from '../scriptUtils'
+import {
+  checkForNodeJsEnvironment,
+  handleDataFetching
+} from '../../../sdk-common/scripts/scriptUtils'
 import { fetchAllNodesPallets } from './fetchPallets'
 
 const JSON_FILE_PATH = './src/maps/pallets.json'

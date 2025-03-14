@@ -1,4 +1,4 @@
-import type { TAssetJsonMap, TNode } from '../../src/types'
+import type { TAssetJsonMap, TNode } from '../../src'
 import { isForeignAsset } from '../../src/utils/assets'
 
 function collectDuplicateSymbolsInChains(assetsMap: TAssetJsonMap): {

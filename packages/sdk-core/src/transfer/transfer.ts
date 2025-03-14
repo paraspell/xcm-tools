@@ -1,7 +1,9 @@
 // Contains basic call formatting for different XCM Palletss
 
-import { isTMultiLocation } from '../pallets/xcmPallet/utils'
-import type { TNativeAsset, TRelayToParaDestination, TSendOptions } from '../types'
+import type { TNativeAsset } from '@paraspell/assets'
+import { isTMultiLocation } from '@paraspell/sdk-common'
+
+import type { TRelayToParaDestination, TSendOptions } from '../types'
 import { getNode, isRelayChain, validateAddress } from '../utils'
 import { transferRelayToPara } from './transferRelayToPara'
 import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'

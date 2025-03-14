@@ -40,7 +40,9 @@
   },
   "dependencies": {
     "ethers": "^6.13.5",
-    "viem": "^2.23.5"
+    "viem": "^2.23.5",
+    "@paraspell/sdk-common": "workspace:*",
+    "@paraspell/assets": "workspace:*"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.26.0",

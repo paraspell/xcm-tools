@@ -1,0 +1,54 @@
+{
+  "name": "@paraspell/assets",
+  "version": "8.8.0",
+  "description": "Assets for ParaSpell XCM/XCMP tool for developers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paraspell/xcm-tools.git",
+    "directory": "packages/assets"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "compile": "tsc --noEmit",
+    "build": "rollup -c",
+    "lint:check": "eslint src",
+    "lint": "eslint --fix .",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@paraspell/sdk-common": "workspace:*"
+  },
+  "devDependencies": {
+    "@babel/plugin-syntax-import-attributes": "^7.26.0",
+    "@babel/preset-env": "^7.26.9",
+    "@codecov/rollup-plugin": "^1.9.0",
+    "@polkadot/api": "^15.7.1",
+    "@polkadot/types": "^15.7.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@vitest/coverage-v8": "^3.0.7",
+    "dotenv": "^16.4.7",
+    "prettier": "^3.5.2",
+    "rollup": "^4.34.8",
+    "rollup-plugin-dts": "^6.1.1"
+  }
+}

@@ -1,7 +1,8 @@
+import type { TMultiAsset } from '@paraspell/assets'
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import type { TMultiAsset, TMultiLocation } from '../../../types'
 import { Version } from '../../../types'
 import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
 import { createApiInstanceForNode, isRelayChain } from '../../../utils'

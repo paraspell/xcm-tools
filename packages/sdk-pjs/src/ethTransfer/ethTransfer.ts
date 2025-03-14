@@ -1,5 +1,5 @@
 import {
-  getAssetBySymbolOrId,
+  findAsset,
   getParaId,
   InvalidCurrencyError,
   isEthersSigner,
@@ -45,7 +45,7 @@ export const transferEthToPolkadot = async <TApi, TRes>({
     throw new Error('Snowbridge does not support Viem provider yet.')
   }
 
-  const ethAsset = getAssetBySymbolOrId('Ethereum', currency, to)
+  const ethAsset = findAsset('Ethereum', currency, to)
 
   if (ethAsset === null) {
     throw new InvalidCurrencyError(

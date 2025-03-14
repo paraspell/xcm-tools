@@ -1,14 +1,11 @@
 // Contains detailed structure of XCM call construction for Pendulum Parachain
 
-import {
-  InvalidCurrencyError,
-  NodeNotSupportedError,
-  ScenarioNotSupportedError
-} from '../../errors'
+import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+
+import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { type TSerializedApiCall, Version } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 
 class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {

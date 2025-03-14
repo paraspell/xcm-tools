@@ -1,6 +1,7 @@
-import type { TCurrencyInput, TNodeDotKsmWithRelayChains } from '../../types'
+import { isOverrideMultiLocationSpecifier, type TCurrencyInput } from '@paraspell/assets'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
 import { getNode, isRelayChain } from '../../utils'
-import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation/isOverrideMultiLocationSpecifier'
 
 export const determineAssetCheckEnabled = <TApi, TRes>(
   origin: TNodeDotKsmWithRelayChains,

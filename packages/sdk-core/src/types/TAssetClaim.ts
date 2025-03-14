@@ -1,6 +1,7 @@
+import type { TMultiAsset } from '@paraspell/assets'
+import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+
 import type { WithApi } from './TApi'
-import { type TMultiAsset } from './TMultiAsset'
-import { type TNodeWithRelayChains } from './TNode'
 import { type TAddress, type TVersionClaimAssets } from './TTransfer'
 
 export type TAssetClaimOptionsBase = {

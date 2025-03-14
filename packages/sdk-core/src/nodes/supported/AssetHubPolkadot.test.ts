@@ -1,18 +1,20 @@
+import type { TAsset } from '@paraspell/assets'
+import {
+  getOtherAssets,
+  InvalidCurrencyError,
+  isForeignAsset,
+  type TMultiAsset,
+  type TNativeAsset,
+  type WithAmount
+} from '@paraspell/assets'
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { InvalidCurrencyError, ScenarioNotSupportedError } from '../../errors'
-import { getOtherAssets } from '../../pallets/assets'
+import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import type {
-  TAsset,
-  TMultiAsset,
-  TMultiLocation,
-  TNativeAsset,
-  TXcmVersioned,
-  WithAmount
-} from '../../types'
+import type { TXcmVersioned } from '../../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
 import { createExecuteXcm } from '../../utils/createExecuteXcm'
@@ -33,9 +35,13 @@ vi.mock('../polkadotXcm', () => ({
   }
 }))
 
-vi.mock('../../pallets/assets', () => ({
+vi.mock('@paraspell/assets', () => ({
   getOtherAssets: vi.fn(),
-  getParaId: vi.fn()
+  getParaId: vi.fn(),
+  isAssetEqual: vi.fn(),
+  InvalidCurrencyError: class extends Error {},
+  isForeignAsset: vi.fn(),
+  hasSupportForAsset: vi.fn()
 }))
 
 vi.mock('../../utils/generateAddressMultiLocationV4', () => ({
@@ -143,6 +149,7 @@ describe('AssetHubPolkadot', () => {
       vi.mocked(ethers.isAddress).mockReturnValue(true)
       const mockEthAsset = { symbol: 'ETH', assetId: '0x123' }
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
+      vi.mocked(isForeignAsset).mockReturnValue(true)
 
       const mockResult = {} as unknown
       const spy = vi
@@ -188,6 +195,7 @@ describe('AssetHubPolkadot', () => {
         scenario: 'ParaToPara',
         destination: 'Acala'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
+      vi.mocked(isForeignAsset).mockReturnValue(false)
 
       expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
@@ -199,6 +207,7 @@ describe('AssetHubPolkadot', () => {
         scenario: 'ParaToPara',
         destination: 'Acala'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
+      vi.mocked(isForeignAsset).mockReturnValue(false)
 
       expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
     })
@@ -269,6 +278,7 @@ describe('AssetHubPolkadot', () => {
       vi.mocked(generateAddressPayload).mockReturnValue({
         [Version.V3]: {}
       } as TXcmVersioned<TMultiLocation>)
+      vi.mocked(isForeignAsset).mockReturnValue(true)
 
       const handleBifrostEthTransferSpy = vi.spyOn(assetHub, 'handleBifrostEthTransfer')
 

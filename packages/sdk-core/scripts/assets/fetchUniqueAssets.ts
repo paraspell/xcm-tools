@@ -9,7 +9,7 @@ import type {
 } from '../../src/types'
 import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
 import { getAssetBySymbolOrId } from '../../src/pallets/assets'
-import { NODES_WITH_RELAY_CHAINS } from '../../src/constants'
+import { NODES_WITH_RELAY_CHAINS } from '../../src'
 import { getParaId } from '../../src/nodes/config'
 
 const findSimilarAsset = (multilocation: TMultiLocation) => {

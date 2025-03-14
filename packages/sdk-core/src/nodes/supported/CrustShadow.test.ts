@@ -1,8 +1,8 @@
+import { InvalidCurrencyError, type TNativeAsset, type WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { InvalidCurrencyError } from '../../errors/InvalidCurrencyError'
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TNativeAsset, TReserveAsset, TXTokensTransferOptions, WithAmount } from '../../types'
+import type { TReserveAsset, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type CrustShadow from './CrustShadow'

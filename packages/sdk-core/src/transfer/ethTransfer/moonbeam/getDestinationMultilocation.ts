@@ -1,7 +1,8 @@
+import { getAssetsObject } from '@paraspell/assets'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
 import type { IPolkadotApi } from '../../../api'
 import { getNodeConfig } from '../../../nodes/config'
-import { getAssetsObject } from '../../../pallets/assets'
-import type { TNodeDotKsmWithRelayChains } from '../../../types'
 
 // Partially inspired by Moonbeam XCM-SDK
 // https://github.com/moonbeam-foundation/xcm-sdk/blob/ab835c15bf41612604b1c858d956a9f07705ed65/packages/builder/src/contract/contracts/Xtokens/Xtokens.ts#L126

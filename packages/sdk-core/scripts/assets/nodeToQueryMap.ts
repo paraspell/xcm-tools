@@ -1,4 +1,4 @@
-import type { TNode } from '../../src/types'
+import type { TNode } from '../../src'
 
 export const GLOBAL = 'GLOBAL_XCM_REGISTRY'
 

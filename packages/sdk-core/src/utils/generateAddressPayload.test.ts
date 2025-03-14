@@ -1,9 +1,10 @@
+import { Parents } from '@paraspell/sdk-common'
 import * as ethers from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import type { TPallet, TScenario } from '../types'
-import { Parents, Version } from '../types'
+import { Version } from '../types'
 import { createX1Payload } from './createX1Payload'
 import { generateAddressPayload } from './generateAddressPayload'
 

@@ -1,6 +1,6 @@
-import { InvalidCurrencyError } from '../../../errors'
+import { getAssetsObject, getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
+
 import type { TGetBalanceNativeOptions } from '../../../types/TBalance'
-import { getAssetsObject, getNativeAssetSymbol } from '../assets'
 import { getBalanceForeignInternal } from './getBalanceForeign'
 
 export const getBalanceNativeInternal = async <TApi, TRes>({

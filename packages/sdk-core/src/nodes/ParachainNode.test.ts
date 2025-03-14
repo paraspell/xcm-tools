@@ -1,8 +1,8 @@
+import { findAssetByMultiLocation } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import { NoXCMSupportImplementedError } from '../errors'
-import { findAssetByMultiLocation } from '../pallets/assets'
 import type { TRelayToParaOptions } from '../types'
 import {
   type TPolkadotXcmSection,
@@ -23,8 +23,7 @@ vi.mock('../utils', () => ({
   getFees: vi.fn().mockReturnValue('fees'),
   verifyMultiLocation: vi.fn(),
   isTMultiLocation: vi.fn(),
-  isRelayChain: vi.fn(),
-  isForeignAsset: vi.fn().mockReturnValue(true)
+  isRelayChain: vi.fn()
 }))
 
 vi.mock('../pallets/xcmPallet/utils', () => ({
@@ -35,10 +34,11 @@ vi.mock('../pallets/xcmPallet/utils', () => ({
   isTMultiLocation: vi.fn()
 }))
 
-vi.mock('../pallets/assets', () => ({
+vi.mock('@paraspell/assets', () => ({
   getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
   findAssetByMultiLocation: vi.fn().mockReturnValue({ symbol: 'DOT' }),
-  getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT', assetId: '123' }])
+  getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT', assetId: '123' }]),
+  isForeignAsset: vi.fn().mockReturnValue(true)
 }))
 
 vi.mock('./config', () => ({

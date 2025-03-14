@@ -1,6 +1,7 @@
 // Contains basic structure of xToken call
 
-import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
+import { isTMultiLocation } from '@paraspell/sdk-common'
+
 import type {
   TPallet,
   TSerializedApiCall,

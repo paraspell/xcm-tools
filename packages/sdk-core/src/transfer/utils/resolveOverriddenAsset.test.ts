@@ -1,42 +1,50 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-
-import { InvalidCurrencyError } from '../../errors'
-import type ParachainNode from '../../nodes/ParachainNode'
-import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
-import { createMultiAsset, isTMultiAsset, isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import type {
   TAsset,
   TMultiAsset,
   TMultiAssetWithFee,
-  TMultiLocation,
-  TMultiLocationValueWithOverride,
-  TSendOptions
-} from '../../types'
-import { getNode, isAssetEqual, isForeignAsset } from '../../utils'
-import { isOverrideMultiLocationSpecifier } from '../../utils/multiLocation'
+  TMultiLocationValueWithOverride
+} from '@paraspell/assets'
+import {
+  findAsset,
+  InvalidCurrencyError,
+  isAssetEqual,
+  isForeignAsset,
+  isOverrideMultiLocationSpecifier,
+  isTMultiAsset
+} from '@paraspell/assets'
+import { isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import type ParachainNode from '../../nodes/ParachainNode'
+import { createMultiAsset } from '../../pallets/xcmPallet/utils'
+import type { TSendOptions } from '../../types'
+import { getNode } from '../../utils'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
 import { validateAssetSupport } from './validationUtils'
 
+vi.mock('../../pallets/xcmPallet/utils', () => ({
+  createMultiAsset: vi.fn()
+}))
+
 vi.mock('../../utils', () => ({
-  getNode: vi.fn(),
-  isForeignAsset: vi.fn(),
-  isAssetEqual: vi.fn(),
+  getNode: vi.fn()
+}))
+
+vi.mock('@paraspell/sdk-common', () => ({
+  isTMultiLocation: vi.fn(),
+  Parents: vi.fn(),
   deepEqual: vi.fn()
 }))
 
-vi.mock('../../utils/multiLocation', () => ({
-  isOverrideMultiLocationSpecifier: vi.fn(),
-  extractMultiAssetLoc: vi.fn().mockResolvedValue({} as TMultiLocation)
-}))
-
-vi.mock('../../pallets/assets/getAssetBySymbolOrId', () => ({
-  getAssetBySymbolOrId: vi.fn()
-}))
-
-vi.mock('../../pallets/xcmPallet/utils', () => ({
+vi.mock('@paraspell/assets', () => ({
+  findAsset: vi.fn(),
   createMultiAsset: vi.fn(),
   isTMultiAsset: vi.fn(),
-  isTMultiLocation: vi.fn()
+  isForeignAsset: vi.fn(),
+  isAssetEqual: vi.fn(),
+  isOverrideMultiLocationSpecifier: vi.fn(),
+  extractMultiAssetLoc: vi.fn().mockResolvedValue({} as TMultiLocation),
+  InvalidCurrencyError: class extends Error {}
 }))
 
 vi.mock('./validationUtils', () => ({
@@ -62,7 +70,7 @@ describe('resolveOverriddenAsset', () => {
     vi.mocked(getNode).mockReturnValue(mockOriginNode)
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(createMultiAsset).mockReturnValue({} as TMultiAsset)
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue({
+    vi.mocked(findAsset).mockReturnValue({
       multiLocation: {} as TMultiLocation
     } as TAsset)
   })
@@ -117,7 +125,7 @@ describe('resolveOverriddenAsset', () => {
     const result = resolveOverriddenAsset(options, false, true, { symbol: 'DOT' } as TAsset)
 
     expect(validateAssetSupport).toHaveBeenCalledTimes(2)
-    expect(getAssetBySymbolOrId).toHaveBeenCalledTimes(multiasset.length)
+    expect(findAsset).toHaveBeenCalledTimes(multiasset.length)
     expect(createMultiAsset).toHaveBeenCalledTimes(multiasset.length)
     expect(result).toEqual([
       {
@@ -137,7 +145,7 @@ describe('resolveOverriddenAsset', () => {
     }
 
     vi.mocked(isTMultiAsset).mockImplementationOnce(() => false)
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue({} as TAsset)
+    vi.mocked(findAsset).mockReturnValue({} as TAsset)
 
     expect(() => resolveOverriddenAsset(options, false, false, {} as TAsset)).toThrow(
       InvalidCurrencyError

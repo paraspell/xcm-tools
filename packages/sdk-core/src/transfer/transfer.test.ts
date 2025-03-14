@@ -1,15 +1,11 @@
+import type { TAsset, TCurrencyInput, TMultiLocationValueWithOverride } from '@paraspell/assets'
+import { isOverrideMultiLocationSpecifier } from '@paraspell/assets'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import type ParachainNode from '../nodes/ParachainNode'
-import type {
-  TAsset,
-  TCurrencyInput,
-  TMultiLocationValueWithOverride,
-  TSendOptions
-} from '../types'
+import type { TSendOptions } from '../types'
 import { getNode } from '../utils'
-import { isOverrideMultiLocationSpecifier } from '../utils/multiLocation/isOverrideMultiLocationSpecifier'
 import { send } from './transfer'
 import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
 import { isBridgeTransfer } from './utils/isBridgeTransfer'
@@ -29,7 +25,7 @@ vi.mock('../utils', () => ({
   isRelayChain: vi.fn()
 }))
 
-vi.mock('../utils/multiLocation/isOverrideMultiLocationSpecifier', () => ({
+vi.mock('@paraspell/assets', () => ({
   isOverrideMultiLocationSpecifier: vi.fn()
 }))
 

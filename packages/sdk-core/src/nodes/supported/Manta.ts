@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for Manta Parachain
 
-import { InvalidCurrencyError } from '../../errors'
+import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+
 import XTokensTransferImpl from '../../pallets/xTokens'
 import {
   type IXTokensTransfer,
@@ -8,7 +9,6 @@ import {
   type TXTokensTransferOptions,
   Version
 } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 
 class Manta<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {

@@ -1,7 +1,8 @@
+import type { TAsset } from '@paraspell/assets'
+import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+
 import type { IPolkadotApi } from '../../../api'
-import { InvalidCurrencyError } from '../../../errors'
-import type { TAsset, TNodePolkadotKusama } from '../../../types'
-import { isForeignAsset } from '../../../utils/assets'
 
 export const getBalanceForeignXTokens = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,

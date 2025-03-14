@@ -1,7 +1,9 @@
 // Script that pulls XCM Pallets for selected Parachain
 
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
 import * as palletsMapJson from '../maps/pallets.json' with { type: 'json' }
-import type { TNodeDotKsmWithRelayChains, TPalletDetails } from '../types'
+import type { TPalletDetails } from '../types'
 import { type TPallet, type TPalletJsonMap } from '../types'
 
 const palletsMap = palletsMapJson as TPalletJsonMap

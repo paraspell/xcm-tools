@@ -3,10 +3,9 @@ import {
   getNativeAssetSymbol,
   getRelayChainSymbol,
   hasSupportForAsset,
-  isForeignAsset,
-  NODE_NAMES_DOT_KSM,
-  TNode
-} from '../src'
+  isForeignAsset
+} from '@paraspell/assets'
+import { NODE_NAMES_DOT_KSM, TNode } from '@paraspell/sdk-common'
 
 const supportsOnlyNativeAsset: TNode[] = ['Nodle', 'Pendulum', 'Phala', 'Subsocial']
 

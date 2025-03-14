@@ -1,4 +1,4 @@
-import type { TNodeDotKsmWithRelayChains } from './TNode'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 export type TProviderEntry = {
   name: string

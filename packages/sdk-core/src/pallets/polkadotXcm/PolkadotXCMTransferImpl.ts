@@ -1,12 +1,14 @@
 // Contains basic structure of polkadotXCM call
 
+import type { TMultiAsset } from '@paraspell/assets'
+import { isTMultiLocation } from '@paraspell/sdk-common'
+
 import { DEFAULT_FEE_ASSET } from '../../constants'
-import type { TMultiAsset, TPallet, TPolkadotXcmSection, TSerializedApiCall } from '../../types'
+import type { TPallet, TPolkadotXcmSection, TSerializedApiCall } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import {
   addXcmVersionHeader,
   extractVersionFromHeader,
-  isTMultiLocation,
   maybeOverrideMultiAssets
 } from '../xcmPallet/utils'
 

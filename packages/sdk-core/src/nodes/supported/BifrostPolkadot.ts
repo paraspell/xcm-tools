@@ -1,18 +1,18 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Polkadot
 
+import { getAssetId, isForeignAsset, type TAsset } from '@paraspell/assets'
+import { Parents } from '@paraspell/sdk-common'
+
 import { ETHEREUM_JUNCTION } from '../../constants'
-import { getAssetId } from '../../pallets/assets'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
-  TAsset,
   TPolkadotXCMTransferOptions,
   TSendInternalOptions
 } from '../../types'
-import { type IXTokensTransfer, Parents, type TXTokensTransferOptions, Version } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
+import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 export class BifrostPolkadot<TApi, TRes>

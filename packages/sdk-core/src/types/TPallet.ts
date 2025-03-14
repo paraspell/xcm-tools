@@ -1,5 +1,6 @@
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
 import { type SUPPORTED_PALLETS } from '../constants'
-import type { TNodeDotKsmWithRelayChains } from './TNode'
 
 export type TPallet = (typeof SUPPORTED_PALLETS)[number]
 export type TPalletDetails = {

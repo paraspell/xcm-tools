@@ -1,9 +1,11 @@
 // Contains tests for querying Parachain XCM Pallets compatibility
 
+import type { TNode } from '@paraspell/sdk-common'
+import { NODE_NAMES_DOT_KSM } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
-import { NODE_NAMES_DOT_KSM, SUPPORTED_PALLETS } from '../constants'
-import { type TNode, type TPallet } from '../types'
+import { SUPPORTED_PALLETS } from '../constants'
+import { type TPallet } from '../types'
 import { getDefaultPallet, getSupportedPallets } from './pallets'
 
 describe('getDefaultPallet', () => {

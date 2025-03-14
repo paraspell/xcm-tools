@@ -1,19 +1,16 @@
+import { getOtherAssets, isForeignAsset } from '@paraspell/assets'
+import { Parents } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_MULTILOCATION } from '../../../constants'
-import type { TXTokensTransferOptions } from '../../../types'
-import { Parents, Version } from '../../../types'
-import { isForeignAsset } from '../../../utils/assets'
-import { getOtherAssets } from '../../assets'
+import { type TXTokensTransferOptions, Version } from '../../../types'
 import { createMultiAsset } from '../../xcmPallet/utils'
 import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
 
-vi.mock('../../../utils/assets', () => ({
-  isForeignAsset: vi.fn()
-}))
-
-vi.mock('../../../pallets/assets', () => ({
-  getOtherAssets: vi.fn()
+vi.mock('@paraspell/assets', () => ({
+  isForeignAsset: vi.fn(),
+  getOtherAssets: vi.fn(),
+  InvalidCurrencyError: class InvalidCurrencyError extends Error {}
 }))
 
 describe('getModifiedCurrencySelection', () => {

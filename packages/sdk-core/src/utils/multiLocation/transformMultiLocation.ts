@@ -1,4 +1,4 @@
-import { Parents, type TMultiLocation } from '../../types'
+import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
 export const transformMultiLocation = (multiLocation: TMultiLocation): TMultiLocation => {
   let newInterior: TMultiLocation['interior']

@@ -1,7 +1,8 @@
+import { getExistentialDeposit } from '@paraspell/assets'
+
 import type { TVerifyEdOnDestinationOptions } from '../../../types'
 import { validateAddress } from '../../../utils'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
-import { getExistentialDeposit } from '../getExistentialDeposit'
 
 export const verifyEdOnDestinationInternal = async <TApi, TRes>({
   api,

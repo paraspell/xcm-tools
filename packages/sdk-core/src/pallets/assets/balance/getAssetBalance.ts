@@ -1,6 +1,7 @@
-import type { TNodePolkadotKusama } from '../../../types'
+import { getNativeAssetSymbol } from '@paraspell/assets'
+import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+
 import type { TGetAssetBalanceOptions } from '../../../types/TBalance'
-import { getNativeAssetSymbol } from '../assets'
 import { getBalanceForeignInternal } from './getBalanceForeign'
 import { getBalanceNativeInternal } from './getBalanceNative'
 

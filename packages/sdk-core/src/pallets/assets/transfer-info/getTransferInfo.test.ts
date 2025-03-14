@@ -1,33 +1,34 @@
+import {
+  findAsset,
+  getExistentialDeposit,
+  getNativeAssetSymbol,
+  getRelayChainSymbol,
+  InvalidCurrencyError
+} from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import { InvalidCurrencyError } from '../../../errors'
 import { createApiInstanceForNode } from '../../../utils'
-import { getExistentialDeposit, getNativeAssetSymbol, getRelayChainSymbol } from '../assets'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
 import { getBalanceNativeInternal } from '../balance/getBalanceNative'
-import { getAssetBySymbolOrId } from '../getAssetBySymbolOrId'
 import { getOriginFeeDetailsInternal } from '../getOriginFeeDetails'
 import { getMaxNativeTransferableAmount } from '../getTransferableAmount'
 import { getTransferInfo } from './getTransferInfo'
 
+vi.mock('@paraspell/assets', () => ({
+  findAsset: vi.fn(),
+  getExistentialDeposit: vi.fn(),
+  getNativeAssetSymbol: vi.fn(),
+  getRelayChainSymbol: vi.fn(),
+  InvalidCurrencyError: class extends Error {}
+}))
+
 vi.mock('../../../utils', () => ({
-  createApiInstanceForNode: vi.fn(),
-  getNativeAssetSymbol: vi.fn()
+  createApiInstanceForNode: vi.fn()
 }))
 
 vi.mock('../getTransferableAmount', () => ({
   getMaxNativeTransferableAmount: vi.fn()
-}))
-
-vi.mock('../assets', () => ({
-  getNativeAssetSymbol: vi.fn(),
-  getExistentialDeposit: vi.fn(),
-  getRelayChainSymbol: vi.fn()
-}))
-
-vi.mock('../getAssetBySymbolOrId', () => ({
-  getAssetBySymbolOrId: vi.fn()
 }))
 
 vi.mock('../balance/getAssetBalance', () => ({
@@ -67,7 +68,7 @@ describe('getTransferInfo', () => {
       xcmFee: 100n,
       sufficientForXCM: true
     })
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue({ symbol: 'DOT', assetId: '1' })
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'DOT', assetId: '1' })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(2000n)
     vi.mocked(getExistentialDeposit).mockReturnValue('100')
     vi.mocked(getMaxNativeTransferableAmount).mockResolvedValue(4000n)
@@ -127,7 +128,7 @@ describe('getTransferInfo', () => {
   })
 
   it('Throws an error if invalid currency for origin node provided', async () => {
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(null)
+    vi.mocked(findAsset).mockReturnValue(null)
     await expect(() =>
       getTransferInfo({
         api: apiMock,

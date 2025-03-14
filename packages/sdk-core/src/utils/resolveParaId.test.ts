@@ -1,18 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-vi.mock('../pallets/xcmPallet/utils', () => ({
+vi.mock('@paraspell/sdk-common', () => ({
   isTMultiLocation: vi.fn()
 }))
+
 vi.mock('.', () => ({
   isRelayChain: vi.fn()
 }))
+
 vi.mock('../nodes/config', () => ({
   getParaId: vi.fn()
 }))
 
+import { isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
+
 import { getParaId } from '../nodes/config'
-import { isTMultiLocation } from '../pallets/xcmPallet/utils'
-import type { TMultiLocation } from '../types'
 import { isRelayChain } from '.'
 import { resolveParaId } from './resolveParaId'
 
