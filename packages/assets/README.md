@@ -2,7 +2,7 @@
 
 <div align="center">
   <h1 align="center">@paraspell/assets</h1>
-  <h4 align="center"> Common code for @paraspell/sdk-core and @paraspell/assets. </h4>
+  <h4 align="center"> Pallet queries for Polkadot and Kusama Parachains. </h4>
   <p align="center">
     <a href="https://npmjs.com/package/@paraspell/sdk-core">
       <img alt="version" src="https://img.shields.io/npm/v/@paraspell/sdk-core?style=flat-square" />
@@ -24,7 +24,90 @@
 
 ## Information
 
-This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own `doesn't` offer any XCM functionality but can be used to get `common functions` shared between both XCM SDK versions.
+This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own offers functionality that can be imported separately and be used in front-end applications.
+
+## Implementation
+
+This package serves to retrieve asset data from compatible Parachains. Users can retrieve details like `asset decimals`, `registered assets on particular Parachain`, `check if the asset is registered on Parachain` and more.
+
+### Install package
+
+```bash
+pnpm | npm install || yarn add @paraspell/assets
+```
+
+### Import functionality
+
+To use this functionality you first have to import it in the following way.
+```ts
+import { getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTNode, getAssetMultiLocation, NODE_NAMES } from  '@paraspell/assets'
+```
+
+
+### Query assets object
+This function returns `assets object` from `assets.json` for `particular Parachain` including information about `native` and `foreign` assets.
+```ts
+getAssetsObject('Acala')
+```
+
+### Query asset ID
+This function returns `assetId` for `particular Parachain` and `asset symbol`
+```ts
+getAssetId('Acala', 'DOT')
+```
+### Query Relay chain asset symbol
+This function returns the `symbol` of the Relay chain for a particular Parachain. Either "DOT" or "KSM"
+```ts
+getRelayChainSymbol('Basilisk')
+```
+### Query native assets
+This function returns a string array of `native` assets symbols for a particular Parachain
+```ts
+getNativeAssets('Acala')
+```
+### Query foreign assets
+This function returns an object array of foreign assets for a particular Parachain. Each object has a symbol and assetId property
+```ts
+getOtherAssets('Acala')
+```
+### Query all asset symbols
+Function returns string array of all asset symbols for a specific Parachain. (native and foreign assets are merged into a single array)
+```ts
+getAllAssetsSymbols('Acala')
+```
+### Query asset support
+The function checks if Parachain supports a particular asset. (Both native and foreign assets are searched). Returns boolean
+```ts
+hasSupportForAsset(node: TNode, symbol: string)
+```
+### Query asset decimals
+The function returns decimals for a specific asset
+```ts
+getAssetDecimals('Basilisk', 'KSM')
+```
+### Query Parachain ID
+The function returns specific Parachain id
+```ts
+getParaId('Basilisk')
+```
+
+### Query Parachain name
+Function to get specific TNode from Parachain id
+```ts
+getTNode(nodeID: number, ecosystem: 'polkadot' || 'kusama' || 'ethereum') //When Ethereum ecosystem is selected please fill nodeID as 1 to select Ethereum.
+```
+
+### Import Parachains as constant
+Import all compatible Parachains as constant
+```ts
+console.log(NODE_NAMES)
+```
+
+### Convert id or symbol to multilocation
+Get multilocation for asset id or symbol.
+```ts
+getAssetMultiLocation(chainFrom, { symbol: symbol } | { id: assetId })
+```
 
 ## 💻 Tests
 
@@ -36,19 +119,15 @@ This package serves as a `core` component for both `@paraspell/sdk` and `@parasp
 
 - Update Parachain registered assets in the map using script - `pnpm updateAssets`
 
-- Update XCM pallets in the map using script - `pnpm updatePallets`
-
 - Update existential deposits in the map using script - `pnpm updateEds`
 
-- Run all core tests and checks using `pnpm runAll`
-
-XCM SDK can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
+Assets can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
 
 ## License
 
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
 
-Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk-core/LICENSE).
+Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/assets/LICENSE).
 
 ## Support
 

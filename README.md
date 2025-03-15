@@ -42,8 +42,11 @@ apps | - XCM Playground
 packages | - XCM SDK
          | - XCM SDK-PJS
          | - XCM SDK-Core
+         | - XCM SDK-Common
          | - XCM Router
          | - XCM Analyser
+         | - Assets
+         | - Pallets
 ```
 
 **Monorepo commands:**

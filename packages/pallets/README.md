@@ -2,7 +2,7 @@
 
 <div align="center">
   <h1 align="center">@paraspell/pallets</h1>
-  <h4 align="center"> Pallets for @paraspell/sdk-core and @paraspell/assets. </h4>
+  <h4 align="center"> Pallet queries for Polkadot and Kusama Parachains. </h4>
   <p align="center">
     <a href="https://npmjs.com/package/@paraspell/sdk-core">
       <img alt="version" src="https://img.shields.io/npm/v/@paraspell/sdk-core?style=flat-square" />
@@ -24,7 +24,45 @@
 
 ## Information
 
-This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own `doesn't` offer any XCM functionality but can be used to get `common functions` shared between both XCM SDK versions.
+This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own offers functionality that can be imported separately and be used in front-end applications.
+
+## Implementation
+
+This package allows developers to query the `XCM pallets` that Parachains currently support. 
+
+### Install package
+
+```bash
+pnpm | npm install || yarn add @paraspell/pallets
+```
+
+### Import functionality
+
+To use this functionality you first have to import it in the following way.
+```ts
+import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@paraspell/pallets'
+```
+
+### Get default XCM pallet
+
+The function returns the default XCM pallet for selected compatible Parachain.
+```ts
+getDefaultPallet(node: TNode)
+```
+
+### Get all supported XCM pallets
+
+The function returns all supported XCM pallets for selected compatible Parachain.
+```ts
+getSupportedPallets(node: TNode)
+```
+
+### Print all supported XCM pallets
+
+This returns all supported XCM pallets supported by compatible Parachains as constant.
+```ts
+console.log(SUPPORTED_PALLETS)
+```
 
 ## 💻 Tests
 
@@ -34,21 +72,15 @@ This package serves as a `core` component for both `@paraspell/sdk` and `@parasp
 
 - Run unit tests using `pnpm test`
 
-- Update Parachain registered assets in the map using script - `pnpm updateAssets`
-
 - Update XCM pallets in the map using script - `pnpm updatePallets`
 
-- Update existential deposits in the map using script - `pnpm updateEds`
-
-- Run all core tests and checks using `pnpm runAll`
-
-XCM SDK can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
+Pallet queries can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
 
 ## License
 
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
 
-Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk-core/LICENSE).
+Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/assets/LICENSE).
 
 ## Support
 

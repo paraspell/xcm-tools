@@ -2,7 +2,7 @@
 
 <div align="center">
   <h1 align="center">@paraspell/sdk-common</h1>
-  <h4 align="center"> Common code for @paraspell/sdk-core and @paraspell/assets. </h4>
+  <h4 align="center"> Common code for @paraspell/sdk-core, @paraspell/assets and @paraspell/pallets. </h4>
   <p align="center">
     <a href="https://npmjs.com/package/@paraspell/sdk-core">
       <img alt="version" src="https://img.shields.io/npm/v/@paraspell/sdk-core?style=flat-square" />
@@ -24,7 +24,7 @@
 
 ## Information
 
-This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own `doesn't` offer any XCM functionality but can be used to get `common functions` shared between both XCM SDK versions.
+This package serves as a `core` component for both `@paraspell/sdk-core`, `assets` and `pallets` and is `automatically` installed as a `dependency`. The package on its own `doesn't` offer any XCM functionality but can be used to get `common types` shared in mentioned packages.
 
 ## 💻 Tests
 
@@ -34,21 +34,13 @@ This package serves as a `core` component for both `@paraspell/sdk` and `@parasp
 
 - Run unit tests using `pnpm test`
 
-- Update Parachain registered assets in the map using script - `pnpm updateAssets`
-
-- Update XCM pallets in the map using script - `pnpm updatePallets`
-
-- Update existential deposits in the map using script - `pnpm updateEds`
-
-- Run all core tests and checks using `pnpm runAll`
-
 XCM SDK can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
 
 ## License
 
 Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
 
-Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk-core/LICENSE).
+Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk-common/LICENSE).
 
 ## Support
 
