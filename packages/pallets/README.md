@@ -38,7 +38,7 @@ pnpm | npm install || yarn add @paraspell/pallets
 
 To use this functionality you first have to import it in the following way.
 ```ts
-import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@paraspell/pallets'
+import { getDefaultPallet, getSupportedPallets, getPalletIndex, SUPPORTED_PALLETS } from  '@paraspell/pallets'
 ```
 
 ### Get default XCM pallet
@@ -53,6 +53,13 @@ getDefaultPallet(node: TNode)
 The function returns all supported XCM pallets for selected compatible Parachain.
 ```ts
 getSupportedPallets(node: TNode)
+```
+
+### Get index of XCM Pallet
+
+The function returns all index of XCM Pallet for selected Parachain.
+```ts
+getPalletIndex(node: TNode)
 ```
 
 ### Print all supported XCM pallets

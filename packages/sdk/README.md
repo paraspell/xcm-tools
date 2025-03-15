@@ -291,13 +291,16 @@ getAssetMultiLocation(chainFrom, { symbol: symbol } | { id: assetId })
 
 ### Parachain XCM Pallet queries
 ```ts
-import { getDefaultPallet, getSupportedPallets, SUPPORTED_PALLETS } from  '@paraspell/sdk';
+import { getDefaultPallet, getSupportedPallets, getPalletIndex SUPPORTED_PALLETS } from  '@paraspell/sdk';
 
 //Retrieve default pallet for specific Parachain 
 getDefaultPallet(node: TNode)
 
 // Returns an array of supported pallets for a specific Parachain
 getSupportedPallets(node: TNode)
+
+//Returns index of XCM Pallet used by Parachain
+getPalletIndex(node: TNode)
 
 // Print all pallets that are currently supported
 console.log(SUPPORTED_PALLETS)
