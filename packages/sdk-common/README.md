@@ -4,11 +4,11 @@
   <h1 align="center">@paraspell/sdk-common</h1>
   <h4 align="center"> Common code for @paraspell/sdk-core, @paraspell/assets and @paraspell/pallets. </h4>
   <p align="center">
-    <a href="https://npmjs.com/package/@paraspell/sdk-core">
-      <img alt="version" src="https://img.shields.io/npm/v/@paraspell/sdk-core?style=flat-square" />
+    <a href="https://npmjs.com/package/@paraspell/sdk-common">
+      <img alt="version" src="https://img.shields.io/npm/v/@paraspell/sdk-common?style=flat-square" />
     </a>
-    <a href="https://npmjs.com/package/@paraspell/sdk-core">
-      <img alt="downloads" src="https://img.shields.io/npm/dm/@paraspell/sdk-core?style=flat-square" />
+    <a href="https://npmjs.com/package/@paraspell/sdk-common">
+      <img alt="downloads" src="https://img.shields.io/npm/dm/@paraspell/sdk-common?style=flat-square" />
     </a>
     <a href="https://github.com/paraspell/xcm-sdk/actions">
       <img alt="build" src="https://github.com/paraspell/xcm-sdk/actions/workflows/release.yml/badge.svg" />
@@ -34,11 +34,11 @@ This package serves as a `core` component for both `@paraspell/sdk-core`, `asset
 
 - Run unit tests using `pnpm test`
 
-XCM SDK can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
+XCM SDK can be tested in [Playground](https://playground.paraspell.xyz/xcm-sdk/xcm-transfer).
 
 ## License
 
-Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
+Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
 Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk-common/LICENSE).
 

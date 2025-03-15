@@ -180,9 +180,11 @@ This should result into:
 
 - Run an example from [example file](https://github.com/paraspell/xcm-tools/blob/main/packages/xcm-analyser/scripts/example.ts) using `pnpm runExample`
 
+XCM Analyser can be tested in [Playground](https://playground.paraspell.xyz/xcm-analyser).
+
 ## License
 
-Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
+Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
 Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/xcm-analyser/LICENSE).
 

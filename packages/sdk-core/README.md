@@ -36,11 +36,11 @@ This package serves as a `core` component for both `@paraspell/sdk` and `@parasp
 
 - Run all core tests and checks using `pnpm runAll`
 
-XCM SDK can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
+XCM SDK can be tested in [Playground](https://playground.paraspell.xyz/xcm-sdk/xcm-transfer).
 
 ## License
 
-Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
+Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
 Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/sdk-core/LICENSE).
 

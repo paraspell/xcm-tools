@@ -4,11 +4,11 @@
   <h1 align="center">@paraspell/assets</h1>
   <h4 align="center"> Pallet queries for Polkadot and Kusama Parachains. </h4>
   <p align="center">
-    <a href="https://npmjs.com/package/@paraspell/sdk-core">
-      <img alt="version" src="https://img.shields.io/npm/v/@paraspell/sdk-core?style=flat-square" />
+    <a href="https://npmjs.com/package/@paraspell/assets">
+      <img alt="version" src="https://img.shields.io/npm/v/@paraspell/assets?style=flat-square" />
     </a>
-    <a href="https://npmjs.com/package/@paraspell/sdk-core">
-      <img alt="downloads" src="https://img.shields.io/npm/dm/@paraspell/sdk-core?style=flat-square" />
+    <a href="https://npmjs.com/package/@paraspell/assets">
+      <img alt="downloads" src="https://img.shields.io/npm/dm/@paraspell/assets?style=flat-square" />
     </a>
     <a href="https://github.com/paraspell/xcm-sdk/actions">
       <img alt="build" src="https://github.com/paraspell/xcm-sdk/actions/workflows/release.yml/badge.svg" />
@@ -24,11 +24,9 @@
 
 ## Information
 
-This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own offers functionality that can be imported separately and be used in front-end applications.
+This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own offers functionality that can be imported separately and be used in front-end applications. It allows to retrieve asset data from compatible Parachains. Users can retrieve details like `asset decimals`, `registered assets on particular Parachain`, `check if the asset is registered on Parachain` and more.
 
 ## Implementation
-
-This package serves to retrieve asset data from compatible Parachains. Users can retrieve details like `asset decimals`, `registered assets on particular Parachain`, `check if the asset is registered on Parachain` and more.
 
 ### Install package
 
@@ -121,11 +119,11 @@ getAssetMultiLocation(chainFrom, { symbol: symbol } | { id: assetId })
 
 - Update existential deposits in the map using script - `pnpm updateEds`
 
-Assets can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
+Assets can be tested in [Playground](https://playground.paraspell.xyz/xcm-sdk/assets).
 
 ## License
 
-Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
+Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
 Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/assets/LICENSE).
 

@@ -4,11 +4,11 @@
   <h1 align="center">@paraspell/pallets</h1>
   <h4 align="center"> Pallet queries for Polkadot and Kusama Parachains. </h4>
   <p align="center">
-    <a href="https://npmjs.com/package/@paraspell/sdk-core">
-      <img alt="version" src="https://img.shields.io/npm/v/@paraspell/sdk-core?style=flat-square" />
+    <a href="https://npmjs.com/package/@paraspell/pallets">
+      <img alt="version" src="https://img.shields.io/npm/v/@paraspell/pallets?style=flat-square" />
     </a>
-    <a href="https://npmjs.com/package/@paraspell/sdk-core">
-      <img alt="downloads" src="https://img.shields.io/npm/dm/@paraspell/sdk-core?style=flat-square" />
+    <a href="https://npmjs.com/package/@paraspell/pallets">
+      <img alt="downloads" src="https://img.shields.io/npm/dm/@paraspell/pallets?style=flat-square" />
     </a>
     <a href="https://github.com/paraspell/xcm-sdk/actions">
       <img alt="build" src="https://github.com/paraspell/xcm-sdk/actions/workflows/release.yml/badge.svg" />
@@ -24,11 +24,9 @@
 
 ## Information
 
-This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own offers functionality that can be imported separately and be used in front-end applications.
+This package serves as a `core` component for both `@paraspell/sdk` and `@paraspell/sdk-pjs` and is `automatically` installed as a `dependency`. The package on its own offers functionality that can be imported separately and be used in front-end applications. It allows developers to query the `XCM pallets` that Parachains currently support. 
 
 ## Implementation
-
-This package allows developers to query the `XCM pallets` that Parachains currently support. 
 
 ### Install package
 
@@ -78,9 +76,9 @@ Pallet queries can be tested in [Playground](https://github.com/paraspell/xcm-to
 
 ## License
 
-Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
+Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
-Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/assets/LICENSE).
+Published under [MIT License](https://playground.paraspell.xyz/xcm-sdk/pallets).
 
 ## Support
 

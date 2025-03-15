@@ -212,11 +212,11 @@ const assets = getExchangeAssets('AssetHubPolkadotDex')
 
 - Run integration tests using `yarn test:integration`
 
-XCM Router can be tested in [Playground](https://github.com/paraspell/xcm-tools/tree/main/apps/playground).
+XCM Router can be tested in [Playground](https://playground.paraspell.xyz/xcm-router).
 
 ## License
 
-Made with 💛 by [ParaSpell✨](https://github.com/paraspell)
+Made with 💛 by [ParaSpell✨](https://paraspell.xyz/)
 
 Published under [MIT License](https://github.com/paraspell/xcm-tools/blob/main/packages/xcm-router/LICENSE).
 
