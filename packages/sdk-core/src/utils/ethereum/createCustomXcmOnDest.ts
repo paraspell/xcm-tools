@@ -1,13 +1,13 @@
-import { ETHEREUM_JUNCTION } from '../../constants'
-import { InvalidCurrencyError } from '../../errors'
-import { findAssetByMultiLocation, getOtherAssets } from '../../pallets/assets'
 import {
-  Parents,
-  type TMultiLocation,
-  type TPolkadotXCMTransferOptions,
-  type Version
-} from '../../types'
-import { isForeignAsset } from '../assets'
+  findAssetByMultiLocation,
+  getOtherAssets,
+  InvalidCurrencyError,
+  isForeignAsset
+} from '@paraspell/assets'
+import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+
+import { ETHEREUM_JUNCTION } from '../../constants'
+import { type TPolkadotXCMTransferOptions, type Version } from '../../types'
 import { generateAddressPayload } from '../generateAddressPayload'
 
 export const createCustomXcmOnDest = <TApi, TRes>(

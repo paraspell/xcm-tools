@@ -1,10 +1,10 @@
+import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type {
-  TCurrencyCore,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
-  TNodeWithRelayChains,
-  WithAmount
-} from '.'
+  TNodeWithRelayChains
+} from '@paraspell/sdk-common'
+
 import type { WithApi } from './TApi'
 
 export type TBalanceResponse = {

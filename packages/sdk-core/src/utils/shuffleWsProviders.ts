@@ -1,4 +1,5 @@
-import type { TNodeDotKsmWithRelayChains } from '../types'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
 import { shuffleArray } from './shuffleArray'
 
 export const shuffleWsProviders = (node: TNodeDotKsmWithRelayChains, wsProviders: string[]) => {

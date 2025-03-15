@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { TForeignAsset } from '@paraspell/assets'
+import {
+  findAsset,
+  getNativeAssetSymbol,
+  InvalidCurrencyError,
+  isForeignAsset,
+  isOverrideMultiLocationSpecifier
+} from '@paraspell/assets'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import type { TransactionResponse } from 'ethers'
 import { Contract } from 'ethers'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
-import { InvalidCurrencyError } from '../../../errors'
-import { getNativeAssetSymbol } from '../../../pallets/assets'
-import { getAssetBySymbolOrId } from '../../../pallets/assets/getAssetBySymbolOrId'
-import type { TEvmBuilderOptions, TForeignAsset, TNodeDotKsmWithRelayChains } from '../../../types'
-import { isForeignAsset } from '../../../utils'
-import { isOverrideMultiLocationSpecifier } from '../../../utils/multiLocation/isOverrideMultiLocationSpecifier'
+import type { TEvmBuilderOptions } from '../../../types'
 import { isEthersContract, isEthersSigner } from '../utils'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
@@ -52,7 +56,7 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
         }
       })
 
-  const foundAsset = getAssetBySymbolOrId(from, currency, to)
+  const foundAsset = findAsset(from, currency, to)
 
   if (foundAsset === null) {
     throw new InvalidCurrencyError(
@@ -98,7 +102,7 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     to === 'AssetHubPolkadot' &&
     multiCurrencySymbols.includes(foundAsset.symbol)
 
-  const usdtAsset = getAssetBySymbolOrId(from, { symbol: 'xcUSDT' }, to) as TForeignAsset
+  const usdtAsset = findAsset(from, { symbol: 'xcUSDT' }, to) as TForeignAsset
 
   const tx: TransactionResponse | WriteContractReturnType = useMultiAssets
     ? await createTx('transferMultiCurrencies', [

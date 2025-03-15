@@ -1,4 +1,4 @@
-import { getAssetBySymbolOrId, hasSupportForAsset, type TNode } from '@paraspell/sdk-pjs';
+import { findAsset, hasSupportForAsset, type TNode } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
@@ -22,7 +22,7 @@ export const selectBestExchangeCommon = async <
 ): Promise<ExchangeNode> => {
   const { from, exchange, to, currencyFrom, currencyTo } = options;
 
-  const assetFromOrigin = from ? getAssetBySymbolOrId(from, currencyFrom, null) : undefined;
+  const assetFromOrigin = from ? findAsset(from, currencyFrom, null) : undefined;
 
   if (from && !assetFromOrigin) {
     throw new Error(

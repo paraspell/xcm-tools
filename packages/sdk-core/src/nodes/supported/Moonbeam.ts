@@ -1,19 +1,18 @@
 // Contains detailed structure of XCM call construction for Moonbeam Parachain
 
+import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+
 import { DOT_MULTILOCATION } from '../../constants'
-import { InvalidCurrencyError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
 import type {
   IPolkadotXCMTransfer,
-  TAsset,
-  TMultiLocation,
   TPolkadotXCMTransferOptions,
   TRelayToParaOverrides,
   TScenario
 } from '../../types'
-import { Parents, Version } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
+import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {

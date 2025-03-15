@@ -1,12 +1,13 @@
+import type { TAsset, WithAmount } from '@paraspell/assets'
+import { getRelayChainSymbol } from '@paraspell/assets'
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import type ParachainNode from '../nodes/ParachainNode'
-import { getRelayChainSymbol } from '../pallets/assets'
 import { resolveTNodeFromMultiLocation } from '../pallets/xcmPallet/utils'
-import type { TAsset, WithAmount } from '../types'
-import { type TMultiLocation, type TRelayToParaOptions, Version } from '../types'
+import { type TRelayToParaOptions, Version } from '../types'
 import { determineRelayChain, getNode } from '../utils'
 import { transferRelayToPara } from './transferRelayToPara'
 
@@ -15,7 +16,7 @@ vi.mock('../utils', () => ({
   getNode: vi.fn()
 }))
 
-vi.mock('../pallets/assets', () => ({
+vi.mock('@paraspell/assets', () => ({
   getRelayChainSymbol: vi.fn()
 }))
 

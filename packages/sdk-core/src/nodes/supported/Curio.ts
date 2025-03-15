@@ -1,9 +1,10 @@
 // Contains detailed structure of XCM call construction for Curio Parachain
 
+import { isForeignAsset } from '@paraspell/assets'
+
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type { TForeignOrTokenAsset } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 
 class Curio<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {

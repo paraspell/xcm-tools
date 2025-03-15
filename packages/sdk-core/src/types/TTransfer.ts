@@ -1,22 +1,23 @@
-import type { IPolkadotApi } from '../api/IPolkadotApi'
-import type { WithApi } from './TApi'
-import type { TAsset } from './TAssets'
 import type {
+  TAsset,
   TCurrencyInput,
   TCurrencyInputWithAmount,
+  TMultiAsset,
   TMultiAssetWithFee,
-  TXcmVersioned,
   WithAmount
-} from './TCurrency'
-import { type TMultiAsset } from './TMultiAsset'
-import { type TMultiLocation } from './TMultiLocation'
+} from '@paraspell/assets'
+import type { TPallet } from '@paraspell/pallets'
 import type {
+  TMultiLocation,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
-  TNodeWithRelayChains,
-  TRelaychain
-} from './TNode'
-import type { TPallet } from './TPallet'
+  TNodeWithRelayChains
+} from '@paraspell/sdk-common'
+
+import type { IPolkadotApi } from '../api/IPolkadotApi'
+import type { WithApi } from './TApi'
+import type { TXcmVersioned } from './TCurrency'
+import type { TRelaychain } from './TNode'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
@@ -91,13 +92,6 @@ export enum Version {
  */
 export type TVersionClaimAssets = Version.V3 | Version.V2
 
-export enum Parents {
-  ZERO = 0,
-  ONE = 1,
-  TWO = 2
-}
-
-export type TAmount = string | number | bigint
 export type TAddress = string | TMultiLocation
 export type TDestination = TNodeWithRelayChains | TMultiLocation
 export type TRelayToParaDestination = TNodePolkadotKusama | TMultiLocation

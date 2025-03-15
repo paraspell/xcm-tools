@@ -1,9 +1,10 @@
+import { isNodeEvm } from '@paraspell/assets'
+import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidAddressError } from '../errors'
-import { isNodeEvm } from '../pallets/assets'
-import type { TAddress, TNodeWithRelayChains } from '../types'
+import type { TAddress } from '../types'
 import { validateAddress } from './validateAddress'
 
 vi.mock('ethers', () => ({
@@ -12,7 +13,7 @@ vi.mock('ethers', () => ({
   }
 }))
 
-vi.mock('../pallets/assets', () => ({
+vi.mock('@paraspell/assets', () => ({
   isNodeEvm: vi.fn()
 }))
 

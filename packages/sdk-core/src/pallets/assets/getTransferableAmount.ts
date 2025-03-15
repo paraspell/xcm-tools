@@ -1,15 +1,19 @@
-import { InvalidCurrencyError } from '../../errors'
+import {
+  findAsset,
+  getExistentialDeposit,
+  InvalidCurrencyError,
+  isForeignAsset
+} from '@paraspell/assets'
+
 import type {
   TGetMaxForeignTransferableAmountOptions,
   TGetMaxNativeTransferableAmountOptions,
   TGetTransferableAmountOptions
 } from '../../types/TBalance'
-import { isForeignAsset, isRelayChain } from '../../utils'
+import { isRelayChain } from '../../utils'
 import { validateAddress } from '../../utils/validateAddress'
-import { getExistentialDeposit } from './assets'
 import { getBalanceForeignInternal } from './balance/getBalanceForeign'
 import { getBalanceNativeInternal } from './balance/getBalanceNative'
-import { getAssetBySymbolOrId } from './getAssetBySymbolOrId'
 
 export const getMaxNativeTransferableAmount = async <TApi, TRes>({
   api,
@@ -45,8 +49,8 @@ export const getMaxForeignTransferableAmount = async <TApi, TRes>({
   validateAddress(address, node, false)
 
   const asset =
-    getAssetBySymbolOrId(node, currency, null) ??
-    (node === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency, null) : null)
+    findAsset(node, currency, null) ??
+    (node === 'AssetHubPolkadot' ? findAsset('Ethereum', currency, null) : null)
 
   if (!asset) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${node}`)
@@ -82,8 +86,8 @@ export const getTransferableAmount = async <TApi, TRes>({
   validateAddress(address, node, false)
 
   const asset =
-    getAssetBySymbolOrId(node, currency, null) ??
-    (node === 'AssetHubPolkadot' ? getAssetBySymbolOrId('Ethereum', currency, null) : null)
+    findAsset(node, currency, null) ??
+    (node === 'AssetHubPolkadot' ? findAsset('Ethereum', currency, null) : null)
 
   if (!asset) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${node}`)

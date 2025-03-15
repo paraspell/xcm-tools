@@ -1,6 +1,7 @@
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { TNodeConfig, TNodeDotKsmWithRelayChains } from '../../types'
+import type { TNodeConfig } from '../../types'
 import { getNodeConfig } from './getNodeConfig'
 import { getNodeProviders } from './getNodeProviders'
 

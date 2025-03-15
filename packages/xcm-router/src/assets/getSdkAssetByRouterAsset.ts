@@ -4,12 +4,7 @@ import type {
   TMultiLocation,
   TNodePolkadotKusama,
 } from '@paraspell/sdk-pjs';
-import {
-  findBestMatches,
-  getAssetBySymbolOrId,
-  getAssets,
-  isForeignAsset,
-} from '@paraspell/sdk-pjs';
+import { findAsset, findBestMatches, getAssets, isForeignAsset } from '@paraspell/sdk-pjs';
 
 import type { TRouterAsset } from '../types';
 
@@ -45,7 +40,7 @@ export const getSdkAssetByRouterAsset = (
     let sdkAsset;
 
     if (asset.multiLocation) {
-      sdkAsset = getAssetBySymbolOrId(
+      sdkAsset = findAsset(
         exchangeBaseNode,
         { multilocation: asset.multiLocation as TMultiLocation },
         null,
@@ -55,11 +50,7 @@ export const getSdkAssetByRouterAsset = (
     }
 
     if (asset.assetId) {
-      sdkAsset = getAssetBySymbolOrId(
-        exchangeBaseNode,
-        { id: asset.assetId },
-        null,
-      ) as TForeignAsset;
+      sdkAsset = findAsset(exchangeBaseNode, { id: asset.assetId }, null) as TForeignAsset;
 
       if (sdkAsset) return true;
     }

@@ -1,5 +1,7 @@
+import type { TMultiLocation } from '@paraspell/sdk-common'
+
 import { createPolkadotXcmHeader, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
-import type { TMultiLocation, TSerializedApiCall, TWeight } from '../types'
+import type { TSerializedApiCall, TWeight } from '../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../types'
 import { generateAddressPayload } from './generateAddressPayload'
 import { transformMultiLocation } from './multiLocation'

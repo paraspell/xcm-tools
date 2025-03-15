@@ -1,20 +1,21 @@
+import type { TAsset } from '@paraspell/assets'
+import { findAsset, type TCurrencyInput } from '@paraspell/assets'
+import { isTMultiLocation, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
-import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
-import type { TAsset, TCurrencyInput, TDestination, TNodePolkadotKusama } from '../../types'
+import type { TDestination } from '../../types'
 import { determineRelayChain } from '../../utils'
 import { resolveAsset } from './resolveAsset'
 
-vi.mock('../../pallets/assets/getAssetBySymbolOrId', () => ({
-  getAssetBySymbolOrId: vi.fn()
+vi.mock('@paraspell/assets', () => ({
+  findAsset: vi.fn()
 }))
 
 vi.mock('../../utils', () => ({
   determineRelayChain: vi.fn()
 }))
 
-vi.mock('../../pallets/xcmPallet/utils', () => ({
+vi.mock('@paraspell/sdk-common', () => ({
   isTMultiLocation: vi.fn()
 }))
 
@@ -32,7 +33,7 @@ describe('resolveAsset', () => {
     const result = resolveAsset(currency, origin, destination, assetCheckEnabled)
 
     expect(result).toBeNull()
-    expect(getAssetBySymbolOrId).not.toHaveBeenCalled()
+    expect(findAsset).not.toHaveBeenCalled()
   })
 
   it('should call getAssetBySymbolOrId with determineRelayChain(origin) when destination is undefined', () => {
@@ -43,11 +44,11 @@ describe('resolveAsset', () => {
     const asset = {} as TAsset
 
     vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(asset)
+    vi.mocked(findAsset).mockReturnValue(asset)
 
     const result = resolveAsset(currency, origin, destination, assetCheckEnabled)
 
-    expect(getAssetBySymbolOrId).toHaveBeenCalledWith(origin, currency, 'Polkadot')
+    expect(findAsset).toHaveBeenCalledWith(origin, currency, 'Polkadot')
     expect(result).toBe(asset)
   })
 
@@ -59,13 +60,13 @@ describe('resolveAsset', () => {
     const asset = {} as TAsset
 
     vi.mocked(isTMultiLocation).mockReturnValue(false)
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(asset)
+    vi.mocked(findAsset).mockReturnValue(asset)
 
     const result = resolveAsset(currency, origin, destination, assetCheckEnabled)
 
     expect(isTMultiLocation).toHaveBeenCalledWith(destination)
     expect(determineRelayChain).not.toHaveBeenCalled()
-    expect(getAssetBySymbolOrId).toHaveBeenCalledWith(origin, currency, destination)
+    expect(findAsset).toHaveBeenCalledWith(origin, currency, destination)
     expect(result).toBe(asset)
   })
 
@@ -78,13 +79,13 @@ describe('resolveAsset', () => {
     const asset = {} as TAsset
 
     vi.mocked(isTMultiLocation).mockReturnValue(true)
-    vi.mocked(getAssetBySymbolOrId).mockReturnValue(asset)
+    vi.mocked(findAsset).mockReturnValue(asset)
 
     const result = resolveAsset(currency, origin, destination, assetCheckEnabled)
 
     expect(isTMultiLocation).toHaveBeenCalledWith(destination)
     expect(determineRelayChain).not.toHaveBeenCalled()
-    expect(getAssetBySymbolOrId).toHaveBeenCalledWith(origin, currency, null)
+    expect(findAsset).toHaveBeenCalledWith(origin, currency, null)
     expect(result).toBe(asset)
   })
 })

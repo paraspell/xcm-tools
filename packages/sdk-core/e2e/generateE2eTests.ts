@@ -1,16 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   determineRelayChain,
-  Foreign,
-  ForeignAbstract,
   GeneralBuilder,
-  getAssetBySymbolOrId,
-  getOtherAssets,
-  getRelayChainSymbol,
-  hasSupportForAsset,
-  isForeignAsset,
-  isNodeEvm,
-  Native,
   NODE_NAMES_DOT_KSM,
   NodeNotSupportedError,
   Parents,
@@ -20,7 +11,18 @@ import {
   Version
 } from '../src'
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
-import { generateAssetsTests } from './generateAssetsTests'
+import { generateAssetsTests } from '../../assets/e2e'
+import {
+  findAsset,
+  Foreign,
+  ForeignAbstract,
+  getOtherAssets,
+  getRelayChainSymbol,
+  hasSupportForAsset,
+  isForeignAsset,
+  isNodeEvm,
+  Native
+} from '@paraspell/assets'
 
 const MOCK_AMOUNT = 1000000000000
 const MOCK_ADDRESS = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty'
@@ -307,7 +309,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
 
     reorderedNodes.forEach(node => {
       const scenarios = generateTransferScenarios(node)
-      const relayChainAsset = getAssetBySymbolOrId(
+      const relayChainAsset = findAsset(
         node,
         { symbol: getRelayChainSymbol(node) },
         determineRelayChain(node)

@@ -1,9 +1,9 @@
 // Contains detailed structure of XCM call construction for Quartz Parachain
 
-import { InvalidCurrencyError } from '../../errors'
+import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+
 import XTokensTransferImpl from '../../pallets/xTokens'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
-import { isForeignAsset } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Quartz<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {

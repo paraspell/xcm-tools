@@ -1,11 +1,11 @@
+import { getNativeAssetSymbol } from '@paraspell/assets'
+import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getNativeAssetSymbol } from '../../pallets/assets'
-import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '../../types'
 import { computeFeeFromDryRunPjs } from './computeFeeFromDryRunPjs'
 import { getMultiLocationTokenIdPjs } from './getMultiLocationTokenIdPjs'
 
-vi.mock('../../pallets/assets', () => ({
+vi.mock('@paraspell/assets', () => ({
   getNativeAssetSymbol: vi.fn()
 }))
 

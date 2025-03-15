@@ -47,7 +47,7 @@ describe('getExchangeAssetByOriginAsset', () => {
     const candidate2 = { symbol: 'DOT', id: '2' };
     vi.spyOn(sdkPjs, 'findBestMatches').mockReturnValue([candidate1, candidate2]);
     vi.spyOn(sdkPjs, 'isForeignAsset').mockReturnValue(true);
-    vi.spyOn(sdkPjs, 'getAssetBySymbolOrId').mockImplementation((_node, currency) => {
+    vi.spyOn(sdkPjs, 'findAsset').mockImplementation((_node, currency) => {
       if ('id' in currency && currency.id === '1')
         return {
           symbol: 'DOT',
@@ -78,7 +78,7 @@ describe('getExchangeAssetByOriginAsset', () => {
     const candidate2 = { symbol: 'DOT', id: '2' };
     vi.spyOn(sdkPjs, 'findBestMatches').mockReturnValue([candidate1, candidate2]);
     vi.spyOn(sdkPjs, 'isForeignAsset').mockReturnValue(true);
-    vi.spyOn(sdkPjs, 'getAssetBySymbolOrId').mockReturnValue({
+    vi.spyOn(sdkPjs, 'findAsset').mockReturnValue({
       multiLocation: 'ml1' as unknown as sdkPjs.TMultiLocation,
     } as sdkPjs.TForeignAsset);
     vi.spyOn(sdkPjs, 'deepEqual').mockReturnValue(false);
@@ -102,14 +102,14 @@ describe('getExchangeAssetByOriginAsset', () => {
     } as sdkPjs.TForeignAsset);
 
     expect(result).toBeUndefined();
-    expect(sdkPjs.getAssetBySymbolOrId).not.toHaveBeenCalled();
+    expect(sdkPjs.findAsset).not.toHaveBeenCalled();
   });
 
   it('skips candidates where SDK asset has no multiLocation or XCM interior', () => {
     const candidate = { symbol: 'DOT' };
     vi.spyOn(sdkPjs, 'findBestMatches').mockReturnValue([candidate, candidate]);
     vi.spyOn(sdkPjs, 'isForeignAsset').mockReturnValue(true);
-    vi.spyOn(sdkPjs, 'getAssetBySymbolOrId').mockReturnValue({
+    vi.spyOn(sdkPjs, 'findAsset').mockReturnValue({
       symbol: 'DOT',
     } as sdkPjs.TForeignAsset);
 
@@ -126,7 +126,7 @@ describe('getExchangeAssetByOriginAsset', () => {
 
     vi.spyOn(sdkPjs, 'findBestMatches').mockReturnValue([candidate1, candidate2]);
     vi.spyOn(sdkPjs, 'isForeignAsset').mockReturnValue(true);
-    vi.spyOn(sdkPjs, 'getAssetBySymbolOrId').mockReturnValue({
+    vi.spyOn(sdkPjs, 'findAsset').mockReturnValue({
       symbol: 'DOT',
       multiLocation: 'ml1' as unknown as sdkPjs.TMultiLocation,
     } as sdkPjs.TForeignAsset);

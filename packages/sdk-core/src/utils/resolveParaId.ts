@@ -1,5 +1,6 @@
+import { isTMultiLocation } from '@paraspell/sdk-common'
+
 import { getParaId } from '../nodes/config'
-import { isTMultiLocation } from '../pallets/xcmPallet/utils'
 import type { TDestination } from '../types'
 import { isRelayChain } from '.'
 

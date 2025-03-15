@@ -1,8 +1,5 @@
-export { DuplicateAssetError } from './DuplicateAssetError'
-export { DuplicateAssetIdError } from './DuplicateAssetIdError'
 export { IncompatibleNodesError } from './IncompatibleNodesError'
 export { InvalidAddressError } from './InvalidAddressError'
-export { InvalidCurrencyError } from './InvalidCurrencyError'
 export { NodeNotSupportedError } from './NodeNotSupportedError'
 export { NoXCMSupportImplementedError } from './NoXCMSupportImplementedError'
 export { ScenarioNotSupportedError } from './ScenarioNotSupportedError'

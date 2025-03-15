@@ -1,10 +1,10 @@
 // Contains detailed structure of XCM call construction for Centrifuge Parachain
 
-import { InvalidCurrencyError } from '../../errors'
+import type { TAsset } from '@paraspell/assets'
+import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TAsset } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 
 export class Centrifuge<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {

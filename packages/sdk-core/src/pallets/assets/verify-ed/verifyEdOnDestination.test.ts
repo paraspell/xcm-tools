@@ -1,10 +1,10 @@
+import * as assetsModule from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
 import type { TVerifyEdOnDestinationOptions } from '../../../types'
 import * as utils from '../../../utils'
 import * as balanceModule from '../balance/getAssetBalance'
-import * as existentialModule from '../getExistentialDeposit'
 import { verifyEdOnDestination } from './verifyEdOnDestination'
 import * as internal from './verifyEdOnDestinationInternal'
 
@@ -20,7 +20,7 @@ describe('verifyEdOnDestinationInternal', () => {
   it('should return true when balance + amountWithoutFee - ed > 0', async () => {
     const currency = { symbol: 'DOT', amount: '1000' }
     vi.spyOn(utils, 'validateAddress').mockImplementation(() => {})
-    vi.spyOn(existentialModule, 'getExistentialDeposit').mockReturnValue('50')
+    vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue('50')
     vi.spyOn(balanceModule, 'getAssetBalanceInternal').mockResolvedValue(20n)
 
     const options = {
@@ -39,7 +39,7 @@ describe('verifyEdOnDestinationInternal', () => {
   it('should return false when balance + amountWithoutFee - ed <= 0', async () => {
     const currency = { symbol: 'DOT', amount: '100' }
     vi.spyOn(utils, 'validateAddress').mockImplementation(() => {})
-    vi.spyOn(existentialModule, 'getExistentialDeposit').mockReturnValue('100')
+    vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue('100')
     vi.spyOn(balanceModule, 'getAssetBalanceInternal').mockResolvedValue(0n)
 
     const options = {
@@ -57,7 +57,7 @@ describe('verifyEdOnDestinationInternal', () => {
   it('should throw an error when getExistentialDeposit returns null', async () => {
     const currency = { symbol: 'DOT', amount: '1000' }
     vi.spyOn(utils, 'validateAddress').mockImplementation(() => {})
-    vi.spyOn(existentialModule, 'getExistentialDeposit').mockReturnValue(null)
+    vi.spyOn(assetsModule, 'getExistentialDeposit').mockReturnValue(null)
 
     const options = {
       api: dummyApi,

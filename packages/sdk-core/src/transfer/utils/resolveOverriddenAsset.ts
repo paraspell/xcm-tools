@@ -1,16 +1,20 @@
-import { InvalidCurrencyError } from '../../errors'
-import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
-import { createMultiAsset, isTMultiAsset, isTMultiLocation } from '../../pallets/xcmPallet/utils'
-import type {
-  TAsset,
-  TMultiAssetWithFee,
-  TMultiLocation,
-  TNodePolkadotKusama,
-  TSendOptions
-} from '../../types'
-import { deepEqual, getNode, isForeignAsset } from '../../utils'
-import { isAssetEqual } from '../../utils'
-import { extractMultiAssetLoc, isOverrideMultiLocationSpecifier } from '../../utils/multiLocation'
+import {
+  extractMultiAssetLoc,
+  findAsset,
+  InvalidCurrencyError,
+  isAssetEqual,
+  isForeignAsset,
+  isOverrideMultiLocationSpecifier,
+  isTMultiAsset,
+  type TAsset,
+  type TMultiAssetWithFee
+} from '@paraspell/assets'
+import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+import { deepEqual, isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
+
+import { createMultiAsset } from '../../pallets/xcmPallet/utils'
+import type { TSendOptions } from '../../types'
+import { getNode } from '../../utils'
 import { validateAssetSupport } from './validationUtils'
 
 export const resolveOverriddenAsset = <TApi, TRes>(
@@ -57,11 +61,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
 
     // MultiAsset is an array of TCurrencyCore, search for assets
     const assets = currency.multiasset.map(currency => {
-      const asset = getAssetBySymbolOrId(
-        origin,
-        currency,
-        !isTMultiLocation(destination) ? destination : null
-      )
+      const asset = findAsset(origin, currency, !isTMultiLocation(destination) ? destination : null)
 
       if (asset && (!isForeignAsset(asset) || !asset.multiLocation)) {
         throw new InvalidCurrencyError(

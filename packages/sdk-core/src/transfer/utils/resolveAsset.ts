@@ -1,6 +1,7 @@
-import { getAssetBySymbolOrId } from '../../pallets/assets/getAssetBySymbolOrId'
-import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
-import type { TAsset, TCurrencyInput, TDestination, TNodeDotKsmWithRelayChains } from '../../types'
+import { findAsset, type TAsset, type TCurrencyInput } from '@paraspell/assets'
+import { isTMultiLocation, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+
+import type { TDestination } from '../../types'
 
 export const resolveAsset = (
   currency: TCurrencyInput,
@@ -9,6 +10,6 @@ export const resolveAsset = (
   assetCheckEnabled: boolean
 ): TAsset | null => {
   return assetCheckEnabled
-    ? getAssetBySymbolOrId(origin, currency, !isTMultiLocation(destination) ? destination : null)
+    ? findAsset(origin, currency, !isTMultiLocation(destination) ? destination : null)
     : null
 }

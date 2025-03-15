@@ -27,6 +27,15 @@
     "packages/sdk-pjs": {
       "component": "sdk-pjs"
     },
+    "packages/sdk-common": {
+      "component": "sdk-common"
+    },
+    "packages/assets": {
+      "component": "assets"
+    },
+    "packages/pallets": {
+      "component": "pallets"
+    },
     "packages/xcm-router": {
       "component": "xcm-router"
     },
@@ -37,7 +46,15 @@
     {
       "type": "linked-versions",
       "groupName": "main",
-      "components": ["sdk-core", "sdk", "sdk-pjs", "xcm-router"]
+      "components": [
+        "sdk-core",
+        "sdk",
+        "sdk-pjs",
+        "sdk-common",
+        "assets",
+        "pallets",
+        "xcm-router"
+      ]
     }
   ]
 }

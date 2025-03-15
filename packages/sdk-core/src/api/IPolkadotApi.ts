@@ -1,13 +1,11 @@
+import type { TAsset } from '@paraspell/assets'
 import type {
-  BatchMode,
-  TAsset,
-  TDryRunBaseOptions,
-  TDryRunResult,
   TMultiLocation,
   TNodePolkadotKusama,
-  TNodeWithRelayChains,
-  TSerializedApiCall
-} from '../types'
+  TNodeWithRelayChains
+} from '@paraspell/sdk-common'
+
+import type { BatchMode, TDryRunBaseOptions, TDryRunResult, TSerializedApiCall } from '../types'
 import type { TApiOrUrl } from '../types/TApi'
 
 export interface IPolkadotApi<TApi, TRes> {

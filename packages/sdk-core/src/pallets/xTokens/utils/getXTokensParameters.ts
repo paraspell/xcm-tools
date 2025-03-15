@@ -1,11 +1,7 @@
-import type {
-  TAmount,
-  TMultiAssetWithFee,
-  TMultiLocation,
-  TXcmVersioned,
-  TXTokensCurrencySelection
-} from '../../../types'
-import { isTMultiLocation } from '../../xcmPallet/utils'
+import type { TAmount, TMultiAssetWithFee } from '@paraspell/assets'
+import { isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
+
+import type { TXcmVersioned, TXTokensCurrencySelection } from '../../../types'
 
 export const getXTokensParameters = (
   isMultiAssetTransfer: boolean,

@@ -1,12 +1,9 @@
+import { InvalidCurrencyError, type TNativeAsset, type WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import {
-  InvalidCurrencyError,
-  NodeNotSupportedError,
-  ScenarioNotSupportedError
-} from '../../errors'
+import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TNativeAsset, TXTokensTransferOptions, WithAmount } from '../../types'
+import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Bajun from './Bajun'

@@ -1,4 +1,5 @@
-import type { TPallet } from '../../../types'
+import type { TPallet } from '@paraspell/pallets'
+
 import { type TAssetClaimOptions } from '../../../types/TAssetClaim'
 import { isRelayChain } from '../../../utils'
 import { buildClaimAssetsInput } from './buildClaimAssetsInput'

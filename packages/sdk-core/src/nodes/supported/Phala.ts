@@ -1,4 +1,5 @@
-import { InvalidCurrencyError } from '../../errors'
+import { InvalidCurrencyError } from '@paraspell/assets'
+
 import XTransferTransferImpl from '../../pallets/xTransfer'
 import { type IXTransferTransfer, type TXTransferTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'

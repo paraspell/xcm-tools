@@ -1,5 +1,7 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
+import { isForeignAsset } from '@paraspell/assets'
+
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import {
@@ -10,7 +12,6 @@ import {
   type TXTokensTransferOptions,
   Version
 } from '../../types'
-import { isForeignAsset } from '../../utils/assets'
 import ParachainNode from '../ParachainNode'
 
 class Astar<TApi, TRes>

@@ -1,6 +1,7 @@
+import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
+
 import type { WithApi } from './TApi'
-import type { TCurrencyCore, WithAmount } from './TCurrency'
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from './TNode'
 
 export type TTransferInfo = {
   chain: { origin: TNodeWithRelayChains; destination: TNodeWithRelayChains; ecosystem: string }

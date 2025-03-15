@@ -1,5 +1,6 @@
+import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+
 import { ETH_PARA_ID } from '../../constants'
-import type { TNodeWithRelayChains } from '../../types'
 import { getNodeConfig } from './getNodeConfig'
 
 /**

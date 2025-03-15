@@ -1,7 +1,7 @@
+import { isTMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidAddressError } from '../../errors'
-import { isTMultiLocation } from '../../pallets/xcmPallet/utils'
 import type { TAddress, TDestination } from '../../types'
 import { validateAddress } from '../../utils/validateAddress'
 import { validateDestinationAddress } from './validateDestinationAddress'
@@ -9,7 +9,8 @@ import { validateDestinationAddress } from './validateDestinationAddress'
 vi.mock('../../utils/validateAddress', () => ({
   validateAddress: vi.fn()
 }))
-vi.mock('../../pallets/xcmPallet/utils', () => ({
+
+vi.mock('@paraspell/sdk-common', () => ({
   isTMultiLocation: vi.fn()
 }))
 

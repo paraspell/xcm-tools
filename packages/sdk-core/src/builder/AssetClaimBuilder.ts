@@ -1,6 +1,8 @@
+import type { TMultiAsset } from '@paraspell/assets'
+
 import type { IPolkadotApi } from '../api'
 import { claimAssets } from '../pallets/assets/asset-claim'
-import { type TAddress, type TMultiAsset, type TVersionClaimAssets } from '../types'
+import { type TAddress, type TVersionClaimAssets } from '../types'
 import type { TAssetClaimOptionsBase } from '../types/TAssetClaim'
 
 /**
