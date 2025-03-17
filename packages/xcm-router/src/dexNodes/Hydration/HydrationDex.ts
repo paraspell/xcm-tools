@@ -1,8 +1,9 @@
 import { PoolService, PoolType, TradeRouter } from '@galacticcouncil/sdk';
-import type { TAsset } from '@paraspell/sdk-pjs';
+import type { TForeignAsset } from '@paraspell/sdk-pjs';
 import {
   type Extrinsic,
   getAssetDecimals,
+  getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
 } from '@paraspell/sdk-pjs';
@@ -12,7 +13,7 @@ import BigNumber from 'bignumber.js';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type { TAssets, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import type { TGetAmountOutOptions, TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
 
@@ -29,12 +30,8 @@ class HydrationExchangeNode extends ExchangeNode {
       poolService,
       this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
     );
-    const currencyFromInfo = await getAssetInfo(tradeRouter, {
-      symbol: assetFrom.symbol,
-    } as TAsset);
-    const currencyToInfo = await getAssetInfo(tradeRouter, {
-      symbol: assetTo.symbol,
-    } as TAsset);
+    const currencyFromInfo = await getAssetInfo(tradeRouter, assetFrom);
+    const currencyToInfo = await getAssetInfo(tradeRouter, assetTo);
 
     if (currencyFromInfo === undefined) {
       throw new InvalidCurrencyError("Currency from doesn't exist");
@@ -89,7 +86,7 @@ class HydrationExchangeNode extends ExchangeNode {
 
     const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
       symbol: getNativeAssetSymbol(this.node),
-    } as TAsset);
+    });
 
     if (nativeCurrencyInfo === undefined) {
       throw new InvalidCurrencyError('Native currency not found');
@@ -184,14 +181,24 @@ class HydrationExchangeNode extends ExchangeNode {
     return BigInt(trade.amountOut.toString());
   }
 
-  async getAssets(api: ApiPromise): Promise<TAssets> {
+  async getAssets(api: ApiPromise): Promise<TRouterAsset[]> {
     const poolService = new PoolService(api);
     const tradeRouter = new TradeRouter(
       poolService,
       this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
     );
     const assets = await tradeRouter.getAllAssets();
-    return assets.map(({ symbol, id }) => ({ symbol, id }));
+    return assets.map(({ symbol, id }) => {
+      const sdkAssets = getAssets(this.node) as TForeignAsset[];
+      const asset =
+        sdkAssets.find((a) => a.assetId === id) ??
+        sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());
+      return {
+        symbol,
+        assetId: asset?.assetId,
+        multiLocation: asset?.multiLocation,
+      };
+    });
   }
 }
 

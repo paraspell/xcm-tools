@@ -3,8 +3,8 @@ import { type InterBtcApi } from 'inter-exchange';
 import type { TRouterAsset } from '../../types';
 
 export const getCurrency = async (interBTC: InterBtcApi, asset: TRouterAsset) => {
-  if (asset.id) {
-    return interBTC.assetRegistry.getForeignAsset(Number(asset.id));
+  if (asset.assetId) {
+    return interBTC.assetRegistry.getForeignAsset(Number(asset.assetId));
   } else {
     const { symbol } = asset;
     if (symbol === 'DOT' || symbol === 'KSM') {

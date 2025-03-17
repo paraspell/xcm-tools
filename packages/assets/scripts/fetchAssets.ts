@@ -281,7 +281,7 @@ const fetchMultiLocations = async (api: ApiPromise): Promise<TForeignAsset[]> =>
         return {
           symbol,
           decimals: +decimals,
-          multiLocation: multiLocation as object,
+          multiLocation: multiLocation as unknown as TMultiLocation,
           existentialDeposit: (resDetail.toHuman() as any).minBalance.replace(/,/g, '')
         }
       }

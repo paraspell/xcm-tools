@@ -31,14 +31,14 @@ describe('computeFeeFromDryRunPjs', () => {
               fees: [
                 {
                   fun: { Fungible: '500' },
-                  id: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } } as TMultiLocation
+                  id: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
                 },
                 {
                   fun: { Fungible: '300' },
                   id: {
                     parents: 1,
                     interior: { X2: [{ Parachain: 1000 }, { PalletInstance: 50 }] }
-                  } as TMultiLocation
+                  }
                 }
               ]
             }
@@ -71,7 +71,7 @@ describe('computeFeeFromDryRunPjs', () => {
               fees: [
                 {
                   fun: { Fungible: '500' },
-                  id: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } } as TMultiLocation
+                  id: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
                 }
               ]
             }
@@ -104,13 +104,13 @@ describe('computeFeeFromDryRunPjs', () => {
               fees: [
                 {
                   fun: { NonFungible: true },
-                  id: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } } as TMultiLocation
+                  id: { parents: 1, interior: { X1: [{ Parachain: 1000 }] } }
                 },
                 {
                   fun: { Fungible: '300' },
                   id: {
                     interior: { X2: [{ Parachain: 1000 }, { PalletInstance: 50 }] }
-                  } as TMultiLocation
+                  }
                 }
               ]
             }

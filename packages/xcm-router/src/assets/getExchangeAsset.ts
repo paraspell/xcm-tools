@@ -36,12 +36,7 @@ export const getExchangeAsset = (
 
   const nativeAssets = assets.filter((asset) => 'isNative' in asset) as TNativeAsset[];
 
-  const otherAssets = assets
-    .filter((asset) => !('isNative' in asset))
-    .map((asset) => ({
-      ...asset,
-      ...(asset.id !== undefined ? { assetId: asset.id } : {}),
-    })) as TForeignAsset[];
+  const otherAssets = assets.filter((asset) => !('isNative' in asset)) as TForeignAsset[];
 
   let asset: TRouterAsset | undefined;
   if ('symbol' in currency) {

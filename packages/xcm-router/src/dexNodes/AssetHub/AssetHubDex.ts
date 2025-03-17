@@ -1,10 +1,10 @@
-import type { TForeignAsset, TMultiLocation } from '@paraspell/sdk-pjs';
+import type { TForeignAsset } from '@paraspell/sdk-pjs';
 import { getAssets, getNativeAssetSymbol, Parents } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
-import type { TAssets, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import type { TGetAmountOutOptions, TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { getQuotedAmount } from './utils';
 
@@ -34,8 +34,8 @@ class AssetHubExchangeNode extends ExchangeNode {
       usedToML,
     } = await getQuotedAmount(
       api,
-      assetFrom.multiLocation as TMultiLocation,
-      assetTo.multiLocation as TMultiLocation,
+      assetFrom.multiLocation,
+      assetTo.multiLocation,
       amountWithoutFee,
     );
 
@@ -49,7 +49,7 @@ class AssetHubExchangeNode extends ExchangeNode {
       amountWithoutFee.toString(),
       minAmountOut,
       senderAddress,
-      assetFrom.id === undefined,
+      assetFrom.assetId === undefined,
     );
 
     const toDestFeeCurrencyTo =
@@ -63,7 +63,7 @@ class AssetHubExchangeNode extends ExchangeNode {
                 Here: null,
               },
             },
-            assetTo.multiLocation as TMultiLocation,
+            assetTo.multiLocation,
             toDestTxFee,
             true,
           ).then((res) => res.amountOut);
@@ -98,19 +98,20 @@ class AssetHubExchangeNode extends ExchangeNode {
 
     const { amountOut } = await getQuotedAmount(
       api,
-      assetFrom.multiLocation as TMultiLocation,
-      assetTo.multiLocation as TMultiLocation,
+      assetFrom.multiLocation,
+      assetTo.multiLocation,
       amountWithoutFee,
     );
 
     return amountOut;
   }
 
-  async getAssets(_api: ApiPromise): Promise<TAssets> {
+  async getAssets(_api: ApiPromise): Promise<TRouterAsset[]> {
     const assets = getAssets(this.node) as TForeignAsset[];
-    const transformedAssets = assets.map((asset) => ({
-      symbol: asset.symbol ?? '',
-      id: asset.assetId,
+    const transformedAssets: TRouterAsset[] = assets.map((asset) => ({
+      symbol: asset.symbol,
+      assetId: asset.assetId,
+      multiLocation: asset.multiLocation,
     }));
     return Promise.resolve(transformedAssets);
   }

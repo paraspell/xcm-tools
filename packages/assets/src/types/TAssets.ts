@@ -1,4 +1,4 @@
-import type { TNodeWithRelayChains, TRelayChainSymbol } from '@paraspell/sdk-common'
+import type { TMultiLocation, TNodeWithRelayChains, TRelayChainSymbol } from '@paraspell/sdk-common'
 
 type AtLeastOne<T, Keys extends keyof T = keyof T> = Pick<T, Exclude<keyof T, Keys>> &
   {
@@ -15,13 +15,13 @@ type TBaseAsset = {
 
 export type TNativeAsset = TBaseAsset & {
   isNative: true
-  multiLocation?: object
+  multiLocation?: TMultiLocation
 }
 
 export type TForeignAsset = TBaseAsset &
   AtLeastOne<{
     assetId?: string
-    multiLocation?: object
+    multiLocation?: TMultiLocation
   }>
 
 export type TAsset = TNativeAsset | TForeignAsset

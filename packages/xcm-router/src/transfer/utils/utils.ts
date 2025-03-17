@@ -1,9 +1,4 @@
-import type {
-  TAsset,
-  TCurrencyInput,
-  TMultiLocation,
-  TNodeDotKsmWithRelayChains,
-} from '@paraspell/sdk-pjs';
+import type { TAsset, TCurrencyInput, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
 import { Builder, isForeignAsset } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers-v6';
 
@@ -17,7 +12,7 @@ export const getCurrencySelection = (
   const isBifrost = node === 'BifrostPolkadot' || node === 'BifrostKusama';
   if (isForeignAsset(asset) && !isBifrost) {
     if (asset.assetId) return { id: asset.assetId };
-    if (asset.multiLocation) return { multilocation: asset.multiLocation as TMultiLocation };
+    if (asset.multiLocation) return { multilocation: asset.multiLocation };
   }
 
   return { symbol: asset.symbol };

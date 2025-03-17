@@ -6,6 +6,7 @@ import {
   isForeignAsset,
   isOverrideMultiLocationSpecifier
 } from '@paraspell/assets'
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import type { Signer } from 'ethers'
 import { Contract } from 'ethers'
 import type { WalletClient } from 'viem'
@@ -115,7 +116,7 @@ describe('transferMoonbeamToEth', () => {
     vi.clearAllMocks()
     vi.mocked(findAsset).mockReturnValue({
       symbol: '',
-      multiLocation: { valid: 'location' },
+      multiLocation: { valid: 'location' } as unknown as TMultiLocation,
       assetId: '0xmockedAssetId'
     })
     vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: '', assetId: '0xethAssetId' })

@@ -29,7 +29,7 @@ export const getAssetInfo = async (
   asset: TRouterAsset,
 ): Promise<Asset | undefined> => {
   const assets = await tradeRouter.getAllAssets();
-  return asset.id
-    ? assets.find((a) => a.id === asset.id)
+  return asset.assetId
+    ? assets.find((a) => a.id === asset.assetId)
     : assets.find((a) => a.symbol === asset.symbol);
 };

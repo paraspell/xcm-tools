@@ -175,8 +175,8 @@ describe('InterlayExchangeNode', () => {
       const result = await interlayExchangeNode.getAssets(apiMock as ApiPromise);
 
       expect(result).toEqual([
-        { symbol: 'ABC', id: '1' },
-        { symbol: 'XYZ', id: '2' },
+        { symbol: 'ABC', assetId: '1' },
+        { symbol: 'XYZ', assetId: '2' },
       ]);
     });
   });

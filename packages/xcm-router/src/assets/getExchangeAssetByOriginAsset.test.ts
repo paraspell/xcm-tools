@@ -43,8 +43,8 @@ describe('getExchangeAssetByOriginAsset', () => {
   });
 
   it('returns the candidate with matching multiLocation when origin is foreign', () => {
-    const candidate1 = { symbol: 'DOT', id: '1' };
-    const candidate2 = { symbol: 'DOT', id: '2' };
+    const candidate1 = { symbol: 'DOT', assetId: '1' };
+    const candidate2 = { symbol: 'DOT', assetId: '2' };
     vi.spyOn(sdkPjs, 'findBestMatches').mockReturnValue([candidate1, candidate2]);
     vi.spyOn(sdkPjs, 'isForeignAsset').mockReturnValue(true);
     vi.spyOn(sdkPjs, 'findAsset').mockImplementation((_node, currency) => {

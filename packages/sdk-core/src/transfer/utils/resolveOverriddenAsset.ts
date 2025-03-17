@@ -3,7 +3,6 @@ import {
   findAsset,
   InvalidCurrencyError,
   isAssetEqual,
-  isForeignAsset,
   isOverrideMultiLocationSpecifier,
   isTMultiAsset,
   type TAsset,
@@ -63,7 +62,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
     const assets = currency.multiasset.map(currency => {
       const asset = findAsset(origin, currency, !isTMultiLocation(destination) ? destination : null)
 
-      if (asset && (!isForeignAsset(asset) || !asset.multiLocation)) {
+      if (asset && !asset.multiLocation) {
         throw new InvalidCurrencyError(
           `Asset ${JSON.stringify(currency)} does not have a multiLocation`
         )

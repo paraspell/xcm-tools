@@ -1,5 +1,5 @@
 import type { Asset, TradeRouter } from '@galacticcouncil/sdk';
-import type { Extrinsic, TAsset } from '@paraspell/sdk-pjs';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
 import { getAssetDecimals, getNativeAssetSymbol, type TNode } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 
@@ -34,7 +34,7 @@ export const calculateFee = async (
 
   const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
     symbol: getNativeAssetSymbol(node),
-  } as TAsset);
+  });
 
   if (nativeCurrencyInfo === undefined) {
     throw new Error('Native currency not found');

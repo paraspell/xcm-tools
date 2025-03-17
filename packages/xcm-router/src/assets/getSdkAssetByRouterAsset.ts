@@ -1,9 +1,4 @@
-import type {
-  TAsset,
-  TForeignAsset,
-  TMultiLocation,
-  TNodePolkadotKusama,
-} from '@paraspell/sdk-pjs';
+import type { TAsset, TForeignAsset, TNodePolkadotKusama } from '@paraspell/sdk-pjs';
 import { findAsset, findBestMatches, getAssets, isForeignAsset } from '@paraspell/sdk-pjs';
 
 import type { TRouterAsset } from '../types';
@@ -28,7 +23,7 @@ export const getSdkAssetByRouterAsset = (
     return candidates[0];
   }
 
-  if (!routerAsset.id) {
+  if (!routerAsset.assetId) {
     // Origin asset is a native asset, but multiple candidates were found.
     return undefined;
   }
@@ -42,7 +37,7 @@ export const getSdkAssetByRouterAsset = (
     if (asset.multiLocation) {
       sdkAsset = findAsset(
         exchangeBaseNode,
-        { multilocation: asset.multiLocation as TMultiLocation },
+        { multilocation: asset.multiLocation },
         null,
       ) as TForeignAsset;
 

@@ -32,7 +32,7 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "test:watch": "vitest",
-    "update": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updateAssets.ts",
+    "updateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/updateAssets.ts",
     "checkDuplicateAssets": "node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/assets/checkDuplicates.ts"
   },
   "dependencies": {

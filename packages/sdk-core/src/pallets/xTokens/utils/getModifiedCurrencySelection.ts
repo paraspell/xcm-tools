@@ -37,7 +37,7 @@ const buildMultiLocation = <TApi, TRes>({
     }
 
     if (assetHubAsset.multiLocation) {
-      return assetHubAsset.multiLocation as TMultiLocation
+      return assetHubAsset.multiLocation
     }
 
     throw new InvalidCurrencyError(`Asset ${asset.symbol} has no multiLocation`)
@@ -57,7 +57,7 @@ const buildMultiLocation = <TApi, TRes>({
   }
 
   if (asset.multiLocation) {
-    return asset.multiLocation as TMultiLocation
+    return asset.multiLocation
   } else {
     return createDefaultMultiLocation(asset.assetId as string)
   }

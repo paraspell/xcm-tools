@@ -269,11 +269,11 @@ describe('AssetHubPolkadot', () => {
         symbol: 'WETH',
         assetId: '0x123',
         amount: '1000',
-        multiLocation: {}
+        multiLocation: {} as TMultiLocation
       }
 
       vi.mocked(getOtherAssets).mockReturnValue([
-        { symbol: 'WETH', assetId: '0x123', multiLocation: {} }
+        { symbol: 'WETH', assetId: '0x123', multiLocation: {} as TMultiLocation }
       ])
       vi.mocked(generateAddressPayload).mockReturnValue({
         [Version.V3]: {}
@@ -373,7 +373,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} }
+        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation }
       }
       mockApi.getDryRun = vi.fn().mockResolvedValue({ success: false, fee: 0n, weight: 0n })
       await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow()
@@ -383,7 +383,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} }
+        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation }
       }
       mockApi.getDryRun = vi.fn().mockResolvedValue({ success: true, fee: 10000n, weight: null })
       await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
@@ -395,7 +395,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} }
+        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation }
       }
       input.asset.amount = '1000000'
       mockApi.getDryRun = vi.fn().mockResolvedValue({ success: true, fee: 10000n, weight: 5000n })
@@ -412,7 +412,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} }
+        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation }
       }
       input.asset.amount = '100'
       mockApi.getDryRun = vi.fn().mockResolvedValue({ success: true, fee: 10000n, weight: 5000n })
@@ -429,7 +429,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} }
+        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation }
       }
       input.asset.amount = '1000000'
       const dryRunResult = { success: true, fee: 10000n, weight: 5000n }

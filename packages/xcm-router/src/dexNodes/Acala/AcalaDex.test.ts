@@ -1,3 +1,4 @@
+import { findAssetById, getNativeAssets } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -8,8 +9,11 @@ import AcalaExchangeNode from './AcalaDex';
 import { calculateAcalaSwapFee, createAcalaApiInstance } from './utils';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
-  getBalanceNative: vi.fn().mockResolvedValue(new BigNumber(100)),
+  getBalanceNative: vi.fn().mockResolvedValue(100n),
   getNativeAssetSymbol: vi.fn().mockReturnValue('ACA'),
+  getNativeAssets: vi.fn(),
+  getOtherAssets: vi.fn(),
+  findAssetById: vi.fn(),
 }));
 
 vi.mock('@acala-network/sdk-core', () => ({
@@ -39,6 +43,15 @@ vi.mock('@acala-network/sdk', () => ({
         symbol: 'DOT',
         toCurrencyId: vi.fn().mockReturnValue({
           toString: () => JSON.stringify({ Token: 'DOT' }),
+        }),
+      },
+      USDC: {
+        symbol: 'USDC',
+        toCurrencyId: vi.fn().mockReturnValue({
+          toString: () =>
+            JSON.stringify({
+              Foreign: '',
+            }),
         }),
       },
     }),
@@ -96,7 +109,6 @@ describe('AcalaExchangeNode', () => {
 
   beforeEach(() => {
     node = new AcalaExchangeNode('Acala', 'AcalaDex');
-    vi.clearAllMocks();
   });
 
   describe('createApiInstance', () => {
@@ -110,10 +122,30 @@ describe('AcalaExchangeNode', () => {
   describe('getAssets', () => {
     it('should return a list of assets from the wallet', async () => {
       const mockApi = {} as ApiPromise;
+
+      vi.mocked(getNativeAssets).mockReturnValue([
+        { symbol: 'ACA', isNative: true },
+        { symbol: 'DOT', isNative: true },
+      ]);
+      vi.mocked(findAssetById).mockReturnValueOnce({ symbol: 'GHG', assetId: '11' });
+
       const assets = await node.getAssets(mockApi);
 
-      expect(assets).toEqual([{ symbol: 'ACA' }, { symbol: 'DOT' }]);
+      expect(assets).toEqual([
+        { symbol: 'ACA' },
+        { symbol: 'DOT' },
+        { symbol: 'USDC', assetId: '11' },
+      ]);
     });
+  });
+
+  it('should fail when asset not found', async () => {
+    const mockApi = {} as ApiPromise;
+
+    vi.mocked(getNativeAssets).mockReturnValue([]);
+    vi.mocked(findAssetById).mockReturnValueOnce(undefined);
+
+    await expect(node.getAssets(mockApi)).rejects.toThrow('Asset not found: ');
   });
 
   describe('swapCurrency', () => {

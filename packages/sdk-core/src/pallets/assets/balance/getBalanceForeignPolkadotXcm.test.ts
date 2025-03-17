@@ -1,4 +1,5 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
@@ -47,7 +48,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
 
     const result = await getBalanceForeignPolkadotXcm(mockApi, 'Polimec', 'some-address', {
       symbol: 'DOT',
-      multiLocation: { foo: 'bar' }
+      multiLocation: { foo: 'bar' } as unknown as TMultiLocation
     })
 
     expect(result).toBe(200n)

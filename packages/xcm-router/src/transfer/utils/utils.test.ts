@@ -144,8 +144,8 @@ describe('transfer utils', () => {
           api: parachainApi,
           baseNode: 'Acala',
           exchangeNode: 'AcalaDex',
-          assetFrom: { symbol: 'ASTR', id: '0x1234567890abcdef' },
-          assetTo: { symbol: 'GLMR', id: '0xabcdef1234567890' },
+          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+          assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
         },
       };
       const extrinsic = buildFromExchangeExtrinsic(options);
@@ -163,8 +163,8 @@ describe('transfer utils', () => {
           api: parachainApi,
           baseNode: 'Acala',
           exchangeNode: 'AcalaDex',
-          assetFrom: { symbol: 'ASTR', id: '0x1234567890abcdef' },
-          assetTo: { symbol: 'GLMR', id: '0xabcdef1234567890' },
+          assetFrom: { symbol: 'ASTR', assetId: '0x1234567890abcdef' },
+          assetTo: { symbol: 'GLMR', assetId: '0xabcdef1234567890' },
         },
       };
       const extrinsic = buildFromExchangeExtrinsic(options);

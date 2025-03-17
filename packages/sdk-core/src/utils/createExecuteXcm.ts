@@ -1,5 +1,3 @@
-import type { TMultiLocation } from '@paraspell/sdk-common'
-
 import { createPolkadotXcmHeader, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
 import type { TSerializedApiCall, TWeight } from '../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../types'
@@ -26,7 +24,11 @@ export const createExecuteXcm = <TApi, TRes>(
   )
   const [__, beneficiary] = extractVersionFromHeader(beneficiaryWithHeader)
 
-  const transformedMultiLocation = transformMultiLocation(asset.multiLocation as TMultiLocation)
+  if (!asset.multiLocation) {
+    throw new Error(`Asset ${JSON.stringify(asset)} has no multiLocation`)
+  }
+
+  const transformedMultiLocation = transformMultiLocation(asset.multiLocation)
 
   const amountWithoutFee = BigInt(asset.amount) - executionFee
 

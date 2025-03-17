@@ -1,7 +1,12 @@
 // Contains detailed structure of XCM call construction for Polimec Parachain
 
 import type { TMultiAsset } from '@paraspell/assets'
-import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import {
+  getNativeAssetSymbol,
+  InvalidCurrencyError,
+  isForeignAsset,
+  type TAsset
+} from '@paraspell/assets'
 import { isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
@@ -31,8 +36,15 @@ import ParachainNode from '../ParachainNode'
 const GAS_LIMIT = 1000000000n
 
 const getAssetMultiLocation = (asset: TAsset): TMultiLocation => {
+  if (!isForeignAsset(asset) && asset.symbol === getNativeAssetSymbol('Polimec')) {
+    return {
+      parents: Parents.ZERO,
+      interior: 'Here'
+    }
+  }
+
   if (isForeignAsset(asset) && asset.multiLocation !== undefined) {
-    return asset.multiLocation as TMultiLocation
+    return asset.multiLocation
   }
 
   throw new InvalidCurrencyError(`Transfer of asset ${JSON.stringify(asset)} is not supported yet`)

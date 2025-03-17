@@ -8,7 +8,7 @@ import { createInterBtcApi, createSubstrateAPI, newMonetaryAmount } from 'inter-
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type { TAssets, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import type { TGetAmountOutOptions, TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { getCurrency } from './utils';
 
@@ -121,11 +121,12 @@ class InterlayExchangeNode extends ExchangeNode {
     return BigInt(outputAmount.toString(true));
   }
 
-  async getAssets(_api: ApiPromise): Promise<TAssets> {
+  async getAssets(_api: ApiPromise): Promise<TRouterAsset[]> {
     const assets = getAssets(this.node) as TForeignAsset[];
-    const transformedAssets = assets.map((asset) => ({
+    const transformedAssets: TRouterAsset[] = assets.map((asset) => ({
       symbol: asset.symbol ?? '',
-      id: asset.assetId,
+      assetId: asset.assetId,
+      multiLocation: asset.multiLocation,
     }));
     return Promise.resolve(transformedAssets);
   }

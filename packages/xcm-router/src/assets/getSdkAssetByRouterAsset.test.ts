@@ -38,7 +38,7 @@ describe('getSdkAssetByRouterAsset', () => {
     const candidate: TAsset = { symbol: 'ABC', assetId: '1' };
     vi.mocked(getAssets).mockReturnValue([candidate]);
     vi.mocked(findBestMatches).mockReturnValue([candidate]);
-    const routerAsset: TRouterAsset = { symbol: 'ABC', id: '1' };
+    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1' };
     const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
     expect(result).toEqual(candidate);
   });
@@ -71,7 +71,7 @@ describe('getSdkAssetByRouterAsset', () => {
       }
       return null;
     });
-    const routerAsset: TRouterAsset = { symbol: 'ABC', id: '1', multiLocation: multiLoc };
+    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '1', multiLocation: multiLoc };
     const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
     expect(result).toEqual({ ...candidate1, multiLocation: multiLoc });
   });
@@ -88,7 +88,7 @@ describe('getSdkAssetByRouterAsset', () => {
       if ('id' in currency && currency.id === candidate2.assetId) return candidate2;
       return null;
     });
-    const routerAsset: TRouterAsset = { symbol: 'ABC', id: '2' };
+    const routerAsset: TRouterAsset = { symbol: 'ABC', assetId: '2' };
     const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
     expect(result).toEqual(candidate2);
   });
@@ -102,7 +102,7 @@ describe('getSdkAssetByRouterAsset', () => {
     const candidate2: TForeignAsset = {
       symbol: 'ABC',
       assetId: '2',
-      multiLocation: { parents: 0, interior: 'There' },
+      multiLocation: { parents: 0, interior: 'Here' },
     };
     vi.mocked(getAssets).mockReturnValue([candidate1, candidate2]);
     vi.mocked(findBestMatches).mockReturnValue([candidate1, candidate2]);
@@ -110,7 +110,7 @@ describe('getSdkAssetByRouterAsset', () => {
     vi.mocked(findAsset).mockReturnValue(null);
     const routerAsset: TRouterAsset = {
       symbol: 'ABC',
-      id: '1',
+      assetId: '1',
       multiLocation: candidate1.multiLocation,
     };
     const result = getSdkAssetByRouterAsset(exchangeBaseNode, routerAsset);
