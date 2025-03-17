@@ -2,10 +2,9 @@
 
 import type { TMultiAsset } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
-import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
-import { DOT_MULTILOCATION } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
@@ -24,12 +23,106 @@ import type {
   TXcmVersioned
 } from '../../types'
 import { Version } from '../../types'
-import { generateAddressPayload } from '../../utils'
+import { createX1Payload, generateAddressPayload } from '../../utils'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
 
 const GAS_LIMIT = 1000000000n
+
+const getAssetMultiLocation = (asset: TAsset): TMultiLocation => {
+  if (isForeignAsset(asset) && asset.multiLocation !== undefined) {
+    return asset.multiLocation as TMultiLocation
+  }
+
+  throw new InvalidCurrencyError(`Transfer of asset ${JSON.stringify(asset)} is not supported yet`)
+}
+
+export const createTransferAssetsTransfer = <TRes>(
+  options: TPolkadotXCMTransferOptions<unknown, TRes>,
+  version: Version
+): TRes => {
+  const { asset } = options
+
+  const currencySelection: TXcmVersioned<TMultiAsset[]> = addXcmVersionHeader(
+    [createMultiAsset(version, asset.amount, getAssetMultiLocation(asset))],
+    version
+  )
+
+  return PolkadotXCMTransferImpl.transferPolkadotXCM(
+    {
+      ...options,
+      currencySelection
+    },
+    'transfer_assets',
+    'Unlimited'
+  )
+}
+
+const createTypeAndThenDest = (
+  destination: TDestination,
+  scenario: TScenario,
+  version: Version
+): TMultiLocation =>
+  isTMultiLocation(destination)
+    ? destination
+    : {
+        parents: scenario === 'ParaToPara' ? Parents.ONE : Parents.ZERO,
+        interior: createX1Payload(version, {
+          Parachain: getParaId('AssetHubPolkadot')
+        })
+      }
+
+export const createTypeAndThenTransfer = <TApi, TRes>(
+  {
+    api,
+    asset,
+    address,
+    scenario,
+    destination,
+    paraIdTo
+  }: Pick<
+    TPolkadotXCMTransferOptions<TApi, TRes>,
+    'api' | 'asset' | 'address' | 'scenario' | 'destination' | 'paraIdTo'
+  >,
+  version: Version,
+  transferType: 'DestinationReserve' | 'Teleport' = 'DestinationReserve'
+): TSerializedApiCall => ({
+  module: scenario === 'RelayToPara' ? 'XcmPallet' : 'PolkadotXcm',
+  section: 'transfer_assets_using_type_and_then',
+  parameters: {
+    dest: {
+      [version]: createTypeAndThenDest(destination, scenario, version)
+    },
+    assets: {
+      [version]: [
+        createMultiAsset(version, asset.amount, {
+          parents: scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE,
+          interior: 'Here'
+        })
+      ]
+    },
+    assets_transfer_type: transferType,
+    remote_fees_id: {
+      [version]: {
+        Concrete: {
+          parents: scenario === 'ParaToPara' ? Parents.ONE : Parents.ZERO,
+          interior: 'Here'
+        }
+      }
+    },
+    fees_transfer_type: transferType,
+    custom_xcm_on_dest: createCustomXcmPolimec(
+      api,
+      address,
+      scenario,
+      destination,
+      paraIdTo,
+      version
+    ),
+    weight_limit: 'Unlimited'
+  }
+})
 
 const createCustomXcmPolimec = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
@@ -111,135 +204,42 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
     super('Polimec', 'polimec', 'polkadot', Version.V3)
   }
 
-  private getAssetMultiLocation = (asset: TAsset): TMultiLocation => {
-    if (asset.symbol === 'DOT') {
-      return DOT_MULTILOCATION
-    }
-
-    if (isForeignAsset(asset) && asset.multiLocation !== undefined) {
-      return asset.multiLocation as TMultiLocation
-    }
-
-    throw new InvalidCurrencyError(
-      `Transfer of asset ${JSON.stringify(asset)} is not supported yet`
-    )
-  }
-
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { api, version = this.version, asset, destination, address, scenario, paraIdTo } = input
+    const { api, version = this.version, asset, destination, scenario } = input
 
-    if (scenario === 'ParaToPara' && destination === 'AssetHubPolkadot') {
-      const currencySelection: TXcmVersioned<TMultiAsset[]> = addXcmVersionHeader(
-        [
-          createMultiAsset(
-            version,
-            asset.amount.toString(),
-            this.getAssetMultiLocation(input.asset)
-          )
-        ],
-        version
-      )
+    if (scenario === 'ParaToPara' && destination === 'Hydration' && asset.symbol === 'DOT') {
+      const call = createTypeAndThenTransfer(input, version)
+      return Promise.resolve(api.callTxMethod(call))
+    }
 
-      return Promise.resolve(
-        PolkadotXCMTransferImpl.transferPolkadotXCM(
-          {
-            ...input,
-            currencySelection
-          },
-          'transfer_assets',
-          'Unlimited'
-        )
-      )
+    if (
+      scenario === 'ParaToPara' &&
+      (destination === 'AssetHubPolkadot' || destination === 'Hydration')
+    ) {
+      return createTransferAssetsTransfer(input, version)
     }
 
     if (scenario !== 'ParaToRelay') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
 
-    const versionOrDefault = version ?? Version.V3
-
-    const call: TSerializedApiCall = {
-      module: 'PolkadotXcm',
-      section: 'transfer_assets_using_type_and_then',
-      parameters: {
-        dest: this.createPolkadotXcmHeader(
-          'RelayToPara',
-          versionOrDefault,
-          destination,
-          getParaId('AssetHubPolkadot')
-        ),
-        assets: {
-          [versionOrDefault]: [createMultiAsset(versionOrDefault, asset.amount, DOT_MULTILOCATION)]
-        },
-        assets_transfer_type: 'Teleport',
-        remote_fees_id: {
-          [versionOrDefault]: {
-            Concrete: {
-              parents: Parents.ZERO,
-              interior: 'Here'
-            }
-          }
-        },
-        fees_transfer_type: 'Teleport',
-        custom_xcm_on_dest: createCustomXcmPolimec(
-          api,
-          address,
-          scenario,
-          destination,
-          paraIdTo,
-          versionOrDefault
-        ),
-        weight_limit: 'Unlimited'
-      }
-    }
-
+    const call = createTypeAndThenTransfer(input, version, 'Teleport')
     return Promise.resolve(api.callTxMethod(call))
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
-    const { version = Version.V3, api, asset, address, destination, paraIdTo } = options
+    const { version = this.version } = options
 
-    const call: TSerializedApiCall = {
-      module: 'XcmPallet',
-      section: 'transfer_assets_using_type_and_then',
-      parameters: {
-        dest: this.createPolkadotXcmHeader(
-          'RelayToPara',
-          version,
-          destination,
-          getParaId('AssetHubPolkadot')
-        ),
-        assets: {
-          [version]: [
-            createMultiAsset(version, asset.amount, {
-              parents: Parents.ZERO,
-              interior: 'Here'
-            })
-          ]
-        },
-        assets_transfer_type: 'Teleport',
-        remote_fees_id: {
-          [version]: {
-            Concrete: {
-              parents: Parents.ZERO,
-              interior: 'Here'
-            }
-          }
-        },
-        fees_transfer_type: 'Teleport',
-        custom_xcm_on_dest: createCustomXcmPolimec(
-          api,
-          address,
-          'RelayToPara',
-          destination,
-          paraIdTo,
-          version
-        ),
-        weight_limit: 'Unlimited'
-      }
-    }
+    const call = createTypeAndThenTransfer(
+      {
+        ...options,
+        scenario: 'RelayToPara'
+      },
+      version,
+      'Teleport'
+    )
 
     return call
   }

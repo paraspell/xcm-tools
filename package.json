@@ -44,9 +44,9 @@
     "run:api": "pnpm --filter xcm-api start:dev",
     "run:lightspell-site": "pnpm --filter lightspell-site dev",
     "run:paraspell-site": "pnpm --filter site dev",
-    "run:updateAssets": "pnpm --filter sdk-core updateAssets",
+    "run:updateAssets": "pnpm --filter assets update",
     "run:updateRouterAssets": "pnpm --filter xcm-router updateAssets",
-    "run:updatePallets": "pnpm --filter sdk-core updatePallets"
+    "run:updatePallets": "pnpm --filter pallets update"
   },
   "packageManager": "pnpm@10.5.2"
 }

@@ -53,6 +53,24 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: packages/sdk-pjs
           flags: xcm-sdk-pjs
+      - name: Upload Assets coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/sdk-common
+          flags: sdk-common
+      - name: Upload Assets coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/assets
+          flags: assets
+      - name: Upload Pallets coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: packages/pallets
+          flags: pallets
       - name: Upload XCM Analyser coverage report to Codecov
         uses: codecov/codecov-action@v5
         with:

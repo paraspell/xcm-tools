@@ -40,7 +40,7 @@ describe('Polimec', () => {
     expect(polimec.version).toBe(Version.V3)
   })
 
-  it('should throw ScenarioNotSupportedError when scenario is not ParaToRelay or ParaToPara with AssetHubPolkadot', async () => {
+  it('should throw ScenarioNotSupportedError when scenario is not ParaToRelay or ParaToPara with AssetHubPolkadot or Hydration', async () => {
     const input = {
       api: mockApi,
       version: Version.V3,
@@ -99,40 +99,7 @@ describe('Polimec', () => {
       address: 'SomeAddress',
       scenario: 'ParaToPara',
       paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: '1000' }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
-    const result = await polimec.transferPolkadotXCM(input)
-
-    expect(spy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        currencySelection: {
-          [Version.V3]: [
-            expect.objectContaining({
-              id: {
-                Concrete: DOT_MULTILOCATION
-              }
-            })
-          ]
-        }
-      }),
-      'transfer_assets',
-      'Unlimited'
-    )
-    expect(result).toBe('mocked polkadotXcm result')
-  })
-
-  it('should use DOT_MULTILOCATION when asset is not foreign and symbol is DOT', async () => {
-    const input = {
-      api: mockApi,
-      version: Version.V3,
-      destination: 'AssetHubPolkadot',
-      address: 'SomeAddress',
-      scenario: 'ParaToPara',
-      paraIdTo: 2000,
-      asset: { symbol: 'DOT', amount: '1000' }
+      asset: { symbol: 'DOT', amount: '1000', multiLocation: DOT_MULTILOCATION }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')

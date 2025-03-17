@@ -19,6 +19,18 @@ flag_management:
       paths:
         - packages/sdk-pjs
       carryforward: true
+    - name: sdk-common
+      paths:
+        - packages/sdk-common
+      carryforward: true
+    - name: assets
+      paths:
+        - packages/assets
+      carryforward: true
+    - name: pallets
+      paths:
+        - packages/pallets
+      carryforward: true
     - name: xcm-analyser
       paths:
         - packages/xcm-analyser

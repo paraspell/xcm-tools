@@ -1,3 +1,4 @@
+import { hasJunction } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -6,11 +7,13 @@ import XTokensTransferImpl from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
+  TSerializedApiCall,
   TXTokensTransferOptions
 } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Hydration from './Hydration'
+import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
 
 vi.mock('../../pallets/xTokens', () => ({
   default: {
@@ -22,6 +25,17 @@ vi.mock('../polkadotXcm', () => ({
   default: {
     transferPolkadotXCM: vi.fn()
   }
+}))
+
+vi.mock('./Polimec', async importOriginal => ({
+  ...(await importOriginal<typeof import('./Polimec')>()),
+  createTypeAndThenTransfer: vi.fn(),
+  createTransferAssetsTransfer: vi.fn()
+}))
+
+vi.mock('@paraspell/sdk-common', async importOriginal => ({
+  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
+  hasJunction: vi.fn()
 }))
 
 describe('Hydration', () => {
@@ -56,7 +70,7 @@ describe('Hydration', () => {
 
     beforeEach(() => {
       mockApi = {
-        callTxMethod: vi.fn().mockResolvedValue('success'),
+        callTxMethod: vi.fn().mockReturnValue('success'),
         createApiForNode: vi.fn().mockResolvedValue({
           getFromRpc: vi.fn().mockResolvedValue('0x0000000000000000'),
           disconnect: vi.fn()
@@ -155,6 +169,71 @@ describe('Hydration', () => {
         section: 'transfer_assets_using_type_and_then',
         parameters: expect.any(Object)
       })
+    })
+
+    it('should call api.callTxMethod using createTypeAndThenTransfer when asset is DOT', () => {
+      mockInput = {
+        api: mockApi,
+        address: '0xPolimecAddress',
+        asset: { symbol: 'DOT', assetId: '1', amount: '1000' },
+        scenario: 'ParaToPara',
+        destination: 'Polimec',
+        version: Version.V3
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      const typeAndThenCall = { dummy: 'call-dummy' } as unknown as TSerializedApiCall
+      vi.mocked(createTypeAndThenTransfer).mockReturnValue(typeAndThenCall)
+      const callTxSpy = vi.spyOn(mockApi, 'callTxMethod')
+
+      const result = hydration.transferToPolimec(mockInput)
+
+      expect(createTypeAndThenTransfer).toHaveBeenCalledWith(mockInput, Version.V3)
+      expect(callTxSpy).toHaveBeenCalledWith(typeAndThenCall)
+      expect(result).toBe('success')
+    })
+
+    it('should call createTransferAssetsTransfer for non-DOT asset (USDC) when junction is valid', () => {
+      mockInput = {
+        api: mockApi,
+        address: '0xPolimecAddress',
+        asset: { symbol: 'USDC', assetId: 'usdc-id', amount: '500', multiLocation: {} },
+        scenario: 'ParaToPara',
+        destination: 'Polimec',
+        version: Version.V3
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      const hasJunctionSpy = vi.mocked(hasJunction).mockReturnValue(true)
+
+      const assetsTransferSpy = vi
+        .mocked(createTransferAssetsTransfer)
+        .mockReturnValue('assets-transfer-call')
+
+      const result = hydration.transferToPolimec(mockInput)
+
+      expect(hasJunctionSpy).toHaveBeenCalled()
+      expect(assetsTransferSpy).toHaveBeenCalledWith(mockInput, Version.V3)
+      expect(result).toBe('assets-transfer-call')
+
+      hasJunctionSpy.mockRestore()
+    })
+
+    it('should throw InvalidCurrencyError for USDC when junction is invalid', () => {
+      mockInput = {
+        api: mockApi,
+        address: '0xPolimecAddress',
+        asset: { symbol: 'USDC', assetId: 'usdc-id', amount: '500', multiLocation: {} },
+        scenario: 'ParaToPara',
+        destination: 'Polimec',
+        version: Version.V3
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      const hasJunctionSpy = vi.mocked(hasJunction).mockReturnValue(false)
+
+      expect(() => hydration.transferToPolimec(mockInput)).toThrowError(
+        'The selected asset is not supported for transfer to Polimec'
+      )
+
+      hasJunctionSpy.mockRestore()
     })
   })
 

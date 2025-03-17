@@ -126,8 +126,14 @@ abstract class ParachainNode<TApi, TRes> {
     const scenario: TScenario = isRelayDestination ? 'ParaToRelay' : 'ParaToPara'
     const paraId = resolveParaId(paraIdTo, destination)
 
-    if (destination === 'Polimec' && this.node !== 'AssetHubPolkadot') {
-      throw new Error('Sending assets to Polimec is supported only from AssetHubPolkadot')
+    if (
+      destination === 'Polimec' &&
+      this.node !== 'AssetHubPolkadot' &&
+      this.node !== 'Hydration'
+    ) {
+      throw new Error(
+        'Sending assets to Polimec is supported only from AssetHubPolkadot and Hydration'
+      )
     }
 
     const versionOrDefault = version ?? this.version

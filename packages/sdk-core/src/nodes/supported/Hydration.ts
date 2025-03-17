@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
-import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { hasJunction, Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
 import { createMultiAsset } from '../../pallets/xcmPallet/utils'
@@ -16,6 +16,7 @@ import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '..
 import { generateAddressPayload } from '../../utils'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
+import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
 
 const createCustomXcmAh = <TApi, TRes>(
   { api, scenario, address }: TPolkadotXCMTransferOptions<TApi, TRes>,
@@ -81,13 +82,39 @@ class Hydration<TApi, TRes>
     return api.callTxMethod(call)
   }
 
-  // Handles transfers to Ethereum
+  transferToPolimec<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {
+    const { api, asset, version = this.version } = options
+    const symbol = asset.symbol.toUpperCase()
+
+    if (symbol === 'DOT') {
+      const call = createTypeAndThenTransfer(options, version)
+      return api.callTxMethod(call)
+    }
+
+    if (
+      (symbol === 'USDC' || symbol === 'USDT') &&
+      !hasJunction(
+        asset.multiLocation as TMultiLocation,
+        'Parachain',
+        getParaId('AssetHubPolkadot')
+      )
+    ) {
+      throw new InvalidCurrencyError('The selected asset is not supported for transfer to Polimec')
+    }
+
+    return createTransferAssetsTransfer(options, version)
+  }
+
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
     const { destination } = input
     if (destination === 'Ethereum') {
       return this.transferToEthereum(input)
+    }
+
+    if (destination === 'Polimec') {
+      return this.transferToPolimec(input)
     }
 
     return this.transferToAssetHub(input)
@@ -109,7 +136,9 @@ class Hydration<TApi, TRes>
 
   protected canUseXTokens({ to: destination, asset }: TSendInternalOptions<TApi, TRes>): boolean {
     return (
-      destination !== 'Ethereum' && !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT')
+      destination !== 'Ethereum' &&
+      destination !== 'Polimec' &&
+      !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT')
     )
   }
 }
