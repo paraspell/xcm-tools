@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.8.0...sdk-v8.9.0) (2025-03-18)
+
+
+### Code Refactoring
+
+* Create separate packages for assets and common code ✨ ([d1ed352](https://github.com/paraspell/xcm-tools/commit/d1ed3523e86219916e810fffa06e53b2a3ef96ea))
+* Create separate packages for assets and common code e ✨ ([371b3ec](https://github.com/paraspell/xcm-tools/commit/371b3ec72558e2177c6d7129871820ad50a02a4e))
+
 ## [8.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.7.1...sdk-v8.8.0) (2025-03-13)
 
 
