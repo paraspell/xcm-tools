@@ -51,6 +51,7 @@ const builderMock = {
   recipientAddress: vi.fn().mockReturnThis(),
   slippagePct: vi.fn().mockReturnThis(),
   buildTransactions: vi.fn().mockResolvedValue(serializedExtrinsics),
+  getBestAmountOut: vi.fn().mockResolvedValue('1000000000000000000'),
 };
 
 vi.mock('@paraspell/xcm-router', async () => {
@@ -202,6 +203,60 @@ describe('RouterService', () => {
       );
 
       await expect(service.generateExtrinsics(options)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+  });
+
+  describe('getBestAmountOut', () => {
+    it('should return best amount out for the given parameters', async () => {
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMock as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      const result = await service.getBestAmountOut(options);
+
+      if (Array.isArray(result)) {
+        throw new Error('Expected a best amount out return value');
+      }
+
+      expect(builderMock.from).toHaveBeenCalledWith('Astar');
+      expect(builderMock.exchange).toHaveBeenCalledWith('AcalaDex');
+      expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');
+      expect(builderMock.getBestAmountOut).toHaveBeenCalled();
+      expect(result).toBe('1000000000000000000');
+    });
+
+    it('should throw InternalServerError when uknown error occures in the spell router', async () => {
+      const builderMockWithError = {
+        ...builderMock,
+        getBestAmountOut: vi.fn().mockImplementation(() => {
+          throw new Error('Invalid currency');
+        }),
+      };
+
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMockWithError as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      await expect(service.getBestAmountOut(options)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
+
+    it('should throw InvalidCurrencyError when InvalidCurrencyError error occures in the spell router', async () => {
+      const builderMockWithError = {
+        ...builderMock,
+        getBestAmountOut: vi.fn().mockImplementation(() => {
+          throw new InvalidCurrencyError('Invalid currency');
+        }),
+      };
+
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMockWithError as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      await expect(service.getBestAmountOut(options)).rejects.toThrow(
         BadRequestException,
       );
     });

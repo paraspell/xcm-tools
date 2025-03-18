@@ -29,6 +29,7 @@ export enum EventName {
   GENERATE_ETH_CALL = 'Generate ETH Call',
   GENERATE_API_KEY = 'Generate API Key',
   GENERATE_ROUTER_EXTRINSICS = 'Generate router extrinsics',
+  GET_BEST_AMOUNT_OUT = 'Get Best Amount Out',
   CLAIM_ASSETS = 'Claim assets',
   GET_TRANSFER_INFO = 'Get Transfer Info',
   XCM_ANALYSER = 'XCM Analyser',

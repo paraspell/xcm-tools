@@ -16,7 +16,41 @@ import {
 } from '@paraspell/xcm-router';
 
 import { isValidWalletAddress } from '../utils.js';
-import { RouterDto } from './dto/RouterDto.js';
+import { RouterBestAmountOutDto, RouterDto } from './dto/RouterDto.js';
+
+const validateNodesAndExchange = (
+  from: string,
+  exchange: RouterDto['exchange'],
+  to: string,
+): {
+  fromNode: TNodeDotKsmWithRelayChains;
+  exchangeNode?: TExchangeNode;
+  toNode: TNodeDotKsmWithRelayChains;
+} => {
+  const fromNode = from as TNodeDotKsmWithRelayChains;
+  const exchangeNode = exchange as TExchangeNode;
+  const toNode = to as TNodeDotKsmWithRelayChains;
+
+  if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
+    throw new BadRequestException(
+      `Node ${from} is not valid. Check docs for valid nodes.`,
+    );
+  }
+
+  if (exchange && !EXCHANGE_NODES.includes(exchangeNode)) {
+    throw new BadRequestException(
+      `Exchange ${exchange.toString()} is not valid. Check docs for valid exchanges.`,
+    );
+  }
+
+  if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(toNode)) {
+    throw new BadRequestException(
+      `Node ${to} is not valid. Check docs for valid nodes.`,
+    );
+  }
+
+  return { fromNode, exchangeNode, toNode };
+};
 
 @Injectable()
 export class RouterService {
@@ -38,23 +72,7 @@ export class RouterService {
     const exchangeNode = exchange as TExchangeNode;
     const toNode = to as TNodeDotKsmWithRelayChains;
 
-    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
-      throw new BadRequestException(
-        `Node ${from} is not valid. Check docs for valid nodes.`,
-      );
-    }
-
-    if (exchange && !EXCHANGE_NODES.includes(exchangeNode)) {
-      throw new BadRequestException(
-        `Exchange ${exchange.toString()} is not valid. Check docs for valid exchanges.`,
-      );
-    }
-
-    if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(toNode)) {
-      throw new BadRequestException(
-        `Node ${to} is not valid. Check docs for valid nodes.`,
-      );
-    }
+    validateNodesAndExchange(from, exchange, to);
 
     if (!isValidWalletAddress(senderAddress)) {
       throw new BadRequestException('Invalid sender wallet address.');
@@ -96,6 +114,35 @@ export class RouterService {
       await Promise.all(transactions.map((item) => item.api.disconnect()));
 
       return response;
+    } catch (e) {
+      if (e instanceof InvalidCurrencyError) {
+        throw new BadRequestException(e.message);
+      }
+      if (e instanceof Error) {
+        throw new InternalServerErrorException(e.message);
+      }
+      throw e;
+    }
+  }
+
+  async getBestAmountOut(options: RouterBestAmountOutDto) {
+    const { from, exchange, to, currencyFrom, currencyTo, amount } = options;
+
+    const fromNode = from as TNodeDotKsmWithRelayChains;
+    const exchangeNode = exchange as TExchangeNode;
+    const toNode = to as TNodeDotKsmWithRelayChains;
+
+    validateNodesAndExchange(from, exchange, to);
+
+    try {
+      return await RouterBuilder()
+        .from(fromNode)
+        .exchange(exchangeNode)
+        .to(toNode)
+        .currencyFrom(currencyFrom)
+        .currencyTo(currencyTo)
+        .amount(amount.toString())
+        .getBestAmountOut();
     } catch (e) {
       if (e instanceof InvalidCurrencyError) {
         throw new BadRequestException(e.message);
