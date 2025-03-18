@@ -6,7 +6,12 @@ import { describe, expect, it } from 'vitest'
 
 import { SUPPORTED_PALLETS } from '../constants'
 import { type TPallet } from '../types'
-import { getDefaultPallet, getPalletIndex, getSupportedPallets } from './pallets'
+import {
+  getDefaultPallet,
+  getPalletIndex,
+  getSupportedPallets,
+  getSupportedPalletsDetails
+} from '.'
 
 describe('getDefaultPallet', () => {
   it('should return default pallet for all nodes', () => {
@@ -42,6 +47,19 @@ describe('getSupportedPallets', () => {
     const supportedPallets: TPallet[] = ['PolkadotXcm', 'XTokens']
     const pallets = getSupportedPallets(node)
     expect(pallets).toEqual(supportedPallets)
+  })
+})
+
+describe('getSupportedPalletsDetails', () => {
+  it('should return supported pallets details for all nodes', () => {
+    NODE_NAMES_DOT_KSM.forEach(node => {
+      const pallets = getSupportedPalletsDetails(node)
+      pallets.forEach(pallet => {
+        const res = SUPPORTED_PALLETS.includes(pallet.name)
+        expect(pallet.index).toBeTypeOf('number')
+        expect(res).toBeTruthy()
+      })
+    })
   })
 })
 
