@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { deepEqual, isPrimitive } from './deepEqual'
+import { deepEqual, isPrimitive } from '.'
 
 describe('isPrimitive', () => {
   it('should return true for primitives', () => {
