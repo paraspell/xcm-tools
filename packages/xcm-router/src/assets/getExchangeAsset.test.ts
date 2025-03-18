@@ -1,7 +1,6 @@
 import type {
   TCurrencyInput,
   TForeignAsset,
-  TMultiLocation,
   TNativeAsset,
   TNodePolkadotKusama,
 } from '@paraspell/sdk-pjs';
@@ -109,7 +108,7 @@ describe('getExchangeAsset', () => {
   });
 
   test('should find native asset by multilocation', () => {
-    const multiLocation = { parents: 0, interior: 'Here' } as TMultiLocation;
+    const multiLocation = { parents: 0, interior: 'Here' };
     const currency = { multilocation: multiLocation } as TCurrencyInput;
 
     vi.mocked(findAssetByMultiLocation)

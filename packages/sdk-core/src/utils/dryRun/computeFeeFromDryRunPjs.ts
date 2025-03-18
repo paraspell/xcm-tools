@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getNativeAssetSymbol } from '@paraspell/assets'
-import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import { getMultiLocationTokenIdPjs } from './getMultiLocationTokenIdPjs'
 
@@ -23,7 +23,7 @@ export const computeFeeFromDryRunPjs = (
       for (const feeItem of e.data.fees) {
         if (feeItem.fun.NonFungible) continue
         const plancks = BigInt(feeItem.fun.Fungible.replace(/,/g, ''))
-        const tokenSymbol = getMultiLocationTokenIdPjs(feeItem.id as TMultiLocation, node)
+        const tokenSymbol = getMultiLocationTokenIdPjs(feeItem.id, node)
         if (!tokenSymbol || !plancks) continue
         deliveryFees.push({ plancks, tokenSymbol })
       }

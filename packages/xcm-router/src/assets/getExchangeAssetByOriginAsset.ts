@@ -36,8 +36,8 @@ export const getExchangeAssetByOriginAsset = (
 
   // Origin asset is a foreign asset, try matching by multi-location.
   const candidateByML = candidates.find((asset) => {
-    if (asset.id === undefined) return false;
-    const sdkAsset = findAsset(exchangeBaseNode, { id: asset.id }, null) as TForeignAsset;
+    if (asset.assetId === undefined) return false;
+    const sdkAsset = findAsset(exchangeBaseNode, { id: asset.assetId }, null) as TForeignAsset;
 
     if (sdkAsset.multiLocation === undefined) return false;
 

@@ -1,14 +1,15 @@
 import { Amount, getCurrencyCombinations, Token } from '@crypto-dex-sdk/currency';
 import { Percent } from '@crypto-dex-sdk/math';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
-import { getNativeAssetSymbol, getOtherAssets, getParaId } from '@paraspell/sdk-pjs';
+import type { TForeignAsset } from '@paraspell/sdk-pjs';
+import { getAssets, getNativeAssetSymbol, getParaId } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type { TAssets, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import type { TGetAmountOutOptions, TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 
@@ -139,13 +140,21 @@ class BifrostExchangeNode extends ExchangeNode {
     return BigInt(amountOut);
   }
 
-  async getAssets(_api: ApiPromise): Promise<TAssets> {
+  async getAssets(_api: ApiPromise): Promise<TRouterAsset[]> {
     const chainId = getParaId(this.node);
     const tokenMap = getTokenMap(this.node, chainId);
-    const assets = Object.values(tokenMap).map((item) => ({
-      symbol: item.wrapped.symbol ?? '',
-      id: getOtherAssets(this.node).find((asset) => asset.symbol === item.wrapped.symbol)?.assetId,
-    }));
+    const assets: TRouterAsset[] = Object.values(tokenMap).map((item) => {
+      const sdkAssets = getAssets(this.node) as TForeignAsset[];
+      const sdkAsset = sdkAssets.find(
+        (asset) => asset.symbol.toLowerCase() === item.wrapped.symbol?.toLowerCase(),
+      );
+
+      return {
+        symbol: item.wrapped.symbol ?? '',
+        assetId: sdkAsset?.assetId,
+        multiLocation: sdkAsset?.multiLocation,
+      };
+    });
     return Promise.resolve(assets);
   }
 }

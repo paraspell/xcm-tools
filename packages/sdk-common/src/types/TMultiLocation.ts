@@ -92,14 +92,14 @@ export type TJunction =
 
 export interface TJunctions {
   Here?: null
-  X1?: TJunction | [TJunction]
-  X2?: [TJunction, TJunction]
-  X3?: [TJunction, TJunction, TJunction]
-  X4?: [TJunction, TJunction, TJunction, TJunction]
-  X5?: [TJunction, TJunction, TJunction, TJunction, TJunction]
-  X6?: [TJunction, TJunction, TJunction, TJunction, TJunction, TJunction]
-  X7?: [TJunction, TJunction, TJunction, TJunction, TJunction, TJunction, TJunction]
-  X8?: [TJunction, TJunction, TJunction, TJunction, TJunction, TJunction, TJunction, TJunction]
+  X1?: TJunction | TJunction[]
+  X2?: TJunction[]
+  X3?: TJunction[]
+  X4?: TJunction[]
+  X5?: TJunction[]
+  X6?: TJunction[]
+  X7?: TJunction[]
+  X8?: TJunction[]
 }
 
 export interface TMultiLocation {

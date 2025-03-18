@@ -62,7 +62,7 @@ export const generateAddressPayload = <TApi, TRes>(
                 }
           ]
         }
-      } as TMultiLocation,
+      },
       version
     )
   }

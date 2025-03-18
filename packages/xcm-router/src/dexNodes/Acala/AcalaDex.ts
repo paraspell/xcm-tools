@@ -2,7 +2,14 @@ import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
 import type { TWeight } from '@paraspell/sdk-pjs';
-import { type Extrinsic, getBalanceNative, getNativeAssetSymbol } from '@paraspell/sdk-pjs';
+import {
+  type Extrinsic,
+  findAssetById,
+  getBalanceNative,
+  getNativeAssets,
+  getNativeAssetSymbol,
+  getOtherAssets,
+} from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { firstValueFrom } from 'rxjs';
@@ -10,7 +17,7 @@ import { firstValueFrom } from 'rxjs';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type { TAssets, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import type { TGetAmountOutOptions, TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { calculateAcalaSwapFee, createAcalaApiInstance } from './utils';
 
@@ -151,11 +158,11 @@ class AcalaExchangeNode extends ExchangeNode {
     return createAcalaApiInstance(this.node);
   }
 
-  async getAssets(api: ApiPromise): Promise<TAssets> {
+  async getAssets(api: ApiPromise): Promise<TRouterAsset[]> {
     const wallet = new Wallet(api);
     await wallet.isReady;
     const tokens = await wallet.getTokens();
-    return Object.values(tokens).reduce<TAssets>((acc, token) => {
+    return Object.values(tokens).reduce<TRouterAsset[]>((acc, token) => {
       const idObject = JSON.parse(token.toCurrencyId(api).toString()) as Record<string, unknown>;
 
       const firstKey = Object.keys(idObject)[0];
@@ -163,14 +170,30 @@ class AcalaExchangeNode extends ExchangeNode {
 
       if (!Array.isArray(firstValue)) {
         if (firstKey.toLowerCase() === 'token') {
-          acc.push({ symbol: token.symbol });
+          const sdkAsset = getNativeAssets(this.node).find(
+            (asset) => asset.symbol === token.symbol,
+          );
+          acc.push({
+            symbol: token.symbol,
+            multiLocation: sdkAsset?.multiLocation,
+          });
         } else {
           const formattedId =
             typeof firstValue === 'object' ? JSON.stringify(firstValue) : firstValue.toString();
-          acc.push({
-            symbol: token.symbol,
-            id: formattedId,
-          });
+
+          if (firstKey.toLowerCase() !== 'erc20') {
+            const sdkAsset = findAssetById(getOtherAssets(this.node), formattedId);
+
+            if (!sdkAsset) {
+              throw new Error(`Asset not found: ${formattedId}`);
+            }
+
+            acc.push({
+              symbol: token.symbol,
+              assetId: sdkAsset?.assetId,
+              multiLocation: sdkAsset?.multiLocation,
+            });
+          }
         }
       }
       return acc;

@@ -189,10 +189,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       ...values,
       exchange: getExchange(values.exchange) as TExchangeNode,
       currencyFrom,
-      currencyTo: {
-        ...currencyTo,
-        assetId: currencyTo.id,
-      } as TAsset,
+      currencyTo: currencyTo as TAsset,
     };
 
     onSubmit(transformedValues, submitType);

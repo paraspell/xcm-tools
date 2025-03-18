@@ -4,9 +4,9 @@ import type { ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';
 
 import type {
-  TAssets,
   TExchangeNode,
   TGetAmountOutOptions,
+  TRouterAsset,
   TSwapOptions,
   TSwapResult,
 } from '../types';
@@ -37,7 +37,7 @@ abstract class ExchangeNode {
 
   abstract getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint>;
 
-  abstract getAssets(api: ApiPromise): Promise<TAssets>;
+  abstract getAssets(api: ApiPromise): Promise<TRouterAsset[]>;
 
   async createApiInstance(): Promise<ApiPromise> {
     return createApiInstanceForNode(this.node);

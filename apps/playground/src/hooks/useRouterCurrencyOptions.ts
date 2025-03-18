@@ -1,8 +1,4 @@
-import {
-  isForeignAsset,
-  type TAsset,
-  type TNodeWithRelayChains,
-} from '@paraspell/sdk';
+import { type TAsset, type TNodeWithRelayChains } from '@paraspell/sdk';
 import type { TExchangeInput, TRouterAsset } from '@paraspell/xcm-router';
 import {
   getSupportedAssetsFrom,
@@ -28,7 +24,7 @@ const useRouterCurrencyOptions = (
   const currencyFromMap = useMemo(
     () =>
       supportedAssetsFrom.reduce((map: Record<string, TAsset>, asset) => {
-        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${isForeignAsset(asset) ? asset.assetId : 'NO_ID'}`;
+        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${'assetId' in asset ? asset.assetId : 'NO_ID'}`;
         map[key] = asset;
         return map;
       }, {}),
@@ -38,7 +34,7 @@ const useRouterCurrencyOptions = (
   const currencyToMap = useMemo(
     () =>
       supportedAssetsTo.reduce((map: Record<string, TRouterAsset>, asset) => {
-        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${asset.id ? asset.id : 'NO_ID'}`;
+        const key = `${asset.symbol ?? 'NO_SYMBOL'}-${'assetId' in asset ? asset.assetId : 'NO_ID'}`;
         map[key] = asset;
         return map;
       }, {}),
@@ -49,7 +45,7 @@ const useRouterCurrencyOptions = (
     () =>
       Object.keys(currencyFromMap).map((key) => ({
         value: key,
-        label: `${currencyFromMap[key].symbol} - ${isForeignAsset(currencyFromMap[key]) ? (currencyFromMap[key].assetId ?? 'Multi-location') : 'Native'}`,
+        label: `${currencyFromMap[key].symbol} - ${'assetId' in currencyFromMap[key] || 'multiLocation' in currencyFromMap[key] ? ('assetId' in currencyFromMap[key] ? currencyFromMap[key].assetId : 'Multi-Location') : 'Native'}`,
       })),
     [currencyFromMap],
   );
@@ -58,7 +54,7 @@ const useRouterCurrencyOptions = (
     () =>
       Object.keys(currencyToMap).map((key) => ({
         value: key,
-        label: `${currencyToMap[key].symbol} - ${currencyToMap[key].id ? (currencyToMap[key].id ?? 'Multi-location') : 'Native'}`,
+        label: `${currencyToMap[key].symbol} - ${'assetId' in currencyToMap[key] || 'multiLocation' in currencyToMap[key] ? ('assetId' in currencyToMap[key] ? currencyToMap[key].assetId : 'Multi-location') : 'Native'}`,
       })),
     [currencyToMap],
   );

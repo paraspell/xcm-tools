@@ -26,13 +26,7 @@ export const getSupportedAssetsFrom = (
     : getExchangeAssets(exchange);
 
   if (!from || (!Array.isArray(exchange) && from === createDexNodeInstance(exchange).node)) {
-    return exchangeAssets.map(
-      (exchangeAsset) =>
-        ({
-          ...exchangeAsset,
-          ...(exchangeAsset.id !== undefined ? { assetId: exchangeAsset.id } : {}),
-        }) as TAsset,
-    );
+    return exchangeAssets as TAsset[];
   }
 
   const fromAssets = getAssets(from);

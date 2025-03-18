@@ -60,10 +60,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
     throw new InvalidCurrencyError('Currency must be a foreign asset with valid multi-location')
   }
 
-  const ethAsset = findAssetByMultiLocation(
-    getOtherAssets('Ethereum'),
-    foundAsset.multiLocation as TMultiLocation
-  )
+  const ethAsset = findAssetByMultiLocation(getOtherAssets('Ethereum'), foundAsset.multiLocation)
 
   if (!ethAsset || !ethAsset.assetId) {
     throw new InvalidCurrencyError(

@@ -98,7 +98,7 @@ describe('getCurrency', () => {
       .spyOn(interBTC.assetRegistry, 'getForeignAsset')
       .mockResolvedValue(expectedCurrency);
 
-    const result = await getCurrency(interBTC, { symbol: 'USDT', id: '123' });
+    const result = await getCurrency(interBTC, { symbol: 'USDT', assetId: '123' });
 
     expect(spy).toHaveBeenCalledWith(123);
     expect(result).toBe(expectedCurrency);
@@ -111,7 +111,7 @@ describe('getCurrency', () => {
       .spyOn(interBTC.assetRegistry, 'getForeignAsset')
       .mockResolvedValue(expectedCurrency);
 
-    const result = await getCurrency(interBTC, { symbol: 'HDX', id: '456' });
+    const result = await getCurrency(interBTC, { symbol: 'HDX', assetId: '456' });
 
     expect(spy).toHaveBeenCalledWith(456);
     expect(result).toBe(expectedCurrency);

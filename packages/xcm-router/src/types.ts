@@ -2,6 +2,7 @@ import type {
   Extrinsic,
   TAsset,
   TCurrencyInput,
+  TMultiLocation,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
   TNodeWithRelayChains,
@@ -183,11 +184,10 @@ export type TCommonTransferOptionsModified = Omit<TTransferOptionsModified, 'sig
 
 export type TRouterAsset = {
   symbol: string;
-  id?: string;
-  multiLocation?: object;
+  assetId?: string;
+  multiLocation?: TMultiLocation;
 };
-export type TAssets = Array<TRouterAsset>;
-export type TAssetsRecord = Record<TExchangeNode, TAssets>;
+export type TAssetsRecord = Record<TExchangeNode, TRouterAsset[]>;
 
 export type TExchangeInput =
   | TExchangeNode

@@ -1,3 +1,4 @@
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import { Parents, type TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -40,7 +41,7 @@ describe('getAssetMultiLocation', () => {
     const multiLocation = {
       parents: Parents.ZERO,
       interior: { X2: [{ Parachain: 123 }, { Parachain: 456 }] }
-    }
+    } as TMultiLocation
     const asset = { symbol: 'TEST', multiLocation }
     vi.mocked(findAsset).mockReturnValue(asset)
     vi.mocked(isForeignAsset).mockReturnValue(true)

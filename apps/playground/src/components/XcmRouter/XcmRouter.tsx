@@ -12,11 +12,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type {
-  TAsset,
-  TMultiLocation,
-  TNodeDotKsmWithRelayChains,
-} from '@paraspell/sdk-pjs';
+import type { TAsset, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
 import {
   getOtherAssets,
   isForeignAsset,
@@ -117,7 +113,7 @@ export const XcmRouter = () => {
 
     if (isAutoExchange) {
       return asset.multiLocation
-        ? { multilocation: asset.multiLocation as TMultiLocation }
+        ? { multilocation: asset.multiLocation }
         : { symbol: asset.symbol };
     }
 
@@ -132,8 +128,7 @@ export const XcmRouter = () => {
       return { symbol: asset.symbol };
     }
 
-    if (asset.multiLocation)
-      return { multilocation: asset.multiLocation as TMultiLocation };
+    if (asset.multiLocation) return { multilocation: asset.multiLocation };
 
     if (asset.assetId) return { id: asset.assetId };
 

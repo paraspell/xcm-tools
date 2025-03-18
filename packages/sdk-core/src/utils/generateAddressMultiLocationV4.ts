@@ -26,7 +26,7 @@ export const generateAddressMultiLocationV4 = <TApi, TRes>(
             : { AccountId32: { id: api.accountToHex(address), network: null } }
         ]
       }
-    } as TMultiLocation,
+    },
     Version.V4
   )
 }

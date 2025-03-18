@@ -9,7 +9,7 @@ import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { TAssets, TSwapOptions, TSwapResult } from '../../types';
+import type { TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
 import AssetHubExchangeNode from './AssetHubDex';
 import { getQuotedAmount } from './utils';
 
@@ -114,7 +114,7 @@ describe('AssetHubExchangeNode', () => {
       };
       const feeQuote = {
         amountOut: BigInt('100'),
-        usedFromML: { parents: Parents.ONE, interior: { Here: null } } as TMultiLocation,
+        usedFromML: { parents: Parents.ONE, interior: { Here: null } },
         usedToML: assetToML,
       };
       vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote).mockResolvedValueOnce(feeQuote);
@@ -148,10 +148,10 @@ describe('AssetHubExchangeNode', () => {
         { symbol: 'BBB', assetId: '2' } as TForeignAsset,
       ];
       vi.mocked(sdkGetAssets).mockReturnValue(sdkAssets);
-      const assets: TAssets = await instance.getAssets(api);
+      const assets: TRouterAsset[] = await instance.getAssets(api);
       expect(assets).toEqual([
-        { symbol: 'AAA', id: '1' },
-        { symbol: 'BBB', id: '2' },
+        { symbol: 'AAA', assetId: '1' },
+        { symbol: 'BBB', assetId: '2' },
       ]);
       expect(vi.mocked(sdkGetAssets)).toHaveBeenCalledWith('AssetHubPolkadot');
     });

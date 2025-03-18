@@ -177,6 +177,19 @@ describe('ParachainNode', () => {
     expect(result).toBe('transferXTransfer called')
   })
 
+  it('should fail when transfering to Polimec and node is not AssetHubPolkadot or Hydration', async () => {
+    const options = {
+      api: {},
+      asset: { symbol: 'DOT', amount: '100' },
+      address: 'destinationAddress',
+      to: 'Polimec'
+    } as TSendInternalOptions<unknown, unknown>
+
+    await expect(node.transfer(options)).rejects.toThrowError(
+      'Sending assets to Polimec is supported only from AssetHubPolkadot and Hydration'
+    )
+  })
+
   it('should call transferPolkadotXCM when supportsPolkadotXCM returns true', async () => {
     const node = new OnlyPolkadotXCMNode('Acala', 'TestNode', 'polkadot', Version.V3)
     const options = {

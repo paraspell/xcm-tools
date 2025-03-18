@@ -27,10 +27,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     throw new InvalidCurrencyError(`Please provide senderAddress`)
   }
 
-  const ethAsset = findAssetByMultiLocation(
-    getOtherAssets('Ethereum'),
-    asset.multiLocation as TMultiLocation
-  )
+  const ethAsset = findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
 
   if (!ethAsset) {
     throw new InvalidCurrencyError(

@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Moonbeam Parachain
 
-import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import { InvalidCurrencyError, type TAsset } from '@paraspell/assets'
 import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
@@ -33,13 +33,13 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
         }
       }
 
-    if (!isForeignAsset(asset)) {
+    if (!asset.multiLocation) {
       throw new InvalidCurrencyError(
         'throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)'
       )
     }
 
-    return asset.multiLocation as TMultiLocation
+    return asset.multiLocation
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

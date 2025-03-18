@@ -1,6 +1,11 @@
 import type { Asset } from '@galacticcouncil/sdk';
 import { TradeRouter } from '@galacticcouncil/sdk';
-import { type Extrinsic, getAssetDecimals, InvalidCurrencyError } from '@paraspell/sdk-pjs';
+import {
+  type Extrinsic,
+  getAssetDecimals,
+  getAssets,
+  InvalidCurrencyError,
+} from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -26,6 +31,7 @@ vi.mock('@paraspell/sdk-pjs', () => ({
   getAssetDecimals: vi.fn(),
   InvalidCurrencyError: class extends Error {},
   getNativeAssetSymbol: vi.fn(),
+  getAssets: vi.fn(),
 }));
 
 vi.mock('./utils', () => ({
@@ -206,8 +212,8 @@ describe('HydrationExchangeNode', () => {
   describe('getAssets', () => {
     it('returns a list of assets in the correct format', async () => {
       const mockAssets = [
-        { symbol: 'ABC', id: 1 },
-        { symbol: 'XYZ', id: 2 },
+        { symbol: 'ABC', assetId: '1' },
+        { symbol: 'XYZ', assetId: '2' },
       ];
       vi.mocked(TradeRouter).mockImplementation(
         () =>
@@ -215,6 +221,8 @@ describe('HydrationExchangeNode', () => {
             getAllAssets: vi.fn().mockResolvedValue(mockAssets),
           }) as unknown as TradeRouter,
       );
+
+      vi.mocked(getAssets).mockReturnValue(mockAssets);
 
       const assets = await node.getAssets(api);
 

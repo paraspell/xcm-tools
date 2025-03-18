@@ -1,5 +1,5 @@
 import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
-import type { TMultiLocation, TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 
@@ -30,12 +30,12 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multi-location`)
     }
 
-    return api.getAssetHubForeignBalance(address, asset.multiLocation as TMultiLocation)
+    return api.getAssetHubForeignBalance(address, asset.multiLocation)
   }
 
   if (node === 'AssetHubPolkadot') {
     if (asset.multiLocation) {
-      return api.getAssetHubForeignBalance(address, asset.multiLocation as TMultiLocation)
+      return api.getAssetHubForeignBalance(address, asset.multiLocation)
     } else {
       return api.getBalanceForeignAssetsAccount(address, Number(asset.assetId))
     }

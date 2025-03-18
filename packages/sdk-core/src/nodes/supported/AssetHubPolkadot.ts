@@ -168,11 +168,7 @@ class AssetHubPolkadot<TApi, TRes>
         this.version,
         paraIdTo
       ),
-      currencySelection: createVersionedMultiAssets(
-        Version.V3,
-        asset.amount,
-        asset.multiLocation as TMultiLocation
-      )
+      currencySelection: createVersionedMultiAssets(Version.V3, asset.amount, asset.multiLocation)
     }
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
       modifiedInput,
@@ -235,9 +231,7 @@ class AssetHubPolkadot<TApi, TRes>
           getParaId('BifrostPolkadot')
         ),
         assets: {
-          [version]: [
-            createMultiAsset(version, asset.amount, asset.multiLocation as TMultiLocation)
-          ]
+          [version]: [createMultiAsset(version, asset.amount, asset.multiLocation)]
         },
         assets_transfer_type: 'LocalReserve',
         remote_fees_id: {
@@ -430,7 +424,7 @@ class AssetHubPolkadot<TApi, TRes>
 
   createCurrencySpec(amount: TAmount, scenario: TScenario, version: Version, asset?: TAsset) {
     if (scenario === 'ParaToPara') {
-      const multiLocation = asset ? (asset.multiLocation as TMultiLocation) : undefined
+      const multiLocation = asset ? asset.multiLocation : undefined
 
       return createVersionedMultiAssets(
         version,

@@ -14,7 +14,7 @@ export const getAssetMultiLocation = (
   }
 
   if (asset.multiLocation) {
-    return asset.multiLocation as TMultiLocation
+    return asset.multiLocation
   }
 
   return null
