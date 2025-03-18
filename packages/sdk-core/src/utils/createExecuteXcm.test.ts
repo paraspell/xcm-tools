@@ -6,7 +6,7 @@ import { createPolkadotXcmHeader, extractVersionFromHeader } from '../pallets/xc
 import type { TPolkadotXCMTransferOptions, TSerializedApiCall, TXcmVersioned } from '../types'
 import { Version } from '../types'
 import { createExecuteXcm } from './createExecuteXcm'
-import { generateAddressPayload } from './generateAddressPayload'
+import { createVersionedBeneficiary } from './createVersionedBeneficiary'
 import { transformMultiLocation } from './multiLocation'
 
 vi.mock('../pallets/xcmPallet/utils', () => ({
@@ -14,8 +14,8 @@ vi.mock('../pallets/xcmPallet/utils', () => ({
   extractVersionFromHeader: vi.fn()
 }))
 
-vi.mock('./generateAddressPayload', () => ({
-  generateAddressPayload: vi.fn()
+vi.mock('./createVersionedBeneficiary', () => ({
+  createVersionedBeneficiary: vi.fn()
 }))
 
 vi.mock('./multiLocation', () => ({
@@ -29,7 +29,7 @@ describe('createExecuteXcm', () => {
 
   beforeEach(() => {
     vi.mocked(createPolkadotXcmHeader).mockReturnValue(dummyDestHeader)
-    vi.mocked(generateAddressPayload).mockReturnValue(dummyBeneficiaryHeader)
+    vi.mocked(createVersionedBeneficiary).mockReturnValue(dummyBeneficiaryHeader)
     vi.mocked(extractVersionFromHeader).mockImplementation(header => {
       if (header === dummyDestHeader) return [Version.V1, 'destValue']
       if (header === dummyBeneficiaryHeader) return [Version.V1, 'beneficiaryValue']
@@ -134,13 +134,13 @@ describe('createExecuteXcm', () => {
       input.destination,
       input.paraIdTo
     )
-    expect(vi.mocked(generateAddressPayload)).toHaveBeenCalledWith(
-      input.api,
-      input.scenario,
-      'PolkadotXcm',
-      input.address,
-      Version.V4,
-      input.paraIdTo
-    )
+    expect(createVersionedBeneficiary).toHaveBeenCalledWith({
+      api: input.api,
+      scenario: input.scenario,
+      pallet: 'PolkadotXcm',
+      recipientAddress: input.address,
+      version: Version.V4,
+      paraId: input.paraIdTo
+    })
   })
 })

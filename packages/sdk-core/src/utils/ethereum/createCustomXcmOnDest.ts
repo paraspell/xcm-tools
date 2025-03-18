@@ -4,11 +4,11 @@ import {
   InvalidCurrencyError,
   isForeignAsset
 } from '@paraspell/assets'
-import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { Parents } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
 import { type TPolkadotXCMTransferOptions, type Version } from '../../types'
-import { generateAddressPayload } from '../generateAddressPayload'
+import { createBeneficiaryMultiLocation } from '../multiLocation'
 
 export const createCustomXcmOnDest = <TApi, TRes>(
   { api, address, asset, scenario, senderAddress }: TPolkadotXCMTransferOptions<TApi, TRes>,
@@ -42,18 +42,13 @@ export const createCustomXcmOnDest = <TApi, TRes>(
           {
             DepositAsset: {
               assets: { Wild: 'All' },
-              beneficiary: (
-                Object.values(
-                  generateAddressPayload(
-                    api,
-                    scenario,
-                    'PolkadotXcm',
-                    senderAddress,
-                    version,
-                    undefined
-                  )
-                ) as TMultiLocation[]
-              )[0]
+              beneficiary: createBeneficiaryMultiLocation({
+                api,
+                scenario,
+                pallet: 'PolkadotXcm',
+                recipientAddress: senderAddress,
+                version
+              })
             }
           }
         ]

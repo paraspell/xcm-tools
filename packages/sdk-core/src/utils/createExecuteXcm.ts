@@ -1,7 +1,7 @@
 import { createPolkadotXcmHeader, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
 import type { TSerializedApiCall, TWeight } from '../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../types'
-import { generateAddressPayload } from './generateAddressPayload'
+import { createVersionedBeneficiary } from './createVersionedBeneficiary'
 import { transformMultiLocation } from './multiLocation'
 
 export const createExecuteXcm = <TApi, TRes>(
@@ -14,14 +14,14 @@ export const createExecuteXcm = <TApi, TRes>(
   const destWithHeader = createPolkadotXcmHeader(scenario, version, destination, paraIdTo)
   const [_, dest] = extractVersionFromHeader(destWithHeader)
 
-  const beneficiaryWithHeader = generateAddressPayload(
+  const beneficiaryWithHeader = createVersionedBeneficiary({
     api,
     scenario,
-    'PolkadotXcm',
-    address,
+    pallet: 'PolkadotXcm',
+    recipientAddress: address,
     version,
-    paraIdTo
-  )
+    paraId: paraIdTo
+  })
   const [__, beneficiary] = extractVersionFromHeader(beneficiaryWithHeader)
 
   if (!asset.multiLocation) {

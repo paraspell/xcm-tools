@@ -44,7 +44,7 @@ import type {
   TXTokensTransferOptions
 } from '../types'
 import { Version } from '../types'
-import { generateAddressPayload, getFees, isRelayChain } from '../utils'
+import { createVersionedBeneficiary, getFees, isRelayChain } from '../utils'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
 import { resolveParaId } from '../utils/resolveParaId'
@@ -146,14 +146,14 @@ abstract class ParachainNode<TApi, TRes> {
       const input: TXTokensTransferOptions<TApi, TRes> = {
         api,
         asset,
-        addressSelection: generateAddressPayload(
+        addressSelection: createVersionedBeneficiary({
           api,
           scenario,
-          'XTokens',
-          address,
-          versionOrDefault,
+          pallet: 'XTokens',
+          recipientAddress: address,
+          version: versionOrDefault,
           paraId
-        ),
+        }),
         fees: getFees(scenario),
         origin: this.node,
         scenario,
@@ -185,14 +185,14 @@ abstract class ParachainNode<TApi, TRes> {
       return this.transferPolkadotXCM({
         api,
         header: this.createPolkadotXcmHeader(scenario, versionOrDefault, destination, paraId),
-        addressSelection: generateAddressPayload(
+        addressSelection: createVersionedBeneficiary({
           api,
           scenario,
-          'PolkadotXcm',
-          address,
-          versionOrDefault,
+          pallet: 'PolkadotXcm',
+          recipientAddress: address,
+          version: versionOrDefault,
           paraId
-        ),
+        }),
         address,
         currencySelection: this.createCurrencySpec(asset.amount, scenario, versionOrDefault, asset),
         overriddenAsset,

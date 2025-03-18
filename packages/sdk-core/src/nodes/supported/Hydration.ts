@@ -13,7 +13,7 @@ import type {
   TSerializedApiCall
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
-import { generateAddressPayload } from '../../utils'
+import { createBeneficiaryMultiLocation } from '../../utils'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
 import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
@@ -26,11 +26,13 @@ const createCustomXcmAh = <TApi, TRes>(
     {
       DepositAsset: {
         assets: { Wild: { AllCounted: 1 } },
-        beneficiary: (
-          Object.values(
-            generateAddressPayload(api, scenario, 'PolkadotXcm', address, version, undefined)
-          ) as TMultiLocation[]
-        )[0]
+        beneficiary: createBeneficiaryMultiLocation({
+          api,
+          scenario,
+          pallet: 'PolkadotXcm',
+          recipientAddress: address,
+          version
+        })
       }
     }
   ]

@@ -6,12 +6,12 @@ import type { IPolkadotApi } from '../../api'
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TRelayToParaOptions, TXcmVersioned } from '../../types'
 import { Version } from '../../types'
-import { generateAddressPayload, resolveParaId } from '../../utils'
+import { createVersionedBeneficiary, resolveParaId } from '../../utils'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
 import { createPolkadotXcmHeader, createVersionedMultiAssets } from './utils'
 
 vi.mock('../../utils', () => ({
-  generateAddressPayload: vi.fn(),
+  createVersionedBeneficiary: vi.fn(),
   resolveParaId: vi.fn()
 }))
 
@@ -36,7 +36,7 @@ describe('constructRelayToParaParameters', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(generateAddressPayload).mockReturnValue(
+    vi.mocked(createVersionedBeneficiary).mockReturnValue(
       'mockedBeneficiary' as unknown as TXcmVersioned<TMultiLocation>
     )
     vi.mocked(resolveParaId).mockReturnValue(mockParaId)
@@ -55,14 +55,14 @@ describe('constructRelayToParaParameters', () => {
       'Acala',
       mockParaId
     )
-    expect(generateAddressPayload).toHaveBeenCalledWith(
-      mockApi,
-      'RelayToPara',
-      null,
-      mockAddress,
-      Version.V1,
-      mockParaId
-    )
+    expect(createVersionedBeneficiary).toHaveBeenCalledWith({
+      api: mockApi,
+      scenario: 'RelayToPara',
+      pallet: null,
+      recipientAddress: mockAddress,
+      version: Version.V1,
+      paraId: mockParaId
+    })
     expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V1, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
@@ -85,14 +85,14 @@ describe('constructRelayToParaParameters', () => {
       options.destination,
       mockParaId
     )
-    expect(generateAddressPayload).toHaveBeenCalledWith(
-      mockApi,
-      'RelayToPara',
-      null,
-      mockAddress,
-      Version.V3,
-      mockParaId
-    )
+    expect(createVersionedBeneficiary).toHaveBeenCalledWith({
+      api: mockApi,
+      scenario: 'RelayToPara',
+      pallet: null,
+      recipientAddress: mockAddress,
+      version: Version.V3,
+      paraId: mockParaId
+    })
     expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
@@ -124,14 +124,14 @@ describe('constructRelayToParaParameters', () => {
       options.destination,
       mockParaId
     )
-    expect(generateAddressPayload).toHaveBeenCalledWith(
-      mockApi,
-      'RelayToPara',
-      null,
-      mockAddress,
-      Version.V2,
-      mockParaId
-    )
+    expect(createVersionedBeneficiary).toHaveBeenCalledWith({
+      api: mockApi,
+      scenario: 'RelayToPara',
+      pallet: null,
+      recipientAddress: mockAddress,
+      version: Version.V2,
+      paraId: mockParaId
+    })
     expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V2, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'

@@ -230,3 +230,12 @@ export type TWeight = {
   refTime: bigint
   proofSize: bigint
 }
+
+export type TCreateBeneficiaryOptions<TApi, TRes> = {
+  api: IPolkadotApi<TApi, TRes>
+  scenario: TScenario
+  pallet: TPallet | null
+  recipientAddress: TAddress
+  version: Version
+  paraId?: number
+}

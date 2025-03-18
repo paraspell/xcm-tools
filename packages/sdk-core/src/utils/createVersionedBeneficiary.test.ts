@@ -6,8 +6,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../api'
 import type { TScenario } from '../types'
 import { Version } from '../types'
+import { createVersionedBeneficiary } from './createVersionedBeneficiary'
 import { createX1Payload } from './createX1Payload'
-import { generateAddressPayload } from './generateAddressPayload'
 
 vi.mock('./createX1Payload', () => ({
   createX1Payload: vi.fn()
@@ -32,14 +32,13 @@ describe('generateAddressPayload', () => {
     const recipientAddress = { parents: Parents.ONE, interior: {} }
     const version = Version.V4
 
-    const result = generateAddressPayload(
-      apiMock,
-      'ParaToRelay' as TScenario,
-      null,
+    const result = createVersionedBeneficiary({
+      api: apiMock,
+      scenario: 'ParaToRelay',
+      pallet: null,
       recipientAddress,
-      version,
-      undefined
-    )
+      version
+    })
 
     expect(result).toEqual({ [version]: recipientAddress })
   })
@@ -53,14 +52,13 @@ describe('generateAddressPayload', () => {
       X1: [{ AccountId32: { id: accIDMock, network: 'any' } }]
     })
 
-    const result = generateAddressPayload(
-      apiMock,
-      'ParaToRelay' as TScenario,
-      'XTokens' as TPallet,
+    const result = createVersionedBeneficiary({
+      api: apiMock,
+      scenario: 'ParaToRelay',
+      pallet: 'XTokens',
       recipientAddress,
-      Version.V1,
-      undefined
-    )
+      version: Version.V1
+    })
 
     expect(result).toEqual({
       [Version.V1]: {
@@ -76,14 +74,14 @@ describe('generateAddressPayload', () => {
     const ethAddress = '0x1234567890123456789012345678901234567890'
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(true)
 
-    const result = generateAddressPayload(
-      apiMock,
-      'ParaToPara' as TScenario,
-      'XTokens' as TPallet,
-      ethAddress,
-      Version.V4,
-      1000
-    )
+    const result = createVersionedBeneficiary({
+      api: apiMock,
+      scenario: 'ParaToPara',
+      pallet: 'XTokens',
+      recipientAddress: ethAddress,
+      version: Version.V4,
+      paraId: 1000
+    })
 
     expect(result).toEqual({
       [Version.V4]: {
@@ -106,14 +104,13 @@ describe('generateAddressPayload', () => {
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
     })
 
-    const result = generateAddressPayload(
-      apiMock,
-      'ParaToPara' as TScenario,
-      'PolkadotXcm' as TPallet,
+    const result = createVersionedBeneficiary({
+      api: apiMock,
+      scenario: 'ParaToPara',
+      pallet: 'PolkadotXcm',
       recipientAddress,
-      Version.V4,
-      undefined
-    )
+      version: Version.V4
+    })
 
     expect(result).toEqual({
       [Version.V4]: {
@@ -134,14 +131,13 @@ describe('generateAddressPayload', () => {
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
     })
 
-    const result = generateAddressPayload(
-      apiMock,
-      'UnknownScenario' as TScenario,
-      null,
+    const result = createVersionedBeneficiary({
+      api: apiMock,
+      scenario: 'UnknownScenario' as TScenario,
+      pallet: null,
       recipientAddress,
-      Version.V4,
-      undefined
-    )
+      version: Version.V4
+    })
 
     expect(result).toEqual({
       [Version.V4]: {
@@ -159,14 +155,14 @@ describe('generateAddressPayload', () => {
     vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
     const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
 
-    const result = generateAddressPayload(
-      apiMock,
-      'ParaToPara' as TScenario,
-      'XTokens' as TPallet,
+    const result = createVersionedBeneficiary({
+      api: apiMock,
+      scenario: 'ParaToPara',
+      pallet: 'XTokens',
       recipientAddress,
-      Version.V4,
-      1000
-    )
+      version: Version.V4,
+      paraId: 1000
+    })
 
     expect(result).toEqual({
       [Version.V4]: {
@@ -190,14 +186,13 @@ describe('generateAddressPayload', () => {
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
     })
 
-    const result = generateAddressPayload(
-      apiMock,
-      'ParaToPara' as TScenario,
-      'PolkadotXcm' as TPallet,
+    const result = createVersionedBeneficiary({
+      api: apiMock,
+      scenario: 'ParaToPara' as TScenario,
+      pallet: 'PolkadotXcm' as TPallet,
       recipientAddress,
-      Version.V4,
-      undefined
-    )
+      version: Version.V4
+    })
 
     expect(result).toEqual({
       [Version.V4]: {
