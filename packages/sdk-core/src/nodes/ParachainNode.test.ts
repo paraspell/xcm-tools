@@ -19,7 +19,7 @@ vi.mock('../constants/nodes', () => ({}))
 
 vi.mock('../utils', () => ({
   createApiInstance: vi.fn().mockResolvedValue('apiInstance'),
-  generateAddressPayload: vi.fn().mockReturnValue('addressPayload'),
+  createVersionedBeneficiary: vi.fn().mockReturnValue('addressPayload'),
   getFees: vi.fn().mockReturnValue('fees'),
   verifyMultiLocation: vi.fn(),
   isTMultiLocation: vi.fn(),

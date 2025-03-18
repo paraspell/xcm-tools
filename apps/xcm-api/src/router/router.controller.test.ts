@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
-import type { RouterDto } from './dto/RouterDto.js';
+import type { RouterBestAmountOutDto, RouterDto } from './dto/RouterDto.js';
 import { RouterController } from './router.controller.js';
 import { RouterService } from './router.service.js';
 
@@ -79,6 +79,36 @@ describe('RouterController', () => {
         .mockResolvedValue(mockResult);
 
       const result = await controller.generateExtrinsics(
+        queryParams,
+        {} as unknown as Request,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(queryParams);
+    });
+  });
+
+  describe('getBestAmountOut', () => {
+    it('should call getBestAmount out service method with correct parameters and return result', async () => {
+      const queryParams: RouterBestAmountOutDto = {
+        from: 'Astar',
+        exchange: 'AcalaDex',
+        to: 'Moonbeam',
+        currencyFrom: { symbol: 'ASTR' },
+        currencyTo: { symbol: 'GLMR' },
+        amount: '1000000000000000000',
+      };
+
+      const mockResult: Awaited<ReturnType<typeof service.getBestAmountOut>> = {
+        exchange: 'AcalaDex',
+        amountOut: 1000000000000000000n,
+      };
+
+      const spy = vi
+        .spyOn(service, 'getBestAmountOut')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getBestAmountOut(
         queryParams,
         {} as unknown as Request,
       );

@@ -31,10 +31,10 @@ import {
   type TScenario,
   Version
 } from '../../types'
+import { createVersionedBeneficiary } from '../../utils'
 import { createExecuteXcm } from '../../utils/createExecuteXcm'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
-import { generateAddressPayload } from '../../utils/generateAddressPayload'
-import { transformMultiLocation } from '../../utils/multiLocation'
+import { createBeneficiaryMultiLocation, transformMultiLocation } from '../../utils/multiLocation'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { validateAddress } from '../../utils/validateAddress'
 import { getParaId } from '../config'
@@ -48,11 +48,13 @@ const createCustomXcmToBifrost = <TApi, TRes>(
     {
       DepositAsset: {
         assets: { Wild: 'All' },
-        beneficiary: (
-          Object.values(
-            generateAddressPayload(api, scenario, 'PolkadotXcm', address, version, undefined)
-          ) as TMultiLocation[]
-        )[0]
+        beneficiary: createBeneficiaryMultiLocation({
+          api,
+          scenario,
+          pallet: 'PolkadotXcm',
+          recipientAddress: address,
+          version
+        })
       }
     }
   ]
@@ -160,14 +162,14 @@ class AssetHubPolkadot<TApi, TRes>
         ETHEREUM_JUNCTION,
         Parents.TWO
       ),
-      addressSelection: generateAddressPayload(
+      addressSelection: createVersionedBeneficiary({
         api,
         scenario,
-        'PolkadotXcm',
-        address,
-        this.version,
-        paraIdTo
-      ),
+        pallet: 'PolkadotXcm',
+        recipientAddress: address,
+        version: this.version,
+        paraId: paraIdTo
+      }),
       currencySelection: createVersionedMultiAssets(Version.V3, asset.amount, asset.multiLocation)
     }
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
@@ -192,14 +194,14 @@ class AssetHubPolkadot<TApi, TRes>
     const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
       ...input,
       header: this.createPolkadotXcmHeader(scenario, version, destination, paraId),
-      addressSelection: generateAddressPayload(
+      addressSelection: createVersionedBeneficiary({
         api,
         scenario,
-        'PolkadotXcm',
-        address,
+        pallet: 'PolkadotXcm',
+        recipientAddress: address,
         version,
         paraId
-      ),
+      }),
       currencySelection: createVersionedMultiAssets(version, asset.amount, customMultiLocation)
     }
     return PolkadotXCMTransferImpl.transferPolkadotXCM(
@@ -261,14 +263,14 @@ class AssetHubPolkadot<TApi, TRes>
       return {
         ...input,
         header: this.createPolkadotXcmHeader(scenario, versionOrDefault, destination, paraIdTo),
-        addressSelection: generateAddressPayload(
+        addressSelection: createVersionedBeneficiary({
           api,
           scenario,
-          'PolkadotXcm',
-          address,
-          versionOrDefault,
-          paraIdTo
-        ),
+          pallet: 'PolkadotXcm',
+          recipientAddress: address,
+          version: versionOrDefault,
+          paraId: paraIdTo
+        }),
         currencySelection: this.createCurrencySpec(asset.amount, scenario, versionOrDefault, asset)
       }
     }

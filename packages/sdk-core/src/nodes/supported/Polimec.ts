@@ -28,7 +28,7 @@ import type {
   TXcmVersioned
 } from '../../types'
 import { Version } from '../../types'
-import { createX1Payload, generateAddressPayload } from '../../utils'
+import { createBeneficiaryMultiLocation, createX1Payload } from '../../utils'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
@@ -190,18 +190,13 @@ const createCustomXcmPolimec = <TApi, TRes>(
                     AllCounted: 1
                   }
                 },
-                beneficiary: (
-                  Object.values(
-                    generateAddressPayload(
-                      api,
-                      scenario,
-                      'PolkadotXcm',
-                      address,
-                      version,
-                      undefined
-                    )
-                  ) as TMultiLocation[]
-                )[0]
+                beneficiary: createBeneficiaryMultiLocation({
+                  api,
+                  scenario,
+                  pallet: 'PolkadotXcm',
+                  recipientAddress: address,
+                  version
+                })
               }
             }
           ]

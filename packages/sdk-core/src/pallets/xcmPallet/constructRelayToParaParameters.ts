@@ -3,7 +3,7 @@ import { Parents } from '@paraspell/sdk-common'
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TRelayToParaOptions } from '../../types'
 import { type Version } from '../../types'
-import { generateAddressPayload, resolveParaId } from '../../utils'
+import { createVersionedBeneficiary, resolveParaId } from '../../utils'
 import { createPolkadotXcmHeader, createVersionedMultiAssets } from './utils'
 
 export const constructRelayToParaParameters = <TApi, TRes>(
@@ -15,7 +15,14 @@ export const constructRelayToParaParameters = <TApi, TRes>(
 
   return {
     dest: createPolkadotXcmHeader('RelayToPara', version, destination, paraId),
-    beneficiary: generateAddressPayload(api, 'RelayToPara', null, address, version, paraId),
+    beneficiary: createVersionedBeneficiary({
+      api,
+      scenario: 'RelayToPara',
+      pallet: null,
+      recipientAddress: address,
+      version,
+      paraId
+    }),
     assets: createVersionedMultiAssets(version, asset.amount, {
       parents: Parents.ZERO,
       interior: 'Here'

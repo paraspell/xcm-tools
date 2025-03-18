@@ -1250,6 +1250,21 @@ describe('XCM API (e2e)', () => {
           });
         });
     });
+
+    it(`Generate router call - getBestAmountOut - ${routerUrl}`, async () => {
+      const bestAmountOutOptions = {
+        ...routerOptions,
+      };
+
+      return request(app.getHttpServer())
+        .post(routerUrl)
+        .send(bestAmountOutOptions)
+        .expect(201)
+        .expect((res) => {
+          const data = JSON.parse(res.text);
+          expect(Array.isArray(data)).not.toBeTruthy();
+        });
+    });
   });
 
   describe('Asset claim controller', () => {

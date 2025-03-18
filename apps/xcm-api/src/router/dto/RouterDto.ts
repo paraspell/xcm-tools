@@ -37,4 +37,14 @@ export const RouterDtoSchema = z.object({
   slippagePct: z.string().optional(),
 });
 
+export const RouterBestAmountOutSchema = RouterDtoSchema.pick({
+  from: true,
+  exchange: true,
+  to: true,
+  currencyFrom: true,
+  currencyTo: true,
+  amount: true,
+});
+
 export type RouterDto = z.infer<typeof RouterDtoSchema>;
+export type RouterBestAmountOutDto = z.infer<typeof RouterBestAmountOutSchema>;

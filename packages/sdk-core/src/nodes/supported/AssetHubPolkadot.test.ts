@@ -17,8 +17,8 @@ import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TXcmVersioned } from '../../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
+import { createVersionedBeneficiary } from '../../utils'
 import { createExecuteXcm } from '../../utils/createExecuteXcm'
-import { generateAddressPayload } from '../../utils/generateAddressPayload'
 import { transformMultiLocation } from '../../utils/multiLocation'
 import { validateAddress } from '../../utils/validateAddress'
 import type AssetHubPolkadot from './AssetHubPolkadot'
@@ -48,12 +48,13 @@ vi.mock('../../utils/generateAddressMultiLocationV4', () => ({
   generateAddressMultiLocationV4: vi.fn()
 }))
 
-vi.mock('../../utils/generateAddressPayload', () => ({
-  generateAddressPayload: vi.fn()
+vi.mock('../../utils/createVersionedBeneficiary', () => ({
+  createVersionedBeneficiary: vi.fn()
 }))
 
 vi.mock('../../utils/multiLocation', () => ({
-  transformMultiLocation: vi.fn()
+  transformMultiLocation: vi.fn(),
+  createBeneficiaryMultiLocation: vi.fn()
 }))
 
 vi.mock('../../utils/validateAddress', () => ({
@@ -275,7 +276,7 @@ describe('AssetHubPolkadot', () => {
       vi.mocked(getOtherAssets).mockReturnValue([
         { symbol: 'WETH', assetId: '0x123', multiLocation: {} as TMultiLocation }
       ])
-      vi.mocked(generateAddressPayload).mockReturnValue({
+      vi.mocked(createVersionedBeneficiary).mockReturnValue({
         [Version.V3]: {}
       } as TXcmVersioned<TMultiLocation>)
       vi.mocked(isForeignAsset).mockReturnValue(true)
