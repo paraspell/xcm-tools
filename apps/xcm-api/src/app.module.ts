@@ -18,6 +18,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { BalanceModule } from './balance/balance.module.js';
 import { throttlerConfig } from './config/throttler.config.js';
 import { typeOrmConfig } from './config/typeorm.config.js';
+import { IdentityModule } from './identity/identity.module.js';
 import { NodeConfigsModule } from './node-configs/node-configs.module.js';
 import { PalletsModule } from './pallets/pallets.module.js';
 import { RouterModule } from './router/router.module.js';
@@ -34,6 +35,7 @@ const __dirname = path.dirname(__filename);
     AnalyticsModule,
     XTransferModule,
     AssetClaimModule,
+    IdentityModule,
     TransferInfoModule,
     XcmAnalyserModule,
     RouterModule,

@@ -2,6 +2,7 @@ import {
   IconBoxAlignBottomRight,
   IconCoins,
   IconCurrencyEthereum,
+  IconId,
   IconSend,
   IconSend2,
   IconWallet,
@@ -40,6 +41,11 @@ export const NAVIGATION_ITEMS: TNavItem[] = [
     label: 'Asset Claim',
     url: PageRoute.XCM_SDK.ASSET_CLAIM,
     Icon: IconWallet,
+  },
+  {
+    label: 'Identity',
+    url: PageRoute.XCM_SDK.IDENTITY,
+    Icon: IconId,
   },
 ];
 

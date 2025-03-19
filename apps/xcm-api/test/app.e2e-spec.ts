@@ -1257,7 +1257,7 @@ describe('XCM API (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .post(routerUrl)
+        .post('/router/best-amount-out')
         .send(bestAmountOutOptions)
         .expect(201)
         .expect((res) => {
@@ -1448,6 +1448,20 @@ describe('XCM API (e2e)', () => {
         })
         .expect(201)
         .expect('[]');
+    });
+  });
+
+  describe('Identity controller', () => {
+    it('Generate identity call - valid parameters - /identity', () => {
+      return request(app.getHttpServer())
+        .post('/identity')
+        .send({
+          from: 'AssetHubPolkadot',
+          regIndex: 1,
+          maxRegistrarFee: 111,
+          identity: {},
+        })
+        .expect(201);
     });
   });
 });

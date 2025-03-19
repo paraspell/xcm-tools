@@ -531,4 +531,15 @@ describe('transform', () => {
     }
     expect(transform(input)).toEqual(expected)
   })
+
+  it('should not transform call key', () => {
+    const input = {
+      call: 'call_value'
+    }
+    const expected = {
+      type: 'call',
+      value: 'call_value'
+    }
+    expect(transform(input)).toEqual(expected)
+  })
 })

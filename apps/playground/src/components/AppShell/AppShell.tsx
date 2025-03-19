@@ -40,6 +40,7 @@ import {
   XcmRouterPage,
   XcmTransferPage,
 } from '../../routes';
+import { IdentityPage } from '../../routes/IdentityPage';
 import { LinksGroup } from '../LinksGroup/LinksGroup';
 import { PageRoute } from '../PageRoute';
 import { Header } from './Header/Header';
@@ -285,6 +286,7 @@ export const AppShell = () => {
           />
           <Route path={PageRoute.XCM_ROUTER} Component={XcmRouterPage} />
           <Route path={PageRoute.XCM_ANALYSER} Component={XcmAnalyserPage} />
+          <Route path={PageRoute.XCM_SDK.IDENTITY} Component={IdentityPage} />
         </Routes>
       </MantineAppShell.Main>
     </MantineAppShell>

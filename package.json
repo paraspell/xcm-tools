@@ -16,7 +16,7 @@
     "turbo": "^2.4.4",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.26.0",
-    "vitest": "^3.0.8"
+    "vitest": "^3.0.9"
   },
   "engines": {
     "node": ">=22"
@@ -26,7 +26,14 @@
     "@polkadot/api": "^15.7.1",
     "@polkadot/types": "^15.7.1",
     "@crypto-dex-sdk/chain": "0.1.2",
-    "react-is": "19.0.0"
+    "react-is": "19.0.0",
+    "axios": "^1.8.3",
+    "ws": "^8.18.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@acala-network/eth-transactions>ethers": "^5.8.0"
+    }
   },
   "scripts": {
     "compile": "turbo run compile",

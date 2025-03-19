@@ -92,6 +92,16 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api.tx[moduleLowerCase][sectionCamelCase](...values)
   }
 
+  encodeTx(tx: Extrinsic) {
+    return Promise.resolve({ encoded: tx.toHex() })
+  }
+
+  createRaw(value: string) {
+    return {
+      Raw: value
+    }
+  }
+
   callBatchMethod(calls: Extrinsic[], mode: BatchMode) {
     const section = mode === BatchMode.BATCH_ALL ? 'batchAll' : 'batch'
     return this.api.tx.utility[section](calls)

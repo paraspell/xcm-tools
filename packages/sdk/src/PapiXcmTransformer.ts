@@ -25,7 +25,7 @@ export const transform = (obj: any): any => {
   } else if (typeof obj === 'object' && obj !== null) {
     const keys = Object.keys(obj)
 
-    if (keys.length === 1) {
+    if (keys.length === 1 && keys[0] !== 'info') {
       const key = keys[0]
       const value = obj[key]
 
@@ -41,6 +41,11 @@ export const transform = (obj: any): any => {
                 : undefined,
             id: FixedSizeBinary.fromHex(value.id)
           }
+        }
+      } else if (key === 'call') {
+        return {
+          type: key,
+          value: value
         }
       } else if (key === 'OtherReserve') {
         return {

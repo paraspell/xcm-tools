@@ -28,8 +28,8 @@ import {
   type TNodePolkadotKusama,
   type TPapiTransaction,
 } from '@paraspell/sdk';
-import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
+import { type Extrinsic, type TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
 import { ethers } from 'ethers';

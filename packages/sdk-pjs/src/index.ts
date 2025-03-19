@@ -26,5 +26,6 @@ export {
   send,
   transferEthToPolkadot
 } from './transfer'
+export { createXcmIdentityCall } from './identity'
 export * from './types'
 export { createApiInstanceForNode } from './utils'

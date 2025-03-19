@@ -118,10 +118,6 @@
     "paraId": 2030,
     "providers": [
       {
-        "name": "Dwellir",
-        "endpoint": "wss://bifrost-polkadot-rpc.dwellir.com"
-      },
-      {
         "name": "IBP1",
         "endpoint": "wss://bifrost-polkadot.ibp.network"
       },
@@ -581,10 +577,6 @@
     "info": "bifrost",
     "paraId": 2001,
     "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://bifrost-rpc.dwellir.com"
-      },
       {
         "name": "Liebi",
         "endpoint": "wss://bifrost-rpc.liebi.com/ws"

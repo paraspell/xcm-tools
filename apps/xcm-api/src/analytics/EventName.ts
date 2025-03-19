@@ -31,6 +31,7 @@ export enum EventName {
   GENERATE_ROUTER_EXTRINSICS = 'Generate router extrinsics',
   GET_BEST_AMOUNT_OUT = 'Get Best Amount Out',
   CLAIM_ASSETS = 'Claim assets',
+  CREATE_IDENTITY = 'Create Identity',
   GET_TRANSFER_INFO = 'Get Transfer Info',
   XCM_ANALYSER = 'XCM Analyser',
 }

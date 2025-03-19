@@ -114,6 +114,16 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return this.api.getUnsafeApi().tx[module][section](transformedParameters)
   }
 
+  async encodeTx(tx: TPapiTransaction) {
+    return await tx.getEncodedData()
+  }
+
+  createRaw(value: string) {
+    return {
+      [`Raw${value.length}`]: FixedSizeBinary.fromText(value)
+    }
+  }
+
   callBatchMethod(calls: TPapiTransaction[], mode: BatchMode) {
     const section = mode === BatchMode.BATCH_ALL ? 'batch_all' : 'batch'
     return this.api

@@ -34,7 +34,7 @@ export const MultiAssetSchema = z.union([
 
 export type TMultiAsset = z.infer<typeof MultiAssetSchema>;
 
-const AmountSchema = z.union([
+export const AmountSchema = z.union([
   z.string().refine(validateAmount, {
     message: 'Amount must be a positive number',
   }),

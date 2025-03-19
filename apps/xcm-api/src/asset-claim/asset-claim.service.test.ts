@@ -93,29 +93,6 @@ describe('AssetClaimService', () => {
     expect(result).toEqual('hash');
   });
 
-  it('successfully claims assets when parameters are valid with hash enabled', async () => {
-    const dto = {
-      from: 'Acala',
-      fungible: [
-        {
-          id: {
-            parents: 2,
-            interior: {
-              X1: { Parachain: 1000 },
-            },
-          },
-          fun: { Fungible: '100' },
-        },
-      ],
-      address: 'validAddress',
-    } as AssetClaimDto;
-    sdk.NODES_WITH_RELAY_CHAINS.includes = vi.fn().mockReturnValue(true);
-    vi.mocked(utils.isValidWalletAddress).mockReturnValue(true);
-    const result = await service.claimAssets(dto);
-
-    expect(result).toEqual('hash');
-  });
-
   it('throws BadRequestException when InvalidCurrencyError is thrown', async () => {
     vi.mocked(sdk.Builder).mockImplementation(() => {
       throw new sdk.InvalidCurrencyError('Invalid currency error');

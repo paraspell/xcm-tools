@@ -7,13 +7,8 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type {
-  GeneralBuilder,
-  TPapiApiOrUrl,
-  TPapiTransaction,
-} from '@paraspell/sdk';
-import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
-import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
+import type { TPapiTransaction } from '@paraspell/sdk';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
@@ -28,13 +23,10 @@ import {
   showSuccessNotification,
 } from '../../utils/notifications';
 import { ErrorAlert } from '../common/ErrorAlert';
-import { VersionBadge } from '../common/VersionBadge';
-import type { FormValues } from './AssetClaimForm';
-import AssetClaimForm from './AssetClaimForm';
+import type { FormValues } from './IdentityForm';
+import IdentityForm from './IdentityForm';
 
-const VERSION = import.meta.env.VITE_XCM_SDK_VERSION as string;
-
-const AssetClaim = () => {
+const Identity = () => {
   const { selectedAccount, apiType, getSigner } = useWallet();
 
   const [alertOpened, { open: openAlert, close: closeAlert }] =
@@ -55,7 +47,8 @@ const AssetClaim = () => {
   }, [error, scrollIntoView]);
 
   const submit = async (formValues: FormValues) => {
-    const { useApi, from, amount, address } = formValues;
+    const { useApi, from, xcmFee, regIndex, maxRegistrarFee, identity } =
+      formValues;
 
     if (!selectedAccount) {
       showErrorNotification('No account selected, connect wallet first');
@@ -73,59 +66,29 @@ const AssetClaim = () => {
         ? await import('@paraspell/sdk')
         : await import('@paraspell/sdk-pjs');
 
-    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
-      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
-
     const signer = await getSigner();
 
-    let api;
+    const api = await Sdk.createApiInstanceForNode(from);
     try {
       let tx: Extrinsic | TPapiTransaction;
       if (useApi) {
-        api = await Sdk.createApiInstanceForNode(from);
         tx = await getTxFromApi(
-          {
-            from,
-            address: formValues.address,
-            fungible: [
-              {
-                id: {
-                  Concrete: {
-                    parents: from === 'Polkadot' || from === 'Kusama' ? 0 : 1,
-                    interior: 'Here',
-                  },
-                },
-                fun: { Fungible: amount },
-              },
-            ],
-          },
+          formValues,
           api,
-          '/asset-claim',
+          '/identity',
           selectedAccount.address,
           apiType,
           'POST',
           true,
         );
       } else {
-        const builder = Builder();
-        tx = await builder
-          .claimFrom(from)
-          .fungible([
-            {
-              id: {
-                Concrete: {
-                  parents: from === 'Polkadot' || from === 'Kusama' ? 0 : 1,
-                  interior: {
-                    Here: null,
-                  },
-                },
-              },
-              fun: { Fungible: amount },
-            },
-          ])
-          .account(address)
-          .build();
-        api = builder.getApi();
+        tx = await Sdk.createXcmIdentityCall({
+          from,
+          xcmFee: xcmFee ? BigInt(xcmFee) : undefined,
+          identity,
+          regIndex,
+          maxRegistrarFee: BigInt(maxRegistrarFee),
+        });
       }
 
       if (apiType === 'PAPI') {
@@ -191,11 +154,7 @@ const AssetClaim = () => {
       <Stack w="100%" maw={450} mx="auto" gap="lg">
         <Box px="xl" pb="xl">
           <Center mb="sm">
-            <Title order={2}>Asset Claim 🪙</Title>
-          </Center>
-
-          <Center>
-            <VersionBadge version={VERSION} />
+            <Title order={2}>Create Identity call 🪪</Title>
           </Center>
 
           <Text
@@ -204,10 +163,10 @@ const AssetClaim = () => {
             fw={700}
             ta="center"
           >
-            Recover assets that have been trapped in the cross-chain transfers.
+            Create a new identity call to set or request identity information
           </Text>
         </Box>
-        <AssetClaimForm onSubmit={onSubmit} loading={loading} />
+        <IdentityForm onSubmit={onSubmit} loading={loading} />
       </Stack>
       <Center ref={targetRef}>
         {alertOpened && (
@@ -220,4 +179,4 @@ const AssetClaim = () => {
   );
 };
 
-export default AssetClaim;
+export default Identity;

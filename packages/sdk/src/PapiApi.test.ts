@@ -27,7 +27,8 @@ vi.mock('polkadot-api', () => ({
   createClient: vi.fn(),
   withPolkadotSdkCompat: vi.fn().mockImplementation((provider: JsonRpcProvider) => provider),
   FixedSizeBinary: {
-    fromAccountId32: vi.fn()
+    fromAccountId32: vi.fn(),
+    fromText: vi.fn()
   },
   Binary: {
     fromHex: vi.fn(),
@@ -66,7 +67,8 @@ describe('PapiApi', () => {
     papiApi = new PapiApi()
 
     mockTransaction = {
-      getEstimatedFees: vi.fn().mockResolvedValue(1000n)
+      getEstimatedFees: vi.fn().mockResolvedValue(1000n),
+      getEncodedData: vi.fn().mockReturnValue('0x1234567890abcdef')
     } as unknown as TPapiTransaction
 
     mockDryRunResult = {
@@ -865,6 +867,30 @@ describe('PapiApi', () => {
       const quote = await papiApi.quoteAhPrice(mlFrom, mlTo, amountIn)
 
       expect(quote).toBeUndefined()
+    })
+  })
+
+  describe('encodeTx', () => {
+    it('should return the encoded transaction', async () => {
+      const tx = await papiApi.encodeTx(mockTransaction)
+      expect(tx).toBe('0x1234567890abcdef')
+    })
+  })
+
+  describe('createRaw', () => {
+    it('should return the raw transaction', () => {
+      const mockFixedSizeBinary = {
+        asHex: vi.fn().mockReturnValue('0x1234567890abcdef')
+      }
+      const spy = vi
+        .spyOn(FixedSizeBinary, 'fromText')
+        .mockReturnValue(mockFixedSizeBinary as unknown as FixedSizeBinary<32>)
+
+      const output = papiApi.createRaw('123')
+      expect(output).toEqual({
+        Raw3: mockFixedSizeBinary
+      })
+      expect(spy).toHaveBeenCalledWith('123')
     })
   })
 })

@@ -16,6 +16,8 @@ export interface IPolkadotApi<TApi, TRes> {
   createApiInstance: (wsUrl: string | string[]) => Promise<TApi>
   accountToHex(address: string, isPrefixed?: boolean): string
   callTxMethod(serializedCall: TSerializedApiCall): TRes
+  encodeTx(tx: TRes): Promise<unknown>
+  createRaw(value: string): unknown
   callBatchMethod(calls: TRes[], mode: BatchMode): TRes
   objectToHex(obj: unknown, typeName: string): Promise<string>
   hexToUint8a(hex: string): Uint8Array

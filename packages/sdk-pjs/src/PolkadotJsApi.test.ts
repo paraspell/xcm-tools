@@ -774,4 +774,24 @@ describe('PolkadotJsApi', () => {
       expect(price).toBeUndefined()
     })
   })
+
+  describe('encodeTx', () => {
+    it('should return the encoded tx as object', async () => {
+      const mockExtrinsic = {
+        toHex: vi.fn().mockReturnValue('0x1234567890abcdef')
+      } as unknown as Extrinsic
+
+      const result = await polkadotApi.encodeTx(mockExtrinsic)
+
+      expect(result).toEqual({ encoded: '0x1234567890abcdef' })
+    })
+  })
+
+  describe('createRaw', () => {
+    it('should return the raw object', () => {
+      const value = 'some value'
+      const result = polkadotApi.createRaw(value)
+      expect(result).toEqual({ Raw: value })
+    })
+  })
 })
