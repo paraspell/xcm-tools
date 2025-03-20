@@ -4,7 +4,9 @@
     "compile": {},
     "format:check": {},
     "format:write": {},
-    "lint:check": {},
+    "lint:check": {
+      "cache": false
+    },
     "lint": {},
     "test": {},
     "test:cov": {

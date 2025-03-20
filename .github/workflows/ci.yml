@@ -9,89 +9,126 @@ on:
       - main
 
 jobs:
-  ci:
+  setup:
     runs-on: ubuntu-latest
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-      NODE_OPTIONS: "--max_old_space_size=8192"
     steps:
       - uses: actions/checkout@v4
-      - name: Set alternate npm integrity keys
-        run: |
-          echo COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" >> $GITHUB_ENV
       - run: corepack enable
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: "pnpm"
+      - name: Set alternate npm integrity keys
+        run: |
+          echo COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - run: |
           touch .env
           echo GH_COMMIT_SHA="${{ github.event.pull_request.head.sha }}" >> .env
           echo CODECOV_TOKEN="${{ secrets.CODECOV_TOKEN }}" >> .env
-      - run: pnpm install
-      - run: pnpm build
-      - run: pnpm compile
-      - run: pnpm format:check
-      - run: pnpm lint:check
-      - run: pnpm test:cov
-      - name: Upload XCM SDK core coverage report to Codecov
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm build
+
+  lint:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint:check
+
+  compile-format:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        task: [compile, format:check]
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      NODE_OPTIONS: "--max_old_space_size=16384"
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run ${{ matrix.task }}
+        run: pnpm ${{ matrix.task }}
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      NODE_OPTIONS: "--max_old_space_size=16384"
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run test
+        run: pnpm test
+
+  coverage-upload:
+    needs: [lint, compile-format, test]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - sdk-core
+          - sdk
+          - sdk-pjs
+          - sdk-common
+          - assets
+          - pallets
+          - xcm-analyser
+          - xcm-router
+          - visualizator-be
+          - xcm-api
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Upload coverage report for ${{ matrix.package }}
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/sdk-core
-          flags: xcm-sdk-core
-      - name: Upload XCM SDK coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/sdk
-          flags: xcm-sdk
-      - name: Upload XCM SDK PJS coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/sdk-pjs
-          flags: xcm-sdk-pjs
-      - name: Upload Assets coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/sdk-common
-          flags: sdk-common
-      - name: Upload Assets coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/assets
-          flags: assets
-      - name: Upload Pallets coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/pallets
-          flags: pallets
-      - name: Upload XCM Analyser coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/xcm-analyser
-          flags: xcm-analyser
-      - name: Upload XCM Router coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/xcm-router
-          flags: xcm-router
-      - name: Upload Visualizator BE coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: apps/visualizator-be
-          flags: visualizator-be
-      - name: Upload XCM API coverage report to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: apps/xcm-api
-          flags: xcm-api
+          directory: packages/${{ matrix.package }}
+          flags: ${{ matrix.package }}
