@@ -82,6 +82,10 @@ export default tseslint.config(
     },
   },
   {
+    files: ["**/*.test.ts"],
+    extends: [tseslint.configs.disableTypeChecked],
+  },
+  {
     files: [
       "apps/{playground,visualizator-fe,landing-page}/**/*.ts",
       "apps/{playground,visualizator-fe,landing-page}/**/*.tsx",

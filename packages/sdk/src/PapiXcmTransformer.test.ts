@@ -75,7 +75,7 @@ describe('transform', () => {
     const input = {
       OtherReserve: 'invalid_integer'
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
     expect(() => transform(input)).toThrow('Invalid integer string')
   })
 
