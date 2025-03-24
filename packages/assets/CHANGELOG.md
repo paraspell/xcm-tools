@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.1](https://github.com/paraspell/xcm-tools/compare/assets-v8.9.0...assets-v8.9.1) (2025-03-24)
+
+
+### Bug Fixes
+
+* Fix ETH asset parents 🔧 ([324059f](https://github.com/paraspell/xcm-tools/commit/324059fa3fa5119d5d55e2bdd5721816eb384381))
+
 ## [8.9.0](https://github.com/paraspell/xcm-tools/compare/assets-v8.8.0...assets-v8.9.0) (2025-03-18)
 
 
