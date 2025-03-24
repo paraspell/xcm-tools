@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.4](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.3...xcm-analyser-v1.5.4) (2025-03-24)
+
+
+### Code Refactoring
+
+* Create separate packages for assets and common code ✨ ([d1ed352](https://github.com/paraspell/xcm-tools/commit/d1ed3523e86219916e810fffa06e53b2a3ef96ea))
+
+
+### Build System
+
+* Add sort-imports ESlint rule ✨ ([d9bd402](https://github.com/paraspell/xcm-tools/commit/d9bd4024ba87f6c8fedad012100ea76fdf7658c8))
+
 ## [1.5.3](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.2...xcm-analyser-v1.5.3) (2025-02-28)
 
 

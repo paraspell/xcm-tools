@@ -1,5 +1,5 @@
 {
-  "packages/xcm-analyser": "1.5.3",
+  "packages/xcm-analyser": "1.5.4",
   "packages/xcm-router": "8.9.0",
   "packages/sdk": "8.9.0",
   "packages/sdk-core": "8.9.0",
