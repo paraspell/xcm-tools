@@ -1,5 +1,162 @@
 # Changelog
 
+## [9.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.9.1...xcm-router-v9.0.0) (2025-03-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Split SDK into separate packages for PJS and PAPI ✨
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains
+
+### Features
+
+* Add Select component for selecting assets ([850483f](https://github.com/paraspell/xcm-tools/commit/850483fc75dbef266b46a5bbb15da8517985c620))
+* Add support for Polkadot and Kusama bridge ([0b935fe](https://github.com/paraspell/xcm-tools/commit/0b935fecf6e49e7e58abb1efee239bce53126a0b))
+* **playground:** Add support for multi-assets to playground 🛝 ([132f475](https://github.com/paraspell/xcm-tools/commit/132f4753e49f89f479cd29043b67917ad9993755))
+* **playground:** Improve playground ✨ ([441fa6f](https://github.com/paraspell/xcm-tools/commit/441fa6fb197f2b8f35f34c14fd8f94dcdc15635d))
+* **sdk-core:** Add support for additional &lt;&gt;Polimec transfers 🪄 ([600e0e6](https://github.com/paraspell/xcm-tools/commit/600e0e6935bcac72d98b92b0c68b2a92669934e4))
+* **sdk-core:** Add support for PolkadotXCM execute transfers ✨ ([7387c96](https://github.com/paraspell/xcm-tools/commit/7387c96ab45dbc4e20cfa8254f808c5d621504b7))
+* **sdk-core:** Add support for PolkadotXCM execute transfers ✨ ([3fee6ac](https://github.com/paraspell/xcm-tools/commit/3fee6ac6f45808758ebcbf1fedddbd3e825bcbd2))
+* **sdk:** Add asset search by multi-location ✨ ([54d0d46](https://github.com/paraspell/xcm-tools/commit/54d0d46d96e4b17b315856a61563a13209fef026))
+* **sdk:** Add fail-safe support ✨ ([18b1328](https://github.com/paraspell/xcm-tools/commit/18b1328ba3f079d03adebc67ba2d15634d115055))
+* **sdk:** Add MultiLocation override feature ⛓️ ([eb6cdbe](https://github.com/paraspell/xcm-tools/commit/eb6cdbedd8bdfb2570e0bc94192afe6079a20b11))
+* **sdk:** Add support for abstracted assets selection ✨ ([b5ffed8](https://github.com/paraspell/xcm-tools/commit/b5ffed8958aa5680a5ffc9308f0f7f0dd1c1d727))
+* **sdk:** Add support for Moonbeam EVM transfers ✨ ([d30ba8e](https://github.com/paraspell/xcm-tools/commit/d30ba8e941c9f0835b35d9887339e88e9f1986e8))
+* **sdk:** Refactor transfer Builder to explicitly include from, to parameters for relaychains ([395b45e](https://github.com/paraspell/xcm-tools/commit/395b45e2d1bfe68c84cea7d19b44e16f2a3b4cd8))
+* Split SDK into separate packages for PJS and PAPI ✨ ([ff465e9](https://github.com/paraspell/xcm-tools/commit/ff465e92e57640f525c7d350afec0b9dcf364453))
+* **xcm-api:** Add support for XCM Router API Snowbridge transfers ([c468a80](https://github.com/paraspell/xcm-tools/commit/c468a804845fa3fd78649f01af7eee32a7305aae))
+* **xcm-router:** Add getBestAmountOut function to builder 🪄 ([8e0e46e](https://github.com/paraspell/xcm-tools/commit/8e0e46e9d16b1fae7b53df5266519034598ffd9b))
+* **xcm-router:** Add Snowbridge transfers support ❄️ ([d69fda6](https://github.com/paraspell/xcm-tools/commit/d69fda6e723f3e7e7820c2eeaf2800975d43b53f))
+* **xcm-router:** Add support for AssetHub DEX ✨ ([274ad41](https://github.com/paraspell/xcm-tools/commit/274ad41d8e7f70f327d2918a8d2fd0aca5374101))
+* **xcm-router:** Add support for EVM signer ([569f4fc](https://github.com/paraspell/xcm-tools/commit/569f4fc3e0316df4ac82a1b4f3714a7528548c14))
+* **xcm-router:** Add support for precise exchange auto-select ✨ ([ee018a3](https://github.com/paraspell/xcm-tools/commit/ee018a38f72cba5b8e20b4f7d537a6ad4027f92a))
+* **xcm-router:** Add support for precise exchange auto-select ✨ ([18d65d8](https://github.com/paraspell/xcm-tools/commit/18d65d8dead2ef68c71e956a41ea0b1dcca3993b))
+* **xcm-router:** Refactor currency inputs ✨ ([28db4a9](https://github.com/paraspell/xcm-tools/commit/28db4a918f896f496a5b8c984d9f0413d6f827ae))
+* **xcm-router:** Remove Mangata DEX ([b601bbf](https://github.com/paraspell/xcm-tools/commit/b601bbffc8ba285b159c14cc395dc27594f1a068))
+* **xcm-router:** Remove Snowbridge support 🔧 ([cb5e5f3](https://github.com/paraspell/xcm-tools/commit/cb5e5f3737f607aa734e551279f53cf34d735915))
+
+
+### Bug Fixes
+
+* Add destination address checks ([f072da7](https://github.com/paraspell/xcm-tools/commit/f072da7c032ed9fb871191f4975115e779608ed0))
+* Add no-console rule to ESlint configuration ✨ ([d58a744](https://github.com/paraspell/xcm-tools/commit/d58a744c8fb4a892697eed9fca0f5514c7dfb243))
+* Enable support for bigint literals ✨ ([0090106](https://github.com/paraspell/xcm-tools/commit/0090106babe2dcecf66d4eaa532d3963a230958b))
+* Fix ignored ESlint errors 🔧 ([495fc06](https://github.com/paraspell/xcm-tools/commit/495fc067758db128df1d0c46c1c2534dc28aaf3f))
+* Fix package json warnings 🔧 ([de6ea5d](https://github.com/paraspell/xcm-tools/commit/de6ea5df89513753b7a83e4053121a4b207a97c5))
+* Fix WS endpoints timing out ([32f34b8](https://github.com/paraspell/xcm-tools/commit/32f34b8eecaf46be06b968bbd97b817860dd8e52))
+* **playground:** Remove Ethereum option from some selects ✨ ([825702e](https://github.com/paraspell/xcm-tools/commit/825702e55f2cfab2d52f0c3c6bfcab7904b285a5))
+* Properly handle smaller amounts in exchanges ([6004c13](https://github.com/paraspell/xcm-tools/commit/6004c137c470719ed5d3f9c138c59a187b6e42a2))
+* Remove ahAddress field in favor of senderAddress & Router fixes 🔧 ([9c2680a](https://github.com/paraspell/xcm-tools/commit/9c2680afe64caec8b7e91b2e1a584cf8e527eb8e))
+* **sdk-core:** Add complete multi-locations for AH assets ([8d5e2ce](https://github.com/paraspell/xcm-tools/commit/8d5e2ce855f9becd5afb446d88e36111ec8bf47f))
+* **sdk-core:** Add multi-locations to native assets ([8e40da1](https://github.com/paraspell/xcm-tools/commit/8e40da1450722e37de7cf0365a806e424b58c453))
+* **sdk-pjs:** Fix Snowbridge transfers not working for some wallets 🔧 ([b846b70](https://github.com/paraspell/xcm-tools/commit/b846b708e90675b3e47c3da1b2142a1ef2528f0a))
+* **sdk:** Remove @polkadot/apps-config depencency ([8a5bbc7](https://github.com/paraspell/xcm-tools/commit/8a5bbc7e5f31ec928e4be2714a69f666fd706fd1))
+* Update Rollup TypeScript plugin to official version ⬆ ([20c0f25](https://github.com/paraspell/xcm-tools/commit/20c0f25224a86b859ac1ad043c5cf04febdf743e))
+* **xcm-api:** Remove old XCM API code 👴 ([973dfde](https://github.com/paraspell/xcm-tools/commit/973dfde2cc6206ebdee90b45bda1cd871c0063b3))
+* **xcm-router:** Add missing methods to Router builder ([fac5bc0](https://github.com/paraspell/xcm-tools/commit/fac5bc01fb33bc1e54a8d7d99622efb27c218073))
+* **xcm-router:** Add missing Router builder methods ([2048e9c](https://github.com/paraspell/xcm-tools/commit/2048e9c380b94ed788f0176ecb28276d551538f6))
+* **xcm-router:** Fix handling small amounts before sending XCM to exchange ([ae27b5b](https://github.com/paraspell/xcm-tools/commit/ae27b5b4bbbce3ad9bfa656ce5cea1186de067e9))
+* **xcm-router:** Modify fee calculations ([9e0f19b](https://github.com/paraspell/xcm-tools/commit/9e0f19bab007b58033dacde352e2529530b380b5))
+* **xcm-router:** Update Acala SDK to latest version 📦 ([011fb29](https://github.com/paraspell/xcm-tools/commit/011fb2931fd9de98acc40706a1e2a0eb9b07be27))
+
+
+### Documentation
+
+* Add TSDoc reference comments to exported functions 📄 ([73b8cfe](https://github.com/paraspell/xcm-tools/commit/73b8cfe6d0944a0ea2c649552c844501ad10b19c))
+
+
+### Miscellaneous Chores
+
+* Add consistent type imports ESlint rule ✏️ ([61c20ae](https://github.com/paraspell/xcm-tools/commit/61c20ae24b83d871a6a5e3819e09748df3026061))
+* **main:** release main libraries ([e49d724](https://github.com/paraspell/xcm-tools/commit/e49d72434cec8fc28edb55b2afc195f24a18718b))
+* **main:** release main libraries ([f84aa87](https://github.com/paraspell/xcm-tools/commit/f84aa8738812d3c90984599c51ddad5661a69129))
+* **main:** release main libraries ([d43690c](https://github.com/paraspell/xcm-tools/commit/d43690c8b28ae651e8bcd002e415b3c929d6190d))
+* **main:** release main libraries ([9381e35](https://github.com/paraspell/xcm-tools/commit/9381e3511f57bc9b5c6d98fdc4c8eec6acfcce66))
+* **main:** release main libraries ([f6d7433](https://github.com/paraspell/xcm-tools/commit/f6d743313b4d856069af02fbc9e6627377f340ae))
+* **main:** release main libraries ([2d37e2c](https://github.com/paraspell/xcm-tools/commit/2d37e2cd197fe336af58c5a1c8396b91a147cc3d))
+* **main:** release main libraries ([47a7aef](https://github.com/paraspell/xcm-tools/commit/47a7aefd7b57cc76a92dcfcb01f37dcfe152e9a4))
+* **main:** release main libraries ([b6c1909](https://github.com/paraspell/xcm-tools/commit/b6c19095fc0ec3507f3388bd73381126a29d2336))
+* **main:** release main libraries ([0ea7489](https://github.com/paraspell/xcm-tools/commit/0ea74897682d7fc6519a05c69852a4f14ae3a881))
+* **main:** release main libraries ([d8a0439](https://github.com/paraspell/xcm-tools/commit/d8a04394fefc3a4ebc50af11c2b9a5f418a3f2c7))
+* **main:** release main libraries ([bef599f](https://github.com/paraspell/xcm-tools/commit/bef599f8eb516d7d7fc2bc730e647479784c112c))
+* **main:** release main libraries ([588f49a](https://github.com/paraspell/xcm-tools/commit/588f49a892142898e2ce4eb18edf970ff71a771b))
+* **main:** release main libraries ([34067ae](https://github.com/paraspell/xcm-tools/commit/34067aef14ba20f06e441240e0ff30b9821d98b4))
+* **main:** release xcm-router 1.1.0 ([#200](https://github.com/paraspell/xcm-tools/issues/200)) ([8efc755](https://github.com/paraspell/xcm-tools/commit/8efc755ac31ed37612f135b4b7c108c9680e52d2))
+* **main:** release xcm-router 1.1.1 ([#213](https://github.com/paraspell/xcm-tools/issues/213)) ([3022cd7](https://github.com/paraspell/xcm-tools/commit/3022cd7c27c35e543f4715ab86ac8a50647e4d66))
+* **main:** release xcm-router 1.2.0 ([75964fc](https://github.com/paraspell/xcm-tools/commit/75964fc5b9d313b347734dfc706e09f98ed5c761))
+* **main:** release xcm-router 1.2.1 ([#286](https://github.com/paraspell/xcm-tools/issues/286)) ([3d6e25c](https://github.com/paraspell/xcm-tools/commit/3d6e25c13b8e7684fc1a452d9893cf61a042dac2))
+* **main:** release xcm-router 1.2.2 ([920edf0](https://github.com/paraspell/xcm-tools/commit/920edf0d99aa775fa417e149b8a134ec98f2b5d0))
+* **main:** release xcm-router 1.3.0 ([33e7a36](https://github.com/paraspell/xcm-tools/commit/33e7a36789adb4e4127c1c32e066baa3dbb08900))
+* **main:** release xcm-router 1.4.0 ([576f2cf](https://github.com/paraspell/xcm-tools/commit/576f2cf2efffcf2352b450ae351453caa1791f50))
+* **main:** release xcm-router 1.4.1 ([f6939f2](https://github.com/paraspell/xcm-tools/commit/f6939f2408c748fc2cf5d3776674e2d6cca72265))
+* **main:** release xcm-router 1.5.0 ([d52c61e](https://github.com/paraspell/xcm-tools/commit/d52c61eaba4519d9624e46caafdb98e183403a38))
+* **main:** release xcm-router 2.0.0 ([41f5dfa](https://github.com/paraspell/xcm-tools/commit/41f5dfa3c556c48a20f331eb62420ca8d0d762f6))
+* **main:** release xcm-router 2.1.0 ([0979efc](https://github.com/paraspell/xcm-tools/commit/0979efc1aff0d057939f112361a6518307f6a6bf))
+* **main:** release xcm-router 2.2.0 ([ccd07b9](https://github.com/paraspell/xcm-tools/commit/ccd07b996e730bca430f739bd68c39175cf0746f))
+* **main:** release xcm-router 2.2.1 ([b3917f3](https://github.com/paraspell/xcm-tools/commit/b3917f317532028ffde69d2b2752a26cad7f3c5f))
+* **main:** release xcm-router 2.2.2 ([41be7cc](https://github.com/paraspell/xcm-tools/commit/41be7cc68d6bc0e8f01bebf78a26af525356967d))
+* **main:** release xcm-router 2.2.3 ([f5b0a28](https://github.com/paraspell/xcm-tools/commit/f5b0a28142ed6f622a4ec9650f1946ac27ebf612))
+* **main:** release xcm-router 2.3.0 ([1d0233f](https://github.com/paraspell/xcm-tools/commit/1d0233f7b07187173ffc2df03b5057e591cfdfae))
+* Perform a monthly check 🛠️ ([46a8802](https://github.com/paraspell/xcm-tools/commit/46a8802cb68a49b28f131b337e5b4b4731e01fd4))
+* Perform monthly check 🔧 ([fdcb194](https://github.com/paraspell/xcm-tools/commit/fdcb194681947b4e92ff8b34ebd7b3c84e6d0048))
+* Perform monthly check 🔧 ([b459bc4](https://github.com/paraspell/xcm-tools/commit/b459bc48044711b02e3ed1bf0ea1d9ddecd32098))
+* Perform monthly maintenance check ([5b1b76a](https://github.com/paraspell/xcm-tools/commit/5b1b76a249d52568488242908581fe061dee2750))
+* Perform monthly maintenance check  👨‍🔧 ([a85c3bd](https://github.com/paraspell/xcm-tools/commit/a85c3bd427b6d1d829155bf32a4524637eb78a1f))
+* Perform monthly maintenance check 🛠️ ([e85ed15](https://github.com/paraspell/xcm-tools/commit/e85ed15e709ccf3b59f7aa8c0fcaf7134e0fe8a3))
+* Perform montly check ✨ ([3f20805](https://github.com/paraspell/xcm-tools/commit/3f20805195f11ca9f37c57f1c6ee6e37c07f6edc))
+* Perform November monthly check 🔧 ([6aceb38](https://github.com/paraspell/xcm-tools/commit/6aceb38be5fd65c9f7dbfd037bdcc947c9cf37d8))
+* Remove unused standard-version package 🔨 ([f36f10c](https://github.com/paraspell/xcm-tools/commit/f36f10ccbdf67ec61fea78a9fe20030b5fcea705))
+* **sdk:** Perform monthly check ⚙️ ([0edf441](https://github.com/paraspell/xcm-tools/commit/0edf441af391711f4884032a8ed0f9c3b1818cc6))
+* **sdk:** Perform monthly maintenance check 🛠️ ([71e0bdd](https://github.com/paraspell/xcm-tools/commit/71e0bdd6e4df2c87bb428a66d6dea637131f27c1))
+* Update docs ([1cea10f](https://github.com/paraspell/xcm-tools/commit/1cea10f78a1377ce4526dba7a54ad3a806afc024))
+* Update Node.js to v20 LTS ([4b00caa](https://github.com/paraspell/xcm-tools/commit/4b00caa58649051f4dea57e7f6ebb94baa6e307a))
+* Update Polkadot dependencies to latest version ([319ec70](https://github.com/paraspell/xcm-tools/commit/319ec70e4f3771f0ca339f770d6474a8fcceb8ed))
+* Update readme ([fd92c72](https://github.com/paraspell/xcm-tools/commit/fd92c72edcf16ec4450606f0e5938cf1f5a3bc01))
+* **xcm-router:** Default to builder pattern ([82b6305](https://github.com/paraspell/xcm-tools/commit/82b6305c0bceeab9ea84e4a6797aa4b6ba06d2bc))
+* **xcm-router:** Update all dependencies ([b71eaec](https://github.com/paraspell/xcm-tools/commit/b71eaec3ee5c2fb2a73e37e2b0fb3013a2d53b95))
+* **xcm-router:** Update License ([1422afe](https://github.com/paraspell/xcm-tools/commit/1422afe61d08cb9083fa3d724e900b1f7d54ec86))
+* **xcm-router:** Update README.md ([879f672](https://github.com/paraspell/xcm-tools/commit/879f6725dd7e360e1faa94e7bb793a491ef77d33))
+* **xcm-router:** Update README.md ([c38cb49](https://github.com/paraspell/xcm-tools/commit/c38cb49c50c39b02ab84a2a4c5e9cb5e4fd45fa0))
+* **xcm-router:** Update README.md ([0b24925](https://github.com/paraspell/xcm-tools/commit/0b2492503dc573379ec2f1b988939bf89316133a))
+* **xcm-tools:** Add starter template projects to readme ([8e9cbf7](https://github.com/paraspell/xcm-tools/commit/8e9cbf7f6a8c25e7bf7dd48287d0dd66557c4c02))
+* **xcm-tools:** Update readme to reflect latest changes ([65c7a72](https://github.com/paraspell/xcm-tools/commit/65c7a72963eaf9eaba147a13c2b9da654d5cf8fb))
+
+
+### Code Refactoring
+
+* Change multi-location type ✨ ([997e605](https://github.com/paraspell/xcm-tools/commit/997e605a1f5816ac44f4a18ee90859a677c55141))
+* Create separate packages for assets and common code ✨ ([d1ed352](https://github.com/paraspell/xcm-tools/commit/d1ed3523e86219916e810fffa06e53b2a3ef96ea))
+* Create separate packages for assets and common code e ✨ ([371b3ec](https://github.com/paraspell/xcm-tools/commit/371b3ec72558e2177c6d7129871820ad50a02a4e))
+* **sdk-core:** Refactor override currency logic 🔧 ([6f4f636](https://github.com/paraspell/xcm-tools/commit/6f4f63685402907efb18b6346ce4c189773d219f))
+* **sdk-core:** Refactor override currency logic 🔧 ([905e9c5](https://github.com/paraspell/xcm-tools/commit/905e9c5355fd7e0f1e8defbef34d4247e6b39f9d))
+* Upgrade ESlint to v9 & create shared config ([524161b](https://github.com/paraspell/xcm-tools/commit/524161b9a9509c3beb15af99bfc0151c7eeb5619))
+* **xcm-router:** Enhance XCM Router to use only 2 signatures ✍️ ([f4f1761](https://github.com/paraspell/xcm-tools/commit/f4f17614a2842af69b4b8ef0480f3df531ce9eed))
+* **xcm-router:** Improve asset selection and validation 🪄 ([138f633](https://github.com/paraspell/xcm-tools/commit/138f633fbe3e2de851dd70be305e792208350320))
+* **xcm-router:** Reduce unit tests code duplication & add tests for small amount error ([384803d](https://github.com/paraspell/xcm-tools/commit/384803da3528087124fe2f2182d7d4ee8fdf9120))
+* **xcm-router:** Refactor to use route plan object 🛠️ ([3650a42](https://github.com/paraspell/xcm-tools/commit/3650a4254c9fa8dc442a8b0fe00abfcc91b7d63d))
+* **xcm-router:** Refactor transfer functions 🔧 ([420db1e](https://github.com/paraspell/xcm-tools/commit/420db1ec3361add1a24764ac0d6a6d6353d31032))
+
+
+### Tests
+
+* Improve overall unit test coverage to above 90% 🧪 ([aeb32bb](https://github.com/paraspell/xcm-tools/commit/aeb32bb6a54c1bc2e527cf587b8e0a44e3c397a5))
+* **xcm-router:** Speed up XCM Router tests 🧪 ([e1e2373](https://github.com/paraspell/xcm-tools/commit/e1e2373f6c4b7a515d6af8d805d66bef28b19110))
+
+
+### Build System
+
+* Add sort-imports ESlint rule ✨ ([d9bd402](https://github.com/paraspell/xcm-tools/commit/d9bd4024ba87f6c8fedad012100ea76fdf7658c8))
+* Update all package commands to use pnpm ([5478cf3](https://github.com/paraspell/xcm-tools/commit/5478cf3166613eb7fdd9571bc20811d45d1d2fcd))
+* **xcm-router:** Bump @galacticcouncil/sdk to v5.3.0 📦 ([8830300](https://github.com/paraspell/xcm-tools/commit/8830300d594f14f1780dbf918212e3d88a34ec2d))
+* **xcm-router:** Update Bifrost DEX SDK 📦 ([fe85f27](https://github.com/paraspell/xcm-tools/commit/fe85f273c6371c27a97e86c57d59b8913f5bff68))
+
+
+### Continuous Integration
+
+* Integrate Codecov PR comments 💬 ([220da1b](https://github.com/paraspell/xcm-tools/commit/220da1b6d060b7aa4d8262e779256e40ce145f3f))
+* Setup Codecov bundle analysis 📦 ([c3e0e53](https://github.com/paraspell/xcm-tools/commit/c3e0e535cef0e2d8dd77035cb10ee596163d54a0))
+* Update Node.js to v22 LTS 📦 ([f7d4902](https://github.com/paraspell/xcm-tools/commit/f7d49029e295fb4bd3840ab27abe40d3168beae5))
+
 ## [8.9.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.9.0...xcm-router-v8.9.1) (2025-03-24)
 
 
