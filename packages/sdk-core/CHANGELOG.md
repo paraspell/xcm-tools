@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.9.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.0...sdk-core-v8.9.1) (2025-03-24)
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor beneficiary multi-location creation 🔧 ([d96e518](https://github.com/paraspell/xcm-tools/commit/d96e5186d243fa560138342fd9bdb4f7328bf156))
+* **sdk-core:** Refactor beneficiary multi-location creation 🔧 ([bde4031](https://github.com/paraspell/xcm-tools/commit/bde4031ff28d90139da1557f9244b4833ceae817))
+
 ## [8.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.8.0...sdk-core-v8.9.0) (2025-03-18)
 
 
