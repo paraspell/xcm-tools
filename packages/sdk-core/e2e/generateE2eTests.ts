@@ -276,7 +276,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     })
 
     describe.sequential('Auto API create', () => {
-      it('should create transfer tx from Picasso to Turing - auto API', async () => {
+      it('should create transfer tx from Acala to Astar - auto API', async () => {
         const tx = await Builder()
           .from('Acala')
           .to('Astar')
@@ -286,7 +286,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         await validateTx(tx, signer)
       })
 
-      it('should create transfer tx from Turing to Picasso - WS url', async () => {
+      it('should create transfer tx from Acala to Astar - WS url', async () => {
         const tx = await Builder('wss://acala-rpc.dwellir.com')
           .from('Acala')
           .to('Astar')
@@ -296,7 +296,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         await validateTx(tx, signer)
       })
 
-      it('should create transfer tx from Turing to Picasso - WS url array', async () => {
+      it('should create transfer tx from Acala to Astar - WS url array', async () => {
         const tx = await Builder(['wss://acala-rpc.dwellir.com', 'wss://acala.ibp.network'])
           .from('Acala')
           .to('Astar')
@@ -323,7 +323,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           scenarios.forEach(({ destNode, asset }) => {
             it(`should create transfer tx from ${node} to ${destNode} - (${asset.symbol})`, async () => {
               const getCurrency = () => {
-                if (node === 'Turing' || node === 'Picasso') {
+                if (node === 'Turing') {
                   return {
                     symbol: isForeignAsset(asset) ? Foreign(asset.symbol) : Native(asset.symbol)
                   }

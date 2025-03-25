@@ -293,7 +293,7 @@ export const XcmRouter = () => {
             determineCurrency(
               from
                 ? from
-                : exchange
+                : exchange && !Array.isArray(exchange)
                   ? createDexNodeInstance(exchange).node
                   : undefined,
               currencyFrom,
@@ -301,9 +301,11 @@ export const XcmRouter = () => {
           )
           .currencyTo(
             determineCurrency(
-              exchange ? createDexNodeInstance(exchange).node : undefined,
+              exchange && !Array.isArray(exchange)
+                ? createDexNodeInstance(exchange).node
+                : undefined,
               currencyTo,
-              exchange === undefined,
+              exchange === undefined || Array.isArray(exchange),
             ),
           )
           .amount(formValues.amount)
@@ -313,6 +315,14 @@ export const XcmRouter = () => {
       openOutputAlert();
       closeAlert();
       showSuccessNotification(undefined, 'Success', 'Best amount fetched');
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e);
+        showErrorNotification(e.message);
+        setError(e);
+        openAlert();
+        setShowStepper(false);
+      }
     } finally {
       setLoading(false);
     }
@@ -330,8 +340,14 @@ export const XcmRouter = () => {
 
     closeOutputAlert();
 
+    const exchange = (
+      formValues.exchange && formValues.exchange?.length > 1
+        ? formValues.exchange
+        : formValues.exchange?.[0]
+    ) as TExchangeNode | undefined;
+
     if (submitType === 'getBestAmountOut') {
-      await submitGetBestAmountOut(formValues, undefined);
+      await submitGetBestAmountOut(formValues, exchange);
       return;
     }
 
@@ -342,12 +358,6 @@ export const XcmRouter = () => {
     );
 
     const injector = await web3FromAddress(selectedAccount.address);
-
-    const exchange = (
-      formValues.exchange && formValues.exchange?.length > 1
-        ? formValues.exchange
-        : formValues.exchange?.[0]
-    ) as TExchangeNode | undefined;
 
     const originalError = console.error;
     console.error = (...args: unknown[]) => {

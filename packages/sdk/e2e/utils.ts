@@ -57,11 +57,8 @@ export const filteredNodes = NODE_NAMES_DOT_KSM.filter(
     // PAPI UNSUPPORTED NODES START
     node !== 'ComposableFinance' &&
     node !== 'Interlay' &&
-    node !== 'Parallel' &&
     node !== 'CrustShadow' &&
     node !== 'Kintsugi' &&
-    node !== 'ParallelHeiko' &&
-    node !== 'Picasso' &&
     node !== 'RobonomicsKusama' &&
     node !== 'RobonomicsPolkadot' &&
     node !== 'Turing' &&

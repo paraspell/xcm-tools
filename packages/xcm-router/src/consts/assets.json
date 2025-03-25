@@ -867,6 +867,18 @@
       }
     },
     {
+      "symbol": "EWT",
+      "assetId": "252525",
+      "multiLocation": {
+        "parents": 1,
+        "interior": {
+          "X1": {
+            "Parachain": 3345
+          }
+        }
+      }
+    },
+    {
       "symbol": "KSM",
       "assetId": "1000771",
       "multiLocation": {

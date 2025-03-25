@@ -1257,7 +1257,7 @@ describe('XCM API (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .post(routerUrl)
+        .post(`${routerUrl}/best-amount-out`)
         .send(bestAmountOutOptions)
         .expect(201)
         .expect((res) => {

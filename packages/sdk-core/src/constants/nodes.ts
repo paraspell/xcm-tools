@@ -4,7 +4,6 @@ import Amplitude from '../nodes/supported/Amplitude'
 import AssetHubKusama from '../nodes/supported/AssetHubKusama'
 import AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
 import Astar from '../nodes/supported/Astar'
-import Bajun from '../nodes/supported/Bajun'
 import Basilisk from '../nodes/supported/Basilisk'
 import BifrostKusama from '../nodes/supported/BifrostKusama'
 import { BifrostPolkadot } from '../nodes/supported/BifrostPolkadot'
@@ -25,7 +24,6 @@ import Darwinia from '../nodes/supported/Darwinia'
 import Encointer from '../nodes/supported/Encointer'
 import Heima from '../nodes/supported/Heima'
 import Hydration from '../nodes/supported/Hydration'
-import Imbue from '../nodes/supported/Imbue'
 import Interlay from '../nodes/supported/Interlay'
 import InvArchTinker from '../nodes/supported/InvArchTinker'
 import Karura from '../nodes/supported/Karura'
@@ -37,14 +35,11 @@ import Moonriver from '../nodes/supported/Moonriver'
 import Mythos from '../nodes/supported/Mythos'
 import NeuroWeb from '../nodes/supported/NeuroWeb'
 import Nodle from '../nodes/supported/Nodle'
-import Parallel from '../nodes/supported/Parallel'
-import ParallelHeiko from '../nodes/supported/ParallelHeiko'
 import Peaq from '../nodes/supported/Peaq'
 import Pendulum from '../nodes/supported/Pendulum'
 import PeopleKusama from '../nodes/supported/PeopleKusama'
 import PeoplePolkadot from '../nodes/supported/PeoplePolkadot'
 import Phala from '../nodes/supported/Phala'
-import Picasso from '../nodes/supported/Picasso'
 import Polimec from '../nodes/supported/Polimec'
 import Quartz from '../nodes/supported/Quartz'
 import RobonomicsKusama from '../nodes/supported/RobonomicsKusama'
@@ -72,26 +67,21 @@ export const nodes = <TApi, TRes>() => ({
   Interlay: new Interlay<TApi, TRes>(),
   Heima: new Heima<TApi, TRes>(),
   Moonbeam: new Moonbeam<TApi, TRes>(),
-  Parallel: new Parallel<TApi, TRes>(),
   AssetHubKusama: new AssetHubKusama<TApi, TRes>(),
   CoretimeKusama: new CoretimeKusama<TApi, TRes>(),
   CoretimePolkadot: new CoretimePolkadot<TApi, TRes>(),
   Encointer: new Encointer<TApi, TRes>(),
   Altair: new Altair<TApi, TRes>(),
   Amplitude: new Amplitude<TApi, TRes>(),
-  Bajun: new Bajun<TApi, TRes>(),
   Basilisk: new Basilisk<TApi, TRes>(),
   BifrostKusama: new BifrostKusama<TApi, TRes>(),
   Calamari: new Calamari<TApi, TRes>(),
   CrustShadow: new CrustShadow<TApi, TRes>(),
   Crab: new Crab<TApi, TRes>(),
-  Imbue: new Imbue<TApi, TRes>(),
   InvArchTinker: new InvArchTinker<TApi, TRes>(),
   Karura: new Karura<TApi, TRes>(),
   Kintsugi: new Kintsugi<TApi, TRes>(),
   Moonriver: new Moonriver<TApi, TRes>(),
-  ParallelHeiko: new ParallelHeiko<TApi, TRes>(),
-  Picasso: new Picasso<TApi, TRes>(),
   Quartz: new Quartz<TApi, TRes>(),
   RobonomicsKusama: new RobonomicsKusama<TApi, TRes>(),
   RobonomicsPolkadot: new RobonomicsPolkadot<TApi, TRes>(),

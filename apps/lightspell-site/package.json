@@ -8,28 +8,28 @@
     "build": "vite build",
     "compile": "tsc",
     "preview": "vite preview",
-    "lint:check": "eslint .",
-    "lint": "eslint --fix .",
+    "lint:check": "eslint src",
+    "lint": "eslint --fix src",
     "format:check": "prettier --check src",
     "format:write": "prettier --write src"
   },
   "dependencies": {
-    "@mantine/core": "^7.17.0",
-    "@mantine/form": "^7.17.0",
-    "@mantine/hooks": "^7.17.0",
+    "@mantine/core": "^7.17.2",
+    "@mantine/form": "^7.17.2",
+    "@mantine/hooks": "^7.17.2",
     "@mantinex/dev-icons": "^1.1.0",
-    "@tabler/icons-react": "^3.30.0",
+    "@tabler/icons-react": "^3.31.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.2.0"
+    "react-router-dom": "^7.4.0"
   },
   "devDependencies": {
-    "@types/react": "^19.0.10",
+    "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "postcss": "^8.5.3",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
-    "vite": "^6.2.0"
+    "vite": "^6.2.3"
   }
 }

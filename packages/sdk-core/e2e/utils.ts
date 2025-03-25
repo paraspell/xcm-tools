@@ -18,10 +18,7 @@ const assetIdRequired: TNode[] = [
   'Basilisk',
   'Amplitude',
   'Pendulum',
-  'Parallel',
-  'ParallelHeiko',
-  'Turing',
-  'Picasso'
+  'Turing'
 ]
 
 export const doesNotSupportParaToRelay: TNode[] = ['Phala', 'Peaq', 'Pendulum']
