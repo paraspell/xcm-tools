@@ -28,7 +28,13 @@ import { supportsDryRunApi } from './supportsDryRunApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
 import { fetchXcmRegistry, TRegistryAssets } from './fetchXcmRegistry'
 import { fetchPolimecForeignAssets } from './fetchPolimecAssets'
-import { TMultiLocation, TNode, TNodePolkadotKusama } from '@paraspell/sdk-common'
+import {
+  Parents,
+  TMultiLocation,
+  TNode,
+  TNodePolkadotKusama,
+  TNodeWithRelayChains
+} from '@paraspell/sdk-common'
 import { getNodeProviders, getParaId, getNode } from '../../sdk-core/src'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
@@ -309,7 +315,7 @@ const fetchOtherAssets = async (
     otherAssets = await fetchOtherAssetsCurio(api, query)
   }
 
-  if (node === 'Picasso' || node === 'ComposableFinance') {
+  if (node === 'ComposableFinance') {
     otherAssets = await fetchComposableAssets(api, query)
   }
 
@@ -340,6 +346,23 @@ const fetchOtherAssets = async (
   return otherAssets.length > 0 ? otherAssets : fetchOtherAssetsDefault(node, api, query)
 }
 
+const patchParents = (node: TNodePolkadotKusama, asset: TForeignAsset): TForeignAsset => {
+  if ((node === 'Hydration' || node === 'BifrostPolkadot') && asset.symbol === 'ETH') {
+    if (asset.multiLocation) {
+      if ('parents' in asset.multiLocation) {
+        return {
+          ...asset,
+          multiLocation: {
+            ...asset.multiLocation,
+            parents: Parents.TWO
+          }
+        }
+      }
+    }
+  }
+  return asset
+}
+
 const fetchNodeAssets = async (
   node: TNodePolkadotKusama,
   api: ApiPromise,
@@ -365,6 +388,7 @@ const fetchNodeAssets = async (
     const matchingQueryAsset = queryOtherAssets.find(
       queryAsset => queryAsset.assetId === globalAsset.assetId
     )
+
     return matchingQueryAsset
       ? {
           ...globalAsset,
@@ -421,6 +445,8 @@ const fetchNodeAssets = async (
   }
 
   mergedAssets = mergedAssets.filter(asset => asset.assetId !== 'Native')
+
+  mergedAssets = mergedAssets.map(asset => patchParents(node, asset))
 
   await api.disconnect()
 

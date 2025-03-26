@@ -87,7 +87,6 @@ export const fetchOtherAssetsRegistry = async (
   const assets = await fetchAssets(node)
   const data = await fetchXcmRegistry()
 
-  const isAssetHub = node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
   const isBifrost = node === 'BifrostPolkadot' || node === 'BifrostKusama'
 
   return assets
@@ -111,7 +110,6 @@ export const fetchOtherAssetsRegistry = async (
         multiLocation = capitalizeMultiLocation(multiLocation)
       }
 
-      const paraId = getParaId(node)
       const relay = getNode(node).type as 'polkadot' | 'kusama'
       let xcmInteriorKey = item.xcmInteriorKey
 

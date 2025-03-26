@@ -37,11 +37,8 @@ import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 const unsupportedNodes = [
   'ComposableFinance',
   'Interlay',
-  'Parallel',
   'CrustShadow',
   'Kintsugi',
-  'ParallelHeiko',
-  'Picasso',
   'RobonomicsKusama',
   'Turing',
   'Pendulum',

@@ -148,19 +148,6 @@
       }
     ]
   },
-  "Parallel": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 24
-      },
-      {
-        "name": "XTokens",
-        "index": 43
-      }
-    ]
-  },
   "AssetHubKusama": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -206,19 +193,6 @@
       {
         "name": "XTokens",
         "index": 54
-      }
-    ]
-  },
-  "Bajun": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      },
-      {
-        "name": "XTokens",
-        "index": 35
       }
     ]
   },
@@ -283,19 +257,6 @@
       }
     ]
   },
-  "Imbue": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 27
-      },
-      {
-        "name": "XTokens",
-        "index": 30
-      }
-    ]
-  },
   "InvArchTinker": {
     "defaultPallet": "XTokens",
     "supportedPallets": [
@@ -341,32 +302,6 @@
       {
         "name": "PolkadotXcm",
         "index": 103
-      }
-    ]
-  },
-  "ParallelHeiko": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 24
-      },
-      {
-        "name": "XTokens",
-        "index": 43
-      }
-    ]
-  },
-  "Picasso": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 41
-      },
-      {
-        "name": "XTokens",
-        "index": 44
       }
     ]
   },

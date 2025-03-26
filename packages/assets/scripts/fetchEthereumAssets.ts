@@ -41,7 +41,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
       assetId: '0x0000000000000000000000000000000000000000',
       existentialDeposit: '15000000000000',
       multiLocation: {
-        parents: 1,
+        parents: 2,
         interior: {
           X1: {
             GlobalConsensus: {

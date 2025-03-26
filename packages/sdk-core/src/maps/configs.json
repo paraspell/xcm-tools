@@ -118,10 +118,6 @@
     "paraId": 2030,
     "providers": [
       {
-        "name": "Dwellir",
-        "endpoint": "wss://bifrost-polkadot-rpc.dwellir.com"
-      },
-      {
         "name": "IBP1",
         "endpoint": "wss://bifrost-polkadot.ibp.network"
       },
@@ -389,17 +385,6 @@
       }
     ]
   },
-  "Parallel": {
-    "name": "Parallel",
-    "info": "parallel",
-    "paraId": 2012,
-    "providers": [
-      {
-        "name": "Gatotech",
-        "endpoint": "wss://parallel.gatotech.network"
-      }
-    ]
-  },
   "AssetHubKusama": {
     "name": "AssetHub",
     "info": "KusamaAssetHub",
@@ -550,17 +535,6 @@
       }
     ]
   },
-  "Bajun": {
-    "name": "Bajun Network",
-    "info": "bajun",
-    "paraId": 2119,
-    "providers": [
-      {
-        "name": "AjunaNetwork",
-        "endpoint": "wss://rpc-para.bajun.network"
-      }
-    ]
-  },
   "Basilisk": {
     "name": "Basilisk",
     "info": "basilisk",
@@ -581,10 +555,6 @@
     "info": "bifrost",
     "paraId": 2001,
     "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://bifrost-rpc.dwellir.com"
-      },
       {
         "name": "Liebi",
         "endpoint": "wss://bifrost-rpc.liebi.com/ws"
@@ -645,17 +615,6 @@
       {
         "name": "Dwellir",
         "endpoint": "wss://darwiniacrab-rpc.dwellir.com"
-      }
-    ]
-  },
-  "Imbue": {
-    "name": "Imbue Network",
-    "info": "imbue",
-    "paraId": 2121,
-    "providers": [
-      {
-        "name": "Imbue Network 0",
-        "endpoint": "wss://kusama.imbuenetwork.com"
       }
     ]
   },
@@ -755,32 +714,6 @@
       }
     ]
   },
-  "ParallelHeiko": {
-    "name": "Parallel Heiko",
-    "info": "heiko",
-    "paraId": 2085,
-    "providers": [
-      {
-        "name": "Parallel",
-        "endpoint": "wss://heiko-rpc.parallel.fi"
-      }
-    ]
-  },
-  "Picasso": {
-    "name": "Picasso",
-    "info": "picasso",
-    "paraId": 2087,
-    "providers": [
-      {
-        "name": "Composable",
-        "endpoint": "wss://rpc.composablenodes.tech"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://picasso-rpc.dwellir.com"
-      }
-    ]
-  },
   "Quartz": {
     "name": "QUARTZ by UNIQUE",
     "info": "quartz",
@@ -788,7 +721,7 @@
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://quartz-rpc.dwellir.com"
+        "endpoint": "wss://quartz-rpc.n.dwellir.com"
       },
       {
         "name": "Geo Load Balancer",
@@ -864,7 +797,7 @@
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://people-kusama-rpc.dwellir.com"
+        "endpoint": "wss://people-kusama-rpc.n.dwellir.com"
       },
       {
         "name": "IBP1",
@@ -933,7 +866,7 @@
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://unique-rpc.dwellir.com"
+        "endpoint": "wss://unique-rpc.n.dwellir.com"
       },
       {
         "name": "Geo Load Balancer",
