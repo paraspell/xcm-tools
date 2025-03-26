@@ -247,7 +247,7 @@ const XcmTransfer = () => {
             options: { mode: batchMode },
           },
           api,
-          apiType === 'PJS' ? '/x-transfer-batch' : '/x-transfer-batch-papi',
+          '/x-transfer-batch',
           selectedAccount.address,
           apiType,
           'POST',
@@ -517,6 +517,11 @@ const XcmTransfer = () => {
         tx = await getTxFromApi(
           {
             ...formValues,
+            feeAsset:
+              transformedFeeAsset?.currencyOptionId ||
+              transformedFeeAsset?.isCustomCurrency
+                ? determineCurrency(formValues, transformedFeeAsset)
+                : undefined,
             currency:
               currencyInputs.length === 1
                 ? currencyInputs[0]
@@ -525,7 +530,7 @@ const XcmTransfer = () => {
                   },
           },
           api,
-          apiType === 'PJS' ? '/x-transfer' : '/x-transfer-papi',
+          '/x-transfer',
           selectedAccount.address,
           apiType,
           'POST',

@@ -1,4 +1,5 @@
 import { Body, Controller, Post, Req, Request, UsePipes } from '@nestjs/common';
+import { replaceBigInt } from 'src/utils/replaceBigInt.js';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
@@ -25,7 +26,7 @@ export class TransferInfoController {
     this.analyticsService.track(eventName, req, {
       origin,
       destination,
-      currency: JSON.stringify(currency),
+      currency: JSON.stringify(currency, replaceBigInt),
     });
   }
 
