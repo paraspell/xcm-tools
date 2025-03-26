@@ -77,10 +77,10 @@ describe('AssetClaimService', () => {
           id: {
             parents: 2,
             interior: {
-              X1: { Parachain: 1000 },
+              X1: { Parachain: 1000n },
             },
           },
-          fun: { Fungible: '100' },
+          fun: { Fungible: 100n },
         },
       ],
       address: 'validAddress',
@@ -101,10 +101,10 @@ describe('AssetClaimService', () => {
           id: {
             parents: 2,
             interior: {
-              X1: { Parachain: 1000 },
+              X1: { Parachain: 1000n },
             },
           },
-          fun: { Fungible: '100' },
+          fun: { Fungible: 100n },
         },
       ],
       address: 'validAddress',

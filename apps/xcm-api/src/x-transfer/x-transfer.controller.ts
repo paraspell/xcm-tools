@@ -2,6 +2,7 @@ import { Body, Controller, Post, Req, Request, UsePipes } from '@nestjs/common';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
+import { replaceBigInt } from '../utils/replaceBigInt.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import {
   BatchXTransferDto,
@@ -23,8 +24,8 @@ export class XTransferController {
     params: XTransferDto,
   ) {
     const { from, to, currency } = params;
-    const resolvedCurrency = JSON.stringify(currency);
-    const resolvedTo = JSON.stringify(to);
+    const resolvedCurrency = JSON.stringify(currency, replaceBigInt);
+    const resolvedTo = JSON.stringify(to, replaceBigInt);
     this.analyticsService.track(eventName, req, {
       from: from ?? 'unknown',
       resolvedTo,

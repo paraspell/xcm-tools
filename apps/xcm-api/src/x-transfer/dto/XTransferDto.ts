@@ -5,11 +5,15 @@ import { z } from 'zod';
 import { validateAmount } from '../../utils/validateAmount.js';
 
 const StringOrNumber = z
-  .string()
-  .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
-  .transform((s) => s.replace(/,/g, ''))
-  .or(z.number())
-  .or(z.bigint());
+  .union([
+    z
+      .string()
+      .regex(/^(?:\d{1,3}(?:,\d{3})*|\d+)$/)
+      .transform((s) => s.replace(/,/g, '')),
+    z.number(),
+    z.bigint(),
+  ])
+  .transform((value) => BigInt(value));
 
 export const MultiAssetSchemaV3 = z.object({
   id: z.object({
