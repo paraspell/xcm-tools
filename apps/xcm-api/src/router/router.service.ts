@@ -24,11 +24,11 @@ const validateNodesAndExchange = (
   to: string,
 ): {
   fromNode: TNodeDotKsmWithRelayChains;
-  exchangeNode?: TExchangeNode;
+  exchangeNode?: TExchangeNode | TExchangeNode[];
   toNode: TNodeDotKsmWithRelayChains;
 } => {
   const fromNode = from as TNodeDotKsmWithRelayChains;
-  const exchangeNode = exchange as TExchangeNode;
+  const exchangeNode = exchange as TExchangeNode | TExchangeNode[];
   const toNode = to as TNodeDotKsmWithRelayChains;
 
   if (!NODES_WITH_RELAY_CHAINS_DOT_KSM.includes(fromNode)) {
@@ -37,9 +37,13 @@ const validateNodesAndExchange = (
     );
   }
 
-  if (exchange && !EXCHANGE_NODES.includes(exchangeNode)) {
+  const exchanges = exchangeNode
+    ? ([] as TExchangeNode[]).concat(exchangeNode)
+    : undefined;
+
+  if (exchanges?.some((x) => !EXCHANGE_NODES.includes(x))) {
     throw new BadRequestException(
-      `Exchange ${exchange.toString()} is not valid. Check docs for valid exchanges.`,
+      `Exchange ${exchanges.toString()} is not valid. Check docs for valid exchanges.`,
     );
   }
 

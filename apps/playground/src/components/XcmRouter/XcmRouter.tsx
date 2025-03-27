@@ -138,7 +138,7 @@ export const XcmRouter = () => {
   const submitUsingRouterModule = async (
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeInput,
-    injectorAddress: string,
+    senderAddress: string,
     signer: Signer,
   ) => {
     const {
@@ -148,7 +148,7 @@ export const XcmRouter = () => {
       currencyTo,
       amount,
       recipientAddress,
-      evmInjectorAddress,
+      evmInjectorAddress: evmSenderAddress,
       slippagePct,
       evmSigner,
     } = formValues;
@@ -177,9 +177,9 @@ export const XcmRouter = () => {
         ),
       )
       .amount(amount)
-      .senderAddress(injectorAddress)
+      .senderAddress(senderAddress)
       .recipientAddress(recipientAddress)
-      .evmSenderAddress(evmInjectorAddress)
+      .evmSenderAddress(evmSenderAddress)
       .signer(signer)
       .evmSigner(evmSigner)
       .slippagePct(slippagePct)
@@ -190,7 +190,7 @@ export const XcmRouter = () => {
   const submitUsingApi = async (
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeNode | TExchangeNode[] | undefined,
-    injectorAddress: string,
+    senderAddress: string,
     signer: Signer,
   ) => {
     const { currencyFrom, currencyTo } = formValues;
@@ -202,7 +202,7 @@ export const XcmRouter = () => {
           currencyFrom: { symbol: currencyFrom.symbol },
           currencyTo: { symbol: currencyTo.symbol },
           exchange: exchange ?? undefined,
-          injectorAddress,
+          senderAddress,
         },
         {
           timeout: 120000,
@@ -234,10 +234,10 @@ export const XcmRouter = () => {
             api,
             api.tx(tx),
             formValues.evmSigner ?? signer,
-            formValues.evmInjectorAddress ?? injectorAddress,
+            formValues.evmInjectorAddress ?? senderAddress,
           );
         } else {
-          await submitTransaction(api, api.tx(tx), signer, injectorAddress);
+          await submitTransaction(api, api.tx(tx), signer, senderAddress);
         }
       }
 
