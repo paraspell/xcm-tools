@@ -110,6 +110,29 @@ describe('RouterService', () => {
       expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');
     });
 
+    it('should generate 3 extrinsics with automatic exchange selection', async () => {
+      const modifiedOptions: RouterDto = {
+        ...options,
+        exchange: undefined,
+      };
+
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMock as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      const result = await service.generateExtrinsics(modifiedOptions);
+
+      result.forEach((transaction, index) => {
+        expect(transaction.node).toBe(serializedExtrinsics[index].node);
+        expect(transaction.tx).toBe(serializedExtrinsics[index].tx);
+        expect(transaction.type).toBe(serializedExtrinsics[index].type);
+      });
+
+      expect(builderMock.from).toHaveBeenCalledWith('Astar');
+      expect(builderMock.exchange).toHaveBeenCalledWith(undefined);
+      expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');
+    });
+
     it('should throw BadRequestException for invalid from node', async () => {
       const modifiedOptions: RouterDto = {
         ...options,
