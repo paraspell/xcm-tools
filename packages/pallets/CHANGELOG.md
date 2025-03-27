@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.9.2](https://github.com/paraspell/xcm-tools/compare/pallets-v8.9.1...pallets-v8.9.2) (2025-03-27)
+
+
+### Miscellaneous Chores
+
+* Perform a monthly check 🪄 ([d0e49e1](https://github.com/paraspell/xcm-tools/commit/d0e49e1d808e81e3179ff64a714f89559b46c6f8))
+* Perform a monthly check 🪄 ([baa54a1](https://github.com/paraspell/xcm-tools/commit/baa54a1e37ea1324643005c813983fe5ef86dbf8))
+
 ## [8.9.1](https://github.com/paraspell/xcm-tools/compare/pallets-v8.9.0...pallets-v8.9.1) (2025-03-24)
 
 
