@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.9.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.1...sdk-core-v8.9.2) (2025-03-27)
+
+
+### Miscellaneous Chores
+
+* Add unit tests ([70d0e12](https://github.com/paraspell/xcm-tools/commit/70d0e124476809b33168ec25e4264fb5024e0f03))
+* Fix lint ([70d0e12](https://github.com/paraspell/xcm-tools/commit/70d0e124476809b33168ec25e4264fb5024e0f03))
+* Perform a monthly check 🪄 ([d0e49e1](https://github.com/paraspell/xcm-tools/commit/d0e49e1d808e81e3179ff64a714f89559b46c6f8))
+* Perform a monthly check 🪄 ([baa54a1](https://github.com/paraspell/xcm-tools/commit/baa54a1e37ea1324643005c813983fe5ef86dbf8))
+* Update format ([70d0e12](https://github.com/paraspell/xcm-tools/commit/70d0e124476809b33168ec25e4264fb5024e0f03))
+* Update SB ([70d0e12](https://github.com/paraspell/xcm-tools/commit/70d0e124476809b33168ec25e4264fb5024e0f03))
+
 ## [8.9.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.0...sdk-core-v8.9.1) (2025-03-24)
 
 
