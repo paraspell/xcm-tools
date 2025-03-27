@@ -35,6 +35,11 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     )
   }
 
+  const interior_sb =
+    ethAsset.symbol === 'ETH'
+      ? { Here: null }
+      : { X1: [{ AccountKey20: { network: null, key: ethAsset.assetId } }] }
+
   return {
     [version]: [
       {
@@ -70,9 +75,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
                 fees: {
                   id: {
                     parents: Parents.ZERO,
-                    interior: {
-                      X1: [{ AccountKey20: { network: null, key: ethAsset.assetId } }]
-                    }
+                    interior: interior_sb
                   },
                   fun: { Fungible: 1n }
                 },
