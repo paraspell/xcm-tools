@@ -104,6 +104,48 @@ describe('HydrationExchangeNode', () => {
       );
     });
 
+    it('returns a fixed price when swapping to the native currency', async () => {
+      vi.spyOn(utils, 'getAssetInfo')
+        .mockResolvedValueOnce({ decimals: 12, id: '1', symbol: 'ABC' } as Asset)
+        .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset) // Native currency
+        .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset); // Native currency info
+
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('10'));
+      vi.spyOn(utils, 'getMinAmountOut').mockReturnValue({ amount: BigNumber('90'), decimals: 12 });
+
+      const mockToTxGet = vi.fn().mockResolvedValue('mockExtrinsic' as unknown as Extrinsic);
+
+      vi.mocked(TradeRouter).mockImplementation(
+        () =>
+          ({
+            getBestSell: vi.fn().mockResolvedValue({
+              amountOut: new BigNumber('10000000000000000'),
+              toTx: vi.fn().mockImplementation((_minAmount) => ({
+                get: mockToTxGet,
+              })),
+            }),
+            getBestSpotPrice: vi
+              .fn()
+              .mockResolvedValue({ amount: new BigNumber('1'), decimals: 12 }),
+          }) as unknown as TradeRouter,
+      );
+
+      vi.mocked(getAssetDecimals).mockReturnValue(12);
+
+      const options = {
+        assetFrom: { symbol: 'ABC' },
+        assetTo: { symbol: 'HDX' },
+        slippagePct: '1',
+        amount: '10000',
+      } as TSwapOptions;
+      const toDestTransactionFee = new BigNumber('10');
+
+      const result = await node.swapCurrency(api, options, toDestTransactionFee);
+
+      expect(result.tx).toBe('mockExtrinsic');
+      expect(result.amountOut).toBe('9999999999999989'); // Ensuring the fixed price is set correctly
+    });
+
     it('throws if the amountWithoutFee becomes negative', async () => {
       vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '1' } as Asset);
       vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '2' } as Asset);
