@@ -1,5 +1,14 @@
 # Changelog
 
+## [8.9.3](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.9.2...xcm-router-v8.9.3) (2025-04-01)
+
+
+### Miscellaneous Chores
+
+* Add unit test for native currency ([8e0e6dd](https://github.com/paraspell/xcm-tools/commit/8e0e6ddd44e5c8020ad873ce5823d0b5af2236c2))
+* Fix formatting ([8e0e6dd](https://github.com/paraspell/xcm-tools/commit/8e0e6ddd44e5c8020ad873ce5823d0b5af2236c2))
+* Update Hydration native asset config ([8e0e6dd](https://github.com/paraspell/xcm-tools/commit/8e0e6ddd44e5c8020ad873ce5823d0b5af2236c2))
+
 ## [8.9.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.9.1...xcm-router-v8.9.2) (2025-03-27)
 
 
