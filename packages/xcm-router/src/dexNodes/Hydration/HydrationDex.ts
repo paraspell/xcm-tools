@@ -102,7 +102,7 @@ class HydrationExchangeNode extends ExchangeNode {
 
     if (currencyToInfo.id === nativeCurrencyInfo.id) {
       priceInfo = {
-        amount: BigNumber(1),
+        amount: BigNumber(1000000000000),
         decimals: nativeCurrencyDecimals,
       };
     }

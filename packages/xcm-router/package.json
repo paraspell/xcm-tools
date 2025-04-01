@@ -47,7 +47,7 @@
     "@crypto-dex-sdk/math": "^0.1.4",
     "@crypto-dex-sdk/parachains-bifrost": "^0.1.4",
     "@crypto-dex-sdk/token-lists": "^0.1.4",
-    "@galacticcouncil/sdk": "^5.6.1",
+    "@galacticcouncil/sdk": "^6.0.0",
     "@paraspell/sdk-pjs": "workspace:*",
     "@polkadot/api": "^15.8.1",
     "@polkadot/api-base": "^15.8.1",
