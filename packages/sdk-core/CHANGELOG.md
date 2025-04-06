@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.3...sdk-core-v8.9.4) (2025-04-06)
+
+
+### Miscellaneous Chores
+
+* Enable Relay &gt; Pendulum & Pendulum Para PEN ([c0fb1f5](https://github.com/paraspell/xcm-tools/commit/c0fb1f50f4003c40db6d3c3e5e73086285452e6b))
+
 ## [8.9.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.2...sdk-core-v8.9.3) (2025-04-01)
 
 
