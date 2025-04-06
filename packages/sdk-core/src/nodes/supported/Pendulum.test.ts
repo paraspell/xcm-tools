@@ -1,23 +1,36 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { isForeignAsset } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
+import { ScenarioNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type { TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Pendulum from './Pendulum'
-
 vi.mock('../../pallets/xTokens', () => ({
   default: {
     transferXTokens: vi.fn()
   }
 }))
 
+vi.mock('@paraspell/assets', async () => {
+  const actual = await vi.importActual<typeof import('@paraspell/assets')>('@paraspell/assets')
+  return {
+    ...actual,
+    isForeignAsset: vi.fn()
+  }
+})
+
 describe('Pendulum', () => {
   let pendulum: Pendulum<unknown, unknown>
   const mockInput = {
     asset: { symbol: 'PEN', assetId: '123', amount: '100' },
+    scenario: 'ParaToPara'
+  } as TXTokensTransferOptions<unknown, unknown>
+
+  const mockDOTInput = {
+    asset: { symbol: 'DOT', assetId: '123', amount: '100' },
     scenario: 'ParaToPara'
   } as TXTokensTransferOptions<unknown, unknown>
 
@@ -29,7 +42,7 @@ describe('Pendulum', () => {
     expect(pendulum.node).toBe('Pendulum')
     expect(pendulum.info).toBe('pendulum')
     expect(pendulum.type).toBe('polkadot')
-    expect(pendulum.version).toBe(Version.V3)
+    expect(pendulum.version).toBe(Version.V2)
   })
 
   it('should call transferXTokens with valid scenario and currency', () => {
@@ -38,7 +51,7 @@ describe('Pendulum', () => {
 
     pendulum.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { XCM: 123 } as TXcmAsset)
+    expect(spy).toHaveBeenCalledWith(mockInput, { Native: null } as TXcmAsset)
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
@@ -51,14 +64,35 @@ describe('Pendulum', () => {
   })
 
   it('should throw InvalidCurrencyError for unsupported currency', () => {
-    vi.spyOn(pendulum, 'getNativeAssetSymbol').mockReturnValue('NOT_PEN')
-
-    expect(() => pendulum.transferXTokens(mockInput)).toThrowError(
-      new InvalidCurrencyError(`Asset PEN is not supported by node Pendulum.`)
+    expect(() => pendulum.transferXTokens(mockDOTInput)).toThrowError(
+      new InvalidCurrencyError(`Pendulum does not support DOT transfers`)
     )
   })
 
-  it('should throw NodeNotSupportedError for transferRelayToPara', () => {
-    expect(() => pendulum.transferRelayToPara()).toThrowError(NodeNotSupportedError)
+  it('should call transferXTokens with XCM asset when foreign asset is provided', () => {
+    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
+    const foreignAssetInput = {
+      asset: { symbol: 'USDC', assetId: '456', amount: '200' },
+      scenario: 'ParaToPara'
+    } as TXTokensTransferOptions<unknown, unknown>
+
+    vi.mocked(isForeignAsset).mockReturnValue(true)
+
+    pendulum.transferXTokens(foreignAssetInput)
+
+    expect(spy).toHaveBeenCalledWith(foreignAssetInput, { XCM: 456 })
+  })
+
+  it('should throw InvalidCurrencyError for asset without assetId and not foreign', () => {
+    const invalidAssetInput = {
+      asset: { symbol: 'FAKE', amount: '50' }, // missing assetId
+      scenario: 'ParaToPara'
+    } as TXTokensTransferOptions<unknown, unknown>
+
+    vi.mocked(isForeignAsset).mockReturnValue(false)
+
+    expect(() => pendulum.transferXTokens(invalidAssetInput)).toThrowError(
+      new InvalidCurrencyError(`Asset ${JSON.stringify(invalidAssetInput.asset)} has no assetId`)
+    )
   })
 })
