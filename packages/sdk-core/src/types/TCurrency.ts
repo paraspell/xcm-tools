@@ -23,9 +23,7 @@ export type TForeignOrTokenAsset = TXcmForeignAsset | { Token: string | undefine
 
 export type TForeignOrNativeAsset = TXcmForeignAsset | 'Native'
 
-export type TXcmAsset = {
-  XCM: number | undefined
-}
+export type TXcmAsset = { XCM: number | undefined } | { Native: null }
 
 export type TMantaAsset = {
   MantaCurrency: bigint | undefined
