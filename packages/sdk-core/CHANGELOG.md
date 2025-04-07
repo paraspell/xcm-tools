@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.5...sdk-core-v8.9.6) (2025-04-07)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix Pendulum DOT transfers ([5c62578](https://github.com/paraspell/xcm-tools/commit/5c62578da516f28b31ccee1d396b3cc46548d88e))
+
 ## [8.9.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.4...sdk-core-v8.9.5) (2025-04-07)
 
 
