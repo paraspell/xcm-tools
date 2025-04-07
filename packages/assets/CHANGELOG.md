@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.5](https://github.com/paraspell/xcm-tools/compare/assets-v8.9.4...assets-v8.9.5) (2025-04-07)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix AssetHub transfers 🔧 ([5c4e223](https://github.com/paraspell/xcm-tools/commit/5c4e2232da0c865f5d35ce9f8be1f994ddc4e5b0))
+
 ## [8.9.4](https://github.com/paraspell/xcm-tools/compare/assets-v8.9.3...assets-v8.9.4) (2025-04-06)
 
 

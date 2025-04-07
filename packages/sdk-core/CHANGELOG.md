@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.9.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.4...sdk-core-v8.9.5) (2025-04-07)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix AssetHub transfers 🔧 ([5c4e223](https://github.com/paraspell/xcm-tools/commit/5c4e2232da0c865f5d35ce9f8be1f994ddc4e5b0))
+* **sdk-core:** Fix Manta native asset transfers 🪛 ([803c4be](https://github.com/paraspell/xcm-tools/commit/803c4be7b153f79bfe6921bc9525564c55c9edaf))
+
 ## [8.9.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.3...sdk-core-v8.9.4) (2025-04-06)
 
 
