@@ -7,20 +7,22 @@ import {
   type TNativeAsset,
   type WithAmount
 } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import { hasJunction, type TMultiLocation } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { MockInstance } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import type { TXcmVersioned } from '../../types'
+import type { TScenario, TXcmVersioned } from '../../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
 import { createVersionedBeneficiary } from '../../utils'
 import { createExecuteXcm } from '../../utils/createExecuteXcm'
 import { transformMultiLocation } from '../../utils/multiLocation'
 import { validateAddress } from '../../utils/validateAddress'
+import ParachainNode from '../ParachainNode'
 import type AssetHubPolkadot from './AssetHubPolkadot'
 
 vi.mock('ethers', () => ({
@@ -64,6 +66,15 @@ vi.mock('../../utils/validateAddress', () => ({
 vi.mock('../../utils/createExecuteXcm', () => ({
   createExecuteXcm: vi.fn()
 }))
+
+vi.mock('@paraspell/sdk-common', async () => {
+  const actual =
+    await vi.importActual<typeof import('@paraspell/sdk-common')>('@paraspell/sdk-common')
+  return {
+    ...actual,
+    hasJunction: vi.fn()
+  }
+})
 
 describe('AssetHubPolkadot', () => {
   let assetHub: AssetHubPolkadot<unknown, unknown>
@@ -292,6 +303,14 @@ describe('AssetHubPolkadot', () => {
       mockInput.asset = {
         symbol: 'USDT',
         amount: '1000',
+        multiLocation: {
+          parents: 1,
+          interior: {
+            X1: {
+              Parachain: 1000
+            }
+          }
+        },
         isNative: true
       } as WithAmount<TNativeAsset>
       mockInput.scenario = 'ParaToPara'
@@ -310,7 +329,14 @@ describe('AssetHubPolkadot', () => {
     it('should modify input for USDC currencyId', async () => {
       mockInput.asset = {
         symbol: 'USDC',
-        assetId: '1',
+        multiLocation: {
+          parents: 1,
+          interior: {
+            X1: {
+              Parachain: 1000
+            }
+          }
+        } as TMultiLocation,
         amount: '1000'
       }
       mockInput.scenario = 'ParaToPara'
@@ -466,6 +492,114 @@ describe('AssetHubPolkadot', () => {
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       expect(() => assetHub['transferPolkadotXCM'](input)).toThrow(
         'Fee asset does not match transfer asset.'
+      )
+    })
+  })
+
+  describe('createCurrencySpec', () => {
+    const amount = 1000n
+    const version = Version.V3
+    let superCreateCurrencySpecSpy: MockInstance
+
+    beforeEach(() => {
+      superCreateCurrencySpecSpy = vi.spyOn(ParachainNode.prototype, 'createCurrencySpec')
+      vi.mocked(hasJunction).mockClear()
+      vi.mocked(transformMultiLocation).mockClear()
+    })
+
+    afterEach(() => {
+      superCreateCurrencySpecSpy.mockRestore()
+    })
+
+    it('should call super.createCurrencySpec for non-ParaToPara scenarios', () => {
+      const scenario: TScenario = 'RelayToPara'
+      const mockAsset = {
+        symbol: 'DOT',
+        amount: '1000',
+        isNative: true
+      } as WithAmount<TNativeAsset>
+      const expectedSuperResult = {
+        V3: [{ id: 'Here' as unknown as TMultiLocation, fun: { Fungible: amount } }]
+      }
+      superCreateCurrencySpecSpy.mockReturnValue(expectedSuperResult)
+
+      const result = assetHub.createCurrencySpec(amount, scenario, version, mockAsset)
+
+      expect(superCreateCurrencySpecSpy).toHaveBeenCalledWith(amount, scenario, version, mockAsset)
+      expect(hasJunction).not.toHaveBeenCalled()
+      expect(transformMultiLocation).not.toHaveBeenCalled()
+      expect(result).toEqual(expectedSuperResult)
+    })
+
+    it('should use original MultiLocation for ParaToPara when transformation is not needed', () => {
+      const scenario: TScenario = 'ParaToPara'
+      const mockMultiLocation: TMultiLocation = {
+        parents: 1,
+        interior: { X1: { Parachain: 2000 } }
+      }
+      const mockAsset = {
+        symbol: 'DOT',
+        amount: '1000',
+        isNative: true,
+        multiLocation: mockMultiLocation
+      } as WithAmount<TNativeAsset>
+      const expectedResult = {
+        V3: [{ id: { Concrete: mockMultiLocation }, fun: { Fungible: amount } }]
+      }
+
+      vi.mocked(hasJunction).mockReturnValue(false)
+
+      const result = assetHub.createCurrencySpec(amount, scenario, version, mockAsset)
+
+      expect(hasJunction).toHaveBeenCalledWith(mockMultiLocation, 'Parachain', 1000)
+      expect(transformMultiLocation).not.toHaveBeenCalled()
+      expect(superCreateCurrencySpecSpy).not.toHaveBeenCalled()
+      expect(result).toEqual(expectedResult)
+    })
+
+    it('should use transformed MultiLocation for ParaToPara when transformation is needed', () => {
+      const scenario: TScenario = 'ParaToPara'
+      const originalMultiLocation: TMultiLocation = {
+        parents: 1,
+        interior: { X1: { Parachain: 1000 } }
+      }
+      const mockAsset = {
+        symbol: 'DOT',
+        amount: '1000',
+        isNative: true,
+        multiLocation: originalMultiLocation
+      } as WithAmount<TNativeAsset>
+      const transformedMultiLocation: TMultiLocation = {
+        parents: 0,
+        interior: { X1: { AccountId32: { id: '0x123...' } } }
+      }
+      const expectedResult = {
+        V3: [{ id: { Concrete: transformedMultiLocation }, fun: { Fungible: amount } }]
+      }
+
+      vi.mocked(hasJunction).mockReturnValue(true)
+      vi.mocked(transformMultiLocation).mockReturnValue(transformedMultiLocation)
+
+      const result = assetHub.createCurrencySpec(amount, scenario, version, mockAsset)
+
+      expect(hasJunction).toHaveBeenCalledWith(originalMultiLocation, 'Parachain', 1000)
+      expect(transformMultiLocation).toHaveBeenCalledWith(originalMultiLocation)
+      expect(superCreateCurrencySpecSpy).not.toHaveBeenCalled()
+      expect(result).toEqual(expectedResult)
+    })
+
+    it('should throw InvalidCurrencyError for ParaToPara if asset is missing', () => {
+      const scenario: TScenario = 'ParaToPara'
+      expect(() => assetHub.createCurrencySpec(amount, scenario, version, undefined)).toThrow(
+        'Asset does not have a multiLocation defined'
+      )
+    })
+
+    it('should throw InvalidCurrencyError for ParaToPara if asset has no multiLocation', () => {
+      const scenario: TScenario = 'ParaToPara'
+      const assetWithoutML = { symbol: 'TST' } as TAsset
+      expect(() => assetHub.createCurrencySpec(amount, scenario, version, assetWithoutML)).toThrow(
+        'Asset does not have a multiLocation defined'
       )
     })
   })

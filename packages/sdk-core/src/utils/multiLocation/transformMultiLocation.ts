@@ -1,5 +1,12 @@
 import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
+/**
+ * This function transforms a multiLocation by removing the `Parachain` junction
+ * if it exists and setting the `parents` to `0`.
+ *
+ * @param multiLocation - The multiLocation to transform
+ * @returns The transformed multiLocation
+ */
 export const transformMultiLocation = (multiLocation: TMultiLocation): TMultiLocation => {
   let newInterior: TMultiLocation['interior']
   if (multiLocation.interior === 'Here') {

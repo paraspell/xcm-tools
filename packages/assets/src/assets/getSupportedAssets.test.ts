@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { getAssets, getOtherAssets } from './assets'
 import { getSupportedAssets } from './getSupportedAssets'
-import { findAsset } from './search'
 
 vi.mock('./assets', () => ({
   getAssets: vi.fn(),
@@ -38,16 +37,12 @@ describe('getSupportedAssets', () => {
   it('should return DOT and KSM assets when origin and destination are AssetHubPolkadot and AssetHubKusama', () => {
     const mockDOTAsset = { symbol: 'DOT', assetId: '100' }
     const mockKSMAsset = { symbol: 'KSM', assetId: '200' }
-    vi.mocked(findAsset).mockImplementation((chain, asset) => {
-      if (chain === 'Polkadot' && 'symbol' in asset && asset.symbol === 'DOT') return mockDOTAsset
-      if (chain === 'Kusama' && 'symbol' in asset && asset.symbol === 'KSM') return mockKSMAsset
-      return null
+    vi.mocked(getAssets).mockImplementation(_node => {
+      return [mockDOTAsset, mockKSMAsset]
     })
 
     const result = getSupportedAssets('AssetHubPolkadot', 'AssetHubKusama')
     expect(result).toEqual([mockDOTAsset, mockKSMAsset])
-    expect(findAsset).toHaveBeenCalledWith('Polkadot', { symbol: 'DOT' }, null)
-    expect(findAsset).toHaveBeenCalledWith('Kusama', { symbol: 'KSM' }, null)
 
     const result2 = getSupportedAssets('AssetHubKusama', 'AssetHubPolkadot')
     expect(result2).toEqual([mockDOTAsset, mockKSMAsset])

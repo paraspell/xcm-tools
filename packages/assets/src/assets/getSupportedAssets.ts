@@ -3,7 +3,6 @@ import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 import type { TAsset, TForeignAsset } from '../types'
 import { getAssets, getOtherAssets } from './assets'
 import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
-import { findAsset } from './search'
 
 /**
  * Normalizes an asset symbol by stripping the 'xc' prefix (if present) and converting it to lowercase.
@@ -42,9 +41,7 @@ export const getSupportedAssets = (
     (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
     (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot')
   ) {
-    const polkadotAsset = findAsset('Polkadot', { symbol: 'DOT' }, null)
-    const kusamaAsset = findAsset('Kusama', { symbol: 'KSM' }, null)
-    return [...(polkadotAsset ? [polkadotAsset] : []), ...(kusamaAsset ? [kusamaAsset] : [])]
+    return originAssets.filter(asset => asset.symbol === 'KSM' || asset.symbol === 'DOT')
   }
 
   const supportedAssets = originAssets.filter(asset =>
