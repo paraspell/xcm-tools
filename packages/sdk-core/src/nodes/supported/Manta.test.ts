@@ -1,3 +1,4 @@
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import XTokensTransferImpl from '../../pallets/xTokens'
@@ -35,5 +36,36 @@ describe('Manta', () => {
     manta.transferXTokens(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, { MantaCurrency: 123n })
+  })
+
+  it('should throw error for unsupported asset', () => {
+    const unsupportedInput = {
+      asset: { symbol: 'unsupported' }
+    } as TXTokensTransferOptions<unknown, unknown>
+
+    expect(() => manta.transferXTokens(unsupportedInput)).toThrow(InvalidCurrencyError)
+  })
+
+  it('should throw error for asset without assetId', () => {
+    const unsupportedInput = {
+      asset: { symbol: 'unsupported', assetId: undefined }
+    } as TXTokensTransferOptions<unknown, unknown>
+
+    expect(() => manta.transferXTokens(unsupportedInput)).toThrow(InvalidCurrencyError)
+  })
+
+  it('should call transferXTokens with native asset', () => {
+    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
+
+    manta.transferXTokens({
+      asset: { symbol: 'MANTA' }
+    } as TXTokensTransferOptions<unknown, unknown>)
+
+    expect(spy).toHaveBeenCalledWith(
+      {
+        asset: { symbol: 'MANTA' }
+      },
+      { MantaCurrency: 1n }
+    )
   })
 })
