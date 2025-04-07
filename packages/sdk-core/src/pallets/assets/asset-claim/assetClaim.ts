@@ -1,7 +1,7 @@
 import type { TPallet } from '@paraspell/pallets'
+import { isRelayChain } from '@paraspell/sdk-common'
 
 import { type TAssetClaimOptions } from '../../../types/TAssetClaim'
-import { isRelayChain } from '../../../utils'
 import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 
 export const claimAssets = async <TApi, TRes>(

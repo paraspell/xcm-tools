@@ -19,10 +19,18 @@ import {
   validateDestination
 } from './utils/validationUtils'
 
+vi.mock('@paraspell/sdk-common', async () => {
+  const actual =
+    await vi.importActual<typeof import('@paraspell/sdk-common')>('@paraspell/sdk-common')
+  return {
+    ...actual,
+    isRelayChain: vi.fn()
+  }
+})
+
 vi.mock('../utils', () => ({
   getNode: vi.fn(),
-  isPjsClient: vi.fn(),
-  isRelayChain: vi.fn()
+  isPjsClient: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({

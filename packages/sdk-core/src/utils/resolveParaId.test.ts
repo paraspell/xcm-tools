@@ -1,10 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@paraspell/sdk-common', () => ({
-  isTMultiLocation: vi.fn()
-}))
-
-vi.mock('.', () => ({
+  isTMultiLocation: vi.fn(),
   isRelayChain: vi.fn()
 }))
 
@@ -12,10 +9,9 @@ vi.mock('../nodes/config', () => ({
   getParaId: vi.fn()
 }))
 
-import { isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
+import { isRelayChain, isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
 
 import { getParaId } from '../nodes/config'
-import { isRelayChain } from '.'
 import { resolveParaId } from './resolveParaId'
 
 describe('resolveParaId', () => {

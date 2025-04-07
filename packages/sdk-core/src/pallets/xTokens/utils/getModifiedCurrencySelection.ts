@@ -1,10 +1,9 @@
 import type { TMultiAsset } from '@paraspell/assets'
 import { getOtherAssets, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
-import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { isRelayChain, Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../../constants'
 import type { TXcmVersioned, TXTokensTransferOptions, Version } from '../../../types'
-import { isRelayChain } from '../../../utils'
 import {
   addXcmVersionHeader,
   createMultiAsset,

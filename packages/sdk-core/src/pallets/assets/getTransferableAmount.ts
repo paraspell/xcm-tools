@@ -4,13 +4,13 @@ import {
   InvalidCurrencyError,
   isForeignAsset
 } from '@paraspell/assets'
+import { isRelayChain } from '@paraspell/sdk-common'
 
 import type {
   TGetMaxForeignTransferableAmountOptions,
   TGetMaxNativeTransferableAmountOptions,
   TGetTransferableAmountOptions
 } from '../../types/TBalance'
-import { isRelayChain } from '../../utils'
 import { validateAddress } from '../../utils/validateAddress'
 import { getBalanceForeignInternal } from './balance/getBalanceForeign'
 import { getBalanceNativeInternal } from './balance/getBalanceNative'

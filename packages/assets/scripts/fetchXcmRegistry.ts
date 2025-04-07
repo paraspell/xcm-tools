@@ -1,9 +1,7 @@
+import { TEcosystemType } from '@paraspell/sdk-common'
 import axios from 'axios'
 
-export type TAssets = {
-  polkadot: TRegistryAssetData[]
-  kusama: TRegistryAssetData[]
-}
+export type TAssets = Record<TEcosystemType, TRegistryAssetData[]>
 
 export type TRegistryAssetData = {
   relayChain: string

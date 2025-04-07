@@ -14,15 +14,6 @@ import type { TRelaychain } from '../types'
 export const determineRelayChain = (node: TNodeWithRelayChains): TRelaychain =>
   getRelayChainSymbol(node) === 'KSM' ? 'Kusama' : 'Polkadot'
 
-/**
- * Determines whether a given node is a relay chain (Polkadot or Kusama).
- *
- * @param node - The node to check.
- * @returns True if the node is 'Polkadot' or 'Kusama'; otherwise, false.
- */
-export const isRelayChain = (node: TNodeWithRelayChains): node is 'Polkadot' | 'Kusama' =>
-  node === 'Polkadot' || node === 'Kusama'
-
 export { createApiInstanceForNode } from './createApiInstanceForNode'
 export * from './createVersionedBeneficiary'
 export { createX1Payload } from './createX1Payload'

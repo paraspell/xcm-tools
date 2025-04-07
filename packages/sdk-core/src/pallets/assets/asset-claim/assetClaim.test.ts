@@ -1,21 +1,24 @@
 import type { TMultiAsset } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import { isRelayChain, type TMultiLocation } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { Version } from '../../../types'
 import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
-import { createApiInstanceForNode, isRelayChain } from '../../../utils'
+import { createApiInstanceForNode } from '../../../utils'
 import { claimAssets } from './assetClaim'
 import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 
 vi.mock('../../../utils', () => ({
-  createApiInstanceForNode: vi.fn(),
-  isRelayChain: vi.fn()
+  createApiInstanceForNode: vi.fn()
 }))
 
 vi.mock('./buildClaimAssetsInput', () => ({
   buildClaimAssetsInput: vi.fn()
+}))
+
+vi.mock('@paraspell/sdk-common', () => ({
+  isRelayChain: vi.fn()
 }))
 
 describe('claimAssets', () => {
