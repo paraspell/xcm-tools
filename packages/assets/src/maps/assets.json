@@ -5189,12 +5189,6 @@
           }
         },
         "existentialDeposit": "100000000"
-      },
-      {
-        "symbol": "KSM",
-        "decimals": 12,
-        "isNative": true,
-        "manuallyAdded": true
       }
     ],
     "otherAssets": [
@@ -8748,12 +8742,6 @@
           }
         },
         "existentialDeposit": "3333333"
-      },
-      {
-        "symbol": "DOT",
-        "decimals": 12,
-        "isNative": true,
-        "manuallyAdded": true
       }
     ],
     "otherAssets": [

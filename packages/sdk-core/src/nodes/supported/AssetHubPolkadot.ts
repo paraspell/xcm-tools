@@ -7,7 +7,7 @@ import {
   isAssetEqual,
   isForeignAsset
 } from '@paraspell/assets'
-import { isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { hasJunction, isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 
 import { DOT_MULTILOCATION, ETHEREUM_JUNCTION, SYSTEM_NODES_POLKADOT } from '../../constants'
@@ -426,26 +426,17 @@ class AssetHubPolkadot<TApi, TRes>
 
   createCurrencySpec(amount: TAmount, scenario: TScenario, version: Version, asset?: TAsset) {
     if (scenario === 'ParaToPara') {
-      const multiLocation = asset ? asset.multiLocation : undefined
+      const multiLocation = asset?.multiLocation
 
-      return createVersionedMultiAssets(
-        version,
-        amount,
-        multiLocation ?? {
-          parents: Parents.ZERO,
-          interior: {
-            X2: [
-              {
-                PalletInstance: 50
-              },
-              {
-                // TODO: Handle missing assedId
-                GeneralIndex: asset && isForeignAsset(asset) && asset.assetId ? asset.assetId : 0
-              }
-            ]
-          }
-        }
-      )
+      if (!multiLocation) {
+        throw new InvalidCurrencyError('Asset does not have a multiLocation defined')
+      }
+
+      const transformedMultiLocation = hasJunction(multiLocation, 'Parachain', 1000)
+        ? transformMultiLocation(multiLocation)
+        : multiLocation
+
+      return createVersionedMultiAssets(version, amount, transformedMultiLocation)
     } else {
       return super.createCurrencySpec(amount, scenario, version, asset)
     }

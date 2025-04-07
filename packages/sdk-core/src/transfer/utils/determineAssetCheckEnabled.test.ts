@@ -23,12 +23,11 @@ describe('determineAssetCheckEnabled', () => {
   it('should return false if "multiasset" is in currency', () => {
     const origin = 'Acala' as TNodePolkadotKusama
     const currency = { multiasset: [] } as TCurrencyInput
-    const isBridge = false
 
     const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
-    const result = determineAssetCheckEnabled(origin, currency, isBridge)
+    const result = determineAssetCheckEnabled(origin, currency)
 
     expect(result).toBe(false)
   })
@@ -36,26 +35,12 @@ describe('determineAssetCheckEnabled', () => {
   it('should return false if "multilocation" is in currency and isOverrideMultiLocationSpecifier returns true', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = { multilocation: {} } as TCurrencyInput
-    const isBridge = false
 
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
     const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
-    const result = determineAssetCheckEnabled(origin, currency, isBridge)
-
-    expect(result).toBe(false)
-  })
-
-  it('should return false if isBridge is true', () => {
-    const origin = {} as TNodePolkadotKusama
-    const currency = {} as TCurrencyInput
-    const isBridge = true
-
-    const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
-    vi.mocked(getNode).mockReturnValue(originNode)
-
-    const result = determineAssetCheckEnabled(origin, currency, isBridge)
+    const result = determineAssetCheckEnabled(origin, currency)
 
     expect(result).toBe(false)
   })
@@ -63,12 +48,11 @@ describe('determineAssetCheckEnabled', () => {
   it('should return originNode.assetCheckEnabled when none of the conditions are met', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = {} as TCurrencyInput
-    const isBridge = false
 
     const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
-    const result = determineAssetCheckEnabled(origin, currency, isBridge)
+    const result = determineAssetCheckEnabled(origin, currency)
 
     expect(result).toBe(true)
   })
@@ -76,12 +60,11 @@ describe('determineAssetCheckEnabled', () => {
   it('should return originNode.assetCheckEnabled (false) when none of the conditions are met', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = {} as TCurrencyInput
-    const isBridge = false
 
     const originNode = { assetCheckEnabled: false } as ParachainNode<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
-    const result = determineAssetCheckEnabled(origin, currency, isBridge)
+    const result = determineAssetCheckEnabled(origin, currency)
 
     expect(result).toBe(false)
   })
@@ -89,12 +72,11 @@ describe('determineAssetCheckEnabled', () => {
   it('should prioritize "multiasset" in currency over other conditions', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = { multiasset: {} } as TCurrencyInput
-    const isBridge = true
 
     const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
-    const result = determineAssetCheckEnabled(origin, currency, isBridge)
+    const result = determineAssetCheckEnabled(origin, currency)
 
     expect(result).toBe(false)
   })
@@ -102,13 +84,12 @@ describe('determineAssetCheckEnabled', () => {
   it('should return false when both "multilocation" in currency and isOverrideMultiLocationSpecifier returns true, even if isBridge is false', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = { multilocation: {} } as TCurrencyInput
-    const isBridge = false
 
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
     const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
-    const result = determineAssetCheckEnabled(origin, currency, isBridge)
+    const result = determineAssetCheckEnabled(origin, currency)
 
     expect(result).toBe(false)
   })
@@ -116,13 +97,12 @@ describe('determineAssetCheckEnabled', () => {
   it('should return originNode.assetCheckEnabled when "multilocation" in currency but isOverrideMultiLocationSpecifier returns false', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = { multilocation: {} } as TCurrencyInput
-    const isBridge = false
 
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
     const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
-    const result = determineAssetCheckEnabled(origin, currency, isBridge)
+    const result = determineAssetCheckEnabled(origin, currency)
 
     expect(result).toBe(true)
   })
@@ -130,12 +110,11 @@ describe('determineAssetCheckEnabled', () => {
   it('should return false when isBridge is true, regardless of other conditions', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = {} as TCurrencyInput
-    const isBridge = true
 
     const originNode = { assetCheckEnabled: false } as ParachainNode<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
-    const result = determineAssetCheckEnabled(origin, currency, isBridge)
+    const result = determineAssetCheckEnabled(origin, currency)
 
     expect(result).toBe(false)
   })
