@@ -2,12 +2,12 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ScenarioNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type { TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Pendulum from './Pendulum'
+
 vi.mock('../../pallets/xTokens', () => ({
   default: {
     transferXTokens: vi.fn()
@@ -36,6 +36,7 @@ describe('Pendulum', () => {
 
   beforeEach(() => {
     pendulum = getNode<unknown, unknown, 'Pendulum'>('Pendulum')
+    vi.spyOn(pendulum, 'getNativeAssetSymbol').mockReturnValue('PEN')
   })
 
   it('should initialize with correct values', () => {
@@ -45,28 +46,14 @@ describe('Pendulum', () => {
     expect(pendulum.version).toBe(Version.V2)
   })
 
-  it('should call transferXTokens with valid scenario and currency', () => {
+  it('should call transferXTokens with native asset', () => {
     const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-    vi.spyOn(pendulum, 'getNativeAssetSymbol').mockReturnValue('PEN')
 
     pendulum.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { Native: null } as TXcmAsset)
-  })
-
-  it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as TXTokensTransferOptions<
-      unknown,
-      unknown
-    >
-
-    expect(() => pendulum.transferXTokens(invalidInput)).toThrowError(ScenarioNotSupportedError)
-  })
-
-  it('should throw InvalidCurrencyError for unsupported currency', () => {
-    expect(() => pendulum.transferXTokens(mockDOTInput)).toThrowError(
-      new InvalidCurrencyError(`Pendulum does not support DOT transfers`)
-    )
+    expect(spy).toHaveBeenCalledWith({ ...mockInput, useMultiAssetTransfer: false }, {
+      Native: null
+    } as TXcmAsset)
   })
 
   it('should call transferXTokens with XCM asset when foreign asset is provided', () => {
@@ -80,7 +67,18 @@ describe('Pendulum', () => {
 
     pendulum.transferXTokens(foreignAssetInput)
 
-    expect(spy).toHaveBeenCalledWith(foreignAssetInput, { XCM: 456 })
+    expect(spy).toHaveBeenCalledWith(
+      { ...foreignAssetInput, useMultiAssetTransfer: false },
+      { XCM: 456 }
+    )
+  })
+
+  it('Should call transferXTokens with useMultiAssetTransfer for DOT asset', () => {
+    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
+
+    pendulum.transferXTokens(mockDOTInput)
+
+    expect(spy).toHaveBeenCalledWith({ ...mockDOTInput, useMultiAssetTransfer: true }, { XCM: 123 })
   })
 
   it('should throw InvalidCurrencyError for asset without assetId and not foreign', () => {
