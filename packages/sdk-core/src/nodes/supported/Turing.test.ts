@@ -34,6 +34,6 @@ describe('Turing', () => {
 
     turing.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 123n)
+    expect(spy).toHaveBeenCalledWith({ ...mockInput, useMultiAssetTransfer: true }, 123n)
   })
 })

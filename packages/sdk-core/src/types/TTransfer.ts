@@ -49,6 +49,7 @@ export type TXTokensTransferOptions<TApi, TRes> = {
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   pallet?: string
   method?: string
+  useMultiAssetTransfer?: boolean
 }
 
 export type TXTransferTransferOptions<TApi, TRes> = {

@@ -18,7 +18,10 @@ class Turing<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    return XTokensTransferImpl.transferXTokens(input, BigInt(asset.assetId))
+    return XTokensTransferImpl.transferXTokens(
+      { ...input, useMultiAssetTransfer: true },
+      BigInt(asset.assetId)
+    )
   }
 }
 

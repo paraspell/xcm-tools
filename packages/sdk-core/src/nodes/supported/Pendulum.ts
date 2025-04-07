@@ -1,8 +1,8 @@
 // Contains detailed structure of XCM call construction for Pendulum Parachain
 
+import type { TAsset } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
-import { ScenarioNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
 import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
@@ -13,31 +13,30 @@ class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     super('Pendulum', 'pendulum', 'polkadot', Version.V2)
   }
 
+  private getCurrencySelection(asset: TAsset): TXcmAsset {
+    if (asset.symbol === this.getNativeAssetSymbol()) {
+      return { Native: null }
+    }
+
+    if (isForeignAsset(asset) && asset.assetId !== undefined) {
+      return { XCM: Number(asset.assetId) }
+    }
+
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+  }
+
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
-    const { scenario, asset } = input
+    const { asset } = input
 
-    if (scenario === 'ParaToRelay') {
-      throw new ScenarioNotSupportedError(this.node, scenario)
-    }
+    const currencySelection = this.getCurrencySelection(asset)
 
-    if (scenario === 'ParaToPara' && asset.symbol === 'DOT') {
-      throw new InvalidCurrencyError('Pendulum does not support DOT transfers')
-    }
-
-    const currencySelection: TXcmAsset =
-      asset.symbol === 'PEN'
-        ? {
-            Native: null
-          }
-        : {
-            XCM: isForeignAsset(asset)
-              ? Number(asset.assetId)
-              : (() => {
-                  throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
-                })()
-          }
-
-    return XTokensTransferImpl.transferXTokens(input, currencySelection)
+    return XTokensTransferImpl.transferXTokens(
+      {
+        ...input,
+        useMultiAssetTransfer: asset.symbol === 'DOT'
+      },
+      currencySelection
+    )
   }
 }
 

@@ -27,7 +27,8 @@ class XTokensTransferImpl {
       scenario,
       overriddenAsset,
       pallet,
-      method
+      method,
+      useMultiAssetTransfer = false
     } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
@@ -42,11 +43,10 @@ class XTokensTransferImpl {
 
     const isAstarOrShidenToRelay =
       scenario === 'ParaToRelay' && (origin === 'Astar' || origin === 'Shiden')
-    const isTuring = origin === 'Turing'
     const isOverridenMultiAssets = overriddenAsset && !isTMultiLocation(overriddenAsset)
 
     const shouldUseMultiasset =
-      isTuring ||
+      useMultiAssetTransfer ||
       isAstarOrShidenToRelay ||
       (isAssetHubDest && !isBifrostOrigin) ||
       !!isOverridenMultiAssets
