@@ -9,12 +9,15 @@ import {
   type TCurrencyInput
 } from '@paraspell/assets'
 import { getDefaultPallet } from '@paraspell/pallets'
-import { isTMultiLocation, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import {
+  isRelayChain,
+  isTMultiLocation,
+  type TNodeDotKsmWithRelayChains
+} from '@paraspell/sdk-common'
 
 import { IncompatibleNodesError } from '../../errors'
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type { TDestination, TSendOptions } from '../../types'
-import { isRelayChain } from '../../utils'
 import { isBridgeTransfer } from './isBridgeTransfer'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {

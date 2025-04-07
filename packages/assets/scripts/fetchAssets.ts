@@ -29,13 +29,14 @@ import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
 import { fetchXcmRegistry, TRegistryAssets } from './fetchXcmRegistry'
 import { fetchPolimecForeignAssets } from './fetchPolimecAssets'
 import {
+  isRelayChain,
   Parents,
   TMultiLocation,
-  TNode,
   TNodePolkadotKusama,
   TNodeWithRelayChains
 } from '@paraspell/sdk-common'
-import { getNodeProviders, getParaId, getNode } from '../../sdk-core/src'
+import { getNodeProviders, getParaId } from '../../sdk-core/src'
+import { getRelayChainSymbol, getRelayChainType } from './utils'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -82,7 +83,7 @@ const fetchNativeAssets = async (
   const data = await fetchXcmRegistry()
 
   const paraId = getParaId(node)
-  const relay = getNode(node).type as 'polkadot' | 'kusama'
+  const relay = getRelayChainType(node)
 
   const assets = data.assets[relay].find(item => item.paraID === paraId)?.data as
     | TRegistryAssets[]
@@ -462,7 +463,7 @@ const fetchNodeAssets = async (
 export const fetchAllNodesAssets = async (assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const [node, query] of Object.entries(nodeToQuery)) {
-    const nodeName = node as TNode
+    const nodeName = node as TNodeWithRelayChains
 
     console.log(`Fetching assets for ${nodeName}...`)
 
@@ -498,12 +499,12 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
         const combinedOtherAssets = [...(newData?.otherAssets ?? []), ...manuallyAddedOtherAssets]
 
         output[nodeName] = {
-          relayChainAssetSymbol: getNode(nodeName).type === 'polkadot' ? 'DOT' : 'KSM',
+          relayChainAssetSymbol: getRelayChainSymbol(nodeName),
           nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
           isEVM: newData?.isEVM ?? false,
           supportsDryRunApi: newData?.supportsDryRunApi ?? false,
           nativeAssets: combinedNativeAssets,
-          otherAssets: combinedOtherAssets
+          otherAssets: isRelayChain(nodeName) ? [] : combinedOtherAssets
         }
       }
     }

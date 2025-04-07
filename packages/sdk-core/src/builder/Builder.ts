@@ -2,6 +2,7 @@
 
 import type { TCurrencyInput, TCurrencyInputWithAmount } from '@paraspell/assets'
 import {
+  isRelayChain,
   isTMultiLocation,
   type TNodeDotKsmWithRelayChains,
   type TNodeWithRelayChains
@@ -10,7 +11,6 @@ import {
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { getDryRun, send } from '../transfer'
 import type { TAddress, TBatchOptions, TDestination, TSendBaseOptions, Version } from '../types'
-import { isRelayChain } from '../utils'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 

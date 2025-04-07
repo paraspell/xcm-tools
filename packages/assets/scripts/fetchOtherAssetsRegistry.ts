@@ -4,21 +4,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { getParaId, getNode } from '../../sdk-core/src'
-import { TNodePolkadotKusama } from '@paraspell/sdk-common'
+import { getParaId } from '../../sdk-core/src'
+import { isRelayChain, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import type { TForeignAsset } from '../src'
 import type { TRegistryAssets } from './fetchXcmRegistry'
 import { fetchXcmRegistry } from './fetchXcmRegistry'
+import { getRelayChainType } from './utils'
 
 export const fetchAssets = async (node: TNodePolkadotKusama): Promise<TRegistryAssets[]> => {
   const data = await fetchXcmRegistry()
 
   const paraId = getParaId(node)
-  const relay = getNode(node).type as 'polkadot' | 'kusama'
+  const relay = getRelayChainType(node)
 
-  const isAssetHub = node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
+  const doesNotUseXcAssets =
+    node === 'AssetHubPolkadot' || node === 'AssetHubKusama' || isRelayChain(node)
 
-  const assets = data[isAssetHub ? 'assets' : 'xcAssets'][relay].find(
+  const assets = data[doesNotUseXcAssets ? 'assets' : 'xcAssets'][relay].find(
     item => item.paraID === paraId
   )?.data
 
@@ -26,7 +28,7 @@ export const fetchAssets = async (node: TNodePolkadotKusama): Promise<TRegistryA
     throw new Error(`No assets found for ${node}`)
   }
 
-  return isAssetHub ? assets.filter(asset => !!asset.xcmInteriorKey) : assets
+  return doesNotUseXcAssets ? assets.filter(asset => !!asset.xcmInteriorKey) : assets
 }
 
 export const capitalizeMultiLocation = (obj: any) => {
@@ -110,7 +112,7 @@ export const fetchOtherAssetsRegistry = async (
         multiLocation = capitalizeMultiLocation(multiLocation)
       }
 
-      const relay = getNode(node).type as 'polkadot' | 'kusama'
+      const relay = getRelayChainType(node)
       let xcmInteriorKey = item.xcmInteriorKey
 
       const assetsRegistry = data.xcmRegistry.find(item => item.relayChain === relay)?.data

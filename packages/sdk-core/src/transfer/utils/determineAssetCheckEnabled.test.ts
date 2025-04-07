@@ -7,7 +7,10 @@ import { getNode } from '../../utils'
 import { determineAssetCheckEnabled } from './determineAssetCheckEnabled'
 
 vi.mock('../../utils', () => ({
-  getNode: vi.fn(),
+  getNode: vi.fn()
+}))
+
+vi.mock('@paraspell/sdk-common', () => ({
   isRelayChain: vi.fn()
 }))
 

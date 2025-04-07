@@ -9,6 +9,7 @@ import {
 } from '@paraspell/assets'
 import { getDefaultPallet } from '@paraspell/pallets'
 import {
+  isRelayChain,
   isTMultiLocation,
   type TNodeDotKsmWithRelayChains,
   type TNodePolkadotKusama
@@ -19,7 +20,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { IncompatibleNodesError } from '../../errors'
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type { TDestination, TSendOptions } from '../../types'
-import { isRelayChain } from '../../utils'
 import { isBridgeTransfer } from './isBridgeTransfer'
 import {
   validateAssetSpecifiers,
@@ -37,7 +37,8 @@ vi.mock('@paraspell/pallets', () => ({
 }))
 
 vi.mock('@paraspell/sdk-common', () => ({
-  isTMultiLocation: vi.fn()
+  isTMultiLocation: vi.fn(),
+  isRelayChain: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
@@ -51,10 +52,6 @@ vi.mock('@paraspell/assets', () => ({
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
   throwUnsupportedCurrency: vi.fn()
-}))
-
-vi.mock('../../utils', () => ({
-  isRelayChain: vi.fn()
 }))
 
 describe('validateCurrency', () => {

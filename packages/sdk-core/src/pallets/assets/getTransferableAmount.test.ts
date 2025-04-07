@@ -34,7 +34,10 @@ vi.mock('@paraspell/assets', () => ({
 }))
 
 vi.mock('../../utils', () => ({
-  validateAddress: vi.fn(),
+  validateAddress: vi.fn()
+}))
+
+vi.mock('@paraspell/sdk-common', () => ({
   isRelayChain: vi.fn().mockImplementation(chain => chain === 'Polkadot' || chain === 'Kusama')
 }))
 

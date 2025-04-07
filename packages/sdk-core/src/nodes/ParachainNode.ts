@@ -13,6 +13,7 @@ import {
 import type { TPallet } from '@paraspell/pallets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import {
+  isRelayChain,
   isTMultiLocation,
   Parents,
   type TEcosystemType,
@@ -44,7 +45,7 @@ import type {
   TXTokensTransferOptions
 } from '../types'
 import { Version } from '../types'
-import { createVersionedBeneficiary, getFees, isRelayChain } from '../utils'
+import { createVersionedBeneficiary, getFees } from '../utils'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
 import { resolveParaId } from '../utils/resolveParaId'
