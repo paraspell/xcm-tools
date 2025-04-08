@@ -674,7 +674,15 @@
         "symbol": "ASTR",
         "isNative": true,
         "decimals": 18,
-        "existentialDeposit": "1000000"
+        "existentialDeposit": "1000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "Parachain": 2006
+            }
+          }
+        }
       }
     ],
     "otherAssets": [

@@ -100,9 +100,15 @@ const fetchNativeAssets = async (
   }
 
   return reordered.map(asset => {
-    const matchingGlobalAsset = assets?.find(
-      a => a.symbol.toLowerCase() === asset.symbol.toLowerCase()
-    )
+    const matchingGlobalAsset = assets?.find(a => {
+      const isSymbolMatch = a.symbol.toLowerCase() === asset.symbol.toLowerCase()
+
+      // Needed for Astar to find the correct native asset as other asset
+      // has the same symbol
+      const isAstarNoCurrencyId = node === 'Astar' ? a.currencyID === undefined : true
+
+      return isSymbolMatch && isAstarNoCurrencyId
+    })
 
     let xcmInteriorKey = matchingGlobalAsset?.xcmInteriorKey
 
@@ -464,6 +470,7 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const [node, query] of Object.entries(nodeToQuery)) {
     const nodeName = node as TNodeWithRelayChains
+    if (nodeName.toString() !== 'Astar') continue
 
     console.log(`Fetching assets for ${nodeName}...`)
 
