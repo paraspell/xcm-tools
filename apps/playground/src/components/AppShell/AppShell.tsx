@@ -55,6 +55,7 @@ export const AppShell = () => {
     apiType,
     isLoadingExtensions,
     isInitialized,
+    isUseXcmApiSelected,
   } = useWallet();
 
   const onMobileMenuClick = () => {
@@ -98,6 +99,18 @@ export const AppShell = () => {
       handleApiSwitch('PJS');
     }
   }, [location.pathname, apiType]);
+
+  useEffect(() => {
+    // Switch to PAPI because XCM API does not support PJS
+    if (
+      isUseXcmApiSelected &&
+      apiType === 'PJS' &&
+      // XcmRouter supports only PJS
+      location.pathname !== PageRoute.XCM_ROUTER
+    ) {
+      handleApiSwitch('PAPI');
+    }
+  }, [isUseXcmApiSelected]);
 
   const theme = useMantineTheme();
 

@@ -168,6 +168,21 @@ const XcmTransfer = () => {
     }
   };
 
+  const determineFeeAsset = (
+    formValues: FormValuesTransformed,
+    transformedFeeAsset?: TCurrencyEntryTransformed,
+  ): TCurrencyInput | undefined => {
+    if (!transformedFeeAsset) return undefined;
+
+    if (
+      transformedFeeAsset.currencyOptionId ||
+      transformedFeeAsset.isCustomCurrency
+    ) {
+      return determineCurrency(formValues, transformedFeeAsset);
+    }
+    return undefined;
+  };
+
   const submitTx = async (
     api: ApiPromise | PolkadotClient,
     tx: Extrinsic | TPapiTransaction,
@@ -275,11 +290,7 @@ const XcmTransfer = () => {
               ? currencyInputs[0]
               : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
           )
-          .feeAsset(
-            transformedFeeAsset
-              ? determineCurrency(firstItem, transformedFeeAsset)
-              : undefined,
-          )
+          .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
           .address(address, selectedAccount.address)
           .addToBatch();
 
@@ -297,11 +308,7 @@ const XcmTransfer = () => {
                 ? currencyInputs[0]
                 : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
             )
-            .feeAsset(
-              transformedFeeAsset
-                ? determineCurrency(firstItem, transformedFeeAsset)
-                : undefined,
-            )
+            .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
             .address(address, selectedAccount.address)
             .addToBatch();
         }
@@ -382,6 +389,7 @@ const XcmTransfer = () => {
             currencyInputs.length === 1
               ? currencyInputs[0]
               : { multiasset: currencyInputs },
+          feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
         },
         '/dry-run',
         'POST',
@@ -396,11 +404,7 @@ const XcmTransfer = () => {
             ? currencyInputs[0]
             : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
         )
-        .feeAsset(
-          transformedFeeAsset
-            ? determineCurrency(formValues, transformedFeeAsset)
-            : undefined,
-        )
+        .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
         .address(address, selectedAccount.address)
         .dryRun(selectedAccount.address);
     }
@@ -517,11 +521,7 @@ const XcmTransfer = () => {
         tx = await getTxFromApi(
           {
             ...formValues,
-            feeAsset:
-              transformedFeeAsset?.currencyOptionId ||
-              transformedFeeAsset?.isCustomCurrency
-                ? determineCurrency(formValues, transformedFeeAsset)
-                : undefined,
+            feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
             currency:
               currencyInputs.length === 1
                 ? currencyInputs[0]
@@ -547,11 +547,7 @@ const XcmTransfer = () => {
                   multiasset: currencyInputs as WithAmount<TCurrencyCore>[],
                 },
           )
-          .feeAsset(
-            transformedFeeAsset
-              ? determineCurrency(formValues, transformedFeeAsset)
-              : undefined,
-          )
+          .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
           .address(address, selectedAccount.address);
         tx = await builder.build();
         api = builder.getApi();

@@ -460,7 +460,7 @@ describe('XCM API (e2e)', () => {
           address,
           currency,
         })
-        .expect(500);
+        .expect(400);
     });
 
     it(`Generate Batch XCM call - Parachain to parachain all valid - ${xTransferBatchUrl}`, async () => {
@@ -588,7 +588,7 @@ describe('XCM API (e2e)', () => {
             {
               from,
               to,
-              address: invalidAddress, // Invalid address
+              address: invalidAddress,
               currency,
             },
           ],
@@ -596,7 +596,7 @@ describe('XCM API (e2e)', () => {
             mode: BatchMode.BATCH_ALL,
           },
         })
-        .expect(400) // Expect Bad Request due to invalid address
+        .expect(400)
         .expect((res) => {
           expect(res.body.message).toContain('Invalid wallet address.');
         });

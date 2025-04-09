@@ -141,7 +141,7 @@ const XcmTransferForm: FC<Props> = ({
     },
   });
 
-  const { from, to, currencies } = form.getValues();
+  const { from, to, currencies, useApi } = form.getValues();
 
   const { currencyOptions, currencyMap, isNotParaToPara } = useCurrencyOptions(
     from,
@@ -213,6 +213,10 @@ const XcmTransferForm: FC<Props> = ({
     }
   }, [isNotParaToPara, currencyMap]);
 
+  useEffect(() => {
+    setIsUseXcmApiSelected(useApi);
+  }, [useApi]);
+
   const onSwap = () => {
     const { from, to } = form.getValues();
     if (to !== 'Ethereum') {
@@ -221,8 +225,13 @@ const XcmTransferForm: FC<Props> = ({
     }
   };
 
-  const { connectWallet, selectedAccount, isInitialized, isLoadingExtensions } =
-    useWallet();
+  const {
+    connectWallet,
+    selectedAccount,
+    isInitialized,
+    isLoadingExtensions,
+    setIsUseXcmApiSelected,
+  } = useWallet();
 
   const onConnectWalletClick = () => void connectWallet();
 

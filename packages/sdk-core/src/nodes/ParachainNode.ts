@@ -195,7 +195,13 @@ abstract class ParachainNode<TApi, TRes> {
           paraId
         }),
         address,
-        currencySelection: this.createCurrencySpec(asset.amount, scenario, versionOrDefault, asset),
+        currencySelection: this.createCurrencySpec(
+          asset.amount,
+          scenario,
+          versionOrDefault,
+          asset,
+          overriddenAsset !== undefined
+        ),
         overriddenAsset,
         asset,
         feeAsset,
@@ -230,7 +236,8 @@ abstract class ParachainNode<TApi, TRes> {
     amount: TAmount,
     scenario: TScenario,
     version: Version,
-    _asset?: TAsset
+    _asset?: TAsset,
+    _isOverridenAsset?: boolean
   ): TXcmVersioned<TMultiAsset[]> {
     return createVersionedMultiAssets(version, amount, {
       parents: scenario === 'ParaToRelay' ? Parents.ONE : Parents.ZERO,

@@ -424,9 +424,19 @@ class AssetHubPolkadot<TApi, TRes>
     return { section: 'limited_teleport_assets', includeFee: true }
   }
 
-  createCurrencySpec(amount: TAmount, scenario: TScenario, version: Version, asset?: TAsset) {
+  createCurrencySpec(
+    amount: TAmount,
+    scenario: TScenario,
+    version: Version,
+    asset?: TAsset,
+    isOverriddenAsset?: boolean
+  ) {
     if (scenario === 'ParaToPara') {
-      const multiLocation = asset?.multiLocation
+      // If the asset has overridden multi-locaiton, provide default multi-location
+      // as it will be replaced later
+      const multiLocation: TMultiLocation | undefined = isOverriddenAsset
+        ? { parents: Parents.ZERO, interior: 'Here' }
+        : asset?.multiLocation
 
       if (!multiLocation) {
         throw new InvalidCurrencyError('Asset does not have a multiLocation defined')

@@ -21,6 +21,8 @@ type WalletState = {
   connectWallet: () => Promise<void>;
   changeAccount: () => Promise<void>;
   handleApiSwitch: (value: TApiType) => void;
+  setIsUseXcmApiSelected: (value: boolean) => void;
+  isUseXcmApiSelected: boolean;
   isLoadingExtensions: boolean;
   isInitialized: boolean;
 };
@@ -41,6 +43,8 @@ const defaultWalletState: WalletState = {
   connectWallet: () => Promise.resolve(),
   changeAccount: () => Promise.resolve(),
   handleApiSwitch: (_value: TApiType) => {},
+  setIsUseXcmApiSelected: (_value: boolean) => {},
+  isUseXcmApiSelected: false,
   isLoadingExtensions: false,
   isInitialized: false,
 };

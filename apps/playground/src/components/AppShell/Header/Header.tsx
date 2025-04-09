@@ -38,7 +38,7 @@ export const Header: FC<Props> = ({
   onChangeAccountClick,
   onConnectWalletClick,
 }) => {
-  const { apiType, selectedAccount } = useWallet();
+  const { apiType, selectedAccount, isUseXcmApiSelected } = useWallet();
 
   const { icon } = getExtensionInfo(selectedAccount?.meta.source);
 
@@ -108,6 +108,7 @@ export const Header: FC<Props> = ({
             onChange={onApiTypeChange}
             apiTypeInitialized={apiTypeInitialized}
             size={size}
+            isUseApiSelected={isUseXcmApiSelected}
           />
           {selectedAccount ? (
             <Button

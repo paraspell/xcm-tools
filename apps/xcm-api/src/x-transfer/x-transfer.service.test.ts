@@ -301,6 +301,30 @@ describe('XTransferService', () => {
         'transfer',
       );
     });
+
+    it('should throw BadRequestException when error inside dryRun SDK is thrown', async () => {
+      const builderMockWithError = {
+        ...builderMock,
+        dryRun: vi.fn().mockImplementation(() => {
+          throw new InvalidCurrencyError('Unknown error');
+        }),
+      };
+
+      vi.spyOn(paraspellSdk, 'Builder').mockReturnValue(
+        builderMockWithError as unknown as ReturnType<
+          typeof paraspellSdk.Builder
+        >,
+      );
+
+      const options: XTransferDto = {
+        ...xTransferDto,
+        senderAddress: 'sender-address',
+      };
+
+      await expect(service.generateXcmCall(options, true)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
   });
 
   describe('generateBatchXcmCall', () => {

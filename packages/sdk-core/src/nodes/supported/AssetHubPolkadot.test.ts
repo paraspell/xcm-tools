@@ -602,5 +602,45 @@ describe('AssetHubPolkadot', () => {
         'Asset does not have a multiLocation defined'
       )
     })
+
+    it('should provide default multi-location if asset is overridden', () => {
+      const scenario: TScenario = 'ParaToPara'
+      const mockAsset = {
+        symbol: 'DOT',
+        amount: '1000',
+        isNative: true,
+        multiLocation: {} as TMultiLocation
+      } as WithAmount<TNativeAsset>
+
+      const isOverriddenAsset = true
+
+      const expectedResult = {
+        V3: [
+          {
+            id: {
+              Concrete: {
+                parents: 0,
+                interior: 'Here'
+              }
+            },
+            fun: { Fungible: amount }
+          }
+        ]
+      }
+
+      vi.mocked(hasJunction).mockReturnValue(false)
+      vi.mocked(superCreateCurrencySpecSpy).mockReturnValue(expectedResult)
+
+      const result = assetHub.createCurrencySpec(
+        amount,
+        scenario,
+        version,
+        mockAsset,
+        isOverriddenAsset
+      )
+
+      expect(result).toEqual(expectedResult)
+      expect(hasJunction).toHaveBeenCalled()
+    })
   })
 })

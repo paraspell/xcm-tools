@@ -15,6 +15,7 @@ import {
   TNodeWithRelayChains,
   verifyEdOnDestination,
 } from '@paraspell/sdk';
+import { handleXcmApiError } from 'src/utils/error-handler.js';
 
 import { BalanceForeignDto } from './dto/BalanceForeignDto.js';
 import { BalanceNativeDto } from './dto/BalanceNativeDto.js';
@@ -49,12 +50,16 @@ export class BalanceService {
       );
     }
 
-    const balance = await getBalanceForeign({
-      address,
-      currency,
-      node: nodeTyped,
-    });
-    return balance === null ? 'null' : balance.toString();
+    try {
+      const balance = await getBalanceForeign({
+        address,
+        currency,
+        node: nodeTyped,
+      });
+      return balance === null ? 'null' : balance.toString();
+    } catch (e) {
+      return handleXcmApiError(e);
+    }
   }
 
   async getAssetBalance(

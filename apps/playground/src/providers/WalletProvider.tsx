@@ -76,6 +76,8 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
 
   const [isInitialized, setIsInitialized] = useState(false);
 
+  const [isUseXcmApiSelected, setIsUseXcmApiSelected] = useState(false);
+
   useEffect(() => {
     if (apiType) {
       localStorage.setItem(STORAGE_API_TYPE_KEY, apiType);
@@ -370,6 +372,8 @@ export const WalletProvider: React.FC<PropsWithChildren<unknown>> = ({
           connectWallet,
           changeAccount,
           handleApiSwitch,
+          setIsUseXcmApiSelected,
+          isUseXcmApiSelected,
           isLoadingExtensions,
           isInitialized,
         }}

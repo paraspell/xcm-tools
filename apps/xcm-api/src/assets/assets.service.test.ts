@@ -1,7 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TNode } from '@paraspell/sdk';
+import { InvalidAddressError, type TNode } from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -526,7 +526,7 @@ describe('AssetsService', () => {
       });
     });
 
-    it('should throw BadRequestException for invalid origin node', () => {
+    it('should throw BadRequestException for invalid origin node', async () => {
       const nodeOrigin = 'InvalidNode';
       const nodeDestination = 'Karura';
 
@@ -536,12 +536,12 @@ describe('AssetsService', () => {
           throw new BadRequestException();
         });
 
-      expect(() =>
+      await expect(
         service.getOriginFeeDetails({
           origin: nodeOrigin,
           destination: nodeDestination,
         } as OriginFeeDetailsDto),
-      ).toThrow(BadRequestException);
+      ).rejects.toThrow(BadRequestException);
 
       expect(validateNodeSpy).toHaveBeenCalledWith(nodeOrigin, {
         withRelayChains: true,
@@ -549,7 +549,7 @@ describe('AssetsService', () => {
       });
     });
 
-    it('should throw BadRequestException for invalid destination node', () => {
+    it('should throw BadRequestException for invalid destination node', async () => {
       const nodeOrigin = 'Acala';
       const nodeDestination = 'InvalidNode';
 
@@ -562,13 +562,40 @@ describe('AssetsService', () => {
           throw new BadRequestException();
         });
 
-      expect(() =>
+      await expect(
         service.getOriginFeeDetails({
           origin: nodeOrigin,
           destination: nodeDestination,
         } as OriginFeeDetailsDto),
-      ).toThrow(BadRequestException);
+      ).rejects.toThrow(BadRequestException);
 
+      expect(validateNodeSpy).toHaveBeenCalledWith(nodeOrigin, {
+        withRelayChains: true,
+        excludeEthereum: true,
+      });
+      expect(validateNodeSpy).toHaveBeenCalledWith(nodeDestination, {
+        withRelayChains: true,
+      });
+    });
+
+    it('should throw a BadRequestException if an error occurs inside SDK', async () => {
+      const nodeOrigin = 'Acala';
+      const nodeDestination = 'Karura';
+
+      const getOriginFeeDetailsSpy = vi
+        .spyOn(paraspellSdk, 'getOriginFeeDetails')
+        .mockRejectedValue(new InvalidAddressError('Invalid address'));
+
+      const validateNodeSpy = vi.spyOn(utils, 'validateNode');
+
+      await expect(
+        service.getOriginFeeDetails({
+          origin: nodeOrigin,
+          destination: nodeDestination,
+        } as OriginFeeDetailsDto),
+      ).rejects.toThrow(BadRequestException);
+
+      expect(getOriginFeeDetailsSpy).toHaveBeenCalled();
       expect(validateNodeSpy).toHaveBeenCalledWith(nodeOrigin, {
         withRelayChains: true,
         excludeEthereum: true,

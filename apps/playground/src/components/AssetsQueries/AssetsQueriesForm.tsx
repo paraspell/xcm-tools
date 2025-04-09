@@ -23,6 +23,7 @@ import {
 import { type FC, useEffect, useRef } from 'react';
 
 import { ASSET_QUERIES } from '../../consts';
+import { useWallet } from '../../hooks/useWallet';
 import type { TAssetsQuery } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
@@ -59,7 +60,9 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
-  const { func, node, currencyType } = form.getValues();
+  const { func, node, currencyType, useApi } = form.getValues();
+
+  const { setIsUseXcmApiSelected } = useWallet();
 
   const showSymbolInput =
     func === 'ASSET_ID' ||
@@ -198,6 +201,10 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     { label: 'Foreign', value: 'foreign' },
     { label: 'Foreign abstract', value: 'foreignAbstract' },
   ];
+
+  useEffect(() => {
+    setIsUseXcmApiSelected(useApi);
+  }, [useApi]);
 
   return (
     <Paper p="xl" shadow="md">
