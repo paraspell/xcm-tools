@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.9.7](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.6...sdk-core-v8.9.7) (2025-04-09)
+
+
+### Bug Fixes
+
+* **assets:** Add relay assets multi-locations ✨ ([e3a4631](https://github.com/paraspell/xcm-tools/commit/e3a4631bda587536d969d5a09e0da61669a85b0c))
+* **xcm-api:** Fix XCM-API error handling & playground request forming 💻 ([4a8d962](https://github.com/paraspell/xcm-tools/commit/4a8d962b1852112b8b8b128647d38604b0c502c6))
+
 ## [8.9.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.5...sdk-core-v8.9.6) (2025-04-07)
 
 

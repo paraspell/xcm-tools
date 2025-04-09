@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.7](https://github.com/paraspell/xcm-tools/compare/sdk-common-v8.9.6...sdk-common-v8.9.7) (2025-04-09)
+
+
+### Bug Fixes
+
+* **assets:** Add relay assets multi-locations ✨ ([e3a4631](https://github.com/paraspell/xcm-tools/commit/e3a4631bda587536d969d5a09e0da61669a85b0c))
+
 ## [8.9.6](https://github.com/paraspell/xcm-tools/compare/sdk-common-v8.9.5...sdk-common-v8.9.6) (2025-04-07)
 
 
