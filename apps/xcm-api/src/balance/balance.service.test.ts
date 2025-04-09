@@ -6,6 +6,7 @@ import {
   getMaxForeignTransferableAmount,
   getMaxNativeTransferableAmount,
   getTransferableAmount,
+  InvalidAddressError,
   verifyEdOnDestination,
 } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -15,18 +16,22 @@ import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
 import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import type { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
 
-vi.mock('@paraspell/sdk', () => ({
-  getBalanceForeign: vi.fn(),
-  getBalanceNative: vi.fn(),
-  getMaxForeignTransferableAmount: vi.fn(),
-  getMaxNativeTransferableAmount: vi.fn(),
-  getTransferableAmount: vi.fn(),
-  getExistentialDeposit: vi.fn(),
-  verifyEdOnDestination: vi.fn(),
-  NODE_NAMES_DOT_KSM: ['valid-node'],
-  NODES_WITH_RELAY_CHAINS: ['valid-node'],
-  NODES_WITH_RELAY_CHAINS_DOT_KSM: ['valid-node'],
-}));
+vi.mock('@paraspell/sdk', async () => {
+  const actual = await vi.importActual('@paraspell/sdk');
+  return {
+    ...actual,
+    getBalanceForeign: vi.fn(),
+    getBalanceNative: vi.fn(),
+    getMaxForeignTransferableAmount: vi.fn(),
+    getMaxNativeTransferableAmount: vi.fn(),
+    getTransferableAmount: vi.fn(),
+    getExistentialDeposit: vi.fn(),
+    verifyEdOnDestination: vi.fn(),
+    NODE_NAMES_DOT_KSM: ['valid-node'],
+    NODES_WITH_RELAY_CHAINS: ['valid-node'],
+    NODES_WITH_RELAY_CHAINS_DOT_KSM: ['valid-node'],
+  };
+});
 
 describe('BalanceService', () => {
   let balanceService: BalanceService;
@@ -112,6 +117,22 @@ describe('BalanceService', () => {
         currency: params.currency,
       });
       expect(result).toEqual('0');
+    });
+
+    it('should throw BadRequestException for error inside SDK', async () => {
+      const validNode = 'valid-node';
+      const params: BalanceForeignDto = {
+        address: '0x1234567890',
+        currency: { symbol: 'UNQ' },
+      };
+
+      vi.mocked(getBalanceForeign).mockRejectedValue(
+        new InvalidAddressError('Invalid address'),
+      );
+
+      await expect(
+        balanceService.getBalanceForeign(validNode, params),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 

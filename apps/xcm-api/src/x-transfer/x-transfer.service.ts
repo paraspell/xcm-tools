@@ -1,19 +1,14 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   Builder,
   GeneralBuilder,
-  IncompatibleNodesError,
-  InvalidCurrencyError,
   NODES_WITH_RELAY_CHAINS,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
   TSendBaseOptions,
 } from '@paraspell/sdk';
+import { handleXcmApiError } from 'src/utils/error-handler.js';
 
 import { isValidWalletAddress } from '../utils.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
@@ -91,6 +86,23 @@ export class XTransferService {
     return finalBuilder;
   }
 
+  async performDryRun(
+    senderAddress: string | undefined,
+    finalBuilder: ReturnType<typeof this.buildXTransfer>,
+  ) {
+    if (!senderAddress) {
+      throw new BadRequestException('Sender address is required for dry run.');
+    }
+
+    try {
+      return await finalBuilder.dryRun(senderAddress);
+    } catch (e) {
+      return handleXcmApiError(e);
+    } finally {
+      await finalBuilder.disconnect();
+    }
+  }
+
   async generateXcmCall(transfer: XTransferDto, isDryRun = false) {
     this.validateTransfer(transfer);
 
@@ -98,32 +110,17 @@ export class XTransferService {
 
     const builder = Builder();
 
+    const finalBuilder = this.buildXTransfer(builder, transfer);
+
+    if (isDryRun) return this.performDryRun(senderAddress, finalBuilder);
+
     try {
-      const finalBuilder = this.buildXTransfer(builder, transfer);
-
-      if (isDryRun) {
-        if (!senderAddress) {
-          throw new BadRequestException(
-            'Sender address is required for dry run.',
-          );
-        }
-
-        return await finalBuilder.dryRun(senderAddress);
-      }
-
       const tx = await finalBuilder.build();
 
       const encoded = await tx.getEncodedData();
       return encoded.asHex();
     } catch (e) {
-      if (
-        e instanceof InvalidCurrencyError ||
-        e instanceof IncompatibleNodesError ||
-        e instanceof BadRequestException
-      ) {
-        throw new BadRequestException(e.message);
-      }
-      throw new InternalServerErrorException((e as Error).message);
+      return handleXcmApiError(e);
     } finally {
       await builder.disconnect();
     }
@@ -160,6 +157,10 @@ export class XTransferService {
 
     let builder = Builder() as GeneralBuilder<TSendBaseOptions>;
 
+    for (const transfer of transfers) {
+      this.validateTransfer(transfer);
+    }
+
     try {
       for (const transfer of transfers) {
         this.validateTransfer(transfer);
@@ -172,14 +173,7 @@ export class XTransferService {
       const encoded = await tx.getEncodedData();
       return encoded.asHex();
     } catch (e) {
-      if (
-        e instanceof InvalidCurrencyError ||
-        e instanceof IncompatibleNodesError ||
-        e instanceof BadRequestException
-      ) {
-        throw new BadRequestException(e.message);
-      }
-      throw new InternalServerErrorException((e as Error).message);
+      return handleXcmApiError(e);
     } finally {
       await builder.disconnect();
     }

@@ -17,6 +17,7 @@ import {
 } from '@paraspell/sdk';
 
 import { validateNode } from '../utils.js';
+import { handleXcmApiError } from '../utils/error-handler.js';
 import { AssetMultiLocationDto } from './dto/AssetMultiLocationDto.js';
 import { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
 
@@ -83,15 +84,19 @@ export class AssetsService {
     return getSupportedAssets(nodeOrigin as TNode, nodeDestination as TNode);
   }
 
-  getOriginFeeDetails(params: OriginFeeDetailsDto) {
+  async getOriginFeeDetails(params: OriginFeeDetailsDto) {
     const { origin, destination } = params;
     validateNode(origin, { withRelayChains: true, excludeEthereum: true });
     validateNode(destination, { withRelayChains: true });
 
-    return getOriginFeeDetails({
-      ...params,
-      origin: origin as TNodeDotKsmWithRelayChains,
-      destination: destination as TNodeDotKsmWithRelayChains,
-    });
+    try {
+      return await getOriginFeeDetails({
+        ...params,
+        origin: origin as TNodeDotKsmWithRelayChains,
+        destination: destination as TNodeDotKsmWithRelayChains,
+      });
+    } catch (e) {
+      return handleXcmApiError(e);
+    }
   }
 }

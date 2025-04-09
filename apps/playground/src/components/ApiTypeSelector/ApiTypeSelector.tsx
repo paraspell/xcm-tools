@@ -12,6 +12,7 @@ type Props = {
   onChange: (apiType: TApiType) => void;
   apiTypeInitialized: boolean;
   size: MantineSize;
+  isUseApiSelected?: boolean;
 };
 
 export const ApiTypeSelector: FC<Props> = ({
@@ -19,6 +20,7 @@ export const ApiTypeSelector: FC<Props> = ({
   onChange,
   apiTypeInitialized,
   size,
+  isUseApiSelected = false,
 }) => {
   const onChangeInternal = (value: string) => {
     onChange(value as TApiType);
@@ -42,7 +44,7 @@ export const ApiTypeSelector: FC<Props> = ({
     },
     {
       value: 'PJS',
-      disabled: fullyDisabled,
+      disabled: fullyDisabled || isUseApiSelected,
       label: (
         <Center style={{ gap: 8 }}>
           <PolkadotJsLogo />

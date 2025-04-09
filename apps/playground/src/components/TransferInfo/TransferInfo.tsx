@@ -86,18 +86,20 @@ const TransferInfo = () => {
   };
 
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
-    const { useApi } = formValues;
-    const originAddress = formValues.address;
-    const currency = resolveCurrency(formValues);
+    const { useApi, from, to, amount, address, destinationAddress } =
+      formValues;
+    const currency = {
+      amount,
+      ...resolveCurrency(formValues),
+    };
     if (useApi) {
       return fetchFromApi(
         {
-          origin: formValues.from,
-          destination: formValues.to,
-          accountOrigin: originAddress,
-          accountDestination: formValues.destinationAddress,
+          origin: from,
+          destination: to,
+          accountOrigin: address,
+          accountDestination: destinationAddress,
           currency,
-          amount: formValues.amount,
         },
         `/transfer-info`,
         'POST',
@@ -110,14 +112,11 @@ const TransferInfo = () => {
           : await import('@paraspell/sdk-pjs');
 
       return Sdk.getTransferInfo({
-        origin: formValues.from,
-        destination: formValues.to,
-        accountOrigin: originAddress,
-        accountDestination: formValues.destinationAddress,
-        currency: {
-          ...currency,
-          amount: formValues.amount,
-        },
+        origin: from,
+        destination: to,
+        accountOrigin: address,
+        accountDestination: destinationAddress,
+        currency,
       });
     }
   };

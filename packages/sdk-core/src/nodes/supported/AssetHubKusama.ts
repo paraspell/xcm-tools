@@ -65,8 +65,20 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     return { section: 'limited_teleport_assets', includeFee: true }
   }
 
-  createCurrencySpec(amount: string, scenario: TScenario, version: Version, asset?: TAsset) {
-    return getNode('AssetHubPolkadot').createCurrencySpec(amount, scenario, version, asset)
+  createCurrencySpec(
+    amount: string,
+    scenario: TScenario,
+    version: Version,
+    asset?: TAsset,
+    isOverridenAsset?: boolean
+  ) {
+    return getNode('AssetHubPolkadot').createCurrencySpec(
+      amount,
+      scenario,
+      version,
+      asset,
+      isOverridenAsset
+    )
   }
 }
 

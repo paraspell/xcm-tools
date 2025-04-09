@@ -17,6 +17,7 @@ import {
 import { IconTransfer } from '@tabler/icons-react';
 import { type FC, useEffect } from 'react';
 
+import { useWallet } from '../../hooks/useWallet';
 import { isValidWalletAddress } from '../../utils';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
@@ -61,7 +62,9 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
-  const { from, to, customCurrencyType } = form.getValues();
+  const { from, to, customCurrencyType, useApi } = form.getValues();
+
+  const { setIsUseXcmApiSelected } = useWallet();
 
   const isNotParaToPara = isRelayChain(from) || isRelayChain(to);
 
@@ -93,6 +96,10 @@ const TransferInfoForm: FC<Props> = ({ onSubmit, loading }) => {
     { label: 'Foreign', value: 'foreign' },
     { label: 'Foreign abstract', value: 'foreignAbstract' },
   ];
+
+  useEffect(() => {
+    setIsUseXcmApiSelected(useApi);
+  }, [useApi]);
 
   return (
     <Paper p="xl" shadow="md">

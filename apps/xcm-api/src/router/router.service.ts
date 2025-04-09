@@ -1,11 +1,6 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   getNodeProviders,
-  InvalidCurrencyError,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk';
@@ -16,6 +11,7 @@ import {
 } from '@paraspell/xcm-router';
 
 import { isValidWalletAddress } from '../utils.js';
+import { handleXcmApiError } from '../utils/error-handler.js';
 import { RouterBestAmountOutDto, RouterDto } from './dto/RouterDto.js';
 
 const validateNodesAndExchange = (
@@ -119,13 +115,7 @@ export class RouterService {
 
       return response;
     } catch (e) {
-      if (e instanceof InvalidCurrencyError) {
-        throw new BadRequestException(e.message);
-      }
-      if (e instanceof Error) {
-        throw new InternalServerErrorException(e.message);
-      }
-      throw e;
+      return handleXcmApiError(e);
     }
   }
 
@@ -148,13 +138,7 @@ export class RouterService {
         .amount(amount.toString())
         .getBestAmountOut();
     } catch (e) {
-      if (e instanceof InvalidCurrencyError) {
-        throw new BadRequestException(e.message);
-      }
-      if (e instanceof Error) {
-        throw new InternalServerErrorException(e.message);
-      }
-      throw e;
+      return handleXcmApiError(e);
     }
   }
 }

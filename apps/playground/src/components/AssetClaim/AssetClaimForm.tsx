@@ -1,7 +1,7 @@
 import { Button, Paper, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
-import type { FC } from 'react';
+import { type FC, useEffect } from 'react';
 
 import { useWallet } from '../../hooks/useWallet';
 import { isValidWalletAddress } from '../../utils';
@@ -42,10 +42,21 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
-  const { connectWallet, selectedAccount, isInitialized, isLoadingExtensions } =
-    useWallet();
+  const { useApi } = form.getValues();
+
+  const {
+    connectWallet,
+    selectedAccount,
+    isInitialized,
+    isLoadingExtensions,
+    setIsUseXcmApiSelected,
+  } = useWallet();
 
   const onConnectWalletClick = () => void connectWallet();
+
+  useEffect(() => {
+    setIsUseXcmApiSelected(useApi);
+  }, [useApi]);
 
   return (
     <Paper p="xl" shadow="md">

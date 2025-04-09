@@ -9,11 +9,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { isValidWalletAddress } from '../utils.js';
 import { TransferInfoService } from './transfer-info.service.js';
 
-vi.mock('@paraspell/sdk', () => ({
-  getTransferInfo: vi.fn(),
-  NODES_WITH_RELAY_CHAINS_DOT_KSM: ['Polkadot', 'Kusama'],
-  InvalidCurrencyError: class extends Error {},
-}));
+vi.mock('@paraspell/sdk', async () => {
+  const actual = await vi.importActual('@paraspell/sdk');
+  return {
+    ...actual,
+    getTransferInfo: vi.fn(),
+    NODES_WITH_RELAY_CHAINS_DOT_KSM: ['Polkadot', 'Kusama'],
+  };
+});
 
 vi.mock('../utils', () => ({
   isValidWalletAddress: vi.fn(),

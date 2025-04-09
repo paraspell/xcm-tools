@@ -2,9 +2,10 @@ import { Button, Paper, Select, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TNodePolkadotKusama } from '@paraspell/sdk';
 import { NODE_NAMES_DOT_KSM } from '@paraspell/sdk';
-import type { FC } from 'react';
+import { type FC, useEffect } from 'react';
 
 import { PALLETS_QUERIES } from '../../consts';
+import { useWallet } from '../../hooks/useWallet';
 import type { TPalletsQuery } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
@@ -28,6 +29,14 @@ const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
       useApi: false,
     },
   });
+
+  const { useApi } = form.getValues();
+
+  const { setIsUseXcmApiSelected } = useWallet();
+
+  useEffect(() => {
+    setIsUseXcmApiSelected(useApi);
+  }, [useApi]);
 
   return (
     <Paper p="xl" shadow="md">

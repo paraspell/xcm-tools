@@ -1,16 +1,12 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   getTransferInfo,
-  InvalidCurrencyError,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk';
 
 import { isValidWalletAddress } from '../utils.js';
+import { handleXcmApiError } from '../utils/error-handler.js';
 import { TransferInfoDto } from './dto/transfer-info.dto.js';
 
 @Injectable()
@@ -53,13 +49,8 @@ export class TransferInfoService {
         accountDestination,
         currency,
       });
-    } catch (e) {
-      if (e instanceof InvalidCurrencyError) {
-        throw new BadRequestException(e.message);
-      }
-      if (e instanceof Error) {
-        throw new InternalServerErrorException(e.message);
-      }
+    } catch (error: unknown) {
+      return handleXcmApiError(error);
     }
   }
 }

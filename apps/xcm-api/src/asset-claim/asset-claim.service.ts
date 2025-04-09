@@ -1,12 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   AssetClaimBuilder,
   Builder,
-  InvalidCurrencyError,
   NODES_WITH_RELAY_CHAINS,
   TAssetClaimOptionsBase,
   TMultiAsset,
@@ -14,6 +9,7 @@ import {
   TPapiApi,
   TPapiTransaction,
 } from '@paraspell/sdk';
+import { handleXcmApiError } from 'src/utils/error-handler.js';
 
 import { isValidWalletAddress } from '../utils.js';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
@@ -51,12 +47,7 @@ export class AssetClaimService {
       const encoded = await tx.getEncodedData();
       return encoded.asHex();
     } catch (e) {
-      if (e instanceof InvalidCurrencyError) {
-        throw new BadRequestException(e.message);
-      }
-      if (e instanceof Error) {
-        throw new InternalServerErrorException(e.message);
-      }
+      return handleXcmApiError(e);
     } finally {
       await builder?.disconnect();
     }
