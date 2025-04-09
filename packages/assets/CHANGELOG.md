@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.9.7](https://github.com/paraspell/xcm-tools/compare/assets-v8.9.6...assets-v8.9.7) (2025-04-09)
+
+
+### Bug Fixes
+
+* **assets:** Add missing Multi-Location for ASTR asset ✨ ([422fb3b](https://github.com/paraspell/xcm-tools/commit/422fb3bdbc38e63fd7db011effd27f6f2886913b))
+* **assets:** Add relay assets multi-locations ✨ ([e3a4631](https://github.com/paraspell/xcm-tools/commit/e3a4631bda587536d969d5a09e0da61669a85b0c))
+
 ## [8.9.6](https://github.com/paraspell/xcm-tools/compare/assets-v8.9.5...assets-v8.9.6) (2025-04-07)
 
 

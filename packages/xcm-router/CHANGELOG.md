@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.7](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.9.6...xcm-router-v8.9.7) (2025-04-09)
+
+
+### Miscellaneous Chores
+
+* **xcm-router:** Update batch to batchAll ([9944b69](https://github.com/paraspell/xcm-tools/commit/9944b698c8f45a0043051bf5cb1e89541a777ebf))
+
 ## [8.9.6](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.9.5...xcm-router-v8.9.6) (2025-04-07)
 
 
