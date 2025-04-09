@@ -11,7 +11,7 @@ const originApi = {} as TPjsApi;
 const swapApi = {
   tx: {
     utility: {
-      batch: vi.fn().mockReturnValue('batchTx' as unknown as Extrinsic),
+      batchAll: vi.fn().mockReturnValue('batchTx' as unknown as Extrinsic),
     },
   },
 } as unknown as TPjsApi;

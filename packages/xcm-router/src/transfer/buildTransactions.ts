@@ -41,7 +41,7 @@ export const buildTransactions = async (
   }
 
   if (toDestTx) {
-    const batchedTx = exchange.api.tx.utility.batch([swapTx, toDestTx]);
+    const batchedTx = exchange.api.tx.utility.batchAll([swapTx, toDestTx]);
     transactions.push({
       api: exchange.api,
       node: dex.node,
