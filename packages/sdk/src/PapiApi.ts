@@ -296,7 +296,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
     if (!supportsDryRunApi) {
-      throw new Error(`DryRunApi is not available on node ${node}`)
+      throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
     }
 
     const result = await this.api.getUnsafeApi().apis.DryRunApi.dry_run_call(

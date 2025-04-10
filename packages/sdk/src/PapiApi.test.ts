@@ -708,6 +708,16 @@ describe('PapiApi', () => {
 
       expect(result).toEqual({ success: false, failureReason: 'SomeError' })
     })
+
+    it('should throw error for unsupported node', async () => {
+      await expect(
+        papiApi.getDryRun({
+          tx: mockTransaction,
+          address: 'some_address',
+          node: 'Acala'
+        })
+      ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+    })
   })
 
   describe('objectToHex', () => {
