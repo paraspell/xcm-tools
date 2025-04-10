@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.8](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.9.7...sdk-pjs-v8.9.8) (2025-04-10)
+
+
+### Bug Fixes
+
+* **xcm-api:** Change dry-run unsupported node error to 400 🪛 ([80cf395](https://github.com/paraspell/xcm-tools/commit/80cf39578276b8be02b6719b70c658483e2e9841))
+
 ## [8.9.7](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.9.6...sdk-pjs-v8.9.7) (2025-04-09)
 
 

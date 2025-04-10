@@ -1,10 +1,10 @@
 {
   "packages/xcm-analyser": "1.5.4",
-  "packages/xcm-router": "8.9.7",
-  "packages/sdk": "8.9.7",
-  "packages/sdk-core": "8.9.7",
-  "packages/sdk-pjs": "8.9.7",
-  "packages/sdk-common": "8.9.7",
-  "packages/assets": "8.9.7",
-  "packages/pallets": "8.9.7"
+  "packages/xcm-router": "8.9.8",
+  "packages/sdk": "8.9.8",
+  "packages/sdk-core": "8.9.8",
+  "packages/sdk-pjs": "8.9.8",
+  "packages/sdk-common": "8.9.8",
+  "packages/assets": "8.9.8",
+  "packages/pallets": "8.9.8"
 }
