@@ -15,8 +15,8 @@ import {
   TNodeWithRelayChains,
   verifyEdOnDestination,
 } from '@paraspell/sdk';
-import { handleXcmApiError } from 'src/utils/error-handler.js';
 
+import { handleXcmApiError } from '../utils/error-handler.js';
 import { BalanceForeignDto } from './dto/BalanceForeignDto.js';
 import { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';

@@ -8,9 +8,9 @@ import {
   TNodeWithRelayChains,
   TSendBaseOptions,
 } from '@paraspell/sdk';
-import { handleXcmApiError } from 'src/utils/error-handler.js';
 
 import { isValidWalletAddress } from '../utils.js';
+import { handleXcmApiError } from '../utils/error-handler.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
 import { XTransferDto } from './dto/XTransferDto.js';
 

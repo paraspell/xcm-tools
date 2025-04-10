@@ -9,9 +9,9 @@ import {
   TPapiApi,
   TPapiTransaction,
 } from '@paraspell/sdk';
-import { handleXcmApiError } from 'src/utils/error-handler.js';
 
 import { isValidWalletAddress } from '../utils.js';
+import { handleXcmApiError } from '../utils/error-handler.js';
 import { AssetClaimDto } from './dto/asset-claim.dto.js';
 
 @Injectable()
