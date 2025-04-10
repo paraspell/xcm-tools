@@ -675,6 +675,18 @@ describe('PolkadotJsApi', () => {
         failureReason: 'ModuleError'
       })
     })
+
+    it('should throw error for unsupported node', async () => {
+      const mockTransaction = {} as unknown as Extrinsic
+
+      await expect(
+        polkadotApi.getDryRun({
+          tx: mockTransaction,
+          address: 'some_address',
+          node: 'Acala'
+        })
+      ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+    })
   })
 
   describe('objectToHex', () => {

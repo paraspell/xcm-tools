@@ -1140,6 +1140,22 @@ describe('XCM API (e2e)', () => {
         .expect((await tx.getEncodedData()).asHex());
     });
 
+    it(`Generate XCM call - Dry run unsupported node - should throw error 400 - ${xTransferUrl}`, async () => {
+      return request(app.getHttpServer())
+        .post('/dry-run')
+        .send({
+          from: 'Acala',
+          to: 'Astar',
+          currency: {
+            symbol: 'ACA',
+            amount,
+          },
+          address,
+          senderAddress: address,
+        })
+        .expect(400);
+    });
+
     it(`Generate XCM call - Parachain to relaychain invalid version - ${xTransferUrl}`, async () => {
       const from: TNode = 'AssetHubKusama';
       return request(app.getHttpServer())

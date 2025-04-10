@@ -13,7 +13,7 @@ import type {
   TSerializedApiCall,
   TWeight
 } from '@paraspell/sdk-core'
-import { BatchMode } from '@paraspell/sdk-core'
+import { BatchMode, NodeNotSupportedError } from '@paraspell/sdk-core'
 import {
   computeFeeFromDryRunPjs,
   createApiInstanceForNode,
@@ -247,7 +247,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
     if (!supportsDryRunApi) {
-      throw new Error(`DryRunApi is not available on node ${node}`)
+      throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
     }
 
     const response = await this.api.call.dryRunApi.dryRunCall(
