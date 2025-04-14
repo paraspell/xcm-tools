@@ -15,10 +15,12 @@ import { Contract } from 'ethers'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
+import { BridgeHaltedError } from '../../../errors'
 import { getParaId } from '../../../nodes/config'
 import { type TEvmBuilderOptions, type TXcmVersioned, Version } from '../../../types'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
+import { getBridgeStatus } from '../../getBridgeStatus'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
 import { isEthersContract, isEthersSigner } from '../utils'
 import abi from './abi-xcm.json' with { type: 'json' }
@@ -38,6 +40,12 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
 }: TEvmBuilderOptions<TApi, TRes>) => {
   if (!ahAddress) {
     throw new Error('AssetHub address is required')
+  }
+
+  const bridgeStatus = await getBridgeStatus(api.clone())
+
+  if (bridgeStatus !== 'Normal') {
+    throw new BridgeHaltedError()
   }
 
   if ('multiasset' in currency) {

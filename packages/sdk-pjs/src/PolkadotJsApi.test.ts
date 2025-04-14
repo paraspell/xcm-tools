@@ -58,6 +58,9 @@ describe('PolkadotJsApi', () => {
         }
       },
       query: {
+        ethereumOutboundQueue: {
+          operatingMode: vi.fn().mockResolvedValue({ toPrimitive: () => 'Normal' })
+        },
         system: {
           account: vi.fn().mockResolvedValue({ data: { free: { toBigInt: () => 2000n } } })
         },
@@ -784,6 +787,13 @@ describe('PolkadotJsApi', () => {
         mockApiPromise.call.assetConversionApi.quotePriceExactTokensForTokens
       ).toHaveBeenCalledWith(fromMl, toMl, '1000', true)
       expect(price).toBeUndefined()
+    })
+  })
+
+  describe('getBridgeStatus', () => {
+    it('should return the bridge status', async () => {
+      const status = await polkadotApi.getBridgeStatus()
+      expect(status).toEqual('Normal')
     })
   })
 })

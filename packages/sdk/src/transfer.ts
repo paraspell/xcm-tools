@@ -1,4 +1,5 @@
 import {
+  getBridgeStatus as getBridgeStatusImpl,
   getDryRun as getDryRunImpl,
   getParaEthTransferFees as getEthFeesImpl,
   send as sendImpl
@@ -22,4 +23,13 @@ export const getParaEthTransferFees = async (ahApi?: TPapiApiOrUrl) => {
   papiApi.setApi(ahApi)
   await papiApi.init('AssetHubPolkadot')
   return getEthFeesImpl<TPapiApi, TPapiTransaction>(papiApi)
+}
+
+/**
+ * Gets the Ethereum bridge status.
+ */
+export const getBridgeStatus = async (ahApi?: TPapiApiOrUrl) => {
+  const papiApi = new PapiApi()
+  papiApi.setApi(ahApi)
+  return getBridgeStatusImpl<TPapiApi, TPapiTransaction>(papiApi)
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -5,6 +6,7 @@
 import type {
   TAsset,
   TBalanceResponse,
+  TBridgeStatus,
   TDryRunBaseOptions,
   TDryRunResult,
   TModuleError,
@@ -282,6 +284,11 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       : undefined
 
     return { success: true, fee, weight }
+  }
+
+  async getBridgeStatus() {
+    const outboundOperatingMode = await this.api.query.ethereumOutboundQueue.operatingMode()
+    return outboundOperatingMode.toPrimitive() as TBridgeStatus
   }
 
   setDisconnectAllowed(allowed: boolean) {

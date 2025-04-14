@@ -2,7 +2,8 @@ import { findAssetByMultiLocation } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
-import { NoXCMSupportImplementedError } from '../errors'
+import { BridgeHaltedError, NoXCMSupportImplementedError } from '../errors'
+import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type { TRelayToParaOptions } from '../types'
 import {
   type TPolkadotXcmSection,
@@ -16,6 +17,10 @@ import {
 import ParachainNode from './ParachainNode'
 
 vi.mock('../constants/nodes', () => ({}))
+
+vi.mock('../transfer/getBridgeStatus', () => ({
+  getBridgeStatus: vi.fn().mockResolvedValue('Normal')
+}))
 
 vi.mock('../utils', () => ({
   createApiInstance: vi.fn().mockResolvedValue('apiInstance'),
@@ -308,7 +313,8 @@ describe('ParachainNode', () => {
         accountToHex: vi.fn(),
         createApiForNode: vi.fn(),
         callTxMethod: vi.fn(),
-        getFromRpc: vi.fn()
+        getFromRpc: vi.fn(),
+        clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>,
       asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
       senderAddress: '0x456'
@@ -325,5 +331,23 @@ describe('ParachainNode', () => {
       section: 'transfer_assets_using_type_and_then',
       parameters: expect.any(Object)
     })
+  })
+
+  it('should throw BridgeHaltedError when bridge status is not normal', async () => {
+    const options = {
+      api: {
+        accountToHex: vi.fn(),
+        createApiForNode: vi.fn(),
+        callTxMethod: vi.fn(),
+        getFromRpc: vi.fn(),
+        clone: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>,
+      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
+      senderAddress: '0x456'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
+
+    await expect(node.exposeTransferToEthereum(options)).rejects.toThrowError(BridgeHaltedError)
   })
 })

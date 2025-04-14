@@ -15,6 +15,10 @@ import { getNode } from '../../utils'
 import type Hydration from './Hydration'
 import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
 
+vi.mock('../../transfer/getBridgeStatus', () => ({
+  getBridgeStatus: vi.fn().mockResolvedValue('Normal')
+}))
+
 vi.mock('../../pallets/xTokens', () => ({
   default: {
     transferXTokens: vi.fn()
@@ -79,7 +83,8 @@ describe('Hydration', () => {
         accountToHex: vi.fn().mockReturnValue('0x0000000000000000'),
         stringToUint8a: vi.fn().mockReturnValue(new Uint8Array(0)),
         hexToUint8a: vi.fn().mockReturnValue(new Uint8Array(0)),
-        blake2AsHex: vi.fn().mockReturnValue('0x0000000000000000')
+        blake2AsHex: vi.fn().mockReturnValue('0x0000000000000000'),
+        clone: vi.fn()
       } as unknown as IPolkadotApi<unknown, unknown>
 
       mockInput = {

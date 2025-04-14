@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   Builder,
   GeneralBuilder,
+  getBridgeStatus,
   NODES_WITH_RELAY_CHAINS,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
@@ -177,5 +178,9 @@ export class XTransferService {
     } finally {
       await builder.disconnect();
     }
+  }
+
+  async getBridgeStatus() {
+    return getBridgeStatus();
   }
 }

@@ -22,6 +22,7 @@ export const getApiEndpoint = (func: TAssetsQuery, node: string): string => {
     ORIGIN_FEE_DETAILS: `/origin-fee-details`,
     VERIFY_ED_ON_DESTINATION: `/balance/${node}/verify-ed-on-destination`,
     HAS_DRY_RUN_SUPPORT: `/nodes/${node}/has-dry-run-support`,
+    ETHEREUM_BRIDGE_STATUS: `/x-transfer/eth-bridge-status`,
   };
 
   return endpoints[func] ?? '/';

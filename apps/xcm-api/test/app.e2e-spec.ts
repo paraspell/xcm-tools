@@ -1191,6 +1191,15 @@ describe('XCM API (e2e)', () => {
         })
         .expect(500);
     });
+
+    it(`Gets Ethereum bridge status`, async () => {
+      return request(app.getHttpServer())
+        .get('/x-transfer/eth-bridge-status')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toBeDefined();
+        });
+    });
   });
 
   describe('Router controller', () => {

@@ -21,6 +21,7 @@ import {
 } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../constants'
+import { BridgeHaltedError } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import {
   constructRelayToParaParameters,
@@ -30,6 +31,7 @@ import {
 } from '../pallets/xcmPallet/utils'
 import XTokensTransferImpl from '../pallets/xTokens'
 import { getParaEthTransferFees } from '../transfer'
+import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type {
   IPolkadotXCMTransfer,
   IXTokensTransfer,
@@ -262,6 +264,12 @@ abstract class ParachainNode<TApi, TRes> {
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
     const { api, asset, scenario, version, destination, address, senderAddress } = input
+
+    const bridgeStatus = await getBridgeStatus(api.clone())
+
+    if (bridgeStatus !== 'Normal') {
+      throw new BridgeHaltedError()
+    }
 
     if (!isForeignAsset(asset)) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)

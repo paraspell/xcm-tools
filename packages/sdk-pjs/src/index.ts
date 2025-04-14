@@ -24,7 +24,8 @@ export {
   getParaEthTransferFees,
   getTokenBalance,
   send,
-  transferEthToPolkadot
+  transferEthToPolkadot,
+  getBridgeStatus
 } from './transfer'
 export * from './types'
 export { createApiInstanceForNode } from './utils'

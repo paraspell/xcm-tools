@@ -47,6 +47,7 @@ vi.mock('@paraspell/sdk', async () => {
   const actual = await vi.importActual('@paraspell/sdk');
   return {
     ...actual,
+    getBridgeStatus: vi.fn(),
     Builder: vi.fn().mockImplementation(() => builderMock),
   };
 });
@@ -732,6 +733,16 @@ describe('XTransferService', () => {
         'Balances',
         'transfer',
       );
+    });
+  });
+
+  describe('getBridgeStatus', () => {
+    it('should return bridge status', async () => {
+      vi.mocked(paraspellSdk.getBridgeStatus).mockResolvedValue('Normal');
+
+      const status = await service.getBridgeStatus();
+
+      expect(status).toEqual('Normal');
     });
   });
 });

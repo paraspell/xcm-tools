@@ -122,6 +122,7 @@ export const callSdkFunc = (
       }),
     HAS_DRY_RUN_SUPPORT: () =>
       Promise.resolve(chosenSdk.hasDryRunSupport(node)),
+    ETHEREUM_BRIDGE_STATUS: () => Promise.resolve(chosenSdk.getBridgeStatus()),
   };
 
   const action = sdkActions[func];

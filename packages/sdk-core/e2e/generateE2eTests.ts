@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   determineRelayChain,
   GeneralBuilder,
+  getBridgeStatus,
   NODE_NAMES_DOT_KSM,
   NodeNotSupportedError,
   Parents,

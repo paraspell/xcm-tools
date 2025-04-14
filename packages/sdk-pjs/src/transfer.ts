@@ -1,5 +1,6 @@
 import type { TEvmBuilderOptions } from '@paraspell/sdk-core'
 import {
+  getBridgeStatus as getBridgeStatusImpl,
   getDryRun as getDryRunImpl,
   getParaEthTransferFees as getEthFeesImpl,
   send as sendImpl
@@ -31,7 +32,16 @@ export const getParaEthTransferFees = async (api?: TPjsApiOrUrl) => {
   const pjsApi = new PolkadotJsApi()
   pjsApi.setApi(api)
   await pjsApi.init('AssetHubPolkadot')
-  return getEthFeesImpl<TPjsApi, Extrinsic>(pjsApi)
+  return getEthFeesImpl(pjsApi)
+}
+
+/**
+ * Gets the Ethereum bridge status.
+ */
+export const getBridgeStatus = async (api?: TPjsApiOrUrl) => {
+  const pjsApi = new PolkadotJsApi()
+  pjsApi.setApi(api)
+  return getBridgeStatusImpl(pjsApi)
 }
 
 export { approveToken, depositToken, getTokenBalance } from './ethTransfer'
