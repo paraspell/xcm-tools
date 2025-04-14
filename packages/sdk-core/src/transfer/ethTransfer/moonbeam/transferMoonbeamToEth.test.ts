@@ -13,8 +13,10 @@ import type { WalletClient } from 'viem'
 import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { BridgeHaltedError } from '../../../errors'
 import { getParaId } from '../../../nodes/config'
 import type { TEvmBuilderOptions } from '../../../types'
+import { getBridgeStatus } from '../../getBridgeStatus'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
 import { isEthersContract, isEthersSigner } from '../utils'
 import { transferMoonbeamToEth } from './transferMoonbeamToEth'
@@ -26,6 +28,10 @@ vi.mock('@paraspell/assets', () => ({
   isForeignAsset: vi.fn(),
   isOverrideMultiLocationSpecifier: vi.fn(),
   InvalidCurrencyError: class extends Error {}
+}))
+
+vi.mock('../../getBridgeStatus', () => ({
+  getBridgeStatus: vi.fn().mockResolvedValue('Normal')
 }))
 
 vi.mock('../../../nodes/config', () => ({
@@ -68,6 +74,7 @@ vi.mock('../utils', () => ({
 describe('transferMoonbeamToEth', () => {
   const mockApi = {
     init: vi.fn(),
+    clone: vi.fn(),
     getApi: vi.fn(() => ({
       query: {
         parachainInfo: {
@@ -223,5 +230,15 @@ describe('transferMoonbeamToEth', () => {
         ...expectedParams
       )
     }
+  })
+
+  it('should throw BridgeHaltedError when bridge status is not normal', async () => {
+    vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
+    await expect(
+      transferMoonbeamToEth({
+        ...baseOptions,
+        signer: { chain: {}, getAddress: () => '123' } as unknown as Signer
+      })
+    ).rejects.toThrow(BridgeHaltedError)
   })
 })

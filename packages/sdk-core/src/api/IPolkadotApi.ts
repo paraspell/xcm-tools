@@ -5,7 +5,13 @@ import type {
   TNodeWithRelayChains
 } from '@paraspell/sdk-common'
 
-import type { BatchMode, TDryRunBaseOptions, TDryRunResult, TSerializedApiCall } from '../types'
+import type {
+  BatchMode,
+  TBridgeStatus,
+  TDryRunBaseOptions,
+  TDryRunResult,
+  TSerializedApiCall
+} from '../types'
 import type { TApiOrUrl } from '../types/TApi'
 
 export interface IPolkadotApi<TApi, TRes> {
@@ -45,6 +51,7 @@ export interface IPolkadotApi<TApi, TRes> {
   clone(): IPolkadotApi<TApi, TRes>
   createApiForNode(node: TNodeWithRelayChains): Promise<IPolkadotApi<TApi, TRes>>
   getDryRun(options: TDryRunBaseOptions<TRes>): Promise<TDryRunResult>
+  getBridgeStatus(): Promise<TBridgeStatus>
   setDisconnectAllowed(allowed: boolean): void
   getDisconnectAllowed(): boolean
   disconnect(force?: boolean): Promise<void>

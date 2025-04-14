@@ -1,5 +1,6 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
+import type { TBridgeStatus } from '@paraspell/sdk';
 import { BatchMode } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -109,6 +110,20 @@ describe('XTransferController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(bodyParams, true);
+    });
+  });
+
+  describe('getBridgeStatus', () => {
+    it('should call getBridgeStatus service method and return result', async () => {
+      const mockResult: TBridgeStatus = 'Normal';
+      const spy = vi
+        .spyOn(service, 'getBridgeStatus')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getBridgeStatus();
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalled();
     });
   });
 });

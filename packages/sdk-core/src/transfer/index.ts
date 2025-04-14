@@ -1,5 +1,6 @@
 export * from './ethTransfer'
 export * from './ethTransfer/utils'
+export * from './getBridgeStatus'
 export * from './getDryRun'
 export * from './transfer'
 export * from './transferRelayToPara'

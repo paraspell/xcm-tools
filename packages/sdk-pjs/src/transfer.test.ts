@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
-import { getParaEthTransferFees, send, transferEthToPolkadot } from './transfer'
+import { getBridgeStatus, getParaEthTransferFees, send, transferEthToPolkadot } from './transfer'
 import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
 
 vi.mock('./PolkadotJsApi')
@@ -18,6 +18,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => {
   return {
     ...(await importOriginal<typeof import('@paraspell/sdk-core')>()),
     send: vi.fn(),
+    getBridgeStatus: vi.fn(),
     getParaEthTransferFees: vi.fn()
   }
 })
@@ -25,7 +26,7 @@ vi.mock('@paraspell/sdk-core', async importOriginal => {
 describe('Send Function using PolkadotJsAPI', () => {
   const mockApi = {} as TPjsApi
 
-  const optionsSend = {
+  const options = {
     api: mockApi
   } as unknown as Omit<TSendOptions<TPjsApi, Extrinsic>, 'api'> & {
     api: TPjsApiOrUrl
@@ -41,13 +42,21 @@ describe('Send Function using PolkadotJsAPI', () => {
 
   describe('send', () => {
     it('should call setApi on pjsApi and destPjsApi, and call send in transferImpl with correct arguments', async () => {
-      await send(optionsSend)
+      await send(options)
 
       expect(pjsApiSetApiSpy).toHaveBeenCalledWith(mockApi)
       expect(sdkCore.send).toHaveBeenCalledWith({
-        ...optionsSend,
+        ...options,
         api: expect.any(PolkadotJsApi)
       })
+    })
+  })
+
+  describe('getBridgeStatus', () => {
+    it('should call getBridgeStatus from SDK-Core', async () => {
+      await getBridgeStatus(options.api)
+
+      expect(sdkCore.getBridgeStatus).toHaveBeenCalledWith(expect.any(PolkadotJsApi))
     })
   })
 

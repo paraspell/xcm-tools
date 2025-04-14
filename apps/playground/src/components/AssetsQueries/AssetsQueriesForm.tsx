@@ -221,14 +221,16 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             {...form.getInputProps('func')}
           />
 
-          <ParachainSelect
-            label={isOriginFee ? 'Origin node' : 'Node'}
-            placeholder="Pick value"
-            data={nodeList}
-            required
-            data-testid="select-node"
-            {...form.getInputProps('node')}
-          />
+          {func !== 'ETHEREUM_BRIDGE_STATUS' && (
+            <ParachainSelect
+              label={isOriginFee ? 'Origin node' : 'Node'}
+              placeholder="Pick value"
+              data={nodeList}
+              required
+              data-testid="select-node"
+              {...form.getInputProps('node')}
+            />
+          )}
 
           {isOriginFee && (
             <ParachainSelect

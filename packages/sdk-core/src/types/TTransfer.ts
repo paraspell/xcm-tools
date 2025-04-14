@@ -240,3 +240,5 @@ export type TCreateBeneficiaryOptions<TApi, TRes> = {
   version: Version
   paraId?: number
 }
+
+export type TBridgeStatus = 'Normal' | 'Halted'

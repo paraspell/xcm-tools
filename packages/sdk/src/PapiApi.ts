@@ -328,6 +328,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return Promise.resolve({ success: true, fee, weight })
   }
 
+  async getBridgeStatus() {
+    const outboundOperatingMode = await this.api
+      .getUnsafeApi()
+      .query.EthereumOutboundQueue.OperatingMode.getValue()
+    return outboundOperatingMode.type
+  }
+
   setDisconnectAllowed(allowed: boolean) {
     this.disconnectAllowed = allowed
   }

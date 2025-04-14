@@ -11,7 +11,7 @@ import { hasJunction, isTMultiLocation, Parents, type TMultiLocation } from '@pa
 import { ethers } from 'ethers'
 
 import { DOT_MULTILOCATION, ETHEREUM_JUNCTION, SYSTEM_NODES_POLKADOT } from '../../constants'
-import { ScenarioNotSupportedError } from '../../errors'
+import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
   createBridgePolkadotXcmDest,
@@ -19,6 +19,7 @@ import {
   createPolkadotXcmHeader,
   createVersionedMultiAssets
 } from '../../pallets/xcmPallet/utils'
+import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type {
   TDestination,
   TPolkadotXcmSection,
@@ -137,8 +138,14 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
-  public handleEthBridgeTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
+  public async handleEthBridgeTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
     const { api, scenario, destination, paraIdTo, address, asset } = input
+
+    const bridgeStatus = await getBridgeStatus(api.clone())
+
+    if (bridgeStatus !== 'Normal') {
+      throw new BridgeHaltedError()
+    }
 
     if (!ethers.isAddress(address)) {
       throw new Error('Only Ethereum addresses are supported for Ethereum transfers')

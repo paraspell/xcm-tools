@@ -109,6 +109,11 @@ describe('PapiApi', () => {
           }
         },
         query: {
+          EthereumOutboundQueue: {
+            OperatingMode: {
+              getValue: vi.fn().mockResolvedValue({ type: 'Normal' })
+            }
+          },
           System: {
             Account: {
               getValue: vi.fn().mockResolvedValue({
@@ -875,6 +880,13 @@ describe('PapiApi', () => {
       const quote = await papiApi.quoteAhPrice(mlFrom, mlTo, amountIn)
 
       expect(quote).toBeUndefined()
+    })
+  })
+
+  describe('getBridgeStatus', () => {
+    it('should return the bridge status', async () => {
+      const status = await papiApi.getBridgeStatus()
+      expect(status).toEqual('Normal')
     })
   })
 })

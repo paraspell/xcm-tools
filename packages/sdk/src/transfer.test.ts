@@ -4,7 +4,7 @@ import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PapiApi from './PapiApi'
-import { getParaEthTransferFees, send } from './transfer'
+import { getBridgeStatus, getParaEthTransferFees, send } from './transfer'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 
 vi.mock('./PapiApi')
@@ -13,7 +13,7 @@ vi.mock('@paraspell/sdk-core')
 describe('Send function using PapiApi', () => {
   const mockApi = {} as TPapiApi
 
-  const optionsSend = {
+  const options = {
     api: mockApi
   } as Omit<TSendOptions<TPapiApi, TPapiTransaction>, 'api'> & {
     api: TPapiApiOrUrl
@@ -29,13 +29,21 @@ describe('Send function using PapiApi', () => {
 
   describe('send', () => {
     it('should call setApi on papiApi and destPapiApi, and call send in transferImpl with correct arguments', async () => {
-      await send(optionsSend)
+      await send(options)
 
       expect(papiApiSetApiSpy).toHaveBeenCalledWith(mockApi)
       expect(sdkCore.send).toHaveBeenCalledWith({
-        ...optionsSend,
+        ...options,
         api: expect.any(PapiApi)
       })
+    })
+  })
+
+  describe('getBridgeStatus', () => {
+    it('should call getBridgeStatus from SDK-Core', async () => {
+      await getBridgeStatus(options.api)
+
+      expect(sdkCore.getBridgeStatus).toHaveBeenCalledWith(expect.any(PapiApi))
     })
   })
 

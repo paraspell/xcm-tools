@@ -1,3 +1,4 @@
+export { BridgeHaltedError } from './BridgeHaltedError'
 export { IncompatibleNodesError } from './IncompatibleNodesError'
 export { InvalidAddressError } from './InvalidAddressError'
 export { NodeNotSupportedError } from './NodeNotSupportedError'

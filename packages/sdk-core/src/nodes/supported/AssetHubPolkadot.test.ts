@@ -13,8 +13,9 @@ import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { ScenarioNotSupportedError } from '../../errors'
+import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type { TScenario, TXcmVersioned } from '../../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
@@ -44,6 +45,10 @@ vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class extends Error {},
   isForeignAsset: vi.fn(),
   hasSupportForAsset: vi.fn()
+}))
+
+vi.mock('../../transfer/getBridgeStatus', () => ({
+  getBridgeStatus: vi.fn()
 }))
 
 vi.mock('../../utils/generateAddressMultiLocationV4', () => ({
@@ -84,7 +89,8 @@ describe('AssetHubPolkadot', () => {
     createApiForNode: vi.fn().mockResolvedValue({
       getFromStorage: vi.fn().mockResolvedValue('0x0000000000000000')
     }),
-    createAccountId: vi.fn().mockReturnValue('0x0000000000000000')
+    createAccountId: vi.fn().mockReturnValue('0x0000000000000000'),
+    clone: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
   const mockInput = {
@@ -102,6 +108,7 @@ describe('AssetHubPolkadot', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     assetHub = getNode<unknown, unknown, 'AssetHubPolkadot'>('AssetHubPolkadot')
+    vi.mocked(getBridgeStatus).mockResolvedValue('Normal')
   })
 
   describe('handleBridgeTransfer', () => {
@@ -142,22 +149,36 @@ describe('AssetHubPolkadot', () => {
   })
 
   describe('handleEthBridgeTransfer', () => {
-    it('should throw an error if the address is not a valid Ethereum address', () => {
+    it('should throw an error if the address is not a valid Ethereum address', async () => {
       vi.mocked(ethers.isAddress).mockReturnValue(false)
 
-      expect(() => assetHub.handleEthBridgeTransfer(mockInput)).toThrowError(
+      await expect(assetHub.handleEthBridgeTransfer(mockInput)).rejects.toThrowError(
         'Only Ethereum addresses are supported for Ethereum transfers'
       )
     })
 
-    it('should throw InvalidCurrencyError if currency is not supported for Ethereum transfers', () => {
+    it('should throw InvalidCurrencyError if currency is not supported for Ethereum transfers', async () => {
       vi.mocked(ethers.isAddress).mockReturnValue(true)
       vi.mocked(getOtherAssets).mockReturnValue([])
 
-      expect(() => assetHub.handleEthBridgeTransfer(mockInput)).toThrowError(InvalidCurrencyError)
+      await expect(assetHub.handleEthBridgeTransfer(mockInput)).rejects.toThrowError(
+        InvalidCurrencyError
+      )
     })
 
-    it('should process a valid ETH transfer', () => {
+    it('should throw BridgeHaltedError if bridge status is not normal', async () => {
+      vi.mocked(ethers.isAddress).mockReturnValue(true)
+      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', assetId: '0x123' }])
+      vi.mocked(isForeignAsset).mockReturnValue(true)
+
+      vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
+
+      await expect(assetHub.handleEthBridgeTransfer(mockInput)).rejects.toThrowError(
+        BridgeHaltedError
+      )
+    })
+
+    it('should process a valid ETH transfer', async () => {
       vi.mocked(ethers.isAddress).mockReturnValue(true)
       const mockEthAsset = { symbol: 'ETH', assetId: '0x123' }
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
@@ -173,7 +194,7 @@ describe('AssetHubPolkadot', () => {
         asset: { symbol: 'ETH', assetId: '0x123', multiLocation: {} },
         destination: 'Ethereum'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
-      const result = assetHub.handleEthBridgeTransfer(input)
+      const result = await assetHub.handleEthBridgeTransfer(input)
 
       expect(result).toStrictEqual(mockResult)
       expect(spy).toHaveBeenCalledTimes(1)
@@ -256,7 +277,7 @@ describe('AssetHubPolkadot', () => {
 
       vi.mocked(ethers.isAddress).mockReturnValue(true)
 
-      const spy = vi.spyOn(assetHub, 'handleEthBridgeTransfer').mockReturnValue({} as unknown)
+      const spy = vi.spyOn(assetHub, 'handleEthBridgeTransfer').mockResolvedValue({} as unknown)
 
       await assetHub.transferPolkadotXCM(mockInput)
 

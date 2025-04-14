@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Req, Request, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Request,
+  UsePipes,
+} from '@nestjs/common';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
@@ -73,5 +81,10 @@ export class XTransferController {
       bodyParams,
     );
     return this.xTransferService.generateBatchXcmCall(bodyParams);
+  }
+
+  @Get('x-transfer/eth-bridge-status')
+  getBridgeStatus() {
+    return this.xTransferService.getBridgeStatus();
   }
 }
