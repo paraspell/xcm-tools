@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.9](https://github.com/paraspell/xcm-tools/compare/sdk-v8.9.8...sdk-v8.9.9) (2025-04-14)
+
+
+### Bug Fixes
+
+* Add Ethereum bridge status checks 🛠️ ([7347cca](https://github.com/paraspell/xcm-tools/commit/7347cca0b43fc900028951db05b2217b3be19573))
+
 ## [8.9.8](https://github.com/paraspell/xcm-tools/compare/sdk-v8.9.7...sdk-v8.9.8) (2025-04-10)
 
 
