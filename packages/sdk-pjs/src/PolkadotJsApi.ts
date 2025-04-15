@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -252,13 +251,18 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
     }
 
+    // Bifrost requires a third parameter XCM version
+    const isBifrost = node === 'BifrostPolkadot' || node === 'BifrostKusama'
+    const DEFAULT_XCM_VERSION = 3
+
     const response = await this.api.call.dryRunApi.dryRunCall(
       {
         system: {
           Signed: address
         }
       },
-      tx
+      tx,
+      ...(isBifrost ? [DEFAULT_XCM_VERSION] : [])
     )
 
     const result = response.toHuman() as any
