@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.10](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.9.9...sdk-pjs-v8.9.10) (2025-04-15)
+
+
+### Bug Fixes
+
+* Handle bifrost dry-run call 🔧 ([96a6dac](https://github.com/paraspell/xcm-tools/commit/96a6dac178a5cf709a350deb3d056b4aed37a290))
+
 ## [8.9.9](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.9.8...sdk-pjs-v8.9.9) (2025-04-14)
 
 
