@@ -4,6 +4,7 @@ import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
+import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { TGetAmountOutOptions, TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { getQuotedAmount } from './utils';
@@ -74,6 +75,12 @@ class AssetHubExchangeNode extends ExchangeNode {
     const finalAmountOut = quotedAmountOutBN
       .minus(toDestFeeCurrencyToBN.multipliedBy(FEE_BUFFER))
       .decimalPlaces(0);
+
+    if (finalAmountOut.isNegative()) {
+      throw new SmallAmountError(
+        'The provided amount is too small to cover the fees. Please provide a larger amount.',
+      );
+    }
 
     return {
       tx,

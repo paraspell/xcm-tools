@@ -23,7 +23,7 @@ class HydrationExchangeNode extends ExchangeNode {
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
   ): Promise<TSwapResult> {
-    const { assetFrom, assetTo, slippagePct, amount } = options;
+    const { origin, assetFrom, assetTo, slippagePct, amount } = options;
 
     const poolService = new PoolService(api);
     const tradeRouter = new TradeRouter(
@@ -51,6 +51,7 @@ class HydrationExchangeNode extends ExchangeNode {
     }
 
     const amountBnum = BigNumber(amount);
+
     const tradeFee = await calculateFee(
       options,
       tradeRouter,
@@ -61,7 +62,7 @@ class HydrationExchangeNode extends ExchangeNode {
       this.node,
       toDestTransactionFee,
     );
-    const amountWithoutFee = amountBnum.minus(tradeFee);
+    const amountWithoutFee = origin ? amountBnum.minus(tradeFee) : amountBnum;
 
     if (amountWithoutFee.isNegative()) {
       throw new SmallAmountError(
@@ -126,7 +127,7 @@ class HydrationExchangeNode extends ExchangeNode {
 
     if (amountOutModified.isNegative()) {
       throw new SmallAmountError(
-        'The amount after deducting fees is negative. Please provide a larger amount.',
+        'The provided amount is too small to cover the fees. Please provide a larger amount.',
       );
     }
 
