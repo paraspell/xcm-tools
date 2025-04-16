@@ -133,6 +133,9 @@ describe('HydrationExchangeNode', () => {
       vi.mocked(getAssetDecimals).mockReturnValue(12);
 
       const options = {
+        origin: {
+          node: 'Acala',
+        },
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'HDX' },
         slippagePct: '1',
@@ -153,6 +156,9 @@ describe('HydrationExchangeNode', () => {
       vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('150'));
 
       const options = {
+        origin: {
+          node: 'Acala',
+        },
         assetFrom: { symbol: 'ABC' },
         assetTo: { symbol: 'XYZ' },
         slippagePct: '1',

@@ -9,6 +9,7 @@ import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
 import AssetHubExchangeNode from './AssetHubDex';
 import { getQuotedAmount } from './utils';
@@ -71,6 +72,30 @@ describe('AssetHubExchangeNode', () => {
       const opts = { ...baseSwapOptions, assetTo: { symbol: 'ASSET2' } } as TSwapOptions;
       await expect(instance.swapCurrency(api, opts, new BigNumber('50'))).rejects.toThrow(
         'Asset to multiLocation not found',
+      );
+    });
+
+    it('should throw SmallAmountError if amount is too small', async () => {
+      vi.mocked(getQuotedAmount).mockResolvedValueOnce({
+        amountOut: BigInt('100'),
+        usedFromML: assetFromML,
+        usedToML: assetToML,
+      });
+
+      vi.mocked(getQuotedAmount).mockResolvedValueOnce({
+        amountOut: BigInt('10000000'),
+        usedFromML: assetFromML,
+        usedToML: assetToML,
+      });
+
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: { symbol: 'ASSET1', multiLocation: assetFromML },
+        assetTo: { symbol: 'NATIVE', multiLocation: assetToML },
+        amoun: 1000,
+      } as TSwapOptions;
+      await expect(instance.swapCurrency(api, opts, new BigNumber('50000'))).rejects.toThrow(
+        SmallAmountError,
       );
     });
 

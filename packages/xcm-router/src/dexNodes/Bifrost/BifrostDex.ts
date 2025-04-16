@@ -86,8 +86,19 @@ class BifrostExchangeNode extends ExchangeNode {
       .decimalPlaces(0);
 
     const nativeSymbol = getNativeAssetSymbol(this.node);
+
     if (tokenTo.symbol === nativeSymbol) {
-      const amountOutWithFee = amountOutBN.minus(toDestTxFee).multipliedBy(FEE_BUFFER);
+      const amountOutWithFee = amountOutBN
+        .minus(toDestTxFee)
+        .multipliedBy(FEE_BUFFER)
+        .decimalPlaces(0);
+
+      if (amountOutWithFee.isNegative()) {
+        throw new SmallAmountError(
+          'The provided amount is too small to cover the fees. Please provide a larger amount.',
+        );
+      }
+
       Logger.log('Amount out with fee:', amountOutWithFee.toString());
       return { tx: extrinsic[0], amountOut: amountOutWithFee.toString() };
     }

@@ -2,11 +2,12 @@ import type { Trade } from '@crypto-dex-sdk/amm';
 import type { Token } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
 import type { Extrinsic, TMultiLocation } from '@paraspell/sdk-pjs';
-import { getAssets, getParaId } from '@paraspell/sdk-pjs';
+import { getAssets, getBalanceNative, getParaId } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { TSwapOptions } from '../../types';
 import BifrostExchangeNode from './BifrostDex';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
@@ -17,6 +18,7 @@ vi.mock('@paraspell/sdk-pjs', async () => {
     ...actualModule,
     getParaId: vi.fn(),
     getAssets: vi.fn(),
+    getBalanceNative: vi.fn(),
   };
 });
 
@@ -42,8 +44,9 @@ vi.mock('@crypto-dex-sdk/currency', () => ({
       toFixed: () => rawAmount,
     })),
   },
-  Token: vi.fn().mockImplementation((props: { decimals: number }) => ({
+  Token: vi.fn().mockImplementation((props: { decimals: number; symbol: string }) => ({
     decimals: props.decimals,
+    symbol: props.symbol,
   })),
   getCurrencyCombinations: vi.fn(),
 }));
@@ -74,6 +77,7 @@ describe('BifrostExchangeNode', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     node = new BifrostExchangeNode('BifrostPolkadot', 'BifrostPolkadotDex');
+    vi.mocked(getBalanceNative).mockResolvedValue(10000000000n);
   });
 
   describe('getAssets', () => {
@@ -155,6 +159,23 @@ describe('BifrostExchangeNode', () => {
       await expect(
         node.swapCurrency(mockApi, swapOptions, mockToDestTransactionFee),
       ).rejects.toThrowError('Extrinsic is null');
+    });
+
+    it('should throw an error if the amount is too small to cover the fees', async () => {
+      vi.mocked(getBestTrade).mockReturnValue({
+        descriptions: [{ fee: 0.5 }],
+        outputAmount: {
+          toFixed: () => '-1000000000000',
+        },
+      } as Trade);
+
+      await expect(
+        node.swapCurrency(
+          mockApi,
+          { ...swapOptions, assetFrom: { symbol: 'KSM' }, assetTo: { symbol: 'BNC' } },
+          mockToDestTransactionFee,
+        ),
+      ).rejects.toThrowError(SmallAmountError);
     });
 
     it('should return the extrinsic and final amountOut if successful', async () => {
