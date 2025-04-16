@@ -1,4 +1,5 @@
 import type { IPolkadotApi } from '../../api'
+import { ASSET_HUB_EXECUTION_FEE } from '../../constants'
 
 export const getParaEthTransferFees = async <TApi, TRes>(
   ahApi: IPolkadotApi<TApi, TRes>
@@ -23,9 +24,7 @@ export const getParaEthTransferFees = async <TApi, TRes>(
 
   const transferBridgeFee = leFee === 0n ? DEFAULT_FEE : BigInt(leFee.toString())
 
-  const transferAssethubExecutionFee = 2200000000n
-
   const finalBridgeFee = (transferBridgeFee * 110n) / 100n
-  const finalAssethubExecutionFee = (transferAssethubExecutionFee * 110n) / 100n
+  const finalAssethubExecutionFee = (ASSET_HUB_EXECUTION_FEE * 110n) / 100n
   return [finalBridgeFee, finalAssethubExecutionFee]
 }

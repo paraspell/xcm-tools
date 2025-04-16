@@ -1,7 +1,9 @@
-import { findAssetByMultiLocation } from '@paraspell/assets'
+import { findAssetByMultiLocation, InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
+import * as BuilderModule from '../builder'
+import { DOT_MULTILOCATION } from '../constants'
 import { BridgeHaltedError, NoXCMSupportImplementedError } from '../errors'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type { TRelayToParaOptions } from '../types'
@@ -28,22 +30,30 @@ vi.mock('../utils', () => ({
   getFees: vi.fn().mockReturnValue('fees'),
   verifyMultiLocation: vi.fn(),
   isTMultiLocation: vi.fn(),
-  isRelayChain: vi.fn()
+  isRelayChain: vi.fn(),
+  createBeneficiaryMultiLocation: vi.fn().mockReturnValue('beneficiaryMultiLocation')
 }))
 
-vi.mock('../pallets/xcmPallet/utils', () => ({
-  constructRelayToParaParameters: vi.fn().mockReturnValue('parameters'),
-  createVersionedMultiAssets: vi.fn().mockReturnValue('currencySpec'),
-  createMultiAsset: vi.fn().mockReturnValue('multiAsset'),
-  createPolkadotXcmHeader: vi.fn().mockReturnValue('polkadotXcmHeader'),
-  isTMultiLocation: vi.fn()
-}))
+vi.mock('../pallets/xcmPallet/utils', async () => {
+  const actual = await vi.importActual('../pallets/xcmPallet/utils')
+  return {
+    ...actual,
+    constructRelayToParaParameters: vi.fn().mockReturnValue('parameters'),
+    createVersionedMultiAssets: vi.fn().mockReturnValue('currencySpec'),
+    createMultiAsset: vi.fn().mockReturnValue('multiAsset'),
+    createPolkadotXcmHeader: vi.fn().mockReturnValue('polkadotXcmHeader'),
+    isTMultiLocation: vi.fn(),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    extractVersionFromHeader: vi.fn().mockImplementation(header => [header, Version.V4])
+  }
+})
 
 vi.mock('@paraspell/assets', () => ({
   getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
   findAssetByMultiLocation: vi.fn().mockReturnValue({ symbol: 'DOT' }),
   getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT', assetId: '123' }]),
-  isForeignAsset: vi.fn().mockReturnValue(true)
+  isForeignAsset: vi.fn().mockReturnValue(true),
+  InvalidCurrencyError: class extends Error {}
 }))
 
 vi.mock('./config', () => ({
@@ -88,8 +98,15 @@ class TestParachainNode extends ParachainNode<unknown, unknown> {
     return this.canUseXTokens(options)
   }
 
-  public exposeTransferToEthereum(options: TPolkadotXCMTransferOptions<unknown, unknown>) {
-    return this.transferToEthereum(options)
+  public exposeTransferToEthereum(
+    options: TPolkadotXCMTransferOptions<unknown, unknown>,
+    useOnlyDepositAsset = false
+  ) {
+    return this.transferToEthereum(options, useOnlyDepositAsset)
+  }
+
+  public exposeTransferEthAssetViaAH(options: TPolkadotXCMTransferOptions<unknown, unknown>) {
+    return this.transferEthAssetViaAH(options)
   }
 }
 
@@ -330,6 +347,134 @@ describe('ParachainNode', () => {
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: expect.any(Object)
+    })
+  })
+
+  it('should perform eth asset transfer with deposit asset only instruction', async () => {
+    const options = {
+      api: {
+        accountToHex: vi.fn(),
+        createApiForNode: vi.fn(),
+        callTxMethod: vi.fn(),
+        getFromRpc: vi.fn(),
+        clone: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>,
+      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
+      senderAddress: '0x456'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    const spy = vi.spyOn(options.api, 'callTxMethod')
+
+    vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: 'WETH', assetId: '123' })
+
+    await node.exposeTransferToEthereum(options, true)
+
+    expect(spy).toHaveBeenCalledWith({
+      module: 'PolkadotXcm',
+      section: 'transfer_assets_using_type_and_then',
+      parameters: expect.any(Object)
+    })
+  })
+
+  describe('transferEthAssetViaAH', () => {
+    const options = {
+      api: {
+        accountToHex: vi.fn(),
+        createApiForNode: vi.fn(),
+        callTxMethod: vi.fn(),
+        getFromRpc: vi.fn(),
+        clone: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>,
+      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
+      senderAddress: '0x456'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    beforeEach(() => {
+      const mockBuilderInstance = {
+        from: vi.fn().mockReturnThis(),
+        to: vi.fn().mockReturnThis(),
+        amount: vi.fn().mockReturnThis(),
+        address: vi.fn().mockReturnThis(),
+        currency: vi.fn().mockReturnThis(),
+        dryRun: vi.fn().mockResolvedValue({
+          success: true,
+          fee: 1000n
+        })
+      } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
+
+      vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
+    })
+
+    it('should throw an error if the asset has no multi-location', async () => {
+      await expect(
+        node.exposeTransferEthAssetViaAH({
+          ...options,
+          asset: { symbol: 'WETH', assetId: '', multiLocation: undefined, amount: '100' }
+        })
+      ).rejects.toThrowError(InvalidCurrencyError)
+    })
+
+    it('should throw an error if no sender address provided', async () => {
+      await expect(
+        node.exposeTransferEthAssetViaAH({
+          ...options,
+          senderAddress: undefined
+        })
+      ).rejects.toThrowError()
+    })
+
+    it('should throw an error if the address is multi-location', async () => {
+      await expect(
+        node.exposeTransferEthAssetViaAH({
+          ...options,
+          senderAddress: '0x123',
+          address: DOT_MULTILOCATION
+        })
+      ).rejects.toThrowError()
+    })
+
+    it('should throw an error if dry-run fails', async () => {
+      const mockBuilderInstance = {
+        from: vi.fn().mockReturnThis(),
+        to: vi.fn().mockReturnThis(),
+        amount: vi.fn().mockReturnThis(),
+        address: vi.fn().mockReturnThis(),
+        currency: vi.fn().mockReturnThis(),
+        dryRun: vi.fn().mockResolvedValue({
+          success: false,
+          failureReason: 'error'
+        })
+      } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
+
+      vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
+
+      await expect(node.exposeTransferEthAssetViaAH(options)).rejects.toThrowError()
+    })
+
+    it('should perform eth asset transfer via AH', async () => {
+      const options = {
+        api: {
+          accountToHex: vi.fn(),
+          createApiForNode: vi.fn(),
+          callTxMethod: vi.fn(),
+          getFromRpc: vi.fn(),
+          clone: vi.fn()
+        } as unknown as IPolkadotApi<unknown, unknown>,
+        asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
+        senderAddress: '0x456'
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      const spy = vi.spyOn(options.api, 'callTxMethod')
+
+      vi.mocked(findAssetByMultiLocation).mockReturnValue({ symbol: 'WETH', assetId: '123' })
+
+      await node.exposeTransferEthAssetViaAH(options)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'PolkadotXcm',
+        section: 'transfer_assets_using_type_and_then',
+        parameters: expect.any(Object)
+      })
     })
   })
 

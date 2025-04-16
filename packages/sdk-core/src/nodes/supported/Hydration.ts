@@ -1,6 +1,11 @@
 // Contains detailed structure of XCM call construction for Hydration Parachain
 
-import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import {
+  findAssetByMultiLocation,
+  getOtherAssets,
+  InvalidCurrencyError,
+  isForeignAsset
+} from '@paraspell/assets'
 import { hasJunction, Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
@@ -137,10 +142,14 @@ class Hydration<TApi, TRes>
   }
 
   protected canUseXTokens({ to: destination, asset }: TSendInternalOptions<TApi, TRes>): boolean {
+    const isEthAsset =
+      asset.multiLocation &&
+      findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
     return (
       destination !== 'Ethereum' &&
       destination !== 'Polimec' &&
-      !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT')
+      !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT') &&
+      !isEthAsset
     )
   }
 }

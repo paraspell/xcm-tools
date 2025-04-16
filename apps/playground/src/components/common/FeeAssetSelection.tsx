@@ -104,6 +104,7 @@ export const FeeAssetSelection: FC<Props> = ({ form, currencyOptions }) => {
           allowDeselect={false}
           disabled={isRelayToPara}
           searchable
+          clearable
           data-testid="select-currency"
           {...form.getInputProps(`feeAsset.currencyOptionId`)}
         />

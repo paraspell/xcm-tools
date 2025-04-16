@@ -244,16 +244,17 @@ describe('Hydration', () => {
 
   describe('canUseXTokens', () => {
     it('should return false when destination is Ethereum', () => {
-      const result = hydration['canUseXTokens']({ to: 'Ethereum' } as TSendInternalOptions<
-        unknown,
-        unknown
-      >)
+      const result = hydration['canUseXTokens']({
+        to: 'Ethereum',
+        asset: { multiLocation: {} }
+      } as TSendInternalOptions<unknown, unknown>)
       expect(result).toBe(false)
     })
 
     it('should return true when destination is not Ethereum', () => {
       const result = hydration['canUseXTokens']({
-        to: 'Acala'
+        to: 'Acala',
+        asset: { multiLocation: {} }
       } as TSendInternalOptions<unknown, unknown>)
       expect(result).toBe(true)
     })
@@ -261,7 +262,7 @@ describe('Hydration', () => {
     it('should return false when destination AssetHubPolkadot and currency is DOT', () => {
       const result = hydration['canUseXTokens']({
         to: 'AssetHubPolkadot',
-        asset: { symbol: 'DOT' }
+        asset: { symbol: 'DOT', multiLocation: {} }
       } as TSendInternalOptions<unknown, unknown>)
       expect(result).toBe(false)
     })

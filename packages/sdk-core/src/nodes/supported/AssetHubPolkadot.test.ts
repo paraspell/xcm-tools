@@ -1,5 +1,6 @@
 import type { TAsset } from '@paraspell/assets'
 import {
+  findAssetByMultiLocation,
   getOtherAssets,
   InvalidCurrencyError,
   isForeignAsset,
@@ -38,14 +39,19 @@ vi.mock('../polkadotXcm', () => ({
   }
 }))
 
-vi.mock('@paraspell/assets', () => ({
-  getOtherAssets: vi.fn(),
-  getParaId: vi.fn(),
-  isAssetEqual: vi.fn(),
-  InvalidCurrencyError: class extends Error {},
-  isForeignAsset: vi.fn(),
-  hasSupportForAsset: vi.fn()
-}))
+vi.mock('@paraspell/assets', async () => {
+  const actual = await vi.importActual('@paraspell/assets')
+  return {
+    ...actual,
+    getOtherAssets: vi.fn(),
+    getParaId: vi.fn(),
+    isAssetEqual: vi.fn(),
+    InvalidCurrencyError: class extends Error {},
+    isForeignAsset: vi.fn(),
+    hasSupportForAsset: vi.fn(),
+    findAssetByMultiLocation: vi.fn()
+  }
+})
 
 vi.mock('../../transfer/getBridgeStatus', () => ({
   getBridgeStatus: vi.fn()
@@ -70,6 +76,10 @@ vi.mock('../../utils/validateAddress', () => ({
 
 vi.mock('../../utils/createExecuteXcm', () => ({
   createExecuteXcm: vi.fn()
+}))
+
+vi.mock('../../utils/ethereum/generateMessageId', () => ({
+  generateMessageId: vi.fn()
 }))
 
 vi.mock('@paraspell/sdk-common', async () => {
@@ -102,7 +112,8 @@ describe('AssetHubPolkadot', () => {
     addressSelection: {} as TXcmVersioned<TMultiLocation>,
     paraIdTo: 1001,
     address: 'address',
-    destination: 'Polkadot'
+    destination: 'Polkadot',
+    senderAddress: '0x1234567890abcdef'
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
@@ -201,9 +212,58 @@ describe('AssetHubPolkadot', () => {
     })
   })
 
+  describe('handleEthBridgeNativeTransfer', () => {
+    it('should throw an error if the address is not a valid Ethereum address', async () => {
+      vi.mocked(ethers.isAddress).mockReturnValue(false)
+
+      await expect(assetHub.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrowError()
+    })
+
+    it('should throw InvalidCurrencyError if currency is not supported for Ethereum transfers', async () => {
+      vi.mocked(ethers.isAddress).mockReturnValue(true)
+      vi.mocked(getOtherAssets).mockReturnValue([])
+
+      await expect(assetHub.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrowError(
+        InvalidCurrencyError
+      )
+    })
+
+    it('should throw BridgeHaltedError if bridge status is not normal', async () => {
+      vi.mocked(ethers.isAddress).mockReturnValue(true)
+      vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', assetId: '0x123' }])
+      vi.mocked(isForeignAsset).mockReturnValue(true)
+
+      vi.mocked(getBridgeStatus).mockResolvedValue('Halted')
+
+      await expect(assetHub.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrowError(
+        BridgeHaltedError
+      )
+    })
+
+    it('should process a valid AH native asset to ETH transfer', async () => {
+      vi.mocked(ethers.isAddress).mockReturnValue(true)
+      const mockEthAsset = { symbol: 'ETH', assetId: '0x123' }
+      vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
+      vi.mocked(isForeignAsset).mockReturnValue(true)
+
+      const spy = vi.spyOn(mockApi, 'callTxMethod')
+
+      const input = {
+        ...mockInput,
+        asset: { symbol: 'ETH', assetId: '0x123', multiLocation: {} },
+        destination: 'Ethereum'
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+      const result = await assetHub.handleEthBridgeNativeTransfer(input)
+
+      expect(result).toEqual('success')
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('handleMythosTransfer', () => {
     it('should process a valid Mythos transfer', () => {
       const mockResult = {}
+
       const spy = vi
         .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
         .mockReturnValue(mockResult)
@@ -306,8 +366,14 @@ describe('AssetHubPolkadot', () => {
       }
 
       vi.mocked(getOtherAssets).mockReturnValue([
-        { symbol: 'WETH', assetId: '0x123', multiLocation: {} as TMultiLocation }
+        { symbol: 'WETH', assetId: '0x123', multiLocation: mockInput.asset.multiLocation }
       ])
+
+      vi.mocked(findAssetByMultiLocation).mockReturnValueOnce({
+        symbol: 'WETH',
+        multiLocation: {} as TMultiLocation
+      })
+
       vi.mocked(createVersionedBeneficiary).mockReturnValue({
         [Version.V3]: {}
       } as TXcmVersioned<TMultiLocation>)

@@ -1,6 +1,12 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Polkadot
 
-import { getAssetId, isForeignAsset, type TAsset } from '@paraspell/assets'
+import {
+  findAssetByMultiLocation,
+  getAssetId,
+  getOtherAssets,
+  isForeignAsset,
+  type TAsset
+} from '@paraspell/assets'
 import { Parents } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
@@ -91,6 +97,10 @@ export class BifrostPolkadot<TApi, TRes>
   }
 
   protected canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {
+    const isEthAsset =
+      asset.multiLocation &&
+      findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
+    if (isEthAsset) return false
     if (destination === 'Ethereum') return false
     return (asset.symbol !== 'WETH' && asset.symbol !== 'DOT') || destination !== 'AssetHubPolkadot'
   }

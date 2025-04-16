@@ -242,9 +242,6 @@ const XcmTransferForm: FC<Props> = ({
 
   const colorScheme = useComputedColorScheme();
 
-  const isVisibleFeeAsset =
-    currencies.length > 1 || from === 'AssetHubPolkadot';
-
   if (!isVisible) {
     return null;
   }
@@ -342,9 +339,7 @@ const XcmTransferForm: FC<Props> = ({
             </Button>
           </Stack>
 
-          {isVisibleFeeAsset && (
-            <FeeAssetSelection form={form} currencyOptions={currencyOptions} />
-          )}
+          <FeeAssetSelection form={form} currencyOptions={currencyOptions} />
 
           <TextInput
             label="Recipient address"

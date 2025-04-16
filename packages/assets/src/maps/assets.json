@@ -10358,6 +10358,38 @@
         }
       },
       {
+        "symbol": "DOT",
+        "existentialDeposit": "1",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "Polkadot": null
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "KSM",
+        "existentialDeposit": "1",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "Kusama": null
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
         "symbol": "WETH",
         "assetId": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
         "existentialDeposit": "15000000000000",

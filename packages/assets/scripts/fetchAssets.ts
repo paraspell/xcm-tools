@@ -470,7 +470,6 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
   const output: TAssetJsonMap = JSON.parse(JSON.stringify(assetsMapJson))
   for (const [node, query] of Object.entries(nodeToQuery)) {
     const nodeName = node as TNodeWithRelayChains
-    if (nodeName.toString() !== 'Astar') continue
 
     console.log(`Fetching assets for ${nodeName}...`)
 

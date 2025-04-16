@@ -52,6 +52,38 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
           }
         }
       }
+    },
+    {
+      symbol: 'DOT',
+      existentialDeposit: '1',
+      multiLocation: {
+        parents: 2,
+        interior: {
+          X1: [
+            {
+              GlobalConsensus: {
+                polkadot: null
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      symbol: 'KSM',
+      existentialDeposit: '1',
+      multiLocation: {
+        parents: 2,
+        interior: {
+          X1: [
+            {
+              GlobalConsensus: {
+                kusama: null
+              }
+            }
+          ]
+        }
+      }
     }
   ]
 
