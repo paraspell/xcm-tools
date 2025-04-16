@@ -2,6 +2,8 @@
 
 import type { TAmount, TAsset } from '@paraspell/assets'
 import {
+  findAssetByMultiLocation,
+  getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
   isAssetEqual,
@@ -14,6 +16,7 @@ import { DOT_MULTILOCATION, ETHEREUM_JUNCTION, SYSTEM_NODES_POLKADOT } from '../
 import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
+  addXcmVersionHeader,
   createBridgePolkadotXcmDest,
   createMultiAsset,
   createPolkadotXcmHeader,
@@ -34,6 +37,7 @@ import {
 } from '../../types'
 import { createVersionedBeneficiary } from '../../utils'
 import { createExecuteXcm } from '../../utils/createExecuteXcm'
+import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { createBeneficiaryMultiLocation, transformMultiLocation } from '../../utils/multiLocation'
 import { resolveParaId } from '../../utils/resolveParaId'
@@ -138,6 +142,100 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
+  public async handleEthBridgeNativeTransfer<TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): Promise<TRes> {
+    const {
+      api,
+      version = Version.V4,
+      scenario,
+      destination,
+      senderAddress,
+      address,
+      paraIdTo,
+      asset
+    } = input
+
+    const bridgeStatus = await getBridgeStatus(api.clone())
+
+    if (bridgeStatus !== 'Normal') {
+      throw new BridgeHaltedError()
+    }
+
+    if (senderAddress === undefined) {
+      throw new Error('Sender address is required for transfers to Ethereum')
+    }
+
+    if (isTMultiLocation(address)) {
+      throw new Error('Multi-location address is not supported for Ethereum transfers')
+    }
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+    }
+
+    if (!asset.multiLocation) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
+    }
+
+    const messageId = await generateMessageId(
+      api,
+      senderAddress,
+      getParaId(this.node),
+      JSON.stringify(asset.multiLocation),
+      address,
+      asset.amount
+    )
+
+    const multiLocation =
+      asset.symbol === this.getNativeAssetSymbol() ? DOT_MULTILOCATION : asset.multiLocation
+
+    const call: TSerializedApiCall = {
+      module: 'PolkadotXcm',
+      section: 'transfer_assets_using_type_and_then',
+      parameters: {
+        dest: createPolkadotXcmHeader(
+          scenario,
+          this.version,
+          destination,
+          paraIdTo,
+          ETHEREUM_JUNCTION,
+          Parents.TWO
+        ),
+        assets: addXcmVersionHeader(
+          [createMultiAsset(version, asset.amount, multiLocation)],
+          version
+        ),
+        assets_transfer_type: 'LocalReserve',
+        remote_fees_id: addXcmVersionHeader(multiLocation, version),
+        fees_transfer_type: 'LocalReserve',
+        custom_xcm_on_dest: addXcmVersionHeader(
+          [
+            {
+              DepositAsset: {
+                assets: { Wild: { AllCounted: 1 } },
+                beneficiary: createBeneficiaryMultiLocation({
+                  api,
+                  scenario,
+                  pallet: 'PolkadotXcm',
+                  recipientAddress: address,
+                  version
+                })
+              }
+            },
+            {
+              SetTopic: messageId
+            }
+          ],
+          version
+        ),
+        weight_limit: 'Unlimited'
+      }
+    }
+
+    return api.callTxMethod(call)
+  }
+
   public async handleEthBridgeTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
     const { api, scenario, destination, paraIdTo, address, asset } = input
 
@@ -157,6 +255,13 @@ class AssetHubPolkadot<TApi, TRes>
 
     if (!asset.multiLocation) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
+    }
+
+    if (
+      asset.symbol === this.getNativeAssetSymbol() ||
+      asset.symbol === getNativeAssetSymbol('Kusama')
+    ) {
+      return this.handleEthBridgeNativeTransfer(input)
     }
 
     const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
@@ -218,8 +323,11 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
-  handleBifrostEthTransfer = <TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes => {
-    const { api, scenario, version = this.version, destination, asset } = input
+  handleBifrostEthTransfer = <TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>,
+    useDOTAsFeeAsset = false
+  ): TRes => {
+    const { api, scenario, version = Version.V4, destination, asset, paraIdTo } = input
 
     if (!isForeignAsset(asset)) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
@@ -229,25 +337,28 @@ class AssetHubPolkadot<TApi, TRes>
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
     }
 
+    const PARA_TO_PARA_FEE_DOT = 500000000n // 0.5 DOT
+
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: this.createPolkadotXcmHeader(
-          scenario,
-          version,
-          destination,
-          getParaId('BifrostPolkadot')
+        dest: this.createPolkadotXcmHeader(scenario, version, destination, paraIdTo),
+        assets: addXcmVersionHeader(
+          [
+            ...(useDOTAsFeeAsset
+              ? [createMultiAsset(version, PARA_TO_PARA_FEE_DOT, DOT_MULTILOCATION)]
+              : []),
+            createMultiAsset(version, asset.amount, asset.multiLocation)
+          ],
+          version
         ),
-        assets: {
-          [version]: [createMultiAsset(version, asset.amount, asset.multiLocation)]
-        },
+
         assets_transfer_type: 'LocalReserve',
-        remote_fees_id: {
-          [version]: {
-            Concrete: asset.multiLocation
-          }
-        },
+        remote_fees_id: addXcmVersionHeader(
+          useDOTAsFeeAsset ? DOT_MULTILOCATION : asset.multiLocation,
+          version
+        ),
         fees_transfer_type: 'LocalReserve',
         custom_xcm_on_dest: createCustomXcmToBifrost(input, version),
         weight_limit: 'Unlimited'
@@ -379,14 +490,16 @@ class AssetHubPolkadot<TApi, TRes>
       return Promise.resolve(this.handleMythosTransfer(input))
     }
 
-    const ethereumAssets = getOtherAssets('Ethereum')
-    const isEthereumAsset = ethereumAssets.some(
-      ({ symbol, assetId }) =>
-        asset.symbol === symbol && isForeignAsset(asset) && asset.assetId === assetId
-    )
+    const isEthereumAsset =
+      asset.multiLocation &&
+      findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
 
     if (destination === 'BifrostPolkadot' && isEthereumAsset) {
       return Promise.resolve(this.handleBifrostEthTransfer(input))
+    }
+
+    if (isEthereumAsset) {
+      return Promise.resolve(this.handleBifrostEthTransfer(input, true))
     }
 
     const isSystemNode =
