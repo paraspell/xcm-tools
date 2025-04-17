@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.10.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.10...sdk-core-v8.10.0) (2025-04-17)
+
+
+### Features
+
+* **sdk-core:** Add support for various type_and_then xcm calls ✨ ([08d4f19](https://github.com/paraspell/xcm-tools/commit/08d4f19510cdffff049c1a1d0e79c488f408e516))
+
 ## [8.9.10](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.9...sdk-core-v8.9.10) (2025-04-15)
 
 
