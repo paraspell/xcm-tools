@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.10.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.9.10...xcm-router-v8.10.0) (2025-04-17)
+
+
+### Bug Fixes
+
+* **xcm-router:** Fix amountIn & BifrostDex decimal error 🛠️ ([bb44edb](https://github.com/paraspell/xcm-tools/commit/bb44edb587d3e34efdcd1654b3788bb2e6e5a2be))
+
 ## [8.9.10](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.9.9...xcm-router-v8.9.10) (2025-04-15)
 
 
