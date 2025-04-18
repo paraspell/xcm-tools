@@ -71,7 +71,7 @@ const XcmVisualizator = () => (
       <div className={classes.controls}>
         <Button
           component="a"
-          href="https://xcm-visualizator.tech/"
+          href="https://xcm-visualizator.paraspell.xyz/"
           target="_blank"
           size="lg"
           radius="lg"

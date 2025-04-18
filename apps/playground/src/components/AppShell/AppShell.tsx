@@ -255,7 +255,7 @@ export const AppShell = () => {
               </ActionIcon>
               <ActionIcon
                 component="a"
-                href="https://xcm-visualizator.tech/"
+                href="https://xcm-visualizator.paraspell.xyz/"
                 target="_blank"
                 size="sm"
                 color="gray.6"
