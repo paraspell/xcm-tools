@@ -10,7 +10,7 @@
       <img alt="build" src="https://github.com/paraspell/xcm-tools/actions/workflows/ci.yml/badge.svg" />
     </a>
   </p>
-  <p align="center"> Now live at https://xcm-visualizator.tech/</p>
+  <p align="center"> Now live at https://xcm-visualizator.paraspell.xyz/</p>
   <p>XCM Visualizator documentation <a href = "https://paraspell.github.io/docs/visualizator/getting-start.html" \>[here]</p>
 </div>
 
@@ -57,7 +57,7 @@ TypeScript
 
 ## Development
 
-The production version of the XCM Visualizator is available at [https://xcm-visualizator.tech/](https://xcm-visualizator.tech/).
+The production version of the XCM Visualizator is available at [https://xcm-visualizator.paraspell.xyz/](https://xcm-visualizator.paraspell.xyz/).
 
 To run the project locally, you need to have Node.js v.20^ installed, as well as PostgreSQL database.
 
