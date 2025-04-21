@@ -1,7 +1,8 @@
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TXTokensTransferOptions } from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Altair from './Altair'
@@ -47,6 +48,60 @@ describe('Altair', () => {
 
     expect(spy).toHaveBeenCalledWith(inputWithCurrencyID, {
       ForeignAsset: 1
+    })
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should throw an error when asset is not a foreign asset', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => altair.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should throw an error when assetId is undefined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => altair.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should call transfer with ForeignAsset when assetId is defined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      altair.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Tokens',
+        section: 'transfer',
+        parameters: {
+          dest: { Id: mockOptions.address },
+          currency_id: { ForeignAsset: 1 },
+          amount: BigInt(mockOptions.asset.amount)
+        }
+      })
     })
   })
 })

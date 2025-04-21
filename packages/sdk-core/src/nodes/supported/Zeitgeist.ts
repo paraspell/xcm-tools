@@ -3,6 +3,7 @@
 import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
 
 import XTokensTransferImpl from '../../pallets/xTokens'
+import type { TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
   type TXcmForeignAsset,
@@ -31,6 +32,28 @@ class Zeitgeist<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    const { api, asset, address } = options
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+    }
+
+    if (asset.assetId === undefined) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return api.callTxMethod({
+      module: 'AssetManager',
+      section: 'transfer',
+      parameters: {
+        dest: { Id: address },
+        currency_id: this.getCurrencySelection(asset),
+        amount: BigInt(asset.amount)
+      }
+    })
   }
 }
 

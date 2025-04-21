@@ -2,7 +2,9 @@
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
+import { ScenarioNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
+import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
@@ -25,6 +27,14 @@ class Unique<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
     }
 
     return XTokensTransferImpl.transferXTokens(input, Number(asset.assetId))
+  }
+
+  transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes>): TRes {
+    throw new ScenarioNotSupportedError(
+      this.node,
+      'ParaToPara',
+      `${this.node} does not support foreign assets local transfers`
+    )
   }
 }
 

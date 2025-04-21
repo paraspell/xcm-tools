@@ -7,6 +7,7 @@ import { NodeNotSupportedError } from '../../errors'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
+import type { TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
@@ -14,6 +15,7 @@ import {
   type TSerializedApiCall,
   Version
 } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -48,6 +50,10 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
     } else {
       return super.createCurrencySpec(amount, scenario, version)
     }
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    return getNode<TApi, TRes, 'Darwinia'>('Darwinia').transferLocalNonNativeAsset(options)
   }
 }
 

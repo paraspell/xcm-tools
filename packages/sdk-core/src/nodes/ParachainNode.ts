@@ -6,6 +6,8 @@ import {
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
+  isForeignAsset,
+  isNodeEvm,
   type TAsset,
   type TMultiAsset
 } from '@paraspell/assets'
@@ -21,7 +23,7 @@ import {
 
 import { Builder } from '../builder'
 import { ASSET_HUB_EXECUTION_FEE, DOT_MULTILOCATION } from '../constants'
-import { BridgeHaltedError, DryRunFailedError } from '../errors'
+import { BridgeHaltedError, DryRunFailedError, InvalidAddressError } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import {
   addXcmVersionHeader,
@@ -45,6 +47,7 @@ import type {
   TScenario,
   TSendInternalOptions,
   TSerializedApiCall,
+  TTransferLocalOptions,
   TXcmVersioned,
   TXTokensTransferOptions
 } from '../types'
@@ -137,7 +140,8 @@ abstract class ParachainNode<TApi, TRes> {
     if (
       destination === 'Polimec' &&
       this.node !== 'AssetHubPolkadot' &&
-      this.node !== 'Hydration'
+      this.node !== 'Hydration' &&
+      this.node !== destination
     ) {
       throw new Error(
         'Sending assets to Polimec is supported only from AssetHubPolkadot and Hydration'
@@ -145,6 +149,11 @@ abstract class ParachainNode<TApi, TRes> {
     }
 
     const versionOrDefault = version ?? this.version
+
+    const isLocalTransfer = this.node === destination
+    if (isLocalTransfer) {
+      return this.transferLocal(options)
+    }
 
     if (supportsXTokens(this) && this.canUseXTokens(options)) {
       const isBifrostOrigin = this.node === 'BifrostPolkadot' || this.node === 'BifrostKusama'
@@ -284,6 +293,59 @@ abstract class ParachainNode<TApi, TRes> {
 
   getNativeAssetSymbol(): string {
     return getNativeAssetSymbol(this.node)
+  }
+
+  transferLocal(options: TSendInternalOptions<TApi, TRes>): TRes {
+    const { asset, address } = options
+
+    if (isTMultiLocation(address)) {
+      throw new InvalidAddressError('Multi-Location address is not supported for local transfers')
+    }
+
+    const validatedOptions = { ...options, address }
+
+    const isNativeAsset = asset.symbol === this.getNativeAssetSymbol() && !isForeignAsset(asset)
+
+    if (isNativeAsset) {
+      return this.transferLocalNativeAsset(validatedOptions)
+    } else {
+      return this.transferLocalNonNativeAsset(validatedOptions)
+    }
+  }
+
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    const { api, asset, address } = options
+
+    return api.callTxMethod({
+      module: 'Balances',
+      section: 'transfer_keep_alive',
+      parameters: {
+        dest: isNodeEvm(this.node) ? address : { Id: address },
+        value: BigInt(asset.amount)
+      }
+    })
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    const { api, asset, address } = options
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+    }
+
+    if (asset.assetId === undefined) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return api.callTxMethod({
+      module: 'Tokens',
+      section: 'transfer',
+      parameters: {
+        dest: { Id: address },
+        currency_id: BigInt(asset.assetId),
+        amount: BigInt(asset.amount)
+      }
+    })
   }
 
   protected async transferEthAssetViaAH<TApi, TRes>(

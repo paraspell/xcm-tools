@@ -10,6 +10,7 @@ import XTokensTransferImpl from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
+  TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../../types'
 import { Version } from '../../types'
@@ -151,6 +152,32 @@ describe('BifrostPolkadot', () => {
         to: 'Acala'
       } as TSendInternalOptions<unknown, unknown>
       expect(bifrostPolkadot['canUseXTokens'](options)).toBe(true)
+    })
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should call transfer with ForeignAsset when assetId is defined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      bifrostPolkadot.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Tokens',
+        section: 'transfer',
+        parameters: {
+          dest: { Id: mockOptions.address },
+          currency_id: { Token2: 1 },
+          amount: BigInt(mockOptions.asset.amount)
+        }
+      })
     })
   })
 })

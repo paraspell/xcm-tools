@@ -27,7 +27,8 @@ import type {
   TDestination,
   TPolkadotXcmSection,
   TRelayToParaOverrides,
-  TSerializedApiCall
+  TSerializedApiCall,
+  TTransferLocalOptions
 } from '../../types'
 import {
   type IPolkadotXCMTransfer,
@@ -570,6 +571,36 @@ class AssetHubPolkadot<TApi, TRes>
     } else {
       return super.createCurrencySpec(amount, scenario, version, asset)
     }
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    const { api, asset, address } = options
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+    }
+
+    if (asset.assetId !== undefined) {
+      return api.callTxMethod({
+        module: 'Assets',
+        section: 'transfer',
+        parameters: {
+          id: Number(asset.assetId),
+          target: { Id: address },
+          amount: BigInt(asset.amount)
+        }
+      })
+    }
+
+    return api.callTxMethod({
+      module: 'ForeignAssets',
+      section: 'transfer',
+      parameters: {
+        id: asset.multiLocation,
+        target: { Id: address },
+        amount: BigInt(asset.amount)
+      }
+    })
   }
 }
 

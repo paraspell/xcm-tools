@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Moonbeam Parachain
 
-import { InvalidCurrencyError, type TAsset } from '@paraspell/assets'
+import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
 import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
@@ -10,7 +10,8 @@ import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
   TRelayToParaOverrides,
-  TScenario
+  TScenario,
+  TTransferLocalOptions
 } from '../../types'
 import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -59,6 +60,28 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
     return { section: 'limited_reserve_transfer_assets', includeFee: true }
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    const { api, asset, address } = options
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+    }
+
+    if (asset.assetId === undefined) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return api.callTxMethod({
+      module: 'Assets',
+      section: 'transfer',
+      parameters: {
+        id: BigInt(asset.assetId),
+        target: address,
+        amount: BigInt(asset.amount)
+      }
+    })
   }
 }
 

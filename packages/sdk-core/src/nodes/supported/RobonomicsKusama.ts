@@ -1,7 +1,9 @@
 // Contains detailed structure of XCM call construction for Robonomics Parachain
 
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import type { TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class RobonomicsKusama<TApi, TRes>
@@ -20,6 +22,12 @@ class RobonomicsKusama<TApi, TRes>
         'Unlimited'
       )
     )
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    return getNode<TApi, TRes, 'RobonomicsPolkadot'>(
+      'RobonomicsPolkadot'
+    ).transferLocalNonNativeAsset(options)
   }
 }
 

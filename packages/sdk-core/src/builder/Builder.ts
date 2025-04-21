@@ -171,11 +171,9 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       )
     }
 
-    if (
-      !isTMultiLocation(this._options.to) &&
-      isRelayChain(this._options.from) &&
-      isRelayChain(this._options.to)
-    ) {
+    const { from, to } = this._options
+
+    if (!isTMultiLocation(to) && isRelayChain(from) && isRelayChain(to) && from !== to) {
       throw new Error('Transfers between relay chains are not yet supported.')
     }
 

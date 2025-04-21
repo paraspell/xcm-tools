@@ -16,7 +16,8 @@ import XTokensTransferImpl from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
-  TSendInternalOptions
+  TSendInternalOptions,
+  TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -103,5 +104,19 @@ export class BifrostPolkadot<TApi, TRes>
     if (isEthAsset) return false
     if (destination === 'Ethereum') return false
     return (asset.symbol !== 'WETH' && asset.symbol !== 'DOT') || destination !== 'AssetHubPolkadot'
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    const { api, asset, address } = options
+
+    return api.callTxMethod({
+      module: 'Tokens',
+      section: 'transfer',
+      parameters: {
+        dest: { Id: address },
+        currency_id: this.getCurrencySelection(asset),
+        amount: BigInt(asset.amount)
+      }
+    })
   }
 }

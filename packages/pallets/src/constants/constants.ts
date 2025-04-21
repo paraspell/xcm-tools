@@ -7,5 +7,11 @@ export const SUPPORTED_PALLETS = [
   'PolkadotXcm',
   'RelayerXcm',
   'XTransfer',
-  'XcmPallet'
+  'XcmPallet',
+  'Balances',
+  'Tokens',
+  'Currencies',
+  'Assets',
+  'AssetManager',
+  'ForeignAssets'
 ] as const

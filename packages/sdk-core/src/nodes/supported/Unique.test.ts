@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
+import { ScenarioNotSupportedError } from '../../errors'
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TXTokensTransferOptions } from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Unique from './Unique'
@@ -54,5 +56,18 @@ describe('Unique', () => {
       }
     } as TXTokensTransferOptions<unknown, unknown>
     expect(() => unique.transferXTokens(input)).toThrowError()
+  })
+
+  it('should throw an error when trying to create a local foreign asset transfer', () => {
+    const input = {
+      api: {} as unknown as IPolkadotApi<unknown, unknown>,
+      asset: {
+        symbol: 'GLMR',
+        assetId: '123'
+      },
+      to: 'Unique'
+    } as TTransferLocalOptions<unknown, unknown>
+
+    expect(() => unique.transferLocalNonNativeAsset(input)).toThrowError(ScenarioNotSupportedError)
   })
 })

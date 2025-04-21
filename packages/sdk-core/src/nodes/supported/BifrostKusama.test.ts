@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TXTokensTransferOptions } from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type BifrostKusama from './BifrostKusama'
@@ -14,6 +14,7 @@ vi.mock('../../pallets/xTokens', () => ({
 
 describe('BifrostKusama', () => {
   let bifrostKusama: BifrostKusama<unknown, unknown>
+
   const mockInput = {
     asset: { symbol: 'BNC', amount: '100' }
   } as TXTokensTransferOptions<unknown, unknown>
@@ -45,5 +46,31 @@ describe('BifrostKusama', () => {
     bifrostKusama.transferXTokens(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, { Native: 'BNC' })
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should call transfer with ForeignAsset when assetId is defined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      bifrostKusama.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Tokens',
+        section: 'transfer',
+        parameters: {
+          dest: { Id: mockOptions.address },
+          currency_id: { Token2: 1 },
+          amount: BigInt(mockOptions.asset.amount)
+        }
+      })
+    })
   })
 })

@@ -1,5 +1,6 @@
 // Contains detailed structure of XCM call construction for Shiden Parachain
 
+import type { TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type IXTokensTransfer,
@@ -31,6 +32,10 @@ class Shiden<TApi, TRes>
 
   protected canUseXTokens({ asset }: TSendInternalOptions<TApi, TRes>): boolean {
     return asset.symbol !== this.getNativeAssetSymbol()
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    return getNode<TApi, TRes, 'Astar'>('Astar').transferLocalNonNativeAsset(options)
   }
 }
 

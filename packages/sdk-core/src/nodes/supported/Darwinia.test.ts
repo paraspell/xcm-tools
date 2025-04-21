@@ -1,8 +1,9 @@
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions } from '../../types'
+import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Darwinia from './Darwinia'
@@ -47,5 +48,59 @@ describe('Darwinia', () => {
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     expect(() => darwinia.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should throw an error when asset is not a foreign asset', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => darwinia.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should throw an error when assetId is undefined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => darwinia.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should call transfer with ForeignAsset when assetId is defined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      darwinia.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Assets',
+        section: 'transfer',
+        parameters: {
+          target: mockOptions.address,
+          id: 1n,
+          amount: BigInt(mockOptions.asset.amount)
+        }
+      })
+    })
   })
 })

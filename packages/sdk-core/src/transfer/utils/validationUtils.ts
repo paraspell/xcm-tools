@@ -46,7 +46,12 @@ export const validateDestination = (
   origin: TNodeDotKsmWithRelayChains,
   destination: TDestination
 ) => {
-  if (isRelayChain(origin) && !isTMultiLocation(destination) && isRelayChain(destination)) {
+  if (
+    isRelayChain(origin) &&
+    !isTMultiLocation(destination) &&
+    isRelayChain(destination) &&
+    origin !== destination
+  ) {
     throw new IncompatibleNodesError(
       'Direct relay chain to relay chain transfers are not supported. Please use Polkadot <-> Kusama bridge through AssetHub.'
     )

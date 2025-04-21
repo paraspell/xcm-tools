@@ -1,5 +1,6 @@
 // Contains detailed structure of XCM call construction for Bifrost Parachain on Kusama
 
+import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
@@ -11,6 +12,12 @@ class BifrostKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXT
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>): TRes {
     return getNode<TApi, TRes, 'BifrostPolkadot'>('BifrostPolkadot').transferXTokens(input)
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    return getNode<TApi, TRes, 'BifrostPolkadot'>('BifrostPolkadot').transferLocalNonNativeAsset(
+      options
+    )
   }
 }
 
