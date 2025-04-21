@@ -1,3 +1,4 @@
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { hasJunction } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -8,6 +9,7 @@ import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
   TSerializedApiCall,
+  TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../../types'
 import { Version } from '../../types'
@@ -265,6 +267,89 @@ describe('Hydration', () => {
         asset: { symbol: 'DOT', multiLocation: {} }
       } as TSendInternalOptions<unknown, unknown>)
       expect(result).toBe(false)
+    })
+  })
+
+  describe('transferLocalNativeAsset', () => {
+    it('should call api.callTxMethod with correct parameters', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const mockInput = {
+        api: mockApi,
+        asset: { symbol: 'DOT', amount: '1000' },
+        address: '0x1234567890abcdef'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'callTxMethod')
+
+      hydration.transferLocalNativeAsset(mockInput)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Balances',
+        section: 'transfer_keep_alive',
+        parameters: {
+          dest: mockInput.address,
+          value: BigInt(mockInput.asset.amount)
+        }
+      })
+    })
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should throw InvalidCurrencyError if asset is not a foreign asset', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const mockInput = {
+        api: mockApi,
+        asset: { symbol: 'DOT', amount: '1000' },
+        address: '0x1234567890abcdef'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => hydration.transferLocalNonNativeAsset(mockInput)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should throw InvalidCurrencyError if assetId is undefined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const mockInput = {
+        api: mockApi,
+        asset: { symbol: 'USDC', amount: '1000' },
+        address: '0x1234567890abcdef'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => hydration.transferLocalNonNativeAsset(mockInput)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should call api.callTxMethod with correct parameters', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const mockInput = {
+        api: mockApi,
+        asset: { symbol: 'USDC', assetId: '123', amount: '1000' },
+        address: '0x1234567890abcdef'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'callTxMethod')
+
+      hydration.transferLocalNonNativeAsset(mockInput)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Tokens',
+        section: 'transfer',
+        parameters: {
+          dest: mockInput.address,
+          currency_id: 123,
+          amount: BigInt(mockInput.asset.amount)
+        }
+      })
     })
   })
 })

@@ -1,5 +1,6 @@
 import type { TAsset, TCurrencyInput, TMultiLocationValueWithOverride } from '@paraspell/assets'
 import { isOverrideMultiLocationSpecifier } from '@paraspell/assets'
+import { isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
@@ -24,7 +25,8 @@ vi.mock('@paraspell/sdk-common', async () => {
     await vi.importActual<typeof import('@paraspell/sdk-common')>('@paraspell/sdk-common')
   return {
     ...actual,
-    isRelayChain: vi.fn()
+    isRelayChain: vi.fn(),
+    isTMultiLocation: vi.fn()
   }
 })
 
@@ -74,7 +76,8 @@ describe('send', () => {
     apiMock = {
       init: vi.fn().mockResolvedValue(undefined),
       disconnect: vi.fn().mockResolvedValue(undefined),
-      getApi: vi.fn()
+      getApi: vi.fn(),
+      callTxMethod: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
 
     originNodeMock = {
@@ -283,5 +286,58 @@ describe('send', () => {
     )
 
     expect(result).toBe('transferResult')
+  })
+
+  describe('local transfers on relay chain', () => {
+    const relayChain = 'Polkadot'
+
+    beforeEach(() => {
+      vi.mocked(isRelayChain).mockReturnValue(true)
+      vi.mocked(resolveAsset).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    })
+
+    it('should perform a local transfer from relay chain successfully', async () => {
+      const options = {
+        api: apiMock,
+        from: relayChain,
+        to: relayChain,
+        currency: { symbol: 'DOT', amount: '100' },
+        address: 'some-polkadot-address'
+      } as TSendOptions<unknown, unknown>
+
+      const initSpy = vi.spyOn(apiMock, 'init')
+      const callTxSpy = vi.spyOn(apiMock, 'callTxMethod').mockResolvedValue('localTransferResult')
+
+      const result = await send(options)
+
+      expect(initSpy).toHaveBeenCalledWith(relayChain)
+
+      expect(callTxSpy).toHaveBeenCalledWith({
+        module: 'Balances',
+        section: 'transfer_keep_alive',
+        parameters: {
+          dest: { Id: options.address },
+          value: 100n
+        }
+      })
+
+      expect(result).toBe('localTransferResult')
+    })
+
+    it('should throw an error when Multi-Location address is provided for local transfer', async () => {
+      vi.mocked(isTMultiLocation).mockReturnValue(true)
+
+      const options = {
+        api: apiMock,
+        from: relayChain,
+        to: relayChain,
+        currency: { symbol: 'DOT', amount: '100' },
+        address: { X1: { AccountId32: { id: '0x1234' } } } as unknown as string
+      } as TSendOptions<unknown, unknown>
+
+      await expect(send(options)).rejects.toThrow(
+        'Multi-Location address is not supported for local transfers.'
+      )
+    })
   })
 })

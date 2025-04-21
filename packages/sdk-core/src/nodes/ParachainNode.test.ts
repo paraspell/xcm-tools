@@ -1,12 +1,12 @@
-import { findAssetByMultiLocation, InvalidCurrencyError } from '@paraspell/assets'
+import { findAssetByMultiLocation, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import * as BuilderModule from '../builder'
 import { DOT_MULTILOCATION } from '../constants'
-import { BridgeHaltedError, NoXCMSupportImplementedError } from '../errors'
+import { BridgeHaltedError, InvalidAddressError, NoXCMSupportImplementedError } from '../errors'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
-import type { TRelayToParaOptions } from '../types'
+import type { TRelayToParaOptions, TTransferLocalOptions } from '../types'
 import {
   type TPolkadotXcmSection,
   type TPolkadotXCMTransferOptions,
@@ -53,6 +53,7 @@ vi.mock('@paraspell/assets', () => ({
   findAssetByMultiLocation: vi.fn().mockReturnValue({ symbol: 'DOT' }),
   getOtherAssets: vi.fn().mockReturnValue([{ symbol: 'DOT', assetId: '123' }]),
   isForeignAsset: vi.fn().mockReturnValue(true),
+  isNodeEvm: vi.fn().mockReturnValue(false),
   InvalidCurrencyError: class extends Error {}
 }))
 
@@ -373,6 +374,168 @@ describe('ParachainNode', () => {
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: expect.any(Object)
+    })
+  })
+
+  describe('transferLocal', () => {
+    it('should throw an error if the address is multi-location', () => {
+      const options = {
+        api: {
+          accountToHex: vi.fn(),
+          createApiForNode: vi.fn(),
+          callTxMethod: vi.fn(),
+          getFromRpc: vi.fn(),
+          clone: vi.fn()
+        } as unknown as IPolkadotApi<unknown, unknown>,
+        asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
+        senderAddress: '0x456',
+        address: DOT_MULTILOCATION
+      } as TSendInternalOptions<unknown, unknown>
+
+      expect(() => node.transferLocal(options)).toThrow(InvalidAddressError)
+    })
+
+    it('should call transferLocalNativeAsset when asset is native', () => {
+      const options = {
+        api: {
+          accountToHex: vi.fn(),
+          createApiForNode: vi.fn(),
+          callTxMethod: vi.fn(),
+          getFromRpc: vi.fn(),
+          clone: vi.fn()
+        } as unknown as IPolkadotApi<unknown, unknown>,
+        asset: { symbol: 'DOT', assetId: '', multiLocation: {}, amount: '100' },
+        senderAddress: '0x456',
+        address: '0x123'
+      } as TSendInternalOptions<unknown, unknown>
+
+      vi.mocked(isForeignAsset).mockReturnValue(false)
+
+      const transferLocalNativeSpy = vi.spyOn(node, 'transferLocalNativeAsset')
+
+      node.transferLocal(options)
+
+      expect(transferLocalNativeSpy).toHaveBeenCalled()
+    })
+
+    it('should call transferLocalNonNativeAsset when asset is foreign', () => {
+      const options = {
+        api: {
+          accountToHex: vi.fn(),
+          createApiForNode: vi.fn(),
+          callTxMethod: vi.fn(),
+          getFromRpc: vi.fn(),
+          clone: vi.fn()
+        } as unknown as IPolkadotApi<unknown, unknown>,
+        asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
+        senderAddress: '0x456',
+        address: '0x123'
+      } as TSendInternalOptions<unknown, unknown>
+
+      vi.mocked(isForeignAsset).mockReturnValue(true)
+
+      const transferLocalNonNativeSpy = vi.spyOn(node, 'transferLocalNonNativeAsset')
+
+      node.transferLocal(options)
+
+      expect(transferLocalNonNativeSpy).toHaveBeenCalled()
+    })
+  })
+
+  describe('transferLocalNativeAsset', () => {
+    it('should create an API call', () => {
+      const options = {
+        api: {
+          accountToHex: vi.fn(),
+          createApiForNode: vi.fn(),
+          callTxMethod: vi.fn(),
+          getFromRpc: vi.fn(),
+          clone: vi.fn()
+        } as unknown as IPolkadotApi<unknown, unknown>,
+        asset: { symbol: 'DOT', assetId: '', multiLocation: {}, amount: '100' },
+        senderAddress: '0x456',
+        address: '0x123'
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(options.api, 'callTxMethod')
+
+      node.transferLocalNativeAsset(options)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Balances',
+        section: 'transfer_keep_alive',
+        parameters: {
+          dest: { Id: options.address },
+          value: BigInt(options.asset.amount)
+        }
+      })
+    })
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should throw an error if the asset is not foreign', () => {
+      const options = {
+        api: {
+          accountToHex: vi.fn(),
+          createApiForNode: vi.fn(),
+          callTxMethod: vi.fn(),
+          getFromRpc: vi.fn(),
+          clone: vi.fn()
+        } as unknown as IPolkadotApi<unknown, unknown>,
+        asset: { symbol: 'DOT', amount: '100' },
+        senderAddress: '0x456',
+        address: '0x123'
+      } as TTransferLocalOptions<unknown, unknown>
+
+      vi.mocked(isForeignAsset).mockReturnValueOnce(false)
+
+      expect(() => node.transferLocalNonNativeAsset(options)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should throw an error if assetId is undefined', () => {
+      const options = {
+        api: {
+          accountToHex: vi.fn(),
+          createApiForNode: vi.fn(),
+          callTxMethod: vi.fn(),
+          getFromRpc: vi.fn(),
+          clone: vi.fn()
+        } as unknown as IPolkadotApi<unknown, unknown>,
+        asset: { symbol: 'WETH', assetId: undefined, amount: '100' },
+        senderAddress: '0x456',
+        address: '0x123'
+      } as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => node.transferLocalNonNativeAsset(options)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should create an API call', () => {
+      const options = {
+        api: {
+          accountToHex: vi.fn(),
+          createApiForNode: vi.fn(),
+          callTxMethod: vi.fn(),
+          getFromRpc: vi.fn(),
+          clone: vi.fn()
+        } as unknown as IPolkadotApi<unknown, unknown>,
+        asset: { symbol: 'WETH', assetId: '10', multiLocation: {}, amount: '100' },
+        senderAddress: '0x456',
+        address: '0x123'
+      } as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(options.api, 'callTxMethod')
+
+      node.transferLocalNonNativeAsset(options)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Tokens',
+        section: 'transfer',
+        parameters: {
+          dest: { Id: options.address },
+          currency_id: 10n,
+          amount: BigInt(options.asset.amount)
+        }
+      })
     })
   })
 

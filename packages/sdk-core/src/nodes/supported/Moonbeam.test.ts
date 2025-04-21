@@ -1,9 +1,10 @@
+import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions } from '../../types'
+import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Moonbeam from './Moonbeam'
@@ -167,6 +168,60 @@ describe('Moonbeam', () => {
     expect(result).toEqual({
       section: 'limited_reserve_transfer_assets',
       includeFee: true
+    })
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should throw an error when asset is not a foreign asset', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => node.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should throw an error when assetId is undefined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => node.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should call transfer with ForeignAsset when assetId is defined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      node.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Assets',
+        section: 'transfer',
+        parameters: {
+          target: mockOptions.address,
+          id: 1n,
+          amount: BigInt(mockOptions.asset.amount)
+        }
+      })
     })
   })
 })

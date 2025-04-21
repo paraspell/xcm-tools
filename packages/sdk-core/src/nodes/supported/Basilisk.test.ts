@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TXTokensTransferOptions } from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import { getNodeProviders } from '../config'
@@ -43,5 +44,60 @@ describe('Basilisk', () => {
     basilisk.transferXTokens(mockInput)
 
     expect(spy).toHaveBeenCalledWith(mockInput, Number(123))
+  })
+
+  describe('transferLocalNativeAsset', () => {
+    it('should call api.callTxMethod with correct parameters', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const mockInput = {
+        api: mockApi,
+        asset: { symbol: 'DOT', amount: '1000' },
+        address: '0x1234567890abcdef'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'callTxMethod')
+
+      basilisk.transferLocalNativeAsset(mockInput)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Balances',
+        section: 'transfer_keep_alive',
+        parameters: {
+          dest: mockInput.address,
+          value: BigInt(mockInput.asset.amount)
+        }
+      })
+    })
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should call api.callTxMethod with correct parameters', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const mockInput = {
+        api: mockApi,
+        asset: { symbol: 'USDC', assetId: '123', amount: '1000' },
+        address: '0x1234567890abcdef'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'callTxMethod')
+
+      basilisk.transferLocalNonNativeAsset(mockInput)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Tokens',
+        section: 'transfer',
+        parameters: {
+          dest: mockInput.address,
+          currency_id: 123,
+          amount: BigInt(mockInput.asset.amount)
+        }
+      })
+    })
   })
 })

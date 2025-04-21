@@ -10,9 +10,11 @@ import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
   TRelayToParaOverrides,
-  TScenario
+  TScenario,
+  TTransferLocalOptions
 } from '../../types'
 import { Version } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -59,6 +61,10 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
     return { section: 'limited_reserve_transfer_assets', includeFee: true }
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    return getNode<TApi, TRes, 'Moonbeam'>('Moonbeam').transferLocalNonNativeAsset(options)
   }
 }
 

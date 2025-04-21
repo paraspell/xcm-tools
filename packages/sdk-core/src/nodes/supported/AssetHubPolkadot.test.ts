@@ -17,7 +17,7 @@ import type { IPolkadotApi } from '../../api'
 import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
-import type { TScenario, TXcmVersioned } from '../../types'
+import type { TScenario, TTransferLocalOptions, TXcmVersioned } from '../../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
 import { createVersionedBeneficiary } from '../../utils'
@@ -728,6 +728,73 @@ describe('AssetHubPolkadot', () => {
 
       expect(result).toEqual(expectedResult)
       expect(hasJunction).toHaveBeenCalled()
+    })
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should throw error if asset is not a foreign asset', () => {
+      const input = {
+        ...mockInput,
+        asset: { symbol: 'DOT', amount: '1000', isNative: true } as WithAmount<TNativeAsset>,
+        scenario: 'RelayToPara',
+        destination: 'Acala',
+        to: 'AssetHubPolkadot'
+      } as TTransferLocalOptions<unknown, unknown>
+      vi.mocked(isForeignAsset).mockReturnValueOnce(false)
+
+      expect(() => assetHub.transferLocalNonNativeAsset(input)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should call api.callTxMethod with correct parameters if assetId is defined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const mockInput = {
+        api: mockApi,
+        asset: { symbol: 'USDC', assetId: '123', amount: '1000' },
+        address: '0x1234567890abcdef'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'callTxMethod')
+
+      assetHub.transferLocalNonNativeAsset(mockInput)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'Assets',
+        section: 'transfer',
+        parameters: {
+          id: 123,
+          target: { Id: mockInput.address },
+          amount: BigInt(mockInput.asset.amount)
+        }
+      })
+    })
+
+    it('should call api.callTxMethod with correct parameters if assetId is not defined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>
+
+      const mockInput = {
+        api: mockApi,
+        asset: { symbol: 'USDC', amount: '1000', multiLocation: {} },
+        address: '0x1234567890abcdef'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(mockApi, 'callTxMethod')
+
+      assetHub.transferLocalNonNativeAsset(mockInput)
+
+      expect(spy).toHaveBeenCalledWith({
+        module: 'ForeignAssets',
+        section: 'transfer',
+        parameters: {
+          id: {},
+          target: { Id: mockInput.address },
+          amount: BigInt(mockInput.asset.amount)
+        }
+      })
     })
   })
 })

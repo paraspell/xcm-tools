@@ -7,7 +7,7 @@ import { isTMultiLocation } from '@paraspell/sdk-common'
 import { SYSTEM_NODES_KUSAMA } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import type { TRelayToParaOverrides } from '../../types'
+import type { TRelayToParaOverrides, TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
@@ -78,6 +78,12 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
       version,
       asset,
       isOverridenAsset
+    )
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    return getNode<TApi, TRes, 'AssetHubPolkadot'>('AssetHubPolkadot').transferLocalNonNativeAsset(
+      options
     )
   }
 }

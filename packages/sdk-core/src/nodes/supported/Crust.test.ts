@@ -2,7 +2,7 @@ import { InvalidCurrencyError, type TNativeAsset, type WithAmount } from '@paras
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TReserveAsset, TXTokensTransferOptions } from '../../types'
+import type { TReserveAsset, TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Crust from './Crust'
@@ -64,5 +64,59 @@ describe('Crust', () => {
     vi.spyOn(crust, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
 
     expect(() => crust.transferXTokens(invalidInput)).toThrowError(InvalidCurrencyError)
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should throw an error when asset is not a foreign asset', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => crust.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should throw an error when assetId is undefined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => crust.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should call transfer with ForeignAsset when assetId is defined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      crust.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Assets',
+        section: 'transfer',
+        parameters: {
+          target: { Id: mockOptions.address },
+          id: 1n,
+          amount: BigInt(mockOptions.asset.amount)
+        }
+      })
+    })
   })
 })

@@ -3,7 +3,9 @@
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
 import XTokensTransferImpl from '../../pallets/xTokens'
+import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Basilisk<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -19,6 +21,14 @@ class Basilisk<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
     }
 
     return XTokensTransferImpl.transferXTokens(input, Number(asset.assetId))
+  }
+
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    return getNode<TApi, TRes, 'Hydration'>('Hydration').transferLocalNativeAsset(options)
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    return getNode<TApi, TRes, 'Hydration'>('Hydration').transferLocalNonNativeAsset(options)
   }
 }
 

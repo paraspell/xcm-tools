@@ -242,3 +242,10 @@ export type TCreateBeneficiaryOptions<TApi, TRes> = {
 }
 
 export type TBridgeStatus = 'Normal' | 'Halted'
+
+export type TTransferLocalOptions<TApi, TRes> = Omit<
+  TSendInternalOptions<TApi, TRes>,
+  'address'
+> & {
+  address: string
+}

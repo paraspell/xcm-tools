@@ -42,6 +42,11 @@ export const transform = (obj: any): any => {
             id: FixedSizeBinary.fromHex(value.id)
           }
         }
+      } else if (key === 'Id') {
+        return {
+          type: key,
+          value
+        }
       } else if (key === 'OtherReserve') {
         return {
           type: key,
@@ -138,6 +143,11 @@ export const transform = (obj: any): any => {
 
         if (k === 'dest_weight' && v === null) {
           newObj[k] = undefined
+          continue
+        }
+
+        if ((k === 'dest' || k === 'target') && typeof v === 'string') {
+          newObj[k] = v
           continue
         }
 

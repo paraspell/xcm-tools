@@ -60,6 +60,33 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should transform Id correctly', () => {
+    const input = {
+      Id: {
+        id: '0xdeadbeef'
+      }
+    }
+    const expected = {
+      type: 'Id',
+      value: {
+        id: '0xdeadbeef'
+      }
+    }
+    expect(transform(input)).toEqual(expected)
+  })
+
+  it('should not transform dest and target keys', () => {
+    const input = {
+      dest: '0x1234abcd',
+      target: '0xdeadbeef'
+    }
+    const expected = {
+      dest: '0x1234abcd',
+      target: '0xdeadbeef'
+    }
+    expect(transform(input)).toEqual(expected)
+  })
+
   it('should handle OtherReserve with valid integer string', () => {
     const input = {
       OtherReserve: '12345678901234567890'

@@ -5,7 +5,11 @@ import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import type { TPolkadotXCMTransferOptions, TRelayToParaOptions } from '../../types'
+import type {
+  TPolkadotXCMTransferOptions,
+  TRelayToParaOptions,
+  TTransferLocalOptions
+} from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Polimec from './Polimec'
@@ -216,5 +220,59 @@ describe('Polimec', () => {
     expect(call.parameters).toHaveProperty('fees_transfer_type', 'Teleport')
     expect(call.parameters).toHaveProperty('custom_xcm_on_dest')
     expect(call.parameters).toHaveProperty('weight_limit', 'Unlimited')
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should throw an error when asset is not a foreign asset', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => polimec.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should throw an error when assetId is undefined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      expect(() => polimec.transferLocalNonNativeAsset(mockOptions)).toThrow(InvalidCurrencyError)
+    })
+
+    it('should call transfer with ForeignAsset when assetId is defined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100', assetId: '1', multiLocation: {} },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      polimec.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'ForeignAssets',
+        section: 'transfer',
+        parameters: {
+          id: {},
+          target: { Id: mockOptions.address },
+          amount: BigInt(mockOptions.asset.amount)
+        }
+      })
+    })
   })
 })

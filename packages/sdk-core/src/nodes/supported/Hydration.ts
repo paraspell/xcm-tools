@@ -15,7 +15,8 @@ import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
-  TSerializedApiCall
+  TSerializedApiCall,
+  TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import { createBeneficiaryMultiLocation } from '../../utils'
@@ -151,6 +152,41 @@ class Hydration<TApi, TRes>
       !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT') &&
       !isEthAsset
     )
+  }
+
+  transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    const { api, asset, address } = options
+
+    return api.callTxMethod({
+      module: 'Balances',
+      section: 'transfer_keep_alive',
+      parameters: {
+        dest: address,
+        value: BigInt(asset.amount)
+      }
+    })
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    const { api, asset, address } = options
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+    }
+
+    if (asset.assetId === undefined) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    return api.callTxMethod({
+      module: 'Tokens',
+      section: 'transfer',
+      parameters: {
+        dest: address,
+        currency_id: Number(asset.assetId),
+        amount: BigInt(asset.amount)
+      }
+    })
   }
 }
 

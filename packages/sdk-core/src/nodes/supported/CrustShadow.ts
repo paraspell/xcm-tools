@@ -3,12 +3,14 @@
 import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
 
 import XTokensTransferImpl from '../../pallets/xTokens'
+import type { TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
   type TReserveAsset,
   type TXTokensTransferOptions,
   Version
 } from '../../types'
+import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class CrustShadow<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
@@ -32,6 +34,10 @@ class CrustShadow<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTok
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
     return XTokensTransferImpl.transferXTokens(input, currencySelection)
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    return getNode<TApi, TRes, 'Crust'>('Crust').transferLocalNonNativeAsset(options)
   }
 }
 

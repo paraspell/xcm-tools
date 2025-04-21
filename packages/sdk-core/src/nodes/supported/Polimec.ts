@@ -25,6 +25,7 @@ import type {
   TRelayToParaOptions,
   TScenario,
   TSerializedApiCall,
+  TTransferLocalOptions,
   TXcmVersioned
 } from '../../types'
 import { Version } from '../../types'
@@ -249,6 +250,28 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
     )
 
     return call
+  }
+
+  transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
+    const { api, asset, address } = options
+
+    if (!isForeignAsset(asset)) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
+    }
+
+    if (asset.multiLocation === undefined) {
+      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multi-location`)
+    }
+
+    return api.callTxMethod({
+      module: 'ForeignAssets',
+      section: 'transfer',
+      parameters: {
+        id: asset.multiLocation,
+        target: { Id: address },
+        amount: BigInt(asset.amount)
+      }
+    })
   }
 }
 

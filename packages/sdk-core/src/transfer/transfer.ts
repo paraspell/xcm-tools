@@ -3,6 +3,7 @@
 import type { TNativeAsset } from '@paraspell/assets'
 import { isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 
+import { InvalidAddressError } from '../errors'
 import type { TRelayToParaDestination, TSendOptions } from '../types'
 import { getNode, validateAddress } from '../utils'
 import { transferRelayToPara } from './transferRelayToPara'
@@ -39,10 +40,6 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   validateDestinationAddress(address, destination)
   if (senderAddress) validateAddress(senderAddress, origin, false)
 
-  if (isRelayChain(origin) && !isTMultiLocation(destination) && isRelayChain(destination)) {
-    throw new Error('Relay chain to relay chain transfers are not supported.')
-  }
-
   const isBridge = isBridgeTransfer(origin, destination)
 
   const assetCheckEnabled = determineAssetCheckEnabled(origin, currency)
@@ -62,6 +59,26 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
     if (!asset) {
       throw new Error('Asset is required for relay chain to relay chain transfers.')
+    }
+
+    const isLocalTransfer = origin === destination
+
+    if (isLocalTransfer) {
+      if (isTMultiLocation(address)) {
+        throw new InvalidAddressError(
+          'Multi-Location address is not supported for local transfers.'
+        )
+      }
+
+      await api.init(origin)
+      return api.callTxMethod({
+        module: 'Balances',
+        section: 'transfer_keep_alive',
+        parameters: {
+          dest: { Id: address },
+          value: 'multiasset' in currency ? 0n : BigInt(currency.amount)
+        }
+      })
     }
 
     return transferRelayToPara({

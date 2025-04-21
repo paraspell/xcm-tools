@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TXTokensTransferOptions } from '../../types'
+import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Acala from './Acala'
@@ -55,6 +55,53 @@ describe('Acala', () => {
 
     expect(spyTransferXTokens).toHaveBeenCalledWith(inputWithCurrencyID, {
       ForeignAsset: 1
+    })
+  })
+
+  it('should call transferLocalNativeAsset', () => {
+    const mockApi = {
+      callTxMethod: vi.fn()
+    }
+
+    const mockOptions = {
+      api: mockApi,
+      asset: { symbol: 'ACA', amount: '100' },
+      address: 'address'
+    } as unknown as TTransferLocalOptions<unknown, unknown>
+
+    acala.transferLocalNativeAsset(mockOptions)
+
+    expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      module: 'Currencies',
+      section: 'transfer_native_currency',
+      parameters: {
+        dest: { Id: 'address' },
+        amount: BigInt('100')
+      }
+    })
+  })
+
+  it('should call transferLocalNonNativeAsset', () => {
+    const mockApi = {
+      callTxMethod: vi.fn()
+    }
+
+    const mockOptions = {
+      api: mockApi,
+      asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+      address: 'address'
+    } as unknown as TTransferLocalOptions<unknown, unknown>
+
+    acala.transferLocalNonNativeAsset(mockOptions)
+
+    expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+      module: 'Currencies',
+      section: 'transfer',
+      parameters: {
+        dest: { Id: 'address' },
+        currency_id: { ForeignAsset: 1 },
+        amount: BigInt('100')
+      }
     })
   })
 })

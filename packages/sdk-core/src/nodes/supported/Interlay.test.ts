@@ -2,7 +2,11 @@ import type { TNativeAsset, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import XTokensTransferImpl from '../../pallets/xTokens'
-import type { TForeignOrTokenAsset, TXTokensTransferOptions } from '../../types'
+import type {
+  TForeignOrTokenAsset,
+  TTransferLocalOptions,
+  TXTokensTransferOptions
+} from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Interlay from './Interlay'
@@ -58,5 +62,49 @@ describe('Interlay', () => {
     expect(spy).toHaveBeenCalledWith(inputWithoutCurrencyID, {
       Token: 'INTR'
     } as TForeignOrTokenAsset)
+  })
+
+  describe('transferLocalNativeAsset', () => {
+    it('should call transferLocalNonNativeAsset', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      const spy = vi.spyOn(interlay, 'transferLocalNonNativeAsset')
+      interlay.transferLocalNativeAsset(mockOptions)
+      expect(spy).toHaveBeenCalledWith(mockOptions)
+    })
+  })
+
+  describe('transferLocalNonNativeAsset', () => {
+    it('should call transfer with ForeignAsset when assetId is defined', () => {
+      const mockApi = {
+        callTxMethod: vi.fn()
+      }
+
+      const mockOptions = {
+        api: mockApi,
+        asset: { symbol: 'ACA', amount: '100', assetId: '1' },
+        address: 'address'
+      } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      interlay.transferLocalNonNativeAsset(mockOptions)
+
+      expect(mockApi.callTxMethod).toHaveBeenCalledWith({
+        module: 'Tokens',
+        section: 'transfer',
+        parameters: {
+          dest: mockOptions.address,
+          currency_id: { ForeignAsset: 1 },
+          value: BigInt(mockOptions.asset.amount)
+        }
+      })
+    })
   })
 })

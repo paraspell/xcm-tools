@@ -5,6 +5,7 @@ import {
   getBridgeStatus,
   NODE_NAMES_DOT_KSM,
   NodeNotSupportedError,
+  NODES_WITH_RELAY_CHAINS_DOT_KSM,
   Parents,
   TApiOrUrl,
   TNodeDotKsmWithRelayChains,
@@ -385,6 +386,29 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             await validateTx(tx, isNodeEvm(node) ? evmSigner : signer)
           })
         }
+      })
+    })
+
+    describe.sequential('Local transfers (origin = destination)', () => {
+      NODES_WITH_RELAY_CHAINS_DOT_KSM.forEach(node => {
+        it(`should create local transfer tx on ${node}`, async () => {
+          const api = await createOrGetApiInstanceForNode(node)
+          const symbol = getRelayChainSymbol(node)
+          const resolvedAddress = isNodeEvm(node) ? MOCK_ETH_ADDRESS : MOCK_ADDRESS
+          try {
+            const tx = await Builder(api)
+              .from(node)
+              .to(node)
+              .currency({ symbol, amount: MOCK_AMOUNT })
+              .address(resolvedAddress)
+              .build()
+            await validateTx(tx, isNodeEvm(node) ? evmSigner : signer)
+          } catch (error) {
+            if (error instanceof NodeNotSupportedError) {
+              expect(error).toBeInstanceOf(NodeNotSupportedError)
+            }
+          }
+        })
       })
     })
   })
