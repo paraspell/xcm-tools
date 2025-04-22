@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.10.0...sdk-core-v8.11.0) (2025-04-22)
+
+
+### Features
+
+* **sdk-core:** Add support for local transfers 🪄 ([fcefd1a](https://github.com/paraspell/xcm-tools/commit/fcefd1a3fe0ea93c5701c9544f43ae9f870597d3))
+
 ## [8.10.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.9.10...sdk-core-v8.10.0) (2025-04-17)
 
 
