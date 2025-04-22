@@ -149,7 +149,10 @@ const XcmTransfer = () => {
         return { symbol: currency.symbol };
       }
 
-      if (!isForeignAsset(currency)) {
+      if (
+        !isForeignAsset(currency) ||
+        (isForeignAsset(currency) && currency.assetId === undefined)
+      ) {
         return { symbol: currency.symbol };
       }
 

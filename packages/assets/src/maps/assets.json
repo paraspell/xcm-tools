@@ -6970,7 +6970,19 @@
         "existentialDeposit": "10000000000000"
       }
     ],
-    "otherAssets": []
+    "otherAssets": [
+      {
+        "symbol": "DOT",
+        "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "existentialDeposit": "1"
+      }
+    ]
   },
   "InvArchTinker": {
     "relayChainAssetSymbol": "KSM",
