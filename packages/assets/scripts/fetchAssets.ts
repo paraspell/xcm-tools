@@ -346,7 +346,7 @@ const fetchOtherAssets = async (
     otherAssets = await fetchUniqueForeignAssets(api, query)
   }
 
-  if (node === 'Polimec') {
+  if (node === 'Polimec' || node === 'KiltSpiritnet') {
     otherAssets = await fetchPolimecForeignAssets(api, query)
   }
 

@@ -12,15 +12,26 @@ import ParachainNode from '../ParachainNode'
 
 class KiltSpiritnet<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('KiltSpiritnet', 'kilt', 'polkadot', Version.V2)
+    super('KiltSpiritnet', 'kilt', 'polkadot', Version.V3)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    if (input.scenario !== 'ParaToPara') {
-      throw new ScenarioNotSupportedError(this.node, input.scenario)
+    const { scenario, asset } = input
+
+    if (scenario === 'ParaToPara' && asset.symbol !== this.getNativeAssetSymbol()) {
+      throw new ScenarioNotSupportedError(
+        this.node,
+        scenario,
+        'KiltSpiritnet only supports native asset ParaToPara transfers'
+      )
     }
+
     return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserve_transfer_assets')
+      PolkadotXCMTransferImpl.transferPolkadotXCM(
+        input,
+        'limited_reserve_transfer_assets',
+        'Unlimited'
+      )
     )
   }
 

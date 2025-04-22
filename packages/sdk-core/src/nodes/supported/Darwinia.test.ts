@@ -1,8 +1,10 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Parents } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
@@ -12,6 +14,10 @@ vi.mock('../../pallets/polkadotXcm', () => ({
   default: {
     transferPolkadotXCM: vi.fn()
   }
+}))
+
+vi.mock('../../pallets/xcmPallet/utils', () => ({
+  createVersionedMultiAssets: vi.fn()
 }))
 
 describe('Darwinia', () => {
@@ -33,12 +39,16 @@ describe('Darwinia', () => {
     expect(darwinia.version).toBe(Version.V3)
   })
 
-  it('should call transferPolkadotXCM with reserveTransferAssets for ParaToRelay scenario', async () => {
+  it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToRelay scenario', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
     await darwinia.transferPolkadotXCM(mockPolkadotXCMInput)
 
-    expect(spy).toHaveBeenCalledWith(mockPolkadotXCMInput, 'reserve_transfer_assets')
+    expect(spy).toHaveBeenCalledWith(
+      mockPolkadotXCMInput,
+      'limited_reserve_transfer_assets',
+      'Unlimited'
+    )
   })
 
   it('should throw error for ParaToPara scenario', () => {
@@ -48,6 +58,30 @@ describe('Darwinia', () => {
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     expect(() => darwinia.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+  })
+
+  it('should call createCurrencySpec with correct values', () => {
+    darwinia.createCurrencySpec('100', 'ParaToPara', Version.V3)
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, '100', {
+      parents: Parents.ZERO,
+      interior: {
+        X1: {
+          PalletInstance: 5
+        }
+      }
+    })
+  })
+
+  it('should call createCurrencySpec with correct values - ParaToRelay', () => {
+    darwinia.createCurrencySpec('100', 'ParaToRelay', Version.V3)
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, '100', {
+      parents: Parents.ZERO,
+      interior: {
+        X1: {
+          PalletInstance: 5
+        }
+      }
+    })
   })
 
   describe('transferLocalNonNativeAsset', () => {

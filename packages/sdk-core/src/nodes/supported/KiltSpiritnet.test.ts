@@ -31,26 +31,27 @@ describe('KiltSpiritnet', () => {
     expect(kiltSpiritnet.node).toBe('KiltSpiritnet')
     expect(kiltSpiritnet.info).toBe('kilt')
     expect(kiltSpiritnet.type).toBe('polkadot')
-    expect(kiltSpiritnet.version).toBe(Version.V2)
+    expect(kiltSpiritnet.version).toBe(Version.V3)
   })
 
-  it('should call transferPolkadotXCM with reserveTransferAssets', async () => {
+  it('should call transferPolkadotXCM with limitedReserveTransferAssets', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
     await kiltSpiritnet.transferPolkadotXCM(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'reserve_transfer_assets')
+    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
   })
 
-  it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
-    const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
-      unknown,
-      unknown
-    >
-
-    expect(() => kiltSpiritnet.transferPolkadotXCM(invalidInput)).toThrowError(
-      ScenarioNotSupportedError
-    )
+  it('should throw an error if trying to transfer ParaToPara with non-native asset', () => {
+    expect(() =>
+      kiltSpiritnet.transferPolkadotXCM({
+        ...mockInput,
+        asset: {
+          ...mockInput.asset,
+          symbol: 'DOT'
+        }
+      })
+    ).toThrow(ScenarioNotSupportedError)
   })
 
   it('should throw NodeNotSupportedError for transferRelayToPara', () => {

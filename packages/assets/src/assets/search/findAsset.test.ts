@@ -59,10 +59,14 @@ describe('getAssetBySymbolOrId', () => {
       const { otherAssets } = getAssetsObject(node)
 
       otherAssets.forEach(other => {
+        if (other.assetId === undefined) {
+          return
+        }
         const hasDuplicateIds =
           otherAssets.filter(asset => asset.assetId === other.assetId).length > 1
         if (!hasDuplicateIds) {
           const asset = findAsset(node, { id: other.assetId ?? '' }, null)
+
           expect(asset).not.toBeNull()
           expect(isForeignAsset(asset as TAsset)).toBe(true)
           expect(asset).toHaveProperty('assetId')

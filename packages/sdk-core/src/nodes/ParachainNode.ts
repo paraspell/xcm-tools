@@ -256,7 +256,7 @@ abstract class ParachainNode<TApi, TRes> {
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { section: 'reserve_transfer_assets', includeFee: false }
+    return { section: 'limited_reserve_transfer_assets', includeFee: true }
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {

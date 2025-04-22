@@ -51,7 +51,7 @@ export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   CoretimeKusama: [],
   CoretimePolkadot: [],
   Subsocial: [], // No assets metadata query
-  KiltSpiritnet: [], // No assets metadata query
+  KiltSpiritnet: ['fungibles.metadata'],
   Curio: ['assetRegistry.metadata'],
   BridgeHubPolkadot: [],
   BridgeHubKusama: [],

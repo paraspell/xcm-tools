@@ -305,7 +305,7 @@ describe('ParachainNode', () => {
 
     expect(result).toEqual({
       module: 'XcmPallet',
-      section: 'reserve_transfer_assets',
+      section: 'limited_reserve_transfer_assets',
       parameters: 'parameters'
     })
   })

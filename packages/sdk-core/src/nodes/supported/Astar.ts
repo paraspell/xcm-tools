@@ -24,9 +24,12 @@ class Astar<TApi, TRes>
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    // TESTED https://polkadot.subscan.io/xcm_message/polkadot-f2b697df74ebe4b62853fe81b8b7d0522464972d
     return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserve_transfer_assets')
+      PolkadotXCMTransferImpl.transferPolkadotXCM(
+        input,
+        'limited_reserve_transfer_assets',
+        'Unlimited'
+      )
     )
   }
 

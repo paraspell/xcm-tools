@@ -46,12 +46,16 @@ describe('Astar', () => {
     expect(astar.version).toBe(Version.V3)
   })
 
-  it('should call transferPolkadotXCM with reserveTransferAssets for ParaToPara scenario', async () => {
+  it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', async () => {
     const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
 
     await astar.transferPolkadotXCM(mockPolkadotXCMInput)
 
-    expect(spy).toHaveBeenCalledWith(mockPolkadotXCMInput, 'reserve_transfer_assets')
+    expect(spy).toHaveBeenCalledWith(
+      mockPolkadotXCMInput,
+      'limited_reserve_transfer_assets',
+      'Unlimited'
+    )
   })
 
   it('should call transferXTokens with currencyID', () => {
