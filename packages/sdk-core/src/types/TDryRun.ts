@@ -3,7 +3,7 @@ import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import type { WithApi } from './TApi'
 import type { TWeight } from './TTransfer'
 
-export type TDryRunBaseOptions<TRes> = {
+export type TDryRunCallBaseOptions<TRes> = {
   /**
    * The transaction to dry-run
    */
@@ -18,13 +18,36 @@ export type TDryRunBaseOptions<TRes> = {
   address: string
 }
 
-export type TDryRunOptions<TApi, TRes> = WithApi<TDryRunBaseOptions<TRes>, TApi, TRes>
+export type TDryRunCallOptions<TApi, TRes> = WithApi<TDryRunCallBaseOptions<TRes>, TApi, TRes>
+
+export type TDryRunXcmBaseOptions = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  originLocation: any
+  /**
+   * The XCM instructions
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  xcm: any
+  /**
+   * The node to dry-run on
+   */
+  node: TNodeDotKsmWithRelayChains
+  /**
+   * The origin node
+   */
+  origin: TNodeDotKsmWithRelayChains
+}
+
+export type TDryRunXcmOptions<TApi, TRes> = WithApi<TDryRunXcmBaseOptions, TApi, TRes>
 
 export type TDryRunResult =
   | {
       success: true
       fee: bigint
       weight?: TWeight
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      forwardedXcms: any
+      destParaId?: number
     }
   | {
       success: false

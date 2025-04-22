@@ -27,3 +27,5 @@ export const SYSTEM_NODES_POLKADOT: TNodeWithRelayChains[] = [
 export const SYSTEM_NODES_KUSAMA: TNodeWithRelayChains[] = ['PeopleKusama', 'CoretimeKusama']
 
 export const ASSET_HUB_EXECUTION_FEE = 2200000000n // 0.22 DOT
+
+export const FEE_PADDING_FACTOR = 130n // 30% padding

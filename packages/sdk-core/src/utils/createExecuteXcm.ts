@@ -1,4 +1,4 @@
-import { createPolkadotXcmHeader, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
+import { createVersionedDestination, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
 import type { TSerializedApiCall, TWeight } from '../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../types'
 import { createVersionedBeneficiary } from './createVersionedBeneficiary'
@@ -11,7 +11,7 @@ export const createExecuteXcm = <TApi, TRes>(
 ): TRes => {
   const { api, version = Version.V4, asset, scenario, destination, paraIdTo, address } = input
 
-  const destWithHeader = createPolkadotXcmHeader(scenario, version, destination, paraIdTo)
+  const destWithHeader = createVersionedDestination(scenario, version, destination, paraIdTo)
   const [_, dest] = extractVersionFromHeader(destWithHeader)
 
   const beneficiaryWithHeader = createVersionedBeneficiary({

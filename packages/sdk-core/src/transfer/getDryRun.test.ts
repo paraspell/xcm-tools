@@ -12,7 +12,7 @@ vi.mock('../utils', () => ({
 describe('getDryRun', () => {
   const apiMock = {
     init: vi.fn(),
-    getDryRun: vi.fn(),
+    getDryRunCall: vi.fn(),
     disconnect: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
@@ -22,10 +22,12 @@ describe('getDryRun', () => {
 
     const mockResult: TDryRunResult = {
       success: true,
-      fee: 1000n
+      fee: 1000n,
+      forwardedXcms: [],
+      destParaId: 0
     }
 
-    vi.spyOn(apiMock, 'getDryRun').mockResolvedValue(mockResult)
+    vi.spyOn(apiMock, 'getDryRunCall').mockResolvedValue(mockResult)
 
     const initSpy = vi.spyOn(apiMock, 'init')
     const disconnectSpy = vi.spyOn(apiMock, 'disconnect')

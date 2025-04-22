@@ -69,11 +69,7 @@ export const createVersionedMultiAssets = (
   return addXcmVersionHeader([multiAssets], version)
 }
 
-export const createVersionedMultiLocation = (version: Version, multiLocation: TMultiLocation) => ({
-  [version]: multiLocation
-})
-
-export const createPolkadotXcmHeader = (
+export const createVersionedDestination = (
   scenario: TScenario,
   version: Version,
   destination: TDestination,

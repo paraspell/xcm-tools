@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -6,8 +8,9 @@ import type {
   TAsset,
   TBalanceResponse,
   TBridgeStatus,
-  TDryRunBaseOptions,
+  TDryRunCallBaseOptions,
   TDryRunResult,
+  TDryRunXcmBaseOptions,
   TModuleError,
   TMultiLocation,
   TNodePolkadotKusama,
@@ -244,7 +247,11 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return api
   }
 
-  async getDryRun({ tx, address, node }: TDryRunBaseOptions<Extrinsic>): Promise<TDryRunResult> {
+  async getDryRunCall({
+    tx,
+    address,
+    node
+  }: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunResult> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -266,6 +273,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     )
 
     const result = response.toHuman() as any
+    const resultJson = response.toJSON() as any
 
     const isSuccess = result.Ok && result.Ok.executionResult.Ok
 
@@ -278,7 +286,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const executionFee = await this.calculateTransactionFee(tx, address)
     const fee = computeFeeFromDryRunPjs(result, node, executionFee)
 
-    const actualWeight = (response.toJSON() as any).ok.executionResult.ok.actualWeight
+    const actualWeight = resultJson.ok.executionResult.ok.actualWeight
 
     const weight: TWeight | undefined = actualWeight
       ? {
@@ -287,7 +295,100 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
         }
       : undefined
 
-    return { success: true, fee, weight }
+    const forwardedXcms =
+      resultJson.ok.forwardedXcms.length > 0 ? resultJson.ok.forwardedXcms[0] : []
+
+    const destParaId =
+      forwardedXcms.length === 0
+        ? undefined
+        : (i => (i.Here ? 0 : (Array.isArray(i.x1) ? i.x1[0] : i.x1)?.parachain))(
+            Object.values<any>(forwardedXcms[0])[0].interior
+          )
+
+    return { success: true, fee, weight, forwardedXcms, destParaId }
+  }
+
+  async getDryRunXcm({
+    originLocation,
+    xcm,
+    node,
+    origin
+  }: TDryRunXcmBaseOptions): Promise<TDryRunResult> {
+    const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
+
+    if (!supportsDryRunApi) {
+      throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
+    }
+
+    const response = await this.api.call.dryRunApi.dryRunXcm(originLocation, xcm)
+
+    const result = response.toHuman() as any
+    const resultJson = response.toJSON() as any
+
+    const isSuccess = result.Ok && result.Ok.executionResult.Complete
+
+    if (!isSuccess) {
+      const failureReason = result.Ok.executionResult.Incomplete.error
+      return { success: false, failureReason }
+    }
+
+    const emitted = result.Ok.emittedEvents
+
+    // We want to look for the last event
+    const reversedEvents = [...emitted].reverse()
+
+    const palletsWithIssued = ['balances', 'foreignAssets', 'assets']
+
+    const feeEvent =
+      (origin === 'Mythos'
+        ? reversedEvents.find(
+            event => event.section === 'assetConversion' && event.method === 'SwapCreditExecuted'
+          )
+        : undefined) ??
+      // Prefer an Issued event
+      reversedEvents.find(
+        (event: any) => palletsWithIssued.includes(event.section) && event.method === 'Issued'
+      ) ??
+      // Fallback to Minted event
+      reversedEvents.find(
+        event => ['balances', 'foreignAssets'].includes(event.section) && event.method === 'Minted'
+      ) ??
+      reversedEvents.find(
+        event => ['currencies', 'tokens'].includes(event.section) && event.method === 'Deposited'
+      )
+
+    if (!feeEvent) {
+      return Promise.resolve({
+        success: false,
+        failureReason: 'Cannot determine destination fee. No Issued event found'
+      })
+    }
+
+    const feeAmount =
+      feeEvent.section === 'assetConversion' ? feeEvent.data.amountIn : feeEvent.data.amount
+
+    const fee = BigInt(feeAmount.replace(/,/g, ''))
+
+    const actualWeight = resultJson.ok.executionResult.used
+
+    const weight: TWeight | undefined = actualWeight
+      ? {
+          refTime: BigInt(actualWeight.refTime as string),
+          proofSize: BigInt(actualWeight.proofSize as string)
+        }
+      : undefined
+
+    const forwardedXcms =
+      resultJson.ok.forwardedXcms.length > 0 ? resultJson.ok.forwardedXcms[0] : []
+
+    const destParaId =
+      forwardedXcms.length === 0
+        ? undefined
+        : (i => (i.Here ? 0 : (Array.isArray(i.x1) ? i.x1[0] : i.x1)?.parachain))(
+            Object.values<any>(forwardedXcms[0])[0].interior
+          )
+
+    return { success: true, fee, weight, forwardedXcms, destParaId }
   }
 
   async getBridgeStatus() {

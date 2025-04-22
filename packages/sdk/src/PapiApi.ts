@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -9,7 +10,7 @@ import { blake2b } from '@noble/hashes/blake2b'
 import { bytesToHex } from '@noble/hashes/utils'
 import type {
   TAsset,
-  TDryRunBaseOptions,
+  TDryRunCallBaseOptions,
   TDryRunResult,
   TMultiLocation,
   TNodePolkadotKusama,
@@ -28,6 +29,7 @@ import {
   type TNodeDotKsmWithRelayChains,
   type TNodeWithRelayChains
 } from '@paraspell/sdk-core'
+import type { TDryRunXcmBaseOptions } from '@paraspell/sdk-core/src'
 import { AccountId, Binary, createClient, FixedSizeBinary } from 'polkadot-api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 
@@ -288,11 +290,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return api
   }
 
-  async getDryRun({
+  async getDryRunCall({
     tx,
     address,
     node
-  }: TDryRunBaseOptions<TPapiTransaction>): Promise<TDryRunResult> {
+  }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunResult> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -330,7 +332,109 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       ? { refTime: actualWeight.ref_time, proofSize: actualWeight.proof_size }
       : undefined
 
-    return Promise.resolve({ success: true, fee, weight })
+    const forwardedXcms =
+      result.value.forwarded_xcms.length > 0 ? result.value.forwarded_xcms[0] : []
+
+    const destParaId =
+      forwardedXcms.length === 0
+        ? undefined
+        : forwardedXcms[0].value.interior.type === 'Here'
+          ? 0
+          : forwardedXcms[0].value.interior.value.value
+
+    return Promise.resolve({
+      success: true,
+      fee,
+      weight,
+      forwardedXcms,
+      destParaId
+    })
+  }
+
+  async getDryRunXcm({
+    originLocation,
+    xcm,
+    node,
+    origin
+  }: TDryRunXcmBaseOptions): Promise<TDryRunResult> {
+    const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
+
+    if (!supportsDryRunApi) {
+      throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
+    }
+
+    const transformedOriginLocation = transform(originLocation)
+
+    const result = await this.api
+      .getUnsafeApi()
+      .apis.DryRunApi.dry_run_xcm(transformedOriginLocation, xcm)
+
+    const isSuccess = result.success && result.value.execution_result.type === 'Complete'
+    if (!isSuccess) {
+      const failureReason = result.value.execution_result.value.error.type
+      return Promise.resolve({ success: false, failureReason })
+    }
+
+    const emitted = result.value.emitted_events
+
+    // We want to look for the last event
+    const reversedEvents = [...emitted].reverse()
+
+    const palletsWithIssued = ['Balances', 'ForeignAssets', 'Assets']
+
+    const feeEvent =
+      (origin === 'Mythos'
+        ? reversedEvents.find(
+            event => event.type === 'AssetConversion' && event.value.type === 'SwapCreditExecuted'
+          )
+        : undefined) ??
+      // Prefer an Issued event
+      reversedEvents.find(
+        (event: any) => palletsWithIssued.includes(event.type) && event.value.type === 'Issued'
+      ) ??
+      // Fallback to Minted event
+      reversedEvents.find(
+        event => ['Balances', 'ForeignAssets'].includes(event.type) && event.value.type === 'Minted'
+      ) ??
+      reversedEvents.find(
+        event => ['Currencies', 'Tokens'].includes(event.type) && event.value.type === 'Deposited'
+      )
+
+    if (!feeEvent) {
+      return Promise.resolve({
+        success: false,
+        failureReason: 'Cannot determine destination fee. No Issued event found'
+      })
+    }
+
+    const fee =
+      feeEvent.type === 'AssetConversion'
+        ? feeEvent.value.value.amount_in
+        : feeEvent.value.value.amount
+
+    const actualWeight = result.value.execution_result.value.used
+
+    const weight: TWeight | undefined = actualWeight
+      ? { refTime: actualWeight.ref_time, proofSize: actualWeight.proof_size }
+      : undefined
+
+    const forwardedXcms =
+      result.value.forwarded_xcms.length > 0 ? result.value.forwarded_xcms[0] : []
+
+    const destParaId =
+      forwardedXcms.length === 0
+        ? undefined
+        : forwardedXcms[0].value.interior.type === 'Here'
+          ? 0
+          : forwardedXcms[0].value.interior.value.value
+
+    return Promise.resolve({
+      success: true,
+      fee,
+      weight,
+      forwardedXcms,
+      destParaId
+    })
   }
 
   async getBridgeStatus() {

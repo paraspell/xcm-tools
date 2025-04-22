@@ -19,7 +19,7 @@ import {
   addXcmVersionHeader,
   createBridgePolkadotXcmDest,
   createMultiAsset,
-  createPolkadotXcmHeader,
+  createVersionedDestination,
   createVersionedMultiAssets
 } from '../../pallets/xcmPallet/utils'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
@@ -195,7 +195,7 @@ class AssetHubPolkadot<TApi, TRes>
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: createPolkadotXcmHeader(
+        dest: createVersionedDestination(
           scenario,
           this.version,
           destination,
@@ -267,7 +267,7 @@ class AssetHubPolkadot<TApi, TRes>
 
     const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
       ...input,
-      header: createPolkadotXcmHeader(
+      header: createVersionedDestination(
         scenario,
         this.version,
         destination,
@@ -306,7 +306,7 @@ class AssetHubPolkadot<TApi, TRes>
     }
     const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
       ...input,
-      header: this.createPolkadotXcmHeader(scenario, version, destination, paraId),
+      header: this.createVersionedDestination(scenario, version, destination, paraId),
       addressSelection: createVersionedBeneficiary({
         api,
         scenario,
@@ -344,7 +344,7 @@ class AssetHubPolkadot<TApi, TRes>
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: this.createPolkadotXcmHeader(scenario, version, destination, paraIdTo),
+        dest: this.createVersionedDestination(scenario, version, destination, paraIdTo),
         assets: addXcmVersionHeader(
           [
             ...(useDOTAsFeeAsset
@@ -381,7 +381,7 @@ class AssetHubPolkadot<TApi, TRes>
       const versionOrDefault = input.version ?? Version.V2
       return {
         ...input,
-        header: this.createPolkadotXcmHeader(scenario, versionOrDefault, destination, paraIdTo),
+        header: this.createVersionedDestination(scenario, versionOrDefault, destination, paraIdTo),
         addressSelection: createVersionedBeneficiary({
           api,
           scenario,
@@ -432,7 +432,7 @@ class AssetHubPolkadot<TApi, TRes>
     const maxU64 = (1n << 64n) - 1n
     const dummyTx = createExecuteXcm(input, { refTime: maxU64, proofSize: maxU64 }, MIN_FEE)
 
-    const dryRunResult = await api.getDryRun({
+    const dryRunResult = await api.getDryRunCall({
       node: this.node,
       tx: dummyTx,
       address: senderAddress

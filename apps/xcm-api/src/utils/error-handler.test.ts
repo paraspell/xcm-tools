@@ -3,6 +3,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
+  BridgeHaltedError,
+  DryRunFailedError,
   DuplicateAssetError,
   DuplicateAssetIdError,
   IncompatibleNodesError,
@@ -26,6 +28,8 @@ describe('handleXcmApiError', () => {
     new DuplicateAssetError('2'),
     new DuplicateAssetIdError('2'),
     new ScenarioNotSupportedError('Acala', 'ParaToPara'),
+    new BridgeHaltedError(),
+    new DryRunFailedError('Failed'),
   ];
 
   it('should throw BadRequestException for known SDK errors', () => {

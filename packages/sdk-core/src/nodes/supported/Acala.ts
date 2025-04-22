@@ -19,7 +19,8 @@ class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
   }
 
   getCurrencySelection(asset: TAsset): TForeignOrTokenAsset {
-    return isForeignAsset(asset) ? { ForeignAsset: Number(asset.assetId) } : { Token: asset.symbol }
+    const symbol = asset.symbol === 'aSEED' ? 'AUSD' : asset.symbol
+    return isForeignAsset(asset) ? { ForeignAsset: Number(asset.assetId) } : { Token: symbol }
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
@@ -53,10 +54,7 @@ class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
       section: 'transfer',
       parameters: {
         dest: { Id: address },
-        currency_id: this.getCurrencySelection({
-          ...asset,
-          symbol: asset.symbol === 'aSEED' ? 'AUSD' : asset.symbol
-        }),
+        currency_id: this.getCurrencySelection(asset),
         amount: BigInt(asset.amount)
       }
     })

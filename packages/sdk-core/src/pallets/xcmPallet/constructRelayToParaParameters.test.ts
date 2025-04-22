@@ -8,7 +8,7 @@ import type { TRelayToParaOptions, TXcmVersioned } from '../../types'
 import { Version } from '../../types'
 import { createVersionedBeneficiary, resolveParaId } from '../../utils'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
-import { createPolkadotXcmHeader, createVersionedMultiAssets } from './utils'
+import { createVersionedDestination, createVersionedMultiAssets } from './utils'
 
 vi.mock('../../utils', () => ({
   createVersionedBeneficiary: vi.fn(),
@@ -17,7 +17,7 @@ vi.mock('../../utils', () => ({
 
 vi.mock('./utils', () => ({
   createVersionedMultiAssets: vi.fn(),
-  createPolkadotXcmHeader: vi.fn()
+  createVersionedDestination: vi.fn()
 }))
 
 describe('constructRelayToParaParameters', () => {
@@ -41,7 +41,7 @@ describe('constructRelayToParaParameters', () => {
     )
     vi.mocked(resolveParaId).mockReturnValue(mockParaId)
     vi.mocked(createVersionedMultiAssets).mockReturnValue({} as TXcmVersioned<TMultiAsset[]>)
-    vi.mocked(createPolkadotXcmHeader).mockReturnValue(
+    vi.mocked(createVersionedDestination).mockReturnValue(
       'mockedDest' as unknown as TXcmVersioned<TMultiLocation>
     )
   })
@@ -49,7 +49,7 @@ describe('constructRelayToParaParameters', () => {
   it('should construct parameters with multi-location destination and include fee', () => {
     const result = constructRelayToParaParameters(options, Version.V1, { includeFee: true })
 
-    expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
+    expect(createVersionedDestination).toHaveBeenCalledWith(
       'RelayToPara',
       Version.V1,
       'Acala',
@@ -79,7 +79,7 @@ describe('constructRelayToParaParameters', () => {
   it('should construct parameters without fee for multi-location destination', () => {
     const result = constructRelayToParaParameters(options, Version.V3)
 
-    expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
+    expect(createVersionedDestination).toHaveBeenCalledWith(
       'RelayToPara',
       Version.V3,
       options.destination,
@@ -118,7 +118,7 @@ describe('constructRelayToParaParameters', () => {
     )
 
     expect(resolveParaId).toHaveBeenCalledWith(paraIdTo, options.destination)
-    expect(createPolkadotXcmHeader).toHaveBeenCalledWith(
+    expect(createVersionedDestination).toHaveBeenCalledWith(
       'RelayToPara',
       Version.V2,
       options.destination,

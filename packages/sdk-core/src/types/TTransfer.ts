@@ -140,6 +140,13 @@ export type TSendBaseOptions = {
   method?: string
 }
 
+export type TSendBaseOptionsWithSenderAddress = Omit<TSendBaseOptions, 'senderAddress'> & {
+  /**
+   * The sender address. A SS58 or H160 format.
+   */
+  senderAddress: string
+}
+
 /**
  * Options for transferring from a parachain to another parachain or relay chain
  */

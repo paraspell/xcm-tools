@@ -626,7 +626,7 @@ describe('PapiApi', () => {
     })
   })
 
-  describe('getDryRun', () => {
+  describe('getDryRunCall', () => {
     it('should return success with calculated fee', async () => {
       const mockApiResponse = {
         success: true,
@@ -639,7 +639,24 @@ describe('PapiApi', () => {
               }
             },
             success: true
-          }
+          },
+          forwarded_xcms: [
+            [
+              {
+                type: 'V4',
+                value: {
+                  parents: 0,
+                  interior: {
+                    type: 'X1',
+                    value: {
+                      type: 'Parachain',
+                      value: 1000
+                    }
+                  }
+                }
+              }
+            ]
+          ]
         }
       }
 
@@ -650,7 +667,7 @@ describe('PapiApi', () => {
 
       vi.mocked(computeFeeFromDryRun).mockReturnValue(500n)
 
-      const result = await papiApi.getDryRun({
+      const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: 'some_address',
         node: 'AssetHubPolkadot'
@@ -670,7 +687,9 @@ describe('PapiApi', () => {
         weight: {
           refTime: 0n,
           proofSize: 0n
-        }
+        },
+        forwardedXcms: expect.any(Object),
+        destParaId: 1000
       })
     })
 
@@ -697,7 +716,7 @@ describe('PapiApi', () => {
 
       papiApi.setApi(mockPolkadotClient)
 
-      const result = await papiApi.getDryRun({
+      const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: 'some_address',
         node: 'Moonbeam'
@@ -716,12 +735,240 @@ describe('PapiApi', () => {
 
     it('should throw error for unsupported node', async () => {
       await expect(
-        papiApi.getDryRun({
+        papiApi.getDryRunCall({
           tx: mockTransaction,
           address: 'some_address',
           node: 'Acala'
         })
       ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+    })
+  })
+
+  describe('getDryRunXcm', () => {
+    const originLocation: sdkCore.TMultiLocation = {
+      parents: 0,
+      interior: { Here: null }
+    }
+    const dummyXcm = { some: 'xcm-payload' }
+
+    it('should return success with destination fee, weight and forwarded XCM', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Complete',
+            value: {
+              used: { ref_time: 11n, proof_size: 22n }
+            }
+          },
+          emitted_events: [
+            {
+              type: 'Balances',
+              value: {
+                type: 'Issued',
+                value: { amount: 999n }
+              }
+            }
+          ],
+          forwarded_xcms: [
+            [
+              {
+                type: 'V4',
+                value: {
+                  parents: 0,
+                  interior: {
+                    type: 'X1',
+                    value: {
+                      type: 'Parachain',
+                      value: 1000
+                    }
+                  }
+                }
+              }
+            ]
+          ]
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        node: 'AssetHubPolkadot',
+        origin: 'Hydration'
+      })
+
+      expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
+        transform(originLocation),
+        dummyXcm
+      )
+      expect(result).toEqual({
+        success: true,
+        fee: 999n,
+        weight: { refTime: 11n, proofSize: 22n },
+        forwardedXcms: expect.any(Object),
+        destParaId: 1000
+      })
+    })
+
+    it('should return failure with failure reason', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Incomplete',
+            value: {
+              error: { type: 'SomeXcmError' }
+            }
+          }
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        node: 'AssetHubPolkadot',
+        origin: 'Hydration'
+      })
+
+      expect(result).toEqual({ success: false, failureReason: 'SomeXcmError' })
+    })
+
+    it('should throw error for unsupported node', async () => {
+      await expect(
+        papiApi.getDryRunXcm({
+          originLocation,
+          xcm: dummyXcm,
+          node: 'Acala',
+          origin: 'Hydration'
+        })
+      ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+    })
+  })
+
+  describe('getDryRunXcm', () => {
+    const originLocation: sdkCore.TMultiLocation = {
+      parents: 0,
+      interior: { Here: null }
+    }
+    const dummyXcm = { some: 'xcm-payload' }
+
+    it('should return success with destination fee, weight and forwarded XCM', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Complete',
+            value: {
+              used: { ref_time: 11n, proof_size: 22n }
+            }
+          },
+          emitted_events: [
+            {
+              type: 'Balances',
+              value: {
+                type: 'Issued',
+                value: { amount: 999n }
+              }
+            }
+          ],
+          forwarded_xcms: []
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        node: 'AssetHubPolkadot',
+        origin: 'Acala'
+      })
+
+      expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
+        transform(originLocation),
+        dummyXcm
+      )
+      expect(result).toEqual({
+        success: true,
+        fee: 999n,
+        weight: { refTime: 11n, proofSize: 22n },
+        forwardedXcms: []
+      })
+    })
+
+    it('should return failure with failure reason', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Incomplete',
+            value: {
+              error: { type: 'SomeXcmError' }
+            }
+          }
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        node: 'AssetHubPolkadot',
+        origin: 'Acala'
+      })
+
+      expect(result).toEqual({ success: false, failureReason: 'SomeXcmError' })
+    })
+
+    it('should throw error for unsupported node', async () => {
+      await expect(
+        papiApi.getDryRunXcm({
+          originLocation,
+          xcm: dummyXcm,
+          node: 'Acala',
+          origin: 'Acala'
+        })
+      ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+    })
+
+    it('should throw error if no issued event found', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Complete',
+            value: {
+              used: { ref_time: 11n, proof_size: 22n }
+            }
+          },
+          emitted_events: [],
+          forwarded_xcms: ['0xdeadbeef']
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      expect(
+        await papiApi.getDryRunXcm({
+          originLocation,
+          xcm: dummyXcm,
+          node: 'AssetHubPolkadot',
+          origin: 'Mythos'
+        })
+      ).toEqual({
+        success: false,
+        failureReason: 'Cannot determine destination fee. No Issued event found'
+      })
     })
   })
 

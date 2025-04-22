@@ -418,6 +418,76 @@ const XcmTransfer = () => {
     showSuccessNotification(notifId ?? '', 'Success', 'Dry run was successful');
   };
 
+  const performXcmFee = async (
+    formValues: FormValuesTransformed,
+    selectedAccount: { address: string },
+    notifId: string | undefined,
+    type: 'fee' | 'estimate',
+  ) => {
+    const Sdk =
+      apiType === 'PAPI'
+        ? await import('@paraspell/sdk')
+        : await import('@paraspell/sdk-pjs');
+
+    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
+      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
+
+    const { from, to, currencies, transformedFeeAsset, address, useApi } =
+      formValues;
+
+    const currencyInputs = currencies.map((c) => ({
+      ...determineCurrency(formValues, c),
+      amount: c.amount,
+    }));
+
+    const body = {
+      ...formValues,
+      senderAddress: selectedAccount.address,
+      currency:
+        currencyInputs.length === 1
+          ? currencyInputs[0]
+          : { multiasset: currencyInputs },
+      feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
+    };
+
+    let result;
+
+    if (useApi) {
+      result = await fetchFromApi(
+        body,
+        type === 'fee' ? '/xcm-fee' : '/xcm-fee-estimate',
+        'POST',
+        true,
+      );
+    } else {
+      const builder = Builder()
+        .from(from)
+        .to(to)
+        .currency(
+          currencyInputs.length === 1
+            ? currencyInputs[0]
+            : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
+        )
+        .feeAsset(body.feeAsset)
+        .address(address, selectedAccount.address);
+
+      result =
+        type === 'fee'
+          ? await builder.getXcmFee()
+          : await builder.getXcmFeeEstimate();
+    }
+
+    setOutput(JSON.stringify(result, replaceBigInt, 2));
+    openOutputAlert();
+    closeErrorAlert();
+
+    showSuccessNotification(
+      notifId ?? '',
+      'Success',
+      type === 'fee' ? 'XCM fee retrieved' : 'XCM fee estimate retrieved',
+    );
+  };
+
   const submit = async (
     formValues: FormValuesTransformed,
     submitType: TSubmitType,
@@ -508,6 +578,16 @@ const XcmTransfer = () => {
     try {
       if (submitType === 'dryRun') {
         await performDryRun(formValues, selectedAccount, notifId);
+        return;
+      }
+
+      if (submitType === 'getXcmFee' || submitType === 'getXcmFeeEstimate') {
+        await performXcmFee(
+          formValues,
+          selectedAccount,
+          notifId,
+          submitType === 'getXcmFee' ? 'fee' : 'estimate',
+        );
         return;
       }
 

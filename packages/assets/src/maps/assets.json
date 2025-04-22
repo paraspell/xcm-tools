@@ -10713,7 +10713,17 @@
         "symbol": "MYTH",
         "isNative": true,
         "decimals": 18,
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3369
+              }
+            ]
+          }
+        }
       }
     ],
     "otherAssets": []

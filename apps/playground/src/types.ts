@@ -47,6 +47,8 @@ export type TSubmitType =
   | 'update'
   | 'delete'
   | 'dryRun'
+  | 'getXcmFee'
+  | 'getXcmFeeEstimate'
   | 'addToBatch';
 
 export type TEvmSubmitType = 'default' | 'approve' | 'deposit';
