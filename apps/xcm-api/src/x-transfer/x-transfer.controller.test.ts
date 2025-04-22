@@ -1,6 +1,11 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TBridgeStatus } from '@paraspell/sdk';
+import type {
+  TBridgeStatus,
+  TDryRunResult,
+  TGetXcmFeeEstimateResult,
+  TGetXcmFeeResult,
+} from '@paraspell/sdk';
 import { BatchMode } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -101,15 +106,57 @@ describe('XTransferController', () => {
         address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
         currency: { symbol: 'DOT', amount: 100 },
       };
-      const mockResult = 'hash';
-      const spy = vi
-        .spyOn(service, 'generateXcmCall')
-        .mockResolvedValue(mockResult);
+      const mockResult = {} as TDryRunResult;
+      const spy = vi.spyOn(service, 'dryRun').mockResolvedValue(mockResult);
 
       const result = await controller.dryRun(bodyParams, mockRequestObject);
 
       expect(result).toBe(mockResult);
-      expect(spy).toHaveBeenCalledWith(bodyParams, true);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+  });
+
+  describe('getXcmFee', () => {
+    it('should call service.getXcmFee and returns its value', async () => {
+      const bodyParams: XTransferDto = {
+        from: 'Acala',
+        to: 'Basilisk',
+        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        currency: { symbol: 'DOT', amount: 100 },
+      };
+      const mockResult = { origin: {}, destination: {} } as TGetXcmFeeResult;
+      const spy = vi.spyOn(service, 'getXcmFee').mockResolvedValue(mockResult);
+
+      const result = await controller.getXcmFee(bodyParams, mockRequestObject);
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
+    });
+  });
+
+  describe('getXcmFeeEstimate', () => {
+    it('should call service.getXcmFeeEstimate and returns its value', async () => {
+      const bodyParams: XTransferDto = {
+        from: 'Acala',
+        to: 'Basilisk',
+        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        currency: { symbol: 'DOT', amount: 100 },
+      };
+      const mockResult = {
+        origin: {},
+        destination: {},
+      } as TGetXcmFeeEstimateResult;
+      const spy = vi
+        .spyOn(service, 'getXcmFeeEstimate')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getXcmFeeEstimate(
+        bodyParams,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(bodyParams);
     });
   });
 

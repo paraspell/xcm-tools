@@ -15,7 +15,7 @@ import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
   addXcmVersionHeader,
   createMultiAsset,
-  createPolkadotXcmHeader
+  createVersionedDestination
 } from '../../pallets/xcmPallet/utils'
 import type {
   IPolkadotXCMTransfer,
@@ -157,7 +157,7 @@ const createCustomXcmPolimec = <TApi, TRes>(
           },
           dest: (
             Object.values(
-              createPolkadotXcmHeader(
+              createVersionedDestination(
                 scenario,
                 version,
                 destination,

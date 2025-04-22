@@ -2,7 +2,7 @@
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { createPolkadotXcmHeader, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
+import { createVersionedDestination, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions, TSerializedApiCall, TXcmVersioned } from '../types'
 import { Version } from '../types'
 import { createExecuteXcm } from './createExecuteXcm'
@@ -10,7 +10,7 @@ import { createVersionedBeneficiary } from './createVersionedBeneficiary'
 import { transformMultiLocation } from './multiLocation'
 
 vi.mock('../pallets/xcmPallet/utils', () => ({
-  createPolkadotXcmHeader: vi.fn(),
+  createVersionedDestination: vi.fn(),
   extractVersionFromHeader: vi.fn()
 }))
 
@@ -28,7 +28,7 @@ describe('createExecuteXcm', () => {
     'dummyBeneficiaryHeader' as unknown as TXcmVersioned<TMultiLocation>
 
   beforeEach(() => {
-    vi.mocked(createPolkadotXcmHeader).mockReturnValue(dummyDestHeader)
+    vi.mocked(createVersionedDestination).mockReturnValue(dummyDestHeader)
     vi.mocked(createVersionedBeneficiary).mockReturnValue(dummyBeneficiaryHeader)
     vi.mocked(extractVersionFromHeader).mockImplementation(header => {
       if (header === dummyDestHeader) return [Version.V1, 'destValue']
@@ -128,7 +128,7 @@ describe('createExecuteXcm', () => {
 
     const result = createExecuteXcm(input, weight, executionFee)
     expect(result).toBe('defaultResult')
-    expect(vi.mocked(createPolkadotXcmHeader)).toHaveBeenCalledWith(
+    expect(vi.mocked(createVersionedDestination)).toHaveBeenCalledWith(
       input.scenario,
       Version.V4,
       input.destination,

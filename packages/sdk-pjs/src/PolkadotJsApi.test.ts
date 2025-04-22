@@ -32,7 +32,8 @@ describe('PolkadotJsApi', () => {
       registry: {},
       call: {
         dryRunApi: {
-          dryRunCall: vi.fn()
+          dryRunCall: vi.fn(),
+          dryRunXcm: vi.fn()
         },
         assetConversionApi: {
           quotePriceExactTokensForTokens: vi.fn().mockResolvedValue({
@@ -609,7 +610,7 @@ describe('PolkadotJsApi', () => {
     })
   })
 
-  describe('getDryRun', () => {
+  describe('getDryRunCall', () => {
     it('should return sucess when dryRunCall is successful', async () => {
       const mockExtrinsic = {
         paymentInfo: vi.fn().mockResolvedValue({ partialFee: { toBigInt: () => 1000n } })
@@ -625,13 +626,25 @@ describe('PolkadotJsApi', () => {
           }
         }),
         toJSON: vi.fn().mockReturnValue({
-          ok: { executionResult: { ok: { actualWeight: { refTime: '1000', proofSize: '2000' } } } }
+          ok: {
+            executionResult: { ok: { actualWeight: { refTime: '1000', proofSize: '2000' } } },
+            forwardedXcms: [
+              [
+                {
+                  v4: {
+                    parents: 0,
+                    interior: { Here: null }
+                  }
+                }
+              ]
+            ]
+          }
         })
       } as unknown as Codec
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(mockResponse)
 
-      const result = await polkadotApi.getDryRun({ tx: mockExtrinsic, address, node })
+      const result = await polkadotApi.getDryRunCall({ tx: mockExtrinsic, address, node })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
         { system: { Signed: address } },
@@ -644,7 +657,8 @@ describe('PolkadotJsApi', () => {
         weight: {
           refTime: 1000n,
           proofSize: 2000n
-        }
+        },
+        forwardedXcms: expect.any(Object)
       })
     })
 
@@ -661,12 +675,20 @@ describe('PolkadotJsApi', () => {
           Ok: {
             executionResult: { Err: { error: { Module: 'ModuleError' } } }
           }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: {
+              err: { error: { Module: 'ModuleError' } }
+            },
+            forwardedXcms: []
+          }
         })
       } as unknown as Codec
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(mockResponse)
 
-      const result = await polkadotApi.getDryRun({ tx: mockExtrinsic, address, node })
+      const result = await polkadotApi.getDryRunCall({ tx: mockExtrinsic, address, node })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
         { system: { Signed: address } },
@@ -683,12 +705,152 @@ describe('PolkadotJsApi', () => {
       const mockTransaction = {} as unknown as Extrinsic
 
       await expect(
-        polkadotApi.getDryRun({
+        polkadotApi.getDryRunCall({
           tx: mockTransaction,
           address: 'some_address',
           node: 'Acala'
         })
       ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+    })
+  })
+
+  describe('getDryRunXcm', () => {
+    const originLocation: sdkCore.TMultiLocation = {
+      parents: 0,
+      interior: { Here: null }
+    }
+    const dummyXcm = { some: 'payload' }
+
+    it('should return success with computed fee and weight', async () => {
+      const mockResponse = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: {
+            executionResult: { Complete: {} },
+            emittedEvents: [
+              {
+                method: 'Issued',
+                section: 'balances',
+                data: {
+                  amount: '1000'
+                }
+              }
+            ]
+          }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: {
+              used: { refTime: '111', proofSize: '222' }
+            },
+            forwardedXcms: [
+              [
+                {
+                  v4: {
+                    parents: 0,
+                    interior: { Here: null }
+                  }
+                }
+              ]
+            ]
+          }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
+
+      vi.mocked(sdkCore.computeFeeFromDryRunPjs).mockReturnValue(555n)
+
+      const result = await polkadotApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        node: 'Astar',
+        origin: 'Hydration'
+      })
+
+      expect(mockApiPromise.call.dryRunApi.dryRunXcm).toHaveBeenCalledWith(originLocation, dummyXcm)
+      expect(result).toEqual({
+        success: true,
+        fee: 1000n,
+        weight: {
+          refTime: 111n,
+          proofSize: 222n
+        },
+        forwardedXcms: expect.any(Object)
+      })
+    })
+
+    it('should return failureReason when dryRunCall is not successful', async () => {
+      const mockResponse = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: {
+            executionResult: { Incomplete: { error: 'ModuleError' } }
+          }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: {
+              err: { error: { Module: 'ModuleError' } }
+            }
+          }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
+
+      const result = await polkadotApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        node: 'Astar',
+        origin: 'Hydration'
+      })
+
+      expect(result).toEqual({
+        success: false,
+        failureReason: 'ModuleError'
+      })
+    })
+
+    it('should throw NodeNotSupportedError for unsupported node', async () => {
+      await expect(
+        polkadotApi.getDryRunXcm({
+          originLocation,
+          xcm: dummyXcm,
+          node: 'Acala',
+          origin: 'Hydration'
+        })
+      ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+    })
+
+    it('should throw error if no issued event found', async () => {
+      const mockResponse = {
+        toHuman: vi.fn().mockReturnValue({
+          Ok: {
+            executionResult: { Complete: {} },
+            emittedEvents: []
+          }
+        }),
+        toJSON: vi.fn().mockReturnValue({
+          ok: {
+            executionResult: {
+              used: { refTime: '111', proofSize: '222' }
+            }
+          }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.dryRunApi.dryRunXcm).mockResolvedValue(mockResponse)
+
+      expect(
+        await polkadotApi.getDryRunXcm({
+          originLocation,
+          xcm: dummyXcm,
+          node: 'AssetHubPolkadot',
+          origin: 'Hydration'
+        })
+      ).toEqual({
+        success: false,
+        failureReason: 'Cannot determine destination fee. No Issued event found'
+      })
     })
   })
 

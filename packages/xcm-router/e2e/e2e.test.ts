@@ -200,7 +200,7 @@ describe.sequential('E2E tests', () => {
   describe('InterlayDex', () => {
     it('should build a transfer extrinsic without error on Interlay', async () => {
       const transactions = await RouterBuilder()
-        .from('Zeitgeist')
+        .from('BifrostPolkadot')
         .exchange('InterlayDex')
         .to('Phala')
         .currencyFrom({ symbol: 'INTR' })

@@ -6,15 +6,20 @@ import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
+import { DOT_MULTILOCATION } from '../constants'
+import { InvalidParameterError } from '../errors'
 import * as claimAssets from '../pallets/assets/asset-claim'
 import * as xcmPallet from '../transfer'
+import type { TGetXcmFeeEstimateResult, TGetXcmFeeResult } from '../types'
 import { Version } from '../types'
 import { Builder } from './Builder'
 
 vi.mock('../transfer', () => ({
   send: vi.fn(),
   transferRelayToPara: vi.fn(),
-  getDryRun: vi.fn()
+  getDryRun: vi.fn(),
+  getXcmFee: vi.fn(),
+  getXcmFeeEstimate: vi.fn()
 }))
 
 const NODE: TNode = 'Acala'
@@ -701,7 +706,9 @@ describe('Builder', () => {
     it('should dry run a normal transfer', async () => {
       const spy = vi.mocked(xcmPallet.getDryRun).mockResolvedValue({
         success: true,
-        fee: 1000n
+        fee: 1000n,
+        forwardedXcms: [],
+        destParaId: 0
       })
 
       const SENDER_ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
@@ -715,9 +722,113 @@ describe('Builder', () => {
 
       expect(result).toEqual({
         success: true,
-        fee: 1000n
+        fee: 1000n,
+        forwardedXcms: [],
+        destParaId: 0
       })
       expect(spy).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('Fee calculation', () => {
+    it('should estimate XCM fee', async () => {
+      const spy = vi
+        .mocked(xcmPallet.getXcmFeeEstimate)
+        .mockResolvedValue({} as TGetXcmFeeEstimateResult)
+
+      const SENDER = 'sender-address'
+
+      const result = await Builder(mockApi)
+        .from(NODE)
+        .to(NODE_2)
+        .currency(CURRENCY)
+        .address(ADDRESS, SENDER)
+        .getXcmFeeEstimate()
+
+      expect(result).toEqual({})
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+
+    it('should throw when destination is a Multi-Location (estimate)', async () => {
+      await expect(
+        Builder(mockApi)
+          .from(NODE)
+          .to(DOT_MULTILOCATION)
+          .currency(CURRENCY)
+          .address(ADDRESS, 'alice')
+          .getXcmFeeEstimate()
+      ).rejects.toThrow(InvalidParameterError)
+    })
+
+    it('should throw when address is a Multi-Location (estimate)', async () => {
+      await expect(
+        Builder(mockApi)
+          .from(NODE)
+          .to(NODE_2)
+          .currency(CURRENCY)
+          .address(DOT_MULTILOCATION, 'alice')
+          .getXcmFeeEstimate()
+      ).rejects.toThrow(InvalidParameterError)
+    })
+
+    it('should throw when destination is Ethereum (estimate)', async () => {
+      await expect(
+        Builder(mockApi)
+          .from(NODE)
+          .to('Ethereum')
+          .currency(CURRENCY)
+          .address(ADDRESS, 'alice')
+          .getXcmFeeEstimate()
+      ).rejects.toThrow(InvalidParameterError)
+    })
+
+    it('should fetch XCM fee (dryRun)', async () => {
+      const spy = vi.mocked(xcmPallet.getXcmFee).mockResolvedValue({} as TGetXcmFeeResult)
+
+      const SENDER = 'sender-address'
+
+      const result = await Builder(mockApi)
+        .from(NODE)
+        .to(NODE_2)
+        .currency(CURRENCY)
+        .address(ADDRESS, SENDER)
+        .getXcmFee()
+
+      expect(result).toEqual({})
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+
+    it('should throw when destination is a Multi-Location (dryRun)', async () => {
+      await expect(
+        Builder(mockApi)
+          .from(NODE)
+          .to(DOT_MULTILOCATION)
+          .currency(CURRENCY)
+          .address(ADDRESS, 'alice')
+          .getXcmFee()
+      ).rejects.toThrow(InvalidParameterError)
+    })
+
+    it('should throw when address is a Multi-Location (estimate)', async () => {
+      await expect(
+        Builder(mockApi)
+          .from(NODE)
+          .to(NODE_2)
+          .currency(CURRENCY)
+          .address(DOT_MULTILOCATION, 'alice')
+          .getXcmFee()
+      ).rejects.toThrow(InvalidParameterError)
+    })
+
+    it('should throw when destination is Ethereum (dryRun)', async () => {
+      await expect(
+        Builder(mockApi)
+          .from(NODE)
+          .to('Ethereum')
+          .currency(CURRENCY)
+          .address(ADDRESS, 'alice')
+          .getXcmFee()
+      ).rejects.toThrow(InvalidParameterError)
     })
   })
 })

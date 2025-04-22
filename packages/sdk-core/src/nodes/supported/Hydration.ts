@@ -63,7 +63,7 @@ class Hydration<TApi, TRes>
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: this.createPolkadotXcmHeader(
+        dest: this.createVersionedDestination(
           scenario,
           versionOrDefault,
           destination,

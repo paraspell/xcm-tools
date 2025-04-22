@@ -13,10 +13,30 @@ import {
 import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
-import { XTransferDto } from './dto/XTransferDto.js';
+import { GetXcmFeeDto, XTransferDto } from './dto/XTransferDto.js';
 
 @Injectable()
 export class XTransferService {
+  private async executeWithBuilder<T>(
+    transfer: XTransferDto,
+    executor: (
+      finalBuilder: ReturnType<typeof this.buildXTransfer>,
+    ) => Promise<T>,
+  ): Promise<T> {
+    this.validateTransfer(transfer);
+
+    const sdkBuilder = Builder();
+    const finalBuilder = this.buildXTransfer(sdkBuilder, transfer);
+
+    try {
+      return await executor(finalBuilder);
+    } catch (e) {
+      return handleXcmApiError(e);
+    } finally {
+      await sdkBuilder.disconnect();
+    }
+  }
+
   private validateTransfer(transfer: XTransferDto) {
     const { from, to, address, pallet, method, senderAddress } = transfer;
 
@@ -74,7 +94,7 @@ export class XTransferService {
       .to(to as TNodeWithRelayChains)
       .currency(currency)
       .feeAsset(feeAsset)
-      .address(address, senderAddress);
+      .address(address, senderAddress as string);
 
     if (xcmVersion) {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);
@@ -87,44 +107,34 @@ export class XTransferService {
     return finalBuilder;
   }
 
-  async performDryRun(
-    senderAddress: string | undefined,
-    finalBuilder: ReturnType<typeof this.buildXTransfer>,
-  ) {
+  dryRun(transfer: XTransferDto) {
+    const { senderAddress } = transfer;
     if (!senderAddress) {
-      throw new BadRequestException('Sender address is required for dry run.');
+      throw new BadRequestException('Sender address is required for dry-run.');
     }
-
-    try {
-      return await finalBuilder.dryRun(senderAddress);
-    } catch (e) {
-      return handleXcmApiError(e);
-    } finally {
-      await finalBuilder.disconnect();
-    }
+    return this.executeWithBuilder(transfer, (builder) =>
+      builder.dryRun(senderAddress),
+    );
   }
 
-  async generateXcmCall(transfer: XTransferDto, isDryRun = false) {
-    this.validateTransfer(transfer);
+  getXcmFee(transfer: GetXcmFeeDto) {
+    return this.executeWithBuilder(transfer as XTransferDto, (builder) =>
+      builder.getXcmFee(),
+    );
+  }
 
-    const { senderAddress } = transfer;
+  getXcmFeeEstimate(transfer: XTransferDto) {
+    return this.executeWithBuilder(transfer, (builder) =>
+      builder.getXcmFeeEstimate(),
+    );
+  }
 
-    const builder = Builder();
-
-    const finalBuilder = this.buildXTransfer(builder, transfer);
-
-    if (isDryRun) return this.performDryRun(senderAddress, finalBuilder);
-
-    try {
+  generateXcmCall(transfer: XTransferDto) {
+    return this.executeWithBuilder(transfer, async (finalBuilder) => {
       const tx = await finalBuilder.build();
-
       const encoded = await tx.getEncodedData();
       return encoded.asHex();
-    } catch (e) {
-      return handleXcmApiError(e);
-    } finally {
-      await builder.disconnect();
-    }
+    });
   }
 
   async generateBatchXcmCall(batchDto: BatchXTransferDto) {

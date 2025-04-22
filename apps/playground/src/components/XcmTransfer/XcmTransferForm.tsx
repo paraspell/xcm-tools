@@ -21,6 +21,8 @@ import {
 } from '@paraspell/sdk';
 import {
   IconChevronDown,
+  IconCoin,
+  IconCoinFilled,
   IconLocationCheck,
   IconPlus,
   IconTransfer,
@@ -194,6 +196,20 @@ const XcmTransferForm: FC<Props> = ({
     form.validate();
     if (form.isValid()) {
       onSubmitInternal(form.getValues(), undefined, 'dryRun');
+    }
+  };
+
+  const onSubmitGetXcmFee = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), undefined, 'getXcmFee');
+    }
+  };
+
+  const onSubmitGetXcmFeeEstimate = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), undefined, 'getXcmFeeEstimate');
     }
   };
 
@@ -382,6 +398,20 @@ const XcmTransferForm: FC<Props> = ({
                     onClick={onSubmitInternalDryRun}
                   >
                     Dry run
+                  </Menu.Item>
+
+                  <Menu.Item
+                    leftSection={<IconCoinFilled size={16} />}
+                    onClick={onSubmitGetXcmFee}
+                  >
+                    Get XCM fee
+                  </Menu.Item>
+
+                  <Menu.Item
+                    leftSection={<IconCoin size={16} />}
+                    onClick={onSubmitGetXcmFeeEstimate}
+                  >
+                    Get XCM fee estimate
                   </Menu.Item>
 
                   {!initialValues && (

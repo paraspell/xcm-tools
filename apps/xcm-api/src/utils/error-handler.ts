@@ -3,6 +3,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
+  BridgeHaltedError,
+  DryRunFailedError,
   DuplicateAssetError,
   DuplicateAssetIdError,
   IncompatibleNodesError,
@@ -24,6 +26,8 @@ const sdkErrors = [
   ScenarioNotSupportedError,
   DuplicateAssetError,
   DuplicateAssetIdError,
+  BridgeHaltedError,
+  DryRunFailedError,
 ];
 
 type SdkErrorConstructors = (typeof sdkErrors)[number];

@@ -1,8 +1,8 @@
-import type { TDryRunOptions, TDryRunResult } from '../types'
+import type { TDryRunCallOptions, TDryRunResult } from '../types'
 import { validateAddress } from '../utils'
 
 export const getDryRun = async <TApi, TRes>(
-  options: TDryRunOptions<TApi, TRes>
+  options: TDryRunCallOptions<TApi, TRes>
 ): Promise<TDryRunResult> => {
   const { api, node, address } = options
 
@@ -10,7 +10,7 @@ export const getDryRun = async <TApi, TRes>(
 
   await api.init(node)
   try {
-    return await api.getDryRun(options)
+    return await api.getDryRunCall(options)
   } finally {
     await api.disconnect()
   }

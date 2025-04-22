@@ -29,7 +29,7 @@ import {
   addXcmVersionHeader,
   constructRelayToParaParameters,
   createMultiAsset,
-  createPolkadotXcmHeader,
+  createVersionedDestination,
   createVersionedMultiAssets,
   extractVersionFromHeader
 } from '../pallets/xcmPallet/utils'
@@ -201,7 +201,7 @@ abstract class ParachainNode<TApi, TRes> {
     } else if (supportsPolkadotXCM(this)) {
       const options: TPolkadotXCMTransferOptions<TApi, TRes> = {
         api,
-        header: this.createPolkadotXcmHeader(scenario, versionOrDefault, destination, paraId),
+        header: this.createVersionedDestination(scenario, versionOrDefault, destination, paraId),
         addressSelection: createVersionedBeneficiary({
           api,
           scenario,
@@ -282,13 +282,13 @@ abstract class ParachainNode<TApi, TRes> {
     })
   }
 
-  createPolkadotXcmHeader(
+  createVersionedDestination(
     scenario: TScenario,
     version: Version,
     destination: TDestination,
     paraId?: number
   ): TXcmVersioned<TMultiLocation> {
-    return createPolkadotXcmHeader(scenario, version, destination, paraId)
+    return createVersionedDestination(scenario, version, destination, paraId)
   }
 
   getNativeAssetSymbol(): string {
@@ -400,14 +400,14 @@ abstract class ParachainNode<TApi, TRes> {
     // Pad fee by 50%
     const dryRunFeePadded = (BigInt(dryRunResult.fee) * BigInt(3)) / BigInt(2)
 
-    const destWithHeader = createPolkadotXcmHeader(scenario, version, destination, paraIdTo)
+    const destWithHeader = createVersionedDestination(scenario, version, destination, paraIdTo)
     const [_, dest] = extractVersionFromHeader(destWithHeader)
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: this.createPolkadotXcmHeader(
+        dest: this.createVersionedDestination(
           scenario,
           version,
           destination,
@@ -551,7 +551,7 @@ abstract class ParachainNode<TApi, TRes> {
       module: 'PolkadotXcm',
       section: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: this.createPolkadotXcmHeader(
+        dest: this.createVersionedDestination(
           scenario,
           version,
           destination,

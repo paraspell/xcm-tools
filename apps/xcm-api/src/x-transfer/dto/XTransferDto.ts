@@ -127,4 +127,12 @@ export const XTransferDtoSchema = z.object({
   senderAddress: z.string().optional(),
 });
 
+export const GetXcmFeeSchema = z.union([
+  XTransferDtoSchema,
+  z.object({
+    disableFallback: z.boolean().default(false),
+  }),
+]);
+
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
+export type GetXcmFeeDto = z.infer<typeof GetXcmFeeSchema>;

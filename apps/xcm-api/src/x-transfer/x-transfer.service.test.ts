@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TDryRunResult, TNode } from '@paraspell/sdk';
+import type { TDryRunResult, TGetXcmFeeResult, TNode } from '@paraspell/sdk';
 import { IncompatibleNodesError, InvalidCurrencyError } from '@paraspell/sdk';
 import * as paraspellSdk from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -18,6 +18,20 @@ const txHashBatch = '0x123456';
 const dryRunResult: TDryRunResult = {
   success: true,
   fee: 1n,
+  forwardedXcms: [],
+};
+
+const feeResult: TGetXcmFeeResult = {
+  origin: {
+    fee: 1n,
+    feeType: 'dryRun',
+    currency: 'DOT',
+  },
+  destination: {
+    fee: 1n,
+    currency: 'DOT',
+    feeType: 'dryRun',
+  },
 };
 
 const builderMock = {
@@ -40,6 +54,8 @@ const builderMock = {
     }),
   }),
   dryRun: vi.fn().mockResolvedValue(dryRunResult),
+  getXcmFee: vi.fn().mockResolvedValue(feeResult),
+  getXcmFeeEstimate: vi.fn().mockResolvedValue(feeResult),
   disconnect: vi.fn(),
 };
 
@@ -245,37 +261,6 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should get dry run result if isDryRun is set', async () => {
-      const result = await service.generateXcmCall(
-        {
-          ...xTransferDto,
-          senderAddress: 'sender-address',
-        },
-        true,
-      );
-      expect(result).toBe(dryRunResult);
-    });
-
-    it('should throw BadRequestException when address is missing in dry run', async () => {
-      const options: XTransferDto = {
-        ...xTransferDto,
-        address: {
-          parents: 1,
-          interior: {
-            X1: [
-              {
-                Parachain: 1000,
-              },
-            ],
-          },
-        },
-      };
-
-      await expect(service.generateXcmCall(options, true)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
     it('should throw BadRequestException when pallet or method are not provided', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
@@ -302,29 +287,54 @@ describe('XTransferService', () => {
         'transfer',
       );
     });
+  });
 
-    it('should throw BadRequestException when error inside dryRun SDK is thrown', async () => {
-      const builderMockWithError = {
-        ...builderMock,
-        dryRun: vi.fn().mockImplementation(() => {
-          throw new InvalidCurrencyError('Unknown error');
-        }),
-      };
+  describe('dryRun', () => {
+    it('returns SDK dry-run result', async () => {
+      const dto: XTransferDto = { ...xTransferDto, senderAddress: 'alice' };
 
-      vi.spyOn(paraspellSdk, 'Builder').mockReturnValue(
-        builderMockWithError as unknown as ReturnType<
-          typeof paraspellSdk.Builder
-        >,
-      );
+      const result = await service.dryRun(dto);
 
-      const options: XTransferDto = {
-        ...xTransferDto,
-        senderAddress: 'sender-address',
-      };
+      expect(result).toBe(dryRunResult);
+      expect(builderMock.dryRun).toHaveBeenCalledWith('alice');
+    });
 
-      await expect(service.generateXcmCall(options, true)).rejects.toThrow(
+    it('throws BadRequestException when senderAddress missing', () => {
+      expect(() => service.dryRun({ ...xTransferDto })).toThrow(
         BadRequestException,
       );
+    });
+
+    it('maps SDK errors inside dryRun to BadRequestException', async () => {
+      const builderErr = {
+        ...builderMock,
+        dryRun: vi.fn().mockImplementation(() => {
+          throw new InvalidCurrencyError('some error');
+        }),
+      };
+      vi.spyOn(paraspellSdk, 'Builder').mockReturnValue(
+        builderErr as unknown as ReturnType<typeof paraspellSdk.Builder>,
+      );
+
+      await expect(
+        service.dryRun({ ...xTransferDto, senderAddress: 'alice' }),
+      ).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('getXcmFee', () => {
+    it('delegates to builder.getXcmFee', async () => {
+      const res = await service.getXcmFee(xTransferDto);
+      expect(res).toBe(feeResult);
+      expect(builderMock.getXcmFee).toHaveBeenCalled();
+    });
+  });
+
+  describe('getXcmFeeEstimate', () => {
+    it('delegates to builder.getXcmFeeEstimate', async () => {
+      const res = await service.getXcmFeeEstimate(xTransferDto);
+      expect(res).toBe(feeResult);
+      expect(builderMock.getXcmFeeEstimate).toHaveBeenCalled();
     });
   });
 

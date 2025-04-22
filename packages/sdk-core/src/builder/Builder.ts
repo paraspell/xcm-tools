@@ -1,6 +1,6 @@
 // Implements general builder pattern, this is Builder main file
 
-import type { TCurrencyInput, TCurrencyInputWithAmount } from '@paraspell/assets'
+import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import {
   isRelayChain,
   isTMultiLocation,
@@ -9,8 +9,17 @@ import {
 } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
-import { getDryRun, send } from '../transfer'
-import type { TAddress, TBatchOptions, TDestination, TSendBaseOptions, Version } from '../types'
+import { InvalidParameterError } from '../errors'
+import { getDryRun, getXcmFee, getXcmFeeEstimate, send } from '../transfer'
+import type {
+  TAddress,
+  TBatchOptions,
+  TDestination,
+  TGetXcmFeeBuilderOptions,
+  TSendBaseOptions,
+  TSendBaseOptionsWithSenderAddress,
+  Version
+} from '../types'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 
@@ -90,14 +99,16 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @param address - The destination address.
    * @returns An instance of Builder
    */
+  address(address: TAddress): GeneralBuilder<TApi, TRes, T & { address: TAddress }>
   address(
     address: TAddress,
-    senderAddress?: string
-  ): GeneralBuilder<TApi, TRes, T & { address: TAddress }> {
+    senderAddress: string
+  ): GeneralBuilder<TApi, TRes, T & { address: TAddress; senderAddress: string }>
+  address(address: TAddress, senderAddress?: string) {
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
       address,
-      senderAddress
+      ...(senderAddress ? { senderAddress } : {})
     })
   }
 
@@ -191,6 +202,94 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       tx,
       address: senderAddress,
       node: this._options.from
+    })
+  }
+
+  /**
+   * Estimates the XCM fee for the transfer using paymentInfo function.
+   *
+   * @returns An origin and destination fee estimate.
+   */
+  async getXcmFeeEstimate(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+    const { from, to, address, senderAddress } = this._options
+
+    if (isTMultiLocation(to)) {
+      throw new InvalidParameterError(
+        'Multi-Location destination is not supported for XCM fee calculation.'
+      )
+    }
+
+    if (isTMultiLocation(address)) {
+      throw new InvalidParameterError(
+        'Multi-Location address is not supported for XCM fee calculation.'
+      )
+    }
+
+    if (to === 'Ethereum') {
+      throw new InvalidParameterError(
+        'Ethereum destination is not yet supported for XCM fee calculation.'
+      )
+    }
+
+    this.api.setDisconnectAllowed(false)
+
+    const tx = await this.build()
+
+    this.api.setDisconnectAllowed(true)
+
+    return getXcmFeeEstimate({
+      api: this.api,
+      tx,
+      origin: from,
+      destination: to,
+      address: address,
+      senderAddress: senderAddress,
+      currency: this._options.currency
+    })
+  }
+
+  /**
+   * Returns the XCM fee for the transfer using dryRun or paymentInfo function.
+   *
+   * @returns An origin and destination fee.
+   */
+  async getXcmFee(
+    this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
+    { disableFallback }: TGetXcmFeeBuilderOptions = { disableFallback: false }
+  ) {
+    const { from, to, address, senderAddress } = this._options
+
+    if (isTMultiLocation(to)) {
+      throw new InvalidParameterError(
+        'Multi-Location destination is not supported for XCM fee calculation.'
+      )
+    }
+
+    if (isTMultiLocation(address)) {
+      throw new InvalidParameterError(
+        'Multi-Location address is not supported for XCM fee calculation.'
+      )
+    }
+
+    if (to === 'Ethereum') {
+      throw new InvalidParameterError(
+        'Ethereum destination is not yet supported for XCM fee calculation.'
+      )
+    }
+
+    const tx = await this.build()
+
+    this.api.setDisconnectAllowed(false)
+
+    return getXcmFee({
+      api: this.api,
+      tx,
+      origin: from,
+      destination: to,
+      senderAddress: senderAddress,
+      address: address,
+      currency: this._options.currency,
+      disableFallback
     })
   }
 

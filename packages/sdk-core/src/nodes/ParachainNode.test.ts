@@ -41,7 +41,7 @@ vi.mock('../pallets/xcmPallet/utils', async () => {
     constructRelayToParaParameters: vi.fn().mockReturnValue('parameters'),
     createVersionedMultiAssets: vi.fn().mockReturnValue('currencySpec'),
     createMultiAsset: vi.fn().mockReturnValue('multiAsset'),
-    createPolkadotXcmHeader: vi.fn().mockReturnValue('polkadotXcmHeader'),
+    createVersionedDestination: vi.fn().mockReturnValue('polkadotXcmHeader'),
     isTMultiLocation: vi.fn(),
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     extractVersionFromHeader: vi.fn().mockImplementation(header => [header, Version.V4])
@@ -320,7 +320,7 @@ describe('ParachainNode', () => {
   })
 
   it('should create Polkadot XCM header', () => {
-    const result = node.createPolkadotXcmHeader('ParaToRelay', Version.V3, 'Polkadot')
+    const result = node.createVersionedDestination('ParaToRelay', Version.V3, 'Polkadot')
 
     expect(result).toBe('polkadotXcmHeader')
   })
