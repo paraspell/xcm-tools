@@ -68,23 +68,15 @@ import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk-pjs'; //Only ne
 
 ```
 NOTES:
-- If you wish to transfer from Parachain that uses long IDs for example Moonbeam you have to add the character 'n' to the end of currencyID. Eg: .currency({id: 42259045809535163221576417993425387648n}) will mean you transfer xcDOT.
-- You can now use custom ParachainIDs if you wish to test in TestNet. Just add parachainID as an additional parameter eg: .to('Basilisk', 2948).
-- POLKADOT <> KUSAMA Bridge is now available! Try sending DOT or KSM between AssetHubs - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
-- You can now customize XCM Version! Try using .xcmVersion parameter after address in builder.
-- POLKADOT <> ETHEREUM Bridge is now available! Try sending WETH between the ecosystems - More information here: https://paraspell.github.io/docs/sdk/xcmPallet.html#ecosystem-bridges.
-- ParaSpell now offers advanced asset symbol selection {symbol: "symbol"} for non duplicate assets, {symbol: Native("symbol")} or {symbol: Foreign("symbol")} if the duplicates are between native and foreign assets and {symbol: ForeignAbstract("symbol")} if the duplicates are in foreign assets only. You will get an error that will guide you further if you simply start with {symbol: "symbol"}.
-- You can now select assets by multilocation by simply using { multilocation: string | JSON }. The custom multilocation selection remains supported, but in order to use it you now have to use override - {multilocation: Override('Custom Multilocation')}.
-- The balance queries also support multilocation asset selection
-- You can now query foreign asset minimal deposits also.
-```
-
-```
-Latest news:
 - Since v8, amount moved closer to currency selection and specifying from and to parameters is no longer optional to save code.
 - More information on v8 major breaking change: https://github.com/paraspell/xcm-tools/pull/554
 - XCM SDK Now supports API Failsafe - If one endpoint doesn't work it automatically switches to the next one.
 - Builder now allows you to directly disconnect API.
+```
+
+```
+Latest news:
+- Local transfers are now available for every currency and every chain. To try them, simply use same origin and destination parameters.
 ```
 
 ### Builder pattern:
@@ -245,6 +237,38 @@ const tx = await builder.build()
 //Make sure to disconnect API after it is no longer used (eg. after transaction)
 await builder.disconnect()
 ```
+
+### Local transfers
+```ts
+const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+      .from(NODE)
+      .to(NODE) //Has to be same as origin (from)
+      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
+      .address(address)
+
+const tx = await builder.build()
+
+//Make sure to disconnect API after it is no longer used (eg. after transaction)
+await builder.disconnect()
+
+/*
+EXAMPLE:
+const builder = Builder()
+  .from('Hydration')
+  .to('Hydration')
+  .currency({
+    symbol: 'DOT',
+    amount: '1000000000'
+  })
+  .address(address)
+
+const tx = await builder.build()
+
+//Disconnect API after TX
+await builder.disconnect()
+*/
+```
+
 
 ### Asset queries:
 
