@@ -108,6 +108,20 @@ const response = await fetch('http://localhost:3001/x-transfer', {
   }),
 });
 
+//Construct local asset transfer
+const response = await fetch('http://localhost:3001/x-transfer', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Parachain', // Replace "Parachain" with sender Parachain, e.g., "Acala"
+    to: 'Parachain' // Replace Parachain with same parameter as "from" parameter
+    currency: { currencySpec }, //{id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}}
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+  }),
+});
+
 //Construct custom multilocation XCM call from Parachain to Parachain (HRMP)
 //Multilocations can be customized for Destination, Address and Currency.
 const response = await fetch('http://localhost:3001/x-transfer', {
