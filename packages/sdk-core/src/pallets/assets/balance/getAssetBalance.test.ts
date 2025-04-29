@@ -1,7 +1,8 @@
-import { getNativeAssetSymbol } from '@paraspell/assets'
+import { findAsset, getNativeAssetSymbol } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import { DOT_MULTILOCATION } from '../../../constants'
 import { createApiInstanceForNode } from '../../../utils'
 import { getAssetBalance } from './getAssetBalance'
 import { getBalanceForeignInternal } from './getBalanceForeign'
@@ -12,7 +13,9 @@ vi.mock('../../../utils', () => ({
 }))
 
 vi.mock('@paraspell/assets', () => ({
-  getNativeAssetSymbol: vi.fn()
+  getNativeAssetSymbol: vi.fn(),
+  findAsset: vi.fn(),
+  InvalidCurrencyError: class extends Error {}
 }))
 
 vi.mock('./getBalanceNative', () => ({
@@ -38,6 +41,7 @@ describe('getAssetBalance', () => {
     const account = '0x123'
     const node = 'Polkadot'
     const currency = { symbol: 'DOT' }
+    vi.mocked(findAsset).mockReturnValueOnce({ symbol: 'DOT', multiLocation: DOT_MULTILOCATION })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getBalanceNativeInternal).mockResolvedValue(1000n)
 
@@ -50,6 +54,7 @@ describe('getAssetBalance', () => {
     const account = '0x456'
     const node = 'Kusama'
     const currency = { symbol: 'KSM' }
+    vi.mocked(findAsset).mockReturnValueOnce({ symbol: 'KSM', multiLocation: DOT_MULTILOCATION })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getBalanceForeignInternal).mockResolvedValue(200n)
 
@@ -67,6 +72,7 @@ describe('getAssetBalance', () => {
     const account = '0x789'
     const node = 'Kusama'
     const currency = { symbol: 'XYZ' }
+    vi.mocked(findAsset).mockReturnValueOnce({ symbol: 'XYZ', multiLocation: DOT_MULTILOCATION })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getBalanceForeignInternal).mockResolvedValue(0n)
 
@@ -78,6 +84,7 @@ describe('getAssetBalance', () => {
     const account = '0x234'
     const node = 'Interlay'
     const currency = { symbol: 'INTR' }
+    vi.mocked(findAsset).mockReturnValueOnce({ symbol: 'INTR', multiLocation: DOT_MULTILOCATION })
     vi.mocked(getNativeAssetSymbol).mockReturnValue('INTR')
     vi.mocked(getBalanceForeignInternal).mockResolvedValue(1500n)
 
@@ -89,5 +96,17 @@ describe('getAssetBalance', () => {
       currency,
       api: apiMock
     })
+  })
+
+  it('throws an error when the asset is not found', async () => {
+    const account = '0x123'
+    const node = 'Polkadot'
+    const currency = { symbol: 'UNKNOWN' }
+    vi.mocked(findAsset).mockReturnValueOnce(null)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+
+    await expect(
+      getAssetBalance({ api: apiMock, address: account, node, currency })
+    ).rejects.toThrow('Asset {"symbol":"UNKNOWN"} not found on Polkadot')
   })
 })
