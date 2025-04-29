@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.11.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.11.0...sdk-pjs-v8.11.1) (2025-04-29)
+
+
+### Miscellaneous Chores
+
+* **xcm-tools:** Add Local transfers ([3a37b22](https://github.com/paraspell/xcm-tools/commit/3a37b222a40d0475a48646bcd5653d6ba6c4de65))
+
 ## [8.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.10.0...sdk-pjs-v8.11.0) (2025-04-22)
 
 

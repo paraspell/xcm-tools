@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.11.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.11.0...sdk-core-v8.11.1) (2025-04-29)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix multi-location currency select ✨ ([58b11c0](https://github.com/paraspell/xcm-tools/commit/58b11c023135ab76c158a6b8b91840d73ba2b1f9))
+* **sdk-core:** Upgrade deprecated reserve_transfer_assets transfers 🪄 ([f12793c](https://github.com/paraspell/xcm-tools/commit/f12793c18f807d9088f5d921c56223a921fb468b))
+
 ## [8.11.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.10.0...sdk-core-v8.11.0) (2025-04-22)
 
 
