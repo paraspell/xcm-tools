@@ -1,5 +1,18 @@
 # Changelog
 
+## [8.12.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.11.1...sdk-v8.12.0) (2025-04-30)
+
+
+### Features
+
+* **sdk-core:** Add XCM fee queries ✨ ([1bcca3f](https://github.com/paraspell/xcm-tools/commit/1bcca3f45d45c47714a1ffb20d32c83486df2179))
+
+
+### Miscellaneous Chores
+
+* Perform monthly maintenance check ✨ ([2922557](https://github.com/paraspell/xcm-tools/commit/292255751429cb59dc5086b3f4dd93b4b4ee8f21))
+* **xcm-tools:** Add XCM fee query docs ([96cd0be](https://github.com/paraspell/xcm-tools/commit/96cd0be399a63382fd673c5360a135dafc5b713a))
+
 ## [8.11.1](https://github.com/paraspell/xcm-tools/compare/sdk-v8.11.0...sdk-v8.11.1) (2025-04-29)
 
 
