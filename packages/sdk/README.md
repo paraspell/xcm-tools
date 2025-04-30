@@ -227,6 +227,42 @@ import { hasDryRunSupport } from "@paraspell/sdk-pjs";
 const result = hasDryRunSupport(node)
 ```
 
+### XCM Fee (Origin and Dest.)
+Following queries allow you to query fee from both Origin and Destination of the XCM Message. You can get accurate result from DryRun query(Requires token balance) or less accurate from Payment info query (Doesn't require token balance).
+
+#### More accurate query using DryRun
+The query is designed to retrieve you XCM fee at any cost, but fallbacking to Payment info if DryRun query fails or is not supported by either origin or destination. This query requires user to have token balance (Token that they are sending and origin native asset to pay for execution fees on origin).
+
+```
+NOTICE: When Payment info query is performed, it retrieves fees for destination in destination's native currency, however, they are paid in currency that is being sent. To solve this, you have to convert token(native) to token(transferred) based on price. DryRun returns fees in currency that is being transferred, so no additional calculations necessary in that case.
+```
+
+```ts
+const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+          .from(ORIGIN_CHAIN)
+          .to(DESTINATION_CHAIN)
+          .currency(CURRENCY)
+          .address(RECIPIENT_ADDRESS, SENDER_ADDRESS) // Both sender and recipient addresses are required!
+          .getXcmFee({disableFallback: true / false})  //When fallback is disabled, you only get notified of DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin or Destination chain do not support DryRun out of the box.
+```
+
+#### Less accurate query using Payment info
+This query is designed to retrieve you approximate fee and doesn't require any token balance.
+
+```
+NOTICE: When Payment info query is performed, it retrieves fees for destination in destination's native currency, however, they are paid in currency that is being sent. To solve this, you have to convert token(native) to token(transferred) based on price. 
+```
+
+```ts
+const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+          .from(ORIGIN_CHAIN)
+          .to(DESTINATION_CHAIN)
+          .currency(CURRENCY)
+          .address(RECIPIENT_ADDRESS, SENDER_ADDRESS) // Both sender and recipient addresses are required!
+          .getXcmFeeEstimate()
+```
+
+
 ### Asset claim:
 ```ts
 //Claim XCM trapped assets from the selected chain
