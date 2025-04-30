@@ -222,19 +222,6 @@
       }
     ]
   },
-  "Calamari": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      },
-      {
-        "name": "XTokens",
-        "index": 34
-      }
-    ]
-  },
   "CrustShadow": {
     "defaultPallet": "XTokens",
     "supportedPallets": [
@@ -254,19 +241,6 @@
       {
         "name": "PolkadotXcm",
         "index": 33
-      }
-    ]
-  },
-  "InvArchTinker": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      },
-      {
-        "name": "XTokens",
-        "index": 92
       }
     ]
   },
@@ -589,6 +563,19 @@
       {
         "name": "XcmPallet",
         "index": 99
+      }
+    ]
+  },
+  "Ajuna": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      },
+      {
+        "name": "XTokens",
+        "index": 35
       }
     ]
   }

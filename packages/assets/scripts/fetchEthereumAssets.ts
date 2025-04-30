@@ -62,7 +62,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
           X1: [
             {
               GlobalConsensus: {
-                polkadot: null
+                Polkadot: null
               }
             }
           ]
@@ -78,7 +78,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
           X1: [
             {
               GlobalConsensus: {
-                kusama: null
+                Kusama: null
               }
             }
           ]

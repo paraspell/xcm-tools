@@ -64,7 +64,5 @@ export const filteredNodes = NODE_NAMES_DOT_KSM.filter(
     node !== 'Turing' &&
     node !== 'Pendulum' &&
     node !== 'Subsocial' &&
-    // WS endpoint not working
-    node !== 'InvArchTinker' &&
     node !== 'Darwinia'
 )

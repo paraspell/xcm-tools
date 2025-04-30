@@ -1,4 +1,5 @@
 import Acala from '../nodes/supported/Acala'
+import { Ajuna } from '../nodes/supported/Ajuna'
 import Altair from '../nodes/supported/Altair'
 import Amplitude from '../nodes/supported/Amplitude'
 import AssetHubKusama from '../nodes/supported/AssetHubKusama'
@@ -10,7 +11,6 @@ import { BifrostPolkadot } from '../nodes/supported/BifrostPolkadot'
 import Bitgreen from '../nodes/supported/Bitgreen'
 import BridgeHubKusama from '../nodes/supported/BridgeHubKusama'
 import BridgeHubPolkadot from '../nodes/supported/BridgeHubPolkadot'
-import Calamari from '../nodes/supported/Calamari'
 import { Centrifuge } from '../nodes/supported/Centrifuge'
 import Collectives from '../nodes/supported/Collectives'
 import ComposableFinance from '../nodes/supported/ComposableFinance'
@@ -25,7 +25,6 @@ import Encointer from '../nodes/supported/Encointer'
 import Heima from '../nodes/supported/Heima'
 import Hydration from '../nodes/supported/Hydration'
 import Interlay from '../nodes/supported/Interlay'
-import InvArchTinker from '../nodes/supported/InvArchTinker'
 import Karura from '../nodes/supported/Karura'
 import KiltSpiritnet from '../nodes/supported/KiltSpiritnet'
 import Kintsugi from '../nodes/supported/Kintsugi'
@@ -53,6 +52,7 @@ import Zeitgeist from '../nodes/supported/Zeitgeist'
 export const nodes = <TApi, TRes>() => ({
   AssetHubPolkadot: new AssetHubPolkadot<TApi, TRes>(),
   Acala: new Acala<TApi, TRes>(),
+  Ajuna: new Ajuna<TApi, TRes>(),
   Astar: new Astar<TApi, TRes>(),
   Unique: new Unique<TApi, TRes>(),
   Crust: new Crust<TApi, TRes>(),
@@ -75,10 +75,8 @@ export const nodes = <TApi, TRes>() => ({
   Amplitude: new Amplitude<TApi, TRes>(),
   Basilisk: new Basilisk<TApi, TRes>(),
   BifrostKusama: new BifrostKusama<TApi, TRes>(),
-  Calamari: new Calamari<TApi, TRes>(),
   CrustShadow: new CrustShadow<TApi, TRes>(),
   Crab: new Crab<TApi, TRes>(),
-  InvArchTinker: new InvArchTinker<TApi, TRes>(),
   Karura: new Karura<TApi, TRes>(),
   Kintsugi: new Kintsugi<TApi, TRes>(),
   Moonriver: new Moonriver<TApi, TRes>(),

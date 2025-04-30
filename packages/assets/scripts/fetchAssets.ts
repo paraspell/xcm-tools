@@ -37,6 +37,7 @@ import {
 } from '@paraspell/sdk-common'
 import { getNodeProviders, getParaId } from '../../sdk-core/src'
 import { getRelayChainSymbol, getRelayChainType } from './utils'
+import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -348,6 +349,10 @@ const fetchOtherAssets = async (
 
   if (node === 'Polimec' || node === 'KiltSpiritnet') {
     otherAssets = await fetchPolimecForeignAssets(api, query)
+  }
+
+  if (node === 'Ajuna') {
+    otherAssets = await fetchAjunaOtherAssets(api, query)
   }
 
   return otherAssets.length > 0 ? otherAssets : fetchOtherAssetsDefault(node, api, query)

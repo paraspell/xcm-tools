@@ -5,8 +5,4 @@ export const validateTx = async (tx: Extrinsic) => {
   expect(tx).toBeDefined()
 }
 
-export const filteredNodes = NODE_NAMES_DOT_KSM.filter(
-  node =>
-    // WS endpoint not working
-    node !== 'InvArchTinker' && node !== 'Darwinia'
-)
+export const filteredNodes = NODE_NAMES_DOT_KSM

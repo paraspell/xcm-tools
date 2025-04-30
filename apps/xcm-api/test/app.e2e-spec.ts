@@ -128,10 +128,11 @@ describe('XCM API (e2e)', () => {
       });
 
       const otherAssets = getOtherAssets(node);
-      if (otherAssets.length > 0) {
-        const { symbol, assetId, decimals } = otherAssets[0].assetId
-          ? otherAssets[0]
-          : otherAssets[1];
+      if (otherAssets.length > 1) {
+        const { symbol, assetId, decimals } =
+          otherAssets[0].assetId !== undefined
+            ? otherAssets[0]
+            : otherAssets[1];
         const assetIdUrl = `/assets/${node}/id`;
         it(`Get asset id - ${assetIdUrl} (GET)`, () => {
           return request(app.getHttpServer())
@@ -807,7 +808,7 @@ describe('XCM API (e2e)', () => {
       const from: TNode = 'AssetHubKusama';
       const to: TNode = 'Basilisk';
       const currency = { symbol: 'USDT', amount: '1000' };
-      const xcmVersion = Version.V2;
+      const xcmVersion = Version.V3;
 
       const builder = Builder()
         .from(from)
