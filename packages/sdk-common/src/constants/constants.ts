@@ -4,6 +4,7 @@
 export const NODE_NAMES_DOT_KSM = [
   'AssetHubPolkadot',
   'Acala',
+  'Ajuna',
   'Astar',
   'BifrostPolkadot',
   'Bitgreen',
@@ -24,10 +25,8 @@ export const NODE_NAMES_DOT_KSM = [
   'Amplitude',
   'Basilisk',
   'BifrostKusama',
-  'Calamari',
   'CrustShadow',
   'Crab',
-  'InvArchTinker',
   'Karura',
   'Kintsugi',
   'Moonriver',

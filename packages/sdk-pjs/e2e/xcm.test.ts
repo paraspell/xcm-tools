@@ -1,4 +1,4 @@
-import { Builder, createApiInstanceForNode } from '../src'
+import { Builder, createApiInstanceForNode, NODE_NAMES_DOT_KSM, TNodePolkadotKusama } from '../src'
 import { generateE2eTests } from '../../sdk-core/e2e'
 import { filteredNodes, validateTx } from './utils'
 
@@ -6,4 +6,6 @@ import { filteredNodes, validateTx } from './utils'
 // Provide a dummy signer to satisfy the function signature
 const signer = {}
 
-generateE2eTests(Builder, createApiInstanceForNode, signer, signer, validateTx, filteredNodes)
+generateE2eTests(Builder, createApiInstanceForNode, signer, signer, validateTx, [
+  ...NODE_NAMES_DOT_KSM
+])

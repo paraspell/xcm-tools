@@ -8,6 +8,7 @@ export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   Polkadot: [GLOBAL],
   Kusama: [GLOBAL],
   Acala: [GLOBAL, 'assetRegistry.assetMetadatas'],
+  Ajuna: ['assets.metadata'],
   Astar: [GLOBAL, 'assets.metadata'],
   BifrostPolkadot: [GLOBAL, 'assetRegistry.currencyMetadatas'],
   Bitgreen: [], // No assets metadata query
@@ -23,11 +24,9 @@ export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   Amplitude: ['assetRegistry.metadata'],
   Basilisk: [GLOBAL, 'assetRegistry.assetMetadataMap'],
   BifrostKusama: [GLOBAL, 'assetRegistry.currencyMetadatas'],
-  Calamari: [GLOBAL, 'assets.metadata'],
   Crab: ['assets.metadata'],
   CrustShadow: ['assets.metadata'],
   Encointer: [], // No assets metadata query
-  InvArchTinker: [], // Assets query returns empty array
   Karura: [GLOBAL, 'assetRegistry.assetMetadatas'],
   Kintsugi: [GLOBAL, 'assetRegistry.metadata'],
   Moonriver: ['assetManager.assetIdType'],

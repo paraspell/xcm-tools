@@ -3,28 +3,28 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@eslint/js": "^9.23.0",
+    "@eslint/js": "^9.25.1",
     "@types/eslint-config-prettier": "^6.11.3",
-    "@types/node": "^22.13.13",
-    "eslint": "^9.23.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-react": "^7.37.4",
+    "@types/node": "^22.15.3",
+    "eslint": "^9.25.1",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-tsdoc": "^0.4.0",
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
-    "turbo": "^2.4.4",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.28.0",
-    "vitest": "^3.0.9"
+    "turbo": "^2.5.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.1",
+    "vitest": "^3.1.2"
   },
   "engines": {
     "node": ">=22"
   },
   "resolutions": {
-    "@polkadot/types-codec": "^15.8.1",
-    "@polkadot/api": "^15.8.1",
-    "@polkadot/types": "^15.8.1",
+    "@polkadot/types-codec": "^15.9.2",
+    "@polkadot/api": "^15.9.2",
+    "@polkadot/types": "^15.9.2",
     "react-is": "19.0.0",
     "@crypto-dex-sdk/chain": "0.1.2"
   },

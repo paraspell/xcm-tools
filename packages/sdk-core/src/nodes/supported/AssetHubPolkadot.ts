@@ -515,6 +515,7 @@ class AssetHubPolkadot<TApi, TRes>
       destination !== 'Moonbeam' &&
       destination !== 'BifrostPolkadot' &&
       destination !== 'PeoplePolkadot' &&
+      destination !== 'Ajuna' &&
       !isSystemNode
     ) {
       throw new ScenarioNotSupportedError(

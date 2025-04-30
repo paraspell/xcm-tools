@@ -664,7 +664,28 @@
   ],
   "HydrationDex": [
     {
-      "symbol": "HDX",
+      "symbol": "USDC",
+      "assetId": "22",
+      "multiLocation": {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1337
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "aUSDC",
+      "assetId": "1003",
       "multiLocation": {
         "parents": 1,
         "interior": {
@@ -673,7 +694,93 @@
               "Parachain": 2034
             },
             {
-              "GeneralIndex": 0
+              "AccountKey20": {
+                "network": null,
+                "key": "0x2ec4884088d84e5c2970a034732e5209b0acfa93"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "USDT",
+      "assetId": "10",
+      "multiLocation": {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 1000
+            },
+            {
+              "PalletInstance": 50
+            },
+            {
+              "GeneralIndex": 1984
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "aUSDT",
+      "assetId": "1002",
+      "multiLocation": {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xc64980e4eaf9a1151bd21712b9946b81e41e2b92"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "WBTC",
+      "assetId": "19",
+      "multiLocation": {
+        "parents": 1,
+        "interior": {
+          "X3": [
+            {
+              "Parachain": 2004
+            },
+            {
+              "PalletInstance": 110
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0xe57ebd2d67b462e9926e04a8e33f01cd0d64346d"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "aWBTC",
+      "assetId": "1004",
+      "multiLocation": {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x02759d14d0d4f452b9c76f5a230750e8857d36f2"
+              }
             }
           ]
         }
@@ -686,6 +793,115 @@
         "parents": 1,
         "interior": {
           "Here": null
+        }
+      }
+    },
+    {
+      "symbol": "aDOT",
+      "assetId": "1001",
+      "multiLocation": {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x02639ec01313c8775fae74f2dad1118c8a8a86da"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "vDOT",
+      "assetId": "15",
+      "multiLocation": {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2030
+            },
+            {
+              "GeneralKey": {
+                "length": 2,
+                "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "avDOT",
+      "assetId": "1005",
+      "multiLocation": {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x0e13b904f4168f93814216b6874ca8349457f263"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "tBTC",
+      "assetId": "1000765",
+      "multiLocation": {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "atBTC"
+    },
+    {
+      "symbol": "2-Pool-GDOT"
+    },
+    {
+      "symbol": "GDOT"
+    },
+    {
+      "symbol": "HDX",
+      "multiLocation": {
+        "parents": 1,
+        "interior": {
+          "X2": [
+            {
+              "Parachain": 2034
+            },
+            {
+              "GeneralIndex": 0
+            }
+          ]
         }
       }
     },
@@ -713,26 +929,6 @@
             },
             {
               "PalletInstance": 2
-            }
-          ]
-        }
-      }
-    },
-    {
-      "symbol": "USDT",
-      "assetId": "10",
-      "multiLocation": {
-        "parents": 1,
-        "interior": {
-          "X3": [
-            {
-              "Parachain": 1000
-            },
-            {
-              "PalletInstance": 50
-            },
-            {
-              "GeneralIndex": 1984
             }
           ]
         }
@@ -774,26 +970,6 @@
             },
             {
               "PalletInstance": 10
-            }
-          ]
-        }
-      }
-    },
-    {
-      "symbol": "vDOT",
-      "assetId": "15",
-      "multiLocation": {
-        "parents": 1,
-        "interior": {
-          "X2": [
-            {
-              "Parachain": 2030
-            },
-            {
-              "GeneralKey": {
-                "length": 2,
-                "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
-              }
             }
           ]
         }
@@ -1014,22 +1190,23 @@
       }
     },
     {
-      "symbol": "WBTC",
-      "assetId": "19",
+      "symbol": "SKY",
+      "assetId": "1000795",
       "multiLocation": {
-        "parents": 1,
+        "parents": 2,
         "interior": {
-          "X3": [
+          "X2": [
             {
-              "Parachain": 2004
-            },
-            {
-              "PalletInstance": 110
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
             },
             {
               "AccountKey20": {
                 "network": null,
-                "key": "0xe57ebd2d67b462e9926e04a8e33f01cd0d64346d"
+                "key": "0x56072c95faa701256059aa122697b133aded9279"
               }
             }
           ]
@@ -1067,6 +1244,30 @@
               "GeneralKey": {
                 "length": 2,
                 "data": "0x0903000000000000000000000000000000000000000000000000000000000000"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "symbol": "LINK",
+      "assetId": "1000794",
+      "multiLocation": {
+        "parents": 2,
+        "interior": {
+          "X2": [
+            {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            },
+            {
+              "AccountKey20": {
+                "network": null,
+                "key": "0x514910771af9ca656af840dff83e8264ecf986ca"
               }
             }
           ]
@@ -1129,30 +1330,6 @@
           "X1": {
             "Parachain": 2035
           }
-        }
-      }
-    },
-    {
-      "symbol": "tBTC",
-      "assetId": "1000765",
-      "multiLocation": {
-        "parents": 2,
-        "interior": {
-          "X2": [
-            {
-              "GlobalConsensus": {
-                "Ethereum": {
-                  "chainId": 1
-                }
-              }
-            },
-            {
-              "AccountKey20": {
-                "network": null,
-                "key": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
-              }
-            }
-          ]
         }
       }
     },
@@ -1278,26 +1455,6 @@
                 "network": null,
                 "key": "0xc30e9ca94cf52f3bf5692aacf81353a27052c46f"
               }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "symbol": "USDC",
-      "assetId": "22",
-      "multiLocation": {
-        "parents": 1,
-        "interior": {
-          "X3": [
-            {
-              "Parachain": 1000
-            },
-            {
-              "PalletInstance": 50
-            },
-            {
-              "GeneralIndex": 1337
             }
           ]
         }
