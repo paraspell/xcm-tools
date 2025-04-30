@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.12.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v8.11.1...sdk-common-v8.12.0) (2025-04-30)
+
+
+### Miscellaneous Chores
+
+* Perform monthly maintenance check ✨ ([2922557](https://github.com/paraspell/xcm-tools/commit/292255751429cb59dc5086b3f4dd93b4b4ee8f21))
+
 ## [8.11.1](https://github.com/paraspell/xcm-tools/compare/sdk-common-v8.11.0...sdk-common-v8.11.1) (2025-04-29)
 
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.12.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.11.1...xcm-router-v8.12.0) (2025-04-30)
+
+
+### Features
+
+* **sdk-core:** Add XCM fee queries ✨ ([1bcca3f](https://github.com/paraspell/xcm-tools/commit/1bcca3f45d45c47714a1ffb20d32c83486df2179))
+
+
+### Miscellaneous Chores
+
+* Perform monthly maintenance check ✨ ([2922557](https://github.com/paraspell/xcm-tools/commit/292255751429cb59dc5086b3f4dd93b4b4ee8f21))
+
 ## [8.11.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.11.0...xcm-router-v8.11.1) (2025-04-29)
 
 
