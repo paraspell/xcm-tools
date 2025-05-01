@@ -31,12 +31,14 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     paraIdTo,
     version,
     senderAddress,
+    ahAddress,
     pallet,
     method
   } = options
 
   validateCurrency(currency, feeAsset)
   validateDestination(origin, destination)
+
   validateDestinationAddress(address, destination)
   if (senderAddress) validateAddress(senderAddress, origin, false)
 
@@ -125,6 +127,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     overriddenAsset,
     version,
     senderAddress,
+    ahAddress,
     pallet,
     method
   })

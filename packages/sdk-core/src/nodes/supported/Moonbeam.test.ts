@@ -15,6 +15,10 @@ vi.mock('../../pallets/polkadotXcm', () => ({
   }
 }))
 
+type WithTransferToEthereum = Moonbeam<unknown, unknown> & {
+  transferToEthereum: Moonbeam<unknown, unknown>['transferToEthereum']
+}
+
 describe('Moonbeam', () => {
   let node: Moonbeam<unknown, unknown>
 
@@ -161,6 +165,28 @@ describe('Moonbeam', () => {
       'transfer_assets',
       'Unlimited'
     )
+  })
+
+  it('should call transferToEthereum when destination is Ethereum', async () => {
+    const spyTransferToEth = vi
+      .spyOn(node as WithTransferToEthereum, 'transferToEthereum')
+      .mockResolvedValue({})
+
+    const spyXcm = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
+    spyXcm.mockClear()
+
+    const inputEth = {
+      ...mockInput,
+      destination: 'Ethereum',
+      scenario: 'ParaToPara'
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    await node.transferPolkadotXCM(inputEth)
+
+    expect(spyTransferToEth).toHaveBeenCalledTimes(1)
+    expect(spyTransferToEth).toHaveBeenCalledWith(inputEth)
+
+    expect(spyXcm).not.toHaveBeenCalled()
   })
 
   it('should call getRelayToParaOverrides with the correct parameters', () => {

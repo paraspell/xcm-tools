@@ -1,4 +1,4 @@
-import { InvalidCurrencyError } from '@paraspell/assets'
+import { findAssetByMultiLocation, InvalidCurrencyError } from '@paraspell/assets'
 import { hasJunction } from '@paraspell/sdk-common'
 import { ethers } from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -42,6 +42,11 @@ vi.mock('./Polimec', async importOriginal => ({
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
   hasJunction: vi.fn()
+}))
+
+vi.mock('@paraspell/assets', async importOriginal => ({
+  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
+  findAssetByMultiLocation: vi.fn()
 }))
 
 describe('Hydration', () => {
@@ -120,10 +125,18 @@ describe('Hydration', () => {
         scenario: 'RelayToPara',
         destination: 'Ethereum'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      vi.mocked(findAssetByMultiLocation).mockReturnValue(undefined)
     })
 
     it('should call api.callTxMethod with correct parameters', async () => {
       const spy = vi.spyOn(mockApi, 'callTxMethod')
+
+      vi.mocked(findAssetByMultiLocation).mockReturnValue({
+        assetId: '0x1234567890abcdef',
+        symbol: 'WETH',
+        decimals: 18
+      })
 
       await hydration.transferPolkadotXCM({
         ...mockInput,

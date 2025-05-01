@@ -44,7 +44,12 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { asset, scenario, version = this.version } = input
+    const { destination, asset, scenario, version = this.version } = input
+
+    if (destination === 'Ethereum') {
+      return this.transferToEthereum(input)
+    }
+
     const multiLocation = this.getMultiLocation(asset, scenario)
     return Promise.resolve(
       PolkadotXCMTransferImpl.transferPolkadotXCM(

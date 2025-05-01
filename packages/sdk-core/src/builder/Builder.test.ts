@@ -113,6 +113,27 @@ describe('Builder', () => {
       })
     })
 
+    it('should initiate a transfer with assetHub address', async () => {
+      const ASSET_HUB_ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
+      await Builder(mockApi)
+        .from(NODE)
+        .to(NODE_2, PARA_ID_TO)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .ahAddress(ASSET_HUB_ADDRESS)
+        .build()
+
+      expect(sendSpy).toHaveBeenCalledWith({
+        api: mockApi,
+        from: NODE,
+        currency: CURRENCY,
+        address: ADDRESS,
+        ahAddress: ASSET_HUB_ADDRESS,
+        to: NODE_2,
+        paraIdTo: PARA_ID_TO
+      })
+    })
+
     it('should initiate a para to para transfer with specified asset ID', async () => {
       const ASSET_ID = 1
       await Builder(mockApi)

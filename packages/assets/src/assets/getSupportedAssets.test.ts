@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { getAssets, getOtherAssets } from './assets'
+import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
 import { getSupportedAssets } from './getSupportedAssets'
 
 vi.mock('./assets', () => ({
@@ -20,17 +21,51 @@ vi.mock('../pallets', () => ({
   getDefaultPallet: vi.fn()
 }))
 
+vi.mock('./filterEthCompatibleAssets', () => ({
+  filterEthCompatibleAssets: vi.fn()
+}))
+
 describe('getSupportedAssets', () => {
   it('should return Ethereum assets when either origin or destination is Ethereum', () => {
-    const mockAssets = [{ symbol: 'ETH', assetId: '1' }]
-    vi.mocked(getOtherAssets).mockReturnValue(mockAssets)
+    const ethAssets = [{ symbol: 'ETH', assetId: '1' }]
+    vi.mocked(getOtherAssets).mockImplementation(node => (node === 'Ethereum' ? ethAssets : []))
 
-    const result = getSupportedAssets('Ethereum', 'Polkadot')
-    expect(result).toEqual(mockAssets)
+    vi.mocked(filterEthCompatibleAssets).mockReturnValue([])
+
+    const res1 = getSupportedAssets('Ethereum', 'Polkadot')
+    expect(res1).toEqual(ethAssets)
+
+    const res2 = getSupportedAssets('Polkadot', 'Ethereum')
+    expect(res2).toEqual(ethAssets)
+
     expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
+    expect(filterEthCompatibleAssets).toHaveBeenCalled()
+  })
 
-    const result2 = getSupportedAssets('Polkadot', 'Ethereum')
-    expect(result2).toEqual(mockAssets)
+  it('should return Ethereum compatible assets when origin is Moonbeam', () => {
+    const moonbeamAssets = [
+      { symbol: 'xcUSDT', assetId: '100' },
+      { symbol: 'ETH', assetId: '1' }
+    ]
+
+    const ethCompatible = [{ symbol: 'ETH', assetId: '1' }]
+
+    vi.mocked(getOtherAssets).mockImplementation(node => {
+      if (node === 'Moonbeam') return moonbeamAssets
+      if (node === 'Ethereum') return [{ symbol: 'WETH', assetId: '999' }]
+      return []
+    })
+
+    vi.mocked(filterEthCompatibleAssets).mockReturnValue(ethCompatible)
+
+    vi.mocked(getAssets).mockReturnValue([])
+
+    const result = getSupportedAssets('Moonbeam', 'Ethereum')
+
+    expect(result).toEqual(ethCompatible)
+
+    expect(getOtherAssets).toHaveBeenCalledWith('Moonbeam')
+    expect(filterEthCompatibleAssets).toHaveBeenCalledWith(moonbeamAssets)
     expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
   })
 

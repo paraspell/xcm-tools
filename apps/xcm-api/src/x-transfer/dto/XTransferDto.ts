@@ -125,6 +125,7 @@ export const XTransferDtoSchema = z.object({
   pallet: z.string().optional(),
   method: z.string().optional(),
   senderAddress: z.string().optional(),
+  ahAddress: z.string().optional(),
 });
 
 export const GetXcmFeeSchema = z.union([

@@ -33,6 +33,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   paraIdTo?: number
   version?: Version
   senderAddress?: string
+  ahAddress?: string
   pallet?: string
   method?: string
 }
@@ -107,9 +108,13 @@ export type TSendBaseOptions = {
    */
   address: TAddress
   /**
-   * The optional sender address. A SS58
+   * The optional sender address. A SS58 or H160 format.
    */
   senderAddress?: string
+  /**
+   * The optional asset hub address. A SS58 format only.
+   */
+  ahAddress?: string
   /**
    * The destination node or multi-location
    */
