@@ -130,6 +130,7 @@ abstract class ParachainNode<TApi, TRes> {
       overriddenAsset,
       version,
       senderAddress,
+      ahAddress,
       pallet,
       method
     } = options
@@ -226,6 +227,7 @@ abstract class ParachainNode<TApi, TRes> {
         paraIdTo: paraId,
         version,
         senderAddress,
+        ahAddress,
         pallet,
         method
       }
@@ -586,7 +588,7 @@ abstract class ParachainNode<TApi, TRes> {
               ],
               version
             )
-          : createCustomXcmOnDest(input, version, messageId),
+          : createCustomXcmOnDest(input, this.node, version, messageId),
         weight_limit: 'Unlimited'
       }
     }

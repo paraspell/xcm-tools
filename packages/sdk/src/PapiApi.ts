@@ -30,6 +30,7 @@ import {
   type TNodeWithRelayChains
 } from '@paraspell/sdk-core'
 import type { TDryRunXcmBaseOptions } from '@paraspell/sdk-core/src'
+import { ethers } from 'ethers'
 import { AccountId, Binary, createClient, FixedSizeBinary } from 'polkadot-api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 
@@ -275,7 +276,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   async getFromRpc(module: string, method: string, key: string): Promise<string> {
     const toSS58 = AccountId().dec
     const value = await this.api._request(`${module}_${method}`, [
-      module === 'system' && isHex(key) ? toSS58(key) : key
+      module === 'system' && isHex(key) && !ethers.isAddress(key) ? toSS58(key) : key
     ])
     return isHex(value) ? value : '0x' + value.toString(16).padStart(8, '0')
   }

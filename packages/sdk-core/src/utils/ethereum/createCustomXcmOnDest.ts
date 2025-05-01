@@ -2,16 +2,27 @@ import {
   findAssetByMultiLocation,
   getOtherAssets,
   InvalidCurrencyError,
-  isForeignAsset
+  isForeignAsset,
+  isNodeEvm
 } from '@paraspell/assets'
+import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
+import { InvalidParameterError } from '../../errors'
 import { type TPolkadotXCMTransferOptions, type Version } from '../../types'
 import { createBeneficiaryMultiLocation } from '../multiLocation'
 
 export const createCustomXcmOnDest = <TApi, TRes>(
-  { api, address, asset, scenario, senderAddress }: TPolkadotXCMTransferOptions<TApi, TRes>,
+  {
+    api,
+    address,
+    asset,
+    scenario,
+    senderAddress,
+    ahAddress
+  }: TPolkadotXCMTransferOptions<TApi, TRes>,
+  origin: TNodeWithRelayChains,
   version: Version,
   messageId: string
 ) => {
@@ -24,7 +35,11 @@ export const createCustomXcmOnDest = <TApi, TRes>(
   }
 
   if (!senderAddress) {
-    throw new InvalidCurrencyError(`Please provide senderAddress`)
+    throw new InvalidParameterError(`Please provide senderAddress`)
+  }
+
+  if (isNodeEvm(origin) && !ahAddress) {
+    throw new InvalidParameterError(`Please provide ahAddress`)
   }
 
   const ethAsset = findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
@@ -51,7 +66,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
                 api,
                 scenario,
                 pallet: 'PolkadotXcm',
-                recipientAddress: senderAddress,
+                recipientAddress: isNodeEvm(origin) ? (ahAddress as string) : senderAddress,
                 version
               })
             }

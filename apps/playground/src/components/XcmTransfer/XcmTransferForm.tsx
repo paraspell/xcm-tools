@@ -34,7 +34,7 @@ import { useEffect } from 'react';
 import useCurrencyOptions from '../../hooks/useCurrencyOptions';
 import { useWallet } from '../../hooks/useWallet';
 import type { TSubmitType } from '../../types';
-import { isValidWalletAddress } from '../../utils';
+import { isValidPolkadotAddress, isValidWalletAddress } from '../../utils';
 import { CurrencySelection } from '../common/CurrencySelection';
 import { FeeAssetSelection } from '../common/FeeAssetSelection';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
@@ -63,6 +63,7 @@ export type FormValues = {
   currencies: TCurrencyEntry[];
   feeAsset: Omit<TCurrencyEntry, 'amount'>;
   address: string;
+  ahAddress: string;
   useApi: boolean;
 };
 
@@ -110,6 +111,7 @@ const XcmTransferForm: FC<Props> = ({
         customCurrencySymbolSpecifier: 'auto',
       },
       address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+      ahAddress: '',
       useApi: false,
     },
 
@@ -140,6 +142,8 @@ const XcmTransferForm: FC<Props> = ({
           ? 'Fee asset is required'
           : null;
       },
+      ahAddress: (value) =>
+        isValidPolkadotAddress(value) ? null : 'Invalid Polkadot address',
     },
   });
 
@@ -365,6 +369,17 @@ const XcmTransferForm: FC<Props> = ({
             data-testid="input-address"
             {...form.getInputProps('address')}
           />
+
+          {from === 'Moonbeam' && to === 'Ethereum' && (
+            <TextInput
+              label="AssetHub address"
+              description="SS58 address"
+              placeholder="Enter address"
+              required
+              data-testid="input-address"
+              {...form.getInputProps('ahAddress')}
+            />
+          )}
 
           <XcmApiCheckbox
             {...form.getInputProps('useApi', { type: 'checkbox' })}

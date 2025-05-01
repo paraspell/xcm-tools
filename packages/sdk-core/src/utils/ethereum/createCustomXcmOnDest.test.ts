@@ -1,17 +1,23 @@
-import { findAssetByMultiLocation, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import {
+  findAssetByMultiLocation,
+  InvalidCurrencyError,
+  isForeignAsset,
+  isNodeEvm
+} from '@paraspell/assets'
+import type { TMultiLocation, TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { InvalidParameterError } from '../../errors'
 import type { TPolkadotXCMTransferOptions, Version } from '../../types'
 import { createCustomXcmOnDest } from './createCustomXcmOnDest'
 
-// Mock dependencies
 vi.mock('@paraspell/assets', () => ({
   findAssetByMultiLocation: vi.fn(),
   getOtherAssets: vi.fn(() => ['mockEthereumAsset']),
   isForeignAsset: vi.fn(),
+  isNodeEvm: vi.fn(),
   InvalidCurrencyError: class extends Error {}
 }))
 
@@ -43,8 +49,13 @@ describe('createCustomXcmOnDest', () => {
     blake2AsHex
   } as unknown as IPolkadotApi<{ provider: unknown }, unknown>
 
+  const mockNode: TNodeWithRelayChains = 'Acala'
   const version = 'V3' as Version
   const messageId = 'test-message-id'
+
+  beforeEach(() => {
+    vi.mocked(isNodeEvm).mockReturnValue(false)
+  })
 
   it('should throw an error if the asset is not a foreign asset', () => {
     const options: TPolkadotXCMTransferOptions<{ provider: unknown }, unknown> = {
@@ -63,7 +74,9 @@ describe('createCustomXcmOnDest', () => {
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
-    expect(() => createCustomXcmOnDest(options, version, messageId)).toThrow(InvalidCurrencyError)
+    expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
+      InvalidCurrencyError
+    )
   })
 
   it('should throw an error if asset has no multiLocation', () => {
@@ -83,7 +96,9 @@ describe('createCustomXcmOnDest', () => {
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
-    expect(() => createCustomXcmOnDest(options, version, messageId)).toThrow(InvalidCurrencyError)
+    expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
+      InvalidCurrencyError
+    )
   })
 
   it('should throw an error if senderAddress is missing', () => {
@@ -96,7 +111,30 @@ describe('createCustomXcmOnDest', () => {
         amount: '1000000'
       },
       scenario: 'ParaToPara',
-      senderAddress: '',
+      header: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
+      addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
+      currencySelection: {
+        V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
+      },
+      destination: { parents: Parents.ONE, interior: { Here: null } }
+    }
+
+    expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
+      InvalidParameterError
+    )
+  })
+
+  it('should throw an error if node is EVM and ahAddress is missing', () => {
+    const options: TPolkadotXCMTransferOptions<{ provider: unknown }, unknown> = {
+      api: api,
+      address: '0xRecipient',
+      asset: {
+        symbol: 'ETH',
+        multiLocation: { parents: Parents.ZERO, interior: { Here: null } },
+        amount: '1000000'
+      },
+      scenario: 'ParaToPara',
+      senderAddress: '0xSender',
       header: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
       addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
       currencySelection: {
@@ -106,8 +144,11 @@ describe('createCustomXcmOnDest', () => {
     }
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
+    vi.mocked(isNodeEvm).mockReturnValue(true)
 
-    expect(() => createCustomXcmOnDest(options, version, messageId)).toThrow(InvalidCurrencyError)
+    expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
+      InvalidParameterError
+    )
   })
 
   it('should throw an error if Ethereum asset is not found', () => {
@@ -132,7 +173,9 @@ describe('createCustomXcmOnDest', () => {
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(findAssetByMultiLocation).mockReturnValue(undefined)
 
-    expect(() => createCustomXcmOnDest(options, version, messageId)).toThrow(InvalidCurrencyError)
+    expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
+      InvalidCurrencyError
+    )
   })
 
   it('should return a valid XCM message structure', () => {
@@ -162,7 +205,7 @@ describe('createCustomXcmOnDest', () => {
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(findAssetByMultiLocation).mockReturnValue(mockEthAsset)
 
-    const result = createCustomXcmOnDest(options, version, messageId)
+    const result = createCustomXcmOnDest(options, mockNode, version, messageId)
 
     expect(result).toBeDefined()
     expect(result[version]).toBeInstanceOf(Array)

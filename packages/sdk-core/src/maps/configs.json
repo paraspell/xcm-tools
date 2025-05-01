@@ -355,20 +355,20 @@
     "paraId": 2004,
     "providers": [
       {
+        "name": "IBP1",
+        "endpoint": "wss://moonbeam.ibp.network"
+      },
+      {
+        "name": "RadiumBlock",
+        "endpoint": "wss://moonbeam.public.curie.radiumblock.co/ws"
+      },
+      {
         "name": "Allnodes",
         "endpoint": "wss://moonbeam-rpc.publicnode.com"
       },
       {
         "name": "Blast",
         "endpoint": "wss://moonbeam.public.blastapi.io"
-      },
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://moonbeam-rpc.n.dwellir.com"
-      },
-      {
-        "name": "IBP1",
-        "endpoint": "wss://moonbeam.ibp.network"
       },
       {
         "name": "IBP2",
@@ -382,10 +382,7 @@
         "name": "OnFinality",
         "endpoint": "wss://moonbeam.api.onfinality.io/public-ws"
       },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://moonbeam.public.curie.radiumblock.co/ws"
-      },
+
       {
         "name": "UnitedBloc",
         "endpoint": "wss://moonbeam.unitedbloc.com"

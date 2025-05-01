@@ -113,6 +113,19 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   }
 
   /**
+   * Sets the asset hub address. This is used for transfers that go through the Asset Hub and originate from an EVM chain.
+   *
+   * @param address - The address to be used.
+   * @returns An instance of Builder
+   */
+  ahAddress(address: string | undefined) {
+    return new GeneralBuilder(this.api, this.batchManager, {
+      ...this._options,
+      ahAddress: address
+    })
+  }
+
+  /**
    * Sets the XCM version to be used for the transfer.
    *
    * @param version - The XCM version.

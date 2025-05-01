@@ -34,6 +34,11 @@ export const getSupportedAssets = (
     const otherAssets = getOtherAssets(origin)
     const ethereumCompatibleAssets = filterEthCompatibleAssets(otherAssets)
     const ethereumAssets = getOtherAssets('Ethereum')
+
+    if (origin === 'Moonbeam') {
+      return ethereumCompatibleAssets
+    }
+
     return [...ethereumCompatibleAssets, ...ethereumAssets]
   }
 

@@ -278,8 +278,14 @@ const XcmTransfer = () => {
 
         const [firstItem, ...restItems] = items;
 
-        const { from, to, currencies, transformedFeeAsset, address } =
-          firstItem;
+        const {
+          from,
+          to,
+          currencies,
+          transformedFeeAsset,
+          address,
+          ahAddress,
+        } = firstItem;
         const currencyInputs = currencies.map((c) => ({
           ...determineCurrency(firstItem, c),
           amount: c.amount,
@@ -295,6 +301,7 @@ const XcmTransfer = () => {
           )
           .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
           .address(address, selectedAccount.address)
+          .ahAddress(ahAddress)
           .addToBatch();
 
         for (const item of restItems) {
@@ -375,8 +382,15 @@ const XcmTransfer = () => {
     const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
       ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
 
-    const { from, to, currencies, transformedFeeAsset, address, useApi } =
-      formValues;
+    const {
+      from,
+      to,
+      currencies,
+      transformedFeeAsset,
+      address,
+      ahAddress,
+      useApi,
+    } = formValues;
     const currencyInputs = currencies.map((c) => ({
       ...determineCurrency(formValues, c),
       amount: c.amount,
@@ -409,6 +423,7 @@ const XcmTransfer = () => {
         )
         .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
         .address(address, selectedAccount.address)
+        .ahAddress(ahAddress)
         .dryRun(selectedAccount.address);
     }
 
@@ -469,7 +484,8 @@ const XcmTransfer = () => {
             : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
         )
         .feeAsset(body.feeAsset)
-        .address(address, selectedAccount.address);
+        .address(address, selectedAccount.address)
+        .ahAddress(body.ahAddress);
 
       result =
         type === 'fee'
@@ -492,8 +508,15 @@ const XcmTransfer = () => {
     formValues: FormValuesTransformed,
     submitType: TSubmitType,
   ) => {
-    const { from, to, currencies, transformedFeeAsset, address, useApi } =
-      formValues;
+    const {
+      from,
+      to,
+      currencies,
+      transformedFeeAsset,
+      address,
+      ahAddress,
+      useApi,
+    } = formValues;
 
     if (submitType === 'delete') {
       setBatchItems((prevItems) => {
@@ -631,7 +654,8 @@ const XcmTransfer = () => {
                 },
           )
           .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
-          .address(address, selectedAccount.address);
+          .address(address, selectedAccount.address)
+          .ahAddress(ahAddress);
         tx = await builder.build();
         api = builder.getApi();
       }

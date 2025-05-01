@@ -5337,6 +5337,104 @@
           }
         },
         "existentialDeposit": "1"
+      },
+      {
+        "symbol": "DAI",
+        "existentialDeposit": "1",
+        "decimals": 18,
+        "assetId": "209858003230988836317829383377338889687",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x6b175474e89094c44da98b954eedeac495271d0f"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "USDC",
+        "existentialDeposit": "1",
+        "decimals": 6,
+        "assetId": "29822050060168568866953499393406221037",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "ETH",
+        "existentialDeposit": "15000000000000",
+        "decimals": 18,
+        "assetId": "233896737710358964064857020859081821253",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "USDT",
+        "existentialDeposit": "1",
+        "decimals": 6,
+        "assetId": "164507627753062513353393042023152019483",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+                }
+              }
+            ]
+          }
+        }
       }
     ]
   },

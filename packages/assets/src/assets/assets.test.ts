@@ -105,11 +105,9 @@ describe('getAssetDecimals', () => {
       const obj = getAssetsObject(node)
       expect(obj).not.toBeNull()
       ;[...obj.nativeAssets, ...obj.otherAssets].forEach(asset => {
-        if (asset.symbol !== undefined) {
-          const decimals = getAssetDecimals(node, asset.symbol)
-          expect(decimals).toBeTypeOf('number')
-          expect(decimals).toBeGreaterThanOrEqual(0)
-        }
+        const decimals = getAssetDecimals(node, asset.symbol)
+        expect(decimals).toBeTypeOf('number')
+        expect(decimals).toBeGreaterThanOrEqual(0)
       })
     })
   })
