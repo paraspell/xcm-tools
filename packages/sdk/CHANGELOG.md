@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.12.1](https://github.com/paraspell/xcm-tools/compare/sdk-v8.12.0...sdk-v8.12.1) (2025-05-01)
+
+
+### Bug Fixes
+
+* Fix Moonbeam -&gt; Ethereum transfer 🔧 ([8981eaf](https://github.com/paraspell/xcm-tools/commit/8981eaf9832a9145b31bbfc941136ebdcad33378))
+
 ## [8.12.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.11.1...sdk-v8.12.0) (2025-04-30)
 
 
