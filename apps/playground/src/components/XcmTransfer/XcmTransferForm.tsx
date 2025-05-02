@@ -142,8 +142,12 @@ const XcmTransferForm: FC<Props> = ({
           ? 'Fee asset is required'
           : null;
       },
-      ahAddress: (value) =>
-        isValidPolkadotAddress(value) ? null : 'Invalid Polkadot address',
+      ahAddress: (value) => {
+        if (value.length === 0) return null;
+        return isValidPolkadotAddress(value)
+          ? null
+          : 'Invalid Polkadot address';
+      },
     },
   });
 
