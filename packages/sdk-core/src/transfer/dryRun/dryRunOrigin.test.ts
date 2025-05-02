@@ -1,15 +1,15 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../api/IPolkadotApi'
-import type { TDryRunResult } from '../types'
-import { validateAddress } from '../utils'
-import { getDryRun } from './getDryRun'
+import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import type { TDryRunNodeResult } from '../../types'
+import { validateAddress } from '../../utils'
+import { dryRunOrigin } from './dryRunOrigin'
 
-vi.mock('../utils', () => ({
+vi.mock('../../utils', () => ({
   validateAddress: vi.fn()
 }))
 
-describe('getDryRun', () => {
+describe('getDryRunOrigin', () => {
   const apiMock = {
     init: vi.fn(),
     getDryRunCall: vi.fn(),
@@ -20,11 +20,12 @@ describe('getDryRun', () => {
     const address = '0x123'
     const node = 'Polkadot'
 
-    const mockResult: TDryRunResult = {
+    const mockResult: TDryRunNodeResult = {
       success: true,
       fee: 1000n,
       forwardedXcms: [],
-      destParaId: 0
+      destParaId: 0,
+      currency: 'DOT'
     }
 
     vi.spyOn(apiMock, 'getDryRunCall').mockResolvedValue(mockResult)
@@ -32,7 +33,7 @@ describe('getDryRun', () => {
     const initSpy = vi.spyOn(apiMock, 'init')
     const disconnectSpy = vi.spyOn(apiMock, 'disconnect')
 
-    const result = await getDryRun({
+    const result = await dryRunOrigin({
       api: apiMock,
       node,
       address,

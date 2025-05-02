@@ -1,7 +1,19 @@
+import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
 import type { TWeight } from './TTransfer'
+
+export type TDryRunBaseOptions<TRes> = {
+  tx: TRes
+  origin: TNodeDotKsmWithRelayChains
+  destination: TNodeDotKsmWithRelayChains
+  senderAddress: string
+  address: string
+  currency: TCurrencyInputWithAmount
+}
+
+export type TDryRunOptions<TApi, TRes> = WithApi<TDryRunBaseOptions<TRes>, TApi, TRes>
 
 export type TDryRunCallBaseOptions<TRes> = {
   /**
@@ -40,19 +52,30 @@ export type TDryRunXcmBaseOptions = {
 
 export type TDryRunXcmOptions<TApi, TRes> = WithApi<TDryRunXcmBaseOptions, TApi, TRes>
 
-export type TDryRunResult =
-  | {
-      success: true
-      fee: bigint
-      weight?: TWeight
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      forwardedXcms: any
-      destParaId?: number
-    }
-  | {
-      success: false
-      failureReason: string
-    }
+export type TDryRunNodeSuccess = {
+  success: true
+  fee: bigint
+  weight?: TWeight
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  forwardedXcms: any
+  destParaId?: number
+}
+
+export type TDryRunNodeFailure = {
+  success: false
+  failureReason: string
+}
+
+export type TDryRunNodeResultInternal = TDryRunNodeSuccess | TDryRunNodeFailure
+
+export type TDryRunNodeResult = (TDryRunNodeSuccess & { currency: string }) | TDryRunNodeFailure
+
+export type TDryRunResult = {
+  origin: TDryRunNodeResult
+  destination?: TDryRunNodeResult
+  assetHub?: TDryRunNodeResult
+  bridgeHub?: TDryRunNodeResult
+}
 
 export enum XTokensError {
   AssetHasNoReserve = 'AssetHasNoReserve',

@@ -1,6 +1,7 @@
 import {
+  dryRun as dryRunImpl,
+  dryRunOrigin as dryRunOriginImpl,
   getBridgeStatus as getBridgeStatusImpl,
-  getDryRun as getDryRunImpl,
   getParaEthTransferFees as getEthFeesImpl,
   send as sendImpl
 } from '@paraspell/sdk-core'
@@ -16,7 +17,9 @@ import { createPapiApiCall } from './utils'
  */
 export const send = createPapiApiCall(sendImpl<TPapiApi, TPapiTransaction>)
 
-export const getDryRun = createPapiApiCall(getDryRunImpl<TPapiApi, TPapiTransaction>)
+export const dryRun = createPapiApiCall(dryRunImpl<TPapiApi, TPapiTransaction>)
+
+export const dryRunOrigin = createPapiApiCall(dryRunOriginImpl<TPapiApi, TPapiTransaction>)
 
 export const getParaEthTransferFees = async (ahApi?: TPapiApiOrUrl) => {
   const papiApi = new PapiApi()

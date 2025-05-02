@@ -168,7 +168,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             .from('AssetHubPolkadot')
             .to('Ethereum')
             .currency({ symbol, amount: MOCK_AMOUNT })
-            .address(MOCK_ETH_ADDRESS, MOCK_ADDRESS)
+            .address(MOCK_ETH_ADDRESS)
+            .senderAddress(MOCK_ADDRESS)
             .build()
           await validateTx(tx, signer)
         })
@@ -351,7 +352,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                     ...currency,
                     amount: MOCK_AMOUNT
                   })
-                  .address(resolvedAddress, resolvedSenderAddress)
+                  .address(resolvedAddress)
+                  .senderAddress(resolvedSenderAddress)
                   .build()
 
                 await validateTx(tx, isNodeEvm(node) ? evmSigner : signer)

@@ -6,12 +6,16 @@ import { findAsset, getNativeAssetSymbol, InvalidCurrencyError } from '@paraspel
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import { getTNode } from '../../nodes/getTNode'
-import type { TFeeType, TGetXcmFeeOptions, TGetXcmFeeResult, TXcmFeeDetail } from '../../types'
+import type {
+  TFeeType,
+  TGetXcmFeeOptions,
+  TGetXcmFeeResult,
+  THubKey,
+  TXcmFeeDetail
+} from '../../types'
 import { determineRelayChain } from '../../utils'
 import { getFeeForDestNode } from './getFeeForDestNode'
 import { getFeeForOriginNode } from './getFeeForOriginNode'
-
-type HubKey = 'assetHub' | 'bridgeHub'
 
 export const getXcmFee = async <TApi, TRes>({
   api,
@@ -91,7 +95,7 @@ export const getXcmFee = async <TApi, TRes>({
   let forwardedXcms: any = initialForwardedXcm
   let nextParaId: number | undefined = initialDestParaId
 
-  const intermediateFees: Partial<Record<HubKey, TXcmFeeDetail>> = {}
+  const intermediateFees: Partial<Record<THubKey, TXcmFeeDetail>> = {}
   let destinationFee: bigint | undefined = 0n
   let destinationFeeType: TFeeType | undefined = 'paymentInfo'
   let destinationDryRunError: string | undefined
@@ -194,7 +198,6 @@ export const getXcmFee = async <TApi, TRes>({
       nextParaId = hopResult.destParaId
       currentOrigin = nextChain as TNodeDotKsmWithRelayChains
     } finally {
-      hopApi.setDisconnectAllowed(true)
       await hopApi.disconnect()
     }
   }

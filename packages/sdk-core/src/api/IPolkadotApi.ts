@@ -9,7 +9,7 @@ import type {
   BatchMode,
   TBridgeStatus,
   TDryRunCallBaseOptions,
-  TDryRunResult,
+  TDryRunNodeResultInternal,
   TDryRunXcmBaseOptions,
   TSerializedApiCall
 } from '../types'
@@ -51,8 +51,8 @@ export interface IPolkadotApi<TApi, TRes> {
   blake2AsHex(data: Uint8Array): string
   clone(): IPolkadotApi<TApi, TRes>
   createApiForNode(node: TNodeWithRelayChains): Promise<IPolkadotApi<TApi, TRes>>
-  getDryRunCall(options: TDryRunCallBaseOptions<TRes>): Promise<TDryRunResult>
-  getDryRunXcm(options: TDryRunXcmBaseOptions): Promise<TDryRunResult>
+  getDryRunCall(options: TDryRunCallBaseOptions<TRes>): Promise<TDryRunNodeResultInternal>
+  getDryRunXcm(options: TDryRunXcmBaseOptions): Promise<TDryRunNodeResultInternal>
   getBridgeStatus(): Promise<TBridgeStatus>
   setDisconnectAllowed(allowed: boolean): void
   getDisconnectAllowed(): boolean

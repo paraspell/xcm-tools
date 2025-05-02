@@ -558,10 +558,13 @@ describe('ParachainNode', () => {
         to: vi.fn().mockReturnThis(),
         amount: vi.fn().mockReturnThis(),
         address: vi.fn().mockReturnThis(),
+        senderAddress: vi.fn().mockReturnThis(),
         currency: vi.fn().mockReturnThis(),
         dryRun: vi.fn().mockResolvedValue({
-          success: true,
-          fee: 1000n
+          origin: {
+            success: true,
+            fee: 1000n
+          }
         })
       } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
 
@@ -604,8 +607,10 @@ describe('ParachainNode', () => {
         address: vi.fn().mockReturnThis(),
         currency: vi.fn().mockReturnThis(),
         dryRun: vi.fn().mockResolvedValue({
-          success: false,
-          failureReason: 'error'
+          origin: {
+            success: false,
+            failureReason: 'error'
+          }
         })
       } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
 

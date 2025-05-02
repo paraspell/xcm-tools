@@ -87,6 +87,7 @@ export class XTransferService {
       pallet,
       method,
       senderAddress,
+      ahAddress,
     } = transfer;
 
     let finalBuilder = builder
@@ -94,7 +95,9 @@ export class XTransferService {
       .to(to as TNodeWithRelayChains)
       .currency(currency)
       .feeAsset(feeAsset)
-      .address(address, senderAddress as string);
+      .address(address)
+      .ahAddress(ahAddress)
+      .senderAddress(senderAddress as string);
 
     if (xcmVersion) {
       finalBuilder = finalBuilder.xcmVersion(xcmVersion);
@@ -112,9 +115,7 @@ export class XTransferService {
     if (!senderAddress) {
       throw new BadRequestException('Sender address is required for dry-run.');
     }
-    return this.executeWithBuilder(transfer, (builder) =>
-      builder.dryRun(senderAddress),
-    );
+    return this.executeWithBuilder(transfer, (builder) => builder.dryRun());
   }
 
   getXcmFee(transfer: GetXcmFeeDto) {

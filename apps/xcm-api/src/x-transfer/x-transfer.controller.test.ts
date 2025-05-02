@@ -98,7 +98,7 @@ describe('XTransferController', () => {
     });
   });
 
-  describe('getDryRun', () => {
+  describe('dryRun', () => {
     it('should call generateXcmCall service method with correct parameters and return result', async () => {
       const bodyParams: XTransferDto = {
         from: 'Acala',

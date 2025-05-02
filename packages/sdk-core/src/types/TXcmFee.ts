@@ -67,6 +67,8 @@ export type TGetFeeForDestNodeOptions<TApi, TRes> = WithApi<
   TRes
 >
 
+export type THubKey = 'assetHub' | 'bridgeHub'
+
 export type TFeeType = 'dryRun' | 'paymentInfo'
 
 export type TXcmFeeDetail =

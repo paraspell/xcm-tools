@@ -54,7 +54,8 @@ export const getXcmFeeEstimate = async <TApi, TRes>({
   const flippedTx = await Builder(destApi)
     .from(destination)
     .to(origin)
-    .address(senderAddress, address)
+    .address(senderAddress)
+    .senderAddress(address)
     .currency({ ...currencyInput, amount: currency.amount })
     .build()
 
