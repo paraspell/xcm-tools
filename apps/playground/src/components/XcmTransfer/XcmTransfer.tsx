@@ -300,7 +300,8 @@ const XcmTransfer = () => {
               : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
           )
           .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
-          .address(address, selectedAccount.address)
+          .address(address)
+          .senderAddress(selectedAccount.address)
           .ahAddress(ahAddress)
           .addToBatch();
 
@@ -319,7 +320,8 @@ const XcmTransfer = () => {
                 : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
             )
             .feeAsset(determineFeeAsset(firstItem, transformedFeeAsset))
-            .address(address, selectedAccount.address)
+            .address(address)
+            .senderAddress(selectedAccount.address)
             .addToBatch();
         }
 
@@ -422,9 +424,10 @@ const XcmTransfer = () => {
             : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
         )
         .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
-        .address(address, selectedAccount.address)
+        .address(address)
+        .senderAddress(selectedAccount.address)
         .ahAddress(ahAddress)
-        .dryRun(selectedAccount.address);
+        .dryRun();
     }
 
     setOutput(JSON.stringify(result, replaceBigInt, 2));
@@ -484,7 +487,8 @@ const XcmTransfer = () => {
             : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
         )
         .feeAsset(body.feeAsset)
-        .address(address, selectedAccount.address)
+        .address(address)
+        .senderAddress(selectedAccount.address)
         .ahAddress(body.ahAddress);
 
       result =
@@ -654,7 +658,8 @@ const XcmTransfer = () => {
                 },
           )
           .feeAsset(determineFeeAsset(formValues, transformedFeeAsset))
-          .address(address, selectedAccount.address)
+          .address(address)
+          .senderAddress(selectedAccount.address)
           .ahAddress(ahAddress);
         tx = await builder.build();
         api = builder.getApi();

@@ -38,7 +38,7 @@ describe('Index Exports', () => {
 
   it('should export transfer functions', () => {
     expect(moduleExports.send).toBeDefined()
-    expect(moduleExports.getDryRun).toBeDefined()
+    expect(moduleExports.dryRun).toBeDefined()
     expect(moduleExports.getParaEthTransferFees).toBeDefined()
   })
 

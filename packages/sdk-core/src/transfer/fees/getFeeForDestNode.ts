@@ -13,7 +13,7 @@ import type { TFeeType } from '../../types'
 import { type TGetFeeForDestNodeOptions, Version } from '../../types'
 import { padFee } from './padFee'
 
-const createOriginLocation = (
+export const createOriginLocation = (
   origin: TNodeDotKsmWithRelayChains,
   destination: TNodeDotKsmWithRelayChains
 ): TMultiLocation => {
@@ -64,7 +64,8 @@ export const getFeeForDestNode = async <TApi, TRes>({
     const tx = await Builder(api)
       .from(destination)
       .to(origin)
-      .address(senderAddress, address)
+      .address(senderAddress)
+      .senderAddress(address)
       .currency({ ...currencyInput, amount: currency.amount })
       .build()
 

@@ -17,7 +17,7 @@ import { Builder } from './Builder'
 vi.mock('../transfer', () => ({
   send: vi.fn(),
   transferRelayToPara: vi.fn(),
-  getDryRun: vi.fn(),
+  dryRun: vi.fn(),
   getXcmFee: vi.fn(),
   getXcmFeeEstimate: vi.fn()
 }))
@@ -724,12 +724,51 @@ describe('Builder', () => {
   })
 
   describe('Dry run', () => {
+    it('should throw when destination is a Multi-Location (dryRun)', async () => {
+      await expect(
+        Builder(mockApi)
+          .from(NODE)
+          .to(DOT_MULTILOCATION)
+          .currency(CURRENCY)
+          .address(ADDRESS)
+          .senderAddress('alice')
+          .dryRun()
+      ).rejects.toThrow(InvalidParameterError)
+    })
+
+    it('should throw when address is a Multi-Location (dryRun)', async () => {
+      await expect(
+        Builder(mockApi)
+          .from(NODE)
+          .to(NODE_2)
+          .currency(CURRENCY)
+          .address(DOT_MULTILOCATION)
+          .senderAddress('alice')
+          .dryRun()
+      ).rejects.toThrow(InvalidParameterError)
+    })
+
+    it('should throw when destination is Ethereum (dryRun)', async () => {
+      await expect(
+        Builder(mockApi)
+          .from(NODE)
+          .to('Ethereum')
+          .currency(CURRENCY)
+          .address(ADDRESS)
+          .senderAddress('alice')
+          .dryRun()
+      ).rejects.toThrow(InvalidParameterError)
+    })
+
     it('should dry run a normal transfer', async () => {
-      const spy = vi.mocked(xcmPallet.getDryRun).mockResolvedValue({
-        success: true,
-        fee: 1000n,
-        forwardedXcms: [],
-        destParaId: 0
+      const spy = vi.mocked(xcmPallet.dryRun).mockResolvedValue({
+        origin: {
+          success: true,
+          fee: 1000n,
+          forwardedXcms: [],
+          destParaId: 0,
+          currency: 'DOT'
+        }
       })
 
       const SENDER_ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
@@ -739,13 +778,17 @@ describe('Builder', () => {
         .to(NODE_2)
         .currency(CURRENCY)
         .address(ADDRESS)
-        .dryRun(SENDER_ADDRESS)
+        .senderAddress(SENDER_ADDRESS)
+        .dryRun()
 
       expect(result).toEqual({
-        success: true,
-        fee: 1000n,
-        forwardedXcms: [],
-        destParaId: 0
+        origin: {
+          success: true,
+          fee: 1000n,
+          forwardedXcms: [],
+          destParaId: 0,
+          currency: 'DOT'
+        }
       })
       expect(spy).toHaveBeenCalledTimes(1)
     })
@@ -763,7 +806,8 @@ describe('Builder', () => {
         .from(NODE)
         .to(NODE_2)
         .currency(CURRENCY)
-        .address(ADDRESS, SENDER)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
         .getXcmFeeEstimate()
 
       expect(result).toEqual({})
@@ -776,7 +820,8 @@ describe('Builder', () => {
           .from(NODE)
           .to(DOT_MULTILOCATION)
           .currency(CURRENCY)
-          .address(ADDRESS, 'alice')
+          .address(ADDRESS)
+          .senderAddress('alice')
           .getXcmFeeEstimate()
       ).rejects.toThrow(InvalidParameterError)
     })
@@ -787,7 +832,8 @@ describe('Builder', () => {
           .from(NODE)
           .to(NODE_2)
           .currency(CURRENCY)
-          .address(DOT_MULTILOCATION, 'alice')
+          .address(DOT_MULTILOCATION)
+          .senderAddress('alice')
           .getXcmFeeEstimate()
       ).rejects.toThrow(InvalidParameterError)
     })
@@ -798,7 +844,8 @@ describe('Builder', () => {
           .from(NODE)
           .to('Ethereum')
           .currency(CURRENCY)
-          .address(ADDRESS, 'alice')
+          .address(ADDRESS)
+          .senderAddress('alice')
           .getXcmFeeEstimate()
       ).rejects.toThrow(InvalidParameterError)
     })
@@ -812,7 +859,8 @@ describe('Builder', () => {
         .from(NODE)
         .to(NODE_2)
         .currency(CURRENCY)
-        .address(ADDRESS, SENDER)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
         .getXcmFee()
 
       expect(result).toEqual({})
@@ -825,18 +873,20 @@ describe('Builder', () => {
           .from(NODE)
           .to(DOT_MULTILOCATION)
           .currency(CURRENCY)
-          .address(ADDRESS, 'alice')
+          .address(ADDRESS)
+          .senderAddress('alice')
           .getXcmFee()
       ).rejects.toThrow(InvalidParameterError)
     })
 
-    it('should throw when address is a Multi-Location (estimate)', async () => {
+    it('should throw when address is a Multi-Location (dryRun)', async () => {
       await expect(
         Builder(mockApi)
           .from(NODE)
           .to(NODE_2)
           .currency(CURRENCY)
-          .address(DOT_MULTILOCATION, 'alice')
+          .address(DOT_MULTILOCATION)
+          .senderAddress('alice')
           .getXcmFee()
       ).rejects.toThrow(InvalidParameterError)
     })
@@ -847,7 +897,8 @@ describe('Builder', () => {
           .from(NODE)
           .to('Ethereum')
           .currency(CURRENCY)
-          .address(ADDRESS, 'alice')
+          .address(ADDRESS)
+          .senderAddress('alice')
           .getXcmFee()
       ).rejects.toThrow(InvalidParameterError)
     })

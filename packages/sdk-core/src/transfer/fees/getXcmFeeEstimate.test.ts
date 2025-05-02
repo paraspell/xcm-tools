@@ -58,6 +58,7 @@ beforeEach(() => {
     from: vi.fn().mockReturnThis(),
     to: vi.fn().mockReturnThis(),
     address: vi.fn().mockReturnThis(),
+    senderAddress: vi.fn().mockReturnThis(),
     currency: vi.fn().mockReturnThis(),
     build: vi.fn().mockResolvedValue(flippedTx)
   } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>

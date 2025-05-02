@@ -46,6 +46,7 @@ describe('getOriginFeeDetails', () => {
       to: vi.fn().mockReturnThis(),
       amount: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
+      senderAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(mockTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
@@ -100,6 +101,7 @@ describe('getOriginFeeDetails', () => {
       to: vi.fn().mockReturnThis(),
       amount: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
+      senderAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(mockTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
@@ -154,6 +156,7 @@ describe('getOriginFeeDetails', () => {
       to: vi.fn().mockReturnThis(),
       amount: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
+      senderAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(mockTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>

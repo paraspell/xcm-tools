@@ -17,6 +17,6 @@ export {
 } from './assets'
 export { Builder, EvmBuilder, GeneralBuilder } from './builder'
 export * as xcmPallet from './transfer'
-export { getDryRun, getParaEthTransferFees, send, getBridgeStatus } from './transfer'
+export { dryRun, dryRunOrigin, getParaEthTransferFees, send, getBridgeStatus } from './transfer'
 export * from './types'
 export { createApiInstanceForNode } from './utils'

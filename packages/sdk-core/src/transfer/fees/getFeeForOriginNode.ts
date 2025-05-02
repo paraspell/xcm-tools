@@ -3,7 +3,6 @@
 import { hasDryRunSupport } from '@paraspell/assets'
 
 import type { TFeeType, TGetFeeForOriginNodeOptions } from '../../types'
-import { getDryRun } from '../getDryRun'
 import { padFee } from './padFee'
 
 export const getFeeForOriginNode = async <TApi, TRes>({
@@ -25,8 +24,7 @@ export const getFeeForOriginNode = async <TApi, TRes>({
     return { fee: padFee(rawFee, origin, destination, 'origin'), feeType: 'paymentInfo' }
   }
 
-  const dryRunResult = await getDryRun({
-    api,
+  const dryRunResult = await api.getDryRunCall({
     tx,
     node: origin,
     address: senderAddress

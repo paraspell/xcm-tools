@@ -20,7 +20,8 @@ export * as xcmPallet from './transfer'
 export {
   approveToken,
   depositToken,
-  getDryRun,
+  dryRun,
+  dryRunOrigin,
   getParaEthTransferFees,
   getTokenBalance,
   send,

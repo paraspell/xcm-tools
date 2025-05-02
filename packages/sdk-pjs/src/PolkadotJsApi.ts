@@ -9,7 +9,7 @@ import type {
   TBalanceResponse,
   TBridgeStatus,
   TDryRunCallBaseOptions,
-  TDryRunResult,
+  TDryRunNodeResultInternal,
   TDryRunXcmBaseOptions,
   TModuleError,
   TMultiLocation,
@@ -251,7 +251,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     tx,
     address,
     node
-  }: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunResult> {
+  }: TDryRunCallBaseOptions<Extrinsic>): Promise<TDryRunNodeResultInternal> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -313,7 +313,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     xcm,
     node,
     origin
-  }: TDryRunXcmBaseOptions): Promise<TDryRunResult> {
+  }: TDryRunXcmBaseOptions): Promise<TDryRunNodeResultInternal> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
     if (!supportsDryRunApi) {

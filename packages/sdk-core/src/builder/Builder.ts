@@ -10,7 +10,7 @@ import {
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { InvalidParameterError } from '../errors'
-import { getDryRun, getXcmFee, getXcmFeeEstimate, send } from '../transfer'
+import { dryRun, getXcmFee, getXcmFeeEstimate, send } from '../transfer'
 import type {
   TAddress,
   TBatchOptions,
@@ -99,16 +99,23 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @param address - The destination address.
    * @returns An instance of Builder
    */
-  address(address: TAddress): GeneralBuilder<TApi, TRes, T & { address: TAddress }>
-  address(
-    address: TAddress,
-    senderAddress: string
-  ): GeneralBuilder<TApi, TRes, T & { address: TAddress; senderAddress: string }>
-  address(address: TAddress, senderAddress?: string) {
+  address(address: TAddress): GeneralBuilder<TApi, TRes, T & { address: TAddress }> {
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
-      address,
-      ...(senderAddress ? { senderAddress } : {})
+      address
+    })
+  }
+
+  /**
+   * Sets the sender address.
+   *
+   * @param address - The sender address.
+   * @returns
+   */
+  senderAddress(address: string): GeneralBuilder<TApi, TRes, T & { senderAddress: string }> {
+    return new GeneralBuilder(this.api, this.batchManager, {
+      ...this._options,
+      senderAddress: address
     })
   }
 
@@ -204,17 +211,37 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     return send({ api: this.api, ...this._options })
   }
 
-  async dryRun(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>, senderAddress: string) {
-    this.api.setDisconnectAllowed(false)
+  async dryRun(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+    const { to, address, senderAddress } = this._options
+
     const tx = await this.build()
 
-    this.api.setDisconnectAllowed(true)
+    if (isTMultiLocation(to)) {
+      throw new InvalidParameterError(
+        'Multi-Location destination is not supported for XCM fee calculation.'
+      )
+    }
 
-    return getDryRun({
+    if (isTMultiLocation(address)) {
+      throw new InvalidParameterError(
+        'Multi-Location address is not supported for XCM fee calculation.'
+      )
+    }
+
+    if (to === 'Ethereum') {
+      throw new InvalidParameterError(
+        'Ethereum destination is not yet supported for XCM fee calculation.'
+      )
+    }
+
+    return dryRun({
       api: this.api,
       tx,
       address: senderAddress,
-      node: this._options.from
+      origin: this._options.from,
+      destination: to,
+      currency: this._options.currency,
+      senderAddress: this._options.senderAddress
     })
   }
 
@@ -250,15 +277,19 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     this.api.setDisconnectAllowed(true)
 
-    return getXcmFeeEstimate({
-      api: this.api,
-      tx,
-      origin: from,
-      destination: to,
-      address: address,
-      senderAddress: senderAddress,
-      currency: this._options.currency
-    })
+    try {
+      return await getXcmFeeEstimate({
+        api: this.api,
+        tx,
+        origin: from,
+        destination: to,
+        address: address,
+        senderAddress: senderAddress,
+        currency: this._options.currency
+      })
+    } finally {
+      await this.api.disconnect()
+    }
   }
 
   /**
@@ -292,18 +323,20 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     const tx = await this.build()
 
-    this.api.setDisconnectAllowed(false)
-
-    return getXcmFee({
-      api: this.api,
-      tx,
-      origin: from,
-      destination: to,
-      senderAddress: senderAddress,
-      address: address,
-      currency: this._options.currency,
-      disableFallback
-    })
+    try {
+      return await getXcmFee({
+        api: this.api,
+        tx,
+        origin: from,
+        destination: to,
+        senderAddress: senderAddress,
+        address: address,
+        currency: this._options.currency,
+        disableFallback
+      })
+    } finally {
+      await this.api.disconnect()
+    }
   }
 
   /**

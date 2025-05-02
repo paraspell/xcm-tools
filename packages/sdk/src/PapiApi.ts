@@ -11,7 +11,7 @@ import { bytesToHex } from '@noble/hashes/utils'
 import type {
   TAsset,
   TDryRunCallBaseOptions,
-  TDryRunResult,
+  TDryRunNodeResultInternal,
   TMultiLocation,
   TNodePolkadotKusama,
   TSerializedApiCall,
@@ -295,7 +295,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     tx,
     address,
     node
-  }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunResult> {
+  }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunNodeResultInternal> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
     if (!supportsDryRunApi) {
@@ -357,7 +357,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     xcm,
     node,
     origin
-  }: TDryRunXcmBaseOptions): Promise<TDryRunResult> {
+  }: TDryRunXcmBaseOptions): Promise<TDryRunNodeResultInternal> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
     if (!supportsDryRunApi) {

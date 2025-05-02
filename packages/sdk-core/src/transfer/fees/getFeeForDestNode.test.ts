@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import * as BuilderModule from '../../builder'
-import type { TDryRunResult } from '../../types'
+import type { TDryRunNodeResultInternal } from '../../types'
 import { getFeeForDestNode } from './getFeeForDestNode'
 import { padFee } from './padFee'
 
@@ -25,7 +25,7 @@ vi.mock('./padFee', () => ({
   padFee: vi.fn()
 }))
 
-const createApi = (fee: bigint, dryRunRes?: TDryRunResult) =>
+const createApi = (fee: bigint, dryRunRes?: TDryRunNodeResultInternal) =>
   ({
     calculateTransactionFee: vi.fn().mockResolvedValue(fee),
     getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {})
@@ -47,6 +47,7 @@ describe('getFeeForDestNode', () => {
       from: vi.fn().mockReturnThis(),
       to: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
+      senderAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(flippedTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
@@ -71,7 +72,7 @@ describe('getFeeForDestNode', () => {
 
   it('returns a “dryRun” fee (plus forwarded XCMs) when dry-run succeeds', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
-    const dryRunObj: TDryRunResult = {
+    const dryRunObj: TDryRunNodeResultInternal = {
       success: true,
       fee: 200n,
       forwardedXcms: [[{ x: 1 }]],
@@ -108,6 +109,7 @@ describe('getFeeForDestNode', () => {
       from: vi.fn().mockReturnThis(),
       to: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
+      senderAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(flippedTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>

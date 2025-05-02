@@ -21,8 +21,8 @@ describe('calculateTxFeeDryRun', () => {
       success: true,
       fee,
       failureReason: '',
-    } as unknown as sdkPjs.TDryRunResult;
-    const getDryRunSpy = vi.spyOn(sdkPjs, 'getDryRun').mockResolvedValue(resultFromDryRun);
+    } as unknown as sdkPjs.TDryRunNodeResult;
+    const getDryRunSpy = vi.spyOn(sdkPjs, 'dryRunOrigin').mockResolvedValue(resultFromDryRun);
     const expectedFee = new BigNumber(fee.toString()).multipliedBy(DRY_RUN_FEE_BUFFER);
     const result = await calculateTxFeeDryRun(api, node, tx, address);
     expect(getDryRunSpy).toHaveBeenCalledWith({ api, node, tx, address });
@@ -31,8 +31,8 @@ describe('calculateTxFeeDryRun', () => {
 
   it('should throw an error when dry run fails', async () => {
     const failureReason = 'some error';
-    const resultFromDryRun = { success: false, fee: 0, failureReason } as sdkPjs.TDryRunResult;
-    vi.spyOn(sdkPjs, 'getDryRun').mockResolvedValue(resultFromDryRun);
+    const resultFromDryRun = { success: false, fee: 0, failureReason } as sdkPjs.TDryRunNodeResult;
+    vi.spyOn(sdkPjs, 'dryRunOrigin').mockResolvedValue(resultFromDryRun);
     await expect(calculateTxFeeDryRun(api, node, tx, address)).rejects.toThrow(
       `Failed to calculate fee using dry run. Node: ${node} Error: ${failureReason}`,
     );

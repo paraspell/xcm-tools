@@ -1,7 +1,8 @@
 import type { TEvmBuilderOptions } from '@paraspell/sdk-core'
 import {
+  dryRun as dryRunImpl,
+  dryRunOrigin as dryRunOriginImpl,
   getBridgeStatus as getBridgeStatusImpl,
-  getDryRun as getDryRunImpl,
   getParaEthTransferFees as getEthFeesImpl,
   send as sendImpl
 } from '@paraspell/sdk-core'
@@ -18,7 +19,9 @@ import { createPolkadotJsApiCall } from './utils'
  */
 export const send = createPolkadotJsApiCall(sendImpl<TPjsApi, Extrinsic>)
 
-export const getDryRun = createPolkadotJsApiCall(getDryRunImpl<TPjsApi, Extrinsic>)
+export const dryRun = createPolkadotJsApiCall(dryRunImpl<TPjsApi, Extrinsic>)
+
+export const dryRunOrigin = createPolkadotJsApiCall(dryRunOriginImpl<TPjsApi, Extrinsic>)
 
 export const transferEthToPolkadot = (
   options: Omit<TEvmBuilderOptions<TPjsApi, Extrinsic>, 'api'>
