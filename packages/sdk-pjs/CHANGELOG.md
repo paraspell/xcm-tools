@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.13.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.13.0...sdk-pjs-v8.13.1) (2025-05-05)
+
+
+### Build System
+
+* Update polkadot-api version 📦 ([9e2957f](https://github.com/paraspell/xcm-tools/commit/9e2957f628ff3662e7e1ed6338fe472653fe742a))
+
 ## [8.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.12.1...sdk-pjs-v8.13.0) (2025-05-05)
 
 
