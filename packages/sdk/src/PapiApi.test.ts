@@ -355,7 +355,7 @@ describe('PapiApi', () => {
 
     it('should return the balance as bigint when balance exists', async () => {
       papiApi.setApi(mockPolkadotClient)
-      const balance = await papiApi.getAssetHubForeignBalance('some_address', multiLocation)
+      const balance = await papiApi.getBalanceForeignAssetsPallet('some_address', multiLocation)
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.ForeignAssets.Account.getValue).toHaveBeenCalledWith(
@@ -369,7 +369,7 @@ describe('PapiApi', () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.query.ForeignAssets.Account.getValue = vi.fn().mockResolvedValue(undefined)
 
-      const balance = await papiApi.getAssetHubForeignBalance('some_address', multiLocation)
+      const balance = await papiApi.getBalanceForeignAssetsPallet('some_address', multiLocation)
 
       expect(balance).toBe(0n)
     })
@@ -493,7 +493,7 @@ describe('PapiApi', () => {
   describe('getBalanceForeignMoonbeam', () => {
     it('should return the balance when balance exists', async () => {
       papiApi.setApi(mockPolkadotClient)
-      const balance = await papiApi.getBalanceForeignAssetsAccount('some_address', 1)
+      const balance = await papiApi.getBalanceAssetsPallet('some_address', 1)
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       expect(unsafeApi.query.Assets.Account.getValue).toHaveBeenCalledWith(1, 'some_address')
@@ -504,7 +504,7 @@ describe('PapiApi', () => {
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.query.Assets.Account.getValue = vi.fn().mockResolvedValue(undefined)
 
-      const balance = await papiApi.getBalanceForeignAssetsAccount('some_address', 1)
+      const balance = await papiApi.getBalanceAssetsPallet('some_address', 1)
 
       expect(balance).toEqual(0n)
     })

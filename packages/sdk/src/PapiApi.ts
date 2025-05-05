@@ -198,7 +198,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return res && res.free ? BigInt(res.free) : 0n
   }
 
-  async getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation) {
+  async getBalanceForeignAssetsPallet(address: string, multiLocation: TMultiLocation) {
     const transformedMultiLocation = transform(multiLocation)
 
     const res = await this.api
@@ -267,7 +267,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return entry?.value ? BigInt(entry.value.free.toString()) : 0n
   }
 
-  async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number) {
+  async getBalanceAssetsPallet(address: string, assetId: bigint | number) {
     const response = await this.api.getUnsafeApi().query.Assets.Account.getValue(assetId, address)
 
     return BigInt(response === undefined ? 0 : response.balance)

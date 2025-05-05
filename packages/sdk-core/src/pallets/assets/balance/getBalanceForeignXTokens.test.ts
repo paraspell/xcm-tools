@@ -5,7 +5,7 @@ import type { IPolkadotApi } from '../../../api'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
 
 const mockApi = {
-  getBalanceForeignAssetsAccount: vi.fn(),
+  getBalanceAssetsPallet: vi.fn(),
   getBalanceForeignXTokens: vi.fn(),
   getBalanceForeignBifrost: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
@@ -19,7 +19,7 @@ describe('getBalanceForeignXTokens', () => {
   })
 
   it('calls getBalanceForeignMoonbeam when node is Astar', async () => {
-    const spy = vi.spyOn(mockApi, 'getBalanceForeignAssetsAccount').mockResolvedValue(1000n)
+    const spy = vi.spyOn(mockApi, 'getBalanceAssetsPallet').mockResolvedValue(1000n)
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
     const balance = await getBalanceForeignXTokens(mockApi, 'Astar', address, asset)
     expect(spy).toHaveBeenCalledWith(address, BigInt(asset.assetId ?? ''))
@@ -28,7 +28,7 @@ describe('getBalanceForeignXTokens', () => {
   })
 
   it('calls getBalanceForeignAssetsAccount when node is Shiden', async () => {
-    const spy = vi.spyOn(mockApi, 'getBalanceForeignAssetsAccount').mockResolvedValue(2000n)
+    const spy = vi.spyOn(mockApi, 'getBalanceAssetsPallet').mockResolvedValue(2000n)
     const spy2 = vi.spyOn(mockApi, 'getBalanceForeignXTokens')
     const balance = await getBalanceForeignXTokens(mockApi, 'Shiden', address, asset)
     expect(spy).toHaveBeenCalledWith(address, BigInt(asset.assetId ?? ''))
@@ -38,7 +38,7 @@ describe('getBalanceForeignXTokens', () => {
 
   it('calls getBalanceForeignXTokens for any other node', async () => {
     const spy = vi.spyOn(mockApi, 'getBalanceForeignXTokens').mockResolvedValue(3000n)
-    const spy2 = vi.spyOn(mockApi, 'getBalanceForeignAssetsAccount')
+    const spy2 = vi.spyOn(mockApi, 'getBalanceAssetsPallet')
     const balance = await getBalanceForeignXTokens(mockApi, 'Acala', address, asset)
     expect(spy).toHaveBeenCalledWith('Acala', address, asset)
     expect(spy2).not.toHaveBeenCalled()
@@ -55,7 +55,7 @@ describe('getBalanceForeignXTokens', () => {
   })
 
   it('returns 0 if getBalanceForeignMoonbeam resolves with 0', async () => {
-    vi.spyOn(mockApi, 'getBalanceForeignAssetsAccount').mockResolvedValue(0n)
+    vi.spyOn(mockApi, 'getBalanceAssetsPallet').mockResolvedValue(0n)
     const balance = await getBalanceForeignXTokens(mockApi, 'Astar', address, asset)
     expect(balance).toEqual(0n)
   })

@@ -38,7 +38,7 @@ export interface IPolkadotApi<TApi, TRes> {
   getBalanceNativeAcala(address: string, symbol: string): Promise<bigint>
   getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint>
   getMythosForeignBalance(address: string): Promise<bigint>
-  getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation): Promise<bigint>
+  getBalanceForeignAssetsPallet(address: string, multiLocation: TMultiLocation): Promise<bigint>
   getForeignAssetsByIdBalance(address: string, assetId: string): Promise<bigint>
   getBalanceForeignXTokens(
     node: TNodePolkadotKusama,
@@ -46,7 +46,7 @@ export interface IPolkadotApi<TApi, TRes> {
     asset: TAsset
   ): Promise<bigint>
   getBalanceForeignBifrost(address: string, asset: TAsset): Promise<bigint>
-  getBalanceForeignAssetsAccount(address: string, assetId: bigint | number): Promise<bigint>
+  getBalanceAssetsPallet(address: string, assetId: bigint | number): Promise<bigint>
   getFromRpc(module: string, method: string, key: string): Promise<string>
   blake2AsHex(data: Uint8Array): string
   clone(): IPolkadotApi<TApi, TRes>
