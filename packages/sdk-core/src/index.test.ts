@@ -9,6 +9,8 @@ describe('Module Exports', () => {
     expect(sdk.NODES_WITH_RELAY_CHAINS).toBeDefined()
     expect(sdk.NODES_WITH_RELAY_CHAINS_DOT_KSM).toBeDefined()
     expect(sdk.SUPPORTED_PALLETS).toBeDefined()
+    expect(sdk.TX_CLIENT_TIMEOUT_MS).toBeDefined()
+    expect(sdk.DRY_RUN_CLIENT_TIMEOUT_MS).toBeDefined()
   })
 
   it('should export utility functions', () => {

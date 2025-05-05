@@ -4,6 +4,7 @@ import { isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
+import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type ParachainNode from '../nodes/ParachainNode'
 import type { TSendOptions } from '../types'
 import { getNode } from '../utils'
@@ -115,7 +116,7 @@ describe('send', () => {
     expect(validateAssetSpecifiers).toHaveBeenCalledWith(true, options.currency)
     expect(validateAssetSupport).toHaveBeenCalledWith(options, true, false, { symbol: 'TEST' })
 
-    expect(apiSpy).toHaveBeenCalledWith(options.from)
+    expect(apiSpy).toHaveBeenCalledWith(options.from, TX_CLIENT_TIMEOUT_MS)
 
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
@@ -310,7 +311,7 @@ describe('send', () => {
 
       const result = await send(options)
 
-      expect(initSpy).toHaveBeenCalledWith(relayChain)
+      expect(initSpy).toHaveBeenCalledWith(relayChain, TX_CLIENT_TIMEOUT_MS)
 
       expect(callTxSpy).toHaveBeenCalledWith({
         module: 'Balances',

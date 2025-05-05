@@ -354,7 +354,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns A Promise that resolves when the API is disconnected.
    */
   disconnect() {
-    return this.api.disconnect(true)
+    return this.api.disconnect()
   }
 }
 

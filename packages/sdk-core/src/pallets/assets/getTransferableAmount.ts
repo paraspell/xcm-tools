@@ -15,7 +15,7 @@ import { validateAddress } from '../../utils/validateAddress'
 import { getBalanceForeignInternal } from './balance/getBalanceForeign'
 import { getBalanceNativeInternal } from './balance/getBalanceNative'
 
-export const getMaxNativeTransferableAmount = async <TApi, TRes>({
+export const getMaxNativeTransferableAmountInternal = async <TApi, TRes>({
   api,
   address,
   node,
@@ -40,7 +40,20 @@ export const getMaxNativeTransferableAmount = async <TApi, TRes>({
   return maxTransferableAmount > 0n ? maxTransferableAmount : 0n
 }
 
-export const getMaxForeignTransferableAmount = async <TApi, TRes>({
+export const getMaxNativeTransferableAmount = async <TApi, TRes>(
+  options: TGetMaxNativeTransferableAmountOptions<TApi, TRes>
+): Promise<bigint> => {
+  const { api } = options
+  api.setDisconnectAllowed(false)
+  try {
+    return await getMaxNativeTransferableAmountInternal(options)
+  } finally {
+    api.setDisconnectAllowed(true)
+    await api.disconnect()
+  }
+}
+
+export const getMaxForeignTransferableAmountInternal = async <TApi, TRes>({
   api,
   address,
   node,
@@ -77,7 +90,20 @@ export const getMaxForeignTransferableAmount = async <TApi, TRes>({
   return maxTransferableAmount > 0n ? maxTransferableAmount : 0n
 }
 
-export const getTransferableAmount = async <TApi, TRes>({
+export const getMaxForeignTransferableAmount = async <TApi, TRes>(
+  options: TGetMaxForeignTransferableAmountOptions<TApi, TRes>
+): Promise<bigint> => {
+  const { api } = options
+  api.setDisconnectAllowed(false)
+  try {
+    return await getMaxForeignTransferableAmountInternal(options)
+  } finally {
+    api.setDisconnectAllowed(true)
+    await api.disconnect()
+  }
+}
+
+export const getTransferableAmountInternal = async <TApi, TRes>({
   api,
   address,
   node,
@@ -94,9 +120,9 @@ export const getTransferableAmount = async <TApi, TRes>({
   }
 
   if (isForeignAsset(asset) && !isRelayChain(node)) {
-    return getMaxForeignTransferableAmount({ api, address, node, currency })
+    return getMaxForeignTransferableAmountInternal({ api, address, node, currency })
   } else {
-    return getMaxNativeTransferableAmount({
+    return getMaxNativeTransferableAmountInternal({
       api,
       address,
       node,
@@ -104,5 +130,18 @@ export const getTransferableAmount = async <TApi, TRes>({
         symbol: asset.symbol
       }
     })
+  }
+}
+
+export const getTransferableAmount = async <TApi, TRes>(
+  options: TGetTransferableAmountOptions<TApi, TRes>
+): Promise<bigint> => {
+  const { api } = options
+  api.setDisconnectAllowed(false)
+  try {
+    return await getTransferableAmountInternal(options)
+  } finally {
+    api.setDisconnectAllowed(true)
+    await api.disconnect()
   }
 }

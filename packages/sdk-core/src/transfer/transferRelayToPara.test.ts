@@ -5,6 +5,7 @@ import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
+import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type ParachainNode from '../nodes/ParachainNode'
 import { resolveTNodeFromMultiLocation } from '../pallets/xcmPallet/utils'
 import { type TRelayToParaOptions, Version } from '../types'
@@ -89,7 +90,7 @@ describe('transferRelayToPara', () => {
 
     await transferRelayToPara(options)
 
-    expect(spy).toHaveBeenCalledWith('Polkadot')
+    expect(spy).toHaveBeenCalledWith('Polkadot', TX_CLIENT_TIMEOUT_MS)
   })
 
   it('should get the serialized api call correctly when destination is MultiLocation', async () => {

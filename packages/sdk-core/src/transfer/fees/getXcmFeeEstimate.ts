@@ -1,6 +1,7 @@
 import { findAsset, getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
 
 import { Builder } from '../../builder'
+import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetXcmFeeEstimateOptions, TGetXcmFeeEstimateResult } from '../../types/TXcmFee'
 import { padFee } from './padFee'
 
@@ -34,7 +35,7 @@ export const getXcmFeeEstimate = async <TApi, TRes>({
   const originFee = padFee(rawOriginFee, origin, destination, 'origin')
 
   const destApi = api.clone()
-  await destApi.init(destination)
+  await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
 
   if ('multiasset' in currency) {
     throw new InvalidCurrencyError(

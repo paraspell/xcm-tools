@@ -1,3 +1,4 @@
+import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { resolveTNodeFromMultiLocation } from '../pallets/xcmPallet/utils'
 import type { TRelayToParaOptions } from '../types'
 import { getNode } from '../utils'
@@ -12,7 +13,7 @@ export const transferRelayToPara = async <TApi, TRes>(
     throw new Error('API is required when using MultiLocation as destination.')
   }
 
-  await api.init(origin)
+  await api.init(origin, TX_CLIENT_TIMEOUT_MS)
 
   const serializedApiCall = getNode(
     isMultiLocationDestination ? resolveTNodeFromMultiLocation(origin, destination) : destination

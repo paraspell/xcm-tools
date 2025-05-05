@@ -3,6 +3,7 @@
 import type { TNativeAsset } from '@paraspell/assets'
 import { isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 
+import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidAddressError } from '../errors'
 import type { TRelayToParaDestination, TSendOptions } from '../types'
 import { getNode, validateAddress } from '../utils'
@@ -72,7 +73,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
         )
       }
 
-      await api.init(origin)
+      await api.init(origin, TX_CLIENT_TIMEOUT_MS)
       return api.callTxMethod({
         module: 'Balances',
         section: 'transfer_keep_alive',
@@ -106,7 +107,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     resolvedFeeAsset
   )
 
-  await api.init(origin)
+  await api.init(origin, TX_CLIENT_TIMEOUT_MS)
 
   // In case asset check is disabled, we create asset object from currency symbol
   const resolvedAsset =

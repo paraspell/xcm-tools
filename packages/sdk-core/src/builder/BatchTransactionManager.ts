@@ -1,6 +1,7 @@
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
+import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { send } from '../transfer'
 import type { TSendOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
@@ -21,7 +22,7 @@ class BatchTransactionManager<TApi, TRes> {
     from: TNodeDotKsmWithRelayChains,
     options: TBatchOptions = { mode: BatchMode.BATCH_ALL }
   ): Promise<TRes> {
-    await api.init(from)
+    await api.init(from, TX_CLIENT_TIMEOUT_MS)
 
     const { mode } = options
     if (this.transactionOptions.length === 0) {

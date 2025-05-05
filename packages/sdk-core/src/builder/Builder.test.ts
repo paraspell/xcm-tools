@@ -667,7 +667,7 @@ describe('Builder', () => {
       await builder.disconnect()
 
       expect(disconnectAllowedSpy).not.toHaveBeenCalled()
-      expect(disconnectSpy).toHaveBeenCalledWith(true)
+      expect(disconnectSpy).toHaveBeenCalledWith()
     })
   })
 

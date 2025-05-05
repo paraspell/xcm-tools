@@ -2,6 +2,7 @@ import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
+import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TDryRunResult } from '../../types'
 import { validateAddress } from '../../utils'
 import { dryRun } from './dryRun'
@@ -52,7 +53,7 @@ describe('dryRun', () => {
 
     expect(validateAddress).toHaveBeenCalledWith(address, node, false)
     expect(result).toEqual(mockResult)
-    expect(initSpy).toHaveBeenCalledWith(node)
+    expect(initSpy).toHaveBeenCalledWith(node, DRY_RUN_CLIENT_TIMEOUT_MS)
     expect(disconnectSpy).toHaveBeenCalled()
   })
 })

@@ -2,7 +2,12 @@
 
 export * from './api'
 export * from './builder'
-export { ETH_CHAIN_ID, ETHEREUM_JUNCTION } from './constants'
+export {
+  DRY_RUN_CLIENT_TIMEOUT_MS,
+  ETH_CHAIN_ID,
+  ETHEREUM_JUNCTION,
+  TX_CLIENT_TIMEOUT_MS
+} from './constants'
 export * from './errors'
 export * from './nodes/config'
 export * from './nodes/getTNode'

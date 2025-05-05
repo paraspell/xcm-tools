@@ -10,6 +10,7 @@ import {
 } from '@paraspell/assets'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
+import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { getTNode } from '../../nodes/getTNode'
 import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
 import type { TDryRunNodeResultInternal } from '../../types'
@@ -93,7 +94,7 @@ export const dryRunInternal = async <TApi, TRes>(
         break
       }
 
-      await hopApi.init(nextChain)
+      await hopApi.init(nextChain, DRY_RUN_CLIENT_TIMEOUT_MS)
 
       const hopDryRun = await hopApi.getDryRunXcm({
         originLocation: addXcmVersionHeader(

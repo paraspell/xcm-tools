@@ -23,9 +23,12 @@ vi.mock('polkadot-api/ws-provider/node', () => ({
   }))
 }))
 
+vi.mock('polkadot-api/polkadot-sdk-compat', () => ({
+  withPolkadotSdkCompat: vi.fn().mockImplementation((provider: JsonRpcProvider) => provider)
+}))
+
 vi.mock('polkadot-api', () => ({
   createClient: vi.fn(),
-  withPolkadotSdkCompat: vi.fn().mockImplementation((provider: JsonRpcProvider) => provider),
   FixedSizeBinary: {
     fromAccountId32: vi.fn()
   },
@@ -527,60 +530,68 @@ describe('PapiApi', () => {
   })
 
   describe('disconnect', () => {
-    it('should disconnect the api when _api is a string', async () => {
-      const mockDisconnect = vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
+    const spyDestroy = () => vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
 
-      papiApi.setApi('api')
-      await papiApi.disconnect()
+    it('releases (does NOT destroy) when _api is a string and force = false', async () => {
+      const destroySpy = spyDestroy()
 
-      expect(mockDisconnect).toHaveBeenCalled()
+      papiApi.setApi('ws://example:9944')
+      await papiApi.disconnect(false)
 
-      mockDisconnect.mockRestore()
+      expect(destroySpy).not.toHaveBeenCalled()
     })
 
-    it('should disconnect the api when _api is not provided', async () => {
-      const mockDisconnect = vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
+    it('releases (does NOT destroy) when _api is undefined and force = false', async () => {
+      const providersSpy = vi
+        .spyOn(sdkCore, 'getNodeProviders')
+        .mockReturnValue(['ws://dummy:9944'])
+
+      const destroySpy = spyDestroy()
 
       papiApi.setApi(undefined)
-      await papiApi.disconnect()
+      await papiApi.disconnect(false)
 
-      expect(mockDisconnect).toHaveBeenCalled()
+      expect(providersSpy).toHaveBeenCalledWith('Acala')
+      expect(destroySpy).not.toHaveBeenCalled()
 
-      mockDisconnect.mockRestore()
+      providersSpy.mockRestore()
     })
 
-    it('should not disconnect the api when _api is provided', async () => {
-      const mockDisconnect = vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
+    it('destroys when _api is a string and force = true', async () => {
+      const destroySpy = spyDestroy()
 
-      papiApi.setApi(mockPolkadotClient)
-      await papiApi.disconnect()
-
-      expect(mockDisconnect).not.toHaveBeenCalled()
-
-      mockDisconnect.mockRestore()
-    })
-
-    it('should disconnect the api when force is true', async () => {
-      const mockDisconnect = vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
-
-      papiApi.setApi('api')
+      papiApi.setApi('ws://example:9944')
       await papiApi.disconnect(true)
 
-      expect(mockDisconnect).toHaveBeenCalled()
-
-      mockDisconnect.mockRestore()
+      expect(destroySpy).toHaveBeenCalledTimes(1)
     })
 
-    it('should not disconnect the api when force is false and disconnect is not allowed', async () => {
-      const mockDisconnect = vi.spyOn(mockPolkadotClient, 'destroy').mockResolvedValue()
+    it('does NOT destroy when _api is an injected client and force = false', async () => {
+      const destroySpy = spyDestroy()
 
-      papiApi.setApi('api')
+      papiApi.setApi(mockPolkadotClient)
+      await papiApi.disconnect(false)
+
+      expect(destroySpy).not.toHaveBeenCalled()
+    })
+
+    it('destroys when _api is an injected client AND force = true', async () => {
+      const destroySpy = spyDestroy()
+
+      papiApi.setApi(mockPolkadotClient)
+      await papiApi.disconnect(true)
+
+      expect(destroySpy).toHaveBeenCalledTimes(1)
+    })
+
+    it('does nothing when disconnectAllowed = false and force = false', async () => {
+      const destroySpy = spyDestroy()
+
+      papiApi.setApi('ws://example:9944')
       papiApi.setDisconnectAllowed(false)
       await papiApi.disconnect(false)
 
-      expect(mockDisconnect).not.toHaveBeenCalled()
-
-      mockDisconnect.mockRestore()
+      expect(destroySpy).not.toHaveBeenCalled()
     })
   })
 
@@ -1134,6 +1145,72 @@ describe('PapiApi', () => {
     it('should return the bridge status', async () => {
       const status = await papiApi.getBridgeStatus()
       expect(status).toEqual('Normal')
+    })
+  })
+
+  describe('PapiApi - timed cache integration', () => {
+    it('re-uses the same PolkadotClient and destroys it after refs drop to 0 when destroyWanted=true', async () => {
+      vi.useFakeTimers()
+
+      const ws = 'ws://cache-test:9944'
+      const sharedClient = {
+        destroy: vi.fn(),
+        getUnsafeApi: vi.fn().mockReturnValue({}),
+        getChainSpecData: vi.fn().mockResolvedValue(undefined)
+      } as unknown as PolkadotClient
+
+      // first lease will create the client; subsequent ones should not
+      vi.mocked(createClient).mockReturnValue(sharedClient)
+
+      const apiA = new PapiApi()
+      apiA.setApi(ws)
+      await apiA.init('Acala', 1_000) // ttl = 1 s
+
+      const apiB = new PapiApi()
+      apiB.setApi(ws)
+      await apiB.init('Acala', 1_000)
+
+      expect(createClient).toHaveBeenCalledTimes(1) // same underlying connection
+
+      // ⏩ first expiry while still in use => mark destroyWanted but keep alive
+      vi.advanceTimersByTime(1_001)
+      expect(sharedClient.destroy).not.toHaveBeenCalled()
+
+      // release one reference – still 1 left
+      await apiA.disconnect()
+      expect(sharedClient.destroy).not.toHaveBeenCalled()
+
+      // release last reference – destroyWanted && refs==0 -> real destroy
+      await apiB.disconnect()
+      expect(sharedClient.destroy).toHaveBeenCalledTimes(1)
+
+      vi.useRealTimers()
+    })
+
+    it('evicts and destroys an idle client after its TTL elapses', async () => {
+      vi.useFakeTimers()
+
+      const ws = 'ws://cache-test2:9944'
+      const idleClient = {
+        destroy: vi.fn(),
+        getUnsafeApi: vi.fn().mockReturnValue({}),
+        getChainSpecData: vi.fn().mockResolvedValue(undefined)
+      } as unknown as PolkadotClient
+      vi.mocked(createClient).mockReturnValue(idleClient)
+
+      const api = new PapiApi()
+      api.setApi(ws)
+      await api.init('Acala', 500) // ttl = 0.5 s
+
+      // drop the only reference – entry.refs becomes 0
+      await api.disconnect()
+      expect(idleClient.destroy).not.toHaveBeenCalled()
+
+      // ⏩ timer fires, entry is evicted because refs==0
+      vi.advanceTimersByTime(501)
+      expect(idleClient.destroy).toHaveBeenCalledTimes(1)
+
+      vi.useRealTimers()
     })
   })
 })

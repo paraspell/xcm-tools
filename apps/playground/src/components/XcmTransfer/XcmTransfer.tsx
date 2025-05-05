@@ -355,10 +355,6 @@ const XcmTransfer = () => {
       }
     } finally {
       setLoading(false);
-      if (api) {
-        if ('disconnect' in api) await api.disconnect();
-        else api.destroy();
-      }
     }
   };
 
@@ -695,10 +691,6 @@ const XcmTransfer = () => {
       }
     } finally {
       setLoading(false);
-      if (api) {
-        if ('disconnect' in api) await api.disconnect();
-        else api.destroy();
-      }
     }
   };
 

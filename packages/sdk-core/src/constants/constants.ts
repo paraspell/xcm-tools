@@ -29,3 +29,6 @@ export const SYSTEM_NODES_KUSAMA: TNodeWithRelayChains[] = ['PeopleKusama', 'Cor
 export const ASSET_HUB_EXECUTION_FEE = 2200000000n // 0.22 DOT
 
 export const FEE_PADDING_FACTOR = 130n // 30% padding
+
+export const TX_CLIENT_TIMEOUT_MS = 20 * 60 * 1000 // 20 minutes
+export const DRY_RUN_CLIENT_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes

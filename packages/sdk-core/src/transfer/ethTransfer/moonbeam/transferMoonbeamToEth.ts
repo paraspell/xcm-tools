@@ -15,6 +15,7 @@ import { Contract } from 'ethers'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
+import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
 import { BridgeHaltedError } from '../../../errors'
 import { getParaId } from '../../../nodes/config'
 import { type TEvmBuilderOptions, type TXcmVersioned, Version } from '../../../types'
@@ -96,7 +97,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
     throw new Error('Unable to get sender address')
   }
 
-  await api.init(from)
+  await api.init(from, TX_CLIENT_TIMEOUT_MS)
 
   const messageId = await generateMessageId(
     api,

@@ -17,8 +17,9 @@ vi.mock('./buildClaimAssetsInput', () => ({
   buildClaimAssetsInput: vi.fn()
 }))
 
-vi.mock('@paraspell/sdk-common', () => ({
-  isRelayChain: vi.fn()
+vi.mock('@paraspell/sdk-common', async importOriginal => ({
+  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
+  isRelayChain: vi.fn().mockReturnValue(false)
 }))
 
 describe('claimAssets', () => {

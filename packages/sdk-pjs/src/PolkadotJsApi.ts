@@ -63,7 +63,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api
   }
 
-  async init(node: TNodeDotKsmWithRelayChains) {
+  async init(node: TNodeDotKsmWithRelayChains, _clientTtlMs?: number) {
     if (this.initialized) {
       return
     }
