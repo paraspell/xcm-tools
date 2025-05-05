@@ -1,6 +1,7 @@
 import type { TPallet } from '@paraspell/pallets'
 import { isRelayChain } from '@paraspell/sdk-common'
 
+import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
 import { type TAssetClaimOptions } from '../../../types/TAssetClaim'
 import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 
@@ -9,7 +10,7 @@ export const claimAssets = async <TApi, TRes>(
 ): Promise<TRes> => {
   const { api, node } = options
 
-  await api.init(node)
+  await api.init(node, TX_CLIENT_TIMEOUT_MS)
 
   const args = buildClaimAssetsInput<TApi, TRes>(options)
 

@@ -6,6 +6,7 @@ import {
   getParaEthTransferFees as getEthFeesImpl,
   send as sendImpl
 } from '@paraspell/sdk-core'
+import { DRY_RUN_CLIENT_TIMEOUT_MS } from '@paraspell/sdk-core'
 
 import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
@@ -34,7 +35,7 @@ export const transferEthToPolkadot = (
 export const getParaEthTransferFees = async (api?: TPjsApiOrUrl) => {
   const pjsApi = new PolkadotJsApi()
   pjsApi.setApi(api)
-  await pjsApi.init('AssetHubPolkadot')
+  await pjsApi.init('AssetHubPolkadot', DRY_RUN_CLIENT_TIMEOUT_MS)
   return getEthFeesImpl(pjsApi)
 }
 

@@ -14,7 +14,8 @@ import { getBalanceNativeInternal } from './balance/getBalanceNative'
 import {
   getMaxForeignTransferableAmount,
   getMaxNativeTransferableAmount,
-  getTransferableAmount
+  getTransferableAmount,
+  getTransferableAmountInternal
 } from './getTransferableAmount'
 
 vi.mock('./balance/getBalanceNative', () => ({
@@ -43,7 +44,8 @@ vi.mock('@paraspell/sdk-common', () => ({
 
 describe('Transferable Amounts', () => {
   const apiMock = {
-    disconnect: vi.fn()
+    disconnect: vi.fn(),
+    setDisconnectAllowed: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
   const mockNode: TNodeDotKsmWithRelayChains = 'Acala'
   const mockAddress = '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa'
@@ -187,7 +189,7 @@ describe('Transferable Amounts', () => {
       vi.mocked(getBalanceNativeInternal).mockResolvedValue(1000000000000n)
       vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
 
-      const result = await getTransferableAmount({
+      const result = await getTransferableAmountInternal({
         api: apiMock,
         address: mockAddress,
         node: mockNode,
@@ -205,7 +207,7 @@ describe('Transferable Amounts', () => {
       vi.mocked(isForeignAsset).mockReturnValue(true)
       vi.mocked(getBalanceForeignInternal).mockResolvedValue(2000000000000n)
 
-      const result = await getTransferableAmount({
+      const result = await getTransferableAmountInternal({
         api: apiMock,
         address: mockAddress,
         node: mockNode,
@@ -238,7 +240,7 @@ describe('Transferable Amounts', () => {
       vi.mocked(getBalanceNativeInternal).mockResolvedValue(BigInt(5000))
       vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
 
-      const result = await getTransferableAmount({
+      const result = await getTransferableAmountInternal({
         api: apiMock,
         address: mockAddress,
         node: mockNode,
@@ -253,7 +255,7 @@ describe('Transferable Amounts', () => {
       vi.mocked(isForeignAsset).mockReturnValue(true)
       vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt('500000000')) // less than ED
 
-      const result = await getTransferableAmount({
+      const result = await getTransferableAmountInternal({
         api: apiMock,
         address: mockAddress,
         node: mockNode,

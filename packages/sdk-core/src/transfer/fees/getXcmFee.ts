@@ -5,6 +5,7 @@
 import { findAsset, getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
+import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { getTNode } from '../../nodes/getTNode'
 import type {
   TFeeType,
@@ -60,7 +61,7 @@ export const getXcmFee = async <TApi, TRes>({
 
     const destApi = api.clone()
     try {
-      await destApi.init(destination)
+      await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
       destApi.setDisconnectAllowed(false)
 
       const destFee = await getFeeForDestNode({
@@ -100,7 +101,7 @@ export const getXcmFee = async <TApi, TRes>({
     const destApi = api.clone()
 
     try {
-      await destApi.init(destination)
+      await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
       destApi.setDisconnectAllowed(false)
 
       const destFeeRes = await getFeeForDestNode({
@@ -163,7 +164,7 @@ export const getXcmFee = async <TApi, TRes>({
     const hopApi = api.clone()
 
     try {
-      await hopApi.init(nextChain)
+      await hopApi.init(nextChain, DRY_RUN_CLIENT_TIMEOUT_MS)
 
       const hopResult = await getFeeForDestNode({
         api: hopApi,

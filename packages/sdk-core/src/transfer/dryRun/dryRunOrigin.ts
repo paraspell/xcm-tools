@@ -1,5 +1,6 @@
 import { getNativeAssetSymbol } from '@paraspell/assets'
 
+import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TDryRunCallOptions, TDryRunNodeResult } from '../../types'
 import { validateAddress } from '../../utils'
 
@@ -10,7 +11,7 @@ export const dryRunOrigin = async <TApi, TRes>(
 
   validateAddress(address, node, false)
 
-  await api.init(node)
+  await api.init(node, DRY_RUN_CLIENT_TIMEOUT_MS)
   try {
     const result = await api.getDryRunCall(options)
     if (result.success) {

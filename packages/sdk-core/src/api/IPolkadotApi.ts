@@ -19,7 +19,7 @@ export interface IPolkadotApi<TApi, TRes> {
   setApi(api?: TApiOrUrl<TApi>): void
   getApi(): TApi
   getApiOrUrl(): TApiOrUrl<TApi> | undefined
-  init(node: TNodeWithRelayChains): Promise<void>
+  init(node: TNodeWithRelayChains, clientTtlMs?: number): Promise<void>
   createApiInstance: (wsUrl: string | string[]) => Promise<TApi>
   accountToHex(address: string, isPrefixed?: boolean): string
   callTxMethod(serializedCall: TSerializedApiCall): TRes

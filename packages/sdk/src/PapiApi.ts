@@ -6,7 +6,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
-import { blake2b } from '@noble/hashes/blake2b'
+import { blake2b } from '@noble/hashes/blake2'
 import { bytesToHex } from '@noble/hashes/utils'
 import type {
   TAsset,
@@ -17,7 +17,7 @@ import type {
   TSerializedApiCall,
   TWeight
 } from '@paraspell/sdk-core'
-import { BatchMode, Parents, Version } from '@paraspell/sdk-core'
+import { BatchMode, getNodeProviders, Parents, Version } from '@paraspell/sdk-core'
 import {
   computeFeeFromDryRun,
   createApiInstanceForNode,
@@ -35,7 +35,67 @@ import { AccountId, Binary, createClient, FixedSizeBinary } from 'polkadot-api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 
 import { transform } from './PapiXcmTransformer'
+import { createClientCache, type TClientKey } from './TimedCache'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
+
+const DEFAULT_TTL_MS = 60_000 // 1 minute
+const MAX_CLIENTS = 100
+const EXTENSION_MS = 5 * 60_000 // 5 minutes
+
+const clientPool = createClientCache(
+  MAX_CLIENTS,
+  (_key, entry) => {
+    entry.client.destroy()
+  },
+  EXTENSION_MS
+)
+
+const keyFromWs = (ws: string | string[]): TClientKey => {
+  return Array.isArray(ws) ? JSON.stringify(ws) : ws
+}
+
+const createPolkadotClient = async (ws: string | string[]): Promise<TPapiApi> => {
+  const isNodeJs = typeof window === 'undefined'
+
+  const { getWsProvider } = isNodeJs
+    ? await import('polkadot-api/ws-provider/node')
+    : await import('polkadot-api/ws-provider/web')
+
+  const provider = Array.isArray(ws) ? getWsProvider(ws) : getWsProvider(ws)
+  return createClient(withPolkadotSdkCompat(provider))
+}
+
+const leasePolkadotClient = async (ws: string | string[], ttlMs: number) => {
+  const key = keyFromWs(ws)
+  let entry = clientPool.peek(key)
+
+  if (!entry) {
+    entry = { client: await createPolkadotClient(ws), refs: 0, destroyWanted: false }
+    clientPool.set(key, entry, ttlMs)
+  }
+
+  entry.refs += 1
+
+  clientPool.revive(key, ttlMs)
+  entry.destroyWanted = false
+
+  return entry.client
+}
+
+const releasePolkadotClient = (ws: string | string[]) => {
+  const key = keyFromWs(ws)
+  const entry = clientPool.peek(key)
+
+  if (!entry) {
+    return
+  }
+
+  entry.refs -= 1
+
+  if (entry.refs === 0 && entry.destroyWanted) {
+    clientPool.delete(key)
+  }
+}
 
 const unsupportedNodes = [
   'ComposableFinance',
@@ -55,8 +115,10 @@ const isHex = (str: string) => {
 class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   private _api?: TPapiApiOrUrl
   private api: TPapiApi
+  private _ttlMs = DEFAULT_TTL_MS
   private initialized = false
   private disconnectAllowed = true
+  private _node: TNodeDotKsmWithRelayChains
 
   setApi(api?: TPapiApiOrUrl) {
     this._api = api
@@ -70,7 +132,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return this.api
   }
 
-  async init(node: TNodeDotKsmWithRelayChains) {
+  async init(node: TNodeDotKsmWithRelayChains, clientTtlMs: number = DEFAULT_TTL_MS) {
     if (this.initialized) {
       return
     }
@@ -78,6 +140,9 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (unsupportedNodes.includes(node)) {
       throw new NodeNotSupportedError(`The node ${node} is not yet supported by the Polkadot API.`)
     }
+
+    this._ttlMs = clientTtlMs
+
     if (typeof this._api === 'string' || this._api instanceof Array) {
       this.api = await this.createApiInstance(this._api)
     } else {
@@ -85,21 +150,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         this._api ?? (await createApiInstanceForNode<TPapiApi, TPapiTransaction>(this, node))
     }
 
+    this._node = node
+
     this.initialized = true
   }
 
   async createApiInstance(wsUrl: string | string[]) {
-    const isNodeJs = typeof window === 'undefined'
-    let getWsProvider
-    if (isNodeJs) {
-      getWsProvider = (await import('polkadot-api/ws-provider/node')).getWsProvider
-    } else {
-      getWsProvider = (await import('polkadot-api/ws-provider/web')).getWsProvider
-    }
-
-    const provider = wsUrl instanceof Array ? getWsProvider(wsUrl) : getWsProvider(wsUrl)
-
-    return Promise.resolve(createClient(withPolkadotSdkCompat(provider)))
+    return leasePolkadotClient(wsUrl, this._ttlMs)
   }
 
   accountToHex(address: string, isPrefixed = true) {
@@ -458,10 +515,21 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (!this.initialized) return Promise.resolve()
     if (!force && !this.disconnectAllowed) return Promise.resolve()
 
-    // Disconnect api only if it was created automatically
-    if (force || typeof this._api === 'string' || this._api === undefined) {
+    // Own client provided, destroy only if force true
+    if (force && typeof this._api === 'object') {
       this.api.destroy()
     }
+
+    // Client created automatically
+    if (typeof this._api === 'string' || Array.isArray(this._api) || this._api === undefined) {
+      if (force) {
+        this.api.destroy()
+      } else {
+        const key = this._api === undefined ? getNodeProviders(this._node) : this._api
+        releasePolkadotClient(key)
+      }
+    }
+
     return Promise.resolve()
   }
 }

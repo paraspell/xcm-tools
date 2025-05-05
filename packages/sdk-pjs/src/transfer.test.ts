@@ -86,7 +86,10 @@ describe('Send Function using PolkadotJsAPI', () => {
       await getParaEthTransferFees(mockApi)
 
       expect(pjsApiSetApiSpy).toHaveBeenCalledWith(mockApi)
-      expect(pjsApiInitSpy).toHaveBeenCalledWith('AssetHubPolkadot')
+      expect(pjsApiInitSpy).toHaveBeenCalledWith(
+        'AssetHubPolkadot',
+        sdkCore.DRY_RUN_CLIENT_TIMEOUT_MS
+      )
       expect(sdkCore.getParaEthTransferFees).toHaveBeenCalledWith(expect.any(PolkadotJsApi))
     })
   })

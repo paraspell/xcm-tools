@@ -20,7 +20,8 @@ vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class InvalidCurrencyError extends Error {}
 }))
 
-vi.mock('@paraspell/sdk-common', () => ({
+vi.mock('@paraspell/sdk-common', async importOriginal => ({
+  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
   isRelayChain: vi.fn().mockReturnValue(false)
 }))
 
