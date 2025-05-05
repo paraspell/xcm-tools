@@ -300,7 +300,7 @@ describe('PolkadotJsApi', () => {
           mockResponse as unknown as VoidFn
         )
 
-        const balance = await polkadotApi.getAssetHubForeignBalance(address, multiLocation)
+        const balance = await polkadotApi.getBalanceForeignAssetsPallet(address, multiLocation)
 
         expect(mockApiPromise.query.foreignAssets.account).toHaveBeenCalledWith(
           multiLocation,
@@ -320,7 +320,7 @@ describe('PolkadotJsApi', () => {
           mockResponse as unknown as VoidFn
         )
 
-        const balance = await polkadotApi.getAssetHubForeignBalance(address, multiLocation)
+        const balance = await polkadotApi.getBalanceForeignAssetsPallet(address, multiLocation)
 
         expect(mockApiPromise.query.foreignAssets.account).toHaveBeenCalledWith(
           multiLocation,
@@ -480,7 +480,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.query.assets.account).mockResolvedValue(mockResponse)
 
-      const balance = await polkadotApi.getBalanceForeignAssetsAccount(address, 1n)
+      const balance = await polkadotApi.getBalanceAssetsPallet(address, 1n)
 
       expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(1n, address)
       expect(balance).toBe(7000n)
@@ -494,7 +494,7 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.query.assets.account).mockResolvedValue(mockResponse)
 
-      const balance = await polkadotApi.getBalanceForeignAssetsAccount(address, 1)
+      const balance = await polkadotApi.getBalanceAssetsPallet(address, 1)
 
       expect(mockApiPromise.query.assets.account).toHaveBeenCalledWith(1, address)
       expect(balance).toEqual(0n)

@@ -152,7 +152,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return obj.free ? BigInt(obj.free) : 0n
   }
 
-  async getAssetHubForeignBalance(address: string, multiLocation: TMultiLocation) {
+  async getBalanceForeignAssetsPallet(address: string, multiLocation: TMultiLocation) {
     const response: Codec = await this.api.query.foreignAssets.account(multiLocation, address)
     const obj = response.toJSON() as TBalanceResponse
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
@@ -218,7 +218,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return accountData ? BigInt(accountData.free.toString()) : 0n
   }
 
-  async getBalanceForeignAssetsAccount(address: string, assetId: bigint | number) {
+  async getBalanceAssetsPallet(address: string, assetId: bigint | number) {
     const response = await this.api.query.assets.account(assetId, address)
     const obj = response.toJSON() as TBalanceResponse
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
