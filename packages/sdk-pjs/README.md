@@ -87,10 +87,11 @@ const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE)
       .to(NODE /*,customParaId - optional*/ | Multilocation object /*Only works for PolkadotXCM pallet*/) 
       .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
-      .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/, /*senderAddress - OPTIONAL - used when origin is AssetHub and feeAsset parameter is provided*/)
-    /*.feeAsset({symbol: 'symbol'} || {id: 'id'} || {multilocation: 'multilocation'}) // Optional parameter used when multiasset is provided or when origin is AssetHub - so user can pay in fees different than DOT
-      .xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call
-      .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some node but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
+      .address(address | Multilocation object /*If you are sending through xTokens, you need to pass the destination and address multilocation in one object (x2)*/)
+      /*.senderAddress(address) - OPTIONAL - used when origin is AssetHub and feeAsset parameter is provided
+        .feeAsset({symbol: 'symbol'} || {id: 'id'} || {multilocation: 'multilocation'}) // Optional parameter used when multiasset is provided or when origin is AssetHub - so user can pay in fees different than DOT
+        .xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call
+        .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some node but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
 
 const tx = await builder.build()
 
@@ -212,7 +213,8 @@ const result = await Builder(API /*optional*/)
         .to(NODE_2)
         .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
         .address(ADDRESS)
-        .dryRun(SENDER_ADDRESS)
+        .senderAddress(SENDER_ADDRESS)
+        .dryRun()
 
 //Function pattern
 await getDryRun({api /*optional*/,  node, address /*sender address*/, tx /* Extrinsic object */})
@@ -238,7 +240,8 @@ const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          .address(RECIPIENT_ADDRESS, SENDER_ADDRESS) // Both sender and recipient addresses are required!
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
           .getXcmFee({disableFallback: true / false})  //When fallback is disabled, you only get notified of DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin or Destination chain do not support DryRun out of the box.
 ```
 
@@ -254,7 +257,8 @@ const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          .address(RECIPIENT_ADDRESS, SENDER_ADDRESS) // Both sender and recipient addresses are required!
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(SENDER_ADDRESS) 
           .getXcmFeeEstimate()
 ```
 
