@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.13.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.13.0...sdk-core-v8.13.1) (2025-05-05)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix incorrect balances returning on AH 🔧 ([d7b870d](https://github.com/paraspell/xcm-tools/commit/d7b870decca5b288fe760497ec022716190d0557))
+
 ## [8.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.12.1...sdk-core-v8.13.0) (2025-05-05)
 
 

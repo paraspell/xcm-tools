@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.13.1](https://github.com/paraspell/xcm-tools/compare/sdk-v8.13.0...sdk-v8.13.1) (2025-05-05)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix incorrect balances returning on AH 🔧 ([d7b870d](https://github.com/paraspell/xcm-tools/commit/d7b870decca5b288fe760497ec022716190d0557))
+
+
+### Build System
+
+* Update polkadot-api version 📦 ([9e2957f](https://github.com/paraspell/xcm-tools/commit/9e2957f628ff3662e7e1ed6338fe472653fe742a))
+
 ## [8.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.12.1...sdk-v8.13.0) (2025-05-05)
 
 
