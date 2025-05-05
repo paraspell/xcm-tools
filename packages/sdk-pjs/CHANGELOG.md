@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.13.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.12.1...sdk-pjs-v8.13.0) (2025-05-05)
+
+
+### Features
+
+* Improve dryRun function to check destination ✨ ([8c78c8c](https://github.com/paraspell/xcm-tools/commit/8c78c8c922d8b2b53b8979d0951586e81fc48ce3))
+
+
+### Miscellaneous Chores
+
+* Update senderAddress parameter ([07b4ab5](https://github.com/paraspell/xcm-tools/commit/07b4ab591e0bd54785b5d885834da92f04b15b3a))
+
 ## [8.12.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.12.0...sdk-pjs-v8.12.1) (2025-05-01)
 
 
