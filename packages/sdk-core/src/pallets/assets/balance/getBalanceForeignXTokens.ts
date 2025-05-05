@@ -15,7 +15,7 @@ export const getBalanceForeignXTokens = async <TApi, TRes>(
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    return api.getBalanceForeignAssetsAccount(address, BigInt(asset.assetId))
+    return api.getBalanceAssetsPallet(address, BigInt(asset.assetId))
   }
 
   if (node === 'BifrostPolkadot' || node === 'BifrostKusama') {

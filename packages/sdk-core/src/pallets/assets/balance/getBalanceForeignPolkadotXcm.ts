@@ -1,5 +1,5 @@
 import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
-import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+import { hasJunction, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 
@@ -14,7 +14,7 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    return api.getBalanceForeignAssetsAccount(address, BigInt(asset.assetId))
+    return api.getBalanceAssetsPallet(address, BigInt(asset.assetId))
   }
 
   if (node === 'Mythos') {
@@ -30,15 +30,22 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multi-location`)
     }
 
-    return api.getAssetHubForeignBalance(address, asset.multiLocation)
+    return api.getBalanceForeignAssetsPallet(address, asset.multiLocation)
   }
 
   if (node === 'AssetHubPolkadot') {
-    if (asset.multiLocation) {
-      return api.getAssetHubForeignBalance(address, asset.multiLocation)
-    } else {
-      return api.getBalanceForeignAssetsAccount(address, Number(asset.assetId))
+    const ASSETS_PALLET_ID = 50
+
+    const hasRequiredJunctions =
+      asset.multiLocation &&
+      hasJunction(asset.multiLocation, 'PalletInstance', ASSETS_PALLET_ID) &&
+      hasJunction(asset.multiLocation, 'GeneralIndex')
+
+    if (!asset.multiLocation || hasRequiredJunctions) {
+      return api.getBalanceAssetsPallet(address, Number(asset.assetId))
     }
+
+    return api.getBalanceForeignAssetsPallet(address, asset.multiLocation)
   }
 
   return api.getBalanceForeignPolkadotXcm(address, asset.assetId)
