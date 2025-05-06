@@ -56,7 +56,7 @@ NOTICE:
 
 ```js
 //Construct XCM call from Relay chain to Parachain (DMP)
-const response = await fetch('http://localhost:3001/x-transfer', {
+const response = await fetch('http://localhost:3001/v2/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ const response = await fetch('http://localhost:3001/x-transfer', {
 });
 
 //Construct XCM call from Parachain chain to Relay chain (UMP)
-const response = await fetch('http://localhost:3001/x-transfer', {
+const response = await fetch('http://localhost:3001/v2/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ const response = await fetch('http://localhost:3001/x-transfer', {
 });
 
 //Construct XCM call from Parachain to Parachain (HRMP)
-const response = await fetch('http://localhost:3001/x-transfer', {
+const response = await fetch('http://localhost:3001/v2/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ const response = await fetch('http://localhost:3001/x-transfer', {
 });
 
 //Construct local asset transfer
-const response = await fetch('http://localhost:3001/x-transfer', {
+const response = await fetch('http://localhost:3001/v2/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ const response = await fetch('http://localhost:3001/x-transfer', {
 
 //Construct custom multilocation XCM call from Parachain to Parachain (HRMP)
 //Multilocations can be customized for Destination, Address and Currency.
-const response = await fetch('http://localhost:3001/x-transfer', {
+const response = await fetch('http://localhost:3001/v2/x-transfer', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ const response = await fetch('http://localhost:3001/x-transfer', {
 A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#dry-run).
 
 ```js
-const response = await fetch('http://localhost:3001/dry-run', {
+const response = await fetch('http://localhost:3001/v2/dry-run', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ const response = await fetch('http://localhost:3001/dry-run', {
 A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#xcm-fee-query-with-dryrun).
 
 ```ts
-const response = await fetch("http://localhost:3001/xcm-fee", {
+const response = await fetch("http://localhost:3001/v2/xcm-fee", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -192,7 +192,7 @@ const response = await fetch("http://localhost:3001/xcm-fee", {
 A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#xcm-fee-query-payment-info).
 
 ```ts
-const response = await fetch("http://localhost:3001/xcm-fee-estimate", {
+const response = await fetch("http://localhost:3001/v2/xcm-fee-estimate", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -214,7 +214,7 @@ A complete guide on asset claim can be found in [official docs](https://paraspel
 Possible parameters: - `transfers` (Inside JSON body): (required): Represents array of XCM calls along with optional parameter "options" which contains "mode" to switch between BATCH and BATCH_ALL call forms.
 
 ```js
-const response = await fetch('http://localhost:3001/x-transfer-batch', {
+const response = await fetch('http://localhost:3001/v2/x-transfer-batch', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -236,7 +236,7 @@ Possible parameters:
 - `fungible` (Inside JSON body): (required): Represents the asset being claimed. It should be a multilocation.
 
 ```js
-const response = await fetch('http://localhost:3001/asset-claim', {
+const response = await fetch('http://localhost:3001/v2/asset-claim', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -263,7 +263,7 @@ Possible parameters:
 - `accountDestination`: (Inside JSON body): (required): Specifies the recipient's address.
 
 ```js
-const response = await fetch('http://localhost:3001/transfer-info?', {
+const response = await fetch('http://localhost:3001/v2/transfer-info?', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -302,7 +302,7 @@ Possible parameters:
 - `senderAddress`: (required): Specifies the sender's address.
 
 ```js
-const response = await fetch('http://localhost:3001/router', {
+const response = await fetch('http://localhost:3001/v2/router', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -335,7 +335,7 @@ Possible parameters:
 - `xcm` (Optional): Complete XCM call
 
 ```js
-const response = await fetch('http://localhost:3001/xcm-analyser', {
+const response = await fetch('http://localhost:3001/v2/xcm-analyser', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -359,54 +359,54 @@ Possible parameters:
 
 ```js
 //Retrieve assets object for a specific Parachain
-const response = await fetch('http://localhost:3001/assets/:node');
+const response = await fetch('http://localhost:3001/v2/assets/:node');
 
 //Retrieve asset ID for particular Parachain and asset
 const response = await fetch(
-  'http://localhost:3001/assets/:node/id?symbol=:asset',
+  'http://localhost:3001/v2/assets/:node/id?symbol=:asset',
 );
 
 //Retrieve the Relay chain asset Symbol for a particular Parachain
 const response = await fetch(
-  'http://localhost:3001/assets/:node/relay-chain-symbol',
+  'http://localhost:3001/v2/assets/:node/relay-chain-symbol',
 );
 
 //Retrieve native assets for a particular Parachain
-const response = await fetch('http://localhost:3001/assets/:node/native');
+const response = await fetch('http://localhost:3001/v2/assets/:node/native');
 
 //Retrieve foreign assets for a particular Parachain
-const response = await fetch('http://localhost:3001/assets/:node/other');
+const response = await fetch('http://localhost:3001/v2/assets/:node/other');
 
 //Retrieve all asset symbols for particular Parachain
-const response = await fetch('http://localhost:3001/assets/:node/all-symbols');
+const response = await fetch('http://localhost:3001/v2/assets/:node/all-symbols');
 
 //Retrieve support for a particular asset on a particular Parachain
 const response = await fetch(
-  'http://localhost:3001/assets/:node/has-support?symbol=:asset',
+  'http://localhost:3001/v2/assets/:node/has-support?symbol=:asset',
 );
 
 //Retrieve decimals for a particular asset for a particular Parachain
 const response = await fetch(
-  'http://localhost:3001/assets/:node/decimals?symbol=:asset',
+  'http://localhost:3001/v2/assets/:node/decimals?symbol=:asset',
 );
 
 //Retrieve Parachain ID for a particular Parachain
-const response = await fetch('http://localhost:3001/nodes/:node/para-id');
+const response = await fetch('http://localhost:3001/v2/nodes/:node/para-id');
 
 //Retrieve Parachain name from Parachain ID
-const response = await fetch('http://localhost:3001/nodes/:paraID?ecosystem=polkadot');
+const response = await fetch('http://localhost:3001/v2/nodes/:paraID?ecosystem=polkadot');
 
 //Retrieve a list of implemented Parachains
-const response = await fetch('http://localhost:3001/nodes');
+const response = await fetch('http://localhost:3001/v2/nodes');
 
 //Query list of node WS endpoints
-const response = await fetch('http://localhost:3001/nodes/:node/ws-endpoints');
+const response = await fetch('http://localhost:3001/v2/nodes/:node/ws-endpoints');
 
 //Query supported assets supported between two nodes
-const response = await fetch('http://localhost:3001/supported-assets?origin=:node&destination=:node');
+const response = await fetch('http://localhost:3001/v2/supported-assets?origin=:node&destination=:node');
 
 //Query native asset balance
-const response = await fetch("http://localhost:3001/balance/:node/native", {
+const response = await fetch("http://localhost:3001/v2/balance/:node/native", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -417,7 +417,7 @@ const response = await fetch("http://localhost:3001/balance/:node/native", {
 });
 
 //Query foreign asset balance
-const response = await fetch("http://localhost:3001/balance/:node/foreign", {
+const response = await fetch("http://localhost:3001/v2/balance/:node/foreign", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -429,7 +429,7 @@ const response = await fetch("http://localhost:3001/balance/:node/foreign", {
 });
 
 //Retrieve max transferable amount for specific account, specific foreign asset on specific chain
-const response = await fetch("http://localhost:3001/balance/:node/max-foreign-transferable-amount", {
+const response = await fetch("http://localhost:3001/v2/balance/:node/max-foreign-transferable-amount", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -441,7 +441,7 @@ const response = await fetch("http://localhost:3001/balance/:node/max-foreign-tr
 });
 
 //Retrieve max transferable amount for specific account, specific native asset on specific chain
-const response = await fetch("http://localhost:3001/balance/:node/max-native-transferable-amount", {
+const response = await fetch("http://localhost:3001/v2/balance/:node/max-native-transferable-amount", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -453,7 +453,7 @@ const response = await fetch("http://localhost:3001/balance/:node/max-native-tra
 });
 
 //Retrieve max transferable amount for specific account, specific asset on specific chain
-const response = await fetch("http://localhost:3001/balance/:node/transferable-amount", {
+const response = await fetch("http://localhost:3001/v2/balance/:node/transferable-amount", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -465,7 +465,7 @@ const response = await fetch("http://localhost:3001/balance/:node/transferable-a
 });
 
 //Retrieve existential deposit for specific assets on selected chain
-const response = await fetch("http://localhost:3001/balance/:node/existential-deposit", {
+const response = await fetch("http://localhost:3001/v2/balance/:node/existential-deposit", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -476,7 +476,7 @@ const response = await fetch("http://localhost:3001/balance/:node/existential-de
 });
 
 //Retrieve multilocation for asset id or symbol for specific assets on selected chain
-const response = await fetch("http://localhost:3001/assets/:node/multilocation", {
+const response = await fetch("http://localhost:3001/v2/assets/:node/multilocation", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -487,7 +487,7 @@ const response = await fetch("http://localhost:3001/assets/:node/multilocation",
 });
 
 //Verify whether XCM message you wish to send will reach above existential deposit on destination chain.
-const response = await fetch("http://localhost:3001/balance/:node/foreign", {
+const response = await fetch("http://localhost:3001/v2/balance/:node/foreign", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -509,13 +509,13 @@ Possible parameters:
 
 ```js
 //Return default pallet for specific Parachain
-const response = await fetch('http://localhost:3001/pallets/:node/default');
+const response = await fetch('http://localhost:3001/v2/pallets/:node/default');
 
-//Return an array of supported pallets for specific Parachain
-const response = await fetch('http://localhost:3001/pallets/:node');
+//Return an array of supported pallets for a specific Parachain
+const response = await fetch('http://localhost:3001/v2/pallets/:node');
 
 //Return Parachain support for DryRun
-const response = await fetch('http://localhost:3001/nodes/:node/has-dry-run-support');
+const response = await fetch('http://localhost:3001/v2/nodes/:node/has-dry-run-support');
 ```
 
 ## Running the API locally
