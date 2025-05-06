@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.13.2](https://github.com/paraspell/xcm-tools/compare/sdk-v8.13.1...sdk-v8.13.2) (2025-05-06)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix dry run errors on Kusama ecosystem 🛠️ ([3fda754](https://github.com/paraspell/xcm-tools/commit/3fda75434dc25f4fa6bb7a4e61875869271ee916))
+
 ## [8.13.1](https://github.com/paraspell/xcm-tools/compare/sdk-v8.13.0...sdk-v8.13.1) (2025-05-05)
 
 
