@@ -36,7 +36,7 @@ class FakeApi {
   getApi = vi.fn().mockReturnValue({ disconnect: vi.fn() })
 }
 
-import type { TAsset } from '@paraspell/assets'
+import type { TAsset, TCurrencyInputWithAmount } from '@paraspell/assets'
 import { findAsset, getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
 
 import type { IPolkadotApi } from '../../api'
@@ -46,7 +46,7 @@ import { determineRelayChain } from '../../utils'
 import { getFeeForDestNode } from './getFeeForDestNode'
 import { getFeeForOriginNode } from './getFeeForOriginNode'
 
-const createOptions = () =>
+const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>) =>
   ({
     api: new FakeApi() as unknown as IPolkadotApi<unknown, unknown>,
     tx: {} as unknown,
@@ -54,7 +54,8 @@ const createOptions = () =>
     destination: 'Moonbeam',
     senderAddress: '5Alice',
     address: '5Bob',
-    currency: 'ACA'
+    currency: 'ACA',
+    ...overrides
   }) as unknown as TGetXcmFeeOptions<unknown, unknown>
 
 afterEach(() => vi.resetAllMocks())
@@ -240,6 +241,38 @@ describe('getXcmFee', () => {
         feeType: 'paymentInfo',
         currency: 'GLMR'
       }
+    })
+  })
+
+  it('bypasses forwarded XCM and uses paymentInfo for AssetHubKusama -> Kusama', async () => {
+    // Arrange mocks
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'KSM' } as TAsset)
+    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) =>
+      chain === 'AssetHubKusama' ? 'KSM' : 'KSM'
+    )
+    vi.mocked(getFeeForOriginNode).mockResolvedValue({
+      fee: 500n,
+      feeType: 'paymentInfo',
+      dryRunError: undefined,
+      forwardedXcms: [null, [{ dummy: 'xcm' }]],
+      destParaId: 123
+    })
+    vi.mocked(getFeeForDestNode).mockResolvedValue({ fee: 800n, feeType: 'paymentInfo' })
+
+    const specialOpts = createOptions({
+      origin: 'AssetHubKusama',
+      destination: 'Kusama',
+      currency: 'KSM' as unknown as TCurrencyInputWithAmount
+    })
+
+    const res = await getXcmFee(specialOpts)
+
+    expect(getFeeForDestNode).toHaveBeenCalledTimes(1)
+    expect(vi.mocked(getFeeForDestNode).mock.calls[0][0].forwardedXcms).toBeUndefined()
+
+    expect(res).toEqual({
+      origin: { fee: 500n, feeType: 'paymentInfo', currency: 'KSM' },
+      destination: { fee: 800n, feeType: 'paymentInfo', currency: 'KSM' }
     })
   })
 })

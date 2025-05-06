@@ -258,8 +258,9 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
     }
 
-    // Bifrost requires a third parameter XCM version
-    const isBifrost = node === 'BifrostPolkadot' || node === 'BifrostKusama'
+    // These nodes require a third parameter XCM version
+    const isBifrost =
+      node === 'BifrostPolkadot' || node === 'BifrostKusama' || node === 'AssetHubKusama'
     const DEFAULT_XCM_VERSION = 3
 
     const response = await this.api.call.dryRunApi.dryRunCall(
@@ -301,7 +302,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     const destParaId =
       forwardedXcms.length === 0
         ? undefined
-        : (i => (i.Here ? 0 : (Array.isArray(i.x1) ? i.x1[0] : i.x1)?.parachain))(
+        : (i => (i.here === null ? 0 : (Array.isArray(i.x1) ? i.x1[0] : i.x1)?.parachain))(
             Object.values<any>(forwardedXcms[0])[0].interior
           )
 
