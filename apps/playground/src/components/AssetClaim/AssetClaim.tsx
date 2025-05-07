@@ -7,10 +7,11 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type {
-  GeneralBuilder,
-  TPapiApiOrUrl,
-  TPapiTransaction,
+import {
+  type GeneralBuilder,
+  type TPapiApiOrUrl,
+  type TPapiTransaction,
+  validateAddress,
 } from '@paraspell/sdk';
 import type { Extrinsic, TPjsApiOrUrl } from '@paraspell/sdk-pjs';
 import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
@@ -127,6 +128,8 @@ const AssetClaim = () => {
           .build();
         api = builder.getApi();
       }
+
+      validateAddress(selectedAccount.address, from, false);
 
       if (apiType === 'PAPI') {
         await submitTransactionPapi(

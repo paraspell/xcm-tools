@@ -5,12 +5,12 @@ import { describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { Version } from '../../../types'
 import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
-import { createApiInstanceForNode } from '../../../utils'
+import { validateAddress } from '../../../utils'
 import { claimAssets } from './assetClaim'
 import { buildClaimAssetsInput } from './buildClaimAssetsInput'
 
 vi.mock('../../../utils', () => ({
-  createApiInstanceForNode: vi.fn()
+  validateAddress: vi.fn()
 }))
 
 vi.mock('./buildClaimAssetsInput', () => ({
@@ -56,6 +56,8 @@ describe('claimAssets', () => {
       section: 'claim_assets',
       parameters: argsMock
     })
+
+    expect(validateAddress).toHaveBeenCalledWith(options.address, nodeMock)
   })
 
   it('should create an API instance if api is not provided', async () => {
@@ -71,7 +73,6 @@ describe('claimAssets', () => {
       assets: { [Version.V3]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
       beneficiary: { [Version.V3]: {} as TMultiLocation }
     }
-    vi.mocked(createApiInstanceForNode).mockResolvedValue(apiInstanceMock)
     vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(false)
 
