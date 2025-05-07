@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.15.0](https://github.com/paraspell/xcm-tools/compare/assets-v8.14.0...assets-v8.15.0) (2025-05-07)
+
+
+### Features
+
+* **assets:** Add fee assets query ✨ ([3e65c4a](https://github.com/paraspell/xcm-tools/commit/3e65c4a0518c7c89da11b1a9078cbb43fa799c3c))
+
 ## [8.14.0](https://github.com/paraspell/xcm-tools/compare/assets-v8.13.2...assets-v8.14.0) (2025-05-07)
 
 
