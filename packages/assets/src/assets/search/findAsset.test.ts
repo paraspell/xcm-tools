@@ -246,6 +246,7 @@ describe('getAssetBySymbolOrId', () => {
             relayChainAssetSymbol: 'DOT',
             isEVM: false,
             supportsDryRunApi: false,
+            supportsXcmPaymentApi: true,
             otherAssets: [],
             nativeAssets: []
           }
@@ -254,6 +255,7 @@ describe('getAssetBySymbolOrId', () => {
             relayChainAssetSymbol: 'DOT',
             isEVM: false,
             supportsDryRunApi: false,
+            supportsXcmPaymentApi: true,
             otherAssets: [
               {
                 assetId: '1',
@@ -279,6 +281,7 @@ describe('getAssetBySymbolOrId', () => {
             nativeAssetSymbol: 'ETH',
             isEVM: false,
             supportsDryRunApi: false,
+            supportsXcmPaymentApi: true,
             relayChainAssetSymbol: 'DOT',
             otherAssets: [],
             nativeAssets: []
@@ -287,6 +290,7 @@ describe('getAssetBySymbolOrId', () => {
             nativeAssetSymbol: 'DOT',
             isEVM: false,
             supportsDryRunApi: false,
+            supportsXcmPaymentApi: true,
             relayChainAssetSymbol: 'DOT',
             otherAssets: [
               {
@@ -312,6 +316,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '1',
@@ -339,6 +344,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '1',
@@ -360,6 +366,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '1',
@@ -381,6 +388,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '1',
@@ -402,6 +410,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '1',
@@ -423,6 +432,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '2',
@@ -448,6 +458,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [],
       nativeAssets: [
         {
@@ -468,6 +479,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '1',
@@ -493,6 +505,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '1',
@@ -522,6 +535,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '2',
@@ -542,6 +556,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [],
       nativeAssets: []
     })
@@ -573,6 +588,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '2',
@@ -629,6 +645,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '2',
@@ -685,6 +702,7 @@ describe('getAssetBySymbolOrId', () => {
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       otherAssets: [
         {
           assetId: '2',

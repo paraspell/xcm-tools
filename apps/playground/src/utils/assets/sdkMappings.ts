@@ -10,6 +10,7 @@ import {
   getAssetId,
   getAssetMultiLocation,
   getAssetsObject,
+  getFeeAssets,
   getNativeAssets,
   getOtherAssets,
   getParaId,
@@ -47,6 +48,7 @@ export const callSdkFunc = (
     NATIVE_ASSETS: () =>
       Promise.resolve(getNativeAssets(node as TNodePolkadotKusama)),
     OTHER_ASSETS: () => Promise.resolve(getOtherAssets(node)),
+    FEE_ASSETS: () => Promise.resolve(getFeeAssets(node)),
     ALL_SYMBOLS: () => Promise.resolve(getAllAssetsSymbols(node)),
     DECIMALS: () => Promise.resolve(getAssetDecimals(node, currency)),
     HAS_SUPPORT: () => Promise.resolve(hasSupportForAsset(node, currency)),

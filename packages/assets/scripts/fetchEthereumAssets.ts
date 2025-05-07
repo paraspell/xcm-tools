@@ -127,6 +127,7 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
   return {
     isEVM: true,
     supportsDryRunApi: false,
+    supportsXcmPaymentApi: false,
     relayChainAssetSymbol: 'DOT',
     nativeAssetSymbol: 'ETH',
     nativeAssets: [],

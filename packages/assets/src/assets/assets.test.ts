@@ -11,7 +11,9 @@ import {
   getNativeAssets,
   getOtherAssets,
   getRelayChainSymbol,
-  hasSupportForAsset
+  hasDryRunSupport,
+  hasSupportForAsset,
+  hasXcmPaymentApiSupport
 } from './assets'
 
 describe('getAssetsObject', () => {
@@ -132,5 +134,29 @@ describe('hasSupportForAsset', () => {
   it('should return true for .e suffixed asset', () => {
     const hasSupport = hasSupportForAsset('AssetHubPolkadot', 'WETH.e')
     expect(hasSupport).toBe(true)
+  })
+})
+
+describe('hasDryRunSupport', () => {
+  it('should return true for nodes with dry run support', () => {
+    const hasSupport = hasDryRunSupport('Polkadot')
+    expect(hasSupport).toBe(true)
+  })
+
+  it('should return false for nodes without dry run support', () => {
+    const hasSupport = hasDryRunSupport('Peaq')
+    expect(hasSupport).toBe(false)
+  })
+})
+
+describe('hasXcmPaymentApiSupport', () => {
+  it('should return true for nodes with XCM payment API support', () => {
+    const hasSupport = hasXcmPaymentApiSupport('Polkadot')
+    expect(hasSupport).toBe(true)
+  })
+
+  it('should return false for nodes without XCM payment API support', () => {
+    const hasSupport = hasXcmPaymentApiSupport('Peaq')
+    expect(hasSupport).toBe(false)
   })
 })

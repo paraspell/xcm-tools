@@ -5,6 +5,7 @@ import {
   getAssetId,
   getAssetMultiLocation,
   getAssetsObject,
+  getFeeAssets,
   getNativeAssets,
   getOriginFeeDetails,
   getOtherAssets,
@@ -71,6 +72,11 @@ export class AssetsService {
       throw new NotFoundException(`Decimals for currency ${symbol} not found.`);
     }
     return decimals;
+  }
+
+  getFeeAssets(node: string) {
+    validateNode(node, { excludeEthereum: true, withRelayChains: true });
+    return getFeeAssets(node as TNodeDotKsmWithRelayChains);
   }
 
   hasSupportForAsset(node: string, symbol: string) {
