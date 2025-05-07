@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.15.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.14.0...sdk-v8.15.0) (2025-05-07)
+
+
+### Miscellaneous Chores
+
+* Add docs for Fee asset query ([51a0fea](https://github.com/paraspell/xcm-tools/commit/51a0feaee1565a1318aa358e08a8a616dab1319d))
+
 ## [8.14.0](https://github.com/paraspell/xcm-tools/compare/sdk-v8.13.2...sdk-v8.14.0) (2025-05-07)
 
 

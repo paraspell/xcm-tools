@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.15.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.14.0...sdk-core-v8.15.0) (2025-05-07)
+
+
+### Bug Fixes
+
+* Add asset claim address validation 🪄 ([05851b3](https://github.com/paraspell/xcm-tools/commit/05851b3287e4ebce191752a908cbf4c61286dbb2))
+
 ## [8.14.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.13.2...sdk-core-v8.14.0) (2025-05-07)
 
 
