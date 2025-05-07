@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.14.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.13.2...sdk-pjs-v8.14.0) (2025-05-07)
+
+
+### Features
+
+* **sdk:** Add papi client pool 🪄 ([41f4597](https://github.com/paraspell/xcm-tools/commit/41f459710e986e1eaf5414d66d9291675886f3b9))
+
 ## [8.13.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.13.1...sdk-pjs-v8.13.2) (2025-05-06)
 
 
