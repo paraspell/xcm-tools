@@ -4,6 +4,7 @@
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -25,6 +26,7 @@
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -46,6 +48,7 @@
     "nativeAssetSymbol": "PLMC",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "PLMC",
@@ -74,7 +77,8 @@
             ]
           }
         },
-        "existentialDeposit": "70000"
+        "existentialDeposit": "70000",
+        "isFeeAsset": true
       },
       {
         "symbol": "USDt",
@@ -95,7 +99,8 @@
             ]
           }
         },
-        "existentialDeposit": "70000"
+        "existentialDeposit": "70000",
+        "isFeeAsset": true
       },
       {
         "symbol": "DOT",
@@ -106,7 +111,8 @@
             "Here": null
           }
         },
-        "existentialDeposit": "100000000"
+        "existentialDeposit": "100000000",
+        "isFeeAsset": true
       }
     ]
   },
@@ -115,6 +121,7 @@
     "nativeAssetSymbol": "ACA",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "isNative": true,
@@ -434,56 +441,6 @@
         "existentialDeposit": "100000000000000000"
       },
       {
-        "assetId": "11",
-        "symbol": "CRU",
-        "decimals": 12,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2008
-            }
-          }
-        },
-        "existentialDeposit": "10000000000"
-      },
-      {
-        "assetId": "8",
-        "symbol": "EQD",
-        "decimals": 9,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2011
-              },
-              {
-                "GeneralKey": {
-                  "length": 3,
-                  "data": "0x6571640000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "1000000000"
-      },
-      {
-        "assetId": "7",
-        "symbol": "EQ",
-        "decimals": 9,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2011
-            }
-          }
-        },
-        "existentialDeposit": "1000000000"
-      },
-      {
         "assetId": "1",
         "symbol": "PARA",
         "decimals": 12,
@@ -548,6 +505,74 @@
           }
         },
         "existentialDeposit": "100"
+      },
+      {
+        "assetId": "21",
+        "symbol": "ETH",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "GlobalConsensus": {
+                "Ethereum": {
+                  "chainId": 1
+                }
+              }
+            }
+          }
+        },
+        "existentialDeposit": "10000000000000"
+      },
+      {
+        "assetId": "11",
+        "symbol": "CRU",
+        "decimals": 12,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "Parachain": 2008
+            }
+          }
+        },
+        "existentialDeposit": "10000000000"
+      },
+      {
+        "assetId": "8",
+        "symbol": "EQD",
+        "decimals": 9,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2011
+              },
+              {
+                "GeneralKey": {
+                  "length": 3,
+                  "data": "0x6571640000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1000000000"
+      },
+      {
+        "assetId": "7",
+        "symbol": "EQ",
+        "decimals": 9,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "Parachain": 2011
+            }
+          }
+        },
+        "existentialDeposit": "1000000000"
       },
       {
         "assetId": "4",
@@ -639,6 +664,7 @@
     "nativeAssetSymbol": "AJUN",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "AJUN",
@@ -717,6 +743,7 @@
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -732,6 +759,7 @@
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -747,6 +775,7 @@
     "nativeAssetSymbol": "ASTR",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "ASTR",
@@ -774,7 +803,8 @@
             "Here": null
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551641",
@@ -796,7 +826,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "4294969281",
@@ -818,7 +849,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "4294969280",
@@ -840,7 +872,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551633",
@@ -862,7 +895,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551618",
@@ -884,7 +918,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551616",
@@ -906,7 +941,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551617",
@@ -928,7 +964,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551625",
@@ -942,7 +979,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551619",
@@ -961,7 +999,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551629",
@@ -983,7 +1022,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551628",
@@ -997,7 +1037,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551639",
@@ -1019,7 +1060,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551626",
@@ -1041,7 +1083,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551638",
@@ -1063,7 +1106,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551624",
@@ -1085,7 +1129,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551640",
@@ -1107,7 +1152,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551632",
@@ -1129,7 +1175,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551623",
@@ -1151,7 +1198,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551637",
@@ -1173,7 +1221,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551620",
@@ -1195,7 +1244,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551621",
@@ -1217,7 +1267,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551630",
@@ -1236,7 +1287,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551622",
@@ -1250,7 +1302,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551631",
@@ -1264,7 +1317,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551627",
@@ -1283,7 +1337,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551636",
@@ -1317,7 +1372,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551634",
@@ -1336,7 +1392,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551635",
@@ -1358,7 +1415,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       }
     ]
   },
@@ -1367,6 +1425,7 @@
     "nativeAssetSymbol": "BNC",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "BNC",
@@ -1434,7 +1493,8 @@
             ]
           }
         },
-        "existentialDeposit": "100"
+        "existentialDeposit": "100",
+        "isFeeAsset": true
       },
       {
         "assetId": "8",
@@ -1448,7 +1508,8 @@
             }
           }
         },
-        "existentialDeposit": "10000000000000"
+        "existentialDeposit": "10000000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "13",
@@ -1474,7 +1535,8 @@
             ]
           }
         },
-        "existentialDeposit": "15000000000000"
+        "existentialDeposit": "15000000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "0",
@@ -1486,7 +1548,8 @@
             "Here": null
           }
         },
-        "existentialDeposit": "1000000"
+        "existentialDeposit": "1000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "2",
@@ -1508,7 +1571,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000"
+        "existentialDeposit": "1000",
+        "isFeeAsset": true
       },
       {
         "assetId": "5",
@@ -1530,7 +1594,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000"
+        "existentialDeposit": "1000",
+        "isFeeAsset": true
       },
       {
         "assetId": "11",
@@ -1552,7 +1617,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "10",
@@ -1574,7 +1640,8 @@
             ]
           }
         },
-        "existentialDeposit": "100000000"
+        "existentialDeposit": "100000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "1",
@@ -1593,7 +1660,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000000000000"
+        "existentialDeposit": "1000000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "1",
@@ -1744,7 +1812,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000000"
+        "existentialDeposit": "10000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "15",
@@ -1762,7 +1831,8 @@
             }
           }
         },
-        "existentialDeposit": "15000000000000"
+        "existentialDeposit": "15000000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "4",
@@ -1820,7 +1890,8 @@
             }
           }
         },
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "0",
@@ -1842,7 +1913,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000000"
+        "existentialDeposit": "1000000",
+        "isFeeAsset": true
       }
     ]
   },
@@ -1851,6 +1923,7 @@
     "nativeAssetSymbol": "BBB",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "BBB",
@@ -1866,6 +1939,7 @@
     "nativeAssetSymbol": "CFG",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "CFG",
@@ -2187,6 +2261,7 @@
     "nativeAssetSymbol": "SUB",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "SUB",
@@ -2202,6 +2277,7 @@
     "nativeAssetSymbol": "LAYR",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "LAYR",
@@ -2370,6 +2446,7 @@
     "nativeAssetSymbol": "RING",
     "isEVM": true,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "RING",
@@ -2402,7 +2479,8 @@
             "Here": null
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "1027",
@@ -2424,7 +2502,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "1028",
@@ -2455,6 +2534,7 @@
     "nativeAssetSymbol": "HDX",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "HDX",
@@ -2473,7 +2553,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": [
@@ -2518,6 +2599,7 @@
           }
         },
         "existentialDeposit": "10000",
+        "isFeeAsset": true,
         "alias": "USDC1"
       },
       {
@@ -2544,7 +2626,8 @@
             ]
           }
         },
-        "existentialDeposit": "5102040816326530"
+        "existentialDeposit": "5102040816326530",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000795",
@@ -2570,7 +2653,8 @@
             ]
           }
         },
-        "existentialDeposit": "211685012701101000"
+        "existentialDeposit": "211685012701101000",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000794",
@@ -2596,7 +2680,8 @@
             ]
           }
         },
-        "existentialDeposit": "436681222707424"
+        "existentialDeposit": "436681222707424",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000625",
@@ -2622,7 +2707,8 @@
             ]
           }
         },
-        "existentialDeposit": "8928571428571430"
+        "existentialDeposit": "8928571428571430",
+        "isFeeAsset": true
       },
       {
         "assetId": "10",
@@ -2645,6 +2731,7 @@
           }
         },
         "existentialDeposit": "10000",
+        "isFeeAsset": true,
         "alias": "USDT1"
       },
       {
@@ -2667,7 +2754,8 @@
             ]
           }
         },
-        "existentialDeposit": "200000000000000"
+        "existentialDeposit": "200000000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "4",
@@ -2690,6 +2778,7 @@
           }
         },
         "existentialDeposit": "5000000000000",
+        "isFeeAsset": true,
         "alias": "WETH3"
       },
       {
@@ -2712,7 +2801,8 @@
             ]
           }
         },
-        "existentialDeposit": "90744101633"
+        "existentialDeposit": "90744101633",
+        "isFeeAsset": true
       },
       {
         "assetId": "6",
@@ -2734,7 +2824,8 @@
             ]
           }
         },
-        "existentialDeposit": "2518891687657430"
+        "existentialDeposit": "2518891687657430",
+        "isFeeAsset": true
       },
       {
         "assetId": "2",
@@ -2757,6 +2848,7 @@
           }
         },
         "existentialDeposit": "10000000000000000",
+        "isFeeAsset": true,
         "alias": "DAI2"
       },
       {
@@ -2783,6 +2875,7 @@
           }
         },
         "existentialDeposit": "10000",
+        "isFeeAsset": true,
         "alias": "USDC2"
       },
       {
@@ -2809,6 +2902,7 @@
           }
         },
         "existentialDeposit": "5390835579515",
+        "isFeeAsset": true,
         "alias": "WETH2"
       },
       {
@@ -2828,7 +2922,8 @@
             ]
           }
         },
-        "existentialDeposit": "34854864344868000"
+        "existentialDeposit": "34854864344868000",
+        "isFeeAsset": true
       },
       {
         "assetId": "19",
@@ -2854,6 +2949,7 @@
           }
         },
         "existentialDeposit": "34",
+        "isFeeAsset": true,
         "alias": "WBTC2"
       },
       {
@@ -2880,6 +2976,7 @@
           }
         },
         "existentialDeposit": "9910802775024780",
+        "isFeeAsset": true,
         "alias": "sUSDS2"
       },
       {
@@ -2894,7 +2991,8 @@
             }
           }
         },
-        "existentialDeposit": "7874015748"
+        "existentialDeposit": "7874015748",
+        "isFeeAsset": true
       },
       {
         "assetId": "14",
@@ -2916,7 +3014,8 @@
             ]
           }
         },
-        "existentialDeposit": "68795189840"
+        "existentialDeposit": "68795189840",
+        "isFeeAsset": true
       },
       {
         "assetId": "33",
@@ -2938,7 +3037,8 @@
             ]
           }
         },
-        "existentialDeposit": "133689839572193000"
+        "existentialDeposit": "133689839572193000",
+        "isFeeAsset": true
       },
       {
         "assetId": "15",
@@ -2960,7 +3060,8 @@
             ]
           }
         },
-        "existentialDeposit": "18761726"
+        "existentialDeposit": "18761726",
+        "isFeeAsset": true
       },
       {
         "assetId": "13",
@@ -2982,7 +3083,8 @@
             ]
           }
         },
-        "existentialDeposit": "32467532467532500"
+        "existentialDeposit": "32467532467532500",
+        "isFeeAsset": true
       },
       {
         "assetId": "11",
@@ -3004,7 +3106,8 @@
             ]
           }
         },
-        "existentialDeposit": "36"
+        "existentialDeposit": "36",
+        "isFeeAsset": true
       },
       {
         "assetId": "1001",
@@ -3089,7 +3192,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000000000000000000"
+        "existentialDeposit": "1000000000000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "32",
@@ -3111,7 +3215,8 @@
             ]
           }
         },
-        "existentialDeposit": "100786131828"
+        "existentialDeposit": "100786131828",
+        "isFeeAsset": true
       },
       {
         "assetId": "28",
@@ -3125,7 +3230,8 @@
             }
           }
         },
-        "existentialDeposit": "21358393848783"
+        "existentialDeposit": "21358393848783",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000198",
@@ -3147,7 +3253,8 @@
             ]
           }
         },
-        "existentialDeposit": "19500780031"
+        "existentialDeposit": "19500780031",
+        "isFeeAsset": true
       },
       {
         "assetId": "29",
@@ -3161,7 +3268,8 @@
             }
           }
         },
-        "existentialDeposit": "205888408"
+        "existentialDeposit": "205888408",
+        "isFeeAsset": true
       },
       {
         "assetId": "30",
@@ -3175,7 +3283,8 @@
             }
           }
         },
-        "existentialDeposit": "21367521367521400"
+        "existentialDeposit": "21367521367521400",
+        "isFeeAsset": true
       },
       {
         "assetId": "34",
@@ -3193,7 +3302,8 @@
             }
           }
         },
-        "existentialDeposit": "5373455131650"
+        "existentialDeposit": "5373455131650",
+        "isFeeAsset": true
       },
       {
         "assetId": "5",
@@ -3205,7 +3315,8 @@
             "Here": null
           }
         },
-        "existentialDeposit": "17540000"
+        "existentialDeposit": "17540000",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000624",
@@ -3231,7 +3342,8 @@
             ]
           }
         },
-        "existentialDeposit": "59084194977843"
+        "existentialDeposit": "59084194977843",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000190",
@@ -3258,6 +3370,7 @@
           }
         },
         "existentialDeposit": "23",
+        "isFeeAsset": true,
         "alias": "WBTC1"
       },
       {
@@ -3285,6 +3398,7 @@
           }
         },
         "existentialDeposit": "9910802775024780",
+        "isFeeAsset": true,
         "alias": "sUSDS1"
       },
       {
@@ -3311,7 +3425,8 @@
             ]
           }
         },
-        "existentialDeposit": "3244646333550"
+        "existentialDeposit": "3244646333550",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000767",
@@ -3338,6 +3453,7 @@
           }
         },
         "existentialDeposit": "10000",
+        "isFeeAsset": true,
         "alias": "USDT2"
       },
       {
@@ -3364,7 +3480,8 @@
             ]
           }
         },
-        "existentialDeposit": "106803374987"
+        "existentialDeposit": "106803374987",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000851",
@@ -3390,7 +3507,8 @@
             ]
           }
         },
-        "existentialDeposit": "11"
+        "existentialDeposit": "11",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000189",
@@ -3417,6 +3535,7 @@
           }
         },
         "existentialDeposit": "6009615384615",
+        "isFeeAsset": true,
         "alias": "WETH1"
       },
       {
@@ -3440,6 +3559,7 @@
           }
         },
         "existentialDeposit": "10000",
+        "isFeeAsset": true,
         "alias": "USDC3"
       },
       {
@@ -3463,6 +3583,7 @@
           }
         },
         "existentialDeposit": "10000",
+        "isFeeAsset": true,
         "alias": "USDC4"
       },
       {
@@ -3485,7 +3606,8 @@
             ]
           }
         },
-        "existentialDeposit": "100200401"
+        "existentialDeposit": "100200401",
+        "isFeeAsset": true
       },
       {
         "assetId": "3",
@@ -3508,6 +3630,7 @@
           }
         },
         "existentialDeposit": "44",
+        "isFeeAsset": true,
         "alias": "WBTC3"
       },
       {
@@ -3533,7 +3656,8 @@
             ]
           }
         },
-        "existentialDeposit": "2652520"
+        "existentialDeposit": "2652520",
+        "isFeeAsset": true
       },
       {
         "assetId": "18",
@@ -3559,6 +3683,7 @@
           }
         },
         "existentialDeposit": "10000000000000000",
+        "isFeeAsset": true,
         "alias": "DAI1"
       },
       {
@@ -3585,6 +3710,7 @@
           }
         },
         "existentialDeposit": "10000",
+        "isFeeAsset": true,
         "alias": "USDT3"
       },
       {
@@ -3610,7 +3736,8 @@
             ]
           }
         },
-        "existentialDeposit": "46339"
+        "existentialDeposit": "46339",
+        "isFeeAsset": true
       },
       {
         "assetId": "9",
@@ -3624,7 +3751,8 @@
             }
           }
         },
-        "existentialDeposit": "147058823529412000"
+        "existentialDeposit": "147058823529412000",
+        "isFeeAsset": true
       },
       {
         "assetId": "26",
@@ -3643,7 +3771,8 @@
             ]
           }
         },
-        "existentialDeposit": "109890109890"
+        "existentialDeposit": "109890109890",
+        "isFeeAsset": true
       },
       {
         "assetId": "17",
@@ -3665,7 +3794,8 @@
             ]
           }
         },
-        "existentialDeposit": "6164274209"
+        "existentialDeposit": "6164274209",
+        "isFeeAsset": true
       },
       {
         "assetId": "1003",
@@ -3767,7 +3897,8 @@
             }
           }
         },
-        "existentialDeposit": "54945054945"
+        "existentialDeposit": "54945054945",
+        "isFeeAsset": true
       },
       {
         "assetId": "25",
@@ -3781,7 +3912,8 @@
             }
           }
         },
-        "existentialDeposit": "1224384348939740000"
+        "existentialDeposit": "1224384348939740000",
+        "isFeeAsset": true
       },
       {
         "assetId": "12",
@@ -3803,7 +3935,8 @@
             ]
           }
         },
-        "existentialDeposit": "1204151916"
+        "existentialDeposit": "1204151916",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000081",
@@ -3822,7 +3955,8 @@
             ]
           }
         },
-        "existentialDeposit": "153256704981"
+        "existentialDeposit": "153256704981",
+        "isFeeAsset": true
       },
       {
         "assetId": "1000746",
@@ -3856,7 +3990,8 @@
             ]
           }
         },
-        "existentialDeposit": "9523809524"
+        "existentialDeposit": "9523809524",
+        "isFeeAsset": true
       },
       {
         "assetId": "24",
@@ -3870,7 +4005,8 @@
             }
           }
         },
-        "existentialDeposit": "20000000"
+        "existentialDeposit": "20000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "252525",
@@ -3884,7 +4020,8 @@
             }
           }
         },
-        "existentialDeposit": "3244646333550"
+        "existentialDeposit": "3244646333550",
+        "isFeeAsset": true
       },
       {
         "assetId": "3370",
@@ -3898,7 +4035,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       }
     ]
   },
@@ -3907,6 +4045,7 @@
     "nativeAssetSymbol": "INTR",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "INTR",
@@ -4322,6 +4461,7 @@
     "nativeAssetSymbol": "HEI",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "HEI",
@@ -4337,6 +4477,7 @@
     "nativeAssetSymbol": "GLMR",
     "isEVM": true,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "GLMR",
@@ -4379,7 +4520,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "150874409661081770150564009349448205842",
@@ -4401,7 +4543,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "283870493414747423842723289889816153538",
@@ -4415,7 +4558,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "90225766094594282577230355136633846906",
@@ -4429,7 +4573,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "178794693648360392906933130845919698647",
@@ -4455,7 +4600,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "314077021455772878282433861213184736939",
@@ -4469,7 +4615,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "144012926827374458669278577633504620722",
@@ -4532,7 +4679,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "91372035960551235635465443179559840483",
@@ -4554,7 +4702,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "187224307232923873519830480073807488153",
@@ -4602,7 +4751,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "69606720909260275826784788104880799692",
@@ -4621,7 +4771,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "133307414193833606001516599592873928539",
@@ -4643,7 +4794,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "190590555344745888270686124937537713878",
@@ -4657,7 +4809,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "61295607754960722617854661686514597014",
@@ -4701,7 +4854,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "29085784439601774464560083082574142143",
@@ -4723,7 +4877,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "225719522181998468294117309041779353812",
@@ -4745,7 +4900,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "36282181791341254438422467838694599751",
@@ -4771,7 +4927,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "124463719055550872076363892993240202694",
@@ -4807,7 +4964,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "199907282886248358976504623107230837230",
@@ -4829,7 +4987,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "166377000701797186346254371275954761085",
@@ -4851,7 +5010,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "142155548796783636521833385094843759961",
@@ -4887,7 +5047,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "138280378441551394289980644963240827219",
@@ -4909,7 +5070,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "228510780171552721666262089780561563481",
@@ -4931,7 +5093,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "204507659831918931608354793288110796652",
@@ -4975,7 +5138,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "289989900872525819559124583375550296953",
@@ -5019,7 +5183,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "311091173110107856861649819128533077277",
@@ -5041,7 +5206,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "64174511183114006009298114091987195453",
@@ -5082,7 +5248,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "120637696315203257380661607956669368914",
@@ -5104,7 +5271,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "166446646689194205559791995948102903873",
@@ -5118,7 +5286,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "101170542313601871197860408087030232491",
@@ -5140,7 +5309,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "165823357460190568952172802245839421906",
@@ -5162,7 +5332,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "32615670524745285411807346420584982855",
@@ -5184,7 +5355,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "42259045809535163221576417993425387648",
@@ -5196,7 +5368,8 @@
             "Here": null
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "45647473099451451833602657905356404688",
@@ -5215,7 +5388,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "224821240862170613278369189818311486111",
@@ -5237,7 +5411,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "272547899416482196831721420898811311297",
@@ -5300,7 +5475,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "112679793397406599376365943185137098326",
@@ -5336,7 +5512,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "symbol": "DAI",
@@ -5362,7 +5539,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "USDC",
@@ -5388,7 +5566,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "ETH",
@@ -5408,7 +5587,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "USDT",
@@ -5434,7 +5614,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       }
     ]
   },
@@ -5443,6 +5624,7 @@
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -5782,7 +5964,8 @@
             ]
           }
         },
-        "existentialDeposit": "15000000000000"
+        "existentialDeposit": "15000000000000",
+        "isFeeAsset": true
       },
       {
         "symbol": "KSM",
@@ -5799,7 +5982,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000000000"
+        "existentialDeposit": "1000000000",
+        "isFeeAsset": true
       },
       {
         "symbol": "TEER",
@@ -5814,7 +5998,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000000000"
+        "existentialDeposit": "1000000000",
+        "isFeeAsset": true
       },
       {
         "symbol": "PLMC",
@@ -5844,7 +6029,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "symbol": "BNC",
@@ -5866,6 +6052,32 @@
           }
         },
         "existentialDeposit": "1"
+      },
+      {
+        "symbol": "USDC",
+        "decimals": 6,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10000",
+        "isFeeAsset": true
       },
       {
         "symbol": "EQD",
@@ -5904,7 +6116,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "symbol": "MYTH",
@@ -5919,7 +6132,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "isFeeAsset": true
       },
       {
         "symbol": "vDOT",
@@ -5977,7 +6191,34 @@
             ]
           }
         },
-        "existentialDeposit": "15000000000000"
+        "existentialDeposit": "15000000000000",
+        "isFeeAsset": true
+      },
+      {
+        "symbol": "USDT",
+        "decimals": 6,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "10000",
+        "isFeeAsset": true
       },
       {
         "symbol": "AJUN",
@@ -5992,7 +6233,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000000000"
+        "existentialDeposit": "1000000000",
+        "isFeeAsset": true
       }
     ]
   },
@@ -6001,6 +6243,7 @@
     "nativeAssetSymbol": "AIR",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "AIR",
@@ -6089,6 +6332,7 @@
     "nativeAssetSymbol": "AMPE",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "AMPE",
@@ -6123,6 +6367,7 @@
     "nativeAssetSymbol": "BSX",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "BSX",
@@ -6142,7 +6387,8 @@
             "Here": null
           }
         },
-        "existentialDeposit": "297441999"
+        "existentialDeposit": "297441999",
+        "isFeeAsset": true
       },
       {
         "assetId": "14",
@@ -6164,7 +6410,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000"
+        "existentialDeposit": "10000",
+        "isFeeAsset": true
       },
       {
         "assetId": "13",
@@ -6186,7 +6433,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000000000"
+        "existentialDeposit": "10000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "9",
@@ -6208,7 +6456,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000"
+        "existentialDeposit": "10000",
+        "isFeeAsset": true
       },
       {
         "assetId": "2",
@@ -6230,7 +6479,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000000000"
+        "existentialDeposit": "10000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "10",
@@ -6252,7 +6502,8 @@
             ]
           }
         },
-        "existentialDeposit": "6230529595016"
+        "existentialDeposit": "6230529595016",
+        "isFeeAsset": true
       },
       {
         "assetId": "11",
@@ -6274,7 +6525,8 @@
             ]
           }
         },
-        "existentialDeposit": "33"
+        "existentialDeposit": "33",
+        "isFeeAsset": true
       },
       {
         "assetId": "12",
@@ -6296,7 +6548,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000"
+        "existentialDeposit": "10000",
+        "isFeeAsset": true
       },
       {
         "assetId": "16",
@@ -6310,7 +6563,8 @@
             }
           }
         },
-        "existentialDeposit": "1683502"
+        "existentialDeposit": "1683502",
+        "isFeeAsset": true
       },
       {
         "assetId": "6",
@@ -6329,7 +6583,8 @@
             ]
           }
         },
-        "existentialDeposit": "43591979076"
+        "existentialDeposit": "43591979076",
+        "isFeeAsset": true
       }
     ]
   },
@@ -6338,6 +6593,7 @@
     "nativeAssetSymbol": "BNC",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "BNC",
@@ -6371,7 +6627,8 @@
           "interior": {
             "Here": null
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "RMRK",
@@ -6393,7 +6650,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "vBNC",
@@ -6478,7 +6736,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "ZLK",
@@ -6500,7 +6759,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "PHA",
@@ -6514,7 +6774,8 @@
               "Parachain": 2004
             }
           }
-        }
+        },
+        "isFeeAsset": true
       },
       {
         "symbol": "KAR",
@@ -6536,7 +6797,8 @@
               }
             ]
           }
-        }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": [
@@ -6560,7 +6822,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000"
+        "existentialDeposit": "1000",
+        "isFeeAsset": true
       },
       {
         "assetId": "2",
@@ -6582,7 +6845,8 @@
             ]
           }
         },
-        "existentialDeposit": "100"
+        "existentialDeposit": "100",
+        "isFeeAsset": true
       },
       {
         "assetId": "1",
@@ -6604,7 +6868,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000000000"
+        "existentialDeposit": "10000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "4",
@@ -6626,7 +6891,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000000000000"
+        "existentialDeposit": "10000000000000",
+        "isFeeAsset": true
       },
       {
         "assetId": "3",
@@ -6640,7 +6906,8 @@
             }
           }
         },
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "isFeeAsset": true
       }
     ]
   },
@@ -6649,6 +6916,7 @@
     "nativeAssetSymbol": "CRAB",
     "isEVM": true,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "CRAB",
@@ -6684,6 +6952,7 @@
     "nativeAssetSymbol": "CSM",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "CSM",
@@ -6750,6 +7019,7 @@
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -6765,6 +7035,7 @@
     "nativeAssetSymbol": "KILT",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "KILT",
@@ -6792,6 +7063,7 @@
     "nativeAssetSymbol": "CGT",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "isNative": true,
@@ -6838,6 +7110,7 @@
     "nativeAssetSymbol": "KAR",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "isNative": true,
@@ -7396,6 +7669,7 @@
     "nativeAssetSymbol": "KINT",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "KINT",
@@ -7615,6 +7889,7 @@
     "nativeAssetSymbol": "MOVR",
     "isEVM": true,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "MOVR",
@@ -7649,7 +7924,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "16797826370226091782818345603793389938",
@@ -7663,7 +7939,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "76100021443485661246318545281171740067",
@@ -7685,7 +7962,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "138512078356357941985706694377215053953",
@@ -7704,7 +7982,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "328179947973504579459046439826496046832",
@@ -7726,7 +8005,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "108036400430056508975016746969135344601",
@@ -7740,7 +8020,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "133300872918374599700079037156071917454",
@@ -7754,7 +8035,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "213357169630950964874127107356898319277",
@@ -7768,7 +8050,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "65216491554813189869575508812319036608",
@@ -7787,7 +8070,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "173481220575862801646329923366065693029",
@@ -7806,7 +8090,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "189307976387032586987344677431204943363",
@@ -7820,7 +8105,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "264344629840762281112027368930249420542",
@@ -7886,7 +8172,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "175400718394635817552109270754364440562",
@@ -7908,7 +8195,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "167283995827706324502761431814209211090",
@@ -7922,7 +8210,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "105075627293246237499203909093923548958",
@@ -7944,7 +8233,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "118095707745084482624853002839493125353",
@@ -7966,7 +8256,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "203223821023327994093278529517083736593",
@@ -8010,7 +8301,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "182365888117048807484804376330534607370",
@@ -8032,7 +8324,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "42259045809535163221576417993425387648",
@@ -8044,7 +8337,8 @@
             "Here": null
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "10810581592933651521121702237638664357",
@@ -8066,7 +8360,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "319623561105283008236062145480775032445",
@@ -8088,7 +8383,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       }
     ]
   },
@@ -8097,6 +8393,7 @@
     "nativeAssetSymbol": "QTZ",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "QTZ",
@@ -8120,6 +8417,7 @@
     "nativeAssetSymbol": "XRT",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "XRT",
@@ -8156,6 +8454,7 @@
     "nativeAssetSymbol": "XRT",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "XRT",
@@ -8178,6 +8477,7 @@
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -8193,6 +8493,7 @@
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -8208,6 +8509,7 @@
     "nativeAssetSymbol": "SDN",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "SDN",
@@ -8227,7 +8529,8 @@
             "Here": null
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551634",
@@ -8249,7 +8552,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "4294969280",
@@ -8271,7 +8575,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551618",
@@ -8293,7 +8598,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551619",
@@ -8315,7 +8621,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551616",
@@ -8337,7 +8644,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551627",
@@ -8359,7 +8667,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551629",
@@ -8381,7 +8690,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551628",
@@ -8403,7 +8713,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551623",
@@ -8417,7 +8728,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551624",
@@ -8431,7 +8743,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551626",
@@ -8445,7 +8758,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551620",
@@ -8464,7 +8778,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551621",
@@ -8486,7 +8801,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551622",
@@ -8508,7 +8824,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551633",
@@ -8522,7 +8839,8 @@
             }
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "18446744073709551625",
@@ -8541,7 +8859,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       }
     ]
   },
@@ -8550,6 +8869,7 @@
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -8718,7 +9038,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000000"
+        "existentialDeposit": "10000000",
+        "isFeeAsset": true
       },
       {
         "symbol": "TNKR",
@@ -8751,7 +9072,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000000000"
+        "existentialDeposit": "1000000000",
+        "isFeeAsset": true
       },
       {
         "symbol": "MOVR",
@@ -8837,6 +9159,7 @@
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "KSM",
@@ -8852,6 +9175,7 @@
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -8867,6 +9191,7 @@
     "nativeAssetSymbol": "TUR",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "TUR",
@@ -9096,6 +9421,7 @@
     "nativeAssetSymbol": "UNQ",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "UNQ",
@@ -9195,6 +9521,7 @@
     "nativeAssetSymbol": "CRU",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "CRU",
@@ -9223,6 +9550,7 @@
     "nativeAssetSymbol": "MANTA",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "MANTA",
@@ -9431,6 +9759,7 @@
     "nativeAssetSymbol": "NODL",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "NODL",
@@ -9459,6 +9788,7 @@
     "nativeAssetSymbol": "NEURO",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "NEURO",
@@ -9494,6 +9824,7 @@
     "nativeAssetSymbol": "PEN",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "PEN",
@@ -9786,6 +10117,7 @@
     "nativeAssetSymbol": "ZTG",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "ZTG",
@@ -9898,6 +10230,7 @@
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
     "nativeAssets": [
       {
         "symbol": "DOT",
@@ -9913,6 +10246,7 @@
     "nativeAssetSymbol": "PHA",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "PHA",
@@ -10230,6 +10564,7 @@
   "Ethereum": {
     "isEVM": true,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ETH",
     "nativeAssets": [],
@@ -10590,6 +10925,7 @@
     "nativeAssetSymbol": "MYTH",
     "isEVM": true,
     "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "MYTH",
@@ -10615,6 +10951,7 @@
     "nativeAssetSymbol": "PEAQ",
     "isEVM": false,
     "supportsDryRunApi": false,
+    "supportsXcmPaymentApi": false,
     "nativeAssets": [
       {
         "symbol": "PEAQ",

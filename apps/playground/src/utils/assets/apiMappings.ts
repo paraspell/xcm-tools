@@ -8,6 +8,7 @@ export const getApiEndpoint = (func: TAssetsQuery, node: string): string => {
     RELAYCHAIN_SYMBOL: `/assets/${node}/relay-chain-symbol`,
     NATIVE_ASSETS: `/assets/${node}/native`,
     OTHER_ASSETS: `/assets/${node}/other`,
+    FEE_ASSETS: `/assets/${node}/fee-assets`,
     ALL_SYMBOLS: `/assets/${node}/all-symbols`,
     DECIMALS: `/assets/${node}/decimals`,
     HAS_SUPPORT: `/assets/${node}/has-support`,

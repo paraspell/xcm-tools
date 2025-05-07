@@ -43,6 +43,7 @@ describe('AssetsController', () => {
       relayChainAssetSymbol: 'KSM',
       isEVM: false,
       supportsDryRunApi: false,
+      supportsXcmPaymentApi: true,
       nativeAssets: [{ symbol, decimals, isNative: true }],
       otherAssets: [{ assetId: '234123123', symbol: 'FKK', decimals }],
       nativeAssetSymbol: symbol,
@@ -229,6 +230,22 @@ describe('AssetsController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith({ origin, destination });
+    });
+  });
+
+  describe('getFeeAssets', () => {
+    it('should return fee assets for a valid node', () => {
+      const mockResult = [
+        { symbol, decimals, isNative: true },
+      ] as TNativeAsset[];
+      const spy = vi
+        .spyOn(assetsService, 'getFeeAssets')
+        .mockReturnValue(mockResult);
+
+      const result = controller.getFeeAssets(node, mockRequestObject);
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(node);
     });
   });
 });

@@ -150,4 +150,9 @@ export const hasDryRunSupport = (node: TNodeWithRelayChains): boolean => {
   return getAssetsObject(node).supportsDryRunApi
 }
 
+export const hasXcmPaymentApiSupport = (node: TNodeWithRelayChains): boolean => {
+  return getAssetsObject(node).supportsXcmPaymentApi
+}
+
 export * from './getExistentialDeposit'
+export * from './getFeeAssets'

@@ -60,6 +60,7 @@ describe('AssetsService', () => {
         nativeAssetSymbol: 'DOT',
         isEVM: false,
         supportsDryRunApi: false,
+        supportsXcmPaymentApi: true,
         nativeAssets: [
           { symbol, decimals, isNative: true },
         ] as paraspellSdk.TNativeAsset[],
@@ -601,6 +602,38 @@ describe('AssetsService', () => {
         excludeEthereum: true,
       });
       expect(validateNodeSpy).toHaveBeenCalledWith(nodeDestination, {
+        withRelayChains: true,
+      });
+    });
+  });
+
+  describe('getFeeAssets', () => {
+    it('should return fee assets for a valid node', () => {
+      const node = 'Acala';
+      const feeAssets = [{ symbol: 'KSM', decimals }] as paraspellSdk.TAsset[];
+      const getFeeAssetsSpy = vi
+        .spyOn(paraspellSdk, 'getFeeAssets')
+        .mockReturnValue(feeAssets);
+
+      const result = service.getFeeAssets(node);
+
+      expect(result).toEqual(feeAssets);
+      expect(getFeeAssetsSpy).toHaveBeenCalledWith(node);
+    });
+
+    it('should throw BadRequestException for invalid node', () => {
+      const validateNodeSpy = vi
+        .spyOn(utils, 'validateNode')
+        .mockImplementation(() => {
+          throw new BadRequestException();
+        });
+
+      expect(() => service.getFeeAssets(invalidNode)).toThrow(
+        BadRequestException,
+      );
+
+      expect(validateNodeSpy).toHaveBeenCalledWith(invalidNode, {
+        excludeEthereum: true,
         withRelayChains: true,
       });
     });

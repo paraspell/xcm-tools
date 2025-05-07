@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import {
+  findAssetByMultiLocation,
   getNativeAssetSymbol,
   type TAssetJsonMap,
   type TForeignAsset,
@@ -24,7 +25,7 @@ import { fetchAcalaForeignAssets, fetchAcalaNativeAssets } from './fetchAcalaAss
 import { fetchComposableAssets } from './fetchComposableAssets'
 import { fetchPendulumForeignAssets } from './fetchPendulumAssets'
 import { fetchMoonbeamForeignAssets } from './fetchMoonbeamAssets'
-import { supportsDryRunApi } from './supportsDryRunApi'
+import { supportsRuntimeApi } from './supportsRuntimeApi'
 import { fetchUniqueForeignAssets } from './fetchUniqueAssets'
 import { fetchXcmRegistry, TRegistryAssets } from './fetchXcmRegistry'
 import { fetchPolimecForeignAssets } from './fetchPolimecAssets'
@@ -38,6 +39,7 @@ import {
 import { getNodeProviders, getParaId } from '../../sdk-core/src'
 import { getRelayChainSymbol, getRelayChainType } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
+import { fetchFeeAssets } from './fetchFeeAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -380,6 +382,9 @@ const fetchNodeAssets = async (
   api: ApiPromise,
   query: string[]
 ): Promise<Partial<TNodeAssets>> => {
+  const supportsXcmPaymentApi = supportsRuntimeApi(api, 'xcmPaymentApi')
+  const feeAssets: TMultiLocation[] = supportsXcmPaymentApi ? await fetchFeeAssets(api) : []
+
   const nativeAssetSymbol = await fetchNativeAsset(api)
 
   const hasGlobal = query.includes(GLOBAL)
@@ -460,6 +465,17 @@ const fetchNodeAssets = async (
 
   mergedAssets = mergedAssets.map(asset => patchParents(node, asset))
 
+  if (feeAssets.length > 0) {
+    const allAssets = [...nativeAssets, ...mergedAssets] as unknown as TForeignAsset[]
+
+    feeAssets.forEach(loc => {
+      const matched = findAssetByMultiLocation(allAssets, loc)
+      if (matched) {
+        matched.isFeeAsset = true
+      }
+    })
+  }
+
   await api.disconnect()
 
   return {
@@ -467,7 +483,8 @@ const fetchNodeAssets = async (
     otherAssets: mergedAssets,
     nativeAssetSymbol,
     isEVM: isNodeEvm(api),
-    supportsDryRunApi: supportsDryRunApi(api)
+    supportsDryRunApi: supportsRuntimeApi(api, 'dryRunApi'),
+    supportsXcmPaymentApi
   }
 }
 
@@ -514,6 +531,7 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
           nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
           isEVM: newData?.isEVM ?? false,
           supportsDryRunApi: newData?.supportsDryRunApi ?? false,
+          supportsXcmPaymentApi: newData?.supportsXcmPaymentApi ?? false,
           nativeAssets: combinedNativeAssets,
           otherAssets: isRelayChain(nodeName) ? [] : combinedOtherAssets
         }

@@ -148,4 +148,12 @@ export class AssetsController {
     });
     return this.assetsService.getOriginFeeDetails(params);
   }
+
+  @Get('assets/:node/fee-assets')
+  getFeeAssets(@Param('node') node: string, @Req() req: Request) {
+    this.analyticsService.track(EventName.GET_FEE_ASSETS, req, {
+      node,
+    });
+    return this.assetsService.getFeeAssets(node);
+  }
 }

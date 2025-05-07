@@ -11,6 +11,7 @@ type TBaseAsset = {
   manuallyAdded?: boolean
   alias?: string
   existentialDeposit?: string
+  isFeeAsset?: boolean
 }
 
 export type TNativeAsset = TBaseAsset & {
@@ -31,6 +32,7 @@ export type TNodeAssets = {
   nativeAssetSymbol: string
   isEVM: boolean
   supportsDryRunApi: boolean
+  supportsXcmPaymentApi: boolean
   nativeAssets: TNativeAsset[]
   otherAssets: TForeignAsset[]
 }
