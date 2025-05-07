@@ -358,54 +358,57 @@ Possible parameters:
 - `paraID`: Parachain ID eg. 2090 (Basilisk)
 
 ```js
-//Retrieve assets object for a specific Parachain
+// Retrieve Fee asset queries (Assets accepted as XCM Fee on specific node)
+const response = await fetch('http://localhost:3001/v2/assets/:node/fee-assets');
+
+// Retrieve assets object for a specific Parachain
 const response = await fetch('http://localhost:3001/v2/assets/:node');
 
-//Retrieve asset ID for particular Parachain and asset
+// Retrieve asset ID for particular Parachain and asset
 const response = await fetch(
   'http://localhost:3001/v2/assets/:node/id?symbol=:asset',
 );
 
-//Retrieve the Relay chain asset Symbol for a particular Parachain
+// Retrieve the Relay chain asset Symbol for a particular Parachain
 const response = await fetch(
   'http://localhost:3001/v2/assets/:node/relay-chain-symbol',
 );
 
-//Retrieve native assets for a particular Parachain
+// Retrieve native assets for a particular Parachain
 const response = await fetch('http://localhost:3001/v2/assets/:node/native');
 
-//Retrieve foreign assets for a particular Parachain
+// Retrieve foreign assets for a particular Parachain
 const response = await fetch('http://localhost:3001/v2/assets/:node/other');
 
-//Retrieve all asset symbols for particular Parachain
+// Retrieve all asset symbols for particular Parachain
 const response = await fetch('http://localhost:3001/v2/assets/:node/all-symbols');
 
-//Retrieve support for a particular asset on a particular Parachain
+// Retrieve support for a particular asset on a particular Parachain
 const response = await fetch(
   'http://localhost:3001/v2/assets/:node/has-support?symbol=:asset',
 );
 
-//Retrieve decimals for a particular asset for a particular Parachain
+// Retrieve decimals for a particular asset for a particular Parachain
 const response = await fetch(
   'http://localhost:3001/v2/assets/:node/decimals?symbol=:asset',
 );
 
-//Retrieve Parachain ID for a particular Parachain
+// Retrieve Parachain ID for a particular Parachain
 const response = await fetch('http://localhost:3001/v2/nodes/:node/para-id');
 
-//Retrieve Parachain name from Parachain ID
+// Retrieve Parachain name from Parachain ID
 const response = await fetch('http://localhost:3001/v2/nodes/:paraID?ecosystem=polkadot');
 
-//Retrieve a list of implemented Parachains
+// Retrieve a list of implemented Parachains
 const response = await fetch('http://localhost:3001/v2/nodes');
 
-//Query list of node WS endpoints
+// Query list of node WS endpoints
 const response = await fetch('http://localhost:3001/v2/nodes/:node/ws-endpoints');
 
-//Query supported assets supported between two nodes
+// Query supported assets supported between two nodes
 const response = await fetch('http://localhost:3001/v2/supported-assets?origin=:node&destination=:node');
 
-//Query native asset balance
+// Query native asset balance
 const response = await fetch("http://localhost:3001/v2/balance/:node/native", {
     method: 'POST',
     headers: {
@@ -416,7 +419,7 @@ const response = await fetch("http://localhost:3001/v2/balance/:node/native", {
     })
 });
 
-//Query foreign asset balance
+// Query foreign asset balance
 const response = await fetch("http://localhost:3001/v2/balance/:node/foreign", {
     method: 'POST',
     headers: {
@@ -428,7 +431,7 @@ const response = await fetch("http://localhost:3001/v2/balance/:node/foreign", {
     })
 });
 
-//Retrieve max transferable amount for specific account, specific foreign asset on specific chain
+// Retrieve max transferable amount for specific account, specific foreign asset on specific chain
 const response = await fetch("http://localhost:3001/v2/balance/:node/max-foreign-transferable-amount", {
     method: 'POST',
     headers: {
@@ -440,7 +443,7 @@ const response = await fetch("http://localhost:3001/v2/balance/:node/max-foreign
     })
 });
 
-//Retrieve max transferable amount for specific account, specific native asset on specific chain
+// Retrieve max transferable amount for specific account, specific native asset on specific chain
 const response = await fetch("http://localhost:3001/v2/balance/:node/max-native-transferable-amount", {
     method: 'POST',
     headers: {
@@ -452,7 +455,7 @@ const response = await fetch("http://localhost:3001/v2/balance/:node/max-native-
     })
 });
 
-//Retrieve max transferable amount for specific account, specific asset on specific chain
+// Retrieve max transferable amount for specific account, specific asset on specific chain
 const response = await fetch("http://localhost:3001/v2/balance/:node/transferable-amount", {
     method: 'POST',
     headers: {
@@ -464,7 +467,7 @@ const response = await fetch("http://localhost:3001/v2/balance/:node/transferabl
     })
 });
 
-//Retrieve existential deposit for specific assets on selected chain
+// Retrieve existential deposit for specific assets on selected chain
 const response = await fetch("http://localhost:3001/v2/balance/:node/existential-deposit", {
     method: 'POST',
     headers: {
@@ -475,7 +478,7 @@ const response = await fetch("http://localhost:3001/v2/balance/:node/existential
     })
 });
 
-//Retrieve multilocation for asset id or symbol for specific assets on selected chain
+// Retrieve multilocation for asset id or symbol for specific assets on selected chain
 const response = await fetch("http://localhost:3001/v2/assets/:node/multilocation", {
     method: 'POST',
     headers: {
@@ -486,7 +489,7 @@ const response = await fetch("http://localhost:3001/v2/assets/:node/multilocatio
     })
 });
 
-//Verify whether XCM message you wish to send will reach above existential deposit on destination chain.
+// Verify whether XCM message you wish to send will reach above existential deposit on destination chain.
 const response = await fetch("http://localhost:3001/v2/balance/:node/foreign", {
     method: 'POST',
     headers: {
@@ -508,13 +511,13 @@ Possible parameters:
 - `node`: Specific Parachain eg. Moonbeam
 
 ```js
-//Return default pallet for specific Parachain
+// Return default pallet for specific Parachain
 const response = await fetch('http://localhost:3001/v2/pallets/:node/default');
 
-//Return an array of supported pallets for a specific Parachain
+// Return an array of supported pallets for a specific Parachain
 const response = await fetch('http://localhost:3001/v2/pallets/:node');
 
-//Return Parachain support for DryRun
+// Return Parachain support for DryRun
 const response = await fetch('http://localhost:3001/v2/nodes/:node/has-dry-run-support');
 ```
 

@@ -313,38 +313,43 @@ await builder.disconnect()
 ### Asset queries:
 
 ```ts
+import { getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTNode, getAssetMultiLocation, NODE_NAMES } from  '@paraspell/sdk-pjs'
+
+// Retrieve Fee asset queries (Assets accepted as XCM Fee on specific node)
+getFeeAssets(node: TNode)
+
 // Retrieve assets object from assets.json for particular node including information about native and foreign assets
-paraspell.assets.getAssetsObject(node: TNode)
+getAssetsObject(node: TNode)
 
 // Retrieve foreign assetId for a particular node and asset symbol
-paraspell.assets.getAssetId(node: TNode, symbol: string)
+getAssetId(node: TNode, symbol: string)
 
 // Retrieve the symbol of the relay chain for a particular node. Either "DOT" or "KSM"
-paraspell.assets.getRelayChainSymbol(node: TNode)
+getRelayChainSymbol(node: TNode)
 
 // Retrieve string array of native assets symbols for particular node
-paraspell.assets.getNativeAssets(node: TNode)
+getNativeAssets(node: TNode)
 
 // Retrieve object array of foreign assets for a particular node. Each object has a symbol and assetId property
-paraspell.assets.getOtherAssets(node: TNode)
+getOtherAssets(node: TNode)
 
 // Retrieve string array of all assets symbols. (native and foreign assets are merged into a single array)
-paraspell.assets.getAllAssetsSymbols(node: TNode)
+getAllAssetsSymbols(node: TNode)
 
 // Check if a node supports a particular asset. (Both native and foreign assets are searched). Returns boolean
-paraspell.assets.hasSupportForAsset(node: TNode, symbol: string)
+hasSupportForAsset(node: TNode, symbol: string)
 
 // Get decimals for specific asset
-paraspell.assets.getAssetDecimals(node: TNode, symbol: string)
+getAssetDecimals(node: TNode, symbol: string)
 
 // Get specific node id
-paraspell.assets.getParaId(node: TNode)
+getParaId(node: TNode)
 
 // Get specific TNode from nodeID
-paraspell.assets.getTNode(nodeID: number, ecosystem: 'polkadot' || 'kusama' || 'ethereum') //When Ethereum ecosystem is selected please fill nodeID as 1 to select Ethereum.
+getTNode(nodeID: number, ecosystem: 'polkadot' || 'kusama' || 'ethereum') //When Ethereum ecosystem is selected please fill nodeID as 1 to select Ethereum.
 
 // Import all compatible nodes as constant
-paraspell.NODE_NAMES
+NODE_NAMES
 
 // Get multilocation for asset id or symbol on specific chain
 getAssetMultiLocation(chainFrom, { symbol: symbol } | { id: assetId })
