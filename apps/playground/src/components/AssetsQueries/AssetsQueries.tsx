@@ -67,12 +67,8 @@ export const AssetsQueries = () => {
     const { useApi, func, address } = formValues;
 
     const postCalls = new Set<TAssetsQuery>([
-      'BALANCE_FOREIGN',
-      'BALANCE_NATIVE',
       'ASSET_BALANCE',
       'ASSET_MULTILOCATION',
-      'MAX_NATIVE_TRANSFERABLE_AMOUNT',
-      'MAX_FOREIGN_TRANSFERABLE_AMOUNT',
       'TRANSFERABLE_AMOUNT',
       'EXISTENTIAL_DEPOSIT',
       'ORIGIN_FEE_DETAILS',

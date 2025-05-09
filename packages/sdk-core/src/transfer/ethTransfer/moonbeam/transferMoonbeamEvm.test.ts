@@ -15,8 +15,8 @@ import { createPublicClient, getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
+import { formatAssetIdToERC20 } from '../../../pallets/assets/balance'
 import { isEthersContract, isEthersSigner } from '../utils'
-import { formatAssetIdToERC20 } from './formatAssetIdToERC20'
 import { getDestinationMultilocation } from './getDestinationMultilocation'
 import { transferMoonbeamEvm } from './transferMoonbeamEvm'
 
@@ -42,7 +42,7 @@ vi.mock('../utils', () => ({
   isEthersSigner: vi.fn()
 }))
 
-vi.mock('./formatAssetIdToERC20', () => ({
+vi.mock('../../../pallets/assets/balance', () => ({
   formatAssetIdToERC20: vi.fn()
 }))
 

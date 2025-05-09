@@ -2,6 +2,7 @@ import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/as
 import { hasJunction, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
+import { getMoonbeamErc20Balance } from './getMoonbeamErc20Balance'
 
 export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
@@ -12,6 +13,10 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   if (node === 'Moonbeam' || node === 'Moonriver') {
     if (!isForeignAsset(asset) || !asset.assetId) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    }
+
+    if (asset.multiLocation && hasJunction(asset.multiLocation, 'GlobalConsensus')) {
+      return getMoonbeamErc20Balance(node, asset.assetId, address)
     }
 
     return api.getBalanceAssetsPallet(address, BigInt(asset.assetId))

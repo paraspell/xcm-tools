@@ -69,11 +69,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'ASSET_MULTILOCATION' ||
     func === 'DECIMALS' ||
     func == 'HAS_SUPPORT' ||
-    func === 'BALANCE_NATIVE' ||
-    func === 'BALANCE_FOREIGN' ||
     func === 'ASSET_BALANCE' ||
-    func === 'MAX_FOREIGN_TRANSFERABLE_AMOUNT' ||
-    func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
     func === 'TRANSFERABLE_AMOUNT' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'ORIGIN_FEE_DETAILS' ||
@@ -81,20 +77,14 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const supportsCurrencyType =
     func === 'ASSET_MULTILOCATION' ||
-    func === 'BALANCE_FOREIGN' ||
     func === 'ASSET_BALANCE' ||
-    func === 'MAX_FOREIGN_TRANSFERABLE_AMOUNT' ||
     func === 'TRANSFERABLE_AMOUNT' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'ORIGIN_FEE_DETAILS' ||
     func === 'VERIFY_ED_ON_DESTINATION';
 
   const showAddressInput =
-    func === 'BALANCE_FOREIGN' ||
-    func === 'BALANCE_NATIVE' ||
     func === 'ASSET_BALANCE' ||
-    func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
-    func === 'MAX_FOREIGN_TRANSFERABLE_AMOUNT' ||
     func === 'TRANSFERABLE_AMOUNT' ||
     func === 'ORIGIN_FEE_DETAILS' ||
     func === 'VERIFY_ED_ON_DESTINATION';
@@ -111,19 +101,13 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const notSupportsEthereum =
     func === 'PARA_ID' ||
-    func === 'BALANCE_NATIVE' ||
-    func === 'BALANCE_FOREIGN' ||
     func === 'ASSET_BALANCE' ||
-    func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
-    func === 'MAX_FOREIGN_TRANSFERABLE_AMOUNT' ||
     func === 'ORIGIN_FEE_DETAILS' ||
     func === 'VERIFY_ED_ON_DESTINATION';
 
   const supportsRelayChains =
     func === 'ASSETS_OBJECT' ||
     func === 'NATIVE_ASSETS' ||
-    func === 'BALANCE_NATIVE' ||
-    func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'TRANSFERABLE_AMOUNT' ||
     func === 'ASSET_BALANCE' ||
@@ -131,10 +115,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'VERIFY_ED_ON_DESTINATION' ||
     func === 'HAS_DRY_RUN_SUPPORT';
 
-  const optionalCurrency =
-    func === 'MAX_NATIVE_TRANSFERABLE_AMOUNT' ||
-    func === 'EXISTENTIAL_DEPOSIT' ||
-    func === 'BALANCE_NATIVE';
+  const optionalCurrency = func === 'EXISTENTIAL_DEPOSIT';
 
   const supportsAmount =
     func === 'ORIGIN_FEE_DETAILS' || func === 'VERIFY_ED_ON_DESTINATION';

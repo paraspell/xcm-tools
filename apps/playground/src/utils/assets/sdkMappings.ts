@@ -53,38 +53,10 @@ export const callSdkFunc = (
     DECIMALS: () => Promise.resolve(getAssetDecimals(node, currency)),
     HAS_SUPPORT: () => Promise.resolve(hasSupportForAsset(node, currency)),
     PARA_ID: () => Promise.resolve(getParaId(node)),
-    BALANCE_NATIVE: () =>
-      chosenSdk.getBalanceNative({
-        address,
-        node,
-      }),
-    BALANCE_FOREIGN: () =>
-      chosenSdk.getBalanceForeign({
-        address,
-        node: node as TNodePolkadotKusama,
-        currency: resolvedCurrency,
-      }),
     ASSET_BALANCE: () =>
       chosenSdk.getAssetBalance({
         address,
         node: node,
-        currency: resolvedCurrency,
-      }),
-    MAX_NATIVE_TRANSFERABLE_AMOUNT: () =>
-      chosenSdk.getMaxNativeTransferableAmount({
-        address,
-        node: node,
-        currency:
-          'symbol' in resolvedCurrency &&
-          typeof resolvedCurrency.symbol === 'string' &&
-          resolvedCurrency.symbol.length > 0
-            ? { symbol: resolvedCurrency.symbol }
-            : undefined,
-      }),
-    MAX_FOREIGN_TRANSFERABLE_AMOUNT: () =>
-      chosenSdk.getMaxForeignTransferableAmount({
-        address,
-        node: node as TNodePolkadotKusama,
         currency: resolvedCurrency,
       }),
     TRANSFERABLE_AMOUNT: () =>

@@ -14,11 +14,11 @@ import { Contract } from 'ethers'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
+import { formatAssetIdToERC20 } from '../../../pallets/assets/balance'
 import type { TEvmBuilderOptions } from '../../../types'
 import { isEthersContract, isEthersSigner } from '../utils'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
-import { formatAssetIdToERC20 } from './formatAssetIdToERC20'
 import { getDestinationMultilocation } from './getDestinationMultilocation'
 
 const U_64_MAX = 18446744073709551615n

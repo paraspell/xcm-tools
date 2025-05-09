@@ -58,11 +58,18 @@ export class EvmBuilderCore<
    * @param address - The Polkadot address to receive the transfer.
    * @returns An instance of EvmBuilder
    */
-  address(
-    address: string,
-    ahAddress?: string
-  ): EvmBuilderCore<TApi, TRes, T & { address: string }> {
-    return new EvmBuilderCore({ ...this._options, address, ahAddress })
+  address(address: string): EvmBuilderCore<TApi, TRes, T & { address: string }> {
+    return new EvmBuilderCore({ ...this._options, address })
+  }
+
+  /**
+   * Sets the asset hub address. This is used for transfers that go through the Asset Hub.
+   *
+   * @param address - The address to be used.
+   * @returns An instance of EvmBuilder
+   */
+  ahAddress(address: string | undefined) {
+    return new EvmBuilderCore({ ...this._options, ahAddress: address })
   }
 
   /**
