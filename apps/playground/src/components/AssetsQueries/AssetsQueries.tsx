@@ -99,6 +99,7 @@ export const AssetsQueries = () => {
                     account: address,
                     origin: formValues.node,
                     destination: formValues.nodeDestination,
+                    ahAddress: formValues.ahAddress,
                     currency: {
                       ...resolvedCurrency,
                       amount: formValues.amount,

@@ -47,13 +47,12 @@ describe('getOriginFeeDetails', () => {
       amount: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
       senderAddress: vi.fn().mockReturnThis(),
+      ahAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(mockTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
 
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
-
-    const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
     const result = await getOriginFeeDetails({
       origin: originNode,
@@ -68,8 +67,6 @@ describe('getOriginFeeDetails', () => {
       sufficientForXCM: true,
       xcmFee
     })
-
-    consoleLogSpy.mockRestore()
   })
 
   it('should return correct origin fee details when origin is a relay chain', async () => {
@@ -102,13 +99,12 @@ describe('getOriginFeeDetails', () => {
       amount: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
       senderAddress: vi.fn().mockReturnThis(),
+      ahAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(mockTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
 
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
-
-    const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
     const result = await getOriginFeeDetails<unknown, unknown>({
       origin: originNode,
@@ -123,8 +119,6 @@ describe('getOriginFeeDetails', () => {
       sufficientForXCM: true,
       xcmFee: BigInt(xcmFee)
     })
-
-    consoleLogSpy.mockRestore()
   })
 
   it('should return correct origin fee details when destination is a relay chain', async () => {
@@ -157,13 +151,12 @@ describe('getOriginFeeDetails', () => {
       amount: vi.fn().mockReturnThis(),
       address: vi.fn().mockReturnThis(),
       senderAddress: vi.fn().mockReturnThis(),
+      ahAddress: vi.fn().mockReturnThis(),
       currency: vi.fn().mockReturnThis(),
       build: vi.fn().mockResolvedValue(mockTx)
     } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
 
     vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
-
-    const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
     const result = await getOriginFeeDetails({
       origin: originNode,
@@ -178,7 +171,5 @@ describe('getOriginFeeDetails', () => {
       sufficientForXCM: true,
       xcmFee: BigInt(xcmFee)
     })
-
-    consoleLogSpy.mockRestore()
   })
 })
