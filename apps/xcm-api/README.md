@@ -182,6 +182,7 @@ const response = await fetch("http://localhost:3001/v2/xcm-fee", {
         currency: {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}}
         address: "Address" // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
         senderAddress: "Address" // Replace "Address" with sender wallet address (In AccountID32 or AccountKey20 Format) 
+        //ahAddress: ahAddress //Optional parameter - used when origin is EVM node and XCM goes through AssetHub (Multihop transfer where we are unable to convert Key20 to ID32 address eg. origin: Moonbeam & destination: Ethereum (Multihop goes from Moonbeam > AssetHub > BridgeHub > Ethereum)
         /*disableFallback: "True" //Optional parameter - if enabled it disables fallback to payment info if dryrun fails only returning dryrun error but no fees.*/
     })
 });
@@ -408,50 +409,15 @@ const response = await fetch('http://localhost:3001/v2/nodes/:node/ws-endpoints'
 // Query supported assets supported between two nodes
 const response = await fetch('http://localhost:3001/v2/supported-assets?origin=:node&destination=:node');
 
-// Query native asset balance
-const response = await fetch("http://localhost:3001/v2/balance/:node/native", {
+// Retrieve specific asset balance for specific chain
+const response = await fetch("http://localhost:3001/v2/balance/:node/asset", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format)
-    })
-});
-
-// Query foreign asset balance
-const response = await fetch("http://localhost:3001/v2/balance/:node/foreign", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format)
-        currency: "Currency" //Replace "Currency" with either {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson}
-    })
-});
-
-// Retrieve max transferable amount for specific account, specific foreign asset on specific chain
-const response = await fetch("http://localhost:3001/v2/balance/:node/max-foreign-transferable-amount", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        address: "Address", // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
-        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson}
-    })
-});
-
-// Retrieve max transferable amount for specific account, specific native asset on specific chain
-const response = await fetch("http://localhost:3001/v2/balance/:node/max-native-transferable-amount", {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        address: "Address", // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
-        currency?: "Currency" //Replace "Currency" with {symbol: currencySymbol}
+        address: "Address" // Replace "Address" with wallet address (In AccountID32 or AccountKey20 Format) 
+        currency: {currencySpec}, //{id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"} | {multilocation: AssetMultilocationString} | {multilocation: AssetMultilocationJson} | {multilocation: "type": "Override","value": "CustomAssetMultilocationJson"}
     })
 });
 
