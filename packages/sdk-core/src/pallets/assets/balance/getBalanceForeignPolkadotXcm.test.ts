@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { DOT_MULTILOCATION } from '../../../constants'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
+import { getMoonbeamErc20Balance } from './getMoonbeamErc20Balance'
 
 vi.mock('@paraspell/sdk-common', async importActual => {
   const actual = await importActual<typeof import('@paraspell/sdk-common')>()
@@ -16,6 +17,10 @@ vi.mock('@paraspell/sdk-common', async importActual => {
 
 vi.mock('./getAssetHubMultiLocation', () => ({
   getAssetHubMultiLocation: vi.fn()
+}))
+
+vi.mock('./getMoonbeamErc20Balance', () => ({
+  getMoonbeamErc20Balance: vi.fn()
 }))
 
 describe('getBalanceForeignPolkadotXcm', () => {
@@ -68,6 +73,31 @@ describe('getBalanceForeignPolkadotXcm', () => {
     })
 
     expect(result).toBe(300n)
+  })
+
+  it('Moonbeam – asset with GlobalConsensus junction uses getMoonbeamBalance', async () => {
+    vi.mocked(hasJunction).mockImplementation((_, kind) => kind === 'GlobalConsensus')
+
+    const MOONBEAM_BAL = 555n
+    vi.mocked(getMoonbeamErc20Balance).mockResolvedValue(MOONBEAM_BAL)
+
+    const api = {
+      getBalanceAssetsPallet: vi.fn()
+    } as unknown as IPolkadotApi<unknown, unknown>
+
+    const multiloc = {} as TMultiLocation
+
+    const spy = vi.spyOn(api, 'getBalanceAssetsPallet')
+
+    const res = await getBalanceForeignPolkadotXcm(api, 'Moonbeam', 'addr', {
+      symbol: 'DOT',
+      assetId: '1234',
+      multiLocation: multiloc
+    })
+
+    expect(res).toBe(MOONBEAM_BAL)
+    expect(getMoonbeamErc20Balance).toHaveBeenCalledWith('Moonbeam', '1234', 'addr')
+    expect(spy).not.toHaveBeenCalled()
   })
 
   it('should return balance for Moonriver node', async () => {

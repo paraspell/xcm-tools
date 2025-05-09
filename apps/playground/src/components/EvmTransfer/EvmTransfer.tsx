@@ -201,7 +201,8 @@ const EvmTransfer = () => {
         .from(from)
         .to(to)
         .currency(currencyInput)
-        .address(address, ahAddress)
+        .address(address)
+        .ahAddress(ahAddress)
         .signer(signer)
         .build();
     } else {
@@ -209,7 +210,8 @@ const EvmTransfer = () => {
         .from(from)
         .to(to)
         .currency(currencyInput)
-        .address(address, ahAddress)
+        .address(address)
+        .ahAddress(ahAddress)
         .signer(signer)
         .build();
     }

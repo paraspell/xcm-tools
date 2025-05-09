@@ -47,6 +47,7 @@ describe('EvmBuilderClass', () => {
       .to('Ethereum')
       .currency(currency)
       .address(address)
+      .ahAddress(address)
       .signer(signer)
 
     await builder.build()
@@ -58,6 +59,7 @@ describe('EvmBuilderClass', () => {
       to: 'Ethereum',
       currency,
       address,
+      ahAddress: address,
       signer
     })
   })
@@ -68,6 +70,7 @@ describe('EvmBuilderClass', () => {
       .to('Polkadot')
       .currency(currency)
       .address(address)
+      .ahAddress(address)
       .signer(signer)
 
     await builder.build()
@@ -79,6 +82,7 @@ describe('EvmBuilderClass', () => {
       to: 'Polkadot',
       currency,
       address,
+      ahAddress: address,
       signer
     })
   })
@@ -89,6 +93,7 @@ describe('EvmBuilderClass', () => {
       .to('AssetHubPolkadot')
       .currency(currency)
       .address(address)
+      .ahAddress(address)
       .signer(signer)
 
     await builder.build()
@@ -100,6 +105,7 @@ describe('EvmBuilderClass', () => {
       to: 'AssetHubPolkadot',
       currency,
       address,
+      ahAddress: address,
       signer
     })
   })
