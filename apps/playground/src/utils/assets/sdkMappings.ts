@@ -34,6 +34,7 @@ export const callSdkFunc = (
     currency,
     amount,
     address,
+    ahAddress,
     accountDestination,
   } = formValues;
   const chosenSdk = apiType === 'PAPI' ? Sdk : SdkPjs;
@@ -84,6 +85,7 @@ export const callSdkFunc = (
         },
         account: address,
         accountDestination,
+        ahAddress,
       }),
     VERIFY_ED_ON_DESTINATION: () =>
       chosenSdk.verifyEdOnDestination({

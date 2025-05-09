@@ -100,6 +100,10 @@ export type TGetOriginFeeDetailsOptionsBase = {
    */
   accountDestination: string
   /**
+   * The address of the account.
+   */
+  ahAddress?: string
+  /**
    * The fee margin percentage.
    */
   feeMarginPercentage?: number

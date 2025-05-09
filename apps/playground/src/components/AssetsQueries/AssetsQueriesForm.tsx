@@ -35,6 +35,7 @@ export type FormValues = {
   currency: string;
   amount: string;
   address: string;
+  ahAddress: string;
   accountDestination: string;
   useApi: boolean;
   currencyType?: 'id' | 'symbol' | 'multilocation';
@@ -53,6 +54,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
       nodeDestination: 'Astar',
       currency: '',
       address: '',
+      ahAddress: '',
       accountDestination: '',
       amount: '',
       useApi: false,
@@ -60,7 +62,8 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     },
   });
 
-  const { func, node, currencyType, useApi } = form.getValues();
+  const { func, node, currencyType, useApi, nodeDestination } =
+    form.getValues();
 
   const { setIsUseXcmApiSelected } = useWallet();
 
@@ -88,6 +91,8 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'TRANSFERABLE_AMOUNT' ||
     func === 'ORIGIN_FEE_DETAILS' ||
     func === 'VERIFY_ED_ON_DESTINATION';
+
+  const showAhAddressInput = func === 'ORIGIN_FEE_DETAILS';
 
   const onSubmitInternal = (formValues: FormValues) => {
     const { func } = formValues;
@@ -301,6 +306,18 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
               {...form.getInputProps('address')}
             />
           )}
+
+          {showAhAddressInput &&
+            node === 'Moonbeam' &&
+            nodeDestination === 'Ethereum' && (
+              <TextInput
+                label="AssetHub address"
+                placeholder="Enter address"
+                required
+                data-testid="ah-address-input"
+                {...form.getInputProps('ahAddress')}
+              />
+            )}
 
           {isOriginFee && (
             <TextInput

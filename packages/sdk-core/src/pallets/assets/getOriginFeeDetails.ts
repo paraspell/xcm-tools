@@ -9,6 +9,7 @@ export const getOriginFeeDetailsInternal = async <TApi, TRes>({
   api,
   account,
   accountDestination,
+  ahAddress,
   currency,
   origin,
   destination,
@@ -22,6 +23,7 @@ export const getOriginFeeDetailsInternal = async <TApi, TRes>({
     .currency(currency)
     .address(accountDestination)
     .senderAddress(account)
+    .ahAddress(ahAddress)
     .build()
 
   const xcmFee = await api.calculateTransactionFee(tx, account)
