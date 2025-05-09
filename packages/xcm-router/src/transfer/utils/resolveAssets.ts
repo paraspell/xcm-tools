@@ -1,4 +1,4 @@
-import { findAsset, hasSupportForAsset } from '@paraspell/sdk-pjs';
+import { findAsset, hasSupportForAsset } from '@paraspell/sdk';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
 import type ExchangeNode from '../../dexNodes/DexNode';

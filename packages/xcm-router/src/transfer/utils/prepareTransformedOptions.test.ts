@@ -1,5 +1,5 @@
-import * as sdkPjs from '@paraspell/sdk-pjs';
-import { findAsset } from '@paraspell/sdk-pjs';
+import * as sdkPapi from '@paraspell/sdk';
+import { findAsset } from '@paraspell/sdk';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import * as assets from '../../assets';
@@ -27,8 +27,8 @@ vi.mock('../../assets', () => ({
   getExchangeAsset: vi.fn(),
 }));
 
-vi.mock('@paraspell/sdk-pjs', async (importOriginal) => {
-  const mod = await importOriginal<typeof import('@paraspell/sdk-pjs')>();
+vi.mock('@paraspell/sdk', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('@paraspell/sdk')>();
   return {
     ...mod,
     hasSupportForAsset: vi.fn(),
@@ -54,6 +54,7 @@ describe('prepareTransformedOptions', () => {
       node: 'Acala',
       exchangeNode: 'AcalaDex',
       createApiInstance: vi.fn(),
+      createApiInstancePapi: vi.fn(),
     } as unknown as ExchangeNode;
 
     vi.mocked(selectBestExchange).mockResolvedValue(mockDexNode);
@@ -100,7 +101,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPjs.TAsset);
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAsset);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(undefined);
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow(
@@ -123,7 +124,7 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPjs.TAsset);
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAsset);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'EXCHANGE_ACA' });
     vi.mocked(assets.getExchangeAsset).mockReturnValue(null);
 
@@ -147,10 +148,10 @@ describe('prepareTransformedOptions', () => {
     } as ExchangeNode;
 
     vi.mocked(createDexNodeInstance).mockReturnValue(mockDexNode);
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPjs.TAsset);
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as sdkPapi.TAsset);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue({ symbol: 'EXCHANGE_ACA' });
     vi.mocked(assets.getExchangeAsset).mockReturnValue({ symbol: 'ASTR' });
-    vi.mocked(sdkPjs.hasSupportForAsset).mockReturnValue(false);
+    vi.mocked(sdkPapi.hasSupportForAsset).mockReturnValue(false);
 
     await expect(prepareTransformedOptions(mockOptions)).rejects.toThrow(
       `Currency to ${JSON.stringify(mockOptions.currencyTo)} not supported by ${mockOptions.to}.`,
@@ -172,9 +173,10 @@ describe('prepareTransformedOptions', () => {
       node: 'Acala',
       exchangeNode: 'AcalaDex',
       createApiInstance: vi.fn().mockResolvedValue({}),
+      createApiInstancePapi: vi.fn().mockResolvedValue({}),
     } as unknown as ExchangeNode;
 
-    const mockOriginAsset = { symbol: 'ACA' } as sdkPjs.TAsset;
+    const mockOriginAsset = { symbol: 'ACA' } as sdkPapi.TAsset;
     const mockExchangeAssetFrom = { symbol: 'EXCHANGE_ACA' };
     const mockExchangeAssetTo = { symbol: 'ASTR' };
 
@@ -182,8 +184,8 @@ describe('prepareTransformedOptions', () => {
     vi.mocked(findAsset).mockReturnValue(mockOriginAsset);
     vi.mocked(assets.getExchangeAssetByOriginAsset).mockReturnValue(mockExchangeAssetFrom);
     vi.mocked(assets.getExchangeAsset).mockReturnValue(mockExchangeAssetTo);
-    vi.mocked(sdkPjs.hasSupportForAsset).mockReturnValue(true);
-    vi.mocked(sdkPjs.createApiInstanceForNode).mockResolvedValue({} as sdkPjs.TPjsApi);
+    vi.mocked(sdkPapi.hasSupportForAsset).mockReturnValue(true);
+    vi.mocked(sdkPapi.createApiInstanceForNode).mockResolvedValue({} as sdkPapi.TPapiApi);
     vi.mocked(determineFeeCalcAddress).mockReturnValue('feeCalcAddr');
 
     const result = await prepareTransformedOptions(mockOptions);
@@ -196,6 +198,7 @@ describe('prepareTransformedOptions', () => {
     });
     expect(result.options.exchange).toEqual({
       api: expect.any(Object),
+      apiPapi: expect.any(Object),
       baseNode: mockDexNode.node,
       exchangeNode: mockDexNode.exchangeNode,
       assetFrom: mockExchangeAssetFrom,

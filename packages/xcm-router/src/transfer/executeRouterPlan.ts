@@ -1,4 +1,4 @@
-import { getBalanceNative, isNodeEvm } from '@paraspell/sdk-pjs';
+import { getBalanceNative, isNodeEvm } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 
 import { FEE_BUFFER } from '../consts';
@@ -51,9 +51,9 @@ export const executeRouterPlan = async (
         throw new Error('EVM signer and sender address must be provided for EVM nodes.');
       }
 
-      await submitTransaction(api, tx, evmSigner, evmSenderAddress);
+      await submitTransaction(tx, evmSigner);
     } else {
-      await submitTransaction(api, tx, signer, senderAddress);
+      await submitTransaction(tx, signer);
     }
   }
 

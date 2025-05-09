@@ -46,13 +46,8 @@ vi.mock('./executeRouterPlan', () => {
 });
 
 describe('transfer', () => {
-  const mockOriginApi = {
-    disconnect: vi.fn(),
-  } as unknown as TPjsApi;
-
-  const mockSwapApi = {
-    disconnect: vi.fn(),
-  } as unknown as TPjsApi;
+  const mockOriginApi = {} as unknown as TPjsApi;
+  const mockSwapApi = {} as unknown as TPjsApi;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -167,12 +162,6 @@ describe('transfer', () => {
       to: 'Kusama',
     } as TTransferOptions;
 
-    const originDisconnectSpy = vi.spyOn(mockOriginApi, 'disconnect');
-    const swapDisconnectSpy = vi.spyOn(mockSwapApi, 'disconnect');
-
     await transfer(options);
-
-    expect(originDisconnectSpy).toHaveBeenCalledTimes(1);
-    expect(swapDisconnectSpy).toHaveBeenCalledTimes(1);
   });
 });

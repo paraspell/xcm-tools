@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 
 import type ExchangeNode from '../dexNodes/DexNode';
 import { type TCommonTransferOptions, type TCommonTransferOptionsModified } from '../types';
-import { calculateFromExchangeFee, calculateToExchangeWeight } from './createSwapTx';
+import { calculateFromExchangeFee } from './createSwapTx';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 import { determineFeeCalcAddress } from './utils';
 
@@ -13,6 +13,7 @@ export const selectBestExchange = async (options: TCommonTransferOptions): Promi
       ...options,
       exchange: {
         api: await dex.createApiInstance(),
+        apiPapi: await dex.createApiInstancePapi(),
         baseNode: dex.node,
         exchangeNode: dex.exchangeNode,
         assetFrom: assetFromExchange,
@@ -20,7 +21,6 @@ export const selectBestExchange = async (options: TCommonTransferOptions): Promi
       },
       feeCalcAddress: determineFeeCalcAddress(options.senderAddress, options.recipientAddress),
     };
-    const toExchangeTxFee = await calculateToExchangeWeight(modifiedOptions);
     const toDestTxFee = await calculateFromExchangeFee(modifiedOptions);
 
     const swapResult = await dex.swapCurrency(
@@ -32,7 +32,6 @@ export const selectBestExchange = async (options: TCommonTransferOptions): Promi
         assetTo: modifiedOptions.exchange.assetTo as TAsset,
       },
       toDestTxFee,
-      toExchangeTxFee,
     );
     return new BigNumber(swapResult.amountOut);
   });
