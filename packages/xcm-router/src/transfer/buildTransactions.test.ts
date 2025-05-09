@@ -1,4 +1,5 @@
-import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
+import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import type { TPjsApi } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type ExchangeNode from '../dexNodes/DexNode';
@@ -7,14 +8,18 @@ import { buildTransactions } from './buildTransactions';
 import * as createSwapTxModule from './createSwapTx';
 import * as utils from './utils';
 
-const originApi = {} as TPjsApi;
-const swapApi = {
-  tx: {
-    utility: {
-      batchAll: vi.fn().mockReturnValue('batchTx' as unknown as Extrinsic),
+const originApi = {} as TPapiApi;
+const swapApi = {} as TPjsApi;
+
+const swapApiPapi = {
+  getUnsafeApi: () => ({
+    tx: {
+      Utility: {
+        batch_all: vi.fn().mockReturnValue('batchTx' as unknown as TPapiTransaction),
+      },
     },
-  },
-} as unknown as TPjsApi;
+  }),
+} as unknown as TPapiApi;
 
 vi.mock('./utils', async (importOriginal) => {
   const actual = await importOriginal<typeof utils>();
@@ -39,6 +44,7 @@ describe('buildTransactions', () => {
     exchange: {
       baseNode: 'Acala',
       api: swapApi,
+      apiPapi: swapApiPapi,
     },
     destination: {
       address: 'someAddress',
@@ -50,7 +56,7 @@ describe('buildTransactions', () => {
     vi.clearAllMocks();
 
     vi.mocked(createSwapTxModule.createSwapTx).mockResolvedValue({
-      tx: 'swapTx' as unknown as Extrinsic,
+      tx: 'swapTx' as unknown as TPapiTransaction,
       amountOut: '1000',
     });
   });
@@ -76,7 +82,7 @@ describe('buildTransactions', () => {
 
     expect(result).toEqual([
       {
-        api: swapApi,
+        api: swapApiPapi,
         node: 'Acala',
         tx: 'swapTx',
         type: 'SWAP',
@@ -90,7 +96,7 @@ describe('buildTransactions', () => {
 
   test('should include transfer-to-exchange and swap transactions when from differs', async () => {
     vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue(
-      'toExchangeTx' as unknown as Extrinsic,
+      'toExchangeTx' as unknown as TPapiTransaction,
     );
 
     const result = await buildTransactions({ node: 'Acala' } as ExchangeNode, options);
@@ -104,7 +110,7 @@ describe('buildTransactions', () => {
         type: 'TRANSFER',
       },
       {
-        api: swapApi,
+        api: swapApiPapi,
         node: 'Acala',
         tx: 'swapTx',
         type: 'SWAP',
@@ -115,7 +121,7 @@ describe('buildTransactions', () => {
 
   test('should include swap and transfer-from-exchange transactions when to differs', async () => {
     vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue(
-      'toDestTx' as unknown as Extrinsic,
+      'toDestTx' as unknown as TPapiTransaction,
     );
 
     const result = await buildTransactions({ node: 'Acala' } as ExchangeNode, {
@@ -141,10 +147,10 @@ describe('buildTransactions', () => {
 
   test('should include all transactions when both from and to differ', async () => {
     vi.mocked(utils.buildToExchangeExtrinsic).mockResolvedValue(
-      'toExchangeTx' as unknown as Extrinsic,
+      'toExchangeTx' as unknown as TPapiTransaction,
     );
     vi.mocked(utils.buildFromExchangeExtrinsic).mockResolvedValue(
-      'toDestTx' as unknown as Extrinsic,
+      'toDestTx' as unknown as TPapiTransaction,
     );
 
     const result = await buildTransactions({ node: 'Acala' } as ExchangeNode, {
@@ -178,7 +184,7 @@ describe('buildTransactions', () => {
   test('should pass correct amountOut to buildFromExchangeExtrinsic', async () => {
     const amountOut = '500';
     vi.mocked(createSwapTxModule.createSwapTx).mockResolvedValue({
-      tx: 'swapTx' as unknown as Extrinsic,
+      tx: 'swapTx' as unknown as TPapiTransaction,
       amountOut,
     });
 

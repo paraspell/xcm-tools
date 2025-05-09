@@ -8,14 +8,12 @@ import BifrostExchangeNode from './Bifrost/BifrostDex';
 import type ExchangeNode from './DexNode';
 import { createDexNodeInstance } from './DexNodeFactory';
 import HydrationExchangeNode from './Hydration/HydrationDex';
-import InterlayExchangeNode from './Interlay/InterlayDex';
 
 describe('createDexNodeInstance', () => {
   const testCases: Array<{ node: TExchangeNode; expectedClass: typeof ExchangeNode }> = [
     { node: 'HydrationDex', expectedClass: HydrationExchangeNode },
     { node: 'AcalaDex', expectedClass: AcalaExchangeNode },
     { node: 'BifrostPolkadotDex', expectedClass: BifrostExchangeNode },
-    { node: 'InterlayDex', expectedClass: InterlayExchangeNode },
   ];
 
   testCases.forEach(({ node, expectedClass }) => {

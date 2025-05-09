@@ -6,7 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TSwapOptions } from '../../../types';
-import { calculateTxFee } from '../../../utils';
+import { calculateTxFeePjs } from '../../../utils';
 import { calculateAcalaSwapFee } from './calculateAcalaSwapFee';
 
 vi.mock('./utils', () => ({
@@ -14,7 +14,7 @@ vi.mock('./utils', () => ({
 }));
 
 vi.mock('../../../utils', () => ({
-  calculateTxFee: vi.fn(),
+  calculateTxFeePjs: vi.fn(),
 }));
 
 vi.mock('rxjs', () => ({
@@ -79,7 +79,7 @@ describe('calculateAcalaTransactionFee', () => {
     const swapResultMock = { result: 'mockSwapResult' };
     vi.mocked(firstValueFrom).mockResolvedValue(swapResultMock);
 
-    vi.mocked(calculateTxFee).mockResolvedValue(new BigNumber('0.1'));
+    vi.mocked(calculateTxFeePjs).mockResolvedValue(new BigNumber('0.1'));
 
     const result = await calculateAcalaSwapFee(
       dexMock as AggregateDex,
@@ -92,7 +92,7 @@ describe('calculateAcalaTransactionFee', () => {
     expect(dexMock.swap).toHaveBeenCalledTimes(1);
     expect(firstValueFrom).toHaveBeenCalledTimes(1);
     expect(dexMock.getTradingTx).toHaveBeenCalledWith(swapResultMock);
-    expect(calculateTxFee).toHaveBeenCalledWith(extrinsicMock, 'some-address');
+    expect(calculateTxFeePjs).toHaveBeenCalledWith(extrinsicMock, 'some-address');
     expect(result.toString()).toEqual('0.1');
   });
 
@@ -105,7 +105,7 @@ describe('calculateAcalaTransactionFee', () => {
     const swapResultMock = { result: 'mockSwapResult2' };
     vi.mocked(firstValueFrom).mockResolvedValue(swapResultMock);
 
-    vi.mocked(calculateTxFee).mockResolvedValue(new BigNumber('0.1'));
+    vi.mocked(calculateTxFeePjs).mockResolvedValue(new BigNumber('0.1'));
 
     const result = await calculateAcalaSwapFee(
       dexMock as AggregateDex,

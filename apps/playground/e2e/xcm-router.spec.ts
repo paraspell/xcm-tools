@@ -25,20 +25,6 @@ const exchanges = [
     toCurrency: 'DOT - Native',
   },
   {
-    exchange: 'KintsugiDex',
-    fromNode: 'Karura',
-    toNode: 'Moonriver',
-    fromCurrency: 'KINT - Native',
-    toCurrency: 'KSM - Native',
-  },
-  {
-    exchange: 'InterlayDex',
-    fromNode: 'Hydration',
-    toNode: 'Moonbeam',
-    fromCurrency: 'HDX - Native',
-    toCurrency: 'DOT - Native',
-  },
-  {
     exchange: 'BifrostKusamaDex',
     fromNode: 'AssetHubKusama',
     toNode: 'Basilisk',

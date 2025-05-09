@@ -15,7 +15,7 @@ import { RouterService } from './router.service.js';
 const txHash = '0x123';
 
 const mockApi = {
-  disconnect: vi.fn(),
+  destroy: vi.fn(),
 };
 
 const serializedExtrinsics = [

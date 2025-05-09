@@ -1,5 +1,10 @@
-import type { TAsset, TCurrencyInput, TNodePolkadotKusama } from '@paraspell/sdk-pjs';
-import { findAsset, hasSupportForAsset } from '@paraspell/sdk-pjs';
+import {
+  findAsset,
+  hasSupportForAsset,
+  type TAsset,
+  type TCurrencyInput,
+  type TNodePolkadotKusama,
+} from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
@@ -7,7 +12,7 @@ import type ExchangeNode from '../../dexNodes/DexNode';
 import type { TExchangeNode, TTransferOptions } from '../../types';
 import { resolveAssets } from './resolveAssets';
 
-vi.mock('@paraspell/sdk-pjs', () => ({
+vi.mock('@paraspell/sdk', () => ({
   findAsset: vi.fn(),
   hasSupportForAsset: vi.fn(),
 }));

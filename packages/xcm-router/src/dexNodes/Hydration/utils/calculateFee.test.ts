@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TSwapOptions } from '../../../types';
-import { calculateTxFee } from '../../../utils';
+import { calculateTxFeePjs } from '../../../utils';
 import { calculateFee } from './calculateFee';
 import { getAssetInfo } from './utils';
 
@@ -19,7 +19,7 @@ vi.mock('@galacticcouncil/sdk', () => ({
 }));
 
 vi.mock('../../../utils', () => ({
-  calculateTxFee: vi.fn(),
+  calculateTxFeePjs: vi.fn(),
 }));
 
 vi.mock('./utils', async () => {
@@ -53,7 +53,7 @@ describe('calculateFee', () => {
         }) as unknown as TradeRouter,
     );
 
-    vi.mocked(calculateTxFee).mockResolvedValue(BigNumber(10));
+    vi.mocked(calculateTxFeePjs).mockResolvedValue(BigNumber(10));
 
     vi.mocked(getAssetInfo).mockImplementation((_router, asset) => {
       if ('symbol' in asset && asset.symbol === 'HDX') {
@@ -197,7 +197,7 @@ describe('calculateFee', () => {
       }),
     } as unknown as TradeRouter;
 
-    vi.mocked(calculateTxFee).mockResolvedValue(BigNumber(10));
+    vi.mocked(calculateTxFeePjs).mockResolvedValue(BigNumber(10));
 
     const result = await calculateFee(
       options,
@@ -236,7 +236,7 @@ describe('calculateFee', () => {
       getAllAssets: vi.fn(),
     } as unknown as TradeRouter;
 
-    vi.mocked(calculateTxFee).mockResolvedValue(BigNumber(10));
+    vi.mocked(calculateTxFeePjs).mockResolvedValue(BigNumber(10));
 
     const finalFeeBN = await calculateFee(
       options,

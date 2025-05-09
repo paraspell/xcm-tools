@@ -1,14 +1,15 @@
 import type {
-  Extrinsic,
   TAsset,
   TCurrencyInput,
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
   TNodeWithRelayChains,
-  TPjsApi,
-} from '@paraspell/sdk-pjs';
-import { type Signer } from '@polkadot/types/types';
+  TPapiApi,
+  TPapiTransaction,
+} from '@paraspell/sdk';
+import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
+import type { PolkadotSigner } from 'polkadot-api';
 
 import { type EXCHANGE_NODES } from './consts';
 
@@ -114,11 +115,11 @@ export type TTransferOptions = {
   /**
    * The Polkadot signer instance.
    */
-  signer: Signer;
+  signer: PolkadotSigner;
   /**
    * The Polkadot EVM signer instance.
    */
-  evmSigner?: Signer;
+  evmSigner?: PolkadotSigner;
 
   /**
    * The callback function to call when the transaction status changes.
@@ -151,13 +152,14 @@ export type TBuildTransactionsOptionsModified = Omit<TBuildTransactionsOptions, 
   TAdditionalTransferOptions;
 
 export type TOriginInfo = {
-  api: TPjsApi;
+  api: TPapiApi;
   node: TNodeDotKsmWithRelayChains;
   assetFrom: TAsset;
 };
 
 export type TExchangeInfo = {
   api: TPjsApi;
+  apiPapi: TPapiApi;
   baseNode: TNodePolkadotKusama;
   exchangeNode: TExchangeNode;
   assetFrom: TRouterAsset;
@@ -197,10 +199,10 @@ export type TExchangeInput =
 export type TTransactionType = 'TRANSFER' | 'SWAP' | 'SWAP_AND_TRANSFER';
 
 type TBaseTransaction = {
-  api: TPjsApi;
+  api: TPapiApi;
   node: TNodeDotKsmWithRelayChains;
   destinationNode?: TNodeWithRelayChains;
-  tx: Extrinsic;
+  tx: TPapiTransaction;
 };
 
 export type TSwapTransaction = TBaseTransaction & {
@@ -217,10 +219,10 @@ export type TTransaction = TSwapTransaction | TNonSwapTransaction;
 export type TRouterPlan = TTransaction[];
 
 export type TExecuteRouterPlanOptions = {
-  signer: Signer;
+  signer: PolkadotSigner;
   senderAddress: string;
   destination?: TNodeWithRelayChains;
-  evmSigner?: Signer;
+  evmSigner?: PolkadotSigner;
   evmSenderAddress?: string;
   onStatusChange?: TStatusChangeCallback;
 };

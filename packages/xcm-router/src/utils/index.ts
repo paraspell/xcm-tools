@@ -1,4 +1,4 @@
 export * from './calculateTxFee';
 export * from './calculateTxFeeDryRun';
-export * from './getTxWeight';
+export * from './calculateTxFeePjs';
 export * from './submitTransaction';

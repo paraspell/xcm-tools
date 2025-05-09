@@ -41,9 +41,12 @@ export const buildTransactions = async (
   }
 
   if (toDestTx) {
-    const batchedTx = exchange.api.tx.utility.batchAll([swapTx, toDestTx]);
+    const batchedTx = exchange.apiPapi
+      .getUnsafeApi()
+      .tx.Utility.batch_all({ calls: [swapTx.decodedCall, toDestTx.decodedCall] });
+
     transactions.push({
-      api: exchange.api,
+      api: exchange.apiPapi,
       node: dex.node,
       destinationNode: destination?.node,
       tx: batchedTx,
@@ -51,7 +54,7 @@ export const buildTransactions = async (
     });
   } else {
     transactions.push({
-      api: exchange.api,
+      api: exchange.apiPapi,
       node: dex.node,
       tx: swapTx,
       amountOut: BigInt(amountOut),

@@ -1,7 +1,6 @@
 import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
-import type { TWeight } from '@paraspell/sdk-pjs';
 import {
   type Extrinsic,
   findAssetById,
@@ -26,7 +25,6 @@ class AcalaExchangeNode extends ExchangeNode {
     api: ApiPromise,
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
-    _toExchangeTxWeight: TWeight,
   ): Promise<TSwapResult> {
     const { assetFrom, assetTo, amount, senderAddress, origin } = options;
 

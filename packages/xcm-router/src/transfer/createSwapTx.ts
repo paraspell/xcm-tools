@@ -1,10 +1,10 @@
-import type { TAsset, TWeight } from '@paraspell/sdk-pjs';
+import type { TAsset } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { TBuildTransactionsOptionsModified } from '../types';
-import { calculateTxFee, getTxWeight } from '../utils';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
+import { calculateTxFee } from '../utils';
+import { buildFromExchangeExtrinsic, convertTxToPapi } from './utils';
 
 export const calculateFromExchangeFee = async (options: TBuildTransactionsOptionsModified) => {
   const { exchange, destination, amount, feeCalcAddress } = options;
@@ -17,26 +17,13 @@ export const calculateFromExchangeFee = async (options: TBuildTransactionsOption
   return calculateTxFee(tx, feeCalcAddress);
 };
 
-export const calculateToExchangeWeight = async (
-  options: TBuildTransactionsOptionsModified,
-): Promise<TWeight> => {
-  const { origin, feeCalcAddress } = options;
-  if (!origin) return { refTime: 0n, proofSize: 0n };
-  const tx = await buildToExchangeExtrinsic({
-    ...options,
-    origin,
-  });
-  return getTxWeight(tx, feeCalcAddress);
-};
-
 export const createSwapTx = async (
   exchange: ExchangeNode,
   options: TBuildTransactionsOptionsModified,
 ) => {
-  const toExchangeTxFee = await calculateToExchangeWeight(options);
   const toDestTxFee = await calculateFromExchangeFee(options);
 
-  return exchange.swapCurrency(
+  const swapResult = await exchange.swapCurrency(
     options.exchange.api,
     {
       ...options,
@@ -44,6 +31,7 @@ export const createSwapTx = async (
       assetTo: options.exchange.assetTo as TAsset,
     },
     toDestTxFee,
-    toExchangeTxFee,
   );
+
+  return { ...swapResult, tx: await convertTxToPapi(swapResult.tx, options.exchange.apiPapi) };
 };
