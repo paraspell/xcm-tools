@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.15.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.15.1...sdk-core-v8.15.2) (2025-05-09)
+
+
+### Bug Fixes
+
+* **sdk-core:** Add ahAddress param to getOriginFeeDetails function 🔧 ([5325586](https://github.com/paraspell/xcm-tools/commit/53255868abaae3168cbbbfac01887356251a8215))
+
 ## [8.15.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v8.15.0...sdk-core-v8.15.1) (2025-05-09)
 
 
