@@ -1,13 +1,14 @@
-import type { TNodeDotKsmWithRelayChains, TPjsApi } from '@paraspell/sdk-pjs';
-import { dryRunOrigin, type Extrinsic } from '@paraspell/sdk-pjs';
+import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import { dryRunOrigin } from '@paraspell/sdk';
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 
 import { DRY_RUN_FEE_BUFFER } from '../consts';
 
 export const calculateTxFeeDryRun = async (
-  api: TPjsApi,
+  api: TPapiApi,
   node: TNodeDotKsmWithRelayChains,
-  tx: Extrinsic,
+  tx: TPapiTransaction,
   address: string,
 ) => {
   const result = await dryRunOrigin({

@@ -161,7 +161,6 @@ describe('AcalaExchangeNode', () => {
         mockApi,
         baseSwapOptions,
         new BigNumber(0.01),
-        { proofSize: 0n, refTime: 0n },
       );
 
       expect(calculateAcalaSwapFee).toHaveBeenCalled();
@@ -174,10 +173,7 @@ describe('AcalaExchangeNode', () => {
       vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(new BigNumber(9999));
 
       await expect(
-        node.swapCurrency(mockApi, baseSwapOptions, new BigNumber(0.01), {
-          proofSize: 0n,
-          refTime: 0n,
-        }),
+        node.swapCurrency(mockApi, baseSwapOptions, new BigNumber(0.01)),
       ).rejects.toThrow(SmallAmountError);
     });
   });

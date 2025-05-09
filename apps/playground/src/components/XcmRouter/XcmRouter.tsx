@@ -25,11 +25,11 @@ import type {
   TTransaction,
 } from '@paraspell/xcm-router';
 import { createDexNodeInstance, RouterBuilder } from '@paraspell/xcm-router';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import type { Signer } from '@polkadot/api/types';
-import { web3FromAddress } from '@polkadot/extension-dapp';
 import axios, { AxiosError } from 'axios';
 import { ethers } from 'ethers';
+import { Binary, createClient, type PolkadotSigner } from 'polkadot-api';
+import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat';
+import { getWsProvider } from 'polkadot-api/ws-provider/web';
 import { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 
@@ -38,7 +38,11 @@ import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
 import { API_URL } from '../../consts';
 import { useWallet } from '../../hooks/useWallet';
 import type { TRouterSubmitType } from '../../types';
-import { fetchFromApi, replaceBigInt, submitTransaction } from '../../utils';
+import {
+  fetchFromApi,
+  replaceBigInt,
+  submitTransactionPapi,
+} from '../../utils';
 import {
   showErrorNotification,
   showLoadingNotification,
@@ -52,7 +56,7 @@ import { TransferStepper } from './TransferStepper';
 const VERSION = import.meta.env.VITE_XCM_ROUTER_VERSION as string;
 
 export const XcmRouter = () => {
-  const { selectedAccount } = useWallet();
+  const { selectedAccount, getSigner } = useWallet();
 
   const [alertOpened, { open: openAlert, close: closeAlert }] =
     useDisclosure(false);
@@ -139,7 +143,7 @@ export const XcmRouter = () => {
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeInput,
     senderAddress: string,
-    signer: Signer,
+    signer: PolkadotSigner,
   ) => {
     const {
       from,
@@ -191,7 +195,7 @@ export const XcmRouter = () => {
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeNode | TExchangeNode[] | undefined,
     senderAddress: string,
-    signer: Signer,
+    signer: PolkadotSigner,
   ) => {
     const { currencyFrom, currencyTo } = formValues;
     try {
@@ -224,21 +228,19 @@ export const XcmRouter = () => {
           routerPlan: transactions,
         });
 
-        const api = await ApiPromise.create({
-          provider: new WsProvider(wsProviders),
-        });
+        const api = createClient(
+          withPolkadotSdkCompat(getWsProvider(wsProviders)),
+        );
 
-        if (type === 'TRANSFER' && index === 0) {
+        await submitTransactionPapi(
+          await api
+            .getUnsafeApi()
+            .txFromCallData(Binary.fromHex(tx as unknown as string)),
           // When submitting to exchange, prioritize the evmSigner if available
-          await submitTransaction(
-            api,
-            api.tx(tx),
-            formValues.evmSigner ?? signer,
-            formValues.evmInjectorAddress ?? senderAddress,
-          );
-        } else {
-          await submitTransaction(api, api.tx(tx), signer, senderAddress);
-        }
+          type === 'TRANSFER' && index === 0
+            ? signer
+            : (formValues.evmSigner ?? signer),
+        );
       }
 
       onStatusChange({
@@ -283,7 +285,12 @@ export const XcmRouter = () => {
     try {
       let result;
       if (useApi) {
-        result = await fetchFromApi(formValues, '/dry-run', 'POST', true);
+        result = await fetchFromApi(
+          formValues,
+          '/router/best-amount-out',
+          'POST',
+          true,
+        );
       } else {
         result = await RouterBuilder()
           .from(from)
@@ -357,7 +364,7 @@ export const XcmRouter = () => {
       'Transaction is being processed',
     );
 
-    const injector = await web3FromAddress(selectedAccount.address);
+    const signer = await getSigner();
 
     const originalError = console.error;
     console.error = (...args: unknown[]) => {
@@ -386,14 +393,14 @@ export const XcmRouter = () => {
           formValues,
           exchange,
           selectedAccount.address,
-          injector.signer,
+          signer as PolkadotSigner,
         );
       } else {
         await submitUsingRouterModule(
           formValues,
           exchange,
           selectedAccount.address,
-          injector.signer,
+          signer as PolkadotSigner,
         );
       }
       setRunConfetti(true);
@@ -412,6 +419,7 @@ export const XcmRouter = () => {
       }
     } finally {
       setLoading(false);
+      setShowStepper(false);
     }
     setLoading(false);
   };

@@ -26,7 +26,7 @@ const TransferForm: FC<Props> = ({ onSubmit, loading }) => {
       to: 'Acala',
       currency: 'GLMR',
       amount: '10000000000000000000',
-      address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC'
+      address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz'
     }
   });
 

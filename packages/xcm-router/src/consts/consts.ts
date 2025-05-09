@@ -7,8 +7,6 @@ export const EXCHANGE_NODES = [
   'HydrationDex',
   'KaruraDex',
   'AcalaDex',
-  'KintsugiDex',
-  'InterlayDex',
   'BifrostKusamaDex',
   'BifrostPolkadotDex',
 ] as const;

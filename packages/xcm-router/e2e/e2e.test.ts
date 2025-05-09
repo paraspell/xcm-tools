@@ -197,42 +197,6 @@ describe.sequential('E2E tests', () => {
     });
   });
 
-  describe('InterlayDex', () => {
-    it('should build a transfer extrinsic without error on Interlay', async () => {
-      const transactions = await RouterBuilder()
-        .from('BifrostPolkadot')
-        .exchange('InterlayDex')
-        .to('Phala')
-        .currencyFrom({ symbol: 'INTR' })
-        .currencyTo({ symbol: 'IBTC' })
-        .amount('5000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
-        .slippagePct('1')
-        .buildTransactions();
-
-      expect(transactions).toBeDefined();
-      expect(transactions.length).toBe(2);
-    });
-
-    it('should build a transfer extrinsic without error on Kintsugi', async () => {
-      const hashes = await RouterBuilder()
-        .from('Kusama')
-        .exchange('KintsugiDex')
-        .to('Karura')
-        .currencyFrom({ symbol: 'KSM' })
-        .currencyTo({ symbol: 'KINT' })
-        .amount('5000000000')
-        .senderAddress(MOCK_ADDRESS)
-        .recipientAddress(MOCK_ADDRESS)
-        .slippagePct('1')
-        .buildTransactions();
-
-      expect(hashes).toBeDefined();
-      expect(hashes.length).toBe(2);
-    });
-  });
-
   describe('AssetHubDex', () => {
     it('should build a transfer extrinsic without error on AssetHubPolkadot', async () => {
       const hashes = await RouterBuilder()

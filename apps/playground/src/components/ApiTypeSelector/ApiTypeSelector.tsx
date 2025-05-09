@@ -31,10 +31,7 @@ export const ApiTypeSelector: FC<Props> = ({
   const data = [
     {
       value: 'PAPI',
-      disabled:
-        fullyDisabled ||
-        location.pathname === PageRoute.XCM_ROUTER.toString() ||
-        !apiTypeInitialized,
+      disabled: fullyDisabled || !apiTypeInitialized,
       label: (
         <Center style={{ gap: 8 }}>
           <PapiLogo />
@@ -44,7 +41,10 @@ export const ApiTypeSelector: FC<Props> = ({
     },
     {
       value: 'PJS',
-      disabled: fullyDisabled || isUseApiSelected,
+      disabled:
+        fullyDisabled ||
+        location.pathname === PageRoute.XCM_ROUTER.toString() ||
+        isUseApiSelected,
       label: (
         <Center style={{ gap: 8 }}>
           <PolkadotJsLogo />

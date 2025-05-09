@@ -31,7 +31,7 @@ const performTransferInfoTest = async (
     await page.getByTestId('input-currency').fill(randomCurrencySymbol ?? '');
   }
 
-  const testAddress = '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC';
+  const testAddress = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
   await page.getByTestId('input-address').fill(testAddress);
   await page.getByTestId('input-destination-address').fill(testAddress);
   await page.getByTestId('input-amount').fill('10000000000000000000');

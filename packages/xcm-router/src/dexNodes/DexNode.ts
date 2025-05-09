@@ -1,4 +1,6 @@
-import type { TNodePolkadotKusama, TWeight } from '@paraspell/sdk-pjs';
+import type { TPapiApi } from '@paraspell/sdk';
+import { createApiInstanceForNode as createApiInstanceForNodePapi } from '@paraspell/sdk';
+import type { TNodePolkadotKusama } from '@paraspell/sdk-pjs';
 import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';
@@ -32,7 +34,6 @@ abstract class ExchangeNode {
     api: ApiPromise,
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
-    toExchangeTxWeight: TWeight,
   ): Promise<TSwapResult>;
 
   abstract getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint>;
@@ -41,6 +42,10 @@ abstract class ExchangeNode {
 
   async createApiInstance(): Promise<ApiPromise> {
     return createApiInstanceForNode(this.node);
+  }
+
+  async createApiInstancePapi(): Promise<TPapiApi> {
+    return createApiInstanceForNodePapi(this.node);
   }
 }
 

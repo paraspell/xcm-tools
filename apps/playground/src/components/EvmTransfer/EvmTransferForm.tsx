@@ -47,7 +47,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
       to: 'AssetHubPolkadot',
       currencyOptionId: '',
       amount: '1000000000',
-      address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+      address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       ahAddress: '',
       useViem: false,
     },

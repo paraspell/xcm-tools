@@ -41,8 +41,8 @@ describe('RouterController', () => {
         currencyFrom: { symbol: 'ASTR' },
         currencyTo: { symbol: 'GLMR' },
         amount: '1000000000000000000',
-        senderAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-        recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       };
 
       const mockResult: Awaited<ReturnType<typeof service.generateExtrinsics>> =
@@ -68,8 +68,8 @@ describe('RouterController', () => {
         currencyFrom: { symbol: 'ASTR' },
         currencyTo: { symbol: 'GLMR' },
         amount: '1000000000000000000',
-        senderAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-        recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       };
 
       const mockResult: Awaited<ReturnType<typeof service.generateExtrinsics>> =

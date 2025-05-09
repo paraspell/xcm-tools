@@ -111,7 +111,7 @@ export class RouterService {
         wsProviders: getNodeProviders(transaction.node),
       }));
 
-      await Promise.all(transactions.map((item) => item.api.disconnect()));
+      await Promise.all(transactions.map((item) => item.api.destroy()));
 
       return response;
     } catch (e) {

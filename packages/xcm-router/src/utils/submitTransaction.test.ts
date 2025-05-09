@@ -1,143 +1,82 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// Unit tests for submitTransaction function
-
-import { type Extrinsic } from '@paraspell/sdk-pjs';
-import { type ApiPromise } from '@polkadot/api';
-import { type H256 } from '@polkadot/types/interfaces';
-import {
-  type ISubmittableResult,
-  type SignerPayloadJSON,
-  type SignerPayloadRaw,
-  type SignerResult,
-} from '@polkadot/types/types';
-import { describe, expect, it, vi } from 'vitest';
+import type { TPapiTransaction } from '@paraspell/sdk';
+import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { submitTransaction } from './submitTransaction';
 
-class MockApiPromise {
-  registry = {
-    findMetaError: (moduleError: unknown) => {
-      return {
-        docs: ['Mock documentation'],
-        name: 'MockErrorName',
-        section: 'MockErrorSection',
-      };
-    },
+const buildTxMock = () => {
+  let onNext: (evt: unknown) => void = () => {};
+  let onError: (err: unknown) => void = () => {};
+
+  const txMock: TPapiTransaction = {
+    signSubmitAndWatch: vi.fn(() => ({
+      subscribe(observer: { next: typeof onNext; error: typeof onError }) {
+        onNext = observer.next;
+        onError = observer.error;
+        return { unsubscribe: vi.fn() };
+      },
+    })),
+  } as unknown as TPapiTransaction;
+
+  const emit = {
+    next: (evt: unknown) => onNext(evt),
+    error: (err: unknown) => onError(err),
   };
-}
 
-class MockExtrinsic2 {
-  async signAsync(): Promise<void> {}
-  send(_callback: unknown): void {}
-}
+  return { txMock, emit };
+};
 
-class MockSigner {
-  signPayload?: (payload: SignerPayloadJSON) => Promise<SignerResult>;
-  signRaw?: (raw: SignerPayloadRaw) => Promise<SignerResult>;
-  update?: (id: number, status: H256 | ISubmittableResult) => void;
-}
+const signerStub = {} as PolkadotSigner;
 
 describe('submitTransaction', () => {
-  it('should resolve with transaction hash on successful transaction', async () => {
-    const mockApi = new MockApiPromise();
-    const mockTx = new MockExtrinsic2();
-    const mockSigner = new MockSigner();
-    const injectorAddress = 'mockInjectorAddress';
+  beforeEach(() => vi.clearAllMocks());
 
-    mockTx.send = vi.fn(
-      (
-        callback: (result: {
-          status: { isFinalized: boolean };
-          txHash?: string;
-          dispatchError?: unknown;
-        }) => void,
-      ) => {
-        callback({ status: { isFinalized: true }, txHash: 'mockTxHash' });
-      },
-    );
+  it('invokes onSign when a "signed" event is received', async () => {
+    const { txMock, emit } = buildTxMock();
+    const onSign = vi.fn();
 
-    const result = await submitTransaction(
-      mockApi as ApiPromise,
-      mockTx as unknown as Extrinsic,
-      mockSigner,
-      injectorAddress,
-    );
-    expect(result).toBe('mockTxHash');
+    const promise = submitTransaction(txMock, signerStub, onSign);
+
+    emit.next({ type: 'signed' });
+    const okEvt = { type: 'finalized', ok: true } as unknown as TxFinalizedPayload;
+    emit.next(okEvt);
+
+    await expect(promise).resolves.toBe(okEvt);
+    expect(onSign).toHaveBeenCalledTimes(1);
   });
 
-  it('should reject with an error on dispatch error', async () => {
-    const mockApi = new MockApiPromise();
-    const mockTx = new MockExtrinsic2();
-    const mockSigner = new MockSigner();
-    const injectorAddress = 'mockInjectorAddress';
+  it('resolves on "finalized" with ok === true', async () => {
+    const { txMock, emit } = buildTxMock();
 
-    mockTx.send = vi.fn(
-      (
-        callback: (result: {
-          status: { isFinalized: boolean };
-          txHash?: string;
-          dispatchError?: unknown;
-        }) => void,
-      ) => {
-        const dispatchError = {
-          isModule: true,
-          asModule: 'mockModuleError',
-        };
-        callback({ status: { isFinalized: true }, dispatchError });
-      },
-    );
+    const promise = submitTransaction(txMock, signerStub);
 
-    try {
-      await submitTransaction(
-        mockApi as ApiPromise,
-        mockTx as unknown as Extrinsic,
-        mockSigner,
-        injectorAddress,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        expect(error).toBeInstanceOf(Error);
-        expect(error.message).toBe('MockErrorSection.MockErrorName: Mock documentation');
-      }
-    }
+    const evt = { type: 'finalized', ok: true } as unknown as TxFinalizedPayload;
+    emit.next(evt);
+
+    await expect(promise).resolves.toBe(evt);
   });
 
-  it('should reject with a generic error on dispatch error not being a module error', async () => {
-    const mockApi = new MockApiPromise();
-    const mockTx = new MockExtrinsic2();
-    const mockSigner = new MockSigner();
-    const injectorAddress = 'mockInjectorAddress';
+  it('rejects when ok === false in a finalized event', async () => {
+    const { txMock, emit } = buildTxMock();
 
-    const mockDispatchError = {
-      toString: () => 'Generic Dispatch Error',
-      isModule: false,
-    };
+    const promise = submitTransaction(txMock, signerStub);
 
-    mockTx.send = vi.fn(
-      (
-        callback: (result: {
-          status: { isFinalized: boolean };
-          txHash?: string;
-          dispatchError?: unknown;
-        }) => void,
-      ) => {
-        callback({ status: { isFinalized: true }, dispatchError: mockDispatchError });
-      },
-    );
+    emit.next({
+      type: 'finalized',
+      ok: false,
+      dispatchError: { value: 'BadOrigin' },
+    });
 
-    try {
-      await submitTransaction(
-        mockApi as ApiPromise,
-        mockTx as unknown as Extrinsic,
-        mockSigner,
-        injectorAddress,
-      );
-      throw new Error('Expected submitTransaction to throw an error, but it did not');
-    } catch (error) {
-      if (error instanceof Error) {
-        expect(error).toBeInstanceOf(Error);
-        expect(error.message).toBe('Generic Dispatch Error');
-      }
-    }
+    await expect(promise).rejects.toThrow('BadOrigin');
+  });
+
+  it('rejects when the observable errors', async () => {
+    const { txMock, emit } = buildTxMock();
+
+    const promise = submitTransaction(txMock, signerStub);
+
+    emit.error('network-down');
+
+    await expect(promise).rejects.toThrow('network-down');
   });
 });

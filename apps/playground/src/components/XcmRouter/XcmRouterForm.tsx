@@ -22,11 +22,14 @@ import type {
 import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
 import type { TExchangeInput, TExchangeNode } from '@paraspell/xcm-router';
 import { EXCHANGE_NODES } from '@paraspell/xcm-router';
-import type { Signer } from '@polkadot/api/types';
-import { web3Accounts, web3FromAddress } from '@polkadot/extension-dapp';
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { Icon123, IconChevronDown, IconInfoCircle } from '@tabler/icons-react';
 import { ethers } from 'ethers';
+import type { PolkadotSigner } from 'polkadot-api';
+import {
+  connectInjectedExtension,
+  getInjectedExtensions,
+  type InjectedExtension,
+} from 'polkadot-api/pjs-signer';
 import type { FC, FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 
@@ -38,6 +41,7 @@ import { showErrorNotification } from '../../utils/notifications';
 import AccountSelectModal from '../AccountSelectModal/AccountSelectModal';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
+import WalletSelectModal from '../WalletSelectModal/WalletSelectModal';
 
 export type TRouterFormValues = {
   from?: TNodeDotKsmWithRelayChains;
@@ -49,7 +53,7 @@ export type TRouterFormValues = {
   amount: string;
   slippagePct: string;
   useApi: boolean;
-  evmSigner?: Signer;
+  evmSigner?: PolkadotSigner;
   evmInjectorAddress?: string;
 };
 
@@ -71,25 +75,40 @@ type Props = {
 };
 
 export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
-  const [modalOpened, { open: openModal, close: closeModal }] =
-    useDisclosure(false);
-  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
+  const [
+    walletSelectModalOpened,
+    { open: openWalletSelectModal, close: closeWalletSelectModal },
+  ] = useDisclosure(false);
+  const [
+    accountsModalOpened,
+    { open: openAccountsModal, close: closeAccountsModal },
+  ] = useDisclosure(false);
+
+  const [extensions, setExtensions] = useState<string[]>([]);
+  const [injectedExtension, setInjectedExtension] =
+    useState<InjectedExtension>();
+
+  const [accounts, setAccounts] = useState<TWalletAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<TWalletAccount>();
 
-  const onAccountSelect = (account: TWalletAccount) => () => {
+  const onAccountSelect = (account: TWalletAccount) => {
     setSelectedAccount(account);
-    closeModal();
+    closeAccountsModal();
   };
 
   useEffect(() => {
-    void (async () => {
-      if (selectedAccount) {
-        const injector = await web3FromAddress(selectedAccount.address);
-        form.setFieldValue('evmSigner', injector.signer);
-        form.setFieldValue('evmInjectorAddress', selectedAccount.address);
-      }
-    })();
-  }, [selectedAccount]);
+    if (!selectedAccount || !injectedExtension) return;
+
+    const account = injectedExtension
+      ?.getAccounts()
+      .find((account) => account.address === selectedAccount.address);
+    if (!account) {
+      throw new Error('No selected account');
+    }
+
+    form.setFieldValue('evmSigner', account.polkadotSigner);
+    form.setFieldValue('evmInjectorAddress', selectedAccount.address);
+  }, [selectedAccount, injectedExtension]);
 
   const form = useForm<TRouterFormValues>({
     initialValues: {
@@ -99,7 +118,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       currencyFromOptionId: '',
       currencyToOptionId: '',
       amount: '10000000000000000000',
-      recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+      recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       slippagePct: '1',
       useApi: false,
     },
@@ -125,25 +144,66 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
 
   const { from, to, exchange } = form.getValues();
 
-  const connectEvmWallet = async () => {
+  const initEvmExtensions = () => {
+    const ext = getInjectedExtensions();
+    if (!ext.length) {
+      showErrorNotification('No wallet extension found, install it to connect');
+      return;
+    }
+    setExtensions(ext);
+    openWalletSelectModal();
+  };
+
+  const onConnectEvmWallet = () => {
     try {
-      const allAccounts = await web3Accounts();
-      setAccounts(
-        allAccounts.filter((account) => ethers.isAddress(account.address)),
-      );
-      openModal();
+      initEvmExtensions();
     } catch (_e) {
       showErrorNotification('Failed to connect EVM wallet');
     }
   };
 
-  const onConnectEvmWallet = () => void connectEvmWallet();
+  const onConnectWalletClick = () => void connectWallet();
 
   const onAccountDisconnect = () => {
     setSelectedAccount(undefined);
     form.setFieldValue('evmSigner', undefined);
     form.setFieldValue('evmInjectorAddress', undefined);
-    closeModal();
+    closeAccountsModal();
+  };
+
+  const selectProvider = async (walletName: string) => {
+    try {
+      const extension = await connectInjectedExtension(walletName);
+      setInjectedExtension(extension);
+
+      const allAccounts = extension.getAccounts();
+      const evmAccounts = allAccounts.filter((acc) =>
+        ethers.isAddress(acc.address),
+      );
+      if (!evmAccounts.length) {
+        showErrorNotification('No EVM accounts found in the selected wallet');
+        return;
+      }
+
+      setAccounts(
+        evmAccounts.map((acc) => ({
+          address: acc.address,
+          meta: {
+            name: acc.name,
+            source: extension.name,
+          },
+        })),
+      );
+
+      closeWalletSelectModal();
+      openAccountsModal();
+    } catch (_e) {
+      showErrorNotification('Failed to connect to wallet');
+    }
+  };
+
+  const onProviderSelect = (walletName: string) => {
+    void selectProvider(walletName);
   };
 
   const getExchange = (exchange: TExchangeNode[] | undefined) => {
@@ -239,8 +299,6 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     isLoadingExtensions,
   } = useWallet();
 
-  const onConnectWalletClick = () => void connectWallet();
-
   const onSubmitInternalBestAmount = () => {
     const results = [
       form.validateField('from'),
@@ -260,12 +318,19 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     <Paper p="xl" shadow="md">
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
         <Stack gap="lg">
+          <WalletSelectModal
+            isOpen={walletSelectModalOpened}
+            onClose={closeWalletSelectModal}
+            providers={extensions}
+            onProviderSelect={onProviderSelect}
+          />
+
           <AccountSelectModal
-            isOpen={modalOpened}
-            onClose={closeModal}
+            isOpen={accountsModalOpened}
+            onClose={closeAccountsModal}
             accounts={accounts}
             onAccountSelect={onAccountSelect}
-            title="Select evm account"
+            title="Select EVM account"
             onDisconnect={onAccountDisconnect}
           />
 
