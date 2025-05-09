@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.15.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.15.0...sdk-pjs-v8.15.1) (2025-05-09)
+
+
+### Bug Fixes
+
+* Fix Moonbeam ERC-20 asset balance fetching 🔧 ([5cb497b](https://github.com/paraspell/xcm-tools/commit/5cb497bd293b6ec92a95d04097e8ff07924296a7))
+
+
+### Miscellaneous Chores
+
+* Update docs for sdk and api ([472daf2](https://github.com/paraspell/xcm-tools/commit/472daf2f458d8f674faeafb7cd11f53878032133))
+
 ## [8.15.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.14.0...sdk-pjs-v8.15.0) (2025-05-07)
 
 
