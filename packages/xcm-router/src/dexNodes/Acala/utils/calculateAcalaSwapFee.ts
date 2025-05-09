@@ -7,7 +7,7 @@ import { firstValueFrom } from 'rxjs';
 
 import Logger from '../../../Logger/Logger';
 import type { TSwapOptions } from '../../../types';
-import { calculateTxFee } from '../../../utils';
+import { calculateTxFeePjs } from '../../../utils';
 
 export const calculateAcalaSwapFee = async (
   dex: AggregateDex,
@@ -29,7 +29,7 @@ export const calculateAcalaSwapFee = async (
 
   const swapTx = dex.getTradingTx(feeCalculationResult) as unknown as Extrinsic;
 
-  const swapFee = await calculateTxFee(swapTx, feeCalcAddress);
+  const swapFee = await calculateTxFeePjs(swapTx, feeCalcAddress);
   const swapFeeNativeCurrency = new BigNumber(swapFee.toString());
 
   const nativeCurrency = wallet.consts.nativeCurrency;

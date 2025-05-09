@@ -1,4 +1,4 @@
-import { type Signer } from '@polkadot/api/types';
+import type { PolkadotSigner } from 'polkadot-api';
 import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { buildApiTransactions, transfer } from '../transfer';
@@ -20,7 +20,7 @@ export const transferParams: TTransferOptions = {
   amount: '1000000000',
   senderAddress: 'YkszY2JueDnb31wGtFiEQMSZVn9QpJyrn2rTC6tG6UFYKpg',
   recipientAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496',
-  signer: {} as unknown as Signer,
+  signer: {} as unknown as PolkadotSigner,
   slippagePct: '1',
 };
 
@@ -105,7 +105,7 @@ describe('Builder', () => {
   it('should construct a transfer using RouterBuilder with evmSenderAddress and evmSigner', async () => {
     const onStatusChange = vi.fn();
     const evmSenderAddress = '0x1234567890';
-    const evmSigner = {} as Signer;
+    const evmSigner = {} as PolkadotSigner;
 
     await RouterBuilder()
       .from(from)

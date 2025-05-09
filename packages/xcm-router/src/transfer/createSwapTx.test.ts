@@ -1,3 +1,4 @@
+import type { TPapiTransaction } from '@paraspell/sdk';
 import type { TNodeAssets } from '@paraspell/sdk-pjs';
 import { type Extrinsic, getAssetsObject } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
@@ -8,11 +9,11 @@ import type ExchangeNode from '../dexNodes/DexNode';
 import type { TTransferOptionsModified } from '../types';
 import { calculateTxFee } from '../utils';
 import { createSwapTx } from './createSwapTx';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
+import { buildFromExchangeExtrinsic, convertTxToPapi } from './utils';
 
 vi.mock('./utils', () => ({
   buildFromExchangeExtrinsic: vi.fn(),
-  buildToExchangeExtrinsic: vi.fn(),
+  convertTxToPapi: vi.fn(),
 }));
 
 vi.mock('../utils', () => ({
@@ -29,6 +30,7 @@ describe('createSwapTx', () => {
   let exchangeNode: ExchangeNode;
   let options: TTransferOptionsModified;
   let dummyExtrinsic: Extrinsic;
+  let dummyTxPapi: TPapiTransaction;
 
   beforeEach(() => {
     vi.resetAllMocks();
@@ -53,9 +55,13 @@ describe('createSwapTx', () => {
     } as TTransferOptionsModified;
 
     dummyExtrinsic = { method: { toHex: () => '0x123' } } as unknown as Extrinsic;
+    dummyTxPapi = {
+      method: {
+        toHex: () => '0x123',
+      },
+    } as unknown as TPapiTransaction;
 
-    vi.mocked(buildFromExchangeExtrinsic).mockResolvedValue(dummyExtrinsic);
-    vi.mocked(buildToExchangeExtrinsic).mockResolvedValue(dummyExtrinsic);
+    vi.mocked(buildFromExchangeExtrinsic).mockResolvedValue(dummyTxPapi);
     vi.mocked(calculateTxFee).mockResolvedValue(BigNumber(10));
     vi.spyOn(exchangeNode, 'swapCurrency').mockResolvedValue({
       amountOut: '900',
@@ -65,6 +71,8 @@ describe('createSwapTx', () => {
     vi.mocked(getAssetsObject).mockReturnValue({
       supportsDryRunApi: true,
     } as TNodeAssets);
+
+    vi.mocked(convertTxToPapi).mockResolvedValue(dummyTxPapi);
   });
 
   it('should build extrinsics, calculate fees, and call swapCurrency', async () => {
@@ -79,18 +87,15 @@ describe('createSwapTx', () => {
       amount: options.amount,
     });
 
-    expect(buildToExchangeExtrinsic).toHaveBeenCalledOnce();
-    expect(buildToExchangeExtrinsic).toHaveBeenCalledWith(options);
-
     expect(calculateTxFee).toHaveBeenCalledTimes(1);
-    expect(calculateTxFee).toHaveBeenNthCalledWith(1, dummyExtrinsic, 'someFeeCalcAddress');
+    expect(calculateTxFee).toHaveBeenNthCalledWith(1, dummyTxPapi, 'someFeeCalcAddress');
 
     expect(spy).toHaveBeenCalledOnce();
-    expect(spy).toHaveBeenCalledWith(swapApi, options, BigNumber(10), undefined);
+    expect(spy).toHaveBeenCalledWith(swapApi, options, BigNumber(10));
 
     expect(result).toEqual({
       amountOut: '900',
-      tx: dummyExtrinsic,
+      tx: dummyTxPapi,
     });
   });
 

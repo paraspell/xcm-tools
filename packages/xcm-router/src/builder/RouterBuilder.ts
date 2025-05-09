@@ -3,7 +3,7 @@ import type {
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
 } from '@paraspell/sdk-pjs';
-import { type Signer } from '@polkadot/types/types';
+import type { PolkadotSigner } from 'polkadot-api';
 
 import { buildApiTransactions, getBestAmountOut, transfer } from '../transfer';
 import type {
@@ -117,7 +117,7 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param signer - The Polkadot signer instance.
    * @returns The current builder instance.
    */
-  signer(signer: Signer): RouterBuilderCore<T & { signer: Signer }> {
+  signer(signer: PolkadotSigner): RouterBuilderCore<T & { signer: PolkadotSigner }> {
     return new RouterBuilderCore({ ...this._options, signer });
   }
 
@@ -139,7 +139,9 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
    * @param evmSigner - The EVM signer.
    * @returns The current builder instance.
    */
-  evmSigner(signer: Signer | undefined): RouterBuilderCore<T & { evmSigner: Signer | undefined }> {
+  evmSigner(
+    signer: PolkadotSigner | undefined,
+  ): RouterBuilderCore<T & { evmSigner: PolkadotSigner | undefined }> {
     return new RouterBuilderCore({ ...this._options, evmSigner: signer });
   }
 

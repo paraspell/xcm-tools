@@ -110,7 +110,7 @@ const XcmTransferForm: FC<Props> = ({
         customCurrencyType: 'id',
         customCurrencySymbolSpecifier: 'auto',
       },
-      address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+      address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       ahAddress: '',
       useApi: false,
     },

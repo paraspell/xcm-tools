@@ -46,7 +46,7 @@ describe('XTransferController', () => {
       const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
         currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = 'hash';
@@ -71,13 +71,13 @@ describe('XTransferController', () => {
           {
             from: 'Acala',
             to: 'Astar',
-            address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+            address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
             currency: { symbol: 'ACA', amount: 100 },
           },
           {
             from: 'Acala',
             to: 'Astar',
-            address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+            address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
             currency: { symbol: 'ACA', amount: 100 },
           },
         ],
@@ -103,7 +103,7 @@ describe('XTransferController', () => {
       const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
         currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = {} as TDryRunResult;
@@ -121,7 +121,7 @@ describe('XTransferController', () => {
       const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
         currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = { origin: {}, destination: {} } as TGetXcmFeeResult;
@@ -139,7 +139,7 @@ describe('XTransferController', () => {
       const bodyParams: XTransferDto = {
         from: 'Acala',
         to: 'Basilisk',
-        address: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
         currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = {

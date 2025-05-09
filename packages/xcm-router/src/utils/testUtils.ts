@@ -1,6 +1,6 @@
 import type { TCommonTransferOptions } from '../types';
 
-export const MOCK_ADDRESS = '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC';
+export const MOCK_ADDRESS = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
 export const MOCK_SLIIPPAGE = '1';
 
 export const MOCK_TRANSFER_OPTIONS: TCommonTransferOptions = {

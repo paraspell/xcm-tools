@@ -15,7 +15,7 @@ import { RouterService } from './router.service.js';
 const txHash = '0x123';
 
 const mockApi = {
-  disconnect: vi.fn(),
+  destroy: vi.fn(),
 };
 
 const serializedExtrinsics = [
@@ -72,8 +72,8 @@ describe('RouterService', () => {
     currencyFrom: { symbol: 'ASTR' },
     currencyTo: { symbol: 'GLMR' },
     amount: '1000000000000000000',
-    senderAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-    recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+    senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+    recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
   };
 
   const invalidNode = 'Astarr';

@@ -59,21 +59,14 @@ export const transfer = async (initialOptions: TTransferOptions): Promise<void> 
 
   const { dex, options } = await prepareTransformedOptions(initialOptions);
 
-  const { origin, exchange } = options;
+  const routerPlan = await buildTransactions(dex, options);
 
-  try {
-    const routerPlan = await buildTransactions(dex, options);
-
-    await executeRouterPlan(routerPlan, {
-      signer,
-      senderAddress,
-      destination: options.destination?.node,
-      evmSigner,
-      evmSenderAddress,
-      onStatusChange,
-    });
-  } finally {
-    if (origin) await origin.api.disconnect();
-    await exchange.api.disconnect();
-  }
+  await executeRouterPlan(routerPlan, {
+    signer,
+    senderAddress,
+    destination: options.destination?.node,
+    evmSigner,
+    evmSenderAddress,
+    onStatusChange,
+  });
 };

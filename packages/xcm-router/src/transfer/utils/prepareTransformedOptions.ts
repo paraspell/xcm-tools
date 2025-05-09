@@ -1,4 +1,4 @@
-import { createApiInstanceForNode } from '@paraspell/sdk-pjs';
+import { createApiInstanceForNode } from '@paraspell/sdk';
 
 import type ExchangeNode from '../../dexNodes/DexNode';
 import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
@@ -39,6 +39,7 @@ export const prepareTransformedOptions = async <
           : undefined,
       exchange: {
         api: await dex.createApiInstance(),
+        apiPapi: await dex.createApiInstancePapi(),
         baseNode: dex.node,
         exchangeNode: dex.exchangeNode,
         assetFrom: assetFromExchange,

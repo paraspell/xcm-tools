@@ -1,5 +1,5 @@
+import { Builder, isForeignAsset } from '@paraspell/sdk';
 import type { TAsset, TCurrencyInput, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
-import { Builder, isForeignAsset } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers-v6';
 
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
@@ -48,11 +48,11 @@ export type TBuildFromExchangeTxOptions = {
 };
 
 export const buildFromExchangeExtrinsic = ({
-  exchange: { api, baseNode, assetTo },
+  exchange: { apiPapi, baseNode, assetTo },
   destination,
   amount,
 }: TBuildFromExchangeTxOptions) =>
-  Builder(api)
+  Builder(apiPapi)
     .from(baseNode)
     .to(destination.node)
     .currency({

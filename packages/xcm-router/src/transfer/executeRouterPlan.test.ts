@@ -1,7 +1,7 @@
-import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
-import { getBalanceNative, isNodeEvm } from '@paraspell/sdk-pjs';
-import type { Signer } from '@polkadot/types/types';
+import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import { getBalanceNative, isNodeEvm } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
+import type { PolkadotSigner, TxFinalizedPayload } from 'polkadot-api';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { TExecuteRouterPlanOptions, TRouterPlan } from '../types';
@@ -9,7 +9,7 @@ import { calculateTxFeeDryRun } from '../utils';
 import { submitTransaction } from '../utils/submitTransaction';
 import { executeRouterPlan } from './executeRouterPlan';
 
-vi.mock('@paraspell/sdk-pjs', () => ({
+vi.mock('@paraspell/sdk', () => ({
   isNodeEvm: vi.fn(),
   getBalanceNative: vi.fn(),
 }));
@@ -23,8 +23,8 @@ vi.mock('../utils', () => ({
 }));
 
 describe('executeRouterPlan', () => {
-  const mockSigner = {} as Signer;
-  const mockEvmSigner = {} as Signer;
+  const mockSigner = {} as PolkadotSigner;
+  const mockEvmSigner = {} as PolkadotSigner;
   const mockSenderAddress = 'sender-address';
   const mockEvmSenderAddress = 'evm-sender-address';
   const mockOnStatusChange = vi.fn();
@@ -39,15 +39,15 @@ describe('executeRouterPlan', () => {
 
   const mockPlan = [
     {
-      api: {} as unknown as TPjsApi,
-      tx: 'tx1' as unknown as Extrinsic,
+      api: {} as unknown as TPapiApi,
+      tx: 'tx1' as unknown as TPapiTransaction,
       type: 'TRANSFER',
       node: 'Astar',
       destinationNode: 'Moonbeam',
     },
     {
-      api: {} as unknown as TPjsApi,
-      tx: 'tx2' as unknown as Extrinsic,
+      api: {} as unknown as TPapiApi,
+      tx: 'tx2' as unknown as TPapiTransaction,
       type: 'SWAP',
       node: 'Unique',
     },
@@ -56,7 +56,7 @@ describe('executeRouterPlan', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(isNodeEvm).mockImplementation((node) => node === 'Unique');
-    vi.mocked(submitTransaction).mockResolvedValue('');
+    vi.mocked(submitTransaction).mockResolvedValue({} as TxFinalizedPayload);
     vi.mocked(getBalanceNative).mockResolvedValue(10000000000n);
     vi.mocked(calculateTxFeeDryRun).mockResolvedValue(BigNumber(5000000000));
   });
@@ -84,20 +84,8 @@ describe('executeRouterPlan', () => {
     });
 
     expect(submitTransaction).toHaveBeenCalledTimes(2);
-    expect(submitTransaction).toHaveBeenNthCalledWith(
-      1,
-      mockPlan[0].api,
-      'tx1',
-      mockSigner,
-      mockSenderAddress,
-    );
-    expect(submitTransaction).toHaveBeenNthCalledWith(
-      2,
-      mockPlan[1].api,
-      'tx2',
-      mockEvmSigner,
-      mockEvmSenderAddress,
-    );
+    expect(submitTransaction).toHaveBeenNthCalledWith(1, 'tx1', mockSigner);
+    expect(submitTransaction).toHaveBeenNthCalledWith(2, 'tx2', mockEvmSigner);
   });
 
   test('should throw error for EVM transaction without EVM signer/sender', async () => {
@@ -141,27 +129,15 @@ describe('executeRouterPlan', () => {
 
     await executeRouterPlan(mixedPlan, { ...baseOptions, destination: 'Moonbeam' });
 
-    expect(submitTransaction).toHaveBeenNthCalledWith(
-      1,
-      mixedPlan[0].api,
-      'tx1',
-      mockEvmSigner,
-      mockEvmSenderAddress,
-    );
-    expect(submitTransaction).toHaveBeenNthCalledWith(
-      2,
-      mixedPlan[1].api,
-      'tx2',
-      mockSigner,
-      mockSenderAddress,
-    );
+    expect(submitTransaction).toHaveBeenNthCalledWith(1, 'tx1', mockEvmSigner);
+    expect(submitTransaction).toHaveBeenNthCalledWith(2, 'tx2', mockSigner);
   });
 
   test('should run fee dry run when transferring from BifrostPolkadot to destinationNode', async () => {
     const plan = [
       {
-        api: {} as unknown as TPjsApi,
-        tx: 'txBifrost' as unknown as Extrinsic,
+        api: {} as unknown as TPapiApi,
+        tx: 'txBifrost' as unknown as TPapiTransaction,
         type: 'TRANSFER',
         node: 'BifrostPolkadot',
         destinationNode: 'Astar',
@@ -183,19 +159,14 @@ describe('executeRouterPlan', () => {
       address: mockSenderAddress,
       node: 'BifrostPolkadot',
     });
-    expect(submitTransaction).toHaveBeenCalledWith(
-      plan[0].api,
-      'txBifrost',
-      mockSigner,
-      mockSenderAddress,
-    );
+    expect(submitTransaction).toHaveBeenCalledWith('txBifrost', mockSigner);
   });
 
   test('should throw error if BifrostPolkadot insufficient balance for fees', async () => {
     const plan = [
       {
-        api: {} as unknown as TPjsApi,
-        tx: 'txInsufficient' as unknown as Extrinsic,
+        api: {} as unknown as TPapiApi,
+        tx: 'txInsufficient' as unknown as TPapiTransaction,
         type: 'TRANSFER',
         node: 'BifrostPolkadot',
         destinationNode: 'Astar',

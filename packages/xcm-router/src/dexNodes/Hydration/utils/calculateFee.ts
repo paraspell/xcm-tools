@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { FEE_BUFFER } from '../../../consts';
 import Logger from '../../../Logger/Logger';
 import type { TSwapOptions } from '../../../types';
-import { calculateTxFee } from '../../../utils';
+import { calculateTxFeePjs } from '../../../utils';
 import { getAssetInfo, getMinAmountOut } from './utils';
 
 export const calculateFee = async (
@@ -47,7 +47,7 @@ export const calculateFee = async (
   }
 
   const tx = trade.toTx(minAmountOut.amount).get<Extrinsic>();
-  const swapFee = await calculateTxFee(tx, feeCalcAddress);
+  const swapFee = await calculateTxFeePjs(tx, feeCalcAddress);
   const swapFeeNativeCurrency = new BigNumber(swapFee.toString());
   const feeInNativeCurrency = swapFeeNativeCurrency
     .plus(toDestTransactionFee)
