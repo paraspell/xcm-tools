@@ -348,6 +348,20 @@ const response = await fetch('http://localhost:3001/v2/xcm-analyser', {
 });
 ```
 
+### SS58 Address conversion
+
+A complete guide on this section can be found in [official docs](http://localhost:5174/docs/api/xcmP.html#ss58-address-conversion).
+
+Possible parameters:
+
+- `node`: Specific Parachain eg. Moonbeam
+- `address`: Any SS58 Address
+
+```js
+// Retrieve Fee asset queries (Assets accepted as XCM Fee on specific node)
+const response = await fetch('http://localhost:3001/v2/convert-ss58?address=:address&node=:node');
+```
+
 ### Asset Pallet
 
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/assetP.html).
