@@ -3,6 +3,7 @@
 // eslint-disable-next-line simple-import-sort/exports
 export * from '@paraspell/sdk-core'
 export * as assets from './assets'
+export { convertSs58 } from './address'
 export {
   claimAssets,
   getAssetBalance,

@@ -17,7 +17,13 @@ import type {
   TSerializedApiCall,
   TWeight
 } from '@paraspell/sdk-core'
-import { BatchMode, getNodeProviders, Parents, Version } from '@paraspell/sdk-core'
+import {
+  BatchMode,
+  getNodeProviders,
+  InvalidParameterError,
+  Parents,
+  Version
+} from '@paraspell/sdk-core'
 import {
   computeFeeFromDryRun,
   createApiInstanceForNode,
@@ -31,7 +37,7 @@ import {
 } from '@paraspell/sdk-core'
 import type { TDryRunXcmBaseOptions } from '@paraspell/sdk-core/src'
 import { ethers } from 'ethers'
-import { AccountId, Binary, createClient, FixedSizeBinary } from 'polkadot-api'
+import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 
 import { transform } from './PapiXcmTransformer'
@@ -164,6 +170,16 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const hex = FixedSizeBinary.fromAccountId32<32>(address).asHex()
     return isPrefixed ? hex : hex.slice(2)
+  }
+
+  accountToUint8a(address: string): Uint8Array {
+    const result = getSs58AddressInfo(address)
+
+    if (!result.isValid) {
+      throw new InvalidParameterError(`Invalid address: ${address}`)
+    }
+
+    return result.publicKey
   }
 
   callTxMethod({ module, section, parameters }: TSerializedApiCall) {

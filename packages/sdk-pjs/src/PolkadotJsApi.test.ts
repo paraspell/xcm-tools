@@ -149,6 +149,14 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('accountToUint8a', () => {
+    it('should return the hex address as Uint8Array', () => {
+      const address = '0x1234567890abcdef'
+      const result = polkadotApi.accountToUint8a(address)
+      expect(result).toBeInstanceOf(Uint8Array)
+    })
+  })
+
   describe('callTxMethod', () => {
     it('should create an extrinsic with the provided module, section, and parameters', () => {
       const serializedCall: TSerializedApiCall = {

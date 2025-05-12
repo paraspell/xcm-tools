@@ -54,6 +54,7 @@ export const callSdkFunc = (
     DECIMALS: () => Promise.resolve(getAssetDecimals(node, currency)),
     HAS_SUPPORT: () => Promise.resolve(hasSupportForAsset(node, currency)),
     PARA_ID: () => Promise.resolve(getParaId(node)),
+    CONVERT_SS58: () => Promise.resolve(chosenSdk.convertSs58(address, node)),
     ASSET_BALANCE: () =>
       chosenSdk.getAssetBalance({
         address,

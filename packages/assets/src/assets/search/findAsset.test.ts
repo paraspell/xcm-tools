@@ -245,6 +245,7 @@ describe('getAssetBySymbolOrId', () => {
             nativeAssetSymbol: 'ETH',
             relayChainAssetSymbol: 'DOT',
             isEVM: false,
+            ss58Prefix: 42,
             supportsDryRunApi: false,
             supportsXcmPaymentApi: true,
             otherAssets: [],
@@ -254,6 +255,7 @@ describe('getAssetBySymbolOrId', () => {
             nativeAssetSymbol: 'DOT',
             relayChainAssetSymbol: 'DOT',
             isEVM: false,
+            ss58Prefix: 42,
             supportsDryRunApi: false,
             supportsXcmPaymentApi: true,
             otherAssets: [
@@ -280,6 +282,7 @@ describe('getAssetBySymbolOrId', () => {
         ? {
             nativeAssetSymbol: 'ETH',
             isEVM: false,
+            ss58Prefix: 42,
             supportsDryRunApi: false,
             supportsXcmPaymentApi: true,
             relayChainAssetSymbol: 'DOT',
@@ -289,6 +292,7 @@ describe('getAssetBySymbolOrId', () => {
         : {
             nativeAssetSymbol: 'DOT',
             isEVM: false,
+            ss58Prefix: 42,
             supportsDryRunApi: false,
             supportsXcmPaymentApi: true,
             relayChainAssetSymbol: 'DOT',
@@ -315,6 +319,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -343,6 +348,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -365,6 +371,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -387,6 +394,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -409,6 +417,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -431,6 +440,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -457,6 +467,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [],
@@ -478,6 +489,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -504,6 +516,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -534,6 +547,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -555,6 +569,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [],
@@ -587,6 +602,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -644,6 +660,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [
@@ -701,6 +718,7 @@ describe('getAssetBySymbolOrId', () => {
       nativeAssetSymbol: 'DOT',
       relayChainAssetSymbol: 'DOT',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       otherAssets: [

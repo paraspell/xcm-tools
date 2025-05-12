@@ -3,6 +3,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "ss58Prefix": 0,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -25,6 +26,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "ss58Prefix": 2,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -47,6 +49,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PLMC",
     "isEVM": false,
+    "ss58Prefix": 41,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -120,6 +123,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ACA",
     "isEVM": false,
+    "ss58Prefix": 10,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -663,6 +667,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "AJUN",
     "isEVM": false,
+    "ss58Prefix": 1328,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -742,6 +747,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "ss58Prefix": 0,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -758,6 +764,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "ss58Prefix": 2,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -774,6 +781,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ASTR",
     "isEVM": false,
+    "ss58Prefix": 5,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -1424,6 +1432,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "BNC",
     "isEVM": false,
+    "ss58Prefix": 0,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -1922,6 +1931,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "BBB",
     "isEVM": false,
+    "ss58Prefix": 42,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -1938,6 +1948,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "CFG",
     "isEVM": false,
+    "ss58Prefix": 36,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -2260,6 +2271,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "SUB",
     "isEVM": false,
+    "ss58Prefix": 28,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -2276,6 +2288,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "LAYR",
     "isEVM": false,
+    "ss58Prefix": 50,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -2445,6 +2458,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "RING",
     "isEVM": true,
+    "ss58Prefix": 18,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -2533,6 +2547,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "HDX",
     "isEVM": false,
+    "ss58Prefix": 63,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -4044,6 +4059,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "INTR",
     "isEVM": false,
+    "ss58Prefix": 2032,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -4460,6 +4476,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "HEI",
     "isEVM": false,
+    "ss58Prefix": 31,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -4476,6 +4493,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "GLMR",
     "isEVM": true,
+    "ss58Prefix": 1284,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -5623,6 +5641,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "ss58Prefix": 0,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -6242,6 +6261,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "AIR",
     "isEVM": false,
+    "ss58Prefix": 136,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -6331,6 +6351,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "AMPE",
     "isEVM": false,
+    "ss58Prefix": 57,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -6366,6 +6387,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "BSX",
     "isEVM": false,
+    "ss58Prefix": 10041,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -6592,6 +6614,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "BNC",
     "isEVM": false,
+    "ss58Prefix": 0,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -6915,6 +6938,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "CRAB",
     "isEVM": true,
+    "ss58Prefix": 42,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -6951,6 +6975,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "CSM",
     "isEVM": false,
+    "ss58Prefix": 66,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -7018,6 +7043,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "ss58Prefix": 2,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -7034,6 +7060,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "KILT",
     "isEVM": false,
+    "ss58Prefix": 38,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -7062,6 +7089,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "CGT",
     "isEVM": false,
+    "ss58Prefix": 777,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -7109,6 +7137,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KAR",
     "isEVM": false,
+    "ss58Prefix": 8,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -7668,6 +7697,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KINT",
     "isEVM": false,
+    "ss58Prefix": 2092,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -7888,6 +7918,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "MOVR",
     "isEVM": true,
+    "ss58Prefix": 1285,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -8392,6 +8423,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "QTZ",
     "isEVM": false,
+    "ss58Prefix": 255,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -8416,6 +8448,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "XRT",
     "isEVM": false,
+    "ss58Prefix": 32,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -8453,6 +8486,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "XRT",
     "isEVM": false,
+    "ss58Prefix": 32,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -8476,6 +8510,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "ss58Prefix": 2,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -8492,6 +8527,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "ss58Prefix": 0,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -8508,6 +8544,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "SDN",
     "isEVM": false,
+    "ss58Prefix": 5,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -8868,6 +8905,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "ss58Prefix": 2,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -9158,6 +9196,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "KSM",
     "isEVM": false,
+    "ss58Prefix": 2,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -9174,6 +9213,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "ss58Prefix": 0,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -9190,6 +9230,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "TUR",
     "isEVM": false,
+    "ss58Prefix": 42,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -9420,6 +9461,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "UNQ",
     "isEVM": false,
+    "ss58Prefix": 7391,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -9520,6 +9562,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "CRU",
     "isEVM": false,
+    "ss58Prefix": 88,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -9549,6 +9592,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "MANTA",
     "isEVM": false,
+    "ss58Prefix": 77,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -9758,6 +9802,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "NODL",
     "isEVM": false,
+    "ss58Prefix": 37,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -9787,6 +9832,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "NEURO",
     "isEVM": false,
+    "ss58Prefix": 101,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -9823,6 +9869,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PEN",
     "isEVM": false,
+    "ss58Prefix": 56,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -10116,6 +10163,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "ZTG",
     "isEVM": false,
+    "ss58Prefix": 73,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -10229,6 +10277,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "DOT",
     "isEVM": false,
+    "ss58Prefix": 0,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": true,
     "nativeAssets": [
@@ -10245,6 +10294,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PHA",
     "isEVM": false,
+    "ss58Prefix": 30,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -10563,6 +10613,7 @@
   },
   "Ethereum": {
     "isEVM": true,
+    "ss58Prefix": 42,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "relayChainAssetSymbol": "DOT",
@@ -10924,6 +10975,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "MYTH",
     "isEVM": true,
+    "ss58Prefix": 29972,
     "supportsDryRunApi": true,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -10950,6 +11002,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PEAQ",
     "isEVM": false,
+    "ss58Prefix": 42,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [

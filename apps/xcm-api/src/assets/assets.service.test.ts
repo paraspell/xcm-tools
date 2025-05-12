@@ -59,6 +59,7 @@ describe('AssetsService', () => {
         relayChainAssetSymbol: symbol,
         nativeAssetSymbol: 'DOT',
         isEVM: false,
+        ss58Prefix: 42,
         supportsDryRunApi: false,
         supportsXcmPaymentApi: true,
         nativeAssets: [

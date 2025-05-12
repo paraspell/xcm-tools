@@ -7,7 +7,7 @@ import {
 } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
 import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
-import { AccountId, Binary, createClient, FixedSizeBinary } from 'polkadot-api'
+import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
 import { getWsProvider } from 'polkadot-api/ws-provider/node'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -36,7 +36,8 @@ vi.mock('polkadot-api', () => ({
     fromHex: vi.fn(),
     fromText: vi.fn()
   },
-  AccountId: vi.fn()
+  AccountId: vi.fn(),
+  getSs58AddressInfo: vi.fn()
 }))
 
 vi.mock('./PapiXcmTransformer', () => ({
@@ -634,6 +635,35 @@ describe('PapiApi', () => {
 
       expect(spy).toHaveBeenCalledWith(account, false)
       expect(result).toBe('1234567890abcdef')
+    })
+  })
+
+  describe('accountToUint8a', () => {
+    it('returns the public key bytes when the SS58 address is valid', () => {
+      const addr = '5FHneW46xGXgs5mUiveU4sbTyGBzmst2oT29E5c9F7NYtiLP'
+      const publicKey = new Uint8Array([1, 2, 3, 4])
+
+      vi.mocked(getSs58AddressInfo).mockReturnValue({
+        isValid: true,
+        publicKey,
+        ss58Format: 42
+      })
+
+      const res = papiApi.accountToUint8a(addr)
+
+      expect(getSs58AddressInfo).toHaveBeenCalledWith(addr)
+      expect(res).toEqual(publicKey)
+    })
+
+    it('throws InvalidParameterError when the address is invalid', () => {
+      const badAddr = 'invalid_address'
+
+      vi.mocked(getSs58AddressInfo).mockReturnValue({
+        isValid: false
+      })
+
+      expect(() => papiApi.accountToUint8a(badAddr)).toThrow(sdkCore.InvalidParameterError)
+      expect(getSs58AddressInfo).toHaveBeenCalledWith(badAddr)
     })
   })
 

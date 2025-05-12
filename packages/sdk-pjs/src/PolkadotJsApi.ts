@@ -88,6 +88,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return u8aToHex(uint8Array, -1, isPrefixed)
   }
 
+  accountToUint8a(address: string): Uint8Array {
+    return decodeAddress(address)
+  }
+
   callTxMethod({ module, section, parameters }: TSerializedApiCall) {
     const values = Object.values(parameters)
     const moduleLowerCase = lowercaseFirstLetter(module)

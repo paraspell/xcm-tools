@@ -13,6 +13,7 @@ export enum EventName {
   GET_DECIMALS = 'Get Decimals',
   HAS_SUPPORT_FOR_ASSET = 'Has Support For Asset',
   GET_PARA_ID = 'Get Para Id',
+  CONVERT_SS58 = 'Convert Ss58 address',
   GET_DEFAULT_PALLET = 'Get Default Pallet',
   GET_SUPPORTED_PALLETS = 'Get Supported Pallets',
   GET_ASSET_BALANCE = 'Get Asset Balance',

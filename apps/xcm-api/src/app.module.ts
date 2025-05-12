@@ -9,6 +9,7 @@ import { join } from 'path';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import { AddressModule } from './address/address.module.js';
 import { AnalyticsModule } from './analytics/analytics.module.js';
 import { AppController } from './app.controller.js';
 import { AssetClaimModule } from './asset-claim/asset-claim.module.js';
@@ -40,6 +41,7 @@ const __dirname = path.dirname(__filename);
     AssetsModule,
     PalletsModule,
     BalanceModule,
+    AddressModule,
     NodeConfigsModule,
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
