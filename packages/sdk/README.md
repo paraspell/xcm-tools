@@ -382,6 +382,13 @@ import { getExistentialDeposit } from "@paraspell/sdk";
 const ed = getExistentialDeposit(node, currency?)
 ```
 
+### Convert SS58 address 
+```ts
+import { convertSs58 } from "@paraspell/sdk";
+
+let result = convertSs58(address, node) // returns converted address in string
+```
+
 ### XCM Transfer info
 ```ts
 import { getAssetBalance, getTransferInfo, getOriginFeeDetails, getTransferableAmount, getParaEthTransferFees, verifyEdOnDestination } from "@paraspell/sdk";
