@@ -382,6 +382,13 @@ const fetchNodeAssets = async (
   api: ApiPromise,
   query: string[]
 ): Promise<Partial<TNodeAssets>> => {
+  let ss58Prefix = 42
+  try {
+    ss58Prefix = +api.consts.system.ss58Prefix.toString()
+  } catch (e) {
+    console.warn(`[${node}] ss58Prefix unavailable - using default 42`, e)
+  }
+
   const supportsXcmPaymentApi = supportsRuntimeApi(api, 'xcmPaymentApi')
   const feeAssets: TMultiLocation[] = supportsXcmPaymentApi ? await fetchFeeAssets(api) : []
 
@@ -482,6 +489,7 @@ const fetchNodeAssets = async (
     nativeAssets,
     otherAssets: mergedAssets,
     nativeAssetSymbol,
+    ss58Prefix,
     isEVM: isNodeEvm(api),
     supportsDryRunApi: supportsRuntimeApi(api, 'dryRunApi'),
     supportsXcmPaymentApi
@@ -530,6 +538,7 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
           relayChainAssetSymbol: getRelayChainSymbol(nodeName),
           nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
           isEVM: newData?.isEVM ?? false,
+          ss58Prefix: newData?.ss58Prefix ?? undefined,
           supportsDryRunApi: newData?.supportsDryRunApi ?? false,
           supportsXcmPaymentApi: newData?.supportsXcmPaymentApi ?? false,
           nativeAssets: combinedNativeAssets,

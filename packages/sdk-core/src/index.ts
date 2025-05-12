@@ -1,5 +1,6 @@
 // Contains all important exports
 
+export * from './address'
 export * from './api'
 export * from './builder'
 export {

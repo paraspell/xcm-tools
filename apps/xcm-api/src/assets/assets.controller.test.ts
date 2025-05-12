@@ -42,6 +42,7 @@ describe('AssetsController', () => {
       paraId: 2009,
       relayChainAssetSymbol: 'KSM',
       isEVM: false,
+      ss58Prefix: 42,
       supportsDryRunApi: false,
       supportsXcmPaymentApi: true,
       nativeAssets: [{ symbol, decimals, isNative: true }],

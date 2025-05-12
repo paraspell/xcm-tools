@@ -90,7 +90,8 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'ASSET_BALANCE' ||
     func === 'TRANSFERABLE_AMOUNT' ||
     func === 'ORIGIN_FEE_DETAILS' ||
-    func === 'VERIFY_ED_ON_DESTINATION';
+    func === 'VERIFY_ED_ON_DESTINATION' ||
+    func === 'CONVERT_SS58';
 
   const showAhAddressInput = func === 'ORIGIN_FEE_DETAILS';
 

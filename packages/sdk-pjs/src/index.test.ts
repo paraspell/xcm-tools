@@ -25,7 +25,8 @@ describe('Index Exports', () => {
           'GeneralBuilder',
           'EvmBuilder',
           'IFinalBuilderWithOptions',
-          'createApiInstanceForNode'
+          'createApiInstanceForNode',
+          'convertSs58'
         ].includes(key)
     )
     expect(sdkCoreKeys.length).toBeGreaterThan(0)
@@ -40,6 +41,10 @@ describe('Index Exports', () => {
     expect(moduleExports.send).toBeDefined()
     expect(moduleExports.dryRun).toBeDefined()
     expect(moduleExports.getParaEthTransferFees).toBeDefined()
+  })
+
+  it('should export address functions', () => {
+    expect(moduleExports.convertSs58).toBeDefined()
   })
 
   it('should export assets namespace', () => {
