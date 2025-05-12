@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.16.0](https://github.com/paraspell/xcm-tools/compare/assets-v8.15.2...assets-v8.16.0) (2025-05-12)
+
+
+### Features
+
+* **sdk-core:** Add SS58 address conversion 🪄 ([be1dbd6](https://github.com/paraspell/xcm-tools/commit/be1dbd648d132b5e8ba39e3773192af2407ba4af))
+
 ## [8.15.2](https://github.com/paraspell/xcm-tools/compare/assets-v8.15.1...assets-v8.15.2) (2025-05-09)
 
 

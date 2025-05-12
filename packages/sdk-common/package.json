@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/sdk-common",
-  "version": "8.15.2",
+  "version": "8.16.0",
   "description": "SDK common code for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
