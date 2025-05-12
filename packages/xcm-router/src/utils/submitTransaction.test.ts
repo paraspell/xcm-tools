@@ -102,6 +102,7 @@ describe('submitTransaction', () => {
     }
   });
 
+<<<<<<< Updated upstream
   it('should reject with a generic error on dispatch error not being a module error', async () => {
     const mockApi = new MockApiPromise();
     const mockTx = new MockExtrinsic2();
@@ -139,5 +140,29 @@ describe('submitTransaction', () => {
         expect(error.message).toBe('Generic Dispatch Error');
       }
     }
+=======
+  it('rejects when ok === false in a finalized event', async () => {
+    const { txMock, emit } = buildTxMock();
+
+    const promise = submitTransaction(txMock, signerStub);
+
+    emit.next({
+      type: 'finalized',
+      ok: false,
+      dispatchError: { value: 'BadOrigin' },
+    });
+
+    await expect(promise).rejects.toThrow('BadOrigin');
+  });
+
+  it('rejects when the observable errors', async () => {
+    const { txMock, emit } = buildTxMock();
+
+    const promise = submitTransaction(txMock, signerStub);
+
+    emit.error('network-down');
+
+    await expect(promise).rejects.toThrow('network-down');
+>>>>>>> Stashed changes
   });
 });

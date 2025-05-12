@@ -99,7 +99,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       currencyFromOptionId: '',
       currencyToOptionId: '',
       amount: '10000000000000000000',
-      recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+      recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       slippagePct: '1',
       useApi: false,
     },

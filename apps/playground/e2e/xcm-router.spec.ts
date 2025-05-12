@@ -108,7 +108,7 @@ basePjsTest.describe('RouterTransferForm E2E Tests', () => {
           .click();
         await appPage
           .getByTestId('input-recipient-address')
-          .fill('5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC');
+          .fill('5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz');
 
         await appPage.getByTestId('input-amount').fill('10000000000000000000');
 

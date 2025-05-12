@@ -1213,8 +1213,8 @@ describe('XCM API (e2e)', () => {
       currencyFrom: { symbol: 'ASTR' },
       currencyTo: { symbol: 'BNC' },
       amount: '10000000000000000000',
-      senderAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-      recipientAddress: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+      senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       slippagePct: '1',
     };
 
@@ -1365,8 +1365,8 @@ describe('XCM API (e2e)', () => {
     const transferInfo: TransferInfoDto = {
       origin: 'Acala',
       destination: 'Astar',
-      accountOrigin: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-      accountDestination: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+      accountOrigin: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      accountDestination: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       currency: { symbol: 'DOT', amount: '100000000' },
     };
 

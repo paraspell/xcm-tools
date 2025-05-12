@@ -38,8 +38,8 @@ describe('TransferInfoController', () => {
       const queryParams: TransferInfoDto = {
         origin: 'Acala',
         destination: 'Basilisk',
-        accountOrigin: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
-        accountDestination: '5FA4TfhSWhoDJv39GZPvqjBzwakoX4XTVBNgviqd7sz2YeXC',
+        accountOrigin: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        accountDestination: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
         currency: { symbol: 'DOT', amount: 100 },
       };
       const mockResult = {} as TTransferInfo;
