@@ -145,6 +145,41 @@ const response = await fetch('http://localhost:3001/v2/x-transfer', {
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
   }),
 });
+
+//Construct custom batch of XCM Calls
+const response = await fetch('http://localhost:3001/v2/x-transfer-batch', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    transfers: 'Parachain', // Replace "transfers" with array of XCM transfers
+  }),
+});
+```
+
+### Asset claim
+
+A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#asset-claim).
+
+Possible parameters:
+
+- `from` (Inside JSON body): (required): Represents the Parachain on which the asset will be claimed.
+- `address` (Inside JSON body): (required): Specifies the recipient's address.
+- `fungible` (Inside JSON body): (required): Represents the asset being claimed. It should be a multilocation.
+
+```js
+const response = await fetch('http://localhost:3001/v2/asset-claim', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Parachain', // Replace "Parachain" with chain you wish to claim assets on
+    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+    fungible: 'Asset Multilocation array', //Replace "Asset Multilocation array" with specific asset multilocation array along with the amount (example in docs)
+  }),
+});
 ```
 
 ### Dry run your XCM Calls
@@ -208,48 +243,6 @@ const response = await fetch("http://localhost:3001/v2/xcm-fee-estimate", {
 });
 ```
 
-### Batch call
-
-A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#batch-call).
-
-Possible parameters: - `transfers` (Inside JSON body): (required): Represents array of XCM calls along with optional parameter "options" which contains "mode" to switch between BATCH and BATCH_ALL call forms.
-
-```js
-const response = await fetch('http://localhost:3001/v2/x-transfer-batch', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    transfers: 'Parachain', // Replace "transfers" with array of XCM transfers
-  }),
-});
-```
-
-### Asset claim
-
-A complete guide on asset claim can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#asset-claim).
-
-Possible parameters:
-
-- `from` (Inside JSON body): (required): Represents the Parachain on which the asset will be claimed.
-- `address` (Inside JSON body): (required): Specifies the recipient's address.
-- `fungible` (Inside JSON body): (required): Represents the asset being claimed. It should be a multilocation.
-
-```js
-const response = await fetch('http://localhost:3001/v2/asset-claim', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    from: 'Parachain', // Replace "Parachain" with chain you wish to claim assets on
-    address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
-    fungible: 'Asset Multilocation array', //Replace "Asset Multilocation array" with specific asset multilocation array along with the amount (example in docs)
-  }),
-});
-```
-
 ### Transfer info query
 
 A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmP.html#transfer-info-query).
@@ -276,73 +269,6 @@ const response = await fetch('http://localhost:3001/v2/transfer-info?', {
     amount: 'Amount', // Replace "Amount" with the numeric value you wish to transfer
     accountOrigin: 'Account address', // Replace "Address" with origin wallet address (In AccountID32 or AccountKey20 Format)
     accountDestination: 'Account address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format)
-  }),
-});
-```
-
-### XCM Router
-
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmRouter.html).
-
-```
-NOTICE:
-It is advised to use at least 120s timeout with this endpoint (Because API has to connect to other endpoints and that is time dependent)
-```
-
-Possible parameters:
-
-- `from`: (optional): Represents the Parachain from which the assets will be transferred.
-- `exchange`: (optional): Represents the Parachain DEX on which tokens will be exchanged (If not provided, DEX is selected automatically based on best price output).
-- `to`: (optional): Represents the Parachain to which the assets will be transferred.
-- `currencyFrom`: (required): Represents the asset being sent.
-- `currencyTo`: (required): Represents the received asset.
-- `amount`: (required): Specifies the amount of assets to transfer.
-- `slippagePct`: (required): Specifies the slippage percentage.
-- `recipientAddress`: (required): Specifies the recipient's address.
-- `senderAddress`: (required): Specifies the sender's address.
-
-```js
-const response = await fetch('http://localhost:3001/v2/router', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    from: 'Chain', //Origin Parachain/Relay chain - OPTIONAL PARAMETER
-    exchange: 'Dex', //Exchange Parachain/Relay chain //Optional parameter, if not specified exchange will be auto-selected
-    to: 'Chain', //Destination Parachain/Relay chain - OPTIONAL PARAMETER
-    currencyFrom: { CurrencySpec }, // {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
-    currencyTo: { CurrencySpec }, // {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
-    amount: 'Amount', // Amount to send
-    slippagePct: 'Pct', // Max slipppage percentage
-    recipientAddress: 'Address', //Recipient address
-    senderAddress: 'InjectorAddress', //Address of sender
-  }),
-});
-```
-
-### XCM Analyser
-
-A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmAnalyser.html).
-
-```
-NOTICE: Only one parameter at a time is allowed, either multilocation or xcm.
-```
-
-Possible parameters:
-
-- `multilocation` (Optional): Specific multilocation
-- `xcm` (Optional): Complete XCM call
-
-```js
-const response = await fetch('http://localhost:3001/v2/xcm-analyser', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    multilocation: 'Multilocation', //Replace Multilocation with specific Multilocation you wish to analyse
-    xcm: 'XCM', //Replace XCM with the specific XCM call you wish to analyse
   }),
 });
 ```
@@ -498,6 +424,74 @@ const response = await fetch('http://localhost:3001/v2/pallets/:node');
 
 // Return Parachain support for DryRun
 const response = await fetch('http://localhost:3001/v2/nodes/:node/has-dry-run-support');
+```
+
+### XCM Router
+
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmRouter.html).
+
+```
+NOTICE:
+The latest version switched to the POST method for XCM Transfers, but we kept GET method support. It will however be deprecated at some point. Please consider switching to POST method.
+It is advised to use at least 120s timeout with this endpoint (Because API has to connect to other endpoints and that is time dependent)
+```
+
+Possible parameters:
+
+- `from`: (optional): Represents the Parachain from which the assets will be transferred.
+- `exchange`: (optional): Represents the Parachain DEX on which tokens will be exchanged (If not provided, DEX is selected automatically based on best price output).
+- `to`: (optional): Represents the Parachain to which the assets will be transferred.
+- `currencyFrom`: (required): Represents the asset being sent.
+- `currencyTo`: (required): Represents the received asset.
+- `amount`: (required): Specifies the amount of assets to transfer.
+- `slippagePct`: (required): Specifies the slippage percentage.
+- `recipientAddress`: (required): Specifies the recipient's address.
+- `senderAddress`: (required): Specifies the sender's address.
+
+```js
+const response = await fetch('http://localhost:3001/v2/router', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    from: 'Chain', //Origin Parachain/Relay chain - OPTIONAL PARAMETER
+    exchange: 'Dex', //Exchange Parachain/Relay chain //Optional parameter, if not specified exchange will be auto-selected
+    to: 'Chain', //Destination Parachain/Relay chain - OPTIONAL PARAMETER
+    currencyFrom: { CurrencySpec }, // {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+    currencyTo: { CurrencySpec }, // {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+    amount: 'Amount', // Amount to send
+    slippagePct: 'Pct', // Max slipppage percentage
+    recipientAddress: 'Address', //Recipient address
+    senderAddress: 'InjectorAddress', //Address of sender
+  }),
+});
+```
+
+### XCM Analyser
+
+A complete guide on this section can be found in [official docs](https://paraspell.github.io/docs/api/xcmAnalyser.html).
+
+```
+NOTICE: Only one parameter at a time is allowed, either multilocation or xcm.
+```
+
+Possible parameters:
+
+- `multilocation` (Optional): Specific multilocation
+- `xcm` (Optional): Complete XCM call
+
+```js
+const response = await fetch('http://localhost:3001/v2/xcm-analyser', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    multilocation: 'Multilocation', //Replace Multilocation with specific Multilocation you wish to analyse
+    xcm: 'XCM', //Replace XCM with the specific XCM call you wish to analyse
+  }),
+});
 ```
 
 ## Running the API locally

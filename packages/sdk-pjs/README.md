@@ -181,6 +181,37 @@ await builder.disconnect()
 */
 ```
 
+### Local transfers
+```ts
+const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+      .from(NODE)
+      .to(NODE) //Has to be same as origin (from)
+      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
+      .address(address)
+
+const tx = await builder.build()
+
+//Make sure to disconnect API after it is no longer used (eg. after transaction)
+await builder.disconnect()
+
+/*
+EXAMPLE:
+const builder = Builder()
+  .from('Hydration')
+  .to('Hydration')
+  .currency({
+    symbol: 'DOT',
+    amount: '1000000000'
+  })
+  .address(address)
+
+const tx = await builder.build()
+
+//Disconnect API after TX
+await builder.disconnect()
+*/
+```
+
 ##### Batch calls
 You can batch XCM calls and execute multiple XCM calls within one call. All three scenarios (Para->Para, Para->Relay, Relay->Para) can be used and combined.
 ```js
@@ -201,6 +232,21 @@ const tx = await builder.buildBatch({
           // This settings object is optional and batch all is the default option
           mode: BatchMode.BATCH_ALL //or BatchMode.BATCH
       })
+
+//Make sure to disconnect API after it is no longer used (eg. after transaction)
+await builder.disconnect()
+```
+
+### Asset claim:
+```ts
+//Claim XCM trapped assets from the selected chain
+const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+      .claimFrom(NODE)
+      .fungible(MultilocationArray (Only one multilocation allowed) [{Multilocation}])
+      .account(address | Multilocation object)
+      /*.xcmVersion(Version.V3) Optional parameter, by default V3. XCM Version ENUM if a different XCM version is needed (Supported V2 & V3). Requires importing Version enum.*/
+
+const tx = await builder.build()
 
 //Make sure to disconnect API after it is no longer used (eg. after transaction)
 await builder.disconnect()
@@ -263,53 +309,44 @@ const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
           .getXcmFeeEstimate()
 ```
 
-
-### Asset claim:
+### XCM Transfer info
 ```ts
-//Claim XCM trapped assets from the selected chain
-const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
-      .claimFrom(NODE)
-      .fungible(MultilocationArray (Only one multilocation allowed) [{Multilocation}])
-      .account(address | Multilocation object)
-      /*.xcmVersion(Version.V3) Optional parameter, by default V3. XCM Version ENUM if a different XCM version is needed (Supported V2 & V3). Requires importing Version enum.*/
+import { getAssetBalance, getTransferInfo, getOriginFeeDetails, getTransferableAmount, getParaEthTransferFees, verifyEdOnDestination } from "@paraspell/sdk-pjs";
 
-const tx = await builder.build()
+//Get fee information regarding XCM call
+await getOriginFeeDetails({from, to, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, originAddress, destinationAddress, ahAddress /* optional parameter when destination is Ethereum and origin is Parachain other than AssetHub*/, api /* api/ws_url_string optional */, feeMargin /* 10% by default */})
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
-await builder.disconnect()
+//Retrieves the asset balance for a given account on a specified node. (You do not need to specify if it is native or foreign).
+await getAssetBalance({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, api /* api/ws_url_string optional */});
+
+//Combines the getMaxNative and getMaxForeign transferable amount functions into one, so you don't have to specify whether you want a native or foreign asset.
+await getTransferableAmount({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/});
+
+//Get all the information about XCM transfer
+await getTransferInfo({from, to, address, destinationAddress, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, api /* api/ws_url_string optional */})
+
+//Get bridge and execution fee for transfer from Parachain to Ethereum. Returns as an object of 2 values - [bridgeFee, executionFee]
+await getParaEthTransferFees(/*api - optional (Can also be WS port string or array o WS ports. Must be AssetHubPolkadot WS!)*/)
+
+//Verify whether XCM message you wish to send will reach above existential deposit on destination chain.
+await verifyEdOnDestination(node,  currency: {symbol: || id: || multilocation: .. ,amount: 100000n}, address)
 ```
 
-### Local transfers
+### Existential deposit queries
 ```ts
-const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
-      .from(NODE)
-      .to(NODE) //Has to be same as origin (from)
-      .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
-      .address(address)
+import { getExistentialDeposit } from "@paraspell/sdk-pjs";
 
-const tx = await builder.build()
-
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
-await builder.disconnect()
-
-/*
-EXAMPLE:
-const builder = Builder()
-  .from('Hydration')
-  .to('Hydration')
-  .currency({
-    symbol: 'DOT',
-    amount: '1000000000'
-  })
-  .address(address)
-
-const tx = await builder.build()
-
-//Disconnect API after TX
-await builder.disconnect()
-*/
+//Currency is an optional parameter. If you wish to query native asset, currency parameter is not necessary.
+//Currency can be either {symbol: assetSymbol}, {id: assetId}, {multilocation: assetMultilocation}.
+const ed = getExistentialDeposit(node, currency?)
 ```
 
+### Convert SS58 address 
+```ts
+import { convertSs58 } from "@paraspell/sdk-pjs";
+
+let result = convertSs58(address, node) // returns converted address in string
+```
 
 ### Asset queries:
 
@@ -371,45 +408,6 @@ getPalletIndex(node: TNode)
 
 // Print all pallets that are currently supported
 console.log(SUPPORTED_PALLETS)
-```
-
-### Existential deposit queries
-```ts
-import { getExistentialDeposit } from "@paraspell/sdk-pjs";
-
-//Currency is an optional parameter. If you wish to query native asset, currency parameter is not necessary.
-//Currency can be either {symbol: assetSymbol}, {id: assetId}, {multilocation: assetMultilocation}.
-const ed = getExistentialDeposit(node, currency?)
-```
-
-### Convert SS58 address 
-```ts
-import { convertSs58 } from "@paraspell/sdk-pjs";
-
-let result = convertSs58(address, node) // returns converted address in string
-```
-
-### XCM Transfer info
-```ts
-import { getAssetBalance, getTransferInfo, getOriginFeeDetails, getTransferableAmount, getParaEthTransferFees, verifyEdOnDestination } from "@paraspell/sdk-pjs";
-
-//Get fee information regarding XCM call
-await getOriginFeeDetails({from, to, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, originAddress, destinationAddress, ahAddress /* optional parameter when destination is Ethereum and origin is Parachain other than AssetHub*/, api /* api/ws_url_string optional */, feeMargin /* 10% by default */})
-
-//Retrieves the asset balance for a given account on a specified node. (You do not need to specify if it is native or foreign).
-await getAssetBalance({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, api /* api/ws_url_string optional */});
-
-//Combines the getMaxNative and getMaxForeign transferable amount functions into one, so you don't have to specify whether you want a native or foreign asset.
-await getTransferableAmount({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/});
-
-//Get all the information about XCM transfer
-await getTransferInfo({from, to, address, destinationAddress, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, api /* api/ws_url_string optional */})
-
-//Get bridge and execution fee for transfer from Parachain to Ethereum. Returns as an object of 2 values - [bridgeFee, executionFee]
-await getParaEthTransferFees(/*api - optional (Can also be WS port string or array o WS ports. Must be AssetHubPolkadot WS!)*/)
-
-//Verify whether XCM message you wish to send will reach above existential deposit on destination chain.
-await verifyEdOnDestination(node,  currency: {symbol: || id: || multilocation: .. ,amount: 100000n}, address)
 ```
 
 ## 💻 Tests
