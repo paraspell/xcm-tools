@@ -6,4 +6,12 @@ import { generateE2eTests } from '../../sdk-core/e2e'
 const signer = createSr25519Signer()
 const evmSigner = createEcdsaSigner()
 
-generateE2eTests(Builder, createApiInstanceForNode, signer, evmSigner, validateTx, filteredNodes)
+generateE2eTests(
+  Builder,
+  createApiInstanceForNode,
+  signer,
+  evmSigner,
+  validateTx,
+  filteredNodes,
+  false
+)

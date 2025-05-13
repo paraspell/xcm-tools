@@ -3,6 +3,7 @@ import {
   determineRelayChain,
   GeneralBuilder,
   getBridgeStatus,
+  getNodeProviders,
   NODE_NAMES_DOT_KSM,
   NodeNotSupportedError,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
@@ -36,7 +37,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
   signer: TSigner,
   evmSigner: TSigner,
   validateTx: (tx: TRes, signer: TSigner) => Promise<void>,
-  filteredNodes: TNodePolkadotKusama[]
+  filteredNodes: TNodePolkadotKusama[],
+  isPjs: boolean
 ) => {
   const reorderedNodes = filteredNodes.slice().sort((a, b) => {
     if (a === 'Acala') return 1 // Move a down if it is 'Acala'
@@ -48,6 +50,10 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
     const apiPool: Record<string, TApi> = {}
 
     const createOrGetApiInstanceForNode = async (node: TNodeDotKsmWithRelayChains) => {
+      if (!isPjs) {
+        return getNodeProviders(node)
+      }
+
       if (!apiPool[node]) {
         const api = await createApiInstanceForNode(node)
         apiPool[node] = api
