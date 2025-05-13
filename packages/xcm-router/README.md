@@ -22,7 +22,7 @@
 <br /><br />
 
 ### Introduction
-XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within **one call and only two signatures**. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **10 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **572** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
+XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within **one call and only two signatures**. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **8 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **556** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
 
 **Exchanges implemented:**
 - Acala / 36 Pools available
@@ -30,9 +30,7 @@ XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows 
 - BifrostKusama / 66 Pools available / Requires native token for swaps
 - BifrostPolkadot / 45 Pools available / Requires native token for swaps
 - HydraDX / 210 Pools available
-- Interlay / 10 Pools available / Requires native token for swaps
 - Karura / 136 Pools available
-- Kintsugi / 6 Pools available / Requires native token for swaps
 - AssetHubPolkadot / 32 Pools available / Requires specific native tokens for swaps
 - AssetHubKusama / 16 Pools available / Requires specific native tokens for swaps
 
@@ -45,10 +43,13 @@ XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows 
 ⚠️ NOTE
 Enabling Wasm is required by Hydration SDK in order for XCM-Router to work in your dAPP. You can either enable it in web app config or by plugin.
 Hydration also requires augment package - https://github.com/galacticcouncil/sdk/issues/114
+
+⚠️⚠️ NOTE
+XCM Router is now migrated towards PAPI library! To migrate you just need to replace old PJS injector with PAPI signer and install new peer dependency. Explore docs to find out more.
 ```
 
 ```bash
-yarn add || pnpm | npm install @polkadot/api @polkadot/types @polkadot/api-base @polkadot/apps-config @polkadot/util
+yarn add || pnpm | npm install polkadot-api
 ```
 
 #### Install XCM Router
@@ -92,14 +93,16 @@ await RouterBuilder
         .slippagePct('1')   // Max slipppage percentage
         .senderAddress(injectorAddress)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
-        .signer(injector.signer)    //Signer
+        .signer(signer)    //PAPI Signer
         //.evmSenderAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
         //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
 
-        .onStatusChange((status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
-          console.log(status.hashes);   //Transaction hashes
-          console.log(status.status);   //Transaction statuses
-          console.log(status.type);    //Transaction types
+        .onStatusChange((status: TRouterEvent) => {  //This is how we subscribe to calls that need signing
+          console.log(status.type);   // Current transaction type
+          console.log(status.routerPlan);   // Array of all transactions to execute
+          console.log(status.node);   // Current transaction origin node
+          console.log(status.destinationNode);    // Current transaction destination node
+          console.log(status.currentStep);    // 0-based step index of current transaction
         })
         .buildAndSend()
 ```
@@ -119,14 +122,16 @@ await RouterBuilder
         .slippagePct('1')   // Max slipppage percentage
         .senderAddress(selectedAccount.address)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
-        .signer(injector.signer)    //Signer
+        .signer(signer)    //PAPI Signer
         //.evmSenderAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
         //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
 
-        .onStatusChange((status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
-          console.log(status.hashes);   //Transaction hashes
-          console.log(status.status);   //Transaction statuses
-          console.log(status.type);    //Transaction types
+        .onStatusChange((status: TRouterEvent) => {  //This is how we subscribe to calls that need signing
+          console.log(status.type);   // Current transaction type
+          console.log(status.routerPlan);   // Array of all transactions to execute
+          console.log(status.node);   // Current transaction origin node
+          console.log(status.destinationNode);    // Current transaction destination node
+          console.log(status.currentStep);    // 0-based step index of current transaction
         })
         .buildAndSend()
 ```
@@ -146,14 +151,16 @@ await RouterBuilder
         .slippagePct('1')   // Max slipppage percentage
         .senderAddress(selectedAccount.address)   //Injector address
         .recipientAddress(recipientAddress) //Recipient address
-        .signer(injector.signer)    //Signer
+        .signer(signer)    //PAPI Signer
         //.evmSignerAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
         //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
 
-        .onStatusChange((status: TTxProgressInfo) => {  //This is how we subscribe to calls that need signing
-          console.log(status.hashes);   //Transaction hashes
-          console.log(status.status);   //Transaction statuses
-          console.log(status.type);    //Transaction types
+        .onStatusChange((status: TRouterEvent) => {  //This is how we subscribe to calls that need signing
+          console.log(status.type);   // Current transaction type
+          console.log(status.routerPlan);   // Array of all transactions to execute
+          console.log(status.node);   // Current transaction origin node
+          console.log(status.destinationNode);    // Current transaction destination node
+          console.log(status.currentStep);    // 0-based step index of current transaction
         })
         .buildAndSend()
 ```
@@ -197,8 +204,6 @@ const assets = getExchangeAssets('AssetHubPolkadotDex')
 | Basilisk DEX | Kusama Relay, Karura, AssetHubKusama, Tinkernet, Robonomics| BSX, USDT, aSEED, XRT, KSM, TNKR| Chain automatically gives you native asset to pay for fees.|
 |Bifrost Kusama DEX| Kusama Relay, AssetHubKusama, Karura, Moonriver, Kintsugi| BNC, vBNC, vsKSM, vKSM, USDT, aSEED, KAR, ZLK, RMRK, KBTC, MOVR, vMOVR| Chain requires native BNC asset for fees.|
 |Bifrost Polkadot DEX| Polkadot Relay, AssetHubPolkadot, Moonbeam, Astar, Interlay| BNC, vDOT, vsDOT, USDT, FIL, vFIL, ASTR, vASTR, GLMR, vGLMR, MANTA, vMANTA|Chain requires native BNC asset for fees.|
-|Interlay DEX| Polkadot Relay, Acala, Astar, Parallel, PolkadotAssetHub, HydraDX, BifrostPolkadot |INTR, DOT, IBTC, USDT, VDOT| Chain requires native INTR asset for fees.|
-|Kintsugi DEX| Kusama Relay, Karura, KusamaAssetHub, Parallel Heiko, BifrostKusama|KINT,KSM,KBTC,USDT|Chain requires native KINT asset for fees.|
 |AssetHubPolkadot| Polkadot Relay, Any Parachain it has HRMP channel with | DOT, WETH.e, USDC, USDT, LAOS, MYTH, WBBTC.e, ASX, BILL, DEMO, TATE, PINK, MODE, MVPW, PIGS, DED, wstETH.e, TTT, KSM, tBTC.e, PEPE.e, SHIB.e, TON.e, NAT, NT2, DOTA, STINK, MTC, AJUN, GGI, GLMR, NIN | Requires specific native tokens for swaps |
 |AssetHubKusama| Kusama Relay, Any Parachain it has HRMP channel with | KSM, DOT, USDC, USDT, BILLCOIN, WOOD, dUSD, TACP, TSM, MA42, USDT, DMO, JAM | Requires specific native tokens for swaps |
 
