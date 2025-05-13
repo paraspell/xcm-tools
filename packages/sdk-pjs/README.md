@@ -181,7 +181,7 @@ await builder.disconnect()
 */
 ```
 
-### Local transfers
+##### Local transfers
 ```ts
 const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE)
@@ -237,7 +237,7 @@ const tx = await builder.buildBatch({
 await builder.disconnect()
 ```
 
-### Asset claim:
+##### Asset claim:
 ```ts
 //Claim XCM trapped assets from the selected chain
 const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
