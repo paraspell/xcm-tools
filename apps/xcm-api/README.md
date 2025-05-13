@@ -286,7 +286,6 @@ A complete guide on this section can be found in [official docs](https://paraspe
 
 ```
 NOTICE:
-The latest version switched to the POST method for XCM Transfers, but we kept GET method support. It will however be deprecated at some point. Please consider switching to POST method.
 It is advised to use at least 120s timeout with this endpoint (Because API has to connect to other endpoints and that is time dependent)
 ```
 
