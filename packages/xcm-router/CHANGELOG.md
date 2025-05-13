@@ -1,5 +1,21 @@
 # Changelog
 
+## [9.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.16.0...xcm-router-v9.0.0) (2025-05-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* **xcm-router:** Refactor XCM Router to use PAPI ✨
+
+### Features
+
+* **xcm-router:** Refactor XCM Router to use PAPI ✨ ([7ca577f](https://github.com/paraspell/xcm-tools/commit/7ca577f3ae307e349a1a7b6c8901f232f59ab1fe))
+
+
+### Miscellaneous Chores
+
+* Update docs Router &gt; PAPI migration ([d4e04b0](https://github.com/paraspell/xcm-tools/commit/d4e04b0023b2725c1247ef40e5fa5fa4356f0b1a))
+
 ## [8.16.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.15.2...xcm-router-v8.16.0) (2025-05-12)
 
 

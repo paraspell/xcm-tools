@@ -1,5 +1,18 @@
 # Changelog
 
+## [9.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.16.0...sdk-pjs-v9.0.0) (2025-05-13)
+
+
+### Miscellaneous Chores
+
+* Fix readmes ([ee3a239](https://github.com/paraspell/xcm-tools/commit/ee3a23935b177c5f4fe616d7d4215e5985486066))
+* Reorganize readmes ([4256ecd](https://github.com/paraspell/xcm-tools/commit/4256ecdc0b24e0fe1b81e7c1d2745c44c80610f2))
+
+
+### Tests
+
+* Fix SDK e2e tests 🔧 ([dd01275](https://github.com/paraspell/xcm-tools/commit/dd0127515c9c26782ca53a9382fa99f9a25f4c51))
+
 ## [8.16.0](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v8.15.2...sdk-pjs-v8.16.0) (2025-05-12)
 
 
