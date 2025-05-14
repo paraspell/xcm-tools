@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       visualizator_changed: ${{ steps.filter.outputs.visualizator }}
-      xcm_api_changed: ${{ steps.filter.outputs.xcm_api }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v2
@@ -20,8 +19,6 @@ jobs:
           filters: |
             visualizator:
               - 'apps/visualizator-be/**'
-            xcm_api:
-              - 'apps/xcm-api/**'
 
   deploy_visualizator_backend:
     needs: filter
@@ -33,18 +30,5 @@ jobs:
       - run: pnpm --filter visualizator-be... build
       - name: Restart PM2 process
         run: pm2 restart visualizator-be
-        env:
-          PM2_HOME: /${{ secrets.USER }}/.pm2
-
-  deploy_xcm_api:
-    needs: filter
-    if: ${{ needs.filter.outputs.xcm_api_changed == 'true' }}
-    runs-on: self-hosted
-    steps:
-      - run: git pull
-      - run: pnpm install
-      - run: pnpm --filter xcm-api... build
-      - name: Restart PM2 process
-        run: pm2 restart xcm-api
         env:
           PM2_HOME: /${{ secrets.USER }}/.pm2

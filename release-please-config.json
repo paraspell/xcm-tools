@@ -39,7 +39,10 @@
     "packages/xcm-router": {
       "component": "xcm-router"
     },
-    "packages/xcm-analyser": {}
+    "packages/xcm-analyser": {},
+    "apps/xcm-api": {
+      "component": "xcm-api"
+    }
   },
   "group-pull-request-title-pattern": "chore${scope}: release main libraries",
   "plugins": [
@@ -53,7 +56,8 @@
         "sdk-common",
         "assets",
         "pallets",
-        "xcm-router"
+        "xcm-router",
+        "xcm-api"
       ]
     }
   ]
