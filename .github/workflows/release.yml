@@ -7,38 +7,48 @@ name: release-please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+
+  publish_packages:
+    needs: release-please
+    if: needs.release-please.outputs.releases_created == 'true'
+    runs-on: ubuntu-latest
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
-      - uses: googleapis/release-please-action@v4
-        id: release
-        with:
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
       - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           registry-url: "https://registry.npmjs.org"
-        if: ${{ steps.release.outputs.releases_created }}
       - uses: pnpm/action-setup@v4
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - run: pnpm install
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - run: pnpm build
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - run: pnpm compile
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - run: pnpm format:check
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - run: pnpm lint:check
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - run: pnpm test
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - run: pnpm config set '//registry.npmjs.org/:_authToken' "${NODE_AUTH_TOKEN}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
       - run: pnpm publish -r --no-git-checks --access=public
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
+
+  deploy_xcm_api:
+    needs: release-please
+    if: needs.release-please.outputs.releases_created == 'true'
+    runs-on: self-hosted
+    steps:
+      - run: git pull
+      - run: pnpm install
+      - run: pnpm --filter xcm-api... build
+      - name: Restart PM2 process
+        run: pm2 restart xcm-api
+        env:
+          PM2_HOME: /${{ secrets.USER }}/.pm2
