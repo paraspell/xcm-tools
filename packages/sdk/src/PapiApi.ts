@@ -375,9 +375,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
     }
 
-    // These nodes require a third parameter XCM version
-    const isBifrost =
-      node === 'BifrostPolkadot' || node === 'BifrostKusama' || node === 'AssetHubKusama'
+    const needsVersionParam =
+      node === 'BifrostPolkadot' ||
+      node === 'BifrostKusama' ||
+      node === 'AssetHubKusama' ||
+      node === 'Kusama'
     const DEFAULT_XCM_VERSION = 3
 
     const result = await this.api.getUnsafeApi().apis.DryRunApi.dry_run_call(
@@ -389,7 +391,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         }
       },
       tx.decodedCall,
-      ...(isBifrost ? [DEFAULT_XCM_VERSION] : [])
+      ...(needsVersionParam ? [DEFAULT_XCM_VERSION] : [])
     )
 
     const isSuccess = result.success && result.value.execution_result.success

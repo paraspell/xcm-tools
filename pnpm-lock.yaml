@@ -1144,8 +1144,8 @@ importers:
         specifier: ^6.2.0
         version: 6.2.0(@polkadot/api-augment@15.9.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-base@15.9.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.9.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@15.9.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/keyring@13.4.4(@polkadot/util-crypto@13.4.4(@polkadot/util@13.4.4))(@polkadot/util@13.4.4))(@polkadot/rpc-augment@15.9.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.9.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.9.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.9.2)(@polkadot/types-codec@15.9.2)(@polkadot/types-create@15.9.2)(@polkadot/types-known@15.9.2)(@polkadot/types@15.9.2)(@polkadot/util-crypto@13.4.4(@polkadot/util@13.4.4))(@polkadot/util@13.4.4)(viem@2.28.1(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.3))
       '@paraspell/sdk':
-        specifier: ^8.15.0
-        version: 8.15.0(bufferutil@4.0.8)(polkadot-api@1.10.2(@swc/core@1.11.24)(bufferutil@4.0.8)(jiti@2.3.3)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.4.5))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.3)
+        specifier: workspace:*
+        version: link:../sdk
       '@paraspell/sdk-pjs':
         specifier: workspace:*
         version: link:../sdk-pjs
@@ -4306,23 +4306,6 @@ packages:
 
   '@parallel-finance/type-definitions@2.0.1':
     resolution: {integrity: sha512-fC1QfhFFd8oSZqdIh6kmoMNvTxZdQGw1sTAbdYSINyVxyCxKiDg47ZP9bAZFDexL7POqnXnn4pYM7kUAnsT+8Q==}
-
-  '@paraspell/assets@8.15.0':
-    resolution: {integrity: sha512-mmdpgVl6Fk2YekzYh3p3P34tcI4SGxpRMwY55A9TNtjPA+1uh//KkLG8CdA2kCosVlA5sZc52PfaD5Rs4bsYtA==}
-
-  '@paraspell/pallets@8.15.0':
-    resolution: {integrity: sha512-7E1vvTlxGtc4VDY7XCCagbLG4hU1lq2tvTbweHuPOYyFQ2AD35ZGCe/bBPe/PmTIeZg4mE/B1Aj+ukBwW3PzWQ==}
-
-  '@paraspell/sdk-common@8.15.0':
-    resolution: {integrity: sha512-ROekHN0gtYanM6OepyLtr2VcZ+Rxia2GhnIeKGeid+E7iC+XuJZ+AKm7wFIVNkc1ZozVSaRLsJDtnIuuZhiY0Q==}
-
-  '@paraspell/sdk-core@8.15.0':
-    resolution: {integrity: sha512-f31YrX0cL+1ueeELOmiudknIGvqVb/FbEMfMjc8rd4lgqg7Uv1V9zQSTVNcNf92ci3i5rMnD83PTm+sZhuoX2A==}
-
-  '@paraspell/sdk@8.15.0':
-    resolution: {integrity: sha512-6aABsxbSEHY10J8gTN89IIyx7t7aJjiPT2WLTYt8M+SKZBlZV9MMangu8nSWsqQ0lXY+/WJuYqqqAf7bhqM01g==}
-    peerDependencies:
-      polkadot-api: '>= 1.10.2 < 2'
 
   '@peaqnetwork/type-definitions@0.0.4':
     resolution: {integrity: sha512-bMja9T9PHQrEy4Uhh0ZTWvKGpgiDd51tZg4ZOpgC1KtVBF6Wx+bNtt+Zyg0DKwRh2Eg+xI5OEBPycsFOpdIWIA==}
@@ -16138,43 +16121,6 @@ snapshots:
   '@parallel-finance/type-definitions@2.0.1':
     dependencies:
       '@open-web3/orml-type-definitions': 2.0.1
-
-  '@paraspell/assets@8.15.0':
-    dependencies:
-      '@paraspell/sdk-common': 8.15.0
-
-  '@paraspell/pallets@8.15.0':
-    dependencies:
-      '@paraspell/sdk-common': 8.15.0
-
-  '@paraspell/sdk-common@8.15.0': {}
-
-  '@paraspell/sdk-core@8.15.0(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.3)':
-    dependencies:
-      '@paraspell/assets': 8.15.0
-      '@paraspell/pallets': 8.15.0
-      '@paraspell/sdk-common': 8.15.0
-      ethers: 6.13.7(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      viem: 2.28.1(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.3)
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@paraspell/sdk@8.15.0(bufferutil@4.0.8)(polkadot-api@1.10.2(@swc/core@1.11.24)(bufferutil@4.0.8)(jiti@2.3.3)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.4.5))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.3)':
-    dependencies:
-      '@noble/hashes': 1.8.0
-      '@paraspell/sdk-core': 8.15.0(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.3)
-      ethers: 6.13.7(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      polkadot-api: 1.10.2(@swc/core@1.11.24)(bufferutil@4.0.8)(jiti@2.3.3)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.4.5)
-      quick-lru: 7.0.1
-      viem: 2.28.1(bufferutil@4.0.8)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.3)
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
 
   '@peaqnetwork/type-definitions@0.0.4':
     dependencies:

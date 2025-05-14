@@ -220,6 +220,8 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     return exchange;
   };
 
+  const { currencyFromOptionId, currencyToOptionId } = form.values;
+
   const {
     currencyFromOptions,
     currencyFromMap,
@@ -227,11 +229,54 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     currencyToMap,
     isFromNotParaToPara,
     isToNotParaToPara,
+    adjacency,
   } = useRouterCurrencyOptions(
     from,
     getExchange(exchange) as TExchangeInput,
     to,
+    currencyFromOptionId,
+    currencyToOptionId,
   );
+
+  const pairKey = (asset?: { multiLocation?: object; symbol?: string }) =>
+    asset?.multiLocation ? JSON.stringify(asset.multiLocation) : asset?.symbol;
+
+  useEffect(() => {
+    if (!currencyFromOptionId || !currencyToOptionId) return;
+
+    const fromAsset = currencyFromMap[currencyFromOptionId];
+    const toAsset = currencyToMap[currencyToOptionId];
+
+    const fromKey = pairKey(fromAsset);
+    const toKey = pairKey(toAsset);
+
+    if (fromKey && toKey && !adjacency.get(fromKey)?.has(toKey)) {
+      form.setFieldValue('currencyToOptionId', '');
+    }
+  }, [
+    currencyFromOptionId,
+    currencyToOptionId,
+    currencyFromMap,
+    currencyToMap,
+    adjacency,
+    form,
+  ]);
+
+  useEffect(() => {
+    if (currencyFromOptionId && !currencyFromMap[currencyFromOptionId]) {
+      form.setFieldValue('currencyFromOptionId', '');
+      form.setFieldValue('currencyToOptionId', '');
+    }
+    if (currencyToOptionId && !currencyToMap[currencyToOptionId]) {
+      form.setFieldValue('currencyToOptionId', '');
+    }
+  }, [
+    currencyFromMap,
+    currencyToMap,
+    currencyFromOptionId,
+    currencyToOptionId,
+    form,
+  ]);
 
   const onSubmitInternal = (
     values: TRouterFormValues,
@@ -380,12 +425,17 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
             disabled={isFromNotParaToPara}
             searchable
             required
+            clearable
             data-testid="select-currency-from"
             {...form.getInputProps('currencyFromOptionId')}
+            onClear={() => {
+              form.setFieldValue('currencyFromOptionId', '');
+              form.setFieldValue('currencyToOptionId', '');
+            }}
           />
 
           <Select
-            key={`${from?.toString()}${exchange?.toString()}${to?.toString()}currencyTo`}
+            key={`${from?.toString()}${exchange?.toString()}${to?.toString()}${currencyFromOptionId}currencyTo`}
             label="Currency To"
             placeholder="Pick value"
             data={currencyToOptions}

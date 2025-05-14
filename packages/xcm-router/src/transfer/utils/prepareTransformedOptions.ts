@@ -1,5 +1,6 @@
-import { createApiInstanceForNode } from '@paraspell/sdk';
+import { createApiInstanceForNode, InvalidParameterError } from '@paraspell/sdk';
 
+import { supportsExchangePair } from '../../assets';
 import type ExchangeNode from '../../dexNodes/DexNode';
 import { createDexNodeInstance } from '../../dexNodes/DexNodeFactory';
 import type { TAdditionalTransferOptions } from '../../types';
@@ -21,6 +22,12 @@ export const prepareTransformedOptions = async <
       : await selectBestExchange(options);
 
   const { assetFromOrigin, assetFromExchange, assetTo } = resolveAssets(dex, options);
+
+  if (!supportsExchangePair(dex.exchangeNode, assetFromExchange, assetTo)) {
+    throw new InvalidParameterError(
+      `Exchange ${dex.node} does not support the pair ${assetFromExchange.symbol} -> ${assetTo.symbol}`,
+    );
+  }
 
   const originSpecified = from && from !== dex.node;
   const destinationSpecified = to && to !== dex.node;

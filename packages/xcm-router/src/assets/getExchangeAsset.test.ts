@@ -3,7 +3,7 @@ import type {
   TForeignAsset,
   TNativeAsset,
   TNodePolkadotKusama,
-} from '@paraspell/sdk-pjs';
+} from '@paraspell/sdk';
 import {
   findAssetById,
   findAssetByMultiLocation,
@@ -13,14 +13,14 @@ import {
   getOtherAssets,
   isOverrideMultiLocationSpecifier,
   isSymbolSpecifier,
-} from '@paraspell/sdk-pjs';
+} from '@paraspell/sdk';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { TRouterAsset } from '../types';
 import { getExchangeAsset } from './getExchangeAsset';
-import { getExchangeAssets } from './getExchangeAssets';
+import { getExchangeAssets } from './getExchangeConfig';
 
-vi.mock('@paraspell/sdk-pjs', () => ({
+vi.mock('@paraspell/sdk', () => ({
   getOtherAssets: vi.fn(),
   getNativeAssets: vi.fn(),
   findAssetBySymbol: vi.fn(),
@@ -32,7 +32,7 @@ vi.mock('@paraspell/sdk-pjs', () => ({
   isForeignAsset: (_asset: TRouterAsset) => true,
 }));
 
-vi.mock('./getExchangeAssets', () => ({
+vi.mock('./getExchangeConfig', () => ({
   getExchangeAssets: vi.fn(),
 }));
 

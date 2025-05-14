@@ -1,8 +1,8 @@
 import type { Trade } from '@crypto-dex-sdk/amm';
 import type { Token } from '@crypto-dex-sdk/currency';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
-import type { Extrinsic, TMultiLocation } from '@paraspell/sdk-pjs';
-import { getAssets, getBalanceNative, getParaId } from '@paraspell/sdk-pjs';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
+import { getBalanceNative, getParaId } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -17,7 +17,6 @@ vi.mock('@paraspell/sdk-pjs', async () => {
   return {
     ...actualModule,
     getParaId: vi.fn(),
-    getAssets: vi.fn(),
     getBalanceNative: vi.fn(),
   };
 });
@@ -78,28 +77,6 @@ describe('BifrostExchangeNode', () => {
     vi.clearAllMocks();
     node = new BifrostExchangeNode('BifrostPolkadot', 'BifrostPolkadotDex');
     vi.mocked(getBalanceNative).mockResolvedValue(10000000000n);
-  });
-
-  describe('getAssets', () => {
-    it('should return a list of assets from the token map', async () => {
-      vi.mocked(getParaId).mockReturnValueOnce(2001);
-      vi.mocked(getTokenMap).mockReturnValueOnce({
-        BNC: { wrapped: { symbol: 'BNC', decimals: 12 } } as Token,
-        KSM: { wrapped: { symbol: 'KSM', decimals: 12 } } as Token,
-      });
-      vi.mocked(getAssets).mockReturnValue([
-        { symbol: 'BNC', multiLocation: {} as TMultiLocation },
-        { symbol: 'KSM', multiLocation: {} as TMultiLocation },
-      ]);
-
-      const result = await node.getAssets(mockApi);
-
-      expect(getParaId).toHaveBeenCalledWith('BifrostPolkadot');
-      expect(result).toEqual([
-        { symbol: 'BNC', multiLocation: {} },
-        { symbol: 'KSM', multiLocation: {} },
-      ]);
-    });
   });
 
   describe('swapCurrency', () => {

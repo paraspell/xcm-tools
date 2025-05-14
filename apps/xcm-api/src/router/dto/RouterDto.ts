@@ -46,5 +46,10 @@ export const RouterBestAmountOutSchema = RouterDtoSchema.pick({
   amount: true,
 });
 
+export const ExchangePairsSchema = RouterDtoSchema.pick({
+  exchange: true,
+});
+
 export type RouterDto = z.infer<typeof RouterDtoSchema>;
 export type RouterBestAmountOutDto = z.infer<typeof RouterBestAmountOutSchema>;
+export type ExchangePairsDto = z.infer<typeof ExchangePairsSchema>;

@@ -4,9 +4,9 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TNode } from '@paraspell/sdk';
+import type { TMultiLocation, TNode } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
-import { RouterBuilder } from '@paraspell/xcm-router';
+import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { RouterDto } from './dto/RouterDto.js';
@@ -59,6 +59,20 @@ vi.mock('@paraspell/xcm-router', async () => {
   return {
     ...actual,
     RouterBuilder: vi.fn().mockImplementation(() => builderMock),
+    getExchangePairs: vi.fn().mockReturnValue([
+      [
+        {
+          symbol: 'ASTR',
+          assetId: '0x1234567890abcdef',
+          multiLocation: {} as TMultiLocation,
+        },
+        {
+          symbol: 'GLMR',
+          assetId: '0xabcdef1234567890',
+          multiLocation: {} as TMultiLocation,
+        },
+      ],
+    ]),
   };
 });
 
@@ -282,6 +296,29 @@ describe('RouterService', () => {
       await expect(service.getBestAmountOut(options)).rejects.toThrow(
         BadRequestException,
       );
+    });
+  });
+
+  describe('getExchangePairs', () => {
+    it('should return exchange pairs for the given exchange', () => {
+      const exchange = 'AcalaDex';
+      const expectedPairs = [
+        [
+          {
+            symbol: 'ASTR',
+            assetId: '0x1234567890abcdef',
+            multiLocation: {} as TMultiLocation,
+          },
+          {
+            symbol: 'GLMR',
+            assetId: '0xabcdef1234567890',
+            multiLocation: {} as TMultiLocation,
+          },
+        ],
+      ];
+      const result = service.getExchangePairs(exchange);
+      expect(getExchangePairs).toHaveBeenCalledWith(exchange);
+      expect(result).toEqual(expectedPairs);
     });
   });
 });

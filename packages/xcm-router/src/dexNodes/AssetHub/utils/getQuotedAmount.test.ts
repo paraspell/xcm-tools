@@ -1,4 +1,4 @@
-import { type TMultiLocation, transformMultiLocation } from '@paraspell/sdk-pjs';
+import { type TMultiLocation, transformMultiLocation } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

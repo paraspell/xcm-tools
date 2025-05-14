@@ -210,7 +210,7 @@ describe.sequential('E2E tests', () => {
             },
           },
         })
-        .currencyTo({ symbol: 'USDC' })
+        .currencyTo({ symbol: 'USDT' })
         .amount('5000000000')
         .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
@@ -247,10 +247,10 @@ describe.sequential('E2E tests', () => {
   describe('Auto exchange selection', () => {
     it('should build a transfer extrinsic without error for DOT to ACA', async () => {
       const hashes = await RouterBuilder()
-        .from('Polkadot')
-        .to('Astar')
-        .currencyFrom({ symbol: 'DOT' })
-        .currencyTo({ symbol: 'ACA' })
+        .from('Astar')
+        .to('Polkadot')
+        .currencyFrom({ symbol: 'ACA' })
+        .currencyTo({ symbol: 'DOT' })
         .amount('5000000000')
         .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
@@ -263,12 +263,12 @@ describe.sequential('E2E tests', () => {
 
     it('should build a transfer extrinsic without error for DOT to ACA - 2 exchanges', async () => {
       const hashes = await RouterBuilder()
-        .from('Polkadot')
+        .from('Astar')
         .exchange(['AcalaDex', 'HydrationDex'])
-        .to('Astar')
-        .currencyFrom({ symbol: 'DOT' })
-        .currencyTo({ symbol: 'ACA' })
-        .amount('5000000000')
+        .to('Polkadot')
+        .currencyFrom({ symbol: 'ACA' })
+        .currencyTo({ symbol: 'DOT' })
+        .amount('1000000000')
         .senderAddress(MOCK_ADDRESS)
         .recipientAddress(MOCK_ADDRESS)
         .slippagePct('1')

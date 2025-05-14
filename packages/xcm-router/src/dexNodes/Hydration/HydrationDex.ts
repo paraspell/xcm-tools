@@ -13,7 +13,7 @@ import BigNumber from 'bignumber.js';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type { TGetAmountOutOptions, TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
+import type { TDexConfig, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
 
@@ -182,14 +182,14 @@ class HydrationExchangeNode extends ExchangeNode {
     return BigInt(trade.amountOut.toString());
   }
 
-  async getAssets(api: ApiPromise): Promise<TRouterAsset[]> {
+  async getDexConfig(api: ApiPromise): Promise<TDexConfig> {
     const poolService = new PoolService(api);
     const tradeRouter = new TradeRouter(
       poolService,
       this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
     );
     const assets = await tradeRouter.getAllAssets();
-    return assets.map(({ symbol, id }) => {
+    const transformedAssets = assets.map(({ symbol, id }) => {
       const sdkAssets = getAssets(this.node) as TForeignAsset[];
       const asset =
         sdkAssets.find((a) => a.assetId === id) ??
@@ -200,6 +200,12 @@ class HydrationExchangeNode extends ExchangeNode {
         multiLocation: asset?.multiLocation,
       };
     });
+
+    return {
+      isOmni: true,
+      assets: transformedAssets,
+      pairs: [],
+    };
   }
 }
 

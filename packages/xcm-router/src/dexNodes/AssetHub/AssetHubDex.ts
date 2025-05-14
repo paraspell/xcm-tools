@@ -1,13 +1,13 @@
-import type { TForeignAsset } from '@paraspell/sdk-pjs';
-import { getAssets, getNativeAssetSymbol, Parents } from '@paraspell/sdk-pjs';
+import { getNativeAssetSymbol, Parents } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
-import type { TGetAmountOutOptions, TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
+import type { TDexConfig, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { getQuotedAmount } from './utils';
+import { getDexConfig } from './utils/getDexConfig';
 
 class AssetHubExchangeNode extends ExchangeNode {
   async swapCurrency(
@@ -113,14 +113,8 @@ class AssetHubExchangeNode extends ExchangeNode {
     return amountOut;
   }
 
-  async getAssets(_api: ApiPromise): Promise<TRouterAsset[]> {
-    const assets = getAssets(this.node) as TForeignAsset[];
-    const transformedAssets: TRouterAsset[] = assets.map((asset) => ({
-      symbol: asset.symbol,
-      assetId: asset.assetId,
-      multiLocation: asset.multiLocation,
-    }));
-    return Promise.resolve(transformedAssets);
+  async getDexConfig(api: ApiPromise): Promise<TDexConfig> {
+    return getDexConfig(api, this.node);
   }
 }
 

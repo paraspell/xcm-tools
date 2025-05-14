@@ -1,4 +1,3 @@
-import { findAssetById, getNativeAssets } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -6,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import type { TSwapOptions, TSwapResult } from '../../types';
 import AcalaExchangeNode from './AcalaDex';
-import { calculateAcalaSwapFee, createAcalaApiInstance } from './utils';
+import { calculateAcalaSwapFee, createAcalaApiInstance, getDexConfig } from './utils';
 
 vi.mock('@paraspell/sdk-pjs', () => ({
   getBalanceNative: vi.fn().mockResolvedValue(100n),
@@ -85,16 +84,13 @@ vi.mock('rxjs', async () => {
   };
 });
 
-vi.mock('./utils', () => {
-  return {
-    createAcalaApiInstance: vi.fn().mockResolvedValue({
-      isMockApi: true,
-    }),
-    calculateAcalaSwapFee: vi.fn().mockImplementation(() => {
-      return new BigNumber(1);
-    }),
-  };
-});
+vi.mock('./utils', () => ({
+  createAcalaApiInstance: vi.fn().mockResolvedValue({
+    isMockApi: true,
+  }),
+  calculateAcalaSwapFee: vi.fn().mockReturnValue(BigNumber(1)),
+  getDexConfig: vi.fn(),
+}));
 
 vi.mock('../../Logger/Logger', () => {
   return {
@@ -120,32 +116,17 @@ describe('AcalaExchangeNode', () => {
   });
 
   describe('getAssets', () => {
-    it('should return a list of assets from the wallet', async () => {
-      const mockApi = {} as ApiPromise;
-
-      vi.mocked(getNativeAssets).mockReturnValue([
-        { symbol: 'ACA', isNative: true },
-        { symbol: 'DOT', isNative: true },
-      ]);
-      vi.mocked(findAssetById).mockReturnValueOnce({ symbol: 'GHG', assetId: '11' });
-
-      const assets = await node.getAssets(mockApi);
-
-      expect(assets).toEqual([
-        { symbol: 'ACA' },
-        { symbol: 'DOT' },
-        { symbol: 'USDC', assetId: '11' },
-      ]);
+    it('should call getDexConfig with the api and node', async () => {
+      const mockConfig = {
+        isOmni: false,
+        assets: [],
+        pairs: [],
+      };
+      vi.mocked(getDexConfig).mockResolvedValue(mockConfig);
+      const config = await node.getDexConfig({} as ApiPromise);
+      expect(getDexConfig).toHaveBeenCalledWith({}, node.node);
+      expect(config).toEqual(mockConfig);
     });
-  });
-
-  it('should fail when asset not found', async () => {
-    const mockApi = {} as ApiPromise;
-
-    vi.mocked(getNativeAssets).mockReturnValue([]);
-    vi.mocked(findAssetById).mockReturnValueOnce(undefined);
-
-    await expect(node.getAssets(mockApi)).rejects.toThrow('Asset not found: ');
   });
 
   describe('swapCurrency', () => {

@@ -1,16 +1,11 @@
-import type { TForeignAsset, TMultiLocation } from '@paraspell/sdk-pjs';
-import {
-  getAssets as sdkGetAssets,
-  getNativeAssetSymbol,
-  isForeignAsset,
-  Parents,
-} from '@paraspell/sdk-pjs';
+import type { TMultiLocation } from '@paraspell/sdk-pjs';
+import { getNativeAssetSymbol, isForeignAsset, Parents } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SmallAmountError } from '../../errors/SmallAmountError';
-import type { TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
+import type { TSwapOptions, TSwapResult } from '../../types';
 import AssetHubExchangeNode from './AssetHubDex';
 import { getQuotedAmount } from './utils';
 
@@ -22,7 +17,6 @@ vi.mock('@paraspell/sdk-pjs', async () => {
   const actual = await vi.importActual('@paraspell/sdk-pjs');
   return {
     ...actual,
-    getAssets: vi.fn(),
     getNativeAssetSymbol: vi.fn(),
     isForeignAsset: vi.fn(),
   };
@@ -163,22 +157,6 @@ describe('AssetHubExchangeNode', () => {
       });
       expect(vi.mocked(getQuotedAmount).mock.calls[1][3]).toEqual(toDestTxFee);
       expect(vi.mocked(getQuotedAmount).mock.calls[1][4]).toBe(true);
-    });
-  });
-
-  describe('getAssets', () => {
-    it('should return mapped assets', async () => {
-      const sdkAssets: TForeignAsset[] = [
-        { symbol: 'AAA', assetId: '1' } as TForeignAsset,
-        { symbol: 'BBB', assetId: '2' } as TForeignAsset,
-      ];
-      vi.mocked(sdkGetAssets).mockReturnValue(sdkAssets);
-      const assets: TRouterAsset[] = await instance.getAssets(api);
-      expect(assets).toEqual([
-        { symbol: 'AAA', assetId: '1' },
-        { symbol: 'BBB', assetId: '2' },
-      ]);
-      expect(vi.mocked(sdkGetAssets)).toHaveBeenCalledWith('AssetHubPolkadot');
     });
   });
 

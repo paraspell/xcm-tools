@@ -1,17 +1,17 @@
 import { Amount, getCurrencyCombinations, Token } from '@crypto-dex-sdk/currency';
 import { Percent } from '@crypto-dex-sdk/math';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
-import type { TForeignAsset } from '@paraspell/sdk-pjs';
-import { getAssets, getNativeAssetSymbol, getParaId } from '@paraspell/sdk-pjs';
+import { getNativeAssetSymbol, getParaId } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type { TGetAmountOutOptions, TRouterAsset, TSwapOptions, TSwapResult } from '../../types';
+import type { TDexConfig, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
 import ExchangeNode from '../DexNode';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
+import { getDexConfig } from './utils/getDexConfig';
 
 class BifrostExchangeNode extends ExchangeNode {
   async swapCurrency(
@@ -151,22 +151,8 @@ class BifrostExchangeNode extends ExchangeNode {
     return BigInt(amountOut);
   }
 
-  async getAssets(_api: ApiPromise): Promise<TRouterAsset[]> {
-    const chainId = getParaId(this.node);
-    const tokenMap = getTokenMap(this.node, chainId);
-    const assets: TRouterAsset[] = Object.values(tokenMap).map((item) => {
-      const sdkAssets = getAssets(this.node) as TForeignAsset[];
-      const sdkAsset = sdkAssets.find(
-        (asset) => asset.symbol.toLowerCase() === item.wrapped.symbol?.toLowerCase(),
-      );
-
-      return {
-        symbol: item.wrapped.symbol ?? '',
-        assetId: sdkAsset?.assetId,
-        multiLocation: sdkAsset?.multiLocation,
-      };
-    });
-    return Promise.resolve(assets);
+  async getDexConfig(api: ApiPromise): Promise<TDexConfig> {
+    return getDexConfig(api, this.node);
   }
 }
 
