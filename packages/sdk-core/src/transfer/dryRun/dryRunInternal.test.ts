@@ -1,4 +1,4 @@
-import type { TAsset, TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 import {
   findAsset,
   getNativeAssetSymbol,
@@ -187,35 +187,5 @@ describe('dryRunInternal', () => {
       origin: { ...originOk, currency: 'ACA' },
       destination: destFail
     })
-  })
-
-  it('bypasses forwarded XCM and returns generic failure for AssetHubKusama -> Kusama', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'KSM' } as TAsset)
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('KSM')
-    const originOk = {
-      success: true,
-      fee: 900n,
-      forwardedXcms: emptyXcms,
-      destParaId: 3000
-    }
-    const api = createFakeApi(originOk)
-    const opts = createOptions(api)
-
-    const apiSpy = vi.spyOn(api, 'clone')
-
-    const res = await dryRunInternal({
-      ...opts,
-      origin: 'AssetHubKusama',
-      destination: 'Kusama',
-      currency: 'KSM' as unknown as TCurrencyInputWithAmount
-    })
-    expect(res).toEqual({
-      origin: { ...originOk, currency: 'KSM' },
-      destination: {
-        success: false,
-        failureReason: 'Unknown error occurred. Please open an issue on GitHub.'
-      }
-    })
-    expect(apiSpy).not.toHaveBeenCalled()
   })
 })

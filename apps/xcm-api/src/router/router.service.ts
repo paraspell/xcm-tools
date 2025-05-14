@@ -6,13 +6,19 @@ import {
 } from '@paraspell/sdk';
 import {
   EXCHANGE_NODES,
+  getExchangePairs,
   RouterBuilder,
+  TExchangeInput,
   TExchangeNode,
 } from '@paraspell/xcm-router';
 
 import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
-import { RouterBestAmountOutDto, RouterDto } from './dto/RouterDto.js';
+import {
+  ExchangePairsDto,
+  RouterBestAmountOutDto,
+  RouterDto,
+} from './dto/RouterDto.js';
 
 const validateNodesAndExchange = (
   from: string,
@@ -140,5 +146,9 @@ export class RouterService {
     } catch (e) {
       return handleXcmApiError(e);
     }
+  }
+
+  getExchangePairs(exchange: ExchangePairsDto['exchange']) {
+    return getExchangePairs(exchange as TExchangeInput);
   }
 }

@@ -1,11 +1,17 @@
-import { Body, Controller, Post, Req, Request } from '@nestjs/common';
+import { Body, Controller, Post, Req, Request, UsePipes } from '@nestjs/common';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
-import { RouterBestAmountOutDto, RouterDto } from './dto/RouterDto.js';
+import { ZodValidationPipe } from '../zod-validation-pipe.js';
+import {
+  ExchangePairsDto,
+  ExchangePairsSchema,
+  RouterBestAmountOutDto,
+  RouterDto,
+} from './dto/RouterDto.js';
 import { RouterService } from './router.service.js';
 
-@Controller()
+@Controller('router')
 export class RouterController {
   constructor(
     private routerService: RouterService,
@@ -31,18 +37,30 @@ export class RouterController {
     });
   }
 
-  @Post('router')
-  generateExtrinsics(@Body() queryParams: RouterDto, @Req() req: Request) {
-    this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, queryParams);
-    return this.routerService.generateExtrinsics(queryParams);
+  @Post()
+  generateExtrinsics(@Body() params: RouterDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, params);
+    return this.routerService.generateExtrinsics(params);
   }
 
-  @Post('router/best-amount-out')
+  @Post('best-amount-out')
   getBestAmountOut(
-    @Body() queryParams: RouterBestAmountOutDto,
+    @Body() params: RouterBestAmountOutDto,
     @Req() req: Request,
   ) {
-    this.trackAnalytics(EventName.GET_BEST_AMOUNT_OUT, req, queryParams);
-    return this.routerService.getBestAmountOut(queryParams);
+    this.trackAnalytics(EventName.GET_BEST_AMOUNT_OUT, req, params);
+    return this.routerService.getBestAmountOut(params);
+  }
+
+  @Post('pairs')
+  @UsePipes(new ZodValidationPipe(ExchangePairsSchema))
+  getExchangePairs(
+    @Body() { exchange }: ExchangePairsDto,
+    @Req() req: Request,
+  ) {
+    this.analyticsService.track(EventName.GET_EXCHANGE_PAIRS, req, {
+      exchange: exchange as string,
+    });
+    return this.routerService.getExchangePairs(exchange);
   }
 }

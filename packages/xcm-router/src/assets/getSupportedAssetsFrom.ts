@@ -1,9 +1,9 @@
-import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk-pjs';
-import { getAssets, normalizeSymbol } from '@paraspell/sdk-pjs';
+import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
+import { getAssets, normalizeSymbol } from '@paraspell/sdk';
 
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
 import type { TExchangeInput } from '../types';
-import { getExchangeAssets } from './getExchangeAssets';
+import { getExchangeAssets } from './getExchangeConfig';
 
 /**
  * Retrieves the list of assets supported for transfer from the origin node to the exchange node.

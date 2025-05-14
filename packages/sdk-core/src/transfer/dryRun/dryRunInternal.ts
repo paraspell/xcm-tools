@@ -44,20 +44,6 @@ export const dryRunInternal = async <TApi, TRes>(
 
   const { forwardedXcms: initialForwardedXcms, destParaId: initialDestParaId } = originDryRun
 
-  /* SPECIAL‑CASE: AssetHubKusama -> Kusama relay‑chain should bypass
-   * forwarded XCM inspection - because of Rust panic */
-  if (origin === 'AssetHubKusama' && destination === 'Kusama') {
-    return {
-      origin: originDryRun.success
-        ? { ...originDryRun, currency: getNativeAssetSymbol(origin) }
-        : originDryRun,
-      destination: {
-        success: false,
-        failureReason: 'Unknown error occurred. Please open an issue on GitHub.'
-      }
-    }
-  }
-
   let currentOrigin = origin
   let forwardedXcms: any = initialForwardedXcms
   let nextParaId: number | undefined = initialDestParaId

@@ -4,7 +4,7 @@ import type {
   TMultiLocation,
   TNativeAsset,
   TNodePolkadotKusama,
-} from '@paraspell/sdk-pjs';
+} from '@paraspell/sdk';
 import {
   findAssetById,
   findAssetByMultiLocation,
@@ -12,10 +12,10 @@ import {
   findBestMatches,
   isOverrideMultiLocationSpecifier,
   isSymbolSpecifier,
-} from '@paraspell/sdk-pjs';
+} from '@paraspell/sdk';
 
 import type { TExchangeNode, TRouterAsset } from '../types';
-import { getExchangeAssets } from './getExchangeAssets';
+import { getExchangeAssets } from './getExchangeConfig';
 
 export const getExchangeAsset = (
   exchangeBaseNode: TNodePolkadotKusama,

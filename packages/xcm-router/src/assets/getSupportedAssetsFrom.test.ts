@@ -1,14 +1,14 @@
-import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk-pjs';
-import { getAssets, normalizeSymbol } from '@paraspell/sdk-pjs';
+import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
+import { getAssets, normalizeSymbol } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeNode from '../dexNodes/DexNode';
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
 import type { TExchangeNode } from '../types';
-import { getExchangeAssets } from './getExchangeAssets';
+import { getExchangeAssets } from './getExchangeConfig';
 import { getSupportedAssetsFrom } from './getSupportedAssetsFrom';
 
-vi.mock('@paraspell/sdk-pjs', () => ({
+vi.mock('@paraspell/sdk', () => ({
   getAssets: vi.fn(),
   normalizeSymbol: vi.fn((symbol: string) => symbol.toLowerCase()),
 }));
@@ -17,7 +17,7 @@ vi.mock('../dexNodes/DexNodeFactory', () => ({
   createDexNodeInstance: vi.fn(),
 }));
 
-vi.mock('./getExchangeAssets', () => ({
+vi.mock('./getExchangeConfig', () => ({
   getExchangeAssets: vi.fn(),
 }));
 

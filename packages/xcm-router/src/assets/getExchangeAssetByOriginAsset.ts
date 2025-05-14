@@ -1,19 +1,17 @@
-import type { TAsset, TForeignAsset, TNodePolkadotKusama } from '@paraspell/sdk-pjs';
-import { deepEqual, findAsset, findBestMatches, isForeignAsset } from '@paraspell/sdk-pjs';
+import type { TAsset, TForeignAsset, TNodePolkadotKusama } from '@paraspell/sdk';
+import { deepEqual, findAsset, findBestMatches, isForeignAsset } from '@paraspell/sdk';
 
-import * as assetsMapJson from '../consts/assets.json' with { type: 'json' };
-import type { TAssetsRecord, TExchangeNode, TRouterAsset } from '../types';
-const assetsMap = assetsMapJson as TAssetsRecord;
+import type { TExchangeNode, TRouterAsset } from '../types';
+import { getExchangeAssets } from './getExchangeConfig';
 
 export const getExchangeAssetByOriginAsset = (
   exchangeBaseNode: TNodePolkadotKusama,
   exchange: TExchangeNode,
   originAsset: TAsset,
 ): TRouterAsset | undefined => {
+  const assets = getExchangeAssets(exchange);
+
   // Try searching by symbol fist, if duplicates are found, search by multi-location
-
-  const assets = assetsMap[exchange];
-
   const candidates = findBestMatches(assets, originAsset.symbol);
 
   if (candidates.length === 0) {

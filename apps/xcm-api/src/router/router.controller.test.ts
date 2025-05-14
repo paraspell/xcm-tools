@@ -1,5 +1,6 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
+import type { TMultiLocation } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -115,6 +116,39 @@ describe('RouterController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(queryParams);
+    });
+  });
+
+  describe('getExchangePairs', () => {
+    it('should call getExchangePairs service method with correct parameters and return result', () => {
+      const params = { exchange: 'AcalaDex' };
+
+      const mockResult: Awaited<ReturnType<typeof service.getExchangePairs>> = [
+        [
+          {
+            symbol: 'ASTR',
+            assetId: '0x1234567890abcdef',
+            multiLocation: {} as TMultiLocation,
+          },
+          {
+            symbol: 'GLMR',
+            assetId: '0xabcdef1234567890',
+            multiLocation: {} as TMultiLocation,
+          },
+        ],
+      ];
+
+      const spy = vi
+        .spyOn(service, 'getExchangePairs')
+        .mockReturnValue(mockResult);
+
+      const result = controller.getExchangePairs(
+        params,
+        {} as unknown as Request,
+      );
+
+      expect(result).toEqual(mockResult);
+      expect(spy).toHaveBeenCalledWith(params.exchange);
     });
   });
 });

@@ -257,8 +257,8 @@ describe('HydrationExchangeNode', () => {
     });
   });
 
-  describe('getAssets', () => {
-    it('returns a list of assets in the correct format', async () => {
+  describe('getDexConfig', () => {
+    it('returns dex config', async () => {
       const mockAssets = [
         { symbol: 'ABC', assetId: '1' },
         { symbol: 'XYZ', assetId: '2' },
@@ -272,9 +272,13 @@ describe('HydrationExchangeNode', () => {
 
       vi.mocked(getAssets).mockReturnValue(mockAssets);
 
-      const assets = await node.getAssets(api);
+      const result = await node.getDexConfig(api);
 
-      expect(assets).toEqual(mockAssets);
+      expect(result).toEqual({
+        isOmni: true,
+        assets: mockAssets,
+        pairs: [],
+      });
     });
   });
 

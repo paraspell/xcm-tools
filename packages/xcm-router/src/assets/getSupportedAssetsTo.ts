@@ -1,8 +1,8 @@
-import { getAssets, normalizeSymbol, type TNodeWithRelayChains } from '@paraspell/sdk-pjs';
+import { getAssets, normalizeSymbol, type TNodeWithRelayChains } from '@paraspell/sdk';
 
 import { EXCHANGE_NODES } from '../consts';
 import type { TExchangeInput, TRouterAsset } from '../types';
-import { getExchangeAssets } from './getExchangeAssets';
+import { getExchangeAssets } from './getExchangeConfig';
 
 /**
  * Retrieves the list of assets supported for transfer to the destination node.

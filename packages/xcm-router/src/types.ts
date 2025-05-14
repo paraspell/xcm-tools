@@ -189,7 +189,18 @@ export type TRouterAsset = {
   assetId?: string;
   multiLocation?: TMultiLocation;
 };
-export type TAssetsRecord = Record<TExchangeNode, TRouterAsset[]>;
+
+export type TPairKey = string | object;
+
+export type TPairs = TPairKey[][];
+
+export type TDexConfig = {
+  assets: TRouterAsset[];
+  isOmni: boolean;
+  pairs: TPairs;
+};
+
+export type TAssetsRecord = Record<TExchangeNode, TDexConfig>;
 
 export type TExchangeInput =
   | TExchangeNode
