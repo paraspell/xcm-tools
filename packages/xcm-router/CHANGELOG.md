@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v9.0.0...xcm-router-v10.0.0) (2025-05-14)
+
+
+### Miscellaneous Chores
+
+* **xcm-router:** Synchronize main versions
+
 ## [9.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v8.16.0...xcm-router-v9.0.0) (2025-05-13)
 
 
