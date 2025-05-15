@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v9.0.0...xcm-api-v9.1.0) (2025-05-15)
+
+
+### Features
+
+* **xcm-router:** Add asset pairs checks & expose function ✨ ([8c0d6a3](https://github.com/paraspell/xcm-tools/commit/8c0d6a3767cd54bdfed5b7a4905876fcd0bae22e))
+
 ## [9.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v8.0.0...xcm-api-v9.0.0) (2025-05-14)
 
 
