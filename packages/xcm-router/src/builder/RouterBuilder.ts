@@ -5,11 +5,12 @@ import type {
 } from '@paraspell/sdk-pjs';
 import type { PolkadotSigner } from 'polkadot-api';
 
-import { buildApiTransactions, getBestAmountOut, transfer } from '../transfer';
+import { buildApiTransactions, getBestAmountOut, getXcmFees, transfer } from '../transfer';
 import type {
   TBuildTransactionsOptions,
   TExchangeInput,
   TGetBestAmountOutOptions,
+  TRouterXcmFeeResult,
   TStatusChangeCallback,
   TTransferOptions,
 } from '../types';
@@ -165,6 +166,17 @@ export class RouterBuilderCore<T extends Partial<TTransferOptions> = object> {
     callback: TStatusChangeCallback,
   ): RouterBuilderCore<T & { onStatusChange: TStatusChangeCallback }> {
     return new RouterBuilderCore({ ...this._options, onStatusChange: callback });
+  }
+
+  /**
+   * Returns the XCM fee for origin, exchange, and destination.
+   *
+   * @returns The XCM fee result.
+   */
+  async getXcmFees(
+    this: RouterBuilderCore<TBuildTransactionsOptions>,
+  ): Promise<TRouterXcmFeeResult> {
+    return getXcmFees(this._options);
   }
 
   /**

@@ -274,6 +274,83 @@ export const XcmRouter = () => {
     }
   };
 
+  const submitGetXcmFee = async (
+    formValues: TRouterFormValuesTransformed,
+    exchange: TExchangeNode | undefined,
+    senderAddress: string,
+  ) => {
+    const {
+      useApi,
+      from,
+      to,
+      currencyFrom,
+      currencyTo,
+      amount,
+      recipientAddress,
+      evmInjectorAddress: evmSenderAddress,
+      slippagePct,
+    } = formValues;
+
+    setLoading(true);
+
+    try {
+      let result;
+      if (useApi) {
+        result = await fetchFromApi(
+          formValues,
+          '/router/xcm-fees',
+          'POST',
+          true,
+        );
+      } else {
+        result = await RouterBuilder()
+          .from(from)
+          .exchange(exchange)
+          .to(to)
+          .currencyFrom(
+            determineCurrency(
+              from
+                ? from
+                : exchange && !Array.isArray(exchange)
+                  ? createDexNodeInstance(exchange).node
+                  : undefined,
+              currencyFrom,
+            ),
+          )
+          .currencyTo(
+            determineCurrency(
+              exchange && !Array.isArray(exchange)
+                ? createDexNodeInstance(exchange).node
+                : undefined,
+              currencyTo,
+              exchange === undefined || Array.isArray(exchange),
+            ),
+          )
+          .amount(amount)
+          .senderAddress(senderAddress)
+          .recipientAddress(recipientAddress)
+          .evmSenderAddress(evmSenderAddress)
+          .slippagePct(slippagePct)
+          .onStatusChange(onStatusChange)
+          .getXcmFees();
+      }
+      setOutput(JSON.stringify(result, replaceBigInt, 2));
+      openOutputAlert();
+      closeAlert();
+      showSuccessNotification(undefined, 'Success', 'XCM fee calculated');
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e);
+        showErrorNotification(e.message);
+        setError(e);
+        openAlert();
+        setShowStepper(false);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const submitGetBestAmountOut = async (
     formValues: TRouterFormValuesTransformed,
     exchange: TExchangeNode | undefined,
@@ -355,6 +432,11 @@ export const XcmRouter = () => {
 
     if (submitType === 'getBestAmountOut') {
       await submitGetBestAmountOut(formValues, exchange);
+      return;
+    }
+
+    if (submitType === 'getXcmFee') {
+      await submitGetXcmFee(formValues, exchange, selectedAccount.address);
       return;
     }
 

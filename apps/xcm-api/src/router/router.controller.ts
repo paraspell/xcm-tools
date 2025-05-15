@@ -8,6 +8,7 @@ import {
   ExchangePairsSchema,
   RouterBestAmountOutDto,
   RouterDto,
+  RouterDtoSchema,
 } from './dto/RouterDto.js';
 import { RouterService } from './router.service.js';
 
@@ -41,6 +42,13 @@ export class RouterController {
   generateExtrinsics(@Body() params: RouterDto, @Req() req: Request) {
     this.trackAnalytics(EventName.GENERATE_ROUTER_EXTRINSICS, req, params);
     return this.routerService.generateExtrinsics(params);
+  }
+
+  @Post('xcm-fees')
+  @UsePipes(new ZodValidationPipe(RouterDtoSchema))
+  getXcmFees(@Body() params: RouterDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GET_ROUTER_XCM_FEES, req, params);
+    return this.routerService.getXcmFees(params);
   }
 
   @Post('best-amount-out')

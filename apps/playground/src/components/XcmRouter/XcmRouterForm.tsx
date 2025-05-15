@@ -22,7 +22,12 @@ import type {
 import { NODES_WITH_RELAY_CHAINS } from '@paraspell/sdk';
 import type { TExchangeInput, TExchangeNode } from '@paraspell/xcm-router';
 import { EXCHANGE_NODES } from '@paraspell/xcm-router';
-import { Icon123, IconChevronDown, IconInfoCircle } from '@tabler/icons-react';
+import {
+  Icon123,
+  IconChevronDown,
+  IconCoinFilled,
+  IconInfoCircle,
+} from '@tabler/icons-react';
 import { ethers } from 'ethers';
 import type { PolkadotSigner } from 'polkadot-api';
 import {
@@ -359,6 +364,13 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     }
   };
 
+  const onSubmitGetXcmFee = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), undefined, 'getXcmFee');
+    }
+  };
+
   return (
     <Paper p="xl" shadow="md">
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
@@ -519,6 +531,13 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
                     onClick={onSubmitInternalBestAmount}
                   >
                     Get best amount out
+                  </Menu.Item>
+
+                  <Menu.Item
+                    leftSection={<IconCoinFilled size={16} />}
+                    onClick={onSubmitGetXcmFee}
+                  >
+                    Get XCM fees
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>

@@ -53,4 +53,4 @@ export type TSubmitType =
 
 export type TEvmSubmitType = 'default' | 'approve' | 'deposit';
 
-export type TRouterSubmitType = 'default' | 'getBestAmountOut';
+export type TRouterSubmitType = 'default' | 'getBestAmountOut' | 'getXcmFee';

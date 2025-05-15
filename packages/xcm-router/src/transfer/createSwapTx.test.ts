@@ -1,6 +1,5 @@
 import type { TPapiTransaction } from '@paraspell/sdk';
-import type { TNodeAssets } from '@paraspell/sdk-pjs';
-import { type Extrinsic, getAssetsObject } from '@paraspell/sdk-pjs';
+import { type Extrinsic } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -19,10 +18,6 @@ vi.mock('./utils', () => ({
 vi.mock('../utils', () => ({
   calculateTxFee: vi.fn(),
   getTxWeight: vi.fn(),
-}));
-
-vi.mock('@paraspell/sdk-pjs', () => ({
-  getAssetsObject: vi.fn(),
 }));
 
 describe('createSwapTx', () => {
@@ -67,10 +62,6 @@ describe('createSwapTx', () => {
       amountOut: '900',
       tx: dummyExtrinsic,
     });
-
-    vi.mocked(getAssetsObject).mockReturnValue({
-      supportsDryRunApi: true,
-    } as TNodeAssets);
 
     vi.mocked(convertTxToPapi).mockResolvedValue(dummyTxPapi);
   });

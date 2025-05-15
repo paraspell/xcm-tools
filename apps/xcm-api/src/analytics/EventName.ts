@@ -34,6 +34,7 @@ export enum EventName {
   GENERATE_ETH_CALL = 'Generate ETH Call',
   GENERATE_API_KEY = 'Generate API Key',
   GENERATE_ROUTER_EXTRINSICS = 'Generate router extrinsics',
+  GET_ROUTER_XCM_FEES = 'Get router xcm fees',
   GET_BEST_AMOUNT_OUT = 'Get Best Amount Out',
   GET_EXCHANGE_PAIRS = 'Get Exchange Pairs',
   CLAIM_ASSETS = 'Claim assets',
