@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.0](https://github.com/paraspell/xcm-tools/compare/assets-v9.0.0...assets-v9.1.0) (2025-05-15)
+
+
+### Miscellaneous Chores
+
+* **main:** release main libraries ([7d1a8bd](https://github.com/paraspell/xcm-tools/commit/7d1a8bd18709af151783235794ea63efc6acfe89))
+
 ## [9.0.0](https://github.com/paraspell/xcm-tools/compare/assets-v9.0.0...assets-v9.0.0) (2025-05-14)
 
 

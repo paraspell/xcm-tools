@@ -1,5 +1,17 @@
 # Changelog
 
+## [9.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v9.0.0...sdk-v9.1.0) (2025-05-15)
+
+
+### Features
+
+* **xcm-router:** Add asset pairs checks & expose function ✨ ([8c0d6a3](https://github.com/paraspell/xcm-tools/commit/8c0d6a3767cd54bdfed5b7a4905876fcd0bae22e))
+
+
+### Miscellaneous Chores
+
+* **main:** release main libraries ([7d1a8bd](https://github.com/paraspell/xcm-tools/commit/7d1a8bd18709af151783235794ea63efc6acfe89))
+
 ## [9.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v9.0.0...sdk-v9.0.0) (2025-05-14)
 
 
