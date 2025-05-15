@@ -188,10 +188,13 @@ console.log(result.exchange)
 Below, you can find helpful functions that are exported from XCM Router to help you enhance front end usability of XCM Router.
 
 ```ts
-import {getExchangeAssets} from @paraspell/xcm-router
+import {getExchangeAssets, getExchangePairs} from @paraspell/xcm-router
 
 //Returns all assets that DEX supports
 const assets = getExchangeAssets('AssetHubPolkadotDex')
+
+//Returns asset pairs supported by selected exchanges
+getExchangePairs(exchange) // exchange can be also array of exchanges such as [“HydrationDex”, “AcalaDex”] or undefined which will return all available pairs for all dexes
 ```
 
 ## List of DEX chains, assets, and Parachains supported by XCM Router
