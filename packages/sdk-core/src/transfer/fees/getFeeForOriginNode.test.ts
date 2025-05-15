@@ -16,7 +16,8 @@ vi.mock('./padFee', () => ({
 const createApi = (fee: bigint) =>
   ({
     calculateTransactionFee: vi.fn().mockResolvedValue(fee),
-    getDryRunCall: vi.fn().mockResolvedValue({})
+    getDryRunCall: vi.fn().mockResolvedValue({}),
+    init: vi.fn()
   }) as unknown as IPolkadotApi<unknown, unknown>
 
 describe('getFeeForOriginNode', () => {

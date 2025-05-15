@@ -13,10 +13,10 @@ import { isBridgeTransfer } from './utils/isBridgeTransfer'
 import { resolveAsset } from './utils/resolveAsset'
 import { resolveFeeAsset } from './utils/resolveFeeAsset'
 import { resolveOverriddenAsset } from './utils/resolveOverriddenAsset'
+import { validateAssetSupport } from './utils/validateAssetSupport'
 import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import {
   validateAssetSpecifiers,
-  validateAssetSupport,
   validateCurrency,
   validateDestination
 } from './utils/validationUtils'

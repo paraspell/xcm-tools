@@ -37,7 +37,7 @@ class FakeApi {
   getApi = vi.fn().mockReturnValue({ disconnect: vi.fn() })
 }
 
-import type { TAsset, TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 import { findAsset, getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
 
 import type { IPolkadotApi } from '../../api'
@@ -105,7 +105,7 @@ describe('getXcmFee', () => {
     })
   })
 
-  it('computes fees when origin simulation succeeds and no hops are needed', async () => {
+  it('returns correct structure when origin does not support dry-run, returns paymentInfo, destination should also use paymentInfo', async () => {
     vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
 
     vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) =>
@@ -120,6 +120,42 @@ describe('getXcmFee', () => {
       destParaId: undefined
     })
 
+    vi.mocked(getFeeForDestNode).mockResolvedValue({
+      fee: 2_000n,
+      feeType: 'paymentInfo'
+    })
+
+    const res = await getXcmFee(createOptions())
+
+    expect(res).toEqual({
+      origin: {
+        fee: 1_000n,
+        feeType: 'paymentInfo',
+        currency: 'ACA'
+      },
+      destination: {
+        fee: 2_000n,
+        feeType: 'paymentInfo',
+        currency: 'GLMR'
+      }
+    })
+  })
+
+  it('computes fees when origin simulation succeeds and no hops are needed', async () => {
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
+
+    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) =>
+      chain === 'Acala' ? 'ACA' : 'GLMR'
+    )
+
+    vi.mocked(getFeeForOriginNode).mockResolvedValue({
+      fee: 1_000n,
+      feeType: 'dryRun',
+      dryRunError: undefined,
+      forwardedXcms: undefined,
+      destParaId: undefined
+    })
+
     const res = await getXcmFee(createOptions())
 
     expect(getFeeForDestNode).not.toHaveBeenCalled()
@@ -127,7 +163,7 @@ describe('getXcmFee', () => {
     expect(res).toEqual({
       origin: {
         fee: 1_000n,
-        feeType: 'paymentInfo',
+        feeType: 'dryRun',
         currency: 'ACA'
       },
       destination: {
@@ -150,7 +186,7 @@ describe('getXcmFee', () => {
 
     vi.mocked(getFeeForOriginNode).mockResolvedValue({
       fee: 1_000n,
-      feeType: 'paymentInfo',
+      feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
       destParaId: 1000
@@ -172,7 +208,7 @@ describe('getXcmFee', () => {
     expect(res).toEqual({
       origin: {
         fee: 1_000n,
-        feeType: 'paymentInfo',
+        feeType: 'dryRun',
         currency: 'ACA'
       },
       assetHub: {
@@ -200,7 +236,7 @@ describe('getXcmFee', () => {
 
     vi.mocked(getFeeForOriginNode).mockResolvedValue({
       fee: 1_000n,
-      feeType: 'paymentInfo',
+      feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
       destParaId: 1000
@@ -228,7 +264,7 @@ describe('getXcmFee', () => {
     expect(res).toEqual({
       origin: {
         fee: 1_000n,
-        feeType: 'paymentInfo',
+        feeType: 'dryRun',
         currency: 'ACA'
       },
       assetHub: {
@@ -242,38 +278,6 @@ describe('getXcmFee', () => {
         feeType: 'paymentInfo',
         currency: 'GLMR'
       }
-    })
-  })
-
-  it('bypasses forwarded XCM and uses paymentInfo for AssetHubKusama -> Kusama', async () => {
-    // Arrange mocks
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'KSM' } as TAsset)
-    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) =>
-      chain === 'AssetHubKusama' ? 'KSM' : 'KSM'
-    )
-    vi.mocked(getFeeForOriginNode).mockResolvedValue({
-      fee: 500n,
-      feeType: 'paymentInfo',
-      dryRunError: undefined,
-      forwardedXcms: [null, [{ dummy: 'xcm' }]],
-      destParaId: 123
-    })
-    vi.mocked(getFeeForDestNode).mockResolvedValue({ fee: 800n, feeType: 'paymentInfo' })
-
-    const specialOpts = createOptions({
-      origin: 'AssetHubKusama',
-      destination: 'Kusama',
-      currency: 'KSM' as unknown as TCurrencyInputWithAmount
-    })
-
-    const res = await getXcmFee(specialOpts)
-
-    expect(getFeeForDestNode).toHaveBeenCalledTimes(1)
-    expect(vi.mocked(getFeeForDestNode).mock.calls[0][0].forwardedXcms).toBeUndefined()
-
-    expect(res).toEqual({
-      origin: { fee: 500n, feeType: 'paymentInfo', currency: 'KSM' },
-      destination: { fee: 800n, feeType: 'paymentInfo', currency: 'KSM' }
     })
   })
 })

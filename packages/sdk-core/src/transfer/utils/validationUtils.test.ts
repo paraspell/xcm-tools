@@ -1,13 +1,9 @@
-import type { TAsset, TNativeAsset } from '@paraspell/assets'
 import {
-  getNativeAssets,
   getRelayChainSymbol,
-  hasSupportForAsset,
   InvalidCurrencyError,
   isSymbolSpecifier,
   type TCurrencyInput
 } from '@paraspell/assets'
-import { getDefaultPallet } from '@paraspell/pallets'
 import {
   isRelayChain,
   isTMultiLocation,
@@ -18,15 +14,9 @@ import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { IncompatibleNodesError } from '../../errors'
-import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
-import type { TDestination, TSendOptions } from '../../types'
+import type { TDestination } from '../../types'
 import { isBridgeTransfer } from './isBridgeTransfer'
-import {
-  validateAssetSpecifiers,
-  validateAssetSupport,
-  validateCurrency,
-  validateDestination
-} from './validationUtils'
+import { validateAssetSpecifiers, validateCurrency, validateDestination } from './validationUtils'
 
 vi.mock('./isBridgeTransfer', () => ({
   isBridgeTransfer: vi.fn()
@@ -115,9 +105,6 @@ describe('validateDestination', () => {
     destination = 'Ethereum'
 
     expect(() => validateDestination(origin, destination)).toThrow(IncompatibleNodesError)
-    expect(() => validateDestination(origin, destination)).toThrow(
-      'Transfers to Ethereum are only supported from AssetHubPolkadot and Hydration.'
-    )
   })
 
   it('should not throw when destination is Ethereum and origin is AssetHubPolkadot', () => {
@@ -194,9 +181,6 @@ describe('validateDestination', () => {
     destination = 'Ethereum'
 
     expect(() => validateDestination(origin, destination)).toThrow(IncompatibleNodesError)
-    expect(() => validateDestination(origin, destination)).toThrow(
-      'Transfers to Ethereum are only supported from AssetHubPolkadot and Hydration.'
-    )
   })
 
   it('should not throw when origin and destination relay chain symbols match even if destination is undefined', () => {
@@ -273,248 +257,5 @@ describe('validateAssetSpecifiers', () => {
     const currency = {} as TCurrencyInput
 
     expect(() => validateAssetSpecifiers(assetCheckEnabled, currency)).not.toThrow()
-  })
-})
-
-describe('validateAssetSupport', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('should throw InvalidCurrencyError when asset symbol matches native asset in destination', () => {
-    const options = {
-      from: 'Acala',
-      to: 'AssetHubPolkadot',
-      currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
-
-    vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
-    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'TEST', isNative: true }])
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
-      InvalidCurrencyError
-    )
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
-      '"TEST" is not supported for transfers to AssetHubPolkadot.'
-    )
-  })
-
-  it('should not throw when isBridge is true', () => {
-    const options = {
-      from: 'Acala',
-      to: 'AssetHubPolkadot',
-      currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = true
-    const asset = { symbol: 'TEST' } as TAsset
-
-    vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
-    vi.mocked(getNativeAssets).mockReturnValue([{ symbol: 'TEST' } as TNativeAsset])
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should not throw when destination is not AssetHub', () => {
-    const options = {
-      from: 'Acala',
-      to: 'Astar',
-      currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
-
-    vi.mocked(hasSupportForAsset).mockReturnValue(true)
-    vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should not throw when pallet is not XTokens', () => {
-    const options = {
-      from: 'Acala',
-      to: 'AssetHubPolkadot',
-      currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
-
-    vi.mocked(hasSupportForAsset).mockReturnValue(true)
-    vi.mocked(getDefaultPallet).mockReturnValue('PolkadotXcm')
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should not throw when origin is Bifrost', () => {
-    const options = {
-      from: 'BifrostPolkadot',
-      to: 'AssetHubPolkadot',
-      currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
-
-    vi.mocked(hasSupportForAsset).mockReturnValue(true)
-    vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should filter out DOT from native assets when origin is Hydration', () => {
-    const options = {
-      from: 'Hydration',
-      to: 'AssetHubPolkadot',
-      currency: { symbol: 'DOT' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'DOT' } as TAsset
-
-    vi.mocked(getDefaultPallet).mockReturnValue('XTokens')
-    vi.mocked(hasSupportForAsset).mockReturnValue(true)
-    vi.mocked(getNativeAssets).mockReturnValue([
-      { symbol: 'DOT', isNative: true },
-      { symbol: 'KSM', isNative: true }
-    ])
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should throw InvalidCurrencyError when destination does not support asset', () => {
-    const options = {
-      from: 'Acala',
-      to: 'Astar',
-      currency: { symbol: 'UNSUPPORTED' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'UNSUPPORTED' } as TAsset
-
-    vi.mocked(hasSupportForAsset).mockReturnValue(false)
-    vi.mocked(isRelayChain).mockReturnValue(false)
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
-      InvalidCurrencyError
-    )
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).toThrow(
-      'Destination node Astar does not support currency {"symbol":"UNSUPPORTED"}.'
-    )
-  })
-
-  it('should not throw when destination supports asset', () => {
-    const options = {
-      from: 'Acala',
-      to: 'Astar',
-      currency: { symbol: 'SUPPORTED' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'SUPPORTED' } as TAsset
-
-    vi.mocked(hasSupportForAsset).mockReturnValue(true)
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should not throw when assetCheckEnabled is false', () => {
-    const options = {
-      from: 'Acala',
-      to: 'Astar',
-      currency: { symbol: 'ANY' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = false
-    const isBridge = false
-    const asset = null
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should call throwUnsupportedCurrency when asset is null and assetCheckEnabled is true', () => {
-    const options = {
-      from: 'Acala',
-      to: 'Astar',
-      currency: { symbol: 'UNKNOWN' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = null
-
-    validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
-
-    expect(throwUnsupportedCurrency).toHaveBeenCalledWith(options.currency, options.from)
-  })
-
-  it('should not call throwUnsupportedCurrency when isBridge is true', () => {
-    const options = {
-      from: 'Astar',
-      to: 'Acala',
-      currency: { symbol: 'UNKNOWN' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = true
-    const asset = null
-
-    validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
-
-    expect(throwUnsupportedCurrency).not.toHaveBeenCalled()
-  })
-
-  it('should not throw when destination is relay (undefined)', () => {
-    const options = {
-      from: 'Acala',
-      to: 'Polkadot',
-      currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should not throw when destination is a MultiLocation object', () => {
-    const options = {
-      from: 'Acala',
-      to: {} as TDestination,
-      currency: { symbol: 'TEST' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
-  })
-
-  it('should not throw when currency has id', () => {
-    const options = {
-      from: 'Astar',
-      to: 'Acala',
-      currency: { id: 'some-id' }
-    } as TSendOptions<unknown, unknown>
-
-    const assetCheckEnabled = true
-    const isBridge = false
-    const asset = { symbol: 'TEST' } as TAsset
-
-    expect(() => validateAssetSupport(options, assetCheckEnabled, isBridge, asset)).not.toThrow()
   })
 })

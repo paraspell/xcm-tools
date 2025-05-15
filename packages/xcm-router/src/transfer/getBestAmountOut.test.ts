@@ -102,7 +102,7 @@ describe('getBestAmountOut', () => {
 
     const result = await getBestAmountOut(options);
 
-    expect(selectBestExchangeAmountOut).toHaveBeenCalledWith(options);
+    expect(selectBestExchangeAmountOut).toHaveBeenCalledWith(options, undefined);
     expect(createDexNodeInstance).not.toHaveBeenCalled();
     expect(resolveAssets).toHaveBeenCalledWith(fakeDex, options);
     expect(createApiSpy).toHaveBeenCalled();

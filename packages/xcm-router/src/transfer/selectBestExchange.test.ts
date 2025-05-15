@@ -51,22 +51,30 @@ describe('selectBestExchange', () => {
   it('resolves with the “best” exchange and forwards the fee to swapCurrency', async () => {
     const dex = dummyDex();
 
-    vi.mocked(selectBestExchangeCommon).mockImplementation(async (_options, candidateFn) => {
-      await candidateFn(
-        dex,
-        baseOptions.currencyFrom as never,
-        baseOptions.currencyTo as never,
-        _options,
-      );
+    vi.mocked(selectBestExchangeCommon).mockImplementation(
+      async (_options, _originApi, candidateFn) => {
+        await candidateFn(
+          dex,
+          baseOptions.currencyFrom as never,
+          baseOptions.currencyTo as never,
+          _options,
+        );
 
-      return dex;
-    });
+        return dex;
+      },
+    );
 
     const spy = vi.spyOn(dex, 'swapCurrency');
 
-    const result = await selectBestExchange(baseOptions);
+    const originApi = undefined;
 
-    expect(selectBestExchangeCommon).toHaveBeenCalledWith(baseOptions, expect.any(Function));
+    const result = await selectBestExchange(baseOptions, originApi);
+
+    expect(selectBestExchangeCommon).toHaveBeenCalledWith(
+      baseOptions,
+      originApi,
+      expect.any(Function),
+    );
 
     expect(result).toBe(dex);
 
@@ -89,6 +97,8 @@ describe('selectBestExchange', () => {
 
     vi.mocked(selectBestExchangeCommon).mockRejectedValue(err);
 
-    await expect(selectBestExchange(failingOptions)).rejects.toThrow(err);
+    const originApi = undefined;
+
+    await expect(selectBestExchange(failingOptions, originApi)).rejects.toThrow(err);
   });
 });

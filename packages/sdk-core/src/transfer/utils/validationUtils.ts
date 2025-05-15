@@ -1,14 +1,10 @@
-import type { TAsset } from '@paraspell/assets'
 import {
-  getNativeAssets,
   getRelayChainSymbol,
-  hasSupportForAsset,
   InvalidCurrencyError,
   isSymbolSpecifier,
   isTMultiAsset,
   type TCurrencyInput
 } from '@paraspell/assets'
-import { getDefaultPallet } from '@paraspell/pallets'
 import {
   isRelayChain,
   isTMultiLocation,
@@ -16,8 +12,7 @@ import {
 } from '@paraspell/sdk-common'
 
 import { IncompatibleNodesError } from '../../errors'
-import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
-import type { TDestination, TSendOptions } from '../../types'
+import type { TDestination } from '../../types'
 import { isBridgeTransfer } from './isBridgeTransfer'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
@@ -57,15 +52,11 @@ export const validateDestination = (
     )
   }
 
-  if (
-    destination === 'Ethereum' &&
-    origin !== 'AssetHubPolkadot' &&
-    origin !== 'Hydration' &&
-    origin !== 'BifrostPolkadot' &&
-    origin !== 'Moonbeam'
-  ) {
+  const allowedChainsToEthereum = ['AssetHubPolkadot', 'Hydration', 'BifrostPolkadot', 'Moonbeam']
+
+  if (destination === 'Ethereum' && !allowedChainsToEthereum.includes(origin)) {
     throw new IncompatibleNodesError(
-      'Transfers to Ethereum are only supported from AssetHubPolkadot and Hydration.'
+      `Transfers to Ethereum are only supported from: ${allowedChainsToEthereum.join(', ')}`
     )
   }
 
@@ -93,55 +84,5 @@ export const validateAssetSpecifiers = (assetCheckEnabled: boolean, currency: TC
     throw new InvalidCurrencyError(
       'Asset ID is not supported when asset check is disabled. Please use normal symbol instead'
     )
-  }
-}
-
-export const validateAssetSupport = <TApi, TRes>(
-  { from: origin, to: destination, currency }: TSendOptions<TApi, TRes>,
-  assetCheckEnabled: boolean,
-  isBridge: boolean,
-  asset: TAsset | null
-) => {
-  const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
-  const isMultiLocationDestination = typeof destination === 'object'
-  const isDestAssetHub = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
-  const pallet = getDefaultPallet(origin)
-  const isBifrost = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
-
-  if (!isBridge && isDestAssetHub && pallet === 'XTokens' && !isBifrost) {
-    let nativeAssets = getNativeAssets(destination)
-
-    if (origin === 'Hydration') {
-      nativeAssets = nativeAssets.filter(nativeAsset => nativeAsset.symbol !== 'DOT')
-    }
-
-    if (
-      'symbol' in currency &&
-      nativeAssets.some(
-        nativeAsset => nativeAsset.symbol.toLowerCase() === asset?.symbol?.toLowerCase()
-      )
-    ) {
-      throw new InvalidCurrencyError(
-        `${JSON.stringify(asset?.symbol)} is not supported for transfers to ${destination}.`
-      )
-    }
-  }
-
-  if (
-    !isBridge &&
-    !isRelayDestination &&
-    !isMultiLocationDestination &&
-    asset?.symbol !== undefined &&
-    assetCheckEnabled &&
-    !('id' in currency) &&
-    !hasSupportForAsset(destination, asset.symbol)
-  ) {
-    throw new InvalidCurrencyError(
-      `Destination node ${destination} does not support currency ${JSON.stringify(currency)}.`
-    )
-  }
-
-  if (!isBridge && asset === null && assetCheckEnabled) {
-    throwUnsupportedCurrency(currency, origin)
   }
 }

@@ -1,5 +1,5 @@
-import type { TAsset, TNodePolkadotKusama } from '@paraspell/sdk-pjs';
-import { findAsset, hasSupportForAsset } from '@paraspell/sdk-pjs';
+import type { TAsset, TNodePolkadotKusama } from '@paraspell/sdk';
+import { findAsset, hasSupportForAsset } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -10,9 +10,10 @@ import Logger from '../Logger/Logger';
 import type { TCommonTransferOptions, TExchangeNode } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
-vi.mock('@paraspell/sdk-pjs', () => ({
+vi.mock('@paraspell/sdk', () => ({
   findAsset: vi.fn(),
   hasSupportForAsset: vi.fn(),
+  determineRelayChain: vi.fn(),
 }));
 
 vi.mock('../assets', () => ({
@@ -41,7 +42,7 @@ describe('selectBestExchangeCommon', () => {
   it('throws error if assetFromOrigin is not found', async () => {
     vi.mocked(findAsset).mockReturnValue(null);
     await expect(
-      selectBestExchangeCommon(baseOptions, () => Promise.resolve(new BigNumber(0))),
+      selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(new BigNumber(0))),
     ).rejects.toThrow(
       `Currency from ${JSON.stringify(baseOptions.currencyFrom)} not found in ${baseOptions.from}.`,
     );
@@ -51,9 +52,9 @@ describe('selectBestExchangeCommon', () => {
     const options = { ...baseOptions, currencyTo: { id: 'some-id' } };
     vi.mocked(findAsset).mockReturnValue({ symbol: 'AAA' } as TAsset);
     await expect(
-      selectBestExchangeCommon(options, () => Promise.resolve(new BigNumber(0))),
+      selectBestExchangeCommon(options, undefined, () => Promise.resolve(new BigNumber(0))),
     ).rejects.toThrow(
-      'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or MultiLocation.',
+      'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or multi-location.',
     );
   });
 
@@ -76,7 +77,9 @@ describe('selectBestExchangeCommon', () => {
       return Promise.resolve(BigNumber(0));
     };
 
-    const bestExchange = await selectBestExchangeCommon(baseOptions, computeAmountOut);
+    const originApi = undefined;
+
+    const bestExchange = await selectBestExchangeCommon(baseOptions, originApi, computeAmountOut);
     expect(bestExchange).toBe(fakeDex2);
   });
 
@@ -89,7 +92,7 @@ describe('selectBestExchangeCommon', () => {
     vi.mocked(createDexNodeInstance).mockReturnValue(fakeDex);
 
     await expect(
-      selectBestExchangeCommon(baseOptions, () => Promise.resolve(BigNumber(0))),
+      selectBestExchangeCommon(baseOptions, undefined, () => Promise.resolve(BigNumber(0))),
     ).rejects.toThrow();
   });
 
@@ -114,6 +117,8 @@ describe('selectBestExchangeCommon', () => {
       return Promise.resolve(new BigNumber(0));
     };
 
-    await expect(selectBestExchangeCommon(baseOptions, computeAmountOut)).rejects.toThrow();
+    await expect(
+      selectBestExchangeCommon(baseOptions, undefined, computeAmountOut),
+    ).rejects.toThrow();
   });
 });

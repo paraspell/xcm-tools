@@ -1,10 +1,14 @@
+import type { TPapiApi } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 
 import type { TGetBestAmountOutOptions } from '../types';
 import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 
-export const selectBestExchangeAmountOut = async (options: TGetBestAmountOutOptions) =>
-  selectBestExchangeCommon(options, async (dex, assetFromExchange, assetTo, options) => {
+export const selectBestExchangeAmountOut = async (
+  options: TGetBestAmountOutOptions,
+  originApi: TPapiApi | undefined,
+) =>
+  selectBestExchangeCommon(options, originApi, async (dex, assetFromExchange, assetTo, options) => {
     const api = await dex.createApiInstance();
     const bestAmountOut = await dex.getAmountOut(api, {
       assetFrom: assetFromExchange,

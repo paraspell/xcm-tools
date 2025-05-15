@@ -1,7 +1,7 @@
 import type { PolkadotSigner } from 'polkadot-api';
 import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
-import { buildApiTransactions, transfer } from '../transfer';
+import { buildApiTransactions, getXcmFees, transfer } from '../transfer';
 import type { TTransferOptions } from '../types';
 import { RouterBuilder } from './RouterBuilder';
 
@@ -9,6 +9,7 @@ vi.mock('../transfer', () => ({
   buildApiTransactions: vi.fn(),
   transfer: vi.fn(),
   getBestAmountOut: vi.fn(),
+  getXcmFees: vi.fn(),
 }));
 
 export const transferParams: TTransferOptions = {
@@ -165,5 +166,31 @@ describe('Builder', () => {
       .getBestAmountOut();
 
     expect(getBestAmountOutSpy).toHaveBeenCalledWith(transferParams);
+  });
+
+  it('should get xcm fees', async () => {
+    await RouterBuilder()
+      .from(from)
+      .exchange(exchange)
+      .to(to)
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .senderAddress(senderAddress)
+      .recipientAddress(recipientAddress)
+      .slippagePct(slippagePct)
+      .getXcmFees();
+
+    expect(getXcmFees).toHaveBeenCalledWith({
+      from,
+      exchange,
+      to,
+      currencyFrom,
+      currencyTo,
+      amount,
+      senderAddress,
+      recipientAddress,
+      slippagePct,
+    });
   });
 });

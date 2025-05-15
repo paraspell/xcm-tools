@@ -6,6 +6,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { TMultiLocation, TNode } from '@paraspell/sdk';
 import { InvalidCurrencyError } from '@paraspell/sdk';
+import type { TRouterXcmFeeResult } from '@paraspell/xcm-router';
 import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -52,6 +53,7 @@ const builderMock = {
   slippagePct: vi.fn().mockReturnThis(),
   buildTransactions: vi.fn().mockResolvedValue(serializedExtrinsics),
   getBestAmountOut: vi.fn().mockResolvedValue('1000000000000000000'),
+  getXcmFees: vi.fn().mockResolvedValue({} as TRouterXcmFeeResult),
 };
 
 vi.mock('@paraspell/xcm-router', async () => {
@@ -240,6 +242,118 @@ describe('RouterService', () => {
       );
 
       await expect(service.generateExtrinsics(options)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+  });
+
+  describe('getXcmFees', () => {
+    it('should generate xcm fees ', async () => {
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMock as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      const result = await service.getXcmFees(options);
+
+      expect(result).toEqual({} as TRouterXcmFeeResult);
+      expect(builderMock.from).toHaveBeenCalledWith('Astar');
+      expect(builderMock.exchange).toHaveBeenCalledWith('AcalaDex');
+      expect(builderMock.to).toHaveBeenCalledWith('Moonbeam');
+    });
+
+    it('should throw BadRequestException for invalid from node', async () => {
+      const modifiedOptions: RouterDto = {
+        ...options,
+        from: invalidNode as TNode,
+      };
+
+      await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(
+        BadRequestException,
+      );
+
+      expect(builderMock.from).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid to node', async () => {
+      const modifiedOptions: RouterDto = {
+        ...options,
+        to: invalidNode as TNode,
+      };
+
+      await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(builderMock.from).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid exchange node', async () => {
+      const modifiedOptions: RouterDto = {
+        ...options,
+        exchange: invalidNode as TNode,
+      };
+
+      await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(builderMock.from).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid injector address', async () => {
+      const modifiedOptions: RouterDto = {
+        ...options,
+        senderAddress: invalidNode,
+      };
+
+      await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(
+        BadRequestException,
+      );
+
+      expect(builderMock.from).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException for invalid recipient address', async () => {
+      const modifiedOptions: RouterDto = {
+        ...options,
+        recipientAddress: invalidNode,
+      };
+
+      await expect(service.getXcmFees(modifiedOptions)).rejects.toThrow(
+        BadRequestException,
+      );
+
+      expect(builderMock.from).not.toHaveBeenCalled();
+    });
+
+    it('should throw InternalServerError when uknown error occures in the spell router', async () => {
+      const builderMockWithError = {
+        ...builderMock,
+        getXcmFees: vi.fn().mockImplementation(() => {
+          throw new Error('Invalid currency');
+        }),
+      };
+
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMockWithError as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      await expect(service.getXcmFees(options)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
+
+    it('should throw InvalidCurrencyError when InvalidCurrencyError error occures in the spell router', async () => {
+      const builderMockWithError = {
+        ...builderMock,
+        getXcmFees: vi.fn().mockImplementation(() => {
+          throw new InvalidCurrencyError('Invalid currency');
+        }),
+      };
+
+      vi.mocked(RouterBuilder).mockReturnValue(
+        builderMockWithError as unknown as ReturnType<typeof RouterBuilder>,
+      );
+
+      await expect(service.getXcmFees(options)).rejects.toThrow(
         BadRequestException,
       );
     });

@@ -1,6 +1,7 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { TMultiLocation } from '@paraspell/sdk';
+import type { TRouterXcmFeeResult } from '@paraspell/xcm-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -89,6 +90,31 @@ describe('RouterController', () => {
     });
   });
 
+  describe('getXcmFees', () => {
+    it('should call getXcmFees service method with correct parameters and return result', async () => {
+      const queryParams: RouterDto = {
+        from: 'Astar',
+        exchange: 'AcalaDex',
+        to: 'Moonbeam',
+        currencyFrom: { symbol: 'ASTR' },
+        currencyTo: { symbol: 'GLMR' },
+        amount: '1000000000000000000',
+        senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+        slippagePct: '1',
+      };
+
+      const mockResult = {} as TRouterXcmFeeResult;
+
+      const spy = vi.spyOn(service, 'getXcmFees').mockResolvedValue(mockResult);
+      const result = await controller.getXcmFees(
+        queryParams,
+        {} as unknown as Request,
+      );
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(queryParams);
+    });
+  });
   describe('getBestAmountOut', () => {
     it('should call getBestAmount out service method with correct parameters and return result', async () => {
       const queryParams: RouterBestAmountOutDto = {

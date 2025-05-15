@@ -7,8 +7,11 @@ import type { ApiPromise } from '@polkadot/api';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { transferParams } from '../../builder/RouterBuilder.test';
-import type { TAdditionalTransferOptions } from '../../types';
-import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from './utils';
+import type {
+  TBuildFromExchangeTxOptions,
+  TBuildToExchangeTxOptions,
+  TExchangeInfo,
+} from '../../types';
 import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
 
 const builderMock = {
@@ -17,6 +20,7 @@ const builderMock = {
   amount: vi.fn().mockReturnThis(),
   currency: vi.fn().mockReturnThis(),
   address: vi.fn().mockReturnThis(),
+  senderAddress: vi.fn().mockReturnThis(),
   build: vi.fn().mockReturnValue({
     signAsync: vi.fn().mockResolvedValue('signedTx'),
     send: vi.fn().mockResolvedValue('sentTx'),
@@ -24,7 +28,7 @@ const builderMock = {
 };
 
 vi.mock('@paraspell/sdk', async () => {
-  const actual = await vi.importActual('@paraspell/sdk-pjs');
+  const actual = await vi.importActual('@paraspell/sdk');
   return {
     ...actual,
     createApiInstanceForNode: vi.fn().mockResolvedValue(undefined),
@@ -58,7 +62,7 @@ describe('transfer utils', () => {
         },
         exchange: {
           baseNode: 'Acala',
-        } as TAdditionalTransferOptions['exchange'],
+        } as TExchangeInfo,
       };
 
       const extrinsic = buildToExchangeExtrinsic(options);
@@ -76,7 +80,7 @@ describe('transfer utils', () => {
         },
         exchange: {
           baseNode: 'Acala',
-        } as TAdditionalTransferOptions['exchange'],
+        } as TExchangeInfo,
       };
 
       const extrinsic = buildToExchangeExtrinsic(options);
@@ -96,7 +100,7 @@ describe('transfer utils', () => {
         },
         exchange: {
           baseNode: 'Acala',
-        } as TAdditionalTransferOptions['exchange'],
+        } as TExchangeInfo,
         amount: customAmount,
       };
 
@@ -120,7 +124,7 @@ describe('transfer utils', () => {
         },
         exchange: {
           baseNode: 'Acala',
-        } as TAdditionalTransferOptions['exchange'],
+        } as TExchangeInfo,
       };
 
       const extrinsic = buildToExchangeExtrinsic(options);
