@@ -194,7 +194,7 @@ import {getExchangeAssets, getExchangePairs} from @paraspell/xcm-router
 const assets = getExchangeAssets('AssetHubPolkadotDex')
 
 //Returns asset pairs supported by selected exchanges
-getExchangePairs(exchange) // exchange can be also array of exchanges such as [“HydrationDex”, “AcalaDex”] or undefined which will return all available pairs for all dexes
+const pairs = getExchangePairs(exchange) // exchange can be also array of exchanges such as [“HydrationDex”, “AcalaDex”] or undefined which will return all available pairs for all dexes
 ```
 
 ## List of DEX chains, assets, and Parachains supported by XCM Router
