@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v9.1.1...sdk-core-v9.1.2) (2025-05-16)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix fee calculation for Manta destination 🔧 ([6291f02](https://github.com/paraspell/xcm-tools/commit/6291f02982dc74fe33d4a0b29889a5fb8fb1cf4f))
+
 ## [9.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v9.1.0...sdk-core-v9.1.1) (2025-05-16)
 
 
