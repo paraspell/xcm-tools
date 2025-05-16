@@ -28,22 +28,26 @@ describe('selectBestExchangeAmountOut', () => {
     } as unknown as ExchangeNode;
 
     const mockedSelectBestExchangeCommon = vi.mocked(selectBestExchangeCommon);
-    mockedSelectBestExchangeCommon.mockImplementation(async (options, computeAmountOut) => {
-      const result = await computeAmountOut(
-        fakeDex,
-        'assetFrom' as unknown as TRouterAsset,
-        'assetTo' as unknown as TRouterAsset,
-        options,
-      );
-      expect(result instanceof BigNumber).toBe(true);
-      expect(result.toString()).toBe('300');
-      return fakeDex;
-    });
+    mockedSelectBestExchangeCommon.mockImplementation(
+      async (options, _originApi, computeAmountOut) => {
+        const result = await computeAmountOut(
+          fakeDex,
+          'assetFrom' as unknown as TRouterAsset,
+          'assetTo' as unknown as TRouterAsset,
+          options,
+        );
+        expect(result instanceof BigNumber).toBe(true);
+        expect(result.toString()).toBe('300');
+        return fakeDex;
+      },
+    );
 
     const createApiSpy = vi.spyOn(fakeDex, 'createApiInstance');
     const getAmountOutSpy = vi.spyOn(fakeDex, 'getAmountOut');
 
-    const bestExchange = await selectBestExchangeAmountOut(mockOptions);
+    const originApi = undefined;
+
+    const bestExchange = await selectBestExchangeAmountOut(mockOptions, originApi);
     expect(bestExchange).toBe(fakeDex);
     expect(createApiSpy).toHaveBeenCalledTimes(1);
     expect(getAmountOutSpy).toHaveBeenCalledWith('fakeApi', {
@@ -57,6 +61,6 @@ describe('selectBestExchangeAmountOut', () => {
     const testError = new Error('Test error');
     const mockedSelectBestExchangeCommon = vi.mocked(selectBestExchangeCommon);
     mockedSelectBestExchangeCommon.mockRejectedValue(testError);
-    await expect(selectBestExchangeAmountOut(mockOptions)).rejects.toThrow('Test error');
+    await expect(selectBestExchangeAmountOut(mockOptions, undefined)).rejects.toThrow('Test error');
   });
 });

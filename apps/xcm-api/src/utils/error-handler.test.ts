@@ -13,6 +13,7 @@ import {
   NodeNotSupportedError,
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
+  TransferToAhNotSupported,
 } from '@paraspell/sdk';
 import { describe, expect, it } from 'vitest';
 
@@ -30,6 +31,7 @@ describe('handleXcmApiError', () => {
     new ScenarioNotSupportedError('Acala', 'ParaToPara'),
     new BridgeHaltedError(),
     new DryRunFailedError('Failed'),
+    new TransferToAhNotSupported(),
   ];
 
   it('should throw BadRequestException for known SDK errors', () => {

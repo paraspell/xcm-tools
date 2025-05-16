@@ -11,7 +11,7 @@ import type {
 import type { Extrinsic, TPjsApi } from '@paraspell/sdk-pjs';
 import type { PolkadotSigner } from 'polkadot-api';
 
-import { type EXCHANGE_NODES } from './consts';
+import type { EXCHANGE_NODES } from '../consts';
 
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 
@@ -236,4 +236,26 @@ export type TExecuteRouterPlanOptions = {
   evmSigner?: PolkadotSigner;
   evmSenderAddress?: string;
   onStatusChange?: TStatusChangeCallback;
+};
+
+export type TPreparedExtrinsics = {
+  toExchangeTx?: TPapiTransaction;
+  swapTx: TPapiTransaction;
+  toDestTx?: TPapiTransaction;
+  amountOut: bigint;
+};
+
+export type TBuildToExchangeTxOptions = {
+  origin: TOriginInfo;
+  exchange: TExchangeInfo;
+  senderAddress: string;
+  evmSenderAddress?: string;
+  amount: string;
+};
+
+export type TBuildFromExchangeTxOptions = {
+  exchange: TExchangeInfo;
+  destination: TDestinationInfo;
+  amount: string;
+  senderAddress: string;
 };

@@ -52,52 +52,10 @@ export const getXcmFee = async <TApi, TRes>({
     disableFallback
   })
 
-  /* SPECIAL‑CASE: AssetHubKusama -> Kusama relay‑chain should bypass
-   * forwarded XCM inspection and go straight to paymentInfo for the
-   * destination fee - because of Rust panic */
-  if (origin === 'AssetHubKusama' && destination === 'Kusama') {
-    api.setDisconnectAllowed(true)
-    await api.disconnect()
-
-    const destApi = api.clone()
-    try {
-      await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
-      destApi.setDisconnectAllowed(false)
-
-      const destFee = await getFeeForDestNode({
-        api: destApi,
-        forwardedXcms: undefined,
-        origin,
-        destination,
-        currency,
-        address,
-        senderAddress,
-        disableFallback
-      })
-
-      return {
-        origin: {
-          ...(originFee && { fee: originFee }),
-          ...(originFeeType && { feeType: originFeeType }),
-          currency: getNativeAssetSymbol(origin),
-          ...(originDryRunError && { dryRunError: originDryRunError })
-        } as TXcmFeeDetail,
-        destination: {
-          ...(destFee.fee && { fee: destFee.fee }),
-          ...(destFee.feeType && { feeType: destFee.feeType }),
-          currency: getNativeAssetSymbol(destination)
-        } as TXcmFeeDetail
-      }
-    } finally {
-      destApi.setDisconnectAllowed(true)
-      await destApi.disconnect()
-    }
-  }
-
   api.setDisconnectAllowed(true)
   await api.disconnect()
 
-  if (originDryRunError) {
+  if (originDryRunError || originFeeType === 'paymentInfo') {
     const destApi = api.clone()
 
     try {
@@ -120,8 +78,8 @@ export const getXcmFee = async <TApi, TRes>({
           ...(originFee && { fee: originFee }),
           ...(originFeeType && { feeType: originFeeType }),
           currency: getNativeAssetSymbol(origin),
-          dryRunError: originDryRunError
-        },
+          ...(originDryRunError && { dryRunError: originDryRunError })
+        } as TXcmFeeDetail,
         destination: {
           ...(destFeeRes.fee && { fee: destFeeRes.fee }),
           ...(destFeeRes.feeType && { feeType: destFeeRes.feeType }),

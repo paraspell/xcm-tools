@@ -1,4 +1,3 @@
-import type { TAsset } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 
 import type ExchangeNode from '../dexNodes/DexNode';
@@ -7,12 +6,13 @@ import { calculateTxFee } from '../utils';
 import { buildFromExchangeExtrinsic, convertTxToPapi } from './utils';
 
 export const calculateFromExchangeFee = async (options: TBuildTransactionsOptionsModified) => {
-  const { exchange, destination, amount, feeCalcAddress } = options;
+  const { exchange, destination, amount, feeCalcAddress, senderAddress } = options;
   if (!destination || destination.node === exchange.baseNode) return BigNumber(0);
   const tx = await buildFromExchangeExtrinsic({
     exchange,
     destination,
     amount,
+    senderAddress,
   });
   return calculateTxFee(tx, feeCalcAddress);
 };
@@ -27,8 +27,8 @@ export const createSwapTx = async (
     options.exchange.api,
     {
       ...options,
-      assetFrom: options.exchange.assetFrom as TAsset,
-      assetTo: options.exchange.assetTo as TAsset,
+      assetFrom: options.exchange.assetFrom,
+      assetTo: options.exchange.assetTo,
     },
     toDestTxFee,
   );

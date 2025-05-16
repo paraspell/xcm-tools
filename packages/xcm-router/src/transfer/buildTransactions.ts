@@ -1,7 +1,6 @@
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { TBuildTransactionsOptionsModified, TRouterPlan } from '../types';
-import { createSwapTx } from './createSwapTx';
-import { buildFromExchangeExtrinsic, buildToExchangeExtrinsic } from './utils';
+import { prepareExtrinsics } from './prepareExtrinsics';
 
 export const buildTransactions = async (
   dex: ExchangeNode,
@@ -9,26 +8,9 @@ export const buildTransactions = async (
 ): Promise<TRouterPlan> => {
   const { origin, exchange, destination } = options;
 
+  const { toExchangeTx, swapTx, toDestTx, amountOut } = await prepareExtrinsics(dex, options);
+
   const transactions: TRouterPlan = [];
-
-  const toExchangeTx =
-    origin && origin.node !== exchange.baseNode
-      ? await buildToExchangeExtrinsic({
-          ...options,
-          origin,
-        })
-      : undefined;
-
-  const { tx: swapTx, amountOut } = await createSwapTx(dex, options);
-
-  const toDestTx =
-    destination && destination.node !== exchange.baseNode
-      ? await buildFromExchangeExtrinsic({
-          exchange,
-          destination,
-          amount: amountOut,
-        })
-      : undefined;
 
   if (origin && toExchangeTx) {
     transactions.push({

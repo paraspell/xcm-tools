@@ -1,9 +1,9 @@
-import { Builder, isForeignAsset } from '@paraspell/sdk';
+import { Builder, isForeignAsset, isNodeEvm } from '@paraspell/sdk';
 import type { TAsset, TCurrencyInput, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers-v6';
 
 import { FALLBACK_FEE_CALC_ADDRESS } from '../../consts';
-import type { TDestinationInfo, TExchangeInfo, TOriginInfo } from '../../types';
+import type { TBuildFromExchangeTxOptions, TBuildToExchangeTxOptions } from '../../types';
 
 export const getCurrencySelection = (
   node: TNodeDotKsmWithRelayChains,
@@ -18,17 +18,11 @@ export const getCurrencySelection = (
   return { symbol: asset.symbol };
 };
 
-export type TBuildToExchangeTxOptions = {
-  origin: TOriginInfo;
-  exchange: TExchangeInfo;
-  senderAddress: string;
-  amount: string;
-};
-
-export const buildToExchangeExtrinsic = ({
+const createToExchangeBuilder = ({
   origin: { api, node: from, assetFrom },
   exchange: { baseNode },
   senderAddress,
+  evmSenderAddress,
   amount,
 }: TBuildToExchangeTxOptions) =>
   Builder(api)
@@ -39,36 +33,43 @@ export const buildToExchangeExtrinsic = ({
       amount,
     })
     .address(senderAddress)
-    .build();
+    .senderAddress(isNodeEvm(from) ? (evmSenderAddress as string) : senderAddress);
 
-export type TBuildFromExchangeTxOptions = {
-  exchange: TExchangeInfo;
-  destination: TDestinationInfo;
-  amount: string;
-};
+export const buildToExchangeExtrinsic = (options: TBuildToExchangeTxOptions) =>
+  createToExchangeBuilder(options).build();
 
-export const buildFromExchangeExtrinsic = ({
+export const getToExchangeFee = (options: TBuildToExchangeTxOptions) =>
+  createToExchangeBuilder(options).getXcmFee();
+
+export const createFromExchangeBuilder = ({
   exchange: { apiPapi, baseNode, assetTo },
-  destination,
+  destination: { node, address },
   amount,
+  senderAddress,
 }: TBuildFromExchangeTxOptions) =>
   Builder(apiPapi)
     .from(baseNode)
-    .to(destination.node)
+    .to(node)
     .currency({
       ...getCurrencySelection(baseNode, assetTo as TAsset),
       amount,
     })
-    .address(destination.address)
-    .build();
+    .address(address)
+    .senderAddress(senderAddress);
+
+export const buildFromExchangeExtrinsic = (options: TBuildFromExchangeTxOptions) =>
+  createFromExchangeBuilder(options).build();
+
+export const getFromExchangeFee = (options: TBuildFromExchangeTxOptions) =>
+  createFromExchangeBuilder(options).getXcmFee();
 
 export const determineFeeCalcAddress = (
-  injectorAddress: string,
+  senderAddress: string,
   recipientAddress?: string,
 ): string => {
-  if (!ethers.isAddress(injectorAddress)) {
+  if (!ethers.isAddress(senderAddress)) {
     // Use wallet address for fee calculation
-    return injectorAddress;
+    return senderAddress;
   }
 
   if (recipientAddress && !ethers.isAddress(recipientAddress)) {

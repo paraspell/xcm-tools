@@ -20,7 +20,7 @@ import { createMultiAsset } from '../../pallets/xcmPallet/utils'
 import type { TSendOptions } from '../../types'
 import { getNode } from '../../utils'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
-import { validateAssetSupport } from './validationUtils'
+import { validateAssetSupport } from './validateAssetSupport'
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
   createMultiAsset: vi.fn()
@@ -47,7 +47,7 @@ vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class extends Error {}
 }))
 
-vi.mock('./validationUtils', () => ({
+vi.mock('./validateAssetSupport', () => ({
   validateAssetSupport: vi.fn()
 }))
 

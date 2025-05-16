@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { hasDryRunSupport } from '@paraspell/assets'
 
+import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TFeeType, TGetFeeForOriginNodeOptions } from '../../types'
 import { padFee } from './padFee'
 
@@ -19,6 +20,8 @@ export const getFeeForOriginNode = async <TApi, TRes>({
   forwardedXcms?: any
   destParaId?: number
 }> => {
+  await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
+
   if (!hasDryRunSupport(origin)) {
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
     return { fee: padFee(rawFee, origin, destination, 'origin'), feeType: 'paymentInfo' }

@@ -395,8 +395,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     )
 
     const isSuccess = result.success && result.value.execution_result.success
+
     if (!isSuccess) {
-      const failureReason = result.value.execution_result.value.error.value.value.type
+      const errorValue = result?.value?.execution_result?.value?.error?.value
+      const failureReason = errorValue?.value?.type ?? errorValue?.type ?? 'Unknown'
       return Promise.resolve({ success: false, failureReason })
     }
 

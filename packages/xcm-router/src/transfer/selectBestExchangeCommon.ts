@@ -1,5 +1,6 @@
-import { findAsset, hasSupportForAsset, type TNode } from '@paraspell/sdk-pjs';
+import { determineRelayChain, findAsset, hasSupportForAsset, type TNode } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
+import type { PolkadotClient } from 'polkadot-api';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../assets';
 import { EXCHANGE_NODES } from '../consts';
@@ -8,11 +9,13 @@ import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
 import Logger from '../Logger/Logger';
 import type { TGetBestAmountOutOptions, TRouterAsset } from '../types';
 import { type TCommonTransferOptions } from '../types';
+import { canBuildToExchangeTx } from './canBuildToExchangeTx';
 
 export const selectBestExchangeCommon = async <
   T extends TCommonTransferOptions | TGetBestAmountOutOptions,
 >(
   options: T,
+  originApi: PolkadotClient | undefined,
   computeAmountOut: (
     dex: ExchangeNode,
     assetFromExchange: TRouterAsset,
@@ -32,7 +35,7 @@ export const selectBestExchangeCommon = async <
 
   if ('id' in currencyTo) {
     throw new Error(
-      'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or MultiLocation.',
+      'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or multi-location.',
     );
   }
 
@@ -71,9 +74,19 @@ export const selectBestExchangeCommon = async <
       continue;
     }
 
+    if (from && determineRelayChain(from) !== determineRelayChain(dex.node)) {
+      continue;
+    }
+
     triedAnyExchange = true;
 
     Logger.log(`Checking ${exchangeNode}...`);
+
+    const res = await canBuildToExchangeTx(options, dex.node, originApi, assetFromOrigin);
+    if (!res.success) {
+      errors.set(dex.node, res.error);
+      continue;
+    }
 
     try {
       const amountOut = await computeAmountOut(dex, assetFromExchange, assetTo, options);

@@ -12,6 +12,7 @@ import {
   NodeNotSupportedError,
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
+  TransferToAhNotSupported,
 } from '@paraspell/sdk';
 import { InvalidAddressError } from '@paraspell/sdk';
 
@@ -28,6 +29,7 @@ const sdkErrors = [
   DuplicateAssetIdError,
   BridgeHaltedError,
   DryRunFailedError,
+  TransferToAhNotSupported,
 ];
 
 type SdkErrorConstructors = (typeof sdkErrors)[number];

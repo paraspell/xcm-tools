@@ -16,10 +16,12 @@ export const prepareTransformedOptions = async <
 ): Promise<{ dex: ExchangeNode; options: T & TAdditionalTransferOptions }> => {
   const { from, to, exchange, senderAddress, recipientAddress } = options;
 
+  const originApi = from ? await createApiInstanceForNode(from) : undefined;
+
   const dex =
     exchange !== undefined && !Array.isArray(exchange)
       ? createDexNodeInstance(exchange)
-      : await selectBestExchange(options);
+      : await selectBestExchange(options, originApi);
 
   const { assetFromOrigin, assetFromExchange, assetTo } = resolveAssets(dex, options);
 
@@ -29,7 +31,7 @@ export const prepareTransformedOptions = async <
     );
   }
 
-  const originSpecified = from && from !== dex.node;
+  const originSpecified = from && originApi && from !== dex.node;
   const destinationSpecified = to && to !== dex.node;
 
   return {
@@ -39,7 +41,7 @@ export const prepareTransformedOptions = async <
       origin:
         originSpecified && assetFromOrigin
           ? {
-              api: await createApiInstanceForNode(from),
+              api: originApi,
               node: from,
               assetFrom: assetFromOrigin,
             }

@@ -13,10 +13,10 @@ import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
 import { isBridgeTransfer } from './utils/isBridgeTransfer'
 import { resolveAsset } from './utils/resolveAsset'
 import { resolveFeeAsset } from './utils/resolveFeeAsset'
+import { validateAssetSupport } from './utils/validateAssetSupport'
 import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import {
   validateAssetSpecifiers,
-  validateAssetSupport,
   validateCurrency,
   validateDestination
 } from './utils/validationUtils'
@@ -63,7 +63,10 @@ vi.mock('./utils/resolveFeeAsset', () => ({
 vi.mock('./utils/validationUtils', () => ({
   validateCurrency: vi.fn(),
   validateDestination: vi.fn(),
-  validateAssetSpecifiers: vi.fn(),
+  validateAssetSpecifiers: vi.fn()
+}))
+
+vi.mock('./utils/validateAssetSupport', () => ({
   validateAssetSupport: vi.fn()
 }))
 
