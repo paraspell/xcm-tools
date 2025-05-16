@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.1.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v9.1.0...xcm-router-v9.1.1) (2025-05-16)
+
+
+### Bug Fixes
+
+* **xcm-router:** Fix exchange assets export 🪲 ([d5d0e9b](https://github.com/paraspell/xcm-tools/commit/d5d0e9b02c8fe48c6f7d1b7fa5a888a04e56fe27))
+
 ## [9.1.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v9.0.0...xcm-router-v9.1.0) (2025-05-15)
 
 
