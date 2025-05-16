@@ -1,4 +1,5 @@
 export {
+  getExchangeAssets,
   getExchangeConfig,
   getExchangePairs,
   getSupportedAssetsFrom,

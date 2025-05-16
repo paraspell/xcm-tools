@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { getSupportedAssetsFrom, getSupportedAssetsTo } from './assets';
+import {
+  getExchangeAssets,
+  getExchangeConfig,
+  getExchangePairs,
+  getSupportedAssetsFrom,
+  getSupportedAssetsTo,
+} from './assets';
 import * as RouterBuilder from './builder/RouterBuilder';
 import * as Consts from './consts';
 import * as indexExports from './index';
@@ -50,8 +56,11 @@ describe('Index re-exports', () => {
     });
   });
 
-  it('should re-export getSupportedAssetsFrom and getSupportedAssetsTo from assets', () => {
+  it('should specific functions from assets', () => {
     expect(moduleExports.getSupportedAssetsFrom).toBe(getSupportedAssetsFrom);
     expect(moduleExports.getSupportedAssetsTo).toBe(getSupportedAssetsTo);
+    expect(moduleExports.getExchangeAssets).toBe(getExchangeAssets);
+    expect(moduleExports.getExchangeConfig).toBe(getExchangeConfig);
+    expect(moduleExports.getExchangePairs).toBe(getExchangePairs);
   });
 });
