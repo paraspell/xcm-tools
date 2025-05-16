@@ -2,10 +2,10 @@ import { findAsset, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/as
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import * as BuilderModule from '../../builder'
-import type { TDryRunNodeResultInternal } from '../../types'
+import { DOT_MULTILOCATION } from '../../constants'
+import type { TDryRunNodeResultInternal, TGetFeeForDestNodeOptions } from '../../types'
 import { getFeeForDestNode } from './getFeeForDestNode'
-import { padFee } from './padFee'
+import { getReverseTxFee } from './getReverseTxFee'
 
 vi.mock('@paraspell/assets', () => ({
   hasDryRunSupport: vi.fn(),
@@ -13,49 +13,28 @@ vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class InvalidCurrencyError extends Error {}
 }))
 
-vi.mock('../../builder', () => ({
-  Builder: vi.fn()
+vi.mock('./getReverseTxFee', () => ({
+  getReverseTxFee: vi.fn()
 }))
 
-vi.mock('../../constants', () => ({
-  FEE_PADDING_FACTOR: 150n
-}))
-
-vi.mock('./padFee', () => ({
-  padFee: vi.fn()
-}))
-
-const createApi = (fee: bigint, dryRunRes?: TDryRunNodeResultInternal) =>
+const createApi = (dryRunRes?: TDryRunNodeResultInternal) =>
   ({
-    calculateTransactionFee: vi.fn().mockResolvedValue(fee),
     getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {})
   }) as unknown as IPolkadotApi<unknown, unknown>
 
 beforeEach(() => {
   vi.resetAllMocks()
-  vi.mocked(padFee).mockReturnValue(130n)
   vi.mocked(findAsset).mockReturnValue({ symbol: 'UNIT' } as never)
 })
 
 describe('getFeeForDestNode', () => {
-  it('returns a padded “paymentInfo” fee when dry-run is **not** supported', async () => {
+  it('returns a padded “paymentInfo” fee when dry-run is not supported', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(false)
+    vi.mocked(getReverseTxFee).mockResolvedValue(130n)
 
-    /* stub out the Builder chain */
-    const flippedTx = { tx: 'flip' }
-    const mockBuilderInstance = {
-      from: vi.fn().mockReturnThis(),
-      to: vi.fn().mockReturnThis(),
-      address: vi.fn().mockReturnThis(),
-      senderAddress: vi.fn().mockReturnThis(),
-      currency: vi.fn().mockReturnThis(),
-      build: vi.fn().mockResolvedValue(flippedTx)
-    } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
-    vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
+    const api = createApi()
 
-    const api = createApi(100n)
-
-    const res = await getFeeForDestNode({
+    const options = {
       api,
       forwardedXcms: undefined,
       origin: 'Moonbeam',
@@ -64,10 +43,69 @@ describe('getFeeForDestNode', () => {
       senderAddress: 'sender',
       currency: { symbol: 'UNIT', amount: '1' },
       disableFallback: false
+    } as TGetFeeForDestNodeOptions<unknown, unknown>
+
+    const res = await getFeeForDestNode(options)
+
+    expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
+    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo' })
+  })
+
+  it('returns a padded “paymentInfo” fee when dry-run is not supported and origin asset has multi-location', async () => {
+    vi.mocked(hasDryRunSupport).mockReturnValue(false)
+    vi.mocked(getReverseTxFee).mockResolvedValue(130n)
+    vi.mocked(findAsset).mockReturnValue({
+      symbol: 'UNIT',
+      multiLocation: DOT_MULTILOCATION
     })
 
+    const api = createApi()
+
+    const options = {
+      api,
+      forwardedXcms: undefined,
+      origin: 'Moonbeam',
+      destination: 'Astar',
+      address: 'dest',
+      senderAddress: 'sender',
+      currency: { symbol: 'UNIT', amount: '1' },
+      disableFallback: false
+    } as TGetFeeForDestNodeOptions<unknown, unknown>
+
+    const res = await getFeeForDestNode(options)
+
+    expect(getReverseTxFee).toHaveBeenCalledWith(options, { multilocation: DOT_MULTILOCATION })
     expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo' })
-    expect(padFee).toHaveBeenCalledWith(100n, 'Moonbeam', 'Astar', 'destination')
+  })
+
+  it('returns a padded “paymentInfo” fee when dry-run is not supported, and fails with ML', async () => {
+    vi.mocked(hasDryRunSupport).mockReturnValue(false)
+    vi.mocked(getReverseTxFee).mockRejectedValueOnce(new InvalidCurrencyError(''))
+    vi.mocked(getReverseTxFee).mockResolvedValueOnce(130n)
+    vi.mocked(findAsset).mockReturnValue({
+      symbol: 'UNIT',
+      multiLocation: DOT_MULTILOCATION
+    })
+
+    const api = createApi()
+
+    const options = {
+      api,
+      forwardedXcms: undefined,
+      origin: 'Moonbeam',
+      destination: 'Astar',
+      address: 'dest',
+      senderAddress: 'sender',
+      currency: { symbol: 'FOO', amount: '1' },
+      disableFallback: false
+    } as TGetFeeForDestNodeOptions<unknown, unknown>
+
+    const res = await getFeeForDestNode(options)
+
+    expect(getReverseTxFee).toHaveBeenCalledWith(options, { multilocation: DOT_MULTILOCATION })
+    expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
+
+    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo' })
   })
 
   it('returns a “dryRun” fee (plus forwarded XCMs) when dry-run succeeds', async () => {
@@ -78,7 +116,7 @@ describe('getFeeForDestNode', () => {
       forwardedXcms: [[{ x: 1 }]],
       destParaId: 3320
     }
-    const api = createApi(0n, dryRunObj)
+    const api = createApi(dryRunObj)
 
     const res = await getFeeForDestNode({
       api,
@@ -97,25 +135,15 @@ describe('getFeeForDestNode', () => {
       forwardedXcms: [[{ x: 1 }]],
       destParaId: 3320
     })
-    expect(padFee).not.toHaveBeenCalled()
   })
 
   it('falls back to “paymentInfo” and returns `dryRunError` when dry-run fails', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
-    const api = createApi(100n, { success: false, failureReason: 'fail' })
+    const api = createApi({ success: false, failureReason: 'fail' })
 
-    const flippedTx = { tx: 'flip' }
-    const mockBuilderInstance = {
-      from: vi.fn().mockReturnThis(),
-      to: vi.fn().mockReturnThis(),
-      address: vi.fn().mockReturnThis(),
-      senderAddress: vi.fn().mockReturnThis(),
-      currency: vi.fn().mockReturnThis(),
-      build: vi.fn().mockResolvedValue(flippedTx)
-    } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
-    vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
+    vi.mocked(getReverseTxFee).mockResolvedValue(130n)
 
-    const res = await getFeeForDestNode({
+    const options = {
       api,
       forwardedXcms: [[{}], [{}]],
       origin: 'Moonbeam',
@@ -124,10 +152,13 @@ describe('getFeeForDestNode', () => {
       senderAddress: 'sender',
       currency: { symbol: 'UNIT', amount: '1' },
       disableFallback: false
-    })
+    } as TGetFeeForDestNodeOptions<unknown, unknown>
 
+    const res = await getFeeForDestNode(options)
+
+    expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
     expect(res).toEqual({
-      fee: 130n, // padded fallback
+      fee: 130n,
       feeType: 'paymentInfo',
       dryRunError: 'fail'
     })
@@ -135,7 +166,7 @@ describe('getFeeForDestNode', () => {
 
   it('returns **error variant** (only `dryRunError`) when fallback is disabled', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
-    const api = createApi(0n, { success: false, failureReason: 'boom' })
+    const api = createApi({ success: false, failureReason: 'boom' })
 
     const res = await getFeeForDestNode({
       api,
@@ -149,32 +180,13 @@ describe('getFeeForDestNode', () => {
     })
 
     expect(res).toEqual({ dryRunError: 'boom' })
-    // fee MUST be absent in the error variant
     expect('fee' in res).toBe(false)
-  })
-
-  it('throws InvalidCurrencyError for multi-asset currencies', async () => {
-    vi.mocked(hasDryRunSupport).mockReturnValue(false)
-    const api = createApi(1n)
-
-    await expect(
-      getFeeForDestNode({
-        api,
-        forwardedXcms: undefined,
-        origin: 'Moonbeam',
-        destination: 'Astar',
-        address: 'dest',
-        senderAddress: 'sender',
-        currency: { multiasset: { id: 1 }, amount: '1' } as never,
-        disableFallback: false
-      })
-    ).rejects.toBeInstanceOf(InvalidCurrencyError)
   })
 
   it('throws InvalidCurrencyError when asset lookup fails', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(findAsset).mockReturnValue(null)
-    const api = createApi(1n)
+    const api = createApi()
 
     await expect(
       getFeeForDestNode({

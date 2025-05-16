@@ -5,13 +5,12 @@ import { findAsset, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/as
 import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { isRelayChain, Parents } from '@paraspell/sdk-common'
 
-import { Builder } from '../../builder'
 import { DOT_MULTILOCATION } from '../../constants'
 import { getParaId } from '../../nodes/config'
 import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
 import type { TFeeType } from '../../types'
 import { type TGetFeeForDestNodeOptions, Version } from '../../types'
-import { padFee } from './padFee'
+import { getReverseTxFee } from './getReverseTxFee'
 
 export const createOriginLocation = (
   origin: TNodeDotKsmWithRelayChains,
@@ -31,46 +30,35 @@ export const createOriginLocation = (
   }
 }
 
-export const getFeeForDestNode = async <TApi, TRes>({
-  api,
-  forwardedXcms,
-  origin,
-  destination,
-  address,
-  senderAddress,
-  currency,
-  disableFallback
-}: TGetFeeForDestNodeOptions<TApi, TRes>): Promise<{
+export const getFeeForDestNode = async <TApi, TRes>(
+  options: TGetFeeForDestNodeOptions<TApi, TRes>
+): Promise<{
   fee?: bigint
   feeType?: TFeeType
   forwardedXcms?: any
   destParaId?: number
   dryRunError?: string
 }> => {
-  const calcPaymentInfoFee = async (): Promise<bigint> => {
-    if ('multiasset' in currency) {
-      throw new InvalidCurrencyError('Multi-assets are not yet supported for XCM fee calculation.')
-    }
+  const { api, origin, destination, currency, forwardedXcms, disableFallback } = options
 
+  const calcPaymentInfoFee = async (): Promise<bigint> => {
     const originAsset = findAsset(origin, currency, destination)
     if (!originAsset) {
       throw new InvalidCurrencyError(`Currency ${JSON.stringify(currency)} not found in ${origin}`)
     }
 
-    const currencyInput = originAsset.multiLocation
-      ? { multilocation: originAsset.multiLocation }
-      : { symbol: originAsset.symbol }
+    if (originAsset.multiLocation) {
+      try {
+        return await getReverseTxFee(options, { multilocation: originAsset.multiLocation })
+      } catch (err: any) {
+        if (err instanceof InvalidCurrencyError) {
+          return await getReverseTxFee(options, { symbol: originAsset.symbol })
+        }
+        throw err
+      }
+    }
 
-    const tx = await Builder(api)
-      .from(destination)
-      .to(origin)
-      .address(senderAddress)
-      .senderAddress(address)
-      .currency({ ...currencyInput, amount: currency.amount })
-      .build()
-
-    const rawFee = await api.calculateTransactionFee(tx, address)
-    return padFee(rawFee, origin, destination, 'destination')
+    return await getReverseTxFee(options, { symbol: originAsset.symbol })
   }
 
   if (!hasDryRunSupport(destination) || !forwardedXcms) {
