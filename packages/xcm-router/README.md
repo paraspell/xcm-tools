@@ -171,9 +171,9 @@ To retrieve exchange amount, that you receive for your desired asset pair you ca
 
 ```ts
 const result = await RouterBuilder()
-      .from('Astar') //Optional parameter
-      .to('Acala') //Optional parameter
-      .exchange('Hydration') //Optional parameter
+      .from('Astar') //Optional parameter based on scenario
+      .to('Acala') //Optional parameter based on scenario
+      .exchange('Hydration') //Optional parameter based on scenario
       .currencyFrom({ symbol: 'ASTR' }) 
       .currencyTo({ symbol: 'DOT' })
       .amount(10000000000n)
@@ -181,6 +181,24 @@ const result = await RouterBuilder()
 
 console.log(result.amountOut)
 console.log(result.exchange)
+```
+
+## Get Router fees
+
+You can retrieve fees for all operations XCM Router performs. Keep in mind, that they are not as accurate for transfer from exchange to destination as the currency that is planned to be routed after the swap is not yet available on that account (Thus it uses payment info method instead of dryrun in that scenario).
+
+```ts
+const fees = await RouterBuilder()
+      .from(from) //Optional parameter based on scenario
+      .exchange(exchange) //Optional parameter based on scenario
+      .to(to) //Optional parameter based on scenario
+      .currencyFrom(currencyFrom)
+      .currencyTo(currencyTo)
+      .amount(amount)
+      .senderAddress(senderAddress)
+      .recipientAddress(recipientAddress)
+      .slippagePct(slippagePct)
+      .getXcmFees();
 ```
 
 ## Helpful functions
