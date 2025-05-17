@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v9.1.2...xcm-router-v9.2.0) (2025-05-17)
+
+
+### Features
+
+* **xcm-router:** Add router XCM fees query 🪄 ([4b31830](https://github.com/paraspell/xcm-tools/commit/4b31830bbd36d91f49ca49101629185f529cc096))
+
 ## [9.1.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v9.1.1...xcm-router-v9.1.2) (2025-05-16)
 
 
