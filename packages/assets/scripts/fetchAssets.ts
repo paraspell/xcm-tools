@@ -40,6 +40,7 @@ import { getNodeProviders, getParaId } from '../../sdk-core/src'
 import { getRelayChainSymbol, getRelayChainType } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
+import { fetchMantaOtherAssets } from './fetchMantaAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -357,6 +358,10 @@ const fetchOtherAssets = async (
     otherAssets = await fetchAjunaOtherAssets(api, query)
   }
 
+  if (node === 'Manta') {
+    otherAssets = await fetchMantaOtherAssets(api, query)
+  }
+
   return otherAssets.length > 0 ? otherAssets : fetchOtherAssetsDefault(node, api, query)
 }
 
@@ -377,12 +382,14 @@ const patchParents = (node: TNodePolkadotKusama, asset: TForeignAsset): TForeign
   return asset
 }
 
+const DEFAULT_SS58_PREFIX = 42
+
 const fetchNodeAssets = async (
   node: TNodePolkadotKusama,
   api: ApiPromise,
   query: string[]
 ): Promise<Partial<TNodeAssets>> => {
-  let ss58Prefix = 42
+  let ss58Prefix = DEFAULT_SS58_PREFIX
   try {
     ss58Prefix = +api.consts.system.ss58Prefix.toString()
   } catch (e) {
@@ -538,7 +545,7 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
           relayChainAssetSymbol: getRelayChainSymbol(nodeName),
           nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
           isEVM: newData?.isEVM ?? false,
-          ss58Prefix: newData?.ss58Prefix ?? undefined,
+          ss58Prefix: newData?.ss58Prefix ?? DEFAULT_SS58_PREFIX,
           supportsDryRunApi: newData?.supportsDryRunApi ?? false,
           supportsXcmPaymentApi: newData?.supportsXcmPaymentApi ?? false,
           nativeAssets: combinedNativeAssets,

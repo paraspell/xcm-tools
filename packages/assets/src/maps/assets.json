@@ -9600,7 +9600,15 @@
         "symbol": "MANTA",
         "isNative": true,
         "decimals": 18,
-        "existentialDeposit": "100000000000000000"
+        "existentialDeposit": "100000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "Parachain": 2104
+            }
+          }
+        }
       }
     ],
     "otherAssets": [
@@ -9608,43 +9616,158 @@
         "assetId": "21",
         "symbol": "BUSD.aca.eth",
         "decimals": 18,
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x02909e773276aa63475edf8a3cc7e07b97b971de610000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "26",
         "symbol": "WBTC.aca.eth",
         "decimals": 8,
-        "existentialDeposit": "35"
+        "existentialDeposit": "35",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x02c80084af223c8b598536178d9361dc55bfda68180000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "35",
         "symbol": "WBNB.MRL.BSC",
         "decimals": 18,
-        "existentialDeposit": "40000000000000"
+        "existentialDeposit": "40000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xe3b841c3f96e647e6dc01b468d6d0ad3562a9eeb"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "16",
         "symbol": "SHIB",
         "decimals": 18,
-        "existentialDeposit": "1000000000000000000000"
+        "existentialDeposit": "1000000000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x02af6997a70feb868df863d5380c3ab93da4297edc0000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "29",
         "symbol": "WBNB",
         "decimals": 18,
-        "existentialDeposit": "40000000000000"
+        "existentialDeposit": "40000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x02b05122241f63a69a6435de54981b743707fd17d50000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "23",
         "symbol": "DAI.aca.eth",
         "decimals": 18,
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x0254a37a01cd75b616d63e0ab665bffdb0143c52ae0000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "9",
         "symbol": "USDT",
         "decimals": 6,
-        "existentialDeposit": "1000"
+        "existentialDeposit": "1000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "37",
@@ -9656,49 +9779,170 @@
         "assetId": "31",
         "symbol": "DAI.MRL.ETH",
         "decimals": 18,
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x06e605775296e851ff43b4daa541bb0984e9d6fd"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "18",
         "symbol": "LINK",
         "decimals": 18,
-        "existentialDeposit": "2000000000000000"
+        "existentialDeposit": "2000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x02604cae74cdc395a8824557d422fccf8db6809a2f0000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "20",
         "symbol": "ARB.aca.eth",
         "decimals": 18,
-        "existentialDeposit": "9000000000000000"
+        "existentialDeposit": "9000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x02ef5e517a21d33467e34b3ccd64114a82ba87319a0000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "8",
         "symbol": "DOT",
         "decimals": 10,
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
       },
       {
         "assetId": "30",
         "symbol": "BNC",
         "decimals": 12,
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "33",
         "symbol": "USDC.MRL.ETH",
         "decimals": 6,
-        "existentialDeposit": "10000"
+        "existentialDeposit": "10000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x931715fee2d06333043d11f658c8ce934ac61d0c"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "10",
         "symbol": "GLMR",
         "decimals": 18,
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "12",
         "symbol": "LDOT",
         "decimals": 10,
-        "existentialDeposit": "500000000"
+        "existentialDeposit": "500000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0003000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "36",
@@ -9710,7 +9954,23 @@
         "assetId": "17",
         "symbol": "UNI",
         "decimals": 18,
-        "existentialDeposit": "2000000000000000"
+        "existentialDeposit": "2000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x0213fe490489204abde3265bfd81179e6ddd2020c30000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "38",
@@ -9728,73 +9988,271 @@
         "assetId": "25",
         "symbol": "MATIC.aca.poly",
         "decimals": 18,
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x0219eba3efa7d0e02956678c5f3c63c46beda2d7d80000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "13",
         "symbol": "ARB.aca.arb",
         "decimals": 18,
-        "existentialDeposit": "9000000000000000"
+        "existentialDeposit": "9000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x02d53e4ba478cca5080c47435769ff82f41e5e4cd00000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "22",
         "symbol": "USDT.aca.eth",
         "decimals": 6,
-        "existentialDeposit": "10000"
+        "existentialDeposit": "10000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x02492f4e41bd378d6dbd92ab645ac4020b01784db30000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "28",
         "symbol": "MATIC.aca.eth",
         "decimals": 18,
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x0200d5d8523cd0bf39a777be3ed930e22d4a533bbc0000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "34",
         "symbol": "TBTC.MRL.ETH",
         "decimals": 18,
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xecd65e4b89495ae63b4f11ca872a23680a7c419c"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "24",
         "symbol": "USDC.aca.eth",
         "decimals": 6,
-        "existentialDeposit": "10000"
+        "existentialDeposit": "10000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x0207df96d1341a7d16ba1ad431e2c847d978bc2bce0000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "19",
         "symbol": "APE",
         "decimals": 18,
-        "existentialDeposit": "3000000000000000"
+        "existentialDeposit": "3000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x02f4c723e61709d90f89939c1852f516e373d418a80000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "32",
         "symbol": "WETH.MRL.ETH",
         "decimals": 18,
-        "existentialDeposit": "5555555555555"
+        "existentialDeposit": "5555555555555",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xab3f0245b83feb11d15aaffefd7ad465a59817ed"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "27",
         "symbol": "WETH.aca.eth",
         "decimals": 18,
-        "existentialDeposit": "5555555555555"
+        "existentialDeposit": "5555555555555",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x025a4d6acdc4e3e5ab15717f407afe957f7a2425780000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "15",
         "symbol": "LDO",
         "decimals": 18,
-        "existentialDeposit": "5000000000000000"
+        "existentialDeposit": "5000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x02d1729649ee6d5e3740ee2f9254c4226aabd0dc5b0000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "11",
         "symbol": "ACA",
         "decimals": 12,
-        "existentialDeposit": "100000000000"
+        "existentialDeposit": "100000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "14",
         "symbol": "BUSD.aca.bsc",
         "decimals": 18,
-        "existentialDeposit": "10000000000000000"
+        "existentialDeposit": "10000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 21,
+                  "data": "0x027d52316b1132c26626670fbf52aa7f5ce6f9b3880000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       }
     ]
   },
