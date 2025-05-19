@@ -17,9 +17,12 @@ import {
   BatchXTransferDtoSchema,
 } from './dto/XTransferBatchDto.js';
 import {
+  GetXcmFeeDto,
   GetXcmFeeSchema,
   XTransferDto,
   XTransferDtoSchema,
+  XTransferDtoWSenderAddress,
+  XTransferDtoWSenderAddressSchema,
 } from './dto/XTransferDto.js';
 import { XTransferService } from './x-transfer.service.js';
 
@@ -59,24 +62,47 @@ export class XTransferController {
     });
   }
   @Post('dry-run')
-  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  dryRun(@Body() params: XTransferDto, @Req() req: Request) {
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  dryRun(@Body() params: XTransferDtoWSenderAddress, @Req() req: Request) {
     this.trackAnalytics(EventName.DRY_RUN_XCM_CALL, req, params);
     return this.xTransferService.dryRun(params);
   }
 
   @Post('xcm-fee')
   @UsePipes(new ZodValidationPipe(GetXcmFeeSchema))
-  getXcmFee(@Body() params: XTransferDto, @Req() req: Request) {
-    this.trackAnalytics(EventName.GET_XCM_FEE, req, params);
+  getXcmFee(@Body() params: GetXcmFeeDto, @Req() req: Request) {
+    this.trackAnalytics(EventName.GET_XCM_FEE, req, params as XTransferDto);
     return this.xTransferService.getXcmFee(params);
   }
 
+  @Post('origin-xcm-fee')
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  getOriginXcmFee(
+    @Body() params: XTransferDtoWSenderAddress,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(EventName.GET_ORIGIN_XCM_FEE, req, params);
+    return this.xTransferService.getOriginXcmFee(params);
+  }
+
   @Post('xcm-fee-estimate')
-  @UsePipes(new ZodValidationPipe(XTransferDtoSchema))
-  getXcmFeeEstimate(@Body() params: XTransferDto, @Req() req: Request) {
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  getXcmFeeEstimate(
+    @Body() params: XTransferDtoWSenderAddress,
+    @Req() req: Request,
+  ) {
     this.trackAnalytics(EventName.GET_XCM_FEE_ESTIMATE, req, params);
     return this.xTransferService.getXcmFeeEstimate(params);
+  }
+
+  @Post('origin-xcm-fee-estimate')
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  getOriginXcmFeeEstimate(
+    @Body() params: XTransferDtoWSenderAddress,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(EventName.GET_ORIGIN_XCM_FEE_ESTIMATE, req, params);
+    return this.xTransferService.getOriginXcmFeeEstimate(params);
   }
 
   @Post('x-transfer')
@@ -103,5 +129,35 @@ export class XTransferController {
   @Get('x-transfer/eth-bridge-status')
   getBridgeStatus() {
     return this.xTransferService.getBridgeStatus();
+  }
+
+  @Post('transferable-amount')
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  getTransferableAmount(
+    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(EventName.GET_TRANSFERABLE_AMOUNT, req, bodyParams);
+    return this.xTransferService.getTransferableAmount(bodyParams);
+  }
+
+  @Post('verify-ed-on-destination')
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  verifyEdOnDestination(
+    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(EventName.VERIFY_ED_ON_DESTINATION, req, bodyParams);
+    return this.xTransferService.verifyEdOnDestination(bodyParams);
+  }
+
+  @Post('transfer-info')
+  @UsePipes(new ZodValidationPipe(XTransferDtoWSenderAddressSchema))
+  getTransferInfo(
+    @Body() bodyParams: XTransferDtoWSenderAddress,
+    @Req() req: Request,
+  ) {
+    this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, bodyParams);
+    return this.xTransferService.getTransferInfo(bodyParams);
   }
 }

@@ -1,268 +1,191 @@
-import type { TAsset, TNativeAsset } from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
 import {
-  findAsset,
+  findAssetForNodeOrThrow,
   getExistentialDeposit,
-  InvalidCurrencyError,
-  isForeignAsset
+  getNativeAssetSymbol
 } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 
-import type { IPolkadotApi } from '../../api/IPolkadotApi'
-import { getBalanceForeignInternal } from './balance/getBalanceForeign'
-import { getBalanceNativeInternal } from './balance/getBalanceNative'
-import {
-  getMaxForeignTransferableAmount,
-  getMaxNativeTransferableAmount,
-  getTransferableAmount,
-  getTransferableAmountInternal
-} from './getTransferableAmount'
-
-vi.mock('./balance/getBalanceNative', () => ({
-  getBalanceNativeInternal: vi.fn()
-}))
-
-vi.mock('./balance/getBalanceForeign', () => ({
-  getBalanceForeignInternal: vi.fn()
-}))
+import type { IPolkadotApi } from '../../api'
+import { getOriginXcmFee } from '../../transfer'
+import type { TXcmFeeDetail } from '../../types'
+import { getAssetBalanceInternal } from './balance/getAssetBalance'
+import { getTransferableAmount } from './getTransferableAmount'
 
 vi.mock('@paraspell/assets', () => ({
-  findAsset: vi.fn(),
+  findAssetForNodeOrThrow: vi.fn(),
   getExistentialDeposit: vi.fn(),
-  isNodeEvm: vi.fn(),
-  isForeignAsset: vi.fn(),
-  InvalidCurrencyError: class extends Error {}
+  getNativeAssetSymbol: vi.fn()
 }))
 
-vi.mock('../../utils', () => ({
+vi.mock('../../transfer')
+vi.mock('./balance/getAssetBalance')
+
+vi.mock('../../utils/validateAddress', () => ({
   validateAddress: vi.fn()
 }))
 
-vi.mock('@paraspell/sdk-common', () => ({
-  isRelayChain: vi.fn().mockImplementation(chain => chain === 'Polkadot' || chain === 'Kusama')
-}))
-
-describe('Transferable Amounts', () => {
-  const apiMock = {
-    disconnect: vi.fn(),
-    setDisconnectAllowed: vi.fn()
+describe('getTransferableAmount', () => {
+  const mockApi = {
+    setDisconnectAllowed: vi.fn(),
+    disconnect: vi.fn().mockResolvedValue(undefined)
   } as unknown as IPolkadotApi<unknown, unknown>
-  const mockNode: TNodeDotKsmWithRelayChains = 'Acala'
-  const mockAddress = '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa'
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
   })
 
-  describe('getMaxNativeTransferableAmount', () => {
-    it('should return the correct maximum native transferable amount', async () => {
-      const mockBalance = 1000000000000n
-      vi.mocked(getBalanceNativeInternal).mockResolvedValue(mockBalance)
-      vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
+  test('throws error when existential deposit is null', async () => {
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(getExistentialDeposit).mockReturnValue(null)
 
-      const ed = BigInt(getExistentialDeposit(mockNode) ?? '0')
-      const expectedMaxTransferableAmount = mockBalance - ed
-
-      const result = await getMaxNativeTransferableAmount({
-        api: apiMock,
-        address: mockAddress,
-        node: mockNode
+    await expect(
+      getTransferableAmount({
+        api: mockApi,
+        senderAddress: 'validAddress',
+        node: 'Astar',
+        currency: { symbol: 'DOT' },
+        tx: 'transfer'
       })
-
-      expect(result).toBe(expectedMaxTransferableAmount > 0n ? expectedMaxTransferableAmount : 0n)
-    })
-
-    it('should return 0 if native balance is too low', async () => {
-      const mockBalance = 5000n
-      vi.mocked(getBalanceNativeInternal).mockResolvedValue(mockBalance)
-      vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
-
-      const result = await getMaxNativeTransferableAmount({
-        api: apiMock,
-        address: mockAddress,
-        node: mockNode
-      })
-
-      expect(result).toBe(0n)
-    })
-
-    it('should throw an error if existential deposit cannot be obtained', async () => {
-      vi.mocked(getExistentialDeposit).mockReturnValue(null)
-
-      await expect(
-        getMaxNativeTransferableAmount({
-          api: apiMock,
-          address: mockAddress,
-          node: mockNode
-        })
-      ).rejects.toThrowError(`Cannot get existential deposit for node ${mockNode}`)
-    })
+    ).rejects.toThrow('Cannot get existential deposit for currency {"symbol":"DOT"}.')
   })
 
-  describe('getMaxForeignTransferableAmount', () => {
-    const mockCurrency = { symbol: 'UNQ' }
-    const mockAsset = {
-      symbol: 'UNQ',
-      assetId: '1',
-      existentialDeposit: '1000000000' // 1,000,000,000 as string
-    }
+  test('subtracts XCM fee for native asset', async () => {
+    const balance = 1000n
+    const ed = 100n
+    const fee = 200n
 
-    it('should return the correct max foreign transferable amount', async () => {
-      const mockBalance = 2000000000000n
-      const edBN = BigInt(mockAsset.existentialDeposit)
-      vi.mocked(findAsset).mockReturnValue(mockAsset)
-      vi.mocked(getBalanceForeignInternal).mockResolvedValue(mockBalance)
-      vi.mocked(isForeignAsset).mockReturnValue(true)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+    vi.mocked(getExistentialDeposit).mockReturnValue(ed.toString())
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee } as TXcmFeeDetail)
 
-      const result = await getMaxForeignTransferableAmount({
-        api: apiMock,
-        address: mockAddress,
-        node: mockNode,
-        currency: mockCurrency
-      })
-
-      const expected = mockBalance - edBN
-      expect(result).toBe(expected > 0n ? expected : 0n)
+    const result = await getTransferableAmount({
+      api: mockApi,
+      senderAddress: 'validAddress',
+      node: 'Astar',
+      currency: { symbol: 'DOT' },
+      tx: 'transfer'
     })
 
-    it('should return 0 if foreign balance is too low', async () => {
-      const mockBalance = 500000000n // less than the ED
-      vi.mocked(findAsset).mockReturnValue(mockAsset)
-      vi.mocked(getBalanceForeignInternal).mockResolvedValue(mockBalance)
-
-      const result = await getMaxForeignTransferableAmount({
-        api: apiMock,
-        address: mockAddress,
-        node: mockNode,
-        currency: mockCurrency
-      })
-
-      expect(result).toBe(0n)
-    })
-
-    it('should throw InvalidCurrencyError if asset not found', async () => {
-      vi.mocked(findAsset).mockReturnValue(null)
-
-      await expect(
-        getMaxForeignTransferableAmount({
-          api: apiMock,
-          address: mockAddress,
-          node: mockNode,
-          currency: mockCurrency
-        })
-      ).rejects.toThrowError(InvalidCurrencyError)
-    })
-
-    it('should throw an error if existential deposit cannot be obtained for the asset', async () => {
-      const noEDAsset = { symbol: 'UNQ' } as TAsset
-      vi.mocked(findAsset).mockReturnValue(noEDAsset)
-
-      await expect(
-        getMaxForeignTransferableAmount({
-          api: apiMock,
-          address: mockAddress,
-          node: mockNode,
-          currency: mockCurrency
-        })
-      ).rejects.toThrowError(
-        `Cannot get existential deposit for asset ${JSON.stringify(noEDAsset)}`
-      )
+    expect(result).toBe(balance - ed - fee)
+    expect(getOriginXcmFee).toHaveBeenCalledWith({
+      api: mockApi,
+      tx: 'transfer',
+      origin: 'Astar',
+      destination: 'Astar',
+      senderAddress: 'validAddress',
+      disableFallback: false
     })
   })
 
-  describe('getTransferableAmount', () => {
-    const mockCurrency = { symbol: 'UNQ' }
-    const nativeAsset = {
-      symbol: 'DOT',
-      isNative: true
-      // Suppose native asset's ED is directly from getExistentialDeposit
-    } as TNativeAsset
-    const foreignAsset = {
-      symbol: 'UNQ',
-      assetId: '1',
-      existentialDeposit: '1000000000'
-    }
+  test('does not subtract XCM fee for non-native asset', async () => {
+    const balance = 1000n
+    const ed = 100n
 
-    it('should call getMaxNativeTransferableAmount if asset is native', async () => {
-      vi.mocked(findAsset).mockReturnValue(nativeAsset)
-      vi.mocked(isForeignAsset).mockReturnValue(false)
-      vi.mocked(getBalanceNativeInternal).mockResolvedValue(1000000000000n)
-      vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'USDT' } as TAsset)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+    vi.mocked(getExistentialDeposit).mockReturnValue(ed.toString())
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
 
-      const result = await getTransferableAmountInternal({
-        api: apiMock,
-        address: mockAddress,
-        node: mockNode,
-        currency: { symbol: 'DOT' } // native
+    const result = await getTransferableAmount({
+      api: mockApi,
+      senderAddress: 'validAddress',
+      node: 'Astar',
+      currency: { symbol: 'USDT' },
+      tx: 'transfer'
+    })
+
+    expect(result).toBe(balance - ed)
+    expect(getOriginXcmFee).not.toHaveBeenCalled()
+  })
+
+  test('returns 0 when transferable amount is negative', async () => {
+    const balance = 250n
+    const ed = 100n
+    const fee = 200n
+
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+    vi.mocked(getExistentialDeposit).mockReturnValue(ed.toString())
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee } as TXcmFeeDetail)
+
+    const result = await getTransferableAmount({
+      api: mockApi,
+      senderAddress: 'validAddress',
+      node: 'Astar',
+      currency: { symbol: 'DOT' },
+      tx: 'transfer'
+    })
+
+    expect(result).toBe(0n)
+  })
+
+  test('throws error when XCM fee is undefined for native asset', async () => {
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+    vi.mocked(getExistentialDeposit).mockReturnValue('100')
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
+
+    await expect(
+      getTransferableAmount({
+        api: mockApi,
+        senderAddress: 'validAddress',
+        node: 'Astar',
+        currency: { symbol: 'DOT' },
+        tx: 'transfer'
       })
+    ).rejects.toThrow('Cannot get origin xcm fee for currency {"symbol":"DOT"} on node Astar.')
+  })
 
-      // Check that it didn't call foreign functions
-      expect(getBalanceForeignInternal).not.toHaveBeenCalled()
-      expect(getBalanceNativeInternal).toHaveBeenCalled()
-      expect(result).toBeGreaterThan(0n)
+  test('sets disconnect allowed to false and disconnects after', async () => {
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+    vi.mocked(getExistentialDeposit).mockReturnValue('1000')
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: 100n } as TXcmFeeDetail)
+
+    const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+
+    await getTransferableAmount({
+      api: mockApi,
+      senderAddress: 'validAddress',
+      node: 'Astar',
+      currency: { symbol: 'DOT' },
+      tx: 'transfer'
     })
 
-    it('should call getMaxForeignTransferableAmount if asset is foreign', async () => {
-      vi.mocked(findAsset).mockReturnValue(foreignAsset)
-      vi.mocked(isForeignAsset).mockReturnValue(true)
-      vi.mocked(getBalanceForeignInternal).mockResolvedValue(2000000000000n)
+    expect(disconnectAllowedSpy).toHaveBeenNthCalledWith(1, false)
+    expect(disconnectAllowedSpy).toHaveBeenNthCalledWith(2, true)
+    expect(disconnectSpy).toHaveBeenCalled()
+  })
 
-      const result = await getTransferableAmountInternal({
-        api: apiMock,
-        address: mockAddress,
-        node: mockNode,
-        currency: mockCurrency
+  test('disconnects even if internal function throws', async () => {
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+    vi.mocked(getExistentialDeposit).mockReturnValue('100')
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
+    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
+
+    const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
+    const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
+
+    await expect(
+      getTransferableAmount({
+        api: mockApi,
+        senderAddress: 'validAddress',
+        node: 'Astar',
+        currency: { symbol: 'DOT' },
+        tx: 'transfer'
       })
+    ).rejects.toThrow()
 
-      // Check that it didn't call native function
-      expect(getBalanceNativeInternal).not.toHaveBeenCalled()
-      expect(getBalanceForeignInternal).toHaveBeenCalled()
-      expect(result).toBeGreaterThan(0n)
-    })
-
-    it('should throw InvalidCurrencyError if asset is not found', async () => {
-      vi.mocked(findAsset).mockReturnValue(null)
-      vi.mocked(isForeignAsset).mockReturnValue(false)
-
-      await expect(
-        getTransferableAmount({
-          api: apiMock,
-          address: mockAddress,
-          node: mockNode,
-          currency: mockCurrency
-        })
-      ).rejects.toThrowError(InvalidCurrencyError)
-    })
-
-    it('should return 0 if native balance is lower than ED when calling getTransferableAmount', async () => {
-      vi.mocked(findAsset).mockReturnValue(nativeAsset)
-      vi.mocked(isForeignAsset).mockReturnValue(false)
-      vi.mocked(getBalanceNativeInternal).mockResolvedValue(BigInt(5000))
-      vi.mocked(getExistentialDeposit).mockReturnValue('1000000000')
-
-      const result = await getTransferableAmountInternal({
-        api: apiMock,
-        address: mockAddress,
-        node: mockNode,
-        currency: { symbol: 'DOT' }
-      })
-
-      expect(result).toBe(0n)
-    })
-
-    it('should return 0 if foreign balance is lower than ED when calling getTransferableAmount', async () => {
-      vi.mocked(findAsset).mockReturnValue(foreignAsset)
-      vi.mocked(isForeignAsset).mockReturnValue(true)
-      vi.mocked(getBalanceForeignInternal).mockResolvedValue(BigInt('500000000')) // less than ED
-
-      const result = await getTransferableAmountInternal({
-        api: apiMock,
-        address: mockAddress,
-        node: mockNode,
-        currency: mockCurrency
-      })
-
-      expect(result).toBe(0n)
-    })
+    expect(disconnectAllowedSpy).toHaveBeenNthCalledWith(1, false)
+    expect(disconnectAllowedSpy).toHaveBeenNthCalledWith(2, true)
+    expect(disconnectSpy).toHaveBeenCalled()
   })
 })

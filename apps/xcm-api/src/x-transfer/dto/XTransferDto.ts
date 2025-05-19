@@ -128,12 +128,19 @@ export const XTransferDtoSchema = z.object({
   ahAddress: z.string().optional(),
 });
 
+export const XTransferDtoWSenderAddressSchema = XTransferDtoSchema.extend({
+  senderAddress: z.string().min(1, { message: 'Sender address is required' }),
+});
+
 export const GetXcmFeeSchema = z.union([
-  XTransferDtoSchema,
+  XTransferDtoWSenderAddressSchema,
   z.object({
     disableFallback: z.boolean().default(false),
   }),
 ]);
 
 export type XTransferDto = z.infer<typeof XTransferDtoSchema>;
+export type XTransferDtoWSenderAddress = z.infer<
+  typeof XTransferDtoWSenderAddressSchema
+>;
 export type GetXcmFeeDto = z.infer<typeof GetXcmFeeSchema>;

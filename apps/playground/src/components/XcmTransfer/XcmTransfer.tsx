@@ -432,11 +432,11 @@ const XcmTransfer = () => {
     showSuccessNotification(notifId ?? '', 'Success', 'Dry run was successful');
   };
 
-  const performXcmFee = async (
+  const performInfoOperation = async (
     formValues: FormValuesTransformed,
-    selectedAccount: { address: string },
+    selectedAccountAddress: string,
     notifId: string | undefined,
-    type: 'fee' | 'estimate',
+    submitType: TSubmitType,
   ) => {
     const Sdk =
       apiType === 'PAPI'
@@ -456,7 +456,7 @@ const XcmTransfer = () => {
 
     const body = {
       ...formValues,
-      senderAddress: selectedAccount.address,
+      senderAddress: selectedAccountAddress,
       currency:
         currencyInputs.length === 1
           ? currencyInputs[0]
@@ -465,14 +465,29 @@ const XcmTransfer = () => {
     };
 
     let result;
+    let apiEndpoint = '';
+    let successMessage = '';
+
+    switch (submitType) {
+      case 'getTransferableAmount':
+        apiEndpoint = '/transferable-amount';
+        successMessage = 'Transferable amount retrieved';
+
+        break;
+      case 'verifyEdOnDestination':
+        apiEndpoint = '/verify-ed-on-destination';
+        successMessage = 'ED verification result retrieved';
+        break;
+      case 'getTransferInfo':
+        apiEndpoint = '/transfer-info';
+        successMessage = 'Transfer info retrieved';
+        break;
+      default:
+        throw new Error(`Unsupported info operation type: ${submitType}`);
+    }
 
     if (useApi) {
-      result = await fetchFromApi(
-        body,
-        type === 'fee' ? '/xcm-fee' : '/xcm-fee-estimate',
-        'POST',
-        true,
-      );
+      result = await fetchFromApi(body, apiEndpoint, 'POST', true);
     } else {
       const builder = Builder()
         .from(from)
@@ -484,24 +499,26 @@ const XcmTransfer = () => {
         )
         .feeAsset(body.feeAsset)
         .address(address)
-        .senderAddress(selectedAccount.address)
+        .senderAddress(selectedAccountAddress)
         .ahAddress(body.ahAddress);
 
-      result =
-        type === 'fee'
-          ? await builder.getXcmFee()
-          : await builder.getXcmFeeEstimate();
+      switch (submitType) {
+        case 'getTransferableAmount':
+          result = await builder.getTransferableAmount();
+          break;
+        case 'verifyEdOnDestination':
+          result = await builder.verifyEdOnDestination();
+          break;
+        case 'getTransferInfo':
+          result = await builder.getTransferInfo();
+          break;
+      }
     }
 
     setOutput(JSON.stringify(result, replaceBigInt, 2));
     openOutputAlert();
     closeErrorAlert();
-
-    showSuccessNotification(
-      notifId ?? '',
-      'Success',
-      type === 'fee' ? 'XCM fee retrieved' : 'XCM fee estimate retrieved',
-    );
+    showSuccessNotification(notifId ?? '', 'Success', successMessage);
   };
 
   const submit = async (
@@ -604,12 +621,16 @@ const XcmTransfer = () => {
         return;
       }
 
-      if (submitType === 'getXcmFee' || submitType === 'getXcmFeeEstimate') {
-        await performXcmFee(
+      if (
+        submitType === 'getTransferableAmount' ||
+        submitType === 'verifyEdOnDestination' ||
+        submitType === 'getTransferInfo'
+      ) {
+        await performInfoOperation(
           formValues,
-          selectedAccount,
+          selectedAccount.address,
           notifId,
-          submitType === 'getXcmFee' ? 'fee' : 'estimate',
+          submitType,
         );
         return;
       }

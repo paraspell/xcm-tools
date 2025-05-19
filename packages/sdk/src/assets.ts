@@ -3,12 +3,7 @@ import {
   getAssetBalance as getAssetBalanceImpl,
   getBalanceForeign as getBalanceForeignImpl,
   getBalanceNative as getBalanceNativeImpl,
-  getMaxForeignTransferableAmount as getMaxForeignTransferableAmountImpl,
-  getMaxNativeTransferableAmount as getMaxNativeTransferableAmountImpl,
-  getOriginFeeDetails as getOriginFeeDetailsImpl,
-  getTransferableAmount as getTransferableAmountImpl,
-  getTransferInfo as getTransferInfoImpl,
-  verifyEdOnDestination as verifyEdOnDestinationImpl
+  getOriginFeeDetails as getOriginFeeDetailsImpl
 } from '@paraspell/sdk-core'
 
 import type { TPapiApi, TPapiTransaction } from './types'
@@ -31,13 +26,6 @@ export const getBalanceForeign = createPapiApiCall(
 )
 
 /**
- * Retrieves detailed transfer information for a cross-chain transfer.
- *
- * @returns A Promise that resolves to the transfer information.
- */
-export const getTransferInfo = createPapiApiCall(getTransferInfoImpl<TPapiApi, TPapiTransaction>)
-
-/**
  * Retrieves the asset balance for a given account on a specified node.
  *
  * @returns The asset balance as a bigint.
@@ -51,24 +39,15 @@ export const getAssetBalance = createPapiApiCall(getAssetBalanceImpl<TPapiApi, T
  */
 export const claimAssets = createPapiApiCall(claimAssetsImpl<TPapiApi, TPapiTransaction>)
 
+/**
+ * @deprecated This function is deprecated and will be removed in a future version.
+ * Please use `builder.getOriginXcmFee()` or `builder.getOriginXcmFeeEstimate()` instead,
+ * where `builder` is an instance of `Builder()`.
+ * For more details, please refer to the documentation:
+ * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
+ */
 export const getOriginFeeDetails = createPapiApiCall(
   getOriginFeeDetailsImpl<TPapiApi, TPapiTransaction>
-)
-
-export const getMaxNativeTransferableAmount = createPapiApiCall(
-  getMaxNativeTransferableAmountImpl<TPapiApi, TPapiTransaction>
-)
-
-export const getMaxForeignTransferableAmount = createPapiApiCall(
-  getMaxForeignTransferableAmountImpl<TPapiApi, TPapiTransaction>
-)
-
-export const getTransferableAmount = createPapiApiCall(
-  getTransferableAmountImpl<TPapiApi, TPapiTransaction>
-)
-
-export const verifyEdOnDestination = createPapiApiCall(
-  verifyEdOnDestinationImpl<TPapiApi, TPapiTransaction>
 )
 
 export {

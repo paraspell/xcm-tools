@@ -9,11 +9,10 @@ import { BalanceService } from './balance.service.js';
 import type { BalanceForeignDto } from './dto/BalanceForeignDto.js';
 import type { BalanceNativeDto } from './dto/BalanceNativeDto.js';
 import type { ExistentialDepositDto } from './dto/ExistentialDepositDto.js';
-import type { VerifyEdOnDestDto } from './dto/VerifyEdOnDestDto.js';
 
 describe('BalanceController', () => {
-  let balanceController: BalanceController;
-  let balanceService: BalanceService;
+  let controller: BalanceController;
+  let service: BalanceService;
   let analyticsService: AnalyticsService;
 
   beforeEach(async () => {
@@ -26,11 +25,7 @@ describe('BalanceController', () => {
             getBalanceNative: vi.fn(),
             getBalanceForeign: vi.fn(),
             getAssetBalance: vi.fn(),
-            getMaxForeignTransferableAmount: vi.fn(),
-            getMaxNativeTransferableAmount: vi.fn(),
-            getTransferableAmount: vi.fn(),
             getExistentialDeposit: vi.fn(),
-            verifyEdOnDestination: vi.fn(),
           },
         },
         {
@@ -42,8 +37,8 @@ describe('BalanceController', () => {
       ],
     }).compile();
 
-    balanceController = module.get<BalanceController>(BalanceController);
-    balanceService = module.get<BalanceService>(BalanceService);
+    controller = module.get<BalanceController>(BalanceController);
+    service = module.get<BalanceService>(BalanceService);
     analyticsService = module.get<AnalyticsService>(AnalyticsService);
   });
 
@@ -57,15 +52,11 @@ describe('BalanceController', () => {
 
       const balanceNativeMock = 1000n;
       const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getBalanceNative')
+        .spyOn(service, 'getBalanceNative')
         .mockResolvedValue(balanceNativeMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
-      const result = await balanceController.getBalanceNative(
-        node,
-        params,
-        req,
-      );
+      const result = await controller.getBalanceNative(node, params, req);
 
       expect(analyticsServiceSpy).toHaveBeenCalledWith(
         EventName.GET_BALANCE_NATIVE,
@@ -88,15 +79,11 @@ describe('BalanceController', () => {
 
       const balanceForeignMock = '500';
       const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getBalanceForeign')
+        .spyOn(service, 'getBalanceForeign')
         .mockResolvedValue(balanceForeignMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
-      const result = await balanceController.getBalanceForeign(
-        node,
-        params,
-        req,
-      );
+      const result = await controller.getBalanceForeign(node, params, req);
 
       expect(analyticsServiceSpy).toHaveBeenCalledWith(
         EventName.GET_BALANCE_FOREIGN,
@@ -119,11 +106,11 @@ describe('BalanceController', () => {
 
       const balanceForeignMock = '500';
       const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getAssetBalance')
+        .spyOn(service, 'getAssetBalance')
         .mockResolvedValue(balanceForeignMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
-      const result = await balanceController.getAssetBalance(node, params, req);
+      const result = await controller.getAssetBalance(node, params, req);
 
       expect(analyticsServiceSpy).toHaveBeenCalledWith(
         EventName.GET_ASSET_BALANCE,
@@ -132,99 +119,6 @@ describe('BalanceController', () => {
       );
       expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
       expect(result).toEqual(balanceForeignMock);
-    });
-  });
-
-  describe('getMaxForeignTransferableAmount', () => {
-    it('should track analytics and call BalanceService for max foreign transferable amount', async () => {
-      const node = 'Acala';
-      const params: BalanceForeignDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ' },
-      };
-      const req = {} as Request;
-
-      const maxForeignAmountMock = 10000n;
-      const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getMaxForeignTransferableAmount')
-        .mockResolvedValue(maxForeignAmountMock);
-      const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
-
-      const result = await balanceController.getMaxForeignTransferableAmount(
-        node,
-        params,
-        req,
-      );
-
-      expect(analyticsServiceSpy).toHaveBeenCalledWith(
-        EventName.GET_MAX_FOREIGN_TRANSFERABLE_AMOUNT,
-        req,
-        { node },
-      );
-      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
-      expect(result).toEqual(maxForeignAmountMock);
-    });
-  });
-
-  describe('getMaxNativeTransferableAmount', () => {
-    it('should track analytics and call BalanceService for max native transferable amount', async () => {
-      const node = 'Acala';
-      const params: BalanceNativeDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ' },
-      };
-      const req = {} as Request;
-
-      const maxNativeAmountMock = 20000n;
-      const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getMaxNativeTransferableAmount')
-        .mockResolvedValue(maxNativeAmountMock);
-      const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
-
-      const result = await balanceController.getMaxNativeTransferableAmount(
-        node,
-        params,
-        req,
-      );
-
-      expect(analyticsServiceSpy).toHaveBeenCalledWith(
-        EventName.GET_MAX_FOREIGN_TRANSFERABLE_AMOUNT, // event name matches the code snippet
-        req,
-        { node },
-      );
-      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
-      expect(result).toEqual(maxNativeAmountMock);
-    });
-  });
-
-  describe('getTransferableAmount', () => {
-    it('should track analytics and call BalanceService for transferable amount', async () => {
-      const node = 'Acala';
-      const params: BalanceForeignDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ' },
-      };
-      const req = {} as Request;
-
-      const amountMock = 20000n;
-      const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getTransferableAmount')
-        .mockResolvedValue(amountMock);
-      const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
-
-      const result = await balanceController.getTransferableAmount(
-        node,
-        params,
-        req,
-      );
-
-      expect(analyticsServiceSpy).toHaveBeenCalledWith(
-        EventName.GET_TRANSFERABLE_AMOUNT,
-        req,
-        { node },
-      );
-      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
-      expect(result).toEqual(amountMock);
     });
   });
 
@@ -238,11 +132,11 @@ describe('BalanceController', () => {
 
       const edMock = '1000000000';
       const balanceServiceSpy = vi
-        .spyOn(balanceService, 'getExistentialDeposit')
+        .spyOn(service, 'getExistentialDeposit')
         .mockReturnValue(edMock);
       const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
 
-      const result = balanceController.getExistentialDeposit(node, params, req);
+      const result = controller.getExistentialDeposit(node, params, req);
 
       expect(analyticsServiceSpy).toHaveBeenCalledWith(
         EventName.GET_EXISTENTIAL_DEPOSIT,
@@ -251,37 +145,6 @@ describe('BalanceController', () => {
       );
       expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
       expect(result).toEqual(edMock);
-    });
-  });
-
-  describe('verifyEdOnDestination', () => {
-    it('should track analytics and call BalanceService for verifying ED on destination', async () => {
-      const node = 'Acala';
-      const params: VerifyEdOnDestDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ', amount: '100' },
-      };
-      const req = {} as Request;
-
-      const resultMock = true;
-      const balanceServiceSpy = vi
-        .spyOn(balanceService, 'verifyEdOnDestination')
-        .mockResolvedValue(resultMock);
-      const analyticsServiceSpy = vi.spyOn(analyticsService, 'track');
-
-      const result = await balanceController.verifyEdOnDestination(
-        node,
-        params,
-        req,
-      );
-
-      expect(analyticsServiceSpy).toHaveBeenCalledWith(
-        EventName.VERIFY_ED_ON_DESTINATION,
-        req,
-        { node },
-      );
-      expect(balanceServiceSpy).toHaveBeenCalledWith(node, params);
-      expect(result).toEqual(resultMock);
     });
   });
 });

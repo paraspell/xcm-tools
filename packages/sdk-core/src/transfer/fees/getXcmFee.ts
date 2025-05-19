@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { findAsset, getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
+import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -15,8 +15,8 @@ import type {
   TXcmFeeDetail
 } from '../../types'
 import { determineRelayChain } from '../../utils'
-import { getFeeForDestNode } from './getFeeForDestNode'
-import { getFeeForOriginNode } from './getFeeForOriginNode'
+import { getDestXcmFee } from './getDestXcmFee'
+import { getOriginXcmFee } from './getOriginXcmFee'
 
 export const getXcmFee = async <TApi, TRes>({
   api,
@@ -28,22 +28,17 @@ export const getXcmFee = async <TApi, TRes>({
   currency,
   disableFallback
 }: TGetXcmFeeOptions<TApi, TRes>): Promise<TGetXcmFeeResult> => {
-  const asset =
-    findAsset(origin, currency, destination) ??
-    (origin === 'AssetHubPolkadot' ? findAsset('Ethereum', currency, null) : null)
-
-  if (!asset) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${origin}`)
-  }
+  const asset = findAssetForNodeOrThrow(origin, currency, destination)
 
   // Origin fee = execution fee + delivery fees
   const {
     fee: originFee,
+    currency: originCurrency,
     feeType: originFeeType,
     dryRunError: originDryRunError,
     forwardedXcms: initialForwardedXcm,
     destParaId: initialDestParaId
-  } = await getFeeForOriginNode({
+  } = await getOriginXcmFee({
     api,
     tx,
     origin,
@@ -62,7 +57,7 @@ export const getXcmFee = async <TApi, TRes>({
       await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
       destApi.setDisconnectAllowed(false)
 
-      const destFeeRes = await getFeeForDestNode({
+      const destFeeRes = await getDestXcmFee({
         api: destApi,
         forwardedXcms: undefined, // force paymentInfo
         origin,
@@ -77,7 +72,7 @@ export const getXcmFee = async <TApi, TRes>({
         origin: {
           ...(originFee && { fee: originFee }),
           ...(originFeeType && { feeType: originFeeType }),
-          currency: getNativeAssetSymbol(origin),
+          currency: originCurrency,
           ...(originDryRunError && { dryRunError: originDryRunError })
         } as TXcmFeeDetail,
         destination: {
@@ -124,7 +119,7 @@ export const getXcmFee = async <TApi, TRes>({
     try {
       await hopApi.init(nextChain, DRY_RUN_CLIENT_TIMEOUT_MS)
 
-      const hopResult = await getFeeForDestNode({
+      const hopResult = await getDestXcmFee({
         api: hopApi,
         forwardedXcms,
         origin: currentOrigin,
@@ -158,7 +153,7 @@ export const getXcmFee = async <TApi, TRes>({
 
         // We failed before the true destination, use fallback via paymentInfo.
         if (!hopIsDestination) {
-          const destFallback = await getFeeForDestNode({
+          const destFallback = await getDestXcmFee({
             api: hopApi,
             forwardedXcms: undefined,
             origin: nextChain as TNodeDotKsmWithRelayChains,
@@ -207,7 +202,7 @@ export const getXcmFee = async <TApi, TRes>({
     origin: {
       ...(originFee && { fee: originFee }),
       ...(originFeeType && { feeType: originFeeType }),
-      currency: getNativeAssetSymbol(origin),
+      currency: originCurrency,
       ...(originDryRunError && { dryRunError: originDryRunError })
     } as TXcmFeeDetail,
     ...intermediateFees,

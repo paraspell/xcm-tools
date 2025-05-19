@@ -1,11 +1,18 @@
+import type { TAsset } from '@paraspell/assets'
+import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
+import { getTNode } from '../../nodes/getTNode'
+import type { TGetXcmFeeOptions } from '../../types'
+import { determineRelayChain } from '../../utils'
+import { getDestXcmFee } from './getDestXcmFee'
+import { getOriginXcmFee } from './getOriginXcmFee'
 import { getXcmFee } from './getXcmFee'
 
 vi.mock('@paraspell/assets', () => ({
-  findAsset: vi.fn(),
-  getNativeAssetSymbol: vi.fn(),
-  InvalidCurrencyError: class InvalidCurrencyError extends Error {}
+  findAssetForNodeOrThrow: vi.fn(),
+  getNativeAssetSymbol: vi.fn()
 }))
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
@@ -21,35 +28,23 @@ vi.mock('../../utils', () => ({
   determineRelayChain: vi.fn()
 }))
 
-vi.mock('./getFeeForOriginNode', () => ({
-  getFeeForOriginNode: vi.fn()
+vi.mock('./getOriginXcmFee', () => ({
+  getOriginXcmFee: vi.fn()
 }))
 
-vi.mock('./getFeeForDestNode', () => ({
-  getFeeForDestNode: vi.fn()
+vi.mock('./getDestXcmFee', () => ({
+  getDestXcmFee: vi.fn()
 }))
-
-class FakeApi {
-  setDisconnectAllowed = vi.fn()
-  disconnect = vi.fn().mockResolvedValue(undefined)
-  clone = vi.fn().mockImplementation(() => new FakeApi())
-  init = vi.fn().mockResolvedValue(undefined)
-  getApi = vi.fn().mockReturnValue({ disconnect: vi.fn() })
-}
-
-import type { TAsset } from '@paraspell/assets'
-import { findAsset, getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
-
-import type { IPolkadotApi } from '../../api'
-import { getTNode } from '../../nodes/getTNode'
-import type { TGetXcmFeeOptions } from '../../types'
-import { determineRelayChain } from '../../utils'
-import { getFeeForDestNode } from './getFeeForDestNode'
-import { getFeeForOriginNode } from './getFeeForOriginNode'
 
 const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>) =>
   ({
-    api: new FakeApi() as unknown as IPolkadotApi<unknown, unknown>,
+    api: {
+      setDisconnectAllowed: vi.fn(),
+      disconnect: vi.fn().mockResolvedValue(undefined),
+      clone: vi.fn().mockImplementation(() => createOptions(overrides).api),
+      init: vi.fn().mockResolvedValue(undefined),
+      getApi: vi.fn().mockReturnValue({ disconnect: vi.fn() })
+    } as unknown as IPolkadotApi<unknown, unknown>,
     tx: {} as unknown,
     origin: 'Acala',
     destination: 'Moonbeam',
@@ -62,28 +57,23 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>)
 afterEach(() => vi.resetAllMocks())
 
 describe('getXcmFee', () => {
-  it('throws InvalidCurrencyError when the asset is missing', async () => {
-    vi.mocked(findAsset).mockReturnValue(null)
-
-    await expect(getXcmFee(createOptions())).rejects.toBeInstanceOf(InvalidCurrencyError)
-  })
-
   it('returns correct structure when origin dry-run fails', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
 
     vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) =>
       chain === 'Acala' ? 'ACA' : 'GLMR'
     )
 
-    vi.mocked(getFeeForOriginNode).mockResolvedValue({
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1_000n,
+      currency: 'ACA',
       feeType: 'paymentInfo',
       dryRunError: 'Simulation failed',
       forwardedXcms: undefined,
       destParaId: undefined
     })
 
-    vi.mocked(getFeeForDestNode).mockResolvedValue({
+    vi.mocked(getDestXcmFee).mockResolvedValue({
       fee: 2_000n,
       feeType: 'paymentInfo'
     })
@@ -106,21 +96,22 @@ describe('getXcmFee', () => {
   })
 
   it('returns correct structure when origin does not support dry-run, returns paymentInfo, destination should also use paymentInfo', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
 
     vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) =>
       chain === 'Acala' ? 'ACA' : 'GLMR'
     )
 
-    vi.mocked(getFeeForOriginNode).mockResolvedValue({
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1_000n,
+      currency: 'ACA',
       feeType: 'paymentInfo',
       dryRunError: undefined,
       forwardedXcms: undefined,
       destParaId: undefined
     })
 
-    vi.mocked(getFeeForDestNode).mockResolvedValue({
+    vi.mocked(getDestXcmFee).mockResolvedValue({
       fee: 2_000n,
       feeType: 'paymentInfo'
     })
@@ -142,14 +133,15 @@ describe('getXcmFee', () => {
   })
 
   it('computes fees when origin simulation succeeds and no hops are needed', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
 
     vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) =>
       chain === 'Acala' ? 'ACA' : 'GLMR'
     )
 
-    vi.mocked(getFeeForOriginNode).mockResolvedValue({
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1_000n,
+      currency: 'ACA',
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: undefined,
@@ -158,7 +150,7 @@ describe('getXcmFee', () => {
 
     const res = await getXcmFee(createOptions())
 
-    expect(getFeeForDestNode).not.toHaveBeenCalled()
+    expect(getDestXcmFee).not.toHaveBeenCalled()
 
     expect(res).toEqual({
       origin: {
@@ -174,7 +166,7 @@ describe('getXcmFee', () => {
   })
 
   it('adds intermediate AssetHub fee when hop succeeds', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
 
     vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
       if (chain === 'Acala') return 'ACA'
@@ -184,8 +176,9 @@ describe('getXcmFee', () => {
 
     vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
 
-    vi.mocked(getFeeForOriginNode).mockResolvedValue({
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1_000n,
+      currency: 'ACA',
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -194,7 +187,7 @@ describe('getXcmFee', () => {
 
     vi.mocked(getTNode).mockReturnValue('AssetHubPolkadot')
 
-    vi.mocked(getFeeForDestNode).mockResolvedValueOnce({
+    vi.mocked(getDestXcmFee).mockResolvedValueOnce({
       fee: 3_000n,
       feeType: 'paymentInfo',
       forwardedXcms: undefined,
@@ -203,7 +196,7 @@ describe('getXcmFee', () => {
 
     const res = await getXcmFee(createOptions())
 
-    expect(getFeeForDestNode).toHaveBeenCalledTimes(1)
+    expect(getDestXcmFee).toHaveBeenCalledTimes(1)
 
     expect(res).toEqual({
       origin: {
@@ -224,7 +217,7 @@ describe('getXcmFee', () => {
   })
 
   it('handles hop dry-run error and falls back to destination paymentInfo', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
 
     vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
       if (chain === 'Acala') return 'ACA'
@@ -234,8 +227,9 @@ describe('getXcmFee', () => {
 
     vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
 
-    vi.mocked(getFeeForOriginNode).mockResolvedValue({
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1_000n,
+      currency: 'ACA',
       feeType: 'dryRun',
       dryRunError: undefined,
       forwardedXcms: [null, [{ key: 'value' }]],
@@ -244,7 +238,7 @@ describe('getXcmFee', () => {
 
     vi.mocked(getTNode).mockReturnValue('AssetHubPolkadot')
 
-    vi.mocked(getFeeForDestNode)
+    vi.mocked(getDestXcmFee)
       .mockResolvedValueOnce({
         fee: 3_000n,
         feeType: 'paymentInfo',
@@ -259,7 +253,7 @@ describe('getXcmFee', () => {
 
     const res = await getXcmFee(createOptions())
 
-    expect(getFeeForDestNode).toHaveBeenCalledTimes(2)
+    expect(getDestXcmFee).toHaveBeenCalledTimes(2)
 
     expect(res).toEqual({
       origin: {

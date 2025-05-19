@@ -2,8 +2,8 @@ import {
   IconBoxAlignBottomRight,
   IconCoins,
   IconCurrencyEthereum,
+  IconPackages,
   IconSend,
-  IconSend2,
   IconWallet,
 } from '@tabler/icons-react';
 
@@ -22,6 +22,11 @@ export const NAVIGATION_ITEMS: TNavItem[] = [
     Icon: IconCurrencyEthereum,
   },
   {
+    label: 'XCM Utils',
+    url: PageRoute.XCM_SDK.XCM_UTILS,
+    Icon: IconPackages,
+  },
+  {
     label: 'Assets',
     url: PageRoute.XCM_SDK.ASSETS,
     Icon: IconCoins,
@@ -30,11 +35,6 @@ export const NAVIGATION_ITEMS: TNavItem[] = [
     label: 'Pallets',
     url: PageRoute.XCM_SDK.PALLETS,
     Icon: IconBoxAlignBottomRight,
-  },
-  {
-    label: 'Transfer Info',
-    url: PageRoute.XCM_SDK.TRANSFER_INFO,
-    Icon: IconSend2,
   },
   {
     label: 'Asset Claim',

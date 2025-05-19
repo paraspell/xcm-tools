@@ -2,7 +2,7 @@ import {
   dryRun as dryRunImpl,
   dryRunOrigin as dryRunOriginImpl,
   getBridgeStatus as getBridgeStatusImpl,
-  getFeeForOriginNode as getFeeForOriginNodeImpl,
+  getOriginXcmFee as getOriginXcmFeeImpl,
   getParaEthTransferFees as getEthFeesImpl,
   send as sendImpl
 } from '@paraspell/sdk-core'
@@ -38,6 +38,4 @@ export const getBridgeStatus = async (ahApi?: TPapiApiOrUrl) => {
   return getBridgeStatusImpl<TPapiApi, TPapiTransaction>(papiApi)
 }
 
-export const getFeeForOriginNode = createPapiApiCall(
-  getFeeForOriginNodeImpl<TPapiApi, TPapiTransaction>
-)
+export const getOriginXcmFee = createPapiApiCall(getOriginXcmFeeImpl<TPapiApi, TPapiTransaction>)

@@ -14,13 +14,9 @@ describe('Index Exports', () => {
           'assets',
           'getBalanceNative',
           'getBalanceForeign',
-          'getTransferInfo',
           'getAssetBalance',
           'claimAssets',
           'getOriginFeeDetails',
-          'getMaxNativeTransferableAmount',
-          'getMaxForeignTransferableAmount',
-          'getTransferableAmount',
           'Builder',
           'GeneralBuilder',
           'EvmBuilder',
@@ -55,13 +51,9 @@ describe('Index Exports', () => {
   it('should export asset related functions', () => {
     expect(moduleExports.getBalanceNative).toBeDefined()
     expect(moduleExports.getBalanceForeign).toBeDefined()
-    expect(moduleExports.getTransferInfo).toBeDefined()
     expect(moduleExports.getAssetBalance).toBeDefined()
     expect(moduleExports.claimAssets).toBeDefined()
     expect(moduleExports.getOriginFeeDetails).toBeDefined()
-    expect(moduleExports.getMaxNativeTransferableAmount).toBeDefined()
-    expect(moduleExports.getMaxForeignTransferableAmount).toBeDefined()
-    expect(moduleExports.getTransferableAmount).toBeDefined()
   })
 
   it('should export builder classes', () => {

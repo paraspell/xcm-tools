@@ -33,11 +33,16 @@ export type TGetXcmFeeEstimateOptions<TApi, TRes> = Omit<
   'disableFallback'
 >
 
+export type TGetOriginXcmFeeEstimateOptions<TApi, TRes> = Omit<
+  TGetXcmFeeOptions<TApi, TRes>,
+  'disableFallback' | 'address' | 'currency'
+>
+
 export type TGetXcmFeeBuilderOptions = {
   disableFallback: boolean
 }
 
-export type TGetFeeForOriginNodeBaseOptions<TRes> = {
+export type TGetOriginXcmFeeBaseOptions<TRes> = {
   tx: TRes
   origin: TNodeDotKsmWithRelayChains
   destination: TNodeDotKsmWithRelayChains
@@ -45,8 +50,8 @@ export type TGetFeeForOriginNodeBaseOptions<TRes> = {
   disableFallback: boolean
 }
 
-export type TGetFeeForOriginNodeOptions<TApi, TRes> = WithApi<
-  TGetFeeForOriginNodeBaseOptions<TRes>,
+export type TGetOriginXcmFeeOptions<TApi, TRes> = WithApi<
+  TGetOriginXcmFeeBaseOptions<TRes>,
   TApi,
   TRes
 >

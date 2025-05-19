@@ -145,17 +145,19 @@ export type TSendBaseOptions = {
   method?: string
 }
 
-export type TSendBaseOptionsWithSenderAddress = Omit<TSendBaseOptions, 'senderAddress'> & {
+/**
+ * Options for transferring from a parachain to another parachain or relay chain
+ */
+export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions, TApi, TRes>
+
+export type WithRequiredSenderAddress<TBase> = Omit<TBase, 'senderAddress'> & {
   /**
    * The sender address. A SS58 or H160 format.
    */
   senderAddress: string
 }
 
-/**
- * Options for transferring from a parachain to another parachain or relay chain
- */
-export type TSendOptions<TApi, TRes> = WithApi<TSendBaseOptions, TApi, TRes>
+export type TSendBaseOptionsWithSenderAddress = WithRequiredSenderAddress<TSendBaseOptions>
 
 export type TSendInternalOptions<TApi, TRes> = Omit<
   TSendBaseOptions,

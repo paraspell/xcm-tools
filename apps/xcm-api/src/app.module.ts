@@ -22,7 +22,6 @@ import { typeOrmConfig } from './config/typeorm.config.js';
 import { NodeConfigsModule } from './node-configs/node-configs.module.js';
 import { PalletsModule } from './pallets/pallets.module.js';
 import { RouterModule } from './router/router.module.js';
-import { TransferInfoModule } from './transfer-info/transfer-info.module.js';
 import { UsersService } from './users/users.service.js';
 import { XTransferModule } from './x-transfer/x-transfer.module.js';
 import { XcmAnalyserModule } from './xcm-analyser/xcm-analyser.module.js';
@@ -35,7 +34,6 @@ const __dirname = path.dirname(__filename);
     AnalyticsModule,
     XTransferModule,
     AssetClaimModule,
-    TransferInfoModule,
     XcmAnalyserModule,
     RouterModule,
     AssetsModule,

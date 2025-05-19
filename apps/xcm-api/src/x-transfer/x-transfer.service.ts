@@ -13,7 +13,11 @@ import {
 import { isValidWalletAddress } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { BatchXTransferDto } from './dto/XTransferBatchDto.js';
-import { GetXcmFeeDto, XTransferDto } from './dto/XTransferDto.js';
+import {
+  GetXcmFeeDto,
+  XTransferDto,
+  XTransferDtoWSenderAddress,
+} from './dto/XTransferDto.js';
 
 @Injectable()
 export class XTransferService {
@@ -111,10 +115,6 @@ export class XTransferService {
   }
 
   dryRun(transfer: XTransferDto) {
-    const { senderAddress } = transfer;
-    if (!senderAddress) {
-      throw new BadRequestException('Sender address is required for dry-run.');
-    }
     return this.executeWithBuilder(transfer, (builder) => builder.dryRun());
   }
 
@@ -124,9 +124,21 @@ export class XTransferService {
     );
   }
 
-  getXcmFeeEstimate(transfer: XTransferDto) {
+  getOriginXcmFee(transfer: GetXcmFeeDto) {
+    return this.executeWithBuilder(transfer as XTransferDto, (builder) =>
+      builder.getOriginXcmFee(),
+    );
+  }
+
+  getXcmFeeEstimate(transfer: XTransferDtoWSenderAddress) {
     return this.executeWithBuilder(transfer, (builder) =>
       builder.getXcmFeeEstimate(),
+    );
+  }
+
+  getOriginXcmFeeEstimate(transfer: XTransferDtoWSenderAddress) {
+    return this.executeWithBuilder(transfer, (builder) =>
+      builder.getOriginXcmFeeEstimate(),
     );
   }
 
@@ -136,6 +148,24 @@ export class XTransferService {
       const encoded = await tx.getEncodedData();
       return encoded.asHex();
     });
+  }
+
+  getTransferableAmount(transfer: XTransferDtoWSenderAddress) {
+    return this.executeWithBuilder(transfer, async (finalBuilder) =>
+      finalBuilder.getTransferableAmount(),
+    );
+  }
+
+  verifyEdOnDestination(transfer: XTransferDtoWSenderAddress) {
+    return this.executeWithBuilder(transfer, async (finalBuilder) =>
+      finalBuilder.verifyEdOnDestination(),
+    );
+  }
+
+  getTransferInfo(transfer: XTransferDtoWSenderAddress) {
+    return this.executeWithBuilder(transfer, async (finalBuilder) =>
+      finalBuilder.getTransferInfo(),
+    );
   }
 
   async generateBatchXcmCall(batchDto: BatchXTransferDto) {

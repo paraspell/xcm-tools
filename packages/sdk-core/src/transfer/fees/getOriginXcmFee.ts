@@ -1,30 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { hasDryRunSupport } from '@paraspell/assets'
+import { getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
-import type { TFeeType, TGetFeeForOriginNodeOptions } from '../../types'
+import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
 import { padFee } from './padFee'
 
-export const getFeeForOriginNode = async <TApi, TRes>({
+export const getOriginXcmFee = async <TApi, TRes>({
   api,
   tx,
   origin,
   destination,
   senderAddress,
   disableFallback
-}: TGetFeeForOriginNodeOptions<TApi, TRes>): Promise<{
-  fee?: bigint
-  feeType?: TFeeType
-  dryRunError?: string
-  forwardedXcms?: any
-  destParaId?: number
-}> => {
+}: TGetOriginXcmFeeOptions<TApi, TRes>): Promise<
+  TXcmFeeDetail & {
+    forwardedXcms?: any
+    destParaId?: number
+  }
+> => {
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
+
+  const currency = getNativeAssetSymbol(origin)
 
   if (!hasDryRunSupport(origin)) {
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
-    return { fee: padFee(rawFee, origin, destination, 'origin'), feeType: 'paymentInfo' }
+    return {
+      fee: padFee(rawFee, origin, destination, 'origin'),
+      currency,
+      feeType: 'paymentInfo'
+    }
   }
 
   const dryRunResult = await api.getDryRunCall({
@@ -43,6 +48,7 @@ export const getFeeForOriginNode = async <TApi, TRes>({
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
     return {
       fee: padFee(rawFee, origin, destination, 'origin'),
+      currency,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason
     }
@@ -50,5 +56,11 @@ export const getFeeForOriginNode = async <TApi, TRes>({
 
   const { fee, forwardedXcms, destParaId } = dryRunResult
 
-  return { fee, feeType: 'dryRun', forwardedXcms, destParaId }
+  return {
+    fee,
+    feeType: 'dryRun',
+    currency,
+    forwardedXcms,
+    destParaId
+  }
 }

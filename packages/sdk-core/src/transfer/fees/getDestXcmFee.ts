@@ -30,7 +30,7 @@ export const createOriginLocation = (
   }
 }
 
-export const getFeeForDestNode = async <TApi, TRes>(
+export const getDestXcmFee = async <TApi, TRes>(
   options: TGetFeeForDestNodeOptions<TApi, TRes>
 ): Promise<{
   fee?: bigint

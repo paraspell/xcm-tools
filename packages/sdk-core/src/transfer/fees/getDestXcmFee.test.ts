@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
 import type { TDryRunNodeResultInternal, TGetFeeForDestNodeOptions } from '../../types'
-import { getFeeForDestNode } from './getFeeForDestNode'
+import { getDestXcmFee } from './getDestXcmFee'
 import { getReverseTxFee } from './getReverseTxFee'
 
 vi.mock('@paraspell/assets', () => ({
@@ -27,7 +27,7 @@ beforeEach(() => {
   vi.mocked(findAsset).mockReturnValue({ symbol: 'UNIT' } as never)
 })
 
-describe('getFeeForDestNode', () => {
+describe('getDestXcmFee', () => {
   it('returns a padded “paymentInfo” fee when dry-run is not supported', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
@@ -45,7 +45,7 @@ describe('getFeeForDestNode', () => {
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
 
-    const res = await getFeeForDestNode(options)
+    const res = await getDestXcmFee(options)
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
     expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo' })
@@ -72,7 +72,7 @@ describe('getFeeForDestNode', () => {
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
 
-    const res = await getFeeForDestNode(options)
+    const res = await getDestXcmFee(options)
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { multilocation: DOT_MULTILOCATION })
     expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo' })
@@ -100,7 +100,7 @@ describe('getFeeForDestNode', () => {
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
 
-    const res = await getFeeForDestNode(options)
+    const res = await getDestXcmFee(options)
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { multilocation: DOT_MULTILOCATION })
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
@@ -118,7 +118,7 @@ describe('getFeeForDestNode', () => {
     }
     const api = createApi(dryRunObj)
 
-    const res = await getFeeForDestNode({
+    const res = await getDestXcmFee({
       api,
       forwardedXcms: [[{}], [{}]],
       origin: 'Moonbeam',
@@ -154,7 +154,7 @@ describe('getFeeForDestNode', () => {
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
 
-    const res = await getFeeForDestNode(options)
+    const res = await getDestXcmFee(options)
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
     expect(res).toEqual({
@@ -168,7 +168,7 @@ describe('getFeeForDestNode', () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
     const api = createApi({ success: false, failureReason: 'boom' })
 
-    const res = await getFeeForDestNode({
+    const res = await getDestXcmFee({
       api,
       forwardedXcms: [[{}], [{}]],
       origin: 'Moonbeam',
@@ -189,7 +189,7 @@ describe('getFeeForDestNode', () => {
     const api = createApi()
 
     await expect(
-      getFeeForDestNode({
+      getDestXcmFee({
         api,
         forwardedXcms: undefined,
         origin: 'Moonbeam',

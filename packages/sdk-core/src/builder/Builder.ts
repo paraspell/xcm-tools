@@ -1,5 +1,6 @@
 // Implements general builder pattern, this is Builder main file
 
+import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/assets'
 import {
   isRelayChain,
@@ -10,7 +11,15 @@ import {
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { InvalidParameterError } from '../errors'
-import { dryRun, getXcmFee, getXcmFeeEstimate, send } from '../transfer'
+import { getTransferableAmount, getTransferInfo, verifyEdOnDestination } from '../pallets/assets'
+import {
+  dryRun,
+  getOriginXcmFee,
+  getOriginXcmFeeEstimate,
+  getXcmFee,
+  getXcmFeeEstimate,
+  send
+} from '../transfer'
 import type {
   TAddress,
   TBatchOptions,
@@ -20,6 +29,7 @@ import type {
   TSendBaseOptionsWithSenderAddress,
   Version
 } from '../types'
+import { assertAddressIsString, assertToIsStringAndNoEthereum } from '../utils/builder'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 
@@ -246,53 +256,6 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   }
 
   /**
-   * Estimates the XCM fee for the transfer using paymentInfo function.
-   *
-   * @returns An origin and destination fee estimate.
-   */
-  async getXcmFeeEstimate(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { from, to, address, senderAddress } = this._options
-
-    if (isTMultiLocation(to)) {
-      throw new InvalidParameterError(
-        'Multi-Location destination is not supported for XCM fee calculation.'
-      )
-    }
-
-    if (isTMultiLocation(address)) {
-      throw new InvalidParameterError(
-        'Multi-Location address is not supported for XCM fee calculation.'
-      )
-    }
-
-    if (to === 'Ethereum') {
-      throw new InvalidParameterError(
-        'Ethereum destination is not yet supported for XCM fee calculation.'
-      )
-    }
-
-    this.api.setDisconnectAllowed(false)
-
-    const tx = await this.build()
-
-    this.api.setDisconnectAllowed(true)
-
-    try {
-      return await getXcmFeeEstimate({
-        api: this.api,
-        tx,
-        origin: from,
-        destination: to,
-        address: address,
-        senderAddress: senderAddress,
-        currency: this._options.currency
-      })
-    } finally {
-      await this.api.disconnect()
-    }
-  }
-
-  /**
    * Returns the XCM fee for the transfer using dryRun or paymentInfo function.
    *
    * @returns An origin and destination fee.
@@ -303,23 +266,8 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   ) {
     const { from, to, address, senderAddress } = this._options
 
-    if (isTMultiLocation(to)) {
-      throw new InvalidParameterError(
-        'Multi-Location destination is not supported for XCM fee calculation.'
-      )
-    }
-
-    if (isTMultiLocation(address)) {
-      throw new InvalidParameterError(
-        'Multi-Location address is not supported for XCM fee calculation.'
-      )
-    }
-
-    if (to === 'Ethereum') {
-      throw new InvalidParameterError(
-        'Ethereum destination is not yet supported for XCM fee calculation.'
-      )
-    }
+    assertToIsStringAndNoEthereum(to)
+    assertAddressIsString(address)
 
     const tx = await this.build()
 
@@ -337,6 +285,157 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     } finally {
       await this.api.disconnect()
     }
+  }
+
+  /**
+   * Returns the origin XCM fee for the transfer using dryRun or paymentInfo function.
+   *
+   * @returns An origin fee.
+   */
+  async getOriginXcmFee(
+    this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
+    { disableFallback }: TGetXcmFeeBuilderOptions = { disableFallback: false }
+  ) {
+    const { from, to, senderAddress } = this._options
+
+    assertToIsStringAndNoEthereum(to)
+
+    const tx = await this.build()
+
+    try {
+      return await getOriginXcmFee({
+        api: this.api,
+        tx,
+        origin: from,
+        destination: to,
+        senderAddress: senderAddress,
+        disableFallback
+      })
+    } finally {
+      await this.api.disconnect()
+    }
+  }
+
+  /**
+   * Estimates the origin and destination XCM fee using paymentInfo function.
+   *
+   * @returns An origin and destination fee estimate.
+   */
+  async getXcmFeeEstimate(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+    const { from, to, address, senderAddress } = this._options
+
+    assertToIsStringAndNoEthereum(to)
+    assertAddressIsString(address)
+
+    const tx = await this.build()
+
+    try {
+      return await getXcmFeeEstimate({
+        api: this.api,
+        tx,
+        origin: from,
+        destination: to,
+        address: address,
+        senderAddress: senderAddress,
+        currency: this._options.currency
+      })
+    } finally {
+      await this.api.disconnect()
+    }
+  }
+
+  /**
+   * Estimates the origin XCM fee using paymentInfo function.
+   *
+   * @returns An origin fee estimate.
+   */
+  async getOriginXcmFeeEstimate(
+    this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
+  ) {
+    const { from, to, senderAddress } = this._options
+
+    assertToIsStringAndNoEthereum(to)
+
+    const tx = await this.build()
+
+    try {
+      return await getOriginXcmFeeEstimate({
+        api: this.api,
+        tx,
+        origin: from,
+        destination: to,
+        senderAddress: senderAddress
+      })
+    } finally {
+      await this.api.disconnect()
+    }
+  }
+
+  /**
+   * Returns the max transferable amount for the transfer
+   *
+   * @returns The max transferable amount.
+   */
+  async getTransferableAmount(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+    const { from, senderAddress, currency } = this._options
+
+    const tx = await this.build()
+
+    return await getTransferableAmount({
+      api: this.api,
+      tx,
+      node: from,
+      senderAddress,
+      currency: currency as TCurrencyCore
+    })
+  }
+
+  /**
+   * Returns the max transferable amount for the transfer
+   *
+   * @returns The max transferable amount.
+   */
+  async verifyEdOnDestination(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+    const { from, to, address, currency, senderAddress } = this._options
+
+    assertToIsStringAndNoEthereum(to)
+    assertAddressIsString(address)
+
+    const tx = await this.build()
+
+    return verifyEdOnDestination({
+      api: this.api,
+      tx,
+      origin: from,
+      destination: to,
+      address,
+      senderAddress,
+      currency: currency as WithAmount<TCurrencyCore>
+    })
+  }
+
+  /**
+   * Returns the transfer info for the transfer
+   *
+   * @returns The transfer info.
+   */
+  async getTransferInfo(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
+    const { from, to, address, currency, senderAddress } = this._options
+
+    assertToIsStringAndNoEthereum(to)
+    assertAddressIsString(address)
+
+    const tx = await this.build()
+
+    return getTransferInfo({
+      api: this.api,
+      tx,
+      origin: from,
+      destination: to,
+      address,
+      senderAddress,
+      currency: currency as WithAmount<TCurrencyCore>
+    })
   }
 
   /**

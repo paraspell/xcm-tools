@@ -8,10 +8,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { DOT_MULTILOCATION } from '../constants'
 import { InvalidParameterError } from '../errors'
+import { getTransferableAmount, getTransferInfo, verifyEdOnDestination } from '../pallets/assets'
 import * as claimAssets from '../pallets/assets/asset-claim'
 import * as xcmPallet from '../transfer'
-import type { TGetXcmFeeEstimateResult, TGetXcmFeeResult } from '../types'
+import type {
+  TGetXcmFeeEstimateDetail,
+  TGetXcmFeeEstimateResult,
+  TGetXcmFeeResult,
+  TTransferInfo,
+  TXcmFeeDetail
+} from '../types'
 import { Version } from '../types'
+import { assertAddressIsString, assertToIsStringAndNoEthereum } from '../utils/builder'
 import { Builder } from './Builder'
 
 vi.mock('../transfer', () => ({
@@ -19,7 +27,20 @@ vi.mock('../transfer', () => ({
   transferRelayToPara: vi.fn(),
   dryRun: vi.fn(),
   getXcmFee: vi.fn(),
-  getXcmFeeEstimate: vi.fn()
+  getOriginXcmFee: vi.fn(),
+  getXcmFeeEstimate: vi.fn(),
+  getOriginXcmFeeEstimate: vi.fn()
+}))
+
+vi.mock('../pallets/assets', () => ({
+  getTransferableAmount: vi.fn(),
+  getTransferInfo: vi.fn(),
+  verifyEdOnDestination: vi.fn()
+}))
+
+vi.mock('../utils/builder', () => ({
+  assertToIsStringAndNoEthereum: vi.fn(),
+  assertAddressIsString: vi.fn()
 }))
 
 const NODE: TNode = 'Acala'
@@ -795,7 +816,44 @@ describe('Builder', () => {
   })
 
   describe('Fee calculation', () => {
-    it('should estimate XCM fee', async () => {
+    it('should fetch XCM fee ', async () => {
+      const spy = vi.mocked(xcmPallet.getXcmFee).mockResolvedValue({} as TGetXcmFeeResult)
+
+      const SENDER = 'sender-address'
+
+      const result = await Builder(mockApi)
+        .from(NODE)
+        .to(NODE_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
+        .getXcmFee()
+
+      expect(result).toEqual({})
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
+      expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
+    })
+
+    it('should fetch origin XCM fee', async () => {
+      const spy = vi.mocked(xcmPallet.getOriginXcmFee).mockResolvedValue({} as TXcmFeeDetail)
+
+      const SENDER = 'sender-address'
+
+      const result = await Builder(mockApi)
+        .from(NODE)
+        .to(NODE_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
+        .getOriginXcmFee()
+
+      expect(result).toEqual({})
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
+    })
+
+    it('should fetch XCM fee estimate', async () => {
       const spy = vi
         .mocked(xcmPallet.getXcmFeeEstimate)
         .mockResolvedValue({} as TGetXcmFeeEstimateResult)
@@ -812,46 +870,14 @@ describe('Builder', () => {
 
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
+      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
+      expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
     })
 
-    it('should throw when destination is a Multi-Location (estimate)', async () => {
-      await expect(
-        Builder(mockApi)
-          .from(NODE)
-          .to(DOT_MULTILOCATION)
-          .currency(CURRENCY)
-          .address(ADDRESS)
-          .senderAddress('alice')
-          .getXcmFeeEstimate()
-      ).rejects.toThrow(InvalidParameterError)
-    })
-
-    it('should throw when address is a Multi-Location (estimate)', async () => {
-      await expect(
-        Builder(mockApi)
-          .from(NODE)
-          .to(NODE_2)
-          .currency(CURRENCY)
-          .address(DOT_MULTILOCATION)
-          .senderAddress('alice')
-          .getXcmFeeEstimate()
-      ).rejects.toThrow(InvalidParameterError)
-    })
-
-    it('should throw when destination is Ethereum (estimate)', async () => {
-      await expect(
-        Builder(mockApi)
-          .from(NODE)
-          .to('Ethereum')
-          .currency(CURRENCY)
-          .address(ADDRESS)
-          .senderAddress('alice')
-          .getXcmFeeEstimate()
-      ).rejects.toThrow(InvalidParameterError)
-    })
-
-    it('should fetch XCM fee (dryRun)', async () => {
-      const spy = vi.mocked(xcmPallet.getXcmFee).mockResolvedValue({} as TGetXcmFeeResult)
+    it('should fetch origin XCM fee estimate', async () => {
+      const spy = vi
+        .mocked(xcmPallet.getOriginXcmFeeEstimate)
+        .mockResolvedValue({} as TGetXcmFeeEstimateDetail)
 
       const SENDER = 'sender-address'
 
@@ -861,46 +887,70 @@ describe('Builder', () => {
         .currency(CURRENCY)
         .address(ADDRESS)
         .senderAddress(SENDER)
-        .getXcmFee()
+        .getOriginXcmFeeEstimate()
 
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
+      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
     })
 
-    it('should throw when destination is a Multi-Location (dryRun)', async () => {
-      await expect(
-        Builder(mockApi)
-          .from(NODE)
-          .to(DOT_MULTILOCATION)
-          .currency(CURRENCY)
-          .address(ADDRESS)
-          .senderAddress('alice')
-          .getXcmFee()
-      ).rejects.toThrow(InvalidParameterError)
+    it('should fetch transferable amount', async () => {
+      const amount = 1000n
+
+      const spy = vi.mocked(getTransferableAmount).mockResolvedValue(amount)
+
+      const SENDER = 'sender-address'
+
+      const result = await Builder(mockApi)
+        .from(NODE)
+        .to(NODE_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
+        .getTransferableAmount()
+
+      expect(result).toEqual(amount)
+      expect(spy).toHaveBeenCalledTimes(1)
     })
 
-    it('should throw when address is a Multi-Location (dryRun)', async () => {
-      await expect(
-        Builder(mockApi)
-          .from(NODE)
-          .to(NODE_2)
-          .currency(CURRENCY)
-          .address(DOT_MULTILOCATION)
-          .senderAddress('alice')
-          .getXcmFee()
-      ).rejects.toThrow(InvalidParameterError)
+    it('should verify ed on destination', async () => {
+      const mockResult = true
+
+      const spy = vi.mocked(verifyEdOnDestination).mockResolvedValue(mockResult)
+
+      const SENDER = 'sender-address'
+
+      const result = await Builder(mockApi)
+        .from(NODE)
+        .to(NODE_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
+        .verifyEdOnDestination()
+
+      expect(result).toEqual(mockResult)
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
+      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
     })
 
-    it('should throw when destination is Ethereum (dryRun)', async () => {
-      await expect(
-        Builder(mockApi)
-          .from(NODE)
-          .to('Ethereum')
-          .currency(CURRENCY)
-          .address(ADDRESS)
-          .senderAddress('alice')
-          .getXcmFee()
-      ).rejects.toThrow(InvalidParameterError)
+    it('should fetch tansfer info', async () => {
+      const spy = vi.mocked(getTransferInfo).mockResolvedValue({} as TTransferInfo)
+
+      const SENDER = 'sender-address'
+
+      const result = await Builder(mockApi)
+        .from(NODE)
+        .to(NODE_2)
+        .currency(CURRENCY)
+        .address(ADDRESS)
+        .senderAddress(SENDER)
+        .getTransferInfo()
+
+      expect(result).toEqual({})
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
+      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
     })
   })
 })

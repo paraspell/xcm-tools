@@ -3,18 +3,11 @@ import {
   claimAssets as claimAssetsImpl,
   getAssetBalance as getAssetBalanceImpl,
   getBalanceForeign as getBalanceForeignImpl,
-  getBalanceNative as getBalanceNativeImpl,
-  getTransferInfo as getTransferInfoImpl
+  getBalanceNative as getBalanceNativeImpl
 } from '@paraspell/sdk-core'
 import { describe, expect, it, vi } from 'vitest'
 
-import {
-  claimAssets,
-  getAssetBalance,
-  getBalanceForeign,
-  getBalanceNative,
-  getTransferInfo
-} from './assets'
+import { claimAssets, getAssetBalance, getBalanceForeign, getBalanceNative } from './assets'
 import type { TPapiApi, TPapiTransaction } from './types'
 import { createPapiApiCall } from './utils'
 
@@ -35,12 +28,6 @@ describe('API Call Wrappers', () => {
     expect(createPapiApiCall).toHaveBeenCalledWith(
       getBalanceForeignImpl<TPapiApi, TPapiTransaction>
     )
-  })
-
-  it('should call createPapiApiCall with getTransferInfoImpl for getTransferInfo', () => {
-    getTransferInfo
-
-    expect(createPapiApiCall).toHaveBeenCalledWith(getTransferInfoImpl<TPapiApi, TPapiTransaction>)
   })
 
   it('should call createPapiApiCall with getAssetBalanceImpl for getAssetBalance', () => {
