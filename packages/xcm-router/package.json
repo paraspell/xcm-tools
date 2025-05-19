@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/xcm-router",
-  "version": "9.2.0",
+  "version": "9.2.1",
   "description": "Tool for XCM cross-chain asset exchanging across Polkadot and Kusama ecosystems",
   "type": "module",
   "exports": {
