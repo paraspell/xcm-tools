@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.1](https://github.com/paraspell/xcm-tools/compare/assets-v9.2.0...assets-v9.2.1) (2025-05-19)
+
+
+### Bug Fixes
+
+* **assets:** Add multi-locations to Manta assets 🪄 ([0d68a2b](https://github.com/paraspell/xcm-tools/commit/0d68a2ba17a3e84e0c096667ae279100d31084bd))
+
 ## [9.2.0](https://github.com/paraspell/xcm-tools/compare/assets-v9.1.2...assets-v9.2.0) (2025-05-17)
 
 

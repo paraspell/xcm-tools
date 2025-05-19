@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v9.2.0...xcm-api-v9.2.1) (2025-05-19)
+
+
+### Bug Fixes
+
+* **xcm-api:** Fix XCM API Router endpoints 🛠️ ([aa52d08](https://github.com/paraspell/xcm-tools/commit/aa52d08f29a525ae92a9ce9aa8d3b615ce14c1f6))
+
 ## [9.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v9.1.2...xcm-api-v9.2.0) (2025-05-17)
 
 
