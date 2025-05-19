@@ -979,7 +979,7 @@ describe('XCM API (e2e)', () => {
           currency,
           feeAsset: currency,
         })
-        .expect(500);
+        .expect(400);
     });
 
     it(`Generate XCM call - Parachain to parachain override currency as multi asset - ${xTransferUrl}`, async () => {

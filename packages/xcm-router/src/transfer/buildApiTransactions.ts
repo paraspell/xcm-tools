@@ -9,5 +9,5 @@ export const buildApiTransactions = async (
 ): Promise<TRouterPlan> => {
   validateTransferOptions(initialOptions);
   const { options, dex } = await prepareTransformedOptions(initialOptions);
-  return await buildTransactions(dex, options);
+  return buildTransactions(dex, options);
 };
