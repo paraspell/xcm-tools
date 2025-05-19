@@ -1,5 +1,5 @@
 import type { TPapiTransaction, TXcmFeeDetail } from '@paraspell/sdk';
-import { getFeeForOriginNode, getNativeAssetSymbol } from '@paraspell/sdk';
+import { getOriginXcmFee } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeNode from '../../dexNodes/DexNode';
@@ -12,8 +12,7 @@ vi.mock('../createSwapTx', () => ({
 }));
 
 vi.mock('@paraspell/sdk', () => ({
-  getFeeForOriginNode: vi.fn(),
-  getNativeAssetSymbol: vi.fn(),
+  getOriginXcmFee: vi.fn(),
 }));
 
 describe('getSwapFee', () => {
@@ -32,16 +31,16 @@ describe('getSwapFee', () => {
       tx: 'dummyTx' as unknown as TPapiTransaction,
       amountOut: '100',
     });
-    vi.mocked(getFeeForOriginNode).mockResolvedValue({
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1n,
+      currency: 'DOT',
       feeType: 'paymentInfo',
     });
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT');
 
     const result = await getSwapFee(exchange, options);
 
     expect(createSwapTx).toHaveBeenCalledWith(exchange, options);
-    expect(getFeeForOriginNode).toHaveBeenCalledWith({
+    expect(getOriginXcmFee).toHaveBeenCalledWith({
       api: 'apiInstance',
       tx: 'dummyTx',
       origin: 'TEST_NODE',
@@ -49,7 +48,6 @@ describe('getSwapFee', () => {
       senderAddress: '0xSender',
       disableFallback: false,
     });
-    expect(getNativeAssetSymbol).toHaveBeenCalledWith('TEST_NODE');
 
     expect(result).toEqual({
       result: {
@@ -74,7 +72,7 @@ describe('getSwapFee', () => {
       amountOut: '100',
     });
     const error = new Error('fee error');
-    vi.mocked(getFeeForOriginNode).mockRejectedValue(error);
+    vi.mocked(getOriginXcmFee).mockRejectedValue(error);
 
     await expect(getSwapFee(exchange, options)).rejects.toThrow('fee error');
   });
@@ -85,12 +83,12 @@ describe('getSwapFee', () => {
       tx: 'dummyTx' as unknown as TPapiTransaction,
       amountOut: '200',
     });
-    vi.mocked(getFeeForOriginNode).mockResolvedValue({
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 0n,
+      currency: 'DOT',
       feeType: 'paymentInfo',
       dryRunError: dryError,
     });
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT');
 
     const { result, amountOut } = await getSwapFee(exchange, options);
 

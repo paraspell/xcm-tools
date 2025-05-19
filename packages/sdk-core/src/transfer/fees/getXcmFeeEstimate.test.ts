@@ -1,9 +1,19 @@
+import type { TAsset, TCurrencyInputWithAmount } from '@paraspell/assets'
+import {
+  findAssetForNodeOrThrow,
+  getNativeAssetSymbol,
+  InvalidCurrencyError
+} from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../api'
 import * as BuilderModule from '../../builder'
+import { getOriginXcmFeeEstimate } from './getOriginXcmFeeEstimate'
+import { getXcmFeeEstimate } from './getXcmFeeEstimate'
+import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets', () => ({
-  findAsset: vi.fn(),
+  findAssetForNodeOrThrow: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
   InvalidCurrencyError: class extends Error {}
 }))
@@ -16,16 +26,9 @@ vi.mock('../../builder', () => ({
   Builder: vi.fn()
 }))
 
-import type { TAsset, TCurrencyInputWithAmount } from '@paraspell/assets'
-import { findAsset, getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
-
-import type { IPolkadotApi } from '../../api'
-import { getXcmFeeEstimate } from './getXcmFeeEstimate'
-import { padFee } from './padFee'
-
-const mockedFindAsset = vi.mocked(findAsset)
-const mockedGetNativeAssetSymbol = vi.mocked(getNativeAssetSymbol)
-const mockedPadFee = vi.mocked(padFee)
+vi.mock('./getOriginXcmFeeEstimate', () => ({
+  getOriginXcmFeeEstimate: vi.fn()
+}))
 
 const makeApi = (originFee: bigint, destFee: bigint) => {
   const destApi = {
@@ -45,7 +48,7 @@ const makeApi = (originFee: bigint, destFee: bigint) => {
   }
 }
 
-const common = {
+const baseOptions = {
   tx: '0xdead',
   address: 'alice',
   senderAddress: 'bob'
@@ -67,13 +70,15 @@ beforeEach(() => {
 
 describe('getXcmFeeEstimate', () => {
   it('returns bridge constants polkadot → kusama', async () => {
-    mockedGetNativeAssetSymbol.mockImplementation(c => (c.includes('Polkadot') ? 'DOT' : 'KSM'))
+    vi.mocked(getNativeAssetSymbol).mockImplementation(c =>
+      c.includes('Polkadot') ? 'DOT' : 'KSM'
+    )
     const { api } = makeApi(0n, 0n)
 
     const spy = vi.spyOn(api, 'calculateTransactionFee')
 
     const res = await getXcmFeeEstimate({
-      ...common,
+      ...baseOptions,
       api,
       origin: 'AssetHubPolkadot',
       destination: 'AssetHubKusama',
@@ -87,10 +92,12 @@ describe('getXcmFeeEstimate', () => {
   })
 
   it('returns bridge constants kusama → polkadot', async () => {
-    mockedGetNativeAssetSymbol.mockImplementation(c => (c.includes('Polkadot') ? 'DOT' : 'KSM'))
+    vi.mocked(getNativeAssetSymbol).mockImplementation(c =>
+      c.includes('Polkadot') ? 'DOT' : 'KSM'
+    )
     const { api } = makeApi(0n, 0n)
     const res = await getXcmFeeEstimate({
-      ...common,
+      ...baseOptions,
       api,
       origin: 'AssetHubKusama',
       destination: 'AssetHubPolkadot',
@@ -105,34 +112,25 @@ describe('getXcmFeeEstimate', () => {
   it('pads origin and destination fees on normal route', async () => {
     const rawOrigin = 1000n
     const rawDest = 2000n
-    mockedPadFee.mockImplementationOnce(() => 1300n).mockImplementationOnce(() => 2600n)
-    mockedFindAsset.mockReturnValue({ symbol: 'ABC' } as TAsset)
-    mockedGetNativeAssetSymbol.mockReturnValue('UNIT')
+    vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue({
+      fee: rawOrigin,
+      currency: 'UNIT'
+    })
+    vi.mocked(padFee).mockImplementationOnce(() => 2600n)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ABC' } as TAsset)
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('UNIT')
     const { api } = makeApi(rawOrigin, rawDest)
     const res = await getXcmFeeEstimate({
-      ...common,
+      ...baseOptions,
       api,
       origin: 'BifrostPolkadot',
       destination: 'Hydration',
       currency: { symbol: 'ABC', amount: 5n }
     })
-    expect(mockedPadFee).toHaveBeenCalledTimes(2)
-    expect(mockedPadFee).toHaveBeenNthCalledWith(
-      1,
-      rawOrigin,
-      'BifrostPolkadot',
-      'Hydration',
-      'origin'
-    )
-    expect(mockedPadFee).toHaveBeenNthCalledWith(
-      2,
-      rawDest,
-      'BifrostPolkadot',
-      'Hydration',
-      'destination'
-    )
+    expect(padFee).toHaveBeenCalledTimes(1)
+    expect(padFee).toHaveBeenCalledWith(rawDest, 'BifrostPolkadot', 'Hydration', 'destination')
     expect(res).toEqual({
-      origin: { fee: 1300n, currency: 'UNIT' },
+      origin: { fee: 1000n, currency: 'UNIT' },
       destination: { fee: 2600n, currency: 'UNIT' }
     })
   })
@@ -141,25 +139,11 @@ describe('getXcmFeeEstimate', () => {
     const { api } = makeApi(0n, 0n)
     await expect(
       getXcmFeeEstimate({
-        ...common,
+        ...baseOptions,
         api,
         origin: 'BifrostPolkadot',
         destination: 'Hydration',
         currency: { multiasset: [], amount: 1n } as TCurrencyInputWithAmount
-      })
-    ).rejects.toBeInstanceOf(InvalidCurrencyError)
-  })
-
-  it('throws when asset not found', async () => {
-    mockedFindAsset.mockReturnValue(null)
-    const { api } = makeApi(0n, 0n)
-    await expect(
-      getXcmFeeEstimate({
-        ...common,
-        api,
-        origin: 'BifrostPolkadot',
-        destination: 'Hydration',
-        currency: { symbol: 'XYZ', amount: '1' }
       })
     ).rejects.toBeInstanceOf(InvalidCurrencyError)
   })

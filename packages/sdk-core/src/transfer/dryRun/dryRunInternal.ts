@@ -2,12 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  findAsset,
-  getNativeAssetSymbol,
-  hasDryRunSupport,
-  InvalidCurrencyError
-} from '@paraspell/assets'
+import { findAssetForNodeOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -16,19 +11,14 @@ import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
 import type { TDryRunNodeResultInternal } from '../../types'
 import { type TDryRunOptions, type TDryRunResult, type THubKey, Version } from '../../types'
 import { determineRelayChain } from '../../utils'
-import { createOriginLocation } from '../fees/getFeeForDestNode'
+import { createOriginLocation } from '../fees/getDestXcmFee'
 
 export const dryRunInternal = async <TApi, TRes>(
   options: TDryRunOptions<TApi, TRes>
 ): Promise<TDryRunResult> => {
   const { origin, destination, currency, api, tx, senderAddress } = options
 
-  const asset =
-    findAsset(origin, currency, destination) ??
-    (origin === 'AssetHubPolkadot' ? findAsset('Ethereum', currency, null) : null)
-
-  if (!asset)
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${origin}`)
+  const asset = findAssetForNodeOrThrow(origin, currency, destination)
 
   const originDryRun = await api.getDryRunCall({
     tx,

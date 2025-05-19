@@ -159,11 +159,11 @@ export type TGetMaxForeignTransferableAmountOptions<TApi, TRes> = WithApi<
   TRes
 >
 
-export type TGetTransferableAmountOptionsBase = {
+export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
-   * The address of the account.
+   * The sender address of the account.
    */
-  address: string
+  senderAddress: string
   /**
    * The node on which to query the balance.
    */
@@ -172,22 +172,47 @@ export type TGetTransferableAmountOptionsBase = {
    * The currency to query.
    */
   currency: TCurrencyCore
+  /**
+   * The transaction to calculate the fee for
+   */
+  tx: TRes
 }
 
 export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
-  TGetTransferableAmountOptionsBase,
+  TGetTransferableAmountOptionsBase<TRes>,
   TApi,
   TRes
 >
 
-export type TVerifyEdOnDestinationOptionsBase = {
-  node: TNodeDotKsmWithRelayChains
+export type TVerifyEdOnDestinationOptionsBase<TRes> = {
+  /**
+   * The origin node.
+   */
+  origin: TNodeDotKsmWithRelayChains
+  /**
+   * The destination node.
+   */
+  destination: TNodeDotKsmWithRelayChains
+  /**
+   * The address of the account.
+   */
   address: string
+  /**
+   * The account of the sender.
+   */
+  senderAddress: string
+  /**
+   * The currency to query.
+   */
   currency: WithAmount<TCurrencyCore>
+  /**
+   * The transaction to calculate the fee for
+   */
+  tx: TRes
 }
 
 export type TVerifyEdOnDestinationOptions<TApi, TRes> = WithApi<
-  TVerifyEdOnDestinationOptionsBase,
+  TVerifyEdOnDestinationOptionsBase<TRes>,
   TApi,
   TRes
 >

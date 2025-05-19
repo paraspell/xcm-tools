@@ -10,7 +10,10 @@ import * as paraspellSdk from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { BatchXTransferDto } from './dto/XTransferBatchDto.js';
-import type { XTransferDto } from './dto/XTransferDto.js';
+import type {
+  XTransferDto,
+  XTransferDtoWSenderAddress,
+} from './dto/XTransferDto.js';
 import { XTransferService } from './x-transfer.service.js';
 
 const txHash = '0x123';
@@ -37,6 +40,8 @@ const feeResult: TGetXcmFeeResult = {
   },
 };
 
+const amountResult = 100n;
+
 const builderMock = {
   from: vi.fn().mockReturnThis(),
   to: vi.fn().mockReturnThis(),
@@ -60,7 +65,12 @@ const builderMock = {
   }),
   dryRun: vi.fn().mockResolvedValue(dryRunResult),
   getXcmFee: vi.fn().mockResolvedValue(feeResult),
+  getOriginXcmFee: vi.fn().mockResolvedValue(feeResult),
   getXcmFeeEstimate: vi.fn().mockResolvedValue(feeResult),
+  getOriginXcmFeeEstimate: vi.fn().mockResolvedValue(feeResult),
+  getTransferableAmount: vi.fn().mockResolvedValue(amountResult),
+  verifyEdOnDestination: vi.fn().mockResolvedValue(true),
+  getTransferInfo: vi.fn().mockResolvedValue({}),
   disconnect: vi.fn(),
 };
 
@@ -77,13 +87,15 @@ describe('XTransferService', () => {
   let service: XTransferService;
 
   const address = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
+  const senderAddress = '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
   const currency = { symbol: 'DOT', amount: 100 };
   const invalidNode = 'InvalidNode';
 
-  const xTransferDto: XTransferDto = {
+  const xTransferDto: XTransferDtoWSenderAddress = {
     from: 'Acala',
     to: 'Astar',
     address,
+    senderAddress,
     currency,
   };
 
@@ -102,7 +114,12 @@ describe('XTransferService', () => {
 
   describe('generateXcmCall', () => {
     it('should generate XCM call for parachain to parachain transfer', async () => {
-      const result = await service.generateXcmCall(xTransferDto);
+      const options: XTransferDto = {
+        ...xTransferDto,
+        senderAddress: undefined,
+      };
+
+      const result = await service.generateXcmCall(options);
 
       expect(result).toBeTypeOf('string');
       expect(builderMock.from).toHaveBeenCalledWith(xTransferDto.from);
@@ -114,11 +131,16 @@ describe('XTransferService', () => {
     });
 
     it('should generate XCM call for parachain to parachain transfer', async () => {
+      const options: XTransferDto = {
+        ...xTransferDto,
+        senderAddress: undefined,
+      };
+
       vi.spyOn(paraspellSdk, 'Builder').mockReturnValue(
         builderMock as unknown as ReturnType<typeof paraspellSdk.Builder>,
       );
 
-      const result = await service.generateXcmCall(xTransferDto);
+      const result = await service.generateXcmCall(options);
 
       expect(result).toBeTypeOf('string');
       expect(builderMock.from).toHaveBeenCalledWith(xTransferDto.from);
@@ -133,6 +155,7 @@ describe('XTransferService', () => {
       const options: XTransferDto = {
         ...xTransferDto,
         to: 'Polkadot',
+        senderAddress: undefined,
       };
 
       const result = await service.generateXcmCall(options);
@@ -150,6 +173,7 @@ describe('XTransferService', () => {
         ...xTransferDto,
         from: 'Polkadot',
         currency: { symbol: 'DOT', amount: 100 },
+        senderAddress: undefined,
       };
 
       const result = await service.generateXcmCall(options);
@@ -258,11 +282,12 @@ describe('XTransferService', () => {
       );
     });
 
-    it('should throw BadRequestException when assetHub address is missing', async () => {
+    it('should throw BadRequestException when sender address is missing', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
         from: 'Hydration',
         to: 'Ethereum',
+        senderAddress: undefined,
       };
 
       await expect(service.generateXcmCall(options)).rejects.toThrow(
@@ -309,12 +334,6 @@ describe('XTransferService', () => {
       expect(builderMock.senderAddress).toHaveBeenCalledWith('alice');
     });
 
-    it('throws BadRequestException when senderAddress missing', () => {
-      expect(() => service.dryRun({ ...xTransferDto })).toThrow(
-        BadRequestException,
-      );
-    });
-
     it('maps SDK errors inside dryRun to BadRequestException', async () => {
       const builderErr = {
         ...builderMock,
@@ -340,11 +359,51 @@ describe('XTransferService', () => {
     });
   });
 
+  describe('getOriginXcmFee', () => {
+    it('delegates to builder.getOriginXcmFee', async () => {
+      const res = await service.getOriginXcmFee(xTransferDto);
+      expect(res).toBe(feeResult);
+      expect(builderMock.getOriginXcmFee).toHaveBeenCalled();
+    });
+  });
+
   describe('getXcmFeeEstimate', () => {
     it('delegates to builder.getXcmFeeEstimate', async () => {
       const res = await service.getXcmFeeEstimate(xTransferDto);
       expect(res).toBe(feeResult);
       expect(builderMock.getXcmFeeEstimate).toHaveBeenCalled();
+    });
+  });
+
+  describe('getOriginXcmFeeEstimate', () => {
+    it('delegates to builder.getOriginXcmFeeEstimate', async () => {
+      const res = await service.getOriginXcmFeeEstimate(xTransferDto);
+      expect(res).toBe(feeResult);
+      expect(builderMock.getOriginXcmFeeEstimate).toHaveBeenCalled();
+    });
+  });
+
+  describe('getTransferableAmount', () => {
+    it('delegates to builder.getTransferableAmount', async () => {
+      const res = await service.getTransferableAmount(xTransferDto);
+      expect(res).toBe(amountResult);
+      expect(builderMock.getTransferableAmount).toHaveBeenCalled();
+    });
+  });
+
+  describe('verifyEdOnDestination', () => {
+    it('delegates to builder.verifyEdOnDestination', async () => {
+      const res = await service.verifyEdOnDestination(xTransferDto);
+      expect(res).toBe(true);
+      expect(builderMock.verifyEdOnDestination).toHaveBeenCalled();
+    });
+  });
+
+  describe('getTransferInfo', () => {
+    it('delegates to builder.getTransferInfo', async () => {
+      const res = await service.getTransferInfo(xTransferDto);
+      expect(res).toEqual({});
+      expect(builderMock.getTransferInfo).toHaveBeenCalled();
     });
   });
 

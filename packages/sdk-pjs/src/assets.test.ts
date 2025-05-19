@@ -3,18 +3,11 @@ import {
   claimAssets as claimAssetsImpl,
   getAssetBalance as getAssetBalanceImpl,
   getBalanceForeign as getBalanceForeignImpl,
-  getBalanceNative as getBalanceNativeImpl,
-  getTransferInfo as getTransferInfoImpl
+  getBalanceNative as getBalanceNativeImpl
 } from '@paraspell/sdk-core'
 import { describe, expect, it, vi } from 'vitest'
 
-import {
-  claimAssets,
-  getAssetBalance,
-  getBalanceForeign,
-  getBalanceNative,
-  getTransferInfo
-} from './assets'
+import { claimAssets, getAssetBalance, getBalanceForeign, getBalanceNative } from './assets'
 import type { Extrinsic, TPjsApi } from './types'
 import { createPolkadotJsApiCall } from './utils'
 
@@ -33,12 +26,6 @@ describe('API Call Wrappers', () => {
     getBalanceForeign
 
     expect(createPolkadotJsApiCall).toHaveBeenCalledWith(getBalanceForeignImpl<TPjsApi, Extrinsic>)
-  })
-
-  it('should call createPolkadotJsApiCall with getTransferInfoImpl for getTransferInfo', () => {
-    getTransferInfo
-
-    expect(createPolkadotJsApiCall).toHaveBeenCalledWith(getTransferInfoImpl<TPjsApi, Extrinsic>)
   })
 
   it('should call createPolkadotJsApiCall with getAssetBalanceImpl for getAssetBalance', () => {

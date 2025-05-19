@@ -3,11 +3,7 @@ import {
   getBalanceForeign,
   getBalanceNative,
   getExistentialDeposit,
-  getMaxForeignTransferableAmount,
-  getMaxNativeTransferableAmount,
-  getTransferableAmount,
   InvalidAddressError,
-  verifyEdOnDestination,
 } from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -22,11 +18,7 @@ vi.mock('@paraspell/sdk', async () => {
     ...actual,
     getBalanceForeign: vi.fn(),
     getBalanceNative: vi.fn(),
-    getMaxForeignTransferableAmount: vi.fn(),
-    getMaxNativeTransferableAmount: vi.fn(),
-    getTransferableAmount: vi.fn(),
     getExistentialDeposit: vi.fn(),
-    verifyEdOnDestination: vi.fn(),
     NODE_NAMES_DOT_KSM: ['valid-node'],
     NODES_WITH_RELAY_CHAINS: ['valid-node'],
     NODES_WITH_RELAY_CHAINS_DOT_KSM: ['valid-node'],
@@ -34,10 +26,10 @@ vi.mock('@paraspell/sdk', async () => {
 });
 
 describe('BalanceService', () => {
-  let balanceService: BalanceService;
+  let service: BalanceService;
 
   beforeEach(() => {
-    balanceService = new BalanceService();
+    service = new BalanceService();
   });
 
   describe('getBalanceNative', () => {
@@ -45,9 +37,9 @@ describe('BalanceService', () => {
       const invalidNode = 'invalid-node';
       const params: BalanceNativeDto = { address: '0x1234567890' };
 
-      expect(() =>
-        balanceService.getBalanceNative(invalidNode, params),
-      ).toThrow(BadRequestException);
+      expect(() => service.getBalanceNative(invalidNode, params)).toThrow(
+        BadRequestException,
+      );
     });
 
     it('should return native balance for a valid node', async () => {
@@ -57,7 +49,7 @@ describe('BalanceService', () => {
 
       vi.mocked(getBalanceNative).mockResolvedValue(mockBalance);
 
-      const result = await balanceService.getBalanceNative(validNode, params);
+      const result = await service.getBalanceNative(validNode, params);
 
       expect(getBalanceNative).toHaveBeenCalledWith({
         address: params.address,
@@ -76,7 +68,7 @@ describe('BalanceService', () => {
       };
 
       await expect(
-        balanceService.getBalanceForeign(invalidNode, params),
+        service.getBalanceForeign(invalidNode, params),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -90,7 +82,7 @@ describe('BalanceService', () => {
 
       vi.mocked(getBalanceForeign).mockResolvedValue(mockBalance);
 
-      const result = await balanceService.getBalanceForeign(validNode, params);
+      const result = await service.getBalanceForeign(validNode, params);
 
       expect(getBalanceForeign).toHaveBeenCalledWith({
         address: params.address,
@@ -109,7 +101,7 @@ describe('BalanceService', () => {
 
       vi.mocked(getBalanceForeign).mockResolvedValue(0n);
 
-      const result = await balanceService.getBalanceForeign(validNode, params);
+      const result = await service.getBalanceForeign(validNode, params);
 
       expect(getBalanceForeign).toHaveBeenCalledWith({
         address: params.address,
@@ -131,7 +123,7 @@ describe('BalanceService', () => {
       );
 
       await expect(
-        balanceService.getBalanceForeign(validNode, params),
+        service.getBalanceForeign(validNode, params),
       ).rejects.toThrow(BadRequestException);
     });
   });
@@ -145,7 +137,7 @@ describe('BalanceService', () => {
       };
 
       await expect(
-        balanceService.getBalanceForeign(invalidNode, params),
+        service.getBalanceForeign(invalidNode, params),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -159,7 +151,7 @@ describe('BalanceService', () => {
 
       vi.mocked(getBalanceForeign).mockResolvedValue(mockBalance);
 
-      const result = await balanceService.getBalanceForeign(validNode, params);
+      const result = await service.getBalanceForeign(validNode, params);
 
       expect(getBalanceForeign).toHaveBeenCalledWith({
         address: params.address,
@@ -178,7 +170,7 @@ describe('BalanceService', () => {
 
       vi.mocked(getBalanceForeign).mockResolvedValue(0n);
 
-      const result = await balanceService.getBalanceForeign(validNode, params);
+      const result = await service.getBalanceForeign(validNode, params);
 
       expect(getBalanceForeign).toHaveBeenCalledWith({
         address: params.address,
@@ -189,110 +181,6 @@ describe('BalanceService', () => {
     });
   });
 
-  describe('getMaxNativeTransferableAmount', () => {
-    it('should throw BadRequestException for an invalid node', () => {
-      const invalidNode = 'invalid-node';
-      const params: BalanceNativeDto = { address: '0x1234567890' };
-
-      expect(() =>
-        balanceService.getMaxNativeTransferableAmount(invalidNode, params),
-      ).toThrow(BadRequestException);
-    });
-
-    it('should return max native transferable amount for a valid node', async () => {
-      const validNode = 'valid-node';
-      const params: BalanceNativeDto = { address: '0x1234567890' };
-      const mockAmount = 2000n;
-
-      vi.mocked(getMaxNativeTransferableAmount).mockResolvedValue(mockAmount);
-
-      const result = await balanceService.getMaxNativeTransferableAmount(
-        validNode,
-        params,
-      );
-
-      expect(getMaxNativeTransferableAmount).toHaveBeenCalledWith({
-        address: params.address,
-        node: validNode,
-      });
-      expect(result).toEqual(mockAmount);
-    });
-  });
-
-  describe('getMaxForeignTransferableAmount', () => {
-    it('should throw BadRequestException for an invalid node', () => {
-      const invalidNode = 'invalid-node';
-      const params: BalanceForeignDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ' },
-      };
-
-      expect(() =>
-        balanceService.getMaxForeignTransferableAmount(invalidNode, params),
-      ).toThrow(BadRequestException);
-    });
-
-    it('should return max foreign transferable amount for a valid node', async () => {
-      const validNode = 'valid-node';
-      const params: BalanceForeignDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ' },
-      };
-      const mockAmount = 3000n;
-
-      vi.mocked(getMaxForeignTransferableAmount).mockResolvedValue(mockAmount);
-
-      const result = await balanceService.getMaxForeignTransferableAmount(
-        validNode,
-        params,
-      );
-
-      expect(getMaxForeignTransferableAmount).toHaveBeenCalledWith({
-        address: params.address,
-        currency: params.currency,
-        node: validNode,
-      });
-      expect(result).toEqual(mockAmount);
-    });
-  });
-
-  describe('getTransferableAmount', () => {
-    it('should throw BadRequestException for an invalid node', () => {
-      const invalidNode = 'invalid-node';
-      const params: BalanceForeignDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ' },
-      };
-
-      expect(() =>
-        balanceService.getTransferableAmount(invalidNode, params),
-      ).toThrow(BadRequestException);
-    });
-
-    it('should return transferable amount for a valid node', async () => {
-      const validNode = 'valid-node';
-      const params: BalanceForeignDto = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ' },
-      };
-      const mockAmount = 4000n;
-
-      vi.mocked(getTransferableAmount).mockResolvedValue(mockAmount);
-
-      const result = await balanceService.getTransferableAmount(
-        validNode,
-        params,
-      );
-
-      expect(getTransferableAmount).toHaveBeenCalledWith({
-        address: params.address,
-        currency: params.currency,
-        node: validNode,
-      });
-      expect(result).toEqual(mockAmount);
-    });
-  });
-
   describe('getExistentialDeposit', () => {
     it('should throw BadRequestException for an invalid node', () => {
       const invalidNode = 'invalid-node';
@@ -300,9 +188,9 @@ describe('BalanceService', () => {
         currency: { symbol: 'DOT' },
       };
 
-      expect(() =>
-        balanceService.getExistentialDeposit(invalidNode, params),
-      ).toThrow(BadRequestException);
+      expect(() => service.getExistentialDeposit(invalidNode, params)).toThrow(
+        BadRequestException,
+      );
     });
 
     it('should return existential deposit for a valid node', () => {
@@ -314,48 +202,13 @@ describe('BalanceService', () => {
 
       vi.mocked(getExistentialDeposit).mockReturnValue(edMock);
 
-      const result = balanceService.getExistentialDeposit(validNode, params);
+      const result = service.getExistentialDeposit(validNode, params);
 
       expect(getExistentialDeposit).toHaveBeenCalledWith(
         validNode,
         params.currency,
       );
       expect(result).toEqual(edMock);
-    });
-  });
-
-  describe('verifyEdOnDestination', () => {
-    it('should throw BadRequestException for an invalid node', () => {
-      const invalidNode = 'invalid-node';
-      const params = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ', amount: '100' },
-      };
-
-      expect(() =>
-        balanceService.verifyEdOnDestination(invalidNode, params),
-      ).toThrow(BadRequestException);
-    });
-
-    it('should return true if ED is valid for a valid node', async () => {
-      const validNode = 'valid-node';
-      const params = {
-        address: '0x1234567890',
-        currency: { symbol: 'UNQ', amount: '100' },
-      };
-
-      vi.mocked(verifyEdOnDestination).mockResolvedValue(true);
-
-      const result = await balanceService.verifyEdOnDestination(
-        validNode,
-        params,
-      );
-
-      expect(verifyEdOnDestination).toHaveBeenCalledWith({
-        ...params,
-        node: validNode,
-      });
-      expect(result).toEqual(true);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { findAsset, InvalidCurrencyError } from '@paraspell/assets'
+import { findAssetForNodeOrThrow } from '@paraspell/assets'
 import * as palletsModule from '@paraspell/pallets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -13,8 +13,7 @@ vi.mock('../../../utils', () => ({
 }))
 
 vi.mock('@paraspell/assets', () => ({
-  findAsset: vi.fn(),
-  InvalidCurrencyError: class extends Error {}
+  findAssetForNodeOrThrow: vi.fn()
 }))
 
 vi.mock('./getBalanceForeignXTokens', () => ({
@@ -35,9 +34,8 @@ describe('getBalanceForeign', () => {
 
   beforeEach(() => {
     vi.resetAllMocks()
-
     vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApi)
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'DOT', assetId: '123' })
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT', assetId: '123' })
   })
 
   it('should use the provided API instance if passed', async () => {
@@ -49,7 +47,7 @@ describe('getBalanceForeign', () => {
       api: mockApi
     })
     expect(createApiInstanceForNode).not.toHaveBeenCalled()
-    expect(findAsset).toHaveBeenCalledWith('Acala', { symbol: 'ACA' }, null)
+    expect(findAssetForNodeOrThrow).toHaveBeenCalledWith('Acala', { symbol: 'ACA' }, null)
   })
 
   it('should create an API instance if none is provided', async () => {
@@ -97,17 +95,5 @@ describe('getBalanceForeign', () => {
         api: mockApi
       })
     ).rejects.toThrow('Unsupported pallet')
-  })
-
-  it('throws an error for invalid currency', async () => {
-    vi.mocked(findAsset).mockReturnValue(null)
-    await expect(
-      getBalanceForeign({
-        address: 'address',
-        node: 'Acala',
-        currency: { symbol: 'DOT' },
-        api: mockApi
-      })
-    ).rejects.toThrow(InvalidCurrencyError)
   })
 })

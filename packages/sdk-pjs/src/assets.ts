@@ -3,12 +3,7 @@ import {
   getAssetBalance as getAssetBalanceImpl,
   getBalanceForeign as getBalanceForeignImpl,
   getBalanceNative as getBalanceNativeImpl,
-  getMaxForeignTransferableAmount as getMaxForeignTransferableAmountImpl,
-  getMaxNativeTransferableAmount as getMaxNativeTransferableAmountImpl,
-  getOriginFeeDetails as getOriginFeeDetailsImpl,
-  getTransferableAmount as getTransferableAmountImpl,
-  getTransferInfo as getTransferInfoImpl,
-  verifyEdOnDestination as verifyEdOnDestinationImpl
+  getOriginFeeDetails as getOriginFeeDetailsImpl
 } from '@paraspell/sdk-core'
 
 import type { Extrinsic, TPjsApi } from './types'
@@ -29,13 +24,6 @@ export const getBalanceNative = createPolkadotJsApiCall(getBalanceNativeImpl<TPj
 export const getBalanceForeign = createPolkadotJsApiCall(getBalanceForeignImpl<TPjsApi, Extrinsic>)
 
 /**
- * Retrieves detailed transfer information for a cross-chain transfer.
- *
- * @returns A Promise that resolves to the transfer information.
- */
-export const getTransferInfo = createPolkadotJsApiCall(getTransferInfoImpl<TPjsApi, Extrinsic>)
-
-/**
  * Retrieves the asset balance for a given account on a specified node.
  *
  * @returns The asset balance as a bigint.
@@ -49,24 +37,15 @@ export const getAssetBalance = createPolkadotJsApiCall(getAssetBalanceImpl<TPjsA
  */
 export const claimAssets = createPolkadotJsApiCall(claimAssetsImpl<TPjsApi, Extrinsic>)
 
+/**
+ * @deprecated This function is deprecated and will be removed in a future version.
+ * Please use `builder.getOriginXcmFee()` or `builder.getOriginXcmFeeEstimate()` instead,
+ * where `builder` is an instance of `Builder()`.
+ * For more details, please refer to the documentation:
+ * {@link https://paraspell.github.io/docs/sdk/xcmPallet.html#xcm-fee-origin-and-dest}
+ */
 export const getOriginFeeDetails = createPolkadotJsApiCall(
   getOriginFeeDetailsImpl<TPjsApi, Extrinsic>
-)
-
-export const getMaxNativeTransferableAmount = createPolkadotJsApiCall(
-  getMaxNativeTransferableAmountImpl<TPjsApi, Extrinsic>
-)
-
-export const getMaxForeignTransferableAmount = createPolkadotJsApiCall(
-  getMaxForeignTransferableAmountImpl<TPjsApi, Extrinsic>
-)
-
-export const getTransferableAmount = createPolkadotJsApiCall(
-  getTransferableAmountImpl<TPjsApi, Extrinsic>
-)
-
-export const verifyEdOnDestination = createPolkadotJsApiCall(
-  verifyEdOnDestinationImpl<TPjsApi, Extrinsic>
 )
 
 export {

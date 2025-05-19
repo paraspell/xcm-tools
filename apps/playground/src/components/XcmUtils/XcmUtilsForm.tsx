@@ -20,13 +20,17 @@ import {
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
 } from '@paraspell/sdk';
 import {
+  IconArrowsExchange,
+  IconChecks,
   IconChevronDown,
-  IconLocationCheck,
+  IconCoin,
+  IconCoinFilled,
+  IconFileInfo,
   IconPlus,
   IconTransfer,
   IconTrash,
 } from '@tabler/icons-react';
-import type { FC, FormEvent } from 'react';
+import type { FC } from 'react';
 import { useEffect } from 'react';
 
 import useCurrencyOptions from '../../hooks/useCurrencyOptions';
@@ -75,15 +79,13 @@ export type FormValuesTransformed = FormValues & {
 type Props = {
   onSubmit: (values: FormValuesTransformed, submitType: TSubmitType) => void;
   loading: boolean;
-  isBatchMode: boolean;
   initialValues?: FormValues;
   isVisible?: boolean;
 };
 
-const XcmTransferForm: FC<Props> = ({
+const XcmUtilsForm: FC<Props> = ({
   onSubmit,
   loading,
-  isBatchMode,
   initialValues,
   isVisible = true,
 }) => {
@@ -158,27 +160,14 @@ const XcmTransferForm: FC<Props> = ({
 
   const transformCurrency = (entry: TCurrencyEntry) => {
     if (entry.isCustomCurrency) {
-      // Custom currency doesn't map to currencyMap
       return { ...entry };
     }
-
     const currency = currencyMap[entry.currencyOptionId];
-
-    if (!currency) {
-      return { ...entry };
-    }
-
-    return { ...entry, currency };
+    return currency ? { ...entry, currency } : { ...entry };
   };
 
-  const onSubmitInternal = (
-    values: FormValues,
-    _event: FormEvent<HTMLFormElement> | undefined,
-    submitType: TSubmitType = 'default',
-  ) => {
-    // Transform each currency entry
+  const onSubmitInternal = (values: FormValues, submitType: TSubmitType) => {
     const transformedCurrencies = values.currencies.map(transformCurrency);
-
     const transformedFeeAsset =
       values.feeAsset.currencyOptionId || values.feeAsset.isCustomCurrency
         ? transformCurrency(values.feeAsset as TCurrencyEntry)
@@ -189,26 +178,55 @@ const XcmTransferForm: FC<Props> = ({
       currencies: transformedCurrencies,
       transformedFeeAsset,
     };
-
-    if (submitType === 'dryRun' || submitType === 'delete') {
-      onSubmit(transformedValues, submitType);
-      return;
-    }
-
-    onSubmit(transformedValues, initialValues ? 'update' : submitType);
+    onSubmit(transformedValues, submitType);
   };
 
-  const onSubmitInternalDryRun = () => {
+  const onSubmitGetXcmFee = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), undefined, 'dryRun');
+      onSubmitInternal(form.getValues(), 'getXcmFee');
     }
   };
 
-  const onSubmitInternalAddToBatch = () => {
+  const onSubmitGetXcmFeeEstimate = () => {
     form.validate();
     if (form.isValid()) {
-      onSubmitInternal(form.getValues(), undefined, 'addToBatch');
+      onSubmitInternal(form.getValues(), 'getXcmFeeEstimate');
+    }
+  };
+
+  const onSubmitGetOriginXcmFee = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), 'getOriginXcmFee');
+    }
+  };
+
+  const onSubmitGetOriginXcmFeeEstimate = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), 'getOriginXcmFeeEstimate');
+    }
+  };
+
+  const onSubmitGetTransferableAmount = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), 'getTransferableAmount');
+    }
+  };
+
+  const onSubmitVerifyEdOnDestination = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), 'verifyEdOnDestination');
+    }
+  };
+
+  const onSubmitGetTransferInfo = () => {
+    form.validate();
+    if (form.isValid()) {
+      onSubmitInternal(form.getValues(), 'getTransferInfo');
     }
   };
 
@@ -219,17 +237,18 @@ const XcmTransferForm: FC<Props> = ({
         Object.keys(currencyMap)[0],
       );
     }
-  }, [isNotParaToPara, currencyMap]);
+  }, [isNotParaToPara, currencyMap, form]);
 
   useEffect(() => {
     setIsUseXcmApiSelected(useApi);
-  }, [useApi]);
+  }, [useApi]); // Removed setIsUseXcmApiSelected from dependency array as it's from a hook
 
   const onSwap = () => {
-    const { from, to } = form.getValues();
-    if (to !== 'Ethereum') {
-      form.setFieldValue('from', to);
-      form.setFieldValue('to', from);
+    const { from: currentFrom, to: currentTo } = form.getValues();
+    if (currentTo !== 'Ethereum') {
+      // Assuming TNodeWithRelayChains can be assigned to TNodeDotKsmWithRelayChains if it's not 'Ethereum'
+      form.setFieldValue('from', currentTo as TNodeDotKsmWithRelayChains);
+      form.setFieldValue('to', currentFrom);
     }
   };
 
@@ -243,11 +262,6 @@ const XcmTransferForm: FC<Props> = ({
 
   const onConnectWalletClick = () => void connectWallet();
 
-  const getSubmitLabel = () => {
-    if (initialValues) return 'Update transaction';
-    return isBatchMode ? 'Submit batch' : 'Submit transaction';
-  };
-
   const colorScheme = useComputedColorScheme();
 
   if (!isVisible) {
@@ -256,7 +270,9 @@ const XcmTransferForm: FC<Props> = ({
 
   return (
     <Paper p="xl" shadow="md">
-      <form onSubmit={form.onSubmit(onSubmitInternal)}>
+      <form>
+        {' '}
+        {/* Removed form.onSubmit from here */}
         <Stack gap="lg">
           <ParachainSelect
             label="Origin"
@@ -270,12 +286,9 @@ const XcmTransferForm: FC<Props> = ({
           <ActionIcon
             variant="outline"
             style={{ margin: '0 auto', marginBottom: -12 }}
+            onClick={onSwap} // Added onClick directly here
           >
-            <IconTransfer
-              size={24}
-              style={{ rotate: '90deg' }}
-              onClick={onSwap}
-            />
+            <IconTransfer size={24} style={{ rotate: '90deg' }} />
           </ActionIcon>
 
           <ParachainSelect
@@ -340,6 +353,7 @@ const XcmTransferForm: FC<Props> = ({
                   amount: '10000000000000000000',
                   isCustomCurrency: false,
                   customCurrencyType: 'id',
+                  customCurrencySymbolSpecifier: 'auto',
                 })
               }
             >
@@ -364,7 +378,7 @@ const XcmTransferForm: FC<Props> = ({
               description="SS58 address"
               placeholder="Enter address"
               required
-              data-testid="input-address"
+              data-testid="input-ahAddress" // Changed from input-address to avoid duplicate testid
               {...form.getInputProps('ahAddress')}
             />
           )}
@@ -374,64 +388,75 @@ const XcmTransferForm: FC<Props> = ({
           />
 
           {selectedAccount ? (
-            <Button.Group>
-              <Button
-                type="submit"
-                loading={loading}
-                flex={1}
-                data-testid="submit"
-              >
-                {getSubmitLabel()}
-              </Button>
+            <Menu shadow="md" width={250} position="bottom-end">
+              <Menu.Target>
+                <Button
+                  leftSection={<IconChevronDown />}
+                  loading={loading}
+                  variant="outline"
+                  fullWidth
+                >
+                  Actions
+                </Button>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item
+                  leftSection={<IconCoinFilled size={16} />}
+                  onClick={onSubmitGetXcmFee}
+                >
+                  Get XCM Fee
+                </Menu.Item>
 
-              <Menu shadow="md" width={200} position="bottom-end">
-                <Menu.Target>
-                  <Button
-                    style={{
-                      borderLeft: '1px solid #ff93c0',
-                    }}
-                  >
-                    <IconChevronDown />
-                  </Button>
-                </Menu.Target>
+                <Menu.Item
+                  leftSection={<IconCoin size={16} />}
+                  onClick={onSubmitGetXcmFeeEstimate}
+                >
+                  Get XCM Fee Estimate
+                </Menu.Item>
 
-                <Menu.Dropdown>
-                  <Menu.Item
-                    leftSection={<IconLocationCheck size={16} />}
-                    onClick={onSubmitInternalDryRun}
-                  >
-                    Dry run
-                  </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconCoinFilled size={16} />}
+                  onClick={onSubmitGetOriginXcmFee}
+                >
+                  Get Origin XCM Fee
+                </Menu.Item>
 
-                  {!initialValues && (
-                    <Menu.Item
-                      leftSection={<IconPlus size={16} />}
-                      onClick={onSubmitInternalAddToBatch}
-                    >
-                      Add to batch
-                    </Menu.Item>
-                  )}
+                <Menu.Item
+                  leftSection={<IconCoin size={16} />}
+                  onClick={onSubmitGetOriginXcmFeeEstimate}
+                >
+                  Get Origin XCM Fee Estimate
+                </Menu.Item>
 
-                  {initialValues && (
-                    <Menu.Item
-                      leftSection={<IconTrash size={16} />}
-                      onClick={() =>
-                        onSubmitInternal(form.getValues(), undefined, 'delete')
-                      }
-                    >
-                      Delete from batch
-                    </Menu.Item>
-                  )}
-                </Menu.Dropdown>
-              </Menu>
-            </Button.Group>
+                <Menu.Divider />
+                <Menu.Item
+                  leftSection={<IconArrowsExchange size={16} />}
+                  onClick={onSubmitGetTransferableAmount}
+                >
+                  Get Transferable Amount
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconChecks size={16} />}
+                  onClick={onSubmitVerifyEdOnDestination}
+                >
+                  Verify ED on Destination
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconFileInfo size={16} />}
+                  onClick={onSubmitGetTransferInfo}
+                >
+                  Get Transfer Info
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
           ) : (
             <Button
               onClick={onConnectWalletClick}
               data-testid="btn-connect-wallet"
               loading={!isInitialized || isLoadingExtensions}
+              fullWidth
             >
-              Connect wallet
+              Connect Wallet
             </Button>
           )}
         </Stack>
@@ -440,4 +465,4 @@ const XcmTransferForm: FC<Props> = ({
   );
 };
 
-export default XcmTransferForm;
+export default XcmUtilsForm;

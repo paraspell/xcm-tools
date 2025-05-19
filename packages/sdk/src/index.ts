@@ -9,12 +9,7 @@ export {
   getAssetBalance,
   getBalanceForeign,
   getBalanceNative,
-  getMaxForeignTransferableAmount,
-  getMaxNativeTransferableAmount,
-  getOriginFeeDetails,
-  getTransferableAmount,
-  getTransferInfo,
-  verifyEdOnDestination
+  getOriginFeeDetails
 } from './assets'
 export { Builder, EvmBuilder, GeneralBuilder } from './builder'
 export * as xcmPallet from './transfer'
@@ -24,7 +19,7 @@ export {
   getParaEthTransferFees,
   send,
   getBridgeStatus,
-  getFeeForOriginNode
+  getOriginXcmFee
 } from './transfer'
 export * from './types'
 export { createApiInstanceForNode } from './utils'

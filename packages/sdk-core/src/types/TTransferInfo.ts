@@ -1,31 +1,41 @@
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
 
+import type { UnableToComputeError } from '../errors'
 import type { WithApi } from './TApi'
 
 export type TTransferInfo = {
   chain: { origin: TNodeWithRelayChains; destination: TNodeWithRelayChains; ecosystem: string }
-  currencyBalanceOrigin: {
-    balance: bigint
-    currency: string
-  }
-  originFeeBalance: {
-    balance: bigint
-    // balance - (xcmFee+10%)
-    expectedBalanceAfterXCMFee: bigint
-    xcmFee: {
-      sufficientForXCM: boolean
-      xcmFee: bigint
+  origin: {
+    selectedCurrency: {
+      sufficient: boolean
+      balance: bigint
+      balanceAfter: bigint
+      currencySymbol: string
+      existentialDeposit: bigint
     }
-    existentialDeposit: bigint
-    asset: string
-    minNativeTransferableAmount: bigint
-    maxNativeTransferableAmount: bigint
+    xcmFee: {
+      sufficient: boolean
+      fee: bigint
+      balance: bigint
+      balanceAfter: bigint
+      currencySymbol: string
+    }
   }
-  destinationFeeBalance: {
-    balance: bigint
-    currency: string
-    existentialDeposit: bigint
+  destination: {
+    receivedCurrency: {
+      sufficient: boolean | UnableToComputeError
+      balance: bigint
+      balanceAfter: bigint | UnableToComputeError
+      currencySymbol: string
+      existentialDeposit: bigint
+    }
+    xcmFee: {
+      fee: bigint
+      balance: bigint
+      balanceAfter: bigint
+      currencySymbol: string
+    }
   }
 }
 
@@ -34,12 +44,17 @@ export type TOriginFeeDetails = {
   xcmFee: bigint
 }
 
-export type TGetTransferInfoOptionsBase = {
+export type TGetTransferInfoOptionsBase<TRes> = {
+  tx: TRes
   origin: TNodeDotKsmWithRelayChains
   destination: TNodeDotKsmWithRelayChains
-  accountOrigin: string
-  accountDestination: string
+  senderAddress: string
+  address: string
   currency: WithAmount<TCurrencyCore>
 }
 
-export type TGetTransferInfoOptions<TApi, TRes> = WithApi<TGetTransferInfoOptionsBase, TApi, TRes>
+export type TGetTransferInfoOptions<TApi, TRes> = WithApi<
+  TGetTransferInfoOptionsBase<TRes>,
+  TApi,
+  TRes
+>

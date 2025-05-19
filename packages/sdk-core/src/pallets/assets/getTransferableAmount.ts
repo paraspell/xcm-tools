@@ -1,136 +1,65 @@
 import {
-  findAsset,
+  findAssetForNodeOrThrow,
   getExistentialDeposit,
-  InvalidCurrencyError,
-  isForeignAsset
+  getNativeAssetSymbol
 } from '@paraspell/assets'
-import { isRelayChain } from '@paraspell/sdk-common'
 
-import type {
-  TGetMaxForeignTransferableAmountOptions,
-  TGetMaxNativeTransferableAmountOptions,
-  TGetTransferableAmountOptions
-} from '../../types/TBalance'
+import { getOriginXcmFee } from '../../transfer'
+import type { TGetTransferableAmountOptions } from '../../types/TBalance'
 import { validateAddress } from '../../utils/validateAddress'
-import { getBalanceForeignInternal } from './balance/getBalanceForeign'
-import { getBalanceNativeInternal } from './balance/getBalanceNative'
+import { getAssetBalanceInternal } from './balance/getAssetBalance'
 
-export const getMaxNativeTransferableAmountInternal = async <TApi, TRes>({
+export const getTransferableAmountInternal = async <TApi, TRes>({
   api,
-  address,
+  senderAddress,
   node,
-  currency
-}: TGetMaxNativeTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
-  validateAddress(address, node, false)
+  currency,
+  tx
+}: TGetTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
+  validateAddress(senderAddress, node, false)
+
+  const asset = findAssetForNodeOrThrow(node, currency, null)
+
+  const balance = await getAssetBalanceInternal({
+    api,
+    address: senderAddress,
+    node,
+    currency
+  })
 
   const ed = getExistentialDeposit(node, currency)
 
   if (ed === null) {
-    throw new Error(`Cannot get existential deposit for node ${node}`)
-  }
-  const edBN = BigInt(ed)
-  const nativeBalance = await getBalanceNativeInternal({
-    address,
-    node,
-    api,
-    currency
-  })
-
-  const maxTransferableAmount = nativeBalance - edBN
-  return maxTransferableAmount > 0n ? maxTransferableAmount : 0n
-}
-
-export const getMaxNativeTransferableAmount = async <TApi, TRes>(
-  options: TGetMaxNativeTransferableAmountOptions<TApi, TRes>
-): Promise<bigint> => {
-  const { api } = options
-  api.setDisconnectAllowed(false)
-  try {
-    return await getMaxNativeTransferableAmountInternal(options)
-  } finally {
-    api.setDisconnectAllowed(true)
-    await api.disconnect()
-  }
-}
-
-export const getMaxForeignTransferableAmountInternal = async <TApi, TRes>({
-  api,
-  address,
-  node,
-  currency
-}: TGetMaxForeignTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
-  validateAddress(address, node, false)
-
-  const asset =
-    findAsset(node, currency, null) ??
-    (node === 'AssetHubPolkadot' ? findAsset('Ethereum', currency, null) : null)
-
-  if (!asset) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${node}`)
-  }
-
-  if (!isForeignAsset(asset)) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} is not a foreign asset`)
-  }
-
-  const ed = asset.existentialDeposit
-
-  if (!ed) {
-    throw new Error(`Cannot get existential deposit for asset ${JSON.stringify(asset)}`)
+    throw new Error(`Cannot get existential deposit for currency ${JSON.stringify(currency)}.`)
   }
 
   const edBN = BigInt(ed)
-  const balance = await getBalanceForeignInternal({
-    address,
-    node,
-    api,
-    currency
-  })
-  const maxTransferableAmount = balance - edBN
-  return maxTransferableAmount > 0n ? maxTransferableAmount : 0n
-}
 
-export const getMaxForeignTransferableAmount = async <TApi, TRes>(
-  options: TGetMaxForeignTransferableAmountOptions<TApi, TRes>
-): Promise<bigint> => {
-  const { api } = options
-  api.setDisconnectAllowed(false)
-  try {
-    return await getMaxForeignTransferableAmountInternal(options)
-  } finally {
-    api.setDisconnectAllowed(true)
-    await api.disconnect()
-  }
-}
+  const isNativeAsset = getNativeAssetSymbol(node) === asset.symbol
 
-export const getTransferableAmountInternal = async <TApi, TRes>({
-  api,
-  address,
-  node,
-  currency
-}: TGetTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
-  validateAddress(address, node, false)
+  let feeToSubtract = 0n
 
-  const asset =
-    findAsset(node, currency, null) ??
-    (node === 'AssetHubPolkadot' ? findAsset('Ethereum', currency, null) : null)
-
-  if (!asset) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${node}`)
-  }
-
-  if (isForeignAsset(asset) && !isRelayChain(node)) {
-    return getMaxForeignTransferableAmountInternal({ api, address, node, currency })
-  } else {
-    return getMaxNativeTransferableAmountInternal({
+  if (isNativeAsset) {
+    const { fee } = await getOriginXcmFee({
       api,
-      address,
-      node,
-      currency: {
-        symbol: asset.symbol
-      }
+      tx,
+      origin: node,
+      destination: node,
+      senderAddress,
+      disableFallback: false
     })
+
+    if (fee === undefined) {
+      throw new Error(
+        `Cannot get origin xcm fee for currency ${JSON.stringify(currency)} on node ${node}.`
+      )
+    }
+    feeToSubtract = fee
   }
+
+  const transferable = balance - edBN - feeToSubtract
+
+  return transferable > 0n ? transferable : 0n
 }
 
 export const getTransferableAmount = async <TApi, TRes>(

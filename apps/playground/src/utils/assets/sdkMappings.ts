@@ -61,12 +61,6 @@ export const callSdkFunc = (
         node: node,
         currency: resolvedCurrency,
       }),
-    TRANSFERABLE_AMOUNT: () =>
-      chosenSdk.getTransferableAmount({
-        address,
-        node: node as TNodePolkadotKusama,
-        currency: resolvedCurrency,
-      }),
     EXISTENTIAL_DEPOSIT: () =>
       Promise.resolve(
         chosenSdk.getExistentialDeposit(
@@ -87,15 +81,6 @@ export const callSdkFunc = (
         account: address,
         accountDestination,
         ahAddress,
-      }),
-    VERIFY_ED_ON_DESTINATION: () =>
-      chosenSdk.verifyEdOnDestination({
-        node,
-        address,
-        currency: {
-          ...resolvedCurrency,
-          amount,
-        },
       }),
     HAS_DRY_RUN_SUPPORT: () =>
       Promise.resolve(chosenSdk.hasDryRunSupport(node)),

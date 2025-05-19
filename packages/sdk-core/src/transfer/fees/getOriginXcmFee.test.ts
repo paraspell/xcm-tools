@@ -1,12 +1,13 @@
-import { hasDryRunSupport } from '@paraspell/assets'
+import { getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getFeeForOriginNode } from './getFeeForOriginNode'
+import { getOriginXcmFee } from './getOriginXcmFee'
 import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets', () => ({
-  hasDryRunSupport: vi.fn()
+  hasDryRunSupport: vi.fn(),
+  getNativeAssetSymbol: vi.fn()
 }))
 
 vi.mock('./padFee', () => ({
@@ -20,9 +21,12 @@ const createApi = (fee: bigint) =>
     init: vi.fn()
   }) as unknown as IPolkadotApi<unknown, unknown>
 
-describe('getFeeForOriginNode', () => {
+describe('getOriginXcmFee', () => {
+  const mockCurrency = 'TOKEN'
+
   beforeEach(() => {
     vi.resetAllMocks()
+    vi.mocked(getNativeAssetSymbol).mockReturnValue(mockCurrency)
   })
 
   it('returns padded **paymentInfo** fee when dry-run is NOT supported', async () => {
@@ -34,7 +38,7 @@ describe('getFeeForOriginNode', () => {
 
     const spy = vi.spyOn(api, 'calculateTransactionFee')
 
-    const res = await getFeeForOriginNode({
+    const res = await getOriginXcmFee({
       api,
       tx: {},
       origin: 'Moonbeam',
@@ -43,7 +47,7 @@ describe('getFeeForOriginNode', () => {
       disableFallback: false
     })
 
-    expect(res).toEqual({ fee: 150n, feeType: 'paymentInfo' })
+    expect(res).toEqual({ fee: 150n, currency: mockCurrency, feeType: 'paymentInfo' })
     expect(spy).toHaveBeenCalledWith({}, 'addr')
     expect(dryRunCallSpy).not.toHaveBeenCalled()
   })
@@ -62,7 +66,7 @@ describe('getFeeForOriginNode', () => {
 
     const spy = vi.spyOn(api, 'calculateTransactionFee')
 
-    const res = await getFeeForOriginNode({
+    const res = await getOriginXcmFee({
       api,
       tx: {},
       origin: 'Moonbeam',
@@ -73,6 +77,7 @@ describe('getFeeForOriginNode', () => {
 
     expect(res).toEqual({
       fee: 200n,
+      currency: mockCurrency,
       feeType: 'dryRun',
       forwardedXcms: [[{ x: 1 }]],
       destParaId: 42
@@ -93,7 +98,7 @@ describe('getFeeForOriginNode', () => {
 
     const spy = vi.spyOn(api, 'calculateTransactionFee')
 
-    const res = await getFeeForOriginNode({
+    const res = await getOriginXcmFee({
       api,
       tx: {},
       origin: 'Moonbeam',
@@ -121,7 +126,7 @@ describe('getFeeForOriginNode', () => {
 
     const spy = vi.spyOn(api, 'calculateTransactionFee')
 
-    const res = await getFeeForOriginNode({
+    const res = await getOriginXcmFee({
       api,
       tx: {},
       origin: 'Moonbeam',
@@ -132,6 +137,7 @@ describe('getFeeForOriginNode', () => {
 
     expect(res).toEqual({
       fee: 999n,
+      currency: mockCurrency,
       feeType: 'paymentInfo',
       dryRunError: 'fail'
     })

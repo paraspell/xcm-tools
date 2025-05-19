@@ -73,24 +73,18 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'DECIMALS' ||
     func == 'HAS_SUPPORT' ||
     func === 'ASSET_BALANCE' ||
-    func === 'TRANSFERABLE_AMOUNT' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
-    func === 'ORIGIN_FEE_DETAILS' ||
-    func === 'VERIFY_ED_ON_DESTINATION';
+    func === 'ORIGIN_FEE_DETAILS';
 
   const supportsCurrencyType =
     func === 'ASSET_MULTILOCATION' ||
     func === 'ASSET_BALANCE' ||
-    func === 'TRANSFERABLE_AMOUNT' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
-    func === 'ORIGIN_FEE_DETAILS' ||
-    func === 'VERIFY_ED_ON_DESTINATION';
+    func === 'ORIGIN_FEE_DETAILS';
 
   const showAddressInput =
     func === 'ASSET_BALANCE' ||
-    func === 'TRANSFERABLE_AMOUNT' ||
     func === 'ORIGIN_FEE_DETAILS' ||
-    func === 'VERIFY_ED_ON_DESTINATION' ||
     func === 'CONVERT_SS58';
 
   const showAhAddressInput = func === 'ORIGIN_FEE_DETAILS';
@@ -108,23 +102,19 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const notSupportsEthereum =
     func === 'PARA_ID' ||
     func === 'ASSET_BALANCE' ||
-    func === 'ORIGIN_FEE_DETAILS' ||
-    func === 'VERIFY_ED_ON_DESTINATION';
+    func === 'ORIGIN_FEE_DETAILS';
 
   const supportsRelayChains =
     func === 'ASSETS_OBJECT' ||
     func === 'NATIVE_ASSETS' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
-    func === 'TRANSFERABLE_AMOUNT' ||
     func === 'ASSET_BALANCE' ||
     func === 'ORIGIN_FEE_DETAILS' ||
-    func === 'VERIFY_ED_ON_DESTINATION' ||
     func === 'HAS_DRY_RUN_SUPPORT';
 
   const optionalCurrency = func === 'EXISTENTIAL_DEPOSIT';
 
-  const supportsAmount =
-    func === 'ORIGIN_FEE_DETAILS' || func === 'VERIFY_ED_ON_DESTINATION';
+  const supportsAmount = func === 'ORIGIN_FEE_DETAILS';
 
   const getNodeList = () => {
     if (notSupportsEthereum && supportsRelayChains) {

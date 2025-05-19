@@ -1,10 +1,5 @@
 import type { TAsset } from '@paraspell/assets'
-import {
-  findAsset,
-  getNativeAssetSymbol,
-  hasDryRunSupport,
-  InvalidCurrencyError
-} from '@paraspell/assets'
+import { findAssetForNodeOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -14,10 +9,9 @@ import { determineRelayChain } from '../../utils'
 import { dryRunInternal } from './dryRunInternal'
 
 vi.mock('@paraspell/assets', () => ({
-  findAsset: vi.fn(),
+  findAssetForNodeOrThrow: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
-  hasDryRunSupport: vi.fn(),
-  InvalidCurrencyError: class InvalidCurrencyError extends Error {}
+  hasDryRunSupport: vi.fn()
 }))
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
@@ -73,16 +67,8 @@ const createOptions = (api: IPolkadotApi<unknown, unknown>) =>
 afterEach(() => vi.resetAllMocks())
 
 describe('dryRunInternal', () => {
-  it('throws InvalidCurrencyError when the asset is missing', async () => {
-    vi.mocked(findAsset).mockReturnValue(null)
-
-    const api = createFakeApi({ success: true })
-
-    await expect(dryRunInternal(createOptions(api))).rejects.toBeInstanceOf(InvalidCurrencyError)
-  })
-
   it('returns only origin result when origin dry-run fails', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
 
     const originFail = { success: false, failureReason: 'boom' }
     const api = createFakeApi(originFail)
@@ -93,7 +79,7 @@ describe('dryRunInternal', () => {
   })
 
   it('origin & destination succeed (no intermediates)', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
     vi.mocked(getNativeAssetSymbol).mockReturnValueOnce('ACA').mockReturnValueOnce('GLMR')
     vi.mocked(getTNode).mockReturnValue('Moonbeam')
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
@@ -122,7 +108,7 @@ describe('dryRunInternal', () => {
   })
 
   it('adds intermediate AssetHub result when hop succeeds', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
     vi.mocked(getNativeAssetSymbol)
       .mockReturnValueOnce('ACA')
       .mockReturnValueOnce('DOT')
@@ -166,7 +152,7 @@ describe('dryRunInternal', () => {
   })
 
   it('keeps failing destination result when last hop errors', async () => {
-    vi.mocked(findAsset).mockReturnValue({ symbol: 'ACA' } as TAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
     vi.mocked(getNativeAssetSymbol).mockReturnValueOnce('ACA')
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
     vi.mocked(getTNode).mockReturnValue('Moonbeam')
