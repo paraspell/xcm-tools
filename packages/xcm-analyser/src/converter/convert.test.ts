@@ -64,14 +64,14 @@ describe('convert', () => {
         X1: {
           AccountId32: {
             network: null,
-            id: 'accountID',
+            id: '0x123',
           },
         },
       },
     };
 
     const result = convertMultilocationToUrl(multilocation);
-    expect(result).toBe('./AccountId32(null, accountID)');
+    expect(result).toBe('./AccountId32(null, 0x123)');
   });
 
   it('should convert multilocation to URL with AccountIndex64 interior', () => {
@@ -98,14 +98,14 @@ describe('convert', () => {
         X1: {
           AccountKey20: {
             network: null,
-            key: 'key',
+            key: '0x123',
           },
         },
       },
     };
 
     const result = convertMultilocationToUrl(multilocation);
-    expect(result).toBe('./AccountKey20(null, key)');
+    expect(result).toBe('./AccountKey20(null, 0x123)');
   });
 
   it('should convert multilocation to URL with GeneralKey interior', () => {
@@ -115,13 +115,13 @@ describe('convert', () => {
         X1: {
           GeneralKey: {
             length: '10',
-            data: 'data',
+            data: '0xabc',
           },
         },
       },
     };
     const result = convertMultilocationToUrl(multilocation);
-    expect(result).toBe('./GeneralKey(10, data)');
+    expect(result).toBe('./GeneralKey(10, 0xabc)');
   });
 
   it('should convert multilocation to URL with OnlyChild interior', () => {
@@ -227,7 +227,7 @@ describe('convert', () => {
             X1: {
               AccountId32: {
                 network: null,
-                id: 'accountID',
+                id: '0xa',
               },
             },
           },
@@ -255,7 +255,7 @@ describe('convert', () => {
     const result = convertXCMToUrls(xcmCallArguments);
     expect(result).toStrictEqual([
       '../Parachain(2006)',
-      './AccountId32(null, accountID)',
+      './AccountId32(null, 0xa)',
       './PalletInstance(50)/GeneralIndex(1984)',
     ]);
   });
