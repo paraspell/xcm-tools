@@ -1,9 +1,5 @@
-import {
-  type Junction,
-  type JunctionType,
-  type MultiLocation,
-  MultiLocationSchema,
-} from '../types';
+import { MultiLocationSchema } from '../schema';
+import type { Junction, JunctionType, MultiLocation } from '../types';
 import { convertJunctionToReadable, findMultiLocationInObject } from '../utils/utils';
 
 /**

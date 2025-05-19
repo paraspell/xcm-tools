@@ -1,3 +1,4 @@
+import { MultiLocationSchema } from '../schema';
 import type {
   Junction,
   MultiLocation,
@@ -7,7 +8,6 @@ import type {
   TJunctionGeneralKey,
   TJunctionPlurality,
 } from '../types';
-import { MultiLocationSchema } from '../types';
 
 export const convertJunctionToReadable = (junctionOriginal: Junction): string | never => {
   const junction = Object.fromEntries(
@@ -56,12 +56,10 @@ export function findMultiLocationInObject(obj: unknown): MultiLocation | null {
 
   function searchObject(value: unknown): MultiLocation | null {
     if (hasSpecificKeys(value)) {
-      const parsedValue = MultiLocationSchema.parse(value);
-      return parsedValue;
+      return MultiLocationSchema.parse(value);
     } else if (typeof value === 'object' && value !== null) {
       for (const key of Object.keys(value)) {
         const result = searchObject((value as Record<string, unknown>)[key]);
-
         if (result) return result;
       }
     }
