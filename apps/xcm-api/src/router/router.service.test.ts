@@ -13,7 +13,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { RouterDto } from './dto/RouterDto.js';
 import { RouterService } from './router.service.js';
 
-const txHash = '0x123';
+const mockHex = '0x1234567890abcdef';
+
+const tx = {
+  getEncodedData: vi.fn().mockResolvedValue({
+    asHex: vi.fn().mockReturnValue(mockHex),
+  }),
+};
 
 const mockApi = {
   destroy: vi.fn(),
@@ -23,19 +29,19 @@ const serializedExtrinsics = [
   {
     api: mockApi,
     node: 'Astar',
-    tx: txHash,
+    tx: tx,
     type: 'TRANSFER',
   },
   {
     api: mockApi,
     node: 'Acala',
-    tx: txHash,
+    tx: tx,
     type: 'SWAP',
   },
   {
     api: mockApi,
     node: 'Moonbeam',
-    tx: txHash,
+    tx: tx,
     type: 'TRANSFER',
   },
 ];
@@ -117,7 +123,7 @@ describe('RouterService', () => {
 
       result.forEach((transaction, index) => {
         expect(transaction.node).toBe(serializedExtrinsics[index].node);
-        expect(transaction.tx).toBe(serializedExtrinsics[index].tx);
+        expect(transaction.tx).toBe(mockHex);
         expect(transaction.type).toBe(serializedExtrinsics[index].type);
       });
 
@@ -140,7 +146,7 @@ describe('RouterService', () => {
 
       result.forEach((transaction, index) => {
         expect(transaction.node).toBe(serializedExtrinsics[index].node);
-        expect(transaction.tx).toBe(serializedExtrinsics[index].tx);
+        expect(transaction.tx).toBe(mockHex);
         expect(transaction.type).toBe(serializedExtrinsics[index].type);
       });
 

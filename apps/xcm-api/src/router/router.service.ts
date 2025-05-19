@@ -106,18 +106,24 @@ export class RouterService {
         .slippagePct(slippagePct)
         .buildTransactions();
 
-      const response = transactions.map((transaction) => ({
-        node: transaction.node,
-        destinationNode: transaction.destinationNode,
-        type: transaction.type,
-        tx: transaction.tx,
-        ...(transaction.type === 'SWAP' && {
-          amountOut: transaction.amountOut,
-        }),
-        wsProviders: getNodeProviders(transaction.node),
-      }));
+      const response = await Promise.all(
+        transactions.map(async (transaction) => {
+          const txData = await transaction.tx.getEncodedData();
+          const txHash = txData.asHex();
 
-      await Promise.all(transactions.map((item) => item.api.destroy()));
+          const resultForThisTransaction = {
+            node: transaction.node,
+            destinationNode: transaction.destinationNode,
+            type: transaction.type,
+            tx: txHash,
+            ...(transaction.type === 'SWAP' && {
+              amountOut: transaction.amountOut,
+            }),
+            wsProviders: getNodeProviders(transaction.node),
+          };
+          return resultForThisTransaction;
+        }),
+      );
 
       return response;
     } catch (e) {
