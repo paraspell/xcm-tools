@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v9.2.1...sdk-pjs-v9.2.2) (2025-05-20)
+
+
+### Bug Fixes
+
+* Fix Polimec dryRun & add native asset multi-location 🔧 ([5043d7d](https://github.com/paraspell/xcm-tools/commit/5043d7dafc8dda9fa5bc93590e1012e912d9d458))
+
 ## [9.2.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v9.2.0...sdk-pjs-v9.2.1) (2025-05-19)
 
 
