@@ -266,7 +266,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       node === 'BifrostPolkadot' ||
       node === 'BifrostKusama' ||
       node === 'AssetHubKusama' ||
-      node === 'Kusama'
+      node === 'Kusama' ||
+      node === 'Polimec'
     const DEFAULT_XCM_VERSION = 3
 
     const response = await this.api.call.dryRunApi.dryRunCall(

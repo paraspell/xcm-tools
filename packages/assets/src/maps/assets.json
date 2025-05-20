@@ -57,6 +57,14 @@
         "symbol": "PLMC",
         "isNative": true,
         "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": {
+              "Parachain": 3344
+            }
+          }
+        },
         "existentialDeposit": "100000000"
       }
     ],
