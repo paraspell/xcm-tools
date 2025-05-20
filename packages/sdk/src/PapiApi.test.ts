@@ -774,6 +774,64 @@ describe('PapiApi', () => {
       expect(result).toEqual({ success: false, failureReason: 'SomeError' })
     })
 
+    it('should return failure with failure reason - short error', async () => {
+      const mockApiResponse = {
+        success: false,
+        value: {
+          type: 'SomeError'
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_call = vi.fn().mockResolvedValue(mockApiResponse)
+
+      papiApi.setApi(mockPolkadotClient)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: 'some_address',
+        node: 'Moonbeam'
+      })
+
+      expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
+        {
+          type: 'system',
+          value: { type: 'Signed', value: 'some_address' }
+        },
+        undefined
+      )
+
+      expect(result).toEqual({ success: false, failureReason: 'SomeError' })
+    })
+
+    it('should return failure with failure reason - unknown error', async () => {
+      const mockApiResponse = {
+        success: false,
+        value: {}
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_call = vi.fn().mockResolvedValue(mockApiResponse)
+
+      papiApi.setApi(mockPolkadotClient)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: 'some_address',
+        node: 'Moonbeam'
+      })
+
+      expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
+        {
+          type: 'system',
+          value: { type: 'Signed', value: 'some_address' }
+        },
+        undefined
+      )
+
+      expect(result).toEqual({ success: false, failureReason: '{}' })
+    })
+
     it('should throw error for unsupported node', async () => {
       await expect(
         papiApi.getDryRunCall({

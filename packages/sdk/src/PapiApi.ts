@@ -379,7 +379,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       node === 'BifrostPolkadot' ||
       node === 'BifrostKusama' ||
       node === 'AssetHubKusama' ||
-      node === 'Kusama'
+      node === 'Kusama' ||
+      node === 'Polimec'
     const DEFAULT_XCM_VERSION = 3
 
     const result = await this.api.getUnsafeApi().apis.DryRunApi.dry_run_call(
@@ -398,7 +399,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     if (!isSuccess) {
       const errorValue = result?.value?.execution_result?.value?.error?.value
-      const failureReason = errorValue?.value?.type ?? errorValue?.type ?? 'Unknown'
+
+      const failureReason =
+        errorValue?.value?.type ??
+        errorValue?.type ??
+        result?.value?.type ??
+        JSON.stringify(result.value)
       return Promise.resolve({ success: false, failureReason })
     }
 
