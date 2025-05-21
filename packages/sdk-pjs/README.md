@@ -47,12 +47,12 @@ pnpm | npm install || yarn add @paraspell/sdk-pjs
 ### Importing package to your project
 
 Builder pattern:
-```js
+```ts
 import { Builder } from '@paraspell/sdk-pjs'
 ```
 
 Other patterns:
-```js
+```ts
 // ESM
 import * as paraspell from '@paraspell/sdk-pjs'
 
@@ -61,27 +61,27 @@ const paraspell = require('@paraspell/sdk-pjs')
 ```
 
 Interaction with further asset symbol abstraction:
-```js 
+```ts 
 import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk-pjs'; //Only needed when advanced asset symbol selection is used. PJS version.
 ```
+
 ## Implementation
 
 ```
 NOTES:
-- Since v8, amount moved closer to currency selection and specifying from and to parameters is no longer optional to save code.
-- More information on v8 major breaking change: https://github.com/paraspell/xcm-tools/pull/554
-- XCM SDK Now supports API Failsafe - If one endpoint doesn't work it automatically switches to the next one.
-- Builder now allows you to directly disconnect API.
+- Local transfers are now available for every currency and every chain. To try them, simply use same origin and destination parameters.
 ```
 
 ```
 Latest news:
-- Local transfers are now available for every currency and every chain. To try them, simply use same origin and destination parameters.
+- Transfer info queries are now all in Builder pattern and don't require any imports other than builder.
 ```
 
-### Builder pattern:
+### Sending XCM:
 
-##### Transfer assets from Parachain to Parachain
+For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmPallet.html).
+
+#### Transfer assets from Parachain to Parachain
 ```ts
 const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE)
@@ -116,7 +116,7 @@ const tx = await builder.build()
 await builder.disconnect()
 */
 ```
-##### Transfer assets from the Relay chain to Parachain
+#### Transfer assets from the Relay chain to Parachain
 ```ts
 const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(RELAY_NODE) //Kusama or Polkadot
@@ -124,7 +124,7 @@ const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .currency({symbol: 'DOT', amount: amount})
       .address(address | Multilocation object)
       /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call
-        .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some node but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
+      .customPallet('Pallet','pallet_function') //Optional parameter for manual override of XCM Pallet and function used in call (If they are named differently on some node but syntax stays the same). Both pallet name and function required. Pallet name must be CamelCase, function name snake_case.*/
 
 const tx = await builder.build()
 
@@ -148,7 +148,7 @@ const tx = await builder.build()
 await builder.disconnect()
 */
 ```
-##### Transfer assets from Parachain to Relay chain
+#### Transfer assets from Parachain to Relay chain
 ```ts
 const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE)
@@ -181,7 +181,7 @@ await builder.disconnect()
 */
 ```
 
-##### Local transfers
+#### Local transfers
 ```ts
 const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE)
@@ -212,9 +212,8 @@ await builder.disconnect()
 */
 ```
 
-##### Batch calls
-You can batch XCM calls and execute multiple XCM calls within one call. All three scenarios (Para->Para, Para->Relay, Relay->Para) can be used and combined.
-```js
+#### Batch calls
+```ts
 const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE) //Ensure, that origin node is the same in all batched XCM Calls.
       .to(NODE_2) //Any compatible Parachain
@@ -237,7 +236,7 @@ const tx = await builder.buildBatch({
 await builder.disconnect()
 ```
 
-##### Asset claim:
+#### Asset claim:
 ```ts
 //Claim XCM trapped assets from the selected chain
 const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
@@ -252,7 +251,7 @@ const tx = await builder.build()
 await builder.disconnect()
 ```
 
-### Dry run your XCM Calls:
+#### Dry run your XCM Calls:
 ```ts
 //Builder pattern
 const result = await Builder(API /*optional*/)
@@ -263,25 +262,52 @@ const result = await Builder(API /*optional*/)
         .senderAddress(SENDER_ADDRESS)
         .dryRun()
 
-//Function pattern
-await getDryRun({api /*optional*/,  node, address /*sender address*/, tx /* Extrinsic object */})
-
 //Check Parachain for DryRun support - returns true/false
 import { hasDryRunSupport } from "@paraspell/sdk-pjs";
 
 const result = hasDryRunSupport(node)
 ```
 
-### XCM Fee (Origin and Dest.)
-Following queries allow you to query fee from both Origin and Destination of the XCM Message. You can get accurate result from DryRun query(Requires token balance) or less accurate from Payment info query (Doesn't require token balance).
+### XCM Fee queries
 
-#### More accurate query using DryRun
-The query is designed to retrieve you XCM fee at any cost, but fallbacking to Payment info if DryRun query fails or is not supported by either origin or destination. This query requires user to have token balance (Token that they are sending and origin native asset to pay for execution fees on origin).
+For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmUtils.html).
 
+#### XCM Transfer info
+```ts
+const info = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+          .from(ORIGIN_CHAIN)
+          .to(DESTINATION_CHAIN)
+          .currency(CURRENCY)
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getTransferInfo()
 ```
-NOTICE: When Payment info query is performed, it retrieves fees for destination in destination's native currency, however, they are paid in currency that is being sent. To solve this, you have to convert token(native) to token(transferred) based on price. DryRun returns fees in currency that is being transferred, so no additional calculations necessary in that case.
+
+#### Transferable amount
+```ts
+const transferable = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+          .from(ORIGIN_CHAIN)
+          .to(DESTINATION_CHAIN)
+          .currency(CURRENCY)
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getTransferableAmount()
 ```
 
+#### Verify ED on destination
+```ts
+const ed = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+          .from(ORIGIN_CHAIN)
+          .to(DESTINATION_CHAIN)
+          .currency(CURRENCY)
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .verifyEdOnDestination()
+```
+
+#### XCM Fee (Origin and Dest.)
+
+##### More accurate query using DryRun
 ```ts
 const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
@@ -289,50 +315,60 @@ const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
           .currency(CURRENCY)
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
-          .getXcmFee({disableFallback: true / false})  //When fallback is disabled, you only get notified of DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin or Destination chain do not support DryRun out of the box.
+          .getXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin or Destination chain do not support DryRun out of the box.
 ```
 
-#### Less accurate query using Payment info
-This query is designed to retrieve you approximate fee and doesn't require any token balance.
-
-```
-NOTICE: When Payment info query is performed, it retrieves fees for destination in destination's native currency, however, they are paid in currency that is being sent. To solve this, you have to convert token(native) to token(transferred) based on price. 
-```
-
+##### Less accurate query using Payment info
 ```ts
 const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
           .address(RECIPIENT_ADDRESS)
-          .senderAddress(SENDER_ADDRESS) 
+          .senderAddress(SENDER_ADDRESS)          
           .getXcmFeeEstimate()
 ```
 
-### XCM Transfer info
+#### XCM Fee (Origin only)
+
+##### More accurate query using DryRun
 ```ts
-import { getAssetBalance, getTransferInfo, getOriginFeeDetails, getTransferableAmount, getParaEthTransferFees, verifyEdOnDestination } from "@paraspell/sdk-pjs";
-
-//Get fee information regarding XCM call
-await getOriginFeeDetails({from, to, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, originAddress, destinationAddress, ahAddress /* optional parameter when destination is Ethereum and origin is Parachain other than AssetHub*/, api /* api/ws_url_string optional */, feeMargin /* 10% by default */})
-
-//Retrieves the asset balance for a given account on a specified node. (You do not need to specify if it is native or foreign).
-await getAssetBalance({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, api /* api/ws_url_string optional */});
-
-//Combines the getMaxNative and getMaxForeign transferable amount functions into one, so you don't have to specify whether you want a native or foreign asset.
-await getTransferableAmount({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/});
-
-//Get all the information about XCM transfer
-await getTransferInfo({from, to, address, destinationAddress, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, amount, api /* api/ws_url_string optional */})
-
-//Get bridge and execution fee for transfer from Parachain to Ethereum. Returns as an object of 2 values - [bridgeFee, executionFee]
-await getParaEthTransferFees(/*api - optional (Can also be WS port string or array o WS ports. Must be AssetHubPolkadot WS!)*/)
-
-//Verify whether XCM message you wish to send will reach above existential deposit on destination chain.
-await verifyEdOnDestination(node,  currency: {symbol: || id: || multilocation: .. ,amount: 100000n}, address)
+const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+          .from(ORIGIN_CHAIN)
+          .to(DESTINATION_CHAIN)
+          .currency(CURRENCY)
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(SENDER_ADDRESS)
+          .getOriginXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin do not support DryRun out of the box.
 ```
 
-### Existential deposit queries
+##### Less accurate query using Payment info
+```ts
+const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
+          .from(ORIGIN_CHAIN)
+          .to(DESTINATION_CHAIN)
+          .currency(CURRENCY)
+          .address(RECIPIENT_ADDRESS)
+          .senderAddress(SENDER_ADDRESS)          
+          .getOriginXcmFeeEstimate()
+```
+
+#### Asset balance
+```ts
+import { getAssetBalance } from "@paraspell/sdk-pjs";
+
+//Retrieves the asset balance for a given account on a specified node (You do not need to specify if it is native or foreign).
+const balance = await getAssetBalance({address, node, currency /*- {id: currencyID} | {symbol: currencySymbol} | {symbol: Native('currencySymbol')} | {symbol: Foreign('currencySymbol')} | {symbol: ForeignAbstract('currencySymbol')} | {multilocation: AssetMultilocationString | AssetMultilocationJson}*/, api /* api/ws_url_string optional */});
+```
+
+#### Ethereum bridge fees
+```ts
+import { getParaEthTransferFees } from "@paraspell/sdk-pjs";
+
+const fees = await getParaEthTransferFees(/*api - optional (Can also be WS port string or array o WS ports. Must be AssetHubPolkadot WS!)*/)
+```
+
+#### Existential deposit queries
 ```ts
 import { getExistentialDeposit } from "@paraspell/sdk-pjs";
 
@@ -341,7 +377,7 @@ import { getExistentialDeposit } from "@paraspell/sdk-pjs";
 const ed = getExistentialDeposit(node, currency?)
 ```
 
-### Convert SS58 address 
+#### Convert SS58 address 
 ```ts
 import { convertSs58 } from "@paraspell/sdk-pjs";
 
@@ -350,61 +386,66 @@ let result = convertSs58(address, node) // returns converted address in string
 
 ### Asset queries:
 
+For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
+
 ```ts
 import { getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTNode, getAssetMultiLocation, NODE_NAMES } from  '@paraspell/sdk-pjs'
 
 // Retrieve Fee asset queries (Assets accepted as XCM Fee on specific node)
-getFeeAssets(node: TNode)
+getFeeAssets(NODE)
+
+// Get multilocation for asset id or symbol on specific chain
+getAssetMultiLocation(NODE, { symbol: symbol } | { id: assetId })
 
 // Retrieve assets object from assets.json for particular node including information about native and foreign assets
-getAssetsObject(node: TNode)
+getAssetsObject(NODE)
 
 // Retrieve foreign assetId for a particular node and asset symbol
-getAssetId(node: TNode, symbol: string)
+getAssetId(NODE, ASSET_SYMBOL)
 
 // Retrieve the symbol of the relay chain for a particular node. Either "DOT" or "KSM"
-getRelayChainSymbol(node: TNode)
+getRelayChainSymbol(NODE)
 
 // Retrieve string array of native assets symbols for particular node
-getNativeAssets(node: TNode)
+getNativeAssets(NODE)
 
 // Retrieve object array of foreign assets for a particular node. Each object has a symbol and assetId property
-getOtherAssets(node: TNode)
+getOtherAssets(NODE)
 
 // Retrieve string array of all assets symbols. (native and foreign assets are merged into a single array)
-getAllAssetsSymbols(node: TNode)
+getAllAssetsSymbols(NODE)
 
 // Check if a node supports a particular asset. (Both native and foreign assets are searched). Returns boolean
-hasSupportForAsset(node: TNode, symbol: string)
+hasSupportForAsset(NODE, ASSET_SYMBOL)
 
 // Get decimals for specific asset
-getAssetDecimals(node: TNode, symbol: string)
+getAssetDecimals(NODE, ASSET_SYMBOL)
 
 // Get specific node id
-getParaId(node: TNode)
+getParaId(NODE)
 
 // Get specific TNode from nodeID
-getTNode(nodeID: number, ecosystem: 'polkadot' || 'kusama' || 'ethereum') //When Ethereum ecosystem is selected please fill nodeID as 1 to select Ethereum.
+getTNode(paraID: number, ecosystem: 'polkadot' || 'kusama' || 'ethereum') //When Ethereum ecosystem is selected please fill nodeID as 1 to select Ethereum.
 
 // Import all compatible nodes as constant
 NODE_NAMES
-
-// Get multilocation for asset id or symbol on specific chain
-getAssetMultiLocation(chainFrom, { symbol: symbol } | { id: assetId })
 ```
 
 ### Parachain XCM Pallet queries
+
+For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/NodePallets.html).
+
 ```ts
 import { getDefaultPallet, getSupportedPallets, getPalletIndex SUPPORTED_PALLETS } from  '@paraspell/sdk-pjs';
 
 //Retrieve default pallet for specific Parachain 
-getDefaultPallet(node: TNode)
+getDefaultPallet(NODE)
 
 // Returns an array of supported pallets for a specific Parachain
-getSupportedPallets(node: TNode)
+getSupportedPallets(NODE)
 
 //Returns index of XCM Pallet used by Parachain
-getPalletIndex(node: TNode)
+getPalletIndex(NODE)
 
 // Print all pallets that are currently supported
 console.log(SUPPORTED_PALLETS)
