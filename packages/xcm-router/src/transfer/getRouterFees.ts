@@ -31,7 +31,7 @@ export const getRouterFees = async (
 
   return {
     sendingChain,
-    exchangeChain: swapChain,
+    exchangeChain: { ...swapChain, selectedExchange: exchange.exchangeNode },
     receivingChain,
   };
 };

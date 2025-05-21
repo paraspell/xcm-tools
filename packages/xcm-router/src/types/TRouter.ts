@@ -32,8 +32,13 @@ export type TGetAmountOutOptions = {
   amount: string;
 };
 
-export type TSwapResult = {
+export type TSingleSwapResult = {
   tx: Extrinsic;
+  amountOut: string;
+};
+
+export type TMultiSwapResult = {
+  tx: Extrinsic[];
   amountOut: string;
 };
 

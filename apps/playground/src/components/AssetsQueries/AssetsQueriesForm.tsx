@@ -8,10 +8,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type {
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
-} from '@paraspell/sdk';
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
 import {
   getRelayChainSymbol,
   isRelayChain,
@@ -31,12 +28,9 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 export type FormValues = {
   func: TAssetsQuery;
   node: TNodeDotKsmWithRelayChains;
-  nodeDestination: TNodeWithRelayChains;
   currency: string;
   amount: string;
   address: string;
-  ahAddress: string;
-  accountDestination: string;
   useApi: boolean;
   currencyType?: 'id' | 'symbol' | 'multilocation';
 };
@@ -51,19 +45,15 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     initialValues: {
       func: 'ASSETS_OBJECT',
       node: 'Acala',
-      nodeDestination: 'Astar',
       currency: '',
       address: '',
-      ahAddress: '',
-      accountDestination: '',
       amount: '',
       useApi: false,
       currencyType: 'symbol',
     },
   });
 
-  const { func, node, currencyType, useApi, nodeDestination } =
-    form.getValues();
+  const { func, node, currencyType, useApi } = form.getValues();
 
   const { setIsUseXcmApiSelected } = useWallet();
 
@@ -74,20 +64,18 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func == 'HAS_SUPPORT' ||
     func === 'ASSET_BALANCE' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
-    func === 'ORIGIN_FEE_DETAILS';
+    func === 'VERIFY_ED_ON_DESTINATION';
 
   const supportsCurrencyType =
     func === 'ASSET_MULTILOCATION' ||
     func === 'ASSET_BALANCE' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
-    func === 'ORIGIN_FEE_DETAILS';
+    func === 'VERIFY_ED_ON_DESTINATION';
 
   const showAddressInput =
     func === 'ASSET_BALANCE' ||
-    func === 'ORIGIN_FEE_DETAILS' ||
+    func === 'VERIFY_ED_ON_DESTINATION' ||
     func === 'CONVERT_SS58';
-
-  const showAhAddressInput = func === 'ORIGIN_FEE_DETAILS';
 
   const onSubmitInternal = (formValues: FormValues) => {
     const { func } = formValues;
@@ -102,19 +90,22 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const notSupportsEthereum =
     func === 'PARA_ID' ||
     func === 'ASSET_BALANCE' ||
-    func === 'ORIGIN_FEE_DETAILS';
+    func === 'VERIFY_ED_ON_DESTINATION';
 
   const supportsRelayChains =
     func === 'ASSETS_OBJECT' ||
     func === 'NATIVE_ASSETS' ||
     func === 'EXISTENTIAL_DEPOSIT' ||
     func === 'ASSET_BALANCE' ||
-    func === 'ORIGIN_FEE_DETAILS' ||
+    func === 'VERIFY_ED_ON_DESTINATION' ||
     func === 'HAS_DRY_RUN_SUPPORT';
 
   const optionalCurrency = func === 'EXISTENTIAL_DEPOSIT';
 
-  const supportsAmount = func === 'ORIGIN_FEE_DETAILS';
+  const supportsAmount = func === 'VERIFY_ED_ON_DESTINATION';
+
+  const shouldHideNode =
+    func === 'ETHEREUM_BRIDGE_STATUS' || func === 'PARA_ETH_FEES';
 
   const getNodeList = () => {
     if (notSupportsEthereum && supportsRelayChains) {
@@ -170,8 +161,6 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     previousNodeRef.current = node;
   }, [node, func]);
 
-  const isOriginFee = func === 'ORIGIN_FEE_DETAILS';
-
   const symbolSpecifierOptions = [
     { label: 'Auto', value: 'auto' },
     { label: 'Native', value: 'native' },
@@ -198,25 +187,14 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             {...form.getInputProps('func')}
           />
 
-          {func !== 'ETHEREUM_BRIDGE_STATUS' && (
+          {!shouldHideNode && (
             <ParachainSelect
-              label={isOriginFee ? 'Origin node' : 'Node'}
+              label={'Node'}
               placeholder="Pick value"
               data={nodeList}
               required
               data-testid="select-node"
               {...form.getInputProps('node')}
-            />
-          )}
-
-          {isOriginFee && (
-            <ParachainSelect
-              label={'Destination node'}
-              placeholder="Pick value"
-              data={NODES_WITH_RELAY_CHAINS}
-              required
-              data-testid="select-node-destination"
-              {...form.getInputProps('nodeDestination')}
             />
           )}
 
@@ -295,28 +273,6 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
               required
               data-testid="address-input"
               {...form.getInputProps('address')}
-            />
-          )}
-
-          {showAhAddressInput &&
-            node === 'Moonbeam' &&
-            nodeDestination === 'Ethereum' && (
-              <TextInput
-                label="AssetHub address"
-                placeholder="Enter address"
-                required
-                data-testid="ah-address-input"
-                {...form.getInputProps('ahAddress')}
-              />
-            )}
-
-          {isOriginFee && (
-            <TextInput
-              label="Destination address"
-              placeholder="Enter address"
-              required
-              data-testid="address-input"
-              {...form.getInputProps('accountDestination')}
             />
           )}
 

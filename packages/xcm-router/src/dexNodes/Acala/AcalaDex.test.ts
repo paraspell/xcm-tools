@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SmallAmountError } from '../../errors/SmallAmountError';
-import type { TSwapOptions, TSwapResult } from '../../types';
+import type { TSwapOptions, TSingleSwapResult } from '../../types';
 import AcalaExchangeNode from './AcalaDex';
 import { calculateAcalaSwapFee, createAcalaApiInstance, getDexConfig } from './utils';
 
@@ -138,7 +138,7 @@ describe('AcalaExchangeNode', () => {
     } as TSwapOptions;
 
     it('should swap successfully and return the tx and modified amountOut', async () => {
-      const result: TSwapResult = await node.swapCurrency(
+      const result: TSingleSwapResult = await node.swapCurrency(
         mockApi,
         baseSwapOptions,
         new BigNumber(0.01),

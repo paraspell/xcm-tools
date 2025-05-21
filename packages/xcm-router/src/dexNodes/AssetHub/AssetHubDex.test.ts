@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SmallAmountError } from '../../errors/SmallAmountError';
-import type { TSwapOptions, TSwapResult } from '../../types';
+import type { TSwapOptions, TSingleSwapResult } from '../../types';
 import AssetHubExchangeNode from './AssetHubDex';
 import { getQuotedAmount } from './utils';
 
@@ -108,7 +108,7 @@ describe('AssetHubExchangeNode', () => {
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
       vi.mocked(isForeignAsset).mockReturnValue(false);
       const toDestTxFee = new BigNumber('50');
-      const result: TSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
+      const result: TSingleSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
       expect(api.tx.assetConversion.swapExactTokensForTokens).toHaveBeenCalledWith(
         [assetFromML, assetToML],
         '980',
@@ -140,7 +140,7 @@ describe('AssetHubExchangeNode', () => {
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
       vi.mocked(isForeignAsset).mockReturnValue(false);
       const toDestTxFee = new BigNumber('50');
-      const result: TSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
+      const result: TSingleSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
       expect(api.tx.assetConversion.swapExactTokensForTokens).toHaveBeenCalledWith(
         [assetFromML, assetToML],
         '1000',

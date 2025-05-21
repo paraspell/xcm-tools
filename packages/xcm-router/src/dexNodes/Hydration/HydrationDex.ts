@@ -13,7 +13,12 @@ import BigNumber from 'bignumber.js';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type { TDexConfig, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import type {
+  TDexConfig,
+  TGetAmountOutOptions,
+  TSwapOptions,
+  TSingleSwapResult,
+} from '../../types';
 import ExchangeNode from '../DexNode';
 import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
 
@@ -22,7 +27,7 @@ class HydrationExchangeNode extends ExchangeNode {
     api: ApiPromise,
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
-  ): Promise<TSwapResult> {
+  ): Promise<TSingleSwapResult> {
     const { origin, assetFrom, assetTo, slippagePct, amount } = options;
 
     const poolService = new PoolService(api);

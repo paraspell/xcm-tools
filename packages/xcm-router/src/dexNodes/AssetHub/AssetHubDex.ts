@@ -4,7 +4,12 @@ import BigNumber from 'bignumber.js';
 
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
-import type { TDexConfig, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import type {
+  TDexConfig,
+  TGetAmountOutOptions,
+  TSwapOptions,
+  TSingleSwapResult,
+} from '../../types';
 import ExchangeNode from '../DexNode';
 import { getQuotedAmount } from './utils';
 import { getDexConfig } from './utils/getDexConfig';
@@ -14,7 +19,7 @@ class AssetHubExchangeNode extends ExchangeNode {
     api: ApiPromise,
     options: TSwapOptions,
     toDestTxFee: BigNumber,
-  ): Promise<TSwapResult> {
+  ): Promise<TSingleSwapResult> {
     const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin } = options;
 
     if (!assetFrom.multiLocation) {

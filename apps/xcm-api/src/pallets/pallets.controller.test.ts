@@ -61,4 +61,23 @@ describe('PalletsController', () => {
       expect(spy).toHaveBeenCalledWith(node);
     });
   });
+
+  describe('getPalletIndex', () => {
+    it('should return the index of the given pallet for the given node', async () => {
+      const pallet = 'XTokens';
+      const index = 0;
+      const spy = vi
+        .spyOn(palletsService, 'getPalletIndex')
+        .mockReturnValue(index);
+
+      const result = await controller.getPalletIndex(
+        node,
+        { pallet },
+        mockRequestObject,
+      );
+
+      expect(result).toBe(index.toString());
+      expect(spy).toHaveBeenCalledWith(node, pallet);
+    });
+  });
 });

@@ -73,7 +73,6 @@
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
     "@babel/preset-env": "^7.27.1",
     "@codecov/rollup-plugin": "^1.9.0",
-    "@galacticcouncil/api-augment": "^0.3.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.1.2",

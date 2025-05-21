@@ -1213,9 +1213,6 @@ importers:
       '@codecov/rollup-plugin':
         specifier: ^1.9.0
         version: 1.9.0(rollup@4.40.1)
-      '@galacticcouncil/api-augment':
-        specifier: ^0.3.1
-        version: 0.3.1
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.0.4(@babel/core@7.27.1)(@types/babel__core@7.20.5)(rollup@4.40.1)
@@ -2945,9 +2942,6 @@ packages:
 
   '@frequency-chain/api-augment@1.11.1':
     resolution: {integrity: sha512-CzVjeGrWl8tbTavygZLUICrncjCC54hM5ioJU1Og2OPoX2P4GYf8xoks8MIyj1yOrYX++mzM6Uf0+nCh77QyFw==}
-
-  '@galacticcouncil/api-augment@0.3.1':
-    resolution: {integrity: sha512-psIJv4hY/CEz3jXzd/mrRGtCtwmMQtCzi5OwDlJ8wbYtdxScCkIlHfZXRxDjUvgWTgG7xu9TbjeyifsJE6yHqw==}
 
   '@galacticcouncil/math-lbp@1.0.0':
     resolution: {integrity: sha512-G5WsqJpQEkHcN8oFKxPOYqh7GSrt/6X6YQJWTNjxm9aKpXc/xQlTYXybML2J4wZ4VywEnqvX3CmpPfOg7wQkLg==}
@@ -14323,8 +14317,6 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
-
-  '@galacticcouncil/api-augment@0.3.1': {}
 
   '@galacticcouncil/math-lbp@1.0.0': {}
 

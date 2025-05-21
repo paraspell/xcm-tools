@@ -1,7 +1,6 @@
 import type { TMultiLocation, TNodeWithRelayChains } from '@paraspell/sdk-common'
 
 import { findAsset } from '../assets/search'
-import { isForeignAsset } from '../guards'
 import type { TCurrencyInput } from '../types/TCurrency'
 
 export const getAssetMultiLocation = (
@@ -9,13 +8,9 @@ export const getAssetMultiLocation = (
   currency: TCurrencyInput
 ): TMultiLocation | null => {
   const asset = findAsset(node, currency, null)
-  if (!asset || !isForeignAsset(asset)) {
+  if (!asset || !asset.multiLocation) {
     return null
   }
 
-  if (asset.multiLocation) {
-    return asset.multiLocation
-  }
-
-  return null
+  return asset.multiLocation
 }

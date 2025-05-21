@@ -80,6 +80,7 @@ vi.mock('@paraspell/sdk', async () => {
     ...actual,
     getBridgeStatus: vi.fn(),
     Builder: vi.fn().mockImplementation(() => builderMock),
+    getParaEthTransferFees: vi.fn().mockResolvedValue([0n, 0n]),
   };
 });
 
@@ -826,6 +827,13 @@ describe('XTransferService', () => {
       const status = await service.getBridgeStatus();
 
       expect(status).toEqual('Normal');
+    });
+  });
+
+  describe('getParaEthFees', () => {
+    it('should return para eth transfer fees', async () => {
+      const result = await service.getParaEthFees();
+      expect(result).toEqual([0n, 0n]);
     });
   });
 });

@@ -160,4 +160,9 @@ export class XTransferController {
     this.trackAnalytics(EventName.GET_TRANSFER_INFO, req, bodyParams);
     return this.xTransferService.getTransferInfo(bodyParams);
   }
+
+  @Get('x-transfer/para-eth-fees')
+  getParaEthFees() {
+    return this.xTransferService.getParaEthFees();
+  }
 }

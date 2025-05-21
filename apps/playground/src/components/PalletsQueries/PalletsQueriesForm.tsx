@@ -1,7 +1,7 @@
 import { Button, Paper, Select, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import type { TNodePolkadotKusama } from '@paraspell/sdk';
-import { NODE_NAMES_DOT_KSM } from '@paraspell/sdk';
+import { NODE_NAMES_DOT_KSM, SUPPORTED_PALLETS } from '@paraspell/sdk';
 import { type FC, useEffect } from 'react';
 
 import { PALLETS_QUERIES } from '../../consts';
@@ -13,6 +13,7 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 export type FormValues = {
   func: TPalletsQuery;
   node: TNodePolkadotKusama;
+  pallet: string;
   useApi: boolean;
 };
 
@@ -26,11 +27,12 @@ const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     initialValues: {
       func: 'ALL_PALLETS',
       node: 'Acala',
+      pallet: 'XTokens',
       useApi: false,
     },
   });
 
-  const { useApi } = form.getValues();
+  const { useApi, func } = form.getValues();
 
   const { setIsUseXcmApiSelected } = useWallet();
 
@@ -60,6 +62,19 @@ const PalletsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
             data-testid="select-node"
             {...form.getInputProps('node')}
           />
+
+          {func === 'PALLET_INDEX' && (
+            <Select
+              label="Pallet"
+              placeholder="Pick value"
+              data={SUPPORTED_PALLETS}
+              searchable
+              required
+              allowDeselect={false}
+              data-testid="select-pallet"
+              {...form.getInputProps('pallet')}
+            />
+          )}
 
           <XcmApiCheckbox
             {...form.getInputProps('useApi', { type: 'checkbox' })}

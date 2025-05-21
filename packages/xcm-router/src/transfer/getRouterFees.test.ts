@@ -36,7 +36,7 @@ describe('getRouterFees', () => {
     baseNode = 'chain-A' as TNodePolkadotKusama;
 
     options = {
-      exchange: { baseNode },
+      exchange: { baseNode, exchangeNode: 'HydrationDex' },
       senderAddress: '0xdeadbeef',
     } as TBuildTransactionsOptionsModified;
 
@@ -57,7 +57,7 @@ describe('getRouterFees', () => {
 
     expect(result).toEqual<TRouterXcmFeeResult>({
       sendingChain: undefined,
-      exchangeChain: swapFee,
+      exchangeChain: { ...swapFee, selectedExchange: 'HydrationDex' },
       receivingChain: undefined,
     });
   });
@@ -73,7 +73,7 @@ describe('getRouterFees', () => {
       origin: options.origin,
     });
     expect(result.sendingChain).toBe(toExchangeFeeValue);
-    expect(result.exchangeChain).toBe(swapFee);
+    expect(result.exchangeChain).toEqual({ ...swapFee, selectedExchange: 'HydrationDex' });
     expect(result.receivingChain).toBeUndefined();
   });
 
@@ -99,7 +99,7 @@ describe('getRouterFees', () => {
       senderAddress: options.senderAddress,
     });
     expect(result.receivingChain).toBe(toDestFeeValue);
-    expect(result.exchangeChain).toBe(swapFee);
+    expect(result.exchangeChain).toEqual({ ...swapFee, selectedExchange: 'HydrationDex' });
     expect(result.sendingChain).toBeUndefined();
   });
 
@@ -122,7 +122,7 @@ describe('getRouterFees', () => {
     expect(getFromExchangeFee).toHaveBeenCalled();
     expect(result).toEqual<TRouterXcmFeeResult>({
       sendingChain: toExchangeFeeValue,
-      exchangeChain: swapFee,
+      exchangeChain: { ...swapFee, selectedExchange: 'HydrationDex' },
       receivingChain: toDestFeeValue,
     });
   });

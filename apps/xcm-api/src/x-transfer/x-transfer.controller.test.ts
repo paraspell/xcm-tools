@@ -301,4 +301,18 @@ describe('XTransferController', () => {
       expect(spy).toHaveBeenCalled();
     });
   });
+
+  describe('getParaEthFees', () => {
+    it('should call getParaEthFees service method and return result', async () => {
+      const mockResult: [bigint, bigint] = [BigInt(1000), BigInt(2000)];
+      const spy = vi
+        .spyOn(service, 'getParaEthFees')
+        .mockResolvedValue(mockResult);
+
+      const result = await controller.getParaEthFees();
+
+      expect(result).toEqual(mockResult);
+      expect(spy).toHaveBeenCalled();
+    });
+  });
 });
