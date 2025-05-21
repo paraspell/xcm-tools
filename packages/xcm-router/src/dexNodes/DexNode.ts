@@ -9,8 +9,9 @@ import type {
   TDexConfig,
   TExchangeNode,
   TGetAmountOutOptions,
+  TMultiSwapResult,
+  TSingleSwapResult,
   TSwapOptions,
-  TSwapResult,
 } from '../types';
 
 abstract class ExchangeNode {
@@ -34,7 +35,19 @@ abstract class ExchangeNode {
     api: ApiPromise,
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
-  ): Promise<TSwapResult>;
+  ): Promise<TSingleSwapResult>;
+
+  async handleMultiSwap(
+    api: ApiPromise,
+    options: TSwapOptions,
+    toDestTransactionFee: BigNumber,
+  ): Promise<TMultiSwapResult> {
+    const singleSwapResult = await this.swapCurrency(api, options, toDestTransactionFee);
+    return {
+      txs: [singleSwapResult.tx],
+      amountOut: singleSwapResult.amountOut,
+    };
+  }
 
   abstract getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint>;
 

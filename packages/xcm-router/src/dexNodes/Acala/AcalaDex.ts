@@ -9,7 +9,12 @@ import { firstValueFrom } from 'rxjs';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type { TDexConfig, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import type {
+  TDexConfig,
+  TGetAmountOutOptions,
+  TSingleSwapResult,
+  TSwapOptions,
+} from '../../types';
 import ExchangeNode from '../DexNode';
 import { calculateAcalaSwapFee, createAcalaApiInstance, getDexConfig } from './utils';
 
@@ -18,7 +23,7 @@ class AcalaExchangeNode extends ExchangeNode {
     api: ApiPromise,
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
-  ): Promise<TSwapResult> {
+  ): Promise<TSingleSwapResult> {
     const { assetFrom, assetTo, amount, senderAddress, origin } = options;
 
     const wallet = new Wallet(api);

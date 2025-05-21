@@ -28,7 +28,7 @@ describe('getSwapFee', () => {
 
   it('returns fee detail and amountOut on success', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
-      tx: 'dummyTx' as unknown as TPapiTransaction,
+      txs: ['dummyTx' as unknown as TPapiTransaction],
       amountOut: '100',
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({
@@ -69,7 +69,7 @@ describe('getSwapFee', () => {
 
   it('propagates errors from getFeeForOriginNode', async () => {
     vi.mocked(createSwapTx).mockResolvedValue({
-      tx: 'dummyTx' as unknown as TPapiTransaction,
+      txs: ['dummyTx' as unknown as TPapiTransaction],
       amountOut: '100',
     });
     const error = new Error('fee error');
@@ -81,7 +81,7 @@ describe('getSwapFee', () => {
   it('includes dryRunError when getFeeForOriginNode returns one', async () => {
     const dryError = 'Dry run error';
     vi.mocked(createSwapTx).mockResolvedValue({
-      tx: 'dummyTx' as unknown as TPapiTransaction,
+      txs: ['dummyTx' as unknown as TPapiTransaction],
       amountOut: '200',
     });
     vi.mocked(getOriginXcmFee).mockResolvedValue({

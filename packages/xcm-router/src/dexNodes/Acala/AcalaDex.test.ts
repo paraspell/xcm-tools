@@ -1,9 +1,10 @@
+import { getBalanceNative } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SmallAmountError } from '../../errors/SmallAmountError';
-import type { TSwapOptions, TSwapResult } from '../../types';
+import type { TSingleSwapResult, TSwapOptions } from '../../types';
 import AcalaExchangeNode from './AcalaDex';
 import { calculateAcalaSwapFee, createAcalaApiInstance, getDexConfig } from './utils';
 
@@ -137,8 +138,27 @@ describe('AcalaExchangeNode', () => {
       amount: '100',
     } as TSwapOptions;
 
+    it('should throw SmallAmountError when amountWithoutFee is negative in swapCurrency', async () => {
+      const mockApi = {} as ApiPromise;
+      const options = {
+        assetFrom: { symbol: 'DOT' },
+        assetTo: { symbol: 'ACA' },
+        amount: '1',
+        senderAddress: 'some-address',
+        origin: {},
+      } as TSwapOptions;
+
+      vi.mocked(getBalanceNative).mockResolvedValueOnce(0n);
+
+      vi.mocked(calculateAcalaSwapFee).mockResolvedValueOnce(new BigNumber(1));
+
+      await expect(node.swapCurrency(mockApi, options, new BigNumber(1))).rejects.toThrow(
+        SmallAmountError,
+      );
+    });
+
     it('should swap successfully and return the tx and modified amountOut', async () => {
-      const result: TSwapResult = await node.swapCurrency(
+      const result: TSingleSwapResult = await node.swapCurrency(
         mockApi,
         baseSwapOptions,
         new BigNumber(0.01),
@@ -169,7 +189,6 @@ describe('AcalaExchangeNode', () => {
 
     it('should return the amountOut with fee deducted', async () => {
       const result = await node.getAmountOut(mockApi, baseSwapOptions);
-
       expect(result).toBe(42n);
     });
   });

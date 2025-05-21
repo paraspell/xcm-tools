@@ -37,7 +37,7 @@ describe('prepareExtrinsics', () => {
     vi.clearAllMocks();
 
     vi.mocked(createSwapTxModule.createSwapTx).mockResolvedValue({
-      tx: 'swapTx' as unknown as TPapiTransaction,
+      txs: ['swapTx' as unknown as TPapiTransaction],
       amountOut: '1000',
     });
   });
@@ -51,7 +51,7 @@ describe('prepareExtrinsics', () => {
 
     expect(res).toEqual({
       toExchangeTx: undefined,
-      swapTx: 'swapTx',
+      swapTxs: ['swapTx'],
       toDestTx: undefined,
       amountOut: 1000n,
     });
@@ -73,7 +73,7 @@ describe('prepareExtrinsics', () => {
 
     expect(res).toEqual({
       toExchangeTx: 'toExchangeTx',
-      swapTx: 'swapTx',
+      swapTxs: ['swapTx'],
       toDestTx: undefined,
       amountOut: 1000n,
     });
@@ -95,7 +95,7 @@ describe('prepareExtrinsics', () => {
 
     expect(res).toEqual({
       toExchangeTx: undefined,
-      swapTx: 'swapTx',
+      swapTxs: ['swapTx'],
       toDestTx: 'toDestTx',
       amountOut: 1000n,
     });
@@ -117,7 +117,7 @@ describe('prepareExtrinsics', () => {
 
     expect(res).toEqual({
       toExchangeTx: 'toExchangeTx',
-      swapTx: 'swapTx',
+      swapTxs: ['swapTx'],
       toDestTx: 'toDestTx',
       amountOut: 1000n,
     });

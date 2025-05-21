@@ -23,7 +23,7 @@ export const createSwapTx = async (
 ) => {
   const toDestTxFee = await calculateFromExchangeFee(options);
 
-  const swapResult = await exchange.swapCurrency(
+  const swapResult = await exchange.handleMultiSwap(
     options.exchange.api,
     {
       ...options,
@@ -33,5 +33,9 @@ export const createSwapTx = async (
     toDestTxFee,
   );
 
-  return { ...swapResult, tx: await convertTxToPapi(swapResult.tx, options.exchange.apiPapi) };
+  const txs = await Promise.all(
+    swapResult.txs.map((tx) => convertTxToPapi(tx, options.exchange.apiPapi)),
+  );
+
+  return { txs, amountOut: swapResult.amountOut };
 };

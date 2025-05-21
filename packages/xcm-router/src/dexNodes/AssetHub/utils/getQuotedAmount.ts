@@ -1,4 +1,8 @@
-import { InvalidParameterError, type TMultiLocation, transformMultiLocation } from '@paraspell/sdk';
+import {
+  InvalidParameterError,
+  type TMultiLocation,
+  transformMultiLocation,
+} from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';
 

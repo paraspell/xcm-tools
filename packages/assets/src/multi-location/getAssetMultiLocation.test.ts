@@ -3,13 +3,8 @@ import { Parents, type TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { findAsset } from '../assets'
-import { isForeignAsset } from '../guards'
-import { type TAsset, type TNativeAsset } from '../types'
+import { type TAsset } from '../types'
 import { getAssetMultiLocation } from './getAssetMultiLocation'
-
-vi.mock('../guards', () => ({
-  isForeignAsset: vi.fn()
-}))
 
 vi.mock('../assets/search', () => ({
   findAsset: vi.fn()
@@ -29,14 +24,6 @@ describe('getAssetMultiLocation', () => {
     expect(result).toBeNull()
   })
 
-  it('returns null if asset is not a foreign asset', () => {
-    const asset = { symbol: 'TEST', isNative: true } as TNativeAsset
-    vi.mocked(findAsset).mockReturnValue(asset)
-    vi.mocked(isForeignAsset).mockReturnValue(false)
-    const result = getAssetMultiLocation(node, currency)
-    expect(result).toBeNull()
-  })
-
   it('returns asset.multiLocation if it exists', () => {
     const multiLocation = {
       parents: Parents.ZERO,
@@ -44,7 +31,6 @@ describe('getAssetMultiLocation', () => {
     } as TMultiLocation
     const asset = { symbol: 'TEST', multiLocation }
     vi.mocked(findAsset).mockReturnValue(asset)
-    vi.mocked(isForeignAsset).mockReturnValue(true)
     const result = getAssetMultiLocation(node, currency)
     expect(result).toEqual(multiLocation)
   })
@@ -52,7 +38,6 @@ describe('getAssetMultiLocation', () => {
   it('returns null if multiLocation does not exists', () => {
     const asset = { symbol: 'TEST' } as TAsset
     vi.mocked(findAsset).mockReturnValue(asset)
-    vi.mocked(isForeignAsset).mockReturnValue(true)
     const result = getAssetMultiLocation(node, currency)
     expect(result).toBeNull()
   })

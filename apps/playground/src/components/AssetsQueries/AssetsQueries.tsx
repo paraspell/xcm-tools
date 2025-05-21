@@ -8,6 +8,9 @@ import {
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import {
+  Foreign,
+  ForeignAbstract,
+  Native,
   replaceBigInt,
   type TCurrencyCore,
   type TMultiLocation,
@@ -56,14 +59,37 @@ export const AssetsQueries = () => {
   }, [error, scrollIntoView]);
 
   const resolveCurrency = (formValues: FormValues): TCurrencyCore => {
-    if (formValues.currencyType === 'multilocation') {
+    const { currencyType, currency, customCurrencySymbolSpecifier } =
+      formValues;
+
+    if (currencyType === 'symbol') {
+      if (customCurrencySymbolSpecifier === 'native') {
+        return {
+          symbol: Native(currency),
+        };
+      }
+
+      if (customCurrencySymbolSpecifier === 'foreign') {
+        return {
+          symbol: Foreign(currency),
+        };
+      }
+
+      if (customCurrencySymbolSpecifier === 'foreignAbstract') {
+        return {
+          symbol: ForeignAbstract(currency),
+        };
+      }
+    }
+
+    if (currencyType === 'multilocation') {
       return {
-        multilocation: JSON.parse(formValues.currency) as TMultiLocation,
+        multilocation: JSON.parse(currency) as TMultiLocation,
       };
-    } else if (formValues.currencyType === 'id') {
-      return { id: formValues.currency };
+    } else if (currencyType === 'id') {
+      return { id: currency };
     } else {
-      return { symbol: formValues.currency };
+      return { symbol: currency };
     }
   };
 
@@ -74,7 +100,6 @@ export const AssetsQueries = () => {
       'ASSET_BALANCE',
       'ASSET_MULTILOCATION',
       'EXISTENTIAL_DEPOSIT',
-      'ORIGIN_FEE_DETAILS',
     ]);
 
     const resolvedCurrency = resolveCurrency(formValues);
@@ -83,30 +108,14 @@ export const AssetsQueries = () => {
       const shouldUsePost = postCalls.has(func);
 
       return fetchFromApi(
-        shouldUsePost && func !== 'ORIGIN_FEE_DETAILS'
-          ? {
-              address,
-              ...('symbol' in resolvedCurrency &&
-              typeof resolvedCurrency.symbol === 'string' &&
-              resolvedCurrency.symbol.length === 0
-                ? {}
-                : { currency: resolvedCurrency }),
-            }
-          : {
-              ...formValues,
-              ...(func === 'ORIGIN_FEE_DETAILS'
-                ? {
-                    account: address,
-                    origin: formValues.node,
-                    destination: formValues.nodeDestination,
-                    ahAddress: formValues.ahAddress,
-                    currency: {
-                      ...resolvedCurrency,
-                      amount: formValues.amount,
-                    },
-                  }
-                : {}),
-            },
+        shouldUsePost && {
+          address,
+          ...('symbol' in resolvedCurrency &&
+          typeof resolvedCurrency.symbol === 'string' &&
+          resolvedCurrency.symbol.length === 0
+            ? {}
+            : { currency: resolvedCurrency }),
+        },
         endpoint,
         shouldUsePost ? 'POST' : 'GET',
         shouldUsePost,
