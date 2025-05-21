@@ -1,5 +1,21 @@
 # Changelog
 
+## [10.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v9.2.2...sdk-v10.0.0) (2025-05-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sdk-core:** Refactor transfer / fee helper functions 👷
+
+### Documentation
+
+* Add refactored Transfer info queries ([61b5863](https://github.com/paraspell/xcm-tools/commit/61b58637ed886e7c36793cf78bd9b66eb08f4ac1))
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor transfer / fee helper functions 👷 ([1b33cb7](https://github.com/paraspell/xcm-tools/commit/1b33cb704fdca2b7c80d53384210761d3a85a76a))
+
 ## [9.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-v9.2.1...sdk-v9.2.2) (2025-05-20)
 
 
