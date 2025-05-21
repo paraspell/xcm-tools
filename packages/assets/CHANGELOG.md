@@ -1,5 +1,16 @@
 # Changelog
 
+## [10.0.0](https://github.com/paraspell/xcm-tools/compare/assets-v9.2.2...assets-v10.0.0) (2025-05-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sdk-core:** Refactor transfer / fee helper functions 👷
+
+### Code Refactoring
+
+* **sdk-core:** Refactor transfer / fee helper functions 👷 ([1b33cb7](https://github.com/paraspell/xcm-tools/commit/1b33cb704fdca2b7c80d53384210761d3a85a76a))
+
 ## [9.2.2](https://github.com/paraspell/xcm-tools/compare/assets-v9.2.1...assets-v9.2.2) (2025-05-20)
 
 
