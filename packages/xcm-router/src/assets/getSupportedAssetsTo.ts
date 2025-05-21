@@ -1,8 +1,9 @@
-import { getAssets, normalizeSymbol, type TNodeWithRelayChains } from '@paraspell/sdk';
+import { getAssets, type TNodeWithRelayChains } from '@paraspell/sdk';
 
 import { EXCHANGE_NODES } from '../consts';
 import type { TExchangeInput, TRouterAsset } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
+import { isRouterAssetEqual } from './isRouterAssetEqual';
 
 /**
  * Retrieves the list of assets supported for transfer to the destination node.
@@ -24,9 +25,7 @@ export const getSupportedAssetsTo = (
       const toAssets = getAssets(to);
 
       allExchangeAssets = allExchangeAssets.filter((asset) =>
-        toAssets.some(
-          (toAsset) => normalizeSymbol(toAsset.symbol) === normalizeSymbol(asset.symbol),
-        ),
+        toAssets.some((toAsset) => isRouterAssetEqual(asset, toAsset)),
       );
     }
     return allExchangeAssets;
@@ -39,7 +38,7 @@ export const getSupportedAssetsTo = (
   if (to) {
     const toAssets = getAssets(to);
     exchangeAssets = exchangeAssets.filter((asset) =>
-      toAssets.some((toAsset) => normalizeSymbol(toAsset.symbol) === normalizeSymbol(asset.symbol)),
+      toAssets.some((toAsset) => isRouterAssetEqual(asset, toAsset)),
     );
   }
 

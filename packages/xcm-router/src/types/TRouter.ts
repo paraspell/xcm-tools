@@ -32,8 +32,13 @@ export type TGetAmountOutOptions = {
   amount: string;
 };
 
-export type TSwapResult = {
+export type TSingleSwapResult = {
   tx: Extrinsic;
+  amountOut: string;
+};
+
+export type TMultiSwapResult = {
+  txs: Extrinsic[];
   amountOut: string;
 };
 
@@ -240,7 +245,7 @@ export type TExecuteRouterPlanOptions = {
 
 export type TPreparedExtrinsics = {
   toExchangeTx?: TPapiTransaction;
-  swapTx: TPapiTransaction;
+  swapTxs: TPapiTransaction[];
   toDestTx?: TPapiTransaction;
   amountOut: bigint;
 };

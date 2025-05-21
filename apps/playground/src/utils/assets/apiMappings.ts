@@ -16,9 +16,9 @@ export const getApiEndpoint = (func: TAssetsQuery, node: string): string => {
     CONVERT_SS58: `/convert-ss58`,
     ASSET_BALANCE: `/balance/${node}/asset`,
     EXISTENTIAL_DEPOSIT: `/balance/${node}/existential-deposit`,
-    ORIGIN_FEE_DETAILS: `/origin-fee-details`,
     HAS_DRY_RUN_SUPPORT: `/nodes/${node}/has-dry-run-support`,
     ETHEREUM_BRIDGE_STATUS: `/x-transfer/eth-bridge-status`,
+    PARA_ETH_FEES: `/x-transfer/para-eth-fees`,
   };
 
   return endpoints[func] ?? '/';

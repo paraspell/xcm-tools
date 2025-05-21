@@ -8,7 +8,7 @@ export const buildTransactions = async (
 ): Promise<TRouterPlan> => {
   const { origin, exchange, destination } = options;
 
-  const { toExchangeTx, swapTx, toDestTx, amountOut } = await prepareExtrinsics(dex, options);
+  const { toExchangeTx, swapTxs, toDestTx, amountOut } = await prepareExtrinsics(dex, options);
 
   const transactions: TRouterPlan = [];
 
@@ -23,9 +23,9 @@ export const buildTransactions = async (
   }
 
   if (toDestTx) {
-    const batchedTx = exchange.apiPapi
-      .getUnsafeApi()
-      .tx.Utility.batch_all({ calls: [swapTx.decodedCall, toDestTx.decodedCall] });
+    const batchedTx = exchange.apiPapi.getUnsafeApi().tx.Utility.batch_all({
+      calls: [...swapTxs.map((tx) => tx.decodedCall), toDestTx.decodedCall],
+    });
 
     transactions.push({
       api: exchange.apiPapi,
@@ -35,13 +35,27 @@ export const buildTransactions = async (
       type: 'SWAP_AND_TRANSFER',
     });
   } else {
-    transactions.push({
-      api: exchange.apiPapi,
-      node: dex.node,
-      tx: swapTx,
-      amountOut: BigInt(amountOut),
-      type: 'SWAP',
-    });
+    if (swapTxs.length === 1) {
+      transactions.push({
+        api: exchange.apiPapi,
+        node: dex.node,
+        tx: swapTxs[0],
+        amountOut: BigInt(amountOut),
+        type: 'SWAP',
+      });
+    } else {
+      const batchedSwapTx = exchange.apiPapi.getUnsafeApi().tx.Utility.batch_all({
+        calls: swapTxs.map((tx) => tx.decodedCall),
+      });
+
+      transactions.push({
+        api: exchange.apiPapi,
+        node: dex.node,
+        tx: batchedSwapTx,
+        amountOut: BigInt(amountOut),
+        type: 'SWAP',
+      });
+    }
   }
 
   return transactions;

@@ -3,6 +3,7 @@ import {
   Builder,
   GeneralBuilder,
   getBridgeStatus,
+  getParaEthTransferFees,
   NODES_WITH_RELAY_CHAINS,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNodeDotKsmWithRelayChains,
@@ -223,5 +224,9 @@ export class XTransferService {
 
   async getBridgeStatus() {
     return getBridgeStatus();
+  }
+
+  async getParaEthFees() {
+    return getParaEthTransferFees();
   }
 }

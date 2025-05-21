@@ -45,10 +45,9 @@ describe('buildTransactions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    /* default mock: nothing extra to / from exchange */
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: undefined,
-      swapTx: 'swapTx' as unknown as TPapiTransaction,
+      swapTxs: ['swapTx' as unknown as TPapiTransaction],
       toDestTx: undefined,
       amountOut: 1000n,
     });
@@ -76,7 +75,7 @@ describe('buildTransactions', () => {
   test('adds transfer-to-exchange when origin differs', async () => {
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: 'toExchangeTx' as unknown as TPapiTransaction,
-      swapTx: 'swapTx' as unknown as TPapiTransaction,
+      swapTxs: ['swapTx' as unknown as TPapiTransaction],
       toDestTx: undefined,
       amountOut: 1000n,
     });
@@ -104,7 +103,7 @@ describe('buildTransactions', () => {
   test('adds batched swap+transfer when destination differs', async () => {
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: undefined,
-      swapTx: 'swapTx' as unknown as TPapiTransaction,
+      swapTxs: ['swapTx' as unknown as TPapiTransaction],
       toDestTx: 'toDestTx' as unknown as TPapiTransaction,
       amountOut: 1000n,
     });
@@ -129,7 +128,7 @@ describe('buildTransactions', () => {
   test('includes all steps when both origin & destination differ', async () => {
     vi.mocked(prepareExtrinsicsModule.prepareExtrinsics).mockResolvedValue({
       toExchangeTx: 'toExchangeTx' as unknown as TPapiTransaction,
-      swapTx: 'swapTx' as unknown as TPapiTransaction,
+      swapTxs: ['swapTx' as unknown as TPapiTransaction],
       toDestTx: 'toDestTx' as unknown as TPapiTransaction,
       amountOut: 1000n,
     });

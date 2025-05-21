@@ -7,7 +7,12 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import { getDefaultPallet, getSupportedPallets } from '@paraspell/sdk';
+import type { TPallet } from '@paraspell/sdk';
+import {
+  getDefaultPallet,
+  getPalletIndex,
+  getSupportedPallets,
+} from '@paraspell/sdk';
 import { useEffect, useState } from 'react';
 
 import { fetchFromApi } from '../../utils';
@@ -43,12 +48,14 @@ const PalletsQueries = () => {
     }
   }, [error, scrollIntoView]);
 
-  const submitUsingSdk = ({ func, node }: FormValues) => {
+  const submitUsingSdk = ({ func, node, pallet }: FormValues) => {
     switch (func) {
       case 'ALL_PALLETS':
         return getSupportedPallets(node);
       case 'DEFAULT_PALLET':
         return getDefaultPallet(node);
+      case 'PALLET_INDEX':
+        return getPalletIndex(node, pallet as TPallet);
     }
   };
 
@@ -58,6 +65,8 @@ const PalletsQueries = () => {
         return `${node}`;
       case 'DEFAULT_PALLET':
         return `${node}/default`;
+      case 'PALLET_INDEX':
+        return `${node}/index`;
     }
   };
 
@@ -75,7 +84,7 @@ const PalletsQueries = () => {
 
     try {
       const output = await getQueryResult(formValues);
-      setOutput(JSON.stringify(output, null, 2));
+      setOutput(JSON.stringify(output ?? null, null, 2));
       openOutputAlert();
       closeErrorAlert();
     } catch (e) {

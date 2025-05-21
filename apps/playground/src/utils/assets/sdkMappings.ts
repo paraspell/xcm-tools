@@ -27,16 +27,7 @@ export const callSdkFunc = (
   apiType: TApiType,
   resolvedCurrency: TCurrencyCore,
 ): Promise<unknown> => {
-  const {
-    func,
-    node,
-    nodeDestination,
-    currency,
-    amount,
-    address,
-    ahAddress,
-    accountDestination,
-  } = formValues;
+  const { func, node, currency, address } = formValues;
   const chosenSdk = apiType === 'PAPI' ? Sdk : SdkPjs;
 
   const sdkActions: Record<TAssetsQuery, () => Promise<unknown>> = {
@@ -70,21 +61,10 @@ export const callSdkFunc = (
             : undefined,
         ),
       ),
-    ORIGIN_FEE_DETAILS: () =>
-      chosenSdk.getOriginFeeDetails({
-        origin: node,
-        destination: nodeDestination,
-        currency: {
-          ...resolvedCurrency,
-          amount,
-        },
-        account: address,
-        accountDestination,
-        ahAddress,
-      }),
     HAS_DRY_RUN_SUPPORT: () =>
       Promise.resolve(chosenSdk.hasDryRunSupport(node)),
     ETHEREUM_BRIDGE_STATUS: () => Promise.resolve(chosenSdk.getBridgeStatus()),
+    PARA_ETH_FEES: () => Promise.resolve(chosenSdk.getParaEthTransferFees()),
   };
 
   const action = sdkActions[func];

@@ -8,7 +8,12 @@ import BigNumber from 'bignumber.js';
 import { DEST_FEE_BUFFER_PCT, FEE_BUFFER } from '../../consts';
 import { SmallAmountError } from '../../errors/SmallAmountError';
 import Logger from '../../Logger/Logger';
-import type { TDexConfig, TGetAmountOutOptions, TSwapOptions, TSwapResult } from '../../types';
+import type {
+  TDexConfig,
+  TGetAmountOutOptions,
+  TSingleSwapResult,
+  TSwapOptions,
+} from '../../types';
 import ExchangeNode from '../DexNode';
 import { findToken, getBestTrade, getFilteredPairs, getTokenMap } from './utils';
 import { getDexConfig } from './utils/getDexConfig';
@@ -18,7 +23,7 @@ class BifrostExchangeNode extends ExchangeNode {
     api: ApiPromise,
     options: TSwapOptions,
     toDestTxFee: BigNumber,
-  ): Promise<TSwapResult> {
+  ): Promise<TSingleSwapResult> {
     const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin } = options;
 
     const chainId = getParaId(this.node);

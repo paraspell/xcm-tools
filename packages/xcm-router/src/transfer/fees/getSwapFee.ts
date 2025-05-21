@@ -10,11 +10,11 @@ export const getSwapFee = async (
   options: TBuildTransactionsOptionsModified,
 ) => {
   const { senderAddress } = options;
-  const { tx, amountOut } = await createSwapTx(exchange, options);
+  const { txs, amountOut } = await createSwapTx(exchange, options);
 
   const result = await getOriginXcmFee({
     api: options.exchange.apiPapi,
-    tx,
+    tx: txs[0],
     origin: exchange.node,
     destination: exchange.node,
     senderAddress: senderAddress,
@@ -22,9 +22,11 @@ export const getSwapFee = async (
     disableFallback: false,
   });
 
+  const finalFee = (result.fee as bigint) * BigInt(txs.length);
+
   return {
     result: {
-      fee: result.fee,
+      fee: finalFee,
       feeType: result.feeType,
       currency: result.currency,
       dryRunError: result.dryRunError,

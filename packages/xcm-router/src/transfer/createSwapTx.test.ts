@@ -32,6 +32,7 @@ describe('createSwapTx', () => {
 
     exchangeNode = {
       swapCurrency: vi.fn(),
+      handleMultiSwap: vi.fn(),
     } as unknown as ExchangeNode;
 
     options = {
@@ -58,16 +59,16 @@ describe('createSwapTx', () => {
 
     vi.mocked(buildFromExchangeExtrinsic).mockResolvedValue(dummyTxPapi);
     vi.mocked(calculateTxFee).mockResolvedValue(BigNumber(10));
-    vi.spyOn(exchangeNode, 'swapCurrency').mockResolvedValue({
+    vi.spyOn(exchangeNode, 'handleMultiSwap').mockResolvedValue({
       amountOut: '900',
-      tx: dummyExtrinsic,
+      txs: [dummyExtrinsic],
     });
 
     vi.mocked(convertTxToPapi).mockResolvedValue(dummyTxPapi);
   });
 
   it('should build extrinsics, calculate fees, and call swapCurrency', async () => {
-    const spy = vi.spyOn(exchangeNode, 'swapCurrency');
+    const spy = vi.spyOn(exchangeNode, 'handleMultiSwap');
 
     const result = await createSwapTx(exchangeNode, options);
 
@@ -86,12 +87,12 @@ describe('createSwapTx', () => {
 
     expect(result).toEqual({
       amountOut: '900',
-      tx: dummyTxPapi,
+      txs: [dummyTxPapi],
     });
   });
 
   it('should propagate errors if swapCurrency fails', async () => {
-    vi.spyOn(exchangeNode, 'swapCurrency').mockRejectedValue(new Error('swapCurrency failed'));
+    vi.spyOn(exchangeNode, 'handleMultiSwap').mockRejectedValue(new Error('swapCurrency failed'));
 
     await expect(createSwapTx(exchangeNode, options)).rejects.toThrowError('swapCurrency failed');
   });

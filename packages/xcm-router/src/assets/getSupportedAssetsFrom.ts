@@ -1,9 +1,10 @@
 import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
-import { getAssets, normalizeSymbol } from '@paraspell/sdk';
+import { getAssets } from '@paraspell/sdk';
 
 import { createDexNodeInstance } from '../dexNodes/DexNodeFactory';
 import type { TExchangeInput } from '../types';
 import { getExchangeAssets } from './getExchangeConfig';
+import { isRouterAssetEqual } from './isRouterAssetEqual';
 
 /**
  * Retrieves the list of assets supported for transfer from the origin node to the exchange node.
@@ -31,9 +32,6 @@ export const getSupportedAssetsFrom = (
 
   const fromAssets = getAssets(from);
   return fromAssets.filter((fromAsset) =>
-    exchangeAssets.some(
-      (exchangeAsset) =>
-        normalizeSymbol(exchangeAsset.symbol) === normalizeSymbol(fromAsset.symbol),
-    ),
+    exchangeAssets.some((exchangeAsset) => isRouterAssetEqual(fromAsset, exchangeAsset)),
   );
 };

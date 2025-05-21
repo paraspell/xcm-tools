@@ -17,7 +17,7 @@ export const prepareExtrinsics = async (
       : undefined;
 
   // 2. Create swap in DEX (always)
-  const { tx: swapTx, amountOut } = await createSwapTx(dex, options);
+  const { txs: swapTxs, amountOut } = await createSwapTx(dex, options);
 
   // 3. Create transfer exchange -> destination (optional)
   const toDestTx =
@@ -30,5 +30,5 @@ export const prepareExtrinsics = async (
         })
       : undefined;
 
-  return { toExchangeTx, swapTx, toDestTx, amountOut: BigInt(amountOut) };
+  return { toExchangeTx, swapTxs, toDestTx, amountOut: BigInt(amountOut) };
 };
