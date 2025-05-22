@@ -14,6 +14,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
   destination,
   address,
   senderAddress,
+  feeAsset,
   currency
 }: TVerifyEdOnDestinationOptions<TApi, TRes>) => {
   validateAddress(address, destination)
@@ -53,6 +54,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
     senderAddress,
     address,
     currency,
+    feeAsset,
     disableFallback: false
   })
 

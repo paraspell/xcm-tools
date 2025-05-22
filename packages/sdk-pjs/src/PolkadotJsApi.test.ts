@@ -652,7 +652,12 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(mockResponse)
 
-      const result = await polkadotApi.getDryRunCall({ tx: mockExtrinsic, address, node })
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        node,
+        isFeeAsset: false
+      })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
         { system: { Signed: address } },
@@ -696,7 +701,12 @@ describe('PolkadotJsApi', () => {
 
       vi.mocked(mockApiPromise.call.dryRunApi.dryRunCall).mockResolvedValue(mockResponse)
 
-      const result = await polkadotApi.getDryRunCall({ tx: mockExtrinsic, address, node })
+      const result = await polkadotApi.getDryRunCall({
+        tx: mockExtrinsic,
+        address,
+        node,
+        isFeeAsset: false
+      })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
         { system: { Signed: address } },
@@ -716,7 +726,8 @@ describe('PolkadotJsApi', () => {
         polkadotApi.getDryRunCall({
           tx: mockTransaction,
           address: 'some_address',
-          node: 'Acala'
+          node: 'Acala',
+          isFeeAsset: false
         })
       ).rejects.toThrow(sdkCore.NodeNotSupportedError)
     })

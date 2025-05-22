@@ -1,4 +1,4 @@
-import type { TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TAsset, TCurrencyInput, TCurrencyInputWithAmount } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
@@ -11,6 +11,7 @@ export type TDryRunBaseOptions<TRes> = {
   senderAddress: string
   address: string
   currency: TCurrencyInputWithAmount
+  feeAsset?: TCurrencyInput
 }
 
 export type TDryRunOptions<TApi, TRes> = WithApi<TDryRunBaseOptions<TRes>, TApi, TRes>
@@ -28,6 +29,7 @@ export type TDryRunCallBaseOptions<TRes> = {
    * The address to dry-run with
    */
   address: string
+  isFeeAsset: boolean
 }
 
 export type TDryRunCallOptions<TApi, TRes> = WithApi<TDryRunCallBaseOptions<TRes>, TApi, TRes>
@@ -48,6 +50,10 @@ export type TDryRunXcmBaseOptions = {
    * The origin node
    */
   origin: TNodeDotKsmWithRelayChains
+  asset: TAsset
+  feeAsset?: TAsset
+  amount: bigint
+  originFee: bigint
 }
 
 export type TDryRunXcmOptions<TApi, TRes> = WithApi<TDryRunXcmBaseOptions, TApi, TRes>

@@ -61,7 +61,7 @@ const createOptions = (api: IPolkadotApi<unknown, unknown>) =>
     origin: 'Acala',
     destination: 'Moonbeam',
     senderAddress: '5Alice',
-    currency: 'ACA'
+    currency: { symbol: 'ACA', amount: 1_000n }
   }) as unknown as TDryRunOptions<unknown, unknown>
 
 afterEach(() => vi.resetAllMocks())

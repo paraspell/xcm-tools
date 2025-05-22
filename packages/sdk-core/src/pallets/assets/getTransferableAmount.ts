@@ -1,10 +1,12 @@
 import {
   findAssetForNodeOrThrow,
   getExistentialDeposit,
-  getNativeAssetSymbol
+  getNativeAssetSymbol,
+  isAssetEqual
 } from '@paraspell/assets'
 
 import { getOriginXcmFee } from '../../transfer'
+import { resolveFeeAsset } from '../../transfer/utils/resolveFeeAsset'
 import type { TGetTransferableAmountOptions } from '../../types/TBalance'
 import { validateAddress } from '../../utils/validateAddress'
 import { getAssetBalanceInternal } from './balance/getAssetBalance'
@@ -12,11 +14,17 @@ import { getAssetBalanceInternal } from './balance/getAssetBalance'
 export const getTransferableAmountInternal = async <TApi, TRes>({
   api,
   senderAddress,
-  node,
+  origin: node,
+  destination,
   currency,
-  tx
+  tx,
+  feeAsset
 }: TGetTransferableAmountOptions<TApi, TRes>): Promise<bigint> => {
   validateAddress(senderAddress, node, false)
+
+  const resolvedFeeAsset = feeAsset
+    ? resolveFeeAsset(feeAsset, node, destination, currency)
+    : undefined
 
   const asset = findAssetForNodeOrThrow(node, currency, null)
 
@@ -37,15 +45,21 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
 
   const isNativeAsset = getNativeAssetSymbol(node) === asset.symbol
 
+  const shouldSubstractFee =
+    isNativeAsset ||
+    (node === 'AssetHubPolkadot' && resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, asset))
+
   let feeToSubtract = 0n
 
-  if (isNativeAsset) {
+  if (shouldSubstractFee) {
     const { fee } = await getOriginXcmFee({
       api,
       tx,
       origin: node,
       destination: node,
       senderAddress,
+      feeAsset,
+      currency,
       disableFallback: false
     })
 

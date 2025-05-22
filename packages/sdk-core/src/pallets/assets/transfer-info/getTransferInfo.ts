@@ -2,11 +2,13 @@ import {
   findAssetOnDestOrThrow,
   getExistentialDeposit,
   getNativeAssetSymbol,
-  getRelayChainSymbol
+  getRelayChainSymbol,
+  isAssetEqual
 } from '@paraspell/assets'
 
 import { InvalidParameterError, UnableToComputeError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
+import { resolveFeeAsset } from '../../../transfer/utils/resolveFeeAsset'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../../types/TTransferInfo'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
 
@@ -17,8 +19,13 @@ export const getTransferInfo = async <TApi, TRes>({
   destination,
   senderAddress,
   address,
-  currency
+  currency,
+  feeAsset
 }: TGetTransferInfoOptions<TApi, TRes>): Promise<TTransferInfo> => {
+  const resolvedFeeAsset = feeAsset
+    ? resolveFeeAsset(feeAsset, origin, destination, currency)
+    : undefined
+
   await api.init(origin)
   api.setDisconnectAllowed(false)
 
@@ -33,11 +40,19 @@ export const getTransferInfo = async <TApi, TRes>({
       ? { multilocation: destAsset.multiLocation }
       : { symbol: destAsset.symbol }
 
-    const originBalanceNative = await getBalanceNativeInternal({
-      address: senderAddress,
-      node: origin,
-      api
-    })
+    const originBalanceFee =
+      feeAsset && resolvedFeeAsset
+        ? await getAssetBalanceInternal({
+            api,
+            address: senderAddress,
+            node: origin,
+            currency: feeAsset
+          })
+        : await getBalanceNativeInternal({
+            api,
+            address: senderAddress,
+            node: origin
+          })
 
     const originBalance = await getAssetBalanceInternal({
       api,
@@ -84,6 +99,7 @@ export const getTransferInfo = async <TApi, TRes>({
       senderAddress,
       address,
       currency,
+      feeAsset,
       disableFallback: false
     })
 
@@ -107,16 +123,23 @@ export const getTransferInfo = async <TApi, TRes>({
       destXcmFeeBalance = destBalance
     }
 
+    const isFeeAssetAh =
+      origin === 'AssetHubPolkadot' && resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, destAsset)
+
     const originBalanceAfter = originBalance - BigInt(currency.amount)
 
-    const originBalanceNativeAfter = originBalanceNative - originFee
+    const originBalanceFeeAfter = isFeeAssetAh
+      ? originBalanceFee - BigInt(currency.amount)
+      : originBalanceFee - originFee
 
-    const originBalanceNativeSufficient = originBalanceNative >= originFee
+    const originBalanceNativeSufficient = originBalanceFee >= originFee
 
     const originBalanceSufficient = originBalanceAfter >= edOriginBn
 
+    const destAmount = isFeeAssetAh ? BigInt(currency.amount) - originFee : BigInt(currency.amount)
+
     const destBalanceSufficient =
-      BigInt(currency.amount) - (destFee as bigint) > (destBalance < edDestBn ? edDestBn : 0)
+      destAmount - (destFee as bigint) > (destBalance < edDestBn ? edDestBn : 0)
 
     const destBalanceSufficientResult =
       destFeeCurrency !== destAsset.symbol
@@ -126,9 +149,7 @@ export const getTransferInfo = async <TApi, TRes>({
         : destBalanceSufficient
 
     const destBalanceAfter =
-      destBalance -
-      (destFeeCurrency === destAsset.symbol ? (destFee as bigint) : 0n) +
-      BigInt(currency.amount)
+      destBalance - (destFeeCurrency === destAsset.symbol ? (destFee as bigint) : 0n) + destAmount
 
     const destbalanceAfterResult =
       destFeeCurrency !== destAsset.symbol
@@ -137,10 +158,16 @@ export const getTransferInfo = async <TApi, TRes>({
           )
         : destBalanceAfter
 
-    const destXcmFeeBalanceAfter =
-      destXcmFeeBalance -
-      (destFee as bigint) +
-      (destFeeCurrency === destAsset.symbol ? BigInt(currency.amount) : 0n)
+    const receivedAmount =
+      destbalanceAfterResult instanceof UnableToComputeError
+        ? destbalanceAfterResult
+        : destbalanceAfterResult - destBalance
+
+    const destXcmFeeBalanceAfter = isFeeAssetAh
+      ? destBalanceAfter
+      : destXcmFeeBalance -
+        (destFee as bigint) +
+        (destFeeCurrency === destAsset.symbol ? BigInt(currency.amount) : 0n)
 
     return {
       chain: {
@@ -159,14 +186,15 @@ export const getTransferInfo = async <TApi, TRes>({
         xcmFee: {
           sufficient: originBalanceNativeSufficient,
           fee: originFee,
-          balance: originBalanceNative,
-          balanceAfter: originBalanceNativeAfter,
+          balance: originBalanceFee,
+          balanceAfter: originBalanceFeeAfter,
           currencySymbol: originFeeCurrency as string
         }
       },
       destination: {
         receivedCurrency: {
           sufficient: destBalanceSufficientResult,
+          receivedAmount,
           balance: destBalance,
           balanceAfter: destbalanceAfterResult,
           currencySymbol: destAsset.symbol,

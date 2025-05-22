@@ -4,7 +4,8 @@ import {
   findAssetOnDestOrThrow,
   getExistentialDeposit,
   getNativeAssetSymbol,
-  getRelayChainSymbol
+  getRelayChainSymbol,
+  isAssetEqual
 } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -12,15 +13,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../../api'
 import { InvalidParameterError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
+import { resolveFeeAsset } from '../../../transfer/utils/resolveFeeAsset'
 import type { TGetTransferInfoOptions, TGetXcmFeeResult } from '../../../types'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
 import { getTransferInfo } from './getTransferInfo'
+
+vi.mock('../../../transfer/utils/resolveFeeAsset')
 
 vi.mock('@paraspell/assets', () => ({
   findAssetOnDestOrThrow: vi.fn(),
   getExistentialDeposit: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
-  getRelayChainSymbol: vi.fn()
+  getRelayChainSymbol: vi.fn(),
+  isAssetEqual: vi.fn()
 }))
 
 vi.mock('../../../transfer', () => ({
@@ -267,5 +272,188 @@ describe('getTransferInfo', () => {
     expect(mockDestApiInstance.setDisconnectAllowed).toHaveBeenCalledWith(false)
     expect(mockDestApiInstance.setDisconnectAllowed).toHaveBeenCalledWith(true)
     expect(mockDestApiInstance.disconnect).toHaveBeenCalledTimes(1)
+  })
+
+  describe('with feeAsset provided', () => {
+    const mockFeeAssetIdentifier = 'USDT'
+    const mockResolvedFeeAsset: TAsset = {
+      symbol: 'USDT',
+      decimals: 6,
+      multiLocation: {
+        parents: 0,
+        interior: { X2: [{ PalletInstance: 50 }, { GeneralIndex: 1984 }] }
+      }
+    }
+    const feeAssetOptions: TGetTransferInfoOptions<unknown, unknown> = {
+      ...defaultOptions,
+      feeAsset: { symbol: mockFeeAssetIdentifier }
+    }
+    const mockOriginFeeAssetBalance = BigInt('70000000')
+
+    beforeEach(() => {
+      vi.mocked(resolveFeeAsset).mockReturnValue(mockResolvedFeeAsset)
+
+      vi.mocked(getAssetBalanceInternal).mockReset()
+      vi.mocked(getAssetBalanceInternal)
+        .mockResolvedValueOnce(mockOriginFeeAssetBalance)
+        .mockResolvedValueOnce(BigInt('2000000000000'))
+        .mockResolvedValueOnce(BigInt('50000000000'))
+
+      vi.mocked(getBalanceNativeInternal).mockReset()
+      vi.mocked(getBalanceNativeInternal).mockResolvedValue(BigInt('200000000000'))
+      vi.mocked(getXcmFee).mockResolvedValue({
+        origin: { fee: BigInt('150000'), currency: mockResolvedFeeAsset.symbol },
+        destination: { fee: BigInt('50000000'), currency: 'DOT' }
+      } as TGetXcmFeeResult)
+
+      vi.mocked(getExistentialDeposit)
+        .mockReturnValueOnce('10000000000')
+        .mockReturnValueOnce('10000000000')
+
+      vi.mocked(findAssetOnDestOrThrow).mockReturnValue(mockAsset)
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+    })
+
+    it('should call resolveFeeAsset with correct parameters', async () => {
+      await getTransferInfo(feeAssetOptions)
+      expect(resolveFeeAsset).toHaveBeenCalledWith(
+        feeAssetOptions.feeAsset,
+        feeAssetOptions.origin,
+        feeAssetOptions.destination,
+        feeAssetOptions.currency
+      )
+    })
+
+    it('should use resolvedFeeAsset for origin fee when origin is NOT AssetHubPolkadot (isFeeAssetAh=false)', async () => {
+      const optionsNotAh = {
+        ...feeAssetOptions,
+        origin: 'Karura' as TNodeDotKsmWithRelayChains
+      }
+      vi.mocked(getNativeAssetSymbol).mockImplementation(node =>
+        node === 'Karura' ? 'KAR' : 'DEST_NATIVE'
+      )
+      vi.mocked(getRelayChainSymbol).mockReturnValue('KSM')
+
+      const result = await getTransferInfo(optionsNotAh)
+
+      expect(getAssetBalanceInternal).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          currency: { symbol: mockFeeAssetIdentifier }
+        })
+      )
+
+      expect(result.origin.xcmFee.balance).toBe(mockOriginFeeAssetBalance)
+      expect(result.origin.xcmFee.currencySymbol).toBe(mockResolvedFeeAsset.symbol)
+      expect(result.origin.xcmFee.fee).toBe(BigInt('150000'))
+      expect(result.origin.xcmFee.balanceAfter).toBe(BigInt('69850000'))
+      expect(result.origin.xcmFee.sufficient).toBe(true)
+      expect(result.destination.receivedCurrency.receivedAmount).toEqual(BigInt('999950000000'))
+      expect(result.destination.xcmFee.balanceAfter).toBe(BigInt('1049950000000'))
+    })
+
+    it('should use resolvedFeeAsset for origin fee, and isFeeAssetAh is false when origin is AssetHubPolkadot but assets do not match', async () => {
+      const optionsAhNotMatching = {
+        ...feeAssetOptions,
+        origin: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains
+      }
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+      vi.mocked(getNativeAssetSymbol).mockImplementation(node =>
+        node === 'AssetHubPolkadot' ? 'DOT' : 'DEST_NATIVE'
+      )
+      vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
+
+      const result = await getTransferInfo(optionsAhNotMatching)
+
+      expect(resolveFeeAsset).toHaveBeenCalled()
+      expect(isAssetEqual).toHaveBeenCalledWith(mockResolvedFeeAsset, mockAsset)
+
+      expect(result.origin.xcmFee.balance).toBe(mockOriginFeeAssetBalance)
+      expect(result.origin.xcmFee.currencySymbol).toBe(mockResolvedFeeAsset.symbol)
+      expect(result.origin.xcmFee.balanceAfter).toBe(BigInt('69850000'))
+
+      expect(result.destination.receivedCurrency.receivedAmount).toEqual(BigInt('999950000000'))
+      expect(result.destination.xcmFee.balanceAfter).toBe(BigInt('1049950000000'))
+    })
+
+    describe('when origin is AssetHubPolkadot and resolvedFeeAsset matches destAsset (isFeeAssetAh is true)', () => {
+      const ahFeeCurrency = { symbol: 'USDT', amount: '100000000' }
+      const ahFeeAsset: TAsset = {
+        symbol: 'USDT',
+        decimals: 6,
+        multiLocation: { parents: 0, interior: 'Here' }
+      }
+
+      const ahOptions: TGetTransferInfoOptions<unknown, unknown> = {
+        ...defaultOptions,
+        origin: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
+        currency: ahFeeCurrency,
+        feeAsset: { symbol: ahFeeCurrency.symbol }
+      }
+
+      beforeEach(() => {
+        vi.mocked(resolveFeeAsset).mockReturnValue(ahFeeAsset)
+        vi.mocked(findAssetOnDestOrThrow).mockReturnValue(ahFeeAsset)
+        vi.mocked(isAssetEqual).mockImplementation((assetA, assetB) => {
+          return assetA.symbol === ahFeeAsset.symbol && assetB.symbol === ahFeeAsset.symbol
+        })
+
+        vi.mocked(getAssetBalanceInternal).mockReset()
+        vi.mocked(getAssetBalanceInternal)
+          .mockResolvedValueOnce(BigInt('700000000'))
+          .mockResolvedValueOnce(BigInt('700000000'))
+          .mockResolvedValueOnce(BigInt('5000000'))
+
+        vi.mocked(getXcmFee).mockResolvedValue({
+          origin: { fee: BigInt('150000'), currency: ahFeeAsset.symbol },
+          destination: { fee: BigInt('50000'), currency: ahFeeAsset.symbol }
+        } as TGetXcmFeeResult)
+
+        vi.mocked(getExistentialDeposit).mockReturnValueOnce('100000').mockReturnValueOnce('100000')
+
+        vi.mocked(getNativeAssetSymbol).mockImplementation(node =>
+          node === 'AssetHubPolkadot' ? 'DOT' : 'DEST_NATIVE'
+        )
+        vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
+      })
+
+      it('should correctly calculate balances and fees when isFeeAssetAh is true', async () => {
+        const result = await getTransferInfo(ahOptions)
+
+        expect(isAssetEqual).toHaveBeenCalledWith(ahFeeAsset, ahFeeAsset)
+
+        expect(result.origin.selectedCurrency.balance).toBe(BigInt('700000000'))
+        expect(result.origin.selectedCurrency.balanceAfter).toBe(BigInt('600000000'))
+        expect(result.origin.selectedCurrency.currencySymbol).toBe(ahFeeAsset.symbol)
+
+        expect(result.origin.xcmFee.balance).toBe(BigInt('700000000'))
+        expect(result.origin.xcmFee.fee).toBe(BigInt('150000'))
+
+        expect(result.origin.xcmFee.balanceAfter).toBe(BigInt('600000000'))
+        expect(result.origin.xcmFee.currencySymbol).toBe(ahFeeAsset.symbol)
+
+        const expectedDestAmount = BigInt(ahOptions.currency.amount) - result.origin.xcmFee.fee
+        expect(expectedDestAmount).toBe(BigInt('99850000'))
+
+        const destFeeVal = result.destination.xcmFee.fee
+        const expectedDestBalanceAfter =
+          result.destination.receivedCurrency.balance - destFeeVal + expectedDestAmount
+        expect(result.destination.receivedCurrency.balanceAfter).toBe(expectedDestBalanceAfter)
+        expect(expectedDestBalanceAfter).toBe(BigInt('104800000'))
+        expect(result.destination.receivedCurrency.receivedAmount).toBe(
+          expectedDestAmount - destFeeVal
+        )
+        expect(result.destination.receivedCurrency.receivedAmount).toBe(BigInt('99800000'))
+
+        expect(result.destination.receivedCurrency.currencySymbol).toBe(ahFeeAsset.symbol)
+
+        expect(result.destination.xcmFee.balance).toBe(BigInt('5000000'))
+        expect(result.destination.xcmFee.balanceAfter).toBe(expectedDestBalanceAfter)
+        expect(result.destination.xcmFee.currencySymbol).toBe(ahFeeAsset.symbol)
+        expect(result.origin.selectedCurrency.sufficient).toBe(false)
+        expect(result.origin.xcmFee.sufficient).toBe(true)
+        expect(result.destination.receivedCurrency.sufficient).toBe(false)
+      })
+    })
   })
 })

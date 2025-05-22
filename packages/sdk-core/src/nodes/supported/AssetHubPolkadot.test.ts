@@ -1,8 +1,10 @@
 import type { TAsset } from '@paraspell/assets'
 import {
   findAssetByMultiLocation,
+  getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
+  isAssetEqual,
   isForeignAsset,
   type TMultiAsset,
   type TNativeAsset,
@@ -49,7 +51,8 @@ vi.mock('@paraspell/assets', async () => {
     InvalidCurrencyError: class extends Error {},
     isForeignAsset: vi.fn(),
     hasSupportForAsset: vi.fn(),
-    findAssetByMultiLocation: vi.fn()
+    findAssetByMultiLocation: vi.fn(),
+    getNativeAssetSymbol: vi.fn()
   }
 })
 
@@ -497,7 +500,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation }
+        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation, decimals: 12 }
       }
       mockApi.getDryRunCall = vi
         .fn()
@@ -511,7 +514,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation }
+        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation, decimals: 12 }
       }
       input.asset.amount = '1000000'
       mockApi.getDryRunCall = vi
@@ -530,7 +533,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation }
+        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation, decimals: 12 }
       }
       input.asset.amount = '100'
       mockApi.getDryRunCall = vi
@@ -549,7 +552,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation }
+        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation, decimals: 12 }
       }
       input.asset.amount = '1000000'
       const dryRunResult = { success: true, fee: 10000n, weight: 5000n }
@@ -586,6 +589,36 @@ describe('AssetHubPolkadot', () => {
       expect(() => assetHub['transferPolkadotXCM'](input)).toThrow(
         'Fee asset does not match transfer asset.'
       )
+    })
+
+    it('should call handleExecuteTransfer and return its promise if asset symbol is not native', async () => {
+      const inputForNonNativeAsset = {
+        ...mockInput,
+        feeAsset: { symbol: 'USDT' } as TAsset,
+        asset: {
+          symbol: 'USDT',
+          amount: '1000000',
+          multiLocation: { parents: 0, interior: { X1: { PalletInstance: 50 } } } as TMultiLocation,
+          decimals: 6
+        },
+        destination: 'Acala',
+        scenario: 'ParaToPara'
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      vi.mocked(isAssetEqual).mockReturnValue(true)
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+
+      const handleExecuteTransferSpy = vi
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .spyOn(assetHub as any, 'handleExecuteTransfer')
+        .mockResolvedValue('mockedExecuteTransferTxOutput')
+
+      const result = await assetHub.transferPolkadotXCM(inputForNonNativeAsset)
+
+      expect(handleExecuteTransferSpy).toHaveBeenCalledTimes(1)
+      expect(handleExecuteTransferSpy).toHaveBeenCalledWith(inputForNonNativeAsset)
+
+      expect(result).toBe('mockedExecuteTransferTxOutput')
     })
   })
 

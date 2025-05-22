@@ -1,3 +1,4 @@
+import type { TCurrencyInput } from '@paraspell/assets'
 import { getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -44,6 +45,7 @@ describe('getOriginXcmFee', () => {
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
+      currency: {} as TCurrencyInput,
       disableFallback: false
     })
 
@@ -72,6 +74,7 @@ describe('getOriginXcmFee', () => {
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
+      currency: {} as TCurrencyInput,
       disableFallback: false
     })
 
@@ -104,6 +107,7 @@ describe('getOriginXcmFee', () => {
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
+      currency: {} as TCurrencyInput,
       disableFallback: true
     })
 
@@ -132,6 +136,7 @@ describe('getOriginXcmFee', () => {
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
+      currency: {} as TCurrencyInput,
       disableFallback: false
     })
 

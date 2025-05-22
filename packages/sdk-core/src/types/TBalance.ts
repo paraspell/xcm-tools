@@ -1,4 +1,4 @@
-import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
+import type { TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
 import type {
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
@@ -167,7 +167,11 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
    * The node on which to query the balance.
    */
-  node: TNodeDotKsmWithRelayChains
+  origin: TNodeDotKsmWithRelayChains
+  /**
+   * The destination node.
+   */
+  destination: TNodeWithRelayChains
   /**
    * The currency to query.
    */
@@ -176,6 +180,7 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
    * The transaction to calculate the fee for
    */
   tx: TRes
+  feeAsset?: TCurrencyInput
 }
 
 export type TGetTransferableAmountOptions<TApi, TRes> = WithApi<
@@ -209,6 +214,7 @@ export type TVerifyEdOnDestinationOptionsBase<TRes> = {
    * The transaction to calculate the fee for
    */
   tx: TRes
+  feeAsset?: TCurrencyInput
 }
 
 export type TVerifyEdOnDestinationOptions<TApi, TRes> = WithApi<

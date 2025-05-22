@@ -21,6 +21,7 @@ import {
   BatchMode,
   getNodeProviders,
   InvalidParameterError,
+  isAssetEqual,
   Parents,
   Version
 } from '@paraspell/sdk-core'
@@ -367,7 +368,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
   async getDryRunCall({
     tx,
     address,
-    node
+    node,
+    isFeeAsset
   }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunNodeResultInternal> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
@@ -409,7 +411,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
 
     const executionFee = await this.calculateTransactionFee(tx, address)
-    const fee = computeFeeFromDryRun(result, node, executionFee)
+    const fee = computeFeeFromDryRun(result, node, executionFee, isFeeAsset)
 
     const actualWeight = result.value.execution_result.value.actual_weight
 
@@ -440,7 +442,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     originLocation,
     xcm,
     node,
-    origin
+    origin,
+    asset,
+    feeAsset,
+    originFee,
+    amount
   }: TDryRunXcmBaseOptions): Promise<TDryRunNodeResultInternal> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
@@ -467,7 +473,14 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const palletsWithIssued = ['Balances', 'ForeignAssets', 'Assets']
 
+    const isFeeAsset = origin === 'AssetHubPolkadot' && feeAsset && isAssetEqual(feeAsset, asset)
+
     const feeEvent =
+      (isFeeAsset
+        ? [...emitted].find(
+            event => event.type === 'ForeignAssets' && event.value.type === 'Issued'
+          )
+        : undefined) ??
       (origin === 'Mythos'
         ? reversedEvents.find(
             event => event.type === 'AssetConversion' && event.value.type === 'SwapCreditExecuted'
@@ -492,10 +505,14 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       })
     }
 
-    const fee =
+    let fee =
       feeEvent.type === 'AssetConversion'
         ? feeEvent.value.value.amount_in
         : feeEvent.value.value.amount
+
+    if (isFeeAsset && feeEvent.type === 'ForeignAssets' && feeEvent.value.type === 'Issued') {
+      fee = amount - originFee - feeEvent.value.value.amount
+    }
 
     const actualWeight = result.value.execution_result.value.used
 
