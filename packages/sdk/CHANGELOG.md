@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.0.1](https://github.com/paraspell/xcm-tools/compare/sdk-v10.0.0...sdk-v10.0.1) (2025-05-22)
+
+
+### Bug Fixes
+
+* **sdk-core:** Use conversion fee if fee asset specified 🔧 ([01921b1](https://github.com/paraspell/xcm-tools/commit/01921b13c1f75761505a55a4579b45047f57503f))
+
+
+### Documentation
+
+* Add fee asset to transfer info queries ([91e5e95](https://github.com/paraspell/xcm-tools/commit/91e5e9544b6aed384310989ddb9c0fcf3f366885))
+
 ## [10.0.0](https://github.com/paraspell/xcm-tools/compare/sdk-v9.2.2...sdk-v10.0.0) (2025-05-21)
 
 

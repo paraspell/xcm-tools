@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.1](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.0.0...xcm-api-v10.0.1) (2025-05-22)
+
+
+### Documentation
+
+* Add fee asset to transfer info queries ([91e5e95](https://github.com/paraspell/xcm-tools/commit/91e5e9544b6aed384310989ddb9c0fcf3f366885))
+
 ## [10.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v9.2.2...xcm-api-v10.0.0) (2025-05-21)
 
 

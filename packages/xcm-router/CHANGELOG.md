@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.0.0...xcm-router-v10.0.1) (2025-05-22)
+
+
+### Bug Fixes
+
+* **sdk-core:** Use conversion fee if fee asset specified 🔧 ([01921b1](https://github.com/paraspell/xcm-tools/commit/01921b13c1f75761505a55a4579b45047f57503f))
+
 ## [10.0.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v9.2.2...xcm-router-v10.0.0) (2025-05-21)
 
 
