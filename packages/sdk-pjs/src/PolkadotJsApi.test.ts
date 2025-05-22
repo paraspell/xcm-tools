@@ -1,3 +1,4 @@
+import type { TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
 import { BatchMode, type TMultiLocation, type TSerializedApiCall } from '@paraspell/sdk-core'
 import type { ApiPromise } from '@polkadot/api'
@@ -784,7 +785,7 @@ describe('PolkadotJsApi', () => {
         xcm: dummyXcm,
         node: 'Astar',
         origin: 'Hydration'
-      })
+      } as TDryRunXcmBaseOptions)
 
       expect(mockApiPromise.call.dryRunApi.dryRunXcm).toHaveBeenCalledWith(originLocation, dummyXcm)
       expect(result).toEqual({
@@ -821,7 +822,7 @@ describe('PolkadotJsApi', () => {
         xcm: dummyXcm,
         node: 'Astar',
         origin: 'Hydration'
-      })
+      } as TDryRunXcmBaseOptions)
 
       expect(result).toEqual({
         success: false,
@@ -836,7 +837,7 @@ describe('PolkadotJsApi', () => {
           xcm: dummyXcm,
           node: 'Acala',
           origin: 'Hydration'
-        })
+        } as TDryRunXcmBaseOptions)
       ).rejects.toThrow(sdkCore.NodeNotSupportedError)
     })
 
@@ -865,7 +866,7 @@ describe('PolkadotJsApi', () => {
           xcm: dummyXcm,
           node: 'AssetHubPolkadot',
           origin: 'Hydration'
-        })
+        } as TDryRunXcmBaseOptions)
       ).toEqual({
         success: false,
         failureReason: 'Cannot determine destination fee. No Issued event found'
