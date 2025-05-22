@@ -25,6 +25,7 @@ export type TTransferInfo = {
   destination: {
     receivedCurrency: {
       sufficient: boolean | UnableToComputeError
+      receivedAmount: bigint | UnableToComputeError
       balance: bigint
       balanceAfter: bigint | UnableToComputeError
       currencySymbol: string
@@ -33,7 +34,7 @@ export type TTransferInfo = {
     xcmFee: {
       fee: bigint
       balance: bigint
-      balanceAfter: bigint
+      balanceAfter: bigint | UnableToComputeError
       currencySymbol: string
     }
   }
@@ -51,6 +52,7 @@ export type TGetTransferInfoOptionsBase<TRes> = {
   senderAddress: string
   address: string
   currency: WithAmount<TCurrencyCore>
+  feeAsset?: TCurrencyCore
 }
 
 export type TGetTransferInfoOptions<TApi, TRes> = WithApi<

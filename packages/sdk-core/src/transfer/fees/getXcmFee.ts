@@ -26,6 +26,7 @@ export const getXcmFee = async <TApi, TRes>({
   senderAddress,
   address,
   currency,
+  feeAsset,
   disableFallback
 }: TGetXcmFeeOptions<TApi, TRes>): Promise<TGetXcmFeeResult> => {
   const asset = findAssetForNodeOrThrow(origin, currency, destination)
@@ -44,6 +45,8 @@ export const getXcmFee = async <TApi, TRes>({
     origin,
     destination,
     senderAddress,
+    feeAsset,
+    currency,
     disableFallback
   })
 
@@ -64,6 +67,8 @@ export const getXcmFee = async <TApi, TRes>({
         destination,
         currency,
         address,
+        asset,
+        originFee: originFee ?? 0n,
         senderAddress,
         disableFallback
       })
@@ -127,6 +132,9 @@ export const getXcmFee = async <TApi, TRes>({
         currency,
         address,
         senderAddress,
+        asset,
+        feeAsset,
+        originFee: originFee ?? 0n,
         disableFallback
       })
 
@@ -160,6 +168,8 @@ export const getXcmFee = async <TApi, TRes>({
             destination,
             currency,
             address,
+            asset,
+            originFee: originFee ?? 0n,
             senderAddress,
             disableFallback
           })

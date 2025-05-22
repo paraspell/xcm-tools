@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAsset, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
 import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { isRelayChain, Parents } from '@paraspell/sdk-common'
@@ -10,6 +11,7 @@ import { getParaId } from '../../nodes/config'
 import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
 import type { TFeeType } from '../../types'
 import { type TGetFeeForDestNodeOptions, Version } from '../../types'
+import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getReverseTxFee } from './getReverseTxFee'
 
 export const createOriginLocation = (
@@ -39,7 +41,21 @@ export const getDestXcmFee = async <TApi, TRes>(
   destParaId?: number
   dryRunError?: string
 }> => {
-  const { api, origin, destination, currency, forwardedXcms, disableFallback } = options
+  const {
+    api,
+    origin,
+    destination,
+    currency,
+    forwardedXcms,
+    asset,
+    feeAsset,
+    originFee,
+    disableFallback
+  } = options
+
+  const resolvedFeeAsset = feeAsset
+    ? resolveFeeAsset(feeAsset, origin, destination, currency)
+    : undefined
 
   const calcPaymentInfoFee = async (): Promise<bigint> => {
     const originAsset = findAsset(origin, currency, destination)
@@ -72,7 +88,11 @@ export const getDestXcmFee = async <TApi, TRes>(
     originLocation: addXcmVersionHeader(createOriginLocation(origin, destination), Version.V4),
     xcm: forwardedXcms[1][0],
     node: destination,
-    origin
+    origin,
+    asset,
+    originFee,
+    feeAsset: resolvedFeeAsset,
+    amount: BigInt((currency as WithAmount<TCurrencyCore>).amount)
   })
 
   if (!dryRunResult.success) {

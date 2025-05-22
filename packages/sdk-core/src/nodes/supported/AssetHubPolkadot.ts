@@ -428,14 +428,23 @@ class AssetHubPolkadot<TApi, TRes>
 
     validateAddress(senderAddress, this.node, false)
 
-    const MIN_FEE = 150000n
+    const decimals = asset.decimals as number
+    const multiplier = decimals > 10 ? 0.4 : 0.15
+
+    const base = BigInt(10 ** decimals)
+
+    const scaledMultiplier = BigInt(Math.floor(multiplier * 10 ** decimals))
+
+    const MIN_FEE = (base * scaledMultiplier) / BigInt(10 ** decimals)
+
     const maxU64 = (1n << 64n) - 1n
     const dummyTx = createExecuteXcm(input, { refTime: maxU64, proofSize: maxU64 }, MIN_FEE)
 
     const dryRunResult = await api.getDryRunCall({
       node: this.node,
       tx: dummyTx,
-      address: senderAddress
+      address: senderAddress,
+      isFeeAsset: false
     })
 
     if (!dryRunResult.success) {
@@ -476,7 +485,11 @@ class AssetHubPolkadot<TApi, TRes>
         throw new InvalidCurrencyError(`Fee asset does not match transfer asset.`)
       }
 
-      return Promise.resolve(this.handleExecuteTransfer(input))
+      const isNativeAsset = asset.symbol === this.getNativeAssetSymbol()
+
+      if (!isNativeAsset) {
+        return Promise.resolve(this.handleExecuteTransfer(input))
+      }
     }
 
     if (destination === 'AssetHubKusama') {

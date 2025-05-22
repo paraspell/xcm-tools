@@ -1,3 +1,4 @@
+import type { TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
 import {
   BatchMode,
   computeFeeFromDryRun,
@@ -711,7 +712,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: 'some_address',
-        node: 'AssetHubPolkadot'
+        node: 'AssetHubPolkadot',
+        isFeeAsset: false
       })
 
       expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
@@ -760,7 +762,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: 'some_address',
-        node: 'Moonbeam'
+        node: 'Moonbeam',
+        isFeeAsset: false
       })
 
       expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
@@ -790,7 +793,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: 'some_address',
-        node: 'Moonbeam'
+        node: 'Moonbeam',
+        isFeeAsset: false
       })
 
       expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
@@ -818,7 +822,8 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: 'some_address',
-        node: 'Moonbeam'
+        node: 'Moonbeam',
+        isFeeAsset: false
       })
 
       expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
@@ -837,7 +842,8 @@ describe('PapiApi', () => {
         papiApi.getDryRunCall({
           tx: mockTransaction,
           address: 'some_address',
-          node: 'Acala'
+          node: 'Acala',
+          isFeeAsset: false
         })
       ).rejects.toThrow(sdkCore.NodeNotSupportedError)
     })
@@ -897,7 +903,7 @@ describe('PapiApi', () => {
         xcm: dummyXcm,
         node: 'AssetHubPolkadot',
         origin: 'Hydration'
-      })
+      } as TDryRunXcmBaseOptions)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
         transform(originLocation),
@@ -933,7 +939,7 @@ describe('PapiApi', () => {
         xcm: dummyXcm,
         node: 'AssetHubPolkadot',
         origin: 'Hydration'
-      })
+      } as TDryRunXcmBaseOptions)
 
       expect(result).toEqual({ success: false, failureReason: 'SomeXcmError' })
     })
@@ -945,8 +951,84 @@ describe('PapiApi', () => {
           xcm: dummyXcm,
           node: 'Acala',
           origin: 'Hydration'
-        })
+        } as TDryRunXcmBaseOptions)
       ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+    })
+
+    it('should calculate fee using (amount - originFee - eventAmount) if isFeeAsset and ForeignAssets.Issued event is found', async () => {
+      const mockAssetDetails = { symbol: 'USDT', assetId: 'test-asset-id' }
+      const testAmount = 10000n
+      const testOriginFee = 100n
+      const foreignAssetsIssuedAmount = 500n
+
+      const baseOptions: TDryRunXcmBaseOptions = {
+        originLocation: { parents: 0, interior: { Here: null } } as sdkCore.TMultiLocation,
+        xcm: { some: 'xcm-payload' },
+        node: 'AssetHubPolkadot',
+        origin: 'AssetHubPolkadot',
+        asset: mockAssetDetails,
+        feeAsset: mockAssetDetails,
+        amount: testAmount,
+        originFee: testOriginFee
+      }
+
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Complete',
+            value: { used: { ref_time: 10n, proof_size: 20n } }
+          },
+          emitted_events: [
+            {
+              type: 'ForeignAssets',
+              value: {
+                type: 'Issued',
+                value: {
+                  amount: foreignAssetsIssuedAmount,
+                  owner: 'someOwner',
+                  asset_id: 'someAssetId'
+                }
+              }
+            },
+            {
+              type: 'Balances',
+              value: {
+                type: 'Issued',
+                value: { amount: 9999n }
+              }
+            }
+          ],
+          forwarded_xcms: []
+        }
+      }
+
+      const originalIsAssetEqual = sdkCore.isAssetEqual
+      vi.spyOn(sdkCore, 'isAssetEqual').mockImplementation((a1, a2) => {
+        if (a1 === mockAssetDetails && a2 === mockAssetDetails) {
+          return true
+        }
+        return originalIsAssetEqual(a1, a2)
+      })
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunXcm(baseOptions)
+
+      const expectedFee = testAmount - testOriginFee - foreignAssetsIssuedAmount
+
+      expect(result.success).toBe(true)
+
+      if (result.success) {
+        expect(result.fee).toBe(expectedFee)
+        expect(result.weight).toEqual({ refTime: 10n, proofSize: 20n })
+      }
+      expect(sdkCore.isAssetEqual).toHaveBeenCalledWith(baseOptions.feeAsset, baseOptions.asset)
+      expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalled()
+
+      vi.mocked(sdkCore.isAssetEqual).mockRestore?.()
+      vi.mocked(sdkCore.getAssetsObject).mockRestore?.()
     })
   })
 
@@ -988,7 +1070,7 @@ describe('PapiApi', () => {
         xcm: dummyXcm,
         node: 'AssetHubPolkadot',
         origin: 'Acala'
-      })
+      } as TDryRunXcmBaseOptions)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
         transform(originLocation),
@@ -1023,7 +1105,7 @@ describe('PapiApi', () => {
         xcm: dummyXcm,
         node: 'AssetHubPolkadot',
         origin: 'Acala'
-      })
+      } as TDryRunXcmBaseOptions)
 
       expect(result).toEqual({ success: false, failureReason: 'SomeXcmError' })
     })
@@ -1035,7 +1117,7 @@ describe('PapiApi', () => {
           xcm: dummyXcm,
           node: 'Acala',
           origin: 'Acala'
-        })
+        } as TDryRunXcmBaseOptions)
       ).rejects.toThrow(sdkCore.NodeNotSupportedError)
     })
 
@@ -1063,7 +1145,7 @@ describe('PapiApi', () => {
           xcm: dummyXcm,
           node: 'AssetHubPolkadot',
           origin: 'Mythos'
-        })
+        } as TDryRunXcmBaseOptions)
       ).toEqual({
         success: false,
         failureReason: 'Cannot determine destination fee. No Issued event found'

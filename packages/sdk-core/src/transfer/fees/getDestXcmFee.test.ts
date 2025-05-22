@@ -127,7 +127,7 @@ describe('getDestXcmFee', () => {
       senderAddress: 'sender',
       currency: { symbol: 'UNIT', amount: '1' },
       disableFallback: false
-    })
+    } as TGetFeeForDestNodeOptions<unknown, unknown>)
 
     expect(res).toEqual({
       fee: 200n,
@@ -177,7 +177,7 @@ describe('getDestXcmFee', () => {
       senderAddress: 'sender',
       currency: { symbol: 'UNIT', amount: '1' },
       disableFallback: true
-    })
+    } as TGetFeeForDestNodeOptions<unknown, unknown>)
 
     expect(res).toEqual({ dryRunError: 'boom' })
     expect('fee' in res).toBe(false)
@@ -198,7 +198,7 @@ describe('getDestXcmFee', () => {
         senderAddress: 'sender',
         currency: { symbol: 'FOO', amount: '1' },
         disableFallback: false
-      })
+      } as TGetFeeForDestNodeOptions<unknown, unknown>)
     ).rejects.toBeInstanceOf(InvalidCurrencyError)
   })
 })

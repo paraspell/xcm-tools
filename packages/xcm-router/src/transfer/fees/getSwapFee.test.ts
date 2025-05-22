@@ -47,6 +47,7 @@ describe('getSwapFee', () => {
       destination: 'TEST_NODE',
       senderAddress: '0xSender',
       disableFallback: false,
+      currency: {},
     });
 
     expect(result).toEqual({

@@ -1,4 +1,4 @@
-import type { TXcmFeeDetail } from '@paraspell/sdk';
+import type { TCurrencyInput, TXcmFeeDetail } from '@paraspell/sdk';
 import { getOriginXcmFee } from '@paraspell/sdk';
 
 import type ExchangeNode from '../../dexNodes/DexNode';
@@ -18,6 +18,7 @@ export const getSwapFee = async (
     origin: exchange.node,
     destination: exchange.node,
     senderAddress: senderAddress,
+    currency: {} as TCurrencyInput,
     disableFallback: false,
   });
 

@@ -20,6 +20,7 @@ describe('getDryRunOrigin', () => {
   it('returns the dry run result', async () => {
     const address = '0x123'
     const node = 'Polkadot'
+    const isFeeAsset = false
 
     const mockResult: TDryRunNodeResult = {
       success: true,
@@ -38,6 +39,7 @@ describe('getDryRunOrigin', () => {
       api: apiMock,
       node,
       address,
+      isFeeAsset,
       tx: {}
     })
 

@@ -222,7 +222,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   }
 
   async dryRun(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { to, address, senderAddress } = this._options
+    const { to, address, senderAddress, feeAsset } = this._options
 
     const tx = await this.build()
 
@@ -251,7 +251,8 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       origin: this._options.from,
       destination: to,
       currency: this._options.currency,
-      senderAddress: this._options.senderAddress
+      senderAddress: this._options.senderAddress,
+      feeAsset
     })
   }
 
@@ -264,7 +265,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
     { disableFallback }: TGetXcmFeeBuilderOptions = { disableFallback: false }
   ) {
-    const { from, to, address, senderAddress } = this._options
+    const { from, to, address, senderAddress, feeAsset } = this._options
 
     assertToIsStringAndNoEthereum(to)
     assertAddressIsString(address)
@@ -280,6 +281,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
         senderAddress: senderAddress,
         address: address,
         currency: this._options.currency,
+        feeAsset,
         disableFallback
       })
     } finally {
@@ -296,7 +298,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
     { disableFallback }: TGetXcmFeeBuilderOptions = { disableFallback: false }
   ) {
-    const { from, to, senderAddress } = this._options
+    const { from, to, senderAddress, currency, feeAsset } = this._options
 
     assertToIsStringAndNoEthereum(to)
 
@@ -309,6 +311,8 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
         origin: from,
         destination: to,
         senderAddress: senderAddress,
+        currency,
+        feeAsset,
         disableFallback
       })
     } finally {
@@ -377,15 +381,19 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns The max transferable amount.
    */
   async getTransferableAmount(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { from, senderAddress, currency } = this._options
+    const { from, to, senderAddress, currency, feeAsset } = this._options
+
+    assertToIsStringAndNoEthereum(to)
 
     const tx = await this.build()
 
     return await getTransferableAmount({
       api: this.api,
       tx,
-      node: from,
+      origin: from,
+      destination: to,
       senderAddress,
+      feeAsset,
       currency: currency as TCurrencyCore
     })
   }
@@ -396,7 +404,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns The max transferable amount.
    */
   async verifyEdOnDestination(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { from, to, address, currency, senderAddress } = this._options
+    const { from, to, address, currency, senderAddress, feeAsset } = this._options
 
     assertToIsStringAndNoEthereum(to)
     assertAddressIsString(address)
@@ -410,6 +418,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       destination: to,
       address,
       senderAddress,
+      feeAsset,
       currency: currency as WithAmount<TCurrencyCore>
     })
   }
@@ -420,7 +429,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns The transfer info.
    */
   async getTransferInfo(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { from, to, address, currency, senderAddress } = this._options
+    const { from, to, address, currency, senderAddress, feeAsset } = this._options
 
     assertToIsStringAndNoEthereum(to)
     assertAddressIsString(address)
@@ -434,7 +443,8 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       destination: to,
       address,
       senderAddress,
-      currency: currency as WithAmount<TCurrencyCore>
+      currency: currency as WithAmount<TCurrencyCore>,
+      feeAsset: feeAsset as TCurrencyCore
     })
   }
 

@@ -38,7 +38,13 @@ describe('calculateTxFeeDryRun', () => {
     const getDryRunSpy = vi.mocked(dryRunOrigin).mockResolvedValueOnce(resultFromDryRun);
     const expectedFee = new BigNumber(fee.toString()).multipliedBy(DRY_RUN_FEE_BUFFER);
     const result = await calculateTxFeeDryRun(api, node, tx, address);
-    expect(getDryRunSpy).toHaveBeenCalledWith({ api, node, tx, address });
+    expect(getDryRunSpy).toHaveBeenCalledWith({
+      api,
+      node,
+      tx,
+      address,
+      isFeeAsset: false,
+    });
     expect(result.isEqualTo(expectedFee)).toBe(true);
   });
 

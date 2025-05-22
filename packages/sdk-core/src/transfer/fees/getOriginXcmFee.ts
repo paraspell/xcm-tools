@@ -4,6 +4,7 @@ import { getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
+import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { padFee } from './padFee'
 
 export const getOriginXcmFee = async <TApi, TRes>({
@@ -12,22 +13,28 @@ export const getOriginXcmFee = async <TApi, TRes>({
   origin,
   destination,
   senderAddress,
-  disableFallback
+  disableFallback,
+  feeAsset,
+  currency
 }: TGetOriginXcmFeeOptions<TApi, TRes>): Promise<
   TXcmFeeDetail & {
     forwardedXcms?: any
     destParaId?: number
   }
 > => {
+  const resolvedFeeAsset = feeAsset
+    ? resolveFeeAsset(feeAsset, origin, destination, currency)
+    : undefined
+
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
 
-  const currency = getNativeAssetSymbol(origin)
+  const currencySymbol = resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(origin)
 
   if (!hasDryRunSupport(origin)) {
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
     return {
       fee: padFee(rawFee, origin, destination, 'origin'),
-      currency,
+      currency: currencySymbol,
       feeType: 'paymentInfo'
     }
   }
@@ -35,7 +42,8 @@ export const getOriginXcmFee = async <TApi, TRes>({
   const dryRunResult = await api.getDryRunCall({
     tx,
     node: origin,
-    address: senderAddress
+    address: senderAddress,
+    isFeeAsset: !!resolvedFeeAsset
   })
 
   if (!dryRunResult.success) {
@@ -48,7 +56,7 @@ export const getOriginXcmFee = async <TApi, TRes>({
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
     return {
       fee: padFee(rawFee, origin, destination, 'origin'),
-      currency,
+      currency: currencySymbol,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason
     }
@@ -59,7 +67,7 @@ export const getOriginXcmFee = async <TApi, TRes>({
   return {
     fee,
     feeType: 'dryRun',
-    currency,
+    currency: currencySymbol,
     forwardedXcms,
     destParaId
   }

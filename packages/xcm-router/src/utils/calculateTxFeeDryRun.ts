@@ -16,6 +16,7 @@ export const calculateTxFeeDryRun = async (
     node,
     tx,
     address,
+    isFeeAsset: false,
   });
 
   if (!result.success) {

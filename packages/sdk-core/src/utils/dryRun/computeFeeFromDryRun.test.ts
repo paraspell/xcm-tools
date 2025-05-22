@@ -145,6 +145,187 @@ describe('computeFeeFromDryRun', () => {
     const executionFee = 300n
     const result = computeFeeFromDryRun(dryRun, mockNode, executionFee)
 
-    expect(result).toBe(300n) // Only execution fee
+    expect(result).toBe(300n)
+  })
+
+  it('should return assetConversionFee if isFeeAsset is true and assetConversionFee is > 0, skipping final delivery fee calculation', () => {
+    const dryRun = {
+      value: {
+        emitted_events: [
+          {
+            type: 'AssetConversion',
+            value: {
+              type: 'SwapCreditExecuted',
+              value: {
+                amount_in: 1000n,
+                amount_out: 900n,
+                asset_in: 'assetA',
+                asset_out: 'assetB',
+                who: 'someAccount'
+              }
+            }
+          },
+          {
+            type: 'XcmPallet',
+            value: {
+              type: 'FeesPaid',
+              value: {
+                fees: [{ fun: { type: 'Fungible', value: 50n }, id: 'tokenId1' }]
+              }
+            }
+          }
+        ]
+      }
+    }
+
+    const executionFee = 200n
+    const isFeeAsset = true
+
+    vi.mocked(getMultiLocationTokenId).mockReturnValue('someRelevantSymbolOrNull')
+
+    const result = computeFeeFromDryRun(dryRun, mockNode, executionFee, isFeeAsset)
+
+    expect(result).toBe(1000n)
+
+    expect(getNativeAssetSymbol).not.toHaveBeenCalled()
+    expect(getMultiLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
+  })
+
+  it('should sum multiple AssetConversion fees if isFeeAsset is true', () => {
+    const dryRun = {
+      value: {
+        emitted_events: [
+          {
+            type: 'AssetConversion',
+            value: {
+              type: 'SwapCreditExecuted',
+              value: { amount_in: 1000n }
+            }
+          },
+          {
+            type: 'AssetConversion',
+            value: {
+              type: 'SwapCreditExecuted',
+              value: { amount_in: 500n }
+            }
+          },
+          {
+            type: 'AssetConversion',
+            value: {
+              type: 'SwapCreditExecuted',
+              value: { amount_in: undefined }
+            }
+          },
+          {
+            type: 'AssetConversion',
+            value: {
+              type: 'SwapCreditExecuted',
+              value: { amount_in: null }
+            }
+          }
+        ]
+      }
+    }
+
+    const executionFee = 200n
+    const isFeeAsset = true
+
+    const result = computeFeeFromDryRun(dryRun, mockNode, executionFee, isFeeAsset)
+
+    expect(result).toBe(1500n)
+    expect(getNativeAssetSymbol).not.toHaveBeenCalled()
+    expect(getMultiLocationTokenId).not.toHaveBeenCalled()
+  })
+
+  it('should use delivery and execution fees if isFeeAsset is true but no valid AssetConversion fee is found', () => {
+    const dryRun = {
+      value: {
+        emitted_events: [
+          {
+            type: 'AssetConversion',
+            value: {
+              type: 'SomeOtherAssetConversionEvent',
+              value: {
+                amount_in: 1000n
+              }
+            }
+          },
+          {
+            type: 'AssetConversion',
+            value: {
+              type: 'SwapCreditExecuted',
+              value: {
+                amount_out: 900n
+              }
+            }
+          },
+          {
+            type: 'XcmPallet',
+            value: {
+              type: 'FeesPaid',
+              value: {
+                fees: [{ fun: { type: 'Fungible', value: 500n }, id: 'tokenId1' }]
+              }
+            }
+          }
+        ]
+      }
+    }
+
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
+    vi.mocked(getMultiLocationTokenId).mockImplementation((id: string) =>
+      id === 'tokenId1' ? 'nativeSymbol' : null
+    )
+
+    const executionFee = 200n
+    const isFeeAsset = true
+
+    const result = computeFeeFromDryRun(dryRun, mockNode, executionFee, isFeeAsset)
+
+    expect(result).toBe(700n)
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
+    expect(getMultiLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
+  })
+
+  it('should ignore AssetConversion events and use delivery/execution fees if isFeeAsset is false', () => {
+    const dryRun = {
+      value: {
+        emitted_events: [
+          {
+            type: 'AssetConversion',
+            value: {
+              type: 'SwapCreditExecuted',
+              value: {
+                amount_in: 1000n,
+                amount_out: 900n
+              }
+            }
+          },
+          {
+            type: 'XcmPallet',
+            value: {
+              type: 'FeesPaid',
+              value: {
+                fees: [{ fun: { type: 'Fungible', value: 500n }, id: 'tokenId1' }]
+              }
+            }
+          }
+        ]
+      }
+    }
+
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('nativeSymbol')
+    vi.mocked(getMultiLocationTokenId).mockImplementation((id: string) =>
+      id === 'tokenId1' ? 'nativeSymbol' : null
+    )
+
+    const executionFee = 200n
+    const isFeeAsset = false
+
+    const result = computeFeeFromDryRun(dryRun, mockNode, executionFee, isFeeAsset)
+
+    expect(result).toBe(700n)
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockNode)
+    expect(getMultiLocationTokenId).toHaveBeenCalledWith('tokenId1', mockNode)
   })
 })

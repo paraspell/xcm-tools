@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetForNodeOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
@@ -12,18 +13,25 @@ import type { TDryRunNodeResultInternal } from '../../types'
 import { type TDryRunOptions, type TDryRunResult, type THubKey, Version } from '../../types'
 import { determineRelayChain } from '../../utils'
 import { createOriginLocation } from '../fees/getDestXcmFee'
+import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 
 export const dryRunInternal = async <TApi, TRes>(
   options: TDryRunOptions<TApi, TRes>
 ): Promise<TDryRunResult> => {
-  const { origin, destination, currency, api, tx, senderAddress } = options
+  const { origin, destination, currency, api, tx, senderAddress, feeAsset } = options
+
+  const resolvedFeeAsset =
+    feeAsset && origin === 'AssetHubPolkadot'
+      ? resolveFeeAsset(feeAsset, origin, destination, currency)
+      : undefined
 
   const asset = findAssetForNodeOrThrow(origin, currency, destination)
 
   const originDryRun = await api.getDryRunCall({
     tx,
     node: origin,
-    address: senderAddress
+    address: senderAddress,
+    isFeeAsset: !!resolvedFeeAsset
   })
 
   if (!originDryRun.success) {
@@ -79,7 +87,11 @@ export const dryRunInternal = async <TApi, TRes>(
         ),
         xcm: forwardedXcms[1][0],
         node: nextChain as TNodeDotKsmWithRelayChains,
-        origin: currentOrigin
+        origin: currentOrigin,
+        asset,
+        feeAsset: resolvedFeeAsset,
+        originFee: originDryRun.fee,
+        amount: BigInt((currency as WithAmount<TCurrencyCore>).amount)
       })
 
       if (nextChain === destination || (isRelayChain(nextChain) && !isRelayChain(destination))) {
@@ -106,7 +118,10 @@ export const dryRunInternal = async <TApi, TRes>(
 
   return {
     origin: originDryRun.success
-      ? { ...originDryRun, currency: getNativeAssetSymbol(origin) }
+      ? {
+          ...originDryRun,
+          currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(origin)
+        }
       : originDryRun,
     assetHub: intermediateFees.assetHub?.success
       ? { ...intermediateFees.assetHub, currency: getNativeAssetSymbol('AssetHubPolkadot') }

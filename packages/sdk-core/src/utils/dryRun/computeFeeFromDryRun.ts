@@ -10,10 +10,12 @@ import { getMultiLocationTokenId } from './getMultiLocationTokenId'
 export const computeFeeFromDryRun = (
   dryRun: any,
   node: TNodeDotKsmWithRelayChains,
-  executionFee: bigint
+  executionFee: bigint,
+  isFeeAsset = false
 ): bigint => {
   // Extract delivery fees from emitted events
   const deliveryFees: Array<{ plancks: bigint; tokenSymbol: string }> = []
+  let assetConversionFee = 0n
 
   for (const e of dryRun.value.emitted_events) {
     const isXcmEvent = e.type === 'XcmPallet' || e.type === 'PolkadotXcm' || e.type === 'CumulusXcm'
@@ -28,14 +30,26 @@ export const computeFeeFromDryRun = (
         deliveryFees.push({ plancks, tokenSymbol })
       }
     }
+
+    if (
+      isFeeAsset &&
+      e.type === 'AssetConversion' &&
+      e.value?.type === 'SwapCreditExecuted' &&
+      e.value?.value &&
+      e.value.value.amount_in !== undefined &&
+      e.value.value.amount_in !== null
+    ) {
+      assetConversionFee += e.value.value.amount_in
+    }
   }
 
-  const nativeAssetSymbol = getNativeAssetSymbol(node)
-
-  // Sum the fees that match the feeToken
-  const totalDeliveryFees = deliveryFees
-    .filter(df => df.tokenSymbol === nativeAssetSymbol)
-    .reduce((acc, df) => acc + df.plancks, 0n)
-
-  return totalDeliveryFees + executionFee
+  if (isFeeAsset && assetConversionFee > 0n) {
+    return assetConversionFee
+  } else {
+    const nativeAssetSymbol = getNativeAssetSymbol(node)
+    const totalDeliveryFees = deliveryFees
+      .filter(df => df.tokenSymbol === nativeAssetSymbol)
+      .reduce((acc, df) => acc + df.plancks, 0n)
+    return totalDeliveryFees + executionFee
+  }
 }

@@ -43,7 +43,8 @@ describe('getTransferableAmount', () => {
       getTransferableAmount({
         api: mockApi,
         senderAddress: 'validAddress',
-        node: 'Astar',
+        origin: 'Astar',
+        destination: 'BifrostPolkadot',
         currency: { symbol: 'DOT' },
         tx: 'transfer'
       })
@@ -64,7 +65,8 @@ describe('getTransferableAmount', () => {
     const result = await getTransferableAmount({
       api: mockApi,
       senderAddress: 'validAddress',
-      node: 'Astar',
+      origin: 'Astar',
+      destination: 'BifrostPolkadot',
       currency: { symbol: 'DOT' },
       tx: 'transfer'
     })
@@ -76,6 +78,7 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'Astar',
       senderAddress: 'validAddress',
+      currency: { symbol: 'DOT' },
       disableFallback: false
     })
   })
@@ -92,7 +95,8 @@ describe('getTransferableAmount', () => {
     const result = await getTransferableAmount({
       api: mockApi,
       senderAddress: 'validAddress',
-      node: 'Astar',
+      origin: 'Astar',
+      destination: 'BifrostPolkadot',
       currency: { symbol: 'USDT' },
       tx: 'transfer'
     })
@@ -115,7 +119,8 @@ describe('getTransferableAmount', () => {
     const result = await getTransferableAmount({
       api: mockApi,
       senderAddress: 'validAddress',
-      node: 'Astar',
+      origin: 'Astar',
+      destination: 'BifrostPolkadot',
       currency: { symbol: 'DOT' },
       tx: 'transfer'
     })
@@ -134,7 +139,8 @@ describe('getTransferableAmount', () => {
       getTransferableAmount({
         api: mockApi,
         senderAddress: 'validAddress',
-        node: 'Astar',
+        origin: 'Astar',
+        destination: 'BifrostPolkadot',
         currency: { symbol: 'DOT' },
         tx: 'transfer'
       })
@@ -154,7 +160,8 @@ describe('getTransferableAmount', () => {
     await getTransferableAmount({
       api: mockApi,
       senderAddress: 'validAddress',
-      node: 'Astar',
+      origin: 'Astar',
+      destination: 'BifrostPolkadot',
       currency: { symbol: 'DOT' },
       tx: 'transfer'
     })
@@ -178,7 +185,8 @@ describe('getTransferableAmount', () => {
       getTransferableAmount({
         api: mockApi,
         senderAddress: 'validAddress',
-        node: 'Astar',
+        origin: 'Astar',
+        destination: 'BifrostPolkadot',
         currency: { symbol: 'DOT' },
         tx: 'transfer'
       })
