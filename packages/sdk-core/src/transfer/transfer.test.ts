@@ -1,6 +1,6 @@
 import type { TAsset, TCurrencyInput, TMultiLocationValueWithOverride } from '@paraspell/assets'
 import { isOverrideMultiLocationSpecifier } from '@paraspell/assets'
-import { isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
+import { isDotKsmBridge, isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
@@ -10,7 +10,6 @@ import type { TSendOptions } from '../types'
 import { getNode } from '../utils'
 import { send } from './transfer'
 import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
-import { isBridgeTransfer } from './utils/isBridgeTransfer'
 import { resolveAsset } from './utils/resolveAsset'
 import { resolveFeeAsset } from './utils/resolveFeeAsset'
 import { validateAssetSupport } from './utils/validateAssetSupport'
@@ -27,7 +26,8 @@ vi.mock('@paraspell/sdk-common', async () => {
   return {
     ...actual,
     isRelayChain: vi.fn(),
-    isTMultiLocation: vi.fn()
+    isTMultiLocation: vi.fn(),
+    isDotKsmBridge: vi.fn()
   }
 })
 
@@ -46,10 +46,6 @@ vi.mock('./utils/validateDestinationAddress', () => ({
 
 vi.mock('./utils/determineAssetCheckEnabled', () => ({
   determineAssetCheckEnabled: vi.fn()
-}))
-
-vi.mock('./utils/isBridgeTransfer', () => ({
-  isBridgeTransfer: vi.fn()
 }))
 
 vi.mock('./utils/resolveAsset', () => ({
@@ -90,7 +86,7 @@ describe('send', () => {
     } as unknown as ParachainNode<unknown, unknown>
 
     vi.mocked(getNode).mockReturnValue(originNodeMock)
-    vi.mocked(isBridgeTransfer).mockReturnValue(false)
+    vi.mocked(isDotKsmBridge).mockReturnValue(false)
     vi.mocked(determineAssetCheckEnabled).mockReturnValue(true)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAsset)
     vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAsset)
@@ -295,7 +291,7 @@ describe('send', () => {
 
   it('should throw when destination is ethereum and origin is relay chain', async () => {
     vi.mocked(isRelayChain).mockReturnValue(true)
-    vi.mocked(isBridgeTransfer).mockReturnValue(false)
+    vi.mocked(isDotKsmBridge).mockReturnValue(false)
 
     const options = {
       api: apiMock,
@@ -312,7 +308,7 @@ describe('send', () => {
 
   it('should throw when asset is not provided for relay chain to relay chain transfers', async () => {
     vi.mocked(isRelayChain).mockReturnValue(true)
-    vi.mocked(isBridgeTransfer).mockReturnValue(false)
+    vi.mocked(isDotKsmBridge).mockReturnValue(false)
     vi.mocked(resolveAsset).mockReturnValue(null)
 
     const options = {

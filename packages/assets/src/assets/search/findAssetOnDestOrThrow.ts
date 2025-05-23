@@ -9,11 +9,16 @@ export const findAssetOnDestOrThrow = (
   destination: TNodeWithRelayChains,
   currency: TCurrencyInput
 ): TAsset => {
+  const isDotKsmBridge =
+    (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') ||
+    (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot')
+
   const originAsset = findAssetForNodeOrThrow(origin, currency, destination)
 
-  const assetByMultiLocation = originAsset.multiLocation
-    ? findAsset(destination, { multilocation: originAsset.multiLocation }, null)
-    : null
+  const assetByMultiLocation =
+    !isDotKsmBridge && originAsset.multiLocation
+      ? findAsset(destination, { multilocation: originAsset.multiLocation }, null)
+      : null
 
   return (
     assetByMultiLocation ??

@@ -668,6 +668,23 @@ describe('PapiApi', () => {
     })
   })
 
+  describe('getMethodName', () => {
+    it('should return the method name from the transaction', () => {
+      const methodName = 'methodName'
+      const mockTransaction = {
+        decodedCall: {
+          value: {
+            value: 'methodName'
+          }
+        }
+      } as unknown as TPapiTransaction
+
+      const result = papiApi.getMethod(mockTransaction)
+
+      expect(result).toBe(methodName)
+    })
+  })
+
   describe('getDryRunCall', () => {
     it('should return success with calculated fee', async () => {
       const mockApiResponse = {
@@ -721,7 +738,8 @@ describe('PapiApi', () => {
           type: 'system',
           value: { type: 'Signed', value: 'some_address' }
         },
-        undefined
+        undefined,
+        3
       )
 
       expect(result).toEqual({
@@ -902,7 +920,8 @@ describe('PapiApi', () => {
         originLocation,
         xcm: dummyXcm,
         node: 'AssetHubPolkadot',
-        origin: 'Hydration'
+        origin: 'Hydration',
+        asset: { symbol: 'AUSD' }
       } as TDryRunXcmBaseOptions)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
@@ -1069,7 +1088,8 @@ describe('PapiApi', () => {
         originLocation,
         xcm: dummyXcm,
         node: 'AssetHubPolkadot',
-        origin: 'Acala'
+        origin: 'Acala',
+        asset: { symbol: 'AUSD' }
       } as TDryRunXcmBaseOptions)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(

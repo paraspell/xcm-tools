@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TAsset, TCurrencyInput, TCurrencyInputWithAmount } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
 
@@ -16,7 +16,7 @@ export type TGetXcmFeeBaseOptions<TRes> = {
   /**
    * The destination node
    */
-  destination: TNodeDotKsmWithRelayChains
+  destination: TNodeWithRelayChains
   /**
    * The sender address
    */
@@ -46,7 +46,7 @@ export type TGetXcmFeeBuilderOptions = {
 export type TGetOriginXcmFeeBaseOptions<TRes> = {
   tx: TRes
   origin: TNodeDotKsmWithRelayChains
-  destination: TNodeDotKsmWithRelayChains
+  destination: TNodeWithRelayChains
   senderAddress: string
   currency: TCurrencyInput
   feeAsset?: TCurrencyInput
@@ -61,7 +61,7 @@ export type TGetOriginXcmFeeOptions<TApi, TRes> = WithApi<
 
 export type TGetFeeForDestNodeBaseOptions = {
   origin: TNodeDotKsmWithRelayChains
-  destination: TNodeDotKsmWithRelayChains
+  destination: TNodeWithRelayChains
   senderAddress: string
   address: string
   currency: TCurrencyInputWithAmount
@@ -78,9 +78,16 @@ export type TGetFeeForDestNodeOptions<TApi, TRes> = WithApi<
   TRes
 >
 
+export type TGetReverseTxFeeOptions<TApi, TRes> = Omit<
+  TGetFeeForDestNodeOptions<TApi, TRes>,
+  'destination' | 'disableFallback' | 'forwardedXcms' | 'asset' | 'originFee'
+> & {
+  destination: TNodeDotKsmWithRelayChains
+}
+
 export type THubKey = 'assetHub' | 'bridgeHub'
 
-export type TFeeType = 'dryRun' | 'paymentInfo'
+export type TFeeType = 'dryRun' | 'paymentInfo' | 'noFeeRequired'
 
 export type TXcmFeeDetail =
   | {

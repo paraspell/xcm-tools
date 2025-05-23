@@ -4,17 +4,12 @@ import { isTMultiLocation } from '@paraspell/sdk-common'
 import { InvalidParameterError } from '../../errors'
 import type { TAddress, TDestination } from '../../types'
 
-export const assertToIsStringAndNoEthereum: (
+export const assertToIsString: (
   to: TDestination
-) => asserts to is Exclude<TDestination, 'Ethereum' | TMultiLocation> = to => {
+) => asserts to is Exclude<TDestination, TMultiLocation> = to => {
   if (isTMultiLocation(to)) {
     throw new InvalidParameterError(
       'Multi-Location destination is not supported for XCM fee calculation.'
-    )
-  }
-  if (to === 'Ethereum') {
-    throw new InvalidParameterError(
-      'Ethereum destination is not yet supported for XCM fee calculation.'
     )
   }
 }

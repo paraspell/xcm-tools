@@ -156,6 +156,22 @@ describe('transform', () => {
     expect(transform(input)).toEqual(expected)
   })
 
+  it('should transfer GlobalConsensus', () => {
+    const input = {
+      GlobalConsensus: {
+        polkadot: null
+      }
+    }
+    const expected = {
+      type: 'GlobalConsensus',
+      value: {
+        type: 'Polkadot'
+      }
+    }
+
+    expect(transform(input)).toEqual(expected)
+  })
+
   it('should handle SetTopic', () => {
     const input = {
       SetTopic: '0xabcdef1234567890'

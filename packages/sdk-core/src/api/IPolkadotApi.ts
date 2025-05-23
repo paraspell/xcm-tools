@@ -28,6 +28,7 @@ export interface IPolkadotApi<TApi, TRes> {
   objectToHex(obj: unknown, typeName: string): Promise<string>
   hexToUint8a(hex: string): Uint8Array
   stringToUint8a(str: string): Uint8Array
+  getMethod(tx: TRes): string
   calculateTransactionFee(tx: TRes, address: string): Promise<bigint>
   quoteAhPrice(
     fromMl: TMultiLocation,

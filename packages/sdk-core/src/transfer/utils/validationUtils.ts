@@ -6,6 +6,7 @@ import {
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
+  isDotKsmBridge,
   isRelayChain,
   isTMultiLocation,
   type TNodeDotKsmWithRelayChains
@@ -13,7 +14,6 @@ import {
 
 import { IncompatibleNodesError } from '../../errors'
 import type { TDestination } from '../../types'
-import { isBridgeTransfer } from './isBridgeTransfer'
 
 export const validateCurrency = (currency: TCurrencyInput, feeAsset?: TCurrencyInput) => {
   if ('multiasset' in currency) {
@@ -61,7 +61,7 @@ export const validateDestination = (
   }
 
   const isMultiLocationDestination = typeof destination === 'object'
-  const isBridge = isBridgeTransfer(origin, destination)
+  const isBridge = !isTMultiLocation(destination) && isDotKsmBridge(origin, destination)
   const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
 
   if (!isRelayDestination && !isMultiLocationDestination) {

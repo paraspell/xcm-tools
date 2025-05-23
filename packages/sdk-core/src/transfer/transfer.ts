@@ -1,7 +1,7 @@
 // Contains basic call formatting for different XCM Palletss
 
 import type { TNativeAsset } from '@paraspell/assets'
-import { isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
+import { isDotKsmBridge, isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidAddressError, InvalidParameterError } from '../errors'
@@ -9,7 +9,6 @@ import type { TRelayToParaDestination, TSendOptions } from '../types'
 import { getNode, validateAddress } from '../utils'
 import { transferRelayToPara } from './transferRelayToPara'
 import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
-import { isBridgeTransfer } from './utils/isBridgeTransfer'
 import { resolveAsset } from './utils/resolveAsset'
 import { resolveFeeAsset } from './utils/resolveFeeAsset'
 import { resolveOverriddenAsset } from './utils/resolveOverriddenAsset'
@@ -43,7 +42,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   validateDestinationAddress(address, destination)
   if (senderAddress) validateAddress(senderAddress, origin, false)
 
-  const isBridge = isBridgeTransfer(origin, destination)
+  const isBridge = !isTMultiLocation(destination) && isDotKsmBridge(origin, destination)
 
   const assetCheckEnabled = determineAssetCheckEnabled(origin, currency)
 
@@ -118,9 +117,14 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   const originNode = getNode<TApi, TRes, typeof origin>(origin)
 
+  const finalAsset =
+    'multiasset' in currency
+      ? { ...resolvedAsset, amount: 0, assetId: '1' }
+      : { ...resolvedAsset, amount: currency.amount }
+
   return originNode.transfer({
     api,
-    asset: { ...resolvedAsset, amount: 'multiasset' in currency ? 0 : currency.amount },
+    asset: finalAsset,
     feeAsset: resolvedFeeAsset,
     address,
     to: destination,

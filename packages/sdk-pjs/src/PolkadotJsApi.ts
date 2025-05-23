@@ -14,6 +14,7 @@ import type {
   TModuleError,
   TMultiLocation,
   TNodePolkadotKusama,
+  TNodeWithRelayChains,
   TSerializedApiCall,
   TWeight
 } from '@paraspell/sdk-core'
@@ -228,6 +229,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
+  getMethod(tx: Extrinsic): string {
+    return tx.method.toString()
+  }
+
   async getFromRpc(module: string, method: string, key: string) {
     const rpcModule = (this.api.rpc as any)[module]
     if (!rpcModule || !rpcModule[method]) {
@@ -262,12 +267,18 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
     }
 
-    const needsVersionParam =
-      node === 'BifrostPolkadot' ||
-      node === 'BifrostKusama' ||
-      node === 'AssetHubKusama' ||
-      node === 'Kusama' ||
-      node === 'Polimec'
+    const nodesRequiringVersionParam: TNodeWithRelayChains[] = [
+      'BifrostPolkadot',
+      'BifrostKusama',
+      'AssetHubKusama',
+      'AssetHubPolkadot',
+      'Kusama',
+      'Polkadot',
+      'Polimec'
+    ]
+
+    const needsVersionParam = nodesRequiringVersionParam.includes(node)
+
     const DEFAULT_XCM_VERSION = 3
 
     const response = await this.api.call.dryRunApi.dryRunCall(

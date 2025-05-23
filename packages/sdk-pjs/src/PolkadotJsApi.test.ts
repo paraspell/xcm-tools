@@ -158,6 +158,16 @@ describe('PolkadotJsApi', () => {
     })
   })
 
+  describe('getMethod', () => {
+    it('should return the method', () => {
+      const tx = {
+        method: ''
+      } as unknown as Extrinsic
+      const result = polkadotApi.getMethod(tx)
+      expect(result).toBe(tx.method)
+    })
+  })
+
   describe('callTxMethod', () => {
     it('should create an extrinsic with the provided module, section, and parameters', () => {
       const serializedCall: TSerializedApiCall = {
