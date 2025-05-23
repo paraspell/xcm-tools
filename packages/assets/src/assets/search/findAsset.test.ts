@@ -12,7 +12,7 @@ import { findAsset } from './findAsset'
 
 const getAssetsObject = assetFunctions.getAssetsObject
 
-describe('getAssetBySymbolOrId', () => {
+describe('findAsset', () => {
   afterEach(() => {
     vi.restoreAllMocks()
   })
