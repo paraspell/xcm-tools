@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.0.1...xcm-router-v10.0.2) (2025-05-23)
+
+
+### Bug Fixes
+
+* Use custom errors instead of generic errors to prevent HTTP 500 🔧 ([1e192da](https://github.com/paraspell/xcm-tools/commit/1e192da24e472997cb7b96901f8f2c7507a90630))
+
 ## [10.0.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.0.0...xcm-router-v10.0.1) (2025-05-22)
 
 

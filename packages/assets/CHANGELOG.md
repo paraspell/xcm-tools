@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.0.2](https://github.com/paraspell/xcm-tools/compare/assets-v10.0.1...assets-v10.0.2) (2025-05-23)
+
+
+### Bug Fixes
+
+* **assets:** Fix linter error 🔧 ([77b54d0](https://github.com/paraspell/xcm-tools/commit/77b54d06e91abcc90afa4c584987584c36aa8e48))
+
 ## [10.0.1](https://github.com/paraspell/xcm-tools/compare/assets-v10.0.0...assets-v10.0.1) (2025-05-22)
 
 
