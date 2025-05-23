@@ -16,6 +16,7 @@ import type {
   TXcmFeeDetail
 } from '../../types'
 import { determineRelayChain } from '../../utils'
+import { getParaEthTransferFees } from '../ethTransfer'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFee } from './getOriginXcmFee'
 
@@ -58,7 +59,9 @@ export const getXcmFee = async <TApi, TRes>({
     const destApi = api.clone()
 
     try {
-      await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
+      if (destination !== 'Ethereum') {
+        await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
+      }
       destApi.setDisconnectAllowed(false)
 
       const destFeeRes = await getDestXcmFee({
@@ -82,7 +85,7 @@ export const getXcmFee = async <TApi, TRes>({
           ...(originDryRunError && { dryRunError: originDryRunError })
         } as TXcmFeeDetail,
         destination: {
-          ...(destFeeRes.fee && { fee: destFeeRes.fee }),
+          ...(destFeeRes.fee ? { fee: destFeeRes.fee } : { fee: 0n }),
           ...(destFeeRes.feeType && { feeType: destFeeRes.feeType }),
           currency: getNativeAssetSymbol(destination)
         } as TXcmFeeDetail
@@ -99,7 +102,8 @@ export const getXcmFee = async <TApi, TRes>({
 
   const intermediateFees: Partial<Record<THubKey, TXcmFeeDetail>> = {}
   let destinationFee: bigint | undefined = 0n
-  let destinationFeeType: TFeeType | undefined = 'paymentInfo'
+  let destinationFeeType: TFeeType | undefined =
+    destination === 'Ethereum' ? 'noFeeRequired' : 'paymentInfo'
   let destinationDryRunError: string | undefined
 
   while (
@@ -209,6 +213,24 @@ export const getXcmFee = async <TApi, TRes>({
     }
   }
 
+  let processedBridgeHubData = intermediateFees.bridgeHub
+  if (
+    intermediateFees.bridgeHub &&
+    !intermediateFees.bridgeHub.dryRunError &&
+    destination === 'Ethereum'
+  ) {
+    const ahApi = api.clone()
+    await ahApi.init('AssetHubPolkadot', DRY_RUN_CLIENT_TIMEOUT_MS)
+    const [bridgeFee] = await getParaEthTransferFees(ahApi)
+
+    processedBridgeHubData = {
+      ...intermediateFees.bridgeHub,
+      fee: (intermediateFees.bridgeHub.fee as bigint) + bridgeFee
+    }
+  }
+
+  intermediateFees.bridgeHub = processedBridgeHubData
+
   return {
     origin: {
       ...(originFee && { fee: originFee }),
@@ -218,7 +240,7 @@ export const getXcmFee = async <TApi, TRes>({
     } as TXcmFeeDetail,
     ...intermediateFees,
     destination: {
-      ...(destinationFee && { fee: destinationFee }),
+      ...(destinationFee !== undefined && { fee: destinationFee }),
       ...(destinationFeeType && { feeType: destinationFeeType }),
       currency: destinationFeeType === 'dryRun' ? asset.symbol : getNativeAssetSymbol(destination),
       ...(destinationDryRunError && { dryRunError: destinationDryRunError })

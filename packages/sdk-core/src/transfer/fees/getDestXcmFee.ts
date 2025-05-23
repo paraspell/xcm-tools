@@ -58,6 +58,8 @@ export const getDestXcmFee = async <TApi, TRes>(
     : undefined
 
   const calcPaymentInfoFee = async (): Promise<bigint> => {
+    if (destination === 'Ethereum') return 0n
+
     const originAsset = findAsset(origin, currency, destination)
     if (!originAsset) {
       throw new InvalidCurrencyError(`Currency ${JSON.stringify(currency)} not found in ${origin}`)
@@ -65,19 +67,22 @@ export const getDestXcmFee = async <TApi, TRes>(
 
     if (originAsset.multiLocation) {
       try {
-        return await getReverseTxFee(options, { multilocation: originAsset.multiLocation })
+        return await getReverseTxFee(
+          { ...options, destination },
+          { multilocation: originAsset.multiLocation }
+        )
       } catch (err: any) {
         if (err instanceof InvalidCurrencyError) {
-          return await getReverseTxFee(options, { symbol: originAsset.symbol })
+          return await getReverseTxFee({ ...options, destination }, { symbol: originAsset.symbol })
         }
         throw err
       }
     }
 
-    return await getReverseTxFee(options, { symbol: originAsset.symbol })
+    return await getReverseTxFee({ ...options, destination }, { symbol: originAsset.symbol })
   }
 
-  if (!hasDryRunSupport(destination) || !forwardedXcms) {
+  if (!hasDryRunSupport(destination) || !forwardedXcms || destination === 'Ethereum') {
     return {
       fee: await calcPaymentInfoFee(),
       feeType: 'paymentInfo'

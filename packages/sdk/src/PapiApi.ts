@@ -229,6 +229,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return `0x${bytesToHex(blake2b(data, { dkLen: 32 }))}`
   }
 
+  getMethod(tx: TPapiTransaction) {
+    return tx.decodedCall.value.value
+  }
+
   async calculateTransactionFee(tx: TPapiTransaction, address: string) {
     return tx.getEstimatedFees(address)
   }
@@ -481,7 +485,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
             event => event.type === 'ForeignAssets' && event.value.type === 'Issued'
           )
         : undefined) ??
-      (origin === 'Mythos'
+      (origin === 'Mythos' || (node === 'AssetHubPolkadot' && asset.symbol !== 'DOT')
         ? reversedEvents.find(
             event => event.type === 'AssetConversion' && event.value.type === 'SwapCreditExecuted'
           )

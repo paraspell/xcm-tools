@@ -128,7 +128,7 @@ describe('getXcmFeeEstimate', () => {
       currency: { symbol: 'ABC', amount: 5n }
     })
     expect(padFee).toHaveBeenCalledTimes(1)
-    expect(padFee).toHaveBeenCalledWith(rawDest, 'BifrostPolkadot', 'Hydration', 'destination')
+    expect(padFee).toHaveBeenCalledWith(1000n, 'BifrostPolkadot', 'Hydration', 'destination')
     expect(res).toEqual({
       origin: { fee: 1000n, currency: 'UNIT' },
       destination: { fee: 2600n, currency: 'UNIT' }

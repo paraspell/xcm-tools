@@ -228,6 +228,10 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return BigInt(obj === null || !obj.balance ? 0 : obj.balance)
   }
 
+  getMethod(tx: Extrinsic): string {
+    return tx.method.toString()
+  }
+
   async getFromRpc(module: string, method: string, key: string) {
     const rpcModule = (this.api.rpc as any)[module]
     if (!rpcModule || !rpcModule[method]) {

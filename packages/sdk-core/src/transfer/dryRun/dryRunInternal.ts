@@ -13,6 +13,7 @@ import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
 import type { TDryRunNodeResultInternal } from '../../types'
 import { type TDryRunOptions, type TDryRunResult, type THubKey, Version } from '../../types'
 import { determineRelayChain } from '../../utils'
+import { getParaEthTransferFees } from '../ethTransfer'
 import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 
@@ -117,6 +118,17 @@ export const dryRunInternal = async <TApi, TRes>(
     }
   }
 
+  let processedBridgeHubData = intermediateFees.bridgeHub
+  if (intermediateFees.bridgeHub?.success && destination === 'Ethereum') {
+    const ahApi = api.clone()
+    await ahApi.init('AssetHubPolkadot', DRY_RUN_CLIENT_TIMEOUT_MS)
+    const [bridgeFee] = await getParaEthTransferFees(ahApi)
+    processedBridgeHubData = {
+      ...intermediateFees.bridgeHub,
+      fee: intermediateFees.bridgeHub.fee + bridgeFee
+    }
+  }
+
   return {
     origin: originDryRun.success
       ? {
@@ -127,9 +139,9 @@ export const dryRunInternal = async <TApi, TRes>(
     assetHub: intermediateFees.assetHub?.success
       ? { ...intermediateFees.assetHub, currency: getNativeAssetSymbol('AssetHubPolkadot') }
       : intermediateFees.assetHub,
-    bridgeHub: intermediateFees.bridgeHub?.success
-      ? { ...intermediateFees.bridgeHub, currency: getNativeAssetSymbol('BridgeHubPolkadot') }
-      : intermediateFees.bridgeHub,
+    bridgeHub: processedBridgeHubData?.success
+      ? { ...processedBridgeHubData, currency: getNativeAssetSymbol('BridgeHubPolkadot') }
+      : processedBridgeHubData,
     destination: destinationDryRun?.success
       ? { ...destinationDryRun, currency: asset.symbol }
       : destinationDryRun
