@@ -237,16 +237,15 @@ const XcmUtilsForm: FC<Props> = ({
         Object.keys(currencyMap)[0],
       );
     }
-  }, [isNotParaToPara, currencyMap, form]);
+  }, [isNotParaToPara, currencyMap]);
 
   useEffect(() => {
     setIsUseXcmApiSelected(useApi);
-  }, [useApi]); // Removed setIsUseXcmApiSelected from dependency array as it's from a hook
+  }, [useApi]);
 
   const onSwap = () => {
     const { from: currentFrom, to: currentTo } = form.getValues();
     if (currentTo !== 'Ethereum') {
-      // Assuming TNodeWithRelayChains can be assigned to TNodeDotKsmWithRelayChains if it's not 'Ethereum'
       form.setFieldValue('from', currentTo as TNodeDotKsmWithRelayChains);
       form.setFieldValue('to', currentFrom);
     }
@@ -271,8 +270,6 @@ const XcmUtilsForm: FC<Props> = ({
   return (
     <Paper p="xl" shadow="md">
       <form>
-        {' '}
-        {/* Removed form.onSubmit from here */}
         <Stack gap="lg">
           <ParachainSelect
             label="Origin"
@@ -286,7 +283,7 @@ const XcmUtilsForm: FC<Props> = ({
           <ActionIcon
             variant="outline"
             style={{ margin: '0 auto', marginBottom: -12 }}
-            onClick={onSwap} // Added onClick directly here
+            onClick={onSwap}
           >
             <IconTransfer size={24} style={{ rotate: '90deg' }} />
           </ActionIcon>
@@ -378,7 +375,7 @@ const XcmUtilsForm: FC<Props> = ({
               description="SS58 address"
               placeholder="Enter address"
               required
-              data-testid="input-ahAddress" // Changed from input-address to avoid duplicate testid
+              data-testid="input-ahAddress"
               {...form.getInputProps('ahAddress')}
             />
           )}
