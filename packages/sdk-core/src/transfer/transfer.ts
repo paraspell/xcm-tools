@@ -118,9 +118,14 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   const originNode = getNode<TApi, TRes, typeof origin>(origin)
 
+  const finalAsset =
+    'multiasset' in currency
+      ? { ...resolvedAsset, amount: 0, assetId: '1' }
+      : { ...resolvedAsset, amount: currency.amount }
+
   return originNode.transfer({
     api,
-    asset: { ...resolvedAsset, amount: 'multiasset' in currency ? 0 : currency.amount },
+    asset: finalAsset,
     feeAsset: resolvedFeeAsset,
     address,
     to: destination,

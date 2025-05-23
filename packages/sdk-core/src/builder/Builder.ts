@@ -29,7 +29,7 @@ import type {
   TSendBaseOptionsWithSenderAddress,
   Version
 } from '../types'
-import { assertAddressIsString, assertToIsStringAndNoEthereum } from '../utils/builder'
+import { assertAddressIsString, assertToIsString } from '../utils/builder'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 
@@ -240,12 +240,6 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       )
     }
 
-    if (to === 'Ethereum') {
-      throw new InvalidParameterError(
-        'Ethereum destination is not yet supported for XCM fee calculation.'
-      )
-    }
-
     return dryRun({
       api: this.api,
       tx,
@@ -269,7 +263,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   ) {
     const { from, to, address, senderAddress, feeAsset } = this._options
 
-    assertToIsStringAndNoEthereum(to)
+    assertToIsString(to)
     assertAddressIsString(address)
 
     const tx = await this.build()
@@ -302,7 +296,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   ) {
     const { from, to, senderAddress, currency, feeAsset } = this._options
 
-    assertToIsStringAndNoEthereum(to)
+    assertToIsString(to)
 
     const tx = await this.build()
 
@@ -330,7 +324,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   async getXcmFeeEstimate(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
     const { from, to, address, senderAddress } = this._options
 
-    assertToIsStringAndNoEthereum(to)
+    assertToIsString(to)
     assertAddressIsString(address)
 
     const tx = await this.build()
@@ -360,7 +354,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   ) {
     const { from, to, senderAddress } = this._options
 
-    assertToIsStringAndNoEthereum(to)
+    assertToIsString(to)
 
     const tx = await this.build()
 
@@ -385,7 +379,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   async getTransferableAmount(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
     const { from, to, senderAddress, currency, feeAsset } = this._options
 
-    assertToIsStringAndNoEthereum(to)
+    assertToIsString(to)
 
     const tx = await this.build()
 
@@ -408,7 +402,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   async verifyEdOnDestination(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
     const { from, to, address, currency, senderAddress, feeAsset } = this._options
 
-    assertToIsStringAndNoEthereum(to)
+    assertToIsString(to)
     assertAddressIsString(address)
 
     const tx = await this.build()
@@ -433,7 +427,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   async getTransferInfo(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
     const { from, to, address, currency, senderAddress, feeAsset } = this._options
 
-    assertToIsStringAndNoEthereum(to)
+    assertToIsString(to)
     assertAddressIsString(address)
 
     const tx = await this.build()

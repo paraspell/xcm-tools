@@ -1,11 +1,10 @@
 import type { TCurrencyInput } from '@paraspell/assets'
-import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { Builder } from '../../builder'
-import type { TGetFeeForDestNodeOptions } from '../../types'
+import type { TGetReverseTxFeeOptions } from '../../types'
 import { getReverseTxFee } from './getReverseTxFee'
 import { padFee } from './padFee'
 
@@ -50,30 +49,13 @@ describe('getReverseTxFee', () => {
     senderAddress: 'senderAlice',
     address: 'receiverBob',
     currency: { symbol: 'DOT', amount: mockAmount }
-  } as TGetFeeForDestNodeOptions<unknown, unknown>
+  } as TGetReverseTxFeeOptions<unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
     mockBuild.mockResolvedValue(mockTxObject)
     mockCalculateTransactionFee.mockResolvedValue(rawFee)
     vi.mocked(padFee).mockReturnValue(paddedFee)
-  })
-
-  it('should throw InvalidCurrencyError if currency is a multiasset', async () => {
-    const optionsWithMultiAsset = {
-      ...defaultOptions,
-      currency: { multiasset: [], amount: '100' }
-    }
-    const currencyInput: TCurrencyInput = { symbol: 'TOKEN' }
-
-    await expect(getReverseTxFee(optionsWithMultiAsset, currencyInput)).rejects.toThrow(
-      InvalidCurrencyError
-    )
-    await expect(getReverseTxFee(optionsWithMultiAsset, currencyInput)).rejects.toThrow(
-      'Multi-assets are not yet supported for XCM fee calculation.'
-    )
-
-    expect(Builder).not.toHaveBeenCalled()
   })
 
   it('should correctly call Builder with flipped origin/destination and addresses for fee estimation', async () => {
