@@ -1,14 +1,9 @@
-import {
-  findAssetForNodeOrThrow,
-  getNativeAssetSymbol,
-  InvalidCurrencyError
-} from '@paraspell/assets'
+import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 
-import { Builder } from '../../builder'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetXcmFeeEstimateOptions, TGetXcmFeeEstimateResult } from '../../types/TXcmFee'
 import { getOriginXcmFeeEstimate } from './getOriginXcmFeeEstimate'
-import { padFee } from './padFee'
+import { getReverseTxFee } from './getReverseTxFee'
 
 const BRIDGE_FEE_DOT = 682_395_810n // 0.068239581 DOT
 const BRIDGE_FEE_KSM = 12_016_807_000n // 0.012016807 KSM
@@ -16,7 +11,7 @@ const BRIDGE_FEE_KSM = 12_016_807_000n // 0.012016807 KSM
 export const getXcmFeeEstimate = async <TApi, TRes>(
   options: TGetXcmFeeEstimateOptions<TApi, TRes>
 ): Promise<TGetXcmFeeEstimateResult> => {
-  const { api, origin, destination, address, senderAddress, currency } = options
+  const { api, origin, destination, currency } = options
 
   if (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') {
     return {
@@ -35,13 +30,8 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
   const originFeeDetails = await getOriginXcmFeeEstimate(options)
 
   const destApi = api.clone()
-  await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
 
-  if ('multiasset' in currency) {
-    throw new InvalidCurrencyError(
-      'Multi-assets are not yet supported for simple XCM fee estimation.'
-    )
-  }
+  if (destination !== 'Ethereum') await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
 
   const originAsset = findAssetForNodeOrThrow(origin, currency, destination)
 
@@ -49,16 +39,10 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
     ? { multilocation: originAsset.multiLocation }
     : { symbol: originAsset.symbol }
 
-  const flippedTx = await Builder(destApi)
-    .from(destination)
-    .to(origin)
-    .address(senderAddress)
-    .senderAddress(address)
-    .currency({ ...currencyInput, amount: currency.amount })
-    .build()
-
-  const rawDestFee = await destApi.calculateTransactionFee(flippedTx, address)
-  const destinationFee = padFee(rawDestFee, origin, destination, 'destination')
+  const destinationFee =
+    destination === 'Ethereum'
+      ? 0n
+      : await getReverseTxFee({ ...options, destination }, currencyInput)
 
   const destFeeDetails = {
     fee: destinationFee,

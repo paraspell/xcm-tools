@@ -53,6 +53,17 @@ export const transform = (obj: any): any => {
           type: key,
           value: checkAndConvertToNumberOrBigInt(value)
         }
+      } else if (
+        key === 'GlobalConsensus' &&
+        typeof value === 'object' &&
+        ('polkadot' in value || 'kusama' in value)
+      ) {
+        return {
+          type: key,
+          value: {
+            type: 'polkadot' in value ? 'Polkadot' : 'Kusama'
+          }
+        }
       } else if (key === 'PalletInstance' || key === 'GeneralIndex') {
         return {
           type: key,

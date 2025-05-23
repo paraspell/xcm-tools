@@ -3,9 +3,23 @@ import { findAssetOnDestOrThrow } from '@paraspell/assets'
 
 import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
-import type { TVerifyEdOnDestinationOptions } from '../../../types'
+import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../../types'
 import { validateAddress } from '../../../utils'
 import { getAssetBalanceInternal } from '../balance/getAssetBalance'
+
+export const calculateTotalXcmFee = (feeResult: TGetXcmFeeResult): bigint => {
+  let totalFee = 0n
+
+  if (feeResult.assetHub?.fee !== undefined) {
+    totalFee += feeResult.assetHub.fee
+  }
+
+  if (feeResult.destination.fee !== undefined) {
+    totalFee += feeResult.destination.fee
+  }
+
+  return totalFee
+}
 
 export const verifyEdOnDestinationInternal = async <TApi, TRes>({
   api,
@@ -17,7 +31,20 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
   feeAsset,
   currency
 }: TVerifyEdOnDestinationOptions<TApi, TRes>) => {
+  if (destination === 'Ethereum') return true
+
   validateAddress(address, destination)
+
+  if (origin === 'AssetHubPolkadot' && destination === 'AssetHubKusama') {
+    throw new InvalidParameterError(
+      'Kusama is outside of Polkadot ecosystem, thus function is unable to verify the existential deposit for it.'
+    )
+  }
+  if (origin === 'AssetHubKusama' && destination === 'AssetHubPolkadot') {
+    throw new InvalidParameterError(
+      'Polkadot is outside of Kusama ecosystem, thus function is unable to verify the existential deposit for it.'
+    )
+  }
 
   const destApi = api.clone()
   await destApi.init(destination)
@@ -45,10 +72,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
     currency: destCurrency
   })
 
-  const {
-    origin: { dryRunError },
-    destination: { fee: destFee, currency: destFeeCurrency, dryRunError: destDryRunError }
-  } = await getXcmFee({
+  const xcmFeeResult = await getXcmFee({
     api,
     tx,
     origin,
@@ -59,6 +83,11 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
     feeAsset,
     disableFallback: false
   })
+
+  const {
+    origin: { dryRunError },
+    destination: { fee: destFee, currency: destFeeCurrency, dryRunError: destDryRunError }
+  } = xcmFeeResult
 
   if (destFee === undefined) {
     throw new InvalidParameterError(
@@ -84,5 +113,19 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
     )
   }
 
-  return BigInt(currency.amount) - destFee > (balance < edBN ? edBN : 0)
+  const totalFee = calculateTotalXcmFee(xcmFeeResult)
+  const method = api.getMethod(tx)
+
+  let feeToSubtract: bigint
+
+  if (
+    method === 'transfer_assets_using_type_and_then' ||
+    method === 'transferAssetsUsingTypeAndThen'
+  ) {
+    feeToSubtract = totalFee
+  } else {
+    feeToSubtract = destFee
+  }
+
+  return BigInt(currency.amount) - feeToSubtract > (balance < edBN ? edBN : 0)
 }

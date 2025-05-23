@@ -197,7 +197,7 @@ export type TVerifyEdOnDestinationOptionsBase<TRes> = {
   /**
    * The destination node.
    */
-  destination: TNodeDotKsmWithRelayChains
+  destination: TNodeWithRelayChains
   /**
    * The address of the account.
    */

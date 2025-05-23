@@ -1,5 +1,5 @@
 import type { TAsset, TCurrencyInput, TCurrencyInputWithAmount } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
 import type { TWeight } from './TTransfer'
@@ -7,7 +7,7 @@ import type { TWeight } from './TTransfer'
 export type TDryRunBaseOptions<TRes> = {
   tx: TRes
   origin: TNodeDotKsmWithRelayChains
-  destination: TNodeDotKsmWithRelayChains
+  destination: TNodeWithRelayChains
   senderAddress: string
   address: string
   currency: TCurrencyInputWithAmount
@@ -50,7 +50,7 @@ export type TDryRunXcmBaseOptions = {
    * The origin node
    */
   origin: TNodeDotKsmWithRelayChains
-  asset: TAsset
+  asset: TAsset | null
   feeAsset?: TAsset
   amount: bigint
   originFee: bigint

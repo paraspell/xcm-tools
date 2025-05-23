@@ -4,6 +4,12 @@ import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspel
 import type { UnableToComputeError } from '../errors'
 import type { WithApi } from './TApi'
 
+export type TXcmFeeBase = {
+  fee: bigint
+  balance: bigint
+  currencySymbol: string
+}
+
 export type TTransferInfo = {
   chain: { origin: TNodeWithRelayChains; destination: TNodeWithRelayChains; ecosystem: string }
   origin: {
@@ -14,13 +20,20 @@ export type TTransferInfo = {
       currencySymbol: string
       existentialDeposit: bigint
     }
-    xcmFee: {
+    xcmFee: TXcmFeeBase & {
       sufficient: boolean
-      fee: bigint
-      balance: bigint
       balanceAfter: bigint
-      currencySymbol: string
     }
+  }
+  assetHub?: {
+    balance: bigint
+    currencySymbol: string
+    existentialDeposit: bigint
+    xcmFee: TXcmFeeBase
+  }
+  bridgeHub?: {
+    currencySymbol: string
+    xcmFee: TXcmFeeBase
   }
   destination: {
     receivedCurrency: {
@@ -31,11 +44,8 @@ export type TTransferInfo = {
       currencySymbol: string
       existentialDeposit: bigint
     }
-    xcmFee: {
-      fee: bigint
-      balance: bigint
+    xcmFee: TXcmFeeBase & {
       balanceAfter: bigint | UnableToComputeError
-      currencySymbol: string
     }
   }
 }
@@ -48,8 +58,9 @@ export type TOriginFeeDetails = {
 export type TGetTransferInfoOptionsBase<TRes> = {
   tx: TRes
   origin: TNodeDotKsmWithRelayChains
-  destination: TNodeDotKsmWithRelayChains
+  destination: TNodeWithRelayChains
   senderAddress: string
+  ahAddress?: string
   address: string
   currency: WithAmount<TCurrencyCore>
   feeAsset?: TCurrencyCore

@@ -229,6 +229,10 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return `0x${bytesToHex(blake2b(data, { dkLen: 32 }))}`
   }
 
+  getMethod(tx: TPapiTransaction) {
+    return tx.decodedCall.value.value
+  }
+
   async calculateTransactionFee(tx: TPapiTransaction, address: string) {
     return tx.getEstimatedFees(address)
   }
@@ -377,12 +381,18 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
     }
 
-    const needsVersionParam =
-      node === 'BifrostPolkadot' ||
-      node === 'BifrostKusama' ||
-      node === 'AssetHubKusama' ||
-      node === 'Kusama' ||
-      node === 'Polimec'
+    const nodesRequiringVersionParam: TNodeWithRelayChains[] = [
+      'BifrostPolkadot',
+      'BifrostKusama',
+      'AssetHubKusama',
+      'AssetHubPolkadot',
+      'Kusama',
+      'Polkadot',
+      'Polimec'
+    ]
+
+    const needsVersionParam = nodesRequiringVersionParam.includes(node)
+
     const DEFAULT_XCM_VERSION = 3
 
     const result = await this.api.getUnsafeApi().apis.DryRunApi.dry_run_call(
@@ -473,7 +483,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const palletsWithIssued = ['Balances', 'ForeignAssets', 'Assets']
 
-    const isFeeAsset = origin === 'AssetHubPolkadot' && feeAsset && isAssetEqual(feeAsset, asset)
+    const isFeeAsset =
+      origin === 'AssetHubPolkadot' && feeAsset && asset && isAssetEqual(feeAsset, asset)
 
     const feeEvent =
       (isFeeAsset
@@ -481,7 +492,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
             event => event.type === 'ForeignAssets' && event.value.type === 'Issued'
           )
         : undefined) ??
-      (origin === 'Mythos'
+      (origin === 'Mythos' || (node === 'AssetHubPolkadot' && asset?.symbol !== 'DOT')
         ? reversedEvents.find(
             event => event.type === 'AssetConversion' && event.value.type === 'SwapCreditExecuted'
           )

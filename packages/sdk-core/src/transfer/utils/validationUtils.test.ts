@@ -5,6 +5,7 @@ import {
   type TCurrencyInput
 } from '@paraspell/assets'
 import {
+  isDotKsmBridge,
   isRelayChain,
   isTMultiLocation,
   type TNodeDotKsmWithRelayChains,
@@ -15,12 +16,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { IncompatibleNodesError } from '../../errors'
 import type { TDestination } from '../../types'
-import { isBridgeTransfer } from './isBridgeTransfer'
 import { validateAssetSpecifiers, validateCurrency, validateDestination } from './validationUtils'
-
-vi.mock('./isBridgeTransfer', () => ({
-  isBridgeTransfer: vi.fn()
-}))
 
 vi.mock('@paraspell/pallets', () => ({
   getDefaultPallet: vi.fn()
@@ -28,7 +24,8 @@ vi.mock('@paraspell/pallets', () => ({
 
 vi.mock('@paraspell/sdk-common', () => ({
   isTMultiLocation: vi.fn(),
-  isRelayChain: vi.fn()
+  isRelayChain: vi.fn(),
+  isDotKsmBridge: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
@@ -139,7 +136,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = 'Astar'
 
-    vi.mocked(isBridgeTransfer).mockReturnValue(false)
+    vi.mocked(isDotKsmBridge).mockReturnValue(false)
     vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
     expect(() => validateDestination(origin, destination)).toThrow(IncompatibleNodesError)
@@ -149,7 +146,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = 'Astar'
 
-    vi.mocked(isBridgeTransfer).mockReturnValue(false)
+    vi.mocked(isDotKsmBridge).mockReturnValue(false)
     vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('DOT')
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
@@ -159,7 +156,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = 'Astar'
 
-    vi.mocked(isBridgeTransfer).mockReturnValue(true)
+    vi.mocked(isDotKsmBridge).mockReturnValue(true)
     vi.mocked(getRelayChainSymbol).mockReturnValueOnce('DOT').mockReturnValueOnce('KSM')
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
@@ -169,7 +166,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = {} as TDestination
 
-    vi.mocked(isBridgeTransfer).mockReturnValue(false)
+    vi.mocked(isDotKsmBridge).mockReturnValue(false)
     // Relay chain symbols should not be fetched in this case
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
@@ -187,7 +184,7 @@ describe('validateDestination', () => {
     origin = 'Acala'
     destination = 'Polkadot'
 
-    vi.mocked(isBridgeTransfer).mockReturnValue(false)
+    vi.mocked(isDotKsmBridge).mockReturnValue(false)
     vi.mocked(isRelayChain).mockImplementation(node => node === destination)
 
     expect(() => validateDestination(origin, destination)).not.toThrow()

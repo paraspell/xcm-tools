@@ -31,6 +31,7 @@ vi.mock('../balance/getAssetBalance', () => ({
 
 describe('verifyEdOnDestinationInternal', () => {
   const mockApi = {
+    getMethod: vi.fn(),
     clone: () => ({
       init: vi.fn()
     })

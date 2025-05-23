@@ -19,7 +19,7 @@ import type {
   TXcmFeeDetail
 } from '../types'
 import { Version } from '../types'
-import { assertAddressIsString, assertToIsStringAndNoEthereum } from '../utils/builder'
+import { assertAddressIsString, assertToIsString } from '../utils/builder'
 import { Builder } from './Builder'
 
 vi.mock('../transfer', () => ({
@@ -39,7 +39,7 @@ vi.mock('../pallets/assets', () => ({
 }))
 
 vi.mock('../utils/builder', () => ({
-  assertToIsStringAndNoEthereum: vi.fn(),
+  assertToIsString: vi.fn(),
   assertAddressIsString: vi.fn()
 }))
 
@@ -769,18 +769,6 @@ describe('Builder', () => {
       ).rejects.toThrow(InvalidParameterError)
     })
 
-    it('should throw when destination is Ethereum (dryRun)', async () => {
-      await expect(
-        Builder(mockApi)
-          .from(NODE)
-          .to('Ethereum')
-          .currency(CURRENCY)
-          .address(ADDRESS)
-          .senderAddress('alice')
-          .dryRun()
-      ).rejects.toThrow(InvalidParameterError)
-    })
-
     it('should dry run a normal transfer', async () => {
       const spy = vi.mocked(xcmPallet.dryRun).mockResolvedValue({
         origin: {
@@ -831,7 +819,7 @@ describe('Builder', () => {
 
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
-      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
     })
 
@@ -850,7 +838,7 @@ describe('Builder', () => {
 
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
-      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
     })
 
     it('should fetch XCM fee estimate', async () => {
@@ -870,7 +858,7 @@ describe('Builder', () => {
 
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
-      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
     })
 
@@ -891,7 +879,7 @@ describe('Builder', () => {
 
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
-      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
     })
 
     it('should fetch transferable amount', async () => {
@@ -931,7 +919,7 @@ describe('Builder', () => {
       expect(result).toEqual(mockResult)
       expect(spy).toHaveBeenCalledTimes(1)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
-      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
     })
 
     it('should fetch tansfer info', async () => {
@@ -950,7 +938,7 @@ describe('Builder', () => {
       expect(result).toEqual({})
       expect(spy).toHaveBeenCalledTimes(1)
       expect(assertAddressIsString).toHaveBeenCalledWith(ADDRESS)
-      expect(assertToIsStringAndNoEthereum).toHaveBeenCalledWith(NODE_2)
+      expect(assertToIsString).toHaveBeenCalledWith(NODE_2)
     })
   })
 })

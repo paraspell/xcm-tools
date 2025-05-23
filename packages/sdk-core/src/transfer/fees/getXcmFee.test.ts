@@ -159,6 +159,7 @@ describe('getXcmFee', () => {
         currency: 'ACA'
       },
       destination: {
+        fee: 0n,
         feeType: 'paymentInfo',
         currency: 'GLMR'
       }
@@ -210,6 +211,7 @@ describe('getXcmFee', () => {
         currency: 'DOT'
       },
       destination: {
+        fee: 0n,
         feeType: 'paymentInfo',
         currency: 'GLMR'
       }

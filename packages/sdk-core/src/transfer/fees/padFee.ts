@@ -1,15 +1,16 @@
+import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
-const isAssetHub = (chain: TNodeDotKsmWithRelayChains) =>
+const isAssetHub = (chain: TNodeWithRelayChains) =>
   chain === 'AssetHubPolkadot' || chain === 'AssetHubKusama'
 
-const isBridgeHub = (chain: TNodeDotKsmWithRelayChains) =>
+const isBridgeHub = (chain: TNodeWithRelayChains) =>
   chain === 'BridgeHubPolkadot' || chain === 'BridgeHubKusama'
 
-const isPeople = (chain: TNodeDotKsmWithRelayChains) =>
+const isPeople = (chain: TNodeWithRelayChains) =>
   chain === 'PeoplePolkadot' || chain === 'PeopleKusama'
 
-const isSystemPara = (chain: TNodeDotKsmWithRelayChains) =>
+const isSystemPara = (chain: TNodeWithRelayChains) =>
   isAssetHub(chain) || isBridgeHub(chain) || isPeople(chain)
 
 const mul = (v: bigint, num: bigint, den: bigint = 1n): bigint => (v * num) / den
@@ -17,7 +18,7 @@ const mul = (v: bigint, num: bigint, den: bigint = 1n): bigint => (v * num) / de
 export const padFee = (
   raw: bigint,
   origin: TNodeDotKsmWithRelayChains,
-  dest: TNodeDotKsmWithRelayChains,
+  dest: TNodeWithRelayChains,
   side: 'origin' | 'destination'
 ): bigint => {
   const relayOrigin = isRelayChain(origin)
