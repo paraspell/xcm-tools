@@ -131,6 +131,15 @@ describe('transferMoonbeamToEth', () => {
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
   })
 
+  it('should throw error for missing AssetHub address', async () => {
+    await expect(
+      transferMoonbeamToEth({
+        ...baseOptions,
+        ahAddress: undefined
+      })
+    ).rejects.toThrow('AssetHub address is required')
+  })
+
   it('should throw error for multiasset currency', async () => {
     await expect(
       transferMoonbeamToEth({

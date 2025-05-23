@@ -1,6 +1,11 @@
 import type { Asset, TradeRouter } from '@galacticcouncil/sdk';
+import {
+  getAssetDecimals,
+  getNativeAssetSymbol,
+  InvalidParameterError,
+  type TNode,
+} from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
-import { getAssetDecimals, getNativeAssetSymbol, type TNode } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 
 import { FEE_BUFFER } from '../../../consts';
@@ -37,13 +42,13 @@ export const calculateFee = async (
   });
 
   if (nativeCurrencyInfo === undefined) {
-    throw new Error('Native currency not found');
+    throw new InvalidParameterError('Native currency not found');
   }
 
   const nativeCurrencyDecimals = getAssetDecimals(node, nativeCurrencyInfo.symbol);
 
   if (nativeCurrencyDecimals === null) {
-    throw new Error('Native currency decimals not found');
+    throw new InvalidParameterError('Native currency decimals not found');
   }
 
   const tx = trade.toTx(minAmountOut.amount).get<Extrinsic>();
@@ -68,7 +73,7 @@ export const calculateFee = async (
   );
 
   if (currencyFromPriceInfo === undefined) {
-    throw new Error('Price not found');
+    throw new InvalidParameterError('Price not found');
   }
 
   const currencyFromPrice = currencyFromPriceInfo.amount;

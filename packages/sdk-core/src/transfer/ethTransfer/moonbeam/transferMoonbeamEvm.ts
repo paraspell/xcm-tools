@@ -14,6 +14,7 @@ import { Contract } from 'ethers'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
+import { InvalidParameterError } from '../../../errors'
 import { formatAssetIdToERC20 } from '../../../pallets/assets/balance'
 import type { TEvmBuilderOptions } from '../../../types'
 import { isEthersContract, isEthersSigner } from '../utils'
@@ -35,11 +36,11 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
   currency
 }: TEvmBuilderOptions<TApi, TRes>): Promise<string> => {
   if ('multiasset' in currency) {
-    throw new Error('Multiassets syntax is not supported for Evm transfers')
+    throw new InvalidParameterError('Multiassets syntax is not supported for Evm transfers')
   }
 
   if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
-    throw new Error('Override multilocation is not supported for Evm transfers')
+    throw new InvalidParameterError('Override multilocation is not supported for Evm transfers')
   }
 
   const contract = isEthersSigner(signer)

@@ -7,6 +7,7 @@ import { findAssetForNodeOrThrow, getNativeAssetSymbol, hasDryRunSupport } from 
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
+import { InvalidParameterError } from '../../errors'
 import { getTNode } from '../../nodes/getTNode'
 import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
 import type { TDryRunNodeResultInternal } from '../../types'
@@ -63,7 +64,7 @@ export const dryRunInternal = async <TApi, TRes>(
       determineRelayChain(origin) === 'Polkadot' ? 'polkadot' : 'kusama'
     )
 
-    if (!nextChain) throw new Error(`Unable to find TNode for paraId ${nextParaId}`)
+    if (!nextChain) throw new InvalidParameterError(`Unable to find TNode for paraId ${nextParaId}`)
 
     const hopApi = api.clone()
 

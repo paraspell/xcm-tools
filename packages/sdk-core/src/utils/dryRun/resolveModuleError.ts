@@ -1,13 +1,14 @@
 import { getSupportedPalletsDetails } from '@paraspell/pallets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
+import { InvalidParameterError } from '../../errors'
 import { PolkadotXcmError, type TModuleError, XTokensError } from '../../types'
 
 export const resolveModuleError = (node: TNodeDotKsmWithRelayChains, error: TModuleError) => {
   const palletDetails = getSupportedPalletsDetails(node).find(p => p.index === Number(error.index))
 
   if (!palletDetails) {
-    throw new Error(`Pallet with index ${error.index} not found`)
+    throw new InvalidParameterError(`Pallet with index ${error.index} not found`)
   }
 
   // Use only the first byte of the error to get the error index
@@ -16,7 +17,7 @@ export const resolveModuleError = (node: TNodeDotKsmWithRelayChains, error: TMod
   const { name } = palletDetails
 
   if (name !== 'XTokens' && name !== 'PolkadotXcm' && name !== 'XcmPallet') {
-    throw new Error(`Pallet ${name} is not supported`)
+    throw new InvalidParameterError(`Pallet ${name} is not supported`)
   }
 
   const failureReason =
@@ -25,7 +26,7 @@ export const resolveModuleError = (node: TNodeDotKsmWithRelayChains, error: TMod
       : Object.values(PolkadotXcmError)[errorIndex]
 
   if (!failureReason) {
-    throw new Error(`Error index ${errorIndex} not found in ${name} pallet`)
+    throw new InvalidParameterError(`Error index ${errorIndex} not found in ${name} pallet`)
   }
 
   return failureReason

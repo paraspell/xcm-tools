@@ -13,6 +13,34 @@ describe('validateTransferOptions', () => {
     vi.clearAllMocks();
   });
 
+  it('should throw error if both from and exchange are undefined', () => {
+    const mockOptions = {
+      evmSenderAddress: undefined,
+      senderAddress: 'someAddress',
+      recipientAddress: 'someRecipient',
+      from: undefined,
+      to: 'Astar',
+    } as TTransferOptions;
+
+    expect(() => validateTransferOptions(mockOptions)).toThrow(
+      'Cannot use automatic exchange selection without specifying the origin node',
+    );
+  });
+
+  it('should throw error if to is defined but recipientAddress is undefined', () => {
+    const mockOptions = {
+      evmSenderAddress: undefined,
+      senderAddress: 'someAddress',
+      recipientAddress: undefined,
+      from: 'Polkadot',
+      to: 'Astar',
+    } as TTransferOptions;
+
+    expect(() => validateTransferOptions(mockOptions)).toThrow(
+      'Recipient address is required when destination node is specified',
+    );
+  });
+
   it('should call validateDestinationAddress with recipientAddress and to', () => {
     const mockOptions = {
       evmSenderAddress: undefined,

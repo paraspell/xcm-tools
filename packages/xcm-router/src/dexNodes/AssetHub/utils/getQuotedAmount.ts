@@ -1,4 +1,4 @@
-import { type TMultiLocation, transformMultiLocation } from '@paraspell/sdk';
+import { InvalidParameterError, type TMultiLocation, transformMultiLocation } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import type BigNumber from 'bignumber.js';
 
@@ -36,5 +36,5 @@ export const getQuotedAmount = async (
       console.error(`Error (${strat.desc}):`, error);
     }
   }
-  throw new Error('Swap failed: Pool not found');
+  throw new InvalidParameterError('Swap failed: Pool not found');
 };

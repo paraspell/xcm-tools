@@ -12,6 +12,7 @@ import { executeRouterPlan } from './executeRouterPlan';
 vi.mock('@paraspell/sdk', () => ({
   isNodeEvm: vi.fn(),
   getBalanceNative: vi.fn(),
+  InvalidParameterError: class extends Error {},
 }));
 
 vi.mock('../utils/submitTransaction', () => ({

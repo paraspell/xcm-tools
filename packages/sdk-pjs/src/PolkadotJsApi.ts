@@ -17,7 +17,7 @@ import type {
   TSerializedApiCall,
   TWeight
 } from '@paraspell/sdk-core'
-import { BatchMode, NodeNotSupportedError } from '@paraspell/sdk-core'
+import { BatchMode, InvalidParameterError, NodeNotSupportedError } from '@paraspell/sdk-core'
 import {
   computeFeeFromDryRunPjs,
   createApiInstanceForNode,
@@ -231,7 +231,7 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
   async getFromRpc(module: string, method: string, key: string) {
     const rpcModule = (this.api.rpc as any)[module]
     if (!rpcModule || !rpcModule[method]) {
-      throw new Error(`RPC method ${module}.${method} not available`)
+      throw new InvalidParameterError(`RPC method ${module}.${method} not available`)
     }
     const response = (await rpcModule[method](key)) as Codec
     return response.toHex()

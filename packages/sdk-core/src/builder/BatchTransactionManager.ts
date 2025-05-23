@@ -2,6 +2,7 @@ import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
+import { InvalidParameterError } from '../errors'
 import { send } from '../transfer'
 import type { TSendOptions } from '../types'
 import { BatchMode, type TBatchOptions } from '../types'
@@ -26,13 +27,13 @@ class BatchTransactionManager<TApi, TRes> {
 
     const { mode } = options
     if (this.transactionOptions.length === 0) {
-      throw new Error('No transactions to batch.')
+      throw new InvalidParameterError('No transactions to batch.')
     }
 
     const sameFrom = this.transactionOptions.every(tx => tx.from === from)
 
     if (!sameFrom) {
-      throw new Error('All transactions must have the same origin.')
+      throw new InvalidParameterError('All transactions must have the same origin.')
     }
 
     const results = this.transactionOptions.map(options => send(options))

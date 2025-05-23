@@ -4,6 +4,7 @@ import type { TJunction, TMultiLocation } from '@paraspell/sdk-common'
 import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
 import { NODE_NAMES_DOT_KSM, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 
+import { InvalidParameterError } from '../../errors'
 import { getParaId } from '../../nodes/config'
 import type { OneKey, TRelaychain, TXcmVersioned } from '../../types'
 import { type TDestination, type TScenario, Version } from '../../types'
@@ -35,12 +36,12 @@ export const addXcmVersionHeader = <T, V extends Version>(obj: T, version: V) =>
 export const extractVersionFromHeader = <T>(versionHeader: OneKey<Version, T>): [Version, T] => {
   const keys = Object.keys(versionHeader) as Version[]
   if (keys.length !== 1) {
-    throw new Error('Invalid version header: expected exactly one key.')
+    throw new InvalidParameterError('Invalid version header: expected exactly one key.')
   }
   const version = keys[0]
   const value = versionHeader[version]
   if (value === undefined) {
-    throw new Error('Invalid version header: value is undefined.')
+    throw new InvalidParameterError('Invalid version header: value is undefined.')
   }
   return [version, value]
 }
@@ -126,7 +127,7 @@ export const resolveTNodeFromMultiLocation = (
 ): TNodePolkadotKusama => {
   const parachainId = findParachainJunction(multiLocation)
   if (parachainId === null) {
-    throw new Error('Parachain ID not found in destination multi location.')
+    throw new InvalidParameterError('Parachain ID not found in destination multi location.')
   }
 
   const node =
@@ -136,7 +137,9 @@ export const resolveTNodeFromMultiLocation = (
     ) ?? null
 
   if (node === null) {
-    throw new Error('Node with specified paraId not found in destination multi location.')
+    throw new InvalidParameterError(
+      'Node with specified paraId not found in destination multi location.'
+    )
   }
 
   return node

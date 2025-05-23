@@ -1,4 +1,4 @@
-import { getBalanceNative, isNodeEvm } from '@paraspell/sdk';
+import { getBalanceNative, InvalidParameterError, isNodeEvm } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 
 import { FEE_BUFFER } from '../consts';
@@ -39,7 +39,7 @@ export const executeRouterPlan = async (
         const nativeBalanceBN = BigNumber(nativeBalance.toString());
         const feeBN = BigNumber(fee.toString()).multipliedBy(FEE_BUFFER);
         if (nativeBalanceBN.isLessThan(feeBN)) {
-          throw new Error(
+          throw new InvalidParameterError(
             `Insufficient balance to cover fees for transfer from ${node} to ${destinationNode}`,
           );
         }
@@ -48,7 +48,9 @@ export const executeRouterPlan = async (
 
     if (isNodeEvm(node)) {
       if (!evmSigner || !evmSenderAddress) {
-        throw new Error('EVM signer and sender address must be provided for EVM nodes.');
+        throw new InvalidParameterError(
+          'EVM signer and sender address must be provided for EVM nodes.',
+        );
       }
 
       await submitTransaction(tx, evmSigner);

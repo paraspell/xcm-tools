@@ -104,7 +104,7 @@ export const getTransferInfo = async <TApi, TRes>({
     })
 
     if (originFee === undefined) {
-      throw new Error(
+      throw new InvalidParameterError(
         `Cannot get origin xcm fee for currency ${JSON.stringify(currency)} on node ${origin}.`
       )
     }

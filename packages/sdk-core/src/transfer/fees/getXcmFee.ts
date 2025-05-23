@@ -6,6 +6,7 @@ import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
+import { InvalidParameterError } from '../../errors'
 import { getTNode } from '../../nodes/getTNode'
 import type {
   TFeeType,
@@ -116,7 +117,7 @@ export const getXcmFee = async <TApi, TRes>({
     )
 
     if (nextChain === null) {
-      throw new Error(`Unable to find TNode for paraId ${nextParaId}`)
+      throw new InvalidParameterError(`Unable to find TNode for paraId ${nextParaId}`)
     }
 
     const hopApi = api.clone()

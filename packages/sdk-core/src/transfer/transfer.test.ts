@@ -81,7 +81,8 @@ describe('send', () => {
       init: vi.fn().mockResolvedValue(undefined),
       disconnect: vi.fn().mockResolvedValue(undefined),
       getApi: vi.fn(),
-      callTxMethod: vi.fn()
+      callTxMethod: vi.fn(),
+      getApiOrUrl: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
 
     originNodeMock = {
@@ -290,6 +291,41 @@ describe('send', () => {
     )
 
     expect(result).toBe('transferResult')
+  })
+
+  it('should throw when destination is ethereum and origin is relay chain', async () => {
+    vi.mocked(isRelayChain).mockReturnValue(true)
+    vi.mocked(isBridgeTransfer).mockReturnValue(false)
+
+    const options = {
+      api: apiMock,
+      from: 'Polkadot',
+      currency: { symbol: 'DOT', amount: 100 },
+      address: 'some-address',
+      to: 'Ethereum'
+    } as TSendOptions<unknown, unknown>
+
+    await expect(send(options)).rejects.toThrow(
+      'Transfers from relay chain to Ethereum are not supported.'
+    )
+  })
+
+  it('should throw when asset is not provided for relay chain to relay chain transfers', async () => {
+    vi.mocked(isRelayChain).mockReturnValue(true)
+    vi.mocked(isBridgeTransfer).mockReturnValue(false)
+    vi.mocked(resolveAsset).mockReturnValue(null)
+
+    const options = {
+      api: apiMock,
+      from: 'Polkadot',
+      address: 'some-address',
+      to: 'Acala',
+      currency: { symbol: 'DOT', amount: 100 }
+    } as TSendOptions<unknown, unknown>
+
+    await expect(send(options)).rejects.toThrow(
+      'Asset is required for relay chain to relay chain transfers.'
+    )
   })
 
   describe('local transfers on relay chain', () => {

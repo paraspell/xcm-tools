@@ -13,7 +13,12 @@ import { hasJunction, isTMultiLocation, Parents, type TMultiLocation } from '@pa
 import { ethers } from 'ethers'
 
 import { DOT_MULTILOCATION, ETHEREUM_JUNCTION, SYSTEM_NODES_POLKADOT } from '../../constants'
-import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
+import {
+  BridgeHaltedError,
+  DryRunFailedError,
+  InvalidParameterError,
+  ScenarioNotSupportedError
+} from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
   addXcmVersionHeader,
@@ -164,11 +169,13 @@ class AssetHubPolkadot<TApi, TRes>
     }
 
     if (senderAddress === undefined) {
-      throw new Error('Sender address is required for transfers to Ethereum')
+      throw new InvalidParameterError('Sender address is required for transfers to Ethereum')
     }
 
     if (isTMultiLocation(address)) {
-      throw new Error('Multi-location address is not supported for Ethereum transfers')
+      throw new InvalidParameterError(
+        'Multi-location address is not supported for Ethereum transfers'
+      )
     }
 
     if (!isForeignAsset(asset)) {
@@ -247,7 +254,9 @@ class AssetHubPolkadot<TApi, TRes>
     }
 
     if (!ethers.isAddress(address)) {
-      throw new Error('Only Ethereum addresses are supported for Ethereum transfers')
+      throw new InvalidParameterError(
+        'Only Ethereum addresses are supported for Ethereum transfers'
+      )
     }
 
     if (!isForeignAsset(asset)) {
@@ -423,7 +432,7 @@ class AssetHubPolkadot<TApi, TRes>
     const { api, senderAddress, asset } = input
 
     if (!senderAddress) {
-      throw new Error('Please provide senderAddress')
+      throw new InvalidParameterError('Please provide senderAddress')
     }
 
     validateAddress(senderAddress, this.node, false)
@@ -448,11 +457,11 @@ class AssetHubPolkadot<TApi, TRes>
     })
 
     if (!dryRunResult.success) {
-      throw new Error(`Dry run failed: ${dryRunResult.failureReason}`)
+      throw new DryRunFailedError(`Dry run failed: ${dryRunResult.failureReason}`)
     }
 
     if (!dryRunResult.weight) {
-      throw new Error('Dry run failed: weight not found')
+      throw new DryRunFailedError('Dry run failed: weight not found')
     }
 
     const feeDotShifted = dryRunResult.fee / 10n
@@ -461,11 +470,13 @@ class AssetHubPolkadot<TApi, TRes>
     const feeConverted = await api.quoteAhPrice(DOT_MULTILOCATION, toMl, feeDotShifted)
 
     if (!feeConverted) {
-      throw new Error(`Pool DOT -> ${asset.symbol} not found.`)
+      throw new InvalidParameterError(`Pool DOT -> ${asset.symbol} not found.`)
     }
 
     if (BigInt(asset.amount) - feeConverted < 0) {
-      throw new Error(`Insufficient balance. Fee: ${feeConverted}, Amount: ${asset.amount}`)
+      throw new InvalidParameterError(
+        `Insufficient balance. Fee: ${feeConverted}, Amount: ${asset.amount}`
+      )
     }
 
     const feeConvertedPadded = (feeConverted * 3n) / 2n // increases fee by 50%

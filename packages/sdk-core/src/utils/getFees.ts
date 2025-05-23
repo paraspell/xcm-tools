@@ -1,3 +1,4 @@
+import { InvalidParameterError } from '../errors'
 import type { TScenario } from '../types'
 
 export const getFees = (scenario: TScenario): number => {
@@ -6,5 +7,5 @@ export const getFees = (scenario: TScenario): number => {
   } else if (scenario === 'ParaToPara') {
     return 399600000000
   }
-  throw new Error(`Fees for scenario ${scenario} are not defined.`)
+  throw new InvalidParameterError(`Fees for scenario ${scenario} are not defined.`)
 }

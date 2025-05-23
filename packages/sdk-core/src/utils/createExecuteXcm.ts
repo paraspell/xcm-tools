@@ -1,3 +1,4 @@
+import { InvalidParameterError } from '../errors'
 import { createVersionedDestination, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
 import type { TSerializedApiCall, TWeight } from '../types'
 import { type TPolkadotXCMTransferOptions, Version } from '../types'
@@ -25,7 +26,7 @@ export const createExecuteXcm = <TApi, TRes>(
   const [__, beneficiary] = extractVersionFromHeader(beneficiaryWithHeader)
 
   if (!asset.multiLocation) {
-    throw new Error(`Asset ${JSON.stringify(asset)} has no multiLocation`)
+    throw new InvalidParameterError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
   }
 
   const transformedMultiLocation = transformMultiLocation(asset.multiLocation)

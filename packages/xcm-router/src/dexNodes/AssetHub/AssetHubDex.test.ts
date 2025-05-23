@@ -161,6 +161,20 @@ describe('AssetHubExchangeNode', () => {
   });
 
   describe('getAmountOut', () => {
+    it('should throw if assetFrom.multiLocation is missing', async () => {
+      const opts = { ...baseSwapOptions, assetFrom: { symbol: 'ASSET1' } } as TSwapOptions;
+      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+        'Asset from multiLocation not found',
+      );
+    });
+
+    it('should throw if assetTo.multiLocation is missing', async () => {
+      const opts = { ...baseSwapOptions, assetTo: { symbol: 'ASSET2' } } as TSwapOptions;
+      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+        'Asset to multiLocation not found',
+      );
+    });
+
     it('should return amountOut', async () => {
       const firstQuote = {
         amountOut: BigInt('2000'),

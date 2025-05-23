@@ -16,7 +16,7 @@ import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
 import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
-import { BridgeHaltedError } from '../../../errors'
+import { BridgeHaltedError, InvalidParameterError } from '../../../errors'
 import { getParaId } from '../../../nodes/config'
 import { type TEvmBuilderOptions, type TXcmVersioned, Version } from '../../../types'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
@@ -40,7 +40,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
   currency
 }: TEvmBuilderOptions<TApi, TRes>) => {
   if (!ahAddress) {
-    throw new Error('AssetHub address is required')
+    throw new InvalidParameterError('AssetHub address is required')
   }
 
   const bridgeStatus = await getBridgeStatus(api.clone())
@@ -50,11 +50,11 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
   }
 
   if ('multiasset' in currency) {
-    throw new Error('Multiassets syntax is not supported for Evm transfers')
+    throw new InvalidParameterError('Multiassets syntax is not supported for Evm transfers')
   }
 
   if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
-    throw new Error('Override multilocation is not supported for Evm transfers')
+    throw new InvalidParameterError('Override multilocation is not supported for Evm transfers')
   }
 
   const foundAsset = findAsset(from, currency, to)
@@ -94,7 +94,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
   const senderAddress = isEthersSigner(signer) ? await signer.getAddress() : signer.account?.address
 
   if (!senderAddress) {
-    throw new Error('Unable to get sender address')
+    throw new InvalidParameterError('Unable to get sender address')
   }
 
   await api.init(from, TX_CLIENT_TIMEOUT_MS)
@@ -150,7 +150,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
   const numberToHex32 = (num: number) =>
     typeof num !== 'number' || isNaN(num)
       ? (() => {
-          throw new Error('Input must be a valid number')
+          throw new InvalidParameterError('Input must be a valid number')
         })()
       : `0x${(num >>> 0).toString(16).padStart(8, '0')}`
 

@@ -10,6 +10,7 @@ import {
   findAssetByMultiLocation,
   findAssetBySymbol,
   findBestMatches,
+  InvalidParameterError,
   isOverrideMultiLocationSpecifier,
   isSymbolSpecifier,
 } from '@paraspell/sdk';
@@ -27,7 +28,7 @@ export const getExchangeAsset = (
     ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) ||
     'multiasset' in currency
   ) {
-    throw new Error(
+    throw new InvalidParameterError(
       'XCM Router does not support multi-location override or multi-asset currencies yet.',
     );
   }
@@ -41,13 +42,15 @@ export const getExchangeAsset = (
   let asset: TRouterAsset | undefined;
   if ('symbol' in currency) {
     if (isSymbolSpecifier(currency.symbol)) {
-      throw new Error('Cannot use currency specifiers when using exchange auto select');
+      throw new InvalidParameterError(
+        'Cannot use currency specifiers when using exchange auto select',
+      );
     }
 
     const matches = findBestMatches(assets, currency.symbol);
 
     if (matches.length > 1 && throwOnDuplicateSymbol) {
-      throw new Error(
+      throw new InvalidParameterError(
         `Multiple assets found for symbol ${currency.symbol}. Please specify the asset by Multi-Location.`,
       );
     }
@@ -66,7 +69,7 @@ export const getExchangeAsset = (
   } else if ('id' in currency) {
     asset = findAssetById(otherAssets, currency.id);
   } else {
-    throw new Error('Invalid currency input');
+    throw new InvalidParameterError('Invalid currency input');
   }
 
   if (asset) {

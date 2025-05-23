@@ -30,6 +30,7 @@ vi.mock('@paraspell/sdk', () => ({
   isSymbolSpecifier: vi.fn(),
   isOverrideMultiLocationSpecifier: vi.fn(),
   isForeignAsset: (_asset: TRouterAsset) => true,
+  InvalidParameterError: class extends Error {},
 }));
 
 vi.mock('./getExchangeConfig', () => ({

@@ -70,7 +70,9 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    */
   to(node: TDestination, paraIdTo?: number): GeneralBuilder<TApi, TRes, T & { to: TDestination }> {
     if (this._options.from && isRelayChain(this._options.from) && node === 'Ethereum') {
-      throw new Error('Transfers from Relay chain to Ethereum are not yet supported.')
+      throw new InvalidParameterError(
+        'Transfers from Relay chain to Ethereum are not yet supported.'
+      )
     }
     return new GeneralBuilder(this.api, this.batchManager, {
       ...this._options,
@@ -207,7 +209,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    */
   async build(this: GeneralBuilder<TApi, TRes, TSendBaseOptions>) {
     if (!this.batchManager.isEmpty()) {
-      throw new Error(
+      throw new InvalidParameterError(
         'Transaction manager contains batched items. Use buildBatch() to process them.'
       )
     }
@@ -215,7 +217,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     const { from, to } = this._options
 
     if (!isTMultiLocation(to) && isRelayChain(from) && isRelayChain(to) && from !== to) {
-      throw new Error('Transfers between relay chains are not yet supported.')
+      throw new InvalidParameterError('Transfers between relay chains are not yet supported.')
     }
 
     return send({ api: this.api, ...this._options })

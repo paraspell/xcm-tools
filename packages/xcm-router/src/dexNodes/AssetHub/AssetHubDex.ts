@@ -1,4 +1,4 @@
-import { getNativeAssetSymbol, Parents } from '@paraspell/sdk-pjs';
+import { getNativeAssetSymbol, InvalidParameterError, Parents } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
@@ -18,11 +18,11 @@ class AssetHubExchangeNode extends ExchangeNode {
     const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin } = options;
 
     if (!assetFrom.multiLocation) {
-      throw new Error('Asset from multiLocation not found');
+      throw new InvalidParameterError('Asset from multiLocation not found');
     }
 
     if (!assetTo.multiLocation) {
-      throw new Error('Asset to multiLocation not found');
+      throw new InvalidParameterError('Asset to multiLocation not found');
     }
 
     const amountIn = BigNumber(amount);
@@ -92,11 +92,11 @@ class AssetHubExchangeNode extends ExchangeNode {
     const { assetFrom, assetTo, amount, origin } = options;
 
     if (!assetFrom.multiLocation) {
-      throw new Error('Asset from multiLocation not found');
+      throw new InvalidParameterError('Asset from multiLocation not found');
     }
 
     if (!assetTo.multiLocation) {
-      throw new Error('Asset to multiLocation not found');
+      throw new InvalidParameterError('Asset to multiLocation not found');
     }
 
     const amountIn = BigNumber(amount);

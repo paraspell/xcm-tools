@@ -1,7 +1,7 @@
 import { Amount, getCurrencyCombinations, Token } from '@crypto-dex-sdk/currency';
 import { Percent } from '@crypto-dex-sdk/math';
 import { SwapRouter } from '@crypto-dex-sdk/parachains-bifrost';
-import { getNativeAssetSymbol, getParaId } from '@paraspell/sdk-pjs';
+import { getNativeAssetSymbol, getParaId, InvalidParameterError } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
@@ -28,13 +28,13 @@ class BifrostExchangeNode extends ExchangeNode {
     const tokenWrappedFrom = findToken(tokenMap, assetFrom.symbol);
 
     if (tokenWrappedFrom === undefined) {
-      throw new Error('Currency from not found');
+      throw new InvalidParameterError('Currency from not found');
     }
 
     const tokenWrappedTo = findToken(tokenMap, assetTo.symbol);
 
     if (tokenWrappedTo === undefined) {
-      throw new Error('Currency to not found');
+      throw new InvalidParameterError('Currency to not found');
     }
 
     const tokenFrom = new Token(tokenWrappedFrom.wrapped);
@@ -78,7 +78,7 @@ class BifrostExchangeNode extends ExchangeNode {
     });
 
     if (extrinsic === null) {
-      throw new Error('Extrinsic is null');
+      throw new InvalidParameterError('Extrinsic is null');
     }
 
     const amountOutBN = new BigNumber(trade.outputAmount.toFixed())
@@ -121,13 +121,13 @@ class BifrostExchangeNode extends ExchangeNode {
     const tokenWrappedFrom = findToken(tokenMap, assetFrom.symbol);
 
     if (tokenWrappedFrom === undefined) {
-      throw new Error('Currency from not found');
+      throw new InvalidParameterError('Currency from not found');
     }
 
     const tokenWrappedTo = findToken(tokenMap, assetTo.symbol);
 
     if (tokenWrappedTo === undefined) {
-      throw new Error('Currency to not found');
+      throw new InvalidParameterError('Currency to not found');
     }
 
     const tokenFrom = new Token(tokenWrappedFrom.wrapped);

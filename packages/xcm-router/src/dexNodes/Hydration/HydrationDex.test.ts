@@ -4,7 +4,9 @@ import {
   type Extrinsic,
   getAssetDecimals,
   getAssets,
+  getNativeAssetSymbol,
   InvalidCurrencyError,
+  InvalidParameterError,
 } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
@@ -30,6 +32,7 @@ vi.mock('@galacticcouncil/sdk', () => ({
 vi.mock('@paraspell/sdk-pjs', () => ({
   getAssetDecimals: vi.fn(),
   InvalidCurrencyError: class extends Error {},
+  InvalidParameterError: class extends Error {},
   getNativeAssetSymbol: vi.fn(),
   getAssets: vi.fn(),
 }));
@@ -51,6 +54,105 @@ describe('HydrationExchangeNode', () => {
   });
 
   describe('swapCurrency', () => {
+    it('throws InvalidParameterError if native currency decimals are not found', async () => {
+      vi.spyOn(utils, 'getAssetInfo')
+        .mockResolvedValueOnce({ decimals: 12, id: '1', symbol: 'ABC' } as Asset)
+        .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
+        .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset);
+
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('10'));
+
+      const mockToTxGet = vi.fn().mockResolvedValue('mockExtrinsic' as unknown as Extrinsic);
+      const mockTrade = {
+        amountOut: new BigNumber('10000000000000000'),
+        toTx: vi.fn().mockReturnValue({ get: mockToTxGet }),
+      };
+      vi.mocked(TradeRouter).mockImplementation(
+        () =>
+          ({
+            getBestSell: vi.fn().mockResolvedValue(mockTrade),
+            getBestSpotPrice: vi
+              .fn()
+              .mockResolvedValue({ amount: new BigNumber('1'), decimals: 12 }),
+          }) as unknown as TradeRouter,
+      );
+
+      vi.spyOn(utils, 'getMinAmountOut').mockReturnValue({ amount: BigNumber('80'), decimals: 12 });
+
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
+
+      vi.mocked(getAssetDecimals).mockImplementation((_node, symbol) => {
+        if (symbol === 'HDX') {
+          return null;
+        }
+        return 12;
+      });
+
+      const options = {
+        origin: { node: 'Acala' },
+        assetFrom: { symbol: 'ABC' },
+        assetTo: { symbol: 'XYZ' },
+        slippagePct: '1',
+        amount: '10000',
+      } as TSwapOptions;
+      const toDestTransactionFee = BigNumber('10');
+
+      await expect(node.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+        new InvalidParameterError('Native currency decimals not found'),
+      );
+
+      expect(getAssetDecimals).toHaveBeenCalledWith(node.node, 'HDX');
+    });
+
+    it('throws InvalidParameterError if priceInfo is not found (and currencyTo is not native)', async () => {
+      vi.spyOn(utils, 'getAssetInfo')
+        .mockResolvedValueOnce({ decimals: 12, id: '1', symbol: 'ABC' } as Asset)
+        .mockResolvedValueOnce({ decimals: 12, id: '2', symbol: 'XYZ' } as Asset)
+        .mockResolvedValueOnce({ decimals: 12, id: '999', symbol: 'HDX' } as Asset);
+
+      vi.mocked(utils.calculateFee).mockResolvedValueOnce(BigNumber('10'));
+
+      const mockToTxGet = vi.fn().mockResolvedValue('mockExtrinsic' as unknown as Extrinsic);
+      const mockTrade = {
+        amountOut: new BigNumber('10000000000000000'),
+        toTx: vi.fn().mockReturnValue({ get: mockToTxGet }),
+      };
+
+      const mockTradeRouterInstance = {
+        getBestSell: vi.fn().mockResolvedValue(mockTrade),
+        getBestSpotPrice: vi.fn().mockImplementation((assetIdA, assetIdB) => {
+          if (assetIdA === '2' && assetIdB === '999') {
+            return Promise.resolve(undefined);
+          }
+          return Promise.resolve({ amount: new BigNumber('1'), decimals: 12 });
+        }),
+      };
+      vi.mocked(TradeRouter).mockImplementation(
+        () => mockTradeRouterInstance as unknown as TradeRouter,
+      );
+
+      vi.spyOn(utils, 'getMinAmountOut').mockReturnValue({ amount: BigNumber('80'), decimals: 12 });
+
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('HDX');
+
+      vi.mocked(getAssetDecimals).mockReturnValue(12);
+
+      const options = {
+        origin: { node: 'Acala' },
+        assetFrom: { symbol: 'ABC' },
+        assetTo: { symbol: 'XYZ' },
+        slippagePct: '1',
+        amount: '10000',
+      } as TSwapOptions;
+      const toDestTransactionFee = BigNumber('10');
+
+      await expect(node.swapCurrency(api, options, toDestTransactionFee)).rejects.toThrow(
+        new InvalidParameterError('Price not found'),
+      );
+
+      expect(mockTradeRouterInstance.getBestSpotPrice).toHaveBeenCalledWith('2', '999');
+    });
+
     it('throws if currencyFrom does not exist', async () => {
       vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce(undefined);
       vi.spyOn(utils, 'getAssetInfo').mockResolvedValueOnce({ decimals: 12, id: '2' } as Asset);
