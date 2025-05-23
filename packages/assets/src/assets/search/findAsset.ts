@@ -59,8 +59,6 @@ export const findAsset = (
     } else {
       asset = findAssetById(otherAssets, currency.id)
     }
-  } else {
-    throw new Error('Invalid currency input')
   }
 
   return asset ?? null
