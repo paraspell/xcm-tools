@@ -1,6 +1,7 @@
 import type { Asset } from '@galacticcouncil/sdk';
 import { TradeRouter } from '@galacticcouncil/sdk';
-import { type Extrinsic, getAssetDecimals, getNativeAssetSymbol } from '@paraspell/sdk-pjs';
+import { getAssetDecimals, getNativeAssetSymbol } from '@paraspell/sdk';
+import type { Extrinsic } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -30,9 +31,10 @@ vi.mock('./utils', async () => {
   };
 });
 
-vi.mock('@paraspell/sdk-pjs', () => ({
+vi.mock('@paraspell/sdk', () => ({
   getAssetDecimals: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
+  InvalidParameterError: class extends Error {},
 }));
 
 describe('calculateFee', () => {

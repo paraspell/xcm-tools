@@ -2,6 +2,7 @@ import {
   findAsset,
   getParaId,
   InvalidCurrencyError,
+  InvalidParameterError,
   isEthersSigner,
   isForeignAsset,
   isOverrideMultiLocationSpecifier,
@@ -30,19 +31,19 @@ export const transferEthToPolkadot = async <TApi, TRes>({
   currency
 }: TEvmBuilderOptions<TApi, TRes>) => {
   if ('multiasset' in currency) {
-    throw new Error('Multiassets syntax is not supported for Evm transfers')
+    throw new InvalidParameterError('Multiassets syntax is not supported for Evm transfers')
   }
 
   if ('multilocation' in currency && isOverrideMultiLocationSpecifier(currency.multilocation)) {
-    throw new Error('Override multilocation is not supported for Evm transfers')
+    throw new InvalidParameterError('Override multilocation is not supported for Evm transfers')
   }
 
   if (!provider) {
-    throw new Error('provider parameter is required for Snowbridge transfers.')
+    throw new InvalidParameterError('provider parameter is required for Snowbridge transfers.')
   }
 
   if (!isEthersSigner(signer)) {
-    throw new Error('Snowbridge does not support Viem provider yet.')
+    throw new InvalidParameterError('Snowbridge does not support Viem provider yet.')
   }
 
   const ethAsset = findAsset('Ethereum', currency, to)
@@ -124,7 +125,7 @@ export const transferEthToPolkadot = async <TApi, TRes>({
   )
 
   if (validation.logs.find(l => l.kind == toPolkadotV2.ValidationKind.Error)) {
-    throw Error(
+    throw new InvalidParameterError(
       `Validation failed with following errors: \n\n ${validation.logs
         .filter(l => l.kind == toPolkadotV2.ValidationKind.Error)
         .map(l => l.message)
@@ -137,12 +138,12 @@ export const transferEthToPolkadot = async <TApi, TRes>({
   const response = await signer.sendTransaction(tx)
   const receipt = await response.wait(1)
   if (!receipt) {
-    throw Error(`Transaction ${response.hash} not included.`)
+    throw new InvalidParameterError(`Transaction ${response.hash} not included.`)
   }
 
   const messageReceipt = await toPolkadotV2.getMessageReceipt(receipt)
   if (!messageReceipt) {
-    throw Error(`Transaction ${receipt.hash} did not emit a message.`)
+    throw new InvalidParameterError(`Transaction ${receipt.hash} did not emit a message.`)
   }
 
   return {

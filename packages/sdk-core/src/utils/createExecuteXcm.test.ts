@@ -44,6 +44,30 @@ describe('createExecuteXcm', () => {
     vi.clearAllMocks()
   })
 
+  it('should throw an error if asset.multiLocation is not provided', () => {
+    const fakeApi = {
+      callTxMethod: vi.fn()
+    }
+    const input = {
+      api: fakeApi,
+      asset: {
+        amount: '1000'
+      },
+      scenario: 'test-scenario',
+      destination: 'dest',
+      paraIdTo: 200,
+      address: 'address'
+    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
+    const weight = {
+      refTime: 123n,
+      proofSize: 456n
+    }
+    const executionFee = 50n
+    expect(() => createExecuteXcm(input, weight, executionFee)).toThrow(
+      'Asset {"amount":"1000"} has no multiLocation'
+    )
+  })
+
   it('should construct the correct call and return the api.callTxMethod result when version is provided', () => {
     const fakeApi = {
       callTxMethod: vi.fn().mockReturnValue('result')

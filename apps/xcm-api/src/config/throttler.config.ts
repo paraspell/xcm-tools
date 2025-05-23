@@ -8,6 +8,7 @@ export const throttlerConfig = (
 ): ThrottlerModuleOptions => {
   const rateLimitTtlSec = config.get<number>('RATE_LIMIT_TTL_SEC');
   if (!rateLimitTtlSec) {
+    // eslint-disable-next-line no-restricted-syntax
     throw new Error('Missing rate limit configuration');
   }
   return {
@@ -26,6 +27,7 @@ export const throttlerConfig = (
             return request.user.requestLimit;
           }
           if (!rateLimitReqCountAuth || !rateLimitReqCountPublic) {
+            // eslint-disable-next-line no-restricted-syntax
             throw new Error('Missing rate limit configuration');
           }
           return request.user ? rateLimitReqCountAuth : rateLimitReqCountPublic;

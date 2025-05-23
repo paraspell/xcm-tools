@@ -27,6 +27,7 @@ vi.mock('@paraspell/sdk-core', () => ({
   findAsset: vi.fn(),
   isForeignAsset: vi.fn().mockReturnValue(true),
   InvalidCurrencyError: class extends Error {},
+  InvalidParameterError: class extends Error {},
   isOverrideMultiLocationSpecifier: vi.fn().mockReturnValue(false),
   isEthersSigner: vi.fn()
 }))

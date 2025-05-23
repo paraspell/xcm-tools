@@ -6,6 +6,7 @@ import {
   getAssets,
   getNativeAssetSymbol,
   InvalidCurrencyError,
+  InvalidParameterError,
 } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
@@ -96,7 +97,7 @@ class HydrationExchangeNode extends ExchangeNode {
     const nativeCurrencyDecimals = getAssetDecimals(this.node, nativeCurrencyInfo.symbol);
 
     if (nativeCurrencyDecimals === null) {
-      throw new Error('Native currency decimals not found');
+      throw new InvalidParameterError('Native currency decimals not found');
     }
 
     let priceInfo = await tradeRouter.getBestSpotPrice(currencyToInfo.id, nativeCurrencyInfo.id);
@@ -109,7 +110,7 @@ class HydrationExchangeNode extends ExchangeNode {
     }
 
     if (priceInfo === undefined) {
-      throw new Error('Price not found');
+      throw new InvalidParameterError('Price not found');
     }
 
     const currencyToPriceNormalNumber = priceInfo.amount.shiftedBy(-priceInfo.decimals);

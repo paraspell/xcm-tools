@@ -4,7 +4,7 @@ import type { TNativeAsset } from '@paraspell/assets'
 import { isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
-import { InvalidAddressError } from '../errors'
+import { InvalidAddressError, InvalidParameterError } from '../errors'
 import type { TRelayToParaDestination, TSendOptions } from '../types'
 import { getNode, validateAddress } from '../utils'
 import { transferRelayToPara } from './transferRelayToPara'
@@ -57,11 +57,11 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   if (isRelayChain(origin)) {
     if (destination === 'Ethereum') {
-      throw new Error('Transfers from relay chain to Ethereum are not supported.')
+      throw new InvalidParameterError('Transfers from relay chain to Ethereum are not supported.')
     }
 
     if (!asset) {
-      throw new Error('Asset is required for relay chain to relay chain transfers.')
+      throw new InvalidParameterError('Asset is required for relay chain to relay chain transfers.')
     }
 
     const isLocalTransfer = origin === destination

@@ -16,6 +16,7 @@ import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { DOT_MULTILOCATION } from '../../constants'
 import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
@@ -216,6 +217,28 @@ describe('AssetHubPolkadot', () => {
   })
 
   describe('handleEthBridgeNativeTransfer', () => {
+    it('should throw an error if the senderAddress is not provided', async () => {
+      const input = {
+        ...mockInput,
+        senderAddress: undefined
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      await expect(assetHub.handleEthBridgeNativeTransfer(input)).rejects.toThrow(
+        'Sender address is required for transfers to Ethereum'
+      )
+    })
+
+    it('should throw if the address is multi-location', async () => {
+      const input = {
+        ...mockInput,
+        address: DOT_MULTILOCATION
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      await expect(assetHub.handleEthBridgeNativeTransfer(input)).rejects.toThrow(
+        'Multi-location address is not supported for Ethereum transfers'
+      )
+    })
+
     it('should throw an error if the address is not a valid Ethereum address', async () => {
       vi.mocked(ethers.isAddress).mockReturnValue(false)
 

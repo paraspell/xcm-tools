@@ -1,5 +1,5 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
-import { dryRunOrigin } from '@paraspell/sdk';
+import { dryRunOrigin, InvalidParameterError } from '@paraspell/sdk';
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 
@@ -20,7 +20,7 @@ export const calculateTxFeeDryRun = async (
   });
 
   if (!result.success) {
-    throw new Error(
+    throw new InvalidParameterError(
       `Failed to calculate fee using dry run. Node: ${node} Error: ${result.failureReason}`,
     );
   }

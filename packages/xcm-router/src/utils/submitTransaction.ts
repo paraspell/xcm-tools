@@ -1,4 +1,4 @@
-import type { TPapiTransaction } from '@paraspell/sdk';
+import { InvalidParameterError, type TPapiTransaction } from '@paraspell/sdk';
 import { InvalidTxError, type PolkadotSigner, type TxFinalizedPayload } from 'polkadot-api';
 
 export const submitTransaction = async (
@@ -18,7 +18,7 @@ export const submitTransaction = async (
             const errorMsg = event.dispatchError?.value
               ? JSON.stringify(event.dispatchError.value)
               : 'Transaction failed';
-            reject(new Error(errorMsg));
+            reject(new InvalidParameterError(errorMsg));
           } else {
             resolve(event);
           }
@@ -28,9 +28,9 @@ export const submitTransaction = async (
         if (error instanceof InvalidTxError) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const typedErr = error.error;
-          reject(new Error(`Invalid transaction: ${JSON.stringify(typedErr)}`));
+          reject(new InvalidParameterError(`Invalid transaction: ${JSON.stringify(typedErr)}`));
         } else {
-          reject(error instanceof Error ? error : new Error(String(error)));
+          reject(error instanceof Error ? error : new InvalidParameterError(String(error)));
         }
       },
     });

@@ -14,6 +14,7 @@ vi.mock('@paraspell/sdk', () => ({
   findAsset: vi.fn(),
   hasSupportForAsset: vi.fn(),
   determineRelayChain: vi.fn(),
+  InvalidParameterError: class extends Error {},
 }));
 
 vi.mock('../assets', () => ({

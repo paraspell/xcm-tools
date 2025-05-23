@@ -3,6 +3,7 @@
 import type { TPallet } from '@paraspell/pallets'
 import { isTMultiLocation } from '@paraspell/sdk-common'
 
+import { InvalidParameterError } from '../../errors'
 import type {
   TSerializedApiCall,
   TXTokensCurrencySelection,
@@ -33,7 +34,7 @@ class XTokensTransferImpl {
 
     const isMultiLocationDestination = typeof destination === 'object'
     if (isMultiLocationDestination) {
-      throw new Error(
+      throw new InvalidParameterError(
         'Multilocation destinations are not supported for specific transfer you are trying to create. In special cases such as xTokens or xTransfer pallet try using address multilocation instead (for both destination and address in same multilocation set (eg. X2 - Parachain, Address). For further assistance please open issue in our repository.'
       )
     }

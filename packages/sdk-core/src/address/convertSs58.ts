@@ -17,7 +17,7 @@ const ALLOWED_PUBKEY_BYTES = new Set([32, 33])
 
 export const deriveAccountId = (raw: Uint8Array): Uint8Array => {
   if (!ALLOWED_PUBKEY_BYTES.has(raw.length)) {
-    throw new Error('public key length is invalid')
+    throw new InvalidParameterError('public key length is invalid')
   }
   return raw.length === 33 ? blake2b256(raw) : raw
 }
@@ -38,7 +38,7 @@ const networkToBytes = (net: number): Uint8Array => {
 
 export const encodeSs58 = (payload: Uint8Array, network: number): string => {
   if (!VALID_ADDR_PAYLOAD.has(payload.length)) {
-    throw new Error('unexpected payload length for SS58 address')
+    throw new InvalidParameterError('unexpected payload length for SS58 address')
   }
 
   const netBytes = networkToBytes(network)

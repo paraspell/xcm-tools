@@ -1,3 +1,5 @@
+import { InvalidParameterError } from '@paraspell/sdk';
+
 import { type TTransferOptions } from '../types';
 import { buildTransactions } from './buildTransactions';
 import { executeRouterPlan } from './executeRouterPlan';
@@ -44,11 +46,11 @@ export const transfer = async (initialOptions: TTransferOptions): Promise<void> 
   validateTransferOptions(initialOptions);
 
   if (evmSigner !== undefined && evmSenderAddress === undefined) {
-    throw new Error('evmSenderAddress is required when evmSigner is provided');
+    throw new InvalidParameterError('evmSenderAddress is required when evmSigner is provided');
   }
 
   if (evmSenderAddress !== undefined && evmSigner === undefined) {
-    throw new Error('evmSigner is required when evmSenderAddress is provided');
+    throw new InvalidParameterError('evmSigner is required when evmSenderAddress is provided');
   }
 
   if (exchangeNode === undefined) {

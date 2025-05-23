@@ -1,6 +1,7 @@
 import { findAssetForNodeOrThrow } from '@paraspell/assets'
 import { getDefaultPallet } from '@paraspell/pallets'
 
+import { InvalidParameterError } from '../../../errors'
 import type { TGetBalanceForeignOptions } from '../../../types/TBalance'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
@@ -23,7 +24,7 @@ export const getBalanceForeignInternal = async <TApi, TRes>({
     return getBalanceForeignPolkadotXcm(api, node, address, asset)
   }
 
-  throw new Error('Unsupported pallet')
+  throw new InvalidParameterError('Unsupported pallet')
 }
 
 export const getBalanceForeign = async <TApi, TRes>(

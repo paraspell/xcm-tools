@@ -5,6 +5,7 @@ import {
   isAssetEqual
 } from '@paraspell/assets'
 
+import { InvalidParameterError } from '../../errors'
 import { getOriginXcmFee } from '../../transfer'
 import { resolveFeeAsset } from '../../transfer/utils/resolveFeeAsset'
 import type { TGetTransferableAmountOptions } from '../../types/TBalance'
@@ -38,7 +39,9 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
   const ed = getExistentialDeposit(node, currency)
 
   if (ed === null) {
-    throw new Error(`Cannot get existential deposit for currency ${JSON.stringify(currency)}.`)
+    throw new InvalidParameterError(
+      `Cannot get existential deposit for currency ${JSON.stringify(currency)}.`
+    )
   }
 
   const edBN = BigInt(ed)
@@ -64,7 +67,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
     })
 
     if (fee === undefined) {
-      throw new Error(
+      throw new InvalidParameterError(
         `Cannot get origin xcm fee for currency ${JSON.stringify(currency)} on node ${node}.`
       )
     }

@@ -23,7 +23,12 @@ import {
 
 import { Builder } from '../builder'
 import { ASSET_HUB_EXECUTION_FEE, DOT_MULTILOCATION } from '../constants'
-import { BridgeHaltedError, DryRunFailedError, InvalidAddressError } from '../errors'
+import {
+  BridgeHaltedError,
+  DryRunFailedError,
+  InvalidAddressError,
+  InvalidParameterError
+} from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import {
   addXcmVersionHeader,
@@ -144,7 +149,7 @@ abstract class ParachainNode<TApi, TRes> {
       this.node !== 'Hydration' &&
       this.node !== destination
     ) {
-      throw new Error(
+      throw new InvalidParameterError(
         'Sending assets to Polimec is supported only from AssetHubPolkadot and Hydration'
       )
     }
@@ -370,11 +375,13 @@ abstract class ParachainNode<TApi, TRes> {
     }
 
     if (senderAddress === undefined) {
-      throw new Error('Sender address is required for transfers to Ethereum')
+      throw new InvalidParameterError('Sender address is required for transfers to Ethereum')
     }
 
     if (isTMultiLocation(address)) {
-      throw new Error('Multi-location address is not supported for Ethereum transfers')
+      throw new InvalidParameterError(
+        'Multi-location address is not supported for Ethereum transfers'
+      )
     }
 
     const ethMultiAsset = createMultiAsset(version, asset.amount, asset.multiLocation)
@@ -514,11 +521,13 @@ abstract class ParachainNode<TApi, TRes> {
     }
 
     if (senderAddress === undefined) {
-      throw new Error('Sender address is required for transfers to Ethereum')
+      throw new InvalidParameterError('Sender address is required for transfers to Ethereum')
     }
 
     if (isTMultiLocation(address)) {
-      throw new Error('Multi-location address is not supported for Ethereum transfers')
+      throw new InvalidParameterError(
+        'Multi-location address is not supported for Ethereum transfers'
+      )
     }
 
     const ethMultiAsset = createMultiAsset(version, asset.amount, asset.multiLocation)

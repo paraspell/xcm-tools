@@ -2,7 +2,12 @@ import { Wallet } from '@acala-network/sdk';
 import { FixedPointNumber } from '@acala-network/sdk-core';
 import { AcalaDex, AggregateDex } from '@acala-network/sdk-swap';
 import type { TNodePolkadotKusama } from '@paraspell/sdk';
-import { findAssetById, getNativeAssets, getOtherAssets } from '@paraspell/sdk';
+import {
+  findAssetById,
+  getNativeAssets,
+  getOtherAssets,
+  InvalidParameterError,
+} from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import { firstValueFrom } from 'rxjs';
 
@@ -40,7 +45,7 @@ export const getDexConfig = async (
         const formatted = typeof idVal === 'object' ? JSON.stringify(idVal) : idVal.toString();
         if (key.toLowerCase() !== 'erc20') {
           const sdkAsset = findAssetById(getOtherAssets(node), formatted);
-          if (!sdkAsset) throw new Error(`Asset not found: ${formatted}`);
+          if (!sdkAsset) throw new InvalidParameterError(`Asset not found: ${formatted}`);
           routerAsset = {
             symbol,
             assetId: sdkAsset.assetId,

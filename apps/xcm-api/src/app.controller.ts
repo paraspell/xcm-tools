@@ -11,6 +11,7 @@ export class AppController {
     if (process.env.NODE_ENV === 'production') {
       return 'Sentry test is only available in development mode.';
     }
+    // eslint-disable-next-line no-restricted-syntax
     throw new Error('Sentry test');
   }
 }

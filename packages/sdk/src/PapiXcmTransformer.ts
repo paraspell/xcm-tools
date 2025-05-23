@@ -3,11 +3,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { InvalidParameterError } from '@paraspell/sdk-core'
 import { FixedSizeBinary } from 'polkadot-api'
 
 export const checkAndConvertToNumberOrBigInt = (input: string) => {
   if (!/^-?\d+$/.test(input)) {
-    throw new Error('Invalid integer string')
+    throw new InvalidParameterError('Invalid integer string')
   }
 
   const bigIntValue = BigInt(input)

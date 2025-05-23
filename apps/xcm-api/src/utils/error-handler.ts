@@ -9,12 +9,15 @@ import {
   DuplicateAssetIdError,
   IncompatibleNodesError,
   InvalidCurrencyError,
+  InvalidParameterError,
   NodeNotSupportedError,
   NoXCMSupportImplementedError,
   ScenarioNotSupportedError,
   TransferToAhNotSupported,
+  UnableToComputeError,
 } from '@paraspell/sdk';
 import { InvalidAddressError } from '@paraspell/sdk';
+import { SmallAmountError } from '@paraspell/xcm-router';
 
 // For these errors thrown inside SDK, throw a 400 BadRequestException in API
 // Otherwise throw 500 InternalServerErrorException
@@ -30,6 +33,9 @@ const sdkErrors = [
   BridgeHaltedError,
   DryRunFailedError,
   TransferToAhNotSupported,
+  InvalidParameterError,
+  UnableToComputeError,
+  SmallAmountError,
 ];
 
 type SdkErrorConstructors = (typeof sdkErrors)[number];

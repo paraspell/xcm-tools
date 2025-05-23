@@ -351,6 +351,42 @@ describe('ParachainNode', () => {
     })
   })
 
+  it('should throw if senderAddress is not provided', async () => {
+    const options = {
+      api: {
+        accountToHex: vi.fn(),
+        createApiForNode: vi.fn(),
+        callTxMethod: vi.fn(),
+        getFromRpc: vi.fn(),
+        clone: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>,
+      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
+      senderAddress: undefined
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+    await expect(node.exposeTransferToEthereum(options)).rejects.toThrowError(
+      'Sender address is required'
+    )
+  })
+
+  it('should throw if the address is multi-location', async () => {
+    const options = {
+      api: {
+        accountToHex: vi.fn(),
+        createApiForNode: vi.fn(),
+        callTxMethod: vi.fn(),
+        getFromRpc: vi.fn(),
+        clone: vi.fn()
+      } as unknown as IPolkadotApi<unknown, unknown>,
+      asset: { symbol: 'WETH', assetId: '', multiLocation: {}, amount: '100' },
+      senderAddress: '0x456',
+      address: DOT_MULTILOCATION
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
+    await expect(node.exposeTransferToEthereum(options)).rejects.toThrowError(
+      'Multi-location address is not supported for Ethereum transfers'
+    )
+  })
+
   it('should perform eth asset transfer with deposit asset only instruction', async () => {
     const options = {
       api: {

@@ -1,4 +1,10 @@
-import { determineRelayChain, findAsset, hasSupportForAsset, type TNode } from '@paraspell/sdk';
+import {
+  determineRelayChain,
+  findAsset,
+  hasSupportForAsset,
+  InvalidParameterError,
+  type TNode,
+} from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import type { PolkadotClient } from 'polkadot-api';
 
@@ -28,13 +34,13 @@ export const selectBestExchangeCommon = async <
   const assetFromOrigin = from ? findAsset(from, currencyFrom, null) : undefined;
 
   if (from && !assetFromOrigin) {
-    throw new Error(
+    throw new InvalidParameterError(
       `Currency from ${JSON.stringify(options.currencyFrom)} not found in ${options.from}.`,
     );
   }
 
   if ('id' in currencyTo) {
-    throw new Error(
+    throw new InvalidParameterError(
       'Cannot select currencyTo by ID when auto-selecting is enabled. Please specify currencyTo by symbol or multi-location.',
     );
   }
@@ -103,13 +109,13 @@ export const selectBestExchangeCommon = async <
   }
   if (bestExchange === undefined) {
     if (!triedAnyExchange && errors.size === 0) {
-      throw new Error(
+      throw new InvalidParameterError(
         `No exchange found that supports asset pair: ` +
           `${JSON.stringify(assetFromOrigin?.symbol)} -> ${JSON.stringify('symbol' in currencyTo ? currencyTo.symbol : '')}.`,
       );
     }
 
-    throw new Error(
+    throw new InvalidParameterError(
       `Could not select best exchange automatically. Please specify one manually. Errors: \n\n${Array.from(
         errors.entries(),
       )

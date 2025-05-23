@@ -1,7 +1,7 @@
 import { getExistentialDeposit, normalizeSymbol } from '@paraspell/assets'
 import { findAssetOnDestOrThrow } from '@paraspell/assets'
 
-import { DryRunFailedError, UnableToComputeError } from '../../../errors'
+import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
 import type { TVerifyEdOnDestinationOptions } from '../../../types'
 import { validateAddress } from '../../../utils'
@@ -31,7 +31,9 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
   const ed = getExistentialDeposit(destination, destCurrency)
 
   if (ed === null) {
-    throw new Error(`Cannot get existential deposit for currency ${JSON.stringify(currency)}`)
+    throw new InvalidParameterError(
+      `Cannot get existential deposit for currency ${JSON.stringify(currency)}`
+    )
   }
 
   const edBN = BigInt(ed)
@@ -59,7 +61,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
   })
 
   if (destFee === undefined) {
-    throw new Error(
+    throw new InvalidParameterError(
       `Cannot get destination xcm fee for currency ${JSON.stringify(currency)} on node ${destination}.`
     )
   }

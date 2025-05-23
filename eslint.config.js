@@ -105,5 +105,29 @@ export default tseslint.config(
         ...globals.browser,
       },
     },
+  },
+  {
+    files: ["apps/xcm-api/**/*.{ts,tsx}", "packages/*/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "NewExpression[callee.name='Error']",
+          message:
+            'Using plain "new Error()" is forbidden in this project. Please use a specific error class that extends Error. Do not forget to handle it in the XCM-API afterwards.',
+        },
+        {
+          selector: "CallExpression[callee.name='Error']",
+          message:
+            'Calling "Error()" directly is forbidden in this project). Please use a specific error class that extends Error. Do not forget to handle it in the XCM-API afterwards.',
+        },
+      ],
+    },
+  },
+  {
+    files: ["apps/xcm-api/**/*.test.ts", "packages/*/**/*.test.ts"],
+    rules: {
+      "no-restricted-syntax": "off",
+    },
   }
 );

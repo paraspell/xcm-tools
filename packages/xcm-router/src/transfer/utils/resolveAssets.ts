@@ -1,4 +1,4 @@
-import { findAsset, hasSupportForAsset } from '@paraspell/sdk';
+import { findAsset, hasSupportForAsset, InvalidParameterError } from '@paraspell/sdk';
 
 import { getExchangeAsset, getExchangeAssetByOriginAsset } from '../../assets';
 import type ExchangeNode from '../../dexNodes/DexNode';
@@ -19,7 +19,9 @@ export const resolveAssets = (
   const assetFromOrigin = originSpecified ? findAsset(from, currencyFrom, dex.node) : undefined;
 
   if (originSpecified && !assetFromOrigin) {
-    throw new Error(`Currency from ${JSON.stringify(currencyFrom)} not found in ${from}.`);
+    throw new InvalidParameterError(
+      `Currency from ${JSON.stringify(currencyFrom)} not found in ${from}.`,
+    );
   }
 
   const assetFromExchange =
@@ -28,7 +30,7 @@ export const resolveAssets = (
       : getExchangeAsset(dex.node, dex.exchangeNode, currencyFrom);
 
   if (!assetFromExchange) {
-    throw new Error(
+    throw new InvalidParameterError(
       `Currency from ${JSON.stringify(currencyFrom)} not found in ${dex.exchangeNode}.`,
     );
   }
@@ -36,11 +38,15 @@ export const resolveAssets = (
   const assetTo = getExchangeAsset(dex.node, dex.exchangeNode, currencyTo);
 
   if (!assetTo) {
-    throw new Error(`Currency to ${JSON.stringify(currencyTo)} not found in ${dex.exchangeNode}.`);
+    throw new InvalidParameterError(
+      `Currency to ${JSON.stringify(currencyTo)} not found in ${dex.exchangeNode}.`,
+    );
   }
 
   if (destinationSpecified && !hasSupportForAsset(to, assetTo.symbol)) {
-    throw new Error(`Currency to ${JSON.stringify(currencyTo)} not supported by ${to}.`);
+    throw new InvalidParameterError(
+      `Currency to ${JSON.stringify(currencyTo)} not supported by ${to}.`,
+    );
   }
 
   return {
