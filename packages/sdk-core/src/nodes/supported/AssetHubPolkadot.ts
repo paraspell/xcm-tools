@@ -430,7 +430,7 @@ class AssetHubPolkadot<TApi, TRes>
   }
 
   private async handleExecuteTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
-    const { api, senderAddress, asset } = input
+    const { api, senderAddress, asset, feeAsset } = input
 
     if (!senderAddress) {
       throw new InvalidParameterError('Please provide senderAddress')
@@ -454,35 +454,18 @@ class AssetHubPolkadot<TApi, TRes>
       node: this.node,
       tx: dummyTx,
       address: senderAddress,
-      isFeeAsset: false
+      isFeeAsset: !!feeAsset
     })
 
     if (!dryRunResult.success) {
-      throw new DryRunFailedError(`Dry run failed: ${dryRunResult.failureReason}`)
+      throw new DryRunFailedError(dryRunResult.failureReason)
     }
 
     if (!dryRunResult.weight) {
-      throw new DryRunFailedError('Dry run failed: weight not found')
+      throw new DryRunFailedError('weight not found')
     }
 
-    const feeDotShifted = dryRunResult.fee / 10n
-
-    const toMl = transformMultiLocation(asset.multiLocation as TMultiLocation)
-    const feeConverted = await api.quoteAhPrice(DOT_MULTILOCATION, toMl, feeDotShifted)
-
-    if (!feeConverted) {
-      throw new InvalidParameterError(`Pool DOT -> ${asset.symbol} not found.`)
-    }
-
-    if (BigInt(asset.amount) - feeConverted < 0) {
-      throw new InvalidParameterError(
-        `Insufficient balance. Fee: ${feeConverted}, Amount: ${asset.amount}`
-      )
-    }
-
-    const feeConvertedPadded = (feeConverted * 3n) / 2n // increases fee by 50%
-
-    return createExecuteXcm(input, dryRunResult.weight, feeConvertedPadded)
+    return createExecuteXcm(input, dryRunResult.weight, dryRunResult.fee)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

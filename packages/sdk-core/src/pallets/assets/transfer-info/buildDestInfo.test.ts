@@ -132,19 +132,22 @@ describe('buildDestInfo', () => {
   })
 
   it('should handle Ethereum destination correctly', async () => {
+    const ASSET_HUB_FEE = BigInt('20000000')
     const ethOptions = {
       ...baseOptions,
-      api: mockApi,
       destination: 'Ethereum' as TNodeWithRelayChains,
       destAsset: { symbol: 'USDT', assetId: 'usdtContractAddress', decimals: 6 } as TAsset,
       currency: { symbol: 'USDT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
       destFeeDetail: { fee: DEFAULT_FEE, currency: 'ETH' } as TXcmFeeDetail,
-      assetHubFee: BigInt('20000000')
+      assetHubFee: ASSET_HUB_FEE
     }
-    vi.mocked(getNativeAssetSymbol).mockReturnValue('ETH')
+
+    const destBalanceEthAsset = BigInt('60000000000')
+    const destBalanceNativeFee = BigInt('100000000000000000')
+
     vi.mocked(getEthErc20Balance)
-      .mockResolvedValueOnce(DEFAULT_BALANCE)
-      .mockResolvedValueOnce(BigInt('100000000000000000'))
+      .mockResolvedValueOnce(destBalanceEthAsset)
+      .mockResolvedValueOnce(destBalanceNativeFee)
 
     const result = await buildDestInfo(ethOptions)
 
@@ -152,22 +155,27 @@ describe('buildDestInfo', () => {
     expect(getEthErc20Balance).toHaveBeenCalledWith({ symbol: 'USDT' }, ethOptions.address)
     expect(getEthErc20Balance).toHaveBeenCalledWith({ symbol: 'ETH' }, ethOptions.address)
 
-    const expectedDestAmount = BigInt(ethOptions.currency.amount)
+    const initialDestAmount = ethOptions.isFeeAssetAh
+      ? BigInt(ethOptions.currency.amount) - ethOptions.originFee
+      : BigInt(ethOptions.currency.amount)
+    const effectiveAmountForBalance = initialDestAmount - ASSET_HUB_FEE
+
     const expectedSufficient =
-      expectedDestAmount - (ethOptions.destFeeDetail.fee ?? 0n) >
-      (DEFAULT_BALANCE < BigInt(DEFAULT_ED) ? BigInt(DEFAULT_ED) : 0)
+      effectiveAmountForBalance >
+      (destBalanceEthAsset < BigInt(DEFAULT_ED) ? BigInt(DEFAULT_ED) : 0n)
     expect(result.receivedCurrency.sufficient).toBe(expectedSufficient)
 
-    const expectedBalanceAfter = DEFAULT_BALANCE + expectedDestAmount
+    const expectedBalanceAfter = destBalanceEthAsset + effectiveAmountForBalance
     expect(result.receivedCurrency.balanceAfter).toBe(expectedBalanceAfter)
 
-    const expectedReceived = expectedBalanceAfter - DEFAULT_BALANCE - ethOptions.assetHubFee
+    const expectedReceived = effectiveAmountForBalance
     expect(result.receivedCurrency.receivedAmount).toBe(expectedReceived)
 
     expect(result.xcmFee.currencySymbol).toBe('ETH')
-    expect(result.xcmFee.balance).toBe(BigInt('100000000000000000'))
-    const expectedFeeBalanceAfter =
-      BigInt('100000000000000000') - (ethOptions.destFeeDetail.fee ?? 0n)
+    expect(result.xcmFee.fee).toBe(DEFAULT_FEE)
+    expect(result.xcmFee.balance).toBe(destBalanceNativeFee)
+
+    const expectedFeeBalanceAfter = destBalanceNativeFee - (ethOptions.destFeeDetail.fee as bigint)
     expect(result.xcmFee.balanceAfter).toBe(expectedFeeBalanceAfter)
   })
 

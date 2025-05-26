@@ -86,6 +86,8 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
 
   const {
     origin: { dryRunError },
+    assetHub: assetHubFeeResult,
+    bridgeHub: bridgeHubFeeResult,
     destination: { fee: destFee, currency: destFeeCurrency, dryRunError: destDryRunError }
   } = xcmFeeResult
 
@@ -97,6 +99,14 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
 
   if (dryRunError) {
     throw new DryRunFailedError(dryRunError, 'origin')
+  }
+
+  const hopDryRunError = assetHubFeeResult?.dryRunError || bridgeHubFeeResult?.dryRunError
+  if (hopDryRunError) {
+    throw new DryRunFailedError(
+      hopDryRunError,
+      assetHubFeeResult?.dryRunError ? 'assetHub' : 'bridgeHub'
+    )
   }
 
   if (destDryRunError) {

@@ -42,7 +42,7 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
   const destinationFee =
     destination === 'Ethereum'
       ? 0n
-      : await getReverseTxFee({ ...options, destination }, currencyInput)
+      : await getReverseTxFee({ ...options, api: destApi, destination }, currencyInput)
 
   const destFeeDetails = {
     fee: destinationFee,

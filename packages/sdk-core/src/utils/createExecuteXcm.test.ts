@@ -112,7 +112,7 @@ describe('createExecuteXcm', () => {
     expect(buyExecution.fees.id).toBe('transformedLocation')
     expect(buyExecution.fees.fun).toEqual({ Fungible: executionFee })
     expect(buyExecution.weight_limit).toEqual({
-      Limited: { ref_time: 100n, proof_size: 0n }
+      Limited: { ref_time: 150n, proof_size: 0n }
     })
     const depositReserveAsset = message[2].DepositReserveAsset
     expect(depositReserveAsset.assets.Definite[0]).toEqual({
@@ -123,7 +123,7 @@ describe('createExecuteXcm', () => {
     expect(depositReserveAsset.xcm).toHaveLength(2)
     expect(depositReserveAsset.xcm[0].BuyExecution.fees).toEqual({
       id: input.asset.multiLocation,
-      fun: { Fungible: 950n }
+      fun: { Fungible: 900n }
     })
     expect(depositReserveAsset.xcm[0].BuyExecution.weight_limit).toBe('Unlimited')
     expect(depositReserveAsset.xcm[1].DepositAsset.beneficiary).toBe('beneficiaryValue')
