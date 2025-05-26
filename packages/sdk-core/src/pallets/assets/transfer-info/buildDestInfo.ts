@@ -72,8 +72,14 @@ export const buildDestInfo = async <TApi, TRes>({
 
   const destAmount = isFeeAssetAh ? BigInt(currency.amount) - originFee : BigInt(currency.amount)
 
+  let effectiveAmountForBalance = destAmount
+  if (destination === 'Ethereum' && assetHubFee !== undefined) {
+    effectiveAmountForBalance -= assetHubFee
+  }
+
   const destBalanceSufficient =
-    destAmount - (destFeeDetail.fee as bigint) > (destBalance < edDestBn ? edDestBn : 0)
+    effectiveAmountForBalance - (destFeeDetail.fee as bigint) >
+    (destBalance < edDestBn ? edDestBn : 0)
 
   const destBalanceSufficientResult =
     destFeeDetail.currency !== destAsset.symbol && destination !== 'Ethereum'
@@ -85,7 +91,7 @@ export const buildDestInfo = async <TApi, TRes>({
   const destBalanceAfter =
     destBalance -
     (destFeeDetail.currency === destAsset.symbol ? (destFeeDetail.fee as bigint) : 0n) +
-    destAmount
+    effectiveAmountForBalance
 
   const destbalanceAfterResult =
     destFeeDetail.currency !== destAsset.symbol && destination !== 'Ethereum'
@@ -129,14 +135,6 @@ export const buildDestInfo = async <TApi, TRes>({
     }
   }
 
-  if (
-    destination === 'Ethereum' &&
-    assetHubFee &&
-    !(receivedAmount instanceof UnableToComputeError)
-  ) {
-    receivedAmount -= assetHubFee
-  }
-
   let destXcmFeeBalance: bigint
   const isDestFeeInNativeCurrency = destFeeDetail.currency === getNativeAssetSymbol(destination)
 
@@ -158,7 +156,7 @@ export const buildDestInfo = async <TApi, TRes>({
     ? destBalanceAfter
     : destXcmFeeBalance -
       (destFeeDetail.fee as bigint) +
-      (destFeeDetail.currency === destAsset.symbol ? BigInt(currency.amount) : 0n)
+      (destFeeDetail.currency === destAsset.symbol ? effectiveAmountForBalance : 0n)
 
   return {
     receivedCurrency: {

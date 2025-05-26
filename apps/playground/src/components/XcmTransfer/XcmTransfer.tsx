@@ -431,95 +431,6 @@ const XcmTransfer = () => {
     showSuccessNotification(notifId ?? '', 'Success', 'Dry run was successful');
   };
 
-  const performInfoOperation = async (
-    formValues: FormValuesTransformed,
-    selectedAccountAddress: string,
-    notifId: string | undefined,
-    submitType: TSubmitType,
-  ) => {
-    const Sdk =
-      apiType === 'PAPI'
-        ? await import('@paraspell/sdk')
-        : await import('@paraspell/sdk-pjs');
-
-    const Builder = Sdk.Builder as ((api?: TPjsApiOrUrl) => GeneralBuilder) &
-      ((api?: TPapiApiOrUrl) => GeneralBuilderPjs);
-
-    const { from, to, currencies, transformedFeeAsset, address, useApi } =
-      formValues;
-
-    const currencyInputs = currencies.map((c) => ({
-      ...determineCurrency(formValues, c),
-      amount: c.amount,
-    }));
-
-    const body = {
-      ...formValues,
-      senderAddress: selectedAccountAddress,
-      currency:
-        currencyInputs.length === 1
-          ? currencyInputs[0]
-          : { multiasset: currencyInputs },
-      feeAsset: determineFeeAsset(formValues, transformedFeeAsset),
-    };
-
-    let result;
-    let apiEndpoint = '';
-    let successMessage = '';
-
-    switch (submitType) {
-      case 'getTransferableAmount':
-        apiEndpoint = '/transferable-amount';
-        successMessage = 'Transferable amount retrieved';
-
-        break;
-      case 'verifyEdOnDestination':
-        apiEndpoint = '/verify-ed-on-destination';
-        successMessage = 'ED verification result retrieved';
-        break;
-      case 'getTransferInfo':
-        apiEndpoint = '/transfer-info';
-        successMessage = 'Transfer info retrieved';
-        break;
-      default:
-        throw new Error(`Unsupported info operation type: ${submitType}`);
-    }
-
-    if (useApi) {
-      result = await fetchFromApi(body, apiEndpoint, 'POST', true);
-    } else {
-      const builder = Builder()
-        .from(from)
-        .to(to)
-        .currency(
-          currencyInputs.length === 1
-            ? currencyInputs[0]
-            : { multiasset: currencyInputs as WithAmount<TCurrencyCore>[] },
-        )
-        .feeAsset(body.feeAsset)
-        .address(address)
-        .senderAddress(selectedAccountAddress)
-        .ahAddress(body.ahAddress);
-
-      switch (submitType) {
-        case 'getTransferableAmount':
-          result = await builder.getTransferableAmount();
-          break;
-        case 'verifyEdOnDestination':
-          result = await builder.verifyEdOnDestination();
-          break;
-        case 'getTransferInfo':
-          result = await builder.getTransferInfo();
-          break;
-      }
-    }
-
-    setOutput(JSON.stringify(result, replaceBigInt, 2));
-    openOutputAlert();
-    closeErrorAlert();
-    showSuccessNotification(notifId ?? '', 'Success', successMessage);
-  };
-
   const submit = async (
     formValues: FormValuesTransformed,
     submitType: TSubmitType,
@@ -617,20 +528,6 @@ const XcmTransfer = () => {
     try {
       if (submitType === 'dryRun') {
         await performDryRun(formValues, selectedAccount, notifId);
-        return;
-      }
-
-      if (
-        submitType === 'getTransferableAmount' ||
-        submitType === 'verifyEdOnDestination' ||
-        submitType === 'getTransferInfo'
-      ) {
-        await performInfoOperation(
-          formValues,
-          selectedAccount.address,
-          notifId,
-          submitType,
-        );
         return;
       }
 

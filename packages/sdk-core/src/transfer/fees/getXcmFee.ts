@@ -68,7 +68,7 @@ export const getXcmFee = async <TApi, TRes>({
         api: destApi,
         forwardedXcms: undefined, // force paymentInfo
         origin,
-        hopNode: origin,
+        prevNode: origin,
         destination,
         currency,
         address,
@@ -139,7 +139,7 @@ export const getXcmFee = async <TApi, TRes>({
         api: hopApi,
         forwardedXcms,
         origin,
-        hopNode: currentOrigin,
+        prevNode: currentOrigin,
         destination: nextChain as TNodeDotKsmWithRelayChains,
         currency,
         address,
@@ -173,11 +173,17 @@ export const getXcmFee = async <TApi, TRes>({
 
         // We failed before the true destination, use fallback via paymentInfo.
         if (!hopIsDestination) {
+          const destApi = api.clone()
+
+          if (destination !== 'Ethereum') {
+            await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
+          }
+
           const destFallback = await getDestXcmFee({
-            api: hopApi,
+            api: destApi,
             forwardedXcms: undefined,
             origin,
-            hopNode: currentOrigin,
+            prevNode: currentOrigin,
             destination,
             currency,
             address,

@@ -239,6 +239,22 @@ const XcmUtilsForm: FC<Props> = ({
     }
   }, [isNotParaToPara, currencyMap]);
 
+  // Ensure that the fee asset is valid when the form values change
+  useEffect(() => {
+    const currentFeeAssetIsCustom = form.values.feeAsset.isCustomCurrency;
+    const feeAssetOptionId = form.values.feeAsset.currencyOptionId;
+
+    if (!currentFeeAssetIsCustom && feeAssetOptionId) {
+      const isOptionStillValid = currencyOptions.some(
+        (option) => option.value === feeAssetOptionId,
+      );
+
+      if (!isOptionStillValid) {
+        form.setFieldValue('feeAsset.currencyOptionId', '');
+      }
+    }
+  }, [from, to, currencyOptions, form.values.feeAsset.isCustomCurrency]);
+
   useEffect(() => {
     setIsUseXcmApiSelected(useApi);
   }, [useApi]);

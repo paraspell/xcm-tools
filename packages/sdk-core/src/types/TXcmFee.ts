@@ -60,7 +60,7 @@ export type TGetOriginXcmFeeOptions<TApi, TRes> = WithApi<
 >
 
 export type TGetFeeForDestNodeBaseOptions = {
-  hopNode: TNodeDotKsmWithRelayChains
+  prevNode: TNodeDotKsmWithRelayChains
   origin: TNodeDotKsmWithRelayChains
   destination: TNodeWithRelayChains
   senderAddress: string
@@ -81,7 +81,7 @@ export type TGetFeeForDestNodeOptions<TApi, TRes> = WithApi<
 
 export type TGetReverseTxFeeOptions<TApi, TRes> = Omit<
   TGetFeeForDestNodeOptions<TApi, TRes>,
-  'destination' | 'disableFallback' | 'forwardedXcms' | 'asset' | 'originFee' | 'hopNode'
+  'destination' | 'disableFallback' | 'forwardedXcms' | 'asset' | 'originFee' | 'prevNode'
 > & {
   destination: TNodeDotKsmWithRelayChains
 }

@@ -59,7 +59,7 @@ export const createExecuteXcm = <TApi, TRes>(
               },
               weight_limit: {
                 Limited: {
-                  ref_time: 100n,
+                  ref_time: 150n,
                   proof_size: 0n
                 }
               }
@@ -84,7 +84,7 @@ export const createExecuteXcm = <TApi, TRes>(
                     fees: {
                       id: asset.multiLocation,
                       fun: {
-                        Fungible: amountWithoutFee
+                        Fungible: amountWithoutFee - executionFee
                       }
                     },
                     weight_limit: 'Unlimited'

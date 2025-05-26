@@ -8,10 +8,10 @@ export class DryRunFailedError extends Error {
    * @param reason - The reason why the dry run failed.
    * @param dryRunType - Optional. Specifies if the error is related to the 'origin' or 'destination' dry run.
    */
-  constructor(reason: string, dryRunType?: 'origin' | 'destination') {
+  constructor(reason: string, dryRunType?: 'origin' | 'destination' | 'assetHub' | 'bridgeHub') {
     let message = `Dry run failed: ${reason}`
     if (dryRunType) {
-      message = `Dry run ${dryRunType} failed: ${reason}`
+      message = `Dry run on ${dryRunType} failed: ${reason}`
     }
     super(message)
     this.name = 'DryRunFailedError'

@@ -4,7 +4,7 @@ import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
-import { UnableToComputeError } from '../../../errors'
+import { DryRunFailedError, UnableToComputeError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
 import type { TGetXcmFeeResult, TVerifyEdOnDestinationOptions } from '../../../types'
 import { validateAddress } from '../../../utils'
@@ -67,6 +67,48 @@ describe('verifyEdOnDestinationInternal', () => {
       if (!symbol) return ''
       return symbol.toUpperCase()
     })
+  })
+
+  it('should throw DryRunFailedError if assetHub dryRunError occurs', async () => {
+    const hopError = 'AssetHub dry run failed'
+    vi.mocked(getXcmFee).mockResolvedValue({
+      origin: { dryRunError: undefined },
+      destination: { fee: BigInt('1000000000'), currency: 'DOT', dryRunError: undefined },
+      assetHub: { fee: BigInt('500000000'), dryRunError: hopError }
+    } as TGetXcmFeeResult)
+
+    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
+      new DryRunFailedError(hopError, 'assetHub')
+    )
+  })
+
+  it('should throw DryRunFailedError if bridgeHub dryRunError occurs and assetHub error is undefined', async () => {
+    const hopError = 'BridgeHub dry run failed'
+    vi.mocked(getXcmFee).mockResolvedValue({
+      origin: { dryRunError: undefined },
+      destination: { fee: BigInt('1000000000'), currency: 'DOT', dryRunError: undefined },
+      assetHub: { fee: BigInt('500000000'), dryRunError: undefined },
+      bridgeHub: { fee: BigInt('200000000'), dryRunError: hopError }
+    } as TGetXcmFeeResult)
+
+    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
+      new DryRunFailedError(hopError, 'bridgeHub')
+    )
+  })
+
+  it('should prioritize assetHub dryRunError if both assetHub and bridgeHub errors exist', async () => {
+    const assetHubError = 'AssetHub specific dry run failed'
+    const bridgeHubError = 'BridgeHub also failed but should be ignored'
+    vi.mocked(getXcmFee).mockResolvedValue({
+      origin: { dryRunError: undefined },
+      destination: { fee: BigInt('1000000000'), currency: 'DOT', dryRunError: undefined },
+      assetHub: { fee: BigInt('500000000'), dryRunError: assetHubError },
+      bridgeHub: { fee: BigInt('200000000'), dryRunError: bridgeHubError }
+    } as TGetXcmFeeResult)
+
+    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
+      new DryRunFailedError(assetHubError, 'assetHub')
+    )
   })
 
   it('should return true if amount after fee is greater than ED when balance is less than ED', async () => {

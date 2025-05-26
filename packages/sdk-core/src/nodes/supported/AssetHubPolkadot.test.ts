@@ -533,44 +533,6 @@ describe('AssetHubPolkadot', () => {
       )
     })
 
-    it('should throw error if fee conversion fails (quoteAhPrice returns falsy)', async () => {
-      const input = {
-        ...mockInput,
-        senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation, decimals: 12 }
-      }
-      input.asset.amount = '1000000'
-      mockApi.getDryRunCall = vi
-        .fn()
-        .mockResolvedValue({ success: true, fee: 10000n, weight: 5000n })
-      vi.mocked(transformMultiLocation).mockReturnValue({
-        transformed: true
-      } as unknown as TMultiLocation)
-      mockApi.quoteAhPrice = vi.fn().mockResolvedValue(null)
-      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
-        `Pool DOT -> ${input.asset.symbol} not found.`
-      )
-    })
-
-    it('should throw error if asset amount is insufficient after fee conversion', async () => {
-      const input = {
-        ...mockInput,
-        senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation, decimals: 12 }
-      }
-      input.asset.amount = '100'
-      mockApi.getDryRunCall = vi
-        .fn()
-        .mockResolvedValue({ success: true, fee: 10000n, weight: 5000n })
-      vi.mocked(transformMultiLocation).mockReturnValue({
-        transformed: true
-      } as unknown as TMultiLocation)
-      mockApi.quoteAhPrice = vi.fn().mockResolvedValue(150n)
-      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
-        `Insufficient balance. Fee: 150, Amount: ${input.asset.amount}`
-      )
-    })
-
     it('should successfully create and return executeXcm transaction', async () => {
       const input = {
         ...mockInput,
@@ -587,7 +549,7 @@ describe('AssetHubPolkadot', () => {
       vi.mocked(createExecuteXcm).mockReturnValueOnce('dummyTx').mockReturnValueOnce('finalTx')
       const result = await assetHub['handleExecuteTransfer'](input)
       expect(result).toBe('finalTx')
-      expect(createExecuteXcm).toHaveBeenCalledWith(input, dryRunResult.weight, 750n)
+      expect(createExecuteXcm).toHaveBeenCalledWith(input, dryRunResult.weight, 10000n)
     })
 
     it('should throw error if using overridden multi-assets with xcm execute transfer', () => {

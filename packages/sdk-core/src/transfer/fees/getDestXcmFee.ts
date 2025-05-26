@@ -45,7 +45,7 @@ export const getDestXcmFee = async <TApi, TRes>(
   const {
     api,
     origin,
-    hopNode,
+    prevNode: hopNode,
     destination,
     currency,
     forwardedXcms,
