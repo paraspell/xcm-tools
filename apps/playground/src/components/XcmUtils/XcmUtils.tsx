@@ -23,6 +23,7 @@ import {
   isRelayChain,
   Native,
   Override,
+  replaceBigInt,
   type TMultiLocation,
   type TNodePolkadotKusama,
 } from '@paraspell/sdk';
@@ -33,7 +34,7 @@ import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks/useWallet';
 import type { TSubmitType } from '../../types';
-import { fetchFromApi, replaceBigInt } from '../../utils';
+import { fetchFromApi } from '../../utils';
 import {
   showErrorNotification,
   showLoadingNotification,

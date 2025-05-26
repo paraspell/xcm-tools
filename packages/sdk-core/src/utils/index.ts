@@ -22,5 +22,6 @@ export { generateAddressMultiLocationV4 } from './generateAddressMultiLocationV4
 export { getFees } from './getFees'
 export { getNode } from './getNode'
 export * from './multiLocation'
+export * from './replaceBigInt'
 export * from './resolveParaId'
 export * from './validateAddress'

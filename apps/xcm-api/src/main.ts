@@ -3,9 +3,9 @@ import './instrument.js';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import type { ExpressAdapter } from '@nestjs/platform-express';
+import { replaceBigInt } from '@paraspell/sdk';
 
 import { AppModule } from './app.module.js';
-import { replaceBigInt } from './utils/replaceBigInt.js';
 
 export const bootstrap = async () => {
   const app = await NestFactory.create(AppModule);

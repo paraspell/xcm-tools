@@ -672,7 +672,8 @@ describe('PolkadotJsApi', () => {
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
         { system: { Signed: address } },
-        mockExtrinsic
+        mockExtrinsic,
+        3
       )
 
       expect(result).toEqual({
@@ -721,7 +722,8 @@ describe('PolkadotJsApi', () => {
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
         { system: { Signed: address } },
-        mockExtrinsic
+        mockExtrinsic,
+        3
       )
 
       expect(result).toEqual({

@@ -15,7 +15,7 @@ import type {
   TPapiApiOrUrl,
   WithAmount,
 } from '@paraspell/sdk';
-import { BatchMode } from '@paraspell/sdk';
+import { BatchMode, replaceBigInt } from '@paraspell/sdk';
 import {
   Foreign,
   ForeignAbstract,
@@ -41,7 +41,6 @@ import type { TSubmitType } from '../../types';
 import {
   fetchFromApi,
   getTxFromApi,
-  replaceBigInt,
   submitTransaction,
   submitTransactionPapi,
 } from '../../utils';
