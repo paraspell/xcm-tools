@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.1.0...sdk-core-v10.1.1) (2025-05-26)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix getFee & getTransferInfo 🔧 ([aec9d3c](https://github.com/paraspell/xcm-tools/commit/aec9d3c9cd72d8ba8d1672aa98a72e87972371df))
+* **sdk-core:** Fix incorrect origin when calculating dest fee 🛠️ ([6acebf1](https://github.com/paraspell/xcm-tools/commit/6acebf148c437f1cd7e5885e9b17eb82cce1aaf6))
+
 ## [10.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.0.2...sdk-core-v10.1.0) (2025-05-26)
 
 
