@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-v10.1.0...sdk-v10.1.1) (2025-05-26)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix incorrect origin when calculating dest fee 🛠️ ([6acebf1](https://github.com/paraspell/xcm-tools/commit/6acebf148c437f1cd7e5885e9b17eb82cce1aaf6))
+
 ## [10.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-v10.0.2...sdk-v10.1.0) (2025-05-26)
 
 
