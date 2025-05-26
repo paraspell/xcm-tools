@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.1.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.0.2...sdk-core-v10.1.0) (2025-05-26)
+
+
+### Features
+
+* **sdk-core:** Enhance getTransferInfo ✨ ([bd568e0](https://github.com/paraspell/xcm-tools/commit/bd568e0a38d240224dea6adbc4791ad7a8674e26))
+
 ## [10.0.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.0.1...sdk-core-v10.0.2) (2025-05-23)
 
 
