@@ -7,12 +7,16 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TCurrencyCore, TMultiLocation } from '@paraspell/sdk';
+import {
+  replaceBigInt,
+  type TCurrencyCore,
+  type TMultiLocation,
+} from '@paraspell/sdk';
 import { useEffect, useState } from 'react';
 
 import { useWallet } from '../../hooks/useWallet';
 import type { TAssetsQuery } from '../../types';
-import { fetchFromApi, replaceBigInt } from '../../utils';
+import { fetchFromApi } from '../../utils';
 import { getApiEndpoint } from '../../utils/assets/apiMappings';
 import { callSdkFunc } from '../../utils/assets/sdkMappings';
 import { showErrorNotification } from '../../utils/notifications';

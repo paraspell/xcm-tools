@@ -68,6 +68,7 @@ export const getXcmFee = async <TApi, TRes>({
         api: destApi,
         forwardedXcms: undefined, // force paymentInfo
         origin,
+        hopNode: origin,
         destination,
         currency,
         address,
@@ -137,7 +138,8 @@ export const getXcmFee = async <TApi, TRes>({
       const hopResult = await getDestXcmFee({
         api: hopApi,
         forwardedXcms,
-        origin: currentOrigin,
+        origin,
+        hopNode: currentOrigin,
         destination: nextChain as TNodeDotKsmWithRelayChains,
         currency,
         address,
@@ -174,7 +176,8 @@ export const getXcmFee = async <TApi, TRes>({
           const destFallback = await getDestXcmFee({
             api: hopApi,
             forwardedXcms: undefined,
-            origin: nextChain as TNodeDotKsmWithRelayChains,
+            origin,
+            hopNode: currentOrigin,
             destination,
             currency,
             address,

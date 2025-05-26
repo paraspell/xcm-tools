@@ -12,12 +12,14 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
-import type { TAsset, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
 import {
   getOtherAssets,
   isForeignAsset,
+  replaceBigInt,
+  type TAsset,
   type TCurrencyInput,
-} from '@paraspell/sdk-pjs';
+  type TNodeDotKsmWithRelayChains,
+} from '@paraspell/sdk';
 import type {
   TExchangeInput,
   TExchangeNode,
@@ -38,11 +40,7 @@ import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
 import { API_URL } from '../../consts';
 import { useWallet } from '../../hooks/useWallet';
 import type { TRouterSubmitType } from '../../types';
-import {
-  fetchFromApi,
-  replaceBigInt,
-  submitTransactionPapi,
-} from '../../utils';
+import { fetchFromApi, submitTransactionPapi } from '../../utils';
 import {
   showErrorNotification,
   showLoadingNotification,

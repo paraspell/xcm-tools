@@ -388,7 +388,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       'AssetHubPolkadot',
       'Kusama',
       'Polkadot',
-      'Polimec'
+      'Polimec',
+      'Astar'
     ]
 
     const needsVersionParam = nodesRequiringVersionParam.includes(node)

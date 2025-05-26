@@ -274,7 +274,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
       'AssetHubPolkadot',
       'Kusama',
       'Polkadot',
-      'Polimec'
+      'Polimec',
+      'Astar'
     ]
 
     const needsVersionParam = nodesRequiringVersionParam.includes(node)

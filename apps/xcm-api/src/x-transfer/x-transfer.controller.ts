@@ -7,10 +7,10 @@ import {
   Request,
   UsePipes,
 } from '@nestjs/common';
+import { replaceBigInt } from '@paraspell/sdk';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { EventName } from '../analytics/EventName.js';
-import { replaceBigInt } from '../utils/replaceBigInt.js';
 import { ZodValidationPipe } from '../zod-validation-pipe.js';
 import {
   BatchXTransferDto,

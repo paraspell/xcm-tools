@@ -11,6 +11,7 @@ import { getParaId } from '../../nodes/config'
 import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
 import type { TFeeType } from '../../types'
 import { type TGetFeeForDestNodeOptions, Version } from '../../types'
+import { replaceBigInt } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getReverseTxFee } from './getReverseTxFee'
 
@@ -44,6 +45,7 @@ export const getDestXcmFee = async <TApi, TRes>(
   const {
     api,
     origin,
+    hopNode,
     destination,
     currency,
     forwardedXcms,
@@ -61,8 +63,11 @@ export const getDestXcmFee = async <TApi, TRes>(
     if (destination === 'Ethereum') return 0n
 
     const originAsset = findAsset(origin, currency, destination)
+
     if (!originAsset) {
-      throw new InvalidCurrencyError(`Currency ${JSON.stringify(currency)} not found in ${origin}`)
+      throw new InvalidCurrencyError(
+        `Currency ${JSON.stringify(currency, replaceBigInt)} not found in ${origin}`
+      )
     }
 
     if (originAsset.multiLocation) {
@@ -90,7 +95,7 @@ export const getDestXcmFee = async <TApi, TRes>(
   }
 
   const dryRunResult = await api.getDryRunXcm({
-    originLocation: addXcmVersionHeader(createOriginLocation(origin, destination), Version.V4),
+    originLocation: addXcmVersionHeader(createOriginLocation(hopNode, destination), Version.V4),
     xcm: forwardedXcms[1][0],
     node: destination,
     origin,
