@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.1.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.1.3...sdk-core-v10.1.4) (2025-05-27)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix transfer info asset symbols 🔧 ([0337b31](https://github.com/paraspell/xcm-tools/commit/0337b31cf464937bda5f6eb1357767419744d13a))
+
 ## [10.1.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.1.2...sdk-core-v10.1.3) (2025-05-27)
 
 
