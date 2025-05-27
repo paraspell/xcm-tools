@@ -1,5 +1,13 @@
 # Changelog
 
+## [9.2.3](https://github.com/paraspell/xcm-tools/compare/sdk-v9.2.2...sdk-v9.2.3) (2025-05-27)
+
+
+### Bug Fixes
+
+* Fix PapiApi unit tests 🧪 ([acee317](https://github.com/paraspell/xcm-tools/commit/acee31714e196c70df911013e51995f633576454))
+* **sdk:** Handle dryRun version for all nodes ✨ ([fca33ab](https://github.com/paraspell/xcm-tools/commit/fca33abda8ef8540a662b1053aa45bc7de2f4dd9))
+
 ## [9.2.2](https://github.com/paraspell/xcm-tools/compare/sdk-v9.2.1...sdk-v9.2.2) (2025-05-20)
 
 
