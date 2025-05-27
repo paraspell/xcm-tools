@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.1.3](https://github.com/paraspell/xcm-tools/compare/sdk-v10.1.2...sdk-v10.1.3) (2025-05-27)
+
+
+### Bug Fixes
+
+* **sdk:** Handle dryRun version for all nodes ✨ ([21eb7bf](https://github.com/paraspell/xcm-tools/commit/21eb7bfe02685d609c0526b01e1de1a4ec1271f3))
+
 ## [10.1.2](https://github.com/paraspell/xcm-tools/compare/sdk-v10.1.1...sdk-v10.1.2) (2025-05-27)
 
 
