@@ -549,7 +549,7 @@ describe('AssetHubPolkadot', () => {
       vi.mocked(createExecuteXcm).mockReturnValueOnce('dummyTx').mockReturnValueOnce('finalTx')
       const result = await assetHub['handleExecuteTransfer'](input)
       expect(result).toBe('finalTx')
-      expect(createExecuteXcm).toHaveBeenCalledWith(input, dryRunResult.weight, 10000n)
+      expect(createExecuteXcm).toHaveBeenCalledWith(input, dryRunResult.weight, 12000n)
     })
 
     it('should throw error if using overridden multi-assets with xcm execute transfer', () => {

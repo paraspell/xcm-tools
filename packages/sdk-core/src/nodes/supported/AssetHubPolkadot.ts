@@ -465,7 +465,9 @@ class AssetHubPolkadot<TApi, TRes>
       throw new DryRunFailedError('weight not found')
     }
 
-    return createExecuteXcm(input, dryRunResult.weight, dryRunResult.fee)
+    const paddedFee = (dryRunResult.fee * 120n) / 100n
+
+    return createExecuteXcm(input, dryRunResult.weight, paddedFee)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
