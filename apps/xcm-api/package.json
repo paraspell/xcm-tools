@@ -12,7 +12,6 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "cross-env NODE_ENV=production node dist/main",
-    "lint:check": "eslint src",
     "lint": "eslint --fix src",
     "format:check": "prettier --check src",
     "format:write": "prettier --write src",
