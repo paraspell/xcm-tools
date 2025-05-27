@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import {
+  findAssetForNodeOrThrow,
+  findAssetOnDestOrThrow,
+  getNativeAssetSymbol
+} from '@paraspell/assets'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -245,6 +249,11 @@ export const getXcmFee = async <TApi, TRes>({
 
   intermediateFees.bridgeHub = processedBridgeHubData
 
+  const destCurrency =
+    destinationFeeType === 'dryRun'
+      ? findAssetOnDestOrThrow(origin, destination, currency).symbol
+      : getNativeAssetSymbol(destination)
+
   return {
     origin: {
       ...(originFee && { fee: originFee }),
@@ -256,7 +265,7 @@ export const getXcmFee = async <TApi, TRes>({
     destination: {
       ...(destinationFee !== undefined && { fee: destinationFee }),
       ...(destinationFeeType && { feeType: destinationFeeType }),
-      currency: destinationFeeType === 'dryRun' ? asset.symbol : getNativeAssetSymbol(destination),
+      currency: destCurrency,
       ...(destinationDryRunError && { dryRunError: destinationDryRunError })
     } as TXcmFeeDetail
   }
