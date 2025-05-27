@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.4](https://github.com/paraspell/xcm-tools/compare/xcm-api-v9.2.3...xcm-api-v9.2.4) (2025-05-27)
+
+
+### Bug Fixes
+
+* Fix xcm-api lint command ([b43f9a2](https://github.com/paraspell/xcm-tools/commit/b43f9a25c635640953a43c3f6e8c2c5c5449cc53))
+
 ## [9.2.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v9.2.2...xcm-api-v9.2.3) (2025-05-27)
 
 
