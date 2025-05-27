@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.6](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.5...xcm-analyser-v1.5.6) (2025-05-27)
+
+
+### Bug Fixes
+
+* **xcm-api:** Fix Here junction parsing 🔧 ([07731ee](https://github.com/paraspell/xcm-tools/commit/07731ee64bbc0cbecbc68a6ca1e82ab18d268689))
+
 ## [1.5.5](https://github.com/paraspell/xcm-tools/compare/xcm-analyser-v1.5.4...xcm-analyser-v1.5.5) (2025-04-30)
 
 
