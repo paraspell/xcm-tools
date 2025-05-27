@@ -403,12 +403,12 @@ abstract class ParachainNode<TApi, TRes> {
       .senderAddress(senderAddress)
       .dryRun()
 
-    if (!dryRunResult.origin.success) {
-      throw new DryRunFailedError(dryRunResult.origin.failureReason)
+    if (!dryRunResult.success) {
+      throw new DryRunFailedError(dryRunResult.failureReason)
     }
 
     // Pad fee by 50%
-    const dryRunFeePadded = (BigInt(dryRunResult.origin.fee) * BigInt(3)) / BigInt(2)
+    const dryRunFeePadded = (BigInt(dryRunResult.fee) * BigInt(3)) / BigInt(2)
 
     const destWithHeader = createVersionedDestination(scenario, version, destination, paraIdTo)
     const [_, dest] = extractVersionFromHeader(destWithHeader)

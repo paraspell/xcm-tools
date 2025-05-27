@@ -76,12 +76,7 @@ export type TDryRunNodeResultInternal = TDryRunNodeSuccess | TDryRunNodeFailure
 
 export type TDryRunNodeResult = (TDryRunNodeSuccess & { currency: string }) | TDryRunNodeFailure
 
-export type TDryRunResult = {
-  origin: TDryRunNodeResult
-  destination?: TDryRunNodeResult
-  assetHub?: TDryRunNodeResult
-  bridgeHub?: TDryRunNodeResult
-}
+export type TDryRunResult = TDryRunNodeResult
 
 export enum XTokensError {
   AssetHasNoReserve = 'AssetHasNoReserve',

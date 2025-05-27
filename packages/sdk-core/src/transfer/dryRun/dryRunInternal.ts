@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -38,9 +39,7 @@ export const dryRunInternal = async <TApi, TRes>(
   })
 
   if (!originDryRun.success) {
-    return {
-      origin: originDryRun
-    }
+    return originDryRun
   }
 
   const { forwardedXcms: initialForwardedXcms, destParaId: initialDestParaId } = originDryRun
@@ -129,27 +128,17 @@ export const dryRunInternal = async <TApi, TRes>(
     const ahApi = api.clone()
     await ahApi.init(assetHubNode, DRY_RUN_CLIENT_TIMEOUT_MS)
     const [bridgeFee] = await getParaEthTransferFees(ahApi)
+
     processedBridgeHubData = {
       ...intermediateFees.bridgeHub,
       fee: intermediateFees.bridgeHub.fee + bridgeFee
     }
   }
 
-  return {
-    origin: originDryRun.success
-      ? {
-          ...originDryRun,
-          currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(origin)
-        }
-      : originDryRun,
-    assetHub: intermediateFees.assetHub?.success
-      ? { ...intermediateFees.assetHub, currency: getNativeAssetSymbol(assetHubNode) }
-      : intermediateFees.assetHub,
-    bridgeHub: processedBridgeHubData?.success
-      ? { ...processedBridgeHubData, currency: getNativeAssetSymbol(bridgeHubNode) }
-      : processedBridgeHubData,
-    destination: destinationDryRun?.success
-      ? { ...destinationDryRun, currency: asset?.symbol as string }
-      : destinationDryRun
-  }
+  return originDryRun.success
+    ? {
+        ...originDryRun,
+        currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(origin)
+      }
+    : originDryRun
 }

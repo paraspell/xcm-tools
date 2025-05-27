@@ -27,13 +27,11 @@ describe('dryRun', () => {
     const node = 'Polkadot'
 
     const mockResult: TDryRunResult = {
-      origin: {
-        success: true,
-        fee: 1000n,
-        forwardedXcms: [],
-        destParaId: 0,
-        currency: 'DOT'
-      }
+      success: true,
+      fee: 1000n,
+      forwardedXcms: [],
+      destParaId: 0,
+      currency: 'DOT'
     }
 
     vi.mocked(dryRunInternal).mockResolvedValue(mockResult)

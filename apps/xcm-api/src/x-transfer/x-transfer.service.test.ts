@@ -19,12 +19,10 @@ import { XTransferService } from './x-transfer.service.js';
 const txHash = '0x123';
 const txHashBatch = '0x123456';
 const dryRunResult: TDryRunResult = {
-  origin: {
-    success: true,
-    fee: 1n,
-    forwardedXcms: [],
-    currency: 'DOT',
-  },
+  success: true,
+  fee: 1n,
+  forwardedXcms: [],
+  currency: 'DOT',
 };
 
 const feeResult: TGetXcmFeeResult = {

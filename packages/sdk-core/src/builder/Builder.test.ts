@@ -771,13 +771,11 @@ describe('Builder', () => {
 
     it('should dry run a normal transfer', async () => {
       const spy = vi.mocked(xcmPallet.dryRun).mockResolvedValue({
-        origin: {
-          success: true,
-          fee: 1000n,
-          forwardedXcms: [],
-          destParaId: 0,
-          currency: 'DOT'
-        }
+        success: true,
+        fee: 1000n,
+        forwardedXcms: [],
+        destParaId: 0,
+        currency: 'DOT'
       })
 
       const SENDER_ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
