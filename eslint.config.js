@@ -125,7 +125,11 @@ export default tseslint.config(
     },
   },
   {
-    files: ["apps/xcm-api/**/*.test.ts", "packages/*/**/*.test.ts"],
+    files: [
+      "apps/xcm-api/**/*.test.ts",
+      "packages/*/**/*.test.ts",
+      "packages/xcm-analyser/**/*.ts",
+    ],
     rules: {
       "no-restricted-syntax": "off",
     },
