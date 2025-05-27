@@ -513,12 +513,20 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     const isFeeAsset =
       origin === 'AssetHubPolkadot' && feeAsset && asset && isAssetEqual(feeAsset, asset)
 
-    const feeEvent =
+    const feeAssetFeeEvent =
       (isFeeAsset
         ? [...emitted].find(
-            event => event.type === 'ForeignAssets' && event.value.type === 'Issued'
+            event =>
+              (event.type === 'ForeignAssets' || event.type === 'Assets') &&
+              event.value.type === 'Issued'
           )
         : undefined) ??
+      (isFeeAsset
+        ? [...emitted].find(event => event.type === 'Tokens' && event.value.type === 'Deposited')
+        : undefined)
+
+    const feeEvent =
+      feeAssetFeeEvent ??
       (origin === 'Mythos' || (node === 'AssetHubPolkadot' && asset?.symbol !== 'DOT')
         ? reversedEvents.find(
             event => event.type === 'AssetConversion' && event.value.type === 'SwapCreditExecuted'
@@ -548,7 +556,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         ? feeEvent.value.value.amount_in
         : feeEvent.value.value.amount
 
-    if (isFeeAsset && feeEvent.type === 'ForeignAssets' && feeEvent.value.type === 'Issued') {
+    if (feeAssetFeeEvent) {
       fee = amount - originFee - feeEvent.value.value.amount
     }
 
