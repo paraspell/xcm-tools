@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.1.5](https://github.com/paraspell/xcm-tools/compare/sdk-v10.1.4...sdk-v10.1.5) (2025-05-27)
+
+
+### Bug Fixes
+
+* **sdk:** Fix destination fees when feeAsset is specified on AHP 🪄 ([b350d8c](https://github.com/paraspell/xcm-tools/commit/b350d8c6daf11053efac42c7fbd0539ba3fff30e))
+
 ## [10.1.4](https://github.com/paraspell/xcm-tools/compare/sdk-v10.1.3...sdk-v10.1.4) (2025-05-27)
 
 
