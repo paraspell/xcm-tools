@@ -1,7 +1,9 @@
-import type { TDryRunXcmBaseOptions } from '@paraspell/sdk-core'
+import type { TDryRunXcmBaseOptions, TNodeAssets } from '@paraspell/sdk-core'
 import {
   BatchMode,
   computeFeeFromDryRun,
+  getAssetsObject,
+  NodeNotSupportedError,
   type TMultiLocation,
   type TNodeDotKsmWithRelayChains,
   type TSerializedApiCall
@@ -11,6 +13,7 @@ import type { Codec, PolkadotClient, SS58String } from 'polkadot-api'
 import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } from 'polkadot-api'
 import type { JsonRpcProvider } from 'polkadot-api/dist/reexports/ws-provider_node'
 import { getWsProvider } from 'polkadot-api/ws-provider/node'
+import type { Mock } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PapiApi from './PapiApi'
@@ -57,7 +60,8 @@ vi.mock('@paraspell/sdk-core', async importOriginal => {
   return {
     ...(await importOriginal<typeof import('@paraspell/sdk-core')>()),
     computeFeeFromDryRun: vi.fn(),
-    createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient)
+    createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient),
+    getAssetsObject: vi.fn()
   }
 })
 
@@ -686,31 +690,266 @@ describe('PapiApi', () => {
   })
 
   describe('getDryRunCall', () => {
-    it('should return success with calculated fee', async () => {
-      const mockApiResponse = {
+    let dryRunApiCallMock: Mock
+    const DEFAULT_XCM_VERSION = 3
+    const testAddress = 'some_address'
+
+    const basePayloadMatcher = {
+      type: 'system',
+      value: { type: 'Signed', value: testAddress }
+    }
+
+    beforeEach(() => {
+      vi.mocked(getAssetsObject).mockImplementation(
+        (node: TNodeDotKsmWithRelayChains) =>
+          ({ supportsDryRunApi: node === 'Acala' ? false : true }) as TNodeAssets
+      )
+
+      dryRunApiCallMock = vi.fn()
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_call = dryRunApiCallMock
+
+      vi.mocked(computeFeeFromDryRun).mockReturnValue(500n)
+    })
+
+    it('should succeed on the first attempt if version is not needed', async () => {
+      const successResponse = {
         success: true,
         value: {
           execution_result: {
-            value: {
-              actual_weight: {
-                ref_time: 0n,
-                proof_size: 0n
+            success: true,
+            value: { actual_weight: { ref_time: 10n, proof_size: 20n } }
+          },
+          forwarded_xcms: []
+        }
+      }
+      dryRunApiCallMock.mockResolvedValue(successResponse)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        node: 'Moonbeam',
+        isFeeAsset: false
+      })
+
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
+      expect(dryRunApiCallMock).toHaveBeenCalledWith(
+        basePayloadMatcher,
+        mockTransaction.decodedCall
+      )
+      expect(result).toEqual({
+        success: true,
+        fee: 500n,
+        weight: { refTime: 10n, proofSize: 20n },
+        forwardedXcms: [],
+        destParaId: undefined
+      })
+    })
+
+    it('should retry with version and succeed if first attempt fails with VersionedConversionFailed', async () => {
+      const versionedConversionFailedResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: false,
+            value: { error: { value: { type: 'VersionedConversionFailed' } } }
+          }
+        }
+      }
+      const successResponseWithVersion = {
+        success: true,
+        value: {
+          execution_result: {
+            success: true,
+            value: { actual_weight: { ref_time: 30n, proof_size: 40n } }
+          },
+          forwarded_xcms: [
+            [
+              {
+                type: 'V4',
+                value: { interior: { type: 'Here' } }
               }
-            },
-            success: true
+            ]
+          ]
+        }
+      }
+
+      dryRunApiCallMock
+        .mockResolvedValueOnce(versionedConversionFailedResponse)
+        .mockResolvedValueOnce(successResponseWithVersion)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        node: 'AssetHubPolkadot',
+        isFeeAsset: false
+      })
+
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
+      expect(dryRunApiCallMock).toHaveBeenNthCalledWith(
+        1,
+        basePayloadMatcher,
+        mockTransaction.decodedCall
+      )
+      expect(dryRunApiCallMock).toHaveBeenNthCalledWith(
+        2,
+        basePayloadMatcher,
+        mockTransaction.decodedCall,
+        DEFAULT_XCM_VERSION
+      )
+      expect(result).toEqual({
+        success: true,
+        fee: 500n,
+        weight: { refTime: 30n, proofSize: 40n },
+        forwardedXcms: [{ type: 'V4', value: { interior: { type: 'Here' } } }],
+        destParaId: 0
+      })
+    })
+
+    it('should retry with version and still fail if retry attempt also fails', async () => {
+      const versionedConversionFailedResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: false,
+            value: { error: { value: { type: 'VersionedConversionFailed' } } }
+          }
+        }
+      }
+      const retryFailedResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: false,
+            value: { error: { value: { type: 'SomeOtherErrorAfterRetry' } } }
+          }
+        }
+      }
+
+      dryRunApiCallMock
+        .mockResolvedValueOnce(versionedConversionFailedResponse)
+        .mockResolvedValueOnce(retryFailedResponse)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        node: 'Kusama',
+        isFeeAsset: false
+      })
+
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
+      expect(dryRunApiCallMock).toHaveBeenNthCalledWith(
+        1,
+        basePayloadMatcher,
+        mockTransaction.decodedCall
+      )
+      expect(dryRunApiCallMock).toHaveBeenNthCalledWith(
+        2,
+        basePayloadMatcher,
+        mockTransaction.decodedCall,
+        DEFAULT_XCM_VERSION
+      )
+      expect(result).toEqual({ success: false, failureReason: 'SomeOtherErrorAfterRetry' })
+    })
+
+    it('should fail on the first attempt and not retry if error is not VersionedConversionFailed', async () => {
+      const otherErrorResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            success: false,
+            value: { error: { value: { type: 'NotVersionedConversion' } } }
+          }
+        }
+      }
+      dryRunApiCallMock.mockResolvedValue(otherErrorResponse)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        node: 'Moonbeam',
+        isFeeAsset: false
+      })
+
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
+      expect(dryRunApiCallMock).toHaveBeenCalledWith(
+        basePayloadMatcher,
+        mockTransaction.decodedCall
+      )
+      expect(result).toEqual({ success: false, failureReason: 'NotVersionedConversion' })
+    })
+
+    it('should correctly parse failure reason from short error structure', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          type: 'ShortErrorType',
+          execution_result: { success: false }
+        }
+      }
+      dryRunApiCallMock.mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        node: 'Moonbeam',
+        isFeeAsset: false
+      })
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
+      expect(result).toEqual({ success: false, failureReason: 'ShortErrorType' })
+    })
+
+    it('should correctly parse failure reason from unknown error structure (stringified)', async () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          someOtherField: 'WithError',
+          execution_result: { success: false }
+        }
+      }
+      dryRunApiCallMock.mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        node: 'Moonbeam',
+        isFeeAsset: false
+      })
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
+      expect(result).toEqual({
+        success: false,
+        failureReason: JSON.stringify(mockApiResponse.value)
+      })
+    })
+
+    it('should throw NodeNotSupportedError for an unsupported node', async () => {
+      await expect(
+        papiApi.getDryRunCall({
+          tx: mockTransaction,
+          address: testAddress,
+          node: 'Acala',
+          isFeeAsset: false
+        })
+      ).rejects.toThrow(NodeNotSupportedError)
+      expect(dryRunApiCallMock).not.toHaveBeenCalled()
+    })
+
+    it('should correctly parse forwardedXcms and destParaId when XCM is forwarded to a parachain', async () => {
+      const successResponseWithForwardedXcm = {
+        success: true,
+        value: {
+          execution_result: {
+            success: true,
+            value: { actual_weight: { ref_time: 10n, proof_size: 20n } }
           },
           forwarded_xcms: [
             [
               {
                 type: 'V4',
                 value: {
-                  parents: 0,
                   interior: {
                     type: 'X1',
-                    value: {
-                      type: 'Parachain',
-                      value: 1000
-                    }
+                    value: { type: 'Parachain', value: 2000 }
                   }
                 }
               }
@@ -718,152 +957,29 @@ describe('PapiApi', () => {
           ]
         }
       }
-
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
-      unsafeApi.apis.DryRunApi.dry_run_call = vi.fn().mockResolvedValue(mockApiResponse)
-
-      papiApi.setApi(mockPolkadotClient)
-
-      vi.mocked(computeFeeFromDryRun).mockReturnValue(500n)
+      dryRunApiCallMock.mockResolvedValue(successResponseWithForwardedXcm)
 
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
-        address: 'some_address',
-        node: 'AssetHubPolkadot',
+        address: testAddress,
+        node: 'Moonbeam',
         isFeeAsset: false
       })
 
-      expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
-        {
-          type: 'system',
-          value: { type: 'Signed', value: 'some_address' }
-        },
-        undefined,
-        3
-      )
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
+      expect(result.success).toBe(true)
 
-      expect(result).toEqual({
-        success: true,
-        fee: 500n,
-        weight: {
-          refTime: 0n,
-          proofSize: 0n
-        },
-        forwardedXcms: expect.any(Object),
-        destParaId: 1000
-      })
-    })
-
-    it('should return failure with failure reason', async () => {
-      const mockApiResponse = {
-        success: false,
-        value: {
-          execution_result: {
+      if (result.success) {
+        expect(result.forwardedXcms).toEqual([
+          {
+            type: 'V4',
             value: {
-              error: {
-                value: {
-                  value: {
-                    type: 'SomeError'
-                  }
-                }
-              }
+              interior: { type: 'X1', value: { type: 'Parachain', value: 2000 } }
             }
           }
-        }
+        ])
+        expect(result.destParaId).toBe(2000)
       }
-
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
-      unsafeApi.apis.DryRunApi.dry_run_call = vi.fn().mockResolvedValue(mockApiResponse)
-
-      papiApi.setApi(mockPolkadotClient)
-
-      const result = await papiApi.getDryRunCall({
-        tx: mockTransaction,
-        address: 'some_address',
-        node: 'Moonbeam',
-        isFeeAsset: false
-      })
-
-      expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
-        {
-          type: 'system',
-          value: { type: 'Signed', value: 'some_address' }
-        },
-        undefined
-      )
-
-      expect(result).toEqual({ success: false, failureReason: 'SomeError' })
-    })
-
-    it('should return failure with failure reason - short error', async () => {
-      const mockApiResponse = {
-        success: false,
-        value: {
-          type: 'SomeError'
-        }
-      }
-
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
-      unsafeApi.apis.DryRunApi.dry_run_call = vi.fn().mockResolvedValue(mockApiResponse)
-
-      papiApi.setApi(mockPolkadotClient)
-
-      const result = await papiApi.getDryRunCall({
-        tx: mockTransaction,
-        address: 'some_address',
-        node: 'Moonbeam',
-        isFeeAsset: false
-      })
-
-      expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
-        {
-          type: 'system',
-          value: { type: 'Signed', value: 'some_address' }
-        },
-        undefined
-      )
-
-      expect(result).toEqual({ success: false, failureReason: 'SomeError' })
-    })
-
-    it('should return failure with failure reason - unknown error', async () => {
-      const mockApiResponse = {
-        success: false,
-        value: {}
-      }
-
-      const unsafeApi = papiApi.getApi().getUnsafeApi()
-      unsafeApi.apis.DryRunApi.dry_run_call = vi.fn().mockResolvedValue(mockApiResponse)
-
-      papiApi.setApi(mockPolkadotClient)
-
-      const result = await papiApi.getDryRunCall({
-        tx: mockTransaction,
-        address: 'some_address',
-        node: 'Moonbeam',
-        isFeeAsset: false
-      })
-
-      expect(unsafeApi.apis.DryRunApi.dry_run_call).toHaveBeenCalledWith(
-        {
-          type: 'system',
-          value: { type: 'Signed', value: 'some_address' }
-        },
-        undefined
-      )
-
-      expect(result).toEqual({ success: false, failureReason: '{}' })
-    })
-
-    it('should throw error for unsupported node', async () => {
-      await expect(
-        papiApi.getDryRunCall({
-          tx: mockTransaction,
-          address: 'some_address',
-          node: 'Acala',
-          isFeeAsset: false
-        })
-      ).rejects.toThrow(sdkCore.NodeNotSupportedError)
     })
   })
 
@@ -1057,6 +1173,13 @@ describe('PapiApi', () => {
       interior: { Here: null }
     }
     const dummyXcm = { some: 'xcm-payload' }
+
+    beforeEach(() => {
+      vi.mocked(getAssetsObject).mockImplementation(
+        (node: TNodeDotKsmWithRelayChains) =>
+          ({ supportsDryRunApi: node === 'Acala' ? false : true }) as TNodeAssets
+      )
+    })
 
     it('should return success with destination fee, weight and forwarded XCM', async () => {
       const mockApiResponse = {
