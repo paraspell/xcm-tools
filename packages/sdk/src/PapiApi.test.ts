@@ -1,4 +1,4 @@
-import type { TDryRunXcmBaseOptions, TNodeAssets } from '@paraspell/sdk-core'
+import type { TNodeAssets } from '@paraspell/sdk-core'
 import {
   BatchMode,
   computeFeeFromDryRun,
@@ -711,8 +711,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        isFeeAsset: false
+        node: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -764,8 +763,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'AssetHubPolkadot',
-        isFeeAsset: false
+        node: 'AssetHubPolkadot'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -816,8 +814,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Kusama',
-        isFeeAsset: false
+        node: 'Kusama'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -850,8 +847,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        isFeeAsset: false
+        node: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -875,8 +871,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        isFeeAsset: false
+        node: 'Moonbeam'
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({ success: false, failureReason: 'ShortErrorType' })
@@ -895,8 +890,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        isFeeAsset: false
+        node: 'Moonbeam'
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
@@ -910,8 +904,7 @@ describe('PapiApi', () => {
         papiApi.getDryRunCall({
           tx: mockTransaction,
           address: testAddress,
-          node: 'Acala',
-          isFeeAsset: false
+          node: 'Acala'
         })
       ).rejects.toThrow(NodeNotSupportedError)
       expect(dryRunApiCallMock).not.toHaveBeenCalled()
@@ -945,8 +938,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        isFeeAsset: false
+        node: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
