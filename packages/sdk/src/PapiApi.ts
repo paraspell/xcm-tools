@@ -375,37 +375,70 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       throw new NodeNotSupportedError(`DryRunApi is not available on node ${node}`)
     }
 
-    const needsVersionParam =
-      node === 'BifrostPolkadot' ||
-      node === 'BifrostKusama' ||
-      node === 'AssetHubKusama' ||
-      node === 'Kusama' ||
-      node === 'Polimec'
     const DEFAULT_XCM_VERSION = 3
 
-    const result = await this.api.getUnsafeApi().apis.DryRunApi.dry_run_call(
-      {
-        type: 'system',
-        value: {
-          type: 'Signed',
-          value: address
-        }
-      },
-      tx.decodedCall,
-      ...(needsVersionParam ? [DEFAULT_XCM_VERSION] : [])
-    )
+    const basePayload = {
+      type: 'system',
+      value: {
+        type: 'Signed',
+        value: address
+      }
+    }
 
-    const isSuccess = result.success && result.value.execution_result.success
+    const performDryRunCall = async (includeVersion: boolean): Promise<any> => {
+      const callArgs: any[] = [basePayload, tx.decodedCall]
+      if (includeVersion) {
+        callArgs.push(DEFAULT_XCM_VERSION)
+      }
+      return this.api.getUnsafeApi().apis.DryRunApi.dry_run_call(...callArgs)
+    }
+
+    const getExecutionSuccessFromResult = (result: any): boolean => {
+      return result?.success && result.value?.execution_result?.success
+    }
+
+    const extractFailureReasonFromResult = (result: any): string => {
+      const executionResultValue = result?.value?.execution_result?.value
+
+      if (executionResultValue?.error?.value?.value?.type) {
+        return String(executionResultValue.error.value.value.type)
+      }
+
+      if (executionResultValue?.error?.value?.type) {
+        return String(executionResultValue.error.value.type)
+      }
+
+      if (result?.value?.type) {
+        return String(result.value.type)
+      }
+      return JSON.stringify(result?.value ?? result ?? 'Unknown error structure')
+    }
+
+    let result
+    let isSuccess
+    let failureOutputReason = ''
+
+    result = await performDryRunCall(false)
+    isSuccess = getExecutionSuccessFromResult(result)
 
     if (!isSuccess) {
-      const errorValue = result?.value?.execution_result?.value?.error?.value
+      const initialFailureReason = extractFailureReasonFromResult(result)
+      failureOutputReason = initialFailureReason
 
-      const failureReason =
-        errorValue?.value?.type ??
-        errorValue?.type ??
-        result?.value?.type ??
-        JSON.stringify(result.value)
-      return Promise.resolve({ success: false, failureReason })
+      if (initialFailureReason === 'VersionedConversionFailed') {
+        result = await performDryRunCall(true)
+        isSuccess = getExecutionSuccessFromResult(result)
+
+        if (!isSuccess) {
+          failureOutputReason = extractFailureReasonFromResult(result)
+        } else {
+          failureOutputReason = ''
+        }
+      }
+    }
+
+    if (!isSuccess) {
+      return Promise.resolve({ success: false, failureReason: failureOutputReason })
     }
 
     const executionFee = await this.calculateTransactionFee(tx, address)
