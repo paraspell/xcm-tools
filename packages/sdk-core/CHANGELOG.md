@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.1.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.1.1...sdk-core-v10.1.2) (2025-05-27)
+
+
+### Bug Fixes
+
+* **sdk-core:** Apply padding to execution fee for AH-&gt;Polimec transfer 🔧 ([ef2a3e4](https://github.com/paraspell/xcm-tools/commit/ef2a3e43d3d99daa3814bdfb423f50cccb7a39ee))
+
 ## [10.1.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.1.0...sdk-core-v10.1.1) (2025-05-26)
 
 
