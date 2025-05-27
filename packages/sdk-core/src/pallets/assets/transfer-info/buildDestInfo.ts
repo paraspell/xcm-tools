@@ -1,6 +1,5 @@
-import type { TAsset } from '@paraspell/assets'
 import {
-  getExistentialDeposit,
+  findAssetOnDestOrThrow,
   getNativeAssetSymbol,
   type TCurrencyCore,
   type WithAmount
@@ -19,7 +18,6 @@ export type TBuildDestInfoOptions<TApi, TRes> = {
   destination: TNodeWithRelayChains
   address: string
   currency: WithAmount<TCurrencyCore>
-  destAsset: TAsset
   originFee: bigint
   isFeeAssetAh: boolean
   destFeeDetail: TXcmFeeDetail
@@ -34,7 +32,6 @@ export const buildDestInfo = async <TApi, TRes>({
   address,
   currency,
   originFee,
-  destAsset,
   isFeeAssetAh,
   destFeeDetail,
   assetHubFee,
@@ -46,11 +43,9 @@ export const buildDestInfo = async <TApi, TRes>({
     await destApi.init(destination)
   }
 
-  const destCurrency = destAsset.multiLocation
-    ? { multilocation: destAsset.multiLocation }
-    : { symbol: destAsset.symbol }
+  const destAsset = findAssetOnDestOrThrow(origin, destination, currency)
 
-  const edDest = getExistentialDeposit(destination, destCurrency)
+  const edDest = destAsset.existentialDeposit
 
   if (!edDest) {
     throw new InvalidParameterError(
@@ -59,6 +54,10 @@ export const buildDestInfo = async <TApi, TRes>({
   }
 
   const edDestBn = BigInt(edDest)
+
+  const destCurrency = destAsset.multiLocation
+    ? { multilocation: destAsset.multiLocation }
+    : { symbol: destAsset.symbol }
 
   const destBalance =
     destination === 'Ethereum'

@@ -1,5 +1,5 @@
 import {
-  findAssetOnDestOrThrow,
+  findAssetForNodeOrThrow,
   getExistentialDeposit,
   getRelayChainSymbol,
   isAssetEqual,
@@ -38,7 +38,7 @@ export const getTransferInfo = async <TApi, TRes>({
   api.setDisconnectAllowed(false)
 
   try {
-    const destAsset = findAssetOnDestOrThrow(origin, destination, currency)
+    const originAsset = findAssetForNodeOrThrow(origin, currency, destination)
 
     const originBalanceFee =
       feeAsset && resolvedFeeAsset
@@ -95,7 +95,9 @@ export const getTransferInfo = async <TApi, TRes>({
     }
 
     const isFeeAssetAh =
-      origin === 'AssetHubPolkadot' && resolvedFeeAsset && isAssetEqual(resolvedFeeAsset, destAsset)
+      origin === 'AssetHubPolkadot' &&
+      resolvedFeeAsset &&
+      isAssetEqual(resolvedFeeAsset, originAsset)
 
     const originBalanceAfter = originBalance - BigInt(currency.amount)
 
@@ -141,7 +143,6 @@ export const getTransferInfo = async <TApi, TRes>({
       destination,
       address,
       currency,
-      destAsset,
       originFee,
       isFeeAssetAh: !!isFeeAssetAh,
       destFeeDetail,
@@ -160,7 +161,7 @@ export const getTransferInfo = async <TApi, TRes>({
           sufficient: originBalanceSufficient,
           balance: originBalance,
           balanceAfter: originBalanceAfter,
-          currencySymbol: destAsset.symbol,
+          currencySymbol: originAsset.symbol,
           existentialDeposit: edOriginBn
         },
         xcmFee: {
