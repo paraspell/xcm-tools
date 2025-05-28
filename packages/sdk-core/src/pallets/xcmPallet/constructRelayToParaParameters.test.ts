@@ -113,14 +113,14 @@ describe('constructRelayToParaParameters', () => {
         ...options,
         paraIdTo
       },
-      Version.V2,
+      Version.V4,
       { includeFee: true }
     )
 
     expect(resolveParaId).toHaveBeenCalledWith(paraIdTo, options.destination)
     expect(createVersionedDestination).toHaveBeenCalledWith(
       'RelayToPara',
-      Version.V2,
+      Version.V4,
       options.destination,
       mockParaId
     )
@@ -129,10 +129,10 @@ describe('constructRelayToParaParameters', () => {
       scenario: 'RelayToPara',
       pallet: null,
       recipientAddress: mockAddress,
-      version: Version.V2,
+      version: Version.V4,
       paraId: mockParaId
     })
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V2, mockAmount, {
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
     })

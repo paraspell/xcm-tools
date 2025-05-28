@@ -47,14 +47,14 @@ describe('buildClaimAssetsInput', () => {
       api: apiMock,
       multiAssets,
       address,
-      version: Version.V2
+      version: Version.V3
     }
 
     const result = buildClaimAssetsInput(options)
 
     expect(result).toEqual({
-      assets: { [Version.V2]: multiAssets },
-      beneficiary: { [Version.V2]: beneficiaryInput }
+      assets: { [Version.V3]: multiAssets },
+      beneficiary: { [Version.V3]: beneficiaryInput }
     })
     expect(buildBeneficiaryInput).toHaveBeenCalledWith(apiMock, address)
   })
