@@ -272,13 +272,13 @@ describe('XTransferService', () => {
     it('should specify xcm version if provided', async () => {
       const options: XTransferDto = {
         ...xTransferDto,
-        xcmVersion: paraspellSdk.Version.V2,
+        xcmVersion: paraspellSdk.Version.V3,
       };
 
       await service.generateXcmCall(options);
 
       expect(builderMock.xcmVersion).toHaveBeenCalledWith(
-        paraspellSdk.Version.V2,
+        paraspellSdk.Version.V3,
       );
     });
 
@@ -758,7 +758,7 @@ describe('XTransferService', () => {
             to,
             address,
             currency,
-            xcmVersion: paraspellSdk.Version.V2,
+            xcmVersion: paraspellSdk.Version.V3,
           },
         ],
       };
@@ -767,7 +767,7 @@ describe('XTransferService', () => {
 
       expect(result).toBe(txHashBatch);
       expect(builderMock.xcmVersion).toHaveBeenCalledWith(
-        paraspellSdk.Version.V2,
+        paraspellSdk.Version.V3,
       );
     });
 

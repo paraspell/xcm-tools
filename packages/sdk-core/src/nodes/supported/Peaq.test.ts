@@ -29,7 +29,7 @@ describe('Peaq', () => {
     expect(peaq.node).toBe('Peaq')
     expect(peaq.info).toBe('peaq')
     expect(peaq.type).toBe('polkadot')
-    expect(peaq.version).toBe(Version.V2)
+    expect(peaq.version).toBe(Version.V3)
   })
 
   it('should call transferXTokens with valid scenario', () => {
