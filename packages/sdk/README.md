@@ -70,12 +70,12 @@ import { Native, Foreign, ForeignAbstract } from '@paraspell/sdk'; //Only needed
 
 ```
 NOTES:
-- Local transfers are now available for every currency and every chain. To try them, simply use same origin and destination parameters.
+- Local transfers are now available for every currency and every chain. To try them, simply use the same origin and destination parameters.
 ```
 
 ```
 Latest news:
-- Transfer info queries are now all in Builder pattern and don't require any imports other than builder.
+- Transfer info queries are now all in the Builder pattern and don't require any imports other than the builder.
 ```
 
 ### Sending XCM:
@@ -97,7 +97,7 @@ const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
 
 const tx = await builder.build()
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 
 /*
@@ -117,7 +117,7 @@ const tx = await builder.build()
 await builder.disconnect()
 */
 ```
-#### Transfer assets from the Relay chain to Parachain
+#### Transfer assets from the Relay chain to the Parachain
 ```ts
 const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(RELAY_NODE) //Kusama or Polkadot
@@ -129,7 +129,7 @@ const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
 
 const tx = await builder.build()
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 
 /*
@@ -161,7 +161,7 @@ const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
 
 const tx = await builder.build()
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 
 /*
@@ -186,13 +186,13 @@ await builder.disconnect()
 ```ts
 const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
       .from(NODE)
-      .to(NODE) //Has to be same as origin (from)
+      .to(NODE) //Has to be the same as the origin (from)
       .currency({id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}})
       .address(address)
 
 const tx = await builder.build()
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 
 /*
@@ -233,7 +233,7 @@ const tx = await builder.buildBatch({
           mode: BatchMode.BATCH_ALL //or BatchMode.BATCH
       })
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 ```
 
@@ -248,7 +248,7 @@ const builder = Builder(/*node api/ws_url_string/ws_url_array - optional*/)
 
 const tx = await builder.build()
 
-//Make sure to disconnect API after it is no longer used (eg. after transaction)
+//Make sure to disconnect the API after it is no longer used (eg, after a transaction)
 await builder.disconnect()
 ```
 
@@ -272,7 +272,7 @@ const result = hasDryRunSupport(node)
 
 ### XCM Fee queries
 
-For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/xcmUtils.html).
+For full documentation with examples on this feature, head to [official documentation](https://paraspell.github.io/docs/sdk/xcmUtils.html).
 
 #### XCM Transfer info
 ```ts
@@ -280,7 +280,7 @@ const info = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
           .getTransferInfo()
@@ -292,7 +292,7 @@ const transferable = await Builder(/*node api/ws_url_string/ws_url_array - optio
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
           .getTransferableAmount()
@@ -304,7 +304,7 @@ const ed = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
           .verifyEdOnDestination()
@@ -318,10 +318,10 @@ const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
-          .getXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin or Destination chain do not support DryRun out of the box.
+          .getXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of a DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin or Destination chain do not support DryRun out of the box.
 ```
 
 ##### Less accurate query using Payment info
@@ -343,10 +343,10 @@ const fee = await Builder(/*node api/ws_url_string/ws_url_array - optional*/)
           .from(ORIGIN_CHAIN)
           .to(DESTINATION_CHAIN)
           .currency(CURRENCY)
-          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          /*.feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in the same fee asset as selected currency.*/
           .address(RECIPIENT_ADDRESS)
           .senderAddress(SENDER_ADDRESS)
-          .getOriginXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin do not support DryRun out of the box.
+          .getOriginXcmFee(/*{disableFallback: true / false}*/)  //Fallback is optional. When fallback is disabled, you only get notified of a DryRun error, but no Payment info query fallback is performed. Payment info is still performed if Origin do not support DryRun out of the box.
 ```
 
 ##### Less accurate query using Payment info
@@ -379,7 +379,7 @@ const fees = await getParaEthTransferFees(/*api - optional (Can also be WS port 
 ```ts
 import { getExistentialDeposit } from "@paraspell/sdk";
 
-//Currency is an optional parameter. If you wish to query native asset, currency parameter is not necessary.
+//Currency is an optional parameter. If you wish to query a native asset, the currency parameter is not necessary.
 //Currency can be either {symbol: assetSymbol}, {id: assetId}, {multilocation: assetMultilocation}.
 const ed = getExistentialDeposit(node, currency?)
 ```
@@ -393,7 +393,7 @@ let result = convertSs58(address, node) // returns converted address in string
 
 ### Asset queries:
 
-For full documentation with examples on this feature head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
+For full documentation with examples on this feature, head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
 
 ```ts
 import { getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTNode, getAssetMultiLocation, NODE_NAMES } from  '@paraspell/sdk'
@@ -401,10 +401,10 @@ import { getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNati
 // Retrieve Fee asset queries (Assets accepted as XCM Fee on specific node)
 getFeeAssets(NODE)
 
-// Get multilocation for asset id or symbol on specific chain
+// Get multilocation for asset ID or symbol ona  specific chain
 getAssetMultiLocation(NODE, { symbol: symbol } | { id: assetId })
 
-// Retrieve assets object from assets.json for particular node including information about native and foreign assets
+// Retrieve assets object from assets.json for a particular node, including information about native and foreign assets
 getAssetsObject(NODE)
 
 // Retrieve foreign assetId for a particular node and asset symbol
@@ -413,13 +413,13 @@ getAssetId(NODE, ASSET_SYMBOL)
 // Retrieve the symbol of the relay chain for a particular node. Either "DOT" or "KSM"
 getRelayChainSymbol(NODE)
 
-// Retrieve string array of native assets symbols for particular node
+// Retrieve string array of native assets symbols fora  particular node
 getNativeAssets(NODE)
 
-// Retrieve object array of foreign assets for a particular node. Each object has a symbol and assetId property
+// Retrieve object array of foreign assets for a particular node. Each object has a symbol and an  assetId property
 getOtherAssets(NODE)
 
-// Retrieve string array of all assets symbols. (native and foreign assets are merged into a single array)
+// Retrieve string array of all asset symbols. (native and foreign assets are merged into a single array)
 getAllAssetsSymbols(NODE)
 
 // Check if a node supports a particular asset. (Both native and foreign assets are searched). Returns boolean
@@ -432,7 +432,7 @@ getAssetDecimals(NODE, ASSET_SYMBOL)
 getParaId(NODE)
 
 // Get specific TNode from nodeID
-getTNode(paraID: number, ecosystem: 'polkadot' || 'kusama' || 'ethereum') //When Ethereum ecosystem is selected please fill nodeID as 1 to select Ethereum.
+getTNode(paraID: number, ecosystem: 'polkadot' || 'kusama' || 'ethereum') //When the Ethereum ecosystem is selected, please fill nodeID as 1 to select Ethereum.
 
 // Import all compatible nodes as constant
 NODE_NAMES
