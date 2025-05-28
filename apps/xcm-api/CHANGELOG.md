@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.1.7...xcm-api-v10.2.0) (2025-05-28)
+
+
+### Features
+
+* **xcm-router:** Add support for ethereum destination ✨ ([06afba5](https://github.com/paraspell/xcm-tools/commit/06afba56015336ca193d9f1df570403711e9c8ec))
+
 ## [10.1.7](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.1.6...xcm-api-v10.1.7) (2025-05-28)
 
 

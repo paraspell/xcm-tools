@@ -1,6 +1,6 @@
 {
   "name": "@paraspell/assets",
-  "version": "10.1.7",
+  "version": "10.2.0",
   "description": "Assets for ParaSpell XCM/XCMP tool for developers",
   "repository": {
     "type": "git",
