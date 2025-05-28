@@ -1,5 +1,12 @@
 # Changelog
 
+## [9.2.5](https://github.com/paraspell/xcm-tools/compare/xcm-api-v9.2.4...xcm-api-v9.2.5) (2025-05-28)
+
+
+### Bug Fixes
+
+* **sdk-core:** Bump V2 calls to V3 ✨ ([ba16285](https://github.com/paraspell/xcm-tools/commit/ba162851bafd384af302697b1e94344374402e87))
+
 ## [9.2.4](https://github.com/paraspell/xcm-tools/compare/xcm-api-v9.2.3...xcm-api-v9.2.4) (2025-05-27)
 
 
