@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.1.7](https://github.com/paraspell/xcm-tools/compare/sdk-v10.1.6...sdk-v10.1.7) (2025-05-28)
+
+
+### Documentation
+
+* Fix grammar ([5d99c8a](https://github.com/paraspell/xcm-tools/commit/5d99c8a49049cbf7c50da7121eb88ae7f9fb44e2))
+* Improve grammar ([0217c3d](https://github.com/paraspell/xcm-tools/commit/0217c3d01e2377b2b18feb8752bca86712cf373e))
+
 ## [10.1.6](https://github.com/paraspell/xcm-tools/compare/sdk-v10.1.5...sdk-v10.1.6) (2025-05-28)
 
 
