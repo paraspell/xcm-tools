@@ -51,19 +51,13 @@ export const createBeneficiaryMultiLocation = <TApi, TRes>({
     return {
       parents: Parents.ONE,
       interior: {
-        X2: [
-          { Parachain: paraId },
-          getAccountPayload(version === Version.V1 || version === Version.V2)
-        ]
+        X2: [{ Parachain: paraId }, getAccountPayload(version === Version.V1)]
       }
     }
   } else if (scenario === 'ParaToPara' && pallet === 'PolkadotXcm') {
     return {
       parents: Parents.ZERO,
-      interior: createX1Payload(
-        version,
-        getAccountPayload(version === Version.V1 || version === Version.V2)
-      )
+      interior: createX1Payload(version, getAccountPayload(version === Version.V1))
     }
   } else {
     return {

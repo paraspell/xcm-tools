@@ -160,7 +160,7 @@ describe('Builder', () => {
     })
 
     it('should initiate a para to para transfer with overriden version', async () => {
-      const version = Version.V2
+      const version = Version.V4
 
       await Builder(mockApi)
         .from(NODE)
@@ -370,7 +370,7 @@ describe('Builder', () => {
 
     it('should initiate a para to relay transfer with overriden version', async () => {
       const currency = getRelayChainSymbol(NODE)
-      const version = Version.V2
+      const version = Version.V4
 
       await Builder(mockApi)
         .from(NODE)
@@ -400,7 +400,7 @@ describe('Builder', () => {
           { symbol: 'USDT', amount: 10000 }
         ]
       }
-      const version = Version.V2
+      const version = Version.V4
       const feeAsset = {
         symbol: 'USDT'
       }
@@ -561,7 +561,7 @@ describe('Builder', () => {
     })
 
     it('should initiate a relay to para transfer with overriden version', async () => {
-      const version = Version.V2
+      const version = Version.V4
 
       await Builder(mockApi)
         .from('Polkadot')
@@ -583,7 +583,7 @@ describe('Builder', () => {
     })
 
     it('should initiate a relay to para transfer with overriden version', async () => {
-      const version = Version.V2
+      const version = Version.V4
 
       await Builder(mockApi)
         .from('Polkadot')

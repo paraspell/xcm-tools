@@ -294,7 +294,7 @@ class AssetHubPolkadot<TApi, TRes>
 
   handleMythosTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
     const { api, address, asset, scenario, destination, paraIdTo } = input
-    const version = Version.V2
+    const version = Version.V3
     const paraId = resolveParaId(paraIdTo, destination)
     const customMultiLocation: TMultiLocation = {
       parents: Parents.ONE,
@@ -372,27 +372,7 @@ class AssetHubPolkadot<TApi, TRes>
   patchInput<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): TPolkadotXCMTransferOptions<TApi, TRes> {
-    const { asset, destination, paraIdTo, scenario, api, version = this.version, address } = input
-
-    if (
-      (asset.symbol?.toUpperCase() === 'USDT' || asset.symbol?.toUpperCase() === 'USDC') &&
-      destination === 'BifrostPolkadot'
-    ) {
-      const versionOrDefault = input.version ?? Version.V2
-      return {
-        ...input,
-        header: this.createVersionedDestination(scenario, versionOrDefault, destination, paraIdTo),
-        addressSelection: createVersionedBeneficiary({
-          api,
-          scenario,
-          pallet: 'PolkadotXcm',
-          recipientAddress: address,
-          version: versionOrDefault,
-          paraId: paraIdTo
-        }),
-        currencySelection: this.createCurrencySpec(asset.amount, scenario, versionOrDefault, asset)
-      }
-    }
+    const { asset, destination, version = this.version } = input
 
     if (
       (destination === 'Hydration' ||
