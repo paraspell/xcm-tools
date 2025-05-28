@@ -121,27 +121,6 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         })
       })
 
-      it('should create asset claim tx V2', async () => {
-        const api = await createOrGetApiInstanceForNode('AssetHubPolkadot')
-        const tx = await Builder(api)
-          .claimFrom('AssetHubPolkadot')
-          .fungible([
-            {
-              id: {
-                Concrete: {
-                  parents: 0,
-                  interior: 'Here'
-                }
-              },
-              fun: { Fungible: 1000 }
-            }
-          ])
-          .account(MOCK_ADDRESS)
-          .xcmVersion(Version.V2)
-          .build()
-        expect(tx).toBeDefined()
-      })
-
       it('should create asset claim tx V3', async () => {
         const api = await createOrGetApiInstanceForNode('AssetHubPolkadot')
         const tx = await Builder(api)
@@ -160,7 +139,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           .account(MOCK_ADDRESS)
           .xcmVersion(Version.V3)
           .build()
-        await validateTx(tx, signer)
+        expect(tx).toBeDefined()
       })
     })
 

@@ -84,7 +84,6 @@ export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
  */
 export enum Version {
   V1 = 'V1',
-  V2 = 'V2',
   V3 = 'V3',
   V4 = 'V4'
 }
@@ -92,7 +91,7 @@ export enum Version {
 /**
  * The supported XCM versions for asset claims.
  */
-export type TVersionClaimAssets = Version.V3 | Version.V2
+export type TVersionClaimAssets = Version.V3
 
 export type TAddress = string | TMultiLocation
 export type TDestination = TNodeWithRelayChains | TMultiLocation

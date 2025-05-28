@@ -15,7 +15,7 @@ import ParachainNode from '../ParachainNode'
 
 class Peaq<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Peaq', 'peaq', 'polkadot', Version.V2)
+    super('Peaq', 'peaq', 'polkadot', Version.V3)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

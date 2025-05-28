@@ -90,7 +90,7 @@ describe('getModifiedCurrencySelection', () => {
   })
 
   it('returns default multiLocation for Bifrost origin', () => {
-    const version = Version.V2
+    const version = Version.V3
     const currencyID = '123'
     const paraIdTo = 2000
     const origin = 'BifrostPolkadot'
@@ -159,7 +159,7 @@ describe('getModifiedCurrencySelection', () => {
   })
 
   it('returns default multiLocation when asset.multiLocation is undefiend', () => {
-    const version = Version.V2
+    const version = Version.V3
     const currencyID = '123'
     const paraIdTo = 2000
 

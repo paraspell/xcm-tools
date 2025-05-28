@@ -43,7 +43,7 @@ describe('Pendulum', () => {
     expect(pendulum.node).toBe('Pendulum')
     expect(pendulum.info).toBe('pendulum')
     expect(pendulum.type).toBe('polkadot')
-    expect(pendulum.version).toBe(Version.V2)
+    expect(pendulum.version).toBe(Version.V3)
   })
 
   it('should call transferXTokens with native asset', () => {
