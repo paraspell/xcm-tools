@@ -401,7 +401,7 @@ import { getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNati
 // Retrieve Fee asset queries (Assets accepted as XCM Fee on specific node)
 getFeeAssets(NODE)
 
-// Get multilocation for asset ID or symbol ona  specific chain
+// Get multilocation for asset ID or symbol on a  specific chain
 getAssetMultiLocation(NODE, { symbol: symbol } | { id: assetId })
 
 // Retrieve assets object from assets.json for a particular node, including information about native and foreign assets
@@ -413,7 +413,7 @@ getAssetId(NODE, ASSET_SYMBOL)
 // Retrieve the symbol of the relay chain for a particular node. Either "DOT" or "KSM"
 getRelayChainSymbol(NODE)
 
-// Retrieve string array of native assets symbols fora  particular node
+// Retrieve string array of native assets symbols for a  particular node
 getNativeAssets(NODE)
 
 // Retrieve object array of foreign assets for a particular node. Each object has a symbol and an  assetId property
