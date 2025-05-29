@@ -23,3 +23,4 @@ export {
 } from './transfer'
 export * from './types'
 export { createApiInstanceForNode } from './utils'
+export * from './PapiXcmTransformer'

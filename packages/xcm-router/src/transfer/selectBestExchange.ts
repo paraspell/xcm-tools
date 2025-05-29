@@ -1,4 +1,3 @@
-import type { TAsset } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 import type { PolkadotClient } from 'polkadot-api';
 
@@ -31,9 +30,9 @@ export const selectBestExchange = async (
       modifiedOptions.exchange.api,
       {
         ...modifiedOptions,
-        feeCalcAddress: modifiedOptions.feeCalcAddress,
-        assetFrom: modifiedOptions.exchange.assetFrom as TAsset,
-        assetTo: modifiedOptions.exchange.assetTo as TAsset,
+        papiApi: modifiedOptions.exchange.apiPapi,
+        assetFrom: modifiedOptions.exchange.assetFrom,
+        assetTo: modifiedOptions.exchange.assetTo,
       },
       toDestTxFee,
     );

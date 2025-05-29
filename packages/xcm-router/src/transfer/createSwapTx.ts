@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { TBuildTransactionsOptionsModified } from '../types';
-import { calculateTxFee } from '../utils';
+import { calculateTxFee, isPjsExtrinsic } from '../utils';
 import { buildFromExchangeExtrinsic, convertTxToPapi } from './utils';
 
 export const calculateFromExchangeFee = async (options: TBuildTransactionsOptionsModified) => {
@@ -27,6 +27,7 @@ export const createSwapTx = async (
     options.exchange.api,
     {
       ...options,
+      papiApi: options.exchange.apiPapi,
       assetFrom: options.exchange.assetFrom,
       assetTo: options.exchange.assetTo,
     },
@@ -34,7 +35,12 @@ export const createSwapTx = async (
   );
 
   const txs = await Promise.all(
-    swapResult.txs.map((tx) => convertTxToPapi(tx, options.exchange.apiPapi)),
+    swapResult.txs.map((tx) => {
+      if (!isPjsExtrinsic(tx)) {
+        return tx;
+      }
+      return convertTxToPapi(tx, options.exchange.apiPapi);
+    }),
   );
 
   return { txs, amountOut: swapResult.amountOut };

@@ -29,10 +29,12 @@ export const getBestAmountOut = async (
   }
 
   const api = await dex.createApiInstance();
+  const papiApi = await dex.createApiInstancePapi();
 
   return {
     exchange: dex.exchangeNode,
     amountOut: await dex.getAmountOut(api, {
+      papiApi,
       assetFrom,
       assetTo,
       amount,

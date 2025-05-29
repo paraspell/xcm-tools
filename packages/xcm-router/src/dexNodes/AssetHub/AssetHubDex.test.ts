@@ -1,10 +1,12 @@
+import type { TPapiApi } from '@paraspell/sdk';
 import {
   getNativeAssetSymbol,
   InvalidParameterError,
   isForeignAsset,
   Parents,
   type TMultiLocation,
-} from '@paraspell/sdk-pjs';
+  transform,
+} from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import { BigNumber } from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -20,12 +22,13 @@ vi.mock('./utils', () => ({
   getDexConfig: vi.fn(),
 }));
 
-vi.mock('@paraspell/sdk-pjs', async () => {
-  const original = await vi.importActual('@paraspell/sdk-pjs');
+vi.mock('@paraspell/sdk', async () => {
+  const original = await vi.importActual('@paraspell/sdk');
   return {
     ...original,
     getNativeAssetSymbol: vi.fn(),
     isForeignAsset: vi.fn(),
+    transform: vi.fn(),
   };
 });
 
@@ -45,28 +48,39 @@ describe('AssetHubExchangeNode', () => {
 
   let instance: AssetHubExchangeNode;
   let api: ApiPromise;
+  let papiApi: TPapiApi = {} as unknown as TPapiApi;
   const dummyTx = { dummy: true };
   const assetFromML: TMultiLocation = { parents: 0, interior: { X1: [{ PalletInstance: 1 }] } };
   const assetToML: TMultiLocation = { parents: 0, interior: { X1: [{ GeneralIndex: 2 }] } };
-  const baseSwapOptions = {
-    assetFrom: { symbol: 'ASSET1', multiLocation: assetFromML },
-    assetTo: { symbol: 'ASSET2', multiLocation: assetToML },
-    amount: '1000',
-    senderAddress: 'sender',
-    slippagePct: '5',
-    origin: undefined,
-  } as TSwapOptions;
+  let baseSwapOptions: TSwapOptions;
+  const swapMock = vi.fn(() => dummyTx);
 
   beforeEach(() => {
-    instance = new AssetHubExchangeNode('AssetHubPolkadot', 'AssetHubPolkadotDex');
-    api = {
-      tx: {
-        assetConversion: {
-          swapExactTokensForTokens: vi.fn(() => dummyTx),
-        },
-      },
-    } as unknown as ApiPromise;
     vi.clearAllMocks();
+    instance = new AssetHubExchangeNode('AssetHubPolkadot', 'AssetHubPolkadotDex');
+    api = {} as unknown as ApiPromise;
+    papiApi = {
+      getUnsafeApi: () => ({
+        tx: {
+          AssetConversion: {
+            swap_exact_tokens_for_tokens: swapMock,
+          },
+        },
+      }),
+    } as unknown as TPapiApi;
+
+    baseSwapOptions = {
+      papiApi: papiApi,
+      assetFrom: { symbol: 'ASSET1', multiLocation: assetFromML },
+      assetTo: { symbol: 'ASSET2', multiLocation: assetToML },
+      amount: '1000',
+      senderAddress: 'sender',
+      slippagePct: '5',
+      origin: undefined,
+    } as TSwapOptions;
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    vi.mocked(transform).mockImplementation((ml) => ml);
   });
 
   describe('swapCurrency', () => {
@@ -76,12 +90,14 @@ describe('AssetHubExchangeNode', () => {
         'Asset from multiLocation not found',
       );
     });
+
     it('should throw if assetTo.multiLocation is missing', async () => {
       const opts = { ...baseSwapOptions, assetTo: { symbol: 'ASSET2' } } as TSwapOptions;
       await expect(instance.swapCurrency(api, opts, new BigNumber('50'))).rejects.toThrow(
         'Asset to multiLocation not found',
       );
     });
+
     it('should throw SmallAmountError if amount is too small', async () => {
       vi.mocked(getQuotedAmount).mockResolvedValueOnce({
         amountOut: BigInt('100'),
@@ -99,10 +115,11 @@ describe('AssetHubExchangeNode', () => {
         assetTo: { symbol: 'NATIVE', multiLocation: assetToML },
         amoun: 1000,
       } as TSwapOptions;
-      await expect(instance.swapCurrency(api, opts, new BigNumber('50000'))).rejects.toThrow(
+      await expect(instance.swapCurrency(api, opts, BigNumber('50000'))).rejects.toThrow(
         SmallAmountError,
       );
     });
+
     it('should swap using native fee conversion when assetTo.symbol equals native asset symbol', async () => {
       const opts = {
         ...baseSwapOptions,
@@ -117,18 +134,19 @@ describe('AssetHubExchangeNode', () => {
       vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
       vi.mocked(isForeignAsset).mockReturnValue(false);
-      const toDestTxFee = new BigNumber('50');
+      const toDestTxFee = BigNumber('50');
       const result: TSingleSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
-      expect(api.tx.assetConversion.swapExactTokensForTokens).toHaveBeenCalledWith(
-        [assetFromML, assetToML],
-        '980',
-        BigInt('1900'),
-        'sender',
-        true,
-      );
+      expect(swapMock).toHaveBeenCalledWith({
+        path: [assetFromML, assetToML],
+        amount_in: 980n,
+        amount_out_min: 1900n,
+        send_to: 'sender',
+        keep_alive: true,
+      });
       expect(result).toEqual({ tx: dummyTx, amountOut: '1950' });
       expect(vi.mocked(getQuotedAmount)).toHaveBeenCalledTimes(1);
     });
+
     it('should swap using fee conversion via getQuotedAmount when assetTo.symbol is not native', async () => {
       const opts = {
         ...baseSwapOptions,
@@ -136,30 +154,30 @@ describe('AssetHubExchangeNode', () => {
         origin: undefined,
       } as TSwapOptions;
       const firstQuote = {
-        amountOut: BigInt('2000'),
+        amountOut: 2000n,
         usedFromML: assetFromML,
         usedToML: assetToML,
       };
       const feeQuote = {
-        amountOut: BigInt('100'),
+        amountOut: 100n,
         usedFromML: { parents: Parents.ONE, interior: { Here: null } },
         usedToML: assetToML,
       };
       vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote).mockResolvedValueOnce(feeQuote);
       vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
       vi.mocked(isForeignAsset).mockReturnValue(false);
-      const toDestTxFee = new BigNumber('50');
+      const toDestTxFee = BigNumber('50');
       const result: TSingleSwapResult = await instance.swapCurrency(api, opts, toDestTxFee);
-      expect(api.tx.assetConversion.swapExactTokensForTokens).toHaveBeenCalledWith(
-        [assetFromML, assetToML],
-        '1000',
-        BigInt('1900'),
-        'sender',
-        true,
-      );
+      expect(swapMock).toHaveBeenCalledWith({
+        path: [assetFromML, assetToML],
+        amount_in: 1000n,
+        amount_out_min: 1900n,
+        send_to: 'sender',
+        keep_alive: true,
+      });
       expect(result).toEqual({ tx: dummyTx, amountOut: '1900' });
       expect(vi.mocked(getQuotedAmount)).toHaveBeenCalledTimes(2);
-      expect(vi.mocked(getQuotedAmount).mock.calls[1][0]).toBe(api);
+      expect(vi.mocked(getQuotedAmount).mock.calls[1][0]).toBe(papiApi);
       expect(vi.mocked(getQuotedAmount).mock.calls[1][1]).toEqual({
         parents: Parents.ONE,
         interior: { Here: null },
@@ -199,13 +217,13 @@ describe('AssetHubExchangeNode', () => {
       vi.mocked(getExchangeAsset).mockReturnValue(null);
       await expect(
         instance.handleMultiSwap(
-          {} as ApiPromise,
+          api,
           {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
           } as TSwapOptions,
-          new BigNumber(0),
+          BigNumber(0),
         ),
       ).rejects.toThrow(InvalidParameterError);
     });
@@ -213,13 +231,13 @@ describe('AssetHubExchangeNode', () => {
     it('throws when swapping native asset to itself', async () => {
       await expect(
         instance.handleMultiSwap(
-          {} as ApiPromise,
+          api,
           {
             ...baseOpts,
             assetFrom: assetNative,
             assetTo: assetNative,
           } as TSwapOptions,
-          new BigNumber(0),
+          BigNumber(0),
         ),
       ).rejects.toThrow(InvalidParameterError);
     });
@@ -233,13 +251,13 @@ describe('AssetHubExchangeNode', () => {
       const spy = vi.spyOn(instance, 'swapCurrency');
 
       const result = await instance.handleMultiSwap(
-        {} as ApiPromise,
+        api,
         {
           ...baseOpts,
           assetFrom: assetNative,
           assetTo: assetB,
         } as TSwapOptions,
-        new BigNumber(0),
+        BigNumber(0),
       );
 
       expect(spy).toHaveBeenCalledTimes(1);
@@ -255,13 +273,13 @@ describe('AssetHubExchangeNode', () => {
       const spy = vi.spyOn(instance, 'swapCurrency');
 
       const result = await instance.handleMultiSwap(
-        {} as ApiPromise,
+        api,
         {
           ...baseOpts,
           assetFrom: assetA,
           assetTo: assetNative,
         } as TSwapOptions,
-        new BigNumber(0),
+        BigNumber(0),
       );
 
       expect(spy).toHaveBeenCalledTimes(1);
@@ -277,13 +295,13 @@ describe('AssetHubExchangeNode', () => {
       const spy = vi.spyOn(instance, 'swapCurrency');
 
       const result = await instance.handleMultiSwap(
-        {} as ApiPromise,
+        api,
         {
           ...baseOpts,
           assetFrom: assetA,
           assetTo: assetB,
         } as TSwapOptions,
-        new BigNumber(0),
+        BigNumber(0),
       );
 
       expect(spy).toHaveBeenCalledTimes(2);
@@ -297,13 +315,13 @@ describe('AssetHubExchangeNode', () => {
       instance.swapCurrency = vi.fn().mockResolvedValueOnce({ tx: 'tx1', amountOut: '0' });
       await expect(
         instance.handleMultiSwap(
-          {} as ApiPromise,
+          api,
           {
             ...baseOpts,
             assetFrom: assetA,
             assetTo: assetB,
           } as TSwapOptions,
-          new BigNumber(0),
+          BigNumber(0),
         ),
       ).rejects.toThrow(SmallAmountError);
     });
@@ -316,7 +334,7 @@ describe('AssetHubExchangeNode', () => {
 
       await expect(
         instance.handleMultiSwap(
-          {} as ApiPromise,
+          api,
           {
             ...baseOpts,
             assetFrom: assetA,
@@ -352,11 +370,11 @@ describe('AssetHubExchangeNode', () => {
       vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
       const amountOut = await instance.getAmountOut(api, baseSwapOptions);
       expect(amountOut).toEqual(2000n);
-      expect(vi.mocked(getQuotedAmount)).toHaveBeenCalledWith(
-        api,
+      expect(getQuotedAmount).toHaveBeenCalledWith(
+        papiApi,
         assetFromML,
         assetToML,
-        new BigNumber('1000'),
+        BigNumber('1000'),
       );
     });
   });

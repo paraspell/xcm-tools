@@ -38,6 +38,7 @@ describe('getBestAmountOut', () => {
     const fakeDex = {
       exchangeNode: 'EXCHANGE_A_NODE',
       createApiInstance: vi.fn().mockResolvedValue('api_instance'),
+      createApiInstancePapi: vi.fn().mockResolvedValue('api_instance_papi'),
       getAmountOut: vi.fn().mockResolvedValue(200),
     } as unknown as ExchangeNode;
 
@@ -64,6 +65,7 @@ describe('getBestAmountOut', () => {
       assetFrom: fakeAssets.assetFromExchange,
       assetTo: fakeAssets.assetTo,
       amount: 100,
+      papiApi: 'api_instance_papi',
     });
     expect(result).toEqual({
       exchange: fakeDex.exchangeNode,
@@ -84,6 +86,7 @@ describe('getBestAmountOut', () => {
     const fakeDex = {
       exchangeNode: 'EXCHANGE_NODE_B',
       createApiInstance: vi.fn().mockResolvedValue('api_instance_b'),
+      createApiInstancePapi: vi.fn().mockResolvedValue('api_instance_papi_b'),
       getAmountOut: vi.fn().mockResolvedValue(75),
     } as unknown as ExchangeNode;
 
@@ -110,6 +113,7 @@ describe('getBestAmountOut', () => {
       assetFrom: fakeAssets.assetFromExchange,
       assetTo: fakeAssets.assetTo,
       amount: 50,
+      papiApi: 'api_instance_papi_b',
     });
     expect(result).toEqual({
       exchange: fakeDex.exchangeNode,
