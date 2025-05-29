@@ -1,16 +1,14 @@
 import { isNodeEvm } from '@paraspell/assets'
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
-import { ethers } from 'ethers'
+import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidAddressError } from '../errors'
 import type { TAddress } from '../types'
 import { validateAddress } from './validateAddress'
 
-vi.mock('ethers', () => ({
-  ethers: {
-    isAddress: vi.fn()
-  }
+vi.mock('viem', () => ({
+  isAddress: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
@@ -18,19 +16,23 @@ vi.mock('@paraspell/assets', () => ({
 }))
 
 describe('validateAddress', () => {
-  const mockedIsAddress = vi.mocked(ethers.isAddress)
-  const mockedIsNodeEvm = vi.mocked(isNodeEvm)
-
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  it('should not throw when address is a TMultiLocation', () => {
+    const address: TAddress = { parents: 0, interior: { X1: { Parachain: 100 } } }
+    const node: TNodeWithRelayChains = 'Polkadot'
+
+    expect(() => validateAddress(address, node)).not.toThrow()
   })
 
   it('should not throw when node is EVM and address is a valid Ethereum address', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef12345678'
     const node: TNodeWithRelayChains = 'Moonbeam'
 
-    mockedIsNodeEvm.mockReturnValue(true)
-    mockedIsAddress.mockReturnValue(true)
+    vi.mocked(isNodeEvm).mockReturnValue(true)
+    vi.mocked(isAddress).mockReturnValue(true)
 
     expect(() => validateAddress(address, node)).not.toThrow()
   })
@@ -39,8 +41,8 @@ describe('validateAddress', () => {
     const address: TAddress = 'invalid-address'
     const node: TNodeWithRelayChains = 'Moonbeam'
 
-    mockedIsNodeEvm.mockReturnValue(true)
-    mockedIsAddress.mockReturnValue(false)
+    vi.mocked(isNodeEvm).mockReturnValue(true)
+    vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(address, node)).toThrow(InvalidAddressError)
     expect(() => validateAddress(address, node)).toThrow(
@@ -52,8 +54,8 @@ describe('validateAddress', () => {
     const address: TAddress = 'some-non-ethereum-address'
     const node: TNodeWithRelayChains = 'Acala'
 
-    mockedIsNodeEvm.mockReturnValue(false)
-    mockedIsAddress.mockReturnValue(false)
+    vi.mocked(isNodeEvm).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(address, node)).not.toThrow()
   })
@@ -62,8 +64,8 @@ describe('validateAddress', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef12345678'
     const node: TNodeWithRelayChains = 'Polkadot'
 
-    mockedIsNodeEvm.mockReturnValue(false)
-    mockedIsAddress.mockReturnValue(true)
+    vi.mocked(isNodeEvm).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(true)
 
     expect(() => validateAddress(address, node)).toThrow(InvalidAddressError)
     expect(() => validateAddress(address, node)).toThrow(
@@ -75,8 +77,8 @@ describe('validateAddress', () => {
     const address: TAddress = 'invalid-address'
     const node: TNodeWithRelayChains = 'Moonbeam'
 
-    mockedIsNodeEvm.mockReturnValue(true)
-    mockedIsAddress.mockReturnValue(false)
+    vi.mocked(isNodeEvm).mockReturnValue(true)
+    vi.mocked(isAddress).mockReturnValue(false)
 
     expect(() => validateAddress(address, node, false)).toThrow(InvalidAddressError)
     expect(() => validateAddress(address, node, false)).toThrow(
@@ -88,8 +90,8 @@ describe('validateAddress', () => {
     const address: TAddress = '0x1234567890abcdef1234567890abcdef12345678'
     const node: TNodeWithRelayChains = 'Polkadot'
 
-    mockedIsNodeEvm.mockReturnValue(false)
-    mockedIsAddress.mockReturnValue(true)
+    vi.mocked(isNodeEvm).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(true)
 
     expect(() => validateAddress(address, node, false)).toThrow(InvalidAddressError)
     expect(() => validateAddress(address, node, false)).toThrow(

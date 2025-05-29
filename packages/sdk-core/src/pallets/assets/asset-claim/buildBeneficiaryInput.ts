@@ -1,5 +1,5 @@
 import { isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
-import { ethers } from 'ethers'
+import { isAddress } from 'viem'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import type { TAddress } from '../../../types'
@@ -11,7 +11,7 @@ export const buildBeneficiaryInput = <TApi, TRes>(
   if (isTMultiLocation(address)) {
     return address
   }
-  const isEthAddress = ethers.isAddress(address)
+  const isEthAddress = isAddress(address)
   return {
     parents: Parents.ZERO,
     interior: {

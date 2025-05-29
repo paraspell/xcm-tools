@@ -5,7 +5,7 @@ import {
   transferMoonbeamToEth,
   validateAddress
 } from '@paraspell/sdk-core'
-import type { Signer } from 'ethers'
+import type { WalletClient } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { EvmBuilder } from './EvmBuilder'
@@ -22,13 +22,13 @@ const mockApi = {
 } as unknown as IPolkadotApi<unknown, unknown>
 
 describe('EvmBuilderClass', () => {
-  let signer: Signer
+  let signer: WalletClient
   let currency: TCurrencyInputWithAmount
   let address: string
 
   beforeEach(() => {
     vi.resetAllMocks()
-    signer = {} as Signer
+    signer = {} as WalletClient
     currency = {} as TCurrencyInputWithAmount
     address = '0x1234567890abcdef'
   })

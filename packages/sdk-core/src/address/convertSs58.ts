@@ -2,7 +2,7 @@ import { blake2b } from '@noble/hashes/blake2'
 import { getAssetsObject, isNodeEvm } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { base58 } from '@scure/base'
-import { ethers } from 'ethers'
+import { isAddress } from 'viem'
 
 import type { IPolkadotApi } from '../api'
 import { InvalidParameterError } from '../errors'
@@ -63,7 +63,7 @@ export const convertSs58 = <TApi, TRes>(
   address: string,
   node: TNodeDotKsmWithRelayChains
 ) => {
-  const isEvmAddress = ethers.isAddress(address)
+  const isEvmAddress = isAddress(address)
 
   if (isEvmAddress && isNodeEvm(node)) {
     return address

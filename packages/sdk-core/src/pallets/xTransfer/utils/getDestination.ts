@@ -1,5 +1,5 @@
 import { Parents, type TJunction, type TMultiLocation } from '@paraspell/sdk-common'
-import { ethers } from 'ethers'
+import { isAddress } from 'viem'
 
 import { type TXTransferTransferOptions } from '../../../types'
 
@@ -13,7 +13,7 @@ export const getDestination = <TApi, TRes>({
     return recipientAddress
   }
 
-  const isEthAddress = ethers.isAddress(recipientAddress)
+  const isEthAddress = isAddress(recipientAddress)
 
   const addressJunction: TJunction = isEthAddress
     ? {

@@ -7,8 +7,6 @@ import {
   isOverrideMultiLocationSpecifier
 } from '@paraspell/assets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
-import type { Signer } from 'ethers'
-import { Contract } from 'ethers'
 import type { WalletClient } from 'viem'
 import { getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -18,7 +16,6 @@ import { getParaId } from '../../../nodes/config'
 import type { TEvmBuilderOptions } from '../../../types'
 import { getBridgeStatus } from '../../getBridgeStatus'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
-import { isEthersContract, isEthersSigner } from '../utils'
 import { transferMoonbeamToEth } from './transferMoonbeamToEth'
 
 vi.mock('@paraspell/assets', () => ({
@@ -46,29 +43,14 @@ vi.mock('../../../utils/ethereum/createCustomXcmOnDest', () => ({
   createCustomXcmOnDest: vi.fn(() => '0xmockedXcm')
 }))
 
-vi.mock('ethers', () => ({
-  Contract: vi.fn().mockImplementation(() => ({
-    'transferAssetsUsingTypeAndThenAddress((uint8,bytes[]),(address,uint256)[],uint8,uint8,uint8,bytes)':
-      vi.fn(() => ({
-        hash: '0xethersHash'
-      }))
-  })),
-  isAddress: vi.fn().mockReturnValue(true)
-}))
-
 vi.mock('viem', () => ({
+  http: vi.fn(),
   createPublicClient: vi.fn(),
   getContract: vi.fn().mockImplementation(() => ({
     write: {
       transferAssetsUsingTypeAndThenAddress: vi.fn(() => '0xviemHash')
     }
-  })),
-  http: vi.fn()
-}))
-
-vi.mock('../utils', () => ({
-  isEthersSigner: vi.fn(),
-  isEthersContract: vi.fn()
+  }))
 }))
 
 describe('transferMoonbeamToEth', () => {
@@ -190,55 +172,20 @@ describe('transferMoonbeamToEth', () => {
       expect(getParaId).toHaveBeenCalledWith('AssetHubPolkadot')
       expect(getParaEthTransferFees).toHaveBeenCalled()
     })
-
-    it('should work with ethers signer', async () => {
-      vi.mocked(isEthersSigner).mockReturnValue(true)
-      vi.mocked(isEthersContract).mockReturnValue(true)
-
-      const result = await transferMoonbeamToEth({
-        ...baseOptions,
-        signer: { getAddress: () => '0xethers' } as unknown as Signer
-      })
-
-      expect(result).toBe('0xethersHash')
-      expect(Contract).toHaveBeenCalled()
-    })
   })
 
   it('should handle messageId generation correctly', async () => {
-    vi.mocked(isEthersSigner).mockReturnValue(true)
-    vi.mocked(isEthersContract).mockReturnValue(true)
     await transferMoonbeamToEth({
       ...baseOptions,
-      signer: { chain: {}, getAddress: () => ({ address: '' }) } as unknown as Signer
+      signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
     })
   })
 
   it('should construct XCM parameters correctly', async () => {
-    vi.mocked(isEthersSigner).mockReturnValue(true)
-    vi.mocked(isEthersContract).mockReturnValue(true)
     await transferMoonbeamToEth({
       ...baseOptions,
-      signer: { chain: {}, getAddress: () => '123' } as unknown as Signer
+      signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
     })
-
-    const expectedParams = [
-      [1, ['0x00000000000000000000000000000000000000000000000000000000000003e8']],
-      [
-        ['0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080', 2000n],
-        ['0xethAssetId', 1000]
-      ],
-      2,
-      0,
-      2,
-      '0xmockedXcm'
-    ]
-
-    if (process.env.USE_ETHERS) {
-      expect(Contract.prototype.transferAssetsUsingTypeAndThenAddress).toHaveBeenCalledWith(
-        ...expectedParams
-      )
-    }
   })
 
   it('should throw BridgeHaltedError when bridge status is not normal', async () => {
@@ -246,7 +193,7 @@ describe('transferMoonbeamToEth', () => {
     await expect(
       transferMoonbeamToEth({
         ...baseOptions,
-        signer: { chain: {}, getAddress: () => '123' } as unknown as Signer
+        signer: { chain: {}, account: { address: '0xviem' } } as unknown as WalletClient
       })
     ).rejects.toThrow(BridgeHaltedError)
   })

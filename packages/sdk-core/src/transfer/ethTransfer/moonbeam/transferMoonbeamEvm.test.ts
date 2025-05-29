@@ -1,28 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { TForeignAsset } from '@paraspell/assets'
+import type { TAsset, TForeignAsset } from '@paraspell/assets'
 import {
   findAsset,
   getNativeAssetSymbol,
   InvalidCurrencyError,
   isForeignAsset
 } from '@paraspell/assets'
-import type { Signer, TransactionResponse } from 'ethers'
-import { Contract } from 'ethers'
-import type { WalletClient } from 'viem'
+import type { GetContractReturnType, PublicClient, WalletClient } from 'viem'
 import { createPublicClient, getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
 import { formatAssetIdToERC20 } from '../../../pallets/assets/balance'
-import { isEthersContract, isEthersSigner } from '../utils'
+import type { TEvmBuilderOptions } from '../../../types'
+import abi from './abi.json' with { type: 'json' }
 import { getDestinationMultilocation } from './getDestinationMultilocation'
 import { transferMoonbeamEvm } from './transferMoonbeamEvm'
-
-vi.mock('ethers', () => ({
-  Contract: vi.fn()
-}))
 
 vi.mock('@paraspell/assets', () => ({
   findAsset: vi.fn(),
@@ -35,11 +27,6 @@ vi.mock('viem', () => ({
   createPublicClient: vi.fn(),
   getContract: vi.fn(),
   http: vi.fn()
-}))
-
-vi.mock('../utils', () => ({
-  isEthersContract: vi.fn(),
-  isEthersSigner: vi.fn()
 }))
 
 vi.mock('../../../pallets/assets/balance', () => ({
@@ -56,18 +43,16 @@ const mockApi = {
 } as unknown as IPolkadotApi<unknown, unknown>
 
 describe('transferMoonbeamEvm', () => {
-  const mockContract = {
-    transfer: vi.fn(),
-    transferMultiCurrencies: vi.fn()
-  } as unknown as Contract
   const mockViemContract = {
+    address: '0xMockContract',
+    abi: [],
     write: {
-      transfer: vi.fn(),
-      transferMultiCurrencies: vi.fn()
+      transfer: vi.fn().mockResolvedValue('0xMockTxHash'),
+      transferMultiCurrencies: vi.fn().mockResolvedValue('0xMockMultiTxHash')
     }
-  } as any
-  const mockSigner = { provider: {} } as Signer
-  const mockViemSigner = { property: 'value' } as unknown as WalletClient
+  } as unknown as GetContractReturnType<typeof abi, PublicClient>
+
+  const mockSigner = { account: '0xabc', chain: { id: 1284 } } as unknown as WalletClient
   const mockFrom = 'Moonbeam'
   const mockTo = 'AssetHubPolkadot'
   const mockAddress = 'some-address'
@@ -79,19 +64,15 @@ describe('transferMoonbeamEvm', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(isEthersSigner).mockReturnValue(false)
     vi.mocked(getContract).mockReturnValue(mockViemContract)
-    vi.mocked(Contract).mockImplementation(() => mockContract)
-    vi.mocked(isEthersContract).mockReturnValue(false)
     vi.mocked(findAsset).mockReturnValue(mockForeignAsset)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(formatAssetIdToERC20).mockReturnValue('0xformattedAsset')
-    vi.mocked(getDestinationMultilocation).mockReturnValue(['someDestination'] as unknown as (
-      | number
-      | string[]
-    )[])
-    vi.mocked(createPublicClient).mockReturnValue({} as any)
+    vi.mocked(getDestinationMultilocation).mockReturnValue([
+      'someDestination'
+    ] as unknown as ReturnType<typeof getDestinationMultilocation>)
+    vi.mocked(createPublicClient).mockReturnValue({} as PublicClient)
   })
 
   it('throws InvalidCurrencyError if getAssetBySymbolOrId returns null', async () => {
@@ -109,12 +90,7 @@ describe('transferMoonbeamEvm', () => {
   })
 
   it('uses native asset ID if found asset is the native symbol', async () => {
-    vi.mocked(findAsset).mockReturnValueOnce({
-      symbol: 'GLMR'
-    } as any)
-
-    const spy = vi.spyOn(mockViemContract.write, 'transfer')
-
+    vi.mocked(findAsset).mockReturnValueOnce({ symbol: 'GLMR' } as TAsset)
     await transferMoonbeamEvm({
       api: mockApi,
       from: mockFrom,
@@ -124,7 +100,7 @@ describe('transferMoonbeamEvm', () => {
       currency: mockCurrency
     })
     expect(formatAssetIdToERC20).not.toHaveBeenCalled()
-    expect(spy).toHaveBeenCalledWith([
+    expect(mockViemContract.write.transfer).toHaveBeenCalledWith([
       '0x0000000000000000000000000000000000000802',
       mockCurrency.amount,
       ['someDestination'],
@@ -137,7 +113,8 @@ describe('transferMoonbeamEvm', () => {
     vi.mocked(findAsset).mockReturnValueOnce({
       symbol: 'NOT_NATIVE',
       assetId: undefined
-    } as any)
+    } as TAsset)
+
     await expect(
       transferMoonbeamEvm({
         api: mockApi,
@@ -168,7 +145,7 @@ describe('transferMoonbeamEvm', () => {
     vi.mocked(findAsset).mockReturnValueOnce({
       symbol: 'xcPINK',
       assetId: '100000000'
-    } as any)
+    } as TAsset)
     await transferMoonbeamEvm({
       api: mockApi,
       from: 'Moonbeam',
@@ -189,13 +166,11 @@ describe('transferMoonbeamEvm', () => {
   })
 
   it('calls transfer if useMultiAssets is false', async () => {
-    vi.mocked(isEthersContract).mockReturnValueOnce(false)
-    vi.mocked(isEthersSigner).mockReturnValueOnce(false)
     await transferMoonbeamEvm({
       api: mockApi,
       from: 'Moonbeam',
       to: 'AssetHubPolkadot',
-      signer: mockViemSigner,
+      signer: mockSigner,
       address: mockAddress,
       currency: { symbol: 'SOME_TOKEN', amount: '1234' }
     })
@@ -207,13 +182,7 @@ describe('transferMoonbeamEvm', () => {
     ])
   })
 
-  it('returns tx.hash if the result is an object', async () => {
-    vi.mocked(isEthersSigner).mockReturnValueOnce(true)
-    vi.mocked(isEthersContract).mockReturnValueOnce(true)
-    const mockTxResponse = { hash: '0xMockHash' } as TransactionResponse
-
-    vi.spyOn(mockContract, 'transfer').mockResolvedValueOnce(mockTxResponse)
-
+  it('returns string transaction hash', async () => {
     const result = await transferMoonbeamEvm({
       api: mockApi,
       from: mockFrom,
@@ -222,21 +191,7 @@ describe('transferMoonbeamEvm', () => {
       address: mockAddress,
       currency: mockCurrency
     })
-    expect(result).toBe('0xMockHash')
-  })
-
-  it('returns the raw string if the result is a string', async () => {
-    vi.spyOn(mockViemContract.write, 'transfer').mockResolvedValueOnce('0xStringHash')
-
-    const result = await transferMoonbeamEvm({
-      api: mockApi,
-      from: mockFrom,
-      to: mockTo,
-      signer: mockViemSigner,
-      address: mockAddress,
-      currency: mockCurrency
-    })
-    expect(result).toBe('0xStringHash')
+    expect(result).toBe('0xMockTxHash')
   })
 
   it('throws if passed multiasset currency', async () => {
@@ -248,7 +203,7 @@ describe('transferMoonbeamEvm', () => {
         signer: mockSigner,
         address: mockAddress,
         currency: { multiasset: [], amount: '1234' }
-      })
+      } as TEvmBuilderOptions<unknown, unknown>)
     ).rejects.toThrowError()
   })
 
@@ -264,7 +219,7 @@ describe('transferMoonbeamEvm', () => {
           multilocation: { type: 'Override', value: { parents: 1, interior: {} } },
           amount: 1000
         }
-      })
+      } as TEvmBuilderOptions<unknown, unknown>)
     ).rejects.toThrowError()
   })
 })

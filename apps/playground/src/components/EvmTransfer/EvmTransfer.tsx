@@ -18,7 +18,7 @@ import {
 import type { BrowserProvider } from 'ethers';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
-import type { Address } from 'viem';
+import type { Address, WalletClient } from 'viem';
 import { createWalletClient, custom } from 'viem';
 import { darwinia, mainnet, moonbeam, moonriver } from 'viem/chains';
 import { Web3 } from 'web3';
@@ -197,13 +197,19 @@ const EvmTransfer = () => {
         throw new Error('Snowbridge does not support PAPI yet');
       }
 
+      if (!useViem) {
+        throw new Error(
+          'ParaSpell XCM SDK - PAPI version no longer supports ethers.js',
+        );
+      }
+
       await EvmBuilder()
         .from(from)
         .to(to)
         .currency(currencyInput)
         .address(address)
         .ahAddress(ahAddress)
-        .signer(signer)
+        .signer(signer as WalletClient)
         .build();
     } else {
       await EvmBuilderPJS(provider)

@@ -1,16 +1,14 @@
 import { getAssetsObject, isNodeEvm } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { base58 } from '@scure/base'
-import { ethers } from 'ethers'
+import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import { blake2b256, blake2b512, convertSs58, deriveAccountId, encodeSs58 } from './convertSs58'
 
-vi.mock('ethers', () => ({
-  ethers: {
-    isAddress: vi.fn()
-  }
+vi.mock('viem', () => ({
+  isAddress: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
@@ -94,8 +92,8 @@ describe('crypto helpers', () => {
       } as unknown as IPolkadotApi<unknown, unknown>
     })
 
-    it('EVM address on EVM node – returns the address untouched', () => {
-      vi.spyOn(ethers, 'isAddress').mockReturnValue(true)
+    it('EVM address on EVM node - returns the address untouched', () => {
+      vi.mocked(isAddress).mockReturnValue(true)
       vi.mocked(isNodeEvm).mockReturnValue(true)
 
       const spy = vi.spyOn(apiMock, 'accountToUint8a')
@@ -107,8 +105,8 @@ describe('crypto helpers', () => {
       expect(getAssetsObject).not.toHaveBeenCalled()
     })
 
-    it('EVM address on NON-EVM node – throws InvalidParameterError', () => {
-      vi.spyOn(ethers, 'isAddress').mockReturnValue(true)
+    it('EVM address on NON-EVM node - throws InvalidParameterError', () => {
+      vi.mocked(isAddress).mockReturnValue(true)
       vi.mocked(isNodeEvm).mockReturnValue(false)
 
       const spy = vi.spyOn(apiMock, 'accountToUint8a')
@@ -119,8 +117,8 @@ describe('crypto helpers', () => {
       expect(spy).not.toHaveBeenCalled()
     })
 
-    it('SS58 address on EVM node – throws InvalidParameterError', () => {
-      vi.spyOn(ethers, 'isAddress').mockReturnValue(false)
+    it('SS58 address on EVM node - throws InvalidParameterError', () => {
+      vi.mocked(isAddress).mockReturnValue(false)
       vi.mocked(isNodeEvm).mockReturnValue(true)
 
       const spy = vi.spyOn(apiMock, 'accountToUint8a')
@@ -131,8 +129,8 @@ describe('crypto helpers', () => {
       expect(spy).not.toHaveBeenCalled()
     })
 
-    it('SS58 address on NON-EVM node – performs a normal conversion', () => {
-      vi.spyOn(ethers, 'isAddress').mockReturnValue(false)
+    it('SS58 address on NON-EVM node - performs a normal conversion', () => {
+      vi.mocked(isAddress).mockReturnValue(false)
       vi.mocked(isNodeEvm).mockReturnValue(false)
 
       const spy = vi.spyOn(apiMock, 'accountToUint8a')

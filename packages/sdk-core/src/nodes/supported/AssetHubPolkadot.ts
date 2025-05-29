@@ -10,7 +10,6 @@ import {
   isForeignAsset
 } from '@paraspell/assets'
 import { hasJunction, isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
-import { ethers } from 'ethers'
 
 import { DOT_MULTILOCATION, ETHEREUM_JUNCTION, SYSTEM_NODES_POLKADOT } from '../../constants'
 import {
@@ -252,12 +251,6 @@ class AssetHubPolkadot<TApi, TRes>
 
     if (bridgeStatus !== 'Normal') {
       throw new BridgeHaltedError()
-    }
-
-    if (!ethers.isAddress(address)) {
-      throw new InvalidParameterError(
-        'Only Ethereum addresses are supported for Ethereum transfers'
-      )
     }
 
     if (!isForeignAsset(asset)) {

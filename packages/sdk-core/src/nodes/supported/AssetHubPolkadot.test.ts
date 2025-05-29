@@ -11,7 +11,6 @@ import {
   type WithAmount
 } from '@paraspell/assets'
 import { hasJunction, type TMultiLocation } from '@paraspell/sdk-common'
-import { ethers } from 'ethers'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -29,12 +28,6 @@ import { transformMultiLocation } from '../../utils/multiLocation'
 import { validateAddress } from '../../utils/validateAddress'
 import ParachainNode from '../ParachainNode'
 import type AssetHubPolkadot from './AssetHubPolkadot'
-
-vi.mock('ethers', () => ({
-  ethers: {
-    isAddress: vi.fn()
-  }
-}))
 
 vi.mock('../polkadotXcm', () => ({
   default: {
@@ -164,16 +157,7 @@ describe('AssetHubPolkadot', () => {
   })
 
   describe('handleEthBridgeTransfer', () => {
-    it('should throw an error if the address is not a valid Ethereum address', async () => {
-      vi.mocked(ethers.isAddress).mockReturnValue(false)
-
-      await expect(assetHub.handleEthBridgeTransfer(mockInput)).rejects.toThrowError(
-        'Only Ethereum addresses are supported for Ethereum transfers'
-      )
-    })
-
     it('should throw InvalidCurrencyError if currency is not supported for Ethereum transfers', async () => {
-      vi.mocked(ethers.isAddress).mockReturnValue(true)
       vi.mocked(getOtherAssets).mockReturnValue([])
 
       await expect(assetHub.handleEthBridgeTransfer(mockInput)).rejects.toThrowError(
@@ -182,7 +166,6 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should throw BridgeHaltedError if bridge status is not normal', async () => {
-      vi.mocked(ethers.isAddress).mockReturnValue(true)
       vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', assetId: '0x123' }])
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
@@ -194,7 +177,6 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should process a valid ETH transfer', async () => {
-      vi.mocked(ethers.isAddress).mockReturnValue(true)
       const mockEthAsset = { symbol: 'ETH', assetId: '0x123' }
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
       vi.mocked(isForeignAsset).mockReturnValue(true)
@@ -239,14 +221,7 @@ describe('AssetHubPolkadot', () => {
       )
     })
 
-    it('should throw an error if the address is not a valid Ethereum address', async () => {
-      vi.mocked(ethers.isAddress).mockReturnValue(false)
-
-      await expect(assetHub.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrowError()
-    })
-
     it('should throw InvalidCurrencyError if currency is not supported for Ethereum transfers', async () => {
-      vi.mocked(ethers.isAddress).mockReturnValue(true)
       vi.mocked(getOtherAssets).mockReturnValue([])
 
       await expect(assetHub.handleEthBridgeNativeTransfer(mockInput)).rejects.toThrowError(
@@ -255,7 +230,6 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should throw BridgeHaltedError if bridge status is not normal', async () => {
-      vi.mocked(ethers.isAddress).mockReturnValue(true)
       vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'ETH', assetId: '0x123' }])
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
@@ -267,7 +241,6 @@ describe('AssetHubPolkadot', () => {
     })
 
     it('should process a valid AH native asset to ETH transfer', async () => {
-      vi.mocked(ethers.isAddress).mockReturnValue(true)
       const mockEthAsset = { symbol: 'ETH', assetId: '0x123' }
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
       vi.mocked(isForeignAsset).mockReturnValue(true)
@@ -360,8 +333,6 @@ describe('AssetHubPolkadot', () => {
 
     it('should call handleEthBridgeTransfer when destination is Ethereum', async () => {
       mockInput.destination = 'Ethereum'
-
-      vi.mocked(ethers.isAddress).mockReturnValue(true)
 
       const spy = vi.spyOn(assetHub, 'handleEthBridgeTransfer').mockResolvedValue({} as unknown)
 

@@ -1,27 +1,34 @@
-import { ethers } from 'ethers'
+import { createPublicClient, http } from 'viem'
+import { moonbeam, moonriver } from 'viem/chains'
 
 import { formatAssetIdToERC20 } from './formatAssetIdToERC20'
 
-const MOONBEAM_RPC = 'https://rpc.api.moonbeam.network'
-const MOONBEAM_ID = 1284
+const ERC20_ABI = [
+  {
+    type: 'function',
+    name: 'balanceOf',
+    stateMutability: 'view',
+    inputs: [{ name: 'account', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256' }]
+  }
+] as const
 
-const MOONRIVER_RPC = 'https://rpc.api.moonriver.moonbeam.network'
-const MOONRIVER_ID = 1285
-
-const ERC20_ABI = ['function balanceOf(address) view returns (uint256)']
-
-export async function getMoonbeamErc20Balance(
+export const getMoonbeamErc20Balance = async (
   node: 'Moonbeam' | 'Moonriver',
   assetId: string,
   address: string
-): Promise<bigint> {
-  const { rpc, id } =
-    node === 'Moonbeam'
-      ? { rpc: MOONBEAM_RPC, id: MOONBEAM_ID }
-      : { rpc: MOONRIVER_RPC, id: MOONRIVER_ID }
+): Promise<bigint> => {
+  const client = createPublicClient({
+    chain: node === 'Moonbeam' ? moonbeam : moonriver,
+    transport: http()
+  })
 
-  const provider = new ethers.JsonRpcProvider(rpc, id)
-  const addr = formatAssetIdToERC20(assetId)
-  const token = new ethers.Contract(addr, ERC20_ABI, provider)
-  return (await token.balanceOf(address)) as bigint
+  const tokenAddress = formatAssetIdToERC20(assetId)
+
+  return await client.readContract({
+    address: tokenAddress as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: [address as `0x${string}`]
+  })
 }

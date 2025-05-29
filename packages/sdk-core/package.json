@@ -41,7 +41,6 @@
     "@paraspell/pallets": "workspace:*",
     "@paraspell/sdk-common": "workspace:*",
     "@scure/base": "^1.2.5",
-    "ethers": "^6.13.7",
     "viem": "^2.28.1"
   },
   "devDependencies": {

@@ -10,8 +10,6 @@ import {
   isOverrideMultiLocationSpecifier
 } from '@paraspell/assets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
-import type { TransactionResponse } from 'ethers'
-import { Contract } from 'ethers'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
@@ -23,7 +21,6 @@ import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOn
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
 import { getBridgeStatus } from '../../getBridgeStatus'
 import { getParaEthTransferFees } from '../getParaEthTransferFees'
-import { isEthersContract, isEthersSigner } from '../utils'
 import abi from './abi-xcm.json' with { type: 'json' }
 
 // https://github.com/moonbeam-foundation/moonbeam/blob/b2b1bde7ced13aad4bd2928effc415c521fd48cb/runtime/moonbeam/src/precompiles.rs#L281
@@ -77,21 +74,19 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
     )
   }
 
-  const contract = isEthersSigner(signer)
-    ? new Contract(xcmInterfacePrecompile, abi, signer)
-    : getContract({
-        abi,
-        address: xcmInterfacePrecompile,
-        client: {
-          public: createPublicClient({
-            chain: signer.chain,
-            transport: http()
-          }),
-          wallet: signer
-        }
-      })
+  const contract = getContract({
+    abi,
+    address: xcmInterfacePrecompile,
+    client: {
+      public: createPublicClient({
+        chain: signer.chain,
+        transport: http()
+      }),
+      wallet: signer
+    }
+  })
 
-  const senderAddress = isEthersSigner(signer) ? await signer.getAddress() : signer.account?.address
+  const senderAddress = signer.account?.address
 
   if (!senderAddress) {
     throw new InvalidParameterError('Unable to get sender address')
@@ -136,14 +131,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
 
   // Partially inspired by Moonbeam XCM-SDK
   // https://github.com/moonbeam-foundation/xcm-sdk/blob/ab835c15bf41612604b1c858d956a9f07705ed65/packages/sdk/src/contract/contracts/Xtokens/Xtokens.ts#L53
-  const createTx = (
-    func: string,
-    args: unknown[]
-  ): Promise<TransactionResponse | WriteContractReturnType> => {
-    if (isEthersContract(contract)) {
-      return contract[func](...args)
-    }
-
+  const createTx = (func: string, args: unknown[]): Promise<WriteContractReturnType> => {
     return contract.write[func](args as any)
   }
 
@@ -155,27 +143,22 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
       : `0x${(num >>> 0).toString(16).padStart(8, '0')}`
 
   // Execute the custom XCM message with the precompile
-  const tx = await createTx(
-    isEthersSigner(signer)
-      ? 'transferAssetsUsingTypeAndThenAddress((uint8,bytes[]),(address,uint256)[],uint8,uint8,uint8,bytes)'
-      : 'transferAssetsUsingTypeAndThenAddress',
+  const tx = await createTx('transferAssetsUsingTypeAndThenAddress', [
+    // This represents (1,X1(Parachain(1000)))
+    [1, ['0x00' + numberToHex32(getParaId('AssetHubPolkadot')).slice(2)]],
+    // Assets including fee and the ERC20 asset, with fee be the first
     [
-      // This represents (1,X1(Parachain(1000)))
-      [1, ['0x00' + numberToHex32(getParaId('AssetHubPolkadot')).slice(2)]],
-      // Assets including fee and the ERC20 asset, with fee be the first
-      [
-        [XCDOT, transferFee],
-        [ethAsset.assetId, currency.amount.toString()]
-      ],
-      // The TransferType corresponding to asset being sent, 2 represents `DestinationReserve`
-      2,
-      // index for the fee
-      0,
-      // The TransferType corresponding to fee asset
-      2,
-      customXcmOnDest
-    ]
-  )
+      [XCDOT, transferFee],
+      [ethAsset.assetId, currency.amount.toString()]
+    ],
+    // The TransferType corresponding to asset being sent, 2 represents `DestinationReserve`
+    2,
+    // index for the fee
+    0,
+    // The TransferType corresponding to fee asset
+    2,
+    customXcmOnDest
+  ])
 
-  return typeof tx === 'object' ? tx.hash : tx
+  return tx
 }

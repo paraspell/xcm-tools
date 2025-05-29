@@ -3,14 +3,14 @@ import {
   getParaId,
   InvalidCurrencyError,
   InvalidParameterError,
-  isEthersSigner,
   isForeignAsset,
-  isOverrideMultiLocationSpecifier,
-  type TEvmBuilderOptions
+  isOverrideMultiLocationSpecifier
 } from '@paraspell/sdk-core'
 import { assetsV2, environment, toPolkadotV2 } from '@snowbridge/api'
 import type { RegistryOptions } from '@snowbridge/api/dist/assets_v2'
 
+import type { TPjsEvmBuilderOptions } from '../types'
+import { isEthersSigner } from '../utils'
 import { createContext } from './createContext'
 
 /**
@@ -29,7 +29,7 @@ export const transferEthToPolkadot = async <TApi, TRes>({
   address,
   to,
   currency
-}: TEvmBuilderOptions<TApi, TRes>) => {
+}: TPjsEvmBuilderOptions<TApi, TRes>) => {
   if ('multiasset' in currency) {
     throw new InvalidParameterError('Multiassets syntax is not supported for Evm transfers')
   }

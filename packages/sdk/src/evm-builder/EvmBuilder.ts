@@ -5,7 +5,6 @@ import type {
   TNodeWithRelayChains
 } from '@paraspell/sdk-core'
 import { transferMoonbeamEvm, transferMoonbeamToEth, validateAddress } from '@paraspell/sdk-core'
-import type { Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 
 import type { TEvmNodeFromPapi } from '../types'
@@ -76,9 +75,7 @@ export class EvmBuilderCore<
    * @param signer - The Ethereum signer to authorize the transfer.
    * @returns An instance of EvmBuilder
    */
-  signer(
-    signer: Signer | WalletClient
-  ): EvmBuilderCore<TApi, TRes, T & { signer: Signer | WalletClient }> {
+  signer(signer: WalletClient): EvmBuilderCore<TApi, TRes, T & { signer: WalletClient }> {
     return new EvmBuilderCore({ ...this._options, signer })
   }
 

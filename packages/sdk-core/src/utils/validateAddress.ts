@@ -1,6 +1,6 @@
 import { isNodeEvm } from '@paraspell/assets'
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
-import { ethers } from 'ethers'
+import { isTMultiLocation, type TNodeWithRelayChains } from '@paraspell/sdk-common'
+import { isAddress } from 'viem'
 
 import { InvalidAddressError } from '../errors'
 import type { TAddress } from '../types'
@@ -10,9 +10,11 @@ export const validateAddress = (
   node: TNodeWithRelayChains,
   isDestination = true
 ) => {
+  if (isTMultiLocation(address)) return
+
   const isEvm = isNodeEvm(node)
 
-  const isEthereumAddress = ethers.isAddress(address)
+  const isEthereumAddress = isAddress(address)
 
   if (isEvm) {
     if (!isEthereumAddress) {
