@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.2.0...sdk-core-v10.3.0) (2025-05-29)
+
+
+### Features
+
+* Migrate sdk-core to viem 🪄 ([f1fc5d6](https://github.com/paraspell/xcm-tools/commit/f1fc5d67eeb2b9bcebcdfa8981d8a57644191707))
+
 ## [10.2.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.1.7...sdk-core-v10.2.0) (2025-05-28)
 
 
