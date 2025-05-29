@@ -1,4 +1,5 @@
-import type { ethers } from 'ethers'
+import { createPublicClient } from 'viem'
+import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { formatAssetIdToERC20 } from './formatAssetIdToERC20'
@@ -8,55 +9,31 @@ vi.mock('./formatAssetIdToERC20', () => ({
   formatAssetIdToERC20: vi.fn((id: string) => (id.startsWith('0x') ? id : `0xmocked${id}`))
 }))
 
-const mockBalanceOf = vi.fn()
-const mockProviderConstructor = vi.fn()
-const mockContractConstructor = vi.fn()
-
-vi.mock('ethers', async () => {
-  const actual = await vi.importActual<typeof import('ethers')>('ethers')
-
-  class MockProvider {
-    constructor(rpc: string, id: number) {
-      mockProviderConstructor(rpc, id)
-    }
-  }
-
-  class MockContract {
-    address: string
-    abi: unknown
-    provider: unknown
-    balanceOf = mockBalanceOf
-
-    constructor(address: string, abi: unknown, provider: unknown) {
-      this.address = address
-      this.abi = abi
-      this.provider = provider
-      mockContractConstructor(address, abi, provider)
-    }
-  }
-
+vi.mock('viem', async () => {
+  const actual = await vi.importActual<typeof import('viem')>('viem')
   return {
     ...actual,
-    ethers: {
-      ...actual.ethers,
-      JsonRpcProvider: MockProvider,
-      Contract: MockContract as unknown as ethers.Contract
-    }
+    createPublicClient: vi.fn()
   }
 })
 
-const MOONBEAM_RPC = 'https://rpc.api.moonbeam.network'
-const MOONBEAM_ID = 1284
-const MOONRIVER_RPC = 'https://rpc.api.moonriver.moonbeam.network'
-const MOONRIVER_ID = 1285
+vi.mock('viem/chains', () => ({
+  moonbeam: { id: 1284, name: 'Moonbeam' },
+  moonriver: { id: 1285, name: 'Moonriver' }
+}))
 
 describe('getMoonbeamErc20Balance', () => {
   const WALLET = '0xA11CE0000000000000000000000000000000000'
   const RAW = 123456789n
 
+  let mockReadContract: MockInstance
+
   beforeEach(() => {
     vi.clearAllMocks()
-    mockBalanceOf.mockResolvedValue(RAW)
+    mockReadContract = vi.fn().mockResolvedValue(RAW)
+    vi.mocked(createPublicClient).mockReturnValue({
+      readContract: mockReadContract
+    } as unknown as ReturnType<typeof createPublicClient>)
   })
 
   afterEach(() => vi.clearAllMocks())
@@ -68,13 +45,14 @@ describe('getMoonbeamErc20Balance', () => {
 
     expect(bal).toBe(RAW)
     expect(formatAssetIdToERC20).toHaveBeenCalledWith(ASSET)
-    expect(mockProviderConstructor).toHaveBeenCalledWith(MOONBEAM_RPC, MOONBEAM_ID)
-    expect(mockContractConstructor).toHaveBeenCalledWith(
-      ASSET,
-      ['function balanceOf(address) view returns (uint256)'],
-      expect.any(Object)
+    expect(createPublicClient).toHaveBeenCalled()
+    expect(mockReadContract).toHaveBeenCalledWith(
+      expect.objectContaining({
+        address: ASSET,
+        functionName: 'balanceOf',
+        args: [WALLET]
+      })
     )
-    expect(mockBalanceOf).toHaveBeenCalledWith(WALLET)
   })
 
   it('Moonriver: returns bigint balance for direct 0x address', async () => {
@@ -84,13 +62,13 @@ describe('getMoonbeamErc20Balance', () => {
 
     expect(bal).toBe(RAW)
     expect(formatAssetIdToERC20).toHaveBeenCalledWith(ASSET)
-    expect(mockProviderConstructor).toHaveBeenCalledWith(MOONRIVER_RPC, MOONRIVER_ID)
-    expect(mockContractConstructor).toHaveBeenCalledWith(
-      ASSET,
-      ['function balanceOf(address) view returns (uint256)'],
-      expect.any(Object)
+    expect(mockReadContract).toHaveBeenCalledWith(
+      expect.objectContaining({
+        address: ASSET,
+        functionName: 'balanceOf',
+        args: [WALLET]
+      })
     )
-    expect(mockBalanceOf).toHaveBeenCalledWith(WALLET)
   })
 
   it('Moonbeam: converts numeric assetId and returns bigint balance', async () => {
@@ -101,15 +79,17 @@ describe('getMoonbeamErc20Balance', () => {
 
     expect(bal).toBe(RAW)
     expect(formatAssetIdToERC20).toHaveBeenCalledWith(NUMERIC_ASSET_ID)
-    expect(mockContractConstructor).toHaveBeenCalledWith(
-      EXPECTED_ADDR,
-      expect.any(Array),
-      expect.any(Object)
+    expect(mockReadContract).toHaveBeenCalledWith(
+      expect.objectContaining({
+        address: EXPECTED_ADDR,
+        functionName: 'balanceOf',
+        args: [WALLET]
+      })
     )
   })
 
-  it('propagates errors thrown by balanceOf', async () => {
-    mockBalanceOf.mockRejectedValueOnce(new Error('boom'))
+  it('propagates errors thrown by readContract', async () => {
+    mockReadContract.mockRejectedValueOnce(new Error('boom'))
     await expect(getMoonbeamErc20Balance('Moonbeam', '0xAB', WALLET)).rejects.toThrow('boom')
   })
 })

@@ -1,14 +1,14 @@
 import {
+  InvalidParameterError,
   type IPolkadotApi,
   type TCurrencyInputWithAmount,
-  transferMoonbeamEvm,
-  transferMoonbeamToEth,
   validateAddress
 } from '@paraspell/sdk-core'
 import type { Signer } from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferEthToPolkadot } from '../ethTransfer'
+import { isEthersSigner } from '../utils'
 import { EvmBuilder } from './EvmBuilder'
 
 vi.mock('../ethTransfer', () => ({
@@ -22,7 +22,12 @@ vi.mock('../ethTransfer', () => ({
 vi.mock('@paraspell/sdk-core', () => ({
   validateAddress: vi.fn().mockReturnValue(true),
   transferMoonbeamToEth: vi.fn(),
-  transferMoonbeamEvm: vi.fn()
+  transferMoonbeamEvm: vi.fn(),
+  InvalidParameterError: class InvalidParameterError extends Error {}
+}))
+
+vi.mock('../utils', () => ({
+  isEthersSigner: vi.fn()
 }))
 
 const mockApi = {
@@ -39,6 +44,7 @@ describe('EvmBuilderClass', () => {
     signer = {} as Signer
     currency = {} as TCurrencyInputWithAmount
     address = '0x1234567890abcdef'
+    vi.mocked(isEthersSigner).mockReturnValue(true)
   })
 
   it('should call transferMoonbeamToEth if from is Moonbeam and to is Ethereum', async () => {
@@ -50,18 +56,9 @@ describe('EvmBuilderClass', () => {
       .ahAddress(address)
       .signer(signer)
 
-    await builder.build()
+    await expect(builder.build()).rejects.toThrow(InvalidParameterError)
 
     expect(validateAddress).toHaveBeenCalledWith(address, 'Ethereum')
-    expect(transferMoonbeamToEth).toHaveBeenCalledWith({
-      api: mockApi,
-      from: 'Moonbeam',
-      to: 'Ethereum',
-      currency,
-      address,
-      ahAddress: address,
-      signer
-    })
   })
 
   it('should call transferMoonbeamEvm if from is Moonbeam, Moonriver, or Darwinia', async () => {
@@ -73,18 +70,9 @@ describe('EvmBuilderClass', () => {
       .ahAddress(address)
       .signer(signer)
 
-    await builder.build()
+    await expect(builder.build()).rejects.toThrow(InvalidParameterError)
 
     expect(validateAddress).toHaveBeenCalledWith(address, 'Polkadot')
-    expect(transferMoonbeamEvm).toHaveBeenCalledWith({
-      api: mockApi,
-      from: 'Moonbeam',
-      to: 'Polkadot',
-      currency,
-      address,
-      ahAddress: address,
-      signer
-    })
   })
 
   it('should call transferEthToPolkadot if from is Ethereum', async () => {

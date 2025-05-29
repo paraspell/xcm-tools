@@ -1,19 +1,28 @@
 import type { TCurrencyCore } from '@paraspell/assets'
 import { findAssetForNodeOrThrow, isForeignAsset } from '@paraspell/assets'
-import { ethers } from 'ethers'
+import { createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
 
 import { InvalidParameterError } from '../../../errors'
 
-const ETH_RPC = 'https://ethereum.publicnode.com/'
-const ETH_ID = 1
+const ERC20_ABI = [
+  {
+    type: 'function',
+    name: 'balanceOf',
+    stateMutability: 'view',
+    inputs: [{ name: 'account', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256' }]
+  }
+] as const
 
-const ERC20_ABI = ['function balanceOf(address) view returns (uint256)']
-
-export async function getEthErc20Balance(
+export const getEthErc20Balance = async (
   currency: TCurrencyCore,
   address: string
-): Promise<bigint> {
-  const { rpc, id } = { rpc: ETH_RPC, id: ETH_ID }
+): Promise<bigint> => {
+  const client = createPublicClient({
+    chain: mainnet,
+    transport: http('https://ethereum.publicnode.com/')
+  })
 
   const asset = findAssetForNodeOrThrow('Ethereum', currency, null)
 
@@ -21,13 +30,14 @@ export async function getEthErc20Balance(
     throw new InvalidParameterError(`Asset ${JSON.stringify(asset)} is not a foreign asset.`)
   }
 
-  const provider = new ethers.JsonRpcProvider(rpc, id)
-
   if (asset.symbol === 'ETH') {
-    return await provider.getBalance(address)
+    return await client.getBalance({ address: address as `0x${string}` })
   }
 
-  const tokenAddress = asset.assetId
-  const token = new ethers.Contract(tokenAddress, ERC20_ABI, provider)
-  return (await token.balanceOf(address)) as bigint
+  return await client.readContract({
+    address: asset.assetId as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: [address as `0x${string}`]
+  })
 }

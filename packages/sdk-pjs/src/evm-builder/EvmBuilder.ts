@@ -1,16 +1,21 @@
 import type {
   IPolkadotApi,
   TCurrencyInputWithAmount,
-  TEvmBuilderOptions,
   TNodeWithRelayChains
 } from '@paraspell/sdk-core'
-import { transferMoonbeamEvm, transferMoonbeamToEth } from '@paraspell/sdk-core'
+import {
+  InvalidParameterError,
+  transferMoonbeamEvm,
+  transferMoonbeamToEth
+} from '@paraspell/sdk-core'
 import { validateAddress } from '@paraspell/sdk-core'
 import type { TEvmNodeFrom } from '@paraspell/sdk-core/src'
 import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 
 import { transferEthToPolkadot } from '../ethTransfer'
+import type { TPjsEvmBuilderOptions } from '../types'
+import { isEthersSigner } from '../utils'
 
 /**
  * Builder class for constructing transfers from Ethereum to Polkadot.
@@ -18,7 +23,7 @@ import { transferEthToPolkadot } from '../ethTransfer'
 export class EvmBuilderCore<
   TApi,
   TRes,
-  T extends Partial<TEvmBuilderOptions<TApi, TRes>> = object
+  T extends Partial<TPjsEvmBuilderOptions<TApi, TRes>> = object
 > {
   protected readonly _options: T
 
@@ -89,16 +94,29 @@ export class EvmBuilderCore<
    *
    * @throws Error if any required parameters are missing.
    */
-  async build(this: EvmBuilderCore<TApi, TRes, TEvmBuilderOptions<TApi, TRes>>): Promise<string> {
-    const { from, to, address } = this._options
+  async build(
+    this: EvmBuilderCore<TApi, TRes, TPjsEvmBuilderOptions<TApi, TRes>>
+  ): Promise<string> {
+    const { from, to, address, signer } = this._options
     validateAddress(address, to)
 
     if (from === 'Moonbeam' && to === 'Ethereum') {
-      return transferMoonbeamToEth(this._options)
+      if (isEthersSigner(signer)) {
+        throw new InvalidParameterError(
+          'Ethers signer is not supported for Moonbeam to Ethereum transfers.'
+        )
+      }
+
+      return transferMoonbeamToEth({ ...this._options, signer: signer })
     }
 
     if (from === 'Moonbeam' || from === 'Moonriver' || from === 'Darwinia') {
-      return transferMoonbeamEvm(this._options)
+      if (isEthersSigner(signer)) {
+        throw new InvalidParameterError(
+          'Ethers signer is not supported for Moonbeam to Ethereum transfers.'
+        )
+      }
+      return transferMoonbeamEvm({ ...this._options, signer: signer })
     } else {
       const { response } = await transferEthToPolkadot(this._options)
       return response.hash

@@ -2,13 +2,7 @@ import type { TAsset, TCurrencyCore, TForeignAsset } from '@paraspell/assets'
 import { findAssetForNodeOrThrow, isForeignAsset } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { InvalidParameterError } from '../../../errors'
 import { getEthErc20Balance } from './getEthErc20Balance'
-
-const mockEthersInstanceBalanceOf = vi.fn()
-const mockEthersInstanceGetBalance = vi.fn()
-const mockEthersProviderConstructor = vi.fn()
-const mockEthersContractConstructor = vi.fn()
 
 vi.mock('@paraspell/assets', () => ({
   findAssetForNodeOrThrow: vi.fn(),
@@ -24,53 +18,32 @@ vi.mock('../../../errors', () => ({
   }
 }))
 
-vi.mock('ethers', async () => {
-  const actualEthers = await vi.importActual<typeof import('ethers')>('ethers')
-
-  class MockJsonRpcProvider {
-    getBalance = mockEthersInstanceGetBalance
-
-    constructor(rpcUrl: string, network?: number | string) {
-      mockEthersProviderConstructor(rpcUrl, network)
-    }
-  }
-
-  class MockContract {
-    balanceOf = mockEthersInstanceBalanceOf
-
-    address: string
-    abi: unknown
-    runner: unknown
-
-    constructor(address: string, abi: unknown, runnerOrProvider: unknown) {
-      this.address = address
-      this.abi = abi
-      this.runner = runnerOrProvider
-      mockEthersContractConstructor(address, abi, runnerOrProvider)
-    }
-  }
-
+vi.mock('viem', () => {
   return {
-    ...actualEthers,
-    ethers: {
-      ...actualEthers.ethers,
-      JsonRpcProvider: MockJsonRpcProvider,
-      Contract: MockContract
-    }
+    createPublicClient: vi.fn(() => mockClient),
+    http: vi.fn(() => ({}))
   }
 })
 
+vi.mock('viem/chains', () => ({
+  mainnet: { id: 1 }
+}))
+
+const mockReadContract = vi.fn()
+const mockGetBalance = vi.fn()
+
+const mockClient = {
+  readContract: mockReadContract,
+  getBalance: mockGetBalance
+}
+
 describe('getEthErc20Balance', () => {
   const MOCK_WALLET_ADDRESS = '0x1234567890123456789012345678901234567890'
-  const ETH_RPC_URL = 'https://ethereum.publicnode.com/'
-  const ETH_CHAIN_ID = 1
-  const ERC20_ABI_EXPECTED = ['function balanceOf(address) view returns (uint256)']
 
   beforeEach(() => {
     vi.clearAllMocks()
-
-    mockEthersInstanceBalanceOf.mockReset()
-    mockEthersInstanceGetBalance.mockReset()
+    mockReadContract.mockReset()
+    mockGetBalance.mockReset()
   })
 
   it('should return ERC20 token balance for a valid foreign asset', async () => {
@@ -79,130 +52,87 @@ describe('getEthErc20Balance', () => {
       symbol: 'USDT',
       assetId: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
     } as TForeignAsset
-    const mockBalanceValue = BigInt('1000000000000000000')
 
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset as TAsset)
+    const expectedBalance = 1234567890n
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
-    mockEthersInstanceBalanceOf.mockResolvedValue(mockBalanceValue)
+    mockReadContract.mockResolvedValue(expectedBalance)
 
-    const balance = await getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)
+    const result = await getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)
 
-    expect(findAssetForNodeOrThrow).toHaveBeenCalledWith('Ethereum', currency, null)
-    expect(isForeignAsset).toHaveBeenCalledWith(mockAsset as TAsset)
-    expect(mockEthersProviderConstructor).toHaveBeenCalledWith(ETH_RPC_URL, ETH_CHAIN_ID)
-    expect(mockEthersContractConstructor).toHaveBeenCalledWith(
-      mockAsset.assetId,
-      ERC20_ABI_EXPECTED,
-      expect.any(Object)
-    )
-    expect(mockEthersInstanceBalanceOf).toHaveBeenCalledWith(MOCK_WALLET_ADDRESS)
-    expect(mockEthersInstanceGetBalance).not.toHaveBeenCalled()
-    expect(balance).toBe(mockBalanceValue)
+    expect(result).toBe(expectedBalance)
+    expect(mockReadContract).toHaveBeenCalledWith({
+      address: mockAsset.assetId,
+      abi: expect.anything(),
+      functionName: 'balanceOf',
+      args: [MOCK_WALLET_ADDRESS]
+    })
+    expect(mockGetBalance).not.toHaveBeenCalled()
   })
 
-  it('should return native ETH balance when currency is ETH', async () => {
+  it('should return ETH balance when symbol is ETH', async () => {
     const currency: TCurrencyCore = { symbol: 'ETH' }
-    const mockAsset: TAsset = {
-      symbol: 'ETH',
-      assetId: '0xETHAssetIdPlaceholder'
-    }
-    const mockBalanceValue = BigInt('2000000000000000000')
+    const mockAsset = { symbol: 'ETH', assetId: '0xETH' }
+    const expectedBalance = 1000000000000000000n
 
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
-    mockEthersInstanceGetBalance.mockResolvedValue(mockBalanceValue)
+    mockGetBalance.mockResolvedValue(expectedBalance)
 
-    const balance = await getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)
+    const result = await getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)
 
-    expect(findAssetForNodeOrThrow).toHaveBeenCalledWith('Ethereum', currency, null)
-    expect(isForeignAsset).toHaveBeenCalledWith(mockAsset)
-    expect(mockEthersProviderConstructor).toHaveBeenCalledWith(ETH_RPC_URL, ETH_CHAIN_ID)
-    expect(mockEthersInstanceGetBalance).toHaveBeenCalledWith(MOCK_WALLET_ADDRESS)
-    expect(mockEthersContractConstructor).not.toHaveBeenCalled()
-    expect(mockEthersInstanceBalanceOf).not.toHaveBeenCalled()
-    expect(balance).toBe(mockBalanceValue)
+    expect(result).toBe(expectedBalance)
+    expect(mockGetBalance).toHaveBeenCalledWith({ address: MOCK_WALLET_ADDRESS })
+    expect(mockReadContract).not.toHaveBeenCalled()
   })
 
-  it('should throw InvalidParameterError if asset is not a foreign asset', async () => {
+  it('should throw if asset is not a foreign asset', async () => {
     const currency: TCurrencyCore = { symbol: 'XYZ' }
-    const mockAsset: TAsset = {
-      symbol: 'XYZ',
-      assetId: 'some-id'
-    }
+    const mockAsset = { symbol: 'XYZ', assetId: 'some-id' }
 
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
-    await expect(getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(
-      InvalidParameterError
+    await expect(() => getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(
+      /not a foreign asset/
     )
-    await expect(getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(
-      `Asset ${JSON.stringify(mockAsset)} is not a foreign asset.`
-    )
-    expect(mockEthersProviderConstructor).not.toHaveBeenCalled()
   })
 
-  it('should throw InvalidParameterError if foreign asset has no assetId', async () => {
-    const currency: TCurrencyCore = { symbol: 'ABC' }
-    const mockAsset = {
-      symbol: 'ABC',
-      assetId: null,
-      type: 'ERC20'
-    } as unknown as TAsset
+  it('should throw if foreign asset is missing assetId', async () => {
+    const currency: TCurrencyCore = { symbol: 'MISSING' }
+    const mockAsset = { symbol: 'MISSING', assetId: null } as unknown as TAsset
 
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
-    await expect(getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(
-      InvalidParameterError
+    await expect(() => getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(
+      /not a foreign asset/
     )
-    await expect(getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(
-      `Asset ${JSON.stringify(mockAsset)} is not a foreign asset.`
-    )
-    expect(mockEthersProviderConstructor).not.toHaveBeenCalled()
   })
 
-  it('should propagate error from findAssetForNodeOrThrow', async () => {
-    const currency: TCurrencyCore = { symbol: 'FAIL' }
-    const errorMessage = 'Asset not found deliberately'
-    vi.mocked(findAssetForNodeOrThrow).mockImplementation(() => {
-      throw new Error(errorMessage)
-    })
+  it('should propagate error from readContract', async () => {
+    const currency: TCurrencyCore = { symbol: 'USDC' }
+    const mockAsset = { symbol: 'USDC', assetId: '0x1234' } as TForeignAsset
 
-    await expect(getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(errorMessage)
-    expect(isForeignAsset).not.toHaveBeenCalled()
-    expect(mockEthersProviderConstructor).not.toHaveBeenCalled()
+    const error = new Error('revert')
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
+    vi.mocked(isForeignAsset).mockReturnValue(true)
+    mockReadContract.mockRejectedValue(error)
+
+    await expect(() => getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow('revert')
   })
 
-  it('should propagate error from provider.getBalance when fetching ETH', async () => {
+  it('should propagate error from getBalance', async () => {
     const currency: TCurrencyCore = { symbol: 'ETH' }
-    const mockAsset: TAsset = {
-      symbol: 'ETH',
-      assetId: '0xETHPlaceholder'
-    }
-    const errorMessage = 'Provider network error'
+    const mockAsset = { symbol: 'ETH', assetId: '0xETH' }
 
+    const error = new Error('eth getBalance failed')
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset)
     vi.mocked(isForeignAsset).mockReturnValue(true)
-    mockEthersInstanceGetBalance.mockRejectedValue(new Error(errorMessage))
+    mockGetBalance.mockRejectedValue(error)
 
-    await expect(getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(errorMessage)
-    expect(mockEthersProviderConstructor).toHaveBeenCalledWith(ETH_RPC_URL, ETH_CHAIN_ID)
-  })
-
-  it('should propagate error from token.balanceOf when fetching ERC20', async () => {
-    const currency: TCurrencyCore = { symbol: 'USDT' }
-    const mockAsset = {
-      symbol: 'USDT',
-      assetId: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
-    } as TForeignAsset
-    const errorMessage = 'Token contract reverted'
-
-    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockAsset as TAsset)
-    vi.mocked(isForeignAsset).mockReturnValue(true)
-    mockEthersInstanceBalanceOf.mockRejectedValue(new Error(errorMessage))
-
-    await expect(getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(errorMessage)
-    expect(mockEthersContractConstructor).toHaveBeenCalled()
+    await expect(() => getEthErc20Balance(currency, MOCK_WALLET_ADDRESS)).rejects.toThrow(
+      'eth getBalance failed'
+    )
   })
 })

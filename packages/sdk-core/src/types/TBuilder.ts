@@ -1,6 +1,5 @@
 import type { TCurrencyInputWithAmount } from '@paraspell/assets'
 import type { TNode, TNodeWithRelayChains } from '@paraspell/sdk-common'
-import type { AbstractProvider, Signer } from 'ethers'
 import type { WalletClient } from 'viem'
 
 import type { WithApi } from './TApi'
@@ -34,12 +33,10 @@ export type TEvmBuilderOptionsBase = {
   /**
    * The Ethereum signer.
    */
-  signer: Signer | WalletClient
+  signer: WalletClient
 }
 
-export type TEvmBuilderOptions<TApi, TRes> = WithApi<TEvmBuilderOptionsBase, TApi, TRes> & {
-  provider?: AbstractProvider
-}
+export type TEvmBuilderOptions<TApi, TRes> = WithApi<TEvmBuilderOptionsBase, TApi, TRes>
 
 export type TSerializeEthTransferOptions = Omit<TEvmBuilderOptionsBase, 'signer'> & {
   destAddress: string

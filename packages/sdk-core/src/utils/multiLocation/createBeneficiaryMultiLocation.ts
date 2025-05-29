@@ -1,6 +1,6 @@
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
-import { ethers } from 'ethers'
+import { isAddress } from 'viem'
 
 import type { TCreateBeneficiaryOptions } from '../../types'
 import { Version } from '../../types'
@@ -18,7 +18,7 @@ export const createBeneficiaryMultiLocation = <TApi, TRes>({
     return recipientAddress
   }
 
-  const isEthAddress = ethers.isAddress(recipientAddress)
+  const isEthAddress = isAddress(recipientAddress)
 
   const getAccountPayload = (allowNetwork: boolean) => {
     if (isEthAddress) {

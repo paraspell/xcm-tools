@@ -1,6 +1,5 @@
 import { findAssetByMultiLocation, InvalidCurrencyError } from '@paraspell/assets'
 import { hasJunction } from '@paraspell/sdk-common'
-import { ethers } from 'ethers'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -96,7 +95,7 @@ describe('Hydration', () => {
 
       mockInput = {
         api: mockApi,
-        address: ethers.Wallet.createRandom().address,
+        address: '0xPolkadotAddress',
         asset: {
           symbol: 'WETH',
           assetId: '0x1234567890abcdef',

@@ -1,14 +1,12 @@
 import { Parents } from '@paraspell/sdk-common'
-import { ethers } from 'ethers'
+import { isAddress } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
 import { buildBeneficiaryInput } from './buildBeneficiaryInput'
 
-vi.mock('ethers', () => ({
-  ethers: {
-    isAddress: vi.fn()
-  }
+vi.mock('viem', () => ({
+  isAddress: vi.fn()
 }))
 
 vi.mock('../../../utils', () => ({
@@ -31,7 +29,7 @@ describe('buildBeneficiaryInput', () => {
 
   it('should return AccountKey20 if the address is an Ethereum address', () => {
     const ethAddress = '0x1234567890abcdef1234567890abcdef12345678'
-    vi.mocked(ethers.isAddress).mockReturnValue(true)
+    vi.mocked(isAddress).mockReturnValue(true)
 
     const result = buildBeneficiaryInput(apiMock, ethAddress)
 
@@ -50,7 +48,7 @@ describe('buildBeneficiaryInput', () => {
   it('should return AccountId32 if the address is not an Ethereum address', () => {
     const nonEthAddress = 'somePolkadotAddress'
     const accountId32 = '0xabcdef'
-    vi.mocked(ethers.isAddress).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
 
     const accountSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accountId32)
 

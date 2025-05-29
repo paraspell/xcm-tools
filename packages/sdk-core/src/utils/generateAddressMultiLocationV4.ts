@@ -1,5 +1,5 @@
 import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
-import { ethers } from 'ethers'
+import { isAddress } from 'viem'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import { addXcmVersionHeader } from '../pallets/xcmPallet/utils'
@@ -15,7 +15,7 @@ export const generateAddressMultiLocationV4 = <TApi, TRes>(
     return { [Version.V4]: address }
   }
 
-  const isEthAddress = ethers.isAddress(address)
+  const isEthAddress = isAddress(address)
   return addXcmVersionHeader(
     {
       parents: Parents.ZERO,

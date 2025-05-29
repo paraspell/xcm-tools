@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TForeignAsset } from '@paraspell/assets'
 import {
@@ -9,15 +8,12 @@ import {
   isOverrideMultiLocationSpecifier
 } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
-import type { TransactionResponse } from 'ethers'
-import { Contract } from 'ethers'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
 import { InvalidParameterError } from '../../../errors'
 import { formatAssetIdToERC20 } from '../../../pallets/assets/balance'
 import type { TEvmBuilderOptions } from '../../../types'
-import { isEthersContract, isEthersSigner } from '../utils'
 // Inspired by Moonbeam XCM-SDK
 import abi from './abi.json' with { type: 'json' }
 import { getDestinationMultilocation } from './getDestinationMultilocation'
@@ -43,19 +39,17 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     throw new InvalidParameterError('Override multilocation is not supported for Evm transfers')
   }
 
-  const contract = isEthersSigner(signer)
-    ? new Contract(CONTRACT_ADDRESS, abi, signer)
-    : getContract({
-        abi,
-        address: CONTRACT_ADDRESS,
-        client: {
-          public: createPublicClient({
-            chain: signer.chain,
-            transport: http()
-          }),
-          wallet: signer
-        }
-      })
+  const contract = getContract({
+    abi,
+    address: CONTRACT_ADDRESS,
+    client: {
+      public: createPublicClient({
+        chain: signer.chain,
+        transport: http()
+      }),
+      wallet: signer
+    }
+  })
 
   const foundAsset = findAsset(from, currency, to)
 
@@ -86,14 +80,8 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
 
   // Partially inspired by Moonbeam XCM-SDK
   // https://github.com/moonbeam-foundation/xcm-sdk/blob/ab835c15bf41612604b1c858d956a9f07705ed65/packages/sdk/src/contract/contracts/Xtokens/Xtokens.ts#L53
-  const createTx = (
-    func: string,
-    args: unknown[]
-  ): Promise<TransactionResponse | WriteContractReturnType> => {
-    if (isEthersContract(contract)) {
-      return contract[func](...args)
-    }
-
+  const createTx = (func: string, args: unknown[]): Promise<WriteContractReturnType> => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return contract.write[func](args as any)
   }
 
@@ -105,7 +93,7 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
 
   const usdtAsset = findAsset(from, { symbol: 'xcUSDT' }, to) as TForeignAsset
 
-  const tx: TransactionResponse | WriteContractReturnType = useMultiAssets
+  const tx = useMultiAssets
     ? await createTx('transferMultiCurrencies', [
         [
           [asset, currency.amount],
@@ -117,5 +105,5 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
       ])
     : await createTx('transfer', [asset, currency.amount, destMultiLocation, weight])
 
-  return typeof tx === 'object' ? tx.hash : tx
+  return tx
 }

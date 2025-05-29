@@ -1,4 +1,4 @@
-import type { TEvmBuilderOptions, TSendOptions } from '@paraspell/sdk-core'
+import type { TSendOptions } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
 import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { transferEthToPolkadot as transferEthToPolkadotImpl } from './ethTransfer'
 import PolkadotJsApi from './PolkadotJsApi'
 import { getBridgeStatus, getParaEthTransferFees, send, transferEthToPolkadot } from './transfer'
-import type { Extrinsic, TPjsApi, TPjsApiOrUrl } from './types'
+import type { Extrinsic, TPjsApi, TPjsApiOrUrl, TPjsEvmBuilderOptions } from './types'
 
 vi.mock('./PolkadotJsApi')
 
@@ -70,7 +70,7 @@ describe('Send Function using PolkadotJsAPI', () => {
         currency: {
           symbol: 'ETH'
         }
-      } as TEvmBuilderOptions<TPjsApi, Extrinsic>
+      } as TPjsEvmBuilderOptions<TPjsApi, Extrinsic>
 
       await transferEthToPolkadot(options)
 

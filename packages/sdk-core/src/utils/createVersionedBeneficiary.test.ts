@@ -1,6 +1,6 @@
 import type { TPallet } from '@paraspell/pallets'
 import { Parents } from '@paraspell/sdk-common'
-import * as ethers from 'ethers'
+import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
@@ -13,10 +13,8 @@ vi.mock('./createX1Payload', () => ({
   createX1Payload: vi.fn()
 }))
 
-vi.mock('ethers', () => ({
-  ethers: {
-    isAddress: vi.fn()
-  }
+vi.mock('viem', () => ({
+  isAddress: vi.fn()
 }))
 
 describe('generateAddressPayload', () => {
@@ -46,7 +44,7 @@ describe('generateAddressPayload', () => {
   it('should return a correct payload for ParaToRelay scenario with XTokens pallet', () => {
     const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     const accIDMock = '0x1234567890abcdef'
-    vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
     const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
     vi.mocked(createX1Payload).mockReturnValue({
       X1: [{ AccountId32: { id: accIDMock, network: 'any' } }]
@@ -72,7 +70,7 @@ describe('generateAddressPayload', () => {
 
   it('should return a correct payload for ParaToPara scenario with XTokens pallet and Ethereum address', () => {
     const ethAddress = '0x1234567890123456789012345678901234567890'
-    vi.mocked(ethers.ethers.isAddress).mockReturnValue(true)
+    vi.mocked(isAddress).mockReturnValue(true)
 
     const result = createVersionedBeneficiary({
       api: apiMock,
@@ -92,13 +90,13 @@ describe('generateAddressPayload', () => {
       }
     })
 
-    expect(ethers.ethers.isAddress).toHaveBeenCalledWith(ethAddress)
+    expect(isAddress).toHaveBeenCalledWith(ethAddress)
   })
 
   it('should return a correct payload for ParaToPara scenario with PolkadotXcm pallet and standard address', () => {
     const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     const accIDMock = '0x1234567890abcdef'
-    vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
     const acccountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
     vi.mocked(createX1Payload).mockReturnValue({
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
@@ -125,7 +123,7 @@ describe('generateAddressPayload', () => {
   it('should return a fallback payload for an unknown scenario', () => {
     const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     const accIDMock = '0x1234567890abcdef'
-    vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
     const acccountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
     vi.mocked(createX1Payload).mockReturnValue({
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
@@ -152,7 +150,7 @@ describe('generateAddressPayload', () => {
   it('should return a correct payload for ParaToPara scenario with XTokens pallet and non-Ethereum address', () => {
     const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     const accIDMock = '0x1234567890abcdef'
-    vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
     const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
 
     const result = createVersionedBeneficiary({
@@ -173,14 +171,14 @@ describe('generateAddressPayload', () => {
       }
     })
 
-    expect(ethers.ethers.isAddress).toHaveBeenCalledWith(recipientAddress)
+    expect(isAddress).toHaveBeenCalledWith(recipientAddress)
     expect(accountIdSpy).toHaveBeenCalledWith(recipientAddress)
   })
 
   it('should return a correct payload for ParaToPara scenario with PolkadotXcm pallet and non-Ethereum address', () => {
     const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
     const accIDMock = '0x1234567890abcdef'
-    vi.mocked(ethers.ethers.isAddress).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
     const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
     vi.mocked(createX1Payload).mockReturnValue({
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
@@ -201,7 +199,7 @@ describe('generateAddressPayload', () => {
       }
     })
 
-    expect(ethers.ethers.isAddress).toHaveBeenCalledWith(recipientAddress)
+    expect(isAddress).toHaveBeenCalledWith(recipientAddress)
     expect(accountIdSpy).toHaveBeenCalledWith(recipientAddress)
     expect(createX1Payload).toHaveBeenCalledWith(Version.V4, {
       AccountId32: { id: accIDMock }

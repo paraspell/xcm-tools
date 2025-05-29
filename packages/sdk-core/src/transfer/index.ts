@@ -1,6 +1,5 @@
 export * from './dryRun'
 export * from './ethTransfer'
-export * from './ethTransfer/utils'
 export * from './fees'
 export * from './getBridgeStatus'
 export * from './transfer'

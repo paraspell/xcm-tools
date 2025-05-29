@@ -1,14 +1,12 @@
-import { ethers } from 'ethers'
+import { isAddress } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api'
 import type { TXTransferTransferOptions } from '../../../types'
 import { getDestination } from './getDestination'
 
-vi.mock('ethers', () => ({
-  ethers: {
-    isAddress: vi.fn()
-  }
+vi.mock('viem', () => ({
+  isAddress: vi.fn()
 }))
 
 describe('getDestination', () => {
@@ -26,7 +24,7 @@ describe('getDestination', () => {
   })
 
   it('returns a correct multi-location for Ethereum addresses', () => {
-    vi.mocked(ethers.isAddress).mockReturnValue(true)
+    vi.mocked(isAddress).mockReturnValue(true)
     const ethAddressInput = {
       recipientAddress: '0x123',
       paraId: 2000,
@@ -51,7 +49,7 @@ describe('getDestination', () => {
   })
 
   it('returns a correct multi-location for non-Ethereum addresses using createAccID', () => {
-    vi.mocked(ethers.isAddress).mockReturnValue(false)
+    vi.mocked(isAddress).mockReturnValue(false)
     const mockAddress = '0x123'
     const apiMock = {
       accountToHex: vi.fn().mockReturnValue(mockAddress)

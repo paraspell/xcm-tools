@@ -16,6 +16,7 @@ import { type BrowserProvider, ethers, formatEther } from 'ethers';
 import { type FC, type FormEvent, useEffect, useState } from 'react';
 
 import useCurrencyOptions from '../../hooks/useCurrencyOptions';
+import { useWallet } from '../../hooks/useWallet';
 import type { TEvmSubmitType } from '../../types';
 import { isValidPolkadotAddress } from '../../utils';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
@@ -126,6 +127,14 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
     }
   };
 
+  const { apiType } = useWallet();
+
+  useEffect(() => {
+    if (apiType === 'PAPI') {
+      form.setFieldValue('useViem', true);
+    }
+  }, [apiType]);
+
   return (
     <Paper p="xl" shadow="md">
       <form onSubmit={form.onSubmit(onSubmitInternal)}>
@@ -133,7 +142,8 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
           <Switch
             label="Use viem?"
             data-testid="switch-api"
-            {...form.getInputProps('useViem')}
+            disabled={apiType !== 'PJS'}
+            {...form.getInputProps('useViem', { type: 'checkbox' })}
           />
 
           <ParachainSelect
