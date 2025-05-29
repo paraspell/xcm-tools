@@ -22,6 +22,7 @@ describe('selectBestExchangeAmountOut', () => {
   it('should compute the amount out using the dex callback and return the best exchange', async () => {
     const fakeDex = {
       createApiInstance: vi.fn().mockResolvedValue('fakeApi'),
+      createApiInstancePapi: vi.fn().mockResolvedValue('fakePapiApi'),
       getAmountOut: vi.fn().mockResolvedValue('300'),
       node: 'dummyDex',
       exchangeNode: 'dummyExchange',
@@ -54,6 +55,7 @@ describe('selectBestExchangeAmountOut', () => {
       assetFrom: 'assetFrom',
       assetTo: 'assetTo',
       amount: mockOptions.amount,
+      papiApi: 'fakePapiApi',
     });
   });
 

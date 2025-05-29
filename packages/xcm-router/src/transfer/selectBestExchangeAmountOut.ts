@@ -10,7 +10,9 @@ export const selectBestExchangeAmountOut = async (
 ) =>
   selectBestExchangeCommon(options, originApi, async (dex, assetFromExchange, assetTo, options) => {
     const api = await dex.createApiInstance();
+    const papiApi = await dex.createApiInstancePapi();
     const bestAmountOut = await dex.getAmountOut(api, {
+      papiApi,
       assetFrom: assetFromExchange,
       assetTo,
       amount: options.amount,

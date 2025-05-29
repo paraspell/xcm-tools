@@ -1,39 +1,47 @@
-import { type TMultiLocation, transformMultiLocation } from '@paraspell/sdk';
-import type { ApiPromise } from '@polkadot/api';
+import type { TPapiApi } from '@paraspell/sdk';
+import { type TMultiLocation, transform, transformMultiLocation } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getQuotedAmount } from './getQuotedAmount';
 
+vi.mock('@paraspell/sdk', async (importActual) => {
+  const actual = await importActual<typeof import('@paraspell/sdk')>();
+  return {
+    ...actual,
+    transform: vi.fn(),
+  };
+});
+
 describe('getQuotedAmount', () => {
-  let api: ApiPromise;
+  let api: TPapiApi;
   let quotePriceExactTokensForTokens: ReturnType<typeof vi.fn>;
   const assetFromML: TMultiLocation = { parents: 0, interior: 'Here' };
   const assetToML: TMultiLocation = { parents: 0, interior: 'Here' };
-  const amountIn = new BigNumber('1000');
+  const amountIn = BigNumber('1000');
 
   beforeEach(() => {
     quotePriceExactTokensForTokens = vi.fn();
     api = {
-      call: {
-        assetConversionApi: {
-          quotePriceExactTokensForTokens,
+      getUnsafeApi: () => ({
+        apis: {
+          AssetConversionApi: {
+            quote_price_exact_tokens_for_tokens: quotePriceExactTokensForTokens,
+          },
         },
-      },
-    } as unknown as ApiPromise;
+      }),
+    } as unknown as TPapiApi;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    vi.mocked(transform).mockImplementation((ml) => ml);
   });
 
   it('should return on first valid strategy', async () => {
-    const validQuoted = {
-      toJSON: () => 1,
-      toString: () => '2000',
-    };
-    quotePriceExactTokensForTokens.mockResolvedValueOnce(validQuoted);
+    quotePriceExactTokensForTokens.mockResolvedValueOnce(2000n);
 
     const result = await getQuotedAmount(api, assetFromML, assetToML, amountIn, true);
 
     expect(result).toEqual({
-      amountOut: BigInt('2000'),
+      amountOut: 2000n,
       usedFromML: assetFromML,
       usedToML: assetToML,
     });
@@ -41,27 +49,19 @@ describe('getQuotedAmount', () => {
     expect(quotePriceExactTokensForTokens).toHaveBeenCalledWith(
       assetFromML,
       assetToML,
-      amountIn.toString(),
+      BigInt(amountIn.toString()),
       true,
     );
   });
 
   it('should try subsequent strategies if first fails', async () => {
     quotePriceExactTokensForTokens.mockRejectedValueOnce(new Error('Error 1'));
-    const invalidQuoted = {
-      toJSON: () => null,
-      toString: () => '0',
-    };
-    quotePriceExactTokensForTokens.mockResolvedValueOnce(invalidQuoted);
-    const validQuoted = {
-      toJSON: () => 1,
-      toString: () => '3000',
-    };
-    quotePriceExactTokensForTokens.mockResolvedValueOnce(validQuoted);
+    quotePriceExactTokensForTokens.mockResolvedValueOnce(undefined);
+    quotePriceExactTokensForTokens.mockResolvedValueOnce(3000n);
 
     const result = await getQuotedAmount(api, assetFromML, assetToML, amountIn, false);
     expect(result).toEqual({
-      amountOut: BigInt('3000'),
+      amountOut: 3000n,
       usedFromML: assetFromML,
       usedToML: transformMultiLocation(assetToML),
     });
@@ -78,11 +78,7 @@ describe('getQuotedAmount', () => {
   });
 
   it('should pass the includeFee parameter as provided', async () => {
-    const validQuoted = {
-      toJSON: () => 1,
-      toString: () => '4000',
-    };
-    quotePriceExactTokensForTokens.mockResolvedValueOnce(validQuoted);
+    quotePriceExactTokensForTokens.mockResolvedValueOnce(4000n);
     const includeFee = true;
 
     await getQuotedAmount(api, assetFromML, assetToML, amountIn, includeFee);
@@ -90,7 +86,7 @@ describe('getQuotedAmount', () => {
     expect(quotePriceExactTokensForTokens).toHaveBeenCalledWith(
       assetFromML,
       assetToML,
-      amountIn.toString(),
+      BigInt(amountIn.toString()),
       includeFee,
     );
   });

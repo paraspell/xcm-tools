@@ -1,4 +1,5 @@
-import { getNativeAssetSymbol, InvalidParameterError, Parents } from '@paraspell/sdk-pjs';
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { getNativeAssetSymbol, InvalidParameterError, Parents, transform } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
 
@@ -17,11 +18,11 @@ import { getDexConfig, getQuotedAmount } from './utils';
 
 class AssetHubExchangeNode extends ExchangeNode {
   async swapCurrency(
-    api: ApiPromise,
+    _api: ApiPromise,
     options: TSwapOptions,
     toDestTxFee: BigNumber,
   ): Promise<TSingleSwapResult> {
-    const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin } = options;
+    const { assetFrom, assetTo, amount, senderAddress, slippagePct, origin, papiApi } = options;
 
     if (!assetFrom.multiLocation) {
       throw new InvalidParameterError('Asset from multiLocation not found');
@@ -40,7 +41,7 @@ class AssetHubExchangeNode extends ExchangeNode {
       usedFromML,
       usedToML,
     } = await getQuotedAmount(
-      api,
+      papiApi,
       assetFrom.multiLocation,
       assetTo.multiLocation,
       amountWithoutFee,
@@ -51,19 +52,19 @@ class AssetHubExchangeNode extends ExchangeNode {
       new BigNumber(quotedAmountOut.toString()).multipliedBy(slippageMultiplier).toFixed(0),
     );
 
-    const tx = api.tx.assetConversion.swapExactTokensForTokens(
-      [usedFromML, usedToML],
-      amountWithoutFee.toString(),
-      minAmountOut,
-      senderAddress,
-      assetFrom.assetId === undefined,
-    );
+    const tx = papiApi.getUnsafeApi().tx.AssetConversion.swap_exact_tokens_for_tokens({
+      path: [transform(usedFromML), transform(usedToML)],
+      amount_in: BigInt(amountWithoutFee.toString()),
+      amount_out_min: minAmountOut,
+      send_to: senderAddress,
+      keep_alive: assetFrom.assetId === undefined,
+    });
 
     const toDestFeeCurrencyTo =
       assetTo.symbol == getNativeAssetSymbol(this.node)
         ? toDestTxFee
         : await getQuotedAmount(
-            api,
+            papiApi,
             {
               parents: Parents.ONE,
               interior: {
@@ -138,6 +139,7 @@ class AssetHubExchangeNode extends ExchangeNode {
       const assumedInputForHop2 = hop1Received.multipliedBy(0.98).decimalPlaces(0);
 
       const optionsHop2: TSwapOptions = {
+        papiApi: options.papiApi,
         slippagePct: options.slippagePct,
         senderAddress: options.senderAddress,
         origin: undefined,
@@ -162,8 +164,8 @@ class AssetHubExchangeNode extends ExchangeNode {
     }
   }
 
-  async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions) {
-    const { assetFrom, assetTo, amount, origin } = options;
+  async getAmountOut(_api: ApiPromise, options: TGetAmountOutOptions) {
+    const { assetFrom, assetTo, amount, origin, papiApi } = options;
 
     if (!assetFrom.multiLocation) {
       throw new InvalidParameterError('Asset from multiLocation not found');
@@ -178,7 +180,7 @@ class AssetHubExchangeNode extends ExchangeNode {
     const amountWithoutFee = amountIn.minus(amountIn.times(pctDestFee));
 
     const { amountOut } = await getQuotedAmount(
-      api,
+      papiApi,
       assetFrom.multiLocation,
       assetTo.multiLocation,
       amountWithoutFee,

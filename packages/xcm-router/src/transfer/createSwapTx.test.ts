@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { TTransferOptionsModified } from '../types';
-import { calculateTxFee } from '../utils';
+import { calculateTxFee, isPjsExtrinsic } from '../utils';
 import { createSwapTx } from './createSwapTx';
 import { buildFromExchangeExtrinsic, convertTxToPapi } from './utils';
 
@@ -18,6 +18,7 @@ vi.mock('./utils', () => ({
 vi.mock('../utils', () => ({
   calculateTxFee: vi.fn(),
   getTxWeight: vi.fn(),
+  isPjsExtrinsic: vi.fn(),
 }));
 
 describe('createSwapTx', () => {
@@ -65,6 +66,7 @@ describe('createSwapTx', () => {
     });
 
     vi.mocked(convertTxToPapi).mockResolvedValue(dummyTxPapi);
+    vi.mocked(isPjsExtrinsic).mockReturnValue(true);
   });
 
   it('should build extrinsics, calculate fees, and call swapCurrency', async () => {

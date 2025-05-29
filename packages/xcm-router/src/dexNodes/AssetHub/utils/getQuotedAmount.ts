@@ -1,13 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import type { TPapiApi } from '@paraspell/sdk';
 import {
   InvalidParameterError,
   type TMultiLocation,
+  transform,
   transformMultiLocation,
-} from '@paraspell/sdk-pjs';
-import type { ApiPromise } from '@polkadot/api';
+} from '@paraspell/sdk';
 import type BigNumber from 'bignumber.js';
 
 export const getQuotedAmount = async (
-  api: ApiPromise,
+  api: TPapiApi,
   assetFromML: TMultiLocation,
   assetToML: TMultiLocation,
   amountIn: BigNumber,
@@ -26,14 +31,16 @@ export const getQuotedAmount = async (
 
   for (const strat of strategies) {
     try {
-      const quoted = await api.call.assetConversionApi.quotePriceExactTokensForTokens(
-        strat.from,
-        strat.to,
-        amountIn.toString(),
-        includeFee,
-      );
+      const quoted = await api
+        .getUnsafeApi()
+        .apis.AssetConversionApi.quote_price_exact_tokens_for_tokens(
+          transform(strat.from),
+          transform(strat.to),
+          BigInt(amountIn.toString()),
+          includeFee,
+        );
 
-      if (quoted.toJSON() !== null)
+      if (quoted !== undefined)
         return { amountOut: BigInt(quoted.toString()), usedFromML: strat.from, usedToML: strat.to };
     } catch (error) {
       // eslint-disable-next-line no-console

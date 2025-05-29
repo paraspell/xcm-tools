@@ -16,6 +16,7 @@ import type { EXCHANGE_NODES } from '../consts';
 export type TExchangeNode = (typeof EXCHANGE_NODES)[number];
 
 export type TSwapOptions = {
+  papiApi: TPapiApi;
   assetFrom: TRouterAsset;
   assetTo: TRouterAsset;
   amount: string;
@@ -26,19 +27,22 @@ export type TSwapOptions = {
 };
 
 export type TGetAmountOutOptions = {
+  papiApi: TPapiApi;
   origin?: TOriginInfo;
   assetFrom: TRouterAsset;
   assetTo: TRouterAsset;
   amount: string;
 };
 
+export type TExtrinsic = Extrinsic | TPapiTransaction;
+
 export type TSingleSwapResult = {
-  tx: Extrinsic;
+  tx: TExtrinsic;
   amountOut: string;
 };
 
 export type TMultiSwapResult = {
-  txs: Extrinsic[];
+  txs: TExtrinsic[];
   amountOut: string;
 };
 
