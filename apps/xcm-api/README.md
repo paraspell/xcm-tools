@@ -419,6 +419,9 @@ const response = await fetch('http://localhost:3001/v3/pallets/:node/default');
 // Return an array of supported pallets for a specific Parachain
 const response = await fetch('http://localhost:3001/v3/pallets/:node');
 
+// Return ID of the specific cross-chain pallet for specific Parachain
+const response = await fetch('http://localhost:3001/v3/pallets/:node/index?pallet=XTokens');
+
 // Return Parachain support for DryRun
 const response = await fetch('http://localhost:3001/v3/nodes/:node/has-dry-run-support');
 ```
