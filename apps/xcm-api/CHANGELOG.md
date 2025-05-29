@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.3.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.2.0...xcm-api-v10.3.0) (2025-05-29)
+
+
+### Documentation
+
+* Add pallet ID to the docs ([d345bfe](https://github.com/paraspell/xcm-tools/commit/d345bfec638e241fa298bf686ff07b00a6b846f5))
+
 ## [10.2.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.1.7...xcm-api-v10.2.0) (2025-05-28)
 
 
