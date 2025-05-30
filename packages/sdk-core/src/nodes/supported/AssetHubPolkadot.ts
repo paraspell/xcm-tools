@@ -504,7 +504,7 @@ class AssetHubPolkadot<TApi, TRes>
       throw new ScenarioNotSupportedError(
         this.node,
         scenario,
-        'Para to Para scenarios for DOT transfer from AssetHub are not supported, you have to transfer DOT to Relay chain and transfer to destination chain from Relay chain.'
+        'Some Parachains do not have a reserve for DOT on AssetHub. This can also include multihop transfers that have AssetHub as a hop chain and the call contains DOT. Chains that do not have a DOT reserve on AssetHub are not allowed to transfer DOT to it or through it because this transfer will result in asset loss.'
       )
     }
 
