@@ -3,28 +3,28 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@eslint/js": "^9.25.1",
+    "@eslint/js": "^9.27.0",
     "@types/eslint-config-prettier": "^6.11.3",
-    "@types/node": "^22.15.3",
-    "eslint": "^9.25.1",
-    "eslint-config-prettier": "^10.1.2",
+    "@types/node": "^22.15.28",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-tsdoc": "^0.4.0",
-    "globals": "^16.0.0",
+    "globals": "^16.2.0",
     "prettier": "^3.5.3",
-    "turbo": "^2.5.2",
+    "turbo": "^2.5.4",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.31.1",
-    "vitest": "^3.1.2"
+    "typescript-eslint": "^8.33.0",
+    "vitest": "^3.1.4"
   },
   "engines": {
     "node": ">=22"
   },
   "resolutions": {
-    "@polkadot/types-codec": "^15.9.2",
-    "@polkadot/api": "^15.9.2",
-    "@polkadot/types": "^15.9.2",
+    "@polkadot/types-codec": "^16.1.1",
+    "@polkadot/api": "^16.1.1",
+    "@polkadot/types": "^16.1.1",
     "react-is": "19.0.0",
     "@crypto-dex-sdk/chain": "0.1.2"
   },
@@ -50,5 +50,5 @@
     "run:updateRouterAssets": "pnpm --filter xcm-router updateAssets",
     "run:updatePallets": "pnpm --filter pallets updatePallets"
   },
-  "packageManager": "pnpm@10.6.5"
+  "packageManager": "pnpm@10.11.0"
 }

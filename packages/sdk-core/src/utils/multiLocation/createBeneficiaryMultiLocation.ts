@@ -3,7 +3,6 @@ import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 
 import type { TCreateBeneficiaryOptions } from '../../types'
-import { Version } from '../../types'
 import { createX1Payload } from '../createX1Payload'
 
 export const createBeneficiaryMultiLocation = <TApi, TRes>({
@@ -20,30 +19,24 @@ export const createBeneficiaryMultiLocation = <TApi, TRes>({
 
   const isEthAddress = isAddress(recipientAddress)
 
-  const getAccountPayload = (allowNetwork: boolean) => {
-    if (isEthAddress) {
-      return {
+  const accountPayload = isEthAddress
+    ? {
         AccountKey20: {
-          key: recipientAddress,
-          ...(allowNetwork ? { network: 'any' } : {})
+          key: recipientAddress
         }
       }
-    }
-    return {
-      AccountId32: {
-        id: api.accountToHex(recipientAddress),
-        ...(allowNetwork ? { network: 'any' } : {})
+    : {
+        AccountId32: {
+          id: api.accountToHex(recipientAddress)
+        }
       }
-    }
-  }
 
   if (scenario === 'ParaToRelay') {
     return {
       parents: pallet === 'XTokens' ? Parents.ONE : Parents.ZERO,
       interior: createX1Payload(version, {
         AccountId32: {
-          id: api.accountToHex(recipientAddress),
-          ...(version === Version.V1 ? { network: 'any' } : {})
+          id: api.accountToHex(recipientAddress)
         }
       })
     }
@@ -51,18 +44,18 @@ export const createBeneficiaryMultiLocation = <TApi, TRes>({
     return {
       parents: Parents.ONE,
       interior: {
-        X2: [{ Parachain: paraId }, getAccountPayload(version === Version.V1)]
+        X2: [{ Parachain: paraId }, accountPayload]
       }
     }
   } else if (scenario === 'ParaToPara' && pallet === 'PolkadotXcm') {
     return {
       parents: Parents.ZERO,
-      interior: createX1Payload(version, getAccountPayload(version === Version.V1))
+      interior: createX1Payload(version, accountPayload)
     }
   } else {
     return {
       parents: Parents.ZERO,
-      interior: createX1Payload(version, getAccountPayload(false))
+      interior: createX1Payload(version, accountPayload)
     }
   }
 }

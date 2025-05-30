@@ -234,7 +234,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
     }
 
     const call = createTypeAndThenTransfer(input, version, 'Teleport')
-    return Promise.resolve(api.callTxMethod(call))
+    return api.callTxMethod(call)
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {

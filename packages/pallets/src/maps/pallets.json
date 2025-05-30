@@ -47,15 +47,6 @@
       }
     ]
   },
-  "Bitgreen": {
-    "defaultPallet": "PolkadotXcm",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 31
-      }
-    ]
-  },
   "CoretimeKusama": {
     "defaultPallet": "PolkadotXcm",
     "supportedPallets": [
@@ -311,19 +302,6 @@
       {
         "name": "XTokens",
         "index": 55
-      }
-    ]
-  },
-  "Turing": {
-    "defaultPallet": "XTokens",
-    "supportedPallets": [
-      {
-        "name": "PolkadotXcm",
-        "index": 41
-      },
-      {
-        "name": "XTokens",
-        "index": 44
       }
     ]
   },

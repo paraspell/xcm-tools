@@ -10,12 +10,7 @@ import {
   NODE_NAMES_DOT_KSM,
 } from '@paraspell/sdk';
 
-const excludedNodes = new Set([
-  'Quartz',
-  'Bitgreen',
-  'Bajun',
-  'CoretimeKusama',
-]);
+const excludedNodes = new Set(['Quartz', 'Bajun', 'CoretimeKusama']);
 
 const nodes = NODES_WITH_RELAY_CHAINS.filter(
   (node) => !excludedNodes.has(node),

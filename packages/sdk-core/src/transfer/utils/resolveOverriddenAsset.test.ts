@@ -15,7 +15,7 @@ import {
 import { isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type ParachainNode from '../../nodes/ParachainNode'
+import type AssetHubPolkadot from '../../nodes/supported/AssetHubPolkadot'
 import { createMultiAsset } from '../../pallets/xcmPallet/utils'
 import type { TSendOptions } from '../../types'
 import { getNode } from '../../utils'
@@ -52,7 +52,7 @@ vi.mock('./validateAssetSupport', () => ({
 }))
 
 describe('resolveOverriddenAsset', () => {
-  const mockOriginNode = { version: 'testVersion' } as unknown as ParachainNode<unknown, unknown>
+  const mockOriginNode = { version: 'testVersion' } as unknown as AssetHubPolkadot<unknown, unknown>
   const mockOrigin = 'Acala'
   const mockDestination = {} as TMultiLocation
 

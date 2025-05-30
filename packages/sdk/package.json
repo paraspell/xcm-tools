@@ -38,28 +38,28 @@
   "dependencies": {
     "@noble/hashes": "^1.8.0",
     "@paraspell/sdk-core": "workspace:*",
-    "viem": "^2.28.1"
+    "viem": "^2.30.5"
   },
   "peerDependencies": {
-    "polkadot-api": ">= 1.10.2 < 2"
+    "polkadot-api": ">= 1.13.0 < 2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-attributes": "^7.27.1",
-    "@babel/preset-env": "^7.27.1",
-    "@codecov/rollup-plugin": "^1.9.0",
-    "@noble/curves": "^1.9.0",
-    "@polkadot-labs/hdkd": "^0.0.14",
-    "@polkadot-labs/hdkd-helpers": "^0.0.14",
+    "@babel/preset-env": "^7.27.2",
+    "@codecov/rollup-plugin": "^1.9.1",
+    "@noble/curves": "^1.9.1",
+    "@polkadot-labs/hdkd": "^0.0.16",
+    "@polkadot-labs/hdkd-helpers": "^0.0.16",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^12.1.2",
     "@scure/bip32": "^1.7.0",
     "@scure/bip39": "^1.6.0",
-    "@vitest/coverage-v8": "^3.1.2",
+    "@vitest/coverage-v8": "^3.1.4",
     "axios": "^1.9.0",
     "dotenv": "^16.5.0",
     "prettier": "^3.5.3",
-    "rollup": "^4.40.1",
+    "rollup": "^4.41.1",
     "rollup-plugin-dts": "^6.2.1",
     "tslib": "^2.8.1"
   }

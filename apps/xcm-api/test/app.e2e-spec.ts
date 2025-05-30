@@ -11,10 +11,8 @@ import {
   NODE_NAMES_DOT_KSM,
   Native,
   Override,
-  TCurrencyInput,
   TCurrencyInputWithAmount,
   TMultiAsset,
-  TMultiAssetWithFee,
   TMultiLocation,
   TNode,
   Version,
@@ -27,12 +25,12 @@ import {
   getRelayChainSymbol,
   getSupportedPallets,
   hasSupportForAsset,
+  replaceBigInt,
 } from '@paraspell/sdk';
 import { RouterDto } from '../src/router/dto/RouterDto';
 import { describe, beforeAll, it, expect } from 'vitest';
-import { TransferInfoDto } from '../src/transfer-info/dto/transfer-info.dto';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import { replaceBigInt } from '../src/utils/replaceBigInt';
+import { XTransferDto } from '../src/x-transfer/dto/XTransferDto';
 
 describe('XCM API (e2e)', () => {
   let app: INestApplication;
@@ -1362,11 +1360,11 @@ describe('XCM API (e2e)', () => {
   });
 
   describe('Transfer info controller', () => {
-    const transferInfo: TransferInfoDto = {
-      origin: 'Acala',
-      destination: 'Astar',
-      accountOrigin: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
-      accountDestination: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+    const transferInfo: XTransferDto = {
+      from: 'Acala',
+      to: 'Astar',
+      senderAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
       currency: { symbol: 'DOT', amount: '100000000' },
     };
 
@@ -1375,7 +1373,7 @@ describe('XCM API (e2e)', () => {
         .post('/transfer-info')
         .send({
           ...transferInfo,
-          origin: unknownNode,
+          from: unknownNode,
         })
         .expect(400);
     });
@@ -1385,17 +1383,7 @@ describe('XCM API (e2e)', () => {
         .post('/transfer-info')
         .send({
           ...transferInfo,
-          destination: unknownNode,
-        })
-        .expect(400);
-    });
-
-    it('Generate transfer info call - invalid wallet address origin - /transfer-info', () => {
-      return request(app.getHttpServer())
-        .post('/transfer-info')
-        .send({
-          ...transferInfo,
-          accountOrigin: 'InvalidWalletAddress',
+          to: unknownNode,
         })
         .expect(400);
     });
@@ -1405,7 +1393,7 @@ describe('XCM API (e2e)', () => {
         .post('/transfer-info')
         .send({
           ...transferInfo,
-          accountDestination: 'InvalidWalletAddress',
+          address: 'InvalidWalletAddress',
         })
         .expect(400);
     });

@@ -42,10 +42,10 @@ export class ChannelService {
         "totalCount" DESC;
     `;
 
-    const results = (await this.channelRepository.query(query, [
+    const results = await this.channelRepository.query<ChannelResult[]>(query, [
       startTime,
       endTime,
-    ])) as ChannelResult[];
+    ]);
 
     return results.map(({ id, senderId, recipientId, totalCount }) => ({
       id: parseInt(id, 10),
@@ -75,17 +75,16 @@ export class ChannelService {
         ch.sender, ch.recipient, ch.id, ch.status;
     `;
 
-    const result = (await this.channelRepository.query(query, [
-      sender,
-      recipient,
-    ])) as {
-      id: string;
-      senderId: string;
-      recipientId: string;
-      totalCount: string;
-      active_at: string;
-      status: string;
-    }[];
+    const result = await this.channelRepository.query<
+      {
+        id: string;
+        senderId: string;
+        recipientId: string;
+        totalCount: string;
+        active_at: string;
+        status: string;
+      }[]
+    >(query, [sender, recipient]);
 
     if (result.length === 0) {
       throw new Error(

@@ -311,12 +311,6 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           scenarios.forEach(({ destNode, asset }) => {
             it(`should create transfer tx from ${node} to ${destNode} - (${asset.symbol})`, async () => {
               const getCurrency = () => {
-                if (node === 'Turing') {
-                  return {
-                    symbol: isForeignAsset(asset) ? Foreign(asset.symbol) : Native(asset.symbol)
-                  }
-                }
-
                 // BifrostPolkadot has duplicated asset ids, thus use symbol specifier
                 if (isForeignAsset(asset) && asset.assetId && node !== 'BifrostPolkadot') {
                   return { id: asset.assetId }
