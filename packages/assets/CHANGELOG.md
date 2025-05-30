@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.3.1](https://github.com/paraspell/xcm-tools/compare/assets-v10.3.0...assets-v10.3.1) (2025-05-30)
+
+
+### Code Refactoring
+
+* Perform a monthly maintenance check ✨📆 ([bcfe0bd](https://github.com/paraspell/xcm-tools/commit/bcfe0bdeb645ebe3048b354cb4f242e9df0b02cf))
+
 ## [10.3.0](https://github.com/paraspell/xcm-tools/compare/assets-v10.2.0...assets-v10.3.0) (2025-05-29)
 
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.3.0...sdk-core-v10.3.1) (2025-05-30)
+
+
+### Code Refactoring
+
+* Perform a monthly maintenance check ✨📆 ([bcfe0bd](https://github.com/paraspell/xcm-tools/commit/bcfe0bdeb645ebe3048b354cb4f242e9df0b02cf))
+* **sdk-core:** Refactor XTokens pallet to be more modular 🧹 ([68d8968](https://github.com/paraspell/xcm-tools/commit/68d89687b5f33fb0bc4ea803f8373eaab5c28e8c))
+
 ## [10.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.2.0...sdk-core-v10.3.0) (2025-05-29)
 
 
