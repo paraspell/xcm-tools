@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-v10.3.0...sdk-v10.3.1) (2025-05-30)
+
+
+### Code Refactoring
+
+* Perform a monthly maintenance check ✨📆 ([bcfe0bd](https://github.com/paraspell/xcm-tools/commit/bcfe0bdeb645ebe3048b354cb4f242e9df0b02cf))
+* **xcm-router:** Rewrite AssetHub DEX to PAPI 🛠️ ([8077a2c](https://github.com/paraspell/xcm-tools/commit/8077a2c3e54d9cc8b0f86c83d2f997bf46050df4))
+
 ## [10.3.0](https://github.com/paraspell/xcm-tools/compare/sdk-v10.2.0...sdk-v10.3.0) (2025-05-29)
 
 
