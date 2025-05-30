@@ -343,7 +343,7 @@ const fetchOtherAssets = async (
   }
 
   if (node === 'Moonbeam' || node === 'Moonriver') {
-    otherAssets = await fetchMoonbeamForeignAssets(api, query)
+    otherAssets = await fetchMoonbeamForeignAssets(api, query, node)
   }
 
   if (node === 'Unique' || node === 'Quartz') {

@@ -8,7 +8,6 @@ import Astar from '../nodes/supported/Astar'
 import Basilisk from '../nodes/supported/Basilisk'
 import BifrostKusama from '../nodes/supported/BifrostKusama'
 import { BifrostPolkadot } from '../nodes/supported/BifrostPolkadot'
-import Bitgreen from '../nodes/supported/Bitgreen'
 import BridgeHubKusama from '../nodes/supported/BridgeHubKusama'
 import BridgeHubPolkadot from '../nodes/supported/BridgeHubPolkadot'
 import { Centrifuge } from '../nodes/supported/Centrifuge'
@@ -45,7 +44,6 @@ import RobonomicsKusama from '../nodes/supported/RobonomicsKusama'
 import RobonomicsPolkadot from '../nodes/supported/RobonomicsPolkadot'
 import Shiden from '../nodes/supported/Shiden'
 import Subsocial from '../nodes/supported/Subsocial'
-import Turing from '../nodes/supported/Turing'
 import Unique from '../nodes/supported/Unique'
 import Zeitgeist from '../nodes/supported/Zeitgeist'
 
@@ -59,7 +57,6 @@ export const nodes = <TApi, TRes>() => ({
   BifrostPolkadot: new BifrostPolkadot<TApi, TRes>(),
   BridgeHubPolkadot: new BridgeHubPolkadot<TApi, TRes>(),
   BridgeHubKusama: new BridgeHubKusama<TApi, TRes>(),
-  Bitgreen: new Bitgreen<TApi, TRes>(),
   Centrifuge: new Centrifuge<TApi, TRes>(),
   ComposableFinance: new ComposableFinance<TApi, TRes>(),
   Darwinia: new Darwinia<TApi, TRes>(),
@@ -86,7 +83,6 @@ export const nodes = <TApi, TRes>() => ({
   PeoplePolkadot: new PeoplePolkadot<TApi, TRes>(),
   PeopleKusama: new PeopleKusama<TApi, TRes>(),
   Shiden: new Shiden<TApi, TRes>(),
-  Turing: new Turing<TApi, TRes>(),
   Manta: new Manta<TApi, TRes>(),
   Nodle: new Nodle<TApi, TRes>(),
   NeuroWeb: new NeuroWeb<TApi, TRes>(),

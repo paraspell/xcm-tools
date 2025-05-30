@@ -11,14 +11,13 @@ export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   Ajuna: ['assets.metadata'],
   Astar: [GLOBAL, 'assets.metadata'],
   BifrostPolkadot: [GLOBAL, 'assetRegistry.currencyMetadatas'],
-  Bitgreen: [], // No assets metadata query
   Centrifuge: [GLOBAL, 'ormlAssetRegistry.metadata'],
   ComposableFinance: ['assetsRegistry.assetSymbol'],
   Darwinia: [GLOBAL, 'assets.metadata'],
   Hydration: [GLOBAL, 'assetRegistry.assets'],
   Interlay: [GLOBAL, 'assetRegistry.metadata'],
   Heima: ['assets.metadata'],
-  Moonbeam: ['assetManager.assetIdType'],
+  Moonbeam: ['evmForeignAssets.assetsById'],
   AssetHubPolkadot: [GLOBAL, 'assets.metadata'],
   Altair: [GLOBAL, 'ormlAssetRegistry.metadata'],
   Amplitude: ['assetRegistry.metadata'],
@@ -37,7 +36,6 @@ export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   PeoplePolkadot: [], // Does not support ParaToPara transfers
   Shiden: [GLOBAL, 'assets.metadata'],
   AssetHubKusama: [GLOBAL, 'assets.metadata'],
-  Turing: [GLOBAL, 'assetRegistry.metadata'],
   Unique: ['foreignAssets.collectionToForeignAsset'],
   Crust: ['assets.metadata'],
   Manta: ['assets.metadata'],

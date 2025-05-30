@@ -55,11 +55,11 @@ describe('generateAddressPayload', () => {
       scenario: 'ParaToRelay',
       pallet: 'XTokens',
       recipientAddress,
-      version: Version.V1
+      version: Version.V3
     })
 
     expect(result).toEqual({
-      [Version.V1]: {
+      [Version.V3]: {
         parents: Parents.ONE,
         interior: { X1: [{ AccountId32: { id: accIDMock, network: 'any' } }] }
       }

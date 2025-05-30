@@ -37,7 +37,7 @@ describe('getModifiedCurrencySelection', () => {
   })
 
   it('returns assetHubAsset.multiLocation when non-foreign asset is found in AssetHub', () => {
-    const version = Version.V1
+    const version = Version.V3
     const xTransferInput = {
       asset: { symbol: 'DOT', amount: '1000' },
       destination: 'AssetHubPolkadot',
@@ -70,7 +70,7 @@ describe('getModifiedCurrencySelection', () => {
   })
 
   it('throws InvalidCurrencyError when non-foreign asset is not found in AssetHub', () => {
-    const version = Version.V1
+    const version = Version.V3
     const xTransferInput = {
       asset: { symbol: 'UNKNOWN', amount: '500' },
       destination: 'AssetHubPolkadot',

@@ -251,10 +251,9 @@ export class MessageService {
       `;
     }
 
-    const results = (await this.messagesRepository.query(
-      query,
-      queryParameters,
-    )) as (ParaIdAssetCountResult | AssetCountResult)[];
+    const results = await this.messagesRepository.query<
+      (ParaIdAssetCountResult | AssetCountResult)[]
+    >(query, queryParameters);
 
     return results.map((result) =>
       'origin_para_id' in result
@@ -300,10 +299,9 @@ export class MessageService {
 
     parameters.push(threshold);
 
-    const results = (await this.messagesRepository.query(
-      query,
-      parameters,
-    )) as AccountXcmCountResult[];
+    const results = await this.messagesRepository.query<
+      AccountXcmCountResult[]
+    >(query, parameters);
 
     return results.map((account) => ({
       id: account.from_account_id,

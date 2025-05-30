@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
-import type ParachainNode from '../nodes/ParachainNode'
+import type AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
 import { resolveTNodeFromMultiLocation } from '../pallets/xcmPallet/utils'
 import { type TRelayToParaOptions, Version } from '../types'
 import { determineRelayChain, getNode } from '../utils'
@@ -27,7 +27,7 @@ vi.mock('../pallets/xcmPallet/utils', () => ({
 
 describe('transferRelayToPara', () => {
   let apiMock: IPolkadotApi<unknown, unknown>
-  let nodeMock: ParachainNode<unknown, unknown>
+  let nodeMock: AssetHubPolkadot<unknown, unknown>
   let consoleWarnSpy: MockInstance
 
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('transferRelayToPara', () => {
 
     nodeMock = {
       transferRelayToPara: vi.fn().mockReturnValue('serializedApiCall')
-    } as unknown as ParachainNode<unknown, unknown>
+    } as unknown as AssetHubPolkadot<unknown, unknown>
 
     vi.mocked(getNode).mockReturnValue(nodeMock)
     vi.mocked(determineRelayChain).mockReturnValue('Polkadot')

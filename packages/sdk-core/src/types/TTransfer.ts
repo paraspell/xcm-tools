@@ -84,9 +84,9 @@ export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
  * The XCM version.
  */
 export enum Version {
-  V1 = 'V1',
   V3 = 'V3',
-  V4 = 'V4'
+  V4 = 'V4',
+  V5 = 'V5'
 }
 
 /**

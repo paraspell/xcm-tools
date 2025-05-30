@@ -2,7 +2,7 @@ import { isOverrideMultiLocationSpecifier, type TCurrencyInput } from '@paraspel
 import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type ParachainNode from '../../nodes/ParachainNode'
+import type AssetHubPolkadot from '../../nodes/supported/AssetHubPolkadot'
 import { getNode } from '../../utils'
 import { determineAssetCheckEnabled } from './determineAssetCheckEnabled'
 
@@ -27,7 +27,7 @@ describe('determineAssetCheckEnabled', () => {
     const origin = 'Acala' as TNodePolkadotKusama
     const currency = { multiasset: [] } as TCurrencyInput
 
-    const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
+    const originNode = { assetCheckEnabled: true } as AssetHubPolkadot<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
     const result = determineAssetCheckEnabled(origin, currency)
@@ -40,7 +40,7 @@ describe('determineAssetCheckEnabled', () => {
     const currency = { multilocation: {} } as TCurrencyInput
 
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
-    const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
+    const originNode = { assetCheckEnabled: true } as AssetHubPolkadot<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
     const result = determineAssetCheckEnabled(origin, currency)
@@ -52,7 +52,7 @@ describe('determineAssetCheckEnabled', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = {} as TCurrencyInput
 
-    const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
+    const originNode = { assetCheckEnabled: true } as AssetHubPolkadot<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
     const result = determineAssetCheckEnabled(origin, currency)
@@ -64,7 +64,7 @@ describe('determineAssetCheckEnabled', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = {} as TCurrencyInput
 
-    const originNode = { assetCheckEnabled: false } as ParachainNode<unknown, unknown>
+    const originNode = { assetCheckEnabled: false } as AssetHubPolkadot<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
     const result = determineAssetCheckEnabled(origin, currency)
@@ -76,7 +76,7 @@ describe('determineAssetCheckEnabled', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = { multiasset: {} } as TCurrencyInput
 
-    const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
+    const originNode = { assetCheckEnabled: true } as AssetHubPolkadot<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
     const result = determineAssetCheckEnabled(origin, currency)
@@ -89,7 +89,7 @@ describe('determineAssetCheckEnabled', () => {
     const currency = { multilocation: {} } as TCurrencyInput
 
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
-    const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
+    const originNode = { assetCheckEnabled: true } as AssetHubPolkadot<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
     const result = determineAssetCheckEnabled(origin, currency)
@@ -102,7 +102,7 @@ describe('determineAssetCheckEnabled', () => {
     const currency = { multilocation: {} } as TCurrencyInput
 
     vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
-    const originNode = { assetCheckEnabled: true } as ParachainNode<unknown, unknown>
+    const originNode = { assetCheckEnabled: true } as AssetHubPolkadot<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
     const result = determineAssetCheckEnabled(origin, currency)
@@ -114,7 +114,7 @@ describe('determineAssetCheckEnabled', () => {
     const origin = {} as TNodePolkadotKusama
     const currency = {} as TCurrencyInput
 
-    const originNode = { assetCheckEnabled: false } as ParachainNode<unknown, unknown>
+    const originNode = { assetCheckEnabled: false } as AssetHubPolkadot<unknown, unknown>
     vi.mocked(getNode).mockReturnValue(originNode)
 
     const result = determineAssetCheckEnabled(origin, currency)

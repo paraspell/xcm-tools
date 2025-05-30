@@ -110,7 +110,6 @@ const unsupportedNodes = [
   'CrustShadow',
   'Kintsugi',
   'RobonomicsKusama',
-  'Turing',
   'Pendulum',
   'Subsocial'
 ] as TNodeWithRelayChains[]

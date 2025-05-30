@@ -31,8 +31,8 @@ describe('createExecuteXcm', () => {
     vi.mocked(createVersionedDestination).mockReturnValue(dummyDestHeader)
     vi.mocked(createVersionedBeneficiary).mockReturnValue(dummyBeneficiaryHeader)
     vi.mocked(extractVersionFromHeader).mockImplementation(header => {
-      if (header === dummyDestHeader) return [Version.V1, 'destValue']
-      if (header === dummyBeneficiaryHeader) return [Version.V1, 'beneficiaryValue']
+      if (header === dummyDestHeader) return [Version.V3, 'destValue']
+      if (header === dummyBeneficiaryHeader) return [Version.V3, 'beneficiaryValue']
       return [Version.V4, 'transformedLocation']
     })
     vi.mocked(transformMultiLocation).mockReturnValue(

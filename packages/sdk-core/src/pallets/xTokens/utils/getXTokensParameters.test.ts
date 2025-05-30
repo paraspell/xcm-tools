@@ -1,16 +1,14 @@
 import type { TMultiAssetWithFee } from '@paraspell/assets'
-import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { type TMultiLocation } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
+import { DOT_MULTILOCATION } from '../../../constants'
 import type { TXcmVersioned } from '../../../types'
 import { Version } from '../../../types'
 import { getXTokensParameters } from './getXTokensParameters'
 
 const mockMultiLocationHeader: TXcmVersioned<TMultiLocation> = {
-  [Version.V4]: {
-    parents: Parents.ONE,
-    interior: 'Here'
-  }
+  [Version.V4]: DOT_MULTILOCATION
 }
 
 const createMockAsset = (parachain: number, isFeeAsset = false): TMultiAssetWithFee => ({

@@ -154,17 +154,6 @@
       }
     ]
   },
-  "Bitgreen": {
-    "name": "Bitgreen",
-    "info": "bitgreen",
-    "paraId": 2048,
-    "providers": [
-      {
-        "name": "Bitgreen",
-        "endpoint": "wss://mainnet.bitgreen.org"
-      }
-    ]
-  },
   "BridgeHubPolkadot": {
     "name": "BridgeHub",
     "info": "polkadotBridgeHub",
@@ -535,10 +524,6 @@
     "paraId": 2088,
     "providers": [
       {
-        "name": "Centrifuge",
-        "endpoint": "wss://fullnode.altair.centrifuge.io"
-      },
-      {
         "name": "OnFinality",
         "endpoint": "wss://altair.api.onfinality.io/public-ws"
       }
@@ -851,17 +836,6 @@
       {
         "name": "RadiumBlock",
         "endpoint": "wss://shiden.public.curie.radiumblock.co/ws"
-      }
-    ]
-  },
-  "Turing": {
-    "name": "Turing Network",
-    "info": "turing",
-    "paraId": 2114,
-    "providers": [
-      {
-        "name": "Dwellir",
-        "endpoint": "wss://turing-rpc.dwellir.com"
       }
     ]
   },

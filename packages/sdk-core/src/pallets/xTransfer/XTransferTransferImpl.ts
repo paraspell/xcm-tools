@@ -23,7 +23,7 @@ class XTransferTransferImpl {
       )
     }
 
-    const version = Version.V1
+    const version = Version.V3
 
     const multiAssets = [
       createMultiAsset(version, asset.amount, {

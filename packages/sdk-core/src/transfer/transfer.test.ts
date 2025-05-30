@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
-import type ParachainNode from '../nodes/ParachainNode'
+import type AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
 import type { TSendOptions } from '../types'
 import { getNode } from '../utils'
 import { send } from './transfer'
@@ -68,7 +68,7 @@ vi.mock('./utils/validateAssetSupport', () => ({
 
 describe('send', () => {
   let apiMock: IPolkadotApi<unknown, unknown>
-  let originNodeMock: ParachainNode<unknown, unknown>
+  let originNodeMock: AssetHubPolkadot<unknown, unknown>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -83,7 +83,7 @@ describe('send', () => {
 
     originNodeMock = {
       transfer: vi.fn().mockResolvedValue('transferResult')
-    } as unknown as ParachainNode<unknown, unknown>
+    } as unknown as AssetHubPolkadot<unknown, unknown>
 
     vi.mocked(getNode).mockReturnValue(originNodeMock)
     vi.mocked(isDotKsmBridge).mockReturnValue(false)

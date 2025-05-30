@@ -61,7 +61,6 @@ export const filteredNodes = NODE_NAMES_DOT_KSM.filter(
     node !== 'Kintsugi' &&
     node !== 'RobonomicsKusama' &&
     node !== 'RobonomicsPolkadot' &&
-    node !== 'Turing' &&
     node !== 'Pendulum' &&
     node !== 'Subsocial' &&
     node !== 'Darwinia'

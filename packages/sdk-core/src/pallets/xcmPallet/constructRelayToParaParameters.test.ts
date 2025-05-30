@@ -47,11 +47,11 @@ describe('constructRelayToParaParameters', () => {
   })
 
   it('should construct parameters with multi-location destination and include fee', () => {
-    const result = constructRelayToParaParameters(options, Version.V1, { includeFee: true })
+    const result = constructRelayToParaParameters(options, Version.V3, { includeFee: true })
 
     expect(createVersionedDestination).toHaveBeenCalledWith(
       'RelayToPara',
-      Version.V1,
+      Version.V3,
       'Acala',
       mockParaId
     )
@@ -60,10 +60,10 @@ describe('constructRelayToParaParameters', () => {
       scenario: 'RelayToPara',
       pallet: null,
       recipientAddress: mockAddress,
-      version: Version.V1,
+      version: Version.V3,
       paraId: mockParaId
     })
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V1, mockAmount, {
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
     })
