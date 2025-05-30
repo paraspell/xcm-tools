@@ -1,15 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Acala from './Acala'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 vi.mock('../config', () => ({
@@ -21,11 +19,9 @@ describe('Acala', () => {
   const mockInput = {
     asset: { symbol: 'ACA', amount: '100' }
   } as TXTokensTransferOptions<unknown, unknown>
-  const spyTransferXTokens = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
 
   beforeEach(() => {
     acala = getNode<unknown, unknown, 'Acala'>('Acala')
-    spyTransferXTokens.mockClear()
   })
 
   it('should initialize with correct values', () => {
@@ -37,8 +33,7 @@ describe('Acala', () => {
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {
     acala.transferXTokens(mockInput)
-
-    expect(spyTransferXTokens).toHaveBeenCalledWith(mockInput, { Token: 'ACA' })
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, { Token: 'ACA' })
   })
 
   it('should call transferXTokens with ForeignAsset when currencyID is defined', () => {
@@ -53,7 +48,7 @@ describe('Acala', () => {
 
     acala.transferXTokens(inputWithCurrencyID)
 
-    expect(spyTransferXTokens).toHaveBeenCalledWith(inputWithCurrencyID, {
+    expect(transferXTokens).toHaveBeenCalledWith(inputWithCurrencyID, {
       ForeignAsset: 1
     })
   })

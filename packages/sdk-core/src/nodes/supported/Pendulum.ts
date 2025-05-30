@@ -3,7 +3,7 @@
 import type { TAsset } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -30,7 +30,7 @@ class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
 
     const currencySelection = this.getCurrencySelection(asset)
 
-    return XTokensTransferImpl.transferXTokens(
+    return transferXTokens(
       {
         ...input,
         useMultiAssetTransfer: asset.symbol === 'DOT'

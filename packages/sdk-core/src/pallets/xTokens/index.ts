@@ -1,1 +1,1 @@
-export { default } from './XTokensTransferImpl'
+export * from './transferXTokens'

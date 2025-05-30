@@ -3,7 +3,7 @@
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -19,14 +19,14 @@ class Unique<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
     const { asset } = input
 
     if (asset.symbol === this.getNativeAssetSymbol()) {
-      return XTokensTransferImpl.transferXTokens(input, Unique.NATIVE_ASSET_ID)
+      return transferXTokens(input, Unique.NATIVE_ASSET_ID)
     }
 
     if (!isForeignAsset(asset) || !asset.assetId) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    return XTokensTransferImpl.transferXTokens(input, Number(asset.assetId))
+    return transferXTokens(input, Number(asset.assetId))
   }
 
   transferLocalNonNativeAsset(_options: TTransferLocalOptions<TApi, TRes>): TRes {

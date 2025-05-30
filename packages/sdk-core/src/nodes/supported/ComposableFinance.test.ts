@@ -1,15 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type ComposableFinance from './ComposableFinance'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('ComposableFinance', () => {
@@ -30,10 +28,7 @@ describe('ComposableFinance', () => {
   })
 
   it('should call transferXTokens with currencyID', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     composableFinance.transferXTokens(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, 123n)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 123n)
   })
 })

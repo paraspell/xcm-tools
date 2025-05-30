@@ -1,16 +1,14 @@
 import type { TNativeAsset, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TForeignOrTokenAsset, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Curio from './Curio'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Curio', () => {
@@ -35,15 +33,13 @@ describe('Curio', () => {
   })
 
   it('should call transferXTokens with ForeignAsset when currencyID is defined', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     curio.transferXTokens(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: 123 } as TForeignOrTokenAsset)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, {
+      ForeignAsset: 123
+    } as TForeignOrTokenAsset)
   })
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     const inputWithoutCurrencyID = {
       ...mockInput,
       asset: {
@@ -55,7 +51,7 @@ describe('Curio', () => {
 
     curio.transferXTokens(inputWithoutCurrencyID)
 
-    expect(spy).toHaveBeenCalledWith(inputWithoutCurrencyID, {
+    expect(transferXTokens).toHaveBeenCalledWith(inputWithoutCurrencyID, {
       Token: 'CUR'
     } as TForeignOrTokenAsset)
   })

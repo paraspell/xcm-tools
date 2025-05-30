@@ -1,16 +1,17 @@
-import { getOtherAssets, isForeignAsset } from '@paraspell/assets'
+import { getOtherAssets, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Parents } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_MULTILOCATION } from '../../../constants'
-import { type TXTokensTransferOptions, Version } from '../../../types'
+import type { TXTokensTransferOptions } from '../../../types'
+import { Version } from '../../../types'
 import { createMultiAsset } from '../../xcmPallet/utils'
-import { getModifiedCurrencySelection } from './getModifiedCurrencySelection'
+import { getModifiedCurrencySelection } from './currencySelection'
 
 vi.mock('@paraspell/assets', () => ({
   isForeignAsset: vi.fn(),
   getOtherAssets: vi.fn(),
-  InvalidCurrencyError: class InvalidCurrencyError extends Error {}
+  InvalidCurrencyError: class extends Error {}
 }))
 
 describe('getModifiedCurrencySelection', () => {
@@ -18,32 +19,29 @@ describe('getModifiedCurrencySelection', () => {
     vi.clearAllMocks()
   })
 
-  it('throws error when asset is not foreign and destination is relaychain', () => {
-    const version = Version.V1
-    const paraIdTo = 1000
-
+  it('returns default DOT multiLocation when asset is non-foreign and destination is relay chain', () => {
+    const version = Version.V3
     const xTransferInput = {
       asset: { symbol: 'DOT', amount: '500' },
-      paraIdTo,
-      destination: 'Polkadot'
+      destination: 'Polkadot',
+      version
     } as TXTokensTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
-    expect(getModifiedCurrencySelection(version, xTransferInput)).toEqual({
+    const expected = {
       [version]: createMultiAsset(version, xTransferInput.asset.amount, DOT_MULTILOCATION)
-    })
+    }
+
+    expect(getModifiedCurrencySelection(xTransferInput)).toEqual(expected)
   })
 
-  it('returns assetHubAsset.multiLocation when asset is not foreign and assetHubAsset.multiLocation is defined', () => {
+  it('returns assetHubAsset.multiLocation when non-foreign asset is found in AssetHub', () => {
     const version = Version.V1
-    const paraIdTo = 1000
-    const destination = 'AssetHubPolkadot'
-
     const xTransferInput = {
       asset: { symbol: 'DOT', amount: '1000' },
-      paraIdTo,
-      destination
+      destination: 'AssetHubPolkadot',
+      version
     } as TXTokensTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
@@ -54,7 +52,8 @@ describe('getModifiedCurrencySelection', () => {
       }
     ])
 
-    const result = getModifiedCurrencySelection(version, xTransferInput)
+    const result = getModifiedCurrencySelection(xTransferInput)
+
     expect(result).toEqual({
       [version]: {
         id: {
@@ -70,40 +69,64 @@ describe('getModifiedCurrencySelection', () => {
     })
   })
 
-  it('throws InvalidCurrencyError when assetHubAsset is undefined', () => {
+  it('throws InvalidCurrencyError when non-foreign asset is not found in AssetHub', () => {
     const version = Version.V1
-    const paraIdTo = 1000
-    const destination = 'AssetHubPolkadot'
-
     const xTransferInput = {
       asset: { symbol: 'UNKNOWN', amount: '500' },
-      paraIdTo,
-      destination
+      destination: 'AssetHubPolkadot',
+      version
     } as TXTokensTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
     vi.mocked(getOtherAssets).mockReturnValue([])
 
-    expect(() => getModifiedCurrencySelection(version, xTransferInput)).toThrow(
-      'Asset UNKNOWN not found in AssetHub'
-    )
+    expect(() => getModifiedCurrencySelection(xTransferInput)).toThrow(InvalidCurrencyError)
   })
 
-  it('returns default multiLocation for Bifrost origin', () => {
+  it('returns multiLocation from asset when asset is foreign and multiLocation defined', () => {
     const version = Version.V3
-    const currencyID = '123'
-    const paraIdTo = 2000
-    const origin = 'BifrostPolkadot'
-
     const xTransferInput = {
-      asset: { assetId: currencyID, amount: '1000' },
-      paraIdTo,
-      origin
+      asset: {
+        multiLocation: { parents: Parents.ONE, interior: 'Here' },
+        amount: '1500'
+      },
+      version
     } as TXTokensTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
-    const result = getModifiedCurrencySelection(version, xTransferInput)
+    const result = getModifiedCurrencySelection(xTransferInput)
+
+    expect(result).toEqual({
+      [version]: {
+        id: {
+          Concrete: {
+            parents: Parents.ONE,
+            interior: 'Here'
+          }
+        },
+        fun: {
+          Fungible: xTransferInput.asset.amount
+        }
+      }
+    })
+  })
+
+  it('builds default multiLocation for foreign asset when multiLocation is undefined', () => {
+    const version = Version.V3
+    const currencyID = '123'
+    const paraIdTo = 2000
+
+    const xTransferInput = {
+      asset: { assetId: currencyID, amount: '1000' },
+      paraIdTo,
+      version
+    } as TXTokensTransferOptions<unknown, unknown>
+
+    vi.mocked(isForeignAsset).mockReturnValue(true)
+
+    const result = getModifiedCurrencySelection(xTransferInput)
+
     expect(result).toEqual({
       [version]: {
         id: {
@@ -125,52 +148,23 @@ describe('getModifiedCurrencySelection', () => {
     })
   })
 
-  it('returns asset.multiLocation when it is defined', () => {
-    const version = Version.V3
-    const paraIdTo = 3000
-
-    const xTransferInput = {
-      asset: {
-        multiLocation: {
-          parents: Parents.ONE,
-          interior: 'Here'
-        },
-        amount: '1500'
-      },
-      paraIdTo
-    } as TXTokensTransferOptions<unknown, unknown>
-
-    vi.mocked(isForeignAsset).mockReturnValue(true)
-
-    const result = getModifiedCurrencySelection(version, xTransferInput)
-    expect(result).toEqual({
-      [version]: {
-        id: {
-          Concrete: {
-            parents: Parents.ONE,
-            interior: 'Here'
-          }
-        },
-        fun: {
-          Fungible: xTransferInput.asset.amount
-        }
-      }
-    })
-  })
-
-  it('returns default multiLocation when asset.multiLocation is undefiend', () => {
+  it('builds default multiLocation for foreign asset with Bifrost origin', () => {
     const version = Version.V3
     const currencyID = '123'
     const paraIdTo = 2000
+    const origin = 'BifrostPolkadot'
 
     const xTransferInput = {
       asset: { assetId: currencyID, amount: '1000' },
-      paraIdTo
+      paraIdTo,
+      origin,
+      version
     } as TXTokensTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
-    const result = getModifiedCurrencySelection(version, xTransferInput)
+    const result = getModifiedCurrencySelection(xTransferInput)
+
     expect(result).toEqual({
       [version]: {
         id: {

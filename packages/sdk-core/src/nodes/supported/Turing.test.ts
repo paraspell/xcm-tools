@@ -1,16 +1,14 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Turing from './Turing'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Turing', () => {
@@ -31,11 +29,12 @@ describe('Turing', () => {
   })
 
   it('should call transferXTokens with currencyID', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     turing.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith({ ...mockInput, useMultiAssetTransfer: true }, 123n)
+    expect(transferXTokens).toHaveBeenCalledWith(
+      { ...mockInput, useMultiAssetTransfer: true },
+      123n
+    )
   })
 
   describe('transferLocalNonNativeAsset', () => {

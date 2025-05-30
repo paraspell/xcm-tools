@@ -3,7 +3,7 @@ import { hasJunction } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
@@ -21,9 +21,7 @@ vi.mock('../../transfer/getBridgeStatus', () => ({
 }))
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 vi.mock('../polkadotXcm', () => ({
@@ -67,11 +65,9 @@ describe('Hydration', () => {
       asset: { assetId: '123', amount: '100' }
     } as TXTokensTransferOptions<unknown, unknown>
 
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     hydration.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, Number(123))
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, Number(123))
   })
 
   describe('transferPolkadotXCM', () => {

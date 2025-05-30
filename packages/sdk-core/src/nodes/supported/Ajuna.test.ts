@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
@@ -15,9 +15,7 @@ import { getNode } from '../../utils'
 import type { Ajuna } from './Ajuna'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 vi.mock('../../pallets/polkadotXcm', () => ({
@@ -61,12 +59,11 @@ describe('Ajuna', () => {
 
   describe('transferXTokens', () => {
     it('delegates to XTokens implementation when called with native asset', () => {
-      const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
       vi.spyOn(ajuna, 'getNativeAssetSymbol').mockReturnValue('BNC')
 
       ajuna.transferXTokens(baseXTokensInput)
 
-      expect(spy).toHaveBeenCalledWith(baseXTokensInput, 'BNC')
+      expect(transferXTokens).toHaveBeenCalledWith(baseXTokensInput, 'BNC')
     })
 
     it('throws ScenarioNotSupportedError for scenarios other than ParaToPara', () => {

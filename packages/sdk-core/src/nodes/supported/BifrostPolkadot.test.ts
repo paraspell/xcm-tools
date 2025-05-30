@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
   TSendInternalOptions,
@@ -18,9 +18,7 @@ import { getNode } from '../../utils'
 import type { BifrostPolkadot } from './BifrostPolkadot'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 vi.mock('../../pallets/polkadotXcm', () => ({
@@ -51,12 +49,11 @@ describe('BifrostPolkadot', () => {
   })
 
   it('should call transferXTokens with Native when currency matches native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     vi.spyOn(bifrostPolkadot, 'getNativeAssetSymbol').mockReturnValue('BNC')
 
     bifrostPolkadot.transferXTokens(mockXTokensInput)
 
-    expect(spy).toHaveBeenCalledWith(mockXTokensInput, { Native: 'BNC' })
+    expect(transferXTokens).toHaveBeenCalledWith(mockXTokensInput, { Native: 'BNC' })
   })
 
   it('should call transferPolkadotXCM with correct parameters for WETH transfer', async () => {

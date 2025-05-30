@@ -2,7 +2,7 @@
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -19,10 +19,7 @@ class Turing<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    return XTokensTransferImpl.transferXTokens(
-      { ...input, useMultiAssetTransfer: true },
-      BigInt(asset.assetId)
-    )
+    return transferXTokens({ ...input, useMultiAssetTransfer: true }, BigInt(asset.assetId))
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

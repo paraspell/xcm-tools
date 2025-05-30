@@ -1,16 +1,14 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Zeitgeist from './Zeitgeist'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Zeitgeist', () => {
@@ -31,21 +29,19 @@ describe('Zeitgeist', () => {
   })
 
   it('should call transferXTokens with native asset "Ztg" when currency matches native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     vi.spyOn(zeitgeist, 'getNativeAssetSymbol').mockReturnValue('ZTG')
 
     zeitgeist.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'Ztg')
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'Ztg')
   })
 
   it('should call transferXTokens with ForeignAsset when currency does not match the native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     vi.spyOn(zeitgeist, 'getNativeAssetSymbol').mockReturnValue('NOT_ZTG')
 
     zeitgeist.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, {
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, {
       ForeignAsset: 123
     })
   })

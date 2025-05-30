@@ -38,7 +38,7 @@ import {
   createVersionedMultiAssets,
   extractVersionFromHeader
 } from '../pallets/xcmPallet/utils'
-import XTokensTransferImpl from '../pallets/xTokens'
+import { transferXTokens } from '../pallets/xTokens'
 import { getParaEthTransferFees } from '../transfer'
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type {
@@ -181,6 +181,7 @@ abstract class ParachainNode<TApi, TRes> {
         origin: this.node,
         scenario,
         paraIdTo: paraId,
+        version: versionOrDefault,
         destination,
         overriddenAsset,
         pallet,
@@ -188,7 +189,7 @@ abstract class ParachainNode<TApi, TRes> {
       }
 
       if (shouldUseMultiasset) {
-        return XTokensTransferImpl.transferXTokens(input, undefined)
+        return transferXTokens(input, undefined)
       }
 
       return this.transferXTokens(input)

@@ -13,6 +13,8 @@ export const ETHEREUM_JUNCTION: TJunction = {
   GlobalConsensus: { Ethereum: { chainId: ETH_CHAIN_ID } }
 }
 
+export const DEFAULT_FEE = 'Unlimited'
+
 export const DOT_MULTILOCATION: TMultiLocation = {
   parents: Parents.ONE,
   interior: 'Here'

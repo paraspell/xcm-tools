@@ -11,24 +11,26 @@ export const getXTokensParameters = (
   fees: string | number,
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
 ): Record<string, unknown> => {
-  if (isMultiAssetTransfer) {
-    const isOverridenMultiAssets = overriddenAsset && !isTMultiLocation(overriddenAsset)
-
-    const feeAssetIndex = isOverridenMultiAssets
-      ? overriddenAsset.findIndex(asset => asset.isFeeAsset)
-      : undefined
-
+  if (!isMultiAssetTransfer) {
     return {
-      [isOverridenMultiAssets ? 'assets' : 'asset']: currencySelection,
-      ...(isOverridenMultiAssets && { fee_item: feeAssetIndex }),
+      currency_id: currencySelection,
+      amount: BigInt(amount),
       dest: addressSelection,
       dest_weight_limit: fees
     }
   }
 
+  const isOverriddenMultiAssets = overriddenAsset && !isTMultiLocation(overriddenAsset)
+  const assetKey = isOverriddenMultiAssets ? 'assets' : 'asset'
+  const feeAssetIndex = isOverriddenMultiAssets
+    ? overriddenAsset.findIndex(asset => asset.isFeeAsset)
+    : undefined
+
+  const feeIndexWithFallback = feeAssetIndex === -1 ? 0 : feeAssetIndex
+
   return {
-    currency_id: currencySelection,
-    amount: BigInt(amount),
+    [assetKey]: currencySelection,
+    ...(isOverriddenMultiAssets && { fee_item: feeIndexWithFallback }),
     dest: addressSelection,
     dest_weight_limit: fees
   }
