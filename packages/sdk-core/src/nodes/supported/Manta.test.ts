@@ -1,16 +1,14 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Manta from './Manta'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Manta', () => {
@@ -31,11 +29,8 @@ describe('Manta', () => {
   })
 
   it('should call transferXTokens with MantaCurrency selection', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     manta.transferXTokens(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, { MantaCurrency: 123n })
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, { MantaCurrency: 123n })
   })
 
   it('should throw error for unsupported asset', () => {
@@ -55,13 +50,11 @@ describe('Manta', () => {
   })
 
   it('should call transferXTokens with native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     manta.transferXTokens({
       asset: { symbol: 'MANTA' }
     } as TXTokensTransferOptions<unknown, unknown>)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferXTokens).toHaveBeenCalledWith(
       {
         asset: { symbol: 'MANTA' }
       },

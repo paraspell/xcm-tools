@@ -3,7 +3,7 @@
 import type { TAsset } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -26,7 +26,7 @@ export class Centrifuge<TApi, TRes> extends ParachainNode<TApi, TRes> implements
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
     const { asset } = input
     const currencySelection = this.getCurrencySelection(asset)
-    return XTokensTransferImpl.transferXTokens(input, currencySelection)
+    return transferXTokens(input, currencySelection)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

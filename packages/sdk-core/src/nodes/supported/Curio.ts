@@ -2,7 +2,7 @@
 
 import { isForeignAsset } from '@paraspell/assets'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TForeignOrTokenAsset } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -17,7 +17,7 @@ class Curio<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTra
     const currencySelection: TForeignOrTokenAsset = isForeignAsset(asset)
       ? { ForeignAsset: Number(asset.assetId) }
       : { Token: asset.symbol }
-    return XTokensTransferImpl.transferXTokens(input, currencySelection)
+    return transferXTokens(input, currencySelection)
   }
 }
 

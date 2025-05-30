@@ -2,16 +2,14 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Peaq from './Peaq'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Peaq', () => {
@@ -33,11 +31,8 @@ describe('Peaq', () => {
   })
 
   it('should call transferXTokens with valid scenario', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     peaq.transferXTokens(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, 123n)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 123n)
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {

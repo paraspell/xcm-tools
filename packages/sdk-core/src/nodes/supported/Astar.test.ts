@@ -2,7 +2,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
   TTransferLocalOptions,
@@ -19,9 +19,7 @@ vi.mock('../../pallets/polkadotXcm', () => ({
 }))
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Astar', () => {
@@ -59,11 +57,8 @@ describe('Astar', () => {
   })
 
   it('should call transferXTokens with currencyID', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     astar.transferXTokens(mockXTokensInput)
-
-    expect(spy).toHaveBeenCalledWith(mockXTokensInput, 123n)
+    expect(transferXTokens).toHaveBeenCalledWith(mockXTokensInput, 123n)
   })
 
   describe('transferLocalNonNativeAsset', () => {

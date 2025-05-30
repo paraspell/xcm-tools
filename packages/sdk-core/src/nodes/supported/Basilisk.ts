@@ -2,7 +2,7 @@
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
@@ -20,7 +20,7 @@ class Basilisk<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    return XTokensTransferImpl.transferXTokens(input, Number(asset.assetId))
+    return transferXTokens(input, Number(asset.assetId))
   }
 
   transferLocalNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

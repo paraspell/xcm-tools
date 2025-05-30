@@ -12,7 +12,7 @@ import { Parents } from '@paraspell/sdk-common'
 import { ETHEREUM_JUNCTION } from '../../constants'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -56,7 +56,7 @@ export class BifrostPolkadot<TApi, TRes>
     const { asset } = input
 
     const currencySelection = this.getCurrencySelection(asset)
-    return XTokensTransferImpl.transferXTokens(input, currencySelection)
+    return transferXTokens(input, currencySelection)
   }
 
   // Handles DOT, WETH transfers to AssetHubPolkadot

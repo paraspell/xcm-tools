@@ -1,15 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Quartz from './Quartz'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Quartz', () => {
@@ -30,13 +28,11 @@ describe('Quartz', () => {
   })
 
   it('should call transferXTokens with asset id', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     quartz.transferXTokens(mockInput)
-    expect(spy).toHaveBeenCalledWith(mockInput, 123)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 123)
   })
 
   it('should call transferXTokens with NativeAssetId', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     const input = {
       asset: {
         ...mockInput.asset,
@@ -44,7 +40,7 @@ describe('Quartz', () => {
       }
     } as TXTokensTransferOptions<unknown, unknown>
     quartz.transferXTokens(input)
-    expect(spy).toHaveBeenCalledWith(input, 0)
+    expect(transferXTokens).toHaveBeenCalledWith(input, 0)
   })
 
   it('should throw InvalidCurrencyError if asset has no assetId', () => {

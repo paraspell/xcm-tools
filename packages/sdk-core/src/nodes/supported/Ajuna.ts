@@ -4,7 +4,7 @@ import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -34,7 +34,7 @@ export class Ajuna<TApi, TRes>
       throw new InvalidCurrencyError(`Asset ${asset.symbol} is not supported by node ${this.node}.`)
     }
 
-    return XTokensTransferImpl.transferXTokens(input, this.getNativeAssetSymbol())
+    return transferXTokens(input, this.getNativeAssetSymbol())
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

@@ -3,7 +3,7 @@
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
@@ -37,10 +37,10 @@ class Astar<TApi, TRes>
     const { asset } = input
 
     if (!isForeignAsset(asset) || !asset.assetId) {
-      return XTokensTransferImpl.transferXTokens(input, undefined)
+      return transferXTokens(input, undefined)
     }
 
-    return XTokensTransferImpl.transferXTokens(input, BigInt(asset.assetId))
+    return transferXTokens(input, BigInt(asset.assetId))
   }
 
   protected canUseXTokens({ asset }: TSendInternalOptions<TApi, TRes>): boolean {

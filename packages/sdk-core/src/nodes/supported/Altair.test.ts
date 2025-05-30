@@ -1,16 +1,14 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Altair from './Altair'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Altair', () => {
@@ -31,22 +29,20 @@ describe('Altair', () => {
   })
 
   it('should call transferXTokens with Native when currency matches the native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     vi.spyOn(altair, 'getNativeAssetSymbol').mockReturnValue('AIR')
 
     altair.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'Native')
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'Native')
   })
 
   it('should call transferXTokens with ForeignAsset when currency does not match the native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     const inputWithCurrencyID = { ...mockInput, asset: { ...mockInput.asset, assetId: '1' } }
     vi.spyOn(altair, 'getNativeAssetSymbol').mockReturnValue('NOT_AIR')
 
     altair.transferXTokens(inputWithCurrencyID)
 
-    expect(spy).toHaveBeenCalledWith(inputWithCurrencyID, {
+    expect(transferXTokens).toHaveBeenCalledWith(inputWithCurrencyID, {
       ForeignAsset: 1
     })
   })

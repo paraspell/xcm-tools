@@ -2,18 +2,15 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TXcmAsset, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Pendulum from './Pendulum'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
-
 vi.mock('@paraspell/assets', async () => {
   const actual = await vi.importActual<typeof import('@paraspell/assets')>('@paraspell/assets')
   return {
@@ -47,17 +44,13 @@ describe('Pendulum', () => {
   })
 
   it('should call transferXTokens with native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     pendulum.transferXTokens(mockInput)
-
-    expect(spy).toHaveBeenCalledWith({ ...mockInput, useMultiAssetTransfer: false }, {
+    expect(transferXTokens).toHaveBeenCalledWith({ ...mockInput, useMultiAssetTransfer: false }, {
       Native: null
     } as TXcmAsset)
   })
 
   it('should call transferXTokens with XCM asset when foreign asset is provided', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     const foreignAssetInput = {
       asset: { symbol: 'USDC', assetId: '456', amount: '200' },
       scenario: 'ParaToPara'
@@ -67,18 +60,18 @@ describe('Pendulum', () => {
 
     pendulum.transferXTokens(foreignAssetInput)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferXTokens).toHaveBeenCalledWith(
       { ...foreignAssetInput, useMultiAssetTransfer: false },
       { XCM: 456 }
     )
   })
 
   it('Should call transferXTokens with useMultiAssetTransfer for DOT asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     pendulum.transferXTokens(mockDOTInput)
-
-    expect(spy).toHaveBeenCalledWith({ ...mockDOTInput, useMultiAssetTransfer: true }, { XCM: 123 })
+    expect(transferXTokens).toHaveBeenCalledWith(
+      { ...mockDOTInput, useMultiAssetTransfer: true },
+      { XCM: 123 }
+    )
   })
 
   it('should throw InvalidCurrencyError for asset without assetId and not foreign', () => {

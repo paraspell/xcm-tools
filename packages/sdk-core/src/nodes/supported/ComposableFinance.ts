@@ -2,7 +2,7 @@
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
@@ -18,7 +18,7 @@ class ComposableFinance<TApi, TRes> extends ParachainNode<TApi, TRes> implements
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    return XTokensTransferImpl.transferXTokens(input, BigInt(asset.assetId))
+    return transferXTokens(input, BigInt(asset.assetId))
   }
 }
 

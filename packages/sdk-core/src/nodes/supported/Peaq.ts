@@ -3,7 +3,7 @@
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
@@ -28,7 +28,7 @@ class Peaq<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTran
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    return XTokensTransferImpl.transferXTokens(input, BigInt(asset.assetId))
+    return transferXTokens(input, BigInt(asset.assetId))
   }
 
   transferRelayToPara(): TSerializedApiCall {

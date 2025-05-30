@@ -1,15 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Amplitude from './Amplitude'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Amplitude', () => {
@@ -30,10 +28,7 @@ describe('Amplitude', () => {
   })
 
   it('should call transferXTokens with XCM asset selection', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     amplitude.transferXTokens(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, { XCM: 123 })
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, { XCM: 123 })
   })
 })

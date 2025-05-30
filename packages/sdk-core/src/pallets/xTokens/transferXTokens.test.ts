@@ -1,11 +1,11 @@
-import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { DOT_MULTILOCATION } from '../../constants'
 import type { TXcmVersioned, TXTokensCurrencySelection, TXTokensTransferOptions } from '../../types'
-import { getCurrencySelection } from './utils/getCurrencySelection'
+import { transferXTokens } from './transferXTokens'
 import { getXTokensParameters } from './utils/getXTokensParameters'
-import XTokensTransferImpl from './XTokensTransferImpl'
 
 vi.mock('./utils/getCurrencySelection', () => ({
   getCurrencySelection: vi.fn()
@@ -15,16 +15,11 @@ vi.mock('./utils/getXTokensParameters', () => ({
   getXTokensParameters: vi.fn()
 }))
 
-const mockMultiLocation: TMultiLocation = {
-  parents: Parents.ONE,
-  interior: 'Here'
-}
-
 const mockApi = {
   callTxMethod: vi.fn()
 } as unknown as IPolkadotApi<unknown, unknown>
 
-describe('XTokensTransferImpl', () => {
+describe('transferXTokens', () => {
   it('throws an error for multilocation destinations', () => {
     const input = {
       api: mockApi,
@@ -36,13 +31,11 @@ describe('XTokensTransferImpl', () => {
       },
       fees: 1000,
       addressSelection: {} as TXcmVersioned<TMultiLocation>,
-      destination: mockMultiLocation,
+      destination: DOT_MULTILOCATION,
       scenario: 'ParaToPara'
     } as TXTokensTransferOptions<unknown, unknown>
 
-    expect(() =>
-      XTokensTransferImpl.transferXTokens(input, {} as TXTokensCurrencySelection)
-    ).toThrow(
+    expect(() => transferXTokens(input, {} as TXTokensCurrencySelection)).toThrow(
       'Multilocation destinations are not supported for specific transfer you are trying to create.'
     )
   })
@@ -63,7 +56,6 @@ describe('XTokensTransferImpl', () => {
     } as TXTokensTransferOptions<unknown, unknown>
     const currencySelection = '123'
 
-    vi.mocked(getCurrencySelection).mockReturnValue(currencySelection)
     vi.mocked(getXTokensParameters).mockReturnValue({
       param1: 'value1',
       param2: 'value2',
@@ -71,7 +63,7 @@ describe('XTokensTransferImpl', () => {
     })
     const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
-    XTokensTransferImpl.transferXTokens(input, currencySelection)
+    transferXTokens(input, currencySelection)
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'XTokens',

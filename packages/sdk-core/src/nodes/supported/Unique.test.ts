@@ -2,16 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Unique from './Unique'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Unique', () => {
@@ -32,13 +30,11 @@ describe('Unique', () => {
   })
 
   it('should call transferXTokens with asset id', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     unique.transferXTokens(mockInput)
-    expect(spy).toHaveBeenCalledWith(mockInput, 123)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 123)
   })
 
   it('should call transferXTokens with NativeAssetId', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     const input = {
       asset: {
         ...mockInput.asset,
@@ -46,7 +42,7 @@ describe('Unique', () => {
       }
     } as TXTokensTransferOptions<unknown, unknown>
     unique.transferXTokens(input)
-    expect(spy).toHaveBeenCalledWith(input, 0)
+    expect(transferXTokens).toHaveBeenCalledWith(input, 0)
   })
 
   it('should throw InvalidCurrencyError if asset has no assetId', () => {

@@ -1,7 +1,7 @@
 import type { TNativeAsset, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TForeignOrTokenAsset,
   TTransferLocalOptions,
@@ -12,9 +12,7 @@ import { getNode } from '../../utils'
 import type Kintsugi from './Kintsugi'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Kintsugi', () => {
@@ -39,15 +37,13 @@ describe('Kintsugi', () => {
   })
 
   it('should call transferXTokens with ForeignAsset when currencyID is defined', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     kintsugi.transferXTokens(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: 123 } as TForeignOrTokenAsset)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, {
+      ForeignAsset: 123
+    } as TForeignOrTokenAsset)
   })
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     const inputWithoutCurrencyID = {
       ...mockInput,
       asset: {
@@ -59,7 +55,7 @@ describe('Kintsugi', () => {
 
     kintsugi.transferXTokens(inputWithoutCurrencyID)
 
-    expect(spy).toHaveBeenCalledWith(inputWithoutCurrencyID, {
+    expect(transferXTokens).toHaveBeenCalledWith(inputWithoutCurrencyID, {
       Token: 'KINT'
     } as TForeignOrTokenAsset)
   })

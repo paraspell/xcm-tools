@@ -1,0 +1,74 @@
+import type { TPallet } from '@paraspell/pallets'
+import { isTMultiLocation } from '@paraspell/sdk-common'
+
+import type {
+  TSerializedApiCall,
+  TXTokensCurrencySelection,
+  TXTokensSection,
+  TXTokensTransferOptions
+} from '../../../types'
+import { getModifiedCurrencySelection } from './currencySelection'
+import { getXTokensParameters } from './getXTokensParameters'
+
+export const shouldUseMultiAssetTransfer = <TApi, TRes>({
+  origin,
+  destination,
+  scenario,
+  overriddenAsset,
+  useMultiAssetTransfer
+}: TXTokensTransferOptions<TApi, TRes>) => {
+  const isAstarOrShidenToRelay =
+    scenario === 'ParaToRelay' && (origin === 'Astar' || origin === 'Shiden')
+  const isBifrostOrigin = origin === 'BifrostPolkadot' || origin === 'BifrostKusama'
+  const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
+  const isOverriddenMultiAssets = overriddenAsset && !isTMultiLocation(overriddenAsset)
+
+  return (
+    useMultiAssetTransfer ||
+    isAstarOrShidenToRelay ||
+    (isAssetHubDest && !isBifrostOrigin) ||
+    !!isOverriddenMultiAssets
+  )
+}
+
+export const getXTokensSection = <TApi, TRes>(
+  useMultiAsset: boolean,
+  overriddenAsset: TXTokensTransferOptions<TApi, TRes>['overriddenAsset']
+): TXTokensSection => {
+  if (!useMultiAsset) return 'transfer'
+
+  const isOverriddenMultiAssets = overriddenAsset && !isTMultiLocation(overriddenAsset)
+
+  return isOverriddenMultiAssets ? 'transfer_multiassets' : 'transfer_multiasset'
+}
+
+export const buildXTokensCall = <TApi, TRes>(
+  input: TXTokensTransferOptions<TApi, TRes>,
+  currencySelection: TXTokensCurrencySelection,
+  fees: string | number
+): TSerializedApiCall => {
+  const { overriddenAsset, addressSelection, asset, pallet, method } = input
+
+  const useMultiAsset = shouldUseMultiAssetTransfer(input)
+
+  const modifiedCurrencySelection = useMultiAsset
+    ? getModifiedCurrencySelection(input)
+    : currencySelection
+
+  const section = getXTokensSection(useMultiAsset, overriddenAsset)
+
+  const parameters = getXTokensParameters(
+    useMultiAsset,
+    modifiedCurrencySelection,
+    addressSelection,
+    asset.amount,
+    fees,
+    overriddenAsset
+  )
+
+  return {
+    module: (pallet as TPallet) ?? 'XTokens',
+    section: method ?? section,
+    parameters
+  }
+}

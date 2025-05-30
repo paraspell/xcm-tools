@@ -1,7 +1,7 @@
 import type { TNativeAsset, WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TForeignOrTokenAsset,
   TTransferLocalOptions,
@@ -12,9 +12,7 @@ import { getNode } from '../../utils'
 import type Interlay from './Interlay'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('Interlay', () => {
@@ -39,15 +37,13 @@ describe('Interlay', () => {
   })
 
   it('should call transferXTokens with ForeignAsset when currencyID is defined', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     interlay.transferXTokens(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, { ForeignAsset: 456 } as TForeignOrTokenAsset)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, {
+      ForeignAsset: 456
+    } as TForeignOrTokenAsset)
   })
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     const inputWithoutCurrencyID = {
       ...mockInput,
       asset: {
@@ -59,7 +55,7 @@ describe('Interlay', () => {
 
     interlay.transferXTokens(inputWithoutCurrencyID)
 
-    expect(spy).toHaveBeenCalledWith(inputWithoutCurrencyID, {
+    expect(transferXTokens).toHaveBeenCalledWith(inputWithoutCurrencyID, {
       Token: 'INTR'
     } as TForeignOrTokenAsset)
   })

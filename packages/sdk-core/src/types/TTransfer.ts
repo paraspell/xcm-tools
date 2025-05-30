@@ -47,6 +47,7 @@ export type TXTokensTransferOptions<TApi, TRes> = {
   origin: TNodePolkadotKusama
   destination: TDestination
   paraIdTo?: number
+  version: Version
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   pallet?: string
   method?: string

@@ -2,7 +2,7 @@
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import {
   type IXTokensTransfer,
   type TXcmAsset,
@@ -24,7 +24,7 @@ class Amplitude<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
     }
 
     const currencySelection: TXcmAsset = { XCM: Number(asset.assetId) }
-    return XTokensTransferImpl.transferXTokens(input, currencySelection)
+    return transferXTokens(input, currencySelection)
   }
 }
 

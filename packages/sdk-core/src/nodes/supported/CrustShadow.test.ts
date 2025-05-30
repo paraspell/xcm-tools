@@ -1,16 +1,14 @@
 import { InvalidCurrencyError, type TNativeAsset, type WithAmount } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TReserveAsset, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type CrustShadow from './CrustShadow'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('CrustShadow', () => {
@@ -35,21 +33,19 @@ describe('CrustShadow', () => {
   })
 
   it('should call transferXTokens with SelfReserve when currency matches native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     vi.spyOn(crustShadow, 'getNativeAssetSymbol').mockReturnValue('CRU')
 
     crustShadow.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, 'SelfReserve' as TReserveAsset)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, 'SelfReserve' as TReserveAsset)
   })
 
   it('should call transferXTokens with OtherReserve when currencyID is defined and currency does not match native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     vi.spyOn(crustShadow, 'getNativeAssetSymbol').mockReturnValue('NOT_CRU')
 
     crustShadow.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { OtherReserve: 123n } as TReserveAsset)
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, { OtherReserve: 123n } as TReserveAsset)
   })
 
   it('should throw InvalidCurrencyError when currencyID is undefined and currency does not match native asset', () => {

@@ -10,7 +10,7 @@ import { hasJunction, Parents, type TMultiLocation } from '@paraspell/sdk-common
 
 import { DOT_MULTILOCATION } from '../../constants'
 import { createMultiAsset } from '../../pallets/xcmPallet/utils'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -132,14 +132,14 @@ class Hydration<TApi, TRes>
     const { asset } = input
 
     if (asset.symbol === this.getNativeAssetSymbol()) {
-      return XTokensTransferImpl.transferXTokens(input, Hydration.NATIVE_ASSET_ID)
+      return transferXTokens(input, Hydration.NATIVE_ASSET_ID)
     }
 
     if (!isForeignAsset(asset)) {
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
     }
 
-    return XTokensTransferImpl.transferXTokens(input, Number(asset.assetId))
+    return transferXTokens(input, Number(asset.assetId))
   }
 
   protected canUseXTokens({ to: destination, asset }: TSendInternalOptions<TApi, TRes>): boolean {

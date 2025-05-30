@@ -1,15 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type BifrostKusama from './BifrostKusama'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 describe('BifrostKusama', () => {
@@ -31,21 +29,19 @@ describe('BifrostKusama', () => {
   })
 
   it('should call transferXTokens with Native when currency matches native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     vi.spyOn(bifrostKusama, 'getNativeAssetSymbol').mockReturnValue('BNC')
 
     bifrostKusama.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { Native: 'BNC' })
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, { Native: 'BNC' })
   })
 
   it('should call transferXTokens with Token when currency does not match native asset', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
     vi.spyOn(bifrostKusama, 'getNativeAssetSymbol').mockReturnValue('NOT_BNC')
 
     bifrostKusama.transferXTokens(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput, { Native: 'BNC' })
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, { Native: 'BNC' })
   })
 
   describe('transferLocalNonNativeAsset', () => {

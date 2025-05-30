@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import XTokensTransferImpl from '../../pallets/xTokens'
+import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
@@ -9,9 +9,7 @@ import { getNodeProviders } from '../config'
 import type Basilisk from './Basilisk'
 
 vi.mock('../../pallets/xTokens', () => ({
-  default: {
-    transferXTokens: vi.fn()
-  }
+  transferXTokens: vi.fn()
 }))
 
 vi.mock('../config', () => ({
@@ -39,11 +37,8 @@ describe('Basilisk', () => {
   })
 
   it('should call transferXTokens with currencyID', () => {
-    const spy = vi.spyOn(XTokensTransferImpl, 'transferXTokens')
-
     basilisk.transferXTokens(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, Number(123))
+    expect(transferXTokens).toHaveBeenCalledWith(mockInput, Number(123))
   })
 
   describe('transferLocalNativeAsset', () => {
