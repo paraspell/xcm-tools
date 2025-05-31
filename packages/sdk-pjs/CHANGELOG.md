@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.3.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v10.3.1...sdk-pjs-v10.3.2) (2025-05-31)
+
+
+### Miscellaneous Chores
+
+* **sdk-pjs:** Synchronize main versions
+
 ## [10.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v10.3.0...sdk-pjs-v10.3.1) (2025-05-30)
 
 
