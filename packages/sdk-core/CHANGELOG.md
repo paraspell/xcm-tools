@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.3.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.3.1...sdk-core-v10.3.2) (2025-05-31)
+
+
+### Bug Fixes
+
+* **sdk-core:** Update para-to-para DOT error msg ⬆️ ([910a3e9](https://github.com/paraspell/xcm-tools/commit/910a3e9344697322cbb160547e6532951a6714fb))
+
 ## [10.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.3.0...sdk-core-v10.3.1) (2025-05-30)
 
 
