@@ -49,7 +49,7 @@ await RouterBuilder
 
 const codeForLightSpell = `
 HTTP GET 
-api.lightspell.xyz/Acala/id
+api.lightspell.xyz/v3/nodes/Acala/para-id
 -> { 
   "paraId": 2000
 } 
