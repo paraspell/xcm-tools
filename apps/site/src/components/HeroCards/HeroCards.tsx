@@ -47,13 +47,12 @@ await RouterBuilder
     .signer(signer)
     .buildAndSend()`;
 
-const codeForLightSpell = `
-HTTP GET 
-api.lightspell.xyz/v3/nodes/Acala/para-id
+const codeForLightSpell = `HTTP GET 
+api.lightspell.xyz/v3/nodes/
+Acala/para-id
 -> { 
   "paraId": 2000
-} 
-`;
+} `;
 
 const HeroCards = () => {
   const isSmallScreen = useMediaQuery(`(max-width: ${em(992)})`);
@@ -133,7 +132,7 @@ const HeroCards = () => {
         p="xl"
         pt={21}
         radius="lg"
-        h={{ base: undefined, md: 300 }}
+        h={{ base: undefined, md: 325 }}
         mt={{ base: undefined, md: 150 }}
         style={{
           backdropFilter: "blur(2px)",
@@ -196,7 +195,7 @@ const HeroCards = () => {
   );
 
   const analyser = (
-    <Box style={{ gridColumn: isSmallScreen ? "auto" : "3 / 4" }}>
+    <Box mt={25} style={{ gridColumn: isSmallScreen ? "auto" : "3 / 4" }}>
       <Paper
         shadow="xl"
         p="xl"
