@@ -53,7 +53,7 @@ describe('claimAssets', () => {
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
-      section: 'claim_assets',
+      method: 'claim_assets',
       parameters: argsMock
     })
 
@@ -85,7 +85,7 @@ describe('claimAssets', () => {
     expect(initSpy).toHaveBeenCalled()
     expect(callSpy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
-      section: 'claim_assets',
+      method: 'claim_assets',
       parameters: argsMock
     })
   })
@@ -111,7 +111,7 @@ describe('claimAssets', () => {
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'XcmPallet',
-      section: 'claim_assets',
+      method: 'claim_assets',
       parameters: argsMock
     })
   })

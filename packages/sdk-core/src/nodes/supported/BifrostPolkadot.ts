@@ -111,7 +111,7 @@ export class BifrostPolkadot<TApi, TRes>
 
     return api.callTxMethod({
       module: 'Tokens',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),

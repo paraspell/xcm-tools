@@ -61,7 +61,7 @@ class Hydration<TApi, TRes>
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
-      section: 'transfer_assets_using_type_and_then',
+      method: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: this.createVersionedDestination(
           scenario,
@@ -159,7 +159,7 @@ class Hydration<TApi, TRes>
 
     return api.callTxMethod({
       module: 'Balances',
-      section: 'transfer_keep_alive',
+      method: 'transfer_keep_alive',
       parameters: {
         dest: address,
         value: BigInt(asset.amount)
@@ -180,7 +180,7 @@ class Hydration<TApi, TRes>
 
     return api.callTxMethod({
       module: 'Tokens',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         dest: address,
         currency_id: Number(asset.assetId),

@@ -190,7 +190,7 @@ describe('Polimec', () => {
     const call = polimec.transferRelayToPara(options)
 
     expect(call).toHaveProperty('module', 'XcmPallet')
-    expect(call).toHaveProperty('section', 'transfer_assets_using_type_and_then')
+    expect(call).toHaveProperty('method', 'transfer_assets_using_type_and_then')
     expect(call.parameters).toHaveProperty('dest')
     expect(call.parameters).toHaveProperty('assets')
     expect(call.parameters).toHaveProperty('assets_transfer_type', 'Teleport')
@@ -212,7 +212,7 @@ describe('Polimec', () => {
     const call = polimec.transferRelayToPara(options)
 
     expect(call).toHaveProperty('module', 'XcmPallet')
-    expect(call).toHaveProperty('section', 'transfer_assets_using_type_and_then')
+    expect(call).toHaveProperty('method', 'transfer_assets_using_type_and_then')
     expect(call.parameters).toHaveProperty('dest')
     expect(call.parameters).toHaveProperty('assets')
     expect(call.parameters).toHaveProperty('assets_transfer_type', 'Teleport')
@@ -266,7 +266,7 @@ describe('Polimec', () => {
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'ForeignAssets',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           id: {},
           target: { Id: mockOptions.address },

@@ -102,7 +102,7 @@ export const createTypeAndThenTransfer = <TApi, TRes>(
   transferType: 'DestinationReserve' | 'Teleport' = 'DestinationReserve'
 ): TSerializedApiCall => ({
   module: scenario === 'RelayToPara' ? 'XcmPallet' : 'PolkadotXcm',
-  section: 'transfer_assets_using_type_and_then',
+  method: 'transfer_assets_using_type_and_then',
   parameters: {
     dest: {
       [version]: createTypeAndThenDest(destination, scenario, version)
@@ -265,7 +265,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
 
     return api.callTxMethod({
       module: 'ForeignAssets',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         id: asset.multiLocation,
         target: { Id: address },

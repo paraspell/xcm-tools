@@ -38,7 +38,7 @@ class RobonomicsPolkadot<TApi, TRes>
 
     return api.callTxMethod({
       module: 'Assets',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         id: BigInt(asset.assetId),
         target: { Id: address },

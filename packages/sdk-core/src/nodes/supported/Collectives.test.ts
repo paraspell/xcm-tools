@@ -50,6 +50,6 @@ describe('Collectives', () => {
 
   it('should return correct parameters for getRelayToParaOverrides', () => {
     const result = node.getRelayToParaOverrides()
-    expect(result).toEqual({ section: 'limited_teleport_assets', includeFee: true })
+    expect(result).toEqual({ method: 'limited_teleport_assets', includeFee: true })
   })
 })

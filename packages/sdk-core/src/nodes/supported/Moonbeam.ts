@@ -64,7 +64,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { section: 'limited_reserve_transfer_assets', includeFee: true }
+    return { method: 'limited_reserve_transfer_assets', includeFee: true }
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {
@@ -80,7 +80,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
 
     return api.callTxMethod({
       module: 'Assets',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         id: BigInt(asset.assetId),
         target: address,

@@ -29,7 +29,7 @@ class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolk
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { section: 'limited_teleport_assets', includeFee: true }
+    return { method: 'limited_teleport_assets', includeFee: true }
   }
 
   createCurrencySpec(amount: string, scenario: TScenario, version: Version, asset?: TAsset) {

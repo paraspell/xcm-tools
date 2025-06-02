@@ -106,7 +106,7 @@ describe('Crust', () => {
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'Assets',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           target: { Id: mockOptions.address },
           id: 1n,

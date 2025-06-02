@@ -5,7 +5,7 @@ import type { TPallet } from '@paraspell/pallets'
 import { isTMultiLocation } from '@paraspell/sdk-common'
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
-import type { TPolkadotXcmSection, TSerializedApiCall } from '../../types'
+import type { TPolkadotXcmMethod, TSerializedApiCall } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import {
   addXcmVersionHeader,
@@ -23,9 +23,9 @@ class PolkadotXCMTransferImpl {
       currencySelection,
       overriddenAsset,
       pallet,
-      method
+      method: methodOverride
     }: TPolkadotXCMTransferOptions<TApi, TRes>,
-    section: TPolkadotXcmSection,
+    method: TPolkadotXcmMethod,
     fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ): TRes {
     const [version, multiAssets] = extractVersionFromHeader<TMultiAsset[]>(currencySelection)
@@ -42,7 +42,7 @@ class PolkadotXCMTransferImpl {
 
     const call: TSerializedApiCall = {
       module: (pallet as TPallet) ?? 'PolkadotXcm',
-      section: method ?? section,
+      method: methodOverride ?? method,
       parameters: {
         dest: header,
         beneficiary: addressSelection,

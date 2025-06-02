@@ -141,7 +141,7 @@ describe('Hydration', () => {
       expect(spy).toHaveBeenCalled()
       expect(spy).toHaveBeenCalledWith({
         module: 'PolkadotXcm',
-        section: 'transfer_assets_using_type_and_then',
+        method: 'transfer_assets_using_type_and_then',
         parameters: expect.any(Object)
       })
     })
@@ -163,7 +163,7 @@ describe('Hydration', () => {
       expect(transferToAhSpy).toHaveBeenCalled()
       expect(spy).toHaveBeenCalledWith({
         module: 'PolkadotXcm',
-        section: 'transfer_assets_using_type_and_then',
+        method: 'transfer_assets_using_type_and_then',
         parameters: expect.any(Object)
       })
     })
@@ -181,7 +181,7 @@ describe('Hydration', () => {
       expect(transferToAhSpy).toHaveBeenCalled()
       expect(spy).toHaveBeenCalledWith({
         module: 'PolkadotXcm',
-        section: 'transfer_assets_using_type_and_then',
+        method: 'transfer_assets_using_type_and_then',
         parameters: expect.any(Object)
       })
     })
@@ -296,7 +296,7 @@ describe('Hydration', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',
-        section: 'transfer_keep_alive',
+        method: 'transfer_keep_alive',
         parameters: {
           dest: mockInput.address,
           value: BigInt(mockInput.asset.amount)
@@ -351,7 +351,7 @@ describe('Hydration', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           dest: mockInput.address,
           currency_id: 123,

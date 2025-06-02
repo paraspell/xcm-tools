@@ -21,7 +21,7 @@ export const claimAssets = async <TApi, TRes>(
 
   const call = {
     module,
-    section: 'claim_assets',
+    method: 'claim_assets',
     parameters: args
   }
 

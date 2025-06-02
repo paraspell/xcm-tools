@@ -168,7 +168,7 @@ describe('BifrostPolkadot', () => {
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'Tokens',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           dest: { Id: mockOptions.address },
           currency_id: { Token2: 1 },

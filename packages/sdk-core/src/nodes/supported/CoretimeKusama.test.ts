@@ -62,7 +62,7 @@ describe('CoretimeKusama', () => {
     const result = node.getRelayToParaOverrides()
 
     expect(result).toEqual({
-      section: 'limited_teleport_assets',
+      method: 'limited_teleport_assets',
       includeFee: true
     })
   })

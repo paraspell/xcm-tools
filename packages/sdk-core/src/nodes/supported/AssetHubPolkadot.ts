@@ -29,7 +29,7 @@ import {
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type {
   TDestination,
-  TPolkadotXcmSection,
+  TPolkadotXcmMethod,
   TRelayToParaOverrides,
   TSerializedApiCall,
   TTransferLocalOptions
@@ -200,7 +200,7 @@ class AssetHubPolkadot<TApi, TRes>
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
-      section: 'transfer_assets_using_type_and_then',
+      method: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: createVersionedDestination(
           scenario,
@@ -345,7 +345,7 @@ class AssetHubPolkadot<TApi, TRes>
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
-      section: 'transfer_assets_using_type_and_then',
+      method: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: this.createVersionedDestination(scenario, version, destination, paraIdTo),
         assets: addXcmVersionHeader(
@@ -393,7 +393,7 @@ class AssetHubPolkadot<TApi, TRes>
     return input
   }
 
-  private getSection(scenario: TScenario, destination: TDestination): TPolkadotXcmSection {
+  private getMethod(scenario: TScenario, destination: TDestination): TPolkadotXcmMethod {
     const isSystemNode =
       !isTMultiLocation(destination) && SYSTEM_NODES_POLKADOT.includes(destination)
     if (destination === 'Polimec' || destination === 'Moonbeam') return 'transfer_assets'
@@ -516,17 +516,17 @@ class AssetHubPolkadot<TApi, TRes>
       )
     }
 
-    const section = this.getSection(scenario, destination)
+    const method = this.getMethod(scenario, destination)
 
     const modifiedInput = this.patchInput(input)
 
     return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, section, 'Unlimited')
+      PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, method, 'Unlimited')
     )
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { section: 'limited_teleport_assets', includeFee: true }
+    return { method: 'limited_teleport_assets', includeFee: true }
   }
 
   createCurrencySpec(
@@ -567,7 +567,7 @@ class AssetHubPolkadot<TApi, TRes>
     if (asset.assetId !== undefined) {
       return api.callTxMethod({
         module: 'Assets',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           id: Number(asset.assetId),
           target: { Id: address },
@@ -578,7 +578,7 @@ class AssetHubPolkadot<TApi, TRes>
 
     return api.callTxMethod({
       module: 'ForeignAssets',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         id: asset.multiLocation,
         target: { Id: address },

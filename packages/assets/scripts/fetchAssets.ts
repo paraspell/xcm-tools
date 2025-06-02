@@ -141,9 +141,9 @@ const fetchOtherAssetsDefault = async (
   api: ApiPromise,
   query: string
 ): Promise<TForeignAsset[]> => {
-  const [module, section] = query.split('.')
+  const [module, method] = query.split('.')
 
-  const res = await api.query[module][section].entries()
+  const res = await api.query[module][method].entries()
 
   const results = await Promise.all(
     res.map(
@@ -180,8 +180,8 @@ const fetchOtherAssetsDefault = async (
 }
 
 const fetchNativeAssetsCurio = async (api: ApiPromise, query: string): Promise<TNativeAsset[]> => {
-  const [module, section] = query.split('.')
-  const res = await api.query[module][section].entries()
+  const [module, method] = query.split('.')
+  const res = await api.query[module][method].entries()
   return res
     .map(
       ([
@@ -209,8 +209,8 @@ const fetchNativeAssetsCurio = async (api: ApiPromise, query: string): Promise<T
 }
 
 const fetchOtherAssetsCurio = async (api: ApiPromise, query: string) => {
-  const [module, section] = query.split('.')
-  const res = await api.query[module][section].entries()
+  const [module, method] = query.split('.')
+  const res = await api.query[module][method].entries()
   return res
     .map(
       ([
@@ -238,8 +238,8 @@ const fetchOtherAssetsCurio = async (api: ApiPromise, query: string) => {
 }
 
 const fetchOtherAssetsAmplitude = async (api: ApiPromise, query: string) => {
-  const [module, section] = query.split('.')
-  const res = await api.query[module][section].entries()
+  const [module, method] = query.split('.')
+  const res = await api.query[module][method].entries()
   return res
     .filter(
       ([

@@ -8,8 +8,8 @@ export const fetchComposableAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<TForeignAsset[]> => {
-  const [module, section] = query.split('.')
-  const symbolsResponse = await api.query[module][section].entries()
+  const [module, method] = query.split('.')
+  const symbolsResponse = await api.query[module][method].entries()
 
   const assets = await Promise.all(
     symbolsResponse.map(

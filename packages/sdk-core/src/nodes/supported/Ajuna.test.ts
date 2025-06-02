@@ -141,7 +141,7 @@ describe('Ajuna', () => {
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'Assets',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           id: 1,
           target: { Id: 'addr' },

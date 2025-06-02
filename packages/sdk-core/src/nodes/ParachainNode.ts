@@ -258,15 +258,15 @@ abstract class ParachainNode<TApi, TRes> {
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { section: 'limited_reserve_transfer_assets', includeFee: true }
+    return { method: 'limited_reserve_transfer_assets', includeFee: true }
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
-    const { version = Version.V3, pallet, method } = options
-    const { section, includeFee } = this.getRelayToParaOverrides()
+    const { version = Version.V3, pallet, method: methodOverride } = options
+    const { method, includeFee } = this.getRelayToParaOverrides()
     return {
       module: (pallet as TPallet) ?? 'XcmPallet',
-      section: method ?? section,
+      method: methodOverride ?? method,
       parameters: constructRelayToParaParameters(options, version, { includeFee })
     }
   }
@@ -320,7 +320,7 @@ abstract class ParachainNode<TApi, TRes> {
 
     return api.callTxMethod({
       module: 'Balances',
-      section: 'transfer_keep_alive',
+      method: 'transfer_keep_alive',
       parameters: {
         dest: isNodeEvm(this.node) ? address : { Id: address },
         value: BigInt(asset.amount)
@@ -341,7 +341,7 @@ abstract class ParachainNode<TApi, TRes> {
 
     return api.callTxMethod({
       module: 'Tokens',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         dest: { Id: address },
         currency_id: BigInt(asset.assetId),
@@ -410,7 +410,7 @@ abstract class ParachainNode<TApi, TRes> {
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
-      section: 'transfer_assets_using_type_and_then',
+      method: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: this.createVersionedDestination(
           scenario,
@@ -556,7 +556,7 @@ abstract class ParachainNode<TApi, TRes> {
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
-      section: 'transfer_assets_using_type_and_then',
+      method: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: this.createVersionedDestination(
           scenario,

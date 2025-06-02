@@ -68,7 +68,7 @@ describe('XTransferTransferImpl', () => {
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'XTransfer',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         asset: mockMultiAsset,
         dest: mockMultiLocation,
@@ -102,7 +102,7 @@ describe('XTransferTransferImpl', () => {
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'XTransfer',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         asset: mockMultiAsset,
         dest: mockMultiLocation,

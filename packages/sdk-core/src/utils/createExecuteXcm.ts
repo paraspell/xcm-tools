@@ -35,7 +35,7 @@ export const createExecuteXcm = <TApi, TRes>(
 
   const call: TSerializedApiCall = {
     module: 'PolkadotXcm',
-    section: 'execute',
+    method: 'execute',
     parameters: {
       message: {
         [version]: [

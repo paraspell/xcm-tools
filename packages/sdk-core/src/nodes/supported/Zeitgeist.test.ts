@@ -90,7 +90,7 @@ describe('Zeitgeist', () => {
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'AssetManager',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           dest: { Id: mockOptions.address },
           currency_id: { ForeignAsset: 1 },

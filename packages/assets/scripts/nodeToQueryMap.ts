@@ -3,7 +3,7 @@ import { TNodeWithRelayChains } from '@paraspell/sdk-common'
 export const GLOBAL = 'GLOBAL_XCM_REGISTRY'
 
 export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
-  // Chain state query: <module>.<section> for assets metadata
+  // Chain state query: <module>.<method> for assets metadata
   // Or GLOBAL flag to use global XCM registry
   Polkadot: [GLOBAL],
   Kusama: [GLOBAL],

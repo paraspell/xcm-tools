@@ -9,8 +9,8 @@ export const fetchAjunaOtherAssets = async (
   api: ApiPromise,
   query: string
 ): Promise<TForeignAsset[]> => {
-  const [module, section] = query.split('.')
-  const response = await api.query[module][section].entries()
+  const [module, method] = query.split('.')
+  const response = await api.query[module][method].entries()
 
   const assets = await Promise.all(
     response.map(

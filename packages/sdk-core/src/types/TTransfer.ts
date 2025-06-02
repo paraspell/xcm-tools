@@ -205,7 +205,7 @@ type TRelayToParaBaseOptions = {
 }
 
 export type TRelayToParaOverrides = {
-  section: TXcmPalletSection
+  method: TXcmPalletMethod
   includeFee: boolean
 }
 
@@ -216,7 +216,7 @@ export type TRelayToParaOptions<TApi, TRes> = WithApi<TRelayToParaBaseOptions, T
 
 export type TSerializedApiCall = {
   module: TPallet | 'Utility'
-  section: string
+  method: string
   parameters: Record<string, unknown>
 }
 
@@ -225,18 +225,18 @@ export type TDestWeight = {
   proof_size: bigint
 }
 
-export type TXTransferSection = 'transfer'
+export type TXTransferMethod = 'transfer'
 
-export type TXTokensSection = 'transfer' | 'transfer_multiasset' | 'transfer_multiassets'
+export type TXTokensMethod = 'transfer' | 'transfer_multiasset' | 'transfer_multiassets'
 
-export type TPolkadotXcmSection =
+export type TPolkadotXcmMethod =
   | 'limited_teleport_assets'
   | 'limited_reserve_transfer_assets'
   | 'reserve_transfer_assets'
   | 'reserve_withdraw_assets'
   | 'transfer_assets'
 
-export type TXcmPalletSection =
+export type TXcmPalletMethod =
   | 'limited_teleport_assets'
   | 'reserve_transfer_assets'
   | 'limited_reserve_transfer_assets'

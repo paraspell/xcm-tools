@@ -4,7 +4,7 @@ import { Parents } from '@paraspell/sdk-common'
 import { InvalidParameterError } from '../../errors'
 import {
   type TSerializedApiCall,
-  type TXTransferSection,
+  type TXTransferMethod,
   type TXTransferTransferOptions,
   Version
 } from '../../types'
@@ -14,7 +14,7 @@ import { getDestination } from './utils/getDestination'
 
 class XTransferTransferImpl {
   static transferXTransfer<TApi, TRes>(input: TXTransferTransferOptions<TApi, TRes>): TRes {
-    const { api, destination, asset, overriddenAsset, pallet, method } = input
+    const { api, destination, asset, overriddenAsset, pallet, method: methodOverride } = input
 
     const isMultiLocationDestination = typeof destination === 'object'
     if (isMultiLocationDestination) {
@@ -41,13 +41,13 @@ class XTransferTransferImpl {
 
     const dest = getDestination(input)
 
-    const section: TXTransferSection = 'transfer'
+    const method: TXTransferMethod = 'transfer'
 
     const destWeight = determineDestWeight(destination)
 
     const call: TSerializedApiCall = {
       module: (pallet as TPallet) ?? 'XTransfer',
-      section: method ?? section,
+      method: methodOverride ?? method,
       parameters: {
         asset: resolvedMultiAssets[0],
         dest,

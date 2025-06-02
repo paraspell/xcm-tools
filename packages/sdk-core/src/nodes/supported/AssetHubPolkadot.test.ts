@@ -463,7 +463,7 @@ describe('AssetHubPolkadot', () => {
     const result = assetHub.getRelayToParaOverrides()
 
     expect(result).toEqual({
-      section: 'limited_teleport_assets',
+      method: 'limited_teleport_assets',
       includeFee: true
     })
   })
@@ -757,7 +757,7 @@ describe('AssetHubPolkadot', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Assets',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           id: 123,
           target: { Id: mockInput.address },
@@ -783,7 +783,7 @@ describe('AssetHubPolkadot', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'ForeignAssets',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           id: {},
           target: { Id: mockInput.address },

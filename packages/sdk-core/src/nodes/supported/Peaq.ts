@@ -48,7 +48,7 @@ class Peaq<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTran
 
     return api.callTxMethod({
       module: 'Assets',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         id: BigInt(asset.assetId),
         target: { Id: address },
