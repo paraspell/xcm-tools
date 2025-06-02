@@ -94,7 +94,7 @@ describe('Kintsugi', () => {
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'Tokens',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           dest: mockOptions.address,
           currency_id: { ForeignAsset: 1 },

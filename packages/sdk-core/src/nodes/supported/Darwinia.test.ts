@@ -128,7 +128,7 @@ describe('Darwinia', () => {
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'Assets',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           target: mockOptions.address,
           id: 1n,

@@ -75,7 +75,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       await api.init(origin, TX_CLIENT_TIMEOUT_MS)
       return api.callTxMethod({
         module: 'Balances',
-        section: 'transfer_keep_alive',
+        method: 'transfer_keep_alive',
         parameters: {
           dest: { Id: address },
           value: 'multiasset' in currency ? 0n : BigInt(currency.amount)

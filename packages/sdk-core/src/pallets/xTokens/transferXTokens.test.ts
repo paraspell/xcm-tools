@@ -67,7 +67,7 @@ describe('transferXTokens', () => {
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'XTokens',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         param1: 'value1',
         param2: 'value2',

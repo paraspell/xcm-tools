@@ -54,15 +54,15 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
       )
     }
 
-    const section =
+    const method =
       scenario === 'ParaToPara' && !isSystemNode
         ? 'limited_reserve_transfer_assets'
         : 'limited_teleport_assets'
-    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited'))
+    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited'))
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { section: 'limited_teleport_assets', includeFee: true }
+    return { method: 'limited_teleport_assets', includeFee: true }
   }
 
   createCurrencySpec(

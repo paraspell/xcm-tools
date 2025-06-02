@@ -233,10 +233,10 @@ describe('PapiApi', () => {
   })
 
   describe('callTxMethod', () => {
-    it('should create a transaction with the provided module, section, and parameters', () => {
+    it('should create a transaction with the provided module, method, and parameters', () => {
       const serializedCall: TSerializedApiCall = {
         module: 'XcmPallet',
-        section: 'methodName',
+        method: 'methodName',
         parameters: { param1: 'value1', param2: 'value2' }
       }
 

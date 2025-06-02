@@ -60,7 +60,7 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { section: 'limited_reserve_transfer_assets', includeFee: true }
+    return { method: 'limited_reserve_transfer_assets', includeFee: true }
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

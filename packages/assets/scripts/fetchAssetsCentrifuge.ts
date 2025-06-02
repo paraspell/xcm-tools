@@ -6,8 +6,8 @@
 import type { ApiPromise } from '@polkadot/api'
 
 export const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string) => {
-  const [module, section] = query.split('.')
-  const res = await api.query[module][section].entries()
+  const [module, method] = query.split('.')
+  const res = await api.query[module][method].entries()
   return res
     .filter(
       ([

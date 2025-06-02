@@ -8,7 +8,7 @@ import { BridgeHaltedError, InvalidAddressError, NoXCMSupportImplementedError } 
 import { getBridgeStatus } from '../transfer/getBridgeStatus'
 import type { TRelayToParaOptions, TTransferLocalOptions } from '../types'
 import {
-  type TPolkadotXcmSection,
+  type TPolkadotXcmMethod,
   type TPolkadotXCMTransferOptions,
   type TSendInternalOptions,
   type TXTokensCurrencySelection,
@@ -89,7 +89,7 @@ class TestParachainNode extends ParachainNode<unknown, unknown> {
 
   transferPolkadotXCM(
     _options: TPolkadotXCMTransferOptions<unknown, unknown>,
-    _section: TPolkadotXcmSection,
+    _method: TPolkadotXcmMethod,
     _fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ) {
     return 'transferPolkadotXCM called'
@@ -120,7 +120,7 @@ class NoXTokensNode extends ParachainNode<unknown, unknown> {
 class OnlyPolkadotXCMNode extends ParachainNode<unknown, unknown> {
   transferPolkadotXCM(
     _options: TPolkadotXCMTransferOptions<unknown, unknown>,
-    _section: TPolkadotXcmSection,
+    _method: TPolkadotXcmMethod,
     _fees: 'Unlimited' | { Limited: string } | undefined = undefined
   ) {
     return 'transferPolkadotXCM called'
@@ -301,7 +301,7 @@ describe('ParachainNode', () => {
 
     expect(result).toEqual({
       module: 'XcmPallet',
-      section: 'limited_reserve_transfer_assets',
+      method: 'limited_reserve_transfer_assets',
       parameters: 'parameters'
     })
   })
@@ -342,7 +342,7 @@ describe('ParachainNode', () => {
 
     expect(spy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
-      section: 'transfer_assets_using_type_and_then',
+      method: 'transfer_assets_using_type_and_then',
       parameters: expect.any(Object)
     })
   })
@@ -404,7 +404,7 @@ describe('ParachainNode', () => {
 
     expect(spy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
-      section: 'transfer_assets_using_type_and_then',
+      method: 'transfer_assets_using_type_and_then',
       parameters: expect.any(Object)
     })
   })
@@ -495,7 +495,7 @@ describe('ParachainNode', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',
-        section: 'transfer_keep_alive',
+        method: 'transfer_keep_alive',
         parameters: {
           dest: { Id: options.address },
           value: BigInt(options.asset.amount)
@@ -561,7 +561,7 @@ describe('ParachainNode', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           dest: { Id: options.address },
           currency_id: 10n,
@@ -672,7 +672,7 @@ describe('ParachainNode', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'PolkadotXcm',
-        section: 'transfer_assets_using_type_and_then',
+        method: 'transfer_assets_using_type_and_then',
         parameters: expect.any(Object)
       })
     })

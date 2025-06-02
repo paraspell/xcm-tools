@@ -29,8 +29,8 @@ export const fetchMoonbeamForeignAssets = async (
   query: string,
   node: 'Moonbeam' | 'Moonriver'
 ): Promise<TForeignAsset[]> => {
-  const [module, section] = query.split('.')
-  const evmEntries = await api.query[module][section].entries()
+  const [module, method] = query.split('.')
+  const evmEntries = await api.query[module][method].entries()
 
   const client = createPublicClient({
     chain: node === 'Moonbeam' ? moonbeam : moonriver,

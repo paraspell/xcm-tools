@@ -8,8 +8,8 @@ const fetchAssets = async (
   query: string,
   isNative: boolean
 ): Promise<TForeignAsset[]> => {
-  const [module, section] = query.split('.')
-  const res = await api.query[module][section].entries()
+  const [module, method] = query.split('.')
+  const res = await api.query[module][method].entries()
 
   return res
     .filter(

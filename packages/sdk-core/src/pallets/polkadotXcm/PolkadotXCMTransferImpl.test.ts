@@ -3,7 +3,7 @@ import type { TMultiLocation } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import type { TPolkadotXcmSection, TPolkadotXCMTransferOptions, TXcmVersioned } from '../../types'
+import type { TPolkadotXcmMethod, TPolkadotXCMTransferOptions, TXcmVersioned } from '../../types'
 import { Version } from '../../types'
 import PolkadotXCMTransferImpl from './PolkadotXCMTransferImpl'
 
@@ -36,10 +36,10 @@ const mockCurrencySelection: TXcmVersioned<TMultiAsset[]> = {
   ]
 }
 
-const mockSection: TPolkadotXcmSection = 'limited_reserve_transfer_assets'
+const mockMethod: TPolkadotXcmMethod = 'limited_reserve_transfer_assets'
 
 describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
-  it('should call api.tx[module][section] with correct parameters when fees is undefined', () => {
+  it('should call api.tx[module][method] with correct parameters when fees is undefined', () => {
     const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
     PolkadotXCMTransferImpl.transferPolkadotXCM(
@@ -50,13 +50,13 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         currencySelection: mockCurrencySelection,
         asset: { amount: '123' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>,
-      mockSection,
+      mockMethod,
       undefined
     )
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
-      section: mockSection,
+      method: mockMethod,
       parameters: {
         assets: {
           V4: [
@@ -80,7 +80,7 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
     })
   })
 
-  it('should call api.tx[module][section] with correct parameters when fees is "Unlimited"', () => {
+  it('should call api.tx[module][method] with correct parameters when fees is "Unlimited"', () => {
     const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
     PolkadotXCMTransferImpl.transferPolkadotXCM(
@@ -91,13 +91,13 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         addressSelection: mockVersionedMultiLocation,
         currencySelection: mockCurrencySelection
       } as TPolkadotXCMTransferOptions<unknown, unknown>,
-      mockSection,
+      mockMethod,
       'Unlimited'
     )
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
-      section: mockSection,
+      method: mockMethod,
       parameters: {
         assets: {
           V4: [
@@ -122,7 +122,7 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
     })
   })
 
-  it('should call api.tx[module][section] with correct parameters when fees is Limited', () => {
+  it('should call api.tx[module][method] with correct parameters when fees is Limited', () => {
     const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
     PolkadotXCMTransferImpl.transferPolkadotXCM(
@@ -133,13 +133,13 @@ describe('PolkadotXCMTransferImpl.transferPolkadotXCM', () => {
         addressSelection: mockVersionedMultiLocation,
         currencySelection: mockCurrencySelection
       } as TPolkadotXCMTransferOptions<unknown, unknown>,
-      mockSection,
+      mockMethod,
       { Limited: '1000' }
     )
 
     expect(callSpy).toHaveBeenCalledWith({
       module: 'PolkadotXcm',
-      section: mockSection,
+      method: mockMethod,
       parameters: {
         assets: {
           V4: [

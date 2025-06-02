@@ -4,7 +4,7 @@ import { isTMultiLocation } from '@paraspell/sdk-common'
 import type {
   TSerializedApiCall,
   TXTokensCurrencySelection,
-  TXTokensSection,
+  TXTokensMethod,
   TXTokensTransferOptions
 } from '../../../types'
 import { getModifiedCurrencySelection } from './currencySelection'
@@ -31,10 +31,10 @@ export const shouldUseMultiAssetTransfer = <TApi, TRes>({
   )
 }
 
-export const getXTokensSection = <TApi, TRes>(
+export const getXTokensMethod = <TApi, TRes>(
   useMultiAsset: boolean,
   overriddenAsset: TXTokensTransferOptions<TApi, TRes>['overriddenAsset']
-): TXTokensSection => {
+): TXTokensMethod => {
   if (!useMultiAsset) return 'transfer'
 
   const isOverriddenMultiAssets = overriddenAsset && !isTMultiLocation(overriddenAsset)
@@ -47,7 +47,7 @@ export const buildXTokensCall = <TApi, TRes>(
   currencySelection: TXTokensCurrencySelection,
   fees: string | number
 ): TSerializedApiCall => {
-  const { overriddenAsset, addressSelection, asset, pallet, method } = input
+  const { overriddenAsset, addressSelection, asset, pallet, method: methodOverride } = input
 
   const useMultiAsset = shouldUseMultiAssetTransfer(input)
 
@@ -55,7 +55,7 @@ export const buildXTokensCall = <TApi, TRes>(
     ? getModifiedCurrencySelection(input)
     : currencySelection
 
-  const section = getXTokensSection(useMultiAsset, overriddenAsset)
+  const method = getXTokensMethod(useMultiAsset, overriddenAsset)
 
   const parameters = getXTokensParameters(
     useMultiAsset,
@@ -68,7 +68,7 @@ export const buildXTokensCall = <TApi, TRes>(
 
   return {
     module: (pallet as TPallet) ?? 'XTokens',
-    section: method ?? section,
+    method: methodOverride ?? method,
     parameters
   }
 }

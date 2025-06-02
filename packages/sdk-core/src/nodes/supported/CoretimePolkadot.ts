@@ -15,13 +15,13 @@ class CoretimePolkadot<TApi, TRes>
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { scenario } = input
-    const section =
+    const method =
       scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
-    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited'))
+    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited'))
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { section: 'limited_teleport_assets', includeFee: true }
+    return { method: 'limited_teleport_assets', includeFee: true }
   }
 }
 

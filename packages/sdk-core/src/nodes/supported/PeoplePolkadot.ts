@@ -16,12 +16,12 @@ class PeoplePolkadot<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
-    const section = 'limited_teleport_assets'
-    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, section, 'Unlimited'))
+    const method = 'limited_teleport_assets'
+    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited'))
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { section: 'limited_teleport_assets', includeFee: true }
+    return { method: 'limited_teleport_assets', includeFee: true }
   }
 }
 

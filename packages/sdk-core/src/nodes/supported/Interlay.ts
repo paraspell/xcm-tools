@@ -37,7 +37,7 @@ class Interlay<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokens
 
     return api.callTxMethod({
       module: 'Tokens',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         dest: address,
         currency_id: this.getCurrencySelection(asset),

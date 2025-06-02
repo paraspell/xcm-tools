@@ -23,7 +23,7 @@ class Encointer<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
-    return { section: 'limited_teleport_assets', includeFee: true }
+    return { method: 'limited_teleport_assets', includeFee: true }
   }
 }
 

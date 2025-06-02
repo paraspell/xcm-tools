@@ -60,7 +60,7 @@ class Astar<TApi, TRes>
 
     return api.callTxMethod({
       module: 'Assets',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         id: Number(asset.assetId),
         target: { Id: address },

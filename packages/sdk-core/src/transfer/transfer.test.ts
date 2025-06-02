@@ -340,7 +340,7 @@ describe('send', () => {
 
       expect(callTxSpy).toHaveBeenCalledWith({
         module: 'Balances',
-        section: 'transfer_keep_alive',
+        method: 'transfer_keep_alive',
         parameters: {
           dest: { Id: options.address },
           value: 100n

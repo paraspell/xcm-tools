@@ -50,7 +50,7 @@ describe('buildXTokensCall', () => {
     vi.mocked(isTMultiLocation).mockReturnValue(true)
   })
 
-  it('uses default pallet and transfer section when multiAsset is false', () => {
+  it('uses default pallet and transfer method when multiAsset is false', () => {
     const input = {
       ...baseInput,
       useMultiAssetTransfer: false,
@@ -66,7 +66,7 @@ describe('buildXTokensCall', () => {
 
     expect(result).toEqual({
       module: 'XTokens',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         param1: 'value1',
         param2: 'value2'
@@ -123,7 +123,7 @@ describe('buildXTokensCall', () => {
 
     const result = buildXTokensCall(input, currencySelection, '0.1')
 
-    expect(result.section).toBe('transfer_multiasset')
+    expect(result.method).toBe('transfer_multiasset')
   })
 
   it('selects transfer_multiassets when overriddenAsset is not MultiLocation', () => {
@@ -141,7 +141,7 @@ describe('buildXTokensCall', () => {
 
     const result = buildXTokensCall(input, currencySelection, '0.1')
 
-    expect(result.section).toBe('transfer_multiassets')
+    expect(result.method).toBe('transfer_multiassets')
   })
 
   it('uses method override when provided', () => {
@@ -157,6 +157,6 @@ describe('buildXTokensCall', () => {
     } as TXTokensTransferOptions<unknown, unknown>
 
     const result = buildXTokensCall(input, currencySelection, DEFAULT_FEE)
-    expect(result.section).toBe('custom_method')
+    expect(result.method).toBe('custom_method')
   })
 })

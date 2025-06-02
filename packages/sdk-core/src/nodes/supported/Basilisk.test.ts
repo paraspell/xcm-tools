@@ -59,7 +59,7 @@ describe('Basilisk', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Balances',
-        section: 'transfer_keep_alive',
+        method: 'transfer_keep_alive',
         parameters: {
           dest: mockInput.address,
           value: BigInt(mockInput.asset.amount)
@@ -86,7 +86,7 @@ describe('Basilisk', () => {
 
       expect(spy).toHaveBeenCalledWith({
         module: 'Tokens',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           dest: mockInput.address,
           currency_id: 123,

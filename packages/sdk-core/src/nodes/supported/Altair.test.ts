@@ -91,7 +91,7 @@ describe('Altair', () => {
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'Tokens',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           dest: { Id: mockOptions.address },
           currency_id: { ForeignAsset: 1 },

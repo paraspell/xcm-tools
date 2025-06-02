@@ -47,7 +47,7 @@ class Zeitgeist<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXToken
 
     return api.callTxMethod({
       module: 'AssetManager',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),

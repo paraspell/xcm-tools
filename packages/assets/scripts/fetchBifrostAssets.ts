@@ -27,8 +27,8 @@ const fetchBifrostAssets = async (
   nativeAssets: TNativeAsset[]
   otherAssets: TForeignAsset[]
 }> => {
-  const [module, section] = query.split('.')
-  const res = await api.query[module][section].entries()
+  const [module, method] = query.split('.')
+  const res = await api.query[module][method].entries()
 
   const filterAssets = (tokenTypes: string[]) =>
     res.filter(

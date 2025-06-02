@@ -95,7 +95,7 @@ describe('createExecuteXcm', () => {
     expect(fakeApi.callTxMethod).toHaveBeenCalledTimes(1)
     const callArg = fakeApi.callTxMethod.mock.calls[0][0] as TSerializedApiCall
     expect(callArg.module).toBe('PolkadotXcm')
-    expect(callArg.section).toBe('execute')
+    expect(callArg.method).toBe('execute')
     expect(callArg.parameters.max_weight).toEqual({
       ref_time: weight.refTime,
       proof_size: weight.proofSize

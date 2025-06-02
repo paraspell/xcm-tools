@@ -169,10 +169,10 @@ describe('PolkadotJsApi', () => {
   })
 
   describe('callTxMethod', () => {
-    it('should create an extrinsic with the provided module, section, and parameters', () => {
+    it('should create an extrinsic with the provided module, method, and parameters', () => {
       const serializedCall: TSerializedApiCall = {
         module: 'XTokens',
-        section: 'transfer',
+        method: 'transfer',
         parameters: { beneficiary: 'recipient_address', amount: 1000 }
       }
 

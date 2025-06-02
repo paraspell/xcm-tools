@@ -138,8 +138,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return this.api
   }
 
-  async init(node: TNodeDotKsmWithRelayChains, clientTtlMs: number = DEFAULT_TTL_MS) {
-    if (this.initialized) {
+  async init(node: TNodeWithRelayChains, clientTtlMs: number = DEFAULT_TTL_MS) {
+    if (this.initialized || node === 'Ethereum') {
       return
     }
 
@@ -182,16 +182,16 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     return result.publicKey
   }
 
-  callTxMethod({ module, section, parameters }: TSerializedApiCall) {
+  callTxMethod({ module, method, parameters }: TSerializedApiCall) {
     const transformedParameters = transform(parameters)
-    return this.api.getUnsafeApi().tx[module][section](transformedParameters)
+    return this.api.getUnsafeApi().tx[module][method](transformedParameters)
   }
 
   callBatchMethod(calls: TPapiTransaction[], mode: BatchMode) {
-    const section = mode === BatchMode.BATCH_ALL ? 'batch_all' : 'batch'
+    const method = mode === BatchMode.BATCH_ALL ? 'batch_all' : 'batch'
     return this.api
       .getUnsafeApi()
-      .tx.Utility[section]({ calls: calls.map(call => call.decodedCall) })
+      .tx.Utility[method]({ calls: calls.map(call => call.decodedCall) })
   }
 
   async objectToHex(obj: unknown) {

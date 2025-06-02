@@ -64,8 +64,8 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return this.api
   }
 
-  async init(node: TNodeDotKsmWithRelayChains, _clientTtlMs?: number) {
-    if (this.initialized) {
+  async init(node: TNodeWithRelayChains, _clientTtlMs?: number) {
+    if (this.initialized || node === 'Ethereum') {
       return
     }
 
@@ -93,17 +93,17 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return decodeAddress(address)
   }
 
-  callTxMethod({ module, section, parameters }: TSerializedApiCall) {
+  callTxMethod({ module, method, parameters }: TSerializedApiCall) {
     const values = Object.values(parameters)
     const moduleLowerCase = lowercaseFirstLetter(module)
-    const sectionCamelCase = snakeToCamel(section)
+    const methodCamelCase = snakeToCamel(method)
 
-    return this.api.tx[moduleLowerCase][sectionCamelCase](...values)
+    return this.api.tx[moduleLowerCase][methodCamelCase](...values)
   }
 
   callBatchMethod(calls: Extrinsic[], mode: BatchMode) {
-    const section = mode === BatchMode.BATCH_ALL ? 'batchAll' : 'batch'
-    return this.api.tx.utility[section](calls)
+    const method = mode === BatchMode.BATCH_ALL ? 'batchAll' : 'batch'
+    return this.api.tx.utility[method](calls)
   }
 
   objectToHex(obj: unknown, typeName: string) {

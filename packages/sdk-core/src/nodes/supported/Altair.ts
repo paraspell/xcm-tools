@@ -42,7 +42,7 @@ class Altair<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTr
 
     return api.callTxMethod({
       module: 'Tokens',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         dest: { Id: address },
         currency_id: this.getCurrencySelection(asset),

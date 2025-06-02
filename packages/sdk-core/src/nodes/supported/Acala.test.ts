@@ -68,7 +68,7 @@ describe('Acala', () => {
 
     expect(mockApi.callTxMethod).toHaveBeenCalledWith({
       module: 'Currencies',
-      section: 'transfer_native_currency',
+      method: 'transfer_native_currency',
       parameters: {
         dest: { Id: 'address' },
         amount: BigInt('100')
@@ -91,7 +91,7 @@ describe('Acala', () => {
 
     expect(mockApi.callTxMethod).toHaveBeenCalledWith({
       module: 'Currencies',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         dest: { Id: 'address' },
         currency_id: { ForeignAsset: 1 },

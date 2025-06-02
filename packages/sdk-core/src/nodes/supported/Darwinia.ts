@@ -65,7 +65,7 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
 
     return api.callTxMethod({
       module: 'Assets',
-      section: 'transfer',
+      method: 'transfer',
       parameters: {
         id: BigInt(asset.assetId),
         target: address,

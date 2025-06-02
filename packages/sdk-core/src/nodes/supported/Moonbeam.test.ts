@@ -192,7 +192,7 @@ describe('Moonbeam', () => {
   it('should call getRelayToParaOverrides with the correct parameters', () => {
     const result = node.getRelayToParaOverrides()
     expect(result).toEqual({
-      section: 'limited_reserve_transfer_assets',
+      method: 'limited_reserve_transfer_assets',
       includeFee: true
     })
   })
@@ -241,7 +241,7 @@ describe('Moonbeam', () => {
 
       expect(mockApi.callTxMethod).toHaveBeenCalledWith({
         module: 'Assets',
-        section: 'transfer',
+        method: 'transfer',
         parameters: {
           target: mockOptions.address,
           id: 1n,
