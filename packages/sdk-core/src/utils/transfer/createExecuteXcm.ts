@@ -1,9 +1,9 @@
-import { InvalidParameterError } from '../errors'
-import { createVersionedDestination, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
-import type { TSerializedApiCall, TWeight } from '../types'
-import { type TPolkadotXCMTransferOptions, Version } from '../types'
-import { createVersionedBeneficiary } from './createVersionedBeneficiary'
-import { transformMultiLocation } from './multiLocation'
+import { InvalidParameterError } from '../../errors'
+import { createVersionedDestination, extractVersionFromHeader } from '../../pallets/xcmPallet/utils'
+import type { TSerializedApiCall } from '../../types'
+import { type TPolkadotXCMTransferOptions, type TWeight, Version } from '../../types'
+import { createVersionedBeneficiary } from '../createVersionedBeneficiary'
+import { transformMultiLocation } from '../multiLocation'
 
 export const createExecuteXcm = <TApi, TRes>(
   input: TPolkadotXCMTransferOptions<TApi, TRes>,
@@ -59,7 +59,7 @@ export const createExecuteXcm = <TApi, TRes>(
               },
               weight_limit: {
                 Limited: {
-                  ref_time: 150n,
+                  ref_time: 950n,
                   proof_size: 0n
                 }
               }

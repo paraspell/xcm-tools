@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { createVersionedDestination, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
-import type { TPolkadotXCMTransferOptions, TSerializedApiCall, TXcmVersioned } from '../types'
-import { Version } from '../types'
+import { createVersionedDestination, extractVersionFromHeader } from '../../pallets/xcmPallet/utils'
+import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
+import { type TXcmVersioned, Version } from '../../types'
+import { createVersionedBeneficiary } from '../createVersionedBeneficiary'
+import { transformMultiLocation } from '../multiLocation'
 import { createExecuteXcm } from './createExecuteXcm'
-import { createVersionedBeneficiary } from './createVersionedBeneficiary'
-import { transformMultiLocation } from './multiLocation'
 
 vi.mock('../pallets/xcmPallet/utils', () => ({
   createVersionedDestination: vi.fn(),
@@ -152,7 +151,7 @@ describe('createExecuteXcm', () => {
 
     const result = createExecuteXcm(input, weight, executionFee)
     expect(result).toBe('defaultResult')
-    expect(vi.mocked(createVersionedDestination)).toHaveBeenCalledWith(
+    expect(createVersionedDestination).toHaveBeenCalledWith(
       input.scenario,
       Version.V4,
       input.destination,

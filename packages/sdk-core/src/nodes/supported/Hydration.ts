@@ -4,6 +4,7 @@ import {
   findAssetByMultiLocation,
   getOtherAssets,
   InvalidCurrencyError,
+  isAssetEqual,
   isForeignAsset
 } from '@paraspell/assets'
 import { hasJunction, Parents, type TMultiLocation } from '@paraspell/sdk-common'
@@ -20,6 +21,7 @@ import type {
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
 import { createBeneficiaryMultiLocation } from '../../utils'
+import { handleExecuteTransfer } from '../../utils/transfer/handleExecuteTransfer'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
 import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
@@ -116,9 +118,25 @@ class Hydration<TApi, TRes>
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { destination } = input
+    const { destination, feeAsset, overriddenAsset, asset } = input
     if (destination === 'Ethereum') {
       return this.transferToEthereum(input)
+    }
+
+    if (feeAsset) {
+      if (overriddenAsset) {
+        throw new InvalidCurrencyError('Cannot use overridden multi-assets with XCM execute')
+      }
+
+      if (!isAssetEqual(feeAsset, asset)) {
+        throw new InvalidCurrencyError(`Fee asset does not match transfer asset.`)
+      }
+
+      const isNativeAsset = asset.symbol === this.getNativeAssetSymbol()
+
+      if (!isNativeAsset) {
+        return Promise.resolve(handleExecuteTransfer(this.node, input))
+      }
     }
 
     if (destination === 'Polimec') {
@@ -142,7 +160,11 @@ class Hydration<TApi, TRes>
     return transferXTokens(input, Number(asset.assetId))
   }
 
-  protected canUseXTokens({ to: destination, asset }: TSendInternalOptions<TApi, TRes>): boolean {
+  protected canUseXTokens({
+    to: destination,
+    asset,
+    feeAsset
+  }: TSendInternalOptions<TApi, TRes>): boolean {
     const isEthAsset =
       asset.multiLocation &&
       findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
@@ -150,7 +172,8 @@ class Hydration<TApi, TRes>
       destination !== 'Ethereum' &&
       destination !== 'Polimec' &&
       !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT') &&
-      !isEthAsset
+      !isEthAsset &&
+      !feeAsset
     )
   }
 
