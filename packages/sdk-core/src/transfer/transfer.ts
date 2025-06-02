@@ -8,17 +8,17 @@ import { InvalidAddressError, InvalidParameterError } from '../errors'
 import type { TRelayToParaDestination, TSendOptions } from '../types'
 import { getNode, validateAddress } from '../utils'
 import { transferRelayToPara } from './transferRelayToPara'
-import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
-import { resolveAsset } from './utils/resolveAsset'
-import { resolveFeeAsset } from './utils/resolveFeeAsset'
-import { resolveOverriddenAsset } from './utils/resolveOverriddenAsset'
-import { validateAssetSupport } from './utils/validateAssetSupport'
-import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import {
+  resolveAsset,
+  resolveFeeAsset,
+  resolveOverriddenAsset,
+  shouldPerformAssetCheck,
   validateAssetSpecifiers,
+  validateAssetSupport,
   validateCurrency,
-  validateDestination
-} from './utils/validationUtils'
+  validateDestination,
+  validateDestinationAddress
+} from './utils'
 
 export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promise<TRes> => {
   const {
@@ -44,7 +44,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
 
   const isBridge = !isTMultiLocation(destination) && isDotKsmBridge(origin, destination)
 
-  const assetCheckEnabled = determineAssetCheckEnabled(origin, currency)
+  const assetCheckEnabled = shouldPerformAssetCheck(origin, currency)
 
   validateAssetSpecifiers(assetCheckEnabled, currency)
   const asset = resolveAsset(currency, origin, destination, assetCheckEnabled)

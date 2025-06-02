@@ -1,5 +1,10 @@
-import type { TAsset, TCurrencyInput, TMultiLocationValueWithOverride } from '@paraspell/assets'
-import { isOverrideMultiLocationSpecifier } from '@paraspell/assets'
+import type {
+  TAsset,
+  TCurrencyInput,
+  TMultiAssetWithFee,
+  TMultiLocationValueWithOverride
+} from '@paraspell/assets'
+import type { TMultiLocation } from '@paraspell/sdk-common'
 import { isDotKsmBridge, isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -9,16 +14,17 @@ import type AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
 import type { TSendOptions } from '../types'
 import { getNode } from '../utils'
 import { send } from './transfer'
-import { determineAssetCheckEnabled } from './utils/determineAssetCheckEnabled'
-import { resolveAsset } from './utils/resolveAsset'
-import { resolveFeeAsset } from './utils/resolveFeeAsset'
-import { validateAssetSupport } from './utils/validateAssetSupport'
-import { validateDestinationAddress } from './utils/validateDestinationAddress'
 import {
+  resolveAsset,
+  resolveFeeAsset,
+  resolveOverriddenAsset,
+  shouldPerformAssetCheck,
   validateAssetSpecifiers,
+  validateAssetSupport,
   validateCurrency,
-  validateDestination
-} from './utils/validationUtils'
+  validateDestination,
+  validateDestinationAddress
+} from './utils'
 
 vi.mock('@paraspell/sdk-common', async () => {
   const actual =
@@ -40,29 +46,15 @@ vi.mock('@paraspell/assets', () => ({
   isOverrideMultiLocationSpecifier: vi.fn()
 }))
 
-vi.mock('./utils/validateDestinationAddress', () => ({
-  validateDestinationAddress: vi.fn()
-}))
-
-vi.mock('./utils/determineAssetCheckEnabled', () => ({
-  determineAssetCheckEnabled: vi.fn()
-}))
-
-vi.mock('./utils/resolveAsset', () => ({
-  resolveAsset: vi.fn()
-}))
-
-vi.mock('./utils/resolveFeeAsset', () => ({
-  resolveFeeAsset: vi.fn()
-}))
-
-vi.mock('./utils/validationUtils', () => ({
+vi.mock('./utils', () => ({
+  validateDestinationAddress: vi.fn(),
+  shouldPerformAssetCheck: vi.fn(),
+  resolveAsset: vi.fn(),
+  resolveFeeAsset: vi.fn(),
+  resolveOverriddenAsset: vi.fn(),
   validateCurrency: vi.fn(),
   validateDestination: vi.fn(),
-  validateAssetSpecifiers: vi.fn()
-}))
-
-vi.mock('./utils/validateAssetSupport', () => ({
+  validateAssetSpecifiers: vi.fn(),
   validateAssetSupport: vi.fn()
 }))
 
@@ -87,10 +79,9 @@ describe('send', () => {
 
     vi.mocked(getNode).mockReturnValue(originNodeMock)
     vi.mocked(isDotKsmBridge).mockReturnValue(false)
-    vi.mocked(determineAssetCheckEnabled).mockReturnValue(true)
+    vi.mocked(shouldPerformAssetCheck).mockReturnValue(true)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAsset)
     vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAsset)
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(false)
   })
 
   afterEach(() => {
@@ -131,7 +122,7 @@ describe('send', () => {
   })
 
   it('should handle when assetCheckEnabled is false', async () => {
-    vi.mocked(determineAssetCheckEnabled).mockReturnValue(false)
+    vi.mocked(shouldPerformAssetCheck).mockReturnValue(false)
     vi.mocked(resolveAsset).mockReturnValue(null)
 
     const options = {
@@ -196,9 +187,8 @@ describe('send', () => {
     expect(apiSpy).not.toHaveBeenCalled()
   })
 
-  it('should handle overriddenAsset when multilocation is present and isOverrideMultiLocationSpecifier returns true', async () => {
-    vi.mocked(isOverrideMultiLocationSpecifier).mockReturnValue(true)
-
+  it('should handle overriddenAsset when override multi-location is present', async () => {
+    vi.mocked(resolveOverriddenAsset).mockReturnValue({} as TMultiLocation)
     const currency = { multilocation: { type: 'Override', value: {} } }
 
     const options = {
@@ -215,8 +205,6 @@ describe('send', () => {
 
     const result = await send(options)
 
-    expect(isOverrideMultiLocationSpecifier).toHaveBeenCalledWith(currency.multilocation)
-
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         overriddenAsset: {}
@@ -227,6 +215,8 @@ describe('send', () => {
   })
 
   it('should handle overriddenAsset when multiasset is present', async () => {
+    vi.mocked(resolveOverriddenAsset).mockReturnValue([] as TMultiAssetWithFee[])
+
     const options = {
       api: apiMock,
       from: 'Acala',

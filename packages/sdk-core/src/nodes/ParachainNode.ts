@@ -88,8 +88,6 @@ abstract class ParachainNode<TApi, TRes> {
 
   private readonly _version: Version
 
-  protected _assetCheckEnabled = true
-
   constructor(node: TNodePolkadotKusama, info: string, type: TEcosystemType, version: Version) {
     this._info = info
     this._type = type
@@ -111,10 +109,6 @@ abstract class ParachainNode<TApi, TRes> {
 
   get version(): Version {
     return this._version
-  }
-
-  get assetCheckEnabled(): boolean {
-    return this._assetCheckEnabled
   }
 
   protected canUseXTokens({ asset }: TSendInternalOptions<TApi, TRes>): boolean {

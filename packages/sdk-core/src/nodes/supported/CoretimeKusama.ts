@@ -10,8 +10,6 @@ class CoretimeKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     super('CoretimeKusama', 'kusamaCoretime', 'kusama', Version.V3)
   }
 
-  _assetCheckEnabled = false
-
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     // TESTED block hash on Rococo: 0x78ace0f1bf7cac9a42e56143321b617d98327e2750f795efb0abb833025c9082
     const { scenario } = input

@@ -156,10 +156,6 @@ describe('ParachainNode', () => {
     expect(node.version).toBe(Version.V3)
   })
 
-  it('should get assetCheckEnabled', () => {
-    expect(node.assetCheckEnabled).toBe(true)
-  })
-
   it('should return true for canUseXTokens when using exposeCanUseXTokens', () => {
     const options = {
       api: {} as IPolkadotApi<unknown, unknown>,

@@ -13,8 +13,6 @@ class CoretimePolkadot<TApi, TRes>
     super('CoretimePolkadot', 'polkadotCoretime', 'polkadot', Version.V3)
   }
 
-  _assetCheckEnabled = false
-
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { scenario } = input
     const section =

@@ -41,6 +41,7 @@ import { getRelayChainSymbol, getRelayChainType } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
 import { fetchMantaOtherAssets } from './fetchMantaAssets'
+import { DOT_MULTILOCATION } from '../../sdk-core/src/constants'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -95,42 +96,15 @@ const fetchNativeAssets = async (
 
   const assetsRegistry = data.xcmRegistry.find(item => item.relayChain === relay)?.data
 
-  if (!assets || !assetsRegistry) {
-    return reordered.map(asset => ({
-      ...asset,
-      isNative: true,
-      existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
-    }))
-  }
+  const cleanAsset = (asset: TNativeAsset, multiLocation?: any): TNativeAsset => {
+    let finalMultiLocation = multiLocation
 
-  return reordered.map(asset => {
-    const matchingGlobalAsset = assets?.find(a => {
-      const isSymbolMatch = a.symbol.toLowerCase() === asset.symbol.toLowerCase()
-
-      // Needed for Astar to find the correct native asset as other asset
-      // has the same symbol
-      const isAstarNoCurrencyId = node === 'Astar' ? a.currencyID === undefined : true
-
-      return isSymbolMatch && isAstarNoCurrencyId
-    })
-
-    let xcmInteriorKey = matchingGlobalAsset?.xcmInteriorKey
-
-    if (!xcmInteriorKey) {
-      return {
-        ...asset,
-        isNative: true,
-        existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
-      }
-    }
-
-    const foundAsset = assetsRegistry[xcmInteriorKey]
-
-    if (!foundAsset || !foundAsset.xcmV1MultiLocation) {
-      return {
-        ...asset,
-        isNative: true,
-        existentialDeposit: asset.existentialDeposit?.replace(/,/g, '')
+    if (asset.symbol === getRelayChainSymbol(node) && !multiLocation) {
+      finalMultiLocation = {
+        parents: 1,
+        interior: {
+          Here: null
+        }
       }
     }
 
@@ -138,8 +112,27 @@ const fetchNativeAssets = async (
       ...asset,
       isNative: true,
       existentialDeposit: asset.existentialDeposit?.replace(/,/g, ''),
-      multiLocation: capitalizeMultiLocation(foundAsset.xcmV1MultiLocation.v1)
+      ...(finalMultiLocation && { multiLocation: capitalizeMultiLocation(finalMultiLocation) })
     }
+  }
+
+  return reordered.map(asset => {
+    if (!assets || !assetsRegistry) return cleanAsset(asset)
+
+    const match = assets.find(a => {
+      const symbolMatch = a.symbol.toLowerCase() === asset.symbol.toLowerCase()
+
+      // Needed for Astar to find the correct native asset as other asset
+      // has the same symbol
+      const astarCheck = node === 'Astar' ? a.currencyID === undefined : true
+      return symbolMatch && astarCheck
+    })
+
+    const xcmKey = match?.xcmInteriorKey
+    const registryAsset = xcmKey ? assetsRegistry[xcmKey] : null
+
+    if (!registryAsset?.xcmV1MultiLocation) return cleanAsset(asset)
+    return cleanAsset(asset, registryAsset.xcmV1MultiLocation.v1)
   })
 }
 

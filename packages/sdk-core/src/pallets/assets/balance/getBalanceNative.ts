@@ -1,7 +1,8 @@
-import { getAssetsObject, getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
+import { getNativeAssetSymbol, InvalidCurrencyError } from '@paraspell/assets'
 
 import type { TGetBalanceNativeOptions } from '../../../types/TBalance'
 import { getBalanceForeignInternal } from './getBalanceForeign'
+import { getEthErc20Balance } from './getEthErc20Balance'
 
 export const getBalanceNativeInternal = async <TApi, TRes>({
   address,
@@ -11,12 +12,18 @@ export const getBalanceNativeInternal = async <TApi, TRes>({
 }: TGetBalanceNativeOptions<TApi, TRes>): Promise<bigint> => {
   await api.init(node)
 
+  const resolvedCurrency = { symbol: currency ? currency.symbol : getNativeAssetSymbol(node) }
+
+  if (node === 'Ethereum') {
+    return getEthErc20Balance(resolvedCurrency, address)
+  }
+
   if (node === 'Interlay' || node === 'Kintsugi') {
     return getBalanceForeignInternal({
       address,
       node,
       api,
-      currency: { symbol: currency ? currency.symbol : getAssetsObject(node).nativeAssetSymbol }
+      currency: resolvedCurrency
     })
   }
 

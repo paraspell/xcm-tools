@@ -29,7 +29,6 @@ describe('BridgeHubKusama', () => {
     expect(node.info).toBe('kusamaBridgeHub')
     expect(node.type).toBe('kusama')
     expect(node.version).toBe(Version.V3)
-    expect(node._assetCheckEnabled).toBe(false)
   })
 
   it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {

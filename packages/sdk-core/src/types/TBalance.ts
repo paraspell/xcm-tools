@@ -1,5 +1,6 @@
 import type { TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
 import type {
+  TNode,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
   TNodeWithRelayChains
@@ -23,7 +24,7 @@ export type TGetBalanceNativeOptionsBase = {
   /**
    * The node on which to query the balance.
    */
-  node: TNodeDotKsmWithRelayChains
+  node: TNodeWithRelayChains
   /**
    * The native currency to query.
    */
@@ -45,7 +46,7 @@ export type TGetBalanceForeignOptionsBase = {
   /**
    * The node on which to query the balance.
    */
-  node: TNodePolkadotKusama
+  node: TNode
   /**
    * The currency to query.
    */
@@ -69,7 +70,7 @@ export type TGetAssetBalanceOptionsBase = {
   /**
    * The node on which to query the balance.
    */
-  node: TNodeDotKsmWithRelayChains
+  node: TNodeWithRelayChains
   /**
    * The currency to query.
    */

@@ -10,7 +10,6 @@ import type { IPolkadotApi } from '../../../api'
 import { InvalidParameterError, UnableToComputeError } from '../../../errors'
 import type { TXcmFeeDetail } from '../../../types'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
-import { getEthErc20Balance } from '../balance/getEthErc20Balance'
 
 export type TBuildDestInfoOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
@@ -59,15 +58,12 @@ export const buildDestInfo = async <TApi, TRes>({
     ? { multilocation: destAsset.multiLocation }
     : { symbol: destAsset.symbol }
 
-  const destBalance =
-    destination === 'Ethereum'
-      ? await getEthErc20Balance(destCurrency, address)
-      : await getAssetBalanceInternal({
-          api: destApi,
-          address,
-          node: destination,
-          currency: destCurrency
-        })
+  const destBalance = await getAssetBalanceInternal({
+    api: destApi,
+    address,
+    node: destination,
+    currency: destCurrency
+  })
 
   const destAmount = isFeeAssetAh ? BigInt(currency.amount) - originFee : BigInt(currency.amount)
 
@@ -138,14 +134,11 @@ export const buildDestInfo = async <TApi, TRes>({
   const isDestFeeInNativeCurrency = destFeeDetail.currency === getNativeAssetSymbol(destination)
 
   if (isDestFeeInNativeCurrency) {
-    const destRecipientNativeBalance =
-      destination === 'Ethereum'
-        ? await getEthErc20Balance({ symbol: getNativeAssetSymbol(destination) }, address)
-        : await getBalanceNativeInternal({
-            address: address,
-            node: destination,
-            api: destApi
-          })
+    const destRecipientNativeBalance = await getBalanceNativeInternal({
+      address: address,
+      node: destination,
+      api: destApi
+    })
     destXcmFeeBalance = destRecipientNativeBalance
   } else {
     destXcmFeeBalance = destBalance

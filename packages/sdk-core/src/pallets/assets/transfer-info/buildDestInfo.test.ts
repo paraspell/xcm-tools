@@ -7,7 +7,6 @@ import type { IPolkadotApi } from '../../../api'
 import { InvalidParameterError, UnableToComputeError } from '../../../errors'
 import type { TXcmFeeDetail } from '../../../types'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
-import { getEthErc20Balance } from '../balance/getEthErc20Balance'
 import type { TBuildDestInfoOptions } from './buildDestInfo'
 import { buildDestInfo } from './buildDestInfo'
 
@@ -38,10 +37,6 @@ vi.mock('../../../errors', () => ({
 vi.mock('../balance', () => ({
   getAssetBalanceInternal: vi.fn(),
   getBalanceNativeInternal: vi.fn()
-}))
-
-vi.mock('../balance/getEthErc20Balance', () => ({
-  getEthErc20Balance: vi.fn()
 }))
 
 describe('buildDestInfo', () => {
@@ -97,10 +92,9 @@ describe('buildDestInfo', () => {
     })
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(DEFAULT_BALANCE)
     vi.mocked(getBalanceNativeInternal).mockResolvedValue(DEFAULT_BALANCE)
-    vi.mocked(getEthErc20Balance).mockResolvedValue(DEFAULT_BALANCE)
   })
 
-  it('should successfully build dest info for a non-Ethereum destination', async () => {
+  it('should successfully build dest info', async () => {
     const options = { ...baseOptions, api: mockApi }
 
     const cloneSpy = vi.spyOn(mockApi, 'clone')
@@ -137,62 +131,6 @@ describe('buildDestInfo', () => {
     expect(result.xcmFee.fee).toBe(DEFAULT_FEE)
     expect(result.xcmFee.balance).toBe(DEFAULT_BALANCE)
     expect(result.xcmFee.balanceAfter).toBe(DEFAULT_BALANCE - DEFAULT_FEE + BigInt(DEFAULT_AMOUNT))
-  })
-
-  it('should handle Ethereum destination correctly', async () => {
-    vi.mocked(findAssetOnDestOrThrow).mockReturnValue({
-      symbol: 'USDT',
-      assetId: 'usdtContractAddress',
-      decimals: 6,
-      multiLocation: undefined,
-      existentialDeposit: DEFAULT_ED
-    } as TAsset)
-    const ASSET_HUB_FEE = BigInt('20000000')
-    const ethOptions = {
-      ...baseOptions,
-      destination: 'Ethereum' as TNodeWithRelayChains,
-      currency: { symbol: 'USDT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
-      destFeeDetail: { fee: DEFAULT_FEE, currency: 'ETH' } as TXcmFeeDetail,
-      assetHubFee: ASSET_HUB_FEE
-    }
-
-    const destBalanceEthAsset = BigInt('60000000000')
-    const destBalanceNativeFee = BigInt('100000000000000000')
-
-    vi.mocked(getEthErc20Balance)
-      .mockResolvedValueOnce(destBalanceEthAsset)
-      .mockResolvedValueOnce(destBalanceNativeFee)
-
-    const cloneSpy = vi.spyOn(mockClonedApi, 'clone')
-
-    const result = await buildDestInfo(ethOptions)
-
-    expect(cloneSpy).not.toHaveBeenCalled()
-    expect(getEthErc20Balance).toHaveBeenCalledWith({ symbol: 'USDT' }, ethOptions.address)
-    expect(getEthErc20Balance).toHaveBeenCalledWith({ symbol: 'ETH' }, ethOptions.address)
-
-    const initialDestAmount = ethOptions.isFeeAssetAh
-      ? BigInt(ethOptions.currency.amount) - ethOptions.originFee
-      : BigInt(ethOptions.currency.amount)
-    const effectiveAmountForBalance = initialDestAmount - ASSET_HUB_FEE
-
-    const expectedSufficient =
-      effectiveAmountForBalance >
-      (destBalanceEthAsset < BigInt(DEFAULT_ED) ? BigInt(DEFAULT_ED) : 0n)
-    expect(result.receivedCurrency.sufficient).toBe(expectedSufficient)
-
-    const expectedBalanceAfter = destBalanceEthAsset + effectiveAmountForBalance
-    expect(result.receivedCurrency.balanceAfter).toBe(expectedBalanceAfter)
-
-    const expectedReceived = effectiveAmountForBalance
-    expect(result.receivedCurrency.receivedAmount).toBe(expectedReceived)
-
-    expect(result.xcmFee.currencySymbol).toBe('ETH')
-    expect(result.xcmFee.fee).toBe(DEFAULT_FEE)
-    expect(result.xcmFee.balance).toBe(destBalanceNativeFee)
-
-    const expectedFeeBalanceAfter = destBalanceNativeFee - (ethOptions.destFeeDetail.fee as bigint)
-    expect(result.xcmFee.balanceAfter).toBe(expectedFeeBalanceAfter)
   })
 
   it('should throw InvalidParameterError if ED is not found', async () => {

@@ -7,6 +7,7 @@ import { createApiInstanceForNode } from '../../../utils'
 import { getBalanceForeign } from './getBalanceForeign'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
+import { getEthErc20Balance } from './getEthErc20Balance'
 
 vi.mock('../../../utils', () => ({
   createApiInstanceForNode: vi.fn()
@@ -24,6 +25,10 @@ vi.mock('./getBalanceForeignPolkadotXcm', () => ({
   getBalanceForeignPolkadotXcm: vi.fn()
 }))
 
+vi.mock('./getEthErc20Balance', () => ({
+  getEthErc20Balance: vi.fn()
+}))
+
 describe('getBalanceForeign', () => {
   const mockApi = {
     init: vi.fn(),
@@ -36,6 +41,21 @@ describe('getBalanceForeign', () => {
     vi.resetAllMocks()
     vi.mocked(createApiInstanceForNode).mockResolvedValue(mockApi)
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT', assetId: '123' })
+  })
+
+  it('should return Ethereum ERC20 balance if node is Ethereum', async () => {
+    const mockBalance = 500n
+    const mockCurrency = { symbol: 'ETH' }
+    const mockAddress = '0x123'
+    vi.mocked(getEthErc20Balance).mockResolvedValue(mockBalance)
+    const result = await getBalanceForeign({
+      address: mockAddress,
+      node: 'Ethereum',
+      currency: mockCurrency,
+      api: mockApi
+    })
+    expect(result).toBe(mockBalance)
+    expect(getEthErc20Balance).toHaveBeenCalledWith(mockCurrency, mockAddress)
   })
 
   it('should use the provided API instance if passed', async () => {
