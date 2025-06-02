@@ -27,12 +27,11 @@ describe('CoretimeKusama', () => {
     node = getNode<unknown, unknown, 'CoretimeKusama'>('CoretimeKusama')
   })
 
-  it('should initialize with correct values including assetCheckDisabled', () => {
+  it('should initialize with correct values', () => {
     expect(node.node).toBe('CoretimeKusama')
     expect(node.info).toBe('kusamaCoretime')
     expect(node.type).toBe('kusama')
     expect(node.version).toBe(Version.V3)
-    expect(node._assetCheckEnabled).toBe(false)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', async () => {

@@ -763,7 +763,14 @@
         "symbol": "DOT",
         "isNative": true,
         "decimals": 10,
-        "existentialDeposit": "1000000000"
+        "existentialDeposit": "1000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": []
@@ -780,7 +787,14 @@
         "symbol": "KSM",
         "isNative": true,
         "decimals": 12,
-        "existentialDeposit": "33333333"
+        "existentialDeposit": "33333333",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": []
@@ -4198,7 +4212,13 @@
         "symbol": "DOT",
         "isNative": true,
         "decimals": 10,
-        "existentialDeposit": "0"
+        "existentialDeposit": "0",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
       },
       {
         "symbol": "KINT",
@@ -5804,13 +5824,14 @@
         "symbol": "DOT",
         "isNative": true,
         "decimals": 10,
+        "existentialDeposit": "100000000",
         "multiLocation": {
           "parents": 1,
           "interior": {
             "Here": null
           }
         },
-        "existentialDeposit": "100000000"
+        "isFeeAsset": true
       }
     ],
     "otherAssets": [
@@ -7140,7 +7161,14 @@
         "symbol": "KSM",
         "isNative": true,
         "decimals": 12,
-        "existentialDeposit": "33333333"
+        "existentialDeposit": "33333333",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": []
@@ -7192,7 +7220,13 @@
         "isNative": true,
         "symbol": "KSM",
         "decimals": 12,
-        "existentialDeposit": "333333333"
+        "existentialDeposit": "333333333",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
       }
     ],
     "otherAssets": [
@@ -7838,7 +7872,13 @@
         "symbol": "KSM",
         "isNative": true,
         "decimals": 12,
-        "existentialDeposit": "0"
+        "existentialDeposit": "0",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
       },
       {
         "symbol": "INTR",
@@ -8132,7 +8172,14 @@
         "symbol": "KSM",
         "isNative": true,
         "decimals": 12,
-        "existentialDeposit": "33333333"
+        "existentialDeposit": "33333333",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": []
@@ -8149,7 +8196,14 @@
         "symbol": "DOT",
         "isNative": true,
         "decimals": 10,
-        "existentialDeposit": "1000000000"
+        "existentialDeposit": "1000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": []
@@ -8527,13 +8581,14 @@
         "symbol": "KSM",
         "isNative": true,
         "decimals": 12,
+        "existentialDeposit": "3333333",
         "multiLocation": {
           "parents": 1,
           "interior": {
             "Here": null
           }
         },
-        "existentialDeposit": "3333333"
+        "isFeeAsset": true
       }
     ],
     "otherAssets": [
@@ -8818,7 +8873,14 @@
         "symbol": "KSM",
         "isNative": true,
         "decimals": 12,
-        "existentialDeposit": "33333333"
+        "existentialDeposit": "33333333",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": []
@@ -8835,7 +8897,14 @@
         "symbol": "DOT",
         "isNative": true,
         "decimals": 10,
-        "existentialDeposit": "1000000000"
+        "existentialDeposit": "1000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": []
@@ -10126,7 +10195,14 @@
         "symbol": "DOT",
         "isNative": true,
         "decimals": 10,
-        "existentialDeposit": "1000000000"
+        "existentialDeposit": "1000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "isFeeAsset": true
       }
     ],
     "otherAssets": []

@@ -13,9 +13,7 @@ import {
   getRelayChainSymbol,
   isRelayChain,
   NODE_NAMES,
-  NODE_NAMES_DOT_KSM,
   NODES_WITH_RELAY_CHAINS,
-  NODES_WITH_RELAY_CHAINS_DOT_KSM,
 } from '@paraspell/sdk';
 import { type FC, useEffect, useRef } from 'react';
 
@@ -87,8 +85,6 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     });
   };
 
-  const notSupportsEthereum = func === 'PARA_ID' || func === 'ASSET_BALANCE';
-
   const supportsRelayChains =
     func === 'ASSETS_OBJECT' ||
     func === 'NATIVE_ASSETS' ||
@@ -101,23 +97,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
   const shouldHideNode =
     func === 'ETHEREUM_BRIDGE_STATUS' || func === 'PARA_ETH_FEES';
 
-  const getNodeList = () => {
-    if (notSupportsEthereum && supportsRelayChains) {
-      return NODES_WITH_RELAY_CHAINS_DOT_KSM;
-    }
-
-    if (notSupportsEthereum && !supportsRelayChains) {
-      return NODE_NAMES_DOT_KSM;
-    }
-
-    if (!notSupportsEthereum && supportsRelayChains) {
-      return NODES_WITH_RELAY_CHAINS;
-    }
-
-    return NODE_NAMES;
-  };
-
-  const nodeList = getNodeList();
+  const nodeList = supportsRelayChains ? NODES_WITH_RELAY_CHAINS : NODE_NAMES;
 
   useEffect(() => {
     if (!nodeList.includes(node as (typeof nodeList)[0])) {

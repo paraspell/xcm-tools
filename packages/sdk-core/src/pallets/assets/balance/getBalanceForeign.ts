@@ -5,6 +5,7 @@ import { InvalidParameterError } from '../../../errors'
 import type { TGetBalanceForeignOptions } from '../../../types/TBalance'
 import { getBalanceForeignPolkadotXcm } from './getBalanceForeignPolkadotXcm'
 import { getBalanceForeignXTokens } from './getBalanceForeignXTokens'
+import { getEthErc20Balance } from './getEthErc20Balance'
 
 export const getBalanceForeignInternal = async <TApi, TRes>({
   address,
@@ -15,6 +16,10 @@ export const getBalanceForeignInternal = async <TApi, TRes>({
   await api.init(node)
 
   const asset = findAssetForNodeOrThrow(node, currency, null)
+
+  if (node === 'Ethereum') {
+    return getEthErc20Balance(currency, address)
+  }
 
   const defaultPallet = getDefaultPallet(node)
 

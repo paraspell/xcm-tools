@@ -14,8 +14,6 @@ class BridgeHubKusama<TApi, TRes>
     super('BridgeHubKusama', 'kusamaBridgeHub', 'kusama', Version.V3)
   }
 
-  _assetCheckEnabled = false
-
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { scenario } = input
     if (scenario === 'ParaToPara') {
