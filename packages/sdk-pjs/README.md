@@ -75,6 +75,7 @@ NOTES:
 ```
 Latest news:
 - Transfer info queries are now all in Builder pattern and don't require any imports other than builder.
+- You can now query Ethereum asset balances on Ethereum via balance query
 ```
 
 ### Sending XCM:
