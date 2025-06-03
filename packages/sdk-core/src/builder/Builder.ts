@@ -261,7 +261,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
     { disableFallback }: TGetXcmFeeBuilderOptions = { disableFallback: false }
   ) {
-    const { from, to, address, senderAddress, feeAsset } = this._options
+    const { from, to, address, senderAddress, feeAsset, currency } = this._options
 
     assertToIsString(to)
     assertAddressIsString(address)
@@ -276,7 +276,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
         destination: to,
         senderAddress: senderAddress,
         address: address,
-        currency: this._options.currency,
+        currency: currency as WithAmount<TCurrencyCore>,
         feeAsset,
         disableFallback
       })
@@ -322,7 +322,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns An origin and destination fee estimate.
    */
   async getXcmFeeEstimate(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { from, to, address, senderAddress } = this._options
+    const { from, to, address, senderAddress, currency } = this._options
 
     assertToIsString(to)
     assertAddressIsString(address)
@@ -337,7 +337,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
         destination: to,
         address: address,
         senderAddress: senderAddress,
-        currency: this._options.currency
+        currency: currency as WithAmount<TCurrencyCore>
       })
     } finally {
       await this.api.disconnect()

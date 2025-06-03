@@ -1,5 +1,6 @@
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 
+import { InvalidCurrencyError } from '../errors'
 import type { TCurrencyCore } from '../types'
 import { getAssetsObject } from './assets'
 import { findAssetForNodeOrThrow } from './search'
@@ -22,4 +23,17 @@ export const getExistentialDeposit = (
   const asset = findAssetForNodeOrThrow(node, currency, null)
 
   return asset.existentialDeposit ?? null
+}
+
+export const getExistentialDepositOrThrow = (
+  node: TNodeWithRelayChains,
+  currency?: TCurrencyCore
+): bigint => {
+  const ed = getExistentialDeposit(node, currency)
+  if (ed === null) {
+    throw new InvalidCurrencyError(
+      `Existential deposit not found for currency ${JSON.stringify(currency)} on node ${node}.`
+    )
+  }
+  return BigInt(ed)
 }

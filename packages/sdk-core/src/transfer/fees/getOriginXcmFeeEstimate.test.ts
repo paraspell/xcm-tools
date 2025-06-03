@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import type { TGetOriginXcmFeeEstimateOptions, TGetXcmFeeEstimateDetail } from '../../types'
 import { getOriginXcmFeeEstimate } from './getOriginXcmFeeEstimate'
+import { isSufficientOrigin } from './isSufficient'
 import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets', () => ({
@@ -13,6 +14,10 @@ vi.mock('@paraspell/assets', () => ({
 
 vi.mock('./padFee', () => ({
   padFee: vi.fn()
+}))
+
+vi.mock('./isSufficient', () => ({
+  isSufficientOrigin: vi.fn()
 }))
 
 describe('getOriginXcmFeeEstimate', () => {
@@ -28,9 +33,10 @@ describe('getOriginXcmFeeEstimate', () => {
   const MOCK_PADDED_FEE = 120000000000n
   const MOCK_NATIVE_ASSET_SYMBOL = 'DOT'
 
-  it('should correctly calculate and return the origin XCM fee estimate', async () => {
+  it('should correctly calculate and return the origin XCM fee estimate including sufficiency', async () => {
     vi.mocked(padFee).mockReturnValue(MOCK_PADDED_FEE)
     vi.mocked(getNativeAssetSymbol).mockReturnValue(MOCK_NATIVE_ASSET_SYMBOL)
+    vi.mocked(isSufficientOrigin).mockResolvedValue(true)
     const spy = vi.spyOn(mockApi, 'calculateTransactionFee').mockResolvedValue(MOCK_RAW_FEE)
 
     const options: TGetOriginXcmFeeEstimateOptions<unknown, unknown> = {
@@ -49,12 +55,21 @@ describe('getOriginXcmFeeEstimate', () => {
     expect(padFee).toHaveBeenCalledTimes(1)
     expect(padFee).toHaveBeenCalledWith(MOCK_RAW_FEE, mockOriginNode, mockDestinationNode, 'origin')
 
+    expect(isSufficientOrigin).toHaveBeenCalledTimes(1)
+    expect(isSufficientOrigin).toHaveBeenCalledWith(
+      mockApi,
+      mockOriginNode,
+      mockSenderAddress,
+      MOCK_PADDED_FEE
+    )
+
     expect(getNativeAssetSymbol).toHaveBeenCalledTimes(1)
     expect(getNativeAssetSymbol).toHaveBeenCalledWith(mockOriginNode)
 
     expect(result).toEqual({
       fee: MOCK_PADDED_FEE,
-      currency: MOCK_NATIVE_ASSET_SYMBOL
+      currency: MOCK_NATIVE_ASSET_SYMBOL,
+      sufficient: true
     })
   })
 })

@@ -6,12 +6,17 @@ import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { getNode } from '../../utils'
+import { handleToAhTeleport } from '../../utils/transfer'
 import type Mythos from './Mythos'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
   default: {
     transferPolkadotXCM: vi.fn()
   }
+}))
+
+vi.mock('../../utils/transfer', () => ({
+  handleToAhTeleport: vi.fn()
 }))
 
 describe('Mythos', () => {
@@ -23,6 +28,7 @@ describe('Mythos', () => {
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
+    vi.clearAllMocks()
     mythos = getNode<unknown, unknown, 'Mythos'>('Mythos')
   })
 
@@ -55,21 +61,28 @@ describe('Mythos', () => {
     )
   })
 
-  it('should throw ScenarioNotSupportedError for unsupported scenario', () => {
+  it('should throw ScenarioNotSupportedError for unsupported scenario', async () => {
     const invalidInput = { ...mockInput, scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<
       unknown,
       unknown
     >
 
-    expect(() => mythos.transferPolkadotXCM(invalidInput)).toThrowError(ScenarioNotSupportedError)
+    await expect(mythos.transferPolkadotXCM(invalidInput)).rejects.toThrowError(
+      ScenarioNotSupportedError
+    )
   })
 
-  it('should throw InvalidCurrencyError for unsupported currency', () => {
+  it('should throw InvalidCurrencyError for unsupported currency', async () => {
     vi.spyOn(mythos, 'getNativeAssetSymbol').mockReturnValue('NOT_MYTH')
 
-    expect(() => mythos.transferPolkadotXCM(mockInput)).toThrowError(
+    await expect(mythos.transferPolkadotXCM(mockInput)).rejects.toThrowError(
       new InvalidCurrencyError(`Node Mythos does not support currency MYTH`)
     )
+  })
+
+  it('should handle to Ah teleport', async () => {
+    await mythos.transferPolkadotXCM({ ...mockInput, destination: 'AssetHubPolkadot' })
+    expect(handleToAhTeleport).toHaveBeenCalled()
   })
 
   it('should throw NodeNotSupportedError for transferRelayToPara', () => {

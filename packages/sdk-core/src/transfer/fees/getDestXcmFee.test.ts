@@ -6,6 +6,7 @@ import { DOT_MULTILOCATION } from '../../constants'
 import type { TDryRunNodeResultInternal, TGetFeeForDestNodeOptions } from '../../types'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getReverseTxFee } from './getReverseTxFee'
+import { isSufficientDestination } from './isSufficient'
 
 vi.mock('@paraspell/assets', () => ({
   hasDryRunSupport: vi.fn(),
@@ -17,17 +18,22 @@ vi.mock('./getReverseTxFee', () => ({
   getReverseTxFee: vi.fn()
 }))
 
+vi.mock('./isSufficient', () => ({
+  isSufficientDestination: vi.fn()
+}))
+
 const createApi = (dryRunRes?: TDryRunNodeResultInternal) =>
   ({
     getDryRunXcm: vi.fn().mockResolvedValue(dryRunRes ?? {})
   }) as unknown as IPolkadotApi<unknown, unknown>
 
-beforeEach(() => {
-  vi.resetAllMocks()
-  vi.mocked(findAsset).mockReturnValue({ symbol: 'UNIT' } as never)
-})
-
 describe('getDestXcmFee', () => {
+  beforeEach(() => {
+    vi.resetAllMocks()
+    vi.mocked(findAsset).mockReturnValue({ symbol: 'UNIT' } as never)
+    vi.mocked(isSufficientDestination).mockResolvedValue(true)
+  })
+
   it('returns a padded “paymentInfo” fee when dry-run is not supported', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(false)
     vi.mocked(getReverseTxFee).mockResolvedValue(130n)
@@ -42,13 +48,17 @@ describe('getDestXcmFee', () => {
       address: 'dest',
       senderAddress: 'sender',
       currency: { symbol: 'UNIT', amount: '1' },
+      asset: { symbol: 'UNIT' },
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
-    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo' })
+    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', 1n, {
+      symbol: 'UNIT'
+    })
+    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo', sufficient: true })
   })
 
   it('returns a padded “paymentInfo” fee when dry-run is not supported and origin asset has multi-location', async () => {
@@ -69,13 +79,17 @@ describe('getDestXcmFee', () => {
       address: 'dest',
       senderAddress: 'sender',
       currency: { symbol: 'UNIT', amount: '1' },
+      asset: { symbol: 'UNIT' },
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
 
     const res = await getDestXcmFee(options)
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { multilocation: DOT_MULTILOCATION })
-    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo' })
+    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', 1n, {
+      symbol: 'UNIT'
+    })
+    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo', sufficient: true })
   })
 
   it('returns a padded “paymentInfo” fee when dry-run is not supported, and fails with ML', async () => {
@@ -97,6 +111,7 @@ describe('getDestXcmFee', () => {
       address: 'dest',
       senderAddress: 'sender',
       currency: { symbol: 'FOO', amount: '1' },
+      asset: { symbol: 'UNIT' },
       disableFallback: false
     } as TGetFeeForDestNodeOptions<unknown, unknown>
 
@@ -104,8 +119,10 @@ describe('getDestXcmFee', () => {
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { multilocation: DOT_MULTILOCATION })
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
-
-    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo' })
+    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', 1n, {
+      symbol: 'UNIT'
+    })
+    expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo', sufficient: true })
   })
 
   it('returns a “dryRun” fee (plus forwarded XCMs) when dry-run succeeds', async () => {
@@ -136,6 +153,7 @@ describe('getDestXcmFee', () => {
       forwardedXcms: [[{ x: 1 }]],
       destParaId: 3320
     })
+    expect(isSufficientDestination).not.toHaveBeenCalled()
   })
 
   it('falls back to “paymentInfo” and returns `dryRunError` when dry-run fails', async () => {
@@ -162,11 +180,12 @@ describe('getDestXcmFee', () => {
     expect(res).toEqual({
       fee: 130n,
       feeType: 'paymentInfo',
-      dryRunError: 'fail'
+      dryRunError: 'fail',
+      sufficient: true
     })
   })
 
-  it('returns **error variant** (only `dryRunError`) when fallback is disabled', async () => {
+  it('returnserror variant (only `dryRunError`) when fallback is disabled', async () => {
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
     const api = createApi({ success: false, failureReason: 'boom' })
 

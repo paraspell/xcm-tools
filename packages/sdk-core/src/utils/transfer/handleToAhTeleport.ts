@@ -1,3 +1,4 @@
+import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { isTMultiLocation } from '@paraspell/sdk-common'
 
@@ -55,7 +56,7 @@ export const handleToAhTeleport = async <TApi, TRes>(
     destination,
     senderAddress: senderAddress as string,
     address,
-    currency,
+    currency: currency as WithAmount<TCurrencyCore>,
     disableFallback: false
   })
 

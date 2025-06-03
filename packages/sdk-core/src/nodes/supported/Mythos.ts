@@ -10,6 +10,7 @@ import {
   type TSerializedApiCall,
   Version
 } from '../../types'
+import { handleToAhTeleport } from '../../utils/transfer'
 import ParachainNode from '../ParachainNode'
 
 class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -17,7 +18,7 @@ class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotX
     super('Mythos', 'mythos', 'polkadot', Version.V3)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
+  private createTx<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { scenario, asset, destination } = input
     if (scenario !== 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
@@ -37,6 +38,20 @@ class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotX
         'Unlimited'
       )
     )
+  }
+
+  async transferPolkadotXCM<TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): Promise<TRes> {
+    const { destination } = input
+
+    const defaultTx = await this.createTx(input)
+
+    if (destination === 'AssetHubPolkadot') {
+      return handleToAhTeleport('Mythos', input, defaultTx)
+    }
+
+    return defaultTx
   }
 
   transferRelayToPara(): TSerializedApiCall {

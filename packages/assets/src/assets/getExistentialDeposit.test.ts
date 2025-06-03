@@ -1,9 +1,10 @@
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { InvalidCurrencyError } from '../errors'
 import type { TAsset, TCurrencyCore, TNodeAssets } from '../types'
 import { getAssetsObject } from './assets'
-import { getExistentialDeposit } from './getExistentialDeposit'
+import { getExistentialDeposit, getExistentialDepositOrThrow } from './getExistentialDeposit'
 import { findAssetForNodeOrThrow } from './search'
 
 vi.mock('./assets', () => ({
@@ -79,5 +80,43 @@ describe('getExistentialDeposit', () => {
 
     const result = getExistentialDeposit(node, currency)
     expect(result).toBeNull()
+  })
+})
+
+describe('getExistentialDepositOrThrow', () => {
+  it('should throw an error if the ED is not found', () => {
+    const node: TNodeWithRelayChains = 'Acala'
+    const currency: TCurrencyCore = { symbol: 'KSM' }
+
+    vi.mocked(getAssetsObject).mockReturnValue({
+      nativeAssets: [{ symbol: 'ACA', existentialDeposit: '1000000000' }],
+      otherAssets: []
+    } as unknown as TNodeAssets)
+
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({
+      symbol: 'KSM'
+    } as TAsset)
+
+    expect(() => getExistentialDepositOrThrow(node, currency)).toThrow(InvalidCurrencyError)
+  })
+
+  it('should return the ED if found', () => {
+    const node: TNodeWithRelayChains = 'Acala'
+    const currency: TCurrencyCore = { symbol: 'ACA' }
+    const ed = '1000000000'
+
+    vi.mocked(getAssetsObject).mockReturnValue({
+      nativeAssets: [{ symbol: 'ACA', existentialDeposit: ed }],
+      otherAssets: []
+    } as unknown as TNodeAssets)
+
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({
+      symbol: 'ACA',
+      assetId: '1',
+      existentialDeposit: ed
+    })
+
+    const result = getExistentialDepositOrThrow(node, currency)
+    expect(result).toBe(BigInt(ed))
   })
 })

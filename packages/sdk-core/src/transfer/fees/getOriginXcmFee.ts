@@ -5,6 +5,7 @@ import { getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import type { TGetOriginXcmFeeOptions, TXcmFeeDetail } from '../../types'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
+import { isSufficientOrigin } from './isSufficient'
 import { padFee } from './padFee'
 
 export const getOriginXcmFee = async <TApi, TRes>({
@@ -32,10 +33,14 @@ export const getOriginXcmFee = async <TApi, TRes>({
 
   if (!hasDryRunSupport(origin)) {
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
+    const paddedFee = padFee(rawFee, origin, destination, 'origin')
+    const sufficient = await isSufficientOrigin(api, origin, senderAddress, paddedFee)
+
     return {
-      fee: padFee(rawFee, origin, destination, 'origin'),
+      fee: paddedFee,
       currency: currencySymbol,
-      feeType: 'paymentInfo'
+      feeType: 'paymentInfo',
+      sufficient
     }
   }
 
@@ -54,11 +59,15 @@ export const getOriginXcmFee = async <TApi, TRes>({
     }
 
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
+    const paddedFee = padFee(rawFee, origin, destination, 'origin')
+    const sufficient = await isSufficientOrigin(api, origin, senderAddress, paddedFee)
+
     return {
-      fee: padFee(rawFee, origin, destination, 'origin'),
+      fee: paddedFee,
       currency: currencySymbol,
       feeType: 'paymentInfo',
-      dryRunError: dryRunResult.failureReason
+      dryRunError: dryRunResult.failureReason,
+      sufficient
     }
   }
 
