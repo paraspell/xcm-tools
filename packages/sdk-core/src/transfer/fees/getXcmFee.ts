@@ -45,7 +45,8 @@ export const getXcmFee = async <TApi, TRes>({
     dryRunError: originDryRunError,
     forwardedXcms: initialForwardedXcm,
     destParaId: initialDestParaId,
-    weight: originWeight
+    weight: originWeight,
+    sufficient: sufficientOriginFee
   } = await getOriginXcmFee({
     api,
     tx,
@@ -64,9 +65,7 @@ export const getXcmFee = async <TApi, TRes>({
     const destApi = api.clone()
 
     try {
-      if (destination !== 'Ethereum') {
-        await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
-      }
+      await destApi.init(destination, DRY_RUN_CLIENT_TIMEOUT_MS)
       destApi.setDisconnectAllowed(false)
 
       const destFeeRes = await getDestXcmFee({
@@ -87,12 +86,14 @@ export const getXcmFee = async <TApi, TRes>({
         origin: {
           ...(originFee && { fee: originFee }),
           ...(originFeeType && { feeType: originFeeType }),
+          ...(sufficientOriginFee !== undefined && { sufficient: sufficientOriginFee }),
           currency: originCurrency,
           ...(originDryRunError && { dryRunError: originDryRunError })
         } as TXcmFeeDetail,
         destination: {
           ...(destFeeRes.fee ? { fee: destFeeRes.fee } : { fee: 0n }),
           ...(destFeeRes.feeType && { feeType: destFeeRes.feeType }),
+          ...(destFeeRes.sufficient !== undefined && { sufficient: destFeeRes.sufficient }),
           currency: getNativeAssetSymbol(destination)
         } as TXcmFeeDetail
       }
@@ -116,6 +117,7 @@ export const getXcmFee = async <TApi, TRes>({
   let destinationFeeType: TFeeType | undefined =
     destination === 'Ethereum' ? 'noFeeRequired' : 'paymentInfo'
   let destinationDryRunError: string | undefined
+  let destinationSufficient: boolean | undefined = undefined
 
   while (
     Array.isArray(forwardedXcms) &&
@@ -160,7 +162,8 @@ export const getXcmFee = async <TApi, TRes>({
           fee: hopResult.fee,
           feeType: hopResult.feeType,
           currency: getNativeAssetSymbol(nextChain),
-          dryRunError: hopResult.dryRunError
+          dryRunError: hopResult.dryRunError,
+          sufficient: hopResult.sufficient
         }
 
         const hopIsDestination =
@@ -170,6 +173,7 @@ export const getXcmFee = async <TApi, TRes>({
           destinationFee = hopResult.fee
           destinationFeeType = hopResult.feeType // paymentInfo
           destinationDryRunError = hopResult.dryRunError
+          destinationSufficient = hopResult.sufficient
         } else if (nextChain === assetHubNode) {
           intermediateFees.assetHub = failingRecord
         } else if (nextChain === bridgeHubNode) {
@@ -200,6 +204,7 @@ export const getXcmFee = async <TApi, TRes>({
 
           destinationFee = destFallback.fee
           destinationFeeType = destFallback.feeType
+          destinationSufficient = destFallback.sufficient
         }
 
         break // stop traversing further hops
@@ -208,17 +213,20 @@ export const getXcmFee = async <TApi, TRes>({
       if (nextChain === destination || (isRelayChain(nextChain) && !isRelayChain(destination))) {
         destinationFee = hopResult.fee
         destinationFeeType = hopResult.feeType
+        destinationSufficient = hopResult.sufficient
       } else if (nextChain === assetHubNode) {
         intermediateFees.assetHub = {
           fee: hopResult.fee,
           feeType: hopResult.feeType,
-          currency: getNativeAssetSymbol(nextChain)
+          currency: getNativeAssetSymbol(nextChain),
+          sufficient: hopResult.sufficient
         } as TXcmFeeDetail
       } else if (nextChain === bridgeHubNode) {
         intermediateFees.bridgeHub = {
           fee: hopResult.fee,
           feeType: hopResult.feeType,
-          currency: getNativeAssetSymbol(nextChain)
+          currency: getNativeAssetSymbol(nextChain),
+          sufficient: hopResult.sufficient
         } as TXcmFeeDetail
       } else {
         // Unconcerned intermediate chain – we ignore its fee
@@ -260,6 +268,7 @@ export const getXcmFee = async <TApi, TRes>({
       ...(originWeight && { weight: originWeight }),
       ...(originFee && { fee: originFee }),
       ...(originFeeType && { feeType: originFeeType }),
+      ...(sufficientOriginFee !== undefined && { sufficient: sufficientOriginFee }),
       currency: originCurrency,
       ...(originDryRunError && { dryRunError: originDryRunError })
     } as TXcmFeeDetail,
@@ -267,6 +276,7 @@ export const getXcmFee = async <TApi, TRes>({
     destination: {
       ...(destinationFee !== undefined && { fee: destinationFee }),
       ...(destinationFeeType && { feeType: destinationFeeType }),
+      sufficient: destinationSufficient,
       currency: destCurrency,
       ...(destinationDryRunError && { dryRunError: destinationDryRunError })
     } as TXcmFeeDetail

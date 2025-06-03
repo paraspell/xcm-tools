@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { getOriginXcmFee } from './getOriginXcmFee'
+import { isSufficientOrigin } from './isSufficient'
 import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets', () => ({
@@ -13,6 +14,10 @@ vi.mock('@paraspell/assets', () => ({
 
 vi.mock('./padFee', () => ({
   padFee: vi.fn()
+}))
+
+vi.mock('./isSufficient', () => ({
+  isSufficientOrigin: vi.fn()
 }))
 
 const createApi = (fee: bigint) =>
@@ -28,6 +33,7 @@ describe('getOriginXcmFee', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     vi.mocked(getNativeAssetSymbol).mockReturnValue(mockCurrency)
+    vi.mocked(isSufficientOrigin).mockResolvedValue(true)
   })
 
   it('returns padded **paymentInfo** fee when dry-run is NOT supported', async () => {
@@ -36,8 +42,7 @@ describe('getOriginXcmFee', () => {
     const api = createApi(100n)
 
     const dryRunCallSpy = vi.spyOn(api, 'getDryRunCall')
-
-    const spy = vi.spyOn(api, 'calculateTransactionFee')
+    const feeCalcSpy = vi.spyOn(api, 'calculateTransactionFee')
 
     const res = await getOriginXcmFee({
       api,
@@ -49,8 +54,14 @@ describe('getOriginXcmFee', () => {
       disableFallback: false
     })
 
-    expect(res).toEqual({ fee: 150n, currency: mockCurrency, feeType: 'paymentInfo' })
-    expect(spy).toHaveBeenCalledWith({}, 'addr')
+    expect(res).toEqual({
+      fee: 150n,
+      currency: mockCurrency,
+      feeType: 'paymentInfo',
+      sufficient: true
+    })
+    expect(feeCalcSpy).toHaveBeenCalledWith({}, 'addr')
+    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'Moonbeam', 'addr', 150n)
     expect(dryRunCallSpy).not.toHaveBeenCalled()
   })
 
@@ -66,7 +77,7 @@ describe('getOriginXcmFee', () => {
       destParaId: 42
     })
 
-    const spy = vi.spyOn(api, 'calculateTransactionFee')
+    const feeCalcSpy = vi.spyOn(api, 'calculateTransactionFee')
 
     const res = await getOriginXcmFee({
       api,
@@ -85,8 +96,9 @@ describe('getOriginXcmFee', () => {
       forwardedXcms: [[{ x: 1 }]],
       destParaId: 42
     })
-    expect(spy).not.toHaveBeenCalled()
+    expect(feeCalcSpy).not.toHaveBeenCalled()
     expect(padFee).not.toHaveBeenCalled()
+    expect(isSufficientOrigin).not.toHaveBeenCalled()
   })
 
   it('returns **error variant** when dry-run fails and fallback is disabled', async () => {
@@ -99,7 +111,7 @@ describe('getOriginXcmFee', () => {
       failureReason: 'boom'
     })
 
-    const spy = vi.spyOn(api, 'calculateTransactionFee')
+    const feeCalcSpy = vi.spyOn(api, 'calculateTransactionFee')
 
     const res = await getOriginXcmFee({
       api,
@@ -113,7 +125,8 @@ describe('getOriginXcmFee', () => {
 
     expect(res).toEqual({ dryRunError: 'boom' })
     expect('fee' in res).toBe(false)
-    expect(spy).not.toHaveBeenCalled()
+    expect(feeCalcSpy).not.toHaveBeenCalled()
+    expect(isSufficientOrigin).not.toHaveBeenCalled()
   })
 
   it('falls back to padded **paymentInfo** and returns `dryRunError` when dry-run fails', async () => {
@@ -128,7 +141,7 @@ describe('getOriginXcmFee', () => {
 
     vi.mocked(padFee).mockReturnValue(999n)
 
-    const spy = vi.spyOn(api, 'calculateTransactionFee')
+    const feeCalcSpy = vi.spyOn(api, 'calculateTransactionFee')
 
     const res = await getOriginXcmFee({
       api,
@@ -144,9 +157,11 @@ describe('getOriginXcmFee', () => {
       fee: 999n,
       currency: mockCurrency,
       feeType: 'paymentInfo',
-      dryRunError: 'fail'
+      dryRunError: 'fail',
+      sufficient: true
     })
     expect(padFee).toHaveBeenCalledWith(888n, 'Moonbeam', 'Acala', 'origin')
-    expect(spy).toHaveBeenCalledWith({}, 'addr')
+    expect(feeCalcSpy).toHaveBeenCalledWith({}, 'addr')
+    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'Moonbeam', 'addr', 999n)
   })
 })

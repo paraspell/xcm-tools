@@ -33,6 +33,7 @@ import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedE
 import {
   addXcmVersionHeader,
   constructRelayToParaParameters,
+  createDestination,
   createMultiAsset,
   createVersionedDestination,
   createVersionedMultiAssets
@@ -60,7 +61,6 @@ import { createBeneficiaryMultiLocation, createVersionedBeneficiary, getFees } f
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
 import { resolveParaId } from '../utils/resolveParaId'
-import { handleToAhTeleport } from '../utils/transfer/handleToAhTeleport'
 import { getParaId } from './config'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
@@ -253,14 +253,7 @@ abstract class ParachainNode<TApi, TRes> {
         return this.transferToEthereum(options, true)
       }
 
-      const defaultTx = await this.transferPolkadotXCM(options)
-
-      // Any asset - Any origin to AHP - Execute
-      if (isAHPDest && !isAHPOrigin && !isEthAsset) {
-        return handleToAhTeleport(this.node, options, defaultTx)
-      }
-
-      return defaultTx
+      return this.transferPolkadotXCM(options)
     } else {
       throw new NoXCMSupportImplementedError(this._node)
     }
@@ -414,7 +407,7 @@ abstract class ParachainNode<TApi, TRes> {
     // Pad fee by 50%
     const dryRunFeePadded = (BigInt(dryRunResult.origin.fee) * BigInt(3)) / BigInt(2)
 
-    const dest = createVersionedDestination(scenario, version, destination, paraIdTo)
+    const dest = createDestination(scenario, version, destination, paraIdTo)
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',

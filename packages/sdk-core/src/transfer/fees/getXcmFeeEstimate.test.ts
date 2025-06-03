@@ -1,15 +1,12 @@
-import type { TAsset, TCurrencyInputWithAmount } from '@paraspell/assets'
-import {
-  findAssetForNodeOrThrow,
-  getNativeAssetSymbol,
-  InvalidCurrencyError
-} from '@paraspell/assets'
+import type { TAsset } from '@paraspell/assets'
+import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import * as BuilderModule from '../../builder'
 import { getOriginXcmFeeEstimate } from './getOriginXcmFeeEstimate'
+import { getReverseTxFee } from './getReverseTxFee'
 import { getXcmFeeEstimate } from './getXcmFeeEstimate'
+import { isSufficientDestination, isSufficientOrigin } from './isSufficient'
 import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets', () => ({
@@ -22,12 +19,17 @@ vi.mock('./padFee', () => ({
   padFee: vi.fn()
 }))
 
-vi.mock('../../builder', () => ({
-  Builder: vi.fn()
-}))
-
 vi.mock('./getOriginXcmFeeEstimate', () => ({
   getOriginXcmFeeEstimate: vi.fn()
+}))
+
+vi.mock('./isSufficient', () => ({
+  isSufficientOrigin: vi.fn(),
+  isSufficientDestination: vi.fn()
+}))
+
+vi.mock('./getReverseTxFee', () => ({
+  getReverseTxFee: vi.fn()
 }))
 
 const makeApi = (originFee: bigint, destFee: bigint) => {
@@ -38,6 +40,7 @@ const makeApi = (originFee: bigint, destFee: bigint) => {
   }
   destApi.clone.mockReturnValue(destApi)
   const api = {
+    init: vi.fn().mockResolvedValue(undefined),
     calculateTransactionFee: vi.fn().mockResolvedValue(originFee),
     clone: vi.fn()
   }
@@ -48,34 +51,29 @@ const makeApi = (originFee: bigint, destFee: bigint) => {
   }
 }
 
-const baseOptions = {
-  tx: '0xdead',
-  address: 'alice',
-  senderAddress: 'bob'
-}
-
-beforeEach(() => {
-  vi.clearAllMocks()
-  const flippedTx = { tx: 'flip' }
-  const mockBuilderInstance = {
-    from: vi.fn().mockReturnThis(),
-    to: vi.fn().mockReturnThis(),
-    address: vi.fn().mockReturnThis(),
-    senderAddress: vi.fn().mockReturnThis(),
-    currency: vi.fn().mockReturnThis(),
-    build: vi.fn().mockResolvedValue(flippedTx)
-  } as unknown as BuilderModule.GeneralBuilder<unknown, unknown>
-  vi.spyOn(BuilderModule, 'Builder').mockImplementation(() => mockBuilderInstance)
-})
-
 describe('getXcmFeeEstimate', () => {
-  it('returns bridge constants polkadot → kusama', async () => {
+  const baseOptions = {
+    tx: '0xdead',
+    address: 'alice',
+    senderAddress: 'bob',
+    receiverAddress: 'charlie',
+    amount: 5n
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+
+    vi.mocked(isSufficientOrigin).mockResolvedValue(true)
+    vi.mocked(isSufficientDestination).mockResolvedValue(true)
+    vi.mocked(getReverseTxFee).mockResolvedValue(2000n)
+  })
+
+  it('returns bridge constants polkadot → kusama with sufficiency checks', async () => {
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'DOT' } as TAsset)
     vi.mocked(getNativeAssetSymbol).mockImplementation(c =>
       c.includes('Polkadot') ? 'DOT' : 'KSM'
     )
     const { api } = makeApi(0n, 0n)
-
-    const spy = vi.spyOn(api, 'calculateTransactionFee')
 
     const res = await getXcmFeeEstimate({
       ...baseOptions,
@@ -84,18 +82,29 @@ describe('getXcmFeeEstimate', () => {
       destination: 'AssetHubKusama',
       currency: { symbol: 'DOT', amount: 1n }
     })
+
     expect(res).toEqual({
-      origin: { fee: 682_395_810n, currency: 'DOT' },
-      destination: { fee: 12_016_807_000n, currency: 'KSM' }
+      origin: { fee: 682_395_810n, currency: 'DOT', sufficient: true },
+      destination: { fee: 12_016_807_000n, currency: 'KSM', sufficient: true }
     })
-    expect(spy).not.toHaveBeenCalled()
+
+    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'AssetHubPolkadot', 'bob', 682_395_810n)
+    expect(isSufficientDestination).toHaveBeenCalledWith(
+      api.clone(),
+      'AssetHubKusama',
+      'alice',
+      1n,
+      { symbol: 'DOT' }
+    )
   })
 
-  it('returns bridge constants kusama → polkadot', async () => {
+  it('returns bridge constants kusama → polkadot with sufficiency checks', async () => {
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'KSM' } as TAsset)
     vi.mocked(getNativeAssetSymbol).mockImplementation(c =>
       c.includes('Polkadot') ? 'DOT' : 'KSM'
     )
     const { api } = makeApi(0n, 0n)
+
     const res = await getXcmFeeEstimate({
       ...baseOptions,
       api,
@@ -103,23 +112,38 @@ describe('getXcmFeeEstimate', () => {
       destination: 'AssetHubPolkadot',
       currency: { symbol: 'KSM', amount: 1n }
     })
+
     expect(res).toEqual({
-      origin: { fee: 12_016_807_000n, currency: 'KSM' },
-      destination: { fee: 682_395_810n, currency: 'DOT' }
+      origin: { fee: 12_016_807_000n, currency: 'KSM', sufficient: true },
+      destination: { fee: 682_395_810n, currency: 'DOT', sufficient: true }
     })
+
+    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'AssetHubKusama', 'bob', 12_016_807_000n)
+    expect(isSufficientDestination).toHaveBeenCalledWith(
+      api.clone(),
+      'AssetHubPolkadot',
+      'alice',
+      1n,
+      { symbol: 'KSM' }
+    )
   })
 
-  it('pads origin and destination fees on normal route', async () => {
+  it('pads origin and destination fees on normal route and includes sufficiency', async () => {
     const rawOrigin = 1000n
     const rawDest = 2000n
+
     vi.mocked(getOriginXcmFeeEstimate).mockResolvedValue({
       fee: rawOrigin,
-      currency: 'UNIT'
+      currency: 'UNIT',
+      sufficient: true
     })
     vi.mocked(padFee).mockImplementationOnce(() => 2600n)
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ABC' } as TAsset)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('UNIT')
-    const { api } = makeApi(rawOrigin, rawDest)
+    vi.mocked(getReverseTxFee).mockResolvedValue(rawDest)
+
+    const { api, destApi } = makeApi(rawOrigin, rawDest)
+
     const res = await getXcmFeeEstimate({
       ...baseOptions,
       api,
@@ -127,24 +151,29 @@ describe('getXcmFeeEstimate', () => {
       destination: 'Hydration',
       currency: { symbol: 'ABC', amount: 5n }
     })
-    expect(padFee).toHaveBeenCalledTimes(1)
-    expect(padFee).toHaveBeenCalledWith(2000n, 'BifrostPolkadot', 'Hydration', 'destination')
-    expect(res).toEqual({
-      origin: { fee: 1000n, currency: 'UNIT' },
-      destination: { fee: 2600n, currency: 'UNIT' }
-    })
-  })
 
-  it('throws on multiasset currency', async () => {
-    const { api } = makeApi(0n, 0n)
-    await expect(
-      getXcmFeeEstimate({
+    expect(getReverseTxFee).toHaveBeenCalledWith(
+      {
         ...baseOptions,
-        api,
+        api: destApi,
         origin: 'BifrostPolkadot',
         destination: 'Hydration',
-        currency: { multiasset: [], amount: 1n } as TCurrencyInputWithAmount
-      })
-    ).rejects.toBeInstanceOf(InvalidCurrencyError)
+        currency: { symbol: 'ABC', amount: 5n }
+      },
+      { symbol: 'ABC' }
+    )
+
+    expect(res).toEqual({
+      origin: { fee: rawOrigin, currency: 'UNIT', sufficient: true },
+      destination: { fee: rawDest, currency: 'UNIT', sufficient: true }
+    })
+
+    expect(getOriginXcmFeeEstimate).toHaveBeenCalledWith({
+      ...baseOptions,
+      api,
+      origin: 'BifrostPolkadot',
+      destination: 'Hydration',
+      currency: { symbol: 'ABC', amount: 5n }
+    })
   })
 })

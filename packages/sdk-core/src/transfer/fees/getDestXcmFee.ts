@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAsset, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
 import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { isRelayChain, Parents } from '@paraspell/sdk-common'
@@ -14,6 +13,7 @@ import { type TGetFeeForDestNodeOptions, Version } from '../../types'
 import { replaceBigInt } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getReverseTxFee } from './getReverseTxFee'
+import { isSufficientDestination } from './isSufficient'
 
 export const createOriginLocation = (
   origin: TNodeDotKsmWithRelayChains,
@@ -41,6 +41,7 @@ export const getDestXcmFee = async <TApi, TRes>(
   forwardedXcms?: any
   destParaId?: number
   dryRunError?: string
+  sufficient?: boolean
 }> => {
   const {
     api,
@@ -50,6 +51,7 @@ export const getDestXcmFee = async <TApi, TRes>(
     currency,
     forwardedXcms,
     asset,
+    address,
     feeAsset,
     originFee,
     disableFallback
@@ -88,9 +90,18 @@ export const getDestXcmFee = async <TApi, TRes>(
   }
 
   if (!hasDryRunSupport(destination) || !forwardedXcms || destination === 'Ethereum') {
+    const sufficient = await isSufficientDestination(
+      api,
+      destination,
+      address,
+      BigInt(currency.amount),
+      asset
+    )
+
     return {
       fee: await calcPaymentInfoFee(),
-      feeType: 'paymentInfo'
+      feeType: 'paymentInfo',
+      sufficient
     }
   }
 
@@ -102,7 +113,7 @@ export const getDestXcmFee = async <TApi, TRes>(
     asset,
     originFee,
     feeAsset: resolvedFeeAsset,
-    amount: BigInt((currency as WithAmount<TCurrencyCore>).amount)
+    amount: BigInt(currency.amount)
   })
 
   if (!dryRunResult.success) {
@@ -112,10 +123,19 @@ export const getDestXcmFee = async <TApi, TRes>(
       }
     }
 
+    const sufficient = await isSufficientDestination(
+      api,
+      destination,
+      address,
+      BigInt(currency.amount),
+      asset
+    )
+
     return {
       fee: await calcPaymentInfoFee(),
       feeType: 'paymentInfo',
-      dryRunError: dryRunResult.failureReason
+      dryRunError: dryRunResult.failureReason,
+      sufficient
     }
   }
 

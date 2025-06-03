@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { TAsset, TCurrencyInput, TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { TAsset, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
@@ -23,7 +23,7 @@ export type TGetXcmFeeBaseOptions<TRes> = {
    */
   senderAddress: string
   address: string
-  currency: TCurrencyInputWithAmount
+  currency: WithAmount<TCurrencyCore>
   feeAsset?: TCurrencyInput
   disableFallback: boolean
 }
@@ -66,7 +66,7 @@ export type TGetFeeForDestNodeBaseOptions = {
   destination: TNodeWithRelayChains
   senderAddress: string
   address: string
-  currency: TCurrencyInputWithAmount
+  currency: WithAmount<TCurrencyCore>
   forwardedXcms: any
   asset: TAsset
   originFee: bigint
@@ -96,14 +96,16 @@ export type TXcmFeeDetail =
       fee: bigint
       currency: string
       feeType: TFeeType
-      dryRunError?: string
       weight?: TWeight
+      sufficient?: boolean
+      dryRunError?: string
     }
   | {
       fee?: bigint
       currency?: string
       feeType?: TFeeType
       weight?: TWeight
+      sufficient?: boolean
       dryRunError: string
     }
 
@@ -117,6 +119,7 @@ export type TGetXcmFeeResult = {
 export type TGetXcmFeeEstimateDetail = {
   fee: bigint
   currency: string
+  sufficient?: boolean
 }
 
 export type TGetXcmFeeEstimateResult = {
