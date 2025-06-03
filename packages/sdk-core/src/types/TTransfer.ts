@@ -28,6 +28,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   scenario: TScenario
   asset: WithAmount<TAsset>
+  currency: TCurrencyInputWithAmount
   feeAsset?: TAsset
   destination: TDestination
   paraIdTo?: number
@@ -159,10 +160,7 @@ export type WithRequiredSenderAddress<TBase> = Omit<TBase, 'senderAddress'> & {
 
 export type TSendBaseOptionsWithSenderAddress = WithRequiredSenderAddress<TSendBaseOptions>
 
-export type TSendInternalOptions<TApi, TRes> = Omit<
-  TSendBaseOptions,
-  'from' | 'currency' | 'feeAsset'
-> & {
+export type TSendInternalOptions<TApi, TRes> = Omit<TSendBaseOptions, 'from' | 'feeAsset'> & {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
   feeAsset?: TAsset

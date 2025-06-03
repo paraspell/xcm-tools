@@ -23,8 +23,8 @@ import type { TScenario, TTransferLocalOptions, TXcmVersioned } from '../../type
 import { type TPolkadotXCMTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
 import { createVersionedBeneficiary } from '../../utils'
-import { createExecuteXcm } from '../../utils/createExecuteXcm'
 import { transformMultiLocation } from '../../utils/multiLocation'
+import { createExecuteXcm } from '../../utils/transfer'
 import { validateAddress } from '../../utils/validateAddress'
 import ParachainNode from '../ParachainNode'
 import type AssetHubPolkadot from './AssetHubPolkadot'
@@ -58,7 +58,7 @@ vi.mock('../../utils/generateAddressMultiLocationV4', () => ({
   generateAddressMultiLocationV4: vi.fn()
 }))
 
-vi.mock('../../utils/createVersionedBeneficiary', () => ({
+vi.mock('../../utils/createBeneficiary', () => ({
   createVersionedBeneficiary: vi.fn()
 }))
 
@@ -71,7 +71,7 @@ vi.mock('../../utils/validateAddress', () => ({
   validateAddress: vi.fn()
 }))
 
-vi.mock('../../utils/createExecuteXcm', () => ({
+vi.mock('../../utils/transfer', () => ({
   createExecuteXcm: vi.fn()
 }))
 

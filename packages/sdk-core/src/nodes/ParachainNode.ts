@@ -35,8 +35,7 @@ import {
   constructRelayToParaParameters,
   createMultiAsset,
   createVersionedDestination,
-  createVersionedMultiAssets,
-  extractVersionFromHeader
+  createVersionedMultiAssets
 } from '../pallets/xcmPallet/utils'
 import { transferXTokens } from '../pallets/xTokens'
 import { getParaEthTransferFees } from '../transfer'
@@ -61,6 +60,7 @@ import { createBeneficiaryMultiLocation, createVersionedBeneficiary, getFees } f
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
 import { resolveParaId } from '../utils/resolveParaId'
+import { handleToAhTeleport } from '../utils/transfer/handleToAhTeleport'
 import { getParaId } from './config'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
@@ -122,6 +122,7 @@ abstract class ParachainNode<TApi, TRes> {
     const {
       api,
       asset,
+      currency,
       feeAsset,
       address,
       to: destination,
@@ -221,6 +222,7 @@ abstract class ParachainNode<TApi, TRes> {
         ),
         overriddenAsset,
         asset,
+        currency,
         feeAsset,
         scenario,
         destination,
@@ -241,17 +243,24 @@ abstract class ParachainNode<TApi, TRes> {
       const isAHPDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
       const isEthDest = destination === 'Ethereum'
 
-      // Any origin to any dest via AH - DestinationReserve - multiple instructions
+      // Eth asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
       if (isEthAsset && !isAHPOrigin && !isAHPDest && !isEthDest) {
         return this.transferEthAssetViaAH(options)
       }
 
-      // Any origin to AHP - DestinationReserve - one DepositAsset instruction
+      // Eth asset - Any origin to AHP - DestinationReserve - one DepositAsset instruction
       if (isEthAsset && isAHPDest && !isAHPOrigin && !isEthDest) {
         return this.transferToEthereum(options, true)
       }
 
-      return this.transferPolkadotXCM(options)
+      const defaultTx = await this.transferPolkadotXCM(options)
+
+      // Any asset - Any origin to AHP - Execute
+      if (isAHPDest && !isAHPOrigin && !isEthAsset) {
+        return handleToAhTeleport(this.node, options, defaultTx)
+      }
+
+      return defaultTx
     } else {
       throw new NoXCMSupportImplementedError(this._node)
     }
@@ -405,8 +414,7 @@ abstract class ParachainNode<TApi, TRes> {
     // Pad fee by 50%
     const dryRunFeePadded = (BigInt(dryRunResult.origin.fee) * BigInt(3)) / BigInt(2)
 
-    const destWithHeader = createVersionedDestination(scenario, version, destination, paraIdTo)
-    const [_, dest] = extractVersionFromHeader(destWithHeader)
+    const dest = createVersionedDestination(scenario, version, destination, paraIdTo)
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',

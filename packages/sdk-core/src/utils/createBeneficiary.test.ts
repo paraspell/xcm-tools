@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../api'
 import type { TScenario } from '../types'
 import { Version } from '../types'
-import { createVersionedBeneficiary } from './createVersionedBeneficiary'
+import { createBeneficiary, createVersionedBeneficiary } from './createBeneficiary'
 import { createX1Payload } from './createX1Payload'
 
 vi.mock('./createX1Payload', () => ({
@@ -17,7 +17,7 @@ vi.mock('viem', () => ({
   isAddress: vi.fn()
 }))
 
-describe('generateAddressPayload', () => {
+describe('createBeneficiary', () => {
   let apiMock: IPolkadotApi<unknown, unknown>
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('generateAddressPayload', () => {
     const recipientAddress = { parents: Parents.ONE, interior: {} }
     const version = Version.V4
 
-    const result = createVersionedBeneficiary({
+    const result = createBeneficiary({
       api: apiMock,
       scenario: 'ParaToRelay',
       pallet: null,
@@ -38,7 +38,7 @@ describe('generateAddressPayload', () => {
       version
     })
 
-    expect(result).toEqual({ [version]: recipientAddress })
+    expect(result).toEqual(recipientAddress)
   })
 
   it('should return a correct payload for ParaToRelay scenario with XTokens pallet', () => {
@@ -50,7 +50,7 @@ describe('generateAddressPayload', () => {
       X1: [{ AccountId32: { id: accIDMock, network: 'any' } }]
     })
 
-    const result = createVersionedBeneficiary({
+    const result = createBeneficiary({
       api: apiMock,
       scenario: 'ParaToRelay',
       pallet: 'XTokens',
@@ -59,10 +59,8 @@ describe('generateAddressPayload', () => {
     })
 
     expect(result).toEqual({
-      [Version.V3]: {
-        parents: Parents.ONE,
-        interior: { X1: [{ AccountId32: { id: accIDMock, network: 'any' } }] }
-      }
+      parents: Parents.ONE,
+      interior: { X1: [{ AccountId32: { id: accIDMock, network: 'any' } }] }
     })
 
     expect(accountIdSpy).toHaveBeenCalledWith(recipientAddress)
@@ -72,7 +70,7 @@ describe('generateAddressPayload', () => {
     const ethAddress = '0x1234567890123456789012345678901234567890'
     vi.mocked(isAddress).mockReturnValue(true)
 
-    const result = createVersionedBeneficiary({
+    const result = createBeneficiary({
       api: apiMock,
       scenario: 'ParaToPara',
       pallet: 'XTokens',
@@ -82,11 +80,9 @@ describe('generateAddressPayload', () => {
     })
 
     expect(result).toEqual({
-      [Version.V4]: {
-        parents: Parents.ONE,
-        interior: {
-          X2: [{ Parachain: 1000 }, { AccountKey20: { key: ethAddress } }]
-        }
+      parents: Parents.ONE,
+      interior: {
+        X2: [{ Parachain: 1000 }, { AccountKey20: { key: ethAddress } }]
       }
     })
 
@@ -102,7 +98,7 @@ describe('generateAddressPayload', () => {
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
     })
 
-    const result = createVersionedBeneficiary({
+    const result = createBeneficiary({
       api: apiMock,
       scenario: 'ParaToPara',
       pallet: 'PolkadotXcm',
@@ -111,10 +107,8 @@ describe('generateAddressPayload', () => {
     })
 
     expect(result).toEqual({
-      [Version.V4]: {
-        parents: Parents.ZERO,
-        interior: { X1: [{ AccountId32: { id: accIDMock, network: null } }] }
-      }
+      parents: Parents.ZERO,
+      interior: { X1: [{ AccountId32: { id: accIDMock, network: null } }] }
     })
 
     expect(acccountIdSpy).toHaveBeenCalledWith(recipientAddress)
@@ -129,7 +123,7 @@ describe('generateAddressPayload', () => {
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
     })
 
-    const result = createVersionedBeneficiary({
+    const result = createBeneficiary({
       api: apiMock,
       scenario: 'UnknownScenario' as TScenario,
       pallet: null,
@@ -138,10 +132,8 @@ describe('generateAddressPayload', () => {
     })
 
     expect(result).toEqual({
-      [Version.V4]: {
-        parents: Parents.ZERO,
-        interior: { X1: [{ AccountId32: { id: accIDMock, network: null } }] }
-      }
+      parents: Parents.ZERO,
+      interior: { X1: [{ AccountId32: { id: accIDMock, network: null } }] }
     })
 
     expect(acccountIdSpy).toHaveBeenCalledWith(recipientAddress)
@@ -153,7 +145,7 @@ describe('generateAddressPayload', () => {
     vi.mocked(isAddress).mockReturnValue(false)
     const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
 
-    const result = createVersionedBeneficiary({
+    const result = createBeneficiary({
       api: apiMock,
       scenario: 'ParaToPara',
       pallet: 'XTokens',
@@ -163,11 +155,9 @@ describe('generateAddressPayload', () => {
     })
 
     expect(result).toEqual({
-      [Version.V4]: {
-        parents: Parents.ONE,
-        interior: {
-          X2: [{ Parachain: 1000 }, { AccountId32: { id: accIDMock } }]
-        }
+      parents: Parents.ONE,
+      interior: {
+        X2: [{ Parachain: 1000 }, { AccountId32: { id: accIDMock } }]
       }
     })
 
@@ -184,7 +174,7 @@ describe('generateAddressPayload', () => {
       X1: [{ AccountId32: { id: accIDMock, network: null } }]
     })
 
-    const result = createVersionedBeneficiary({
+    const result = createBeneficiary({
       api: apiMock,
       scenario: 'ParaToPara' as TScenario,
       pallet: 'PolkadotXcm' as TPallet,
@@ -193,16 +183,43 @@ describe('generateAddressPayload', () => {
     })
 
     expect(result).toEqual({
-      [Version.V4]: {
-        parents: Parents.ZERO,
-        interior: { X1: [{ AccountId32: { id: accIDMock, network: null } }] }
-      }
+      parents: Parents.ZERO,
+      interior: { X1: [{ AccountId32: { id: accIDMock, network: null } }] }
     })
 
     expect(isAddress).toHaveBeenCalledWith(recipientAddress)
     expect(accountIdSpy).toHaveBeenCalledWith(recipientAddress)
     expect(createX1Payload).toHaveBeenCalledWith(Version.V4, {
       AccountId32: { id: accIDMock }
+    })
+  })
+
+  it('should return a beneficiary with the correct version header', () => {
+    const recipientAddress = '5F3sa2TJAWMqDhXG6jhV4N8ko9iFyzPXj7v5jcmn5ySxkPPg'
+    const accIDMock = '0x1234567890abcdef'
+    vi.mocked(isAddress).mockReturnValue(false)
+    const accountIdSpy = vi.spyOn(apiMock, 'accountToHex').mockReturnValue(accIDMock)
+    vi.mocked(createX1Payload).mockReturnValue({
+      X1: [{ AccountId32: { id: accIDMock, network: null } }]
+    })
+
+    const version = Version.V4
+
+    const result = createVersionedBeneficiary({
+      api: apiMock,
+      scenario: 'ParaToPara' as TScenario,
+      pallet: 'PolkadotXcm' as TPallet,
+      recipientAddress,
+      version
+    })
+
+    expect(accountIdSpy).toHaveBeenCalledWith(recipientAddress)
+
+    expect(result).toEqual({
+      [version]: {
+        parents: Parents.ZERO,
+        interior: { X1: [{ AccountId32: { id: accIDMock, network: null } }] }
+      }
     })
   })
 })

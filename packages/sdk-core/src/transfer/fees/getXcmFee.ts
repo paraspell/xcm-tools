@@ -44,7 +44,8 @@ export const getXcmFee = async <TApi, TRes>({
     feeType: originFeeType,
     dryRunError: originDryRunError,
     forwardedXcms: initialForwardedXcm,
-    destParaId: initialDestParaId
+    destParaId: initialDestParaId,
+    weight: originWeight
   } = await getOriginXcmFee({
     api,
     tx,
@@ -256,6 +257,7 @@ export const getXcmFee = async <TApi, TRes>({
 
   return {
     origin: {
+      ...(originWeight && { weight: originWeight }),
       ...(originFee && { fee: originFee }),
       ...(originFeeType && { feeType: originFeeType }),
       currency: originCurrency,

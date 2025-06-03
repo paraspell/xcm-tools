@@ -2,39 +2,32 @@
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { createVersionedDestination, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
-import type { TPolkadotXCMTransferOptions, TSerializedApiCall, TXcmVersioned } from '../types'
-import { Version } from '../types'
+import { createDestination } from '../../pallets/xcmPallet/utils'
+import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
+import { Version } from '../../types'
+import { createBeneficiary } from '../createBeneficiary'
+import { transformMultiLocation } from '../multiLocation'
 import { createExecuteXcm } from './createExecuteXcm'
-import { createVersionedBeneficiary } from './createVersionedBeneficiary'
-import { transformMultiLocation } from './multiLocation'
 
-vi.mock('../pallets/xcmPallet/utils', () => ({
-  createVersionedDestination: vi.fn(),
-  extractVersionFromHeader: vi.fn()
+vi.mock('../../pallets/xcmPallet/utils', () => ({
+  createDestination: vi.fn()
 }))
 
-vi.mock('./createVersionedBeneficiary', () => ({
-  createVersionedBeneficiary: vi.fn()
+vi.mock('../createBeneficiary', () => ({
+  createBeneficiary: vi.fn()
 }))
 
-vi.mock('./multiLocation', () => ({
+vi.mock('../multiLocation', () => ({
   transformMultiLocation: vi.fn()
 }))
 
 describe('createExecuteXcm', () => {
-  const dummyDestHeader = 'dummyDestHeader' as unknown as TXcmVersioned<TMultiLocation>
-  const dummyBeneficiaryHeader =
-    'dummyBeneficiaryHeader' as unknown as TXcmVersioned<TMultiLocation>
+  const dummyDest = 'destValue' as unknown as TMultiLocation
+  const dummyBeneficiary = 'beneficiaryValue' as unknown as TMultiLocation
 
   beforeEach(() => {
-    vi.mocked(createVersionedDestination).mockReturnValue(dummyDestHeader)
-    vi.mocked(createVersionedBeneficiary).mockReturnValue(dummyBeneficiaryHeader)
-    vi.mocked(extractVersionFromHeader).mockImplementation(header => {
-      if (header === dummyDestHeader) return [Version.V3, 'destValue']
-      if (header === dummyBeneficiaryHeader) return [Version.V3, 'beneficiaryValue']
-      return [Version.V4, 'transformedLocation']
-    })
+    vi.mocked(createDestination).mockReturnValue(dummyDest)
+    vi.mocked(createBeneficiary).mockReturnValue(dummyBeneficiary)
     vi.mocked(transformMultiLocation).mockReturnValue(
       'transformedLocation' as unknown as TMultiLocation
     )
@@ -107,7 +100,7 @@ describe('createExecuteXcm', () => {
     const withdrawAsset = message[0].WithdrawAsset
     expect(withdrawAsset).toHaveLength(1)
     expect(withdrawAsset[0].id).toBe('transformedLocation')
-    expect(withdrawAsset[0].fun).toEqual({ Fungible: '1000' })
+    expect(withdrawAsset[0].fun).toEqual({ Fungible: 1000n })
     const buyExecution = message[1].BuyExecution
     expect(buyExecution.fees.id).toBe('transformedLocation')
     expect(buyExecution.fees.fun).toEqual({ Fungible: executionFee })
@@ -152,13 +145,13 @@ describe('createExecuteXcm', () => {
 
     const result = createExecuteXcm(input, weight, executionFee)
     expect(result).toBe('defaultResult')
-    expect(vi.mocked(createVersionedDestination)).toHaveBeenCalledWith(
+    expect(createDestination).toHaveBeenCalledWith(
       input.scenario,
       Version.V4,
       input.destination,
       input.paraIdTo
     )
-    expect(createVersionedBeneficiary).toHaveBeenCalledWith({
+    expect(createBeneficiary).toHaveBeenCalledWith({
       api: input.api,
       scenario: input.scenario,
       pallet: 'PolkadotXcm',

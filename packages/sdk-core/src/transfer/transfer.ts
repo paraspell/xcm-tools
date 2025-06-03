@@ -125,6 +125,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   return originNode.transfer({
     api,
     asset: finalAsset,
+    currency,
     feeAsset: resolvedFeeAsset,
     address,
     to: destination,

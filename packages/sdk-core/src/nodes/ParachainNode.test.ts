@@ -18,7 +18,7 @@ import {
 } from '../types'
 import ParachainNode from './ParachainNode'
 
-vi.mock('../constants/nodes', () => ({}))
+vi.mock('../constants/nodes')
 
 vi.mock('../transfer/getBridgeStatus', () => ({
   getBridgeStatus: vi.fn().mockResolvedValue('Normal')
@@ -42,9 +42,7 @@ vi.mock('../pallets/xcmPallet/utils', async () => {
     createVersionedMultiAssets: vi.fn().mockReturnValue('currencySpec'),
     createMultiAsset: vi.fn().mockReturnValue('multiAsset'),
     createVersionedDestination: vi.fn().mockReturnValue('polkadotXcmHeader'),
-    isTMultiLocation: vi.fn(),
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    extractVersionFromHeader: vi.fn().mockImplementation(header => [header, Version.V4])
+    isTMultiLocation: vi.fn()
   }
 })
 

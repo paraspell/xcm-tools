@@ -1,21 +1,22 @@
-import { InvalidParameterError } from '../errors'
-import { createVersionedDestination, extractVersionFromHeader } from '../pallets/xcmPallet/utils'
-import type { TSerializedApiCall, TWeight } from '../types'
-import { type TPolkadotXCMTransferOptions, Version } from '../types'
-import { createVersionedBeneficiary } from './createVersionedBeneficiary'
-import { transformMultiLocation } from './multiLocation'
+import { DOT_MULTILOCATION } from '../../constants'
+import { InvalidParameterError } from '../../errors'
+import { createDestination } from '../../pallets/xcmPallet/utils'
+import type { TSerializedApiCall, TWeight } from '../../types'
+import { type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { createBeneficiary } from '../createBeneficiary'
+import { transformMultiLocation } from '../multiLocation'
 
-export const createExecuteXcm = <TApi, TRes>(
+export const createExecuteExchangeXcm = <TApi, TRes>(
   input: TPolkadotXCMTransferOptions<TApi, TRes>,
   weight: TWeight,
-  executionFee: bigint
+  originExecutionFee: bigint,
+  destExecutionFee: bigint
 ): TRes => {
   const { api, version = Version.V4, asset, scenario, destination, paraIdTo, address } = input
 
-  const destWithHeader = createVersionedDestination(scenario, version, destination, paraIdTo)
-  const [_, dest] = extractVersionFromHeader(destWithHeader)
+  const dest = createDestination(scenario, version, destination, paraIdTo)
 
-  const beneficiaryWithHeader = createVersionedBeneficiary({
+  const beneficiary = createBeneficiary({
     api,
     scenario,
     pallet: 'PolkadotXcm',
@@ -23,15 +24,12 @@ export const createExecuteXcm = <TApi, TRes>(
     version,
     paraId: paraIdTo
   })
-  const [__, beneficiary] = extractVersionFromHeader(beneficiaryWithHeader)
 
   if (!asset.multiLocation) {
     throw new InvalidParameterError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
   }
 
   const transformedMultiLocation = transformMultiLocation(asset.multiLocation)
-
-  const amountWithoutFee = BigInt(asset.amount) - executionFee
 
   const call: TSerializedApiCall = {
     module: 'PolkadotXcm',
@@ -44,7 +42,7 @@ export const createExecuteXcm = <TApi, TRes>(
               {
                 id: transformedMultiLocation,
                 fun: {
-                  Fungible: asset.amount
+                  Fungible: BigInt(asset.amount)
                 }
               }
             ]
@@ -54,29 +52,15 @@ export const createExecuteXcm = <TApi, TRes>(
               fees: {
                 id: transformedMultiLocation,
                 fun: {
-                  Fungible: executionFee
+                  Fungible: originExecutionFee
                 }
               },
-              weight_limit: {
-                Limited: {
-                  ref_time: 150n,
-                  proof_size: 0n
-                }
-              }
+              weight_limit: 'Unlimited'
             }
           },
           {
-            DepositReserveAsset: {
-              assets: {
-                Definite: [
-                  {
-                    id: transformedMultiLocation,
-                    fun: {
-                      Fungible: amountWithoutFee
-                    }
-                  }
-                ]
-              },
+            InitiateTeleport: {
+              assets: { Wild: { AllCounted: 1 } },
               dest,
               xcm: [
                 {
@@ -84,17 +68,33 @@ export const createExecuteXcm = <TApi, TRes>(
                     fees: {
                       id: asset.multiLocation,
                       fun: {
-                        Fungible: amountWithoutFee - executionFee
+                        Fungible: destExecutionFee
                       }
                     },
                     weight_limit: 'Unlimited'
                   }
                 },
                 {
+                  ExchangeAsset: {
+                    give: {
+                      Wild: {
+                        AllCounted: 1
+                      }
+                    },
+                    want: [
+                      {
+                        id: DOT_MULTILOCATION,
+                        fun: { Fungible: 100000000n } // 0.01 DOT
+                      }
+                    ],
+                    maximal: false
+                  }
+                },
+                {
                   DepositAsset: {
                     assets: {
                       Wild: {
-                        AllCounted: 1
+                        AllCounted: 2
                       }
                     },
                     beneficiary
