@@ -144,7 +144,7 @@ describe('AssetHubExchangeNode', () => {
         keep_alive: true,
       });
       expect(result).toEqual({ tx: dummyTx, amountOut: '1950' });
-      expect(vi.mocked(getQuotedAmount)).toHaveBeenCalledTimes(1);
+      expect(getQuotedAmount).toHaveBeenCalledTimes(1);
     });
 
     it('should swap using fee conversion via getQuotedAmount when assetTo.symbol is not native', async () => {
@@ -176,7 +176,7 @@ describe('AssetHubExchangeNode', () => {
         keep_alive: true,
       });
       expect(result).toEqual({ tx: dummyTx, amountOut: '1900' });
-      expect(vi.mocked(getQuotedAmount)).toHaveBeenCalledTimes(2);
+      expect(getQuotedAmount).toHaveBeenCalledTimes(2);
       expect(vi.mocked(getQuotedAmount).mock.calls[1][0]).toBe(papiApi);
       expect(vi.mocked(getQuotedAmount).mock.calls[1][1]).toEqual({
         parents: Parents.ONE,

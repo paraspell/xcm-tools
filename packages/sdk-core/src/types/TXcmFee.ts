@@ -3,6 +3,7 @@ import type { TAsset, TCurrencyInput, TCurrencyInputWithAmount } from '@paraspel
 import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
+import type { TWeight } from './TTransfer'
 
 export type TGetXcmFeeBaseOptions<TRes> = {
   /**
@@ -96,11 +97,13 @@ export type TXcmFeeDetail =
       currency: string
       feeType: TFeeType
       dryRunError?: string
+      weight?: TWeight
     }
   | {
       fee?: bigint
       currency?: string
       feeType?: TFeeType
+      weight?: TWeight
       dryRunError: string
     }
 

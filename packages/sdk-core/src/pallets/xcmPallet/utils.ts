@@ -70,6 +70,27 @@ export const createVersionedMultiAssets = (
   return addXcmVersionHeader([multiAssets], version)
 }
 
+export const createDestination = (
+  scenario: TScenario,
+  version: Version,
+  destination: TDestination,
+  nodeId?: number,
+  junction?: TJunction,
+  parents?: Parents
+): TMultiLocation => {
+  const parentsResolved = parents ?? (scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE)
+  const interior =
+    scenario === 'ParaToRelay'
+      ? 'Here'
+      : createX1Payload(version, junction ?? { Parachain: nodeId })
+
+  const isMultiLocationDestination = isTMultiLocation(destination)
+
+  return isMultiLocationDestination
+    ? destination
+    : ({ parents: parentsResolved, interior } as TMultiLocation)
+}
+
 export const createVersionedDestination = (
   scenario: TScenario,
   version: Version,
@@ -78,24 +99,16 @@ export const createVersionedDestination = (
   junction?: TJunction,
   parents?: Parents
 ): TXcmVersioned<TMultiLocation> => {
-  const parentsResolved = parents ?? (scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE)
-  const interior =
-    scenario === 'ParaToRelay'
-      ? 'Here'
-      : createX1Payload(
-          version,
-          junction ?? {
-            Parachain: nodeId
-          }
-        )
-
-  const isMultiLocationDestination = isTMultiLocation(destination)
-  return addXcmVersionHeader(
-    isMultiLocationDestination
-      ? destination
-      : ({ parents: parentsResolved, interior } as TMultiLocation),
-    version
+  const plainDestination = createDestination(
+    scenario,
+    version,
+    destination,
+    nodeId,
+    junction,
+    parents
   )
+
+  return addXcmVersionHeader(plainDestination, version)
 }
 
 export const createBridgePolkadotXcmDest = (

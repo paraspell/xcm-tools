@@ -170,7 +170,7 @@ describe('validateDestination', () => {
     // Relay chain symbols should not be fetched in this case
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
-    expect(vi.mocked(getRelayChainSymbol)).not.toHaveBeenCalled()
+    expect(getRelayChainSymbol).not.toHaveBeenCalled()
   })
 
   it('should throw IncompatibleNodesError when origin is undefined and destination is Ethereum', () => {
@@ -188,7 +188,7 @@ describe('validateDestination', () => {
     vi.mocked(isRelayChain).mockImplementation(node => node === destination)
 
     expect(() => validateDestination(origin, destination)).not.toThrow()
-    expect(vi.mocked(getRelayChainSymbol)).not.toHaveBeenCalled()
+    expect(getRelayChainSymbol).not.toHaveBeenCalled()
   })
 
   it('should throw when origin and destination are relay chains', () => {

@@ -11,7 +11,12 @@ import {
 } from '@paraspell/assets'
 import { hasJunction, isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
-import { DOT_MULTILOCATION, ETHEREUM_JUNCTION, SYSTEM_NODES_POLKADOT } from '../../constants'
+import {
+  DOT_MULTILOCATION,
+  ETHEREUM_JUNCTION,
+  MAX_WEIGHT,
+  SYSTEM_NODES_POLKADOT
+} from '../../constants'
 import {
   BridgeHaltedError,
   DryRunFailedError,
@@ -41,11 +46,11 @@ import {
   Version
 } from '../../types'
 import { createVersionedBeneficiary } from '../../utils'
-import { createExecuteXcm } from '../../utils/createExecuteXcm'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { createBeneficiaryMultiLocation, transformMultiLocation } from '../../utils/multiLocation'
 import { resolveParaId } from '../../utils/resolveParaId'
+import { createExecuteXcm } from '../../utils/transfer'
 import { validateAddress } from '../../utils/validateAddress'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
@@ -415,13 +420,10 @@ class AssetHubPolkadot<TApi, TRes>
     const multiplier = decimals > 10 ? 0.4 : 0.15
 
     const base = BigInt(10 ** decimals)
-
     const scaledMultiplier = BigInt(Math.floor(multiplier * 10 ** decimals))
-
     const MIN_FEE = (base * scaledMultiplier) / BigInt(10 ** decimals)
 
-    const maxU64 = (1n << 64n) - 1n
-    const dummyTx = createExecuteXcm(input, { refTime: maxU64, proofSize: maxU64 }, MIN_FEE)
+    const dummyTx = createExecuteXcm(input, MAX_WEIGHT, MIN_FEE)
 
     const dryRunResult = await api.getDryRunCall({
       node: this.node,

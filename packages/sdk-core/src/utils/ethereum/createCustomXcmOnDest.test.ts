@@ -47,7 +47,7 @@ describe('createCustomXcmOnDest', () => {
     stringToUint8a,
     hexToUint8a,
     blake2AsHex
-  } as unknown as IPolkadotApi<{ provider: unknown }, unknown>
+  } as unknown as IPolkadotApi<unknown, unknown>
 
   const mockNode: TNodeWithRelayChains = 'Acala'
   const version = 'V3' as Version
@@ -58,7 +58,7 @@ describe('createCustomXcmOnDest', () => {
   })
 
   it('should throw an error if the asset is not a foreign asset', () => {
-    const options: TPolkadotXCMTransferOptions<{ provider: unknown }, unknown> = {
+    const options = {
       api: api,
       address: '0xRecipient',
       asset: { symbol: 'DOT', multiLocation: {} as TMultiLocation, amount: '1000000' },
@@ -68,9 +68,9 @@ describe('createCustomXcmOnDest', () => {
       addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
       currencySelection: {
         V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      }, // minimal valid TXcmVersioned structure
+      },
       destination: { parents: Parents.ONE, interior: { Here: null } }
-    }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
@@ -80,7 +80,7 @@ describe('createCustomXcmOnDest', () => {
   })
 
   it('should throw an error if asset has no multiLocation', () => {
-    const options: TPolkadotXCMTransferOptions<{ provider: unknown }, unknown> = {
+    const options = {
       api: api,
       address: '0xRecipient',
       asset: { symbol: 'ETH', multiLocation: {} as TMultiLocation, amount: '1000000' },
@@ -90,9 +90,9 @@ describe('createCustomXcmOnDest', () => {
       addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
       currencySelection: {
         V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      }, // minimal valid TXcmVersioned structure
+      },
       destination: { parents: Parents.ONE, interior: { Here: null } }
-    }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
@@ -102,7 +102,7 @@ describe('createCustomXcmOnDest', () => {
   })
 
   it('should throw an error if senderAddress is missing', () => {
-    const options: TPolkadotXCMTransferOptions<{ provider: unknown }, unknown> = {
+    const options = {
       api: api,
       address: '0xRecipient',
       asset: {
@@ -117,7 +117,7 @@ describe('createCustomXcmOnDest', () => {
         V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
       },
       destination: { parents: Parents.ONE, interior: { Here: null } }
-    }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
       InvalidParameterError
@@ -125,7 +125,7 @@ describe('createCustomXcmOnDest', () => {
   })
 
   it('should throw an error if node is EVM and ahAddress is missing', () => {
-    const options: TPolkadotXCMTransferOptions<{ provider: unknown }, unknown> = {
+    const options = {
       api: api,
       address: '0xRecipient',
       asset: {
@@ -139,9 +139,9 @@ describe('createCustomXcmOnDest', () => {
       addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
       currencySelection: {
         V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      }, // minimal valid TXcmVersioned structure
+      },
       destination: { parents: Parents.ONE, interior: { Here: null } }
-    }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(isNodeEvm).mockReturnValue(true)
@@ -152,7 +152,7 @@ describe('createCustomXcmOnDest', () => {
   })
 
   it('should throw an error if Ethereum asset is not found', () => {
-    const options: TPolkadotXCMTransferOptions<{ provider: unknown }, unknown> = {
+    const options = {
       api: api,
       address: '0xRecipient',
       asset: {
@@ -166,9 +166,9 @@ describe('createCustomXcmOnDest', () => {
       addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
       currencySelection: {
         V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      }, // minimal valid TXcmVersioned structure
+      },
       destination: { parents: Parents.ONE, interior: { Here: null } }
-    }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(findAssetByMultiLocation).mockReturnValue(undefined)
@@ -184,7 +184,7 @@ describe('createCustomXcmOnDest', () => {
       assetId: '0x123'
     }
 
-    const options: TPolkadotXCMTransferOptions<{ provider: unknown }, unknown> = {
+    const options = {
       api: api,
       address: '0xRecipient',
       asset: {
@@ -198,9 +198,9 @@ describe('createCustomXcmOnDest', () => {
       addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
       currencySelection: {
         V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      }, // minimal valid TXcmVersioned structure
+      },
       destination: { parents: Parents.ONE, interior: { Here: null } }
-    }
+    } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(findAssetByMultiLocation).mockReturnValue(mockEthAsset)

@@ -59,7 +59,7 @@ describe('findAssetOnDestOrThrow', () => {
       null
     )
     expect(result).toEqual(mockDestinationAsset)
-    expect(vi.mocked(findAssetForNodeOrThrow)).toHaveBeenCalledTimes(1)
+    expect(findAssetForNodeOrThrow).toHaveBeenCalledTimes(1)
   })
 
   it('should find asset on destination by symbol if origin asset has multiLocation but asset is NOT found by multiLocation', () => {
@@ -113,7 +113,7 @@ describe('findAssetOnDestOrThrow', () => {
       null
     )
     expect(result).toEqual(mockDestinationAsset)
-    expect(vi.mocked(findAssetForNodeOrThrow)).toHaveBeenCalledTimes(2)
+    expect(findAssetForNodeOrThrow).toHaveBeenCalledTimes(2)
   })
 
   it('should throw error if findAssetForNodeOrThrow (for origin) throws an error', () => {

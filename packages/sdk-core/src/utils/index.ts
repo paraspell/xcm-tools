@@ -15,7 +15,7 @@ export const determineRelayChain = (node: TNodeWithRelayChains): TRelaychain =>
   getRelayChainSymbol(node) === 'KSM' ? 'Kusama' : 'Polkadot'
 
 export { createApiInstanceForNode } from './createApiInstanceForNode'
-export * from './createVersionedBeneficiary'
+export * from './createBeneficiary'
 export { createX1Payload } from './createX1Payload'
 export * from './dryRun'
 export { generateAddressMultiLocationV4 } from './generateAddressMultiLocationV4'

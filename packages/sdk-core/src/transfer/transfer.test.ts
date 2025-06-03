@@ -112,6 +112,7 @@ describe('send', () => {
     expect(transferSpy).toHaveBeenCalledWith({
       api: apiMock,
       asset: { symbol: 'TEST', amount: '100' },
+      currency: options.currency,
       address: options.address,
       to: options.to,
       paraIdTo: options.paraIdTo,

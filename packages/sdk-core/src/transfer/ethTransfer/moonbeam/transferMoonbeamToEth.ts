@@ -112,6 +112,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
       senderAddress,
       ahAddress,
       asset: { ...foundAsset, amount: currency.amount },
+      currency,
       header: {} as TXcmVersioned<TMultiLocation>,
       currencySelection: {} as TXcmVersioned<TMultiAsset[]>,
       addressSelection: {} as TXcmVersioned<TMultiLocation>

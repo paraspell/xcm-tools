@@ -62,13 +62,14 @@ export const getOriginXcmFee = async <TApi, TRes>({
     }
   }
 
-  const { fee, forwardedXcms, destParaId } = dryRunResult
+  const { fee, forwardedXcms, destParaId, weight } = dryRunResult
 
   return {
     fee,
     feeType: 'dryRun',
     currency: currencySymbol,
     forwardedXcms,
-    destParaId
+    destParaId,
+    weight
   }
 }
