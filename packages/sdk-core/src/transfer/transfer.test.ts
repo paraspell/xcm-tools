@@ -1,9 +1,4 @@
-import type {
-  TAsset,
-  TCurrencyInput,
-  TMultiAssetWithFee,
-  TMultiLocationValueWithOverride
-} from '@paraspell/assets'
+import type { TAsset, TCurrencyInput, TMultiAssetWithFee } from '@paraspell/assets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import { isDotKsmBridge, isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -190,14 +185,12 @@ describe('send', () => {
 
   it('should handle overriddenAsset when override multi-location is present', async () => {
     vi.mocked(resolveOverriddenAsset).mockReturnValue({} as TMultiLocation)
-    const currency = { multilocation: { type: 'Override', value: {} } }
+    const currency = { multilocation: { type: 'Override', value: {} }, amount: '100' }
 
     const options = {
       api: apiMock,
       from: 'Acala',
-      currency: currency as {
-        multilocation: TMultiLocationValueWithOverride
-      },
+      currency: currency,
       address: 'some-address',
       to: 'Astar'
     } as TSendOptions<unknown, unknown>

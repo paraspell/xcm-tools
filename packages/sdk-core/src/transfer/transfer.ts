@@ -120,7 +120,8 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   const finalAsset =
     'multiasset' in currency
       ? { ...resolvedAsset, amount: 0, assetId: '1' }
-      : { ...resolvedAsset, amount: currency.amount }
+      : // Ensure amount is at least 1 to avoid Rust panic
+        { ...resolvedAsset, amount: BigInt(currency.amount) < 1n ? 1n : currency.amount }
 
   return originNode.transfer({
     api,
