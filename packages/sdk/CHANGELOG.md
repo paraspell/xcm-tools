@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-v10.3.1...sdk-v10.4.0) (2025-06-04)
+
+
+### Documentation
+
+* Add latest news ([60226ca](https://github.com/paraspell/xcm-tools/commit/60226ca85455ebde887a27f7584cb080cfa49cea))
+
+
+### Code Refactoring
+
+* Rename xcm call section property to method 𝌡 ([20fafb3](https://github.com/paraspell/xcm-tools/commit/20fafb38ae783343a428c860091ea67be53208f6))
+
 ## [10.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-v10.3.0...sdk-v10.3.1) (2025-05-30)
 
 

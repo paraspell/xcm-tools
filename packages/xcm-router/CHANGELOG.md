@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.3.1...xcm-router-v10.4.0) (2025-06-04)
+
+
+### Features
+
+* **sdk-core:** Add para -&gt; AH autoswap transfer ✨ ([fdf6ec6](https://github.com/paraspell/xcm-tools/commit/fdf6ec6517c948510d279b1b0638eea15025a5d1))
+
 ## [10.3.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.3.0...xcm-router-v10.3.1) (2025-05-30)
 
 
