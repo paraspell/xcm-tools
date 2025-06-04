@@ -2679,13 +2679,15 @@
         "symbol": "KSM",
         "decimals": 12,
         "multiLocation": {
-          "parents": 1,
+          "parents": 2,
           "interior": {
-            "X1": {
-              "GlobalConsensus": {
-                "kusama": null
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "kusama": null
+                }
               }
-            }
+            ]
           }
         },
         "existentialDeposit": "313283208"
@@ -10579,7 +10581,7 @@
             "X1": [
               {
                 "GlobalConsensus": {
-                  "Kusama": null
+                  "kusama": null
                 }
               }
             ]

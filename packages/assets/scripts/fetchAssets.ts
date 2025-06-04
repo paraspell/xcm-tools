@@ -359,7 +359,10 @@ const fetchOtherAssets = async (
 }
 
 const patchParents = (node: TNodePolkadotKusama, asset: TForeignAsset): TForeignAsset => {
-  if ((node === 'Hydration' || node === 'BifrostPolkadot') && asset.symbol === 'ETH') {
+  if (
+    ((node === 'Hydration' || node === 'BifrostPolkadot') && asset.symbol === 'ETH') ||
+    asset.symbol === 'KSM'
+  ) {
     if (asset.multiLocation) {
       if ('parents' in asset.multiLocation) {
         return {
