@@ -1,5 +1,19 @@
 # Changelog
 
+## [10.4.0](https://github.com/paraspell/xcm-tools/compare/assets-v10.3.1...assets-v10.4.0) (2025-06-04)
+
+
+### Features
+
+* **sdk-core:** Add para -&gt; AH autoswap transfer ✨ ([fdf6ec6](https://github.com/paraspell/xcm-tools/commit/fdf6ec6517c948510d279b1b0638eea15025a5d1))
+* **sdk-core:** Add sufficient field to xcm fee queries ✨ ([ded8648](https://github.com/paraspell/xcm-tools/commit/ded8648321f254f05bbf761129b01926c7b3b2ed))
+
+
+### Code Refactoring
+
+* Rename xcm call section property to method 𝌡 ([20fafb3](https://github.com/paraspell/xcm-tools/commit/20fafb38ae783343a428c860091ea67be53208f6))
+* **sdk-core:** Remove assetCheck override & add eth balance direct support 🪄 ([e197298](https://github.com/paraspell/xcm-tools/commit/e1972982bedb20dcacf628c8e1b996bd7c709fb8))
+
 ## [10.3.1](https://github.com/paraspell/xcm-tools/compare/assets-v10.3.0...assets-v10.3.1) (2025-05-30)
 
 

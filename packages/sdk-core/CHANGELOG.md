@@ -1,5 +1,26 @@
 # Changelog
 
+## [10.4.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.3.1...sdk-core-v10.4.0) (2025-06-04)
+
+
+### Features
+
+* **sdk-core:** Add para -&gt; AH autoswap transfer ✨ ([fdf6ec6](https://github.com/paraspell/xcm-tools/commit/fdf6ec6517c948510d279b1b0638eea15025a5d1))
+* **sdk-core:** Add sufficient field to xcm fee queries ✨ ([ded8648](https://github.com/paraspell/xcm-tools/commit/ded8648321f254f05bbf761129b01926c7b3b2ed))
+* **sdk-core:** Add top-level failureReason & failureChain 👨‍💻 ([c94fc8a](https://github.com/paraspell/xcm-tools/commit/c94fc8a0eee3ae8975fbce5c5834af5533a9a43c))
+
+
+### Bug Fixes
+
+* **sdk-core:** Add fallback for zero or negative amount 🔧 ([881a0a7](https://github.com/paraspell/xcm-tools/commit/881a0a759b2b817ccfe021fa2896ea41103d87b2))
+* **sdk-core:** Update para-to-para DOT error msg ⬆️ ([910a3e9](https://github.com/paraspell/xcm-tools/commit/910a3e9344697322cbb160547e6532951a6714fb))
+
+
+### Code Refactoring
+
+* Rename xcm call section property to method 𝌡 ([20fafb3](https://github.com/paraspell/xcm-tools/commit/20fafb38ae783343a428c860091ea67be53208f6))
+* **sdk-core:** Remove assetCheck override & add eth balance direct support 🪄 ([e197298](https://github.com/paraspell/xcm-tools/commit/e1972982bedb20dcacf628c8e1b996bd7c709fb8))
+
 ## [10.3.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.3.0...sdk-core-v10.3.1) (2025-05-30)
 
 
