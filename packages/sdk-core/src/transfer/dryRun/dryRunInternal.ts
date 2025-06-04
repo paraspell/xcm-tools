@@ -10,12 +10,24 @@ import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { getTNode } from '../../nodes/getTNode'
 import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
-import type { TDryRunNodeResultInternal } from '../../types'
+import type { TDryRunChain, TDryRunNodeResultInternal } from '../../types'
 import { type TDryRunOptions, type TDryRunResult, type THubKey, Version } from '../../types'
 import { determineRelayChain } from '../../utils'
 import { getParaEthTransferFees } from '../ethTransfer'
 import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
+
+const getFailureInfo = (
+  results: Partial<Record<TDryRunChain, TDryRunNodeResultInternal | undefined>>
+): { failureReason?: string; failureChain?: TDryRunChain } => {
+  for (const chain of ['destination', 'assetHub', 'bridgeHub'] as TDryRunChain[]) {
+    const res = results[chain]
+    if (res && !res.success && res.failureReason) {
+      return { failureReason: res.failureReason, failureChain: chain }
+    }
+  }
+  return {}
+}
 
 export const dryRunInternal = async <TApi, TRes>(
   options: TDryRunOptions<TApi, TRes>
@@ -39,6 +51,8 @@ export const dryRunInternal = async <TApi, TRes>(
 
   if (!originDryRun.success) {
     return {
+      failureReason: originDryRun.failureReason,
+      failureChain: 'origin',
       origin: originDryRun
     }
   }
@@ -135,7 +149,15 @@ export const dryRunInternal = async <TApi, TRes>(
     }
   }
 
+  const { failureReason, failureChain } = getFailureInfo({
+    destination: destinationDryRun,
+    assetHub: intermediateFees.assetHub,
+    bridgeHub: intermediateFees.bridgeHub
+  })
+
   return {
+    failureReason,
+    failureChain,
     origin: originDryRun.success
       ? {
           ...originDryRun,
