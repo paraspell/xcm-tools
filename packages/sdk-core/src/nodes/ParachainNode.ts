@@ -540,20 +540,48 @@ abstract class ParachainNode<TApi, TRes> {
 
     const ethAsset = findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
 
-    if (!ethAsset || !ethAsset.assetId) {
+    if (!ethAsset) {
       throw new InvalidCurrencyError(
         `Could not obtain Ethereum asset address for ${JSON.stringify(asset)}`
       )
     }
 
-    const messageId = await generateMessageId(
-      api,
-      senderAddress,
-      getParaId(this.node),
-      ethAsset.assetId,
-      address,
-      asset.amount
-    )
+    let customXcmOnDest
+
+    if (useOnlyDepositInstruction) {
+      customXcmOnDest = addXcmVersionHeader(
+        [
+          {
+            DepositAsset: {
+              assets: { Wild: { AllCounted: 1 } },
+              beneficiary: createBeneficiaryMultiLocation({
+                api,
+                scenario,
+                pallet: 'PolkadotXcm',
+                recipientAddress: address,
+                version
+              })
+            }
+          }
+        ],
+        version
+      )
+    } else {
+      if (!ethAsset.assetId) {
+        throw new InvalidCurrencyError(`Ethereum asset ${JSON.stringify(ethAsset)} has no assetId`)
+      }
+
+      const messageId = await generateMessageId(
+        api,
+        senderAddress,
+        getParaId(this.node),
+        ethAsset.assetId,
+        address,
+        asset.amount
+      )
+
+      customXcmOnDest = createCustomXcmOnDest(input, this.node, version, messageId)
+    }
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
@@ -576,25 +604,7 @@ abstract class ParachainNode<TApi, TRes> {
         assets_transfer_type: 'DestinationReserve',
         remote_fees_id: addXcmVersionHeader(feeAsset?.multiLocation ?? DOT_MULTILOCATION, version),
         fees_transfer_type: 'DestinationReserve',
-        custom_xcm_on_dest: useOnlyDepositInstruction
-          ? addXcmVersionHeader(
-              [
-                {
-                  DepositAsset: {
-                    assets: { Wild: { AllCounted: 1 } },
-                    beneficiary: createBeneficiaryMultiLocation({
-                      api,
-                      scenario,
-                      pallet: 'PolkadotXcm',
-                      recipientAddress: address,
-                      version
-                    })
-                  }
-                }
-              ],
-              version
-            )
-          : createCustomXcmOnDest(input, this.node, version, messageId),
+        custom_xcm_on_dest: customXcmOnDest,
         weight_limit: 'Unlimited'
       }
     }
