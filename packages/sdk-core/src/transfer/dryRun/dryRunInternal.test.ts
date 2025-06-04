@@ -70,12 +70,12 @@ describe('dryRunInternal', () => {
   it('returns only origin result when origin dry-run fails', async () => {
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
 
-    const originFail = { success: false, failureReason: 'boom' }
+    const originFail = { success: false, failureReason: 'someError' }
     const api = createFakeApi(originFail)
 
     const res = await dryRunInternal(createOptions(api))
 
-    expect(res).toEqual({ origin: originFail })
+    expect(res).toEqual({ failureReason: 'someError', failureChain: 'origin', origin: originFail })
   })
 
   it('origin & destination succeed (no intermediates)', async () => {
@@ -170,6 +170,8 @@ describe('dryRunInternal', () => {
     const res = await dryRunInternal(createOptions(api))
 
     expect(res).toEqual({
+      failureReason: 'dest-boom',
+      failureChain: 'destination',
       origin: { ...originOk, currency: 'ACA' },
       destination: destFail
     })

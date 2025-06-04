@@ -81,6 +81,8 @@ describe('getXcmFee', () => {
     const res = await getXcmFee(createOptions())
 
     expect(res).toEqual({
+      failureReason: 'Simulation failed',
+      failureChain: 'origin',
       origin: {
         fee: 1_000n,
         feeType: 'paymentInfo',
@@ -258,6 +260,8 @@ describe('getXcmFee', () => {
     expect(getDestXcmFee).toHaveBeenCalledTimes(2)
 
     expect(res).toEqual({
+      failureReason: 'Hop failed',
+      failureChain: 'assetHub',
       origin: {
         fee: 1_000n,
         feeType: 'dryRun',

@@ -109,7 +109,11 @@ export type TXcmFeeDetail =
       dryRunError: string
     }
 
+export type TXcmFeeChain = 'origin' | 'destination' | 'assetHub' | 'bridgeHub'
+
 export type TGetXcmFeeResult = {
+  failureReason?: string
+  failureChain?: TXcmFeeChain
   origin: TXcmFeeDetail
   destination: TXcmFeeDetail
   assetHub?: TXcmFeeDetail

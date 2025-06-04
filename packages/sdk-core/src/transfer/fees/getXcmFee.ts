@@ -17,12 +17,30 @@ import type {
   TGetXcmFeeOptions,
   TGetXcmFeeResult,
   THubKey,
+  TXcmFeeChain,
   TXcmFeeDetail
 } from '../../types'
 import { determineRelayChain } from '../../utils'
 import { getParaEthTransferFees } from '../ethTransfer'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFee } from './getOriginXcmFee'
+
+const getFailureInfo = (
+  nodes: Partial<Record<TXcmFeeChain, TXcmFeeDetail>>
+): {
+  failureChain?: TXcmFeeChain
+  failureReason?: string
+} => {
+  if (nodes.origin?.dryRunError)
+    return { failureChain: 'origin', failureReason: nodes.origin.dryRunError }
+  if (nodes.assetHub?.dryRunError)
+    return { failureChain: 'assetHub', failureReason: nodes.assetHub.dryRunError }
+  if (nodes.bridgeHub?.dryRunError)
+    return { failureChain: 'bridgeHub', failureReason: nodes.bridgeHub.dryRunError }
+  if (nodes.destination?.dryRunError)
+    return { failureChain: 'destination', failureReason: nodes.destination.dryRunError }
+  return {}
+}
 
 export const getXcmFee = async <TApi, TRes>({
   api,
@@ -82,7 +100,7 @@ export const getXcmFee = async <TApi, TRes>({
         disableFallback
       })
 
-      return {
+      const result: TGetXcmFeeResult = {
         origin: {
           ...(originFee && { fee: originFee }),
           ...(originFeeType && { feeType: originFeeType }),
@@ -96,6 +114,17 @@ export const getXcmFee = async <TApi, TRes>({
           ...(destFeeRes.sufficient !== undefined && { sufficient: destFeeRes.sufficient }),
           currency: getNativeAssetSymbol(destination)
         } as TXcmFeeDetail
+      }
+
+      const { failureChain, failureReason } = getFailureInfo({
+        origin: result.origin,
+        destination: result.destination
+      })
+
+      return {
+        ...result,
+        failureChain,
+        failureReason
       }
     } finally {
       destApi.setDisconnectAllowed(true)
@@ -263,7 +292,7 @@ export const getXcmFee = async <TApi, TRes>({
       ? findAssetOnDestOrThrow(origin, destination, currency).symbol
       : getNativeAssetSymbol(destination)
 
-  return {
+  const result: TGetXcmFeeResult = {
     origin: {
       ...(originWeight && { weight: originWeight }),
       ...(originFee && { fee: originFee }),
@@ -280,5 +309,18 @@ export const getXcmFee = async <TApi, TRes>({
       currency: destCurrency,
       ...(destinationDryRunError && { dryRunError: destinationDryRunError })
     } as TXcmFeeDetail
+  }
+
+  const { failureChain, failureReason } = getFailureInfo({
+    origin: result.origin,
+    assetHub: result.assetHub,
+    bridgeHub: result.bridgeHub,
+    destination: result.destination
+  })
+
+  return {
+    ...result,
+    failureChain,
+    failureReason
   }
 }

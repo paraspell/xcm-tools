@@ -76,7 +76,11 @@ export type TDryRunNodeResultInternal = TDryRunNodeSuccess | TDryRunNodeFailure
 
 export type TDryRunNodeResult = (TDryRunNodeSuccess & { currency: string }) | TDryRunNodeFailure
 
+export type TDryRunChain = 'origin' | 'destination' | 'assetHub' | 'bridgeHub'
+
 export type TDryRunResult = {
+  failureReason?: string
+  failureChain?: TDryRunChain
   origin: TDryRunNodeResult
   destination?: TDryRunNodeResult
   assetHub?: TDryRunNodeResult
