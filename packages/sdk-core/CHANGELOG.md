@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.1...sdk-core-v10.4.2) (2025-06-05)
+
+
+### Bug Fixes
+
+* Moonbeam dest fee & AH bridged KSM transfer 🛠️ ([e126c9f](https://github.com/paraspell/xcm-tools/commit/e126c9f32b56fe6784aa65c643100a1c538e51bf))
+
 ## [10.4.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.0...sdk-core-v10.4.1) (2025-06-05)
 
 
