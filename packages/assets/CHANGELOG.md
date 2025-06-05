@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.1](https://github.com/paraspell/xcm-tools/compare/assets-v10.4.0...assets-v10.4.1) (2025-06-05)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix bridged KSM transfers 🛠️ ([a395859](https://github.com/paraspell/xcm-tools/commit/a3958590b7dc566a0f65797c08b815a77f7b88a5))
+
 ## [10.4.0](https://github.com/paraspell/xcm-tools/compare/assets-v10.3.1...assets-v10.4.0) (2025-06-04)
 
 
