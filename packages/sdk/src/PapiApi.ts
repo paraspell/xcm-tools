@@ -20,8 +20,10 @@ import type {
 import {
   BatchMode,
   getNodeProviders,
+  InvalidCurrencyError,
   InvalidParameterError,
   isAssetEqual,
+  normalizeMultiLocation,
   Parents,
   Version
 } from '@paraspell/sdk-core'
@@ -474,6 +476,27 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     })
   }
 
+  private async getXcmPaymentApiFee(xcm: any, asset: any): Promise<bigint> {
+    const weight = await this.api.getUnsafeApi().apis.XcmPaymentApi.query_xcm_weight(xcm)
+
+    if (!asset?.multiLocation) {
+      throw new InvalidCurrencyError(
+        'This asset does not have a multiLocation defined. Cannot determine destination fee.'
+      )
+    }
+
+    const transformedMultiLocation = transform(normalizeMultiLocation(asset.multiLocation))
+
+    const feeResult = await this.api
+      .getUnsafeApi()
+      .apis.XcmPaymentApi.query_weight_to_asset_fee(weight.value, {
+        type: 'V4',
+        value: transformedMultiLocation
+      })
+
+    return feeResult.value
+  }
+
   async getDryRunXcm({
     originLocation,
     xcm,
@@ -500,6 +523,34 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (!isSuccess) {
       const failureReason = result.value.execution_result.value.error.type
       return Promise.resolve({ success: false, failureReason })
+    }
+
+    const actualWeight = result.value.execution_result.value.used
+
+    const weight: TWeight | undefined = actualWeight
+      ? { refTime: actualWeight.ref_time, proofSize: actualWeight.proof_size }
+      : undefined
+
+    const forwardedXcms =
+      result.value.forwarded_xcms.length > 0 ? result.value.forwarded_xcms[0] : []
+
+    const destParaId =
+      forwardedXcms.length === 0
+        ? undefined
+        : forwardedXcms[0].value.interior.type === 'Here'
+          ? 0
+          : forwardedXcms[0].value.interior.value.value
+
+    if (node === 'Moonbeam' || node === 'Moonriver') {
+      const fee = await this.getXcmPaymentApiFee(xcm, asset)
+
+      return {
+        success: true,
+        fee,
+        weight,
+        forwardedXcms,
+        destParaId
+      }
     }
 
     const emitted = result.value.emitted_events
@@ -558,22 +609,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (feeAssetFeeEvent) {
       fee = amount - originFee - feeEvent.value.value.amount
     }
-
-    const actualWeight = result.value.execution_result.value.used
-
-    const weight: TWeight | undefined = actualWeight
-      ? { refTime: actualWeight.ref_time, proofSize: actualWeight.proof_size }
-      : undefined
-
-    const forwardedXcms =
-      result.value.forwarded_xcms.length > 0 ? result.value.forwarded_xcms[0] : []
-
-    const destParaId =
-      forwardedXcms.length === 0
-        ? undefined
-        : forwardedXcms[0].value.interior.type === 'Here'
-          ? 0
-          : forwardedXcms[0].value.interior.value.value
 
     return Promise.resolve({
       success: true,
