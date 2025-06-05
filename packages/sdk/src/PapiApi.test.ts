@@ -103,6 +103,10 @@ describe('PapiApi', () => {
           },
           AssetConversionApi: {
             quote_price_exact_tokens_for_tokens: vi.fn().mockResolvedValue(1n)
+          },
+          XcmPaymentApi: {
+            query_xcm_weight: vi.fn().mockResolvedValue({ proof_size: 0n, ref_time: 0n }),
+            query_weight_to_asset_fee: vi.fn().mockResolvedValue({ value: 100n })
           }
         },
         tx: {
@@ -1275,7 +1279,7 @@ describe('PapiApi', () => {
             }
           },
           emitted_events: [],
-          forwarded_xcms: ['0xdeadbeef']
+          forwarded_xcms: []
         }
       }
 
@@ -1293,6 +1297,69 @@ describe('PapiApi', () => {
         success: false,
         failureReason: 'Cannot determine destination fee. No Issued event found'
       })
+    })
+
+    it('should get fee from XcmPaymentApi if node is Moonbeam', () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Complete',
+            value: {
+              used: { ref_time: 11n, proof_size: 22n }
+            }
+          },
+          emitted_events: [],
+          forwarded_xcms: []
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      return expect(
+        papiApi.getDryRunXcm({
+          originLocation,
+          xcm: dummyXcm,
+          node: 'Moonbeam',
+          origin: 'Acala',
+          asset: { symbol: 'AUSD', multiLocation: { parents: 0, interior: { Here: null } } }
+        } as TDryRunXcmBaseOptions)
+      ).resolves.toEqual({
+        success: true,
+        fee: 100n,
+        weight: { refTime: 11n, proofSize: 22n },
+        forwardedXcms: []
+      })
+    })
+
+    it('should fail to get fee from XcmPaymentApi if node is Moonbeam and asset has no ML', () => {
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Complete',
+            value: {
+              used: { ref_time: 11n, proof_size: 22n }
+            }
+          },
+          emitted_events: [],
+          forwarded_xcms: []
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      return expect(
+        papiApi.getDryRunXcm({
+          originLocation,
+          xcm: dummyXcm,
+          node: 'Moonbeam',
+          origin: 'Acala',
+          asset: { symbol: 'AUSD' }
+        } as TDryRunXcmBaseOptions)
+      ).rejects.toThrow(sdkCore.InvalidCurrencyError)
     })
   })
 

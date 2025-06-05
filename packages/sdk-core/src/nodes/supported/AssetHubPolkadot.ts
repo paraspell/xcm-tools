@@ -7,7 +7,8 @@ import {
   getOtherAssets,
   InvalidCurrencyError,
   isAssetEqual,
-  isForeignAsset
+  isForeignAsset,
+  normalizeSymbol
 } from '@paraspell/assets'
 import { hasJunction, isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
 
@@ -332,7 +333,7 @@ class AssetHubPolkadot<TApi, TRes>
     )
   }
 
-  handleBifrostEthTransfer = <TApi, TRes>(
+  handleLocalReserveTransfer = <TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>,
     useDOTAsFeeAsset = false
   ): TRes => {
@@ -457,6 +458,10 @@ class AssetHubPolkadot<TApi, TRes>
         throw new InvalidCurrencyError(`Fee asset does not match transfer asset.`)
       }
 
+      if (normalizeSymbol(asset.symbol) === normalizeSymbol('KSM')) {
+        return Promise.resolve(this.handleLocalReserveTransfer(input))
+      }
+
       const isNativeAsset = asset.symbol === this.getNativeAssetSymbol()
 
       if (!isNativeAsset) {
@@ -481,11 +486,11 @@ class AssetHubPolkadot<TApi, TRes>
       findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
 
     if (destination === 'BifrostPolkadot' && isEthereumAsset) {
-      return Promise.resolve(this.handleBifrostEthTransfer(input))
+      return Promise.resolve(this.handleLocalReserveTransfer(input))
     }
 
     if (isEthereumAsset) {
-      return Promise.resolve(this.handleBifrostEthTransfer(input, true))
+      return Promise.resolve(this.handleLocalReserveTransfer(input, true))
     }
 
     const isSystemNode =

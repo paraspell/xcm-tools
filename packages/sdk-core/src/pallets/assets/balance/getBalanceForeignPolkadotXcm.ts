@@ -11,15 +11,13 @@ export const getBalanceForeignPolkadotXcm = async <TApi, TRes>(
   asset: TAsset
 ): Promise<bigint> => {
   if (node === 'Moonbeam' || node === 'Moonriver') {
-    if (!isForeignAsset(asset) || !asset.assetId) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)
+    if (!isForeignAsset(asset) || !asset.assetId || !asset.multiLocation) {
+      throw new InvalidCurrencyError(
+        `Asset ${JSON.stringify(asset)} has no multi-location or assetId`
+      )
     }
 
-    if (asset.multiLocation && hasJunction(asset.multiLocation, 'GlobalConsensus')) {
-      return getMoonbeamErc20Balance(node, asset.assetId, address)
-    }
-
-    return api.getBalanceAssetsPallet(address, BigInt(asset.assetId))
+    return getMoonbeamErc20Balance(node, asset.assetId, address)
   }
 
   if (node === 'Mythos') {

@@ -1,4 +1,4 @@
-import type { TAsset } from '@paraspell/assets'
+import type { TAsset, TForeignAsset } from '@paraspell/assets'
 import {
   findAssetByMultiLocation,
   getNativeAssetSymbol,
@@ -6,6 +6,7 @@ import {
   InvalidCurrencyError,
   isAssetEqual,
   isForeignAsset,
+  normalizeSymbol,
   type TMultiAsset,
   type TNativeAsset,
   type WithAmount
@@ -46,7 +47,8 @@ vi.mock('@paraspell/assets', async () => {
     isForeignAsset: vi.fn(),
     hasSupportForAsset: vi.fn(),
     findAssetByMultiLocation: vi.fn(),
-    getNativeAssetSymbol: vi.fn()
+    getNativeAssetSymbol: vi.fn(),
+    normalizeSymbol: vi.fn()
   }
 })
 
@@ -114,9 +116,10 @@ describe('AssetHubPolkadot', () => {
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    vi.resetAllMocks()
     assetHub = getNode<unknown, unknown, 'AssetHubPolkadot'>('AssetHubPolkadot')
     vi.mocked(getBridgeStatus).mockResolvedValue('Normal')
+    vi.mocked(normalizeSymbol).mockImplementation(sym => (sym ?? '').toUpperCase())
   })
 
   describe('handleBridgeTransfer', () => {
@@ -245,13 +248,14 @@ describe('AssetHubPolkadot', () => {
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
-      const spy = vi.spyOn(mockApi, 'callTxMethod')
+      const spy = vi.spyOn(mockApi, 'callTxMethod').mockResolvedValue('success')
 
       const input = {
         ...mockInput,
         asset: { symbol: 'ETH', assetId: '0x123', multiLocation: {} },
         destination: 'Ethereum'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
+
       const result = await assetHub.handleEthBridgeNativeTransfer(input)
 
       expect(result).toEqual('success')
@@ -376,11 +380,67 @@ describe('AssetHubPolkadot', () => {
       } as TXcmVersioned<TMultiLocation>)
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
-      const handleBifrostEthTransferSpy = vi.spyOn(assetHub, 'handleBifrostEthTransfer')
+      const handleLocalReserveTransferSpy = vi.spyOn(assetHub, 'handleLocalReserveTransfer')
 
       await assetHub.transferPolkadotXCM(mockInput)
 
-      expect(handleBifrostEthTransferSpy).toHaveBeenCalled()
+      expect(handleLocalReserveTransferSpy).toHaveBeenCalled()
+    })
+
+    it('should call handleLocalReserveTransfer when feeAsset is KSM', async () => {
+      const inputWithFeeAssetKSM = {
+        ...mockInput,
+        asset: {
+          symbol: 'KSM'
+        },
+        feeAsset: {
+          symbol: 'KSM'
+        },
+        destination: 'Moonbeam',
+        api: mockApi
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      vi.mocked(isAssetEqual).mockReturnValue(true)
+      vi.mocked(isForeignAsset).mockReturnValue(true)
+
+      const handleLocalReserveTransferSpy = vi
+        .spyOn(assetHub, 'handleLocalReserveTransfer')
+        .mockReturnValue({} as unknown)
+
+      await assetHub.transferPolkadotXCM(inputWithFeeAssetKSM)
+
+      expect(handleLocalReserveTransferSpy).toHaveBeenCalledWith(inputWithFeeAssetKSM)
+      expect(handleLocalReserveTransferSpy.mock.calls[0][1]).toBeUndefined()
+    })
+
+    it('should call handleLocalReserveTransfer  if asset is Ethereum asset ', async () => {
+      const ethAsset = {
+        symbol: 'USDC',
+        amount: '1000',
+        decimals: 6,
+        multiLocation: {
+          parents: 1,
+          interior: { X2: [{ Parachain: 1000 }, { GeneralKey: '0x...' }] }
+        }
+      } as TForeignAsset
+      const inputForEthereumAsset = {
+        ...mockInput,
+        asset: ethAsset,
+        destination: 'Acala',
+        api: mockApi
+      } as TPolkadotXCMTransferOptions<unknown, unknown>
+
+      vi.mocked(getOtherAssets).mockReturnValue([
+        { symbol: 'USDC', multiLocation: ethAsset.multiLocation }
+      ] as TForeignAsset[])
+      vi.mocked(findAssetByMultiLocation).mockReturnValue(ethAsset)
+      vi.mocked(isForeignAsset).mockReturnValue(true)
+
+      const handleLocalReserveTransferSpy = vi.spyOn(assetHub, 'handleLocalReserveTransfer')
+
+      await assetHub.transferPolkadotXCM(inputForEthereumAsset)
+
+      expect(handleLocalReserveTransferSpy).toHaveBeenCalledWith(inputForEthereumAsset, true)
     })
 
     it('should modify input for USDT currencySymbol', async () => {
@@ -540,9 +600,12 @@ describe('AssetHubPolkadot', () => {
         ...mockInput,
         senderAddress: '0xvalid',
         feeAsset: { symbol: 'DOT' } as TAsset,
-        asset: { symbol: 'KSM', amount: 10000 } as WithAmount<TNativeAsset>
+        asset: { symbol: 'ACA', amount: 10000 } as WithAmount<TNativeAsset>
       } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => assetHub['transferPolkadotXCM'](input)).toThrow(
+
+      vi.mocked(isAssetEqual).mockReturnValue(false)
+
+      expect(() => assetHub.transferPolkadotXCM(input)).toThrow(
         'Fee asset does not match transfer asset.'
       )
     })
@@ -751,6 +814,8 @@ describe('AssetHubPolkadot', () => {
         address: '0x1234567890abcdef'
       } as unknown as TTransferLocalOptions<unknown, unknown>
 
+      vi.mocked(isForeignAsset).mockReturnValueOnce(true)
+
       const spy = vi.spyOn(mockApi, 'callTxMethod')
 
       assetHub.transferLocalNonNativeAsset(mockInput)
@@ -776,6 +841,8 @@ describe('AssetHubPolkadot', () => {
         asset: { symbol: 'USDC', amount: '1000', multiLocation: {} },
         address: '0x1234567890abcdef'
       } as unknown as TTransferLocalOptions<unknown, unknown>
+
+      vi.mocked(isForeignAsset).mockReturnValueOnce(true)
 
       const spy = vi.spyOn(mockApi, 'callTxMethod')
 
