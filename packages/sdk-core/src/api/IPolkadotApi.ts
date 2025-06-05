@@ -11,7 +11,8 @@ import type {
   TDryRunCallBaseOptions,
   TDryRunNodeResultInternal,
   TDryRunXcmBaseOptions,
-  TSerializedApiCall
+  TSerializedApiCall,
+  TWeight
 } from '../types'
 import type { TApiOrUrl } from '../types/TApi'
 
@@ -36,6 +37,8 @@ export interface IPolkadotApi<TApi, TRes> {
     amountIn: bigint,
     includeFee?: boolean
   ): Promise<bigint | undefined>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getXcmWeight(xcm: any): Promise<TWeight>
   getBalanceNative(address: string): Promise<bigint>
   getBalanceNativeAcala(address: string, symbol: string): Promise<bigint>
   getBalanceForeignPolkadotXcm(address: string, id?: string): Promise<bigint>

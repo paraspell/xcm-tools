@@ -476,6 +476,19 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     })
   }
 
+  async getXcmWeight(xcm: any): Promise<TWeight> {
+    const weightResult = await this.api
+      .getUnsafeApi()
+      .apis.XcmPaymentApi.query_xcm_weight(!xcm.type ? transform(xcm) : xcm)
+
+    const { ref_time, proof_size } = weightResult.value
+
+    return {
+      refTime: ref_time,
+      proofSize: proof_size
+    }
+  }
+
   private async getXcmPaymentApiFee(xcm: any, asset: any): Promise<bigint> {
     const weight = await this.api.getUnsafeApi().apis.XcmPaymentApi.query_xcm_weight(xcm)
 
@@ -489,7 +502,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const feeResult = await this.api
       .getUnsafeApi()
-      .apis.XcmPaymentApi.query_weight_to_asset_fee(weight.value, {
+      .apis.XcmPaymentApi.query_weight_to_asset_fee(weight, {
         type: 'V4',
         value: transformedMultiLocation
       })

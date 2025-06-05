@@ -6,7 +6,6 @@ import {
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
-  isAssetEqual,
   isForeignAsset,
   normalizeSymbol
 } from '@paraspell/assets'
@@ -51,7 +50,7 @@ import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { createBeneficiaryMultiLocation, transformMultiLocation } from '../../utils/multiLocation'
 import { resolveParaId } from '../../utils/resolveParaId'
-import { createExecuteXcm } from '../../utils/transfer'
+import { createExecuteCall, createExecuteXcm } from '../../utils/transfer'
 import { validateAddress } from '../../utils/validateAddress'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
@@ -408,8 +407,10 @@ class AssetHubPolkadot<TApi, TRes>
       : 'limited_teleport_assets'
   }
 
-  private async handleExecuteTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
-    const { api, senderAddress, asset, feeAsset } = input
+  private async handleExecuteTransfer<TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): Promise<TSerializedApiCall> {
+    const { api, senderAddress, asset, feeAsset, version = Version.V4 } = input
 
     if (!senderAddress) {
       throw new InvalidParameterError('Please provide senderAddress')
@@ -424,11 +425,11 @@ class AssetHubPolkadot<TApi, TRes>
     const scaledMultiplier = BigInt(Math.floor(multiplier * 10 ** decimals))
     const MIN_FEE = (base * scaledMultiplier) / BigInt(10 ** decimals)
 
-    const dummyTx = createExecuteXcm(input, MAX_WEIGHT, MIN_FEE)
+    const call = createExecuteCall(createExecuteXcm(input, MIN_FEE, version), MAX_WEIGHT)
 
     const dryRunResult = await api.getDryRunCall({
       node: this.node,
-      tx: dummyTx,
+      tx: api.callTxMethod(call),
       address: senderAddress,
       isFeeAsset: !!feeAsset
     })
@@ -437,48 +438,46 @@ class AssetHubPolkadot<TApi, TRes>
       throw new DryRunFailedError(dryRunResult.failureReason)
     }
 
-    if (!dryRunResult.weight) {
-      throw new DryRunFailedError('weight not found')
-    }
-
     const paddedFee = (dryRunResult.fee * 120n) / 100n
 
-    return createExecuteXcm(input, dryRunResult.weight, paddedFee)
+    const xcm = createExecuteXcm(input, paddedFee, version)
+
+    const weight = await api.getXcmWeight(xcm)
+
+    return createExecuteCall(createExecuteXcm(input, paddedFee, version), weight)
   }
 
-  transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    const { scenario, asset, destination, feeAsset, overriddenAsset } = input
+  async transferPolkadotXCM<TApi, TRes>(
+    input: TPolkadotXCMTransferOptions<TApi, TRes>
+  ): Promise<TRes> {
+    const { api, scenario, asset, destination, feeAsset, overriddenAsset } = input
 
     if (feeAsset) {
       if (overriddenAsset) {
         throw new InvalidCurrencyError('Cannot use overridden multi-assets with XCM execute')
       }
 
-      if (!isAssetEqual(feeAsset, asset)) {
-        throw new InvalidCurrencyError(`Fee asset does not match transfer asset.`)
-      }
-
       if (normalizeSymbol(asset.symbol) === normalizeSymbol('KSM')) {
-        return Promise.resolve(this.handleLocalReserveTransfer(input))
+        return this.handleLocalReserveTransfer(input)
       }
 
       const isNativeAsset = asset.symbol === this.getNativeAssetSymbol()
 
       if (!isNativeAsset) {
-        return Promise.resolve(this.handleExecuteTransfer(input))
+        return api.callTxMethod(await this.handleExecuteTransfer(input))
       }
     }
 
     if (destination === 'AssetHubKusama') {
-      return Promise.resolve(this.handleBridgeTransfer<TApi, TRes>(input, 'Kusama'))
+      return this.handleBridgeTransfer<TApi, TRes>(input, 'Kusama')
     }
 
     if (destination === 'Ethereum') {
-      return Promise.resolve(this.handleEthBridgeTransfer<TApi, TRes>(input))
+      return this.handleEthBridgeTransfer<TApi, TRes>(input)
     }
 
     if (destination === 'Mythos') {
-      return Promise.resolve(this.handleMythosTransfer(input))
+      return this.handleMythosTransfer(input)
     }
 
     const isEthereumAsset =
@@ -486,11 +485,11 @@ class AssetHubPolkadot<TApi, TRes>
       findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
 
     if (destination === 'BifrostPolkadot' && isEthereumAsset) {
-      return Promise.resolve(this.handleLocalReserveTransfer(input))
+      return this.handleLocalReserveTransfer(input)
     }
 
     if (isEthereumAsset) {
-      return Promise.resolve(this.handleLocalReserveTransfer(input, true))
+      return this.handleLocalReserveTransfer(input, true)
     }
 
     const isSystemNode =
@@ -527,9 +526,7 @@ class AssetHubPolkadot<TApi, TRes>
 
     const modifiedInput = this.patchInput(input)
 
-    return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, method, 'Unlimited')
-    )
+    return PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, method, 'Unlimited')
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
