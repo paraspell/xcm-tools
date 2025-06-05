@@ -62,22 +62,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
     ).rejects.toThrow(InvalidCurrencyError)
   })
 
-  it('should return balance for Moonbeam node', async () => {
-    const mockApi = {
-      getBalanceAssetsPallet: vi.fn().mockResolvedValue(300n)
-    } as unknown as IPolkadotApi<unknown, unknown>
-
-    const result = await getBalanceForeignPolkadotXcm(mockApi, 'Moonbeam', 'some-address', {
-      symbol: 'DOT',
-      assetId: '1'
-    })
-
-    expect(result).toBe(300n)
-  })
-
-  it('Moonbeam – asset with GlobalConsensus junction uses getMoonbeamBalance', async () => {
-    vi.mocked(hasJunction).mockImplementation((_, kind) => kind === 'GlobalConsensus')
-
+  it('Moonbeam - uses getMoonbeamBalance', async () => {
     const MOONBEAM_BAL = 555n
     vi.mocked(getMoonbeamErc20Balance).mockResolvedValue(MOONBEAM_BAL)
 
@@ -101,16 +86,26 @@ describe('getBalanceForeignPolkadotXcm', () => {
   })
 
   it('should return balance for Moonriver node', async () => {
-    const mockApi = {
-      getBalanceAssetsPallet: vi.fn().mockResolvedValue(400n)
+    const MOONBEAM_BAL = 555n
+    vi.mocked(getMoonbeamErc20Balance).mockResolvedValue(MOONBEAM_BAL)
+
+    const api = {
+      getBalanceAssetsPallet: vi.fn()
     } as unknown as IPolkadotApi<unknown, unknown>
 
-    const result = await getBalanceForeignPolkadotXcm(mockApi, 'Moonriver', 'some-address', {
+    const multiloc = {} as TMultiLocation
+
+    const spy = vi.spyOn(api, 'getBalanceAssetsPallet')
+
+    const res = await getBalanceForeignPolkadotXcm(api, 'Moonriver', 'addr', {
       symbol: 'DOT',
-      assetId: '1'
+      assetId: '1234',
+      multiLocation: multiloc
     })
 
-    expect(result).toBe(400n)
+    expect(res).toBe(MOONBEAM_BAL)
+    expect(getMoonbeamErc20Balance).toHaveBeenCalledWith('Moonriver', '1234', 'addr')
+    expect(spy).not.toHaveBeenCalled()
   })
 
   it('Moonbeam - throws if assetId missing', async () => {
@@ -121,7 +116,7 @@ describe('getBalanceForeignPolkadotXcm', () => {
     ).rejects.toThrow(InvalidCurrencyError)
   })
 
-  it('Moonriver - should throw error if asset is not foreign', async () => {
+  it('Moonriver - should throw error if asset has no multi-location', async () => {
     const mockApi = {} as unknown as IPolkadotApi<unknown, unknown>
 
     await expect(
