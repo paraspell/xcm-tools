@@ -1,16 +1,17 @@
-import { InvalidParameterError } from '../../errors'
-import { createDestination } from '../../pallets/xcmPallet/utils'
-import type { TSerializedApiCall, TWeight } from '../../types'
-import { type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { InvalidCurrencyError, isAssetEqual } from '@paraspell/assets'
+
+import { addXcmVersionHeader, createDestination } from '../../pallets/xcmPallet/utils'
+import type { Version } from '../../types'
+import { type TPolkadotXCMTransferOptions } from '../../types'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'
 
 export const createExecuteXcm = <TApi, TRes>(
   input: TPolkadotXCMTransferOptions<TApi, TRes>,
-  weight: TWeight,
-  executionFee: bigint
-): TRes => {
-  const { api, version = Version.V4, asset, scenario, destination, paraIdTo, address } = input
+  executionFee: bigint,
+  version: Version
+) => {
+  const { api, asset, scenario, destination, paraIdTo, address, feeAsset } = input
 
   const dest = createDestination(scenario, version, destination, paraIdTo)
 
@@ -23,92 +24,93 @@ export const createExecuteXcm = <TApi, TRes>(
     paraId: paraIdTo
   })
 
-  if (!asset.multiLocation) {
-    throw new InvalidParameterError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
+  if (!asset.multiLocation || (feeAsset && !feeAsset.multiLocation)) {
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
   }
 
-  const transformedMultiLocation = transformMultiLocation(asset.multiLocation)
+  const assetML = transformMultiLocation(asset.multiLocation)
+  const feeML = transformMultiLocation(feeAsset?.multiLocation ?? asset.multiLocation)
+
+  const sameFeeAsset = feeAsset && isAssetEqual(asset, feeAsset)
 
   const amountWithoutFee = BigInt(asset.amount) - executionFee
 
-  const call: TSerializedApiCall = {
-    module: 'PolkadotXcm',
-    method: 'execute',
-    parameters: {
-      message: {
-        [version]: [
-          {
-            WithdrawAsset: [
+  const xcm = [
+    {
+      WithdrawAsset: [
+        {
+          id: assetML,
+          fun: {
+            Fungible: BigInt(asset.amount)
+          }
+        },
+        ...(!sameFeeAsset && feeAsset?.multiLocation
+          ? [
               {
-                id: transformedMultiLocation,
-                fun: {
-                  Fungible: BigInt(asset.amount)
-                }
-              }
-            ]
-          },
-          {
-            BuyExecution: {
-              fees: {
-                id: transformedMultiLocation,
+                id: transformMultiLocation(feeAsset.multiLocation),
                 fun: {
                   Fungible: executionFee
                 }
-              },
-              weight_limit: {
-                Limited: {
-                  ref_time: 150n,
-                  proof_size: 0n
-                }
               }
+            ]
+          : [])
+      ]
+    },
+    {
+      BuyExecution: {
+        fees: {
+          id: feeML,
+          fun: {
+            Fungible: executionFee
+          }
+        },
+        weight_limit: {
+          Limited: {
+            ref_time: 150n,
+            proof_size: 0n
+          }
+        }
+      }
+    },
+    {
+      DepositReserveAsset: {
+        assets: {
+          Definite: [
+            {
+              id: assetML,
+              fun: {
+                Fungible: sameFeeAsset ? amountWithoutFee : BigInt(asset.amount)
+              }
+            }
+          ]
+        },
+        dest,
+        xcm: [
+          {
+            BuyExecution: {
+              fees: {
+                id: asset.multiLocation,
+                fun: {
+                  Fungible: sameFeeAsset ? amountWithoutFee - executionFee : BigInt(asset.amount)
+                }
+              },
+              weight_limit: 'Unlimited'
             }
           },
           {
-            DepositReserveAsset: {
+            DepositAsset: {
               assets: {
-                Definite: [
-                  {
-                    id: transformedMultiLocation,
-                    fun: {
-                      Fungible: amountWithoutFee
-                    }
-                  }
-                ]
-              },
-              dest,
-              xcm: [
-                {
-                  BuyExecution: {
-                    fees: {
-                      id: asset.multiLocation,
-                      fun: {
-                        Fungible: amountWithoutFee - executionFee
-                      }
-                    },
-                    weight_limit: 'Unlimited'
-                  }
-                },
-                {
-                  DepositAsset: {
-                    assets: {
-                      Wild: {
-                        AllCounted: 1
-                      }
-                    },
-                    beneficiary
-                  }
+                Wild: {
+                  AllCounted: 1
                 }
-              ]
+              },
+              beneficiary
             }
           }
         ]
-      },
-      max_weight: {
-        ref_time: weight.refTime,
-        proof_size: weight.proofSize
       }
     }
-  }
+  ]
 
-  return api.callTxMethod(call)
+  return addXcmVersionHeader(xcm, version)
 }

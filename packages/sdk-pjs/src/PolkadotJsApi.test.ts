@@ -11,14 +11,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import PolkadotJsApi from './PolkadotJsApi'
 import type { Extrinsic, TPjsApi } from './types'
 
-vi.mock('@paraspell/sdk-core', async importOriginal => {
-  return {
-    ...(await importOriginal<typeof import('@paraspell/sdk-core')>()),
-    computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
-    createApiInstanceForNodePjs: vi.fn().mockResolvedValue({} as ApiPromise),
-    resolveModuleError: vi.fn().mockReturnValue('ModuleError')
-  }
-})
+vi.mock('@paraspell/sdk-core', async importOriginal => ({
+  ...(await importOriginal()),
+  computeFeeFromDryRunPjs: vi.fn().mockReturnValue(1000n),
+  createApiInstanceForNodePjs: vi.fn().mockResolvedValue({} as ApiPromise),
+  resolveModuleError: vi.fn().mockReturnValue('ModuleError')
+}))
 
 describe('PolkadotJsApi', () => {
   let polkadotApi: PolkadotJsApi
@@ -35,6 +33,9 @@ describe('PolkadotJsApi', () => {
         dryRunApi: {
           dryRunCall: vi.fn(),
           dryRunXcm: vi.fn()
+        },
+        xcmPaymentApi: {
+          queryXcmWeight: vi.fn()
         },
         assetConversionApi: {
           quotePriceExactTokensForTokens: vi.fn().mockResolvedValue({
@@ -743,6 +744,25 @@ describe('PolkadotJsApi', () => {
           isFeeAsset: false
         })
       ).rejects.toThrow(sdkCore.NodeNotSupportedError)
+    })
+  })
+
+  describe('getXcmWeight', () => {
+    it('should return the weight from the XCM payload', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const xcm: any = []
+      const mockResponse = {
+        toJSON: () => ({
+          ok: { refTime: '1000', proofSize: '2000' }
+        })
+      } as unknown as Codec
+
+      vi.mocked(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).mockResolvedValue(mockResponse)
+
+      const result = await polkadotApi.getXcmWeight(xcm)
+
+      expect(mockApiPromise.call.xcmPaymentApi.queryXcmWeight).toHaveBeenCalledWith(xcm)
+      expect(result).toEqual({ refTime: '1000', proofSize: '2000' })
     })
   })
 

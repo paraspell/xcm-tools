@@ -56,14 +56,12 @@ vi.mock('../utils/createApiInstanceForNode', () => ({
   createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient)
 }))
 
-vi.mock('@paraspell/sdk-core', async importOriginal => {
-  return {
-    ...(await importOriginal<typeof import('@paraspell/sdk-core')>()),
-    computeFeeFromDryRun: vi.fn(),
-    createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient),
-    getAssetsObject: vi.fn()
-  }
-})
+vi.mock('@paraspell/sdk-core', async importOriginal => ({
+  ...(await importOriginal()),
+  computeFeeFromDryRun: vi.fn(),
+  createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient),
+  getAssetsObject: vi.fn()
+}))
 
 describe('PapiApi', () => {
   let papiApi: PapiApi
@@ -105,7 +103,7 @@ describe('PapiApi', () => {
             quote_price_exact_tokens_for_tokens: vi.fn().mockResolvedValue(1n)
           },
           XcmPaymentApi: {
-            query_xcm_weight: vi.fn().mockResolvedValue({ proof_size: 0n, ref_time: 0n }),
+            query_xcm_weight: vi.fn(),
             query_weight_to_asset_fee: vi.fn().mockResolvedValue({ value: 100n })
           }
         },
@@ -984,6 +982,25 @@ describe('PapiApi', () => {
         ])
         expect(result.destParaId).toBe(2000)
       }
+    })
+  })
+
+  describe('getXcmWeight', () => {
+    it('should return the weight for a given XCM payload', async () => {
+      const mockXcmPayload = { some: 'xcm-payload' }
+      const mockWeight = { ref_time: 100n, proof_size: 200n }
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
+        success: true,
+        value: mockWeight
+      })
+      vi.mocked(transform).mockReturnValue({ some: 'xcm-payload' })
+
+      const result = await papiApi.getXcmWeight(mockXcmPayload)
+
+      expect(unsafeApi.apis.XcmPaymentApi.query_xcm_weight).toHaveBeenCalledWith(mockXcmPayload)
+
+      expect(result).toEqual({ refTime: 100n, proofSize: 200n })
     })
   })
 

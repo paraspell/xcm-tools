@@ -4,7 +4,6 @@ import {
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
-  isAssetEqual,
   isForeignAsset,
   normalizeSymbol,
   type TMultiAsset,
@@ -25,7 +24,7 @@ import { type TPolkadotXCMTransferOptions, Version } from '../../types'
 import { getNode } from '../../utils'
 import { createVersionedBeneficiary } from '../../utils'
 import { transformMultiLocation } from '../../utils/multiLocation'
-import { createExecuteXcm } from '../../utils/transfer'
+import { createExecuteCall, createExecuteXcm } from '../../utils/transfer'
 import { validateAddress } from '../../utils/validateAddress'
 import ParachainNode from '../ParachainNode'
 import type AssetHubPolkadot from './AssetHubPolkadot'
@@ -42,7 +41,6 @@ vi.mock('@paraspell/assets', async () => {
     ...actual,
     getOtherAssets: vi.fn(),
     getParaId: vi.fn(),
-    isAssetEqual: vi.fn(),
     InvalidCurrencyError: class extends Error {},
     isForeignAsset: vi.fn(),
     hasSupportForAsset: vi.fn(),
@@ -74,7 +72,8 @@ vi.mock('../../utils/validateAddress', () => ({
 }))
 
 vi.mock('../../utils/transfer', () => ({
-  createExecuteXcm: vi.fn()
+  createExecuteXcm: vi.fn(),
+  createExecuteCall: vi.fn()
 }))
 
 vi.mock('../../utils/ethereum/generateMessageId', () => ({
@@ -94,7 +93,8 @@ describe('AssetHubPolkadot', () => {
   let assetHub: AssetHubPolkadot<unknown, unknown>
 
   const mockApi = {
-    callTxMethod: vi.fn().mockResolvedValue('success'),
+    callTxMethod: vi.fn(),
+    getXcmWeight: vi.fn(),
     createApiForNode: vi.fn().mockResolvedValue({
       getFromStorage: vi.fn().mockResolvedValue('0x0000000000000000')
     }),
@@ -284,7 +284,7 @@ describe('AssetHubPolkadot', () => {
   })
 
   describe('transferPolkadotXCM', () => {
-    it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', () => {
+    it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', async () => {
       const input = {
         ...mockInput,
         asset: { symbol: 'DOT', amount: '1000', isNative: true } as WithAmount<TNativeAsset>,
@@ -293,10 +293,12 @@ describe('AssetHubPolkadot', () => {
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       vi.mocked(isForeignAsset).mockReturnValue(false)
 
-      expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+      await expect(() => assetHub.transferPolkadotXCM(input)).rejects.toThrow(
+        ScenarioNotSupportedError
+      )
     })
 
-    it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', () => {
+    it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', async () => {
       const input = {
         ...mockInput,
         asset: { symbol: 'KSM', amount: '1000', isNative: true } as WithAmount<TNativeAsset>,
@@ -305,7 +307,9 @@ describe('AssetHubPolkadot', () => {
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       vi.mocked(isForeignAsset).mockReturnValue(false)
 
-      expect(() => assetHub.transferPolkadotXCM(input)).toThrow(ScenarioNotSupportedError)
+      await expect(() => assetHub.transferPolkadotXCM(input)).rejects.toThrow(
+        ScenarioNotSupportedError
+      )
     })
 
     it('should process a valid transfer for non-ParaToPara scenario', async () => {
@@ -400,7 +404,6 @@ describe('AssetHubPolkadot', () => {
         api: mockApi
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-      vi.mocked(isAssetEqual).mockReturnValue(true)
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
       const handleLocalReserveTransferSpy = vi
@@ -550,20 +553,6 @@ describe('AssetHubPolkadot', () => {
       await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow()
     })
 
-    it('should throw error if dry run weight is not found', async () => {
-      const input = {
-        ...mockInput,
-        senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation, decimals: 12 }
-      }
-      mockApi.getDryRunCall = vi
-        .fn()
-        .mockResolvedValue({ success: true, fee: 10000n, weight: null })
-      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
-        'Dry run failed: weight not found'
-      )
-    })
-
     it('should successfully create and return executeXcm transaction', async () => {
       const input = {
         ...mockInput,
@@ -571,42 +560,33 @@ describe('AssetHubPolkadot', () => {
         asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation, decimals: 12 }
       }
       input.asset.amount = '1000000'
-      const dryRunResult = { success: true, fee: 10000n, weight: 5000n }
+      const dryRunResult = { success: true, fee: 10000n }
       mockApi.getDryRunCall = vi.fn().mockResolvedValue(dryRunResult)
+      mockApi.getXcmWeight = vi.fn().mockResolvedValue(12000n)
       vi.mocked(transformMultiLocation).mockReturnValue({
         transformed: true
       } as unknown as TMultiLocation)
       mockApi.quoteAhPrice = vi.fn().mockResolvedValue(500n)
-      vi.mocked(createExecuteXcm).mockReturnValueOnce('dummyTx').mockReturnValueOnce('finalTx')
+      vi.mocked(createExecuteXcm)
+        .mockReturnValueOnce({ [Version.V4]: {} } as ReturnType<typeof createExecuteXcm>)
+        .mockReturnValueOnce({ [Version.V3]: {} } as ReturnType<typeof createExecuteXcm>)
+      vi.mocked(createExecuteCall)
+        .mockReturnValueOnce('finalTx' as unknown as ReturnType<typeof createExecuteCall>)
+        .mockReturnValueOnce('finalTx' as unknown as ReturnType<typeof createExecuteCall>)
       const result = await assetHub['handleExecuteTransfer'](input)
       expect(result).toBe('finalTx')
-      expect(createExecuteXcm).toHaveBeenCalledWith(input, dryRunResult.weight, 12000n)
+      expect(createExecuteXcm).toHaveBeenCalledWith(input, 12000n, Version.V4)
     })
 
-    it('should throw error if using overridden multi-assets with xcm execute transfer', () => {
+    it('should throw error if using overridden multi-assets with xcm execute transfer', async () => {
       const input = {
         ...mockInput,
         overriddenAsset: {},
         senderAddress: '0xvalid',
         feeAsset: {} as TAsset
       } as TPolkadotXCMTransferOptions<unknown, unknown>
-      expect(() => assetHub['transferPolkadotXCM'](input)).toThrow(
+      await expect(() => assetHub['transferPolkadotXCM'](input)).rejects.toThrow(
         'Cannot use overridden multi-assets with XCM execute'
-      )
-    })
-
-    it('should throw error if fee asset does not match', () => {
-      const input = {
-        ...mockInput,
-        senderAddress: '0xvalid',
-        feeAsset: { symbol: 'DOT' } as TAsset,
-        asset: { symbol: 'ACA', amount: 10000 } as WithAmount<TNativeAsset>
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      vi.mocked(isAssetEqual).mockReturnValue(false)
-
-      expect(() => assetHub.transferPolkadotXCM(input)).toThrow(
-        'Fee asset does not match transfer asset.'
       )
     })
 
@@ -624,13 +604,13 @@ describe('AssetHubPolkadot', () => {
         scenario: 'ParaToPara'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-      vi.mocked(isAssetEqual).mockReturnValue(true)
       vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+      mockApi.callTxMethod = vi.fn().mockResolvedValue('mockedExecuteTransferTxOutput')
 
       const handleExecuteTransferSpy = vi
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .spyOn(assetHub as any, 'handleExecuteTransfer')
-        .mockResolvedValue('mockedExecuteTransferTxOutput')
+        .mockResolvedValue({})
 
       const result = await assetHub.transferPolkadotXCM(inputForNonNativeAsset)
 

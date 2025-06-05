@@ -328,6 +328,12 @@ class PolkadotJsApi implements IPolkadotApi<TPjsApi, Extrinsic> {
     return { success: true, fee, weight, forwardedXcms, destParaId }
   }
 
+  async getXcmWeight(xcm: any): Promise<TWeight> {
+    const result = await this.api.call.xcmPaymentApi.queryXcmWeight(xcm)
+    const resultJson = result.toJSON() as any
+    return resultJson.ok
+  }
+
   async getDryRunXcm({
     originLocation,
     xcm,

@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { InvalidCurrencyError } from '@paraspell/assets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { createDestination } from '../../pallets/xcmPallet/utils'
-import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
+import { addXcmVersionHeader, createDestination } from '../../pallets/xcmPallet/utils'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { Version } from '../../types'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'
 import { createExecuteXcm } from './createExecuteXcm'
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
-  createDestination: vi.fn()
+  createDestination: vi.fn(),
+  addXcmVersionHeader: vi.fn()
 }))
 
 vi.mock('../createBeneficiary', () => ({
@@ -24,6 +26,7 @@ vi.mock('../multiLocation', () => ({
 describe('createExecuteXcm', () => {
   const dummyDest = 'destValue' as unknown as TMultiLocation
   const dummyBeneficiary = 'beneficiaryValue' as unknown as TMultiLocation
+  const version = Version.V4
 
   beforeEach(() => {
     vi.mocked(createDestination).mockReturnValue(dummyDest)
@@ -31,6 +34,7 @@ describe('createExecuteXcm', () => {
     vi.mocked(transformMultiLocation).mockReturnValue(
       'transformedLocation' as unknown as TMultiLocation
     )
+    vi.mocked(addXcmVersionHeader).mockImplementation((xcm, version) => ({ [version]: xcm }))
   })
 
   afterEach(() => {
@@ -38,9 +42,7 @@ describe('createExecuteXcm', () => {
   })
 
   it('should throw an error if asset.multiLocation is not provided', () => {
-    const fakeApi = {
-      callTxMethod: vi.fn()
-    }
+    const fakeApi = {}
     const input = {
       api: fakeApi,
       asset: {
@@ -51,24 +53,20 @@ describe('createExecuteXcm', () => {
       paraIdTo: 200,
       address: 'address'
     } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
-    const weight = {
-      refTime: 123n,
-      proofSize: 456n
-    }
     const executionFee = 50n
-    expect(() => createExecuteXcm(input, weight, executionFee)).toThrow(
-      'Asset {"amount":"1000"} has no multiLocation'
-    )
+    expect(() => createExecuteXcm(input, executionFee, version)).toThrow(InvalidCurrencyError)
   })
 
   it('should construct the correct call and return the api.callTxMethod result when version is provided', () => {
-    const fakeApi = {
-      callTxMethod: vi.fn().mockReturnValue('result')
-    }
+    const fakeApi = {}
     const input = {
       api: fakeApi,
       version: Version.V4,
       asset: {
+        multiLocation: { foo: 'bar' },
+        amount: '1000'
+      },
+      feeAsset: {
         multiLocation: { foo: 'bar' },
         amount: '1000'
       },
@@ -77,36 +75,28 @@ describe('createExecuteXcm', () => {
       paraIdTo: 200,
       address: 'address'
     } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
-    const weight = {
-      refTime: 123n,
-      proofSize: 456n
-    }
+
     const executionFee = 50n
 
-    const result = createExecuteXcm(input, weight, executionFee)
-    expect(result).toBe('result')
-    expect(fakeApi.callTxMethod).toHaveBeenCalledTimes(1)
-    const callArg = fakeApi.callTxMethod.mock.calls[0][0] as TSerializedApiCall
-    expect(callArg.module).toBe('PolkadotXcm')
-    expect(callArg.method).toBe('execute')
-    expect(callArg.parameters.max_weight).toEqual({
-      ref_time: weight.refTime,
-      proof_size: weight.proofSize
-    })
+    const result = createExecuteXcm(input, executionFee, version)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const message = (callArg.parameters.message as Record<string, any>)[Version.V4] as any[]
+    const message = result.V4 as any[]
+
     expect(Array.isArray(message)).toBe(true)
     expect(message).toHaveLength(3)
+
     const withdrawAsset = message[0].WithdrawAsset
     expect(withdrawAsset).toHaveLength(1)
     expect(withdrawAsset[0].id).toBe('transformedLocation')
     expect(withdrawAsset[0].fun).toEqual({ Fungible: 1000n })
+
     const buyExecution = message[1].BuyExecution
     expect(buyExecution.fees.id).toBe('transformedLocation')
     expect(buyExecution.fees.fun).toEqual({ Fungible: executionFee })
     expect(buyExecution.weight_limit).toEqual({
       Limited: { ref_time: 150n, proof_size: 0n }
     })
+
     const depositReserveAsset = message[2].DepositReserveAsset
     expect(depositReserveAsset.assets.Definite[0]).toEqual({
       id: 'transformedLocation',
@@ -122,10 +112,8 @@ describe('createExecuteXcm', () => {
     expect(depositReserveAsset.xcm[1].DepositAsset.beneficiary).toBe('beneficiaryValue')
   })
 
-  it('should default to Version.V4 when version is not provided', () => {
-    const fakeApi = {
-      callTxMethod: vi.fn().mockReturnValue('defaultResult')
-    }
+  it('should call createDestination and createBeneficiary with correct args', () => {
+    const fakeApi = {}
     const input = {
       api: fakeApi,
       asset: {
@@ -137,17 +125,13 @@ describe('createExecuteXcm', () => {
       paraIdTo: 300,
       address: 'address-default'
     } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
-    const weight = {
-      refTime: 500n,
-      proofSize: 600n
-    }
     const executionFee = 100n
 
-    const result = createExecuteXcm(input, weight, executionFee)
-    expect(result).toBe('defaultResult')
+    createExecuteXcm(input, executionFee, version)
+
     expect(createDestination).toHaveBeenCalledWith(
       input.scenario,
-      Version.V4,
+      version,
       input.destination,
       input.paraIdTo
     )
@@ -156,7 +140,7 @@ describe('createExecuteXcm', () => {
       scenario: input.scenario,
       pallet: 'PolkadotXcm',
       recipientAddress: input.address,
-      version: Version.V4,
+      version,
       paraId: input.paraIdTo
     })
   })
