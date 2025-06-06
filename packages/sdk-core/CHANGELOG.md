@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.2...sdk-core-v10.4.3) (2025-06-06)
+
+
+### Bug Fixes
+
+* **sdk-core:** Allow different fee assets for execute call ✨ ([763685d](https://github.com/paraspell/xcm-tools/commit/763685de9d205d1654249903db06e0c2ed31ad07))
+
 ## [10.4.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.1...sdk-core-v10.4.2) (2025-06-05)
 
 
