@@ -32,6 +32,7 @@ import {
   createVersionedMultiAssets
 } from '../../pallets/xcmPallet/utils'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
+import { transferExecute } from '../../transfer/transferExecute'
 import type {
   TDestination,
   TPolkadotXcmMethod,
@@ -50,8 +51,6 @@ import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { generateAddressMultiLocationV4 } from '../../utils/generateAddressMultiLocationV4'
 import { createBeneficiaryMultiLocation, transformMultiLocation } from '../../utils/multiLocation'
 import { resolveParaId } from '../../utils/resolveParaId'
-import { createExecuteCall, createExecuteXcm } from '../../utils/transfer'
-import { validateAddress } from '../../utils/validateAddress'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
 
@@ -407,46 +406,6 @@ class AssetHubPolkadot<TApi, TRes>
       : 'limited_teleport_assets'
   }
 
-  private async handleExecuteTransfer<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
-  ): Promise<TSerializedApiCall> {
-    const { api, senderAddress, asset, feeAsset, version = Version.V4 } = input
-
-    if (!senderAddress) {
-      throw new InvalidParameterError('Please provide senderAddress')
-    }
-
-    validateAddress(senderAddress, this.node, false)
-
-    const decimals = asset.decimals as number
-    const multiplier = decimals > 10 ? 0.4 : 0.15
-
-    const base = BigInt(10 ** decimals)
-    const scaledMultiplier = BigInt(Math.floor(multiplier * 10 ** decimals))
-    const MIN_FEE = (base * scaledMultiplier) / BigInt(10 ** decimals)
-
-    const call = createExecuteCall(createExecuteXcm(input, MIN_FEE, version), MAX_WEIGHT)
-
-    const dryRunResult = await api.getDryRunCall({
-      node: this.node,
-      tx: api.callTxMethod(call),
-      address: senderAddress,
-      isFeeAsset: !!feeAsset
-    })
-
-    if (!dryRunResult.success) {
-      throw new DryRunFailedError(dryRunResult.failureReason)
-    }
-
-    const paddedFee = (dryRunResult.fee * 120n) / 100n
-
-    const xcm = createExecuteXcm(input, paddedFee, version)
-
-    const weight = await api.getXcmWeight(xcm)
-
-    return createExecuteCall(createExecuteXcm(input, paddedFee, version), weight)
-  }
-
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
@@ -464,7 +423,7 @@ class AssetHubPolkadot<TApi, TRes>
       const isNativeAsset = asset.symbol === this.getNativeAssetSymbol()
 
       if (!isNativeAsset) {
-        return api.callTxMethod(await this.handleExecuteTransfer(input))
+        return api.callTxMethod(await transferExecute(this.node, input))
       }
     }
 
