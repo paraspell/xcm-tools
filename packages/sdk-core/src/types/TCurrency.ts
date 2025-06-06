@@ -1,7 +1,5 @@
 import type { TMultiAsset } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
-
-import type { Version } from './TTransfer'
+import type { TMultiLocation, Version } from '@paraspell/sdk-common'
 
 export type OneKey<K extends string, V = unknown> = {
   [P in K]: Record<P, V> & Partial<Record<Exclude<K, P>, never>> extends infer O

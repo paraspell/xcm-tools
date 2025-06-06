@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { InvalidCurrencyError } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import { type TMultiLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { addXcmVersionHeader, createDestination } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'
 import { createExecuteXcm } from './createExecuteXcm'

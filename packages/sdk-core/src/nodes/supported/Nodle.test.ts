@@ -1,8 +1,8 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Nodle from './Nodle'
 
@@ -27,7 +27,7 @@ describe('Nodle', () => {
     expect(nodle.node).toBe('Nodle')
     expect(nodle.info).toBe('nodle')
     expect(nodle.type).toBe('polkadot')
-    expect(nodle.version).toBe(Version.V3)
+    expect(nodle.version).toBe(Version.V4)
   })
 
   it('should call transferPolkadotXCM with the correct arguments', async () => {

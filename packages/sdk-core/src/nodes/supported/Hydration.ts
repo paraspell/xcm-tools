@@ -6,7 +6,7 @@ import {
   InvalidCurrencyError,
   isForeignAsset
 } from '@paraspell/assets'
-import { hasJunction, Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { hasJunction, Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
 import { createMultiAsset } from '../../pallets/xcmPallet/utils'
@@ -18,7 +18,7 @@ import type {
   TSerializedApiCall,
   TTransferLocalOptions
 } from '../../types'
-import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
+import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { createBeneficiaryMultiLocation } from '../../utils'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
@@ -51,13 +51,11 @@ class Hydration<TApi, TRes>
   private static NATIVE_ASSET_ID = 0
 
   constructor() {
-    super('Hydration', 'hydradx', 'polkadot', Version.V3)
+    super('Hydration', 'hydradx', 'polkadot', Version.V4)
   }
 
   transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {
     const { api, asset, scenario, version, destination } = input
-
-    const versionOrDefault = version ?? Version.V3
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
@@ -65,24 +63,22 @@ class Hydration<TApi, TRes>
       parameters: {
         dest: this.createVersionedDestination(
           scenario,
-          versionOrDefault,
+          version,
           destination,
           getParaId('AssetHubPolkadot')
         ),
         assets: {
-          [versionOrDefault]: [createMultiAsset(versionOrDefault, asset.amount, DOT_MULTILOCATION)]
+          [version]: [createMultiAsset(version, asset.amount, DOT_MULTILOCATION)]
         },
         assets_transfer_type: 'DestinationReserve',
         remote_fees_id: {
-          [versionOrDefault]: {
-            Concrete: {
-              parents: Parents.ONE,
-              interior: 'Here'
-            }
+          [version]: {
+            parents: Parents.ONE,
+            interior: 'Here'
           }
         },
         fees_transfer_type: 'DestinationReserve',
-        custom_xcm_on_dest: createCustomXcmAh(input, versionOrDefault),
+        custom_xcm_on_dest: createCustomXcmAh(input, version),
         weight_limit: 'Unlimited'
       }
     }

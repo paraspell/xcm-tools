@@ -1,10 +1,10 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Peaq from './Peaq'
 
@@ -27,7 +27,7 @@ describe('Peaq', () => {
     expect(peaq.node).toBe('Peaq')
     expect(peaq.info).toBe('peaq')
     expect(peaq.type).toBe('polkadot')
-    expect(peaq.version).toBe(Version.V3)
+    expect(peaq.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with valid scenario', () => {

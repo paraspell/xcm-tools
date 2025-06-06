@@ -1,8 +1,8 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TXTokensTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Quartz from './Quartz'
 
@@ -24,7 +24,7 @@ describe('Quartz', () => {
     expect(quartz.node).toBe('Quartz')
     expect(quartz.info).toBe('quartz')
     expect(quartz.type).toBe('kusama')
-    expect(quartz.version).toBe(Version.V3)
+    expect(quartz.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with asset id', () => {

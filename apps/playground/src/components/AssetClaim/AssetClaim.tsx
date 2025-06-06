@@ -91,10 +91,8 @@ const AssetClaim = () => {
             fungible: [
               {
                 id: {
-                  Concrete: {
-                    parents: from === 'Polkadot' || from === 'Kusama' ? 0 : 1,
-                    interior: 'Here',
-                  },
+                  parents: from === 'Polkadot' || from === 'Kusama' ? 0 : 1,
+                  interior: 'Here',
                 },
                 fun: { Fungible: amount },
               },
@@ -114,11 +112,9 @@ const AssetClaim = () => {
           .fungible([
             {
               id: {
-                Concrete: {
-                  parents: from === 'Polkadot' || from === 'Kusama' ? 0 : 1,
-                  interior: {
-                    Here: null,
-                  },
+                parents: from === 'Polkadot' || from === 'Kusama' ? 0 : 1,
+                interior: {
+                  Here: null,
                 },
               },
               fun: { Fungible: amount },

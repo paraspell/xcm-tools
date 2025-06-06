@@ -1,7 +1,7 @@
 import { InvalidCurrencyError, isAssetEqual } from '@paraspell/assets'
+import type { Version } from '@paraspell/sdk-common'
 
 import { addXcmVersionHeader, createDestination } from '../../pallets/xcmPallet/utils'
-import type { Version } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'

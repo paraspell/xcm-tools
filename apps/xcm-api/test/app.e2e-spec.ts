@@ -986,21 +986,19 @@ describe('XCM API (e2e)', () => {
       const createCurrency = (fungible: string | bigint): TMultiAsset[] => [
         {
           id: {
-            Concrete: {
-              parents: 1,
-              interior: {
-                X3: [
-                  {
-                    Parachain: 1000,
-                  },
-                  {
-                    PalletInstance: 50,
-                  },
-                  {
-                    GeneralIndex: 1984,
-                  },
-                ],
-              },
+            parents: 1,
+            interior: {
+              X3: [
+                {
+                  Parachain: 1000,
+                },
+                {
+                  PalletInstance: 50,
+                },
+                {
+                  GeneralIndex: 1984,
+                },
+              ],
             },
           },
           fun: {
@@ -1009,18 +1007,16 @@ describe('XCM API (e2e)', () => {
         },
         {
           id: {
-            Concrete: {
-              parents: 1,
-              interior: {
-                X2: [
-                  {
-                    Parachain: 2125,
-                  },
-                  {
-                    GeneralIndex: 0,
-                  },
-                ],
-              },
+            parents: 1,
+            interior: {
+              X2: [
+                {
+                  Parachain: 2125,
+                },
+                {
+                  GeneralIndex: 0,
+                },
+              ],
             },
           },
           fun: {
@@ -1328,12 +1324,10 @@ describe('XCM API (e2e)', () => {
       const fungible = [
         {
           id: {
-            Concrete: {
-              parents: 0,
-              interior: {
-                X1: {
-                  Parachain: 2000,
-                },
+            parents: 0,
+            interior: {
+              X1: {
+                Parachain: 2000,
               },
             },
           },

@@ -1,9 +1,9 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import XTransferTransferImpl from '../../pallets/xTransfer'
 import type { TTransferLocalOptions, TXTransferTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Phala from './Phala'
 

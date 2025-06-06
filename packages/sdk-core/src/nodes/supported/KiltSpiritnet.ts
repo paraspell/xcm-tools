@@ -1,18 +1,19 @@
 // Contains detailed structure of XCM call construction for KiltSpiritnet Parachain
 
+import { Version } from '@paraspell/sdk-common'
+
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
-  type TSerializedApiCall,
-  Version
+  type TSerializedApiCall
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class KiltSpiritnet<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('KiltSpiritnet', 'kilt', 'polkadot', Version.V3)
+    super('KiltSpiritnet', 'kilt', 'polkadot', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

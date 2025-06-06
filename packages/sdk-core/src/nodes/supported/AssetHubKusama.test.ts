@@ -1,9 +1,10 @@
 import type { TAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_MULTILOCATION } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
-import { type TPolkadotXCMTransferOptions, type TScenario, Version } from '../../types'
+import { type TPolkadotXCMTransferOptions, type TScenario } from '../../types'
 import { getNode } from '../../utils'
 import type AssetHubKusama from './AssetHubKusama'
 
@@ -13,6 +14,13 @@ describe('transferPolkadotXCM', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     node = getNode<unknown, unknown, 'AssetHubKusama'>('AssetHubKusama')
+  })
+
+  it('should initialize with correct values', () => {
+    expect(node.node).toBe('AssetHubKusama')
+    expect(node.info).toBe('KusamaAssetHub')
+    expect(node.type).toBe('kusama')
+    expect(node.version).toBe(Version.V4)
   })
 
   it('throws ScenarioNotSupportedError for native KSM transfers in para to para scenarios', () => {
@@ -53,11 +61,10 @@ describe('transferPolkadotXCM', () => {
       const scenario: TScenario = 'ParaToPara'
       const amount = '1000000000'
       const assetWithoutML = { symbol: 'DOT', multiLocation: DOT_MULTILOCATION } as TAsset
-      const version = Version.V3
 
       const spy = vi.spyOn(node, 'createCurrencySpec')
 
-      node.createCurrencySpec(amount, scenario, version, assetWithoutML)
+      node.createCurrencySpec(amount, scenario, node.version, assetWithoutML)
 
       expect(spy).toHaveBeenCalled()
     })

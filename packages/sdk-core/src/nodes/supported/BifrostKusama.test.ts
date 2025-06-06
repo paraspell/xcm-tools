@@ -1,8 +1,8 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type BifrostKusama from './BifrostKusama'
 
@@ -25,7 +25,7 @@ describe('BifrostKusama', () => {
     expect(bifrostKusama.node).toBe('BifrostKusama')
     expect(bifrostKusama.info).toBe('bifrost')
     expect(bifrostKusama.type).toBe('kusama')
-    expect(bifrostKusama.version).toBe(Version.V3)
+    expect(bifrostKusama.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with Native when currency matches native asset', () => {

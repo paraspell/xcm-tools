@@ -1,15 +1,11 @@
 import type { TMultiAsset } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
-import { isTMultiLocation } from '@paraspell/sdk-common'
+import { isTMultiLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DEFAULT_FEE } from '../../../constants'
-import {
-  type TXTokensCurrencySelection,
-  type TXTokensTransferOptions,
-  Version
-} from '../../../types'
+import { type TXTokensCurrencySelection, type TXTokensTransferOptions } from '../../../types'
 import { buildXTokensCall } from './buildXTokensCall'
 import { getModifiedCurrencySelection } from './currencySelection'
 import { getXTokensParameters } from './getXTokensParameters'
@@ -45,7 +41,7 @@ describe('buildXTokensCall', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     currencySelection = { ForeignAsset: '1' }
-    vi.mocked(getModifiedCurrencySelection).mockReturnValue({ [Version.V3]: {} as TMultiAsset })
+    vi.mocked(getModifiedCurrencySelection).mockReturnValue({ [Version.V4]: {} as TMultiAsset })
     vi.mocked(getXTokensParameters).mockReturnValue({ param1: 'value1', param2: 'value2' })
     vi.mocked(isTMultiLocation).mockReturnValue(true)
   })
@@ -100,7 +96,7 @@ describe('buildXTokensCall', () => {
     expect(getModifiedCurrencySelection).toHaveBeenCalledWith(input)
     expect(getXTokensParameters).toHaveBeenCalledWith(
       true,
-      { [Version.V3]: {} },
+      { [Version.V4]: {} },
       input.addressSelection,
       input.asset.amount,
       123,

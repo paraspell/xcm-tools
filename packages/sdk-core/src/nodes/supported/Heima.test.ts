@@ -1,9 +1,10 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import Heima from './Heima'
 
@@ -29,7 +30,7 @@ describe('Heima', () => {
       expect(heima.node).toBe('Heima')
       expect(heima.info).toBe('litentry')
       expect(heima.type).toBe('polkadot')
-      expect(heima.version).toBe(Version.V3)
+      expect(heima.version).toBe(Version.V4)
     })
 
     it('should not suppoert ParaToRelay scenario', () => {

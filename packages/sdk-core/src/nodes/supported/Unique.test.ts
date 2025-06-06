@@ -1,10 +1,10 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Unique from './Unique'
 
@@ -26,7 +26,7 @@ describe('Unique', () => {
     expect(unique.node).toBe('Unique')
     expect(unique.info).toBe('unique')
     expect(unique.type).toBe('polkadot')
-    expect(unique.version).toBe(Version.V3)
+    expect(unique.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with asset id', () => {

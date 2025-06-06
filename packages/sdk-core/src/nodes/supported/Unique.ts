@@ -1,18 +1,19 @@
 // Contains detailed structure of XCM call construction for Unique Parachain
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
-import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
+import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Unique<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   private static NATIVE_ASSET_ID = 0
 
   constructor() {
-    super('Unique', 'unique', 'polkadot', Version.V3)
+    super('Unique', 'unique', 'polkadot', Version.V4)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

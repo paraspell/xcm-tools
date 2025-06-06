@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for Peaq Parachain
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import { transferXTokens } from '../../pallets/xTokens'
@@ -8,14 +9,13 @@ import type { TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
   type TSerializedApiCall,
-  type TXTokensTransferOptions,
-  Version
+  type TXTokensTransferOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Peaq<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Peaq', 'peaq', 'polkadot', Version.V3)
+    super('Peaq', 'peaq', 'polkadot', Version.V4)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {

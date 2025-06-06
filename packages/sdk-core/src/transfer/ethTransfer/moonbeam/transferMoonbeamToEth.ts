@@ -9,14 +9,14 @@ import {
   isForeignAsset,
   isOverrideMultiLocationSpecifier
 } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import { type TMultiLocation, Version } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
 import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
 import { BridgeHaltedError, InvalidParameterError } from '../../../errors'
 import { getParaId } from '../../../nodes/config'
-import { type TEvmBuilderOptions, type TXcmVersioned, Version } from '../../../types'
+import { type TEvmBuilderOptions, type TXcmVersioned } from '../../../types'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
 import { getBridgeStatus } from '../../getBridgeStatus'
@@ -115,10 +115,10 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
       currency,
       header: {} as TXcmVersioned<TMultiLocation>,
       currencySelection: {} as TXcmVersioned<TMultiAsset[]>,
-      addressSelection: {} as TXcmVersioned<TMultiLocation>
+      addressSelection: {} as TXcmVersioned<TMultiLocation>,
+      version: Version.V4
     },
     from,
-    Version.V4,
     messageId
   )
 

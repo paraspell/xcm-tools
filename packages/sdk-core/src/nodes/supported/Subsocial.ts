@@ -1,11 +1,11 @@
 // Contains detailed structure of XCM call construction for Subsocial Parachain
 
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Subsocial<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {

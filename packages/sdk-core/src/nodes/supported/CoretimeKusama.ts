@@ -1,13 +1,15 @@
 // Contains detailed structure of XCM call construction for CoretimeKusama Parachain
 
+import { Version } from '@paraspell/sdk-common'
+
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
-import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class CoretimeKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('CoretimeKusama', 'kusamaCoretime', 'kusama', Version.V3)
+    super('CoretimeKusama', 'kusamaCoretime', 'kusama', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

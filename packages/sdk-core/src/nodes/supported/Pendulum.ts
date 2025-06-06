@@ -2,10 +2,10 @@
 
 import type { TAsset } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { IXTokensTransfer, TXcmAsset, TXTokensTransferOptions } from '../../types'
-import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Pendulum<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {

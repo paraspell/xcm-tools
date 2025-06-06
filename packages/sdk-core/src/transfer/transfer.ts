@@ -1,6 +1,6 @@
 // Contains basic call formatting for different XCM Palletss
 
-import type { TNativeAsset } from '@paraspell/assets'
+import { normalizeMultiLocation, type TNativeAsset } from '@paraspell/assets'
 import { isDotKsmBridge, isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
@@ -12,6 +12,7 @@ import {
   resolveAsset,
   resolveFeeAsset,
   resolveOverriddenAsset,
+  selectXcmVersion,
   shouldPerformAssetCheck,
   validateAssetSpecifiers,
   validateAssetSupport,
@@ -123,16 +124,31 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
       : // Ensure amount is at least 1 to avoid Rust panic
         { ...resolvedAsset, amount: BigInt(currency.amount) < 1n ? 1n : currency.amount }
 
+  const originVersion = originNode.version
+  const destVersion =
+    !isTMultiLocation(destination) && !isRelayChain(destination) && destination !== 'Ethereum'
+      ? getNode<TApi, TRes, typeof destination>(destination).version
+      : undefined
+
+  const finalVersion = selectXcmVersion(version, originVersion, destVersion)
+
+  const normalizedAsset = finalAsset.multiLocation
+    ? {
+        ...finalAsset,
+        multilocation: normalizeMultiLocation(finalAsset.multiLocation, finalVersion)
+      }
+    : finalAsset
+
   return originNode.transfer({
     api,
-    asset: finalAsset,
+    asset: normalizedAsset,
     currency,
     feeAsset: resolvedFeeAsset,
     address,
     to: destination,
     paraIdTo,
     overriddenAsset,
-    version,
+    version: finalVersion,
     senderAddress,
     ahAddress,
     pallet,

@@ -1,10 +1,9 @@
 import type { TMultiAsset } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import { type TMultiLocation, Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import type { TPolkadotXcmMethod, TPolkadotXCMTransferOptions, TXcmVersioned } from '../../types'
-import { Version } from '../../types'
 import PolkadotXCMTransferImpl from './PolkadotXCMTransferImpl'
 
 const mockApi = {

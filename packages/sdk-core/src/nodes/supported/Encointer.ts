@@ -1,14 +1,16 @@
 // Contains detailed structure of XCM call construction for Encoiter Parachain
 
+import { Version } from '@paraspell/sdk-common'
+
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
-import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Encointer<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Encointer', 'encointer', 'kusama', Version.V3)
+    super('Encointer', 'encointer', 'kusama', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

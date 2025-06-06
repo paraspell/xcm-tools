@@ -1,14 +1,14 @@
 // Contains detailed structure of XCM call construction for CrustShadow Parachain
 
 import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
   type TReserveAsset,
-  type TXTokensTransferOptions,
-  Version
+  type TXTokensTransferOptions
 } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'

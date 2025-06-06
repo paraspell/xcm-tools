@@ -1,8 +1,8 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type NeuroWeb from './NeuroWeb'
 
@@ -26,7 +26,7 @@ describe('NeuroWeb', () => {
     expect(neuroweb.node).toBe('NeuroWeb')
     expect(neuroweb.info).toBe('neuroweb')
     expect(neuroweb.type).toBe('polkadot')
-    expect(neuroweb.version).toBe(Version.V3)
+    expect(neuroweb.version).toBe(Version.V4)
   })
 
   it('should call transferPolkadotXCM with the correct arguments', async () => {

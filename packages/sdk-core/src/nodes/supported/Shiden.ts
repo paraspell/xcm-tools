@@ -1,13 +1,14 @@
 // Contains detailed structure of XCM call construction for Shiden Parachain
 
+import { Version } from '@paraspell/sdk-common'
+
 import type { TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type IXTokensTransfer,
   type TPolkadotXCMTransferOptions,
   type TSendInternalOptions,
-  type TXTokensTransferOptions,
-  Version
+  type TXTokensTransferOptions
 } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
@@ -17,7 +18,7 @@ class Shiden<TApi, TRes>
   implements IPolkadotXCMTransfer, IXTokensTransfer
 {
   constructor() {
-    super('Shiden', 'shiden', 'kusama', Version.V3)
+    super('Shiden', 'shiden', 'kusama', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

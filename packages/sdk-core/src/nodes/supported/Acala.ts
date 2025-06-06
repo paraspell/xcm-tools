@@ -2,20 +2,20 @@
 
 import type { TAsset } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
   type TForeignOrTokenAsset,
-  type TXTokensTransferOptions,
-  Version
+  type TXTokensTransferOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Acala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
   constructor() {
-    super('Acala', 'acala', 'polkadot', Version.V3)
+    super('Acala', 'acala', 'polkadot', Version.V4)
   }
 
   getCurrencySelection(asset: TAsset): TForeignOrTokenAsset {
