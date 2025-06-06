@@ -1,9 +1,11 @@
 // Contains detailed structure of XCM call construction for BridgeHubKusama Parachain
 
+import { Version } from '@paraspell/sdk-common'
+
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
-import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class BridgeHubKusama<TApi, TRes>
@@ -11,7 +13,7 @@ class BridgeHubKusama<TApi, TRes>
   implements IPolkadotXCMTransfer
 {
   constructor() {
-    super('BridgeHubKusama', 'kusamaBridgeHub', 'kusama', Version.V3)
+    super('BridgeHubKusama', 'kusamaBridgeHub', 'kusama', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

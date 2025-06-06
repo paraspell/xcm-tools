@@ -2,7 +2,7 @@
 
 import type { TAsset } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
@@ -13,12 +13,11 @@ import type {
   TScenario,
   TTransferLocalOptions
 } from '../../types'
-import { Version } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Darwinia', 'darwinia', 'polkadot', Version.V3)
+    super('Darwinia', 'darwinia', 'polkadot', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

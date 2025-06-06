@@ -10,7 +10,7 @@ import { Parents } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
 import { InvalidParameterError } from '../../errors'
-import { type TPolkadotXCMTransferOptions, type Version } from '../../types'
+import { type TPolkadotXCMTransferOptions } from '../../types'
 import { createBeneficiaryMultiLocation } from '../multiLocation'
 
 export const createCustomXcmOnDest = <TApi, TRes>(
@@ -20,10 +20,10 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     asset,
     scenario,
     senderAddress,
-    ahAddress
+    ahAddress,
+    version
   }: TPolkadotXCMTransferOptions<TApi, TRes>,
   origin: TNodeWithRelayChains,
-  version: Version,
   messageId: string
 ) => {
   if (!isForeignAsset(asset)) {

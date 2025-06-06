@@ -4,14 +4,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetForNodeOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
-import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { isRelayChain, type TNodeDotKsmWithRelayChains, Version } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { getTNode } from '../../nodes/getTNode'
 import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
 import type { TDryRunChain, TDryRunNodeResultInternal } from '../../types'
-import { type TDryRunOptions, type TDryRunResult, type THubKey, Version } from '../../types'
+import { type TDryRunOptions, type TDryRunResult, type THubKey } from '../../types'
 import { determineRelayChain } from '../../utils'
 import { getParaEthTransferFees } from '../ethTransfer'
 import { createOriginLocation } from '../fees/getDestXcmFee'

@@ -1,9 +1,9 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type { Centrifuge } from './Centrifuge'
 
@@ -29,7 +29,7 @@ describe('Centrifuge', () => {
     expect(centrifuge.node).toBe('Centrifuge')
     expect(centrifuge.info).toBe('centrifuge')
     expect(centrifuge.type).toBe('polkadot')
-    expect(centrifuge.version).toBe(Version.V3)
+    expect(centrifuge.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with Native when currency matches native asset', () => {

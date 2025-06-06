@@ -28,7 +28,7 @@ export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   Encointer: [], // No assets metadata query
   Karura: [GLOBAL, 'assetRegistry.assetMetadatas'],
   Kintsugi: [GLOBAL, 'assetRegistry.metadata'],
-  Moonriver: ['assetManager.assetIdType'],
+  Moonriver: ['evmForeignAssets.assetsById'],
   Quartz: ['foreignAssets.collectionToForeignAsset'],
   RobonomicsKusama: ['assets.metadata'],
   RobonomicsPolkadot: ['assets.metadata'],

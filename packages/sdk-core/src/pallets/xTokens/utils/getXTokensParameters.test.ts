@@ -1,10 +1,9 @@
 import type { TMultiAssetWithFee } from '@paraspell/assets'
-import { type TMultiLocation } from '@paraspell/sdk-common'
+import { type TMultiLocation, Version } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
 import { DOT_MULTILOCATION } from '../../../constants'
 import type { TXcmVersioned } from '../../../types'
-import { Version } from '../../../types'
 import { getXTokensParameters } from './getXTokensParameters'
 
 const mockMultiLocationHeader: TXcmVersioned<TMultiLocation> = {
@@ -14,11 +13,9 @@ const mockMultiLocationHeader: TXcmVersioned<TMultiLocation> = {
 const createMockAsset = (parachain: number, isFeeAsset = false): TMultiAssetWithFee => ({
   ...(isFeeAsset && { isFeeAsset }),
   id: {
-    Concrete: {
-      parents: 0,
-      interior: {
-        X2: [{ PalletInstance: '50' }, { Parachain: parachain.toString() }]
-      }
+    parents: 0,
+    interior: {
+      X2: [{ PalletInstance: '50' }, { Parachain: parachain.toString() }]
     }
   },
   fun: { Fungible: '123456' }

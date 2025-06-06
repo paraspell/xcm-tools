@@ -1,4 +1,5 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -10,7 +11,6 @@ import type {
   TRelayToParaOptions,
   TTransferLocalOptions
 } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Polimec from './Polimec'
 
@@ -41,13 +41,13 @@ describe('Polimec', () => {
     expect(polimec.node).toBe('Polimec')
     expect(polimec.info).toBe('polimec')
     expect(polimec.type).toBe('polkadot')
-    expect(polimec.version).toBe(Version.V3)
+    expect(polimec.version).toBe(Version.V4)
   })
 
   it('should throw ScenarioNotSupportedError when scenario is not ParaToRelay or ParaToPara with AssetHubPolkadot or Hydration', async () => {
     const input = {
       api: mockApi,
-      version: Version.V3,
+      version: polimec.version,
       destination: 'Acala',
       address: 'SomeAddress',
       scenario: 'ParaToPara',
@@ -61,7 +61,7 @@ describe('Polimec', () => {
   it('should transfer Polkadot XCM when scenario is ParaToRelay', async () => {
     const input = {
       api: mockApi,
-      version: Version.V3,
+      version: polimec.version,
       destination: 'Acala',
       address: 'SomeAddress',
       scenario: 'ParaToRelay',
@@ -98,7 +98,7 @@ describe('Polimec', () => {
   it('should transfer Polkadot XCM when scenario is ParaToPara and destination is AssetHubPolkadot', async () => {
     const input = {
       api: mockApi,
-      version: Version.V3,
+      version: polimec.version,
       destination: 'AssetHubPolkadot',
       address: 'SomeAddress',
       scenario: 'ParaToPara',
@@ -113,11 +113,9 @@ describe('Polimec', () => {
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({
         currencySelection: {
-          [Version.V3]: [
+          [Version.V4]: [
             expect.objectContaining({
-              id: {
-                Concrete: DOT_MULTILOCATION
-              }
+              id: DOT_MULTILOCATION
             })
           ]
         }
@@ -133,7 +131,7 @@ describe('Polimec', () => {
 
     const input = {
       api: mockApi,
-      version: Version.V3,
+      version: polimec.version,
       destination: 'AssetHubPolkadot',
       address: 'SomeAddress',
       scenario: 'ParaToPara',
@@ -148,11 +146,9 @@ describe('Polimec', () => {
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({
         currencySelection: {
-          [Version.V3]: [
+          [Version.V4]: [
             expect.objectContaining({
-              id: {
-                Concrete: assetMultiLocation
-              }
+              id: assetMultiLocation
             })
           ]
         }
@@ -166,7 +162,7 @@ describe('Polimec', () => {
   it('should throw InvalidCurrencyError when asset is not supported in getAssetMultiLocation', async () => {
     const input = {
       api: mockApi,
-      version: Version.V3,
+      version: polimec.version,
       destination: 'AssetHubPolkadot',
       address: 'SomeAddress',
       scenario: 'ParaToPara',
@@ -179,7 +175,7 @@ describe('Polimec', () => {
 
   it('should create a correct call object in transferRelayToPara', () => {
     const options = {
-      version: Version.V3,
+      version: polimec.version,
       api: mockApi,
       address: 'SomeAddress',
       destination: 'Acala',

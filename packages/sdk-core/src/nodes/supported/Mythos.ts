@@ -1,21 +1,21 @@
 // Contains detailed structure of XCM call construction for Mythos Parachain
 
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
-  type TSerializedApiCall,
-  Version
+  type TSerializedApiCall
 } from '../../types'
 import { handleToAhTeleport } from '../../utils/transfer'
 import ParachainNode from '../ParachainNode'
 
 class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Mythos', 'mythos', 'polkadot', Version.V3)
+    super('Mythos', 'mythos', 'polkadot', Version.V4)
   }
 
   private createTx<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

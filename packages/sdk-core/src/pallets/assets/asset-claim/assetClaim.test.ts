@@ -1,9 +1,8 @@
 import type { TMultiAsset } from '@paraspell/assets'
-import { isRelayChain, type TMultiLocation } from '@paraspell/sdk-common'
+import { isRelayChain, type TMultiLocation, Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import { Version } from '../../../types'
 import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
 import { validateAddress } from '../../../utils'
 import { claimAssets } from './assetClaim'
@@ -18,7 +17,7 @@ vi.mock('./buildClaimAssetsInput', () => ({
 }))
 
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
-  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
+  ...(await importOriginal()),
   isRelayChain: vi.fn().mockReturnValue(false)
 }))
 
@@ -38,11 +37,11 @@ describe('claimAssets', () => {
       node: nodeMock,
       multiAssets: ['asset1', 'asset2'] as unknown as TMultiAsset[],
       address: 'someAddress',
-      version: Version.V3
+      version: Version.V4
     }
     const argsMock = {
-      assets: { [Version.V3]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
-      beneficiary: { [Version.V3]: {} as TMultiLocation }
+      assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
+      beneficiary: { [Version.V4]: {} as TMultiLocation }
     }
     vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -66,12 +65,12 @@ describe('claimAssets', () => {
       node: nodeMock,
       multiAssets: ['asset1', 'asset2'] as unknown as TMultiAsset[],
       address: 'someAddress',
-      version: Version.V3
+      version: Version.V4
     }
     const apiInstanceMock = apiMock
     const argsMock = {
-      assets: { [Version.V3]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
-      beneficiary: { [Version.V3]: {} as TMultiLocation }
+      assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
+      beneficiary: { [Version.V4]: {} as TMultiLocation }
     }
     vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(false)
@@ -96,11 +95,11 @@ describe('claimAssets', () => {
       node: nodeMock,
       multiAssets: ['asset1', 'asset2'] as unknown as TMultiAsset[],
       address: 'someAddress',
-      version: Version.V3
+      version: Version.V4
     }
     const argsMock = {
-      assets: { [Version.V3]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
-      beneficiary: { [Version.V3]: {} as TMultiLocation }
+      assets: { [Version.V4]: ['asset1', 'asset2'] as unknown as TMultiAsset[] },
+      beneficiary: { [Version.V4]: {} as TMultiLocation }
     }
     vi.mocked(buildClaimAssetsInput).mockReturnValue(argsMock)
     vi.mocked(isRelayChain).mockReturnValue(true)

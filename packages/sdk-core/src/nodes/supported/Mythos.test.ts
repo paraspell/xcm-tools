@@ -1,10 +1,10 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import { handleToAhTeleport } from '../../utils/transfer'
 import type Mythos from './Mythos'
@@ -36,7 +36,7 @@ describe('Mythos', () => {
     expect(mythos.node).toBe('Mythos')
     expect(mythos.info).toBe('mythos')
     expect(mythos.type).toBe('polkadot')
-    expect(mythos.version).toBe(Version.V3)
+    expect(mythos.version).toBe(Version.V4)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for non-AssetHubPolkadot destination', async () => {

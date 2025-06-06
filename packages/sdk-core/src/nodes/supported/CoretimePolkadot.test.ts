@@ -1,3 +1,4 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
@@ -22,8 +23,12 @@ describe('CoretimePolkadot', () => {
     node = getNode<unknown, unknown, 'CoretimePolkadot'>('CoretimePolkadot')
   })
 
-  it('should be instantiated correctly', () => {
+  it('should initialize with correct values', () => {
     expect(node).toBeInstanceOf(CoretimePolkadot)
+    expect(node.node).toBe('CoretimePolkadot')
+    expect(node.info).toBe('polkadotCoretime')
+    expect(node.type).toBe('polkadot')
+    expect(node.version).toBe(Version.V4)
   })
 
   describe('transferPolkadotXCM', () => {

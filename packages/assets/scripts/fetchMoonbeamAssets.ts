@@ -15,6 +15,7 @@ const ERC20_ABI = [
     stateMutability: 'view',
     type: 'function'
   },
+
   {
     inputs: [],
     name: 'decimals',
@@ -30,11 +31,12 @@ export const fetchMoonbeamForeignAssets = async (
   node: 'Moonbeam' | 'Moonriver'
 ): Promise<TForeignAsset[]> => {
   const [module, method] = query.split('.')
+
   const evmEntries = await api.query[module][method].entries()
 
   const client = createPublicClient({
     chain: node === 'Moonbeam' ? moonbeam : moonriver,
-    transport: http()
+    transport: node === 'Moonbeam' ? http() : http('https://moonriver.api.onfinality.io/public')
   })
 
   const evmAssets: TForeignAsset[] = await Promise.all(

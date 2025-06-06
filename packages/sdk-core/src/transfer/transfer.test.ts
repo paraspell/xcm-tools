@@ -1,6 +1,6 @@
 import type { TAsset, TCurrencyInput, TMultiAssetWithFee } from '@paraspell/assets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
-import { isDotKsmBridge, isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
+import { isDotKsmBridge, isRelayChain, isTMultiLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
@@ -13,6 +13,7 @@ import {
   resolveAsset,
   resolveFeeAsset,
   resolveOverriddenAsset,
+  selectXcmVersion,
   shouldPerformAssetCheck,
   validateAssetSpecifiers,
   validateAssetSupport,
@@ -50,7 +51,8 @@ vi.mock('./utils', () => ({
   validateCurrency: vi.fn(),
   validateDestination: vi.fn(),
   validateAssetSpecifiers: vi.fn(),
-  validateAssetSupport: vi.fn()
+  validateAssetSupport: vi.fn(),
+  selectXcmVersion: vi.fn()
 }))
 
 describe('send', () => {
@@ -69,7 +71,8 @@ describe('send', () => {
     } as unknown as IPolkadotApi<unknown, unknown>
 
     originNodeMock = {
-      transfer: vi.fn().mockResolvedValue('transferResult')
+      transfer: vi.fn().mockResolvedValue('transferResult'),
+      version: Version.V4
     } as unknown as AssetHubPolkadot<unknown, unknown>
 
     vi.mocked(getNode).mockReturnValue(originNodeMock)
@@ -359,5 +362,36 @@ describe('send', () => {
         'Multi-Location address is not supported for local transfers.'
       )
     })
+  })
+
+  it('should downgrade from V4 to V3 when destination only supports V3', async () => {
+    const destNodeMock = { version: Version.V3 } as unknown as AssetHubPolkadot<unknown, unknown>
+    vi.mocked(getNode).mockImplementation((chain: string) => {
+      return chain === 'Acala' ? originNodeMock : destNodeMock
+    })
+
+    vi.mocked(selectXcmVersion).mockReturnValue(Version.V3)
+
+    const options = {
+      api: apiMock,
+      from: 'Acala',
+      currency: { symbol: 'TEST', amount: '50' },
+      address: 'dest-address',
+      to: 'Astar'
+    } as TSendOptions<unknown, unknown>
+
+    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+
+    const result = await send(options)
+
+    expect(selectXcmVersion).toHaveBeenCalledWith(undefined, Version.V4, Version.V3)
+
+    expect(transferSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        version: Version.V3
+      })
+    )
+
+    expect(result).toBe('transferResult')
   })
 })

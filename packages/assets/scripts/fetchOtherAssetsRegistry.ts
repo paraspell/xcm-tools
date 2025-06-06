@@ -6,7 +6,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { getParaId } from '../../sdk-core/src'
 import { isRelayChain, TNodePolkadotKusama } from '@paraspell/sdk-common'
-import type { TForeignAsset } from '../src'
+import { normalizeMultiLocation, type TForeignAsset } from '../src'
 import type { TRegistryAssets } from './fetchXcmRegistry'
 import { fetchXcmRegistry } from './fetchXcmRegistry'
 import { getRelayChainType } from './utils'
@@ -33,7 +33,7 @@ export const fetchAssets = async (node: TNodePolkadotKusama): Promise<TRegistryA
 
 export const capitalizeMultiLocation = (obj: any) => {
   obj.interior = capitalizeKeys(obj.interior)
-  return obj
+  return normalizeMultiLocation(obj)
 }
 
 export const capitalizeKeys = (obj: any, depth: number = 1): any => {

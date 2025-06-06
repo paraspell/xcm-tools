@@ -1,9 +1,9 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Collectives from './Collectives'
 
@@ -28,7 +28,7 @@ describe('Collectives', () => {
     expect(node.node).toBe('Collectives')
     expect(node.info).toBe('polkadotCollectives')
     expect(node.type).toBe('polkadot')
-    expect(node.version).toBe(Version.V3)
+    expect(node.version).toBe(Version.V4)
   })
 
   it('should throw ScenarioNotSupportedError for ParaToPara scenario', () => {

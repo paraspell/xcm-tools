@@ -1,4 +1,5 @@
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
@@ -10,7 +11,6 @@ import type {
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type { Ajuna } from './Ajuna'
 

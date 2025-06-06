@@ -1,6 +1,6 @@
 import type { TAsset, WithAmount } from '@paraspell/assets'
 import { getRelayChainSymbol } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import { type TMultiLocation, Version } from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -8,7 +8,7 @@ import type { IPolkadotApi } from '../api'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
 import { resolveTNodeFromMultiLocation } from '../pallets/xcmPallet/utils'
-import { type TRelayToParaOptions, Version } from '../types'
+import { type TRelayToParaOptions } from '../types'
 import { determineRelayChain, getNode } from '../utils'
 import { transferRelayToPara } from './transferRelayToPara'
 
@@ -166,7 +166,7 @@ describe('transferRelayToPara', () => {
       asset: { symbol: 'DOT', amount: 100 } as WithAmount<TAsset>,
       address: 'some-address',
       paraIdTo: 2000,
-      version: Version.V3
+      version: Version.V4
     }
 
     const transferSpy = vi.spyOn(nodeMock, 'transferRelayToPara')

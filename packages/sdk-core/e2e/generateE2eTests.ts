@@ -107,10 +107,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             .fungible([
               {
                 id: {
-                  Concrete: {
-                    parents: Parents.ZERO,
-                    interior: 'Here'
-                  }
+                  parents: Parents.ZERO,
+                  interior: 'Here'
                 },
                 fun: { Fungible: MOCK_AMOUNT }
               }
@@ -231,19 +229,15 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             multiasset: [
               {
                 id: {
-                  Concrete: {
-                    parents: 0,
-                    interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '31337' }] }
-                  }
+                  parents: 0,
+                  interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '31337' }] }
                 },
                 fun: { Fungible: '102928' }
               },
               {
                 id: {
-                  Concrete: {
-                    parents: 0,
-                    interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
-                  }
+                  parents: 0,
+                  interior: { X2: [{ PalletInstance: '50' }, { GeneralIndex: '1337' }] }
                 },
                 fun: { Fungible: '38482' }
               }

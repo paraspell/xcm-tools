@@ -1,3 +1,4 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
@@ -19,8 +20,12 @@ describe('PeopleKusama', () => {
     node = getNode<unknown, unknown, 'PeopleKusama'>('PeopleKusama')
   })
 
-  it('should be instantiated correctly', () => {
+  it('should initialize with correct values', () => {
     expect(node).toBeInstanceOf(PeopleKusama)
+    expect(node.node).toBe('PeopleKusama')
+    expect(node.info).toBe('kusamaPeople')
+    expect(node.type).toBe('kusama')
+    expect(node.version).toBe(Version.V4)
   })
 
   describe('transferPolkadotXCM', () => {

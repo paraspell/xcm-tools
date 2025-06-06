@@ -1,4 +1,5 @@
 import { findAssetByMultiLocation, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
@@ -13,8 +14,7 @@ import {
   type TSendInternalOptions,
   type TXTokensCurrencySelection,
   type TXTokensTransferOptions,
-  type TXTransferTransferOptions,
-  Version
+  type TXTransferTransferOptions
 } from '../types'
 import ParachainNode from './ParachainNode'
 
@@ -131,7 +131,7 @@ describe('ParachainNode', () => {
   let node: TestParachainNode
 
   beforeEach(() => {
-    node = new TestParachainNode('Acala', 'TestNode', 'polkadot', Version.V3)
+    node = new TestParachainNode('Acala', 'TestNode', 'polkadot', Version.V4)
   })
 
   it('should create an instance', () => {
@@ -151,7 +151,7 @@ describe('ParachainNode', () => {
   })
 
   it('should get the version', () => {
-    expect(node.version).toBe(Version.V3)
+    expect(node.version).toBe(Version.V4)
   })
 
   it('should return true for canUseXTokens when using exposeCanUseXTokens', () => {
@@ -179,7 +179,7 @@ describe('ParachainNode', () => {
   })
 
   it('should call transferXTransfer when supportsXTransfer returns true', async () => {
-    const node = new NoXTokensNode('Acala', 'TestNode', 'polkadot', Version.V3)
+    const node = new NoXTokensNode('Acala', 'TestNode', 'polkadot', Version.V4)
     const options = {
       api: {},
       asset: { symbol: 'DOT', amount: '100' },
@@ -208,7 +208,7 @@ describe('ParachainNode', () => {
   })
 
   it('should call transferPolkadotXCM when supportsPolkadotXCM returns true', async () => {
-    const node = new OnlyPolkadotXCMNode('Acala', 'TestNode', 'polkadot', Version.V3)
+    const node = new OnlyPolkadotXCMNode('Acala', 'TestNode', 'polkadot', Version.V4)
     const options = {
       api: {},
       asset: { symbol: 'DOT', amount: '100' },
@@ -224,7 +224,7 @@ describe('ParachainNode', () => {
   })
 
   it('should throw NoXCMSupportImplementedError when no transfer methods are supported', async () => {
-    const node = new NoSupportNode('Acala', 'TestNode', 'polkadot', Version.V3)
+    const node = new NoSupportNode('Acala', 'TestNode', 'polkadot', Version.V4)
     const options = {
       api: {},
       asset: { symbol: 'DOT', amount: '100' },
@@ -241,7 +241,7 @@ describe('ParachainNode', () => {
       }
     }
 
-    const node = new TestNode('Acala', 'TestNode', 'polkadot', Version.V3)
+    const node = new TestNode('Acala', 'TestNode', 'polkadot', Version.V4)
     node.transferXTransfer = vi.fn().mockReturnValue('transferXTransfer called')
 
     const options = {
@@ -274,7 +274,7 @@ describe('ParachainNode', () => {
   })
 
   it('should not throw error when destination is Polimec and node is AssetHubPolkadot', async () => {
-    const node = new TestParachainNode('AssetHubPolkadot', 'TestNode', 'polkadot', Version.V3)
+    const node = new TestParachainNode('AssetHubPolkadot', 'TestNode', 'polkadot', Version.V4)
     node.transferXTokens = vi.fn().mockReturnValue('transferXTokens called')
 
     const options = {
@@ -305,7 +305,7 @@ describe('ParachainNode', () => {
   })
 
   it('should create currency spec', () => {
-    const result = node.createCurrencySpec('100', 'ParaToRelay', Version.V3, {
+    const result = node.createCurrencySpec('100', 'ParaToRelay', Version.V4, {
       symbol: 'DOT',
       isNative: true
     })
@@ -314,7 +314,7 @@ describe('ParachainNode', () => {
   })
 
   it('should create Polkadot XCM header', () => {
-    const result = node.createVersionedDestination('ParaToRelay', Version.V3, 'Polkadot')
+    const result = node.createVersionedDestination('ParaToRelay', Version.V4, 'Polkadot')
 
     expect(result).toBe('polkadotXcmHeader')
   })

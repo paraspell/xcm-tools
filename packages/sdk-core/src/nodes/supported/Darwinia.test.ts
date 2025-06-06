@@ -1,12 +1,11 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Darwinia from './Darwinia'
 
@@ -36,7 +35,7 @@ describe('Darwinia', () => {
     expect(darwinia.node).toBe('Darwinia')
     expect(darwinia.info).toBe('darwinia')
     expect(darwinia.type).toBe('polkadot')
-    expect(darwinia.version).toBe(Version.V3)
+    expect(darwinia.version).toBe(Version.V4)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToRelay scenario', async () => {
@@ -61,8 +60,8 @@ describe('Darwinia', () => {
   })
 
   it('should call createCurrencySpec with correct values', () => {
-    darwinia.createCurrencySpec('100', 'ParaToPara', Version.V3)
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, '100', {
+    darwinia.createCurrencySpec('100', 'ParaToPara', darwinia.version)
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(darwinia.version, '100', {
       parents: Parents.ZERO,
       interior: {
         X1: {
@@ -73,8 +72,8 @@ describe('Darwinia', () => {
   })
 
   it('should call createCurrencySpec with correct values - ParaToRelay', () => {
-    darwinia.createCurrencySpec('100', 'ParaToRelay', Version.V3)
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, '100', {
+    darwinia.createCurrencySpec('100', 'ParaToRelay', darwinia.version)
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(darwinia.version, '100', {
       parents: Parents.ZERO,
       interior: {
         X1: {
