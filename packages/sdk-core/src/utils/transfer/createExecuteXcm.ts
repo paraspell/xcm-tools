@@ -28,8 +28,8 @@ export const createExecuteXcm = <TApi, TRes>(
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
   }
 
-  const assetML = transformMultiLocation(asset.multiLocation)
-  const feeML = transformMultiLocation(feeAsset?.multiLocation ?? asset.multiLocation)
+  const assetML = asset.multiLocation
+  const feeML = feeAsset?.multiLocation ?? asset.multiLocation
 
   const sameFeeAsset = feeAsset && isAssetEqual(asset, feeAsset)
 
@@ -47,7 +47,7 @@ export const createExecuteXcm = <TApi, TRes>(
         ...(!sameFeeAsset && feeAsset?.multiLocation
           ? [
               {
-                id: transformMultiLocation(feeAsset.multiLocation),
+                id: feeAsset.multiLocation,
                 fun: {
                   Fungible: executionFee
                 }
@@ -66,7 +66,7 @@ export const createExecuteXcm = <TApi, TRes>(
         },
         weight_limit: {
           Limited: {
-            ref_time: 150n,
+            ref_time: 450n,
             proof_size: 0n
           }
         }
@@ -77,7 +77,7 @@ export const createExecuteXcm = <TApi, TRes>(
         assets: {
           Definite: [
             {
-              id: assetML,
+              id: transformMultiLocation(assetML),
               fun: {
                 Fungible: sameFeeAsset ? amountWithoutFee : BigInt(asset.amount)
               }
@@ -89,7 +89,7 @@ export const createExecuteXcm = <TApi, TRes>(
           {
             BuyExecution: {
               fees: {
-                id: asset.multiLocation,
+                id: transformMultiLocation(asset.multiLocation),
                 fun: {
                   Fungible: sameFeeAsset ? amountWithoutFee - executionFee : BigInt(asset.amount)
                 }
