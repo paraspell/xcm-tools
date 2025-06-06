@@ -1,8 +1,8 @@
 import type { TMultiAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../../api/IPolkadotApi'
-import { Version } from '../../../types'
 import type { TAssetClaimOptions } from '../../../types/TAssetClaim'
 import { buildBeneficiaryInput } from './buildBeneficiaryInput'
 import { buildClaimAssetsInput } from './buildClaimAssetsInput'
@@ -30,8 +30,8 @@ describe('buildClaimAssetsInput', () => {
     const result = buildClaimAssetsInput(options)
 
     expect(result).toEqual({
-      assets: { [Version.V3]: multiAssets },
-      beneficiary: { [Version.V3]: beneficiaryInput }
+      assets: { [Version.V4]: multiAssets },
+      beneficiary: { [Version.V4]: beneficiaryInput }
     })
     expect(buildBeneficiaryInput).toHaveBeenCalledWith(apiMock, address)
   })
@@ -47,14 +47,14 @@ describe('buildClaimAssetsInput', () => {
       api: apiMock,
       multiAssets,
       address,
-      version: Version.V3
+      version: Version.V4
     }
 
     const result = buildClaimAssetsInput(options)
 
     expect(result).toEqual({
-      assets: { [Version.V3]: multiAssets },
-      beneficiary: { [Version.V3]: beneficiaryInput }
+      assets: { [Version.V4]: multiAssets },
+      beneficiary: { [Version.V4]: beneficiaryInput }
     })
     expect(buildBeneficiaryInput).toHaveBeenCalledWith(apiMock, address)
   })
@@ -75,8 +75,8 @@ describe('buildClaimAssetsInput', () => {
     const result = buildClaimAssetsInput(options)
 
     expect(result).toEqual({
-      assets: { [Version.V3]: multiAssets },
-      beneficiary: { [Version.V3]: beneficiaryInput }
+      assets: { [Version.V4]: multiAssets },
+      beneficiary: { [Version.V4]: beneficiaryInput }
     })
     expect(buildBeneficiaryInput).toHaveBeenCalledWith(apiMock, address)
   })

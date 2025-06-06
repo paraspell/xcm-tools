@@ -1,10 +1,10 @@
 import type { TMultiLocation } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
 import { InvalidParameterError } from '../../errors'
 import type { OneKey } from '../../types'
-import { Version } from '../../types'
 import { extractVersionFromHeader, resolveTNodeFromMultiLocation } from './utils'
 
 describe('Error Handling Unit Tests', () => {
@@ -19,8 +19,8 @@ describe('Error Handling Unit Tests', () => {
 
     it('should throw InvalidParameterError if versionHeader has multiple keys', () => {
       const invalidHeader = {
-        [Version.V3]: 'someValue',
-        [Version.V4]: 'anotherValue'
+        [Version.V4]: 'someValue',
+        [Version.V5]: 'anotherValue'
       } as unknown as OneKey<Version, unknown>
       expect(() => extractVersionFromHeader(invalidHeader)).toThrowError(InvalidParameterError)
       expect(() => extractVersionFromHeader(invalidHeader)).toThrowError(
@@ -29,7 +29,7 @@ describe('Error Handling Unit Tests', () => {
     })
 
     it('should throw InvalidParameterError if versionHeader value is undefined', () => {
-      const invalidHeader = { [Version.V3]: undefined } as OneKey<Version, unknown>
+      const invalidHeader = { [Version.V4]: undefined } as OneKey<Version, unknown>
       expect(() => extractVersionFromHeader(invalidHeader)).toThrowError(InvalidParameterError)
       expect(() => extractVersionFromHeader(invalidHeader)).toThrowError(
         'Invalid version header: value is undefined.'

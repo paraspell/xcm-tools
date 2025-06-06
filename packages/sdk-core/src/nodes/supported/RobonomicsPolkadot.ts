@@ -1,10 +1,11 @@
 // Contains detailed structure of XCM call construction for Robonomics Parachain
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TTransferLocalOptions } from '../../types'
-import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class RobonomicsPolkadot<TApi, TRes>

@@ -1,10 +1,10 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Moonriver from './Moonriver'
 
@@ -36,7 +36,7 @@ describe('Moonriver', () => {
     expect(node.node).toBe('Moonriver')
     expect(node.info).toBe('moonriver')
     expect(node.type).toBe('kusama')
-    expect(node.version).toBe(Version.V3)
+    expect(node.version).toBe(Version.V4)
   })
 
   it('should use correct multiLocation when transfering native asset', async () => {
@@ -54,18 +54,16 @@ describe('Moonriver', () => {
       {
         ...mockInputNative,
         currencySelection: {
-          [Version.V3]: [
+          [node.version]: [
             {
               fun: {
                 Fungible: mockInput.asset.amount
               },
               id: {
-                Concrete: {
-                  parents: 0,
-                  interior: {
-                    X1: {
-                      PalletInstance: 10
-                    }
+                parents: 0,
+                interior: {
+                  X1: {
+                    PalletInstance: 10
                   }
                 }
               }
@@ -93,14 +91,12 @@ describe('Moonriver', () => {
       {
         ...mockInputDot,
         currencySelection: {
-          [Version.V3]: [
+          [node.version]: [
             {
               fun: {
                 Fungible: mockInput.asset.amount
               },
-              id: {
-                Concrete: DOT_MULTILOCATION
-              }
+              id: DOT_MULTILOCATION
             }
           ]
         }
@@ -145,14 +141,12 @@ describe('Moonriver', () => {
       {
         ...mockInputUsdt,
         currencySelection: {
-          [Version.V3]: [
+          [node.version]: [
             {
               fun: {
                 Fungible: mockInput.asset.amount
               },
-              id: {
-                Concrete: asset.multiLocation
-              }
+              id: asset.multiLocation
             }
           ]
         }

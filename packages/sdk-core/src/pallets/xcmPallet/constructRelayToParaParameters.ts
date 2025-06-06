@@ -1,8 +1,8 @@
+import type { Version } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TRelayToParaOptions } from '../../types'
-import { type Version } from '../../types'
 import { createVersionedBeneficiary, resolveParaId } from '../../utils'
 import { createVersionedDestination, createVersionedMultiAssets } from './utils'
 

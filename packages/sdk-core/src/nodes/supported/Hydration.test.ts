@@ -1,5 +1,5 @@
 import { findAssetByMultiLocation, InvalidCurrencyError } from '@paraspell/assets'
-import { hasJunction } from '@paraspell/sdk-common'
+import { hasJunction, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -11,7 +11,6 @@ import type {
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Hydration from './Hydration'
 import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
@@ -57,7 +56,7 @@ describe('Hydration', () => {
     expect(hydration.node).toBe('Hydration')
     expect(hydration.info).toBe('hydradx')
     expect(hydration.type).toBe('polkadot')
-    expect(hydration.version).toBe(Version.V3)
+    expect(hydration.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with currencyID', () => {
@@ -193,7 +192,7 @@ describe('Hydration', () => {
         asset: { symbol: 'DOT', assetId: '1', amount: '1000' },
         scenario: 'ParaToPara',
         destination: 'Polimec',
-        version: Version.V3
+        version: hydration.version
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       const typeAndThenCall = { dummy: 'call-dummy' } as unknown as TSerializedApiCall
@@ -202,7 +201,7 @@ describe('Hydration', () => {
 
       const result = hydration.transferToPolimec(mockInput)
 
-      expect(createTypeAndThenTransfer).toHaveBeenCalledWith(mockInput, Version.V3)
+      expect(createTypeAndThenTransfer).toHaveBeenCalledWith(mockInput, hydration.version)
       expect(callTxSpy).toHaveBeenCalledWith(typeAndThenCall)
       expect(result).toBe('success')
     })
@@ -214,7 +213,7 @@ describe('Hydration', () => {
         asset: { symbol: 'USDC', assetId: 'usdc-id', amount: '500', multiLocation: {} },
         scenario: 'ParaToPara',
         destination: 'Polimec',
-        version: Version.V3
+        version: hydration.version
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       const hasJunctionSpy = vi.mocked(hasJunction).mockReturnValue(true)
@@ -226,7 +225,7 @@ describe('Hydration', () => {
       const result = hydration.transferToPolimec(mockInput)
 
       expect(hasJunctionSpy).toHaveBeenCalled()
-      expect(assetsTransferSpy).toHaveBeenCalledWith(mockInput, Version.V3)
+      expect(assetsTransferSpy).toHaveBeenCalledWith(mockInput, hydration.version)
       expect(result).toBe('assets-transfer-call')
 
       hasJunctionSpy.mockRestore()
@@ -239,7 +238,7 @@ describe('Hydration', () => {
         asset: { symbol: 'USDC', assetId: 'usdc-id', amount: '500', multiLocation: {} },
         scenario: 'ParaToPara',
         destination: 'Polimec',
-        version: Version.V3
+        version: hydration.version
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       const hasJunctionSpy = vi.mocked(hasJunction).mockReturnValue(false)

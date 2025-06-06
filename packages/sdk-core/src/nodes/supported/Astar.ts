@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for Astar Parachain
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
@@ -10,8 +11,7 @@ import {
   type IXTokensTransfer,
   type TPolkadotXCMTransferOptions,
   type TSendInternalOptions,
-  type TXTokensTransferOptions,
-  Version
+  type TXTokensTransferOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 
@@ -20,7 +20,7 @@ class Astar<TApi, TRes>
   implements IPolkadotXCMTransfer, IXTokensTransfer
 {
   constructor() {
-    super('Astar', 'astar', 'polkadot', Version.V3)
+    super('Astar', 'astar', 'polkadot', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

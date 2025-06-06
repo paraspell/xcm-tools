@@ -1,4 +1,5 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
@@ -8,7 +9,6 @@ import type {
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Astar from './Astar'
 
@@ -41,7 +41,7 @@ describe('Astar', () => {
     expect(astar.node).toBe('Astar')
     expect(astar.info).toBe('astar')
     expect(astar.type).toBe('polkadot')
-    expect(astar.version).toBe(Version.V3)
+    expect(astar.version).toBe(Version.V4)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', async () => {

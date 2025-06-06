@@ -43,13 +43,15 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
       multiLocation: {
         parents: 2,
         interior: {
-          X1: {
-            GlobalConsensus: {
-              Ethereum: {
-                chainId: 1
+          X1: [
+            {
+              GlobalConsensus: {
+                Ethereum: {
+                  chainId: 1
+                }
               }
             }
-          }
+          ]
         }
       }
     },

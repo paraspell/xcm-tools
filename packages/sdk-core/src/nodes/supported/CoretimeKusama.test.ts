@@ -1,8 +1,8 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type CoretimeKusama from './CoretimeKusama'
 
@@ -31,7 +31,7 @@ describe('CoretimeKusama', () => {
     expect(node.node).toBe('CoretimeKusama')
     expect(node.info).toBe('kusamaCoretime')
     expect(node.type).toBe('kusama')
-    expect(node.version).toBe(Version.V3)
+    expect(node.version).toBe(Version.V4)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', async () => {

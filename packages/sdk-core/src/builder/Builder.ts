@@ -2,6 +2,7 @@
 
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { type TCurrencyInput, type TCurrencyInputWithAmount } from '@paraspell/assets'
+import type { Version } from '@paraspell/sdk-common'
 import {
   isRelayChain,
   isTMultiLocation,
@@ -26,8 +27,7 @@ import type {
   TDestination,
   TGetXcmFeeBuilderOptions,
   TSendBaseOptions,
-  TSendBaseOptionsWithSenderAddress,
-  Version
+  TSendBaseOptionsWithSenderAddress
 } from '../types'
 import { assertAddressIsString, assertToIsString } from '../utils/builder'
 import AssetClaimBuilder from './AssetClaimBuilder'

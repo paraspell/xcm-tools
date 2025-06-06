@@ -3,13 +3,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { findAsset, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
 import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
-import { isRelayChain, Parents } from '@paraspell/sdk-common'
+import { isRelayChain, Parents, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
 import { getParaId } from '../../nodes/config'
 import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
 import type { TFeeType } from '../../types'
-import { type TGetFeeForDestNodeOptions, Version } from '../../types'
+import { type TGetFeeForDestNodeOptions } from '../../types'
 import { replaceBigInt } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getReverseTxFee } from './getReverseTxFee'

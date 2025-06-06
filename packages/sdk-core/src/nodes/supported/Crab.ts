@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Crab Parachain
 
 import type { TAsset } from '@paraspell/assets'
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError } from '../../errors'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
@@ -12,15 +12,14 @@ import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
   type TScenario,
-  type TSerializedApiCall,
-  Version
+  type TSerializedApiCall
 } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Crab', 'crab', 'kusama', Version.V3)
+    super('Crab', 'crab', 'kusama', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

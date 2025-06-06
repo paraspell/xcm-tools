@@ -10,7 +10,7 @@ import {
   type TNativeAsset,
   type WithAmount
 } from '@paraspell/assets'
-import { hasJunction, type TMultiLocation } from '@paraspell/sdk-common'
+import { hasJunction, type TMultiLocation, Version } from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -20,7 +20,7 @@ import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type { TScenario, TTransferLocalOptions, TXcmVersioned } from '../../types'
-import { type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import { createVersionedBeneficiary } from '../../utils'
 import { transformMultiLocation } from '../../utils/multiLocation'
@@ -52,10 +52,6 @@ vi.mock('@paraspell/assets', async () => {
 
 vi.mock('../../transfer/getBridgeStatus', () => ({
   getBridgeStatus: vi.fn()
-}))
-
-vi.mock('../../utils/generateAddressMultiLocationV4', () => ({
-  generateAddressMultiLocationV4: vi.fn()
 }))
 
 vi.mock('../../utils/createBeneficiary', () => ({
@@ -120,6 +116,13 @@ describe('AssetHubPolkadot', () => {
     assetHub = getNode<unknown, unknown, 'AssetHubPolkadot'>('AssetHubPolkadot')
     vi.mocked(getBridgeStatus).mockResolvedValue('Normal')
     vi.mocked(normalizeSymbol).mockImplementation(sym => (sym ?? '').toUpperCase())
+  })
+
+  it('should initialize with correct values', () => {
+    expect(assetHub.node).toBe('AssetHubPolkadot')
+    expect(assetHub.info).toBe('PolkadotAssetHub')
+    expect(assetHub.type).toBe('polkadot')
+    expect(assetHub.version).toBe(Version.V4)
   })
 
   describe('handleBridgeTransfer', () => {
@@ -380,7 +383,7 @@ describe('AssetHubPolkadot', () => {
       })
 
       vi.mocked(createVersionedBeneficiary).mockReturnValue({
-        [Version.V3]: {}
+        [Version.V4]: {}
       } as TXcmVersioned<TMultiLocation>)
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
@@ -557,6 +560,7 @@ describe('AssetHubPolkadot', () => {
       const input = {
         ...mockInput,
         senderAddress: '0xvalid',
+        version: Version.V4,
         asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation, decimals: 12 }
       }
       input.asset.amount = '1000000'
@@ -623,7 +627,6 @@ describe('AssetHubPolkadot', () => {
 
   describe('createCurrencySpec', () => {
     const amount = 1000n
-    const version = Version.V3
     let superCreateCurrencySpecSpy: MockInstance
 
     beforeEach(() => {
@@ -648,9 +651,14 @@ describe('AssetHubPolkadot', () => {
       }
       superCreateCurrencySpecSpy.mockReturnValue(expectedSuperResult)
 
-      const result = assetHub.createCurrencySpec(amount, scenario, version, mockAsset)
+      const result = assetHub.createCurrencySpec(amount, scenario, assetHub.version, mockAsset)
 
-      expect(superCreateCurrencySpecSpy).toHaveBeenCalledWith(amount, scenario, version, mockAsset)
+      expect(superCreateCurrencySpecSpy).toHaveBeenCalledWith(
+        amount,
+        scenario,
+        assetHub.version,
+        mockAsset
+      )
       expect(hasJunction).not.toHaveBeenCalled()
       expect(transformMultiLocation).not.toHaveBeenCalled()
       expect(result).toEqual(expectedSuperResult)
@@ -669,12 +677,12 @@ describe('AssetHubPolkadot', () => {
         multiLocation: mockMultiLocation
       } as WithAmount<TNativeAsset>
       const expectedResult = {
-        V3: [{ id: { Concrete: mockMultiLocation }, fun: { Fungible: amount } }]
+        [assetHub.version]: [{ id: mockMultiLocation, fun: { Fungible: amount } }]
       }
 
       vi.mocked(hasJunction).mockReturnValue(false)
 
-      const result = assetHub.createCurrencySpec(amount, scenario, version, mockAsset)
+      const result = assetHub.createCurrencySpec(amount, scenario, assetHub.version, mockAsset)
 
       expect(hasJunction).toHaveBeenCalledWith(mockMultiLocation, 'Parachain', 1000)
       expect(transformMultiLocation).not.toHaveBeenCalled()
@@ -699,13 +707,13 @@ describe('AssetHubPolkadot', () => {
         interior: { X1: { AccountId32: { id: '0x123...' } } }
       }
       const expectedResult = {
-        V3: [{ id: { Concrete: transformedMultiLocation }, fun: { Fungible: amount } }]
+        [assetHub.version]: [{ id: transformedMultiLocation, fun: { Fungible: amount } }]
       }
 
       vi.mocked(hasJunction).mockReturnValue(true)
       vi.mocked(transformMultiLocation).mockReturnValue(transformedMultiLocation)
 
-      const result = assetHub.createCurrencySpec(amount, scenario, version, mockAsset)
+      const result = assetHub.createCurrencySpec(amount, scenario, assetHub.version, mockAsset)
 
       expect(hasJunction).toHaveBeenCalledWith(originalMultiLocation, 'Parachain', 1000)
       expect(transformMultiLocation).toHaveBeenCalledWith(originalMultiLocation)
@@ -715,17 +723,17 @@ describe('AssetHubPolkadot', () => {
 
     it('should throw InvalidCurrencyError for ParaToPara if asset is missing', () => {
       const scenario: TScenario = 'ParaToPara'
-      expect(() => assetHub.createCurrencySpec(amount, scenario, version, undefined)).toThrow(
-        'Asset does not have a multiLocation defined'
-      )
+      expect(() =>
+        assetHub.createCurrencySpec(amount, scenario, assetHub.version, undefined)
+      ).toThrow('Asset does not have a multiLocation defined')
     })
 
     it('should throw InvalidCurrencyError for ParaToPara if asset has no multiLocation', () => {
       const scenario: TScenario = 'ParaToPara'
       const assetWithoutML = { symbol: 'TST' } as TAsset
-      expect(() => assetHub.createCurrencySpec(amount, scenario, version, assetWithoutML)).toThrow(
-        'Asset does not have a multiLocation defined'
-      )
+      expect(() =>
+        assetHub.createCurrencySpec(amount, scenario, assetHub.version, assetWithoutML)
+      ).toThrow('Asset does not have a multiLocation defined')
     })
 
     it('should provide default multi-location if asset is overridden', () => {
@@ -740,13 +748,11 @@ describe('AssetHubPolkadot', () => {
       const isOverriddenAsset = true
 
       const expectedResult = {
-        V3: [
+        [assetHub.version]: [
           {
             id: {
-              Concrete: {
-                parents: 0,
-                interior: 'Here'
-              }
+              parents: 0,
+              interior: 'Here'
             },
             fun: { Fungible: amount }
           }
@@ -759,7 +765,7 @@ describe('AssetHubPolkadot', () => {
       const result = assetHub.createCurrencySpec(
         amount,
         scenario,
-        version,
+        assetHub.version,
         mockAsset,
         isOverriddenAsset
       )

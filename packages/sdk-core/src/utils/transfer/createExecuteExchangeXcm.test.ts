@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import { type TMultiLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
-import { Version } from '../../types'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'
 import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
@@ -164,7 +163,8 @@ describe('createExecuteExchangeXcm', () => {
       scenario: 'scenario-default',
       destination: 'destination-default',
       paraIdTo: 300,
-      address: 'address-default'
+      address: 'address-default',
+      version: Version.V4
     } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
     const weight = {
       refTime: 500n,

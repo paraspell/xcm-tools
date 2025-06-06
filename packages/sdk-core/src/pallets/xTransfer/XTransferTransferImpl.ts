@@ -1,12 +1,11 @@
 import type { TPallet } from '@paraspell/pallets'
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
 import {
   type TSerializedApiCall,
   type TXTransferMethod,
-  type TXTransferTransferOptions,
-  Version
+  type TXTransferTransferOptions
 } from '../../types'
 import { createMultiAsset, maybeOverrideMultiAssets } from '../xcmPallet/utils'
 import { determineDestWeight } from './utils/determineDestWeight'

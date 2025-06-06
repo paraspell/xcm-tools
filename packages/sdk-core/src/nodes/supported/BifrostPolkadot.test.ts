@@ -1,6 +1,6 @@
 import type { TAsset, WithAmount } from '@paraspell/assets'
 import { getAssetId } from '@paraspell/assets'
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
@@ -13,7 +13,6 @@ import type {
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type { BifrostPolkadot } from './BifrostPolkadot'
 
@@ -45,7 +44,7 @@ describe('BifrostPolkadot', () => {
     expect(bifrostPolkadot.node).toBe('BifrostPolkadot')
     expect(bifrostPolkadot.info).toBe('bifrost')
     expect(bifrostPolkadot.type).toBe('polkadot')
-    expect(bifrostPolkadot.version).toBe(Version.V3)
+    expect(bifrostPolkadot.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with Native when currency matches native asset', () => {
@@ -65,7 +64,7 @@ describe('BifrostPolkadot', () => {
       {
         ...mockPolkadotXCMInput,
         currencySelection: createVersionedMultiAssets(
-          Version.V3,
+          bifrostPolkadot.version,
           mockPolkadotXCMInput.asset.amount,
           {
             parents: Parents.TWO,
@@ -100,7 +99,7 @@ describe('BifrostPolkadot', () => {
         ...mockPolkadotXCMInput,
         asset,
         currencySelection: createVersionedMultiAssets(
-          Version.V3,
+          bifrostPolkadot.version,
           mockPolkadotXCMInput.asset.amount,
           DOT_MULTILOCATION
         )

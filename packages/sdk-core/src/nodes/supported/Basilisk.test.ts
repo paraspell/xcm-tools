@@ -1,9 +1,9 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import { getNodeProviders } from '../config'
 import type Basilisk from './Basilisk'
@@ -33,7 +33,7 @@ describe('Basilisk', () => {
     expect(basilisk.node).toBe('Basilisk')
     expect(basilisk.info).toBe('basilisk')
     expect(basilisk.type).toBe('kusama')
-    expect(basilisk.version).toBe(Version.V3)
+    expect(basilisk.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with currencyID', () => {

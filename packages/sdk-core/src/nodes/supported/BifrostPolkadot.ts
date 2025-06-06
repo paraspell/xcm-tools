@@ -7,7 +7,7 @@ import {
   isForeignAsset,
   type TAsset
 } from '@paraspell/assets'
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
@@ -19,7 +19,7 @@ import type {
   TSendInternalOptions,
   TTransferLocalOptions
 } from '../../types'
-import { type IXTokensTransfer, type TXTokensTransferOptions, Version } from '../../types'
+import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 export class BifrostPolkadot<TApi, TRes>
@@ -27,7 +27,7 @@ export class BifrostPolkadot<TApi, TRes>
   implements IXTokensTransfer, IPolkadotXCMTransfer
 {
   constructor() {
-    super('BifrostPolkadot', 'bifrost', 'polkadot', Version.V3)
+    super('BifrostPolkadot', 'bifrost', 'polkadot', Version.V4)
   }
 
   getCurrencySelection(asset: TAsset) {

@@ -1,7 +1,7 @@
-import { InvalidCurrencyError, isAssetEqual } from '@paraspell/assets'
+import { InvalidCurrencyError, isAssetEqual, isForeignAsset } from '@paraspell/assets'
+import type { Version } from '@paraspell/sdk-common'
 
 import { addXcmVersionHeader, createDestination } from '../../pallets/xcmPallet/utils'
-import type { Version } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'
@@ -24,8 +24,16 @@ export const createExecuteXcm = <TApi, TRes>(
     paraId: paraIdTo
   })
 
-  if (!asset.multiLocation || (feeAsset && !feeAsset.multiLocation)) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
+  if (!isForeignAsset(asset) || !asset.multiLocation || !asset.assetId) {
+    throw new InvalidCurrencyError(
+      `Asset ${JSON.stringify(asset)} is missing multiLocation or assetId`
+    )
+  }
+
+  if (feeAsset && (!isForeignAsset(feeAsset) || !feeAsset.multiLocation || !feeAsset.assetId)) {
+    throw new InvalidCurrencyError(
+      `Fee asset ${JSON.stringify(feeAsset)} is missing multiLocation or assetId`
+    )
   }
 
   const assetML = transformMultiLocation(asset.multiLocation)
@@ -35,26 +43,35 @@ export const createExecuteXcm = <TApi, TRes>(
 
   const amountWithoutFee = BigInt(asset.amount) - executionFee
 
+  const assetsToWithdraw = [
+    {
+      assetId: asset.assetId,
+      multiasset: {
+        id: assetML,
+        fun: {
+          Fungible: BigInt(asset.amount)
+        }
+      }
+    }
+  ]
+
+  if (!sameFeeAsset && feeAsset?.multiLocation) {
+    assetsToWithdraw.push({
+      assetId: feeAsset.assetId as string,
+      multiasset: {
+        id: feeML,
+        fun: {
+          Fungible: executionFee
+        }
+      }
+    })
+  }
+
+  assetsToWithdraw.sort((a, b) => (a.assetId > b.assetId ? 1 : -1))
+
   const xcm = [
     {
-      WithdrawAsset: [
-        {
-          id: assetML,
-          fun: {
-            Fungible: BigInt(asset.amount)
-          }
-        },
-        ...(!sameFeeAsset && feeAsset?.multiLocation
-          ? [
-              {
-                id: transformMultiLocation(feeAsset.multiLocation),
-                fun: {
-                  Fungible: executionFee
-                }
-              }
-            ]
-          : [])
-      ]
+      WithdrawAsset: assetsToWithdraw.map(({ multiasset }) => multiasset)
     },
     {
       BuyExecution: {

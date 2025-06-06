@@ -11,7 +11,8 @@ import type {
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
-  TNodeWithRelayChains
+  TNodeWithRelayChains,
+  Version
 } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
@@ -32,7 +33,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   feeAsset?: TAsset
   destination: TDestination
   paraIdTo?: number
-  version?: Version
+  version: Version
   senderAddress?: string
   ahAddress?: string
   pallet?: string
@@ -80,20 +81,6 @@ export interface IXTransferTransfer {
 }
 
 export type TScenario = 'ParaToRelay' | 'ParaToPara' | 'RelayToPara'
-
-/**
- * The XCM version.
- */
-export enum Version {
-  V3 = 'V3',
-  V4 = 'V4',
-  V5 = 'V5'
-}
-
-/**
- * The supported XCM versions for asset claims.
- */
-export type TVersionClaimAssets = Version.V3
 
 export type TAddress = string | TMultiLocation
 export type TDestination = TNodeWithRelayChains | TMultiLocation
@@ -160,11 +147,15 @@ export type WithRequiredSenderAddress<TBase> = Omit<TBase, 'senderAddress'> & {
 
 export type TSendBaseOptionsWithSenderAddress = WithRequiredSenderAddress<TSendBaseOptions>
 
-export type TSendInternalOptions<TApi, TRes> = Omit<TSendBaseOptions, 'from' | 'feeAsset'> & {
+export type TSendInternalOptions<TApi, TRes> = Omit<
+  TSendBaseOptions,
+  'from' | 'feeAsset' | 'version'
+> & {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
   feeAsset?: TAsset
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
+  version: Version
 }
 
 type TRelayToParaBaseOptions = {
@@ -187,7 +178,7 @@ type TRelayToParaBaseOptions = {
   /**
    * The optional overrided XCM version
    */
-  version?: Version
+  version: Version
   /**
    * The DOT or KSM asset to transfer
    */

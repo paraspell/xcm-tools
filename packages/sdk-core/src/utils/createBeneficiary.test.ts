@@ -1,11 +1,10 @@
 import type { TPallet } from '@paraspell/pallets'
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../api'
 import type { TScenario } from '../types'
-import { Version } from '../types'
 import { createBeneficiary, createVersionedBeneficiary } from './createBeneficiary'
 import { createX1Payload } from './createX1Payload'
 
@@ -55,7 +54,7 @@ describe('createBeneficiary', () => {
       scenario: 'ParaToRelay',
       pallet: 'XTokens',
       recipientAddress,
-      version: Version.V3
+      version: Version.V4
     })
 
     expect(result).toEqual({

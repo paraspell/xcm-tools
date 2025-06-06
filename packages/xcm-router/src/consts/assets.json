@@ -92,26 +92,6 @@
         }
       },
       {
-        "symbol": "STINK",
-        "assetId": "42069",
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 42069
-              }
-            ]
-          }
-        }
-      },
-      {
         "symbol": "WETH",
         "multiLocation": {
           "parents": 2,
@@ -651,9 +631,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2008
-            }
+            "X1": [
+              {
+                "Parachain": 2008
+              }
+            ]
           }
         }
       },
@@ -680,9 +662,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2037
-            }
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
           }
         }
       },
@@ -692,9 +676,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 3369
-            }
+            "X1": [
+              {
+                "Parachain": 3369
+              }
+            ]
           }
         }
       },
@@ -721,9 +707,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 3370
-            }
+            "X1": [
+              {
+                "Parachain": 3370
+              }
+            ]
           }
         }
       },
@@ -756,9 +744,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2101
-            }
+            "X1": [
+              {
+                "Parachain": 2101
+              }
+            ]
           }
         }
       },
@@ -788,9 +778,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 3345
-            }
+            "X1": [
+              {
+                "Parachain": 3345
+              }
+            ]
           }
         }
       },
@@ -798,13 +790,15 @@
         "symbol": "KSM",
         "assetId": "1000771",
         "multiLocation": {
-          "parents": 1,
+          "parents": 2,
           "interior": {
-            "X1": {
-              "GlobalConsensus": {
-                "kusama": null
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "kusama": null
+                }
               }
-            }
+            ]
           }
         }
       },
@@ -840,9 +834,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2086
-            }
+            "X1": [
+              {
+                "Parachain": 2086
+              }
+            ]
           }
         }
       },
@@ -1067,9 +1063,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2035
-            }
+            "X1": [
+              {
+                "Parachain": 2035
+              }
+            ]
           }
         }
       },
@@ -1099,9 +1097,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2006
-            }
+            "X1": [
+              {
+                "Parachain": 2006
+              }
+            ]
           }
         }
       },
@@ -1298,9 +1298,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
           }
         }
       },
@@ -1313,9 +1315,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
           }
         }
       },
@@ -1527,9 +1531,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
           }
         }
       ],
@@ -1596,9 +1602,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
           }
         }
       ],
@@ -1825,9 +1833,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
           }
         }
       ],
@@ -1849,40 +1859,6 @@
           }
         },
         "PHA"
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
       ],
       [
         {
@@ -1906,854 +1882,12 @@
           "interior": {
             "X2": [
               {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "BNC"
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2088
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        "PHA"
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "Here": null
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 8
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 8
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
                 "Parachain": 2000
               },
               {
                 "GeneralKey": {
                   "length": 2,
                   "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 8
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 8
-              }
-            ]
-          }
-        },
-        "BNC"
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 8
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 8
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 16
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 8
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 8
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2088
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 8
-              }
-            ]
-          }
-        },
-        "PHA"
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 8
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "BNC"
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 16
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2088
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "PHA"
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "BNC"
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
-              {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 16
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2088
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        "PHA"
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2000
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2092
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
                 }
               }
             ]
@@ -2780,15 +1914,15 @@
         {
           "parents": 1,
           "interior": {
-            "X3": [
+            "X2": [
               {
-                "Parachain": 1000
+                "Parachain": 2092
               },
               {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 16
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
               }
             ]
           }
@@ -2798,9 +1932,25 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
           }
         },
         "BNC"
@@ -2809,41 +1959,15 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
+            "Here": null
           }
         },
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
-          }
-        }
-      ],
-      [
-        {
-          "parents": 1,
-          "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
-          }
-        },
-        {
-          "parents": 1,
-          "interior": {
-            "X3": [
+            "X1": [
               {
-                "Parachain": 1000
-              },
-              {
-                "PalletInstance": 50
-              },
-              {
-                "GeneralIndex": 16
+                "Parachain": 2012
               }
             ]
           }
@@ -2853,9 +1977,7 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
+            "Here": null
           }
         },
         {
@@ -2879,9 +2001,7 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
+            "Here": null
           }
         },
         {
@@ -2905,9 +2025,927 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2095
-            }
+            "Here": null
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        "BNC"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 8
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "BNC"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0080000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "BNC"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        "PHA"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0083000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000b000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2000
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0081000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        "BNC"
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 16
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2092
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x000c000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
+          }
+        },
+        {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2088
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      [
+        {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2095
+              }
+            ]
           }
         },
         "PHA"
@@ -2917,9 +2955,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
           }
         }
       ],
@@ -3004,9 +3044,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
           }
         },
         {
@@ -3030,9 +3072,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
           }
         },
         {
@@ -3056,9 +3100,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
           }
         },
         {
@@ -3082,9 +3128,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
           }
         },
         "PHA"
@@ -3093,9 +3141,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2012
-            }
+            "X1": [
+              {
+                "Parachain": 2012
+              }
+            ]
           }
         },
         {
@@ -3458,9 +3508,11 @@
         "multiLocation": {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2037
-            }
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
           }
         }
       },
@@ -3664,9 +3716,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2037
-            }
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
           }
         }
       ],
@@ -4228,9 +4282,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2037
-            }
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
           }
         }
       ],
@@ -4844,9 +4900,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2037
-            }
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
           }
         },
         {
@@ -4870,9 +4928,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2037
-            }
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
           }
         },
         {
@@ -4896,9 +4956,11 @@
         {
           "parents": 1,
           "interior": {
-            "X1": {
-              "Parachain": 2037
-            }
+            "X1": [
+              {
+                "Parachain": 2037
+              }
+            ]
           }
         },
         {
