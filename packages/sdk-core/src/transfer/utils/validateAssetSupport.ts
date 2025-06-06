@@ -14,6 +14,7 @@ export const validateAssetSupport = <TApi, TRes>(
   const isDestAssetHub = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
 
   const allowedChainsToAh = [
+    'AssetHubPolkadot',
     'BifrostPolkadot',
     'BifrostKusama',
     'Hydration',

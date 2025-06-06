@@ -7,7 +7,7 @@ import {
   isForeignAsset,
   type TAsset
 } from '@paraspell/assets'
-import { isTMultiLocation, Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { isTMultiLocation, Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
@@ -28,7 +28,6 @@ import type {
   TTransferLocalOptions,
   TXcmVersioned
 } from '../../types'
-import { Version } from '../../types'
 import { createBeneficiaryMultiLocation, createX1Payload } from '../../utils'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { getParaId } from '../config'
@@ -118,10 +117,8 @@ export const createTypeAndThenTransfer = <TApi, TRes>(
     assets_transfer_type: transferType,
     remote_fees_id: {
       [version]: {
-        Concrete: {
-          parents: scenario === 'ParaToPara' ? Parents.ONE : Parents.ZERO,
-          interior: 'Here'
-        }
+        parents: scenario === 'ParaToPara' ? Parents.ONE : Parents.ZERO,
+        interior: 'Here'
       }
     },
     fees_transfer_type: transferType,
@@ -172,10 +169,8 @@ const createCustomXcmPolimec = <TApi, TRes>(
               BuyExecution: {
                 fees: {
                   id: {
-                    Concrete: {
-                      parents: Parents.ONE,
-                      interior: 'Here'
-                    }
+                    parents: Parents.ONE,
+                    interior: 'Here'
                   },
                   fun: {
                     Fungible: GAS_LIMIT
@@ -209,7 +204,7 @@ const createCustomXcmPolimec = <TApi, TRes>(
 
 class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Polimec', 'polimec', 'polkadot', Version.V3)
+    super('Polimec', 'polimec', 'polkadot', Version.V4)
   }
 
   async transferPolkadotXCM<TApi, TRes>(

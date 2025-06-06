@@ -1,13 +1,14 @@
 import type { TAmount } from '@paraspell/assets'
 import { InvalidCurrencyError, type TCurrencyInput, type TMultiAsset } from '@paraspell/assets'
 import type { TJunction, TMultiLocation } from '@paraspell/sdk-common'
+import { Version } from '@paraspell/sdk-common'
 import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
 import { NODE_NAMES_DOT_KSM, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
 import { getParaId } from '../../nodes/config'
 import type { OneKey, TRelaychain, TXcmVersioned } from '../../types'
-import { type TDestination, type TScenario, Version } from '../../types'
+import { type TDestination, type TScenario } from '../../types'
 import { determineRelayChain } from '../../utils'
 import { createX1Payload } from '../../utils/createX1Payload'
 import { findParachainJunction } from '../../utils/findParachainJunction'
@@ -17,7 +18,7 @@ export const createMultiAsset = (
   amount: TAmount,
   multiLocation: TMultiLocation
 ): TMultiAsset => {
-  if (version === Version.V4) {
+  if (version === Version.V4 || version === Version.V5) {
     return {
       id: multiLocation,
       fun: { Fungible: amount }

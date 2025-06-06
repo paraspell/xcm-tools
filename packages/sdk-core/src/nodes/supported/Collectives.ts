@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for Collectives Parachain
 
 import type { TAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
@@ -8,14 +9,13 @@ import type { TRelayToParaOverrides } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
-  type TScenario,
-  Version
+  type TScenario
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Collectives', 'polkadotCollectives', 'polkadot', Version.V3)
+    super('Collectives', 'polkadotCollectives', 'polkadot', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

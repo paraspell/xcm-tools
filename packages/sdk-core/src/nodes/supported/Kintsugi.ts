@@ -2,14 +2,14 @@
 
 import type { TAsset } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
 import {
   type IXTokensTransfer,
   type TForeignOrTokenAsset,
-  type TXTokensTransferOptions,
-  Version
+  type TXTokensTransferOptions
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 

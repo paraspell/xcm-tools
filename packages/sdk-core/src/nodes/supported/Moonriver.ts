@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Moonriver Parachain
 
 import { InvalidCurrencyError, type TAsset } from '@paraspell/assets'
-import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
@@ -13,13 +13,12 @@ import type {
   TScenario,
   TTransferLocalOptions
 } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Moonriver', 'moonriver', 'kusama', Version.V3)
+    super('Moonriver', 'moonriver', 'kusama', Version.V4)
   }
 
   private getMultiLocation(asset: TAsset, scenario: TScenario): TMultiLocation {

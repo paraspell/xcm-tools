@@ -1,7 +1,7 @@
 // Contains builder pattern tests for different Builder pattern functionalities
 
 import { getRelayChainSymbol, type TCurrencyInputWithAmount } from '@paraspell/assets'
-import type { TNode } from '@paraspell/sdk-common'
+import { type TNode, Version } from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -18,7 +18,6 @@ import type {
   TTransferInfo,
   TXcmFeeDetail
 } from '../types'
-import { Version } from '../types'
 import { assertAddressIsString, assertToIsString } from '../utils/builder'
 import { Builder } from './Builder'
 
@@ -242,39 +241,34 @@ describe('Builder', () => {
         multiasset: [
           {
             id: {
-              Concrete: {
-                parents: 0,
-                interior: {
-                  X2: [
-                    {
-                      PalletInstance: '50'
-                    },
-                    {
-                      Parachain: '30'
-                    }
-                  ]
-                }
+              parents: 0,
+              interior: {
+                X2: [
+                  {
+                    PalletInstance: '50'
+                  },
+                  {
+                    Parachain: '30'
+                  }
+                ]
               }
             },
-
             fun: {
               Fungible: '102928'
             }
           },
           {
             id: {
-              Concrete: {
-                parents: 0,
-                interior: {
-                  X2: [
-                    {
-                      PalletInstance: '50'
-                    },
-                    {
-                      Parachain: '1337'
-                    }
-                  ]
-                }
+              parents: 0,
+              interior: {
+                X2: [
+                  {
+                    PalletInstance: '50'
+                  },
+                  {
+                    Parachain: '1337'
+                  }
+                ]
               }
             },
             fun: {

@@ -2,15 +2,11 @@
 
 import type { TAsset } from '@paraspell/assets'
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
-import {
-  type IXTokensTransfer,
-  type TMantaAsset,
-  type TXTokensTransferOptions,
-  Version
-} from '../../types'
+import { type IXTokensTransfer, type TMantaAsset, type TXTokensTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Manta<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {

@@ -1,8 +1,9 @@
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import XTransferTransferImpl from '../../pallets/xTransfer'
 import type { TTransferLocalOptions } from '../../types'
-import { type IXTransferTransfer, type TXTransferTransferOptions, Version } from '../../types'
+import { type IXTransferTransfer, type TXTransferTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Phala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTransferTransfer {

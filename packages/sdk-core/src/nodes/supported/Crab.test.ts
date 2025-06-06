@@ -1,11 +1,10 @@
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Crab from './Crab'
 
@@ -34,7 +33,7 @@ describe('Crab', () => {
     expect(crab.node).toBe('Crab')
     expect(crab.info).toBe('crab')
     expect(crab.type).toBe('kusama')
-    expect(crab.version).toBe(Version.V3)
+    expect(crab.version).toBe(Version.V4)
   })
 
   it('should throw ScenarioNotSupportedError for ParaToRelay scenario', () => {
@@ -59,8 +58,8 @@ describe('Crab', () => {
   })
 
   it('should call createCurrencySpec with correct values', () => {
-    crab.createCurrencySpec('100', 'ParaToPara', Version.V3)
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, '100', {
+    crab.createCurrencySpec('100', 'ParaToPara', Version.V4)
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V4, '100', {
       parents: Parents.ZERO,
       interior: {
         X1: {
@@ -71,8 +70,8 @@ describe('Crab', () => {
   })
 
   it('should call createCurrencySpec with correct values - ParaToRelay', () => {
-    crab.createCurrencySpec('100', 'ParaToRelay', Version.V3)
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, '100', {
+    crab.createCurrencySpec('100', 'ParaToRelay', Version.V4)
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V4, '100', {
       parents: Parents.ZERO,
       interior: {
         X1: {

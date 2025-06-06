@@ -1,8 +1,8 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Acala from './Acala'
 
@@ -28,7 +28,7 @@ describe('Acala', () => {
     expect(acala.node).toBe('Acala')
     expect(acala.info).toBe('acala')
     expect(acala.type).toBe('polkadot')
-    expect(acala.version).toBe(Version.V3)
+    expect(acala.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with Token when currencyID is undefined', () => {

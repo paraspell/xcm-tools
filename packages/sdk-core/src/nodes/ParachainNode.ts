@@ -13,6 +13,7 @@ import {
 } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
+import type { Version } from '@paraspell/sdk-common'
 import {
   isRelayChain,
   isTMultiLocation,
@@ -56,7 +57,6 @@ import type {
   TXcmVersioned,
   TXTokensTransferOptions
 } from '../types'
-import { Version } from '../types'
 import { createBeneficiaryMultiLocation, createVersionedBeneficiary, getFees } from '../utils'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
@@ -149,8 +149,6 @@ abstract class ParachainNode<TApi, TRes> {
       )
     }
 
-    const versionOrDefault = version ?? this.version
-
     const isLocalTransfer = this.node === destination
     if (isLocalTransfer) {
       return this.transferLocal(options)
@@ -169,14 +167,14 @@ abstract class ParachainNode<TApi, TRes> {
           scenario,
           pallet: 'XTokens',
           recipientAddress: address,
-          version: versionOrDefault,
+          version,
           paraId
         }),
         fees: getFees(scenario),
         origin: this.node,
         scenario,
         paraIdTo: paraId,
-        version: versionOrDefault,
+        version,
         destination,
         overriddenAsset,
         pallet,
@@ -203,20 +201,20 @@ abstract class ParachainNode<TApi, TRes> {
     } else if (supportsPolkadotXCM(this)) {
       const options: TPolkadotXCMTransferOptions<TApi, TRes> = {
         api,
-        header: this.createVersionedDestination(scenario, versionOrDefault, destination, paraId),
+        header: this.createVersionedDestination(scenario, version, destination, paraId),
         addressSelection: createVersionedBeneficiary({
           api,
           scenario,
           pallet: 'PolkadotXcm',
           recipientAddress: address,
-          version: versionOrDefault,
+          version,
           paraId
         }),
         address,
         currencySelection: this.createCurrencySpec(
           asset.amount,
           scenario,
-          versionOrDefault,
+          version,
           asset,
           overriddenAsset !== undefined
         ),
@@ -264,7 +262,7 @@ abstract class ParachainNode<TApi, TRes> {
   }
 
   transferRelayToPara(options: TRelayToParaOptions<TApi, TRes>): TSerializedApiCall {
-    const { version = Version.V3, pallet, method: methodOverride } = options
+    const { version, pallet, method: methodOverride } = options
     const { method, includeFee } = this.getRelayToParaOverrides()
     return {
       module: (pallet as TPallet) ?? 'XcmPallet',
@@ -359,7 +357,7 @@ abstract class ParachainNode<TApi, TRes> {
       api,
       asset,
       scenario,
-      version = Version.V4,
+      version,
       destination,
       address,
       senderAddress,
@@ -495,16 +493,7 @@ abstract class ParachainNode<TApi, TRes> {
     input: TPolkadotXCMTransferOptions<TApi, TRes>,
     useOnlyDepositInstruction = false
   ): Promise<TRes> {
-    const {
-      api,
-      asset,
-      scenario,
-      version = Version.V4,
-      destination,
-      address,
-      senderAddress,
-      feeAsset
-    } = input
+    const { api, asset, scenario, version, destination, address, senderAddress, feeAsset } = input
 
     const bridgeStatus = await getBridgeStatus(api.clone())
 
@@ -580,7 +569,7 @@ abstract class ParachainNode<TApi, TRes> {
         asset.amount
       )
 
-      customXcmOnDest = createCustomXcmOnDest(input, this.node, version, messageId)
+      customXcmOnDest = createCustomXcmOnDest(input, this.node, messageId)
     }
 
     const call: TSerializedApiCall = {

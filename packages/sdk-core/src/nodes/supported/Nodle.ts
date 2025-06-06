@@ -1,16 +1,17 @@
 // Contains detailed structure of XCM call construction for Nodle Parachain
 
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../types'
-import { type TSerializedApiCall, Version } from '../../types'
+import { type TSerializedApiCall } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Nodle<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('Nodle', 'nodle', 'polkadot', Version.V3)
+    super('Nodle', 'nodle', 'polkadot', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

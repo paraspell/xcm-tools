@@ -5,12 +5,12 @@ import {
   isNodeEvm
 } from '@paraspell/assets'
 import type { TMultiLocation, TNodeWithRelayChains } from '@paraspell/sdk-common'
-import { Parents } from '@paraspell/sdk-common'
+import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { InvalidParameterError } from '../../errors'
-import type { TPolkadotXCMTransferOptions, Version } from '../../types'
+import type { TPolkadotXCMTransferOptions } from '../../types'
 import { createCustomXcmOnDest } from './createCustomXcmOnDest'
 
 vi.mock('@paraspell/assets', () => ({
@@ -50,132 +50,107 @@ describe('createCustomXcmOnDest', () => {
   } as unknown as IPolkadotApi<unknown, unknown>
 
   const mockNode: TNodeWithRelayChains = 'Acala'
-  const version = 'V3' as Version
+  const version = Version.V4
   const messageId = 'test-message-id'
 
+  const defaultMultiLocation = { parents: Parents.ZERO, interior: { Here: null } } as TMultiLocation
+  const defaultHeader = { V3: defaultMultiLocation }
+  const defaultAddressSelection = { V3: defaultMultiLocation }
+  const defaultCurrencySelection = {
+    V3: [{ id: defaultMultiLocation, fun: { Fungible: 1n } }]
+  }
+  const defaultDestination = { parents: Parents.ONE, interior: { Here: null } } as TMultiLocation
+  const baseOptions = {
+    api,
+    address: '0xRecipient',
+    scenario: 'ParaToPara',
+    senderAddress: '0xSender',
+    header: defaultHeader,
+    addressSelection: defaultAddressSelection,
+    currencySelection: defaultCurrencySelection,
+    destination: defaultDestination,
+    version
+  } as Partial<TPolkadotXCMTransferOptions<unknown, unknown>>
+
   beforeEach(() => {
+    vi.clearAllMocks()
     vi.mocked(isNodeEvm).mockReturnValue(false)
   })
 
   it('should throw an error if the asset is not a foreign asset', () => {
     const options = {
-      api: api,
-      address: '0xRecipient',
-      asset: { symbol: 'DOT', multiLocation: {} as TMultiLocation, amount: '1000000' },
-      scenario: 'ParaToPara',
-      senderAddress: '0xSender',
-      header: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      currencySelection: {
-        V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      },
-      destination: { parents: Parents.ONE, interior: { Here: null } }
+      ...baseOptions,
+      asset: {
+        symbol: 'DOT',
+        multiLocation: {} as TMultiLocation,
+        amount: '1000000'
+      }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(false)
 
-    expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
-      InvalidCurrencyError
-    )
+    expect(() => createCustomXcmOnDest(options, mockNode, messageId)).toThrow(InvalidCurrencyError)
   })
 
   it('should throw an error if asset has no multiLocation', () => {
     const options = {
-      api: api,
-      address: '0xRecipient',
-      asset: { symbol: 'ETH', multiLocation: {} as TMultiLocation, amount: '1000000' },
-      scenario: 'ParaToPara',
-      senderAddress: '0xSender',
-      header: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      currencySelection: {
-        V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      },
-      destination: { parents: Parents.ONE, interior: { Here: null } }
+      ...baseOptions,
+      asset: {
+        symbol: 'ETH',
+        multiLocation: {} as TMultiLocation, // invalid multiLocation
+        amount: '1000000'
+      }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
 
-    expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
-      InvalidCurrencyError
-    )
+    expect(() => createCustomXcmOnDest(options, mockNode, messageId)).toThrow(InvalidCurrencyError)
   })
 
   it('should throw an error if senderAddress is missing', () => {
     const options = {
-      api: api,
-      address: '0xRecipient',
+      ...baseOptions,
+      senderAddress: undefined,
       asset: {
         symbol: 'ETH',
-        multiLocation: { parents: Parents.ZERO, interior: { Here: null } },
+        multiLocation: defaultMultiLocation,
         amount: '1000000'
-      },
-      scenario: 'ParaToPara',
-      header: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      currencySelection: {
-        V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      },
-      destination: { parents: Parents.ONE, interior: { Here: null } }
+      }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
-      InvalidParameterError
-    )
+    expect(() => createCustomXcmOnDest(options, mockNode, messageId)).toThrow(InvalidParameterError)
   })
 
   it('should throw an error if node is EVM and ahAddress is missing', () => {
     const options = {
-      api: api,
-      address: '0xRecipient',
+      ...baseOptions,
       asset: {
         symbol: 'ETH',
-        multiLocation: { parents: Parents.ZERO, interior: { Here: null } },
+        multiLocation: defaultMultiLocation,
         amount: '1000000'
-      },
-      scenario: 'ParaToPara',
-      senderAddress: '0xSender',
-      header: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      currencySelection: {
-        V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      },
-      destination: { parents: Parents.ONE, interior: { Here: null } }
+      }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(isNodeEvm).mockReturnValue(true)
 
-    expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
-      InvalidParameterError
-    )
+    expect(() => createCustomXcmOnDest(options, mockNode, messageId)).toThrow(InvalidParameterError)
   })
 
   it('should throw an error if Ethereum asset is not found', () => {
     const options = {
-      api: api,
-      address: '0xRecipient',
+      ...baseOptions,
       asset: {
         symbol: 'ETH',
-        multiLocation: { parents: Parents.ZERO, interior: { Here: null } },
+        multiLocation: defaultMultiLocation,
         amount: '1000000'
-      },
-      scenario: 'ParaToPara',
-      senderAddress: '0xSender',
-      header: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      currencySelection: {
-        V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      },
-      destination: { parents: Parents.ONE, interior: { Here: null } }
+      }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(findAssetByMultiLocation).mockReturnValue(undefined)
 
-    expect(() => createCustomXcmOnDest(options, mockNode, version, messageId)).toThrow(
-      InvalidCurrencyError
-    )
+    expect(() => createCustomXcmOnDest(options, mockNode, messageId)).toThrow(InvalidCurrencyError)
   })
 
   it('should return a valid XCM message structure', () => {
@@ -185,33 +160,25 @@ describe('createCustomXcmOnDest', () => {
     }
 
     const options = {
-      api: api,
-      address: '0xRecipient',
+      ...baseOptions,
       asset: {
         symbol: 'ETH',
-        multiLocation: { parents: Parents.ZERO, interior: { Here: null } },
+        multiLocation: defaultMultiLocation,
         amount: '1000000'
-      },
-      scenario: 'ParaToPara',
-      senderAddress: '0xSender',
-      header: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      addressSelection: { V3: { parents: Parents.ZERO, interior: { Here: null } } },
-      currencySelection: {
-        V3: [{ id: { parents: Parents.ZERO, interior: { Here: null } }, fun: { Fungible: 1n } }]
-      },
-      destination: { parents: Parents.ONE, interior: { Here: null } }
+      }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(findAssetByMultiLocation).mockReturnValue(mockEthAsset)
 
-    const result = createCustomXcmOnDest(options, mockNode, version, messageId)
+    const result = createCustomXcmOnDest(options, mockNode, messageId)
 
     expect(result).toBeDefined()
-    expect(result[version]).toBeInstanceOf(Array)
-    expect(result[version].length).toBeGreaterThan(0)
+    const xcmV4 = result[version]
+    expect(Array.isArray(xcmV4)).toBe(true)
+    expect(xcmV4.length).toBeGreaterThan(0)
 
-    expect(result[version]).toContainEqual({
+    expect(xcmV4).toContainEqual({
       SetAppendix: [
         {
           DepositAsset: {
@@ -222,12 +189,12 @@ describe('createCustomXcmOnDest', () => {
       ]
     })
 
-    expect(result[version]).toContainEqual({
+    expect(xcmV4).toContainEqual({
       InitiateReserveWithdraw: {
         assets: {
           Wild: {
             AllOf: {
-              id: { parents: Parents.ZERO, interior: { Here: null } },
+              id: defaultMultiLocation,
               fun: 'Fungible'
             }
           }
@@ -248,10 +215,7 @@ describe('createCustomXcmOnDest', () => {
           {
             BuyExecution: {
               fees: {
-                id: {
-                  parents: Parents.ZERO,
-                  interior: { Here: null }
-                },
+                id: defaultMultiLocation,
                 fun: { Fungible: 1n }
               },
               weight_limit: 'Unlimited'
@@ -275,7 +239,7 @@ describe('createCustomXcmOnDest', () => {
       }
     })
 
-    expect(result[version]).toContainEqual({
+    expect(xcmV4).toContainEqual({
       SetTopic: messageId
     })
   })

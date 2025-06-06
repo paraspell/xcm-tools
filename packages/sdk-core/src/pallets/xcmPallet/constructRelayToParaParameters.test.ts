@@ -1,11 +1,10 @@
 import type { TMultiAsset } from '@paraspell/assets'
-import { Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TRelayToParaOptions, TXcmVersioned } from '../../types'
-import { Version } from '../../types'
 import { createVersionedBeneficiary, resolveParaId } from '../../utils'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
 import { createVersionedDestination, createVersionedMultiAssets } from './utils'
@@ -47,11 +46,11 @@ describe('constructRelayToParaParameters', () => {
   })
 
   it('should construct parameters with multi-location destination and include fee', () => {
-    const result = constructRelayToParaParameters(options, Version.V3, { includeFee: true })
+    const result = constructRelayToParaParameters(options, Version.V4, { includeFee: true })
 
     expect(createVersionedDestination).toHaveBeenCalledWith(
       'RelayToPara',
-      Version.V3,
+      Version.V4,
       'Acala',
       mockParaId
     )
@@ -60,10 +59,10 @@ describe('constructRelayToParaParameters', () => {
       scenario: 'RelayToPara',
       pallet: null,
       recipientAddress: mockAddress,
-      version: Version.V3,
+      version: Version.V4,
       paraId: mockParaId
     })
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, mockAmount, {
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
     })
@@ -77,11 +76,11 @@ describe('constructRelayToParaParameters', () => {
   })
 
   it('should construct parameters without fee for multi-location destination', () => {
-    const result = constructRelayToParaParameters(options, Version.V3)
+    const result = constructRelayToParaParameters(options, Version.V4)
 
     expect(createVersionedDestination).toHaveBeenCalledWith(
       'RelayToPara',
-      Version.V3,
+      Version.V4,
       options.destination,
       mockParaId
     )
@@ -90,10 +89,10 @@ describe('constructRelayToParaParameters', () => {
       scenario: 'RelayToPara',
       pallet: null,
       recipientAddress: mockAddress,
-      version: Version.V3,
+      version: Version.V4,
       paraId: mockParaId
     })
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V3, mockAmount, {
+    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V4, mockAmount, {
       parents: Parents.ZERO,
       interior: 'Here'
     })

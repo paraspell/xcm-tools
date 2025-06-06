@@ -1,9 +1,9 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Altair from './Altair'
 
@@ -25,7 +25,7 @@ describe('Altair', () => {
     expect(altair.node).toBe('Altair')
     expect(altair.info).toBe('altair')
     expect(altair.type).toBe('kusama')
-    expect(altair.version).toBe(Version.V3)
+    expect(altair.version).toBe(Version.V4)
   })
 
   it('should call transferXTokens with Native when currency matches the native asset', () => {

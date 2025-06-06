@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { InvalidCurrencyError } from '@paraspell/assets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
+import { InvalidCurrencyError, isAssetEqual, isForeignAsset } from '@paraspell/assets'
+import { type TMultiLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { addXcmVersionHeader, createDestination } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'
 import { createExecuteXcm } from './createExecuteXcm'
@@ -23,6 +22,12 @@ vi.mock('../multiLocation', () => ({
   transformMultiLocation: vi.fn()
 }))
 
+vi.mock('@paraspell/assets', () => ({
+  isForeignAsset: vi.fn(),
+  InvalidCurrencyError: class InvalidCurrencyError extends Error {},
+  isAssetEqual: vi.fn()
+}))
+
 describe('createExecuteXcm', () => {
   const dummyDest = 'destValue' as unknown as TMultiLocation
   const dummyBeneficiary = 'beneficiaryValue' as unknown as TMultiLocation
@@ -35,6 +40,8 @@ describe('createExecuteXcm', () => {
       'transformedLocation' as unknown as TMultiLocation
     )
     vi.mocked(addXcmVersionHeader).mockImplementation((xcm, version) => ({ [version]: xcm }))
+    vi.mocked(isForeignAsset).mockReturnValue(true)
+    vi.mocked(isAssetEqual).mockReturnValue(true)
   })
 
   afterEach(() => {
@@ -63,11 +70,13 @@ describe('createExecuteXcm', () => {
       api: fakeApi,
       version: Version.V4,
       asset: {
-        multiLocation: { foo: 'bar' },
+        multiLocation: {},
+        assetId: 'asset-id',
         amount: '1000'
       },
       feeAsset: {
-        multiLocation: { foo: 'bar' },
+        multiLocation: {},
+        assetId: 'asset-id',
         amount: '1000'
       },
       scenario: 'test-scenario',
@@ -117,7 +126,8 @@ describe('createExecuteXcm', () => {
     const input = {
       api: fakeApi,
       asset: {
-        multiLocation: { foo: 'bar' },
+        multiLocation: {},
+        assetId: 'asset-id',
         amount: 2000
       },
       scenario: 'scenario-default',

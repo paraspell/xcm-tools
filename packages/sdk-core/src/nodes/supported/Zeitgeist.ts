@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for Zeitgeist Parachain
 
 import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions } from '../../types'
@@ -8,8 +9,7 @@ import {
   type IXTokensTransfer,
   type TXcmForeignAsset,
   type TXTokensTransferOptions,
-  type TZeitgeistAsset,
-  Version
+  type TZeitgeistAsset
 } from '../../types'
 import ParachainNode from '../ParachainNode'
 

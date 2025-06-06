@@ -2,7 +2,7 @@ import { DOT_MULTILOCATION } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TSerializedApiCall, TWeight } from '../../types'
-import { type TPolkadotXCMTransferOptions, Version } from '../../types'
+import { type TPolkadotXCMTransferOptions } from '../../types'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'
 
@@ -12,7 +12,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
   originExecutionFee: bigint,
   destExecutionFee: bigint
 ): TRes => {
-  const { api, version = Version.V4, asset, scenario, destination, paraIdTo, address } = input
+  const { api, version, asset, scenario, destination, paraIdTo, address } = input
 
   const dest = createDestination(scenario, version, destination, paraIdTo)
 

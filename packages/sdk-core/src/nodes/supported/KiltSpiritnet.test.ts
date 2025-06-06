@@ -1,9 +1,9 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type KiltSpiritnet from './KiltSpiritnet'
 
@@ -31,7 +31,7 @@ describe('KiltSpiritnet', () => {
     expect(kiltSpiritnet.node).toBe('KiltSpiritnet')
     expect(kiltSpiritnet.info).toBe('kilt')
     expect(kiltSpiritnet.type).toBe('polkadot')
-    expect(kiltSpiritnet.version).toBe(Version.V3)
+    expect(kiltSpiritnet.version).toBe(Version.V4)
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets', async () => {

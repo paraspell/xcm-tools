@@ -2,7 +2,7 @@
 
 import type { TAsset } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
-import { isTMultiLocation } from '@paraspell/sdk-common'
+import { isTMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { SYSTEM_NODES_KUSAMA } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
@@ -11,15 +11,14 @@ import type { TRelayToParaOverrides, TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
-  type TScenario,
-  Version
+  type TScenario
 } from '../../types'
 import { getNode } from '../../utils'
 import ParachainNode from '../ParachainNode'
 
 class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
   constructor() {
-    super('AssetHubKusama', 'KusamaAssetHub', 'kusama', Version.V3)
+    super('AssetHubKusama', 'KusamaAssetHub', 'kusama', Version.V4)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

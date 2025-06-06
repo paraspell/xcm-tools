@@ -1,9 +1,9 @@
+import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
 import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { Version } from '../../types'
 import { getNode } from '../../utils'
 import type Encointer from './Encointer'
 
@@ -28,7 +28,7 @@ describe('Encointer', () => {
     expect(node.node).toBe('Encointer')
     expect(node.info).toBe('encointer')
     expect(node.type).toBe('kusama')
-    expect(node.version).toBe(Version.V3)
+    expect(node.version).toBe(Version.V4)
   })
 
   it('should call transferPolkadotXCM with limitedTeleportAssets for ParaToRelay scenario', async () => {
