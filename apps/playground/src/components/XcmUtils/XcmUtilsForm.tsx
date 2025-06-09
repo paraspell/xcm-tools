@@ -279,6 +279,9 @@ const XcmUtilsForm: FC<Props> = ({
 
   const colorScheme = useComputedColorScheme();
 
+  const feeAssetDisabled =
+    form.values.currencies.length <= 1 && from !== 'AssetHubPolkadot';
+
   if (!isVisible) {
     return null;
   }
@@ -374,7 +377,11 @@ const XcmUtilsForm: FC<Props> = ({
             </Button>
           </Stack>
 
-          <FeeAssetSelection form={form} currencyOptions={currencyOptions} />
+          <FeeAssetSelection
+            disabled={feeAssetDisabled}
+            form={form}
+            currencyOptions={currencyOptions}
+          />
 
           <TextInput
             label="Recipient address"
