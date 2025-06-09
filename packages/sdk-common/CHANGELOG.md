@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.4](https://github.com/paraspell/xcm-tools/compare/sdk-common-v10.4.3...sdk-common-v10.4.4) (2025-06-09)
+
+
+### Bug Fixes
+
+* Improve XCM version handling & Update calls to V4 🔧 ([7e5e356](https://github.com/paraspell/xcm-tools/commit/7e5e3565b0e94a7f88fa48f0209f786276bed829))
+
 ## [10.4.3](https://github.com/paraspell/xcm-tools/compare/sdk-common-v10.4.2...sdk-common-v10.4.3) (2025-06-06)
 
 
