@@ -18,9 +18,14 @@ import type { FormValues } from '../XcmTransfer/XcmTransferForm';
 type Props = {
   form: UseFormReturnType<FormValues>;
   currencyOptions: ComboboxItem[];
+  disabled?: boolean;
 };
 
-export const FeeAssetSelection: FC<Props> = ({ form, currencyOptions }) => {
+export const FeeAssetSelection: FC<Props> = ({
+  form,
+  currencyOptions,
+  disabled = false,
+}) => {
   const { from, to, feeAsset } = form.getValues();
 
   const isCustomCurrency = feeAsset.isCustomCurrency;
@@ -102,7 +107,7 @@ export const FeeAssetSelection: FC<Props> = ({ form, currencyOptions }) => {
           placeholder="Pick value"
           data={currencyOptions}
           allowDeselect={false}
-          disabled={isRelayToPara}
+          disabled={isRelayToPara || disabled}
           searchable
           clearable
           data-testid="select-currency"
@@ -116,6 +121,7 @@ export const FeeAssetSelection: FC<Props> = ({ form, currencyOptions }) => {
             <Checkbox
               size="xs"
               label="Select custom asset"
+              disabled={isRelayToPara || disabled}
               {...form.getInputProps(`feeAsset.isCustomCurrency`, {
                 type: 'checkbox',
               })}
