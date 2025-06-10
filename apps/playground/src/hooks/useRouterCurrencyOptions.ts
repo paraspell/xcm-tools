@@ -20,7 +20,7 @@ const assetKeys = (
   return keys;
 };
 
-const useRouterCurrencyOptions = (
+export const useRouterCurrencyOptions = (
   from: TNodeWithRelayChains | undefined,
   exchangeNode: TExchangeInput,
   to: TNodeWithRelayChains | undefined,
@@ -141,5 +141,3 @@ const useRouterCurrencyOptions = (
     adjacency,
   };
 };
-
-export default useRouterCurrencyOptions;

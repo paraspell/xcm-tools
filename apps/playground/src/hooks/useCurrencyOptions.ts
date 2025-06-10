@@ -2,7 +2,7 @@ import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
 import { getSupportedAssets, isForeignAsset } from '@paraspell/sdk';
 import { useMemo } from 'react';
 
-const useCurrencyOptions = (
+export const useCurrencyOptions = (
   from: TNodeWithRelayChains,
   to: TNodeWithRelayChains,
 ) => {
@@ -38,5 +38,3 @@ const useCurrencyOptions = (
 
   return { currencyOptions, isNotParaToPara, currencyMap };
 };
-
-export default useCurrencyOptions;

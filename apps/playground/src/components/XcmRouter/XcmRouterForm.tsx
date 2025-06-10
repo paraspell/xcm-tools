@@ -38,8 +38,12 @@ import {
 import type { FC, FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 
-import useRouterCurrencyOptions from '../../hooks/useRouterCurrencyOptions';
-import { useWallet } from '../../hooks/useWallet';
+import { DEFAULT_ADDRESS } from '../../constants';
+import {
+  useAutoFillWalletAddress,
+  useRouterCurrencyOptions,
+  useWallet,
+} from '../../hooks';
 import type { TRouterSubmitType, TWalletAccount } from '../../types';
 import { isValidWalletAddress } from '../../utils';
 import { showErrorNotification } from '../../utils/notifications';
@@ -123,7 +127,7 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
       currencyFromOptionId: '',
       currencyToOptionId: '',
       amount: '10000000000000000000',
-      recipientAddress: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      recipientAddress: DEFAULT_ADDRESS,
       slippagePct: '1',
       useApi: false,
     },
@@ -146,6 +150,8 @@ export const XcmRouterForm: FC<Props> = ({ onSubmit, loading }) => {
     },
     validateInputOnChange: ['exchange'],
   });
+
+  useAutoFillWalletAddress(form, 'recipientAddress');
 
   const { from, to, exchange } = form.getValues();
 

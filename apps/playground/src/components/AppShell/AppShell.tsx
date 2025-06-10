@@ -28,8 +28,8 @@ import {
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
-import { NAVIGATION_ITEMS } from '../../constants/constants';
-import { useWallet } from '../../hooks/useWallet';
+import { NAVIGATION_ITEMS } from '../../constants';
+import { useWallet } from '../../hooks';
 import {
   AssetClaimPage,
   AssetsQueriesPage,

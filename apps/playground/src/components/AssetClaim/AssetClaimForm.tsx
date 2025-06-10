@@ -3,7 +3,8 @@ import { useForm } from '@mantine/form';
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
 import { type FC, useEffect } from 'react';
 
-import { useWallet } from '../../hooks/useWallet';
+import { DEFAULT_ADDRESS } from '../../constants';
+import { useAutoFillWalletAddress, useWallet } from '../../hooks';
 import { isValidWalletAddress } from '../../utils';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
@@ -32,7 +33,7 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
     initialValues: {
       from: 'Polkadot',
       amount: '10000000000000000000',
-      address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      address: DEFAULT_ADDRESS,
       useApi: false,
     },
 
@@ -41,6 +42,8 @@ const AssetClaimForm: FC<Props> = ({ onSubmit, loading }) => {
         isValidWalletAddress(value) ? null : 'Invalid address',
     },
   });
+
+  useAutoFillWalletAddress(form, 'address');
 
   const { useApi } = form.getValues();
 

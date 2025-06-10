@@ -5,7 +5,7 @@ import { NODE_NAMES_DOT_KSM, SUPPORTED_PALLETS } from '@paraspell/sdk';
 import { type FC, useEffect } from 'react';
 
 import { PALLETS_QUERIES } from '../../consts';
-import { useWallet } from '../../hooks/useWallet';
+import { useWallet } from '../../hooks';
 import type { TPalletsQuery } from '../../types';
 import { XcmApiCheckbox } from '../common/XcmApiCheckbox';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';

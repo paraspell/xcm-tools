@@ -29,8 +29,12 @@ import {
 import type { FC, FormEvent } from 'react';
 import { useEffect } from 'react';
 
-import useCurrencyOptions from '../../hooks/useCurrencyOptions';
-import { useWallet } from '../../hooks/useWallet';
+import { DEFAULT_ADDRESS } from '../../constants';
+import {
+  useAutoFillWalletAddress,
+  useCurrencyOptions,
+  useWallet,
+} from '../../hooks';
 import type { TSubmitType } from '../../types';
 import { isValidPolkadotAddress, isValidWalletAddress } from '../../utils';
 import { CurrencySelection } from '../common/CurrencySelection';
@@ -108,7 +112,7 @@ const XcmTransferForm: FC<Props> = ({
         customCurrencyType: 'id',
         customCurrencySymbolSpecifier: 'auto',
       },
-      address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      address: DEFAULT_ADDRESS,
       ahAddress: '',
       useApi: false,
     },
@@ -148,6 +152,8 @@ const XcmTransferForm: FC<Props> = ({
       },
     },
   });
+
+  useAutoFillWalletAddress(form, 'address');
 
   const { from, to, currencies, useApi } = form.getValues();
 
@@ -237,10 +243,6 @@ const XcmTransferForm: FC<Props> = ({
     }
   }, [from, to, currencyOptions, form.values.feeAsset.isCustomCurrency]);
 
-  useEffect(() => {
-    setIsUseXcmApiSelected(useApi);
-  }, [useApi]);
-
   const onSwap = () => {
     const { from, to } = form.getValues();
     if (to !== 'Ethereum') {
@@ -256,6 +258,10 @@ const XcmTransferForm: FC<Props> = ({
     isLoadingExtensions,
     setIsUseXcmApiSelected,
   } = useWallet();
+
+  useEffect(() => {
+    setIsUseXcmApiSelected(useApi);
+  }, [useApi]);
 
   const onConnectWalletClick = () => void connectWallet();
 

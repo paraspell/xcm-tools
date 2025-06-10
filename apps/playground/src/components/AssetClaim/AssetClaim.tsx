@@ -20,7 +20,7 @@ import type { Signer } from '@polkadot/api/types';
 import type { PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
-import { useWallet } from '../../hooks/useWallet';
+import { useWallet } from '../../hooks';
 import { getTxFromApi } from '../../utils';
 import { submitTransaction, submitTransactionPapi } from '../../utils';
 import {

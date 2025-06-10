@@ -33,8 +33,12 @@ import {
 import type { FC } from 'react';
 import { useEffect } from 'react';
 
-import useCurrencyOptions from '../../hooks/useCurrencyOptions';
-import { useWallet } from '../../hooks/useWallet';
+import { DEFAULT_ADDRESS } from '../../constants';
+import {
+  useAutoFillWalletAddress,
+  useCurrencyOptions,
+  useWallet,
+} from '../../hooks';
 import type { TSubmitType } from '../../types';
 import { isValidPolkadotAddress, isValidWalletAddress } from '../../utils';
 import { CurrencySelection } from '../common/CurrencySelection';
@@ -110,7 +114,7 @@ const XcmUtilsForm: FC<Props> = ({
         customCurrencyType: 'id',
         customCurrencySymbolSpecifier: 'auto',
       },
-      address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      address: DEFAULT_ADDRESS,
       ahAddress: '',
       useApi: false,
     },
@@ -150,6 +154,8 @@ const XcmUtilsForm: FC<Props> = ({
       },
     },
   });
+
+  useAutoFillWalletAddress(form, 'address');
 
   const { from, to, currencies, useApi } = form.getValues();
 

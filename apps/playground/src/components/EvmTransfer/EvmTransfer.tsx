@@ -23,7 +23,7 @@ import { createWalletClient, custom } from 'viem';
 import { darwinia, mainnet, moonbeam, moonriver } from 'viem/chains';
 import { Web3 } from 'web3';
 
-import { useWallet } from '../../hooks/useWallet';
+import { useWallet } from '../../hooks';
 import type { EIP6963ProviderDetail, TEvmSubmitType } from '../../types';
 import {
   showErrorNotification,

@@ -44,3 +44,6 @@ export const NAVIGATION_ITEMS: TNavItem[] = [
 ];
 
 export const DAPP_NAME = 'Paraspell';
+
+export const DEFAULT_ADDRESS =
+  '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz';
