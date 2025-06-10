@@ -4,7 +4,11 @@ import {
   type TCurrencyCore,
   type WithAmount
 } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import {
+  replaceBigInt,
+  type TNodeDotKsmWithRelayChains,
+  type TNodeWithRelayChains
+} from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../../api'
 import { InvalidParameterError, UnableToComputeError } from '../../../errors'
@@ -48,7 +52,7 @@ export const buildDestInfo = async <TApi, TRes>({
 
   if (!edDest) {
     throw new InvalidParameterError(
-      `Existential deposit not found for ${destination} with currency ${JSON.stringify(currency)}`
+      `Existential deposit not found for ${destination} with currency ${JSON.stringify(currency, replaceBigInt)}`
     )
   }
 

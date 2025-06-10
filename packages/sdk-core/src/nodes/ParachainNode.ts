@@ -403,7 +403,7 @@ abstract class ParachainNode<TApi, TRes> {
     }
 
     // Pad fee by 50%
-    const dryRunFeePadded = (BigInt(dryRunResult.origin.fee) * BigInt(3)) / BigInt(2)
+    const dryRunFeePadded = (BigInt(dryRunResult.origin.fee) * 3n) / 2n
 
     const dest = createDestination(scenario, version, destination, paraIdTo)
 

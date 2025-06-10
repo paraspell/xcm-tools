@@ -1,7 +1,7 @@
 import type { TAmount } from '@paraspell/assets'
 import { InvalidCurrencyError, type TCurrencyInput, type TMultiAsset } from '@paraspell/assets'
 import type { TJunction, TMultiLocation } from '@paraspell/sdk-common'
-import { Version } from '@paraspell/sdk-common'
+import { replaceBigInt, Version } from '@paraspell/sdk-common'
 import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
 import { NODE_NAMES_DOT_KSM, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 
@@ -170,7 +170,7 @@ export const throwUnsupportedCurrency = (
   }
 
   throw new InvalidCurrencyError(
-    `${isDestination ? 'Destination' : 'Origin'} node ${node} does not support currency ${JSON.stringify(currency)}.`
+    `${isDestination ? 'Destination' : 'Origin'} node ${node} does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
   )
 }
 

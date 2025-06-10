@@ -45,7 +45,7 @@ describe('buildMultiLocation', () => {
     expect(result).toEqual({
       parents: Parents.ONE,
       interior: {
-        X3: [{ Parachain: 2000 }, { PalletInstance: '50' }, { GeneralIndex: BigInt('123') }]
+        X3: [{ Parachain: 2000 }, { PalletInstance: '50' }, { GeneralIndex: 123n }]
       }
     })
   })
@@ -78,7 +78,7 @@ describe('buildMultiLocation', () => {
     expect(result).toEqual({
       parents: Parents.ONE,
       interior: {
-        X3: [{ Parachain: 2000 }, { PalletInstance: '50' }, { GeneralIndex: BigInt('123') }]
+        X3: [{ Parachain: 2000 }, { PalletInstance: '50' }, { GeneralIndex: 123n }]
       }
     })
   })

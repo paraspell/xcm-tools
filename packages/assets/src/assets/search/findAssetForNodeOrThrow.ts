@@ -1,4 +1,4 @@
-import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+import { replaceBigInt, type TNodeWithRelayChains } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../../errors'
 import type { TAsset, TCurrencyInput } from '../../types'
@@ -14,7 +14,9 @@ export const findAssetForNodeOrThrow = (
     (node === 'AssetHubPolkadot' ? findAsset('Ethereum', currency, null) : null)
 
   if (!asset) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(currency)} not found on ${node}`)
+    throw new InvalidCurrencyError(
+      `Asset ${JSON.stringify(currency, replaceBigInt)} not found on ${node}`
+    )
   }
 
   return asset

@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { TMultiAsset } from '@paraspell/assets'
 import {
-  findAsset,
   findAssetByMultiLocation,
+  findAssetForNodeOrThrow,
   getOtherAssets,
   InvalidCurrencyError,
   isForeignAsset,
@@ -54,13 +54,7 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
     throw new InvalidParameterError('Override multilocation is not supported for Evm transfers')
   }
 
-  const foundAsset = findAsset(from, currency, to)
-
-  if (foundAsset === null) {
-    throw new InvalidCurrencyError(
-      `Origin node ${from} does not support currency ${JSON.stringify(currency)}.`
-    )
-  }
+  const foundAsset = findAssetForNodeOrThrow(from, currency, to)
 
   if (!isForeignAsset(foundAsset) || !foundAsset.multiLocation) {
     throw new InvalidCurrencyError('Currency must be a foreign asset with valid multi-location')

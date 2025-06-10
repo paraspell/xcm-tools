@@ -9,7 +9,12 @@ import {
   type TMultiAssetWithFee
 } from '@paraspell/assets'
 import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
-import { deepEqual, isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
+import {
+  deepEqual,
+  isTMultiLocation,
+  replaceBigInt,
+  type TMultiLocation
+} from '@paraspell/sdk-common'
 
 import { createMultiAsset } from '../../pallets/xcmPallet/utils'
 import type { TSendOptions } from '../../types'
@@ -64,7 +69,7 @@ export const resolveOverriddenAsset = <TApi, TRes>(
 
       if (asset && !asset.multiLocation) {
         throw new InvalidCurrencyError(
-          `Asset ${JSON.stringify(currency)} does not have a multiLocation`
+          `Asset ${JSON.stringify(currency, replaceBigInt)} does not have a multiLocation`
         )
       }
 

@@ -1,5 +1,6 @@
-import { getExistentialDeposit, normalizeSymbol } from '@paraspell/assets'
+import { getExistentialDepositOrThrow, normalizeSymbol } from '@paraspell/assets'
 import { findAssetOnDestOrThrow } from '@paraspell/assets'
+import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { DryRunFailedError, InvalidParameterError, UnableToComputeError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
@@ -55,15 +56,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
     ? { multilocation: asset.multiLocation }
     : { symbol: asset.symbol }
 
-  const ed = getExistentialDeposit(destination, destCurrency)
-
-  if (ed === null) {
-    throw new InvalidParameterError(
-      `Cannot get existential deposit for currency ${JSON.stringify(currency)}`
-    )
-  }
-
-  const edBN = BigInt(ed)
+  const ed = getExistentialDepositOrThrow(destination, destCurrency)
 
   const balance = await getAssetBalanceInternal({
     address,
@@ -93,7 +86,7 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
 
   if (destFee === undefined) {
     throw new InvalidParameterError(
-      `Cannot get destination xcm fee for currency ${JSON.stringify(currency)} on node ${destination}.`
+      `Cannot get destination xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on node ${destination}.`
     )
   }
 
@@ -137,5 +130,5 @@ export const verifyEdOnDestinationInternal = async <TApi, TRes>({
     feeToSubtract = destFee
   }
 
-  return BigInt(currency.amount) - feeToSubtract > (balance < edBN ? edBN : 0)
+  return BigInt(currency.amount) - feeToSubtract > (balance < ed ? ed : 0)
 }

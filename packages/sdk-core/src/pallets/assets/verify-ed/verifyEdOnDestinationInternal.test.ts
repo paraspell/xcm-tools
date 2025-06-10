@@ -1,5 +1,9 @@
 import type { TAsset } from '@paraspell/assets'
-import { findAssetOnDestOrThrow, getExistentialDeposit, normalizeSymbol } from '@paraspell/assets'
+import {
+  findAssetOnDestOrThrow,
+  getExistentialDepositOrThrow,
+  normalizeSymbol
+} from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -13,7 +17,7 @@ import { verifyEdOnDestinationInternal } from './verifyEdOnDestinationInternal' 
 
 vi.mock('@paraspell/assets', () => ({
   findAssetOnDestOrThrow: vi.fn(),
-  getExistentialDeposit: vi.fn(),
+  getExistentialDepositOrThrow: vi.fn(),
   normalizeSymbol: vi.fn()
 }))
 
@@ -57,11 +61,11 @@ describe('verifyEdOnDestinationInternal', () => {
     vi.resetAllMocks()
     vi.mocked(validateAddress).mockImplementation(() => {})
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'DOT', decimals: 10 } as TAsset)
-    vi.mocked(getExistentialDeposit).mockReturnValue('10000000000') // 1 DOT
+    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(10000000000n) // 1 DOT
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000000000n) // 5 DOT
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { dryRunError: undefined },
-      destination: { fee: BigInt('1000000000'), currency: 'DOT' } // 0.1 DOT
+      destination: { fee: 1000000000n, currency: 'DOT' } // 0.1 DOT
     } as TGetXcmFeeResult)
     vi.mocked(normalizeSymbol).mockImplementation(symbol => {
       if (!symbol) return ''
@@ -73,8 +77,8 @@ describe('verifyEdOnDestinationInternal', () => {
     const hopError = 'AssetHub dry run failed'
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { dryRunError: undefined },
-      destination: { fee: BigInt('1000000000'), currency: 'DOT', dryRunError: undefined },
-      assetHub: { fee: BigInt('500000000'), dryRunError: hopError }
+      destination: { fee: 1000000000n, currency: 'DOT', dryRunError: undefined },
+      assetHub: { fee: 500000000n, dryRunError: hopError }
     } as TGetXcmFeeResult)
 
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
@@ -86,9 +90,9 @@ describe('verifyEdOnDestinationInternal', () => {
     const hopError = 'BridgeHub dry run failed'
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { dryRunError: undefined },
-      destination: { fee: BigInt('1000000000'), currency: 'DOT', dryRunError: undefined },
-      assetHub: { fee: BigInt('500000000'), dryRunError: undefined },
-      bridgeHub: { fee: BigInt('200000000'), dryRunError: hopError }
+      destination: { fee: 1000000000n, currency: 'DOT', dryRunError: undefined },
+      assetHub: { fee: 500000000n, dryRunError: undefined },
+      bridgeHub: { fee: 200000000n, dryRunError: hopError }
     } as TGetXcmFeeResult)
 
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
@@ -101,9 +105,9 @@ describe('verifyEdOnDestinationInternal', () => {
     const bridgeHubError = 'BridgeHub also failed but should be ignored'
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { dryRunError: undefined },
-      destination: { fee: BigInt('1000000000'), currency: 'DOT', dryRunError: undefined },
-      assetHub: { fee: BigInt('500000000'), dryRunError: assetHubError },
-      bridgeHub: { fee: BigInt('200000000'), dryRunError: bridgeHubError }
+      destination: { fee: 1000000000n, currency: 'DOT', dryRunError: undefined },
+      assetHub: { fee: 500000000n, dryRunError: assetHubError },
+      bridgeHub: { fee: 200000000n, dryRunError: bridgeHubError }
     } as TGetXcmFeeResult)
 
     await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrow(
@@ -112,15 +116,15 @@ describe('verifyEdOnDestinationInternal', () => {
   })
 
   it('should return true if amount after fee is greater than ED when balance is less than ED', async () => {
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt('5000000000')) // 0.5 DOT
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(5000000000n) // 0.5 DOT
     // amount (10 DOT) - destFee (0.1 DOT) = 9.9 DOT
-    // balance (0.5 DOT) < edBN (1 DOT) ? edBN (1 DOT) : 0 -> 1 DOT
+    // balance (0.5 DOT) < ed (1 DOT) ? ed (1 DOT) : 0 -> 1 DOT
     // 9.9 DOT > 1 DOT -> true
     const result = await verifyEdOnDestinationInternal(defaultOptions)
     expect(result).toBe(true)
     expect(validateAddress).toHaveBeenCalledWith(mockAddress, mockDestination)
     expect(findAssetOnDestOrThrow).toHaveBeenCalledWith(mockOrigin, mockDestination, mockCurrency)
-    expect(getExistentialDeposit).toHaveBeenCalledWith(mockDestination, {
+    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(mockDestination, {
       symbol: mockCurrency.symbol
     })
     expect(getAssetBalanceInternal).toHaveBeenCalledWith({
@@ -144,9 +148,9 @@ describe('verifyEdOnDestinationInternal', () => {
   })
 
   it('should return true if amount after fee is greater than 0 when balance is greater than or equal to ED', async () => {
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt('15000000000')) // 1.5 DOT
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(15000000000n) // 1.5 DOT
     // amount (10 DOT) - destFee (0.1 DOT) = 9.9 DOT
-    // balance (1.5 DOT) < edBN (1 DOT) ? edBN (1 DOT) : 0 -> 0
+    // balance (1.5 DOT) < ed (1 DOT) ? ed (1 DOT) : 0 -> 0
     // 9.9 DOT > 0 -> true
     const result = await verifyEdOnDestinationInternal(defaultOptions)
     expect(result).toBe(true)
@@ -158,15 +162,15 @@ describe('verifyEdOnDestinationInternal', () => {
       currency: { ...defaultOptions.currency, amount: '100000000000' } // 10 DOT
     }
 
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt('5000000000')) // 0.5 DOT
-    vi.mocked(getExistentialDeposit).mockReturnValue('10000000000') // 1 DOT
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(5000000000n) // 0.5 DOT
+    vi.mocked(getExistentialDepositOrThrow).mockReturnValue(10000000000n) // 1 DOT
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { dryRunError: undefined },
-      destination: { fee: BigInt('95000000000'), currency: 'DOT' } // 9.5 DOT
+      destination: { fee: 95000000000n, currency: 'DOT' } // 9.5 DOT
     } as TGetXcmFeeResult)
 
     // amount (10 DOT) - destFee (9.5 DOT) = 5000000000n (0.5 DOT)
-    // balance (0.5 DOT) < edBN (1 DOT) ? edBN (10000000000n) : 0
+    // balance (0.5 DOT) < ed (1 DOT) ? ed (10000000000n) : 0
     // 0.5 DOT > 10000000000n (1 DOT) ? false
 
     const result = await verifyEdOnDestinationInternal(testSpecificOptions)
@@ -174,23 +178,16 @@ describe('verifyEdOnDestinationInternal', () => {
   })
 
   it('should return false if amount after fee is not greater than 0 when balance is greater than or equal to ED and fee is high', async () => {
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt('15000000000')) // 1.5 DOT
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(15000000000n) // 1.5 DOT
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { dryRunError: undefined },
-      destination: { fee: BigInt('1000000000000'), currency: 'DOT' } // 10 DOT
+      destination: { fee: 1000000000000n, currency: 'DOT' } // 10 DOT
     } as TGetXcmFeeResult)
     // amount (10 DOT) - destFee (10 DOT) = 0 DOT
-    // balance (1.5 DOT) < edBN (1 DOT) ? edBN (1 DOT) : 0 -> 0
+    // balance (1.5 DOT) < ed (1 DOT) ? ed (1 DOT) : 0 -> 0
     // 0 DOT > 0 -> false
     const result = await verifyEdOnDestinationInternal(defaultOptions)
     expect(result).toBe(false)
-  })
-
-  it('should throw error if existential deposit is null', async () => {
-    vi.mocked(getExistentialDeposit).mockReturnValue(null)
-    await expect(verifyEdOnDestinationInternal(defaultOptions)).rejects.toThrowError(
-      `Cannot get existential deposit for currency ${JSON.stringify(mockCurrency)}`
-    )
   })
 
   it('should throw error if destination xcm fee is undefined', async () => {
@@ -207,7 +204,7 @@ describe('verifyEdOnDestinationInternal', () => {
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ symbol: 'KSM', decimals: 12 } as TAsset)
     vi.mocked(getXcmFee).mockResolvedValue({
       origin: { dryRunError: undefined },
-      destination: { fee: BigInt('1000000000'), currency: 'DOT' }
+      destination: { fee: 1000000000n, currency: 'DOT' }
     } as TGetXcmFeeResult)
     vi.mocked(normalizeSymbol).mockImplementation(symbol => symbol as string)
 
