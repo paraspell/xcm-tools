@@ -141,5 +141,11 @@ export const getDestXcmFee = async <TApi, TRes>(
 
   const { fee, forwardedXcms: newForwardedXcms, destParaId } = dryRunResult
 
-  return { fee: fee, feeType: 'dryRun', forwardedXcms: newForwardedXcms, destParaId }
+  return {
+    fee: fee,
+    feeType: 'dryRun',
+    sufficient: true,
+    forwardedXcms: newForwardedXcms,
+    destParaId
+  }
 }

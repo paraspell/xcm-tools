@@ -37,7 +37,7 @@ export type TGetXcmFeeEstimateOptions<TApi, TRes> = Omit<
 
 export type TGetOriginXcmFeeEstimateOptions<TApi, TRes> = Omit<
   TGetXcmFeeOptions<TApi, TRes>,
-  'disableFallback' | 'address' | 'currency'
+  'disableFallback' | 'address'
 >
 
 export type TGetXcmFeeBuilderOptions = {

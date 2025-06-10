@@ -29,16 +29,22 @@ export const getOriginXcmFee = async <TApi, TRes>({
 
   await api.init(origin, DRY_RUN_CLIENT_TIMEOUT_MS)
 
-  const currencySymbol = resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(origin)
+  const nativeAssetSymbol = getNativeAssetSymbol(origin)
 
   if (!hasDryRunSupport(origin)) {
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
     const paddedFee = padFee(rawFee, origin, destination, 'origin')
-    const sufficient = await isSufficientOrigin(api, origin, senderAddress, paddedFee)
+    const sufficient = await isSufficientOrigin(
+      api,
+      origin,
+      senderAddress,
+      paddedFee,
+      resolvedFeeAsset
+    )
 
     return {
       fee: paddedFee,
-      currency: currencySymbol,
+      currency: nativeAssetSymbol,
       feeType: 'paymentInfo',
       sufficient
     }
@@ -60,11 +66,17 @@ export const getOriginXcmFee = async <TApi, TRes>({
 
     const rawFee = await api.calculateTransactionFee(tx, senderAddress)
     const paddedFee = padFee(rawFee, origin, destination, 'origin')
-    const sufficient = await isSufficientOrigin(api, origin, senderAddress, paddedFee)
+    const sufficient = await isSufficientOrigin(
+      api,
+      origin,
+      senderAddress,
+      paddedFee,
+      resolvedFeeAsset
+    )
 
     return {
       fee: paddedFee,
-      currency: currencySymbol,
+      currency: nativeAssetSymbol,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
       sufficient
@@ -73,9 +85,12 @@ export const getOriginXcmFee = async <TApi, TRes>({
 
   const { fee, forwardedXcms, destParaId, weight } = dryRunResult
 
+  const currencySymbol = resolvedFeeAsset ? resolvedFeeAsset.symbol : nativeAssetSymbol
+
   return {
     fee,
     feeType: 'dryRun',
+    sufficient: true,
     currency: currencySymbol,
     forwardedXcms,
     destParaId,

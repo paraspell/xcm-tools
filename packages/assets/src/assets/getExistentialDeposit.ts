@@ -2,8 +2,9 @@ import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 
 import { InvalidCurrencyError } from '../errors'
 import type { TCurrencyCore } from '../types'
-import { getAssetsObject } from './assets'
-import { findAssetForNodeOrThrow } from './search'
+import { getNativeAssetSymbol } from './assets'
+import { Native } from './assetSelectors'
+import { findAsset, findAssetForNodeOrThrow } from './search'
 
 /**
  * Retrieves the existential deposit value for a given node.
@@ -15,12 +16,16 @@ export const getExistentialDeposit = (
   node: TNodeWithRelayChains,
   currency?: TCurrencyCore
 ): string | null => {
-  const assetsObject = getAssetsObject(node)
-  if (!currency) {
-    return assetsObject.nativeAssets[0].existentialDeposit ?? null
-  }
+  let asset
 
-  const asset = findAssetForNodeOrThrow(node, currency, null)
+  if (!currency) {
+    const nativeAssetSymbol = getNativeAssetSymbol(node)
+    asset =
+      findAsset(node, { symbol: Native(nativeAssetSymbol) }, null) ??
+      findAssetForNodeOrThrow(node, { symbol: nativeAssetSymbol }, null)
+  } else {
+    asset = findAssetForNodeOrThrow(node, currency, null)
+  }
 
   return asset.existentialDeposit ?? null
 }

@@ -13,8 +13,13 @@ export const isSufficientOrigin = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   node: TNodeWithRelayChains,
   senderAddress: string,
-  fee: bigint
-): Promise<boolean> => {
+  fee: bigint,
+  feeAsset: TAsset | undefined
+): Promise<boolean | undefined> => {
+  if (feeAsset) {
+    return undefined
+  }
+
   const existentialDeposit = getExistentialDepositOrThrow(node)
 
   const nativeBalance = await getBalanceNativeInternal({

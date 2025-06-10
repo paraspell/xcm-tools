@@ -61,7 +61,7 @@ describe('getOriginXcmFee', () => {
       sufficient: true
     })
     expect(feeCalcSpy).toHaveBeenCalledWith({}, 'addr')
-    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'Moonbeam', 'addr', 150n)
+    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'Moonbeam', 'addr', 150n, undefined)
     expect(dryRunCallSpy).not.toHaveBeenCalled()
   })
 
@@ -93,6 +93,7 @@ describe('getOriginXcmFee', () => {
       fee: 200n,
       currency: mockCurrency,
       feeType: 'dryRun',
+      sufficient: true,
       forwardedXcms: [[{ x: 1 }]],
       destParaId: 42
     })
@@ -162,6 +163,6 @@ describe('getOriginXcmFee', () => {
     })
     expect(padFee).toHaveBeenCalledWith(888n, 'Moonbeam', 'Acala', 'origin')
     expect(feeCalcSpy).toHaveBeenCalledWith({}, 'addr')
-    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'Moonbeam', 'addr', 999n)
+    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'Moonbeam', 'addr', 999n, undefined)
   })
 })
