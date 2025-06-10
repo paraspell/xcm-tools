@@ -49,13 +49,13 @@ export const getTxFromApi = async <T>(
   params: T,
   api: ApiPromise | PolkadotClient,
   endpoint: string,
-  injectorAddress: string,
+  senderAddress: string,
   apiType: TApiType,
   method: string = 'GET',
   useBody = false,
 ): Promise<Extrinsic | TPapiTransaction> => {
   const txHash = await fetchFromApi(
-    { ...params, injectorAddress },
+    { ...params, senderAddress },
     endpoint,
     method,
     useBody,
