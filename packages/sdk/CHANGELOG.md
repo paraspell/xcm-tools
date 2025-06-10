@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.5](https://github.com/paraspell/xcm-tools/compare/sdk-v10.4.4...sdk-v10.4.5) (2025-06-10)
+
+
+### Bug Fixes
+
+* **sdk:** Fix Moonbeam dest fee calculation 🛠️ ([3aaafb0](https://github.com/paraspell/xcm-tools/commit/3aaafb0bd9121311df06bbdacfbddff777302e92))
+
 ## [10.4.4](https://github.com/paraspell/xcm-tools/compare/sdk-v10.4.3...sdk-v10.4.4) (2025-06-09)
 
 
