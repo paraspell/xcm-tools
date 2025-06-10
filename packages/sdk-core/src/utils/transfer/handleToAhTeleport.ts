@@ -25,12 +25,16 @@ export const handleToAhTeleport = async <TApi, TRes>(
     throw new InvalidParameterError('Multi-Location address is not supported for this scenario')
   }
 
+  if (!senderAddress) {
+    throw new InvalidParameterError(`Please provide senderAddress`)
+  }
+
   const dryRunResult = await dryRunInternal({
     api,
     tx: defaultTx,
     origin,
     destination,
-    senderAddress: senderAddress as string,
+    senderAddress: senderAddress,
     address,
     currency
   })
@@ -54,7 +58,7 @@ export const handleToAhTeleport = async <TApi, TRes>(
     tx: dummyTx,
     origin,
     destination,
-    senderAddress: senderAddress as string,
+    senderAddress: senderAddress,
     address,
     currency: currency as WithAmount<TCurrencyCore>,
     disableFallback: false
