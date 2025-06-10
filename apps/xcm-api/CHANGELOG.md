@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.7](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.4.6...xcm-api-v10.4.7) (2025-06-10)
+
+
+### Documentation
+
+* Add senderAddress as recommended ([3b40e4f](https://github.com/paraspell/xcm-tools/commit/3b40e4f8dbc33bcaf1aadd16c6d014a4c1e21b8a))
+
 ## [10.4.6](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.4.5...xcm-api-v10.4.6) (2025-06-10)
 
 

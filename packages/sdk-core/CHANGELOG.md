@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.7](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.6...sdk-core-v10.4.7) (2025-06-10)
+
+
+### Bug Fixes
+
+* **sdk-core:** Add sufficient true when dry run passes 🔧 ([de33ce4](https://github.com/paraspell/xcm-tools/commit/de33ce46e8360f2bdc04f5cab494aa106cdeb826))
+
 ## [10.4.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.5...sdk-core-v10.4.6) (2025-06-10)
 
 
