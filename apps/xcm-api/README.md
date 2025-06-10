@@ -95,8 +95,8 @@ const response = await fetch('http://localhost:3001/v3/x-transfer', {
     to: 'Parachain', // Replace "Parachain" with destination Parachain, e.g., "Moonbeam" or custom Multilocation
     currency: { currencySpec }, //{id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount} | {multilocation: Override('Custom Multilocation'), amount: amount} | {multiasset: {currencySelection, isFeeAsset?: true /* for example symbol: symbol or id: id, or multilocation: multilocation*/, amount: amount}}
     address: 'Address', // Replace "Address" with destination wallet address (In AccountID32 or AccountKey20 Format) or custom Multilocation
+    senderAddress: "senderAddress" //Optional but strongly recommended as it is automatically ignored when not needed - Used when origin is AssetHub with feeAsset or when sending to AssetHub to prevent asset traps by auto-swapping to DOT to have DOT ED.
     //feeAsset: {id: currencyID} | {symbol: currencySymbol} | {multilocation: AssetMultilocationString | AssetMultilocationJson} //Optional parameter used when multiasset is provided or when origin is AssetHub - so user can pay in fees different than DOT
-    //senderAddress: senderAddress //Optional parameter - only needed when origin is AssetHub and feeAsset is provided
     //xcmVersion: "Vx" //Optional parameter - replace "Vx" with V and version number eg. "V4"
     //pallet: 'RandomXTokens', //Optional parameter - replace RandomXtokens with Camel case name of the pallet
 	  //method: 'random_function' //Optional parameter - replace random_function with snake case name of the method
