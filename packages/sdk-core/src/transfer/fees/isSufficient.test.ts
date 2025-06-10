@@ -29,11 +29,21 @@ describe('isSufficientOrigin', () => {
     vi.clearAllMocks()
   })
 
+  it('returns undefined when feeAsset is provided', async () => {
+    const feeAsset = { symbol: 'ACA' } as TAsset
+    const result = await isSufficientOrigin(mockApi, node, address, 100n, feeAsset)
+    expect(result).toBeUndefined()
+    expect(getNativeAssetSymbol).not.toHaveBeenCalled()
+    expect(normalizeSymbol).not.toHaveBeenCalled()
+    expect(getBalanceNativeInternal).not.toHaveBeenCalled()
+    expect(getExistentialDepositOrThrow).not.toHaveBeenCalled()
+  })
+
   it('returns true when nativeBalance - deposit - fee > 0', async () => {
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(50n)
     vi.mocked(getBalanceNativeInternal).mockResolvedValue(200n)
 
-    const result = await isSufficientOrigin(mockApi, node, address, 100n)
+    const result = await isSufficientOrigin(mockApi, node, address, 100n, undefined)
 
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(node)
     expect(getBalanceNativeInternal).toHaveBeenCalledWith({
@@ -48,11 +58,11 @@ describe('isSufficientOrigin', () => {
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(50n)
     vi.mocked(getBalanceNativeInternal).mockResolvedValue(120n)
 
-    const resultZero = await isSufficientOrigin(mockApi, node, address, 70n)
+    const resultZero = await isSufficientOrigin(mockApi, node, address, 70n, undefined)
     expect(resultZero).toBe(false)
 
     vi.mocked(getBalanceNativeInternal).mockResolvedValue(100n)
-    const resultNegative = await isSufficientOrigin(mockApi, node, address, 60n)
+    const resultNegative = await isSufficientOrigin(mockApi, node, address, 60n, undefined)
     expect(resultNegative).toBe(false)
   })
 })

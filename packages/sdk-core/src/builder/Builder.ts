@@ -352,7 +352,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
   async getOriginXcmFeeEstimate(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>
   ) {
-    const { from, to, senderAddress } = this._options
+    const { from, to, senderAddress, currency } = this._options
 
     assertToIsString(to)
 
@@ -364,6 +364,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
         tx,
         origin: from,
         destination: to,
+        currency: currency as WithAmount<TCurrencyCore>,
         senderAddress: senderAddress
       })
     } finally {

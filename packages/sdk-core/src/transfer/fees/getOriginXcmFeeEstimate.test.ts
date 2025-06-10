@@ -1,3 +1,4 @@
+import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { getNativeAssetSymbol } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { describe, expect, it, vi } from 'vitest'
@@ -28,6 +29,7 @@ describe('getOriginXcmFeeEstimate', () => {
   const mockSenderAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
   const mockOriginNode = 'origin' as TNodeDotKsmWithRelayChains
   const mockDestinationNode = 'destination' as TNodeDotKsmWithRelayChains
+  const currency = { symbol: 'DOT', amount: 100000n } as WithAmount<TCurrencyCore>
 
   const MOCK_RAW_FEE = 100000000000n
   const MOCK_PADDED_FEE = 120000000000n
@@ -43,6 +45,7 @@ describe('getOriginXcmFeeEstimate', () => {
       api: mockApi,
       tx: mockTx,
       origin: mockOriginNode,
+      currency,
       destination: mockDestinationNode,
       senderAddress: mockSenderAddress
     }
@@ -60,7 +63,8 @@ describe('getOriginXcmFeeEstimate', () => {
       mockApi,
       mockOriginNode,
       mockSenderAddress,
-      MOCK_PADDED_FEE
+      MOCK_PADDED_FEE,
+      undefined
     )
 
     expect(getNativeAssetSymbol).toHaveBeenCalledTimes(1)

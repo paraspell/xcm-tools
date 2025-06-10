@@ -32,6 +32,8 @@ vi.mock('./getReverseTxFee', () => ({
   getReverseTxFee: vi.fn()
 }))
 
+vi.mock('../utils')
+
 const makeApi = (originFee: bigint, destFee: bigint) => {
   const destApi = {
     init: vi.fn().mockResolvedValue(undefined),
@@ -88,7 +90,13 @@ describe('getXcmFeeEstimate', () => {
       destination: { fee: 12_016_807_000n, currency: 'KSM', sufficient: true }
     })
 
-    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'AssetHubPolkadot', 'bob', 682_395_810n)
+    expect(isSufficientOrigin).toHaveBeenCalledWith(
+      api,
+      'AssetHubPolkadot',
+      'bob',
+      682_395_810n,
+      undefined
+    )
     expect(isSufficientDestination).toHaveBeenCalledWith(
       api.clone(),
       'AssetHubKusama',
@@ -118,7 +126,13 @@ describe('getXcmFeeEstimate', () => {
       destination: { fee: 682_395_810n, currency: 'DOT', sufficient: true }
     })
 
-    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'AssetHubKusama', 'bob', 12_016_807_000n)
+    expect(isSufficientOrigin).toHaveBeenCalledWith(
+      api,
+      'AssetHubKusama',
+      'bob',
+      12_016_807_000n,
+      undefined
+    )
     expect(isSufficientDestination).toHaveBeenCalledWith(
       api.clone(),
       'AssetHubPolkadot',

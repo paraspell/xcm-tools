@@ -150,6 +150,7 @@ describe('getDestXcmFee', () => {
     expect(res).toEqual({
       fee: 200n,
       feeType: 'dryRun',
+      sufficient: true,
       forwardedXcms: [[{ x: 1 }]],
       destParaId: 3320
     })
