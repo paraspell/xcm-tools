@@ -1317,13 +1317,15 @@ describe('PapiApi', () => {
     })
 
     it('should get fee from XcmPaymentApi if node is Moonbeam', () => {
+      const weight = { ref_time: 11n, proof_size: 22n }
+
       const mockApiResponse = {
         success: true,
         value: {
           execution_result: {
             type: 'Complete',
             value: {
-              used: { ref_time: 11n, proof_size: 22n }
+              used: weight
             }
           },
           emitted_events: [],
@@ -1333,6 +1335,10 @@ describe('PapiApi', () => {
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+      unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
+        success: true,
+        value: weight
+      })
 
       return expect(
         papiApi.getDryRunXcm({
