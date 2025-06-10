@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.8](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.7...sdk-core-v10.4.8) (2025-06-10)
+
+
+### Bug Fixes
+
+* Fix BigInt serialization in errors 🔧 ([a2d0d86](https://github.com/paraspell/xcm-tools/commit/a2d0d860cfb3b633648b00c4147b45c87a769109))
+
 ## [10.4.7](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.6...sdk-core-v10.4.7) (2025-06-10)
 
 
