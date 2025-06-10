@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.5...sdk-core-v10.4.6) (2025-06-10)
+
+
+### Bug Fixes
+
+* **sdk-core:** Add check for sender address 🔧 ([f572ad2](https://github.com/paraspell/xcm-tools/commit/f572ad2ea02090278bfa7658d77d582c965a4311))
+
 ## [10.4.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.4...sdk-core-v10.4.5) (2025-06-10)
 
 
