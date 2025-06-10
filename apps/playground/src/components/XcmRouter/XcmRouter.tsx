@@ -38,7 +38,7 @@ import Confetti from 'react-confetti';
 import type { TRouterFormValuesTransformed } from '../../components/XcmRouter/XcmRouterForm';
 import { XcmRouterForm } from '../../components/XcmRouter/XcmRouterForm';
 import { API_URL } from '../../consts';
-import { useWallet } from '../../hooks/useWallet';
+import { useWallet } from '../../hooks';
 import type { TRouterSubmitType } from '../../types';
 import { fetchFromApi, submitTransactionPapi } from '../../utils';
 import {

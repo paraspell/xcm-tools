@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 
 import AccountSelectModal from '../components/AccountSelectModal/AccountSelectModal';
 import PolkadotWalletSelectModal from '../components/WalletSelectModal/WalletSelectModal';
-import { DAPP_NAME } from '../constants/constants';
+import { DAPP_NAME } from '../constants';
 import type { TApiType, TWalletAccount } from '../types';
 import { showErrorNotification } from '../utils/notifications';
 import { WalletContext } from './WalletContext';

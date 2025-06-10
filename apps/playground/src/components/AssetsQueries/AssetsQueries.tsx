@@ -17,7 +17,7 @@ import {
 } from '@paraspell/sdk';
 import { useEffect, useState } from 'react';
 
-import { useWallet } from '../../hooks/useWallet';
+import { useWallet } from '../../hooks';
 import type { TAssetsQuery } from '../../types';
 import { fetchFromApi } from '../../utils';
 import { getApiEndpoint } from '../../utils/assets/apiMappings';

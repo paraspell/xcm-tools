@@ -15,8 +15,12 @@ import { getTokenBalance } from '@paraspell/sdk-pjs';
 import { type BrowserProvider, ethers, formatEther } from 'ethers';
 import { type FC, type FormEvent, useEffect, useState } from 'react';
 
-import useCurrencyOptions from '../../hooks/useCurrencyOptions';
-import { useWallet } from '../../hooks/useWallet';
+import { DEFAULT_ADDRESS } from '../../constants';
+import {
+  useAutoFillWalletAddress,
+  useCurrencyOptions,
+  useWallet,
+} from '../../hooks';
 import type { TEvmSubmitType } from '../../types';
 import { isValidPolkadotAddress } from '../../utils';
 import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
@@ -48,7 +52,7 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
       to: 'AssetHubPolkadot',
       currencyOptionId: '',
       amount: '1000000000',
-      address: '5FNDaod3wYTvg48s73H1zSB3gVoKNg2okr6UsbyTuLutTXFz',
+      address: DEFAULT_ADDRESS,
       ahAddress: '',
       useViem: false,
     },
@@ -62,6 +66,8 @@ const EvmTransferForm: FC<Props> = ({ onSubmit, loading, provider }) => {
         values.from === 'Moonbeam' && values.to === 'Ethereum' && !value,
     },
   });
+
+  useAutoFillWalletAddress(form, 'address');
 
   const { from } = form.getValues();
 

@@ -32,7 +32,7 @@ import type { GeneralBuilder as GeneralBuilderPjs } from '@paraspell/sdk-pjs';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 
-import { useWallet } from '../../hooks/useWallet';
+import { useWallet } from '../../hooks';
 import type { TSubmitType } from '../../types';
 import { fetchFromApi } from '../../utils';
 import {

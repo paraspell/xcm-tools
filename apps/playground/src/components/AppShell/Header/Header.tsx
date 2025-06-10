@@ -10,8 +10,8 @@ import {
 } from '@mantine/core';
 import type { FC } from 'react';
 
-import { NAVIGATION_ITEMS } from '../../../constants/constants';
-import { useWallet } from '../../../hooks/useWallet';
+import { NAVIGATION_ITEMS } from '../../../constants';
+import { useWallet } from '../../../hooks';
 import type { TApiType } from '../../../types';
 import { getExtensionInfo } from '../../../utils/getExtensionInfo';
 import { ApiTypeSelector } from '../../ApiTypeSelector/ApiTypeSelector';

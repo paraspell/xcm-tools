@@ -36,7 +36,7 @@ import { ethers } from 'ethers';
 import type { PolkadotClient, PolkadotSigner } from 'polkadot-api';
 import { useEffect, useState } from 'react';
 
-import { useWallet } from '../../hooks/useWallet';
+import { useWallet } from '../../hooks';
 import type { TSubmitType } from '../../types';
 import {
   fetchFromApi,
