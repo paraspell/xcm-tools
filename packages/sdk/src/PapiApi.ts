@@ -502,8 +502,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const feeResult = await this.api
       .getUnsafeApi()
-      .apis.XcmPaymentApi.query_weight_to_asset_fee(weight, {
-        type: 'V4',
+      .apis.XcmPaymentApi.query_weight_to_asset_fee(weight.value, {
+        type: Version.V4,
         value: transformedMultiLocation
       })
 
