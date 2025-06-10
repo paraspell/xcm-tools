@@ -71,7 +71,7 @@ describe('Acala', () => {
       method: 'transfer_native_currency',
       parameters: {
         dest: { Id: 'address' },
-        amount: BigInt('100')
+        amount: 100n
       }
     })
   })
@@ -95,7 +95,7 @@ describe('Acala', () => {
       parameters: {
         dest: { Id: 'address' },
         currency_id: { ForeignAsset: 1 },
-        amount: BigInt('100')
+        amount: 100n
       }
     })
   })

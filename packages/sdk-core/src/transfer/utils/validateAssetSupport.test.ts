@@ -13,7 +13,8 @@ import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
 import type { TDestination, TSendOptions } from '../../types'
 import { validateAssetSupport } from './validateAssetSupport'
 
-vi.mock('@paraspell/sdk-common', () => ({
+vi.mock('@paraspell/sdk-common', async importOriginal => ({
+  ...(await importOriginal()),
   isRelayChain: vi.fn(),
   isTMultiLocation: vi.fn()
 }))

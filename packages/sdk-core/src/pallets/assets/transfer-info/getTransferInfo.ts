@@ -1,10 +1,11 @@
 import {
   findAssetForNodeOrThrow,
-  getExistentialDeposit,
+  getExistentialDepositOrThrow,
   getRelayChainSymbol,
   isAssetEqual,
   isNodeEvm
 } from '@paraspell/assets'
+import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
@@ -61,15 +62,7 @@ export const getTransferInfo = async <TApi, TRes>({
       currency
     })
 
-    const edOrigin = getExistentialDeposit(origin, currency)
-
-    if (!edOrigin) {
-      throw new InvalidParameterError(
-        `Existential deposit not found for ${origin} with currency ${JSON.stringify(currency)}`
-      )
-    }
-
-    const edOriginBn = BigInt(edOrigin)
+    const edOrigin = getExistentialDepositOrThrow(origin, currency)
 
     const {
       origin: { fee: originFee, currency: originFeeCurrency },
@@ -90,7 +83,7 @@ export const getTransferInfo = async <TApi, TRes>({
 
     if (originFee === undefined) {
       throw new InvalidParameterError(
-        `Cannot get origin xcm fee for currency ${JSON.stringify(currency)} on node ${origin}.`
+        `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on node ${origin}.`
       )
     }
 
@@ -107,7 +100,7 @@ export const getTransferInfo = async <TApi, TRes>({
 
     const originBalanceNativeSufficient = originBalanceFee >= originFee
 
-    const originBalanceSufficient = originBalanceAfter >= edOriginBn
+    const originBalanceSufficient = originBalanceAfter >= edOrigin
 
     let assetHub
     if (assetHubFeeResult) {
@@ -162,7 +155,7 @@ export const getTransferInfo = async <TApi, TRes>({
           balance: originBalance,
           balanceAfter: originBalanceAfter,
           currencySymbol: originAsset.symbol,
-          existentialDeposit: edOriginBn
+          existentialDeposit: edOrigin
         },
         xcmFee: {
           sufficient: originBalanceNativeSufficient,

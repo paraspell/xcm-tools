@@ -45,9 +45,9 @@ describe('buildHopInfo', () => {
   let mockHopApi: IPolkadotApi<unknown, unknown>
   let baseOptions: BuildHopInfoOptions<unknown, unknown>
 
-  const DEFAULT_NATIVE_BALANCE = BigInt('100000000000')
-  const DEFAULT_ASSET_BALANCE = BigInt('5000000000')
-  const DEFAULT_HOP_FEE = BigInt('100000000')
+  const DEFAULT_NATIVE_BALANCE = 100000000000n
+  const DEFAULT_ASSET_BALANCE = 5000000000n
+  const DEFAULT_HOP_FEE = 100000000n
   const DEFAULT_ED = '100000000'
 
   beforeEach(() => {

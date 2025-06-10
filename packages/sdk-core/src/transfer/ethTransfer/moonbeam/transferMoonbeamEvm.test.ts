@@ -1,10 +1,5 @@
 import type { TAsset, TForeignAsset } from '@paraspell/assets'
-import {
-  findAsset,
-  getNativeAssetSymbol,
-  InvalidCurrencyError,
-  isForeignAsset
-} from '@paraspell/assets'
+import { findAssetForNodeOrThrow, getNativeAssetSymbol, isForeignAsset } from '@paraspell/assets'
 import type { GetContractReturnType, PublicClient, WalletClient } from 'viem'
 import { createPublicClient, getContract } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -17,9 +12,9 @@ import { getDestinationMultilocation } from './getDestinationMultilocation'
 import { transferMoonbeamEvm } from './transferMoonbeamEvm'
 
 vi.mock('@paraspell/assets', () => ({
-  findAsset: vi.fn(),
+  findAssetForNodeOrThrow: vi.fn(),
+  InvalidCurrencyError: class InvalidCurrencyError extends Error {},
   getNativeAssetSymbol: vi.fn(),
-  InvalidCurrencyError: class extends Error {},
   isForeignAsset: vi.fn()
 }))
 
@@ -65,7 +60,7 @@ describe('transferMoonbeamEvm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(getContract).mockReturnValue(mockViemContract)
-    vi.mocked(findAsset).mockReturnValue(mockForeignAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(mockForeignAsset)
     vi.mocked(getNativeAssetSymbol).mockReturnValue('GLMR')
     vi.mocked(isForeignAsset).mockReturnValue(true)
     vi.mocked(formatAssetIdToERC20).mockReturnValue('0xformattedAsset')
@@ -75,22 +70,8 @@ describe('transferMoonbeamEvm', () => {
     vi.mocked(createPublicClient).mockReturnValue({} as PublicClient)
   })
 
-  it('throws InvalidCurrencyError if getAssetBySymbolOrId returns null', async () => {
-    vi.mocked(findAsset).mockReturnValueOnce(null)
-    await expect(
-      transferMoonbeamEvm({
-        api: mockApi,
-        from: mockFrom,
-        to: mockTo,
-        signer: mockSigner,
-        address: mockAddress,
-        currency: mockCurrency
-      })
-    ).rejects.toThrowError(InvalidCurrencyError)
-  })
-
   it('uses native asset ID if found asset is the native symbol', async () => {
-    vi.mocked(findAsset).mockReturnValueOnce({ symbol: 'GLMR' } as TAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValueOnce({ symbol: 'GLMR' } as TAsset)
     await transferMoonbeamEvm({
       api: mockApi,
       from: mockFrom,
@@ -110,7 +91,7 @@ describe('transferMoonbeamEvm', () => {
 
   it('throws InvalidCurrencyError if asset is not foreign and missing valid assetId', async () => {
     vi.mocked(isForeignAsset).mockReturnValueOnce(false)
-    vi.mocked(findAsset).mockReturnValueOnce({
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValueOnce({
       symbol: 'NOT_NATIVE',
       assetId: undefined
     } as TAsset)
@@ -128,7 +109,7 @@ describe('transferMoonbeamEvm', () => {
   })
 
   it('formats foreign asset ID if the asset is foreign', async () => {
-    vi.mocked(findAsset).mockReturnValueOnce(mockForeignAsset)
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValueOnce(mockForeignAsset)
     vi.mocked(isForeignAsset).mockReturnValueOnce(true)
     await transferMoonbeamEvm({
       api: mockApi,
@@ -142,7 +123,7 @@ describe('transferMoonbeamEvm', () => {
   })
 
   it('calls transferMultiCurrencies if useMultiAssets is true', async () => {
-    vi.mocked(findAsset).mockReturnValueOnce({
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValueOnce({
       symbol: 'xcPINK',
       assetId: '100000000'
     } as TAsset)

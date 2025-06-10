@@ -1,5 +1,5 @@
 import { hasSupportForAsset, InvalidCurrencyError, type TAsset } from '@paraspell/assets'
-import { isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
+import { isRelayChain, isTMultiLocation, replaceBigInt } from '@paraspell/sdk-common'
 
 import { TransferToAhNotSupported } from '../../errors'
 import { throwUnsupportedCurrency } from '../../pallets/xcmPallet/utils'
@@ -46,7 +46,7 @@ export const validateAssetSupport = <TApi, TRes>(
     !hasSupportForAsset(destination, asset.symbol)
   ) {
     throw new InvalidCurrencyError(
-      `Destination node ${destination} does not support currency ${JSON.stringify(currency)}.`
+      `Destination node ${destination} does not support currency ${JSON.stringify(currency, replaceBigInt)}.`
     )
   }
 

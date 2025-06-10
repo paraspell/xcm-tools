@@ -45,8 +45,8 @@ describe('buildDestInfo', () => {
   let baseOptions: TBuildDestInfoOptions<unknown, unknown>
 
   const DEFAULT_ED = '1000000000'
-  const DEFAULT_BALANCE = BigInt('50000000000')
-  const DEFAULT_FEE = BigInt('100000000')
+  const DEFAULT_BALANCE = 50000000000n
+  const DEFAULT_FEE = 100000000n
   const DEFAULT_AMOUNT = '20000000000'
   const MULTILOCATION = { parents: 0, interior: { X1: { PalletInstance: 50 } } }
 
@@ -76,7 +76,7 @@ describe('buildDestInfo', () => {
       destination: 'Moonbeam' as TNodeWithRelayChains,
       address: 'receiverAlice',
       currency: { symbol: 'GLMR', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
-      originFee: BigInt('50000000'),
+      originFee: 50000000n,
       isFeeAssetAh: false,
       destFeeDetail: { fee: DEFAULT_FEE, currency: 'GLMR' } as TXcmFeeDetail,
       assetHubFee: undefined,
@@ -191,10 +191,10 @@ describe('buildDestInfo', () => {
       const options = {
         ...ahToAhBase,
         api: mockApi,
-        originFee: BigInt('50000000'),
+        originFee: 50000000n,
         destFeeDetail: { fee: DEFAULT_FEE, currency: 'DOT' } as TXcmFeeDetail,
         currency: { symbol: 'DOT', amount: DEFAULT_AMOUNT } as WithAmount<TCurrencyCore>,
-        bridgeFee: BigInt('30000000')
+        bridgeFee: 30000000n
       }
       const result = await buildDestInfo(options)
       const expectedReceived =
@@ -282,7 +282,7 @@ describe('buildDestInfo', () => {
   })
 
   it('should handle destBalance < edDestBn correctly in sufficiency check', async () => {
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(DEFAULT_ED) / BigInt(2))
+    vi.mocked(getAssetBalanceInternal).mockResolvedValue(BigInt(DEFAULT_ED) / 2n)
     const options = { ...baseOptions, api: mockApi }
     const result = await buildDestInfo(options)
 
@@ -332,7 +332,7 @@ describe('buildDestInfo', () => {
       isFeeAssetAh: false,
       destFeeDetail: { fee: DEFAULT_FEE, currency: 'SOME_OTHER_FEE_TOKEN' } as TXcmFeeDetail
     }
-    const nativeBalanceForFee = BigInt('70000000000')
+    const nativeBalanceForFee = 70000000000n
     vi.mocked(getNativeAssetSymbol).mockImplementation(node =>
       node === options.destination ? 'SOME_OTHER_FEE_TOKEN' : 'NATIVE'
     )

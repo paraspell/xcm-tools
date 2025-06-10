@@ -1,9 +1,10 @@
 import {
   findAssetForNodeOrThrow,
-  getExistentialDeposit,
+  getExistentialDepositOrThrow,
   getNativeAssetSymbol,
   isAssetEqual
 } from '@paraspell/assets'
+import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
 import { getOriginXcmFee } from '../../transfer'
@@ -36,15 +37,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
     currency
   })
 
-  const ed = getExistentialDeposit(node, currency)
-
-  if (ed === null) {
-    throw new InvalidParameterError(
-      `Cannot get existential deposit for currency ${JSON.stringify(currency)}.`
-    )
-  }
-
-  const edBN = BigInt(ed)
+  const ed = getExistentialDepositOrThrow(node, currency)
 
   const isNativeAsset = getNativeAssetSymbol(node) === asset.symbol
 
@@ -68,13 +61,13 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
 
     if (fee === undefined) {
       throw new InvalidParameterError(
-        `Cannot get origin xcm fee for currency ${JSON.stringify(currency)} on node ${node}.`
+        `Cannot get origin xcm fee for currency ${JSON.stringify(currency, replaceBigInt)} on node ${node}.`
       )
     }
     feeToSubtract = fee
   }
 
-  const transferable = balance - edBN - feeToSubtract
+  const transferable = balance - ed - feeToSubtract
 
   return transferable > 0n ? transferable : 0n
 }

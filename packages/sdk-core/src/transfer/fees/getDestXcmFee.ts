@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { findAsset, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
+import { findAssetForNodeOrThrow, hasDryRunSupport, InvalidCurrencyError } from '@paraspell/assets'
 import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { isRelayChain, Parents, Version } from '@paraspell/sdk-common'
 
@@ -10,7 +10,6 @@ import { getParaId } from '../../nodes/config'
 import { addXcmVersionHeader } from '../../pallets/xcmPallet/utils'
 import type { TFeeType } from '../../types'
 import { type TGetFeeForDestNodeOptions } from '../../types'
-import { replaceBigInt } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 import { getReverseTxFee } from './getReverseTxFee'
 import { isSufficientDestination } from './isSufficient'
@@ -64,13 +63,7 @@ export const getDestXcmFee = async <TApi, TRes>(
   const calcPaymentInfoFee = async (): Promise<bigint> => {
     if (destination === 'Ethereum') return 0n
 
-    const originAsset = findAsset(origin, currency, destination)
-
-    if (!originAsset) {
-      throw new InvalidCurrencyError(
-        `Currency ${JSON.stringify(currency, replaceBigInt)} not found in ${origin}`
-      )
-    }
+    const originAsset = findAssetForNodeOrThrow(origin, currency, destination)
 
     if (originAsset.multiLocation) {
       try {

@@ -145,7 +145,7 @@ describe('Ajuna', () => {
         parameters: {
           id: 1,
           target: { Id: 'addr' },
-          amount: BigInt('100')
+          amount: 100n
         }
       })
     })

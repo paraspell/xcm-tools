@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TForeignAsset } from '@paraspell/assets'
 import {
-  findAsset,
+  findAssetForNodeOrThrow,
   getNativeAssetSymbol,
   InvalidCurrencyError,
   isForeignAsset,
   isOverrideMultiLocationSpecifier
 } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import type { WriteContractReturnType } from 'viem'
 import { createPublicClient, getContract, http } from 'viem'
 
@@ -51,13 +51,7 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     }
   })
 
-  const foundAsset = findAsset(from, currency, to)
-
-  if (foundAsset === null) {
-    throw new InvalidCurrencyError(
-      `Origin node ${from} does not support currency ${JSON.stringify(currency)}.`
-    )
-  }
+  const foundAsset = findAssetForNodeOrThrow(from, currency, to)
 
   let asset: string
   if (foundAsset.symbol === getNativeAssetSymbol(from)) {
@@ -91,7 +85,7 @@ export const transferMoonbeamEvm = async <TApi, TRes>({
     to === 'AssetHubPolkadot' &&
     multiCurrencySymbols.includes(foundAsset.symbol)
 
-  const usdtAsset = findAsset(from, { symbol: 'xcUSDT' }, to) as TForeignAsset
+  const usdtAsset = findAssetForNodeOrThrow(from, { symbol: 'xcUSDT' }, to) as TForeignAsset
 
   const tx = useMultiAssets
     ? await createTx('transferMultiCurrencies', [
