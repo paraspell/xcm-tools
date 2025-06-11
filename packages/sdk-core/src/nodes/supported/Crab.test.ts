@@ -2,20 +2,18 @@ import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
+import { createMultiAsset } from '../../utils/multiAsset'
 import type Crab from './Crab'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
-vi.mock('../../pallets/xcmPallet/utils', () => ({
-  createVersionedMultiAssets: vi.fn()
+vi.mock('../../utils/multiAsset', () => ({
+  createMultiAsset: vi.fn()
 }))
 
 describe('Crab', () => {
@@ -46,11 +44,8 @@ describe('Crab', () => {
   })
 
   it('should call transferPolkadotXCM with reserve_transfer_assets for non-ParaToPara scenario', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await crab.transferPolkadotXCM(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, 'reserve_transfer_assets')
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(mockInput, 'reserve_transfer_assets')
   })
 
   it('should throw NodeNotSupportedError when calling transferRelayToPara', () => {
@@ -59,7 +54,7 @@ describe('Crab', () => {
 
   it('should call createCurrencySpec with correct values', () => {
     crab.createCurrencySpec('100', 'ParaToPara', Version.V4)
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V4, '100', {
+    expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, '100', {
       parents: Parents.ZERO,
       interior: {
         X1: {
@@ -71,7 +66,7 @@ describe('Crab', () => {
 
   it('should call createCurrencySpec with correct values - ParaToRelay', () => {
     crab.createCurrencySpec('100', 'ParaToRelay', Version.V4)
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(Version.V4, '100', {
+    expect(createMultiAsset).toHaveBeenCalledWith(Version.V4, '100', {
       parents: Parents.ZERO,
       interior: {
         X1: {

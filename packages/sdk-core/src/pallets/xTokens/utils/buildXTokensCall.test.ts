@@ -27,12 +27,15 @@ vi.mock('./getXTokensParameters', () => ({
 }))
 
 describe('buildXTokensCall', () => {
+  const version = Version.V4
+
   const baseInput = {
     origin: 'Acala',
     destination: 'Kusama',
     scenario: 'ParaToPara',
     asset: { amount: '100' },
-    addressSelection: {},
+    destLocation: {},
+    version,
     fees: 10000
   } as TXTokensTransferOptions<unknown, unknown>
 
@@ -72,9 +75,10 @@ describe('buildXTokensCall', () => {
     expect(getXTokensParameters).toHaveBeenCalledWith(
       false,
       currencySelection,
-      input.addressSelection,
+      input.destLocation,
       input.asset.amount,
       '0.1',
+      version,
       undefined
     )
   })
@@ -97,9 +101,10 @@ describe('buildXTokensCall', () => {
     expect(getXTokensParameters).toHaveBeenCalledWith(
       true,
       { [Version.V4]: {} },
-      input.addressSelection,
+      input.destLocation,
       input.asset.amount,
       123,
+      version,
       undefined
     )
     expect(result.module).toBe('TestPallet')

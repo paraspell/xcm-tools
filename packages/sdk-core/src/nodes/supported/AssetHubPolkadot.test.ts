@@ -4,6 +4,7 @@ import {
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
+  isAssetEqual,
   isForeignAsset,
   normalizeSymbol,
   type TMultiAsset,
@@ -17,22 +18,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
 import { BridgeHaltedError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
-import type { TScenario, TTransferLocalOptions, TXcmVersioned } from '../../types'
+import type { TScenario, TTransferLocalOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
-import { createVersionedBeneficiary } from '../../utils'
+import { createBeneficiary } from '../../utils'
 import { transformMultiLocation } from '../../utils/multiLocation'
 import { createExecuteCall, createExecuteXcm } from '../../utils/transfer'
 import { validateAddress } from '../../utils/validateAddress'
 import ParachainNode from '../ParachainNode'
 import type AssetHubPolkadot from './AssetHubPolkadot'
 
-vi.mock('../polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+vi.mock('../../pallets/polkadotXcm', () => ({
+  transferPolkadotXcm: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', async () => {
@@ -46,7 +45,8 @@ vi.mock('@paraspell/assets', async () => {
     hasSupportForAsset: vi.fn(),
     findAssetByMultiLocation: vi.fn(),
     getNativeAssetSymbol: vi.fn(),
-    normalizeSymbol: vi.fn()
+    normalizeSymbol: vi.fn(),
+    isAssetEqual: vi.fn()
   }
 })
 
@@ -55,7 +55,7 @@ vi.mock('../../transfer/getBridgeStatus', () => ({
 }))
 
 vi.mock('../../utils/createBeneficiary', () => ({
-  createVersionedBeneficiary: vi.fn()
+  createBeneficiary: vi.fn()
 }))
 
 vi.mock('../../utils/multiLocation', () => ({
@@ -76,14 +76,10 @@ vi.mock('../../utils/ethereum/generateMessageId', () => ({
   generateMessageId: vi.fn()
 }))
 
-vi.mock('@paraspell/sdk-common', async () => {
-  const actual =
-    await vi.importActual<typeof import('@paraspell/sdk-common')>('@paraspell/sdk-common')
-  return {
-    ...actual,
-    hasJunction: vi.fn()
-  }
-})
+vi.mock('@paraspell/sdk-common', async importOriginal => ({
+  ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
+  hasJunction: vi.fn()
+}))
 
 describe('AssetHubPolkadot', () => {
   let assetHub: AssetHubPolkadot<unknown, unknown>
@@ -98,13 +94,15 @@ describe('AssetHubPolkadot', () => {
     clone: vi.fn()
   } as unknown as IPolkadotApi<unknown, unknown>
 
+  const mockExtrinsic = {} as unknown
+
   const mockInput = {
     api: mockApi,
     asset: { symbol: 'DOT', amount: '1000', isNative: true },
-    currencySelection: {} as TXcmVersioned<TMultiAsset[]>,
+    multiAsset: {} as TMultiAsset,
     scenario: 'ParaToRelay',
-    header: {} as TXcmVersioned<TMultiLocation>,
-    addressSelection: {} as TXcmVersioned<TMultiLocation>,
+    destLocation: {} as TMultiLocation,
+    beneficiaryLocation: {} as TMultiLocation,
     paraIdTo: 1001,
     address: 'address',
     destination: 'Polkadot',
@@ -116,6 +114,7 @@ describe('AssetHubPolkadot', () => {
     assetHub = getNode<unknown, unknown, 'AssetHubPolkadot'>('AssetHubPolkadot')
     vi.mocked(getBridgeStatus).mockResolvedValue('Normal')
     vi.mocked(normalizeSymbol).mockImplementation(sym => (sym ?? '').toUpperCase())
+    vi.mocked(transferPolkadotXcm).mockResolvedValue(mockExtrinsic)
   })
 
   it('should initialize with correct values', () => {
@@ -126,31 +125,21 @@ describe('AssetHubPolkadot', () => {
   })
 
   describe('handleBridgeTransfer', () => {
-    it('should process a valid DOT transfer to Polkadot', () => {
-      const mockResult = {} as unknown
-      const spy = vi
-        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-        .mockReturnValue(mockResult)
-
-      const result = assetHub.handleBridgeTransfer(mockInput, 'Polkadot')
-      expect(result).toStrictEqual(mockResult)
-      expect(spy).toHaveBeenCalledTimes(1)
+    it('should process a valid DOT transfer to Polkadot', async () => {
+      const result = await assetHub.handleBridgeTransfer(mockInput, 'Polkadot')
+      expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
+      expect(result).toBe(mockExtrinsic)
     })
 
-    it('should process a valid DOT transfer to Kusama', () => {
-      const mockResult = {} as unknown
-      const spy = vi
-        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-        .mockReturnValue(mockResult)
-
+    it('should process a valid DOT transfer to Kusama', async () => {
       const input = { ...mockInput, asset: { symbol: 'DOT' } } as TPolkadotXCMTransferOptions<
         unknown,
         unknown
       >
 
-      const result = assetHub.handleBridgeTransfer(input, 'Kusama')
-      expect(result).toStrictEqual(mockResult)
-      expect(spy).toHaveBeenCalledTimes(1)
+      const result = await assetHub.handleBridgeTransfer(input, 'Kusama')
+      expect(result).toStrictEqual(mockExtrinsic)
+      expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
     })
 
     it('throws InvalidCurrencyError for unsupported currency', () => {
@@ -187,11 +176,6 @@ describe('AssetHubPolkadot', () => {
       vi.mocked(getOtherAssets).mockReturnValue([mockEthAsset])
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
-      const mockResult = {} as unknown
-      const spy = vi
-        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-        .mockReturnValue(mockResult)
-
       const input = {
         ...mockInput,
         asset: { symbol: 'ETH', assetId: '0x123', multiLocation: {} },
@@ -199,8 +183,8 @@ describe('AssetHubPolkadot', () => {
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       const result = await assetHub.handleEthBridgeTransfer(input)
 
-      expect(result).toStrictEqual(mockResult)
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(result).toStrictEqual(mockExtrinsic)
+      expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -267,26 +251,20 @@ describe('AssetHubPolkadot', () => {
   })
 
   describe('handleMythosTransfer', () => {
-    it('should process a valid Mythos transfer', () => {
-      const mockResult = {}
-
-      const spy = vi
-        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-        .mockReturnValue(mockResult)
-
+    it('should process a valid Mythos transfer', async () => {
       const input = {
         ...mockInput,
         destination: 'Mythos',
         paraIdTo: 2000
       } as TPolkadotXCMTransferOptions<unknown, unknown>
-      const result = assetHub.handleMythosTransfer(input)
+      const result = await assetHub.handleMythosTransfer(input)
 
-      expect(result).toStrictEqual(mockResult)
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(result).toStrictEqual(mockExtrinsic)
+      expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
     })
   })
 
-  describe('transferPolkadotXCM', () => {
+  describe('transferPolkadotXcm', () => {
     it('throws ScenarioNotSupportedError for native DOT transfers in para to para scenarios', async () => {
       const input = {
         ...mockInput,
@@ -318,24 +296,20 @@ describe('AssetHubPolkadot', () => {
     it('should process a valid transfer for non-ParaToPara scenario', async () => {
       vi.mocked(getOtherAssets).mockReturnValue([{ symbol: 'DOT', assetId: '' }])
 
-      const mockResult = {}
-      const spy = vi
-        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-        .mockReturnValue(mockResult)
       const input = {
         ...mockInput,
         scenario: 'RelayToPara'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
       const result = await assetHub.transferPolkadotXCM(input)
-      expect(result).toStrictEqual(mockResult)
-      expect(spy).toHaveBeenCalledTimes(1)
+      expect(result).toStrictEqual(mockExtrinsic)
+      expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
     })
 
     it('should call handleBridgeTransfer when destination is AssetHubKusama', async () => {
       mockInput.destination = 'AssetHubKusama'
 
-      const spy = vi.spyOn(assetHub, 'handleBridgeTransfer').mockReturnValue({} as unknown)
+      const spy = vi.spyOn(assetHub, 'handleBridgeTransfer').mockResolvedValue({} as unknown)
 
       await assetHub.transferPolkadotXCM(mockInput)
 
@@ -357,7 +331,7 @@ describe('AssetHubPolkadot', () => {
 
       const handleMythosTransferSpy = vi
         .spyOn(assetHub, 'handleMythosTransfer')
-        .mockReturnValue({} as unknown)
+        .mockResolvedValue({} as unknown)
 
       await assetHub.transferPolkadotXCM(mockInput)
 
@@ -382,9 +356,7 @@ describe('AssetHubPolkadot', () => {
         multiLocation: {} as TMultiLocation
       })
 
-      vi.mocked(createVersionedBeneficiary).mockReturnValue({
-        [Version.V4]: {}
-      } as TXcmVersioned<TMultiLocation>)
+      vi.mocked(createBeneficiary).mockReturnValue({} as TMultiLocation)
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
       const handleLocalReserveTransferSpy = vi.spyOn(assetHub, 'handleLocalReserveTransfer')
@@ -466,14 +438,9 @@ describe('AssetHubPolkadot', () => {
       mockInput.scenario = 'ParaToPara'
       mockInput.destination = 'BifrostPolkadot'
 
-      const mockResult = {}
-      const spy = vi
-        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-        .mockReturnValue(mockResult)
-
       await assetHub.transferPolkadotXCM(mockInput)
 
-      expect(spy).toHaveBeenCalled()
+      expect(transferPolkadotXcm).toHaveBeenCalled()
     })
 
     it('should modify input for USDC currencyId', async () => {
@@ -492,14 +459,9 @@ describe('AssetHubPolkadot', () => {
       mockInput.scenario = 'ParaToPara'
       mockInput.destination = 'BifrostPolkadot'
 
-      const mockResult = {}
-      const spy = vi
-        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-        .mockReturnValue(mockResult)
-
       await assetHub.transferPolkadotXCM(mockInput)
 
-      expect(spy).toHaveBeenCalled()
+      expect(transferPolkadotXcm).toHaveBeenCalled()
     })
 
     it('should modify input for DOT transfer to Hydration', async () => {
@@ -514,14 +476,9 @@ describe('AssetHubPolkadot', () => {
         node === 'Ethereum' ? [] : [{ symbol: 'DOT', assetId: '' }]
       )
 
-      const mockResult = {}
-      const spy = vi
-        .spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-        .mockReturnValue(mockResult)
-
       await assetHub.transferPolkadotXCM(mockInput)
 
-      expect(spy).toHaveBeenCalled()
+      expect(transferPolkadotXcm).toHaveBeenCalled()
     })
   })
 
@@ -543,6 +500,39 @@ describe('AssetHubPolkadot', () => {
       const input = { ...mockInput, senderAddress: undefined }
       await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
         'Please provide senderAddress'
+      )
+    })
+
+    it('should throw error when amount is smaller than MIN_FEE', async () => {
+      const input = {
+        ...mockInput,
+        senderAddress: '0xvalid',
+        feeAsset: { ...mockInput.asset },
+        asset: { ...mockInput.asset, amount: '1', decimals: 6, multiLocation: {} as TMultiLocation }
+      }
+      vi.mocked(isAssetEqual).mockReturnValue(true)
+      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
+        'Asset amount 1 is too low, please increase the amount or use a different fee asset.'
+      )
+    })
+
+    it('should throw error when amount is smaller than calculated fee', async () => {
+      const input = {
+        ...mockInput,
+        senderAddress: '0xvalid',
+        feeAsset: { ...mockInput.asset },
+        asset: {
+          ...mockInput.asset,
+          amount: '300001',
+          decimals: 6,
+          multiLocation: {} as TMultiLocation
+        }
+      }
+      vi.mocked(isAssetEqual).mockReturnValue(true)
+      mockApi.getDryRunCall = vi.fn().mockResolvedValue({ success: true, fee: 170000n, weight: 0n })
+
+      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
+        'Asset amount 300001 is too low, please increase the amount or use a different fee asset.'
       )
     })
 
@@ -676,9 +666,7 @@ describe('AssetHubPolkadot', () => {
         isNative: true,
         multiLocation: mockMultiLocation
       } as WithAmount<TNativeAsset>
-      const expectedResult = {
-        [assetHub.version]: [{ id: mockMultiLocation, fun: { Fungible: amount } }]
-      }
+      const expectedResult = { id: mockMultiLocation, fun: { Fungible: amount } }
 
       vi.mocked(hasJunction).mockReturnValue(false)
 
@@ -706,9 +694,7 @@ describe('AssetHubPolkadot', () => {
         parents: 0,
         interior: { X1: { AccountId32: { id: '0x123...' } } }
       }
-      const expectedResult = {
-        [assetHub.version]: [{ id: transformedMultiLocation, fun: { Fungible: amount } }]
-      }
+      const expectedResult = { id: transformedMultiLocation, fun: { Fungible: amount } }
 
       vi.mocked(hasJunction).mockReturnValue(true)
       vi.mocked(transformMultiLocation).mockReturnValue(transformedMultiLocation)
@@ -748,15 +734,11 @@ describe('AssetHubPolkadot', () => {
       const isOverriddenAsset = true
 
       const expectedResult = {
-        [assetHub.version]: [
-          {
-            id: {
-              parents: 0,
-              interior: 'Here'
-            },
-            fun: { Fungible: amount }
-          }
-        ]
+        id: {
+          parents: 0,
+          interior: 'Here'
+        },
+        fun: { Fungible: amount }
       }
 
       vi.mocked(hasJunction).mockReturnValue(false)

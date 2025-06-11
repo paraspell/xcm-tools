@@ -4,8 +4,7 @@ import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
@@ -14,6 +13,7 @@ import type {
   TXTokensTransferOptions
 } from '../../types'
 import { getNode } from '../../utils'
+import { createMultiAsset } from '../../utils/multiAsset'
 import type { BifrostPolkadot } from './BifrostPolkadot'
 
 vi.mock('../../pallets/xTokens', () => ({
@@ -21,9 +21,7 @@ vi.mock('../../pallets/xTokens', () => ({
 }))
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('BifrostPolkadot', () => {
@@ -56,28 +54,21 @@ describe('BifrostPolkadot', () => {
   })
 
   it('should call transferPolkadotXCM with correct parameters for WETH transfer', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await bifrostPolkadot.transferPolkadotXCM(mockPolkadotXCMInput)
-
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockPolkadotXCMInput,
-        currencySelection: createVersionedMultiAssets(
-          bifrostPolkadot.version,
-          mockPolkadotXCMInput.asset.amount,
-          {
-            parents: Parents.TWO,
-            interior: {
-              X2: [
-                ETHEREUM_JUNCTION,
-                {
-                  AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
-                }
-              ]
-            }
+        multiAsset: createMultiAsset(bifrostPolkadot.version, mockPolkadotXCMInput.asset.amount, {
+          parents: Parents.TWO,
+          interior: {
+            X2: [
+              ETHEREUM_JUNCTION,
+              {
+                AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
+              }
+            ]
           }
-        )
+        })
       },
       'transfer_assets',
       'Unlimited'
@@ -85,8 +76,6 @@ describe('BifrostPolkadot', () => {
   })
 
   it('should call transferPolkadotXCM with correct parameters for DOT transfer', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     const asset = { symbol: 'DOT', amount: '100' } as WithAmount<TAsset>
 
     await bifrostPolkadot.transferPolkadotXCM({
@@ -94,11 +83,11 @@ describe('BifrostPolkadot', () => {
       asset
     })
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockPolkadotXCMInput,
         asset,
-        currencySelection: createVersionedMultiAssets(
+        multiAsset: createMultiAsset(
           bifrostPolkadot.version,
           mockPolkadotXCMInput.asset.amount,
           DOT_MULTILOCATION

@@ -6,6 +6,7 @@ import {
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
+  isAssetEqual,
   isForeignAsset,
   normalizeSymbol
 } from '@paraspell/assets'
@@ -29,13 +30,11 @@ import {
   InvalidParameterError,
   ScenarioNotSupportedError
 } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import {
-  addXcmVersionHeader,
-  createBridgePolkadotXcmDest,
-  createMultiAsset,
-  createVersionedDestination,
-  createVersionedMultiAssets
+  createBridgeDestination,
+  createDestination,
+  createVersionedDestination
 } from '../../pallets/xcmPallet/utils'
 import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type {
@@ -50,8 +49,9 @@ import {
   type TPolkadotXCMTransferOptions,
   type TScenario
 } from '../../types'
-import { createVersionedBeneficiary } from '../../utils'
+import { addXcmVersionHeader, createBeneficiary } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
+import { createMultiAsset } from '../../utils/multiAsset'
 import { createBeneficiaryMultiLocation, transformMultiLocation } from '../../utils/multiLocation'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { createExecuteCall, createExecuteXcm } from '../../utils/transfer'
@@ -90,7 +90,7 @@ class AssetHubPolkadot<TApi, TRes>
   public handleBridgeTransfer<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>,
     targetChain: 'Polkadot' | 'Kusama'
-  ) {
+  ): Promise<TRes> {
     const { api, asset, destination, scenario, address, version, paraIdTo } = input
     if (
       (targetChain === 'Kusama' && asset.symbol?.toUpperCase() === 'KSM') ||
@@ -98,8 +98,8 @@ class AssetHubPolkadot<TApi, TRes>
     ) {
       const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
-        header: createBridgePolkadotXcmDest(version, targetChain, destination, paraIdTo),
-        addressSelection: createVersionedBeneficiary({
+        destLocation: createBridgeDestination(targetChain, destination, paraIdTo),
+        beneficiaryLocation: createBeneficiary({
           api,
           scenario,
           pallet: 'PolkadotXcm',
@@ -107,32 +107,20 @@ class AssetHubPolkadot<TApi, TRes>
           version,
           paraId: paraIdTo
         }),
-        currencySelection: createVersionedMultiAssets(
-          version,
-          asset.amount,
-          asset.multiLocation as TMultiLocation
-        )
+        multiAsset: createMultiAsset(version, asset.amount, asset.multiLocation as TMultiLocation)
       }
-      return PolkadotXCMTransferImpl.transferPolkadotXCM(
-        modifiedInput,
-        'transfer_assets',
-        'Unlimited'
-      )
+      return transferPolkadotXcm(modifiedInput, 'transfer_assets', 'Unlimited')
     } else if (
       (targetChain === 'Polkadot' && asset.symbol?.toUpperCase() === 'KSM') ||
       (targetChain === 'Kusama' && asset.symbol?.toUpperCase() === 'DOT')
     ) {
       const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
-        header: createBridgePolkadotXcmDest(version, targetChain, destination, paraIdTo),
-        currencySelection: createVersionedMultiAssets(version, asset.amount, DOT_MULTILOCATION)
+        destLocation: createBridgeDestination(targetChain, destination, paraIdTo),
+        multiAsset: createMultiAsset(version, asset.amount, DOT_MULTILOCATION)
       }
 
-      return PolkadotXCMTransferImpl.transferPolkadotXCM(
-        modifiedInput,
-        'limited_reserve_transfer_assets',
-        'Unlimited'
-      )
+      return transferPolkadotXcm(modifiedInput, 'limited_reserve_transfer_assets', 'Unlimited')
     }
     throw new InvalidCurrencyError(
       `Polkadot <-> Kusama bridge does not support currency ${asset.symbol}`
@@ -252,7 +240,7 @@ class AssetHubPolkadot<TApi, TRes>
 
     const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
       ...input,
-      header: createVersionedDestination(
+      destLocation: createDestination(
         scenario,
         this.version,
         destination,
@@ -260,7 +248,7 @@ class AssetHubPolkadot<TApi, TRes>
         ETHEREUM_JUNCTION,
         Parents.TWO
       ),
-      addressSelection: createVersionedBeneficiary({
+      beneficiaryLocation: createBeneficiary({
         api,
         scenario,
         pallet: 'PolkadotXcm',
@@ -268,13 +256,9 @@ class AssetHubPolkadot<TApi, TRes>
         version: this.version,
         paraId: paraIdTo
       }),
-      currencySelection: createVersionedMultiAssets(version, asset.amount, asset.multiLocation)
+      multiAsset: createMultiAsset(version, asset.amount, asset.multiLocation)
     }
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(
-      modifiedInput,
-      'transfer_assets',
-      'Unlimited'
-    )
+    return transferPolkadotXcm(modifiedInput, 'transfer_assets', 'Unlimited')
   }
 
   handleMythosTransfer<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>) {
@@ -290,8 +274,8 @@ class AssetHubPolkadot<TApi, TRes>
     }
     const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
       ...input,
-      header: this.createVersionedDestination(scenario, version, destination, paraId),
-      addressSelection: createVersionedBeneficiary({
+      destLocation: createDestination(scenario, version, destination, paraId),
+      beneficiaryLocation: createBeneficiary({
         api,
         scenario,
         pallet: 'PolkadotXcm',
@@ -299,13 +283,9 @@ class AssetHubPolkadot<TApi, TRes>
         version,
         paraId
       }),
-      currencySelection: createVersionedMultiAssets(version, asset.amount, customMultiLocation)
+      multiAsset: createMultiAsset(version, asset.amount, customMultiLocation)
     }
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(
-      modifiedInput,
-      'limited_teleport_assets',
-      'Unlimited'
-    )
+    return transferPolkadotXcm(modifiedInput, 'limited_teleport_assets', 'Unlimited')
   }
 
   handleLocalReserveTransfer = <TApi, TRes>(
@@ -328,7 +308,7 @@ class AssetHubPolkadot<TApi, TRes>
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: this.createVersionedDestination(scenario, version, destination, paraIdTo),
+        dest: createVersionedDestination(scenario, version, destination, paraIdTo),
         assets: addXcmVersionHeader(
           [
             ...(useDOTAsFeeAsset
@@ -367,7 +347,7 @@ class AssetHubPolkadot<TApi, TRes>
     ) {
       return {
         ...input,
-        currencySelection: createVersionedMultiAssets(version, asset.amount, DOT_MULTILOCATION)
+        multiAsset: createMultiAsset(version, asset.amount, DOT_MULTILOCATION)
       }
     }
 
@@ -401,6 +381,16 @@ class AssetHubPolkadot<TApi, TRes>
     const scaledMultiplier = BigInt(Math.floor(multiplier * 10 ** decimals))
     const MIN_FEE = (base * scaledMultiplier) / BigInt(10 ** decimals)
 
+    const checkAmount = (fee: bigint) => {
+      if (feeAsset && isAssetEqual(asset, feeAsset) && BigInt(asset.amount) <= fee * 2n) {
+        throw new InvalidParameterError(
+          `Asset amount ${asset.amount} is too low, please increase the amount or use a different fee asset.`
+        )
+      }
+    }
+
+    checkAmount(MIN_FEE)
+
     const call = createExecuteCall(createExecuteXcm(input, MIN_FEE, version), MAX_WEIGHT)
 
     const dryRunResult = await api.getDryRunCall({
@@ -415,6 +405,8 @@ class AssetHubPolkadot<TApi, TRes>
     }
 
     const paddedFee = (dryRunResult.fee * 120n) / 100n
+
+    checkAmount(paddedFee)
 
     const xcm = createExecuteXcm(input, paddedFee, version)
 
@@ -502,7 +494,7 @@ class AssetHubPolkadot<TApi, TRes>
 
     const modifiedInput = this.patchInput(input)
 
-    return PolkadotXCMTransferImpl.transferPolkadotXCM(modifiedInput, method, 'Unlimited')
+    return transferPolkadotXcm(modifiedInput, method, 'Unlimited')
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
@@ -531,7 +523,7 @@ class AssetHubPolkadot<TApi, TRes>
         ? transformMultiLocation(multiLocation)
         : multiLocation
 
-      return createVersionedMultiAssets(version, amount, transformedMultiLocation)
+      return createMultiAsset(version, amount, transformedMultiLocation)
     } else {
       return super.createCurrencySpec(amount, scenario, version, asset)
     }

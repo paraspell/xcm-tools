@@ -3,15 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import type Moonriver from './Moonriver'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('Moonriver', () => {
@@ -46,29 +44,23 @@ describe('Moonriver', () => {
       asset: { symbol: 'MOVR', amount: 100 }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await node.transferPolkadotXCM(mockInputNative)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockInputNative,
-        currencySelection: {
-          [node.version]: [
-            {
-              fun: {
-                Fungible: mockInput.asset.amount
-              },
-              id: {
-                parents: 0,
-                interior: {
-                  X1: {
-                    PalletInstance: 10
-                  }
-                }
+        multiAsset: {
+          fun: {
+            Fungible: mockInput.asset.amount
+          },
+          id: {
+            parents: 0,
+            interior: {
+              X1: {
+                PalletInstance: 10
               }
             }
-          ]
+          }
         }
       },
       'transfer_assets',
@@ -83,22 +75,16 @@ describe('Moonriver', () => {
       asset: { symbol: 'DOT', amount: 100 }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await node.transferPolkadotXCM(mockInputDot)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockInputDot,
-        currencySelection: {
-          [node.version]: [
-            {
-              fun: {
-                Fungible: mockInput.asset.amount
-              },
-              id: DOT_MULTILOCATION
-            }
-          ]
+        multiAsset: {
+          fun: {
+            Fungible: mockInput.asset.amount
+          },
+          id: DOT_MULTILOCATION
         }
       },
       'transfer_assets',
@@ -133,22 +119,16 @@ describe('Moonriver', () => {
       asset
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await node.transferPolkadotXCM(mockInputUsdt)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockInputUsdt,
-        currencySelection: {
-          [node.version]: [
-            {
-              fun: {
-                Fungible: mockInput.asset.amount
-              },
-              id: asset.multiLocation
-            }
-          ]
+        multiAsset: {
+          fun: {
+            Fungible: mockInput.asset.amount
+          },
+          id: asset.multiLocation
         }
       },
       'transfer_assets',

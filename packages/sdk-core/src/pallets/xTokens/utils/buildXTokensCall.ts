@@ -47,7 +47,7 @@ export const buildXTokensCall = <TApi, TRes>(
   currencySelection: TXTokensCurrencySelection,
   fees: string | number
 ): TSerializedApiCall => {
-  const { overriddenAsset, addressSelection, asset, pallet, method: methodOverride } = input
+  const { overriddenAsset, destLocation, asset, pallet, version, method: methodOverride } = input
 
   const useMultiAsset = shouldUseMultiAssetTransfer(input)
 
@@ -60,9 +60,10 @@ export const buildXTokensCall = <TApi, TRes>(
   const parameters = getXTokensParameters(
     useMultiAsset,
     modifiedCurrencySelection,
-    addressSelection,
+    destLocation,
     asset.amount,
     fees,
+    version,
     overriddenAsset
   )
 

@@ -12,7 +12,6 @@ import {
   type TMultiAsset
 } from '@paraspell/assets'
 import type { TPallet } from '@paraspell/pallets'
-import type { TMultiLocation } from '@paraspell/sdk-common'
 import type { Version } from '@paraspell/sdk-common'
 import {
   isRelayChain,
@@ -32,12 +31,9 @@ import {
 } from '../errors'
 import { NoXCMSupportImplementedError } from '../errors/NoXCMSupportImplementedError'
 import {
-  addXcmVersionHeader,
   constructRelayToParaParameters,
   createDestination,
-  createMultiAsset,
-  createVersionedDestination,
-  createVersionedMultiAssets
+  createVersionedDestination
 } from '../pallets/xcmPallet/utils'
 import { transferXTokens } from '../pallets/xTokens'
 import { getParaEthTransferFees } from '../transfer'
@@ -46,7 +42,6 @@ import type {
   IPolkadotXCMTransfer,
   IXTokensTransfer,
   IXTransferTransfer,
-  TDestination,
   TPolkadotXCMTransferOptions,
   TRelayToParaOptions,
   TRelayToParaOverrides,
@@ -54,12 +49,17 @@ import type {
   TSendInternalOptions,
   TSerializedApiCall,
   TTransferLocalOptions,
-  TXcmVersioned,
   TXTokensTransferOptions
 } from '../types'
-import { createBeneficiaryMultiLocation, createVersionedBeneficiary, getFees } from '../utils'
+import {
+  addXcmVersionHeader,
+  createBeneficiary,
+  createBeneficiaryMultiLocation,
+  getFees
+} from '../utils'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
+import { createMultiAsset } from '../utils/multiAsset'
 import { resolveParaId } from '../utils/resolveParaId'
 import { getParaId } from './config'
 
@@ -162,7 +162,8 @@ abstract class ParachainNode<TApi, TRes> {
       const input: TXTokensTransferOptions<TApi, TRes> = {
         api,
         asset,
-        addressSelection: createVersionedBeneficiary({
+        // Refactor this
+        destLocation: createBeneficiary({
           api,
           scenario,
           pallet: 'XTokens',
@@ -191,7 +192,8 @@ abstract class ParachainNode<TApi, TRes> {
         api,
         asset,
         recipientAddress: address,
-        paraId,
+        paraIdTo: paraId,
+        scenario,
         origin: this.node,
         destination,
         overriddenAsset,
@@ -201,8 +203,8 @@ abstract class ParachainNode<TApi, TRes> {
     } else if (supportsPolkadotXCM(this)) {
       const options: TPolkadotXCMTransferOptions<TApi, TRes> = {
         api,
-        header: this.createVersionedDestination(scenario, version, destination, paraId),
-        addressSelection: createVersionedBeneficiary({
+        destLocation: createDestination(scenario, version, destination, paraId),
+        beneficiaryLocation: createBeneficiary({
           api,
           scenario,
           pallet: 'PolkadotXcm',
@@ -211,7 +213,7 @@ abstract class ParachainNode<TApi, TRes> {
           paraId
         }),
         address,
-        currencySelection: this.createCurrencySpec(
+        multiAsset: this.createCurrencySpec(
           asset.amount,
           scenario,
           version,
@@ -277,20 +279,11 @@ abstract class ParachainNode<TApi, TRes> {
     version: Version,
     _asset?: TAsset,
     _isOverridenAsset?: boolean
-  ): TXcmVersioned<TMultiAsset[]> {
-    return createVersionedMultiAssets(version, amount, {
+  ): TMultiAsset {
+    return createMultiAsset(version, amount, {
       parents: scenario === 'ParaToRelay' ? Parents.ONE : Parents.ZERO,
       interior: 'Here'
     })
-  }
-
-  createVersionedDestination(
-    scenario: TScenario,
-    version: Version,
-    destination: TDestination,
-    paraId?: number
-  ): TXcmVersioned<TMultiLocation> {
-    return createVersionedDestination(scenario, version, destination, paraId)
   }
 
   getNativeAssetSymbol(): string {
@@ -411,7 +404,7 @@ abstract class ParachainNode<TApi, TRes> {
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: this.createVersionedDestination(
+        dest: createVersionedDestination(
           scenario,
           version,
           destination,
@@ -576,7 +569,7 @@ abstract class ParachainNode<TApi, TRes> {
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: this.createVersionedDestination(
+        dest: createVersionedDestination(
           scenario,
           version,
           destination,

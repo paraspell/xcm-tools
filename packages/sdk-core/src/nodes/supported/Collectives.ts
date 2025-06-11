@@ -1,16 +1,11 @@
 // Contains detailed structure of XCM call construction for Collectives Parachain
 
-import type { TAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
-import {
-  type IPolkadotXCMTransfer,
-  type TPolkadotXCMTransferOptions,
-  type TScenario
-} from '../../types'
+import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
 class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -23,17 +18,11 @@ class Collectives<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolk
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
-    return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'limited_teleport_assets', 'Unlimited')
-    )
+    return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {
     return { method: 'limited_teleport_assets', includeFee: true }
-  }
-
-  createCurrencySpec(amount: string, scenario: TScenario, version: Version, asset?: TAsset) {
-    return super.createCurrencySpec(amount, scenario, version, asset)
   }
 }
 

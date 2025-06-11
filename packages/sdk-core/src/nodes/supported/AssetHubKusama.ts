@@ -6,7 +6,7 @@ import { isTMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { SYSTEM_NODES_KUSAMA } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides, TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
@@ -27,7 +27,7 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     // TESTED https://kusama.subscan.io/xcm_message/kusama-8e423130a4d8b61679af95dbea18a55124f99672
 
     if (destination === 'AssetHubPolkadot') {
-      return Promise.resolve(getNode('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot'))
+      return getNode('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot')
     }
 
     const isSystemNode = !isTMultiLocation(destination) && SYSTEM_NODES_KUSAMA.includes(destination)
@@ -57,7 +57,8 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
       scenario === 'ParaToPara' && !isSystemNode
         ? 'limited_reserve_transfer_assets'
         : 'limited_teleport_assets'
-    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited'))
+
+    return transferPolkadotXcm(input, method, 'Unlimited')
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {

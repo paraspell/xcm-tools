@@ -1,15 +1,13 @@
 import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getNode } from '../../utils'
 import RobonomicsPolkadot from './RobonomicsPolkadot'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('RobonomicsPolkadot', () => {
@@ -26,11 +24,12 @@ describe('RobonomicsPolkadot', () => {
   describe('transferPolkadotXCM', () => {
     it('should use limitedTeleportAssets when scenario is not ParaToPara', async () => {
       const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
       await robonomics.transferPolkadotXCM(input)
-      expect(spy).toHaveBeenCalledWith(input, 'limited_reserve_transfer_assets', 'Unlimited')
+      expect(transferPolkadotXcm).toHaveBeenCalledWith(
+        input,
+        'limited_reserve_transfer_assets',
+        'Unlimited'
+      )
     })
   })
 

@@ -3,20 +3,18 @@ import { Parents, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getNode } from '../../utils'
+import { createMultiAsset } from '../../utils/multiAsset'
 import type Darwinia from './Darwinia'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
-vi.mock('../../pallets/xcmPallet/utils', () => ({
-  createVersionedMultiAssets: vi.fn()
+vi.mock('../../utils/multiAsset', () => ({
+  createMultiAsset: vi.fn()
 }))
 
 describe('Darwinia', () => {
@@ -39,11 +37,9 @@ describe('Darwinia', () => {
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToRelay scenario', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await darwinia.transferPolkadotXCM(mockPolkadotXCMInput)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       mockPolkadotXCMInput,
       'limited_reserve_transfer_assets',
       'Unlimited'
@@ -61,7 +57,7 @@ describe('Darwinia', () => {
 
   it('should call createCurrencySpec with correct values', () => {
     darwinia.createCurrencySpec('100', 'ParaToPara', darwinia.version)
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(darwinia.version, '100', {
+    expect(createMultiAsset).toHaveBeenCalledWith(darwinia.version, '100', {
       parents: Parents.ZERO,
       interior: {
         X1: {
@@ -73,7 +69,7 @@ describe('Darwinia', () => {
 
   it('should call createCurrencySpec with correct values - ParaToRelay', () => {
     darwinia.createCurrencySpec('100', 'ParaToRelay', darwinia.version)
-    expect(createVersionedMultiAssets).toHaveBeenCalledWith(darwinia.version, '100', {
+    expect(createMultiAsset).toHaveBeenCalledWith(darwinia.version, '100', {
       parents: Parents.ZERO,
       interior: {
         X1: {

@@ -1,11 +1,8 @@
 import type { TMultiAsset } from '@paraspell/assets'
 
 import type { TXcmVersioned, TXTokensTransferOptions } from '../../../types'
-import {
-  addXcmVersionHeader,
-  createMultiAsset,
-  maybeOverrideMultiAssets
-} from '../../xcmPallet/utils'
+import { addXcmVersionHeader } from '../../../utils'
+import { createMultiAsset, maybeOverrideMultiAssets } from '../../../utils/multiAsset'
 import { buildMultiLocation } from './multiLocationResolvers'
 
 export const createDefaultCurrencySelection = <TApi, TRes>(

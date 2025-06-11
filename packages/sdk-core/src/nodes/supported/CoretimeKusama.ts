@@ -2,7 +2,7 @@
 
 import { Version } from '@paraspell/sdk-common'
 
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -17,7 +17,7 @@ class CoretimeKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     const { scenario } = input
     const method =
       scenario === 'ParaToPara' ? 'limited_reserve_transfer_assets' : 'limited_teleport_assets'
-    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited'))
+    return transferPolkadotXcm(input, method, 'Unlimited')
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {

@@ -3,7 +3,7 @@
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -15,11 +15,12 @@ class PeoplePolkadot<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { scenario } = input
+
     if (scenario === 'ParaToPara') {
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
-    const method = 'limited_teleport_assets'
-    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited'))
+
+    return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {

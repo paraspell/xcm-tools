@@ -3,7 +3,7 @@ import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
 import { isAddress } from 'viem'
 
 import type { TCreateBeneficiaryOptions } from '../../types'
-import { createX1Payload } from '../createX1Payload'
+import { createX1Payload } from './createX1Payload'
 
 export const createBeneficiaryMultiLocation = <TApi, TRes>({
   api,

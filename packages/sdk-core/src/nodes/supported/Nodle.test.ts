@@ -1,15 +1,13 @@
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import type Nodle from './Nodle'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('Nodle', () => {
@@ -31,10 +29,11 @@ describe('Nodle', () => {
   })
 
   it('should call transferPolkadotXCM with the correct arguments', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await nodle.transferPolkadotXCM(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
+      mockInput,
+      'limited_reserve_transfer_assets',
+      'Unlimited'
+    )
   })
 })

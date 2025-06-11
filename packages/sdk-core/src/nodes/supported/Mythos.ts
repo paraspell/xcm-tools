@@ -4,7 +4,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
@@ -29,14 +29,12 @@ class Mythos<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotX
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${asset.symbol}`)
     }
 
-    return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(
-        input,
-        destination === 'AssetHubPolkadot'
-          ? 'limited_teleport_assets'
-          : 'limited_reserve_transfer_assets',
-        'Unlimited'
-      )
+    return transferPolkadotXcm(
+      input,
+      destination === 'AssetHubPolkadot'
+        ? 'limited_teleport_assets'
+        : 'limited_reserve_transfer_assets',
+      'Unlimited'
     )
   }
 

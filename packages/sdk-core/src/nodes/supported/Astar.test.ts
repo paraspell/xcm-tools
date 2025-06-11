@@ -2,7 +2,7 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
@@ -13,9 +13,7 @@ import { getNode } from '../../utils'
 import type Astar from './Astar'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 vi.mock('../../pallets/xTokens', () => ({
@@ -45,11 +43,8 @@ describe('Astar', () => {
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for ParaToPara scenario', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await astar.transferPolkadotXCM(mockPolkadotXCMInput)
-
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       mockPolkadotXCMInput,
       'limited_reserve_transfer_assets',
       'Unlimited'

@@ -3,7 +3,7 @@
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -26,7 +26,7 @@ class BridgeHubPolkadot<TApi, TRes>
       )
     }
     const method = 'limited_teleport_assets'
-    return Promise.resolve(PolkadotXCMTransferImpl.transferPolkadotXCM(input, method, 'Unlimited'))
+    return transferPolkadotXcm(input, method, 'Unlimited')
   }
 
   getRelayToParaOverrides(): TRelayToParaOverrides {

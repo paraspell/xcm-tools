@@ -2,15 +2,13 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import PeopleKusama from './PeopleKusama'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('PeopleKusama', () => {
@@ -37,11 +35,12 @@ describe('PeopleKusama', () => {
 
     it('should use limitedTeleportAssets when scenario is not ParaToPara', async () => {
       const input = { scenario: 'ParaToRelay' } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
       await node.transferPolkadotXCM(input)
-      expect(spy).toHaveBeenCalledWith(input, 'limited_teleport_assets', 'Unlimited')
+      expect(transferPolkadotXcm).toHaveBeenCalledWith(
+        input,
+        'limited_teleport_assets',
+        'Unlimited'
+      )
     })
   })
 

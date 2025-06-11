@@ -9,7 +9,7 @@ import {
 import { hasJunction, Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
-import { createMultiAsset } from '../../pallets/xcmPallet/utils'
+import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
@@ -20,6 +20,7 @@ import type {
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { createBeneficiaryMultiLocation } from '../../utils'
+import { createMultiAsset } from '../../utils/multiAsset'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
 import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
@@ -61,7 +62,7 @@ class Hydration<TApi, TRes>
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
       parameters: {
-        dest: this.createVersionedDestination(
+        dest: createVersionedDestination(
           scenario,
           version,
           destination,
@@ -86,13 +87,13 @@ class Hydration<TApi, TRes>
     return api.callTxMethod(call)
   }
 
-  transferToPolimec<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {
+  transferToPolimec<TApi, TRes>(options: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { api, asset, version = this.version } = options
     const symbol = asset.symbol.toUpperCase()
 
     if (symbol === 'DOT') {
       const call = createTypeAndThenTransfer(options, version)
-      return api.callTxMethod(call)
+      return Promise.resolve(api.callTxMethod(call))
     }
 
     if (

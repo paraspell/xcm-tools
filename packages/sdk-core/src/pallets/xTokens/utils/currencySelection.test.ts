@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DOT_MULTILOCATION } from '../../../constants'
 import type { TXTokensTransferOptions } from '../../../types'
-import { createMultiAsset } from '../../xcmPallet/utils'
+import { createMultiAsset } from '../../../utils/multiAsset'
 import { getModifiedCurrencySelection } from './currencySelection'
 
 vi.mock('@paraspell/assets', () => ({

@@ -24,10 +24,7 @@ vi.mock('../../nodes/getTNode', () => ({
 }))
 
 vi.mock('../../utils', () => ({
-  determineRelayChain: vi.fn()
-}))
-
-vi.mock('../../pallets/xcmPallet/utils', () => ({
+  determineRelayChain: vi.fn(),
   addXcmVersionHeader: vi.fn().mockReturnValue({})
 }))
 
@@ -47,7 +44,7 @@ const createFakeApi = (originDryRun: unknown, xcmResults: unknown[] = []) => {
       init: vi.fn().mockResolvedValue(undefined),
       disconnect: vi.fn().mockResolvedValue(undefined),
       getApi: vi.fn().mockReturnValue({}),
-      getDryRunXcm: vi.fn().mockImplementation(() => Promise.resolve(hopResults.shift()))
+      getDryRunXcm: vi.fn().mockResolvedValue(hopResults.shift())
     }))
   } as unknown as IPolkadotApi<unknown, unknown>
 }

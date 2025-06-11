@@ -16,7 +16,7 @@ import { createPublicClient, getContract, http } from 'viem'
 import { TX_CLIENT_TIMEOUT_MS } from '../../../constants'
 import { BridgeHaltedError, InvalidParameterError } from '../../../errors'
 import { getParaId } from '../../../nodes/config'
-import { type TEvmBuilderOptions, type TXcmVersioned } from '../../../types'
+import { type TEvmBuilderOptions } from '../../../types'
 import { createCustomXcmOnDest } from '../../../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../../../utils/ethereum/generateMessageId'
 import { getBridgeStatus } from '../../getBridgeStatus'
@@ -107,9 +107,9 @@ export const transferMoonbeamToEth = async <TApi, TRes>({
       ahAddress,
       asset: { ...foundAsset, amount: currency.amount },
       currency,
-      header: {} as TXcmVersioned<TMultiLocation>,
-      currencySelection: {} as TXcmVersioned<TMultiAsset[]>,
-      addressSelection: {} as TXcmVersioned<TMultiLocation>,
+      destLocation: {} as TMultiLocation,
+      multiAsset: {} as TMultiAsset,
+      beneficiaryLocation: {} as TMultiLocation,
       version: Version.V4
     },
     from,

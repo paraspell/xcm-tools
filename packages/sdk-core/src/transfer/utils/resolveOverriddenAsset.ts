@@ -16,9 +16,9 @@ import {
   type TMultiLocation
 } from '@paraspell/sdk-common'
 
-import { createMultiAsset } from '../../pallets/xcmPallet/utils'
 import type { TSendOptions } from '../../types'
 import { getNode } from '../../utils'
+import { createMultiAsset } from '../../utils/multiAsset'
 import { validateAssetSupport } from './validateAssetSupport'
 
 export const resolveOverriddenAsset = <TApi, TRes>(

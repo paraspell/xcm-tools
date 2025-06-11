@@ -16,13 +16,13 @@ import { isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type AssetHubPolkadot from '../../nodes/supported/AssetHubPolkadot'
-import { createMultiAsset } from '../../pallets/xcmPallet/utils'
 import type { TSendOptions } from '../../types'
 import { getNode } from '../../utils'
+import { createMultiAsset } from '../../utils/multiAsset'
 import { resolveOverriddenAsset } from './resolveOverriddenAsset'
 import { validateAssetSupport } from './validateAssetSupport'
 
-vi.mock('../../pallets/xcmPallet/utils', () => ({
+vi.mock('../../utils/multiAsset', () => ({
   createMultiAsset: vi.fn()
 }))
 
@@ -38,7 +38,6 @@ vi.mock('@paraspell/sdk-common', () => ({
 
 vi.mock('@paraspell/assets', () => ({
   findAsset: vi.fn(),
-  createMultiAsset: vi.fn(),
   isTMultiAsset: vi.fn(),
   isForeignAsset: vi.fn(),
   isAssetEqual: vi.fn(),

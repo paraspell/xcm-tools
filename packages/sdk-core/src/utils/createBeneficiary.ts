@@ -1,5 +1,5 @@
-import { addXcmVersionHeader } from '../pallets/xcmPallet/utils'
 import type { TCreateBeneficiaryOptions } from '../types'
+import { addXcmVersionHeader } from './addXcmVersionHeader'
 import { createBeneficiaryMultiLocation } from './multiLocation'
 
 export const createBeneficiary = <TApi, TRes>(options: TCreateBeneficiaryOptions<TApi, TRes>) => {

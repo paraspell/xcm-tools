@@ -3,7 +3,7 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
@@ -19,9 +19,7 @@ vi.mock('../../pallets/xTokens', () => ({
 }))
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', async () => {
@@ -86,9 +84,12 @@ describe('Ajuna', () => {
 
   describe('transferPolkadotXCM', () => {
     it('delegates unchanged input to PolkadotXCM implementation', async () => {
-      const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
       await ajuna.transferPolkadotXCM(basePolkadotXCMInput)
-      expect(spy).toHaveBeenCalledWith(basePolkadotXCMInput, 'transfer_assets', 'Unlimited')
+      expect(transferPolkadotXcm).toHaveBeenCalledWith(
+        basePolkadotXCMInput,
+        'transfer_assets',
+        'Unlimited'
+      )
     })
   })
 

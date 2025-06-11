@@ -14,9 +14,10 @@ import type { TRelaychain } from '../types'
 export const determineRelayChain = (node: TNodeWithRelayChains): TRelaychain =>
   getRelayChainSymbol(node) === 'KSM' ? 'Kusama' : 'Polkadot'
 
+export * from './addXcmVersionHeader'
+export * from './assertions'
 export { createApiInstanceForNode } from './createApiInstanceForNode'
 export * from './createBeneficiary'
-export { createX1Payload } from './createX1Payload'
 export * from './dryRun'
 export { getFees } from './getFees'
 export { getNode } from './getNode'

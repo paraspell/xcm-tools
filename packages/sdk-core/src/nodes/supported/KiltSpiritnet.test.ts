@@ -2,15 +2,13 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import type KiltSpiritnet from './KiltSpiritnet'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('KiltSpiritnet', () => {
@@ -35,11 +33,12 @@ describe('KiltSpiritnet', () => {
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await kiltSpiritnet.transferPolkadotXCM(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
+      mockInput,
+      'limited_reserve_transfer_assets',
+      'Unlimited'
+    )
   })
 
   it('should throw an error if trying to transfer ParaToPara with non-native asset', () => {

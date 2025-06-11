@@ -3,15 +3,13 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import Heima from './Heima'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('Heima', () => {
@@ -52,10 +50,13 @@ describe('Heima', () => {
         asset: { symbol: 'HEI' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-      const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
       await heima.transferPolkadotXCM(input)
-      expect(spy).toHaveBeenCalledWith(input, 'limited_reserve_transfer_assets', 'Unlimited')
+
+      expect(transferPolkadotXcm).toHaveBeenCalledWith(
+        input,
+        'limited_reserve_transfer_assets',
+        'Unlimited'
+      )
     })
   })
 })

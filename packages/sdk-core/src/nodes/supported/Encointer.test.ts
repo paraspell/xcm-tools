@@ -2,15 +2,13 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import type Encointer from './Encointer'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('Encointer', () => {
@@ -32,11 +30,12 @@ describe('Encointer', () => {
   })
 
   it('should call transferPolkadotXCM with limitedTeleportAssets for ParaToRelay scenario', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await node.transferPolkadotXCM(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_teleport_assets', 'Unlimited')
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
+      mockInput,
+      'limited_teleport_assets',
+      'Unlimited'
+    )
   })
 
   it('should throw ScenarioNotSupportedError for unsupported scenario', () => {

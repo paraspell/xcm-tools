@@ -4,15 +4,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions, TTransferLocalOptions } from '../../types'
 import { getNode } from '../../utils'
 import type Moonbeam from './Moonbeam'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 type WithTransferToEthereum = Moonbeam<unknown, unknown> & {
@@ -34,6 +32,7 @@ describe('Moonbeam', () => {
   } as TPolkadotXCMTransferOptions<unknown, unknown>
 
   beforeEach(() => {
+    vi.clearAllMocks()
     node = getNode<unknown, unknown, 'Moonbeam'>('Moonbeam')
   })
 
@@ -51,29 +50,23 @@ describe('Moonbeam', () => {
       asset: { symbol: 'GLMR', amount: 100 }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await node.transferPolkadotXCM(mockInputNative)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockInputNative,
-        currencySelection: {
-          [node.version]: [
-            {
-              fun: {
-                Fungible: mockInput.asset.amount
-              },
-              id: {
-                parents: 0,
-                interior: {
-                  X1: {
-                    PalletInstance: 10
-                  }
-                }
+        multiAsset: {
+          fun: {
+            Fungible: mockInput.asset.amount
+          },
+          id: {
+            parents: 0,
+            interior: {
+              X1: {
+                PalletInstance: 10
               }
             }
-          ]
+          }
         }
       },
       'transfer_assets',
@@ -88,22 +81,16 @@ describe('Moonbeam', () => {
       asset: { symbol: 'DOT', amount: 100 }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await node.transferPolkadotXCM(mockInputDot)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockInputDot,
-        currencySelection: {
-          [node.version]: [
-            {
-              fun: {
-                Fungible: mockInput.asset.amount
-              },
-              id: DOT_MULTILOCATION
-            }
-          ]
+        multiAsset: {
+          fun: {
+            Fungible: mockInput.asset.amount
+          },
+          id: DOT_MULTILOCATION
         }
       },
       'transfer_assets',
@@ -138,22 +125,16 @@ describe('Moonbeam', () => {
       asset
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await node.transferPolkadotXCM(mockInputUsdt)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       {
         ...mockInputUsdt,
-        currencySelection: {
-          [node.version]: [
-            {
-              fun: {
-                Fungible: mockInput.asset.amount
-              },
-              id: asset.multiLocation
-            }
-          ]
+        multiAsset: {
+          fun: {
+            Fungible: mockInput.asset.amount
+          },
+          id: asset.multiLocation
         }
       },
       'transfer_assets',
@@ -166,9 +147,6 @@ describe('Moonbeam', () => {
       .spyOn(node as WithTransferToEthereum, 'transferToEthereum')
       .mockResolvedValue({})
 
-    const spyXcm = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-    spyXcm.mockClear()
-
     const inputEth = {
       ...mockInput,
       destination: 'Ethereum',
@@ -180,7 +158,7 @@ describe('Moonbeam', () => {
     expect(spyTransferToEth).toHaveBeenCalledTimes(1)
     expect(spyTransferToEth).toHaveBeenCalledWith(inputEth)
 
-    expect(spyXcm).not.toHaveBeenCalled()
+    expect(transferPolkadotXcm).not.toHaveBeenCalled()
   })
 
   it('should call getRelayToParaOverrides with the correct parameters', () => {

@@ -4,8 +4,7 @@ import { InvalidCurrencyError, type TAsset } from '@paraspell/assets'
 import { Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -14,6 +13,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { getNode } from '../../utils'
+import { createMultiAsset } from '../../utils/multiAsset'
 import ParachainNode from '../ParachainNode'
 
 class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -46,15 +46,13 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { asset, scenario, version = this.version } = input
     const multiLocation = this.getMultiLocation(asset, scenario)
-    return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(
-        {
-          ...input,
-          currencySelection: createVersionedMultiAssets(version, asset.amount, multiLocation)
-        },
-        'transfer_assets',
-        'Unlimited'
-      )
+    return transferPolkadotXcm(
+      {
+        ...input,
+        multiAsset: createMultiAsset(version, asset.amount, multiLocation)
+      },
+      'transfer_assets',
+      'Unlimited'
     )
   }
 

@@ -17,15 +17,14 @@ import type {
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { WithApi } from './TApi'
-import type { TXcmVersioned } from './TCurrency'
 import type { TRelaychain } from './TNode'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  header: TXcmVersioned<TMultiLocation>
-  addressSelection: TXcmVersioned<TMultiLocation>
+  destLocation: TMultiLocation
+  beneficiaryLocation: TMultiLocation
   address: TAddress
-  currencySelection: TXcmVersioned<TMultiAsset[]>
+  multiAsset: TMultiAsset
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   scenario: TScenario
   asset: WithAmount<TAsset>
@@ -43,7 +42,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
 export type TXTokensTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
-  addressSelection: TXcmVersioned<TMultiLocation>
+  destLocation: TMultiLocation
   fees: number
   scenario: TScenario
   origin: TNodePolkadotKusama
@@ -59,9 +58,10 @@ export type TXTokensTransferOptions<TApi, TRes> = {
 export type TXTransferTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
+  scenario: TScenario
   recipientAddress: TAddress
   origin: TNodePolkadotKusama
-  paraId?: number
+  paraIdTo?: number
   destination: TDestination
   overriddenAsset?: TMultiLocation | TMultiAsset[]
   pallet?: string
