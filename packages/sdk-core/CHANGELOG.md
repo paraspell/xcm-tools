@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.9](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.8...sdk-core-v10.4.9) (2025-06-11)
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor PolkadotXcm pallet implementation 👨‍💻 ([e291c96](https://github.com/paraspell/xcm-tools/commit/e291c9606b44db191eddfb874338cd8ca4727cb1))
+
 ## [10.4.8](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.7...sdk-core-v10.4.8) (2025-06-10)
 
 
