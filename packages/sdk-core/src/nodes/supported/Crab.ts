@@ -5,8 +5,7 @@ import { Parents, Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError } from '../../errors'
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TTransferLocalOptions } from '../../types'
 import {
   type IPolkadotXCMTransfer,
@@ -15,6 +14,7 @@ import {
   type TSerializedApiCall
 } from '../../types'
 import { getNode } from '../../utils'
+import { createMultiAsset } from '../../utils/multiAsset'
 import ParachainNode from '../ParachainNode'
 
 class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -25,9 +25,7 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     // TESTED https://kusama.subscan.io/xcm_message/kusama-ce7396ec470ba0c6516a50075046ee65464572dc
     if (input.scenario === 'ParaToPara') {
-      return Promise.resolve(
-        PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'reserve_transfer_assets')
-      )
+      return transferPolkadotXcm(input, 'reserve_transfer_assets')
     }
     throw new ScenarioNotSupportedError(this.node, input.scenario)
   }
@@ -38,7 +36,7 @@ class Crab<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCM
 
   createCurrencySpec(amount: string, scenario: TScenario, version: Version, _asset?: TAsset) {
     if (scenario === 'ParaToPara') {
-      return createVersionedMultiAssets(version, amount, {
+      return createMultiAsset(version, amount, {
         parents: Parents.ZERO,
         interior: {
           X1: {

@@ -2,15 +2,13 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import Subsocial from './Subsocial'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('Subsocial', () => {
@@ -44,10 +42,12 @@ describe('Subsocial', () => {
         asset: { symbol: 'SUB' }
       } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-      const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
       await subsocial.transferPolkadotXCM(input)
-      expect(spy).toHaveBeenCalledWith(input, 'limited_reserve_transfer_assets', 'Unlimited')
+      expect(transferPolkadotXcm).toHaveBeenCalledWith(
+        input,
+        'limited_reserve_transfer_assets',
+        'Unlimited'
+      )
     })
   })
 })

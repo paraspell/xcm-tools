@@ -29,7 +29,7 @@ import type {
   TSendBaseOptions,
   TSendBaseOptionsWithSenderAddress
 } from '../types'
-import { assertAddressIsString, assertToIsString } from '../utils/builder'
+import { assertAddressIsString, assertToIsString } from '../utils'
 import AssetClaimBuilder from './AssetClaimBuilder'
 import BatchTransactionManager from './BatchTransactionManager'
 

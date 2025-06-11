@@ -2,7 +2,7 @@
 
 import { Version } from '@paraspell/sdk-common'
 
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TTransferLocalOptions } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
@@ -17,13 +17,7 @@ class RobonomicsKusama<TApi, TRes>
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(
-        input,
-        'limited_reserve_transfer_assets',
-        'Unlimited'
-      )
-    )
+    return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

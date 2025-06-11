@@ -53,21 +53,19 @@ describe('createCustomXcmOnDest', () => {
   const version = Version.V4
   const messageId = 'test-message-id'
 
-  const defaultMultiLocation = { parents: Parents.ZERO, interior: { Here: null } } as TMultiLocation
-  const defaultHeader = { V3: defaultMultiLocation }
-  const defaultAddressSelection = { V3: defaultMultiLocation }
-  const defaultCurrencySelection = {
-    V3: [{ id: defaultMultiLocation, fun: { Fungible: 1n } }]
-  }
+  const mockMultiLocation = { parents: Parents.ZERO, interior: { Here: null } } as TMultiLocation
+  const mockHeader = mockMultiLocation
+  const mockBeneficiary = mockMultiLocation
+  const mockMultiAsset = { id: mockMultiLocation, fun: { Fungible: 1n } }
   const defaultDestination = { parents: Parents.ONE, interior: { Here: null } } as TMultiLocation
   const baseOptions = {
     api,
     address: '0xRecipient',
     scenario: 'ParaToPara',
     senderAddress: '0xSender',
-    header: defaultHeader,
-    addressSelection: defaultAddressSelection,
-    currencySelection: defaultCurrencySelection,
+    destLocation: mockHeader,
+    beneficiaryLocation: mockBeneficiary,
+    multiAsset: mockMultiAsset,
     destination: defaultDestination,
     version
   } as Partial<TPolkadotXCMTransferOptions<unknown, unknown>>
@@ -113,7 +111,7 @@ describe('createCustomXcmOnDest', () => {
       senderAddress: undefined,
       asset: {
         symbol: 'ETH',
-        multiLocation: defaultMultiLocation,
+        multiLocation: mockMultiLocation,
         amount: '1000000'
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -126,7 +124,7 @@ describe('createCustomXcmOnDest', () => {
       ...baseOptions,
       asset: {
         symbol: 'ETH',
-        multiLocation: defaultMultiLocation,
+        multiLocation: mockMultiLocation,
         amount: '1000000'
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -142,7 +140,7 @@ describe('createCustomXcmOnDest', () => {
       ...baseOptions,
       asset: {
         symbol: 'ETH',
-        multiLocation: defaultMultiLocation,
+        multiLocation: mockMultiLocation,
         amount: '1000000'
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -163,7 +161,7 @@ describe('createCustomXcmOnDest', () => {
       ...baseOptions,
       asset: {
         symbol: 'ETH',
-        multiLocation: defaultMultiLocation,
+        multiLocation: mockMultiLocation,
         amount: '1000000'
       }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
@@ -194,7 +192,7 @@ describe('createCustomXcmOnDest', () => {
         assets: {
           Wild: {
             AllOf: {
-              id: defaultMultiLocation,
+              id: mockMultiLocation,
               fun: 'Fungible'
             }
           }
@@ -215,7 +213,7 @@ describe('createCustomXcmOnDest', () => {
           {
             BuyExecution: {
               fees: {
-                id: defaultMultiLocation,
+                id: mockMultiLocation,
                 fun: { Fungible: 1n }
               },
               weight_limit: 'Unlimited'

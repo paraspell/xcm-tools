@@ -2,15 +2,13 @@ import { InvalidCurrencyError } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import XTransferTransferImpl from '../../pallets/xTransfer'
+import { transferXTransfer } from '../../pallets/xTransfer'
 import type { TTransferLocalOptions, TXTransferTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import type Phala from './Phala'
 
 vi.mock('../../pallets/xTransfer', () => ({
-  default: {
-    transferXTransfer: vi.fn()
-  }
+  transferXTransfer: vi.fn()
 }))
 
 describe('Phala', () => {
@@ -31,12 +29,11 @@ describe('Phala', () => {
   })
 
   it('should call transferXTransfer with valid currency', () => {
-    const spy = vi.spyOn(XTransferTransferImpl, 'transferXTransfer')
     vi.spyOn(phala, 'getNativeAssetSymbol').mockReturnValue('PHA')
 
     phala.transferXTransfer(mockInput)
 
-    expect(spy).toHaveBeenCalledWith(mockInput)
+    expect(transferXTransfer).toHaveBeenCalledWith(mockInput)
   })
 
   it('should throw InvalidCurrencyError for unsupported currency', () => {

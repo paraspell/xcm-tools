@@ -3,7 +3,7 @@
 import { Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import {
   type IPolkadotXCMTransfer,
   type TPolkadotXCMTransferOptions,
@@ -27,13 +27,7 @@ class KiltSpiritnet<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPo
       )
     }
 
-    return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(
-        input,
-        'limited_reserve_transfer_assets',
-        'Unlimited'
-      )
-    )
+    return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
   transferRelayToPara(): TSerializedApiCall {

@@ -2,15 +2,13 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils/getNode'
 import type Collectives from './Collectives'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('Collectives', () => {
@@ -41,11 +39,12 @@ describe('Collectives', () => {
   })
 
   it('should call transferPolkadotXCM with limitedTeleportAssets for non-ParaToPara scenario', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     await node.transferPolkadotXCM(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_teleport_assets', 'Unlimited')
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
+      mockInput,
+      'limited_teleport_assets',
+      'Unlimited'
+    )
   })
 
   it('should return correct parameters for getRelayToParaOverrides', () => {

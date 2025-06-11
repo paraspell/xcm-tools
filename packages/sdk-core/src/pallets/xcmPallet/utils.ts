@@ -1,75 +1,15 @@
-import type { TAmount } from '@paraspell/assets'
-import { InvalidCurrencyError, type TCurrencyInput, type TMultiAsset } from '@paraspell/assets'
-import type { TJunction, TMultiLocation } from '@paraspell/sdk-common'
-import { replaceBigInt, Version } from '@paraspell/sdk-common'
+import { InvalidCurrencyError, type TCurrencyInput } from '@paraspell/assets'
+import type { TJunction, TMultiLocation, Version } from '@paraspell/sdk-common'
+import { replaceBigInt } from '@paraspell/sdk-common'
 import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
 import { NODE_NAMES_DOT_KSM, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
 import { getParaId } from '../../nodes/config'
-import type { OneKey, TRelaychain, TXcmVersioned } from '../../types'
+import type { TRelaychain, TXcmVersioned } from '../../types'
 import { type TDestination, type TScenario } from '../../types'
-import { determineRelayChain } from '../../utils'
-import { createX1Payload } from '../../utils/createX1Payload'
+import { addXcmVersionHeader, createX1Payload, determineRelayChain } from '../../utils'
 import { findParachainJunction } from '../../utils/findParachainJunction'
-
-export const createMultiAsset = (
-  version: Version,
-  amount: TAmount,
-  multiLocation: TMultiLocation
-): TMultiAsset => {
-  if (version === Version.V4 || version === Version.V5) {
-    return {
-      id: multiLocation,
-      fun: { Fungible: amount }
-    }
-  }
-
-  return {
-    id: { Concrete: multiLocation },
-    fun: { Fungible: amount }
-  }
-}
-
-export const addXcmVersionHeader = <T, V extends Version>(obj: T, version: V) =>
-  ({ [version]: obj }) as OneKey<V, T>
-
-export const extractVersionFromHeader = <T>(versionHeader: OneKey<Version, T>): [Version, T] => {
-  const keys = Object.keys(versionHeader) as Version[]
-  if (keys.length !== 1) {
-    throw new InvalidParameterError('Invalid version header: expected exactly one key.')
-  }
-  const version = keys[0]
-  const value = versionHeader[version]
-  if (value === undefined) {
-    throw new InvalidParameterError('Invalid version header: value is undefined.')
-  }
-  return [version, value]
-}
-
-export const maybeOverrideMultiAssets = (
-  version: Version,
-  amount: TAmount,
-  multiAssets: TMultiAsset[],
-  overriddenCurrency?: TMultiLocation | TMultiAsset[]
-) => {
-  if (!overriddenCurrency) {
-    return multiAssets
-  }
-
-  return isTMultiLocation(overriddenCurrency)
-    ? [createMultiAsset(version, amount, overriddenCurrency)]
-    : overriddenCurrency
-}
-
-export const createVersionedMultiAssets = (
-  version: Version,
-  amount: TAmount,
-  multiLocation: TMultiLocation
-) => {
-  const multiAssets = createMultiAsset(version, amount, multiLocation)
-  return addXcmVersionHeader([multiAssets], version)
-}
 
 export const createDestination = (
   scenario: TScenario,
@@ -112,12 +52,11 @@ export const createVersionedDestination = (
   return addXcmVersionHeader(plainDestination, version)
 }
 
-export const createBridgePolkadotXcmDest = (
-  version: Version,
+export const createBridgeDestination = (
   ecosystem: 'Kusama' | 'Polkadot',
   destination: TDestination,
   nodeId?: number
-): TXcmVersioned<TMultiLocation> => {
+): TMultiLocation => {
   const multiLocation: TMultiLocation = {
     parents: Parents.TWO,
     interior: {
@@ -131,8 +70,7 @@ export const createBridgePolkadotXcmDest = (
       ]
     }
   }
-  const isMultiLocationDestination = isTMultiLocation(destination)
-  return addXcmVersionHeader(isMultiLocationDestination ? destination : multiLocation, version)
+  return isTMultiLocation(destination) ? destination : multiLocation
 }
 
 export const resolveTNodeFromMultiLocation = (

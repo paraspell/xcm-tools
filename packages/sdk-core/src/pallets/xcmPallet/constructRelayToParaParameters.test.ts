@@ -6,8 +6,9 @@ import type { IPolkadotApi } from '../../api'
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TRelayToParaOptions, TXcmVersioned } from '../../types'
 import { createVersionedBeneficiary, resolveParaId } from '../../utils'
+import { createVersionedMultiAssets } from '../../utils/multiAsset'
 import { constructRelayToParaParameters } from './constructRelayToParaParameters'
-import { createVersionedDestination, createVersionedMultiAssets } from './utils'
+import { createVersionedDestination } from './utils'
 
 vi.mock('../../utils', () => ({
   createVersionedBeneficiary: vi.fn(),
@@ -15,8 +16,11 @@ vi.mock('../../utils', () => ({
 }))
 
 vi.mock('./utils', () => ({
-  createVersionedMultiAssets: vi.fn(),
   createVersionedDestination: vi.fn()
+}))
+
+vi.mock('../../utils/multiAsset', () => ({
+  createVersionedMultiAssets: vi.fn()
 }))
 
 describe('constructRelayToParaParameters', () => {

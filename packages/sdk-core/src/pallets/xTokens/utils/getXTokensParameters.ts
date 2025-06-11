@@ -1,21 +1,26 @@
 import type { TAmount, TMultiAssetWithFee } from '@paraspell/assets'
+import type { Version } from '@paraspell/sdk-common'
 import { isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
 
-import type { TXcmVersioned, TXTokensCurrencySelection } from '../../../types'
+import type { TXTokensCurrencySelection } from '../../../types'
+import { addXcmVersionHeader } from '../../../utils'
 
 export const getXTokensParameters = (
   isMultiAssetTransfer: boolean,
   currencySelection: TXTokensCurrencySelection,
-  addressSelection: TXcmVersioned<TMultiLocation>,
+  destLocation: TMultiLocation,
   amount: TAmount,
   fees: string | number,
+  version: Version,
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
 ): Record<string, unknown> => {
+  const versionedDestLocation = addXcmVersionHeader(destLocation, version)
+
   if (!isMultiAssetTransfer) {
     return {
       currency_id: currencySelection,
       amount: BigInt(amount),
-      dest: addressSelection,
+      dest: versionedDestLocation,
       dest_weight_limit: fees
     }
   }
@@ -31,7 +36,7 @@ export const getXTokensParameters = (
   return {
     [assetKey]: currencySelection,
     ...(isOverriddenMultiAssets && { fee_item: feeIndexWithFallback }),
-    dest: addressSelection,
+    dest: versionedDestLocation,
     dest_weight_limit: fees
   }
 }

@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { DOT_MULTILOCATION } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   TPolkadotXCMTransferOptions,
   TRelayToParaOptions,
@@ -19,9 +19,7 @@ vi.mock('../../pallets/assets', () => ({
 }))
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn().mockResolvedValue('mocked polkadotXcm result')
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 describe('Polimec', () => {
@@ -32,9 +30,12 @@ describe('Polimec', () => {
     accountToHex: vi.fn().mockReturnValue('0x0000000000000000')
   } as unknown as IPolkadotApi<unknown, unknown>
 
+  const mockExtrinsic = {} as unknown
+
   beforeEach(() => {
     vi.clearAllMocks()
     polimec = getNode<unknown, unknown, 'Polimec'>('Polimec')
+    vi.mocked(transferPolkadotXcm).mockResolvedValue(mockExtrinsic)
   })
 
   it('should initialize with correct values', () => {
@@ -106,24 +107,18 @@ describe('Polimec', () => {
       asset: { symbol: 'DOT', amount: '1000', multiLocation: DOT_MULTILOCATION }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     const result = await polimec.transferPolkadotXCM(input)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       expect.objectContaining({
-        currencySelection: {
-          [Version.V4]: [
-            expect.objectContaining({
-              id: DOT_MULTILOCATION
-            })
-          ]
-        }
+        multiAsset: expect.objectContaining({
+          id: DOT_MULTILOCATION
+        })
       }),
       'transfer_assets',
       'Unlimited'
     )
-    expect(result).toBe('mocked polkadotXcm result')
+    expect(result).toBe(mockExtrinsic)
   })
 
   it('should use asset.multiLocation when asset is foreign and has multiLocation', async () => {
@@ -139,24 +134,18 @@ describe('Polimec', () => {
       asset: { symbol: 'XYZ', multiLocation: assetMultiLocation, amount: '1000' }
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
-
     const result = await polimec.transferPolkadotXCM(input)
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       expect.objectContaining({
-        currencySelection: {
-          [Version.V4]: [
-            expect.objectContaining({
-              id: assetMultiLocation
-            })
-          ]
-        }
+        multiAsset: expect.objectContaining({
+          id: assetMultiLocation
+        })
       }),
       'transfer_assets',
       'Unlimited'
     )
-    expect(result).toBe('mocked polkadotXcm result')
+    expect(result).toBe(mockExtrinsic)
   })
 
   it('should throw InvalidCurrencyError when asset is not supported in getAssetMultiLocation', async () => {

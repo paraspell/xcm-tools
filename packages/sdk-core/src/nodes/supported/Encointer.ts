@@ -3,7 +3,7 @@
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors/ScenarioNotSupportedError'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides } from '../../types'
 import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -17,9 +17,7 @@ class Encointer<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
     // NO PARA TO PARA SCENARIOS ON SUBSCAN
     // TESTED https://encointer.subscan.io/xcm_message/kusama-418501e86e947b16c4e4e9040694017e64f9b162
     if (input.scenario === 'ParaToRelay') {
-      return Promise.resolve(
-        PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'limited_teleport_assets', 'Unlimited')
-      )
+      return transferPolkadotXcm(input, 'limited_teleport_assets', 'Unlimited')
     }
     throw new ScenarioNotSupportedError(this.node, input.scenario)
   }

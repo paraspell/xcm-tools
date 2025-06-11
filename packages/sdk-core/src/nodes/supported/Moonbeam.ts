@@ -4,8 +4,7 @@ import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/as
 import { Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
@@ -13,6 +12,7 @@ import type {
   TScenario,
   TTransferLocalOptions
 } from '../../types'
+import { createMultiAsset } from '../../utils/multiAsset'
 import ParachainNode from '../ParachainNode'
 
 class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -50,15 +50,13 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
     }
 
     const multiLocation = this.getMultiLocation(asset, scenario)
-    return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(
-        {
-          ...input,
-          currencySelection: createVersionedMultiAssets(version, asset.amount, multiLocation)
-        },
-        'transfer_assets',
-        'Unlimited'
-      )
+    return transferPolkadotXcm(
+      {
+        ...input,
+        multiAsset: createMultiAsset(version, asset.amount, multiLocation)
+      },
+      'transfer_assets',
+      'Unlimited'
     )
   }
 

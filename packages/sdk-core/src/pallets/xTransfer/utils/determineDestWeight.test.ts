@@ -21,15 +21,10 @@ describe('determineDestWeight', () => {
   })
 
   it('throws an error for unsupported nodes', () => {
-    const unsupportedNode: TNode = 'Altair'
-    expect(() => determineDestWeight(unsupportedNode)).toThrow(NodeNotSupportedError)
-    expect(() => determineDestWeight(unsupportedNode)).toThrow(
-      `Node ${unsupportedNode} is not supported`
+    const dest: TNode = 'Altair'
+    expect(() => determineDestWeight(dest)).toThrow(NodeNotSupportedError)
+    expect(() => determineDestWeight(dest)).toThrow(
+      `Pallet XTransfer does not support transfering to ${dest}.`
     )
-  })
-
-  it('throws an error when destNode is undefined', () => {
-    expect(() => determineDestWeight()).toThrow(NodeNotSupportedError)
-    expect(() => determineDestWeight()).toThrow('Node undefined is not supported')
   })
 })

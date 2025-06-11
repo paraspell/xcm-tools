@@ -4,7 +4,7 @@ import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
@@ -39,9 +39,7 @@ export class Ajuna<TApi, TRes>
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
-    return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(input, 'transfer_assets', 'Unlimited')
-    )
+    return transferPolkadotXcm(input, 'transfer_assets', 'Unlimited')
   }
 
   protected canUseXTokens({ asset, to: destination }: TSendInternalOptions<TApi, TRes>): boolean {

@@ -5,14 +5,14 @@ import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Parents, Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type {
   IPolkadotXCMTransfer,
   TPolkadotXCMTransferOptions,
   TScenario,
   TTransferLocalOptions
 } from '../../types'
+import { createMultiAsset } from '../../utils/multiAsset'
 import ParachainNode from '../ParachainNode'
 
 class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
@@ -27,18 +27,12 @@ class Darwinia<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
       throw new ScenarioNotSupportedError(this.node, scenario)
     }
 
-    return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(
-        input,
-        'limited_reserve_transfer_assets',
-        'Unlimited'
-      )
-    )
+    return transferPolkadotXcm(input, 'limited_reserve_transfer_assets', 'Unlimited')
   }
 
   createCurrencySpec(amount: string, scenario: TScenario, version: Version, _asset?: TAsset) {
     if (scenario === 'ParaToPara') {
-      return createVersionedMultiAssets(version, amount, {
+      return createMultiAsset(version, amount, {
         parents: Parents.ZERO,
         interior: {
           X1: {

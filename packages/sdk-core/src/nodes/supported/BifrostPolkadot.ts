@@ -10,8 +10,7 @@ import {
 import { Parents, Version } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import { createVersionedMultiAssets } from '../../pallets/xcmPallet/utils'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
   IPolkadotXCMTransfer,
@@ -20,6 +19,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
+import { createMultiAsset } from '../../utils/multiAsset'
 import ParachainNode from '../ParachainNode'
 
 export class BifrostPolkadot<TApi, TRes>
@@ -63,28 +63,26 @@ export class BifrostPolkadot<TApi, TRes>
   transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {
     const { asset } = input
 
-    return Promise.resolve(
-      PolkadotXCMTransferImpl.transferPolkadotXCM(
-        {
-          ...input,
-          currencySelection: createVersionedMultiAssets(this.version, asset.amount, {
-            parents: asset.symbol === 'DOT' ? Parents.ONE : Parents.TWO,
-            interior:
-              asset.symbol === 'WETH'
-                ? {
-                    X2: [
-                      ETHEREUM_JUNCTION,
-                      {
-                        AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
-                      }
-                    ]
-                  }
-                : 'Here'
-          })
-        },
-        'transfer_assets',
-        'Unlimited'
-      )
+    return transferPolkadotXcm(
+      {
+        ...input,
+        multiAsset: createMultiAsset(this.version, asset.amount, {
+          parents: asset.symbol === 'DOT' ? Parents.ONE : Parents.TWO,
+          interior:
+            asset.symbol === 'WETH'
+              ? {
+                  X2: [
+                    ETHEREUM_JUNCTION,
+                    {
+                      AccountKey20: { key: getAssetId('Ethereum', 'WETH') ?? '' }
+                    }
+                  ]
+                }
+              : 'Here'
+        })
+      },
+      'transfer_assets',
+      'Unlimited'
     )
   }
 

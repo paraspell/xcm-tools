@@ -1,1 +1,1 @@
-export { default } from './PolkadotXCMTransferImpl'
+export * from './transferPolkadotXcm'

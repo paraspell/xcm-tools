@@ -1,7 +1,7 @@
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import { Version } from '@paraspell/sdk-common'
 
-import XTransferTransferImpl from '../../pallets/xTransfer'
+import { transferXTransfer } from '../../pallets/xTransfer'
 import type { TTransferLocalOptions } from '../../types'
 import { type IXTransferTransfer, type TXTransferTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
@@ -16,7 +16,7 @@ class Phala<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTransferT
     if (asset.symbol !== this.getNativeAssetSymbol()) {
       throw new InvalidCurrencyError(`Node ${this.node} does not support currency ${asset.symbol}`)
     }
-    return XTransferTransferImpl.transferXTransfer(input)
+    return transferXTransfer(input)
   }
 
   transferLocalNonNativeAsset(options: TTransferLocalOptions<TApi, TRes>): TRes {

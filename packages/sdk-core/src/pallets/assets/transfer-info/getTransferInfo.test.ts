@@ -115,18 +115,16 @@ describe('getTransferInfo', () => {
     vi.mocked(isAssetEqual).mockReturnValue(false)
     vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
     vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
-    vi.mocked(buildHopInfo).mockImplementation(_opts =>
-      Promise.resolve({
+    vi.mocked(buildHopInfo).mockResolvedValue({
+      balance: 0n,
+      currencySymbol: 'DOT',
+      existentialDeposit: 0n,
+      xcmFee: {
+        fee: 0n,
         balance: 0n,
-        currencySymbol: 'DOT',
-        existentialDeposit: 0n,
-        xcmFee: {
-          fee: 0n,
-          balance: 0n,
-          currencySymbol: 'DOT'
-        }
-      })
-    )
+        currencySymbol: 'DOT'
+      }
+    })
     vi.mocked(buildDestInfo).mockResolvedValue({
       receivedCurrency: {
         sufficient: true,

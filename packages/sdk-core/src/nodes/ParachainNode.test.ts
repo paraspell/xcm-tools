@@ -24,27 +24,34 @@ vi.mock('../transfer/getBridgeStatus', () => ({
   getBridgeStatus: vi.fn().mockResolvedValue('Normal')
 }))
 
-vi.mock('../utils', () => ({
-  createApiInstance: vi.fn().mockResolvedValue('apiInstance'),
-  createVersionedBeneficiary: vi.fn().mockReturnValue('addressPayload'),
-  getFees: vi.fn().mockReturnValue('fees'),
-  verifyMultiLocation: vi.fn(),
-  isTMultiLocation: vi.fn(),
-  isRelayChain: vi.fn(),
-  createBeneficiaryMultiLocation: vi.fn().mockReturnValue('beneficiaryMultiLocation')
-}))
+vi.mock('../utils', async () => {
+  const actual = await vi.importActual('../utils')
+  return {
+    ...actual,
+    createApiInstance: vi.fn().mockResolvedValue('apiInstance'),
+    createBeneficiary: vi.fn().mockReturnValue('beneficiary'),
+    getFees: vi.fn().mockReturnValue('fees'),
+    verifyMultiLocation: vi.fn(),
+    isTMultiLocation: vi.fn(),
+    isRelayChain: vi.fn(),
+    createBeneficiaryMultiLocation: vi.fn().mockReturnValue('beneficiaryMultiLocation')
+  }
+})
 
 vi.mock('../pallets/xcmPallet/utils', async () => {
   const actual = await vi.importActual('../pallets/xcmPallet/utils')
   return {
     ...actual,
     constructRelayToParaParameters: vi.fn().mockReturnValue('parameters'),
-    createVersionedMultiAssets: vi.fn().mockReturnValue('currencySpec'),
-    createMultiAsset: vi.fn().mockReturnValue('multiAsset'),
     createVersionedDestination: vi.fn().mockReturnValue('polkadotXcmHeader'),
-    isTMultiLocation: vi.fn()
+    createDestination: vi.fn()
   }
 })
+
+vi.mock('../utils/multiAsset', () => ({
+  createMultiAsset: vi.fn().mockReturnValue('multiAsset'),
+  createVersionedMultiAssets: vi.fn().mockReturnValue('currencySpec')
+}))
 
 vi.mock('@paraspell/assets', () => ({
   getNativeAssetSymbol: vi.fn().mockReturnValue('DOT'),
@@ -310,13 +317,7 @@ describe('ParachainNode', () => {
       isNative: true
     })
 
-    expect(result).toBe('currencySpec')
-  })
-
-  it('should create Polkadot XCM header', () => {
-    const result = node.createVersionedDestination('ParaToRelay', Version.V4, 'Polkadot')
-
-    expect(result).toBe('polkadotXcmHeader')
+    expect(result).toBe('multiAsset')
   })
 
   it('should perform transfer to ethereum', async () => {

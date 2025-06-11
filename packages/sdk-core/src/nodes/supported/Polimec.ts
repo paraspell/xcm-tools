@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Polimec Parachain
 
-import type { TMultiAsset } from '@paraspell/assets'
 import {
   getNativeAssetSymbol,
   InvalidCurrencyError,
@@ -11,12 +10,8 @@ import { isTMultiLocation, Parents, type TMultiLocation, Version } from '@parasp
 
 import type { IPolkadotApi } from '../../api'
 import { ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
-import {
-  addXcmVersionHeader,
-  createMultiAsset,
-  createVersionedDestination
-} from '../../pallets/xcmPallet/utils'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
+import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import type {
   IPolkadotXCMTransfer,
   TAddress,
@@ -25,10 +20,10 @@ import type {
   TRelayToParaOptions,
   TScenario,
   TSerializedApiCall,
-  TTransferLocalOptions,
-  TXcmVersioned
+  TTransferLocalOptions
 } from '../../types'
 import { createBeneficiaryMultiLocation, createX1Payload } from '../../utils'
+import { createMultiAsset } from '../../utils/multiAsset'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
@@ -53,18 +48,15 @@ const getAssetMultiLocation = (asset: TAsset): TMultiLocation => {
 export const createTransferAssetsTransfer = <TRes>(
   options: TPolkadotXCMTransferOptions<unknown, TRes>,
   version: Version
-): TRes => {
+): Promise<TRes> => {
   const { asset } = options
 
-  const currencySelection: TXcmVersioned<TMultiAsset[]> = addXcmVersionHeader(
-    [createMultiAsset(version, asset.amount, getAssetMultiLocation(asset))],
-    version
-  )
+  const location = getAssetMultiLocation(asset)
 
-  return PolkadotXCMTransferImpl.transferPolkadotXCM(
+  return transferPolkadotXcm(
     {
       ...options,
-      currencySelection
+      multiAsset: createMultiAsset(version, asset.amount, location)
     },
     'transfer_assets',
     'Unlimited'
@@ -214,7 +206,7 @@ class Polimec<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadot
 
     if (scenario === 'ParaToPara' && destination === 'Hydration' && asset.symbol === 'DOT') {
       const call = createTypeAndThenTransfer(input, version)
-      return Promise.resolve(api.callTxMethod(call))
+      return api.callTxMethod(call)
     }
 
     if (

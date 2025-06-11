@@ -1,1 +1,1 @@
-export { default } from './XTransferTransferImpl'
+export * from './transferXTransfer'

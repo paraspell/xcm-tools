@@ -3,6 +3,7 @@ import { hasJunction, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { transferXTokens } from '../../pallets/xTokens'
 import type {
   TPolkadotXCMTransferOptions,
@@ -23,10 +24,8 @@ vi.mock('../../pallets/xTokens', () => ({
   transferXTokens: vi.fn()
 }))
 
-vi.mock('../polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+vi.mock('../../pallets/polkadotXcm', () => ({
+  transferPolkadotXcm: vi.fn()
 }))
 
 vi.mock('./Polimec', async importOriginal => ({
@@ -48,8 +47,11 @@ vi.mock('@paraspell/assets', async importOriginal => ({
 describe('Hydration', () => {
   let hydration: Hydration<unknown, unknown>
 
+  const mockExtrinsic = {} as unknown
+
   beforeEach(() => {
     hydration = getNode<unknown, unknown, 'Hydration'>('Hydration')
+    vi.mocked(transferPolkadotXcm).mockResolvedValue(mockExtrinsic)
   })
 
   it('should initialize with correct values', () => {
@@ -75,7 +77,7 @@ describe('Hydration', () => {
 
     beforeEach(() => {
       mockApi = {
-        callTxMethod: vi.fn().mockReturnValue('success'),
+        callTxMethod: vi.fn().mockReturnValue(mockExtrinsic),
         createApiForNode: vi.fn().mockResolvedValue({
           getFromRpc: vi.fn().mockResolvedValue('0x0000000000000000'),
           disconnect: vi.fn()
@@ -185,7 +187,7 @@ describe('Hydration', () => {
       })
     })
 
-    it('should call api.callTxMethod using createTypeAndThenTransfer when asset is DOT', () => {
+    it('should call api.callTxMethod using createTypeAndThenTransfer when asset is DOT', async () => {
       mockInput = {
         api: mockApi,
         address: '0xPolimecAddress',
@@ -199,14 +201,14 @@ describe('Hydration', () => {
       vi.mocked(createTypeAndThenTransfer).mockReturnValue(typeAndThenCall)
       const callTxSpy = vi.spyOn(mockApi, 'callTxMethod')
 
-      const result = hydration.transferToPolimec(mockInput)
+      const result = await hydration.transferToPolimec(mockInput)
 
       expect(createTypeAndThenTransfer).toHaveBeenCalledWith(mockInput, hydration.version)
       expect(callTxSpy).toHaveBeenCalledWith(typeAndThenCall)
-      expect(result).toBe('success')
+      expect(result).toBe(mockExtrinsic)
     })
 
-    it('should call createTransferAssetsTransfer for non-DOT asset (USDC) when junction is valid', () => {
+    it('should call createTransferAssetsTransfer for non-DOT asset (USDC) when junction is valid', async () => {
       mockInput = {
         api: mockApi,
         address: '0xPolimecAddress',
@@ -220,13 +222,13 @@ describe('Hydration', () => {
 
       const assetsTransferSpy = vi
         .mocked(createTransferAssetsTransfer)
-        .mockReturnValue('assets-transfer-call')
+        .mockResolvedValue(mockExtrinsic)
 
-      const result = hydration.transferToPolimec(mockInput)
+      const result = await hydration.transferToPolimec(mockInput)
 
       expect(hasJunctionSpy).toHaveBeenCalled()
       expect(assetsTransferSpy).toHaveBeenCalledWith(mockInput, hydration.version)
-      expect(result).toBe('assets-transfer-call')
+      expect(result).toBe(mockExtrinsic)
 
       hasJunctionSpy.mockRestore()
     })

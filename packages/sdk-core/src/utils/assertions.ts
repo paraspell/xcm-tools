@@ -1,15 +1,16 @@
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import { isTMultiLocation } from '@paraspell/sdk-common'
 
-import { InvalidParameterError } from '../../errors'
-import type { TAddress, TDestination } from '../../types'
+import { InvalidParameterError } from '../errors'
+import type { TAddress, TDestination } from '../types'
 
 export const assertToIsString: (
-  to: TDestination
-) => asserts to is Exclude<TDestination, TMultiLocation> = to => {
+  to: TDestination,
+  overrideMsg?: string
+) => asserts to is Exclude<TDestination, TMultiLocation> = (to, overrideMsg) => {
   if (isTMultiLocation(to)) {
     throw new InvalidParameterError(
-      'Multi-Location destination is not supported for XCM fee calculation.'
+      overrideMsg ?? 'Multi-Location destination is not supported for XCM fee calculation.'
     )
   }
 }

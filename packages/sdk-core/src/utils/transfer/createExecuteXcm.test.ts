@@ -3,15 +3,15 @@ import { InvalidCurrencyError, isAssetEqual, isForeignAsset } from '@paraspell/a
 import { type TMultiLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { addXcmVersionHeader, createDestination } from '../../pallets/xcmPallet/utils'
+import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions } from '../../types'
+import { addXcmVersionHeader } from '../addXcmVersionHeader'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'
 import { createExecuteXcm } from './createExecuteXcm'
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
-  createDestination: vi.fn(),
-  addXcmVersionHeader: vi.fn()
+  createDestination: vi.fn()
 }))
 
 vi.mock('../createBeneficiary', () => ({
@@ -20,6 +20,10 @@ vi.mock('../createBeneficiary', () => ({
 
 vi.mock('../multiLocation', () => ({
   transformMultiLocation: vi.fn()
+}))
+
+vi.mock('../addXcmVersionHeader', () => ({
+  addXcmVersionHeader: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({

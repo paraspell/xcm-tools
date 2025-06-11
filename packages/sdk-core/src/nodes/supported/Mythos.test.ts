@@ -3,16 +3,14 @@ import { Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
-import PolkadotXCMTransferImpl from '../../pallets/polkadotXcm'
+import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import { handleToAhTeleport } from '../../utils/transfer'
 import type Mythos from './Mythos'
 
 vi.mock('../../pallets/polkadotXcm', () => ({
-  default: {
-    transferPolkadotXCM: vi.fn()
-  }
+  transferPolkadotXcm: vi.fn()
 }))
 
 vi.mock('../../utils/transfer', () => ({
@@ -40,21 +38,21 @@ describe('Mythos', () => {
   })
 
   it('should call transferPolkadotXCM with limitedReserveTransferAssets for non-AssetHubPolkadot destination', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
     vi.spyOn(mythos, 'getNativeAssetSymbol').mockReturnValue('MYTH')
-
     await mythos.transferPolkadotXCM(mockInput)
-
-    expect(spy).toHaveBeenCalledWith(mockInput, 'limited_reserve_transfer_assets', 'Unlimited')
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
+      mockInput,
+      'limited_reserve_transfer_assets',
+      'Unlimited'
+    )
   })
 
   it('should call transferPolkadotXCM with limitedTeleportAssets for AssetHubPolkadot destination', async () => {
-    const spy = vi.spyOn(PolkadotXCMTransferImpl, 'transferPolkadotXCM')
     vi.spyOn(mythos, 'getNativeAssetSymbol').mockReturnValue('MYTH')
 
     await mythos.transferPolkadotXCM({ ...mockInput, destination: 'AssetHubPolkadot' })
 
-    expect(spy).toHaveBeenCalledWith(
+    expect(transferPolkadotXcm).toHaveBeenCalledWith(
       { ...mockInput, destination: 'AssetHubPolkadot' },
       'limited_teleport_assets',
       'Unlimited'

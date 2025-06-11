@@ -3,42 +3,44 @@ import { type TMultiLocation, Version } from '@paraspell/sdk-common'
 import { describe, expect, it } from 'vitest'
 
 import { DOT_MULTILOCATION } from '../../../constants'
-import type { TXcmVersioned } from '../../../types'
 import { getXTokensParameters } from './getXTokensParameters'
 
-const mockMultiLocationHeader: TXcmVersioned<TMultiLocation> = {
-  [Version.V4]: DOT_MULTILOCATION
-}
-
-const createMockAsset = (parachain: number, isFeeAsset = false): TMultiAssetWithFee => ({
-  ...(isFeeAsset && { isFeeAsset }),
-  id: {
-    parents: 0,
-    interior: {
-      X2: [{ PalletInstance: '50' }, { Parachain: parachain.toString() }]
-    }
-  },
-  fun: { Fungible: '123456' }
-})
-
 describe('getXTokensParameters', () => {
+  const mockMultiLocation: TMultiLocation = DOT_MULTILOCATION
+  const mockVersionedMultiLocation = {
+    [Version.V4]: mockMultiLocation
+  }
+
+  const createMockAsset = (parachain: number, isFeeAsset = false): TMultiAssetWithFee => ({
+    ...(isFeeAsset && { isFeeAsset }),
+    id: {
+      parents: 0,
+      interior: {
+        X2: [{ PalletInstance: '50' }, { Parachain: parachain.toString() }]
+      }
+    },
+    fun: { Fungible: '123456' }
+  })
+
+  const version = Version.V4
+
   it('should return params for single asset (non-multi-asset)', () => {
-    const result = getXTokensParameters(false, 'DOT', mockMultiLocationHeader, '1000', '10')
+    const result = getXTokensParameters(false, 'DOT', mockMultiLocation, '1000', '10', version)
 
     expect(result).toEqual({
       currency_id: 'DOT',
       amount: 1000n,
-      dest: mockMultiLocationHeader,
+      dest: mockVersionedMultiLocation,
       dest_weight_limit: '10'
     })
   })
 
   it('should return params for multi-asset without fee asset', () => {
-    const result = getXTokensParameters(true, 'DOT', mockMultiLocationHeader, '1000', '10')
+    const result = getXTokensParameters(true, 'DOT', mockMultiLocation, '1000', '10', version)
 
     expect(result).toEqual({
       asset: 'DOT',
-      dest: mockMultiLocationHeader,
+      dest: mockVersionedMultiLocation,
       dest_weight_limit: '10'
     })
   })
@@ -49,16 +51,17 @@ describe('getXTokensParameters', () => {
     const result = getXTokensParameters(
       true,
       'DOT',
-      mockMultiLocationHeader,
+      mockMultiLocation,
       '1000',
       '10',
+      version,
       multiAssets
     )
 
     expect(result).toEqual({
       assets: 'DOT',
       fee_item: 0,
-      dest: mockMultiLocationHeader,
+      dest: mockVersionedMultiLocation,
       dest_weight_limit: '10'
     })
   })
@@ -69,16 +72,17 @@ describe('getXTokensParameters', () => {
     const result = getXTokensParameters(
       true,
       'DOT',
-      mockMultiLocationHeader,
+      mockMultiLocation,
       '1000',
       20,
+      version,
       multiAssets
     )
 
     expect(result).toEqual({
       assets: 'DOT',
       fee_item: 1,
-      dest: mockMultiLocationHeader,
+      dest: mockVersionedMultiLocation,
       dest_weight_limit: 20
     })
   })
@@ -89,16 +93,17 @@ describe('getXTokensParameters', () => {
     const result = getXTokensParameters(
       true,
       'DOT',
-      mockMultiLocationHeader,
+      mockMultiLocation,
       '1000',
       '5',
+      version,
       multiAssets
     )
 
     expect(result).toEqual({
       assets: 'DOT',
       fee_item: 0,
-      dest: mockMultiLocationHeader,
+      dest: mockVersionedMultiLocation,
       dest_weight_limit: '5'
     })
   })

@@ -18,7 +18,7 @@ import type {
   TTransferInfo,
   TXcmFeeDetail
 } from '../types'
-import { assertAddressIsString, assertToIsString } from '../utils/builder'
+import { assertAddressIsString, assertToIsString } from '../utils'
 import { Builder } from './Builder'
 
 vi.mock('../transfer', () => ({
@@ -37,7 +37,7 @@ vi.mock('../pallets/assets', () => ({
   verifyEdOnDestination: vi.fn()
 }))
 
-vi.mock('../utils/builder', () => ({
+vi.mock('../utils', () => ({
   assertToIsString: vi.fn(),
   assertAddressIsString: vi.fn()
 }))
