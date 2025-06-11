@@ -3,6 +3,7 @@ import {
   BatchMode,
   computeFeeFromDryRun,
   getAssetsObject,
+  hasXcmPaymentApiSupport,
   NodeNotSupportedError,
   type TMultiLocation,
   type TNodeDotKsmWithRelayChains,
@@ -60,7 +61,8 @@ vi.mock('@paraspell/sdk-core', async importOriginal => ({
   ...(await importOriginal()),
   computeFeeFromDryRun: vi.fn(),
   createApiInstanceForNode: vi.fn().mockResolvedValue({} as PolkadotClient),
-  getAssetsObject: vi.fn()
+  getAssetsObject: vi.fn(),
+  hasXcmPaymentApiSupport: vi.fn()
 }))
 
 describe('PapiApi', () => {
@@ -87,7 +89,8 @@ describe('PapiApi', () => {
               proof_size: 0n
             }
           }
-        }
+        },
+        local_xcm: { type: 'V4', value: [] }
       }
     }
 
@@ -103,7 +106,9 @@ describe('PapiApi', () => {
             quote_price_exact_tokens_for_tokens: vi.fn().mockResolvedValue(1n)
           },
           XcmPaymentApi: {
-            query_xcm_weight: vi.fn(),
+            query_xcm_weight: vi
+              .fn()
+              .mockResolvedValue({ value: { ref_time: 100n, proof_size: 200n } }),
             query_weight_to_asset_fee: vi.fn().mockResolvedValue({ value: 100n })
           }
         },
@@ -186,6 +191,7 @@ describe('PapiApi', () => {
       })
     } as unknown as PolkadotClient
     vi.mocked(createClient).mockReturnValue(mockPolkadotClient)
+    vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(false)
     papiApi.setApi(mockPolkadotClient)
     await papiApi.init('Acala')
   })
@@ -731,7 +737,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         node: 'Moonbeam',
-        isFeeAsset: false
+        asset: { symbol: 'GLMR', multiLocation: {} } as sdkCore.TAsset
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -784,7 +790,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         node: 'AssetHubPolkadot',
-        isFeeAsset: false
+        asset: { symbol: 'DOT' } as sdkCore.TAsset
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -836,7 +842,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         node: 'Kusama',
-        isFeeAsset: false
+        asset: { symbol: 'KSM', multiLocation: {} } as sdkCore.TAsset
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -870,7 +876,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         node: 'Moonbeam',
-        isFeeAsset: false
+        asset: { symbol: 'GLMR', multiLocation: {} } as sdkCore.TAsset
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -895,7 +901,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         node: 'Moonbeam',
-        isFeeAsset: false
+        asset: { symbol: 'DOT', multiLocation: {} } as sdkCore.TAsset
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({ success: false, failureReason: 'ShortErrorType' })
@@ -915,7 +921,7 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         node: 'Moonbeam',
-        isFeeAsset: false
+        asset: { symbol: 'DOT', multiLocation: {} } as sdkCore.TAsset
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
@@ -930,7 +936,7 @@ describe('PapiApi', () => {
           tx: mockTransaction,
           address: testAddress,
           node: 'Acala',
-          isFeeAsset: false
+          asset: { symbol: 'ACA', multiLocation: {} } as sdkCore.TAsset
         })
       ).rejects.toThrow(NodeNotSupportedError)
       expect(dryRunApiCallMock).not.toHaveBeenCalled()
@@ -965,7 +971,64 @@ describe('PapiApi', () => {
         tx: mockTransaction,
         address: testAddress,
         node: 'Moonbeam',
-        isFeeAsset: false
+        asset: { symbol: 'GLMR', multiLocation: {} } as sdkCore.TAsset
+      })
+
+      expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
+      expect(result.success).toBe(true)
+
+      if (result.success) {
+        expect(result.forwardedXcms).toEqual([
+          {
+            type: 'V4',
+            value: {
+              interior: { type: 'X1', value: { type: 'Parachain', value: 2000 } }
+            }
+          }
+        ])
+        expect(result.destParaId).toBe(2000)
+      }
+    })
+
+    it('should use XcmPaymentApi to calculate fee', async () => {
+      const successResponseWithForwardedXcm = {
+        success: true,
+        value: {
+          execution_result: {
+            success: true,
+            value: { actual_weight: { ref_time: 10n, proof_size: 20n } }
+          },
+          local_xcm: { type: 'V4', value: [] },
+          forwarded_xcms: [
+            [
+              {
+                type: 'V4',
+                value: {
+                  interior: {
+                    type: 'X1',
+                    value: { type: 'Parachain', value: 2000 }
+                  }
+                }
+              }
+            ]
+          ]
+        }
+      }
+      dryRunApiCallMock.mockResolvedValue(successResponseWithForwardedXcm)
+
+      vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
+
+      const result = await papiApi.getDryRunCall({
+        tx: mockTransaction,
+        address: testAddress,
+        node: 'Moonbeam',
+        asset: {
+          symbol: 'GLMR',
+          multiLocation: {
+            parents: 0,
+            interior: { Here: null }
+          }
+        } as sdkCore.TAsset
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -1058,7 +1121,7 @@ describe('PapiApi', () => {
         xcm: dummyXcm,
         node: 'AssetHubPolkadot',
         origin: 'Hydration',
-        asset: { symbol: 'AUSD' }
+        asset: { symbol: 'USDT', multiLocation: {} } as sdkCore.TAsset
       } as TDryRunXcmBaseOptions)
 
       expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
@@ -1333,6 +1396,8 @@ describe('PapiApi', () => {
         }
       }
 
+      vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
+
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
       unsafeApi.apis.XcmPaymentApi.query_xcm_weight = vi.fn().mockResolvedValue({
@@ -1370,6 +1435,8 @@ describe('PapiApi', () => {
           forwarded_xcms: []
         }
       }
+
+      vi.mocked(hasXcmPaymentApiSupport).mockReturnValue(true)
 
       const unsafeApi = papiApi.getApi().getUnsafeApi()
       unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)

@@ -20,6 +20,7 @@ import type {
 import {
   BatchMode,
   getNodeProviders,
+  hasXcmPaymentApiSupport,
   InvalidCurrencyError,
   InvalidParameterError,
   isAssetEqual,
@@ -374,7 +375,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     tx,
     address,
     node,
-    isFeeAsset
+    asset,
+    feeAsset
   }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunNodeResultInternal> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
 
@@ -448,9 +450,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       return Promise.resolve({ success: false, failureReason: failureOutputReason })
     }
 
-    const executionFee = await this.calculateTransactionFee(tx, address)
-    const fee = computeFeeFromDryRun(result, node, executionFee, isFeeAsset)
-
     const actualWeight = result.value.execution_result.value.actual_weight
 
     const weight: TWeight | undefined = actualWeight
@@ -466,6 +465,28 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         : forwardedXcms[0].value.interior.type === 'Here'
           ? 0
           : forwardedXcms[0].value.interior.value.value
+
+    const executionFee = await this.calculateTransactionFee(tx, address)
+
+    const hasMultiLocation = feeAsset
+      ? Boolean(feeAsset.multiLocation)
+      : Boolean(asset?.multiLocation)
+
+    if (hasXcmPaymentApiSupport(node) && result.value.local_xcm && hasMultiLocation) {
+      const xcmFee = await this.getXcmPaymentApiFee(result.value.local_xcm, feeAsset ?? asset)
+
+      if (typeof xcmFee === 'bigint') {
+        return Promise.resolve({
+          success: true,
+          fee: xcmFee,
+          weight,
+          forwardedXcms,
+          destParaId
+        })
+      }
+    }
+
+    const fee = computeFeeFromDryRun(result, node, executionFee, !!feeAsset)
 
     return Promise.resolve({
       success: true,
@@ -489,7 +510,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
   }
 
-  private async getXcmPaymentApiFee(xcm: any, asset: any): Promise<bigint> {
+  private async getXcmPaymentApiFee(xcm: any, asset: TAsset): Promise<bigint> {
     const weight = await this.api.getUnsafeApi().apis.XcmPaymentApi.query_xcm_weight(xcm)
 
     if (!asset?.multiLocation) {
@@ -554,15 +575,17 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
-    if (node === 'Moonbeam' || node === 'Moonriver') {
+    if (hasXcmPaymentApiSupport(node) && asset) {
       const fee = await this.getXcmPaymentApiFee(xcm, asset)
 
-      return {
-        success: true,
-        fee,
-        weight,
-        forwardedXcms,
-        destParaId
+      if (typeof fee === 'bigint') {
+        return {
+          success: true,
+          fee,
+          weight,
+          forwardedXcms,
+          destParaId
+        }
       }
     }
 

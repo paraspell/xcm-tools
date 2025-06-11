@@ -38,14 +38,14 @@ export const dryRunInternal = async <TApi, TRes>(
       ? resolveFeeAsset(feeAsset, origin, destination, currency)
       : undefined
 
-  const asset =
-    'multiasset' in currency ? null : findAssetForNodeOrThrow(origin, currency, destination)
+  const asset = findAssetForNodeOrThrow(origin, currency, destination)
 
   const originDryRun = await api.getDryRunCall({
     tx,
     node: origin,
     address: senderAddress,
-    isFeeAsset: !!resolvedFeeAsset
+    asset,
+    feeAsset: resolvedFeeAsset
   })
 
   if (!originDryRun.success) {
@@ -170,7 +170,7 @@ export const dryRunInternal = async <TApi, TRes>(
       ? { ...processedBridgeHubData, currency: getNativeAssetSymbol(bridgeHubNode) }
       : processedBridgeHubData,
     destination: destinationDryRun?.success
-      ? { ...destinationDryRun, currency: asset?.symbol as string }
+      ? { ...destinationDryRun, currency: asset?.symbol }
       : destinationDryRun
   }
 }
