@@ -668,7 +668,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         node,
-        isFeeAsset: false
+        asset: { symbol: 'AUSD' } as sdkCore.TAsset
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
@@ -718,7 +718,7 @@ describe('PolkadotJsApi', () => {
         tx: mockExtrinsic,
         address,
         node,
-        isFeeAsset: false
+        asset: { symbol: 'AUSD' } as sdkCore.TAsset
       })
 
       expect(mockApiPromise.call.dryRunApi.dryRunCall).toHaveBeenCalledWith(
@@ -741,7 +741,7 @@ describe('PolkadotJsApi', () => {
           tx: mockTransaction,
           address: 'some_address',
           node: 'Acala',
-          isFeeAsset: false
+          asset: { symbol: 'AUSD' } as sdkCore.TAsset
         })
       ).rejects.toThrow(sdkCore.NodeNotSupportedError)
     })

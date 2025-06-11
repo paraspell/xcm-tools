@@ -1,3 +1,4 @@
+import type { TAsset } from '@paraspell/assets'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
@@ -20,7 +21,6 @@ describe('getDryRunOrigin', () => {
   it('returns the dry run result', async () => {
     const address = '0x123'
     const node = 'Polkadot'
-    const isFeeAsset = false
 
     const mockResult: TDryRunNodeResult = {
       success: true,
@@ -39,7 +39,7 @@ describe('getDryRunOrigin', () => {
       api: apiMock,
       node,
       address,
-      isFeeAsset,
+      asset: { symbol: 'DOT' } as TAsset,
       tx: {}
     })
 

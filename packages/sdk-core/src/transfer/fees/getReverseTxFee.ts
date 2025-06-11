@@ -1,9 +1,22 @@
 import type { TCurrencyInput } from '@paraspell/assets'
-import { InvalidCurrencyError } from '@paraspell/assets'
+import { isNodeEvm } from '@paraspell/assets'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import { isAddress } from 'viem'
 
 import { Builder } from '../../builder'
 import type { TGetReverseTxFeeOptions } from '../../types'
 import { padFee } from './padFee'
+
+const determineAddress = (
+  chain: TNodeDotKsmWithRelayChains,
+  address: string,
+  senderAddress: string
+): string => {
+  if (isNodeEvm(chain)) {
+    return isAddress(address) ? address : senderAddress
+  }
+  return isAddress(address) ? senderAddress : address
+}
 
 export const getReverseTxFee = async <TApi, TRes>(
   {
@@ -16,18 +29,17 @@ export const getReverseTxFee = async <TApi, TRes>(
   }: TGetReverseTxFeeOptions<TApi, TRes>,
   currencyInput: TCurrencyInput
 ) => {
-  if ('multiasset' in currency) {
-    throw new InvalidCurrencyError('Multi-assets are not yet supported for XCM fee calculation.')
-  }
+  const toAddress = determineAddress(origin, address, senderAddress)
+  const fromAddress = determineAddress(destination, address, senderAddress)
 
   const tx = await Builder(api)
     .from(destination)
     .to(origin)
-    .address(senderAddress)
-    .senderAddress(address)
+    .address(toAddress)
+    .senderAddress(fromAddress)
     .currency({ ...currencyInput, amount: currency.amount })
     .build()
 
-  const rawFee = await api.calculateTransactionFee(tx, address)
+  const rawFee = await api.calculateTransactionFee(tx, fromAddress)
   return padFee(rawFee, origin, destination, 'destination')
 }

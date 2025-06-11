@@ -43,7 +43,7 @@ describe('calculateTxFeeDryRun', () => {
       node,
       tx,
       address,
-      isFeeAsset: false,
+      asset: expect.any(Object),
     });
     expect(result.isEqualTo(expectedFee)).toBe(true);
   });

@@ -29,7 +29,8 @@ export type TDryRunCallBaseOptions<TRes> = {
    * The address to dry-run with
    */
   address: string
-  isFeeAsset: boolean
+  asset: TAsset
+  feeAsset?: TAsset
 }
 
 export type TDryRunCallOptions<TApi, TRes> = WithApi<TDryRunCallBaseOptions<TRes>, TApi, TRes>

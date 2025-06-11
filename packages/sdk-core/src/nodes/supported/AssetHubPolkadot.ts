@@ -397,7 +397,8 @@ class AssetHubPolkadot<TApi, TRes>
       node: this.node,
       tx: api.callTxMethod(call),
       address: senderAddress,
-      isFeeAsset: !!feeAsset
+      asset,
+      feeAsset
     })
 
     if (!dryRunResult.success) {
