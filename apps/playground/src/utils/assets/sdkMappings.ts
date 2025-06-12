@@ -65,6 +65,10 @@ export const callSdkFunc = (
       Promise.resolve(chosenSdk.hasDryRunSupport(node)),
     ETHEREUM_BRIDGE_STATUS: () => Promise.resolve(chosenSdk.getBridgeStatus()),
     PARA_ETH_FEES: () => Promise.resolve(chosenSdk.getParaEthTransferFees()),
+    SUPPORTED_DESTINATIONS: () =>
+      Promise.resolve(
+        chosenSdk.getSupportedDestinations(node, resolvedCurrency),
+      ),
   };
 
   const action = sdkActions[func];

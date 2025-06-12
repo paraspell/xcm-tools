@@ -18,6 +18,7 @@ export const ASSET_QUERIES = [
   'HAS_DRY_RUN_SUPPORT',
   'ETHEREUM_BRIDGE_STATUS',
   'PARA_ETH_FEES',
+  'SUPPORTED_DESTINATIONS',
 ] as const;
 
 export const PALLETS_QUERIES = [

@@ -15,6 +15,7 @@ export const getOriginXcmFeeEstimate = async <TApi, TRes>({
   feeAsset
 }: TGetOriginXcmFeeEstimateOptions<TApi, TRes>): Promise<TGetXcmFeeEstimateDetail> => {
   const rawOriginFee = await api.calculateTransactionFee(tx, senderAddress)
+
   const originFee = padFee(rawOriginFee, origin, destination, 'origin')
 
   const resolvedFeeAsset = feeAsset

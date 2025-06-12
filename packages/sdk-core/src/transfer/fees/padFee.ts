@@ -31,6 +31,11 @@ export const padFee = (
 
   if (sysParaToPara) return raw * 40n
   if (relayToPara) return side === 'origin' ? mul(raw, 320n, 100n) : mul(raw, 3000n, 100n)
+
+  if (paraToPara && side == 'origin' && origin === 'Mythos' && dest !== 'Ethereum') {
+    return 150000000000000000n
+  }
+
   if (paraToPara) return mul(raw, 130n, 100n)
 
   // apply default 30% padding

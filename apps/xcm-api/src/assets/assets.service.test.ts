@@ -498,6 +498,34 @@ describe('AssetsService', () => {
     });
   });
 
+  describe('getSupportedDEstinations', () => {
+    let getSupportedDestinationsSpy: MockInstance;
+
+    beforeEach(() => {
+      getSupportedDestinationsSpy = vi.spyOn(
+        paraspellSdk,
+        'getSupportedDestinations',
+      );
+    });
+
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should return supported destinations for a valid node', () => {
+      const node = 'Acala';
+      const supportedDestinations = ['Karura', 'Moonbeam'];
+      getSupportedDestinationsSpy.mockReturnValue(supportedDestinations);
+      const result = service.getSupportedDestinations(node, {
+        currency: { symbol: 'KSM' },
+      });
+      expect(result).toEqual(supportedDestinations);
+      expect(getSupportedDestinationsSpy).toHaveBeenCalledWith(node, {
+        symbol: 'KSM',
+      });
+    });
+  });
+
   describe('getOriginFeeDetails', () => {
     it('should return origin fee details for a valid origin and destination node', async () => {
       const nodeOrigin = 'Acala';

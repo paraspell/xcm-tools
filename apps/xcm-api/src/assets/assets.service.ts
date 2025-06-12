@@ -11,6 +11,7 @@ import {
   getOtherAssets,
   getRelayChainSymbol,
   getSupportedAssets,
+  getSupportedDestinations,
   hasSupportForAsset,
   TNode,
   TNodeDotKsmWithRelayChains,
@@ -21,6 +22,7 @@ import { validateNode } from '../utils.js';
 import { handleXcmApiError } from '../utils/error-handler.js';
 import { AssetMultiLocationDto } from './dto/AssetMultiLocationDto.js';
 import { OriginFeeDetailsDto } from './dto/OriginFeeDetailsDto.js';
+import { SupportedDestinationsDto } from './dto/SupportedDestinationsDto.js';
 
 @Injectable()
 export class AssetsService {
@@ -88,6 +90,20 @@ export class AssetsService {
     validateNode(nodeOrigin, { withRelayChains: true });
     validateNode(nodeDestination, { withRelayChains: true });
     return getSupportedAssets(nodeOrigin as TNode, nodeDestination as TNode);
+  }
+
+  getSupportedDestinations(node: string, params: SupportedDestinationsDto) {
+    const { currency } = params;
+    validateNode(node, { withRelayChains: true });
+
+    try {
+      return getSupportedDestinations(
+        node as TNodeDotKsmWithRelayChains,
+        currency,
+      );
+    } catch (e) {
+      return handleXcmApiError(e);
+    }
   }
 
   async getOriginFeeDetails(params: OriginFeeDetailsDto) {

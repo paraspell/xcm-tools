@@ -1,6 +1,12 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import type { TAsset, TNativeAsset, TNode, TNodeAssets } from '@paraspell/sdk';
+import type {
+  TAsset,
+  TNativeAsset,
+  TNode,
+  TNodeAssets,
+  TNodeWithRelayChains,
+} from '@paraspell/sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsService } from '../analytics/analytics.service.js';
@@ -209,6 +215,25 @@ describe('AssetsController', () => {
 
       expect(result).toBe(mockResult);
       expect(spy).toHaveBeenCalledWith(nodeOrigin, nodeDestination);
+    });
+  });
+
+  describe('getSupportedDestinations', () => {
+    it('should return supported destinations for a valid node and parameters', () => {
+      const node: TNodeWithRelayChains = 'Acala';
+      const params = { currency: { symbol: 'KSM' } };
+      const mockResult: TNodeWithRelayChains[] = ['Moonbeam', 'Hydration'];
+      const spy = vi
+        .spyOn(assetsService, 'getSupportedDestinations')
+        .mockReturnValue(mockResult);
+      const result = controller.getSupportedDestinations(
+        node,
+        params,
+        mockRequestObject,
+      );
+
+      expect(result).toBe(mockResult);
+      expect(spy).toHaveBeenCalledWith(node, params);
     });
   });
 

@@ -3,18 +3,7 @@ import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 import type { TAsset, TForeignAsset } from '../types'
 import { getAssets, getOtherAssets } from './assets'
 import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
-
-/**
- * Normalizes an asset symbol by stripping the 'xc' prefix (if present) and converting it to lowercase.
- *
- * @param symbol - The symbol to normalize.
- * @returns The normalized symbol.
- */
-export const normalizeSymbol = (symbol: string | undefined): string => {
-  if (!symbol) return ''
-  const lowerSymbol = symbol.toLowerCase()
-  return lowerSymbol.startsWith('xc') ? lowerSymbol.substring(2) : lowerSymbol
-}
+import { normalizeSymbol } from './normalizeSymbol'
 
 /**
  * Retrieves the list of assets that are supported for transfers between two specified nodes.
