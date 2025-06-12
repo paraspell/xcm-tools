@@ -342,6 +342,7 @@ Possible parameters:
 - `paraID`: Parachain ID eg. 2090 (Basilisk)
 
 ```ts
+
 // Retrieve Fee asset queries (Assets accepted as XCM Fee on specific node)
 const response = await fetch('http://localhost:3001/v3/assets/:node/fee-assets');
 
@@ -394,6 +395,17 @@ const response = await fetch('http://localhost:3001/v3/supported-assets?origin=:
 
 // Retrieve multilocation for asset id or symbol for specific assets on selected chain
 const response = await fetch("http://localhost:3001/v3/assets/:node/multilocation", {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        currency: "Currency" //Replace "Currency" with {id: currencyID} | {symbol: currencySymbol} | {"symbol": {"type": "Native","value": "currencySymbol"} | {"symbol": {"type": "Foreign","value": "currencySymbol"} | {"symbol": {"type": "ForeignAbstract","value": "currencySymbolAlias"}
+    })
+});
+
+//Get chains that support the specific asset related to origin
+const response = await fetch("http://localhost:3001/v3/assets/:node/supported-destinations", {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
