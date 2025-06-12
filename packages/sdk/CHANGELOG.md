@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-v10.4.10...sdk-v10.5.0) (2025-06-12)
+
+
+### Documentation
+
+* Add supportedDestination query ([9da0509](https://github.com/paraspell/xcm-tools/commit/9da050914ad8b4bbc436f6680d46ab2d1983312c))
+* Update the supported query ([9184f1a](https://github.com/paraspell/xcm-tools/commit/9184f1ab7fe08ca7655a09ef632446f734695e6a))
+
 ## [10.4.10](https://github.com/paraspell/xcm-tools/compare/sdk-v10.4.9...sdk-v10.4.10) (2025-06-12)
 
 
