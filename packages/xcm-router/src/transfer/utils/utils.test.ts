@@ -36,6 +36,14 @@ vi.mock('@paraspell/sdk', async () => {
   };
 });
 
+vi.mock('@paraspell/sdk-pjs', async () => {
+  const actual = await vi.importActual('@paraspell/sdk-pjs');
+  return {
+    ...actual,
+    createApiInstanceForNode: vi.fn().mockResolvedValue(undefined),
+  };
+});
+
 describe('transfer utils', () => {
   let parachainPapiApi: TPapiApi;
   let parachainApi: ApiPromise;

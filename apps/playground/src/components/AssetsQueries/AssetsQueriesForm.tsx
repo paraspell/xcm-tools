@@ -68,12 +68,14 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     func === 'DECIMALS' ||
     func == 'HAS_SUPPORT' ||
     func === 'ASSET_BALANCE' ||
-    func === 'EXISTENTIAL_DEPOSIT';
+    func === 'EXISTENTIAL_DEPOSIT' ||
+    func === 'SUPPORTED_DESTINATIONS';
 
   const supportsCurrencyType =
     func === 'ASSET_MULTILOCATION' ||
     func === 'ASSET_BALANCE' ||
-    func === 'EXISTENTIAL_DEPOSIT';
+    func === 'EXISTENTIAL_DEPOSIT' ||
+    func === 'SUPPORTED_DESTINATIONS';
 
   const showAddressInput = func === 'ASSET_BALANCE' || func === 'CONVERT_SS58';
 

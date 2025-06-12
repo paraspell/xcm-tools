@@ -8,6 +8,7 @@ export enum EventName {
   GET_NATIVE_ASSETS = 'Get Native Assets',
   GET_OTHER_ASSETS = 'Get Other Assets',
   GET_SUPPORTED_ASSETS = 'Get Supported Assets',
+  GET_SUPPORTED_DESTINATIONS = 'Get Supported Destinations',
   GET_FEE_ASSETS = 'Get Fee Assets',
   GET_ALL_ASSETS_SYMBOLS = 'Get All Assets Symbols',
   GET_DECIMALS = 'Get Decimals',

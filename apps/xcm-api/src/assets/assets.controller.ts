@@ -22,6 +22,10 @@ import {
   OriginFeeDetailsDtoSchema,
 } from './dto/OriginFeeDetailsDto.js';
 import { SupportedAssetsDto } from './dto/SupportedAssetsDto.js';
+import {
+  SupportedDestinationsDto,
+  SupportedDestinationsSchema,
+} from './dto/SupportedDestinationsDto.js';
 import { SymbolDto } from './dto/SymbolDto.js';
 
 @Controller()
@@ -132,6 +136,21 @@ export class AssetsController {
       origin,
     });
     return this.assetsService.getSupportedAssets(origin, destination);
+  }
+
+  @Post('assets/:node/supported-destinations')
+  getSupportedDestinations(
+    @Param('node') node: string,
+    @Body(new ZodValidationPipe(SupportedDestinationsSchema))
+    params: SupportedDestinationsDto,
+    @Req() req: Request,
+  ) {
+    const { currency } = params;
+    this.analyticsService.track(EventName.GET_SUPPORTED_DESTINATIONS, req, {
+      node,
+      currency: JSON.stringify(currency),
+    });
+    return this.assetsService.getSupportedDestinations(node, params);
   }
 
   @Post('origin-fee-details')
