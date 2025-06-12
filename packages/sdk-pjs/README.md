@@ -399,7 +399,7 @@ For full documentation with examples on this feature head over to [official docu
 import { getSupportedDestinations, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTNode, getAssetMultiLocation, NODE_NAMES } from  '@paraspell/sdk-pjs'
 
 //Get chains that support the specific asset related to origin
-getSupportedDestinations(‘Acala’, {symbol: “DOT”})
+getSupportedDestinations(NODE, CURRENCY)
 
 // Retrieve Fee asset queries (Assets accepted as XCM Fee on specific node)
 getFeeAssets(NODE)
