@@ -130,8 +130,8 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   const finalAsset =
     'multiasset' in currency
       ? { ...resolvedAsset, amount: 0, assetId: '1' }
-      : // Ensure amount is at least 1 to avoid Rust panic
-        { ...resolvedAsset, amount: BigInt(currency.amount) < 1n ? 1n : currency.amount }
+      : // Ensure amount is at least 2 to avoid Rust panic
+        { ...resolvedAsset, amount: BigInt(currency.amount) < 2n ? 2n : currency.amount }
 
   const finalVersion = selectXcmVersion(version, originVersion, destVersion)
 

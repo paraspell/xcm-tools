@@ -106,7 +106,7 @@ export const getDestXcmFee = async <TApi, TRes>(
     asset,
     originFee,
     feeAsset: resolvedFeeAsset,
-    amount: BigInt(currency.amount)
+    amount: BigInt(currency.amount) < 2n ? 2n : BigInt(currency.amount)
   })
 
   if (!dryRunResult.success) {
