@@ -397,7 +397,10 @@ let result = convertSs58(address, node) // returns converted address in string
 For full documentation with examples on this feature, head over to [official documentation](https://paraspell.github.io/docs/sdk/AssetPallet.html).
 
 ```ts
-import { getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTNode, getAssetMultiLocation, NODE_NAMES } from  '@paraspell/sdk'
+import { getSupportedDestinations, getFeeAssets, getAssetsObject, getAssetId, getRelayChainSymbol, getNativeAssets, getNativeAssets, getOtherAssets, getAllAssetsSymbols, hasSupportForAsset, getAssetDecimals, getParaId, getTNode, getAssetMultiLocation, NODE_NAMES } from  '@paraspell/sdk'
+
+//Get chains that support the specific asset related to origin
+getSupportedDestinations(‘Acala’, {symbol: “DOT”})
 
 // Retrieve Fee asset queries (Assets accepted as XCM Fee on specific node)
 getFeeAssets(NODE)
