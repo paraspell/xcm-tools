@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.4.10](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.9...sdk-core-v10.4.10) (2025-06-12)
+
+
+### Bug Fixes
+
+* Repair magic numbers✨ ([5913843](https://github.com/paraspell/xcm-tools/commit/591384374540b0bd08e23a4a5caa44c16f515016))
+
 ## [10.4.9](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.8...sdk-core-v10.4.9) (2025-06-11)
 
 
