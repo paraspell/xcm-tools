@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.5.0](https://github.com/paraspell/xcm-tools/compare/assets-v10.4.10...assets-v10.5.0) (2025-06-12)
+
+
+### Features
+
+* **assets:** Add supported destinations query 🪄 ([dfebfee](https://github.com/paraspell/xcm-tools/commit/dfebfeea6683ce54bed489ebbf669916170cbb12))
+
 ## [10.4.10](https://github.com/paraspell/xcm-tools/compare/assets-v10.4.9...assets-v10.4.10) (2025-06-12)
 
 

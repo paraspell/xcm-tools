@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.5.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.4.10...xcm-api-v10.5.0) (2025-06-12)
+
+
+### Features
+
+* **assets:** Add supported destinations query 🪄 ([dfebfee](https://github.com/paraspell/xcm-tools/commit/dfebfeea6683ce54bed489ebbf669916170cbb12))
+
+
+### Documentation
+
+* Add supportedDestination query ([9da0509](https://github.com/paraspell/xcm-tools/commit/9da050914ad8b4bbc436f6680d46ab2d1983312c))
+
 ## [10.4.10](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.4.9...xcm-api-v10.4.10) (2025-06-12)
 
 
