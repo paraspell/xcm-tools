@@ -10,7 +10,8 @@ import { isSufficientOrigin } from './isSufficient'
 import { padFee } from './padFee'
 
 vi.mock('@paraspell/assets', () => ({
-  getNativeAssetSymbol: vi.fn()
+  getNativeAssetSymbol: vi.fn(),
+  findAssetForNodeOrThrow: vi.fn()
 }))
 
 vi.mock('./padFee', () => ({
@@ -62,8 +63,11 @@ describe('getOriginXcmFeeEstimate', () => {
     expect(isSufficientOrigin).toHaveBeenCalledWith(
       mockApi,
       mockOriginNode,
+      mockDestinationNode,
       mockSenderAddress,
       MOCK_PADDED_FEE,
+      currency,
+      undefined,
       undefined
     )
 

@@ -1,34 +1,61 @@
-import type { TAsset } from '@paraspell/assets'
+import type { TAsset, TCurrencyCore, WithAmount } from '@paraspell/assets'
 import {
   getExistentialDepositOrThrow,
   getNativeAssetSymbol,
-  normalizeSymbol
+  isSymbolMatch
 } from '@paraspell/assets'
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
-import { getBalanceNativeInternal } from '../../pallets/assets'
+import { getAssetBalance, getBalanceNativeInternal } from '../../pallets/assets'
 
 export const isSufficientOrigin = async <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
-  node: TNodeWithRelayChains,
+  origin: TNodeWithRelayChains,
+  destination: TNodeWithRelayChains,
   senderAddress: string,
-  fee: bigint,
+  feeNative: bigint,
+  currency: WithAmount<TCurrencyCore>,
+  asset: TAsset,
   feeAsset: TAsset | undefined
 ): Promise<boolean | undefined> => {
   if (feeAsset) {
     return undefined
   }
 
-  const existentialDeposit = getExistentialDepositOrThrow(node)
+  const edNative = getExistentialDepositOrThrow(origin)
 
-  const nativeBalance = await getBalanceNativeInternal({
+  const balanceNative = await getBalanceNativeInternal({
     api,
-    node,
+    node: origin,
     address: senderAddress
   })
 
-  return nativeBalance - existentialDeposit - fee > 0n
+  const isNativeAssetToOrigin = isSymbolMatch(asset.symbol, getNativeAssetSymbol(origin))
+  const isNativeAssetToDest = isSymbolMatch(asset.symbol, getNativeAssetSymbol(destination))
+
+  if (isNativeAssetToOrigin && isNativeAssetToDest) {
+    return balanceNative - edNative - feeNative - BigInt(currency.amount) > 0n
+  }
+
+  if (!isNativeAssetToOrigin) {
+    const isSufficientNative = balanceNative - edNative - feeNative > 0n
+
+    const balanceAsset = await getAssetBalance({
+      api,
+      node: origin,
+      address: senderAddress,
+      currency
+    })
+
+    const edAsset = getExistentialDepositOrThrow(origin, asset)
+
+    const isSufficientAsset = balanceAsset - edAsset > 0n
+
+    return isSufficientNative && isSufficientAsset
+  } else {
+    return balanceNative - edNative - feeNative - BigInt(currency.amount) > 0n
+  }
 }
 
 export const isSufficientDestination = async <TApi, TRes>(
@@ -36,9 +63,12 @@ export const isSufficientDestination = async <TApi, TRes>(
   destination: TNodeWithRelayChains,
   address: string,
   amount: bigint,
-  asset: TAsset
+  asset: TAsset,
+  feeNative: bigint
 ): Promise<boolean | undefined> => {
-  if (normalizeSymbol(asset.symbol) !== normalizeSymbol(getNativeAssetSymbol(destination))) {
+  const isNativeAsset = isSymbolMatch(asset.symbol, getNativeAssetSymbol(destination))
+
+  if (!isNativeAsset) {
     return undefined
   }
 
@@ -50,5 +80,5 @@ export const isSufficientDestination = async <TApi, TRes>(
     address: address
   })
 
-  return nativeBalance + amount - existentialDeposit > 0n
+  return nativeBalance + amount - existentialDeposit - feeNative > 0n
 }

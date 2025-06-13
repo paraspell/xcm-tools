@@ -1,4 +1,4 @@
-import type { TCurrencyInput } from '@paraspell/assets'
+import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -51,7 +51,7 @@ describe('getOriginXcmFee', () => {
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
-      currency: {} as TCurrencyInput,
+      currency: {} as WithAmount<TCurrencyCore>,
       disableFallback: false
     })
 
@@ -62,7 +62,16 @@ describe('getOriginXcmFee', () => {
       sufficient: true
     })
     expect(feeCalcSpy).toHaveBeenCalledWith({}, 'addr')
-    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'Moonbeam', 'addr', 150n, undefined)
+    expect(isSufficientOrigin).toHaveBeenCalledWith(
+      api,
+      'Moonbeam',
+      'Acala',
+      'addr',
+      150n,
+      {},
+      undefined,
+      undefined
+    )
     expect(dryRunCallSpy).not.toHaveBeenCalled()
   })
 
@@ -86,7 +95,7 @@ describe('getOriginXcmFee', () => {
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
-      currency: {} as TCurrencyInput,
+      currency: {} as WithAmount<TCurrencyCore>,
       disableFallback: false
     })
 
@@ -121,7 +130,7 @@ describe('getOriginXcmFee', () => {
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
-      currency: {} as TCurrencyInput,
+      currency: {} as WithAmount<TCurrencyCore>,
       disableFallback: true
     })
 
@@ -151,7 +160,7 @@ describe('getOriginXcmFee', () => {
       origin: 'Moonbeam',
       destination: 'Acala',
       senderAddress: 'addr',
-      currency: {} as TCurrencyInput,
+      currency: {} as WithAmount<TCurrencyCore>,
       disableFallback: false
     })
 
@@ -164,6 +173,15 @@ describe('getOriginXcmFee', () => {
     })
     expect(padFee).toHaveBeenCalledWith(888n, 'Moonbeam', 'Acala', 'origin')
     expect(feeCalcSpy).toHaveBeenCalledWith({}, 'addr')
-    expect(isSufficientOrigin).toHaveBeenCalledWith(api, 'Moonbeam', 'addr', 999n, undefined)
+    expect(isSufficientOrigin).toHaveBeenCalledWith(
+      api,
+      'Moonbeam',
+      'Acala',
+      'addr',
+      999n,
+      {},
+      undefined,
+      undefined
+    )
   })
 })

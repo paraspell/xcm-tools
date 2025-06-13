@@ -83,16 +83,19 @@ export const getDestXcmFee = async <TApi, TRes>(
   }
 
   if (!hasDryRunSupport(destination) || !forwardedXcms || destination === 'Ethereum') {
+    const fee = await calcPaymentInfoFee()
+
     const sufficient = await isSufficientDestination(
       api,
       destination,
       address,
       BigInt(currency.amount),
-      asset
+      asset,
+      fee
     )
 
     return {
-      fee: await calcPaymentInfoFee(),
+      fee,
       feeType: 'paymentInfo',
       sufficient
     }
@@ -116,16 +119,19 @@ export const getDestXcmFee = async <TApi, TRes>(
       }
     }
 
+    const fee = await calcPaymentInfoFee()
+
     const sufficient = await isSufficientDestination(
       api,
       destination,
       address,
       BigInt(currency.amount),
-      asset
+      asset,
+      fee
     )
 
     return {
-      fee: await calcPaymentInfoFee(),
+      fee,
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
       sufficient

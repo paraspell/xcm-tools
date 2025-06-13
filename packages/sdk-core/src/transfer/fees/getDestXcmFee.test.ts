@@ -56,9 +56,16 @@ describe('getDestXcmFee', () => {
     const res = await getDestXcmFee(options)
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
-    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', 1n, {
-      symbol: 'UNIT'
-    })
+    expect(isSufficientDestination).toHaveBeenCalledWith(
+      api,
+      'Astar',
+      'dest',
+      1n,
+      {
+        symbol: 'UNIT'
+      },
+      130n
+    )
     expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo', sufficient: true })
   })
 
@@ -87,9 +94,16 @@ describe('getDestXcmFee', () => {
     const res = await getDestXcmFee(options)
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { multilocation: DOT_MULTILOCATION })
-    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', 1n, {
-      symbol: 'UNIT'
-    })
+    expect(isSufficientDestination).toHaveBeenCalledWith(
+      api,
+      'Astar',
+      'dest',
+      1n,
+      {
+        symbol: 'UNIT'
+      },
+      130n
+    )
     expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo', sufficient: true })
   })
 
@@ -120,9 +134,16 @@ describe('getDestXcmFee', () => {
 
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { multilocation: DOT_MULTILOCATION })
     expect(getReverseTxFee).toHaveBeenCalledWith(options, { symbol: 'UNIT' })
-    expect(isSufficientDestination).toHaveBeenCalledWith(api, 'Astar', 'dest', 1n, {
-      symbol: 'UNIT'
-    })
+    expect(isSufficientDestination).toHaveBeenCalledWith(
+      api,
+      'Astar',
+      'dest',
+      1n,
+      {
+        symbol: 'UNIT'
+      },
+      130n
+    )
     expect(res).toEqual({ fee: 130n, feeType: 'paymentInfo', sufficient: true })
   })
 

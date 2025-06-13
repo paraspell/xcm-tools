@@ -23,6 +23,8 @@ export const getOriginXcmFee = async <TApi, TRes>({
     destParaId?: number
   }
 > => {
+  const asset = findAssetForNodeOrThrow(origin, currency, destination)
+
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, origin, destination, currency)
     : undefined
@@ -37,8 +39,11 @@ export const getOriginXcmFee = async <TApi, TRes>({
     const sufficient = await isSufficientOrigin(
       api,
       origin,
+      destination,
       senderAddress,
       paddedFee,
+      currency,
+      asset,
       resolvedFeeAsset
     )
 
@@ -49,8 +54,6 @@ export const getOriginXcmFee = async <TApi, TRes>({
       sufficient
     }
   }
-
-  const asset = findAssetForNodeOrThrow(origin, currency, destination)
 
   const dryRunResult = await api.getDryRunCall({
     tx,
@@ -72,8 +75,11 @@ export const getOriginXcmFee = async <TApi, TRes>({
     const sufficient = await isSufficientOrigin(
       api,
       origin,
+      destination,
       senderAddress,
       paddedFee,
+      currency,
+      asset,
       resolvedFeeAsset
     )
 
