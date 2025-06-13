@@ -49,7 +49,7 @@ export type TGetOriginXcmFeeBaseOptions<TRes> = {
   origin: TNodeDotKsmWithRelayChains
   destination: TNodeWithRelayChains
   senderAddress: string
-  currency: TCurrencyInput
+  currency: WithAmount<TCurrencyCore>
   feeAsset?: TCurrencyInput
   disableFallback: boolean
 }

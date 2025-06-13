@@ -307,7 +307,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
         origin: from,
         destination: to,
         senderAddress: senderAddress,
-        currency,
+        currency: currency as WithAmount<TCurrencyCore>,
         feeAsset,
         disableFallback
       })
@@ -391,7 +391,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       destination: to,
       senderAddress,
       feeAsset,
-      currency: currency as TCurrencyCore
+      currency: currency as WithAmount<TCurrencyCore>
     })
   }
 

@@ -51,7 +51,7 @@ describe('getTransferableAmount', () => {
       senderAddress: 'validAddress',
       origin: 'Astar',
       destination: 'BifrostPolkadot',
-      currency: { symbol: 'DOT' },
+      currency: { symbol: 'DOT', amount: '1000' },
       tx: 'transfer'
     })
 
@@ -62,7 +62,7 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'Astar',
       senderAddress: 'validAddress',
-      currency: { symbol: 'DOT' },
+      currency: { symbol: 'DOT', amount: '1000' },
       disableFallback: false
     })
   })
@@ -81,7 +81,7 @@ describe('getTransferableAmount', () => {
       senderAddress: 'validAddress',
       origin: 'Astar',
       destination: 'BifrostPolkadot',
-      currency: { symbol: 'USDT' },
+      currency: { symbol: 'USDT', amount: '1000' },
       tx: 'transfer'
     })
 
@@ -105,7 +105,7 @@ describe('getTransferableAmount', () => {
       senderAddress: 'validAddress',
       origin: 'Astar',
       destination: 'BifrostPolkadot',
-      currency: { symbol: 'DOT' },
+      currency: { symbol: 'DOT', amount: '1000' },
       tx: 'transfer'
     })
 
@@ -125,10 +125,12 @@ describe('getTransferableAmount', () => {
         senderAddress: 'validAddress',
         origin: 'Astar',
         destination: 'BifrostPolkadot',
-        currency: { symbol: 'DOT' },
+        currency: { symbol: 'DOT', amount: '1000' },
         tx: 'transfer'
       })
-    ).rejects.toThrow('Cannot get origin xcm fee for currency {"symbol":"DOT"} on node Astar.')
+    ).rejects.toThrow(
+      'Cannot get origin xcm fee for currency {"symbol":"DOT","amount":"1000"} on node Astar.'
+    )
   })
 
   test('sets disconnect allowed to false and disconnects after', async () => {
@@ -146,7 +148,7 @@ describe('getTransferableAmount', () => {
       senderAddress: 'validAddress',
       origin: 'Astar',
       destination: 'BifrostPolkadot',
-      currency: { symbol: 'DOT' },
+      currency: { symbol: 'DOT', amount: '1000' },
       tx: 'transfer'
     })
 
@@ -171,7 +173,7 @@ describe('getTransferableAmount', () => {
         senderAddress: 'validAddress',
         origin: 'Astar',
         destination: 'BifrostPolkadot',
-        currency: { symbol: 'DOT' },
+        currency: { symbol: 'DOT', amount: '1000' },
         tx: 'transfer'
       })
     ).rejects.toThrow()

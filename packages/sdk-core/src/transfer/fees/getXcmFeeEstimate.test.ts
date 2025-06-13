@@ -93,8 +93,11 @@ describe('getXcmFeeEstimate', () => {
     expect(isSufficientOrigin).toHaveBeenCalledWith(
       api,
       'AssetHubPolkadot',
+      'AssetHubKusama',
       'bob',
       682_395_810n,
+      { symbol: 'DOT', amount: 1n },
+      { symbol: 'DOT' },
       undefined
     )
     expect(isSufficientDestination).toHaveBeenCalledWith(
@@ -102,7 +105,8 @@ describe('getXcmFeeEstimate', () => {
       'AssetHubKusama',
       'alice',
       1n,
-      { symbol: 'DOT' }
+      { symbol: 'DOT' },
+      12_016_807_000n
     )
   })
 
@@ -129,8 +133,11 @@ describe('getXcmFeeEstimate', () => {
     expect(isSufficientOrigin).toHaveBeenCalledWith(
       api,
       'AssetHubKusama',
+      'AssetHubPolkadot',
       'bob',
       12_016_807_000n,
+      { symbol: 'KSM', amount: 1n },
+      { symbol: 'KSM' },
       undefined
     )
     expect(isSufficientDestination).toHaveBeenCalledWith(
@@ -138,7 +145,8 @@ describe('getXcmFeeEstimate', () => {
       'AssetHubPolkadot',
       'alice',
       1n,
-      { symbol: 'KSM' }
+      { symbol: 'KSM' },
+      682_395_810n
     )
   })
 

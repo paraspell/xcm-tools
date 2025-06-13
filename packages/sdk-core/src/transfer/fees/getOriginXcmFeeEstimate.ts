@@ -1,4 +1,4 @@
-import { getNativeAssetSymbol } from '@paraspell/assets'
+import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
 
 import type { TGetOriginXcmFeeEstimateOptions, TGetXcmFeeEstimateDetail } from '../../types'
 import { resolveFeeAsset } from '../utils'
@@ -14,6 +14,8 @@ export const getOriginXcmFeeEstimate = async <TApi, TRes>({
   senderAddress,
   feeAsset
 }: TGetOriginXcmFeeEstimateOptions<TApi, TRes>): Promise<TGetXcmFeeEstimateDetail> => {
+  const originAsset = findAssetForNodeOrThrow(origin, currency, destination)
+
   const rawOriginFee = await api.calculateTransactionFee(tx, senderAddress)
 
   const originFee = padFee(rawOriginFee, origin, destination, 'origin')
@@ -25,8 +27,11 @@ export const getOriginXcmFeeEstimate = async <TApi, TRes>({
   const sufficient = await isSufficientOrigin(
     api,
     origin,
+    destination,
     senderAddress,
     originFee,
+    currency,
+    originAsset,
     resolvedFeeAsset
   )
 

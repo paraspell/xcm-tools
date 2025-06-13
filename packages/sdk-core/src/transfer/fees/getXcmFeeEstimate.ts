@@ -38,8 +38,11 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
     const originSufficient = await isSufficientOrigin(
       api,
       origin,
+      destination,
       senderAddress,
       fixedOriginFee,
+      currency,
+      originAsset,
       resolvedFeeAsset
     )
 
@@ -48,7 +51,8 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
       destination,
       address,
       BigInt(currency.amount),
-      originAsset
+      originAsset,
+      fixedDestinationFee
     )
 
     return {
@@ -81,7 +85,8 @@ export const getXcmFeeEstimate = async <TApi, TRes>(
     destination,
     address,
     BigInt(currency.amount),
-    originAsset
+    originAsset,
+    destinationFee
   )
 
   const destFeeDetails = {

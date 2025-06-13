@@ -176,7 +176,7 @@ export type TGetTransferableAmountOptionsBase<TRes> = {
   /**
    * The currency to query.
    */
-  currency: TCurrencyCore
+  currency: WithAmount<TCurrencyCore>
   /**
    * The transaction to calculate the fee for
    */
