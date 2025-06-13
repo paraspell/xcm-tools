@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.5.0...sdk-core-v10.5.1) (2025-06-13)
+
+
+### Bug Fixes
+
+* **sdk:** Prefer to use XcmPaymentApi for fee calculation ✨ ([8421510](https://github.com/paraspell/xcm-tools/commit/84215108db522624d70aabc1c88036808f971b05))
+
 ## [10.5.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.4.10...sdk-core-v10.5.0) (2025-06-12)
 
 
