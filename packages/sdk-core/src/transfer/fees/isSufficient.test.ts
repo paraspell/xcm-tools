@@ -123,7 +123,7 @@ describe('isSufficientOrigin', () => {
       address: senderAddress,
       currency
     })
-    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(origin, nonNativeAsset)
+    expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(origin, currency)
     expect(result).toBe(true)
   })
 

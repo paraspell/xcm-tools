@@ -19,7 +19,8 @@ describe('getSwapFee', () => {
   const exchange = { node: 'TEST_NODE' } as unknown as ExchangeNode;
   const options = {
     senderAddress: '0xSender',
-    exchange: { apiPapi: 'apiInstance' },
+    exchange: { apiPapi: 'apiInstance', assetFrom: { symbol: 'DOT' } },
+    amount: '100',
   } as unknown as TBuildTransactionsOptionsModified;
 
   beforeEach(() => {
@@ -47,7 +48,7 @@ describe('getSwapFee', () => {
       destination: 'TEST_NODE',
       senderAddress: '0xSender',
       disableFallback: false,
-      currency: {},
+      currency: { symbol: 'DOT', amount: '100' },
     });
 
     expect(result).toEqual({
@@ -92,6 +93,31 @@ describe('getSwapFee', () => {
     });
 
     const { result, amountOut } = await getSwapFee(exchange, options);
+
+    expect(result.fee).toBe(0n);
+    expect(result.feeType).toBe('paymentInfo');
+    expect(result.currency).toBe('DOT');
+    expect(result.dryRunError).toBe(dryError);
+    expect(amountOut).toBe('200');
+  });
+
+  it('enters currency as multilocation', async () => {
+    const dryError = 'Dry run error';
+    vi.mocked(createSwapTx).mockResolvedValue({
+      txs: ['dummyTx' as unknown as TPapiTransaction],
+      amountOut: '200',
+    });
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
+      fee: 0n,
+      currency: 'DOT',
+      feeType: 'paymentInfo',
+      dryRunError: dryError,
+    });
+
+    const { result, amountOut } = await getSwapFee(exchange, {
+      ...options,
+      exchange: { apiPapi: 'apiInstance', assetFrom: { symbol: 'DOT', multiLocation: {} } },
+    } as unknown as TBuildTransactionsOptionsModified);
 
     expect(result.fee).toBe(0n);
     expect(result.feeType).toBe('paymentInfo');

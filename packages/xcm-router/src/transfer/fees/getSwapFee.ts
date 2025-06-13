@@ -1,4 +1,4 @@
-import type { TCurrencyInput, TXcmFeeDetail } from '@paraspell/sdk';
+import type { TXcmFeeDetail } from '@paraspell/sdk';
 import { getOriginXcmFee } from '@paraspell/sdk';
 
 import type ExchangeNode from '../../dexNodes/DexNode';
@@ -9,8 +9,22 @@ export const getSwapFee = async (
   exchange: ExchangeNode,
   options: TBuildTransactionsOptionsModified,
 ) => {
-  const { senderAddress } = options;
+  const {
+    senderAddress,
+    exchange: { assetFrom },
+    amount,
+  } = options;
   const { txs, amountOut } = await createSwapTx(exchange, options);
+
+  const currency = assetFrom.multiLocation
+    ? {
+        multilocation: assetFrom.multiLocation,
+        amount,
+      }
+    : {
+        symbol: assetFrom.symbol,
+        amount,
+      };
 
   const result = await getOriginXcmFee({
     api: options.exchange.apiPapi,
@@ -18,7 +32,7 @@ export const getSwapFee = async (
     origin: exchange.node,
     destination: exchange.node,
     senderAddress: senderAddress,
-    currency: {} as TCurrencyInput,
+    currency,
     disableFallback: false,
   });
 
