@@ -48,7 +48,7 @@ export const isSufficientOrigin = async <TApi, TRes>(
       currency
     })
 
-    const edAsset = getExistentialDepositOrThrow(origin, asset)
+    const edAsset = getExistentialDepositOrThrow(origin, currency)
 
     const isSufficientAsset = balanceAsset - edAsset > 0n
 

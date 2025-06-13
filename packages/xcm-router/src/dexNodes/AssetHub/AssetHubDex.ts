@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { getNativeAssetSymbol, InvalidParameterError, Parents, transform } from '@paraspell/sdk';
 import type { ApiPromise } from '@polkadot/api';
 import BigNumber from 'bignumber.js';
