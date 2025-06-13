@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.5.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.5.1...xcm-router-v10.5.2) (2025-06-13)
+
+
+### Bug Fixes
+
+* **xcm-router:** Fix getSwapFee function 🔧 ([4a45aec](https://github.com/paraspell/xcm-tools/commit/4a45aec4b3fdd76ed94a25fedb975d1067747c64))
+
 ## [10.5.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.5.0...xcm-router-v10.5.1) (2025-06-13)
 
 
