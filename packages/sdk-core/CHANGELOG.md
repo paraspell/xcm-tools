@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.5.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.5.1...sdk-core-v10.5.2) (2025-06-13)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix sufficient field calculations 🔧 ([b217f3a](https://github.com/paraspell/xcm-tools/commit/b217f3acbaf2dc0ce79faa47e44ace0a424f0c9d))
+* **xcm-router:** Fix getSwapFee function 🔧 ([4a45aec](https://github.com/paraspell/xcm-tools/commit/4a45aec4b3fdd76ed94a25fedb975d1067747c64))
+
 ## [10.5.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.5.0...sdk-core-v10.5.1) (2025-06-13)
 
 

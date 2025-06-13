@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.5.2](https://github.com/paraspell/xcm-tools/compare/assets-v10.5.1...assets-v10.5.2) (2025-06-13)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix sufficient field calculations 🔧 ([b217f3a](https://github.com/paraspell/xcm-tools/commit/b217f3acbaf2dc0ce79faa47e44ace0a424f0c9d))
+
 ## [10.5.1](https://github.com/paraspell/xcm-tools/compare/assets-v10.5.0...assets-v10.5.1) (2025-06-13)
 
 
