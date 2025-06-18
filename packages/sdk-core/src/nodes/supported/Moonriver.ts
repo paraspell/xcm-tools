@@ -1,6 +1,6 @@
 // Contains detailed structure of XCM call construction for Moonriver Parachain
 
-import { InvalidCurrencyError, type TAsset } from '@paraspell/assets'
+import { type TAsset } from '@paraspell/assets'
 import { Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
@@ -12,7 +12,7 @@ import type {
   TScenario,
   TTransferLocalOptions
 } from '../../types'
-import { getNode } from '../../utils'
+import { assertHasLocation, getNode } from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
 import ParachainNode from '../ParachainNode'
 
@@ -34,11 +34,7 @@ class Moonriver<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkad
         }
       }
 
-    if (!asset.multiLocation) {
-      throw new InvalidCurrencyError(
-        'throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)'
-      )
-    }
+    assertHasLocation(asset)
 
     return asset.multiLocation
   }

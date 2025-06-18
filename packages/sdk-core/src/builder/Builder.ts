@@ -426,7 +426,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    * @returns The transfer info.
    */
   async getTransferInfo(this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>) {
-    const { from, to, address, currency, senderAddress, feeAsset } = this._options
+    const { from, to, address, currency, ahAddress, senderAddress, feeAsset } = this._options
 
     assertToIsString(to)
     assertAddressIsString(address)
@@ -440,6 +440,7 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
       destination: to,
       address,
       senderAddress,
+      ahAddress,
       currency: currency as WithAmount<TCurrencyCore>,
       feeAsset: feeAsset as TCurrencyCore
     })

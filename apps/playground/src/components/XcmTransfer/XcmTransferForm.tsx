@@ -16,6 +16,7 @@ import type {
   TNodeWithRelayChains,
 } from '@paraspell/sdk';
 import {
+  isNodeEvm,
   NODES_WITH_RELAY_CHAINS,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
 } from '@paraspell/sdk';
@@ -275,6 +276,8 @@ const XcmTransferForm: FC<Props> = ({
   const feeAssetDisabled =
     form.values.currencies.length <= 1 && from !== 'AssetHubPolkadot';
 
+  const showAhAddress = isNodeEvm(from) && isNodeEvm(to);
+
   if (!isVisible) {
     return null;
   }
@@ -387,7 +390,7 @@ const XcmTransferForm: FC<Props> = ({
             {...form.getInputProps('address')}
           />
 
-          {from === 'Moonbeam' && to === 'Ethereum' && (
+          {showAhAddress && (
             <TextInput
               label="AssetHub address"
               description="SS58 address"

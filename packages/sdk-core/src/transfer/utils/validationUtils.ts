@@ -52,7 +52,13 @@ export const validateDestination = (
     )
   }
 
-  const allowedChainsToEthereum = ['AssetHubPolkadot', 'Hydration', 'BifrostPolkadot', 'Moonbeam']
+  const allowedChainsToEthereum = [
+    'AssetHubPolkadot',
+    'Hydration',
+    'BifrostPolkadot',
+    'Moonbeam',
+    'Mythos'
+  ]
 
   if (destination === 'Ethereum' && !allowedChainsToEthereum.includes(origin)) {
     throw new IncompatibleNodesError(

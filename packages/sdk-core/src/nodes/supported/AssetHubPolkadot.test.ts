@@ -391,7 +391,7 @@ describe('AssetHubPolkadot', () => {
       expect(handleLocalReserveTransferSpy.mock.calls[0][1]).toBeUndefined()
     })
 
-    it('should call handleLocalReserveTransfer  if asset is Ethereum asset ', async () => {
+    it('should call handleLocalReserveTransfer if asset is Ethereum asset ', async () => {
       const ethAsset = {
         symbol: 'USDC',
         amount: '1000',
