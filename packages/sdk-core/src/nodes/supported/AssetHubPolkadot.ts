@@ -49,7 +49,7 @@ import {
   type TPolkadotXCMTransferOptions,
   type TScenario
 } from '../../types'
-import { addXcmVersionHeader, createBeneficiary } from '../../utils'
+import { addXcmVersionHeader, assertHasLocation, createBeneficiary } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createMultiAsset } from '../../utils/multiAsset'
 import { createBeneficiaryMultiLocation, transformMultiLocation } from '../../utils/multiLocation'
@@ -152,9 +152,7 @@ class AssetHubPolkadot<TApi, TRes>
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
     }
 
-    if (!asset.multiLocation) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
-    }
+    assertHasLocation(asset)
 
     const messageId = await generateMessageId(
       api,
@@ -227,9 +225,7 @@ class AssetHubPolkadot<TApi, TRes>
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
     }
 
-    if (!asset.multiLocation) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
-    }
+    assertHasLocation(asset)
 
     if (
       asset.symbol === this.getNativeAssetSymbol() ||
@@ -298,9 +294,7 @@ class AssetHubPolkadot<TApi, TRes>
       throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
     }
 
-    if (!asset.multiLocation) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
-    }
+    assertHasLocation(asset)
 
     const PARA_TO_PARA_FEE_DOT = 500000000n // 0.5 DOT
 

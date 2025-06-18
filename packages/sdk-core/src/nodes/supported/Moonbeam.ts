@@ -12,6 +12,7 @@ import type {
   TScenario,
   TTransferLocalOptions
 } from '../../types'
+import { assertHasLocation } from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
 import ParachainNode from '../ParachainNode'
 
@@ -33,11 +34,7 @@ class Moonbeam<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkado
         }
       }
 
-    if (!asset.multiLocation) {
-      throw new InvalidCurrencyError(
-        'throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no assetId`)'
-      )
-    }
+    assertHasLocation(asset)
 
     return asset.multiLocation
   }

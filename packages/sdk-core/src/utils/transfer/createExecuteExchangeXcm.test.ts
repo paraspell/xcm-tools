@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
+import { assertHasLocation } from '../assertions'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'
 import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
@@ -20,6 +21,8 @@ vi.mock('../multiLocation', () => ({
   transformMultiLocation: vi.fn()
 }))
 
+vi.mock('../assertions')
+
 describe('createExecuteExchangeXcm', () => {
   const dummyDest = 'destValue' as unknown as TMultiLocation
   const dummyBeneficiary = 'beneficiaryValue' as unknown as TMultiLocation
@@ -34,32 +37,6 @@ describe('createExecuteExchangeXcm', () => {
 
   afterEach(() => {
     vi.clearAllMocks()
-  })
-
-  it('should throw an error if asset.multiLocation is not provided', () => {
-    const fakeApi = {
-      callTxMethod: vi.fn()
-    }
-    const input = {
-      api: fakeApi,
-      asset: {
-        amount: '1000'
-      },
-      scenario: 'test-scenario',
-      destination: 'dest',
-      paraIdTo: 200,
-      address: 'address'
-    } as unknown as TPolkadotXCMTransferOptions<unknown, unknown>
-    const weight = {
-      refTime: 123n,
-      proofSize: 456n
-    }
-    const originFee = 50n
-    const destFee = 75n
-
-    expect(() => createExecuteExchangeXcm(input, weight, originFee, destFee)).toThrow(
-      'Asset {"amount":"1000"} has no multiLocation'
-    )
   })
 
   it('should construct the correct call and return the api.callTxMethod result when version is provided', () => {
@@ -86,6 +63,9 @@ describe('createExecuteExchangeXcm', () => {
     const destFee = 75n
 
     const result = createExecuteExchangeXcm(input, weight, originFee, destFee)
+
+    expect(assertHasLocation).toHaveBeenCalledOnce()
+
     expect(result).toBe('result')
     expect(fakeApi.callTxMethod).toHaveBeenCalledTimes(1)
 
@@ -175,6 +155,7 @@ describe('createExecuteExchangeXcm', () => {
 
     const result = createExecuteExchangeXcm(input, weight, originFee, destFee)
     expect(result).toBe('defaultResult')
+    expect(assertHasLocation).toHaveBeenCalledOnce()
     expect(createDestination).toHaveBeenCalledWith(
       input.scenario,
       Version.V4,

@@ -138,7 +138,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
   const normalizedAsset = finalAsset.multiLocation
     ? {
         ...finalAsset,
-        multilocation: normalizeMultiLocation(finalAsset.multiLocation, finalVersion)
+        multiLocation: normalizeMultiLocation(finalAsset.multiLocation, finalVersion)
       }
     : finalAsset
 

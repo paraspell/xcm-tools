@@ -1,8 +1,8 @@
 import { DOT_MULTILOCATION } from '../../constants'
-import { InvalidParameterError } from '../../errors'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TSerializedApiCall, TWeight } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
+import { assertHasLocation } from '../assertions'
 import { createBeneficiary } from '../createBeneficiary'
 import { transformMultiLocation } from '../multiLocation'
 
@@ -25,9 +25,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
     paraId: paraIdTo
   })
 
-  if (!asset.multiLocation) {
-    throw new InvalidParameterError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
-  }
+  assertHasLocation(asset)
 
   const transformedMultiLocation = transformMultiLocation(asset.multiLocation)
 

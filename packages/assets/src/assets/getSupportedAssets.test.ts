@@ -1,12 +1,18 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { getAssets, getOtherAssets } from './assets'
+import { getAssets, getNativeAssetSymbol, getOtherAssets } from './assets'
 import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
 import { getSupportedAssets } from './getSupportedAssets'
+import { isSymbolMatch } from './isSymbolMatch'
 
 vi.mock('./assets', () => ({
   getAssets: vi.fn(),
-  getOtherAssets: vi.fn()
+  getOtherAssets: vi.fn(),
+  getNativeAssetSymbol: vi.fn()
+}))
+
+vi.mock('./isSymbolMatch', () => ({
+  isSymbolMatch: vi.fn()
 }))
 
 vi.mock('./search', () => ({
@@ -67,6 +73,32 @@ describe('getSupportedAssets', () => {
     expect(getOtherAssets).toHaveBeenCalledWith('Moonbeam')
     expect(filterEthCompatibleAssets).toHaveBeenCalledWith(moonbeamAssets)
     expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
+  })
+
+  it('should return only native Mythos assets when origin is Mythos and destination is Ethereum', () => {
+    const ethereumAssets = [
+      { symbol: 'MYTH', assetId: '1' },
+      { symbol: 'ETH', assetId: '2' },
+      { symbol: 'USDT', assetId: '3' }
+    ]
+
+    vi.mocked(getNativeAssetSymbol).mockReturnValue('MYTH')
+    vi.mocked(isSymbolMatch).mockImplementation((symbol1, symbol2) => symbol1 === symbol2)
+
+    vi.mocked(getOtherAssets).mockImplementation(node => {
+      if (node === 'Ethereum') return ethereumAssets
+      if (node === 'Mythos') return []
+      return []
+    })
+
+    vi.mocked(filterEthCompatibleAssets).mockReturnValue([])
+
+    const result = getSupportedAssets('Mythos', 'Ethereum')
+
+    expect(result).toEqual([{ symbol: 'MYTH', assetId: '1' }])
+    expect(getOtherAssets).toHaveBeenCalledWith('Mythos')
+    expect(getOtherAssets).toHaveBeenCalledWith('Ethereum')
+    expect(getNativeAssetSymbol).toHaveBeenCalledWith('Mythos')
   })
 
   it('should return DOT and KSM assets when origin and destination are AssetHubPolkadot and AssetHubKusama', () => {

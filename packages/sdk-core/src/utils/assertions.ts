@@ -1,3 +1,5 @@
+import type { TAssetWithLocation } from '@paraspell/assets'
+import { InvalidCurrencyError, type TAsset } from '@paraspell/assets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import { isTMultiLocation } from '@paraspell/sdk-common'
 
@@ -22,5 +24,11 @@ export const assertAddressIsString: (
     throw new InvalidParameterError(
       'Multi-Location address is not supported for XCM fee calculation.'
     )
+  }
+}
+
+export const assertHasLocation: (asset: TAsset) => asserts asset is TAssetWithLocation = asset => {
+  if (!asset.multiLocation) {
+    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is missing multi-location`)
   }
 }

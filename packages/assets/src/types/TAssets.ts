@@ -27,6 +27,10 @@ export type TForeignAsset = TBaseAsset &
 
 export type TAsset = TNativeAsset | TForeignAsset
 
+export type TAssetWithLocation = TAsset & {
+  multiLocation: TMultiLocation
+}
+
 export type TNodeAssets = {
   relayChainAssetSymbol: TRelayChainSymbol
   nativeAssetSymbol: string

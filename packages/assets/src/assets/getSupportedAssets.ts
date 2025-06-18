@@ -1,8 +1,9 @@
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
 
 import type { TAsset, TForeignAsset } from '../types'
-import { getAssets, getOtherAssets } from './assets'
+import { getAssets, getNativeAssetSymbol, getOtherAssets } from './assets'
 import { filterEthCompatibleAssets } from './filterEthCompatibleAssets'
+import { isSymbolMatch } from './isSymbolMatch'
 import { normalizeSymbol } from './normalizeSymbol'
 
 /**
@@ -26,6 +27,12 @@ export const getSupportedAssets = (
 
     if (origin === 'Moonbeam') {
       return ethereumCompatibleAssets
+    }
+
+    if (origin === 'Mythos') {
+      return ethereumAssets.filter(asset =>
+        isSymbolMatch(asset.symbol, getNativeAssetSymbol(origin))
+      )
     }
 
     return [...ethereumCompatibleAssets, ...ethereumAssets]

@@ -53,6 +53,7 @@ import type {
 } from '../types'
 import {
   addXcmVersionHeader,
+  assertHasLocation,
   createBeneficiary,
   createBeneficiaryMultiLocation,
   getFees
@@ -358,9 +359,7 @@ abstract class ParachainNode<TApi, TRes> {
       paraIdTo
     } = input
 
-    if (!asset.multiLocation) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
-    }
+    assertHasLocation(asset)
 
     if (senderAddress === undefined) {
       throw new InvalidParameterError('Sender address is required for transfers to Ethereum')
@@ -494,9 +493,7 @@ abstract class ParachainNode<TApi, TRes> {
       throw new BridgeHaltedError()
     }
 
-    if (!asset.multiLocation) {
-      throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
-    }
+    assertHasLocation(asset)
 
     if (senderAddress === undefined) {
       throw new InvalidParameterError('Sender address is required for transfers to Ethereum')

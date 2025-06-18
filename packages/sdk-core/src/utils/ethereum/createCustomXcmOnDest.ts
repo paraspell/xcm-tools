@@ -10,12 +10,16 @@ import { Parents } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
 import { InvalidParameterError } from '../../errors'
+import { getParaId } from '../../nodes/config'
+import { createDestination } from '../../pallets/xcmPallet/utils'
 import { type TPolkadotXCMTransferOptions } from '../../types'
+import { assertHasLocation } from '../assertions'
 import { createBeneficiaryMultiLocation } from '../multiLocation'
 
 export const createCustomXcmOnDest = <TApi, TRes>(
   {
     api,
+    destination,
     address,
     asset,
     scenario,
@@ -24,15 +28,14 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     version
   }: TPolkadotXCMTransferOptions<TApi, TRes>,
   origin: TNodeWithRelayChains,
-  messageId: string
+  messageId: string,
+  feeAmount?: bigint
 ) => {
   if (!isForeignAsset(asset)) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
   }
 
-  if (!asset.multiLocation) {
-    throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} has no multiLocation`)
-  }
+  assertHasLocation(asset)
 
   if (!senderAddress) {
     throw new InvalidParameterError(`Please provide senderAddress`)
@@ -59,18 +62,64 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     [version]: [
       {
         SetAppendix: [
-          {
-            DepositAsset: {
-              assets: { Wild: 'All' },
-              beneficiary: createBeneficiaryMultiLocation({
-                api,
-                scenario,
-                pallet: 'PolkadotXcm',
-                recipientAddress: isNodeEvm(origin) ? (ahAddress as string) : senderAddress,
-                version
-              })
-            }
-          }
+          origin === 'Mythos'
+            ? {
+                DepositReserveAsset: {
+                  assets: {
+                    Wild: 'All'
+                  },
+                  dest: createDestination(
+                    scenario,
+                    version,
+                    destination,
+                    getParaId(origin),
+                    undefined,
+                    Parents.ONE
+                  ),
+                  xcm: [
+                    {
+                      BuyExecution: {
+                        fees: {
+                          id: {
+                            parents: Parents.ZERO,
+                            interior: 'Here'
+                          },
+                          fun: {
+                            Fungible: feeAmount
+                          }
+                        },
+                        weight_limit: 'Unlimited'
+                      }
+                    },
+                    {
+                      DepositAsset: {
+                        assets: {
+                          Wild: 'All'
+                        },
+                        beneficiary: createBeneficiaryMultiLocation({
+                          api,
+                          scenario,
+                          pallet: 'PolkadotXcm',
+                          recipientAddress: address,
+                          version
+                        })
+                      }
+                    }
+                  ]
+                }
+              }
+            : {
+                DepositAsset: {
+                  assets: { Wild: 'All' },
+                  beneficiary: createBeneficiaryMultiLocation({
+                    api,
+                    scenario,
+                    pallet: 'PolkadotXcm',
+                    recipientAddress: isNodeEvm(origin) ? (ahAddress as string) : senderAddress,
+                    version
+                  })
+                }
+              }
         ]
       },
       {
