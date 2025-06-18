@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.6.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.5.2...sdk-core-v10.6.0) (2025-06-18)
+
+
+### Features
+
+* **sdk-core:** Enable Mythos -&gt; Ethereum transfers 🪄 ([dc9dc6b](https://github.com/paraspell/xcm-tools/commit/dc9dc6bdda4c4a4ac16401b647bbb53da7c1cbe5))
+
 ## [10.5.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.5.1...sdk-core-v10.5.2) (2025-06-13)
 
 
