@@ -10,7 +10,7 @@ export const getXTokensParameters = (
   currencySelection: TXTokensCurrencySelection,
   destLocation: TMultiLocation,
   amount: TAmount,
-  fees: string | number,
+  weightLimit: string | number,
   version: Version,
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
 ): Record<string, unknown> => {
@@ -21,7 +21,7 @@ export const getXTokensParameters = (
       currency_id: currencySelection,
       amount: BigInt(amount),
       dest: versionedDestLocation,
-      dest_weight_limit: fees
+      dest_weight_limit: weightLimit
     }
   }
 
@@ -37,6 +37,6 @@ export const getXTokensParameters = (
     [assetKey]: currencySelection,
     ...(isOverriddenMultiAssets && { fee_item: feeIndexWithFallback }),
     dest: versionedDestLocation,
-    dest_weight_limit: fees
+    dest_weight_limit: weightLimit
   }
 }

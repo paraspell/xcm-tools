@@ -1,9 +1,4 @@
-import {
-  getAssets,
-  type TAsset,
-  type TMultiLocation,
-  transformMultiLocation,
-} from '@paraspell/sdk-pjs';
+import { getAssets, localizeLocation, type TAsset, type TMultiLocation } from '@paraspell/sdk-pjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getDexConfig } from './getDexConfig';
@@ -11,9 +6,9 @@ import { getDexConfig } from './getDexConfig';
 vi.mock('@paraspell/sdk-pjs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@paraspell/sdk-pjs')>();
   return {
-    ...actual, // Preserve other exports if any
+    ...actual,
     getAssets: vi.fn(),
-    transformMultiLocation: vi.fn(),
+    localizeLocation: vi.fn(),
   };
 });
 
@@ -45,7 +40,7 @@ const makeApi = (entriesReturn: unknown[]) =>
 describe('getDexConfig', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(transformMultiLocation).mockImplementation((ml) => ml);
+    vi.mocked(localizeLocation).mockImplementation((_node, ml) => ml);
   });
 
   it('returns filtered assets based on on-chain pools, empty pairs, and isOmni true', async () => {
@@ -97,7 +92,7 @@ describe('getDexConfig', () => {
     const specialAsset = makeAsset('SPECIAL', 'sp_id', assetOriginalMl);
     vi.mocked(getAssets).mockReturnValue([specialAsset, DOT_FA]);
 
-    vi.mocked(transformMultiLocation).mockImplementation((ml) => {
+    vi.mocked(localizeLocation).mockImplementation((_node, ml) => {
       if (JSON.stringify(ml) === JSON.stringify(assetOriginalMl)) {
         return assetTransformedMl as TMultiLocation;
       }
@@ -109,7 +104,7 @@ describe('getDexConfig', () => {
 
     const cfg = await getDexConfig(apiMock, 'Moonbeam');
 
-    expect(transformMultiLocation).toHaveBeenCalledWith(assetOriginalMl);
+    expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', assetOriginalMl);
     expect(cfg.assets.length).toBe(1);
     expect(cfg.assets).toEqual(
       expect.arrayContaining([

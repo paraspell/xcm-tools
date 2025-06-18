@@ -25,6 +25,7 @@ const dryRunResult: TDryRunResult = {
     forwardedXcms: [],
     currency: 'DOT',
   },
+  hops: [],
 };
 
 const feeResult: TGetXcmFeeResult = {

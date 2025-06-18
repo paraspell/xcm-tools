@@ -5,9 +5,9 @@
 import type { TPapiApi } from '@paraspell/sdk';
 import {
   InvalidParameterError,
+  localizeLocation,
   type TMultiLocation,
   transform,
-  transformMultiLocation,
 } from '@paraspell/sdk';
 import type BigNumber from 'bignumber.js';
 
@@ -20,11 +20,19 @@ export const getQuotedAmount = async (
 ) => {
   const strategies = [
     { from: assetFromML, to: assetToML, desc: 'original' },
-    { from: transformMultiLocation(assetFromML), to: assetToML, desc: 'transformed assetFrom' },
-    { from: assetFromML, to: transformMultiLocation(assetToML), desc: 'transformed assetTo' },
     {
-      from: transformMultiLocation(assetFromML),
-      to: transformMultiLocation(assetToML),
+      from: localizeLocation('AssetHubPolkadot', assetFromML),
+      to: assetToML,
+      desc: 'transformed assetFrom',
+    },
+    {
+      from: assetFromML,
+      to: localizeLocation('AssetHubPolkadot', assetToML),
+      desc: 'transformed assetTo',
+    },
+    {
+      from: localizeLocation('AssetHubPolkadot', assetFromML),
+      to: localizeLocation('AssetHubPolkadot', assetToML),
       desc: 'both transformed',
     },
   ];

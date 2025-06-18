@@ -4,7 +4,8 @@ import {
   findAssetByMultiLocation,
   getOtherAssets,
   InvalidCurrencyError,
-  isForeignAsset
+  isForeignAsset,
+  isSymbolMatch
 } from '@paraspell/assets'
 import { hasJunction, Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
@@ -21,6 +22,7 @@ import type {
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import { createBeneficiaryMultiLocation } from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
+import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
 import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
@@ -113,9 +115,22 @@ class Hydration<TApi, TRes>
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const { destination } = input
+    const { api, destination, feeAsset, asset, overriddenAsset } = input
     if (destination === 'Ethereum') {
       return this.transferToEthereum(input)
+    }
+
+    if (feeAsset) {
+      if (overriddenAsset) {
+        throw new InvalidCurrencyError('Cannot use overridden multi-assets with XCM execute')
+      }
+
+      const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
+      const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol())
+
+      if (!isNativeAsset || !isNativeFeeAsset) {
+        return api.callTxMethod(await handleExecuteTransfer(this.node, input))
+      }
     }
 
     if (destination === 'Polimec') {
@@ -139,7 +154,11 @@ class Hydration<TApi, TRes>
     return transferXTokens(input, Number(asset.assetId))
   }
 
-  protected canUseXTokens({ to: destination, asset }: TSendInternalOptions<TApi, TRes>): boolean {
+  protected canUseXTokens({
+    to: destination,
+    asset,
+    feeAsset
+  }: TSendInternalOptions<TApi, TRes>): boolean {
     const isEthAsset =
       asset.multiLocation &&
       findAssetByMultiLocation(getOtherAssets('Ethereum'), asset.multiLocation)
@@ -147,7 +166,8 @@ class Hydration<TApi, TRes>
       destination !== 'Ethereum' &&
       destination !== 'Polimec' &&
       !(destination === 'AssetHubPolkadot' && asset.symbol === 'DOT') &&
-      !isEthAsset
+      !isEthAsset &&
+      !feeAsset
     )
   }
 

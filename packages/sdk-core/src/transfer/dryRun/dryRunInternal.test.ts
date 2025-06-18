@@ -72,7 +72,12 @@ describe('dryRunInternal', () => {
 
     const res = await dryRunInternal(createOptions(api))
 
-    expect(res).toEqual({ failureReason: 'someError', failureChain: 'origin', origin: originFail })
+    expect(res).toEqual({
+      failureReason: 'someError',
+      failureChain: 'origin',
+      origin: originFail,
+      hops: []
+    })
   })
 
   it('origin & destination succeed (no intermediates)', async () => {
@@ -100,16 +105,18 @@ describe('dryRunInternal', () => {
 
     expect(res).toEqual({
       origin: { ...originOk, currency: 'ACA' },
-      destination: { ...destOk, currency: 'ACA' }
+      destination: { ...destOk, currency: 'ACA' },
+      hops: []
     })
   })
 
   it('adds intermediate AssetHub result when hop succeeds', async () => {
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
-    vi.mocked(getNativeAssetSymbol)
-      .mockReturnValueOnce('ACA')
-      .mockReturnValueOnce('DOT')
-      .mockReturnValueOnce('GLMR')
+    vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
+      if (node === 'AssetHubPolkadot') return 'DOT'
+      if (node === 'Moonbeam') return 'GLMR'
+      return 'ACA'
+    })
 
     vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
     vi.mocked(getTNode)
@@ -144,7 +151,8 @@ describe('dryRunInternal', () => {
     expect(res).toEqual({
       origin: { ...originOk, currency: 'ACA' },
       assetHub: { ...assetHubOk, currency: 'DOT' },
-      destination: { ...destOk, currency: 'ACA' }
+      destination: { ...destOk, currency: 'ACA' },
+      hops: [{ node: 'AssetHubPolkadot', result: { ...assetHubOk, currency: 'DOT' } }]
     })
   })
 
@@ -170,7 +178,8 @@ describe('dryRunInternal', () => {
       failureReason: 'dest-boom',
       failureChain: 'destination',
       origin: { ...originOk, currency: 'ACA' },
-      destination: destFail
+      destination: destFail,
+      hops: []
     })
   })
 })

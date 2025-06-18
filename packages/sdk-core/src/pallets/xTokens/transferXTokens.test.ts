@@ -75,8 +75,7 @@ describe('transferXTokens', () => {
         assetId: '123',
         amount: '3000'
       },
-      destination: 'Hydration',
-      fees: 500
+      destination: 'Hydration'
     }
 
     const currencySelection = 'USD'

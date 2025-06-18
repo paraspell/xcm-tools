@@ -5914,7 +5914,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000"
+        "existentialDeposit": "10000",
+        "isFeeAsset": true
       },
       {
         "assetId": "1984",
@@ -5936,7 +5937,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000"
+        "existentialDeposit": "10000",
+        "isFeeAsset": true
       },
       {
         "assetId": "21",
@@ -6002,7 +6004,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "30",
@@ -6024,7 +6027,8 @@
             ]
           }
         },
-        "existentialDeposit": "1"
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       },
       {
         "assetId": "31337",

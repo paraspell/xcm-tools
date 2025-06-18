@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TForeignAsset, TMultiLocation } from '@paraspell/sdk-pjs';
-import { getAssets, type TNodePolkadotKusama, transformMultiLocation } from '@paraspell/sdk-pjs';
+import { getAssets, localizeLocation, type TNodePolkadotKusama } from '@paraspell/sdk-pjs';
 import type { ApiPromise } from '@polkadot/api';
 
 import type { TDexConfig, TRouterAsset } from '../../../types';
@@ -39,7 +39,7 @@ export const getDexConfig = async (
     (asset) =>
       poolMultiLocations.has(JSON.stringify(asset.multiLocation)) ||
       poolMultiLocations.has(
-        JSON.stringify(transformMultiLocation(asset.multiLocation as TMultiLocation)),
+        JSON.stringify(localizeLocation('AssetHubPolkadot', asset.multiLocation as TMultiLocation)),
       ),
   );
 

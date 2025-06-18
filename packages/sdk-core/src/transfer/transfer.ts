@@ -147,6 +147,7 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     asset: normalizedAsset,
     currency,
     feeAsset: resolvedFeeAsset,
+    feeCurrency: feeAsset,
     address,
     to: destination,
     paraIdTo,

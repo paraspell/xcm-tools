@@ -30,6 +30,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   asset: WithAmount<TAsset>
   currency: TCurrencyInputWithAmount
   feeAsset?: TAsset
+  feeCurrency?: TCurrencyInput
   destination: TDestination
   paraIdTo?: number
   version: Version
@@ -43,7 +44,6 @@ export type TXTokensTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
   destLocation: TMultiLocation
-  fees: number
   scenario: TScenario
   origin: TNodePolkadotKusama
   destination: TDestination
@@ -154,6 +154,7 @@ export type TSendInternalOptions<TApi, TRes> = Omit<
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
   feeAsset?: TAsset
+  feeCurrency?: TCurrencyInput
   overriddenAsset?: TMultiLocation | TMultiAssetWithFee[]
   version: Version
 }

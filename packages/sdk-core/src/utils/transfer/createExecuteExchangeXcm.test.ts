@@ -6,7 +6,7 @@ import { createDestination } from '../../pallets/xcmPallet/utils'
 import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
 import { assertHasLocation } from '../assertions'
 import { createBeneficiary } from '../createBeneficiary'
-import { transformMultiLocation } from '../multiLocation'
+import { localizeLocation } from '../multiLocation'
 import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
 
 vi.mock('../../pallets/xcmPallet/utils', () => ({
@@ -18,7 +18,7 @@ vi.mock('../createBeneficiary', () => ({
 }))
 
 vi.mock('../multiLocation', () => ({
-  transformMultiLocation: vi.fn()
+  localizeLocation: vi.fn()
 }))
 
 vi.mock('../assertions')
@@ -30,9 +30,7 @@ describe('createExecuteExchangeXcm', () => {
   beforeEach(() => {
     vi.mocked(createDestination).mockReturnValue(dummyDest)
     vi.mocked(createBeneficiary).mockReturnValue(dummyBeneficiary)
-    vi.mocked(transformMultiLocation).mockReturnValue(
-      'transformedLocation' as unknown as TMultiLocation
-    )
+    vi.mocked(localizeLocation).mockReturnValue('transformedLocation' as unknown as TMultiLocation)
   })
 
   afterEach(() => {
