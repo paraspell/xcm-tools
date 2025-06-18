@@ -1,22 +1,19 @@
+import { isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { getParaId } from '../nodes/config'
+import { resolveParaId } from './resolveParaId'
+
 vi.mock('@paraspell/sdk-common', () => ({
-  isTMultiLocation: vi.fn(),
-  isRelayChain: vi.fn()
+  isTMultiLocation: vi.fn()
 }))
 
 vi.mock('../nodes/config', () => ({
   getParaId: vi.fn()
 }))
 
-import { isRelayChain, isTMultiLocation, type TMultiLocation } from '@paraspell/sdk-common'
-
-import { getParaId } from '../nodes/config'
-import { resolveParaId } from './resolveParaId'
-
 describe('resolveParaId', () => {
   const parachain = 'Acala'
-  const relaychain = 'Polkadot'
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -24,7 +21,6 @@ describe('resolveParaId', () => {
 
   it('returns undefined if destination is a TMultiLocation', () => {
     vi.mocked(isTMultiLocation).mockReturnValue(true)
-    vi.mocked(isRelayChain).mockReturnValue(false)
     const multiLocation: TMultiLocation = {
       parents: 1,
       interior: {}
@@ -34,24 +30,8 @@ describe('resolveParaId', () => {
     expect(result).toBeUndefined()
   })
 
-  it('returns undefined if destination is Relay Chain', () => {
+  it('returns the provided paraId if destination is not TMultiLocation', () => {
     vi.mocked(isTMultiLocation).mockReturnValue(false)
-    vi.mocked(isRelayChain).mockReturnValue(true)
-    const result = resolveParaId(100, relaychain)
-    expect(isTMultiLocation).toHaveBeenCalledWith(relaychain)
-    expect(result).toBeUndefined()
-  })
-
-  it('returns undefined if destination is "Ethereum"', () => {
-    vi.mocked(isTMultiLocation).mockReturnValue(false)
-    vi.mocked(isRelayChain).mockReturnValue(false)
-    const result = resolveParaId(999, 'Ethereum')
-    expect(result).toBeUndefined()
-  })
-
-  it('returns the provided paraId if destination is not TMultiLocation/RelayChain/Ethereum', () => {
-    vi.mocked(isTMultiLocation).mockReturnValue(false)
-    vi.mocked(isRelayChain).mockReturnValue(false)
     vi.mocked(getParaId).mockReturnValue(1234)
     const result = resolveParaId(999, parachain)
     expect(result).toBe(999)
@@ -60,7 +40,6 @@ describe('resolveParaId', () => {
 
   it('calls getParaId and returns its value if paraId is undefined', () => {
     vi.mocked(isTMultiLocation).mockReturnValue(false)
-    vi.mocked(isRelayChain).mockReturnValue(false)
     vi.mocked(getParaId).mockReturnValue(5678)
     const result = resolveParaId(undefined, parachain)
     expect(getParaId).toHaveBeenCalledWith(parachain)

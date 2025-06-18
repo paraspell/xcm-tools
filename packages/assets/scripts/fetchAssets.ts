@@ -7,6 +7,7 @@ import type { ApiPromise } from '@polkadot/api'
 import {
   findAssetByMultiLocation,
   getNativeAssetSymbol,
+  normalizeMultiLocation,
   type TAssetJsonMap,
   type TForeignAsset,
   type TNativeAsset,
@@ -36,7 +37,12 @@ import {
   TNodePolkadotKusama,
   TNodeWithRelayChains
 } from '@paraspell/sdk-common'
-import { getNodeProviders, getParaId } from '../../sdk-core/src'
+import {
+  getNodeProviders,
+  getParaId,
+  localizeLocation,
+  reverseTransformMultiLocation
+} from '../../sdk-core/src'
 import { getRelayChainSymbol, getRelayChainType } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
@@ -479,7 +485,9 @@ const fetchNodeAssets = async (
     const allAssets = [...nativeAssets, ...mergedAssets] as unknown as TForeignAsset[]
 
     feeAssets.forEach(loc => {
-      const matched = findAssetByMultiLocation(allAssets, loc)
+      const matched =
+        findAssetByMultiLocation(allAssets, loc) ||
+        findAssetByMultiLocation(allAssets, reverseTransformMultiLocation(loc))
       if (matched) {
         matched.isFeeAsset = true
       }

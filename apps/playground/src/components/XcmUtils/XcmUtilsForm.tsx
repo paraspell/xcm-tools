@@ -38,6 +38,7 @@ import { DEFAULT_ADDRESS } from '../../constants';
 import {
   useAutoFillWalletAddress,
   useCurrencyOptions,
+  useFeeCurrencyOptions,
   useWallet,
 } from '../../hooks';
 import type { TSubmitType } from '../../types';
@@ -165,19 +166,35 @@ const XcmUtilsForm: FC<Props> = ({
     to,
   );
 
-  const transformCurrency = (entry: TCurrencyEntry) => {
+  const { currencyOptions: feeCurrencyOptions, currencyMap: feeCurrencyMap } =
+    useFeeCurrencyOptions(from);
+
+  const transformCurrency = (
+    entry: TCurrencyEntry,
+    currencyMap: Record<string, TAsset>,
+  ) => {
     if (entry.isCustomCurrency) {
+      // Custom currency doesn't map to currencyMap
       return { ...entry };
     }
+
     const currency = currencyMap[entry.currencyOptionId];
-    return currency ? { ...entry, currency } : { ...entry };
+
+    if (!currency) {
+      return { ...entry };
+    }
+
+    return { ...entry, currency };
   };
 
   const onSubmitInternal = (values: FormValues, submitType: TSubmitType) => {
-    const transformedCurrencies = values.currencies.map(transformCurrency);
+    const transformedCurrencies = values.currencies.map((entry) =>
+      transformCurrency(entry, currencyMap),
+    );
+
     const transformedFeeAsset =
       values.feeAsset.currencyOptionId || values.feeAsset.isCustomCurrency
-        ? transformCurrency(values.feeAsset as TCurrencyEntry)
+        ? transformCurrency(values.feeAsset as TCurrencyEntry, feeCurrencyMap)
         : undefined;
 
     const transformedValues: FormValuesTransformed = {
@@ -252,7 +269,7 @@ const XcmUtilsForm: FC<Props> = ({
     const feeAssetOptionId = form.values.feeAsset.currencyOptionId;
 
     if (!currentFeeAssetIsCustom && feeAssetOptionId) {
-      const isOptionStillValid = currencyOptions.some(
+      const isOptionStillValid = feeCurrencyOptions.some(
         (option) => option.value === feeAssetOptionId,
       );
 
@@ -260,7 +277,7 @@ const XcmUtilsForm: FC<Props> = ({
         form.setFieldValue('feeAsset.currencyOptionId', '');
       }
     }
-  }, [from, to, currencyOptions, form.values.feeAsset.isCustomCurrency]);
+  }, [from, feeCurrencyOptions, form.values.feeAsset.isCustomCurrency]);
 
   useEffect(() => {
     setIsUseXcmApiSelected(useApi);
@@ -287,7 +304,9 @@ const XcmUtilsForm: FC<Props> = ({
   const colorScheme = useComputedColorScheme();
 
   const feeAssetDisabled =
-    form.values.currencies.length <= 1 && from !== 'AssetHubPolkadot';
+    form.values.currencies.length <= 1 &&
+    from !== 'AssetHubPolkadot' &&
+    from !== 'Hydration';
 
   const showAhAddress = isNodeEvm(from) && isNodeEvm(to);
 
@@ -389,7 +408,7 @@ const XcmUtilsForm: FC<Props> = ({
           <FeeAssetSelection
             disabled={feeAssetDisabled}
             form={form}
-            currencyOptions={currencyOptions}
+            currencyOptions={feeCurrencyOptions}
           />
 
           <TextInput

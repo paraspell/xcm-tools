@@ -771,7 +771,8 @@ describe('Builder', () => {
           forwardedXcms: [],
           destParaId: 0,
           currency: 'DOT'
-        }
+        },
+        hops: []
       })
 
       const SENDER_ADDRESS = '23sxrMSmaUMqe2ufSJg8U3Y8kxHfKT67YbubwXWFazpYi7w6'
@@ -791,7 +792,8 @@ describe('Builder', () => {
           forwardedXcms: [],
           destParaId: 0,
           currency: 'DOT'
-        }
+        },
+        hops: []
       })
       expect(spy).toHaveBeenCalledTimes(1)
     })

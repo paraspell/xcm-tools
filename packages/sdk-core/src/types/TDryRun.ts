@@ -77,7 +77,17 @@ export type TDryRunNodeResultInternal = TDryRunNodeSuccess | TDryRunNodeFailure
 
 export type TDryRunNodeResult = (TDryRunNodeSuccess & { currency: string }) | TDryRunNodeFailure
 
-export type TDryRunChain = 'origin' | 'destination' | 'assetHub' | 'bridgeHub'
+export type THopInfo = {
+  node: TNodeWithRelayChains
+  result: TDryRunNodeResultInternal & { currency?: string }
+}
+
+export type TDryRunChain =
+  | 'origin'
+  | 'destination'
+  | 'assetHub'
+  | 'bridgeHub'
+  | TNodeWithRelayChains
 
 export type TDryRunResult = {
   failureReason?: string
@@ -86,6 +96,7 @@ export type TDryRunResult = {
   destination?: TDryRunNodeResult
   assetHub?: TDryRunNodeResult
   bridgeHub?: TDryRunNodeResult
+  hops: THopInfo[]
 }
 
 export enum XTokensError {

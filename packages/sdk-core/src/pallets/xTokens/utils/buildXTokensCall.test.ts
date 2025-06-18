@@ -35,8 +35,7 @@ describe('buildXTokensCall', () => {
     scenario: 'ParaToPara',
     asset: { amount: '100' },
     destLocation: {},
-    version,
-    fees: 10000
+    version
   } as TXTokensTransferOptions<unknown, unknown>
 
   let currencySelection: TXTokensCurrencySelection

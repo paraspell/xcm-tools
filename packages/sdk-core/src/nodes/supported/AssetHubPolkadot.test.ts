@@ -1,10 +1,8 @@
 import type { TAsset, TForeignAsset } from '@paraspell/assets'
 import {
   findAssetByMultiLocation,
-  getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
-  isAssetEqual,
   isForeignAsset,
   normalizeSymbol,
   type TMultiAsset,
@@ -24,9 +22,7 @@ import type { TScenario, TTransferLocalOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import { createBeneficiary } from '../../utils'
-import { transformMultiLocation } from '../../utils/multiLocation'
-import { createExecuteCall, createExecuteXcm } from '../../utils/transfer'
-import { validateAddress } from '../../utils/validateAddress'
+import { localizeLocation } from '../../utils/multiLocation'
 import ParachainNode from '../ParachainNode'
 import type AssetHubPolkadot from './AssetHubPolkadot'
 
@@ -59,17 +55,8 @@ vi.mock('../../utils/createBeneficiary', () => ({
 }))
 
 vi.mock('../../utils/multiLocation', () => ({
-  transformMultiLocation: vi.fn(),
+  localizeLocation: vi.fn(),
   createBeneficiaryMultiLocation: vi.fn()
-}))
-
-vi.mock('../../utils/validateAddress', () => ({
-  validateAddress: vi.fn()
-}))
-
-vi.mock('../../utils/transfer', () => ({
-  createExecuteXcm: vi.fn(),
-  createExecuteCall: vi.fn()
 }))
 
 vi.mock('../../utils/ethereum/generateMessageId', () => ({
@@ -491,130 +478,6 @@ describe('AssetHubPolkadot', () => {
     })
   })
 
-  describe('handleExecuteTransfer', () => {
-    beforeEach(() => {
-      vi.mocked(validateAddress).mockImplementation(() => {})
-    })
-
-    it('should throw error when senderAddress is not provided', async () => {
-      const input = { ...mockInput, senderAddress: undefined }
-      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
-        'Please provide senderAddress'
-      )
-    })
-
-    it('should throw error when amount is smaller than MIN_FEE', async () => {
-      const input = {
-        ...mockInput,
-        senderAddress: '0xvalid',
-        feeAsset: { ...mockInput.asset },
-        asset: { ...mockInput.asset, amount: '1', decimals: 6, multiLocation: {} as TMultiLocation }
-      }
-      vi.mocked(isAssetEqual).mockReturnValue(true)
-      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
-        'Asset amount 1 is too low, please increase the amount or use a different fee asset.'
-      )
-    })
-
-    it('should throw error when amount is smaller than calculated fee', async () => {
-      const input = {
-        ...mockInput,
-        senderAddress: '0xvalid',
-        feeAsset: { ...mockInput.asset },
-        asset: {
-          ...mockInput.asset,
-          amount: '300001',
-          decimals: 6,
-          multiLocation: {} as TMultiLocation
-        }
-      }
-      vi.mocked(isAssetEqual).mockReturnValue(true)
-      mockApi.getDryRunCall = vi.fn().mockResolvedValue({ success: true, fee: 170000n, weight: 0n })
-
-      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow(
-        'Asset amount 300001 is too low, please increase the amount or use a different fee asset.'
-      )
-    })
-
-    it('should throw error if dry run fails (success is false)', async () => {
-      const input = {
-        ...mockInput,
-        senderAddress: '0xvalid',
-        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation }
-      }
-      mockApi.getDryRunCall = vi.fn().mockResolvedValue({ success: false, fee: 0n, weight: 0n })
-      await expect(assetHub['handleExecuteTransfer'](input)).rejects.toThrow()
-    })
-
-    it('should successfully create and return executeXcm transaction', async () => {
-      const input = {
-        ...mockInput,
-        senderAddress: '0xvalid',
-        version: Version.V4,
-        asset: { ...mockInput.asset, multiLocation: {} as TMultiLocation, decimals: 12 }
-      }
-      input.asset.amount = '1000000'
-      const dryRunResult = { success: true, fee: 10000n }
-      mockApi.getDryRunCall = vi.fn().mockResolvedValue(dryRunResult)
-      mockApi.getXcmWeight = vi.fn().mockResolvedValue(12000n)
-      vi.mocked(transformMultiLocation).mockReturnValue({
-        transformed: true
-      } as unknown as TMultiLocation)
-      mockApi.quoteAhPrice = vi.fn().mockResolvedValue(500n)
-      vi.mocked(createExecuteXcm)
-        .mockReturnValueOnce({ [Version.V4]: {} } as ReturnType<typeof createExecuteXcm>)
-        .mockReturnValueOnce({ [Version.V3]: {} } as ReturnType<typeof createExecuteXcm>)
-      vi.mocked(createExecuteCall)
-        .mockReturnValueOnce('finalTx' as unknown as ReturnType<typeof createExecuteCall>)
-        .mockReturnValueOnce('finalTx' as unknown as ReturnType<typeof createExecuteCall>)
-      const result = await assetHub['handleExecuteTransfer'](input)
-      expect(result).toBe('finalTx')
-      expect(createExecuteXcm).toHaveBeenCalledWith(input, 12000n, Version.V4)
-    })
-
-    it('should throw error if using overridden multi-assets with xcm execute transfer', async () => {
-      const input = {
-        ...mockInput,
-        overriddenAsset: {},
-        senderAddress: '0xvalid',
-        feeAsset: {} as TAsset
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-      await expect(() => assetHub['transferPolkadotXCM'](input)).rejects.toThrow(
-        'Cannot use overridden multi-assets with XCM execute'
-      )
-    })
-
-    it('should call handleExecuteTransfer and return its promise if asset symbol is not native', async () => {
-      const inputForNonNativeAsset = {
-        ...mockInput,
-        feeAsset: { symbol: 'USDT' } as TAsset,
-        asset: {
-          symbol: 'USDT',
-          amount: '1000000',
-          multiLocation: { parents: 0, interior: { X1: { PalletInstance: 50 } } } as TMultiLocation,
-          decimals: 6
-        },
-        destination: 'Acala',
-        scenario: 'ParaToPara'
-      } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
-      mockApi.callTxMethod = vi.fn().mockResolvedValue('mockedExecuteTransferTxOutput')
-
-      const handleExecuteTransferSpy = vi
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .spyOn(assetHub as any, 'handleExecuteTransfer')
-        .mockResolvedValue({})
-
-      const result = await assetHub.transferPolkadotXCM(inputForNonNativeAsset)
-
-      expect(handleExecuteTransferSpy).toHaveBeenCalledTimes(1)
-      expect(handleExecuteTransferSpy).toHaveBeenCalledWith(inputForNonNativeAsset)
-
-      expect(result).toBe('mockedExecuteTransferTxOutput')
-    })
-  })
-
   describe('createCurrencySpec', () => {
     const amount = 1000n
     let superCreateCurrencySpecSpy: MockInstance
@@ -622,7 +485,7 @@ describe('AssetHubPolkadot', () => {
     beforeEach(() => {
       superCreateCurrencySpecSpy = vi.spyOn(ParachainNode.prototype, 'createCurrencySpec')
       vi.mocked(hasJunction).mockClear()
-      vi.mocked(transformMultiLocation).mockClear()
+      vi.mocked(localizeLocation).mockClear()
     })
 
     afterEach(() => {
@@ -650,7 +513,7 @@ describe('AssetHubPolkadot', () => {
         mockAsset
       )
       expect(hasJunction).not.toHaveBeenCalled()
-      expect(transformMultiLocation).not.toHaveBeenCalled()
+      expect(localizeLocation).not.toHaveBeenCalled()
       expect(result).toEqual(expectedSuperResult)
     })
 
@@ -673,7 +536,7 @@ describe('AssetHubPolkadot', () => {
       const result = assetHub.createCurrencySpec(amount, scenario, assetHub.version, mockAsset)
 
       expect(hasJunction).toHaveBeenCalledWith(mockMultiLocation, 'Parachain', 1000)
-      expect(transformMultiLocation).not.toHaveBeenCalled()
+      expect(localizeLocation).not.toHaveBeenCalled()
       expect(superCreateCurrencySpecSpy).not.toHaveBeenCalled()
       expect(result).toEqual(expectedResult)
     })
@@ -697,12 +560,12 @@ describe('AssetHubPolkadot', () => {
       const expectedResult = { id: transformedMultiLocation, fun: { Fungible: amount } }
 
       vi.mocked(hasJunction).mockReturnValue(true)
-      vi.mocked(transformMultiLocation).mockReturnValue(transformedMultiLocation)
+      vi.mocked(localizeLocation).mockReturnValue(transformedMultiLocation)
 
       const result = assetHub.createCurrencySpec(amount, scenario, assetHub.version, mockAsset)
 
       expect(hasJunction).toHaveBeenCalledWith(originalMultiLocation, 'Parachain', 1000)
-      expect(transformMultiLocation).toHaveBeenCalledWith(originalMultiLocation)
+      expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', originalMultiLocation)
       expect(superCreateCurrencySpecSpy).not.toHaveBeenCalled()
       expect(result).toEqual(expectedResult)
     })

@@ -55,8 +55,7 @@ import {
   addXcmVersionHeader,
   assertHasLocation,
   createBeneficiary,
-  createBeneficiaryMultiLocation,
-  getFees
+  createBeneficiaryMultiLocation
 } from '../utils'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
@@ -125,6 +124,7 @@ abstract class ParachainNode<TApi, TRes> {
       asset,
       currency,
       feeAsset,
+      feeCurrency,
       address,
       to: destination,
       paraIdTo,
@@ -172,7 +172,6 @@ abstract class ParachainNode<TApi, TRes> {
           version,
           paraId
         }),
-        fees: getFees(scenario),
         origin: this.node,
         scenario,
         paraIdTo: paraId,
@@ -225,6 +224,7 @@ abstract class ParachainNode<TApi, TRes> {
         asset,
         currency,
         feeAsset,
+        feeCurrency,
         scenario,
         destination,
         paraIdTo: paraId,
@@ -245,12 +245,12 @@ abstract class ParachainNode<TApi, TRes> {
       const isEthDest = destination === 'Ethereum'
 
       // Eth asset - Any origin to any dest via AH - DestinationReserve - multiple instructions
-      if (isEthAsset && !isAHPOrigin && !isAHPDest && !isEthDest) {
+      if (isEthAsset && !isAHPOrigin && !isAHPDest && !isEthDest && !feeAsset) {
         return this.transferEthAssetViaAH(options)
       }
 
       // Eth asset - Any origin to AHP - DestinationReserve - one DepositAsset instruction
-      if (isEthAsset && isAHPDest && !isAHPOrigin && !isEthDest) {
+      if (isEthAsset && isAHPDest && !isAHPOrigin && !isEthDest && !feeAsset) {
         return this.transferToEthereum(options, true)
       }
 

@@ -4,7 +4,7 @@ import type { TSerializedApiCall, TWeight } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasLocation } from '../assertions'
 import { createBeneficiary } from '../createBeneficiary'
-import { transformMultiLocation } from '../multiLocation'
+import { localizeLocation } from '../multiLocation'
 
 export const createExecuteExchangeXcm = <TApi, TRes>(
   input: TPolkadotXCMTransferOptions<TApi, TRes>,
@@ -27,7 +27,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
 
   assertHasLocation(asset)
 
-  const transformedMultiLocation = transformMultiLocation(asset.multiLocation)
+  const transformedMultiLocation = localizeLocation('AssetHubPolkadot', asset.multiLocation)
 
   const call: TSerializedApiCall = {
     module: 'PolkadotXcm',

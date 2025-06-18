@@ -1,1 +1,1 @@
-export * from './hasJunction'
+export * from './junctions'

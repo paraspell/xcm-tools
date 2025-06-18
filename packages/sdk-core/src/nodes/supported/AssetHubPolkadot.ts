@@ -6,9 +6,8 @@ import {
   getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
-  isAssetEqual,
   isForeignAsset,
-  normalizeSymbol
+  isSymbolMatch
 } from '@paraspell/assets'
 import {
   hasJunction,
@@ -18,18 +17,8 @@ import {
   Version
 } from '@paraspell/sdk-common'
 
-import {
-  DOT_MULTILOCATION,
-  ETHEREUM_JUNCTION,
-  MAX_WEIGHT,
-  SYSTEM_NODES_POLKADOT
-} from '../../constants'
-import {
-  BridgeHaltedError,
-  DryRunFailedError,
-  InvalidParameterError,
-  ScenarioNotSupportedError
-} from '../../errors'
+import { DOT_MULTILOCATION, ETHEREUM_JUNCTION, SYSTEM_NODES_POLKADOT } from '../../constants'
+import { BridgeHaltedError, InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import {
   createBridgeDestination,
@@ -52,10 +41,9 @@ import {
 import { addXcmVersionHeader, assertHasLocation, createBeneficiary } from '../../utils'
 import { generateMessageId } from '../../utils/ethereum/generateMessageId'
 import { createMultiAsset } from '../../utils/multiAsset'
-import { createBeneficiaryMultiLocation, transformMultiLocation } from '../../utils/multiLocation'
+import { createBeneficiaryMultiLocation, localizeLocation } from '../../utils/multiLocation'
 import { resolveParaId } from '../../utils/resolveParaId'
-import { createExecuteCall, createExecuteXcm } from '../../utils/transfer'
-import { validateAddress } from '../../utils/validateAddress'
+import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
 import ParachainNode from '../ParachainNode'
 
@@ -357,59 +345,6 @@ class AssetHubPolkadot<TApi, TRes>
       : 'limited_teleport_assets'
   }
 
-  private async handleExecuteTransfer<TApi, TRes>(
-    input: TPolkadotXCMTransferOptions<TApi, TRes>
-  ): Promise<TSerializedApiCall> {
-    const { api, senderAddress, asset, feeAsset, version } = input
-
-    if (!senderAddress) {
-      throw new InvalidParameterError('Please provide senderAddress')
-    }
-
-    validateAddress(senderAddress, this.node, false)
-
-    const decimals = asset.decimals as number
-    const multiplier = decimals > 10 ? 0.4 : 0.15
-
-    const base = BigInt(10 ** decimals)
-    const scaledMultiplier = BigInt(Math.floor(multiplier * 10 ** decimals))
-    const MIN_FEE = (base * scaledMultiplier) / BigInt(10 ** decimals)
-
-    const checkAmount = (fee: bigint) => {
-      if (feeAsset && isAssetEqual(asset, feeAsset) && BigInt(asset.amount) <= fee * 2n) {
-        throw new InvalidParameterError(
-          `Asset amount ${asset.amount} is too low, please increase the amount or use a different fee asset.`
-        )
-      }
-    }
-
-    checkAmount(MIN_FEE)
-
-    const call = createExecuteCall(createExecuteXcm(input, MIN_FEE, version), MAX_WEIGHT)
-
-    const dryRunResult = await api.getDryRunCall({
-      node: this.node,
-      tx: api.callTxMethod(call),
-      address: senderAddress,
-      asset,
-      feeAsset
-    })
-
-    if (!dryRunResult.success) {
-      throw new DryRunFailedError(dryRunResult.failureReason)
-    }
-
-    const paddedFee = (dryRunResult.fee * 120n) / 100n
-
-    checkAmount(paddedFee)
-
-    const xcm = createExecuteXcm(input, paddedFee, version)
-
-    const weight = await api.getXcmWeight(xcm)
-
-    return createExecuteCall(createExecuteXcm(input, paddedFee, version), weight)
-  }
-
   async transferPolkadotXCM<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
@@ -420,14 +355,14 @@ class AssetHubPolkadot<TApi, TRes>
         throw new InvalidCurrencyError('Cannot use overridden multi-assets with XCM execute')
       }
 
-      if (normalizeSymbol(asset.symbol) === normalizeSymbol('KSM')) {
+      if (isSymbolMatch(asset.symbol, 'KSM')) {
         return this.handleLocalReserveTransfer(input)
       }
 
-      const isNativeAsset = asset.symbol === this.getNativeAssetSymbol()
+      const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
 
       if (!isNativeAsset) {
-        return api.callTxMethod(await this.handleExecuteTransfer(input))
+        return api.callTxMethod(await handleExecuteTransfer(this.node, input))
       }
     }
 
@@ -514,8 +449,8 @@ class AssetHubPolkadot<TApi, TRes>
         throw new InvalidCurrencyError('Asset does not have a multiLocation defined')
       }
 
-      const transformedMultiLocation = hasJunction(multiLocation, 'Parachain', 1000)
-        ? transformMultiLocation(multiLocation)
+      const transformedMultiLocation = hasJunction(multiLocation, 'Parachain', getParaId(this.node))
+        ? localizeLocation(this.node, multiLocation)
         : multiLocation
 
       return createMultiAsset(version, amount, transformedMultiLocation)

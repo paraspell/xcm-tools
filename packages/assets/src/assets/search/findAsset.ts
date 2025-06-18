@@ -21,6 +21,7 @@ export const findAsset = (
   }
 
   const { otherAssets, nativeAssets } = getAssetsObject(node)
+
   const isEthereumDestination = destination === 'Ethereum'
 
   const getEthereumAssets = () => getOtherAssets('Ethereum')

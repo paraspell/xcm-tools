@@ -33,7 +33,8 @@ describe('dryRun', () => {
         forwardedXcms: [],
         destParaId: 0,
         currency: 'DOT'
-      }
+      },
+      hops: []
     }
 
     vi.mocked(dryRunInternal).mockResolvedValue(mockResult)

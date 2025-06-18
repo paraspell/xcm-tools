@@ -24,7 +24,8 @@ import {
   InvalidCurrencyError,
   InvalidParameterError,
   isAssetEqual,
-  normalizeMultiLocation,
+  isRelayChain,
+  localizeLocation,
   Parents,
   Version
 } from '@paraspell/sdk-core'
@@ -472,8 +473,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       ? Boolean(feeAsset.multiLocation)
       : Boolean(asset?.multiLocation)
 
-    if (hasXcmPaymentApiSupport(node) && result.value.local_xcm && hasMultiLocation) {
-      const xcmFee = await this.getXcmPaymentApiFee(result.value.local_xcm, feeAsset ?? asset)
+    if (
+      hasXcmPaymentApiSupport(node) &&
+      result.value.local_xcm &&
+      hasMultiLocation &&
+      node !== 'AssetHubPolkadot'
+    ) {
+      const xcmFee = await this.getXcmPaymentApiFee(node, result.value.local_xcm, feeAsset ?? asset)
 
       if (typeof xcmFee === 'bigint') {
         return Promise.resolve({
@@ -510,7 +516,11 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     }
   }
 
-  private async getXcmPaymentApiFee(xcm: any, asset: TAsset): Promise<bigint> {
+  async getXcmPaymentApiFee(
+    node: TNodeDotKsmWithRelayChains,
+    xcm: any,
+    asset: TAsset
+  ): Promise<bigint> {
     const weight = await this.api.getUnsafeApi().apis.XcmPaymentApi.query_xcm_weight(xcm)
 
     if (!asset?.multiLocation) {
@@ -519,13 +529,18 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       )
     }
 
-    const transformedMultiLocation = transform(normalizeMultiLocation(asset.multiLocation))
+    const transformedLocation =
+      node === 'AssetHubPolkadot' || node === 'AssetHubKusama' || isRelayChain(node)
+        ? localizeLocation(node, asset.multiLocation)
+        : asset.multiLocation
+
+    const transformedPapiLocation = transform(transformedLocation)
 
     const feeResult = await this.api
       .getUnsafeApi()
       .apis.XcmPaymentApi.query_weight_to_asset_fee(weight.value, {
         type: Version.V4,
-        value: transformedMultiLocation
+        value: transformedPapiLocation
       })
 
     return feeResult.value
@@ -575,8 +590,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
-    if (hasXcmPaymentApiSupport(node) && asset) {
-      const fee = await this.getXcmPaymentApiFee(xcm, asset)
+    if (hasXcmPaymentApiSupport(node) && asset && node !== 'AssetHubPolkadot') {
+      const fee = await this.getXcmPaymentApiFee(node, xcm, asset)
 
       if (typeof fee === 'bigint') {
         return {

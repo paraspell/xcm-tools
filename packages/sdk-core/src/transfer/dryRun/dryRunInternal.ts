@@ -9,7 +9,7 @@ import { isRelayChain, type TNodeDotKsmWithRelayChains, Version } from '@paraspe
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
 import { InvalidParameterError } from '../../errors'
 import { getTNode } from '../../nodes/getTNode'
-import type { TDryRunChain, TDryRunNodeResultInternal } from '../../types'
+import type { TDryRunChain, TDryRunNodeResultInternal, THopInfo } from '../../types'
 import { type TDryRunOptions, type TDryRunResult, type THubKey } from '../../types'
 import { addXcmVersionHeader, determineRelayChain } from '../../utils'
 import { getParaEthTransferFees } from '../ethTransfer'
@@ -17,14 +17,23 @@ import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
 
 const getFailureInfo = (
-  results: Partial<Record<TDryRunChain, TDryRunNodeResultInternal | undefined>>
+  results: Partial<Record<TDryRunChain, TDryRunNodeResultInternal | undefined>>,
+  hops: THopInfo[]
 ): { failureReason?: string; failureChain?: TDryRunChain } => {
+  // Check standard chains first for backwards compatibility
   for (const chain of ['destination', 'assetHub', 'bridgeHub'] as TDryRunChain[]) {
     const res = results[chain]
     if (res && !res.success && res.failureReason) {
       return { failureReason: res.failureReason, failureChain: chain }
     }
   }
+
+  for (const hop of hops) {
+    if (!hop.result.success && hop.result.failureReason) {
+      return { failureReason: hop.result.failureReason, failureChain: hop.node }
+    }
+  }
+
   return {}
 }
 
@@ -33,10 +42,9 @@ export const dryRunInternal = async <TApi, TRes>(
 ): Promise<TDryRunResult> => {
   const { origin, destination, currency, api, tx, senderAddress, feeAsset } = options
 
-  const resolvedFeeAsset =
-    feeAsset && origin === 'AssetHubPolkadot'
-      ? resolveFeeAsset(feeAsset, origin, destination, currency)
-      : undefined
+  const resolvedFeeAsset = feeAsset
+    ? resolveFeeAsset(feeAsset, origin, destination, currency)
+    : undefined
 
   const asset = findAssetForNodeOrThrow(origin, currency, destination)
 
@@ -52,7 +60,8 @@ export const dryRunInternal = async <TApi, TRes>(
     return {
       failureReason: originDryRun.failureReason,
       failureChain: 'origin',
-      origin: originDryRun
+      origin: originDryRun,
+      hops: []
     }
   }
 
@@ -68,6 +77,7 @@ export const dryRunInternal = async <TApi, TRes>(
   let nextParaId: number | undefined = initialDestParaId
 
   const intermediateFees: Partial<Record<THubKey, TDryRunNodeResultInternal>> = {}
+  const hops: THopInfo[] = []
   let destinationDryRun: TDryRunNodeResultInternal | undefined
 
   while (
@@ -115,6 +125,30 @@ export const dryRunInternal = async <TApi, TRes>(
         amount: BigInt((currency as WithAmount<TCurrencyCore>).amount)
       })
 
+      // Determine the currency for this hop
+      let hopCurrency: string | undefined
+      if (nextChain === destination) {
+        hopCurrency = asset?.symbol
+      } else if (
+        isRelayChain(nextChain) ||
+        nextChain === assetHubNode ||
+        nextChain === bridgeHubNode
+      ) {
+        hopCurrency = resolvedFeeAsset
+          ? resolvedFeeAsset.symbol
+          : getNativeAssetSymbol(nextChain as TNodeDotKsmWithRelayChains)
+      }
+
+      // Add to hops array (only if not the destination)
+      if (nextChain !== destination) {
+        hops.push({
+          node: nextChain,
+          result:
+            hopDryRun.success && hopCurrency ? { ...hopDryRun, currency: hopCurrency } : hopDryRun
+        })
+      }
+
+      // Keep existing logic for backwards compatibility
       if (nextChain === destination || (isRelayChain(nextChain) && !isRelayChain(destination))) {
         destinationDryRun = hopDryRun
       } else if (nextChain === assetHubNode) {
@@ -146,13 +180,25 @@ export const dryRunInternal = async <TApi, TRes>(
       ...intermediateFees.bridgeHub,
       fee: intermediateFees.bridgeHub.fee + bridgeFee
     }
+
+    // Update the hop data if BridgeHub is in the hops array
+    const bridgeHubHopIndex = hops.findIndex(hop => hop.node === bridgeHubNode)
+    if (bridgeHubHopIndex !== -1 && hops[bridgeHubHopIndex].result.success) {
+      hops[bridgeHubHopIndex].result = {
+        ...hops[bridgeHubHopIndex].result,
+        fee: intermediateFees.bridgeHub.fee + bridgeFee
+      }
+    }
   }
 
-  const { failureReason, failureChain } = getFailureInfo({
-    destination: destinationDryRun,
-    assetHub: intermediateFees.assetHub,
-    bridgeHub: intermediateFees.bridgeHub
-  })
+  const { failureReason, failureChain } = getFailureInfo(
+    {
+      destination: destinationDryRun,
+      assetHub: intermediateFees.assetHub,
+      bridgeHub: intermediateFees.bridgeHub
+    },
+    hops
+  )
 
   return {
     failureReason,
@@ -164,13 +210,17 @@ export const dryRunInternal = async <TApi, TRes>(
         }
       : originDryRun,
     assetHub: intermediateFees.assetHub?.success
-      ? { ...intermediateFees.assetHub, currency: getNativeAssetSymbol(assetHubNode) }
+      ? {
+          ...intermediateFees.assetHub,
+          currency: resolvedFeeAsset ? resolvedFeeAsset.symbol : getNativeAssetSymbol(assetHubNode)
+        }
       : intermediateFees.assetHub,
     bridgeHub: processedBridgeHubData?.success
       ? { ...processedBridgeHubData, currency: getNativeAssetSymbol(bridgeHubNode) }
       : processedBridgeHubData,
     destination: destinationDryRun?.success
       ? { ...destinationDryRun, currency: asset?.symbol }
-      : destinationDryRun
+      : destinationDryRun,
+    hops // Add the hops array to the return value
   }
 }

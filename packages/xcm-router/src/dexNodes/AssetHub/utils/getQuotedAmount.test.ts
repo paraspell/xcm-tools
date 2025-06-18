@@ -1,5 +1,5 @@
 import type { TPapiApi } from '@paraspell/sdk';
-import { type TMultiLocation, transform, transformMultiLocation } from '@paraspell/sdk';
+import { localizeLocation, type TMultiLocation, transform } from '@paraspell/sdk';
 import BigNumber from 'bignumber.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -63,7 +63,7 @@ describe('getQuotedAmount', () => {
     expect(result).toEqual({
       amountOut: 3000n,
       usedFromML: assetFromML,
-      usedToML: transformMultiLocation(assetToML),
+      usedToML: localizeLocation('AssetHubPolkadot', assetToML),
     });
     expect(quotePriceExactTokensForTokens).toHaveBeenCalledTimes(3);
   });
