@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.7.1](https://github.com/paraspell/xcm-tools/compare/assets-v10.7.0...assets-v10.7.1) (2025-06-19)
+
+
+### Bug Fixes
+
+* **assets:** Add locations to Zeitgeist assets 💰 ([14aa822](https://github.com/paraspell/xcm-tools/commit/14aa8228d2f3f52a172b7652062ff8802cc2199e))
+
 ## [10.7.0](https://github.com/paraspell/xcm-tools/compare/assets-v10.6.0...assets-v10.7.0) (2025-06-19)
 
 
