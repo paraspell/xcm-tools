@@ -1,4 +1,4 @@
-import type { Asset } from '@galacticcouncil/sdk';
+import type { Asset, TxBuilderFactory } from '@galacticcouncil/sdk';
 import { TradeRouter } from '@galacticcouncil/sdk';
 import { getAssetDecimals, getNativeAssetSymbol } from '@paraspell/sdk';
 import type { Extrinsic } from '@paraspell/sdk-pjs';
@@ -38,19 +38,29 @@ vi.mock('@paraspell/sdk', () => ({
 }));
 
 describe('calculateFee', () => {
+  let mockTxBuilderFactory: TxBuilderFactory;
+
   beforeEach(() => {
     vi.resetAllMocks();
 
-    const mockToTxGet = vi.fn().mockResolvedValue('mockExtrinsic' as unknown as Extrinsic);
-    const mockTrade = {
+    const mockGet = vi.fn().mockReturnValue('mockExtrinsic' as unknown as Extrinsic);
+    const mockBuild = vi.fn().mockResolvedValue({ get: mockGet });
+    const mockWithBeneficiary = vi.fn().mockReturnValue({ build: mockBuild });
+    const mockWithSlippage = vi.fn().mockReturnValue({ withBeneficiary: mockWithBeneficiary });
+    const mockTrade = vi.fn().mockReturnValue({ withSlippage: mockWithSlippage });
+
+    mockTxBuilderFactory = {
+      trade: mockTrade,
+    } as unknown as TxBuilderFactory;
+
+    const mockTradeResult = {
       amountOut: new BigNumber('10000000000000000'),
-      toTx: vi.fn().mockReturnValue({ get: mockToTxGet }),
     };
 
     vi.mocked(TradeRouter).mockImplementation(
       () =>
         ({
-          getBestSell: vi.fn().mockResolvedValue(mockTrade),
+          getBestSell: vi.fn().mockResolvedValue(mockTradeResult),
           getBestSpotPrice: vi.fn().mockResolvedValue({ amount: new BigNumber('1'), decimals: 12 }),
         }) as unknown as TradeRouter,
     );
@@ -74,7 +84,6 @@ describe('calculateFee', () => {
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
         amountOut: new BigNumber('1000'),
-        toTx: () => ({ get: vi.fn().mockReturnValue({} as Extrinsic) }),
       }),
       getBestSpotPrice: vi.fn().mockResolvedValue({ amount: new BigNumber('1'), decimals: 12 }),
     } as unknown as TradeRouter;
@@ -94,9 +103,9 @@ describe('calculateFee', () => {
       calculateFee(
         options,
         mockTradeRouter,
+        mockTxBuilderFactory,
         currencyFromInfo,
         currencyToInfo,
-        12,
         12,
         'Hydration',
         BigNumber('1'),
@@ -117,7 +126,6 @@ describe('calculateFee', () => {
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
         amountOut: new BigNumber('1000'),
-        toTx: () => ({ get: vi.fn().mockReturnValue({} as Extrinsic) }),
       }),
       getBestSpotPrice: vi.fn().mockResolvedValue({ amount: new BigNumber('1'), decimals: 12 }),
     } as unknown as TradeRouter;
@@ -132,9 +140,9 @@ describe('calculateFee', () => {
       calculateFee(
         options,
         mockTradeRouter,
+        mockTxBuilderFactory,
         currencyFromInfo,
         currencyToInfo,
-        12,
         12,
         'Hydration',
         BigNumber(1),
@@ -148,7 +156,6 @@ describe('calculateFee', () => {
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
         amountOut: new BigNumber('1000'),
-        toTx: () => ({ get: vi.fn().mockReturnValue({} as Extrinsic) }),
       }),
       getBestSpotPrice: vi.fn().mockResolvedValue(undefined),
     } as unknown as TradeRouter;
@@ -166,9 +173,9 @@ describe('calculateFee', () => {
       calculateFee(
         options,
         mockTradeRouter,
+        mockTxBuilderFactory,
         currencyFromInfo,
         currencyToInfo,
-        12,
         12,
         'Hydration',
         BigNumber(1),
@@ -191,7 +198,6 @@ describe('calculateFee', () => {
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
         amountOut: new BigNumber('1000'),
-        toTx: () => ({ get: vi.fn().mockReturnValue({} as Extrinsic) }),
       }),
       getBestSpotPrice: vi.fn().mockResolvedValue({
         amount: new BigNumber('1'),
@@ -204,9 +210,9 @@ describe('calculateFee', () => {
     const result = await calculateFee(
       options,
       mockTradeRouter,
+      mockTxBuilderFactory,
       currencyFromInfo,
       currencyToInfo,
-      12,
       12,
       'Hydration',
       BigNumber(2),
@@ -229,7 +235,6 @@ describe('calculateFee', () => {
     const mockTradeRouter = {
       getBestSell: vi.fn().mockResolvedValue({
         amountOut: new BigNumber('1000'),
-        toTx: () => ({ get: vi.fn().mockReturnValue({} as Extrinsic) }),
       }),
       getBestSpotPrice: vi.fn().mockResolvedValue({
         amount: new BigNumber('2'),
@@ -243,9 +248,9 @@ describe('calculateFee', () => {
     const finalFeeBN = await calculateFee(
       options,
       mockTradeRouter,
+      mockTxBuilderFactory,
       currencyFromInfo,
       currencyToInfo,
-      12,
       12,
       'Hydration',
       BigNumber(2),

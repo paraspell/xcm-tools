@@ -1,30 +1,30 @@
-import type { Asset, TradeRouter } from '@galacticcouncil/sdk';
+import type { Asset, TradeRouter, TxBuilderFactory } from '@galacticcouncil/sdk';
 import {
   getAssetDecimals,
   getNativeAssetSymbol,
   InvalidParameterError,
   type TNode,
 } from '@paraspell/sdk';
-import type { Extrinsic } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 
 import { FEE_BUFFER } from '../../../consts';
 import Logger from '../../../Logger/Logger';
 import type { TSwapOptions } from '../../../types';
 import { calculateTxFeePjs } from '../../../utils';
-import { getAssetInfo, getMinAmountOut } from './utils';
+import { getAssetInfo } from './utils';
 
 export const calculateFee = async (
   {
     amount,
     slippagePct,
     feeCalcAddress,
-  }: Pick<TSwapOptions, 'amount' | 'slippagePct' | 'feeCalcAddress'>,
+    senderAddress,
+  }: Pick<TSwapOptions, 'amount' | 'slippagePct' | 'feeCalcAddress' | 'senderAddress'>,
   tradeRouter: TradeRouter,
+  txBuilderFactory: TxBuilderFactory,
   currencyFromInfo: Asset,
   currencyToInfo: Asset,
   currencyFromDecimals: number,
-  currencyToDecimals: number,
   node: TNode,
   toDestTransactionFee: BigNumber,
 ): Promise<BigNumber> => {
@@ -35,7 +35,6 @@ export const calculateFee = async (
     currencyToInfo.id,
     amountBnum.toString(),
   );
-  const minAmountOut = getMinAmountOut(trade.amountOut, currencyToDecimals, slippagePct);
 
   const nativeCurrencyInfo = await getAssetInfo(tradeRouter, {
     symbol: getNativeAssetSymbol(node),
@@ -51,7 +50,14 @@ export const calculateFee = async (
     throw new InvalidParameterError('Native currency decimals not found');
   }
 
-  const tx = trade.toTx(minAmountOut.amount).get<Extrinsic>();
+  const substrateTx = await txBuilderFactory
+    .trade(trade)
+    .withSlippage(Number(slippagePct))
+    .withBeneficiary(senderAddress)
+    .build();
+
+  const tx = substrateTx.get();
+
   const swapFee = await calculateTxFeePjs(tx, feeCalcAddress);
   const swapFeeNativeCurrency = new BigNumber(swapFee.toString());
   const feeInNativeCurrency = swapFeeNativeCurrency

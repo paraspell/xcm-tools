@@ -1,7 +1,6 @@
-import { PoolService, PoolType, TradeRouter } from '@galacticcouncil/sdk';
+import { createSdkContext } from '@galacticcouncil/sdk';
 import type { TForeignAsset } from '@paraspell/sdk-pjs';
 import {
-  type Extrinsic,
   getAssetDecimals,
   getAssets,
   getNativeAssetSymbol,
@@ -21,7 +20,7 @@ import type {
   TSwapOptions,
 } from '../../types';
 import ExchangeNode from '../DexNode';
-import { calculateFee, getAssetInfo, getMinAmountOut } from './utils';
+import { calculateFee, getAssetInfo } from './utils';
 
 class HydrationExchangeNode extends ExchangeNode {
   async swapCurrency(
@@ -29,13 +28,13 @@ class HydrationExchangeNode extends ExchangeNode {
     options: TSwapOptions,
     toDestTransactionFee: BigNumber,
   ): Promise<TSingleSwapResult> {
-    const { origin, assetFrom, assetTo, slippagePct, amount } = options;
+    const { origin, assetFrom, assetTo, senderAddress, slippagePct, amount } = options;
 
-    const poolService = new PoolService(api);
-    const tradeRouter = new TradeRouter(
-      poolService,
-      this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
-    );
+    const {
+      api: { router: tradeRouter },
+      tx: txBuilderFactory,
+    } = createSdkContext(api);
+
     const currencyFromInfo = await getAssetInfo(tradeRouter, assetFrom);
     const currencyToInfo = await getAssetInfo(tradeRouter, assetTo);
 
@@ -61,9 +60,9 @@ class HydrationExchangeNode extends ExchangeNode {
     const tradeFee = await calculateFee(
       options,
       tradeRouter,
+      txBuilderFactory,
       currencyFromInfo,
       currencyToInfo,
-      currencyFromDecimals,
       currencyFromDecimals,
       this.node,
       toDestTransactionFee,
@@ -86,8 +85,14 @@ class HydrationExchangeNode extends ExchangeNode {
       currencyToInfo.id,
       amountNormalized,
     );
-    const minAmountOut = getMinAmountOut(trade.amountOut, currencyFromDecimals, slippagePct);
-    const tx: Extrinsic = await trade.toTx(minAmountOut.amount).get();
+
+    const substrateTx = await txBuilderFactory
+      .trade(trade)
+      .withSlippage(Number(slippagePct))
+      .withBeneficiary(senderAddress)
+      .build();
+
+    const tx = substrateTx.get();
 
     const amountOut = trade.amountOut;
 
@@ -146,11 +151,10 @@ class HydrationExchangeNode extends ExchangeNode {
   async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint> {
     const { assetFrom, assetTo, amount, origin } = options;
 
-    const poolService = new PoolService(api);
-    const tradeRouter = new TradeRouter(
-      poolService,
-      this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
-    );
+    const {
+      api: { router: tradeRouter },
+    } = createSdkContext(api);
+
     const currencyFromInfo = await getAssetInfo(tradeRouter, assetFrom);
     const currencyToInfo = await getAssetInfo(tradeRouter, assetTo);
 
@@ -189,11 +193,10 @@ class HydrationExchangeNode extends ExchangeNode {
   }
 
   async getDexConfig(api: ApiPromise): Promise<TDexConfig> {
-    const poolService = new PoolService(api);
-    const tradeRouter = new TradeRouter(
-      poolService,
-      this.node === 'Basilisk' ? { includeOnly: [PoolType.XYK] } : undefined,
-    );
+    const {
+      api: { router: tradeRouter },
+    } = createSdkContext(api);
+
     const assets = await tradeRouter.getAllAssets();
     const transformedAssets = assets.map(({ symbol, id }) => {
       const sdkAssets = getAssets(this.node) as TForeignAsset[];
