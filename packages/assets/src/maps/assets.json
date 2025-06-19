@@ -10698,32 +10698,115 @@
         "symbol": "USDC",
         "decimals": 6,
         "existentialDeposit": "100000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 110
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x931715fee2d06333043d11f658c8ce934ac61d0c"
+                }
+              }
+            ]
+          }
+        },
         "alias": "USDC1"
       },
       {
         "assetId": "11",
         "symbol": "vASTR",
         "decimals": 18,
-        "existentialDeposit": "1295001295"
+        "existentialDeposit": "1295001295",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0903000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "4",
         "symbol": "USDC",
         "decimals": 6,
         "existentialDeposit": "100000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1337
+              }
+            ]
+          }
+        },
         "alias": "USDC2"
       },
       {
         "assetId": "9",
         "symbol": "vDOT",
         "decimals": 10,
-        "existentialDeposit": "15748031"
+        "existentialDeposit": "15748031",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0900000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "7",
         "symbol": "INTR",
         "decimals": 10,
-        "existentialDeposit": "8403361345"
+        "existentialDeposit": "8403361345",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "2",
@@ -10735,43 +10818,139 @@
         "assetId": "3",
         "symbol": "GLMR",
         "decimals": 18,
-        "existentialDeposit": "233481200"
+        "existentialDeposit": "233481200",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "0",
         "symbol": "DOT",
         "decimals": 10,
-        "existentialDeposit": "10000000"
+        "existentialDeposit": "10000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        }
       },
       {
         "assetId": "8",
         "symbol": "BNC",
         "decimals": 12,
-        "existentialDeposit": "466853408"
+        "existentialDeposit": "466853408",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "5",
         "symbol": "USDT",
         "decimals": 6,
-        "existentialDeposit": "100000000"
+        "existentialDeposit": "100000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "10",
         "symbol": "vGLMR",
         "decimals": 18,
-        "existentialDeposit": "515729758"
+        "existentialDeposit": "515729758",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0901000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "12",
         "symbol": "vMANTA",
         "decimals": 18,
-        "existentialDeposit": "116645282"
+        "existentialDeposit": "116645282",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2030
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0908000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "assetId": "6",
         "symbol": "HDX",
         "decimals": 12,
-        "existentialDeposit": "15830299193"
+        "existentialDeposit": "15830299193",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "GeneralIndex": 0
+              }
+            ]
+          }
+        }
       }
     ]
   },
