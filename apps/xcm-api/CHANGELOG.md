@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.7.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.6.0...xcm-api-v10.7.0) (2025-06-19)
+
+
+### Features
+
+* **sdk-core:** Add execute transfers for Hydration ✨ ([d1e741a](https://github.com/paraspell/xcm-tools/commit/d1e741a8f77691c26c678d6f2178e31faf38202b))
+
 ## [10.6.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.5.2...xcm-api-v10.6.0) (2025-06-18)
 
 
