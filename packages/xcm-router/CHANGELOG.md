@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.7.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.7.0...xcm-router-v10.7.1) (2025-06-19)
+
+
+### Build System
+
+* **xcm-router:** Update Hydration SDK 📦 ([c7a9a30](https://github.com/paraspell/xcm-tools/commit/c7a9a306737109f23f35a4bb41ef50e97e701f22))
+
 ## [10.7.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.6.0...xcm-router-v10.7.0) (2025-06-19)
 
 
