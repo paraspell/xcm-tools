@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset, TNativeAsset } from '../src'
+import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
 
 const fetchAssets = async (
   api: ApiPromise,
@@ -33,11 +34,22 @@ const fetchAssets = async (
         value
       ]) => {
         const { symbol, decimals, existentialDeposit, minimalBalance } = value.toHuman() as any
+
+        const multiLocationJson = value.toJSON() as any
+
+        const multiLocation =
+          multiLocationJson.location !== null
+            ? capitalizeMultiLocation(
+                multiLocationJson.location.v3 ?? multiLocationJson.location.v2
+              )
+            : undefined
+
         return {
           assetId: Object.values(era.toHuman() ?? {})[0],
           symbol,
           decimals: +decimals,
-          existentialDeposit: minimalBalance ?? existentialDeposit
+          existentialDeposit: minimalBalance ?? existentialDeposit,
+          multiLocation
         }
       }
     )
