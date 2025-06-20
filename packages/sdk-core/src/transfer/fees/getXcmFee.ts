@@ -18,7 +18,8 @@ import type {
   TGetXcmFeeResult,
   THubKey,
   TXcmFeeChain,
-  TXcmFeeDetail
+  TXcmFeeDetail,
+  TXcmFeeHopInfo
 } from '../../types'
 import { determineRelayChain } from '../../utils'
 import { getParaEthTransferFees } from '../ethTransfer'
@@ -26,11 +27,13 @@ import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFee } from './getOriginXcmFee'
 
 const getFailureInfo = (
-  nodes: Partial<Record<TXcmFeeChain, TXcmFeeDetail>>
+  nodes: Partial<Record<TXcmFeeChain, TXcmFeeDetail>>,
+  hops: TXcmFeeHopInfo[]
 ): {
   failureChain?: TXcmFeeChain
   failureReason?: string
 } => {
+  // Check standard chains first for backwards compatibility
   if (nodes.origin?.dryRunError)
     return { failureChain: 'origin', failureReason: nodes.origin.dryRunError }
   if (nodes.assetHub?.dryRunError)
@@ -39,6 +42,14 @@ const getFailureInfo = (
     return { failureChain: 'bridgeHub', failureReason: nodes.bridgeHub.dryRunError }
   if (nodes.destination?.dryRunError)
     return { failureChain: 'destination', failureReason: nodes.destination.dryRunError }
+
+  // Check hops for failures
+  for (const hop of hops) {
+    if (hop.result.dryRunError) {
+      return { failureChain: hop.chain as TXcmFeeChain, failureReason: hop.result.dryRunError }
+    }
+  }
+
   return {}
 }
 
@@ -79,6 +90,9 @@ export const getXcmFee = async <TApi, TRes>({
   api.setDisconnectAllowed(true)
   await api.disconnect()
 
+  // Initialize hops array
+  const hops: TXcmFeeHopInfo[] = []
+
   if (originDryRunError || originFeeType === 'paymentInfo') {
     const destApi = api.clone()
 
@@ -113,13 +127,17 @@ export const getXcmFee = async <TApi, TRes>({
           ...(destFeeRes.feeType && { feeType: destFeeRes.feeType }),
           ...(destFeeRes.sufficient !== undefined && { sufficient: destFeeRes.sufficient }),
           currency: getNativeAssetSymbol(destination)
-        } as TXcmFeeDetail
+        } as TXcmFeeDetail,
+        hops // Include empty hops array
       }
 
-      const { failureChain, failureReason } = getFailureInfo({
-        origin: result.origin,
-        destination: result.destination
-      })
+      const { failureChain, failureReason } = getFailureInfo(
+        {
+          origin: result.origin,
+          destination: result.destination
+        },
+        hops
+      )
 
       return {
         ...result,
@@ -186,14 +204,47 @@ export const getXcmFee = async <TApi, TRes>({
         disableFallback
       })
 
+      // Determine the currency for this hop
+      let hopCurrency: string
+      if (nextChain === destination) {
+        hopCurrency =
+          destinationFeeType === 'dryRun'
+            ? findAssetOnDestOrThrow(origin, destination, currency).symbol
+            : getNativeAssetSymbol(destination)
+      } else if (
+        isRelayChain(nextChain) ||
+        nextChain === assetHubNode ||
+        nextChain === bridgeHubNode
+      ) {
+        hopCurrency = getNativeAssetSymbol(nextChain as TNodeDotKsmWithRelayChains)
+      } else {
+        hopCurrency = getNativeAssetSymbol(nextChain as TNodeDotKsmWithRelayChains)
+      }
+
+      const hopDetail: TXcmFeeDetail = hopResult.dryRunError
+        ? {
+            fee: hopResult.fee,
+            feeType: hopResult.feeType,
+            currency: hopCurrency,
+            sufficient: hopResult.sufficient,
+            dryRunError: hopResult.dryRunError
+          }
+        : ({
+            fee: hopResult.fee,
+            feeType: hopResult.feeType,
+            currency: hopCurrency,
+            sufficient: hopResult.sufficient
+          } as TXcmFeeDetail)
+
+      if (nextChain !== destination) {
+        hops.push({
+          chain: nextChain,
+          result: hopDetail
+        })
+      }
+
       if (hopResult.dryRunError) {
-        const failingRecord: TXcmFeeDetail = {
-          fee: hopResult.fee,
-          feeType: hopResult.feeType,
-          currency: getNativeAssetSymbol(nextChain),
-          dryRunError: hopResult.dryRunError,
-          sufficient: hopResult.sufficient
-        }
+        const failingRecord: TXcmFeeDetail = hopDetail
 
         const hopIsDestination =
           nextChain === destination || (isRelayChain(nextChain) && !isRelayChain(destination))
@@ -244,19 +295,9 @@ export const getXcmFee = async <TApi, TRes>({
         destinationFeeType = hopResult.feeType
         destinationSufficient = hopResult.sufficient
       } else if (nextChain === assetHubNode) {
-        intermediateFees.assetHub = {
-          fee: hopResult.fee,
-          feeType: hopResult.feeType,
-          currency: getNativeAssetSymbol(nextChain),
-          sufficient: hopResult.sufficient
-        } as TXcmFeeDetail
+        intermediateFees.assetHub = hopDetail
       } else if (nextChain === bridgeHubNode) {
-        intermediateFees.bridgeHub = {
-          fee: hopResult.fee,
-          feeType: hopResult.feeType,
-          currency: getNativeAssetSymbol(nextChain),
-          sufficient: hopResult.sufficient
-        } as TXcmFeeDetail
+        intermediateFees.bridgeHub = hopDetail
       } else {
         // Unconcerned intermediate chain – we ignore its fee
       }
@@ -283,6 +324,14 @@ export const getXcmFee = async <TApi, TRes>({
       ...intermediateFees.bridgeHub,
       fee: (intermediateFees.bridgeHub.fee as bigint) + bridgeFee
     }
+
+    const bridgeHubHopIndex = hops.findIndex(hop => hop.chain === bridgeHubNode)
+    if (bridgeHubHopIndex !== -1) {
+      hops[bridgeHubHopIndex].result = {
+        ...hops[bridgeHubHopIndex].result,
+        fee: (intermediateFees.bridgeHub.fee as bigint) + bridgeFee
+      }
+    }
   }
 
   intermediateFees.bridgeHub = processedBridgeHubData
@@ -308,15 +357,19 @@ export const getXcmFee = async <TApi, TRes>({
       sufficient: destinationSufficient,
       currency: destCurrency,
       ...(destinationDryRunError && { dryRunError: destinationDryRunError })
-    } as TXcmFeeDetail
+    } as TXcmFeeDetail,
+    hops
   }
 
-  const { failureChain, failureReason } = getFailureInfo({
-    origin: result.origin,
-    assetHub: result.assetHub,
-    bridgeHub: result.bridgeHub,
-    destination: result.destination
-  })
+  const { failureChain, failureReason } = getFailureInfo(
+    {
+      origin: result.origin,
+      assetHub: result.assetHub,
+      bridgeHub: result.bridgeHub,
+      destination: result.destination
+    },
+    hops
+  )
 
   return {
     ...result,

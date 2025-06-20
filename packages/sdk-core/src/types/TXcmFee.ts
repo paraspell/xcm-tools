@@ -109,7 +109,17 @@ export type TXcmFeeDetail =
       dryRunError: string
     }
 
-export type TXcmFeeChain = 'origin' | 'destination' | 'assetHub' | 'bridgeHub'
+export type TXcmFeeChain =
+  | 'origin'
+  | 'destination'
+  | 'assetHub'
+  | 'bridgeHub'
+  | TNodeWithRelayChains
+
+export type TXcmFeeHopInfo = {
+  chain: TNodeWithRelayChains
+  result: TXcmFeeDetail
+}
 
 export type TGetXcmFeeResult = {
   failureReason?: string
@@ -118,6 +128,7 @@ export type TGetXcmFeeResult = {
   destination: TXcmFeeDetail
   assetHub?: TXcmFeeDetail
   bridgeHub?: TXcmFeeDetail
+  hops: TXcmFeeHopInfo[]
 }
 
 export type TGetXcmFeeEstimateDetail = {

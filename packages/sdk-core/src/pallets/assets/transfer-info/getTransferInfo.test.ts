@@ -14,7 +14,12 @@ import type { IPolkadotApi } from '../../../api'
 import { InvalidParameterError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
 import { resolveFeeAsset } from '../../../transfer/utils/resolveFeeAsset'
-import type { TGetTransferInfoOptions, TXcmFeeDetail } from '../../../types'
+import type {
+  TGetTransferInfoOptions,
+  TTransferInfo,
+  TXcmFeeDetail,
+  TXcmFeeHopInfo
+} from '../../../types'
 import { determineRelayChain } from '../../../utils'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
 import { buildDestInfo } from './buildDestInfo'
@@ -110,6 +115,7 @@ describe('getTransferInfo', () => {
       origin: { fee: 100000000n, currency: 'DOT' } as TXcmFeeDetail,
       assetHub: { fee: 50000000n, currency: 'DOT' } as TXcmFeeDetail,
       bridgeHub: { fee: 60000000n, currency: 'DOT' } as TXcmFeeDetail,
+      hops: [],
       destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
     })
     vi.mocked(isAssetEqual).mockReturnValue(false)
@@ -154,7 +160,7 @@ describe('getTransferInfo', () => {
       options.currency,
       options.destination
     )
-    expect(getAssetBalanceInternal).toHaveBeenCalledTimes(2) // Once for fee, once for currency
+    expect(getAssetBalanceInternal).toHaveBeenCalledTimes(2)
     expect(getBalanceNativeInternal).not.toHaveBeenCalled()
     expect(getExistentialDepositOrThrow).toHaveBeenCalledWith(options.origin, options.currency)
     expect(getXcmFee).toHaveBeenCalledWith({
@@ -188,6 +194,82 @@ describe('getTransferInfo', () => {
     expect(result.assetHub).toBeDefined()
     expect(result.bridgeHub).toBeDefined()
     expect(result.destination).toBeDefined()
+  })
+
+  it('should build hop info for each hop in the hops array from getXcmFee', async () => {
+    const mockHopsFromFee = [
+      {
+        chain: 'Hydration',
+        result: { fee: 12345n, currency: 'HDX' }
+      },
+      {
+        chain: 'Interlay',
+        result: { fee: 56789n, currency: 'INTR' }
+      }
+    ]
+
+    const mockHydraHopInfo = {
+      balance: 100n,
+      currencySymbol: 'HDX',
+      existentialDeposit: 1n,
+      xcmFee: { fee: 12345n, balance: 100n, currencySymbol: 'HDX' }
+    }
+
+    const mockInterlayHopInfo = {
+      balance: 200n,
+      currencySymbol: 'INTR',
+      existentialDeposit: 2n,
+      xcmFee: { fee: 56789n, balance: 200n, currencySymbol: 'INTR' }
+    }
+
+    vi.mocked(getXcmFee).mockResolvedValue({
+      origin: { fee: 100000000n, currency: 'DOT' } as TXcmFeeDetail,
+      assetHub: undefined,
+      bridgeHub: undefined,
+      hops: mockHopsFromFee as TXcmFeeHopInfo[],
+      destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
+    })
+
+    vi.mocked(buildHopInfo).mockImplementation(({ node }) => {
+      if (node === 'Hydration') return Promise.resolve(mockHydraHopInfo)
+      if (node === 'Interlay') return Promise.resolve(mockInterlayHopInfo)
+      return Promise.resolve({} as TTransferInfo['assetHub'])
+    })
+
+    const options = { ...baseOptions, api: mockApi, tx: mockTx }
+
+    const result = await getTransferInfo(options)
+
+    expect(buildHopInfo).toHaveBeenCalledTimes(2)
+
+    expect(buildHopInfo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        node: 'Hydration',
+        feeData: mockHopsFromFee[0].result
+      })
+    )
+    expect(buildHopInfo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        node: 'Interlay',
+        feeData: mockHopsFromFee[1].result
+      })
+    )
+
+    expect(result.assetHub).toBeUndefined()
+    expect(result.bridgeHub).toBeUndefined()
+
+    expect(result.hops).toBeDefined()
+    expect(result.hops).toHaveLength(2)
+    expect(result.hops).toEqual([
+      {
+        chain: 'Hydration',
+        result: mockHydraHopInfo
+      },
+      {
+        chain: 'Interlay',
+        result: mockInterlayHopInfo
+      }
+    ])
   })
 
   it('should throw InvalidParameterError if origin is EVM and ahAddress is not provided', async () => {
@@ -233,6 +315,7 @@ describe('getTransferInfo', () => {
       origin: { fee: undefined, currency: 'DOT' } as TXcmFeeDetail,
       assetHub: { fee: 50000000n, currency: 'DOT' } as TXcmFeeDetail,
       bridgeHub: { fee: 60000000n, currency: 'DOT' } as TXcmFeeDetail,
+      hops: [],
       destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
     })
     const options = { ...baseOptions, api: mockApi, tx: mockTx }
@@ -294,6 +377,7 @@ describe('getTransferInfo', () => {
       origin: { fee: 100000000n, currency: 'DOT' } as TXcmFeeDetail,
       assetHub: undefined,
       bridgeHub: { fee: 60000000n, currency: 'DOT' } as TXcmFeeDetail,
+      hops: [],
       destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
     })
     const options = { ...baseOptions, api: mockApi, tx: mockTx }
@@ -308,6 +392,7 @@ describe('getTransferInfo', () => {
       origin: { fee: 100000000n, currency: 'DOT' } as TXcmFeeDetail,
       assetHub: { fee: 50000000n, currency: 'DOT' } as TXcmFeeDetail,
       bridgeHub: undefined,
+      hops: [],
       destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
     })
     const options = { ...baseOptions, api: mockApi, tx: mockTx }

@@ -1,4 +1,4 @@
-// eslint-disable-next-line simple-import-sort/exports
+/* eslint-disable simple-import-sort/imports */
 import { init as sentryInit } from '@sentry/nestjs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 

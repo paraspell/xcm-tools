@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import type { TAsset, TForeignAsset } from '@paraspell/assets'
 import {
   findAssetByMultiLocation,
+  getNativeAssetSymbol,
   getOtherAssets,
   InvalidCurrencyError,
   isForeignAsset,
@@ -9,6 +11,7 @@ import {
   type TNativeAsset,
   type WithAmount
 } from '@paraspell/assets'
+import type { TPallet } from '@paraspell/pallets'
 import { hasJunction, type TMultiLocation, Version } from '@paraspell/sdk-common'
 import type { MockInstance } from 'vitest'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -23,6 +26,7 @@ import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
 import { createBeneficiary } from '../../utils'
 import { localizeLocation } from '../../utils/multiLocation'
+import { handleExecuteTransfer } from '../../utils/transfer'
 import ParachainNode from '../ParachainNode'
 import type AssetHubPolkadot from './AssetHubPolkadot'
 
@@ -66,6 +70,10 @@ vi.mock('../../utils/ethereum/generateMessageId', () => ({
 vi.mock('@paraspell/sdk-common', async importOriginal => ({
   ...(await importOriginal<typeof import('@paraspell/sdk-common')>()),
   hasJunction: vi.fn()
+}))
+
+vi.mock('../../utils/transfer', () => ({
+  handleExecuteTransfer: vi.fn()
 }))
 
 describe('AssetHubPolkadot', () => {
@@ -291,6 +299,48 @@ describe('AssetHubPolkadot', () => {
       const result = await assetHub.transferPolkadotXCM(input)
       expect(result).toStrictEqual(mockExtrinsic)
       expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
+    })
+
+    describe('with feeAsset provided', () => {
+      beforeEach(() => {
+        vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
+        vi.mocked(handleExecuteTransfer).mockResolvedValue({
+          module: 'System' as TPallet,
+          method: 'remark',
+          parameters: { _remark: '0x' }
+        })
+        vi.mocked(mockApi.callTxMethod).mockResolvedValue(mockExtrinsic)
+      })
+
+      it.each([
+        { assetSymbol: 'USDT', feeAssetSymbol: 'DOT', description: 'asset is non-native' },
+        { assetSymbol: 'DOT', feeAssetSymbol: 'USDT', description: 'feeAsset is non-native' },
+        { assetSymbol: 'USDC', feeAssetSymbol: 'USDT', description: 'both are non-native' }
+      ])(
+        'should call handleExecuteTransfer when $description',
+        async ({ assetSymbol, feeAssetSymbol }) => {
+          const input = {
+            ...mockInput,
+            asset: { symbol: assetSymbol, amount: '100' },
+            feeAsset: { symbol: feeAssetSymbol }
+          } as TPolkadotXCMTransferOptions<unknown, unknown>
+          await assetHub.transferPolkadotXCM(input)
+          expect(handleExecuteTransfer).toHaveBeenCalledWith('AssetHubPolkadot', input)
+          expect(mockApi.callTxMethod).toHaveBeenCalledTimes(1)
+        }
+      )
+
+      it('should not call handleExecuteTransfer when both asset and feeAsset are native', async () => {
+        const input = {
+          ...mockInput,
+          destination: 'Acala',
+          asset: { symbol: 'DOT', amount: '100' },
+          feeAsset: { symbol: 'DOT' }
+        } as TPolkadotXCMTransferOptions<unknown, unknown>
+        await assetHub.transferPolkadotXCM(input)
+        expect(handleExecuteTransfer).not.toHaveBeenCalled()
+        expect(transferPolkadotXcm).toHaveBeenCalled()
+      })
     })
 
     it('should call handleBridgeTransfer when destination is AssetHubKusama', async () => {

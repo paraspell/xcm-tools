@@ -34,6 +34,7 @@ const feeResult: TGetXcmFeeResult = {
     feeType: 'dryRun',
     currency: 'DOT',
   },
+  hops: [],
   destination: {
     fee: 1n,
     currency: 'DOT',
