@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.7.2](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.7.1...sdk-core-v10.7.2) (2025-06-20)
+
+
+### Bug Fixes
+
+* **sdk-core:** Remove Mythos balance check 🔧 ([ce91edc](https://github.com/paraspell/xcm-tools/commit/ce91edc42b8381d4bb2ce8d4f02165ae987cd7c8))
+
 ## [10.7.1](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.7.0...sdk-core-v10.7.1) (2025-06-19)
 
 
