@@ -276,8 +276,24 @@ describe('handleExecuteTransfer', () => {
 
     expect(result).toBe('finalTx')
     expect(createExecuteXcm).toHaveBeenCalledTimes(2)
-    expect(createExecuteXcm).toHaveBeenNthCalledWith(1, mockNode, input, 1000n, 1000n, Version.V4)
-    expect(createExecuteXcm).toHaveBeenNthCalledWith(2, mockNode, input, 1200n, 2800n, Version.V4)
+    expect(createExecuteXcm).toHaveBeenNthCalledWith(
+      1,
+      mockNode,
+      mockNode,
+      input,
+      1000n,
+      1000n,
+      Version.V4
+    )
+    expect(createExecuteXcm).toHaveBeenNthCalledWith(
+      2,
+      mockNode,
+      mockNode,
+      input,
+      1200n,
+      2800n,
+      Version.V4
+    )
     expect(getXcmWeightSpy).toHaveBeenCalledWith(mockXcm)
     expect(createExecuteCall).toHaveBeenCalledTimes(2)
     expect(createExecuteCall).toHaveBeenNthCalledWith(1, mockXcm, MAX_WEIGHT)
@@ -311,8 +327,24 @@ describe('handleExecuteTransfer', () => {
 
     expect(result).toBe('finalTx')
     expect(createExecuteXcm).toHaveBeenCalledTimes(2)
-    expect(createExecuteXcm).toHaveBeenNthCalledWith(1, mockNode, input, 1000n, 1000n, Version.V4)
-    expect(createExecuteXcm).toHaveBeenNthCalledWith(2, mockNode, input, 1800n, 4200n, Version.V4)
+    expect(createExecuteXcm).toHaveBeenNthCalledWith(
+      1,
+      mockNode,
+      mockNode,
+      input,
+      1000n,
+      1000n,
+      Version.V4
+    )
+    expect(createExecuteXcm).toHaveBeenNthCalledWith(
+      2,
+      mockNode,
+      mockNode,
+      input,
+      1800n,
+      4200n,
+      Version.V4
+    )
     expect(getXcmWeightSpy).toHaveBeenCalledWith(mockXcm)
     expect(createExecuteCall).toHaveBeenCalledTimes(2)
   })
@@ -338,8 +370,24 @@ describe('handleExecuteTransfer', () => {
 
     expect(result).toBe('finalTx')
     expect(createExecuteXcm).toHaveBeenCalledTimes(2)
-    expect(createExecuteXcm).toHaveBeenNthCalledWith(1, mockNode, input, 1000n, 1000n, Version.V4)
-    expect(createExecuteXcm).toHaveBeenNthCalledWith(2, mockNode, input, 1800n, 1400n, Version.V4)
+    expect(createExecuteXcm).toHaveBeenNthCalledWith(
+      1,
+      mockNode,
+      mockNode,
+      input,
+      1000n,
+      1000n,
+      Version.V4
+    )
+    expect(createExecuteXcm).toHaveBeenNthCalledWith(
+      2,
+      mockNode,
+      mockNode,
+      input,
+      1800n,
+      1400n,
+      Version.V4
+    )
   })
 
   it('should fetch fee asset balance when fee asset is different', async () => {
@@ -374,7 +422,23 @@ describe('handleExecuteTransfer', () => {
       node: mockNode,
       currency: { symbol: 'USDT' }
     })
-    expect(createExecuteXcm).toHaveBeenNthCalledWith(1, mockNode, input, 5000n, 1000n, Version.V4)
-    expect(createExecuteXcm).toHaveBeenNthCalledWith(2, mockNode, input, 1200n, 2800n, Version.V4)
+    expect(createExecuteXcm).toHaveBeenNthCalledWith(
+      1,
+      mockNode,
+      mockNode,
+      input,
+      5000n,
+      1000n,
+      Version.V4
+    )
+    expect(createExecuteXcm).toHaveBeenNthCalledWith(
+      2,
+      mockNode,
+      mockNode,
+      input,
+      1200n,
+      2800n,
+      Version.V4
+    )
   })
 })

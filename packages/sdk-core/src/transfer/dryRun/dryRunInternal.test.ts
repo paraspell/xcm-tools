@@ -152,7 +152,7 @@ describe('dryRunInternal', () => {
       origin: { ...originOk, currency: 'ACA' },
       assetHub: { ...assetHubOk, currency: 'DOT' },
       destination: { ...destOk, currency: 'ACA' },
-      hops: [{ node: 'AssetHubPolkadot', result: { ...assetHubOk, currency: 'DOT' } }]
+      hops: [{ chain: 'AssetHubPolkadot', result: { ...assetHubOk, currency: 'DOT' } }]
     })
   })
 

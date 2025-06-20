@@ -78,7 +78,7 @@ export type TDryRunNodeResultInternal = TDryRunNodeSuccess | TDryRunNodeFailure
 export type TDryRunNodeResult = (TDryRunNodeSuccess & { currency: string }) | TDryRunNodeFailure
 
 export type THopInfo = {
-  node: TNodeWithRelayChains
+  chain: TNodeWithRelayChains
   result: TDryRunNodeResultInternal & { currency?: string }
 }
 

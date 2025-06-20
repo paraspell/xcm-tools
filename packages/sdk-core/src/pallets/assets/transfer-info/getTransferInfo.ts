@@ -5,6 +5,7 @@ import {
   isAssetEqual,
   isNodeEvm
 } from '@paraspell/assets'
+import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../../errors'
@@ -68,7 +69,8 @@ export const getTransferInfo = async <TApi, TRes>({
       origin: { fee: originFee, currency: originFeeCurrency },
       assetHub: assetHubFeeResult,
       bridgeHub: bridgeHubFeeResult,
-      destination: destFeeDetail
+      destination: destFeeDetail,
+      hops
     } = await getXcmFee({
       api,
       tx,
@@ -130,6 +132,28 @@ export const getTransferInfo = async <TApi, TRes>({
       })
     }
 
+    let builtHops: TTransferInfo['hops'] = []
+
+    if (hops && hops.length > 0) {
+      builtHops = (await Promise.all(
+        hops.map(async hop => {
+          const result = await buildHopInfo({
+            api,
+            node: hop.chain as TNodeDotKsmWithRelayChains,
+            feeData: hop.result as { fee: bigint; currency: string },
+            originNode: origin,
+            currency,
+            senderAddress,
+            ahAddress
+          })
+          return {
+            chain: hop.chain,
+            result
+          }
+        })
+      )) as TTransferInfo['hops']
+    }
+
     const destinationInfo = await buildDestInfo({
       api,
       origin,
@@ -167,6 +191,7 @@ export const getTransferInfo = async <TApi, TRes>({
       },
       assetHub,
       bridgeHub,
+      hops: builtHops,
       destination: destinationInfo
     }
   } finally {

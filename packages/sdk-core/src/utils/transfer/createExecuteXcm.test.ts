@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { extractMultiAssetLoc, isAssetEqual } from '@paraspell/assets'
 import {
+  isSystemChain,
   Parents,
   type TMultiLocation,
   type TNodePolkadotKusama,
@@ -36,6 +37,13 @@ vi.mock('@paraspell/assets', () => ({
   isAssetEqual: vi.fn(),
   extractMultiAssetLoc: vi.fn()
 }))
+vi.mock('@paraspell/sdk-common', async () => {
+  const actual = await vi.importActual('@paraspell/sdk-common')
+  return {
+    ...actual,
+    isSystemChain: vi.fn()
+  }
+})
 
 describe('createExecuteXcm', () => {
   const version = Version.V4
@@ -67,6 +75,7 @@ describe('createExecuteXcm', () => {
     vi.mocked(addXcmVersionHeader).mockImplementation(xcm => ({ [version]: xcm }))
     vi.mocked(assertHasLocation).mockImplementation(() => {})
     vi.mocked(isAssetEqual).mockReturnValue(false)
+    vi.mocked(isSystemChain).mockReturnValue(false)
     vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
     vi.mocked(getParaId).mockImplementation(node => {
       if (node === 'AssetHubPolkadot') return 1000
@@ -137,9 +146,9 @@ describe('createExecuteXcm', () => {
         asset: { symbol: 'TEST', amount: '1000' }
       } as TPolkadotXCMTransferOptions<any, any>
 
-      expect(() => createExecuteXcm('AssetHubPolkadot', input, 100n, 50n, version)).toThrow(
-        InvalidParameterError
-      )
+      expect(() =>
+        createExecuteXcm('AssetHubPolkadot', 'Moonbeam', input, 100n, 50n, version)
+      ).toThrow(InvalidParameterError)
     })
 
     it('should throw when sending local reserve with custom fee on unsupported chain', () => {
@@ -160,7 +169,9 @@ describe('createExecuteXcm', () => {
         return 1000
       })
 
-      expect(() => createExecuteXcm('Moonbeam', input, 100n, 50n, version)).toThrow(
+      expect(() =>
+        createExecuteXcm('Moonbeam', 'AssetHubPolkadot', input, 100n, 50n, version)
+      ).toThrow(
         'Sending local reserve assets with custom fee asset is not yet supported for this chain.'
       )
     })
@@ -173,6 +184,7 @@ describe('createExecuteXcm', () => {
 
       const result = createExecuteXcm(
         'AssetHubPolkadot',
+        'Moonbeam',
         baseInput,
         executionFee,
         hopExecutionFee,
@@ -210,7 +222,7 @@ describe('createExecuteXcm', () => {
         }
       } as TPolkadotXCMTransferOptions<any, any>
 
-      const result = createExecuteXcm('AssetHubPolkadot', input, 100n, 50n, version)
+      const result = createExecuteXcm('AssetHubPolkadot', 'Moonbeam', input, 100n, 50n, version)
       const xcm = result[version] as any
 
       const withdrawnAssets = xcm[0].WithdrawAsset
@@ -227,13 +239,20 @@ describe('createExecuteXcm', () => {
   })
 
   describe('reserve chain scenarios', () => {
-    it('should create direct DepositAsset when destination is reserve', () => {
+    it('should create direct DepositAsset when destination is reserve (non-trusted chains)', () => {
       const input = {
         ...baseInput,
         paraIdTo: 1000
       }
 
-      const result = createExecuteXcm('AssetHubPolkadot', input, 100n, 50n, version)
+      const result = createExecuteXcm(
+        'AssetHubPolkadot',
+        'AssetHubPolkadot',
+        input,
+        100n,
+        50n,
+        version
+      )
       const xcm = result[version] as any
 
       expect(xcm[2]).toHaveProperty('DepositAsset')
@@ -247,7 +266,7 @@ describe('createExecuteXcm', () => {
         return 2000
       })
 
-      const result = createExecuteXcm('Moonbeam', baseInput, 100n, 50n, version)
+      const result = createExecuteXcm('Moonbeam', 'Astar', baseInput, 100n, 50n, version)
       const xcm = result[version] as any
 
       expect(xcm[2]).toHaveProperty('InitiateReserveWithdraw')
@@ -259,6 +278,146 @@ describe('createExecuteXcm', () => {
       expect(initiateWithdraw.xcm).toHaveLength(2)
       expect(initiateWithdraw.xcm[0]).toHaveProperty('BuyExecution')
       expect(initiateWithdraw.xcm[1]).toHaveProperty('DepositReserveAsset')
+    })
+  })
+
+  describe('teleport scenarios (trusted chains)', () => {
+    it('should create InitiateTeleport when both chains are system chains', () => {
+      vi.mocked(isSystemChain).mockReturnValue(true)
+
+      const result = createExecuteXcm(
+        'AssetHubPolkadot',
+        'AssetHubKusama',
+        baseInput,
+        100n,
+        50n,
+        version
+      )
+      const xcm = result[version] as any
+
+      expect(xcm[2]).toHaveProperty('InitiateTeleport')
+      const initiateTeleport = xcm[2].InitiateTeleport
+
+      expect(initiateTeleport.assets).toHaveProperty('Wild')
+      expect(initiateTeleport.assets.Wild.AllCounted).toBe(1)
+      expect(initiateTeleport.dest).toBe(mockDest)
+
+      expect(initiateTeleport.xcm).toHaveLength(2)
+
+      const nestedBuyExecution = initiateTeleport.xcm[0].BuyExecution
+      expect(nestedBuyExecution.fees.fun.Fungible).toBe(900n) // amount - executionFee
+      expect(nestedBuyExecution.weight_limit).toBe('Unlimited')
+
+      const nestedDepositAsset = initiateTeleport.xcm[1].DepositAsset
+      expect(nestedDepositAsset.assets.Wild.AllCounted).toBe(1)
+      expect(nestedDepositAsset.beneficiary).toBe(mockBeneficiary)
+    })
+
+    it('should create InitiateTeleport with custom fee asset', () => {
+      vi.mocked(isSystemChain).mockReturnValue(true)
+
+      const input = {
+        ...baseInput,
+        feeAsset: {
+          multiLocation: { parents: Parents.ONE, interior: { X1: [{ Parachain: 999 }] } }
+        }
+      } as TPolkadotXCMTransferOptions<any, any>
+
+      const result = createExecuteXcm(
+        'AssetHubPolkadot',
+        'AssetHubKusama',
+        input,
+        100n,
+        50n,
+        version
+      )
+      const xcm = result[version] as any
+
+      expect(xcm[2]).toHaveProperty('InitiateTeleport')
+      const initiateTeleport = xcm[2].InitiateTeleport
+
+      expect(initiateTeleport.assets).toHaveProperty('Definite')
+      expect(initiateTeleport.assets.Definite).toHaveLength(1)
+
+      // With fee asset, the amount remains unchanged
+      const nestedBuyExecution = initiateTeleport.xcm[0].BuyExecution
+      expect(nestedBuyExecution.fees.fun.Fungible).toBe(1000n)
+    })
+
+    it('should still use InitiateTeleport when destination is reserve if chains are trusted', () => {
+      vi.mocked(isSystemChain).mockReturnValue(true)
+
+      const input = {
+        ...baseInput,
+        paraIdTo: 1000 // Same as reserve
+      }
+
+      const result = createExecuteXcm(
+        'AssetHubPolkadot',
+        'AssetHubKusama',
+        input,
+        100n,
+        50n,
+        version
+      )
+      const xcm = result[version] as any
+
+      // When chains are trusted, InitiateTeleport is always used regardless of reserve
+      expect(xcm[2]).toHaveProperty('InitiateTeleport')
+      expect(xcm[2]).not.toHaveProperty('DepositAsset')
+
+      const initiateTeleport = xcm[2].InitiateTeleport
+      expect(initiateTeleport.dest).toBe(mockDest)
+      expect(initiateTeleport.xcm).toHaveLength(2)
+    })
+
+    it('should not use teleport when only source is system chain', () => {
+      vi.mocked(isSystemChain).mockImplementation(chain => chain === 'AssetHubPolkadot')
+
+      const result = createExecuteXcm('AssetHubPolkadot', 'Moonbeam', baseInput, 100n, 50n, version)
+      const xcm = result[version] as any
+
+      expect(xcm[2]).not.toHaveProperty('InitiateTeleport')
+      expect(xcm[2]).toHaveProperty('DepositReserveAsset')
+    })
+
+    it('should not use teleport when only destination is system chain', () => {
+      vi.mocked(isSystemChain).mockImplementation(chain => chain === 'AssetHubKusama')
+
+      const result = createExecuteXcm('Moonbeam', 'AssetHubKusama', baseInput, 100n, 50n, version)
+      const xcm = result[version] as any
+
+      expect(xcm[2]).not.toHaveProperty('InitiateTeleport')
+    })
+
+    it('should use InitiateTeleport between trusted chains even when going through reserve', () => {
+      vi.mocked(isSystemChain).mockReturnValue(true)
+      vi.mocked(getParaId).mockImplementation(node => {
+        if (node === 'AssetHubPolkadot') return 1000
+        if (node === 'AssetHubKusama') return 1001
+        return 2000
+      })
+
+      // Asset has reserve at AssetHubPolkadot (1000)
+      // Sending from AssetHubKusama to another system chain
+      const input = {
+        ...baseInput,
+        paraIdTo: 2000 // Different from reserve
+      }
+
+      const result = createExecuteXcm(
+        'AssetHubKusama',
+        'BridgeHubPolkadot',
+        input,
+        100n,
+        50n,
+        version
+      )
+      const xcm = result[version] as any
+
+      expect(xcm[2]).toHaveProperty('InitiateTeleport')
+      const initiateTeleport = xcm[2].InitiateTeleport
+      expect(initiateTeleport.xcm[0].BuyExecution.fees.fun.Fungible).toBe(900n) // amount - executionFee
     })
   })
 
@@ -280,7 +439,7 @@ describe('createExecuteXcm', () => {
         any
       >
 
-      const result = createExecuteXcm('AssetHubPolkadot', input, 100n, 50n, version)
+      const result = createExecuteXcm('AssetHubPolkadot', 'Moonbeam', input, 100n, 50n, version)
       const xcm = result[version] as any
 
       const withdrawnAssets = xcm[0].WithdrawAsset
@@ -302,7 +461,7 @@ describe('createExecuteXcm', () => {
         feeAsset: asset2
       } as TPolkadotXCMTransferOptions<any, any>
 
-      const result = createExecuteXcm('AssetHubPolkadot', input, 100n, 50n, version)
+      const result = createExecuteXcm('AssetHubPolkadot', 'Moonbeam', input, 100n, 50n, version)
       const xcm = result[version] as any
 
       const withdrawnAssets = xcm[0].WithdrawAsset
@@ -319,7 +478,7 @@ describe('createExecuteXcm', () => {
         feeAsset: baseInput.asset
       }
 
-      const result = createExecuteXcm('AssetHubPolkadot', input, 100n, 50n, version)
+      const result = createExecuteXcm('AssetHubPolkadot', 'Moonbeam', input, 100n, 50n, version)
       const xcm = result[version] as any
 
       const withdrawnAssets = xcm[0].WithdrawAsset
@@ -331,7 +490,7 @@ describe('createExecuteXcm', () => {
     })
 
     it('should handle non-AssetHubPolkadot chains differently', () => {
-      const result = createExecuteXcm('Moonbeam', baseInput, 100n, 50n, version)
+      const result = createExecuteXcm('Moonbeam', 'Astar', baseInput, 100n, 50n, version)
       const xcm = result[version] as any
 
       const withdrawnAssets = xcm[0].WithdrawAsset
@@ -348,7 +507,7 @@ describe('createExecuteXcm', () => {
         return 2000
       })
 
-      const result = createExecuteXcm('Moonbeam', baseInput, 100n, 50n, version)
+      const result = createExecuteXcm('Moonbeam', 'Astar', baseInput, 100n, 50n, version)
       const xcm = result[version] as any
 
       const initiateWithdraw = xcm[2].InitiateReserveWithdraw

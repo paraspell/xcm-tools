@@ -5,6 +5,7 @@ import {
   deepEqual,
   getJunctionValue,
   hasJunction,
+  isSystemChain,
   Parents,
   type TNodePolkadotKusama,
   type Version
@@ -92,6 +93,12 @@ const sortMultiAssets = (assets: TMultiAsset[]) =>
     const aLoc = extractMultiAssetLoc(a)
     const bLoc = extractMultiAssetLoc(b)
 
+    // 1. Sort by parents first
+    if (aLoc.parents !== bLoc.parents) {
+      return Number(aLoc.parents) - Number(bLoc.parents)
+    }
+
+    // 2. If parents are equal, use priority function
     const aIsHere = isHere(aLoc)
     const bIsHere = isHere(bLoc)
 
@@ -119,7 +126,7 @@ const sortMultiAssets = (assets: TMultiAsset[]) =>
     return aGeneralIndex - bGeneralIndex
   })
 
-function isHere(loc: TMultiLocation): boolean {
+const isHere = (loc: TMultiLocation): boolean => {
   return loc.interior === 'Here' || loc.interior?.Here !== undefined
 }
 
@@ -144,6 +151,7 @@ const createWithdrawAssets = (asset: TMultiAsset, feeAsset: TMultiAsset | undefi
 
 export const createExecuteXcm = <TApi, TRes>(
   node: TNodePolkadotKusama,
+  destChain: TNodePolkadotKusama,
   input: TPolkadotXCMTransferOptions<TApi, TRes>,
   executionFee: bigint,
   hopExecutionFee: bigint,
@@ -190,6 +198,12 @@ export const createExecuteXcm = <TApi, TRes>(
     localizeLocation(reserveChain ?? node, asset.multiLocation)
   )
 
+  const multiAssetLocalizedToDest = createMultiAsset(
+    version,
+    amount,
+    localizeLocation(destChain, asset.multiLocation)
+  )
+
   const feeMultiAsset =
     feeAsset && !isAssetEqual(asset, feeAsset)
       ? createMultiAsset(version, executionFee, feeAsset.multiLocation)
@@ -222,23 +236,63 @@ export const createExecuteXcm = <TApi, TRes>(
     )
   }
 
-  const depositInstruction = isReserveDest
-    ? {
-        DepositAsset: {
-          assets: createAssetsFilter(multiAssetLocalizedToReserve, feeMultiAssetLocalizedToReserve),
-          beneficiary
+  const chainsAreTrusted = isSystemChain(node) && isSystemChain(destChain)
+
+  const depositInstruction =
+    isReserveDest || chainsAreTrusted
+      ? {
+          DepositAsset: {
+            assets: createAssetsFilter(
+              multiAssetLocalizedToReserve,
+              feeMultiAssetLocalizedToReserve
+            ),
+            beneficiary
+          }
         }
-      }
-    : {
-        DepositReserveAsset: {
-          assets: createAssetsFilter(multiAssetLocalized, feeMultiAssetLocalized),
+      : {
+          DepositReserveAsset: {
+            assets: createAssetsFilter(multiAssetLocalized, feeMultiAssetLocalized),
+            dest,
+            xcm: [
+              {
+                BuyExecution: {
+                  fees: updateAsset(
+                    multiAsset,
+                    amount - (feeMultiAsset ? hopExecutionFee : executionFee + hopExecutionFee)
+                  ),
+                  weight_limit: 'Unlimited'
+                }
+              },
+              {
+                DepositAsset: {
+                  assets: {
+                    Wild: {
+                      AllCounted: 1
+                    }
+                  },
+                  beneficiary
+                }
+              }
+            ]
+          }
+        }
+
+  const needsIntermediaryReserve =
+    reserveParaId !== undefined && // Has a reserve
+    !isOnReserveChain(node, reserveParaId) // Not on reserve
+
+  const lastInstruction = chainsAreTrusted
+    ? // Use teleport for trusted chains
+      {
+        InitiateTeleport: {
+          assets: assetsFilter,
           dest,
           xcm: [
             {
               BuyExecution: {
                 fees: updateAsset(
-                  multiAsset,
-                  amount - (feeMultiAsset ? hopExecutionFee : executionFee + hopExecutionFee)
+                  multiAssetLocalizedToDest,
+                  feeMultiAsset ? amount : amount - executionFee
                 ),
                 weight_limit: 'Unlimited'
               }
@@ -256,31 +310,27 @@ export const createExecuteXcm = <TApi, TRes>(
           ]
         }
       }
-
-  const needsIntermediaryReserve =
-    reserveParaId !== undefined && // Has a reserve
-    !isOnReserveChain(node, reserveParaId) // Not on reserve
-
-  const lastInstruction = needsIntermediaryReserve
-    ? {
-        InitiateReserveWithdraw: {
-          assets: assetsFilter,
-          reserve: getChainLocation(reserveParaId),
-          xcm: [
-            {
-              BuyExecution: {
-                fees:
-                  // Decrease amount by 2 units becuase for some reason polkadot withdraws 2 units less
-                  // than requested, so we need to account for that
-                  updateAsset(multiAssetLocalizedToReserve, amount - 2n),
-                weight_limit: 'Unlimited'
-              }
-            },
-            depositInstruction
-          ]
+    : needsIntermediaryReserve
+      ? // Use reserve for non-trusted chains
+        {
+          InitiateReserveWithdraw: {
+            assets: assetsFilter,
+            reserve: getChainLocation(reserveParaId),
+            xcm: [
+              {
+                BuyExecution: {
+                  fees:
+                    // Decrease amount by 2 units becuase for some reason polkadot withdraws 2 units less
+                    // than requested, so we need to account for that
+                    updateAsset(multiAssetLocalizedToReserve, amount - 2n),
+                  weight_limit: 'Unlimited'
+                }
+              },
+              depositInstruction
+            ]
+          }
         }
-      }
-    : depositInstruction
+      : depositInstruction
 
   const xcm = [
     {

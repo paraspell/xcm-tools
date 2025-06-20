@@ -4,6 +4,16 @@ import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspel
 import type { UnableToComputeError } from '../errors'
 import type { WithApi } from './TApi'
 
+export type THopTransferInfo = {
+  chain: TNodeWithRelayChains
+  result: {
+    xcmFee: TXcmFeeBase
+    balance?: bigint
+    existentialDeposit?: bigint
+    currencySymbol: string
+  }
+}
+
 export type TXcmFeeBase = {
   fee: bigint
   balance: bigint
@@ -35,6 +45,7 @@ export type TTransferInfo = {
     currencySymbol: string
     xcmFee: TXcmFeeBase
   }
+  hops?: THopTransferInfo[]
   destination: {
     receivedCurrency: {
       sufficient: boolean | UnableToComputeError

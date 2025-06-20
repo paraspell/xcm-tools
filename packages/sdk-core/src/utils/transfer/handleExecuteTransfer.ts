@@ -51,9 +51,15 @@ export const handleExecuteTransfer = async <TApi, TRes>(
 
   checkAmount(MIN_FEE)
 
+  const destChain = getTNode(
+    paraIdTo as number,
+    determineRelayChain(node) === 'Polkadot' ? 'polkadot' : 'kusama'
+  ) as TNodePolkadotKusama
+
   const call = createExecuteCall(
     createExecuteXcm(
       node,
+      destChain,
       input,
       feeAssetBalance && feeAssetBalance > 1n ? feeAssetBalance : MIN_FEE,
       MIN_FEE,
@@ -62,16 +68,11 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     MAX_WEIGHT
   )
 
-  const destNode = getTNode(
-    paraIdTo as number,
-    determineRelayChain(node) === 'Polkadot' ? 'polkadot' : 'kusama'
-  ) as TNodePolkadotKusama
-
   const dryRunResult = await dryRunInternal({
     api,
     tx: api.callTxMethod(call),
     origin: node,
-    destination: destNode,
+    destination: destChain,
     senderAddress,
     address,
     currency,
@@ -120,7 +121,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
 
   checkAmount(feeAsset && !isAssetEqual(asset, feeAsset) ? paddedHopFee : paddedFee + paddedHopFee)
 
-  const xcm = createExecuteXcm(node, input, paddedFee, paddedHopFee, version)
+  const xcm = createExecuteXcm(node, destChain, input, paddedFee, paddedHopFee, version)
 
   const weight = await api.getXcmWeight(xcm)
 

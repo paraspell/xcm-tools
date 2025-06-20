@@ -360,8 +360,9 @@ class AssetHubPolkadot<TApi, TRes>
       }
 
       const isNativeAsset = isSymbolMatch(asset.symbol, this.getNativeAssetSymbol())
+      const isNativeFeeAsset = isSymbolMatch(feeAsset.symbol, this.getNativeAssetSymbol())
 
-      if (!isNativeAsset) {
+      if (!isNativeAsset || !isNativeFeeAsset) {
         return api.callTxMethod(await handleExecuteTransfer(this.node, input))
       }
     }

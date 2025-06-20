@@ -30,7 +30,7 @@ const getFailureInfo = (
 
   for (const hop of hops) {
     if (!hop.result.success && hop.result.failureReason) {
-      return { failureReason: hop.result.failureReason, failureChain: hop.node }
+      return { failureReason: hop.result.failureReason, failureChain: hop.chain }
     }
   }
 
@@ -142,7 +142,7 @@ export const dryRunInternal = async <TApi, TRes>(
       // Add to hops array (only if not the destination)
       if (nextChain !== destination) {
         hops.push({
-          node: nextChain,
+          chain: nextChain,
           result:
             hopDryRun.success && hopCurrency ? { ...hopDryRun, currency: hopCurrency } : hopDryRun
         })
@@ -182,7 +182,7 @@ export const dryRunInternal = async <TApi, TRes>(
     }
 
     // Update the hop data if BridgeHub is in the hops array
-    const bridgeHubHopIndex = hops.findIndex(hop => hop.node === bridgeHubNode)
+    const bridgeHubHopIndex = hops.findIndex(hop => hop.chain === bridgeHubNode)
     if (bridgeHubHopIndex !== -1 && hops[bridgeHubHopIndex].result.success) {
       hops[bridgeHubHopIndex].result = {
         ...hops[bridgeHubHopIndex].result,

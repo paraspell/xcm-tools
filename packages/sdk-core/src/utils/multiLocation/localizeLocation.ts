@@ -1,5 +1,7 @@
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
-import { isRelayChain, Parents, type TMultiLocation } from '@paraspell/sdk-common'
+import { getJunctionValue, isRelayChain, Parents, type TMultiLocation } from '@paraspell/sdk-common'
+
+import { getParaId } from '../../nodes/config'
 
 /**
  * This function localizes a multiLocation by removing the `Parachain` junction
@@ -18,14 +20,19 @@ export const localizeLocation = (
   let parachainRemoved = false
 
   if (multiLocation.interior !== 'Here') {
+    const paraId = getParaId(node)
+
     const junctions = Object.values(multiLocation.interior)
       .flat()
       .filter(junction => typeof junction === 'object' && junction !== null)
 
     const filteredJunctions = junctions.filter(junction => {
       if ('Parachain' in junction) {
-        parachainRemoved = true
-        return false
+        const paraJunctionId = getJunctionValue<number>(multiLocation, 'Parachain')
+        if (paraJunctionId === paraId) {
+          parachainRemoved = true
+          return false
+        }
       }
       return true
     })
