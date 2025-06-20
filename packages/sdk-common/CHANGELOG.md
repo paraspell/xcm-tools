@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.8.0](https://github.com/paraspell/xcm-tools/compare/sdk-common-v10.7.2...sdk-common-v10.8.0) (2025-06-20)
+
+
+### Features
+
+* **sdk-core:** Add hops property & fix execute teleport ✨ ([38e12ff](https://github.com/paraspell/xcm-tools/commit/38e12fff8b27f90a15473ee09c25024ab4f3a21b))
+
 ## [10.7.2](https://github.com/paraspell/xcm-tools/compare/sdk-common-v10.7.1...sdk-common-v10.7.2) (2025-06-20)
 
 
