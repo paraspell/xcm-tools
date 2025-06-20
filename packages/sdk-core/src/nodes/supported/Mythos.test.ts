@@ -12,7 +12,6 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import { getAssetBalanceInternal } from '../../pallets/assets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { getParaEthTransferFees } from '../../transfer'
 import type { TPolkadotXCMTransferOptions } from '../../types'
@@ -29,10 +28,6 @@ vi.mock('../../pallets/polkadotXcm', () => ({
 
 vi.mock('../../utils/transfer', () => ({
   handleToAhTeleport: vi.fn()
-}))
-
-vi.mock('../../pallets/assets', () => ({
-  getAssetBalanceInternal: vi.fn()
 }))
 
 vi.mock('../../transfer', () => ({
@@ -150,8 +145,7 @@ describe('Mythos', () => {
       scenario: 'ParaToPara',
       destination: 'Ethereum',
       senderAddress: '0x1234567890123456789012345678901234567890',
-      address: '0x0987654321098765432109876543210987654321',
-      currency: { symbol: 'MYTH' }
+      address: '0x0987654321098765432109876543210987654321'
     } as TPolkadotXCMTransferOptions<unknown, unknown>
 
     beforeEach(() => {
@@ -166,7 +160,6 @@ describe('Mythos', () => {
     it('should handle Ethereum transfers with createTypeAndThenTransfer', async () => {
       vi.mocked(generateMessageId).mockResolvedValue('message_id_123')
       vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 300n])
-      vi.mocked(getAssetBalanceInternal).mockResolvedValue(5000n)
       vi.mocked(createCustomXcmOnDest).mockReturnValue([
         { instruction: 'test' }
       ] as unknown as ReturnType<typeof createCustomXcmOnDest>)
@@ -183,7 +176,6 @@ describe('Mythos', () => {
       )
       expect(getParaEthTransferFees).toHaveBeenCalledWith(mockApi)
       expect(mockApi.quoteAhPrice).toHaveBeenCalled()
-      expect(getAssetBalanceInternal).toHaveBeenCalled()
       expect(mockApi.callTxMethod).toHaveBeenCalled()
       expect(result).toBe('ethereum_tx_result')
     })
@@ -191,7 +183,6 @@ describe('Mythos', () => {
     it('should call createTypeAndThenTransfer for Ethereum destination', async () => {
       vi.mocked(generateMessageId).mockResolvedValue('message_id_456')
       vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 300n])
-      vi.mocked(getAssetBalanceInternal).mockResolvedValue(5000n)
       vi.mocked(createCustomXcmOnDest).mockReturnValue([
         { instruction: 'test' }
       ] as unknown as ReturnType<typeof createCustomXcmOnDest>)
@@ -274,22 +265,10 @@ describe('createTypeAndThenTransfer', () => {
     )
   })
 
-  it('should throw InvalidCurrencyError when insufficient balance', async () => {
-    vi.mocked(generateMessageId).mockResolvedValue('message_id_123')
-    vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 300n])
-    vi.spyOn(mockApi, 'quoteAhPrice').mockResolvedValue(1000n)
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(500n) // Insufficient balance
-
-    await expect(createTypeAndThenTransfer(mockOptions, 'Mythos', Version.V4)).rejects.toThrowError(
-      InvalidCurrencyError
-    )
-  })
-
   it('should successfully create transfer call with sufficient balance', async () => {
     vi.mocked(generateMessageId).mockResolvedValue('message_id_123')
     vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 300n])
     vi.spyOn(mockApi, 'quoteAhPrice').mockResolvedValue(1000n)
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(5000n)
     vi.mocked(createCustomXcmOnDest).mockReturnValue([
       { instruction: 'test' }
     ] as unknown as ReturnType<typeof createCustomXcmOnDest>)
@@ -315,7 +294,6 @@ describe('createTypeAndThenTransfer', () => {
     vi.mocked(generateMessageId).mockResolvedValue('message_id_123')
     vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 300n])
     vi.spyOn(mockApi, 'quoteAhPrice').mockResolvedValue(1000n)
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(5000n)
     vi.mocked(createCustomXcmOnDest).mockReturnValue([
       { instruction: 'test' }
     ] as unknown as ReturnType<typeof createCustomXcmOnDest>)
@@ -333,12 +311,6 @@ describe('createTypeAndThenTransfer', () => {
     expect(mockApi.clone).toHaveBeenCalled()
     expect(mockApi.init).toHaveBeenCalledWith('AssetHubPolkadot')
     expect(getParaEthTransferFees).toHaveBeenCalledWith(mockApi)
-    expect(getAssetBalanceInternal).toHaveBeenCalledWith({
-      api: mockOptions.api,
-      address: mockOptions.senderAddress,
-      node: 'Mythos',
-      currency: mockOptions.currency
-    })
     expect(createCustomXcmOnDest).toHaveBeenCalledWith(
       mockOptions,
       'Mythos',
@@ -356,7 +328,6 @@ describe('createTypeAndThenTransfer', () => {
     vi.mocked(generateMessageId).mockResolvedValue('message_id_large')
     vi.mocked(getParaEthTransferFees).mockResolvedValue([500n, 300n])
     vi.spyOn(mockApi, 'quoteAhPrice').mockResolvedValue(2000n)
-    vi.mocked(getAssetBalanceInternal).mockResolvedValue(50000n)
     vi.mocked(createCustomXcmOnDest).mockReturnValue([
       { instruction: 'test' }
     ] as unknown as ReturnType<typeof createCustomXcmOnDest>)

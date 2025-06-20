@@ -1,6 +1,5 @@
 // Contains detailed structure of XCM call construction for Mythos Parachain
 
-import type { TCurrencyCore } from '@paraspell/assets'
 import { getNativeAssets, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
 import type { TMultiLocation, TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { Parents, replaceBigInt, Version } from '@paraspell/sdk-common'
@@ -11,7 +10,6 @@ import {
   NodeNotSupportedError,
   ScenarioNotSupportedError
 } from '../../errors'
-import { getAssetBalanceInternal } from '../../pallets/assets'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import { createVersionedDestination } from '../../pallets/xcmPallet/utils'
 import { getParaEthTransferFees } from '../../transfer'
@@ -34,7 +32,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
   node: TNodeWithRelayChains,
   version: Version
 ): Promise<TSerializedApiCall> => {
-  const { api, scenario, asset, currency, senderAddress, address, destination } = options
+  const { api, scenario, asset, senderAddress, address, destination } = options
 
   assertHasLocation(asset)
   assertAddressIsString(address)
@@ -74,19 +72,6 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
   }
 
   const nativeMythAmount = padFeeBy(feeConverted, 10)
-
-  const nativeMythBalance = await getAssetBalanceInternal({
-    api,
-    address: senderAddress,
-    node,
-    currency: currency as TCurrencyCore
-  })
-
-  if (nativeMythBalance - nativeMythAmount < 0) {
-    throw new InvalidCurrencyError(
-      `Insufficient balance. Fee: ${nativeMythAmount}, Amount: ${asset.amount}`
-    )
-  }
 
   return {
     module: 'PolkadotXcm',
