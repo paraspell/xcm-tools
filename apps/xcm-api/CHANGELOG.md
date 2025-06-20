@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.8.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.7.2...xcm-api-v10.8.0) (2025-06-20)
+
+
+### Features
+
+* **sdk-core:** Add hops property & fix execute teleport ✨ ([38e12ff](https://github.com/paraspell/xcm-tools/commit/38e12fff8b27f90a15473ee09c25024ab4f3a21b))
+
+
+### Build System
+
+* **xcm-api:** Add Sentry DSN to .env 🛠️ ([2205c49](https://github.com/paraspell/xcm-tools/commit/2205c491740f28fd50a20f2ae3cc7706d604cdcf))
+
 ## [10.7.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.7.1...xcm-api-v10.7.2) (2025-06-20)
 
 
