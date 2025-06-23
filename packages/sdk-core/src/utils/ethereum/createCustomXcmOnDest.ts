@@ -14,7 +14,7 @@ import { getParaId } from '../../nodes/config'
 import { createDestination } from '../../pallets/xcmPallet/utils'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasLocation } from '../assertions'
-import { createBeneficiaryMultiLocation } from '../multiLocation'
+import { createBeneficiaryLocation } from '../location'
 
 export const createCustomXcmOnDest = <TApi, TRes>(
   {
@@ -22,7 +22,6 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     destination,
     address,
     asset,
-    scenario,
     senderAddress,
     ahAddress,
     version
@@ -69,8 +68,8 @@ export const createCustomXcmOnDest = <TApi, TRes>(
                     Wild: 'All'
                   },
                   dest: createDestination(
-                    scenario,
                     version,
+                    origin,
                     destination,
                     getParaId(origin),
                     undefined,
@@ -96,11 +95,9 @@ export const createCustomXcmOnDest = <TApi, TRes>(
                         assets: {
                           Wild: 'All'
                         },
-                        beneficiary: createBeneficiaryMultiLocation({
+                        beneficiary: createBeneficiaryLocation({
                           api,
-                          scenario,
-                          pallet: 'PolkadotXcm',
-                          recipientAddress: address,
+                          address: address,
                           version
                         })
                       }
@@ -111,11 +108,9 @@ export const createCustomXcmOnDest = <TApi, TRes>(
             : {
                 DepositAsset: {
                   assets: { Wild: 'All' },
-                  beneficiary: createBeneficiaryMultiLocation({
+                  beneficiary: createBeneficiaryLocation({
                     api,
-                    scenario,
-                    pallet: 'PolkadotXcm',
-                    recipientAddress: isNodeEvm(origin) ? (ahAddress as string) : senderAddress,
+                    address: isNodeEvm(origin) ? (ahAddress as string) : senderAddress,
                     version
                   })
                 }

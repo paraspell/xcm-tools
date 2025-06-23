@@ -33,7 +33,7 @@ class AssetHubExchangeNode extends ExchangeNode {
 
     const amountIn = BigNumber(amount);
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
-    const amountWithoutFee = amountIn.minus(amountIn.times(pctDestFee));
+    const amountWithoutFee = amountIn.minus(amountIn.times(pctDestFee)).decimalPlaces(0);
 
     const {
       amountOut: quotedAmountOut,
@@ -41,15 +41,16 @@ class AssetHubExchangeNode extends ExchangeNode {
       usedToML,
     } = await getQuotedAmount(
       papiApi,
+      this.node,
       assetFrom.multiLocation,
       assetTo.multiLocation,
       amountWithoutFee,
     );
 
+    const amountOutBN = BigNumber(quotedAmountOut.toString()).decimalPlaces(0);
+
     const slippageMultiplier = BigNumber(1).minus(BigNumber(slippagePct).dividedBy(100));
-    const minAmountOut = BigInt(
-      new BigNumber(quotedAmountOut.toString()).multipliedBy(slippageMultiplier).toFixed(0),
-    );
+    const minAmountOut = BigInt(amountOutBN.multipliedBy(slippageMultiplier).toFixed(0));
 
     const tx = papiApi.getUnsafeApi().tx.AssetConversion.swap_exact_tokens_for_tokens({
       path: [transform(usedFromML), transform(usedToML)],
@@ -64,6 +65,7 @@ class AssetHubExchangeNode extends ExchangeNode {
         ? toDestTxFee
         : await getQuotedAmount(
             papiApi,
+            this.node,
             {
               parents: Parents.ONE,
               interior: {
@@ -174,18 +176,73 @@ class AssetHubExchangeNode extends ExchangeNode {
       throw new InvalidParameterError('Asset to multiLocation not found');
     }
 
+    const nativeAsset = getExchangeAsset(this.node, this.exchangeNode, {
+      symbol: getNativeAssetSymbol(this.node),
+    });
+
+    if (!nativeAsset) {
+      throw new InvalidParameterError('Native asset not found for this exchange node.');
+    }
+
+    const isAssetFromNative = assetFrom.symbol === nativeAsset.symbol;
+    const isAssetToNative = assetTo.symbol === nativeAsset.symbol;
+
+    if (isAssetFromNative && isAssetToNative) {
+      throw new InvalidParameterError('Cannot swap native asset to itself.');
+    }
+
     const amountIn = BigNumber(amount);
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
     const amountWithoutFee = amountIn.minus(amountIn.times(pctDestFee));
 
-    const { amountOut } = await getQuotedAmount(
-      papiApi,
-      assetFrom.multiLocation,
-      assetTo.multiLocation,
-      amountWithoutFee,
-    );
+    if (isAssetFromNative || isAssetToNative) {
+      const { amountOut } = await getQuotedAmount(
+        papiApi,
+        this.node,
+        assetFrom.multiLocation,
+        assetTo.multiLocation,
+        amountWithoutFee,
+      );
 
-    return amountOut;
+      return amountOut;
+    } else {
+      if (!nativeAsset.multiLocation) {
+        throw new InvalidParameterError('Native asset multiLocation not found');
+      }
+
+      const { amountOut: hop1AmountOut } = await getQuotedAmount(
+        papiApi,
+        this.node,
+        assetFrom.multiLocation,
+        nativeAsset.multiLocation,
+        amountWithoutFee,
+      );
+
+      if (BigNumber(hop1AmountOut.toString()).isLessThanOrEqualTo(0)) {
+        throw new SmallAmountError(
+          `First hop (${assetFrom.symbol} -> ${nativeAsset.symbol}) resulted in zero or negative output.`,
+        );
+      }
+
+      const hop1Received = BigNumber(hop1AmountOut.toString());
+      const assumedInputForHop2 = hop1Received.multipliedBy(0.98).decimalPlaces(0);
+
+      const { amountOut: finalAmountOut } = await getQuotedAmount(
+        papiApi,
+        this.node,
+        nativeAsset.multiLocation,
+        assetTo.multiLocation,
+        assumedInputForHop2,
+      );
+
+      if (BigNumber(finalAmountOut.toString()).isLessThanOrEqualTo(0)) {
+        throw new SmallAmountError(
+          `Second hop (${nativeAsset.symbol} -> ${assetTo.symbol}) resulted in zero or negative output.`,
+        );
+      }
+
+      return finalAmountOut;
+    }
   }
 
   async getDexConfig(api: ApiPromise): Promise<TDexConfig> {

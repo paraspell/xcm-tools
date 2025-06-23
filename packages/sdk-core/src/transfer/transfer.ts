@@ -1,12 +1,13 @@
 // Contains basic call formatting for different XCM Palletss
 
 import { normalizeMultiLocation, type TNativeAsset } from '@paraspell/assets'
-import { isDotKsmBridge, isRelayChain, isTMultiLocation, Version } from '@paraspell/sdk-common'
+import { isDotKsmBridge, isRelayChain, isTMultiLocation } from '@paraspell/sdk-common'
 
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import { InvalidAddressError, InvalidParameterError } from '../errors'
 import type { TRelayToParaDestination, TSendOptions } from '../types'
 import { getNode, validateAddress } from '../utils'
+import { getChainVersion } from '../utils/chain'
 import { transferRelayToPara } from './transferRelayToPara'
 import {
   resolveAsset,
@@ -55,14 +56,9 @@ export const send = async <TApi, TRes>(options: TSendOptions<TApi, TRes>): Promi
     : undefined
   validateAssetSupport(options, assetCheckEnabled, isBridge, asset)
 
-  const originVersion = isRelayChain(origin)
-    ? Version.V4
-    : getNode<TApi, TRes, typeof origin>(origin).version
+  const originVersion = getChainVersion(origin)
 
-  const destVersion =
-    !isTMultiLocation(destination) && !isRelayChain(destination) && destination !== 'Ethereum'
-      ? getNode<TApi, TRes, typeof destination>(destination).version
-      : undefined
+  const destVersion = !isTMultiLocation(destination) ? getChainVersion(destination) : undefined
 
   const resolvedVersion = selectXcmVersion(version, originVersion, destVersion)
 

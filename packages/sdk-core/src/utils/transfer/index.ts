@@ -1,5 +1,2 @@
-export * from './createExecuteCall'
-export * from './createExecuteExchangeXcm'
-export * from './createExecuteXcm'
-export * from './handleExecuteTransfer'
+export * from './execute'
 export * from './handleToAhTeleport'

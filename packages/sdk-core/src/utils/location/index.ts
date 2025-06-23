@@ -1,4 +1,5 @@
-export * from './createBeneficiaryMultiLocation'
+export * from './createBeneficiaryLocation'
 export * from './createX1Payload'
+export * from './getChainLocation'
 export * from './localizeLocation'
 export * from './reverseTransformMultiLocation'

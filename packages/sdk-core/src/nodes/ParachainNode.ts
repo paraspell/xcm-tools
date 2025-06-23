@@ -14,7 +14,6 @@ import {
 import type { TPallet } from '@paraspell/pallets'
 import type { Version } from '@paraspell/sdk-common'
 import {
-  isRelayChain,
   isTMultiLocation,
   Parents,
   type TEcosystemType,
@@ -51,16 +50,12 @@ import type {
   TTransferLocalOptions,
   TXTokensTransferOptions
 } from '../types'
-import {
-  addXcmVersionHeader,
-  assertHasLocation,
-  createBeneficiary,
-  createBeneficiaryMultiLocation
-} from '../utils'
+import { addXcmVersionHeader, assertHasLocation, createBeneficiaryLocation } from '../utils'
 import { createCustomXcmOnDest } from '../utils/ethereum/createCustomXcmOnDest'
 import { generateMessageId } from '../utils/ethereum/generateMessageId'
 import { createMultiAsset } from '../utils/multiAsset'
 import { resolveParaId } from '../utils/resolveParaId'
+import { resolveScenario } from '../utils/transfer/resolveScenario'
 import { getParaId } from './config'
 
 const supportsXTokens = (obj: unknown): obj is IXTokensTransfer => {
@@ -135,8 +130,7 @@ abstract class ParachainNode<TApi, TRes> {
       pallet,
       method
     } = options
-    const isRelayDestination = !isTMultiLocation(destination) && isRelayChain(destination)
-    const scenario: TScenario = isRelayDestination ? 'ParaToRelay' : 'ParaToPara'
+    const scenario = resolveScenario(this.node, destination)
     const paraId = resolveParaId(paraIdTo, destination)
 
     if (
@@ -163,15 +157,7 @@ abstract class ParachainNode<TApi, TRes> {
       const input: TXTokensTransferOptions<TApi, TRes> = {
         api,
         asset,
-        // Refactor this
-        destLocation: createBeneficiary({
-          api,
-          scenario,
-          pallet: 'XTokens',
-          recipientAddress: address,
-          version,
-          paraId
-        }),
+        address,
         origin: this.node,
         scenario,
         paraIdTo: paraId,
@@ -193,7 +179,6 @@ abstract class ParachainNode<TApi, TRes> {
         asset,
         recipientAddress: address,
         paraIdTo: paraId,
-        scenario,
         origin: this.node,
         destination,
         overriddenAsset,
@@ -203,14 +188,11 @@ abstract class ParachainNode<TApi, TRes> {
     } else if (supportsPolkadotXCM(this)) {
       const options: TPolkadotXCMTransferOptions<TApi, TRes> = {
         api,
-        destLocation: createDestination(scenario, version, destination, paraId),
-        beneficiaryLocation: createBeneficiary({
+        destLocation: createDestination(version, this.node, destination, paraId),
+        beneficiaryLocation: createBeneficiaryLocation({
           api,
-          scenario,
-          pallet: 'PolkadotXcm',
-          recipientAddress: address,
-          version,
-          paraId
+          address: address,
+          version
         }),
         address,
         multiAsset: this.createCurrencySpec(
@@ -347,17 +329,7 @@ abstract class ParachainNode<TApi, TRes> {
   protected async transferEthAssetViaAH<TApi, TRes>(
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
-    const {
-      api,
-      asset,
-      scenario,
-      version,
-      destination,
-      address,
-      senderAddress,
-      feeAsset,
-      paraIdTo
-    } = input
+    const { api, asset, version, destination, address, senderAddress, feeAsset, paraIdTo } = input
 
     assertHasLocation(asset)
 
@@ -397,15 +369,15 @@ abstract class ParachainNode<TApi, TRes> {
     // Pad fee by 50%
     const dryRunFeePadded = (BigInt(dryRunResult.origin.fee) * 3n) / 2n
 
-    const dest = createDestination(scenario, version, destination, paraIdTo)
+    const dest = createDestination(version, this.node, destination, paraIdTo)
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: createVersionedDestination(
-          scenario,
           version,
+          this.node,
           destination,
           getParaId('AssetHubPolkadot')
         ),
@@ -429,11 +401,9 @@ abstract class ParachainNode<TApi, TRes> {
                 {
                   DepositAsset: {
                     assets: { Wild: 'All' },
-                    beneficiary: createBeneficiaryMultiLocation({
+                    beneficiary: createBeneficiaryLocation({
                       api,
-                      scenario,
-                      pallet: 'PolkadotXcm',
-                      recipientAddress: senderAddress,
+                      address: senderAddress,
                       version
                     })
                   }
@@ -459,11 +429,9 @@ abstract class ParachainNode<TApi, TRes> {
                   {
                     DepositAsset: {
                       assets: { Wild: 'All' },
-                      beneficiary: createBeneficiaryMultiLocation({
+                      beneficiary: createBeneficiaryLocation({
                         api,
-                        scenario,
-                        pallet: 'PolkadotXcm',
-                        recipientAddress: address,
+                        address: address,
                         version
                       })
                     }
@@ -485,7 +453,7 @@ abstract class ParachainNode<TApi, TRes> {
     input: TPolkadotXCMTransferOptions<TApi, TRes>,
     useOnlyDepositInstruction = false
   ): Promise<TRes> {
-    const { api, asset, scenario, version, destination, address, senderAddress, feeAsset } = input
+    const { api, asset, version, destination, address, senderAddress, feeAsset } = input
 
     const bridgeStatus = await getBridgeStatus(api.clone())
 
@@ -533,11 +501,9 @@ abstract class ParachainNode<TApi, TRes> {
           {
             DepositAsset: {
               assets: { Wild: { AllCounted: 1 } },
-              beneficiary: createBeneficiaryMultiLocation({
+              beneficiary: createBeneficiaryLocation({
                 api,
-                scenario,
-                pallet: 'PolkadotXcm',
-                recipientAddress: address,
+                address: address,
                 version
               })
             }
@@ -567,8 +533,8 @@ abstract class ParachainNode<TApi, TRes> {
       method: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: createVersionedDestination(
-          scenario,
           version,
+          this.node,
           destination,
           getParaId('AssetHubPolkadot')
         ),

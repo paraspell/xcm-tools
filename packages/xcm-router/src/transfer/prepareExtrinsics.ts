@@ -1,3 +1,6 @@
+import type { TAsset, WithAmount } from '@paraspell/sdk';
+import { DryRunFailedError, handleSwapExecuteTransfer } from '@paraspell/sdk';
+
 import type ExchangeNode from '../dexNodes/DexNode';
 import type { TBuildTransactionsOptionsModified } from '../types';
 import type { TPreparedExtrinsics } from '../types';
@@ -8,7 +11,52 @@ export const prepareExtrinsics = async (
   dex: ExchangeNode,
   options: TBuildTransactionsOptionsModified,
 ): Promise<TPreparedExtrinsics> => {
-  const { origin, exchange, destination, senderAddress } = options;
+  const { origin, exchange, destination, amount, senderAddress, recipientAddress } = options;
+
+  if ((origin || destination) && (dex.node.includes('AssetHub') || dex.node === 'Hydration')) {
+    try {
+      const amountOut = await dex.getAmountOut(exchange.api, {
+        ...options,
+        papiApi: exchange.apiPapi,
+        assetFrom: exchange.assetFrom,
+        assetTo: exchange.assetTo,
+      });
+
+      const tx = await handleSwapExecuteTransfer({
+        chain: origin?.node,
+        exchangeChain: exchange.baseNode,
+        destChain: destination?.node,
+        assetFrom: {
+          ...(origin?.assetFrom ?? exchange.assetFrom),
+          amount: BigInt(amount),
+        } as WithAmount<TAsset>,
+        assetTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAsset>,
+        senderAddress,
+        recipientAddress: recipientAddress ?? senderAddress,
+        calculateMinAmountOut: (amountIn: bigint, assetTo?: TAsset) =>
+          dex.getAmountOut(exchange.api, {
+            ...options,
+            amount: amountIn.toString(),
+            papiApi: options.exchange.apiPapi,
+            assetFrom: options.exchange.assetFrom,
+            assetTo: assetTo ?? options.exchange.assetTo,
+          }),
+      });
+
+      return { swapTxs: [tx], amountOut };
+    } catch (error) {
+      // If the execute is not supported, fallback to default swap execution
+      if (
+        !(
+          error instanceof DryRunFailedError &&
+          error.dryRunType === 'origin' &&
+          error.reason === 'Filtered'
+        )
+      ) {
+        throw error;
+      }
+    }
+  }
 
   // 1. Create transfer origin -> exchange (optional)
   const toExchangeTx =

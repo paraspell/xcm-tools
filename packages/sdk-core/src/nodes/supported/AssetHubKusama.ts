@@ -2,9 +2,8 @@
 
 import type { TAsset } from '@paraspell/assets'
 import { isForeignAsset } from '@paraspell/assets'
-import { isTMultiLocation, Version } from '@paraspell/sdk-common'
+import { isSystemChain, isTMultiLocation, Version } from '@paraspell/sdk-common'
 
-import { SYSTEM_NODES_KUSAMA } from '../../constants'
 import { ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import type { TRelayToParaOverrides, TTransferLocalOptions } from '../../types'
@@ -30,13 +29,13 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
       return getNode('AssetHubPolkadot').handleBridgeTransfer(input, 'Polkadot')
     }
 
-    const isSystemNode = !isTMultiLocation(destination) && SYSTEM_NODES_KUSAMA.includes(destination)
+    const isTrusted = !isTMultiLocation(destination) && isSystemChain(destination)
 
     if (
       scenario === 'ParaToPara' &&
       asset.symbol === 'KSM' &&
       !isForeignAsset(asset) &&
-      !isSystemNode
+      !isTrusted
     ) {
       throw new ScenarioNotSupportedError(
         this.node,
@@ -54,7 +53,7 @@ class AssetHubKusama<TApi, TRes> extends ParachainNode<TApi, TRes> implements IP
     }
 
     const method =
-      scenario === 'ParaToPara' && !isSystemNode
+      scenario === 'ParaToPara' && !isTrusted
         ? 'limited_reserve_transfer_assets'
         : 'limited_teleport_assets'
 

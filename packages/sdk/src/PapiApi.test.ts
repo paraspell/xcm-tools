@@ -1360,7 +1360,7 @@ describe('PapiApi', () => {
         } as TDryRunXcmBaseOptions)
       ).toEqual({
         success: false,
-        failureReason: 'Cannot determine destination fee. No Issued event found'
+        failureReason: 'Cannot determine destination fee. No fee event found'
       })
     })
 

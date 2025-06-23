@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import type { TSerializedApiCall, TWeight, TXcmVersioned } from '../../types'
+import type { TSerializedApiCall, TWeight, TXcmVersioned } from '../../../types'
 import { createExecuteCall } from './createExecuteCall'
 
 describe('createExecuteCall', () => {
+  const mockChain = 'Hydration'
+
   it('should return correct serialized api call with given xcm and maxWeight', () => {
     const fakeXcm = {
       V4: [{ someInstruction: 'someValue' }]
@@ -26,7 +28,7 @@ describe('createExecuteCall', () => {
       }
     }
 
-    const result = createExecuteCall(fakeXcm, maxWeight)
+    const result = createExecuteCall(mockChain, fakeXcm, maxWeight)
 
     expect(result).toEqual(expected)
   })

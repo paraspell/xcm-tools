@@ -8,7 +8,7 @@ import { getXcmFee } from '../../transfer'
 import { dryRunInternal } from '../../transfer/dryRun/dryRunInternal'
 import { padFeeBy } from '../../transfer/fees/padFee'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
+import { createExecuteExchangeXcm } from './execute'
 
 export const handleToAhTeleport = async <TApi, TRes>(
   origin: TNodePolkadotKusama,
@@ -47,6 +47,7 @@ export const handleToAhTeleport = async <TApi, TRes>(
   // If the default tx dry run failed, we need to create execute transaction
   const dummyTx = createExecuteExchangeXcm(
     input,
+    origin,
     MAX_WEIGHT,
     // Enter dummy fee values just to get the dry run to pass
     BigInt(asset.amount),
@@ -75,6 +76,7 @@ export const handleToAhTeleport = async <TApi, TRes>(
 
   return createExecuteExchangeXcm(
     input,
+    origin,
     feeResult.origin.weight ?? MAX_WEIGHT,
     originExecutionFee,
     destinationExecutionFee

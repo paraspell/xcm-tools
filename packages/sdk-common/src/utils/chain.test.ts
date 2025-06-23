@@ -31,6 +31,9 @@ describe('isSystemChain', () => {
     'BridgeHubKusama',
     'PeoplePolkadot',
     'PeopleKusama',
+    'Collectives',
+    'CoretimePolkadot',
+    'CoretimeKusama',
     'Mythos'
   ]
 
@@ -41,14 +44,14 @@ describe('isSystemChain', () => {
     })
   })
 
-  it('should return false for Polkadot', () => {
+  it('should return true for Polkadot', () => {
     const result = isSystemChain('Polkadot')
-    expect(result).toBe(false)
+    expect(result).toBe(true)
   })
 
-  it('should return false for Kusama', () => {
+  it('should return true for Kusama', () => {
     const result = isSystemChain('Kusama')
-    expect(result).toBe(false)
+    expect(result).toBe(true)
   })
 
   NODE_NAMES.forEach(node => {

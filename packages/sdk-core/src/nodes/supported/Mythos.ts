@@ -1,7 +1,7 @@
 // Contains detailed structure of XCM call construction for Mythos Parachain
 
 import { getNativeAssets, InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
-import type { TMultiLocation, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { Parents, replaceBigInt, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
@@ -29,10 +29,10 @@ import ParachainNode from '../ParachainNode'
 
 export const createTypeAndThenTransfer = async <TApi, TRes>(
   options: TPolkadotXCMTransferOptions<TApi, TRes>,
-  node: TNodeWithRelayChains,
+  node: TNodeDotKsmWithRelayChains,
   version: Version
 ): Promise<TSerializedApiCall> => {
-  const { api, scenario, asset, senderAddress, address, destination } = options
+  const { api, asset, senderAddress, address, destination } = options
 
   assertHasLocation(asset)
   assertAddressIsString(address)
@@ -77,12 +77,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
     module: 'PolkadotXcm',
     method: 'transfer_assets_using_type_and_then',
     parameters: {
-      dest: createVersionedDestination(
-        scenario,
-        version,
-        destination,
-        getParaId('AssetHubPolkadot')
-      ),
+      dest: createVersionedDestination(version, node, destination, getParaId('AssetHubPolkadot')),
       assets: {
         [version]: [
           createMultiAsset(version, nativeMythAmount, {

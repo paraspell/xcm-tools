@@ -1,9 +1,5 @@
-import {
-  Parents,
-  type TJunction,
-  type TMultiLocation,
-  type TNodeWithRelayChains
-} from '@paraspell/sdk-common'
+import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
+import { Parents, type TJunction, type TMultiLocation } from '@paraspell/sdk-common'
 
 import type { TWeight } from '../types'
 
@@ -22,13 +18,14 @@ export const DOT_MULTILOCATION: TMultiLocation = {
   interior: 'Here'
 }
 
-export const SYSTEM_NODES_POLKADOT: TNodeWithRelayChains[] = [
+export const CHAINS_DOT_RESERVE_AH = new Set<TNodeWithRelayChains>([
+  'Hydration',
+  'Polimec',
+  'Moonbeam',
+  'BifrostPolkadot',
   'PeoplePolkadot',
-  'CoretimePolkadot',
-  'Collectives'
-]
-
-export const SYSTEM_NODES_KUSAMA: TNodeWithRelayChains[] = ['PeopleKusama', 'CoretimeKusama']
+  'Ajuna'
+] as const)
 
 export const ASSET_HUB_EXECUTION_FEE = 2200000000n // 0.22 DOT
 

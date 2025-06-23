@@ -1,9 +1,15 @@
-import type { TGetXcmFeeResult, TXcmFeeDetail } from '@paraspell/sdk';
+import type { TGetXcmFeeResult, TXcmFeeDetail, TXcmFeeHopInfo } from '@paraspell/sdk';
 
-import type { TExchangeNode } from './TRouter';
+type TWithExchange<T> = T & {
+  isExchange?: boolean;
+};
 
-export type TRouterXcmFeeResult = {
-  sendingChain?: TGetXcmFeeResult;
-  exchangeChain: TXcmFeeDetail & { selectedExchange: TExchangeNode };
-  receivingChain?: TGetXcmFeeResult;
+export type TRouterXcmFeeHopInfo = TWithExchange<TXcmFeeHopInfo>;
+
+export type TRouterXcmFeeDetail = TWithExchange<TXcmFeeDetail>;
+
+export type TRouterXcmFeeResult = TGetXcmFeeResult & {
+  origin: TRouterXcmFeeDetail;
+  destination: TRouterXcmFeeDetail;
+  hops: TRouterXcmFeeHopInfo[];
 };

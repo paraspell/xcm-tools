@@ -5,7 +5,7 @@ import { getXcmFee } from '../../transfer'
 import { dryRunInternal } from '../../transfer/dryRun/dryRunInternal'
 import { padFeeBy } from '../../transfer/fees/padFee'
 import type { TDryRunResult, TGetXcmFeeResult, TPolkadotXCMTransferOptions } from '../../types'
-import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
+import { createExecuteExchangeXcm } from './execute'
 import { handleToAhTeleport } from './handleToAhTeleport'
 
 vi.mock('../../transfer/dryRun/dryRunInternal', () => ({
@@ -16,7 +16,7 @@ vi.mock('../../transfer', () => ({
   getXcmFee: vi.fn()
 }))
 
-vi.mock('./createExecuteExchangeXcm', () => ({
+vi.mock('./execute', () => ({
   createExecuteExchangeXcm: vi.fn()
 }))
 
@@ -29,7 +29,7 @@ describe('handleToAhTeleport', () => {
     api: {},
     destination: 'Astar',
     address: '5FakeAddress',
-    senderAddress: '5FakeSender',
+    senderAddress: 'FakeSender',
     asset: { symbol: 'DOT', amount: '1000' },
     currency: { symbol: 'DOT' }
   } as TPolkadotXCMTransferOptions<unknown, unknown>

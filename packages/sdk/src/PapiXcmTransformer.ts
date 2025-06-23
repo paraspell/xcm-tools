@@ -94,6 +94,13 @@ export const transform = (obj: any): any => {
           type: key,
           value: FixedSizeBinary.fromHex(value)
         }
+      } else if (key === 'SetFeesMode') {
+        return {
+          type: key,
+          value: {
+            jit_withdraw: value.jit_withdraw ?? false
+          }
+        }
       } else if (key === 'X1' && Array.isArray(value)) {
         return {
           type: key,

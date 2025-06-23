@@ -1,24 +1,30 @@
 import { InvalidCurrencyError, type TCurrencyInput } from '@paraspell/assets'
-import type { TJunction, TMultiLocation, Version } from '@paraspell/sdk-common'
-import { replaceBigInt } from '@paraspell/sdk-common'
+import type {
+  TJunction,
+  TMultiLocation,
+  TNodeDotKsmWithRelayChains,
+  Version
+} from '@paraspell/sdk-common'
+import { getJunctionValue, replaceBigInt } from '@paraspell/sdk-common'
 import { isTMultiLocation, Parents } from '@paraspell/sdk-common'
 import { NODE_NAMES_DOT_KSM, type TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
 import { getParaId } from '../../nodes/config'
 import type { TRelaychain, TXcmVersioned } from '../../types'
-import { type TDestination, type TScenario } from '../../types'
+import { type TDestination } from '../../types'
 import { addXcmVersionHeader, createX1Payload, determineRelayChain } from '../../utils'
-import { findParachainJunction } from '../../utils/findParachainJunction'
+import { resolveScenario } from '../../utils/transfer/resolveScenario'
 
 export const createDestination = (
-  scenario: TScenario,
   version: Version,
+  origin: TNodeDotKsmWithRelayChains,
   destination: TDestination,
   nodeId?: number,
   junction?: TJunction,
   parents?: Parents
 ): TMultiLocation => {
+  const scenario = resolveScenario(origin, destination)
   const parentsResolved = parents ?? (scenario === 'RelayToPara' ? Parents.ZERO : Parents.ONE)
   const interior =
     scenario === 'ParaToRelay'
@@ -33,16 +39,16 @@ export const createDestination = (
 }
 
 export const createVersionedDestination = (
-  scenario: TScenario,
   version: Version,
+  origin: TNodeDotKsmWithRelayChains,
   destination: TDestination,
   nodeId?: number,
   junction?: TJunction,
   parents?: Parents
 ): TXcmVersioned<TMultiLocation> => {
   const plainDestination = createDestination(
-    scenario,
     version,
+    origin,
     destination,
     nodeId,
     junction,
@@ -77,9 +83,9 @@ export const resolveTNodeFromMultiLocation = (
   relayChain: TRelaychain,
   multiLocation: TMultiLocation
 ): TNodePolkadotKusama => {
-  const parachainId = findParachainJunction(multiLocation)
-  if (parachainId === null) {
-    throw new InvalidParameterError('Parachain ID not found in destination multi location.')
+  const parachainId = getJunctionValue(multiLocation, 'Parachain')
+  if (parachainId === undefined) {
+    throw new InvalidParameterError('Parachain ID not found in destination multi-location.')
   }
 
   const node =

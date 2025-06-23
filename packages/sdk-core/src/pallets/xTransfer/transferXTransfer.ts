@@ -6,7 +6,7 @@ import {
   type TXTransferMethod,
   type TXTransferTransferOptions
 } from '../../types'
-import { assertToIsString, createBeneficiaryMultiLocation } from '../../utils'
+import { assertToIsString, createBeneficiaryLocXTokens } from '../../utils'
 import { createMultiAsset, maybeOverrideMultiAsset } from '../../utils/multiAsset'
 import { ERR_MULTILOCATION_DEST_NOT_SUPPORTED } from '../xTokens'
 import { determineDestWeight } from './utils/determineDestWeight'
@@ -16,8 +16,8 @@ export const transferXTransfer = <TApi, TRes>(
 ): TRes => {
   const {
     api,
+    origin,
     destination,
-    scenario,
     asset,
     overriddenAsset,
     recipientAddress,
@@ -44,11 +44,11 @@ export const transferXTransfer = <TApi, TRes>(
     overriddenAsset
   )
 
-  const dest = createBeneficiaryMultiLocation({
+  const dest = createBeneficiaryLocXTokens({
     api,
-    scenario,
-    pallet: 'XTokens',
-    recipientAddress,
+    origin,
+    destination,
+    address: recipientAddress,
     version,
     paraId: paraIdTo
   })
