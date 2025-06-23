@@ -204,22 +204,12 @@ export const getXcmFee = async <TApi, TRes>({
         disableFallback
       })
 
-      // Determine the currency for this hop
-      let hopCurrency: string
-      if (nextChain === destination) {
-        hopCurrency =
-          destinationFeeType === 'dryRun'
-            ? findAssetOnDestOrThrow(origin, destination, currency).symbol
-            : getNativeAssetSymbol(destination)
-      } else if (
-        isRelayChain(nextChain) ||
-        nextChain === assetHubNode ||
-        nextChain === bridgeHubNode
-      ) {
-        hopCurrency = getNativeAssetSymbol(nextChain as TNodeDotKsmWithRelayChains)
-      } else {
-        hopCurrency = getNativeAssetSymbol(nextChain as TNodeDotKsmWithRelayChains)
-      }
+      const hopCurrency =
+        hopResult.feeType === 'dryRun'
+          ? destination === nextChain
+            ? findAssetOnDestOrThrow(origin, nextChain, currency).symbol
+            : asset.symbol
+          : getNativeAssetSymbol(nextChain)
 
       const hopDetail: TXcmFeeDetail = hopResult.dryRunError
         ? {

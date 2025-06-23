@@ -23,8 +23,11 @@ export const isSystemChain = (node: TNodeWithRelayChains): boolean => {
     'BridgeHubKusama',
     'PeoplePolkadot',
     'PeopleKusama',
+    'CoretimePolkadot',
+    'CoretimeKusama',
+    'Collectives',
     'Mythos'
   ]
 
-  return systemChains.includes(node)
+  return systemChains.includes(node) || isRelayChain(node)
 }

@@ -7,6 +7,7 @@ import type {
   TXTokensMethod,
   TXTokensTransferOptions
 } from '../../../types'
+import { createBeneficiaryLocXTokens } from '../../../utils'
 import { getModifiedCurrencySelection } from './currencySelection'
 import { getXTokensParameters } from './getXTokensParameters'
 
@@ -47,7 +48,18 @@ export const buildXTokensCall = <TApi, TRes>(
   currencySelection: TXTokensCurrencySelection,
   fees: string | number
 ): TSerializedApiCall => {
-  const { overriddenAsset, destLocation, asset, pallet, version, method: methodOverride } = input
+  const {
+    api,
+    origin,
+    destination,
+    overriddenAsset,
+    address,
+    asset,
+    pallet,
+    version,
+    paraIdTo,
+    method: methodOverride
+  } = input
 
   const useMultiAsset = shouldUseMultiAssetTransfer(input)
 
@@ -56,6 +68,15 @@ export const buildXTokensCall = <TApi, TRes>(
     : currencySelection
 
   const method = getXTokensMethod(useMultiAsset, overriddenAsset)
+
+  const destLocation = createBeneficiaryLocXTokens({
+    api,
+    origin,
+    destination,
+    address: address,
+    version,
+    paraId: paraIdTo
+  })
 
   const parameters = getXTokensParameters(
     useMultiAsset,

@@ -22,7 +22,7 @@ import type {
   TSerializedApiCall,
   TTransferLocalOptions
 } from '../../types'
-import { createBeneficiaryMultiLocation, createX1Payload } from '../../utils'
+import { createBeneficiaryLocation, createX1Payload } from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
 import { resolveParaId } from '../../utils/resolveParaId'
 import { getParaId } from '../config'
@@ -114,14 +114,7 @@ export const createTypeAndThenTransfer = <TApi, TRes>(
       }
     },
     fees_transfer_type: transferType,
-    custom_xcm_on_dest: createCustomXcmPolimec(
-      api,
-      address,
-      scenario,
-      destination,
-      paraIdTo,
-      version
-    ),
+    custom_xcm_on_dest: createCustomXcmPolimec(api, address, destination, paraIdTo, version),
     weight_limit: 'Unlimited'
   }
 })
@@ -129,7 +122,6 @@ export const createTypeAndThenTransfer = <TApi, TRes>(
 const createCustomXcmPolimec = <TApi, TRes>(
   api: IPolkadotApi<TApi, TRes>,
   address: TAddress,
-  scenario: TScenario,
   destination: TDestination,
   paraIdTo: number | undefined,
   version: Version
@@ -147,8 +139,8 @@ const createCustomXcmPolimec = <TApi, TRes>(
           dest: (
             Object.values(
               createVersionedDestination(
-                scenario,
                 version,
+                'Polimec',
                 destination,
                 paraId,
                 undefined,
@@ -178,11 +170,9 @@ const createCustomXcmPolimec = <TApi, TRes>(
                     AllCounted: 1
                   }
                 },
-                beneficiary: createBeneficiaryMultiLocation({
+                beneficiary: createBeneficiaryLocation({
                   api,
-                  scenario,
-                  pallet: 'PolkadotXcm',
-                  recipientAddress: address,
+                  address: address,
                   version
                 })
               }

@@ -20,7 +20,7 @@ import type {
   TTransferLocalOptions
 } from '../../types'
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
-import { createBeneficiaryMultiLocation } from '../../utils'
+import { createBeneficiaryLocation } from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import { getParaId } from '../config'
@@ -28,18 +28,16 @@ import ParachainNode from '../ParachainNode'
 import { createTransferAssetsTransfer, createTypeAndThenTransfer } from './Polimec'
 
 const createCustomXcmAh = <TApi, TRes>(
-  { api, scenario, address }: TPolkadotXCMTransferOptions<TApi, TRes>,
+  { api, address }: TPolkadotXCMTransferOptions<TApi, TRes>,
   version: Version
 ) => ({
   [version]: [
     {
       DepositAsset: {
         assets: { Wild: { AllCounted: 1 } },
-        beneficiary: createBeneficiaryMultiLocation({
+        beneficiary: createBeneficiaryLocation({
           api,
-          scenario,
-          pallet: 'PolkadotXcm',
-          recipientAddress: address,
+          address: address,
           version
         })
       }
@@ -58,15 +56,15 @@ class Hydration<TApi, TRes>
   }
 
   transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {
-    const { api, asset, scenario, version, destination } = input
+    const { api, asset, version, destination } = input
 
     const call: TSerializedApiCall = {
       module: 'PolkadotXcm',
       method: 'transfer_assets_using_type_and_then',
       parameters: {
         dest: createVersionedDestination(
-          scenario,
           version,
+          this.node,
           destination,
           getParaId('AssetHubPolkadot')
         ),

@@ -17,7 +17,7 @@ describe('XcmPallet utils', () => {
       ).toThrowError(InvalidParameterError)
       expect(() =>
         resolveTNodeFromMultiLocation('Kusama', multiLocationWithoutParachain)
-      ).toThrowError('Parachain ID not found in destination multi location.')
+      ).toThrowError('Parachain ID not found in destination multi-location.')
     })
 
     it('should throw InvalidParameterError if node with specified paraId is not found for the relay chain', () => {

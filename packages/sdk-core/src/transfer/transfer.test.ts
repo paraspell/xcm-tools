@@ -1,4 +1,9 @@
-import type { TAsset, TCurrencyInput, TMultiAssetWithFee } from '@paraspell/assets'
+import {
+  normalizeMultiLocation,
+  type TAsset,
+  type TCurrencyInput,
+  type TMultiAssetWithFee
+} from '@paraspell/assets'
 import type { TMultiLocation } from '@paraspell/sdk-common'
 import { isDotKsmBridge, isRelayChain, isTMultiLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -7,8 +12,10 @@ import type { IPolkadotApi } from '../api'
 import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
 import type { TSendOptions } from '../types'
-import { getNode } from '../utils'
+import { getNode, validateAddress } from '../utils'
+import { getChainVersion } from '../utils/chain'
 import { send } from './transfer'
+import { transferRelayToPara } from './transferRelayToPara'
 import {
   resolveAsset,
   resolveFeeAsset,
@@ -34,11 +41,21 @@ vi.mock('@paraspell/sdk-common', async () => {
 })
 
 vi.mock('../utils', () => ({
-  getNode: vi.fn()
+  getNode: vi.fn(),
+  validateAddress: vi.fn()
+}))
+
+vi.mock('../utils/chain', () => ({
+  getChainVersion: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
-  isOverrideMultiLocationSpecifier: vi.fn()
+  isOverrideMultiLocationSpecifier: vi.fn(),
+  normalizeMultiLocation: vi.fn()
+}))
+
+vi.mock('./transferRelayToPara', () => ({
+  transferRelayToPara: vi.fn()
 }))
 
 vi.mock('./utils', () => ({
@@ -75,10 +92,13 @@ describe('send', () => {
     } as unknown as AssetHubPolkadot<unknown, unknown>
 
     vi.mocked(getNode).mockReturnValue(originNodeMock)
+    vi.mocked(getChainVersion).mockReturnValue(Version.V4)
     vi.mocked(isDotKsmBridge).mockReturnValue(false)
     vi.mocked(shouldPerformAssetCheck).mockReturnValue(true)
     vi.mocked(resolveAsset).mockReturnValue({ symbol: 'TEST' } as TAsset)
     vi.mocked(resolveFeeAsset).mockReturnValue({ symbol: 'FEE' } as TAsset)
+    vi.mocked(selectXcmVersion).mockReturnValue(Version.V4)
+    vi.mocked(normalizeMultiLocation).mockImplementation(location => location)
   })
 
   afterEach(() => {
@@ -110,36 +130,45 @@ describe('send', () => {
       api: apiMock,
       asset: { symbol: 'TEST', amount: '100' },
       currency: options.currency,
+      feeAsset: undefined,
+      feeCurrency: undefined,
       address: options.address,
       to: options.to,
       paraIdTo: options.paraIdTo,
-      version: options.version
+      overriddenAsset: undefined,
+      version: Version.V4,
+      senderAddress: undefined,
+      ahAddress: undefined,
+      pallet: undefined,
+      method: undefined
     })
 
     expect(result).toBe('transferResult')
   })
 
-  it('should handle when assetCheckEnabled is false', async () => {
-    vi.mocked(shouldPerformAssetCheck).mockReturnValue(false)
-    vi.mocked(resolveAsset).mockReturnValue(null)
-
+  it('should handle when feeAsset is provided', async () => {
     const options = {
       api: apiMock,
       from: 'Acala',
       to: 'Astar',
       currency: { symbol: 'DOT', amount: '100' },
+      feeAsset: { symbol: 'USDT' },
       address: 'some-address'
     } as TSendOptions<unknown, unknown>
+
     const transferSpy = vi.spyOn(originNodeMock, 'transfer')
 
     const result = await send(options)
 
-    expect(validateAssetSpecifiers).toHaveBeenCalledWith(false, options.currency)
-    expect(validateAssetSupport).toHaveBeenCalledWith(options, false, false, null)
+    expect(resolveFeeAsset).toHaveBeenCalledWith({ symbol: 'USDT' }, 'Acala', 'Astar', {
+      symbol: 'DOT',
+      amount: '100'
+    })
 
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        asset: { symbol: 'DOT', amount: '100' }
+        feeAsset: { symbol: 'FEE' },
+        feeCurrency: { symbol: 'USDT' }
       })
     )
 
@@ -235,17 +264,23 @@ describe('send', () => {
     expect(result).toBe('transferResult')
   })
 
-  it('should throw error if senderAddress is in EVM format', async () => {
+  it('should validate senderAddress if provided', async () => {
     const options = {
       api: apiMock,
       from: 'Acala',
       currency: { symbol: 'TEST', amount: 100 },
       address: 'some-address',
       to: 'Astar',
-      senderAddress: '0x1501C1413e4178c38567Ada8945A80351F7B8496'
+      senderAddress: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY'
     } as TSendOptions<unknown, unknown>
 
-    await expect(send(options)).rejects.toThrow()
+    await send(options)
+
+    expect(validateAddress).toHaveBeenCalledWith(
+      '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+      'Acala',
+      false
+    )
   })
 
   it('should not include optional parameters if they are undefined', async () => {
@@ -267,7 +302,7 @@ describe('send', () => {
     expect(transferSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         paraIdTo: undefined,
-        version: undefined,
+        version: Version.V4,
         senderAddress: undefined
       })
     )
@@ -308,6 +343,42 @@ describe('send', () => {
     await expect(send(options)).rejects.toThrow(
       'Asset is required for relay chain to relay chain transfers.'
     )
+  })
+
+  it('should handle relay to para transfers', async () => {
+    vi.mocked(isRelayChain).mockReturnValue(true)
+    vi.mocked(transferRelayToPara).mockResolvedValue('relayTransferResult')
+
+    const options = {
+      api: apiMock,
+      from: 'Polkadot',
+      to: 'Acala',
+      currency: { symbol: 'DOT', amount: '100' },
+      address: 'some-address',
+      paraIdTo: 1000,
+      version: Version.V3,
+      pallet: 'XTokens',
+      method: 'transfer'
+    } as TSendOptions<unknown, unknown>
+
+    const result = await send(options)
+
+    expect(transferRelayToPara).toHaveBeenCalledWith({
+      api: apiMock,
+      origin: 'Polkadot',
+      destination: 'Acala',
+      address: 'some-address',
+      asset: {
+        symbol: 'TEST',
+        amount: '100'
+      },
+      paraIdTo: 1000,
+      version: Version.V4,
+      pallet: 'XTokens',
+      method: 'transfer'
+    })
+
+    expect(result).toBe('relayTransferResult')
   })
 
   describe('local transfers on relay chain', () => {
@@ -364,9 +435,11 @@ describe('send', () => {
   })
 
   it('should downgrade from V4 to V3 when destination only supports V3', async () => {
-    const destNodeMock = { version: Version.V3 } as unknown as AssetHubPolkadot<unknown, unknown>
-    vi.mocked(getNode).mockImplementation((chain: string) => {
-      return chain === 'Acala' ? originNodeMock : destNodeMock
+    // Mock origin chain to support V4
+    vi.mocked(getChainVersion).mockImplementation(chain => {
+      if (chain === 'Acala') return Version.V4
+      if (chain === 'Astar') return Version.V3
+      return Version.V4
     })
 
     vi.mocked(selectXcmVersion).mockReturnValue(Version.V3)
@@ -383,6 +456,8 @@ describe('send', () => {
 
     const result = await send(options)
 
+    expect(getChainVersion).toHaveBeenCalledWith('Acala')
+    expect(getChainVersion).toHaveBeenCalledWith('Astar')
     expect(selectXcmVersion).toHaveBeenCalledWith(undefined, Version.V4, Version.V3)
 
     expect(transferSpy).toHaveBeenCalledWith(
@@ -395,9 +470,14 @@ describe('send', () => {
   })
 
   it('resolves correct versions for Polkadot → Manta', async () => {
-    vi.mocked(getNode)
-      .mockReturnValueOnce({ version: Version.V4 } as AssetHubPolkadot<unknown, unknown>)
-      .mockReturnValueOnce({ version: Version.V3 } as AssetHubPolkadot<unknown, unknown>)
+    vi.mocked(isRelayChain).mockReturnValue(true)
+    vi.mocked(transferRelayToPara).mockResolvedValue('relayTransferResult')
+
+    vi.mocked(getChainVersion).mockImplementation(chain => {
+      if (chain === 'Polkadot') return Version.V4
+      if (chain === 'Manta') return Version.V3
+      return Version.V4
+    })
 
     await send({
       api: apiMock,
@@ -407,6 +487,76 @@ describe('send', () => {
       address: 'some-address'
     })
 
+    expect(getChainVersion).toHaveBeenCalledWith('Polkadot')
+    expect(getChainVersion).toHaveBeenCalledWith('Manta')
     expect(selectXcmVersion).toHaveBeenCalledWith(undefined, Version.V4, Version.V3)
+  })
+
+  it('should handle multiasset currency with amount 0', async () => {
+    const options = {
+      api: apiMock,
+      from: 'Acala',
+      to: 'Astar',
+      currency: { multiasset: [], amount: '0' } as TCurrencyInput,
+      address: 'some-address'
+    } as TSendOptions<unknown, unknown>
+
+    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+
+    await send(options)
+
+    expect(transferSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        asset: { symbol: 'TEST', amount: 0, assetId: '1' }
+      })
+    )
+  })
+
+  it('should ensure minimum amount of 2 for regular currencies', async () => {
+    const options = {
+      api: apiMock,
+      from: 'Acala',
+      to: 'Astar',
+      currency: { symbol: 'DOT', amount: '1' },
+      address: 'some-address'
+    } as TSendOptions<unknown, unknown>
+
+    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+
+    await send(options)
+
+    expect(transferSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        asset: { symbol: 'TEST', amount: 2n }
+      })
+    )
+  })
+
+  it('should normalize multiLocation when present', async () => {
+    const multiLocation = { parents: 1, interior: { X1: { Parachain: 1000 } } }
+    vi.mocked(resolveAsset).mockReturnValue({
+      symbol: 'TEST',
+      multiLocation
+    } as TAsset)
+
+    const options = {
+      api: apiMock,
+      from: 'Acala',
+      to: 'Astar',
+      currency: { symbol: 'TEST', amount: '100' },
+      address: 'some-address'
+    } as TSendOptions<unknown, unknown>
+
+    const transferSpy = vi.spyOn(originNodeMock, 'transfer')
+
+    await send(options)
+
+    expect(transferSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        asset: expect.objectContaining({
+          multiLocation
+        })
+      })
+    )
   })
 })

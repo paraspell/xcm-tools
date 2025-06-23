@@ -5962,7 +5962,8 @@
           }
         },
         "existentialDeposit": "10000",
-        "isFeeAsset": true
+        "isFeeAsset": true,
+        "alias": "USDC1"
       },
       {
         "assetId": "1984",
@@ -6316,7 +6317,8 @@
           }
         },
         "existentialDeposit": "10000",
-        "isFeeAsset": true
+        "isFeeAsset": true,
+        "alias": "USDC2"
       },
       {
         "symbol": "EQD",

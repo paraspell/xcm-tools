@@ -124,19 +124,7 @@ export const dryRunInternal = async <TApi, TRes>(
         amount: BigInt((currency as WithAmount<TCurrencyCore>).amount)
       })
 
-      // Determine the currency for this hop
-      let hopCurrency: string | undefined
-      if (nextChain === destination) {
-        hopCurrency = asset?.symbol
-      } else if (
-        isRelayChain(nextChain) ||
-        nextChain === assetHubNode ||
-        nextChain === bridgeHubNode
-      ) {
-        hopCurrency = resolvedFeeAsset
-          ? resolvedFeeAsset.symbol
-          : getNativeAssetSymbol(nextChain as TNodeDotKsmWithRelayChains)
-      }
+      const hopCurrency = asset.symbol
 
       // Add to hops array (only if not the destination)
       if (nextChain !== destination) {
@@ -220,6 +208,6 @@ export const dryRunInternal = async <TApi, TRes>(
     destination: destinationDryRun?.success
       ? { ...destinationDryRun, currency: asset?.symbol }
       : destinationDryRun,
-    hops // Add the hops array to the return value
+    hops
   }
 }

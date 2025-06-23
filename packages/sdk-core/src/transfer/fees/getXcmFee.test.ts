@@ -312,7 +312,7 @@ describe('getXcmFee', () => {
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
     vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
       if (chain === 'Acala') return 'ACA'
-      if (chain === 'AssetHubPolkadot') return 'DOT'
+      if (chain === 'AssetHubPolkadot') return 'ACA'
       if (chain === 'BridgeHubPolkadot') return 'BRIDGE'
       return 'GLMR'
     })
@@ -356,7 +356,7 @@ describe('getXcmFee', () => {
         result: {
           fee: 3_000n,
           feeType: 'dryRun',
-          currency: 'DOT',
+          currency: 'ACA',
           sufficient: true
         }
       },
@@ -374,7 +374,7 @@ describe('getXcmFee', () => {
     expect(res.assetHub).toEqual({
       fee: 3_000n,
       feeType: 'dryRun',
-      currency: 'DOT',
+      currency: 'ACA',
       sufficient: true
     })
     expect(res.bridgeHub).toEqual({

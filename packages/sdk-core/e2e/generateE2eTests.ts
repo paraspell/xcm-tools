@@ -335,6 +335,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                     expect(error.name).toBe('NodeNotSupported')
                   } else if (error.name === 'NoXCMSupportImplemented') {
                     expect(error.name).toBe('NoXCMSupportImplemented')
+                  } else if (error.name === 'TransferToAhNotSupported') {
+                    expect(error.name).toBe('TransferToAhNotSupported')
                   } else {
                     throw error
                   }

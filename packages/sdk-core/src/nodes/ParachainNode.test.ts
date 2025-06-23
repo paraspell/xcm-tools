@@ -29,12 +29,10 @@ vi.mock('../utils', async () => {
   return {
     ...actual,
     createApiInstance: vi.fn().mockResolvedValue('apiInstance'),
-    createBeneficiary: vi.fn().mockReturnValue('beneficiary'),
     getFees: vi.fn().mockReturnValue('fees'),
     verifyMultiLocation: vi.fn(),
     isTMultiLocation: vi.fn(),
-    isRelayChain: vi.fn(),
-    createBeneficiaryMultiLocation: vi.fn().mockReturnValue('beneficiaryMultiLocation')
+    createBeneficiaryLocation: vi.fn().mockReturnValue('beneficiaryMultiLocation')
   }
 })
 

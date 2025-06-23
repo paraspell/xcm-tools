@@ -637,18 +637,27 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const feeEvent =
       feeAssetFeeEvent ??
+      //
+      (node === 'AssetHubPolkadot' && asset?.symbol !== 'DOT'
+        ? [...emitted].find(event => event.type === 'Assets' && event.value.type === 'Deposited')
+        : undefined) ??
+      //
+      (node === 'Mythos'
+        ? reversedEvents.find(event => event.type === 'Balances' && event.value.type === 'Issued')
+        : undefined) ??
+      //
       (origin === 'Mythos' || (node === 'AssetHubPolkadot' && asset?.symbol !== 'DOT')
         ? reversedEvents.find(
             event => event.type === 'AssetConversion' && event.value.type === 'SwapCreditExecuted'
           )
         : undefined) ??
-      // Prefer an Issued event
-      reversedEvents.find(
-        (event: any) => palletsWithIssued.includes(event.type) && event.value.type === 'Issued'
-      ) ??
-      // Fallback to Minted event
+      // Prefer to Minted event
       reversedEvents.find(
         event => ['Balances', 'ForeignAssets'].includes(event.type) && event.value.type === 'Minted'
+      ) ??
+      // Fallback an Issued event
+      reversedEvents.find(
+        (event: any) => palletsWithIssued.includes(event.type) && event.value.type === 'Issued'
       ) ??
       reversedEvents.find(
         event => ['Currencies', 'Tokens'].includes(event.type) && event.value.type === 'Deposited'
@@ -657,7 +666,7 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     if (!feeEvent) {
       return Promise.resolve({
         success: false,
-        failureReason: 'Cannot determine destination fee. No Issued event found'
+        failureReason: 'Cannot determine destination fee. No fee event found'
       })
     }
 

@@ -246,10 +246,6 @@
     "paraId": 2031,
     "providers": [
       {
-        "name": "Centrifuge",
-        "endpoint": "wss://fullnode.centrifuge.io"
-      },
-      {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-centrifuge.luckyfriday.io"
       },

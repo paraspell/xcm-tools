@@ -2,6 +2,9 @@
  * Error thrown when the Dry Run fails.
  */
 export class DryRunFailedError extends Error {
+  public readonly reason: string
+  public readonly dryRunType?: 'origin' | 'destination' | 'assetHub' | 'bridgeHub'
+
   /**
    * Constructs a new DryRunFailedError.
    *
@@ -15,5 +18,7 @@ export class DryRunFailedError extends Error {
     }
     super(message)
     this.name = 'DryRunFailedError'
+    this.reason = reason
+    this.dryRunType = dryRunType
   }
 }

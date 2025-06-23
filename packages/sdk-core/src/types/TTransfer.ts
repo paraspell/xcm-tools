@@ -43,7 +43,7 @@ export type TPolkadotXCMTransferOptions<TApi, TRes> = {
 export type TXTokensTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
-  destLocation: TMultiLocation
+  address: TAddress
   scenario: TScenario
   origin: TNodePolkadotKusama
   destination: TDestination
@@ -58,7 +58,6 @@ export type TXTokensTransferOptions<TApi, TRes> = {
 export type TXTransferTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
   asset: WithAmount<TAsset>
-  scenario: TScenario
   recipientAddress: TAddress
   origin: TNodePolkadotKusama
   paraIdTo?: number
@@ -238,9 +237,15 @@ export type TWeight = {
 
 export type TCreateBeneficiaryOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
-  scenario: TScenario
-  pallet: TPallet | null
-  recipientAddress: TAddress
+  address: TAddress
+  version: Version
+}
+
+export type TCreateBeneficiaryXTokensOptions<TApi, TRes> = {
+  api: IPolkadotApi<TApi, TRes>
+  origin: TNodeDotKsmWithRelayChains
+  destination: TDestination
+  address: TAddress
   version: Version
   paraId?: number
 }
@@ -252,4 +257,57 @@ export type TTransferLocalOptions<TApi, TRes> = Omit<
   'address'
 > & {
   address: string
+}
+
+export type TTransferFeeEstimates = {
+  originFee: bigint
+  reserveFee: bigint
+}
+
+export type TCreateBaseTransferXcmOptions = {
+  chain: TNodeDotKsmWithRelayChains
+  destChain: TNodeWithRelayChains
+  asset: WithAmount<TAsset>
+  feeAsset?: TAsset
+  fees: TTransferFeeEstimates
+  recipientAddress: string
+  version: Version
+  // refactor this
+  paraIdTo?: number
+}
+
+export type TCreateTransferXcmOptions<TApi, TRes> = WithApi<
+  TCreateBaseTransferXcmOptions,
+  TApi,
+  TRes
+>
+
+export type TCreateBaseSwapXcmOptions = {
+  chain?: TNodeDotKsmWithRelayChains
+  exchangeChain: TNodePolkadotKusama
+  destChain?: TNodeWithRelayChains
+  assetFrom: WithAmount<TAsset>
+  assetTo: WithAmount<TAsset>
+  senderAddress: string
+  recipientAddress: string
+  calculateMinAmountOut: (amountIn: bigint, assetTo?: TAsset) => Promise<bigint>
+}
+
+export type TCreateSwapXcmOptions<TApi, TRes> = WithApi<TCreateBaseSwapXcmOptions, TApi, TRes>
+
+export type TSwapFeeEstimates = {
+  originReserveFee: bigint
+  exchangeFee: bigint
+  destReserveFee: bigint
+}
+
+export type TCreateSwapXcmInternalOptions<TApi, TRes> = WithApi<
+  TCreateBaseSwapXcmOptions,
+  TApi,
+  TRes
+> & {
+  version: Version
+  fees: TSwapFeeEstimates
+  // refactor this
+  paraIdTo?: number
 }

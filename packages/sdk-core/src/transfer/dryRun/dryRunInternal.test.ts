@@ -113,7 +113,6 @@ describe('dryRunInternal', () => {
   it('adds intermediate AssetHub result when hop succeeds', async () => {
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
     vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
-      if (node === 'AssetHubPolkadot') return 'DOT'
       if (node === 'Moonbeam') return 'GLMR'
       return 'ACA'
     })
@@ -150,9 +149,9 @@ describe('dryRunInternal', () => {
 
     expect(res).toEqual({
       origin: { ...originOk, currency: 'ACA' },
-      assetHub: { ...assetHubOk, currency: 'DOT' },
+      assetHub: { ...assetHubOk, currency: 'ACA' },
       destination: { ...destOk, currency: 'ACA' },
-      hops: [{ chain: 'AssetHubPolkadot', result: { ...assetHubOk, currency: 'DOT' } }]
+      hops: [{ chain: 'AssetHubPolkadot', result: { ...assetHubOk, currency: 'ACA' } }]
     })
   })
 

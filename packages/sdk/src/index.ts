@@ -19,7 +19,9 @@ export {
   getParaEthTransferFees,
   send,
   getBridgeStatus,
-  getOriginXcmFee
+  getOriginXcmFee,
+  getXcmFee,
+  handleSwapExecuteTransfer
 } from './transfer'
 export * from './types'
 export { createApiInstanceForNode } from './utils'
