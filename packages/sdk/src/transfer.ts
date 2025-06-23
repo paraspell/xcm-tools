@@ -4,6 +4,7 @@ import {
   getBridgeStatus as getBridgeStatusImpl,
   getOriginXcmFee as getOriginXcmFeeImpl,
   getParaEthTransferFees as getEthFeesImpl,
+  handleSwapExecuteTransfer as handleSwapExecuteTransferImpl,
   send as sendImpl
 } from '@paraspell/sdk-core'
 
@@ -39,3 +40,7 @@ export const getBridgeStatus = async (ahApi?: TPapiApiOrUrl) => {
 }
 
 export const getOriginXcmFee = createPapiApiCall(getOriginXcmFeeImpl<TPapiApi, TPapiTransaction>)
+
+export const handleSwapExecuteTransfer = createPapiApiCall(
+  handleSwapExecuteTransferImpl<TPapiApi, TPapiTransaction>
+)

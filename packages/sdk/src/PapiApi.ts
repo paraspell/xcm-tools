@@ -633,13 +633,13 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
             event => event.type === 'AssetConversion' && event.value.type === 'SwapCreditExecuted'
           )
         : undefined) ??
-      // Prefer an Issued event
-      reversedEvents.find(
-        (event: any) => palletsWithIssued.includes(event.type) && event.value.type === 'Issued'
-      ) ??
-      // Fallback to Minted event
+      // Prefer to Minted event
       reversedEvents.find(
         event => ['Balances', 'ForeignAssets'].includes(event.type) && event.value.type === 'Minted'
+      ) ??
+      // Fallback an Issued event
+      reversedEvents.find(
+        (event: any) => palletsWithIssued.includes(event.type) && event.value.type === 'Issued'
       ) ??
       reversedEvents.find(
         event => ['Currencies', 'Tokens'].includes(event.type) && event.value.type === 'Deposited'

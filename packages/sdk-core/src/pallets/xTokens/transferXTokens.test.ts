@@ -1,4 +1,3 @@
-import type { TMultiLocation } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -30,8 +29,7 @@ describe('transferXTokens', () => {
   const baseOptions = {
     api: mockApi,
     origin: 'Acala',
-    scenario: 'ParaToPara',
-    destLocation: {} as TMultiLocation
+    scenario: 'ParaToPara'
   } as TXTokensTransferOptions<unknown, unknown>
 
   beforeEach(() => {

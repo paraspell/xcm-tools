@@ -1,4 +1,4 @@
-import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
+import { handleSwapExecuteTransfer, type TPapiApi, type TPapiTransaction } from '@paraspell/sdk';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type ExchangeNode from '../dexNodes/DexNode';
@@ -11,9 +11,18 @@ vi.mock('./utils', () => ({
   buildToExchangeExtrinsic: vi.fn(),
   buildFromExchangeExtrinsic: vi.fn(),
 }));
+
 vi.mock('./createSwapTx', () => ({
   createSwapTx: vi.fn(),
 }));
+
+vi.mock('@paraspell/sdk', async () => {
+  const actual = await vi.importActual('@paraspell/sdk');
+  return {
+    ...actual,
+    handleSwapExecuteTransfer: vi.fn(),
+  };
+});
 
 const originApi = {} as TPapiApi;
 const dexNode = { node: 'Acala' } as ExchangeNode;
@@ -120,6 +129,55 @@ describe('prepareExtrinsics', () => {
       swapTxs: ['swapTx'],
       toDestTx: 'toDestTx',
       amountOut: 1000n,
+    });
+  });
+
+  test('handles AssetHub/Hydration special case with handleSwapExecuteTransfer', async () => {
+    vi.mocked(handleSwapExecuteTransfer).mockResolvedValue(
+      'handleSwapExecuteTransferTx' as unknown as TPapiTransaction,
+    );
+
+    const assetHubDexNode = {
+      node: 'AssetHubPolkadot',
+      getAmountOut: vi.fn().mockReturnValue('500'),
+    } as unknown as ExchangeNode;
+
+    const optionsWithAssetHub = {
+      ...baseOptions,
+      amount: '100',
+      senderAddress: 'sender123',
+      recipientAddress: 'recipient456',
+      exchange: {
+        ...baseOptions.exchange,
+        baseNode: 'AssetHubPolkadot',
+        assetFrom: { symbol: 'DOT' },
+        assetTo: { symbol: 'USDT' },
+        apiPapi: {} as TPapiApi,
+      },
+    } as TBuildTransactionsOptionsModified;
+
+    const res = await prepareExtrinsics(assetHubDexNode, optionsWithAssetHub);
+
+    expect(res).toEqual({
+      swapTxs: ['handleSwapExecuteTransferTx'],
+      amountOut: 1000n,
+    });
+
+    expect(handleSwapExecuteTransfer).toHaveBeenCalledWith({
+      chain: optionsWithAssetHub.origin?.node,
+      exchangeChain: optionsWithAssetHub.exchange.baseNode,
+      destChain: optionsWithAssetHub.destination?.node,
+      assetFrom: {
+        ...optionsWithAssetHub.exchange.assetFrom,
+        amount: BigInt(optionsWithAssetHub.amount),
+      },
+      assetTo: {
+        ...optionsWithAssetHub.exchange.assetTo,
+        amount: BigInt('1000'),
+      },
+      senderAddress: optionsWithAssetHub.senderAddress,
+      recipientAddress: optionsWithAssetHub.recipientAddress,
+      calculateMinAmountOut: expect.any(Function),
     });
   });
 });

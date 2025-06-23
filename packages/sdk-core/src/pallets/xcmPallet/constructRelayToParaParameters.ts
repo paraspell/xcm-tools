@@ -3,7 +3,7 @@ import { Parents } from '@paraspell/sdk-common'
 
 import { DEFAULT_FEE_ASSET } from '../../constants'
 import type { TRelayToParaOptions } from '../../types'
-import { createVersionedBeneficiary, resolveParaId } from '../../utils'
+import { addXcmVersionHeader, createBeneficiaryLocation, resolveParaId } from '../../utils'
 import { createVersionedMultiAssets } from '../../utils/multiAsset'
 import { createVersionedDestination } from './utils'
 
@@ -14,16 +14,15 @@ export const constructRelayToParaParameters = <TApi, TRes>(
 ): Record<string, unknown> => {
   const paraId = resolveParaId(paraIdTo, destination)
 
+  const beneficiaryLocation = createBeneficiaryLocation({
+    api,
+    address: address,
+    version
+  })
+
   return {
-    dest: createVersionedDestination('RelayToPara', version, destination, paraId),
-    beneficiary: createVersionedBeneficiary({
-      api,
-      scenario: 'RelayToPara',
-      pallet: null,
-      recipientAddress: address,
-      version,
-      paraId
-    }),
+    dest: createVersionedDestination(version, destination, paraId),
+    beneficiary: addXcmVersionHeader(beneficiaryLocation, version),
     assets: createVersionedMultiAssets(version, asset.amount, {
       parents: Parents.ZERO,
       interior: 'Here'

@@ -10,17 +10,20 @@ vi.mock('@paraspell/sdk', async (importActual) => {
   return {
     ...actual,
     transform: vi.fn(),
+    localizeLocation: vi.fn(),
   };
 });
 
 describe('getQuotedAmount', () => {
   let api: TPapiApi;
   let quotePriceExactTokensForTokens: ReturnType<typeof vi.fn>;
+  const mockChain = 'AssetHubPolkadot';
   const assetFromML: TMultiLocation = { parents: 0, interior: 'Here' };
   const assetToML: TMultiLocation = { parents: 0, interior: 'Here' };
   const amountIn = BigNumber('1000');
 
   beforeEach(() => {
+    vi.clearAllMocks();
     quotePriceExactTokensForTokens = vi.fn();
     api = {
       getUnsafeApi: () => ({
@@ -31,57 +34,53 @@ describe('getQuotedAmount', () => {
         },
       }),
     } as unknown as TPapiApi;
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     vi.mocked(transform).mockImplementation((ml) => ml);
+    vi.mocked(localizeLocation).mockImplementation((_, ml) => ml);
   });
 
-  it('should return on first valid strategy', async () => {
+  it('should return quoted amount with localized locations', async () => {
     quotePriceExactTokensForTokens.mockResolvedValueOnce(2000n);
 
-    const result = await getQuotedAmount(api, assetFromML, assetToML, amountIn, true);
+    const result = await getQuotedAmount(api, mockChain, assetFromML, assetToML, amountIn, true);
 
-    expect(result).toEqual({
-      amountOut: 2000n,
-      usedFromML: assetFromML,
-      usedToML: assetToML,
-    });
-    expect(quotePriceExactTokensForTokens).toHaveBeenCalledTimes(1);
+    expect(localizeLocation).toHaveBeenCalledWith(mockChain, assetFromML);
+    expect(localizeLocation).toHaveBeenCalledWith(mockChain, assetToML);
+
+    expect(transform).toHaveBeenCalledWith(assetFromML);
+    expect(transform).toHaveBeenCalledWith(assetToML);
+
     expect(quotePriceExactTokensForTokens).toHaveBeenCalledWith(
       assetFromML,
       assetToML,
       BigInt(amountIn.toString()),
       true,
     );
-  });
 
-  it('should try subsequent strategies if first fails', async () => {
-    quotePriceExactTokensForTokens.mockRejectedValueOnce(new Error('Error 1'));
-    quotePriceExactTokensForTokens.mockResolvedValueOnce(undefined);
-    quotePriceExactTokensForTokens.mockResolvedValueOnce(3000n);
-
-    const result = await getQuotedAmount(api, assetFromML, assetToML, amountIn, false);
     expect(result).toEqual({
-      amountOut: 3000n,
+      amountOut: 2000n,
       usedFromML: assetFromML,
-      usedToML: localizeLocation('AssetHubPolkadot', assetToML),
+      usedToML: assetToML,
     });
-    expect(quotePriceExactTokensForTokens).toHaveBeenCalledTimes(3);
   });
 
-  it('should throw an error if all strategies fail', async () => {
-    quotePriceExactTokensForTokens.mockRejectedValue(new Error('Error'));
+  it('should throw if quoting fails', async () => {
+    quotePriceExactTokensForTokens.mockRejectedValueOnce(new Error('API failed'));
 
-    await expect(getQuotedAmount(api, assetFromML, assetToML, amountIn)).rejects.toThrow(
+    await expect(getQuotedAmount(api, mockChain, assetFromML, assetToML, amountIn)).rejects.toThrow(
       'Swap failed: Pool not found',
     );
-    expect(quotePriceExactTokensForTokens).toHaveBeenCalledTimes(4);
+
+    expect(localizeLocation).toHaveBeenCalledTimes(2);
+    expect(quotePriceExactTokensForTokens).toHaveBeenCalledTimes(1);
   });
 
-  it('should pass the includeFee parameter as provided', async () => {
-    quotePriceExactTokensForTokens.mockResolvedValueOnce(4000n);
-    const includeFee = true;
+  it('should respect includeFee parameter', async () => {
+    quotePriceExactTokensForTokens.mockResolvedValueOnce(3000n);
+    const includeFee = false;
 
-    await getQuotedAmount(api, assetFromML, assetToML, amountIn, includeFee);
+    await getQuotedAmount(api, mockChain, assetFromML, assetToML, amountIn, includeFee);
 
     expect(quotePriceExactTokensForTokens).toHaveBeenCalledWith(
       assetFromML,

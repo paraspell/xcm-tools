@@ -23,8 +23,8 @@ vi.mock('@paraspell/assets', () => ({
   InvalidCurrencyError: class extends Error {}
 }))
 
-vi.mock('../multiLocation', () => ({
-  createBeneficiaryMultiLocation: vi.fn(() => 'mockedBeneficiary')
+vi.mock('../location', () => ({
+  createBeneficiaryLocation: vi.fn(() => 'mockedBeneficiary')
 }))
 
 vi.mock('../assertions')
