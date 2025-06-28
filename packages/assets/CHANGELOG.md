@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.8.1](https://github.com/paraspell/xcm-tools/compare/assets-v10.8.0...assets-v10.8.1) (2025-06-28)
+
+
+### Bug Fixes
+
+* Enable SKY and LINK routes on Ethereum ([5e337c0](https://github.com/paraspell/xcm-tools/commit/5e337c0525cad8a2d176d41786e750e2cf445f36))
+
 ## [10.8.0](https://github.com/paraspell/xcm-tools/compare/assets-v10.7.2...assets-v10.8.0) (2025-06-20)
 
 
