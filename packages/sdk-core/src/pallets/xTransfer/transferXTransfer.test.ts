@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
 import type { TXTransferTransferOptions } from '../../types'
-import { assertToIsString, createBeneficiaryMultiLocation } from '../../utils'
+import { assertToIsString, createBeneficiaryLocXTokens } from '../../utils'
 import { createMultiAsset, maybeOverrideMultiAsset } from '../../utils/multiAsset'
 import { transferXTransfer } from './transferXTransfer'
 import { determineDestWeight } from './utils/determineDestWeight'
@@ -35,7 +35,7 @@ vi.mock('./utils/determineDestWeight', () => ({
 }))
 
 vi.mock('../../utils', () => ({
-  createBeneficiaryMultiLocation: vi.fn(),
+  createBeneficiaryLocXTokens: vi.fn(),
   assertToIsString: vi.fn()
 }))
 
@@ -54,7 +54,7 @@ describe('XTransferTransferImpl', () => {
 
     vi.mocked(createMultiAsset).mockReturnValue(mockMultiAsset)
     vi.mocked(maybeOverrideMultiAsset).mockReturnValue(mockMultiAsset)
-    vi.mocked(createBeneficiaryMultiLocation).mockReturnValue(mockMultiLocation)
+    vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockMultiLocation)
 
     const callSpy = vi.spyOn(mockApi, 'callTxMethod')
 
@@ -82,7 +82,7 @@ describe('XTransferTransferImpl', () => {
 
     vi.mocked(createMultiAsset).mockReturnValue(mockMultiAsset)
     vi.mocked(maybeOverrideMultiAsset).mockReturnValue(mockMultiAsset)
-    vi.mocked(createBeneficiaryMultiLocation).mockReturnValue(mockMultiLocation)
+    vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockMultiLocation)
 
     const mockDestWeight = {
       ref_time: 6000000000n,

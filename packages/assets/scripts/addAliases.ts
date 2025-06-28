@@ -8,23 +8,26 @@ function collectDuplicateSymbolsInChains(assetsMap: TAssetJsonMap): {
 
   for (const node in assetsMap) {
     const nodeData = assetsMap[node as TNode]
-    const symbolToAssetIds: { [symbol: string]: Set<string> } = {}
+    const symbolToAssetKeys: { [symbol: string]: Set<string> } = {}
 
     const allAssets = [...(nodeData.nativeAssets || []), ...(nodeData.otherAssets || [])]
     for (const asset of allAssets) {
       const symbol = asset.symbol
-      const assetId = isForeignAsset(asset) ? asset.assetId : ''
-      if (symbol && assetId) {
-        if (!symbolToAssetIds[symbol]) {
-          symbolToAssetIds[symbol] = new Set()
+      let assetKey = ''
+      if (isForeignAsset(asset)) {
+        assetKey = asset.assetId ?? JSON.stringify(asset.multiLocation)
+      }
+      if (symbol && assetKey) {
+        if (!symbolToAssetKeys[symbol]) {
+          symbolToAssetKeys[symbol] = new Set()
         }
-        symbolToAssetIds[symbol].add(assetId)
+        symbolToAssetKeys[symbol].add(assetKey)
       }
     }
 
     const duplicates: { [symbol: string]: string[] } = {}
-    for (const symbol in symbolToAssetIds) {
-      const assetIds = Array.from(symbolToAssetIds[symbol])
+    for (const symbol in symbolToAssetKeys) {
+      const assetIds = Array.from(symbolToAssetKeys[symbol])
       if (assetIds.length > 1) {
         duplicates[symbol] = assetIds
       }
@@ -63,7 +66,8 @@ export function addAliasesToDuplicateSymbols(assetsMap: TAssetJsonMap): TAssetJs
 
       for (const asset of allAssets) {
         if (asset.symbol === symbol && isForeignAsset(asset)) {
-          const aliasNumber = asset.assetId ? aliasNumbers[asset.assetId] : undefined
+          const assetKey = asset.assetId ?? JSON.stringify(asset.multiLocation)
+          const aliasNumber = aliasNumbers[assetKey]
           if (aliasNumber !== undefined) {
             asset.alias = `${symbol}${aliasNumber}`
           }

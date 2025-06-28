@@ -24,11 +24,17 @@ import { getBridgeStatus } from '../../transfer/getBridgeStatus'
 import type { TScenario, TTransferLocalOptions } from '../../types'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { getNode } from '../../utils'
-import { createBeneficiary } from '../../utils'
-import { localizeLocation } from '../../utils/multiLocation'
+import { createBeneficiaryLocation } from '../../utils'
+import { localizeLocation } from '../../utils/location'
 import { handleExecuteTransfer } from '../../utils/transfer'
 import ParachainNode from '../ParachainNode'
 import type AssetHubPolkadot from './AssetHubPolkadot'
+
+vi.mock('../../pallets/xcmPallet/utils', () => ({
+  createDestination: vi.fn(),
+  createVersionedDestination: vi.fn(),
+  createBridgeDestination: vi.fn()
+}))
 
 vi.mock('../../pallets/polkadotXcm', () => ({
   transferPolkadotXcm: vi.fn()
@@ -54,13 +60,9 @@ vi.mock('../../transfer/getBridgeStatus', () => ({
   getBridgeStatus: vi.fn()
 }))
 
-vi.mock('../../utils/createBeneficiary', () => ({
-  createBeneficiary: vi.fn()
-}))
-
-vi.mock('../../utils/multiLocation', () => ({
+vi.mock('../../utils/location', () => ({
   localizeLocation: vi.fn(),
-  createBeneficiaryMultiLocation: vi.fn()
+  createBeneficiaryLocation: vi.fn()
 }))
 
 vi.mock('../../utils/ethereum/generateMessageId', () => ({
@@ -393,7 +395,7 @@ describe('AssetHubPolkadot', () => {
         multiLocation: {} as TMultiLocation
       })
 
-      vi.mocked(createBeneficiary).mockReturnValue({} as TMultiLocation)
+      vi.mocked(createBeneficiaryLocation).mockReturnValue({} as TMultiLocation)
       vi.mocked(isForeignAsset).mockReturnValue(true)
 
       const handleLocalReserveTransferSpy = vi.spyOn(assetHub, 'handleLocalReserveTransfer')

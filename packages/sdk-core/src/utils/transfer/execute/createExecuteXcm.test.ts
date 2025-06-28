@@ -2,26 +2,27 @@
 import { type TMultiLocation, Version } from '@paraspell/sdk-common'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { createDestination } from '../../pallets/xcmPallet/utils'
-import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../types'
-import { assertHasLocation } from '../assertions'
-import { createBeneficiary } from '../createBeneficiary'
-import { localizeLocation } from '../multiLocation'
+import { DOT_MULTILOCATION } from '../../../constants'
+import { createDestination } from '../../../pallets/xcmPallet/utils'
+import type { TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
+import { assertHasLocation } from '../../assertions'
+import { createBeneficiaryLocation, localizeLocation } from '../../location'
 import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
 
-vi.mock('../../pallets/xcmPallet/utils', () => ({
+vi.mock('../../../constants', () => ({
+  DOT_MULTILOCATION: { parents: 0, interior: { X1: { PalletInstance: 50 } } }
+}))
+
+vi.mock('../../../pallets/xcmPallet/utils', () => ({
   createDestination: vi.fn()
 }))
 
-vi.mock('../createBeneficiary', () => ({
-  createBeneficiary: vi.fn()
+vi.mock('../../location', () => ({
+  localizeLocation: vi.fn(),
+  createBeneficiaryLocation: vi.fn()
 }))
 
-vi.mock('../multiLocation', () => ({
-  localizeLocation: vi.fn()
-}))
-
-vi.mock('../assertions')
+vi.mock('../../assertions')
 
 describe('createExecuteExchangeXcm', () => {
   const dummyDest = 'destValue' as unknown as TMultiLocation
@@ -29,7 +30,7 @@ describe('createExecuteExchangeXcm', () => {
 
   beforeEach(() => {
     vi.mocked(createDestination).mockReturnValue(dummyDest)
-    vi.mocked(createBeneficiary).mockReturnValue(dummyBeneficiary)
+    vi.mocked(createBeneficiaryLocation).mockReturnValue(dummyBeneficiary)
     vi.mocked(localizeLocation).mockReturnValue('transformedLocation' as unknown as TMultiLocation)
   })
 
@@ -48,7 +49,6 @@ describe('createExecuteExchangeXcm', () => {
         multiLocation: { foo: 'bar' },
         amount: '1000'
       },
-      scenario: 'test-scenario',
       destination: 'dest',
       paraIdTo: 200,
       address: 'address'
@@ -63,6 +63,10 @@ describe('createExecuteExchangeXcm', () => {
     const result = createExecuteExchangeXcm(input, weight, originFee, destFee)
 
     expect(assertHasLocation).toHaveBeenCalledOnce()
+    expect(assertHasLocation).toHaveBeenCalledWith(input.asset)
+
+    expect(localizeLocation).toHaveBeenCalledOnce()
+    expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', input.asset.multiLocation)
 
     expect(result).toBe('result')
     expect(fakeApi.callTxMethod).toHaveBeenCalledTimes(1)
@@ -114,7 +118,7 @@ describe('createExecuteExchangeXcm', () => {
       give: { Wild: { AllCounted: 1 } },
       want: [
         {
-          id: expect.anything(), // DOT_MULTILOCATION
+          id: DOT_MULTILOCATION,
           fun: { Fungible: 100000000n }
         }
       ],
@@ -153,20 +157,13 @@ describe('createExecuteExchangeXcm', () => {
 
     const result = createExecuteExchangeXcm(input, weight, originFee, destFee)
     expect(result).toBe('defaultResult')
+
     expect(assertHasLocation).toHaveBeenCalledOnce()
-    expect(createDestination).toHaveBeenCalledWith(
-      input.scenario,
-      Version.V4,
-      input.destination,
-      input.paraIdTo
-    )
-    expect(createBeneficiary).toHaveBeenCalledWith({
-      api: input.api,
-      scenario: input.scenario,
-      pallet: 'PolkadotXcm',
-      recipientAddress: input.address,
-      version: Version.V4,
-      paraId: input.paraIdTo
-    })
+    expect(assertHasLocation).toHaveBeenCalledWith(input.asset)
+
+    expect(localizeLocation).toHaveBeenCalledOnce()
+    expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', input.asset.multiLocation)
+
+    expect(createDestination).toHaveBeenCalledWith(Version.V4, input.destination, input.paraIdTo)
   })
 })

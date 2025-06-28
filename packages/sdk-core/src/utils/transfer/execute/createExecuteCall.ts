@@ -1,4 +1,4 @@
-import type { TSerializedApiCall, TWeight, TXcmVersioned } from '../../types'
+import type { TSerializedApiCall, TWeight, TXcmVersioned } from '../../../types'
 
 export const createExecuteCall = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

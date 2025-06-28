@@ -177,13 +177,18 @@ describe('AssetHubExchangeNode', () => {
       });
       expect(result).toEqual({ tx: dummyTx, amountOut: '1900' });
       expect(getQuotedAmount).toHaveBeenCalledTimes(2);
-      expect(vi.mocked(getQuotedAmount).mock.calls[1][0]).toBe(papiApi);
-      expect(vi.mocked(getQuotedAmount).mock.calls[1][1]).toEqual({
-        parents: Parents.ONE,
-        interior: { Here: null },
-      });
-      expect(vi.mocked(getQuotedAmount).mock.calls[1][3]).toEqual(toDestTxFee);
-      expect(vi.mocked(getQuotedAmount).mock.calls[1][4]).toBe(true);
+
+      expect(getQuotedAmount).toHaveBeenCalledWith(
+        papiApi,
+        instance.node,
+        {
+          parents: Parents.ONE,
+          interior: { Here: null },
+        },
+        assetToML,
+        toDestTxFee,
+        true,
+      );
     });
   });
 
@@ -347,6 +352,26 @@ describe('AssetHubExchangeNode', () => {
   });
 
   describe('getAmountOut', () => {
+    const assetNative = {
+      symbol: 'NATIVE',
+      multiLocation: { parents: 0, interior: { Here: null } },
+    };
+
+    const assetA = {
+      symbol: 'A',
+      multiLocation: { parents: 0, interior: { X1: [{ PalletInstance: 1 }] } },
+    };
+
+    const assetB = {
+      symbol: 'B',
+      multiLocation: { parents: 0, interior: { X1: [{ GeneralIndex: 2 }] } },
+    };
+
+    beforeEach(() => {
+      vi.mocked(getExchangeAsset).mockReturnValue(assetNative);
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('NATIVE');
+    });
+
     it('should throw if assetFrom.multiLocation is missing', async () => {
       const opts = { ...baseSwapOptions, assetFrom: { symbol: 'ASSET1' } } as TSwapOptions;
       await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
@@ -361,20 +386,251 @@ describe('AssetHubExchangeNode', () => {
       );
     });
 
-    it('should return amountOut', async () => {
+    it('should throw when native asset not found', async () => {
+      vi.mocked(getExchangeAsset).mockReturnValue(null);
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetA,
+        assetTo: assetB,
+      } as TSwapOptions;
+      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+        'Native asset not found for this exchange node.',
+      );
+    });
+
+    it('should throw when swapping native asset to itself', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetNative,
+        assetTo: assetNative,
+      } as TSwapOptions;
+      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+        'Cannot swap native asset to itself.',
+      );
+    });
+
+    it('should return amountOut for single hop when assetFrom is native', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetNative,
+        assetTo: assetB,
+        origin: undefined,
+      } as TSwapOptions;
+
       const firstQuote = {
         amountOut: BigInt('2000'),
-        usedFromML: assetFromML,
-        usedToML: assetToML,
+        usedFromML: assetNative.multiLocation,
+        usedToML: assetB.multiLocation,
       };
       vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
-      const amountOut = await instance.getAmountOut(api, baseSwapOptions);
+
+      const amountOut = await instance.getAmountOut(api, opts);
+      expect(amountOut).toEqual(2000n);
+      expect(getQuotedAmount).toHaveBeenCalledTimes(1);
+      expect(getQuotedAmount).toHaveBeenCalledWith(
+        papiApi,
+        instance.node,
+        assetNative.multiLocation,
+        assetB.multiLocation,
+        BigNumber('1000'),
+      );
+    });
+
+    it('should return amountOut for single hop when assetTo is native', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetA,
+        assetTo: assetNative,
+        origin: undefined,
+      } as TSwapOptions;
+
+      const firstQuote = {
+        amountOut: BigInt('2000'),
+        usedFromML: assetA.multiLocation,
+        usedToML: assetNative.multiLocation,
+      };
+      vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
+
+      const amountOut = await instance.getAmountOut(api, opts);
+      expect(amountOut).toEqual(2000n);
+      expect(getQuotedAmount).toHaveBeenCalledTimes(1);
+      expect(getQuotedAmount).toHaveBeenCalledWith(
+        papiApi,
+        instance.node,
+        assetA.multiLocation,
+        assetNative.multiLocation,
+        BigNumber('1000'),
+      );
+    });
+
+    it('should return amountOut for single hop with origin fee deduction', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetNative,
+        assetTo: assetB,
+        origin: {},
+      } as TSwapOptions;
+
+      const firstQuote = {
+        amountOut: BigInt('2000'),
+        usedFromML: assetNative.multiLocation,
+        usedToML: assetB.multiLocation,
+      };
+      vi.mocked(getQuotedAmount).mockResolvedValueOnce(firstQuote);
+
+      const amountOut = await instance.getAmountOut(api, opts);
       expect(amountOut).toEqual(2000n);
       expect(getQuotedAmount).toHaveBeenCalledWith(
         papiApi,
-        assetFromML,
-        assetToML,
+        instance.node,
+        assetNative.multiLocation,
+        assetB.multiLocation,
+        BigNumber('980'), // 1000 * (1 - 0.02)
+      );
+    });
+
+    it('should handle multi-hop swap when both assets are non-native', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetA,
+        assetTo: assetB,
+        origin: undefined,
+      } as TSwapOptions;
+
+      const hop1Quote = {
+        amountOut: BigInt('1000'),
+        usedFromML: assetA.multiLocation,
+        usedToML: assetNative.multiLocation,
+      };
+      const hop2Quote = {
+        amountOut: BigInt('950'),
+        usedFromML: assetNative.multiLocation,
+        usedToML: assetB.multiLocation,
+      };
+
+      vi.mocked(getQuotedAmount).mockResolvedValueOnce(hop1Quote).mockResolvedValueOnce(hop2Quote);
+
+      const amountOut = await instance.getAmountOut(api, opts);
+      expect(amountOut).toEqual(950n);
+      expect(getQuotedAmount).toHaveBeenCalledTimes(2);
+
+      expect(getQuotedAmount).toHaveBeenNthCalledWith(
+        1,
+        papiApi,
+        instance.node,
+        assetA.multiLocation,
+        assetNative.multiLocation,
         BigNumber('1000'),
+      );
+
+      expect(getQuotedAmount).toHaveBeenNthCalledWith(
+        2,
+        papiApi,
+        instance.node,
+        assetNative.multiLocation,
+        assetB.multiLocation,
+        BigNumber('980'), // 1000 * 0.98
+      );
+    });
+
+    it('should handle multi-hop swap with origin fee deduction', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetA,
+        assetTo: assetB,
+        origin: {},
+      } as TSwapOptions;
+
+      const hop1Quote = {
+        amountOut: BigInt('1000'),
+        usedFromML: assetA.multiLocation,
+        usedToML: assetNative.multiLocation,
+      };
+      const hop2Quote = {
+        amountOut: BigInt('950'),
+        usedFromML: assetNative.multiLocation,
+        usedToML: assetB.multiLocation,
+      };
+
+      vi.mocked(getQuotedAmount).mockResolvedValueOnce(hop1Quote).mockResolvedValueOnce(hop2Quote);
+
+      const amountOut = await instance.getAmountOut(api, opts);
+      expect(amountOut).toEqual(950n);
+
+      expect(getQuotedAmount).toHaveBeenNthCalledWith(
+        1,
+        papiApi,
+        instance.node,
+        assetA.multiLocation,
+        assetNative.multiLocation,
+        BigNumber('980'), // 1000 * (1 - 0.02)
+      );
+
+      expect(getQuotedAmount).toHaveBeenNthCalledWith(
+        2,
+        papiApi,
+        instance.node,
+        assetNative.multiLocation,
+        assetB.multiLocation,
+        BigNumber('980'), // 1000 (hop1Quote.amountOut) * 0.98
+      );
+    });
+
+    it('should throw SmallAmountError if first hop returns zero in multi-hop', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetA,
+        assetTo: assetB,
+      } as TSwapOptions;
+
+      const hop1Quote = {
+        amountOut: BigInt('0'),
+        usedFromML: assetA.multiLocation,
+        usedToML: assetNative.multiLocation,
+      };
+
+      vi.mocked(getQuotedAmount).mockResolvedValueOnce(hop1Quote);
+
+      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+        `First hop (${assetA.symbol} -> ${assetNative.symbol}) resulted in zero or negative output.`,
+      );
+    });
+
+    it('should throw SmallAmountError if second hop returns zero in multi-hop', async () => {
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetA,
+        assetTo: assetB,
+      } as TSwapOptions;
+
+      const hop1Quote = {
+        amountOut: BigInt('1000'),
+        usedFromML: assetA.multiLocation,
+        usedToML: assetNative.multiLocation,
+      };
+      const hop2Quote = {
+        amountOut: BigInt('0'),
+        usedFromML: assetNative.multiLocation,
+        usedToML: assetB.multiLocation,
+      };
+
+      vi.mocked(getQuotedAmount).mockResolvedValueOnce(hop1Quote).mockResolvedValueOnce(hop2Quote);
+
+      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+        `Second hop (${assetNative.symbol} -> ${assetB.symbol}) resulted in zero or negative output.`,
+      );
+    });
+
+    it('should throw if native asset multiLocation is missing in multi-hop', async () => {
+      vi.mocked(getExchangeAsset).mockReturnValue({ symbol: 'NATIVE' });
+      const opts = {
+        ...baseSwapOptions,
+        assetFrom: assetA,
+        assetTo: assetB,
+      } as TSwapOptions;
+
+      await expect(instance.getAmountOut(api, opts)).rejects.toThrow(
+        'Native asset multiLocation not found',
       );
     });
   });

@@ -1,10 +1,9 @@
-import { DOT_MULTILOCATION } from '../../constants'
-import { createDestination } from '../../pallets/xcmPallet/utils'
-import type { TSerializedApiCall, TWeight } from '../../types'
-import { type TPolkadotXCMTransferOptions } from '../../types'
-import { assertHasLocation } from '../assertions'
-import { createBeneficiary } from '../createBeneficiary'
-import { localizeLocation } from '../multiLocation'
+import { DOT_MULTILOCATION } from '../../../constants'
+import { createDestination } from '../../../pallets/xcmPallet/utils'
+import type { TSerializedApiCall, TWeight } from '../../../types'
+import { type TPolkadotXCMTransferOptions } from '../../../types'
+import { assertHasLocation } from '../../assertions'
+import { createBeneficiaryLocation, localizeLocation } from '../../location'
 
 export const createExecuteExchangeXcm = <TApi, TRes>(
   input: TPolkadotXCMTransferOptions<TApi, TRes>,
@@ -12,17 +11,14 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
   originExecutionFee: bigint,
   destExecutionFee: bigint
 ): TRes => {
-  const { api, version, asset, scenario, destination, paraIdTo, address } = input
+  const { api, version, asset, destination, paraIdTo, address } = input
 
-  const dest = createDestination(scenario, version, destination, paraIdTo)
+  const dest = createDestination(version, destination, paraIdTo)
 
-  const beneficiary = createBeneficiary({
+  const beneficiary = createBeneficiaryLocation({
     api,
-    scenario,
-    pallet: 'PolkadotXcm',
-    recipientAddress: address,
-    version,
-    paraId: paraIdTo
+    address: address,
+    version
   })
 
   assertHasLocation(asset)

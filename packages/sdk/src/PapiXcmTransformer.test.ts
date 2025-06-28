@@ -574,4 +574,34 @@ describe('transform', () => {
     }
     expect(transform(input)).toEqual(expected)
   })
+
+  it('should handle SetFeesMode with jit_withdraw true', () => {
+    const input = {
+      SetFeesMode: {
+        jit_withdraw: true
+      }
+    }
+    const expected = {
+      type: 'SetFeesMode',
+      value: {
+        jit_withdraw: true
+      }
+    }
+    expect(transform(input)).toEqual(expected)
+  })
+
+  it('should handle SetFeesMode with jit_withdraw false', () => {
+    const input = {
+      SetFeesMode: {
+        jit_withdraw: false
+      }
+    }
+    const expected = {
+      type: 'SetFeesMode',
+      value: {
+        jit_withdraw: false
+      }
+    }
+    expect(transform(input)).toEqual(expected)
+  })
 })

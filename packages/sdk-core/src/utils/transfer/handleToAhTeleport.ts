@@ -8,7 +8,7 @@ import { getXcmFee } from '../../transfer'
 import { dryRunInternal } from '../../transfer/dryRun/dryRunInternal'
 import { padFeeBy } from '../../transfer/fees/padFee'
 import type { TPolkadotXCMTransferOptions } from '../../types'
-import { createExecuteExchangeXcm } from './createExecuteExchangeXcm'
+import { createExecuteExchangeXcm } from './execute'
 
 export const handleToAhTeleport = async <TApi, TRes>(
   origin: TNodePolkadotKusama,

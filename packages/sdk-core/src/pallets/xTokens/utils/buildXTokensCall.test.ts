@@ -4,8 +4,10 @@ import type { TMultiLocation } from '@paraspell/sdk-common'
 import { isTMultiLocation, Version } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { IPolkadotApi } from '../../../api'
 import { DEFAULT_FEE } from '../../../constants'
 import { type TXTokensCurrencySelection, type TXTokensTransferOptions } from '../../../types'
+import { createBeneficiaryLocXTokens } from '../../../utils'
 import { buildXTokensCall } from './buildXTokensCall'
 import { getModifiedCurrencySelection } from './currencySelection'
 import { getXTokensParameters } from './getXTokensParameters'
@@ -26,15 +28,23 @@ vi.mock('./getXTokensParameters', () => ({
   getXTokensParameters: vi.fn()
 }))
 
+vi.mock('../../../utils', () => ({
+  createBeneficiaryLocXTokens: vi.fn()
+}))
+
 describe('buildXTokensCall', () => {
   const version = Version.V4
+  const mockDestLocation = { parents: 1, interior: { X1: { Parachain: 2000 } } }
+  const mockApi = {} as IPolkadotApi<unknown, unknown>
 
   const baseInput = {
+    api: mockApi,
     origin: 'Acala',
     destination: 'Kusama',
     scenario: 'ParaToPara',
     asset: { amount: '100' },
-    destLocation: {},
+    address: '0x123',
+    paraIdTo: 2000,
     version
   } as TXTokensTransferOptions<unknown, unknown>
 
@@ -46,6 +56,7 @@ describe('buildXTokensCall', () => {
     vi.mocked(getModifiedCurrencySelection).mockReturnValue({ [Version.V4]: {} as TMultiAsset })
     vi.mocked(getXTokensParameters).mockReturnValue({ param1: 'value1', param2: 'value2' })
     vi.mocked(isTMultiLocation).mockReturnValue(true)
+    vi.mocked(createBeneficiaryLocXTokens).mockReturnValue(mockDestLocation)
   })
 
   it('uses default pallet and transfer method when multiAsset is false', () => {
@@ -62,6 +73,14 @@ describe('buildXTokensCall', () => {
 
     const result = buildXTokensCall(input, currencySelection, '0.1')
 
+    expect(createBeneficiaryLocXTokens).toHaveBeenCalledWith({
+      api: mockApi,
+      destination: 'Astar',
+      address: '0x123',
+      version,
+      paraId: 2000
+    })
+
     expect(result).toEqual({
       module: 'XTokens',
       method: 'transfer',
@@ -74,7 +93,7 @@ describe('buildXTokensCall', () => {
     expect(getXTokensParameters).toHaveBeenCalledWith(
       false,
       currencySelection,
-      input.destLocation,
+      mockDestLocation,
       input.asset.amount,
       '0.1',
       version,
@@ -96,11 +115,19 @@ describe('buildXTokensCall', () => {
 
     const result = buildXTokensCall(input, currencySelection, 123)
 
+    expect(createBeneficiaryLocXTokens).toHaveBeenCalledWith({
+      api: mockApi,
+      destination: 'Polkadot',
+      address: '0x123',
+      version,
+      paraId: 2000
+    })
+
     expect(getModifiedCurrencySelection).toHaveBeenCalledWith(input)
     expect(getXTokensParameters).toHaveBeenCalledWith(
       true,
       { [Version.V4]: {} },
-      input.destLocation,
+      mockDestLocation,
       input.asset.amount,
       123,
       version,
@@ -123,6 +150,14 @@ describe('buildXTokensCall', () => {
 
     const result = buildXTokensCall(input, currencySelection, '0.1')
 
+    expect(createBeneficiaryLocXTokens).toHaveBeenCalledWith({
+      api: mockApi,
+      destination: 'AssetHubPolkadot',
+      address: '0x123',
+      version,
+      paraId: 2000
+    })
+
     expect(result.method).toBe('transfer_multiasset')
   })
 
@@ -141,6 +176,14 @@ describe('buildXTokensCall', () => {
 
     const result = buildXTokensCall(input, currencySelection, '0.1')
 
+    expect(createBeneficiaryLocXTokens).toHaveBeenCalledWith({
+      api: mockApi,
+      destination: 'Polkadot',
+      address: '0x123',
+      version,
+      paraId: 2000
+    })
+
     expect(result.method).toBe('transfer_multiassets')
   })
 
@@ -157,6 +200,73 @@ describe('buildXTokensCall', () => {
     } as TXTokensTransferOptions<unknown, unknown>
 
     const result = buildXTokensCall(input, currencySelection, DEFAULT_FEE)
+
+    expect(createBeneficiaryLocXTokens).toHaveBeenCalledWith({
+      api: mockApi,
+      destination: 'Kusama',
+      address: '0x123',
+      version,
+      paraId: 2000
+    })
+
     expect(result.method).toBe('custom_method')
+  })
+
+  describe('shouldUseMultiAssetTransfer scenarios', () => {
+    it('returns true for Astar to Relay scenario', () => {
+      const input = {
+        ...baseInput,
+        origin: 'Astar',
+        destination: 'Polkadot',
+        scenario: 'ParaToRelay',
+        useMultiAssetTransfer: false
+      } as TXTokensTransferOptions<unknown, unknown>
+
+      const result = buildXTokensCall(input, currencySelection, '0.1')
+
+      expect(result.method).toBe('transfer_multiasset')
+    })
+
+    it('returns true for Shiden to Relay scenario', () => {
+      const input = {
+        ...baseInput,
+        origin: 'Shiden',
+        destination: 'Kusama',
+        scenario: 'ParaToRelay',
+        useMultiAssetTransfer: false
+      } as TXTokensTransferOptions<unknown, unknown>
+
+      const result = buildXTokensCall(input, currencySelection, '0.1')
+
+      expect(result.method).toBe('transfer_multiasset')
+    })
+
+    it('returns true for AssetHub destination (non-Bifrost origin)', () => {
+      const input = {
+        ...baseInput,
+        origin: 'Acala',
+        destination: 'AssetHubPolkadot',
+        scenario: 'ParaToPara',
+        useMultiAssetTransfer: false
+      } as TXTokensTransferOptions<unknown, unknown>
+
+      const result = buildXTokensCall(input, currencySelection, '0.1')
+
+      expect(result.method).toBe('transfer_multiasset')
+    })
+
+    it('returns false for AssetHub destination with Bifrost origin', () => {
+      const input = {
+        ...baseInput,
+        origin: 'BifrostPolkadot',
+        destination: 'AssetHubPolkadot',
+        scenario: 'ParaToPara',
+        useMultiAssetTransfer: false
+      } as TXTokensTransferOptions<unknown, unknown>
+
+      const result = buildXTokensCall(input, currencySelection, '0.1')
+
+      expect(result.method).toBe('transfer')
+    })
   })
 })

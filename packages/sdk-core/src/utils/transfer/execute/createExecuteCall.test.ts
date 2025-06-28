@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import type { TSerializedApiCall, TWeight, TXcmVersioned } from '../../types'
+import type { TSerializedApiCall, TWeight, TXcmVersioned } from '../../../types'
 import { createExecuteCall } from './createExecuteCall'
 
 describe('createExecuteCall', () => {
