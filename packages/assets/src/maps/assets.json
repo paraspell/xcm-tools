@@ -11334,6 +11334,56 @@
         }
       },
       {
+        "assetId": "0x56072c95faa701256059aa122697b133aded9279",
+        "symbol": "SKY",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x56072c95faa701256059aa122697b133aded9279"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1"
+      },
+      {
+        "assetId": "0x514910771af9ca656af840dff83e8264ecf986ca",
+        "symbol": "LINK",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x514910771af9ca656af840dff83e8264ecf986ca"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1"
+      },
+      {
         "symbol": "DOT",
         "existentialDeposit": "1",
         "multiLocation": {
