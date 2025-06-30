@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.8.2](https://github.com/paraspell/xcm-tools/compare/sdk-v10.8.1...sdk-v10.8.2) (2025-06-30)
+
+
+### Build System
+
+* Perform a monthly maintenance check ✨ ([9ac0349](https://github.com/paraspell/xcm-tools/commit/9ac0349d2a8e02f850588a434ffaf8d7065da128))
+
 ## [10.8.1](https://github.com/paraspell/xcm-tools/compare/sdk-v10.8.0...sdk-v10.8.1) (2025-06-28)
 
 
