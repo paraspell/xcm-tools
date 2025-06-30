@@ -29,6 +29,7 @@ export const NODE_NAMES_DOT_KSM = [
   'Karura',
   'Kintsugi',
   'Moonriver',
+  'Laos',
   'Quartz',
   'RobonomicsKusama',
   'RobonomicsPolkadot',

@@ -411,9 +411,9 @@ const EvmTransfer = () => {
       <Center ref={targetRef}>
         {alertOpened && (
           <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
-            {error?.message
-              .split('\n\n')
-              .map((line, index) => <p key={index}>{line}</p>)}{' '}
+            {error?.message.split('\n\n').map((line, index) => (
+              <p key={index}>{line}</p>
+            ))}{' '}
           </ErrorAlert>
         )}
       </Center>

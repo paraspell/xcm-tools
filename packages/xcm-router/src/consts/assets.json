@@ -342,6 +342,19 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "TEER",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2015
+              }
+            ]
+          }
+        }
       }
     ],
     "pairs": []
@@ -886,26 +899,6 @@
         }
       },
       {
-        "symbol": "iBTC",
-        "assetId": "11",
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X2": [
-              {
-                "Parachain": 2032
-              },
-              {
-                "GeneralKey": {
-                  "length": 2,
-                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
-                }
-              }
-            ]
-          }
-        }
-      },
-      {
         "symbol": "BNC",
         "assetId": "14",
         "multiLocation": {
@@ -1194,6 +1187,26 @@
                 "AccountKey20": {
                   "network": null,
                   "key": "0xc30e9ca94cf52f3bf5692aacf81353a27052c46f"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "iBTC",
+        "assetId": "11",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2032
+              },
+              {
+                "GeneralKey": {
+                  "length": 2,
+                  "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
                 }
               }
             ]

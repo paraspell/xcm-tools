@@ -65,13 +65,10 @@ export const transferEthToPolkadot = async <TApi, TRes>({
 
   const overrides: Partial<RegistryOptions> = {
     precompiles: { '2004': '0x000000000000000000000000000000000000081A' },
-    destinationFeeOverrides: {
-      '3369': 500_000_000n
-    },
     assetOverrides: {
       '3369': [
         {
-          token: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003'.toLowerCase(),
+          token: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
           name: 'Mythos',
           minimumBalance: 10_000_000_000_000_000n,
           symbol: 'MYTH',

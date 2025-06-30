@@ -2808,6 +2808,33 @@
         "isFeeAsset": true
       },
       {
+        "assetId": "35",
+        "symbol": "TRAC",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "27777777777777800",
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1000794",
         "symbol": "LINK",
         "decimals": 18,
@@ -3282,7 +3309,7 @@
             ]
           }
         },
-        "existentialDeposit": "0"
+        "existentialDeposit": "54125333"
       },
       {
         "assetId": "1006",
@@ -3304,7 +3331,7 @@
             ]
           }
         },
-        "existentialDeposit": "0"
+        "existentialDeposit": "208779411374"
       },
       {
         "assetId": "1002",
@@ -3326,7 +3353,27 @@
             ]
           }
         },
-        "existentialDeposit": "0"
+        "existentialDeposit": "22409"
+      },
+      {
+        "assetId": "36",
+        "symbol": "NEURO",
+        "decimals": 12,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2043
+              },
+              {
+                "PalletInstance": 10
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "588235294118",
+        "isFeeAsset": true
       },
       {
         "assetId": "31",
@@ -3409,23 +3456,6 @@
           }
         },
         "existentialDeposit": "19500780031",
-        "isFeeAsset": true
-      },
-      {
-        "assetId": "29",
-        "symbol": "PLMC",
-        "decimals": 10,
-        "multiLocation": {
-          "parents": 1,
-          "interior": {
-            "X1": [
-              {
-                "Parachain": 3344
-              }
-            ]
-          }
-        },
-        "existentialDeposit": "205888408",
         "isFeeAsset": true
       },
       {
@@ -3980,7 +4010,7 @@
             ]
           }
         },
-        "existentialDeposit": "0"
+        "existentialDeposit": "22409"
       },
       {
         "assetId": "1005",
@@ -4002,7 +4032,7 @@
             ]
           }
         },
-        "existentialDeposit": "0"
+        "existentialDeposit": "36627790"
       },
       {
         "assetId": "1004",
@@ -4024,7 +4054,7 @@
             ]
           }
         },
-        "existentialDeposit": "0"
+        "existentialDeposit": "40"
       },
       {
         "assetId": "69",
@@ -4046,7 +4076,7 @@
             ]
           }
         },
-        "existentialDeposit": "0"
+        "existentialDeposit": "5290724013368937"
       },
       {
         "assetId": "8",
@@ -4175,6 +4205,23 @@
           }
         },
         "existentialDeposit": "20000000",
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "29",
+        "symbol": "PLMC",
+        "decimals": 10,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 3344
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "205888408",
         "isFeeAsset": true
       },
       {
@@ -6524,7 +6571,7 @@
     "relayChainAssetSymbol": "KSM",
     "nativeAssetSymbol": "AMPE",
     "isEVM": false,
-    "ss58Prefix": 57,
+    "ss58Prefix": 0,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
@@ -7219,6 +7266,23 @@
         "existentialDeposit": "1"
       }
     ]
+  },
+  "Laos": {
+    "relayChainAssetSymbol": "DOT",
+    "nativeAssetSymbol": "LAOS",
+    "isEVM": true,
+    "ss58Prefix": 42,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
+    "nativeAssets": [
+      {
+        "symbol": "LAOS",
+        "isNative": true,
+        "decimals": 18,
+        "existentialDeposit": "0"
+      }
+    ],
+    "otherAssets": []
   },
   "Encointer": {
     "relayChainAssetSymbol": "KSM",
@@ -9218,7 +9282,8 @@
             ]
           }
         },
-        "existentialDeposit": "100"
+        "existentialDeposit": "100",
+        "isFeeAsset": true
       },
       {
         "assetId": "223",
@@ -9240,7 +9305,8 @@
             ]
           }
         },
-        "existentialDeposit": "10000"
+        "existentialDeposit": "10000",
+        "isFeeAsset": true
       },
       {
         "assetId": "8",
@@ -9397,7 +9463,8 @@
             ]
           }
         },
-        "existentialDeposit": "1000000000"
+        "existentialDeposit": "1000000000",
+        "isFeeAsset": true
       },
       {
         "symbol": "ETH",
@@ -10367,7 +10434,7 @@
     "relayChainAssetSymbol": "DOT",
     "nativeAssetSymbol": "PEN",
     "isEVM": false,
-    "ss58Prefix": 56,
+    "ss58Prefix": 0,
     "supportsDryRunApi": false,
     "supportsXcmPaymentApi": false,
     "nativeAssets": [
