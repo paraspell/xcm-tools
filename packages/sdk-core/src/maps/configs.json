@@ -10,7 +10,7 @@
       },
       {
         "name": "Dwellir",
-        "endpoint": "wss://asset-hub-polkadot-rpc.dwellir.com"
+        "endpoint": "wss://asset-hub-polkadot-rpc.n.dwellir.com"
       },
       {
         "name": "Dwellir Tunisia",
@@ -65,7 +65,7 @@
       },
       {
         "name": "Dwellir",
-        "endpoint": "wss://acala-rpc.dwellir.com"
+        "endpoint": "wss://acala-rpc.n.dwellir.com"
       },
       {
         "name": "IBP1",
@@ -74,10 +74,6 @@
       {
         "name": "IBP2",
         "endpoint": "wss://acala.dotters.network"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://acala-polkadot.api.onfinality.io/public-ws"
       }
     ]
   },
@@ -119,7 +115,7 @@
       },
       {
         "name": "Dwellir",
-        "endpoint": "wss://astar-rpc.dwellir.com"
+        "endpoint": "wss://astar-rpc.n.dwellir.com"
       },
       {
         "name": "OnFinality",
@@ -151,6 +147,10 @@
       {
         "name": "LiebiEU",
         "endpoint": "wss://eu.bifrost-polkadot-rpc.liebi.com/ws"
+      },
+      {
+        "name": "RadiumBlock",
+        "endpoint": "wss://bifrost.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -161,7 +161,7 @@
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://bridge-hub-polkadot-rpc.dwellir.com"
+        "endpoint": "wss://bridge-hub-polkadot-rpc.n.dwellir.com"
       },
       {
         "name": "Dwellir Tunisia",
@@ -204,7 +204,7 @@
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://bridge-hub-kusama-rpc.dwellir.com"
+        "endpoint": "wss://bridge-hub-kusama-rpc.n.dwellir.com"
       },
       {
         "name": "Dwellir Tunisia",
@@ -221,6 +221,10 @@
       {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-bridge-hub-kusama.luckyfriday.io"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://bridgehub-kusama.api.onfinality.io/public-ws"
       },
       {
         "name": "Parity",
@@ -242,14 +246,13 @@
     "paraId": 2031,
     "providers": [
       {
-        "name": "LuckyFriday",
-        "endpoint": "wss://rpc-centrifuge.luckyfriday.io"
-      },
-      {
         "name": "Centrifuge",
         "endpoint": "wss://fullnode.centrifuge.io"
       },
-
+      {
+        "name": "LuckyFriday",
+        "endpoint": "wss://rpc-centrifuge.luckyfriday.io"
+      },
       {
         "name": "OnFinality",
         "endpoint": "wss://centrifuge-parachain.api.onfinality.io/public-ws"
@@ -278,7 +281,7 @@
       },
       {
         "name": "Dwellir",
-        "endpoint": "wss://darwinia-rpc.dwellir.com"
+        "endpoint": "wss://darwinia-rpc.n.dwellir.com"
       },
       {
         "name": "Subquery",
@@ -389,7 +392,7 @@
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://asset-hub-kusama-rpc.dwellir.com"
+        "endpoint": "wss://asset-hub-kusama-rpc.n.dwellir.com"
       },
       {
         "name": "Dwellir Tunisia",
@@ -406,6 +409,10 @@
       {
         "name": "LuckyFriday",
         "endpoint": "wss://rpc-asset-hub-kusama.luckyfriday.io"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://assethub-kusama.api.onfinality.io/public-ws"
       },
       {
         "name": "Parity",
@@ -498,7 +505,7 @@
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://encointer-kusama-rpc.dwellir.com"
+        "endpoint": "wss://encointer-kusama-rpc.n.dwellir.com"
       },
       {
         "name": "Encointer Association",
@@ -567,10 +574,6 @@
       {
         "name": "LiebiUS",
         "endpoint": "wss://us.bifrost-rpc.liebi.com/ws"
-      },
-      {
-        "name": "RadiumBlock",
-        "endpoint": "wss://bifrost.public.curie.radiumblock.co/ws"
       }
     ]
   },
@@ -608,7 +611,7 @@
       },
       {
         "name": "Dwellir",
-        "endpoint": "wss://darwiniacrab-rpc.dwellir.com"
+        "endpoint": "wss://darwiniacrab-rpc.n.dwellir.com"
       }
     ]
   },
@@ -635,11 +638,7 @@
       },
       {
         "name": "Dwellir",
-        "endpoint": "wss://karura-rpc.dwellir.com"
-      },
-      {
-        "name": "OnFinality",
-        "endpoint": "wss://karura.api.onfinality.io/public-ws"
+        "endpoint": "wss://karura-rpc.n.dwellir.com"
       }
     ]
   },
@@ -668,10 +667,6 @@
         "endpoint": "wss://moonriver-rpc.publicnode.com"
       },
       {
-        "name": "Blast",
-        "endpoint": "wss://moonriver.public.blastapi.io"
-      },
-      {
         "name": "Dwellir",
         "endpoint": "wss://moonriver-rpc.n.dwellir.com"
       },
@@ -690,6 +685,17 @@
       {
         "name": "UnitedBloc",
         "endpoint": "wss://moonriver.unitedbloc.com"
+      }
+    ]
+  },
+  "Laos": {
+    "name": "Laos",
+    "info": "laos",
+    "paraId": 3370,
+    "providers": [
+      {
+        "name": "laosfoundation.io",
+        "endpoint": "wss://rpc.laos.laosfoundation.io"
       }
     ]
   },
@@ -822,12 +828,8 @@
         "endpoint": "wss://rpc.shiden.astar.network"
       },
       {
-        "name": "Blast",
-        "endpoint": "wss://shiden.public.blastapi.io"
-      },
-      {
         "name": "Dwellir",
-        "endpoint": "wss://shiden-rpc.dwellir.com"
+        "endpoint": "wss://shiden-rpc.n.dwellir.com"
       },
       {
         "name": "OnFinality",
@@ -959,7 +961,7 @@
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://collectives-polkadot-rpc.dwellir.com"
+        "endpoint": "wss://collectives-polkadot-rpc.n.dwellir.com"
       },
       {
         "name": "Dwellir Tunisia",
@@ -1002,7 +1004,7 @@
     "providers": [
       {
         "name": "Dwellir",
-        "endpoint": "wss://phala-rpc.dwellir.com"
+        "endpoint": "wss://phala-rpc.n.dwellir.com"
       },
       {
         "name": "Helikon",
@@ -1135,7 +1137,7 @@
       },
       {
         "name": "Dwellir",
-        "endpoint": "wss://polkadot-rpc.dwellir.com"
+        "endpoint": "wss://polkadot-rpc.n.dwellir.com"
       },
       {
         "name": "Dwellir Tunisia",
@@ -1190,7 +1192,7 @@
       },
       {
         "name": "Dwellir",
-        "endpoint": "wss://kusama-rpc.dwellir.com"
+        "endpoint": "wss://kusama-rpc.n.dwellir.com"
       },
       {
         "name": "Dwellir Tunisia",

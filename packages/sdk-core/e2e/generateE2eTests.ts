@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import {
   determineRelayChain,
   GeneralBuilder,
-  getBridgeStatus,
   getNodeProviders,
   NODE_NAMES_DOT_KSM,
   NodeNotSupportedError,
@@ -17,14 +16,12 @@ import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
 import { generateAssetsTests } from '../../assets/e2e'
 import {
   findAsset,
-  Foreign,
   ForeignAbstract,
   getOtherAssets,
   getRelayChainSymbol,
   hasSupportForAsset,
   isForeignAsset,
-  isNodeEvm,
-  Native
+  isNodeEvm
 } from '@paraspell/assets'
 
 const MOCK_AMOUNT = 1000000000000
@@ -196,24 +193,24 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
         expect(tx).toBeDefined()
       })
 
-      it('should create transfer tx from Hydration to AssetHubPolkadot - overridden multiasset', async () => {
-        const api = await createOrGetApiInstanceForNode('Hydration')
+      it('should create transfer tx from BifrostPolkadot to AssetHubPolkadot - overridden multiasset', async () => {
+        const api = await createOrGetApiInstanceForNode('BifrostPolkadot')
         const tx = await Builder(api)
-          .from('Hydration')
+          .from('BifrostPolkadot')
           .to('AssetHubPolkadot')
           .currency({
             multiasset: [
               {
-                symbol: 'WUD',
+                symbol: 'USDT',
                 amount: '102928'
               },
               {
-                symbol: ForeignAbstract('USDC2'),
+                symbol: 'USDC',
                 amount: '38482'
               }
             ]
           })
-          .feeAsset({ symbol: ForeignAbstract('USDC2') })
+          .feeAsset({ symbol: 'USDC' })
           .address(MOCK_ADDRESS)
           .build()
 

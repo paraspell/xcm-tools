@@ -566,9 +566,9 @@ export const XcmRouter = () => {
           )}
           {alertOpened && (
             <ErrorAlert onAlertCloseClick={onAlertCloseClick}>
-              {error?.message
-                .split('\n\n')
-                .map((line, index) => <p key={index}>{line}</p>)}
+              {error?.message.split('\n\n').map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
             </ErrorAlert>
           )}
         </Box>

@@ -27,6 +27,7 @@ import Interlay from '../nodes/supported/Interlay'
 import Karura from '../nodes/supported/Karura'
 import KiltSpiritnet from '../nodes/supported/KiltSpiritnet'
 import Kintsugi from '../nodes/supported/Kintsugi'
+import Laos from '../nodes/supported/Laos'
 import Manta from '../nodes/supported/Manta'
 import Moonbeam from '../nodes/supported/Moonbeam'
 import Moonriver from '../nodes/supported/Moonriver'
@@ -77,6 +78,7 @@ export const nodes = <TApi, TRes>() => ({
   Karura: new Karura<TApi, TRes>(),
   Kintsugi: new Kintsugi<TApi, TRes>(),
   Moonriver: new Moonriver<TApi, TRes>(),
+  Laos: new Laos<TApi, TRes>(),
   Quartz: new Quartz<TApi, TRes>(),
   RobonomicsKusama: new RobonomicsKusama<TApi, TRes>(),
   RobonomicsPolkadot: new RobonomicsPolkadot<TApi, TRes>(),

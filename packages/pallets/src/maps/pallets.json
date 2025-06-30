@@ -556,5 +556,14 @@
         "index": 35
       }
     ]
+  },
+  "Laos": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
   }
 }
