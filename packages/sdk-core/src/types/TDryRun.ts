@@ -29,7 +29,6 @@ export type TDryRunCallBaseOptions<TRes> = {
    * The address to dry-run with
    */
   address: string
-  asset: TAsset
   feeAsset?: TAsset
 }
 

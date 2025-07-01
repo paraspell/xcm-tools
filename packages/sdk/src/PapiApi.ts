@@ -19,6 +19,8 @@ import type {
 } from '@paraspell/sdk-core'
 import {
   BatchMode,
+  findAsset,
+  getNativeAssetSymbol,
   getNodeProviders,
   hasXcmPaymentApiSupport,
   InvalidCurrencyError,
@@ -26,6 +28,7 @@ import {
   isAssetEqual,
   isRelayChain,
   localizeLocation,
+  Native,
   Parents,
   Version
 } from '@paraspell/sdk-core'
@@ -376,7 +379,6 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
     tx,
     address,
     node,
-    asset,
     feeAsset
   }: TDryRunCallBaseOptions<TPapiTransaction>): Promise<TDryRunNodeResultInternal> {
     const supportsDryRunApi = getAssetsObject(node).supportsDryRunApi
@@ -469,17 +471,24 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
 
     const executionFee = await this.calculateTransactionFee(tx, address)
 
+    const nativeAsset = findAsset(node, { symbol: Native(getNativeAssetSymbol(node)) }, null)
+
     const hasMultiLocation = feeAsset
       ? Boolean(feeAsset.multiLocation)
-      : Boolean(asset?.multiLocation)
+      : Boolean(nativeAsset?.multiLocation)
 
     if (
       hasXcmPaymentApiSupport(node) &&
       result.value.local_xcm &&
       hasMultiLocation &&
+      nativeAsset &&
       node !== 'AssetHubPolkadot'
     ) {
-      const xcmFee = await this.getXcmPaymentApiFee(node, result.value.local_xcm, feeAsset ?? asset)
+      const xcmFee = await this.getXcmPaymentApiFee(
+        node,
+        result.value.local_xcm,
+        feeAsset ?? nativeAsset
+      )
 
       if (typeof xcmFee === 'bigint') {
         return Promise.resolve({

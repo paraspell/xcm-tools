@@ -736,8 +736,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        asset: { symbol: 'GLMR', multiLocation: {} } as sdkCore.TAsset
+        node: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -789,8 +788,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'AssetHubPolkadot',
-        asset: { symbol: 'DOT' } as sdkCore.TAsset
+        node: 'AssetHubPolkadot'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -841,8 +839,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Kusama',
-        asset: { symbol: 'KSM', multiLocation: {} } as sdkCore.TAsset
+        node: 'Kusama'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(2)
@@ -875,8 +872,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        asset: { symbol: 'GLMR', multiLocation: {} } as sdkCore.TAsset
+        node: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -900,8 +896,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        asset: { symbol: 'DOT', multiLocation: {} } as sdkCore.TAsset
+        node: 'Moonbeam'
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({ success: false, failureReason: 'ShortErrorType' })
@@ -920,8 +915,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        asset: { symbol: 'DOT', multiLocation: {} } as sdkCore.TAsset
+        node: 'Moonbeam'
       })
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
       expect(result).toEqual({
@@ -935,8 +929,7 @@ describe('PapiApi', () => {
         papiApi.getDryRunCall({
           tx: mockTransaction,
           address: testAddress,
-          node: 'Acala',
-          asset: { symbol: 'ACA', multiLocation: {} } as sdkCore.TAsset
+          node: 'Acala'
         })
       ).rejects.toThrow(NodeNotSupportedError)
       expect(dryRunApiCallMock).not.toHaveBeenCalled()
@@ -970,8 +963,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        asset: { symbol: 'GLMR', multiLocation: {} } as sdkCore.TAsset
+        node: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
@@ -1021,14 +1013,7 @@ describe('PapiApi', () => {
       const result = await papiApi.getDryRunCall({
         tx: mockTransaction,
         address: testAddress,
-        node: 'Moonbeam',
-        asset: {
-          symbol: 'GLMR',
-          multiLocation: {
-            parents: 0,
-            interior: { Here: null }
-          }
-        } as sdkCore.TAsset
+        node: 'Moonbeam'
       })
 
       expect(dryRunApiCallMock).toHaveBeenCalledTimes(1)
