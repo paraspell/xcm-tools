@@ -1,5 +1,5 @@
 import type { TPapiApi, TPapiTransaction } from '@paraspell/sdk';
-import { dryRunOrigin, getNativeAssets, InvalidParameterError } from '@paraspell/sdk';
+import { dryRunOrigin, InvalidParameterError } from '@paraspell/sdk';
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-pjs';
 import BigNumber from 'bignumber.js';
 
@@ -16,7 +16,6 @@ export const calculateTxFeeDryRun = async (
     node,
     tx,
     address,
-    asset: getNativeAssets(node)[0],
   });
 
   if (!result.success) {
