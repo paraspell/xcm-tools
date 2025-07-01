@@ -52,7 +52,6 @@ export const dryRunInternal = async <TApi, TRes>(
     tx,
     node: origin,
     address: senderAddress,
-    asset,
     feeAsset: resolvedFeeAsset
   })
 

@@ -1,4 +1,3 @@
-import type { TAsset } from '@paraspell/assets'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api/IPolkadotApi'
@@ -39,7 +38,6 @@ describe('getDryRunOrigin', () => {
       api: apiMock,
       node,
       address,
-      asset: { symbol: 'DOT' } as TAsset,
       tx: {}
     })
 
