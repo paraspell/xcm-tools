@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.8.3](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v10.8.2...sdk-pjs-v10.8.3) (2025-07-01)
+
+
+### Bug Fixes
+
+* Fix PJS package compile error 🛠️ ([70d1d8b](https://github.com/paraspell/xcm-tools/commit/70d1d8b7c919babcdfb1530642bb81556727aa6e))
+
 ## [10.8.2](https://github.com/paraspell/xcm-tools/compare/sdk-pjs-v10.8.1...sdk-pjs-v10.8.2) (2025-06-30)
 
 

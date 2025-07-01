@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.8.3](https://github.com/paraspell/xcm-tools/compare/sdk-v10.8.2...sdk-v10.8.3) (2025-07-01)
+
+
+### Bug Fixes
+
+* **sdk:** Default to native asset on origin when using XcmPaymentApi 🔧 ([a16d161](https://github.com/paraspell/xcm-tools/commit/a16d161ec2627c6c7f81d5dd3daa45aaab515691))
+
 ## [10.8.2](https://github.com/paraspell/xcm-tools/compare/sdk-v10.8.1...sdk-v10.8.2) (2025-06-30)
 
 
