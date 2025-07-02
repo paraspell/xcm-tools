@@ -7,7 +7,6 @@ import type { ApiPromise } from '@polkadot/api'
 import {
   findAssetByMultiLocation,
   getNativeAssetSymbol,
-  normalizeMultiLocation,
   type TAssetJsonMap,
   type TForeignAsset,
   type TNativeAsset,
@@ -37,17 +36,11 @@ import {
   TNodePolkadotKusama,
   TNodeWithRelayChains
 } from '@paraspell/sdk-common'
-import {
-  getNodeProviders,
-  getParaId,
-  localizeLocation,
-  reverseTransformMultiLocation
-} from '../../sdk-core/src'
+import { getNodeProviders, getParaId, reverseTransformMultiLocation } from '../../sdk-core/src'
 import { getRelayChainSymbol, getRelayChainType } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
 import { fetchMantaOtherAssets } from './fetchMantaAssets'
-import { DOT_MULTILOCATION } from '../../sdk-core/src/constants'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -77,8 +70,12 @@ const fetchNativeAssets = async (
     nativeAssets = await fetchBifrostNativeAssets(api, query)
   }
 
-  if (node === 'Acala' || node === 'Karura') {
-    nativeAssets = await fetchAcalaNativeAssets(api, query)
+  if (node === 'Acala' || node === 'Karura' || node === 'Jamton') {
+    nativeAssets = await fetchAcalaNativeAssets(
+      api,
+      query,
+      node === 'Jamton' ? 'Native' : undefined
+    )
   }
 
   const transformed = nativeAssets.length > 0 ? nativeAssets : await fetchNativeAssetsDefault(api)
@@ -304,6 +301,26 @@ const fetchMultiLocations = async (api: ApiPromise): Promise<TForeignAsset[]> =>
     )
   )
 
+  const wstETHMultiLocation = {
+    parents: 2,
+    interior: {
+      X2: [
+        { GlobalConsensus: { Ethereum: { chainId: 1 } } },
+        { AccountKey20: { network: null, key: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0' } }
+      ]
+    }
+  }
+
+  const wstETHAssetDetail = await api.query.foreignAssets.asset(wstETHMultiLocation)
+  if (wstETHAssetDetail !== undefined) {
+    results.push({
+      symbol: 'wstETH',
+      decimals: 18,
+      multiLocation: wstETHMultiLocation as unknown as TMultiLocation,
+      existentialDeposit: (wstETHAssetDetail.toHuman() as any).minBalance.replace(/,/g, '')
+    })
+  }
+
   return results
 }
 
@@ -313,8 +330,12 @@ const fetchOtherAssets = async (
   query: string
 ): Promise<TForeignAsset[]> => {
   let otherAssets: TForeignAsset[] = []
-  if (node === 'Zeitgeist' || node === 'Acala' || node === 'Karura') {
-    otherAssets = await fetchAcalaForeignAssets(api, query)
+  if (node === 'Zeitgeist' || node === 'Acala' || node === 'Karura' || node === 'Jamton') {
+    otherAssets = await fetchAcalaForeignAssets(
+      api,
+      query,
+      node === 'Jamton' ? 'Native' : undefined
+    )
   }
 
   if (node === 'Amplitude') {

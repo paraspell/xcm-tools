@@ -17,6 +17,7 @@ export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   Hydration: [GLOBAL, 'assetRegistry.assets'],
   Interlay: [GLOBAL, 'assetRegistry.metadata'],
   Heima: ['assets.metadata'],
+  Jamton: ['assetRegistry.metadata'],
   Moonbeam: ['evmForeignAssets.assetsById'],
   AssetHubPolkadot: [GLOBAL, 'assets.metadata'],
   Altair: [GLOBAL, 'ormlAssetRegistry.metadata'],

@@ -7,7 +7,8 @@ import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
 const fetchAssets = async (
   api: ApiPromise,
   query: string,
-  isNative: boolean
+  isNative: boolean,
+  nativeKey = 'NativeAssetId'
 ): Promise<TForeignAsset[]> => {
   const [module, method] = query.split('.')
   const res = await api.query[module][method].entries()
@@ -19,10 +20,7 @@ const fetchAssets = async (
           args: [era]
         }
       ]) => {
-        const hasNativeAssetId = Object.prototype.hasOwnProperty.call(
-          era.toHuman(),
-          'NativeAssetId'
-        )
+        const hasNativeAssetId = Object.prototype.hasOwnProperty.call(era.toHuman(), nativeKey)
         return isNative ? hasNativeAssetId : !hasNativeAssetId
       }
     )
@@ -40,7 +38,9 @@ const fetchAssets = async (
         const multiLocation =
           multiLocationJson.location !== null
             ? capitalizeMultiLocation(
-                multiLocationJson.location.v3 ?? multiLocationJson.location.v2
+                multiLocationJson.location.v4 ??
+                  multiLocationJson.location.v3 ??
+                  multiLocationJson.location.v2
               )
             : undefined
 
@@ -57,9 +57,10 @@ const fetchAssets = async (
 
 export const fetchAcalaNativeAssets = async (
   api: ApiPromise,
-  query: string
+  query: string,
+  nativeKey?: string
 ): Promise<TNativeAsset[]> => {
-  return (await fetchAssets(api, query, true)).map(asset => ({
+  return (await fetchAssets(api, query, true, nativeKey)).map(asset => ({
     isNative: true,
     symbol: asset.symbol,
     decimals: asset.decimals,
@@ -69,7 +70,8 @@ export const fetchAcalaNativeAssets = async (
 
 export const fetchAcalaForeignAssets = async (
   api: ApiPromise,
-  query: string
+  query: string,
+  nativeKey?: string
 ): Promise<TForeignAsset[]> => {
-  return fetchAssets(api, query, false)
+  return fetchAssets(api, query, false, nativeKey)
 }

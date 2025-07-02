@@ -623,6 +623,33 @@
         }
       },
       {
+        "symbol": "2-Pool-GETH"
+      },
+      {
+        "symbol": "GETH"
+      },
+      {
+        "symbol": "ETH",
+        "assetId": "34",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X1": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "aETH"
+      },
+      {
         "symbol": "HDX",
         "multiLocation": {
           "parents": 1,
@@ -1207,6 +1234,30 @@
                 "GeneralKey": {
                   "length": 2,
                   "data": "0x0001000000000000000000000000000000000000000000000000000000000000"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "wstETH",
+        "assetId": "1000809",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
                 }
               }
             ]

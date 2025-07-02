@@ -20,7 +20,8 @@ export const validateAssetSupport = <TApi, TRes>(
     'Hydration',
     'Moonbeam',
     'Ajuna',
-    'Polimec'
+    'Polimec',
+    'Jamton'
   ]
 
   if (

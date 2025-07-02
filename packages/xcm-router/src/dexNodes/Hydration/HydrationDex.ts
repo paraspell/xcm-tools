@@ -198,8 +198,10 @@ class HydrationExchangeNode extends ExchangeNode {
     } = createSdkContext(api);
 
     const assets = await tradeRouter.getAllAssets();
+
+    const sdkAssets = getAssets(this.node) as TForeignAsset[];
+
     const transformedAssets = assets.map(({ symbol, id }) => {
-      const sdkAssets = getAssets(this.node) as TForeignAsset[];
       const asset =
         sdkAssets.find((a) => a.assetId === id) ??
         sdkAssets.find((a) => a.symbol.toLowerCase() === symbol.toLowerCase());

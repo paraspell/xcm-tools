@@ -42,7 +42,7 @@ export type TSelfReserveAsset = 'SelfReserve'
 export type TReserveAsset = TOtherReserveAsset | TSelfReserveAsset
 
 export type TBifrostToken =
-  | { Native: string }
+  | { Native: string | number }
   | { VToken: string }
   | { Token: string }
   | { VSToken2: number }

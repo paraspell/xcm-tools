@@ -565,5 +565,18 @@
         "index": 31
       }
     ]
+  },
+  "Jamton": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": [
+      {
+        "name": "XTokens",
+        "index": 18
+      },
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
   }
 }

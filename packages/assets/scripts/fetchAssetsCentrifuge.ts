@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import type { ApiPromise } from '@polkadot/api'
 
 export const fetchOtherAssetsCentrifuge = async (api: ApiPromise, query: string) => {
