@@ -48,6 +48,7 @@ import { AccountId, Binary, createClient, FixedSizeBinary, getSs58AddressInfo } 
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { isAddress } from 'viem'
 
+import { processAssetsDepositedEvents } from './fee'
 import { transform } from './PapiXcmTransformer'
 import { createClientCache, type TClientKey } from './TimedCache'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
@@ -635,11 +636,22 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
         ? [...emitted].find(event => event.type === 'Tokens' && event.value.type === 'Deposited')
         : undefined)
 
+    const processedAssetsAmount =
+      node === 'AssetHubPolkadot' && asset?.symbol !== 'DOT'
+        ? processAssetsDepositedEvents(emitted, amount)
+        : undefined
+
     const feeEvent =
       feeAssetFeeEvent ??
       //
-      (node === 'AssetHubPolkadot' && asset?.symbol !== 'DOT'
-        ? [...emitted].find(event => event.type === 'Assets' && event.value.type === 'Deposited')
+      (processedAssetsAmount !== undefined
+        ? {
+            type: 'Assets',
+            value: {
+              type: 'Deposited',
+              value: { amount: processedAssetsAmount }
+            }
+          }
         : undefined) ??
       //
       (node === 'Mythos'

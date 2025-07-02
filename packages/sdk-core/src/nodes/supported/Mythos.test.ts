@@ -311,12 +311,7 @@ describe('createTypeAndThenTransfer', () => {
     expect(mockApi.clone).toHaveBeenCalled()
     expect(mockApi.init).toHaveBeenCalledWith('AssetHubPolkadot')
     expect(getParaEthTransferFees).toHaveBeenCalledWith(mockApi)
-    expect(createCustomXcmOnDest).toHaveBeenCalledWith(
-      mockOptions,
-      'Mythos',
-      'message_id_123',
-      expect.any(BigInt)
-    )
+    expect(createCustomXcmOnDest).toHaveBeenCalledWith(mockOptions, 'Mythos', 'message_id_123')
   })
 
   it('should handle different asset amounts correctly', async () => {
