@@ -10,8 +10,6 @@ import { Parents } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
 import { InvalidParameterError } from '../../errors'
-import { getParaId } from '../../nodes/config'
-import { createDestination } from '../../pallets/xcmPallet/utils'
 import { type TPolkadotXCMTransferOptions } from '../../types'
 import { assertHasLocation } from '../assertions'
 import { createBeneficiaryLocation } from '../location'
@@ -19,7 +17,6 @@ import { createBeneficiaryLocation } from '../location'
 export const createCustomXcmOnDest = <TApi, TRes>(
   {
     api,
-    destination,
     address,
     asset,
     senderAddress,
@@ -27,8 +24,7 @@ export const createCustomXcmOnDest = <TApi, TRes>(
     version
   }: TPolkadotXCMTransferOptions<TApi, TRes>,
   origin: TNodeWithRelayChains,
-  messageId: string,
-  feeAmount?: bigint
+  messageId: string
 ) => {
   if (!isForeignAsset(asset)) {
     throw new InvalidCurrencyError(`Asset ${JSON.stringify(asset)} is not a foreign asset`)
@@ -60,62 +56,21 @@ export const createCustomXcmOnDest = <TApi, TRes>(
   return {
     [version]: [
       {
-        SetAppendix: [
+        SetAppendix:
           origin === 'Mythos'
-            ? {
-                DepositReserveAsset: {
-                  assets: {
-                    Wild: 'All'
-                  },
-                  dest: createDestination(
-                    version,
-                    origin,
-                    destination,
-                    getParaId(origin),
-                    undefined,
-                    Parents.ONE
-                  ),
-                  xcm: [
-                    {
-                      BuyExecution: {
-                        fees: {
-                          id: {
-                            parents: Parents.ZERO,
-                            interior: 'Here'
-                          },
-                          fun: {
-                            Fungible: feeAmount
-                          }
-                        },
-                        weight_limit: 'Unlimited'
-                      }
-                    },
-                    {
-                      DepositAsset: {
-                        assets: {
-                          Wild: 'All'
-                        },
-                        beneficiary: createBeneficiaryLocation({
-                          api,
-                          address: address,
-                          version
-                        })
-                      }
-                    }
-                  ]
+            ? []
+            : [
+                {
+                  DepositAsset: {
+                    assets: { Wild: 'All' },
+                    beneficiary: createBeneficiaryLocation({
+                      api,
+                      address: isNodeEvm(origin) ? (ahAddress as string) : senderAddress,
+                      version
+                    })
+                  }
                 }
-              }
-            : {
-                DepositAsset: {
-                  assets: { Wild: 'All' },
-                  beneficiary: createBeneficiaryLocation({
-                    api,
-                    address: isNodeEvm(origin) ? (ahAddress as string) : senderAddress,
-                    version
-                  })
-                }
-              }
-        ]
+              ]
       },
       {
         InitiateReserveWithdraw: {

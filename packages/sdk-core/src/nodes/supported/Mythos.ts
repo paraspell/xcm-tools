@@ -95,7 +95,7 @@ export const createTypeAndThenTransfer = async <TApi, TRes>(
         }
       },
       fees_transfer_type: 'Teleport',
-      custom_xcm_on_dest: createCustomXcmOnDest(options, node, messageId, nativeMythAmount),
+      custom_xcm_on_dest: createCustomXcmOnDest(options, node, messageId),
       weight_limit: 'Unlimited'
     }
   }

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   findAssetByMultiLocation,
   InvalidCurrencyError,
@@ -144,61 +142,6 @@ describe('createCustomXcmOnDest', () => {
     vi.mocked(findAssetByMultiLocation).mockReturnValue(undefined)
 
     expect(() => createCustomXcmOnDest(options, mockNode, messageId)).toThrow(InvalidCurrencyError)
-  })
-
-  it('should create DepositReserveAsset for Mythos origin', () => {
-    const mockEthAsset = {
-      symbol: 'ETH',
-      assetId: '0x123'
-    }
-
-    const options = {
-      ...baseOptions,
-      asset: {
-        symbol: 'ETH',
-        multiLocation: mockMultiLocation,
-        amount: '1000000'
-      }
-    } as TPolkadotXCMTransferOptions<unknown, unknown>
-
-    vi.mocked(isForeignAsset).mockReturnValue(true)
-    vi.mocked(findAssetByMultiLocation).mockReturnValue(mockEthAsset)
-
-    const result = createCustomXcmOnDest(options, 'Mythos', messageId, 1000n)
-
-    const xcmV4 = result[version]
-    const setAppendix = xcmV4.find((item: any) => item.SetAppendix)
-
-    expect(setAppendix).toBeDefined()
-    if (setAppendix && setAppendix.SetAppendix) {
-      expect(setAppendix.SetAppendix[0]).toHaveProperty('DepositReserveAsset')
-      expect(setAppendix.SetAppendix[0].DepositReserveAsset).toMatchObject({
-        assets: { Wild: 'All' },
-        dest: expect.any(Object),
-        xcm: expect.arrayContaining([
-          {
-            BuyExecution: {
-              fees: {
-                id: {
-                  parents: Parents.ZERO,
-                  interior: 'Here'
-                },
-                fun: {
-                  Fungible: 1000n
-                }
-              },
-              weight_limit: 'Unlimited'
-            }
-          },
-          {
-            DepositAsset: {
-              assets: { Wild: 'All' },
-              beneficiary: 'mockedBeneficiary'
-            }
-          }
-        ])
-      })
-    }
   })
 
   it('should return a valid XCM message structure', () => {

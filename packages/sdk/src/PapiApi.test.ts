@@ -1322,6 +1322,83 @@ describe('PapiApi', () => {
       expect(result).toEqual({ success: false, failureReason: 'SomeXcmError' })
     })
 
+    it('should use processAssetsDepositedEvents for AssetHubPolkadot with non-DOT assets', async () => {
+      const originLocation: sdkCore.TMultiLocation = {
+        parents: 0,
+        interior: { Here: null }
+      }
+      const dummyXcm = { some: 'xcm-payload' }
+      const testAmount = 5000n
+
+      const mockApiResponse = {
+        success: true,
+        value: {
+          execution_result: {
+            type: 'Complete',
+            value: {
+              used: { ref_time: 11n, proof_size: 22n }
+            }
+          },
+          emitted_events: [
+            {
+              type: 'Assets',
+              value: {
+                type: 'Deposited',
+                value: { amount: 1000n }
+              }
+            },
+            {
+              type: 'Assets',
+              value: {
+                type: 'Deposited',
+                value: { amount: 3000n }
+              }
+            },
+            {
+              type: 'Assets',
+              value: {
+                type: 'Deposited',
+                value: { amount: 500n }
+              }
+            },
+            {
+              type: 'Balances',
+              value: {
+                type: 'Issued',
+                value: { amount: 999n }
+              }
+            }
+          ],
+          forwarded_xcms: []
+        }
+      }
+
+      const unsafeApi = papiApi.getApi().getUnsafeApi()
+      unsafeApi.apis.DryRunApi.dry_run_xcm = vi.fn().mockResolvedValue(mockApiResponse)
+
+      const result = await papiApi.getDryRunXcm({
+        originLocation,
+        xcm: dummyXcm,
+        node: 'AssetHubPolkadot',
+        origin: 'Hydration',
+        asset: { symbol: 'USDT' },
+        amount: testAmount
+      } as TDryRunXcmBaseOptions)
+
+      expect(unsafeApi.apis.DryRunApi.dry_run_xcm).toHaveBeenCalledWith(
+        transform(originLocation),
+        dummyXcm
+      )
+
+      expect(result).toEqual({
+        success: true,
+        fee: 1500n, // 1000n + 500n
+        weight: { refTime: 11n, proofSize: 22n },
+        forwardedXcms: [],
+        destParaId: undefined
+      })
+    })
+
     it('should throw error for unsupported node', async () => {
       await expect(
         papiApi.getDryRunXcm({
