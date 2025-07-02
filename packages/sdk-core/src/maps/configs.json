@@ -338,6 +338,17 @@
       }
     ]
   },
+  "Jamton": {
+    "name": "JAMTON",
+    "info": "jamton",
+    "paraId": 3397,
+    "providers": [
+      {
+        "name": "Jamton",
+        "endpoint": "wss://rpc.jamton.network"
+      }
+    ]
+  },
   "Moonbeam": {
     "name": "Moonbeam",
     "info": "moonbeam",

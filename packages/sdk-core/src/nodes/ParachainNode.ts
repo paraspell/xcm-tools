@@ -151,8 +151,9 @@ abstract class ParachainNode<TApi, TRes> {
 
     if (supportsXTokens(this) && this.canUseXTokens(options)) {
       const isBifrostOrigin = this.node === 'BifrostPolkadot' || this.node === 'BifrostKusama'
+      const isJamtonOrigin = this.node === 'Jamton'
       const isAssetHubDest = destination === 'AssetHubPolkadot' || destination === 'AssetHubKusama'
-      const shouldUseMultiasset = isAssetHubDest && !isBifrostOrigin
+      const shouldUseMultiasset = isAssetHubDest && !isBifrostOrigin && !isJamtonOrigin
 
       const input: TXTokensTransferOptions<TApi, TRes> = {
         api,
@@ -500,7 +501,7 @@ abstract class ParachainNode<TApi, TRes> {
         [
           {
             DepositAsset: {
-              assets: { Wild: { AllCounted: 1 } },
+              assets: { Wild: { AllCounted: 2 } },
               beneficiary: createBeneficiaryLocation({
                 api,
                 address: address,

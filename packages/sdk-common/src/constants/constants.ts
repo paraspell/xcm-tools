@@ -15,6 +15,7 @@ export const NODE_NAMES_DOT_KSM = [
   'Hydration',
   'Interlay',
   'Heima',
+  'Jamton',
   'Moonbeam',
   'AssetHubKusama',
   'CoretimeKusama',

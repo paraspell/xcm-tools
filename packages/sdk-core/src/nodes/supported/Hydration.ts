@@ -34,7 +34,7 @@ const createCustomXcmAh = <TApi, TRes>(
   [version]: [
     {
       DepositAsset: {
-        assets: { Wild: { AllCounted: 1 } },
+        assets: { Wild: { AllCounted: 2 } },
         beneficiary: createBeneficiaryLocation({
           api,
           address: address,
@@ -114,6 +114,7 @@ class Hydration<TApi, TRes>
     input: TPolkadotXCMTransferOptions<TApi, TRes>
   ): Promise<TRes> {
     const { api, destination, feeAsset, asset, overriddenAsset } = input
+
     if (destination === 'Ethereum') {
       return this.transferToEthereum(input)
     }

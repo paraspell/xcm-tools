@@ -24,6 +24,7 @@ import Encointer from '../nodes/supported/Encointer'
 import Heima from '../nodes/supported/Heima'
 import Hydration from '../nodes/supported/Hydration'
 import Interlay from '../nodes/supported/Interlay'
+import Jamton from '../nodes/supported/Jamton'
 import Karura from '../nodes/supported/Karura'
 import KiltSpiritnet from '../nodes/supported/KiltSpiritnet'
 import Kintsugi from '../nodes/supported/Kintsugi'
@@ -64,6 +65,7 @@ export const nodes = <TApi, TRes>() => ({
   Hydration: new Hydration<TApi, TRes>(),
   Interlay: new Interlay<TApi, TRes>(),
   Heima: new Heima<TApi, TRes>(),
+  Jamton: new Jamton<TApi, TRes>(),
   Moonbeam: new Moonbeam<TApi, TRes>(),
   AssetHubKusama: new AssetHubKusama<TApi, TRes>(),
   CoretimeKusama: new CoretimeKusama<TApi, TRes>(),

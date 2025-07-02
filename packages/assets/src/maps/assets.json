@@ -6476,6 +6476,32 @@
         },
         "existentialDeposit": "1000000000",
         "isFeeAsset": true
+      },
+      {
+        "symbol": "wstETH",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "1",
+        "isFeeAsset": true
       }
     ]
   },
@@ -8737,6 +8763,121 @@
       }
     ],
     "otherAssets": []
+  },
+  "Jamton": {
+    "relayChainAssetSymbol": "DOT",
+    "nativeAssetSymbol": "DOTON",
+    "isEVM": false,
+    "ss58Prefix": 5589,
+    "supportsDryRunApi": true,
+    "supportsXcmPaymentApi": true,
+    "nativeAssets": [
+      {
+        "isNative": true,
+        "symbol": "DOTON",
+        "decimals": 18,
+        "existentialDeposit": "1000000000000000"
+      },
+      {
+        "isNative": true,
+        "symbol": "jamTON",
+        "decimals": 9,
+        "existentialDeposit": "1000000"
+      },
+      {
+        "isNative": true,
+        "symbol": "stDOT",
+        "decimals": 10,
+        "existentialDeposit": "10000000"
+      }
+    ],
+    "otherAssets": [
+      {
+        "assetId": "0",
+        "symbol": "DOT",
+        "decimals": 10,
+        "existentialDeposit": "100000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "Here": null
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "2",
+        "symbol": "USDt",
+        "decimals": 6,
+        "existentialDeposit": "10000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 1984
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "3",
+        "symbol": "CGT",
+        "decimals": 18,
+        "existentialDeposit": "10000000000000000",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x0e186357c323c806c1efdad36d217f7a54b63d18"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "assetId": "1",
+        "symbol": "WUD",
+        "decimals": 10,
+        "existentialDeposit": "10000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X3": [
+              {
+                "Parachain": 1000
+              },
+              {
+                "PalletInstance": 50
+              },
+              {
+                "GeneralIndex": 31337
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      }
+    ]
   },
   "RobonomicsKusama": {
     "relayChainAssetSymbol": "KSM",
