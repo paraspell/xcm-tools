@@ -22,19 +22,30 @@
 <br /><br />
 
 ### Introduction
-XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within **one call and only two signatures**. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **8 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **556** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
+XCM Router (Codenamed SpellRouter) is ParaSpell's latest innovation that allows for seamless XCM Exchanges. Send one token type and receive a different one you choose on the destination chain cross-chain. All within **one call with one signature or two signatures (In cases where one signature calls are not supported)**. This seamless operation allows for a better user experience, limiting the possibility of user errors. The router currently implements the **8 largest Parachain DEXes** and is easy to extend as the number of DEXes with public SDKs increases. Together, there are **556** asset pools to choose from, making XCM Router the **largest liquidity bridging tool in the ecosystem**.
 
 **Exchanges implemented:**
+```
+1️⃣ Supporting one click swaps
+- Hydration / 210 Pools available
+- AssetHubPolkadot / 32 Pools available
+
+2️⃣ Supporting standard two click swaps
 - Acala / 36 Pools available
 - Basilisk / 15 Pools available
 - BifrostKusama / 66 Pools available / Requires native token for swaps
 - BifrostPolkadot / 45 Pools available / Requires native token for swaps
-- HydraDX / 210 Pools available
 - Karura / 136 Pools available
-- AssetHubPolkadot / 32 Pools available / Requires specific native tokens for swaps
 - AssetHubKusama / 16 Pools available / Requires specific native tokens for swaps
+```
 
-```NOTE: Some exchanges require native tokens in order to proceed with swaps.```
+**⚠️ IMPORTANT NOTES:** 
+```
+- 📣 Some exchanges require native tokens to proceed with swaps.
+
+- 📣 Router now supports one-click cross-chain swaps! Supported exchanges are AssetHubPolkadot and Hydration.
+        -Sidenote: Not all chains can be selected as origin for one-click cross-chain swaps, because their barrier doesn't support executing instructions. All chains can be selected as a destination, however. For origin chains that do not support execute instruction, we automatically default to the original two-click scenario.
+```
 
 # Installation
 #### Install dependencies
@@ -185,7 +196,7 @@ console.log(result.exchange)
 
 ## Get Router fees
 
-You can retrieve fees for all operations XCM Router performs. Keep in mind, that they are not as accurate for transfer from exchange to destination as the currency that is planned to be routed after the swap is not yet available on that account (Thus it uses payment info method instead of dryrun in that scenario).
+You can retrieve fees for all operations XCM Router performs. Keep in mind that they are not as accurate for transfer from exchange to destination as the currency that is planned to be routed after the swap is not yet available on that account (Thus it uses payment info method instead of dry run in that scenario). Find out the example output of this function in the [official documentation](https://paraspell.github.io/docs/router/router-use.html#get-router-fees).
 
 ```ts
 const fees = await RouterBuilder()
