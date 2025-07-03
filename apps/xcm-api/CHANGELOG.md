@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.9.0](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.8.3...xcm-api-v10.9.0) (2025-07-03)
+
+
+### Miscellaneous Chores
+
+* **xcm-api:** Synchronize main versions
+
 ## [10.8.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.8.2...xcm-api-v10.8.3) (2025-07-01)
 
 
