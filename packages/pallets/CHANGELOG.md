@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.9.0](https://github.com/paraspell/xcm-tools/compare/pallets-v10.8.3...pallets-v10.9.0) (2025-07-03)
+
+
+### Features
+
+* **sdk-core:** Add Jamton parachain 🕺✨ ([e7bd8e6](https://github.com/paraspell/xcm-tools/commit/e7bd8e69f5798e4e363a1a95b4be80fa9c8c6124))
+
 ## [10.8.3](https://github.com/paraspell/xcm-tools/compare/pallets-v10.8.2...pallets-v10.8.3) (2025-07-01)
 
 

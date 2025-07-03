@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.9.0](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.8.3...sdk-core-v10.9.0) (2025-07-03)
+
+
+### Features
+
+* **sdk-core:** Add Jamton parachain 🕺✨ ([e7bd8e6](https://github.com/paraspell/xcm-tools/commit/e7bd8e69f5798e4e363a1a95b4be80fa9c8c6124))
+* **xcm-router:** Add support for 1-click transfer -&gt; swaps 🪄✨ ([32925d0](https://github.com/paraspell/xcm-tools/commit/32925d04d4833ec6deb67491b1855b89a6d8f9be))
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix Mythos transfer & AH fee events 🛠️ ([cd4beb9](https://github.com/paraspell/xcm-tools/commit/cd4beb9da60f4dc5fcbc69e9eda3f29e1bcf2ba1))
+
 ## [10.8.3](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.8.2...sdk-core-v10.8.3) (2025-07-01)
 
 
