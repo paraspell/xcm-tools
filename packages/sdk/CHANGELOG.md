@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.1](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.0...sdk-v10.10.1) (2025-07-04)
+
+
+### Bug Fixes
+
+* Fix execute transfer edge cases 🔧 ([56921e0](https://github.com/paraspell/xcm-tools/commit/56921e06267262c108f937da3320f6fb4e6d2fa3))
+
 ## [10.10.0](https://github.com/paraspell/xcm-tools/compare/sdk-v10.9.0...sdk-v10.10.0) (2025-07-04)
 
 
