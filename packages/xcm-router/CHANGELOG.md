@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.9.0...xcm-router-v10.10.0) (2025-07-04)
+
+
+### Features
+
+* Add testnets support 🧪 ✨ ([6a9f19e](https://github.com/paraspell/xcm-tools/commit/6a9f19ed05e937d097f9e3846016f6e773e27a7e))
+
 ## [10.9.0](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.8.3...xcm-router-v10.9.0) (2025-07-03)
 
 
