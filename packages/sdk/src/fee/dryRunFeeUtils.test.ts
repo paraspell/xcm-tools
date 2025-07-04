@@ -44,6 +44,15 @@ describe('processAssetsDepositedEvents', () => {
     expect(result).toBe(500n) // 300 + 200
   })
 
+  it('should return sum of two largest events when their sum is less than amount limit', () => {
+    const events = [
+      createMockEvent('Assets', 'Deposited', 300),
+      createMockEvent('Assets', 'Deposited', 200)
+    ]
+    const result = processAssetsDepositedEvents(events, 1000n)
+    expect(result).toBe(500n) // 300 + 200
+  })
+
   it('should remove additional events when sum exceeds amount limit', () => {
     const events = [
       createMockEvent('Assets', 'Deposited', 400),

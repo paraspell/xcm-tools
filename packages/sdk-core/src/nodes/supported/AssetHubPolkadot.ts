@@ -9,7 +9,11 @@ import {
   isForeignAsset,
   isSymbolMatch
 } from '@paraspell/assets'
-import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type {
+  TEcosystemType,
+  TNodePolkadotKusama,
+  TNodeWithRelayChains
+} from '@paraspell/sdk-common'
 import {
   hasJunction,
   isSystemChain,
@@ -19,7 +23,7 @@ import {
   Version
 } from '@paraspell/sdk-common'
 
-import { CHAINS_DOT_RESERVE_AH, DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
+import { DOT_MULTILOCATION, ETHEREUM_JUNCTION } from '../../constants'
 import { BridgeHaltedError, InvalidParameterError, ScenarioNotSupportedError } from '../../errors'
 import { transferPolkadotXcm } from '../../pallets/polkadotXcm'
 import {
@@ -384,8 +388,18 @@ class AssetHubPolkadot<TApi, TRes>
       return this.handleLocalReserveTransfer(input, true)
     }
 
+    const CHAINS_SUPPORT_DOT_TRANSFER = new Set<TNodeWithRelayChains>([
+      'Hydration',
+      'Polimec',
+      'Moonbeam',
+      'BifrostPolkadot',
+      'PeoplePolkadot',
+      'Ajuna'
+    ] as const)
+
     const isTrusted = !isTMultiLocation(destination) && isSystemChain(destination)
-    const isDotReserveAh = !isTMultiLocation(destination) && CHAINS_DOT_RESERVE_AH.has(destination)
+    const isDotReserveAh =
+      !isTMultiLocation(destination) && CHAINS_SUPPORT_DOT_TRANSFER.has(destination)
 
     if (
       scenario === 'ParaToPara' &&
