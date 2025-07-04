@@ -1129,6 +1129,338 @@
       }
     ]
   },
+  "AssetHubWestend": {
+    "name": "AssetHub",
+    "info": "WestendAssetHub",
+    "paraId": 1000,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://asset-hub-westend-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Dwellir Tunisia",
+        "endpoint": "wss://westmint-rpc-tn.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/asset-hub-westend"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://asset-hub-westend.dotters.network"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://westend-asset-hub-rpc.polkadot.io"
+      },
+      {
+        "name": "Permanence DAO EU",
+        "endpoint": "wss://asset-hub-westend.rpc.permanence.io"
+      }
+    ]
+  },
+  "BridgeHubWestend": {
+    "name": "BridgeHub",
+    "info": "westendBridgeHub",
+    "paraId": 1002,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://bridge-hub-westend-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Dwellir Tunisia",
+        "endpoint": "wss://westend-bridge-hub-rpc-tn.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/bridgehub-westend"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://bridge-hub-westend.dotters.network"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://westend-bridge-hub-rpc.polkadot.io"
+      }
+    ]
+  },
+  "CollectivesWestend": {
+    "name": "Collectives",
+    "info": "westendCollectives",
+    "paraId": 1001,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://collectives-westend-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Dwellir Tunisia",
+        "endpoint": "wss://westend-collectives-rpc-tn.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/collectives-westend"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://collectives-westend.dotters.network"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://westend-collectives-rpc.polkadot.io"
+      }
+    ]
+  },
+  "CoretimeWestend": {
+    "name": "Coretime",
+    "info": "westendCoretime",
+    "paraId": 1005,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://coretime-westend-rpc.n.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/coretime-westend"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://coretime-westend.dotters.network"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://westend-coretime-rpc.polkadot.io"
+      }
+    ]
+  },
+  "PeopleWestend": {
+    "name": "People",
+    "info": "westendPeople",
+    "paraId": 1004,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://people-westend-rpc.n.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/people-westend"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://people-westend.dotters.network"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://westend-people-rpc.polkadot.io"
+      }
+    ]
+  },
+  "Penpal": {
+    "name": "Penpal",
+    "info": "westendPenpal",
+    "paraId": 2042,
+    "providers": [
+      {
+        "name": "Parity",
+        "endpoint": "wss://westend-penpal-rpc.polkadot.io"
+      }
+    ]
+  },
+  "AssetHubPaseo": {
+    "name": "AssetHub",
+    "info": "PaseoAssetHub",
+    "paraId": 1000,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://asset-hub-paseo-rpc.n.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/asset-hub-paseo"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://asset-hub-paseo.dotters.network"
+      },
+      {
+        "name": "StakeWorld",
+        "endpoint": "wss://pas-rpc.stakeworld.io/assethub"
+      },
+      {
+        "name": "TurboFlakes",
+        "endpoint": "wss://sys.turboflakes.io/asset-hub-paseo"
+      }
+    ]
+  },
+  "BridgeHubPaseo": {
+    "name": "BridgeHub",
+    "info": "PaseoBridgeHub",
+    "paraId": 1002,
+    "providers": [
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/bridgehub-paseo"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://bridge-hub-paseo.dotters.network"
+      }
+    ]
+  },
+  "CoretimePaseo": {
+    "name": "Coretime",
+    "info": "PaseoCoretime",
+    "paraId": 1005,
+    "providers": [
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/coretime-paseo"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://coretime-paseo.dotters.network"
+      }
+    ]
+  },
+  "PAssetHub": {
+    "name": "PAssetHub - Contracts",
+    "info": "PAssetHub - Contracts",
+    "paraId": 1111,
+    "providers": [
+      {
+        "name": "IBP1",
+        "endpoint": "wss://passet-hub-paseo.ibp.network"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://testnet-passet-hub.polkadot.io"
+      }
+    ]
+  },
+  "PeoplePaseo": {
+    "name": "People",
+    "info": "PaseoPeopleChain",
+    "paraId": 1004,
+    "providers": [
+      {
+        "name": "Amforc",
+        "endpoint": "wss://people-paseo.rpc.amforc.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://sys.ibp.network/people-paseo"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://people-paseo.dotters.network"
+      }
+    ]
+  },
+  "AjunaPaseo": {
+    "name": "Ajuna Network (Paseo)",
+    "info": "Ajuna(paseo)",
+    "paraId": 2051,
+    "providers": [
+      {
+        "name": "BajunNetwork",
+        "endpoint": "wss://rpc-paseo.ajuna.network"
+      }
+    ]
+  },
+  "BifrostPaseo": {
+    "name": "Bifrost",
+    "info": "Bifrost(Paseo)",
+    "paraId": 2030,
+    "providers": [
+      {
+        "name": "Liebi",
+        "endpoint": "wss://bifrost-rpc.paseo.liebi.com/ws"
+      }
+    ]
+  },
+  "HeimaPaseo": {
+    "name": "Heima paseo",
+    "info": "heima-paseo",
+    "paraId": 2106,
+    "providers": [
+      {
+        "name": "Heima",
+        "endpoint": "wss://rpc.paseo-parachain.heima.network"
+      }
+    ]
+  },
+  "HydrationPaseo": {
+    "name": "Hydration (Paseo)",
+    "info": "rococoHydraDX",
+    "paraId": 2034,
+    "providers": [
+      {
+        "name": "Galactic Council",
+        "endpoint": "wss://paseo-rpc.play.hydration.cloud"
+      }
+    ]
+  },
+  "KiltPaseo": {
+    "name": "KILT Peregrine",
+    "info": "kilt",
+    "paraId": 2086,
+    "providers": [
+      {
+        "name": "KILT Foundation",
+        "endpoint": "wss://peregrine.kilt.io/"
+      }
+    ]
+  },
+  "LaosPaseo": {
+    "name": "Laos Sigma",
+    "info": "laos-sigma",
+    "paraId": 4006,
+    "providers": [
+      {
+        "name": "freeverse.io",
+        "endpoint": "wss://rpc.laossigma.laosfoundation.io"
+      }
+    ]
+  },
+  "NeuroWebPaseo": {
+    "name": "NeuroWeb Testnet",
+    "info": "NeuroWeb",
+    "paraId": 2043,
+    "providers": [
+      {
+        "name": "TraceLabs",
+        "endpoint": "wss://parachain-testnet-rpc.origin-trail.network/"
+      }
+    ]
+  },
+  "NodlePaseo": {
+    "name": "Nodle",
+    "info": "NodleParadis",
+    "paraId": 2026,
+    "providers": [
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://node-7273232234617282560.nv.onfinality.io/ws?apikey=b937a7d7-7395-49b9-b745-60a0342fa365"
+      }
+    ]
+  },
+  "ZeitgeistPaseo": {
+    "name": "Zeitgeist Battery Station",
+    "info": "ZeitgeistBatteryStation",
+    "paraId": 2101,
+    "providers": [
+      {
+        "name": "Zeitgeist",
+        "endpoint": "wss://bsr.zeitgeist.pm"
+      }
+    ]
+  },
   "Polkadot": {
     "name": "Polkadot",
     "info": "polkadot",
@@ -1232,6 +1564,68 @@
       {
         "name": "Stakeworld",
         "endpoint": "wss://ksm-rpc.stakeworld.io"
+      }
+    ]
+  },
+  "Westend": {
+    "name": "Westend",
+    "info": "westend",
+    "paraId": 0,
+    "providers": [
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://westend-rpc.n.dwellir.com"
+      },
+      {
+        "name": "Dwellir Tunisia",
+        "endpoint": "wss://westend-rpc-tn.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://rpc.ibp.network/westend"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://westend.dotters.network"
+      },
+      {
+        "name": "OnFinality",
+        "endpoint": "wss://westend.api.onfinality.io/public-ws"
+      },
+      {
+        "name": "Parity",
+        "endpoint": "wss://westend-rpc.polkadot.io"
+      },
+      {
+        "name": "RadiumBlock",
+        "endpoint": "wss://westend.public.curie.radiumblock.co/ws"
+      }
+    ]
+  },
+  "Paseo": {
+    "name": "Paseo",
+    "info": "paseo",
+    "paraId": 0,
+    "providers": [
+      {
+        "name": "Amforc",
+        "endpoint": "wss://paseo.rpc.amforc.com"
+      },
+      {
+        "name": "Dwellir",
+        "endpoint": "wss://paseo-rpc.n.dwellir.com"
+      },
+      {
+        "name": "IBP1",
+        "endpoint": "wss://rpc.ibp.network/paseo"
+      },
+      {
+        "name": "IBP2",
+        "endpoint": "wss://paseo.dotters.network"
+      },
+      {
+        "name": "StakeWorld",
+        "endpoint": "wss://pas-rpc.stakeworld.io"
       }
     ]
   }

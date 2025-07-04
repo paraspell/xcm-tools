@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { transferXTokens } from '../../pallets/xTokens'
 import type { TTransferLocalOptions, TXTokensTransferOptions } from '../../types'
 import { getNode } from '../../utils'
-import type { Centrifuge } from './Centrifuge'
+import type Centrifuge from './Centrifuge'
 
 vi.mock('../../pallets/xTokens', () => ({
   transferXTokens: vi.fn()

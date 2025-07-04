@@ -5,6 +5,7 @@ import type { ApiPromise } from '@polkadot/api'
 import type { TForeignAsset, TNativeAsset } from '../src'
 import type { StorageKey } from '@polkadot/types'
 import type { AnyTuple, Codec } from '@polkadot/types/types'
+import { capitalizeMultiLocation } from './fetchOtherAssetsRegistry'
 
 export const fetchBifrostNativeAssets = async (
   api: ApiPromise,
@@ -42,29 +43,52 @@ const fetchBifrostAssets = async (
       }
     )
 
-  const mapAssets = (assets: [StorageKey<AnyTuple>, Codec][], isNative: boolean) =>
-    assets.map(([_key, value]) => {
-      const val = value.toHuman() as any
+  const mapAssets = async (assets: [StorageKey<AnyTuple>, Codec][], isNative: boolean) => {
+    const mapped = await Promise.all(
+      assets.map(async ([_key, value]) => {
+        const val = value.toHuman() as any
 
-      return isNative
-        ? { symbol: val.symbol, decimals: +val.decimals, existentialDeposit: val.minimalBalance }
-        : {
-            assetId: Object.values(_key.args[0].toHuman() ?? {})[0],
-            symbol: val.symbol,
-            decimals: +val.decimals,
-            existentialDeposit: val.minimalBalance
-          }
-    })
+        const assetIdKey = _key.args[0].toHuman()
 
-  const nativeAssets = mapAssets(
+        const multiLocation = await api.query[module].currencyIdToLocations(assetIdKey)
+
+        const assetId = Object.values(assetIdKey ?? {})[0]
+
+        return isNative
+          ? {
+              symbol: val.symbol,
+              decimals: +val.decimals,
+              existentialDeposit: val.minimalBalance,
+              multiLocation:
+                multiLocation.toJSON() !== null
+                  ? capitalizeMultiLocation(multiLocation.toJSON())
+                  : undefined
+            }
+          : {
+              assetId,
+              symbol: val.symbol,
+              decimals: +val.decimals,
+              existentialDeposit: val.minimalBalance,
+              multiLocation:
+                multiLocation.toJSON() !== null
+                  ? capitalizeMultiLocation(multiLocation.toJSON())
+                  : undefined
+            }
+      })
+    )
+
+    return mapped
+  }
+
+  const nativeAssets = (await mapAssets(
     filterAssets(['token', 'vtoken', 'native']),
     true
-  ) as TNativeAsset[]
+  )) as TNativeAsset[]
 
-  const otherAssets = mapAssets(
+  const otherAssets = (await mapAssets(
     filterAssets(['token2', 'vtoken2', 'vstoken2']),
     false
-  ) as TForeignAsset[]
+  )) as TForeignAsset[]
 
   return {
     nativeAssets,

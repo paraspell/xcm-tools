@@ -7,6 +7,7 @@ import {
   isForeignAsset,
   isSymbolMatch
 } from '@paraspell/assets'
+import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { hasJunction, Parents, type TMultiLocation, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
@@ -51,8 +52,13 @@ class Hydration<TApi, TRes>
 {
   private static NATIVE_ASSET_ID = 0
 
-  constructor() {
-    super('Hydration', 'hydradx', 'polkadot', Version.V4)
+  constructor(
+    chain: TNodePolkadotKusama = 'Hydration',
+    info: string = 'hydradx',
+    type: TEcosystemType = 'polkadot',
+    version: Version = Version.V4
+  ) {
+    super(chain, info, type, version)
   }
 
   transferToAssetHub<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): TRes {

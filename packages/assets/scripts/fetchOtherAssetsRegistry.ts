@@ -9,13 +9,13 @@ import { isRelayChain, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { normalizeMultiLocation, type TForeignAsset } from '../src'
 import type { TRegistryAssets } from './fetchXcmRegistry'
 import { fetchXcmRegistry } from './fetchXcmRegistry'
-import { getRelayChainType } from './utils'
+import { getChainEcosystem } from './utils'
 
 export const fetchAssets = async (node: TNodePolkadotKusama): Promise<TRegistryAssets[]> => {
   const data = await fetchXcmRegistry()
 
   const paraId = getParaId(node)
-  const relay = getRelayChainType(node)
+  const relay = getChainEcosystem(node)
 
   const doesNotUseXcAssets =
     node === 'AssetHubPolkadot' || node === 'AssetHubKusama' || isRelayChain(node)
@@ -112,7 +112,7 @@ export const fetchOtherAssetsRegistry = async (
         multiLocation = capitalizeMultiLocation(multiLocation)
       }
 
-      const relay = getRelayChainType(node)
+      const relay = getChainEcosystem(node)
       let xcmInteriorKey = item.xcmInteriorKey
 
       const assetsRegistry = data.xcmRegistry.find(item => item.relayChain === relay)?.data

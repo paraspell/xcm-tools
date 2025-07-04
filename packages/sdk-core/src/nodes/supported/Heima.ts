@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for Heima Parachain
 
 import { InvalidCurrencyError } from '@paraspell/assets'
+import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
@@ -9,8 +10,13 @@ import type { IPolkadotXCMTransfer, TPolkadotXCMTransferOptions } from '../../ty
 import ParachainNode from '../ParachainNode'
 
 class Heima<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
-  constructor() {
-    super('Heima', 'litentry', 'polkadot', Version.V4)
+  constructor(
+    chain: TNodePolkadotKusama = 'Heima',
+    info: string = 'litentry',
+    type: TEcosystemType = 'polkadot',
+    version: Version = Version.V4
+  ) {
+    super(chain, info, type, version)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

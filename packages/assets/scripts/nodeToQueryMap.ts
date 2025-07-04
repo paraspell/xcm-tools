@@ -7,6 +7,8 @@ export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   // Or GLOBAL flag to use global XCM registry
   Polkadot: [GLOBAL],
   Kusama: [GLOBAL],
+  Westend: [],
+  Paseo: [],
   Acala: [GLOBAL, 'assetRegistry.assetMetadatas'],
   Ajuna: ['assets.metadata'],
   Astar: [GLOBAL, 'assets.metadata'],
@@ -57,5 +59,27 @@ export const nodeToQuery: Record<TNodeWithRelayChains, string[]> = {
   Mythos: [], // No assets metadata query
   Peaq: ['assets.metadata'],
   Polimec: ['foreignAssets.metadata'],
-  Ethereum: []
+  Ethereum: [],
+  // Westend chains
+  AssetHubWestend: ['assets.metadata'],
+  BridgeHubWestend: [],
+  CollectivesWestend: [],
+  CoretimeWestend: [],
+  PeopleWestend: [],
+  Penpal: ['foreignAssets.metadata'],
+  // Paseo chains
+  AssetHubPaseo: ['assets.metadata'],
+  BridgeHubPaseo: [],
+  CoretimePaseo: [],
+  PAssetHub: ['assets.metadata'],
+  PeoplePaseo: [],
+  AjunaPaseo: ['assets.metadata'],
+  BifrostPaseo: ['assetRegistry.currencyMetadatas'],
+  HeimaPaseo: ['assets.metadata'],
+  HydrationPaseo: ['assetRegistry.assets'],
+  KiltPaseo: ['fungibles.metadata'],
+  LaosPaseo: [], // No assets metadata query
+  NeuroWebPaseo: ['assets.metadata'],
+  NodlePaseo: [],
+  ZeitgeistPaseo: ['assetRegistry.metadata']
 }

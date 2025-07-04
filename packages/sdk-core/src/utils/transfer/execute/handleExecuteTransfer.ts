@@ -1,6 +1,6 @@
 import type { TCurrencyCore } from '@paraspell/assets'
 import { isAssetEqual } from '@paraspell/assets'
-import type { TNodePolkadotKusama } from '@paraspell/sdk-common'
+import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 
 import { MAX_WEIGHT } from '../../../constants'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
@@ -9,7 +9,7 @@ import { getAssetBalanceInternal } from '../../../pallets/assets'
 import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
 import { padFeeBy } from '../../../transfer/fees/padFee'
 import type { THopInfo, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
-import { assertAddressIsString, determineRelayChain } from '../..'
+import { assertAddressIsString, getRelayChainOf } from '../..'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
 
@@ -71,7 +71,7 @@ export const handleExecuteTransfer = async <TApi, TRes>(
 
   const destChain = getTNode(
     paraIdTo as number,
-    determineRelayChain(chain) === 'Polkadot' ? 'polkadot' : 'kusama'
+    getRelayChainOf(chain).toLowerCase() as TEcosystemType
   ) as TNodePolkadotKusama
 
   const internalOptions = {

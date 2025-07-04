@@ -37,10 +37,11 @@ import {
   TNodeWithRelayChains
 } from '@paraspell/sdk-common'
 import { getNodeProviders, getParaId, reverseTransformMultiLocation } from '../../sdk-core/src'
-import { getRelayChainSymbol, getRelayChainType } from './utils'
+import { getRelayChainSymbolOf, getChainEcosystem } from './utils'
 import { fetchAjunaOtherAssets } from './fetchAjunaAssets'
 import { fetchFeeAssets } from './fetchFeeAssets'
 import { fetchMantaOtherAssets } from './fetchMantaAssets'
+import { fetchHydrationOtherAssets } from './fetchHydrationAssets'
 
 const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]> => {
   const propertiesRes = await api.rpc.system.properties()
@@ -55,6 +56,23 @@ const fetchNativeAssetsDefault = async (api: ApiPromise): Promise<TNativeAsset[]
   }))
 }
 
+const resolveNativeAssets = async (
+  chain: TNodePolkadotKusama,
+  api: ApiPromise
+): Promise<TNativeAsset[]> => {
+  if (chain === 'Penpal') {
+    return [
+      {
+        symbol: await resolveNativeAsset(chain, api),
+        isNative: true,
+        decimals: 12,
+        existentialDeposit: '1'
+      }
+    ]
+  }
+  return fetchNativeAssetsDefault(api)
+}
+
 const fetchNativeAssets = async (
   node: TNodePolkadotKusama,
   api: ApiPromise,
@@ -66,7 +84,7 @@ const fetchNativeAssets = async (
     nativeAssets = await fetchNativeAssetsCurio(api, query)
   }
 
-  if (node === 'BifrostPolkadot' || node === 'BifrostKusama') {
+  if (node.includes('Bifrost')) {
     nativeAssets = await fetchBifrostNativeAssets(api, query)
   }
 
@@ -78,7 +96,7 @@ const fetchNativeAssets = async (
     )
   }
 
-  const transformed = nativeAssets.length > 0 ? nativeAssets : await fetchNativeAssetsDefault(api)
+  const transformed = nativeAssets.length > 0 ? nativeAssets : await resolveNativeAssets(node, api)
 
   const nativeSymbol = getNativeAssetSymbol(node)
 
@@ -91,9 +109,9 @@ const fetchNativeAssets = async (
   const data = await fetchXcmRegistry()
 
   const paraId = getParaId(node)
-  const relay = getRelayChainType(node)
+  const relay = getChainEcosystem(node)
 
-  const assets = data.assets[relay].find(item => item.paraID === paraId)?.data as
+  const assets = data.assets[relay]?.find(item => item.paraID === paraId)?.data as
     | TRegistryAssets[]
     | undefined
 
@@ -102,7 +120,16 @@ const fetchNativeAssets = async (
   const cleanAsset = (asset: TNativeAsset, multiLocation?: any): TNativeAsset => {
     let finalMultiLocation = multiLocation
 
-    if (asset.symbol === getRelayChainSymbol(node) && !multiLocation) {
+    if (asset.symbol === nativeSymbol && !multiLocation) {
+      finalMultiLocation = {
+        parents: 1,
+        interior: {
+          X1: [{ Parachain: paraId }]
+        }
+      }
+    }
+
+    if (asset.symbol === getRelayChainSymbolOf(node) && !multiLocation) {
       finalMultiLocation = {
         parents: 1,
         interior: {
@@ -276,49 +303,74 @@ const fetchNativeAsset = async (api: ApiPromise): Promise<string> => {
   return symbols[0]
 }
 
-const fetchMultiLocations = async (api: ApiPromise): Promise<TForeignAsset[]> => {
+const resolveNativeAsset = async (node: TNodePolkadotKusama, api: ApiPromise): Promise<string> => {
+  // Return hardcoded value for Penpal because query returns null
+  if (node === 'Penpal') return 'UNIT'
+  return fetchNativeAsset(api)
+}
+
+const fetchMultiLocations = async (
+  chain: TNodePolkadotKusama,
+  api: ApiPromise
+): Promise<TForeignAsset[]> => {
   const res = await api.query.foreignAssets.metadata.entries()
 
-  const results = await Promise.all(
-    res.map(
-      async ([
-        {
-          args: [era]
-        },
-        value
-      ]) => {
-        const multiLocation = era.toJSON() ?? {}
-        const resDetail = await api.query.foreignAssets.asset(era)
-        const { symbol, decimals } = value.toHuman() as any
+  const parseAsset = async (key: unknown, value: unknown): Promise<TForeignAsset> => {
+    const era = (key as any).args[0]
+    const multiLocation = era.toJSON() ?? {}
+    const assetDetail = await api.query.foreignAssets.asset(era)
+    const { symbol, decimals } = (value as any).toHuman()
 
-        return {
-          symbol,
-          decimals: +decimals,
-          multiLocation: multiLocation as unknown as TMultiLocation,
-          existentialDeposit: (resDetail.toHuman() as any).minBalance.replace(/,/g, '')
-        }
-      }
-    )
-  )
+    return {
+      symbol,
+      decimals: +decimals,
+      multiLocation: multiLocation as unknown as TMultiLocation,
+      existentialDeposit: (assetDetail.toHuman() as any).minBalance.replace(/,/g, '')
+    }
+  }
 
-  const wstETHMultiLocation = {
+  const results = await Promise.all(res.map(([key, value]) => parseAsset(key, value)))
+
+  const isAssetHub = chain === 'AssetHubPolkadot' || chain === 'AssetHubKusama'
+
+  const buildEthereumMultiLocation = (address: string): TMultiLocation => ({
     parents: 2,
     interior: {
       X2: [
         { GlobalConsensus: { Ethereum: { chainId: 1 } } },
-        { AccountKey20: { network: null, key: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0' } }
+        { AccountKey20: { network: null, key: address } }
       ]
     }
-  }
+  })
 
-  const wstETHAssetDetail = await api.query.foreignAssets.asset(wstETHMultiLocation)
-  if (wstETHAssetDetail !== undefined) {
-    results.push({
+  // These assets are missing metadata, we need to add them manually
+  const staticAssets = [
+    {
       symbol: 'wstETH',
       decimals: 18,
-      multiLocation: wstETHMultiLocation as unknown as TMultiLocation,
-      existentialDeposit: (wstETHAssetDetail.toHuman() as any).minBalance.replace(/,/g, '')
-    })
+      address: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0'
+    },
+    {
+      symbol: 'tBTC',
+      decimals: 18,
+      address: '0x18084fba666a33d37592fa2633fd49a74dd93a88'
+    }
+  ]
+
+  if (isAssetHub) {
+    for (const { symbol, decimals, address } of staticAssets) {
+      const location = buildEthereumMultiLocation(address)
+      const assetDetail = await api.query.foreignAssets.asset(location)
+
+      if (assetDetail) {
+        results.push({
+          symbol,
+          decimals,
+          multiLocation: location,
+          existentialDeposit: (assetDetail.toHuman() as any).minBalance.replace(/,/g, '')
+        })
+      }
+    }
   }
 
   return results
@@ -330,7 +382,7 @@ const fetchOtherAssets = async (
   query: string
 ): Promise<TForeignAsset[]> => {
   let otherAssets: TForeignAsset[] = []
-  if (node === 'Zeitgeist' || node === 'Acala' || node === 'Karura' || node === 'Jamton') {
+  if (node.includes('Zeitgeist') || node === 'Acala' || node === 'Karura' || node === 'Jamton') {
     otherAssets = await fetchAcalaForeignAssets(
       api,
       query,
@@ -350,7 +402,7 @@ const fetchOtherAssets = async (
     otherAssets = await fetchComposableAssets(api, query)
   }
 
-  if (node === 'BifrostPolkadot' || node === 'BifrostKusama') {
+  if (node.includes('Bifrost')) {
     otherAssets = await fetchBifrostForeignAssets(api, query)
   }
 
@@ -370,16 +422,20 @@ const fetchOtherAssets = async (
     otherAssets = await fetchUniqueForeignAssets(api, query)
   }
 
-  if (node === 'Polimec' || node === 'KiltSpiritnet') {
+  if (node === 'Polimec' || node.includes('Kilt') || node === 'Penpal') {
     otherAssets = await fetchPolimecForeignAssets(api, query)
   }
 
-  if (node === 'Ajuna') {
+  if (node.includes('Ajuna')) {
     otherAssets = await fetchAjunaOtherAssets(api, query)
   }
 
   if (node === 'Manta') {
     otherAssets = await fetchMantaOtherAssets(api, query)
+  }
+
+  if (node === 'HydrationPaseo') {
+    otherAssets = await fetchHydrationOtherAssets(api, query)
   }
 
   return otherAssets.length > 0 ? otherAssets : fetchOtherAssetsDefault(node, api, query)
@@ -422,7 +478,7 @@ const fetchNodeAssets = async (
   const supportsXcmPaymentApi = supportsRuntimeApi(api, 'xcmPaymentApi')
   const feeAssets: TMultiLocation[] = supportsXcmPaymentApi ? await fetchFeeAssets(api) : []
 
-  const nativeAssetSymbol = await fetchNativeAsset(api)
+  const nativeAssetSymbol = await resolveNativeAsset(node, api)
 
   const hasGlobal = query.includes(GLOBAL)
   const queryPath = hasGlobal ? query[1] : query[0]
@@ -462,10 +518,10 @@ const fetchNodeAssets = async (
 
   const nativeAssets = (await fetchNativeAssets(node, api, queryPath)) ?? []
 
-  const isAssetHub = node === 'AssetHubPolkadot' || node === 'AssetHubKusama'
+  const isAssetHub = node.includes('AssetHub')
 
   if (isAssetHub) {
-    const foreignAssets = await fetchMultiLocations(api)
+    const foreignAssets = await fetchMultiLocations(node, api)
 
     const transformedForeignAssets = foreignAssets.map(asset => ({
       ...asset,
@@ -567,7 +623,7 @@ export const fetchAllNodesAssets = async (assetsMapJson: any) => {
         const combinedOtherAssets = [...(newData?.otherAssets ?? []), ...manuallyAddedOtherAssets]
 
         output[nodeName] = {
-          relayChainAssetSymbol: getRelayChainSymbol(nodeName),
+          relayChainAssetSymbol: getRelayChainSymbolOf(nodeName),
           nativeAssetSymbol: newData?.nativeAssetSymbol ?? '',
           isEVM: newData?.isEVM ?? false,
           ss58Prefix: newData?.ss58Prefix ?? DEFAULT_SS58_PREFIX,

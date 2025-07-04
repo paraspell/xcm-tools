@@ -1,6 +1,6 @@
 import {
-  determineRelayChain,
   findAsset,
+  getRelayChainOf,
   hasSupportForAsset,
   InvalidParameterError,
   type TNode,
@@ -80,7 +80,7 @@ export const selectBestExchangeCommon = async <
       continue;
     }
 
-    if (from && determineRelayChain(from) !== determineRelayChain(dex.node)) {
+    if (from && getRelayChainOf(from) !== getRelayChainOf(dex.node)) {
       continue;
     }
 

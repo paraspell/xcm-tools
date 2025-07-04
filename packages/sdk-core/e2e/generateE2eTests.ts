@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import {
-  determineRelayChain,
   GeneralBuilder,
   getNodeProviders,
   NODE_NAMES_DOT_KSM,
@@ -10,18 +9,21 @@ import {
   TApiOrUrl,
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
-  Version
+  Version,
+  getRelayChainOf
 } from '../src'
 import { doesNotSupportParaToRelay, generateTransferScenarios } from './utils'
 import { generateAssetsTests } from '../../assets/e2e'
 import {
   findAsset,
+  Foreign,
   ForeignAbstract,
   getOtherAssets,
   getRelayChainSymbol,
   hasSupportForAsset,
   isForeignAsset,
-  isNodeEvm
+  isNodeEvm,
+  Native
 } from '@paraspell/assets'
 
 const MOCK_AMOUNT = 1000000000000
@@ -291,7 +293,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
       const relayChainAsset = findAsset(
         node,
         { symbol: getRelayChainSymbol(node) },
-        determineRelayChain(node)
+        getRelayChainOf(node)
       )
       const paraToRelaySupported = relayChainAsset && !doesNotSupportParaToRelay.includes(node)
       if (scenarios.length === 0 && !paraToRelaySupported) {
@@ -302,9 +304,15 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
           scenarios.forEach(({ destNode, asset }) => {
             it(`should create transfer tx from ${node} to ${destNode} - (${asset.symbol})`, async () => {
               const getCurrency = () => {
-                // BifrostPolkadot has duplicated asset ids, thus use symbol specifier
-                if (isForeignAsset(asset) && asset.assetId && node !== 'BifrostPolkadot') {
+                // Bifrost has duplicated asset ids, thus use symbol specifier
+                if (isForeignAsset(asset) && asset.assetId && !node.includes('Bifrost')) {
                   return { id: asset.assetId }
+                }
+
+                if (node === 'BifrostPaseo') {
+                  return {
+                    symbol: asset.symbol === 'KSM' ? Native(asset.symbol) : Foreign(asset.symbol)
+                  }
                 }
 
                 return { symbol: asset.symbol }
@@ -335,6 +343,8 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
                     expect(error.name).toBe('NodeNotSupported')
                   } else if (error.name === 'NoXCMSupportImplemented') {
                     expect(error.name).toBe('NoXCMSupportImplemented')
+                  } else if (error.name === 'IncompatibleNodes') {
+                    expect(error.name).toBe('IncompatibleNodes')
                   } else if (error.name === 'TransferToAhNotSupported') {
                     expect(error.name).toBe('TransferToAhNotSupported')
                   } else {
@@ -353,7 +363,7 @@ export const generateE2eTests = <TApi, TRes, TSigner>(
             const api = await createOrGetApiInstanceForNode(node)
             const tx = await Builder(api)
               .from(node)
-              .to(determineRelayChain(node))
+              .to(getRelayChainOf(node))
               .currency({ symbol: getRelayChainSymbol(node), amount: MOCK_AMOUNT })
               .address(MOCK_ADDRESS)
               .build()

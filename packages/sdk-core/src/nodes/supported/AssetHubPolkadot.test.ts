@@ -123,6 +123,7 @@ describe('AssetHubPolkadot', () => {
 
   describe('handleBridgeTransfer', () => {
     it('should process a valid DOT transfer to Polkadot', async () => {
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
       const result = await assetHub.handleBridgeTransfer(mockInput, 'Polkadot')
       expect(transferPolkadotXcm).toHaveBeenCalledTimes(1)
       expect(result).toBe(mockExtrinsic)
@@ -133,6 +134,7 @@ describe('AssetHubPolkadot', () => {
         unknown,
         unknown
       >
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
 
       const result = await assetHub.handleBridgeTransfer(input, 'Kusama')
       expect(result).toStrictEqual(mockExtrinsic)
@@ -270,6 +272,7 @@ describe('AssetHubPolkadot', () => {
         destination: 'Acala'
       } as TPolkadotXCMTransferOptions<unknown, unknown>
       vi.mocked(isForeignAsset).mockReturnValue(false)
+      vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
 
       await expect(() => assetHub.transferPolkadotXCM(input)).rejects.toThrow(
         ScenarioNotSupportedError

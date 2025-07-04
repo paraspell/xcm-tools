@@ -20,7 +20,7 @@ import type {
   TXcmFeeDetail,
   TXcmFeeHopInfo
 } from '../../../types'
-import { determineRelayChain } from '../../../utils'
+import { getRelayChainOf } from '../../../utils'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
@@ -56,7 +56,7 @@ vi.mock('../../../transfer/utils/resolveFeeAsset', () => ({
 }))
 
 vi.mock('../../../utils', () => ({
-  determineRelayChain: vi.fn()
+  getRelayChainOf: vi.fn()
 }))
 
 vi.mock('../balance', () => ({
@@ -119,7 +119,7 @@ describe('getTransferInfo', () => {
       destination: { fee: 70000000n, currency: 'DOT' } as TXcmFeeDetail
     })
     vi.mocked(isAssetEqual).mockReturnValue(false)
-    vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
     vi.mocked(buildHopInfo).mockResolvedValue({
       balance: 0n,
@@ -403,7 +403,7 @@ describe('getTransferInfo', () => {
   })
 
   it('should correctly determine Kusama hop nodes if origin is Kusama based', async () => {
-    vi.mocked(determineRelayChain).mockReturnValue('Kusama')
+    vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
     vi.mocked(getRelayChainSymbol).mockReturnValue('KSM')
     const options = {
       ...baseOptions,

@@ -7,7 +7,14 @@ import {
 } from '@paraspell/assets'
 import { NODE_NAMES_DOT_KSM, TNode } from '@paraspell/sdk-common'
 
-const supportsOnlyNativeAsset: TNode[] = ['Nodle', 'Pendulum', 'Phala', 'Subsocial', 'Ajuna']
+const supportsOnlyNativeAsset: TNode[] = [
+  'Nodle',
+  'Pendulum',
+  'Phala',
+  'Subsocial',
+  'Ajuna',
+  'AjunaPaseo'
+]
 
 const assetIdRequired: TNode[] = [
   'Manta',
@@ -19,7 +26,13 @@ const assetIdRequired: TNode[] = [
   'Pendulum'
 ]
 
-export const doesNotSupportParaToRelay: TNode[] = ['Phala', 'Peaq', 'Pendulum', 'Ajuna']
+export const doesNotSupportParaToRelay: TNode[] = [
+  'Phala',
+  'Peaq',
+  'Pendulum',
+  'Ajuna',
+  'AjunaPaseo'
+]
 
 export const generateTransferScenarios = (originNode: TNode) => {
   const scenarios = []

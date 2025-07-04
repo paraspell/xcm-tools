@@ -127,18 +127,10 @@ describe('XCM API (e2e)', () => {
 
       const otherAssets = getOtherAssets(node);
       if (otherAssets.length > 1) {
-        const { symbol, assetId, decimals } =
+        const { symbol, decimals } =
           otherAssets[0].assetId !== undefined
             ? otherAssets[0]
             : otherAssets[1];
-        const assetIdUrl = `/assets/${node}/id`;
-        it(`Get asset id - ${assetIdUrl} (GET)`, () => {
-          return request(app.getHttpServer())
-            .get(assetIdUrl)
-            .query({ symbol })
-            .expect(200)
-            .expect(assetId ?? '');
-        });
 
         if (symbol) {
           const assetDecimalsUrl = `/assets/${node}/decimals`;

@@ -18,7 +18,16 @@ export const getTNode = (
   ecosystem: TEcosystemType
 ): TNodeWithRelayChains | null => {
   if (paraId === 0) {
-    return ecosystem === 'polkadot' ? 'Polkadot' : 'Kusama'
+    switch (ecosystem) {
+      case 'polkadot':
+        return 'Polkadot'
+      case 'kusama':
+        return 'Kusama'
+      case 'westend':
+        return 'Westend'
+      case 'paseo':
+        return 'Paseo'
+    }
   }
 
   if (paraId === 1) {

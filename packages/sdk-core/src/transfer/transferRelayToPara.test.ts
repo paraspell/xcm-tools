@@ -8,11 +8,11 @@ import { TX_CLIENT_TIMEOUT_MS } from '../constants'
 import type AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
 import { resolveTNodeFromMultiLocation } from '../pallets/xcmPallet/utils'
 import { type TRelayToParaOptions } from '../types'
-import { determineRelayChain, getNode } from '../utils'
+import { getNode, getRelayChainOf } from '../utils'
 import { transferRelayToPara } from './transferRelayToPara'
 
 vi.mock('../utils', () => ({
-  determineRelayChain: vi.fn(),
+  getRelayChainOf: vi.fn(),
   getNode: vi.fn()
 }))
 
@@ -56,7 +56,7 @@ describe('transferRelayToPara', () => {
     } as unknown as AssetHubPolkadot<unknown, unknown>
 
     vi.mocked(getNode).mockReturnValue(nodeMock)
-    vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getRelayChainSymbol).mockReturnValue('DOT')
     vi.mocked(resolveTNodeFromMultiLocation).mockReturnValue('Acala')
   })

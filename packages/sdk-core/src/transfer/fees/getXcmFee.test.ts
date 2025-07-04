@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { getTNode } from '../../nodes/getTNode'
 import type { TGetXcmFeeOptions } from '../../types'
-import { determineRelayChain } from '../../utils'
+import { getRelayChainOf } from '../../utils'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFee } from './getOriginXcmFee'
 import { getXcmFee } from './getXcmFee'
@@ -25,7 +25,7 @@ vi.mock('../../nodes/getTNode', () => ({
 }))
 
 vi.mock('../../utils', () => ({
-  determineRelayChain: vi.fn()
+  getRelayChainOf: vi.fn()
 }))
 
 vi.mock('./getOriginXcmFee', () => ({
@@ -180,7 +180,7 @@ describe('getXcmFee', () => {
       return 'GLMR'
     })
 
-    vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1_000n,
@@ -244,7 +244,7 @@ describe('getXcmFee', () => {
       return 'GLMR'
     })
 
-    vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1_000n,
@@ -316,7 +316,7 @@ describe('getXcmFee', () => {
       if (chain === 'BridgeHubPolkadot') return 'BRIDGE'
       return 'GLMR'
     })
-    vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     vi.mocked(getOriginXcmFee).mockResolvedValue({
       fee: 1_000n,

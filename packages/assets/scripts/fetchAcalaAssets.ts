@@ -36,7 +36,7 @@ const fetchAssets = async (
         const multiLocationJson = value.toJSON() as any
 
         const multiLocation =
-          multiLocationJson.location !== null
+          multiLocationJson.location !== null && multiLocationJson.location !== undefined
             ? capitalizeMultiLocation(
                 multiLocationJson.location.v4 ??
                   multiLocationJson.location.v3 ??
@@ -45,7 +45,7 @@ const fetchAssets = async (
             : undefined
 
         return {
-          assetId: Object.values(era.toHuman() ?? {})[0],
+          assetId: Object.values(era.toHuman() ?? {})[0].replaceAll(',', ''),
           symbol,
           decimals: +decimals,
           existentialDeposit: minimalBalance ?? existentialDeposit,

@@ -14,7 +14,7 @@ import type {
 } from '../../types'
 import { getNode } from '../../utils'
 import { createMultiAsset } from '../../utils/multiAsset'
-import type { BifrostPolkadot } from './BifrostPolkadot'
+import type BifrostPolkadot from './BifrostPolkadot'
 
 vi.mock('../../pallets/xTokens', () => ({
   transferXTokens: vi.fn()

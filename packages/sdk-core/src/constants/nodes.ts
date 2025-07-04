@@ -1,20 +1,29 @@
 import Acala from '../nodes/supported/Acala'
-import { Ajuna } from '../nodes/supported/Ajuna'
+import Ajuna from '../nodes/supported/Ajuna'
+import AjunaPaseo from '../nodes/supported/AjunaPaseo'
 import Altair from '../nodes/supported/Altair'
 import Amplitude from '../nodes/supported/Amplitude'
 import AssetHubKusama from '../nodes/supported/AssetHubKusama'
+import AssetHubPaseo from '../nodes/supported/AssetHubPaseo'
 import AssetHubPolkadot from '../nodes/supported/AssetHubPolkadot'
+import AssetHubWestend from '../nodes/supported/AssetHubWestend'
 import Astar from '../nodes/supported/Astar'
 import Basilisk from '../nodes/supported/Basilisk'
 import BifrostKusama from '../nodes/supported/BifrostKusama'
-import { BifrostPolkadot } from '../nodes/supported/BifrostPolkadot'
+import BifrostPaseo from '../nodes/supported/BifrostPaseo'
+import BifrostPolkadot from '../nodes/supported/BifrostPolkadot'
 import BridgeHubKusama from '../nodes/supported/BridgeHubKusama'
+import BridgeHubPaseo from '../nodes/supported/BridgeHubPaseo'
 import BridgeHubPolkadot from '../nodes/supported/BridgeHubPolkadot'
-import { Centrifuge } from '../nodes/supported/Centrifuge'
+import BridgeHubWestend from '../nodes/supported/BridgeHubWestend'
+import Centrifuge from '../nodes/supported/Centrifuge'
 import Collectives from '../nodes/supported/Collectives'
+import CollectivesWestend from '../nodes/supported/CollectivesWestend'
 import ComposableFinance from '../nodes/supported/ComposableFinance'
 import CoretimeKusama from '../nodes/supported/CoretimeKusama'
+import CoretimePaseo from '../nodes/supported/CoretimePaseo'
 import CoretimePolkadot from '../nodes/supported/CoretimePolkadot'
+import CoretimeWestend from '../nodes/supported/CoretimeWestend'
 import Crab from '../nodes/supported/Crab'
 import Crust from '../nodes/supported/Crust'
 import CrustShadow from '../nodes/supported/CrustShadow'
@@ -22,23 +31,33 @@ import Curio from '../nodes/supported/Curio'
 import Darwinia from '../nodes/supported/Darwinia'
 import Encointer from '../nodes/supported/Encointer'
 import Heima from '../nodes/supported/Heima'
+import HeimaPaseo from '../nodes/supported/HeimaPaseo'
 import Hydration from '../nodes/supported/Hydration'
+import HydrationPaseo from '../nodes/supported/HydrationPaseo'
 import Interlay from '../nodes/supported/Interlay'
 import Jamton from '../nodes/supported/Jamton'
 import Karura from '../nodes/supported/Karura'
+import KiltPaseo from '../nodes/supported/KiltPaseo'
 import KiltSpiritnet from '../nodes/supported/KiltSpiritnet'
 import Kintsugi from '../nodes/supported/Kintsugi'
 import Laos from '../nodes/supported/Laos'
+import LaosPaseo from '../nodes/supported/LaosPaseo'
 import Manta from '../nodes/supported/Manta'
 import Moonbeam from '../nodes/supported/Moonbeam'
 import Moonriver from '../nodes/supported/Moonriver'
 import Mythos from '../nodes/supported/Mythos'
 import NeuroWeb from '../nodes/supported/NeuroWeb'
+import NeuroWebPaseo from '../nodes/supported/NeuroWebPaseo'
 import Nodle from '../nodes/supported/Nodle'
+import NodlePaseo from '../nodes/supported/NodlePaseo'
+import PAssetHub from '../nodes/supported/PAssetHub'
 import Peaq from '../nodes/supported/Peaq'
 import Pendulum from '../nodes/supported/Pendulum'
+import Penpal from '../nodes/supported/Penpal'
 import PeopleKusama from '../nodes/supported/PeopleKusama'
+import PeoplePaseo from '../nodes/supported/PeoplePaseo'
 import PeoplePolkadot from '../nodes/supported/PeoplePolkadot'
+import PeopleWestend from '../nodes/supported/PeopleWestend'
 import Phala from '../nodes/supported/Phala'
 import Polimec from '../nodes/supported/Polimec'
 import Quartz from '../nodes/supported/Quartz'
@@ -48,6 +67,7 @@ import Shiden from '../nodes/supported/Shiden'
 import Subsocial from '../nodes/supported/Subsocial'
 import Unique from '../nodes/supported/Unique'
 import Zeitgeist from '../nodes/supported/Zeitgeist'
+import ZeitgeistPaseo from '../nodes/supported/ZeitgeistPaseo'
 
 export const nodes = <TApi, TRes>() => ({
   AssetHubPolkadot: new AssetHubPolkadot<TApi, TRes>(),
@@ -99,5 +119,27 @@ export const nodes = <TApi, TRes>() => ({
   Curio: new Curio<TApi, TRes>(),
   Mythos: new Mythos<TApi, TRes>(),
   Peaq: new Peaq<TApi, TRes>(),
-  Polimec: new Polimec<TApi, TRes>()
+  Polimec: new Polimec<TApi, TRes>(),
+  // Westend chains
+  AssetHubWestend: new AssetHubWestend<TApi, TRes>(),
+  BridgeHubWestend: new BridgeHubWestend<TApi, TRes>(),
+  CollectivesWestend: new CollectivesWestend<TApi, TRes>(),
+  CoretimeWestend: new CoretimeWestend<TApi, TRes>(),
+  PeopleWestend: new PeopleWestend<TApi, TRes>(),
+  Penpal: new Penpal<TApi, TRes>(),
+  // Paseo chains
+  AssetHubPaseo: new AssetHubPaseo<TApi, TRes>(),
+  BridgeHubPaseo: new BridgeHubPaseo<TApi, TRes>(),
+  CoretimePaseo: new CoretimePaseo<TApi, TRes>(),
+  PAssetHub: new PAssetHub<TApi, TRes>(),
+  PeoplePaseo: new PeoplePaseo<TApi, TRes>(),
+  AjunaPaseo: new AjunaPaseo<TApi, TRes>(),
+  BifrostPaseo: new BifrostPaseo<TApi, TRes>(),
+  HeimaPaseo: new HeimaPaseo<TApi, TRes>(),
+  HydrationPaseo: new HydrationPaseo<TApi, TRes>(),
+  KiltPaseo: new KiltPaseo<TApi, TRes>(),
+  LaosPaseo: new LaosPaseo<TApi, TRes>(),
+  NeuroWebPaseo: new NeuroWebPaseo<TApi, TRes>(),
+  NodlePaseo: new NodlePaseo<TApi, TRes>(),
+  ZeitgeistPaseo: new ZeitgeistPaseo<TApi, TRes>()
 })

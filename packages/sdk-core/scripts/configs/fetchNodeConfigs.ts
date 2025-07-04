@@ -1,5 +1,5 @@
 /**
- * Fetches the node configurations from the \@polkadot/apps-config repo and writes them to the configs.json file.
+ * Fetches the node configurations from the @polkadot/apps-config repo and writes them to the configs.json file.
  */
 
 import axios from 'axios'
@@ -14,11 +14,13 @@ type TModifiedNodeConfig = TNodeConfig & {
 }
 
 export const fetchRpcEndpoints = async (): Promise<void> => {
-  const polkadotUrl =
-    'https://raw.githubusercontent.com/polkadot-js/apps/refs/heads/master/packages/apps-config/src/endpoints/productionRelayPolkadot.ts'
+  const BASE_URL =
+    'https://raw.githubusercontent.com/polkadot-js/apps/refs/heads/master/packages/apps-config/src/endpoints'
 
-  const kusamaUrl =
-    'https://raw.githubusercontent.com/polkadot-js/apps/refs/heads/master/packages/apps-config/src/endpoints/productionRelayKusama.ts'
+  const polkadotUrl = `${BASE_URL}/productionRelayPolkadot.ts`
+  const kusamaUrl = `${BASE_URL}/productionRelayKusama.ts`
+  const westendUrl = `${BASE_URL}/testingRelayWestend.ts`
+  const paseoUrl = `${BASE_URL}/testingRelayPaseo.ts`
 
   const nodeConfig: TModifiedNodeConfig[] = []
 
@@ -92,7 +94,7 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
 
       // Filter out the non RPC compliant Hydration endpoint
       const filteredProviders =
-        paraId === HYDRATION_PARA_ID
+        paraId === HYDRATION_PARA_ID && relayChainName !== 'paseo'
           ? providers.filter(p => p.name !== 'Galactic Council')
           : providers
 
@@ -132,12 +134,21 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
       processEndpointOptions('prodParasKusama')
       processEndpointOptions('prodParasKusamaCommon')
       processEndpointOptions('prodRelayKusama')
+    } else if (relayChainName === 'westend') {
+      processEndpointOptions('testParasWestend')
+      processEndpointOptions('testParasWestendCommon')
+      processEndpointOptions('testRelayWestend')
+    } else if (relayChainName === 'paseo') {
+      processEndpointOptions('testParasPaseo')
+      processEndpointOptions('testParasPaseoCommon')
+      processEndpointOptions('testRelayPaseo')
     }
   }
 
   await processEndpointsFromUrl(polkadotUrl, 'polkadot')
-
   await processEndpointsFromUrl(kusamaUrl, 'kusama')
+  await processEndpointsFromUrl(westendUrl, 'westend')
+  await processEndpointsFromUrl(paseoUrl, 'paseo')
 
   const nodes = NODE_NAMES_DOT_KSM.map(node => {
     return getNode(node)
@@ -157,9 +168,13 @@ export const fetchRpcEndpoints = async (): Promise<void> => {
 
   obj['Polkadot'] = nodeConfig.find(c => c.info === 'polkadot') as TModifiedNodeConfig
   obj['Kusama'] = nodeConfig.find(c => c.info === 'kusama') as TModifiedNodeConfig
+  obj['Westend'] = nodeConfig.find(c => c.info === 'westend') as TModifiedNodeConfig
+  obj['Paseo'] = nodeConfig.find(c => c.info === 'paseo') as TModifiedNodeConfig
 
   obj['Polkadot'].relayChain = undefined
   obj['Kusama'].relayChain = undefined
+  obj['Westend'].relayChain = undefined
+  obj['Paseo'].relayChain = undefined
 
   writeFileSync('./src/maps/configs.json', JSON.stringify(obj, null, 2))
 }
