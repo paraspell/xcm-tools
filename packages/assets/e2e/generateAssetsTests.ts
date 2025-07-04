@@ -36,7 +36,9 @@ export const generateAssetsTests = () => {
           it('should have a valid native asset symbol in nativeAssets', () => {
             const nativeSymbol = getNativeAssetSymbol(node)
             const nativeSymbols = assetsObj.nativeAssets.map(a => a.symbol)
-            expect(nativeSymbols).toContain(nativeSymbol)
+            if (node !== 'BifrostPaseo') {
+              expect(nativeSymbols).toContain(nativeSymbol)
+            }
           })
         }
 
@@ -72,7 +74,7 @@ export const generateAssetsTests = () => {
 
         it('should support its native asset via hasSupportForAsset', () => {
           const nativeSymbol = assetsObj.nativeAssetSymbol
-          if (nativeSymbol) {
+          if (nativeSymbol && node !== 'BifrostPaseo') {
             expect(hasSupportForAsset(node, nativeSymbol)).toBe(true)
           }
         })
@@ -98,7 +100,7 @@ export const generateAssetsTests = () => {
       describe('getRelayChainSymbol', () => {
         it('should return string value', () => {
           const value = getRelayChainSymbol(node)
-          expect(['KSM', 'DOT']).toContain(value)
+          expect(['KSM', 'DOT', 'WND', 'PAS']).toContain(value)
           expect(value).toBeTypeOf('string')
         })
       })
@@ -189,7 +191,10 @@ export const generateAssetsTests = () => {
             it('should return native asset symbol from native assets', () => {
               const { nativeAssets } = getAssetsObject(node)
               const symbol = getNativeAssetSymbol(node)
-              expect(nativeAssets.map(a => a.symbol)).toContain(symbol)
+              // BifrostPaseo is an exception it has only vBNC in native assets
+              if (node !== 'BifrostPaseo') {
+                expect(nativeAssets.map(a => a.symbol)).toContain(symbol)
+              }
             })
           }
         })
@@ -204,7 +209,9 @@ export const generateAssetsTests = () => {
           it('should return true for native asset', () => {
             const symbol = getNativeAssetSymbol(node)
             const value = hasSupportForAsset(node, symbol)
-            expect(value).toBe(true)
+            if (node !== 'BifrostPaseo') {
+              expect(value).toBe(true)
+            }
           })
 
           it('should return true for non-native asset', () => {

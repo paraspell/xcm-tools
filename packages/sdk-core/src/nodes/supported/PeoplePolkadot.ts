@@ -1,5 +1,6 @@
 // Contains detailed structure of XCM call construction for CoretimePolkadot Parachain
 
+import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { ScenarioNotSupportedError } from '../../errors'
@@ -9,8 +10,13 @@ import { type IPolkadotXCMTransfer, type TPolkadotXCMTransferOptions } from '../
 import ParachainNode from '../ParachainNode'
 
 class PeoplePolkadot<TApi, TRes> extends ParachainNode<TApi, TRes> implements IPolkadotXCMTransfer {
-  constructor() {
-    super('PeoplePolkadot', 'polkadotPeople', 'polkadot', Version.V4)
+  constructor(
+    chain: TNodePolkadotKusama = 'PeoplePolkadot',
+    info: string = 'polkadotPeople',
+    type: TEcosystemType = 'polkadot',
+    version: Version = Version.V4
+  ) {
+    super(chain, info, type, version)
   }
 
   transferPolkadotXCM<TApi, TRes>(input: TPolkadotXCMTransferOptions<TApi, TRes>): Promise<TRes> {

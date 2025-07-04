@@ -51,7 +51,29 @@ export const NODE_NAMES_DOT_KSM = [
   'Curio',
   'Mythos',
   'Peaq',
-  'Polimec'
+  'Polimec',
+  // Westend testnet chains
+  'AssetHubWestend',
+  'BridgeHubWestend',
+  'CollectivesWestend',
+  'CoretimeWestend',
+  'PeopleWestend',
+  'Penpal',
+  // Paseo testnet chains
+  'AssetHubPaseo',
+  'BridgeHubPaseo',
+  'CoretimePaseo',
+  'PAssetHub',
+  'PeoplePaseo',
+  'AjunaPaseo',
+  'BifrostPaseo',
+  'HeimaPaseo',
+  'HydrationPaseo',
+  'KiltPaseo',
+  'LaosPaseo',
+  'NeuroWebPaseo',
+  'NodlePaseo',
+  'ZeitgeistPaseo'
 ] as const
 
 /**
@@ -60,15 +82,16 @@ export const NODE_NAMES_DOT_KSM = [
 export const NODE_NAMES = [...NODE_NAMES_DOT_KSM, 'Ethereum'] as const
 
 /**
+ * Relay chains.
+ */
+export const RELAY_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'Paseo'] as const
+
+/**
  * Supported nodes including relay chains and Ethereum.
  */
-export const NODES_WITH_RELAY_CHAINS = [...NODE_NAMES, 'Polkadot', 'Kusama'] as const
+export const NODES_WITH_RELAY_CHAINS = [...NODE_NAMES, ...RELAY_CHAINS] as const
 
 /**
  * Supported nodes including relay chains and excluding Ethereum.
  */
-export const NODES_WITH_RELAY_CHAINS_DOT_KSM = [
-  ...NODE_NAMES_DOT_KSM,
-  'Polkadot',
-  'Kusama'
-] as const
+export const NODES_WITH_RELAY_CHAINS_DOT_KSM = [...NODE_NAMES_DOT_KSM, ...RELAY_CHAINS] as const

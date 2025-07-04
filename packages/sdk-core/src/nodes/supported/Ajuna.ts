@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for Ajuna Parachain on Polkadot
 
 import { InvalidCurrencyError, isForeignAsset } from '@paraspell/assets'
+import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { NodeNotSupportedError, ScenarioNotSupportedError } from '../../errors'
@@ -16,12 +17,17 @@ import type {
 import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types'
 import ParachainNode from '../ParachainNode'
 
-export class Ajuna<TApi, TRes>
+class Ajuna<TApi, TRes>
   extends ParachainNode<TApi, TRes>
   implements IXTokensTransfer, IPolkadotXCMTransfer
 {
-  constructor() {
-    super('Ajuna', 'ajuna', 'polkadot', Version.V4)
+  constructor(
+    chain: TNodePolkadotKusama = 'Ajuna',
+    info: string = 'ajuna',
+    type: TEcosystemType = 'polkadot',
+    version: Version = Version.V4
+  ) {
+    super(chain, info, type, version)
   }
 
   transferXTokens<TApi, TRes>(input: TXTokensTransferOptions<TApi, TRes>) {
@@ -72,3 +78,5 @@ export class Ajuna<TApi, TRes>
     })
   }
 }
+
+export default Ajuna

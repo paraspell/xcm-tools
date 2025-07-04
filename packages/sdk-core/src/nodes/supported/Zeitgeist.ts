@@ -1,6 +1,7 @@
 // Contains detailed structure of XCM call construction for Zeitgeist Parachain
 
 import { InvalidCurrencyError, isForeignAsset, type TAsset } from '@paraspell/assets'
+import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Version } from '@paraspell/sdk-common'
 
 import { transferXTokens } from '../../pallets/xTokens'
@@ -14,8 +15,13 @@ import {
 import ParachainNode from '../ParachainNode'
 
 class Zeitgeist<TApi, TRes> extends ParachainNode<TApi, TRes> implements IXTokensTransfer {
-  constructor() {
-    super('Zeitgeist', 'zeitgeist', 'polkadot', Version.V3)
+  constructor(
+    chain: TNodePolkadotKusama = 'Zeitgeist',
+    info: string = 'zeitgeist',
+    type: TEcosystemType = 'polkadot',
+    version: Version = Version.V3
+  ) {
+    super(chain, info, type, version)
   }
 
   private getCurrencySelection(asset: TAsset): TZeitgeistAsset | TXcmForeignAsset {

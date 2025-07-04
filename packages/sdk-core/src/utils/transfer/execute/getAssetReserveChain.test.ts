@@ -1,8 +1,12 @@
 import type { TMultiLocation, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import { Parents } from '@paraspell/sdk-common'
+import { deepEqual, getJunctionValue, hasJunction } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InvalidParameterError } from '../../../errors'
+import { getTNode } from '../../../nodes/getTNode'
+import { getRelayChainOf } from '../..'
+import { getAssetReserveChain } from './getAssetReserveChain'
 
 vi.mock('@paraspell/sdk-common', async () => {
   const actual = await vi.importActual('@paraspell/sdk-common')
@@ -20,20 +24,8 @@ vi.mock('../../../nodes/getTNode', () => ({
 }))
 
 vi.mock('../..', () => ({
-  determineRelayChain: vi.fn()
+  getRelayChainOf: vi.fn()
 }))
-
-import { deepEqual, getJunctionValue, hasJunction } from '@paraspell/sdk-common'
-
-import { getTNode } from '../../../nodes/getTNode'
-import { determineRelayChain } from '../..'
-import { getAssetReserveChain } from './getAssetReserveChain'
-
-const mockHasJunction = vi.mocked(hasJunction)
-const mockGetJunctionValue = vi.mocked(getJunctionValue)
-const mockDeepEqual = vi.mocked(deepEqual)
-const mockGetTNode = vi.mocked(getTNode)
-const mockDetermineRelayChain = vi.mocked(determineRelayChain)
 
 describe('getAssetReserveChain', () => {
   const mockOrigin = 'Acala' as TNodeDotKsmWithRelayChains
@@ -47,33 +39,33 @@ describe('getAssetReserveChain', () => {
   })
 
   it('returns parachain when paraId is found', () => {
-    mockHasJunction.mockReturnValue(false)
-    mockGetJunctionValue.mockReturnValue(1000)
-    mockDetermineRelayChain.mockReturnValue('Polkadot')
-    mockGetTNode.mockReturnValue('Moonbeam')
+    vi.mocked(hasJunction).mockReturnValue(false)
+    vi.mocked(getJunctionValue).mockReturnValue(1000)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+    vi.mocked(getTNode).mockReturnValue('Moonbeam')
 
     const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
 
-    expect(mockGetTNode).toHaveBeenCalledWith(1000, 'polkadot')
+    expect(getTNode).toHaveBeenCalledWith(1000, 'polkadot')
     expect(result).toBe('Moonbeam')
   })
 
   it('uses kusama when origin relay chain is Kusama', () => {
-    mockHasJunction.mockReturnValue(false)
-    mockGetJunctionValue.mockReturnValue(2000)
-    mockDetermineRelayChain.mockReturnValue('Kusama')
-    mockGetTNode.mockReturnValue('Karura')
+    vi.mocked(hasJunction).mockReturnValue(false)
+    vi.mocked(getJunctionValue).mockReturnValue(2000)
+    vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
+    vi.mocked(getTNode).mockReturnValue('Karura')
 
     getAssetReserveChain(mockOrigin, mockAssetLocation)
 
-    expect(mockGetTNode).toHaveBeenCalledWith(2000, 'kusama')
+    expect(getTNode).toHaveBeenCalledWith(2000, 'kusama')
   })
 
   it('throws error when parachain not found', () => {
-    mockHasJunction.mockReturnValue(false)
-    mockGetJunctionValue.mockReturnValue(9999)
-    mockDetermineRelayChain.mockReturnValue('Polkadot')
-    mockGetTNode.mockReturnValue(null)
+    vi.mocked(hasJunction).mockReturnValue(false)
+    vi.mocked(getJunctionValue).mockReturnValue(9999)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+    vi.mocked(getTNode).mockReturnValue(null)
 
     expect(() => getAssetReserveChain(mockOrigin, mockAssetLocation)).toThrow(
       new InvalidParameterError('Chain with paraId 9999 not found')
@@ -81,8 +73,8 @@ describe('getAssetReserveChain', () => {
   })
 
   it('returns AssetHubPolkadot when has GlobalConsensus junction', () => {
-    mockHasJunction.mockReturnValue(true)
-    mockGetJunctionValue.mockReturnValue(null)
+    vi.mocked(hasJunction).mockReturnValue(true)
+    vi.mocked(getJunctionValue).mockReturnValue(null)
 
     const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
 
@@ -90,13 +82,13 @@ describe('getAssetReserveChain', () => {
   })
 
   it('returns AssetHubPolkadot for specific location pattern', () => {
-    mockHasJunction.mockReturnValue(false)
-    mockGetJunctionValue.mockReturnValue(null)
-    mockDeepEqual.mockReturnValue(true)
+    vi.mocked(hasJunction).mockReturnValue(false)
+    vi.mocked(getJunctionValue).mockReturnValue(null)
+    vi.mocked(deepEqual).mockReturnValue(true)
 
     const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
 
-    expect(mockDeepEqual).toHaveBeenCalledWith(mockAssetLocation, {
+    expect(deepEqual).toHaveBeenCalledWith(mockAssetLocation, {
       parents: Parents.ONE,
       interior: { Here: null }
     })
@@ -104,9 +96,9 @@ describe('getAssetReserveChain', () => {
   })
 
   it('returns origin when no conditions match', () => {
-    mockHasJunction.mockReturnValue(false)
-    mockGetJunctionValue.mockReturnValue(null)
-    mockDeepEqual.mockReturnValue(false)
+    vi.mocked(hasJunction).mockReturnValue(false)
+    vi.mocked(getJunctionValue).mockReturnValue(null)
+    vi.mocked(deepEqual).mockReturnValue(false)
 
     const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
 

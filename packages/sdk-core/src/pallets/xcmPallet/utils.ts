@@ -3,6 +3,7 @@ import type {
   TJunction,
   TMultiLocation,
   TNodeDotKsmWithRelayChains,
+  TRelayChain,
   Version
 } from '@paraspell/sdk-common'
 import { getJunctionValue, replaceBigInt } from '@paraspell/sdk-common'
@@ -11,9 +12,9 @@ import { NODE_NAMES_DOT_KSM, type TNodePolkadotKusama } from '@paraspell/sdk-com
 
 import { InvalidParameterError } from '../../errors'
 import { getParaId } from '../../nodes/config'
-import type { TRelaychain, TXcmVersioned } from '../../types'
+import type { TXcmVersioned } from '../../types'
 import { type TDestination } from '../../types'
-import { addXcmVersionHeader, createX1Payload, determineRelayChain } from '../../utils'
+import { addXcmVersionHeader, createX1Payload, getRelayChainOf } from '../../utils'
 import { resolveScenario } from '../../utils/transfer/resolveScenario'
 
 export const createDestination = (
@@ -80,7 +81,7 @@ export const createBridgeDestination = (
 }
 
 export const resolveTNodeFromMultiLocation = (
-  relayChain: TRelaychain,
+  relayChain: TRelayChain,
   multiLocation: TMultiLocation
 ): TNodePolkadotKusama => {
   const parachainId = getJunctionValue(multiLocation, 'Parachain')
@@ -90,8 +91,7 @@ export const resolveTNodeFromMultiLocation = (
 
   const node =
     NODE_NAMES_DOT_KSM.find(
-      nodeName =>
-        getParaId(nodeName) === parachainId && determineRelayChain(nodeName) === relayChain
+      nodeName => getParaId(nodeName) === parachainId && getRelayChainOf(nodeName) === relayChain
     ) ?? null
 
   if (node === null) {

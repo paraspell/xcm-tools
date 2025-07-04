@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { IPolkadotApi } from '../../api'
 import { getTNode } from '../../nodes/getTNode'
 import type { TDryRunOptions } from '../../types'
-import { determineRelayChain } from '../../utils'
+import { getRelayChainOf } from '../../utils'
 import { dryRunInternal } from './dryRunInternal'
 
 vi.mock('@paraspell/assets', () => ({
@@ -24,7 +24,7 @@ vi.mock('../../nodes/getTNode', () => ({
 }))
 
 vi.mock('../../utils', () => ({
-  determineRelayChain: vi.fn(),
+  getRelayChainOf: vi.fn(),
   addXcmVersionHeader: vi.fn().mockReturnValue({})
 }))
 
@@ -85,6 +85,7 @@ describe('dryRunInternal', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValueOnce('ACA').mockReturnValueOnce('GLMR')
     vi.mocked(getTNode).mockReturnValue('Moonbeam')
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     const originOk = {
       success: true,
@@ -117,7 +118,7 @@ describe('dryRunInternal', () => {
       return 'ACA'
     })
 
-    vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getTNode)
       .mockImplementationOnce(() => 'AssetHubPolkadot')
       .mockImplementationOnce(() => 'Moonbeam')
@@ -160,6 +161,7 @@ describe('dryRunInternal', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValueOnce('ACA')
     vi.mocked(hasDryRunSupport).mockReturnValue(true)
     vi.mocked(getTNode).mockReturnValue('Moonbeam')
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
 
     const originOk = {
       success: true,

@@ -1,16 +1,16 @@
 import type { TAsset, TNodeWithRelayChains } from '@paraspell/sdk';
-import { getSupportedAssets, isForeignAsset } from '@paraspell/sdk';
+import {
+  getSupportedAssets,
+  isForeignAsset,
+  isRelayChain,
+} from '@paraspell/sdk';
 import { useMemo } from 'react';
 
 export const useCurrencyOptions = (
   from: TNodeWithRelayChains,
   to: TNodeWithRelayChains,
 ) => {
-  const isNotParaToPara =
-    from === 'Polkadot' ||
-    from === 'Kusama' ||
-    to === 'Polkadot' ||
-    to === 'Kusama';
+  const isNotParaToPara = isRelayChain(from) || isRelayChain(to);
 
   const supportedAssets = useMemo(
     () => getSupportedAssets(from, to),

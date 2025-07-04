@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
 import { findAssetForNodeOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
+import type { TEcosystemType } from '@paraspell/sdk-common'
 import { isRelayChain, type TNodeDotKsmWithRelayChains, Version } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -11,7 +12,7 @@ import { InvalidParameterError } from '../../errors'
 import { getTNode } from '../../nodes/getTNode'
 import type { TDryRunChain, TDryRunNodeResultInternal, THopInfo } from '../../types'
 import { type TDryRunOptions, type TDryRunResult, type THubKey } from '../../types'
-import { addXcmVersionHeader, determineRelayChain } from '../../utils'
+import { addXcmVersionHeader, getRelayChainOf } from '../../utils'
 import { getParaEthTransferFees } from '../ethTransfer'
 import { createOriginLocation } from '../fees/getDestXcmFee'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
@@ -66,10 +67,8 @@ export const dryRunInternal = async <TApi, TRes>(
 
   const { forwardedXcms: initialForwardedXcms, destParaId: initialDestParaId } = originDryRun
 
-  const assetHubNode =
-    determineRelayChain(origin) === 'Polkadot' ? 'AssetHubPolkadot' : 'AssetHubKusama'
-  const bridgeHubNode =
-    determineRelayChain(origin) === 'Polkadot' ? 'BridgeHubPolkadot' : 'BridgeHubKusama'
+  const assetHubNode = `AssetHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
+  const bridgeHubNode = `BridgeHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
 
   let currentOrigin = origin
   let forwardedXcms: any = initialForwardedXcms
@@ -88,10 +87,7 @@ export const dryRunInternal = async <TApi, TRes>(
       : forwardedXcms[1][0].value.length) > 0 &&
     nextParaId !== undefined
   ) {
-    const nextChain = getTNode(
-      nextParaId,
-      determineRelayChain(origin) === 'Polkadot' ? 'polkadot' : 'kusama'
-    )
+    const nextChain = getTNode(nextParaId, getRelayChainOf(origin).toLowerCase() as TEcosystemType)
 
     if (!nextChain) throw new InvalidParameterError(`Unable to find TNode for paraId ${nextParaId}`)
 

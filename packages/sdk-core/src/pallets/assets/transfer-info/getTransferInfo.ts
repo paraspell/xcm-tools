@@ -12,7 +12,7 @@ import { InvalidParameterError } from '../../../errors'
 import { getXcmFee } from '../../../transfer'
 import { resolveFeeAsset } from '../../../transfer/utils/resolveFeeAsset'
 import type { TGetTransferInfoOptions, TTransferInfo } from '../../../types/TTransferInfo'
-import { determineRelayChain } from '../../../utils'
+import { getRelayChainOf } from '../../../utils'
 import { getAssetBalanceInternal, getBalanceNativeInternal } from '../balance'
 import { buildDestInfo } from './buildDestInfo'
 import { buildHopInfo } from './buildHopInfo'
@@ -108,7 +108,7 @@ export const getTransferInfo = async <TApi, TRes>({
     if (assetHubFeeResult) {
       assetHub = await buildHopInfo({
         api,
-        node: determineRelayChain(origin) === 'Polkadot' ? 'AssetHubPolkadot' : 'AssetHubKusama',
+        node: `AssetHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains,
         feeData: assetHubFeeResult as { fee: bigint; currency: string },
         originNode: origin,
         currency,
@@ -119,8 +119,7 @@ export const getTransferInfo = async <TApi, TRes>({
 
     let bridgeHub
     if (bridgeHubFeeResult) {
-      const bridgeHubNode =
-        determineRelayChain(origin) === 'Polkadot' ? 'BridgeHubPolkadot' : 'BridgeHubKusama'
+      const bridgeHubNode = `BridgeHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
       bridgeHub = await buildHopInfo({
         api,
         node: bridgeHubNode,

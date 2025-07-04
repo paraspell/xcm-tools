@@ -12,12 +12,12 @@ import type {
   TNodeDotKsmWithRelayChains,
   TNodePolkadotKusama,
   TNodeWithRelayChains,
+  TRelayChain,
   Version
 } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../api/IPolkadotApi'
 import type { WithApi } from './TApi'
-import type { TRelaychain } from './TNode'
 
 export type TPolkadotXCMTransferOptions<TApi, TRes> = {
   api: IPolkadotApi<TApi, TRes>
@@ -162,7 +162,7 @@ type TRelayToParaBaseOptions = {
   /**
    * The origin node
    */
-  origin: TRelaychain
+  origin: TRelayChain
   /**
    * The destination node or multi-location
    */

@@ -12,7 +12,7 @@ import type {
   TXTokensTransferOptions
 } from '../../types'
 import { getNode } from '../../utils'
-import type { Ajuna } from './Ajuna'
+import type Ajuna from './Ajuna'
 
 vi.mock('../../pallets/xTokens', () => ({
   transferXTokens: vi.fn()

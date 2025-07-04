@@ -578,5 +578,219 @@
         "index": 31
       }
     ]
+  },
+  "AssetHubWestend": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "BridgeHubWestend": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "CollectivesWestend": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "CoretimeWestend": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "PeopleWestend": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "Penpal": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "AssetHubPaseo": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "BridgeHubPaseo": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "CoretimePaseo": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "PAssetHub": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "PeoplePaseo": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "AjunaPaseo": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      },
+      {
+        "name": "XTokens",
+        "index": 35
+      }
+    ]
+  },
+  "BifrostPaseo": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 41
+      },
+      {
+        "name": "XTokens",
+        "index": 70
+      }
+    ]
+  },
+  "HeimaPaseo": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 51
+      }
+    ]
+  },
+  "HydrationPaseo": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 107
+      },
+      {
+        "name": "XTokens",
+        "index": 137
+      }
+    ]
+  },
+  "KiltPaseo": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 83
+      }
+    ]
+  },
+  "LaosPaseo": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "NeuroWebPaseo": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 31
+      }
+    ]
+  },
+  "NodlePaseo": {
+    "defaultPallet": "PolkadotXcm",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 35
+      }
+    ]
+  },
+  "ZeitgeistPaseo": {
+    "defaultPallet": "XTokens",
+    "supportedPallets": [
+      {
+        "name": "PolkadotXcm",
+        "index": 122
+      },
+      {
+        "name": "XTokens",
+        "index": 126
+      }
+    ]
+  },
+  "Westend": {
+    "defaultPallet": "XcmPallet",
+    "supportedPallets": [
+      {
+        "name": "XcmPallet",
+        "index": 99
+      }
+    ]
+  },
+  "Paseo": {
+    "defaultPallet": "XcmPallet",
+    "supportedPallets": [
+      {
+        "name": "XcmPallet",
+        "index": 99
+      }
+    ]
   }
 }

@@ -7,6 +7,7 @@ import {
   findAssetOnDestOrThrow,
   getNativeAssetSymbol
 } from '@paraspell/assets'
+import type { TEcosystemType } from '@paraspell/sdk-common'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -21,7 +22,7 @@ import type {
   TXcmFeeDetail,
   TXcmFeeHopInfo
 } from '../../types'
-import { determineRelayChain } from '../../utils'
+import { getRelayChainOf } from '../../utils'
 import { getParaEthTransferFees } from '../ethTransfer'
 import { getDestXcmFee } from './getDestXcmFee'
 import { getOriginXcmFee } from './getOriginXcmFee'
@@ -150,10 +151,8 @@ export const getXcmFee = async <TApi, TRes>({
     }
   }
 
-  const assetHubNode =
-    determineRelayChain(origin) === 'Polkadot' ? 'AssetHubPolkadot' : 'AssetHubKusama'
-  const bridgeHubNode =
-    determineRelayChain(origin) === 'Polkadot' ? 'BridgeHubPolkadot' : 'BridgeHubKusama'
+  const assetHubNode = `AssetHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
+  const bridgeHubNode = `BridgeHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
 
   let currentOrigin = origin
   let forwardedXcms: any = initialForwardedXcm
@@ -175,10 +174,7 @@ export const getXcmFee = async <TApi, TRes>({
       : forwardedXcms[1][0].value.length) > 0 &&
     nextParaId !== undefined
   ) {
-    const nextChain = getTNode(
-      nextParaId,
-      determineRelayChain(origin) === 'Polkadot' ? 'polkadot' : 'kusama'
-    )
+    const nextChain = getTNode(nextParaId, getRelayChainOf(origin).toLowerCase() as TEcosystemType)
 
     if (nextChain === null) {
       throw new InvalidParameterError(`Unable to find TNode for paraId ${nextParaId}`)

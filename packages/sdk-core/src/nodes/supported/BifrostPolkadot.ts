@@ -7,6 +7,7 @@ import {
   isForeignAsset,
   type TAsset
 } from '@paraspell/assets'
+import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import { Parents, Version } from '@paraspell/sdk-common'
 
 import { ETHEREUM_JUNCTION } from '../../constants'
@@ -22,12 +23,17 @@ import { type IXTokensTransfer, type TXTokensTransferOptions } from '../../types
 import { createMultiAsset } from '../../utils/multiAsset'
 import ParachainNode from '../ParachainNode'
 
-export class BifrostPolkadot<TApi, TRes>
+class BifrostPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>
   implements IXTokensTransfer, IPolkadotXCMTransfer
 {
-  constructor() {
-    super('BifrostPolkadot', 'bifrost', 'polkadot', Version.V4)
+  constructor(
+    chain: TNodePolkadotKusama = 'BifrostPolkadot',
+    info: string = 'bifrost',
+    type: TEcosystemType = 'polkadot',
+    version: Version = Version.V4
+  ) {
+    super(chain, info, type, version)
   }
 
   getCurrencySelection(asset: TAsset) {
@@ -118,3 +124,5 @@ export class BifrostPolkadot<TApi, TRes>
     })
   }
 }
+
+export default BifrostPolkadot

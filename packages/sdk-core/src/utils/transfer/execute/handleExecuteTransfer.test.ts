@@ -10,7 +10,7 @@ import { getAssetBalanceInternal } from '../../../pallets/assets'
 import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
 import { padFeeBy } from '../../../transfer/fees/padFee'
 import type { TDryRunResult, TPolkadotXCMTransferOptions, TSerializedApiCall } from '../../../types'
-import { assertAddressIsString, determineRelayChain } from '../..'
+import { assertAddressIsString, getRelayChainOf } from '../..'
 import { createExecuteCall } from './createExecuteCall'
 import { createDirectExecuteXcm } from './createExecuteXcm'
 import { handleExecuteTransfer } from './handleExecuteTransfer'
@@ -45,7 +45,7 @@ vi.mock('../../../transfer/fees/padFee', () => ({
 
 vi.mock('../..', () => ({
   assertAddressIsString: vi.fn(),
-  determineRelayChain: vi.fn()
+  getRelayChainOf: vi.fn()
 }))
 
 vi.mock('@paraspell/assets', () => ({
@@ -81,7 +81,7 @@ describe('handleExecuteTransfer', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(assertAddressIsString).mockImplementation(() => {})
-    vi.mocked(determineRelayChain).mockReturnValue('Polkadot')
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getTNode).mockReturnValue(mockDestChain)
     vi.mocked(padFeeBy).mockImplementation(
       (fee, percentage) => fee + (fee * BigInt(percentage)) / 100n

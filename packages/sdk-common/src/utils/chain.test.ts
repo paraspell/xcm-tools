@@ -27,13 +27,22 @@ describe('isSystemChain', () => {
   const systemChains: TNodeWithRelayChains[] = [
     'AssetHubPolkadot',
     'AssetHubKusama',
+    'AssetHubWestend',
+    'AssetHubPaseo',
     'BridgeHubPolkadot',
     'BridgeHubKusama',
+    'BridgeHubWestend',
+    'BridgeHubPaseo',
     'PeoplePolkadot',
     'PeopleKusama',
-    'Collectives',
+    'PeopleWestend',
+    'PeoplePaseo',
     'CoretimePolkadot',
     'CoretimeKusama',
+    'CoretimeWestend',
+    'CoretimePaseo',
+    'Collectives',
+    'CollectivesWestend',
     'Mythos'
   ]
 

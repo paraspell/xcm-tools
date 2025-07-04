@@ -4,7 +4,7 @@ import {
   getRelayChainSymbol,
   NODES_WITH_RELAY_CHAINS_DOT_KSM,
   TNode,
-  determineRelayChain,
+  getRelayChainOf,
 } from '@paraspell/sdk';
 
 const performTransferInfoTest = async (
@@ -65,7 +65,7 @@ basePjsTest.describe('XCM SDK - Transfer Info', () => {
 
   NODES_WITH_RELAY_CHAINS_DOT_KSM.slice(0.5).map((fromNode) => {
     const destinationNode =
-      determineRelayChain(fromNode) === 'Polkadot' ? 'Astar' : 'Basilisk';
+      getRelayChainOf(fromNode) === 'Polkadot' ? 'Astar' : 'Basilisk';
     [false, true].map((useApi) => {
       const apiLabel = useApi ? ' - API' : '';
       basePjsTest(

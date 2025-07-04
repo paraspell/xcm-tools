@@ -13,7 +13,7 @@ import { selectBestExchangeCommon } from './selectBestExchangeCommon';
 vi.mock('@paraspell/sdk', () => ({
   findAsset: vi.fn(),
   hasSupportForAsset: vi.fn(),
-  determineRelayChain: vi.fn(),
+  getRelayChainOf: vi.fn(),
   InvalidParameterError: class extends Error {},
 }));
 

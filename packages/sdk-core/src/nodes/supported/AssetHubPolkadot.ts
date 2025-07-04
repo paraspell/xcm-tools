@@ -9,6 +9,7 @@ import {
   isForeignAsset,
   isSymbolMatch
 } from '@paraspell/assets'
+import type { TEcosystemType, TNodePolkadotKusama } from '@paraspell/sdk-common'
 import {
   hasJunction,
   isSystemChain,
@@ -70,8 +71,13 @@ class AssetHubPolkadot<TApi, TRes>
   extends ParachainNode<TApi, TRes>
   implements IPolkadotXCMTransfer
 {
-  constructor() {
-    super('AssetHubPolkadot', 'PolkadotAssetHub', 'polkadot', Version.V4)
+  constructor(
+    chain: TNodePolkadotKusama = 'AssetHubPolkadot',
+    info: string = 'PolkadotAssetHub',
+    type: TEcosystemType = 'polkadot',
+    version: Version = Version.V4
+  ) {
+    super(chain, info, type, version)
   }
 
   public handleBridgeTransfer<TApi, TRes>(
@@ -81,7 +87,7 @@ class AssetHubPolkadot<TApi, TRes>
     const { api, asset, destination, address, version, paraIdTo } = input
     if (
       (targetChain === 'Kusama' && asset.symbol?.toUpperCase() === 'KSM') ||
-      (targetChain === 'Polkadot' && asset.symbol?.toUpperCase() === 'DOT')
+      (targetChain === 'Polkadot' && asset.symbol?.toUpperCase() === this.getNativeAssetSymbol())
     ) {
       const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
@@ -96,7 +102,7 @@ class AssetHubPolkadot<TApi, TRes>
       return transferPolkadotXcm(modifiedInput, 'transfer_assets', 'Unlimited')
     } else if (
       (targetChain === 'Polkadot' && asset.symbol?.toUpperCase() === 'KSM') ||
-      (targetChain === 'Kusama' && asset.symbol?.toUpperCase() === 'DOT')
+      (targetChain === 'Kusama' && asset.symbol?.toUpperCase() === this.getNativeAssetSymbol())
     ) {
       const modifiedInput: TPolkadotXCMTransferOptions<TApi, TRes> = {
         ...input,
@@ -313,7 +319,7 @@ class AssetHubPolkadot<TApi, TRes>
         destination === 'Polimec' ||
         destination === 'Moonbeam' ||
         destination === 'BifrostPolkadot') &&
-      asset.symbol === 'DOT'
+      asset.symbol === this.getNativeAssetSymbol()
     ) {
       return {
         ...input,
@@ -383,7 +389,7 @@ class AssetHubPolkadot<TApi, TRes>
 
     if (
       scenario === 'ParaToPara' &&
-      asset.symbol === 'DOT' &&
+      asset.symbol === this.getNativeAssetSymbol() &&
       !isForeignAsset(asset) &&
       !isDotReserveAh &&
       !isTrusted

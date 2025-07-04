@@ -9,7 +9,7 @@ describe('getNode', () => {
       const details = getNode(node)
       expect(details).toBeDefined()
       expect(details.info).toBeTypeOf('string')
-      expect(['polkadot', 'kusama']).toContain(details.type)
+      expect(['polkadot', 'kusama', 'westend', 'paseo']).toContain(details.type)
     })
   })
 })

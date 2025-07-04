@@ -17,7 +17,7 @@ describe('Module Exports', () => {
     expect(sdk.getNode).toBeDefined()
     expect(sdk.createApiInstanceForNode).toBeDefined()
     expect(sdk.isRelayChain).toBeDefined()
-    expect(sdk.determineRelayChain).toBeDefined()
+    expect(sdk.getRelayChainOf).toBeDefined()
   })
 
   it('should export node config functions', () => {

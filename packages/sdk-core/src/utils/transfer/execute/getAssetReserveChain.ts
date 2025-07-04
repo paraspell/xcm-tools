@@ -1,4 +1,4 @@
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type { TEcosystemType, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 import {
   deepEqual,
   getJunctionValue,
@@ -10,7 +10,7 @@ import {
 import { CHAINS_DOT_RESERVE_AH } from '../../../constants'
 import { InvalidParameterError } from '../../../errors'
 import { getTNode } from '../../../nodes/getTNode'
-import { determineRelayChain } from '../..'
+import { getRelayChainOf } from '../..'
 
 export const getAssetReserveChain = (
   origin: TNodeDotKsmWithRelayChains,
@@ -20,10 +20,7 @@ export const getAssetReserveChain = (
 
   const paraId = getJunctionValue<number>(assetLocation, 'Parachain')
   if (paraId) {
-    const chain = getTNode(
-      paraId,
-      determineRelayChain(origin) === 'Polkadot' ? 'polkadot' : 'kusama'
-    )
+    const chain = getTNode(paraId, getRelayChainOf(origin).toLowerCase() as TEcosystemType)
     if (!chain) {
       throw new InvalidParameterError(`Chain with paraId ${paraId} not found`)
     }
