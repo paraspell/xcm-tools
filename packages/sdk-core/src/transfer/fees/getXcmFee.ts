@@ -2,11 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  findAssetForNodeOrThrow,
-  findAssetOnDestOrThrow,
-  getNativeAssetSymbol
-} from '@paraspell/assets'
+import { findAssetForNodeOrThrow, findAssetOnDest, getNativeAssetSymbol } from '@paraspell/assets'
 import type { TEcosystemType } from '@paraspell/sdk-common'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
@@ -203,7 +199,7 @@ export const getXcmFee = async <TApi, TRes>({
       const hopCurrency =
         hopResult.feeType === 'dryRun'
           ? destination === nextChain
-            ? findAssetOnDestOrThrow(origin, nextChain, currency).symbol
+            ? (findAssetOnDest(origin, nextChain, currency) ?? asset).symbol
             : asset.symbol
           : getNativeAssetSymbol(nextChain)
 
@@ -324,7 +320,7 @@ export const getXcmFee = async <TApi, TRes>({
 
   const destCurrency =
     destinationFeeType === 'dryRun'
-      ? findAssetOnDestOrThrow(origin, destination, currency).symbol
+      ? (findAssetOnDest(origin, destination, currency) ?? asset).symbol
       : getNativeAssetSymbol(destination)
 
   const result: TGetXcmFeeResult = {

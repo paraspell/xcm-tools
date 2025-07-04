@@ -21,7 +21,16 @@ export const processAssetsDepositedEvents = (events: any[], amount: bigint): big
     Number(BigInt(b.value.value.amount) - BigInt(a.value.value.amount))
   )
 
-  // Remove the biggest value (first in sorted array)
+  // If only 2 events and their sum is not greater than amount, return the sum
+  if (sortedEvents.length === 2) {
+    const sum =
+      BigInt(sortedEvents[0].value.value.amount) + BigInt(sortedEvents[1].value.value.amount)
+    if (sum <= amount) {
+      return sum
+    }
+  }
+
+  // Remove the biggest event
   let filteredEvents = sortedEvents.slice(1)
 
   let sum = filteredEvents.reduce(
@@ -29,7 +38,7 @@ export const processAssetsDepositedEvents = (events: any[], amount: bigint): big
     BigInt(0)
   )
 
-  // If sum is still bigger than amount, remove one more event (the next biggest)
+  // Remove next biggest until sum <= amount or nothing left
   while (sum > amount && filteredEvents.length > 0) {
     filteredEvents = filteredEvents.slice(1)
     sum = filteredEvents.reduce(

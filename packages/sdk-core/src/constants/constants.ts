@@ -19,7 +19,6 @@ export const DOT_MULTILOCATION: TMultiLocation = {
 }
 
 export const CHAINS_DOT_RESERVE_AH = new Set<TNodeWithRelayChains>([
-  'Hydration',
   'Polimec',
   'Moonbeam',
   'BifrostPolkadot',
