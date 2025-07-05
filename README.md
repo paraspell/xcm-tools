@@ -8,7 +8,7 @@ ParaSpell✨ monorepo for XCM-Tool set
 
 **AI-generated podcast about ParaSpell XCM tools:**
 
-Tired of reading? Listen to this AI-generated podcast about ParaSpell XCM Tools here - [AI Podcast about ParaSpell](https://notebooklm.google.com/notebook/4707adaa-0abf-417d-b48f-0f387e3625d3/audio)
+Tired of reading? Listen to this [AI generated Podcast about ParaSpell XCM Tools (New version)](https://notebooklm.google.com/notebook/ff1837d7-2ab2-4e0f-9420-49c8a4cbec97/audio).
 
 **Monorepo contains the following XCM tools:**
 - [XCM SDK](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) 🪄: A tool designed to unify the cross-chain experience on Polkadot and serve as a layer 2 protocol that enables seamless integration of XCM into your decentralized applications. Having **two** versions: [PolkadotAPI Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk) & [PolkadotJS Version](https://github.com/paraspell/xcm-tools/tree/main/packages/sdk-pjs) as the `first` and `only` XCM SDK in the ecosystem.
@@ -25,12 +25,19 @@ Tired of reading? Listen to this AI-generated podcast about ParaSpell XCM Tools 
 **Documentation:**
 - [XCM Tools documentation](https://paraspell.github.io/docs/) 📚: Comprehensive documentation for XCM tools mentioned above.
 
-**Starter templates:**
+<br>
+
+<details><summary><b>Starter templates:</b></summary>  
+<br>
+
 - [XCM SDK (React + Vite) starter template](https://github.com/paraspell/xcm-sdk-template) 🛫: Advanced cross-chain dApp starter template using XCM SDK 
 - [XCM API (React + Vite) starter template](https://github.com/paraspell/xcm-api-template) 🛫: Advanced cross-chain dApp starter template using XCM API
 - [XCM Router (React + Vite) starter template](https://github.com/paraspell/xcm-router-template) 🛫: Advanced cross-chain dApp starter template using XCM Router
 
-**Monorepo infrastructure:**
+</details>
+
+<details><summary><b>Monorepo infrastructure:</b></summary>
+     
 ```
 apps | - XCM Playground
      | - XCM API
@@ -49,11 +56,14 @@ packages | - XCM SDK
          | - Pallets
 ```
 
-**Monorepo commands:**
+</details>
 
-These commands will be run on all packages in monorepo.
+<details><summary><b>Monorepo commands:</b></summary>
+<br>
 
-- Run compilation using `pnpm compile`
+**These commands will be run on all packages in the monorepo.**
+
+- Run compilation using ```pnpm compile```
 
 - Run formatter using `pnpm format:check`
 
@@ -69,7 +79,7 @@ These commands will be run on all packages in monorepo.
   
 - Build all packages and apps using `pnpm build`
 
-- Launch playground from the root using `pnpm run:playground`
+- Launch the XCM Tools Playground from the root using `pnpm run:playground`
 
 - Launch XCM API from the root using `pnpm run:api`
 
@@ -77,19 +87,21 @@ These commands will be run on all packages in monorepo.
 
 - Run asset update script for XCM SDK from the root using `pnpm run:updateAssets`
 
-- Run existential deposit update script for XCM SDK from the root using `run:updateEds`
+- Run the existential deposit update script for XCM SDK from the root using `run:updateEds`
 
-- Run pallet update script for XCM SDK from the root using `pnpm run:updatePallets`
+- Run the pallet update script for XCM SDK from the root using `pnpm run:updatePallets`
 
 - Run asset update script for XCM Router from the root using `pnpm run:updateRouterAssets`
 
-To run command only for specific package or app in monorepo use:
+**To run a command only for a specific package or app in a monorepo, use:**
 
 `pnpm --filter <package_selector> <command>` or cd into appropriate folder.
 
-<br/>
+</details>
+
+<br>
 
 **Tools supported by:**
 <div align="center">
-      <img width="200" alt="version" src="https://user-images.githubusercontent.com/55763425/211145923-f7ee2a57-3e63-4b7d-9674-2da9db46b2ee.png" />
+      <img width="500" alt="version" src="https://github.com/user-attachments/assets/0e9e551f-967c-45c9-85c5-943cac359481" />
 </div>
