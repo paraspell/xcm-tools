@@ -10,8 +10,16 @@ export const getRouterFees = async (
   dex: ExchangeNode,
   options: TBuildTransactionsOptionsModified,
 ): Promise<TRouterXcmFeeResult> => {
-  const { origin, exchange, currencyFrom, destination, amount, recipientAddress, senderAddress } =
-    options;
+  const {
+    origin,
+    exchange,
+    currencyFrom,
+    currencyTo,
+    destination,
+    amount,
+    recipientAddress,
+    senderAddress,
+  } = options;
 
   if ((origin || destination) && (dex.node.includes('AssetHub') || dex.node === 'Hydration')) {
     try {
@@ -31,6 +39,7 @@ export const getRouterFees = async (
           amount: BigInt(amount),
         } as WithAmount<TAsset>,
         assetTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAsset>,
+        currencyTo,
         senderAddress,
         recipientAddress: recipientAddress ?? senderAddress,
         calculateMinAmountOut: (amountIn: bigint, assetTo?: TAsset) =>
@@ -40,6 +49,7 @@ export const getRouterFees = async (
             papiApi: options.exchange.apiPapi,
             assetFrom: options.exchange.assetFrom,
             assetTo: assetTo ?? options.exchange.assetTo,
+            slippagePct: '1',
           }),
       });
 
@@ -51,6 +61,10 @@ export const getRouterFees = async (
         address: recipientAddress ?? senderAddress,
         currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
         disableFallback: false,
+        swapConfig: {
+          currencyTo: currencyTo as TCurrencyCore,
+          exchangeChain: exchange.baseNode,
+        },
       });
 
       const transformedHops = executeResult.hops.map((hop) => {

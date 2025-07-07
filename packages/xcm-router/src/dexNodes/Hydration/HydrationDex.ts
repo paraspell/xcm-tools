@@ -149,7 +149,7 @@ class HydrationExchangeNode extends ExchangeNode {
   }
 
   async getAmountOut(api: ApiPromise, options: TGetAmountOutOptions): Promise<bigint> {
-    const { assetFrom, assetTo, amount, origin } = options;
+    const { assetFrom, assetTo, amount, origin, slippagePct = '0' } = options;
 
     const {
       api: { router: tradeRouter },
@@ -177,7 +177,7 @@ class HydrationExchangeNode extends ExchangeNode {
       throw new InvalidCurrencyError('Decimals not found for currency to');
     }
 
-    const amountBN = new BigNumber(amount);
+    const amountBN = BigNumber(amount);
     const pctDestFee = origin ? DEST_FEE_BUFFER_PCT : 0;
     const amountWithoutFee = amountBN.minus(amountBN.times(pctDestFee));
 
@@ -189,7 +189,11 @@ class HydrationExchangeNode extends ExchangeNode {
       amountNormalized,
     );
 
-    return BigInt(trade.amountOut.toString());
+    const amountOut = trade.amountOut;
+    const slippageDecimal = BigNumber(slippagePct).dividedBy(100);
+    const amountOutWithSlippage = amountOut.minus(amountOut.times(slippageDecimal));
+
+    return BigInt(amountOutWithSlippage.decimalPlaces(0).toString());
   }
 
   async getDexConfig(api: ApiPromise): Promise<TDexConfig> {

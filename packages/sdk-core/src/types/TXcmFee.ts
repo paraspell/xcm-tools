@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TAsset, TCurrencyCore, TCurrencyInput, WithAmount } from '@paraspell/assets'
-import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
+import type {
+  TNodeDotKsmWithRelayChains,
+  TNodePolkadotKusama,
+  TNodeWithRelayChains
+} from '@paraspell/sdk-common'
 
 import type { WithApi } from './TApi'
 import type { TWeight } from './TTransfer'
@@ -26,6 +30,11 @@ export type TGetXcmFeeBaseOptions<TRes> = {
   currency: WithAmount<TCurrencyCore>
   feeAsset?: TCurrencyInput
   disableFallback: boolean
+  // Used when there is an asset swap on some hop
+  swapConfig?: {
+    currencyTo: TCurrencyCore
+    exchangeChain: TNodePolkadotKusama
+  }
 }
 
 export type TGetXcmFeeOptions<TApi, TRes> = WithApi<TGetXcmFeeBaseOptions<TRes>, TApi, TRes>

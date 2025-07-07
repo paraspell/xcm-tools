@@ -1,3 +1,4 @@
+import type { TCurrencyCore } from '@paraspell/assets'
 import {
   type TMultiLocation,
   type TNodeDotKsmWithRelayChains,
@@ -113,7 +114,8 @@ const extractFeesFromDryRun = (
         `Origin dry run failed: ${dryRunResult.origin.failureReason || 'Unknown reason'}`
       )
     }
-    fees.exchangeFee = padFeeBy(dryRunResult.origin.fee, FEE_PADDING_PERCENTAGE)
+    // There is no exchange fee if origin is exchange, because jit_withdraw is used
+    fees.exchangeFee = 0n
   }
 
   // Handle origin reserve fee (hop before exchange)
@@ -179,6 +181,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     destChain,
     assetFrom,
     assetTo,
+    currencyTo,
     senderAddress,
     recipientAddress,
     calculateMinAmountOut
@@ -205,6 +208,10 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
     currency: {
       multilocation: assetFrom.multiLocation as TMultiLocation,
       amount: assetFrom.amount
+    },
+    swapConfig: {
+      currencyTo: currencyTo as TCurrencyCore,
+      exchangeChain
     }
   }
 
@@ -247,11 +254,13 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
   // If we need exchange to succeed but it failed, throw error
   if (requireExchangeSuccess && extractedFees.exchangeFee === 0n) {
     if (destChain) {
-      const exchangeHop = firstDryRunResult.hops[exchangeHopIndex]
-      if (!exchangeHop.result.success) {
-        throw new DryRunFailedError(
-          `Exchange hop failed when no origin reserve exists: ${exchangeHop.result.failureReason || 'Unknown reason'}`
-        )
+      if (chain) {
+        const exchangeHop = firstDryRunResult.hops[exchangeHopIndex]
+        if (!exchangeHop.result.success) {
+          throw new DryRunFailedError(
+            `Exchange hop failed when no origin reserve exists: ${exchangeHop.result.failureReason || 'Unknown reason'}`
+          )
+        }
       }
     } else {
       if (firstDryRunResult.destination && !firstDryRunResult.destination.success) {
@@ -274,13 +283,17 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
 
   validateAmount(BigInt(assetFrom.amount), totalFeesInFromAsset)
 
-  const amountAvailableForSwap = BigInt(assetFrom.amount) - totalFeesInFromAsset
+  let updatedAssetTo = assetTo
 
-  const recalculatedMinAmountOut = await calculateMinAmountOut(amountAvailableForSwap)
+  if (chain) {
+    const amountAvailableForSwap = BigInt(assetFrom.amount) - totalFeesInFromAsset
 
-  const updatedAssetTo = {
-    ...assetTo,
-    amount: recalculatedMinAmountOut.toString()
+    const recalculatedMinAmountOut = await calculateMinAmountOut(amountAvailableForSwap)
+
+    updatedAssetTo = {
+      ...assetTo,
+      amount: recalculatedMinAmountOut.toString()
+    }
   }
 
   // Second dry run with actual fees and amounts
@@ -321,6 +334,7 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
 
   // Validate that we have enough after accounting for final fees
   const finalTotalFeesInFromAsset = chain ? finalFees.originReserveFee + finalFees.exchangeFee : 0n
+
   validateAmount(BigInt(assetFrom.amount), finalTotalFeesInFromAsset)
 
   // If the final fees are different, we might need one more iteration

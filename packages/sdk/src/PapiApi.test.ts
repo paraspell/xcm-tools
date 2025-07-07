@@ -1392,7 +1392,7 @@ describe('PapiApi', () => {
 
       expect(result).toEqual({
         success: true,
-        fee: 1500n, // 1000n + 500n
+        fee: 4500n,
         weight: { refTime: 11n, proofSize: 22n },
         forwardedXcms: [],
         destParaId: undefined

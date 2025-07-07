@@ -1,5 +1,10 @@
 import type { TAsset } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
+import {
+  findAssetForNodeOrThrow,
+  findAssetOnDestOrThrow,
+  getNativeAssetSymbol,
+  hasDryRunSupport
+} from '@paraspell/assets'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -10,6 +15,7 @@ import { dryRunInternal } from './dryRunInternal'
 
 vi.mock('@paraspell/assets', () => ({
   findAssetForNodeOrThrow: vi.fn(),
+  findAssetOnDestOrThrow: vi.fn(),
   getNativeAssetSymbol: vi.fn(),
   hasDryRunSupport: vi.fn()
 }))
@@ -51,14 +57,18 @@ const createFakeApi = (originDryRun: unknown, xcmResults: unknown[] = []) => {
 
 const emptyXcms = [null, [{ value: [1] }]]
 
-const createOptions = (api: IPolkadotApi<unknown, unknown>) =>
+const createOptions = (
+  api: IPolkadotApi<unknown, unknown>,
+  overrides?: Partial<TDryRunOptions<unknown, unknown>>
+) =>
   ({
     api,
     tx: {} as unknown,
     origin: 'Acala',
     destination: 'Moonbeam',
     senderAddress: '5Alice',
-    currency: { symbol: 'ACA', amount: 1_000n }
+    currency: { symbol: 'ACA', amount: 1_000n },
+    ...overrides
   }) as unknown as TDryRunOptions<unknown, unknown>
 
 afterEach(() => vi.resetAllMocks())
@@ -182,5 +192,85 @@ describe('dryRunInternal', () => {
       destination: destFail,
       hops: []
     })
+  })
+
+  it('handles swapConfig with exchange chain routing and asset transformation', async () => {
+    const initialAsset = { symbol: 'ACA' } as TAsset
+    const swappedAsset = { symbol: 'USDT' } as TAsset
+
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(initialAsset)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(swappedAsset)
+    vi.mocked(getNativeAssetSymbol).mockImplementation(node => {
+      if (node === 'Acala') return 'ACA'
+      if (node === 'AssetHubPolkadot') return 'DOT'
+      if (node === 'Hydration') return 'HDX'
+      return 'GLMR'
+    })
+
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+    vi.mocked(getTNode)
+      .mockReturnValueOnce('AssetHubPolkadot')
+      .mockReturnValueOnce('Hydration')
+      .mockReturnValueOnce('Moonbeam')
+    vi.mocked(hasDryRunSupport).mockReturnValue(true)
+
+    const originOk = {
+      success: true,
+      fee: 1_000n,
+      forwardedXcms: emptyXcms,
+      destParaId: 1000
+    }
+    const assetHubOk = {
+      success: true,
+      fee: 2_000n,
+      forwardedXcms: emptyXcms,
+      destParaId: 2034
+    }
+    const hydrationOk = {
+      success: true,
+      fee: 3_000n,
+      forwardedXcms: emptyXcms,
+      destParaId: 2004
+    }
+    const moonbeamOk = {
+      success: true,
+      fee: 4_000n,
+      forwardedXcms: undefined,
+      destParaId: undefined
+    }
+
+    const api = createFakeApi(originOk, [assetHubOk, hydrationOk, moonbeamOk])
+
+    const res = await dryRunInternal(
+      createOptions(api, {
+        swapConfig: {
+          exchangeChain: 'Hydration',
+          currencyTo: { symbol: 'USDT' }
+        }
+      })
+    )
+
+    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith('Hydration', 'Hydration', {
+      symbol: 'USDT'
+    })
+
+    expect(res).toEqual({
+      origin: { ...originOk, currency: 'ACA' },
+      assetHub: { ...assetHubOk, currency: 'DOT' },
+      destination: { ...moonbeamOk, currency: 'ACA' },
+      hops: [
+        {
+          chain: 'AssetHubPolkadot',
+          result: { ...assetHubOk, currency: 'ACA' }
+        },
+        {
+          chain: 'Hydration',
+          result: { ...hydrationOk, currency: 'ACA' }
+        }
+      ]
+    })
+
+    expect(res.hops?.[0]?.result.currency).toBe('ACA')
+    expect(res.hops?.[1]?.result.currency).toBe('ACA')
   })
 })

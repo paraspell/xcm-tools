@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { findAssetForNodeOrThrow, findAssetOnDest, getNativeAssetSymbol } from '@paraspell/assets'
+import {
+  findAssetForNodeOrThrow,
+  findAssetOnDestOrThrow,
+  getNativeAssetSymbol
+} from '@paraspell/assets'
 import type { TEcosystemType } from '@paraspell/sdk-common'
 import { isRelayChain, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
@@ -59,7 +63,8 @@ export const getXcmFee = async <TApi, TRes>({
   address,
   currency,
   feeAsset,
-  disableFallback
+  disableFallback,
+  swapConfig
 }: TGetXcmFeeOptions<TApi, TRes>): Promise<TGetXcmFeeResult> => {
   const asset = findAssetForNodeOrThrow(origin, currency, destination)
 
@@ -154,6 +159,13 @@ export const getXcmFee = async <TApi, TRes>({
   let forwardedXcms: any = initialForwardedXcm
   let nextParaId: number | undefined = initialDestParaId
 
+  let currentAsset =
+    origin === swapConfig?.exchangeChain
+      ? findAssetForNodeOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo, null)
+      : asset
+
+  let hasPassedExchange = origin === swapConfig?.exchangeChain
+
   const intermediateFees: Partial<Record<THubKey, TXcmFeeDetail>> = {}
   let destinationFee: bigint | undefined = 0n
   let destinationFeeType: TFeeType | undefined =
@@ -190,18 +202,28 @@ export const getXcmFee = async <TApi, TRes>({
         currency,
         address,
         senderAddress,
-        asset,
+        asset: currentAsset,
         feeAsset,
         originFee: originFee ?? 0n,
         disableFallback
       })
 
-      const hopCurrency =
-        hopResult.feeType === 'dryRun'
-          ? destination === nextChain
-            ? (findAssetOnDest(origin, nextChain, currency) ?? asset).symbol
-            : asset.symbol
-          : getNativeAssetSymbol(nextChain)
+      let hopCurrency: string
+      if (hopResult.feeType === 'dryRun') {
+        if (hasPassedExchange && swapConfig && nextChain !== swapConfig.exchangeChain) {
+          hopCurrency = findAssetOnDestOrThrow(
+            swapConfig.exchangeChain,
+            nextChain,
+            swapConfig.currencyTo
+          ).symbol
+        } else if (destination === nextChain) {
+          hopCurrency = findAssetOnDestOrThrow(origin, nextChain, currency).symbol
+        } else {
+          hopCurrency = asset.symbol
+        }
+      } else {
+        hopCurrency = getNativeAssetSymbol(nextChain)
+      }
 
       const hopDetail: TXcmFeeDetail = hopResult.dryRunError
         ? {
@@ -284,6 +306,15 @@ export const getXcmFee = async <TApi, TRes>({
         // Unconcerned intermediate chain – we ignore its fee
       }
 
+      if (swapConfig && nextChain === swapConfig.exchangeChain) {
+        hasPassedExchange = true
+        currentAsset = findAssetOnDestOrThrow(
+          swapConfig.exchangeChain,
+          nextChain,
+          swapConfig.currencyTo
+        )
+      }
+
       forwardedXcms = hopResult.forwardedXcms
       nextParaId = hopResult.destParaId
       currentOrigin = nextChain as TNodeDotKsmWithRelayChains
@@ -318,10 +349,20 @@ export const getXcmFee = async <TApi, TRes>({
 
   intermediateFees.bridgeHub = processedBridgeHubData
 
-  const destCurrency =
-    destinationFeeType === 'dryRun'
-      ? (findAssetOnDest(origin, destination, currency) ?? asset).symbol
-      : getNativeAssetSymbol(destination)
+  let destCurrency: string
+  if (destinationFeeType === 'dryRun') {
+    if (hasPassedExchange && swapConfig && destination !== swapConfig.exchangeChain) {
+      destCurrency = findAssetOnDestOrThrow(
+        swapConfig.exchangeChain,
+        destination,
+        swapConfig.currencyTo
+      ).symbol
+    } else {
+      destCurrency = findAssetOnDestOrThrow(origin, destination, currency).symbol
+    }
+  } else {
+    destCurrency = getNativeAssetSymbol(destination)
+  }
 
   const result: TGetXcmFeeResult = {
     origin: {

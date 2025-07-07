@@ -600,7 +600,12 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
           ? 0
           : forwardedXcms[0].value.interior.value.value
 
-    if (hasXcmPaymentApiSupport(node) && asset && node !== 'AssetHubPolkadot') {
+    if (
+      hasXcmPaymentApiSupport(node) &&
+      asset &&
+      node !== 'AssetHubPolkadot' &&
+      node !== 'Polkadot'
+    ) {
       const fee = await this.getXcmPaymentApiFee(node, xcm, asset)
 
       if (typeof fee === 'bigint') {

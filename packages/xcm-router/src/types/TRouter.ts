@@ -32,6 +32,7 @@ export type TGetAmountOutOptions = {
   assetFrom: TRouterAsset;
   assetTo: TRouterAsset;
   amount: string;
+  slippagePct?: string;
 };
 
 export type TExtrinsic = Extrinsic | TPapiTransaction;
