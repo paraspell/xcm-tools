@@ -288,6 +288,7 @@ export type TCreateBaseSwapXcmOptions = {
   destChain?: TNodeWithRelayChains
   assetFrom: WithAmount<TAsset>
   assetTo: WithAmount<TAsset>
+  currencyTo: TCurrencyInput
   senderAddress: string
   recipientAddress: string
   calculateMinAmountOut: (amountIn: bigint, assetTo?: TAsset) => Promise<bigint>

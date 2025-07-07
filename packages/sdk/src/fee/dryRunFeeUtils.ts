@@ -17,35 +17,30 @@ export const processAssetsDepositedEvents = (events: any[], amount: bigint): big
     return BigInt(assetsDepositedEvents[0].value.value.amount)
   }
 
-  const sortedEvents = [...assetsDepositedEvents].sort((a, b) =>
-    Number(BigInt(b.value.value.amount) - BigInt(a.value.value.amount))
-  )
+  // Start with all events
+  let currentEvents = [...assetsDepositedEvents]
+  const threshold = (amount * BigInt(90)) / BigInt(100) // 90% of amount
 
-  // If only 2 events and their sum is not greater than amount, return the sum
-  if (sortedEvents.length === 2) {
-    const sum =
-      BigInt(sortedEvents[0].value.value.amount) + BigInt(sortedEvents[1].value.value.amount)
-    if (sum <= amount) {
+  while (currentEvents.length > 0) {
+    // 1. Make a sum of all amounts in events
+    const sum = currentEvents.reduce(
+      (total, event) => total + BigInt(event.value.value.amount),
+      BigInt(0)
+    )
+
+    // 2. If that sum is bigger than 90% of amount, remove the biggest event
+    if (sum > threshold) {
+      // Sort events by amount (descending) and remove the biggest
+      currentEvents.sort((a, b) =>
+        Number(BigInt(b.value.value.amount) - BigInt(a.value.value.amount))
+      )
+      currentEvents = currentEvents.slice(1) // Remove the biggest event
+    } else {
+      // If not, return the summed value
       return sum
     }
   }
 
-  // Remove the biggest event
-  let filteredEvents = sortedEvents.slice(1)
-
-  let sum = filteredEvents.reduce(
-    (total, event) => total + BigInt(event.value.value.amount),
-    BigInt(0)
-  )
-
-  // Remove next biggest until sum <= amount or nothing left
-  while (sum > amount && filteredEvents.length > 0) {
-    filteredEvents = filteredEvents.slice(1)
-    sum = filteredEvents.reduce(
-      (total, event) => total + BigInt(event.value.value.amount),
-      BigInt(0)
-    )
-  }
-
-  return sum > 0 ? sum : undefined
+  // If we've removed all events, return undefined
+  return undefined
 }

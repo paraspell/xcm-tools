@@ -1,5 +1,9 @@
 import type { TAsset } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, getNativeAssetSymbol } from '@paraspell/assets'
+import {
+  findAssetForNodeOrThrow,
+  findAssetOnDestOrThrow,
+  getNativeAssetSymbol
+} from '@paraspell/assets'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -12,6 +16,7 @@ import { getXcmFee } from './getXcmFee'
 
 vi.mock('@paraspell/assets', () => ({
   findAssetForNodeOrThrow: vi.fn(),
+  findAssetOnDestOrThrow: vi.fn(),
   getNativeAssetSymbol: vi.fn()
 }))
 
@@ -54,9 +59,9 @@ const createOptions = (overrides?: Partial<TGetXcmFeeOptions<unknown, unknown>>)
     ...overrides
   }) as unknown as TGetXcmFeeOptions<unknown, unknown>
 
-afterEach(() => vi.resetAllMocks())
-
 describe('getXcmFee', () => {
+  afterEach(() => vi.resetAllMocks())
+
   it('returns correct structure when origin dry-run fails', async () => {
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ symbol: 'ACA' } as TAsset)
 
@@ -384,5 +389,100 @@ describe('getXcmFee', () => {
       sufficient: false
     })
     expect(res.destination).toMatchObject({ fee: 0n })
+  })
+
+  it('handles swapConfig with exchange chain in hop route - updates asset after exchange', async () => {
+    const initialAsset = { symbol: 'ACA' } as TAsset
+    const swappedAsset = { symbol: 'USDT' } as TAsset
+
+    vi.mocked(findAssetForNodeOrThrow).mockReturnValue(initialAsset)
+    vi.mocked(findAssetOnDestOrThrow).mockReturnValue(swappedAsset)
+
+    vi.mocked(getNativeAssetSymbol).mockImplementation((chain: string) => {
+      if (chain === 'Acala') return 'ACA'
+      if (chain === 'AssetHubPolkadot') return 'DOT'
+      if (chain === 'HydraDX') return 'HDX'
+      return 'GLMR'
+    })
+
+    vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
+
+    vi.mocked(getOriginXcmFee).mockResolvedValue({
+      fee: 1_000n,
+      currency: 'ACA',
+      feeType: 'dryRun',
+      dryRunError: undefined,
+      forwardedXcms: [null, [{ key: 'value' }]],
+      destParaId: 1000
+    })
+
+    vi.mocked(getTNode)
+      .mockReturnValueOnce('AssetHubPolkadot')
+      .mockReturnValueOnce('Hydration')
+      .mockReturnValueOnce('Moonbeam')
+
+    vi.mocked(getDestXcmFee)
+      .mockResolvedValueOnce({
+        fee: 2_000n,
+        feeType: 'dryRun',
+        forwardedXcms: [null, [{ key: 'value2' }]],
+        destParaId: 2034,
+        sufficient: true
+      })
+      .mockResolvedValueOnce({
+        fee: 3_000n,
+        feeType: 'dryRun',
+        forwardedXcms: [null, [{ key: 'value3' }]],
+        destParaId: 2004,
+        sufficient: true
+      })
+      .mockResolvedValueOnce({
+        fee: 4_000n,
+        feeType: 'dryRun',
+        forwardedXcms: undefined,
+        destParaId: undefined,
+        sufficient: false
+      })
+
+    const res = await getXcmFee(
+      createOptions({
+        swapConfig: {
+          exchangeChain: 'Hydration',
+          currencyTo: { symbol: 'USDT' }
+        }
+      })
+    )
+
+    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith('Hydration', 'Hydration', {
+      symbol: 'USDT'
+    })
+    expect(findAssetOnDestOrThrow).toHaveBeenCalledWith('Hydration', 'Moonbeam', { symbol: 'USDT' })
+
+    expect(res.hops).toHaveLength(2)
+    expect(res.hops[0]).toEqual({
+      chain: 'AssetHubPolkadot',
+      result: {
+        fee: 2_000n,
+        feeType: 'dryRun',
+        currency: 'ACA',
+        sufficient: true
+      }
+    })
+    expect(res.hops[1]).toEqual({
+      chain: 'Hydration',
+      result: {
+        fee: 3_000n,
+        feeType: 'dryRun',
+        currency: 'ACA',
+        sufficient: true
+      }
+    })
+
+    expect(res.destination).toMatchObject({
+      fee: 4_000n,
+      feeType: 'dryRun',
+      currency: 'USDT',
+      sufficient: false
+    })
   })
 })

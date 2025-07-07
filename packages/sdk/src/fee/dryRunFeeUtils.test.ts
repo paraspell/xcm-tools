@@ -23,52 +23,37 @@ describe('processAssetsDepositedEvents', () => {
   })
 
   it('should return the amount for single Assets Deposited event', () => {
-    const events = [createMockEvent('Assets', 'Deposited', 500)]
+    const events = [createMockEvent('Assets', 'Deposited', 950)]
+    const result = processAssetsDepositedEvents(events, 1000n)
+    expect(result).toBe(950n)
+  })
+
+  it('should return sum when all events are <= 90% of amount', () => {
+    const events = [
+      createMockEvent('Assets', 'Deposited', 300),
+      createMockEvent('Assets', 'Deposited', 200),
+      createMockEvent('Assets', 'Deposited', 100)
+    ]
+    const result = processAssetsDepositedEvents(events, 1000n)
+    expect(result).toBe(600n)
+  })
+
+  it('should remove largest event when sum > 90% and return remaining sum', () => {
+    const events = [
+      createMockEvent('Assets', 'Deposited', 300),
+      createMockEvent('Assets', 'Deposited', 950),
+      createMockEvent('Assets', 'Deposited', 200)
+    ]
     const result = processAssetsDepositedEvents(events, 1000n)
     expect(result).toBe(500n)
   })
 
-  it('should return 0 for single event with zero amount', () => {
-    const events = [createMockEvent('Assets', 'Deposited', 0)]
-    const result = processAssetsDepositedEvents(events, 1000n)
-    expect(result).toEqual(0n)
-  })
-
-  it('should remove largest amount and return sum of remaining for multiple events', () => {
+  it('should return undefined when all events must be removed', () => {
     const events = [
-      createMockEvent('Assets', 'Deposited', 300),
-      createMockEvent('Assets', 'Deposited', 500), // largest - removed
-      createMockEvent('Assets', 'Deposited', 200)
-    ]
-    const result = processAssetsDepositedEvents(events, 1000n)
-    expect(result).toBe(500n) // 300 + 200
-  })
-
-  it('should return sum of two largest events when their sum is less than amount limit', () => {
-    const events = [
-      createMockEvent('Assets', 'Deposited', 300),
-      createMockEvent('Assets', 'Deposited', 200)
-    ]
-    const result = processAssetsDepositedEvents(events, 1000n)
-    expect(result).toBe(500n) // 300 + 200
-  })
-
-  it('should remove additional events when sum exceeds amount limit', () => {
-    const events = [
-      createMockEvent('Assets', 'Deposited', 400),
-      createMockEvent('Assets', 'Deposited', 600), // removed first
-      createMockEvent('Assets', 'Deposited', 500) // removed second (sum > limit)
+      createMockEvent('Assets', 'Deposited', 460),
+      createMockEvent('Assets', 'Deposited', 480)
     ]
     const result = processAssetsDepositedEvents(events, 500n)
-    expect(result).toBe(400n)
-  })
-
-  it('should return undefined when all events must be removed due to amount limit', () => {
-    const events = [
-      createMockEvent('Assets', 'Deposited', 600),
-      createMockEvent('Assets', 'Deposited', 500)
-    ]
-    const result = processAssetsDepositedEvents(events, 100n)
     expect(result).toBeUndefined()
   })
 

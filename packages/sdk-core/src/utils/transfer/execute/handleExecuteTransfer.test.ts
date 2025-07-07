@@ -247,7 +247,8 @@ describe('handleExecuteTransfer', () => {
       fees: {
         originFee: 1000n,
         reserveFee: 1000n
-      }
+      },
+      paraIdTo: mockInput.paraIdTo
     })
 
     expect(createDirectExecuteXcm).toHaveBeenNthCalledWith(2, {
@@ -265,7 +266,8 @@ describe('handleExecuteTransfer', () => {
       fees: {
         originFee: 1400n, // 1000 padded by 40%
         reserveFee: 2800n // 2000 padded by 40%
-      }
+      },
+      paraIdTo: mockInput.paraIdTo
     })
 
     expect(getXcmWeightSpy).toHaveBeenCalledWith(mockXcm)
@@ -315,7 +317,8 @@ describe('handleExecuteTransfer', () => {
       fees: {
         originFee: 2100n,
         reserveFee: 1400n
-      }
+      },
+      paraIdTo: mockInput.paraIdTo
     })
   })
 
@@ -367,7 +370,8 @@ describe('handleExecuteTransfer', () => {
       fees: {
         originFee: 5000n,
         reserveFee: 1000n
-      }
+      },
+      paraIdTo: mockInput.paraIdTo
     })
   })
 
@@ -411,7 +415,8 @@ describe('handleExecuteTransfer', () => {
       fees: {
         originFee: 1000n,
         reserveFee: 1000n
-      }
+      },
+      paraIdTo: mockInput.paraIdTo
     })
   })
 })

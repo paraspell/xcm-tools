@@ -33,13 +33,15 @@ export const createExchangeInstructions = async <TApi, TRes>(
 
   assertHasLocation(nativeAsset)
 
+  const shouldUseMaximal = !chain || (exchangeChain === 'Hydration' && exchangeFee === 0n)
+
   if (!needsMultiHop) {
     return [
       {
         ExchangeAsset: {
           give: createAssetsFilter(multiAssetFrom),
           want: [multiAssetTo],
-          maximal: exchangeChain === 'Hydration' && exchangeFee === 0n ? true : false
+          maximal: shouldUseMaximal
         }
       }
     ]
@@ -63,7 +65,7 @@ export const createExchangeInstructions = async <TApi, TRes>(
       ExchangeAsset: {
         give: createAssetsFilter(multiAssetFrom),
         want: [multiAssetNative],
-        maximal: exchangeChain === 'Hydration' && exchangeFee === 0n ? true : false
+        maximal: shouldUseMaximal
       }
     },
     {

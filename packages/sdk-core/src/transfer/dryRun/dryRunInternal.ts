@@ -3,7 +3,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { TCurrencyCore, WithAmount } from '@paraspell/assets'
-import { findAssetForNodeOrThrow, getNativeAssetSymbol, hasDryRunSupport } from '@paraspell/assets'
+import {
+  findAssetForNodeOrThrow,
+  findAssetOnDestOrThrow,
+  getNativeAssetSymbol,
+  hasDryRunSupport
+} from '@paraspell/assets'
 import type { TEcosystemType } from '@paraspell/sdk-common'
 import { isRelayChain, type TNodeDotKsmWithRelayChains, Version } from '@paraspell/sdk-common'
 
@@ -41,7 +46,7 @@ const getFailureInfo = (
 export const dryRunInternal = async <TApi, TRes>(
   options: TDryRunOptions<TApi, TRes>
 ): Promise<TDryRunResult> => {
-  const { origin, destination, currency, api, tx, senderAddress, feeAsset } = options
+  const { origin, destination, currency, api, tx, senderAddress, feeAsset, swapConfig } = options
 
   const resolvedFeeAsset = feeAsset
     ? resolveFeeAsset(feeAsset, origin, destination, currency)
@@ -69,6 +74,13 @@ export const dryRunInternal = async <TApi, TRes>(
 
   const assetHubNode = `AssetHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
   const bridgeHubNode = `BridgeHub${getRelayChainOf(origin)}` as TNodeDotKsmWithRelayChains
+
+  let currentAsset =
+    origin === swapConfig?.exchangeChain
+      ? findAssetForNodeOrThrow(swapConfig.exchangeChain, swapConfig.currencyTo, null)
+      : asset
+
+  let hasPassedExchange = origin === swapConfig?.exchangeChain
 
   let currentOrigin = origin
   let forwardedXcms: any = initialForwardedXcms
@@ -114,13 +126,22 @@ export const dryRunInternal = async <TApi, TRes>(
         xcm: forwardedXcms[1][0],
         node: nextChain as TNodeDotKsmWithRelayChains,
         origin: currentOrigin,
-        asset,
+        asset: currentAsset,
         feeAsset: resolvedFeeAsset,
         originFee: originDryRun.fee,
         amount: BigInt((currency as WithAmount<TCurrencyCore>).amount)
       })
 
-      const hopCurrency = asset.symbol
+      let hopCurrency: string
+      if (hasPassedExchange && swapConfig && nextChain !== swapConfig.exchangeChain) {
+        hopCurrency = findAssetOnDestOrThrow(
+          swapConfig.exchangeChain,
+          nextChain,
+          swapConfig.currencyTo
+        ).symbol
+      } else {
+        hopCurrency = asset.symbol
+      }
 
       // Add to hops array (only if not the destination)
       if (nextChain !== destination) {
@@ -142,6 +163,15 @@ export const dryRunInternal = async <TApi, TRes>(
 
       if (!hopDryRun.success) {
         break
+      }
+
+      if (swapConfig && nextChain === swapConfig.exchangeChain) {
+        hasPassedExchange = true
+        currentAsset = findAssetOnDestOrThrow(
+          swapConfig.exchangeChain,
+          nextChain,
+          swapConfig.currencyTo
+        )
       }
 
       const { forwardedXcms: newXcms, destParaId } = hopDryRun

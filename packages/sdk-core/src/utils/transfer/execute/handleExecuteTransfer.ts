@@ -85,7 +85,8 @@ export const handleExecuteTransfer = async <TApi, TRes>(
     feeCurrency,
     recipientAddress: address,
     senderAddress,
-    version
+    version,
+    paraIdTo
   }
 
   const call = createExecuteCall(
