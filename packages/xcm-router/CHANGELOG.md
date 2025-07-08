@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.2](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.10.1...xcm-router-v10.10.2) (2025-07-08)
+
+
+### Bug Fixes
+
+* **xcm-router:** Fix fee query currencies 🔧 ([a09ccf8](https://github.com/paraspell/xcm-tools/commit/a09ccf809fe0079b107dfc27c032a1e0eadffc87))
+
 ## [10.10.1](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.10.0...xcm-router-v10.10.1) (2025-07-04)
 
 
