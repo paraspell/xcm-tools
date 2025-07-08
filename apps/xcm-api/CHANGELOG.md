@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.10.2...xcm-api-v10.10.3) (2025-07-08)
+
+
+### Continuous Integration
+
+* **xcm-api:** Add Health check module 🏥 ([da2b6a0](https://github.com/paraspell/xcm-tools/commit/da2b6a0cb00249589adb7ea5c016f2da00f680b9))
+
 ## [10.10.2](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.10.1...xcm-api-v10.10.2) (2025-07-08)
 
 
