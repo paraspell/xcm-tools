@@ -10,7 +10,8 @@
     </a>
   </p>
   <p align="center"> Now live at https://api.lightspell.xyz/</p>
-  <p>XCM API documentation <a href = "https://paraspell.github.io/docs/api/g-started.html" \>[here]</p>
+  <p>XCM API downtime monitoring <a href = "https://status.lightspell.xyz/" \>[here]</p>
+  <p>XCM API documentation <a href = "https://paraspell.github.io/docs/api/g-started.html" \>[here]</p>	  
     <p>XCM API starter template project <a href = "https://github.com/paraspell/xcm-api-template
     " \>[here]</p>
 </div>
