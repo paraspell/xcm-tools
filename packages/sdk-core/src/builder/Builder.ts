@@ -257,9 +257,9 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
    *
    * @returns An origin and destination fee.
    */
-  async getXcmFee(
+  async getXcmFee<TDisableFallback extends boolean = false>(
     this: GeneralBuilder<TApi, TRes, TSendBaseOptionsWithSenderAddress>,
-    { disableFallback }: TGetXcmFeeBuilderOptions = { disableFallback: false }
+    options?: TGetXcmFeeBuilderOptions & { disableFallback: TDisableFallback }
   ) {
     const { from, to, address, senderAddress, feeAsset, currency } = this._options
 
@@ -267,6 +267,8 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
     assertAddressIsString(address)
 
     const tx = await this.build()
+
+    const disableFallback = (options?.disableFallback ?? false) as TDisableFallback
 
     try {
       return await getXcmFee({

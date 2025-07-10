@@ -65,12 +65,12 @@ export const handleToAhTeleport = async <TApi, TRes>(
     disableFallback: false
   })
 
-  const originExecutionFee = padFeeBy(feeResult.origin.fee as bigint, 20) // Pad by 20%
+  const originExecutionFee = padFeeBy(feeResult.origin.fee, 20) // Pad by 20%
   const destinationExecutionFee = padFeeBy(
     // Pad by 20%
     feeResult.destination.feeType === 'paymentInfo'
-      ? (feeResult.origin.fee as bigint)
-      : (feeResult.destination.fee as bigint),
+      ? feeResult.origin.fee
+      : feeResult.destination.fee,
     20
   )
 
