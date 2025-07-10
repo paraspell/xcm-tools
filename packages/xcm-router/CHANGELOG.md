@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.4](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.10.3...xcm-router-v10.10.4) (2025-07-10)
+
+
+### Bug Fixes
+
+* Update assets maps 📋 ([49613c0](https://github.com/paraspell/xcm-tools/commit/49613c0065d05904261cffd75a05a6ac4ec274f3))
+
 ## [10.10.3](https://github.com/paraspell/xcm-tools/compare/xcm-router-v10.10.2...xcm-router-v10.10.3) (2025-07-08)
 
 
