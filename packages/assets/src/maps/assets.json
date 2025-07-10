@@ -745,7 +745,17 @@
         "symbol": "AJUN",
         "isNative": true,
         "decimals": 12,
-        "existentialDeposit": "1000000000"
+        "existentialDeposit": "1000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X1": [
+              {
+                "Parachain": 2051
+              }
+            ]
+          }
+        }
       }
     ],
     "otherAssets": [
@@ -14342,6 +14352,26 @@
               },
               {
                 "PalletInstance": 10
+              }
+            ]
+          }
+        },
+        "isFeeAsset": true
+      },
+      {
+        "assetId": "12345",
+        "symbol": "KPGT",
+        "decimals": 18,
+        "existentialDeposit": "10000000000000000",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 4818
+              },
+              {
+                "GeneralIndex": 0
               }
             ]
           }
