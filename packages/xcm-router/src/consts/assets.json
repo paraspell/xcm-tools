@@ -259,6 +259,52 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "wstETH",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "tBTC",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x18084fba666a33d37592fa2633fd49a74dd93a88"
+                }
+              }
+            ]
+          }
+        }
       }
     ],
     "pairs": []
@@ -626,7 +672,24 @@
         "symbol": "2-Pool-GETH"
       },
       {
-        "symbol": "GETH"
+        "symbol": "GETH",
+        "assetId": "420",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x8a598fe3e3a471ce865332e330d303502a0e2f52"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "ETH",
@@ -647,7 +710,24 @@
         }
       },
       {
-        "symbol": "aETH"
+        "symbol": "aETH",
+        "assetId": "1007",
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2034
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x11a8f7ffbb7e0fbed88bc20179dd45b4bd6874ff"
+                }
+              }
+            ]
+          }
+        }
       },
       {
         "symbol": "HDX",
@@ -1239,6 +1319,57 @@
             ]
           }
         }
+      },
+      {
+        "symbol": "USDC",
+        "assetId": "1000766",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "USDT",
+        "assetId": "1000767",
+        "multiLocation": {
+          "parents": 2,
+          "interior": {
+            "X2": [
+              {
+                "GlobalConsensus": {
+                  "Ethereum": {
+                    "chainId": 1
+                  }
+                }
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "symbol": "3-Pool"
       },
       {
         "symbol": "wstETH",
