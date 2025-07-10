@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.4](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.10.3...xcm-api-v10.10.4) (2025-07-10)
+
+
+### Documentation
+
+* Add uptime monitoring link ([2f97cc9](https://github.com/paraspell/xcm-tools/commit/2f97cc98c886d94dc728bd0a148efa215fd77028))
+
 ## [10.10.3](https://github.com/paraspell/xcm-tools/compare/xcm-api-v10.10.2...xcm-api-v10.10.3) (2025-07-08)
 
 
