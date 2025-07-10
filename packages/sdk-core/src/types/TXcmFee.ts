@@ -9,7 +9,7 @@ import type {
 import type { WithApi } from './TApi'
 import type { TWeight } from './TTransfer'
 
-export type TGetXcmFeeBaseOptions<TRes> = {
+export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boolean> = {
   /**
    * The transaction to calculate the fee for
    */
@@ -29,7 +29,7 @@ export type TGetXcmFeeBaseOptions<TRes> = {
   address: string
   currency: WithAmount<TCurrencyCore>
   feeAsset?: TCurrencyInput
-  disableFallback: boolean
+  disableFallback: TDisableFallback
   // Used when there is an asset swap on some hop
   swapConfig?: {
     currencyTo: TCurrencyCore
@@ -37,7 +37,11 @@ export type TGetXcmFeeBaseOptions<TRes> = {
   }
 }
 
-export type TGetXcmFeeOptions<TApi, TRes> = WithApi<TGetXcmFeeBaseOptions<TRes>, TApi, TRes>
+export type TGetXcmFeeOptions<TApi, TRes, TDisableFallback extends boolean = boolean> = WithApi<
+  TGetXcmFeeBaseOptions<TRes, TDisableFallback>,
+  TApi,
+  TRes
+>
 
 export type TGetXcmFeeEstimateOptions<TApi, TRes> = Omit<
   TGetXcmFeeOptions<TApi, TRes>,
@@ -100,6 +104,15 @@ export type THubKey = 'assetHub' | 'bridgeHub'
 
 export type TFeeType = 'dryRun' | 'paymentInfo' | 'noFeeRequired'
 
+export type TXcmFeeDetailWithFallback = {
+  fee: bigint
+  currency: string
+  feeType: TFeeType
+  weight?: TWeight
+  sufficient?: boolean
+  dryRunError?: string
+}
+
 export type TXcmFeeDetail =
   | {
       fee: bigint
@@ -118,6 +131,22 @@ export type TXcmFeeDetail =
       dryRunError: string
     }
 
+export type TConditionalXcmFeeDetail<TDisableFallback extends boolean> =
+  TDisableFallback extends false ? TXcmFeeDetailWithFallback : TXcmFeeDetail
+
+export type TDestXcmFeeDetail<TDisableFallback extends boolean> = Omit<
+  TConditionalXcmFeeDetail<TDisableFallback>,
+  'currency'
+> & {
+  forwardedXcms?: any
+  destParaId?: number
+}
+
+export type TConditionalXcmFeeHopInfo<TDisableFallback extends boolean> = {
+  chain: TNodeWithRelayChains
+  result: TConditionalXcmFeeDetail<TDisableFallback>
+}
+
 export type TXcmFeeChain =
   | 'origin'
   | 'destination'
@@ -130,14 +159,14 @@ export type TXcmFeeHopInfo = {
   result: TXcmFeeDetail
 }
 
-export type TGetXcmFeeResult = {
+export type TGetXcmFeeResult<TDisableFallback extends boolean = boolean> = {
   failureReason?: string
   failureChain?: TXcmFeeChain
-  origin: TXcmFeeDetail
-  destination: TXcmFeeDetail
-  assetHub?: TXcmFeeDetail
-  bridgeHub?: TXcmFeeDetail
-  hops: TXcmFeeHopInfo[]
+  origin: TConditionalXcmFeeDetail<TDisableFallback>
+  destination: TConditionalXcmFeeDetail<TDisableFallback>
+  assetHub?: TConditionalXcmFeeDetail<TDisableFallback>
+  bridgeHub?: TConditionalXcmFeeDetail<TDisableFallback>
+  hops: TConditionalXcmFeeHopInfo<TDisableFallback>[]
 }
 
 export type TGetXcmFeeEstimateDetail = {

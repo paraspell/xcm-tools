@@ -185,7 +185,7 @@ export const getTransferInfo = async <TApi, TRes>({
           fee: originFee,
           balance: originBalanceFee,
           balanceAfter: originBalanceFeeAfter,
-          currencySymbol: originFeeCurrency as string
+          currencySymbol: originFeeCurrency
         }
       },
       assetHub,

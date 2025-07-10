@@ -7,7 +7,7 @@ import { isRelayChain, Parents, Version } from '@paraspell/sdk-common'
 
 import { DOT_MULTILOCATION } from '../../constants'
 import { getParaId } from '../../nodes/config'
-import type { TFeeType } from '../../types'
+import type { TDestXcmFeeDetail } from '../../types'
 import { type TGetFeeForDestNodeOptions } from '../../types'
 import { addXcmVersionHeader } from '../../utils'
 import { resolveFeeAsset } from '../utils/resolveFeeAsset'
@@ -32,16 +32,9 @@ export const createOriginLocation = (
   }
 }
 
-export const getDestXcmFee = async <TApi, TRes>(
+export const getDestXcmFee = async <TApi, TRes, TDisableFallback extends boolean>(
   options: TGetFeeForDestNodeOptions<TApi, TRes>
-): Promise<{
-  fee?: bigint
-  feeType?: TFeeType
-  forwardedXcms?: any
-  destParaId?: number
-  dryRunError?: string
-  sufficient?: boolean
-}> => {
+): Promise<TDestXcmFeeDetail<TDisableFallback>> => {
   const {
     api,
     origin,
@@ -98,7 +91,7 @@ export const getDestXcmFee = async <TApi, TRes>(
       fee,
       feeType: 'paymentInfo',
       sufficient
-    }
+    } as TDestXcmFeeDetail<TDisableFallback>
   }
 
   const dryRunResult = await api.getDryRunXcm({
@@ -116,7 +109,7 @@ export const getDestXcmFee = async <TApi, TRes>(
     if (disableFallback) {
       return {
         dryRunError: dryRunResult.failureReason
-      }
+      } as TDestXcmFeeDetail<false>
     }
 
     const fee = await calcPaymentInfoFee()
@@ -135,7 +128,7 @@ export const getDestXcmFee = async <TApi, TRes>(
       feeType: 'paymentInfo',
       dryRunError: dryRunResult.failureReason,
       sufficient
-    }
+    } as TDestXcmFeeDetail<TDisableFallback>
   }
 
   const { fee, forwardedXcms: newForwardedXcms, destParaId } = dryRunResult
@@ -146,5 +139,5 @@ export const getDestXcmFee = async <TApi, TRes>(
     sufficient: true,
     forwardedXcms: newForwardedXcms,
     destParaId
-  }
+  } as TDestXcmFeeDetail<TDisableFallback>
 }

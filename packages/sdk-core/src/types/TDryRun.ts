@@ -10,6 +10,7 @@ import type {
   TNodeWithRelayChains
 } from '@paraspell/sdk-common'
 
+import type { IPolkadotApi } from '../api'
 import type { WithApi } from './TApi'
 import type { TWeight } from './TTransfer'
 
@@ -110,6 +111,53 @@ export type TDryRunResult = {
   assetHub?: TDryRunNodeResult
   bridgeHub?: TDryRunNodeResult
   hops: THopInfo[]
+}
+
+// XCM hop traversal types
+
+export type HopProcessParams<TApi, TRes> = {
+  api: IPolkadotApi<TApi, TRes>
+  currentChain: TNodeDotKsmWithRelayChains
+  currentOrigin: TNodeDotKsmWithRelayChains
+  currentAsset: TAsset
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  forwardedXcms: any
+  hasPassedExchange: boolean
+  isDestination: boolean
+  isAssetHub: boolean
+  isBridgeHub: boolean
+}
+
+export type HopTraversalConfig<TApi, TRes, THopResult> = {
+  api: IPolkadotApi<TApi, TRes>
+  origin: TNodeDotKsmWithRelayChains
+  destination: TNodeWithRelayChains
+  currency: TCurrencyCore
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialForwardedXcms: any
+  initialDestParaId: number | undefined
+  swapConfig?: {
+    exchangeChain: TNodeDotKsmWithRelayChains
+    currencyTo: TCurrencyCore
+  }
+  processHop: (params: HopProcessParams<TApi, TRes>) => Promise<THopResult>
+  shouldContinue: (hopResult: THopResult) => boolean
+  extractNextHopData: (hopResult: THopResult) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    forwardedXcms: any
+    destParaId: number | undefined
+  }
+}
+
+export type HopTraversalResult<THopResult> = {
+  hops: Array<{
+    chain: TNodeDotKsmWithRelayChains
+    result: THopResult
+  }>
+  assetHub?: THopResult
+  bridgeHub?: THopResult
+  destination?: THopResult
+  lastProcessedChain?: TNodeDotKsmWithRelayChains
 }
 
 export enum XTokensError {
