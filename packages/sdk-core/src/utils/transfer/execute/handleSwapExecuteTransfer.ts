@@ -1,4 +1,4 @@
-import type { TCurrencyCore } from '@paraspell/assets'
+import { hasXcmPaymentApiSupport, type TCurrencyCore } from '@paraspell/assets'
 import {
   type TMultiLocation,
   type TNodeDotKsmWithRelayChains,
@@ -6,6 +6,7 @@ import {
   type TNodeWithRelayChains
 } from '@paraspell/sdk-common'
 
+import { MAX_WEIGHT } from '../../../constants'
 import { DryRunFailedError, InvalidParameterError } from '../../../errors'
 import { getParaId } from '../../../nodes/config'
 import { dryRunInternal } from '../../../transfer/dryRun/dryRunInternal'
@@ -16,7 +17,8 @@ import type {
   TDryRunOptions,
   TDryRunResult,
   THopInfo,
-  TSwapFeeEstimates
+  TSwapFeeEstimates,
+  TWeight
 } from '../../../types'
 import { getChainVersion } from '../../chain'
 import { createExecuteCall } from './createExecuteCall'
@@ -160,12 +162,17 @@ const extractFeesFromDryRun = (
   return fees
 }
 
-const createXcmAndCall = async <TApi, TRes>(options: TCreateSwapXcmInternalOptions<TApi, TRes>) => {
+const createXcmAndCall = async <TApi, TRes>(
+  options: TCreateSwapXcmInternalOptions<TApi, TRes>,
+  dryRunWeight?: TWeight
+) => {
   const xcm = await createSwapExecuteXcm(options)
 
   const { api, chain, exchangeChain } = options
 
-  const weight = await api.getXcmWeight(xcm)
+  const hasApiSupport = hasXcmPaymentApiSupport(chain ?? exchangeChain)
+  const weight = hasApiSupport ? await api.getXcmWeight(xcm) : (dryRunWeight ?? MAX_WEIGHT)
+
   const call = createExecuteCall(chain ?? exchangeChain, xcm, weight)
 
   return { xcm, weight, call }
@@ -297,11 +304,14 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
   }
 
   // Second dry run with actual fees and amounts
-  const { call: secondCall } = await createXcmAndCall({
-    ...internalOptions,
-    assetTo: updatedAssetTo,
-    fees: extractedFees
-  })
+  const { call: secondCall } = await createXcmAndCall(
+    {
+      ...internalOptions,
+      assetTo: updatedAssetTo,
+      fees: extractedFees
+    },
+    firstDryRunResult.origin.success ? firstDryRunResult.origin.weight : undefined
+  )
 
   const secondDryRunResult = await executeDryRun({
     ...dryRunParams,
@@ -350,11 +360,14 @@ export const handleSwapExecuteTransfer = async <TApi, TRes>(
       amount: finalMinAmountOut.toString()
     }
 
-    const { call: finalCall } = await createXcmAndCall({
-      ...internalOptions,
-      assetTo: finalAssetTo,
-      fees: finalFees
-    })
+    const { call: finalCall } = await createXcmAndCall(
+      {
+        ...internalOptions,
+        assetTo: finalAssetTo,
+        fees: finalFees
+      },
+      secondDryRunResult.origin.success ? secondDryRunResult.origin.weight : undefined
+    )
 
     return api.callTxMethod(finalCall)
   }

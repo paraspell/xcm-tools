@@ -11,8 +11,16 @@ export const prepareExtrinsics = async (
   dex: ExchangeNode,
   options: TBuildTransactionsOptionsModified,
 ): Promise<TPreparedExtrinsics> => {
-  const { origin, exchange, destination, currencyTo, amount, senderAddress, recipientAddress } =
-    options;
+  const {
+    origin,
+    exchange,
+    destination,
+    currencyTo,
+    amount,
+    evmSenderAddress,
+    senderAddress,
+    recipientAddress,
+  } = options;
 
   if ((origin || destination) && (dex.node.includes('AssetHub') || dex.node === 'Hydration')) {
     try {
@@ -32,7 +40,7 @@ export const prepareExtrinsics = async (
           amount: BigInt(amount),
         } as WithAmount<TAsset>,
         assetTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAsset>,
-        senderAddress,
+        senderAddress: evmSenderAddress ?? senderAddress,
         currencyTo,
         recipientAddress: recipientAddress ?? senderAddress,
         calculateMinAmountOut: (amountIn: bigint, assetTo?: TAsset) =>

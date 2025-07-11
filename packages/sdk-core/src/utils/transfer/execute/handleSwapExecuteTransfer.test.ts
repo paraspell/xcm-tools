@@ -38,6 +38,10 @@ vi.mock('../../../nodes/config', () => ({
   getParaId: vi.fn()
 }))
 
+vi.mock('@paraspell/assets', () => ({
+  hasXcmPaymentApiSupport: vi.fn().mockReturnValue(true)
+}))
+
 const mockApi = {
   init: vi.fn(),
   getXcmWeight: vi.fn(),
