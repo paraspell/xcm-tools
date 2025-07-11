@@ -1,10 +1,10 @@
-import type { TSendOptions } from '@paraspell/sdk-core'
+import type { TGetXcmFeeBaseOptions, TSendOptions } from '@paraspell/sdk-core'
 import * as sdkCore from '@paraspell/sdk-core'
 import type { MockInstance } from 'vitest'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import PapiApi from './PapiApi'
-import { getBridgeStatus, getParaEthTransferFees, send } from './transfer'
+import { getBridgeStatus, getParaEthTransferFees, getXcmFee, send } from './transfer'
 import type { TPapiApi, TPapiApiOrUrl, TPapiTransaction } from './types'
 
 vi.mock('./PapiApi')
@@ -54,6 +54,19 @@ describe('Send function using PapiApi', () => {
       expect(papiApiSetApiSpy).toHaveBeenCalledWith(mockApi)
       expect(papiApiInitSpy).toHaveBeenCalledWith('AssetHubPolkadot')
       expect(sdkCore.getParaEthTransferFees).toHaveBeenCalledWith(expect.any(PapiApi))
+    })
+  })
+
+  describe('getXcmFee', () => {
+    it('should call getXcmFee from SDK-Core with PapiApi instance', async () => {
+      const testOptions = {} as TGetXcmFeeBaseOptions<TPapiTransaction, false>
+
+      await getXcmFee(testOptions)
+
+      expect(sdkCore.getXcmFee).toHaveBeenCalledWith({
+        ...testOptions,
+        api: expect.any(PapiApi)
+      })
     })
   })
 })

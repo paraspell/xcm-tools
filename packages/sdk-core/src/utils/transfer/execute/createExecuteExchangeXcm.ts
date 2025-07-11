@@ -26,7 +26,7 @@ export const createExecuteExchangeXcm = <TApi, TRes>(
 
   assertHasLocation(asset)
 
-  const transformedMultiLocation = localizeLocation('AssetHubPolkadot', asset.multiLocation)
+  const transformedMultiLocation = localizeLocation(origin, asset.multiLocation)
 
   const call: TSerializedApiCall = {
     module: 'PolkadotXcm',

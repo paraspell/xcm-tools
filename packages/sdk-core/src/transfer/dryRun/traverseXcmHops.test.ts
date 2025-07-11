@@ -1,4 +1,3 @@
-// Import mocked functions
 import type { TAsset } from '@paraspell/assets'
 import { findAssetForNodeOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
@@ -251,7 +250,6 @@ describe('traverseXcmHops', () => {
 
     vi.mocked(getTNode).mockReturnValue('Polkadot')
 
-    // Set up isRelayChain to return true for Polkadot, false for others
     vi.mocked(isRelayChain).mockImplementation(node => node === 'Polkadot')
 
     mockProcessHop.mockResolvedValue({ fee: 1000n })

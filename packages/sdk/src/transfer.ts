@@ -1,3 +1,4 @@
+import type { TGetXcmFeeBaseOptions } from '@paraspell/sdk-core'
 import {
   dryRun as dryRunImpl,
   dryRunOrigin as dryRunOriginImpl,
@@ -42,7 +43,13 @@ export const getBridgeStatus = async (ahApi?: TPapiApiOrUrl) => {
 
 export const getOriginXcmFee = createPapiApiCall(getOriginXcmFeeImpl<TPapiApi, TPapiTransaction>)
 
-export const getXcmFee = createPapiApiCall(getXcmFeeImpl<TPapiApi, TPapiTransaction>)
+export const getXcmFee = async <TDisableFallback extends boolean>(
+  options: TGetXcmFeeBaseOptions<TPapiTransaction, TDisableFallback>
+) =>
+  getXcmFeeImpl({
+    ...options,
+    api: new PapiApi()
+  })
 
 export const handleSwapExecuteTransfer = createPapiApiCall(
   handleSwapExecuteTransferImpl<TPapiApi, TPapiTransaction>

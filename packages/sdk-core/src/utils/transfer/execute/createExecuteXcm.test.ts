@@ -67,7 +67,7 @@ describe('createExecuteExchangeXcm', () => {
     expect(assertHasLocation).toHaveBeenCalledWith(input.asset)
 
     expect(localizeLocation).toHaveBeenCalledOnce()
-    expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', input.asset.multiLocation)
+    expect(localizeLocation).toHaveBeenCalledWith(mockOrigin, input.asset.multiLocation)
 
     expect(result).toBe('result')
     expect(fakeApi.callTxMethod).toHaveBeenCalledTimes(1)
@@ -163,7 +163,7 @@ describe('createExecuteExchangeXcm', () => {
     expect(assertHasLocation).toHaveBeenCalledWith(input.asset)
 
     expect(localizeLocation).toHaveBeenCalledOnce()
-    expect(localizeLocation).toHaveBeenCalledWith('AssetHubPolkadot', input.asset.multiLocation)
+    expect(localizeLocation).toHaveBeenCalledWith(mockOrigin, input.asset.multiLocation)
 
     expect(createDestination).toHaveBeenCalledWith(
       Version.V4,
