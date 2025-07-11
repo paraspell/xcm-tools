@@ -18,6 +18,7 @@ export const getRouterFees = async (
     destination,
     amount,
     recipientAddress,
+    evmSenderAddress,
     senderAddress,
   } = options;
 
@@ -40,7 +41,7 @@ export const getRouterFees = async (
         } as WithAmount<TAsset>,
         assetTo: { ...exchange.assetTo, amount: amountOut } as WithAmount<TAsset>,
         currencyTo,
-        senderAddress,
+        senderAddress: evmSenderAddress ?? senderAddress,
         recipientAddress: recipientAddress ?? senderAddress,
         calculateMinAmountOut: (amountIn: bigint, assetTo?: TAsset) =>
           dex.getAmountOut(exchange.api, {
@@ -57,7 +58,7 @@ export const getRouterFees = async (
         tx,
         origin: origin?.node ?? exchange.baseNode,
         destination: destination?.node ?? exchange.baseNode,
-        senderAddress,
+        senderAddress: evmSenderAddress ?? senderAddress,
         address: recipientAddress ?? senderAddress,
         currency: { ...currencyFrom, amount: BigInt(amount) } as WithAmount<TCurrencyCore>,
         disableFallback: false,
