@@ -1,0 +1,48 @@
+name: Update JSON Map and Create PR
+
+on:
+  schedule:
+    - cron: "0 7 * * 1" # Monday 9:00 CEST
+    - cron: "0 7 * * 5" # Friday 9:00 CEST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-map:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set alternate npm integrity keys
+        run: |
+          echo COREPACK_INTEGRITY_KEYS="$(curl https://registry.npmjs.org/-/npm/v1/keys | jq -c '{npm: .keys}')" >> $GITHUB_ENV
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run assets update script
+        run: pnpm --filter assets updateAssets
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "ci: Update assets map 📋"
+          title: "Update assets map 📋"
+          body: "This PR updates the assets map"
+          branch: ci/assets-map
+          delete-branch: true
+          add-paths: |
+            packages/assets/src/maps/assets.json
