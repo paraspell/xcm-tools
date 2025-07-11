@@ -1,5 +1,17 @@
 # Changelog
 
+## [10.10.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.10.4...sdk-core-v10.10.5) (2025-07-11)
+
+
+### Code Refactoring
+
+* **sdk-core:** Refactor getXcmFee, dryRun functions & improve type safety 🪄 ([b09a6d1](https://github.com/paraspell/xcm-tools/commit/b09a6d1bde3dac8b14ac7360f4e02e38ab7d5ebe))
+
+
+### Continuous Integration
+
+* Add assets update Github action ✨ ([be9952a](https://github.com/paraspell/xcm-tools/commit/be9952a394840c883ad4faba487f2545bcf25756))
+
 ## [10.10.4](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.10.3...sdk-core-v10.10.4) (2025-07-10)
 
 
