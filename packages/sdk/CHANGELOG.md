@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.5](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.4...sdk-v10.10.5) (2025-07-11)
+
+
+### Continuous Integration
+
+* Add assets update Github action ✨ ([be9952a](https://github.com/paraspell/xcm-tools/commit/be9952a394840c883ad4faba487f2545bcf25756))
+
 ## [10.10.4](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.3...sdk-v10.10.4) (2025-07-10)
 
 
