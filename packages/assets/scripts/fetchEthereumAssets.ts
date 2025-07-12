@@ -56,6 +56,56 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
       }
     },
     {
+      assetId: '0x56072c95faa701256059aa122697b133aded9279',
+      symbol: 'SKY',
+      multiLocation: {
+        parents: 2,
+        interior: {
+          X2: [
+            {
+              GlobalConsensus: {
+                Ethereum: {
+                  chainId: 1
+                }
+              }
+            },
+            {
+              AccountKey20: {
+                network: null,
+                key: '0x56072c95faa701256059aa122697b133aded9279'
+              }
+            }
+          ]
+        }
+      },
+      existentialDeposit: '1'
+    },
+    {
+      assetId: '0x514910771af9ca656af840dff83e8264ecf986ca',
+      symbol: 'LINK',
+      multiLocation: {
+        parents: 2,
+        interior: {
+          X2: [
+            {
+              GlobalConsensus: {
+                Ethereum: {
+                  chainId: 1
+                }
+              }
+            },
+            {
+              AccountKey20: {
+                network: null,
+                key: '0x514910771af9ca656af840dff83e8264ecf986ca'
+              }
+            }
+          ]
+        }
+      },
+      existentialDeposit: '1'
+    },
+    {
       symbol: 'DOT',
       existentialDeposit: '1',
       multiLocation: {
@@ -81,6 +131,31 @@ export const fetchEthereumAssets = async (): Promise<TNodeAssets> => {
             {
               GlobalConsensus: {
                 Kusama: null
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      symbol: 'MYTH',
+      assetId: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
+      existentialDeposit: '1',
+      multiLocation: {
+        parents: 2,
+        interior: {
+          X2: [
+            {
+              GlobalConsensus: {
+                Ethereum: {
+                  chainId: 1
+                }
+              }
+            },
+            {
+              AccountKey20: {
+                network: null,
+                key: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003'
               }
             }
           ]
