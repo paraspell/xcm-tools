@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.6](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.10.5...sdk-core-v10.10.6) (2025-07-12)
+
+
+### Bug Fixes
+
+* Fix execute swaps for origins without XcmPaymentApi 🔧 ([70b9726](https://github.com/paraspell/xcm-tools/commit/70b97266f1e41623a89c621f5bafdb7f6d69f494))
+
 ## [10.10.5](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.10.4...sdk-core-v10.10.5) (2025-07-11)
 
 

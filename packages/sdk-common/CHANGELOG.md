@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.6](https://github.com/paraspell/xcm-tools/compare/sdk-common-v10.10.5...sdk-common-v10.10.6) (2025-07-12)
+
+
+### Continuous Integration
+
+* Fix assets update script 🔧 ([c16b50e](https://github.com/paraspell/xcm-tools/commit/c16b50e66d13d78503c78d9181f3c190308d9779))
+
 ## [10.10.5](https://github.com/paraspell/xcm-tools/compare/sdk-common-v10.10.4...sdk-common-v10.10.5) (2025-07-11)
 
 
