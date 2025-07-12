@@ -1,13 +1,13 @@
 // Contains basic Utils for scripts that pull data for Assets and XCM pallets maps
 
-import * as fs from 'fs'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import type { TNodeDotKsmWithRelayChains } from '../src'
+import { readFileSync, writeFileSync } from 'fs'
 
 export const readJsonOrReturnEmptyObject = (path: string) => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return JSON.parse(fs.readFileSync(path, 'utf8'))
+    return JSON.parse(readFileSync(path, 'utf8'))
   } catch (_e) {
     return {}
   }
@@ -77,7 +77,8 @@ export const fetchTryMultipleProvidersWithTimeout = async <T>(
 
 export const writeJsonSync = (path: string, data: unknown) => {
   const TAB_WIDTH = 2
-  fs.writeFileSync(path, JSON.stringify(data, null, TAB_WIDTH))
+  const json = JSON.stringify(data, null, TAB_WIDTH) + '\n'
+  writeFileSync(path, json)
 }
 
 export const handleDataFetching = async <T1, T2>(

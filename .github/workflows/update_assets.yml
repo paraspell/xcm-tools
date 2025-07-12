@@ -33,8 +33,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build packages
+        run: pnpm build:packages
+
       - name: Run assets update script
         run: pnpm --filter assets updateAssets
+
+      - name: Run router assets update script
+        run: pnpm --filter xcm-router updateAssets
+
+      - name: Fix files formating
+        run: pnpm format:write
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7

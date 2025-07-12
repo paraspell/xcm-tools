@@ -2,7 +2,7 @@ import { writeJsonSync } from '../../sdk-common/scripts/scriptUtils';
 import { EXCHANGE_NODES } from '../src/consts';
 import { createDexNodeInstance } from '../src/dexNodes/DexNodeFactory';
 import type { TDexConfig, TAssetsRecord, TExchangeNode } from '../src/types';
-import * as assetsMapJson from '../src/consts/assets.json' with { type: 'json' };
+import assetsMapJson from '../src/consts/assets.json' with { type: 'json' };
 
 const assetsMap = assetsMapJson as TAssetsRecord;
 
@@ -53,7 +53,12 @@ void (async () => {
     }
   }
 
-  writeJsonSync('./src/consts/assets.json', record);
+  const merged = {
+    ...assetsMap,
+    ...record,
+  };
+
+  writeJsonSync('./src/consts/assets.json', merged);
   console.log('Assets update complete!');
   process.exit(0);
 })();
