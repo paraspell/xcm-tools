@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.7](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.6...sdk-v10.10.7) (2025-07-14)
+
+
+### Bug Fixes
+
+* **sdk-core:** Fix execute swap transfer amountOut 🔧 ([2db8414](https://github.com/paraspell/xcm-tools/commit/2db8414f5de18a7a04ef9ac679fc8caad9d6ce6c))
+
 ## [10.10.6](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.5...sdk-v10.10.6) (2025-07-12)
 
 
