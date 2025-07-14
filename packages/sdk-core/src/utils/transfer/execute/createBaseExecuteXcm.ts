@@ -1,4 +1,4 @@
-import type { TMultiAsset } from '@paraspell/assets'
+import { type TMultiAsset } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains, TNodeWithRelayChains } from '@paraspell/sdk-common'
 import { isSystemChain } from '@paraspell/sdk-common'
 
@@ -137,7 +137,7 @@ export const createBaseExecuteXcm = (
         {
           InitiateTeleport: {
             assets: createAssetsFilter(multiAssetLocalized),
-            dest: getChainLocation(reserveChain),
+            dest: getChainLocation(chain, reserveChain),
             xcm: [
               {
                 BuyExecution: {
@@ -162,7 +162,7 @@ export const createBaseExecuteXcm = (
         {
           InitiateReserveWithdraw: {
             assets: createAssetsFilter(multiAssetLocalized),
-            reserve: getChainLocation(reserveChain),
+            reserve: getChainLocation(chain, reserveChain),
             xcm: [
               {
                 BuyExecution: {

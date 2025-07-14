@@ -29,6 +29,7 @@ vi.mock('../..', () => ({
 
 describe('getAssetReserveChain', () => {
   const mockOrigin = 'Acala' as TNodeDotKsmWithRelayChains
+  const mockDest = 'Moonbeam' as TNodeDotKsmWithRelayChains
   const mockAssetLocation: TMultiLocation = {
     parents: 1,
     interior: { X1: { Parachain: 1000 } }
@@ -44,7 +45,7 @@ describe('getAssetReserveChain', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getTNode).mockReturnValue('Moonbeam')
 
-    const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
+    const result = getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)
 
     expect(getTNode).toHaveBeenCalledWith(1000, 'polkadot')
     expect(result).toBe('Moonbeam')
@@ -56,7 +57,7 @@ describe('getAssetReserveChain', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Kusama')
     vi.mocked(getTNode).mockReturnValue('Karura')
 
-    getAssetReserveChain(mockOrigin, mockAssetLocation)
+    getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)
 
     expect(getTNode).toHaveBeenCalledWith(2000, 'kusama')
   })
@@ -67,7 +68,7 @@ describe('getAssetReserveChain', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(getTNode).mockReturnValue(null)
 
-    expect(() => getAssetReserveChain(mockOrigin, mockAssetLocation)).toThrow(
+    expect(() => getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)).toThrow(
       new InvalidParameterError('Chain with paraId 9999 not found')
     )
   })
@@ -76,7 +77,7 @@ describe('getAssetReserveChain', () => {
     vi.mocked(hasJunction).mockReturnValue(true)
     vi.mocked(getJunctionValue).mockReturnValue(null)
 
-    const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
+    const result = getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)
 
     expect(result).toBe('AssetHubPolkadot')
   })
@@ -86,13 +87,13 @@ describe('getAssetReserveChain', () => {
     vi.mocked(getJunctionValue).mockReturnValue(null)
     vi.mocked(deepEqual).mockReturnValue(true)
 
-    const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
+    const result = getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)
 
     expect(deepEqual).toHaveBeenCalledWith(mockAssetLocation, {
       parents: Parents.ONE,
       interior: { Here: null }
     })
-    expect(result).toBe('Polkadot')
+    expect(result).toBe('AssetHubPolkadot')
   })
 
   it('returns origin when no conditions match', () => {
@@ -100,7 +101,7 @@ describe('getAssetReserveChain', () => {
     vi.mocked(getJunctionValue).mockReturnValue(null)
     vi.mocked(deepEqual).mockReturnValue(false)
 
-    const result = getAssetReserveChain(mockOrigin, mockAssetLocation)
+    const result = getAssetReserveChain(mockOrigin, mockDest, mockAssetLocation)
 
     expect(result).toBe(mockOrigin)
   })

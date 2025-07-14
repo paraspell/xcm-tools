@@ -4,11 +4,7 @@
 
 import { findAssetForNodeOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
 import type { TNodeWithRelayChains } from '@paraspell/sdk-common'
-import {
-  isRelayChain,
-  type TEcosystemType,
-  type TNodeDotKsmWithRelayChains
-} from '@paraspell/sdk-common'
+import { type TEcosystemType, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
 
 import type { IPolkadotApi } from '../../api'
 import { DRY_RUN_CLIENT_TIMEOUT_MS } from '../../constants'
@@ -73,8 +69,8 @@ export async function traverseXcmHops<TApi, TRes, THopResult>(
     try {
       await hopApi.init(nextChain, DRY_RUN_CLIENT_TIMEOUT_MS)
 
-      const isDestination =
-        nextChain === destination || (isRelayChain(nextChain) && !isRelayChain(destination))
+      const isDestination = nextChain === destination
+
       const isAssetHub = nextChain === assetHubNode
       const isBridgeHub = nextChain === bridgeHubNode
 

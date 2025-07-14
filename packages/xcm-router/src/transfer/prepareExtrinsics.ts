@@ -53,7 +53,7 @@ export const prepareExtrinsics = async (
           }),
       });
 
-      return { swapTxs: [tx], amountOut };
+      return { swapTxs: [tx], isExecute: true, amountOut };
     } catch (error) {
       // If the execute is not supported, fallback to default swap execution
       if (

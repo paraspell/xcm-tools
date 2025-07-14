@@ -33,9 +33,12 @@ describe('prepareExecuteContext', () => {
   const mockMultiLocation: TMultiLocation = { parents: 1, interior: { Here: null } }
   const mockFeeMultiLocation: TMultiLocation = { parents: 1, interior: { X1: { Parachain: 1000 } } }
 
+  const chain = 'Acala'
+  const destChain = 'Moonbeam'
+
   const mockOptions = {
-    chain: 'Acala',
-    destChain: 'Moonbeam',
+    chain,
+    destChain,
     asset: {
       amount: '1000000000000',
       multiLocation: mockMultiLocation
@@ -60,7 +63,7 @@ describe('prepareExecuteContext', () => {
     const result = prepareExecuteContext(mockOptions)
 
     expect(assertHasLocation).toHaveBeenCalledWith(mockOptions.asset)
-    expect(getAssetReserveChain).toHaveBeenCalledWith('Acala', mockMultiLocation)
+    expect(getAssetReserveChain).toHaveBeenCalledWith(chain, destChain, mockMultiLocation)
     expect(createMultiAsset).toHaveBeenCalledTimes(4)
     expect(localizeLocation).toHaveBeenCalledTimes(3)
 

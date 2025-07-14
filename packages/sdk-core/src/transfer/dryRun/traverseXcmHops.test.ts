@@ -1,7 +1,6 @@
 import type { TAsset } from '@paraspell/assets'
 import { findAssetForNodeOrThrow, findAssetOnDestOrThrow } from '@paraspell/assets'
 import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
-import { isRelayChain } from '@paraspell/sdk-common'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
@@ -15,10 +14,6 @@ import { addEthereumBridgeFees, traverseXcmHops } from './traverseXcmHops'
 vi.mock('@paraspell/assets', () => ({
   findAssetForNodeOrThrow: vi.fn(),
   findAssetOnDestOrThrow: vi.fn()
-}))
-
-vi.mock('@paraspell/sdk-common', () => ({
-  isRelayChain: vi.fn()
 }))
 
 vi.mock('../../nodes/getTNode', () => ({
@@ -62,7 +57,6 @@ describe('traverseXcmHops', () => {
     vi.mocked(getRelayChainOf).mockReturnValue('Polkadot')
     vi.mocked(findAssetForNodeOrThrow).mockReturnValue({ assetId: 'asset1' } as TAsset)
     vi.mocked(findAssetOnDestOrThrow).mockReturnValue({ assetId: 'asset2' } as TAsset)
-    vi.mocked(isRelayChain).mockReturnValue(false)
   })
 
   it('should process a single hop successfully', async () => {
@@ -243,38 +237,6 @@ describe('traverseXcmHops', () => {
       lastProcessedChain: 'Polkadot'
     })
     expect(mockProcessHop).not.toHaveBeenCalled()
-  })
-
-  it('should handle relay chain destination', async () => {
-    const forwardedXcms = [[], [{ value: ['data'] }]]
-
-    vi.mocked(getTNode).mockReturnValue('Polkadot')
-
-    vi.mocked(isRelayChain).mockImplementation(node => node === 'Polkadot')
-
-    mockProcessHop.mockResolvedValue({ fee: 1000n })
-    mockExtractNextHopData.mockReturnValue({
-      forwardedXcms: [[], []],
-      destParaId: undefined
-    })
-
-    const config: HopTraversalConfig<unknown, unknown, unknown> = {
-      api: mockApi,
-      origin: 'AssetHubPolkadot' as TNodeDotKsmWithRelayChains,
-      destination: 'Acala' as TNodeDotKsmWithRelayChains,
-      currency: { id: 'DOT' },
-      initialForwardedXcms: forwardedXcms,
-      initialDestParaId: 0,
-      processHop: mockProcessHop,
-      shouldContinue: mockShouldContinue,
-      extractNextHopData: mockExtractNextHopData
-    }
-
-    const result = await traverseXcmHops(config)
-
-    expect(result.destination).toBeDefined()
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(mockProcessHop.mock.calls[0][0].isDestination).toBe(true)
   })
 
   it('should always disconnect api after processing', async () => {

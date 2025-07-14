@@ -183,7 +183,7 @@ describe('createBaseExecuteXcm', () => {
         }
       ])
 
-      expect(getChainLocation).toHaveBeenCalledWith('Acala')
+      expect(getChainLocation).toHaveBeenCalledWith('AssetHubPolkadot', 'Acala')
     })
 
     it('should handle reserve transfer when destination is reserve chain', () => {
