@@ -251,6 +251,7 @@ export type TExecuteRouterPlanOptions = {
 export type TPreparedExtrinsics = {
   toExchangeTx?: TPapiTransaction;
   swapTxs: TPapiTransaction[];
+  isExecute?: boolean;
   toDestTx?: TPapiTransaction;
   amountOut: bigint;
 };

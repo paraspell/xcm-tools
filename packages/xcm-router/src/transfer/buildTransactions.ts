@@ -8,7 +8,10 @@ export const buildTransactions = async (
 ): Promise<TRouterPlan> => {
   const { origin, exchange, destination } = options;
 
-  const { toExchangeTx, swapTxs, toDestTx, amountOut } = await prepareExtrinsics(dex, options);
+  const { toExchangeTx, swapTxs, toDestTx, amountOut, isExecute } = await prepareExtrinsics(
+    dex,
+    options,
+  );
 
   const transactions: TRouterPlan = [];
 
@@ -38,7 +41,7 @@ export const buildTransactions = async (
     if (swapTxs.length === 1) {
       transactions.push({
         api: exchange.apiPapi,
-        node: dex.node,
+        node: isExecute ? (origin?.node ?? dex.node) : dex.node,
         tx: swapTxs[0],
         amountOut: BigInt(amountOut),
         type: 'SWAP',

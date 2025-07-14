@@ -29,6 +29,7 @@ import {
   isRelayChain,
   localizeLocation,
   Native,
+  padFeeBy,
   Parents,
   Version
 } from '@paraspell/sdk-core'
@@ -696,9 +697,14 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       fee = amount - originFee - feeEvent.value.value.amount
     }
 
+    const processedFee =
+      (isRelayChain(node) || node.includes('AssetHub')) && asset?.symbol === 'DOT'
+        ? padFeeBy(fee, 30)
+        : fee
+
     return Promise.resolve({
       success: true,
-      fee,
+      fee: processedFee,
       weight,
       forwardedXcms,
       destParaId

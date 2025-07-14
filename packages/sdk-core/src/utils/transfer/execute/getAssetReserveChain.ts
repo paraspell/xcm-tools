@@ -1,4 +1,8 @@
-import type { TEcosystemType, TNodeDotKsmWithRelayChains } from '@paraspell/sdk-common'
+import type {
+  TEcosystemType,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains
+} from '@paraspell/sdk-common'
 import {
   deepEqual,
   getJunctionValue,
@@ -13,18 +17,19 @@ import { getTNode } from '../../../nodes/getTNode'
 import { getRelayChainOf } from '../..'
 
 export const getAssetReserveChain = (
-  origin: TNodeDotKsmWithRelayChains,
+  chain: TNodeDotKsmWithRelayChains,
+  destChain: TNodeWithRelayChains,
   assetLocation: TMultiLocation
 ): TNodeDotKsmWithRelayChains => {
   const hasGlobalConsensusJunction = hasJunction(assetLocation, 'GlobalConsensus')
 
   const paraId = getJunctionValue<number>(assetLocation, 'Parachain')
   if (paraId) {
-    const chain = getTNode(paraId, getRelayChainOf(origin).toLowerCase() as TEcosystemType)
-    if (!chain) {
+    const resolvedChain = getTNode(paraId, getRelayChainOf(chain).toLowerCase() as TEcosystemType)
+    if (!resolvedChain) {
       throw new InvalidParameterError(`Chain with paraId ${paraId} not found`)
     }
-    return chain as TNodeDotKsmWithRelayChains
+    return resolvedChain as TNodeDotKsmWithRelayChains
   }
 
   if (hasGlobalConsensusJunction) {
@@ -37,8 +42,8 @@ export const getAssetReserveChain = (
       interior: { Here: null }
     })
   ) {
-    return CHAINS_DOT_RESERVE_AH.has(origin) ? 'AssetHubPolkadot' : 'Polkadot'
+    return CHAINS_DOT_RESERVE_AH.has(destChain) ? 'AssetHubPolkadot' : 'Polkadot'
   }
 
-  return origin
+  return chain
 }

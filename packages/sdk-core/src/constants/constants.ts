@@ -21,8 +21,14 @@ export const DOT_MULTILOCATION: TMultiLocation = {
 export const CHAINS_DOT_RESERVE_AH = new Set<TNodeWithRelayChains>([
   'Polimec',
   'Moonbeam',
+  'AssetHubPolkadot',
+  'AssetHubKusama',
+  'AssetHubWestend',
+  'AssetHubPaseo',
   'BifrostPolkadot',
+  'BifrostKusama',
   'PeoplePolkadot',
+  'PeopleKusama',
   'Ajuna'
 ] as const)
 

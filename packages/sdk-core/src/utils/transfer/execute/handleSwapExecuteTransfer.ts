@@ -25,7 +25,7 @@ import { createExecuteCall } from './createExecuteCall'
 import { createSwapExecuteXcm } from './createSwapExecuteXcm'
 
 const MIN_FEE = 1000n
-const FEE_PADDING_PERCENTAGE = 40
+const FEE_PADDING_PERCENTAGE = 20
 
 const validateAmount = (amount: bigint, requiredFee: bigint): void => {
   if (amount <= requiredFee) {

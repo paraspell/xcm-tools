@@ -162,6 +162,7 @@ describe('prepareExtrinsics', () => {
     expect(res).toEqual({
       swapTxs: ['handleSwapExecuteTransferTx'],
       amountOut: 500n,
+      isExecute: true,
     });
 
     expect(handleSwapExecuteTransfer).toHaveBeenCalledWith({

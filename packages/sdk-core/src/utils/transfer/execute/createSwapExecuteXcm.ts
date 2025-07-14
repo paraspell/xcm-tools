@@ -103,12 +103,20 @@ export const createSwapExecuteXcm = async <TApi, TRes>(
     localizeLocation(exchangeChain, assetFrom.multiLocation)
   )
 
+  // Exchange fee 0n means we are creating a dummy tx
+  // Set want to 1000n to prevent NoDeal
+  const amountOut = chain && exchangeFee === 0n ? 1000n : BigInt(assetTo.amount)
+
   const multiAssetTo = createMultiAsset(
     version,
-    // Exchange fee 0n means we are creating a dummy tx
-    // Set want to 1000n to prevent NoDeal
-    exchangeFee === 0n ? 1000n : BigInt(assetTo.amount),
+    amountOut,
     localizeLocation(exchangeChain, assetTo.multiLocation)
+  )
+
+  const multiAssetToLocalizedToDest = createMultiAsset(
+    version,
+    amountOut,
+    localizeLocation(destChain ?? exchangeChain, assetTo.multiLocation)
   )
 
   const { prefix, depositInstruction } = prepareCommonExecuteXcm(
@@ -122,7 +130,7 @@ export const createSwapExecuteXcm = async <TApi, TRes>(
       fees: { originFee: 0n, reserveFee: originReserveFee },
       version
     },
-    multiAssetTo
+    multiAssetToLocalizedToDest
   )
 
   const exchangeInstructions = await createExchangeInstructions(
@@ -143,7 +151,7 @@ export const createSwapExecuteXcm = async <TApi, TRes>(
         fees: { originFee: 0n, reserveFee: destReserveFee },
         suffixXcm: [depositInstruction]
       })
-    : []
+    : [depositInstruction]
 
   const finalXcm = chain
     ? createBaseExecuteXcm({
