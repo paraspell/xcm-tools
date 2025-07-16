@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.8](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.7...sdk-v10.10.8) (2025-07-16)
+
+
+### Bug Fixes
+
+* **sdk:** Fix getTransferableAmount 🔧 ([3088794](https://github.com/paraspell/xcm-tools/commit/3088794b62b625b5e8a780c09217d5a2f4bca627))
+
 ## [10.10.7](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.6...sdk-v10.10.7) (2025-07-14)
 
 
