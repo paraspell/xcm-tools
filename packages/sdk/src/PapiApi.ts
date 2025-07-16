@@ -484,7 +484,8 @@ class PapiApi implements IPolkadotApi<TPapiApi, TPapiTransaction> {
       result.value.local_xcm &&
       hasMultiLocation &&
       nativeAsset &&
-      node !== 'AssetHubPolkadot'
+      node !== 'AssetHubPolkadot' &&
+      node !== 'Kusama'
     ) {
       const xcmFee = await this.getXcmPaymentApiFee(
         node,
