@@ -7,8 +7,9 @@ import {
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import type { IPolkadotApi } from '../../api'
-import { getOriginXcmFee } from '../../transfer'
-import type { TXcmFeeDetail } from '../../types'
+import type { GeneralBuilder } from '../../builder'
+import type { TSendBaseOptions, TXcmFeeDetail } from '../../types'
+import { attemptDryRunFee } from './attemptDryRunFee'
 import { getAssetBalanceInternal } from './balance/getAssetBalance'
 import { getTransferableAmount } from './getTransferableAmount'
 
@@ -18,7 +19,7 @@ vi.mock('@paraspell/assets', () => ({
   getNativeAssetSymbol: vi.fn()
 }))
 
-vi.mock('../../transfer')
+vi.mock('./attemptDryRunFee')
 vi.mock('./balance/getAssetBalance')
 
 vi.mock('../../utils/validateAddress', () => ({
@@ -30,6 +31,8 @@ describe('getTransferableAmount', () => {
     setDisconnectAllowed: vi.fn(),
     disconnect: vi.fn().mockResolvedValue(undefined)
   } as unknown as IPolkadotApi<unknown, unknown>
+
+  const mockBuilder = {} as unknown as GeneralBuilder<unknown, unknown, TSendBaseOptions>
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -44,7 +47,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(ed)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
-    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee } as TXcmFeeDetail)
+    vi.mocked(attemptDryRunFee).mockResolvedValue({ fee } as TXcmFeeDetail)
 
     const result = await getTransferableAmount({
       api: mockApi,
@@ -52,13 +55,13 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'BifrostPolkadot',
       currency: { symbol: 'DOT', amount: '1000' },
-      tx: 'transfer'
+      builder: mockBuilder
     })
 
     expect(result).toBe(balance - ed - fee)
-    expect(getOriginXcmFee).toHaveBeenCalledWith({
+    expect(attemptDryRunFee).toHaveBeenCalledWith({
       api: mockApi,
-      tx: 'transfer',
+      builder: {},
       origin: 'Astar',
       destination: 'Astar',
       senderAddress: 'validAddress',
@@ -82,11 +85,11 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'BifrostPolkadot',
       currency: { symbol: 'USDT', amount: '1000' },
-      tx: 'transfer'
+      builder: mockBuilder
     })
 
     expect(result).toBe(balance - ed)
-    expect(getOriginXcmFee).not.toHaveBeenCalled()
+    expect(attemptDryRunFee).not.toHaveBeenCalled()
   })
 
   test('returns 0 when transferable amount is negative', async () => {
@@ -98,7 +101,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(ed)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(balance)
-    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee } as TXcmFeeDetail)
+    vi.mocked(attemptDryRunFee).mockResolvedValue({ fee } as TXcmFeeDetail)
 
     const result = await getTransferableAmount({
       api: mockApi,
@@ -106,7 +109,7 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'BifrostPolkadot',
       currency: { symbol: 'DOT', amount: '1000' },
-      tx: 'transfer'
+      builder: mockBuilder
     })
 
     expect(result).toBe(0n)
@@ -117,7 +120,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
-    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
+    vi.mocked(attemptDryRunFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
 
     await expect(
       getTransferableAmount({
@@ -126,7 +129,7 @@ describe('getTransferableAmount', () => {
         origin: 'Astar',
         destination: 'BifrostPolkadot',
         currency: { symbol: 'DOT', amount: '1000' },
-        tx: 'transfer'
+        builder: mockBuilder
       })
     ).rejects.toThrow(
       'Cannot get origin xcm fee for currency {"symbol":"DOT","amount":"1000"} on node Astar.'
@@ -138,7 +141,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(1000n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
-    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: 100n } as TXcmFeeDetail)
+    vi.mocked(attemptDryRunFee).mockResolvedValue({ fee: 100n } as TXcmFeeDetail)
 
     const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
@@ -149,7 +152,7 @@ describe('getTransferableAmount', () => {
       origin: 'Astar',
       destination: 'BifrostPolkadot',
       currency: { symbol: 'DOT', amount: '1000' },
-      tx: 'transfer'
+      builder: mockBuilder
     })
 
     expect(disconnectAllowedSpy).toHaveBeenNthCalledWith(1, false)
@@ -162,7 +165,7 @@ describe('getTransferableAmount', () => {
     vi.mocked(getNativeAssetSymbol).mockReturnValue('DOT')
     vi.mocked(getExistentialDepositOrThrow).mockReturnValue(100n)
     vi.mocked(getAssetBalanceInternal).mockResolvedValue(1000n)
-    vi.mocked(getOriginXcmFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
+    vi.mocked(attemptDryRunFee).mockResolvedValue({ fee: undefined } as TXcmFeeDetail)
 
     const disconnectAllowedSpy = vi.spyOn(mockApi, 'setDisconnectAllowed')
     const disconnectSpy = vi.spyOn(mockApi, 'disconnect')
@@ -174,7 +177,7 @@ describe('getTransferableAmount', () => {
         origin: 'Astar',
         destination: 'BifrostPolkadot',
         currency: { symbol: 'DOT', amount: '1000' },
-        tx: 'transfer'
+        builder: mockBuilder
       })
     ).rejects.toThrow()
 

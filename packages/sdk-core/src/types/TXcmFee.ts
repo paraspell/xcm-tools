@@ -6,8 +6,9 @@ import type {
   TNodeWithRelayChains
 } from '@paraspell/sdk-common'
 
+import type { GeneralBuilder } from '../builder'
 import type { WithApi } from './TApi'
-import type { TWeight } from './TTransfer'
+import type { TSendBaseOptions, TWeight } from './TTransfer'
 
 export type TGetXcmFeeBaseOptions<TRes, TDisableFallback extends boolean = boolean> = {
   /**
@@ -72,6 +73,13 @@ export type TGetOriginXcmFeeOptions<TApi, TRes> = WithApi<
   TApi,
   TRes
 >
+
+export type TAttemptDryRunFeeOptions<TApi, TRes> = Omit<
+  TGetOriginXcmFeeOptions<TApi, TRes>,
+  'tx'
+> & {
+  builder: GeneralBuilder<TApi, TRes, TSendBaseOptions>
+}
 
 export type TGetFeeForDestNodeBaseOptions = {
   prevNode: TNodeDotKsmWithRelayChains
