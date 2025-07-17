@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.9](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.10.8...sdk-core-v10.10.9) (2025-07-17)
+
+
+### Bug Fixes
+
+* **sdk-core:** Update getTransferablAmount logic 🛠️ ([7be1c71](https://github.com/paraspell/xcm-tools/commit/7be1c71b54e2986a726c9281181106a8df73b9e2))
+
 ## [10.10.8](https://github.com/paraspell/xcm-tools/compare/sdk-core-v10.10.7...sdk-core-v10.10.8) (2025-07-16)
 
 

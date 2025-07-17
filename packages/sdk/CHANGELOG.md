@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.10.9](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.8...sdk-v10.10.9) (2025-07-17)
+
+
+### Miscellaneous Chores
+
+* **sdk:** Synchronize main versions
+
 ## [10.10.8](https://github.com/paraspell/xcm-tools/compare/sdk-v10.10.7...sdk-v10.10.8) (2025-07-16)
 
 
