@@ -384,11 +384,9 @@ export class GeneralBuilder<TApi, TRes, T extends Partial<TSendBaseOptions> = ob
 
     assertToIsString(to)
 
-    const tx = await this.build()
-
     return await getTransferableAmount({
       api: this.api,
-      tx,
+      builder: this,
       origin: from,
       destination: to,
       senderAddress,
