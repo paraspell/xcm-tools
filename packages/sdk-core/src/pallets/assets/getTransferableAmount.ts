@@ -7,10 +7,10 @@ import {
 import { replaceBigInt } from '@paraspell/sdk-common'
 
 import { InvalidParameterError } from '../../errors'
-import { getOriginXcmFee } from '../../transfer'
 import { resolveFeeAsset } from '../../transfer/utils/resolveFeeAsset'
 import type { TGetTransferableAmountOptions } from '../../types/TBalance'
 import { validateAddress } from '../../utils/validateAddress'
+import { attemptDryRunFee } from './attemptDryRunFee'
 import { getAssetBalanceInternal } from './balance/getAssetBalance'
 
 export const getTransferableAmountInternal = async <TApi, TRes>({
@@ -48,7 +48,7 @@ export const getTransferableAmountInternal = async <TApi, TRes>({
   let feeToSubtract = 0n
 
   if (shouldSubstractFee) {
-    const { fee } = await getOriginXcmFee({
+    const { fee } = await attemptDryRunFee({
       api,
       tx,
       origin: node,
