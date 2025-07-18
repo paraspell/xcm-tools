@@ -4003,6 +4003,29 @@
         "alias": "USDT3"
       },
       {
+        "assetId": "37",
+        "symbol": "SQD",
+        "decimals": 18,
+        "multiLocation": {
+          "parents": 1,
+          "interior": {
+            "X2": [
+              {
+                "Parachain": 2004
+              },
+              {
+                "AccountKey20": {
+                  "network": null,
+                  "key": "0x9c4c6eaad9b926ba09f702f4ad880ef71998ef18"
+                }
+              }
+            ]
+          }
+        },
+        "existentialDeposit": "61012812690665100",
+        "isFeeAsset": true
+      },
+      {
         "assetId": "1000752",
         "symbol": "SOL",
         "decimals": 9,
@@ -12375,7 +12398,8 @@
             ]
           }
         },
-        "existentialDeposit": "15000"
+        "existentialDeposit": "15000",
+        "isFeeAsset": true
       },
       {
         "symbol": "ROC",
@@ -12917,6 +12941,12 @@
         "existentialDeposit": "10000000"
       },
       {
+        "assetId": "15",
+        "symbol": "vETH",
+        "decimals": 18,
+        "existentialDeposit": "15000000000000"
+      },
+      {
         "assetId": "13",
         "symbol": "WETH",
         "decimals": 18,
@@ -12930,9 +12960,9 @@
       },
       {
         "assetId": "18",
-        "symbol": "SEPOLIA_ETH",
+        "symbol": "ARB_ETH",
         "decimals": 18,
-        "existentialDeposit": "1"
+        "existentialDeposit": "1000000000000"
       },
       {
         "assetId": "5",
@@ -12942,9 +12972,9 @@
       },
       {
         "assetId": "15",
-        "symbol": "ARB_ETH",
+        "symbol": "ETH",
         "decimals": 18,
-        "existentialDeposit": "1"
+        "existentialDeposit": "15000000000000"
       },
       {
         "assetId": "0",
@@ -12990,6 +13020,12 @@
         "existentialDeposit": "10000000000"
       },
       {
+        "assetId": "19",
+        "symbol": "OP_ETH",
+        "decimals": 18,
+        "existentialDeposit": "1000000000000"
+      },
+      {
         "assetId": "10",
         "symbol": "PINK",
         "decimals": 10,
@@ -13009,9 +13045,9 @@
       },
       {
         "assetId": "16",
-        "symbol": "OP_ETH",
+        "symbol": "HP_ETH",
         "decimals": 18,
-        "existentialDeposit": "1"
+        "existentialDeposit": "1000000000000"
       },
       {
         "assetId": "0",
@@ -13021,9 +13057,9 @@
       },
       {
         "assetId": "17",
-        "symbol": "ARB_USDT",
+        "symbol": "BASE_ETH",
         "decimals": 18,
-        "existentialDeposit": "1"
+        "existentialDeposit": "1000000000000"
       },
       {
         "assetId": "3",
