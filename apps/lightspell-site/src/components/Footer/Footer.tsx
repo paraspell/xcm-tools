@@ -57,7 +57,7 @@ export const Footer = () => {
       </Container>
       <Container className={classes.afterFooter}>
         <Text c="dimmed" size="sm">
-          © 2024 lightspell.xyz
+          © 2025 lightspell.xyz
         </Text>
 
         <Group

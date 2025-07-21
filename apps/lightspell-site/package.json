@@ -14,9 +14,9 @@
     "format:write": "prettier --write src"
   },
   "dependencies": {
-    "@mantine/core": "^7.17.7",
-    "@mantine/form": "^7.17.7",
-    "@mantine/hooks": "^7.17.7",
+    "@mantine/core": "^8.2.1",
+    "@mantine/form": "^8.2.1",
+    "@mantine/hooks": "^8.2.1",
     "@mantinex/dev-icons": "^2.0.0",
     "@tabler/icons-react": "^3.34.0",
     "react": "^19.1.0",

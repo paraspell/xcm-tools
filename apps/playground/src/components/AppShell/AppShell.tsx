@@ -65,6 +65,26 @@ export const AppShell = () => {
 
   const computedColorScheme = useComputedColorScheme('light');
 
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+
+    if (computedColorScheme === 'dark') {
+      link.href =
+        'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/a11y-dark.min.css';
+    } else {
+      link.href =
+        'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/a11y-light.css';
+    }
+
+    document.head.appendChild(link);
+
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, [computedColorScheme]);
+
   const toggleColorScheme = () => {
     setColorScheme(computedColorScheme === 'dark' ? 'light' : 'dark');
   };
