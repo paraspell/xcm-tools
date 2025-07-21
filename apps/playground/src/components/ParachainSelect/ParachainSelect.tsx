@@ -20,7 +20,15 @@ const renderSelectOption: SelectProps['renderOption'] = ({
   const icon = getParachainIcon(option.value as TNodePolkadotKusama);
   return (
     <Group flex="1" gap="xs">
-      <Image src={icon} width={16} height={16} radius="xl" alt={option.label} />
+      <Image
+        src={icon}
+        style={{
+          width: '16px',
+          height: '16px',
+        }}
+        radius="xl"
+        alt={option.label}
+      />
       {option.label}
       {checked && (
         <IconCheck style={{ marginInlineStart: 'auto' }} {...iconProps} />
@@ -39,7 +47,16 @@ export const ParachainSelect: FC<Props> = (props) => {
       placeholder="Pick value"
       renderOption={renderSelectOption}
       leftSection={
-        icon ? <Image src={icon} width={16} height={16} radius="xl" /> : null
+        icon ? (
+          <Image
+            src={icon}
+            style={{
+              width: '16px',
+              height: '16px',
+            }}
+            radius="xl"
+          />
+        ) : null
       }
       nothingFoundMessage="Nothing found..."
       allowDeselect={false}

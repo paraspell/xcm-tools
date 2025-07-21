@@ -8,7 +8,7 @@ export const useAutoFillWalletAddress = <
   TFormValues extends Record<string, any>,
 >(
   form: UseFormReturnType<TFormValues>,
-  fieldName: keyof TFormValues,
+  fieldName: keyof TFormValues & string,
 ): void => {
   const { selectedAccount } = useWallet();
 

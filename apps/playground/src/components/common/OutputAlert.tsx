@@ -23,18 +23,24 @@ export const OutputAlert: FC<Props> = ({
     mt="lg"
     p="xl"
     style={{ overflowWrap: 'anywhere' }}
-    maw={800}
+    maw={900}
     w="100%"
     data-testid="output"
   >
     <CodeHighlight
       code={output}
-      lang="json"
-      style={{
-        padding: 0,
-        borderRadius: 16,
-        marginTop: 20,
-        backgroundColor: 'transparent',
+      language="ts"
+      withCopyButton={false}
+      styles={{
+        code: {
+          padding: 0,
+          borderRadius: 16,
+          marginTop: 20,
+          backgroundColor: 'transparent',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word',
+          overflowWrap: 'anywhere',
+        },
       }}
     />
   </Alert>
