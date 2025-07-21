@@ -94,7 +94,7 @@ export const AssetsQueries = () => {
   };
 
   const getQueryResult = async (formValues: FormValues): Promise<unknown> => {
-    const { useApi, func, address } = formValues;
+    const { useApi, node, destination, func, address } = formValues;
 
     const postCalls = new Set<TAssetsQuery>([
       'ASSET_BALANCE',
@@ -108,14 +108,21 @@ export const AssetsQueries = () => {
       const shouldUsePost = postCalls.has(func);
 
       return fetchFromApi(
-        shouldUsePost && {
-          address,
-          ...('symbol' in resolvedCurrency &&
-          typeof resolvedCurrency.symbol === 'string' &&
-          resolvedCurrency.symbol.length === 0
-            ? {}
-            : { currency: resolvedCurrency }),
-        },
+        shouldUsePost
+          ? {
+              node,
+              destination,
+              address,
+              ...('symbol' in resolvedCurrency &&
+              typeof resolvedCurrency.symbol === 'string' &&
+              resolvedCurrency.symbol.length === 0
+                ? {}
+                : { currency: resolvedCurrency }),
+            }
+          : {
+              origin: node,
+              destination,
+            },
         endpoint,
         shouldUsePost ? 'POST' : 'GET',
         shouldUsePost,

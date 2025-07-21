@@ -1,10 +1,12 @@
+import { hasDryRunSupport } from '@paraspell/assets'
+
 import { getOriginXcmFee, padFeeBy } from '../../transfer'
 import type { TAttemptDryRunFeeOptions, TXcmFeeDetail } from '../../types'
 
 export const attemptDryRunFee = async <TApi, TRes>(
   options: TAttemptDryRunFeeOptions<TApi, TRes>
 ): Promise<TXcmFeeDetail> => {
-  const { currency, builder } = options
+  const { origin, currency, builder } = options
   const reductionPcts = [0, 10, 20, 30, 40, 50]
   const lastReduction = reductionPcts[reductionPcts.length - 1]
 
@@ -21,7 +23,7 @@ export const attemptDryRunFee = async <TApi, TRes>(
       tx: await modifiedBuilder.build()
     })
 
-    if (result.feeType === 'dryRun' || percentage === lastReduction) {
+    if (result.feeType === 'dryRun' || percentage === lastReduction || !hasDryRunSupport(origin)) {
       return result
     }
   }

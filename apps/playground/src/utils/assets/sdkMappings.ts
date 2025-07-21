@@ -15,6 +15,7 @@ import {
   getOtherAssets,
   getParaId,
   getRelayChainSymbol,
+  getSupportedAssets,
   hasSupportForAsset,
 } from '@paraspell/sdk';
 import * as SdkPjs from '@paraspell/sdk-pjs';
@@ -27,7 +28,7 @@ export const callSdkFunc = (
   apiType: TApiType,
   resolvedCurrency: TCurrencyCore,
 ): Promise<unknown> => {
-  const { func, node, currency, address } = formValues;
+  const { func, node, destination, currency, address } = formValues;
   const chosenSdk = apiType === 'PAPI' ? Sdk : SdkPjs;
 
   const sdkActions: Record<TAssetsQuery, () => Promise<unknown>> = {
@@ -40,6 +41,8 @@ export const callSdkFunc = (
     NATIVE_ASSETS: () =>
       Promise.resolve(getNativeAssets(node as TNodePolkadotKusama)),
     OTHER_ASSETS: () => Promise.resolve(getOtherAssets(node)),
+    SUPPORTED_ASSETS: () =>
+      Promise.resolve(getSupportedAssets(node, destination)),
     FEE_ASSETS: () => Promise.resolve(getFeeAssets(node)),
     ALL_SYMBOLS: () => Promise.resolve(getAllAssetsSymbols(node)),
     DECIMALS: () => Promise.resolve(getAssetDecimals(node, currency)),
