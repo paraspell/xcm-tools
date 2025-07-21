@@ -160,7 +160,7 @@ export class AssetsController {
     @Req() req: Request,
   ) {
     const { origin, destination, currency } = params;
-    this.analyticsService.track(EventName.GET_SUPPORTED_ASSETS, req, {
+    this.analyticsService.track(EventName.GET_ORIGIN_FEE_DETAILS, req, {
       origin,
       destination,
       currency: JSON.stringify(currency),

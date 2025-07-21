@@ -8,7 +8,10 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import type { TNodeDotKsmWithRelayChains } from '@paraspell/sdk';
+import type {
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
+} from '@paraspell/sdk';
 import {
   getRelayChainSymbol,
   isRelayChain,
@@ -26,6 +29,7 @@ import { ParachainSelect } from '../ParachainSelect/ParachainSelect';
 export type FormValues = {
   func: TAssetsQuery;
   node: TNodeDotKsmWithRelayChains;
+  destination: TNodeWithRelayChains;
   currency: string;
   amount: string;
   address: string;
@@ -48,6 +52,7 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
     initialValues: {
       func: 'ASSETS_OBJECT',
       node: 'Acala',
+      destination: 'Astar',
       currency: '',
       address: '',
       amount: '',
@@ -173,6 +178,17 @@ export const AssetsQueriesForm: FC<Props> = ({ onSubmit, loading }) => {
               required
               data-testid="select-node"
               {...form.getInputProps('node')}
+            />
+          )}
+
+          {func === 'SUPPORTED_ASSETS' && (
+            <ParachainSelect
+              label={'Destination'}
+              placeholder="Pick value"
+              data={NODES_WITH_RELAY_CHAINS}
+              required
+              data-testid="select-destination"
+              {...form.getInputProps('destination')}
             />
           )}
 
